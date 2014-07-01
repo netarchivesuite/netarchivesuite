@@ -27,9 +27,9 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.archive.io.arc.ARCWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.arc.ARCUtils;
@@ -41,11 +41,9 @@ import dk.netarkivet.common.utils.arc.ARCUtils;
  */
 public class MetadataFileWriterArc extends MetadataFileWriter {
 
-    private static final Log log = LogFactory.getLog(MetadataFileWriterArc.class);
+    private static final Logger log = LoggerFactory.getLogger(MetadataFileWriterArc.class);
 
-    /** Writer to this jobs metadatafile.
-     * This is closed when the metadata is marked as ready.
-     */
+    /** Writer to this jobs metadatafile. This is closed when the metadata is marked as ready. */
     private ARCWriter writer = null;
 
     /**
@@ -94,28 +92,23 @@ public class MetadataFileWriterArc extends MetadataFileWriter {
     public boolean writeTo(File fileToArchive, String URL, String mimetype) {
         if (fileToArchive.isFile()) {
             try {
-                ARCUtils.writeFileToARC(writer, fileToArchive,
-                        URL, mimetype);
+                ARCUtils.writeFileToARC(writer, fileToArchive, URL, mimetype);
             } catch (IOFailure e) {
-                log.warn("Error writing file '"
-                        + fileToArchive.getAbsolutePath()
-                        + "' to metadata file: ", e);
+                log.warn("Error writing file '{}' to metadata file: ", fileToArchive.getAbsolutePath(), e);
                 return false;
             }
-            log.debug("Wrote '" + fileToArchive.getAbsolutePath() + "' to '"
-                      + writer.getFile().getAbsolutePath() + "'.");
+            log.debug("Wrote '{}' to '{}'.", fileToArchive.getAbsolutePath(), writer.getFile().getAbsolutePath());
             return true;
         } else {
-            log.debug("No '" + fileToArchive.getName()
-                      + "' found in dir: " + fileToArchive.getParent());
+            log.debug("No '{}' found in dir: {}", fileToArchive.getName(), fileToArchive.getParent());
             return false;
         }
     }
 
     /* Copied from the ARCWriter. */
     @Override
-    public void write(String uri, String contentType, String hostIP,
-            long fetchBeginTimeStamp, byte[] payload) throws IOException {
+    public void write(String uri, String contentType, String hostIP, long fetchBeginTimeStamp, byte[] payload)
+    		throws IOException {
         ByteArrayInputStream in = new ByteArrayInputStream(payload);
         writer.write(uri, contentType, hostIP, fetchBeginTimeStamp, payload.length, in);
     }

@@ -44,10 +44,8 @@ public class HarvestReportFactory extends SettingsFactory<HarvestReport> {
      * @throws ArgumentNotValid if the instance cannot be constructed.
      * @return the {@link HarvestReport} instance.
      */
-    public static HarvestReport generateHarvestReport(Object ...args)
-    throws ArgumentNotValid, IOFailure {
-        return SettingsFactory.getInstance(
-                HarvesterSettings.HARVEST_REPORT_CLASS, args);
+    public static HarvestReport generateHarvestReport(Object ...args) throws ArgumentNotValid, IOFailure {
+        return SettingsFactory.getInstance( HarvesterSettings.HARVEST_REPORT_CLASS, args);
     }
 
 }

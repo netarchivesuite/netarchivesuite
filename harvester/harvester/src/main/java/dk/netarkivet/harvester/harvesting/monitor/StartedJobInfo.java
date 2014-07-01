@@ -28,8 +28,8 @@ import java.text.MessageFormat;
 import java.text.ParseException;
 import java.util.Date;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.StringUtils;
@@ -47,54 +47,36 @@ import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlS
 public class StartedJobInfo implements Comparable<StartedJobInfo> {
 
     /** The class logger. */
-    static final Log log = LogFactory.getLog(StartedJobInfo.class);
+    private static final Logger log = LoggerFactory.getLogger(StartedJobInfo.class);
     
     /**list of the compare criteria.*/
-    public enum Criteria { JOBID, HOST, PROGRESS, ELAPSED,
-        QFILES, TOTALQ, ACTIVEQ, EXHAUSTEDQ };
+    public enum Criteria { JOBID, HOST, PROGRESS, ELAPSED, QFILES, TOTALQ, ACTIVEQ, EXHAUSTEDQ };
     /**current compare criteria.*/
-    private StartedJobInfo.Criteria compareCriteria =
-        StartedJobInfo.Criteria.JOBID;
+    private StartedJobInfo.Criteria compareCriteria = StartedJobInfo.Criteria.JOBID;
 
     private static final String NOT_AVAILABLE_STRING = "";
     private static final long NOT_AVAILABLE_NUM = -1L;
 
-    /**
-     * A text format used to parse Heritrix's short frontier report.
-     */
+    /** A text format used to parse Heritrix's short frontier report. */
     private static final MessageFormat FRONTIER_SHORT_FMT = new MessageFormat(
-            "{0} queues: {1} active ({2} in-process; "
-                    + "{3} ready; {4} snoozed); {5} inactive; "
-                    + "{6} retired; {7} exhausted");
+            "{0} queues: {1} active ({2} in-process; {3} ready; {4} snoozed); {5} inactive; {6} retired; {7} exhausted");
 
-    /**
-     * The job identifier.
-     */
+    /** The job identifier. */
     private long jobId;
 
-    /**
-     * The name of the harvest this job belongs to.
-     */
+    /** The name of the harvest this job belongs to. */
     private String harvestName;
 
-    /**
-     * Creation date of the record.
-     */
+    /** Creation date of the record. */
     private Date timestamp;
 
-    /**
-     * URL to the Heritrix admin console.
-     */
+    /** URL to the Heritrix admin console. */
     private String hostUrl;
 
-    /**
-     * A percentage indicating the crawl progress.
-     */
+    /** A percentage indicating the crawl progress. */
     private double progress;
 
-    /**
-     * The number of URIs queued, awaiting to be processed by Heritrix.
-     */
+    /** The number of URIs queued, awaiting to be processed by Heritrix. */
     private long queuedFilesCount;
 
     /**
@@ -108,58 +90,36 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
      */
     private long totalQueuesCount;
 
-    /**
-     * The number of queues in process.
-     */
+    /** The number of queues in process. */
     private long activeQueuesCount;
 
-    /**
-     * The number of queues that have been retired when they hit their quota.
-     */
+    /** The number of queues that have been retired when they hit their quota. */
     private long retiredQueuesCount;
-    /**
-     * Number of queues entirely processed.
-     */
+    /** Number of queues entirely processed. */
     private long exhaustedQueuesCount;
 
-    /**
-     * Time in seconds elapsed since Heritrix began crawling this job.
-     */
+    /** Time in seconds elapsed since Heritrix began crawling this job. */
     private long elapsedSeconds;
 
-    /**
-     * Current download rate in KB/sec.
-     */
+    /** Current download rate in KB/sec. */
     private long currentProcessedKBPerSec;
 
-    /**
-     * Average download rate (over a period of 20 seconds) in KB/sec.
-     */
+    /** Average download rate (over a period of 20 seconds) in KB/sec. */
     private long processedKBPerSec;
 
-    /**
-     * Current download rate in URI/sec.
-     */
+    /** Current download rate in URI/sec. */
     private double currentProcessedDocsPerSec;
 
-    /**
-     * Average download rate (over a period of 20 seconds) in URI/sec.
-     */
+    /** Average download rate (over a period of 20 seconds) in URI/sec. */
     private double processedDocsPerSec;
 
-    /**
-     * Number of active Heritrix worker threads.
-     */
+    /** Number of active Heritrix worker threads. */
     private int activeToeCount;
 
-    /**
-     * Number of alerts raised by Heritrix since the crawl began.
-     */
+    /** Number of alerts raised by Heritrix since the crawl began. */
     private long alertsCount;
 
-    /**
-     * Current job status.
-     */
+    /** Current job status. */
     private CrawlStatus status;
 
     /**
@@ -178,7 +138,6 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
      *            the ID of the job
      */
     public StartedJobInfo(String harvestName, long jobId) {
-        this();
         this.timestamp = new Date(System.currentTimeMillis());
         this.jobId = jobId;
         this.harvestName = harvestName;
@@ -428,8 +387,7 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
      */
     public static StartedJobInfo build(CrawlProgressMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "CrawlProgressMessage msg");
-        String harvestName = HarvestDefinitionDAO.getInstance()
-            .getHarvestName(msg.getHarvestID());
+        String harvestName = HarvestDefinitionDAO.getInstance().getHarvestName(msg.getHarvestID());
         
         StartedJobInfo sji = new StartedJobInfo(harvestName, msg.getJobID());
 
@@ -454,7 +412,6 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
             sji.queuedFilesCount = 0;
             sji.totalQueuesCount = 0;
             break;
-
         case CRAWLER_ACTIVE:
         case CRAWLER_PAUSING:
         case CRAWLER_PAUSED:
@@ -466,14 +423,11 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
             String frontierShortReport = jobInfo.getFrontierShortReport();
             if (frontierShortReport != null) {
                 try {
-                    Object[] params = FRONTIER_SHORT_FMT
-                            .parse(frontierShortReport);
+                    Object[] params = FRONTIER_SHORT_FMT.parse(frontierShortReport);
                     sji.totalQueuesCount = Long.parseLong((String) params[0]);
                     sji.activeQueuesCount = Long.parseLong((String) params[1]);
-                    sji.retiredQueuesCount =
-                        Long.parseLong((String) params[6]);
-                    sji.exhaustedQueuesCount = Long
-                            .parseLong((String) params[7]);
+                    sji.retiredQueuesCount =Long.parseLong((String) params[6]);
+                    sji.exhaustedQueuesCount = Long.parseLong((String) params[7]);
                 } catch (ParseException e) {
                     throw new ArgumentNotValid(frontierShortReport, e);
                 }
@@ -481,10 +435,8 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
 
             sji.activeToeCount = jobInfo.getActiveToeCount();
             sji.alertsCount = heritrixInfo.getAlertCount();
-            sji.currentProcessedDocsPerSec = jobInfo
-                    .getCurrentProcessedDocsPerSec();
-            sji.currentProcessedKBPerSec = jobInfo
-                    .getCurrentProcessedKBPerSec();
+            sji.currentProcessedDocsPerSec = jobInfo.getCurrentProcessedDocsPerSec();
+            sji.currentProcessedKBPerSec = jobInfo.getCurrentProcessedKBPerSec();
             sji.downloadedFilesCount = jobInfo.getDownloadedFilesCount();
             sji.elapsedSeconds = jobInfo.getElapsedSeconds();
             sji.hostUrl = msg.getHostUrl();
@@ -492,7 +444,6 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
             sji.processedKBPerSec = jobInfo.getProcessedKBPerSec();
             sji.queuedFilesCount = jobInfo.getQueuedUriCount();
             break;
-
         case CRAWLING_FINISHED:
             // Set progress to 100 %, and reset the other values .
             sji.progress = 100;
@@ -506,8 +457,9 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
             sji.queuedFilesCount = 0;
             sji.totalQueuesCount = 0;
             break;
-        default: log.debug("Nothing to do for state: " + newStatus); 
-            
+        default:
+        	log.debug("Nothing to do for state: {}", newStatus); 
+            break;
         }
         sji.status = newStatus;
 

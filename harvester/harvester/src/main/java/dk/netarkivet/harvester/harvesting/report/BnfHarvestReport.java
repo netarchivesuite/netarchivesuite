@@ -27,8 +27,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -59,7 +59,7 @@ import dk.netarkivet.harvester.harvesting.distribute.DomainStats;
 public class BnfHarvestReport extends AbstractHarvestReport {
 
     /** The logger for this class. */
-    private static final Log LOG = LogFactory.getLog(BnfHarvestReport.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BnfHarvestReport.class);
     
     /**
      *  Constructor for this class.
@@ -79,10 +79,7 @@ public class BnfHarvestReport extends AbstractHarvestReport {
     public void postProcess(Job job) {
         ArgumentNotValid.checkNotNull(job, "job");
 
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Starting post-processing of harvest report for job "
-                    + job.getJobID());
-        }
+        LOG.info("Starting post-processing of harvest report for job {}", job.getJobID());
         long startTime = System.currentTimeMillis();
 
         long harvestObjectLimit = -1L;
@@ -92,8 +89,7 @@ public class BnfHarvestReport extends AbstractHarvestReport {
         // and if so get actual byte and object limits.
         if (job.isSnapshot()) {
             HarvestDefinitionDAO dao = HarvestDefinitionDAO.getInstance();
-            String harvestName =
-                dao.getHarvestName(job.getOrigHarvestDefinitionID());
+            String harvestName = dao.getHarvestName(job.getOrigHarvestDefinitionID());
             SparseFullHarvest harvest = dao.getSparseFullHarvest(harvestName);
 
             harvestObjectLimit = harvest.getMaxCountObjects();
@@ -122,28 +118,21 @@ public class BnfHarvestReport extends AbstractHarvestReport {
 
             StopReason finalStopReason = ds.getStopReason();
 
-            if (harvestByteLimit > 0
-                    && (actualByteCount >= harvestByteLimit)) {
+            if (harvestByteLimit > 0 && (actualByteCount >= harvestByteLimit)) {
                     finalStopReason = StopReason.SIZE_LIMIT;
-            } else if (harvestObjectLimit > 0
-                    && (actualObjectCount >= harvestObjectLimit)) {
+            } else if (harvestObjectLimit > 0 && (actualObjectCount >= harvestObjectLimit)) {
                 finalStopReason = StopReason.OBJECT_LIMIT;
-            } else if (confByteLimit > 0
-                    && (actualByteCount >= confByteLimit)) {
+            } else if (confByteLimit > 0 && (actualByteCount >= confByteLimit)) {
                     finalStopReason = StopReason.CONFIG_SIZE_LIMIT;
-            } else if (confObjectLimit > 0
-                    && (actualObjectCount >= confObjectLimit)) {
+            } else if (confObjectLimit > 0 && (actualObjectCount >= confObjectLimit)) {
                 finalStopReason = StopReason.CONFIG_OBJECT_LIMIT;
             }
 
             ds.setStopReason(finalStopReason);
 
             // Create the HarvestInfo object
-            HarvestInfo hi = new HarvestInfo(
-                    job.getOrigHarvestDefinitionID(), job.getJobID(),
-                    domainName, confName, new Date(),
-                    actualByteCount, actualObjectCount,
-                    finalStopReason);
+            HarvestInfo hi = new HarvestInfo(job.getOrigHarvestDefinitionID(), job.getJobID(), domainName, confName,
+            		new Date(), actualByteCount, actualObjectCount, finalStopReason);
 
             // Add HarvestInfo to Domain and make data persistent
             // by updating DAO
@@ -153,10 +142,8 @@ public class BnfHarvestReport extends AbstractHarvestReport {
 
         if (LOG.isInfoEnabled()) {
             long time = System.currentTimeMillis() - startTime;
-            LOG.info("Finished post-processing of harvest report for job "
-                    + job.getJobID() + ", operation took "
-                    + StringUtils.formatDuration(
-                            time / TimeUtils.SECOND_IN_MILLIS));
+            LOG.info("Finished post-processing of harvest report for job {}, operation took {}",
+            		job.getJobID(), StringUtils.formatDuration(time / TimeUtils.SECOND_IN_MILLIS));
         }
 
     }

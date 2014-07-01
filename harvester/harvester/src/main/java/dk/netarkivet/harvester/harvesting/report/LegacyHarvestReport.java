@@ -27,8 +27,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.TimeUtils;
@@ -50,8 +50,7 @@ import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 public class LegacyHarvestReport extends AbstractHarvestReport {
 
     /** The logger for this class. */
-    private static final Log LOG = LogFactory.getLog(
-            LegacyHarvestReport.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LegacyHarvestReport.class);
 
     /**
      * The constructor gets the data in a crawl.log file,
@@ -76,6 +75,7 @@ public class LegacyHarvestReport extends AbstractHarvestReport {
     public LegacyHarvestReport(HeritrixFiles hFiles) {
         super(hFiles);
     }
+
     /** Default constructor. */
     public LegacyHarvestReport() {
         super();
@@ -88,11 +88,7 @@ public class LegacyHarvestReport extends AbstractHarvestReport {
      */
     @Override
     public void postProcess(Job job) {
-
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Starting post-processing of harvest report for job "
-                    + job.getJobID());
-        }
+        LOG.info("Starting post-processing of harvest report for job {}", job.getJobID());
         long startTime = System.currentTimeMillis();
 
         // Get the map from domain names to domain configurations
@@ -116,16 +112,16 @@ public class LegacyHarvestReport extends AbstractHarvestReport {
             // Retrieve crawl data from log and add it to HarvestInfo
             StopReason stopReason = getStopReason(domainName);
             if (stopReason == null) {
-                LOG.warn("No stopreason found for domain '" + domainName + "'");
+                LOG.warn("No stopreason found for domain '{}'", domainName);
             }
             Long countObjectRetrieved = getObjectCount(domainName);
             if (countObjectRetrieved == null) {
-                LOG.warn("No count for objects retrieved found for domain '" + domainName + "'");
+                LOG.warn("No count for objects retrieved found for domain '{}'", domainName);
                 countObjectRetrieved = -1L;
             }
             Long bytesReceived = getByteCount(domainName);
             if (bytesReceived == null) {
-                LOG.warn("No count for bytes received found for domain '" + domainName + "'");
+                LOG.warn("No count for bytes received found for domain '{}'", domainName);
                 bytesReceived = -1L;
             }
             //If StopReason is SIZE_LIMIT, we check if it's the harvests' size
@@ -141,28 +137,21 @@ public class LegacyHarvestReport extends AbstractHarvestReport {
             // result for whether we want to harvest any more.
             if (stopReason == StopReason.SIZE_LIMIT) {
                 long maxBytesPerDomain = job.getMaxBytesPerDomain();
-                long configMaxBytes = domain.getConfiguration(
-                        configurationMap.get(domainName)).getMaxBytes();
-                if (NumberUtils.compareInf(configMaxBytes, maxBytesPerDomain)
-                    <= 0
-                    || NumberUtils.compareInf(configMaxBytes, bytesReceived)
-                       <= 0) {
+                long configMaxBytes = domain.getConfiguration(configurationMap.get(domainName)).getMaxBytes();
+                if (NumberUtils.compareInf(configMaxBytes, maxBytesPerDomain) <= 0
+                		|| NumberUtils.compareInf(configMaxBytes, bytesReceived) <= 0) {
                     stopReason = StopReason.CONFIG_SIZE_LIMIT;
                 }
             } else if (stopReason == StopReason.OBJECT_LIMIT) {
                 long maxObjectsPerDomain = job.getMaxObjectsPerDomain();
-                long configMaxObjects = domain.getConfiguration(
-                        configurationMap.get(domainName)).getMaxObjects();
-                if (NumberUtils.compareInf(
-                        configMaxObjects, maxObjectsPerDomain) <= 0) {
+                long configMaxObjects = domain.getConfiguration(configurationMap.get(domainName)).getMaxObjects();
+                if (NumberUtils.compareInf(configMaxObjects, maxObjectsPerDomain) <= 0) {
                     stopReason = StopReason.CONFIG_OBJECT_LIMIT;
                 }
             }
             // Create the HarvestInfo object
-            HarvestInfo hi = new HarvestInfo(
-                    job.getOrigHarvestDefinitionID(), job.getJobID(),
-                    domain.getName(), configurationMap.get(domain.getName()),
-                    new Date(), bytesReceived, countObjectRetrieved,
+            HarvestInfo hi = new HarvestInfo(job.getOrigHarvestDefinitionID(), job.getJobID(), domain.getName(), 
+            		configurationMap.get(domain.getName()), new Date(), bytesReceived, countObjectRetrieved,
                     stopReason);
 
             // Add HarvestInfo to Domain and make data persistent
@@ -173,10 +162,8 @@ public class LegacyHarvestReport extends AbstractHarvestReport {
 
         if (LOG.isInfoEnabled()) {
             long time = System.currentTimeMillis() - startTime;
-            LOG.info("Finished post-processing of harvest report for job "
-                    + job.getJobID() + ", operation took "
-                    + StringUtils.formatDuration(
-                            time / TimeUtils.SECOND_IN_MILLIS));
+            LOG.info("Finished post-processing of harvest report for job {}, operation took {}",
+            		job.getJobID(), StringUtils.formatDuration(time / TimeUtils.SECOND_IN_MILLIS));
         }
 
     }

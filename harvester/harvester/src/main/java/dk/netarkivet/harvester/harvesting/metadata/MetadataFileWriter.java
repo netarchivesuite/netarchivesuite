@@ -24,10 +24,11 @@ package dk.netarkivet.harvester.harvesting.metadata;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.InputStream;
 import java.net.URI;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -48,13 +49,13 @@ import dk.netarkivet.harvester.harvesting.IngestableFiles;
 public abstract class MetadataFileWriter {
 
     /** Logging output place. */
-    private static final Log log = LogFactory.getLog(MetadataFileWriter.class);
+    private static final Logger log = LoggerFactory.getLogger(MetadataFileWriter.class);
+
     /** Constant representing the ARC format. */
     protected static final int MDF_ARC = 1;
     /** Constant representing the WARC format. */
     protected static final int MDF_WARC = 2;
-    /** Constant representing the metadata Format. Recognized formats are either MDF_ARC
-     * or MDF_WARC */
+    /** Constant representing the metadata Format. Recognized formats are either MDF_ARC or MDF_WARC */
     protected static int metadataFormat = 0;
 
     /**
@@ -67,9 +68,8 @@ public abstract class MetadataFileWriter {
         } else if ("warc".equalsIgnoreCase(metadataFormatSetting)) {
             metadataFormat = MDF_WARC;
         } else {
-            throw new ArgumentNotValid("Configuration of '" + HarvesterSettings.METADATA_FORMAT 
-                    + "' is invalid! Unrecognized format '"
-                    + metadataFormatSetting + "'.");
+            throw new ArgumentNotValid("Configuration of '" + HarvesterSettings.METADATA_FORMAT + "' is invalid! "
+            		+ "Unrecognized format '" + metadataFormatSetting + "'.");
         }
     }
 
@@ -84,8 +84,7 @@ public abstract class MetadataFileWriter {
      * only one file is ever made.
      * @throws ArgumentNotValid if any parameter was null.
      */
-    public static String getMetadataArchiveFileName(String jobID)
-            throws ArgumentNotValid {
+    public static String getMetadataArchiveFileName(String jobID) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(jobID, "jobID");
         if (metadataFormat == 0) {
             initializeMetadataFormat();
@@ -96,8 +95,7 @@ public abstract class MetadataFileWriter {
         case MDF_WARC:
             return jobID + "-metadata-" + 1 + ".warc";
         default:
-            throw new ArgumentNotValid("Configuration of '"
-                    + HarvesterSettings.METADATA_FORMAT + "' is invalid!");
+            throw new ArgumentNotValid("Configuration of '" + HarvesterSettings.METADATA_FORMAT + "' is invalid!");
         }
     }
     
@@ -116,8 +114,7 @@ public abstract class MetadataFileWriter {
         case MDF_WARC:
             return MetadataFileWriterWarc.createWriter(metadataArchiveFile);
         default:
-            throw new ArgumentNotValid("Configuration of '" 
-                    + HarvesterSettings.METADATA_FORMAT + "' is invalid!");
+            throw new ArgumentNotValid("Configuration of '" + HarvesterSettings.METADATA_FORMAT + "' is invalid!");
         }
     }
     
@@ -158,8 +155,8 @@ public abstract class MetadataFileWriter {
      * @see org.archive.io.arc.ARCWriter#write(String uri, String contentType, String hostIP,
             long fetchBeginTimeStamp, long recordLength, InputStream in)
      */
-    public abstract void write(String uri, String contentType, String hostIP,
-            long fetchBeginTimeStamp, byte[] payload) throws java.io.IOException;
+    public abstract void write(String uri, String contentType, String hostIP, long fetchBeginTimeStamp, byte[] payload)
+    		throws java.io.IOException;
 
     /**
      * Append the files contained in the directory to the metadata archive file, but
@@ -170,22 +167,17 @@ public abstract class MetadataFileWriter {
      */
     public void insertFiles(File parentDir, FilenameFilter filter, String mimetype, IngestableFiles files) {
         //For each metadata source file in the parentDir that matches the filter ..
-        File[] metadataSourceFiles
-                = parentDir.listFiles(filter);
+        File[] metadataSourceFiles = parentDir.listFiles(filter);
         for (File metadataSourceFile : metadataSourceFiles) {
             //...write its content to the MetadataFileWriter
-            log.debug("Inserting the file '" + metadataSourceFile.getAbsolutePath() + "'");
-            writeFileTo(metadataSourceFile,
-                    getURIforFileName(metadataSourceFile, files).toASCIIString(),
-                    mimetype);
+            log.debug("Inserting the file '{}'", metadataSourceFile.getAbsolutePath());
+            writeFileTo(metadataSourceFile, getURIforFileName(metadataSourceFile, files).toASCIIString(), mimetype);
             //...and delete it afterwards
             try {
                 FileUtils.remove(metadataSourceFile);
             } catch (IOFailure e) {
-                log.warn("Couldn't delete file '"
-                         + metadataSourceFile.getAbsolutePath()
-                         + "' after adding to metadata archive file, ignoring.",
-                         e);
+                log.warn("Couldn't delete file '{}' after adding to metadata archive file, ignoring.",
+                		metadataSourceFile.getAbsolutePath(), e);
             }
         }
     }
@@ -208,11 +200,8 @@ public abstract class MetadataFileWriter {
         }
         int suffix_index = cdx.getName().indexOf(extensionToRemove);
         filename = filename.substring(0, suffix_index);
-        return HarvestDocumentation.getCDXURI(
-                "" + files.getHarvestID(),
-                "" + files.getJobId(),
-                filename);
-        }
+        return HarvestDocumentation.getCDXURI("" + files.getHarvestID(), "" + files.getJobId(), filename);
+    }
 
     /**
      * Reset the metadata format. Should only be used by a unittest.

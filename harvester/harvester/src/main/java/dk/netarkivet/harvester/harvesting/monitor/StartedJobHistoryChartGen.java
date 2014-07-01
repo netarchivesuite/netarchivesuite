@@ -29,8 +29,6 @@ import java.text.DecimalFormat;
 import java.util.LinkedList;
 import java.util.Locale;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.AxisLocation;
@@ -45,6 +43,8 @@ import org.jfree.data.Range;
 import org.jfree.data.xy.DefaultXYDataset;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RectangleInsets;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -66,49 +66,34 @@ import dk.netarkivet.harvester.datamodel.RunningJobsInfoDAO;
  */
 class StartedJobHistoryChartGen {
 
+    /** The class logger. */
+    private static final Logger LOG = LoggerFactory.getLogger(StartedJobHistoryChartGen.class);
+
     /**
      * Time units used to scale the crawl time values and generate the
      * chart's time axis ticks.
      */
     protected static enum TimeAxisResolution {
-        /**
-         * One second. Tick step is 10s.
-         */
+        /** One second. Tick step is 10s. */
         second(1, 1, 10),
-        /**
-         * One minute. Tick step is 5m.
-         */
+        /** One minute. Tick step is 5m. */
         minute(60, 60, 5),
-        /**
-         * One hour. Tick step is 1h.
-         */
+        /** One hour. Tick step is 1h. */
         hour(60 * minute.seconds, 60 * minute.seconds, 1),
-        /**
-         * Twelve hours. Tick step is 2h.
-         */
+        /** Twelve hours. Tick step is 2h. */
         half_day(12 * 60 * minute.seconds, 60 * minute.seconds, 2),
-        /**
-         * One day. Tick step is 0.5d.
-         */
+        /** One day. Tick step is 0.5d. */
         day(24 * hour.seconds, 24 * hour.seconds, 0.5),
-        /**
-         * One week. Tick step is 1w.
-         */
+        /** One week. Tick step is 1w. */
         week(7 * day.seconds, 7 * day.seconds, 1);
 
-        /**
-         * The time unit in seconds.
-         */
+        /** The time unit in seconds. */
         private final int seconds;
 
-        /**
-         * The scale in seconds.
-         */
+        /** The scale in seconds. */
         private final int scaleSeconds;
 
-        /**
-         * The step between two tick units.
-         */
+        /** The step between two tick units. */
         private final double tickStep;
 
         /**
@@ -158,7 +143,7 @@ class StartedJobHistoryChartGen {
      * job progress history.
      */
     private static class ChartGen implements Runnable {
-        /** The process that generates the Charts. */
+    	/** The process that generates the Charts. */
         private final StartedJobHistoryChartGen gen;
       
         /**
@@ -179,8 +164,7 @@ class StartedJobHistoryChartGen {
 
             long jobId = gen.jobId;
 
-            StartedJobInfo[] fullHistory =
-                RunningJobsInfoDAO.getInstance().getFullJobHistory(jobId);
+            StartedJobInfo[] fullHistory = RunningJobsInfoDAO.getInstance().getFullJobHistory(jobId);
 
             LinkedList<Double> timeValues = new LinkedList<Double>();
             LinkedList<Double> progressValues = new LinkedList<Double>();
@@ -199,29 +183,18 @@ class StartedJobHistoryChartGen {
 
             File newPngFile;
             try {
-                newPngFile = File.createTempFile(
-                        jobId + "-history",
-                        "." + System.currentTimeMillis() + ".png");
+                newPngFile = File.createTempFile(jobId + "-history", "." + System.currentTimeMillis() + ".png");
             } catch (IOException e) {
                 LOG.warn("Failed to create temp PNG file for job " + jobId);
                 return;
             }
 
             long startTime = System.currentTimeMillis();
-            gen.generatePngChart(
-                    newPngFile,
-                    CHART_RESOLUTION[0], CHART_RESOLUTION[1],
-                    null, // no chart title
-                    I18N.getString(
-                            gen.locale,
-                            "running.job.details.chart.legend.crawlTime"),
+            gen.generatePngChart(newPngFile, CHART_RESOLUTION[0], CHART_RESOLUTION[1], null, // no chart title
+                    I18N.getString(gen.locale, "running.job.details.chart.legend.crawlTime"),
                     new String[] {
-                        I18N.getString(
-                                gen.locale,
-                                "running.job.details.chart.legend.progress"),
-                                I18N.getString(
-                                        gen.locale,
-                               "running.job.details.chart.legend.queuedUris") },
+            				I18N.getString(gen.locale, "running.job.details.chart.legend.progress"),
+            				I18N.getString(gen.locale, "running.job.details.chart.legend.queuedUris") },
                     NumberUtils.toPrimitiveArray(timeValues),
                     new double[][]  {
                         new double[] {0, 100 },
@@ -237,19 +210,17 @@ class StartedJobHistoryChartGen {
                     Color.lightGray.brighter().brighter());
 
             long genTime = System.currentTimeMillis() - startTime;
-            LOG.info("Generated history chart for job " + jobId
-                    + " in " + (genTime < TimeUtils.SECOND_IN_MILLIS 
-                            ? genTime + " ms" :StringUtils.formatDuration(
-                                genTime / TimeUtils.SECOND_IN_MILLIS))
-                        + ".");
+            LOG.info("Generated history chart for job {} in {}.", jobId,
+            		(genTime < TimeUtils.SECOND_IN_MILLIS ? genTime + " ms"
+            				: StringUtils.formatDuration(genTime / TimeUtils.SECOND_IN_MILLIS)));
 
             synchronized (gen) {
                 // Overwrite old file, then delete temp file
                 try {
                     FileUtils.copyFile(newPngFile, pngFile);
                     FileUtils.remove(newPngFile);
-                } catch (IOFailure iof) {
-                    LOG.error("IOFailure while copying PNG file", iof);
+                } catch (IOFailure e) {
+                    LOG.error("IOFailure while copying PNG file", e);
                 }
                 gen.chartFile = pngFile;
             }
@@ -258,13 +229,8 @@ class StartedJobHistoryChartGen {
 
     }
 
-    /** The class logger. */
-    static final Log LOG = LogFactory.getLog(
-            StartedJobHistoryChartGen.class);
-
     /** Internationalisation object. */
-    private static final I18n I18N
-            = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
+    private static final I18n I18N = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
 
     /**
      * Rate in seconds at which history charts should be generated.

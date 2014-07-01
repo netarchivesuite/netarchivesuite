@@ -22,77 +22,79 @@
  */
 package dk.netarkivet.harvester.harvesting.controller;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
+import org.archive.crawler.Heritrix;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.*;
+import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.JMXUtils;
+import dk.netarkivet.common.utils.NotificationType;
+import dk.netarkivet.common.utils.NotificationsFactory;
+import dk.netarkivet.common.utils.ProcessUtils;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.StringUtils;
+import dk.netarkivet.common.utils.SystemUtils;
+import dk.netarkivet.common.utils.TimeUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.harvesting.HeritrixFiles;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.archive.crawler.Heritrix;
-
-import java.io.*;
-import java.util.*;
 
 /**
  * Abstract base class for JMX-based Heritrix controllers.
  */
 @SuppressWarnings({ "rawtypes" })
-public abstract class AbstractJMXHeritrixController
-implements HeritrixController {
+public abstract class AbstractJMXHeritrixController implements HeritrixController {
 
     /** The logger for this class. */
-    private static final Log log = LogFactory
-            .getLog(AbstractJMXHeritrixController.class);
+    private static final Logger log = LoggerFactory.getLogger(AbstractJMXHeritrixController.class);
 
     /** File path Separator. Used to separate the jar-files in the classpath. */
     private static final String FILE_PATH_SEPARATOR = ":";
 
-    /**
-     * How long we're willing to wait for Heritrix to shutdown in a shutdown
-     * hook.
-     */
+    /** How long we're willing to wait for Heritrix to shutdown in a shutdown hook. */
     private static final long SHUTDOWN_HOOK_MAX_WAIT = 1000L;
 
     /** The various files used by Heritrix. */
     private final HeritrixFiles files;
 
-    /**
-     * The threads used to collect process output. Only one thread used
-     * presently.
-     */
+    /** The threads used to collect process output. Only one thread used presently. */
     private Set<Thread> collectionThreads = new HashSet<Thread>(1);
 
-    /**
-     * The host name for this machine that matches what Heritrix uses in its
-     * MBean names.
-     */
+    /** The host name for this machine that matches what Heritrix uses in its MBean names. */
     private final String hostName;
 
-    /**
-     * The port to use for Heritrix JMX, as set in settings.xml.
-     */
+    /** The port to use for Heritrix JMX, as set in settings.xml. */
     private final int jmxPort = Settings
             .getInt(HarvesterSettings.HERITRIX_JMX_PORT);
 
-    /**
-     * The port to use for Heritrix GUI, as set in settings.xml.
-     */
+    /** The port to use for Heritrix GUI, as set in settings.xml. */
     private final int guiPort = Settings
             .getInt(HarvesterSettings.HERITRIX_GUI_PORT);
 
-    /**
-     * The shutdownHook that takes care of killing our process. This is removed
-     * in cleanup() when the process is shut down.
-     */
+    /** The shutdownHook that takes care of killing our process. This is removed
+     *  in cleanup() when the process is shut down. */
     private Thread processKillerHook;
 
-    /**
-     * The one-shot Heritrix process created in the constructor. It will only
-     * perform a single crawl before being shut down.
-     */
+    /** The one-shot Heritrix process created in the constructor. It will only
+     *  perform a single crawl before being shut down. */
     private final Process heritrixProcess;
 
     /**
@@ -111,7 +113,7 @@ implements HeritrixController {
         hostName = SystemUtils.getLocalHostName();
 
         try {
-            log.info("Starting Heritrix for " + this);
+            log.info("Starting Heritrix for {}", this);
             /*
              * To start Heritrix, we need to do the following (taken from the
              * Heritrix startup shell script): - set heritrix.home to base dir
@@ -139,11 +141,8 @@ implements HeritrixController {
                 // are readable
                 boolean readable = new File(absolutePath).canRead();
                 if (!readable) {
-                    final String errMsg = "The file '" + absolutePath
-                            + "' is missing. ";
-                    log.warn(errMsg);
-                    throw new IOFailure("Failed to read file '" + absolutePath
-                            + "'");
+                    log.warn("The file '{}' is missing.", absolutePath);
+                    throw new IOFailure("Failed to read file '" + absolutePath + "'");
                 }
                 settingProperty.append(absolutePath);
             }
@@ -153,15 +152,11 @@ implements HeritrixController {
             }
 
             List<String> allOpts = new LinkedList<String>();
-            allOpts.add(new File(new File(System.getProperty("java.home"),
-                    "bin"), "java").getAbsolutePath());
-            allOpts.add("-Xmx"
-                    + Settings.get(HarvesterSettings.HERITRIX_HEAP_SIZE));
-            allOpts.add("-Dheritrix.home="
-                    + files.getCrawlDir().getAbsolutePath());
+            allOpts.add(new File(new File(System.getProperty("java.home"), "bin"), "java").getAbsolutePath());
+            allOpts.add("-Xmx" + Settings.get(HarvesterSettings.HERITRIX_HEAP_SIZE));
+            allOpts.add("-Dheritrix.home=" + files.getCrawlDir().getAbsolutePath());
 
-            String jvmOptsStr = Settings
-                    .get(HarvesterSettings.HERITRIX_JVM_OPTS);
+            String jvmOptsStr = Settings.get(HarvesterSettings.HERITRIX_JVM_OPTS);
             if ((jvmOptsStr != null) && (!jvmOptsStr.isEmpty())) {
                 String[] add = jvmOptsStr.split(" ");
                 allOpts.addAll(Arrays.asList(add));
@@ -174,54 +169,45 @@ implements HeritrixController {
             File passwordFile = files.getJmxPasswordFile();
             String pwAbsolutePath = passwordFile.getAbsolutePath();
             if (!passwordFile.canRead()) {
-                final String errMsg = "Failed to read the password file '"
-                        + pwAbsolutePath + "'. It is possibly missing.";
+                final String errMsg = "Failed to read the password file '" + pwAbsolutePath + "'. "
+                		+ "It is possibly missing.";
                 log.warn(errMsg);
                 throw new IOFailure(errMsg);
             }
             File accessFile = files.getJmxAccessFile();
             String acAbsolutePath = accessFile.getAbsolutePath();
             if (!accessFile.canRead()) {
-                final String errMsg = "Failed to read the access file '"
-                        + acAbsolutePath + "'. It is possibly missing.";
+                final String errMsg = "Failed to read the access file '" + acAbsolutePath + "'. "
+                		+ "It is possibly missing.";
                 log.warn(errMsg);
                 throw new IOFailure(errMsg);
             }
-            allOpts.add("-Dcom.sun.management.jmxremote.password.file="
-                    + new File(pwAbsolutePath));
-            allOpts.add("-Dcom.sun.management.jmxremote.access.file="
-                    + new File(acAbsolutePath));
-            allOpts.add("-Dheritrix.out="
-                    + heritrixOutputFile.getAbsolutePath());
+            allOpts.add("-Dcom.sun.management.jmxremote.password.file=" + new File(pwAbsolutePath));
+            allOpts.add("-Dcom.sun.management.jmxremote.access.file=" + new File(acAbsolutePath));
+            allOpts.add("-Dheritrix.out=" + heritrixOutputFile.getAbsolutePath());
             allOpts.add("-Djava.protocol.handler.pkgs=org.archive.net");
             allOpts.add("-Ddk.netarkivet.settings.file=" + settingProperty);
             allOpts.add(Heritrix.class.getName());
             allOpts.add("--bind");
             allOpts.add("/");
             allOpts.add("--port=" + guiPort);
-            allOpts.add("--admin=" + getHeritrixAdminName() + ":"
-                    + getHeritrixAdminPassword());
+            allOpts.add("--admin=" + getHeritrixAdminName() + ":" + getHeritrixAdminPassword());
 
             String[] args = allOpts.toArray(new String[allOpts.size()]);
-            log.info("Starting Heritrix process with args"
-                    + Arrays.toString(args));
-            log.debug("The JMX timeout is set to " 
-                    + TimeUtils.readableTimeInterval(JMXUtils.getJmxTimeout()));
+            log.info("Starting Heritrix process with args" + Arrays.toString(args));
+            log.debug("The JMX timeout is set to "  + TimeUtils.readableTimeInterval(JMXUtils.getJmxTimeout()));
 
             ProcessBuilder builder = new ProcessBuilder(args);
 
             updateEnvironment(builder.environment());
-            FileUtils.copyDirectory(new File("lib/heritrix"), files
-                    .getCrawlDir());
+            FileUtils.copyDirectory(new File("lib/heritrix"), files.getCrawlDir());
             builder.directory(files.getCrawlDir());
             builder.redirectErrorStream(true);
             writeSystemInfo(heritrixOutputFile, builder);
-            FileUtils.appendToFile(heritrixOutputFile, "Working directory: "
-                    + files.getCrawlDir());
+            FileUtils.appendToFile(heritrixOutputFile, "Working directory: " + files.getCrawlDir());
             addProcessKillerHook();
             heritrixProcess = builder.start();
-            ProcessUtils.writeProcessOutput(heritrixProcess.getInputStream(),
-                    heritrixOutputFile, collectionThreads);
+            ProcessUtils.writeProcessOutput(heritrixProcess.getInputStream(), heritrixOutputFile, collectionThreads);
         } catch (IOException e) {
             throw new IOFailure("Error starting Heritrix process", e);
         }
@@ -304,8 +290,7 @@ implements HeritrixController {
         });
         String heritixJar = null;
         for (File lib : jars) {
-            final String jarPath = new File(heritrixLibDir, lib.getName())
-                    .getAbsolutePath();
+            final String jarPath = new File(heritrixLibDir, lib.getName()).getAbsolutePath();
             if (lib.getName().startsWith("heritrix-")) {
                 // Heritrix should be at the very head, as it redefines some
                 // of the functions in its dependencies (!). Thus, we have to
@@ -320,8 +305,7 @@ implements HeritrixController {
         } else {
             throw new IOFailure("Heritrix jar file not found");
         }
-        environment.put("CLASSPATH", StringUtils.conjoin(FILE_PATH_SEPARATOR,
-                classPathParts));
+        environment.put("CLASSPATH", StringUtils.conjoin(FILE_PATH_SEPARATOR, classPathParts));
     }
 
     /**
@@ -376,8 +360,7 @@ implements HeritrixController {
                 try {
                     // Only non-blocking way to check for process liveness
                     int exitValue = heritrixProcess.exitValue();
-                    System.out.println("Heritrix process of " + this
-                            + " exited with exit code " + exitValue);
+                    System.out.println("Heritrix process of " + this + " exited with exit code " + exitValue);
                 } catch (IllegalThreadStateException e) {
                     // Process is still alive, kill it.
                     System.out.println("Killing process of " + this);
@@ -385,11 +368,9 @@ implements HeritrixController {
                     final Integer exitValue = ProcessUtils.waitFor(
                             heritrixProcess, SHUTDOWN_HOOK_MAX_WAIT);
                     if (exitValue != null) {
-                        System.out.println("Process of " + this
-                                + " returned exit code " + exitValue);
+                        System.out.println("Process of " + this + " returned exit code " + exitValue);
                     } else {
-                        System.out.println("Process of " + this
-                                + " never exited!");
+                        System.out.println("Process of " + this + " never exited!");
                     }
                 }
             }
@@ -406,12 +387,10 @@ implements HeritrixController {
     @Override
     public String toString() {
         if (heritrixProcess != null) {
-            return "job " + files.getJobID() + " of harvest "
-                    + files.getHarvestID() + " in " + files.getCrawlDir()
-                    + " running process " + heritrixProcess;
+            return "job " + files.getJobID() + " of harvest " + files.getHarvestID() + " in " + files.getCrawlDir()
+            		+ " running process " + heritrixProcess;
         } else {
-            return "job " + files.getJobID() + " of harvest "
-                    + files.getHarvestID() + " in " + files.getCrawlDir();
+            return "job " + files.getJobID() + " of harvest " + files.getHarvestID() + " in " + files.getCrawlDir();
         }
     }
 
@@ -425,7 +404,7 @@ implements HeritrixController {
         // First check if the process has exited already
         try {
             int exitValue = heritrixProcess.exitValue();
-            log.info("Process of " + this + " returned exit code " + exitValue);
+            log.info("Process of {} returned exit code {}", this, exitValue);
             return true;
         } catch (IllegalThreadStateException e) {
             // Not exited yet, that's fine
@@ -441,29 +420,20 @@ implements HeritrixController {
         final int maxJmxRetries = JMXUtils.getMaxTries();
         Integer exitValue = ProcessUtils.waitFor(heritrixProcess, maxWait);
         if (exitValue != null) {
-            log.info("Heritrix process of " + this + " exited with exit code "
-                    + exitValue);
+            log.info("Heritrix process of {} exited with exit code {}", this, exitValue);
         } else {
-            log.warn("Heritrix process of " + this + " not dead after "
-                    + maxWait + " millis, killing it");
+            log.warn("Heritrix process of {} not dead after {} millis, killing it", this, maxWait);
             heritrixProcess.destroy();
             exitValue = ProcessUtils.waitFor(heritrixProcess, maxWait);
             if (exitValue != null) {
-                log.info("Heritrix process of " + this
-                        + " exited with exit code " + exitValue);
+                log.info("Heritrix process of {} exited with exit code {}", this, exitValue);
             } else {
                 // If it's not dead now, there's little we can do.
-                log.fatal("Heritrix process of " + this
-                        + " not dead after destroy. "
-                        + "Exiting harvest controller. "
-                        + "Make sure you kill the runaway Heritrix "
-                        + "before you restart.");
-                NotificationsFactory.getInstance().notify(
-                        "Heritrix process of " + this
-                                + " not dead after destroy. "
-                                + "Exiting harvest controller. "
-                                + "Make sure you kill the runaway Heritrix "
-                                + "before you restart.", NotificationType.ERROR);
+                log.error("Heritrix process of {} not dead after destroy. Exiting harvest controller. "
+                		+ "Make sure you kill the runaway Heritrix before you restart.", this);
+                NotificationsFactory.getInstance().notify("Heritrix process of " + this + " not dead after destroy. "
+                		+ "Exiting harvest controller. Make sure you kill the runaway Heritrix before you restart.",
+                		NotificationType.ERROR);
                 System.exit(1);
             }
         }

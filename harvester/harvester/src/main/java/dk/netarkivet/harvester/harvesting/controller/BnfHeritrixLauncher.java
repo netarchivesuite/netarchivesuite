@@ -22,6 +22,9 @@
  */
 package dk.netarkivet.harvester.harvesting.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.HarvestingAbort;
@@ -35,8 +38,6 @@ import dk.netarkivet.harvester.harvesting.HeritrixLauncher;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
 import dk.netarkivet.harvester.harvesting.frontier.FrontierReportAnalyzer;
 import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * BnF specific Heritrix launcher, that forces the use of
@@ -46,6 +47,9 @@ import org.apache.commons.logging.LogFactory;
  * be consumed by the {@link HarvestMonitor} instance.
  */
 public class BnfHeritrixLauncher extends HeritrixLauncher {
+
+    /** The class logger. */
+    private static final Logger log = LoggerFactory.getLogger(BnfHeritrixLauncher.class);
 
     /**
      * This class executes a crawl control task, e.g. queries the crawler for
@@ -65,13 +69,12 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
             CrawlProgressMessage cpm = null;
             try {
                 cpm = heritrixController.getCrawlProgress();
-            } catch (IOFailure iof) {
+            } catch (IOFailure e) {
                 // Log a warning and retry
-                log.warn("IOFailure while getting crawl progress", iof);
+                log.warn("IOFailure while getting crawl progress", e);
                 return;
             } catch (HarvestingAbort e) {
-                log.warn("Got HarvestingAbort exception while getting crawl "
-                        + "progress. Means crawl is over", e);
+                log.warn("Got HarvestingAbort exception while getting crawl progress. Means crawl is over", e);
                 crawlIsOver = true;
                 return;
             }
@@ -80,34 +83,21 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
 
             HeritrixFiles files = getHeritrixFiles();
             if (cpm.crawlIsFinished()) {
-                log.info("Job ID: " + files.getJobID()
-                        + ": crawl is finished.");
+                log.info("Job ID: {}: crawl is finished.", files.getJobID());
                 crawlIsOver = true;
                 return;
             }
 
-            log.info("Job ID: " + files.getJobID() + ", Harvest ID: "
-                    + files.getHarvestID() + ", " + cpm.getHostUrl() + "\n"
-                    + cpm.getProgressStatisticsLegend() + "\n"
-                    + cpm.getJobStatus().getStatus() + " "
-                    + cpm.getJobStatus().getProgressStatistics());
+            log.info("Job ID: " + files.getJobID() + ", Harvest ID: " + files.getHarvestID() + ", " + cpm.getHostUrl() + "\n" + cpm.getProgressStatisticsLegend() + "\n" + cpm.getJobStatus().getStatus() + " " + cpm.getJobStatus().getProgressStatistics());
         }
     }
 
-    /** The class logger. */
-    static final Log log = LogFactory.getLog(BnfHeritrixLauncher.class);
-
-    /**
-     * Wait time in milliseconds (10s).
-     */
+    /** Wait time in milliseconds (10s). */
     private static final int SLEEP_TIME_MS = 10 * 60 * 1000;
 
-    /**
-     * Frequency in seconds for generating the full harvest report.
-     * Also serves as delay before the first generation occurs.
-     */
-    static final long FRONTIER_REPORT_GEN_FREQUENCY =
-        Settings.getLong(HarvesterSettings.FRONTIER_REPORT_WAIT_TIME);
+    /** Frequency in seconds for generating the full harvest report.
+     *  Also serves as delay before the first generation occurs. */
+    static final long FRONTIER_REPORT_GEN_FREQUENCY = Settings.getLong(HarvesterSettings.FRONTIER_REPORT_WAIT_TIME);
 
     /** The CrawlController used. */
     private BnfHeritrixController heritrixController;
@@ -136,8 +126,7 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
      *             If either order.xml or seeds.txt does not exist, or argument
      *             files is null.
      */
-    public static BnfHeritrixLauncher getInstance(HeritrixFiles files)
-            throws ArgumentNotValid {
+    public static BnfHeritrixLauncher getInstance(HeritrixFiles files) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(files, "HeritrixFiles files");
         return new BnfHeritrixLauncher(files);
     }
@@ -166,17 +155,10 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
             heritrixController.requestCrawlStart();
 
             // Schedule full frontier report generation
-            exec = new PeriodicTaskExecutor(
-                    new PeriodicTask(
-                            "CrawlControl",
-                            new CrawlControl(),
-                            CRAWL_CONTROL_WAIT_PERIOD,
-                            CRAWL_CONTROL_WAIT_PERIOD),
-                    new PeriodicTask(
-                        "FrontierReportAnalyzer",
-                        new FrontierReportAnalyzer(heritrixController),
-                        FRONTIER_REPORT_GEN_FREQUENCY,
-                        FRONTIER_REPORT_GEN_FREQUENCY));
+            exec = new PeriodicTaskExecutor(new PeriodicTask("CrawlControl", new CrawlControl(),
+            		CRAWL_CONTROL_WAIT_PERIOD, CRAWL_CONTROL_WAIT_PERIOD),
+                    new PeriodicTask("FrontierReportAnalyzer", new FrontierReportAnalyzer(heritrixController),
+                    		FRONTIER_REPORT_GEN_FREQUENCY, FRONTIER_REPORT_GEN_FREQUENCY));
 
             while (!crawlIsOver) {
                 // Wait a bit
@@ -185,7 +167,7 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
                         wait(SLEEP_TIME_MS);
                     }
                 } catch (InterruptedException e) {
-                    log.trace("Waiting thread awoken: " + e.getMessage());
+                    log.trace("Waiting thread awoken: {}", e.getMessage(), e);
                 }
             }
 
@@ -208,4 +190,5 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
         log.debug("Heritrix has finished crawling...");
 
     }
+
 }

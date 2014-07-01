@@ -26,8 +26,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -40,7 +40,6 @@ import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.harvesting.JobInfo;
 import dk.netarkivet.harvester.harvesting.metadata.PersistentJobData.XmlState.OKSTATE;
 
-
 /**
  * Class PersistentJobData holds information about an ongoing harvest.
  * Presently the information is stored in a XML-file.
@@ -48,22 +47,19 @@ import dk.netarkivet.harvester.harvesting.metadata.PersistentJobData.XmlState.OK
 @SuppressWarnings({ "serial"})
 public class PersistentJobData implements JobInfo {
     
+    /** The logger to use. */
+    private static final Logger log = LoggerFactory.getLogger(PersistentJobData.class);
+
     /** Innerclass containing Info about a harvestjob. */
     public static class HarvestDefinitionInfo implements Serializable {
 
-        /**
-         * The original harvest name.
-         */
+        /** The original harvest name. */
         private final String origHarvestName;
 
-        /**
-         * The original harvest description.
-         */
+        /** The original harvest description. */
         private final String origHarvestDesc;
 
-        /**
-         * The name of the schedule for the original harvest definition.
-         */
+        /** The name of the schedule for the original harvest definition. */
         private final String scheduleName;
 
         /**
@@ -72,17 +68,11 @@ public class PersistentJobData implements JobInfo {
          * @param origHarvestDesc the harvest definition's comments (can be empty string)
          * @param scheduleName the harvest definition's schedule name (only applicable for selective harvests) 
          */
-        public HarvestDefinitionInfo(
-                String origHarvestName,
-                String origHarvestDesc,
-                String scheduleName) {
+        public HarvestDefinitionInfo(String origHarvestName, String origHarvestDesc, String scheduleName) {
             super();
-            ArgumentNotValid.checkNotNullOrEmpty(
-                    origHarvestName, "origHarvestName");
-            ArgumentNotValid.checkNotNull(
-                    origHarvestDesc, "origHarvestDesc");
-            ArgumentNotValid.checkNotNull(
-                    scheduleName, "scheduleName");
+            ArgumentNotValid.checkNotNullOrEmpty(origHarvestName, "origHarvestName");
+            ArgumentNotValid.checkNotNull(origHarvestDesc, "origHarvestDesc");
+            ArgumentNotValid.checkNotNull(scheduleName, "scheduleName");
             this.origHarvestName = origHarvestName;
             this.origHarvestDesc = origHarvestDesc;
             this.scheduleName = scheduleName;
@@ -123,48 +113,37 @@ public class PersistentJobData implements JobInfo {
     /** Key in harvestinfo file for the harvestNum of the job. */
     private static final String HARVESTNUM_KEY = ROOT_ELEMENT + ".harvestNum";
     /** Key in harvestinfo file for the maxBytesPerDomain value for the job. */
-    private static final String MAXBYTESPERDOMAIN_KEY = ROOT_ELEMENT
-                        + ".maxBytesPerDomain";
+    private static final String MAXBYTESPERDOMAIN_KEY = ROOT_ELEMENT + ".maxBytesPerDomain";
     /** Key in harvestinfo file for the maxObjectsPerDomain value for 
      * the job. */
-    private static final String MAXOBJECTSPERDOMAIN_KEY = ROOT_ELEMENT
-                        + ".maxObjectsPerDomain";
+    private static final String MAXOBJECTSPERDOMAIN_KEY = ROOT_ELEMENT + ".maxObjectsPerDomain";
     /** Key in harvestinfo file for the orderXMLName of the job. */
-    private static final String ORDERXMLNAME_KEY = ROOT_ELEMENT 
-        + ".orderXMLName";
+    private static final String ORDERXMLNAME_KEY = ROOT_ELEMENT  + ".orderXMLName";
     /** Key in harvestinfo file for the harvestID of the job. */
-    private static final String ORIGHARVESTDEFINITIONID_KEY = ROOT_ELEMENT
-                        + ".origHarvestDefinitionID";
+    private static final String ORIGHARVESTDEFINITIONID_KEY = ROOT_ELEMENT + ".origHarvestDefinitionID";
     /** Key in harvestinfo file for the harvest channel of the job. */
     private static final String CHANNEL_KEY = ROOT_ELEMENT + ".channel";
 
     private static final String PRIORITY_KEY = ROOT_ELEMENT + ".priority";
 
     /** Key in harvestinfo file for the original harvest definition name. */
-    private static final String HARVEST_NAME_KEY =
-        ROOT_ELEMENT + ".origHarvestDefinitionName";
+    private static final String HARVEST_NAME_KEY = ROOT_ELEMENT + ".origHarvestDefinitionName";
 
     /** Key in harvestinfo file for the original harvest definition
      * description. */
-    private static final String HARVEST_DESC_KEY =
-        ROOT_ELEMENT + ".origHarvestDefinitionComments";
+    private static final String HARVEST_DESC_KEY = ROOT_ELEMENT + ".origHarvestDefinitionComments";
 
     /** Key in harvestinfo file for the original harvest definition
      * schedule, will be empty for broad crawls. */
-    private static final String HARVEST_SCHED_KEY =
-        ROOT_ELEMENT + ".scheduleName";
+    private static final String HARVEST_SCHED_KEY = ROOT_ELEMENT + ".scheduleName";
     /** The harvestfilename prefix used by this job set in the Job class. */    
-    private static final String HARVEST_FILENAME_PREFIX_KEY =
-            ROOT_ELEMENT + ".harvestFilenamePrefix";
+    private static final String HARVEST_FILENAME_PREFIX_KEY = ROOT_ELEMENT + ".harvestFilenamePrefix";
     /** The submitted date of this job. */
-    private static final String JOB_SUBMIT_DATE_KEY =
-            ROOT_ELEMENT + ".jobSubmitDate";
+    private static final String JOB_SUBMIT_DATE_KEY = ROOT_ELEMENT + ".jobSubmitDate";
     /** The performer of this harvest. */
-    private static final String HARVEST_PERFORMER_KEY =
-            ROOT_ELEMENT + ".performer";
+    private static final String HARVEST_PERFORMER_KEY = ROOT_ELEMENT + ".performer";
     /** The audience of this harvest. */
-    private static final String HARVEST_AUDIENCE_KEY =
-            ROOT_ELEMENT + ".audience";
+    private static final String HARVEST_AUDIENCE_KEY = ROOT_ELEMENT + ".audience";
     
     /** Key in harvestinfo file for the file version. */
     private static final String HARVESTINFO_VERSION_KEY = "harvestInfo.version";
@@ -178,11 +157,11 @@ public class PersistentJobData implements JobInfo {
     private static final String OLD_HARVESTINFO_VERSION_NUMBER = "0.4";
 
     /** String array containing all mandatory keys contained in valid version 0.5 xml.  */
-    private static final String[] ALL_KEYS = {JOBID_KEY, HARVESTNUM_KEY, 
-        MAXBYTESPERDOMAIN_KEY,
-        MAXOBJECTSPERDOMAIN_KEY, ORDERXMLNAME_KEY,
-        ORIGHARVESTDEFINITIONID_KEY, CHANNEL_KEY, HARVESTINFO_VERSION_KEY,
-        HARVEST_NAME_KEY, HARVEST_FILENAME_PREFIX_KEY, JOB_SUBMIT_DATE_KEY};
+    private static final String[] ALL_KEYS = {
+    	JOBID_KEY, HARVESTNUM_KEY, MAXBYTESPERDOMAIN_KEY, MAXOBJECTSPERDOMAIN_KEY, ORDERXMLNAME_KEY,
+    	ORIGHARVESTDEFINITIONID_KEY, CHANNEL_KEY, HARVESTINFO_VERSION_KEY, HARVEST_NAME_KEY,
+    	HARVEST_FILENAME_PREFIX_KEY, JOB_SUBMIT_DATE_KEY
+    };
     
    /**
     *  Optional keys are HARVEST_DESC_KEY representing harvest comments,
@@ -192,16 +171,12 @@ public class PersistentJobData implements JobInfo {
     
     /** String array containing all mandatory keys contained in old valid version 
      * 0.4 xml.  */
-    private static final String[] ALL_KEYS_OLD = {JOBID_KEY, HARVESTNUM_KEY, 
-        MAXBYTESPERDOMAIN_KEY,
-        MAXOBJECTSPERDOMAIN_KEY, ORDERXMLNAME_KEY,
-        ORIGHARVESTDEFINITIONID_KEY, PRIORITY_KEY, HARVESTINFO_VERSION_KEY,
-        HARVEST_NAME_KEY, HARVEST_FILENAME_PREFIX_KEY, JOB_SUBMIT_DATE_KEY};
+    private static final String[] ALL_KEYS_OLD = {
+    	JOBID_KEY, HARVESTNUM_KEY, MAXBYTESPERDOMAIN_KEY, MAXOBJECTSPERDOMAIN_KEY, ORDERXMLNAME_KEY,
+        ORIGHARVESTDEFINITIONID_KEY, PRIORITY_KEY, HARVESTINFO_VERSION_KEY, HARVEST_NAME_KEY,
+        HARVEST_FILENAME_PREFIX_KEY, JOB_SUBMIT_DATE_KEY
+    };
         
-    /** The logger to use. */
-    private static final Log log
-            = LogFactory.getLog(PersistentJobData.class);
-
     /** the SimpleXml object, that contains the XML in HARVEST_INFO_FILENAME. */
     private SimpleXml theXML = null;
 
@@ -245,24 +220,19 @@ public class PersistentJobData implements JobInfo {
             return theXML;
         }
         if (!exists()) {
-            throw new IOFailure("The harvestInfo file '"
-                                + getHarvestInfoFile().getAbsolutePath()
-                                + "' does not exist!");
+            throw new IOFailure("The harvestInfo file '" + getHarvestInfoFile().getAbsolutePath()
+            		+ "' does not exist!");
         }
         SimpleXml sx = new SimpleXml(getHarvestInfoFile());
         XmlState validationResult = validateHarvestInfo(sx); 
         if (validationResult.getOkState().equals(XmlState.OKSTATE.NOTOK)) {
             try {
-                String errorMsg = "The harvestInfoFile '"
-                    + getHarvestInfoFile().getAbsolutePath()
-                    + "' is invalid: " + validationResult.getError()
-                    + ". The contents of the file is this: "
-                    + FileUtils.readFile(getHarvestInfoFile());
+                String errorMsg = "The harvestInfoFile '" + getHarvestInfoFile().getAbsolutePath() + "' is invalid: "
+                		+ validationResult.getError() + ". The contents of the file is this: "
+                		+ FileUtils.readFile(getHarvestInfoFile());
                 throw new IOFailure(errorMsg);
             } catch (IOException e) {
-                String errorMsg = "Unable to read HarvestInfoFile: '"
-                                  + getHarvestInfoFile().getAbsolutePath()
-                                  + "'";
+                String errorMsg = "Unable to read HarvestInfoFile: '" + getHarvestInfoFile().getAbsolutePath() + "'";
                 throw new IOFailure(errorMsg);
             }
         } else {  // The xml is valid
@@ -282,8 +252,7 @@ public class PersistentJobData implements JobInfo {
         ArgumentNotValid.checkNotNull(harvestJob, "Job harvestJob");
         ArgumentNotValid.checkNotNull(hdi, "HarvestDefinitionInfo hdi");
         if (exists()) {
-            String errorMsg = "Persistent Job data already exists in '"
-                    + crawlDir + "'. Aborting";
+            String errorMsg = "Persistent Job data already exists in '" + crawlDir + "'. Aborting";
             log.warn(errorMsg);
             throw new IOFailure(errorMsg);
         }
@@ -292,16 +261,11 @@ public class PersistentJobData implements JobInfo {
         sx.add(HARVESTINFO_VERSION_KEY, HARVESTINFO_VERSION_NUMBER);
         sx.add(JOBID_KEY, harvestJob.getJobID().toString());
         sx.add(CHANNEL_KEY, harvestJob.getChannel());
-        sx.add(HARVESTNUM_KEY,
-                Integer.toString(harvestJob.getHarvestNum()));
-        sx.add(ORIGHARVESTDEFINITIONID_KEY,
-                Long.toString(harvestJob.getOrigHarvestDefinitionID()));
-        sx.add(MAXBYTESPERDOMAIN_KEY,
-                Long.toString(harvestJob.getMaxBytesPerDomain()));
-        sx.add(MAXOBJECTSPERDOMAIN_KEY,
-                Long.toString(harvestJob.getMaxObjectsPerDomain()));
-        sx.add(ORDERXMLNAME_KEY,
-                harvestJob.getOrderXMLName());
+        sx.add(HARVESTNUM_KEY, Integer.toString(harvestJob.getHarvestNum()));
+        sx.add(ORIGHARVESTDEFINITIONID_KEY, Long.toString(harvestJob.getOrigHarvestDefinitionID()));
+        sx.add(MAXBYTESPERDOMAIN_KEY, Long.toString(harvestJob.getMaxBytesPerDomain()));
+        sx.add(MAXOBJECTSPERDOMAIN_KEY, Long.toString(harvestJob.getMaxObjectsPerDomain()));
+        sx.add(ORDERXMLNAME_KEY, harvestJob.getOrderXMLName());
 
         sx.add(HARVEST_NAME_KEY, hdi.getOrigHarvestName());
         
@@ -318,24 +282,19 @@ public class PersistentJobData implements JobInfo {
         sx.add(HARVEST_FILENAME_PREFIX_KEY, harvestJob.getHarvestFilenamePrefix());
     
         // store the submitted date in WARC Date format
-        sx.add(JOB_SUBMIT_DATE_KEY, 
-                ArchiveDateConverter.getWarcDateFormat()
-                .format(harvestJob.getSubmittedDate()));
+        sx.add(JOB_SUBMIT_DATE_KEY, ArchiveDateConverter.getWarcDateFormat().format(harvestJob.getSubmittedDate()));
         // if performer set to something different from the empty String
         if (!Settings.get(HarvesterSettings.PERFORMER).isEmpty()) {
-            sx.add(HARVEST_PERFORMER_KEY, 
-                Settings.get(HarvesterSettings.PERFORMER));
+            sx.add(HARVEST_PERFORMER_KEY, Settings.get(HarvesterSettings.PERFORMER));
         }
-        if (harvestJob.getHarvestAudience() != null 
-        			&& !harvestJob.getHarvestAudience().isEmpty()) {
+        if (harvestJob.getHarvestAudience() != null && !harvestJob.getHarvestAudience().isEmpty()) {
         	sx.add(HARVEST_AUDIENCE_KEY, harvestJob.getHarvestAudience());
         }
         
         XmlState validationResult = validateHarvestInfo(sx); 
         if (validationResult.getOkState().equals(XmlState.OKSTATE.NOTOK)) {
-            String msg = "Could not create a valid harvestinfo file for job "
-                    + harvestJob.getJobID() 
-                    + ": " + validationResult.getError();
+            String msg = "Could not create a valid harvestinfo file for job " + harvestJob.getJobID() + ": "
+            		+ validationResult.getError();
             throw new IOFailure(msg);
         } else {
             sx.save(getHarvestInfoFile());
@@ -371,8 +330,7 @@ public class PersistentJobData implements JobInfo {
         
         for (String key: keysToCheck) {
             if (!sx.hasKey(key)) {
-                final String errMsg = "Could not find key " + key 
-                        + " in harvestInfoFile, version " + version; 
+                final String errMsg = "Could not find key " + key + " in harvestInfoFile, version " + version; 
                 return new XmlState(OKSTATE.NOTOK, errMsg);
             }
         }
@@ -382,8 +340,7 @@ public class PersistentJobData implements JobInfo {
         try {
             Long.valueOf(jobidAsString);
         } catch(Throwable t) {
-            final String errMsg = "The id '" + jobidAsString 
-                    + "' in harvestInfoFile must be a long value";
+            final String errMsg = "The id '" + jobidAsString + "' in harvestInfoFile must be a long value";
             return new XmlState(OKSTATE.NOTOK, errMsg);
         }
 
@@ -397,15 +354,12 @@ public class PersistentJobData implements JobInfo {
             final String errMsg = "The priority value of the job is undefined";
             return new XmlState(OKSTATE.NOTOK, errMsg);
         }
-        
-        
+
         // Verify, that the job channel element is not the empty String
         if (version.equals(HARVESTINFO_VERSION_NUMBER) && sx.getString(CHANNEL_KEY).isEmpty()) {
             final String errMsg = "The channel and/or the snapshot value of the job is undefined";
             return new XmlState(OKSTATE.NOTOK, errMsg);
         }
-        
-        
 
         // Verify, that the ORDERXMLNAME element is not the empty String
         if (sx.getString(ORDERXMLNAME_KEY).isEmpty()) {
@@ -418,8 +372,7 @@ public class PersistentJobData implements JobInfo {
         try {
             Integer.valueOf(harvestNumAsString);
         } catch(Throwable t) {
-            final String errMsg
-                    = "The HARVESTNUM in harvestInfoFile must be a Integer "
+            final String errMsg = "The HARVESTNUM in harvestInfoFile must be a Integer "
                     + "value. The value given is '" + harvestNumAsString + "'.";
             return new XmlState(OKSTATE.NOTOK, errMsg);
         }
@@ -427,15 +380,12 @@ public class PersistentJobData implements JobInfo {
         /* Check, if the OrigHarvestDefinitionID element contains 
          * a long value.
          */
-        final String origHarvestDefinitionIDAsString 
-            = sx.getString(ORIGHARVESTDEFINITIONID_KEY);
+        final String origHarvestDefinitionIDAsString = sx.getString(ORIGHARVESTDEFINITIONID_KEY);
         try {
             Long.valueOf(origHarvestDefinitionIDAsString);
         } catch(Throwable t) {
-            final String errMsg 
-                = "The OrigHarvestDefinitionID in harvestInfoFile must be a"
-                        + " long value. The value given is: '" 
-                        + origHarvestDefinitionIDAsString + "'.";
+            final String errMsg = "The OrigHarvestDefinitionID in harvestInfoFile must be a long value. "
+            		+ "The value given is: '" + origHarvestDefinitionIDAsString + "'.";
             return new XmlState(OKSTATE.NOTOK, errMsg); 
         }
 
@@ -445,10 +395,8 @@ public class PersistentJobData implements JobInfo {
         try {
             Long.valueOf(maxBytesPerDomainAsString);
         } catch(Throwable t) {
-            final String errMsg 
-                = "The MaxBytesPerDomain element in harvestInfoFile must be"
-                        + " a long value. The value given is: '" 
-                        + maxBytesPerDomainAsString + "'.";
+            final String errMsg = "The MaxBytesPerDomain element in harvestInfoFile must be a long value. "
+            		+ "The value given is: '" + maxBytesPerDomainAsString + "'.";
             return new XmlState(OKSTATE.NOTOK, errMsg); 
         }
 
@@ -459,9 +407,8 @@ public class PersistentJobData implements JobInfo {
             Long.valueOf(maxObjectsPerDomainAsString);
         } catch(Throwable t) {
             final String errMsg 
-                = "The MaxObjectsPerDomain element in harvestInfoFile must"
-                        + " be a long value. The value given is: '"
-                        + maxObjectsPerDomainAsString + "'.";
+                = "The MaxObjectsPerDomain element in harvestInfoFile must be a long value. "
+                		+ "The value given is: '" + maxObjectsPerDomainAsString + "'.";
             return new XmlState(OKSTATE.NOTOK, errMsg); 
         }
 
@@ -514,8 +461,7 @@ public class PersistentJobData implements JobInfo {
      */
     public Long getOrigHarvestDefinitionID() {
         SimpleXml sx = read(); // reads and validates XML
-        String origHarvestDefinitionIDString =
-            sx.getString(ORIGHARVESTDEFINITIONID_KEY);
+        String origHarvestDefinitionIDString = sx.getString(ORIGHARVESTDEFINITIONID_KEY);
         return Long.parseLong(origHarvestDefinitionIDString);
     }
 
@@ -526,8 +472,7 @@ public class PersistentJobData implements JobInfo {
      */
     public long getMaxBytesPerDomain() {
         SimpleXml sx = read(); // reads and validates XML
-        String maxBytesPerDomainString =
-            sx.getString(MAXBYTESPERDOMAIN_KEY);
+        String maxBytesPerDomainString = sx.getString(MAXBYTESPERDOMAIN_KEY);
         return Long.parseLong(maxBytesPerDomainString);
     }
 
@@ -538,8 +483,7 @@ public class PersistentJobData implements JobInfo {
      */
     public long getMaxObjectsPerDomain() {
         SimpleXml sx = read(); // reads and validates XML
-        String maxObjectsPerDomainString =
-            sx.getString(MAXOBJECTSPERDOMAIN_KEY);
+        String maxObjectsPerDomainString = sx.getString(MAXOBJECTSPERDOMAIN_KEY);
         return Long.parseLong(maxObjectsPerDomainString);
     }
 
@@ -595,7 +539,6 @@ public class PersistentJobData implements JobInfo {
         /** 
          * @return the error value of this object (maybe null). 
          */
-
         public String getError() {
             return error;
         }
@@ -610,8 +553,7 @@ public class PersistentJobData implements JobInfo {
         String prefix = null;
         if (!sx.hasKey(HARVEST_FILENAME_PREFIX_KEY)) {
             prefix = this.getJobID() + "-" + this.getOrigHarvestDefinitionID();
-            log.warn("harvestFilenamePrefix not part of persistentJobData. Using old standard naming: " 
-                    + prefix); 
+            log.warn("harvestFilenamePrefix not part of persistentJobData. Using old standard naming: {}", prefix); 
         } else {
             prefix = sx.getString(HARVEST_FILENAME_PREFIX_KEY);
         }
@@ -679,4 +621,5 @@ public class PersistentJobData implements JobInfo {
             return null;
         }
 	}
+
 }

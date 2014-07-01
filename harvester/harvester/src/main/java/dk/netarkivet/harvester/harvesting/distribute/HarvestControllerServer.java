@@ -26,8 +26,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
@@ -95,22 +95,18 @@ import dk.netarkivet.harvester.harvesting.report.HarvestReport;
  * after new jobs, if there is enough room available on the machine. If not, it
  * logs a warning about this, which is also sent as a notification.
  */
-public class HarvestControllerServer
-        extends HarvesterMessageHandler
-        implements CleanupIF {
+public class HarvestControllerServer extends HarvesterMessageHandler implements CleanupIF {
+
+    /** The logger to use. */
+    private static final Logger log = LoggerFactory.getLogger(HarvestControllerServer.class);
 
     /** The unique instance of this class. */
     private static HarvestControllerServer instance;
 
-    /** The logger to use. */
-    private static final Log log =
-            LogFactory.getLog(HarvestControllerServer.class);
-
     /** The configured application instance id.
      * @see CommonSettings#APPLICATION_INSTANCE_ID
      */
-    private final String applicationInstanceId =
-            Settings.get(CommonSettings.APPLICATION_INSTANCE_ID);
+    private final String applicationInstanceId = Settings.get(CommonSettings.APPLICATION_INSTANCE_ID);
 
     /**
      * The name of the server this <code>HarvestControllerServer</code> is
@@ -120,48 +116,36 @@ public class HarvestControllerServer
             = DomainUtils.reduceHostname(SystemUtils.getLocalHostName());
 
     /** The message to write to log when starting the server. */
-    private static final String STARTING_MESSAGE =
-            "Starting HarvestControllerServer.";
+    private static final String STARTING_MESSAGE = "Starting HarvestControllerServer.";
     /** The message to write to log when server is started. */
-    private static final String STARTED_MESSAGE =
-            "HarvestControllerServer started.";
+    private static final String STARTED_MESSAGE = "HarvestControllerServer started.";
     /** The message to write to log when stopping the server. */
-    private static final String CLOSING_MESSAGE =
-            "Closing HarvestControllerServer.";
+    private static final String CLOSING_MESSAGE = "Closing HarvestControllerServer.";
     /** The message to write to log when server is stopped. */
-    private static final String CLOSED_MESSAGE
-            = "Closed down HarvestControllerServer";
+    private static final String CLOSED_MESSAGE = "Closed down HarvestControllerServer";
     /** The message to write to log when starting a crawl. */
     private static final String STARTCRAWL_MESSAGE = "Starting crawl of job :";
     /** The message to write to log after ending a crawl. */
     private static final String ENDCRAWL_MESSAGE = "Ending crawl of job :";
-    /** The max time to wait for the hosts-report.txt to
-     * be available (in secs). */
+    /** The max time to wait for the hosts-report.txt to be available (in secs). */
     static final int WAIT_FOR_HOSTS_REPORT_TIMEOUT_SECS = 30;
     /** Heritrix version property. */
     private static final String HERITRIX_VERSION_PROPERTY = "heritrix.version";
     /** queue-assignment-policy property. */
     private static final String HERITRIX_QUEUE_ASSIGNMENT_POLICY_PROPERTY =
-            "org.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy";
+    		"org.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy";
 
-    /**
-     * The CHANNEL of jobs processed by this instance.
-     */
-    private static final String CHANNEL =
-            Settings.get(HarvesterSettings.HARVEST_CONTROLLER_CHANNEL);
+    /** The CHANNEL of jobs processed by this instance. */
+    private static final String CHANNEL = Settings.get(HarvesterSettings.HARVEST_CONTROLLER_CHANNEL);
 
-    /**
-     * The JMS channel on which to listen for {@link HarvesterRegistrationResponse}s.
-     */
+    /** The JMS channel on which to listen for {@link HarvesterRegistrationResponse}s. */
     public static final ChannelID HARVEST_CHAN_VALID_RESP_ID =
-            HarvesterChannels.getHarvesterRegistrationResponseChannel();
+    		HarvesterChannels.getHarvesterRegistrationResponseChannel();
 
     /** The JMSConnection to use. */
     private JMSConnection jmsConnection;
 
-    /** The (singleton) HarvestController that handles the non-JMS parts of
-     * a harvest.
-     */
+    /** The (singleton) HarvestController that handles the non-JMS parts of a harvest. */
     private final HarvestController controller;
 
     /** Jobs are fetched from this queue. */
@@ -194,36 +178,29 @@ public class HarvestControllerServer
     private HarvestControllerServer() throws IOFailure {
         log.info(STARTING_MESSAGE);
 
-        log.info("Bound to harvest channel '" + CHANNEL + "'");
+        log.info("Bound to harvest channel '{}'", CHANNEL);
 
         // Make sure serverdir (where active crawl-dirs live) and oldJobsDir
         // (where old crawl dirs are stored) exist.
         serverDir = new File(Settings.get(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR));
         ApplicationUtils.dirMustExist(serverDir);
-        log.info("Serverdir: '" + serverDir + "'");
-        minSpaceRequired = Settings
-                .getLong(HarvesterSettings.HARVEST_SERVERDIR_MINSPACE);
+        log.info("Serverdir: '{}'", serverDir);
+        minSpaceRequired = Settings.getLong(HarvesterSettings.HARVEST_SERVERDIR_MINSPACE);
         if (minSpaceRequired <= 0L) {
-            log.warn("Wrong setting of minSpaceLeft read from Settings: "
-                    + minSpaceRequired);
-            throw new ArgumentNotValid(
-                    "Wrong setting of minSpaceLeft read from Settings: "
-                            + minSpaceRequired);
+            log.warn("Wrong setting of minSpaceLeft read from Settings: {}", minSpaceRequired);
+            throw new ArgumentNotValid("Wrong setting of minSpaceLeft read from Settings: " + minSpaceRequired);
         }
-        log.info("Harvesting requires at least " + minSpaceRequired
-                + " bytes free.");
+        log.info("Harvesting requires at least {} bytes free.", minSpaceRequired);
 
         controller = HarvestController.getInstance();
 
         // Set properties "heritrix.version" and
         // "org.archive.crawler.frontier.AbstractFrontier
         //  .queue-assignment-policy"
-        System.setProperty(HERITRIX_VERSION_PROPERTY,
-                Constants.getHeritrixVersionString());
-        System.setProperty(
-                HERITRIX_QUEUE_ASSIGNMENT_POLICY_PROPERTY,
+        System.setProperty(HERITRIX_VERSION_PROPERTY, Constants.getHeritrixVersionString());
+        System.setProperty(HERITRIX_QUEUE_ASSIGNMENT_POLICY_PROPERTY,
                 "org.archive.crawler.frontier.HostnameQueueAssignmentPolicy,"
-                        + "org.archive.crawler.frontier.IPQueueAssignmentPolicy,"
+                		+ "org.archive.crawler.frontier.IPQueueAssignmentPolicy,"
                         + "org.archive.crawler.frontier.BucketQueueAssignmentPolicy,"
                         + "org.archive.crawler.frontier"
                         + ".SurtAuthorityQueueAssignmentPolicy,"
@@ -250,11 +227,8 @@ public class HarvestControllerServer
         JMSConnectionFactory.getInstance().setListener(HARVEST_CHAN_VALID_RESP_ID, this);
         
         // Ask if the channel this harvester is assigned to is valid
-        jmsConnection.send(new HarvesterRegistrationRequest(
-                HarvestControllerServer.CHANNEL,
-                applicationInstanceId));
-        log.info("Requested to check the validity of harvest channel '"
-                + HarvestControllerServer.CHANNEL + "'");
+        jmsConnection.send(new HarvesterRegistrationRequest(HarvestControllerServer.CHANNEL, applicationInstanceId));
+        log.info("Requested to check the validity of harvest channel '{}'", HarvestControllerServer.CHANNEL);
     }
 
     /**
@@ -269,8 +243,7 @@ public class HarvestControllerServer
      * @throws IOFailure
      *             if data from old harvests exist, but contain illegal data
      */
-    public static synchronized HarvestControllerServer getInstance()
-            throws IOFailure {
+    public static synchronized HarvestControllerServer getInstance() throws IOFailure {
         if (instance == null) {
             instance = new HarvestControllerServer();
         }
@@ -313,23 +286,18 @@ public class HarvestControllerServer
     private void processOldJobs() {
         //Search through all crawldirs and process PersistentJobData
         // files in them
-        File crawlDir = new File(Settings.get(
-                HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR));
+        File crawlDir = new File(Settings.get(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR));
         File[] subdirs = crawlDir.listFiles();
         for (File oldCrawlDir : subdirs) {
             if (PersistentJobData.existsIn(oldCrawlDir)) {
                 // Assume that crawl had not ended at this point so
                 // job must be marked as failed
-                final String msg = "Found old unprocessed job data in dir '"
-                        + oldCrawlDir.getAbsolutePath()
-                        + "'. Crawl probably interrupted by "
-                        + "shutdown of HarvestController. "
-                        + "Processing data.";
+                final String msg = "Found old unprocessed job data in dir '" + oldCrawlDir.getAbsolutePath()
+                        + "'. Crawl probably interrupted by " + "shutdown of HarvestController. " + "Processing data.";
                 log.warn(msg);
                 NotificationsFactory.getInstance().notify(msg, NotificationType.WARNING);
-                processHarvestInfoFile(oldCrawlDir,
-                        new IOFailure("Crawl probably interrupted by "
-                                + "shutdown of HarvestController"));
+                processHarvestInfoFile(oldCrawlDir, new IOFailure("Crawl probably interrupted by "
+                		+ "shutdown of HarvestController"));
             }
         }
     }
@@ -364,16 +332,15 @@ public class HarvestControllerServer
      * @throws PermissionDenied
      */
     private void onDoOneCrawl(final DoOneCrawlMessage msg)
-            throws IOFailure, UnknownID, ArgumentNotValid, PermissionDenied {
+    		throws IOFailure, UnknownID, ArgumentNotValid, PermissionDenied {
         // Only one doOneCrawl at a time. Returning should almost never happen,
         // since we deregister the listener, but we may receive another message
         // before the listener is removed.  Also, if the job message is
         // malformed or starting the crawl fails, we re-add the listener.
         synchronized (this) {
             if (status.isRunning()) {
-                log.warn("Received crawl request, but sent it back to queue, "
-                        + "as another crawl is already running: '" + msg
-                        + "'");
+                log.warn("Received crawl request, but sent it back to queue, as another crawl is already running: '{}'",
+                		msg);
                 jmsConnection.resend(msg, jobChannel);
                 try {
                     // Wait a second before listening again, so the message has
@@ -399,13 +366,11 @@ public class HarvestControllerServer
             // send a proper failure message back.
             Long jobID = job.getJobID();
             if (jobID == null) {
-                log.warn("DoOneCrawlMessage arrived without JobID: '"
-                        + msg.toString() + "'");
+                log.warn("DoOneCrawlMessage arrived without JobID: '{}'", msg.toString());
                 throw new UnknownID("DoOneCrawlMessage arrived without JobID");
             }
 
-            log.info("Received crawlrequest for job "
-                    + jobID + ": '" + msg + "'");
+            log.info("Received crawlrequest for job {}: '{}'", jobID, msg);
 
             // Send message to scheduler that job is started
             CrawlStatusMessage csmStarted = new CrawlStatusMessage(
@@ -417,10 +382,8 @@ public class HarvestControllerServer
             // HarvestScheduler likes getting a STARTED message before
             // FAILED, so we oblige it here.
             if (job.getStatus() != JobStatus.SUBMITTED) {
-                String message = "Message '" + msg.toString() + "' arrived with"
-                        + " status " + job.getStatus()
-                        + " for job " + jobID
-                        + ", should have been STATUS_SUBMITTED";
+                String message = "Message '" + msg.toString() + "' arrived with" + " status " + job.getStatus()
+                        + " for job " + jobID + ", should have been STATUS_SUBMITTED";
                 log.warn(message);
                 sendErrorMessage(jobID, message, message);
                 throw new ArgumentNotValid(message);
@@ -430,14 +393,11 @@ public class HarvestControllerServer
 
             Thread t1;
             // Create thread in which harvesting will occur
-            t1 = new HarvesterThread(
-                    job,
-                    msg.getOrigHarvestInfo(),
-                    metadataEntries);
+            t1 = new HarvesterThread(job, msg.getOrigHarvestInfo(), metadataEntries);
             // start thread which will remove this listener, harvest, store, and
             // exit the VM
             t1.start();
-            log.info("Started harvester thread for job " + jobID);
+            log.info("Started harvester thread for job {}", jobID);
             // We delay assigning the thread variable until start() has
             // succeeded.  Thus, if start() fails, we will resume accepting
             // jobs.
@@ -462,10 +422,8 @@ public class HarvestControllerServer
      * @param detailedMessage A more detailed message detailing why it went
      * wrong.
      */
-    private void sendErrorMessage(long jobID, String message,
-                                  String detailedMessage) {
-        CrawlStatusMessage csm = new CrawlStatusMessage(jobID, JobStatus.FAILED,
-                null);
+    private void sendErrorMessage(long jobID, String message, String detailedMessage) {
+        CrawlStatusMessage csm = new CrawlStatusMessage(jobID, JobStatus.FAILED, null);
         csm.setHarvestErrors(message);
         csm.setHarvestErrorDetails(detailedMessage);
         jmsConnection.send(csm);
@@ -495,7 +453,7 @@ public class HarvestControllerServer
      *
      */
     private void removeListener() {
-        log.debug("Removing listener on CHANNEL '" + jobChannel + "'");
+        log.debug("Removing listener on CHANNEL '{}'", jobChannel);
         jmsConnection.removeListener(jobChannel, this);
     }
 
@@ -503,13 +461,12 @@ public class HarvestControllerServer
     private void beginListeningIfSpaceAvailable() {
         long availableSpace = FileUtils.getBytesFree(serverDir);
         if (availableSpace > minSpaceRequired) {
-            log.info("Starts to listen to new jobs on queue '"
-                    + jobChannel + "'");
+            log.info("Starts to listen to new jobs on queue '{}'", jobChannel);
             jmsConnection.setListener(jobChannel, this);
             log.info(STARTED_MESSAGE);
         } else {
-            String pausedMessage = "Not enough available diskspace. Only "
-                    + availableSpace + " bytes available. Harvester is paused.";
+            String pausedMessage = "Not enough available diskspace. Only " + availableSpace + " bytes available."
+            		+ " Harvester is paused.";
             log.error(pausedMessage);
             NotificationsFactory.getInstance().notify(pausedMessage, NotificationType.ERROR);
         }
@@ -524,15 +481,11 @@ public class HarvestControllerServer
      * @param missingHostsReport If true, no hosts report was found.
      * @param failedFiles List of files that failed to upload.
      */
-    private void setErrorMessages(CrawlStatusMessage csm,
-                                  Throwable crawlException,
-                                  String errorMessage,
-                                  boolean missingHostsReport,
-                                  int failedFiles) {
+    private void setErrorMessages(CrawlStatusMessage csm, Throwable crawlException, String errorMessage,
+    		boolean missingHostsReport, int failedFiles) {
         if (crawlException != null) {
             csm.setHarvestErrors(crawlException.toString());
-            csm.setHarvestErrorDetails(
-                    ExceptionUtils.getStackTrace(crawlException));
+            csm.setHarvestErrorDetails(ExceptionUtils.getStackTrace(crawlException));
         }
         if (errorMessage.length() > 0) {
             String shortDesc = "";
@@ -565,8 +518,7 @@ public class HarvestControllerServer
      * @throws PermissionDenied
      *             if the crawldir can't be created
      */
-    public void visit(DoOneCrawlMessage msg)
-            throws IOFailure, UnknownID, ArgumentNotValid, PermissionDenied {
+    public void visit(DoOneCrawlMessage msg) throws IOFailure, UnknownID, ArgumentNotValid, PermissionDenied {
         onDoOneCrawl(msg);
     }
 
@@ -580,20 +532,18 @@ public class HarvestControllerServer
 			// Controller has already started
 			jmsConnection.resend(msg, msg.getTo());
 			if (log.isDebugEnabled()) {
-				log.debug("Resending harvest channel validity message for channel '"
-						+ channelName + "'");
+				log.debug("Resending harvest channel validity message for channel '{}'", channelName);
 			}
 			return;
 		}
 		
 		if (!msg.isValid()) {
-			log.error("Received message stating that channel '" + channelName 
-					+ "' is invalid. Will stop.");
+			log.error("Received message stating that channel '{}' is invalid. Will stop.", channelName);
 			close();
 			return;
 		}
 		
-		log.info("Received message stating that channel '" + channelName + "' is valid.");
+		log.info("Received message stating that channel '{}' is valid.", channelName);
 		// Environment and connections are now ready for processing of messages        
         jobChannel = HarvesterChannels.getHarvestJobChannelId(channelName, msg.isSnapshot());
 
@@ -619,14 +569,10 @@ public class HarvestControllerServer
      * be reported back to the scheduler (may be null for success)
      * @throws IOFailure if the file cannot be read
      */
-    private void processHarvestInfoFile(File crawlDir,
-                                        Throwable crawlException)
-            throws IOFailure {
-        log.debug("Post-processing files in '"
-                + crawlDir.getAbsolutePath() + "'");
+    private void processHarvestInfoFile(File crawlDir, Throwable crawlException) throws IOFailure {
+        log.debug("Post-processing files in '{}'", crawlDir.getAbsolutePath());
         if (!PersistentJobData.existsIn(crawlDir)) {
-            throw new IOFailure("No harvestInfo found in directory: "
-                    + crawlDir.getAbsolutePath());
+            throw new IOFailure("No harvestInfo found in directory: " + crawlDir.getAbsolutePath());
         }
 
         PersistentJobData harvestInfo = new PersistentJobData(crawlDir);
@@ -636,24 +582,17 @@ public class HarvestControllerServer
         HarvestReport dhr = null;
         List<File> failedFiles = new ArrayList<File>();
 
-        HeritrixFiles files =
-                new HeritrixFiles(
-                        crawlDir,
-                        harvestInfo);
+        HeritrixFiles files = new HeritrixFiles(crawlDir, harvestInfo);
         try {
-            log.info("Store files in directory '" + crawlDir + "' "
-                    + "from jobID: " + jobID + ".");
-            dhr = controller.storeFiles(
-                    files, errorMessage, failedFiles);
+            log.info("Store files in directory '{}' " + "from jobID: {}.", crawlDir, jobID);
+            dhr = controller.storeFiles(files, errorMessage, failedFiles);
         } catch (Exception e) {
-            String msg = "Trouble during postprocessing of files in '"
-                    + crawlDir.getAbsolutePath() + "'";
+            String msg = "Trouble during postprocessing of files in '" + crawlDir.getAbsolutePath() + "'";
             log.warn(msg, e);
             errorMessage.append(e.getMessage()).append("\n");
             // send a mail about this problem
-            NotificationsFactory.getInstance().notify(msg
-                    + ". Errors accumulated during the postprocessing: "
-                    + errorMessage.toString(), NotificationType.ERROR, e);
+            NotificationsFactory.getInstance().notify(msg + ". Errors accumulated during the postprocessing: "
+            		+ errorMessage.toString(), NotificationType.ERROR, e);
         } finally {
             // Send a done or failed message back to harvest scheduler
             // FindBugs claims a load of known null value here, but that
@@ -661,14 +600,12 @@ public class HarvestControllerServer
             CrawlStatusMessage csm;
 
             if (crawlException == null && errorMessage.length() == 0) {
-                log.info("Job with ID " + jobID + " finished with status DONE");
+                log.info("Job with ID {} finished with status DONE", jobID);
                 csm = new CrawlStatusMessage(jobID, JobStatus.DONE, dhr);
             } else {
-                log.warn("Job with ID " + jobID
-                        + " finished with status FAILED");
+                log.warn("Job with ID {} finished with status FAILED", jobID);
                 csm = new CrawlStatusMessage(jobID, JobStatus.FAILED, dhr);
-                setErrorMessages(csm, crawlException, errorMessage.toString(),
-                        dhr == null, failedFiles.size());
+                setErrorMessages(csm, crawlException, errorMessage.toString(), dhr == null, failedFiles.size());
             }
             try {
                 jmsConnection.send(csm);
@@ -679,16 +616,11 @@ public class HarvestControllerServer
                 // Delete superfluous files and move the rest to oldjobs
                 // Cleanup is in an extra finally, because it is large amounts
                 // of data we need to remove, even on send trouble.
-                log.info("Cleanup after harvesting job with id: "
-                        + jobID + ".");
-                files.cleanUpAfterHarvest(new File(
-                        Settings.get(
-                                HarvesterSettings.HARVEST_CONTROLLER_OLDJOBSDIR
-                        )));
+                log.info("Cleanup after harvesting job with id: {}.", jobID);
+                files.cleanUpAfterHarvest(new File(Settings.get(HarvesterSettings.HARVEST_CONTROLLER_OLDJOBSDIR)));
             }
         }
-        log.info("Done post-processing files for job " + jobID
-                + " in dir: '" + crawlDir.getAbsolutePath() + "'");
+        log.info("Done post-processing files for job {} in dir: '{}'", jobID, crawlDir.getAbsolutePath());
     }
 
     /** A Thread class for the actual harvesting.  This is required
@@ -697,26 +629,23 @@ public class HarvestControllerServer
      * called.
      */
     private class HarvesterThread extends Thread {
-        /** The harvester Job in this thread. */
+
+    	/** The harvester Job in this thread. */
         private final Job job;
 
-        /**
-         * Stores documentary information about the harvest.
-         */
+        /** Stores documentary information about the harvest. */
         private final HarvestDefinitionInfo origHarvestInfo;
 
         /** The list of metadata associated with this Job. */
         private final List<MetadataEntry> metadataEntries;
+
         /** Constructor for the HarvesterThread class.
          * @param job a harvesting job
          * @param origHarvestInfo Info about the harvestdefinition 
          *      that scheduled this job
          * @param metadataEntries metadata associated with the given job
          */
-        public HarvesterThread(
-                Job job,
-                HarvestDefinitionInfo origHarvestInfo,
-                List<MetadataEntry> metadataEntries) {
+        public HarvesterThread(Job job, HarvestDefinitionInfo origHarvestInfo, List<MetadataEntry> metadataEntries) {
             this.job = job;
             this.origHarvestInfo = origHarvestInfo;
             this.metadataEntries = metadataEntries;
@@ -741,22 +670,16 @@ public class HarvestControllerServer
 
                 File crawlDir = createCrawlDir();
 
-                final HeritrixFiles files =
-                        controller.writeHarvestFiles(
-                                crawlDir,
-                                job,
-                                origHarvestInfo,
-                                metadataEntries);
+                final HeritrixFiles files = controller.writeHarvestFiles(crawlDir, job, origHarvestInfo,
+                		metadataEntries);
 
-                log.info(STARTCRAWL_MESSAGE + " " + job.getJobID());
+                log.info(STARTCRAWL_MESSAGE + " {}", job.getJobID());
 
                 Throwable crawlException = null;
                 try {
                     controller.runHarvest(files);
                 } catch (Throwable e) {
-                    String msg = "Error during crawling. "
-                            + "The crawl may have been only "
-                            + "partially completed.";
+                    String msg = "Error during crawling. The crawl may have been only partially completed.";
                     log.warn(msg, e);
                     crawlException = e;
                     throw new IOFailure(msg, e);
@@ -769,12 +692,12 @@ public class HarvestControllerServer
                     // may throw exceptions.
                     processHarvestInfoFile(files.getCrawlDir(), crawlException);
                 }
-            } catch (Throwable e) {
+            } catch (Throwable t) {
                 String msg = "Fatal error while operating job '" + job + "'";
-                log.fatal(msg, e);
-                NotificationsFactory.getInstance().notify(msg, NotificationType.ERROR, e);
+                log.error(msg, t);
+                NotificationsFactory.getInstance().notify(msg, NotificationType.ERROR, t);
             } finally {
-                log.info(ENDCRAWL_MESSAGE + " " + job.getJobID());
+                log.info(ENDCRAWL_MESSAGE + " {}", job.getJobID());
                 // process serverdir for files not yet uploaded.
                 processOldJobs();
                 shutdownNowOrContinue();
@@ -792,8 +715,7 @@ public class HarvestControllerServer
         private void shutdownNowOrContinue() {
             File shutdownFile = new File(serverDir, "shutdown.txt");
             if (shutdownFile.exists()) {
-                log.info("Found shutdown-file in serverdir - "
-                        + "shutting down the application");
+                log.info("Found shutdown-file in serverdir - " + "shutting down the application");
                 instance.cleanup();
                 System.exit(0);
             }
@@ -813,20 +735,15 @@ public class HarvestControllerServer
             // Create the crawldir.  This is done here in order to be able
             // to send a proper message if something goes wrong.
             try {
-                File baseCrawlDir = new File(Settings.get(
-                        HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR));
-                crawlDir = new File(baseCrawlDir,
-                        job.getJobID() + "_"
-                                + System.currentTimeMillis());
+                File baseCrawlDir = new File(Settings.get(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR));
+                crawlDir = new File(baseCrawlDir, job.getJobID() + "_" + System.currentTimeMillis());
                 FileUtils.createDir(crawlDir);
-                log.info("Created crawl directory: '" + crawlDir + "'");
+                log.info("Created crawl directory: '{}'", crawlDir);
                 return crawlDir;
             } catch (PermissionDenied e) {
-                String message = "Couldn't create the directory for job "
-                        + job.getJobID();
+                String message = "Couldn't create the directory for job " + job.getJobID();
                 log.warn(message, e);
-                sendErrorMessage(job.getJobID(), message,
-                        ExceptionUtils.getStackTrace(e));
+                sendErrorMessage(job.getJobID(), message, ExceptionUtils.getStackTrace(e));
                 throw e;
             }
         }
@@ -838,7 +755,8 @@ public class HarvestControllerServer
      * status.
      */
     private class CrawlStatus {
-        /** The status. */
+
+    	/** The status. */
         private boolean running = false;
         
         private boolean channelIsValid = false;
@@ -846,8 +764,7 @@ public class HarvestControllerServer
         /** Handles the periodic sending of status messages. */
         private PeriodicTaskExecutor statusTransmitter;
 
-        private final int SEND_READY_DELAY =
-                Settings.getInt(HarvesterSettings.SEND_READY_DELAY);
+        private final int SEND_READY_DELAY = Settings.getInt(HarvesterSettings.SEND_READY_DELAY);
 
         /**
          * Returns <code>true</code> if the a doOneCrawl is running, else 
@@ -878,15 +795,13 @@ public class HarvestControllerServer
          */
         public void startSending() {
         	this.channelIsValid = true;
-            statusTransmitter = new PeriodicTaskExecutor(
-                    "HarvesterStatus",
+            statusTransmitter = new PeriodicTaskExecutor("HarvesterStatus",
                     new Runnable() {
                         public void run() {
                             sendStatus();
                         }
                     },
-                    0,
-                    Settings.getInt(HarvesterSettings.SEND_READY_INTERVAL));
+                    0, Settings.getInt(HarvesterSettings.SEND_READY_INTERVAL));
         }
 
         /**
@@ -909,10 +824,10 @@ public class HarvestControllerServer
                 log.error("Unable to sleep", e);
             }
             if (!running) {
-                jmsConnection.send(new HarvesterReadyMessage(
-                        applicationInstanceId + " on " + physicalServerName,
+                jmsConnection.send(new HarvesterReadyMessage(applicationInstanceId + " on " + physicalServerName,
                         HarvestControllerServer.CHANNEL));
             }
         }
     }
+
 }

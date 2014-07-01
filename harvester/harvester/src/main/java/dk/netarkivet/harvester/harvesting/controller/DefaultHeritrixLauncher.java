@@ -22,14 +22,15 @@
  */
 package dk.netarkivet.harvester.harvesting.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 import dk.netarkivet.harvester.harvesting.HeritrixLauncher;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Default implementation of the crawl control.
@@ -37,22 +38,18 @@ import org.apache.commons.logging.LogFactory;
 public class DefaultHeritrixLauncher extends HeritrixLauncher {
 
     /** The class logger. */
-    final Log log = LogFactory.getLog(getClass());
+    private static final Logger log = LoggerFactory.getLogger(DefaultHeritrixLauncher.class);
     
     /** Number of milliseconds in a second. */
     private static final int MILLIS_PER_SECOND = 1000;
     
     /** How long to wait before aborting a request from a webserver. */
-    private static long timeOutInMillisReceivedData =
-            Long.parseLong(Settings.get(
-                    HarvesterSettings.CRAWLER_TIMEOUT_NON_RESPONDING))
-            * MILLIS_PER_SECOND;
+    private static long timeOutInMillisReceivedData = Long.parseLong(Settings.get(
+    		HarvesterSettings.CRAWLER_TIMEOUT_NON_RESPONDING)) * MILLIS_PER_SECOND;
 
     /** How long to wait without any activity before aborting the harvest. */
-    private static long timeOutInMillis =
-            Long.parseLong(Settings.get(
-                    HarvesterSettings.INACTIVITY_TIMEOUT_IN_SECS))
-            * MILLIS_PER_SECOND;
+    private static long timeOutInMillis = Long.parseLong(Settings.get(
+    		HarvesterSettings.INACTIVITY_TIMEOUT_IN_SECS)) * MILLIS_PER_SECOND;
     /** The HeritrixController instance used by the HeritrixLauncher. */
     private HeritrixController heritrixController;
  
@@ -61,8 +58,7 @@ public class DefaultHeritrixLauncher extends HeritrixLauncher {
      * @param files the Heritrix configuration.
      * @throws ArgumentNotValid
      */
-    private DefaultHeritrixLauncher(HeritrixFiles files)
-            throws ArgumentNotValid {
+    private DefaultHeritrixLauncher(HeritrixFiles files) throws ArgumentNotValid {
         super(files);
     }
     
@@ -77,8 +73,7 @@ public class DefaultHeritrixLauncher extends HeritrixLauncher {
      * @throws ArgumentNotValid If either order.xml or seeds.txt does not exist,
      *                          or argument files is null.
      */
-    public static DefaultHeritrixLauncher getInstance(HeritrixFiles files)
-            throws ArgumentNotValid {
+    public static DefaultHeritrixLauncher getInstance(HeritrixFiles files) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(files, "HeritrixFiles files");
         return new DefaultHeritrixLauncher(files);
     }
@@ -99,8 +94,7 @@ public class DefaultHeritrixLauncher extends HeritrixLauncher {
      */
     public void doCrawl() throws IOFailure {
         setupOrderfile(getHeritrixFiles());
-        heritrixController = HeritrixControllerFactory
-                .getDefaultHeritrixController(getControllerArguments());
+        heritrixController = HeritrixControllerFactory.getDefaultHeritrixController(getControllerArguments());
         try {
             // Initialize Heritrix settings according to the order.xml
             heritrixController.initialize();
@@ -135,8 +129,7 @@ public class DefaultHeritrixLauncher extends HeritrixLauncher {
      *                   caught and logged.
      */
     private void doCrawlLoop() throws IOFailure {
-        String errorMessage = "Non-fatal I/O error while communicating with"
-                              + " Heritrix during crawl";
+        String errorMessage = "Non-fatal I/O error while communicating with Heritrix during crawl";
         long lastNonZeroActiveQueuesTime = System.currentTimeMillis();
         long lastTimeReceivedData = System.currentTimeMillis();
         boolean crawlIsEnded = false;
@@ -156,17 +149,13 @@ public class DefaultHeritrixLauncher extends HeritrixLauncher {
             }
             
             HeritrixFiles files = getHeritrixFiles();
-            log.info("Job ID: " + files.getJobID()
-                     + ", Harvest ID: " + files.getHarvestID()
-                     + ", " + harvestInformation
-                     + "\n"
-                     + ((progressStats == null) ? "" : progressStats));
+            log.info("Job ID: {}, Harvest ID: {}, {}\n{}", files.getJobID(), files.getHarvestID(), harvestInformation,
+            		((progressStats == null) ? "" : progressStats));
             // Note that we don't check for timeout while paused.
             int processedKBPerSec = 0;
             boolean paused = false;
             try {
-                processedKBPerSec
-                        = heritrixController.getCurrentProcessedKBPerSec();
+                processedKBPerSec = heritrixController.getCurrentProcessedKBPerSec();
                 paused = heritrixController.isPaused();
             } catch (IOFailure e) {
                 log.debug(errorMessage, e);
@@ -185,37 +174,24 @@ public class DefaultHeritrixLauncher extends HeritrixLauncher {
             if (activeToeCount > 0 || paused) {
                 lastNonZeroActiveQueuesTime = System.currentTimeMillis();
             }
-            if ((lastNonZeroActiveQueuesTime + timeOutInMillis
-                 < System.currentTimeMillis())
-                || (lastTimeReceivedData + timeOutInMillisReceivedData
-                    < System.currentTimeMillis())) {
-                final double noActiveQueuesTimeoutInSeconds =
-                        timeOutInMillis / 1000.0;
-                final double noDataReceivedTimeoutInSeconds =
-                        timeOutInMillisReceivedData / 1000.0;
+            if ((lastNonZeroActiveQueuesTime + timeOutInMillis < System.currentTimeMillis())
+                || (lastTimeReceivedData + timeOutInMillisReceivedData < System.currentTimeMillis())) {
+                final double noActiveQueuesTimeoutInSeconds = timeOutInMillis / 1000.0;
+                final double noDataReceivedTimeoutInSeconds = timeOutInMillisReceivedData / 1000.0;
                 long queuedUriCount = 0;
                 try {
                     queuedUriCount = heritrixController.getQueuedUriCount();
                 } catch (IOFailure e) {
                     log.debug(errorMessage, e);
                 }
-                log.warn("Aborting crawl because of inactivity. "
-                         + "No active queues for the last "
-                         + ((System.currentTimeMillis()
-                             - lastNonZeroActiveQueuesTime) / 1000.0)
-                         + " seconds (timeout is "
-                         + noActiveQueuesTimeoutInSeconds
-                         + " seconds).  No traffic for the last "
-                         + ((System.currentTimeMillis()
-                             - lastTimeReceivedData) / 1000.0)
-                         + " seconds (timeout is "
-                         + noDataReceivedTimeoutInSeconds
-                         + " seconds). URLs in queue:"
-                         + queuedUriCount);
+                long ctm = System.currentTimeMillis();
+                log.warn("Aborting crawl because of inactivity. No active queues for the last {} seconds "
+                		+ "(timeout is {} seconds).No traffic for the last {} seconds (timeout is {} seconds). URLs in queue:{}",
+                		((ctm - lastNonZeroActiveQueuesTime) / 1000.0), noActiveQueuesTimeoutInSeconds,
+                		((ctm - lastTimeReceivedData) / 1000.0), noDataReceivedTimeoutInSeconds, queuedUriCount);
                 // The following is the only controller command exception we
                 // don't catch here. Otherwise we might loop forever.
-                heritrixController.requestCrawlStop(
-                        "Aborting because of inactivity");
+                heritrixController.requestCrawlStop("Aborting because of inactivity");
             }
 
             //Optimization: don't wait if ended since beginning of the loop
@@ -236,9 +212,10 @@ public class DefaultHeritrixLauncher extends HeritrixLauncher {
                         wait(1000 * CRAWL_CONTROL_WAIT_PERIOD);
                     }
                 } catch (InterruptedException e) {
-                    log.trace("Waiting thread awoken: " + e.getMessage());
+                    log.trace("Waiting thread awoken: {}", e.getMessage(), e);
                 }
             }
         } // end of while (!crawlIsEnded)
     }
+
 }

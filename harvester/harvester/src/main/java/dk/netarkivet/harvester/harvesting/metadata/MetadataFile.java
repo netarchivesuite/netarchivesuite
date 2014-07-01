@@ -59,15 +59,13 @@ public class MetadataFile implements Comparable<MetadataFile> {
      * <li>the job id</li> </ol>
      */
     private static final String URL_FORMAT =
-            "metadata://%s/crawl/%s/%s"
-            + "?heritrixVersion=%s&harvestid=%s&jobid=%s";            
+            "metadata://%s/crawl/%s/%s?heritrixVersion=%s&harvestid=%s&jobid=%s";            
     /**
      * A pattern identifying a CDX metadata entry.
      *
      * @see dk.netarkivet.harvester.indexserver.CDXDataCache#CDXDataCache()
      */
-    public static final String CDX_PATTERN =
-        "metadata://[^/]*/crawl/index/cdx.*";
+    public static final String CDX_PATTERN = "metadata://[^/]*/crawl/index/cdx.*";
 
     /**
      * A pattern identifying the crawl log metadata entry.
@@ -75,35 +73,30 @@ public class MetadataFile implements Comparable<MetadataFile> {
      * @see dk.netarkivet.harvester.indexserver.CrawlLogDataCache
      * #CrawlLogDataCache()
      */
-    public static final String CRAWL_LOG_PATTERN =
-        "metadata://[^/]*/crawl/logs/crawl\\.log.*";
+    public static final String CRAWL_LOG_PATTERN = "metadata://[^/]*/crawl/logs/crawl\\.log.*";
 
     /**
      * A pattern identifying the recover.gz log metadata entry.
      */
-    public static final String RECOVER_LOG_PATTERN =
-            "metadata://[^/]*/crawl/logs/recover\\.gz.*";
+    public static final String RECOVER_LOG_PATTERN = "metadata://[^/]*/crawl/logs/recover\\.gz.*";
     
     /**
      * The pattern controlling which files in the crawl directory root should be
      * stored in the metadata ARC.
      */
-    public static final String HERITRIX_FILE_PATTERN =
-            Settings.get(HarvesterSettings.METADATA_HERITRIX_FILE_PATTERN);
+    public static final String HERITRIX_FILE_PATTERN = Settings.get(HarvesterSettings.METADATA_HERITRIX_FILE_PATTERN);
 
     /**
      * The pattern controlling which files in the crawl directory root should be
      * stored in the metadata ARC as reports.
      */
-    public static final String REPORT_FILE_PATTERN =
-            Settings.get(HarvesterSettings.METADATA_REPORT_FILE_PATTERN);
+    public static final String REPORT_FILE_PATTERN = Settings.get(HarvesterSettings.METADATA_REPORT_FILE_PATTERN);
 
     /**
      * The pattern controlling which files in the logs subdirectory of the crawl
      * directory root should be stored in the metadata ARC as log files.
      */
-    public static final String LOG_FILE_PATTERN =
-            Settings.get(HarvesterSettings.METADATA_LOG_FILE_PATTERN);
+    public static final String LOG_FILE_PATTERN = Settings.get(HarvesterSettings.METADATA_LOG_FILE_PATTERN);
 
     /**
      * The name of a domain-specific Heritrix settings file (a.k.a. override).
@@ -124,33 +117,19 @@ public class MetadataFile implements Comparable<MetadataFile> {
      * pattern, then again the logfile pattern. If the name matches neither of
      * these, it is considered a setup file.
      */
-    public MetadataFile(
-            File heritrixFile,
-            Long harvestId,
-            Long jobId,
-            String heritrixVersion) {
-
+    public MetadataFile(File heritrixFile, Long harvestId, Long jobId, String heritrixVersion) {
         this.heritrixFile = heritrixFile;
 
-        this.type = MetadataType.setup;
+        type = MetadataType.setup;
         String name = heritrixFile.getName();
         if (name.matches(REPORT_FILE_PATTERN)) {
-            this.type = MetadataType.reports;
-            this.url = makeMetadataURL(
-                    MetadataType.reports,
-                    heritrixFile.getName(),
-                    harvestId, jobId, heritrixVersion);
+            type = MetadataType.reports;
+            url = makeMetadataURL(MetadataType.reports, heritrixFile.getName(), harvestId, jobId, heritrixVersion);
         } else if (name.matches(LOG_FILE_PATTERN)) {
-            this.type = MetadataType.logs;
-            this.url = makeMetadataURL(
-                    MetadataType.logs,
-                    heritrixFile.getName(),
-                    harvestId, jobId, heritrixVersion);
+            type = MetadataType.logs;
+            url = makeMetadataURL(MetadataType.logs, heritrixFile.getName(), harvestId, jobId, heritrixVersion);
         } else {
-            this.url = makeMetadataURL(
-                    MetadataType.setup,
-                    heritrixFile.getName(),
-                    harvestId, jobId, heritrixVersion);
+            url = makeMetadataURL(MetadataType.setup, heritrixFile.getName(), harvestId, jobId, heritrixVersion);
         }
     }
 
@@ -163,14 +142,9 @@ public class MetadataFile implements Comparable<MetadataFile> {
      * @param heritrixVersion the version of Heritrix generating the file
      * @param domain The name of the domain, this metadata belongs to
      */
-    public MetadataFile(
-            File heritrixFile,
-            Long harvestId,
-            Long jobId,
-            String heritrixVersion,
-            String domain) {
+    public MetadataFile(File heritrixFile, Long harvestId, Long jobId, String heritrixVersion, String domain) {
         this(heritrixFile, harvestId, jobId, heritrixVersion);
-        this.url += "&domain=" + domain;
+        url += "&domain=" + domain;
     }
 
     /**
@@ -210,20 +184,10 @@ public class MetadataFile implements Comparable<MetadataFile> {
      * @param heritrixVersion The version of Heritrix generating the file.
      * @return the metadata URL for this file
      */
-    private String makeMetadataURL(
-            MetadataType theType,
-            String name,
-            long harvestID,
-            long jobID,
-            String heritrixVersion) {
-        return String.format(
-                URL_FORMAT, 
-                Settings.get(CommonSettings.ORGANIZATION),
-                theType.name(),
-                name,
-                heritrixVersion,
-                Long.toString(harvestID),
-                Long.toString(jobID)
+    private String makeMetadataURL(MetadataType theType, String name, long harvestID, long jobID,
+    		String heritrixVersion) {
+        return String.format(URL_FORMAT, Settings.get(CommonSettings.ORGANIZATION), theType.name(), name,
+                heritrixVersion, Long.toString(harvestID), Long.toString(jobID)
         );
     }
 

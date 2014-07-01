@@ -44,8 +44,7 @@ import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor;
  *
  */
 @SuppressWarnings({ "serial"})
-public class CrawlProgressMessage extends HarvesterMessage
-implements Serializable {
+public class CrawlProgressMessage extends HarvesterMessage implements Serializable {
 
     /**
      * The general status of a job in NAS.
@@ -79,19 +78,13 @@ implements Serializable {
      */
     public class CrawlServiceInfo implements Serializable {
 
-        /**
-         * The number of alerts raised by Heritrix.
-         */
+        /** The number of alerts raised by Heritrix. */
         private int alertCount;
 
-        /**
-         * Flag is set to true when Heritrix is crawling or paused.
-         */
+        /** Flag is set to true when Heritrix is crawling or paused. */
         private boolean isCrawling;
 
-        /**
-         * Contains the UID of the current job.
-         */
+        /** Contains the UID of the current job. */
         private String currentJob;
 
         public int getAlertCount() {
@@ -125,59 +118,37 @@ implements Serializable {
      */
     public class CrawlServiceJobInfo implements Serializable {
 
-        /**
-         * The number of URIs currently discovered.
-         */
+        /** The number of URIs currently discovered. */
         private long discoveredFilesCount;
 
-        /**
-         * The number of URIs currently harvested.
-         */
+        /** The number of URIs currently harvested. */
         private long downloadedFilesCount;
 
-        /**
-         * A summary of the frontier queues.
-         */
+        /** A summary of the frontier queues. */
         private String frontierShortReport;
 
-        /**
-         * The time in seconds elapsed since the crawl began.
-         */
+        /** The time in seconds elapsed since the crawl began. */
         private long elapsedSeconds;
 
-        /**
-         * The current download rate in KB/sec.
-         */
+        /** The current download rate in KB/sec. */
         private long currentProcessedKBPerSec;
 
-        /**
-         * The average download rate in KB/sec.
-         */
+        /** The average download rate in KB/sec. */
         private long processedKBPerSec;
 
-        /**
-         * The current download rate in URI/sec.
-         */
+        /** The current download rate in URI/sec. */
         private double currentProcessedDocsPerSec;
 
-        /**
-         * The average download rate in URI/sec.
-         */
+        /** The average download rate in URI/sec. */
         private double processedDocsPerSec;
 
-        /**
-         * The number of active toe threads for this job.
-         */
+        /** The number of active toe threads for this job. */
         private int activeToeCount;
 
-        /**
-         * A textual summary of the crawler activity.
-         */
+        /** A textual summary of the crawler activity. */
         private String progressStatistics;
 
-        /**
-         * The job status.
-         */
+        /** The job status. */
         private String status;
 
         public long getDiscoveredFilesCount() {
@@ -280,40 +251,25 @@ implements Serializable {
 
     }
 
-    /**
-     * The unique identifier of the job.
-     */
+    /** The unique identifier of the job. */
     private final long jobID;
 
-    /**
-     * The unique identifier of the associated harvest definition.
-     */
+    /** The unique identifier of the associated harvest definition. */
     private long harvestID;
 
-    /**
-     * The URL to the host Heritrix admin UI.
-     */
+    /** The URL to the host Heritrix admin UI. */
     private String hostUrl;
 
-    /**
-     * The job's status.
-     */
+    /** The job's status. */
     private CrawlStatus status;
 
-    /**
-     * A legend, fetched only once, for the
-     * {@link CrawlServiceJobInfo#progressStatistics} property.
-     */
+    /** A legend, fetched only once, for the {@link CrawlServiceJobInfo#progressStatistics} property. */
     private final String progressStatisticsLegend;
 
-    /**
-     * The information provided by the CrawlService MBean.
-     */
+    /** The information provided by the CrawlService MBean. */
     private CrawlServiceInfo heritrixStatus = new CrawlServiceInfo();
 
-    /**
-     * The information provided by the CrawlService.Job MBean.
-     */
+    /** The information provided by the CrawlService.Job MBean. */
     private CrawlServiceJobInfo jobStatus = new CrawlServiceJobInfo();
 
     /**
@@ -328,8 +284,7 @@ implements Serializable {
      *            the legend of the progress statistics summary string
      * @see CrawlProgressMessage#progressStatisticsLegend
      */
-    public CrawlProgressMessage(long harvestID, long jobId,
-            String progressStatisticsLegend) {
+    public CrawlProgressMessage(long harvestID, long jobId, String progressStatisticsLegend) {
         super(HarvestMonitor.HARVEST_MONITOR_CHANNEL_ID, Channels.getError());
         this.harvestID = harvestID;
         this.jobID = jobId;
@@ -412,8 +367,7 @@ implements Serializable {
      */
     public boolean crawlIsFinished() {
 
-        boolean jobInProgress = heritrixStatus.isCrawling()
-                && !heritrixStatus.getCurrentJob().isEmpty();
+        boolean jobInProgress = heritrixStatus.isCrawling() && !heritrixStatus.getCurrentJob().isEmpty();
 
         if (!jobInProgress) {
             return true;

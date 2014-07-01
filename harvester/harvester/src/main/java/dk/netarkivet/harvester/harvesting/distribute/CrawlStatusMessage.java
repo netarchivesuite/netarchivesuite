@@ -40,11 +40,10 @@ import dk.netarkivet.harvester.harvesting.report.HarvestReport;
  * This class is immutable
  *
  */
-
 @SuppressWarnings({ "serial"})
-public class CrawlStatusMessage extends HarvesterMessage
-        implements Serializable {
-    /** the id for the crawlJob, for which this message reports. */
+public class CrawlStatusMessage extends HarvesterMessage implements Serializable {
+
+	/** the id for the crawlJob, for which this message reports. */
     private long jobID;
     /** The current state of the crawl-job. */
     private JobStatus statusCode;
@@ -72,8 +71,7 @@ public class CrawlStatusMessage extends HarvesterMessage
      *                              jobID < 0L
      *                              statusCode == null
      */
-    public CrawlStatusMessage(long jobID, JobStatus statusCode,
-                              HarvestReport harvestReport) {
+    public CrawlStatusMessage(long jobID, JobStatus statusCode, HarvestReport harvestReport) {
         super(Channels.getTheSched(), Channels.getError());
         ArgumentNotValid.checkNotNegative(jobID, "jobID");
         ArgumentNotValid.checkNotNull(statusCode, "statusCode");
@@ -141,9 +139,8 @@ public class CrawlStatusMessage extends HarvesterMessage
             dhr = harvestReport.toString();
         }
 
-        return "CrawlStatusMessage:\n"
-               + "JobID: " + jobID  + '\n' + "StatusCode: " + statusCode
-               + '\n' + dhr + '\n' + super.toString();
+        return "CrawlStatusMessage:\n" + "JobID: " + jobID  + '\n' + "StatusCode: " + statusCode + '\n' + dhr + '\n'
+        		+ super.toString();
     }
 
     /**
@@ -160,8 +157,7 @@ public class CrawlStatusMessage extends HarvesterMessage
      * @throws ArgumentNotValid if null argument
      */
     public void setHarvestErrors(String harvestErrors) {
-        ArgumentNotValid.checkNotNull(harvestErrors,
-        "String harvestErrors");
+        ArgumentNotValid.checkNotNull(harvestErrors, "String harvestErrors");
         this.harvestErrors = harvestErrors;
     }
 
@@ -179,8 +175,7 @@ public class CrawlStatusMessage extends HarvesterMessage
      * @throws ArgumentNotValid if null argument
      */
     public void setHarvestErrorDetails(String harvestErrorDetails) {
-        ArgumentNotValid.checkNotNull(harvestErrorDetails,
-        "String harvestErrorDetails");
+        ArgumentNotValid.checkNotNull(harvestErrorDetails, "String harvestErrorDetails");
         this.harvestErrorDetails = harvestErrorDetails;
     }
 
@@ -198,8 +193,7 @@ public class CrawlStatusMessage extends HarvesterMessage
      * @throws ArgumentNotValid if null argument
      */
     public void setUploadErrors(String uploadErrors) {
-        ArgumentNotValid.checkNotNull(uploadErrors,
-        "String uploadErrors");
+        ArgumentNotValid.checkNotNull(uploadErrors, "String uploadErrors");
         this.uploadErrors = uploadErrors;
     }
 
@@ -217,8 +211,7 @@ public class CrawlStatusMessage extends HarvesterMessage
      * @throws ArgumentNotValid if null argument
      */
     public void setUploadErrorDetails(String uploadErrorDetails) {
-        ArgumentNotValid.checkNotNull(uploadErrorDetails,
-                    "String uploadErrorDetails");
+        ArgumentNotValid.checkNotNull(uploadErrorDetails, "String uploadErrorDetails");
         this.uploadErrorDetails = uploadErrorDetails;
     }
 
