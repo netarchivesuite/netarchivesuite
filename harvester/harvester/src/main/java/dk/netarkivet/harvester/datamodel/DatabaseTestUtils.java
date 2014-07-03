@@ -40,6 +40,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Logger;
+import java.util.Date;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
@@ -88,7 +89,7 @@ public class DatabaseTestUtils {
         // FIXME: change for h2
         dburi = "jdbc:derby:" + dbfile;
 
-        System.err.println("Populating " + dbfile + " from " + resourcePath);
+        System.err.println("Populating " + dbfile + " from '" + resourcePath + "' at " + new Date());
         Connection c = DriverManager.getConnection(dburi + ";create=true");
         c.setAutoCommit(false);  // load faster.
         
@@ -104,7 +105,7 @@ public class DatabaseTestUtils {
 
         c.commit();
         
-        System.err.println("Populated...");
+        System.err.println("Populated... at " +  new Date());
         //
         c.close();
 
