@@ -22,9 +22,6 @@
  */
 package dk.netarkivet.harvester.harvesting;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.Settings;
@@ -39,24 +36,16 @@ import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
  * because it has stalled.
  */
 public abstract class HeritrixLauncher {
+
     /** Class encapsulating placement of various files. */
     private HeritrixFiles files;
 
     /** the arguments passed to the HeritricController constructor. */
     private Object[] args;
 
-    /**
-     * The period to wait in seconds before checking if Heritrix has done
-     * anything.
-     */
-    protected static final int CRAWL_CONTROL_WAIT_PERIOD 
-        = Settings.getInt(HarvesterSettings.CRAWL_LOOP_WAIT_TIME);
+    /** The period to wait in seconds before checking if Heritrix has done anything. */
+    protected static final int CRAWL_CONTROL_WAIT_PERIOD = Settings.getInt(HarvesterSettings.CRAWL_LOOP_WAIT_TIME);
 
-    
-    /** The class logger. */
-    final Log log = LogFactory.getLog(getClass());
-    
-    
     /**
      * Private HeritrixLauncher constructor. Sets up the HeritrixLauncher from
      * the given order file and seedsfile.
@@ -69,17 +58,13 @@ public abstract class HeritrixLauncher {
      */
     protected HeritrixLauncher(HeritrixFiles files) throws ArgumentNotValid {
         if (!files.getOrderXmlFile().isFile()) {
-            throw new ArgumentNotValid(
-                    "File '" + files.getOrderXmlFile().getName()
-                    + "' must exist in order for Heritrix to run. "
-                    + "This filepath does not refer to existing file: "
+            throw new ArgumentNotValid("File '" + files.getOrderXmlFile().getName() + "' must exist in order for "
+            		+ "Heritrix to run. This filepath does not refer to existing file: "
                     + files.getOrderXmlFile().getAbsolutePath());
         }
         if (!files.getSeedsTxtFile().isFile()) {
-            throw new ArgumentNotValid(
-                    "File '" + files.getSeedsTxtFile().getName()
-                    + "' must exist in order for Heritrix to run. "
-                    + "This filepath does not refer to existing file: "
+            throw new ArgumentNotValid("File '" + files.getSeedsTxtFile().getName() + "' must exist in order for "
+            		+ "Heritrix to run. This filepath does not refer to existing file: "
                     + files.getSeedsTxtFile().getAbsolutePath());
         }
         this.files = files;
@@ -103,7 +88,6 @@ public abstract class HeritrixLauncher {
      * @throws IOFailure
      */
     public abstract void doCrawl() throws IOFailure;
-
         
     /**
      * @return an instance of the wrapper class for Heritrix files.

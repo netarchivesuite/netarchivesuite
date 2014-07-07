@@ -32,8 +32,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.security.DigestInputStream;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -48,9 +48,12 @@ import dk.netarkivet.common.utils.SystemUtils;
  */
 @SuppressWarnings({ "serial"})
 public class HTTPRemoteFile extends AbstractRemoteFile {
-    /** The default place in classpath where the settings file can be found. */
-    private static String DEFAULT_SETTINGS_CLASSPATH
-            = "dk/netarkivet/common/distribute/HTTPRemoteFileSettings.xml";
+
+    /** The logger for this class. */
+    private static final Logger log = LoggerFactory.getLogger(HTTPRemoteFile.class);
+
+	/** The default place in classpath where the settings file can be found. */
+    private static String DEFAULT_SETTINGS_CLASSPATH = "dk/netarkivet/common/distribute/HTTPRemoteFileSettings.xml";
 
     /*
      * The static initialiser is called when the class is loaded.
@@ -58,9 +61,7 @@ public class HTTPRemoteFile extends AbstractRemoteFile {
      * loading them from a settings.xml file in classpath.
      */
     static {
-        Settings.addDefaultClasspathSettings(
-                DEFAULT_SETTINGS_CLASSPATH
-        );
+        Settings.addDefaultClasspathSettings(DEFAULT_SETTINGS_CLASSPATH);
     }
 
     /** The name of the host this file originated on. */
@@ -69,8 +70,6 @@ public class HTTPRemoteFile extends AbstractRemoteFile {
     protected final URL url;
     /** If useChecksums is true, contains the file checksum. */
     protected final String checksum;
-    /** The logger for this class. */
-    private static final Log log = LogFactory.getLog(AbstractRemoteFile.class);
 
     // NOTE: The constants defining setting names below are left non-final on
     // purpose! Otherwise, the static initialiser that loads default values
@@ -79,8 +78,7 @@ public class HTTPRemoteFile extends AbstractRemoteFile {
     /** 
      * <b>settings.common.remoteFile.port</b>: <br>
      * The setting for the HTTP remotefile port number used. */
-    public static String HTTPREMOTEFILE_PORT_NUMBER
-            = "settings.common.remoteFile.port";
+    public static String HTTPREMOTEFILE_PORT_NUMBER = "settings.common.remoteFile.port";
 
     /**
      * Initialises a remote file implemented by point-to-point HTTP
@@ -98,13 +96,11 @@ public class HTTPRemoteFile extends AbstractRemoteFile {
      * @throws IOFailure if checksums are requested, but i/o errors occur while
      * checksumming.
      */
-    protected HTTPRemoteFile(File file, boolean useChecksums,
-                             boolean fileDeletable, boolean multipleDownloads) {
+    protected HTTPRemoteFile(File file, boolean useChecksums, boolean fileDeletable, boolean multipleDownloads) {
         super(file, useChecksums, fileDeletable, multipleDownloads);
         this.hostname = SystemUtils.getLocalHostName();
         if (filesize > 0) {
-            this.url = getRegistry().registerFile(
-                    this.file, this.fileDeletable);
+            this.url = getRegistry().registerFile(this.file, this.fileDeletable);
         } else {
             this.url = null;
         }
@@ -130,11 +126,9 @@ public class HTTPRemoteFile extends AbstractRemoteFile {
      * @throws IOFailure if checksums are requested, but i/o errors occur while
      * checksumming.
      */
-    public static RemoteFile getInstance(File f, Boolean useChecksums,
-                                         Boolean fileDeletable,
-                                         Boolean multipleDownloads) {
-        return new HTTPRemoteFile(f, useChecksums, fileDeletable,
-                                  multipleDownloads);
+    public static RemoteFile getInstance(File f, Boolean useChecksums, Boolean fileDeletable,
+    		Boolean multipleDownloads) {
+        return new HTTPRemoteFile(f, useChecksums, fileDeletable, multipleDownloads);
     }
 
     /** Get the webserver registry for this class of files. Meant to be
@@ -159,11 +153,9 @@ public class HTTPRemoteFile extends AbstractRemoteFile {
         ArgumentNotValid.checkNotNull(destFile, "File destFile");
         destFile = destFile.getAbsoluteFile();
         if ((!destFile.isFile() || !destFile.canWrite())
-            && (!destFile.getParentFile().isDirectory()
-                || !destFile.getParentFile().canWrite())) {
-            throw new ArgumentNotValid("Destfile '" + destFile
-                    + "' does not point to a writable file for remote file '"
-                    + file + "'");
+        		&& (!destFile.getParentFile().isDirectory() || !destFile.getParentFile().canWrite())) {
+            throw new ArgumentNotValid("Destfile '" + destFile + "' does not point to a writable file for "
+            		+ "remote file '" + file + "'");
         }
         if (isLocal() && fileDeletable && !multipleDownloads && !useChecksums) {
             if (file.renameTo(destFile)) {
@@ -202,19 +194,16 @@ public class HTTPRemoteFile extends AbstractRemoteFile {
                 is = urlConnection.getInputStream();
             }
             if (useChecksums) {
-                is = new DigestInputStream(
-                        is, ChecksumCalculator.getMessageDigest
-                        (ChecksumCalculator.MD5));
+                is = new DigestInputStream(is, ChecksumCalculator.getMessageDigest(ChecksumCalculator.MD5));
             }
             return new FilterInputStream(is) {
                 public void close() {
                     if (useChecksums) {
-                        String newChecksum = ChecksumCalculator.toHex(((DigestInputStream) in)
-                                .getMessageDigest().digest());
+                        String newChecksum = ChecksumCalculator.toHex(
+                        		((DigestInputStream) in).getMessageDigest().digest());
                         if (!newChecksum.equals(checksum)) {
-                            throw new IOFailure("Checksum mismatch! Expected '"
-                                    + checksum + "' but was '" + newChecksum
-                                    + "'");
+                            throw new IOFailure("Checksum mismatch! Expected '" + checksum + "' but was '"
+                            		+ newChecksum + "'");
                         }
                     }
                     if (!multipleDownloads) {
@@ -223,8 +212,7 @@ public class HTTPRemoteFile extends AbstractRemoteFile {
                 }
             };
         } catch (IOException e) {
-            throw new IOFailure("Unable to get inputstream for '" + file
-                    + "' from '" + url + "'", e);
+            throw new IOFailure("Unable to get inputstream for '" + file + "' from '" + url + "'", e);
         }
     }
 
@@ -239,14 +227,12 @@ public class HTTPRemoteFile extends AbstractRemoteFile {
             return;
         }
         try {
-            URLConnection urlConnection = getRegistry().openConnection(
-                    getRegistry().getCleanupUrl(url));
+            URLConnection urlConnection = getRegistry().openConnection(getRegistry().getCleanupUrl(url));
             urlConnection.setUseCaches(false);
             urlConnection.connect();
             urlConnection.getInputStream();
         } catch (IOException e) {
-            log.warn("Unable to cleanup file '"
-                    + file.getAbsolutePath() + "' with URL'" + url +  "'", e);
+            log.warn("Unable to cleanup file '{}' with URL'{}'", file.getAbsolutePath(), url, e);
         }
     }
 
@@ -261,8 +247,7 @@ public class HTTPRemoteFile extends AbstractRemoteFile {
      * @return true if the file is on the local machine, false otherwise.
      */
     protected boolean isLocal() {
-        return SystemUtils.getLocalHostName().equals(hostname)
-                && file.isFile() && file.canRead();
+        return SystemUtils.getLocalHostName().equals(hostname) && file.isFile() && file.canRead();
     }
 
     /**
@@ -276,4 +261,5 @@ public class HTTPRemoteFile extends AbstractRemoteFile {
         // TODO make settings for this. 
         return 1;
     }
+
 }

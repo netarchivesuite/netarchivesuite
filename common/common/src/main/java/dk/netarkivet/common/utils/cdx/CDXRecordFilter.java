@@ -23,13 +23,11 @@
 
 package dk.netarkivet.common.utils.cdx;
 
-
 import java.io.Serializable;
 
 /**
  * Interface defining a filter to use in CDXReader when finding CDXRecords.
  */
-
 public interface CDXRecordFilter extends Serializable {
 
     /**
@@ -47,4 +45,5 @@ public interface CDXRecordFilter extends Serializable {
      * @return the name of the Filter
      */
     String getFilterName();
+
 }

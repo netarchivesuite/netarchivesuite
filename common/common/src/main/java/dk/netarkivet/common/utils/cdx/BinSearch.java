@@ -30,19 +30,20 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 
-/** Performs a binary search through .cdx files for a given prefix string.
+/**
+ * Performs a binary search through .cdx files for a given prefix string.
  * Currently only handles a single .cdx file.
- * */
+ */
 public class BinSearch {
-    /** The logger. */
-    private static final Log log =
-            LogFactory.getLog(BinSearch.class.getName());
+
+	/** The logger. */
+    private static final Logger log = LoggerFactory.getLogger(BinSearch.class);
 
     /** Our own comparison function.  Right now just does prefix match.
      *
@@ -51,8 +52,7 @@ public class BinSearch {
      * @return A result equivalent to String.compareTo, but only for a prefix.
      */
     private static int compare(String line, String pattern) {
-        String start = line.substring(0, Math.min(pattern.length(),
-                line.length()));
+        String start = line.substring(0, Math.min(pattern.length(), line.length()));
         int cmp = start.compareTo(pattern);
         return cmp;
     }
@@ -156,8 +156,7 @@ public class BinSearch {
                     try {
                         line = infile.readLine();
                     } catch (IOException e) {
-                        String message = "IOException reading file '" 
-                            + file + "'";
+                        String message = "IOException reading file '" + file + "'";
                         log.warn(message, e);
                         throw new IOFailure(message, e);
                     }
@@ -177,8 +176,7 @@ public class BinSearch {
                     try {
                         infile.close();
                     } catch (IOException e) {
-                        String message = "IOException closing file '"
-                            + file + "'";
+                        String message = "IOException closing file '" + file + "'";
                         log.warn(message, e);
                         throw new IOFailure(message, e);
                     }
@@ -232,22 +230,19 @@ public class BinSearch {
      *         Guaranteed to be <= matchingline.
      * @throws IOException If the matchingLine < 0 or some I/O error occurs.
      */
-    private static long findFirstLine(RandomAccessFile in,
-                                      String find, long matchingline)
-            throws IOException {
+    private static long findFirstLine(RandomAccessFile in, String find, long matchingline) throws IOException {
         in.seek(matchingline);
         String line = in.readLine();
         if (line == null || compare(line, find) != 0) {
-            final String msg = "Internal: Called findFirstLine without a "
-                    + "matching line in '" + in + "' byte " + matchingline;
+            final String msg = "Internal: Called findFirstLine without a matching line in '"
+            		+ in + "' byte " + matchingline;
             log.warn(msg);
             throw new ArgumentNotValid(msg);
         }
         // Skip backwards in quadratically increasing steps.
         int linelength = line.length();
         long offset = linelength;
-        for (int i = 1; matchingline - offset > 0;
-             i++, offset = i * i * linelength) {
+        for (int i = 1; matchingline - offset > 0; i++, offset = i * i * linelength) {
             skipToLine(in, matchingline - offset);
             line = in.readLine();
             if (line == null || compare(line, find) != 0) {
@@ -285,8 +280,7 @@ public class BinSearch {
      * getFilePointer()) is updated to match.
      * @throws IOException If some I/O error occurs
      */
-    private static long skipToLine(RandomAccessFile in, long pos)
-            throws IOException {
+    private static long skipToLine(RandomAccessFile in, long pos) throws IOException {
         in.seek(pos);
         in.readLine();
         return in.getFilePointer();
@@ -300,8 +294,7 @@ public class BinSearch {
      * @throws IOException If some I/O error occurs
      * @return The index of a line matching find, or -1 if none found.
      */
-    private static long binSearch(RandomAccessFile in,
-                                 String find) throws IOException {
+    private static long binSearch(RandomAccessFile in, String find) throws IOException {
         // The starting position for the binary search.  Always
         // at the start of a line that's < the wanted line.
         long startpos = 0;
@@ -329,8 +322,7 @@ public class BinSearch {
         do {
             line = in.readLine();
             if (line == null) {
-                log.debug("Internal: Ran past end of file in '"
-                          + in + "' at " + endpos);
+                log.debug("Internal: Ran past end of file in '{}' at {}", in, endpos);
                 return -1;
             }
             int cmp = compare(line, find);
@@ -363,9 +355,7 @@ public class BinSearch {
      * or -1 if no such line can be found.
      * @throws IOException If some I/O error occurs
      */
-    private static long findMiddleLine(RandomAccessFile in,
-                                       long startpos, long endpos)
-            throws IOException {
+    private static long findMiddleLine(RandomAccessFile in, long startpos, long endpos) throws IOException {
         // First check that there is a middle line at all.
         // If there is a line after startpos, but before endpos,
         // we remember it and as soon as we hit that line.
@@ -392,8 +382,8 @@ public class BinSearch {
             newmidpos = skipToLine(in, newmidpos);
         }
         // Now the midpos should be != startpos && != endpos
-        assert newmidpos != startpos
-            : "Invariant violated: Newmidpos > startpos";
+        assert newmidpos != startpos : "Invariant violated: Newmidpos > startpos";
         return newmidpos;
     }
+
 }

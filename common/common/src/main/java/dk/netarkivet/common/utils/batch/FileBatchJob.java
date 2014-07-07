@@ -33,8 +33,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -51,11 +51,11 @@ import dk.netarkivet.common.utils.StringUtils;
 public abstract class FileBatchJob implements Serializable {
 
     /** The class log. */
-    private static Log log = LogFactory.getLog(FileBatchJob.class.getName());
-    
+    private static final Logger log = LoggerFactory.getLogger(FileBatchJob.class);
+
     /** Regexp that matches everything. */
     private static final String EVERYTHING_REGEXP = ".*";
-        
+
     /** Regular expression for the files to process with this job.
      * By default, all files are processed.  This pattern must match the
      * entire filename, but not the path (e.g. .*foo.* for any file with
@@ -63,9 +63,7 @@ public abstract class FileBatchJob implements Serializable {
      */
     private Pattern filesToProcess = Pattern.compile(EVERYTHING_REGEXP);
 
-    /** The total number of files processed (including any that 
-     * generated errors).
-     */
+    /** The total number of files processed (including any that generated errors). */
     protected int noOfFilesProcessed = 0;
 
     /**
@@ -77,11 +75,9 @@ public abstract class FileBatchJob implements Serializable {
     /** A Set of files which generated errors. */
     protected Set<File> filesFailed = new HashSet<File>();
     
-    /** A list with information about the exceptions thrown during the execution
-     * of the batchjob.
-     */
-    protected List<ExceptionOccurrence> exceptions
-                = new ArrayList<ExceptionOccurrence>();
+    /** A list with information about the exceptions thrown during the execution of the batchjob. */
+    protected List<ExceptionOccurrence> exceptions = new ArrayList<ExceptionOccurrence>();
+
     /**
      * Initialize the job before runnning.
      * This is called before the processFile() calls. If this throws an
@@ -110,7 +106,6 @@ public abstract class FileBatchJob implements Serializable {
      */
     public abstract void finish(OutputStream os);
 
-
     /** Mark the job to process only the specified files.  This will
      * override any previous setting of which files to process.
      *
@@ -137,8 +132,7 @@ public abstract class FileBatchJob implements Serializable {
      * be processed.  Should not include any path information.
      */
     public void processOnlyFileNamed(String specifiedFilename) {
-        ArgumentNotValid.checkNotNullOrEmpty(specifiedFilename, 
-            "specificedFilename");
+        ArgumentNotValid.checkNotNullOrEmpty(specifiedFilename, "specificedFilename");
         processOnlyFilesMatching(Pattern.quote(specifiedFilename));
     }
 
@@ -151,10 +145,8 @@ public abstract class FileBatchJob implements Serializable {
      * the name).
      */
     public void processOnlyFilesMatching(List<String> specifiedPatterns) {
-        ArgumentNotValid.checkNotNull(specifiedPatterns,
-         "specifiedPatterns");
-        processOnlyFilesMatching("("
-                        + StringUtils.conjoin("|", specifiedPatterns) + ")");
+        ArgumentNotValid.checkNotNull(specifiedPatterns, "specifiedPatterns");
+        processOnlyFilesMatching("(" + StringUtils.conjoin("|", specifiedPatterns) + ")");
     }
 
     /** Set this job to match only a certain pattern.  This will
@@ -166,8 +158,7 @@ public abstract class FileBatchJob implements Serializable {
      * name).
      */
     public void processOnlyFilesMatching(String specifiedPattern) {
-        ArgumentNotValid.checkNotNullOrEmpty(specifiedPattern, 
-                "specificedPattern");
+        ArgumentNotValid.checkNotNullOrEmpty(specifiedPattern, "specificedPattern");
         filesToProcess = Pattern.compile(specifiedPattern);
     }
 
@@ -237,19 +228,15 @@ public abstract class FileBatchJob implements Serializable {
      * exception happened.  If UNKNOWN_OFFSET, the offset could not be found.
      * @param e The exception thrown.  This exception must be serializable.
      */
-    protected void addException(File currentFile, long currentOffset,
-            long outputOffset, Exception e) {
+    protected void addException(File currentFile, long currentOffset, long outputOffset, Exception e) {
         if (!maxExceptionsReached()) {
-            exceptions.add(new ExceptionOccurrence(currentFile,
-                    currentOffset,
-                    outputOffset,
-                    e));
+            exceptions.add(new ExceptionOccurrence(currentFile, currentOffset, outputOffset, e));
         } else {
-            log.trace("Exception not added, because max exceptions reached. "
-                    + "currentFile = " + currentFile.getAbsolutePath() + ","
-                    + "currentOffset = " + currentOffset
-                    + "outputOffset = " + outputOffset + ", exception: ",
-                    e);
+        	if (log.isTraceEnabled()) {
+                log.trace("Exception not added, because max exceptions reached. currentFile = {},currentOffset = {},"
+                		+ "outputOffset = {}, exception: ",
+                		currentFile.getAbsolutePath(), currentOffset, outputOffset, e);
+        	}
         }
     }
     
@@ -264,9 +251,8 @@ public abstract class FileBatchJob implements Serializable {
         if (!maxExceptionsReached()) {
             exceptions.add(new ExceptionOccurrence(true, outputOffset, e));
         } else {
-            log.trace("Exception not added, because max exceptions reached. "
-                    + "outputOffset = " + outputOffset + ", exception: ",
-                    e);
+            log.trace("Exception not added, because max exceptions reached. outputOffset = {}, exception: ",
+            		outputOffset, e);
         }
     }
 
@@ -281,9 +267,8 @@ public abstract class FileBatchJob implements Serializable {
         if (!maxExceptionsReached()) {
             exceptions.add(new ExceptionOccurrence(false, outputOffset, e));
         } else {
-            log.trace("Exception not added, because max exceptions reached. "
-                    + "outputOffset = " + outputOffset + ", exception: ",
-                    e);
+            log.trace("Exception not added, because max exceptions reached. outputOffset = {}, exception: ",
+            		outputOffset, e);
         }
     }
 
@@ -295,11 +280,10 @@ public abstract class FileBatchJob implements Serializable {
      * @return timeout in miliseconds.
      */
     public long getBatchJobTimeout() {
-        if(batchJobTimeout != -1) {
+        if (batchJobTimeout != -1) {
             return batchJobTimeout;
         } else {
-            return Long.parseLong(Settings.get(
-                    CommonSettings.BATCH_DEFAULT_TIMEOUT));
+            return Long.parseLong(Settings.get(CommonSettings.BATCH_DEFAULT_TIMEOUT));
         }
     }
 
@@ -331,8 +315,7 @@ public abstract class FileBatchJob implements Serializable {
         /** The maximum number of exceptions we will accumulate before
          * aborting processing. 
          */
-        private static final int MAX_EXCEPTIONS = Settings.getInt(
-                CommonSettings.MAX_NUM_BATCH_EXCEPTIONS);
+        private static final int MAX_EXCEPTIONS = Settings.getInt(CommonSettings.MAX_NUM_BATCH_EXCEPTIONS);
 
         /** Marker for the case when we couldn't find an offset for the
          * outputstream.
@@ -370,14 +353,11 @@ public abstract class FileBatchJob implements Serializable {
          * @param exception The exception thrown.
          *  This exception must be serializable.
          */
-        public ExceptionOccurrence(File file, long fileOffset,
-                long outputOffset, Exception exception) {
+        public ExceptionOccurrence(File file, long fileOffset, long outputOffset, Exception exception) {
             ArgumentNotValid.checkNotNull(file, "File file");
             ArgumentNotValid.checkNotNegative(fileOffset, "long fileOffset");
-            ArgumentNotValid.checkTrue(outputOffset >= 0
-                    || outputOffset == UNKNOWN_OFFSET,
-                    "outputOffset must be either "
-                    + "non-negative or UNKNOWN_OFFSET");
+            ArgumentNotValid.checkTrue(outputOffset >= 0 || outputOffset == UNKNOWN_OFFSET,
+                    "outputOffset must be either non-negative or UNKNOWN_OFFSET");
             ArgumentNotValid.checkNotNull(exception, "Exception exception");
             this.fileName = file.getName();
             this.fileOffset = fileOffset;
@@ -395,12 +375,9 @@ public abstract class FileBatchJob implements Serializable {
          * UNKNOWN_OFFSET if the offset cannot be found.
          * @param exception The exception that was thrown.
          */
-        public ExceptionOccurrence(boolean inInitialize, long outputOffset,
-                Exception exception) {
-            ArgumentNotValid.checkTrue(outputOffset >= 0
-                    || outputOffset == UNKNOWN_OFFSET,
-                    "outputOffset must be either "
-                    + "non-negative or UNKNOWN_OFFSET");
+        public ExceptionOccurrence(boolean inInitialize, long outputOffset, Exception exception) {
+            ArgumentNotValid.checkTrue(outputOffset >= 0 || outputOffset == UNKNOWN_OFFSET,
+                    "outputOffset must be either non-negative or UNKNOWN_OFFSET");
             ArgumentNotValid.checkNotNull(exception, "Exception exception");
             this.fileName = null;
             this.fileOffset = UNKNOWN_OFFSET;
@@ -471,11 +448,11 @@ public abstract class FileBatchJob implements Serializable {
          * ExceptionOccurence object.
          */
         public String toString() {
-            return "ExceptionOccurrence: (filename, fileoffset, outputoffset, "
-                    + "exception, inInitialize, inFinish) = (" + fileName
-                    + ", " + fileOffset + ", " + outputOffset + ", "
-                    + exception + ", " + inInitialize + ", " + inFinish + "). ";
+            return "ExceptionOccurrence: (filename, fileoffset, outputoffset, " + "exception, inInitialize, inFinish)"
+            		+ " = (" + fileName + ", " + fileOffset + ", " + outputOffset + ", " + exception + ", "
+            		+ inInitialize + ", " + inFinish + "). ";
         }
         
     }
+
 }

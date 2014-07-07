@@ -23,15 +23,15 @@
 
 package dk.netarkivet.common.utils.cdx;
 
-import java.util.regex.Pattern;
-import java.io.OutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.util.regex.Pattern;
 
 import org.archive.io.arc.ARCRecord;
 
-import dk.netarkivet.common.utils.arc.ARCBatchJob;
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.arc.ARCBatchJob;
 
 /**
  * Job to get cdx records out of metadata files.
@@ -83,9 +83,8 @@ public class GetCDXRecordsBatchJob extends ARCBatchJob {
                     //}
                 }
             } catch (IOException e) {
-                String message = "Error writing body of ARC entry '"
-                                 + sar.getMetaData().getArcFile() + "' offset '"
-                                 + sar.getMetaData().getOffset() + "'";
+                String message = "Error writing body of ARC entry '" + sar.getMetaData().getArcFile() + "' offset '"
+                		+ sar.getMetaData().getOffset() + "'";
                 throw new IOFailure(message, e);
             }
         }
@@ -97,4 +96,5 @@ public class GetCDXRecordsBatchJob extends ARCBatchJob {
      */
     public void finish(OutputStream os) {
     }
+
 }

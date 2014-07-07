@@ -33,8 +33,8 @@ import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -45,10 +45,11 @@ import dk.netarkivet.common.utils.StreamUtils;
  * the key to the map is the class name, and the value is the class stored
  * as a byte array.
  */
-@SuppressWarnings({"serial", "resource"})
+@SuppressWarnings("serial")
 public class ByteJarLoader extends ClassLoader implements Serializable {
-    /** The log. */
-    transient Log log = LogFactory.getLog(this.getClass().getName());
+
+	/** The log. */
+    private static final transient Logger log = LoggerFactory.getLogger(ByteJarLoader.class);
 
     /** The map, that holds the class data. */
     Map<String, byte[]> binaryData = new HashMap<String, byte[]>();
@@ -68,25 +69,21 @@ public class ByteJarLoader extends ClassLoader implements Serializable {
      */
     public ByteJarLoader(File... files) {
         ArgumentNotValid.checkNotNull(files, "File ... files");
-        ArgumentNotValid.checkTrue(files.length != 0,
-        "Should not be empty array");
+        ArgumentNotValid.checkTrue(files.length != 0, "Should not be empty array");
         for (File file : files) {
             try {
                 JarFile jarFile = new JarFile(file);
-                for (Enumeration<JarEntry> e = jarFile.entries(); e
-                .hasMoreElements();) {
+                for (Enumeration<JarEntry> e = jarFile.entries(); e.hasMoreElements();) {
                     JarEntry entry = e.nextElement();
                     String name = entry.getName();
                     InputStream in = jarFile.getInputStream(entry);
-                    ByteArrayOutputStream out = new ByteArrayOutputStream(
-                            (int) entry.getSize());
+                    ByteArrayOutputStream out = new ByteArrayOutputStream((int) entry.getSize());
                     StreamUtils.copyInputStreamToOutputStream(in, out);
-                    log.trace("Entering data for class '" + name + "'");
+                    log.trace("Entering data for class '{}'", name);
                     binaryData.put(name, out.toByteArray());
                 }
             } catch (IOException e) {
-                throw new IOFailure("Failed to load jar file '"
-                        + file.getAbsolutePath() + "': " + e);
+                throw new IOFailure("Failed to load jar file '" + file.getAbsolutePath() + "': " + e);
             }
         }
     }
@@ -109,13 +106,10 @@ public class ByteJarLoader extends ClassLoader implements Serializable {
         // in the
         // hashmap
         // Note: The class is stored in the hashmap with a .class extension
-        String realClassName = className.replace(JAVA_PACKAGE_SEPARATOR,
-                DIRECTOR_SEPARATOR)
-                + ".class";
+        String realClassName = className.replace(JAVA_PACKAGE_SEPARATOR, DIRECTOR_SEPARATOR) + ".class";
 
         if (binaryData.isEmpty()) {
-            log.warn("No data loaded for class with name '" + className
-                    + "'");
+            log.warn("No data loaded for class with name '{}'", className);
         }
         if (binaryData.containsKey(realClassName)) {
             final byte[] bytes = binaryData.get(realClassName);
@@ -124,4 +118,5 @@ public class ByteJarLoader extends ClassLoader implements Serializable {
             return super.findClass(className);
         }
     }
+
 }

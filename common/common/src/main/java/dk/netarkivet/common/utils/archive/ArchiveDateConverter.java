@@ -62,8 +62,7 @@ public class ArchiveDateConverter {
 
     /** <code>DateFormat</code> is not thread safe,
      *  so we wrap its construction inside a <code>ThreadLocal</code> object. */
-    private static final ThreadLocal<ArchiveDateConverter> DateParserTL =
-        new ThreadLocal<ArchiveDateConverter>() {
+    private static final ThreadLocal<ArchiveDateConverter> DateParserTL = new ThreadLocal<ArchiveDateConverter>() {
     	@Override
         public ArchiveDateConverter initialValue() {
             return new ArchiveDateConverter();

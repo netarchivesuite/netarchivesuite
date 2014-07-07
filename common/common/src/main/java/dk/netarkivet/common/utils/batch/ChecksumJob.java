@@ -28,14 +28,13 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.ChecksumCalculator;
 import dk.netarkivet.common.utils.KeyValuePair;
-
 
 /**
  * Class responsible for checksumming a list of files.
@@ -45,7 +44,7 @@ import dk.netarkivet.common.utils.KeyValuePair;
 public class ChecksumJob extends FileBatchJob {
 
     /** The log.*/
-    protected transient Log log = LogFactory.getLog(getClass().getName());
+    protected static final transient Logger log = LoggerFactory.getLogger(ChecksumJob.class);
     
     /** Characters used for separating a file identifier 
      * from the checksum in the output from a checksum job.
@@ -82,12 +81,10 @@ public class ChecksumJob extends FileBatchJob {
     public boolean processFile(File file, OutputStream os) {
         ArgumentNotValid.checkNotNull(file, "file");
         try {
-            os.write((file.getName()
-                    + STRING_FILENAME_SEPARATOR
-                    + ChecksumCalculator.calculateMd5(file) + "\n").getBytes());
+            os.write((file.getName() + STRING_FILENAME_SEPARATOR
+            		+ ChecksumCalculator.calculateMd5(file) + "\n").getBytes());
         } catch (IOException e) {
-            log.warn("Checksumming of file " + file.getName()
-                    + " failed: ", e);
+            log.warn("Checksumming of file {} failed: ", file.getName(), e);
             return false;
         }
         return true;
@@ -121,13 +118,11 @@ public class ChecksumJob extends FileBatchJob {
      * @return The filename->checksum mapping.
      * @throws ArgumentNotValid if the line is not on the correct form.
      */
-    public static KeyValuePair<String, String> parseLine(String line) 
-            throws ArgumentNotValid {
+    public static KeyValuePair<String, String> parseLine(String line) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(line, "checksum line");
         String[] parts = line.split(STRING_FILENAME_SEPARATOR);
         if (parts.length != 2) {
-            throw new ArgumentNotValid("String '" + line + "' is not on"
-                    + " checksum output form");
+            throw new ArgumentNotValid("String '" + line + "' is not on checksum output form");
         }
         return new KeyValuePair<String, String>(parts[0], parts[1]);
     }
@@ -145,8 +140,7 @@ public class ChecksumJob extends FileBatchJob {
         } else {
             noOfFailedFiles = filesFailed.size();
         }
-        return ("Checksum job " + getClass().getName()
-                + ": [Files Processed = " + noOfFilesProcessed
+        return ("Checksum job " + getClass().getName() + ": [Files Processed = " + noOfFilesProcessed
                 + "; Files  failed = " + noOfFailedFiles + "]");
     }
 
@@ -161,7 +155,6 @@ public class ChecksumJob extends FileBatchJob {
         } catch (Exception e) {
             throw new IOFailure("Unexpected error during deserialization", e);
         }
-        log = LogFactory.getLog(getClass().getName());
     }
 
     /**

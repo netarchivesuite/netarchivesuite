@@ -28,7 +28,8 @@ import java.io.File;
  * Represents a location key in the ARC format.
  */
 public class ARCKey {
-    /** The ARC file that we will be reading from. */
+
+	/** The ARC file that we will be reading from. */
     private File arcFile;
     /** The offset that the entry starts at in the file. */
     private long offset;
@@ -49,8 +50,7 @@ public class ARCKey {
     public ARCKey(String archiveFileName, long offset) {
         String arcgz;
         if (archiveFileName.toLowerCase().endsWith(ALEXA_DAT_FILE_EXTENSION)) {
-            arcgz = archiveFileName.substring(0,
-                    archiveFileName.length() - ALEXA_DAT_FILE_EXTENSION.length()
+            arcgz = archiveFileName.substring(0, archiveFileName.length() - ALEXA_DAT_FILE_EXTENSION.length()
                     ) + GZIPPED_ARC_FILE_EXTENSION;
         } else {
             arcgz = archiveFileName;
@@ -75,5 +75,5 @@ public class ARCKey {
     public String toString() {
         return getFile() + " offset: " + getOffset();
     }
-}
 
+}

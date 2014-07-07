@@ -32,8 +32,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -45,14 +45,15 @@ import dk.netarkivet.common.exceptions.IOFailure;
  */
 @SuppressWarnings({ "unchecked", "rawtypes", "serial" })
 public class LoadableJarBatchJob extends FileBatchJob {
-    /** The FileBatchJob that this LoadableJarBatchJob is a wrapper for. */
+
+    /** The log. */
+    private static final transient Logger log = LoggerFactory.getLogger(LoadableJarBatchJob.class);
+
+	/** The FileBatchJob that this LoadableJarBatchJob is a wrapper for. */
     transient FileBatchJob loadedJob;
 
     /** The ClassLoader of type ByteJarLoader associated with this job. */
     private ClassLoader multipleClassLoader;
-
-    /** The log. */
-    transient Log log = LogFactory.getLog(this.getClass().getName());
 
     /** The name of the loaded Job. */
     private String jobClass;
@@ -70,20 +71,18 @@ public class LoadableJarBatchJob extends FileBatchJob {
      * FileBatchJob.
      * @throws ArgumentNotValid If any of the arguments are null.
      */
-    public LoadableJarBatchJob(String jobClass, List<String> arguments, 
-            File... jarFiles) throws ArgumentNotValid {
+    public LoadableJarBatchJob(String jobClass, List<String> arguments, File... jarFiles) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(jarFiles, "File jarFile");
         ArgumentNotValid.checkNotNullOrEmpty(jobClass, "String jobClass");
         ArgumentNotValid.checkNotNull(arguments, "List<String> arguments");
         this.jobClass = jobClass;
         this.args = arguments;
-        StringBuffer res = new StringBuffer(
-                "Loading loadableJarBatchJob using jarfiles: ");
+        StringBuffer res = new StringBuffer("Loading loadableJarBatchJob using jarfiles: ");
         for (File jarFile : jarFiles) {
             res.append(jarFile.getName());
         }
         res.append(" and jobclass '" + jobClass);
-        if(!args.isEmpty()) {
+        if (!args.isEmpty()) {
             res.append(", and arguments: '" + args + "'.");
         }
         log.info(res.toString());
@@ -102,7 +101,7 @@ public class LoadableJarBatchJob extends FileBatchJob {
         try {
             Class batchClass = multipleClassLoader.loadClass(jobClass);
             
-            if(args.size() == 0) {
+            if (args.size() == 0) {
                 // just load if no arguments.
                 loadedJob = (FileBatchJob) batchClass.newInstance();
             } else {
@@ -115,16 +114,15 @@ public class LoadableJarBatchJob extends FileBatchJob {
                 // extract the constructor and instantiate the batchjob.
                 Constructor con = batchClass.getConstructor(argClasses);
                 loadedJob = (FileBatchJob) con.newInstance(args.toArray());
-                log.debug("Loaded batchjob with arguments: '" + args + "'.");
+                log.debug("Loaded batchjob with arguments: '{}'.", args);
             }
         } catch (InvocationTargetException e) {
-            final String msg = "Not allowed to invoke the batchjob '" 
-                + jobClass + "'.";
+            final String msg = "Not allowed to invoke the batchjob '" + jobClass + "'.";
             log.warn(msg, e);
             throw new IOFailure(msg, e);
         } catch (NoSuchMethodException e) {
-            final String msg = "No constructor for the arguments '" + args 
-                    + "' can be found for the batchjob '" + jobClass + "'.";
+            final String msg = "No constructor for the arguments '" + args + "' can be found for the batchjob '"
+            		+ jobClass + "'.";
             log.warn(msg, e);
             throw new IOFailure(msg, e);
         } catch (InstantiationException e) {
@@ -191,8 +189,7 @@ public class LoadableJarBatchJob extends FileBatchJob {
      * @return a Human readable representation of this class
      */
     public String toString() {
-        return this.getClass().getName() + " processing " + jobClass + " from "
-                + multipleClassLoader.toString();
+        return this.getClass().getName() + " processing " + jobClass + " from " + multipleClassLoader.toString();
     }
 
     /**
@@ -221,10 +218,8 @@ public class LoadableJarBatchJob extends FileBatchJob {
      *             If the class definition of the serialized object cannot be
      *             found.
      */
-    private void readObject(ObjectInputStream in) throws IOException,
-            ClassNotFoundException {
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
-        log = LogFactory.getLog(this.getClass().getName());
     }
 
     @Override
@@ -246,4 +241,5 @@ public class LoadableJarBatchJob extends FileBatchJob {
     public String getLoadedJobClass() {
         return jobClass;
     }
+
 }

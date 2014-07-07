@@ -24,26 +24,23 @@ package dk.netarkivet.common.distribute;
 
 import java.io.File;
 
+import org.archive.io.ArchiveRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SettingsFactory;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.archive.io.ArchiveRecord;
 
 /**
  * Factory for creating remote files.
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class RemoteFileFactory extends SettingsFactory<RemoteFile> {
-    /**
-        * A named logger for this class.
-        */
-       private static final transient Log log =
-               LogFactory.getLog(RemoteFileFactory.class.getName());
 
+	/** A named logger for this class. */
+    private static final transient Logger log = LoggerFactory.getLogger(RemoteFileFactory.class);
 
     /**
      * Create a remote file that handles the transport of the remote file data.
@@ -57,25 +54,19 @@ public class RemoteFileFactory extends SettingsFactory<RemoteFile> {
      * transferred more than once. 
      * @return A RemoteFile instance encapsulating the file argument.
      */
-    public static RemoteFile getInstance(File file, boolean useChecksums,
-                                         boolean fileDeletable,
-                                         boolean multipleDownloads,
-                                         RemoteFileSettings connectionParams) {
+    public static RemoteFile getInstance(File file, boolean useChecksums, boolean fileDeletable,
+    		boolean multipleDownloads, RemoteFileSettings connectionParams) {
         ArgumentNotValid.checkNotNull(file, "File file");
-        return SettingsFactory.getInstance(
-                CommonSettings.REMOTE_FILE_CLASS, file, useChecksums, 
-                fileDeletable, multipleDownloads, connectionParams);
+        return SettingsFactory.getInstance(CommonSettings.REMOTE_FILE_CLASS, file, useChecksums, fileDeletable,
+        		multipleDownloads, connectionParams);
     }
-   
-    
+
     /* Same as the above method, but without the required RemoteFileSettings. */
-    public static RemoteFile getInstance(File file, boolean useChecksums,
-            boolean fileDeletable,
-            boolean multipleDownloads) {
+    public static RemoteFile getInstance(File file, boolean useChecksums, boolean fileDeletable,
+    		boolean multipleDownloads) {
         ArgumentNotValid.checkNotNull(file, "File file");
-        return SettingsFactory.getInstance(
-                CommonSettings.REMOTE_FILE_CLASS, file, useChecksums, 
-                fileDeletable, multipleDownloads);
+        return SettingsFactory.getInstance(CommonSettings.REMOTE_FILE_CLASS, file, useChecksums, fileDeletable,
+        		multipleDownloads);
     }
 
     /**
@@ -85,8 +76,7 @@ public class RemoteFileFactory extends SettingsFactory<RemoteFile> {
      * @return  the file to be copied.
      */
     public static RemoteFile getExtendedInstance(ArchiveRecord record) {
-        return  SettingsFactory.getInstance(
-                CommonSettings.REMOTE_FILE_CLASS, record);
+        return  SettingsFactory.getInstance(CommonSettings.REMOTE_FILE_CLASS, record);
     }
 
     /**
@@ -105,9 +95,8 @@ public class RemoteFileFactory extends SettingsFactory<RemoteFile> {
                 return false;
             }
         } catch (ClassNotFoundException e) {
-            log.error("Unknown RemoteFile class :" + remoteFileClass);
-            throw new ArgumentNotValid("Unknown RemoteFile class :" +
-                                       remoteFileClass);
+            log.error("Unknown RemoteFile class :{}", remoteFileClass);
+            throw new ArgumentNotValid("Unknown RemoteFile class :" + remoteFileClass);
         }
     }
 
@@ -144,4 +133,5 @@ public class RemoteFileFactory extends SettingsFactory<RemoteFile> {
     public static RemoteFile getDistributefileInstance(File file) {
         return getInstance(file, true, false, true);
     }
+
 }

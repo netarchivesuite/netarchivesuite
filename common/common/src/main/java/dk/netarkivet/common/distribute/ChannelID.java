@@ -44,8 +44,8 @@ public class ChannelID implements Serializable {
      * It is used for prefixing all ChannelIDs.
      * An example value is "PROD".
      */
-    private final String environmentName =
-            Settings.get(CommonSettings.ENVIRONMENT_NAME);
+    private final String environmentName = Settings.get(CommonSettings.ENVIRONMENT_NAME);
+
     /**
      * application instance id is a setting for an application's
      * identification as a specific process on a given machine.
@@ -53,16 +53,17 @@ public class ChannelID implements Serializable {
      * Note that it is set to uppercase in order to ensure that a channel name
      * only has uppercase characters.
      */
-    private static final String applicationInstanceId =
-            Settings.get(CommonSettings.APPLICATION_INSTANCE_ID).toUpperCase();
+    private static final String applicationInstanceId = Settings.get(
+    		CommonSettings.APPLICATION_INSTANCE_ID).toUpperCase();
+
     /**
      * application instance id is a setting for an application's
      * identification as a specific process on a given machine.
      * An example value is "BAONE".
      */
-    private static final String applicationAbbreviation =
-        getApplicationAbbreviation(
-                    Settings.get(CommonSettings.APPLICATION_NAME));
+    private static final String applicationAbbreviation = getApplicationAbbreviation(Settings.get(
+    		CommonSettings.APPLICATION_NAME));
+
     /**
      * Constants to make the semantics of parameters to our name constructors
      * more explicit.
@@ -74,6 +75,7 @@ public class ChannelID implements Serializable {
     public static final boolean NO_APPLINST_ID = false;
     public static final boolean TOPIC = true;
     public static final boolean QUEUE = false;
+
     /**
      * A ChannelID is identified by its name.
      * It has one bit of state information: is it a queue or a topic?
@@ -97,8 +99,7 @@ public class ChannelID implements Serializable {
     */
     public ChannelID(String appPref, String replicaId, boolean useNodeId,
         boolean useAppInstId, boolean isTopic) {
-        this.name = constructName(
-                appPref, replicaId, useNodeId, useAppInstId, isTopic);
+        this.name = constructName(appPref, replicaId, useNodeId, useAppInstId, isTopic);
     }
 
     /**
@@ -124,17 +125,15 @@ public class ChannelID implements Serializable {
             // Replace the '.' in the IP-address with '_'
             id = SystemUtils.getLocalIP().replace('.', '_');
             if (useAppInstId) {
-                id += Channels.CHANNEL_PART_SEPARATOR 
-                    + applicationAbbreviation;
+                id += Channels.CHANNEL_PART_SEPARATOR + applicationAbbreviation;
                 if (!applicationInstanceId.isEmpty()) {
-                    id += (Channels.CHANNEL_PART_SEPARATOR 
-                            + applicationInstanceId);
+                    id += (Channels.CHANNEL_PART_SEPARATOR + applicationInstanceId);
                 }
             }
         }
         
-        String resultingName = userId + Channels.CHANNEL_PART_SEPARATOR
-                + replicaId + Channels.CHANNEL_PART_SEPARATOR + appPref;
+        String resultingName = userId + Channels.CHANNEL_PART_SEPARATOR + replicaId + Channels.CHANNEL_PART_SEPARATOR
+        		+ appPref;
         if (!id.isEmpty()) {
             resultingName += Channels.CHANNEL_PART_SEPARATOR + id; 
         }
@@ -143,6 +142,7 @@ public class ChannelID implements Serializable {
         }
         return resultingName;
     }
+
     /**
      * Getter for the channel name.
      *
@@ -151,13 +151,13 @@ public class ChannelID implements Serializable {
     public String getName() {
         return name;
     }
+
     /**
     * Pretty-printer.
     * @return a nice String representation of the ChannelID.
     */
     public String toString() {
-        return Channels.isTopic(name) ? ("[Topic '" + name + "']")
-                : ("[Queue '" + name + "']");
+        return Channels.isTopic(name) ? ("[Topic '" + name + "']") : ("[Queue '" + name + "']");
     }
     
     /**
@@ -173,8 +173,7 @@ public class ChannelID implements Serializable {
         try {
             ois.defaultReadObject();
         } catch (Exception e) {
-            throw new IOFailure("Standard deserialization of ChannelID failed.",
-                e);
+            throw new IOFailure("Standard deserialization of ChannelID failed.", e);
         }
     }
     /**
@@ -190,8 +189,7 @@ public class ChannelID implements Serializable {
         try {
             oos.defaultWriteObject();
         } catch (Exception e) {
-            throw new IOFailure("Standard serialization of ChannelID failed.",
-                    e);
+            throw new IOFailure("Standard serialization of ChannelID failed.", e);
         }
     }
     /**
@@ -248,4 +246,5 @@ public class ChannelID implements Serializable {
         //return found abbreviation
         return abbr;
     }
+
 }

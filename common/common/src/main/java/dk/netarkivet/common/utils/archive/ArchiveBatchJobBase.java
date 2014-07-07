@@ -26,8 +26,8 @@ import java.io.File;
 import java.io.OutputStream;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.NetarkivetException;
@@ -35,6 +35,8 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 @SuppressWarnings({ "serial"})
 public abstract class ArchiveBatchJobBase extends FileBatchJob {
+
+    private static final Logger log = LoggerFactory.getLogger(ArchiveBatchJobBase.class);
 
 	/** The total number of records processed. */
     protected int noOfRecordsProcessed = 0;
@@ -59,9 +61,8 @@ public abstract class ArchiveBatchJobBase extends FileBatchJob {
      * @param archiveFile The archive file where the exception occurred.
      * @param index The offset in the archive file where the exception occurred.
      */
-    protected void handleOurException(
-            NetarkivetException e, File archiveFile, long index) {
-        handleException(e, archiveFile, index);
+    protected void handleOurException(NetarkivetException e, File archiveFile, long index) {
+    	handleException(e, archiveFile, index);
     }
 
     /**
@@ -75,13 +76,11 @@ public abstract class ArchiveBatchJobBase extends FileBatchJob {
      * @param index The index (in the archive file) at which the Exception was thrown
      * @throws ArgumentNotValid if e is null
      */
-    public void handleException(Exception e, File archiveFile, long index)
-      throws ArgumentNotValid{
+    public void handleException(Exception e, File archiveFile, long index) throws ArgumentNotValid{
         ArgumentNotValid.checkNotNull(e, "e");
-        
-        Log log = LogFactory.getLog(getClass().getName());
-        log.debug("Caught exception while running batch job " + "on file "
-                + archiveFile + ", position " + index + ":\n" + e.getMessage(), e);
+
+        log.debug("Caught exception while running batch job on file {}, position {}:\n{}",
+        		archiveFile, index, e, e.getMessage());
         addException(archiveFile, index, ExceptionOccurrence.UNKNOWN_OFFSET, e);
     }
 

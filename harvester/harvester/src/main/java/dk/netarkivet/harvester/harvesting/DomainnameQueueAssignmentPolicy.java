@@ -22,11 +22,11 @@
  */
 package dk.netarkivet.harvester.harvesting;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.archive.crawler.datamodel.CandidateURI;
 import org.archive.crawler.framework.CrawlController;
 import org.archive.crawler.frontier.HostnameQueueAssignmentPolicy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.utils.DomainUtils;
 
@@ -38,16 +38,14 @@ import dk.netarkivet.common.utils.DomainUtils;
  * y.z -> y.z
  * nn.nn.nn.nn -> nn.nn.nn.nn
  */
-public class DomainnameQueueAssignmentPolicy
-        extends HostnameQueueAssignmentPolicy {
-    /** A key used for the cases when we can't figure out the URI.
-     *  This is taken from parent, where it has private access.  Parent returns
-     *  this on things like about:blank.
-     */
-    static final String DEFAULT_CLASS_KEY = "default...";
+public class DomainnameQueueAssignmentPolicy extends HostnameQueueAssignmentPolicy {
 
-    private Log log
-            = LogFactory.getLog(getClass());
+    private static final Logger log = LoggerFactory.getLogger(DomainnameQueueAssignmentPolicy.class);
+
+	/** A key used for the cases when we can't figure out the URI.
+     *  This is taken from parent, where it has private access.  Parent returns
+     *  this on things like about:blank. */
+    static final String DEFAULT_CLASS_KEY = "default...";
 
     /** Return a key for queue names based on domain names (last two parts of
      * host name) or IP address.  They key may include a #<portnr> at the end.
@@ -67,8 +65,7 @@ public class DomainnameQueueAssignmentPolicy
             // errors.
             candidate = super.getClassKey(controller, cauri);
         } catch (NullPointerException e) {
-            log.debug("Heritrix broke getting class key candidate for "
-                      + cauri);
+            log.debug("Heritrix broke getting class key candidate for {}", cauri);
             candidate = DEFAULT_CLASS_KEY;
         }
         String[] hostnameandportnr = candidate.split("#");
@@ -77,10 +74,10 @@ public class DomainnameQueueAssignmentPolicy
         }
         String domainName = DomainUtils.domainNameFromHostname(hostnameandportnr[0]);
         if (domainName == null) { // Not valid according to our rules
-            log.debug("Illegal class key candidate '" + candidate
-                      + "' for '" + cauri + "'");
+            log.debug("Illegal class key candidate '{}' for '{}'", candidate, cauri);
             return candidate;
         }
         return domainName;
     }
+
 }

@@ -44,42 +44,38 @@ public abstract class WARCBatchFilter implements Serializable {
     
     /** A default filter: Accepts everything. */
     public static final WARCBatchFilter NO_FILTER = new WARCBatchFilter("NO_FILTER") {
-            public boolean accept(WARCRecord record) {
-                return true;
-            }
-        };
+        public boolean accept(WARCRecord record) {
+            return true;
+        }
+    };
     
     /** The name of the filter that filters out non response records. */
-    private static final String EXCLUDE_NON_RESPONSE_RECORDS_FILTER_NAME
-        = "EXCLUDE_NON_RESPONSE_RECORDS";
+    private static final String EXCLUDE_NON_RESPONSE_RECORDS_FILTER_NAME = "EXCLUDE_NON_RESPONSE_RECORDS";
 
     /** A default filter: Accepts on response records. */
     public static final WARCBatchFilter EXCLUDE_NON_RESPONSE_RECORDS = new WARCBatchFilter(
             EXCLUDE_NON_RESPONSE_RECORDS_FILTER_NAME) {
-            public boolean accept(WARCRecord record) {
-                HeritrixArchiveRecordWrapper recordWrapper = new HeritrixArchiveRecordWrapper(record);
-                String warcType = recordWrapper.getHeader().getHeaderStringValue("WARC-Type");
-                return "response".equalsIgnoreCase(warcType);
-            }
-        };
+        public boolean accept(WARCRecord record) {
+            HeritrixArchiveRecordWrapper recordWrapper = new HeritrixArchiveRecordWrapper(record);
+            String warcType = recordWrapper.getHeader().getHeaderStringValue("WARC-Type");
+            return "response".equalsIgnoreCase(warcType);
+        }
+    };
 
     /** Prefix for the url in HTTP records. */    
     private static final String HTTP_ENTRIES_HTTP_PREFIX = "http:";
     /** The name of the filter accepting only HTTP entries. */
-    private static final String ONLY_HTTP_ENTRIES_FILTER_NAME
-        = "ONLY_HTTP_ENTRIES";
+    private static final String ONLY_HTTP_ENTRIES_FILTER_NAME = "ONLY_HTTP_ENTRIES";
 
     /**
      * Filter that only accepts records where the url starts with http.
      */
-    public static final WARCBatchFilter ONLY_HTTP_ENTRIES = new WARCBatchFilter(
-            ONLY_HTTP_ENTRIES_FILTER_NAME) {
-            public boolean accept(WARCRecord record) {
-                HeritrixArchiveRecordWrapper recordWrapper = new HeritrixArchiveRecordWrapper(record);
-                return recordWrapper.getHeader().getUrl().startsWith(
-                        HTTP_ENTRIES_HTTP_PREFIX);
-            }
-        };
+    public static final WARCBatchFilter ONLY_HTTP_ENTRIES = new WARCBatchFilter(ONLY_HTTP_ENTRIES_FILTER_NAME) {
+        public boolean accept(WARCRecord record) {
+            HeritrixArchiveRecordWrapper recordWrapper = new HeritrixArchiveRecordWrapper(record);
+            return recordWrapper.getHeader().getUrl().startsWith(HTTP_ENTRIES_HTTP_PREFIX);
+        }
+    };
     
     /** Create a new filter with the given name.
      * @param name The name of this filter, for debugging mostly.
@@ -108,26 +104,22 @@ public abstract class WARCBatchFilter implements Serializable {
         throws MimeTypeParseException {
         ArgumentNotValid.checkNotNullOrEmpty(mimetype, "String mimetype");
         if (!mimetypeIsOk(mimetype)) {
-            throw new MimeTypeParseException("Mimetype argument '" + mimetype
-                + "' is invalid");
+            throw new MimeTypeParseException("Mimetype argument '" + mimetype + "' is invalid");
         }
         return new WARCBatchFilter(MIMETYPE_BATCH_FILTER_NAME_PREFIX + mimetype) {
-                public boolean accept(WARCRecord record) {
-                    HeritrixArchiveRecordWrapper recordWrapper = new HeritrixArchiveRecordWrapper(record);
-                    return recordWrapper.getHeader().getMimetype().startsWith(
-                            mimetype);
-                }
-            };
+            public boolean accept(WARCRecord record) {
+                HeritrixArchiveRecordWrapper recordWrapper = new HeritrixArchiveRecordWrapper(record);
+                return recordWrapper.getHeader().getMimetype().startsWith(mimetype);
+            }
+        };
     }
 
     /** The name-prefix for mimetype filters. */    
-    private static final String MIMETYPE_BATCH_FILTER_NAME_PREFIX
-        = "MimetypeBatchFilter-";
+    private static final String MIMETYPE_BATCH_FILTER_NAME_PREFIX = "MimetypeBatchFilter-";
     /** Regexp for mimetypes. */
     private static final String MIMETYPE_REGEXP = "\\w+/\\w+";
     /** Pattern for mimetypes. */
-    private static final Pattern MIMETYPE_PATTERN = Pattern.compile(
-            MIMETYPE_REGEXP);
+    private static final Pattern MIMETYPE_PATTERN = Pattern.compile(MIMETYPE_REGEXP);
 
     /**
     * Check, if a certain mimetype is valid.

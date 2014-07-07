@@ -22,14 +22,13 @@
  */
 package dk.netarkivet.common.utils.batch;
 
-import org.archive.io.arc.ARCRecord;
-
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-
 import java.awt.datatransfer.MimeTypeParseException;
 import java.io.Serializable;
 import java.util.regex.Pattern;
 
+import org.archive.io.arc.ARCRecord;
+
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /** A filter class for batch entries.  Allows testing whether or not
  * to process an entry without loading the entry data first.
@@ -47,53 +46,47 @@ public abstract class ARCBatchFilter implements Serializable {
             public boolean accept(ARCRecord record) {
                 return true;
             }
-        };
+    };
     
     /** The ARCRecord url for the filedesc record (the header record of every 
      * ARC File).
      */    
-    private static final String FILE_HEADERS_FILEDESC_PREFIX
-        = "filedesc";
+    private static final String FILE_HEADERS_FILEDESC_PREFIX = "filedesc";
     /** The name of the filter that filters out the filedesc record. */
-    private static final String EXCLUDE_FILE_HEADERS_FILTER_NAME
-        = "EXCLUDE_FILE_HEADERS";
+    private static final String EXCLUDE_FILE_HEADERS_FILTER_NAME = "EXCLUDE_FILE_HEADERS";
     /** A default filter: Accepts all but the first file. */
-    public static final ARCBatchFilter EXCLUDE_FILE_HEADERS = new ARCBatchFilter(
-            EXCLUDE_FILE_HEADERS_FILTER_NAME) {
-            public boolean accept(ARCRecord record) {
-                return !record.getMetaData().getUrl().startsWith(
-                        FILE_HEADERS_FILEDESC_PREFIX);
-            }
-        };
+    public static final ARCBatchFilter EXCLUDE_FILE_HEADERS = new ARCBatchFilter(EXCLUDE_FILE_HEADERS_FILTER_NAME) {
+        public boolean accept(ARCRecord record) {
+            return !record.getMetaData().getUrl().startsWith(
+                    FILE_HEADERS_FILEDESC_PREFIX);
+        }
+    };
 
     /** Prefix for the url in HTTP records. */    
     private static final String HTTP_ENTRIES_HTTP_PREFIX = "http:";
     /** The name of th filter accepting only HTTP entries. */
-    private static final String ONLY_HTTP_ENTRIES_FILTER_NAME
-        = "ONLY_HTTP_ENTRIES";
+    private static final String ONLY_HTTP_ENTRIES_FILTER_NAME = "ONLY_HTTP_ENTRIES";
+
     /**
      * Filter that only accepts records where the url starts with http.
      */
-    public static final ARCBatchFilter ONLY_HTTP_ENTRIES = new ARCBatchFilter(
-            ONLY_HTTP_ENTRIES_FILTER_NAME) {
-            public boolean accept(ARCRecord record) {
-                return record.getMetaData().getUrl().startsWith(
-                        HTTP_ENTRIES_HTTP_PREFIX);
-            }
-        };
+    public static final ARCBatchFilter ONLY_HTTP_ENTRIES = new ARCBatchFilter(ONLY_HTTP_ENTRIES_FILTER_NAME) {
+        public boolean accept(ARCRecord record) {
+            return record.getMetaData().getUrl().startsWith(
+                    HTTP_ENTRIES_HTTP_PREFIX);
+        }
+    };
     
     /** The name-prefix for mimetype filters. */    
-    private static final String MIMETYPE_BATCH_FILTER_NAME_PREFIX
-        = "MimetypeBatchFilter-";
+    private static final String MIMETYPE_BATCH_FILTER_NAME_PREFIX = "MimetypeBatchFilter-";
     /** Regexp for mimetypes. */
     private static final String MIMETYPE_REGEXP = "\\w+/\\w+";
     /** Pattern for mimetypes. */
-    private static final Pattern MIMETYPE_PATTERN = Pattern.compile(
-            MIMETYPE_REGEXP);
+    private static final Pattern MIMETYPE_PATTERN = Pattern.compile(MIMETYPE_REGEXP);
 
     /** Create a new filter with the given name.
      *
-      * @param name The name of this filter, for debugging mostly.
+     * @param name The name of this filter, for debugging mostly.
      */
     protected ARCBatchFilter(String name) {
         ArgumentNotValid.checkNotNullOrEmpty(name, "String name");
@@ -118,16 +111,15 @@ public abstract class ARCBatchFilter implements Serializable {
         throws MimeTypeParseException {
         ArgumentNotValid.checkNotNullOrEmpty(mimetype, "String mimetype");
         if (!mimetypeIsOk(mimetype)) {
-            throw new MimeTypeParseException("Mimetype argument '" + mimetype
-                + "' is invalid");
+            throw new MimeTypeParseException("Mimetype argument '" + mimetype + "' is invalid");
         }
 
         return new ARCBatchFilter(MIMETYPE_BATCH_FILTER_NAME_PREFIX + mimetype) {
-                public boolean accept(ARCRecord record) {
-                    return record.getMetaData().getMimetype().startsWith(
-                            mimetype);
-                }
-            };
+            public boolean accept(ARCRecord record) {
+                return record.getMetaData().getMimetype().startsWith(
+                        mimetype);
+            }
+        };
     }
 
     /**
@@ -146,4 +138,5 @@ public abstract class ARCBatchFilter implements Serializable {
      * @return true, if the given record is accepted by this filter
      */
     public abstract boolean accept(ARCRecord record);
+
 }

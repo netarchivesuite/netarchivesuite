@@ -28,12 +28,12 @@ import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.archive.io.ArchiveRecord;
 import org.archive.io.warc.WARCReader;
 import org.archive.io.warc.WARCReaderFactory;
 import org.archive.io.warc.WARCRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.NetarkivetException;
@@ -49,6 +49,8 @@ import dk.netarkivet.common.utils.batch.WARCBatchFilter;
  */
 @SuppressWarnings({ "serial"})
 public abstract class WARCBatchJob extends FileBatchJob {
+
+    private static final Logger log = LoggerFactory.getLogger(WARCBatchJob.class);
 
     /** The total number of records processed. */
     protected int noOfRecordsProcessed = 0;
@@ -96,14 +98,12 @@ public abstract class WARCBatchJob extends FileBatchJob {
      * @throws ArgumentNotValid if either argument is null
      * @return true, if file processed successful, otherwise false
      */
-    public final boolean processFile(File warcFile, OutputStream os) throws
-            ArgumentNotValid{
+    public final boolean processFile(File warcFile, OutputStream os) throws ArgumentNotValid{
         ArgumentNotValid.checkNotNull(warcFile, "warcFile");
         ArgumentNotValid.checkNotNull(os, "os");
-        Log log = LogFactory.getLog(getClass().getName());
         long arcFileIndex = 0;
         boolean success = true;
-        log.info("Processing WARCfile: " + warcFile.getName());
+        log.info("Processing WARCfile: {}", warcFile.getName());
 
         try { // This outer try-catch block catches all unexpected exceptions
             //Create an WARCReader and retrieve its Iterator:
@@ -120,11 +120,9 @@ public abstract class WARCBatchJob extends FileBatchJob {
             try {
                 Iterator<? extends ArchiveRecord> it = warcReader.iterator();
                 /* Process all records from this Iterator: */
-                log.debug("Starting processing records in WARCfile '"
-                        + warcFile.getName() + "'.");
+                log.debug("Starting processing records in WARCfile '{}'.", warcFile.getName());
                 if (!it.hasNext()) {
-                    log.debug("No WARCRecords found in WARCfile '"
-                            + warcFile.getName() + "'.");
+                    log.debug("No WARCRecords found in WARCfile '{}'.", warcFile.getName());
                 }
                 WARCRecord record = null;
                 while (it.hasNext()) {
@@ -136,9 +134,8 @@ public abstract class WARCBatchJob extends FileBatchJob {
                         if (!getFilter().accept(record)) {
                             continue;
                         }
-                        log.debug(
-                                "Processing WARCRecord #" + noOfRecordsProcessed
-                                + " in WARCfile '" + warcFile.getName()  + "'.");
+                        log.debug("Processing WARCRecord #{} in WARCfile '{}'.",
+                        		noOfRecordsProcessed, warcFile.getName());
                         processRecord(record, os);
                         ++noOfRecordsProcessed;
                     } catch (NetarkivetException e) {
@@ -160,9 +157,7 @@ public abstract class WARCBatchJob extends FileBatchJob {
                     // Close the record
                     try {
                         // TODO maybe this works, maybe not...
-                        long arcRecordOffset =
-                                record.getHeader().getContentBegin() 
-                                + record.getHeader().getLength();
+                        long arcRecordOffset = record.getHeader().getContentBegin() + record.getHeader().getLength();
                         record.close();
                         arcFileIndex = arcRecordOffset;
                     } catch (IOException ioe) { // Couldn't close an WARCRecord
@@ -197,8 +192,7 @@ public abstract class WARCBatchJob extends FileBatchJob {
      * @param warcFile The WARC File where the exception occurred.
      * @param index The offset in the WARC File where the exception occurred.
      */
-    private void handleOurException(
-            NetarkivetException e, File warcFile, long index) {
+    private void handleOurException(NetarkivetException e, File warcFile, long index) {
         handleException(e, warcFile, index);
     }
 
@@ -215,13 +209,11 @@ public abstract class WARCBatchJob extends FileBatchJob {
      * was thrown
      * @throws ArgumentNotValid if e is null
      */
-    public void handleException(Exception e, File warcfile, long index)
-      throws ArgumentNotValid{
+    public void handleException(Exception e, File warcfile, long index) throws ArgumentNotValid{
         ArgumentNotValid.checkNotNull(e, "e");
-        
-        Log log = LogFactory.getLog(getClass().getName());
-        log.debug("Caught exception while running batch job " + "on file "
-                + warcfile + ", position " + index + ":\n" + e.getMessage(), e);
+
+        log.debug("Caught exception while running batch job on file {}, position {}:\n{}",
+        		warcfile, index, e.getMessage(), e);
         addException(warcfile, index, ExceptionOccurrence.UNKNOWN_OFFSET, e);
     }
 

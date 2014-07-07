@@ -28,8 +28,8 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -38,14 +38,14 @@ import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriter;
 
-
 /**
  * Encapsulation of files to be ingested into the archive.
  * These files are presently placed subdirectories under the crawldir.
  *
  */
 public class IngestableFiles {
-    private final Log log = LogFactory.getLog(getClass());
+
+	private static final Logger log = LoggerFactory.getLogger(IngestableFiles.class);
 
     /** Subdir with final metadata file in it. */
     protected static final String METADATA_SUB_DIR = "metadata";
@@ -87,9 +87,7 @@ public class IngestableFiles {
         ArgumentNotValid.checkNotNullOrEmpty(files.getArchiveFilePrefix(), "harvestnamePrefix");
         this.crawlDir = files.getCrawlDir();
         if (!crawlDir.exists()) {
-            throw new ArgumentNotValid("The given crawlDir ("
-                    + crawlDir.getAbsolutePath()
-                    + ") does not exist");
+        	throw new ArgumentNotValid("The given crawlDir (" + crawlDir.getAbsolutePath() + ") does not exist");
         }
         this.jobId = files.getJobID();
         this.harvestnamePrefix = files.getArchiveFilePrefix();
@@ -132,16 +130,13 @@ public class IngestableFiles {
      */
     public void setMetadataGenerationSucceeded(boolean success) {
         if (isMetadataReady()) {
-            throw new PermissionDenied(
-                    "Metadata file " + getMetadataFile().getAbsolutePath()
-                    + " already exists");
+            throw new PermissionDenied("Metadata file " + getMetadataFile().getAbsolutePath() + " already exists");
         }
         
         if (success) {
             writer.close(); // close writer down
             if (!getTmpMetadataFile().exists()) {
-                String message = "No metadata was generated despite claims"
-                        + " that metadata generation was successfull.";
+                String message = "No metadata was generated despite claims that metadata generation was successfull.";
                 throw new PermissionDenied(message);
             }
             getTmpMetadataFile().renameTo(getMetadataFile());
@@ -161,14 +156,11 @@ public class IngestableFiles {
      */
     public MetadataFileWriter getMetadataWriter() {
         if (isMetadataReady()) {
-            throw new PermissionDenied(
-                    "Metadata file " + getMetadataFile().getAbsolutePath()
-                    + " already exists");
+            throw new PermissionDenied("Metadata file " + getMetadataFile().getAbsolutePath() + " already exists");
         }
         if (isMetadataFailed()) {
-            throw new PermissionDenied("Metadata generation of file "
-                    + getMetadataFile().getAbsolutePath()
-                    + " has already failed.");
+            throw new PermissionDenied("Metadata generation of file " + getMetadataFile().getAbsolutePath()
+            		+ " has already failed.");
         }
         if (writer == null) {
             writer = MetadataFileWriter.createWriter(getTmpMetadataFile());
@@ -186,9 +178,7 @@ public class IngestableFiles {
     public List<File> getMetadataArcFiles() {
         // Our one known metadata file must exist.
         if (!isMetadataReady()) {
-            throw new PermissionDenied(
-                    "Metadata file " + getMetadataFile().getAbsolutePath()
-                    + " does not exist");
+            throw new PermissionDenied("Metadata file " + getMetadataFile().getAbsolutePath() + " does not exist");
         }
         return Arrays.asList(new File[]{getMetadataFile()});
     }
@@ -206,9 +196,7 @@ public class IngestableFiles {
      * @return metadata arc file as a File
      */
     protected File getMetadataFile(){
-        return
-            new File(getMetadataDir(),
-                    MetadataFileWriter.getMetadataArchiveFileName(Long.toString(jobId)));
+        return new File(getMetadataDir(), MetadataFileWriter.getMetadataArchiveFileName(Long.toString(jobId)));
     }
 
     /**
@@ -225,9 +213,7 @@ public class IngestableFiles {
      * @return tmp-metadata arc file as a File
      */
     private File getTmpMetadataFile(){
-        return
-            new File(getTmpMetadataDir(),
-                    MetadataFileWriter.getMetadataArchiveFileName(Long.toString(jobId)));
+        return new File(getTmpMetadataDir(), MetadataFileWriter.getMetadataArchiveFileName(Long.toString(jobId)));
     }
 
     /** Get a list of all ARC files that should get ingested.  Any open files
@@ -316,9 +302,7 @@ public class IngestableFiles {
                 //Note: Due to regexp we know filename is at least 5 characters
                 File tofile = new File(fname.substring(0, fname.length() - 5));
                 if (!file.renameTo(tofile)) {
-                    log.warn("Failed to rename '" + file.getAbsolutePath()
-                             + "' to '"
-                             + tofile.getAbsolutePath() + "'");
+                    log.warn("Failed to rename '{}' to '{}'", file.getAbsolutePath(), tofile.getAbsolutePath());
                 }
             }
         }
@@ -338,8 +322,7 @@ public class IngestableFiles {
     public long getJobId() {
         return this.jobId;
     }
-    
-    
+
     /**
      * @return the harvestID of the harvest job being processed.
      */
@@ -363,5 +346,3 @@ public class IngestableFiles {
     }
     
 }
-
-

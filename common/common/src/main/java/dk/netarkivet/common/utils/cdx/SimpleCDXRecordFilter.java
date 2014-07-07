@@ -25,7 +25,6 @@ package dk.netarkivet.common.utils.cdx;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
-
 /**
  * A Simple CDXRecordFilter to be extended.
  * It only implements the filtername method.
@@ -33,9 +32,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 @SuppressWarnings({ "serial"})
 public abstract class SimpleCDXRecordFilter implements CDXRecordFilter{
 
-    /**
-     * Variable holding the filtername.
-     */
+    /** Variable holding the filtername. */
     private String filtername;
 
     /**
@@ -62,4 +59,5 @@ public abstract class SimpleCDXRecordFilter implements CDXRecordFilter{
      * dk.netarkivet.common.utils.cdx.CDXRecord)
      */
     public abstract boolean process(CDXRecord cdxrec);
+
 }

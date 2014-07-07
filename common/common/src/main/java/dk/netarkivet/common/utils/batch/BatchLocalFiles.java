@@ -28,8 +28,8 @@ import java.io.OutputStream;
 import java.util.Date;
 import java.util.HashSet;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -42,14 +42,14 @@ import dk.netarkivet.common.utils.Settings;
  * FileBatchJob and applies it to each file in turn.
  */
 public class BatchLocalFiles {
-    /** The list of files to run batch jobs on. */
-    private File[] files;
+
     /** The class logger. */
-    private Log log = LogFactory.getLog(BatchLocalFiles.class);
-    /** 
-     * The last time logging was performed. 
-     * Initial 0 to ensure logging the first time.
-     */
+    private static final Logger log = LoggerFactory.getLogger(BatchLocalFiles.class);
+
+	/** The list of files to run batch jobs on. */
+    private File[] files;
+
+    /** The last time logging was performed. Initial 0 to ensure logging the first time. */
     private long lastLoggingDate = 0;
     /** The time when the batchjob was started.*/
     private long startTime = 0;
@@ -66,8 +66,7 @@ public class BatchLocalFiles {
     public BatchLocalFiles(File[] incomingFiles) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(incomingFiles, "incomingFiles");
         for (int i = 0; i < incomingFiles.length; i++) {
-            ArgumentNotValid.checkNotNull(incomingFiles[i],
-                    "Null element at index " + i + " in file list for batch.");
+            ArgumentNotValid.checkNotNull(incomingFiles[i], "Null element at index " + i + " in file list for batch.");
         }
         this.files = incomingFiles;
     }
@@ -89,24 +88,18 @@ public class BatchLocalFiles {
             // count the files (used for logging).
             int fileCount = 0;
             // the time in milliseconds between the status logging
-            long logInterval = Settings.getLong(
-                    CommonSettings.BATCH_LOGGING_INTERVAL);
+            long logInterval = Settings.getLong(CommonSettings.BATCH_LOGGING_INTERVAL);
             // get the time for starting the batchjob (used for logging).
             startTime = new Date().getTime();
             //Process each file:
             for (File file : files) {
                 fileCount++;
-                if (job.getFilenamePattern().matcher(file.getName())
-                        .matches()) {
+                if (job.getFilenamePattern().matcher(file.getName()).matches()) {
                     long currentTime = new Date().getTime();
                     // perform logging if necessary.
                     if(lastLoggingDate + logInterval < currentTime) {
-                        log.info("The batchjob '" + job.getClass() 
-                                + "' has run for " 
-                                + (currentTime-startTime)/1000 + " seconds and"
-                                + " has reached file '" + file.getName() 
-                                + "', which is number " + fileCount + " out of "
-                                + files.length);
+                        log.info("The batchjob '{}' has run for {} seconds and has reached file '{}', which is number {} out of {}",
+                        		job.getClass(), (currentTime-startTime)/1000, file.getName(), fileCount, files.length);
                         // set that we have just logged.
                         lastLoggingDate = currentTime;
                     }
@@ -114,10 +107,9 @@ public class BatchLocalFiles {
                 }
                 
                 // check whether the batchjob should stop. 
-                if(Thread.currentThread().isInterrupted()) {
+                if (Thread.currentThread().isInterrupted()) {
                     // log and throw an error (not exception, they are caught!)
-                    String errMsg = "The batchjob '" + job.toString() 
-                            + "' has been interrupted and will terminate!";
+                    String errMsg = "The batchjob '" + job.toString() + "' has been interrupted and will terminate!";
                     log.warn(errMsg);
                     // TODO make new exception to thrown instead.
                     throw new BatchTermination(errMsg);
@@ -127,10 +119,10 @@ public class BatchLocalFiles {
             // TODO Consider adding this initialization exception to the list
             // of exception accumulated:
             // job.addInitializeException(outputOffset, e)
-            log.warn("Exception while initializing job " + job, e);
-            
+            log.warn("Exception while initializing job {}", job, e);
+
             // rethrow exception
-            if(e instanceof BatchTermination) {
+            if (e instanceof BatchTermination) {
                 throw (BatchTermination) e;
             }
         } finally {
@@ -141,10 +133,10 @@ public class BatchLocalFiles {
                 // TODO consider adding this finalization exception to the list
                 // of exception accumulated:
                 // job.addFinishException(outputOffset, e)
-                log.warn("Exception while finishing job " + job, e);
+                log.warn("Exception while finishing job {}", job, e);
 
                 // rethrow exception
-                if(e instanceof BatchTermination) {
+                if (e instanceof BatchTermination) {
                     throw (BatchTermination) e;
                 }
             }
@@ -157,10 +149,8 @@ public class BatchLocalFiles {
      * @param file The file to process
      * @param os Where to put the output.
      */
-    private void processFile(FileBatchJob job, final File file,
-            OutputStream os) {
-        log.trace("Started processing of file '" +  file.getAbsolutePath()
-                + "'.");
+    private void processFile(FileBatchJob job, final File file, OutputStream os) {
+        log.trace("Started processing of file '{}'.", file.getAbsolutePath());
         boolean success = false;
         try {
             success = job.processFile(file, os);
@@ -168,12 +158,12 @@ public class BatchLocalFiles {
             // TODO consider adding this exception to the list
             // of exception accumulated:
             // job.addException(currentFile, currentOffset, outputOffset, e)
-            log.warn("Exception while processing file " + file
-                     + " with job " + job, e);
+            log.warn("Exception while processing file {} with job {}", file, job, e);
         }
         job.noOfFilesProcessed++;
         if (!success) {
             job.filesFailed.add(file);
         }
     }
+
 }

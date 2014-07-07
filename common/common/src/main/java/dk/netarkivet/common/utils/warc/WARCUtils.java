@@ -38,8 +38,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.archive.io.ArchiveRecord;
 import org.archive.io.ArchiveRecordHeader;
 import org.archive.io.warc.WARCConstants;
@@ -48,6 +46,8 @@ import org.archive.io.warc.WARCReaderFactory;
 import org.archive.io.warc.WARCRecord;
 import org.archive.io.warc.WARCWriter;
 import org.archive.util.anvl.ANVLRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -64,7 +64,7 @@ import dk.netarkivet.common.utils.archive.HeritrixArchiveHeaderWrapper;
 public class WARCUtils {
     
     /** Logging output place. */
-    protected static final Log log = LogFactory.getLog(WARCUtils.class);
+    protected static final Logger log = LoggerFactory.getLogger(WARCUtils.class);
 
     /**
      * Create new WARCWriter, writing to warcfile newFile.
@@ -89,8 +89,7 @@ public class WARCUtils {
             if (ps != null) {
                 ps.close();
             }
-            String message = "Could not create WARCWriter to file '"
-                    + newFile + "'.\n";
+            String message = "Could not create WARCWriter to file '" + newFile + "'.\n";
             log.warn(message);
             throw new IOFailure(message, e);
         }
@@ -181,8 +180,7 @@ public class WARCUtils {
 
             String url = header.getUrl();
             Date date = header.getDate();
-            String dateStr = ArchiveDateConverter.getWarcDateFormat()
-                    .format(date);
+            String dateStr = ArchiveDateConverter.getWarcDateFormat().format(date);
             String mimetype = header.getMimetype();
             String recordIdStr;
             URI recordId;
@@ -238,8 +236,7 @@ public class WARCUtils {
                 throw new IOFailure("Unknown WARC-Type!");
             }
         } catch (Exception e) {
-            throw new IOFailure("Error occurred while writing an WARC record"
-                    + record, e);
+            throw new IOFailure("Error occurred while writing an WARC record" + record, e);
         }
     }
 
@@ -261,8 +258,7 @@ public class WARCUtils {
     public static byte[] readWARCRecord(WARCRecord record) throws IOFailure {
         ArgumentNotValid.checkNotNull(record, "WARCRecord record");
         if (record.getHeader().getLength() > Integer.MAX_VALUE) {
-            throw new IOFailure("WARC Record too long to fit in array: "
-                    + record.getHeader().getLength() + " > "
+            throw new IOFailure("WARC Record too long to fit in array: " + record.getHeader().getLength() + " > "
                     + Integer.MAX_VALUE);
         }
         // Calculate the length of the payload.
@@ -280,8 +276,8 @@ public class WARCUtils {
         int bytesRead;
         int totalBytes = 0;
         try {
-            for (; (totalBytes < payloadLength)
-                    && ((bytesRead = record.read(buffer)) != -1); totalBytes += bytesRead) {
+            for (; (totalBytes < payloadLength) && ((bytesRead = record.read(buffer)) != -1);
+            		totalBytes += bytesRead) {
                 System.arraycopy(buffer, 0, tmpbuffer, totalBytes, bytesRead);
             }
         } catch (IOException e) {
@@ -294,8 +290,7 @@ public class WARCUtils {
             // make sure we only return an array with bytes we actually read
             byte[] truncateBuffer = new byte[totalBytes];
             System.arraycopy(tmpbuffer, 0, truncateBuffer, 0, totalBytes);
-            log.debug("Storing " + totalBytes + " bytes. Expected to store: "
-                    + tmpbuffer.length);
+            log.debug("Storing {} bytes. Expected to store: {}", totalBytes, tmpbuffer.length);
             return truncateBuffer;
         } else {
             return tmpbuffer;
@@ -313,6 +308,7 @@ public class WARCUtils {
         ArchiveRecordHeader header = record.getHeader();
         return (String) header.getHeaderValue(WARCConstants.HEADER_KEY_TYPE);
     }
+
     /** 
      * Check if the given filename represents a WARC file.
      * @param filename A given filename
@@ -321,7 +317,7 @@ public class WARCUtils {
     public static boolean isWarc(String filename) {
         ArgumentNotValid.checkNotNullOrEmpty(filename, "filename");
         String lowercaseFilename = filename.toLowerCase();
-        return (lowercaseFilename.endsWith(".warc") 
-                || lowercaseFilename.endsWith(".warc.gz"));
+        return (lowercaseFilename.endsWith(".warc") || lowercaseFilename.endsWith(".warc.gz"));
     }
+
 }

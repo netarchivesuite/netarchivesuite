@@ -35,8 +35,8 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -74,24 +74,20 @@ import dk.netarkivet.harvester.HarvesterSettings;
  */
 class ArchiveFilesReportGenerator {
 
-    private static final Log LOG =
-        LogFactory.getLog(ArchiveFilesReportGenerator.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ArchiveFilesReportGenerator.class);
     
-    private static final String ARCHIVE_FORMAT = 
-    		Settings.get(HarvesterSettings.HERITRIX_ARCHIVE_FORMAT);
+    private static final String ARCHIVE_FORMAT = Settings.get(HarvesterSettings.HERITRIX_ARCHIVE_FORMAT);
 
-    private static final SimpleDateFormat ISO_8601_DATE_FORMAT =
-        new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    private static final SimpleDateFormat ISO_8601_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
-    private static final SimpleDateFormat SOURCE_DATE_FORMAT =
-        new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+    private static final SimpleDateFormat SOURCE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
     /**
      * Stores the opening date, closing date and size of an ARC file.
      */
     static class ArchiveFileStatus {
 
-        private static final String NOT_AVAILABLE = "-1";
+    	private static final String NOT_AVAILABLE = "-1";
 
         String openedDate = NOT_AVAILABLE;
         String closedDate = NOT_AVAILABLE;
@@ -116,6 +112,7 @@ class ArchiveFilesReportGenerator {
         protected long getSize() {
             return size;
         }
+
         protected void setSize(long size) {
             this.size = size;
         }
@@ -127,8 +124,7 @@ class ArchiveFilesReportGenerator {
 
         private String getIsoDateString(String dateStr) {
             try {
-                return ISO_8601_DATE_FORMAT.format(
-                        SOURCE_DATE_FORMAT.parse(dateStr));
+                return ISO_8601_DATE_FORMAT.format(SOURCE_DATE_FORMAT.parse(dateStr));
             } catch (ParseException e) {
                 return NOT_AVAILABLE;
             }
@@ -136,36 +132,23 @@ class ArchiveFilesReportGenerator {
 
     }
 
-    /**
-     * Format used to parse and extract values from  lines of heritrix.out
-     * pertaining to an ARC/WARC file opening.
-     */
+    /** Format used to parse and extract values from  lines of heritrix.out pertaining to an ARC/WARC file opening. */
     public static final MessageFormat FILE_OPEN_FORMAT =
-        new MessageFormat(
-                "{0} INFO thread-{1} "
-                + "org.archive.io.WriterPoolMember.createFile() Opened "
-                + "{2}.open");
+        new MessageFormat("{0} INFO thread-{1} org.archive.io.WriterPoolMember.createFile() Opened {2}.open");
 
-    /**
-     * Format used to parse and extract values from lines of heritrix.out
-     * pertaining to an ARC/WARC file closing.
-     */
+    /** Format used to parse and extract values from lines of heritrix.out pertaining to an ARC/WARC file closing. */
     public static final MessageFormat FILE_CLOSE_FORMAT =
-        new MessageFormat(
-                "{0} INFO thread-{1} "
-                + "org.archive.io.WriterPoolMember.close() Closed {2}"
-                + ", size {3}");
+        new MessageFormat("{0} INFO thread-{1} org.archive.io.WriterPoolMember.close() Closed {2}, size {3}");
 
     /**
      * The name of the report file. It will be generated in the crawl directory.
      */
-    public static final String REPORT_FILE_NAME = 
-    		Settings.get(HarvesterSettings.METADATA_ARCHIVE_FILES_REPORT_NAME);
+    public static final String REPORT_FILE_NAME = Settings.get(HarvesterSettings.METADATA_ARCHIVE_FILES_REPORT_NAME);
     
     /**
      * The header line of the report file.
      */
-    public static final String REPORT_FILE_HEADER = 
+    public static final String REPORT_FILE_HEADER =
     		Settings.get(HarvesterSettings.METADATA_ARCHIVE_FILES_REPORT_HEADER);
 
     /**
@@ -186,7 +169,6 @@ class ArchiveFilesReportGenerator {
      * @return the generated report file.
      */
     protected File generateReport() {
-
         Map<String, ArchiveFileStatus> reportContents = parseHeritrixOut();
 
         File reportFile = new File(crawlDir, REPORT_FILE_NAME);
@@ -194,16 +176,14 @@ class ArchiveFilesReportGenerator {
         try {
             boolean created = reportFile.createNewFile();
             if (!created) {
-                throw new IOException("Unable to create '" 
-                        + reportFile.getAbsolutePath() + "'."); 
+                throw new IOException("Unable to create '" + reportFile.getAbsolutePath() + "'."); 
             }
             PrintWriter out = new PrintWriter(reportFile);
 
             out.println(REPORT_FILE_HEADER);
 
             HashSet<String> arcFilesFromHeritrixOut = new HashSet<String>(); 
-            for (Map.Entry<String, ArchiveFilesReportGenerator.ArchiveFileStatus> entry
-                    : reportContents.entrySet()) {
+            for (Map.Entry<String, ArchiveFilesReportGenerator.ArchiveFileStatus> entry : reportContents.entrySet()) {
                 String arcFileName = entry.getKey();
                 arcFilesFromHeritrixOut.add(arcFileName);
                 ArchiveFileStatus afs = entry.getValue();
@@ -245,13 +225,10 @@ class ArchiveFilesReportGenerator {
      * @return the map of found ARC/WARC files, and related ArchiveFileStatus
      */
     protected Map<String, ArchiveFileStatus> parseHeritrixOut() {
-
-        Map<String, ArchiveFileStatus> arcFiles =
-            new LinkedHashMap<String, ArchiveFileStatus>();
+        Map<String, ArchiveFileStatus> arcFiles = new LinkedHashMap<String, ArchiveFileStatus>();
 
         try {
-            BufferedReader heritrixOut = new BufferedReader(
-                    new FileReader(new File(crawlDir, "heritrix.out")));
+            BufferedReader heritrixOut = new BufferedReader(new FileReader(new File(crawlDir, "heritrix.out")));
 
             String line = null;
             while ((line = heritrixOut.readLine()) != null) {
@@ -279,8 +256,8 @@ class ArchiveFilesReportGenerator {
 
                     ArchiveFileStatus afs = arcFiles.get(arcFileName);
                     if (afs == null) {
-                        throw new ArgumentNotValid(ARCHIVE_FORMAT + " file " + arcFileName 
-                                + " has no previous Opened record!");
+                        throw new ArgumentNotValid(ARCHIVE_FORMAT + " file " + arcFileName + " has no previous "
+                        		+ "Opened record!");
                     }
 
                     afs.setClosedDate(closedDate);
@@ -293,10 +270,11 @@ class ArchiveFilesReportGenerator {
             }
             heritrixOut.close();
         } catch (IOException e) {
-            LOG.error(e);
+            LOG.error("", e);
             return arcFiles;
         }
 
         return arcFiles;
     }
+
 }

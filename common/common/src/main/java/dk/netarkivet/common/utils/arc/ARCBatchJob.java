@@ -28,18 +28,17 @@ import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.archive.io.ArchiveRecord;
 import org.archive.io.arc.ARCReader;
 import org.archive.io.arc.ARCReaderFactory;
 import org.archive.io.arc.ARCRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.NetarkivetException;
 import dk.netarkivet.common.utils.batch.ARCBatchFilter;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
-
 
 /**
  * Abstract class defining a batch job to run on a set of ARC files.
@@ -51,7 +50,9 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
 @SuppressWarnings({ "serial"})
 public abstract class ARCBatchJob extends FileBatchJob {
                                 
-    /** The total number of records processed. */
+    private static final Logger log = LoggerFactory.getLogger(ARCBatchJob.class);
+
+	/** The total number of records processed. */
     protected int noOfRecordsProcessed = 0;
 
     /**
@@ -100,14 +101,12 @@ public abstract class ARCBatchJob extends FileBatchJob {
      * @return true, if file processed successful, otherwise false
      */
     @Override
-    public final boolean processFile(File arcFile, OutputStream os) throws
-            ArgumentNotValid{
+    public final boolean processFile(File arcFile, OutputStream os) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(arcFile, "arcFile");
         ArgumentNotValid.checkNotNull(os, "os");
-        Log log = LogFactory.getLog(getClass().getName());
         long arcFileIndex = 0;
         boolean success = true;
-        log.info("Processing ARCfile: " + arcFile.getName());
+        log.info("Processing ARCfile: {}", arcFile.getName());
 
         try { // This outer try-catch block catches all unexpected exceptions
             //Create an ARCReader and retrieve its Iterator:
@@ -124,11 +123,9 @@ public abstract class ARCBatchJob extends FileBatchJob {
             try {
                 Iterator<? extends ArchiveRecord> it = arcReader.iterator();
                 /* Process all records from this Iterator: */
-                log.debug("Starting processing records in ARCfile '"
-                        + arcFile.getName() + "'.");
+                log.debug("Starting processing records in ARCfile '{}'.", arcFile.getName());
                 if (!it.hasNext()) {
-                    log.debug("No ARCRecords found in ARCfile '"
-                            + arcFile.getName() + "'.");
+                    log.debug("No ARCRecords found in ARCfile '{}'.", arcFile.getName());
                 }
                 ARCRecord record = null;
                 while (it.hasNext()) {
@@ -140,9 +137,8 @@ public abstract class ARCBatchJob extends FileBatchJob {
                         if (!getFilter().accept(record)) {
                             continue;
                         }
-                        log.debug(
-                                "Processing ARCRecord #" + noOfRecordsProcessed
-                                + " in ARCfile '" + arcFile.getName()  + "'.");
+                        log.debug("Processing ARCRecord #{} in ARCfile '{}'.",
+                        		noOfRecordsProcessed, arcFile.getName());
                         processRecord(record, os);
                         ++noOfRecordsProcessed;
                     } catch (NetarkivetException e) {
@@ -163,9 +159,7 @@ public abstract class ARCBatchJob extends FileBatchJob {
                     }
                     // Close the record
                     try {
-                        long arcRecordOffset =
-                                record.getBodyOffset() 
-                                + record.getMetaData().getLength();
+                        long arcRecordOffset = record.getBodyOffset() + record.getMetaData().getLength();
                         record.close();
                         arcFileIndex = arcRecordOffset;
                     } catch (IOException ioe) { // Couldn't close an ARCRecord
@@ -200,8 +194,7 @@ public abstract class ARCBatchJob extends FileBatchJob {
      * @param arcFile The ARCFile where the exception occurred.
      * @param index The offset in the ARCFile where the exception occurred.
      */
-    private void handleOurException(
-            NetarkivetException e, File arcFile, long index) {
+    private void handleOurException(NetarkivetException e, File arcFile, long index) {
         handleException(e, arcFile, index);
     }
 
@@ -218,13 +211,11 @@ public abstract class ARCBatchJob extends FileBatchJob {
      * was thrown
      * @throws ArgumentNotValid if e is null
      */
-    public void handleException(Exception e, File arcfile, long index)
-      throws ArgumentNotValid{
+    public void handleException(Exception e, File arcfile, long index) throws ArgumentNotValid{
         ArgumentNotValid.checkNotNull(e, "e");
         
-        Log log = LogFactory.getLog(getClass().getName());
-        log.debug("Caught exception while running batch job " + "on file "
-                + arcfile + ", position " + index + ":\n" + e.getMessage(), e);
+        log.debug("Caught exception while running batch job on file {}, position {}:\n{}",
+        		arcfile, index, e.getMessage(), e);
         addException(arcfile, index, ExceptionOccurrence.UNKNOWN_OFFSET, e);
     }
 

@@ -29,8 +29,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -46,19 +46,20 @@ import dk.netarkivet.common.utils.StreamUtils;
  */
 @SuppressWarnings({ "serial"})
 public class FileRemoteFile implements RemoteFile {
-    /** The logger for this class. */
-    private Log log = LogFactory.getLog(getClass());
+
+	/** The logger for this class. */
+    private static final Logger log = LoggerFactory.getLogger(FileRemoteFile.class);
     
     /** The local File where the data is stored. */
     private File dataFile;
     
     public FileRemoteFile(File dataFile) {
         ArgumentNotValid.checkNotNull(dataFile, "File dataFile");
-        ArgumentNotValid.checkTrue(dataFile.isFile(), "The dataFile with value '"
-                + dataFile.getAbsolutePath() + "' does not exist.");
+        ArgumentNotValid.checkTrue(dataFile.isFile(), "The dataFile with value '" + dataFile.getAbsolutePath()
+        		+ "' does not exist.");
         this.dataFile = dataFile;
     }
-        
+
     @Override
     public void copyTo(File destFile) {
         FileUtils.copyFile(dataFile, destFile);
@@ -100,8 +101,7 @@ public class FileRemoteFile implements RemoteFile {
     public void cleanup() {
         boolean deleted = dataFile.delete();
         if (!deleted) {
-            log.warn("Unable to delete file '"
-                    + dataFile.getAbsolutePath() + "'");
+            log.warn("Unable to delete file '{}'", dataFile.getAbsolutePath());
         }
     }
 
@@ -109,4 +109,5 @@ public class FileRemoteFile implements RemoteFile {
     public long getSize() {
         return dataFile.length();
     }
+
 }

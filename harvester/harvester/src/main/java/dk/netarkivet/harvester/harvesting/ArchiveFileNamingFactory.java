@@ -46,8 +46,7 @@ public class ArchiveFileNamingFactory extends SettingsFactory<ArchiveFileNaming>
      */
     public static ArchiveFileNaming getInstance(Object ...args) 
     throws ArgumentNotValid {
-        return SettingsFactory.getInstance(
-                HarvesterSettings.HERITRIX_ARCHIVE_NAMING_CLASS, args);
+        return SettingsFactory.getInstance(HarvesterSettings.HERITRIX_ARCHIVE_NAMING_CLASS, args);
     }
 
 }

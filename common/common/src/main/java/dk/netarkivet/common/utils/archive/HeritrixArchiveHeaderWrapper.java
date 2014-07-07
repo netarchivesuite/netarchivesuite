@@ -32,12 +32,12 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.archive.io.ArchiveRecord;
 import org.archive.io.ArchiveRecordHeader;
 import org.archive.io.arc.ARCRecord;
 import org.archive.io.warc.WARCRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
@@ -48,7 +48,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 public class HeritrixArchiveHeaderWrapper extends ArchiveHeaderBase {
 
     /** The logger for this class. */
-    private static final Log log = LogFactory.getLog(HeritrixArchiveHeaderWrapper.class);
+    private static final Logger log = LoggerFactory.getLogger(HeritrixArchiveHeaderWrapper.class);
 
     /** Reuse the sme WARC <code>DateFormat</code> object. */
     protected DateFormat warcDateFormat = ArchiveDateConverter.getWarcDateFormat();
@@ -90,9 +90,7 @@ public class HeritrixArchiveHeaderWrapper extends ArchiveHeaderBase {
         } else if (record instanceof WARCRecord) {
             headerWrapper.bIsWarc = true;
         } else {
-            throw new ArgumentNotValid(
-                    "Unsupported ArchiveRecord type: "
-                    + record.getClass().getName());
+            throw new ArgumentNotValid("Unsupported ArchiveRecord type: " + record.getClass().getName());
         }
         return headerWrapper;
     }
@@ -185,7 +183,7 @@ public class HeritrixArchiveHeaderWrapper extends ArchiveHeaderBase {
                 date = warcDateFormat.parse(dateStr);
             }
         } catch (ParseException e) {
-            log.info("Archive date could not be parsed" + dateStr + ".");
+            log.info("Archive date could not be parsed: '{}'.", dateStr);
         }
         return date;
     } 
@@ -199,7 +197,7 @@ public class HeritrixArchiveHeaderWrapper extends ArchiveHeaderBase {
                 dateStr = arcDateFormat.format(warcDate);
                 return dateStr;
             } catch (Exception e) {
-                log.info("Archive date could not be parsed" + dateStr + ".");
+                log.info("Archive date could not be parsed: {}.", dateStr);
             }
         }
         return dateStr;

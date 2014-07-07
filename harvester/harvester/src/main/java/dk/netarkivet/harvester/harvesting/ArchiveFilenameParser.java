@@ -50,4 +50,5 @@ public abstract class ArchiveFilenameParser {
      * @return the filename.
      */
     public abstract String getFilename();
+
 }

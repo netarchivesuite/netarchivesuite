@@ -29,8 +29,8 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.TimeUtils;
@@ -50,36 +50,27 @@ import dk.netarkivet.common.utils.TimeUtils;
  */
 public final class PeriodicTaskExecutor {
 
+    /** The class logger. */
+    private static final Logger log = LoggerFactory.getLogger(PeriodicTaskExecutor.class);
+
     /**
      * Represents a periodic task.
      */
     public static class PeriodicTask {
 
-        /**
-         * A string identifying the task. It should be unique for this executor,
-         * though there is no such check made.
-         */
+        /** A string identifying the task. It should be unique for this executor, though there is no such check made. */
         private final String taskId;
 
-        /**
-         * The actual task implementation.
-         */
+        /** The actual task implementation. */
         private final Runnable task;
 
-        /**
-         * Delay in seconds between starting the executor and the initial task
-         * execution.
-         */
+        /** Delay in seconds between starting the executor and the initial task execution. */
         private final long secondsBeforeFirstExec;
 
-        /**
-         * Delay in seconds between two successive task executions.
-         */
+        /** Delay in seconds between two successive task executions. */
         private final long secondsBetweenExec;
 
-        /**
-         * The wrapper object for future task executions.
-         */
+        /** The wrapper object for future task executions. */
         private ScheduledFuture<?> future = null;
 
         /**
@@ -91,11 +82,7 @@ public final class PeriodicTaskExecutor {
          * @param secondsBetweenExec the delay in seconds between two successive
          * task executions.
          */
-        public PeriodicTask(
-                String taskId,
-                Runnable task,
-                long secondsBeforeFirstExec,
-                long secondsBetweenExec) {
+        public PeriodicTask(String taskId, Runnable task, long secondsBeforeFirstExec, long secondsBetweenExec) {
             super();
             this.taskId = taskId;
             this.task = task;
@@ -114,18 +101,10 @@ public final class PeriodicTaskExecutor {
 
     }
 
-    /** The class logger. */
-    static final Log log = LogFactory.getLog(PeriodicTaskExecutor.class);
-
-    /**
-     * The actual executor. One thread dedicated to each task.
-     */
+    /** The actual executor. One thread dedicated to each task. */
     private final ScheduledThreadPoolExecutor exec;
 
-    /**
-     * Execution status flag, used to control the termination of the checker
-     * thread.
-     */
+    /** Execution status flag, used to control the termination of the checker thread. */
     private boolean alive = false;
 
     /**
@@ -134,9 +113,7 @@ public final class PeriodicTaskExecutor {
      */
     private Thread checkerThread = null;
 
-    /**
-     * The tasks to run.
-     */
+    /** The tasks to run. */
     private final PeriodicTask[] tasks;
 
     /**
@@ -148,13 +125,8 @@ public final class PeriodicTaskExecutor {
      * @param secondsBetweenExec the delay in seconds between two successive
      * task executions.
      */
-    public PeriodicTaskExecutor(
-            String taskId,
-            Runnable task,
-            long secondsBeforeFirstExec,
-            long secondsBetweenExec) {
-        this(new PeriodicTask(
-                taskId, task, secondsBeforeFirstExec, secondsBetweenExec));
+    public PeriodicTaskExecutor(String taskId, Runnable task, long secondsBeforeFirstExec, long secondsBetweenExec) {
+        this(new PeriodicTask(taskId, task, secondsBeforeFirstExec, secondsBetweenExec));
     }
 
     /**
@@ -162,7 +134,6 @@ public final class PeriodicTaskExecutor {
      * @param tasks the task definitions.
      */
     public PeriodicTaskExecutor(PeriodicTask... tasks) {
-
         ArgumentNotValid.checkNotNull(tasks, "tasks");
         ArgumentNotValid.checkNotNullOrEmpty(Arrays.asList(tasks), "tasks");
 
@@ -189,9 +160,7 @@ public final class PeriodicTaskExecutor {
                     try {
                         Thread.sleep(TimeUtils.SECOND_IN_MILLIS);
                     } catch (InterruptedException e) {
-                        if (log.isTraceEnabled()) {
-                            log.trace("checkerThread interrupted.");
-                        }
+                        log.trace("checkerThread interrupted.");
                     }
                 }
             }
@@ -209,11 +178,9 @@ public final class PeriodicTaskExecutor {
                 t.future.get();
             }
         } catch (InterruptedException e) {
-            if (log.isTraceEnabled()) {
-                log.trace("checkExecution was interrupted.");
-            }
+            log.trace("checkExecution was interrupted.");
         } catch (ExecutionException e) {
-            log.error("Task threw exception: " + e.getCause(), e);
+            log.error("Task threw exception: {}", e.getCause(), e);
         }
     }
 

@@ -31,7 +31,6 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.ExceptionUtils;
 
-
 /**
  * Common base class for all messages exchanged in the NetarchiveSuite.
  */
@@ -76,8 +75,7 @@ public abstract class NetarkivetMessage implements Serializable {
         // Have not implemented replying to a topic because there is no use
         // for it in our current architecture
         if (Channels.isTopic(replyTo.getName())) {
-            throw new ArgumentNotValid("Reply channel must be queue but "
-                    + replyTo.toString() + " is a Topic");
+            throw new ArgumentNotValid("Reply channel must be queue but " + replyTo.toString() + " is a Topic");
         }
 
         this.to = to;
@@ -113,8 +111,7 @@ public abstract class NetarkivetMessage implements Serializable {
      * @param e An exception thrown during processing.
      */
     public void setNotOk(Throwable e) {
-        setNotOk(e.toString() + "\n" 
-                + ExceptionUtils.getStackTrace(e));
+        setNotOk(e.toString() + "\n" + ExceptionUtils.getStackTrace(e));
     }
 
     /**
@@ -124,8 +121,7 @@ public abstract class NetarkivetMessage implements Serializable {
      */
     public String getErrMsg() throws PermissionDenied{
         if (isOk) {
-            throw new PermissionDenied("Can't get error message for message '"
-                    + this + " that has had no error");
+            throw new PermissionDenied("Can't get error message for message '" + this + " that has had no error");
         }
         return errMsg;
     }
@@ -138,8 +134,7 @@ public abstract class NetarkivetMessage implements Serializable {
      */
     public synchronized String getID() {
         if (id == null) {
-            throw new PermissionDenied("This message has not been sent, and "
-                                       + "does not yet have an ID");
+            throw new PermissionDenied("This message has not been sent, and does not yet have an ID");
         }
         return id;
     }
@@ -231,5 +226,5 @@ public abstract class NetarkivetMessage implements Serializable {
     public synchronized boolean hasBeenSent() {
         return (this.id != null);
     }
-}
 
+}

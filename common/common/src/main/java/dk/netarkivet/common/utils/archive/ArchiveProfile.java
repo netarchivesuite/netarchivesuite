@@ -54,9 +54,7 @@ public class ArchiveProfile {
      * @param metadataFilenamePattern archive metadata filename regex pattern
      * @param archive_directory archive directory
      */
-    protected ArchiveProfile(FilenameFilter filename_filter,
-            String filename_pattern,
-            Pattern metadataFilenamePattern,
+    protected ArchiveProfile(FilenameFilter filename_filter, String filename_pattern, Pattern metadataFilenamePattern,
             String archive_directory) {
         this.filename_filter = filename_filter;
         this.filename_pattern = filename_pattern;
@@ -65,19 +63,11 @@ public class ArchiveProfile {
     }
 
     /** ARC archive profile. */
-    public static final ArchiveProfile ARC_PROFILE = new ArchiveProfile(
-            FileUtils.ARCS_FILTER,
-            FileUtils.ARC_PATTERN,
-            Pattern.compile("([0-9]+)-metadata-([0-9]+).arc"),
-            Constants.ARCDIRECTORY_NAME
-            );
+    public static final ArchiveProfile ARC_PROFILE = new ArchiveProfile(FileUtils.ARCS_FILTER, FileUtils.ARC_PATTERN,
+            Pattern.compile("([0-9]+)-metadata-([0-9]+).arc"), Constants.ARCDIRECTORY_NAME);
 
     /** WARC archive profile. */
-    public static final ArchiveProfile WARC_PROFILE = new ArchiveProfile(
-            FileUtils.WARCS_FILTER,
-            FileUtils.WARC_PATTERN,
-            Pattern.compile("([0-9]+)-metadata-([0-9]+).warc"),
-            Constants.WARCDIRECTORY_NAME
-            );
+    public static final ArchiveProfile WARC_PROFILE = new ArchiveProfile(FileUtils.WARCS_FILTER,
+    		FileUtils.WARC_PATTERN, Pattern.compile("([0-9]+)-metadata-([0-9]+).warc"), Constants.WARCDIRECTORY_NAME);
 
 }

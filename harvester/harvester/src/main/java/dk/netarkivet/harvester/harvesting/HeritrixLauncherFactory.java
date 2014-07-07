@@ -44,10 +44,8 @@ public class HeritrixLauncherFactory extends SettingsFactory<HeritrixLauncher> {
      * @throws ArgumentNotValid if the instance cannot be constructed.
      * @return the {@link HeritrixLauncher} instance.
      */
-    public static HeritrixLauncher getInstance(Object ...args) 
-    throws ArgumentNotValid {
-        return SettingsFactory.getInstance(
-                HarvesterSettings.HERITRIX_LAUNCHER_CLASS, args);
+    public static HeritrixLauncher getInstance(Object ...args) throws ArgumentNotValid {
+        return SettingsFactory.getInstance(HarvesterSettings.HERITRIX_LAUNCHER_CLASS, args);
     }
 
 }

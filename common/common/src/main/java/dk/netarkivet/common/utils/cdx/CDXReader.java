@@ -29,29 +29,31 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.arc.ARCKey;
 
-/** This class handles reading CDX files and finding entries in them.
- *  Furthermore it implements the possibility to do filtering of searchresults
+/**
+ * This class handles reading CDX files and finding entries in them.
+ * Furthermore it implements the possibility to do filtering of searchresults
  */
 public class CDXReader {
+
+    /** The instance logger. */
+    private static final Logger log = LoggerFactory.getLogger(CDXReader.class);
+
     /** The CDX files that we want to iterate over. */
     private List<File> files = new ArrayList<File>();
 
     /** Any filters we want to apply. */
-    private Map<String, CDXRecordFilter> cdxrecordfilters 
-        = new HashMap<String, CDXRecordFilter>();
+    private Map<String, CDXRecordFilter> cdxrecordfilters = new HashMap<String, CDXRecordFilter>();
 
     /** The regular expression that defines separation between fields. */
     static final String SEPARATOR_REGEX = "\\s+";
-    /** The instance logger. */
-    private Log log = LogFactory.getLog(CDXReader.class.getName());
 
     /** Create a new CDXReader that reads the given file.
      *
@@ -74,8 +76,7 @@ public class CDXReader {
     public void addCDXFile(File cdxFile) {
         ArgumentNotValid.checkNotNull(cdxFile, "cdxFile");
         if (!cdxFile.exists() || !cdxFile.canRead()) {
-            final String message = "Can't find CDX file '"
-                                   + cdxFile.getAbsolutePath() + "'";
+            final String message = "Can't find CDX file '" + cdxFile.getAbsolutePath() + "'";
             log.debug(message);
             throw new IOFailure(message);
         }
@@ -95,15 +96,12 @@ public class CDXReader {
      * @throws ArgumentNotValid If the filter is invalid or another filter
      * exists with the same name.
      */
-    public void addCDXRecordFilter(CDXRecordFilter cdxrecfilter)
-            throws ArgumentNotValid {
+    public void addCDXRecordFilter(CDXRecordFilter cdxrecfilter) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(cdxrecfilter,  "cdxrecfilter");
-        ArgumentNotValid.checkNotNullOrEmpty(cdxrecfilter.getFilterName(),
-                "cdxrecfilter.getFilterName()");
+        ArgumentNotValid.checkNotNullOrEmpty(cdxrecfilter.getFilterName(), "cdxrecfilter.getFilterName()");
 
         if (cdxrecordfilters.containsKey(cdxrecfilter.getFilterName())) {
-            throw new ArgumentNotValid("The Filtername '"
-                    + cdxrecfilter.getFilterName() + "' is already in use !");
+            throw new ArgumentNotValid("The Filtername '" + cdxrecfilter.getFilterName() + "' is already in use !");
         }
         cdxrecordfilters.put(cdxrecfilter.getFilterName(), cdxrecfilter);
     }
@@ -169,8 +167,7 @@ public class CDXReader {
                     }
                     String cdxuri = cdxrec.getURL();
                     if (CDXRecord.URLsEqual(uri, cdxuri)) {
-                        for (CDXRecordFilter cdxrecf 
-                                : cdxrecordfilters.values()) {
+                        for (CDXRecordFilter cdxrecf : cdxrecordfilters.values()) {
                             if (!cdxrecf.process(cdxrec)) {
                                 continue CDXLINES;
                             }
@@ -181,13 +178,12 @@ public class CDXReader {
                 }
             } finally {
                 if (numBrokenLines > 0) {
-                    log.warn("CDX file '" + f + "' contains "
-                            + numBrokenLines
-                            + " invalid CDX lines, first one is\n"
-                            + firstBrokenLine);
+                    log.warn("CDX file '{}' contains {} invalid CDX lines, first one is\n{}",
+                    		f, numBrokenLines, firstBrokenLine);
                 }
             }
         }
         return null;
     }
+
 }

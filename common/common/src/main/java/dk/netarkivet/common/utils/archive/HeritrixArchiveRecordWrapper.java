@@ -55,9 +55,7 @@ public class HeritrixArchiveRecordWrapper extends ArchiveRecordBase {
         } else if (record instanceof WARCRecord) {
             this.bIsWarc = true;
         } else {
-            throw new ArgumentNotValid(
-                    "Unsupported ArchiveRecord type: "
-                    + record.getClass().getName());
+            throw new ArgumentNotValid("Unsupported ArchiveRecord type: "+ record.getClass().getName());
         }
     }
 

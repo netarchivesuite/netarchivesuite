@@ -27,11 +27,11 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jwat.common.ByteCountingPushBackInputStream;
 import org.jwat.common.ContentType;
 import org.jwat.common.HttpHeader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -52,16 +52,16 @@ import dk.netarkivet.common.utils.batch.ArchiveBatchFilter;
 @SuppressWarnings({ "serial", "unused"})
 public class ArchiveExtractCDXJob extends ArchiveBatchJob {
 
-    /** An encoding for the standard included metadata fields without
-     * checksum.
-    */
+    /** Logger for this class. */
+    private static final Logger log = LoggerFactory.getLogger(ArchiveExtractCDXJob.class);
+
+    /** An encoding for the standard included metadata fields without checksum. */
     private static final String[] STD_FIELDS_EXCL_CHECKSUM = {
-            "A", "e", "b", "m", "n", "g", "v"
-    };
+    	"A", "e", "b", "m", "n", "g", "v"};
 
     /** An encoding for the standard included metadata fields with checksum. */
     private static final String[] STD_FIELDS_INCL_CHECKSUM = {
-            "A", "e", "b", "m", "n", "g", "v", "c"
+    	"A", "e", "b", "m", "n", "g", "v", "c"
     };
 
     /** The fields to be included in CDX output. */
@@ -71,18 +71,12 @@ public class ArchiveExtractCDXJob extends ArchiveBatchJob {
     private boolean includeChecksum;
 
     /**
-     * Logger for this class.
-     */
-    private static final Log log = LogFactory.getLog(ArchiveExtractCDXJob.class.getName());
-
-    /**
      * Constructs a new job for extracting CDX indexes.
      * @param includeChecksum If true, an MD5 checksum is also
      * written for each record. If false, it is not.
      */
     public ArchiveExtractCDXJob(boolean includeChecksum) {
-        this.fields = includeChecksum ? STD_FIELDS_INCL_CHECKSUM
-                                      : STD_FIELDS_EXCL_CHECKSUM;
+        this.fields = includeChecksum ? STD_FIELDS_INCL_CHECKSUM : STD_FIELDS_EXCL_CHECKSUM;
         this.includeChecksum = includeChecksum;
         batchJobTimeout = 7*Constants.ONE_DAY_IN_MILLIES;
     }
@@ -121,8 +115,7 @@ public class ArchiveExtractCDXJob extends ArchiveBatchJob {
      */
     @Override
     public void processRecord(ArchiveRecordBase record, OutputStream os) {
-        log.trace("Processing Archive Record with offset: "
-                + record.getHeader().getOffset());
+        log.trace("Processing Archive Record with offset: {}", record.getHeader().getOffset());
         /*
         * Fields are stored in a map so that it's easy
         * to pull them out when looking at the
@@ -143,8 +136,7 @@ public class ArchiveExtractCDXJob extends ArchiveBatchJob {
         boolean bResponse = false;
         boolean bRequest = false;
         if (contentType != null) {
-            if ("application".equals(contentType.contentType)
-                    && "http".equals(contentType.mediaType)) {
+            if ("application".equals(contentType.contentType) && "http".equals(contentType.mediaType)) {
                 msgType = contentType.getParameter("msgtype");
                 if ("response".equals(msgType)) {
                     bResponse = true;
@@ -158,8 +150,7 @@ public class ArchiveExtractCDXJob extends ArchiveBatchJob {
         HttpHeader httpResponse = null;
         if (bResponse) {
             try {
-                httpResponse = HttpHeader.processPayload(HttpHeader.HT_RESPONSE, 
-                        pbin, header.getLength(), null);
+                httpResponse = HttpHeader.processPayload(HttpHeader.HT_RESPONSE, pbin, header.getLength(), null);
                 if (httpResponse != null && httpResponse.contentType != null) {
                     contentType = ContentType.parseContentType(httpResponse.contentType);
                     if (contentType != null) {
@@ -215,8 +206,7 @@ public class ArchiveExtractCDXJob extends ArchiveBatchJob {
         try {
             outstream.write(sb.toString().getBytes("UTF-8"));
         } catch (IOException e) {
-            throw new IOFailure("Error writing CDX line '"
-                    + sb + "' to batch outstream", e);
+            throw new IOFailure("Error writing CDX line '" + sb + "' to batch outstream", e);
         }
     }
 
@@ -224,8 +214,7 @@ public class ArchiveExtractCDXJob extends ArchiveBatchJob {
      * @return Humanly readable description of this instance.
      */
     public String toString() {
-        return getClass().getName() + ", with Filter: " + getFilter()
-                + ", include checksum = " + includeChecksum;
+        return getClass().getName() + ", with Filter: " + getFilter() + ", include checksum = " + includeChecksum;
     }
 
 }

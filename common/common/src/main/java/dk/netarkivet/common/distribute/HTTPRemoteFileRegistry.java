@@ -22,9 +22,6 @@
  */
 package dk.netarkivet.common.distribute;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -35,12 +32,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.mortbay.jetty.Request;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.bio.SocketConnector;
 import org.mortbay.jetty.handler.AbstractHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -58,7 +59,11 @@ import dk.netarkivet.common.utils.SystemUtils;
  * machine.
  */
 public class HTTPRemoteFileRegistry implements CleanupIF {
-    /** The unique instance. */
+
+    /** Logger for this class. */
+    private static final Logger log = LoggerFactory.getLogger(HTTPRemoteFileRegistry.class);
+
+	/** The unique instance. */
     protected static HTTPRemoteFileRegistry instance;
 
     /** Protocol for URLs. */
@@ -81,8 +86,6 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
      * HttpServletRequest. */
     private static final String UNREGISTER_URL_POSTFIX = "/unregister";
 
-    /** Logger for this class. */
-    private final Log log = LogFactory.getLog(getClass());
     /** The embedded webserver. */ 
     protected Server server;
     /** The shutdown hook. */
@@ -95,8 +98,7 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
     protected HTTPRemoteFileRegistry() {
         port = Settings.getInt(HTTPRemoteFile.HTTPREMOTEFILE_PORT_NUMBER);
         localHostName = SystemUtils.getLocalHostName();
-        registeredFiles = Collections.synchronizedMap(
-                new HashMap<URL, FileInfo>());
+        registeredFiles = Collections.synchronizedMap(new HashMap<URL, FileInfo>());
         random = new Random();
         startServer();
         cleanupHook = new CleanupHook(this);
@@ -116,9 +118,7 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
         try {
             server.start();
         } catch (Exception e) {
-            throw new IOFailure(
-                    "Cannot start HTTPRemoteFile registry on port "
-                    + port, e);
+            throw new IOFailure("Cannot start HTTPRemoteFile registry on port " + port, e);
         }
     }
 
@@ -151,8 +151,7 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
     public URL registerFile(File file, boolean deletable) {
         ArgumentNotValid.checkNotNull(file, "File file");
         if (!file.isFile() && file.canRead()) {
-            throw new ArgumentNotValid("File '" + file
-                    + "' is not a readable file");
+            throw new ArgumentNotValid("File '" + file + "' is not a readable file");
         }
         String path;
         URL url;
@@ -162,15 +161,12 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
             try {
                 url = new URL(getProtocol(), localHostName, port, path);
             } catch (MalformedURLException e) {
-                throw new IOFailure("Unable to create URL for file '" + file
-                                    + "'." + " '" + getProtocol() + "', '"
-                                    + localHostName + "', '" + port + "', '"
-                                    + path + "''", e);
+                throw new IOFailure("Unable to create URL for file '" + file + "'." + " '" + getProtocol() + "', '"
+                		+ localHostName + "', '" + port + "', '" + path + "''", e);
             }
         } while (registeredFiles.containsKey(url));
         registeredFiles.put(url, new FileInfo(file, deletable));
-        log.debug("Registered file '" + file.getPath() + "' with URL '" + url
-                  + "'");
+        log.debug("Registered file '{}' with URL '{}'", file.getPath(), url);
         return url;
     }
 
@@ -183,8 +179,7 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
      * @throws MalformedURLException If unable to construct the cleanup url
      */
     URL getCleanupUrl(URL url) throws MalformedURLException {        
-        return new URL(url.getProtocol(), url.getHost(), url.getPort(),
-                  url.getPath() + UNREGISTER_URL_POSTFIX);
+        return new URL(url.getProtocol(), url.getHost(), url.getPort(), url.getPath() + UNREGISTER_URL_POSTFIX);
     }
 
     /** Open a connection to an URL in a registry.
@@ -203,8 +198,8 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
         /** Whether it should be deleted on cleanup. */
         final boolean deletable;
 
-        /** Initialise pair.
-         *
+        /**
+         * Initialise pair.
          * @param file The file.
          * @param deletable Whether it should be deleted on cleanup.
          */
@@ -251,24 +246,18 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
          * @throws IOException On trouble in communication.
          * @throws ServletException On servlet trouble.
          */
-        public void handle(String string,
-                           HttpServletRequest httpServletRequest,
-                           HttpServletResponse httpServletResponse, int i)
-                throws IOException, ServletException {
+        public void handle(String string, HttpServletRequest httpServletRequest,
+        		HttpServletResponse httpServletResponse, int i) throws IOException, ServletException {
             // since this is a jetty handle method, we know it is a Jetty
             // request object.
             Request request = ((Request) httpServletRequest);
-            String urlString = httpServletRequest.getRequestURL()
-                    .toString();
+            String urlString = httpServletRequest.getRequestURL().toString();
             if (urlString.endsWith(UNREGISTER_URL_POSTFIX)) {
-                URL url = new URL(urlString.substring(0,
-                     urlString.length() - UNREGISTER_URL_POSTFIX.length()));
+                URL url = new URL(urlString.substring(0, urlString.length() - UNREGISTER_URL_POSTFIX.length()));
                 FileInfo fileInfo = registeredFiles.remove(url);
-                if (fileInfo != null && fileInfo.deletable
-                    && fileInfo.file.exists()) {
+                if (fileInfo != null && fileInfo.deletable && fileInfo.file.exists()) {
                     FileUtils.remove(fileInfo.file);
-                    log.debug("Removed file '" + fileInfo.file.getPath()
-                              + "' with URL '" + url + "'");
+                    log.debug("Removed file '{}' with URL '{}'", fileInfo.file.getPath(), url);
                 }
                 httpServletResponse.setStatus(200);
                 request.setHandled(true);
@@ -277,16 +266,15 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
                 FileInfo fileInfo = registeredFiles.get(url);
                 if (fileInfo != null) {
                     httpServletResponse.setStatus(200);
-                    FileUtils.writeFileToStream(fileInfo.file,
-                                    httpServletResponse.getOutputStream());
+                    FileUtils.writeFileToStream(fileInfo.file, httpServletResponse.getOutputStream());
                     request.setHandled(true);
-                    log.debug("Served file '" + fileInfo.file.getPath()
-                              + "' with URL '" + url + "'");
+                    log.debug("Served file '{}' with URL '{}'", fileInfo.file.getPath(), url);
                 } else {
                     httpServletResponse.sendError(404);
-                    log.debug("File not found for URL '" + url + "'");
+                    log.debug("File not found for URL '{}'", url);
                 }
             }
         }
     }
+
 }

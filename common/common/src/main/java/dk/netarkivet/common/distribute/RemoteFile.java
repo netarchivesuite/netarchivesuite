@@ -30,7 +30,6 @@ import java.io.Serializable;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 
-
 /**
  *  RemoteFile: Interface for encapsulating remote files.
  *  Enables us to transmit large files between system components situated
@@ -85,8 +84,10 @@ public interface RemoteFile extends Serializable {
      */
     void cleanup();
 
-    /** Returns the total size of the remote file.
+    /**
+     * Returns the total size of the remote file.
      * @return Size of the remote file.
      */
     long getSize();
+
 }

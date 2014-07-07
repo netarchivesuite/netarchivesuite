@@ -26,7 +26,8 @@ package dk.netarkivet.common.management;
  * Contains the constants for the management classes.
  */
 public final class Constants {
-    /**
+
+	/**
      * Constructor.
      * Private due to constants only class.
      */
@@ -44,8 +45,7 @@ public final class Constants {
     /** The application name key word.*/
     public static final String PRIORITY_KEY_APPLICATIONNAME = "applicationname";
     /** The application instance id key word.*/
-    public static final String PRIORITY_KEY_APPLICATIONINSTANCEID =
-        "applicationinstanceid";
+    public static final String PRIORITY_KEY_APPLICATIONINSTANCEID = "applicationinstanceid";
     /** The http port key word.*/
     public static final String PRIORITY_KEY_HTTP_PORT = "httpport";
     /** The harvest channel key word.*/
@@ -56,4 +56,5 @@ public final class Constants {
     public static final String PRIORITY_KEY_INDEX = "index";
     /** The remove jmx application keyword. */
     public static final String REMOVE_JMX_APPLICATION = "removeapplication";
+
 }

@@ -27,11 +27,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.archive.io.ArchiveReader;
 import org.archive.io.ArchiveReaderFactory;
 import org.archive.io.ArchiveRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.NetarkivetException;
@@ -46,6 +46,8 @@ import dk.netarkivet.common.utils.batch.ArchiveBatchFilter;
  */
 @SuppressWarnings({ "serial"})
 public abstract class ArchiveBatchJob extends ArchiveBatchJobBase {
+
+    private static final Logger log = LoggerFactory.getLogger(ArchiveBatchJob.class);
 
     /**
      * Exceptions should be handled with the handleException() method.
@@ -75,14 +77,12 @@ public abstract class ArchiveBatchJob extends ArchiveBatchJobBase {
      * @throws ArgumentNotValid if either argument is null
      * @return true, if file processed successful, otherwise false
      */
-    public final boolean processFile(File archiveFile, OutputStream os) throws
-            ArgumentNotValid{
+    public final boolean processFile(File archiveFile, OutputStream os) throws ArgumentNotValid{
         ArgumentNotValid.checkNotNull(archiveFile, "archiveFile");
         ArgumentNotValid.checkNotNull(os, "os");
-        Log log = LogFactory.getLog(getClass().getName());
         long arcFileIndex = 0;
         boolean success = true;
-        log.info("Processing archive file: " + archiveFile.getName());
+        log.info("Processing archive file: {}", archiveFile.getName());
 
         try { // This outer try-catch block catches all unexpected exceptions
             //Create an ArchiveReader and retrieve its Iterator:
@@ -99,11 +99,9 @@ public abstract class ArchiveBatchJob extends ArchiveBatchJobBase {
             try {
                 Iterator<? extends ArchiveRecord> it = archiveReader.iterator();
                 /* Process all records from this Iterator: */
-                log.debug("Starting processing records in archive file '"
-                        + archiveFile.getName() + "'.");
+                log.debug("Starting processing records in archive file '{}'.", archiveFile.getName());
                 if (!it.hasNext()) {
-                    log.debug("No records found in archive file '"
-                            + archiveFile.getName() + "'.");
+                    log.debug("No records found in archive file '{}'.", archiveFile.getName());
                 }
                 ArchiveRecord archiveRecord = null;
                 ArchiveRecordBase record;
@@ -117,9 +115,8 @@ public abstract class ArchiveBatchJob extends ArchiveBatchJobBase {
                         if (!getFilter().accept(record)) {
                             continue;
                         }
-                        log.debug(
-                                "Processing record #" + noOfRecordsProcessed
-                                + " in archive file '" + archiveFile.getName()  + "'.");
+                        log.debug("Processing record #{} in archive file '{}'.",
+                        		noOfRecordsProcessed, archiveFile.getName());
                         processRecord(record, os);
                         ++noOfRecordsProcessed;
                     } catch (NetarkivetException e) {
@@ -148,9 +145,7 @@ public abstract class ArchiveBatchJob extends ArchiveBatchJobBase {
                         long arcRecordOffset = record.getHeader().getOffset();
                         */
                     	// TODO maybe this works, maybe not...
-                        long arcRecordOffset =
-                                archiveRecord.getHeader().getContentBegin() 
-                                + archiveRecord.getHeader().getLength();
+                        long arcRecordOffset = archiveRecord.getHeader().getContentBegin() + archiveRecord.getHeader().getLength();
                         archiveRecord.close();
                         arcFileIndex = arcRecordOffset;
                     } catch (IOException ioe) { // Couldn't close an WARCRecord

@@ -26,7 +26,6 @@ package dk.netarkivet.common.utils.batch;
 import java.io.File;
 import java.io.OutputStream;
 
-
 /**
  * This class implements a batchjob that enables you to delete files
  * from an archive. Note that the default Java Security Policy distributed
@@ -76,4 +75,5 @@ public class FileRemover extends FileBatchJob {
     @Override
     public void finish(OutputStream os) {
     }
+
 }

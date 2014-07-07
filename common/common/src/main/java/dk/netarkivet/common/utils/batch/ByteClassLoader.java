@@ -24,16 +24,18 @@ package dk.netarkivet.common.utils.batch;
 
 import java.io.File;
 
-import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.utils.FileUtils;
 
 /** A subclass of ClassLoader that can take a byte[] containing a class file.
  */
 public class ByteClassLoader extends ClassLoader {
-    /** Binary class data loaded from file. */
+
+	/** Binary class data loaded from file. */
     private final byte[] binaryData;
 
-    /** Constructor that reads data from a file.
+    /**
+     * Constructor that reads data from a file.
      *
      * @param binaryFile A file containing a Java class.
      */
@@ -42,7 +44,8 @@ public class ByteClassLoader extends ClassLoader {
         this.binaryData = FileUtils.readBinaryFile(binaryFile);
     }
 
-    /** Constructor taking a class as an array of bytes.
+    /**
+     * Constructor taking a class as an array of bytes.
      *
      * @param bytes Array of bytes containing a class definition.
      */
@@ -51,7 +54,8 @@ public class ByteClassLoader extends ClassLoader {
         this.binaryData = bytes;
     }
 
-    /** Define the class that this class loader knows about.  The name of
+    /**
+     * Define the class that this class loader knows about.  The name of
      * the class is taken from the data given in the constructor.
      *
      * Note that this does *not* override any of the
@@ -64,4 +68,5 @@ public class ByteClassLoader extends ClassLoader {
     public Class defineClass() {
         return super.defineClass(null, binaryData, 0, binaryData.length);
     }
+
 }

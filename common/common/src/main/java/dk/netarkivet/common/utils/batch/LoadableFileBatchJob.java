@@ -33,8 +33,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -46,8 +46,9 @@ import dk.netarkivet.common.utils.FileUtils;
  * the actions of the FileBatchJob class. */
 @SuppressWarnings({ "unchecked", "rawtypes", "serial" })
 public class LoadableFileBatchJob extends FileBatchJob {
-    /** The class logger. */
-    transient Log log = LogFactory.getLog(this.getClass().getName());
+
+	/** The class logger. */
+    private static final transient Logger log = LoggerFactory.getLogger(LoadableFileBatchJob.class);
 
     /** The job loaded from file. */
     transient FileBatchJob loadedJob;
@@ -63,8 +64,7 @@ public class LoadableFileBatchJob extends FileBatchJob {
      * @param arguments The arguments for the batchjobs. This can be null.
      * @throws ArgumentNotValid If the classfile is null.
      */
-    public LoadableFileBatchJob(File classFile, List<String> arguments)
-            throws ArgumentNotValid {
+    public LoadableFileBatchJob(File classFile, List<String> arguments) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(classFile, "File classFile");
         fileContents = FileUtils.readBinaryFile(classFile);
         fileName = classFile.getName();
@@ -89,8 +89,7 @@ public class LoadableFileBatchJob extends FileBatchJob {
      * @throws IOException In case there is an error from the underlying stream,
      * or this object cannot be serialized.
      */
-    private void writeObject(ObjectOutputStream out)
-            throws IOException {
+    private void writeObject(ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
     }
 
@@ -103,10 +102,8 @@ public class LoadableFileBatchJob extends FileBatchJob {
      * @throws ClassNotFoundException If the class definition of the
      * serialized object cannot be found.
      */
-    private void readObject(ObjectInputStream in)
-            throws IOException, ClassNotFoundException {
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
-        log = LogFactory.getLog(this.getClass().getName());
     }
 
     /**
@@ -141,16 +138,15 @@ public class LoadableFileBatchJob extends FileBatchJob {
                 // extract the constructor and instantiate the batchjob.
                 Constructor con = batchClass.getConstructor(argClasses);
                 loadedJob = (FileBatchJob) con.newInstance(args.toArray());
-                log.debug("Loaded batchjob with arguments: '" + args + "'.");
+                log.debug("Loaded batchjob with arguments: '{}'.", args);
             }
         } catch (InvocationTargetException e) {
-            final String msg = "Not allowed to invoke the batchjob '" 
-                + fileName + "'.";
+            final String msg = "Not allowed to invoke the batchjob '" + fileName + "'.";
             log.warn(msg, e);
             throw new IOFailure(msg, e);
         } catch (NoSuchMethodException e) {
-            final String msg = "No constructor for the arguments '" + args 
-                    + "' can be found for the batchjob '" + fileName + "'.";
+            final String msg = "No constructor for the arguments '" + args + "' can be found for the batchjob '"
+            		+ fileName + "'.";
             log.warn(msg, e);
             throw new IOFailure(msg, e);
         } catch (InstantiationException e) {
@@ -173,8 +169,7 @@ public class LoadableFileBatchJob extends FileBatchJob {
      * @return true if the file was successfully processed, false otherwise
      */
     public boolean processFile(File file, OutputStream os) {
-        log.trace("Started processing of file '" +  file.getAbsolutePath()
-                + "'.");
+        log.trace("Started processing of file '{}'.", file.getAbsolutePath());
         ArgumentNotValid.checkNotNull(file, "File file");
         ArgumentNotValid.checkNotNull(os, "OutputStream os");
         return loadedJob.processFile(file, os);
@@ -199,4 +194,5 @@ public class LoadableFileBatchJob extends FileBatchJob {
         loadBatchJob();
         return loadedJob.postProcess(input, output);
     }
+
 }

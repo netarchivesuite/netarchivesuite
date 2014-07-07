@@ -28,9 +28,9 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.archive.io.arc.ARCRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -51,16 +51,18 @@ import dk.netarkivet.common.utils.batch.ARCBatchFilter;
 @SuppressWarnings({ "rawtypes", "serial" })
 public class ExtractCDXJob extends ARCBatchJob {
 
-    /** An encoding for the standard included metadata fields without
-     * checksum.*/
-    private static final String[] STD_FIELDS_EXCL_CHECKSUM = {
-            "A", "e", "b", "m", "n", "g", "v"
-        };
+    /** Logger for this class. */
+    private static final Logger log = LoggerFactory.getLogger(ExtractCDXJob.class);
+
+    /** An encoding for the standard included metadata fields without checksum. */
+	private static final String[] STD_FIELDS_EXCL_CHECKSUM = {
+		"A", "e", "b", "m", "n", "g", "v"
+    };
 
     /** An encoding for the standard included metadata fields with checksum. */
     private static final String[] STD_FIELDS_INCL_CHECKSUM = {
-            "A", "e", "b", "m", "n", "g", "v", "c"
-        };
+    	"A", "e", "b", "m", "n", "g", "v", "c"
+    };
 
     /** The fields to be included in CDX output. */
     private String[] fields;
@@ -69,18 +71,12 @@ public class ExtractCDXJob extends ARCBatchJob {
     private boolean includeChecksum;
 
     /**
-     * Logger for this class.
-     */
-    private final Log log = LogFactory.getLog(getClass().getName());
-
-    /**
      * Constructs a new job for extracting CDX indexes.
      * @param includeChecksum If true, an MD5 checksum is also
      * written for each record. If false, it is not.
      */
     public ExtractCDXJob(boolean includeChecksum) {
-        this.fields = includeChecksum ? STD_FIELDS_INCL_CHECKSUM
-                                      : STD_FIELDS_EXCL_CHECKSUM;
+        this.fields = includeChecksum ? STD_FIELDS_INCL_CHECKSUM : STD_FIELDS_EXCL_CHECKSUM;
         this.includeChecksum = includeChecksum;
         batchJobTimeout = 7*Constants.ONE_DAY_IN_MILLIES;
     }
@@ -118,8 +114,7 @@ public class ExtractCDXJob extends ARCBatchJob {
      */
     @Override
     public void processRecord(ARCRecord sar, OutputStream os) {
-        log.trace("Processing ARCRecord with offset: "
-                + sar.getMetaData().getOffset());
+        log.trace("Processing ARCRecord with offset: {}", sar.getMetaData().getOffset());
         /*
         * Fields are stored in a map so that it's easy
         * to pull them out when looking at the
@@ -182,8 +177,7 @@ public class ExtractCDXJob extends ARCBatchJob {
         try {
             outstream.write(sb.toString().getBytes("UTF-8"));
         } catch (IOException e) {
-            throw new IOFailure("Error writing CDX line '"
-                    + sb + "' to batch outstream", e);
+            throw new IOFailure("Error writing CDX line '" + sb + "' to batch outstream", e);
         }
     }
     
@@ -191,7 +185,7 @@ public class ExtractCDXJob extends ARCBatchJob {
      * @return Humanly readable description of this instance.
      */
     public String toString() {
-        return getClass().getName() + ", with Filter: " + getFilter()
-                + ", include checksum = " + includeChecksum;
+        return getClass().getName() + ", with Filter: " + getFilter() + ", include checksum = " + includeChecksum;
     }
+
 }

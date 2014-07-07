@@ -33,10 +33,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.Node;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
@@ -72,24 +72,17 @@ import dk.netarkivet.harvester.harvesting.report.HarvestReportFactory;
  *
  */
 public class HarvestController {
-    /**
-     * The singleton instance of this class.  Calling cleanup() on the instance
-     * will null this field.
-     */
-    private static HarvestController instance;
-    /** The instance logger. */
-    private Log log
-            = LogFactory.getLog(HarvestController.class);
 
-    /**
-     * The max time to wait for heritrix to close last ARC or WARC files (in secs).
-     */
+    /** The instance logger. */
+    private static final Logger log = LoggerFactory.getLogger(HarvestController.class);
+
+	/** The singleton instance of this class.  Calling cleanup() on the instance will null this field. */
+    private static HarvestController instance;
+
+    /** The max time to wait for heritrix to close last ARC or WARC files (in secs). */
     private static final int WAIT_FOR_HERITRIX_TIMEOUT_SECS = 5;
 
-    /**
-     * The ArcRepositoryClient used to communicate with the ArcRepository to
-     * store the generated arc-files.
-     */
+    /** The ArcRepositoryClient used to communicate with the ArcRepository to store the generated arc-files. */
     private HarvesterArcRepositoryClient arcRepController;
 
     /**
@@ -146,25 +139,21 @@ public class HarvestController {
      *                        should be stored for later use.
      * @return An object encapsulating where these files have been written.
      */
-    public HeritrixFiles writeHarvestFiles(
-            File crawldir,
-            Job job,
-            HarvestDefinitionInfo hdi,
-            List<MetadataEntry> metadataEntries) {
-        final HeritrixFiles files =
-            new HeritrixFiles(crawldir, job);
+    public HeritrixFiles writeHarvestFiles(File crawldir, Job job, HarvestDefinitionInfo hdi,
+    		List<MetadataEntry> metadataEntries) {
+        final HeritrixFiles files = new HeritrixFiles(crawldir, job);
 
         // If this job is a job that tries to continue a previous job
         // using the Heritrix recover.gz log, and this feature is enabled,
         // then try to fetch the recover.log from the metadata-arc-file.
-        if (job.getContinuationOf() != null 
-                && Settings.getBoolean(HarvesterSettings.RECOVERlOG_CONTINUATION_ENABLED)) {
+        if (job.getContinuationOf() != null
+        		&& Settings.getBoolean(HarvesterSettings.RECOVERlOG_CONTINUATION_ENABLED)) {
             tryToRetrieveRecoverLog(job, files);    
         }
         
         // Create harvestInfo file in crawldir
         // & create preharvest-metadata-1.arc
-        log.debug("Writing persistent job data for job " + job.getJobID());
+        log.debug("Writing persistent job data for job {}", job.getJobID());
         // Check that harvestInfo does not yet exist
         
         // Write job data to persistent storage (harvestinfo file)
@@ -176,8 +165,7 @@ public class HarvestController {
        
         files.writeOrderXml(job.getOrderXMLdoc());
         // Only retrieve index if deduplication is not disabled in the template.
-        if (HeritrixTemplate.isDeduplicationEnabledInTemplate(
-                job.getOrderXMLdoc())) {
+        if (HeritrixTemplate.isDeduplicationEnabledInTemplate(job.getOrderXMLdoc())) {
             log.debug("Deduplication enabled. Fetching deduplication index..");
             files.setIndexDir(fetchDeduplicateIndex(metadataEntries));
         } else {
@@ -188,13 +176,13 @@ public class HarvestController {
         // the arcs directory exists in advance.
         boolean created = files.getArcsDir().mkdir();
         if (!created) {
-            log.warn("Unable to create arcsdir: " + files.getArcsDir());
+            log.warn("Unable to create arcsdir: {}", files.getArcsDir());
         }
         // Create Heritrix warcs directory before starting Heritrix to ensure
         // the warcs directory exists in advance.
         created = files.getWarcsDir().mkdir();
         if (!created) {
-            log.warn("Unable to create warcsdir: " + files.getWarcsDir());
+            log.warn("Unable to create warcsdir: {}", files.getWarcsDir());
         }
         
         return files;
@@ -211,11 +199,10 @@ public class HarvestController {
         Long previousJob = job.getContinuationOf();
         List<CDXRecord> metaCDXes = null;
         try {
-            metaCDXes 
-            = getMetadataCDXRecordsForJob(previousJob);
+            metaCDXes = getMetadataCDXRecordsForJob(previousJob);
         } catch (IOFailure e) {
-            log.debug("Failed to retrive CDX of metatadata records. Maybe the metadata arcfile for job " 
-                    + previousJob + " does not exist in repository", e);
+            log.debug("Failed to retrive CDX of metatadata records. "
+            		+ "Maybe the metadata arcfile for job {} does not exist in repository", previousJob, e);
         }
         
         CDXRecord recoverlogCDX = null;
@@ -235,7 +222,7 @@ public class HarvestController {
         BitarchiveRecord br = null;
         if (recoverlogCDX != null) { // Retrieve recover.gz from metadata.arc file
             br = ArcRepositoryClientFactory.getViewerInstance().get(
-                    recoverlogCDX.getArcfile(), recoverlogCDX.getOffset());
+            		recoverlogCDX.getArcfile(), recoverlogCDX.getOffset());
             if (br != null) {
                 log.debug("recover.gz log retrieved from metadata-arcfile");
                 if (files.writeRecoverBackupfile(br.getData())) {
@@ -258,19 +245,15 @@ public class HarvestController {
      */
     private void insertHeritrixRecoverPathInOrderXML(Job job, HeritrixFiles files) {
         Document order = job.getOrderXMLdoc();
-        final String RECOVERLOG_PATH_XPATH =
-                "/crawl-order/controller/string[@name='recover-path']";
+        final String RECOVERLOG_PATH_XPATH = "/crawl-order/controller/string[@name='recover-path']";
         Node orderXmlNode = order.selectSingleNode(RECOVERLOG_PATH_XPATH);
         if (orderXmlNode != null) {
             orderXmlNode.setText(files.getRecoverBackupGzFile().getAbsolutePath());
-            log.debug("The Heritrix recover path now refers to '" 
-                    + files.getRecoverBackupGzFile().getAbsolutePath()
-                    + "'.");
+            log.debug("The Heritrix recover path now refers to '{}'.",
+            		files.getRecoverBackupGzFile().getAbsolutePath());
             job.setOrderXMLDoc(order);
         } else {
-            throw new IOFailure(
-                    "Unable to locate the '" + RECOVERLOG_PATH_XPATH 
-                    + "' element in order.xml: "
+            throw new IOFailure("Unable to locate the '" + RECOVERLOG_PATH_XPATH + "' element in order.xml: "
                     + order.asXML());
         }
     }
@@ -283,10 +266,8 @@ public class HarvestController {
      * @param crawlDir   the directory, where the metadata will be written.
      * @throws IOFailure If there are errors in writing the metadata. 
      */
-    private void writePreharvestMetadata(Job harvestJob,
-                                         List<MetadataEntry> metadata,
-                                         File crawlDir)
-            throws IOFailure  {
+    private void writePreharvestMetadata(Job harvestJob, List<MetadataEntry> metadata, File crawlDir)
+    		throws IOFailure {
         if (metadata.size() == 0) {
             // Do not generate preharvest metadata file for empty list
             return;
@@ -296,15 +277,13 @@ public class HarvestController {
         File metadataDir = new File(crawlDir, IngestableFiles.METADATA_SUB_DIR);
         metadataDir.mkdir();
         if (!(metadataDir.exists() && metadataDir.isDirectory())) {
-            throw new IOFailure(
-                    "Unable to write preharvest metadata for job '" +
-             + harvestJob.getJobID() + "' to directory '" 
-            + metadataDir.getAbsolutePath() + "', as directory does not exist.");
+            throw new IOFailure("Unable to write preharvest metadata for job '" + harvestJob.getJobID()
+            		+ "' to directory '" + metadataDir.getAbsolutePath() + "', as directory does not exist.");
         }                
         
         // Serializing the MetadataEntry objects to the metadataDir
         MetadataEntry.storeMetadataToDisk(metadata, metadataDir);
- }
+    }
 
     /**
      * Creates the actual HeritrixLauncher instance and runs it, after the
@@ -336,12 +315,10 @@ public class HarvestController {
      * @return An object containing info about the domains harvested.
      * @throws ArgumentNotValid if an argument isn't valid.
      */
-    public HarvestReport storeFiles(
-            HeritrixFiles files, StringBuilder errorMessage,
-            List<File> failedFiles) throws ArgumentNotValid {
+    public HarvestReport storeFiles(HeritrixFiles files, StringBuilder errorMessage, List<File> failedFiles)
+    		throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(files, "HeritrixFiles files");
-        ArgumentNotValid.checkNotNull(errorMessage,
-                "StringBuilder errorMessage");
+        ArgumentNotValid.checkNotNull(errorMessage, "StringBuilder errorMessage");
         ArgumentNotValid.checkNotNull(failedFiles, "List<File> failedFiles");
         long jobID = files.getJobID();
         try {
@@ -389,27 +366,19 @@ public class HarvestController {
      * @param errorMessage Accumulator for error messages.
      * @param failedFiles  Accumulator for failed files.
      */
-    private void uploadFiles(List<File> files, StringBuilder errorMessage,
-                             List<File> failedFiles) {
+    private void uploadFiles(List<File> files, StringBuilder errorMessage, List<File> failedFiles) {
         // Upload all archive files
         if (files != null) {
             for (File f : files) {
                 try {
-                    log.info("Uploading file '" + f.getName()
-                             + "' to arcrepository.");
+                    log.info("Uploading file '{}' to arcrepository.", f.getName());
                     arcRepController.store(f);
-                    log.info("File '" + f.getName()
-                            + "' uploaded successfully to arcrepository.");
+                    log.info("File '{}' uploaded successfully to arcrepository.", f.getName());
                 } catch (Exception e) {
-                    File oldJobsDir
-                            = new File(Settings.get(
-                            HarvesterSettings.HARVEST_CONTROLLER_OLDJOBSDIR));
-                    String errorMsg = "Error uploading arcfile '"
-                                      + f.getAbsolutePath()
-                                      + "' Will be moved to '"
+                    File oldJobsDir = new File(Settings.get(HarvesterSettings.HARVEST_CONTROLLER_OLDJOBSDIR));
+                    String errorMsg = "Error uploading arcfile '" + f.getAbsolutePath() + "' Will be moved to '"
                                       + oldJobsDir.getAbsolutePath() + "'";
-                    errorMessage.append(errorMsg).append("\n")
-                            .append(e.toString()).append("\n");
+                    errorMessage.append(errorMsg).append("\n").append(e.toString()).append("\n");
                     log.warn(errorMsg, e);
                     failedFiles.add(f);
                 }
@@ -426,8 +395,7 @@ public class HarvestController {
      * @param metadataEntries list of metadataEntries.
      * @return the list of jobs for deduplicate reduction.
      */
-    private List<Long> parseJobIDsForDuplicateReduction(
-            List<MetadataEntry> metadataEntries) {
+    private List<Long> parseJobIDsForDuplicateReduction(List<MetadataEntry> metadataEntries) {
         // find metadataEntry for duplicatereduction if any.
         List<Long> result = new ArrayList<Long>();
         for (MetadataEntry me : metadataEntries) {
@@ -441,11 +409,8 @@ public class HarvestController {
                     try {
                         result.add(Long.parseLong(stringLong));
                     } catch (NumberFormatException e) {
-                        log.warn("Unable to convert String '" + stringLong
-                                 + "' in duplicate reduction jobid list"
-                                 + " metadataEntry '" + s
-                                 + "' to a jobID. Ignoring.",
-                                 e);
+                        log.warn("Unable to convert String '{}' in duplicate reduction jobid list metadataEntry '{}'"
+                        		+ " to a jobID. Ignoring.", stringLong, s, e);
                     }
                 }
             }
@@ -474,23 +439,22 @@ public class HarvestController {
         // Get list of jobs, which should be used for duplicate reduction
         // and retrieve a luceneIndex from the IndexServer
         // based on the crawl.logs from these jobs and their CDX'es.
-        Set<Long> jobIDsForDuplicateReduction = new HashSet<Long>(
-                parseJobIDsForDuplicateReduction(metadataEntries));
+        Set<Long> jobIDsForDuplicateReduction = new HashSet<Long>(parseJobIDsForDuplicateReduction(metadataEntries));
 
         // The client for requesting job index.
-        JobIndexCache jobIndexCache
-                = IndexClientFactory.getDedupCrawllogInstance();
+        JobIndexCache jobIndexCache = IndexClientFactory.getDedupCrawllogInstance();
 
         // Request the index and return the index file.
-        Index<Set<Long>> jobIndex = jobIndexCache.getIndex(
-                jobIDsForDuplicateReduction);
+        Index<Set<Long>> jobIndex = jobIndexCache.getIndex(jobIDsForDuplicateReduction);
         // Check which jobs didn't become part of the index.
         Set<Long> diffSet = new HashSet<Long>(jobIDsForDuplicateReduction);
         diffSet.removeAll(jobIndex.getIndexSet());
-        log.debug("Received deduplication index containing " + jobIndex.getIndexSet().size()
-                + " jobs. " + ((diffSet.size() > 0)? 
-                        "Missing jobs: " + StringUtils.conjoin(",", diffSet) : ""));
-        
+        if (log.isDebugEnabled()) {
+            log.debug("Received deduplication index containing {} jobs. {}",
+            		jobIndex.getIndexSet().size(),
+            		((diffSet.size() > 0)? "Missing jobs: " + StringUtils.conjoin(",", diffSet) : ""));
+        }
+
         return jobIndex.getIndexFile();
     }
     
@@ -508,29 +472,25 @@ public class HarvestController {
         cdxJob.processOnlyFilesMatching(jobid + "-metadata-[0-9]+\\.(w)?arc(\\.gz)?");
         File f;
         try {
-            f = File.createTempFile(jobid + "-reports", ".cdx",
-                                    FileUtils.getTempDir());
+            f = File.createTempFile(jobid + "-reports", ".cdx", FileUtils.getTempDir());
         } catch (IOException e) {
             throw new IOFailure("Could not create temporary file", e);
         }
-        BatchStatus status
-                = ArcRepositoryClientFactory.getViewerInstance().batch(
-                cdxJob, Settings.get(CommonSettings.USE_REPLICA_ID));
+        BatchStatus status = ArcRepositoryClientFactory.getViewerInstance().batch(cdxJob,
+        		Settings.get(CommonSettings.USE_REPLICA_ID));
         status.getResultFile().copyTo(f);
         List<CDXRecord> records;
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new FileReader(f));
             records = new ArrayList<CDXRecord>();
-            for (String line = reader.readLine();
-                 line != null; line = reader.readLine()) {
+            for (String line = reader.readLine(); line != null; line = reader.readLine()) {
                 String[] parts = line.split("\\s+");
                 CDXRecord record = new CDXRecord(parts);
                 records.add(record);
             }
         } catch (IOException e) {
-            throw new IOFailure("Unable to read results from file '" + f
-                                + "'", e);
+            throw new IOFailure("Unable to read results from file '" + f + "'", e);
         } finally {
             IOUtils.closeQuietly(reader);
             FileUtils.remove(f);

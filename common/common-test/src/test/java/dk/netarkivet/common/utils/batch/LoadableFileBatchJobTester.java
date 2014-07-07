@@ -168,8 +168,9 @@ public class LoadableFileBatchJobTester extends TestCase {
 
         assertNull("Should not have loaded a job after transfer before init",
                    ((LoadableFileBatchJob) job1).loadedJob);
-        assertNotNull("Should have a log after transfer before init",
-                   ((LoadableFileBatchJob) job1).log);
+
+        // TODO log refactoring
+        //assertNotNull("Should have a log after transfer before init", ((LoadableFileBatchJob) job1).log);
 
         baos = new ByteArrayOutputStream();
         job1.initialize(baos);

@@ -22,12 +22,6 @@
  */
 package dk.netarkivet.common.distribute;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.TrustManagerFactory;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
@@ -35,6 +29,13 @@ import java.net.URLConnection;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.SecureRandom;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManagerFactory;
 
 import org.apache.commons.io.IOUtils;
 import org.mortbay.jetty.Server;
@@ -52,66 +53,59 @@ import dk.netarkivet.common.utils.Settings;
  * machine.
  */
 public class HTTPSRemoteFileRegistry extends HTTPRemoteFileRegistry {
-    // Constants defining default X509 algorithm for security framework.
+
+	// Constants defining default X509 algorithm for security framework.
     private static final String SUN_JCEKS_KEYSTORE_TYPE = "JCEKS";
     private static final String SUN_X509_CERTIFICATE_ALGORITHM = "SunX509";
     private static final String SSL_PROTOCOL = "SSL";
     private static final String SHA1_PRNG_RANDOM_ALGORITHM = "SHA1PRNG";
     /** Protocol used in this registry. */
     private static final String PROTOCOL = "https";
+
     /** A hostname verifier accepting any host. */
-    private static final HostnameVerifier ACCEPTING_HOSTNAME_VERIFIER
-            = new HostnameVerifier() {
+    private static final HostnameVerifier ACCEPTING_HOSTNAME_VERIFIER = new HostnameVerifier() {
         public boolean verify(String string, SSLSession sslSession) {
             return true;
         }
     };
-    /** The path to the keystore containing the certificate used for SSL in
-     * HTTPS connections. */
-    private static final String KEYSTORE_PATH
-            = Settings.get(HTTPSRemoteFile.HTTPSREMOTEFILE_KEYSTORE_FILE);
+
+    // FIXME So only one private key for all connections?
+
+    /** The path to the keystore containing the certificate used for SSL in HTTPS connections. */
+    private static final String KEYSTORE_PATH = Settings.get(HTTPSRemoteFile.HTTPSREMOTEFILE_KEYSTORE_FILE);
     /** The keystore password. */
-    private static final String KEYSTORE_PASSWORD = Settings.get(
-            HTTPSRemoteFile.HTTPSREMOTEFILE_KEYSTORE_PASSWORD);
+    private static final String KEYSTORE_PASSWORD = Settings.get(HTTPSRemoteFile.HTTPSREMOTEFILE_KEYSTORE_PASSWORD);
     /** The certificate password. */
-    private static final String KEY_PASSWORD = Settings.get(
-            HTTPSRemoteFile.HTTPSREMOTEFILE_KEY_PASSWORD);
+    private static final String KEY_PASSWORD = Settings.get(HTTPSRemoteFile.HTTPSREMOTEFILE_KEY_PASSWORD);
+
     /** An SSL context, used for creating SSL connections only accepting this
      * certificate. */
     private final SSLContext sslContext;
+
+    // FIXME I think this is what they call a constructor...?!
     //This all initialises the ssl context to use the key in the keystore
     //above.
     {
         FileInputStream keyStoreInputStream = null;    
         try {
             keyStoreInputStream = new FileInputStream(KEYSTORE_PATH); 
-            KeyStore store = KeyStore.getInstance(
-                    SUN_JCEKS_KEYSTORE_TYPE);
-            store.load(keyStoreInputStream, 
-                    KEYSTORE_PASSWORD.toCharArray());
-            KeyManagerFactory kmf = KeyManagerFactory.getInstance(
-                    SUN_X509_CERTIFICATE_ALGORITHM);
-            kmf.init(store,
-                     KEY_PASSWORD.toCharArray());
-            TrustManagerFactory tmf = TrustManagerFactory.getInstance(
-                    SUN_X509_CERTIFICATE_ALGORITHM);
+            KeyStore store = KeyStore.getInstance(SUN_JCEKS_KEYSTORE_TYPE);
+            store.load(keyStoreInputStream, KEYSTORE_PASSWORD.toCharArray());
+            KeyManagerFactory kmf = KeyManagerFactory.getInstance(SUN_X509_CERTIFICATE_ALGORITHM);
+            kmf.init(store, KEY_PASSWORD.toCharArray());
+            TrustManagerFactory tmf = TrustManagerFactory.getInstance(SUN_X509_CERTIFICATE_ALGORITHM);
             tmf.init(store);
-            sslContext = SSLContext.getInstance(
-                    SSL_PROTOCOL);
+            sslContext = SSLContext.getInstance(SSL_PROTOCOL);
             sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(),
-                            SecureRandom.getInstance(
-                                    SHA1_PRNG_RANDOM_ALGORITHM));
+            		SecureRandom.getInstance(SHA1_PRNG_RANDOM_ALGORITHM));
         } catch (GeneralSecurityException e) {
-            throw new IOFailure("Unable to create secure environment for"
-                                + " keystore '" + KEYSTORE_PATH + "'", e);
+            throw new IOFailure("Unable to create secure environment for" + " keystore '" + KEYSTORE_PATH + "'", e);
         } catch (IOException e) {
-            throw new IOFailure("Unable to create secure environment for"
-                                + " keystore '" + KEYSTORE_PATH + "'", e);
+            throw new IOFailure("Unable to create secure environment for" + " keystore '" + KEYSTORE_PATH + "'", e);
         } finally {
             IOUtils.closeQuietly(keyStoreInputStream);
         }
     }
-
 
     /**
      * Get the unique instance.
@@ -180,4 +174,5 @@ public class HTTPSRemoteFileRegistry extends HTTPRemoteFileRegistry {
         httpsConnection.setHostnameVerifier(ACCEPTING_HOSTNAME_VERIFIER);
         return httpsConnection;
     }
+
 }

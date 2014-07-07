@@ -22,12 +22,13 @@
  */
 package dk.netarkivet.common.distribute;
 
-import javax.jms.Message;
-import javax.jms.MessageListener;
 import java.util.Hashtable;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import javax.jms.Message;
+import javax.jms.MessageListener;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -40,15 +41,12 @@ import dk.netarkivet.common.exceptions.IOFailure;
  */
 public class Synchronizer implements MessageListener {
 
-    private final Log log = LogFactory.getLog(getClass().getName());
+    private static final Logger log = LoggerFactory.getLogger(Synchronizer.class);
 
     /** Collection containing messages on which a reply is awaited. */
     private Hashtable<String, NetarkivetMessage> requests;
 
-    /**
-     * Collection containing reply messages which have not yet been returned to
-     * the caller.
-     */
+    /** Collection containing reply messages which have not yet been returned to the caller. */
     private Hashtable<String, NetarkivetMessage> replies;
 
     /**
@@ -78,10 +76,8 @@ public class Synchronizer implements MessageListener {
                 requestMsg.notifyAll();
             }
         } else {
-            log.warn("Received unexpected reply for unknown message '"
-                    + naMsg.getReplyOfId() + "' of type '"
-                    + naMsg.getClass().getName() 
-                    + "'. Ignored!!: " + naMsg.toString());
+            log.warn("Received unexpected reply for unknown message '{}' of type '{}'. Ignored!!: {}",
+            		naMsg.getReplyOfId(), naMsg.getClass().getName(), naMsg.toString());
         }
     }
 
@@ -99,8 +95,7 @@ public class Synchronizer implements MessageListener {
      * @return a reply message from the receiver of the request or null if
      * timed out.
      */
-    public NetarkivetMessage sendAndWaitForOneReply
-            (NetarkivetMessage msg, long timeout) {
+    public NetarkivetMessage sendAndWaitForOneReply(NetarkivetMessage msg, long timeout) {
         ArgumentNotValid.checkNotNull(msg, "msg");
         boolean noTimeout = (timeout == 0);
         JMSConnection con = JMSConnectionFactory.getInstance();
@@ -121,8 +116,7 @@ public class Synchronizer implements MessageListener {
                             // the new timeout value
                             timeout -= timeAfterWait - timeBeforeWait;
                             if (noTimeout || timeout > 0) {   //Unexpected wakeup
-                                log.debug("Unexpected wakeup for "
-                                        + msg.toString());
+                                log.debug("Unexpected wakeup for {}", msg.toString());
                             } else {
                                 //timed out
                                 // NB! if timeout is exactly zero here then this
@@ -130,24 +124,22 @@ public class Synchronizer implements MessageListener {
                                 // wait(0) on the next loop with disastrous
                                 // results
                                 requests.remove(msg.getID());
-                                log.debug("Timed out waiting "
-                                        + "for reply to "
-                                        + msg.toString());
+                                log.debug("Timed out waiting for reply to {}", msg.toString());
                                 return null;
                             }
                         }
                     }
                 }
             } catch (InterruptedException e) {
-                throw new IOFailure("Interrupted while waiting for reply to "
-                        + msg, e);
+                throw new IOFailure("Interrupted while waiting for reply to " + msg, e);
             }
         }
         // If we get here, we must have received the expected reply
         synchronized (requests) {
             requests.remove(msg.getID());
-            log.debug("Received reply for message: " + msg.toString());
+            log.debug("Received reply for message: {}", msg.toString());
             return replies.remove(msg.getID());
         }
     }
+
 }

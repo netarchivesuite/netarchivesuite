@@ -25,8 +25,8 @@ package dk.netarkivet.common.lifecycle;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
@@ -40,15 +40,16 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * <li> Call the <code>super.shutdown</code> operation to  
  */
 public class LifeCycleComponent implements ComponentLifeCycle { 
-    /** The child-components of this lifecycle. */
-    private List<ComponentLifeCycle> children 
-        = new ArrayList<ComponentLifeCycle>();
+
     /** The instance logger. */
-    private final Log log = LogFactory.getLog(getClass().getName());
+    private static final Logger log = LoggerFactory.getLogger(LifeCycleComponent.class);
+
+	/** The child-components of this lifecycle. */
+    private List<ComponentLifeCycle> children = new ArrayList<ComponentLifeCycle>();
 
     @Override
     public void start() {
-        log.debug("Starting " + toString());
+        log.debug("Starting {}", toString());
         for (ComponentLifeCycle child: children) {
             child.start();
         }
@@ -56,7 +57,7 @@ public class LifeCycleComponent implements ComponentLifeCycle {
     
     @Override
     public void shutdown() {
-        log.debug("Shutting down " + toString());
+        log.debug("Shutting down {}", toString());
         for (ComponentLifeCycle child: children) {
             child.shutdown();
         }
@@ -71,4 +72,5 @@ public class LifeCycleComponent implements ComponentLifeCycle {
         ArgumentNotValid.checkNotNull(childComponent, "Child can not be null");
         children.add(childComponent);        
     }
+
 }

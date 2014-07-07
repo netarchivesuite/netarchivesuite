@@ -22,19 +22,20 @@
  */
 package dk.netarkivet.common.distribute;
 
+import java.util.Arrays;
+
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.QueueConnection;
-
-import java.util.Arrays;
 import javax.jms.QueueSession;
 import javax.jms.Session;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.sun.messaging.ConnectionConfiguration;
 import com.sun.messaging.Queue;
 import com.sun.messaging.Topic;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -52,12 +53,13 @@ import dk.netarkivet.common.utils.Settings;
  * Clients: http://docs.sun.com/app/docs/doc/819-7757/aeqgo?a=view
  */
 public class JMSConnectionSunMQ extends JMSConnection {
-    /** The log. */
-    private static final Log log = LogFactory.getLog(JMSConnectionSunMQ.class);
+
+	/** The log. */
+    private static final Logger log = LoggerFactory.getLogger(JMSConnectionSunMQ.class);
 
     /** The default place in classpath where the settings file can be found. */
-    private static String DEFAULT_SETTINGS_CLASSPATH
-            = "dk/netarkivet/common/distribute/JMSConnectionSunMQSettings.xml";
+    private static String DEFAULT_SETTINGS_CLASSPATH =
+    		"dk/netarkivet/common/distribute/JMSConnectionSunMQSettings.xml";
 
     /*
      * The static initialiser is called when the class is loaded.
@@ -65,37 +67,29 @@ public class JMSConnectionSunMQ extends JMSConnection {
      * loading them from a settings.xml file in classpath.
      */
     static {
-        Settings.addDefaultClasspathSettings(
-                DEFAULT_SETTINGS_CLASSPATH
-        );
+        Settings.addDefaultClasspathSettings(DEFAULT_SETTINGS_CLASSPATH);
     }
 
     public static final String[] RECONNECT_ERRORCODES = {
-            "C4000", //Packet acknowledgment failed
-            "C4001", //Write packet failed
-            "C4002", //Read packet failed
-            "C4003", //Connection timed out
-            "C4036", //Server error
-            "C4056", //Received goodbye from broker
-            "C4059", //Session is closed
-            "C4062", //Connection is closed
-            "C4063"  //Consumer is closed
+        "C4000", //Packet acknowledgment failed
+        "C4001", //Write packet failed
+        "C4002", //Read packet failed
+        "C4003", //Connection timed out
+        "C4036", //Server error
+        "C4056", //Received goodbye from broker
+        "C4059", //Session is closed
+        "C4062", //Connection is closed
+        "C4063"  //Consumer is closed
     };
 
     // NOTE: The constants defining setting names below are left non-final on
     // purpose! Otherwise, the static initialiser that loads default values
     // will not run.
 
-    /**
-     * <b>settings.common.jms.broker</b>: <br> The JMS broker host contacted by
-     * the JMS connection.
-     */
+    /** <b>settings.common.jms.broker</b>: <br> The JMS broker host contacted by the JMS connection. */
     public static String JMS_BROKER_HOST = "settings.common.jms.broker";
 
-    /**
-     * <b>settings.common.jms.port</b>: <br> The port the JMS connection should
-     * use.
-     */
+    /** <b>settings.common.jms.port</b>: <br> The port the JMS connection should use. */
     public static String JMS_BROKER_PORT = "settings.common.jms.port";
 
     private QueueConnection qConnection;
@@ -103,7 +97,7 @@ public class JMSConnectionSunMQ extends JMSConnection {
     /** Constructor. */
     private JMSConnectionSunMQ() {
         super();
-        log.info("Creating instance of " + getClass().getName());
+        log.info("Creating instance of {}", getClass().getName());
         initConnection();
     }
 
@@ -114,8 +108,7 @@ public class JMSConnectionSunMQ extends JMSConnection {
      *
      * @throws IOFailure when connection to JMS broker failed
      */
-    public static synchronized JMSConnection getInstance()
-            throws IOFailure {
+    public static synchronized JMSConnection getInstance() throws IOFailure {
         if (instance == null) {
             instance = new JMSConnectionSunMQ();
         }
@@ -136,22 +129,13 @@ public class JMSConnectionSunMQ extends JMSConnection {
      *                      to 1, imqBrokerHostname and imqBrokerHostPort set to
      *                      the values defined in our settings.
      */
-    protected com.sun.messaging.ConnectionFactory getConnectionFactory()
-            throws JMSException {
-        log.info("Establishing SunMQ JMS Connection to '"
-                 + Settings.get(JMS_BROKER_HOST) + ":" + Settings.getInt(
-                JMS_BROKER_PORT) + "'");
-        com.sun.messaging.ConnectionFactory cFactory
-                = new com.sun.messaging.ConnectionFactory();
-        cFactory.setProperty(
-                ConnectionConfiguration.imqBrokerHostName,
-                Settings.get(JMS_BROKER_HOST));
-        cFactory.setProperty(
-                ConnectionConfiguration.imqBrokerHostPort,
-                Settings.get(JMS_BROKER_PORT));
-        cFactory.setProperty(
-                ConnectionConfiguration.imqConsumerFlowLimit,
-                "1");
+    protected com.sun.messaging.ConnectionFactory getConnectionFactory() throws JMSException {
+        log.info("Establishing SunMQ JMS Connection to '{}:{}'",
+        		Settings.get(JMS_BROKER_HOST), Settings.getInt(JMS_BROKER_PORT));
+        com.sun.messaging.ConnectionFactory cFactory = new com.sun.messaging.ConnectionFactory();
+        cFactory.setProperty(ConnectionConfiguration.imqBrokerHostName, Settings.get(JMS_BROKER_HOST));
+        cFactory.setProperty(ConnectionConfiguration.imqBrokerHostPort, Settings.get(JMS_BROKER_PORT));
+        cFactory.setProperty(ConnectionConfiguration.imqConsumerFlowLimit, "1");
         return cFactory;
     }
 
@@ -166,8 +150,7 @@ public class JMSConnectionSunMQ extends JMSConnection {
      *
      * @throws JMSException If unable to create the destination.
      */
-    protected Destination getDestination(String channelName)
-            throws JMSException {
+    protected Destination getDestination(String channelName) throws JMSException {
         boolean isTopic = Channels.isTopic(channelName);
         if (isTopic) {
             return new Topic(channelName);
@@ -193,15 +176,12 @@ public class JMSConnectionSunMQ extends JMSConnection {
     public void onException(JMSException e) {
         ArgumentNotValid.checkNotNull(e, "JMSException e");
         final String errorcode = e.getErrorCode();
-        log.warn("JMSException with errorcode '"
-                 + errorcode + "' encountered: " + e);
+        log.warn("JMSException with errorcode '{}' encountered:", errorcode, e);
 
         if (Arrays.asList(RECONNECT_ERRORCODES).contains(errorcode)) {
             reconnect();
         } else {
-            log.warn("Exception not handled. "
-                     + "Don't know how to handle exceptions with errorcode "
-                     + errorcode, e);
+            log.warn("Exception not handled. Don't know how to handle exceptions with errorcode {}", errorcode, e);
         }
     }
 
@@ -213,4 +193,5 @@ public class JMSConnectionSunMQ extends JMSConnection {
         boolean transacted = false;
         return qConnection.createQueueSession(transacted, Session.AUTO_ACKNOWLEDGE);
     }
+
 }

@@ -87,4 +87,5 @@ public class RemoteFileSettings implements Serializable {
     public String getUserPassword() {
         return userPassword;
     }
+
 }

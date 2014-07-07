@@ -22,11 +22,11 @@
  */
 package dk.netarkivet.common.distribute;
 
-import dk.netarkivet.common.exceptions.NotImplementedException;
-
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
+
+import dk.netarkivet.common.exceptions.NotImplementedException;
 
 /**
  * This is an implementation of RemoteFile which does nothing and can
@@ -39,11 +39,9 @@ public class NullRemoteFile implements RemoteFile {
     /**
      * @see RemoteFileFactory#getInstance(File, boolean, boolean, boolean)
      */
-    public static RemoteFile getInstance(File f,
-                                         Boolean useChecksums,
-                                         Boolean fileDeletable,
-                                         Boolean multipleDownloads) {
-          return new NullRemoteFile();
+    public static RemoteFile getInstance(File f, Boolean useChecksums, Boolean fileDeletable,
+    		Boolean multipleDownloads) {
+    	return new NullRemoteFile();
     }
 
     /**
@@ -93,4 +91,5 @@ public class NullRemoteFile implements RemoteFile {
     public String getChecksum() throws NotImplementedException {
         throw new NotImplementedException("Not implemented!");
     }
+
 }

@@ -28,8 +28,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.OutputStream;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -41,10 +41,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 @SuppressWarnings({ "serial"})
 public class FileListJob extends FileBatchJob {
     
-    /** The class logger. This variable is re-initialized during 
-     * de-serialization.
-     */
-    protected transient Log log = LogFactory.getLog(getClass().getName());
+    private static final transient Logger log = LoggerFactory.getLogger(FileListJob.class);
 
     /** The constructor. */
     public FileListJob() {
@@ -70,7 +67,6 @@ public class FileListJob extends FileBatchJob {
         } catch (Exception e) {
             throw new IOFailure("Unexpected error during deserialization", e);
         }
-        log = LogFactory.getLog(getClass().getName());
     }
 
     /**
@@ -85,8 +81,7 @@ public class FileListJob extends FileBatchJob {
         try {
             os.write(result.getBytes());
         } catch (IOException e) {
-            log.warn("Listing of file " + file.getName()
-                    + " failed: ", e);
+            log.warn("Listing of file {} failed: ", file.getName(), e);
             return false;
         }
         return true;
@@ -110,8 +105,7 @@ public class FileListJob extends FileBatchJob {
         } else {
             filesFailedCount = filesFailed.size();
         }
-        return ("\nFileList job:\nFiles Processed = "
-                + noOfFilesProcessed
-                + "\nFiles  failed = " + filesFailedCount);
+        return ("\nFileList job:\nFiles Processed = " + noOfFilesProcessed + "\nFiles  failed = " + filesFailedCount);
     }
+
 }

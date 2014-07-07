@@ -36,4 +36,5 @@ public class JMSConnectionFactory {
     public static JMSConnection getInstance() {
         return SettingsFactory.getInstance(CommonSettings.JMS_BROKER_CLASS);
     }
+
 }

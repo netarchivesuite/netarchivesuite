@@ -36,8 +36,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.archive.io.ArchiveRecord;
 import org.archive.io.arc.ARCReader;
 import org.archive.io.arc.ARCReaderFactory;
@@ -45,6 +43,8 @@ import org.archive.io.arc.ARCRecord;
 import org.archive.io.arc.ARCRecordMetaData;
 import org.archive.io.arc.ARCWriter;
 import org.archive.util.ArchiveUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -57,22 +57,21 @@ import dk.netarkivet.common.utils.SystemUtils;
  * Also includes method for converting an ARCRecord to a byte array.
  */
 public final class ARCUtils {
-    /** Default constructor to avoid initialization.*/
+
+    /** The log. */
+    private static final Logger log = LoggerFactory.getLogger(ARCUtils.class);
+
+	/** Default constructor to avoid initialization.*/
     private ARCUtils() {
     }
-    /** The log. */
-    private static Log log = LogFactory.getLog(ARCUtils.class.getName());
-
     
     /** Matches HTTP header lines like
      * HTTP/1.1 404 Page has gone south
      * Groups:  111 2222222222222222222. */
-    private static final Pattern HTTP_HEADER_PATTERN
-        = Pattern.compile("^HTTP/1\\.[01] (\\d+) (.*)$");
+    private static final Pattern HTTP_HEADER_PATTERN = Pattern.compile("^HTTP/1\\.[01] (\\d+) (.*)$");
 
     /** Extra ARC Record metadata. */
     public static final String RESPONSETEXT = "RESPONSETEXT";  
-
 
     /** Insert the contents of an ARC file (skipping an optional initial
      *  filedesc: header) in another ARCfile.
@@ -132,8 +131,7 @@ public final class ARCUtils {
             // Note ARCRecord extends InputStream            
             aw.write(uri, mime, ip, timeStamp, meta.getLength(), record);
         } catch (Exception e) {
-            throw new IOFailure("Error occurred while writing an ARC record"
-                    + record, e);
+            throw new IOFailure("Error occurred while writing an ARC record" + record, e);
         }
     }
 
@@ -160,8 +158,7 @@ public final class ARCUtils {
             if (ps != null) {
                 ps.close();
             }
-            String message = "Could not create ARCWriter to file '"
-                    + newFile + "'.\n";
+            String message = "Could not create ARCWriter to file '" + newFile + "'.\n";
             log.warn(message);
             throw new IOFailure(message, e);
         }
@@ -181,8 +178,7 @@ public final class ARCUtils {
      * @throws ArgumentNotValid if any arguments aw and file are null
      *  and arguments uri and mime are null or empty.
      */
-    public static void writeFileToARC(ARCWriter aw, File file, String uri,
-                                      String mime) {
+    public static void writeFileToARC(ARCWriter aw, File file, String uri, String mime) {
         ArgumentNotValid.checkNotNull(aw, "ARCWriter aw");
         ArgumentNotValid.checkNotNull(file, "File file");
         ArgumentNotValid.checkNotNullOrEmpty(uri, "String uri");
@@ -204,8 +200,7 @@ public final class ARCUtils {
                 }
             }
         } catch (IOException e) {
-            String msg = "Error writing '" + file + "' to "
-                    + aw + " as " + uri;
+            String msg = "Error writing '" + file + "' to " + aw + " as " + uri;
             log.warn(msg, e);
             throw new IOFailure(msg, e);
         }
@@ -218,10 +213,8 @@ public final class ARCUtils {
      * @return ARCWriter to be used by tools ArcMerge and ArcWrap
      * @throws IOException redirect from ARCWriter constructure
      */
-    public static ARCWriter getToolsARCWriter(PrintStream stream,
-            File destinationArcfile) throws IOException {
-        return
-            new ARCWriter(new AtomicInteger(), stream,
+    public static ARCWriter getToolsARCWriter(PrintStream stream, File destinationArcfile) throws IOException {
+        return new ARCWriter(new AtomicInteger(), stream,
                 destinationArcfile,
                 false, //Don't compress
                 // Use current time
@@ -245,8 +238,8 @@ public final class ARCUtils {
    public static byte[] readARCRecord(ARCRecord in) throws IOException {
        ArgumentNotValid.checkNotNull(in, "ARCRecord in");
        if (in.getMetaData().getLength() > Integer.MAX_VALUE) {
-           throw new IOFailure("ARC Record too long to fit in array: "
-                   + in.getMetaData().getLength() + " > " + Integer.MAX_VALUE);
+           throw new IOFailure("ARC Record too long to fit in array: " + in.getMetaData().getLength() + " > "
+        		   + Integer.MAX_VALUE);
        }
        // read from stream
        // The arcreader has a number of "features" that complicates the read
@@ -260,8 +253,7 @@ public final class ARCUtils {
        byte[] buffer = new byte[Constants.IO_BUFFER_SIZE];
        int bytesRead;
        int totalBytes = 0;
-       for (; (totalBytes < dataLength)
-           && ((bytesRead = in.read(buffer)) != -1); totalBytes += bytesRead) {
+       for (; (totalBytes < dataLength) && ((bytesRead = in.read(buffer)) != -1); totalBytes += bytesRead) {
            System.arraycopy(buffer, 0, tmpbuffer, totalBytes, bytesRead);
        }
        // Check if the number of bytes read (=i) matches the
@@ -283,9 +275,7 @@ public final class ARCUtils {
      * @return pairwise headers.
      * @throws IOException if fails to read ARC files or ARC files isn't valid.
      */
-    public static Map<String, Object> getHeadersFromARCFile(InputStream in,
-                                                            Long offset) 
-            throws IOException {
+    public static Map<String, Object> getHeadersFromARCFile(InputStream in, Long offset) throws IOException {
         Map<String, Object> headers = new HashMap<String, Object>();
         // extra needed headers.
         headers.put(ARCRecordMetaData.VERSION_FIELD_KEY, "");
@@ -295,35 +285,31 @@ public final class ARCUtils {
         String[] tmp = line.split(" ");
 
         // decode header.
-        if(tmp.length == 5) {
+        if (tmp.length == 5) {
             headers.put(ARCRecordMetaData.URL_FIELD_KEY, tmp[0]);
             headers.put(ARCRecordMetaData.IP_HEADER_FIELD_KEY, tmp[1]);
             headers.put(ARCRecordMetaData.DATE_FIELD_KEY, tmp[2]);
             headers.put(ARCRecordMetaData.MIMETYPE_FIELD_KEY, tmp[3]);
             headers.put(ARCRecordMetaData.LENGTH_FIELD_KEY, tmp[4]);
         } else {
-            throw new IOException(
-                    "Does not include required metadata to be a valid "
-                    + "ARC header: " + line);
+            throw new IOException("Does not include required metadata to be a valid ARC header: " + line);
         }
         // Matches rest of header lines.
         line = InputStreamUtils.readLine(in);
         Matcher m = HTTP_HEADER_PATTERN.matcher(line);
 
-        if(m.matches()) {
+        if (m.matches()) {
             headers.put(ARCRecordMetaData.STATUSCODE_FIELD_KEY, m.group(1));
             // not valid META DATA
             headers.put(RESPONSETEXT, line);
         }
-        while((line = InputStreamUtils.readLine(in)) != null
-              && line.length() > 0
-              && line.startsWith("<") /* arc/warc header */) {
+        /* arc/warc header */
+        while ((line = InputStreamUtils.readLine(in)) != null && line.length() > 0 && line.startsWith("<")) {
             int index = line.indexOf(':');
-            if(index != -1) {
+            if (index != -1) {
                 headers.put(line.substring(0, index), line.substring(index+2));
             } else {
-                throw new IOException(
-                        "Inputstream doesn't not point to valid ARC record");
+                throw new IOException("Inputstream doesn't not point to valid ARC record");
             }
         }
 
@@ -338,7 +324,7 @@ public final class ARCUtils {
     public static boolean isARC(String filename) {
         ArgumentNotValid.checkNotNullOrEmpty(filename, "filename");
         String filenameLowercase = filename.toLowerCase();
-        return (filenameLowercase.endsWith(".arc") 
-                || filenameLowercase.endsWith(".arc.gz"));
+        return (filenameLowercase.endsWith(".arc") || filenameLowercase.endsWith(".arc.gz"));
     }
+
 }

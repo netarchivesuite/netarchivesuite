@@ -37,5 +37,6 @@ public interface ArchiveFileNaming {
      * @param job the harvestJob
      * @return a prefix to be used by Heritrix
      */
-    String getPrefix(Job job);    
+    String getPrefix(Job job);
+
 }

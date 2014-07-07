@@ -25,20 +25,21 @@ package dk.netarkivet.common.utils.cdx;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.StringUtils;
-
 
 /**
  * Represents a line i a CDX-file. A CDX-file is an index over arcfiles, with
  * fields for uri, ip, date, mimetype, length, arcfile, and offset in the file.
  */
 public class CDXRecord {
-    /** The logger for this class. */
-    private static Log log = LogFactory.getLog(CDXRecord.class.getName());
+
+	/** The logger for this class. */
+    private static final Logger log = LoggerFactory.getLogger(CDXRecord.class);
+
     /** The uri information in a CDX entry. */
     private String url;
     /** The ip information in a CDX entry. */
@@ -63,8 +64,7 @@ public class CDXRecord {
         try {
             return URLDecoder.decode(s, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            throw new ArgumentNotValid(
-                    "UTF-8 is an unknown encoding. This should never happen!");
+            throw new ArgumentNotValid("UTF-8 is an unknown encoding. This should never happen!");
         }
     }
 
@@ -89,8 +89,7 @@ public class CDXRecord {
             if (pre1.equals(pre2)) {
                 String postdecode1 = unescape(post1);
                 String postdecode2 = unescape(post2);
-                result = (post1.equals(post2) || postdecode1
-                        .equals(postdecode2));
+                result = (post1.equals(post2) || postdecode1.equals(postdecode2));
             }
         }
         return result;
@@ -116,17 +115,14 @@ public class CDXRecord {
                 this.arcfile = fields[5];
                 this.offset = Long.parseLong(fields[6]);
             } catch (NumberFormatException e) {
-                String message = "Could not make CDXRecord - out of fields "
-                                 + StringUtils.conjoin(",", fields)
-                                 + ". Length or offset was not a parsable"
-                                 + " long value.";
+                String message = "Could not make CDXRecord - out of fields " + StringUtils.conjoin(",", fields)
+                		+ ". Length or offset was not a parsable long value.";
                 log.debug(message);
                 throw new ArgumentNotValid(message);
             }
         } else {
-            String message = "Could not make CDXRecord - out of "
-                             + fields.length + " fields: "
-                             + StringUtils.conjoin(",", fields);
+            String message = "Could not make CDXRecord - out of " + fields.length + " fields: "
+            		+ StringUtils.conjoin(",", fields);
             log.debug(message);
             throw new ArgumentNotValid(message);
         }
@@ -195,4 +191,5 @@ public class CDXRecord {
     public long getOffset() {
         return offset;
     }
+
 }

@@ -49,8 +49,8 @@ public class OnNSDomainsDecideRule extends SurtPrefixedDecideRule {
     public static final String NON_VALID_DOMAIN = "http://(http,)";
     
     /** Pattern that matches the first part of SURT - until ?? */
-    public static final Pattern SURT_FIRSTPART_PATTERN
-        = Pattern.compile("http\\://\\([^\\)]*");
+    public static final Pattern SURT_FIRSTPART_PATTERN = Pattern.compile("http\\://\\([^\\)]*");
+
     /** 
      * Constructor for the class OnNSDomainsDecideRule. 
      * @param s The name of this DecideRule
@@ -133,8 +133,7 @@ public class OnNSDomainsDecideRule extends SurtPrefixedDecideRule {
      */
     public static String convertToDomain(String uri) {
         ArgumentNotValid.checkNotNullOrEmpty(uri, "String uri");
-        DomainnameQueueAssignmentPolicy policy
-                = new DomainnameQueueAssignmentPolicy();
+        DomainnameQueueAssignmentPolicy policy = new DomainnameQueueAssignmentPolicy();
         String u = uri;
         try {
             u = UURIFactory.getInstance(uri).toString();
@@ -150,4 +149,5 @@ public class OnNSDomainsDecideRule extends SurtPrefixedDecideRule {
             return NON_VALID_DOMAIN;
         }
     }
+
 }

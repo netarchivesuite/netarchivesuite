@@ -36,9 +36,10 @@ import dk.netarkivet.common.utils.Settings;
  */
 @SuppressWarnings({ "serial"})
 public class HTTPSRemoteFile extends HTTPRemoteFile {
-    /** The default place in classpath where the settings file can be found. */
-    private static final String DEFAULT_SETTINGS_CLASSPATH
-            = "dk/netarkivet/common/distribute/HTTPSRemoteFileSettings.xml";
+
+	/** The default place in classpath where the settings file can be found. */
+    private static final String DEFAULT_SETTINGS_CLASSPATH =
+    		"dk/netarkivet/common/distribute/HTTPSRemoteFileSettings.xml";
 
     /*
      * The static initialiser is called when the class is loaded.
@@ -46,8 +47,7 @@ public class HTTPSRemoteFile extends HTTPRemoteFile {
      * loading them from a settings.xml file in classpath.
      */
     static {
-        Settings.addDefaultClasspathSettings(
-                DEFAULT_SETTINGS_CLASSPATH
+        Settings.addDefaultClasspathSettings(DEFAULT_SETTINGS_CLASSPATH
         );
     }
 
@@ -59,8 +59,7 @@ public class HTTPSRemoteFile extends HTTPRemoteFile {
      * <b>settings.common.remoteFile.certificateKeyStore</b>: <br>
      * The setting for the keystore file used for HTTPS remotefiles. 
      * It contains the certificate for HTTPS */
-    public static String HTTPSREMOTEFILE_KEYSTORE_FILE
-            = "settings.common.remoteFile.certificateKeyStore";
+    public static String HTTPSREMOTEFILE_KEYSTORE_FILE = "settings.common.remoteFile.certificateKeyStore";
     
     /** 
      * <b>settings.common.remoteFile.certificateKeyStorePassword</b>: <br>
@@ -68,15 +67,13 @@ public class HTTPSRemoteFile extends HTTPRemoteFile {
      * remotefile keystore is encrypted with.
      * Refer to the configuration manual for how to build a keystore.
      */
-    public static String HTTPSREMOTEFILE_KEYSTORE_PASSWORD
-            = "settings.common.remoteFile.certificateKeyStorePassword";
+    public static String HTTPSREMOTEFILE_KEYSTORE_PASSWORD = "settings.common.remoteFile.certificateKeyStorePassword";
     
     /** 
      * <b>settings.common.remoteFile.certificatePassword</b>: <br>
      * The setting for the password that the certificate used for HTTPS 
      * remotefile (private key) is encrypted with. */
-    public static String HTTPSREMOTEFILE_KEY_PASSWORD
-            = "settings.common.remoteFile.certificatePassword";
+    public static String HTTPSREMOTEFILE_KEY_PASSWORD = "settings.common.remoteFile.certificatePassword";
 
     /**
      * Initialises a remote file implemented by point-to-point HTTPS
@@ -96,9 +93,7 @@ public class HTTPSRemoteFile extends HTTPRemoteFile {
      * @throws IOFailure        if checksums are requested, but i/o errors occur
      *                          while checksumming.
      */
-    protected HTTPSRemoteFile(File file, boolean useChecksums,
-                              boolean fileDeletable,
-                              boolean multipleDownloads) {
+    protected HTTPSRemoteFile(File file, boolean useChecksums, boolean fileDeletable, boolean multipleDownloads) {
         super(file, useChecksums, fileDeletable, multipleDownloads);
     }
 
@@ -117,11 +112,9 @@ public class HTTPSRemoteFile extends HTTPRemoteFile {
      * @throws IOFailure if checksums are requested, but i/o errors occur while
      * checksumming.
      */
-    public static RemoteFile getInstance(File f, Boolean useChecksums,
-                                         Boolean fileDeletable,
-                                         Boolean multipleDownloads) {
-        return new HTTPSRemoteFile(f, useChecksums, fileDeletable,
-                                   multipleDownloads);
+    public static RemoteFile getInstance(File f, Boolean useChecksums, Boolean fileDeletable,
+    		Boolean multipleDownloads) {
+        return new HTTPSRemoteFile(f, useChecksums, fileDeletable, multipleDownloads);
     }
 
     /**
@@ -133,4 +126,5 @@ public class HTTPSRemoteFile extends HTTPRemoteFile {
     protected HTTPRemoteFileRegistry getRegistry() {
         return HTTPSRemoteFileRegistry.getInstance();
     }
+
 }

@@ -45,4 +45,5 @@ public interface JobInfo {
      * @return the harvestFilename prefix.
      */
      String getHarvestFilenamePrefix();
+
 }

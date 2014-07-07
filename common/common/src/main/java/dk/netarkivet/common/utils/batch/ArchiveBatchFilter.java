@@ -41,7 +41,8 @@ public abstract class ArchiveBatchFilter implements Serializable {
     /** The name of the BatchFilter. */
     protected String name;
 
-    /** Create a new filter with the given name.
+    /**
+     * Create a new filter with the given name.
      *
      * @param name The name of this filter, for debugging mostly.
      */
@@ -79,12 +80,11 @@ public abstract class ArchiveBatchFilter implements Serializable {
     private static final String ARC_FILE_FILEDESC_HEADER_PREFIX = "filedesc";
 
     /** The name of the filter that filters out the filedesc record and/or non-response records. */
-    private static final String EXCLUDE_NON_RESPONSE_RECORDS_FILTER_NAME 
-        = "EXCLUDE_NON_RESPONSE_RECORDS";
+    private static final String EXCLUDE_NON_RESPONSE_RECORDS_FILTER_NAME = "EXCLUDE_NON_RESPONSE_RECORDS";
     
     /** The name of the filter that filters out the filedesc record and/or non-warcinfo records */
-    private static final String EXCLUDE_WARCINFO_AND_FILEDESC_RECORDS_FILTER_NAME 
-        = "EXCLUDE_WARCINFO_AND_FILEDESC_RECORDS";
+    private static final String EXCLUDE_WARCINFO_AND_FILEDESC_RECORDS_FILTER_NAME =
+    		"EXCLUDE_WARCINFO_AND_FILEDESC_RECORDS";
     
     /** A default filter: Accepts only response records. */
     public static final ArchiveBatchFilter EXCLUDE_NON_RESPONSE_RECORDS = new ArchiveBatchFilter(
@@ -92,8 +92,7 @@ public abstract class ArchiveBatchFilter implements Serializable {
         @Override
         public boolean accept(ArchiveRecordBase record) {
             if (record.bIsArc) {
-                return !record.getHeader().getUrl().startsWith(
-                        ARC_FILE_FILEDESC_HEADER_PREFIX);
+                return !record.getHeader().getUrl().startsWith(ARC_FILE_FILEDESC_HEADER_PREFIX);
             }
             if (record.bIsWarc) {
                 String warcType = record.getHeader().getHeaderStringValue("WARC-Type");
@@ -109,8 +108,7 @@ public abstract class ArchiveBatchFilter implements Serializable {
         @Override
         public boolean accept(ArchiveRecordBase record) {
             if (record.bIsArc) {
-                return !record.getHeader().getUrl().startsWith(
-                        ARC_FILE_FILEDESC_HEADER_PREFIX);
+                return !record.getHeader().getUrl().startsWith(ARC_FILE_FILEDESC_HEADER_PREFIX);
             }
             if (record.bIsWarc) {
                 String warcType = record.getHeader().getHeaderStringValue("WARC-Type");
@@ -119,7 +117,6 @@ public abstract class ArchiveBatchFilter implements Serializable {
             return false;
         }
     };
-
 
     /** Prefix for the url in HTTP records. */    
     private static final String EXCLUDE_HTTP_ENTRIES_HTTP_PREFIX = "http:";
@@ -139,7 +136,6 @@ public abstract class ArchiveBatchFilter implements Serializable {
 
     private static final String MIMETYPE_BATCH_FILTER_NAME_PREFIX = "MimetypeBatchFilter-";
 
-
     /**
      * Note that the mimetype of the WARC responserecord is not (necessarily) the same as its payload.
      * @param mimetype String denoting the mimetype this filter represents
@@ -149,8 +145,7 @@ public abstract class ArchiveBatchFilter implements Serializable {
     public static ArchiveBatchFilter getMimetypeBatchFilter(final String mimetype)
             throws MimeTypeParseException {
         if (!mimetypeIsOk(mimetype)) {
-            throw new MimeTypeParseException("Mimetype argument '" + mimetype +
-                    "' is invalid");
+            throw new MimeTypeParseException("Mimetype argument '" + mimetype + "' is invalid");
         }
         return new ArchiveBatchFilter(MIMETYPE_BATCH_FILTER_NAME_PREFIX + mimetype) {
             @Override

@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
@@ -42,6 +43,9 @@ import javax.jms.QueueBrowser;
 import javax.jms.QueueSession;
 import javax.jms.Session;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -50,8 +54,6 @@ import dk.netarkivet.common.utils.CleanupHook;
 import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.TimeUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Handles the communication with a JMS broker. Note on Thread-safety: the
@@ -62,18 +64,15 @@ import org.apache.commons.logging.LogFactory;
  * exceptionhandler for the JMS Connections
  */
 public abstract class JMSConnection implements ExceptionListener, CleanupIF {
-    /** The log. */
-    private static final Log log = LogFactory.getLog(JMSConnection.class);
 
-    /**
-     * Separator used in the consumer key. Separates the ChannelName from the
-     * MessageListener.toString().
-     */
+	/** The log. */
+    private static final Logger log = LoggerFactory.getLogger(JMSConnection.class);
+
+    /** Separator used in the consumer key. Separates the ChannelName from the MessageListener.toString(). */
     protected static final String CONSUMER_KEY_SEPARATOR = "##";
 
     /** The number to times to (re)try whenever a JMSException is thrown. */
-    static final int JMS_MAXTRIES = Settings.getInt(
-            CommonSettings.JMS_BROKER_RETRIES);
+    static final int JMS_MAXTRIES = Settings.getInt(CommonSettings.JMS_BROKER_RETRIES);
     
     /** The JMS Connection. */
     protected Connection connection;
@@ -85,24 +84,15 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
     protected Session session;
     
     /** Map for caching message producers. */
-    protected final Map<String, MessageProducer> producers
-            = Collections.synchronizedMap(
-            new HashMap<String, MessageProducer>());
+    protected final Map<String, MessageProducer> producers = Collections.synchronizedMap(
+    		new HashMap<String, MessageProducer>());
 
-    /**
-     * Map for caching message consumers (topic-subscribers and
-     * queue-receivers).
-     */
-    protected final Map<String, MessageConsumer> consumers
-            = Collections.synchronizedMap(
+    /** Map for caching message consumers (topic-subscribers and queue-receivers). */
+    protected final Map<String, MessageConsumer> consumers = Collections.synchronizedMap(
             new HashMap<String, MessageConsumer>());
 
-    /**
-     * Map for caching message listeners (topic-subscribers and
-     * queue-receivers).
-     */
-    protected final Map<String, MessageListener> listeners
-            = Collections.synchronizedMap(
+    /** Map for caching message listeners (topic-subscribers and queue-receivers). */
+    protected final Map<String, MessageListener> listeners = Collections.synchronizedMap(
             new HashMap<String, MessageListener>());
 
     /**
@@ -110,15 +100,12 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * sending messages. Locked for write when connection, releasing and
      * reconnecting.
      */
-    protected final ReentrantReadWriteLock connectionLock
-            = new ReentrantReadWriteLock();
+    protected final ReentrantReadWriteLock connectionLock = new ReentrantReadWriteLock();
 
     /** Shutdown hook that closes the JMS connection. */
     protected Thread closeHook;
-    /**
-     * Singleton pattern is be used for this class. This is the one and only
-     * instance.
-     */
+
+    /** Singleton pattern is be used for this class. This is the one and only instance. */
     protected static JMSConnection instance;
 
     /**
@@ -128,8 +115,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      *
      * @throws JMSException If unable to get QueueConnectionFactory
      */
-    protected abstract ConnectionFactory getConnectionFactory()
-            throws JMSException;
+    protected abstract ConnectionFactory getConnectionFactory() throws JMSException;
 
     /**
      * Should be implemented according to a specific JMS broker.
@@ -142,8 +128,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      *
      * @throws JMSException If unable to get a destination.
      */
-    protected abstract Destination getDestination(String destinationName)
-            throws JMSException;
+    protected abstract Destination getDestination(String destinationName) throws JMSException;
 
     /**
      * Exceptionhandler for the JMSConnection. Implemented according to a
@@ -165,7 +150,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * @throws IOFailure if initialization fails.
      */
     protected void initConnection() throws IOFailure {
-        log.debug("Initializing a JMS connection " + getClass().getName());
+        log.debug("Initializing a JMS connection {}", getClass().getName());
 
         connectionLock.writeLock().lock();
         try {
@@ -173,28 +158,24 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
             JMSException lastException = null;
             boolean operationSuccessful = false;
             while (!operationSuccessful && tries < JMS_MAXTRIES) {
-                tries++;
+            	++tries;
                 try {
                     establishConnectionAndSession();
                     operationSuccessful = true;
                 } catch (JMSException e) {
                     closeConnection();
-                    log.debug("Connect failed (try " + tries + ")", e);
+                    log.debug("Connect failed (try {})", tries, e);
                     lastException = e;
                     if (tries < JMS_MAXTRIES) {
-                        log.debug("Will sleep a while before trying to"
-                                  + " connect again");
-                        TimeUtils.exponentialBackoffSleep(tries,
-                                                          Calendar.MINUTE);
+                        log.debug("Will sleep a while before trying to connect again");
+                        TimeUtils.exponentialBackoffSleep(tries, Calendar.MINUTE);
                     }
                 }
             }
             if (!operationSuccessful) {
-                log.warn("Could not initialize JMS connection "
-                         + getClass(), lastException);
+                log.warn("Could not initialize JMS connection {}", getClass(), lastException);
                 cleanup();
-                throw new IOFailure("Could not initialize JMS connection "
-                                    + getClass(), lastException);
+                throw new IOFailure("Could not initialize JMS connection " + getClass(), lastException);
             }
             closeHook = new CleanupHook(this);
             Runtime.getRuntime().addShutdownHook(closeHook);
@@ -215,7 +196,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      */
     public void send(NetarkivetMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
-        log.trace("Sending message (" + msg.toString() + ") to " + msg.getTo());
+        log.trace("Sending message ({}) to {}", msg.toString(), msg.getTo());
         sendMessage(msg, msg.getTo());
     }
 
@@ -229,8 +210,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
     public final void resend(NetarkivetMessage msg, ChannelID to) {
         ArgumentNotValid.checkNotNull(msg, "msg");
         ArgumentNotValid.checkNotNull(to, "to");
-        log.trace("Resending message (" + msg.toString() + ") to "
-                  + to.getName());
+        log.trace("Resending message ({}) to {}", msg.toString(), to.getName());
         sendMessage(msg, to);
     }
 
@@ -246,8 +226,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      */
     public final void reply(NetarkivetMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
-        log.trace("Reply on message (" + msg.toString() + ") to "
-                  + msg.getReplyTo().getName());
+        log.trace("Reply on message ({}) to {}", msg.toString(), msg.getReplyTo().getName());
         if (!msg.hasBeenSent()) {
             throw new PermissionDenied("Message has not been sent yet");
         }
@@ -276,8 +255,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      *
      * @throws IOFailure On network trouble
      */
-    public void removeListener(ChannelID mq, MessageListener ml)
-            throws IOFailure {
+    public void removeListener(ChannelID mq, MessageListener ml) throws IOFailure {
         ArgumentNotValid.checkNotNull(mq, "ChannelID mq");
         ArgumentNotValid.checkNotNull(ml, "MessageListener ml");
         removeListener(ml, mq.getName());
@@ -291,8 +269,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * @throws JMSException
      *             If unable to create the specified queue browser
      */
-    public QueueBrowser createQueueBrowser(ChannelID queueID)
-            throws JMSException {
+    public QueueBrowser createQueueBrowser(ChannelID queueID) throws JMSException {
         ArgumentNotValid.checkNotNull(queueID, "ChannelID queueID");
         Queue queue = getQueueSession().createQueue(queueID.getName());
         return getQueueSession().createBrowser(queue);
@@ -370,17 +347,15 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * @throws ArgumentNotValid when msg in valid or format of JMS Object
      *                          message is invalid
      */
-    public static NetarkivetMessage unpack(Message msg)
-            throws ArgumentNotValid {
+    public static NetarkivetMessage unpack(Message msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "msg");
 
         ObjectMessage objMsg;
         try {
             objMsg = (ObjectMessage) msg;
         } catch (ClassCastException e) {
-            log.warn("Invalid message type: " + msg.getClass());
-            throw new ArgumentNotValid("Invalid message type: "
-                                       + msg.getClass());
+            log.warn("Invalid message type: {}", msg.getClass());
+            throw new ArgumentNotValid("Invalid message type: " + msg.getClass());
         }
 
         NetarkivetMessage netMsg;
@@ -397,15 +372,14 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
             
             netMsg.updateId(msg.getJMSMessageID());
         } catch (ClassCastException e) {
-            log.warn("Invalid message type: " + classname, e);
+            log.warn("Invalid message type: {}", classname, e);
             throw new ArgumentNotValid("Invalid message type: " + classname, e);
         } catch (Exception e) {
-            String message = "Message invalid. Unable to unpack "
-                             + "message: " + classname;
+            String message = "Message invalid. Unable to unpack message: " + classname;
             log.warn(message, e);
             throw new ArgumentNotValid(message, e);
         }
-        log.trace("Unpacked message '" + netMsg + "'");
+        log.trace("Unpacked message '{}'", netMsg);
         return netMsg;
     }
 
@@ -418,34 +392,31 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      *
      * @throws IOFailure if message failed to be sent.
      */
-    protected void sendMessage(NetarkivetMessage nMsg, ChannelID to)
-            throws IOFailure {
+    protected void sendMessage(NetarkivetMessage nMsg, ChannelID to) throws IOFailure {
         Exception lastException = null;
         boolean operationSuccessful = false;
         int tries = 0;
 
         while (!operationSuccessful && tries < JMS_MAXTRIES) {
-            tries++;
+        	++tries;
             try {
                 doSend(nMsg, to);
                 operationSuccessful = true;
             } catch (JMSException e) {
-                log.debug("Send failed (try " + tries + ")", e);
+                log.debug("Send failed (try {})", tries, e);
                 lastException = e;
                 if (tries < JMS_MAXTRIES) {
                     onException(e);
                     log.debug("Will sleep a while before trying to send again");
-                    TimeUtils.exponentialBackoffSleep(tries,
-                                                      Calendar.MINUTE);
+                    TimeUtils.exponentialBackoffSleep(tries, Calendar.MINUTE);
                 }
             } catch (Exception e) {
-                log.debug("Send failed (try " + tries + ")", e);
+                log.debug("Send failed (try {})", tries, e);
                 lastException = e;
                 if (tries < JMS_MAXTRIES) {
                     reconnect();
                     log.debug("Will sleep a while before trying to send again");
-                    TimeUtils.exponentialBackoffSleep(tries,
-                                                      Calendar.MINUTE);
+                    TimeUtils.exponentialBackoffSleep(tries, Calendar.MINUTE);
                 }
             }
         }
@@ -471,24 +442,21 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
             Exception lastException = null;
             int tries = 0;
             while (!operationSuccessful && tries < JMS_MAXTRIES) {
-                tries++;
+            	++tries;
                 try {
                     doReconnect();
                     operationSuccessful = true;
                 } catch (Exception e) {
                     lastException = e;
-                    log.debug("Reconnect failed (try " + tries + ")", e);
+                    log.debug("Reconnect failed (try {})", tries, e);
                     if (tries < JMS_MAXTRIES) {
-                        log.debug("Will sleep a while before trying to"
-                                  + " reconnect again");
-                        TimeUtils.exponentialBackoffSleep(tries,
-                                                          Calendar.MINUTE);
+                        log.debug("Will sleep a while before trying to reconnect again");
+                        TimeUtils.exponentialBackoffSleep(tries, Calendar.MINUTE);
                     }
                 }
             }
             if (!operationSuccessful) {
-                log.warn("Reconnect to JMS broker failed",
-                         lastException);
+                log.warn("Reconnect to JMS broker failed", lastException);
                 closeConnection();
             }
         } finally {
@@ -549,8 +517,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      *
      * @throws JMSException If a new producer cannot be created.
      */
-    private MessageConsumer getConsumer(String channelName, MessageListener ml)
-            throws JMSException {
+    private MessageConsumer getConsumer(String channelName, MessageListener ml) throws JMSException {
         String key = getConsumerKey(channelName, ml);
         MessageConsumer consumer = consumers.get(key);
         if (consumer == null) {
@@ -570,8 +537,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      *
      * @return the generated consumerkey.
      */
-    protected static String getConsumerKey(
-            String channel, MessageListener messageListener) {
+    protected static String getConsumerKey(String channel, MessageListener messageListener) {
         return channel + CONSUMER_KEY_SEPARATOR + messageListener;
     }
     
@@ -610,8 +576,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      *
      * @throws JMSException if message failed to be sent.
      */
-    private void doSend(NetarkivetMessage msg, ChannelID to)
-            throws JMSException {
+    private void doSend(NetarkivetMessage msg, ChannelID to) throws JMSException {
         connectionLock.readLock().lock();
         try {
             ObjectMessage message = getSession().createObjectMessage(msg);
@@ -630,7 +595,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
         } finally {
             connectionLock.readLock().unlock();
         }
-        log.trace("Sent message '" + msg.toString() + "'");
+        log.trace("Sent message '{}'", msg.toString());
     }
 
     /**
@@ -642,16 +607,14 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * @throws IOFailure if the operation failed.
      */
     private void setListener(String channelName, MessageListener ml) {
-        log.debug("Adding " + ml.toString() + " as listener to "
-                  + channelName);
-        String errMsg = "JMS-error - could not add Listener to queue/topic: "
-                        + channelName;
+        log.debug("Adding {} as listener to {}", ml.toString(), channelName);
+        String errMsg = "JMS-error - could not add Listener to queue/topic: " + channelName;
 
         int tries = 0;
         boolean operationSuccessful = false;
         Exception lastException = null;
         while (!operationSuccessful && tries < JMS_MAXTRIES) {
-            tries++;
+        	++tries;
             try {
                 connectionLock.readLock().lock();
                 try {
@@ -662,20 +625,18 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
                 operationSuccessful = true;
             } catch (JMSException e) {
                 lastException = e;
-                log.debug("Set listener failed (try " + tries + ")", e);
+                log.debug("Set listener failed (try {})", tries, e);
                 if (tries < JMS_MAXTRIES) {
                     onException(e);
-                    log.debug("Will sleep a while before trying to set listener"
-                              + " again");
+                    log.debug("Will sleep a while before trying to set listener again");
                     TimeUtils.exponentialBackoffSleep(tries, Calendar.MINUTE);
                 }
             } catch (Exception e) {
                 lastException = e;
-                log.debug("Set listener failed (try " + tries + ")", e);
+                log.debug("Set listener failed (try {})", tries, e);
                 if (tries < JMS_MAXTRIES) {
                     reconnect();
-                    log.debug("Will sleep a while before trying to set listener"
-                              + " again");
+                    log.debug("Will sleep a while before trying to set listener again");
                     TimeUtils.exponentialBackoffSleep(tries, Calendar.MINUTE);
                 }
             }
@@ -694,20 +655,18 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * @param channelName a channelname
      */
     private void removeListener(MessageListener ml, String channelName) {
-        String errMsg = "JMS-error - could not remove Listener from "
-                        + "queue/topic: " + channelName;
+        String errMsg = "JMS-error - could not remove Listener from queue/topic: " + channelName;
         int tries = 0;
         Exception lastException = null;
         boolean operationSuccessful = false;
 
-        log.info("Removing listener from channel '" + channelName + "'");
+        log.info("Removing listener from channel '{}'", channelName);
         while (!operationSuccessful && tries < JMS_MAXTRIES) {
             try {
-                tries++;
+            	++tries;
                 connectionLock.readLock().lock();
                 try {
-                    MessageConsumer messageConsumer = getConsumer(channelName,
-                                                                  ml);
+                    MessageConsumer messageConsumer = getConsumer(channelName, ml);
                     messageConsumer.close();
                     consumers.remove(getConsumerKey(channelName, ml));
                     listeners.remove(getConsumerKey(channelName, ml));
@@ -717,17 +676,15 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
                 operationSuccessful = true;
             } catch (JMSException e) {
                 lastException = e;
-                log.debug("Remove  listener failed (try " + tries + ")", e);
+                log.debug("Remove listener failed (try {})", tries, e);
                 onException(e);
-                log.debug("Will and sleep a while before trying to remove"
-                          + " listener again");
+                log.debug("Will and sleep a while before trying to remove listener again");
                 TimeUtils.exponentialBackoffSleep(tries, Calendar.MINUTE);
             } catch (Exception e) {
                 lastException = e;
-                log.debug("Remove  listener failed (try " + tries + ")", e);
+                log.debug("Remove  listener failed (try {})", tries, e);
                 reconnect();
-                log.debug("Will and sleep a while before trying to remove"
-                          + " listener again");
+                log.debug("Will and sleep a while before trying to remove listener again");
                 TimeUtils.exponentialBackoffSleep(tries, Calendar.MINUTE);
             }
         }
@@ -750,12 +707,10 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
         establishConnectionAndSession();
         // Add listeners already stored in the consumers map
         log.debug("Re-add listeners");
-        for (Map.Entry<String, MessageListener> listener
-                : listeners.entrySet()) {
-            setListener(getChannelName(listener.getKey()),
-                        listener.getValue());
+        for (Map.Entry<String, MessageListener> listener : listeners.entrySet()) {
+            setListener(getChannelName(listener.getKey()), listener.getValue());
         }
         log.info("Reconnect successful");
     }
-}
 
+}

@@ -23,15 +23,16 @@
 
 package dk.netarkivet.common.management;
 
+import java.util.Hashtable;
+
 import javax.management.InstanceAlreadyExistsException;
 import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.StandardMBean;
-import java.util.Hashtable;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
@@ -53,37 +54,29 @@ import dk.netarkivet.common.utils.SystemUtils;
  * with {@link SingleMBeanObject}
  */
 public class SingleMBeanObject<I> {
-    /** Properties for the ObjectName name. */
-    private Hashtable<String, String> nameProperties
-            = new Hashtable<String, String>();
+  
+    /** Initialise the log for this class. */
+    private static final Logger log = LoggerFactory.getLogger(SingleMBeanObject.class);
+
+	/** Properties for the ObjectName name. */
+    private Hashtable<String, String> nameProperties = new Hashtable<String, String>();
     /** The domain for this SingleMBeanObject. */
     private String domain;
     /** The object to expose as an MBean. */
     private I exposedObject;
-    /**
-     * The interface, this SingleMBeanObject should expose on the given
-     * MBeanServer.
-     */
+    /** The interface, this SingleMBeanObject should expose on the given MBeanServer. */
     private Class<I> asInterface;
-    /**
-     * The ObjectName this SingleMBeanObject registers on the given
-     * MBeanServer.
-     */
+    /** The ObjectName this SingleMBeanObject registers on the given MBeanServer. */
     private ObjectName name;
     /** MBeanServer to register mbeans in. */
     private final MBeanServer mBeanServer;
-
-    /** Initialise the log for this class. */
-    private static Log log = LogFactory.getLog(SingleMBeanObject.class
-            .getName());
 
     // FIXME Following environment constant are defined here in order to avoid
     //refering to independent modules - the environment values are only
     //used if defined
     //Note that HARVESTER_HARVEST_CONTROLLER_CHANNEL should be identical to
     //HarvesterSettings.HARVESTER_HARVEST_CONTROLLER_PRIORITY   
-    private static String HARVESTER_HARVEST_CONTROLLER_CHANNEL
-            = "settings.harvester.harvesting.channel";
+    private static String HARVESTER_HARVEST_CONTROLLER_CHANNEL = "settings.harvester.harvesting.channel";
 
     /**
      * Create a single mbean object. This will fill out nameProperties with
@@ -98,8 +91,7 @@ public class SingleMBeanObject<I> {
      * @throws ArgumentNotValid If domain is null or empty, or any other
      *                          argument is null.
      */
-    public SingleMBeanObject(String domain, I object, Class<I> asInterface,
-                             MBeanServer mBeanServer) {
+    public SingleMBeanObject(String domain, I object, Class<I> asInterface, MBeanServer mBeanServer) {
         ArgumentNotValid.checkNotNullOrEmpty(domain, "String domain");
         ArgumentNotValid.checkNotNull(object, "I object");
         ArgumentNotValid.checkNotNull(asInterface, "Class asInterface");
@@ -108,18 +100,12 @@ public class SingleMBeanObject<I> {
         this.asInterface = asInterface;
         this.exposedObject = object;
 
-        nameProperties.put(Constants.PRIORITY_KEY_LOCATION,
-                           Settings.get(
-                                   CommonSettings.THIS_PHYSICAL_LOCATION));
-        nameProperties.put(Constants.PRIORITY_KEY_MACHINE,
-                           SystemUtils.getLocalHostName());
-        nameProperties.put(Constants.PRIORITY_KEY_APPLICATIONNAME,
-                           Settings.get(CommonSettings.APPLICATION_NAME));
-        nameProperties.put(Constants.PRIORITY_KEY_APPLICATIONINSTANCEID,
-                           Settings.get(
-                                   CommonSettings.APPLICATION_INSTANCE_ID));
-        nameProperties.put(Constants.PRIORITY_KEY_HTTP_PORT,
-                           Settings.get(CommonSettings.HTTP_PORT_NUMBER));
+        nameProperties.put(Constants.PRIORITY_KEY_LOCATION, Settings.get(CommonSettings.THIS_PHYSICAL_LOCATION));
+        nameProperties.put(Constants.PRIORITY_KEY_MACHINE, SystemUtils.getLocalHostName());
+        nameProperties.put(Constants.PRIORITY_KEY_APPLICATIONNAME, Settings.get(CommonSettings.APPLICATION_NAME));
+        nameProperties.put(Constants.PRIORITY_KEY_APPLICATIONINSTANCEID, Settings.get(
+        		CommonSettings.APPLICATION_INSTANCE_ID));
+        nameProperties.put(Constants.PRIORITY_KEY_HTTP_PORT, Settings.get(CommonSettings.HTTP_PORT_NUMBER));
         try {
             String val;
             val = Settings.get(HARVESTER_HARVEST_CONTROLLER_CHANNEL);
@@ -129,8 +115,7 @@ public class SingleMBeanObject<I> {
             log.trace("PRIORITY_KEY_CHANNEL set to empty string");
         }
         try {
-            String val = Replica.getReplicaFromId(Settings.get(
-                    CommonSettings.USE_REPLICA_ID)).getName();
+            String val = Replica.getReplicaFromId(Settings.get(CommonSettings.USE_REPLICA_ID)).getName();
             nameProperties.put(Constants.PRIORITY_KEY_REPLICANAME, val);
         } catch (UnknownID e) {
             nameProperties.put(Constants.PRIORITY_KEY_REPLICANAME, "");
@@ -155,8 +140,7 @@ public class SingleMBeanObject<I> {
      *
      * @throws ArgumentNotValid on any null parameter.
      */
-    public SingleMBeanObject(ObjectName name, I o, Class<I> asInterface,
-                             MBeanServer mBeanServer) {
+    public SingleMBeanObject(ObjectName name, I o, Class<I> asInterface, MBeanServer mBeanServer) {
         this(name.getDomain(), o, asInterface, mBeanServer);
         nameProperties.clear();
         nameProperties.putAll(name.getKeyPropertyList());
@@ -183,12 +167,10 @@ public class SingleMBeanObject<I> {
     public void register() {
         try {
             name = new ObjectName(domain, nameProperties);
-            mBeanServer.registerMBean(
-                    new StandardMBean(exposedObject, asInterface), name);
-            log.trace("Registered mbean '" + name + "'");
+            mBeanServer.registerMBean(new StandardMBean(exposedObject, asInterface), name);
+            log.trace("Registered mbean '{}'", name);
         } catch (InstanceAlreadyExistsException e) {
-            String msg = "this MBean '" + name + "' is already registered on "
-                         + "the MBeanServer";
+            String msg = "this MBean '" + name + "' is already registered on the MBeanServer";
             log.warn(msg, e);
             throw new IllegalState(msg, e);
         } catch (JMException e) {
@@ -221,4 +203,5 @@ public class SingleMBeanObject<I> {
     public ObjectName getName() {
         return name;
     }
+
 }

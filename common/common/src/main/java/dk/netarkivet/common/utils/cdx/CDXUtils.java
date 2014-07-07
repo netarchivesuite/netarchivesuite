@@ -29,8 +29,8 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.ExceptionUtils;
@@ -46,7 +46,7 @@ import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 public class CDXUtils {
 
     /** The logger. */
-    private static Log log = LogFactory.getLog(CDXUtils.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(CDXUtils.class);
 
     /**
      * Add cdx info for a given archive file to a given OutputStream.
@@ -59,8 +59,7 @@ public class CDXUtils {
         ArchiveExtractCDXJob job = new ArchiveExtractCDXJob();
         BatchLocalFiles runner = new BatchLocalFiles(new File [] {archivefile});
         runner.run(job, cdxstream);
-        log.trace("Created index for " + job.noOfRecordsProcessed()
-                     + " records on file '" + archivefile + "'");
+        log.trace("Created index for {} records on file '{}'", job.noOfRecordsProcessed(), archivefile);
         Exception[] exceptions = job.getExceptionArray();
         if (exceptions.length > 0) {
             StringBuilder msg = new StringBuilder();
@@ -68,12 +67,9 @@ public class CDXUtils {
                 msg.append(ExceptionUtils.getStackTrace(e));
                 msg.append('\n');
             }
-            log.debug("Exceptions during generation of index on file '"
-                        + archivefile + "': " + msg.toString());
+            log.debug("Exceptions during generation of index on file '{}': {}", archivefile, msg.toString());
         }
-        log.debug("Created index of " + job.noOfRecordsProcessed()
-                    + " records on file '" + archivefile + "'");
-
+        log.debug("Created index of {} records on file '{}'", job.noOfRecordsProcessed(), archivefile);
     }
 
    /**
@@ -93,39 +89,30 @@ public class CDXUtils {
      * @throws ArgumentNotValid if any of directories are null or is not an
      * existing directory, or if cdxFileDirectory is not writable.
      */
-    public static void generateCDX(ArchiveProfile archiveProfile,
-            File archiveFileDirectory, File cdxFileDirectory) throws ArgumentNotValid {
-        ArgumentNotValid.checkNotNull(archiveProfile,
-                "ArchiveProfile archiveProfile");
-        ArgumentNotValid.checkNotNull(archiveFileDirectory,
-                                      "File archiveFileDirectory");
-        ArgumentNotValid.checkNotNull(cdxFileDirectory,
-                                      "File cdxFileDirectory");
+    public static void generateCDX(ArchiveProfile archiveProfile, File archiveFileDirectory, File cdxFileDirectory)
+    		throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(archiveProfile, "ArchiveProfile archiveProfile");
+        ArgumentNotValid.checkNotNull(archiveFileDirectory, "File archiveFileDirectory");
+        ArgumentNotValid.checkNotNull(cdxFileDirectory, "File cdxFileDirectory");
         if (!archiveFileDirectory.isDirectory() || !archiveFileDirectory.canRead()) {
-            throw new ArgumentNotValid("The directory for arc files '"
-                                       + archiveFileDirectory
-                                       + "' is not a readable directory");
+            throw new ArgumentNotValid("The directory for arc files '" + archiveFileDirectory
+            		+ "' is not a readable directory");
         }
         if (!cdxFileDirectory.isDirectory() || !cdxFileDirectory.canWrite()) {
-            throw new ArgumentNotValid("The directory for cdx files '"
-                                       + archiveFileDirectory
-                                       + "' is not a writable directory");
+            throw new ArgumentNotValid("The directory for cdx files '" + archiveFileDirectory
+            		+ "' is not a writable directory");
         }
-        Map<File, Exception> exceptions
-                = new HashMap<File, Exception>();
-        File[] filesToProcess = archiveFileDirectory.listFiles(
-                archiveProfile.filename_filter);
+        Map<File, Exception> exceptions = new HashMap<File, Exception>();
+        File[] filesToProcess = archiveFileDirectory.listFiles(archiveProfile.filename_filter);
         if (filesToProcess.length == 0) {
-            log.warn("Found no related arcfiles to process in the archive dir '" 
-                    + archiveFileDirectory.getAbsolutePath() + "'.");
+            log.warn("Found no related arcfiles to process in the archive dir '{}'.",
+            		archiveFileDirectory.getAbsolutePath());
         } else {
-            log.debug("Found " + filesToProcess.length 
-                    + " related arcfiles to process in the archive dir '" 
-                    + archiveFileDirectory.getAbsolutePath() + "'.");
+            log.debug("Found {} related arcfiles to process in the archive dir '{}'.",
+            		filesToProcess.length, archiveFileDirectory.getAbsolutePath());
         } 
         for (File arcfile : filesToProcess) {
-            File cdxfile = new File(cdxFileDirectory, arcfile.getName()
-                    + FileUtils.CDX_EXTENSION);
+            File cdxfile = new File(cdxFileDirectory, arcfile.getName() + FileUtils.CDX_EXTENSION);
             try {
                 OutputStream cdxstream = null;
                 try {
@@ -142,17 +129,16 @@ public class CDXUtils {
         }
         // Log any errors
         if (exceptions.size() > 0) {
-            StringBuilder errorMsg = new StringBuilder(
-                    "Exceptions during cdx file generation:\n");
+            StringBuilder errorMsg = new StringBuilder("Exceptions during cdx file generation:\n");
             for (Map.Entry<File, Exception> fileException: exceptions.entrySet()) {
                 errorMsg.append("Could not create cdxfile '");
                 errorMsg.append(fileException.getKey().getAbsolutePath());
                 errorMsg.append("':\n");
-                errorMsg.append(ExceptionUtils.getStackTrace(
-                        fileException.getValue()));
+                errorMsg.append(ExceptionUtils.getStackTrace(fileException.getValue()));
                 errorMsg.append('\n');
             }
             log.debug(errorMsg.toString());
         }
     }
+
 }

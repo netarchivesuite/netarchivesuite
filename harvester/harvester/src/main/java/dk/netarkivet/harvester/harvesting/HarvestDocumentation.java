@@ -35,9 +35,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
 import org.archive.util.anvl.ANVLRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
@@ -67,25 +68,17 @@ import dk.netarkivet.harvester.harvesting.metadata.PersistentJobData;
  */
 public class HarvestDocumentation {
 
-    private static Log log
-            = LogFactory.getLog(HarvestDocumentation.class);
+    private static final Logger log = LoggerFactory.getLogger(HarvestDocumentation.class);
 
     /** Constants used in constructing URI for CDX content. */
-    private static final String CDX_URI_SCHEME =
-        "metadata";
-    private static final String CDX_URI_AUTHORITY_HOST =
-        Settings.get(CommonSettings.ORGANIZATION);
-    private static final String CDX_URI_PATH =
-        "/crawl/index/cdx";
-    private static final String CDX_URI_VERSION_PARAMETERS =
-        "majorversion=2&minorversion=0";
-    private static final String ALTERNATE_CDX_URI_VERSION_PARAMETERS =
-            "majorversion=3&minorversion=0";
+    private static final String CDX_URI_SCHEME = "metadata";
+    private static final String CDX_URI_AUTHORITY_HOST = Settings.get(CommonSettings.ORGANIZATION);
+    private static final String CDX_URI_PATH = "/crawl/index/cdx";
+    private static final String CDX_URI_VERSION_PARAMETERS = "majorversion=2&minorversion=0";
+    private static final String ALTERNATE_CDX_URI_VERSION_PARAMETERS = "majorversion=3&minorversion=0";
         
-    private static final String CDX_URI_HARVEST_ID_PARAMETER_NAME =
-        "harvestid";
-    private static final String CDX_URI_JOB_ID_PARAMETER_NAME =
-        "jobid";
+    private static final String CDX_URI_HARVEST_ID_PARAMETER_NAME = "harvestid";
+    private static final String CDX_URI_JOB_ID_PARAMETER_NAME = "jobid";
     private static final String CDX_URI_FILENAME_PARAMETER_NAME = "filename";
     
     /**
@@ -126,9 +119,8 @@ public class HarvestDocumentation {
         // If metadata-arcfile already exists, we are done
         // See bug 722
         if (ingestables.isMetadataReady()) {
-            log.warn("The metadata-file '" 
-                    + ingestables.getMetadataFile().getAbsolutePath() 
-                    + "' already exists, so we don't make another one!");
+            log.warn("The metadata-file '{}' already exists, so we don't make another one!",
+            		ingestables.getMetadataFile().getAbsolutePath());
             return;
         }
         List<File> filesAddedAndNowDeletable = null;
@@ -140,8 +132,8 @@ public class HarvestDocumentation {
             if (mdfw instanceof MetadataFileWriterWarc) {
                 // add warc-info record
                 ANVLRecord infoPayload = new ANVLRecord(3);
-                infoPayload.addLabelValue("software", "NetarchiveSuite/" 
-                        + dk.netarkivet.common.Constants.getVersionString() 
+                infoPayload.addLabelValue("software", "NetarchiveSuite/"
+                		+ dk.netarkivet.common.Constants.getVersionString() 
                         + "/" + dk.netarkivet.common.Constants.PROJECT_WEBSITE);
                 infoPayload.addLabelValue("ip", SystemUtils.getLocalIP());
                 infoPayload.addLabelValue("hostname", SystemUtils.getLocalHostName());
@@ -157,9 +149,8 @@ public class HarvestDocumentation {
             List<MetadataEntry> storedMetadata = getStoredMetadata(crawlDir);
             try {
                 for (MetadataEntry m : storedMetadata) {
-                     mdfw.write(m.getURL(), m.getMimeType(),
-                            SystemUtils.getLocalIP(),
-                            System.currentTimeMillis(), m.getData());
+                     mdfw.write(m.getURL(), m.getMimeType(), SystemUtils.getLocalIP(), System.currentTimeMillis(),
+                    		 m.getData());
                 }
             } catch (IOException e) {
                 log.warn("Unable to write pre-metadata to metadata archivefile", e);
@@ -179,8 +170,7 @@ public class HarvestDocumentation {
             Iterator<File> iterator = filesAddedAndNowDeletable.iterator();
             while (iterator.hasNext()) {
                 File f = iterator.next();
-                if (f.getName().equals("crawl.log")
-                        || f.getName().equals("harvestInfo.xml")
+                if (f.getName().equals("crawl.log") || f.getName().equals("harvestInfo.xml")
                         || f.getName().equals("progress-statistics.log")) {
                     iterator.remove();
                 }
@@ -208,9 +198,8 @@ public class HarvestDocumentation {
                 // TODO refactor, as this call has too many sideeffects
                 ingestables.setMetadataGenerationSucceeded(true);
             } else {
-                log.warn("Found no archive directory with ARC og WARC files. Looked for dirs '" 
-                        + arcFilesDir.getAbsolutePath() 
-                        + "' and '" + warcFilesDir.getAbsolutePath() + "'.");
+                log.warn("Found no archive directory with ARC og WARC files. Looked for dirs '{}' and '{}'.",
+                		arcFilesDir.getAbsolutePath(), warcFilesDir.getAbsolutePath());
             }
         } finally {
             // If at this point metadata is not ready, an error occurred.
@@ -244,8 +233,8 @@ public class HarvestDocumentation {
     private static List<MetadataEntry> getStoredMetadata(File crawlDir) {
         File metadataDir = new File(crawlDir, IngestableFiles.METADATA_SUB_DIR);
         if (!metadataDir.isDirectory()) {
-            log.warn("Should have an metadata directory '" + metadataDir.getAbsolutePath()
-                    +  "' but there wasn't");
+            log.warn("Should have an metadata directory '{}' but there wasn't",
+            		metadataDir.getAbsolutePath());
             return new ArrayList<MetadataEntry>();
         } else {
             return MetadataEntry.getMetadataFromDisk(metadataDir);
@@ -263,11 +252,7 @@ public class HarvestDocumentation {
      * @throws UnknownID if something goes terribly wrong in our URI
      * construction.
      */
-    public static URI getCDXURI(
-            String harvestID,
-            String jobID,
-            String filename)
-    throws ArgumentNotValid, UnknownID {
+    public static URI getCDXURI(String harvestID, String jobID, String filename) throws ArgumentNotValid, UnknownID {
         ArgumentNotValid.checkNotNull(harvestID, "harvestID");
         ArgumentNotValid.checkNotNull(jobID, "jobID");
         ArgumentNotValid.checkNotNull(filename, "filename");
@@ -283,11 +268,7 @@ public class HarvestDocumentation {
                     getCDXURIQuery(harvestID, jobID, filename),
                     null); //Don't include fragment (e.g. "#foo")
         } catch (URISyntaxException e) {
-            throw new UnknownID(
-                    "Failed to generate URI for "
-                    + harvestID + ","
-                    + jobID + ","
-                    + filename + ",", e);
+            throw new UnknownID("Failed to generate URI for " + harvestID + "," + jobID + "," + filename + ",", e);
         }
         return result;
    }
@@ -303,9 +284,7 @@ public class HarvestDocumentation {
      * @throws UnknownID if something goes terribly wrong in our URI
      * construction.
      */
-    public static URI getAlternateCDXURI(
-            long jobID,
-            String filename)
+    public static URI getAlternateCDXURI(long jobID, String filename)
     throws ArgumentNotValid, UnknownID {
         ArgumentNotValid.checkNotNull(jobID, "jobID");
         ArgumentNotValid.checkNotNull(filename, "filename");
@@ -321,17 +300,11 @@ public class HarvestDocumentation {
                     getAlternateCDXURIQuery(jobID, filename),
                     null); //Don't include fragment (e.g. "#foo")
         } catch (URISyntaxException e) {
-            throw new UnknownID(
-                    "Failed to generate URI for "
-                    + jobID + ","
-                    + filename + ",",
-                    e);
+            throw new UnknownID("Failed to generate URI for " + jobID + "," + filename + ",", e);
         }
         return result;
-   }
+    }
 
-    
-    
     /**
      * Generate the query part of a CDX URI.
      * @param harvestID The number of the harvest that generated the ARC file.
@@ -341,10 +314,7 @@ public class HarvestDocumentation {
      * @return An appropriate list of assigned parameters,
      * separated by the "&" character.
      */
-    private static String getCDXURIQuery(
-            String harvestID,
-            String jobID,
-            String filename) {
+    private static String getCDXURIQuery(String harvestID, String jobID, String filename) {
         String result = CDX_URI_VERSION_PARAMETERS;
         result += "&" + CDX_URI_HARVEST_ID_PARAMETER_NAME + "=" + harvestID;
         result += "&" + CDX_URI_JOB_ID_PARAMETER_NAME + "=" + jobID;
@@ -360,10 +330,7 @@ public class HarvestDocumentation {
      * @return An appropriate list of assigned parameters,
      * separated by the "&" character.
      */
-    private static String getAlternateCDXURIQuery(
-            long jobID,
-            String filename
-            ) {
+    private static String getAlternateCDXURIQuery(long jobID, String filename) {
         String result = ALTERNATE_CDX_URI_VERSION_PARAMETERS;
         result += "&" + CDX_URI_JOB_ID_PARAMETER_NAME + "=" + jobID;
         result += "&" + CDX_URI_FILENAME_PARAMETER_NAME + "=" + filename;
@@ -379,38 +346,32 @@ public class HarvestDocumentation {
      * @param dir A directory containing one or more (W)ARC files.
      * @param files Information about the files produced by heritrix (jobId and harvestnamePrefix)
      */
-    private static void moveAwayForeignFiles(ArchiveProfile archiveProfile,
-            File dir, IngestableFiles files) {
+    private static void moveAwayForeignFiles(ArchiveProfile archiveProfile, File dir, IngestableFiles files) {
         File[] archiveFiles = dir.listFiles(archiveProfile.filename_filter);
-        File oldJobsDir = new File(
-                Settings.get(HarvesterSettings.HARVEST_CONTROLLER_OLDJOBSDIR));
-        File lostfilesDir = new File(oldJobsDir,
-                "lost-files-" + new Date().getTime());
+        File oldJobsDir = new File(Settings.get(HarvesterSettings.HARVEST_CONTROLLER_OLDJOBSDIR));
+        File lostfilesDir = new File(oldJobsDir, "lost-files-" + new Date().getTime());
         List<File> movedFiles = new ArrayList<File>();
-        log.info("Looking for files not having harvestprefix '" + files.getHarvestnamePrefix() + "'");
+        log.info("Looking for files not having harvestprefix '{}'", files.getHarvestnamePrefix());
         for (File archiveFile : archiveFiles) {
             if (!(archiveFile.getName().startsWith(files.getHarvestnamePrefix()))) {
                 // move unidentified file to lostfiles directory
-                log.info("removing unidentified file " + archiveFile.getAbsolutePath());
+                log.info("removing unidentified file {}", archiveFile.getAbsolutePath());
                 try {
                     if (!lostfilesDir.exists()) {
                         FileUtils.createDir(lostfilesDir);
                     }
-                        File moveTo = new File(lostfilesDir,
-                                               archiveFile.getName());
+                        File moveTo = new File(lostfilesDir, archiveFile.getName());
                         archiveFile.renameTo(moveTo);
                         movedFiles.add(moveTo);
                 }  catch (PermissionDenied e) {
-                    log.warn("Not allowed to make oldjobs dir '"
-                            + lostfilesDir.getAbsolutePath() + "'", e);
+                    log.warn("Not allowed to make oldjobs dir '{}'", lostfilesDir.getAbsolutePath(), e);
                 }
                 
             }
         }
         if (!movedFiles.isEmpty()) {
-            log.warn("Found files not belonging to job " + files.getJobId()
-                    + ", the following files have been stored for later: "
-                    + movedFiles);
+            log.warn("Found files not belonging to job {}, the following files have been stored for later: {}",
+            		files.getJobId(), movedFiles);
         }
     }
 
@@ -431,8 +392,7 @@ public class HarvestDocumentation {
      * @throws ArgumentNotValid If null arguments occur
      * @return a list of files added to the archive file.
      */
-    private static List<File> writeHarvestDetails(long jobID,
-            long harvestID, File crawlDir, MetadataFileWriter mdfw,
+    private static List<File> writeHarvestDetails(long jobID, long harvestID, File crawlDir, MetadataFileWriter mdfw,
             String heritrixVersion) {
         List<File> filesAdded = new ArrayList<File>();
 
@@ -453,16 +413,14 @@ public class HarvestDocumentation {
             files.add(new MetadataFile(hf, harvestID, jobID, heritrixVersion));
         }   
         // Generate an arcfiles-report.txt if configured to do so.
-        boolean genArcFilesReport = Settings.getBoolean(
-                HarvesterSettings.METADATA_GENERATE_ARCHIVE_FILES_REPORT);
+        boolean genArcFilesReport = Settings.getBoolean(HarvesterSettings.METADATA_GENERATE_ARCHIVE_FILES_REPORT);
         if (genArcFilesReport) {
             log.debug("Creating an arcfiles-report.txt");
             files.add(new MetadataFile(new ArchiveFilesReportGenerator(crawlDir)
                     .generateReport(), harvestID, jobID, heritrixVersion));
         } else {
-            log.debug("Creation of the arcfiles-report.txt has been disabled"
-                    + "by the setting '" + HarvesterSettings.METADATA_GENERATE_ARCHIVE_FILES_REPORT
-                    + "'!");
+            log.debug("Creation of the arcfiles-report.txt has been disabled by the setting '{}'!",
+            		HarvesterSettings.METADATA_GENERATE_ARCHIVE_FILES_REPORT);
         }
         
         // Add log files
@@ -476,14 +434,11 @@ public class HarvestDocumentation {
                 }
             });
             for (File logFile : heritrixLogFiles) {
-                files.add(
-                        new MetadataFile(
-                                logFile, harvestID, jobID, heritrixVersion));
-                log.info("Found Heritrix log file " + logFile.getName());
+                files.add(new MetadataFile(logFile, harvestID, jobID, heritrixVersion));
+                log.info("Found Heritrix log file {}", logFile.getName());
             }
         } else {
-            log.debug("No logs dir found in crawldir: "
-                      + crawlDir.getAbsolutePath());
+            log.debug("No logs dir found in crawldir: {}", crawlDir.getAbsolutePath());
         }
 
         // Check if exists any settings directory (domain-specific settings)
@@ -491,35 +446,27 @@ public class HarvestDocumentation {
         // TODO Delete any settings-files found in the settings directory */
         File settingsDir = new File(crawlDir, "settings");
         if (settingsDir.isDirectory()) {
-            Map<File, String> domainSettingsFiles =
-                findDomainSpecificSettings(settingsDir);
-            for (Map.Entry<File, String> entry : domainSettingsFiles
-                    .entrySet()) {
+            Map<File, String> domainSettingsFiles = findDomainSpecificSettings(settingsDir);
+            for (Map.Entry<File, String> entry : domainSettingsFiles.entrySet()) {
 
                 File dsf = entry.getKey();
                 String domain = entry.getValue();
-                files.add(
-                        new MetadataFile(
-                                dsf,
-                                harvestID, jobID, heritrixVersion,
-                                domain));
+                files.add(new MetadataFile(dsf, harvestID, jobID, heritrixVersion, domain));
             }
         } else {
-            log.debug("No settings directory found in crawldir: "
-                    + crawlDir.getAbsolutePath());
+            log.debug("No settings directory found in crawldir: {}", crawlDir.getAbsolutePath());
         }
 
         // Write files in order to metadata archive file.
         for (MetadataFile mdf : files) {
             File heritrixFile = mdf.getHeritrixFile();
             String heritrixFileName = heritrixFile.getName();
-            String mimeType =
-                (heritrixFileName.endsWith(".xml") ? "text/xml" : "text/plain");
+            String mimeType = (heritrixFileName.endsWith(".xml") ? "text/xml" : "text/plain");
             if (mdfw.writeTo(heritrixFile, mdf.getUrl(), mimeType)) {
                 filesAdded.add(heritrixFile);
             } else {
-                log.warn("The Heritrix file '" + heritrixFile.getAbsolutePath() 
-                        + "' was not included in the metadata archivefile due to some error.");
+                log.warn("The Heritrix file '{}' was not included in the metadata archivefile due to some error.",
+                		heritrixFile.getAbsolutePath());
             }
         }
 
@@ -531,28 +478,20 @@ public class HarvestDocumentation {
      * @param settingsDir the given settings directory
      * @return the settings file paired with their domain..
      */
-    private static Map<File, String> findDomainSpecificSettings(
-            File settingsDir) {
-
+    private static Map<File, String> findDomainSpecificSettings(File settingsDir) {
         // find any domain specific configurations (settings.xml)
-        List<String> reversedDomainsWithSettings =
-            findAllDomainsWithSettings(settingsDir, "");
+        List<String> reversedDomainsWithSettings = findAllDomainsWithSettings(settingsDir, "");
 
         Map<File, String> settingsFileToDomain = new HashMap<File, String>();
         if (reversedDomainsWithSettings.isEmpty()) {
-            log.debug("No settings/<domain> directories exists: "
-                    + "no domain-specific configurations available");
+            log.debug("No settings/<domain> directories exists: no domain-specific configurations available");
         } else {
             for (String reversedDomain: reversedDomainsWithSettings) {
                 String domain = reverseDomainString(reversedDomain);
-                File settingsXmlFile = new File(
-                        settingsDir
-                            + reversedDomain.replaceAll("\\.", File.separator),
+                File settingsXmlFile = new File(settingsDir + reversedDomain.replaceAll("\\.", File.separator),
                         MetadataFile.DOMAIN_SETTINGS_FILE);
                 if (!settingsXmlFile.isFile()) {
-                    log.debug("Directory settings/"
-                              + domain + "/" + MetadataFile.DOMAIN_SETTINGS_FILE
-                              + " does not exist.");
+                    log.debug("Directory settings/{}/{} does not exist.", domain, MetadataFile.DOMAIN_SETTINGS_FILE);
                 } else  {
                     settingsFileToDomain.put(settingsXmlFile, domain);
                 }
@@ -568,8 +507,7 @@ public class HarvestDocumentation {
      * @return a list of domains (in reverse), which contained
      *  a file with given filename
      */
-    private static List<String> findAllDomainsWithSettings(File directory,
-            String domainReversed) {
+    private static List<String> findAllDomainsWithSettings(File directory, String domainReversed) {
         if (!directory.isDirectory()) {
             return new ArrayList<String>(0);
         }
@@ -580,15 +518,13 @@ public class HarvestDocumentation {
             // if the given file is a dir, then call
             // the method recursively.
             if (fileInDir.isDirectory()) {
-                List<String> resultList =
-                    findAllDomainsWithSettings(fileInDir,
-                            domainReversed + "." + fileInDir.getName());
+                List<String> resultList = findAllDomainsWithSettings(fileInDir, domainReversed + "."
+                		+ fileInDir.getName());
                 if (!resultList.isEmpty()) {
                     filesToReturn.addAll(resultList);
                 }
             } else {
-                if (fileInDir.getName().equals(
-                        MetadataFile.DOMAIN_SETTINGS_FILE)) {
+                if (fileInDir.getName().equals(MetadataFile.DOMAIN_SETTINGS_FILE)) {
                     // Store the domain, so that we can find the file later
                     filesToReturn.add(domainReversed);
                 }
@@ -613,4 +549,5 @@ public class HarvestDocumentation {
         }
         return domain.substring(0, domain.length() - 1);
     }
+
 }

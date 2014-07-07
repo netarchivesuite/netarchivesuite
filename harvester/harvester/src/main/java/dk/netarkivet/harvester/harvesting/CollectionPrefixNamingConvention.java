@@ -32,8 +32,7 @@ import dk.netarkivet.harvester.datamodel.Job;
 public class CollectionPrefixNamingConvention implements ArchiveFileNaming {
     
     /** The default place in classpath where the settings file can be found. */
-    private static String defaultSettingsClasspath
-            = "dk/netarkivet/harvester/harvesting/"
+    private static String defaultSettingsClasspath = "dk/netarkivet/harvester/harvesting/"
                 +"CollectionPrefixNamingConventionSettings.xml";
 
     /*
@@ -44,20 +43,19 @@ public class CollectionPrefixNamingConvention implements ArchiveFileNaming {
     static {
         Settings.addDefaultClasspathSettings(defaultSettingsClasspath);
     }
+
     /** The setting for the collectionName. */
-    private static String COLLECTION_SETTING = "settings.harvester.harvesting.heritrix"
-            + ".archiveNaming.collectionName";
+    private static String COLLECTION_SETTING = "settings.harvester.harvesting.heritrix.archiveNaming.collectionName";
+
     /** The name of the collection embedded in the names. */
     private static String CollectionName = Settings.get(COLLECTION_SETTING);
-    
-    
+
     public CollectionPrefixNamingConvention() {
     }
 
     @Override
     public String getPrefix(Job theJob) {
-        return CollectionName + "-" 
-                + theJob.getJobID() + "-" + theJob.getOrigHarvestDefinitionID();
+        return CollectionName + "-" + theJob.getJobID() + "-" + theJob.getOrigHarvestDefinitionID();
     }
       
 }

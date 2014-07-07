@@ -27,12 +27,12 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.archive.io.warc.WARCRecord;
 import org.jwat.common.ByteCountingPushBackInputStream;
 import org.jwat.common.ContentType;
 import org.jwat.common.HttpHeader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -54,16 +54,18 @@ import dk.netarkivet.common.utils.warc.WARCBatchJob;
 @SuppressWarnings({ "serial"})
 public class WARCExtractCDXJob extends WARCBatchJob {
 
-    /** An encoding for the standard included metadata fields without
-     * checksum.*/
+    /** Logger for this class. */
+    private static final Logger log = LoggerFactory.getLogger(WARCExtractCDXJob.class);
+
+    /** An encoding for the standard included metadata fields without checksum.*/
     private static final String[] STD_FIELDS_EXCL_CHECKSUM = {
-            "A", "e", "b", "m", "n", "g", "v"
-        };
+    	"A", "e", "b", "m", "n", "g", "v"
+    };
 
     /** An encoding for the standard included metadata fields with checksum. */
     private static final String[] STD_FIELDS_INCL_CHECKSUM = {
-            "A", "e", "b", "m", "n", "g", "v", "c"
-        };
+    	"A", "e", "b", "m", "n", "g", "v", "c"
+    };
 
     /** The fields to be included in CDX output. */
     private String[] fields;
@@ -72,18 +74,12 @@ public class WARCExtractCDXJob extends WARCBatchJob {
     private boolean includeChecksum;
 
     /**
-     * Logger for this class.
-     */
-    private final Log log = LogFactory.getLog(getClass().getName());
-
-    /**
      * Constructs a new job for extracting CDX indexes.
      * @param includeChecksum If true, an MD5 checksum is also
      * written for each record. If false, it is not.
      */
     public WARCExtractCDXJob(boolean includeChecksum) {
-        this.fields = includeChecksum ? STD_FIELDS_INCL_CHECKSUM
-                                      : STD_FIELDS_EXCL_CHECKSUM;
+        this.fields = includeChecksum ? STD_FIELDS_INCL_CHECKSUM : STD_FIELDS_EXCL_CHECKSUM;
         this.includeChecksum = includeChecksum;
         batchJobTimeout = 7*Constants.ONE_DAY_IN_MILLIES;
     }
@@ -122,8 +118,7 @@ public class WARCExtractCDXJob extends WARCBatchJob {
      */
     @Override
     public void processRecord(WARCRecord sar, OutputStream os) {
-        log.trace("Processing WARCRecord with offset: "
-                + sar.getHeader().getOffset());
+        log.trace("Processing WARCRecord with offset: {}", sar.getHeader().getOffset());
         /*
         * Fields are stored in a map so that it's easy
         * to pull them out when looking at the
@@ -154,8 +149,7 @@ public class WARCExtractCDXJob extends WARCBatchJob {
         ContentType contentType = ContentType.parseContentType(mimeType);
         boolean bResponse = false;
         if (contentType != null) {
-            if ("application".equals(contentType.contentType)
-                    && "http".equals(contentType.mediaType)) {
+            if ("application".equals(contentType.contentType) && "http".equals(contentType.mediaType)) {
                 msgType = contentType.getParameter("msgtype");
                 if ("response".equals(msgType)) {
                     bResponse = true;
@@ -168,8 +162,7 @@ public class WARCExtractCDXJob extends WARCBatchJob {
         HttpHeader httpResponse = null;
         if (bResponse) {
             try {
-                httpResponse = HttpHeader.processPayload(HttpHeader.HT_RESPONSE,
-                        pbin, header.getLength(), null);
+                httpResponse = HttpHeader.processPayload(HttpHeader.HT_RESPONSE, pbin, header.getLength(), null);
                 if (httpResponse != null && httpResponse.contentType != null) {
                     contentType = ContentType.parseContentType(httpResponse.contentType);
                     if (contentType != null) {
@@ -225,8 +218,7 @@ public class WARCExtractCDXJob extends WARCBatchJob {
         try {
             outstream.write(sb.toString().getBytes("UTF-8"));
         } catch (IOException e) {
-            throw new IOFailure("Error writing CDX line '"
-                    + sb + "' to batch outstream", e);
+            throw new IOFailure("Error writing CDX line '" + sb + "' to batch outstream", e);
         }
     }
 
@@ -234,8 +226,7 @@ public class WARCExtractCDXJob extends WARCBatchJob {
      * @return Humanly readable description of this instance.
      */
     public String toString() {
-        return getClass().getName() + ", with Filter: " + getFilter()
-                + ", include checksum = " + includeChecksum;
+        return getClass().getName() + ", with Filter: " + getFilter() + ", include checksum = " + includeChecksum;
     }
 
 }

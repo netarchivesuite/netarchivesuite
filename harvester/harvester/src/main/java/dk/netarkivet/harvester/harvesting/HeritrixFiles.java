@@ -30,9 +30,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
@@ -48,7 +48,11 @@ import dk.netarkivet.common.utils.XmlUtils;
  * and all files we read from Heritrix.
  */
 public class HeritrixFiles {
-    /** The directory that crawls are performed in. */
+
+    /** The logger. */
+    private static final Logger log = LoggerFactory.getLogger(HeritrixFiles.class);
+
+	/** The directory that crawls are performed in. */
     private final File crawlDir;
     /** The job ID this object represents files for. */
     private final Long jobID;
@@ -75,12 +79,8 @@ public class HeritrixFiles {
     /** The name of the index directory. */
     private File indexDir;
 
-    /** The logger. */
-    private Log log = LogFactory.getLog(getClass().getName());
-
     /** The name of the progress statistics log. */
-    private static final String PROGRESS_STATISTICS_LOG_FILENAME
-            = "progress-statistics.log";
+    private static final String PROGRESS_STATISTICS_LOG_FILENAME = "progress-statistics.log";
     /** The name of the crawl log. */
     private static final String CRAWL_LOG_FILENAME = "crawl.log";
     /** The name of the stdout/stderr file from Heritrix. */
@@ -98,8 +98,7 @@ public class HeritrixFiles {
      * @throws ArgumentNotValid if null crawlDir,
      *  or non-positive jobID and harvestID.
      */
-    public HeritrixFiles(File crawlDir, JobInfo harvestJob,
-            File jmxPasswordFile, File jmxAccessFile) {
+    public HeritrixFiles(File crawlDir, JobInfo harvestJob, File jmxPasswordFile, File jmxAccessFile) {
         ArgumentNotValid.checkNotNull(crawlDir, "crawlDir");
         ArgumentNotValid.checkNotNull(harvestJob, "harvestJob");
         ArgumentNotValid.checkNotNull(jmxPasswordFile, "jmxPasswordFile");
@@ -119,8 +118,7 @@ public class HeritrixFiles {
      * @param harvestJob The harvestjob behind this instance of HeritrixFiles
      */
      public HeritrixFiles(File crawlDir, JobInfo harvestJob) {
-         this(crawlDir, harvestJob,
-                 new File(Settings.get(CommonSettings.JMX_PASSWORD_FILE)),
+         this(crawlDir, harvestJob, new File(Settings.get(CommonSettings.JMX_PASSWORD_FILE)),
                  new File(Settings.get(CommonSettings.JMX_ACCESS_FILE)));
      }
     
@@ -196,8 +194,7 @@ public class HeritrixFiles {
      */
     public void writeSeedsTxt(String seeds) {
         ArgumentNotValid.checkNotNullOrEmpty(seeds, "String seeds");
-        log.debug("Writing seeds to disk as file: " 
-                + getSeedsTxtFile().getAbsolutePath());
+        log.debug("Writing seeds to disk as file: {}", getSeedsTxtFile().getAbsolutePath());
         FileUtils.writeBinaryFile(getSeedsTxtFile(), seeds.getBytes());
     }
 
@@ -209,10 +206,8 @@ public class HeritrixFiles {
      */
     public void writeOrderXml(Document doc) {
         ArgumentNotValid.checkNotNull(doc, "Document doc");
-        ArgumentNotValid.checkTrue(doc.hasContent(),
-                "XML document must not be empty");
-        log.debug("Writing order-file to disk as file: "
-                + getOrderXmlFile().getAbsolutePath());
+        ArgumentNotValid.checkTrue(doc.hasContent(), "XML document must not be empty");
+        log.debug("Writing order-file to disk as file: {}", getOrderXmlFile().getAbsolutePath());
         XmlUtils.writeXmlToFile(doc, getOrderXmlFile());
     }
 
@@ -231,10 +226,9 @@ public class HeritrixFiles {
      */
     public void setIndexDir(File indexDir) {
         ArgumentNotValid.checkNotNull(indexDir, "File indexDir");
-        ArgumentNotValid.checkTrue(indexDir.isDirectory(),
-                "indexDir '" + indexDir + "' should be a directory");
+        ArgumentNotValid.checkTrue(indexDir.isDirectory(), "indexDir '" + indexDir + "' should be a directory");
         this.indexDir = indexDir;
-        log.debug("Setting deduplication index dir '" + indexDir + "'");
+        log.debug("Setting deduplication index dir '{}'", indexDir);
     }
 
     /**
@@ -308,8 +302,7 @@ public class HeritrixFiles {
                     FileUtils.removeRecursively(disposable);
                 } catch (IOFailure e) {
                     //Log harmless trouble
-                    log.debug("Couldn't delete leftover file '"
-                               + disposable.getAbsolutePath() + "'", e);
+                    log.debug("Couldn't delete leftover file '{}'", disposable.getAbsolutePath(), e);
                 }
             }
         }
@@ -318,9 +311,7 @@ public class HeritrixFiles {
         File destDir = new File(oldJobsDir, crawlDir.getName());
         boolean success = crawlDir.renameTo(destDir);
         if (!success) {
-            String message = "Failed to rename jobdir '"
-                             + crawlDir + "' to '" + destDir + "'";
-            log.warn(message);
+            log.warn("Failed to rename jobdir '{}' to '{}'", crawlDir, destDir);
         }
     }
 
@@ -350,8 +341,7 @@ public class HeritrixFiles {
     public File getArcsDir() {
         return new File(crawlDir, Constants.ARCDIRECTORY_NAME);
     }
-    
-    
+
     /**
      * Return the directory, where Heritrix writes its warcfiles.
      * @return the directory, where Heritrix writes its warcfiles.
@@ -360,7 +350,6 @@ public class HeritrixFiles {
         return new File(crawlDir, Constants.WARCDIRECTORY_NAME);
     }
 
-    
     /**
      * Method for retrieving the jmxremote.password file.
      * 
@@ -378,4 +367,5 @@ public class HeritrixFiles {
     public File getJmxAccessFile() {
         return jmxAccessFile;
     }
+
 }

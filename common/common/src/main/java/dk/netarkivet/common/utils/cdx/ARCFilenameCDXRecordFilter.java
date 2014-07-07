@@ -33,10 +33,10 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * filename-pattern.
  *
  */
-
 @SuppressWarnings({ "serial"})
 public class ARCFilenameCDXRecordFilter extends SimpleCDXRecordFilter {
-    private String arcfilenamepattern;
+
+	private String arcfilenamepattern;
     private Pattern p;
 
     /**
@@ -45,11 +45,9 @@ public class ARCFilenameCDXRecordFilter extends SimpleCDXRecordFilter {
      * @param filtername The name of this filter
      * @throws ArgumentNotValid If any argument are null or an empty string.
      */
-    public ARCFilenameCDXRecordFilter(String arcfilenamepattern,
-            String filtername) throws ArgumentNotValid {
+    public ARCFilenameCDXRecordFilter(String arcfilenamepattern, String filtername) throws ArgumentNotValid {
         super(filtername);
-        ArgumentNotValid.checkNotNullOrEmpty(arcfilenamepattern,
-                "arcfilenamepattern");
+        ArgumentNotValid.checkNotNullOrEmpty(arcfilenamepattern, "arcfilenamepattern");
         this.arcfilenamepattern = arcfilenamepattern;
         this.p = Pattern.compile(arcfilenamepattern);
     }
@@ -75,4 +73,5 @@ public class ARCFilenameCDXRecordFilter extends SimpleCDXRecordFilter {
         }
         return false;
     }
+
 }
