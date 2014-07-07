@@ -5,12 +5,12 @@ echo "Using installdir=$INSTALLDIR"
 
 installMQ()
 {
-    if [ ! -d "$INSTALLDIR" ]
+    if [ ! -d "$INSTALLDIR"/var ]
     then
       echo "Installing openmq."
       mkdir $INSTALLDIR
       cd $INSTALLDIR
-      wget http://download.java.net/mq/open-mq/4.5.2/latest/openmq4_5_2-binary-Linux_X86.zip
+      wget -N http://download.java.net/mq/open-mq/4.5.2/latest/openmq4_5_2-binary-Linux_X86.zip
       unzip openmq4*.zip
       cd -
 
@@ -44,7 +44,7 @@ startBroker()
             echo "Broker is already running."
         else
             echo "Starting broker"
-            $INSTALLDIR/mq/bin/imqbrokerd &
+            $INSTALLDIR/mq/bin/imqbrokerd -vmargs -d64 &
             sleep 3
             echo "Broker started"
         fi
