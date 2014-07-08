@@ -78,23 +78,6 @@
         <dependencySet>
             <useProjectArtifact>false</useProjectArtifact>
             <includes>
-                <include>org.apache.derby:*:jar</include>
-            </includes>
-            <outputDirectory>/lib/db/</outputDirectory>
-        </dependencySet>
-
-        <dependencySet>
-            <useProjectArtifact>false</useProjectArtifact>
-            <includes>
-                <include>org.apache.derby:*:jar</include>
-            </includes>
-            <outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
-            <outputDirectory>/lib/db/</outputDirectory>
-        </dependencySet>
-
-        <dependencySet>
-            <useProjectArtifact>false</useProjectArtifact>
-            <includes>
                 <include>*:jar</include>
             </includes>
             <!--excludes>
