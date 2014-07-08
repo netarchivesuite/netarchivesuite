@@ -139,7 +139,6 @@
                             <goal>single</goal>
                         </goals>
                         <configuration>
-                            <attach>false</attach>
                             <appendAssemblyId>false</appendAssemblyId>
                             <classifier>prod</classifier>
                             <finalName>NetarchiveSuite-${project.version}</finalName>
