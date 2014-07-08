@@ -69,6 +69,19 @@
     <tag>HEAD</tag>
   </scm>
 
+  <distributionManagement>
+    <repository>
+      <id>sbforge-nexus</id>
+      <name>SBForge Nexus Repo manager</name>
+      <url>https://sbforge.org/nexus/content/repositories/releases</url>
+    </repository>
+    <snapshotRepository>
+      <id>sbforge-nexus</id>
+      <name>SBForge Nexus Repo manager</name>
+      <url>https://sbforge.org/nexus/content/repositories/snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>
+
   <dependencyManagement>
     <dependencies>
       <dependency>
