@@ -8,7 +8,7 @@
         <version>5.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>netarchivesuite-integration-test</artifactId>
+    <artifactId>system-test</artifactId>
 
     <name>NetarchiveSuite System test</name>
     <description>Contains the automatic NetarchiveSuite system tests</description>

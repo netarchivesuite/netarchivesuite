@@ -15,6 +15,6 @@
     <name>Netarchivesuite - integration tests</name>
 
     <modules>
-        <module>netarchivesuite-integration-test</module>
+        <module>system-test</module>
     </modules>
 </project>
