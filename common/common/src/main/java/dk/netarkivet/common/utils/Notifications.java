@@ -25,10 +25,10 @@ package dk.netarkivet.common.utils;
 
 /**
  * This class encapsulates reacting to a serious error or warning message.
- *
  */
 public abstract class Notifications {
-    /**
+
+	/**
      * Notify about an event. This is the same as calling
      * {@link #notify(String, NotificationType, Throwable)} with null as the second parameter.
      *
@@ -46,6 +46,6 @@ public abstract class Notifications {
      * @param e  An exception related to the event, if not the event itself
      * May be null for no exception.
      */
-    public abstract void notify(String message, NotificationType eventType, 
-            Throwable e);
+    public abstract void notify(String message, NotificationType eventType, Throwable e);
+
 }

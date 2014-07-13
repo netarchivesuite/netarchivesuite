@@ -39,8 +39,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -48,25 +48,24 @@ import dk.netarkivet.common.exceptions.IOFailure;
 
 /**
  * Various utilities for running processes -- not exactly Java's forte.
- *
  */
-
 public class ProcessUtils {
-    /** The logger. */
-    private static Log log = LogFactory.getLog(ProcessUtils.class);
 
-    /** Runs an external process that takes no input, discarding its output.
-     *
+	/** The logger. */
+    private static final Logger log = LoggerFactory.getLogger(ProcessUtils.class);
+
+    /**
+     * Runs an external process that takes no input, discarding its output.
      * @param environment An environment to run the process in (may be null)
      * @param programAndArgs The program and its arguments.
      * @return The return code of the process.
      */
-    public static int runProcess(String[] environment,
-            String... programAndArgs) {
+    public static int runProcess(String[] environment, String... programAndArgs) {
         try {
-            log.debug("Running external program: " + StringUtils.conjoin(" ", 
-                    programAndArgs) + " with environment " 
-                    + StringUtils.conjoin(" ", environment));
+        	if (log.isDebugEnabled()) {
+                log.debug("Running external program: {} with environment {}", 
+                		StringUtils.conjoin(" ", programAndArgs), StringUtils.conjoin(" ", environment));
+        	}
             
             Process p = Runtime.getRuntime().exec(programAndArgs, environment);
             discardProcessOutput(p.getInputStream());
@@ -80,12 +79,12 @@ public class ProcessUtils {
                 }
             }
         } catch (IOException e) {
-            throw new IOFailure("Failure while running " 
-                    + Arrays.toString(programAndArgs), e);
+            throw new IOFailure("Failure while running " + Arrays.toString(programAndArgs), e);
         }
     }
 
-    /** Runs an external process that takes no input, discarding its output.
+    /**
+     * Runs an external process that takes no input, discarding its output.
      * This is a convenience wrapper for runProcess(environment, programAndArgs)
      * @param programAndArgs The program to run and its arguments
      * @return The return code of the process.
@@ -106,11 +105,11 @@ public class ProcessUtils {
      *            method returns.
      */
     public static void discardProcessOutput(final InputStream inputStream) {
-        makeCollectorThread(inputStream,
-                            new DiscardingOutputStream(), -1).start();
+        makeCollectorThread(inputStream, new DiscardingOutputStream(), -1).start();
     }
 
-    /** Collect all output from an inputstream, up to maxCollect bytes,
+    /**
+     * Collect all output from an inputstream, up to maxCollect bytes,
      * in an output object. This will eventually close the given InputStream,
      * but not necessarily before the method returns.  The thread created
      * is placed in a thread set, and should be removed once all output
@@ -126,9 +125,8 @@ public class ProcessUtils {
      * is finished, the object will no longer be written to.  The collected
      * output can be retrieved with the toString method.
      */
-    public static Object collectProcessOutput(
-            final InputStream inputStream, final int maxCollect,
-            Set<Thread> collectionThreads) {
+    public static Object collectProcessOutput(final InputStream inputStream, final int maxCollect,
+    		Set<Thread> collectionThreads) {
         final OutputStream stream = new ByteArrayOutputStream();
         Thread t = makeCollectorThread(inputStream, stream, maxCollect);
         t.start();
@@ -136,7 +134,8 @@ public class ProcessUtils {
         return stream;
     }
 
-    /** Collect all output from an inputstream, appending it to a file.
+    /**
+     * Collect all output from an inputstream, appending it to a file.
      * This will eventually close the given InputStream,
      * but not necessarily before the method returns.  The thread created
      * is placed in a thread set, and should be removed once all output
@@ -146,22 +145,21 @@ public class ProcessUtils {
      * @param outputFile The file that output should be appended to.
      * @param collectionThreads Set of threads that concurrently collect output
      */
-    public static void writeProcessOutput(final InputStream inputStream,
-                                            final File outputFile,
-                                            Set<Thread> collectionThreads) {
+    public static void writeProcessOutput(final InputStream inputStream, final File outputFile,
+    		Set<Thread> collectionThreads) {
         final OutputStream stream;
         try {
             stream = new FileOutputStream(outputFile, true);
         } catch (FileNotFoundException e) {
-            throw new IOFailure("Cannot create file '" + outputFile
-                                + " to write process output to.", e);
+            throw new IOFailure("Cannot create file '" + outputFile + " to write process output to.", e);
         }
         Thread t = makeCollectorThread(inputStream, stream, -1);
         t.start();
         collectionThreads.add(t);
     }
 
-    /** Collect all output from an inputstream, writing it to an output stream,
+    /**
+     * Collect all output from an inputstream, writing it to an output stream,
      * using a separate thread. This will eventually close the given InputStream
      * and OutputStream, but not necessarily before the method returns. While
      * only a limited amount may be written to the output object, the entire
@@ -174,9 +172,8 @@ public class ProcessUtils {
      *  limit
      * @return The thread that will collect the output.
      */
-    private static Thread makeCollectorThread(final InputStream inputStream,
-                                              final OutputStream outputStream,
-                                              final int maxCollect) {
+    private static Thread makeCollectorThread(final InputStream inputStream, final OutputStream outputStream,
+    		final int maxCollect) {
         return new Thread() {
             public void run() {
                 try {
@@ -196,40 +193,32 @@ public class ProcessUtils {
                     }
                 } catch (IOException e) {
                     // This seems ugly
-                    throw new RuntimeException("Couldn't close streams for "
-                            + "process.", e);
+                    throw new RuntimeException("Couldn't close streams for " + "process.", e);
                 }
             }
         };
     }
 
-    /** Reads all contents from a stream, writing some or all to another.
-     *
+    /**
+     * Reads all contents from a stream, writing some or all to another.
      * @param in InputStream to read from
      * @param out OutputStream to write to
      * @param maxCollect Maximum number of bytes to write to out
      * @throws IOFailure If there are problems reading or writing.
      */
-    private static void copyContents(InputStream in, OutputStream out,
-                                     int maxCollect) {
+    private static void copyContents(InputStream in, OutputStream out, int maxCollect) {
         int bytesRead;
         byte[] buffer = new byte[Constants.IO_BUFFER_SIZE];
         int totalBytesRead = 0;
         try {
-            while ((bytesRead = in.read(buffer, 0,
-                                        Constants.IO_BUFFER_SIZE))
-                   != -1) {
+            while ((bytesRead = in.read(buffer, 0, Constants.IO_BUFFER_SIZE)) != -1) {
                 if (maxCollect == -1) {
                     out.write(buffer, 0, bytesRead);
                 } else if (totalBytesRead < maxCollect) {
-                    out.write(buffer, 0,
-                              Math.min(bytesRead,
-                                       maxCollect - totalBytesRead));
+                    out.write(buffer, 0, Math.min(bytesRead, maxCollect - totalBytesRead));
                 }
                 // Close early if applicable
-                if (maxCollect != -1
-                    && totalBytesRead < maxCollect
-                    && totalBytesRead + bytesRead > maxCollect) {
+                if (maxCollect != -1 && totalBytesRead < maxCollect && totalBytesRead + bytesRead > maxCollect) {
                     out.close();
                 }
                 totalBytesRead += bytesRead;
@@ -239,9 +228,9 @@ public class ProcessUtils {
         }
     }
 
-    /** Wait for the end of a process, but only for a limited time.  This
-     * method takes care of the ways waitFor can get interrupted.
-     *
+    /**
+     * Wait for the end of a process, but only for a limited time.
+     * This method takes care of the ways waitFor can get interrupted.
      * @param p Process to wait for
      * @param maxWait The maximum number of milliseconds to wait for the
      * process to exit.
@@ -290,9 +279,7 @@ public class ProcessUtils {
         try {
             return p.exitValue();
         } catch (IllegalThreadStateException e) {
-            log.warn("Process '" + p + "' did not exit within "
-                     + (System.currentTimeMillis() - startTime)
-                     + " milliseconds");
+            log.warn("Process '{}' did not exit within {} milliseconds", p, (System.currentTimeMillis() - startTime));
             return null;
         }
     }
@@ -335,8 +322,7 @@ public class ProcessUtils {
             cmdAndParams.add(tempDir.getAbsolutePath());
         }
 
-        return ProcessUtils.runProcess(environment,
-                (String[]) cmdAndParams.toArray(new String[cmdAndParams.size()]));
+        return ProcessUtils.runProcess(environment, (String[]) cmdAndParams.toArray(new String[cmdAndParams.size()]));
     }
 
 }

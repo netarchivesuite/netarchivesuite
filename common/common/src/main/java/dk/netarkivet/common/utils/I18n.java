@@ -27,8 +27,8 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
@@ -36,16 +36,16 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * Internationalization class.
  */
 public class I18n {
-    /** Logger for this class. */
-    private static Log log = LogFactory.getLog(I18n.class);
+
+	/** Logger for this class. */
+    private static final Logger log = LoggerFactory.getLogger(I18n.class);
 
     /** Name of the resource bundle. */
     private final String bundleName;
 
     /** Make an internationalisation object with the given bundle. */
     public I18n(String translationsBundle) {
-        ArgumentNotValid.checkNotNullOrEmpty(translationsBundle,
-                                             "String translationsBundle");
+        ArgumentNotValid.checkNotNullOrEmpty(translationsBundle, "String translationsBundle");
         bundleName = translationsBundle;
     }
 
@@ -67,8 +67,7 @@ public class I18n {
      * found or the format is invalid or does not match the args.
      * @throws ArgumentNotValid on null or empty local or label.
      */
-    public String getString(Locale locale,
-                                   String label, Object... args) {
+    public String getString(Locale locale, String label, Object... args) {
         //Arguments checked in helper method.
         return getString(bundleName, locale, label, args);
     }
@@ -92,27 +91,23 @@ public class I18n {
      * found or the format is invalid or does not match the args.
      * @throws ArgumentNotValid on null bundleName, locale or label.
      */
-    public static String getString(String bundleName, Locale locale,
-                                   String label, Object... args) {
+    public static String getString(String bundleName, Locale locale, String label, Object... args) {
         ArgumentNotValid.checkNotNullOrEmpty(bundleName, "String bundleName");
         ArgumentNotValid.checkNotNull(locale, "Locale locale");
         ArgumentNotValid.checkNotNullOrEmpty(label, "String label");
         try {
-            ResourceBundle bundle =
-                    ResourceBundle.getBundle(bundleName, locale);
+            ResourceBundle bundle = ResourceBundle.getBundle(bundleName, locale);
             String message = bundle.getString(label);
             try {
                 return new MessageFormat(message, locale).format(args);
             } catch (IllegalArgumentException e) {
-                log.warn("I18n bundle '" + bundleName
-                        + "' has wrong format '" + message + "' for label '"
-                        + label + "'", e);
+                log.warn("I18n bundle '{}' has wrong format '{}' for label '{}'", bundleName, message, label, e);
                 return label;
             }
         } catch (MissingResourceException e) {
-            log.warn("I18n bundle '" + bundleName
-                    + "' is missing label '" + label + "'", e);
+            log.warn("I18n bundle '{}' is missing label '{}'", bundleName, label, e);
             return label;
         }
     }
+
 }

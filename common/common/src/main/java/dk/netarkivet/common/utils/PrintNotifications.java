@@ -42,4 +42,5 @@ public class PrintNotifications extends Notifications {
             e.printStackTrace(System.err);
         }
     }
+
 }

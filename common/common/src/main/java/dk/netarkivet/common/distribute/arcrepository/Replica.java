@@ -31,8 +31,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
@@ -47,8 +47,10 @@ import dk.netarkivet.common.utils.StringTree;
  * It guarantees that there is only one Replica object per replica id/name.
  */
 public class Replica {
-    /** the class log. */
-    private static Log log = LogFactory.getLog(Replica.class.getName());
+
+	/** the class log. */
+    private static Logger log = LoggerFactory.getLogger(Replica.class);
+
     /** The id of this replica. */
     private final String id;
     /** The name of this replica. */
@@ -59,9 +61,9 @@ public class Replica {
      * "first" call to initializeKnownReplicasList(). */
     private static Map<String, Replica> knownReplicas;
 
-    /** Private constructor that makes a new Replica object.  These will
+    /**
+     * Private constructor that makes a new Replica object.  These will
      * all be stored in the knownReplicas map.
-     *
      * @param repId Id of the replica (e.g. One)
      * @param repName Name of the replica (e.g. ReplicaOne)
      * @param repType Type of the replica (e.g. biarchive)
@@ -72,38 +74,29 @@ public class Replica {
         this.type = repType;
     }
 
-    /** Initialize the list of known replicas from settings.
+    /**
+     * Initialize the list of known replicas from settings.
      * This must be called before using known, but after settings are loaded.
      */
     private static synchronized void initializeKnownReplicasList() {
         if (knownReplicas == null) {
-            String[] replicaIds 
-                = Settings.getAll(CommonSettings.REPLICA_IDS);
+            String[] replicaIds = Settings.getAll(CommonSettings.REPLICA_IDS);
             knownReplicas = new HashMap<String, Replica>(replicaIds.length);
-            StringTree<String> replicas 
-                = Settings.getTree(CommonSettings.REPLICAS_SETTINGS);
-            List<StringTree<String>> replicaList = replicas.getSubTrees(
-                    CommonSettings.REPLICA_TAG);
+            StringTree<String> replicas = Settings.getTree(CommonSettings.REPLICAS_SETTINGS);
+            List<StringTree<String>> replicaList = replicas.getSubTrees(CommonSettings.REPLICA_TAG);
             for (StringTree<String> replicaTree : replicaList) {
-                String replicaId = replicaTree.getValue(
-                        CommonSettings.REPLICAID_TAG);
-                knownReplicas.put(
-                    replicaId, 
-                    new Replica(
-                            replicaId, 
-                            replicaTree.getValue(
-                               CommonSettings.REPLICANAME_TAG),
-                            ReplicaType.fromSetting(
-                                replicaTree.getValue(
-                                   CommonSettings.REPLICATYPE_TAG))
-                         )
+                String replicaId = replicaTree.getValue(CommonSettings.REPLICAID_TAG);
+                knownReplicas.put(replicaId, new Replica(
+                        replicaId, replicaTree.getValue(CommonSettings.REPLICANAME_TAG),
+                        ReplicaType.fromSetting(replicaTree.getValue(CommonSettings.REPLICATYPE_TAG))
+                     )
                 );
             }
         }
     }
 
-    /** Get an object representing the replica with the given id.
-     *
+    /**
+     * Get an object representing the replica with the given id.
      * @param id The given name of an replica
      * @return an object representing the replica with the given id
      * @throws UnknownID if no replica is known with the given id
@@ -112,20 +105,19 @@ public class Replica {
         ArgumentNotValid.checkNotNullOrEmpty(id, "String id");
         initializeKnownReplicasList();
         if (!knownReplicas.containsKey(id)) {
-            String message = "Can't find replica with id '" + id
-                    + "', only know of " + knownReplicas.keySet();
+            String message = "Can't find replica with id '" + id + "', only know of " + knownReplicas.keySet();
             log.debug(message);
             throw new UnknownID(message);
         }
         return knownReplicas.get(id);
     }
 
-    /** Get an object representing the replica with the given name.
-    *
+    /**
+     * Get an object representing the replica with the given name.
      * @param name The given name of an replica
      * @return an object representing the replica with the given name
      * @throws UnknownID if no replica is known with the given name
-    */
+     */
     public static Replica getReplicaFromName(String name) {
         ArgumentNotValid.checkNotNullOrEmpty(name, "String name");
         initializeKnownReplicasList();
@@ -142,15 +134,16 @@ public class Replica {
             }
         }
         if (!found) {
-           String message = "Can't find replica with name '" + name
-                   + "', only know of names for " + knownReplicas.keySet();
+           String message = "Can't find replica with name '" + name + "', only know of names for "
+        		   + knownReplicas.keySet();
            log.debug(message);
            throw new UnknownID(message);
         }
         return resRep;
    }
 
-   /** Check, if a given name is a replica name.
+    /**
+     * Check, if a given name is a replica name.
      * @param name a given name
      * @return true, if the given name is a replica name, false otherwise
      */
@@ -165,7 +158,8 @@ public class Replica {
         return found;
     }   
 
-    /** Check, if a given id is a replica id.
+    /**
+     * Check, if a given id is a replica id.
      * @param id a given id
      * @return true, if the given id is a replica id, false otherwise
      */
@@ -225,14 +219,13 @@ public class Replica {
         int index = 0;
         for (String s : knownReplicas.keySet()) {
             knownNames[index] = knownReplicas.get(s).getName();
-            index++;
+            ++index;
         }
         return knownNames;
     }
     
     /**
      * Get the names of all known replicas as a string set.
-     *   
      * @return The names of all known replicas as a string set.
      */
     public static Set<String> getKnownNamesAsSet() {
@@ -244,24 +237,24 @@ public class Replica {
         return res;
     }
 
-    /** Get the type of this replica.
-    *
-    * @return The type of this replica (bitarchive or checksum).
-    */
-   public ReplicaType getType() {
-       return type;
-   }
+    /**
+     * Get the type of this replica.
+     * @return The type of this replica (bitarchive or checksum).
+     */
+    public ReplicaType getType() {
+        return type;
+    }
 
-   /** Get the id of this replica.
-    *
-    * @return The id of this replica (also used in queues).
-    */
-   public String getId() {
-       return id;
-   }
+    /**
+     * Get the id of this replica.
+     * @return The id of this replica (also used in queues).
+     */
+    public String getId() {
+        return id;
+    }
 
-   /** Get the name of this replica.
-     *
+    /**
+     * Get the name of this replica.
      * @return The name of this replica is known as in interface.
      */
     public String getName() {
@@ -271,7 +264,6 @@ public class Replica {
     /** 
      * Get the identification channel that corresponds to this replica.
      * Please do not parse its name!
-     *
      * @return The BaMon ChannelID of this replica.
      */
     public ChannelID getIdentificationChannel() {
@@ -286,12 +278,12 @@ public class Replica {
         }
     }
 
-    /** Returns a human-readable representation of the object.
-     *
-     * @return An arbitrary string version of the object.  Do not depend on
-     * its format.
+    /**
+     * Returns a human-readable representation of the object.
+     * @return An arbitrary string version of the object.  Do not depend on its format.
      */
     public String toString() {
         return type.toString() + "Replica (" + id + ") "+ name;
     }
+
 }

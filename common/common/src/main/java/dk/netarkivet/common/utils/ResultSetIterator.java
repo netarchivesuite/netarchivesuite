@@ -37,7 +37,6 @@ import dk.netarkivet.common.exceptions.IOFailure;
  * Iterable, Iterator nor Enumeration).
  * @param <T> The type returned by the ResultSetIterator
  */
-
 public abstract class ResultSetIterator<T> implements Iterator<T> {
 
     /** The current Statement that this Result originates from. */
@@ -80,8 +79,8 @@ public abstract class ResultSetIterator<T> implements Iterator<T> {
                     stm.close();
                 }
             } catch (SQLException e) {
-                throw new IOFailure("SQL error getting next element from "
-                        + res + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
+                throw new IOFailure("SQL error getting next element from " + res + "\n"
+                		+ ExceptionUtils.getSQLExceptionCause(e), e);
             }
         }
         return objectCache != null;
@@ -130,7 +129,7 @@ public abstract class ResultSetIterator<T> implements Iterator<T> {
      *                          to the <tt>next</tt> method.
      */
     public void remove() {
-        throw new UnsupportedOperationException(
-                "This class does not support remove()");
+        throw new UnsupportedOperationException("This class does not support remove()");
     }
+
 }

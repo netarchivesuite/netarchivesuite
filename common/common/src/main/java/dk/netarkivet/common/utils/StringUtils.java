@@ -22,14 +22,14 @@
  */
 package dk.netarkivet.common.utils;
 
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * Utilities for working with strings.
@@ -44,12 +44,10 @@ public final class StringUtils {
 
     /**
      * Replace all occurrences of oldString with newString in a string.
-     * @param sentence the string, where all occurrences of oldString are to be
-     *  replaced with newString.
+     * @param sentence the string, where all occurrences of oldString are to be replaced with newString.
      * @param oldString the oldString.
      * @param newString the newString.
-     * @return the resulting string, where all occurrences of oldString are
-     *  replaced with newString.
+     * @return the resulting string, where all occurrences of oldString are replaced with newString.
      */
     public static String replace(String sentence, String oldString, String newString) {
         StringBuilder newStr = new StringBuilder();
@@ -71,10 +69,11 @@ public final class StringUtils {
         return newStr.toString();
     }
 
-    /** Concatenate all objects in a collection with the given separator
-     *  between each.  If the Collection is a List, this method will generate
-     *  the conjoined string in list order.  If the objects are not Strings,
-     *  the toString method will be used to convert them to strings.
+    /**
+     * Concatenate all objects in a collection with the given separator
+     * between each.  If the Collection is a List, this method will generate
+     * the conjoined string in list order.  If the objects are not Strings,
+     * the toString method will be used to convert them to strings.
      *
      * @param sep A string to separate the list items.
      * @param objects A collection of object to concatenate as a string.
@@ -128,7 +127,7 @@ public final class StringUtils {
             res.append(o);
 
             // check if max is reached.
-            index++;
+            ++index;
             if(index > max) {
                 break;
             }
@@ -137,8 +136,8 @@ public final class StringUtils {
         return res.toString();
     }
 
-    /** Concatenate all strings in a collection with the given separator
-     *  between each.
+    /**
+     * Concatenate all strings in a collection with the given separator between each.
      *
      * @param sep A string to separate the list items.
      * @param strings An array of strings to concatenate.
@@ -159,8 +158,8 @@ public final class StringUtils {
     }
 
 
-    /** Concatenate all strings in a collection, with the fixed strings
-     * appended and prepended to each.
+    /**
+     * Concatenate all strings in a collection, with the fixed strings appended and prepended to each.
      *
      * @param strings A list of strings to join up.
      * @param pre A string that will be put in front of each string in the list.
@@ -180,8 +179,8 @@ public final class StringUtils {
         return res.toString();
     }
 
-    /** Repeat the string n times.
-     *
+    /**
+     * Repeat the string n times.
      * @param s A string to repeat.
      * @param n How many times to repeat it.
      * @return A repeated string.
@@ -340,7 +339,6 @@ public final class StringUtils {
         return new SimpleDateFormat(format).format(new Date(millis));
     }
 
-
     /**
      * Given an input String, this method splits the String with newlines
      * into a multiline String with line-lengths approximately lineLength. The
@@ -350,8 +348,7 @@ public final class StringUtils {
      * @param input the input String.
      * @param lineLength the desired line length.
      * @return the split String.
-     * @throws ArgumentNotValid if the input is null or the lineLength is not
-     * positive
+     * @throws ArgumentNotValid if the input is null or the lineLength is not positive
      */
     public static String splitStringOnWhitespace(String input, int lineLength) {
         ArgumentNotValid.checkNotNull(input, "input");

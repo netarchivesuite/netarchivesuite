@@ -32,22 +32,25 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.IOFailure;
 
-/** Miscellanous utilities for getting system resources. */
+/**
+ * Miscellanous utilities for getting system resources.
+ */
 public class SystemUtils {
-    /** Hostname for this machine used when no name can be found, or when the
-     * actual name doesn't matter. */
+
+    private static final Logger log = LoggerFactory.getLogger(SystemUtils.class);
+
+	/** Hostname for this machine used when no name can be found, or when the actual name doesn't matter. */
     public static final String LOCALHOST = "localhost";
-    /** Name of standard Java property containing class path.  Why these names
-     * aren't actually defined as constants anywhere eludes me. */
+
+    /** Name of standard Java property containing class path.
+     *  Why these names aren't actually defined as constants anywhere eludes me. */
     private static final String CLASS_PATH_PROPERTY = "java.class.path";
     
-    private static final Log log = LogFactory.getLog(SystemUtils.class);
-
     /**
      * Looks up the IP number of the local host.
      * Note that Java does not guarantee that the result is
@@ -79,12 +82,12 @@ public class SystemUtils {
         	String localhostName = localhost.getCanonicalHostName();
         	String localhostIp = localhost.getHostAddress();
         	if (log.isTraceEnabled()) {
-        	    log.trace("[getLocalHostName] Resolved: " + localhostName + " (" + localhostIp + ")");
+        	    log.trace("[getLocalHostName] Resolved: {} ({})", localhostName, localhostIp);
         	}
         	return localhostName;
         } catch (UnknownHostException e) {
             // If no interfaces, use default;
-            log.warn("Unable to resolve localhostname. Returning the default '" + LOCALHOST + "'");
+            log.warn("Unable to resolve localhostname. Returning the default '{}'", LOCALHOST);
         }
         return hostname;
     }
@@ -100,8 +103,7 @@ public class SystemUtils {
             ServerSocket s = new ServerSocket(port, 1);
             s.close();
         } catch (BindException e) {
-            throw new IOFailure("Port " + port + " already in use, or "
-                                + "port is out of range", e);
+            throw new IOFailure("Port " + port + " already in use, or port is out of range", e);
         } catch (IOException e) {
             throw new IOFailure("IO error testing port " + port, e);
         }
@@ -122,4 +124,5 @@ public class SystemUtils {
             return new ArrayList<String>();
         }
     }
+
 }

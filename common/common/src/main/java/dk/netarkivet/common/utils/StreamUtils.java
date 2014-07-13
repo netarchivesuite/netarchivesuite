@@ -23,7 +23,6 @@
 
 package dk.netarkivet.common.utils;
 
-import javax.servlet.jsp.JspWriter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -31,11 +30,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import javax.servlet.jsp.JspWriter;
+
 import org.dom4j.Document;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -45,15 +46,13 @@ import dk.netarkivet.common.exceptions.IOFailure;
  * Utilities for handling streams.
  */
 public class StreamUtils {
-    
-    
+
+    /** logger for this class. */
+    private static final Logger log = LoggerFactory.getLogger(StreamUtils.class);
+
     /** Constant for UTF-8. */
     private static final String UTF8_CHARSET = "UTF-8";
-    
-    /** logger for this class. */
-    private static final Log log =
-            LogFactory.getLog(StreamUtils.class);
-    
+
     /**
      * Will copy everything from input stream to jsp writer, closing input
      * stream afterwards. Charset UTF-8 is assumed.
@@ -63,8 +62,7 @@ public class StreamUtils {
      * @throws ArgumentNotValid if either parameter is null
      * @throws IOFailure if a read or write error happens during copy
      */
-    public static void copyInputStreamToJspWriter(InputStream in,
-            JspWriter out) {
+    public static void copyInputStreamToJspWriter(InputStream in, JspWriter out) {
         ArgumentNotValid.checkNotNull(in, "InputStream in");
         ArgumentNotValid.checkNotNull(out, "JspWriter out");
 
@@ -79,14 +77,12 @@ public class StreamUtils {
                 in.close();
             }
         } catch (IOException e) {
-            String errMsg = "Trouble copying inputstream " + in
-            + " to JspWriter " + out;
+            String errMsg = "Trouble copying inputstream " + in + " to JspWriter " + out;
             log.warn(errMsg, e);
             throw new IOFailure(errMsg, e);
         }
     }
-   
-    
+
     /**
      * Will copy everything from input stream to output stream, closing input
      * stream afterwards.
@@ -96,27 +92,20 @@ public class StreamUtils {
      * @throws ArgumentNotValid if either parameter is null
      * @throws IOFailure if a read or write error happens during copy
      */
-    public static void copyInputStreamToOutputStream(InputStream in,
-                                                     OutputStream out) {
+    public static void copyInputStreamToOutputStream(InputStream in, OutputStream out) {
         ArgumentNotValid.checkNotNull(in, "InputStream in");
         ArgumentNotValid.checkNotNull(out, "OutputStream out");
 
         try {
             try {
-                if (in instanceof FileInputStream
-                    && out instanceof FileOutputStream) {
-                    FileChannel inChannel
-                            = ((FileInputStream) in).getChannel();
-                    FileChannel outChannel
-                            = ((FileOutputStream) out).getChannel();
+                if (in instanceof FileInputStream && out instanceof FileOutputStream) {
+                    FileChannel inChannel = ((FileInputStream) in).getChannel();
+                    FileChannel outChannel = ((FileOutputStream) out).getChannel();
                     long transferred = 0;
                     final long fileLength = inChannel.size();
                     do {
-                        transferred += inChannel.transferTo(
-                                transferred,
-                                Math.min(Constants.IO_CHUNK_SIZE,
-                                         fileLength - transferred),
-                                outChannel);
+                        transferred += inChannel.transferTo(transferred,
+                        		Math.min(Constants.IO_CHUNK_SIZE, fileLength - transferred), outChannel);
                     } while (transferred < fileLength);
                 } else {
                     byte[] buf = new byte[Constants.IO_BUFFER_SIZE];
@@ -130,8 +119,7 @@ public class StreamUtils {
                 in.close();
             }
         } catch (IOException e) {
-            String errMsg = "Trouble copying inputstream " + in
-            + " to outputstream " + out;
+            String errMsg = "Trouble copying inputstream " + in + " to outputstream " + out;
             log.warn(errMsg, e);
             throw new IOFailure(errMsg, e);
         }
@@ -145,8 +133,7 @@ public class StreamUtils {
      * @param os the stream to write xml to
      * @throws IOFailure On trouble writing XML to stream.
      */
-    public static void writeXmlToStream(Document doc,
-                                        OutputStream os) {
+    public static void writeXmlToStream(Document doc, OutputStream os) {
         ArgumentNotValid.checkNotNull(doc, "Document doc");
         ArgumentNotValid.checkNotNull(doc, "OutputStream os");
         XMLWriter xwriter = null;
@@ -178,8 +165,7 @@ public class StreamUtils {
      * @throws IOFailure If an IOException is caught while reading the 
      * inputstream. 
      */
-    public static String getInputStreamAsString(InputStream in) 
-            throws ArgumentNotValid, IOFailure {
+    public static String getInputStreamAsString(InputStream in) throws ArgumentNotValid, IOFailure {
         ArgumentNotValid.checkNotNull(in, "InputStream in");
 
         StringBuilder res = new StringBuilder();
@@ -217,13 +203,12 @@ public class StreamUtils {
         try {
             int read = data.read(contents, 0, dataLength);
             if (dataLength != read) {
-                log.debug("Only read " + read + " bytes out of the "
-                        + dataLength + " bytes requested"); 
+                log.debug("Only read {} bytes out of the {} bytes requested", read, dataLength); 
             }
         } catch (IOException e) {
-            throw new IOFailure("Unable to convert inputstream to byte array",
-                                e);
+            throw new IOFailure("Unable to convert inputstream to byte array", e);
         }
         return contents;
     }
+
 }

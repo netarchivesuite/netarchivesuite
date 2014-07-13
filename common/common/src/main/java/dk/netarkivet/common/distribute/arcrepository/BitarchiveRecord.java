@@ -31,11 +31,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.archive.io.ArchiveRecord;
 import org.archive.io.arc.ARCRecord;
 import org.archive.io.warc.WARCRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.RemoteFile;
@@ -61,6 +61,9 @@ import dk.netarkivet.common.utils.warc.WARCUtils;
 @SuppressWarnings({ "serial"})
 public class BitarchiveRecord implements Serializable {
 
+    /** the log. */
+    private static final transient Logger log = LoggerFactory.getLogger(BitarchiveRecord.class);
+
     /** The file the data were retrieved from. */
     private String fileName;
 
@@ -83,13 +86,8 @@ public class BitarchiveRecord implements Serializable {
     private boolean hasRemoteFileBeenDeleted = false;
     
     /** How large the ARCRecord can before saving as RemoteFile. */
-    private final long LIMIT_FOR_SAVING_DATA_IN_OBJECT_BUFFER
-        = Settings.getLong(CommonSettings
-            .BITARCHIVE_LIMIT_FOR_RECORD_DATATRANSFER_IN_FILE);
-
-    /** the log. */
-    private static final transient Log log
-        = LogFactory.getLog(BitarchiveRecord.class.getName());
+    private final long LIMIT_FOR_SAVING_DATA_IN_OBJECT_BUFFER = Settings.getLong(
+    		CommonSettings.BITARCHIVE_LIMIT_FOR_RECORD_DATATRANSFER_IN_FILE);
 
     /**
      * Creates a BitarchiveRecord from the a ArchiveRecord, which can be either
@@ -121,26 +119,20 @@ public class BitarchiveRecord implements Serializable {
         }
         if (length > LIMIT_FOR_SAVING_DATA_IN_OBJECT_BUFFER) {
             // copy arc-data to local file and create a RemoteFile based on this
-            log.info("Record exceeds limit of "
-                     + LIMIT_FOR_SAVING_DATA_IN_OBJECT_BUFFER
-                     + " bytes. Length is " + length
-                     + " bytes, Storing as instance of "
-                     + Settings.get(CommonSettings.REMOTE_FILE_CLASS));
+            log.info("Record exceeds limit of {} bytes. Length is {} bytes, Storing as instance of {}",
+            		LIMIT_FOR_SAVING_DATA_IN_OBJECT_BUFFER, length, Settings.get(CommonSettings.REMOTE_FILE_CLASS));
             if (RemoteFileFactory.isExtendedRemoteFile()) {
                 objectAsRemoteFile = RemoteFileFactory.getExtendedInstance(record);
                 isStoredAsRemoteFile = true;
             }  else {
                 File localTmpFile = null;
                 try {
-                    localTmpFile = File.createTempFile("BitarchiveRecord-"
-                                                       + fileName, ".tmp", FileUtils.getTempDir());
+                    localTmpFile = File.createTempFile("BitarchiveRecord-" + fileName, ".tmp", FileUtils.getTempDir());
                     record.dump(new FileOutputStream(localTmpFile));
-                    objectAsRemoteFile = RemoteFileFactory.getMovefileInstance(
-                            localTmpFile);
+                    objectAsRemoteFile = RemoteFileFactory.getMovefileInstance(localTmpFile);
                     isStoredAsRemoteFile = true;
                 } catch (IOException e) {
-                    throw new IOFailure("Unable to store record(" + fileName
-                                        + "," + offset + ") as remotefile", e);
+                    throw new IOFailure("Unable to store record(" + fileName + "," + offset + ") as remotefile", e);
                 }
             }
         } else { // Store data in objectbuffer
@@ -150,8 +142,7 @@ public class BitarchiveRecord implements Serializable {
                 } else if (record instanceof WARCRecord) {
                     objectBuffer = WARCUtils.readWARCRecord((WARCRecord) record);
                 }
-                log.debug("Bytes stored in objectBuffer: "
-                        + objectBuffer.length);
+                log.debug("Bytes stored in objectBuffer: {}", objectBuffer.length);
             } catch (IOException e) {
                 throw new ExceptionInInitializerError(e);
             }
@@ -186,7 +177,7 @@ public class BitarchiveRecord implements Serializable {
             if (hasRemoteFileBeenDeleted) {
                 throw new IllegalState("RemoteFile has already been deleted");
             }
-            log.info("Reading " + length + " bytes from RemoteFile");
+            log.info("Reading {} bytes from RemoteFile", length);
             InputStream rfInputStream = objectAsRemoteFile.getInputStream();
             result = new FilterInputStream(rfInputStream) {
                 public void close() throws IOException {
@@ -196,7 +187,7 @@ public class BitarchiveRecord implements Serializable {
                 }
             };
         } else {
-            log.debug("Reading " + length + " bytes from objectBuffer");
+            log.debug("Reading {} bytes from objectBuffer", length);
             result = new ByteArrayInputStream(objectBuffer);
         }
         return result;
@@ -217,22 +208,21 @@ public class BitarchiveRecord implements Serializable {
                 throw new IllegalState("RemoteFile has already been deleted");
             }
             try {
-                log.debug("Reading " + length + " bytes from RemoteFile");
+                log.debug("Reading {} bytes from RemoteFile", length);
                 objectAsRemoteFile.appendTo(out);
             } finally {
-                log.trace("Deleting the RemoteFile '"
-                        + objectAsRemoteFile.getName() + "'.");
+                log.trace("Deleting the RemoteFile '{}'.", objectAsRemoteFile.getName());
                 objectAsRemoteFile.cleanup();
                 hasRemoteFileBeenDeleted = true;
             }
         } else {
             try {
-                log.debug("Reading " + length + " bytes from objectBuffer");
+                log.debug("Reading {} bytes from objectBuffer", length);
                 out.write(objectBuffer, 0, objectBuffer.length);
             } catch (IOException e) {
-                throw new IOFailure("Unable to write data from "
-                        + "objectBuffer to the outputstream", e);
+                throw new IOFailure("Unable to write data from " + "objectBuffer to the outputstream", e);
             }
         }
     }
+
 }

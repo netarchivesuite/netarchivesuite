@@ -26,12 +26,15 @@ import java.util.BitSet;
 import java.util.HashSet;
 import java.util.Set;
 
-/** A sparse implementation of a BitSet, that does not require memory linear
+/**
+ * A sparse implementation of a BitSet, that does not require memory linear
  * to the largest index. This is done at the cost of performance, but should
- * be fairly efficient on few set bits. */
+ * be fairly efficient on few set bits.
+ */
 @SuppressWarnings({ "serial"})
 public class SparseBitSet extends BitSet {
-    /** A set of the indices of bits that are set in this BitSet. */
+
+	/** A set of the indices of bits that are set in this BitSet. */
     private Set<Integer> setbits = new HashSet<Integer>();
 
     /**
@@ -64,8 +67,7 @@ public class SparseBitSet extends BitSet {
             throw new IndexOutOfBoundsException("toIndex < 0: " + toIndex);
         }
         if (fromIndex > toIndex) {
-            throw new IndexOutOfBoundsException("fromIndex: " + fromIndex 
-                    + " > toIndex: " + toIndex);
+            throw new IndexOutOfBoundsException("fromIndex: " + fromIndex + " > toIndex: " + toIndex);
         }
         for (int i = fromIndex; i < toIndex; i++) {
             flip(i);
@@ -143,8 +145,7 @@ public class SparseBitSet extends BitSet {
             throw new IndexOutOfBoundsException("toIndex < 0: " + toIndex);
         }
         if (fromIndex > toIndex) {
-            throw new IndexOutOfBoundsException("fromIndex: " + fromIndex 
-                    + " > toIndex: " + toIndex);
+            throw new IndexOutOfBoundsException("fromIndex: " + fromIndex + " > toIndex: " + toIndex);
         }
         for (int i = fromIndex; i < toIndex; i++) {
             clear(i);
@@ -173,8 +174,7 @@ public class SparseBitSet extends BitSet {
             throw new IndexOutOfBoundsException("toIndex < 0: " + toIndex);
         }
         if (fromIndex > toIndex) {
-            throw new IndexOutOfBoundsException("fromIndex: " + fromIndex 
-                    + " > toIndex: " + toIndex);
+            throw new IndexOutOfBoundsException("fromIndex: " + fromIndex + " > toIndex: " + toIndex);
         }
         SparseBitSet bitsubset = new SparseBitSet();
         for (int i : setbits) {
@@ -330,8 +330,7 @@ public class SparseBitSet extends BitSet {
      * object.
      */
     public boolean equals(Object obj) {
-        return obj instanceof SparseBitSet
-               && setbits.equals(((SparseBitSet) obj).setbits);
+        return obj instanceof SparseBitSet && setbits.equals(((SparseBitSet) obj).setbits);
     }
 
     @Override
@@ -346,4 +345,5 @@ public class SparseBitSet extends BitSet {
     public String toString() {
         return setbits.toString();
     }
+
 }

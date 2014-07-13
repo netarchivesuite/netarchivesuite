@@ -28,8 +28,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -48,6 +48,9 @@ import dk.netarkivet.common.exceptions.UnknownID;
  * location is {@link #DEFAULT_SETTINGS_FILEPATH}.
  */
 public class Settings {
+
+    /** Logger for this class. */
+    private static final Logger log = LoggerFactory.getLogger(Settings.class);
 
     /**
      * The objects representing the contents of the settings xml files. For
@@ -71,23 +74,19 @@ public class Settings {
         reload();
     }
 
-    /** Logger for this class. */
-    private static final Log log
-            = LogFactory.getLog(Settings.class.getName());
-    
     /**
      * This system property specifies alternative position(s) to look for
      * settings files. If more files are specified, they should be separated by
      * {@link File#pathSeparatorChar}
      */
-    public static final String SETTINGS_FILE_PROPERTY
-            = "dk.netarkivet.settings.file";
+    public static final String SETTINGS_FILE_PROPERTY = "dk.netarkivet.settings.file";
 
     /**
      * The file path to look for settings in, if the system property {@link
      * #SETTINGS_FILE_PROPERTY} is not set.
      */
     public static final String DEFAULT_SETTINGS_FILEPATH = "conf/settings.xml";
+
     /** The newest "last modified" date of all settings files. */
     private static long lastModified;
 
@@ -101,8 +100,7 @@ public class Settings {
      */
     public static List<File> getSettingsFiles() {
         String[] pathList = System.getProperty(SETTINGS_FILE_PROPERTY,
-                                               DEFAULT_SETTINGS_FILEPATH).split(
-                File.pathSeparator);
+        		DEFAULT_SETTINGS_FILEPATH).split(File.pathSeparator);
         List<File> result = new ArrayList<File>();
         for (String path : pathList) {
             if (path.trim().length() != 0) {
@@ -139,8 +137,7 @@ public class Settings {
      * @throws UnknownID        if no setting loaded matches key
      * @throws IOFailure        if IO Failure
      */
-    public static String get(String key)
-            throws UnknownID, IOFailure, ArgumentNotValid {
+    public static String get(String key) throws UnknownID, IOFailure, ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(key, "String key");
         String val = System.getProperty(key);
         if (val != null) {
@@ -179,14 +176,13 @@ public class Settings {
      *                          parseable as an integer
      * @throws UnknownID        if no setting loaded matches key
      */
-    public static int getInt(String key)
-            throws UnknownID, ArgumentNotValid {
+    public static int getInt(String key) throws UnknownID, ArgumentNotValid {
         String value = get(key);
         try {
             return Integer.parseInt(value);
         } catch (NumberFormatException e) {
-            String msg = "Invalid setting. Value '" + value + "' for key '"
-                         + key + "' could not be parsed as an integer.";
+            String msg = "Invalid setting. Value '" + value + "' for key '" + key
+            		+ "' could not be parsed as an integer.";
             throw new ArgumentNotValid(msg, e);
         }
     }
@@ -203,14 +199,12 @@ public class Settings {
      *                          parseable as a long
      * @throws UnknownID        if no setting loaded matches key
      */
-    public static long getLong(String key)
-            throws UnknownID, ArgumentNotValid {
+    public static long getLong(String key) throws UnknownID, ArgumentNotValid {
         String value = get(key);
         try {
             return Long.parseLong(value);
         } catch (NumberFormatException e) {
-            String msg = "Invalid setting. Value '" + value + "' for key '"
-                         + key + "' could not be parsed as a long.";
+            String msg = "Invalid setting. Value '" + value + "' for key '" + key + "' could not be parsed as a long.";
             throw new ArgumentNotValid(msg, e);
         }
     }
@@ -227,14 +221,13 @@ public class Settings {
      *                          parseable as a double
      * @throws UnknownID        if no setting loaded matches key
      */
-    public static double getDouble(String key)
-            throws UnknownID, ArgumentNotValid {
+    public static double getDouble(String key) throws UnknownID, ArgumentNotValid {
         String value = get(key);
         try {
             return Double.parseDouble(value);
         } catch (NumberFormatException e) {
-            String msg = "Invalid setting. Value '" + value + "' for key '"
-                         + key + "' could not be parsed as a double.";
+            String msg = "Invalid setting. Value '" + value + "' for key '" + key
+            		+ "' could not be parsed as a double.";
             throw new ArgumentNotValid(msg, e);
         }
     }
@@ -266,8 +259,7 @@ public class Settings {
      * @throws ArgumentNotValid if key is null or the empty string
      * @throws UnknownID        if no setting loaded matches key
      */
-    public static boolean getBoolean(String key)
-            throws UnknownID, ArgumentNotValid {
+    public static boolean getBoolean(String key) throws UnknownID, ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(key, "String key");
         String value = get(key);
         return Boolean.parseBoolean(value);
@@ -292,29 +284,27 @@ public class Settings {
      * @throws ArgumentNotValid if key is null or the empty string
      * @throws UnknownID        if no setting loaded matches key
      */
-    public static String[] getAll(String key)
-            throws UnknownID, ArgumentNotValid {
+    public static String[] getAll(String key) throws UnknownID, ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(key, "key");
-        log.debug("Searching for a setting for key: " + key);
+        log.debug("Searching for a setting for key: {}", key);
         String val = System.getProperty(key);
         if (val != null) {
-            log.debug("value for key found in property:" + val);
+            log.debug("value for key found in property:{}", val);
             return new String[]{val};
         }
         if (fileSettingsXmlList.isEmpty()) {
-            log.warn("The list of loaded data settings is empty."
-                     + "Is this OK?");
+            log.warn("The list of loaded data settings is empty. Is this OK?");
         }
         // Key not in System.properties try loaded data instead
         synchronized (fileSettingsXmlList) {
             for (SimpleXml settingsXml : fileSettingsXmlList) {
-                List<String> result
-                        = settingsXml.getList(key);
+                List<String> result = settingsXml.getList(key);
                 if (result.size() == 0) {
                     continue;
                 }
-                log.debug("Value found in loaded data: "
-                          + StringUtils.conjoin(",", result));
+                if (log.isDebugEnabled()) {
+                    log.debug("Value found in loaded data: {}", StringUtils.conjoin(",", result));
+                }
                 return result.toArray(new String[result.size()]);
             }
         }
@@ -322,13 +312,13 @@ public class Settings {
         // Key not in file based settings, try settings from classpath
         synchronized (defaultClasspathSettingsXmlList) {
             for (SimpleXml settingsXml : defaultClasspathSettingsXmlList) {
-                List<String> result
-                        = settingsXml.getList(key);
+                List<String> result = settingsXml.getList(key);
                 if (result.size() == 0) {
                     continue;
                 }
-                log.debug("Value found in classpath data: "
-                          + StringUtils.conjoin(",", result));
+                if (log.isDebugEnabled()) {
+                    log.debug("Value found in classpath data: {}", StringUtils.conjoin(",", result));
+                }
                 return result.toArray(new String[result.size()]);
             }
         }
@@ -375,9 +365,8 @@ public class Settings {
         List<File> settingsFiles = getSettingsFiles();
         for (File settingsFile : settingsFiles) {
             if (settingsFile.lastModified() > lastModified) {
-                log.info("Do reload of settings, as the file '"
-                         + settingsFile.getAbsolutePath()
-                         + "' has changed since last reload");
+                log.info("Do reload of settings, as the file '{}' has changed since last reload",
+                		settingsFile.getAbsolutePath());
                 reload();
                 return;
             }
@@ -402,9 +391,7 @@ public class Settings {
             if (settingsFile.isFile()) {
                 simpleXmlList.add(new SimpleXml(settingsFile));
             } else {
-                log.warn("The file '"
-                         + settingsFile.getAbsolutePath()
-                         + "' is not a file, and therefore not loaded");
+                log.warn("The file '{}' is not a file, and therefore not loaded", settingsFile.getAbsolutePath());
             }
             if (settingsFile.lastModified() > lastModified) {
                 lastModified = settingsFile.lastModified();
@@ -422,18 +409,14 @@ public class Settings {
      *
      * @param defaultClasspathSettingsPath the given default classpath setting.
      */
-    public static void addDefaultClasspathSettings(
-            String defaultClasspathSettingsPath) {
-        ArgumentNotValid.checkNotNullOrEmpty(
-                defaultClasspathSettingsPath,
-                "String defaultClasspathSettingsPath");
-        InputStream stream = Thread.currentThread().getContextClassLoader()
-                .getResourceAsStream(defaultClasspathSettingsPath);
+    public static void addDefaultClasspathSettings(String defaultClasspathSettingsPath) {
+        ArgumentNotValid.checkNotNullOrEmpty(defaultClasspathSettingsPath, "String defaultClasspathSettingsPath");
+        InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(
+        		defaultClasspathSettingsPath);
         if (stream != null) {
             defaultClasspathSettingsXmlList.add(new SimpleXml(stream));
         } else {
-            log.warn("Unable to read the settings file represented by path: '"
-                     + defaultClasspathSettingsPath + "'");
+            log.warn("Unable to read the settings file represented by path: '{}'", defaultClasspathSettingsPath);
         }
     }
 

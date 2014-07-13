@@ -33,29 +33,26 @@ import dk.netarkivet.common.utils.SettingsFactory;
  * exists, pointed out by the setting settings.common.indexClient.class, but
  * that the cache variant in question is selected by a parameter to its
  * getInstance method.
- *
  */
+public class IndexClientFactory extends SettingsFactory<JobIndexCache> {
 
-public class IndexClientFactory
-        extends SettingsFactory<JobIndexCache> {
-    /** Get a cache of CDX files for a set of jobs.
-     *
+	/**
+	 * Get a cache of CDX files for a set of jobs.
      * @return A cache implementation for CDX files.
      */
     public static JobIndexCache getCDXInstance() {
-        return SettingsFactory.getInstance(CommonSettings.INDEXSERVER_CLIENT,
-                RequestType.CDX);
+        return SettingsFactory.getInstance(CommonSettings.INDEXSERVER_CLIENT, RequestType.CDX);
     }
 
-    /** Get a cache of Lucene index files for a set of jobs.  This index is
+    /**
+     * Get a cache of Lucene index files for a set of jobs.  This index is
      * intended for deduplication and may contain a subset of the actual entries
      * for the given jobs in the archive to preserve space and time.
      *
      * @return A cache implementation for Lucene index files for deduplication.
      */
     public static JobIndexCache getDedupCrawllogInstance() {
-        return SettingsFactory.getInstance(CommonSettings.INDEXSERVER_CLIENT,
-                RequestType.DEDUP_CRAWL_LOG);
+        return SettingsFactory.getInstance(CommonSettings.INDEXSERVER_CLIENT, RequestType.DEDUP_CRAWL_LOG);
     }
 
     /** Get a cache of Lucene index files for a set of jobs.  This index is
@@ -65,7 +62,7 @@ public class IndexClientFactory
      * @return A cache implementation for Lucene index files for viewing.
      */
     public static JobIndexCache getFullCrawllogInstance() {
-        return SettingsFactory.getInstance(CommonSettings.INDEXSERVER_CLIENT,
-                RequestType.FULL_CRAWL_LOG);
+        return SettingsFactory.getInstance(CommonSettings.INDEXSERVER_CLIENT, RequestType.FULL_CRAWL_LOG);
     }
+
 }

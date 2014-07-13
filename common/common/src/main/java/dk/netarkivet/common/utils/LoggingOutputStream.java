@@ -31,7 +31,7 @@ import org.slf4j.Logger;
  * OutputStream which can be used to redirect all stdout and stderr to a logger.
  * Usage:
  *  System.setOut(new PrintStream(new LoggingOutputStream(LoggingOutputStream.LoggingLevel.INFO, log, "StdOut: ")));
-    System.setErr(new PrintStream(new LoggingOutputStream(LoggingOutputStream.LoggingLevel.WARN, log, "StdErr: ")));
+ *  System.setErr(new PrintStream(new LoggingOutputStream(LoggingOutputStream.LoggingLevel.WARN, log, "StdErr: ")));
  */
 public class LoggingOutputStream extends OutputStream {
 

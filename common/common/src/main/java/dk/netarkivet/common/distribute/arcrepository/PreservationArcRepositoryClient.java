@@ -33,7 +33,8 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
  * JMSArcRepositoryClient not to be used by the bit preservation system.
  */
 public interface PreservationArcRepositoryClient  {
-    /** Call on shutdown to release external resources. */
+
+	/** Call on shutdown to release external resources. */
     void close();
 
     /**
@@ -94,8 +95,7 @@ public interface PreservationArcRepositoryClient  {
      * data for fileName is wrong for.
      * @param newval What the administrative data will be updated to.
      */
-    void updateAdminData(String fileName, String replicaId,
-                         ReplicaStoreState newval);
+    void updateAdminData(String fileName, String replicaId, ReplicaStoreState newval);
 
     /** Updates the checksum kept in the ArcRepository for a given
      * file. It is the responsibility of the ArcRepository implementation to
@@ -117,8 +117,7 @@ public interface PreservationArcRepositoryClient  {
      * perform this operation.
      * @return A local copy of the file removed.
      */
-    File removeAndGetFile(String fileName, String replicaId,
-                          String checksum, String credentials);
+    File removeAndGetFile(String fileName, String replicaId, String checksum, String credentials);
     
     /**
      * Retrieves all the checksum from the replica through a 
@@ -177,6 +176,6 @@ public interface PreservationArcRepositoryClient  {
      * the archive.
      * @return The corrupted file from the archive.
      */
-    File correct(String replicaId, String checksum, File file, 
-            String credentials);
+    File correct(String replicaId, String checksum, File file, String credentials);
+
 }

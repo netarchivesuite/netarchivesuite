@@ -23,6 +23,9 @@
 
 package dk.netarkivet.common.utils;
 
+import java.util.Date;
+import java.util.Properties;
+
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
@@ -30,11 +33,9 @@ import javax.mail.Transport;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import java.util.Date;
-import java.util.Properties;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -44,14 +45,17 @@ import dk.netarkivet.common.exceptions.IOFailure;
  * Utilities for sending an email.
  */
 public final class EMailUtils {
-    /** name of property defining the sender of the mail. */
+
+    /** The class logger. */
+    private static final Logger log = LoggerFactory.getLogger(EMailUtils.class);
+
+	/** name of property defining the sender of the mail. */
     private static final String MAIL_FROM_PROPERTY_KEY = "mail.from";
     /** name of property defining the host sending the mail. */
     private static final String MAIL_HOST_PROPERTY_KEY = "mail.host";
     /** The mimetype used in the mail. */
     private static final String MIMETYPE = "text/plain";
-    /** The class logger. */
-    private static Log log = LogFactory.getLog(EMailUtils.class);
+
     /** private constructor to avoid initialization. */
     private EMailUtils() {
     }
@@ -70,8 +74,7 @@ public final class EMailUtils {
      *                          does not contain valid email adresses.
      * @throws IOFailure If the message cannot be sent for some reason.
      */
-    public static void sendEmail(String to, String from, String subject,
-                                 String body) {
+    public static void sendEmail(String to, String from, String subject, String body) {
         sendEmail(to, from, subject, body, false);
     }
 
@@ -95,8 +98,7 @@ public final class EMailUtils {
      *                          any invalid to or from address.
      * @throws IOFailure If the message cannot be sent for some reason.
      */
-    public static void sendEmail(String to, String from, String subject,
-                                 String body, boolean forgive) {
+    public static void sendEmail(String to, String from, String subject, String body, boolean forgive) {
         ArgumentNotValid.checkNotNullOrEmpty(to, "String to");
         ArgumentNotValid.checkNotNullOrEmpty(from, "String from");
         ArgumentNotValid.checkNotNullOrEmpty(subject, "String subject");
@@ -104,8 +106,7 @@ public final class EMailUtils {
 
         Properties props = new Properties();
         props.put(MAIL_FROM_PROPERTY_KEY, from);
-        props.put(MAIL_HOST_PROPERTY_KEY,
-                  Settings.get(CommonSettings.MAIL_SERVER));
+        props.put(MAIL_HOST_PROPERTY_KEY, Settings.get(CommonSettings.MAIL_SERVER));
 
         Session session = Session.getDefaultInstance(props);
         Message msg = new MimeMessage(session);
@@ -113,37 +114,28 @@ public final class EMailUtils {
         // to might contain more than one e-mail address
         for (String toAddressS : to.split(",")) {
             try {
-                InternetAddress toAddress
-                        = new InternetAddress(toAddressS.trim());
+                InternetAddress toAddress = new InternetAddress(toAddressS.trim());
                 msg.addRecipient(Message.RecipientType.TO, toAddress);
             } catch (AddressException e) {
                 if (forgive) {
-                    log.warn("To address '" + toAddressS
-                                               + "' is not a valid email "
-                                               + "address", e);
+                    log.warn("To address '{}' is not a valid email address", toAddressS, e);
                 } else {
-                    throw new ArgumentNotValid("To address '" + toAddressS
-                                               + "' is not a valid email "
-                                               + "address", e);
+                    throw new ArgumentNotValid("To address '" + toAddressS + "' is not a valid email address", e);
                 }
             } catch (MessagingException e) {
                 if (forgive) {
-                    log.warn("To address '" + toAddressS
-                                           + "' could not be set in email", e);
+                    log.warn("To address '{}' could not be set in email", toAddressS, e);
                 } else {
-                    throw new ArgumentNotValid("To address '" + toAddressS
-                                           + "' could not be set in email", e);
+                    throw new ArgumentNotValid("To address '" + toAddressS + "' could not be set in email", e);
                 }
             }
         }
         try {
             if (msg.getAllRecipients().length == 0) {
-                throw new ArgumentNotValid("No valid recipients in '" + to
-                                           + "'");
+                throw new ArgumentNotValid("No valid recipients in '" + to + "'");
             }
         } catch (MessagingException e) {
-            throw new ArgumentNotValid("Message invalid after setting"
-                                       + " recipients", e);
+            throw new ArgumentNotValid("Message invalid after setting recipients", e);
         }
 
         try {
@@ -151,16 +143,12 @@ public final class EMailUtils {
             fromAddress = new InternetAddress(from);
             msg.setFrom(fromAddress);
         } catch (AddressException e) {
-            throw new ArgumentNotValid("From address '" + from
-                                       + "' is not a valid email "
-                                       + "address", e);
+            throw new ArgumentNotValid("From address '" + from + "' is not a valid email address", e);
         } catch (MessagingException e) {
             if (forgive) {
-                log.warn("From address '" + from
-                         + "' could not be set in email", e);
+                log.warn("From address '{}' could not be set in email", from, e);
             } else {
-                throw new ArgumentNotValid("From address '" + from
-                                           + "' could not be set in email", e);
+                throw new ArgumentNotValid("From address '" + from + "' could not be set in email", e);
             }
         }
 
@@ -170,9 +158,9 @@ public final class EMailUtils {
             msg.setSentDate(new Date());
             Transport.send(msg);
         } catch (MessagingException e) {
-            throw new IOFailure("Could not send email with subject '" + subject
-                                +  "' from '" + from + "' to '" + to
-                                + "'. Body:\n" + body, e);
+            throw new IOFailure("Could not send email with subject '" + subject +  "' from '" + from + "' to '" + to
+            		+ "'. Body:\n" + body, e);
         }
     }
+
 }

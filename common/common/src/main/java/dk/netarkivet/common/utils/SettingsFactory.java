@@ -37,7 +37,8 @@ import dk.netarkivet.common.exceptions.PermissionDenied;
  * @param <T> the object-type returned by this class.
  */
 public class SettingsFactory<T> {
-    /** Creates a new class of the class given in the settings field.
+
+	/** Creates a new class of the class given in the settings field.
      *
      * If the loaded class has a getInstance() method that matches the given
      * arguments, that will be called to create the class, otherwise a
@@ -74,7 +75,7 @@ public class SettingsFactory<T> {
             int i = 0;
             for (Object o : args) {
                 classArgs[i] = o.getClass();
-                i++;
+                ++i;
             }
             Method m = null;
             try {
@@ -86,35 +87,33 @@ public class SettingsFactory<T> {
                 try {
                     c = aClass.getConstructor(classArgs);
                 } catch (NoSuchMethodException e1) {
-                    throw new ArgumentNotValid("No suitable getInstance() or"
-                            + " constructor for class '" + className + "'",
-                            e1);
+                    throw new ArgumentNotValid("No suitable getInstance() or" + " constructor for class '" + className
+                    		+ "'", e1);
                 }
                 try {
                     return c.newInstance(args);
                 } catch (InvocationTargetException e1) {
-                    throw new ArgumentNotValid("Error creating singleton "
-                            + "of class '" + className + "': ", e1.getCause());
+                    throw new ArgumentNotValid("Error creating singleton " + "of class '" + className + "': ",
+                    		e1.getCause());
                 }
             }
             try {
                 return (T) m.invoke(null, args);
             } catch (InvocationTargetException e) {
-                throw new ArgumentNotValid("Error creating singleton of class '"
-                        + className + "': ", e.getCause());
+                throw new ArgumentNotValid("Error creating singleton of class '" + className + "': ", e.getCause());
             }
         } catch (IllegalAccessException e) {
-            throw new PermissionDenied("Cannot access class '" + className
-                    + "' defined by '" + settingsField + "'", e);
+            throw new PermissionDenied("Cannot access class '" + className + "' defined by '" + settingsField + "'",
+            		e);
         } catch (ClassNotFoundException e) {
-            throw new IOFailure("Error finding class '" + className
-                    + "' defined by '" + settingsField + "'", e);
+            throw new IOFailure("Error finding class '" + className + "' defined by '" + settingsField + "'", e);
         } catch (InstantiationException e) {
-            throw new IOFailure("Error while instantiating class '" + className
-                    + "' defined by '" + settingsField + "'", e);
+            throw new IOFailure("Error while instantiating class '" + className + "' defined by '" + settingsField
+            		+ "'", e);
         } catch (ClassCastException e) {
-            throw new IOFailure("Set class '" + className + "' is of wrong type"
-                    + " defined by '" + settingsField + "'", e);
+            throw new IOFailure("Set class '" + className + "' is of wrong type" + " defined by '" + settingsField
+            		+ "'", e);
         }
     }
+
 }

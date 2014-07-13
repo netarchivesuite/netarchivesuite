@@ -31,7 +31,8 @@ import java.util.Map;
  * @param <V> the Object type used as value
  */
 public class KeyValuePair<K, V> implements Map.Entry<K, V> {
-    /** The key in this key-value pair. */
+
+	/** The key in this key-value pair. */
     private final K key;
     /** The value in this key-value pair. */
     private final V value;
@@ -76,7 +77,7 @@ public class KeyValuePair<K, V> implements Map.Entry<K, V> {
      *             map.
      */
     public V setValue(V newValue) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("Stand-alone entries cannot "
-                + "be changed");
+        throw new UnsupportedOperationException("Stand-alone entries cannot be changed");
     }
+
 }

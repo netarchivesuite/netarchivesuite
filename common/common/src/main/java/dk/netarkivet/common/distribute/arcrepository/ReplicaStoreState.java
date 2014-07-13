@@ -34,7 +34,8 @@ package dk.netarkivet.common.distribute.arcrepository;
  * @see dk.netarkivet.archive.arcrepositoryadmin.ArcRepositoryEntry
  */
 public enum ReplicaStoreState {
-    /** Upload to a replica archive has started. */
+
+	/** Upload to a replica archive has started. */
     UPLOAD_STARTED, 
     /** Data has been successfully uploaded to a replica archive. */
     DATA_UPLOADED, 
@@ -47,20 +48,20 @@ public enum ReplicaStoreState {
      * replica or not. Used in the database. */
     UNKNOWN_UPLOAD_STATE;
     
-    public static ReplicaStoreState fromOrdinal(int i) {
-        if(i == 0) {
+    public static ReplicaStoreState fromOrdinal(int ordinal) {
+    	switch (ordinal) {
+    	case 0:
             return UPLOAD_STARTED;
-        } 
-        if(i == 1) {
+    	case 1:
             return DATA_UPLOADED;
-        } 
-        if(i == 2) {
+    	case 2:
             return UPLOAD_COMPLETED;
-        }
-        if(i == 3) {
+    	case 3:
             return UPLOAD_FAILED;
-        }
-        // anything else is unknown.
-        return UNKNOWN_UPLOAD_STATE;
+        default:
+            // anything else is unknown.
+            return UNKNOWN_UPLOAD_STATE;
+    	}
     }
+
 }

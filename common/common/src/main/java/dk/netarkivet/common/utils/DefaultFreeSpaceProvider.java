@@ -25,8 +25,8 @@ package dk.netarkivet.common.utils;
 
 import java.io.File;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
@@ -36,7 +36,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 public class DefaultFreeSpaceProvider implements FreeSpaceProvider {
     
     /** The error logger we notify about error messages on. */
-    private Log log = LogFactory.getLog(getClass());
+    private static final Logger log = LoggerFactory.getLogger(DefaultFreeSpaceProvider.class);
 
     /**
      * Returns the number of bytes free on the file system that the given file
@@ -49,10 +49,10 @@ public class DefaultFreeSpaceProvider implements FreeSpaceProvider {
     public long getBytesFree(File f) {
         ArgumentNotValid.checkNotNull(f, "File f");
         if (!f.exists()) {
-            log.warn("The file '" +  f.getAbsolutePath()
-                    + "' does not exist. The value 0 returned.");
+            log.warn("The file '{}' does not exist. The value 0 returned.", f.getAbsolutePath());
             return 0;
         }
         return f.getUsableSpace();
     }
+
 }

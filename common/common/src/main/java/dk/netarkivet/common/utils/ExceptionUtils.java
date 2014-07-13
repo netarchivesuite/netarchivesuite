@@ -33,7 +33,8 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * Utilities for reading a stacktrace.
  */
 public class ExceptionUtils {
-    /**
+
+	/**
      * Utility class, do not instantiate.
      */
     private ExceptionUtils() {
@@ -89,4 +90,5 @@ public class ExceptionUtils {
         message.append(string_writer.getBuffer());
         return message;
     }
+
 }

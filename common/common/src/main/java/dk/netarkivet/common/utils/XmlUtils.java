@@ -23,6 +23,13 @@
 
 package dk.netarkivet.common.utils;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
+import java.util.List;
+
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -34,19 +41,12 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringReader;
-import java.util.List;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -54,12 +54,11 @@ import dk.netarkivet.common.exceptions.IOFailure;
 
 /**
  * Utilities for handling XML-files.
- *
  */
 @SuppressWarnings({ "unchecked"})
 public class XmlUtils {
 
-    private static Log log = LogFactory.getLog(XmlUtils.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(XmlUtils.class);
 
    /** Read and parse an XML-file, and return
      * a Document object representing this object.
@@ -72,16 +71,15 @@ public class XmlUtils {
         ArgumentNotValid.checkNotNull(f, "File f");
         SAXReader reader = new SAXReader();
         if (!f.canRead()) {
-            log.debug("Could not read file: '" + f + "'");
+            log.debug("Could not read file: '{}'", f);
             throw new IOFailure("Could not read file: '" + f + "'");
         }
 
         try {
             return reader.read(f);
         } catch (DocumentException e) {
-            log.warn("Could not parse the file as XML: '" + f + "'", e);
-            throw new IOFailure(
-                    "Could not parse the file as XML: '" + f + "'", e);
+            log.warn("Could not parse the file as XML: '{}'", f, e);
+            throw new IOFailure("Could not parse the file as XML: '" + f + "'", e);
         }
    }
 
@@ -93,17 +91,13 @@ public class XmlUtils {
      *          or unable to parse the document as XML
      */
     public static Document getXmlDoc(InputStream resourceAsStream) {
-        ArgumentNotValid.checkNotNull(resourceAsStream,
-                "InputStream resourceAsStream");
+        ArgumentNotValid.checkNotNull(resourceAsStream, "InputStream resourceAsStream");
         SAXReader reader = new SAXReader();
         try {
             return reader.read(resourceAsStream);
         } catch (DocumentException e) {
-            log.warn("Could not parse inputstream as XML: "
-                    + resourceAsStream, e);
-            throw new IOFailure(
-                    "Could not parse inputstream as XML:"
-                                + resourceAsStream, e);
+            log.warn("Could not parse inputstream as XML: {}", resourceAsStream, e);
+            throw new IOFailure("Could not parse inputstream as XML:" + resourceAsStream, e);
         }
     }
 
@@ -119,13 +113,11 @@ public class XmlUtils {
         ArgumentNotValid.checkNotNull(doc, "Document doc");
         ArgumentNotValid.checkNotNullOrEmpty(xpath, "String xpath");
         ArgumentNotValid.checkNotNull(value, "String value");
-        
-        
+
         Node xpathNode = doc.selectSingleNode(xpath);
         if (xpathNode == null) {
-            throw new IOFailure("Element '" + xpath
-                                + "' could not be found in the document '"
-                                + doc.getRootElement().getName() + "'!");
+            throw new IOFailure("Element '" + xpath + "' could not be found in the document '"
+            		+ doc.getRootElement().getName() + "'!");
         }
         xpathNode.setText(value);
     }
@@ -144,9 +136,8 @@ public class XmlUtils {
         ArgumentNotValid.checkNotNull(value, "String value");
         List<Node> xpathNodes = doc.selectNodes(xpath);
         if (xpathNodes == null) {
-            throw new IOFailure("Element '" + xpath
-                                + "' could not be found in the document '"
-                                + doc.getRootElement().getName() + "'!");
+            throw new IOFailure("Element '" + xpath + "' could not be found in the document '"
+            		+ doc.getRootElement().getName() + "'!");
         }
         for (int i=0; i<xpathNodes.size(); ++i) {
             xpathNodes.get(i).setText(value);
@@ -166,16 +157,13 @@ public class XmlUtils {
         List<File> settingsFiles = Settings.getSettingsFiles();
         for (File settingsFile : settingsFiles) {
             try {
-                DocumentBuilderFactory builderFactory
-                        = DocumentBuilderFactory.newInstance();
+                DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
                 builderFactory.setNamespaceAware(true);
-                DocumentBuilder parser = builderFactory
-                        .newDocumentBuilder();
+                DocumentBuilder parser = builderFactory .newDocumentBuilder();
                 org.w3c.dom.Document document = parser.parse(settingsFile);
 
                 // create a SchemaFactory capable of understanding WXS schemas
-                SchemaFactory factory = SchemaFactory
-                        .newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+                SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 
                 // load a WXS schema, represented by a Schema instance
                 Source schemaFile = new StreamSource(xsdFile);
@@ -190,21 +178,19 @@ public class XmlUtils {
                     validator.validate(new DOMSource(document));
                 } catch (SAXException e) {
                     // instance document is invalid!
-                    final String msg = "Settings file '" + settingsFile
-                            + "' does not validate using '" + xsdFile + "'";
+                    final String msg = "Settings file '" + settingsFile + "' does not validate using '"
+                    		+ xsdFile + "'";
                     log.warn(msg, e);
                     throw new ArgumentNotValid(msg, e);
                 }
             } catch (IOException e) {
                 throw new IOFailure("Error while validating: ", e);
             } catch (ParserConfigurationException e) {
-                final String msg = "Error validating settings file '"
-                        + settingsFile + "'";
+                final String msg = "Error validating settings file '" + settingsFile + "'";
                 log.warn(msg, e);
                 throw new ArgumentNotValid(msg, e);
             } catch (SAXException e) {
-                final String msg = "Error validating settings file '"
-                        + settingsFile + "'";
+                final String msg = "Error validating settings file '" + settingsFile + "'";
                 log.warn(msg, e);
                 throw new ArgumentNotValid(msg, e);
             }
@@ -230,8 +216,7 @@ public class XmlUtils {
                 }
             }
         } catch (IOException e) {
-            throw new IOFailure("Unable to write XML to file '"
-                                + f.getAbsolutePath() + "'", e);
+            throw new IOFailure("Unable to write XML to file '" + f.getAbsolutePath() + "'", e);
         }
     }
     
@@ -250,9 +235,7 @@ public class XmlUtils {
             doc = reader.read(in);
             in.close();
         } catch (DocumentException e) {
-            log.warn(
-                    "Failed to read the contents of the string as XML:" 
-                    +  xml);
+            log.warn("Failed to read the contents of the string as XML:{}", xml);
             throw e;
         }
         return doc;

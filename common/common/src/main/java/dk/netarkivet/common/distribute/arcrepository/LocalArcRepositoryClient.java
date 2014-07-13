@@ -33,11 +33,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.archive.io.ArchiveReader;
 import org.archive.io.ArchiveReaderFactory;
 import org.archive.io.ArchiveRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.distribute.FileRemoteFile;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -57,10 +57,14 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
  * credentials checking or checksum storing!
  */
 public class LocalArcRepositoryClient implements ArcRepositoryClient {
-    /** The default place in classpath where the settings file can be found. */
-    private static String defaultSettingsClasspath
-            = "dk/netarkivet/common/distribute/arcrepository/"
-                + "LocalArcRepositoryClientSettings.xml";
+
+    /** The logger for this class. */
+    private static final Logger log = LoggerFactory.getLogger(LocalArcRepositoryClient.class);
+
+	/** The default place in classpath where the settings file can be found. */
+    private static String defaultSettingsClasspath = "dk/netarkivet/common/distribute/arcrepository/"
+    		+ "LocalArcRepositoryClientSettings.xml";
+
     /*
      * The static initialiser is called when the class is loaded.
      * It will add default values for all settings defined in this class, by
@@ -70,28 +74,21 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
         Settings.addDefaultClasspathSettings(defaultSettingsClasspath);
     }
     
-    /** The logger for this class. */
-    private Log log = LogFactory.getLog(getClass());
-    /** List of the directories that we store files in. Non-absolute dirs are
-     * relative to the current directory. */
+    /** List of the directories that we store files in. Non-absolute dirs are relative to the current directory. */
     private final List<File> storageDirs = new ArrayList<File>(1);
     
     /** Store the file in the directories designated by this setting. */
-    private static final String FILE_DIRS
-            = "settings.common.arcrepositoryClient.fileDir";
+    private static final String FILE_DIRS = "settings.common.arcrepositoryClient.fileDir";
     /** The credentials used to correct data in the archive. */
-    private static final String CREDENTIALS_SETTING
-            = "settings.archive.bitarchive.thisCredentials";
+    private static final String CREDENTIALS_SETTING = "settings.archive.bitarchive.thisCredentials";
 
     /** Create a new LocalArcRepositoryClient based on current settings. */
     public LocalArcRepositoryClient() {
-        List<String> fileDirs =
-                Arrays.asList(Settings.getAll(FILE_DIRS));
+        List<String> fileDirs = Arrays.asList(Settings.getAll(FILE_DIRS));
         for (String fileName : fileDirs) {
             File f = new File(fileName);
             FileUtils.createDir(f);
-            log.info("directory '" +  f.getAbsolutePath() 
-                    + "' is part of this local archive repository");
+            log.info("directory '{}' is part of this local archive repository", f.getAbsolutePath());
             storageDirs.add(f);
         }
     }
@@ -114,11 +111,9 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
     @Override
     public void store(File file) throws IOFailure, ArgumentNotValid {
         ArgumentNotValid.checkNotNull(file, "File file");
-        ArgumentNotValid.checkTrue(file.exists(), "File '" + file
-                                                  + "' does not exist");
+        ArgumentNotValid.checkTrue(file.exists(), "File '" + file + "' does not exist");
         if (findFile(file.getName()) != null) {
-            throw new IllegalState("A file with the name '"
-                                       + file.getName() + " is already stored");
+            throw new IllegalState("A file with the name '" + file.getName() + " is already stored");
         }
         for (File dir : storageDirs) {
             if (dir.canWrite() && FileUtils.getBytesFree(dir) > file.length()) {
@@ -126,8 +121,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
                 return;
             }
         }
-        throw new IOFailure("Not enough room for '" + file
-                            + "' in any of the dirs " + storageDirs);
+        throw new IOFailure("Not enough room for '" + file + "' in any of the dirs " + storageDirs);
     }
 
     /**
@@ -142,14 +136,12 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
      * @throws IOFailure If the get operation failed.
      */
     @Override
-    public BitarchiveRecord get(String arcfile, long index)
-            throws ArgumentNotValid {
+    public BitarchiveRecord get(String arcfile, long index) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(arcfile, "String arcfile");
         ArgumentNotValid.checkNotNegative(index, "long index");
         File f = findFile(arcfile);
         if (f == null) {
-            log.warn("File '" + arcfile 
-                    + "' does not exist. Null BitarchiveRecord returned");
+            log.warn("File '{}' does not exist. Null BitarchiveRecord returned", arcfile);
             return null;
         }
         ArchiveReader reader = null;
@@ -159,21 +151,20 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
             record = reader.get();
             return new BitarchiveRecord(record, arcfile);
         } catch (IOException e) {
-            throw new IOFailure("Error reading record from '"
-                    + arcfile + "' offset " + index, e);
+            throw new IOFailure("Error reading record from '" + arcfile + "' offset " + index, e);
         } finally {
             if (record != null) {
                 try {
                     record.close();
                 } catch (IOException e) {
-                    log.warn("Error closing ARC record '" + record + "'", e);
+                    log.warn("Error closing ARC record '{}'", record, e);
                 }
             }
             if (reader != null) {
                 try {
                     reader.close();
                 } catch (IOException e) {
-                    log.warn("Error closing ARC reader '" + reader + "'", e);
+                    log.warn("Error closing ARC reader '{}'", reader, e);
                 }
             }
         }
@@ -221,24 +212,21 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
      * @throws IOFailure If a problem occurs during processing the batchjob.
      */
     @Override
-    public BatchStatus batch(final FileBatchJob job, String replicaId, 
-            String... args) throws ArgumentNotValid, IOFailure {
+    public BatchStatus batch(final FileBatchJob job, String replicaId, String... args)
+    		throws ArgumentNotValid, IOFailure {
         ArgumentNotValid.checkNotNull(job, "FileBatchJob job");
-        ArgumentNotValid.checkNotNullOrEmpty(replicaId, 
-                "String replicaId");
+        ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
         OutputStream os = null;
         File resultFile;
         try {
-            resultFile = File.createTempFile("batch", replicaId,
-                    FileUtils.getTempDir());
+            resultFile = File.createTempFile("batch", replicaId, FileUtils.getTempDir());
             os = new FileOutputStream(resultFile);
             List<File> files = new ArrayList<File>();
             final FilenameFilter filenameFilter = new FilenameFilter() {
                 public boolean accept(File dir, String name) {
                     Pattern filenamePattern = job.getFilenamePattern();
-                    return new File(dir, name).isFile() && (
-                            filenamePattern == null
-                            || filenamePattern.matcher(name).matches());
+                    return new File(dir, name).isFile()
+                    		&& (filenamePattern == null || filenamePattern.matcher(name).matches());
                 }
             };
             for (File dir : storageDirs) {
@@ -247,9 +235,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
                     files.addAll(Arrays.asList(filesInDir));
                 }
             }
-            BatchLocalFiles batcher
-                    = new BatchLocalFiles(files.toArray(
-                            new File[files.size()]));
+            BatchLocalFiles batcher = new BatchLocalFiles(files.toArray(new File[files.size()]));
             batcher.run(job, os);
         } catch (IOException e) {
             throw new IOFailure("Cannot perform batch '" + job + "'", e);
@@ -258,15 +244,12 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
                 try {
                     os.close();
                 } catch (IOException e) {
-                    log.warn("Error closing batch output stream '" + os + "'",
-                            e);
+                    log.warn("Error closing batch output stream '{}'", os, e);
                 }
             }
         }
-        return new BatchStatus(replicaId, job.getFilesFailed(),
-                job.getNoOfFilesProcessed(),
-                new FileRemoteFile(resultFile),
-                job.getExceptions());
+        return new BatchStatus(replicaId, job.getFilesFailed(), job.getNoOfFilesProcessed(),
+        		new FileRemoteFile(resultFile), job.getExceptions());
     }
 
     /** Updates the administrative data in the ArcRepository for a given
@@ -278,8 +261,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
      * @param newval What the administrative data will be updated to.
      */
     @Override
-    public void updateAdminData(String fileName, String bitarchiveId,
-                                ReplicaStoreState newval) {
+    public void updateAdminData(String fileName, String bitarchiveId, ReplicaStoreState newval) {
     }
 
     /** Updates the checksum kept in the ArcRepository for a given
@@ -311,8 +293,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
      * @throws PermissionDenied On wrong MD5 sum or wrong credentials.
      */
     @Override
-    public File removeAndGetFile(String fileName, String bitarchiveId,
-                                 String checksum, String credentials) {
+    public File removeAndGetFile(String fileName, String bitarchiveId, String checksum, String credentials) {
         // Ignores bitarchiveName, checksum, and credentials for now
         ArgumentNotValid.checkNotNullOrEmpty(fileName, "String fileName");
         ArgumentNotValid.checkNotNullOrEmpty(checksum, "String checksum");
@@ -322,19 +303,16 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
             throw new IOFailure("Cannot find file '" + fileName + "'");
         }
         if (!ChecksumCalculator.calculateMd5(file).equals(checksum)) {
-            throw new PermissionDenied("Wrong checksum for removing file '"
-                                       + fileName + "'");
+            throw new PermissionDenied("Wrong checksum for removing file '" + fileName + "'");
         }
         if (!credentials.equals(Settings.get(CREDENTIALS_SETTING))) {
-            throw new PermissionDenied("Wrong credentials for removing file '" 
-                                   + fileName + "'");
+            throw new PermissionDenied("Wrong credentials for removing file '" + fileName + "'");
         }
         File copiedTo = null;
         try {
             copiedTo = File.createTempFile("removeAndGetFile", fileName);
         } catch (IOException e) {
-            throw new IOFailure("Cannot make temp file to copy '"
-                    + fileName + "' into", e);
+            throw new IOFailure("Cannot make temp file to copy '" + fileName + "' into", e);
         }
         FileUtils.moveFile(file, copiedTo);
         return copiedTo;
@@ -367,8 +345,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
      * @throws IOFailure If an unexpected IOException is caught.
      */
     @Override
-    public File getAllChecksums(String replicaId) throws IOFailure, 
-            ArgumentNotValid {
+    public File getAllChecksums(String replicaId) throws IOFailure, ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
         
         try {
@@ -385,8 +362,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
             }
 
             // create a file with the results.
-            File res = File.createTempFile("all", "checksums", 
-                    FileUtils.getTempDir());
+            File res = File.createTempFile("all", "checksums", FileUtils.getTempDir());
             FileUtils.writeCollectionToFile(res, checksums);
             return res;
         } catch (IOException e) {
@@ -403,8 +379,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
      * @throws IOFailure If an IOException is caught.
      */
     @Override
-    public File getAllFilenames(String replicaId) throws IOFailure, 
-            ArgumentNotValid {
+    public File getAllFilenames(String replicaId) throws IOFailure, ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
         
         List<String> filenames = new ArrayList<String>();
@@ -417,8 +392,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
         }
         
         try {
-            File res = File.createTempFile("all", "filenames", 
-                    FileUtils.getTempDir());
+            File res = File.createTempFile("all", "filenames", FileUtils.getTempDir());
             FileUtils.writeCollectionToFile(res, filenames);
             return res;
         } catch (IOException e) {
@@ -440,16 +414,15 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
      * @throws PermissionDenied If the credentials or checksum are invalid. 
      */
     @Override
-    public File correct(String replicaId, String checksum, File file, 
-            String credentials) throws ArgumentNotValid, PermissionDenied {
+    public File correct(String replicaId, String checksum, File file, String credentials)
+    		throws ArgumentNotValid, PermissionDenied {
         ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
         ArgumentNotValid.checkNotNullOrEmpty(checksum, "String checksum");
         ArgumentNotValid.checkNotNull(file, "File file");
         ArgumentNotValid.checkNotNullOrEmpty(credentials, "String credentials");
         
         // remove bad file.
-        File res = removeAndGetFile(file.getName(), replicaId, 
-                checksum, credentials);
+        File res = removeAndGetFile(file.getName(), replicaId, checksum, credentials);
         // store good new file.
         store(file);
         // return bad file.
@@ -467,10 +440,10 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
      * null or the empty string.
      */
     @Override
-    public String getChecksum(String replicaId, String filename) 
-            throws ArgumentNotValid {
+    public String getChecksum(String replicaId, String filename) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
         return ChecksumCalculator.calculateMd5(findFile(filename));
     }
+
 }

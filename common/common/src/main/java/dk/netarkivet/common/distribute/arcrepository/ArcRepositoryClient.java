@@ -33,18 +33,15 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
  * Generic interface defining all methods that an ArcRepository provides.
  * Typically, an application using this will only see one of the restricted
  * superinterfaces.
- *
  */
-public interface ArcRepositoryClient extends
-        HarvesterArcRepositoryClient, ViewerArcRepositoryClient,
-                PreservationArcRepositoryClient {
+public interface ArcRepositoryClient extends HarvesterArcRepositoryClient, ViewerArcRepositoryClient,
+		PreservationArcRepositoryClient {
     
     /** Call on shutdown to release external resources. */
     void close();
 
     /**
      * Gets a single ARC record out of the ArcRepository.
-     *
      * @param arcfile The name of a file containing the desired record.
      * @param index   The offset of the desired record in the file
      * @return a BitarchiveRecord-object, or null if request times out or object
@@ -57,7 +54,6 @@ public interface ArcRepositoryClient extends
 
     /**
      * Retrieves a file from an ArcRepository and places it in a local file.
-
      * @param arcfilename Name of the arcfile to retrieve.
      * @param replica The bitarchive to retrieve the data from. On
      * implementations with only one replica, null may be used.
@@ -68,9 +64,7 @@ public interface ArcRepositoryClient extends
     void getFile(String arcfilename, Replica replica, File toFile);
 
     /**
-     * Store the given file in the ArcRepository.  After storing, the file is
-     * deleted.
-     *
+     * Store the given file in the ArcRepository.  After storing, the file is deleted.
      * @param file A file to be stored. Must exist.
      * @throws IOFailure thrown if store is unsuccessful, or failed to clean
      * up files after the store operation.
@@ -95,30 +89,28 @@ public interface ArcRepositoryClient extends
      */
     BatchStatus batch(FileBatchJob job, String replicaId, String... args);
 
-    /** Updates the administrative data in the ArcRepository for a given
-     * file and replica.
-     *
+    /**
+     * Updates the administrative data in the ArcRepository for a given file and replica.
      * @param fileName The name of a file stored in the ArcRepository.
      * @param bitarchiveId The id of the replica that the administrative
      * data for fileName is wrong for.
      * @param newval What the administrative data will be updated to.
      */
-    void updateAdminData(String fileName, String bitarchiveId,
-                         ReplicaStoreState newval);
+    void updateAdminData(String fileName, String bitarchiveId, ReplicaStoreState newval);
 
-    /** Updates the checksum kept in the ArcRepository for a given
+    /**
+     * Updates the checksum kept in the ArcRepository for a given
      * file.  It is the responsibility of the ArcRepository implementation to
      * ensure that this checksum matches that of the underlying files.
-     *
      * @param filename The name of a file stored in the ArcRepository.
      * @param checksum The new checksum.
      */
     void updateAdminChecksum(String filename, String checksum);
 
-    /** Remove a file from one part of the ArcRepository, retrieving a copy
+    /**
+     * Remove a file from one part of the ArcRepository, retrieving a copy
      * for security purposes.  This is typically used when repairing a file
      * that has been corrupted.
-     *
      * @param fileName The name of the file to remove.
      * @param bitarchiveId The id of the replica from which to remove the file.
      * @param checksum The checksum of the file to be removed.
@@ -126,6 +118,6 @@ public interface ArcRepositoryClient extends
      * perform this operation.
      * @return A local copy of the file removed.
      */
-    File removeAndGetFile(String fileName, String bitarchiveId,
-                          String checksum, String credentials);
+    File removeAndGetFile(String fileName, String bitarchiveId, String checksum, String credentials);
+
 }

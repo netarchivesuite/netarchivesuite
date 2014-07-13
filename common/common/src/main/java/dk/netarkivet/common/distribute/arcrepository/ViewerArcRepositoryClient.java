@@ -28,13 +28,13 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 
-
 /**
  * Implements the Facade pattern to shield off the methods in
  * JMSArcRepositoryClient not to be used by the bit preservation system.
  */
 public interface ViewerArcRepositoryClient  {
-    /** Call on shutdown to release external resources. */
+
+	/** Call on shutdown to release external resources. */
     void close();
 
     /**
@@ -74,4 +74,5 @@ public interface ViewerArcRepositoryClient  {
      * @return The status of the batch job after it ended.
      */
     BatchStatus batch(FileBatchJob job, String replicaId, String... args);
+
 }

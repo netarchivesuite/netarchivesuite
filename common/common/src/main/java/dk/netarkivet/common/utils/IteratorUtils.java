@@ -31,10 +31,10 @@ import java.util.List;
  * Various utilities to work with iterators more easily.
  *
  */
-
 public class IteratorUtils {
 
-    /** Turns an iterator into a list.
+    /**
+     * Turns an iterator into a list.
      * @param i an iterator
      * @return a List
      */
@@ -45,4 +45,5 @@ public class IteratorUtils {
         }
         return res;
     }
+
 }

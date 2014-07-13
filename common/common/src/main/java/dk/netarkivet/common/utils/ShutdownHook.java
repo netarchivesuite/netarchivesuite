@@ -23,18 +23,18 @@
 
 package dk.netarkivet.common.utils;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.lifecycle.LifeCycleComponent;
 
 /**
  * Defines a ShutdownHook for a class which has a cleanup method.
- *
  */
 public class ShutdownHook extends Thread {
-    /** The component to hook up to. */
+
+	/** The component to hook up to. */
     private LifeCycleComponent app;
     /** The name of the hooked application. */
     private String appName;    
@@ -56,27 +56,26 @@ public class ShutdownHook extends Thread {
      * because logging may or may not be active at this time.
      */
     public void run() {
-        Log log = null;
+        Logger log = null;
         try {
-            log = LogFactory.getLog(appName);
-            log.info("Shutting down " + appName);
+            log = LoggerFactory.getLogger(appName);
+            log.info("Shutting down {}", appName);
         } catch (Throwable e) {
             //Ignore
         }
         try {
             app.shutdown();
         } catch (Throwable e) {
-            System.out.println("Error while  shutting down "
-                    + appName);
+            System.out.println("Error while  shutting down " + appName);
             e.printStackTrace();
         }
         try {
             System.out.println("Shutting down " + appName);
-            log.info("Shutting down " + appName);
+            log.info("Shutting down {}", appName);
         } catch (Throwable e) {
-            System.out.println("Shutting down " + appName
-                    + " but failed to log afterwards");
+            System.out.println("Shutting down " + appName + " but failed to log afterwards");
             e.printStackTrace();
         }
     }
+
 }

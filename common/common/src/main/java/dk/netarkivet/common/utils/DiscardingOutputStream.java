@@ -28,7 +28,8 @@ import java.io.OutputStream;
  *  It overrides all the write methods so that they all execute in constant
  *  time. */
 class DiscardingOutputStream extends OutputStream {
-    /** Discard a single byte of data.
+
+	/** Discard a single byte of data.
      * @see OutputStream#write(int)
      */
     public void write(int i) {
@@ -45,4 +46,5 @@ class DiscardingOutputStream extends OutputStream {
      */
     public void write(byte[] buffer) {
     }
+
 }

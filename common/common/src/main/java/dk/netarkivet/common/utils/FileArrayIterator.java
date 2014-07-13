@@ -37,9 +37,9 @@ import java.util.Arrays;
  *
  * @param <T> The type returned by the FileArrayIterator
  */
-
 public abstract class FileArrayIterator<T> extends FilterIterator<File,T> {
-    protected FileArrayIterator(File[] files) {
+
+	protected FileArrayIterator(File[] files) {
         super(Arrays.asList(files).iterator());
     }
 

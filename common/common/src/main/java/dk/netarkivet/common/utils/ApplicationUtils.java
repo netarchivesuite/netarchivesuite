@@ -26,8 +26,8 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
@@ -41,9 +41,9 @@ import dk.netarkivet.common.management.MBeanConnectorCreator;
  *
  */
 public abstract class ApplicationUtils {
-    /** logger for this class. */
-    private static final Log log =
-            LogFactory.getLog(ApplicationUtils.class);
+
+	/** logger for this class. */
+    private static final Logger log = LoggerFactory.getLogger(ApplicationUtils.class);
 
     /** System.exit() value for the case where wrong arguments are given. */
     public static final int WRONG_ARGUMENTS = 1;
@@ -84,7 +84,7 @@ public abstract class ApplicationUtils {
     private static void logExceptionAndPrint(String s, Throwable t) {
         System.out.println(s);
         t.printStackTrace();
-        log.fatal(s, t);
+        log.error(s, t);
         NotificationsFactory.getInstance().notify(s, NotificationType.ERROR, t);
     }
 
@@ -95,8 +95,7 @@ public abstract class ApplicationUtils {
      */
     private static void checkArgs(String[] args) {
         if (showVersion(args)) {
-            logAndPrint("NetarchiveSuite "
-                    + dk.netarkivet.common.Constants.getVersionString());
+            logAndPrint("NetarchiveSuite " + dk.netarkivet.common.Constants.getVersionString());
             System.exit(0);
         }
         if (args.length > 0) {
@@ -112,8 +111,7 @@ public abstract class ApplicationUtils {
      * otherwise false
      */
     private static boolean showVersion(String[] args) {
-        if(args.length == 1
-                && (args[0].equals("-v") || args[0].equals("--version"))) {
+        if (args.length == 1 && (args[0].equals("-v") || args[0].equals("--version"))) {
             return true;
         }
         return false;
@@ -139,11 +137,8 @@ public abstract class ApplicationUtils {
     public static void startApp(Class c, String[] args) {
         String appName = c.getName();
         Settings.set(CommonSettings.APPLICATION_NAME, appName);
-        logAndPrint("Starting " + appName + "\n"
-                    + Constants.getVersionString());
-        log.info("Using settings files '"
-                    + StringUtils.conjoin(File.pathSeparator,
-                                          Settings.getSettingsFiles()) + "'");
+        logAndPrint("Starting " + appName + "\n" + Constants.getVersionString());
+        log.info("Using settings files '{}'", StringUtils.conjoin(File.pathSeparator, Settings.getSettingsFiles()));
         checkArgs(args);
         dirMustExist(FileUtils.getTempDir());
         Method factoryMethod = null;
@@ -151,10 +146,9 @@ public abstract class ApplicationUtils {
         // Start the remote management connector
         try {
             MBeanConnectorCreator.exposeJMXMBeanServer();
-            log.trace("Added remote management for " + appName);
+            log.trace("Added remote management for {}", appName);
         } catch (Throwable e) {
-            logExceptionAndPrint("Could not add remote management for class "
-                    + appName, e);
+            logExceptionAndPrint("Could not add remote management for class " + appName, e);
             System.exit(EXCEPTION_WHEN_ADDING_MANAGEMENT);
         }
         // Get the factory method
@@ -166,8 +160,7 @@ public abstract class ApplicationUtils {
             }
             logAndPrint(appName + " Running");
         } catch (Throwable e) {
-            logExceptionAndPrint("Class " + appName + " does not have required"
-                                 + "factory method", e);
+            logExceptionAndPrint("Class " + appName + " does not have required factory method", e);
             System.exit(NO_FACTORY_METHOD);
         }
         // Invoke the factory method
@@ -185,8 +178,7 @@ public abstract class ApplicationUtils {
             Runtime.getRuntime().addShutdownHook((new CleanupHook(instance)));
             log.trace("Added shutdown hook for " + appName);
         } catch (Throwable e) {
-            logExceptionAndPrint("Could not add shutdown hook for class "
-                                 + appName, e);
+            logExceptionAndPrint("Could not add shutdown hook for class " + appName, e);
             System.exit(EXCEPTION_WHEN_ADDING_SHUTDOWN_HOOK);
         }
     }
@@ -197,24 +189,19 @@ public abstract class ApplicationUtils {
      * @param component The component to start.
      */
     public static void startApp(LifeCycleComponent component) {
-        ArgumentNotValid.checkNotNull(
-                component, "LifeCycleComponent component");
+        ArgumentNotValid.checkNotNull(component, "LifeCycleComponent component");
         
         String appName = component.getClass().getName();
         Settings.set(CommonSettings.APPLICATION_NAME, appName);
-        logAndPrint("Starting " + appName + "\n"
-                    + Constants.getVersionString());
-        log.info("Using settings files '"
-                    + StringUtils.conjoin(File.pathSeparator,
-                                          Settings.getSettingsFiles()) + "'");
+        logAndPrint("Starting " + appName + "\n" + Constants.getVersionString());
+        log.info("Using settings files '{}'", StringUtils.conjoin(File.pathSeparator, Settings.getSettingsFiles()));
         dirMustExist(FileUtils.getTempDir());
         // Start the remote management connector
         try {
             MBeanConnectorCreator.exposeJMXMBeanServer();
-            log.trace("Added remote management for " + appName);
+            log.trace("Added remote management for {}", appName);
         } catch (Throwable e) {
-            logExceptionAndPrint("Could not add remote management for class "
-                    + appName, e);
+            logExceptionAndPrint("Could not add remote management for class " + appName, e);
             System.exit(EXCEPTION_WHEN_ADDING_MANAGEMENT);
         }
         
@@ -223,12 +210,11 @@ public abstract class ApplicationUtils {
         
         // Add the shutdown hook
         try {
-            log.trace("Adding shutdown hook for " + appName);
+            log.trace("Adding shutdown hook for {}", appName);
             Runtime.getRuntime().addShutdownHook((new ShutdownHook(component)));
-            log.trace("Added shutdown hook for " + appName);
+            log.trace("Added shutdown hook for {}", appName);
         } catch (Throwable e) {
-            logExceptionAndPrint("Could not add shutdown hook for class "
-                                 + appName, e);
+            logExceptionAndPrint("Could not add shutdown hook for class " + appName, e);
             System.exit(EXCEPTION_WHEN_ADDING_SHUTDOWN_HOOK);
         }
     }
@@ -246,8 +232,8 @@ public abstract class ApplicationUtils {
     public static void dirMustExist(File dir) {
         ArgumentNotValid.checkNotNull(dir, "File dir");
         if (FileUtils.createDir(dir)) {
-            String msg = "Non-existing directory created '" + dir + "'";
-            log.warn(msg);
+            log.warn("Non-existing directory created '{}'", dir);
         }
     }
+
 }

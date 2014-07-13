@@ -28,17 +28,16 @@ import java.util.Map;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IllegalState;
 
-/** An interface defining a structure with nodes, subnodes and leaves.
- * This is a recursively defined datastructure, so each instance can be a
- * tree or a leaf.
- * Each is node is named with a String, and each leaf can contain a value of
- * type T.
- * Each non-leaf tree can have any number of subnodes, each identified by
- * a String.
+/**
+ * An interface defining a structure with nodes, subnodes and leaves.
+ * This is a recursively defined datastructure, so each instance can be a tree or a leaf.
+ * Each is node is named with a String, and each leaf can contain a value of type T.
+ * Each non-leaf tree can have any number of subnodes, each identified by a String.
  * @param <T> The leaf type
  */
 public interface StringTree<T> {
-    /**
+
+	/**
      * Returns true if this object is a leaf, and thus if getValue is legal.
      *
      * @return True if the implementing object is a leaf, false otherwise.
@@ -126,4 +125,5 @@ public interface StringTree<T> {
      * uniquely named, or if any of its children are not leaves.
      */
     Map<String, T> getLeafMap();
+
 }

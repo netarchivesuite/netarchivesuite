@@ -30,7 +30,8 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * Various utilities for waiting some time.
  */
 public class TimeUtils {
-    /** Constant for the number of milliseconds per second: 1000.*/
+
+	/** Constant for the number of milliseconds per second: 1000.*/
     public static final long SECOND_IN_MILLIS = 1000;
     /** Constant for the number of seconds per minute: 60.*/
     public static final long MINUTE_IN_SECONDS = 60;
@@ -62,10 +63,8 @@ public class TimeUtils {
      */
     public static void exponentialBackoffSleep(int attempt, int timeunit) {
         ArgumentNotValid.checkNotNegative(attempt, "int attempt");
-        ArgumentNotValid.checkTrue(timeunit >= 0
-                                   && timeunit < Calendar.FIELD_COUNT,
-                                   "Time unit must be one of the fields defined"
-                                   + " by Calendar, not " + timeunit);
+        ArgumentNotValid.checkTrue(timeunit >= 0 && timeunit < Calendar.FIELD_COUNT,
+        		"Time unit must be one of the fields defined" + " by Calendar, not " + timeunit);
 
         Calendar now = Calendar.getInstance();
         long startTime = now.getTimeInMillis();
@@ -89,8 +88,8 @@ public class TimeUtils {
      */
     public static String readableTimeInterval(long millis) {
         // check whether it is in seconds (if not return in milliseconds).
-        if((millis % SECOND_IN_MILLIS) != 0) {
-            if(millis == 1) {
+        if ((millis % SECOND_IN_MILLIS) != 0) {
+            if (millis == 1) {
                 return millis + " millisecond";
             }
             return millis + " milliseconds";
@@ -98,8 +97,8 @@ public class TimeUtils {
         long seconds = millis/SECOND_IN_MILLIS;
         
         // check whether it is in minutes (if not return in seconds).
-        if((seconds % MINUTE_IN_SECONDS) != 0) {
-            if(seconds == 1) {
+        if ((seconds % MINUTE_IN_SECONDS) != 0) {
+            if (seconds == 1) {
                 return seconds + " second";
             }
             return seconds + " seconds";
@@ -107,8 +106,8 @@ public class TimeUtils {
         long minutes = seconds/MINUTE_IN_SECONDS;
 
         // check whether it is in hours (if not return in minutes).
-        if((minutes % HOUR_IN_MINUTES) != 0) {
-            if(minutes == 1) {
+        if ((minutes % HOUR_IN_MINUTES) != 0) {
+            if (minutes == 1) {
                 return minutes + " minute";
             }
             return minutes + " minutes";
@@ -116,25 +115,26 @@ public class TimeUtils {
         long hours = minutes/HOUR_IN_MINUTES;
 
         // check whether it is in days (if not return in hours).
-        if((hours % DAY_IN_HOURS) != 0) {
-            if(hours == 1) {
+        if ((hours % DAY_IN_HOURS) != 0) {
+            if (hours == 1) {
                 return hours + " hour";
             }
             return hours + " hours";
         }
         long days = hours/DAY_IN_HOURS;
 
-        if((days % WEEK_IN_DAYS) != 0) {
-            if(days == 1) {
+        if ((days % WEEK_IN_DAYS) != 0) {
+            if (days == 1) {
                 return days + " day";
             }
             return days + " days";
         }
         long weeks = days/WEEK_IN_DAYS;
         
-        if(weeks == 1) {
+        if (weeks == 1) {
             return weeks + " week";
         }
         return weeks + " weeks";
     }
+
 }

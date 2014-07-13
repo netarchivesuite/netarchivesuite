@@ -26,10 +26,11 @@ package dk.netarkivet.common.utils;
 /**
  * Implements access to an array in a read-only fashion.
  */
-
 public class ReadOnlyByteArray {
-    private byte[] array;
-    /** Creates a new instance based on the given array.
+
+	private byte[] array;
+
+	/** Creates a new instance based on the given array.
      *
      * @param array Array to provide read-only access to.  The array will
      * not be copied by this class.
@@ -55,4 +56,5 @@ public class ReadOnlyByteArray {
     public byte get(int index) {
         return array[index];
     }
+
 }

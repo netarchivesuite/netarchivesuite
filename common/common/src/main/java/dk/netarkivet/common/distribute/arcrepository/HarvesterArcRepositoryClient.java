@@ -32,7 +32,10 @@ import dk.netarkivet.common.exceptions.IOFailure;
  * JMSArcRepositoryClient not to be used by the harvest system.
  */
 public interface HarvesterArcRepositoryClient {
-    /** Call on shutdown to release external resources. */
+
+	/**
+	 * Call on shutdown to release external resources.
+	 */
     void close();
 
     /**
@@ -46,4 +49,5 @@ public interface HarvesterArcRepositoryClient {
      *                          existing file.
      */
     void store(File file) throws IOFailure, ArgumentNotValid;
+
 }

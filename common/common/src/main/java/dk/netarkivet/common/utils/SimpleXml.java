@@ -31,14 +31,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.Namespace;
 import org.dom4j.Node;
 import org.dom4j.XPath;
 import org.dom4j.dom.DOMDocument;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -50,18 +50,17 @@ import dk.netarkivet.common.exceptions.UnknownID;
  */
 @SuppressWarnings({ "unused", "unchecked"})
 public class SimpleXml {
-    protected final Log log = LogFactory.getLog(getClass().getName());
+
+	protected static final Logger log = LoggerFactory.getLogger(SimpleXml.class);
 
     /** The underlying XML Document object that we give access to. */
     private Document xmlDoc;
 
-    /** The file that this XML was read from, or a fixed string if it
-     * was created from scratch.
-     */
+    /** The file that this XML was read from, or a fixed string if it was created from scratch. */
     private String source;
 
-    /** Create a new SimpleXml object by loading a file.
-     *
+    /**
+     * Create a new SimpleXml object by loading a file.
      * @param f XML file to load
      */
     public SimpleXml(File f) {
@@ -85,8 +84,7 @@ public class SimpleXml {
      * @param resourceAsStream XML file to load
      */
     public SimpleXml(InputStream resourceAsStream) {
-        ArgumentNotValid.checkNotNull(resourceAsStream,
-                "InputStream resourceAsStream");
+        ArgumentNotValid.checkNotNull(resourceAsStream, "InputStream resourceAsStream");
         load(resourceAsStream);
     }
 
@@ -109,10 +107,8 @@ public class SimpleXml {
         source = f.toString();
 
         if (!f.exists()) {
-            log.warn("XML file '" + f.getAbsolutePath()
-                      + "' does not exist");
-            throw new IOFailure("XML file '" + f.getAbsolutePath()
-                    + "' does not exist");
+            log.warn("XML file '{}' does not exist", f.getAbsolutePath());
+            throw new IOFailure("XML file '" + f.getAbsolutePath() + "' does not exist");
         }
 
         xmlDoc = XmlUtils.getXmlDoc(f);
@@ -152,20 +148,16 @@ public class SimpleXml {
      * @return The last element added.
      */
     private Element addParents(String... elementNames) {
-        ArgumentNotValid.checkTrue(elementNames.length >= 2,
-                "Must have at least root element and final element in "
-                        + "element names, not just "
-                        + Arrays.asList(elementNames));
+        ArgumentNotValid.checkTrue(elementNames.length >= 2, "Must have at least root element and final element in "
+        		+ "element names, not just " + Arrays.asList(elementNames));
         Element currentNode = xmlDoc.getRootElement();
         if (!currentNode.getName().equals(elementNames[0])) {
-            throw new ArgumentNotValid("Document has root element '"
-                    + currentNode.getName() + "', not '"
-                    + elementNames[0] + "'");
+            throw new ArgumentNotValid("Document has root element '" + currentNode.getName() + "', not '"
+            		+ elementNames[0] + "'");
         }
         for (int i = 1; i < elementNames.length - 1; i++) {
             String elementName = elementNames[i];
-            List<Element> nodes
-                    = currentNode.elements(elementName);
+            List<Element> nodes = currentNode.elements(elementName);
             if (nodes == null || nodes.size() == 0) {
                 // Element not found, add at end
                 currentNode = currentNode.addElement(elementName);
@@ -173,8 +165,7 @@ public class SimpleXml {
                 currentNode = nodes.get(nodes.size() - 1);
             }
         }
-        return addAfterSameElement(currentNode,
-                elementNames[elementNames.length - 1]);
+        return addAfterSameElement(currentNode, elementNames[elementNames.length - 1]);
     }
 
     /** Add another element either right after the last of its kind in
@@ -184,8 +175,7 @@ public class SimpleXml {
      * @param elementName The name of the new element
      * @return The new element, which is now placed under currentNode
      */
-    private Element addAfterSameElement(Element currentNode,
-            String elementName) {
+    private Element addAfterSameElement(Element currentNode, String elementName) {
         Element newElement = currentNode.addElement(elementName);
         newElement.detach();
         // If there are already nodes of this type, add straight after them.
@@ -219,12 +209,10 @@ public class SimpleXml {
         ArgumentNotValid.checkNotNullOrEmpty(key, "String key");
         ArgumentNotValid.checkNotNull(values, "String... values");
         for (int i = 0; i < values.length; i++) {
-            ArgumentNotValid.checkNotNull(
-                    values[i], "String values[" + i + "]");
+            ArgumentNotValid.checkNotNull(values[i], "String values[" + i + "]");
         }
         if (!hasKey(key)) {
-            throw new UnknownID("No key registered with the name: '" + key
-                    + "' in '" + source + "'");
+            throw new UnknownID("No key registered with the name: '" + key + "' in '" + source + "'");
         }
 
         List<Node> nodes = getXPath(key).selectNodes(xmlDoc);
@@ -267,8 +255,7 @@ public class SimpleXml {
         XPath xpath = getXPath(key);
         List<Node> nodes = xpath.selectNodes(xmlDoc);
         if (nodes == null || nodes.size() == 0) {
-            throw new UnknownID("No elements exists for the path '" + key
-                    + "' in '" + source + "'");
+            throw new UnknownID("No elements exists for the path '" + key + "' in '" + source + "'");
         }
         Node first = nodes.get(0);
         return first.getStringValue().trim();
@@ -333,16 +320,15 @@ public class SimpleXml {
         XPath xpath = getXPath(path);
         List<Node> nodes = xpath.selectNodes(xmlDoc);
         if (nodes == null || nodes.size() == 0) {
-            throw new UnknownID("No path '" + path + "' in XML document '"
-                                + source + "'");
+            throw new UnknownID("No path '" + path + "' in XML document '" + source + "'");
         } else if (nodes.size() > 1) {
-            throw new UnknownID("More than one candidate for path '" + path
-                                   + "' in XML document '" + source + "'");
+            throw new UnknownID("More than one candidate for path '" + path + "' in XML document '" + source + "'");
         }
         return XmlTree.getStringTree(nodes.get(0));
     }
 
-    /** Get an XPath version of the given dotted path.  A dotted path
+    /**
+     * Get an XPath version of the given dotted path.  A dotted path
      * foo.bar.baz corresponds to the XML node &lt;foo&gt;&lt;bar&gt;&lt;baz&gt;
      *  &lt;/baz&gt;&lt;/bar&gt;&lt;/foo&gt;
      *

@@ -41,8 +41,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -54,13 +54,12 @@ import dk.netarkivet.common.exceptions.PermissionDenied;
  */
 public final class DBUtils {
     
+    /** The logger. */
+    private static final Logger log = LoggerFactory.getLogger(DBUtils.class);
+
     /** default constructor. Is private to avoid initialization. */
     private DBUtils() {
-        
     }
-
-    /** The logger. */
-    private static final Log log = LogFactory.getLog(DBUtils.class);
 
     /** Execute an SQL statement and return the single integer
      * in the result set.
@@ -86,7 +85,7 @@ public final class DBUtils {
             return resultInt;
         } catch (SQLException e) {
             throw new IOFailure("SQL error executing statement " + s + "\n"
-                    + ExceptionUtils.getSQLExceptionCause(e), e);
+            		+ ExceptionUtils.getSQLExceptionCause(e), e);
         }
     }
 
@@ -103,8 +102,7 @@ public final class DBUtils {
      * @return The integer result
      * @throws IOFailure if the statement didn't result in exactly one integer
      */
-    public static Integer selectIntValue(Connection connection, String query,
-                                         Object... args) {
+    public static Integer selectIntValue(Connection connection, String query, Object... args) {
         ArgumentNotValid.checkNotNull(connection, "Connection connection");
         ArgumentNotValid.checkNotNullOrEmpty(query, "String query");
         ArgumentNotValid.checkNotNull(args, "Object... args");
@@ -115,8 +113,7 @@ public final class DBUtils {
             // selectIntValue(s)
             return selectIntValue(s);
         } catch (SQLException e) {
-            throw new IOFailure("SQL error preparing statement "
-                    + query + " args " + Arrays.toString(args) + "\n"
+            throw new IOFailure("SQL error preparing statement " + query + " args " + Arrays.toString(args) + "\n"
                     + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             closeStatementIfOpen(s);
@@ -166,8 +163,7 @@ public final class DBUtils {
      * @throws IOFailure if the statement didn't result in exactly one long
      * value
      */
-    public static Long selectLongValue(Connection connection, String query,
-                                       Object... args) {
+    public static Long selectLongValue(Connection connection, String query, Object... args) {
         ArgumentNotValid.checkNotNull(connection, "Connection connection");
         ArgumentNotValid.checkNotNullOrEmpty(query, "String query");
         ArgumentNotValid.checkNotNull(args, "Object... args");
@@ -178,8 +174,7 @@ public final class DBUtils {
             // selectLongValue(s)
             return selectLongValue(s);
         } catch (SQLException e) {
-            throw new IOFailure("Error preparing SQL statement "
-                    + query + " args " + Arrays.toString(args)
+            throw new IOFailure("Error preparing SQL statement " + query + " args " + Arrays.toString(args)
                     + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             closeStatementIfOpen(s);
@@ -199,9 +194,7 @@ public final class DBUtils {
      * cases: There is no results, or the first result is a null-value.
      * @throws IOFailure on SQL errors.
      */
-    public static Long selectFirstLongValueIfAny(Connection connection,
-                                                 String query,
-                                                 Object... args) {
+    public static Long selectFirstLongValueIfAny(Connection connection, String query, Object... args) {
         ArgumentNotValid.checkNotNull(connection, "Connection connection");
         ArgumentNotValid.checkNotNullOrEmpty(query, "String query");
         ArgumentNotValid.checkNotNull(args, "Object... args");
@@ -237,8 +230,7 @@ public final class DBUtils {
      * @throws ArgumentNotValid If unable to handle type of one the args, or
      * the arguments are either null or an empty String.
      */
-    public static PreparedStatement prepareStatement(Connection c, String query,
-            Object... args) throws SQLException {
+    public static PreparedStatement prepareStatement(Connection c, String query, Object... args) throws SQLException {
         ArgumentNotValid.checkNotNull(c, "Connection c");
         ArgumentNotValid.checkNotNullOrEmpty(query, "String query");
         ArgumentNotValid.checkNotNull(args, "Object... args");
@@ -256,13 +248,10 @@ public final class DBUtils {
             } else if (arg instanceof Date) {
                 s.setTimestamp(i, new Timestamp(((Date) arg).getTime()));
             } else {
-                throw new ArgumentNotValid("Cannot handle type '"
-                        + arg.getClass().getName()
-                        + "'. We can only handle string, "
-                        + "int, long, date or boolean args for query: "
-                        + query);
+                throw new ArgumentNotValid("Cannot handle type '" + arg.getClass().getName()
+                		+ "'. We can only handle string, " + "int, long, date or boolean args for query: " + query);
             }
-            i++;
+            ++i;
         }
         return s;
     }
@@ -282,8 +271,8 @@ public final class DBUtils {
      * @throws ArgumentNotValid If unable to handle type of one the args, or
      * the arguments are either null or an empty String.
      */
-    public static PreparedStatement prepareStatement(Connection c, int fetchSize, String query,
-            Object... args) throws SQLException {
+    public static PreparedStatement prepareStatement(Connection c, int fetchSize, String query, Object... args)
+    		throws SQLException {
         ArgumentNotValid.checkNotNull(c, "Connection c");
         ArgumentNotValid.checkPositive(fetchSize, "int fetchSize");
         ArgumentNotValid.checkNotNullOrEmpty(query, "String query");
@@ -304,13 +293,10 @@ public final class DBUtils {
             } else if (arg instanceof Date) {
                 s.setTimestamp(i, new Timestamp(((Date) arg).getTime()));
             } else {
-                throw new ArgumentNotValid("Cannot handle type '"
-                        + arg.getClass().getName()
-                        + "'. We can only handle string, "
-                        + "int, long, date or boolean args for query: "
-                        + query);
+                throw new ArgumentNotValid("Cannot handle type '" + arg.getClass().getName()
+                        + "'. We can only handle string, " + "int, long, date or boolean args for query: " + query);
             }
-            i++;
+            ++i;
         }
         return s;
     }
@@ -326,9 +312,7 @@ public final class DBUtils {
      * @throws IOFailure If this query fails
      * @return the list of strings in its result set
      */
-    public static List<String> selectStringList(Connection connection,
-                                                String query,
-                                                Object... args) {
+    public static List<String> selectStringList(Connection connection, String query, Object... args) {
         ArgumentNotValid.checkNotNull(connection, "Connection connection");
         ArgumentNotValid.checkNotNullOrEmpty(query, "String query");
         ArgumentNotValid.checkNotNull(args, "Object... args");
@@ -339,8 +323,7 @@ public final class DBUtils {
             List<String> results = new ArrayList<String>();
             while (result.next()) {
                 if (result.getString(1) == null){
-                    String warning =
-                        "NULL pointer found in resultSet from query: " + query;
+                    String warning = "NULL pointer found in resultSet from query: " + query;
                     log.warn(warning);
                     throw new IOFailure(warning);
                 }
@@ -348,8 +331,7 @@ public final class DBUtils {
             }
             return results;
         } catch (SQLException e) {
-            throw new IOFailure("Error preparing SQL statement "
-                    + query + " args " + Arrays.toString(args)
+            throw new IOFailure("Error preparing SQL statement " + query + " args " + Arrays.toString(args)
                     + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             closeStatementIfOpen(s);
@@ -367,9 +349,7 @@ public final class DBUtils {
      * @throws SQLException If this query fails
      * @return the list of strings -> id mappings
      */
-    public static Map<String, Long> selectStringLongMap(Connection connection,
-                                                        String query,
-                                                        Object... args)
+    public static Map<String, Long> selectStringLongMap(Connection connection, String query, Object... args)
             throws SQLException {
         ArgumentNotValid.checkNotNull(connection, "Connection connection");
         ArgumentNotValid.checkNotNullOrEmpty(query, "String query");
@@ -382,10 +362,8 @@ public final class DBUtils {
             while (result.next()) {
                 String resultString = result.getString(1);
                 long resultLong = result.getLong(2);
-                if ((resultString == null)
-                        || (resultLong == 0L && result.wasNull())) {
-                    String warning = "NULL pointers found in entry ("
-                            + resultString + "," + resultLong
+                if ((resultString == null) || (resultLong == 0L && result.wasNull())) {
+                    String warning = "NULL pointers found in entry (" + resultString + "," + resultLong
                             + ") in resultset from query: " + query;
                     log.warn(warning);
                 }
@@ -409,8 +387,7 @@ public final class DBUtils {
      * @param args The arguments to insert into this query
      * @return the list of Long-objects in its result set
      */
-    public static List<Long> selectLongList(Connection connection, String query,
-            Object... args) {
+    public static List<Long> selectLongList(Connection connection, String query, Object... args) {
         ArgumentNotValid.checkNotNull(connection, "Connection connection");
         ArgumentNotValid.checkNotNullOrEmpty(query, "String query");
         ArgumentNotValid.checkNotNull(args, "Object... args");
@@ -420,18 +397,16 @@ public final class DBUtils {
             ResultSet result = s.executeQuery();
             List<Long> results = new ArrayList<Long>();
             while (result.next()) {
-                if (result.getLong(1) == 0L && result.wasNull()){
-                    String warning = "NULL value encountered in query: "
-                                     + query;
+                if (result.getLong(1) == 0L && result.wasNull()) {
+                    String warning = "NULL value encountered in query: " + query;
                     log.warn(warning);
                 }
                 results.add(result.getLong(1));
             }
             return results;
         } catch (SQLException e) {
-            throw new IOFailure("Error preparing SQL statement "
-                    + query + " args " + Arrays.toString(args)
-                    + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
+            throw new IOFailure("Error preparing SQL statement " + query + " args " + Arrays.toString(args) + "\n"
+            		+ ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             closeStatementIfOpen(s);
         }
@@ -444,8 +419,7 @@ public final class DBUtils {
      * @param args The arguments to insert into this query
      * @return an iterator to a list of Longs.
      */
-    public static Iterator<Long> selectLongIterator(Connection connection, String query,
-            Object... args) {
+    public static Iterator<Long> selectLongIterator(Connection connection, String query, Object... args) {
         ArgumentNotValid.checkNotNull(connection, "Connection connection");
         ArgumentNotValid.checkNotNullOrEmpty(query, "String query");
         ArgumentNotValid.checkNotNull(args, "Object... args");
@@ -459,8 +433,8 @@ public final class DBUtils {
                     try {
                     return result.getLong(1);
                     } catch (SQLException e) {
-                        log.warn("Error retrieving long from resultset\n" 
-                                + ExceptionUtils.getSQLExceptionCause(e), e);
+                        log.warn("Error retrieving long from resultset\n{}",
+                        		ExceptionUtils.getSQLExceptionCause(e), e);
                        return 0L;
                     }
                 }
@@ -468,9 +442,8 @@ public final class DBUtils {
             return results;
         } catch (SQLException e) {
             closeStatementIfOpen(s);
-            throw new IOFailure("Error preparing SQL statement "
-                    + query + " args " + Arrays.toString(args)
-                    + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
+            throw new IOFailure("Error preparing SQL statement " + query + " args " + Arrays.toString(args) + "\n"
+            		+ ExceptionUtils.getSQLExceptionCause(e), e);
         } 
     }
     
@@ -485,8 +458,7 @@ public final class DBUtils {
      * @param args The arguments to insert into this query
      * @return the set of Long-objects in its result set
      */
-    public static Set<Long> selectLongSet(Connection connection, String query,
-            Object... args) {
+    public static Set<Long> selectLongSet(Connection connection, String query, Object... args) {
         ArgumentNotValid.checkNotNull(connection, "Connection connection");
         ArgumentNotValid.checkNotNullOrEmpty(query, "String query");
         ArgumentNotValid.checkNotNull(args, "Object... args");
@@ -496,18 +468,16 @@ public final class DBUtils {
             ResultSet result = s.executeQuery();
             Set<Long> results = new TreeSet<Long>();
             while (result.next()) {
-                if (result.getLong(1) == 0L && result.wasNull()){
-                    String warning = "NULL value encountered in query: "
-                                     + query;
+                if (result.getLong(1) == 0L && result.wasNull()) {
+                    String warning = "NULL value encountered in query: " + query;
                     log.warn(warning);
                 }
                 results.add(result.getLong(1));
             }
             return results;
         } catch (SQLException e) {
-            throw new IOFailure("Error preparing SQL statement "
-                    + query + " args " + Arrays.toString(args)
-                    + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
+            throw new IOFailure("Error preparing SQL statement " + query + " args " + Arrays.toString(args) + "\n"
+            		+ ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             closeStatementIfOpen(s);
         }
@@ -541,33 +511,28 @@ public final class DBUtils {
      * @return Version of the given table.
      * @throws IOFailure if DB table schemaversions does not exist
      */
-    public static int getTableVersion(Connection connection, String tablename)
-            throws IOFailure {
+    public static int getTableVersion(Connection connection, String tablename) throws IOFailure {
         ArgumentNotValid.checkNotNull(connection, "Connection connection");
         ArgumentNotValid.checkNotNullOrEmpty(tablename, "String tablenname");
         PreparedStatement s = null;
         int version = 0;
         try {
-            s = connection.prepareStatement("SELECT version FROM schemaversions"
-                    + " WHERE tablename = ?");
+            s = connection.prepareStatement("SELECT version FROM schemaversions WHERE tablename = ?");
             s.setString(1, tablename);
             ResultSet res = s.executeQuery();
             if (!res.next()) {
-                log.warn("As yet unknown tablename '" + tablename 
-                        + "' in table schemaversions. The table"
-                        + " should be automatically created in the database "
-                        + "when it is first needed.");
+                log.warn("As yet unknown tablename '{}' in table schemaversions. The table should be automatically "
+                		+ "created in the database when it is first needed.", tablename);
             } else {
                 version = res.getInt(1);
                 if (res.wasNull()) {
-                    log.warn("Null table version for '"
-                            + tablename + "'");
+                    log.warn("Null table version for '{}'", tablename);
                 }
             }
             return version;
         } catch (SQLException e) {
-            String msg = "SQL Error checking version of table " + tablename
-                + "\n" + ExceptionUtils.getSQLExceptionCause(e);
+            String msg = "SQL Error checking version of table " + tablename + "\n"
+            		+ ExceptionUtils.getSQLExceptionCause(e);
             log.warn(msg, e);
             throw new IOFailure(msg, e);
         } finally {
@@ -587,20 +552,15 @@ public final class DBUtils {
      * @param fieldname the name of a given field
      * @throws SQLException if set operation fails
      */
-    public static void setStringMaxLength(PreparedStatement s, int fieldNum,
-                                           String contents, int maxSize,
-                                           Object o, String fieldname)
-            throws SQLException {
+    public static void setStringMaxLength(PreparedStatement s, int fieldNum, String contents, int maxSize,
+    		Object o, String fieldname) throws SQLException {
         ArgumentNotValid.checkNotNull(s, "PreparedStatement s");
         ArgumentNotValid.checkNotNegative(fieldNum, "int fieldNum");
 
         if (contents != null) {
             if (contents.length() > maxSize) {
-                log.warn(fieldname + " of " + o
-                        + " is longer than the allowed " + maxSize
-                        + " characters. The contents is truncated to length "
-                        + maxSize
-                        + ". The untruncated contents was: " + contents);
+                log.warn("{} of {} is longer than the allowed {} characters. The contents is truncated to length {}."
+                		+ " The untruncated contents was: {}",fieldname, o, maxSize, maxSize, contents);
                 // truncate to length maxSize
                 contents = contents.substring(0, maxSize);
             }
@@ -621,21 +581,17 @@ public final class DBUtils {
      * @throws PermissionDenied If length of o.getComments() is larger than
      * Constants.MAX_COMMENT_SIZE
      */
-    public static void setComments(PreparedStatement s, int fieldNum, Named o,
-            int maxFieldSize) throws SQLException {
+    public static void setComments(PreparedStatement s, int fieldNum, Named o, int maxFieldSize) throws SQLException {
         ArgumentNotValid.checkNotNull(s, "PreparedStatement s");
         ArgumentNotValid.checkNotNegative(fieldNum, "int fieldNum");
         ArgumentNotValid.checkNotNull(o, "Named o");
         ArgumentNotValid.checkNotNegative(maxFieldSize, "int maxFieldSize");
 
         if (o.getComments().length() > maxFieldSize) {
-            throw new PermissionDenied("Length of comments ("
-                    + o.getComments().length()
-                    + ") is larger than allowed. Max length is "
-                    + maxFieldSize);
+            throw new PermissionDenied("Length of comments (" + o.getComments().length()
+                    + ") is larger than allowed. Max length is " + maxFieldSize);
         }
-        setStringMaxLength(s, fieldNum, o.getComments(), maxFieldSize, o,
-                "comments");
+        setStringMaxLength(s, fieldNum, o.getComments(), maxFieldSize, o, "comments");
     }
 
     /** Set the name of a Named object into the given field.
@@ -648,18 +604,15 @@ public final class DBUtils {
      * @throws PermissionDenied If length of o.getName() is larger than
      * Constants.MAX_NAME_SIZE
      */
-    public static void setName(PreparedStatement s, int fieldNum, Named o,
-            int maxFieldSize) throws SQLException {
+    public static void setName(PreparedStatement s, int fieldNum, Named o, int maxFieldSize) throws SQLException {
         ArgumentNotValid.checkNotNull(s, "PreparedStatement s");
         ArgumentNotValid.checkNotNegative(fieldNum, "int fieldNum");
         ArgumentNotValid.checkNotNull(o, "Named o");
         ArgumentNotValid.checkNotNegative(maxFieldSize, "int maxFieldSize");
 
         if (o.getName().length() > maxFieldSize) {
-            throw new PermissionDenied("Length of name ("
-                    + o.getName().length()
-                    + ") is larger than allowed. Max length is "
-                    + maxFieldSize);
+            throw new PermissionDenied("Length of name (" + o.getName().length()
+                    + ") is larger than allowed. Max length is " + maxFieldSize);
         }
         setStringMaxLength(s, fieldNum, o.getName(), maxFieldSize, o, "name");
     }
@@ -672,8 +625,7 @@ public final class DBUtils {
      * @throws SQLException  If any trouble accessing the database during 
      * the operation
      */
-    public static void setDateMaybeNull(
-            PreparedStatement s, int fieldNum, Date date) throws SQLException {
+    public static void setDateMaybeNull(PreparedStatement s, int fieldNum, Date date) throws SQLException {
         ArgumentNotValid.checkNotNull(s, "PreparedStatement s");
         ArgumentNotValid.checkNotNegative(fieldNum, "int fieldNum");
 
@@ -694,8 +646,7 @@ public final class DBUtils {
      * parameter marker in the ResultSet, or a database access error
      * occurs or this method is called on a closed ResultSet
      */
-    public static Date getDateMaybeNull(ResultSet rs, final int columnIndex)
-    throws SQLException {
+    public static Date getDateMaybeNull(ResultSet rs, final int columnIndex) throws SQLException {
         ArgumentNotValid.checkNotNull(rs, "ResultSet rs");
         ArgumentNotValid.checkNotNegative(columnIndex, "int columnIndex");
 
@@ -726,8 +677,7 @@ public final class DBUtils {
      * @param action The action going on, before calling this method
      * @param o The Object being acted upon by this action
      */
-    public static void rollbackIfNeeded(Connection c,
-                                        String action, Object o) {
+    public static void rollbackIfNeeded(Connection c, String action, Object o) {
         ArgumentNotValid.checkNotNull(c, "Connection c");
         try {
             if (!c.getAutoCommit()) {
@@ -735,9 +685,7 @@ public final class DBUtils {
                 c.setAutoCommit(true);
             }
         } catch (SQLException e) {
-            log.warn("SQL error doing rollback after " + action + " " + o + "\n"
-                    + ExceptionUtils.getSQLExceptionCause(e),
-                    e);
+            log.warn("SQL error doing rollback after {} {}\n{}", action, o, ExceptionUtils.getSQLExceptionCause(e), e);
             // Can't throw here, we want the real exception
         }
     }
@@ -756,18 +704,14 @@ public final class DBUtils {
      * parameter marker in the PreparedStatement, or a database access error
      * occurs or this method is called on a closed PreparedStatement
      */
-    public static void setClobMaxLength(PreparedStatement s, int fieldNum,
-            String contents, long maxSize, Object o, String fieldName)
-            throws SQLException {
+    public static void setClobMaxLength(PreparedStatement s, int fieldNum, String contents, long maxSize, Object o,
+    		String fieldName) throws SQLException {
         ArgumentNotValid.checkNotNull(s, "PreparedStatement s");
         if (contents != null) {
             if (contents.length() > maxSize) {
-                log.warn(
-                        "The field '" + fieldName + "' is " + contents.length() 
-                        + " characters long, which is "
-                                +  (contents.length() - maxSize) + " longer than the allowed " 
-                        + maxSize + " characters. The contents is now truncated to "
-                        + "length " + maxSize);
+                log.warn("The field '{}' is {} characters long, which is {} longer than the allowed {} characters. "
+                		+ "The contents is now truncated to length {}",
+                		fieldName, contents.length(), (contents.length() - maxSize), maxSize, maxSize);
                 // This caused OOM if both the 'contents' and o.toString() was large
                 // (See NAS-2015).
                 // It is therefore omitted from this log-entry.
@@ -775,14 +719,13 @@ public final class DBUtils {
                 // truncate to length maxSize (if maxSize <= Integer.MAX_VALUE)
                 // else truncate to length Integer.MAX_VALUE
                 if (maxSize > Integer.MAX_VALUE) {
-                    log.warn("The maxSize is larger than maxint (" +  Integer.MAX_VALUE
-                            + "), which is not allowed. MaxSize changed to maxint");
+                    log.warn("The maxSize is larger than maxint ({}), which is not allowed. MaxSize changed to maxint",
+                    		Integer.MAX_VALUE);
                     maxSize = Integer.MAX_VALUE;
                 }
                 contents = contents.substring(0, (int) maxSize);
             }
-            s.setCharacterStream(fieldNum, new StringReader(contents), contents
-                    .length());
+            s.setCharacterStream(fieldNum, new StringReader(contents), contents.length());
             s.setString(fieldNum, contents);
         } else {
             s.setNull(fieldNum, Types.CLOB);
@@ -799,8 +742,7 @@ public final class DBUtils {
      * parameter marker in the PreparedStatement, or a database access error
      * occurs or this method is called on a closed PreparedStatement
      */
-    public static void setLongMaybeNull(PreparedStatement s, int i,
-                                        Long value) throws SQLException {
+    public static void setLongMaybeNull(PreparedStatement s, int i, Long value) throws SQLException {
         ArgumentNotValid.checkNotNull(s, "PreparedStatement s");
         if (value != null) {
             s.setLong(i, value);
@@ -818,8 +760,7 @@ public final class DBUtils {
      * parameter marker in the PreparedStatement, or a database access error
      * occurs or this method is called on a closed PreparedStatement
      */
-    public static void setIntegerMaybeNull(PreparedStatement s, int i,
-                                        Integer value) throws SQLException {
+    public static void setIntegerMaybeNull(PreparedStatement s, int i, Integer value) throws SQLException {
         ArgumentNotValid.checkNotNull(s, "PreparedStatement s");
 
         if (value != null) {
@@ -837,8 +778,7 @@ public final class DBUtils {
      * @throws SQLException If the columnIndex is not valid, or a database
      * access error occurs or this method is called on a closed result set
      */
-    public static Integer getIntegerMaybeNull(ResultSet rs, int i)
-            throws SQLException {
+    public static Integer getIntegerMaybeNull(ResultSet rs, int i) throws SQLException {
         ArgumentNotValid.checkNotNull(rs, "ResultSet rs");
         Integer res = rs.getInt(i);
         if (rs.wasNull()) {
@@ -855,8 +795,7 @@ public final class DBUtils {
      * @throws SQLException If the columnIndex is not valid, or a database
      * access error occurs or this method is called on a closed result set
      */
-    public static Long getLongMaybeNull(ResultSet rs, int i)
-            throws SQLException {
+    public static Long getLongMaybeNull(ResultSet rs, int i) throws SQLException {
         ArgumentNotValid.checkNotNull(rs, "ResultSet rs");
         Long res = rs.getLong(i);
         if (rs.wasNull()) {
@@ -877,9 +816,7 @@ public final class DBUtils {
      * @param args Any objects that may be used to prepare the select statement.
      * @return A string describing the usages, or null if no usages were found.
      */
-    public static String getUsages(
-            Connection connection, String select, Object victim,
-            Object... args) {
+    public static String getUsages(Connection connection, String select, Object victim, Object... args) {
         ArgumentNotValid.checkNotNull(connection, "Connection connection");
         PreparedStatement s = null;
         try {
@@ -894,9 +831,8 @@ public final class DBUtils {
             }
             return null;
         } catch (SQLException e) {
-            final String message = "SQL error checking for usages of "
-                                   + victim + "\n"
-                                   + ExceptionUtils.getSQLExceptionCause(e);
+            final String message = "SQL error checking for usages of " + victim + "\n"
+            		+ ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
@@ -918,8 +854,7 @@ public final class DBUtils {
      * @throws IOFailure if the statement didn't result in exactly one string
      * value
      */
-    public static String selectStringValue(Connection connection, String query,
-                                           Object... args) {
+    public static String selectStringValue(Connection connection, String query, Object... args) {
         ArgumentNotValid.checkNotNullOrEmpty(query, "String query");
         ArgumentNotValid.checkNotNull(args, "Object... args");
         ArgumentNotValid.checkNotNull(connection, "Connection connection");
@@ -931,8 +866,7 @@ public final class DBUtils {
             // selectStringValue(s)
             return DBUtils.selectStringValue(s);
         } catch (SQLException e) {
-            throw new IOFailure("Error preparing SQL statement " + query
-                    + " args " + Arrays.toString(args) + "\n"
+            throw new IOFailure("Error preparing SQL statement " + query + " args " + Arrays.toString(args) + "\n"
                     + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             closeStatementIfOpen(s);
@@ -979,8 +913,7 @@ public final class DBUtils {
      * @return True if executing the query resulted in at least one row.
      * @throws IOFailure if there were problems with the SQL query
      */
-    public static boolean selectAny(Connection connection, String query,
-                                    Object... args) {
+    public static boolean selectAny(Connection connection, String query, Object... args) {
         ArgumentNotValid.checkNotNull(connection, "Connection connection");
         ArgumentNotValid.checkNotNullOrEmpty(query, "String query");
         ArgumentNotValid.checkNotNull(args, "Object... args");
@@ -990,8 +923,7 @@ public final class DBUtils {
             s = prepareStatement(connection, query, args);
             return s.executeQuery().next();
         } catch (SQLException e) {
-            throw new IOFailure("Error preparing SQL statement " + query
-                    + " args " + Arrays.toString(args) + "\n"
+            throw new IOFailure("Error preparing SQL statement " + query + " args " + Arrays.toString(args) + "\n"
                     + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             closeStatementIfOpen(s);
@@ -1021,8 +953,7 @@ public final class DBUtils {
      * updates.
      * @throws IOFailure in case of problems in interacting with the database
      */
-    public static void executeSQL(Connection connection,
-                                  final String... updates) {
+    public static void executeSQL(Connection connection, final String... updates) {
         ArgumentNotValid.checkNotNull(updates, "String... updates");
         PreparedStatement st = null;
         String s = "";
@@ -1031,22 +962,21 @@ public final class DBUtils {
             connection.setAutoCommit(false);
             for (String update : updates) {
                 s = update;
-                log.debug("Executing SQL-statement: " + update);
+                log.debug("Executing SQL-statement: {}", update);
                 st = prepareStatement(connection, update);
                 st.executeUpdate();
                 st.close();
             }
             connection.setAutoCommit(true);
-            log.debug("Updated database using updates '"
-                    + StringUtils.conjoin(";", updates) + "'.");
+            if (log.isDebugEnabled()) {
+                log.debug("Updated database using updates '{}'.", StringUtils.conjoin(";", updates));
+            }
         } catch (SQLException e) {
-            String msg = "SQL error updating database with sql: " + s + "\n"
-                         + ExceptionUtils.getSQLExceptionCause(e);
+            String msg = "SQL error updating database with sql: " + s + "\n" + ExceptionUtils.getSQLExceptionCause(e);
             log.warn(msg, e);
             throw new IOFailure(msg, e);
         } finally {
-            rollbackIfNeeded(connection, "updating table with SQL: ",
-                    StringUtils.conjoin(";", updates) + "'.");
+            rollbackIfNeeded(connection, "updating table with SQL: ", StringUtils.conjoin(";", updates) + "'.");
         }
     }
     
@@ -1062,9 +992,9 @@ public final class DBUtils {
             try {
                 s.close();
             } catch (SQLException e) {
-                log.warn("Error closing SQL statement " + s + "\n"
-                         + ExceptionUtils.getSQLExceptionCause(e), e);
+                log.warn("Error closing SQL statement {}\n{}", s, ExceptionUtils.getSQLExceptionCause(e), e);
             }
         }
     }
+
 }

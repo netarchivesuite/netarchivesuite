@@ -24,9 +24,12 @@ package dk.netarkivet.common.distribute.indexserver;
 
 import java.util.Set;
 
-/** An interface to a cache of data for jobs. */
+/**
+ * An interface to a cache of data for jobs.
+ */
 public interface JobIndexCache {
-    /** Get an index for the given list of job IDs.
+
+	/** Get an index for the given list of job IDs.
      * The resulting file contains a suitably sorted list.
      * This method should always be safe for asynchronous calling.
      * This method may use a cached version of the file.
@@ -45,4 +48,5 @@ public interface JobIndexCache {
      * @param harvestId Harvestdefinition associated with this set of jobs
      */
     void requestIndex(Set<Long> jobSet, Long harvestId);
+
 }

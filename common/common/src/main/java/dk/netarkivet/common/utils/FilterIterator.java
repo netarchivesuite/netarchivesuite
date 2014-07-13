@@ -34,9 +34,9 @@ import java.util.NoSuchElementException;
  * @param <T> Type of Iterator
  * @param <S> Type of objects returned by the iterator.
  */
-
 public abstract class FilterIterator<T, S> implements Iterator<S> {
-    private S objectcache;
+
+	private S objectcache;
 
     private final Iterator<T> iter;
 
@@ -87,7 +87,6 @@ public abstract class FilterIterator<T, S> implements Iterator<S> {
         }
 
         throw new NoSuchElementException("No more accepted elements");
-
     }
 
     /**
@@ -107,7 +106,7 @@ public abstract class FilterIterator<T, S> implements Iterator<S> {
      *              method.
      */
     public void remove() {
-        throw new UnsupportedOperationException(
-                "Cannot remove from this iterator");
+        throw new UnsupportedOperationException("Cannot remove from this iterator");
     }
+
 }

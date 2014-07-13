@@ -32,16 +32,14 @@ import org.archive.net.UURI;
  * Pending fix of bug in Heritrix. The bug has been reported, and
  * has number 616: http://webteam.archive.org/jira/browse/HER-616 
  */
-
 @SuppressWarnings({ "serial"})
 public class FixedUURI extends UURI {
-    protected FixedUURI() {
-        super();
 
+	protected FixedUURI() {
+        super();
     }
 
-    protected FixedUURI(String string, boolean b, String string1)
-            throws URIException {
+    protected FixedUURI(String string, boolean b, String string1) throws URIException {
         super(string, b, string1);
     }
 
@@ -65,4 +63,5 @@ public class FixedUURI extends UURI {
         }
         return super.getReferencedHost();
     }
+
 }

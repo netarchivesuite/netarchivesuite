@@ -41,7 +41,8 @@ import dk.netarkivet.common.exceptions.IllegalState;
  * Calculates MD5 or SHA1 checksums on files using the built-in Java methods.
  */
 public final class ChecksumCalculator {
-    /** Defines the MD5 checksum algorithm */
+
+	/** Defines the MD5 checksum algorithm */
     public static final String MD5 = "MD5";
     /** Defines the SHA1 checksum algorithm */
     public static final String SHA1 = "SHA1";
@@ -64,8 +65,7 @@ public final class ChecksumCalculator {
                 IOUtils.closeQuietly(fileInputStream);
             }
         } catch (FileNotFoundException e) {
-            throw new IOFailure("Could not read file '"
-                                + src.getAbsolutePath() + "'", e);
+            throw new IOFailure("Could not read file '" + src.getAbsolutePath() + "'", e);
         }
     }
 
@@ -87,8 +87,7 @@ public final class ChecksumCalculator {
                 IOUtils.closeQuietly(fileInputStream);
             }
         } catch (FileNotFoundException e) {
-            throw new IOFailure("Could not read file '"
-                                + src.getAbsolutePath() + "'", e);
+            throw new IOFailure("Could not read file '" + src.getAbsolutePath() + "'", e);
         }
     }
 
@@ -140,8 +139,7 @@ public final class ChecksumCalculator {
      * @param algorithm digest algorithm to use
      * @return The calculated digest as a string.
      */
-    private static String calculateDigest(final InputStream instream,
-                                          final String algorithm) {
+    private static String calculateDigest(final InputStream instream, final String algorithm) {
         final byte[] buffer = new byte[Constants.IO_BUFFER_SIZE];
         final MessageDigest messageDigest = getMessageDigest(algorithm);
         messageDigest.reset();
@@ -151,15 +149,13 @@ public final class ChecksumCalculator {
                 messageDigest.update(buffer, 0, bytesRead);
             }
         } catch (IOException e) {
-            throw new IOFailure("Error making a '" + algorithm
-                                + "' digest on the inputstream", e);
+            throw new IOFailure("Error making a '" + algorithm + "' digest on the inputstream", e);
         }
         return toHex(messageDigest.digest());
     }
 
     private static final char[] hexdigit = {
-            '0', '1', '2', '3', '4', '5', '6', '7',
-            '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
+            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
     };
 
     /**
@@ -188,8 +184,7 @@ public final class ChecksumCalculator {
         try {
             messageDigest = MessageDigest.getInstance(algorithm);
         } catch (NoSuchAlgorithmException e) {
-            throw new IllegalState(
-                    "The '" + algorithm + "' algorithm is not available", e);
+            throw new IllegalState("The '" + algorithm + "' algorithm is not available", e);
         }
         return messageDigest;
     }

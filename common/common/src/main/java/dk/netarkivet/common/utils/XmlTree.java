@@ -42,9 +42,9 @@ import dk.netarkivet.common.exceptions.IllegalState;
  */
 @SuppressWarnings({ "unchecked"})
 public class XmlTree<T> implements StringTree<T> {
-    /** This matches string values that are valid for identifying a field. */
-    private static final Pattern LEGAL_FIELD_NAME
-            = Pattern.compile("[a-zA-Z0-9.-]*");
+
+	/** This matches string values that are valid for identifying a field. */
+    private static final Pattern LEGAL_FIELD_NAME = Pattern.compile("[a-zA-Z0-9.-]*");
 
     /**
      * This interface defines how the value of an xml leaf is parsed to get a
@@ -58,8 +58,7 @@ public class XmlTree<T> implements StringTree<T> {
      * A value parser that simply converts an XML node to a string, by trimming
      * the text contents.
      */
-    private static final ValueParser<String> TRIMMING_STRING_PARSER
-            = new ValueParser<String>() {
+    private static final ValueParser<String> TRIMMING_STRING_PARSER = new ValueParser<String>() {
         public String parse(String s) {
             return s.trim();
         }
@@ -93,8 +92,7 @@ public class XmlTree<T> implements StringTree<T> {
             element = (Element) n;
             root = null;
         } else {
-            throw new ArgumentNotValid("Invalid XML node type '"
-                                       + n.getNodeTypeName() + "'");
+            throw new ArgumentNotValid("Invalid XML node type '" + n.getNodeTypeName() + "'");
         }
         this.parser = parser;
     }
@@ -149,9 +147,7 @@ public class XmlTree<T> implements StringTree<T> {
     public T getValue() {
         if (!isLeaf()) {
             throw new IllegalState("Node is not text, but "
-                                       + (element != null?
-                                          element.getNodeTypeName():
-                                          root.getNodeTypeName()));
+            		+ (element != null ? element.getNodeTypeName() : root.getNodeTypeName()));
         }
         return parseLeafNode(element);
     }
@@ -192,8 +188,7 @@ public class XmlTree<T> implements StringTree<T> {
             throw new IllegalState("Cannot find subtrees in a leaf");
         }
         List<Element> nodeList = selectMultipleNodes(name);
-        List<StringTree<T>> resultList
-                = new ArrayList<StringTree<T>>(nodeList.size());
+        List<StringTree<T>> resultList = new ArrayList<StringTree<T>>(nodeList.size());
         for (Element n : nodeList) {
             resultList.add(new XmlTree<T>(n, parser));
         }
@@ -210,8 +205,7 @@ public class XmlTree<T> implements StringTree<T> {
         if (isLeaf()) {
             throw new IllegalState("Cannot find subtrees in a leaf");
         }
-        Map<String, List<StringTree<T>>> children =
-                new HashMap<String, List<StringTree<T>>>();
+        Map<String, List<StringTree<T>>> children = new HashMap<String, List<StringTree<T>>>();
         List<Element> nodeList = getChildNodes();
         if (nodeList != null) {
             for (Element n : nodeList) {
@@ -255,14 +249,12 @@ public class XmlTree<T> implements StringTree<T> {
         if (isLeaf()) {
             throw new IllegalState("Cannot find subtrees in a leaf");
         }
-        Map<String, List<T>> children =
-                new HashMap<String, List<T>>();
+        Map<String, List<T>> children = new HashMap<String, List<T>>();
         List<Element> nodeList = getChildNodes();
         if (nodeList != null) {
             for (Element n : nodeList) {
                 if (!elementIsLeaf(n)) {
-                    throw new IllegalState("Child " + n.getName()
-                                           + " is not a leaf");
+                    throw new IllegalState("Child " + n.getName() + " is not a leaf");
                 }
                 List<T> childList = children.get(n.getName());
                 if (childList == null) {
@@ -305,8 +297,7 @@ public class XmlTree<T> implements StringTree<T> {
     private List<Element> selectMultipleNodes(String name) {
         ArgumentNotValid.checkNotNullOrEmpty(name, "String name");
         ArgumentNotValid.checkTrue(LEGAL_FIELD_NAME.matcher(name).matches(),
-                                   "Name must contain only alphanumeric, dash"
-                                   + " and period");
+        		"Name must contain only alphanumeric, dash and period");
         // parts contains the dotted path, split into individual components
         String[] parts = name.split("\\.");
         // elements contains the root elements to find children from.
@@ -315,12 +306,12 @@ public class XmlTree<T> implements StringTree<T> {
         if (root != null) {
             if (parts[i].equals(root.getRootElement().getName())) {
                 elements.add(root.getRootElement());
-                i++;
+                ++i;
             } // We allow zero-element results here, so a no-match is okay.
         } else {
             elements.add(element);
         }
-        for (; i < parts.length; i++) {
+        for (; i < parts.length; ++i) {
             // newElements contains the children matching the name from the
             // dotted path
             List<Element> newElements = new ArrayList<Element>();
@@ -355,8 +346,7 @@ public class XmlTree<T> implements StringTree<T> {
             throw new IllegalState("No subtree with name '" + name + "'");
         }
         if (elements.size() > 1) {
-            throw new IllegalState("Multiple subtrees with name '"
-                                   + name + "'");
+            throw new IllegalState("Multiple subtrees with name '" + name + "'");
         }
         return elements.get(0);
     }
@@ -404,18 +394,15 @@ public class XmlTree<T> implements StringTree<T> {
      * @throws IllegalState if the map does not contain exactly one value for
      * each key.
      */
-    private static <K, V> Map<K, V> convertMultimapToMap(
-            Map<K, List<V>> map) {
-        Map<K, V> result =
-                new HashMap<K, V>();
-        for (Map.Entry<K, List<V>> entry
-                : map.entrySet()) {
+    private static <K, V> Map<K, V> convertMultimapToMap(Map<K, List<V>> map) {
+        Map<K, V> result = new HashMap<K, V>();
+        for (Map.Entry<K, List<V>> entry : map.entrySet()) {
             if (entry.getValue().size() != 1) {
-                throw new IllegalState("More than one value for key '"
-                                           + entry.getKey() + "' found");
+                throw new IllegalState("More than one value for key '" + entry.getKey() + "' found");
             }
             result.put(entry.getKey(), entry.getValue().get(0));
         }
         return result;
     }
+
 }

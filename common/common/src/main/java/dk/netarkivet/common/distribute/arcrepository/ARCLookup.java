@@ -23,14 +23,13 @@
 
 package dk.netarkivet.common.distribute.arcrepository;
 
+import is.hi.bok.deduplicator.DigestIndexer;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
-import is.hi.bok.deduplicator.DigestIndexer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.ConstantScoreQuery;
@@ -40,6 +39,8 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TermRangeFilter;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.BytesRef;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -52,9 +53,12 @@ import dk.netarkivet.common.utils.arc.ARCKey;
  * indexes to find offsets.  The input takes the form of a directory
  * containing a Lucene index.
  */
-
 public class ARCLookup {
-    /** The ArcRepositoryClient we use to retrieve records. */
+
+    /** Logger for this class. */
+    private static final Logger log = LoggerFactory.getLogger(ARCLookup.class);
+
+	/** The ArcRepositoryClient we use to retrieve records. */
     private final ViewerArcRepositoryClient arcRepositoryClient;
 
     /** The currently active lucene search engine. */
@@ -62,53 +66,44 @@ public class ARCLookup {
     /** The Indexreader used by the index-searcher. */
     private IndexReader luceneReader;
     
-    /** Logger for this class. */
-    private final Log log = LogFactory.getLog(getClass().getName());
-
-    /** If the value is true, we will try to lookup w/ ftp instead of http, 
-     * if we don't get a hit in the index. */
+    /** If the value is true, we will try to lookup w/ ftp instead of http, if we don't get a hit in the index. */
     private boolean tryToLookupUriAsFtp;
 
-    /** Create a new ARCLookup object.
-     *
+    /**
+     * Create a new ARCLookup object.
      * @param arcRepositoryClient The interface to the ArcRepository
      * @throws ArgumentNotValid if arcRepositoryClient is null.
      */
     public ARCLookup(ViewerArcRepositoryClient arcRepositoryClient) {
-        ArgumentNotValid.checkNotNull(
-                arcRepositoryClient, "ArcRepositoryClient arcRepositoryClient");
+        ArgumentNotValid.checkNotNull(arcRepositoryClient, "ArcRepositoryClient arcRepositoryClient");
         this.arcRepositoryClient = arcRepositoryClient;
         luceneSearcher = null;
     }
     
     /**
-     * 
+     * TODO javadoc
      * @param searchForFtpUri if true, we replace the http schema with ftp and 
      * try again, if unsuccessful with http as the schema
      */
     public void setTryToLookupUriAsFtp(boolean searchForFtpUri) {
         this.tryToLookupUriAsFtp = searchForFtpUri;
     }
-    
 
-    /** This method sets the current Lucene index this object works
+    /**
+     * This method sets the current Lucene index this object works
      * on, replacing and closing the current index if one is already set.
-     *
      * @param indexDir The new index, a directory containing Lucene files.
      * @throws ArgumentNotValid If argument is null
      */
     public void setIndex(File indexDir) {
         ArgumentNotValid.checkNotNull(indexDir, "File indexDir");
-        ArgumentNotValid.checkTrue(
-                indexDir.isDirectory(),
-                "indexDir '" + indexDir + "' should be a directory");
+        ArgumentNotValid.checkTrue(indexDir.isDirectory(), "indexDir '" + indexDir + "' should be a directory");
         if (luceneSearcher != null) {
             try {
                 // Existing lucene indices must be shut down
                 luceneReader.close();
             } catch (IOException e) {
-                throw new IOFailure("Unable to close index " + luceneSearcher,
-                        e);
+                throw new IOFailure("Unable to close index " + luceneSearcher, e);
             } finally {
                 // Must be careful to shut down only once.
                 luceneSearcher = null;
@@ -124,7 +119,8 @@ public class ARCLookup {
         }
     }
 
-    /** Look up a given URI and return the contents as an InputStream.
+    /**
+     * Look up a given URI and return the contents as an InputStream.
      * The uri is first checked using url-decoding (e.g. "," in the argument
      * is converted to "%2C"). If this returns no match, the method then
      * searches for a non-url-decoded match. If neither returns a match
@@ -146,22 +142,18 @@ public class ARCLookup {
         ArgumentNotValid.checkNotNull(uri, "uri");
         boolean containsHeader = true;
         // the URI.getSchemeSpecificPart() carries out the url-decoding
-        ARCKey key = luceneLookup(uri.getScheme() + ":" 
-                + uri.getSchemeSpecificPart());
+        ARCKey key = luceneLookup(uri.getScheme() + ":" + uri.getSchemeSpecificPart());
         if (key == null) {
             // the URI.getRawSchemeSpecificPart() returns the uri in non-decoded form
-            key = luceneLookup(uri.getScheme() + ":" 
-                    + uri.getRawSchemeSpecificPart());
+            key = luceneLookup(uri.getScheme() + ":" + uri.getRawSchemeSpecificPart());
         }
         
         if (key == null && tryToLookupUriAsFtp) {
-            log.debug("Url not found with the schema '" + uri.getScheme()
-                    + ". Now trying with 'ftp' as the schema");
+            log.debug("Url not found with the schema '{}'. Now trying with 'ftp' as the schema", uri.getScheme());
             final String ftpSchema = "ftp";
             key = luceneLookup(ftpSchema + ":" + uri.getSchemeSpecificPart());
             if (key == null) {
-                key = luceneLookup(ftpSchema + ":"
-                        + uri.getRawSchemeSpecificPart());
+                key = luceneLookup(ftpSchema + ":" + uri.getRawSchemeSpecificPart());
                 if (key != null) {
                     // Remember, that the found ftp-records don't have any HTTP
                     // Header
@@ -177,15 +169,11 @@ public class ARCLookup {
         if (key == null) {
             return null; // key not found
         } else {
-            final BitarchiveRecord bitarchiveRecord =
-                    arcRepositoryClient.get(key.getFile().getName(), key.getOffset());
+            final BitarchiveRecord bitarchiveRecord = arcRepositoryClient.get(key.getFile().getName(), key.getOffset());
             if (bitarchiveRecord == null) {
-                String message = "ARC file '" + key.getFile().getName()
-                        + "' mentioned in index file was not found by"
-                        + " arc repository. This may mean we have a"
-                        + " timeout, or that the index is wrong; or"
-                        + " it may mean we have lost a record in"
-                        + " the bitarchives.";
+                String message = "ARC file '" + key.getFile().getName() + "' mentioned in index file was not found by"
+                        + " arc repository. This may mean we have a timeout, or that the index is wrong; or"
+                        + " it may mean we have lost a record in the bitarchives.";
                 log.debug(message);
                 throw new IOFailure(message);
             }
@@ -193,8 +181,8 @@ public class ARCLookup {
         }
     }
 
-    /** Looks up a URI in our lucene index and extracts a key.
-     *
+    /**
+     * Looks up a URI in our lucene index and extracts a key.
      * @param uri A URI to look for.
      * @return The file and offset where that URI can be found, or null if it
      * doesn't exist.
@@ -203,8 +191,7 @@ public class ARCLookup {
      */
     private ARCKey luceneLookup(String uri) {
         if (luceneSearcher == null) {
-            throw new IOFailure("No index set while searching for '"
-                    + uri + "'");
+            throw new IOFailure("No index set while searching for '" + uri + "'");
         }
         return luceneLookUp(uri);
     }
@@ -227,8 +214,7 @@ public class ARCLookup {
         //        DigestIndexer.FIELD_URL, uri, uri, true, true));
         BytesRef uriRef = new BytesRef(uri.getBytes()); // Should we decide which charset?
         
-        Query query = new ConstantScoreQuery(new TermRangeFilter(
-                DigestIndexer.FIELD_URL, uriRef, uriRef, true, true));
+        Query query = new ConstantScoreQuery(new TermRangeFilter(DigestIndexer.FIELD_URL, uriRef, uriRef, true, true));
         
         try {
             AllDocsCollector allResultsCollector = new AllDocsCollector();
@@ -236,7 +222,7 @@ public class ARCLookup {
             Document doc = null;
             List<ScoreDoc> hits = allResultsCollector.getHits();
             if (hits != null) {
-                log.debug("Found " + hits.size() + " hits for uri: " +  uri);
+                log.debug("Found {} hits for uri: {}", hits.size(), uri);
                 int i = 0;
                 for (ScoreDoc hit: hits) {
                     int docId = hit.doc;
@@ -244,18 +230,15 @@ public class ARCLookup {
                     String origin = doc.get(DigestIndexer.FIELD_ORIGIN);
                     // Here is where we will handle multiple hits in the future
                     if (origin == null) {
-                        log.debug("No origin for URL '" + uri
-                                + "' hit " + i++);
+                        log.debug("No origin for URL '{}' hit {}", uri, i++);
                         continue;
                     }
                     String[] originParts = origin.split(",");
                     if (originParts.length != 2) {
-                        throw new IllegalState("Bad origin for URL '"
-                                + uri + "': '" + origin + "'");
+                        throw new IllegalState("Bad origin for URL '" + uri + "': '" + origin + "'");
                     }
-                    log.debug("Found document with origin: " + origin);
-                    return new ARCKey(originParts[0],
-                            Long.parseLong(originParts[1]));
+                    log.debug("Found document with origin: {}", origin);
+                    return new ARCKey(originParts[0], Long.parseLong(originParts[1]));
                 }
             }
         } catch (IOException e) {
@@ -263,6 +246,5 @@ public class ARCLookup {
         }
         return null;
     }
+
 }
-
-

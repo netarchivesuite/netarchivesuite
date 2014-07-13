@@ -41,9 +41,9 @@ import java.util.zip.GZIPInputStream;
  *
  * @see GZIPInputStream
  */
-
 public class LargeFileGZIPInputStream extends GZIPInputStream {
-    /**
+
+	/**
      * Creates a new input stream with a default buffer size.
      * @param in the input stream
      * @throws IOException if an I/O error has occurred.
@@ -51,8 +51,7 @@ public class LargeFileGZIPInputStream extends GZIPInputStream {
      *                     but this is done here to closely mimic
      *                     GZIPInputStream
      */
-    public LargeFileGZIPInputStream(InputStream in)
-            throws IOException {
+    public LargeFileGZIPInputStream(InputStream in) throws IOException {
         super(in);
     }
 
@@ -97,8 +96,8 @@ public class LargeFileGZIPInputStream extends GZIPInputStream {
      * @return Whether it is one caused by the bug we are working around
      */
     private boolean exceptionCausedByJavaException(IOException e) {
-        return (e.getMessage() != null
-                && e.getMessage().equals("Corrupt GZIP trailer")
-                && inf.getBytesWritten() >= Integer.MAX_VALUE);
+        return (e.getMessage() != null && e.getMessage().equals("Corrupt GZIP trailer")
+        		&& inf.getBytesWritten() >= Integer.MAX_VALUE);
     }
+
 }

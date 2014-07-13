@@ -26,11 +26,13 @@ import java.io.File;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
-/** An immutable pair if an index and the set this is an index for. 
+/**
+ * An immutable pair if an index and the set this is an index for. 
  * @param <I> The type of set, this is an index for.
  */
 public class Index<I> {
-    /** The file containing the index over the set. */
+
+	/** The file containing the index over the set. */
     private final File indexFile;
     /** The set this is an index for. */
     private final I indexSet;
@@ -49,19 +51,20 @@ public class Index<I> {
         this.indexSet = indexSet;
     }
 
-    /** Get the index file.
-     *
+    /**
+     * Get the index file.
      * @return The index file.
      */
     public File getIndexFile() {
         return indexFile;
     }
 
-    /** Get the set this is an index for.
-     *
+    /**
+     * Get the set this is an index for.
      * @return The set this is an index for.
      */
     public I getIndexSet() {
         return indexSet;
     }
+
 }

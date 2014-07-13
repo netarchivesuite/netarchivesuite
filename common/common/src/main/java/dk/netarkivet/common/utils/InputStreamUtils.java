@@ -46,10 +46,10 @@ public class InputStreamUtils {
         int len = rawdata.length;
         if (len > 0) {
             if (rawdata[len - 1] == '\n') {
-                len--;
+            	--len;
                 if (len > 0) {
                     if (rawdata[len - 1] == '\r') {
-                        len--;
+                    	--len;
                     }
                 }
             }
