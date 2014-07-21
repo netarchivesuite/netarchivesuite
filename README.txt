@@ -25,4 +25,10 @@ disable all validation.  [Ok] then rebuilds the project without errors.
 Eclipse configuration files moved to build-tools/src/main/resources so
 maven-java-formatter-plugin can run from the command line.
 
-/tra 2014-06-27
+Eclipse:
+=======
+
+Use File->Import->General->Preferences to import eclipse-xml-settings.epf
+Use Preferences->Java->Code Style->Formatter->[Import] to import eclipse-formatter-settings.xml
+
+/tra 2014-07-21
