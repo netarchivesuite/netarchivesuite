@@ -30,7 +30,11 @@ import java.util.List;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
 import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
 import dk.netarkivet.archive.arcrepositoryadmin.UpdateableAdminData;
@@ -48,7 +52,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
  * The logging of webarchive operations is tested.
  */
 @SuppressWarnings({"deprecation"})
-public class ArcRepositoryTesterLog extends TestCase {
+public class ArcRepositoryTesterLog {
     protected final Logger log = Logger.getLogger(getClass().getName());
 
     private UseTestRemoteFile rf = new UseTestRemoteFile();
@@ -79,11 +83,8 @@ public class ArcRepositoryTesterLog extends TestCase {
      */
     ArcRepository arcRepos;
 
-    public ArcRepositoryTesterLog(String sTestName) {
-        super(sTestName);
-    }
-
-    protected void setUp() throws IOException {
+    @Before
+    public void setUp() throws IOException {
         ServerSetUp.setUp();
         arcRepos = ServerSetUp.getArcRepository();
         FileInputStream fis = new FileInputStream(
@@ -95,7 +96,8 @@ public class ArcRepositoryTesterLog extends TestCase {
         rf.setUp();
     }
 
-    protected void tearDown() {
+    @After
+    public void tearDown() {
         rf.tearDown();
         ServerSetUp.tearDown();
     }
@@ -103,6 +105,7 @@ public class ArcRepositoryTesterLog extends TestCase {
     /**
      * Test logging of store command.
      */
+    @Test
     public void testLogStore() throws Exception {
         String fileName = FILES.get(0).toString();
         //store the file;

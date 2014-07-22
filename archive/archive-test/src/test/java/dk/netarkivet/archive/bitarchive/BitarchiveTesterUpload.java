@@ -29,6 +29,12 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveServer;
 import dk.netarkivet.common.distribute.RemoteFile;
@@ -63,11 +69,6 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
                           "Upload2.ARC",
                           "Upload3.ARC");
 
-    /** Construct a new tester object. */
-    public BitarchiveTesterUpload(final String sTestName) {
-        super(sTestName);
-    }
-
     protected File getOriginalsDir() {
         return ORIGINALS_DIR;
     }
@@ -75,6 +76,7 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
     /** 
      * At start of test, set up an archive we can run against.
      */
+    @Before
     public void setUp() throws Exception {
         super.setUp();
         server = BitarchiveServer.getInstance();
@@ -83,6 +85,7 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
     /**
      * At end of test, remove any files we managed to upload.
      */
+    @After
     public void tearDown() throws Exception {
         if (server != null) {
             server.close();
@@ -94,6 +97,7 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
     /** Test that giving null for a filename gives the right exception.
      *
      */
+    @Test
     public void testUploadNoFile() {
         try {
             archive.upload(null, "NoFile");
@@ -108,6 +112,7 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
      * Uploading a file that does not exist should throw
      * an ArgumentNotValid exception.
      */
+    @Test
     public void testUploadMissingFile() {
         try {
             archive.upload(RemoteFileFactory.getInstance(
@@ -122,6 +127,7 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
     /**
      * Uploading a file that has errors should throw an IOFailure exception.
      */
+    @Test
     public void testUploadBadFile() {
         try {
             final RemoteFile arcfile = RemoteFileFactory
@@ -138,6 +144,7 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
     /** Test that uploading a directory throws an exception.
      *
      */
+    @Test
     public void testUploadNoDir() {
         try {
             archive.upload(
@@ -154,6 +161,7 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
      * Uploading a file that already exists in the archive should throw a
      * FileAlreadyExists exception.
      */
+    @Test
     public void testUploadAlreadyUploaded() {
         RemoteFile rf = new TestRemoteFile(new File(
                 ORIGINALS_DIR, UPLOADED_FILES.get(0)),
@@ -172,6 +180,7 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
      * Uploading a file that exists (valid reference) and that does not exist
      * in the archive.
      */
+    @Test
     public void testUploadSuccess() {
         archive.upload(new TestRemoteFile(new File(ORIGINALS_DIR, 
                 UPLOADED_FILES.get(1)), false, false, false),
@@ -183,6 +192,7 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
      * and that data are part of the archive after upload.
      * @throws IOException If unable to close FileOutputStream.
      */
+    @Test
     public void testUploadDataInArchive() throws IOException {
 
         String nameForFileToUpload = UPLOADED_FILES.get(2);
@@ -229,6 +239,7 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
     /**
      * Verify that we upload into specified directory.
      */
+    @Test
     public void testUploadUsesDir() {
         final File dir1 = new File(TestInfo.WORKING_DIR, "dir1");
         setupBitarchiveWithDirs(new String[] {
@@ -248,5 +259,4 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
         archive.close();
         archive = Bitarchive.getInstance();
     }
-
 }

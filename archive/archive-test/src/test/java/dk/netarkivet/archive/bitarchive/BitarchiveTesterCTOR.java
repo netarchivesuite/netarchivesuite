@@ -27,7 +27,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.logging.LogManager;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
@@ -43,7 +47,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
  * The CTOR method is tested
  */
 @SuppressWarnings({ "unused"})
-public class BitarchiveTesterCTOR extends TestCase {
+public class BitarchiveTesterCTOR {
     private static File PATH_TO_TEST =
             new File("tests/dk/netarkivet/archive/bitarchive/data/ctor");
     private static File NEW_ARCHIVE_DIR = new File(PATH_TO_TEST, "new");
@@ -62,10 +66,7 @@ public class BitarchiveTesterCTOR extends TestCase {
     private static File LOG_FILE = new File("tests/testlogs", "netarkivtest.log");
     private static final String CREDENTIALS = "42";
 
-    public BitarchiveTesterCTOR(String sTestName) {
-        super(sTestName);
-    }
-
+    @Before
     public void setUp() {
         rs.setUp();
         try {
@@ -87,6 +88,7 @@ public class BitarchiveTesterCTOR extends TestCase {
         }
     }
 
+    @After
     public void tearDown() {
         FileUtils.removeRecursively(WORKING_ARCHIVE_DIR);
         FileUtils.removeRecursively(NEW_ARCHIVE_DIR);
@@ -96,6 +98,7 @@ public class BitarchiveTesterCTOR extends TestCase {
     /**
      * Create bitarchive from scratch, no admin data and log files exists
      */
+    @Test
     public void testFromScratch() {
         assertFalse("No bitarchive should exist before creating it", NEW_ARCHIVE_DIR.exists());
         // Create new test archive and close it
@@ -111,6 +114,7 @@ public class BitarchiveTesterCTOR extends TestCase {
      * Create bitarchive with access denied to location of admin data
      * verify that exceptions are thrown
      */
+    @Test
     public void testAccessDenied() {
         // Make sure archive exists
         assertTrue("Inaccessible archive dir must exist",

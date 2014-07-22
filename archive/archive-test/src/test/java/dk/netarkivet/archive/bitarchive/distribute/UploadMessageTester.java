@@ -22,7 +22,11 @@
  */
 package dk.netarkivet.archive.bitarchive.distribute;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
@@ -30,30 +34,25 @@ import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
-public class UploadMessageTester extends TestCase {
+public class UploadMessageTester {
+
     ReloadSettings rs = new ReloadSettings();
 
-    public UploadMessageTester(String sTestName) {
-        super(sTestName);
-    }
-
+    @Before
     public void setUp() {
         rs.setUp();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
     }
 
+    @After
     public void tearDown() {
         rs.tearDown();
     }
 
+    @Test(expected = ArgumentNotValid.class)
     public void testInvalidArguments() {
-        try {
-            new UploadMessage(Channels.getTheBamon(),
-                    Channels.getTheRepos(),
-                    RemoteFileFactory.getInstance(null, true, false, true));
-            fail("Should throw ArgumentNotValid on null file");
-        } catch (ArgumentNotValid e) {
-            // expected case
-        }
+        new UploadMessage(Channels.getTheBamon(), Channels.getTheRepos(), //
+                RemoteFileFactory.getInstance(null, true, false, true));
+        fail("Should throw ArgumentNotValid on null file");
     }
 }

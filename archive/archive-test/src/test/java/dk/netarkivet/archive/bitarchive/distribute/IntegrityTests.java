@@ -33,7 +33,12 @@ import java.util.List;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+
 import org.apache.commons.net.ftp.FTPClient;
 
 import dk.netarkivet.archive.ArchiveSettings;
@@ -63,7 +68,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
  * As a number of tests only succeed if both the client and server
  * both operate correctly, both are tested together.
  */
-public class IntegrityTests extends TestCase {
+public class IntegrityTests {
     private static final String ARC_FILE_NAME = "Upload5.ARC";
     private static final File TEST_DIR = new File("tests/dk/netarkivet/archive/bitarchive/distribute/data/");
     private static final File ORIGINALS_DIR = new File(TEST_DIR, "originals");
@@ -98,16 +103,7 @@ public class IntegrityTests extends TestCase {
     BitarchiveMonitorServer bam;
     ReloadSettings rs = new ReloadSettings();
 
-    /**
-     * @param sTestName
-     */
-    public IntegrityTests(String sTestName) {
-        super(sTestName);
-    }
-
-    /**
-     * @see junit.framework.TestCase#setUp()
-     */
+    @Before
     public void setUp() {
         rs.setUp();
         //new UseTestRemoteFile().setUp();
@@ -187,6 +183,7 @@ public class IntegrityTests extends TestCase {
     /**
      * After test is done, remove the "archive".
      */
+    @After
     public void tearDown() {
 
         FileUtils.removeRecursively(WORKING);
@@ -231,6 +228,7 @@ public class IntegrityTests extends TestCase {
      * Test that monitor can receive and aggregate data from more than one
      * BitarchiveServer and aggregate the data and upload it via FTPRemoteFile.
      */
+    @Test
     public void testBatchEndedMessageAggregation()
              throws InterruptedException, IOException {
          Settings.set(CommonSettings.REMOTE_FILE_CLASS, FTPRemoteFile.class.getName());
@@ -338,6 +336,7 @@ public class IntegrityTests extends TestCase {
     /**
      * Verify that multiple messages sent almost simultaneously works.
      */
+    @Test
     public void testLotsOfMessages() {
         MessageTestHandler handler = new MessageTestHandler();
         JMSConnectionFactory.getInstance().setListener(Channels.getTheRepos(), handler);
@@ -462,6 +461,7 @@ public class IntegrityTests extends TestCase {
     /**
      * Test construction of UploadMessage.
      */
+    @Test
     public void testConstruction() {
         ChannelID to = Channels.getAllBa();
         ChannelID reply = Channels.getThisReposClient();

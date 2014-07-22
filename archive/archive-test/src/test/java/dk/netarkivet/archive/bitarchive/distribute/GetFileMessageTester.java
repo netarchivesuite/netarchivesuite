@@ -26,7 +26,11 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -42,12 +46,13 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
  * Tests for GetFileMessage
  *
  */
-public class GetFileMessageTester extends TestCase {
+public class GetFileMessageTester {
     UseTestRemoteFile utrf = new UseTestRemoteFile();
 
     private static final File WORKING = TestInfo.UPLOADMESSAGE_TEMP_DIR;
     ReloadSettings rs = new ReloadSettings();
 
+    @Before
     protected void setUp() throws IOException {
         rs.setUp();
         utrf.setUp();
@@ -56,6 +61,7 @@ public class GetFileMessageTester extends TestCase {
                 WORKING);
     }
 
+    @After
     protected void tearDown() {
         FileUtils.removeRecursively(WORKING);
         utrf.tearDown();
@@ -63,6 +69,7 @@ public class GetFileMessageTester extends TestCase {
     }
 
 
+    @Test
     public void testGetData() throws IOException, NoSuchFieldException,
             IllegalAccessException {
         File origFile = new File(WORKING, "NetarchiveSuite-store1.arc");

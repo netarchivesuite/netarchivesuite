@@ -39,8 +39,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
+import static org.junit.Assert.*;
 import org.archive.io.arc.ARCConstants;
 import org.archive.io.arc.ARCRecord;
 import org.archive.io.arc.ARCRecordMetaData;
@@ -89,10 +92,10 @@ import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
-/**
- */
+// FIXME:  Rework raw threads in tests into something controllable by an executor.
+
 @SuppressWarnings({ "rawtypes", "unused", "serial" })
-public class JMSArcRepositoryClientTester extends TestCase {
+public class JMSArcRepositoryClientTester {
 
     private static final File BASEDIR =
             new File(
@@ -121,6 +124,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
     UseTestRemoteFile utrf = new UseTestRemoteFile();
     ReloadSettings rs = new ReloadSettings();
 
+    @Before
     protected void setUp() throws Exception {
         rs.setUp();
         utrf.setUp();
@@ -134,6 +138,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
 
     }
 
+    @After
     protected void tearDown() throws Exception {
         if (arc != null) {
             try {
@@ -157,6 +162,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
     }
 
     /** Verify that the JMSArcRepositoryClient class has no public constructor. */
+    @Test
     public void testNoPublicConstructor() {
         Constructor[] ctors = JMSArcRepositoryClient.class.getConstructors();
         assertEquals("Found public constructors for JMSArcRepositoryClient.", 0,
@@ -167,6 +173,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
      * Tests the correct object is returned when getPreservationInstance is
      * called.
      */
+    @Test
     public void testGetPreservationInstance() {
         PreservationArcRepositoryClient arcrep
                 = ArcRepositoryClientFactory.getPreservationInstance();
@@ -176,6 +183,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
     }
 
     /** Tests the correct object is returned when getViewerInstance is called. */
+    @Test
     public void testGetViewerInstance() {
         assertTrue("Must return an instance of ViewerArcRepositoryClient",
                    (arcrepos
@@ -184,6 +192,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
     }
 
     /** Tests the correct object is returned when getHacoInstance is called. */
+    @Test
     public void testGetHacoInstance() {
         assertTrue("Must return an instance of HarvesterArcRepositoryClient",
                    ArcRepositoryClientFactory.getHarvesterInstance() instanceof
@@ -191,6 +200,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
     }
 
     /** Test get() methods arguments. */
+    @Test
     public void testGetArgumentsNotNull() {
         /**
          * Test if ArgumentNotValid is thrown if null
@@ -219,6 +229,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
      * This tests the get()-method returns a BitarchiveRecord via JMS. The reply
      * record should contain a string: <code>filename+" "+index</code>.
      */
+    @Test
     public void testGet() {
         DummyGetMessageReplyServer replyServer
                 = new DummyGetMessageReplyServer();
@@ -244,6 +255,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
      *
      * @throws IOException if arc throws one
      */
+    @Test
     public void testGetFile() throws IOException {
         DummyGetFileMessageReplyServer replyServer =
                 new DummyGetFileMessageReplyServer(ARCDIR);
@@ -301,6 +313,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
     }
 
     /** This tests the get()-method when it times out waiting for a reply. */
+    @Test
     public void testGetTimeout() {
 
         DummyGetMessageReplyServer replyServer
@@ -320,6 +333,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
      *
      * @throws IOException if we cant create new file
      */
+    @Test
     public void testStoreMessageNotOK() throws IOException {
         DummyStoreMessageReplyServer replyServer
                 = new DummyStoreMessageReplyServer();
@@ -348,6 +362,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
      *
      * @throws InterruptedException if ...
      */
+    @Test
     public void testStoreDelete() throws InterruptedException {
         // Set a listener on PRES
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR, "tests/commontempdir");
@@ -400,6 +415,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
     }
 
     /** Test batch() methods arguments. */
+    @Test
     public void testBatchArgumentsNotNull() {
         FileBatchJob batchJob = new FileBatchJob() {
             public void finish(OutputStream os) {
@@ -438,6 +454,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
         }
     }
 
+    @Test
 
     /** Test JMSArcRepositoryClient.batch is distributed. */
     public void testBatch() {
@@ -465,6 +482,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
      *
      * @throws IOException if creation of files fails
      */
+    @Test
     public void testStoreRetries() throws IOException {
         DummyStoreMessageReplyServer ar = new DummyStoreMessageReplyServer();
 
@@ -495,6 +513,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
                 new ArrayList<RemoteFile>(TestRemoteFile.remainingFiles()));
     }
 
+    @Test
     public void testStoreTimeouts() throws IOException, InterruptedException {
         //timeout after 1 millisecond
         //not - no listeners
@@ -536,6 +555,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
      * @throws NoSuchFieldException   if field doens't exists
      * @throws IllegalAccessException if access denied
      */
+    @Test
     public void testStoreException()
             throws NoSuchFieldException, IllegalAccessException {
         // Smashing the replyQ makes the inside of the store loop throw
@@ -571,6 +591,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
      * @throws IllegalAccessException if field doens't exists
      * @throws NoSuchFieldException   if access denied
      */
+    @Test
     public void testStoreFailed()
             throws NoSuchFieldException, IllegalAccessException {
         // Set Synchronizers request field to null to get an appropriately
@@ -589,6 +610,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
                 new ArrayList<RemoteFile>(TestRemoteFile.remainingFiles()));
     }
     
+    @Test
     public void testUpdateAdminData1() throws InterruptedException {
         JMSConnectionMockupMQ jmsCon = 
             (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
@@ -620,6 +642,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
                 adm.isChangeStoreState());
     }
     
+    @Test
     public void testUpdateAdminData2() throws InterruptedException {
         JMSConnectionMockupMQ jmsCon = 
             (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
@@ -654,6 +677,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
     /**
      * Check whether it handles a get all checksums call correctly.
      */
+    @Test
     public void testAllChecksums() throws InterruptedException, IOException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
         final File result = new File(WORKING, "all.checksum");
         result.createNewFile();
@@ -710,6 +734,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
     /**
      * Check whether it handles a get all filenames call correctly.
      */
+    @Test
     public void testAllFilenames() throws InterruptedException, IOException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
         final File result = new File(WORKING, "all.filename");
         result.createNewFile();
@@ -763,6 +788,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
                 expected, received);
     }
 
+    @Test
     public void testGetChecksum() throws InterruptedException, IOException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
         final File result = new File(WORKING, "get.checksum");
         result.createNewFile();
@@ -809,7 +835,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
         assertEquals("Unexpected checksum sent back", "checksum", res);
     }
 
-
+    @Test
     public void testCorrect() throws InterruptedException, IOException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
         final File result = new File(WORKING, "correct.file");
         result.createNewFile();
@@ -869,6 +895,8 @@ public class JMSArcRepositoryClientTester extends TestCase {
 
         assertEquals("Unexpected removed file content", expected, res);
     }
+
+    // FIXME: Rework these inner classes.
 
     private static class DummyBatchMessageReplyServer
             implements MessageListener {

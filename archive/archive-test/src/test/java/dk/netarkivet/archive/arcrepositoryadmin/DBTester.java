@@ -22,26 +22,34 @@
  */
 package dk.netarkivet.archive.arcrepositoryadmin;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
-public class DBTester extends TestCase {
+public class DBTester {
 
     MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR, TestInfo.TEST_DIR);
     
+    @Before
     public void setUp() {
         mtf.setUp();
     }
     
+    @After
     public void tearDown() {
         mtf.tearDown();
     }
     
+    @Test
     public void testDBConnect() {
         ReflectUtils.testUtilityConstructor(ArchiveDBConnection.class);
     }
     
+    @Test
     public void testDerbyServerSpecifics() {
         DerbySpecifics ds = new DerbyServerSpecifics();
         
@@ -55,6 +63,7 @@ public class DBTester extends TestCase {
         }
     }
     
+    @Test
     public void testDerbyEmbeddedSpecifics() {
         DerbySpecifics ds = new DerbyEmbeddedSpecifics();
         

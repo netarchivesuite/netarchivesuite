@@ -41,25 +41,20 @@ import dk.netarkivet.common.utils.batch.ARCBatchFilter;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import static dk.netarkivet.testutils.CollectionUtils.list;
 import dk.netarkivet.testutils.FileAsserts;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
+import static org.junit.Assert.*;
 
 /**
  * This class tests the bitarchive's batch() method.
  */
-@SuppressWarnings({"serial"})
+@SuppressWarnings({ "serial" })
 public class BitarchiveTesterBatch extends BitarchiveTestCase {
-    static final File ORIGINALS_DIR =
-            new File(new File(TestInfo.DATA_DIR, "batch"), "originals");
-    private static List<String> arcFiles = list("Upload3.ARC", "fyensdk.arc",
-            "Upload1.ARC", "Upload2.ARC");
+    static final File ORIGINALS_DIR = new File(new File(TestInfo.DATA_DIR, "batch"), "originals");
+    private static List<String> arcFiles = list("Upload3.ARC", "fyensdk.arc", "Upload1.ARC", "Upload2.ARC");
     private static int ARCHIVE_SIZE = arcFiles.size();
-
-    /**
-     * Construct a new tester object.
-     */
-    public BitarchiveTesterBatch(final String sTestName) {
-        super(sTestName);
-    }
 
     protected File getOriginalsDir() {
         return ORIGINALS_DIR;
@@ -68,27 +63,28 @@ public class BitarchiveTesterBatch extends BitarchiveTestCase {
     /**
      * At start of test, set up an archive we can run against.
      */
+    @Before
     public void setUp() throws Exception {
         super.setUp();
         File fileDir = new File(TestInfo.WORKING_DIR, "filedir");
         fileDir.mkdirs();
         for (String filename : arcFiles) {
-            FileUtils.copyFile(new File(getOriginalsDir(), filename),
-                    new File(fileDir, filename));
+            FileUtils.copyFile(new File(getOriginalsDir(), filename), new File(fileDir, filename));
         }
     }
 
     /**
      * At end of test, remove any files we managed to upload.
      */
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
     }
 
-
     /**
      * Test null arguments.
      */
+    @Test
     public void testBatchNoCode() {
         try {
             archive.batch(TestInfo.baAppId, null);
@@ -99,29 +95,27 @@ public class BitarchiveTesterBatch extends BitarchiveTestCase {
     }
 
     /**
-     * Test that exceptions thrown in the batch program are thrown
-     * back to the caller.
+     * Test that exceptions thrown in the batch program are thrown back to the
+     * caller.
      */
+    @Test
     public void testBatchExceptionInBatch() {
         // reinitialize bitarchive
         Bitarchive.getInstance().close();
         archive = Bitarchive.getInstance();
-        BatchStatus status =
-                archive.batch(TestInfo.baAppId, new FileBatchJob() {
-                    public void initialize(OutputStream os) {
-                    }
+        BatchStatus status = archive.batch(TestInfo.baAppId, new FileBatchJob() {
+            public void initialize(OutputStream os) {
+            }
 
-                    public boolean processFile(File f, OutputStream os) {
-                        throw new IOFailure("Testing IO throws");
-                    }
+            public boolean processFile(File f, OutputStream os) {
+                throw new IOFailure("Testing IO throws");
+            }
 
-                    public void finish(OutputStream os) {
-                    }
-                });
-        assertEquals("Status should show all files processed",
-                     4, status.getNoOfFilesProcessed());
-        assertEquals("Status should show all files failed",
-                     4, status.getFilesFailed().size());
+            public void finish(OutputStream os) {
+            }
+        });
+        assertEquals("Status should show all files processed", 4, status.getNoOfFilesProcessed());
+        assertEquals("Status should show all files failed", 4, status.getFilesFailed().size());
     }
 
     /**
@@ -129,6 +123,7 @@ public class BitarchiveTesterBatch extends BitarchiveTestCase {
      * initialize() and finish() methods, and that process() is called at least
      * once.
      */
+    @Test
     public void testBatchCodeRuns() {
         // reinitialize bitarchive
         Bitarchive.getInstance().close();
@@ -136,21 +131,18 @@ public class BitarchiveTesterBatch extends BitarchiveTestCase {
         TestFileBatchJob job = new TestFileBatchJob();
         BatchStatus lbs = archive.batch(TestInfo.baAppId, job);
         assertTrue("initialize() should been called on job", job.initialized);
-        assertEquals("some calls should have been made to process()",
-                arcFiles.size(), job.processedFileList.size());
+        assertEquals("some calls should have been made to process()", arcFiles.size(), job.processedFileList.size());
         assertTrue("finish() should have been called on job", job.finished);
         lbs.getResultFile().copyTo(TestInfo.BATCH_OUTPUT_FILE);
-        FileAsserts.assertFileContains("Did not log <Started> in output",
-                "Started", TestInfo.BATCH_OUTPUT_FILE);
-        FileAsserts.assertFileContains("Did not log <Processed> in output",
-                "Processed", TestInfo.BATCH_OUTPUT_FILE);
-        FileAsserts.assertFileContains("Did not log <Finished> in output",
-                "Finished", TestInfo.BATCH_OUTPUT_FILE);
+        FileAsserts.assertFileContains("Did not log <Started> in output", "Started", TestInfo.BATCH_OUTPUT_FILE);
+        FileAsserts.assertFileContains("Did not log <Processed> in output", "Processed", TestInfo.BATCH_OUTPUT_FILE);
+        FileAsserts.assertFileContains("Did not log <Finished> in output", "Finished", TestInfo.BATCH_OUTPUT_FILE);
     }
 
     /**
      * Test that the batch code writes its expected output
      */
+    @Test
     public void testBatchCodeOutput() {
         // reinitialize bitarchive
         Bitarchive.getInstance().close();
@@ -158,36 +150,33 @@ public class BitarchiveTesterBatch extends BitarchiveTestCase {
         FileBatchJob job = new TestFileBatchJob();
         BatchStatus lbs = archive.batch(TestInfo.baAppId, job);
         lbs.getResultFile().copyTo(TestInfo.BATCH_OUTPUT_FILE);
-        FileAsserts.assertFileContains("Did not log <Started> in output",
-                "Started", TestInfo.BATCH_OUTPUT_FILE);
-        FileAsserts.assertFileContains("Did not log <Processed> in output",
-                "Processed", TestInfo.BATCH_OUTPUT_FILE);
-        FileAsserts.assertFileContains("Did not log <Finished> in output",
-                "Finished", TestInfo.BATCH_OUTPUT_FILE);
+        FileAsserts.assertFileContains("Did not log <Started> in output", "Started", TestInfo.BATCH_OUTPUT_FILE);
+        FileAsserts.assertFileContains("Did not log <Processed> in output", "Processed", TestInfo.BATCH_OUTPUT_FILE);
+        FileAsserts.assertFileContains("Did not log <Finished> in output", "Finished", TestInfo.BATCH_OUTPUT_FILE);
     }
 
     /**
-     * Test that the batch code runs once for each entry.
-     * Both for multiple entries in a file and in several files.
+     * Test that the batch code runs once for each entry. Both for multiple
+     * entries in a file and in several files.
      */
+    @Test
     public void testBatchCodeRunsAll() {
         // reinitialize bitarchive
         Bitarchive.getInstance().close();
         archive = Bitarchive.getInstance();
         TestFileBatchJob job = new TestFileBatchJob();
         archive.batch(TestInfo.baAppId, job);
-        assertEquals("Number of processed files is incorrect",
-                ARCHIVE_SIZE, job.processedFileList.size());
+        assertEquals("Number of processed files is incorrect", ARCHIVE_SIZE, job.processedFileList.size());
     }
 
     /** Test that filters work in BatchJobs. */
+    @Test
     public void testBatchCodeFiltersWork() {
         // reinitialize bitarchive
         Bitarchive.getInstance().close();
         archive = Bitarchive.getInstance();
         TestFileBatchJob job = new TestFileBatchJob();
-        assertBatchJobProcessesCorrectly("No filter", job,
-                "fyensdk.arc", "Upload1.ARC", "Upload2.ARC", "Upload3.ARC");
+        assertBatchJobProcessesCorrectly("No filter", job, "fyensdk.arc", "Upload1.ARC", "Upload2.ARC", "Upload3.ARC");
 
         job = new TestFileBatchJob();
         job.processOnlyFileNamed("Upload2.ARC");
@@ -195,8 +184,7 @@ public class BitarchiveTesterBatch extends BitarchiveTestCase {
 
         job = new TestFileBatchJob();
         job.processOnlyFilesNamed(list("Upload2.ARC", "fyensdk.arc"));
-        assertBatchJobProcessesCorrectly("File list", job,
-                "Upload2.ARC", "fyensdk.arc");
+        assertBatchJobProcessesCorrectly("File list", job, "Upload2.ARC", "fyensdk.arc");
 
         job = new TestFileBatchJob();
         job.processOnlyFileNamed("Upload....");
@@ -204,39 +192,35 @@ public class BitarchiveTesterBatch extends BitarchiveTestCase {
 
         job = new TestFileBatchJob();
         job.processOnlyFilesMatching("Upload..ARC");
-        assertBatchJobProcessesCorrectly("Regexp with dot", job,
-                "Upload2.ARC", "Upload3.ARC", "Upload1.ARC");
+        assertBatchJobProcessesCorrectly("Regexp with dot", job, "Upload2.ARC", "Upload3.ARC", "Upload1.ARC");
 
         job = new TestFileBatchJob();
         job.processOnlyFilesMatching(".*.ARC");
-        assertBatchJobProcessesCorrectly("Starry regexp", job,
-                "Upload2.ARC", "Upload3.ARC", "Upload1.ARC");
+        assertBatchJobProcessesCorrectly("Starry regexp", job, "Upload2.ARC", "Upload3.ARC", "Upload1.ARC");
 
         job = new TestFileBatchJob();
         job.processOnlyFilesMatching("(Upload2|fyensdk).(arc|ARC)");
-        assertBatchJobProcessesCorrectly("Quotable regexp", job,
-                "Upload2.ARC", "fyensdk.arc");
+        assertBatchJobProcessesCorrectly("Quotable regexp", job, "Upload2.ARC", "fyensdk.arc");
 
         job = new TestFileBatchJob();
         job.processOnlyFilesMatching(list("Upload[23].ARC", "fy.*rc"));
-        assertBatchJobProcessesCorrectly("Multiple regexps", job,
-                "fyensdk.arc", "Upload2.ARC", "Upload3.ARC");
+        assertBatchJobProcessesCorrectly("Multiple regexps", job, "fyensdk.arc", "Upload2.ARC", "Upload3.ARC");
 
         job = new TestFileBatchJob();
         job.processOnlyFilesMatching(list("Upload[23].ARC", ".*3.ARC"));
-        assertBatchJobProcessesCorrectly("Multiple regexps with overlap", job,
-                "Upload2.ARC", "Upload3.ARC");
-
+        assertBatchJobProcessesCorrectly("Multiple regexps with overlap", job, "Upload2.ARC", "Upload3.ARC");
 
     }
 
-    /** Test that illegal code (e.g. that tries to read outside of a bitarchive
+    /**
+     * Test that illegal code (e.g. that tries to read outside of a bitarchive
      * directory, or that tries to write anywhere) cannot be executed.
      * 
      * Fails in Hudson
      */
+    @Test
     @SuppressWarnings("rawtypes")
-	public void failingTestIllegalCode() throws IOException {
+    public void failingTestIllegalCode() throws IOException {
         // reinitialize bitarchive
         Bitarchive.getInstance().close();
         archive = Bitarchive.getInstance();
@@ -247,27 +231,28 @@ public class BitarchiveTesterBatch extends BitarchiveTestCase {
         List<String> classpathAslist = SystemUtils.getCurrentClasspath();
         // Remove from the list all the jars mentioned
         List<String> nonjarElements = new ArrayList<String>();
-        for (String part: classpathAslist) {
+        for (String part : classpathAslist) {
             if (!part.endsWith("jar")) {
                 nonjarElements.add(part);
-                //System.out.println("Nonjar part:" + part);
+                // System.out.println("Nonjar part:" + part);
                 // The result of latest run on eclipse:
-                //Nonjar part:/home/svc/workspace/netarchivesuite/bin
-                //Nonjar part:/home/svc/eclipse/configuration/org.eclipse.osgi/bundles/516/1/.cp/
-                //Nonjar part:/home/svc/eclipse/configuration/org.eclipse.osgi/bundles/539/1/.cp/
+                // Nonjar part:/home/svc/workspace/netarchivesuite/bin
+                // Nonjar
+                // part:/home/svc/eclipse/configuration/org.eclipse.osgi/bundles/516/1/.cp/
+                // Nonjar
+                // part:/home/svc/eclipse/configuration/org.eclipse.osgi/bundles/539/1/.cp/
 
             }
         }
         // FIXME: this assert does not work in eclipse
-        //assertTrue("Number of non jar elements should only be one, but was "
-        //        + nonjarElements.size(),
-        //        nonjarElements.size() == 1);
+        // assertTrue("Number of non jar elements should only be one, but was "
+        // + nonjarElements.size(),
+        // nonjarElements.size() == 1);
         File validClasspathDir = new File(nonjarElements.get(0));
-        
+
         // Copy evilBatchClass to valid classPathDir.
-        FileUtils.copyFile(new File(validClasspathDir,
-                "/dk/netarkivet/archive/bitarchive/EvilBatch.class"),
-                           evilClassFile);
+        FileUtils.copyFile(new File(validClasspathDir, "/dk/netarkivet/archive/bitarchive/EvilBatch.class"),
+                evilClassFile);
         InputStream in = new FileInputStream(evilClassFile);
         ByteArrayOutputStream out = new ByteArrayOutputStream((int) evilClassFile.length());
         StreamUtils.copyInputStreamToOutputStream(in, out);
@@ -275,8 +260,7 @@ public class BitarchiveTesterBatch extends BitarchiveTestCase {
         final byte[] fileBatchJobClass = out.toByteArray();
         Class c = new ClassLoader() {
             Class initialize() {
-                return defineClass(null, fileBatchJobClass,
-                                   0, fileBatchJobClass.length);
+                return defineClass(null, fileBatchJobClass, 0, fileBatchJobClass.length);
             }
         }.initialize();
         FileBatchJob job;
@@ -288,45 +272,36 @@ public class BitarchiveTesterBatch extends BitarchiveTestCase {
             throw new IOFailure("Illegal access for class", e);
         }
         BatchStatus lbs = archive.batch(TestInfo.baAppId, job);
-        assertEquals("Batch should have processed four files",
-                     4, lbs.getNoOfFilesProcessed());
+        assertEquals("Batch should have processed four files", 4, lbs.getNoOfFilesProcessed());
         List<File> failedFiles = new ArrayList<File>();
         failedFiles.addAll(lbs.getFilesFailed());
         File fileDir = new File(TestInfo.WORKING_DIR, "filedir").getCanonicalFile();
-        
+
         assertEquals("Number of failed files should be 2", 2, failedFiles.size());
-        assertTrue("failedFiles should contain fyensdk.arc", 
-                failedFiles.contains(new File(fileDir, "fyensdk.arc")));
-        assertTrue("failedFiles should contain Upload3.ARC", 
-                failedFiles.contains(new File(fileDir, "Upload3.ARC")));
-        
+        assertTrue("failedFiles should contain fyensdk.arc", failedFiles.contains(new File(fileDir, "fyensdk.arc")));
+        assertTrue("failedFiles should contain Upload3.ARC", failedFiles.contains(new File(fileDir, "Upload3.ARC")));
+
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         lbs.appendResults(result);
-        assertEquals("Batch should have written only the legal part",
-                     "Legal\n", result.toString());
-        FileAsserts.assertFileContains("fyensdk.arc must not have been changed",
-                                       fyensdk,
-                                       new File(TestInfo.WORKING_DIR, "fyensdk.arc"));
-    }
-    
-    /** Method that checks, if a BatchJob have processed the correct files,
-     * and the correct number of files.
-     */ 
-    private BatchStatus assertBatchJobProcessesCorrectly(String message,
-                                                         TestFileBatchJob job,
-                                                         String... files) {
-        BatchStatus lbs = archive.batch(TestInfo.baAppId, job);
-        for (String file : files) {
-            assertTrue(message + ": Should have processed file " + file
-                    + " but only had " + job.processedFileList,
-                    job.processedFileList.contains(file));
-        }
-        assertEquals(message + ": Should have processed exactly "
-                + files.length + " files",
-                files.length, job.processedFileList.size());
-        return lbs;
+        assertEquals("Batch should have written only the legal part", "Legal\n", result.toString());
+        FileAsserts.assertFileContains("fyensdk.arc must not have been changed", fyensdk, new File(
+                TestInfo.WORKING_DIR, "fyensdk.arc"));
     }
 
+    /**
+     * Method that checks, if a BatchJob have processed the correct files, and
+     * the correct number of files.
+     */
+    private BatchStatus assertBatchJobProcessesCorrectly(String message, TestFileBatchJob job, String... files) {
+        BatchStatus lbs = archive.batch(TestInfo.baAppId, job);
+        for (String file : files) {
+            assertTrue(message + ": Should have processed file " + file + " but only had " + job.processedFileList,
+                    job.processedFileList.contains(file));
+        }
+        assertEquals(message + ": Should have processed exactly " + files.length + " files", files.length,
+                job.processedFileList.size());
+        return lbs;
+    }
 
     /**
      * Subclass of FileBatchJob used locally for test purposes.

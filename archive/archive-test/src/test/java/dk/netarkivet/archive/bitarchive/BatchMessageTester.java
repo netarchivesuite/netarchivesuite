@@ -26,7 +26,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
@@ -43,23 +47,21 @@ import dk.netarkivet.testutils.Serial;
  *
  */
 @SuppressWarnings({ "serial"})
-public class BatchMessageTester extends TestCase {
+public class BatchMessageTester {
     // Need a couple of queues for the constructors for the messages
     private ChannelID q1 = TestInfo.QUEUE_1;
     private static FileBatchJob job;
 
-    /**
-     *
-     */
+    @Before
     public void setUp() throws Exception {
         job = new TestBatchJob();
-        super.setUp();
     }
 
     /**
      * @throws IOException
      * @throws ClassNotFoundException
      */
+    @Test
     public void testBatchMessageSerializable() throws IOException, ClassNotFoundException {
         BatchMessage bm = new BatchMessage(q1, job, Settings.get(
                 CommonSettings.USE_REPLICA_ID));

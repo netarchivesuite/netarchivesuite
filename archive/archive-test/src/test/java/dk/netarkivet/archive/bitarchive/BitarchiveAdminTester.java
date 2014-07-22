@@ -29,7 +29,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -47,7 +51,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
  * used...
  */
 
-public class BitarchiveAdminTester extends TestCase {
+public class BitarchiveAdminTester {
     public static final File DATA_DIR = new File(
             "./tests/dk/netarkivet/archive/bitarchive/data/admindata");
     public static final File WORKING_DIR = new File(DATA_DIR, "working");
@@ -63,10 +67,8 @@ public class BitarchiveAdminTester extends TestCase {
     private static final String FILEDIR = "filedir";
     ReloadSettings rs = new ReloadSettings();
 
-    public BitarchiveAdminTester(String s) {
-        super(s);
-    }
 
+    @Before
     public void setUp() {
         rs.setUp();
         FileUtils.removeRecursively(WORKING_DIR);
@@ -75,6 +77,7 @@ public class BitarchiveAdminTester extends TestCase {
         ad = BitarchiveAdmin.getInstance();
     }
 
+    @After
     public void tearDown() {
         if (ad != null) {
             ad.close();
@@ -83,6 +86,7 @@ public class BitarchiveAdminTester extends TestCase {
         rs.tearDown();
     }
 
+    @Test
     public void testHasEnoughSpace() throws Exception {
         //1) settings set to 0 bytes required
         Settings.set(ArchiveSettings.BITARCHIVE_MIN_SPACE_LEFT, "1");
@@ -100,6 +104,7 @@ public class BitarchiveAdminTester extends TestCase {
     /**
      * Fails in Hudson
      */
+    @Test
     public void failingTestGetTemporaryPath() throws Exception {
         File tempfile = ad.getTemporaryPath(ARC_FILE_NAME, 1L);
         assertEquals("Filename should be as requested",
@@ -127,6 +132,7 @@ public class BitarchiveAdminTester extends TestCase {
                      .getParentFile().getCanonicalPath());
     }
 
+    @Test
     public void testGetTemporaryPathThrowsException() throws Exception {
         try {
             ad.getTemporaryPath("", 1L);
@@ -166,6 +172,7 @@ public class BitarchiveAdminTester extends TestCase {
     /**
      * FIXME Fails in Hudson
      */
+    @Test
     public void failingTestMoveToStorage() throws Exception {
         File tempfile = ad.getTemporaryPath(ARC_FILE_NAME, 1L);
         FileUtils.writeBinaryFile(tempfile, "abc".getBytes());
@@ -189,6 +196,7 @@ public class BitarchiveAdminTester extends TestCase {
     /**
      * Fails in Hudson
      */
+    @Test
     public void failingTTestMoveToStorageThrowsException() throws Exception {
         try {
             ad.moveToStorage(null);
@@ -251,6 +259,7 @@ public class BitarchiveAdminTester extends TestCase {
         }
     }
 
+    @Test
     public void testGetFiles() throws Exception {
         File[] files = ad.getFiles();
         assertEquals("Should find the four files", 4, files.length);
@@ -267,6 +276,7 @@ public class BitarchiveAdminTester extends TestCase {
                      3, files.length);
     }
 
+    @Test
     public void testLookup() throws Exception {
         try {
             ad.lookup(null);
@@ -293,6 +303,7 @@ public class BitarchiveAdminTester extends TestCase {
         assertNull("Should return null on non-existing file", file);
     }
 
+    @Test
     public void testGetInstance() throws Exception {
         ad.close();
         File baddir = new File(WORKING_DIR, "baddir");
@@ -328,6 +339,7 @@ public class BitarchiveAdminTester extends TestCase {
         }
     }
 
+    @Test
     public void testGetFilesMatching_All() throws Exception {
         // First test that the getFiles() tests work on getFilesMatching w/.*
         File[] files = ad.getFilesMatching(Pattern.compile(".*"));
@@ -346,6 +358,7 @@ public class BitarchiveAdminTester extends TestCase {
                 3, files.length);
     }
 
+    @Test
     public void testGetFilesMatching_Some() throws Exception {
         // Then test that the regexps are obeyed
         File[] files = ad.getFilesMatching(Pattern.compile("ile."));
@@ -369,6 +382,7 @@ public class BitarchiveAdminTester extends TestCase {
                 filePaths.contains(file4path));
     }
 
+    @Test
     public void testIsBitarchiveDirectory() throws IOException {
         assertTrue("Should find existing dir",
                 ad.isBitarchiveDirectory(BA_DIR_1));

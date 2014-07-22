@@ -29,7 +29,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.ArcRepository;
 import dk.netarkivet.archive.arcrepository.bitpreservation.AdminDataMessage;
@@ -70,7 +74,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
  * Unit tests for the class ArcRepositoryServer.
  */
 @SuppressWarnings({ "deprecation"})
-public class ArcRepositoryServerTester extends TestCase {
+public class ArcRepositoryServerTester {
     /**
      * The test log directories for Controller and AdminData.
      */
@@ -114,6 +118,7 @@ public class ArcRepositoryServerTester extends TestCase {
     ReloadSettings rs = new ReloadSettings();
     UseTestRemoteFile rf = new UseTestRemoteFile();
 
+    @Before
     protected void setUp() throws Exception {
         rs.setUp();
         rf.setUp();
@@ -131,6 +136,7 @@ public class ArcRepositoryServerTester extends TestCase {
         con.setListener(Channels.getError(), dummyServer);
     }
 
+    @After
     protected void tearDown() throws Exception {
         AdminData.getUpdateableInstance().close();
         FileUtils.removeRecursively(WORKING_DIR);
@@ -142,6 +148,7 @@ public class ArcRepositoryServerTester extends TestCase {
     /**
      * Test visit() StoreMessage methods arguments.
      */
+    @Test
     public void testVisitNulls() {
         ArcRepository arc = ArcRepository.getInstance();
         ArcRepositoryServer arcServ = new ArcRepositoryServer(arc);
@@ -248,6 +255,7 @@ public class ArcRepositoryServerTester extends TestCase {
     /**
      * Test a BatchMessage is sent to the_bamon queue.
      */
+    @Test
     public void testVisitBatchMessage() {
         // Create dummy server and listen on the TheArcrepos queue
         DummyServer serverTheBamonQueue = new DummyServer();
@@ -271,6 +279,7 @@ public class ArcRepositoryServerTester extends TestCase {
     /**
      * Test message is sent and returned, and set "Not OK" if an error occurs.
      */
+    @Test
     public void testStoreNoSuchFile() {
         file = new File(BITARCHIVE_DIR, "NO_SUCH_FILE");
         ArcRepository arc = ArcRepository.getInstance();
@@ -305,6 +314,7 @@ public class ArcRepositoryServerTester extends TestCase {
     /**
      * Test message is sent and returned, and set "OK" if no errors occurs.
      */
+    @Test
     public void testStore() {
         file = new File(new File(BITARCHIVE_DIR, "filedir"),
                         STORABLE_FILES.get(0).toString());
@@ -320,6 +330,7 @@ public class ArcRepositoryServerTester extends TestCase {
     /**
      * Test message is resent.
      */
+    @Test
     public void testGet() {
         file = new File(BITARCHIVE_DIR, STORABLE_FILES.get(0).toString());
         GetMessage msg = new GetMessage(Channels.getTheRepos(), Channels
@@ -338,12 +349,13 @@ public class ArcRepositoryServerTester extends TestCase {
         arc.close();
     }
 
+    @Test
     public void testVisitBadMessages() throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, InterruptedException {
         file = new File(new File(BITARCHIVE_DIR, "filedir"),
                 STORABLE_FILES.get(0).toString());
         int getReplicaClientValue = 0;
 
-        TestArcRepository arc = new TestArcRepository();
+        CountCallsTestArcRepository arc = new CountCallsTestArcRepository();
         ArcRepositoryServer arcServ = new ArcRepositoryServer(arc);
         
         JMSConnectionMockupMQ testCon = (JMSConnectionMockupMQ) JMSConnectionMockupMQ
@@ -509,11 +521,11 @@ public class ArcRepositoryServerTester extends TestCase {
         arcServ.close();
     }
 
-    public class TestArcRepository extends ArcRepository {
+    public class CountCallsTestArcRepository extends ArcRepository { // FIXME:MOCK
         
         public Map<String, Integer> calls = new HashMap<String, Integer>();
         
-        public TestArcRepository() {
+        public CountCallsTestArcRepository() {
             super();
         }
         

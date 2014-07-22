@@ -29,7 +29,11 @@ import java.io.Writer;
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveServer;
@@ -45,7 +49,7 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /** A number of integrity tests for the bitarchive package. */
-public class IntegrityTests extends TestCase {
+public class IntegrityTests {
     /** The archive directory to work on.
      */
     private static final File ARCHIVE_DIR =
@@ -72,14 +76,10 @@ public class IntegrityTests extends TestCase {
     ReloadSettings rs = new ReloadSettings();
 
 
-    /** Construct a new tester object. */
-    public IntegrityTests(final String sTestName) {
-        super(sTestName);
-    }
-
     /** 
      * At start of test, set up an archive we can run against.
      */
+    @Before
     public void setUp() {
         rs.setUp();
         FileUtils.removeRecursively(ARCHIVE_DIR);
@@ -93,6 +93,7 @@ public class IntegrityTests extends TestCase {
     /**
      * At end of test, remove any files we managed to upload.
      */
+    @After
     public void tearDown() {
         archive.close();
         FileUtils.removeRecursively(ARCHIVE_DIR);
@@ -114,6 +115,7 @@ public class IntegrityTests extends TestCase {
      * Verify that the correct value of free space will be returned, when calling 
      * the DefaultFreeSpaceProvider.
      */
+    @Test
     public void testDefaultFreeSpaceProvider() {
         final File dir1 = new File(ARCHIVE_DIR, "dir1");
         setupBitarchiveWithDirs(new String[] {
@@ -135,6 +137,7 @@ public class IntegrityTests extends TestCase {
      * Verify that the correct value of free space will be returned, when calling 
      * the MockFreeSpaceProvider.
      */
+    @Test
     public void testMockFreeSpaceProvider() {
         final File dir1 = new File(ARCHIVE_DIR, "dir1");
         setupBitarchiveWithDirs(new String[] {
@@ -150,6 +153,7 @@ public class IntegrityTests extends TestCase {
      * Verify that the correct value of free space will be returned, when calling 
      * the FileSpaceProvider.
      */
+    @Test
     public void testFilebasedFreeSpaceProvider1() {
         final File dir1 = new File(ARCHIVE_DIR, "dir1");
         setupBitarchiveWithDirs(new String[] {
@@ -190,6 +194,7 @@ public class IntegrityTests extends TestCase {
      * Verify that the correct value of free space will be returned, when calling 
      * the FileSpaceProvider.
      */
+    @Test
     public void testFilebasedFreeSpaceProvider2() {
         final File dir1 = new File(ARCHIVE_DIR, "dir1");
         setupBitarchiveWithDirs(new String[] {
@@ -207,6 +212,7 @@ public class IntegrityTests extends TestCase {
     /** Verify that we spill into the next directory
      * This test requires special setup to run.
      */
+    @Test
     public void testUploadChangesDirectory() {
         final File dir1 = new File(ARCHIVE_DIR, "dir1");
         final File dir2 = new File(ARCHIVE_DIR, "dir2");
@@ -231,6 +237,7 @@ public class IntegrityTests extends TestCase {
      * This test requires a special setup before actual out of disk space
      * errors will occur.
      */
+    @Test
     public void testUploadNoSpace() {
         long freeSpace = FileUtils.getBytesFree(ARCHIVE_DIR);
         final File localFile2 = new File(ORIGINALS_DIR,

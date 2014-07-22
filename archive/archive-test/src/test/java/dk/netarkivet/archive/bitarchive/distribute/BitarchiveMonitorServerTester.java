@@ -38,7 +38,12 @@ import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.bitarchive.BitarchiveMonitor;
 import dk.netarkivet.archive.bitarchive.BitarchiveMonitorApplication;
@@ -85,7 +90,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
  * Unit tests for the BitarchiveMonitorServer class. 
  */
 @SuppressWarnings({ "unused", "unchecked", "serial"})
-public class BitarchiveMonitorServerTester extends TestCase {
+public class BitarchiveMonitorServerTester {
 
     static final ChannelID THE_BAMON = Channels.getTheBamon();
     static final ChannelID THE_ARCREPOS = Channels.getTheRepos();
@@ -105,6 +110,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
     private MockupJMS mjms = new MockupJMS();
     private ReloadSettings rls = new ReloadSettings();
 
+    @Before
     protected void setUp() {
         rls.setUp();
         mjms.setUp();
@@ -126,6 +132,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
                 commontempdir.getAbsolutePath());
     }
 
+    @After
     protected void tearDown() {
         if (bam_server != null) {
             bam_server.close();
@@ -144,6 +151,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
      * check that the postprocessing of one job can overtake the postprocessing
      * of another.
      */
+    @Test
     public void testParallelBatchJobs() throws InterruptedException {
         bam_server = BitarchiveMonitorServer.getInstance();
         TestMessageListener client = new TestMessageListener();
@@ -246,6 +254,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
     /**
      * Test that BitarchiveMonitorServer is a singleton.
      */
+    @Test
     public void testSingletonicity() {
         ClassAsserts.assertSingleton(BitarchiveMonitorServer.class);
     }
@@ -255,6 +264,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
      * queue) and forward it to the ALL_BA topic.
      * FIXME As it fails, the test has been renamed to disable the test
      */
+    @Test
     public void FAILtestBatchReceive() {
         TestJob job = new TestJob(
                 "testBatchReceive_ID"); // job is used for carrying an id to recognize later
@@ -285,6 +295,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
      * timeout limit.
      * @throws InterruptedException 
      */
+    @Test
     public void testBatchTimeout() throws InterruptedException {
 
         bam_server = new TestBitarchiveMonitorServer();
@@ -354,6 +365,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
      * i.e. that we can receive a heartbeat message and register its data
      * (originating BA application and timestamp).
      */
+    @Test
     public void testReceiveHeartBeat() {
         bam_server = new TestBitarchiveMonitorServer();
 
@@ -378,6 +390,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
     /**
      * Test that listener is registered and unregistered properly.
      */
+    @Test
     public void testListening() {
         testListeningPerReplica("ONE", "TWO");
         testListeningPerReplica("TWO", "ONE");
@@ -392,6 +405,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
      * @param otherReplicaId A replica which the constructed BitarchiveMonitorServer
      *                      should NOT serve.
      */
+    @Test
     private void testListeningPerReplica(String replicaId,
                                           String otherReplicaId) {
         Settings.set(CommonSettings.USE_REPLICA_ID, replicaId);
@@ -419,6 +433,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
      * Verify that we can determine which BA applications are 'live' at a given
      * time. TODO: Make sure that we wait exactly long enough for a heartbeat.
      */
+    @Test
     public void testDeterminationOfLiveBAapps() {
         bam_server = BitarchiveMonitorServer.getInstance();
 
@@ -454,6 +469,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
      * update the internal state of the BA monitor correctly.
      * TODO Update to reflect new API for batch output
      */
+    @Test
     public void testProcessBatchEndedMessage() {
         bam_server = new TestBitarchiveMonitorServer();
         Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, TestInfo.BITARCHIVE_APP_DIR_1);
@@ -529,6 +545,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
      * Verify that we are able to declare a batch job completed and a send
      * BatchReply to the requester.
      */
+    @Test
     public void testDeclareBatchJobCompleted() {
         bam_server = new TestBitarchiveMonitorServer();
 
@@ -621,6 +638,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
      * @throws UnknownID
      * @throws IOFailure        it via RemoteFile
      */
+    @Test
     public void failingTestBatchEndedMessageAggregation() throws InterruptedException {
         // Start the monitor
         BitarchiveMonitorServer bms = BitarchiveMonitorServer.getInstance();
@@ -724,6 +742,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
      * 
      * FIXME: This test is unstable and occasionally fails. Disabled because it 
      */
+    @Test
     public void failingTestGetAllChecksumMessage() throws InterruptedException, IOException {
         bam_server = BitarchiveMonitorServer.getInstance();
         
@@ -788,6 +807,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
 	 * junit.framework.AssertionFailedError: The listener should have one message expected:<1> but was:<0>
 	 * at dk.netarkivet.archive.bitarchive.distribute.BitarchiveMonitorServerTester.testGetAllFilenamesMessage(BitarchiveMonitorServerTester.java:818)
      */
+    @Test
     public void unstableTestGetAllFilenamesMessage() throws InterruptedException, IOException {
         bam_server = BitarchiveMonitorServer.getInstance();
         
@@ -848,6 +868,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
     /**
      * Testing GetChecksumMessage.
      */
+    @Test
     public void testGetChecksumMessage() throws InterruptedException, IOException {
         bam_server = BitarchiveMonitorServer.getInstance();
         Thread.sleep(200);
@@ -898,6 +919,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
      * Tests the opportunity to correct a entry in the archive through CorrectMessage. 
      * @throws InterruptedException 
      */
+    @Test
     public void testCorrectMessage() throws InterruptedException {
         bam_server = BitarchiveMonitorServer.getInstance();
         

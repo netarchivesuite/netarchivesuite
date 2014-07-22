@@ -28,7 +28,11 @@ import java.util.Locale;
 
 import javax.servlet.jsp.PageContext;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 import com.mockobjects.servlet.MockHttpServletRequest;
 
@@ -41,10 +45,11 @@ import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
-public class BatchGUITester extends TestCase {
+public class BatchGUITester {
     MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
     ReloadSettings rs = new ReloadSettings();
-    
+
+    @Before
     public void setUp() {
         mtf.setUp();
         rs.setUp();
@@ -53,11 +58,13 @@ public class BatchGUITester extends TestCase {
         		TestInfo.BATCH_DIR.getAbsolutePath());
     }
     
+    @After
     public void tearDown() {
         rs.tearDown();
         mtf.tearDown();
     }
 
+    @Test
     public void testUtilityConstructor() {
         ReflectUtils.testUtilityConstructor(BatchGUI.class);
     }
@@ -162,8 +169,9 @@ public class BatchGUITester extends TestCase {
 //        PageContext context = new WebinterfaceTestCase.TestPageContext(request, out, l);
 //
 //        BatchGUI.getPageForClass(context);
-//    }        
+    // }
     
+    @Test
     public void testOverviewPage() throws ArgumentNotValid, IOException {
 
       MockHttpServletRequest request = new MockHttpServletRequest(){
@@ -204,6 +212,7 @@ public class BatchGUITester extends TestCase {
     /**
      * FIXME Fails in Hudson
      */
+    @Test
     public void failingTestExecute() {
         File arcFile = new File(TestInfo.BATCH_DIR, "MimeUrlSearch.jar");
         assertTrue(arcFile.isFile());

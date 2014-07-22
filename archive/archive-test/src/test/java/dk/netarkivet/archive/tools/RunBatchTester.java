@@ -41,9 +41,13 @@ import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class RunBatchTester extends TestCase {
+import static org.junit.Assert.*;
+
+public class RunBatchTester {
     private PreventSystemExit pse = new PreventSystemExit();
     private PreserveStdStreams pss = new PreserveStdStreams(true);
     private MoveTestFiles mtf = new MoveTestFiles(TestInfo.DATA_DIR,
@@ -52,6 +56,7 @@ public class RunBatchTester extends TestCase {
     TestMessageListener listener;
     UseTestRemoteFile rf = new UseTestRemoteFile();
     
+    @Before
     public void setUp() {
         pss.setUp();
         pse.setUp();
@@ -63,6 +68,7 @@ public class RunBatchTester extends TestCase {
         rf.setUp();
     }
     
+    @After
     public void tearDown() {
         mtf.tearDown();
         JMSConnectionFactory.getInstance().removeListener(
@@ -76,6 +82,7 @@ public class RunBatchTester extends TestCase {
     /**
      * Tests whether the correct error message is given if no arguments are given.
      */
+    @Test
     public void testNoArguments() {
         String expectedErrorMessage = "Missing required argument: jar or class file";
         String[] args = new String[]{};
@@ -97,6 +104,7 @@ public class RunBatchTester extends TestCase {
     /**
      * Tests whether the correct error message is given if too many arguments are given.
      */
+    @Test
     public void testTooManyArguments() {
         String expectedErrorMessage = "Too many arguments";
         String[] args = new String[]{"-Jsd", "-Nasdf", "-Basdf",  "-Jasdf", 
@@ -124,6 +132,7 @@ public class RunBatchTester extends TestCase {
     /**
      * Test whether the correct error message when given neither class nor jar file.  
      */
+    @Test
     public void testArgumentsMissingFile() {
         String expectedErrorMessage = "Missing required class file argument (-C) "
             + "or Jarfile argument (-J)";
@@ -146,6 +155,7 @@ public class RunBatchTester extends TestCase {
     /**
      * Test whether the correct error message when given both class file and jar file arguments.  
      */
+    @Test
     public void testArgumentsBothClassAndJar() {
         String expectedErrorMessage = "Cannot use option -J and -C at the same time";
         String[] args = new String[]{"-CClassFile.class", "-JJarFile.jar"};
@@ -167,6 +177,7 @@ public class RunBatchTester extends TestCase {
     /**
      * Test whether the correct error message when given wrong extension to a class file.  
      */
+    @Test
     public void testArgumentsNotClassFile() {
         String expectedErrorMessage = "Argument '"+ TestInfo.BATCH_ARG_ERROR_FILE_EXT 
                             + "' is not denoting a class file";
@@ -189,6 +200,7 @@ public class RunBatchTester extends TestCase {
     /**
      * Test whether the correct error message when given an unreadable class file.  
      */
+    @Test
     public void testArgumentsCannotReadClassfile() {
         String expectedErrorMessage = "Cannot read class file: '" + TestInfo.BATCH_C_ARG_NOREAD_FILE + "'";
         String[] args = new String[]{"-C" + TestInfo.BATCH_C_ARG_NOREAD_FILE};
@@ -210,6 +222,7 @@ public class RunBatchTester extends TestCase {
     /**
      * Test whether the correct error message when given no -N argument.  
      */
+    @Test
     public void testArgumentsJarWithoutMethod() {
         String expectedErrorMessage = "Using option -J also requires"
                         + "option -N (the name of the class).";
@@ -232,6 +245,7 @@ public class RunBatchTester extends TestCase {
     /**
      * Test whether the correct error message when given wrong extension on jar file.  
      */
+    @Test
     public void testArgumentsJarWrongExtension() {
         String expectedErrorMessage = "Argument '" + TestInfo.BATCH_ARG_ERROR_FILE_EXT + "' is not denoting a jar file";
         String[] args = new String[]{"-J" + TestInfo.BATCH_ARG_ERROR_FILE_EXT,
@@ -254,6 +268,7 @@ public class RunBatchTester extends TestCase {
     /**
      * Test whether the correct error message when given unreadable jar file.  
      */
+    @Test
     public void testArgumentsUnreadableJar() {
         String expectedErrorMessage = "Cannot read jar file: '" + TestInfo.BATCH_J_ARG_NOREAD_FILE + "'";
         String[] args = new String[]{"-J" + TestInfo.BATCH_J_ARG_NOREAD_FILE,
@@ -276,6 +291,7 @@ public class RunBatchTester extends TestCase {
     /**
      * Test whether the correct error message when wrong method in jar file.  
      */
+    @Test
     public void testArgumentsWrongMethodInJarFile() {
         String expectedErrorMessage = "Cannot create batchjob '" + TestInfo.BATCH_TEST_JAR_ERROR_CLASS + "' from the jarfiles '" + TestInfo.BATCH_TEST_JAR_FILE.getAbsolutePath() + "'";
         String[] args = new String[]{"-J" + TestInfo.BATCH_TEST_JAR_FILE.getAbsolutePath(),
@@ -298,6 +314,7 @@ public class RunBatchTester extends TestCase {
     /**
      * Test whether the correct error message when wrong replica.  
      */
+    @Test
     public void testArgumentsUnknownReplica() {
         String expectedErrorMessage = "Unknown replica name '" + TestInfo.BATCH_REPLICA_ERROR + "', known replicas are ";
         String[] args = new String[]{"-J" + TestInfo.BATCH_TEST_JAR_FILE.getAbsolutePath(),
@@ -320,6 +337,7 @@ public class RunBatchTester extends TestCase {
     /**
      * Test whether the correct error message when sending to a checksum replica.  
      */
+    @Test
     public void testArgumentsChecksumReplica() {
         String expectedErrorMessage = "Can only send a batchjob to a "
             + "bitarchive replica, and '" + Replica.getReplicaFromName(TestInfo.BATCH_CS_REPLICA_NAME) 
@@ -344,6 +362,7 @@ public class RunBatchTester extends TestCase {
     /**
      * Test whether the correct error message when wrong output file.  
      */
+    @Test
     public void testArgumentsWrongOutputFile() {
         String expectedErrorMessage = "Output file '" + TestInfo.BATCH_TEST_JAR_FILE.getAbsolutePath() + "' does already exist";
         String[] args = new String[]{"-J" + TestInfo.BATCH_TEST_JAR_FILE.getAbsolutePath(),
@@ -366,6 +385,7 @@ public class RunBatchTester extends TestCase {
     /**
      * Test whether the correct error message when wrong output file.  
      */
+    @Test
     public void testArgumentsWrongErrorFile() {
         String expectedErrorMessage = "Error file '" + TestInfo.BATCH_TEST_JAR_FILE.getAbsolutePath() + "' does already exist";
         String[] args = new String[]{"-J" + TestInfo.BATCH_TEST_JAR_FILE.getAbsolutePath(),
@@ -388,6 +408,7 @@ public class RunBatchTester extends TestCase {
     /**
      * Test success fully arguments.
      */
+    @Test
     public void testSuccess() {
         String[] args = new String[]{"-J" + TestInfo.BATCH_TEST_JAR_FILE.getAbsolutePath(),
                 "-N" + TestInfo.BATCH_TEST_JAR_GOOD_CLASS};

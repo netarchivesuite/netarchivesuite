@@ -30,7 +30,11 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.logging.LogManager;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
 import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
@@ -61,7 +65,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 /** This class tests the store() method of ArcRepository. */
 @SuppressWarnings({ "deprecation", "unchecked"})
-public class ArcRepositoryTesterStore extends TestCase {
+public class ArcRepositoryTesterStore {
     private UseTestRemoteFile rf = new UseTestRemoteFile();
 
     /** The directory from where we upload the ARC files. */
@@ -98,6 +102,7 @@ public class ArcRepositoryTesterStore extends TestCase {
 
     ReloadSettings rs = new ReloadSettings();
 
+    @Before
     public void setUp() throws IOException {
         rs.setUp();
         rf.setUp();
@@ -129,6 +134,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         LogManager.getLogManager().readConfiguration(fis);
     }
 
+    @After
     public void tearDown() {
         arcRepos.close();// close down ArcRepository Controller
 
@@ -146,6 +152,7 @@ public class ArcRepositoryTesterStore extends TestCase {
      * confirms that the correct error is send, if a wrong replica is tried to
      * be retrieved.
      */
+    @Test
     public void testReplicaClientRetrieval() {
         for (Replica rep : Replica.getKnown()) {
             ReplicaClient repClient = arcRepos.getReplicaClientFromReplicaId(
@@ -178,6 +185,7 @@ public class ArcRepositoryTesterStore extends TestCase {
      *
      * @throws InterruptedException
      */
+    @Test
     public void testStoreFileAlreadyStored() throws InterruptedException,
                                                     IOException {
         //Set listeners
@@ -259,6 +267,7 @@ public class ArcRepositoryTesterStore extends TestCase {
      * Tests that we get a Not-OK message, if the file is known with other
      * checksum. Also test that state is unchanged afterwards
      */
+    @Test
     public void testStoreOtherChecksum() {
         //Set listeners
         JMSConnectionMockupMQ con
@@ -321,6 +330,7 @@ public class ArcRepositoryTesterStore extends TestCase {
      * the bitarchives. Also tests that state is now UPLOAD_STARTED for all
      * bitarchives
      */
+    @Test
     public void testStoreNewFile() throws IOException {
         //Set listeners
         JMSConnectionMockupMQ con
@@ -386,6 +396,7 @@ public class ArcRepositoryTesterStore extends TestCase {
      * Tests that if we call store with a file in state FAILED a checksum job is
      * submitted to the bitarchive. Also test that state is changed to UPLOADED
      */
+    @Test
     public void testStoreFailedFile() throws IOException {
         JMSConnectionMockupMQ con
                 = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
@@ -469,6 +480,7 @@ public class ArcRepositoryTesterStore extends TestCase {
      * Tests that if we call store with a file in state UPLOADED a checksum job
      * is submitted to the bitarchive. Also test that state is still UPLOADED
      */
+    @Test
     public void testStoreUploadedFile() throws IOException {
         JMSConnectionMockupMQ con
                 = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
@@ -550,6 +562,7 @@ public class ArcRepositoryTesterStore extends TestCase {
      * Tests that if we call store with a file in state STARTED a checksum job
      * is submitted to the bitarchive. Also test that state is still STARTED
      */
+    @Test
     public void testStoreStartedFile() throws IOException {
         JMSConnectionMockupMQ con
                 = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
@@ -634,6 +647,7 @@ public class ArcRepositoryTesterStore extends TestCase {
      * Tests that if we get an OK from a bitarchive, we send a checksum job to
      * check the file. Also test that state is data uploaded
      */
+    @Test
     public void testOnUploadMessageOK() throws IOException {
         JMSConnectionMockupMQ con
                 = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
@@ -727,6 +741,7 @@ public class ArcRepositoryTesterStore extends TestCase {
      * other bitarchive is waiting for upload replies). Also test that state is
      * upload failed
      */
+    @Test
     public void testOnUploadMessageNotOK() throws IOException {
         JMSConnectionMockupMQ con
                 = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
@@ -812,6 +827,7 @@ public class ArcRepositoryTesterStore extends TestCase {
      * Tests that a batch reply with correct checksum results in an OK message
      * (all bitarchives are OK) Also test that state is completed
      */
+    @Test
     public void testOnBatchReplyOk() throws IOException, NoSuchFieldException,
                                             IllegalAccessException {
         JMSConnectionMockupMQ con
@@ -907,6 +923,7 @@ public class ArcRepositoryTesterStore extends TestCase {
      * in a not OK message, unless some bitarchive is waiting for replies Also
      * test that state is failed
      */
+    @Test
     public void testOnBatchReplyNotOkOnUpload() throws IOException,
                                                        NoSuchFieldException,
                                                        IllegalAccessException {
@@ -997,6 +1014,7 @@ public class ArcRepositoryTesterStore extends TestCase {
      * (a retry) results in an attempt to store the file again Also test that
      * state is upload started
      */
+    @Test
     public void testOnBatchReplyNotOkOnRetry() throws IOException,
                                                       NoSuchFieldException,
                                                       IllegalAccessException {

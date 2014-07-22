@@ -37,8 +37,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.LogManager;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 import org.archive.io.arc.ARCConstants;
 import org.archive.io.arc.ARCReader;
@@ -70,18 +73,14 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
  * Tests of the ARCLookup class.
  */
 @SuppressWarnings({ "unchecked"})
-public class ARCLookupTester extends TestCase {
+public class ARCLookupTester {
     private ViewerArcRepositoryClient realArcRepos;
     private static ARCLookup lookup;
     protected ARCReader arcReader;
     ReloadSettings rs = new ReloadSettings();
 
-    public ARCLookupTester(String s) {
-        super(s);
-    }
-
+    @Before
     public void setUp() throws Exception {
-        super.setUp();
         rs.setUp();
         dk.netarkivet.archive.distribute.arcrepository.TestInfo.GIF_URL 
             = new URI("http://netarkivet.dk/netarchive_alm/billeder/spacer.gif");
@@ -115,6 +114,7 @@ public class ARCLookupTester extends TestCase {
         fis.close();
     }
 
+    @After
     public void tearDown() throws Exception {
         if (realArcRepos != null) {
             realArcRepos.close();
@@ -126,9 +126,9 @@ public class ARCLookupTester extends TestCase {
                 dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR);
         JMSConnectionMockupMQ.clearTestQueues();
         rs.tearDown();
-        super.tearDown();
     }
 
+    @Test
     public void testSetIndex() throws Exception {
         ArcRepositoryClient arcrep = new TestArcRepositoryClient();
         ARCLookup lookup = new ARCLookup(arcrep);
@@ -177,6 +177,7 @@ public class ARCLookupTester extends TestCase {
      * TODO: This test is bad: It may not clean up properly on fail, and it is
      * really an integrity test. Move and clean up!
      */
+    @Test
     public void testLookup() throws Exception {
         Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, dk.netarkivet.archive.distribute.arcrepository.TestInfo.ARCHIVE_DIR.getAbsolutePath());
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR, new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, "serverdir").getAbsolutePath());
@@ -204,6 +205,7 @@ public class ARCLookupTester extends TestCase {
      * Test that when a uri with escaped characters is looked up, the uri is urldecoded first.
      * @throws Exception
      */
+    @Test
     public void testLookupWithCurlyBrackets() throws Exception {
         Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, 
                dk.netarkivet.archive.distribute.arcrepository.TestInfo.ARCHIVE_DIR.getAbsolutePath());
@@ -223,7 +225,7 @@ public class ARCLookupTester extends TestCase {
         }
     }
 
-
+    @Test
     public void testLuceneLookup() throws NoSuchMethodException,
             IllegalAccessException, InvocationTargetException {
         Method luceneLookup = ReflectUtils.getPrivateMethod(ARCLookup.class,
@@ -246,6 +248,7 @@ public class ARCLookupTester extends TestCase {
      * correctly.
      * @throws Exception
      */
+    @Test
     public void testLookupInputStream() throws Exception {
         realArcRepos.close();
         lookup = new ARCLookup(new TestArcRepositoryClient());
@@ -264,13 +267,13 @@ public class ARCLookupTester extends TestCase {
         is.close();
         assertEquals("Result should start with status code",
                 "HTTP/1.1 200 OK", line1);
-        Assert.assertEquals("Location should be set to the ARC file",
+        assertEquals("Location should be set to the ARC file",
                 "Location: " + dk.netarkivet.archive.distribute.arcrepository.TestInfo.GIF_URL_KEY.getFile(), line2);
         assertEquals("There should be an empty line after the headers",
                 "", line3);
-        Assert.assertEquals("Should get right file for gif",
+        assertEquals("Should get right file for gif",
                 dk.netarkivet.archive.distribute.arcrepository.TestInfo.GIF_URL_KEY.getFile(), retKey.getFile());
-        Assert.assertEquals("Should get right offset for gif",
+        assertEquals("Should get right offset for gif",
                 dk.netarkivet.archive.distribute.arcrepository.TestInfo.GIF_URL_KEY.getOffset(), retKey.getOffset());
     }
 

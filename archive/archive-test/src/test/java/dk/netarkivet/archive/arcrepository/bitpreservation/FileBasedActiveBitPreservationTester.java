@@ -41,8 +41,11 @@ import java.util.Map;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
+import static org.junit.Assert.*;
 import org.archive.io.arc.ARCReaderFactory;
 import org.archive.io.arc.ARCRecord;
 import org.mortbay.log.Log;
@@ -92,7 +95,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
  */
 @SuppressWarnings({ "unused", "deprecation" })
 
-public class FileBasedActiveBitPreservationTester extends TestCase {
+public class FileBasedActiveBitPreservationTester {
     private UseTestRemoteFile rf = new UseTestRemoteFile();
     private ReloadSettings rs = new ReloadSettings();
     private MockupJMS mj = new MockupJMS();
@@ -105,9 +108,8 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
     private static final Replica TWO = Replica.getReplicaFromId(TestInfo.REPLICA_ID_TWO);
     private static final Replica THREE = Replica.getReplicaFromId("THREE");
 
-    @Override
+    @Before
     protected void setUp() throws Exception {
-        super.setUp();
         rs.setUp();
         ChannelsTester.resetChannels();
         mtf.setUp();
@@ -120,7 +122,7 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
         Settings.set(ArchiveSettings.DIR_ARCREPOSITORY_BITPRESERVATION, TestInfo.WORKING_DIR.getAbsolutePath());
     }
 
-    @Override
+    @After
     protected void tearDown() throws Exception {
         // Make sure admin data instance is closed.
         UpdateableAdminData.getInstance().close();
@@ -139,7 +141,6 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
         mtf.tearDown();
         mj.tearDown();
         rs.tearDown();
-        super.tearDown();
     }
 
     /**
@@ -152,6 +153,7 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
      *
      * @throws IOException
      */
+    @Test
     public void testFindChangedFiles() throws IOException {
         
         // We check the following four cases:
@@ -216,6 +218,7 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
      *
      * @throws IOException
      */
+    @Test
     public void testFindMissingFiles() throws IOException {
         File dir = new File(TestInfo.WORKING_DIR, "referenceFiles");
 
@@ -263,6 +266,7 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
      * @throws FileNotFoundException
      * @throws IOException
      */
+    @Test
     public void testRunChecksumJob()
             throws FileNotFoundException, IOException, NoSuchMethodException,
                    InvocationTargetException, IllegalAccessException {
@@ -328,6 +332,7 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
         acp.close();
     }
 
+    @Test
     public void testGetFilePreservationStatus()
             throws NoSuchFieldException, IllegalAccessException {
 
@@ -350,6 +355,7 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
     /**
      * Test for bug #462: Should be able to run checksum jobs in either place.
      */
+    @Test
     public void testRunChecksumJobElsewhere() throws NoSuchFieldException,
                                                      IllegalAccessException,
                                                      NoSuchMethodException,
@@ -412,6 +418,7 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
      *
      * @throws IOException
      */
+    @Test
     public void testRunFileListJob() throws IOException, NoSuchMethodException,
                                             InvocationTargetException,
                                             IllegalAccessException {
@@ -455,6 +462,7 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
      * Fails in Ant
      * @throws Exception
      */
+    @Test
     public void failingTestGetBitarchiveChecksum() throws Exception {
         AdminData.getUpdateableInstance().addEntry("foobar", null, "md5-1");
         AdminData.getUpdateableInstance().addEntry("barfu", null, "klaf");
@@ -799,9 +807,7 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
 
 	@Override
 	public String getChecksum(String replicaId, String filename) {
-	    
 	    throw new NotImplementedException("TODO: ME!");
 	}
     }
-
 }

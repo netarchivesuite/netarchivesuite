@@ -25,8 +25,11 @@ package dk.netarkivet.archive.arcrepository;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
+import static org.junit.Assert.*;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.arcrepository.TrivialArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
@@ -44,16 +47,13 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
  * Unit-tests for the class 
  * TrivialArcRepositoryClient
  */
-public class TrivialArcRepositoryClientTester extends TestCase {
+public class TrivialArcRepositoryClientTester {
     MoveTestFiles mtf = new MoveTestFiles(dk.netarkivet.archive.distribute.arcrepository.TestInfo.ORIGINALS_DIR,
             dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR);
     ReloadSettings rs = new ReloadSettings();
     UseTestRemoteFile utrf = new UseTestRemoteFile();
 
-    public TrivialArcRepositoryClientTester(String s) {
-        super(s);
-    }
-
+    @Before
     public void setUp() {
         rs.setUp();
         utrf.setUp();
@@ -62,12 +62,14 @@ public class TrivialArcRepositoryClientTester extends TestCase {
         mtf.setUp();
     }
 
+    @After
     public void tearDown() {
         mtf.tearDown();
         utrf.tearDown();
         rs.tearDown();
     }
 
+    @Test
     public void testStore() throws Exception {
         ArcRepositoryClient arcrep = new TrivialArcRepositoryClient();
 

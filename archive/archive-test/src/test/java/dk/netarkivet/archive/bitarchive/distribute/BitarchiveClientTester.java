@@ -30,7 +30,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.checksum.distribute.CorrectMessage;
 import dk.netarkivet.archive.checksum.distribute.GetAllChecksumsMessage;
@@ -62,7 +66,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
  * Test bitarchive client and server As a number of tests only succeed if both
  * the client and server both operate correctly, both are tested together.
  */
-public class BitarchiveClientTester extends TestCase {
+public class BitarchiveClientTester {
     private UseTestRemoteFile rf = new UseTestRemoteFile();
 
     private static final String ARC_FILE_NAME = "Upload5.ARC";
@@ -100,10 +104,7 @@ public class BitarchiveClientTester extends TestCase {
     ReloadSettings rs = new ReloadSettings();
 
 
-    public BitarchiveClientTester(String sTestName) {
-        super(sTestName);
-    }
-
+    @Before
     public void setUp() {
         rs.setUp();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
@@ -129,6 +130,7 @@ public class BitarchiveClientTester extends TestCase {
     /**
      * After test is done, remove the "archive".
      */
+    @After
     public void tearDown() {
         bas.close();
         bac.close();
@@ -147,6 +149,7 @@ public class BitarchiveClientTester extends TestCase {
      * Bitarchive server uses mkdir instead of mkdirs to create the location of
      * admin data.
      */
+    @Test
     public void testBug34() {
         File serverdir = new File(SERVER_DIR, "/sub1/sub2/");
         Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, BITARCHIVE_DIR.getAbsolutePath());
@@ -160,6 +163,7 @@ public class BitarchiveClientTester extends TestCase {
     /**
      * Verify handling of invalid params for upload correct get and batch.
      */
+    @Test
     public void testInvalidParams() {
         try {
             bac.sendUploadMessage(null);
@@ -193,6 +197,7 @@ public class BitarchiveClientTester extends TestCase {
      * Initiate upload and verify that corresponding upload message received by
      * onUpload message handler.
      */
+    @Test
     public void testUpload() {
         assertTrue("File to upload must exist: " + ARC_FILE_NAME,
                    FILE_TO_UPLOAD.exists());
@@ -213,6 +218,7 @@ public class BitarchiveClientTester extends TestCase {
     /**
      * Verify that it is possible to retrieve previously uploaded file.
      */
+    @Test
     public void testGetFile() {
         assertTrue("File to upload must exist: " + ARC_FILE_NAME,
                    FILE_TO_UPLOAD.exists());
@@ -250,6 +256,7 @@ public class BitarchiveClientTester extends TestCase {
      * Try to upload the same file twice and verify that corresponding error
      * message received by onUpload message handler.
      */
+    @Test
     public void testUploadTwice() {
         Settings.set(CommonSettings.REMOTE_FILE_CLASS,
                      "dk.netarkivet.common.distribute.TestRemoteFile");
@@ -288,6 +295,7 @@ public class BitarchiveClientTester extends TestCase {
      *
      * @throws IOException
      */
+    @Test
     public void testGet() throws IOException {
         assertTrue("File to upload must exist: " + ARC_FILE_NAME,
                    FILE_TO_UPLOAD.exists());
@@ -330,6 +338,7 @@ public class BitarchiveClientTester extends TestCase {
      * onBatch receives the corresponding message with correct result data from
      * the batch job.
      */
+    @Test
     public void testBatch1() {
         uploadInPreparationOfBatchTest();
 
@@ -346,6 +355,7 @@ public class BitarchiveClientTester extends TestCase {
      * Verify that the batch(ChannelID,FileBatchJob,RemoteFile) method does not
      * accept null parameters.
      */
+    @Test
     public void testBatch2NullParameters() {
         ChannelID chan = Channels.getTheRepos();
         FileBatchJob job = new TestBatchJobRuns();
@@ -368,6 +378,7 @@ public class BitarchiveClientTester extends TestCase {
      * Verify that the batch(ChannelID,FileBatchJob,RemoteFile) method does not
      * accept null parameters.
      */
+    @Test
     public void testBatch2() {
         uploadInPreparationOfBatchTest();
 
@@ -426,7 +437,8 @@ public class BitarchiveClientTester extends TestCase {
             fail(e.getMessage());
         }
     }
-    
+
+    @Test
     public void testNewMessages() {
         // make sure, that the listener 'handler' is the only one on the TheBamon queue
         BitarchiveMonitorServer.getInstance().close();

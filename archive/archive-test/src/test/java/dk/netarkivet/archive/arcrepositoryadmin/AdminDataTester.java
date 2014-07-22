@@ -34,7 +34,12 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.LogManager;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
 import dk.netarkivet.common.CommonSettings;
@@ -58,7 +63,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
  */
 @SuppressWarnings({ "deprecation"})
 
-public class AdminDataTester extends TestCase {
+public class AdminDataTester {
 
     /**
      * Test instance.
@@ -71,6 +76,7 @@ public class AdminDataTester extends TestCase {
     private String myFile;
     ReloadSettings rs = new ReloadSettings();
 
+    @Before
     protected void setUp() throws IOException {
         rs.setUp();
         Settings.set(CommonSettings.REMOTE_FILE_CLASS, TestRemoteFile.class.getName());
@@ -88,7 +94,7 @@ public class AdminDataTester extends TestCase {
         LogUtils.flushLogs(UpdateableAdminData.class.getName());
     }
 
-
+    @After
     protected void tearDown() {
         if (ad != null) {
             ad.close();
@@ -97,6 +103,7 @@ public class AdminDataTester extends TestCase {
         rs.tearDown();
     }
 
+    @Test
     public void testSingleton() {
         ClassAsserts.assertSingleton(UpdateableAdminData.class);
         //init ad to make sure it is closed in teardown.
@@ -108,6 +115,7 @@ public class AdminDataTester extends TestCase {
      * and getAndRemoveReplyInfo() work as expected.
      * @throws IOException
      */
+    @Test
     public void testReplyInfoOperations() throws IOException {
         ad = UpdateableAdminData.getUpdateableInstance();
         assertFalse("No replyInfo has been set", ad.hasReplyInfo(myFile));
@@ -142,6 +150,7 @@ public class AdminDataTester extends TestCase {
      * Verifies that setChecksum(), getChecksum()
      * work as expected.
      */
+    @Test
     public void testChecksumOperations() {
         ad = UpdateableAdminData.getUpdateableInstance();
         assertFalse("Entry for file: " + myFile + " already exists",
@@ -168,6 +177,7 @@ public class AdminDataTester extends TestCase {
      * as expected.
      * @throws FileNotFoundException
      */
+    @Test
     public void testStoreStateOperations() throws FileNotFoundException {
         ad = UpdateableAdminData.getUpdateableInstance();
         String myBA = "Test ID of bit archive";
@@ -196,6 +206,7 @@ public class AdminDataTester extends TestCase {
      * - replyInfoObjects are removed.
      * @throws IOException
      */
+    @Test
     public void testPersistence() throws IOException {
         ad = UpdateableAdminData.getInstance();
         StoreMessage myReplyInfo
@@ -226,6 +237,7 @@ public class AdminDataTester extends TestCase {
      * Tests that admin data starts with an empty or no log.
      * @throws IOException
      */
+    @Test
     public void testAdminDataEmptylog() throws IOException {
         ad = UpdateableAdminData.getUpdateableInstance();
         LogUtils.flushLogs(UpdateableAdminData.class.getName());
@@ -243,6 +255,7 @@ public class AdminDataTester extends TestCase {
     /**
      * Test that admin state transitions work correctly.
      */
+    @Test
     public void testBitArchiveStoreState() {
         //TODO: incorporate the timestamps, and generalState into this unit-test
         ad = UpdateableAdminData.getUpdateableInstance();
@@ -283,6 +296,7 @@ public class AdminDataTester extends TestCase {
     /**
      * Verify that constructing an AdminData does not fail.
      */
+    @Test
     public void testCTOR() {
         // Test invalid settings:
         Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN,
@@ -299,6 +313,7 @@ public class AdminDataTester extends TestCase {
     /**
      * Test that we can read the set of all files stored in admin.data.
      */
+    @Test
     public void testGetAllFiles() {
         Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, TestInfo.NON_EMPTY_ADMIN_DATA_DIR.getAbsolutePath());
         ad = UpdateableAdminData.getUpdateableInstance();
@@ -314,6 +329,7 @@ public class AdminDataTester extends TestCase {
      * @throws IOException
      * @throws FileNotFoundException
      */
+    @Test
     public void testWriteJournalling() throws IOException, FileNotFoundException{
         //ArchiveStoreState dummyGeneralState = new ArchiveStoreState(BitArchiveStoreState.UPLOAD_STARTED);
         File datafile = new File(Settings.get(
@@ -376,6 +392,7 @@ public class AdminDataTester extends TestCase {
      *
      * @throws Exception
      */
+    @Test
     public void testReadCurrentVersion() throws Exception {
         File datafile = new File(Settings.get(
                 ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN), "admin.data");
@@ -483,6 +500,7 @@ public class AdminDataTester extends TestCase {
                 + "and one version number in the file", datafile, 2 + 1);
     }
 
+    @Test
     public void testMigrateOldToCurrentVersion() throws Exception {
 
         File old_version_admindata = new File(TestInfo.VERSION_03_ADMIN_DATA_DIR_ORIG,"admin.data");

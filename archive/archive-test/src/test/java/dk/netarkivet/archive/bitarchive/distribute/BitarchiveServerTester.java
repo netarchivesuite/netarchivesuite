@@ -37,7 +37,11 @@ import java.util.logging.LogManager;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.bitarchive.BitarchiveApplication;
 import dk.netarkivet.common.CommonSettings;
@@ -72,7 +76,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
  * Unit tests for the BitarchiveServer class.
  */
 @SuppressWarnings({ "unused", "serial"})
-public class BitarchiveServerTester extends TestCase {
+public class BitarchiveServerTester {
     private UseTestRemoteFile utrf = new UseTestRemoteFile();
 
     BitarchiveServer bas;
@@ -88,6 +92,7 @@ public class BitarchiveServerTester extends TestCase {
     };
     ReloadSettings rs = new ReloadSettings();
 
+    @Before
     protected void setUp() throws IOException {
         rs.setUp();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
@@ -107,6 +112,7 @@ public class BitarchiveServerTester extends TestCase {
                 tmpdir.getAbsolutePath());
     }
 
+    @After
     protected void tearDown() {
         if (bas != null) {
             bas.close();
@@ -124,6 +130,7 @@ public class BitarchiveServerTester extends TestCase {
     /**
      * Test that BitarchiveServer is a singleton.
      */
+    @Test
     public void testSingletonicity() {
         Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, dirs);
         ClassAsserts.assertSingleton(BitarchiveServer.class);
@@ -136,6 +143,7 @@ public class BitarchiveServerTester extends TestCase {
      *
      * @throws IOException If unable to read the logfile.
      */
+    @Test
     public void testLogging() throws IOException {
         Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, TestInfo.BITARCHIVE_APP_DIR_1);
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR, TestInfo.BITARCHIVE_SERVER_DIR_1);
@@ -156,6 +164,7 @@ public class BitarchiveServerTester extends TestCase {
      * We currently don't resend the message, but just reply.
      * @throws InterruptedException 
      */
+    @Test
     public void testVisitUploadMessage() throws InterruptedException {
         SERVER1.mkdirs();
 
@@ -209,6 +218,7 @@ public class BitarchiveServerTester extends TestCase {
     /**
      * Test that we don't listen on ANY_BA if we are out of space.
      */
+    @Test
     public void testCTor() {
         // Set to just over the minimum size guaranteed.
         Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, dirs);
@@ -233,6 +243,7 @@ public class BitarchiveServerTester extends TestCase {
      *
      * We currently don't resend the message, but just reply.
      */
+    @Test
     public void testVisitUploadMessageDiskcrash() {
         // Set to just over the minimum size guaranteed.
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR, SERVER1.getAbsolutePath());
@@ -286,6 +297,7 @@ public class BitarchiveServerTester extends TestCase {
                 listener.messagesReceived.size() >= 2);
     }
 
+    @Test
     public void testListenerNotRemovedOnErrors() {
         bas = BitarchiveServer.getInstance();
         ChannelID arcReposQ = Channels.getTheRepos();
@@ -332,6 +344,7 @@ public class BitarchiveServerTester extends TestCase {
     /**
      * Test the normal operation of getting a record of a file which is present.
      */
+    @Test
     public void testVisitGetMessage() {
         Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, BITARCHIVE1.getAbsolutePath());
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR, SERVER1.getAbsolutePath());
@@ -362,6 +375,7 @@ public class BitarchiveServerTester extends TestCase {
      * Test the normal operation of trying to get a record of a file which is
      * not present on this bitarchive.
      */
+    @Test
     public void testVisitGetMessageNoSuchFile() {
         Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, BITARCHIVE1.getAbsolutePath());
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR, SERVER1.getAbsolutePath());
@@ -387,6 +401,7 @@ public class BitarchiveServerTester extends TestCase {
      * Test getting an arcrecord of a file which exists but a record which does
      * not.
      */
+    @Test
     public void testVisitGetMessageNoSuchRecord() {
         Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, BITARCHIVE1.getAbsolutePath());
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR, SERVER1.getAbsolutePath());
@@ -416,6 +431,7 @@ public class BitarchiveServerTester extends TestCase {
      * Pass a batch message to BitarchiveServer and test that it replies with an
      * appropriate BatchEndedMessage.
      */
+    @Test
     public void testVisitBatchMessage() throws InterruptedException {
         Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, BITARCHIVE1.getAbsolutePath());
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR, SERVER1.getAbsolutePath());
@@ -480,6 +496,7 @@ public class BitarchiveServerTester extends TestCase {
      * 
      * @throws IOException If unable to read a file. 
      */
+    @Test
     public void failingTestVisitBatchMessageThreaded() throws IOException {
         Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, BITARCHIVE1.getAbsolutePath());
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR, SERVER1.getAbsolutePath());
@@ -574,6 +591,7 @@ public class BitarchiveServerTester extends TestCase {
      * removes (moves) the file.
      * @throws Exception
      */
+    @Test
     public void testVisitRemoveAndGetFileMessage() throws Exception {
         String arcFile = TestInfo.BA1_FILENAME;
         String dummyReplicaId = "ONE";
@@ -685,6 +703,7 @@ public class BitarchiveServerTester extends TestCase {
         
     }
     
+    @Test
     public void testStopBatchThread() throws InterruptedException {
         Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, BITARCHIVE1.getAbsolutePath());
         GenericMessageListener listener = new GenericMessageListener();
@@ -796,6 +815,7 @@ public class BitarchiveServerTester extends TestCase {
      * FIXME: Disabled, fails on hudson an Eclipse see 
      * http://sbforge.statsbiblioteket.dk/hudson/job/NetarchiveSuite-unittest/lastCompletedBuild/testReport/dk.netarkivet.archive.bitarchive.distribute/BitarchiveServerTester/testBatchTerminationMessage/
      */
+    @Test
     public void failingTestBatchTerminationMessage() throws InterruptedException {
         Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, BITARCHIVE1.getAbsolutePath());
         GenericMessageListener listener = new GenericMessageListener();
@@ -900,6 +920,7 @@ public class BitarchiveServerTester extends TestCase {
                 bem.getErrMsg().startsWith(BatchTermination.class.getName()));
     }
     
+    @Test
     public void testHeartBeatSender() throws NoSuchFieldException, 
             IllegalArgumentException, IllegalAccessException {
         BitarchiveServer bas = BitarchiveServer.getInstance();
@@ -916,6 +937,7 @@ public class BitarchiveServerTester extends TestCase {
     /**
      * Ensure, that the application dies if given the wrong input.
      */
+    @Test
     public void testApplication() {
         ReflectUtils.testUtilityConstructor(BitarchiveApplication.class);
 

@@ -22,21 +22,22 @@
  */
 package dk.netarkivet.archive.arcrepositoryadmin;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+import org.junit.Test;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import junit.framework.TestCase;
 
-public class ChecksumStatusTester extends TestCase {
+public class ChecksumStatusTester {
 
+    @Test(expected = ArgumentNotValid.class)
     public void testFromOrdinal() {
         assertEquals(ChecksumStatus.UNKNOWN, ChecksumStatus.fromOrdinal(0));
         assertEquals(ChecksumStatus.CORRUPT, ChecksumStatus.fromOrdinal(1));
         assertEquals(ChecksumStatus.OK, ChecksumStatus.fromOrdinal(2));
-        try {
-            ChecksumStatus.fromOrdinal(3);
-            fail("Should throw ArgumentNotValid with argument > 2");
-        } catch (ArgumentNotValid e) {
-            // Expected
-        }
-        
-      }
+
+        ChecksumStatus.fromOrdinal(3);
+        fail("Should throw ArgumentNotValid with argument > 2");
+    }
 }

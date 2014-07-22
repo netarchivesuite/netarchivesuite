@@ -22,15 +22,18 @@
  */
 package dk.netarkivet.archive;
 
+import static org.junit.Assert.assertFalse;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /** Unittestersuite for the ArchiveSettings class. */
-public class ArchiveSettingsTester extends TestCase {
+public class ArchiveSettingsTester {
 
     @SuppressWarnings("rawtypes")
+    @Test
 	public void testNoFinalSettingsConstants() {
         Class c = ArchiveSettings.class;
         Field[] fields = c.getDeclaredFields();
