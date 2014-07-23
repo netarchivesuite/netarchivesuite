@@ -64,7 +64,7 @@ public class ArchiveMessageHandlerTester {
     UseTestRemoteFile rf = new UseTestRemoteFile();
 
     @Before
-    protected void setUp() throws Exception {
+    public void setUp() throws Exception {
         ChannelsTester.resetChannels();
         // super.setUp();
         rs.setUp();
@@ -75,7 +75,7 @@ public class ArchiveMessageHandlerTester {
     }
 
     @After
-    protected void tearDown() throws Exception {
+    public void tearDown() throws Exception {
         // super.tearDown();
         rf.tearDown();
         rs.tearDown();

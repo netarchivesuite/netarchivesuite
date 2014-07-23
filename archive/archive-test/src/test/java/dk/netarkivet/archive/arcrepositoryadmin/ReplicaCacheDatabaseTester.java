@@ -347,7 +347,6 @@ public class ReplicaCacheDatabaseTester {
         cache.cleanup();
     }
 
-    @Test
     private File makeTemporaryDuplicateFilelistFile() throws Exception {
         File res = new File(TestInfo.TEST_DIR, "filelist.out");
         FileWriter fw = new FileWriter(res);
@@ -371,7 +370,6 @@ public class ReplicaCacheDatabaseTester {
         return res;
     }
     
-    @Test
     private File makeTemporaryFilelistFile() throws Exception {
 	File res = new File(TestInfo.TEST_DIR, "filelist.out");
 	FileWriter fw = new FileWriter(res);

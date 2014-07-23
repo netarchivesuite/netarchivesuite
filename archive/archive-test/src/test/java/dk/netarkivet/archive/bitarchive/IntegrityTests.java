@@ -31,10 +31,10 @@ import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
-
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveServer;
 import dk.netarkivet.common.CommonSettings;
@@ -213,6 +213,8 @@ public class IntegrityTests {
      * This test requires special setup to run.
      */
     @Test
+    @Ignore("FIXME")
+    // FIXME: test temporarily disabled
     public void testUploadChangesDirectory() {
         final File dir1 = new File(ARCHIVE_DIR, "dir1");
         final File dir2 = new File(ARCHIVE_DIR, "dir2");
@@ -238,6 +240,8 @@ public class IntegrityTests {
      * errors will occur.
      */
     @Test
+    @Ignore("FIXME")
+    // FIXME: test temporarily disabled
     public void testUploadNoSpace() {
         long freeSpace = FileUtils.getBytesFree(ARCHIVE_DIR);
         final File localFile2 = new File(ORIGINALS_DIR,

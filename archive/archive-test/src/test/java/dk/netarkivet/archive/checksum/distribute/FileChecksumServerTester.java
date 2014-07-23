@@ -61,18 +61,18 @@ public class FileChecksumServerTester {
     ReloadSettings rs = new ReloadSettings();
     private UseTestRemoteFile utrf = new UseTestRemoteFile();
     JMSConnectionMockupMQ conn;
-    
+
     ChecksumFileServer cfs;
-    
+
     @Before
-    protected void setUp() {
-	rs.setUp();
-	utrf.setUp();
+    public void setUp() {
+        rs.setUp();
+        utrf.setUp();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         // ??
 
         FileUtils.copyDirectory(TestInfo.ORIGINAL_DIR, TestInfo.WORK_DIR);
-	
+
         // Set the test settings.
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR, TestInfo.BASE_FILE_DIR.getAbsolutePath());
         Settings.set(ArchiveSettings.CHECKSUM_BASEDIR, TestInfo.CHECKSUM_FILE.getParentFile().getAbsolutePath());
@@ -83,20 +83,20 @@ public class FileChecksumServerTester {
 
         // Create/recreate the checksum.md5 file
         try {
-	    FileWriter fw = new FileWriter(TestInfo.CHECKSUM_FILE);
-	    
-	    fw.write("test1.arc##1234567890" + "\n" + "test2.arc##0987654321" + "\n");
-	    fw.flush();
-	    fw.close();
-	} catch (IOException e) {
-	    e.printStackTrace();
-	}
-	
+            FileWriter fw = new FileWriter(TestInfo.CHECKSUM_FILE);
+
+            fw.write("test1.arc##1234567890" + "\n" + "test2.arc##0987654321" + "\n");
+            fw.flush();
+            fw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         conn = (JMSConnectionMockupMQ) JMSConnectionFactory.getInstance();
     }
-    
+
     @After
-    protected void tearDown() {
+    public void tearDown() {
         // ??
         JMSConnectionMockupMQ.clearTestQueues();
         utrf.tearDown();
@@ -104,24 +104,25 @@ public class FileChecksumServerTester {
 
         FileUtils.removeRecursively(TestInfo.WORK_DIR);
     }
-    
+
     @Test
     public void testSingletonicity() {
         ClassAsserts.assertSingleton(ChecksumFileServer.class);
     }
 
     /**
-     * Checks the following:
-     * - The connection has only one listener when we start listening.
-     * - We receive a reply on a message when we sent one.
-     * - The checksum archive contains at least one entry.
-     * - All the checksums are retrievable both as a map and individually, and
-     * that these checksum are the same.
-     * - It is possible to upload a file and then retrieve the checksum.
-     * - The retrieved checksum has the correct precalculated checksum.
-     * - It is possible to correct the file, and it new has a different value.
-     * - That the new value equals a precalculated checksum for the new file.
-     * @throws IOException If file handling error in test.
+     * Checks the following: - The connection has only one listener when we
+     * start listening. - We receive a reply on a message when we sent one. -
+     * The checksum archive contains at least one entry. - All the checksums are
+     * retrievable both as a map and individually, and that these checksum are
+     * the same. - It is possible to upload a file and then retrieve the
+     * checksum. - The retrieved checksum has the correct precalculated
+     * checksum. - It is possible to correct the file, and it new has a
+     * different value. - That the new value equals a precalculated checksum for
+     * the new file.
+     * 
+     * @throws IOException
+     *             If file handling error in test.
      */
 
     @Test
@@ -338,7 +339,7 @@ public class FileChecksumServerTester {
         assertEquals("There should only be 1 file within the archive.", filenames.size(), 1);
         assertEquals("Wrong file name retrieved.", TestInfo.UPLOADMESSAGE_TESTFILE_1.getName(), filenames.get(0));
     }
-    
+
     /**
      * Ensure, that the application dies if given the wrong input.
      */
@@ -350,9 +351,9 @@ public class FileChecksumServerTester {
         PreserveStdStreams pss = new PreserveStdStreams(true);
         pse.setUp();
         pss.setUp();
-        
+
         try {
-            ChecksumFileApplication.main(new String[]{"ERROR"});
+            ChecksumFileApplication.main(new String[] { "ERROR" });
             fail("It should throw an exception ");
         } catch (SecurityException e) {
             // expected !
@@ -360,9 +361,9 @@ public class FileChecksumServerTester {
 
         pss.tearDown();
         pse.tearDown();
-        
+
         assertEquals("Should give exit code 1", 1, pse.getExitValue());
-        assertTrue("Should tell that no arguments are expected.", 
+        assertTrue("Should tell that no arguments are expected.",
                 pss.getOut().contains("This application takes no arguments"));
     }
 }
