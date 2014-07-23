@@ -28,24 +28,28 @@ import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 
 /**
  * Unit-tests for the Schedule class.
  */
 public class ScheduleTester extends DataModelTestCase {
-    public ScheduleTester(String testName) {
-        super(testName);
-    }
 
+    @Before
     public void setUp() throws Exception {
         super.setUp();
     }
 
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
     }
 
+    @Test
     public void testValidityOfArguments() {
         try {
             Date startDate = new Date(System.currentTimeMillis());
@@ -93,6 +97,7 @@ public class ScheduleTester extends DataModelTestCase {
      * given as the first possible.
      * @throws Exception
      */
+    @Test
     public void testGetFirstEvent1() throws Exception {
         Calendar cal = new GregorianCalendar(1940, Calendar.APRIL, 9, 9, 30);
         Schedule sched = Schedule.getInstance(cal.getTime(), null,
@@ -107,6 +112,7 @@ public class ScheduleTester extends DataModelTestCase {
      * requirements if the given time is given as the first possible.
      * @throws Exception
      */
+    @Test
     public void testGetFirstEvent2() throws Exception {
         Calendar cal = new GregorianCalendar(1940, Calendar.APRIL, 9, 9, 30);
         Schedule sched = Schedule.getInstance(cal.getTime(), null,
@@ -122,6 +128,7 @@ public class ScheduleTester extends DataModelTestCase {
     /** Tests that first event happens now if no first time is given.
      * @throws Exception
      */
+    @Test
     public void testGetFirstEvent3() throws Exception {
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.MILLISECOND, 0);
@@ -137,6 +144,7 @@ public class ScheduleTester extends DataModelTestCase {
      * frequency requirements if no first time is given.
      * @throws Exception
      */
+    @Test
     public void testGetFirstEvent4() throws Exception {
         Schedule sched = Schedule.getInstance(null, null,
                 new MonthlyFrequency(12, 9, 12, 0), "Full flag",
@@ -163,6 +171,7 @@ public class ScheduleTester extends DataModelTestCase {
      *  if now is before then.
      *  @throws Exception
      */
+    @Test
     public void testGetFirstEvent5() throws Exception {
         Calendar cal = new GregorianCalendar(1940, Calendar.APRIL, 9, 9, 30);
         Calendar cal2 = new GregorianCalendar(1943, Calendar.APRIL, 9, 9, 29);
@@ -179,6 +188,7 @@ public class ScheduleTester extends DataModelTestCase {
      *  if now is before then but at time allowed by frequency requirements.
      *  @throws Exception
      */
+    @Test
     public void testGetFirstEvent6() throws Exception {
         Calendar cal = new GregorianCalendar(1940, Calendar.APRIL, 9, 9, 30);
         Calendar cal2 = new GregorianCalendar(1943, Calendar.APRIL, 9, 9, 29);
@@ -195,6 +205,7 @@ public class ScheduleTester extends DataModelTestCase {
 
 
 
+    @Test
     public void testEquals() {
         // Three identical schedules:
         Schedule sch = TestInfo.getDefaultSchedule();
@@ -239,6 +250,7 @@ public class ScheduleTester extends DataModelTestCase {
         assertFalse("Schedule.equals() does not satisfy null-rule", sch.equals(null));
     }
 
+    @Test
     public void testHashCode() {
 
         // Two identical schedules:

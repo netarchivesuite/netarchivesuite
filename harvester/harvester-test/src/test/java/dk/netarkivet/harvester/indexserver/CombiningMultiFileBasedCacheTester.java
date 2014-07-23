@@ -32,6 +32,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.harvester.indexserver.CombiningMultiFileBasedCache;
 import dk.netarkivet.harvester.indexserver.FileBasedCache;
@@ -41,10 +46,18 @@ import dk.netarkivet.harvester.indexserver.FileBasedCache;
  * Unit test(s) for the CombiningMultiFileBasedCache class.
  */
 public class CombiningMultiFileBasedCacheTester extends CacheTestCase {
-    public CombiningMultiFileBasedCacheTester(String s) {
-        super(s);
+
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
     }
 
+    @After
+    public void tearDown() throws Exception {
+        super.tearDown();
+    }
+
+    @Test
     public void testCacheData() throws Exception {
         final Map<Integer, File> combined = new HashMap<Integer, File>();
         final Set<Integer> rawgotten = new HashSet<Integer>();

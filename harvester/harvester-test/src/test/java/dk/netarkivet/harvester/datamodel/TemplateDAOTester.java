@@ -30,6 +30,10 @@ import org.dom4j.DocumentException;
 
 import java.io.File;
 import java.util.Iterator;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 
 /**
@@ -37,18 +41,17 @@ import java.util.Iterator;
  *
  */
 public class TemplateDAOTester extends DataModelTestCase {
-    public TemplateDAOTester(String s) {
-        super(s);
-    }
-
+    @Before
     public void setUp() throws Exception {
         super.setUp();
     }
 
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
     }
 
+    @Test
     public void testGetAll() throws Exception {
         TemplateDAO dao = TemplateDAO.getInstance();
         Iterator<String> i = dao.getAll();
@@ -63,6 +66,7 @@ public class TemplateDAOTester extends DataModelTestCase {
                 sb.toString());
     }
 
+    @Test
     public void testCreate() throws DocumentException {
         TemplateDAO dao = TemplateDAO.getInstance();
         String defaultOrderXmlName = Settings.get(
@@ -91,6 +95,7 @@ public class TemplateDAOTester extends DataModelTestCase {
         assertEquals( "Text of doc2 and doc3 is equal", doc2.asXML(), doc3.asXML() );
     }
 
+    @Test
     public void testUpdate() throws Exception {
         TemplateDAO dao = TemplateDAO.getInstance();
         String defaultOrderXmlName = Settings.get(

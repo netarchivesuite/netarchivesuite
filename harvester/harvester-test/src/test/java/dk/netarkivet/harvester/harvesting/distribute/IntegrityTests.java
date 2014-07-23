@@ -63,6 +63,10 @@ import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * Integrity tests for the dk.harvester.harvesting.distribute 
@@ -87,10 +91,7 @@ public class IntegrityTests extends DataModelTestCase {
 
     SecurityManager sm;
 
-    public IntegrityTests(String sTestName) {
-        super(sTestName);
-    }
-
+    @Before
     public void setUp() throws Exception, SQLException, IllegalAccessException {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         rs.setUp();
@@ -153,6 +154,7 @@ public class IntegrityTests extends DataModelTestCase {
      * After test is done close test-objects.
      * @throws Exception
      */
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
         //Reset index request client listener
@@ -183,6 +185,7 @@ public class IntegrityTests extends DataModelTestCase {
     //7) The reply to the store is sent
     //8) Waits for message on the sched, indicating doOneCrawl ended
     //9) Checks that we listen for jobs again
+    @Test
     public void testListenersAddedAndRemoved() throws IOException {
         ChannelID hacoQueue = HarvesterChannels.getHarvestJobChannelId(
                 new HarvestChannel("test", false, true, ""));
@@ -320,6 +323,7 @@ public class IntegrityTests extends DataModelTestCase {
      * @throws IOException
      * @throws InterruptedException
      */
+    @Test
     public void testCrawlJob() throws IOException,
                                       InterruptedException {
         // make a dummy job

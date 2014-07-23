@@ -32,7 +32,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Locale;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Test;
+
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.testutils.ReflectUtils;
@@ -43,17 +45,9 @@ import dk.netarkivet.testutils.StringAsserts;
  * Uses two dummy classes: An anonymous JspWriter,
  * and a MockHttpServletResponse.
  */
-public class HTTPControllerClientTester extends TestCase {
-    public HTTPControllerClientTester(String s) {
-        super(s);
-    }
+public class HTTPControllerClientTester {
 
-    public void setUp() {
-    }
-
-    public void tearDown() {
-    }
-
+    @Test
     public void testRedirectForSimpleCommand()
             throws IOException, NoSuchMethodException, IllegalAccessException,
             InvocationTargetException {

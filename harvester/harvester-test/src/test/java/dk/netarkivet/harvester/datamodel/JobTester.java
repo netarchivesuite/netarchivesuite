@@ -64,6 +64,10 @@ import dk.netarkivet.harvester.scheduler.jobgen.DefaultJobGenerator;
 import dk.netarkivet.harvester.webinterface.DomainDefinition;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.TestFileUtils;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * Test class for the Job class.
@@ -75,10 +79,7 @@ public class JobTester extends DataModelTestCase {
 	private HarvestChannel highChan;
 	private HarvestChannel lowChan;
 
-    public JobTester(String sTestName) {
-        super(sTestName);
-    }
-
+    @Before
     public void setUp() throws Exception {
         super.setUp();
         LogManager.getLogManager().readConfiguration();
@@ -91,6 +92,7 @@ public class JobTester extends DataModelTestCase {
         lowChan = new HarvestChannel("SNAPSHOT", true, true, "");
     }
 
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
     }
@@ -98,6 +100,7 @@ public class JobTester extends DataModelTestCase {
     /**
      * Tests that seedlists have ascii versions added.
      */
+    @Test
     public void testDanskTegn() throws Exception {
         DomainDAO dao = DomainDAO.getInstance();
         Domain poelse = Domain.getDefaultDomain("pølse.dk");
@@ -143,6 +146,7 @@ public class JobTester extends DataModelTestCase {
 //        		TestInfo.LOG_FILE, "WARNING");
     }
 
+    @Test
     public void testAddConfigurationMinCountObjects() {
         //Note: The configurations have these expectations:
         //500, 1400, 2400, 4000
@@ -171,6 +175,7 @@ public class JobTester extends DataModelTestCase {
     /**
      * Verify that a Job can be created and the correct data retrieved.
      */
+    @Test
     public void testSetAndGet() throws IOException {
         DomainConfiguration dc = TestInfo.getDefaultConfig(TestInfo.getDefaultDomain());
 
@@ -208,6 +213,7 @@ public class JobTester extends DataModelTestCase {
     }
 
 
+    @Test
     public void testGetAndSetStatus() {
         DomainConfiguration dc = TestInfo.getDefaultConfig(TestInfo.getDefaultDomain());
         Job job = Job.createJob(TestInfo.HARVESTID, highChan, dc, 0);
@@ -221,6 +227,7 @@ public class JobTester extends DataModelTestCase {
      * Tests that it is only permitted to change job status as follows:
      * new -> submitted -> started -> done -> failed.
      */
+    @Test
     public void testOrderSetStatus() {
         DomainConfiguration dc = TestInfo.getDefaultConfig(TestInfo.getDefaultDomain());
         Job job = Job.createJob(TestInfo.HARVESTID, highChan, dc, 0);
@@ -250,6 +257,7 @@ public class JobTester extends DataModelTestCase {
      * Tests that we cannot cause a job status to decrease in ordinal value
      * from DONE to NEW
      */
+    @Test
     public void testIllegalJumpInStatus() {
         DomainConfiguration dc = TestInfo.getDefaultConfig(TestInfo.getDefaultDomain());
         Job job = Job.createJob(TestInfo.HARVESTID, highChan, dc, 0);
@@ -266,6 +274,7 @@ public class JobTester extends DataModelTestCase {
      * Tests the single special case where job status can be reduced in ordinal value from
      * FAILED_REJECTED to FAILED.
      */
+    @Test
     public void testLegalJumpInStatus() {
         DomainConfiguration dc = TestInfo.getDefaultConfig(TestInfo.getDefaultDomain());
         Job job = Job.createJob(TestInfo.HARVESTID, highChan, dc, 0);
@@ -277,6 +286,7 @@ public class JobTester extends DataModelTestCase {
      * Test if a configuration is checked with respect to expected number of objects,
      * and that the domain the domain in this configuration is not already in job.
      */
+    @Test
     public void testCanAcceptByteLimit() {
         
         Domain defaultDomain = TestInfo.getDefaultDomain();
@@ -346,6 +356,7 @@ public class JobTester extends DataModelTestCase {
     }
 
 
+    @Test
     public void testAddConfiguration() {
         DomainConfiguration defaultConfig = TestInfo.getDefaultConfig(TestInfo.getDefaultDomain());
         Job job = Job.createJob(TestInfo.HARVESTID, highChan, defaultConfig, 0);
@@ -393,6 +404,7 @@ public class JobTester extends DataModelTestCase {
     /**
      * Tests that job status fields are defined and are distinct
      */
+    @Test
     public void testStatusFields() {
         assertTrue("Error implementing status codes",
                 JobStatus.NEW !=
@@ -441,6 +453,7 @@ public class JobTester extends DataModelTestCase {
     /**
      * Check handling of invalid arguments.
      */
+    @Test
     public void testInvalidArgs() {
         // HarvestID
         try {
@@ -534,6 +547,7 @@ public class JobTester extends DataModelTestCase {
      * Tests that normal jobs have high priority and snapshot jobs have low
      * priority.
      */
+    @Test
     public void testPriority() {
         Domain d = Domain.getDefaultDomain("testdomain.dk");
         DomainDAO.getInstance().create(d);
@@ -551,6 +565,7 @@ public class JobTester extends DataModelTestCase {
     }
 
 
+    @Test
     public void testCreateSnapShotJob() {
 
         DomainConfiguration defaultConfig =
@@ -591,6 +606,7 @@ public class JobTester extends DataModelTestCase {
      *
      * @throws DocumentException Thrown if SAXReader() has problems parsing the order.xml file.
      */
+    @Test
     public void testForceMaxObjectsPerDomain() throws DocumentException {
 
         DomainConfiguration defaultConfig =
@@ -646,6 +662,7 @@ public class JobTester extends DataModelTestCase {
 
     }
 
+    @Test
     public void testSerializability() throws IOException,
             ClassNotFoundException {
         //make a job:
@@ -695,6 +712,7 @@ public class JobTester extends DataModelTestCase {
      *   </stringList>
      * </newObject>
      */
+    @Test
     public void testAddConfigurationUpdatesOrderXml() {
         //Make a configuration with no crawlertraps
     	Domain domain = TestInfo.getDefaultDomain();
@@ -788,6 +806,7 @@ public class JobTester extends DataModelTestCase {
      * Test fields are set correctly, especially harvestNum (after bug 544)
      * and max-bytes since that now uses limit from configuration if present.
      */
+    @Test
     public void testCreateJob() {
         DomainConfiguration dc = TestInfo.getNetarkivetConfiguration();
         dc.setMaxBytes(-1);
@@ -831,6 +850,7 @@ public class JobTester extends DataModelTestCase {
 
     }
 
+    @Test
     public void testMaxBytes() throws Exception {
         Method m = Job.class.getDeclaredMethod("setMaxBytesPerDomain",
                                                Long.TYPE);
@@ -867,6 +887,7 @@ public class JobTester extends DataModelTestCase {
 
     }
 
+    @Test
     public void testEditOrderXML_maxBytesPerDomain() throws Exception {
         // Check that order.xml for the job is updated after calling setMaxBytesPerDomain()
         // analogous with what is done in testForceMaxObjectsPerDomain()
@@ -890,6 +911,7 @@ public class JobTester extends DataModelTestCase {
                 -1L, maxBytesXML);
     }
 
+    @Test
     public void testMaxBytesBug652() throws Exception {
         DomainConfiguration defaultConfig =
             TestInfo.getDefaultConfig(TestInfo.getDefaultDomain());
@@ -923,6 +945,7 @@ public class JobTester extends DataModelTestCase {
      * test the method public static List<AliasInfo> Job.getJobAliasInfo(Job job);
      *
      */
+    @Test
     public void testgetJobAliasInfo() {
         DomainConfiguration dc = TestInfo.getDefaultConfig(TestInfo
                 .getDefaultDomain());
@@ -961,6 +984,7 @@ public class JobTester extends DataModelTestCase {
     /**
      * Test method getSortedSeedList.
      */
+    @Test
     public void testGetSortedSeedList() throws Exception {
         DomainConfiguration dc = TestInfo.getNetarkivetConfiguration();
         dc.setMaxBytes(-1);
@@ -1024,6 +1048,7 @@ public class JobTester extends DataModelTestCase {
     /**
      * Test method getSubmittedDate().
      */
+    @Test
     public void testGetSubmittedDate() {
         Job job = Job.createJob(Long.valueOf(42), highChan,
                 TestInfo.getDefaultConfig(TestInfo.getDefaultDomain()), 0);
@@ -1049,6 +1074,7 @@ public class JobTester extends DataModelTestCase {
     /**
      * Test method getCreationDate().
      */
+    @Test
     public void testGetCreationDate() {
         Job job = Job.createJob(Long.valueOf(42), highChan,
                 TestInfo.getDefaultConfig(TestInfo.getDefaultDomain()), 0);
@@ -1075,6 +1101,7 @@ public class JobTester extends DataModelTestCase {
      * Tests that global crawler traps defined in the dao are added to new jobs.
      * @throws FileNotFoundException
      */
+    @Test
     public void testCreateJobWithGlobalCrawlerTraps()
             throws FileNotFoundException {
          GlobalCrawlerTrapList list1 = new GlobalCrawlerTrapList(
@@ -1106,6 +1133,7 @@ public class JobTester extends DataModelTestCase {
      *  test that Job.setsetSeedList does not accept null and/or empty 
      *  seedlist.
      */
+    @Test
     public void testSetSeedlist() {
         Job job = Job.createJob(Long.valueOf(42), highChan,
                 TestInfo.getDefaultConfig(TestInfo.getDefaultDomain()), 0);

@@ -26,7 +26,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.PrintStream;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Ignore;
+import org.junit.Test;
+
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.StringAsserts;
@@ -39,7 +45,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 /**
  * Tests of the tool to create metadata files.
  */
-public class CreateCDXMetadataFileTester extends TestCase {
+public class CreateCDXMetadataFileTester {
     //private static String CONTENT = "This is a test message";
     private PreventSystemExit pse = new PreventSystemExit();
     private PreserveStdStreams pss = new PreserveStdStreams();
@@ -53,10 +59,7 @@ public class CreateCDXMetadataFileTester extends TestCase {
     File job70MetadataFile = new File("70-metadata-1.arc");
     private UseTestRemoteFile utrf = new UseTestRemoteFile();
 
-    public CreateCDXMetadataFileTester(String s) {
-        super(s);
-    }
-
+    @Before
     public void setUp(){
         utrf.setUp();
         mjms.setUp();
@@ -66,6 +69,7 @@ public class CreateCDXMetadataFileTester extends TestCase {
         pss.setUp();
         pse.setUp();
     }
+    @After
     public void tearDown(){
         pse.tearDown();
         pss.tearDown();
@@ -82,6 +86,7 @@ public class CreateCDXMetadataFileTester extends TestCase {
     /** Test that arguments are handled correctly.
      *
      */
+    @Test
     public void testMain() {
         ByteArrayOutputStream baosOut = new ByteArrayOutputStream();
         System.setOut(new PrintStream(baosOut));
@@ -180,6 +185,8 @@ public class CreateCDXMetadataFileTester extends TestCase {
     /**
      * FIXME Blocks on Hudson server
      */
+    @Test
+    //@Ignore("blocks on hudson server. NAS-xxxx")
     public void testRunSingleJob() {
         try {
             CreateCDXMetadataFile.main(new String[] { "--jobID 4 --harvestnamePrefix 4-1" });
@@ -205,26 +212,28 @@ public class CreateCDXMetadataFileTester extends TestCase {
                 job4MetadataFile
         );
     }
-    /*
+    
+    @Test
+    @Ignore("was commented out")
     public void testRunFailingJob() {
-        // Test with failure
-        File outputFile = new File(TestInfo.WORKING_DIR, "tmpout");
-        outputFile.delete();
-        outputFile.mkdir(); // Force unwriteable file.
-        try {
-            CreateCDXMetadataFile.main(new String[] { "5" });
-        } catch (SecurityException e) {
-            assertEquals("Should have exited normally",
-                         0, pse.getExitValue());
-        }        
-        // Should not die on errors in the batch job (null result file)
-    } */
+//        // Test with failure
+//        File outputFile = new File(TestInfo.WORKING_DIR, "tmpout");
+//        outputFile.delete();
+//        outputFile.mkdir(); // Force unwriteable file.
+//        try {
+//            CreateCDXMetadataFile.main(new String[] { "5" });
+//        } catch (SecurityException e) {
+//            assertEquals("Should have exited normally",
+//                         0, pse.getExitValue());
+//        }        
+//        // Should not die on errors in the batch job (null result file)
+    } 
 
     /**
      * This class is a MessageListener that responds to BatchMessage,
      * simulating an ArcRepository.
      */
-    /* ToDO Maven-migration Disabling to avoid cyclic dependency to Archive module through BatchMessage
+    /* FIXME: Maven-migration Disabling to avoid cyclic dependency to Archive module through BatchMessage
     private static class BatchListener extends TestMessageListener {
         public BatchListener() {
         }

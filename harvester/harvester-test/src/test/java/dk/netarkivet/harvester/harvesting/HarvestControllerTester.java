@@ -43,7 +43,11 @@ import dk.netarkivet.harvester.harvesting.report.HarvestReportFactory;
 import dk.netarkivet.testutils.*;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -55,21 +59,17 @@ import java.util.List;
  * Tests for the HarvestController class (which was extracted from
  * HarvestControllerServer).
  */
-public class HarvestControllerTester extends TestCase {
+public class HarvestControllerTester {
     HarvestController hc;
-
-    public HarvestControllerTester(String s) {
-        super(s);
-    }
 
     // Out commented to avoid reference to archive module from harvester module.
     //MockupIndexServer mis = new MockupIndexServer(new File(TestInfo.ORIGINALS_DIR, "dedupcache"));
     UseTestRemoteFile rf = new UseTestRemoteFile();
     ReloadSettings rs = new ReloadSettings();
 
+    @Before
     public void setUp()
             throws Exception, IllegalAccessException, IOException {
-        super.setUp();
         rs.setUp();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         JMSConnectionMockupMQ.clearTestQueues();
@@ -86,8 +86,8 @@ public class HarvestControllerTester extends TestCase {
         // mis.setUp();
    }
 
+    @After
     public void tearDown() throws Exception {
-        super.tearDown();
         // Uncommented to avoid reference to archive module from harvester module.
         // mis.tearDown();
         JMSConnectionMockupMQ.clearTestQueues();
@@ -104,7 +104,8 @@ public class HarvestControllerTester extends TestCase {
      * get an exception.
      */
 // Out commented to avoid reference to archive module from harvester module.
-//    public void testFailingArcRepositoryClient() {
+    @Test
+    public void testFailingArcRepositoryClient() {
 //        // If the harvestController is already instantiated,
 //        // make sure that isn't any longer.
 //        HarvestController hc = HarvestController.getInstance();
@@ -118,13 +119,15 @@ public class HarvestControllerTester extends TestCase {
 //        } catch (ArgumentNotValid e) {
 //            //expected
 //        }
-//    }
+    }
 
     /** Tests the writeHarvestFiles method.
      * FIXME fails when run as part of the UnitTesterSuite.java. See bug 1912.
      *
      * @throws Exception
      */
+    @Test
+    // @Ignore
     public void failingTestWriteHarvestFiles() throws Exception {
 
         // Check that harvest info file, seed.txt and order.xml are written,
@@ -216,6 +219,7 @@ public class HarvestControllerTester extends TestCase {
      * Test that writePreharvestMetadata() does what it's supposed to do.
      * @throws Exception
      */
+    @Test
     public void testWritePreharvestMetadata() throws Exception {
         Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR, TestInfo.WORKING_DIR.getAbsolutePath());
         TestInfo.oneMetadata.add(TestInfo.sampleEntry);
@@ -266,6 +270,7 @@ public class HarvestControllerTester extends TestCase {
      * cause behind the message "Error creating singleton of class
      * 'dk.netarkivet.harvester.harvesting.controller.BnfHeritrixLauncher'.
      */
+    @Test
     public void testRunHarvest() throws Exception {
         HeritrixFiles files = new HeritrixFiles(
                 new File(TestInfo.WORKING_DIR, "bogus"), new JobInfoTestImpl(42L, 23L));
@@ -289,6 +294,7 @@ public class HarvestControllerTester extends TestCase {
         }
     }
 
+    @Test
     public void testGenerateHeritrixDomainHarvestReport() throws Exception {
         // Test that an existing crawl.log is used, or null is returned
         // if no hosts report is found.
@@ -325,7 +331,8 @@ public class HarvestControllerTester extends TestCase {
     }
 
 // Uncommented to avoid reference to archive module from harvester module.
-//    public void testUploadFiles() throws Exception {
+    @Test
+    public void testUploadFiles() throws Exception {
 //        hc = HarvestController.getInstance();
 //        Field arcrepField = ReflectUtils.getPrivateField(hc.getClass(), "arcRepController");
 //        final List<File> stored = new ArrayList<File>();
@@ -389,12 +396,13 @@ public class HarvestControllerTester extends TestCase {
 //        assertEquals("Should have no files uploaded", 0, stored.size());
 //        assertEquals("Should have no error messages", 0, errs.length());
 //        assertEquals("Should have no failed files", 0, failed.size());
-//    }
+    }
 
     public static <T> List<T> list(T... objects) {
         return Arrays.asList(objects);
     }
 
+    @Test
     public void testFindDefaultStopReason() throws Exception {
         try {
             AbstractHarvestReport.findDefaultStopReason(null);

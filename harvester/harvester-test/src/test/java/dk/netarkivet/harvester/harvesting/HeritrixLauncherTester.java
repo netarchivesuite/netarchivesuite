@@ -34,8 +34,12 @@ import dk.netarkivet.harvester.harvesting.controller.DirectHeritrixController;
 import dk.netarkivet.harvester.harvesting.controller.HeritrixController;
 import dk.netarkivet.testutils.XmlAsserts;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
 
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.apache.commons.httpclient.URIException;
 import org.archive.crawler.datamodel.CandidateURI;
 import org.archive.crawler.datamodel.CrawlURI;
@@ -67,7 +71,7 @@ import java.util.List;
  * -Xmx512M may be required.
  */
 @SuppressWarnings({ "deprecation", "unused", "unchecked"})
-public class HeritrixLauncherTester extends TestCase {
+public class HeritrixLauncherTester {
 
     private MoveTestFiles mtf;
     private File dummyLuceneIndex;
@@ -76,6 +80,7 @@ public class HeritrixLauncherTester extends TestCase {
         mtf = new MoveTestFiles (TestInfo.CRAWLDIR_ORIGINALS_DIR, TestInfo.WORKING_DIR);
     }
 
+    @Before
     public void setUp() throws IOException {
         mtf.setUp();
         dummyLuceneIndex = mtf.newTmpDir();
@@ -86,6 +91,7 @@ public class HeritrixLauncherTester extends TestCase {
         //dk.netarkivet.archive.indexserver.LuceneUtils.makeDummyIndex(dummyLuceneIndex);
     }
 
+    @After
     public void tearDown() {
         mtf.tearDown();
     }
@@ -171,6 +177,7 @@ public class HeritrixLauncherTester extends TestCase {
     /**
      * Test that the launcher aborts given a non-existing order-file.
      */
+    @Test
     public void testStartMissingOrderFile() {
         try {
             HeritrixLauncherFactory.getInstance(
@@ -185,6 +192,7 @@ public class HeritrixLauncherTester extends TestCase {
     /**
      * Test that the launcher aborts given a non-existing seeds-file.
      */
+    @Test
     public void testStartMissingSeedsFile() {
         try {
             HeritrixFiles hf = new HeritrixFiles(TestInfo.WORKING_DIR, new JobInfoTestImpl(42L, 42L));
@@ -199,6 +207,7 @@ public class HeritrixLauncherTester extends TestCase {
     /**
      * Test that the launcher handles heritrix dying on a bad order file correctly.
      */
+    @Test
     public void testStartBadOrderFile() {
         myTesterOfBadOrderfiles(TestInfo.BAD_ORDER_FILE);
     }
@@ -206,6 +215,7 @@ public class HeritrixLauncherTester extends TestCase {
     /**
      * Test that the launcher handles heritrix dying on a order file missing the disk node correctly.
      */
+    @Test
     public void testStartMissingDiskFieldOrderFile() {
         myTesterOfBadOrderfiles(TestInfo.MISSING_DISK_FIELD_ORDER_FILE);
     }
@@ -214,15 +224,17 @@ public class HeritrixLauncherTester extends TestCase {
      * Test that the launcher handles heritrix dying on a order file 
      * missing the arcs-path node correctly.
      */
-    /*
+
+    @Test
+    @Ignore("was commented out")
     public void testStartMissingARCsPathOrderFile() {
         myTesterOfBadOrderfiles(TestInfo.MISSING_ARCS_PATH_ORDER_FILE);
     }
-    */
 
     /**
      * Test that the launcher handles heritrix dying on a order file missing the seedsfile node correctly.
      */
+    @Test
     public void testStartMissingSeedsfileOrderFile() {
         myTesterOfBadOrderfiles(TestInfo.MISSING_SEEDS_FILE_ORDER_FILE);
     }
@@ -230,10 +242,11 @@ public class HeritrixLauncherTester extends TestCase {
     /**
      * Test that the launcher handles heritrix dying on a order file missing the seedsfile node correctly.
      */
-    /*
+    @Test
+    @Ignore("was commented out")
     public void testStartMissingPrefixOrderFile() {
         myTesterOfBadOrderfiles(TestInfo.MISSING_PREFIX_FIELD_ORDER_FILE);
-    }*/
+    }
 
     /**
      * This method is used to test various scenarios with bad order-files.
@@ -259,6 +272,7 @@ public class HeritrixLauncherTester extends TestCase {
     /**
      * Test that the launcher handles an empty order file correctly.
      */
+    @Test
     public void testStartEmptyFile() {
         HeritrixLauncher hl = getHeritrixLauncher(TestInfo.EMPTY_ORDER_FILE, null);
 
@@ -277,6 +291,8 @@ public class HeritrixLauncherTester extends TestCase {
      * FIXME Fails on Hudson
      * @throws NoSuchFieldException
      * @throws IllegalAccessException */
+    @Test
+    // @Ignore
     public void failingTestStartJob()
             throws NoSuchFieldException, IllegalAccessException {
         //HeritrixLauncher hl = getHeritrixLauncher(TestInfo.ORDER_FILE, null);
@@ -304,6 +320,7 @@ public class HeritrixLauncherTester extends TestCase {
      * - our own DomainnameQueueAssignmentPolicy extends this one and expects 
      * that it returns the right values
      */
+    @Test
     public void testHostnameQueueAssignmentPolicy() {
         HostnameQueueAssignmentPolicy hqap = new HostnameQueueAssignmentPolicy();
         UURI uri;
@@ -341,6 +358,7 @@ public class HeritrixLauncherTester extends TestCase {
     /**
      * Test that the DomainnameQueueAssignmentPolicy returns correct queue-names for different URL's
      */
+    @Test
     public void testDomainnameQueueAssignmentPolicy() {
         DomainnameQueueAssignmentPolicy dqap = new DomainnameQueueAssignmentPolicy();
         UURI uri;
@@ -383,6 +401,8 @@ public class HeritrixLauncherTester extends TestCase {
      * @throws NoSuchFieldException
      * @throws IllegalAccessException
      */
+    @Test
+    @Ignore("apparently fails without dummyIndex")
     public void FailingtestSetupOrderFile()  throws NoSuchFieldException, IllegalAccessException {
 
         /**
@@ -430,6 +450,8 @@ public class HeritrixLauncherTester extends TestCase {
      * 
      * FIXME Fails in Hudson
      */
+    @Test
+    @Ignore("fails in hudson")
     public void failingTestFailOnInitialize()
             throws NoSuchFieldException, IllegalAccessException {
         Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS, 
@@ -453,6 +475,8 @@ public class HeritrixLauncherTester extends TestCase {
      * 
      * * FIXME Fails in Hudson
      */
+    @Test
+    @Ignore("fails in hudson")
     public void failingTestFailOnCleanup() {
         Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS, 
                 "dk.netarkivet.harvester.harvesting.HeritrixLauncherTester$FailingTestController");
@@ -477,6 +501,8 @@ public class HeritrixLauncherTester extends TestCase {
      * 
      * * FIXME Fails in Hudson
      */
+    @Test
+    @Ignore("fails in hudson")
     public void failingTestFailDuringCrawl() {
           Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS,
           "dk.netarkivet.harvester.harvesting.HeritrixLauncherTester$FailDuringCrawlTestController");

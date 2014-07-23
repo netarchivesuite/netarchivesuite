@@ -33,7 +33,11 @@ import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.SetSystemProperty;
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
+
 
 import org.dom4j.Document;
 import org.slf4j.Logger;
@@ -51,7 +55,7 @@ import java.util.*;
  * A generic superclass for the harvest definition tests.  This
  * sets up the various DAOs etc.
  */
-public class DataModelTestCase extends TestCase {
+public class DataModelTestCase {
 
     Logger log = LoggerFactory.getLogger(DataModelTestCase.class);
 
@@ -64,16 +68,13 @@ public class DataModelTestCase extends TestCase {
 	File commonTempdir = new File(TestInfo.TEMPDIR, "commontempdir");
 
 
-	public DataModelTestCase(String s) {
-		super(s);
-	}
 
 	//TODO this method is highly derby-specific. Implement a mechanism, e.g. a
 	//command-line system parameter, to switch between derby and MySQL for
 	//unit tests.
+    @Before
 	public void setUp() throws Exception {
         // log.info("setup() 1");
-		super.setUp();
         rs.setUp();
 
         FileUtils.removeRecursively(TestInfo.TEMPDIR);
@@ -114,9 +115,8 @@ public class DataModelTestCase extends TestCase {
         log.trace("setup() done");
 	}
 
+    @After
 	public void tearDown() throws Exception {
-        log.trace("tearDown() super.tearDown()");
-		super.tearDown();
         log.trace("tearDown() DatabaseTestUtils.dropHDDB()");
 		DatabaseTestUtils.dropHDDB();
 		// null field instance in DBSpecifics.

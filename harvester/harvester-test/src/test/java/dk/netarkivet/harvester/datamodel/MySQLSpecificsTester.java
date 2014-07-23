@@ -22,37 +22,39 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
+
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
-public class MySQLSpecificsTester extends TestCase {
+public class MySQLSpecificsTester {
     ReloadSettings rs = new ReloadSettings();
 
-    public MySQLSpecificsTester(String s) {
-        super(s);
-    }
-
+    @Before
     public void setUp() throws Exception {
         rs.setUp();
         Settings.set(CommonSettings.DB_SPECIFICS_CLASS,
                      "dk.netarkivet.harvester.datamodel.MySQLSpecifics");
-        super.setUp();
     }
 
+    @After
     public void tearDown() throws Exception {
-        super.tearDown();
         rs.tearDown();
     }
     
+    @Test
     public void testLoadClass() {
         DBSpecifics instance = DBSpecifics.getInstance(
                 CommonSettings.DB_SPECIFICS_CLASS);
         assertNotNull("instance should not be null", instance);
     }
     
+    @Test
    public void testGetDriverClassName() {
            DBSpecifics instance = DBSpecifics.getInstance(
                    CommonSettings.DB_SPECIFICS_CLASS);

@@ -25,6 +25,10 @@ package dk.netarkivet.harvester.datamodel;
 import java.util.Date;
 
 import dk.netarkivet.common.exceptions.PermissionDenied;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * Unit-tests for the ScheduleDBDAO class.
@@ -32,18 +36,17 @@ import dk.netarkivet.common.exceptions.PermissionDenied;
 public class ScheduleDBDAOTester extends DataModelTestCase {
     private static final String THIRTY_CHAR_STRING = "123456789012345678901234567890";
 
-    public ScheduleDBDAOTester(String s) {
-        super(s);
-    }
-
+    @Before
     public void setUp() throws Exception {
         super.setUp();
     }
 
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
     }
 
+    @Test
     public void testCreateChecksSize() throws Exception {
         Schedule s1 = TestInfo.getDefaultSchedule();
         ScheduleDAO dao = ScheduleDAO.getInstance();

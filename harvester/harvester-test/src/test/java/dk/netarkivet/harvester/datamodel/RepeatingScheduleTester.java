@@ -26,28 +26,22 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Test;
+
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * Tests a repeating schedule.
  */
-public class RepeatingScheduleTester extends TestCase {
-    public RepeatingScheduleTester(String s) {
-        super(s);
-    }
+public class RepeatingScheduleTester {
 
-    public void setUp() {
-    }
-
-    public void tearDown() {
-    }
-    
     /** Given a repeating schedule that should run yearly 3 times, check
      * that it gives the expected events, and no fourth event.
      * @throws Exception
      */
+    @Test
     public void testGetNextEvent1() throws Exception {
         Calendar cal = new GregorianCalendar(1940, Calendar.APRIL, 9, 9, 30);
         Schedule sched = Schedule.getInstance(cal.getTime(), 3,
@@ -69,6 +63,7 @@ public class RepeatingScheduleTester extends TestCase {
      * that it gives the expected events, and no fourth event.
      * @throws Exception
      */
+    @Test
     public void testGetNextEvent2() throws Exception {
         Calendar cal = new GregorianCalendar(1940, Calendar.APRIL, 9, 9, 30);
         Schedule sched = Schedule.getInstance(cal.getTime(), 3,
@@ -93,6 +88,7 @@ public class RepeatingScheduleTester extends TestCase {
      * throws ArgumentNotValid exception.
      * @throws Exception
      */
+    @Test
     public void testExceptions() throws Exception {
         Calendar cal = new GregorianCalendar(1940, Calendar.APRIL, 9, 9, 30);
         Schedule sched = Schedule.getInstance(cal.getTime(), 1,
@@ -111,6 +107,7 @@ public class RepeatingScheduleTester extends TestCase {
     /** Given a repeating schedule check, that given the date of previous event is null,
      * the date of the next event is also null.
      */
+    @Test
     public void testGetNextEvent3() throws Exception {
         Calendar cal = new GregorianCalendar(1940, Calendar.APRIL, 9, 9, 30);
         Schedule sched = Schedule.getInstance(cal.getTime(), 1,
@@ -121,6 +118,4 @@ public class RepeatingScheduleTester extends TestCase {
         
         assertNull("Null expected", sched.getNextEvent(null, 0));
     }
-    
-    
 }

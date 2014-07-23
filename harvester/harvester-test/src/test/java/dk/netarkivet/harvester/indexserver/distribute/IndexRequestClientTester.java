@@ -32,7 +32,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
+
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.indexserver.RequestType;
@@ -51,7 +55,7 @@ import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
-public class IndexRequestClientTester extends TestCase {
+public class IndexRequestClientTester {
     private static final Set<Long> JOB_SET = new HashSet<Long>(Arrays.asList(new Long[]{2L,3L,5L,7L,11L}));
 
     private UseTestRemoteFile ulrf = new UseTestRemoteFile();
@@ -62,8 +66,8 @@ public class IndexRequestClientTester extends TestCase {
     private MockupJMS mjms = new MockupJMS();
     private MockupIndexServer mis;
     ReloadSettings rs = new ReloadSettings();
-    public IndexRequestClientTester() {
-    }
+
+    @Before
     public void setUp(){
         rs.setUp();
         Settings.set(CommonSettings.CACHE_DIR, new File(TestInfo.WORKING_DIR, "cache").getAbsolutePath());
@@ -77,6 +81,8 @@ public class IndexRequestClientTester extends TestCase {
         mis = new MockupIndexServer(mtf.working(TestInfo.DUMMY_CACHEDIR));
         mis.setUp();
     }
+
+    @After
     public void tearDown() throws NoSuchFieldException, IllegalAccessException {
         mis.tearDown();
         pse.tearDown();
@@ -95,6 +101,7 @@ public class IndexRequestClientTester extends TestCase {
      *  - only throws exceptions if given a null value
      *  - returns non-null values.
      */
+    @Test
     public void testGetInstance() {
         for (RequestType t : RequestType.values()) {
             assertNotNull(
@@ -117,16 +124,19 @@ public class IndexRequestClientTester extends TestCase {
      *  - returns the response on the message to the caller
      *  - throws an exception if response is not OK.
      */
+    @Test
     public void testGetJobIndexFullNonemptySet() throws IOException {
         testNormalDirResponse(IndexRequestClient.getInstance(RequestType.FULL_CRAWL_LOG),
                 RequestType.FULL_CRAWL_LOG,JOB_SET);
     }
 
+    @Test
     public void testGetJobIndexFullEmptySet() throws IOException {
         testNormalDirResponse(IndexRequestClient.getInstance(RequestType.FULL_CRAWL_LOG),
                 RequestType.FULL_CRAWL_LOG, Collections.<Long>emptySet());
     }
 
+    @Test
     public void testGetJobIndexFullFailures() {
         assertFailsOnNull(IndexRequestClient.getInstance(RequestType.FULL_CRAWL_LOG));
         testFailedResponse(IndexRequestClient.getInstance(RequestType.FULL_CRAWL_LOG));
@@ -140,16 +150,19 @@ public class IndexRequestClientTester extends TestCase {
      *  - returns the response on the message to the caller
      *  - throws an exception if response is not OK.
      */
+    @Test
     public void testGetJobIndexDedupNonemptySet() throws IOException {
         testNormalDirResponse(IndexRequestClient.getInstance(RequestType.DEDUP_CRAWL_LOG),
                 RequestType.DEDUP_CRAWL_LOG,JOB_SET);
     }
 
+    @Test
     public void testGetJobIndexDedupEmptySet() throws IOException {
         testNormalDirResponse(IndexRequestClient.getInstance(RequestType.DEDUP_CRAWL_LOG),
                 RequestType.DEDUP_CRAWL_LOG, Collections.<Long>emptySet());
     }
 
+    @Test
     public void testGetJobIndexDedupFailures() {
         assertFailsOnNull(IndexRequestClient.getInstance(RequestType.DEDUP_CRAWL_LOG));
         testFailedResponse(IndexRequestClient.getInstance(RequestType.DEDUP_CRAWL_LOG));
@@ -163,16 +176,19 @@ public class IndexRequestClientTester extends TestCase {
      *  - returns the response on the message to the caller
      *  - throws an exception if response is not OK.
      */
+    @Test
     public void testGetJobIndexCdxNonemptySet() throws IOException {
         testNormalFileResponse(IndexRequestClient.getInstance(RequestType.CDX),
                 RequestType.CDX,JOB_SET);
     }
 
+    @Test
     public void testGetJobIndexCdxEmptySet() throws IOException {
         testNormalFileResponse(IndexRequestClient.getInstance(RequestType.CDX),
                 RequestType.CDX, Collections.<Long>emptySet());
     }
 
+    @Test
     public void testGetJobIndexCdxFailures() {
         assertFailsOnNull(IndexRequestClient.getInstance(RequestType.CDX));
         testFailedResponse(IndexRequestClient.getInstance(RequestType.CDX));

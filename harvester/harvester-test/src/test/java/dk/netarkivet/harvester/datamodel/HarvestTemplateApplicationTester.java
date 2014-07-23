@@ -30,7 +30,11 @@ import dk.netarkivet.harvester.tools.HarvestTemplateApplication;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
+
 import org.dom4j.Document;
 
 import java.io.*;
@@ -40,7 +44,7 @@ import java.util.regex.Pattern;
 /**
  * Unit tests for the HarvestTemplateApplication tool.
  */
-public class HarvestTemplateApplicationTester extends TestCase {
+public class HarvestTemplateApplicationTester {
     PreventSystemExit pse = new PreventSystemExit();
     ReloadSettings rs = new ReloadSettings();
     
@@ -54,10 +58,7 @@ public class HarvestTemplateApplicationTester extends TestCase {
     PrintStream outPrintStream = new PrintStream(newOut);
     PrintStream errPrintStream = new PrintStream(newErr);
 
-    public HarvestTemplateApplicationTester(String s) {
-        super(s);
-    }
-
+    @Before
     public void setUp() throws SQLException, IllegalAccessException, IOException {
         rs.setUp();
         FileUtils.removeRecursively(TestInfo.TEMPDIR);
@@ -79,6 +80,7 @@ public class HarvestTemplateApplicationTester extends TestCase {
         pse.setUp();
     }
 
+    @After
     public void tearDown() throws Exception {
         pse.tearDown();
 
@@ -118,6 +120,7 @@ public class HarvestTemplateApplicationTester extends TestCase {
         }
     }
 
+    @Test
     public void testMainNoCommand() throws Exception {
         HarvestTemplateApplication.main(new String[0]);
         assertOutAndErrMatches("Should fail on no arguments.", "^$",
@@ -125,6 +128,7 @@ public class HarvestTemplateApplicationTester extends TestCase {
 
     }
 
+    @Test
     public void testMainIllegalCommand() {
         HarvestTemplateApplication.main(new String[] {"foo"});
         assertOutAndErrMatches("Should fail on illegal command.", "^$",
@@ -132,6 +136,7 @@ public class HarvestTemplateApplicationTester extends TestCase {
                         + "create.*download.*update.*showall.*");
     }
 
+    @Test
     public void testCreateNoArgs() throws Exception {
         HarvestTemplateApplication.main(new String[] {"create"});
         assertOutAndErrMatches("Should fail on missing parameter.",
@@ -139,6 +144,7 @@ public class HarvestTemplateApplicationTester extends TestCase {
                 + "download.*update.*");
     }
 
+    @Test
     public void testCreateOneArg() throws Exception {
         HarvestTemplateApplication.main(new String[]{
                 "create", "foo"});
@@ -147,6 +153,7 @@ public class HarvestTemplateApplicationTester extends TestCase {
                 + "download.*update.*");
     }
 
+    @Test
     public void testCreateMissingFile() throws Exception {
         HarvestTemplateApplication.main(new String[]{
                 "create", "foo", "missing-file"});
@@ -155,6 +162,7 @@ public class HarvestTemplateApplicationTester extends TestCase {
                 ".*missing-file.*is not readable.*");
     }
 
+    @Test
     public void testCreateIllegalFile() throws Exception {
         HarvestTemplateApplication.main(new String[]{
                 "create", "foo", TestInfo.LOG_FILE.getAbsolutePath()});
@@ -163,6 +171,7 @@ public class HarvestTemplateApplicationTester extends TestCase {
                 ".*netarkivtest.log.*is not readable or is not valid xml.*");
     }
 
+    @Test
     public void testCreate() {
         HarvestTemplateApplication.main(new String[] {
             "create", "NewTemplate", TestInfo.ORDERXMLFILE.getAbsolutePath()});
@@ -177,6 +186,7 @@ public class HarvestTemplateApplicationTester extends TestCase {
                     .getTemplate().getText());
     }
 
+    @Test
     public void testDownloadTemplatesAll() {
         HarvestTemplateApplication.main(new String[] {
                 "download"
@@ -194,6 +204,7 @@ public class HarvestTemplateApplicationTester extends TestCase {
                 doc.getText());
     }
 
+    @Test
     public void testDownloadTemplatesOne() {
         HarvestTemplateApplication.main(new String[] {
                 "download", "OneLevel-order"
@@ -202,6 +213,7 @@ public class HarvestTemplateApplicationTester extends TestCase {
                 "^Downloading template 'OneLevel-order'.\n$", "^$");
     }
 
+    @Test
     public void testDownloadTemplatesTwo() {
         HarvestTemplateApplication.main(new String[] {
                 "download", "OneLevel-order", "NotThere"
@@ -211,6 +223,7 @@ public class HarvestTemplateApplicationTester extends TestCase {
                 "^Unable to download template 'NotThere'. It does not exist.\n$");
     }
 
+    @Test
     public void testUpdateNoArgs() {
         HarvestTemplateApplication.main(new String[] {"update" });
         assertOutAndErrMatches("Should fail on missing parameter.",
@@ -218,6 +231,7 @@ public class HarvestTemplateApplicationTester extends TestCase {
                         + "create.*download.*update.*showall.*");
     }
 
+    @Test
     public void testUpdateOneArg() {
         HarvestTemplateApplication.main(new String[] {"update", "foo" });
         assertOutAndErrMatches("Should fail on missing parameter.",
@@ -225,6 +239,7 @@ public class HarvestTemplateApplicationTester extends TestCase {
                 + "create.*download.*update.*showall.*");
     }
 
+    @Test
     public void testUpdateNoTemplate() {
         HarvestTemplateApplication.main(new String[] {"update", "foo", "bar" });
         assertOutAndErrMatches("Should fail on missing parameter.",
@@ -232,6 +247,7 @@ public class HarvestTemplateApplicationTester extends TestCase {
                 ".*There is no template named 'foo'. Use the create.*");
     }
 
+    @Test
     public void testUpdateNoFile() {
         HarvestTemplateApplication.main(new String[]
                 {"update", "OneLevel-order", "missing-file" });
@@ -240,6 +256,7 @@ public class HarvestTemplateApplicationTester extends TestCase {
                 ".*missing-file.*could not be read or is not valid xml.*");
     }
 
+    @Test
     public void testShowAll() {
         HarvestTemplateApplication.main(new String[] {"showall"});
         assertOutAndErrMatches("Should list all templates.",

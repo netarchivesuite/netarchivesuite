@@ -28,29 +28,30 @@ import java.io.FileFilter;
 import java.io.FileReader;
 import java.io.IOException;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
-public class InMemoryFrontierReportTest extends TestCase {
+public class InMemoryFrontierReportTest {
     
     ReloadSettings rs = new ReloadSettings();
 
-    /* (non-Javadoc)
-     * @see junit.framework.TestCase#setUp()
-     */
-    @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         rs.setUp();
-        super.setUp();
         
         Settings.set(
                 CommonSettings.CACHE_DIR, 
                 TestInfo.WORKDIR.getAbsolutePath());
     }
-    
+
+    @After
     public void tearDown() throws Exception {
         
         File[] testDirs = TestInfo.WORKDIR.listFiles(new FileFilter() {
@@ -64,11 +65,11 @@ public class InMemoryFrontierReportTest extends TestCase {
             FileUtils.removeRecursively(dir);
         }
         
-        super.tearDown();
         rs.tearDown();
     }
-    
-    public final static void testAll() throws IOException {
+
+    @Test
+    public void testAll() throws IOException {
         for (File reportFile : TestInfo.getFrontierReportSamples()) {
             InMemoryFrontierReport report = parse(reportFile);
             
@@ -81,10 +82,8 @@ public class InMemoryFrontierReportTest extends TestCase {
                         FrontierTestUtils.toString(
                                 report.getLineForDomain(domainName)));
             }
-            
             in.close();
         }
-        
     }
     
     private static InMemoryFrontierReport parse(File reportFile) 

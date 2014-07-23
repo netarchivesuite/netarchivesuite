@@ -24,10 +24,13 @@ package dk.netarkivet.harvester.distribute;
 
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
-public class IndexReadyMessageTester extends TestCase {
 
+public class IndexReadyMessageTester {
+
+    @Test
     public void testConstructor() {
         ChannelID replyTo = Channels.getTheIndexServer();
         ChannelID to = Channels.getTheSched();

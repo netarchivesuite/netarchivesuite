@@ -41,9 +41,13 @@ import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
 
-public class CreateIndexTester extends TestCase {
+
+public class CreateIndexTester {
     private PreventSystemExit pse = new PreventSystemExit();
     private PreserveStdStreams pss = new PreserveStdStreams(true);
     private MoveTestFiles mtf = new MoveTestFiles(TestInfo.DATA_DIR,
@@ -52,6 +56,7 @@ public class CreateIndexTester extends TestCase {
     TestMessageListener listener;
     ReloadSettings rs = new ReloadSettings();
 
+    @Before
     public void setUp(){
         rs.setUp();
         mjms.setUp();
@@ -64,6 +69,8 @@ public class CreateIndexTester extends TestCase {
         pss.setUp();
         pse.setUp();
     }
+
+    @After
     public void tearDown(){
         pse.tearDown();
         pss.tearDown();
@@ -76,6 +83,7 @@ public class CreateIndexTester extends TestCase {
     /**
      * Verify that it has a utility class constructor.
      */
+    @Test
     public void testConstructor() {
         ReflectUtils.testUtilityConstructor(CreateIndex.class);
     }
@@ -83,6 +91,7 @@ public class CreateIndexTester extends TestCase {
     /**
      * Test that download of a small file succeeds.
      */
+    @Test
     public void testMain() {
         String[] args = new String[]{"-tDEDUP", "-l1"};
         
@@ -92,6 +101,7 @@ public class CreateIndexTester extends TestCase {
         CreateIndex.main(args);
     }
     
+    @Test
     public void testBadArguments1() {
         String[] args = new String[]{"-asdf"};
         String expectedMsg = "Parsing of parameters failed: Unrecognized option: -a";
@@ -112,6 +122,7 @@ public class CreateIndexTester extends TestCase {
                 errMsg.contains(expectedMsg));
     }
     
+    @Test
     public void testBadArguments2() {
         String[] args = new String[]{"-tCDX"};
         String expectedMsg = "Some of the required parameters are missing: -l";
@@ -132,6 +143,7 @@ public class CreateIndexTester extends TestCase {
                 errMsg.contains(expectedMsg));
     }
 
+    @Test
     public void testBadArguments3() {
         String[] args = new String[]{"-l1"};
         String expectedMsg = "Some of the required parameters are missing: -t";
@@ -152,6 +164,7 @@ public class CreateIndexTester extends TestCase {
                 errMsg.contains(expectedMsg));
     }
     
+    @Test
     public void testBadArguments4() {
         String[] args = new String[]{"-tMYINDEX", "-l1"};
         String expectedMsg = "Unknown indextype 'MYINDEX' requested.";

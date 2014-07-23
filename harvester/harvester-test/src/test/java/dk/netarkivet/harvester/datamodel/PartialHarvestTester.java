@@ -32,6 +32,10 @@ import java.util.Set;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.IteratorUtils;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * Test cases specific to the PartialHarvest class.
@@ -42,10 +46,7 @@ public class PartialHarvestTester extends DataModelTestCase {
     private static final String order1xml = "default_orderxml";
     private static final String order2xml = "OneLevel-order";
 
-    public PartialHarvestTester(String s) {
-        super(s);
-    }
-
+    @Before
     public void setUp() throws Exception {
         super.setUp();
         Schedule sched = ScheduleDAO.getInstance().read("DefaultSchedule");
@@ -53,6 +54,7 @@ public class PartialHarvestTester extends DataModelTestCase {
                 "Everybody");
     }
 
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
     }
@@ -61,6 +63,7 @@ public class PartialHarvestTester extends DataModelTestCase {
      * Test that adding a single seed results in creation of all the
      * appropriate objects.
      */
+    @Test
     public void testAddSeedsSimpleCase() {
         Set<String> seedlist = new HashSet<String>();
         seedlist.add("http://www.mydomain.dk/page1.jsp?aparam=avalue");
@@ -91,6 +94,7 @@ public class PartialHarvestTester extends DataModelTestCase {
     /**
      * Test names of seedlist with max bytes and max object defined.
      */
+    @Test
     public void testMixedLimitsSeedlistNames() {
         Set<String> seedlist = new HashSet<String>();
         seedlist.add("http://www.mydomain.dk/page1.jsp?aparam=avalue");
@@ -119,6 +123,7 @@ public class PartialHarvestTester extends DataModelTestCase {
      * Test that adding a single seed results in creation of all the
      * appropriate objects.
      */
+    @Test
     public void testAddSeedsInvalid() {
         Set<String> seedlist = new HashSet<String>();
         seedlist.add("http://www.x.dk/page1.jsp?aparam=avalue");
@@ -153,6 +158,7 @@ public class PartialHarvestTester extends DataModelTestCase {
      * a) Non-default values for maxLoad, maxObjects
      * b) That omitting "http://" is not a problem
      */
+    @Test
     public void testAddSeedsNonDefaultValues() {
         Set<String> seedlist = new HashSet<String>();
         seedlist.add("www.mydomain.dk/page1.jsp?aparam=avalue");
@@ -192,6 +198,7 @@ public class PartialHarvestTester extends DataModelTestCase {
      * a) parsing of subdomains is ok and
      * b) https is supported
      */
+    @Test
     public void testAddSeedsWithSubdomain() {
         Set<String> seedlist = new HashSet<String>();
         seedlist.add("https://www.asubdomain.mydomain.dk/page1.jsp?aparam=avalue");
@@ -222,6 +229,7 @@ public class PartialHarvestTester extends DataModelTestCase {
     /**
      * Test that we can correctly process a seedlist with multiple entries.
      */
+    @Test
     public void testAddComplexSeedlist() {
         Set<String> seedlist = new HashSet<String>();
         seedlist.add("\thttps://www.asubdomain.mydomain.dk/page1.jsp?aparam=avalue");
@@ -283,6 +291,7 @@ public class PartialHarvestTester extends DataModelTestCase {
      * test that we can call addSeeds() multiple times and both update existing
      * configurations and add new ones
      */
+    @Test
     public void testAddSeedsMultipleAdds() {
         Set<String> list1 = new HashSet<String>();
         list1.add("www.1.dk\n");
@@ -376,6 +385,7 @@ public class PartialHarvestTester extends DataModelTestCase {
     /** Test that setting domain configurations actually removes duplicates.
      * @throws Exception
      */
+    @Test
     public void testSetDomainConfigurations() throws Exception {
         List<DomainConfiguration> nodupslist =
                 IteratorUtils.toList(harvest.getDomainConfigurations());
@@ -421,6 +431,7 @@ public class PartialHarvestTester extends DataModelTestCase {
      * test that we can call addSeeds() multiple times and both update existing
      * configurations and add new ones
      */
+    @Test
     public void testAddSeedsMiscNewlines() {
         Set<String> list1 = new HashSet<String>();
         list1.add("www.1.dk\n\r");
@@ -465,6 +476,7 @@ public class PartialHarvestTester extends DataModelTestCase {
      * Verify that you can delete only DomainConfiguration from the list of
      * DomainConfigurations associated with a PartialHarvest. 
      */
+    @Test
     public void testRemoveDomainconfiguration() {
         DomainDAO ddao = DomainDAO.getInstance();
         Domain d = ddao.read("netarkivet.dk");

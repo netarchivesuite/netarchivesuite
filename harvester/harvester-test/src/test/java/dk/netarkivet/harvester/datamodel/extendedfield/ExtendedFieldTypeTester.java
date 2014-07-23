@@ -29,21 +29,24 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldType;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypeDAO;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypeDBDAO;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 
 public class ExtendedFieldTypeTester extends DataModelTestCase {
-    public ExtendedFieldTypeTester(String aTestName) {
-        super(aTestName);
-    }
-
+    @Before
     public void setUp() throws Exception {
         super.setUp();
     }
 
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
     }
     
+    @Test
     public void testRead() {
         ExtendedFieldTypeDAO extDAO = ExtendedFieldTypeDBDAO.getInstance();
         ExtendedFieldType type = null;

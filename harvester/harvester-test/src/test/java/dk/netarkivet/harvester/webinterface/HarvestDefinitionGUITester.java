@@ -30,6 +30,10 @@ import dk.netarkivet.common.webinterface.GUIWebServer;
 import dk.netarkivet.harvester.datamodel.DataModelTestCase;
 import dk.netarkivet.harvester.datamodel.TestInfo;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * Unit-test for the GUIWebServer class when the DefinitionsSiteSection
@@ -39,11 +43,9 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 public class HarvestDefinitionGUITester extends DataModelTestCase {
     private GUIWebServer gui;
 
-    public HarvestDefinitionGUITester(String s) {
-        super(s);
-    }
     ReloadSettings rs = new ReloadSettings();
 
+    @Before
     public void setUp() throws Exception {
         rs.setUp();
         super.setUp();
@@ -59,6 +61,7 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
     }
 
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
         if (gui != null) {
@@ -67,6 +70,7 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
         rs.tearDown();
     }
 
+    @Test
     public void testSettingsWebappFault() {
         try {
             Settings.set(CommonSettings.SITESECTION_WEBAPPLICATION,
@@ -78,6 +82,7 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
         }
     }
 
+    @Test
     public void testSettingsPortFault() {
         try {
             Settings.set(CommonSettings.HTTP_PORT_NUMBER, "not_a_number");
@@ -88,6 +93,7 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
         }
     }
 
+    @Test
     public void testSettingsPortWrong() {
         Settings.set(CommonSettings.HTTP_PORT_NUMBER, "42");
         try {
@@ -105,6 +111,7 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
      * This tests the partial solution of bug 916
      * @throws InterruptedException
      */
+    @Test
      public void testExitWithoutDefaultTemplateInTemplatesTable() throws InterruptedException {
          String[] webApps = Settings.getAll(
                  CommonSettings.SITESECTION_WEBAPPLICATION);

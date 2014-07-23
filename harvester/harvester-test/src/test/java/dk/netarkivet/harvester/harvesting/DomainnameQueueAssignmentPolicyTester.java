@@ -24,7 +24,9 @@ package dk.netarkivet.harvester.harvesting;
 
 import java.io.File;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Test;
+
 
 import org.apache.commons.httpclient.URIException;
 import org.archive.crawler.datamodel.CandidateURI;
@@ -38,23 +40,14 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
  * Tests of the DomainnameQueueAssignmentPolicy.
  */
 @SuppressWarnings({ "serial"})
-public class DomainnameQueueAssignmentPolicyTester extends TestCase {
+public class DomainnameQueueAssignmentPolicyTester {
     /** A key used for the cases when we can't figure out the URI.
      *  This is taken from parent, where it has private access.  Parent returns
      *  this on things like about:blank.
      */
     static final String DEFAULT_CLASS_KEY = "default...";
 
-    public DomainnameQueueAssignmentPolicyTester(String s) {
-        super(s);
-    }
-
-    public void setUp() {
-    }
-
-    public void tearDown() {
-    }
-
+    @Test
     public void testGetClassKey() throws Exception {
         // Check that domain names + port numbers are extracted as expected
         assertEquals("Should find domain name from simple URL",
@@ -82,6 +75,7 @@ public class DomainnameQueueAssignmentPolicyTester extends TestCase {
 
     }    
 
+    @Test
     public void testGetClassKeyPartTwo() {
 
         DomainnameQueueAssignmentPolicy policy
@@ -97,6 +91,7 @@ public class DomainnameQueueAssignmentPolicyTester extends TestCase {
                         getCandidateURI("foo.dk#1010#fnord")));
     }
 
+    @Test
     public void testTopLevelDomains() throws URIException {
         ReloadSettings rs = new ReloadSettings(
                 new File(

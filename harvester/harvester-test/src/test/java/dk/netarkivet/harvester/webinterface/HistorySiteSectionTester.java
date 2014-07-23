@@ -22,27 +22,21 @@
  */
 package dk.netarkivet.harvester.webinterface;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Test;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * Unit-test for the HistorySiteSection class.
  * FIXME Does not currently test HistorySiteSection functionality.
  */
-public class HistorySiteSectionTester extends TestCase {
-    public HistorySiteSectionTester(String s) {
-        super(s);
-    }
+public class HistorySiteSectionTester {
 
-    public void setUp() {
-    }
-
-    public void tearDown() {
-    }
-    
     /**
      * Tests the HarvestStatus.makeHarvestRunLink() method.
      */
+    @Test
     public void testMakeHarvestRunLink() {
         long harvestID = 10L;
         int harvestRun = 5;

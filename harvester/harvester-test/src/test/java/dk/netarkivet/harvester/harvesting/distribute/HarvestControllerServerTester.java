@@ -37,7 +37,11 @@ import javax.jms.JMSException;
 import javax.jms.ObjectMessage;
 
 import dk.netarkivet.harvester.distribute.HarvesterChannels;
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.distribute.Channels;
@@ -80,7 +84,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
  * Test HarvestControllerServer.
  */
 @SuppressWarnings("unused")
-public class HarvestControllerServerTester extends TestCase {
+public class HarvestControllerServerTester {
     private UseTestRemoteFile utrf = new UseTestRemoteFile();
 
     /** The message to write to log when starting the server. */
@@ -101,10 +105,7 @@ public class HarvestControllerServerTester extends TestCase {
 
     ReloadSettings rs = new ReloadSettings();
 
-    public HarvestControllerServerTester(String sTestName) {
-        super(sTestName);
-    }
-
+    @Before
     public void setUp() throws Exception {
         rs.setUp();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
@@ -133,12 +134,7 @@ public class HarvestControllerServerTester extends TestCase {
                 "dk.netarkivet.common.arcrepository.TrivialArcRepositoryClient");
     }
 
-    /**
-     * After test is done close test-objects.
-     * @throws SQLException
-     * @throws IllegalAccessException
-     * @throws NoSuchFieldException
-     */
+    @After
     public void tearDown() throws SQLException, IllegalAccessException, NoSuchFieldException {
         if (hcs != null) {
             hcs.close();
@@ -161,6 +157,7 @@ public class HarvestControllerServerTester extends TestCase {
     /**
      * Test singletonicity.
      */
+    @Test
     public void testIsSingleton() {
         hcs = ClassAsserts.assertSingleton(HarvestControllerServer.class);
     }
@@ -169,6 +166,7 @@ public class HarvestControllerServerTester extends TestCase {
      * Testing that server starts and log-file logs this !
      * @throws IOException
      */
+    @Test
     public void testServerStarting() throws IOException {
         Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR, TestInfo.SERVER_DIR
                 .getAbsolutePath());
@@ -181,6 +179,7 @@ public class HarvestControllerServerTester extends TestCase {
     /** Test that if the harvestcontrollerserver cannot start, the HACO listener
      * will not be added
      */
+    @Test
     public void testNoListerAddedOnFailure() {
         Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR, "");
         try {
@@ -199,6 +198,7 @@ public class HarvestControllerServerTester extends TestCase {
      * if it is located more than one level below an existing directory in the
      * hierarchy
      */
+    @Test
     public void testCreateServerDir() {
         File server_dir = new File(TestInfo.SERVER_DIR + "/server/server");
         Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR, server_dir
@@ -215,6 +215,7 @@ public class HarvestControllerServerTester extends TestCase {
      * in the IntegrityTester suite
      * @throws InterruptedException
      */
+    @Test
     public synchronized void testMessagesSentByFailedJob()
             throws InterruptedException {
         Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR, TestInfo.SERVER_DIR
@@ -271,6 +272,7 @@ public class HarvestControllerServerTester extends TestCase {
      * Testing close().
      * @throws IOException
      */
+    @Test
     public void testClose() throws IOException {
         Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR, TestInfo.SERVER_DIR
                 .getAbsolutePath());
@@ -287,6 +289,7 @@ public class HarvestControllerServerTester extends TestCase {
      * results in a job-failed message being sent back.
      * @throws JMSException
      */
+    @Test
     public void testJobFailedOnBadMessage() throws JMSException {
         GenericMessageListener listener = new GenericMessageListener();
         JMSConnection con = JMSConnectionFactory.getInstance();
@@ -383,6 +386,7 @@ public class HarvestControllerServerTester extends TestCase {
     /**
      * Tests processing of leftover jobs in the case where all uploads go well.
      */
+    @Test
     public void testProcessHarvestInfoFile() {
         CrawlStatusMessage message
                 = testProcessingOfLeftoverJobs(
@@ -395,6 +399,7 @@ public class HarvestControllerServerTester extends TestCase {
     /**
      * Tests processing of leftover jobs in the case where some uploads fail.
      */
+    @Test
     public void fallingTestProcessHarvestInfoFileFails() {
         CrawlStatusMessage crawlStatusMessage =
             testProcessingOfLeftoverJobs(
@@ -443,7 +448,8 @@ public class HarvestControllerServerTester extends TestCase {
      * and include dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy
      * Also tests, that heritrix.version is set to Constants.getHeritrixVersion()
      */
-     public void testBug852() {
+    @Test
+    public void testBug852() {
          hcs = HarvestControllerServer.getInstance();
          if (!System.getProperties().containsKey("org.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy")) {
              fail ("org.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy is not defined!!");
@@ -475,6 +481,8 @@ public class HarvestControllerServerTester extends TestCase {
      * @throws IllegalAccessException
      * @throws InvocationTargetException
      */
+    @Test
+    // @Ignore
     public void failingTestCopyPreharvestMetadata() throws NoSuchMethodException,
             IllegalAccessException, InvocationTargetException {
         //Set up harvest controller, a job some metadata and a crawlDir

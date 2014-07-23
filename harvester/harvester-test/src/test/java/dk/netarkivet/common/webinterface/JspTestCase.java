@@ -35,7 +35,11 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
+
 
 import org.apache.jasper.JasperException;
 import org.apache.jasper.runtime.HttpJspBase;
@@ -54,11 +58,11 @@ import dk.netarkivet.common.utils.FileUtils;
 
 /**
  * An attempt at making a subclass of TestCase suitable for testing JSP pages.
- * Only used by HarveststatusPerdomainTester.
- * Is currently not working!
+ * Only used by HarveststatusPerdomainTester. Is currently not working! FIXME:
+ * No tests in it? Delete?
  */
 @SuppressWarnings({ "unused"})
-public class JspTestCase extends TestCase {
+public class JspTestCase {
     protected static final File WEB_BASE_DIR = new File("webpages/HarvestDefinition");
     public static final File TOP_DATA_DIR =
             new File("tests/dk/netarkivet/harvester/datamodel/data/");
@@ -77,6 +81,7 @@ public class JspTestCase extends TestCase {
      *
      * @param jspPage The name of the page (under webpages/HarvestDefinition)
      */
+    @Before
     public void setUp(final String jspPage) throws JasperException,
             MalformedURLException, ClassNotFoundException,
             IllegalAccessException, InstantiationException{
@@ -136,7 +141,8 @@ public class JspTestCase extends TestCase {
     */
     }
 
-    protected void tearDown() {
+    @After
+    public void tearDown() {
         FileUtils.removeRecursively(WORKING_DIR);
     }
     

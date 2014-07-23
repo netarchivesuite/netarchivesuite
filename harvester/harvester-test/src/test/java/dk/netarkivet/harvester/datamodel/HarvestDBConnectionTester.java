@@ -35,6 +35,10 @@ import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * Test class for the Database utilities in HarvestDBConnection,
@@ -47,11 +51,7 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
 	private File logfile = new File("tests/testlogs/netarkivtest.log");
 
 
-	public HarvestDBConnectionTester(String s) {
-        super(s);
-    }
-
-
+    @Before
     public void setUp() throws Exception {
         super.setUp();
         FileInputStream fis =
@@ -62,6 +62,7 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
         createTestTable();
       }
 
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
     }
@@ -70,6 +71,7 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
      * Simple test if HarvestDBConnection.getDBConnection() works or not.
      * Uses Settings.DB_URL set in DataModelTestCase.SetUp()
      */
+    @Test
      public void testGetDBConnection() {
          Connection c = HarvestDBConnection.get();
          assertTrue("Should return non null Connection", c != null);
@@ -78,6 +80,7 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
     /** Check that the connection has the expected setup.
      * @throws SQLException
      */
+    @Test
     public void testAutocommitOn() throws SQLException {
         Connection c = HarvestDBConnection.get();
         try {
@@ -95,6 +98,7 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
     /** Check that read locks are released after use.
      * @throws InterruptedException
      */
+    @Test
     public void testLockRelease() throws InterruptedException {
         // Go-ahead ticker
         final int[] state = new int[1];
@@ -175,6 +179,7 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
     /** check HarvestDBConnection.setStringMaxLength().
      *  Especially, that bug 970 is solved.
      */
+    @Test
     public void testSetStringMaxLength() throws SQLException {
         Connection c = null;
         try {
@@ -225,6 +230,7 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
 
 	/** check HarvestDBConnection.setClobMaxLength().
      * especially, that bug 970 is solved. */
+    @Test
     public void testSetClobMaxLength() throws SQLException {
         Connection c = null;
         try {
@@ -278,6 +284,7 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
     }
 
 
+    @Test
     public void testCreateTable() throws SQLException {
         deleteTableIfExists("dummy");
         String[] stmts = {
@@ -297,6 +304,7 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
         }
     }
 
+    @Test
     public void testCreateAndUpdateTable() throws SQLException {
         deleteTableIfExists("dummy");
 

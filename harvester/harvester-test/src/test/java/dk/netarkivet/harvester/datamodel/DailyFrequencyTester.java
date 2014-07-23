@@ -26,29 +26,21 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Test;
+
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * Tests a daily frequency.
  */
-public class DailyFrequencyTester extends TestCase {
-    public DailyFrequencyTester(String s) {
-        super(s);
-    }
-
-    public void setUp() {
-
-    }
-
-    public void tearDown() {
-
-    }
+public class DailyFrequencyTester {
 
     /** 
      * Test value is daily.
      */
+    @Test
     public void testTimeunitIsDaily() {
     	DailyFrequency freq = new DailyFrequency(20);
         assertEquals("Timeunit must be daily.", 
@@ -65,6 +57,7 @@ public class DailyFrequencyTester extends TestCase {
      * immediate.
      * @throws Exception
      */
+    @Test
     public void testGetFirstEvent1() throws Exception {
         DailyFrequency freq = new DailyFrequency(4); // Every four days, anytime
         Calendar cal = GregorianCalendar.getInstance();
@@ -78,6 +71,7 @@ public class DailyFrequencyTester extends TestCase {
      * first time it is 4:22.
      * @throws Exception
      */
+    @Test
     public void testGetFirstEvent2() throws Exception {
         DailyFrequency freq = new DailyFrequency(4, 4, 22); // Every four days, on the hour and minute
         Calendar cal = GregorianCalendar.getInstance();
@@ -94,6 +88,7 @@ public class DailyFrequencyTester extends TestCase {
      * after the correct period.
      * @throws Exception
      */
+    @Test
     public void testGetNextEvent1() throws Exception {
         DailyFrequency freq = new DailyFrequency(4); // Every four days, anytime
         Calendar cal = new GregorianCalendar(2005, Calendar.JUNE, 12, 22, 42);
@@ -108,6 +103,7 @@ public class DailyFrequencyTester extends TestCase {
      * at 5:23 after the correct period.
      * @throws Exception
      */
+    @Test
     public void testGetNextEvent2() throws Exception {
         DailyFrequency freq = new DailyFrequency(4, 5, 23); // Every four days, on the hour and minute
         Calendar cal = GregorianCalendar.getInstance();
@@ -125,6 +121,7 @@ public class DailyFrequencyTester extends TestCase {
      * at 5:23 after the correct period, given a time that is actually 5:23.
      * @throws Exception
      */
+    @Test
     public void testGetNextEvent3() throws Exception {
         DailyFrequency freq = new DailyFrequency(4, 5, 23); // Every four days, on the hour and minute
         Calendar cal = new GregorianCalendar(2005, Calendar.JUNE, 12, 5, 23);
@@ -138,6 +135,7 @@ public class DailyFrequencyTester extends TestCase {
     /** Test validity of arguments.
      * @throws Exception
      */
+    @Test
     public void testValidityOfArguments() throws Exception {
         try {
             new DailyFrequency(-1);

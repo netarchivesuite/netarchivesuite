@@ -31,23 +31,25 @@ import java.util.Set;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.harvester.indexserver.CDXIndexCache;
 import dk.netarkivet.testutils.FileAsserts;
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
 
 /**
  * Unit test(s) for the CDXIndexCache class.
  */
 public class CDXIndexCacheTester extends CacheTestCase {
-    public CDXIndexCacheTester(String s) {
-        super(s);
-    }
-
+    @Before
     public void setUp() throws Exception {
         super.setUp();
     }
 
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
     }
 
+    @Test
     public void testCombine() throws Exception {
         // Check that items are collected, null entries ignored, and all
         // is sorted.

@@ -32,7 +32,11 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import is.hi.bok.deduplicator.CrawlDataItem;
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.harvester.indexserver.CDXOriginCrawlLogIterator;
@@ -44,26 +48,20 @@ import dk.netarkivet.testutils.TestFileUtils;
  *
  */
 @SuppressWarnings({ "unused"})
-public class CDXOriginCrawlLogIteratorTester extends TestCase {
+public class CDXOriginCrawlLogIteratorTester {
 
-    /* (non-Javadoc)
-     * @see junit.framework.TestCase#setUp()
-     */
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR,
                 TestInfo.WORKING_DIR);
-
     }
 
-    /* (non-Javadoc)
-     * @see junit.framework.TestCase#tearDown()
-     */
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
-        super.tearDown();
     }
 
+    @Test
     public void testOriginCrawlLogIterator() throws IOException {
         BufferedReader cdx =
                 new BufferedReader(new FileReader(TestInfo.CDX_CACHE_4_SORTED));
@@ -225,6 +223,7 @@ public class CDXOriginCrawlLogIteratorTester extends TestCase {
      * bug 680
      * @throws Exception
      */
+    @Test
     public void testbug680() throws Exception {    
         File unsortedCrawlLogFile = new File(TestInfo.CRAWLLOGS_DIR, "crawl-680.log");
         File sortedCrawlLogFile = new File(TestInfo.CRAWLLOGS_DIR, "crawl-680-sorted.log");

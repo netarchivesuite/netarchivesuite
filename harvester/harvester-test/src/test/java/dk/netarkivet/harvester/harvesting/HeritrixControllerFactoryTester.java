@@ -32,7 +32,11 @@ import dk.netarkivet.harvester.harvesting.controller.BnfHeritrixController;
 import dk.netarkivet.harvester.harvesting.controller.HeritrixController;
 import dk.netarkivet.harvester.harvesting.controller.HeritrixControllerFactory;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -42,7 +46,7 @@ import java.io.IOException;
  * Unittest for the HeritrixControllerFactory class.
  */
 @SuppressWarnings({ "unused"})
-public class HeritrixControllerFactoryTester extends TestCase {
+public class HeritrixControllerFactoryTester {
 
     private MoveTestFiles mtf;
     private File dummyLuceneIndex;
@@ -53,6 +57,7 @@ public class HeritrixControllerFactoryTester extends TestCase {
                 TestInfo.CRAWLDIR_ORIGINALS_DIR, TestInfo.WORKING_DIR);
     }
 
+    @Before
     public void setUp() throws IOException {
         mtf.setUp();
         dummyLuceneIndex = mtf.newTmpDir();
@@ -62,6 +67,7 @@ public class HeritrixControllerFactoryTester extends TestCase {
                 HarvesterSettings.HERITRIX_CONTROLLER_CLASS);
     }
 
+    @After
     public void tearDown() {
         mtf.tearDown();
         Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS, defaultController);
@@ -71,6 +77,7 @@ public class HeritrixControllerFactoryTester extends TestCase {
      * Test that we can construct a HeritrixController using the
      * setting in settings.xml
      */
+    @Test
     public void testGetDefaultHeritrixControllerDefaultSettings() {
          File origSeeds = TestInfo.SEEDS_FILE;
         File crawlDir = TestInfo.HERITRIX_TEMP_DIR;
@@ -93,6 +100,7 @@ public class HeritrixControllerFactoryTester extends TestCase {
      * Test that we can change the implementation of HeritrixController to
      * construct
      */
+    @Test
     public void testGetDefaultHeritrixControllerChangeDefaultSettigs() {
         Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS, 
                 "dk.netarkivet.harvester.harvesting.HeritrixControllerFactoryTester$DummyHeritrixController");
@@ -104,6 +112,7 @@ public class HeritrixControllerFactoryTester extends TestCase {
     /**
      * Test we throw the expected exception when the signature is invalid
      */
+    @Test
     public void testGetDefaultHeritrixControllerWrongSignature() {
         Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS, 
                 "dk.netarkivet.harvester.harvesting.HeritrixControllerFactoryTester$DummyHeritrixController");

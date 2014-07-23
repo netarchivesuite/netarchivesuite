@@ -29,25 +29,19 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Test;
+
 
 /**
  * Unit tests for the DomainHistory class.
  */
-public class DomainHistoryTester extends TestCase {
-    public DomainHistoryTester(String s) {
-        super(s);
-    }
+public class DomainHistoryTester {
 
-    public void setUp() {
-    }
-
-    public void tearDown() {
-    }
-    
     /**
      * Tests the getmostRecentHarvestInfo() method.
      */
+    @Test
     public void testGetMostRecentHarvestInfo() {
         DomainHistory h = new DomainHistory();
         assertNull("Should be no most recent harvestInfo at construction time",
@@ -61,6 +55,7 @@ public class DomainHistoryTester extends TestCase {
     /**
      * Tests the getHarvestInfo() method.
      */
+    @Test
     public void testGetHarvestInfo() {
         DomainHistory h = setupHarvestInfos();
         List<HarvestInfo> readhislist = new ArrayList<HarvestInfo>();
@@ -82,6 +77,7 @@ public class DomainHistoryTester extends TestCase {
      * different configurations and/or harvest definitions can be recorded
      * in harvest info.
      */
+    @Test
     public void testMultipleHarvestInfoOnSameDate() throws Exception {
         DomainHistory h = new DomainHistory();
         h.addHarvestInfo(new HarvestInfo(Long.valueOf(1L), "foo", "bar", 

@@ -38,10 +38,12 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
 
-public class HarvestdatabaseUpdateApplicationTester extends TestCase {
+
+public class HarvestdatabaseUpdateApplicationTester {
     SetSystemProperty derbyLog
             = new SetSystemProperty(
             "derby.stream.error.file",
@@ -50,20 +52,10 @@ public class HarvestdatabaseUpdateApplicationTester extends TestCase {
     ReloadSettings rs = new ReloadSettings();
     File commonTempdir = new File(TestInfo.TEMPDIR, "commontempdir");
 
-
-    public HarvestdatabaseUpdateApplicationTester(String s) {
-        super(s);
-    }
-
-    public void setUp()  throws Exception {
-
-    }
-
-    public void tearDown(){}
-
     /**
      * Primary use it to create a updated **hddb.jar after database changes.
      */
+    @Test
     public void testUpdateFull() throws Exception {
         setupDatabase("fullhddb");
         DBSpecifics.getInstance().updateTables();
@@ -72,6 +64,7 @@ public class HarvestdatabaseUpdateApplicationTester extends TestCase {
     /**
      * Primary use it to create a updated **hddb.jar after database changes.
      */
+    @Test
     public void testUpdateEmpty() throws Exception {
         setupDatabase("emptyhddb");
         DBSpecifics.getInstance().updateTables();

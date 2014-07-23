@@ -38,7 +38,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
+
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
@@ -58,7 +62,7 @@ import dk.netarkivet.viewerproxy.URIResolver;
  *
  */
 @SuppressWarnings({ "deprecation"})
-public class HTTPControllerServerTester extends TestCase {
+public class HTTPControllerServerTester {
     private TestDelegatingController c;
     private TestURIResolver ur;
     private TestResponse response;
@@ -71,10 +75,7 @@ public class HTTPControllerServerTester extends TestCase {
 
     private TestRequest[] wrongRequests;
 
-    public HTTPControllerServerTester(String s) {
-        super(s);
-    }
-
+    @Before
     public void setUp() throws Exception {
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         ur = new TestURIResolver();
@@ -127,6 +128,7 @@ public class HTTPControllerServerTester extends TestCase {
         };
     }
 
+    @After
     public void tearDown() {
         if (TestDelegatingController.arcRep != null) {
             TestDelegatingController.arcRep.close();
@@ -140,6 +142,7 @@ public class HTTPControllerServerTester extends TestCase {
      *
      * @throws Exception
      */
+    @Test
     public void testControllerServer() throws Exception {
         try {
             new HTTPControllerServer(c, null);
@@ -160,6 +163,7 @@ public class HTTPControllerServerTester extends TestCase {
      * Test setURIResolver. Tests null arguments, and that lookup calls are
      * delegated to this resolver after setting it.
      */
+    @Test
     public void testSetURIResolver() throws Exception {
         HTTPControllerServer cs = new HTTPControllerServer(this.c, ur);
         try {
@@ -196,6 +200,7 @@ public class HTTPControllerServerTester extends TestCase {
      *
      * @throws Exception
      */
+    @Test
     public void testLookup() throws Exception {
         HTTPControllerServer cs = new HTTPControllerServer(this.c, ur);
 

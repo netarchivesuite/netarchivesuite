@@ -24,10 +24,13 @@ package dk.netarkivet.harvester.harvesting.distribute;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.harvester.datamodel.JobStatus;
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
-public class JobEndedMessageTester extends TestCase {
+
+public class JobEndedMessageTester {
     
+    @Test
     public void testJobEndedConstructor() {
         JobEndedMessage msg = new JobEndedMessage(42L, JobStatus.DONE);
         assertEquals(JobStatus.DONE, msg.getJobStatus());

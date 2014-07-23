@@ -26,29 +26,21 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Test;
+
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * Tests a weekly frequency.
  */
-public class WeeklyFrequencyTester extends TestCase {
-    public WeeklyFrequencyTester(String s) {
-        super(s);
-    }
-
-    public void setUp() {
-
-    }
-
-    public void tearDown() {
-
-    }
+public class WeeklyFrequencyTester {
 
     /** 
      * Test value is weekly.
      */
+    @Test
     public void testTimeunitIsWeekly() {
     	WeeklyFrequency freq = new WeeklyFrequency(20);
         assertEquals("Timeunit must be weekly.", 
@@ -65,6 +57,7 @@ public class WeeklyFrequencyTester extends TestCase {
      * immediate.
      * @throws Exception
      */
+    @Test
     public void testGetFirstEvent1() throws Exception {
         WeeklyFrequency freq = new WeeklyFrequency(4); // Every four days, anytime
         Calendar cal = GregorianCalendar.getInstance();
@@ -78,6 +71,7 @@ public class WeeklyFrequencyTester extends TestCase {
      * first possible Wed 4:22
      * @throws Exception
      */
+    @Test
     public void testGetFirstEvent2() throws Exception {
         WeeklyFrequency freq = new WeeklyFrequency(4, Calendar.WEDNESDAY, 4, 22); // Every four weeks, on the day, hour and minute
         Calendar cal = GregorianCalendar.getInstance();
@@ -95,6 +89,7 @@ public class WeeklyFrequencyTester extends TestCase {
      * after correct period.
      * @throws Exception
      */
+    @Test
     public void testGetNextEvent1() throws Exception {
         WeeklyFrequency freq = new WeeklyFrequency(4); // Every four days, anytime
         Calendar cal = GregorianCalendar.getInstance();
@@ -110,6 +105,7 @@ public class WeeklyFrequencyTester extends TestCase {
      * first possible Mon 5:23.
      * @throws Exception
      */
+    @Test
     public void testGetNextEvent2() throws Exception {
         WeeklyFrequency freq = new WeeklyFrequency(4, Calendar.MONDAY, 5, 23); // Every four days, on the day, hour and minute
         Calendar cal = GregorianCalendar.getInstance();
@@ -128,6 +124,7 @@ public class WeeklyFrequencyTester extends TestCase {
      * first possible Mon 5:23, given a time that IS actually Mon 5:23.
      * @throws Exception
      */
+    @Test
     public void testGetNextEvent3() throws Exception {
         WeeklyFrequency freq = new WeeklyFrequency(4, Calendar.MONDAY, 5, 23); // Every four days, on the day, hour and minute
         Calendar cal = new GregorianCalendar(2005, Calendar.FEBRUARY, 28, 5, 23); // 28/2 2005 is a Monday
@@ -141,6 +138,7 @@ public class WeeklyFrequencyTester extends TestCase {
     /**
      * Test validity of arguments.
      */
+    @Test
     public void testValidityOfArguments() throws Exception {
         try {
             new WeeklyFrequency(-1);
@@ -226,5 +224,4 @@ public class WeeklyFrequencyTester extends TestCase {
             //Expected
         }
     }
-
 }

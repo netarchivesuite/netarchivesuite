@@ -23,7 +23,9 @@
 package dk.netarkivet.harvester.datamodel;
 
 import java.util.Date;
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Test;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
@@ -31,17 +33,9 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * Unit tests for the DomainOwner class.
  *
  */
-public class DomainOwnerInfoTester extends TestCase {
-    public DomainOwnerInfoTester(String s) {
-        super(s);
-    }
+public class DomainOwnerInfoTester {
 
-    public void setUp() {
-    }
-
-    public void tearDown() {
-    }
-
+    @Test
     public void testCompareTo() throws Exception {
         DomainOwnerInfo i1 = new DomainOwnerInfo(new Date(1), "foo");
         DomainOwnerInfo i2 = new DomainOwnerInfo(new Date(2), "bar");

@@ -26,6 +26,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,16 +46,14 @@ public class DerbySpecificsTester extends DataModelTestCase {
 
     Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public DerbySpecificsTester(String s) {
-        super(s);
-    }
-
+    @Before
     public void setUp() throws Exception {
         log.trace("setup() init");
         super.setUp();
         log.trace("setup() done");
     }
 
+    @After
     public void tearDown() throws Exception {
         log.trace("tearDown() init");
         super.tearDown();
@@ -60,10 +63,12 @@ public class DerbySpecificsTester extends DataModelTestCase {
     /**
      * Test added to fool JUnit.
      */
+    @Test
     public void testDummy() {
         
     }
 
+    @Test
     public void testGetTemporaryTable() throws SQLException {
         Connection c = HarvestDBConnection.get();
 

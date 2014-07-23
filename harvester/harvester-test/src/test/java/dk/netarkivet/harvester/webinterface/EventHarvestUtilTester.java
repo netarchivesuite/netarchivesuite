@@ -36,6 +36,11 @@ import dk.netarkivet.harvester.datamodel.PartialHarvest;
 import dk.netarkivet.harvester.datamodel.Schedule;
 import dk.netarkivet.harvester.datamodel.ScheduleDAO;
 import dk.netarkivet.harvester.datamodel.SeedList;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 
 
 /**
@@ -48,15 +53,12 @@ public class EventHarvestUtilTester extends HarvesterWebinterfaceTestCase {
     private static final String harvestName = "Test Event Harvest";
     private static final String order1 = "default_orderxml";
 
-    public EventHarvestUtilTester(String s) {
-        super(s);
-    }
-
     /**
      * Initialize the unit-tests.
      * This creates a valid PartialHarvest.
      * @throws Exception
      */
+    @Before
     public void setUp() throws Exception {
         super.setUp();
         Schedule sched = ScheduleDAO.getInstance().read("DefaultSchedule");
@@ -65,6 +67,7 @@ public class EventHarvestUtilTester extends HarvesterWebinterfaceTestCase {
         HarvestDefinitionDAO.getInstance().create(harvest);
     }
 
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
     }
@@ -75,6 +78,8 @@ public class EventHarvestUtilTester extends HarvesterWebinterfaceTestCase {
      * FIXME Fails in Hudson. Rember to reinclude the test case in the 
      * webinterface test suite when fixed.
      */
+    @Test
+    // @Ignore("fails in hudson")
     public void testAddConfigurationsSimpleAdd() {
         String seedlist = "http://www.mydomain.dk/page1.jsp?aparam=avalue";
         Map<String, String[]> parameterMap = new HashMap<String, String[]>();
