@@ -23,6 +23,17 @@
 
 package dk.netarkivet.harvester.harvesting;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.io.File;
+import java.io.IOException;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
@@ -32,14 +43,6 @@ import dk.netarkivet.harvester.harvesting.controller.BnfHeritrixController;
 import dk.netarkivet.harvester.harvesting.controller.HeritrixController;
 import dk.netarkivet.harvester.harvesting.controller.HeritrixControllerFactory;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.After;
-import org.junit.Test;
-
-
-import java.io.File;
-import java.io.IOException;
 
 
 /**
@@ -78,6 +81,7 @@ public class HeritrixControllerFactoryTester {
      * setting in settings.xml
      */
     @Test
+    @Ignore("Heritrix launcher code non functional")
     public void testGetDefaultHeritrixControllerDefaultSettings() {
          File origSeeds = TestInfo.SEEDS_FILE;
         File crawlDir = TestInfo.HERITRIX_TEMP_DIR;

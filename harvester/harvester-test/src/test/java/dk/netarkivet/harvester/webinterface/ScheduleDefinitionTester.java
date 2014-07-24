@@ -23,12 +23,22 @@
 
 package dk.netarkivet.harvester.webinterface;
 
-import javax.servlet.jsp.PageContext;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.servlet.jsp.PageContext;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.harvester.datamodel.DailyFrequency;
@@ -40,14 +50,11 @@ import dk.netarkivet.harvester.datamodel.Schedule;
 import dk.netarkivet.harvester.datamodel.ScheduleDAO;
 import dk.netarkivet.harvester.datamodel.TimedSchedule;
 import dk.netarkivet.harvester.datamodel.WeeklyFrequency;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  * Unit-test for class ScheduleDefinition.
  */
+@Ignore("binary derby database not converted to scripts yet")
 public class ScheduleDefinitionTester extends HarvesterWebinterfaceTestCase {
 
     private static final String DATE_FORMAT = "dd/M yyyy HH:mm";

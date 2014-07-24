@@ -22,6 +22,24 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.sql.SQLException;
+import java.util.regex.Pattern;
+
+import org.dom4j.Document;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
@@ -30,20 +48,11 @@ import dk.netarkivet.harvester.tools.HarvestTemplateApplication;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.After;
-import org.junit.Test;
-
-import org.dom4j.Document;
-
-import java.io.*;
-import java.sql.SQLException;
-import java.util.regex.Pattern;
 
 /**
  * Unit tests for the HarvestTemplateApplication tool.
  */
+@Ignore("binary derby database not converted to scripts yet")
 public class HarvestTemplateApplicationTester {
     PreventSystemExit pse = new PreventSystemExit();
     ReloadSettings rs = new ReloadSettings();

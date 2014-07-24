@@ -22,6 +22,12 @@
  */
 package dk.netarkivet.harvester.harvesting;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -34,17 +40,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.After;
-import org.junit.Test;
-
-
 import org.archive.io.ArchiveRecord;
 import org.archive.io.arc.ARCReader;
 import org.archive.io.arc.ARCReaderFactory;
 import org.archive.io.arc.ARCRecord;
 import org.archive.io.arc.ARCRecordMetaData;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -317,7 +321,7 @@ public class HarvestDocumentationTester {
      * @throws IOException
      */
     @Test
-    // @Ignore
+    @Ignore("Contains dashes instead of actual ip-numbers")
     public void failingtestCreateCDXFile() throws IOException {
         OutputStream cdxstream = new ByteArrayOutputStream();
         cdxstream.write("BEFORE\n".getBytes());

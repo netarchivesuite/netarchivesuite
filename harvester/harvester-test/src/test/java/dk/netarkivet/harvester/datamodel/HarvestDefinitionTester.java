@@ -22,6 +22,12 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -36,6 +42,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.IteratorUtils;
@@ -45,16 +56,13 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue;
 import dk.netarkivet.harvester.scheduler.jobgen.DefaultJobGenerator;
 import dk.netarkivet.testutils.CollectionAsserts;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
 
 
 /**
  * Unit tests for the static methods in the abstract class HarvestDefinition.
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
+@Ignore("binary derby database not converted to scripts yet")
 public class HarvestDefinitionTester extends DataModelTestCase {
     private Schedule schedule;
 

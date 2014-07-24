@@ -25,6 +25,16 @@ package dk.netarkivet.harvester.tools;
  * Tests of the tool to create metadata files.
  */
 
+import static org.junit.Assert.fail;
+
+import java.io.File;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
+
+import org.junit.Ignore;
+import org.junit.Test;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
@@ -34,15 +44,10 @@ import dk.netarkivet.harvester.datamodel.HarvestDAOUtils;
 import dk.netarkivet.harvester.datamodel.TestInfo;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.SetSystemProperty;
-import java.io.File;
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
-import static org.junit.Assert.*;
-import org.junit.Test;
 
 
 
+@Ignore("binary derby database not converted to scripts yet")
 public class HarvestdatabaseUpdateApplicationTester {
     SetSystemProperty derbyLog
             = new SetSystemProperty(

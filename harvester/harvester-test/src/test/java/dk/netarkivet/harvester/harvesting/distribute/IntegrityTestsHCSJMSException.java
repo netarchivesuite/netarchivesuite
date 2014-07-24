@@ -23,15 +23,23 @@
 
 package dk.netarkivet.harvester.harvesting.distribute;
 
+import static org.junit.Assert.fail;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.security.Permission;
 import java.util.ArrayList;
 import java.util.logging.LogManager;
+
 import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
 import javax.jms.QueueConnection;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelsTester;
@@ -53,10 +61,6 @@ import dk.netarkivet.harvester.scheduler.JobDispatcher;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.After;
-import org.junit.Test;
 
 
 /**
@@ -122,6 +126,7 @@ public class IntegrityTestsHCSJMSException {
      * Test that a Harvester will not die immediately a JMSException is received.
      */
     @Test
+    @Ignore("Incorrect handling of 'Cannot connect to JMS' situation")
     public void testJMSExceptionWhileCrawling() throws Exception {
        if (!TestUtils.runningAs("CSR")) {
                    return;

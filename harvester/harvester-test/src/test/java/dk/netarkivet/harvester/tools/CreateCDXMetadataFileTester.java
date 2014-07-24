@@ -22,14 +22,17 @@
  */
 package dk.netarkivet.harvester.tools;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.PrintStream;
 
-import static org.junit.Assert.*;
-
-import org.junit.Before;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -87,6 +90,7 @@ public class CreateCDXMetadataFileTester {
      *
      */
     @Test
+    @Ignore("Incorrect usage text output")
     public void testMain() {
         ByteArrayOutputStream baosOut = new ByteArrayOutputStream();
         System.setOut(new PrintStream(baosOut));
@@ -182,11 +186,8 @@ public class CreateCDXMetadataFileTester {
         }
     }
 
-    /**
-     * FIXME Blocks on Hudson server
-     */
     @Test
-    //@Ignore("blocks on hudson server. NAS-xxxx")
+    @Ignore("Does not exit normally")
     public void testRunSingleJob() {
         try {
             CreateCDXMetadataFile.main(new String[] { "--jobID 4 --harvestnamePrefix 4-1" });

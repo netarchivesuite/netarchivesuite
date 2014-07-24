@@ -75,8 +75,9 @@ public class CleanupHook extends Thread {
             System.out.println("Cleaned up " + appName);
             log.info("Cleaned up " + appName);
         } catch (Throwable e) {
-            System.out.println("Cleaned up " + appName
-                    + " but failed to log afterwards");
+            if (System.out != null) {
+                System.out.println("Cleaned up " + appName + " but failed to log afterwards");
+            }
             e.printStackTrace();
         }
     }

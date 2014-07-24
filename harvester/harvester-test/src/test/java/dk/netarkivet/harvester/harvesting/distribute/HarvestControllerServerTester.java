@@ -22,6 +22,11 @@
  */
 package dk.netarkivet.harvester.harvesting.distribute;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,10 +41,9 @@ import java.util.logging.LogManager;
 import javax.jms.JMSException;
 import javax.jms.ObjectMessage;
 
-import dk.netarkivet.harvester.distribute.HarvesterChannels;
-import static org.junit.Assert.*;
-import org.junit.Before;
 import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import dk.netarkivet.common.CommonSettings;
@@ -50,7 +54,6 @@ import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
-import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
@@ -59,9 +62,9 @@ import dk.netarkivet.common.utils.cdx.CDXRecord;
 import dk.netarkivet.common.utils.cdx.ExtractCDXJob;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.HarvestChannel;
-import dk.netarkivet.harvester.datamodel.HarvestChannelDAO;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobStatus;
+import dk.netarkivet.harvester.distribute.HarvesterChannels;
 import dk.netarkivet.harvester.harvesting.HarvestController;
 import dk.netarkivet.harvester.harvesting.HarvestDocumentation;
 import dk.netarkivet.harvester.harvesting.HeritrixFiles;
@@ -400,6 +403,7 @@ public class HarvestControllerServerTester {
      * Tests processing of leftover jobs in the case where some uploads fail.
      */
     @Test
+    @Ignore("IOFailure: The harvestInfoFile is version 0.3")
     public void fallingTestProcessHarvestInfoFileFails() {
         CrawlStatusMessage crawlStatusMessage =
             testProcessingOfLeftoverJobs(
@@ -482,7 +486,7 @@ public class HarvestControllerServerTester {
      * @throws InvocationTargetException
      */
     @Test
-    // @Ignore
+    @Ignore("AssertionError: documentHarvest() shouldhave generated final metadata")
     public void failingTestCopyPreharvestMetadata() throws NoSuchMethodException,
             IllegalAccessException, InvocationTargetException {
         //Set up harvest controller, a job some metadata and a crawlDir

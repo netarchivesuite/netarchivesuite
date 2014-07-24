@@ -22,24 +22,19 @@
  */
 package dk.netarkivet.harvester.harvesting;
 
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.exceptions.IllegalState;
-import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.XmlUtils;
-import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
-import dk.netarkivet.harvester.harvesting.controller.DirectHeritrixController;
-import dk.netarkivet.harvester.harvesting.controller.HeritrixController;
-import dk.netarkivet.testutils.XmlAsserts;
-import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import org.junit.Before;
-import org.junit.After;
-import org.junit.Ignore;
-import org.junit.Test;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.commons.httpclient.URIException;
 import org.archive.crawler.datamodel.CandidateURI;
 import org.archive.crawler.datamodel.CrawlURI;
@@ -57,13 +52,23 @@ import org.archive.crawler.settings.SettingsHandler;
 import org.archive.net.UURI;
 import org.archive.net.UURIFactory;
 import org.dom4j.Document;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.IllegalState;
+import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.XmlUtils;
+import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
+import dk.netarkivet.harvester.harvesting.controller.DirectHeritrixController;
+import dk.netarkivet.harvester.harvesting.controller.HeritrixController;
+import dk.netarkivet.testutils.XmlAsserts;
+import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
 /**
  * Tests various aspects of launching Heritrix and Heritrix' capabilities.
@@ -292,7 +297,7 @@ public class HeritrixLauncherTester {
      * @throws NoSuchFieldException
      * @throws IllegalAccessException */
     @Test
-    // @Ignore
+    @Ignore("Heritrix jar file not found")
     public void failingTestStartJob()
             throws NoSuchFieldException, IllegalAccessException {
         //HeritrixLauncher hl = getHeritrixLauncher(TestInfo.ORDER_FILE, null);

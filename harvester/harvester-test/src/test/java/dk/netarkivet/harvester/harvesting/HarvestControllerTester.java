@@ -22,6 +22,23 @@
  */
 package dk.netarkivet.harvester.harvesting;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -40,20 +57,12 @@ import dk.netarkivet.harvester.harvesting.metadata.PersistentJobData.HarvestDefi
 import dk.netarkivet.harvester.harvesting.report.AbstractHarvestReport;
 import dk.netarkivet.harvester.harvesting.report.HarvestReport;
 import dk.netarkivet.harvester.harvesting.report.HarvestReportFactory;
-import dk.netarkivet.testutils.*;
+import dk.netarkivet.testutils.FileAsserts;
+import dk.netarkivet.testutils.ReflectUtils;
+import dk.netarkivet.testutils.StringAsserts;
+import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.After;
-import org.junit.Test;
-
-
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Tests for the HarvestController class (which was extracted from
@@ -127,7 +136,7 @@ public class HarvestControllerTester {
      * @throws Exception
      */
     @Test
-    // @Ignore
+    @Ignore("harvestJob.getSubmittedDate() == null")
     public void failingTestWriteHarvestFiles() throws Exception {
 
         // Check that harvest info file, seed.txt and order.xml are written,

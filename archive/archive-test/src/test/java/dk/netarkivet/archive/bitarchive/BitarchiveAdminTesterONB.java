@@ -22,14 +22,16 @@
  */
 package dk.netarkivet.archive.bitarchive;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.io.IOException;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
@@ -39,6 +41,8 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
  * Checking if directories for the bitarchive will be given back in the right order
  */
 
+// FIXME: Move to ONB specific test area.
+@Ignore("Only works for ONB")
 public class BitarchiveAdminTesterONB {
     private BitarchiveAdmin ad;
     private static final String ARC_FILE_NAME = "testfile.arc";

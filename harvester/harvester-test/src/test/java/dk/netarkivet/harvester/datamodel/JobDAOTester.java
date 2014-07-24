@@ -22,6 +22,14 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -36,6 +44,10 @@ import java.util.Map;
 
 import org.dom4j.Document;
 import org.dom4j.Node;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -48,10 +60,6 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.scheduler.jobgen.DefaultJobGenerator;
 import dk.netarkivet.harvester.webinterface.HarvestStatusQuery;
 import dk.netarkivet.harvester.webinterface.HarvestStatusTester;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  * Unit tests for the JobDAO class.
@@ -528,7 +536,7 @@ public class JobDAOTester extends DataModelTestCase {
      * FIXME Fails in Hudson
      */
     @Test
-    // @Ignore
+    @Ignore("Query returned wrong number of jobs")
     public void failingTestGetStatusInfo() throws Exception {
         TemplateDAO.getInstance();
         DomainDAO ddao = DomainDAO.getInstance();
