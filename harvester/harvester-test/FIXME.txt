@@ -14,4 +14,8 @@ Also the tests are VERY liberal with their usage of the filesystem.
 (https://sbforge.org/jira/browse/NAS-2315)
 
 /tra 2014-05-22
- 
+
+Migrated from junit 3 test suite to junit 4 annotated individual
+tests.  Those tests that did not pass or hung have been @Ignore'd.
+
+/tra 2014-07-24

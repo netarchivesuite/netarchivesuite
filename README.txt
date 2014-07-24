@@ -35,3 +35,7 @@ Use File->Import->General->Preferences to import eclipse-xml-settings.epf
 Use Preferences->Java->Code Style->Formatter->[Import] to import eclipse-formatter-settings.xml
 
 /tra 2014-07-21
+
+archive-test and harvester-test migrated from junit 3 to junit 4.
+
+/tra 2014-07-24
