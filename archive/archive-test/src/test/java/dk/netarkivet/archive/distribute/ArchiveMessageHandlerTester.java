@@ -52,7 +52,6 @@ import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.ChannelsTester;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
-import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.batch.ChecksumJob;
@@ -175,15 +174,13 @@ public class ArchiveMessageHandlerTester {
      * Class under test for void visit(StoreMessage)
      */
     @Test
-    public final void testVisitStoreMessage() {
+    public final void testVisitStoreMessage() throws IOException {
         File fil = new File(FileUtils.getTempDir(), "X");
         String f = fil.getAbsolutePath();
         try {
             fil.createNewFile();
             tmh.visit(new StoreMessage(Channels.getError(), fil));
             fail("Should have thrown a permission denied for " + f);
-        } catch (IOException e) {
-            throw new IOFailure("Unexpected exception for " + f, e);
         } catch (PermissionDenied e) {
             // Expected
             FileUtils.remove(fil);
@@ -194,15 +191,13 @@ public class ArchiveMessageHandlerTester {
      * Class under test for void visit(UploadMessage)
      */
     @Test
-    public final void testVisitUploadMessage() {
+    public final void testVisitUploadMessage() throws IOException {
         File fil = new File(FileUtils.getTempDir(), "X");
         String f = fil.getAbsolutePath();
         try {
             fil.createNewFile();
             tmh.visit(new UploadMessage(Channels.getTheBamon(), Channels.getError(), RemoteFileFactory.getInstance(fil, true, false, true)));
             fail("Should have thrown a permission denied for " + f);
-        } catch (IOException e) {
-            throw new IOFailure("Unexpected exception for " + f, e);
         } catch (PermissionDenied e) {
             // Expected
             FileUtils.remove(fil);
@@ -240,7 +235,7 @@ public class ArchiveMessageHandlerTester {
      * Class under test for void visit(CorrectMessage)
      */
     @Test
-    public final void testVisitCorrectMessage() {
+    public final void testVisitCorrectMessage() throws IOException {
         File fil = new File(FileUtils.getTempDir(), "X");
         String f = fil.getAbsolutePath();
         try {
@@ -249,8 +244,6 @@ public class ArchiveMessageHandlerTester {
                     "badChecksum", RemoteFileFactory.getInstance(fil, true, false, true),
                     "replicaId", "credentials"));
             fail("Should have thrown a permission denied for " +f );
-        } catch (IOException e) {
-            throw new IOFailure("Unexpected exception for " +f, e);
         } catch (PermissionDenied e) {
             // Expected
             FileUtils.remove(fil);
