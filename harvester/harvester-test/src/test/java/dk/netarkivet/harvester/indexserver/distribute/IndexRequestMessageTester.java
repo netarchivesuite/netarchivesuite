@@ -31,7 +31,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
+
 
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.RemoteFileSettings;
@@ -53,21 +57,19 @@ import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
  * Unit tests for index request message.
  */
 
-public class IndexRequestMessageTester extends TestCase {
+public class IndexRequestMessageTester {
     private MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,
             TestInfo.WORKING_DIR);
 
     private static final Set<Long> JOB_SET = new HashSet<Long>(
             Arrays.asList(new Long[]{1L, 2L}));
 
-    public IndexRequestMessageTester(String s) {
-        super(s);
-    }
-
+    @Before
     public void setUp() {
         mtf.setUp();
     }
 
+    @After
     public void tearDown() {
         mtf.tearDown();
     }
@@ -75,6 +77,7 @@ public class IndexRequestMessageTester extends TestCase {
     /**
      * Test exceptions in constructor, and default parameters set correctly.
      */
+    @Test
     public void testIndexRequestMessage() throws Exception {
         try {
             new IndexRequestMessage((RequestType)null, JOB_SET, null);
@@ -109,6 +112,7 @@ public class IndexRequestMessageTester extends TestCase {
     /**
      * Test accept indeed calls the accept accepting indexrequestmessage.
      */
+    @Test
     public void testAccept() throws Exception {
         IndexRequestMessage irMsg
                 = new IndexRequestMessage(RequestType.CDX, JOB_SET, null);
@@ -122,6 +126,7 @@ public class IndexRequestMessageTester extends TestCase {
     /**
      * Test setter/getter.
      */
+    @Test
     public void testSetFoundJobs() throws Exception {
         IndexRequestMessage irMsg
                 = new IndexRequestMessage(RequestType.CDX, JOB_SET, null);
@@ -140,6 +145,7 @@ public class IndexRequestMessageTester extends TestCase {
     /**
      * Test setter/getter.
      */
+    @Test
     public void testSetResultFiles() throws Exception {
         IndexRequestMessage irMsg
                 = new IndexRequestMessage(RequestType.CDX, JOB_SET, null);
@@ -180,6 +186,7 @@ public class IndexRequestMessageTester extends TestCase {
         }
     }
 
+    @Test
     public void testSetResultFile() throws IOException {
         IndexRequestMessage irMsg
                 = new IndexRequestMessage(RequestType.CDX, JOB_SET, null);
@@ -217,6 +224,7 @@ public class IndexRequestMessageTester extends TestCase {
      * Test NAS-2017.
      * Test that included FTPServer information can be retrieved again.
      */
+    @Test
     public void testMessageWithNonNullRemoteFileSettings() {
         
         RemoteFileSettings ftpSettings = new RemoteFileSettings("localhost", 25, "test", "test123");
@@ -246,6 +254,7 @@ public class IndexRequestMessageTester extends TestCase {
      * @throws IOException
      * @throws ClassNotFoundException
      */
+    @Test
     public void testSerializability()
             throws IOException, ClassNotFoundException {
         RemoteFileSettings ftpSettings = new RemoteFileSettings("localhost", 25, "test", "test123");

@@ -28,16 +28,21 @@ import dk.netarkivet.harvester.indexserver.IndexServerApplication;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
 
-public class IndexServerTester extends TestCase {
+
+public class IndexServerTester {
     
-    
+    @Before
     public void setUp() {
         ChannelsTester.resetChannels();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
     }
     
+    @After
     public void tearDown() {
         JMSConnectionMockupMQ.clearTestQueues();
         ChannelsTester.resetChannels();
@@ -46,6 +51,7 @@ public class IndexServerTester extends TestCase {
     /**
      * Ensure, that the application dies if given the wrong input.
      */
+    @Test
     public void testApplication() {
         ReflectUtils.testUtilityConstructor(IndexServerApplication.class);
 

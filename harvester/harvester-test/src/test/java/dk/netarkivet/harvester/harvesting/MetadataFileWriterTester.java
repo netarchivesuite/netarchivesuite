@@ -33,8 +33,11 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.archive.util.anvl.ANVLRecord;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriter;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriterArc;
@@ -43,10 +46,11 @@ import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class MetadataFileWriterTester extends TestCase {
+public class MetadataFileWriterTester {
     ReloadSettings rs = new ReloadSettings();
     File logsDir;
     
+    @Before
     public void setUp() {
         rs.setUp();
         TestInfo.WORKING_DIR.mkdirs();
@@ -54,11 +58,13 @@ public class MetadataFileWriterTester extends TestCase {
         logsDir = new File(TestInfo.WORKING_DIR, "logs");
     }
 
+    @After
     public void tearDown() {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         rs.tearDown();
     }
     
+    @Test
     public void testMetadataFileWriterArc() {
         File metafile = new File("metadata.arc");
         MetadataFileWriter mdfw = MetadataFileWriterArc.createWriter(metafile);
@@ -76,7 +82,7 @@ public class MetadataFileWriterTester extends TestCase {
         }
         catch (IOException e) {
             e.printStackTrace();
-            Assert.fail("Unexpected exception!");
+            fail("Unexpected exception!");
         }
 
         metafile.deleteOnExit();
@@ -88,6 +94,7 @@ public class MetadataFileWriterTester extends TestCase {
         }
     }
 
+    @Test
     public void testMetadataFileWriterWarc() {
         File metafile = new File("metadata.warc");
         MetadataFileWriter mdfw = MetadataFileWriterWarc.createWriter(metafile);
@@ -105,7 +112,7 @@ public class MetadataFileWriterTester extends TestCase {
         }
         catch (IOException e) {
             e.printStackTrace();
-            Assert.fail("Unexpected exception!");
+            fail("Unexpected exception!");
         }
 
         metafile.deleteOnExit();

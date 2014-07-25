@@ -28,7 +28,11 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
+
 import dk.netarkivet.common.arcrepository.TestArcRepositoryClient;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
@@ -47,7 +51,7 @@ import dk.netarkivet.viewerproxy.distribute.HTTPControllerServerTester;
  * Unit-tests for the GetDataResolver class. 
  */
 @SuppressWarnings({ "unused"})
-public class GetDataResolverTester extends TestCase {
+public class GetDataResolverTester {
     MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,
             TestInfo.WORKING_DIR);
     File tempdir = new File(TestInfo.WORKING_DIR, "commontempdir");
@@ -56,10 +60,7 @@ public class GetDataResolverTester extends TestCase {
     ReloadSettings rs = new ReloadSettings();
     UseTestRemoteFile utrf = new UseTestRemoteFile();
 
-    public GetDataResolverTester(String s) {
-        super(s);
-    }
-
+    @Before
     public void setUp() {
         rs.setUp();
         mtf.setUp();
@@ -72,6 +73,7 @@ public class GetDataResolverTester extends TestCase {
         arcrep = new TestArcRepositoryClient(TestInfo.WORKING_DIR);
     }
 
+    @After
     public void tearDown() {
         arcrep.close();
         utrf.tearDown();
@@ -80,6 +82,7 @@ public class GetDataResolverTester extends TestCase {
         rs.tearDown();
     }
 
+    @Test
     public void testExecuteCommand() throws Exception {
         String urlPrefix = "http://" + "netarchivesuite.viewerproxy.invalid";
         URIResolver res = new GetDataResolver(new URIResolver() {

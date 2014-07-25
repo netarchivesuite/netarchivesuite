@@ -41,7 +41,11 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
@@ -54,18 +58,16 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 /** Unit tests for the HTMLUtils utility class. */
 @SuppressWarnings({ "rawtypes", "unused" })
 
-public class HTMLUtilsTester extends TestCase {
+public class HTMLUtilsTester {
     ReloadSettings rs = new ReloadSettings();
 
-    public HTMLUtilsTester(String s) {
-        super(s);
-    }
-
+    @Before
     public void setUp() {
         rs.setUp();
         SiteSection.cleanup();
     }
 
+    @After
     public void tearDown() {
         rs.tearDown();
     }
@@ -76,6 +78,7 @@ public class HTMLUtilsTester extends TestCase {
      *
      * @throws Exception
      */
+    @Test
     public void testEscapeJavascriptQuotes() throws Exception {
         assertEquals("Null should be empty string",
                      "", HTMLUtils.escapeJavascriptQuotes(null));
@@ -98,6 +101,7 @@ public class HTMLUtilsTester extends TestCase {
     }
 
     /** Test URL encoding. */
+    @Test
     public void testEncode() throws Exception {
         assertEquals("Should encode space as +", "a+b",
                      HTMLUtils.encode("a b"));
@@ -106,6 +110,7 @@ public class HTMLUtilsTester extends TestCase {
     }
 
     /** Test URL decoding. */
+    @Test
     public void testDecode() throws Exception {
         assertEquals("Should decode + as space", "a b",
                      HTMLUtils.decode("a+b"));
@@ -118,6 +123,7 @@ public class HTMLUtilsTester extends TestCase {
     }
 
     /** Test header. */
+    @Test
     public void testGenerateHeader() throws Exception {
         JspWriterMockup out = new JspWriterMockup();
 
@@ -186,6 +192,7 @@ public class HTMLUtilsTester extends TestCase {
     }
 
     /** Test footer. */
+    @Test
     public void testGenerateFooter() throws Exception {
         JspWriterMockup out = new JspWriterMockup();
         ServletRequest confRequest = makeHttpServletRequest(
@@ -207,12 +214,14 @@ public class HTMLUtilsTester extends TestCase {
     }
 
     /** Test makeTableElement. */
+    @Test
     public void testMakeTableElement() {
         assertEquals("Should escape values", "<td>&lt;</td>",
                      HTMLUtils.makeTableElement("<"));
     }
 
     /** Test null is hyphenated. */
+    @Test
     public void testNullToHyphen() {
         assertEquals("Should give hyphen", "-", HTMLUtils.nullToHyphen(null));
         assertEquals("Should give text", "text",
@@ -221,6 +230,7 @@ public class HTMLUtilsTester extends TestCase {
     }
 
     /** Test HTML escaping. */
+    @Test
     public void testEscapeHtmlValues() {
         assertEquals("Should return empty string on null", "",
                      HTMLUtils.escapeHtmlValues(null));
@@ -229,6 +239,7 @@ public class HTMLUtilsTester extends TestCase {
                      HTMLUtils.escapeHtmlValues("<>'\"&amp;"));
     }
 
+    @Test
     public void testGetRowClass() throws Exception {
         assertEquals("Should return white row",
                      "row0", HTMLUtils.getRowClass(0));
@@ -247,6 +258,7 @@ public class HTMLUtilsTester extends TestCase {
     }
 
 
+    @Test
     public void testParseOptionalLong() {
         Map<String, String[]> parameterMap = new HashMap<String, String[]>();
         parameterMap.put("aLong", new String[]{"10"});
@@ -312,6 +324,7 @@ public class HTMLUtilsTester extends TestCase {
 
     }
 
+    @Test
     public void testParseOptionalDate() {
         Map<String, String[]> parameterMap = new HashMap<String, String[]>();
         parameterMap.put("aDate", new String[]{"10/8 2007 6:17"});

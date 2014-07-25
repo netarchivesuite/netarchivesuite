@@ -52,12 +52,10 @@ import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.PartialHarvest;
 import dk.netarkivet.testutils.CollectionAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
+import static org.junit.Assert.*;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class SelectiveHarvestUtilTester extends DataModelTestCase {
-    public SelectiveHarvestUtilTester(String s) {
-        super(s);
-    }
 
     /**
      * Verify that the correct domain configurations are created.

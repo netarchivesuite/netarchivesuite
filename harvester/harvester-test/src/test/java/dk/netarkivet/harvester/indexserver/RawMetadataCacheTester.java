@@ -31,6 +31,11 @@ import dk.netarkivet.common.utils.archive.ArchiveBatchJob;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.preconfigured.MockupJMS;
+import static org.junit.Assert.*;
+
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
 
 
 /**
@@ -39,21 +44,20 @@ import dk.netarkivet.testutils.preconfigured.MockupJMS;
 public class RawMetadataCacheTester extends CacheTestCase {
     MockupJMS mjms = new MockupJMS();
 
-    public RawMetadataCacheTester(String s) {
-        super(s);
-    }
-
+    @Before
     public void setUp() throws Exception {
         super.setUp();
         mjms.setUp();
     }
 
+    @After
     public void tearDown() throws Exception {
         mjms.tearDown();
         new TestArcRepositoryClient(TestInfo.WORKING_DIR).close();
         super.tearDown();
     }
 
+    @Test
     public void testGetCacheFileName() throws Exception {
         RawMetadataCache cache = new RawMetadataCache("test1", null, null);
         assertEquals("Should get filename for cache files based on prefix"
@@ -69,6 +73,7 @@ public class RawMetadataCacheTester extends CacheTestCase {
                 a.toString().contains(" with arguments: URLMatcher = .*, mimeMatcher = .*"));
     }
 
+    @Test
     public void testGetCacheDir() throws Exception {
         RawMetadataCache cache = new RawMetadataCache("test2", null, null);
         assertEquals("Should get dirname for cache files based on prefix",
@@ -78,6 +83,7 @@ public class RawMetadataCacheTester extends CacheTestCase {
                 cache.getCacheDir().getAbsoluteFile().getParentFile().getName());
     }
 
+    @Test
     public void testCacheData() throws Exception {
         TestArcRepositoryClient tarc = new TestArcRepositoryClient(
                 new File(TestInfo.WORKING_DIR, "arcfiles"));

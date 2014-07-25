@@ -29,17 +29,19 @@ import dk.netarkivet.common.exceptions.PermissionDenied;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 
 public class ScheduleDAOTester extends DataModelTestCase {
-    public ScheduleDAOTester(String sTestName) {
-        super(sTestName);
-    }
-
+    @Before
     public void setUp() throws Exception {
         super.setUp();
     }
 
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
     }
@@ -87,26 +89,31 @@ public class ScheduleDAOTester extends DataModelTestCase {
     }
 
     /** Test an hourly schedule. */
+    @Test
     public void testNormalUsageHourly() {
         doTestNormalUsage(TestInfo.TESTSCHEDULE_HOURLY);
     }
 
     /** Test a daily schedule. */
+    @Test
     public void testNormalUsageDaily() {
         doTestNormalUsage(TestInfo.TESTSCHEDULE_DAILY);
     }
 
     /** Test a weekly schedule. */
+    @Test
     public void testNormalUsageWeekly() {
         doTestNormalUsage(TestInfo.TESTSCHEDULE_WEEKLY);
     }
 
     /** Test a monthly schedule. */
+    @Test
     public void testNormalUsageMonthly() {
         doTestNormalUsage(TestInfo.TESTSCHEDULE_MONTHLY);
     }
 
     /** Test schedule with minute-based frequency */
+    @Test
     public void testNormalUsageMinutes() {
         doTestNormalUsage(TestInfo.TESTSCHEDULE_MINUTES);
     }
@@ -116,6 +123,7 @@ public class ScheduleDAOTester extends DataModelTestCase {
      * Get an instance of a ScheduleDAO
      * create a null schedule and retrieve null data from it
      */
+    @Test
     public void testBasicArgumentExceptions() {
         ScheduleDAO scheduledao = ScheduleDAO.getInstance();
         /** verify that create with null throws an exception */
@@ -151,6 +159,7 @@ public class ScheduleDAOTester extends DataModelTestCase {
      * add one HERE_AND_NOW_SCHEDULE schedule more and
      * retrieve and count all schedules
      */
+    @Test
     public void testGetAllSchedules() {
         ScheduleDAO scheduledao = ScheduleDAO.getInstance();
 
@@ -183,6 +192,7 @@ public class ScheduleDAOTester extends DataModelTestCase {
     /** Check that updating an entry that has already been modified
      *  results in an IOFailure
      *  */
+    @Test
     public void testOptimisticLocking() {
         // create the schedule
         Schedule schedule = TestInfo.TESTSCHEDULE_HOURLY;

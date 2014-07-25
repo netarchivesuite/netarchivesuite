@@ -25,7 +25,11 @@ package dk.netarkivet.harvester.harvesting.distribute;
 import java.io.File;
 import java.util.Date;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.harvester.datamodel.Job;
@@ -36,22 +40,22 @@ import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 /**
  * Test class PersistentJobData.
  */
-public class PersistentJobDataTester extends TestCase {
+public class PersistentJobDataTester {
     MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,
                                           TestInfo.WORKING_DIR);
     private File crawldir;
 
+    @Before
     public void setUp() throws Exception {
-        super.setUp();
         mtf.setUp();
         crawldir = new File(TestInfo.WORKING_DIR, "my-crawldir");
         assertTrue("Unable to create crawldir '" + crawldir.getAbsolutePath() + "'",
                 crawldir.mkdir());
     }
 
+    @After
     public void tearDown() throws Exception {
         mtf.tearDown();
-        super.tearDown();
     }
 
     /**
@@ -59,6 +63,7 @@ public class PersistentJobDataTester extends TestCase {
      * 1. Throws ArgumentNotValid, if file argument null or file does not exist.
      * 2. accepts existing directory as argument
      */
+    @Test
     public void testConstructor() {
         try {
             new PersistentJobData(null);
@@ -85,6 +90,7 @@ public class PersistentJobDataTester extends TestCase {
      * @throws Exception If failure to persist the information
      *                   or unable to access DB
      */
+    @Test
     public void testWrite() throws Exception {
         PersistentJobData pjd = new PersistentJobData(crawldir);
         Job testJob = TestInfo.getJob();
@@ -117,6 +123,7 @@ public class PersistentJobDataTester extends TestCase {
     }
         
     /** Test reading the version 0.5 harvestInfo.xml. The newest */
+    @Test
     public void testReadVersion0_5() {
         File hiVersion03 = new File(TestInfo.DATA_DIR, "harvestInfo-0.5.xml");
         FileUtils.copyFile(hiVersion03, new File(crawldir, TestInfo.HarvestInfofilename));
@@ -125,6 +132,7 @@ public class PersistentJobDataTester extends TestCase {
     }
     
     /** Test reading the 0.4 harvestInfo.xml. */
+    @Test
     public void testReadVersion0_4() {
         File hiVersion03 = new File(TestInfo.DATA_DIR, "harvestInfo-0.4.xml");
         FileUtils.copyFile(hiVersion03, new File(crawldir, TestInfo.HarvestInfofilename));

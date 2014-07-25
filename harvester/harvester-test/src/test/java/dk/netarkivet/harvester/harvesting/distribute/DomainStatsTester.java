@@ -24,14 +24,16 @@ package dk.netarkivet.harvester.harvesting.distribute;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.harvester.datamodel.StopReason;
-import junit.framework.Assert;
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
+
 
 /**
  * Unit tests for the class
  * dk.netarkivet.harvester.harvesting.distribute.DomainStats.
  */
-public class DomainStatsTester extends TestCase {
+public class DomainStatsTester {
 
     private final long negativeInitObjectCount = -100;
     private final long positiveInitObjectCount = 100;
@@ -41,12 +43,14 @@ public class DomainStatsTester extends TestCase {
     private final StopReason nullStopreason = null;
     private DomainStats domainstats;
     
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         domainstats = new DomainStats(positiveInitObjectCount,
                 positiveInitByteCount, downloadComplete);
     }
 
     /** test the DomainStats constructor. */
+    @Test
     public void testDomainStats() {
         try {
             new DomainStats(negativeInitObjectCount,
@@ -84,23 +88,26 @@ public class DomainStatsTester extends TestCase {
     }
     
     /** Test the setByteCount method. */
+    @Test
     public void testSetByteCount() {
         final long bytes = 500L;
         domainstats.setByteCount(bytes);
-        Assert.assertEquals(bytes, domainstats.getByteCount());
+        assertEquals(bytes, domainstats.getByteCount());
     }
     /** Test the setObjectCount method. */
+    @Test
     public void testSetObjectCount() {
         final long objects = 200L;
         domainstats.setObjectCount(objects);
-        Assert.assertEquals(objects, domainstats.getObjectCount());
+        assertEquals(objects, domainstats.getObjectCount());
     }
     
     /** Test the setStopReason method. */
+    @Test
     public void testSetStopReason() {
         StopReason aStopreason = StopReason.DOWNLOAD_UNFINISHED;
         domainstats.setStopReason(aStopreason);
-        Assert.assertEquals(aStopreason, domainstats.getStopReason());
+        assertEquals(aStopreason, domainstats.getStopReason());
 
     }
 

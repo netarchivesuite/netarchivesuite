@@ -48,7 +48,11 @@ import java.util.Locale;
 import java.util.logging.LogManager;
 import java.security.Principal;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
+
 
 import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
@@ -73,16 +77,13 @@ import dk.netarkivet.viewerproxy.distribute.HTTPControllerServerTester;
  * Test the WebProxy class.
  */
 @SuppressWarnings({ "rawtypes" })
-public class WebProxyTester extends TestCase {
+public class WebProxyTester {
     private static final File LOG_FILE = new File("tests/testlogs/netarkivtest.log");
 
     private WebProxy proxy;
     private int httpPort;
 
-    public WebProxyTester(String s) {
-        super(s);
-    }
-
+    @Before
     public void setUp() throws IOException {
         //Check port not in use (since this will fail all tests)
         
@@ -103,6 +104,7 @@ public class WebProxyTester extends TestCase {
         fis.close();
     }
 
+    @After
     public void tearDown() {
         if (proxy != null) {
             proxy.kill();
@@ -116,6 +118,7 @@ public class WebProxyTester extends TestCase {
         }
     }
 
+    @Test
     public void testUriEncode() {
         String test_string = "{abcd{fgåæka}";
         assertEquals("Should recover original string after decoding", 
@@ -129,6 +132,7 @@ public class WebProxyTester extends TestCase {
      * - If you request a URL from the HTTP port, it is forwarded to the given
      *   uri resolver
      */
+    @Test
     public void testWebProxy() throws Exception {
         //Start server
         TestURIResolver uriResolver = new TestURIResolver();
@@ -210,6 +214,7 @@ public class WebProxyTester extends TestCase {
                      "Test", body);
     }
 
+    @Test
     public void testSetURIResolver() throws Exception {
         //Start server
         TestURIResolver uriResolver = new TestURIResolver();
@@ -262,6 +267,7 @@ public class WebProxyTester extends TestCase {
                      "Test", body);
     }
 
+    @Test
     public void testKill() throws Exception {
         //Start server
         TestURIResolver uriResolver = new TestURIResolver();
@@ -286,6 +292,7 @@ public class WebProxyTester extends TestCase {
         }
     }
 
+    @Test
     public void testHandle() throws Exception {
         //Start server
         TestURIResolver uriResolver = new TestURIResolver();
@@ -331,6 +338,7 @@ public class WebProxyTester extends TestCase {
     }
 
     /** Test the error response generation. */
+    @Test
     public void testCreateErrorResponse() throws Exception {
         proxy = new WebProxy(new TestURIResolver());
         HTTPControllerServerTester.TestResponse response
@@ -416,6 +424,7 @@ public class WebProxyTester extends TestCase {
      * @throws IllegalAccessException
      * @throws InstantiationException
      */
+    @Test
     public void testGetUri() throws NoSuchMethodException,
                                     InvocationTargetException,
                                     IllegalAccessException,

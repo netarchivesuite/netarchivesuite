@@ -27,34 +27,32 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.Map;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
+
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * Test of the NotifyingURIResolver class.
  */
-public class NotifyingURIResolverTester extends TestCase {
+public class NotifyingURIResolverTester {
     private TestURIResolver uriResolver;
     private TestURIObserver uriObserver;
     private TestResponse response;
 
-    public NotifyingURIResolverTester(String s) {
-        super(s);
-    }
-
+    @Before
     public void setUp() {
         uriResolver = new TestURIResolver();
         uriObserver = new TestURIObserver();
         response = new TestResponse();
     }
 
-    public void tearDown() {
-    }
-
     /** Test constructor. Only thing really testable is that ArgumentNotValid is
      * thrown on null arguments.
      */
+    @Test
     public void testNotifyingURIResolver() throws Exception {
         try {
             new NotifyingURIResolver(null, uriObserver);
@@ -74,6 +72,7 @@ public class NotifyingURIResolverTester extends TestCase {
     /** Test setURIResolver. Tests null arguments, and that lookup calls are
      * delegated to this resolver after setting it.
      */
+    @Test
     public void testSetURIResolver() throws Exception {
         NotifyingURIResolver notifying
                 = new NotifyingURIResolver(uriResolver, uriObserver);
@@ -102,6 +101,7 @@ public class NotifyingURIResolverTester extends TestCase {
      * Also tests that result of this method is given to the observing class.
      * @throws Exception
      */
+    @Test
     public void testLookup() throws Exception {
         NotifyingURIResolver notifying
                 = new NotifyingURIResolver(uriResolver, uriObserver);

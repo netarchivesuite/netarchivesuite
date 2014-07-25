@@ -27,12 +27,15 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Test;
+
 import dk.netarkivet.harvester.harvesting.frontier.TestInfo;
 
-public class FrontierReportLineTest extends TestCase {
+public class FrontierReportLineTest {
     
-    public final static void testParseReports() throws IOException {
+    @Test
+    public final void testParseReports() throws IOException {
         
         String[] files = new String[] {
                 "frontierReport_all_sample_small.txt",
@@ -59,7 +62,8 @@ public class FrontierReportLineTest extends TestCase {
         
     }
     
-    public static final void testParseDoubleValues() {
+    @Test
+    public final void testParseDoubleValues() {
         
         String line = "000webhost.com 4 8 0 1(1.2) 2010-06-02T12:36:09.208Z - " 
             + "5/-1 1 http://www.000webhost.com/ " 

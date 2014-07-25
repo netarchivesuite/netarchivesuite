@@ -56,7 +56,11 @@ import org.archive.io.arc.ARCConstants;
 import org.archive.io.arc.ARCRecord;
 import org.archive.io.arc.ARCRecordMetaData;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
+
 
 /**
  * Unit tests for ARCArchiveAccess.  This only tests that we connect the CDX
@@ -64,7 +68,7 @@ import junit.framework.TestCase;
  * and so is (supposed to be) tested elsewhere.
  */
 @SuppressWarnings({ "unused", "unchecked"})
-public class ARCArchiveAccessTester extends TestCase {
+public class ARCArchiveAccessTester {
 
     //Unused files:
     private static final File MAIN_PATH = new File(
@@ -109,6 +113,7 @@ public class ARCArchiveAccessTester extends TestCase {
 
     ReloadSettings rs = new ReloadSettings();
 
+    @Before
     public void setUp() throws Exception {
         rs.setUp();
         WRONG_URL = new URI("http://www.test.dk/hest");
@@ -135,6 +140,7 @@ public class ARCArchiveAccessTester extends TestCase {
         fis.close();
     }
 
+    @After
     public void tearDown() {
         FileUtils.removeRecursively(WORKING);
         rs.tearDown();
@@ -144,6 +150,7 @@ public class ARCArchiveAccessTester extends TestCase {
      * Verify that the constructor fails if and only if it is given null
      * parameter.
      */
+    @Test
     public void testConstructor() {
         //Verify construction with OK parameters does not fail:
         new ARCArchiveAccess(fakeArcRepos);
@@ -156,6 +163,7 @@ public class ARCArchiveAccessTester extends TestCase {
         }
     }
 
+    @Test
     public void testReadPage() throws Exception {
         Method readPage = ReflectUtils.getPrivateMethod(ARCArchiveAccess.class,
                                                         "readPage",
@@ -175,6 +183,7 @@ public class ARCArchiveAccessTester extends TestCase {
                 "foo", baos.toString());
     }
 
+    @Test
     public void testCreateErrorResponse() throws Exception {
         TestResponse response = new TestResponse();
 
@@ -211,6 +220,7 @@ public class ARCArchiveAccessTester extends TestCase {
      * HTTP response reflecting this situation. For now, we just need it to
      * return ResponseCode.NOT_FOUND and not throw an Exception.
      */
+    @Test
     public void testLookupNonexistingObject() throws Exception {
         Response response = new TestResponse();
         URI uri = new URI("http://does.not.exist");
@@ -226,6 +236,7 @@ public class ARCArchiveAccessTester extends TestCase {
      * @throws IOException
      * @throws InterruptedException
      */
+    @Test
     public void testLookupExistingObject()
             throws IOException, InterruptedException {
         TestResponse response = new TestResponse();
@@ -250,6 +261,7 @@ public class ARCArchiveAccessTester extends TestCase {
      *
      * @throws Exception
      */
+    @Test
     public void testNullControllerReturn()
             throws Exception {
         Response response = new TestResponse();

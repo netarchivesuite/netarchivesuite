@@ -22,6 +22,12 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -35,6 +41,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.UnknownID;
@@ -51,27 +62,27 @@ import dk.netarkivet.testutils.CollectionAsserts;
  * Unit tests for the static methods in the abstract class HarvestDefinition.
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
+@Ignore("binary derby database not converted to scripts yet")
 public class HarvestDefinitionTester extends DataModelTestCase {
     private Schedule schedule;
-
-    public HarvestDefinitionTester(String sTestName) {
-        super(sTestName);
-    }
 
     /**
      * Creating a valid schedule.
      * @throws Exception
      */
+    @Before
     public void setUp() throws Exception {
         super.setUp();
         schedule = TestInfo.getDefaultSchedule();
         Settings.set(HarvesterSettings.SPLIT_BY_OBJECTLIMIT, "false");
     }
 
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
     }
 
+    @Test
     public void testValidityOfConstructorArguments() {
 
         /* Test validity of constructor parameters:
@@ -176,6 +187,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         }
     }
 
+    @Test
     public void testValidityOfArgumentsNextDate() {
         //  Test exceptions for setters of nextDate and numEvents
         // 1) Setting nextDate to null should _not_ throw exception
@@ -201,6 +213,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         }
     }
 
+    @Test
     public void testValidityOfArgumentsNumEvents() {
         Domain d = TestInfo.getDefaultDomain();
         DomainConfiguration cfg1 = TestInfo.getDefaultConfig(d);
@@ -245,6 +258,8 @@ public class HarvestDefinitionTester extends DataModelTestCase {
      * to
      *  new Date()
      */
+    @Test
+    // @Ignore
     public void unstableTestSetAndGet() {
 
         Domain d = TestInfo.getDefaultDomain();
@@ -327,6 +342,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
     /**
      * Check that we can set and get the DomainConfigurations.
      */
+    @Test
     public void testSetConfigurations() {
         Domain d = TestInfo.getDefaultDomain();
         DomainConfiguration cfg1 = TestInfo.getDefaultConfig(d);
@@ -366,6 +382,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
     /**
      * Test that duplicate objects in the configuration list are removed.
      */
+    @Test
     public void testSetConfigurationsWithDuplicates() {
         Domain d = TestInfo.getDefaultDomain();
         DomainConfiguration cfg1 = TestInfo.getDefaultConfig(d);
@@ -406,6 +423,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
     /**
      * Test runNow for actually returning the correct boolean.
      */
+    @Test
     public void testRunNowPartialHarvest() {
         Domain d = TestInfo.getDefaultDomain();
         DomainConfiguration cfg1 = TestInfo.getDefaultConfig(d);
@@ -442,6 +460,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
     /**
      * Test runNow for actually returning the correct boolean.
      */
+    @Test
     public void testRunNowFullHarvest() {
         Domain d = TestInfo.getDefaultDomain();
         DomainConfiguration cfg1 = TestInfo.getDefaultConfig(d);
@@ -474,6 +493,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
     /**
      * Test createJobs updates numEvents and nextDate correctly on job creation.
      */
+    @Test
     public void testCreateJobsUpdatesEventFields() {
         HarvestDefinitionDAO dao = HarvestDefinitionDAO.getInstance();
 
@@ -558,6 +578,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
     /** Tests that when creating jobs from a harvest definition, we skip some
      * some jobs if the harvesting has been delayed.
      */
+    @Test
     public void testCreateJobsSkipsEvents() {
         Calendar threeHoursAgo = GregorianCalendar.getInstance();
         threeHoursAgo.add(Calendar.HOUR_OF_DAY, -3);
@@ -596,6 +617,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
 
     /** Tests that inactive harvestdefinitions return runNow=false.
      */
+    @Test
     public void testSkipInactive() {
         Calendar threeHoursAgo = GregorianCalendar.getInstance();
         threeHoursAgo.add(Calendar.HOUR_OF_DAY, -3);
@@ -630,6 +652,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
 
     }
 
+    @Test
     public void testReset() {
         Domain d = TestInfo.getDefaultDomain();
         DomainConfiguration cfg1 = TestInfo.getDefaultConfig(d);
@@ -671,6 +694,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
      * Finally the size constraint is changed so that a job is created for
      * each domain
      */
+    @Test
     public void testCreateJobsBySize() {
         // get harvestdefinition (all configurations use same order.xml)
         //Note: The configurations have these expectations:
@@ -731,6 +755,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
      * Verify that configurations with different order.xml files are separated
      * into different jobs.
      */
+    @Test
     public void testCreateJobsByOrderXml() {
         // get harvestdefinition consisting of configurations with
         // same expected size, 1400, but using 3 different order.xmls
@@ -753,6 +778,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
      * Verify that jobs are created in a way where the maximum and
      * minimum Total size limits are obeyed if possible.
      */
+    @Test
     public void testCreateJobsByTotalSizeLimits() {
         // get harvestdefinition (all configurations use same order.xml)
         HarvestDefinition hd = TestInfo.getOneOrderXmlConfig();
@@ -811,6 +837,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
     /**
      * Verify that a snapshot harvesdefinition creates jobs for all domains.
      */
+    @Test
     public void testCreateSnapShot_allDomains() {
 
         HarvestDefinition hd = getTestSnapShotHarvestDefinition();
@@ -832,6 +859,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
      * Verify that a snapshot harvestdefinition is set to start immediately.
      */
 
+    @Test
     public void testCreateSnapShot_scheduleImmediately() {
         HarvestDefinition hd = HarvestDefinition.createFullHarvest(
                 "snapshot", "test", null, 124,
@@ -843,6 +871,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
      * Verify that a inactive snapshot harvestdefinition is set not to start.
      */
 
+    @Test
     public void testCreateSnapShot_Inactive() {
         HarvestDefinition hd = HarvestDefinition.createFullHarvest(
                 "snapshot", "test", null, 124, Constants.DEFAULT_MAX_BYTES,
@@ -859,6 +888,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
      * Verify that the constructor supplied harvest limits are used
      * when snapshot harvest jobs are created.
      */
+    @Test
     public void testCreateSnapShot_maxObjects() {
         HarvestDefinition hd = getTestSnapShotHarvestDefinition();
         // verify that the harvestdefinition generates jobs for all domains
@@ -879,6 +909,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
     /**
      * Verify the creation of an incremental snapshot harvest.
      */
+    @Test
     public void testCreateIncrementalSnapShot() {
         // Create a set fake historical data, marking one domain fully harvested
         // two as stopped by size or object limit, and
@@ -1013,6 +1044,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
 
     /** Test that we can create a full harvest, even with prev being the same.
      */
+    @Test
     public void testCreateFullHarvest() {
         HarvestDefinitionDAO dao = HarvestDefinitionDAO.getInstance();
 
@@ -1036,6 +1068,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
      * Verify that it is possible to set and get
      * the active state of a harvestDefinition.
      */
+    @Test
     public void testSetGetActive() {
         Domain d = TestInfo.getDefaultDomain();
         DomainConfiguration cfg1 = TestInfo.getDefaultConfig(d);
@@ -1068,6 +1101,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
      * - byte limit second
      * - expected number of objects third.
      */
+    @Test
 	public void testCompareConfigsDesc() throws NoSuchFieldException,
                                                 IllegalAccessException,
                                                 InvocationTargetException,
@@ -1240,6 +1274,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
                      cfg3, list.get(5));
     }
 
+    @Test
     public void testEquals() {
         PartialHarvest harvestDef1 =
                 HarvestDefinition.createPartialHarvest(

@@ -26,27 +26,20 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Test;
+
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * Tests a monthly frequency.
  */
-public class MonthlyFrequencyTester extends TestCase {
-    public MonthlyFrequencyTester(String s) {
-        super(s);
-    }
-
-    public void setUp() {
-    }
-
-    public void tearDown() {
-    }
-
+public class MonthlyFrequencyTester {
     /** 
      * Test value is monthly.
      */
+    @Test
     public void testTimeunitIsMonthly() {
     	MonthlyFrequency freq = new MonthlyFrequency(20);
         assertEquals("Timeunit must be monthly.", 
@@ -63,6 +56,7 @@ public class MonthlyFrequencyTester extends TestCase {
      * immediate.
      * @throws Exception
      */
+    @Test
     public void testGetFirstEvent1() throws Exception {
         MonthlyFrequency freq = new MonthlyFrequency(4); // Every four months, anytime
         Calendar cal = GregorianCalendar.getInstance();
@@ -76,6 +70,7 @@ public class MonthlyFrequencyTester extends TestCase {
      * event is at first correct time.
      * @throws Exception
      */
+    @Test
     public void testGetFirstEvent2() throws Exception {
         MonthlyFrequency freq = new MonthlyFrequency(4, 5, 4, 22); // Every four months, on the day hour and minute
         Calendar cal = new GregorianCalendar(2005, Calendar.AUGUST, 25, 22, 42);
@@ -92,6 +87,7 @@ public class MonthlyFrequencyTester extends TestCase {
      * after appropriate period.
      * @throws Exception
      */
+    @Test
     public void testGetNextEvent1() throws Exception {
         MonthlyFrequency freq = new MonthlyFrequency(4); // Every four months, anytime
         Calendar cal = new GregorianCalendar(2005, Calendar.AUGUST, 25, 22, 42);
@@ -106,6 +102,7 @@ public class MonthlyFrequencyTester extends TestCase {
      * event is after appropriate period.
      * @throws Exception
      */
+    @Test
     public void testGetNextEvent2() throws Exception {
         MonthlyFrequency freq = new MonthlyFrequency(4, 5, 5, 23); // Every four months, on the day hour and minute
         Calendar cal = new GregorianCalendar(2005, Calendar.AUGUST, 25, 22, 42);
@@ -124,6 +121,7 @@ public class MonthlyFrequencyTester extends TestCase {
      * at 4:22.
      * @throws Exception
      */
+    @Test
     public void testGetNextEvent3() throws Exception {
         MonthlyFrequency freq = new MonthlyFrequency(4, 5, 5, 23); // Every four months, on the day hour and minute
         Calendar cal = new GregorianCalendar(2005, Calendar.AUGUST, 5, 5, 23);
@@ -138,6 +136,7 @@ public class MonthlyFrequencyTester extends TestCase {
      * will be on the 29th in February, and 31st in March.
      * @throws Exception
      */
+    @Test
     public void testGetNextEvent4() throws Exception {
         MonthlyFrequency freq = new MonthlyFrequency(1, 31, 12, 0); // Every four months, on the day hour and minute
         Calendar cal = new GregorianCalendar(2005, Calendar.JANUARY, 31, 12, 0);
@@ -158,6 +157,7 @@ public class MonthlyFrequencyTester extends TestCase {
      * will be on the 29th in February, and 29th in March.
      * @throws Exception
      */
+    @Test
     public void testGetNextEvent5() throws Exception {
         MonthlyFrequency freq = new MonthlyFrequency(1); // Every four months, on the day hour and minute
         Calendar cal = new GregorianCalendar(2004, Calendar.JANUARY, 31, 12, 0);
@@ -178,6 +178,7 @@ public class MonthlyFrequencyTester extends TestCase {
      * will be on the 28th in February, and 31st in March.
      * @throws Exception
      */
+    @Test
     public void testGetNextEvent6() throws Exception {
         MonthlyFrequency freq = new MonthlyFrequency(1, 31, 12, 0); // Every four months, on the day hour and minute
         Calendar cal = new GregorianCalendar(2005, Calendar.JANUARY, 30, 15, 0);
@@ -199,6 +200,7 @@ public class MonthlyFrequencyTester extends TestCase {
     /** Test validity of arguments (correct number of units), correct time,
      * correct date.
      */
+    @Test
     public void testValidityOfArguments() throws Exception {
         try {
             new MonthlyFrequency(-1);
@@ -284,5 +286,4 @@ public class MonthlyFrequencyTester extends TestCase {
             //Expected
         }
     }
-
 }

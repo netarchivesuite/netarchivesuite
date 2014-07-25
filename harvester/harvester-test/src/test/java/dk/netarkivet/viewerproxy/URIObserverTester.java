@@ -25,31 +25,30 @@ package dk.netarkivet.viewerproxy;
 import java.net.URI;
 import java.util.Observable;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
+
 
 /**
  * Unit-tests of the abstract URIObserver class.
  * Uses a local class TestURIObserver that extends 
  * URIObserver.   
  */
-public class URIObserverTester extends TestCase {
+public class URIObserverTester {
     private TestURIObserver uriObserver;
 
-    public URIObserverTester(String s) {
-        super(s);
-    }
-
+    @Before
     public void setUp() {
         uriObserver = new TestURIObserver();
     }
 
-    public void tearDown() {
-    }
 
     /** Tests that the Observer update method calls URIObservers notify if and
      * only if update is called with a non-null Response object as argument.
      * @throws Exception
      */
+    @Test
     public void testUpdate() throws Exception {
         uriObserver.update(null, null);
         assertEquals("URIObserver notify should not be called",

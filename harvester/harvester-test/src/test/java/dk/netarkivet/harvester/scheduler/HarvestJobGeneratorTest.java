@@ -57,13 +57,14 @@ import dk.netarkivet.harvester.datamodel.TemplateDAO;
 import dk.netarkivet.harvester.datamodel.WeeklyFrequency;
 import dk.netarkivet.harvester.scheduler.HarvestJobGenerator.JobGeneratorTask;
 import dk.netarkivet.testutils.ThreadUtils;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 @SuppressWarnings("unused")
 public class HarvestJobGeneratorTest extends DataModelTestCase {
 
-    public HarvestJobGeneratorTest(String s) {
-        super(s);
-    }
 
     /**
      * Test that we can get jobs created from HDs.
@@ -72,6 +73,8 @@ public class HarvestJobGeneratorTest extends DataModelTestCase {
      * 
      * Disabled JIRA issue: https://sbforge.org/jira/browse/NAS-2342
      */
+    @Test
+    // @Ignore("NAS-2342")
     public void DISABLED_testGenerateJobs() throws Exception {
         HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
         TemplateDAO.getInstance();

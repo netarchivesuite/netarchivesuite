@@ -1,0 +1,10 @@
+Crawl Name: default_orderxml
+Crawl Status: Finished
+Duration Time: 11m2s370ms
+Total Seeds Crawled: 11
+Total Seeds not Crawled: 0
+Total Hosts Crawled: 28
+Total Documents Crawled: 1988
+Processed docs/sec: 1.24
+Bandwidth in Kbytes/sec: 27
+Total Raw Data Size in Bytes: 18631492 (17 MB) 

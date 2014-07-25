@@ -23,6 +23,10 @@
 
 package dk.netarkivet.harvester.harvesting.distribute;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -31,8 +35,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.LogManager;
+
 import javax.jms.Message;
 import javax.jms.MessageListener;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
@@ -87,10 +97,7 @@ public class IntegrityTests extends DataModelTestCase {
 
     SecurityManager sm;
 
-    public IntegrityTests(String sTestName) {
-        super(sTestName);
-    }
-
+    @Before
     public void setUp() throws Exception, SQLException, IllegalAccessException {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         rs.setUp();
@@ -153,6 +160,7 @@ public class IntegrityTests extends DataModelTestCase {
      * After test is done close test-objects.
      * @throws Exception
      */
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
         //Reset index request client listener
@@ -183,6 +191,8 @@ public class IntegrityTests extends DataModelTestCase {
     //7) The reply to the store is sent
     //8) Waits for message on the sched, indicating doOneCrawl ended
     //9) Checks that we listen for jobs again
+    @Test
+    @Ignore("The HACO should listen before job expected")
     public void testListenersAddedAndRemoved() throws IOException {
         ChannelID hacoQueue = HarvesterChannels.getHarvestJobChannelId(
                 new HarvestChannel("test", false, true, ""));
@@ -320,6 +330,8 @@ public class IntegrityTests extends DataModelTestCase {
      * @throws IOException
      * @throws InterruptedException
      */
+    @Test
+    @Ignore("Unable to locate element in order.xml")
     public void testCrawlJob() throws IOException,
                                       InterruptedException {
         // make a dummy job

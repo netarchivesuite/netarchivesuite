@@ -32,25 +32,26 @@ import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
 
-public class FullFrontierReportTest extends TestCase {
+
+public class FullFrontierReportTest {
     
     ReloadSettings rs = new ReloadSettings();
 
-    /* (non-Javadoc)
-     * @see junit.framework.TestCase#setUp()
-     */
-    @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         rs.setUp();
-        super.setUp();
         
         Settings.set(
                 CommonSettings.CACHE_DIR, 
                 TestInfo.WORKDIR.getAbsolutePath());
     }
-    
+
+    @After
     public void tearDown() throws Exception {
         
         File[] testDirs = TestInfo.WORKDIR.listFiles(new FileFilter() {
@@ -64,11 +65,11 @@ public class FullFrontierReportTest extends TestCase {
             FileUtils.removeRecursively(dir);
         }
         
-        super.tearDown();
         rs.tearDown();
     }
-    
-    public final static void testParseStoreAndDispose() throws IOException {
+
+    @Test
+    public final void testParseStoreAndDispose() throws IOException {
         for (File reportFile : TestInfo.getFrontierReportSamples()) {
             FullFrontierReport report = 
                 FullFrontierReport.parseContentsAsString(
@@ -77,10 +78,10 @@ public class FullFrontierReportTest extends TestCase {
             report.dispose();
             assertFalse(report.getStorageDir().exists());
         }
-        
     }
     
-    public final static void testAll() throws IOException {
+    @Test
+    public final void testAll() throws IOException {
         for (File reportFile : TestInfo.getFrontierReportSamples()) {
             FullFrontierReport report = 
                 FullFrontierReport.parseContentsAsString(
@@ -102,9 +103,5 @@ public class FullFrontierReportTest extends TestCase {
             
             assertFalse(report.getStorageDir().exists());
         }
-        
     }
-    
-    
-
 }

@@ -30,7 +30,11 @@ import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
+
 
 import java.lang.reflect.Field;
 import java.sql.Connection;
@@ -39,15 +43,11 @@ import java.sql.Connection;
  * Alternate unit test class for the TemplateDAO.
  * FIXME Merge with TemplateDAOTester
  */
-public class TemplateDAOTesterAlternate extends TestCase {
+public class TemplateDAOTesterAlternate {
     ReloadSettings rs = new ReloadSettings();
 
-    public TemplateDAOTesterAlternate(String s) {
-        super(s);
-    }
-
+    @Before
     public void setUp() throws Exception {
-        super.setUp();
         rs.setUp();
         FileUtils.removeRecursively(TestInfo.TEMPDIR);
         TestFileUtils.copyDirectoryNonCVS(TestInfo.DATADIR, TestInfo.TEMPDIR);
@@ -70,8 +70,8 @@ public class TemplateDAOTesterAlternate extends TestCase {
         TemplateDAO.getInstance();
     }
 
+    @After
     public void tearDown() throws Exception {
-        super.tearDown();
         DatabaseTestUtils.dropHDDB();
         Field f = ReflectUtils.getPrivateField(DBSpecifics.class, "instance");
         f.set(null, null);
@@ -85,6 +85,7 @@ public class TemplateDAOTesterAlternate extends TestCase {
      * This tests that Bug 916 is fixed.
      * FIXME merge with TemplateDAOTester
      */
+    @Test
     public void testGetinstanceOnEmptyDatabase() {
         TemplateDAO dao = null;
         try {

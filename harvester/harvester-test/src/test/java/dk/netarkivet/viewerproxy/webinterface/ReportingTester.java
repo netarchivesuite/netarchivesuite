@@ -35,7 +35,11 @@ import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
+
 
 import java.io.File;
 import java.util.List;
@@ -43,7 +47,7 @@ import java.util.List;
 /**
  * Unit tests for Reporting class.
  */
-public class ReportingTester extends TestCase {
+public class ReportingTester {
     private UseTestRemoteFile utrf = new UseTestRemoteFile();
     private ReloadSettings rs = new ReloadSettings();
     private TrivialArcRepositoryClient tarc;
@@ -51,8 +55,8 @@ public class ReportingTester extends TestCase {
     private File tempdir = new File(working, "commontempdir");
     private File dir;
 
+    @Before
     public void setUp() throws Exception {
-        super.setUp();
         rs.setUp();
         utrf.setUp();
         working.mkdirs();
@@ -71,8 +75,8 @@ public class ReportingTester extends TestCase {
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, dir);
     }
 
+    @After
     public void tearDown() throws Exception {
-        super.tearDown();
         if (tarc != null) {
             tarc.close();
         }
@@ -84,6 +88,7 @@ public class ReportingTester extends TestCase {
         rs.tearDown();
     }
 
+    @Test
     public void testGetFilesForJob() throws Exception {
         try {
             Reporting.getFilesForJob(-1, "2-1");
@@ -104,6 +109,7 @@ public class ReportingTester extends TestCase {
         		Reporting.getFilesForJob(4, "4-2"));
     }
 
+    @Test
     public void testGetMetdataCDXRecordsForJob() throws Exception {
         try {
             Reporting.getMetadataCDXRecordsForJob(-1);
@@ -132,6 +138,7 @@ public class ReportingTester extends TestCase {
      * This unit-test also implicitly tests the class HarvestedUrlsForDomainBatchJob
      * @throws Exception
      */
+    @Test
     public void testGetCrawlLogForDomainInJob() throws Exception {
         int jobId = -1;
         try {

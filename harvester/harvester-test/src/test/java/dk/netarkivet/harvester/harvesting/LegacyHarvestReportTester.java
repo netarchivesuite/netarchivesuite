@@ -33,8 +33,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.LogManager;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
+
 
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.TestRemoteFile;
@@ -54,11 +57,9 @@ import dk.netarkivet.testutils.TestFileUtils;
  * unit tests for the abstract class AbstractHarvestReport and its concrete
  * implementation {@link LegacyHarvestReport}.
  */
-public class LegacyHarvestReportTester extends TestCase {
-    public LegacyHarvestReportTester(String s) {
-        super(s);
-    }
+public class LegacyHarvestReportTester {
 
+    @Before
     public void setUp() throws Exception {
         TestRemoteFile.removeRemainingFiles();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
@@ -75,13 +76,14 @@ public class LegacyHarvestReportTester extends TestCase {
         LogManager.getLogManager().readConfiguration(fis);
     }
 
-
+    @After
     public void tearDown() {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         JMSConnectionMockupMQ.clearTestQueues();
     }
 
 
+    @Test
     public void testConstructor() throws IOException {
         //Test null argument
         try {
@@ -121,6 +123,7 @@ public class LegacyHarvestReportTester extends TestCase {
                 hostReport.getByteCount("netarkivet.dk"));
     }
 
+    @Test
     public void testGetDomainNames() throws IOException, FileNotFoundException {
 
         FileUtils.copyFile(
@@ -146,7 +149,7 @@ public class LegacyHarvestReportTester extends TestCase {
 
         // Number of domain names in AbstractHarvestReport should be less than or equal to
         // the number of lines in the host-reports.txt file (minus 1 , due to header):
-        Assert.assertEquals(
+        assertEquals(
                 "Number of domain names in AbstractHarvestReport should equal testnumber "
                 + TestInfo.NO_OF_TEST_DOMAINS,
                 TestInfo.NO_OF_TEST_DOMAINS, //Expected value
@@ -160,6 +163,7 @@ public class LegacyHarvestReportTester extends TestCase {
     }
 
 
+    @Test
     public void testGetObjectCount() {
         AbstractHarvestReport hostReport = createValidHeritrixHostsReport();
 
@@ -176,6 +180,7 @@ public class LegacyHarvestReportTester extends TestCase {
     }
 
 
+    @Test
     public void testGetByteCount() {
         AbstractHarvestReport hostReport = createValidHeritrixHostsReport();
 
@@ -191,6 +196,7 @@ public class LegacyHarvestReportTester extends TestCase {
     }
 
     /** Test solution to bugs 391 - hosts report with long values. */
+    @Test
     public void testLongValues() {
         File testFile = TestInfo.LONG_REPORT_FILE;
 
@@ -212,6 +218,7 @@ public class LegacyHarvestReportTester extends TestCase {
      * Test solution to bugs 392 - hosts report with byte counts which add to a
      * long value.
      */
+    @Test
     public void testAddLongValues() {
         File testFile = TestInfo.ADD_LONG_REPORT_FILE;
 
@@ -226,6 +233,7 @@ public class LegacyHarvestReportTester extends TestCase {
     }
 
     /** Test stop reason. */
+    @Test
     public void testStopReason() {
         File testFile = TestInfo.STOP_REASON_REPORT_FILE;
         FileUtils.copyFile(
@@ -248,6 +256,7 @@ public class LegacyHarvestReportTester extends TestCase {
                      hr.getStopReason("bibliotek.dk"));
     }
     
+    @Test
     public void testIDNA() {
         File testFile = TestInfo.IDNA_CRAW_LOG;
         FileUtils.copyFile(
@@ -274,6 +283,7 @@ public class LegacyHarvestReportTester extends TestCase {
      * @throws IOException
      * @throws ClassNotFoundException
      */
+    @Test
     public void testSerializability()
             throws IOException, ClassNotFoundException {
         File testFile = TestInfo.REPORT_FILE;

@@ -29,17 +29,21 @@ import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.harvester.datamodel.FullHarvest;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.testutils.StringAsserts;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 
 /** Unit-test for the SnapshotHarvestDefinition class. */
 public class SnapshotHarvestDefinitionTester extends HarvesterWebinterfaceTestCase {
-    public SnapshotHarvestDefinitionTester(String s) {
-        super(s);
-    }
 
+    @Before
     public void setUp() throws Exception {
         super.setUp();
     }
 
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
     }
@@ -49,6 +53,7 @@ public class SnapshotHarvestDefinitionTester extends HarvesterWebinterfaceTestCa
      *
      * @throws Exception
      */
+    @Test
     public void testProcessRequest() throws Exception {
         MockupServletRequest request = new MockupServletRequest();
         // Should just return with update==null

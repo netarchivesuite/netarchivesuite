@@ -22,14 +22,18 @@
  */
 package dk.netarkivet.harvester;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /** Unittestersuite for the HarvesterSettings class. */
-public class HarvesterSettingsTester extends TestCase {
+public class HarvesterSettingsTester {
 
+    @Test
     public void testNoFinalSettingsConstants() {
         Class<HarvesterSettings> c = HarvesterSettings.class;
         Field[] fields = c.getDeclaredFields();
@@ -48,6 +52,7 @@ public class HarvesterSettingsTester extends TestCase {
      * If this test fails, we need to update the SingleMBeanObjectTester#Setup 
      * and ChannelIDTester.
      */
+    @Test
     public void testHarvestControllerPrioritySettingUnchanged() {
        assertEquals("The 'HarvesterSettings.HARVEST_CONTROLLER_CHANNEL' "
                + "setting has changed. Please update " 
@@ -55,5 +60,4 @@ public class HarvesterSettingsTester extends TestCase {
                HarvesterSettings.HARVEST_CONTROLLER_CHANNEL, 
                "settings.harvester.harvesting.channel"); 
     }
-    
 }

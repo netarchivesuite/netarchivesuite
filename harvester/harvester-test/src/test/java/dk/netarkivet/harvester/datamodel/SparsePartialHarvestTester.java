@@ -27,6 +27,10 @@ package dk.netarkivet.harvester.datamodel;
  */
 
 import java.util.ArrayList;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 
 
@@ -36,10 +40,7 @@ public class SparsePartialHarvestTester extends DataModelTestCase {
     //private static final String order1 = "default_orderxml";
     //private static final String order2 = "OneLevel-order";
 
-    public SparsePartialHarvestTester(String s) {
-        super(s);
-    }
-
+    @Before
     public void setUp() throws Exception {
         super.setUp();
         Schedule sched = ScheduleDAO.getInstance().read("DefaultSchedule");
@@ -48,6 +49,7 @@ public class SparsePartialHarvestTester extends DataModelTestCase {
         HarvestDefinitionDAO.getInstance().create(harvest);
     }
 
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
     }
@@ -56,6 +58,7 @@ public class SparsePartialHarvestTester extends DataModelTestCase {
     /**
      * Test constructor.
      */
+    @Test
     public void testConstructor() {
             SparsePartialHarvest sph = new SparsePartialHarvest(
                 harvest.oid,
@@ -76,6 +79,7 @@ public class SparsePartialHarvestTester extends DataModelTestCase {
      * Test the method getSparsePartialHarvest
      *
      */
+    @Test
     public void testGetSparsePartialHarvest() {
         if (harvest.oid == null) {
             harvest.setOid(Long.valueOf(1L));

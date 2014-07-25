@@ -22,19 +22,21 @@
  */
 package dk.netarkivet.harvester.indexserver;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.harvester.indexserver.MultiFileBasedCache;
 
 /**
  * Tests for multifilebasedcache, i.e. file name generation.
  */
-public class MultiFileBasedCacheTester extends TestCase {
+public class MultiFileBasedCacheTester {
 
     private MultiFileBasedCache<Long> multiFileBasedCache
     = new MultiFileBasedCache<Long>("Test") {
@@ -45,16 +47,7 @@ public class MultiFileBasedCacheTester extends TestCase {
         }
     };
 
-    public MultiFileBasedCacheTester(String s) {
-        super(s);
-    }
-
-    public void setUp() {
-    }
-
-    public void tearDown() {
-    }
-
+    @Test
     public void testGetCacheFile() throws Exception {
         try {
             multiFileBasedCache.getCacheFile(null);

@@ -26,7 +26,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Test;
+
 
 import org.apache.commons.httpclient.URIException;
 import org.archive.crawler.datamodel.CrawlURI;
@@ -37,7 +39,7 @@ import org.archive.net.UURIFactory;
 import org.archive.util.HttpRecorder;
 
 @SuppressWarnings({ "serial"})
-public class ExtractorOAITest extends TestCase {
+public class ExtractorOAITest {
 
     public static final String xmlText = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><OAI-PMH xmlns=\"http://www.openarchives.org/OAI/2.0/\" \n"
                                          + "         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
@@ -94,6 +96,7 @@ public class ExtractorOAITest extends TestCase {
      * Create a CrawlURI corresponding to this xml and uri. Run the extract method on it.
      * Check that it now has a new link with resumptionToken=foobar in the query.
      */
+    @Test
     public void testExtract() throws URIException, InterruptedException {
         CrawlURI curi = new CrawlURI(UURIFactory.getInstance(uri)) {
             @Override
@@ -119,5 +122,4 @@ public class ExtractorOAITest extends TestCase {
         Link link1 = links.iterator().next();
         assertTrue(link1.getDestination().toString().contains("resumptionToken=foobar"));
     }
-
 }

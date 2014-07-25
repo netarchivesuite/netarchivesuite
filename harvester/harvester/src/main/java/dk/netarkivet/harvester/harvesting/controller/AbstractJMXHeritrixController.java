@@ -22,19 +22,40 @@
  */
 package dk.netarkivet.harvester.harvesting.controller;
 
-import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.*;
-import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.harvester.harvesting.HeritrixFiles;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.archive.crawler.Heritrix;
 
-import java.io.*;
-import java.util.*;
+import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.JMXUtils;
+import dk.netarkivet.common.utils.NotificationType;
+import dk.netarkivet.common.utils.NotificationsFactory;
+import dk.netarkivet.common.utils.ProcessUtils;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.StringUtils;
+import dk.netarkivet.common.utils.SystemUtils;
+import dk.netarkivet.common.utils.TimeUtils;
+import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 
 /**
  * Abstract base class for JMX-based Heritrix controllers.
@@ -295,6 +316,12 @@ implements HeritrixController {
                 return string.endsWith(".jar");
             }
         });
+
+        // FIXME: Dirty hack around heretrix jars being elsewhere /tra
+        if (jars == null) {
+            jars = new File[0];
+        }
+
         // Reverse sort the file list in order to add in alphabetical order
         // before the basic jars.
         Arrays.sort(jars, new Comparator<File>() {

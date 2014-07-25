@@ -22,7 +22,9 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Test;
+
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
@@ -32,20 +34,11 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * is tested here.
  * The other tests are performed in the subclasses of Frequency.
  */
-public class FrequencyTester extends TestCase {
-    public FrequencyTester(String s) {
-        super(s);
-    }
-
-    public void setUp() {
-    }
-
-    public void tearDown() {
-    }
-
-    /** 
+public class FrequencyTester {
+    /**
      * Test Frequency.getNewInstance.
      */
+    @Test
     public void testGetNewInstance() {
         
         // test, that negative values for timeunit and numtimeunits

@@ -25,25 +25,18 @@ package dk.netarkivet.harvester.datamodel;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Test;
+
 
 /**
  * Unit test for the utility class NumberUtils.
  * TODO Move class to the common package.
  * 
  */
-public class NumberUtilsTester extends TestCase {
-    public NumberUtilsTester(String s) {
-        super(s);
-    }
-
-    public void setUp() {
-    }
-
-    public void tearDown() {
-    }
-
+public class NumberUtilsTester {
     /** Test minimum where -1 means infinite */
+    @Test
     public void testMinInf() throws Exception {
         assertEquals("-1 is greater than all",
                      Long.MAX_VALUE, NumberUtils.minInf(-1L, Long.MAX_VALUE));
@@ -64,6 +57,7 @@ public class NumberUtilsTester extends TestCase {
     }
 
     /** Test comparing where -1 means infinite */
+    @Test
     public void testCompareInf() throws Exception {
         assertEquals("-1 is greater than all",
                      1, NumberUtils.compareInf(-1L, Long.MAX_VALUE));
@@ -83,6 +77,7 @@ public class NumberUtilsTester extends TestCase {
                      0, NumberUtils.compareInf(42L, 42L));
     }
     
+    @Test
     public void testToPrimitiveArray() {
         List<Double> emptyList = new ArrayList<Double>();
         double[] doubles = NumberUtils.toPrimitiveArray(emptyList);
@@ -109,7 +104,4 @@ public class NumberUtilsTester extends TestCase {
         assertTrue(found42Value);
         
     }
-    
-    
-    
 }

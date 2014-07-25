@@ -26,27 +26,21 @@ import java.util.Locale;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Test;
+
 
 /**
  * Tests of the JobStatus class.
  * Currently, only the static method getLocalizedString
  * is tested here.
  */
-public class JobStatusTester extends TestCase {
-    public JobStatusTester(String s) {
-        super(s);
-    }
-
-    public void setUp() {
-    }
-
-    public void tearDown() {
-    }
+public class JobStatusTester {
 
     /** 
      * Test getLocalizedString.
      */
+    @Test
     public void testGetLocalizedString() {
         Locale en = new Locale("en");
         assertEquals(JobStatus.NEW.getLocalizedString(en), "New");
@@ -58,12 +52,14 @@ public class JobStatusTester extends TestCase {
         assertEquals(JobStatus.FAILED_REJECTED.getLocalizedString(en), "Failed (Rejected for Resubmission)");
       }
 
+    @Test
     public void testLegalChange() {
         JobStatus status = JobStatus.FAILED_REJECTED;
         assertTrue("Should be legal to change JobStatus from FAILED_REJECTED "
                    + "back to FAILED", status.legalChange(JobStatus.FAILED));
     }
     
+    @Test
     public void testFromOrdinal() {
         assertEquals(JobStatus.NEW, JobStatus.fromOrdinal(0));
         assertEquals(JobStatus.SUBMITTED, JobStatus.fromOrdinal(1));

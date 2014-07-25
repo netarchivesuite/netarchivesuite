@@ -26,6 +26,10 @@ package dk.netarkivet.harvester.datamodel;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
@@ -33,15 +37,14 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  *  Unittests for the GlobalCrawlerTrapList class.
  */
 public class GlobalCrawlerTrapListTester extends DataModelTestCase {
-    public GlobalCrawlerTrapListTester(String s) {
-        super(s);
-    }
 
+    @Before
     @Override
     public void setUp() throws Exception {
         super.setUp();
     }
 
+    @After
     @Override
     public void tearDown() throws Exception {
       super.tearDown();
@@ -50,6 +53,7 @@ public class GlobalCrawlerTrapListTester extends DataModelTestCase {
     /**
      * Tests that we can construct a trap list.
      */
+    @Test
     public void testConstructor() throws FileNotFoundException {
         GlobalCrawlerTrapList trapList = new GlobalCrawlerTrapList(
                 new FileInputStream(new File(TestInfo.TOPDATADIR, 
@@ -63,6 +67,7 @@ public class GlobalCrawlerTrapListTester extends DataModelTestCase {
     /**
      * Tests that the constructor throws expected exceptions on bad data
      */
+    @Test
     public void testConstructorFail() throws FileNotFoundException {
 
         try {
@@ -90,6 +95,7 @@ public class GlobalCrawlerTrapListTester extends DataModelTestCase {
      * Unit test for  https://sbforge.org/jira/browse/NAS-1793
      * @throws FileNotFoundException
      */
+    @Test
     public void testBadRegexp() throws FileNotFoundException {
         try {
             new GlobalCrawlerTrapList(
@@ -100,6 +106,5 @@ public class GlobalCrawlerTrapListTester extends DataModelTestCase {
         } catch (ArgumentNotValid e) {
             //expected
         }
-
     }
 }

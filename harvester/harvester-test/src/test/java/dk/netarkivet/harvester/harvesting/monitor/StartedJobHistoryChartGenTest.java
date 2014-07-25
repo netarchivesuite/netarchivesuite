@@ -31,7 +31,11 @@ import java.text.ParseException;
 import java.util.LinkedList;
 import java.util.List;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
@@ -39,17 +43,15 @@ import dk.netarkivet.harvester.datamodel.NumberUtils;
 import dk.netarkivet.harvester.harvesting.monitor.StartedJobHistoryChartGen.TimeAxisResolution;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
-public class StartedJobHistoryChartGenTest extends TestCase {
+public class StartedJobHistoryChartGenTest {
 
     ReloadSettings rs = new ReloadSettings();
 
     StartedJobHistoryChartGen gen;
 
-    @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         rs.setUp();
-        super.setUp();
-
         Settings.set(
                 CommonSettings.DIR_COMMONTEMPDIR,
                 TestInfo.WORKING_DIR.getPath());
@@ -57,16 +59,14 @@ public class StartedJobHistoryChartGenTest extends TestCase {
         gen = new StartedJobHistoryChartGen(1);
     }
 
+    @After
     public void tearDown() throws Exception {
-
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
-
-        super.tearDown();
         rs.tearDown();
-
         gen.cleanup();
     }
 
+    @Test
     public final void testPngGeneration() throws IOException, ParseException {
 
         File testDataDir = new File(TestInfo.BASEDIR, "charting");
@@ -153,6 +153,7 @@ public class StartedJobHistoryChartGenTest extends TestCase {
     /**
      * Tests {@link TimeAxisResolution#findTimeUnit(double)}
      */
+    @Test
     public final void testFindTimeUnit() {
 
         long[] durations = new long[] {
