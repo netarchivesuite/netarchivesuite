@@ -35,10 +35,15 @@ import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaType;
 import dk.netarkivet.common.exceptions.IllegalState;
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class DatabasePreservationStateTester extends TestCase {
+import static org.junit.Assert.*;
 
+public class DatabasePreservationStateTester {
+
+    @Test
     public void testState() {
 
         Replica r1 = Replica.getReplicaFromId("ONE");
@@ -148,6 +153,7 @@ public class DatabasePreservationStateTester extends TestCase {
         
     }
     
+    @Test
     public void testError() {
         long guid = 0L;
         long fileId = 1L;

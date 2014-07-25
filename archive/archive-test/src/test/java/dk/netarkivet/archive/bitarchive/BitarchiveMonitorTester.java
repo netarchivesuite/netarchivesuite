@@ -28,7 +28,11 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Set;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.common.CommonSettings;
@@ -41,20 +45,20 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /** Unit test for BitarchiveMonitorTester */
 @SuppressWarnings({ "rawtypes", "unused" })
-public class BitarchiveMonitorTester extends TestCase {
+public class BitarchiveMonitorTester {
     private ReloadSettings rs = new ReloadSettings();
 
     private MockupJMS mj = new MockupJMS();
 
     private static final Replica ONE = Replica.getReplicaFromId("ONE");
 
-    @Override
+    @Before
     public void setUp() {
         rs.setUp();
         mj.setUp();
     }
 
-    @Override
+    @After
     public void tearDown() {
         mj.tearDown();
         rs.tearDown();
@@ -63,6 +67,7 @@ public class BitarchiveMonitorTester extends TestCase {
     /**
      * Test for singleton.
      */
+    @Test
     public void testSingleton() {
         ClassAsserts.assertSingleton(BitarchiveMonitor.class);
     }
@@ -70,6 +75,7 @@ public class BitarchiveMonitorTester extends TestCase {
     /**
      * Tests the timeout of batchjobs.
      */
+    @Test
     public void testBatchJobTimout() {
         TimeoutBatch timeoutBatch = new TimeoutBatch();
 
@@ -118,6 +124,7 @@ public class BitarchiveMonitorTester extends TestCase {
      * @throws IllegalArgumentException 
      * 
      */
+    @Test
     public void testBitarchiveLifeTimeout() throws SecurityException, 
             NoSuchFieldException, NoSuchMethodException, 
             IllegalArgumentException, IllegalAccessException, 

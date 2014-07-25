@@ -39,9 +39,15 @@ import dk.netarkivet.harvester.datamodel.DatabaseTestUtils;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
-import junit.framework.TestCase;
 
-public class DatabaseAdminTester extends TestCase {
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+
+public class DatabaseAdminTester {
     private ReloadSettings rs = new ReloadSettings();
     private MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,
             TestInfo.TEST_DIR);
@@ -52,6 +58,7 @@ public class DatabaseAdminTester extends TestCase {
     Replica TWO = Replica.getReplicaFromId("TWO");
     Replica THREE = Replica.getReplicaFromId("THREE");
 
+    @Before
     public void setUp() throws Exception {
         ChannelsTester.resetChannels();
         rs.setUp();
@@ -78,6 +85,7 @@ public class DatabaseAdminTester extends TestCase {
 
     }
     
+    @After
     public void tearDown() {
         JMSConnectionMockupMQ.clearTestQueues();
         utrf.setUp();
@@ -86,6 +94,9 @@ public class DatabaseAdminTester extends TestCase {
     }
 
     /** Disabled, fails on Jenkins */
+    @Test
+    @Ignore("FIXME")
+    // FIXME: test temporarily disabled
     public void failingTestArcRepositoryCalls() {
         DatabaseAdmin da = DatabaseAdmin.getInstance();
         

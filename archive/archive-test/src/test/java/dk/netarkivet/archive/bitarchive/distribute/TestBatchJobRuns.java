@@ -31,6 +31,10 @@ import java.io.OutputStream;
 
 import org.archive.io.arc.ARCRecord;
 
+/**
+ * Helper batch job to write number of records processed at finish.
+ *
+ */
 @SuppressWarnings({ "serial"})
 public class TestBatchJobRuns extends ARCBatchJob {
     boolean initialized;

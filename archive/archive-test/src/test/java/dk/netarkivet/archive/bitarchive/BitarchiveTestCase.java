@@ -27,7 +27,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.logging.LogManager;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.utils.FileUtils;
@@ -38,7 +42,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 /** A collection of setup/teardown stuff usable by most bitarchive tests.. */
-public abstract class BitarchiveTestCase extends TestCase {
+public abstract class BitarchiveTestCase {
     private UseTestRemoteFile rf = new UseTestRemoteFile();
     protected static Bitarchive archive;
     ReloadSettings rs = new ReloadSettings();
@@ -48,14 +52,12 @@ public abstract class BitarchiveTestCase extends TestCase {
      *
      * @param s Name of the test.
      */
-    public BitarchiveTestCase(String s) {
-        super(s);
-    }
 
     protected abstract File getOriginalsDir();
 
+    @Before
     public void setUp() throws Exception {
-        super.setUp();
+        // super.setUp();
         rs.setUp();
         mj.setUp();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
@@ -79,6 +81,7 @@ public abstract class BitarchiveTestCase extends TestCase {
         rf.setUp();
     }
 
+    @After
     public void tearDown() throws Exception {
         if (archive != null) {
             archive.close();
@@ -87,6 +90,6 @@ public abstract class BitarchiveTestCase extends TestCase {
         mj.tearDown();
         rf.tearDown();
         rs.tearDown();
-        super.tearDown();
+        // super.tearDown();
     }
 }

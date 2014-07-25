@@ -32,7 +32,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.LogManager;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 import org.apache.commons.collections.IteratorUtils;
 
@@ -52,7 +56,7 @@ import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
-public class ReplicaCacheDatabaseTester extends TestCase {
+public class ReplicaCacheDatabaseTester {
 
     private ReloadSettings rs = new ReloadSettings();
     private ReplicaCacheDatabase cache;
@@ -60,6 +64,7 @@ public class ReplicaCacheDatabaseTester extends TestCase {
     private MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,
             TestInfo.TEST_DIR);
     
+    @Before
     public void setUp() throws Exception {
         rs.setUp();
         mtf.setUp();
@@ -93,14 +98,15 @@ public class ReplicaCacheDatabaseTester extends TestCase {
         cache = ReplicaCacheDatabase.getInstance();
     }
     
+    @After
     public void tearDown() {
         mtf.tearDown();
         rs.tearDown();
     }
     
     @SuppressWarnings("unchecked")
-    // Irrgggh a 300 line god test method. Way too long method implementing an ill-defined test scope 
-    // with an increasingly difficult-to-follow test state. 
+    @Test
+    // FIXME: Split test up.
     public void testAll() throws Exception {
         Date beforeTest = new Date(Calendar.getInstance().getTimeInMillis());
 
@@ -340,7 +346,7 @@ public class ReplicaCacheDatabaseTester extends TestCase {
         // cleanup afterwards.
         cache.cleanup();
     }
-    
+
     private File makeTemporaryDuplicateFilelistFile() throws Exception {
         File res = new File(TestInfo.TEST_DIR, "filelist.out");
         FileWriter fw = new FileWriter(res);

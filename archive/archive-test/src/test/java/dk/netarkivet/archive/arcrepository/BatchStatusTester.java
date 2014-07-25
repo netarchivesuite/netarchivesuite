@@ -31,8 +31,13 @@ import java.util.Collections;
 import java.util.List;
 
 import dk.netarkivet.common.distribute.arcrepository.*;
-import junit.framework.TestCase;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IllegalState;
@@ -45,29 +50,28 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 /**
  * Unit-test to test the BatchStatus class.
  */
-public class BatchStatusTester extends TestCase {
+public class BatchStatusTester {
     MoveTestFiles mtf = new MoveTestFiles(dk.netarkivet.archive.distribute.arcrepository.TestInfo.ORIGINALS_DIR,
             dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR);
 
     
     private UseTestRemoteFile utrf = new UseTestRemoteFile();
-    
-    public BatchStatusTester(String s) {
-        super(s);
-    }
 
+    @Before
     public void setUp() {
         mtf.setUp();
         utrf.setUp();
-        
-        
     }
 
+    @After
     public void tearDown() {
         utrf.tearDown();
         mtf.tearDown();
     }
 
+    @Test
+    @Ignore("FIXME")
+    // FIXME: test temporarily disabled
     public void testCopyResults() throws IOException {
         List<File> emptyList = Collections.emptyList();
         File tmpFile = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, "newFile");
@@ -120,6 +124,9 @@ public class BatchStatusTester extends TestCase {
                 noSuchFile.exists());
     }
 
+    @Test
+    @Ignore("FIXME")
+    // FIXME: test temporarily disabled
     public void testAppendResults() throws IOException {
         List<File> emptyList = Collections.emptyList();
         String fileContents = FileUtils.readFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE);
@@ -175,6 +182,10 @@ public class BatchStatusTester extends TestCase {
         }
 
     }
+
+    @Test
+    @Ignore("FIXME")
+    // FIXME: test temporarily disabled
     public void testHasResultFile() throws IOException {
         List<File> emptyList = Collections.emptyList();
         TestRemoteFile lrf = new TestRemoteFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE, false,

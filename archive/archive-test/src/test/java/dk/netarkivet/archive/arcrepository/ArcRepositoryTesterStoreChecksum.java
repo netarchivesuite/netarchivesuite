@@ -29,7 +29,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
 import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
 import dk.netarkivet.archive.arcrepositoryadmin.UpdateableAdminData;
@@ -50,7 +54,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
  * Unit tests for the ArcRepository class.
  */
 @SuppressWarnings({ "deprecation", "unchecked"})
-public class ArcRepositoryTesterStoreChecksum extends TestCase {
+public class ArcRepositoryTesterStoreChecksum {
 
     private UseTestRemoteFile rf = new UseTestRemoteFile();
 
@@ -78,7 +82,8 @@ public class ArcRepositoryTesterStoreChecksum extends TestCase {
     public ArcRepositoryTesterStoreChecksum() {
     }
 
-    protected void setUp() {
+    @Before
+    public void setUp() {
         rs.setUp();
         ChannelsTester.resetChannels();
         ServerSetUp.setUp();
@@ -86,7 +91,8 @@ public class ArcRepositoryTesterStoreChecksum extends TestCase {
         rf.setUp();
     }
 
-    protected void tearDown() {
+    @After
+    public void tearDown() {
         rf.tearDown();
         ServerSetUp.tearDown();
         rs.tearDown();
@@ -97,6 +103,7 @@ public class ArcRepositoryTesterStoreChecksum extends TestCase {
      * Tests if the store operation generates and stores a valid checksum
      * in the reference table (AdminData).
      */
+    @Test
     public void testStoreCompletedChecksum() throws IOException {
         File file = new File(ORIGINALS_DIR, STORABLE_FILES[0]);
         String orgCheckSum = ChecksumCalculator.calculateMd5(file);
@@ -124,6 +131,7 @@ public class ArcRepositoryTesterStoreChecksum extends TestCase {
      * Tests that Controller.getCheckSum() behaves as expected when using a
      * reference to a non-stored file.
      */
+    @Test
     public void testGetChecksumNotStoredFile() {
         File file = new File(ORIGINALS_DIR, STORABLE_FILES[0]);
         // do nothing with file - e.g. not storing it
@@ -143,6 +151,7 @@ public class ArcRepositoryTesterStoreChecksum extends TestCase {
      * the expected behavior: a PermissionDenied should be thrown,
      * and the original entry in checksum reference table remains unaffected.
      */
+    @Test
     public void testStoreFailedAlreadyUploadedChecksum() {
         File file = null;
         String orgCheckSum = null;
@@ -185,16 +194,17 @@ public class ArcRepositoryTesterStoreChecksum extends TestCase {
             assertEquals(
                     "Stored checksum and reference checksum should be equal",
                     refTableSum, storedCheckSum);
-        } catch (IOFailure e) {
-            e.printStackTrace();
-            fail("Unexpected IOException thrown "
-                 + "while trying to re-upload file: " + e);
+//        } catch (IOFailure e) {
+//            e.printStackTrace();
+//            fail("Unexpected IOException thrown "
+//                 + "while trying to re-upload file: " + e);
         }
 
     }
 
     /** Check what happens if we're being sent a checksum while uploading.
      * Test for bug #410. */
+    @Test
     public void testStoreChecksumWhileUploading()
             throws NoSuchMethodException, IllegalAccessException,
             InvocationTargetException, NoSuchFieldException {

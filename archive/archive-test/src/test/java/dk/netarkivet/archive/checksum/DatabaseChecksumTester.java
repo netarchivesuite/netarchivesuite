@@ -24,10 +24,14 @@ package dk.netarkivet.archive.checksum;
 
 import com.sleepycat.je.DatabaseException;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 @SuppressWarnings({ "unused"})
-public class DatabaseChecksumTester extends TestCase {
+public class DatabaseChecksumTester {
 
     /**
      * @param args
@@ -37,6 +41,7 @@ public class DatabaseChecksumTester extends TestCase {
         DatabaseChecksumArchive dca = new DatabaseChecksumArchive();
     }
     
+    @Test
     public void testConstructor() throws DatabaseException {
         DatabaseChecksumArchive dca = new DatabaseChecksumArchive();
     }

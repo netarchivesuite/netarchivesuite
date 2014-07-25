@@ -31,7 +31,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.bitpreservation.AdminDataMessage;
 import dk.netarkivet.archive.arcrepositoryadmin.Admin;
@@ -67,20 +72,21 @@ import dk.netarkivet.testutils.TestMessageListener;
 import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
+
 @SuppressWarnings({ "deprecation", "unchecked", "static-access"})
-public class ArcRepositoryTester extends TestCase {
+public class ArcRepositoryTester {
     /** A repeatedly used reflected method, used across method calls. */
     Method readChecksum;
     ReloadSettings rs = new ReloadSettings();
     static boolean first = true;
 
+    @Before
     public void setUp() throws Exception {
         // reset the channels.
         if (first) {
             ChannelsTester.resetChannels();
         }
 
-        super.setUp();
         rs.setUp();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         TestFileUtils.copyDirectoryNonCVS(
@@ -91,16 +97,17 @@ public class ArcRepositoryTester extends TestCase {
                 RememberNotifications.class.getName());
     }
 
+    @After
     public void tearDown() throws Exception {
         ArcRepository.getInstance().close();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         // Empty the log file.
         new FileOutputStream(TestInfo.LOG_FILE).close();
         rs.tearDown();
-        super.tearDown();
     }
 
     /** Test that BitarchiveMonitorServer is a singleton. */
+    @Test
     public void testIsSingleton() {
         ClassAsserts.assertSingleton(ArcRepository.class);
         ArcRepository.getInstance();
@@ -108,11 +115,13 @@ public class ArcRepositoryTester extends TestCase {
 
 
     /** Verify that calling the protected no-arg constructor does not fail. */
+    @Test
     public void testConstructor() {
         ArcRepository.getInstance().close();
     }
 
     /** Test parameters. */
+    @Test
     public void testGetReplicaClientFromReplicaNameParameters() {
         ArcRepository a = ArcRepository.getInstance();
         /**
@@ -137,6 +146,7 @@ public class ArcRepositoryTester extends TestCase {
     }
 
     /** Test a valid BitarchiveClient is returned. */
+    @Test
     public void testGetReplicaClientFromReplicaName() {
         ArcRepository a = ArcRepository.getInstance();
         String[] locations = Settings.getAll(
@@ -153,6 +163,7 @@ public class ArcRepositoryTester extends TestCase {
      *
      * @throws Throwable if something are thrown
      */
+    @Test
     public void testReadChecksum() throws Throwable {
         readChecksum = ArcRepository.class.getDeclaredMethod("readChecksum",
                 new Class[]{File.class, String.class});
@@ -266,6 +277,7 @@ public class ArcRepositoryTester extends TestCase {
      *
      * @throws Exception if exception is thrown
      */
+    @Test
     public void DISABLED_testOnBatchReply() throws Exception {
         ArcRepository a = ArcRepository.getInstance();
         UpdateableAdminData ad = UpdateableAdminData.getUpdateableInstance();
@@ -368,6 +380,7 @@ public class ArcRepositoryTester extends TestCase {
 
     }
     
+    @Test
     public void testOnChecksumReply() throws Exception {
         ArcRepository a = ArcRepository.getInstance();
         
@@ -406,6 +419,7 @@ public class ArcRepositoryTester extends TestCase {
                 TestInfo.LOG_FILE);
     }
     
+    @Test
     public void testOldRemoveAndGetFile() {
         ArcRepository.getInstance().cleanup();
         ArcRepository a = ArcRepository.getInstance();
@@ -426,6 +440,7 @@ public class ArcRepositoryTester extends TestCase {
                 listener.getNumReceived());
     }
 
+    @Test
     public void DSIABLED_testChecksumCalls() throws Exception {
         ArcRepository.getInstance().cleanup();
         Settings.set(CommonSettings.USE_REPLICA_ID, "THREE");
@@ -433,6 +448,7 @@ public class ArcRepositoryTester extends TestCase {
         DISABLED_testOnBatchReply();
     }
     
+    @Test
     public void testAdminMessages() {
         ArcRepository arc = ArcRepository.getInstance();
         Admin admin = AdminData.getUpdateableInstance();
@@ -482,6 +498,7 @@ public class ArcRepositoryTester extends TestCase {
     /**
      * Ensure, that the application dies if given the wrong input.
      */
+    @Test
     public void testApplication() {
         ReflectUtils.testUtilityConstructor(ArcRepositoryApplication.class);
 

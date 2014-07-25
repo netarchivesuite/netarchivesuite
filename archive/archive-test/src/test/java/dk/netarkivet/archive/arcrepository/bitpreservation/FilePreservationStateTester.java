@@ -37,9 +37,13 @@ import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaType;
 import dk.netarkivet.testutils.ReflectUtils;
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class FilePreservationStateTester extends TestCase {
+import static org.junit.Assert.*;
+
+public class FilePreservationStateTester {
 
     /**
      * Tests the standard way of using the FilePreservationState.
@@ -49,6 +53,7 @@ public class FilePreservationStateTester extends TestCase {
      * @throws IllegalAccessException
      * @throws InvocationTargetException
      */
+    @Test
     public void testState() throws NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
         Replica r1 = Replica.getReplicaFromId("ONE");
         Replica r2 = Replica.getReplicaFromId("TWO");
@@ -161,6 +166,7 @@ public class FilePreservationStateTester extends TestCase {
                 content.contains("General store state: "));
     }
     
+    @Test
     public void testError() throws NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
         Replica r1 = Replica.getReplicaFromId("ONE");
         Replica r2 = Replica.getReplicaFromId("TWO");
@@ -214,6 +220,7 @@ public class FilePreservationStateTester extends TestCase {
     }
     
     // check isAdminDataOk again!
+    @Test
     public void testIsAdminDataOk() throws NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
         // scenario 1. empty checksum and admin-state completed.
         Replica r1 = Replica.getReplicaFromId("ONE");
@@ -294,6 +301,7 @@ public class FilePreservationStateTester extends TestCase {
     }
     
     // check getReferenceBitarchive again!
+    @Test
     public void testGetReferenceBitarchive() throws NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, NoSuchFieldException {
         // scenario 1: no reference checksum.
         Replica r1 = Replica.getReplicaFromId("ONE");
@@ -362,6 +370,7 @@ public class FilePreservationStateTester extends TestCase {
     }
     
     // test getUniqueChecksum again!
+    @Test
     public void testGetUniqueChecksum() throws NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
       // scenario 1: two differen checksums for replica
       Replica r1 = Replica.getReplicaFromId("ONE");

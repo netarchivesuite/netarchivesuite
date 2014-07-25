@@ -51,11 +51,16 @@ import java.util.Map;
 import java.util.Vector;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
-import junit.framework.TestCase;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /** Unittest for the class dk.netarkivet.archive.webinterface.BitpreserveFileState. */
 @SuppressWarnings({ "deprecation"})
-public class BitpreserveFileStatusTester extends TestCase {
+public class BitpreserveFileStatusTester {
     private static final String GET_INFO_METHOD = "getFilePreservationStatus";
     private static final String ADD_METHOD = "reestablishMissingFile";
     private static final String ADD_COMMAND
@@ -77,6 +82,7 @@ public class BitpreserveFileStatusTester extends TestCase {
     ReloadSettings rs = new ReloadSettings();
     MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
 
+    @Before
     public void setUp() throws Exception {
         rs.setUp();
         mtf.setUp();
@@ -95,20 +101,23 @@ public class BitpreserveFileStatusTester extends TestCase {
                                        knownIds.toArray(
                                                Replica.getKnownIds())));
         }
-        super.setUp();
+        // super.setUp();
     }
 
+    @After
     public void tearDown() throws Exception {
         AdminData.getUpdateableInstance().close();
         mtf.tearDown();
         rs.tearDown();
-        super.tearDown();
+        // super.tearDown();
     }
     
+    @Test
     public void testUtilityClass() {
         ReflectUtils.testUtilityConstructor(BitpreserveFileState.class);
     }
 
+    @Test
     public void testProcessMissingRequest() throws Exception {
 
         Settings.set(ArchiveSettings.DIR_ARCREPOSITORY_BITPRESERVATION,
@@ -260,6 +269,7 @@ public class BitpreserveFileStatusTester extends TestCase {
      * @throws NoSuchFieldException
      * @throws IllegalAccessException
      */
+    @Test
     public void testUpdateRequest() throws NoSuchFieldException, IllegalAccessException {
         MockFileBasedActiveBitPreservation mockabp
                 = new MockFileBasedActiveBitPreservation();
@@ -303,6 +313,7 @@ public class BitpreserveFileStatusTester extends TestCase {
       }
 
     
+    @Test
     public void testProcessChecksumRequest() throws NoSuchFieldException, IllegalAccessException {
         MockFileBasedActiveBitPreservation mockabp
                 = new MockFileBasedActiveBitPreservation();
@@ -333,6 +344,7 @@ public class BitpreserveFileStatusTester extends TestCase {
         
     }
     
+    @Test
     public void testMakeCheckbox() throws NoSuchFieldException, IllegalAccessException {
         String res = BitpreserveFileState.makeCheckbox("TEST-COMMAND", "TEST-ARG1", "TEST-ARG2");
 
@@ -345,6 +357,7 @@ public class BitpreserveFileStatusTester extends TestCase {
                         + "TEST-ARG2" + "\""));
     }
     
+    @Test
     public void testPrintMissingFileStateForReplica() throws IOException, NoSuchFieldException, IllegalAccessException {
         MockFileBasedActiveBitPreservation fbabp = 
             new MockFileBasedActiveBitPreservation();
@@ -374,6 +387,7 @@ public class BitpreserveFileStatusTester extends TestCase {
         fbabp.calls.clear();
     }
     
+    @Test
     public void testPrintChecksumErrorStateForReplica() throws IOException, NoSuchFieldException, IllegalAccessException {
         MockFileBasedActiveBitPreservation fbabp =
             new MockFileBasedActiveBitPreservation();
@@ -395,6 +409,7 @@ public class BitpreserveFileStatusTester extends TestCase {
         fbabp.calls.clear();
     }
     
+    @Test
     // Tests both printFileName, printFileState 
     public void testPrints() throws Exception {
         MockJspWriter jspout = new MockJspWriter();
@@ -406,6 +421,7 @@ public class BitpreserveFileStatusTester extends TestCase {
     }
 
     /** A placeholder for ActiveBitPreservation that's easy to ask questions of. */
+    // FIXME: MOCK
     class MockFileBasedActiveBitPreservation extends
                                              FileBasedActiveBitPreservation {
         public Map<String, List<String>> calls

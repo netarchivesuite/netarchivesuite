@@ -24,7 +24,11 @@ package dk.netarkivet.archive.tools;
 
 import java.io.File;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 import dk.netarkivet.archive.arcrepository.MockupArcRepositoryClient;
 import dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient;
@@ -43,7 +47,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 /**
  * Unit test for the archive upload tool.
  */
-public class UploadTester extends TestCase {
+public class UploadTester {
     private UseTestRemoteFile ulrf = new UseTestRemoteFile();
     private PreventSystemExit pse = new PreventSystemExit();
     private PreserveStdStreams pss = new PreserveStdStreams(true);
@@ -56,7 +60,7 @@ public class UploadTester extends TestCase {
     private final int storeRetries = Settings.getInt(
             JMSArcRepositoryClient.ARCREPOSITORY_STORE_RETRIES);
 
-
+    @Before
     public void setUp(){
         rs.setUp();
         ulrf.setUp();
@@ -67,6 +71,8 @@ public class UploadTester extends TestCase {
         marc.setUp();
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
     }
+
+    @After
     public void tearDown(){
         marc.tearDown();
         pse.tearDown();
@@ -78,6 +84,7 @@ public class UploadTester extends TestCase {
         rs.tearDown();
     }
     
+    @Test
     public void testConstructor() {
         ReflectUtils.testUtilityConstructor(Upload.class);
     }
@@ -86,6 +93,7 @@ public class UploadTester extends TestCase {
      * Verify that uploading a single ARC file works as expected
      * and deletes the file locally.
      */
+    @Test
     public void testMainOneFile() {
         Upload.main(new String[]{TestInfo.ARC1.getAbsolutePath()});
         assertMsgCount(1, 0);
@@ -96,6 +104,7 @@ public class UploadTester extends TestCase {
      * Verify that uploading more than one ARC file works as expected
      * and deletes the files locally.
      */
+    @Test
     public void testMainSeveralFiles() {
         Upload.main(new String[]{
                 TestInfo.ARC1.getAbsolutePath(),
@@ -109,6 +118,7 @@ public class UploadTester extends TestCase {
      * Verify that non-ARC files are rejected and execution fails.
      * Also verifies that nothing is stored in that case.
      */
+    @Test
     public void testMainNonArc() {
         try {
             Upload.main(new String[]{
@@ -125,6 +135,7 @@ public class UploadTester extends TestCase {
      * Verify that uploading a single WARC file works as expected
      * and deletes the file locally.
      */
+    @Test
     public void testMainOneWarcFile() {
         Upload.main(new String[]{TestInfo.WARC1.getAbsolutePath()});
         assertMsgCount(1, 0);
@@ -135,6 +146,7 @@ public class UploadTester extends TestCase {
      * Verify that  the system fails as expected when the store operation
      * fails on the server side. (Local files must NOT be deleted).
      */
+    @Test
     public void testMainStoreFails1() {
         marc.failOnFile(TestInfo.ARC1.getName());
        
@@ -157,6 +169,7 @@ public class UploadTester extends TestCase {
      * Verify that  the system fails as expected when the store operation
      * fails on the server side. (Local files must NOT be deleted).
      */
+    @Test
     public void testMainStoreFails2() {
         marc.failOnFile(TestInfo.ARC2.getName());
         
@@ -179,6 +192,7 @@ public class UploadTester extends TestCase {
      * Verify that  the system fails as expected when the store operation
      * fails on the server side. (Local files must NOT be deleted).
      */
+    @Test
     public void testMainStoreFails3() {
         marc.failOnFile(TestInfo.ARC3.getName());
         
@@ -202,6 +216,7 @@ public class UploadTester extends TestCase {
      * Verifies that calling Upload without arguments fails.
      * Also verifies that nothing is stored in that case.
      */
+    @Test
     public void testNoArguments() {
         try {
             Upload.main(new String[]{});
