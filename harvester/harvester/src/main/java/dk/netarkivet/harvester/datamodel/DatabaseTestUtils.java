@@ -25,11 +25,8 @@ package dk.netarkivet.harvester.datamodel;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -39,19 +36,13 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.logging.Logger;
 import java.util.Date;
-
-import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
+import java.util.logging.Logger;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.ZipUtils;
-
-//import dk.netarkivet.testutils.ReflectUtils;
 
 /**
  * Utilities to allow testing databases. //FIXME: Rename without Test as these
@@ -67,8 +58,7 @@ public class DatabaseTestUtils {
      * new transaction that will be rolled back with dropDatabase. Only one
      * connection can be taken at a time.
      * 
-     * @param resourcePath
-     *            A file that contains a test database.
+     * @param resourcePath A file that contains a test database.
      * @param dbCreationDir
      * @return a connection to the database stored in the given file
      * @throws SQLException
@@ -168,8 +158,7 @@ public class DatabaseTestUtils {
      * Get a connection to the given sample harvest definition database and fool
      * the HD DB connect class into thinking it should use that one.
      * 
-     * @param samplefile
-     *            a sample harvest definition database
+     * @param resourcePath Location of the sql files to create and populate the test DB.
      * @param dbCreationDir
      * @return a connection to the given sample harvest definition database
      * @throws SQLException
