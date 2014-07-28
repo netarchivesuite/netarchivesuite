@@ -25,14 +25,13 @@ package dk.netarkivet.harvester.datamodel.extendedfield;
 
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDataTypes;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDefaultValue;
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
-public class ExtendedFieldDefaultValuesTester extends TestCase {
 
-    public ExtendedFieldDefaultValuesTester(String s) {
-        super(s);
-    }
+public class ExtendedFieldDefaultValuesTester {
 
+    @Test
     public void testInValid() {
     	ExtendedFieldDefaultValue e = null;
     	
@@ -59,6 +58,7 @@ public class ExtendedFieldDefaultValuesTester extends TestCase {
     	
     }
     
+    @Test
     public void testValid() {
     	ExtendedFieldDefaultValue e = null;
 
@@ -94,6 +94,7 @@ public class ExtendedFieldDefaultValuesTester extends TestCase {
     	assertTrue(e.isValid());
     }
     
+    @Test
     public void testValuesForDB() {
     	ExtendedFieldDefaultValue e = null;
     	String val;
@@ -109,9 +110,5 @@ public class ExtendedFieldDefaultValuesTester extends TestCase {
         e = new ExtendedFieldDefaultValue("12/03/2000", "dd/MM/yyyy", ExtendedFieldDataTypes.JSCALENDAR);
         val = e.getDBValue();
         assertEquals(val, "952819200000");
-        
-        
     }
-    
-    
 }

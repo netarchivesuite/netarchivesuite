@@ -23,31 +23,26 @@
 package dk.netarkivet.archive.bitarchive;
 
 import java.io.File;
+import java.io.IOException;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
+import static org.junit.Assert.*;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * Unit tests for the class BitarchiveARCFile.
  *
  */
-public class BitarchiveARCFileTester extends TestCase {
+public class BitarchiveARCFileTester {
     private static final File EXISTING_FILE = 
         new File(TestInfo.ORIGINALS_DIR, "Upload2.ARC");
     private static final File NON__EXISTING__FILE = new File("Test2");
 
-    public BitarchiveARCFileTester(String s) {
-        super(s);
-    }
-
-    public void setUp() {
-    }
-
-    public void tearDown() {
-    }
-
-    public void testBitArchiveArcFile() throws Exception {
+    @Test
+    public void testBitArchiveArcFile() throws IOException {
         try {
             new BitarchiveARCFile("Test", null);
             fail("Should fail on null argument");

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -51,7 +52,9 @@
     primary function of the NetarchiveSuite is to plan, schedule and run web harvests of parts of the Internet. It
     scales to a wide range of tasks, from small, thematic harvests (e.g. related to special events, or special
     domains) to harvesting and archiving the content of an entire national domain. The NetarchiveSuite is built
-    around the Heritrix web crawler.</description>
+    around the Heritrix web crawler.
+  </description>
+  
   <url>https://sbforge.org/display/NAS</url>
 
   <organization>
@@ -75,6 +78,7 @@
       <name>SBForge Nexus Repo manager</name>
       <url>https://sbforge.org/nexus/content/repositories/releases</url>
     </repository>
+
     <snapshotRepository>
       <id>sbforge-nexus</id>
       <name>SBForge Nexus Repo manager</name>
@@ -121,15 +125,6 @@
         <artifactId>logback-classic</artifactId>
         <version>1.0.13</version>
       </dependency>
-
-<!-- Too much hurting now.
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>4.11</version>
-                <scope>test</scope>
-            </dependency>
--->
     </dependencies>
   </dependencyManagement>
 
@@ -155,29 +150,32 @@
           <artifactId>maven-assembly-plugin</artifactId>
           <version>2.4</version>
         </plugin>
+
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>license-maven-plugin</artifactId>
           <version>1.7</version>
         </plugin>
 
-  <!--  mvn com.googlecode.maven-java-formatter-plugin:maven-java-formatter-plugin:format -->
-  <plugin>
-    <groupId>com.googlecode.maven-java-formatter-plugin</groupId>
-    <artifactId>maven-java-formatter-plugin</artifactId>
-    <version>0.4</version>
-    <configuration>
-      <configFile>eclipse-formatter-settings.xml</configFile>
-    </configuration>
-    <dependencies>
-      <dependency>
-        <groupId>dk.netarkivet.netarchivesuite</groupId>
-        <artifactId>build-tools</artifactId>
-        <version>5.0-SNAPSHOT</version>
-      </dependency>
-    </dependencies>
-  </plugin>
- 
+        <!-- mvn com.googlecode.maven-java-formatter-plugin:maven-java-formatter-plugin:format -->
+        <plugin>
+          <groupId>com.googlecode.maven-java-formatter-plugin</groupId>
+          <artifactId>maven-java-formatter-plugin</artifactId>
+          <version>0.4</version>
+          
+          <configuration>
+            <!--  found as classpath resource -->
+            <configFile>eclipse-formatter-settings.xml</configFile>
+          </configuration>
+          
+          <dependencies>
+            <dependency>
+              <groupId>dk.netarkivet.netarchivesuite</groupId>
+              <artifactId>build-tools</artifactId>
+              <version>5.0-SNAPSHOT</version>
+            </dependency>
+          </dependencies>
+        </plugin>
       </plugins>
     </pluginManagement>
 
@@ -211,7 +209,6 @@
           </excludes>
         </configuration>
       </plugin>
-
     </plugins>
   </build>
 </project>

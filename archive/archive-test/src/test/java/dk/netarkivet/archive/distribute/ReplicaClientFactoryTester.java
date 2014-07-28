@@ -30,23 +30,31 @@ import dk.netarkivet.common.distribute.ChannelsTester;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaType;
 import dk.netarkivet.testutils.ReflectUtils;
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class ReplicaClientFactoryTester extends TestCase {
+import static org.junit.Assert.*;
+
+public class ReplicaClientFactoryTester {
     
+    @Before
     public void setUp() {
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         ChannelsTester.resetChannels();
     }
 
+    @After
     public void tearDown() {
         JMSConnectionMockupMQ.clearTestQueues();
     }
     
+    @Test
     public void testUtilityConstructor() {
         ReflectUtils.testUtilityConstructor(ReplicaClientFactory.class);
     }
     
+    @Test
     public void testList() {
         List<ReplicaClient> clients = ReplicaClientFactory.getReplicaClients();
         

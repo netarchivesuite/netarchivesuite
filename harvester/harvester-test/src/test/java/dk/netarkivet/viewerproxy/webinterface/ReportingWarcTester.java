@@ -35,15 +35,16 @@ import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
-import junit.framework.TestCase;
-
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.After;
 import java.io.File;
 import java.util.List;
 
 /**
  * Unit tests for Reporting class.
  */
-public class ReportingWarcTester extends TestCase {
+public class ReportingWarcTester {
     private UseTestRemoteFile utrf = new UseTestRemoteFile();
     private ReloadSettings rs = new ReloadSettings();
     private TrivialArcRepositoryClient tarc;
@@ -51,8 +52,8 @@ public class ReportingWarcTester extends TestCase {
     private File tempdir = new File(working, "commontempdir");
     private File dir;
 
+    @Before
     public void setUp() throws Exception {
-        super.setUp();
         rs.setUp();
         utrf.setUp();
         working.mkdirs();
@@ -72,8 +73,8 @@ public class ReportingWarcTester extends TestCase {
         TestFileUtils.copyDirectoryNonCVS(TestInfo.WARC_ORIGINALS_DIR, dir);
     }
 
+    @After
     public void tearDown() throws Exception {
-        super.tearDown();
         if (tarc != null) {
             tarc.close();
         }

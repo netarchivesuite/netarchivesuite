@@ -28,8 +28,11 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
+import static org.junit.Assert.*;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
@@ -39,20 +42,21 @@ import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 /**
  * Unittest for the class WorkFiles.
  */
-public class WorkFilesTester extends TestCase {
+public class WorkFilesTester {
     private MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,
                                                   TestInfo.WORKING_DIR);
 
+    @Before
     public void setUp() throws Exception {
-        super.setUp();
         mtf.setUp();
     }
 
+    @After
     public void tearDown() throws Exception {
         mtf.tearDown();
-        super.tearDown();
     }
 
+    @Test
     public void testGetSortedFile() throws Exception {
         File f = new File(TestInfo.WORKING_DIR, "does-not-exist");
         assertFalse("Input file should not exist at start",

@@ -25,7 +25,9 @@ package dk.netarkivet.harvester.harvesting.distribute;
 
 import java.io.IOException;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Test;
+
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.harvester.datamodel.JobStatus;
@@ -34,11 +36,12 @@ import dk.netarkivet.testutils.Serial;
 /**
  * Unit tests for CrawlStatusMessage.
  */
-public class CrawlStatusMessageTester extends TestCase {
+public class CrawlStatusMessageTester {
     
     /**
      * Test that we can call the constructor for finished jobs
      */
+    @Test
     public void testJobFinishedCTOR() {
         CrawlStatusMessage csm;
         csm = new CrawlStatusMessage(
@@ -56,6 +59,7 @@ public class CrawlStatusMessageTester extends TestCase {
     /**
      * CTOR should fail if not given a null JobStatus, or a negative JobId
      */
+    @Test
     public void testJobFinishedCTORFails() {
         try {
             new CrawlStatusMessage(
@@ -76,6 +80,7 @@ public class CrawlStatusMessageTester extends TestCase {
     /**
      * Test that we can call the constructor for unfinished jobs
      */
+    @Test
     public void testJobNotFinishedCTOR() {
         CrawlStatusMessage csm;
         csm = new CrawlStatusMessage(
@@ -95,6 +100,7 @@ public class CrawlStatusMessageTester extends TestCase {
                 csm.getStatusCode());
     }
 
+    @Test
     public void testJobNotFinishedCTORFails() {
         try {
             new CrawlStatusMessage(
@@ -116,6 +122,7 @@ public class CrawlStatusMessageTester extends TestCase {
     /**
      * Test that class is serializable
      */
+    @Test
     public void testSerializable() throws IOException, ClassNotFoundException {
         CrawlStatusMessage csm = new CrawlStatusMessage(
                 0l, JobStatus.DONE, null);

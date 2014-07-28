@@ -38,7 +38,11 @@ import dk.netarkivet.harvester.harvesting.metadata.PersistentJobData.HarvestDefi
 import dk.netarkivet.harvester.indexserver.distribute.IndexRequestMessage;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
+
 
 import org.mockito.Mockito;
 
@@ -57,9 +61,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @SuppressWarnings("unused")
-public class HarvesterMessageHandlerTester extends TestCase {
+public class HarvesterMessageHandlerTester {
     private HarvesterMessageHandler harvesterMessageHandlerUT = new TestMessageHandler();
 
+    @Test
     public final void testOnMessage() throws JMSException {
         ObjectMessage jmsMessage = mock(ObjectMessage.class);
         HarvesterMessage harvesterMessage = mock(HarvesterMessage.class);
@@ -71,6 +76,7 @@ public class HarvesterMessageHandlerTester extends TestCase {
     /*
      * Class under test for void visit(CrawlStatusMessage)
      */
+    @Test
     public final void testVisitCrawlStatusMessage() {
         try {
             harvesterMessageHandlerUT.visit(mock(CrawlStatusMessage.class));
@@ -81,6 +87,7 @@ public class HarvesterMessageHandlerTester extends TestCase {
     /*
      * Class under test for void visit(DoOneCrawlMessage)
      */
+    @Test
     public final void testVisitDoOneCrawlMessage() {
         try {
             harvesterMessageHandlerUT.visit(mock(DoOneCrawlMessage.class));
@@ -91,6 +98,7 @@ public class HarvesterMessageHandlerTester extends TestCase {
     /*
      * Class under test for void visit(IndexRequestMessage)
      */
+    @Test
     public final void testVisitIndexRequestMessage() {
         try {
             harvesterMessageHandlerUT.visit(mock(IndexRequestMessage.class));

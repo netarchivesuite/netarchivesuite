@@ -29,6 +29,11 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.Settings;
@@ -45,11 +50,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 public class DomainConfigurationTester extends DataModelTestCase {
     ReloadSettings rs = new ReloadSettings();
 
-
-    public DomainConfigurationTester(String sTestName) {
-        super(sTestName);
-    }
-
+    @Before
     public void setUp() throws Exception {
         rs.setUp();
         super.setUp();
@@ -59,11 +60,13 @@ public class DomainConfigurationTester extends DataModelTestCase {
         Settings.set(HarvesterSettings.JOBS_MAX_TOTAL_JOBSIZE, "1000000");
     }
 
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
         rs.tearDown();
     }
 
+    @Test
     public void testConstructorAndSomeGetters() {
         Domain wd = Domain.getDefaultDomain(TestInfo.DOMAIN_NAME);
         wd.addSeedList(TestInfo.seedlist);

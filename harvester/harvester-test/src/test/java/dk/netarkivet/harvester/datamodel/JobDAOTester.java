@@ -22,6 +22,14 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -36,6 +44,10 @@ import java.util.Map;
 
 import org.dom4j.Document;
 import org.dom4j.Node;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -60,10 +72,7 @@ public class JobDAOTester extends DataModelTestCase {
     private HarvestChannel highChan;
     private HarvestChannel lowChan;
 
-    public JobDAOTester(String s) {
-        super(s);
-    }
-
+    @Before
     public void setUp() throws Exception {
         super.setUp();
         highChan = new HarvestChannel("FOCUSED", false, true, "");
@@ -71,11 +80,13 @@ public class JobDAOTester extends DataModelTestCase {
         HarvestDAOUtils.resetDAOs();
     }
 
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
         HarvestDAOUtils.resetDAOs();
     }
 
+    @Test
     public void testGetCountJobs() throws Exception {
         JobDAO dao = JobDAO.getInstance();
         assertEquals("Must have " + INITIAL_JOB_COUNT + " jobs from the" +
@@ -98,6 +109,7 @@ public class JobDAOTester extends DataModelTestCase {
      * Verifies that state of stored job equals state of original job
      * @throws SQLException
      */
+    @Test
     public void testJobRead() throws SQLException {
         JobDAO dao = JobDAO.getInstance();
         DomainConfiguration dc = TestInfo.getDRConfiguration();
@@ -137,7 +149,8 @@ public class JobDAOTester extends DataModelTestCase {
         assertEquals("Filename of order.xml of read Job should equal filename" +
         		" of order.xml of original Job",
                      job.getOrderXMLName(), readJob.getOrderXMLName());
-        assertEquals("List of settings.xml's of read Job should equal list of" +
+        assertArrayEquals(
+                "List of settings.xml's of read Job should equal list of" +
         		" settings.xml's of original Job",
                      job.getSettingsXMLdocs(), readJob.getSettingsXMLdocs());
         assertEquals("OrigHarvestDefinitionID of read Job should equal" +
@@ -177,6 +190,7 @@ public class JobDAOTester extends DataModelTestCase {
     /**
      * Test that JobDAO.create does not allow Job with unknown harvestId.
      */
+    @Test
     public void testCreateJobWithUnknownHarvestId() {
         JobDAO dao = JobDAO.getInstance();
         HarvestDefinitionDAO hdd = HarvestDefinitionDAO.getInstance();
@@ -200,6 +214,7 @@ public class JobDAOTester extends DataModelTestCase {
      * the modified job can be retrieved.
      * @throws SQLException
      */
+    @Test
     public void testJobUpdate() throws SQLException {
         JobDAO dao = JobDAO.getInstance();
 
@@ -283,6 +298,7 @@ public class JobDAOTester extends DataModelTestCase {
      * persistent storage.
      * @throws Exception
      */
+    @Test
     public void testJobUpdateForceMaxObjectsPerDomain() throws Exception {
         JobDAO dao = JobDAO.getInstance();
 
@@ -350,6 +366,7 @@ public class JobDAOTester extends DataModelTestCase {
      * Test getting jobs with various statuses
      * @throws Exception
      */
+    @Test
     public void testGetAll() throws Exception {
         JobDAO jdao = JobDAO.getInstance();
         assertJobsFound("at start", 0, 0, 0, 0, 0);
@@ -379,6 +396,7 @@ public class JobDAOTester extends DataModelTestCase {
         assertJobsFound("only started and failed jobs", 0, 0, 2, 3, 0);
     }
 
+    @Test
     public void testPersistenseOfPriority() throws SQLException {
         //create two jobs with different priority
         Domain d = Domain.getDefaultDomain("testdomain.dk");
@@ -415,6 +433,7 @@ public class JobDAOTester extends DataModelTestCase {
      * Verifies the functionality of the #getAllJobIds(JobStatus, JobPriority)
      * @throws SQLException
      */
+    @Test
     public void testGetAllJobIdsForStatusAndPriority() throws SQLException {
         JobDAO jobDAO = JobDAO.getInstance();
 
@@ -472,6 +491,7 @@ public class JobDAOTester extends DataModelTestCase {
     }
 
     /** Test that the job error info is stored correctly. */
+    @Test
     public void testPersistenceOfJobErrors() throws Exception {
         Domain d = Domain.getDefaultDomain("testdomain.dk");
         DomainDAO.getInstance().create(d);
@@ -515,6 +535,8 @@ public class JobDAOTester extends DataModelTestCase {
      *
      * FIXME Fails in Hudson
      */
+    @Test
+    @Ignore("Query returned wrong number of jobs")
     public void failingTestGetStatusInfo() throws Exception {
         TemplateDAO.getInstance();
         DomainDAO ddao = DomainDAO.getInstance();
@@ -598,6 +620,7 @@ public class JobDAOTester extends DataModelTestCase {
      * harvest runs.
      * @throws Exception
      */
+    @Test
     public void testGetStatusInfoForHarvest() throws Exception {
         DomainDAO ddao = DomainDAO.getInstance();
         JobDAO dao = JobDAO.getInstance();
@@ -672,6 +695,7 @@ public class JobDAOTester extends DataModelTestCase {
     }
 
     /** Check that start and end dates are created and stored correctly. */
+    @Test
     public void testSetDates() {
         JobDAO jdao = JobDAO.getInstance();
         DomainDAO ddao = DomainDAO.getInstance();
@@ -789,6 +813,7 @@ public class JobDAOTester extends DataModelTestCase {
      *
      * @throws Exception
      */
+    @Test
     public void testGetJobIDsForDuplicateReduction() throws Exception {
         // Assume 1st job has id=2, and Last job has id 15
         createTestJobs(2L, 15L);
@@ -869,9 +894,9 @@ public class JobDAOTester extends DataModelTestCase {
                 oldJob1.getChannel(), newJob1.getChannel());
         assertEquals("Should have same seedlist",
                 oldJob1.getSeedListAsString(), newJob1.getSeedListAsString());
-        assertEquals("Should have same settingsxml docs",
+        assertArrayEquals("Should have same settingsxml docs",
                 oldJob1.getSettingsXMLdocs(), newJob1.getSettingsXMLdocs());
-        assertEquals("Should have same settingsxml files",
+        assertArrayEquals("Should have same settingsxml files",
                 oldJob1.getSettingsXMLfiles(), newJob1.getSettingsXMLfiles());
         assertEquals("Should have new status",
                      JobStatus.NEW, newJob1.getStatus());
@@ -904,6 +929,7 @@ public class JobDAOTester extends DataModelTestCase {
      * Tests method in JobDBDAO.rescheduleJob
      * Now verifies, that the new job has startdate and enddate set to null.
      */
+    @Test
     public void testRescheduleJob() {
      // Assume 1st job has id=2, and Last job has id 15
         createTestJobs(2L, 15L);

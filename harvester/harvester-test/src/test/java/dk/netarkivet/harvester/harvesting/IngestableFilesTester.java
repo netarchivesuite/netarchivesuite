@@ -28,14 +28,18 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriter;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
+
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Date;
 
-public class IngestableFilesTester extends TestCase {
+public class IngestableFilesTester {
     private static final String MSG = "This a test message from IngestableFilesTester";
     
     /* variables used by all tests */
@@ -52,10 +56,12 @@ public class IngestableFilesTester extends TestCase {
     private MoveTestFiles mtf =
         new MoveTestFiles(TestInfo.CRAWLDIR_ORIGINALS_DIR, TestInfo.WORKING_DIR);
 
+    @Before
     public void setUp() {
         mtf.setUp();
     }
 
+    @After
     public void tearDown() {
         mtf.tearDown();
     }
@@ -64,6 +70,7 @@ public class IngestableFilesTester extends TestCase {
      * Verify that ordinary construction does not throw Exception.
      * Verify that constructing with nonexisting crawldir or negative jobID fails.
      */
+    @Test
     public void testConstructor() {
         HeritrixFiles OkFiles = new HeritrixFiles(TestInfo.WORKING_DIR, acceptableJobInfoForJobOne);
         new IngestableFiles(OkFiles);
@@ -93,6 +100,7 @@ public class IngestableFilesTester extends TestCase {
      * Note that disallowed actions concerning metdataReady are tested in another method.
      * Note that rediscovery of metadata is tested in another method.
      */
+    @Test
     public void testGetSetMetadataReady() {
         HeritrixFiles OkFiles = new HeritrixFiles(TestInfo.WORKING_DIR, acceptableJobInfoForJobOne);
         IngestableFiles inf = new IngestableFiles(OkFiles);
@@ -136,6 +144,7 @@ public class IngestableFilesTester extends TestCase {
      *  - metadata is NOT ready and getMetadataFiles() is called
      *  - metadata IS ready and getMetadataArcWriter is called
      */
+    @Test
     public void testDisallowedActions() {
         HeritrixFiles OkFiles = new HeritrixFiles(TestInfo.WORKING_DIR, acceptableJobInfoForJobOne);
         IngestableFiles inf = new IngestableFiles(OkFiles);
@@ -198,6 +207,7 @@ public class IngestableFilesTester extends TestCase {
     /**
      * Verify that IngestableFiles discovers old (final) metadata in the crawldir.
      */
+    @Test
     public void testMetadataRediscovery() throws FileNotFoundException, IOException {
         //Original crawl: write some metadata
         HeritrixFiles OkFiles = new HeritrixFiles(TestInfo.WORKING_DIR, acceptableJobInfoForJobOne);
@@ -223,6 +233,7 @@ public class IngestableFilesTester extends TestCase {
     /**
      * Verify that a non-null ArcWriter is returned.
      */
+    @Test
     public void testGetMetadataArcWriter() {
         HeritrixFiles OkFiles = new HeritrixFiles(TestInfo.WORKING_DIR, acceptableJobInfoForJobOne);
         IngestableFiles inf = new IngestableFiles(OkFiles);
@@ -234,6 +245,7 @@ public class IngestableFilesTester extends TestCase {
      * Verify that a file containing data written to the metadata ARCWriter
      * is contained in one the returned files.
      */
+    @Test
     public void testGetMetadataFiles() throws FileNotFoundException, IOException {
         HeritrixFiles OkFiles = new HeritrixFiles(TestInfo.WORKING_DIR, acceptableJobInfoForJobOne);
         IngestableFiles inf = new IngestableFiles(OkFiles);
@@ -250,6 +262,7 @@ public class IngestableFilesTester extends TestCase {
                 + "but wasn't found in " + inf.getMetadataArcFiles(),found);
     }
 
+    @Test
     public void testMetadataFailure() {
         HeritrixFiles OkFiles = new HeritrixFiles(TestInfo.WORKING_DIR, acceptableJobInfoForJobOne);
         IngestableFiles inf = new IngestableFiles(OkFiles);
@@ -269,6 +282,7 @@ public class IngestableFilesTester extends TestCase {
      *
      * @throws Exception
      */
+    @Test
     public void testCloseOpenFiles() throws Exception {
         // These files should end up closed
         File arcsDir = new File(TestInfo.WORKING_DIR, "arcs");

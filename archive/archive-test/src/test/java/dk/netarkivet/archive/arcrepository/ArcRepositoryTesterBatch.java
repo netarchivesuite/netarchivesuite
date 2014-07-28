@@ -33,8 +33,11 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
+import static org.junit.Assert.*;
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveMonitorServer;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveServer;
@@ -63,7 +66,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
  * needs to be done. Specifically,some of the test data for this class are still
  * located in the bitpreservation package.
  */
-public class ArcRepositoryTesterBatch extends TestCase {
+public class ArcRepositoryTesterBatch {
     private UseTestRemoteFile rf = new UseTestRemoteFile();
 
     private static File[] testFiles;
@@ -93,8 +96,8 @@ public class ArcRepositoryTesterBatch extends TestCase {
     /**
      * @see TestCase#setUp()
      */
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         rs.setUp();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         ChannelsTester.resetChannels();
@@ -123,8 +126,8 @@ public class ArcRepositoryTesterBatch extends TestCase {
     /**
      * @see TestCase#tearDown()
      */
-    protected void tearDown() throws Exception {
-        super.tearDown();
+    @After
+    public void tearDown() throws Exception {
         c.close(); //Close down ArcRepository controller
         bam_server.close();
         arClient.close();
@@ -138,6 +141,7 @@ public class ArcRepositoryTesterBatch extends TestCase {
      * Tests that ordinary, non-failing execution of a batch job writes output
      * back to reply message.
      */
+    @Test
     public void testNoOfFilesProcessed() {
         assertTrue("Should have more than zero files in the test directory!",
                    testFiles.length != 0);
@@ -155,6 +159,7 @@ public class ArcRepositoryTesterBatch extends TestCase {
      * Tests that a checkSum job can write output via a RemoteFile, one line of
      * output per file.
      */
+    @Test
     public void testOrdinaryRunRemoteOutput() {
         ChecksumJob jobTest = new ChecksumJob();
         BatchStatus lbs = arClient.batch(jobTest,
@@ -172,6 +177,7 @@ public class ArcRepositoryTesterBatch extends TestCase {
     /**
      * Check that null arguments provoke exceptions.
      */
+    @Test
     public void testNullArgumentsToBatch() {
         try {
             arClient.batch(null,
@@ -186,6 +192,7 @@ public class ArcRepositoryTesterBatch extends TestCase {
     /**
      * Check that a batch job can be executed twice sequentially.
      */
+    @Test
     public void testSequentialRuns() {
         ChecksumJob jobTest = new ChecksumJob();
         BatchStatus batchStatus = arClient.batch(jobTest,
@@ -209,6 +216,7 @@ public class ArcRepositoryTesterBatch extends TestCase {
      * @throws IOException
      */
 
+    @Test
     public void testGeneratedChecksum() throws IOException {
         ChecksumJob checkJob = new ChecksumJob();
         BatchStatus batchStatus = arClient.batch(checkJob,
@@ -252,6 +260,7 @@ public class ArcRepositoryTesterBatch extends TestCase {
      * @throws IOException
      * @throws ClassNotFoundException
      */
+    @Test
     public void testSerializability()
             throws IOException, ClassNotFoundException {
 

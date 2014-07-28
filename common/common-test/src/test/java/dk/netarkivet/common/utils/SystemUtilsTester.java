@@ -22,7 +22,6 @@
  */
 package dk.netarkivet.common.utils;
 
-import dk.netarkivet.common.Constants;
 import dk.netarkivet.testutils.CollectionAsserts;
 import junit.framework.Assert;
 import junit.framework.TestCase;

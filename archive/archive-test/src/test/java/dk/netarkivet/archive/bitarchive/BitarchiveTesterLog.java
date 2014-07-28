@@ -34,43 +34,48 @@ import dk.netarkivet.common.utils.arc.ARCBatchJob;
 import dk.netarkivet.common.utils.batch.ARCBatchFilter;
 import dk.netarkivet.testutils.FileAsserts;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
- * Unit test for Bitarchive API
- * The logging of bitarchive opertions is tested
-*/
-@SuppressWarnings({ "serial"})
+ * Unit test for Bitarchive API The logging of bitarchive opertions is tested
+ */
+@SuppressWarnings({ "serial" })
 public class BitarchiveTesterLog extends BitarchiveTestCase {
-    private static File EXISTING_ARCHIVE_DIR =
-            new File("tests/dk/netarkivet/archive/bitarchive/data/log/existing/");
+    private static File EXISTING_ARCHIVE_DIR = new File("tests/dk/netarkivet/archive/bitarchive/data/log/existing/");
     private static File LOG_FILE = new File("tests/testlogs", "netarkivtest.log");
     private static String ARC_FILE_NAME1 = "Upload1.ARC";
     private static String ARC_FILE_NAME2 = "Upload2.ARC";
-    private static File ARC_FILE =
-            new File("tests/dk/netarkivet/archive/bitarchive/data/log/originals/", ARC_FILE_NAME1);
-
-    public BitarchiveTesterLog(String sTestName) {
-        super(sTestName);
-    }
+    private static File ARC_FILE = new File("tests/dk/netarkivet/archive/bitarchive/data/log/originals/",
+            ARC_FILE_NAME1);
 
     protected File getOriginalsDir() {
         return EXISTING_ARCHIVE_DIR;
     }
 
+    @Before
     public void setUp() throws Exception {
         super.setUp();
     }
 
-    public  void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
     }
 
-    /** Asserts that a source string does not contain a given string, and prints
+    /**
+     * Asserts that a source string does not contain a given string, and prints
      * out the source string if the target string is found.
      *
-     * @param msg An explanatory message
-     * @param src A string to search through
-     * @param str A string to search for
+     * @param msg
+     *            An explanatory message
+     * @param src
+     *            A string to search through
+     * @param str
+     *            A string to search for
      */
     private void assertNotStringContains(String msg, String src, String str) {
         int index = src.indexOf(str);
@@ -83,75 +88,64 @@ public class BitarchiveTesterLog extends BitarchiveTestCase {
 
     /**
      * Test logging of upload command
+     * 
+     * @throws IOException
      */
-    public void testLogUpload() {
-        try {
-            String logtxt = FileUtils.readFile(LOG_FILE);
-            assertNotStringContains("Log does not contain file before uploading.",
-                    logtxt, ARC_FILE_NAME1); // clean log
+    @Test
+    public void testLogUpload() throws IOException {
+        String logtxt = FileUtils.readFile(LOG_FILE);
+        assertNotStringContains("Log does not contain file before uploading.", logtxt, ARC_FILE_NAME1); // clean
+                                                                                                        // log
 
-            archive.upload(new TestRemoteFile(ARC_FILE, false, false, false), ARC_FILE.getName());
+        archive.upload(new TestRemoteFile(ARC_FILE, false, false, false), ARC_FILE.getName());
 
-            FileAsserts.assertFileContains("Log contains file after uploading.",
-                    ARC_FILE_NAME1, LOG_FILE);
-            FileAsserts.assertFileContains("Log contains the word upload after uploading.",
-                    "upload", LOG_FILE);
-        } catch (IOException e) {
-            fail("Exception while reading log file: " + e);
-        }
+        FileAsserts.assertFileContains("Log contains file after uploading.", ARC_FILE_NAME1, LOG_FILE);
+        FileAsserts.assertFileContains("Log contains the word upload after uploading.", "upload", LOG_FILE);
     }
 
     /**
      * test logging of get
      */
-    public void testLogGet() {
-        try {
-            String logtxt = FileUtils.readFile(LOG_FILE);
-            assertNotStringContains("Unuploaded files are not mentioned in the log.",
-                    logtxt, ARC_FILE_NAME2); // clean log
+    @Test
+    public void testLogGet() throws Exception {
+        String logtxt = FileUtils.readFile(LOG_FILE);
+        assertNotStringContains("Unuploaded files are not mentioned in the log.", logtxt, ARC_FILE_NAME2); // clean
+                                                                                                           // log
 
-            archive.get(ARC_FILE_NAME2, 0);
+        archive.get(ARC_FILE_NAME2, 0);
 
-            FileAsserts.assertFileContains("Log contains file after getting.",
-                    ARC_FILE_NAME2, LOG_FILE);
-            FileAsserts.assertFileContains("Log contains the word get after getting.",
-                    "get", LOG_FILE);
-        } catch (IOException e) {
-            fail("Exception while reading log file: " + e);
-        }
+        FileAsserts.assertFileContains("Log contains file after getting.", ARC_FILE_NAME2, LOG_FILE);
+        FileAsserts.assertFileContains("Log contains the word get after getting.", "get", LOG_FILE);
     }
 
-    public void testLogBatch() {
+    @Test
+    public void testLogBatch() throws Exception {
+        String logtxt = FileUtils.readFile(LOG_FILE);
+        assertNotStringContains("Batch not mentioned in log before run", logtxt, "Batch"); // clean
+                                                                                           // log
+        // Run the empty batch job.
         try {
-            String logtxt = FileUtils.readFile(LOG_FILE);
-            assertNotStringContains("Batch not mentioned in log before run",
-                                    logtxt, "Batch"); // clean log
-            // Run the empty batch job.
-            try {
-                archive.batch(TestInfo.baAppId, new ARCBatchJob() {
-                    public ARCBatchFilter getFilter() {
-                        return ARCBatchFilter.NO_FILTER;
-                    }
-                    public void initialize(OutputStream os) { }
-                    public void processRecord(ARCRecord record, OutputStream os) {
-                    }
-                    public void finish(OutputStream os) { }
-                });
-            } catch (Exception e) {
-                fail("Batching should not throw " + e);
-            }
-            FileAsserts.assertFileContains("Log contains the word 'Batch'.",
-                    "Batch", LOG_FILE);
-            FileAsserts.assertFileContains("Log contains the phrase 'Batch: Job'.",
-                    "Batch: Job", LOG_FILE);
-            FileAsserts.assertFileContains("Log should have start indicator",
-                                           "Starting batch job", LOG_FILE);
-            FileAsserts.assertFileContains("Log should have end indicator",
-                                           "Finished batch job", LOG_FILE);
-            FileAsserts.assertFileContains("Log should have batch status",
-                                           "0 failures in processing 0 files", LOG_FILE);
-        } catch (IOException e) {
-            fail("Exception while reading log file: " + e);
+            archive.batch(TestInfo.baAppId, new ARCBatchJob() {
+                public ARCBatchFilter getFilter() {
+                    return ARCBatchFilter.NO_FILTER;
+                }
+
+                public void initialize(OutputStream os) {
+                }
+
+                public void processRecord(ARCRecord record, OutputStream os) {
+                }
+
+                public void finish(OutputStream os) {
+                }
+            });
+        } catch (Exception e) {
+            fail("Batching should not throw " + e);
         }
+        FileAsserts.assertFileContains("Log contains the word 'Batch'.", "Batch", LOG_FILE);
+        FileAsserts.assertFileContains("Log contains the phrase 'Batch: Job'.", "Batch: Job", LOG_FILE);
+        FileAsserts.assertFileContains("Log should have start indicator", "Starting batch job", LOG_FILE);
+        FileAsserts.assertFileContains("Log should have end indicator", "Finished batch job", LOG_FILE);
+        FileAsserts.assertFileContains("Log should have batch status", "0 failures in processing 0 files", LOG_FILE);
     }
 }

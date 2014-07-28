@@ -31,7 +31,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
+
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.harvester.datamodel.AliasInfo;
@@ -42,7 +45,7 @@ import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
  * Tests for class MetadataEntry.
  * Note that this class is also tested in other test-classes.
  */
-public class MetadataEntryTester extends TestCase {
+public class MetadataEntryTester {
     private String aRealURL;
     private String anEmptyURL;
     final private String aNullURL = null;
@@ -57,6 +60,7 @@ public class MetadataEntryTester extends TestCase {
     private String anInvalidUrl;
     private String anInvalidMimetype;
 
+    @Before
     public void setUp() {
         aRealURL = "metadata://netarkivet.dk/crawl/"
                 + "setup/order.xml?version=1.7.1&harvestid=1&jobid=1";
@@ -72,6 +76,7 @@ public class MetadataEntryTester extends TestCase {
     /**
      * Monkey Tests method for MetadataEntry constructor.
      */
+    @Test
     public void testMetadataEntry() {
 
         // check, that null & empty arguments are not accepted. (1)
@@ -140,6 +145,7 @@ public class MetadataEntryTester extends TestCase {
     /**
      * Test method for getMethods.
      */
+    @Test
     public void testGetterAndSetters() {
        MetadataEntry md = new MetadataEntry(aRealURL, aRealMimetype, realData);
        assertEquals("getData() returns wrong value", realData, new String(md.getData()));
@@ -150,6 +156,7 @@ public class MetadataEntryTester extends TestCase {
     /**
      * Test isDuplicateReductionMetadataEntry.
      */
+    @Test
      public void testIsDuplicateReductionMetadataEntry() {
          MetadataEntry md = new MetadataEntry(
                  "metadata://netarkivet.dk/crawl/setup/duplicatereductionjobs?majorversion=1&minorversion=0&harvestid=%s&harvestnum=%s&jobid=%s", aRealMimetype, realData);
@@ -159,6 +166,7 @@ public class MetadataEntryTester extends TestCase {
      }
 
      /** Test toString method. */
+    @Test
      public void testToString() {
          MetadataEntry md = new MetadataEntry(aRealURL, aRealMimetype, realData);
          String expectedToString = "URL= " + aRealURL + " ; mimetype= " + aRealMimetype 
@@ -169,6 +177,7 @@ public class MetadataEntryTester extends TestCase {
      /** Test makeAliasMetadataEntry() returns null 
       * if the aliases in the list of aliases are expired.
       */
+    @Test
      public void testMakeAliasMetadataEntryReturnsNullWithOnlyExpiredAliases() {
          Long origHarvestdefinitionId = 1L;
          Long jobId = 1L;
@@ -188,6 +197,7 @@ public class MetadataEntryTester extends TestCase {
     /**
      * Test serializability.
      */
+    @Test
     public void testSerializability() throws IOException, ClassNotFoundException {
         //Take an object:
 

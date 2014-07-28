@@ -26,6 +26,10 @@ package dk.netarkivet.harvester.datamodel;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class SeedListTester extends DataModelTestCase {
     final String HARVESTNAME = "TestHarvest";
@@ -34,14 +38,12 @@ public class SeedListTester extends DataModelTestCase {
     final int ORF= 1;
     final int WIKI = 0;
     
-    public SeedListTester(String s) {
-        super(s);
-    }
-
+    @Before
     public void setUp() throws Exception {
         super.setUp();
     }
 
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
     }
@@ -87,6 +89,7 @@ public class SeedListTester extends DataModelTestCase {
     /**
      * Tests the getHarvestInfo() method.
      */
+    @Test
     public void testGetDomainsForHarvestdefinition() {
         String[] domains = { "wikipedia.org", "orf.at", "kurier.at", "test.at"};
         String[][] seeds = {

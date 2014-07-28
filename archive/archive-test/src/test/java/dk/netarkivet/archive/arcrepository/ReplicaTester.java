@@ -26,8 +26,11 @@ import java.util.Collection;
 
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaType;
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
+import static org.junit.Assert.*;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -37,7 +40,7 @@ import dk.netarkivet.common.utils.Settings;
 /**
  * Tests of the Location class.
  */
-public class ReplicaTester extends TestCase {
+public class ReplicaTester {
     private String[] knownTestIds;
 
     public ReplicaTester() {
@@ -49,6 +52,7 @@ public class ReplicaTester extends TestCase {
 
     // initializeKnownList is tested in the test of get
     // getName() is tested in the test of get
+    @Test
     public void testGet() {
     	assertTrue("Differences in sizes of replica maps",
     		knownTestIds.length == Replica.getKnown().size());
@@ -66,6 +70,7 @@ public class ReplicaTester extends TestCase {
         }
     }
 
+    @Test
     public void testIsKnownReplica() {
         //Replica ids
     	for (int i=0; i< knownTestIds.length; i++) {
@@ -111,6 +116,7 @@ public class ReplicaTester extends TestCase {
         }
     }
 
+    @Test
     public void  testGetKnown() {
     	// Collection<Location>
     	int i;
@@ -151,6 +157,7 @@ public class ReplicaTester extends TestCase {
     	}
     }
 
+    @Test
     public void testGetKnownIds() {
     	boolean found;
     	int i;
@@ -191,6 +198,7 @@ public class ReplicaTester extends TestCase {
     	};
     }
 
+    @Test
     public void testGetChannelID() {
 	for(Replica rep : Replica.getKnown()) {
 	    if(rep.getType() == ReplicaType.CHECKSUM) {
@@ -205,6 +213,7 @@ public class ReplicaTester extends TestCase {
 	}
     }
 
+    @Test
     public void testToString() {
 	for(Replica replica : Replica.getKnown()) {
 	    assertTrue("The replica.toString() must contain the replica type for replica: " + replica, 

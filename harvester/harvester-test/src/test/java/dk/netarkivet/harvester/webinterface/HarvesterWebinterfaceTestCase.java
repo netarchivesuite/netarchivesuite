@@ -36,6 +36,9 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 import java.io.File;
 
+import org.junit.After;
+import org.junit.Before;
+
 /**
  * A TestCase subclass specifically tailored to test webinterface classes,
  * primarily the classes in dk.netarkivet.harvester.webinterface:
@@ -43,15 +46,12 @@ import java.io.File;
  * ScheduleDefinitionTester, SnapshotHarvestDefinitionTester but also
  * dk.netarkivet.archive.webinterface.BitpreserveFileStatusTester
  */
-public class HarvesterWebinterfaceTestCase extends WebinterfaceTestCase {
+public abstract class HarvesterWebinterfaceTestCase extends WebinterfaceTestCase {
     static final File HARVEST_DEFINITION_BASEDIR
             = new File(TestInfo.WORKING_DIR, "harvestdefinitionbasedir");
     ReloadSettings rs = new ReloadSettings();
 
-    public HarvesterWebinterfaceTestCase(String s) {
-        super(s);
-    }
-
+    @Before
     public void setUp() throws Exception {
         super.setUp();
         rs.setUp();
@@ -67,6 +67,7 @@ public class HarvesterWebinterfaceTestCase extends WebinterfaceTestCase {
         DBSpecifics.getInstance().updateTables();
     }
 
+    @After
     public void tearDown() throws Exception {
         DatabaseTestUtils.dropHDDB();
       HarvestDAOUtils.resetDAOs();

@@ -24,7 +24,11 @@ package dk.netarkivet.archive.arcrepository.distribute;
 
 import java.io.File;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 import dk.netarkivet.archive.distribute.ArchiveMessageHandler;
 import dk.netarkivet.archive.distribute.ArchiveMessageVisitor;
 import dk.netarkivet.common.distribute.ChannelID;
@@ -38,11 +42,12 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 /**
  * Basic unit tests for the StoreMessage.
  */
-public class StoreMessageTester extends TestCase {
+public class StoreMessageTester {
     ReloadSettings rs = new ReloadSettings();
     UseTestRemoteFile rm = new UseTestRemoteFile();
     MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS, TestInfo.WORKING);
 
+    @Before
     public void setUp() {
         rs.setUp();
         rm.setUp();
@@ -50,12 +55,14 @@ public class StoreMessageTester extends TestCase {
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
     }
 
+    @After
     public void tearDown() {
         rm.tearDown();
         rs.tearDown();
         mtf.tearDown();
     }
 
+    @Test
     public void testInvalidArguments() {
 
         try {
@@ -73,6 +80,7 @@ public class StoreMessageTester extends TestCase {
         }
     }
     
+    @Test
     public void testValid() {
         StoreMessage msg = new StoreMessage(Channels.getError(), 
                 TestInfo.ARCFILE);

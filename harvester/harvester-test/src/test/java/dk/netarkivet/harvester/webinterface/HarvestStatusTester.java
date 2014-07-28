@@ -45,6 +45,10 @@ import dk.netarkivet.harvester.datamodel.JobDAOTester;
 import dk.netarkivet.harvester.datamodel.JobDBDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.datamodel.JobStatusInfo;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * Test of Harvest Status utility method for resubmitting jobs.
@@ -55,20 +59,19 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
     
     private HarvestChannel testChan;
 
-    public HarvestStatusTester(String s) {
-        super(s);
-    }
-
+    @Before
     public void setUp() throws Exception {
         super.setUp();
         testChan = new HarvestChannel("test", false, true, "");
     }
 
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
     }
 
     /** Simple unittest for the HarvestStatus constructor and associated getters. */
+    @Test
     public void testHarvestStatusConstructor() {
         List<JobStatusInfo> jsiList = new ArrayList<JobStatusInfo>();
         HarvestStatus hs = new HarvestStatus(420L, jsiList);
@@ -80,6 +83,7 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
                 jsiList, hs.getJobStatusInfo());
     }
     
+    @Test
     public void testRejectFailedJob() throws SQLException {
         JobDAO jobDAO = JobDBDAO.getInstance();
         DataModelTestCase.addHarvestDefinitionToDatabaseWithId(420L);
@@ -100,6 +104,7 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
 
     }
 
+    @Test
     public void testUnrejectRejectedJob() throws SQLException {
         JobDAO jobDAO = JobDBDAO.getInstance();
         DataModelTestCase.addHarvestDefinitionToDatabaseWithId(420L);
@@ -119,6 +124,7 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
         }
     }
 
+    @Test
     public void testProcessRequest() throws Exception {
         
         JobDAO jobDAO = JobDBDAO.getInstance();
@@ -193,6 +199,7 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
 
     }
     
+    @Test
     public void testGetjobStatusList () throws Exception {
         
         Map<String, String[]> params = new HashMap<String, String[]>();
@@ -229,6 +236,7 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
         }
     }
     
+    @Test
     public void testGetSelectedSortOrder () throws Exception {
     	TestServletRequest servletRequest = new TestServletRequest();
         
@@ -266,6 +274,7 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
         		query.isSortAscending());
     }
     
+    @Test
     public void testGetSelectedJobStatusCode() throws Exception {
     	TestServletRequest servletRequest = new TestServletRequest();
         

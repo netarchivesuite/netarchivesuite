@@ -30,7 +30,11 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.webinterface.GUIWebServer;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -41,7 +45,7 @@ import java.net.Socket;
 /**
  * Tests running a web server, represented by the GUIWebServer() class.
  */
-public class GUIWebServerTester extends TestCase {
+public class GUIWebServerTester {
 
     private GUIWebServer server;
     ReloadSettings rs = new ReloadSettings();
@@ -50,13 +54,7 @@ public class GUIWebServerTester extends TestCase {
     public static final File ORIGINALS = new File(BASEDIR, "originals");
     public static final File WORKING = new File(BASEDIR, "working");
 
-    /**
-     * @param sTestName
-     */
-    public GUIWebServerTester(String sTestName) {
-        super(sTestName);
-    }
-
+    @Before
     public void setUp() throws Exception {
         rs.setUp();
         Settings.set(CommonSettings.SITESECTION_WEBAPPLICATION, 
@@ -83,6 +81,7 @@ public class GUIWebServerTester extends TestCase {
 
     }
 
+    @After
     public void tearDown() throws Exception {
         if (server != null) {
             server.cleanup();
@@ -93,6 +92,7 @@ public class GUIWebServerTester extends TestCase {
         rs.tearDown();
     }
 
+    @Test
     public void testRunningServer() {
         server = new GUIWebServer();
         server.startServer();
@@ -104,6 +104,7 @@ public class GUIWebServerTester extends TestCase {
         }
     }
 
+    @Test
     public void testExpectedExceptionsWhenStartingServer() throws IOException {
         Settings.set(CommonSettings.HTTP_PORT_NUMBER, Long.toString(65536L));
 
@@ -148,6 +149,7 @@ public class GUIWebServerTester extends TestCase {
         socket = null;
     }
 
+    @Test
     public void testExpectedExceptionsWhenAddingContext() throws IOException {
         //wrong arguments when adding context
         Settings.set(CommonSettings.SITESECTION_WEBAPPLICATION,
@@ -161,6 +163,7 @@ public class GUIWebServerTester extends TestCase {
         }
     }
 
+    @Test
     public void testStopServer() throws InterruptedException {
         server = new GUIWebServer();
         server.startServer();

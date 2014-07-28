@@ -30,17 +30,19 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 /**
  * Unit tests for the class ReadOnlyAdminData.
  */
 @SuppressWarnings({ "deprecation"})
-public class ReadOnlyAdminDataTester extends TestCase {
+public class ReadOnlyAdminDataTester {
     ReloadSettings rs = new ReloadSettings();
 
-    public ReadOnlyAdminDataTester(String s) {
-        super(s);
-    }
-
+    @Before
     public void setUp() {
         rs.setUp();
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR,
@@ -48,11 +50,13 @@ public class ReadOnlyAdminDataTester extends TestCase {
         Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, TestInfo.TEST_DIR.getAbsolutePath());
     }
 
+    @After
     public void tearDown() {
         FileUtils.removeRecursively(TestInfo.TEST_DIR);
         rs.tearDown();
     }
 
+    @Test
     public void testSynchronize() throws Exception {
         ReadOnlyAdminData ad = ReadOnlyAdminData.getInstance();
 

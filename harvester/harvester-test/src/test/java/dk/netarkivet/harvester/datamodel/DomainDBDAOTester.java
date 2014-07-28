@@ -34,7 +34,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Ignore;
+import org.junit.Test;
+
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.DBUtils;
@@ -56,14 +62,13 @@ import org.dom4j.Node;
  *
  */
 public class DomainDBDAOTester extends DataModelTestCase {
-    public DomainDBDAOTester(String s) {
-        super(s);
-    }
 
+    @Before
     public void setUp() throws Exception {
         super.setUp();
     }
 
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
     }
@@ -71,6 +76,7 @@ public class DomainDBDAOTester extends DataModelTestCase {
     /**
      *  Unittest for extended Fields.
      */
+    @Test
     public void testExtendedFields() {
         ExtendedFieldDAO extDAO = ExtendedFieldDBDAO.getInstance();
         ExtendedField extField = new ExtendedField(null, 
@@ -118,6 +124,7 @@ public class DomainDBDAOTester extends DataModelTestCase {
     /** Test that a bad update doesn't kill the DB.
      * @throws Exception
      */
+    @Test
     public void testBadUpdate() throws Exception {
         DomainDAO dao = DomainDAO.getInstance();
         Domain d = dao.read("netarkivet.dk");
@@ -135,6 +142,7 @@ public class DomainDBDAOTester extends DataModelTestCase {
         dao.update(d);
     }
 
+    @Test
     public void testIteratorLocking() {
         DomainDAO dao = DomainDAO.getInstance();
         assertEquals("Should have 4 domains", 4, dao.getCountDomains());
@@ -152,6 +160,8 @@ public class DomainDBDAOTester extends DataModelTestCase {
 
     /** This stresstests the DB DAOs by running several updates in parallel. */
     // Failing: Causes all subsequent test using the database to fail.
+    @Test
+    @Ignore("Cause all subsequent tests using the database to fail")
     public void failingTestMultipleSavepoints() {
         // Enforce possible database migration
         DomainDAO dummy = DomainDAO.getInstance();
@@ -264,6 +274,7 @@ public class DomainDBDAOTester extends DataModelTestCase {
         }
 
     /** Test that non-ascii chars are correctly stored in clobs. */
+    @Test
     public void testNonAsciiClob() {
         //  Simplest clob: seedlist
         SeedList sl = new SeedList("nonascii", "æåø.dk\n");
@@ -295,6 +306,7 @@ public class DomainDBDAOTester extends DataModelTestCase {
     /**
      * Test method for testing DomainDBDAO.getAliases().
      */
+    @Test
     public void testGetAliases() throws IllegalAccessException,
             NoSuchFieldException, InterruptedException {
 
@@ -370,8 +382,8 @@ public class DomainDBDAOTester extends DataModelTestCase {
         /** Test for bug #746: Don't use DomainDAO.read() to get aliases */
         DomainDAOTester.setDomainDAO(new DomainDBDAO() {
             public Domain read(String name) {
-                TestCase.fail("Should not read any domains, but asked for " + name);
-                return null;
+                fail("Should not read any domains, but asked for " + name);
+                return null; // to placate Eclipse static analysis.
             }
         });
         dao = DomainDAO.getInstance();
@@ -379,6 +391,7 @@ public class DomainDBDAOTester extends DataModelTestCase {
         assertEquals("Too few or too many AliasInfo objects returned", 2, aliasInfoList.size());
     }
 
+    @Test
     public void testGetTLDs() {
         //  create some domains.
         dk.netarkivet.harvester.webinterface.DomainDefinition.createDomains(
@@ -394,6 +407,7 @@ public class DomainDBDAOTester extends DataModelTestCase {
     }
 
 
+    @Test
     public void testGetMultiLevelTLD() {
         //  create some domains.
         dk.netarkivet.harvester.webinterface.DomainDefinition.createDomains(
@@ -426,6 +440,7 @@ public class DomainDBDAOTester extends DataModelTestCase {
 
 
 
+    @Test
     public void testGetCountDomains() {
         // create some domains, ignore invalid domains
         dk.netarkivet.harvester.webinterface.DomainDefinition.createDomains(
@@ -439,6 +454,7 @@ public class DomainDBDAOTester extends DataModelTestCase {
     /**
      *  Unittest for method getDomainJobInfo.
      */
+    @Test
     public void testGetDomainJobInfo() {
         //DomainDAO dao = DomainDAO.getInstance();
         HarvestDefinitionDAO hdDao = HarvestDefinitionDAO.getInstance();
@@ -478,6 +494,7 @@ public class DomainDBDAOTester extends DataModelTestCase {
         }
     }
 
+    @Test
     public void testGetDomainHarvestInfo() {
         HarvestDefinitionDAO hdDao = HarvestDefinitionDAO.getInstance();
         HarvestDefinition hd = hdDao.read(Long.valueOf(42));

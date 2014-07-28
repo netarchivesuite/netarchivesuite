@@ -28,7 +28,11 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.testutils.preconfigured.MockupJMS;
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
+
 import org.dom4j.Document;
 import org.dom4j.DocumentFactory;
 
@@ -37,22 +41,20 @@ import java.io.File;
 /**
  * Unittests for the class HeritrixFiles.
  */
-public class HeritrixFilesTester extends TestCase {
+public class HeritrixFilesTester {
 
     private MockupJMS mjms = new MockupJMS();
     
     private File defaultJmxPasswordFile = new File("/path/to/jmxpasswordfile");
     private File defaultJmxAccessFile = new File("/path/to/jmxaccessfile");
 
-    public HeritrixFilesTester(String s) {
-        super(s);
-    }
-
+    @Before
     public void setUp() {
        TestInfo.WORKING_DIR.mkdirs();
        mjms.setUp();
     }
 
+    @After
     public void tearDown() {
         mjms.tearDown();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
@@ -62,6 +64,7 @@ public class HeritrixFilesTester extends TestCase {
      * Test correct behaviour of the HeritrixFiles constructor.
      *
      */
+    @Test
     public void testConstructor() {
         try {
             new HeritrixFiles(null, null, null, null);
@@ -94,6 +97,7 @@ public class HeritrixFilesTester extends TestCase {
     /**
      * Test alternate constructor.  
      */
+    @Test
     public void testAlternateConstructor() {
         HeritrixFiles hf 
             = new HeritrixFiles(TestInfo.HERITRIX_TEMP_DIR, new JobInfoTestImpl(42L, 42L));
@@ -129,6 +133,7 @@ public class HeritrixFilesTester extends TestCase {
      *
      * Bug 871 caused this test to be written.
      */
+    @Test
     public void testWriteOrderXml(){
         TestInfo.HERITRIX_TEMP_DIR.mkdir();
         HeritrixFiles hf = getStandardHeritrixFiles();
@@ -162,6 +167,7 @@ public class HeritrixFilesTester extends TestCase {
      *
      * Bug 871 caused this test to be written.
      */
+    @Test
     public void testWriteSeedsTxt() {
         TestInfo.HERITRIX_TEMP_DIR.mkdir();
         HeritrixFiles hf = getStandardHeritrixFiles();
@@ -187,6 +193,7 @@ public class HeritrixFilesTester extends TestCase {
     }
     
     /** Check, that the getArcsDir method works.*/
+    @Test
     public void testGetArcsDir() {
         TestInfo.HERITRIX_TEMP_DIR.mkdir();
         HeritrixFiles hf = getStandardHeritrixFiles();
@@ -197,6 +204,7 @@ public class HeritrixFilesTester extends TestCase {
     }
     
     /** Check the getHeritrixOutput method */
+    @Test
     public void testGetHeritrixOutput() {
         TestInfo.HERITRIX_TEMP_DIR.mkdir();
         HeritrixFiles hf = getStandardHeritrixFiles();

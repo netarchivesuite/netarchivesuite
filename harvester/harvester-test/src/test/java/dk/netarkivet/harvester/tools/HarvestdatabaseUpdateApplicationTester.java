@@ -25,6 +25,16 @@ package dk.netarkivet.harvester.tools;
  * Tests of the tool to create metadata files.
  */
 
+import static org.junit.Assert.fail;
+
+import java.io.File;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
+
+import org.junit.Ignore;
+import org.junit.Test;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
@@ -34,14 +44,11 @@ import dk.netarkivet.harvester.datamodel.HarvestDAOUtils;
 import dk.netarkivet.harvester.datamodel.TestInfo;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.SetSystemProperty;
-import java.io.File;
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
-import junit.framework.TestCase;
 
 
-public class HarvestdatabaseUpdateApplicationTester extends TestCase {
+
+@Ignore("binary derby database not converted to scripts yet")
+public class HarvestdatabaseUpdateApplicationTester {
     SetSystemProperty derbyLog
             = new SetSystemProperty(
             "derby.stream.error.file",
@@ -50,20 +57,10 @@ public class HarvestdatabaseUpdateApplicationTester extends TestCase {
     ReloadSettings rs = new ReloadSettings();
     File commonTempdir = new File(TestInfo.TEMPDIR, "commontempdir");
 
-
-    public HarvestdatabaseUpdateApplicationTester(String s) {
-        super(s);
-    }
-
-    public void setUp()  throws Exception {
-
-    }
-
-    public void tearDown(){}
-
     /**
      * Primary use it to create a updated **hddb.jar after database changes.
      */
+    @Test
     public void testUpdateFull() throws Exception {
         setupDatabase("fullhddb");
         DBSpecifics.getInstance().updateTables();
@@ -72,6 +69,7 @@ public class HarvestdatabaseUpdateApplicationTester extends TestCase {
     /**
      * Primary use it to create a updated **hddb.jar after database changes.
      */
+    @Test
     public void testUpdateEmpty() throws Exception {
         setupDatabase("emptyhddb");
         DBSpecifics.getInstance().updateTables();

@@ -25,8 +25,11 @@ package dk.netarkivet.archive.arcrepository;
 import java.io.File;
 import java.io.IOException;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
+import static org.junit.Assert.*;
 import dk.netarkivet.archive.distribute.arcrepository.TestInfo;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
@@ -50,16 +53,13 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
  * Unit-tests for the class
  * LocalArcRepositoryClient.
  */
-public class LocalArcRepositoryClientTester extends TestCase {
+public class LocalArcRepositoryClientTester {
     MoveTestFiles mtf = new MoveTestFiles(dk.netarkivet.archive.distribute.arcrepository.TestInfo.ORIGINALS_DIR,
                                           dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR);
     ReloadSettings rs = new ReloadSettings();
     UseTestRemoteFile utrf = new UseTestRemoteFile();
 
-    public LocalArcRepositoryClientTester(String s) {
-        super(s);
-    }
-
+    @Before
     public void setUp() {
         rs.setUp();
         utrf.setUp();
@@ -69,12 +69,14 @@ public class LocalArcRepositoryClientTester extends TestCase {
         mtf.setUp();
     }
 
+    @After
     public void tearDown() {
         mtf.tearDown();
         utrf.tearDown();
         rs.tearDown();
     }
 
+    @Test
     public void testStore() throws Exception {
         File dir1 = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, "dir1");
         File dir2 = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, "dir2");
@@ -110,6 +112,7 @@ public class LocalArcRepositoryClientTester extends TestCase {
                    new File(dir2, dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE_COPY.getName()).exists());
     }
 
+    @Test
     public void testGetFileMethod() throws IOException {
         File dir1 = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, "dir1");
         File dir2 = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, "dir2");
@@ -140,6 +143,7 @@ public class LocalArcRepositoryClientTester extends TestCase {
         }
     }
 
+    @Test
     public void testBatch() {
         File dir1 = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, "dir1");
         File dir2 = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, "dir2");
@@ -158,6 +162,7 @@ public class LocalArcRepositoryClientTester extends TestCase {
                      1, status.getNoOfFilesProcessed());
     }
 
+    @Test
     public void testStoreAndGet() {
 
         File basedir = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, "localArcRepository");
@@ -184,6 +189,7 @@ public class LocalArcRepositoryClientTester extends TestCase {
         assertNotNull(bar);
     }
     
+    @Test
     public void testNewFunctions() throws IOException {
         Settings.set(
                 "settings.common.arcrepositoryClient.fileDir", 

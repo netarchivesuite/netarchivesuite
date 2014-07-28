@@ -36,21 +36,22 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
+
 
 /**
  * Tests of DelegatingController class.
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class DelegatingControllerTester extends TestCase {
+public class DelegatingControllerTester {
     private TestMissingURIRecorder mur;
     private TestCDXCache cc;
     private TestARCArchiveAccess aaa;
 
-    public DelegatingControllerTester(String s) {
-        super(s);
-    }
-
+    @Before
     public void setUp() {
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         mur = new TestMissingURIRecorder();
@@ -58,6 +59,7 @@ public class DelegatingControllerTester extends TestCase {
         aaa = new TestARCArchiveAccess();
     }
 
+    @After
     public void tearDown() {
         JMSConnectionMockupMQ.getInstance().cleanup();
     }
@@ -65,6 +67,7 @@ public class DelegatingControllerTester extends TestCase {
     /** Tests constructor. Only thing really testable is that ArgumentNotValid
      * is thrown on null arguments.
      */
+    @Test
     public void testController() {
         try {
             new DelegatingController(null, cc, aaa);
@@ -92,6 +95,7 @@ public class DelegatingControllerTester extends TestCase {
      * mur's start is called, and nothing else.
      * @throws Exception
      */
+    @Test
     public void testStart() throws Exception {
         Controller c = new DelegatingController(mur, cc, aaa);
         c.startRecordingURIs();
@@ -109,6 +113,7 @@ public class DelegatingControllerTester extends TestCase {
      * mur's stop is called, and nothing else.
      * @throws Exception
      */
+    @Test
     public void testStop() throws Exception {
         Controller c = new DelegatingController(mur, cc, aaa);
         c.stopRecordingURIs();
@@ -126,6 +131,7 @@ public class DelegatingControllerTester extends TestCase {
      * mur's clear is called, and nothing else.
      * @throws Exception
      */
+    @Test
     public void testClear() throws Exception {
         Controller c = new DelegatingController(mur, cc, aaa);
         c.clearRecordedURIs();
@@ -144,6 +150,7 @@ public class DelegatingControllerTester extends TestCase {
      * is returned is exactly what the mur returns.
      * @throws Exception
      */
+    @Test
     public void testGetRecordedURIs() throws Exception {
         Controller c = new DelegatingController(mur, cc, aaa);
         Set<URI> uris = c.getRecordedURIs();
@@ -168,6 +175,7 @@ public class DelegatingControllerTester extends TestCase {
      * result given to ARCArchiveAccess.setIndex.
      *
      */
+    @Test
     public void testChangeIndex() {
         Controller c = new DelegatingController(mur, cc, aaa);
         try {

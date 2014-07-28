@@ -47,9 +47,13 @@ import dk.netarkivet.testutils.ClassAsserts;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class ChecksumClientTester extends TestCase {
+import static org.junit.Assert.*;
+
+public class ChecksumClientTester {
 
     UseTestRemoteFile rf = new UseTestRemoteFile();
     ReloadSettings rs = new ReloadSettings();
@@ -57,6 +61,7 @@ public class ChecksumClientTester extends TestCase {
     MessageTestHandler handler;
     JMSConnectionMockupMQ con;
     
+    @Before
     public void setUp() {
         rs.setUp();
         rf.setUp();
@@ -72,6 +77,7 @@ public class ChecksumClientTester extends TestCase {
         con.setListener(Channels.getTheCR(), handler);
     }
     
+    @After
     public void tearDown() {
         JMSConnectionMockupMQ.clearTestQueues();
 
@@ -80,10 +86,12 @@ public class ChecksumClientTester extends TestCase {
         rs.tearDown();
     }
 
+    @Test
     public void testClient() {
         ClassAsserts.assertPrivateConstructor(ChecksumClient.class);
     }
     
+    @Test
     public void testFails() {
         ChecksumClient cc = ChecksumClient.getInstance(Channels.getTheCR());
         
@@ -146,6 +154,7 @@ public class ChecksumClientTester extends TestCase {
         }
     }
     
+    @Test
     public void testValid() {
         ChecksumClient cc = ChecksumClient.getInstance(Channels.getTheCR());
         

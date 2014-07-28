@@ -29,7 +29,11 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.regex.Pattern;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
+
 
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.ZipUtils;
@@ -38,12 +42,12 @@ import dk.netarkivet.harvester.harvesting.metadata.MetadataFile;
 import dk.netarkivet.harvester.indexserver.GetMetadataArchiveBatchJob;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
-public class GetMetadataArchiveBatchJobTester extends TestCase {
+public class GetMetadataArchiveBatchJobTester {
     
     MoveTestFiles mtf;
     File metadataDir = new File(TestInfo.WORKING_DIR, "metadata");
     
-    @Override
+    @Before
     public void setUp() {
         TestInfo.WORKING_DIR.mkdir();
         File metadataDir = new File(TestInfo.WORKING_DIR, "metadata");
@@ -53,12 +57,13 @@ public class GetMetadataArchiveBatchJobTester extends TestCase {
         mtf.setUp();
     }
     
-    @Override
+    @After
     public void tearDown() {
         mtf.tearDown();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
     }    
 
+    @Test
     public void testBatchJob() throws FileNotFoundException {
         
         File ZipOne = new File(metadataDir, "1-metadata-1.warc.zip");

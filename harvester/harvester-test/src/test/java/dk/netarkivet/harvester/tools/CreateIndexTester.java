@@ -22,9 +22,16 @@
  */
 package dk.netarkivet.harvester.tools;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import javax.jms.Message;
 
-import dk.netarkivet.harvester.tools.TestInfo;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
@@ -33,7 +40,6 @@ import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.ZipUtils;
 import dk.netarkivet.harvester.indexserver.distribute.IndexRequestMessage;
-import dk.netarkivet.harvester.tools.CreateIndex;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.TestMessageListener;
 import dk.netarkivet.testutils.preconfigured.MockupJMS;
@@ -41,9 +47,9 @@ import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
-import junit.framework.TestCase;
 
-public class CreateIndexTester extends TestCase {
+
+public class CreateIndexTester {
     private PreventSystemExit pse = new PreventSystemExit();
     private PreserveStdStreams pss = new PreserveStdStreams(true);
     private MoveTestFiles mtf = new MoveTestFiles(TestInfo.DATA_DIR,
@@ -52,6 +58,7 @@ public class CreateIndexTester extends TestCase {
     TestMessageListener listener;
     ReloadSettings rs = new ReloadSettings();
 
+    @Before
     public void setUp(){
         rs.setUp();
         mjms.setUp();
@@ -64,6 +71,8 @@ public class CreateIndexTester extends TestCase {
         pss.setUp();
         pse.setUp();
     }
+
+    @After
     public void tearDown(){
         pse.tearDown();
         pss.tearDown();
@@ -76,6 +85,7 @@ public class CreateIndexTester extends TestCase {
     /**
      * Verify that it has a utility class constructor.
      */
+    @Test
     public void testConstructor() {
         ReflectUtils.testUtilityConstructor(CreateIndex.class);
     }
@@ -83,15 +93,18 @@ public class CreateIndexTester extends TestCase {
     /**
      * Test that download of a small file succeeds.
      */
+    @Test
     public void testMain() {
         String[] args = new String[]{"-tDEDUP", "-l1"};
-        
+
+        TestInfo.CACHE_TEMP_DIR.mkdirs(); // FIXME: Should not be missing.
         ZipUtils.gzipFiles(TestInfo.CACHE_TEMP_DIR, TestInfo.CACHE_OUTPUT_DIR);
         
         pss.tearDown();
         CreateIndex.main(args);
     }
     
+    @Test
     public void testBadArguments1() {
         String[] args = new String[]{"-asdf"};
         String expectedMsg = "Parsing of parameters failed: Unrecognized option: -a";
@@ -112,9 +125,12 @@ public class CreateIndexTester extends TestCase {
                 errMsg.contains(expectedMsg));
     }
     
+    @Test
     public void testBadArguments2() {
         String[] args = new String[]{"-tCDX"};
-        String expectedMsg = "Some of the required parameters are missing: -l";
+        // String expectedMsg =
+        // "Some of the required parameters are missing: -l";
+        String expectedMsg = "Some of the required parameters are missing: Missing required option: l";
         
         try {
             CreateIndex.main(args);
@@ -132,9 +148,12 @@ public class CreateIndexTester extends TestCase {
                 errMsg.contains(expectedMsg));
     }
 
+    @Test
     public void testBadArguments3() {
         String[] args = new String[]{"-l1"};
-        String expectedMsg = "Some of the required parameters are missing: -t";
+        // String expectedMsg =
+        // "Some of the required parameters are missing: -t";
+        String expectedMsg = "Some of the required parameters are missing: Missing required option: t";
         
         try {
             CreateIndex.main(args);
@@ -152,6 +171,7 @@ public class CreateIndexTester extends TestCase {
                 errMsg.contains(expectedMsg));
     }
     
+    @Test
     public void testBadArguments4() {
         String[] args = new String[]{"-tMYINDEX", "-l1"};
         String expectedMsg = "Unknown indextype 'MYINDEX' requested.";

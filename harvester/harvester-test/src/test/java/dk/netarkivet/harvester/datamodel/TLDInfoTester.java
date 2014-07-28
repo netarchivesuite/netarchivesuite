@@ -22,24 +22,18 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Test;
+
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /** 
  * Unit tests for the TLDInfo class. 
  */ 
-public class TLDInfoTester extends TestCase {
-    public TLDInfoTester(String s) {
-        super(s);
-    }
-
-    public void setUp() {
-    }
-
-    public void tearDown() {
-    }
+public class TLDInfoTester {
     
+    @Test
     public void testConstructor() {
         TLDInfo info = new TLDInfo("dk");
         assertEquals("dk", info.getName());
@@ -51,8 +45,7 @@ public class TLDInfoTester extends TestCase {
         assertEquals(0, info.getCount());
     }
     
-    
-    
+    @Test
     public void testAddSubdomain() {
         TLDInfo i = new TLDInfo("um");
         assertEquals("Should know no subdomains to start with",

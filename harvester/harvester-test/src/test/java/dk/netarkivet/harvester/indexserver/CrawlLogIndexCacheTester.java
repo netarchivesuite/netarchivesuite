@@ -36,19 +36,23 @@ import dk.netarkivet.harvester.indexserver.FullCrawlLogIndexCache;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.ReflectUtils;
+import static org.junit.Assert.*;
+
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
 
 /**
  * Testclass for class CrawlLogIndexCache.
  */
 public class CrawlLogIndexCacheTester extends CacheTestCase {
-    public CrawlLogIndexCacheTester(String s) {
-        super(s);
-    }
 
+    @Before
     public void setUp() throws Exception {
         super.setUp();
     }
 
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
     }
@@ -57,6 +61,7 @@ public class CrawlLogIndexCacheTester extends CacheTestCase {
      * Test of private method sortCrawlLog.
      * @throws Exception
      */
+    @Test
     public void testSortCrawlLog() throws Exception {
         File sortedFile = new File(TestInfo.CRAWL_LOG_1.getAbsolutePath() + ".sorted");
         FileUtils.sortCrawlLog(TestInfo.CRAWL_LOG_1, sortedFile);
@@ -87,6 +92,7 @@ public class CrawlLogIndexCacheTester extends CacheTestCase {
      * Test of preparecombine.
      * @throws Exception
      */
+    @Test
     public void testPrepareCombine()
             throws NoSuchFieldException, IllegalAccessException {
         // Currently only tests that a log message is written

@@ -28,7 +28,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 import org.archive.io.ArchiveRecord;
 import org.archive.io.arc.ARCConstants;
@@ -51,15 +55,19 @@ import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
  * Unit test for the GetRecord tool.
  *
  */
-public class GetRecordTester extends TestCase {
+public class GetRecordTester {
+
     private static String CONTENT = "This is a test message";
     private PreventSystemExit pse = new PreventSystemExit();
     private PreserveStdStreams pss = new PreserveStdStreams(true);
+
     private MoveTestFiles mtf = new MoveTestFiles(TestInfo.DATA_DIR,
             TestInfo.WORKING_DIR);
+
     private MockupJMS mjms = new MockupJMS();
     TestMessageListener listener;
 
+    @Before
     public void setUp(){
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         JMSConnectionMockupMQ.clearTestQueues();
@@ -73,6 +81,8 @@ public class GetRecordTester extends TestCase {
         pss.setUp();
         pse.setUp();
     }
+
+    @After
     public void tearDown(){
         pse.tearDown();
         pss.tearDown();
@@ -82,6 +92,7 @@ public class GetRecordTester extends TestCase {
         mjms.tearDown();
     }
 
+    @Test
     public void testMain() {
         try {
             GetRecord.main(new String[]{
@@ -98,6 +109,7 @@ public class GetRecordTester extends TestCase {
                 + returnedContent, CONTENT, returnedContent);
     }
     
+    @Test
     public void testFail() {
         String expectedResults = "indexfile uri";
         try {

@@ -24,23 +24,17 @@ package dk.netarkivet.harvester.datamodel;
 
 import java.util.regex.Matcher;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Test;
+
 
 /**
  * Unit-tests for the Constants class.
  * Only tests the static method getIdMatcher.
  */
-public class ConstantsTester extends TestCase {
-    public ConstantsTester(String s) {
-        super(s);
-    }
+public class ConstantsTester {
 
-    public void setUp() {
-    }
-
-    public void tearDown() {
-    }
-
+    @Test
     public void testGetIdMatcher() throws Exception {
         Matcher m1 = Constants.getIdMatcher();
         Matcher m2 = Constants.getIdMatcher();

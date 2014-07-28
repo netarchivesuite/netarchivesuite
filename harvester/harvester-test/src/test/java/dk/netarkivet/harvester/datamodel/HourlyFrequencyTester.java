@@ -23,7 +23,9 @@
 package dk.netarkivet.harvester.datamodel;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Test;
+
 
 import java.util.Calendar;
 import java.util.Date;
@@ -32,22 +34,12 @@ import java.util.GregorianCalendar;
 /**
  * Tests an hourly frequency.
  */
-public class HourlyFrequencyTester extends TestCase {
-    public HourlyFrequencyTester(String s) {
-        super(s);
-    }
-
-    public void setUp() {
-
-    }
-
-    public void tearDown() {
-
-    }
+public class HourlyFrequencyTester {
 
     /** 
      * Test value is hourly.
      */
+    @Test
     public void testTimeunitIsHourly() {
     	HourlyFrequency freq = new HourlyFrequency(20);
         assertEquals("Timeunit must be hourly.", 
@@ -64,6 +56,7 @@ public class HourlyFrequencyTester extends TestCase {
      * immediate.
      * @throws Exception
      */
+    @Test
     public void testGetFirstEvent1() throws Exception {
         HourlyFrequency freq
             = new HourlyFrequency(3); // Every three hours, anytime
@@ -78,6 +71,7 @@ public class HourlyFrequencyTester extends TestCase {
      * event is at the 22nd minute.
      * @throws Exception
      */
+    @Test
     public void testGetFirstEvent2() throws Exception {
         HourlyFrequency freq
             = new HourlyFrequency(3, 22); // Every three hours, on the minute
@@ -94,6 +88,7 @@ public class HourlyFrequencyTester extends TestCase {
      * after correct period.
      * @throws Exception
      */
+    @Test
     public void testGetNextEvent1() throws Exception {
         HourlyFrequency freq
             = new HourlyFrequency(3); // Every three hours, anytime
@@ -110,6 +105,7 @@ public class HourlyFrequencyTester extends TestCase {
      * is after correct period on 23rd minute.
      * @throws Exception
      */
+    @Test
     public void testGetNextEvent2() throws Exception {
         HourlyFrequency freq
             = new HourlyFrequency(3, 23); // Every three hours, on the minute
@@ -129,6 +125,7 @@ public class HourlyFrequencyTester extends TestCase {
      * minute.
      * @throws Exception
      */
+    @Test
     public void testGetNextEvent3() throws Exception {
         HourlyFrequency freq
             = new HourlyFrequency(3, 22); // Every three hours, on the minute
@@ -143,6 +140,7 @@ public class HourlyFrequencyTester extends TestCase {
     /** Test validity of arguments.
      *  @throws Exception
      */
+    @Test
     public void testValidityOfArguments() throws Exception {
         try {
             new HourlyFrequency(-1);
@@ -185,7 +183,6 @@ public class HourlyFrequencyTester extends TestCase {
         } catch (ArgumentNotValid e) {
             //Expected
         }
-
 
         HourlyFrequency freq = new HourlyFrequency(4, 23);
         try {

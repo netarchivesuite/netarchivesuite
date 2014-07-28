@@ -26,20 +26,23 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 
 /**
  * Tests for class dk.netarkivet.datamodel.FullHarvest.
  */
 public class FullHarvestTester extends DataModelTestCase {
-    public FullHarvestTester(String s) {
-        super(s);
-    }
 
+    @Before
     public void setUp() throws Exception {
         super.setUp();
     }
 
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
     }
@@ -49,6 +52,7 @@ public class FullHarvestTester extends DataModelTestCase {
      * unit tests are needed.
      * @throws Exception
      */
+    @Test
     public void testMaxBytes() throws Exception {
         final HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
         FullHarvest fh = HarvestDefinition.createFullHarvest("testfullharvest",
@@ -78,6 +82,7 @@ public class FullHarvestTester extends DataModelTestCase {
      * Test that in getDomainConfigurations() only DomainConfigurations are returned for Domains
      * which are not aliases, or where the alias information is expired.
      */
+    @Test
     public void testGetDomainsConfigurations() {
         DomainDAO ddao = DomainDAO.getInstance();
         FullHarvest fh = HarvestDefinition.createFullHarvest(
@@ -125,6 +130,7 @@ public class FullHarvestTester extends DataModelTestCase {
      * domain for which the status was "Harvesting aborted" on the previous harvest
      * should not be included in this harvest
      */
+    @Test
     public void testGetDomainsPreviousHarvestAborted() {
           DomainDAO ddao = DomainDAO.getInstance();
         FullHarvest previousHarvest = HarvestDefinition.
@@ -162,6 +168,7 @@ public class FullHarvestTester extends DataModelTestCase {
      * Test that the FullHarvester.getDomainConfigurations() part of bug 716 is fixed.
      *
      */
+    @Test
      public void testGetDomainsConfigurationsBug716() {
 
          DomainDAO ddao = DomainDAO.getInstance();

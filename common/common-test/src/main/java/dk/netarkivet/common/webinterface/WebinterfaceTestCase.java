@@ -52,7 +52,6 @@ import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.el.ExpressionEvaluator;
 import javax.servlet.jsp.el.VariableResolver;
 
-import junit.framework.TestCase;
 import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.TestFileUtils;
@@ -67,15 +66,10 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
  */
 @SuppressWarnings({ "rawtypes", "deprecation" })
 
-public class WebinterfaceTestCase extends TestCase {
+public class WebinterfaceTestCase {
     ReloadSettings rs = new ReloadSettings();
 
-    public WebinterfaceTestCase(String s) {
-        super(s);
-    }
-
     public void setUp() throws Exception {
-        super.setUp();
         rs.setUp();
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR,
                 TestInfo.WORKING_DIR);
@@ -84,7 +78,6 @@ public class WebinterfaceTestCase extends TestCase {
     public void tearDown() throws Exception {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         rs.tearDown();
-        super.tearDown();
     }
 
 
