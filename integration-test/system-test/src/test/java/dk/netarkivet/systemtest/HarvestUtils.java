@@ -25,11 +25,11 @@ package dk.netarkivet.systemtest;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.jaccept.TestEventManager;
+import org.openqa.selenium.By;
 import dk.netarkivet.systemtest.page.DomainConfigurationPageHelper;
 import dk.netarkivet.systemtest.page.PageHelper;
 import dk.netarkivet.systemtest.page.SelectiveHarvestPageHelper;
-import org.jaccept.TestEventManager;
-import org.openqa.selenium.By;
 
 public class HarvestUtils {
     public static String DEFAULT_DOMAIN = "pligtaflevering.dk";
@@ -78,25 +78,27 @@ public class HarvestUtils {
         long starttime = System.currentTimeMillis();
         TestEventManager.getInstance().addResult("Waiting for the following harvests to finish: " + unfinishedHarvests);
         int minutesWaitingForHarvest = 0;
+        int maxMinutesToWaitForAllHarvests = unfinishedHarvests.size() * MAX_MINUTES_TO_WAIT_FOR_HARVEST;
+        System.err.print("Initiating " + unfinishedHarvests.size() + " new harvests, so " + count + " finished " +
+                "harvests are available. Will timeout after " + maxMinutesToWaitForAllHarvests + " minutes.\n");
         while (!unfinishedHarvests.isEmpty()) {
-            System.out.print(".");
+            System.err.print(".");
             PageHelper.reloadSubPage(
                     "History/Harveststatus-perdomain.jsp?domainName=" + DEFAULT_DOMAIN);
             for (String harvest:unfinishedHarvests.toArray(new String [unfinishedHarvests.size()])) {
                 if (PageHelper.getWebDriver().getPageSource().contains(harvest)) {
-                    System.out.println(harvest + " finished");
+                    System.err.println("\n" + harvest + " finished");
                     unfinishedHarvests.remove(harvest);
                 }
             }
             try { Thread.sleep(60000); } catch (InterruptedException e) {}
-            if (++minutesWaitingForHarvest > MAX_MINUTES_TO_WAIT_FOR_HARVEST) {
+            if (++minutesWaitingForHarvest > maxMinutesToWaitForAllHarvests) {
                 throw new RuntimeException("The harvests " + unfinishedHarvests + " took to long (more that " +
                         MAX_MINUTES_TO_WAIT_FOR_HARVEST + ") to finish, " + "aborting");
             }
         }
-        System.out.println("All harvests finished in " + (System.currentTimeMillis() - starttime)/1000 +" seconds");
+        System.err.println("All harvests finished in " + (System.currentTimeMillis() - starttime)/1000 +" seconds");
     }
-
 
     public static void minimizeDefaultHarvest() {
         DomainConfigurationPageHelper.gotoDefaultConfigurationPage(DEFAULT_DOMAIN);
