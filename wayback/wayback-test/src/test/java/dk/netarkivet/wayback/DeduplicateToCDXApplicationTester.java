@@ -23,13 +23,17 @@
 
 package dk.netarkivet.wayback;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.TestFileUtils;
@@ -39,13 +43,14 @@ import dk.netarkivet.testutils.TestFileUtils;
  *
  */
 
-public class DeduplicateToCDXApplicationTester extends TestCase {
+public class DeduplicateToCDXApplicationTester {
 
     PrintStream orig_std_out;
     OutputStream new_std_out;
     PrintStream orig_std_err;
     OutputStream new_std_err;
 
+    @Before
     public void setUp() {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
@@ -57,7 +62,7 @@ public class DeduplicateToCDXApplicationTester extends TestCase {
         System.setOut(new PrintStream(new_std_out));
     }
 
-
+    @After
     public void tearDown() {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         FileUtils.remove(TestInfo.LOG_FILE);
@@ -65,6 +70,7 @@ public class DeduplicateToCDXApplicationTester extends TestCase {
         System.setOut(orig_std_err);
     }
 
+    @Test
     public void testGenerateCDX() throws IOException {
         File file1 = new File(TestInfo.WORKING_DIR, "dedup_crawl_log.txt");
         File file2 = new File(TestInfo.WORKING_DIR, "dedup_crawl_log2.txt");
@@ -77,5 +83,4 @@ public class DeduplicateToCDXApplicationTester extends TestCase {
         assertTrue("Expect plenty of cdx results, not '" + output + "'",
                    output.split("\n").length > 20);
     }
-
 }

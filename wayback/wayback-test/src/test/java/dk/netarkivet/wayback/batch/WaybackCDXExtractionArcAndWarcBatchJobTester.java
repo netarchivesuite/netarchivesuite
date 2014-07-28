@@ -23,37 +23,41 @@
 
 package dk.netarkivet.wayback.batch;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.OutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.logging.LogManager;
 
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
 
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.arc.ARCBatchJob;
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 import dk.netarkivet.common.utils.warc.WARCBatchJob;
-import dk.netarkivet.common.utils.arc.ARCBatchJob;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.wayback.TestInfo;
-import dk.netarkivet.wayback.batch.WaybackCDXExtractionARCBatchJob;
-import dk.netarkivet.wayback.batch.WaybackCDXExtractionWARCBatchJob;
 
 
 /**
  * Unittests for the batchjob WaybackCDXExtractionARCBatchJob
  * and WaybackCDXExtractionWARCBatchJob.
  */
-public class WaybackCDXExtractionArcAndWarcBatchJobTester extends TestCase {
+public class WaybackCDXExtractionArcAndWarcBatchJobTester {
 
     private BatchLocalFiles blaf;
     private BatchLocalFiles blafWarc;
      
 
+    @Before
     public void setUp() throws Exception {
-        super.setUp();
         File file = new File(
                 "tests/dk/netarkivet/wayback/data/originals/arcfile_withredirects.arc");
         File warcfile = new File(
@@ -69,6 +73,7 @@ public class WaybackCDXExtractionArcAndWarcBatchJobTester extends TestCase {
         fis.close();
     }
 
+    @Test
     public void testARCProcess() throws IOException {
         ARCBatchJob job = new WaybackCDXExtractionARCBatchJob();
         OutputStream os = new ByteArrayOutputStream();
@@ -105,9 +110,8 @@ public class WaybackCDXExtractionArcAndWarcBatchJobTester extends TestCase {
             assertEquals(msg, -1, index);
         }
     }
-
     
-    
+    @Test
     public void testWARCProcess() throws IOException {
         WARCBatchJob job = new WaybackCDXExtractionWARCBatchJob();
         OutputStream os = new ByteArrayOutputStream();

@@ -22,21 +22,23 @@
  */
 package dk.netarkivet.wayback;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.archive.wayback.UrlCanonicalizer;
 import org.archive.wayback.util.url.IdentityUrlCanonicalizer;
+import org.junit.Test;
 
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.wayback.batch.copycode.NetarchiveSuiteAggressiveUrlCanonicalizer;
 import dk.netarkivet.wayback.batch.UrlCanonicalizerFactory;
+import dk.netarkivet.wayback.batch.copycode.NetarchiveSuiteAggressiveUrlCanonicalizer;
 
 /**
  *
  */
 @SuppressWarnings({ "deprecation"})
-public class UrlCanonicalizerFactoryTester extends TestCase {
+public class UrlCanonicalizerFactoryTester {
 
+    @Test
     public void testGetDefaultUrlCanonicalizer() {
         UrlCanonicalizer uc1 = UrlCanonicalizerFactory.getDefaultUrlCanonicalizer();
         assertEquals("Expect default to return and instance of "
