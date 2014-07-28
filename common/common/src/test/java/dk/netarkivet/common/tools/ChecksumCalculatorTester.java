@@ -22,28 +22,26 @@
  */
 package dk.netarkivet.common.tools;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayInputStream;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
+import org.junit.Test;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.ChecksumCalculator;
 
-public class ChecksumCalculatorTester extends TestCase {
+public class ChecksumCalculatorTester {
 
-    public void setUp() {
-    }
-
-    public void tearDown() {
-    }
-
+    @Test
     public void testChecksumCalculator() {
         MessageDigest md;
-        //ByteArrayInputStream instream;
+        // ByteArrayInputStream instream;
         String expectedChecksum;
         String checksum;
 
@@ -56,15 +54,15 @@ public class ChecksumCalculatorTester extends TestCase {
             md.update(payload);
             expectedChecksum = convertToHex(md.digest(), md.getDigestLength());
             checksum = ChecksumCalculator.calculateMd5(new ByteArrayInputStream(payload));
-            Assert.assertEquals(expectedChecksum, checksum);
+            assertEquals(expectedChecksum, checksum);
 
             md = MessageDigest.getInstance("SHA1");
             md.update(payload);
             expectedChecksum = convertToHex(md.digest(), md.getDigestLength());
             checksum = ChecksumCalculator.calculateSha1(new ByteArrayInputStream(payload));
-            Assert.assertEquals(expectedChecksum, checksum);
+            assertEquals(expectedChecksum, checksum);
         } catch (NoSuchAlgorithmException e) {
-            Assert.fail("Digest error!");
+            fail("Digest error!");
         }
     }
 
@@ -74,8 +72,10 @@ public class ChecksumCalculatorTester extends TestCase {
     /**
      * Convert a buffer of bytes to a hexadecimal string.
      * 
-     * @param data The data to convert to hex
-     * @param digestLength Assumed digestLength
+     * @param data
+     *            The data to convert to hex
+     * @param digestLength
+     *            Assumed digestLength
      * @return The hexadecimal representation of the given data.
      */
     private static String convertToHex(final byte[] data, int digestLength) {
@@ -89,9 +89,8 @@ public class ChecksumCalculatorTester extends TestCase {
             buf.append('0');
         }
         buf.append(digest);
-        ArgumentNotValid.checkTrue(digestLength == buf.length(), 
-                "The digestLength '" + digestLength + "' should be equal to buf.length '"
-                + buf.length() + "'.");
+        ArgumentNotValid.checkTrue(digestLength == buf.length(), "The digestLength '" + digestLength
+                + "' should be equal to buf.length '" + buf.length() + "'.");
         return buf.toString();
     }
 

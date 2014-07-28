@@ -178,6 +178,7 @@ public class GUIWebServer implements CleanupIF {
             log.info("Deleted existing tempdir '" + tmpdir.getAbsolutePath()
                     + "'");
         }
+        tmpdir.mkdirs(); // ensure it exists
         webApplication.setTempDirectory(tmpdir);
         server.addHandler(webApplication);
         log.info("The web application '" + webapp + "' is now deployed at '"

@@ -22,18 +22,29 @@
  */
 package dk.netarkivet.common.distribute;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
 import java.util.Date;
 
 import javax.jms.Message;
 import javax.jms.MessageListener;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
-import junit.framework.TestCase;
+
 
 @SuppressWarnings({ "serial"})
-public class SynchronizerTester extends TestCase {
+public class SynchronizerTester {
     private static final ChannelID toQ = Channels.getAnyBa();
     private static final ChannelID replyToQ = Channels.getError();
     private JMSConnection con;
@@ -43,6 +54,7 @@ public class SynchronizerTester extends TestCase {
 
     ReloadSettings rs = new ReloadSettings();
 
+    @Before
     public void setUp() throws IOException {
         rs.setUp();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
@@ -50,6 +62,7 @@ public class SynchronizerTester extends TestCase {
         con = JMSConnectionFactory.getInstance();
     }
 
+    @After
     public void tearDown() {
         rs.tearDown();
     }
@@ -58,6 +71,7 @@ public class SynchronizerTester extends TestCase {
     /**
      * Verify that sendAndWaitForOneReply() fails when given null first input.
      */
+    @Test
     public void testSendAndWaitForOneReplyNull() {
         Synchronizer sync = new Synchronizer();
         try {
@@ -72,6 +86,7 @@ public class SynchronizerTester extends TestCase {
      * Tests that everything works if the correct parameters are submitted to
      * the Synchronizer.
      */
+    @Test
     public void testNormalBehaviour() {
         NetarkivetMessage msg = new TestMessage(toQ, replyToQ);
         Synchronizer sync = new Synchronizer();
@@ -112,6 +127,7 @@ public class SynchronizerTester extends TestCase {
      * Tests that the synchronizer doesn't trigger if it gets a wrong message
      * as a reply.
      */
+    @Test
     public void testWrongReplyToRequest() {
         NetarkivetMessage msg = new TestMessage(toQ, replyToQ);
         NetarkivetMessage msgOther = new TestMessage(replyToQ, toQ);
@@ -156,6 +172,7 @@ public class SynchronizerTester extends TestCase {
      * Tests that sendAndWaitForOneReply isn't triggered if message with wrong
      * replyOfId is received by onMessage.
      */
+    @Test
     public void testOnMessageBehaviourOnWrongReplyID() {
         NetarkivetMessage msg = new TestMessage(toQ, replyToQ, "UNKNOWN_ID");
         Synchronizer sync = new Synchronizer();
@@ -191,6 +208,7 @@ public class SynchronizerTester extends TestCase {
      * Tests that sendAndWaitForOneReply is triggered if message with correct
      * replyOfId is received by onMessage.
      */
+    @Test
     public void testOnMessageBehaviourOnCorrectReplyID() {
         NetarkivetMessage msg = new TestMessage(toQ, replyToQ);
         Synchronizer sync = new Synchronizer();
@@ -240,8 +258,9 @@ public class SynchronizerTester extends TestCase {
      * available.
      *
      * DISABLED 20140528 as it failed intermittently.  
-     * FIXME: https://sbforge.org/jira/browse/NAS-2320
      */
+    @Test
+    @Ignore("FIXME: https://sbforge.org/jira/browse/NAS-2320")
     public void DISABLED_20140528_testWakingOnWrongNotify() {
         final NetarkivetMessage msg = new TestMessage(toQ, replyToQ) {
             int queries;
@@ -319,6 +338,8 @@ public class SynchronizerTester extends TestCase {
      * Tests that a timed-out synchronizer returns null.
      * Disabled, fails occasionally in Jenkins.
      */
+    @Test
+    @Ignore("fails occasionally in Jenkins")
     public void failingFestTimeout() throws Exception {
         NetarkivetMessage msg = new TestMessage(toQ, replyToQ);
         Synchronizer sync = new Synchronizer();

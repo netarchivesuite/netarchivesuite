@@ -22,24 +22,19 @@
  */
 package dk.netarkivet.common.utils;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.BitSet;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 import dk.netarkivet.testutils.StringAsserts;
 
+public class SparseBitSetTester {
 
-public class SparseBitSetTester extends TestCase {
-    public SparseBitSetTester(String s) {
-        super(s);
-    }
-
-    public void setUp() {
-    }
-
-    public void tearDown() {
-    }
-
+    @Test
     public void testFlip() throws Exception {
         BitSet bs = new SparseBitSet();
         bs.set(5);
@@ -53,7 +48,6 @@ public class SparseBitSetTester extends TestCase {
         bs.flip(5);
         assertTrue("Bit 5 should be set", bs.get(6));
 
-
         bs.flip(4, 10);
         assertFalse("Bit 3 should not be set", bs.get(3));
         assertTrue("Bit 4 should be set", bs.get(4));
@@ -65,6 +59,7 @@ public class SparseBitSetTester extends TestCase {
         assertFalse("Bit 10 should not be set", bs.get(10));
     }
 
+    @Test
     public void testSet() throws Exception {
         BitSet bs = new SparseBitSet();
         bs.set(5);
@@ -95,6 +90,7 @@ public class SparseBitSetTester extends TestCase {
         assertTrue("Bit 7 should be set", bs.get(8));
     }
 
+    @Test
     public void testClear() throws Exception {
         BitSet bs = new SparseBitSet();
         bs.set(2, 8);
@@ -116,7 +112,7 @@ public class SparseBitSetTester extends TestCase {
         assertEquals(0, bs.cardinality());
     }
 
-
+    @Test
     public void testGet() throws Exception {
         BitSet bs = new SparseBitSet();
         bs.set(10);
@@ -139,6 +135,7 @@ public class SparseBitSetTester extends TestCase {
         assertFalse(bs2.get(8));
     }
 
+    @Test
     public void testNextSetBit() throws Exception {
         BitSet bs = new SparseBitSet();
         bs.set(10);
@@ -154,6 +151,7 @@ public class SparseBitSetTester extends TestCase {
         assertEquals(-1, bs.nextSetBit(13));
     }
 
+    @Test
     public void testNextClearBit() throws Exception {
         BitSet bs = new SparseBitSet();
         bs.set(10);
@@ -172,6 +170,7 @@ public class SparseBitSetTester extends TestCase {
 
     }
 
+    @Test
     public void testLength() throws Exception {
         BitSet bs = new SparseBitSet();
         assertEquals(0, bs.length());
@@ -183,6 +182,7 @@ public class SparseBitSetTester extends TestCase {
         assertEquals(11, bs.length());
     }
 
+    @Test
     public void testIsEmpty() throws Exception {
         BitSet bs = new SparseBitSet();
         assertTrue(bs.isEmpty());
@@ -196,6 +196,7 @@ public class SparseBitSetTester extends TestCase {
         assertTrue(bs.isEmpty());
     }
 
+    @Test
     public void testIntersects() throws Exception {
         BitSet bs1 = new SparseBitSet();
         BitSet bs2 = new SparseBitSet();
@@ -215,6 +216,7 @@ public class SparseBitSetTester extends TestCase {
         assertFalse(bs2.intersects(bs1));
     }
 
+    @Test
     public void testCardinality() throws Exception {
         BitSet bs = new SparseBitSet();
         assertEquals(0, bs.cardinality());
@@ -226,6 +228,7 @@ public class SparseBitSetTester extends TestCase {
         assertEquals(6, bs.cardinality());
     }
 
+    @Test
     public void testAnd() throws Exception {
         BitSet bs1 = new SparseBitSet();
         BitSet bs2 = new SparseBitSet();
@@ -242,6 +245,7 @@ public class SparseBitSetTester extends TestCase {
         assertTrue(bs1.get(6));
     }
 
+    @Test
     public void testOr() throws Exception {
         BitSet bs1 = new SparseBitSet();
         BitSet bs2 = new SparseBitSet();
@@ -264,6 +268,7 @@ public class SparseBitSetTester extends TestCase {
         assertTrue(bs1.get(11));
     }
 
+    @Test
     public void testXor() throws Exception {
         BitSet bs1 = new SparseBitSet();
         BitSet bs2 = new SparseBitSet();
@@ -283,6 +288,7 @@ public class SparseBitSetTester extends TestCase {
         assertTrue(bs1.get(11));
     }
 
+    @Test
     public void testAndNot() throws Exception {
         BitSet bs1 = new SparseBitSet();
         BitSet bs2 = new SparseBitSet();
@@ -298,6 +304,7 @@ public class SparseBitSetTester extends TestCase {
         assertTrue(bs1.get(4));
     }
 
+    @Test
     public void testHashCode() throws Exception {
         BitSet bs1 = new SparseBitSet();
         BitSet bs2 = new SparseBitSet();
@@ -309,6 +316,7 @@ public class SparseBitSetTester extends TestCase {
         assertEquals(bs1.hashCode(), bs2.hashCode());
     }
 
+    @Test
     public void testEquals() throws Exception {
         BitSet bs1 = new SparseBitSet();
         BitSet bs2 = new SparseBitSet();
@@ -320,6 +328,7 @@ public class SparseBitSetTester extends TestCase {
         assertEquals(bs1, bs2);
     }
 
+    @Test
     public void testClone() throws Exception {
         BitSet bs1 = new SparseBitSet();
         bs1.set(3, 5);
@@ -331,16 +340,16 @@ public class SparseBitSetTester extends TestCase {
         assertFalse(bs1.get(10));
     }
 
+    @Test
     public void testToString() throws Exception {
         BitSet bs = new SparseBitSet();
         bs.set(54);
         bs.set(42);
-        StringAsserts.assertStringContains("Should contain the indices of "
-                                           + "set bits", "42", bs.toString());
-        StringAsserts.assertStringContains("Should contain the indices of "
-                                           + "set bits", "54", bs.toString());
+        StringAsserts.assertStringContains("Should contain the indices of " + "set bits", "42", bs.toString());
+        StringAsserts.assertStringContains("Should contain the indices of " + "set bits", "54", bs.toString());
     }
 
+    @Test
     public void testSize() throws Exception {
         BitSet bs = new SparseBitSet();
         assertTrue(0 <= bs.size());

@@ -22,6 +22,11 @@
  */
 package dk.netarkivet.common.utils.arc;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -34,18 +39,20 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.archive.io.arc.ARCRecord;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.batch.ARCBatchFilter;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.testutils.TestFileUtils;
-
 /**
  * Unit tests for the class ARCBatchJob.
  */
 @SuppressWarnings({ "serial"})
-public class ARCBatchJobTester extends TestCase {
+public class ARCBatchJobTester {
     //Reference to test files:
     private static final File ARC_DIR = new File(
             "tests/dk/netarkivet/common/utils/arc/data/working/");
@@ -87,23 +94,19 @@ public class ARCBatchJobTester extends TestCase {
     /**
      * @see TestCase#setUp()
      */
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         FileUtils.removeRecursively(ARC_DIR);
         TestFileUtils.copyDirectoryNonCVS(ORIGINALS, ARC_DIR);
         processed = 0;
         //testFile = new File(ARC_DIR + ARC_FILE_NAME);
         //arcgzFile = new File(ARC_DIR + ARC_GZ_FILE_NAME);
     }
-    /**
-     * @see TestCase#tearDown()
-     */
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
+
     /**
     * Tests ordinary, non-failing execution of a batch job.
     */
+    @Test
     public void testOrdinaryRun() {
         TestARCBatchJob job = new TestARCBatchJob();
         job.processFile(ARC_FILE, new ByteArrayOutputStream());
@@ -118,6 +121,7 @@ public class ARCBatchJobTester extends TestCase {
     /**
      * Verify that the given ShareableARCRecord contains the right record.
      */
+    @Test
     public void testContent() {
         TestARCBatchJob job = new TestARCBatchJob();
         job.processFile(ARC_FILE, new ByteArrayOutputStream());
@@ -129,6 +133,7 @@ public class ARCBatchJobTester extends TestCase {
      * Verifies that thrown Exceptions in process get collected
      * TODO Check more error conditions -- the exception handling is tricky!
      */
+    @Test
     public void testOneJob_ExceptionInProcess() {
         ARCBatchJob job = new TestARCBatchJob() {
                 public void processRecord(ARCRecord record, OutputStream os) {
@@ -159,6 +164,7 @@ public class ARCBatchJobTester extends TestCase {
     /**
      * Verifies that all possible filters are respected.
      */
+    @Test
     public void testFiltering() {
         /* We do not need to verify that BatchFilter.NO_FILTER is respected,
         * as this is done in testBatchARCFiles().
@@ -176,6 +182,8 @@ public class ARCBatchJobTester extends TestCase {
         assertEquals("Filtered batch should not throw any exceptions",
                 0, es.length);
     }
+
+    @Test
     public void testSequentialRuns() {
         testOrdinaryRun();
         processed = 0;
@@ -185,6 +193,7 @@ public class ARCBatchJobTester extends TestCase {
      * Verify that ARCBatchJob objects can be serialized and deserialized
      * without harm.
      */
+    @Test
     public void testSerializability() {
         //Take two jobs: one for study and one for reference.
         SerializableARCBatchJob job1 = new SerializableARCBatchJob();
@@ -246,6 +255,8 @@ public class ARCBatchJobTester extends TestCase {
      * Verify that we can also process arc.gz files.
      * FIXME Broken by http://sbforge.org/jira/browse/NAS-1918
      */
+    @Test
+    @Ignore("http://sbforge.org/jira/browse/NAS-1918")
     public void failstestProcessCompressedFile() {
         TestARCBatchJob job = new TestARCBatchJob();
         job.processFile(ARC_GZ_FILE, new ByteArrayOutputStream());
@@ -261,6 +272,7 @@ public class ARCBatchJobTester extends TestCase {
     /**
      *  Test failure mode when file does not exist.
      */
+    @Test
     public void testNonExistentFile() {
         TestARCBatchJob job = new TestARCBatchJob();
         boolean success =
