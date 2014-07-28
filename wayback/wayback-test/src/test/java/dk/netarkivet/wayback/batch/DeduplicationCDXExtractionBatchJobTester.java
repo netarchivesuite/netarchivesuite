@@ -23,24 +23,29 @@
 
 package dk.netarkivet.wayback.batch;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 
-import junit.framework.TestCase;
 import org.archive.wayback.core.CaptureSearchResult;
 import org.archive.wayback.resourceindex.cdx.CDXLineToSearchResultAdapter;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.wayback.TestInfo;
-import dk.netarkivet.wayback.batch.DeduplicationCDXExtractionBatchJob;
 
 /**
  * Tests of the DeduplicationCDXExtractionBatchJob.
  */
-public class DeduplicationCDXExtractionBatchJobTester extends TestCase {
+public class DeduplicationCDXExtractionBatchJobTester {
 
     public static final String METADATA_FILENAME = "duplicate.metadata.arc";
     /** The two next files doesn't exist, therefore renamed from REAL to UNREAL */
@@ -48,21 +53,25 @@ public class DeduplicationCDXExtractionBatchJobTester extends TestCase {
     public static final String METADATA_FILENAME_UNREAL_2 = "124399-metadata-1.arc";
     public static final String METADATA_FILENAME_REAL_1 = "1-metadata-1.warc";
 
+    @Before
     public void setUp() {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
     }
 
+    @After
     public void tearDown() {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         FileUtils.remove(TestInfo.LOG_FILE);
     }
 
+    @Test
     public void testInitialize() {
         DeduplicationCDXExtractionBatchJob job = new DeduplicationCDXExtractionBatchJob();
         job.initialize(new ByteArrayOutputStream());
     }
 
+    @Test
     public void testJob() throws IOException {
         File testFile = new File(TestInfo.WORKING_DIR, METADATA_FILENAME);
         assertTrue("file should exist", testFile.isFile());
@@ -81,6 +90,7 @@ public class DeduplicationCDXExtractionBatchJobTester extends TestCase {
         }
     }
 
+    @Test
     public void testJobRealOne() throws IOException {
         DeduplicationCDXExtractionBatchJob job = new DeduplicationCDXExtractionBatchJob();
         File arcFile =  new File(TestInfo.WORKING_DIR, METADATA_FILENAME_UNREAL_1);
@@ -93,6 +103,8 @@ public class DeduplicationCDXExtractionBatchJobTester extends TestCase {
         assertTrue(exceptions.length == 1);
         //System.out.println("exception " + exceptions[0]);   
     }
+
+    @Test
     public void testJobRealTwo() throws IOException {
         DeduplicationCDXExtractionBatchJob job2 = new DeduplicationCDXExtractionBatchJob();
         File arcFile2 =  new File(TestInfo.WORKING_DIR, METADATA_FILENAME_UNREAL_2);
@@ -107,6 +119,7 @@ public class DeduplicationCDXExtractionBatchJobTester extends TestCase {
         //System.out.println("exception " + exceptions[0]);   
     }
     
+    @Test
     public void testJobRealWarc() throws IOException {
         DeduplicationCDXExtractionBatchJob job3 = new DeduplicationCDXExtractionBatchJob();
         File warcFile =  new File(TestInfo.WORKING_DIR, METADATA_FILENAME_REAL_1);

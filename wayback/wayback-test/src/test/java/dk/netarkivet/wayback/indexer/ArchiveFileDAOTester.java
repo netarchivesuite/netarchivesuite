@@ -22,22 +22,28 @@
  */
 package dk.netarkivet.wayback.indexer;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-public class ArchiveFileDAOTester extends TestCase {
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-    @Override
+
+public class ArchiveFileDAOTester {
+
+    @Before
     protected void setUp() throws Exception {
-        super.setUp();
         HibernateUtil.getSession().getSessionFactory().close();
     }
 
-    @Override
+    @After
     protected void tearDown() throws Exception {
-        super.tearDown();
         HibernateUtil.getSession().getSessionFactory().close();
     }
 
+    @Test
     public void testCreateAndRead() {
         ArchiveFile file1 = new ArchiveFile();
         file1.setFilename("foobar");
@@ -51,6 +57,7 @@ public class ArchiveFileDAOTester extends TestCase {
                      file2.isIndexed());
     }
     
+    @Test
     public void testExists() {
         ArchiveFile file1 = new ArchiveFile();
         file1.setFilename("foobar");
@@ -62,6 +69,7 @@ public class ArchiveFileDAOTester extends TestCase {
         assertTrue(id != null && !id.isEmpty());
     }
 
+    @Test
     public void testNotIndexed() {
         ArchiveFile file1 = new ArchiveFile();
         file1.setFilename("foobar");

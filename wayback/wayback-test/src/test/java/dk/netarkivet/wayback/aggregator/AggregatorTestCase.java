@@ -22,20 +22,24 @@
  */
 package dk.netarkivet.wayback.aggregator;
 
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.logging.LogManager;
 
+import org.junit.After;
+import org.junit.Before;
+
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.wayback.TestInfo;
 import dk.netarkivet.wayback.WaybackSettings;
-import junit.framework.TestCase;
 
 @SuppressWarnings({ "unused"})
 
-public class AggregatorTestCase extends TestCase {
+public class AggregatorTestCase {
     protected static final String testWorkingDirectory = "target"+File.separator+"test-data"+File.separator;
 
     protected static final String testSourceIndexDir = TestInfo.DATA_DIR+ File.separator+"raw-index-files"+File.separator;
@@ -56,10 +60,8 @@ public class AggregatorTestCase extends TestCase {
     private static final File TESTLOGPROP = new File("tests/dk/netarkivet/testlog.prop");
     private static final File LOGFILE = new File("tests/testlogs/netarkivtest.log");
 
-
-    @Override
+    @Before
     public void setUp() throws Exception {
-        super.setUp();
 
         try {
             LogManager.getLogManager().readConfiguration(new FileInputStream(TESTLOGPROP));
@@ -81,10 +83,9 @@ public class AggregatorTestCase extends TestCase {
         new File(outputDirName).mkdirs();
     }
 
-    @Override
+    @After
     public void tearDown() throws Exception {
         originalSettings.tearDown();
-        super.tearDown();
     }
 
     /**
@@ -104,11 +105,5 @@ public class AggregatorTestCase extends TestCase {
         }
         return inputFiles;
     }
-    
-    public void testNothing() {
-        assertTrue("This is here to stop junit complaining that there are no "
-                   + "tests in this class", true);
-    }
-
 
 }
