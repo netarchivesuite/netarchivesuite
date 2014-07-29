@@ -71,6 +71,7 @@
   </dependencies>
 
   <build>
+<!--     <testSourceDirectory>XX</testSourceDirectory> -->
     <testResources>
       <testResource>
         <directory>tests</directory>

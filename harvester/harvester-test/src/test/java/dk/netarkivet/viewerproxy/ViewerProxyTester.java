@@ -30,13 +30,12 @@ import java.util.EnumMap;
 import org.junit.Before;
 import org.junit.After;
 import org.junit.Test;
-
 import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 
 import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.distribute.ChannelsTester;
+import dk.netarkivet.common.distribute.ChannelsTesterHelper;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.distribute.indexserver.RequestType;
@@ -66,7 +65,7 @@ public class ViewerProxyTester {
     public void setUp() throws Exception {
         rs.setUp();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
-        ChannelsTester.resetChannels();
+        ChannelsTesterHelper.resetChannels();
         Settings.set(CommonSettings.REMOTE_FILE_CLASS,
                      "dk.netarkivet.common.distribute.TestRemoteFile");
 

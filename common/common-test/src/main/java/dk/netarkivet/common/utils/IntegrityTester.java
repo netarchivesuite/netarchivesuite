@@ -23,6 +23,8 @@
 
 package dk.netarkivet.common.utils;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -34,8 +36,8 @@ import java.io.OutputStream;
 import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.io.IOUtils;
-
-import junit.framework.TestCase;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
@@ -49,7 +51,8 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 /**
  * Integrity tests for the package dk.netarkivet.common.utils.
  */
-public class IntegrityTester extends TestCase {
+@Ignore("Needs to be run in deploy-test module according to junit 3 test suite")
+public class IntegrityTester {
     ReloadSettings rs = new ReloadSettings();
     private static final File BASE_DIR = new File("tests/dk/netarkivet/common/utils");
     private static final File ORIGINALS = new File(BASE_DIR, "fileutils_data");
@@ -60,6 +63,7 @@ public class IntegrityTester extends TestCase {
     private static final int BLOCKSIZE = 32768;
     private static final long LARGE =((long) Integer.MAX_VALUE) + 1L;
     public static final String LARGE_FILE = "largeFile";
+
 
     public void setUp() {
         rs.setUp();
@@ -78,6 +82,7 @@ public class IntegrityTester extends TestCase {
      * test that FileUtils.append can append between two remote files
      * using ftp.
      */
+    @Test
     public void failingTestAppendRemoteFiles() throws IOException {
         Settings.set(CommonSettings.REMOTE_FILE_CLASS, FTPRemoteFile.class.getName());
         File in_1 = new File(WORKING, "append_data/file1");
@@ -96,6 +101,7 @@ public class IntegrityTester extends TestCase {
     }
 
     /** Test that files larger than 2GB can be copied! */
+    @Test
     public void failingTestCopyLargeFiles() throws IOException {
         byte[] block = new byte[BLOCKSIZE];
         SUBDIR.mkdirs();
@@ -123,6 +129,7 @@ public class IntegrityTester extends TestCase {
      *
      * @throws IOException
      */
+    @Test
     public void failingTestGzipLargeFile() throws IOException {
         byte[] block = new byte[BLOCKSIZE];
         File largeFile = new File(WORKING, LARGE_FILE);
@@ -161,6 +168,7 @@ public class IntegrityTester extends TestCase {
     }
 
     /** Test that files larger than 2GB can be gzipped and gunzipped! */
+    @Test
     public void failingTestGZipGUnZipLargeFiles() throws IOException {
         byte[] block = new byte[BLOCKSIZE];
         SUBDIR.mkdirs();
@@ -189,6 +197,7 @@ public class IntegrityTester extends TestCase {
      * fail with wrong CRC checksum.
      * @throws IOException
      */
+    @Test
     public void failingTestLargeGZIPReadLargeFiles() throws IOException {
         LargeFileGZIPInputStream largeFileGZIPInputStream
                 = new LargeFileGZIPInputStream(new FileInputStream(

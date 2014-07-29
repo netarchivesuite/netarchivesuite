@@ -30,14 +30,14 @@ import java.io.ObjectOutputStream;
 import java.sql.SQLException;
 
 import static org.junit.Assert.*;
+
 import org.junit.Before;
 import org.junit.After;
 import org.junit.Test;
 
-
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.ChannelsTester;
+import dk.netarkivet.common.distribute.ChannelsTesterHelper;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.harvester.datamodel.Job;
@@ -62,14 +62,14 @@ public class DoOneCrawlMessageTester {
         rs.setUp();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
-        ChannelsTester.resetChannels();
+        ChannelsTesterHelper.resetChannels();
     }
 
     @After
     public void tearDown()
             throws SQLException, IllegalAccessException, NoSuchFieldException {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
-        ChannelsTester.resetChannels();
+        ChannelsTesterHelper.resetChannels();
         rs.tearDown();
     }
 

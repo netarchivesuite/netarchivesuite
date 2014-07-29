@@ -22,6 +22,10 @@
  */
 package dk.netarkivet.archive.bitarchive.distribute;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -33,14 +37,11 @@ import java.util.List;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
+import org.apache.commons.net.ftp.FTPClient;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
-
-import org.apache.commons.net.ftp.FTPClient;
 
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.distribute.ArchiveMessageHandler;
@@ -68,6 +69,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
  * Test bitarchive client and server As a number of tests only succeed if both
  * the client and server both operate correctly, both are tested together.
  */
+@Ignore("Needs to be run in deploy-test module according to junit 3 test suite.")
 public class IntegrityTests {
     private static final String ARC_FILE_NAME = "Upload5.ARC";
     private static final File TEST_DIR = new File("tests/dk/netarkivet/archive/bitarchive/distribute/data/");

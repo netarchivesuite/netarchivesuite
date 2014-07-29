@@ -45,10 +45,6 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 public class ChannelsTester {
     ReloadSettings rs = new ReloadSettings();
 
-    public static void resetChannels() {
-        Channels.reset();
-    }
-
     @Before
     public void setUp() {
         rs.setUp();
@@ -56,7 +52,7 @@ public class ChannelsTester {
 
     @After
     public void tearDown() {
-        resetChannels();
+        ChannelsTesterHelper.resetChannels();
         rs.tearDown();
     }
 
@@ -74,7 +70,7 @@ public class ChannelsTester {
         Settings.set(CommonSettings.USE_REPLICA_ID, "TWO");
         assertEquals("Channel name must not change just because setting does", env + "_ONE_THE_BAMON", Channels
                 .getTheBamon().getName());
-        resetChannels();
+        ChannelsTesterHelper.resetChannels();
         assertEquals("Channel name should change after resetting channels", env + "_TWO_THE_BAMON", Channels
                 .getTheBamon().getName());
     }
@@ -87,14 +83,14 @@ public class ChannelsTester {
      */
     @Test
     public void testBadLocation() throws Exception {
-        resetChannels();
+        ChannelsTesterHelper.resetChannels();
         String env = Settings.get(CommonSettings.ENVIRONMENT_NAME);
         assertEquals("Channel must have default name before changing settings",
                 env + "_" + Settings.get(CommonSettings.USE_REPLICA_ID) + "_THE_BAMON", Channels.getTheBamon()
                         .getName());
         Settings.set(CommonSettings.USE_REPLICA_ID, "NOWHERE");
         try {
-            resetChannels();
+            ChannelsTesterHelper.resetChannels();
             Channels.getTheBamon();
             fail("Should fail when getting channel after setting bad location");
         } catch (UnknownID e) {
