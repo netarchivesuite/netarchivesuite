@@ -22,13 +22,21 @@
  */
 package dk.netarkivet.common.utils;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
 import org.dom4j.Document;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IllegalState;
@@ -39,40 +47,33 @@ import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 /**
  * Unit tests for the class XmlTree.
  */
-public class XmlTreeTester extends TestCase {
-    private MoveTestFiles mtf = new MoveTestFiles(TestInfo.DATADIR,
-                                                  TestInfo.TEMPDIR);
+public class XmlTreeTester {
+    private MoveTestFiles mtf = new MoveTestFiles(TestInfo.DATADIR, TestInfo.TEMPDIR);
 
-    public XmlTreeTester(String s) {
-        super(s);
-    }
-
+    @Before
     public void setUp() throws Exception {
-        super.setUp();
         mtf.setUp();
     }
 
+    @After
     public void tearDown() throws Exception {
         mtf.tearDown();
-        super.tearDown();
     }
 
+    @Test
     public void testGetStringTree() {
         StringTree<String> tree1 = getTree();
         assertNotNull("Should get non-null tree", tree1);
-        //<dk> 
-        //  <netarkivet> 
-        //    <test>
-        //      <list1>item1</list1>
-        //      <list1>item2</list1>
-        //      <list1>item3</list1>
-        //      <q> what is the question </q>
-        //    </test> ...
-        assertEquals("Should have node from backing XML",
-                     "what is the question",
-                     tree1.getSubTree("dk").getSubTrees("netarkivet")
-                             .get(0).getSubTree("test")
-                             .getSubTree("q").getValue());
+        // <dk>
+        // <netarkivet>
+        // <test>
+        // <list1>item1</list1>
+        // <list1>item2</list1>
+        // <list1>item3</list1>
+        // <q> what is the question </q>
+        // </test> ...
+        assertEquals("Should have node from backing XML", "what is the question",
+                tree1.getSubTree("dk").getSubTrees("netarkivet").get(0).getSubTree("test").getSubTree("q").getValue());
 
         try {
             XmlTree.getStringTree(null);
@@ -82,6 +83,7 @@ public class XmlTreeTester extends TestCase {
         }
     }
 
+    @Test
     public void testGetSubTree() {
         StringTree<String> tree1 = getTree();
 
@@ -92,12 +94,9 @@ public class XmlTreeTester extends TestCase {
 
         tree1 = getTree();
         // Test dotted paths
-        assertNotNull("Should have non-null dotted subtree",
-                      tree1.getSubTree("dk.heroes.hero"));
+        assertNotNull("Should have non-null dotted subtree", tree1.getSubTree("dk.heroes.hero"));
         // Test it can find the right way to the subtree
-        assertNotNull("Should have non-null dotted subtree",
-                      tree1.getSubTree("dk.netarkivet.test"));
-
+        assertNotNull("Should have non-null dotted subtree", tree1.getSubTree("dk.netarkivet.test"));
 
         tree1 = tree1.getSubTree("dk");
         try {
@@ -114,12 +113,11 @@ public class XmlTreeTester extends TestCase {
         }
     }
 
+    @Test
     public void testGetValue() {
         StringTree<String> tree1 = getTree();
-        tree1 = tree1.getSubTree("dk").getSubTrees("netarkivet").get(0)
-                .getSubTree("answer");
-        assertEquals("Should have value in leaf node",
-                     "42", tree1.getValue());
+        tree1 = tree1.getSubTree("dk").getSubTrees("netarkivet").get(0).getSubTree("answer");
+        assertEquals("Should have value in leaf node", "42", tree1.getValue());
 
         tree1 = getTree();
         try {
@@ -145,8 +143,7 @@ public class XmlTreeTester extends TestCase {
         }
 
         // Test dotted paths
-        assertEquals("Should get value in unique leaf node",
-                     "Batman", tree1.getValue("dk.heroes.hero"));
+        assertEquals("Should get value in unique leaf node", "Batman", tree1.getValue("dk.heroes.hero"));
 
         try {
             tree1.getValue("dk.netarkivet.answer");
@@ -172,8 +169,7 @@ public class XmlTreeTester extends TestCase {
         tree1 = tree1.getSubTree("dk");
 
         tree1 = tree1.getSubTrees("netarkivet").get(0);
-        assertEquals("Should be possible to get value of subnode",
-                     "42", tree1.getValue("answer"));
+        assertEquals("Should be possible to get value of subnode", "42", tree1.getValue("answer"));
         try {
             tree1.getValue("test");
             fail("Should die when the named node is not a leaf");
@@ -193,7 +189,6 @@ public class XmlTreeTester extends TestCase {
             // Expected
         }
 
-
     }
 
     /** Get the default tree from the test.xml file */
@@ -203,95 +198,70 @@ public class XmlTreeTester extends TestCase {
         return tree1;
     }
 
+    @Test
     public void testIsLeaf() {
         StringTree<String> tree1 = getTree();
-        tree1 = tree1.getSubTree("dk").getSubTrees("netarkivet").get(0)
-                .getSubTree("answer");
-        assertTrue("Should have true on leaf node",
-                   tree1.isLeaf());
+        tree1 = tree1.getSubTree("dk").getSubTrees("netarkivet").get(0).getSubTree("answer");
+        assertTrue("Should have true on leaf node", tree1.isLeaf());
 
         tree1 = getTree();
-        assertFalse("Should have false on root node",
-                    tree1.isLeaf());
-        assertFalse("Should have false on non-leaf node",
-                    tree1.getSubTree("dk").isLeaf());
+        assertFalse("Should have false on root node", tree1.isLeaf());
+        assertFalse("Should have false on non-leaf node", tree1.getSubTree("dk").isLeaf());
     }
 
+    @Test
     public void testGetSubTrees() {
         StringTree<String> tree1 = getTree();
         List<StringTree<String>> rootTrees = tree1.getSubTrees("dk");
-        assertEquals("Should get subtrees on root",
-                     1, rootTrees.size());
-        List<StringTree<String>> subTrees = rootTrees.get(0)
-                .getSubTrees("netarkivet");
-        assertEquals("Should have found two netarkivet subtrees",
-                     2, subTrees.size());
-        assertEquals("Tree one should have a 42 answer",
-                     "42", subTrees.get(0).getSubTree("answer").getValue());
-        assertEquals("Tree two should have a 43 answer",
-                     "43", subTrees.get(1).getSubTree("answer").getValue());
+        assertEquals("Should get subtrees on root", 1, rootTrees.size());
+        List<StringTree<String>> subTrees = rootTrees.get(0).getSubTrees("netarkivet");
+        assertEquals("Should have found two netarkivet subtrees", 2, subTrees.size());
+        assertEquals("Tree one should have a 42 answer", "42", subTrees.get(0).getSubTree("answer").getValue());
+        assertEquals("Tree two should have a 43 answer", "43", subTrees.get(1).getSubTree("answer").getValue());
         List<StringTree<String>> nonTrees = tree1.getSubTrees("fop");
         assertEquals("Should have found no fop subtrees", 0, nonTrees.size());
         try {
-            tree1.getSubTree("dk").getSubTrees("netarkivet").get(0)
-                    .getSubTree("answer").getSubTrees("foo");
+            tree1.getSubTree("dk").getSubTrees("netarkivet").get(0).getSubTree("answer").getSubTrees("foo");
             fail("Should throw IllegalState on asking for subtree in leaf");
         } catch (IllegalState e) {
             // expected
         }
 
-        assertEquals("Should find 2 netarkivet subtrees with dotted path",
-                     2, tree1.getSubTrees("dk.netarkivet").size());
-        subTrees = tree1.getSubTrees(
-                "dk.netarkivet.answer");
-        assertEquals("Should find 2 answer subtrees with dotted path",
-                     2, subTrees.size());
-        assertEquals("The first answer should be 42", "42",
-                     subTrees.get(0).getValue());
-        assertEquals("The second answer should be 43", "43",
-                     subTrees.get(1).getValue());
+        assertEquals("Should find 2 netarkivet subtrees with dotted path", 2, tree1.getSubTrees("dk.netarkivet").size());
+        subTrees = tree1.getSubTrees("dk.netarkivet.answer");
+        assertEquals("Should find 2 answer subtrees with dotted path", 2, subTrees.size());
+        assertEquals("The first answer should be 42", "42", subTrees.get(0).getValue());
+        assertEquals("The second answer should be 43", "43", subTrees.get(1).getValue());
 
         // This one taken from HTMLUtils
         Document doc = XmlUtils.getXmlDoc(TestInfo.SETTINGS_FILE);
         tree1 = XmlTree.getStringTree(doc);
         StringTree<String> subTree = tree1.getSubTree("settings");
         assertNotNull("Should find settings subtree", subTree);
-        assertNotNull("Should find common subtree of settings in multimap",
-                      subTree.getChildMap().get("common"));
-        assertNotNull("Should find common subtree of settings",
-                      subTree.getSubTree("common"));
+        assertNotNull("Should find common subtree of settings in multimap", subTree.getChildMap().get("common"));
+        assertNotNull("Should find common subtree of settings", subTree.getSubTree("common"));
         assertNotNull("Should find webinterface subtree of common",
-                      subTree.getSubTree("common").getSubTrees("webinterface"));
+                subTree.getSubTree("common").getSubTrees("webinterface"));
 
-        List<StringTree<String>> languages
-                = tree1.getSubTree("settings.common.webinterface").
-                getSubTrees("language");
-        assertEquals("Should have found two language objects",
-                     2, languages.size());
+        List<StringTree<String>> languages = tree1.getSubTree("settings.common.webinterface").getSubTrees("language");
+        assertEquals("Should have found two language objects", 2, languages.size());
     }
 
+    @Test
     public void testGetChildMultimap() {
         StringTree<String> tree1 = getTree();
-        final Map<String, List<StringTree<String>>> rootChildren = tree1
-                .getChildMultimap();
-        assertEquals("Should be able to get child map of the root element",
-                     1, rootChildren.size());
+        final Map<String, List<StringTree<String>>> rootChildren = tree1.getChildMultimap();
+        assertEquals("Should be able to get child map of the root element", 1, rootChildren.size());
         tree1 = tree1.getSubTree("dk");
-        Map<String, List<StringTree<String>>> children =
-                tree1.getChildMultimap();
-        assertEquals("Multimap should have one entry",
-                     2, children.size());
-        assertEquals("Netarkivet child should have two entries",
-                     2, children.get("netarkivet").size());
+        Map<String, List<StringTree<String>>> children = tree1.getChildMultimap();
+        assertEquals("Multimap should have one entry", 2, children.size());
+        assertEquals("Netarkivet child should have two entries", 2, children.get("netarkivet").size());
         StringTree<String> tree2 = children.get("netarkivet").get(0);
         tree2 = tree2.getSubTree("test");
         children = tree2.getChildMultimap();
-        assertEquals("Multimap should have two entries",
-                     2, children.size());
-        assertTrue("Should have list1 key",
-                   children.containsKey("list1"));
-        assertTrue("Should have q key",
-                   children.containsKey("q"));
+        assertEquals("Multimap should have two entries", 2, children.size());
+        assertTrue("Should have list1 key", children.containsKey("list1"));
+        assertTrue("Should have q key", children.containsKey("q"));
         try {
             children.get("q").get(0).getChildMultimap();
             fail("Should have thrown error on leaf");
@@ -300,6 +270,7 @@ public class XmlTreeTester extends TestCase {
         }
     }
 
+    @Test
     public void testGetLeafMultimap() {
         StringTree<String> tree1 = getTree();
         try {
@@ -317,18 +288,13 @@ public class XmlTreeTester extends TestCase {
         }
         tree1 = tree1.getSubTree("test");
         Map<String, List<String>> leaves = tree1.getLeafMultimap();
-        assertEquals("Should have two leaves",
-                     2, leaves.size());
+        assertEquals("Should have two leaves", 2, leaves.size());
         assertTrue("Should have list1 key", leaves.containsKey("list1"));
         assertTrue("Should have q key", leaves.containsKey("q"));
-        assertEquals("list1 should have three elements",
-                     3, leaves.get("list1").size());
-        CollectionAsserts.assertListEquals("list1 should have right leaves",
-                                           leaves.get("list1"),
-                                           "item1", "item2", "item3");
-        CollectionAsserts.assertListEquals("q should have right leaf",
-                                           leaves.get("q"),
-                                           "what is the question");
+        assertEquals("list1 should have three elements", 3, leaves.get("list1").size());
+        CollectionAsserts.assertListEquals("list1 should have right leaves", leaves.get("list1"), "item1", "item2",
+                "item3");
+        CollectionAsserts.assertListEquals("q should have right leaf", leaves.get("q"), "what is the question");
         tree1 = tree1.getSubTree("q");
         try {
             tree1.getLeafMultimap();
@@ -338,28 +304,23 @@ public class XmlTreeTester extends TestCase {
         }
     }
 
+    @Test
     public void testGetChildMap() {
         StringTree<String> tree1 = getTree();
-        final Map<String, StringTree<String>> rootChildren = tree1
-                .getChildMap();
-        assertEquals("Should be able to get child map of the root element",
-                     1, rootChildren.size());
+        final Map<String, StringTree<String>> rootChildren = tree1.getChildMap();
+        assertEquals("Should be able to get child map of the root element", 1, rootChildren.size());
         tree1 = tree1.getSubTree("dk");
         try {
             tree1.getChildMap();
-            fail("Should not be allowed to get childmap of node with "
-                 + "several of the same subnode.");
+            fail("Should not be allowed to get childmap of node with " + "several of the same subnode.");
         } catch (IllegalState e) {
             // Expected
         }
         StringTree<String> tree2 = tree1.getSubTrees("netarkivet").get(0);
         Map<String, StringTree<String>> children = tree2.getChildMap();
-        assertEquals("Map should have two entries",
-                     2, children.size());
-        assertTrue("Should have test key",
-                   children.containsKey("test"));
-        assertTrue("Should have answer key",
-                   children.containsKey("answer"));
+        assertEquals("Map should have two entries", 2, children.size());
+        assertTrue("Should have test key", children.containsKey("test"));
+        assertTrue("Should have answer key", children.containsKey("answer"));
         try {
             children.get("answer").getChildMap();
             fail("Should have thrown error on leaf");
@@ -368,6 +329,7 @@ public class XmlTreeTester extends TestCase {
         }
     }
 
+    @Test
     public void testGetLeafMap() {
         StringTree<String> tree1 = getTree();
         try {
@@ -387,11 +349,9 @@ public class XmlTreeTester extends TestCase {
         tree1 = getTree();
         tree1 = tree1.getSubTree("dk").getSubTrees("netarkivet").get(1);
         Map<String, String> leaves = tree1.getLeafMap();
-        assertEquals("Should have one leaf",
-                     1, leaves.size());
+        assertEquals("Should have one leaf", 1, leaves.size());
         assertTrue("Should have answer key", leaves.containsKey("answer"));
-        assertEquals("Should have right answer",
-                     "43", leaves.get("answer"));
+        assertEquals("Should have right answer", "43", leaves.get("answer"));
         tree1 = tree1.getSubTree("answer");
         try {
             tree1.getLeafMap();
@@ -402,26 +362,19 @@ public class XmlTreeTester extends TestCase {
         tree1 = getTree();
         tree1 = tree1.getSubTree("dk").getSubTree("heroes");
         leaves = tree1.getLeafMap();
-        assertEquals("Should have three leaves",
-                     3, leaves.size());
-        assertEquals("Should have right hero",
-                     "Batman", leaves.get("hero"));
-        assertEquals("Should have right sidekick",
-                     "Robin", leaves.get("sidekick"));
-        assertEquals("Should have right villain",
-                     "Dr. Evil", leaves.get("villain"));
+        assertEquals("Should have three leaves", 3, leaves.size());
+        assertEquals("Should have right hero", "Batman", leaves.get("hero"));
+        assertEquals("Should have right sidekick", "Robin", leaves.get("sidekick"));
+        assertEquals("Should have right villain", "Dr. Evil", leaves.get("villain"));
 
     }
 
+    @Test
     public void testSelectSingleNode() throws Exception {
-        Method selectSingleNode = ReflectUtils.getPrivateMethod(XmlTree.class,
-                                                              "selectSingleNode",
-                                                              String.class);
+        Method selectSingleNode = ReflectUtils.getPrivateMethod(XmlTree.class, "selectSingleNode", String.class);
         StringTree<String> tree1 = getTree();
-        assertNotNull("Should be able to get root node",
-                      selectSingleNode.invoke(tree1, "dk"));
-        assertNotNull("Should be able to get two levels of nodes",
-                      selectSingleNode.invoke(tree1, "dk.heroes"));
+        assertNotNull("Should be able to get root node", selectSingleNode.invoke(tree1, "dk"));
+        assertNotNull("Should be able to get two levels of nodes", selectSingleNode.invoke(tree1, "dk.heroes"));
         try {
             selectSingleNode.invoke(tree1, "dk/heroes");
             fail("Should fail on invalid syntax");

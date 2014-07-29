@@ -22,6 +22,19 @@
  */
 package dk.netarkivet.common.distribute;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.io.Serializable;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.Enumeration;
+import java.util.Map;
+import java.util.logging.Logger;
+
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
@@ -31,14 +44,11 @@ import javax.jms.MessageListener;
 import javax.jms.MessageProducer;
 import javax.jms.ObjectMessage;
 
-import java.io.Serializable;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.Enumeration;
-import java.util.Map;
-import java.util.logging.Logger;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
-import junit.framework.TestCase;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.NotImplementedException;
@@ -48,12 +58,15 @@ import dk.netarkivet.testutils.preconfigured.MockupJMS;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
+
 /**
  * Tests JMSConnection, the class that handles all JMS operations for
  * Netarkivet.
  */
+
+@Ignore("Not in junit3 test suite")
 @SuppressWarnings({ "unchecked", "rawtypes", "unused", "serial" })
-public class JMSConnectionTester extends TestCase {
+public class JMSConnectionTester {
 
     private SecurityManager originalSecurityManager;
 
@@ -61,18 +74,14 @@ public class JMSConnectionTester extends TestCase {
     PreventSystemExit pse = new PreventSystemExit();
     MockupJMS mj = new MockupJMS();
 
-    /**
-     * setUp() method for this testsuite.
-     */
+    @Before
     public void setUp() {
         rs.setUp();
         pse.setUp();
         mj.setUp();
     }
 
-    /**
-     * tearDown() method for this testsuite.
-     */
+    @After
     public void tearDown() {
         mj.tearDown();
         pse.tearDown();
@@ -82,6 +91,7 @@ public class JMSConnectionTester extends TestCase {
     /**
      * Test that asking for a fake JMSConnection actually gets you just that.
      */
+    @Test
     public void testFakeJMSConnection() {
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
 
@@ -92,6 +102,7 @@ public class JMSConnectionTester extends TestCase {
     /**
      * Tests for null parameters.
      */
+    @Test
     public void testUnpackParameterIsNull() {
         Settings.set(CommonSettings.JMS_BROKER_CLASS,
                      "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
@@ -107,6 +118,7 @@ public class JMSConnectionTester extends TestCase {
     /**
      * Tests for wrong parameters.
      */
+    @Test
     public void testUnpackParameterIsAnObjectMessage() {
         Settings.set(CommonSettings.JMS_BROKER_CLASS,
                      "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
@@ -123,6 +135,7 @@ public class JMSConnectionTester extends TestCase {
      * Tests for correct error handling if ObjectMessage has the wrong
      * payload.
      */
+    @Test
     public void testUnpackInvalidPayload() {
         Settings.set(CommonSettings.JMS_BROKER_CLASS,
                      "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
@@ -139,6 +152,7 @@ public class JMSConnectionTester extends TestCase {
     /**
      * Tests if correct payload is unwrapped.
      */
+    @Test
     public void testUnpackOfCorrectPayload() {
         Settings.set(CommonSettings.JMS_BROKER_CLASS,
                      "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
@@ -154,6 +168,7 @@ public class JMSConnectionTester extends TestCase {
     /**
      * Test resend() methods arguments.
      */
+    @Test
     public void testResendArgumentsNotNull() {
         /*
          * Check it is the correct resend method which is invoked and not
@@ -198,6 +213,7 @@ public class JMSConnectionTester extends TestCase {
      * address specified in the "to" field of the message. It should be sent to
      * the address given in the "to" parameter of the resend() method.
      */
+    @Test
     public void testResendCorrectSendBehaviour() {
         /**
          * Check it is the correct resend method which is invoked and not
@@ -251,6 +267,7 @@ public class JMSConnectionTester extends TestCase {
      *
      * @throws Exception On failures
      */
+    @Test
     public void testInitConnection() throws Exception {
         /*
          * Set up JMSConnection and dummy receive servers.
@@ -262,6 +279,7 @@ public class JMSConnectionTester extends TestCase {
                    ((JMSConnectionMockupMQ.TestConnection)con.connection).isStarted);
     }
 
+    @Test
     public void testSendToQueue() throws JMSException, NoSuchFieldException,
             IllegalAccessException {
         Settings.set(CommonSettings.JMS_BROKER_CLASS,
@@ -291,6 +309,7 @@ public class JMSConnectionTester extends TestCase {
         assertNotNull("Message should now have an id", msg.getID());
     }
 
+    @Test
     public void testSendToTopic() throws JMSException, NoSuchFieldException,
             IllegalAccessException {
         Settings.set(CommonSettings.JMS_BROKER_CLASS,
@@ -321,6 +340,7 @@ public class JMSConnectionTester extends TestCase {
         assertNotNull("Message should now have an id", msg.getID());
     }
 
+    @Test
     public void testSetListener() throws JMSException, NoSuchFieldException,
             IllegalAccessException {
         Settings.set(CommonSettings.JMS_BROKER_CLASS,
@@ -374,6 +394,7 @@ public class JMSConnectionTester extends TestCase {
                 2, consumerMap.size());
     }
     
+    @Test
     public void testGetConsumerKey() throws NoSuchMethodException,
             IllegalAccessException {
         Settings.set(CommonSettings.JMS_BROKER_CLASS,
@@ -394,6 +415,7 @@ public class JMSConnectionTester extends TestCase {
                 JMSConnection.getConsumerKey(Channels.getTheBamon().getName(), listener));
     }
 
+    @Test
     public void testReply() throws JMSException, NoSuchFieldException,
             IllegalAccessException {
         Settings.set(CommonSettings.JMS_BROKER_CLASS,

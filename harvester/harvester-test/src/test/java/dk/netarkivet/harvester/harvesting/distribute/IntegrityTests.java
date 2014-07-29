@@ -47,7 +47,7 @@ import org.junit.Test;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.ChannelsTester;
+import dk.netarkivet.common.distribute.ChannelsTesterHelper;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
@@ -78,6 +78,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
  * Integrity tests for the dk.harvester.harvesting.distribute 
  * package. Both tests assume an FTP server is running.
  */
+@Ignore("Needs to be run in deploy-test according to junit3 TestSuite")
 public class IntegrityTests extends DataModelTestCase {
     /** The message to write to log when starting the server. */
     private static final String START_MESSAGE =
@@ -101,7 +102,7 @@ public class IntegrityTests extends DataModelTestCase {
     public void setUp() throws Exception, SQLException, IllegalAccessException {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         rs.setUp();
-        ChannelsTester.resetChannels();
+        ChannelsTesterHelper.resetChannels();
         super.setUp();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         con = JMSConnectionFactory.getInstance();
@@ -174,7 +175,7 @@ public class IntegrityTests extends DataModelTestCase {
         }
         DatabaseTestUtils.dropHDDB();
         FileUtils.removeRecursively(TestInfo.SERVER_DIR);
-        ChannelsTester.resetChannels();
+        ChannelsTesterHelper.resetChannels();
         HarvestDAOUtils.resetDAOs();
         System.setSecurityManager(sm);
         rs.tearDown();

@@ -22,29 +22,38 @@
  */
 package dk.netarkivet.common.utils;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
+
 /**
  * Unit tests for the SettingsFactory class.
  */
-public class SettingsFactoryTester extends TestCase {
+// FIXME: Need documentation.
+public class SettingsFactoryTester {
     ReloadSettings rs = new ReloadSettings();
 
-    public SettingsFactoryTester(String s) {
-        super(s);
-    }
 
+    @Before
     public void setUp() {
         rs.setUp();
     }
 
+    @After
     public void tearDown() {
         rs.tearDown();
     }
 
+    @Test
     public void testGetInstance() throws Exception {
         Settings.set(CommonSettings.ARC_REPOSITORY_CLIENT, Test1.class.getName());
         TestClass newClass

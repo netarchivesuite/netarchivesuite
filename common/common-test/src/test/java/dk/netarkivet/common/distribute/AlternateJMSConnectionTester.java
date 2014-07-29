@@ -24,7 +24,8 @@
 
  import java.util.Calendar;
 
- import junit.framework.TestCase;
+import org.junit.Ignore;
+
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.TimeUtils;
 
@@ -32,7 +33,8 @@ import dk.netarkivet.common.utils.TimeUtils;
  * Testclass for testing the exceptionhandling in JMSConnection.
  */
 @SuppressWarnings({ "unused", "serial"})
-public class AlternateJMSConnectionTester extends TestCase {
+@Ignore("Not present in TestSuite")
+public class AlternateJMSConnectionTester {
 
     public void errorcodesTest() {
         Settings.set(JMSConnectionSunMQ.JMS_BROKER_PORT, "7677");

@@ -22,37 +22,40 @@
  */
 package dk.netarkivet.common.distribute;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.PermissionDenied;
+
 
 /**
  * Tests the general class for distributed messages in Netarkivet.
  */
 @SuppressWarnings({ "serial"})
-public class NetarkivetMessageTester extends TestCase {
+public class NetarkivetMessageTester {
     private static final ChannelID toQ = Channels.getAnyBa();
     private static final ChannelID replyToQ = Channels.getError();
     private static final ChannelID aTopic = Channels.getAllBa();
     //private static final String PREFIX = "<a prefix for tests>";
     private static final String ERR_MSG = "<an error message for tests>";
 
-    public void setUp() {
-    }
-
-    public void tearDown() {
-    }
-
     /**
      * Verify that constructor returns normally when given non-null inputs with
      * to and replyTo different.
      */
+    @Test
     public void testConstructor() {
         NetarkivetMessage m = new TestMessage(toQ, replyToQ);
         assertNotNull("Should not be null", m);
@@ -63,6 +66,7 @@ public class NetarkivetMessageTester extends TestCase {
      * disallowed in the current design because it is error-prone. Remove
      * this unit test if the design changes on this point.
      */
+    @Test
     public void testConstructorSameQueue() {
         try {
             new TestMessage(toQ, toQ);
@@ -75,6 +79,7 @@ public class NetarkivetMessageTester extends TestCase {
     /**
      * Verify that getInstance() fails when given null first input.
      */
+    @Test
     public void testgetInstanceNull1() {
         try {
             new TestMessage(null, replyToQ);
@@ -87,6 +92,7 @@ public class NetarkivetMessageTester extends TestCase {
     /**
      * Verify that getInstance() fails when given null second input.
      */
+    @Test
     public void testgetInstanceNull2() {
         try {
             new TestMessage(toQ, null);
@@ -99,6 +105,7 @@ public class NetarkivetMessageTester extends TestCase {
     /**
      * Verify that getId() always returns the same value on a given message.
      */
+    @Test
     public void testGetIDSame() {
         NetarkivetMessage m = new TestMessage(toQ, replyToQ);
         JMSConnectionMockupMQ.updateMsgID(m, "TESTMSGID5");
@@ -113,6 +120,7 @@ public class NetarkivetMessageTester extends TestCase {
     /**
      * Verify that getId() always returns the same value on a given message.
      */
+    @Test
     public void testGetIDThorwsExceptopn() {
         NetarkivetMessage m = new TestMessage(toQ, replyToQ);
         try {
@@ -126,6 +134,7 @@ public class NetarkivetMessageTester extends TestCase {
     /**
      * Verify that getTo() returns the ChannelID given to constructor().
      */
+    @Test
     public void testGetTo() {
         NetarkivetMessage m = new TestMessage(toQ, replyToQ);
         assertEquals("Expected to-queue to be '" + toQ.getName() 
@@ -136,6 +145,7 @@ public class NetarkivetMessageTester extends TestCase {
     /**
      * Verify that getTo() returns the ChannelID given to contructor().
      */
+    @Test
     public void testReplyTo() {
         NetarkivetMessage m = new TestMessage(toQ, replyToQ);
         assertEquals("Expected to-queue to be '" + replyToQ.getName()
@@ -147,6 +157,7 @@ public class NetarkivetMessageTester extends TestCase {
      * Verify that getErrorMsg() returns the given error message,
      * if one was given.
      */
+    @Test
     public void testErrMsgText() {
         NetarkivetMessage m = new TestMessage(toQ, replyToQ);
         m.setNotOk(ERR_MSG);
@@ -157,6 +168,7 @@ public class NetarkivetMessageTester extends TestCase {
     /**
      * Verify that getErrorMsg() fails if status is OK.
      */
+    @Test
     public void testErrMsgFail() {
         NetarkivetMessage m = new TestMessage(toQ, replyToQ);
         try {
@@ -170,6 +182,7 @@ public class NetarkivetMessageTester extends TestCase {
     /**
      * Verify that a fresh NetarkivetMessage is OK.
      */
+    @Test
     public void testFreshIsOK() {
         NetarkivetMessage m = new TestMessage(toQ, replyToQ);
         assertTrue("Fresh message wasn't ok.", m.isOk());
@@ -178,6 +191,7 @@ public class NetarkivetMessageTester extends TestCase {
     /**
      * Verify that a message is not OK if this was signalled.
      */
+    @Test
     public void testIsNotOK() {
         NetarkivetMessage m = new TestMessage(toQ, replyToQ);
         m.setNotOk(ERR_MSG);
@@ -188,6 +202,7 @@ public class NetarkivetMessageTester extends TestCase {
      * Verify that several calls to isNotOk() results in appended
      * error messages.
      */
+    @Test
     public void testMultipleErrMsgs() {
         NetarkivetMessage m = new TestMessage(toQ, replyToQ);
         m.setNotOk(ERR_MSG);
@@ -199,6 +214,7 @@ public class NetarkivetMessageTester extends TestCase {
     /**
      * Test that a message replies to a queue, not a topic.
      */
+    @Test
     public void testNoTopicReply() {
         try {
             new TestMessage(toQ, aTopic);
@@ -215,6 +231,7 @@ public class NetarkivetMessageTester extends TestCase {
      * @throws IOException If I/O fails.
      * @throws ClassNotFoundException If class loading fails.
      */
+    @Test
     public void testSerializability() throws IOException, ClassNotFoundException {
         //Take a message:
         NetarkivetMessage m1 = new TestMessage(toQ, replyToQ);

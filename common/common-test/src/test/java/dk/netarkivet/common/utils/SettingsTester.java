@@ -22,30 +22,35 @@
  */
 package dk.netarkivet.common.utils;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.List;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.UnknownID;
-import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
+
 
 /**
  * Unit tests for the Settings class.
  * 
  */
 @SuppressWarnings({ "rawtypes" })
-public class SettingsTester extends TestCase  {
+public class SettingsTester {
     ReloadSettings rs = new ReloadSettings(new File(TestInfo.SETTINGSFILENAME));
 
-    public SettingsTester(String sTestName) {
-        super(sTestName);
-    }
-
+    @Before
     public void setUp()  {
         rs.setUp();
         try {
@@ -61,6 +66,7 @@ public class SettingsTester extends TestCase  {
 
     }
 
+    @After
     public void tearDown() {
         FileUtils.removeRecursively(TestInfo.TEMPDIR);
         rs.tearDown();
@@ -69,6 +75,7 @@ public class SettingsTester extends TestCase  {
     /**
      * Verify the simple read and write functionality.
      */
+    @Test
     public void testReadAndWrite() {
                 
         String processTimeout = Settings.get(CommonSettings.PROCESS_TIMEOUT);
@@ -96,6 +103,7 @@ public class SettingsTester extends TestCase  {
     /**
      * Test that reload functionality resets settings to original values.
      */
+    @Test
     public void testReload() {
         String setting = CommonSettings.NOTIFICATIONS_CLASS;
         String backup_value = Settings.get(setting);
@@ -110,6 +118,7 @@ public class SettingsTester extends TestCase  {
     /**
      * Test that setting a non-existent key will just add it.
      */
+    @Test
     public void testSetNonExistentKey() {
         Settings.set("settings.no.such.key", "hest");
         assertEquals("Should have new value", "hest",
@@ -119,6 +128,7 @@ public class SettingsTester extends TestCase  {
     /**
      * Test that creating a key that already exists throws an exception.
      */
+    @Test
     public void testCreatePreExistingKey() {
         Settings.set(CommonSettings.CACHE_DIR, "hest");
         assertEquals("Should have new value", "hest",
@@ -128,6 +138,7 @@ public class SettingsTester extends TestCase  {
     /**
      * Test that getAll can get a value set in a system property.
      */
+    @Test
     public void testGetAllFromSysprop() {
         String[] val = Settings.getAll(Settings.SETTINGS_FILE_PROPERTY);
         assertTrue("Expected single value but got " + val.length, val.length == 1);
@@ -137,6 +148,7 @@ public class SettingsTester extends TestCase  {
     /**
      * Test that we can get an array of strings for a key value.
      */
+    @Test
     public void testGetAllFromSetting() {
         String key = "settings.for.test.purposes";
         Settings.set(key, "d");
@@ -150,6 +162,7 @@ public class SettingsTester extends TestCase  {
     /**
      * Test that getAll fails for an unknown key.
      */
+    @Test
     public void testGetAllFailure() {
         String key = "just.for.test.purposes2";
         try {
@@ -163,6 +176,7 @@ public class SettingsTester extends TestCase  {
     /**
      * Test getLong works.
      */
+    @Test
     public void testGetLongWorks() {
        String key = "settings.for.test.purposes3";
         long val = 6961464186L;
@@ -173,6 +187,7 @@ public class SettingsTester extends TestCase  {
     /**
      * Test that getLong fails when value cannot be parsed as long
      */
+    @Test
     public void testGetLongFails() {
         String key = "settings.for.test.purposes4";
         float val = 3.1415f;
@@ -189,6 +204,7 @@ public class SettingsTester extends TestCase  {
      * Test that getBoolean returns true, when it can be parsed as 
      * some upper/lowercase combination of the string "true"
      */
+    @Test
     public void testGetBoolean() {
         String key = "settings.for.test.purposes5";
         String trueAsString = "True";

@@ -42,7 +42,8 @@ import dk.netarkivet.common.utils.cdx.ExtractCDXJob;
  * Usage: java dk.netarkivet.common.tools.MakeIndex [filename]
  *
  */
-
+@Deprecated
+// what is this used for? /tra
 public class MakeIndex {
     public static void main(String[] argv) {
         File indexfile = new File("index.cdx");

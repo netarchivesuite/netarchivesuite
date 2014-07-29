@@ -22,55 +22,47 @@
  */
 package dk.netarkivet.common.utils;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Calendar;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
 
 /**
  * Unit tests for the TimeUtils class.
  *
  */
-public class TimeUtilsTester extends TestCase {
-    public TimeUtilsTester(String s) {
-        super(s);
-    }
+public class TimeUtilsTester {
 
-    public void setUp() {
-    }
-
-    public void tearDown() {
-    }
-
+    @Test
     public void testExponentialBackoffSleep() throws Exception {
         long timeStart = System.currentTimeMillis();
         TimeUtils.exponentialBackoffSleep(2, Calendar.MILLISECOND);
         long waited = System.currentTimeMillis() - timeStart;
-        assertTrue("Should have waited at least 2^2 millis, but only waited "
-                + waited,
-                waited >= 4);
+        assertTrue("Should have waited at least 2^2 millis, but only waited " + waited, waited >= 4);
 
         timeStart = System.currentTimeMillis();
         TimeUtils.exponentialBackoffSleep(3, Calendar.MILLISECOND);
         waited = System.currentTimeMillis() - timeStart;
-        assertTrue("Should have waited at least 2^3 millis, but only waited "
-                + waited,
-                waited >= 8);
+        assertTrue("Should have waited at least 2^3 millis, but only waited " + waited, waited >= 8);
 
         timeStart = System.currentTimeMillis();
         TimeUtils.exponentialBackoffSleep(0, Calendar.SECOND);
         waited = System.currentTimeMillis() - timeStart;
-        assertTrue("Should have waited at least 2^0 seconds, but only waited "
-                + waited,
-                waited >= 1000);
+        assertTrue("Should have waited at least 2^0 seconds, but only waited " + waited, waited >= 1000);
     }
-    
+
     /**
-     * Tests whether the readableTimeInterval function converts numbers correctly.
+     * Tests whether the readableTimeInterval function converts numbers
+     * correctly.
      */
+    @Test
     public void testReadability() {
         // Test whether it works.
         assertEquals(TimeUtils.readableTimeInterval(1L), "1 millisecond");
-        
+
         // Test conversion between millisecond and seconds.
         assertEquals(TimeUtils.readableTimeInterval(5000L), "5 seconds");
 

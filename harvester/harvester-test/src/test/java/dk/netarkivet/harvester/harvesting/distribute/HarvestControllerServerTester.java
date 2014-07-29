@@ -49,7 +49,7 @@ import org.junit.Test;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.ChannelsTester;
+import dk.netarkivet.common.distribute.ChannelsTesterHelper;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
@@ -124,7 +124,7 @@ public class HarvestControllerServerTester {
         FileUtils.removeRecursively(TestInfo.LOG_FILE);
         LogManager.getLogManager().readConfiguration(fis);
         fis.close();
-        ChannelsTester.resetChannels();
+        ChannelsTesterHelper.resetChannels();
         utrf.setUp();
         // Out commented to avoid reference to archive module from harvester module.
         // Settings.set(JMSArcRepositoryClient.ARCREPOSITORY_STORE_RETRIES, "1");
@@ -151,7 +151,7 @@ public class HarvestControllerServerTester {
                 HarvesterSettings.HARVEST_CONTROLLER_OLDJOBSDIR)));
         FileUtils.removeRecursively(new File(Settings.get(
                 HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR)));
-        ChannelsTester.resetChannels();
+        ChannelsTesterHelper.resetChannels();
         utrf.tearDown();
         RememberNotifications.resetSingleton();
         rs.tearDown();

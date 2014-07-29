@@ -22,23 +22,22 @@
  */
 package dk.netarkivet.archive.bitarchive;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
 import org.archive.io.arc.ARCRecord;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.arc.ARCBatchJob;
 import dk.netarkivet.common.utils.batch.ARCBatchFilter;
 import dk.netarkivet.testutils.FileAsserts;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 /**
  * Unit test for Bitarchive API The logging of bitarchive opertions is tested
@@ -119,29 +118,25 @@ public class BitarchiveTesterLog extends BitarchiveTestCase {
     }
 
     @Test
-    public void testLogBatch() throws Exception {
+    public void testLogBatch() throws IOException {
         String logtxt = FileUtils.readFile(LOG_FILE);
         assertNotStringContains("Batch not mentioned in log before run", logtxt, "Batch"); // clean
                                                                                            // log
         // Run the empty batch job.
-        try {
-            archive.batch(TestInfo.baAppId, new ARCBatchJob() {
-                public ARCBatchFilter getFilter() {
-                    return ARCBatchFilter.NO_FILTER;
-                }
+        archive.batch(TestInfo.baAppId, new ARCBatchJob() {
+            public ARCBatchFilter getFilter() {
+                return ARCBatchFilter.NO_FILTER;
+            }
 
-                public void initialize(OutputStream os) {
-                }
+            public void initialize(OutputStream os) {
+            }
 
-                public void processRecord(ARCRecord record, OutputStream os) {
-                }
+            public void processRecord(ARCRecord record, OutputStream os) {
+            }
 
-                public void finish(OutputStream os) {
-                }
-            });
-        } catch (Exception e) {
-            fail("Batching should not throw " + e);
-        }
+            public void finish(OutputStream os) {
+            }
+        });
         FileAsserts.assertFileContains("Log contains the word 'Batch'.", "Batch", LOG_FILE);
         FileAsserts.assertFileContains("Log contains the phrase 'Batch: Job'.", "Batch: Job", LOG_FILE);
         FileAsserts.assertFileContains("Log should have start indicator", "Starting batch job", LOG_FILE);

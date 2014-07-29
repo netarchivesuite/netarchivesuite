@@ -53,7 +53,7 @@ import org.archive.io.arc.ARCRecordMetaData;
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient;
 import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.distribute.ChannelsTester;
+import dk.netarkivet.common.distribute.ChannelsTesterHelper;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.arcrepository.ARCLookup;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
@@ -87,7 +87,7 @@ public class ARCLookupTester {
                 "http://netarkivet.dk/netarchive_alm/billeder/spacer.gif");
 
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
-        ChannelsTester.resetChannels();
+        ChannelsTesterHelper.resetChannels();
 
         // Although we also need some real data
         File WORKING_DIR = dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR;

@@ -22,21 +22,24 @@
  */
 package dk.netarkivet.common.utils;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import org.junit.Test;
+
 
 /**
  * 
  * Unit tests for the {@link ReadOnlyByteArray} class.   
  *
  */
-public class ReadOnlyByteArrayTester extends TestCase{
+public class ReadOnlyByteArrayTester {
 
+    @Test
     public void testClassFunctionality() {
-        try {
-            new ReadOnlyByteArray(null);
-        } catch(Exception e) {
-            fail("new ReadOnlyByteArray(null) should not thrown exception: " + e);
-        }
+
+        new ReadOnlyByteArray(null);
+
         byte[] emptyArray = new byte[]{};
         ReadOnlyByteArray roba = new ReadOnlyByteArray(emptyArray);
         assertTrue(roba.length() == 0);

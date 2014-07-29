@@ -22,6 +22,11 @@
  */
 package dk.netarkivet.common.utils.cdx;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -38,12 +43,15 @@ import java.util.Arrays;
 import junit.framework.TestCase;
 
 import org.archive.io.arc.ARCRecord;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 
 @SuppressWarnings({ "unused", "serial"})
-public class ExtractCDXJobTester extends TestCase {
+public class ExtractCDXJobTester {
     
     //Shared instance of BatchLocalFiles
     private BatchLocalFiles arcBlaf;
@@ -57,8 +65,8 @@ public class ExtractCDXJobTester extends TestCase {
     /**
      * @see TestCase#setUp()
      */
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         processed = 0;
         arcBlaf = new BatchLocalFiles(new File[]{TestInfo.ARC_FILE1,
                 new File(TestInfo.ARC_DIR, "input-2.arc"),
@@ -66,13 +74,15 @@ public class ExtractCDXJobTester extends TestCase {
         FileUtils.createDir(TestInfo.CDX_DIR);        
     }
 
-    protected void tearDown() {
+    @After
+    public void tearDown() {
         FileUtils.removeRecursively(TestInfo.CDX_DIR);
     }
 
     /**
      * Verify that construction succeeds regardless of the parameters.
      */
+    @Test
     public void testConstructor() {
         job = new ExtractCDXJob();
         job = new ExtractCDXJob(true);
@@ -83,6 +93,7 @@ public class ExtractCDXJobTester extends TestCase {
      * Verify that the job runs without problems and visits all relevant
      * records.
      */
+    @Test
     public void testRun() throws IOException {
         job = new ExtractCDXJob() {
             public void processRecord(ARCRecord sar, OutputStream os) {
@@ -105,6 +116,7 @@ public class ExtractCDXJobTester extends TestCase {
      * can be performed several times in a row; the job is allowed to let go of
      * the CDX data after successfully writing it out.
      */
+    @Test
     public void testDumpCDX() throws IOException {
         job = new ExtractCDXJob();
         OutputStream os = new ByteArrayOutputStream();
@@ -134,6 +146,7 @@ public class ExtractCDXJobTester extends TestCase {
      * The CDX content itself is not tested. The requirement on that is that it
      * is compatible with existing tools. There is an external test for that.
      */
+    @Test
     public void testMain() throws IOException {
         File[] arcFiles = new File[]{TestInfo.ARC_FILE1};
 
@@ -148,6 +161,7 @@ public class ExtractCDXJobTester extends TestCase {
     /**
      * Test whether the class is really Serializable.
      */
+    @Test
     public void testSerializability()
             throws IOException, ClassNotFoundException {
         //Take two jobs: one for study and one for reference.
