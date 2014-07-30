@@ -141,6 +141,7 @@ public abstract class ApplicationUtils {
         Settings.set(CommonSettings.APPLICATION_NAME, appName);
         logAndPrint("Starting " + appName + "\n"
                     + Constants.getVersionString());
+        logAndPrint("Java VM: " + System.getProperty("java.version"));
         log.info("Using settings files '"
                     + StringUtils.conjoin(File.pathSeparator,
                                           Settings.getSettingsFiles()) + "'");

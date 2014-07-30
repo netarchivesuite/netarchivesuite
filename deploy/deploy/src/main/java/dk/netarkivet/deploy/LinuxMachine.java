@@ -238,9 +238,10 @@ public class LinuxMachine extends Machine {
         StringBuilder res = new StringBuilder();
         res.append(ScriptConstants.SSH + Constants.SPACE);
         res.append(machineUserLogin());
-        res.append(Constants.SPACE + Constants.QUOTE_MARK + Constants.DOT
-                + Constants.SPACE + ScriptConstants.ETC_PROFILE 
-                + Constants.SEMICOLON + Constants.SPACE);
+        res.append(Constants.SPACE + Constants.QUOTE_MARK +
+                Constants.DOT + Constants.SPACE + ScriptConstants.ETC_PROFILE + Constants.SEMICOLON +
+                Constants.DOT + Constants.SPACE + ScriptConstants.USER_BASH_PROFILE + Constants.SEMICOLON
+                + Constants.SPACE);
         res.append(getConfDirPath());
         res.append(Constants.SCRIPT_NAME_START_ALL);
         res.append(scriptExtension);
@@ -387,7 +388,7 @@ public class LinuxMachine extends Machine {
                         + Constants.COLON + Constants.SPACE 
                         + Constants.APOSTROPHE + name + Constants.APOSTROPHE);
 
-                // insert path to kill script for all applications
+                // insert path to start script for each applications
                 for(Application app : applications) {
                     // make name of file
                     String appScript = Constants.DOT + Constants.SLASH

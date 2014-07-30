@@ -116,6 +116,8 @@ public final class ScriptConstants {
     static final String LINUX_ERROR_MESSAGE_TO_1 = "2>&1 &"; 
     /** /etc/profile.*/
     static final String ETC_PROFILE = "/etc/profile";
+    /** /etc/profile.*/
+    static final String USER_BASH_PROFILE = "~/.bash_profile";
     /** The linux command for sleeping. sleep.*/
     static final String SLEEP = "sleep";
     /** sleep 2.*/
