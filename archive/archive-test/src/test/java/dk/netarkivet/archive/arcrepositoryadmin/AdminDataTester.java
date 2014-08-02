@@ -22,6 +22,11 @@
  */
 package dk.netarkivet.archive.arcrepositoryadmin;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -35,11 +40,11 @@ import java.util.Set;
 import java.util.logging.LogManager;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
 import dk.netarkivet.common.CommonSettings;
@@ -54,6 +59,7 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.ClassAsserts;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
+import dk.netarkivet.testutils.LogbackRecorder;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
@@ -117,6 +123,7 @@ public class AdminDataTester {
      */
     @Test
     public void testReplyInfoOperations() throws IOException {
+    	LogbackRecorder lr = LogbackRecorder.startRecorder();
         ad = UpdateableAdminData.getUpdateableInstance();
         assertFalse("No replyInfo has been set", ad.hasReplyInfo(myFile));
         StoreMessage myReplyInfo
@@ -141,9 +148,8 @@ public class AdminDataTester {
         ad.setReplyInfo(myFile, myReplyInfo);
         ad.setReplyInfo(myFile, myReplyInfo);
         // Should give a warning in log.
-        LogUtils.flushLogs(ArcRepositoryEntry.class.getName());
-        FileAsserts.assertFileContains("Should be a warning in the log",
-                "Overwriting replyInfo", TestInfo.LOG_DIR);
+        lr.assertLogContains("Should be a warning in the log", "Overwriting replyInfo");
+        lr.stopRecorder();
     }
 
     /**
@@ -239,17 +245,27 @@ public class AdminDataTester {
      */
     @Test
     public void testAdminDataEmptylog() throws IOException {
+    	LogbackRecorder lr = LogbackRecorder.startRecorder();
         ad = UpdateableAdminData.getUpdateableInstance();
+        if (!lr.isEmpty()) {
+            int index = lr.logIndexOf("AdminData created", 0);
+            Assert.assertTrue("Should contain starting entry", index > -1);
+            int index2 = lr.logIndexOf("Starting AdminData", index + 1);
+            Assert.assertFalse("Should contain starting entry", index2 > -1);
+            index2 = lr.logIndexOf("<record>", index + 1);
+            assertFalse("Log contains further entries - it should not at this point !", index2 > -1);
+        }
+        /*
         LogUtils.flushLogs(UpdateableAdminData.class.getName());
         final File logfile = TestInfo.LOG_DIR;
         if (logfile.exists()) {
             String logtxt = FileUtils.readFile(logfile);
-            FileAsserts.assertFileContains("Should contain starting entry",
-                    "AdminData created", logfile);
+            FileAsserts.assertFileContains("Should contain starting entry", "AdminData created", logfile);
             int index = logtxt.indexOf("Starting AdminData");
-            assertFalse("Log contains further entries - it should not at this point !",
-                    logtxt.indexOf("<record>", index) > -1);
+            assertFalse("Log contains further entries - it should not at this point !", logtxt.indexOf("<record>", index) > -1);
         }
+        */
+        lr.stopRecorder();
     }
 
     /**
@@ -528,4 +544,5 @@ public class AdminDataTester {
         writer.println(s);
         writer.close();
     }
+
 }

@@ -22,29 +22,34 @@
  */
 package dk.netarkivet.archive.tools;
 
-import javax.jms.Message;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import static org.junit.Assert.*;
+import javax.jms.Message;
 
 import org.archive.io.ArchiveRecord;
 import org.archive.io.arc.ARCConstants;
 import org.archive.io.arc.ARCRecord;
 import org.archive.io.arc.ARCRecordMetaData;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.spi.FilterReply;
 import dk.netarkivet.archive.bitarchive.distribute.GetMessage;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
+import dk.netarkivet.testutils.LogbackRecorder;
 import dk.netarkivet.testutils.TestMessageListener;
 import dk.netarkivet.testutils.preconfigured.MockupJMS;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
@@ -94,10 +99,19 @@ public class GetRecordTester {
 
     @Test
     public void testMain() {
-        try {
+    	LogbackRecorder lr = LogbackRecorder.startRecorder();
+    	ch.qos.logback.core.filter.Filter<ch.qos.logback.classic.spi.ILoggingEvent> filter = new ch.qos.logback.core.filter.Filter<ch.qos.logback.classic.spi.ILoggingEvent>() {
+			@Override
+			public FilterReply decide(ILoggingEvent event) {
+				return FilterReply.DENY;
+			}
+    	};
+    	lr.addFilter(filter, ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
+    	try {
             GetRecord.main(new String[]{
                     TestInfo.INDEX_DIR.getAbsolutePath(),
-                    TestInfo.TEST_ENTRY_URI});
+                    TestInfo.TEST_ENTRY_URI
+            });
             fail("Should system exit");
         } catch (SecurityException e) {
             assertEquals("Should have exited normally",
@@ -107,6 +121,8 @@ public class GetRecordTester {
         String returnedContent = pss.getOut();
         assertEquals("Should return content unchanged, but was: "
                 + returnedContent, CONTENT, returnedContent);
+    	lr.clearAllFilters(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
+        lr.stopRecorder();
     }
     
     @Test

@@ -26,6 +26,11 @@
     </dependency>
 
     <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>httpunit</groupId>
       <artifactId>httpunit</artifactId>
       <version>1.6</version>

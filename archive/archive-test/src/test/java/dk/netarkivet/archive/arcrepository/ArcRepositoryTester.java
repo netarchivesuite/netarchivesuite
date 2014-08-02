@@ -36,7 +36,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
-
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.bitpreservation.AdminDataMessage;
 import dk.netarkivet.archive.arcrepositoryadmin.Admin;
@@ -65,6 +64,7 @@ import dk.netarkivet.common.utils.batch.ChecksumJob;
 import dk.netarkivet.testutils.ClassAsserts;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
+import dk.netarkivet.testutils.LogbackRecorder;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
@@ -112,7 +112,6 @@ public class ArcRepositoryTester {
         ClassAsserts.assertSingleton(ArcRepository.class);
         ArcRepository.getInstance();
     }
-
 
     /** Verify that calling the protected no-arg constructor does not fail. */
     @Test
@@ -279,18 +278,17 @@ public class ArcRepositoryTester {
      */
     @Test
     public void DISABLED_testOnBatchReply() throws Exception {
+    	LogbackRecorder lr = LogbackRecorder.startRecorder();
         ArcRepository a = ArcRepository.getInstance();
         UpdateableAdminData ad = UpdateableAdminData.getUpdateableInstance();
         Field ocf = a.getClass().getDeclaredField("outstandingChecksumFiles");
         ocf.setAccessible(true);
         Map<String, String> outstanding = (Map<String, String>) ocf.get(a);
         //Field adm = ad.getClass().getDeclaredField("storeEntries");
-        Field adm = ad.getClass().
-                getSuperclass().getDeclaredField("storeEntries");
+        Field adm = ad.getClass().getSuperclass().getDeclaredField("storeEntries");
 
         adm.setAccessible(true);
-        Map<String, ArcRepositoryEntry> admindataentries =
-                (Map<String, ArcRepositoryEntry>) adm.get(ad);
+        Map<String, ArcRepositoryEntry> admindataentries = (Map<String, ArcRepositoryEntry>) adm.get(ad);
 
         String id1 = "id1";
         String arcname1 = "arc1";
@@ -299,21 +297,12 @@ public class ArcRepositoryTester {
         // Matching checksum
         outstanding.put(id1, arcname1);
         ad.addEntry(arcname1, null, "f00");
-        BatchReplyMessage bamsg0 = new BatchReplyMessage(Channels.getTheRepos(),
-                                                         Channels.getTheBamon(),
-                                                         id1, 0,
-                                                         new ArrayList<File>(0),
-                                                         new StringRemoteFile(
-                                                                 arcname1
-                                                                 + ChecksumJob.STRING_FILENAME_SEPARATOR
-                                                                 + "f00\n"));
+        BatchReplyMessage bamsg0 = new BatchReplyMessage(Channels.getTheRepos(), Channels.getTheBamon(), id1, 0,
+        		new ArrayList<File>(0), new StringRemoteFile(
+        				arcname1 + ChecksumJob.STRING_FILENAME_SEPARATOR + "f00\n"));
         JMSConnectionMockupMQ.updateMsgID(bamsg0, id1);
         a.onBatchReply(bamsg0);
-        LogUtils.flushLogs(ArcRepository.class.getName());
-        //System.out.println(FileUtils.readFile(TestInfo.LOG_FILE));
-        FileAsserts.assertFileNotContains("Should have no warnings",
-                                          TestInfo.LOG_FILE,
-                                          "WARNING: Read unex");
+        lr.assertLogNotContains("Should have no warnings", "WARNING: Read unex");
         assertEquals("Should have updated the store state",
                      ReplicaStoreState.UPLOAD_COMPLETED,
                      ad.getState(arcname1, Channels.getTheBamon().getName()));
@@ -329,14 +318,10 @@ public class ArcRepositoryTester {
         JMSConnectionMockupMQ.updateMsgID(bamsg2, id1);
         bamsg2.setNotOk("Test an error");
         a.onBatchReply(bamsg2);
-        LogUtils.flushLogs(ArcRepository.class.getName());
-        FileAsserts.assertFileContains(
-                "Should have warning about error message",
-                "Reported error: 'Test an error'", TestInfo.LOG_FILE
-        );
-        assertEquals("Bad message should set entry to failed",
-                     ReplicaStoreState.UPLOAD_FAILED,
-                     ad.getState(arcname1, Channels.getTheBamon().getName()));
+        lr.assertLogContains("Should have warning about error message",
+                "Reported error: 'Test an error'");
+        assertEquals("Bad message should set entry to failed", ReplicaStoreState.UPLOAD_FAILED,
+        		ad.getState(arcname1, Channels.getTheBamon().getName()));
 
         // Check what happens if not in AdminData
         // Related bug: 574 -- processing of errors is strange
@@ -351,19 +336,15 @@ public class ArcRepositoryTester {
         bamsg3.setNotOk("Test another error");
         try {
             a.onBatchReply(bamsg3);
-            fail("Should have thrown UnknownID when presented with an unknown"
-                 + " arc file " + arcname1);
+            fail("Should have thrown UnknownID when presented with an unknown arc file " + arcname1);
         } catch (UnknownID e) {
             StringAsserts.assertStringContains("Should have mention of file "
-                                               + "in error message", arcname1,
-                                               e.getMessage());
+            		+ "in error message", arcname1, e.getMessage());
         }
-        LogUtils.flushLogs(ArcRepository.class.getName());
-        FileAsserts.assertFileContains(
-                "Should have warning about error message",
-                "Reported error: 'Test another error'", TestInfo.LOG_FILE);
+        lr.assertLogContains("Should have warning about error message",
+                "Reported error: 'Test another error'");
         assertFalse("Should not have info about non-yet-processed arcfile",
-                    ad.hasEntry(arcname1));
+        		ad.hasEntry(arcname1));
         // Try one without matching arcfilename -- should give warning.
         BatchReplyMessage bamsg1 = new BatchReplyMessage(Channels.getTheRepos(),
                                                          Channels.getTheBamon(),
@@ -371,36 +352,32 @@ public class ArcRepositoryTester {
                                                          new ArrayList<File>(0),
                                                          new NullRemoteFile());
         a.onBatchReply(bamsg1);
-        LogUtils.flushLogs(ArcRepository.class.getName());
-        FileAsserts.assertFileContains("Should have warning about unknown id",
-                                       "unknown originating ID " + id1,
-                                       TestInfo.LOG_FILE);
+        lr.assertLogContains("Should have warning about unknown id",
+                "unknown originating ID " + id1);
         assertFalse("Should not have info about non-yet-processed arcfile",
-                    ad.hasEntry(arcname1));
-
+        		ad.hasEntry(arcname1));
+        lr.stopRecorder();
     }
-    
+
     @Test
     public void testOnChecksumReply() throws Exception {
+    	LogbackRecorder lr = LogbackRecorder.startRecorder();
         ArcRepository a = ArcRepository.getInstance();
         
         GetChecksumMessage msg = new GetChecksumMessage(Channels.getError(), 
                 Channels.getTheRepos(), "THREE", "filename");
         JMSConnectionMockupMQ.updateMsgID(msg, "OnChecksumReply-1");
         a.onChecksumReply(msg);
-        FileAsserts.assertFileContains("Should warn about unknown originating "
-                + "ID from GetChecksumMessage", "Received GetChecksumMessage "
-                + "with unknown originating ID", TestInfo.LOG_FILE);
-        
+        lr.assertLogContains("Should warn about unknown originating ID from GetChecksumMessage",
+        		"Received GetChecksumMessage with unknown originating ID");
+
         Field ocf = ReflectUtils.getPrivateField(ArcRepository.class, 
                 "outstandingChecksumFiles");
         ocf.setAccessible(true);
-        Map<String, String> outstandingFiles = 
-            (Map<String, String>) ocf.get(a);
+        Map<String, String> outstandingFiles = (Map<String, String>) ocf.get(a);
 
         outstandingFiles.put("OnChecksumReply-2", "filename");
-        msg = new GetChecksumMessage(Channels.getError(), Channels.getTheRepos(), 
-                "THREE", "filename");
+        msg = new GetChecksumMessage(Channels.getError(), Channels.getTheRepos(), "THREE", "filename");
         msg.setNotOk("For testing the handling of 'NotOK'!");
         JMSConnectionMockupMQ.updateMsgID(msg, "OnChecksumReply-2");
         assertNull("The checksum should be null.", msg.getChecksum());
@@ -413,14 +390,15 @@ public class ArcRepositoryTester {
             assertTrue("Should say, that it known nothing about 'filename', but was: " + e, 
                     e.getMessage().contains("Don't know anything about file 'filename'"));
         }
-        
-        FileAsserts.assertFileContains("Should give Warning of about message being NotOk.", 
-                "Message 'OnChecksumReply-2' is reported not okay", 
-                TestInfo.LOG_FILE);
+
+        lr.assertLogContains("Should give Warning of about message being NotOk.", 
+                "Message 'OnChecksumReply-2' is reported not okay");
+        lr.stopRecorder();
     }
     
     @Test
     public void testOldRemoveAndGetFile() {
+    	LogbackRecorder lr = LogbackRecorder.startRecorder();
         ArcRepository.getInstance().cleanup();
         ArcRepository a = ArcRepository.getInstance();
         JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
@@ -434,10 +412,10 @@ public class ArcRepositoryTester {
         a.removeAndGetFile(msg);
         con.waitForConcurrentTasksToFinish();
         
-        FileAsserts.assertFileContains("Unexpected content in log-file", 
-                "Requesting remove of file 'filename'", TestInfo.LOG_FILE);
-        assertEquals("number of messages on queue AllBa", 1,
-                listener.getNumReceived());
+        //FileAsserts.assertFileContains("Unexpected content in log-file", "Requesting remove of file 'filename'", TestInfo.LOG_FILE);
+        lr.assertLogContains("Unexpected content in log-file", "Requesting remove of file 'filename'");
+        lr.stopRecorder();
+        assertEquals("number of messages on queue AllBa", 1, listener.getNumReceived());
     }
 
     @Test

@@ -70,7 +70,7 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.ChecksumJob;
 import dk.netarkivet.testutils.ClassAsserts;
 import dk.netarkivet.testutils.FileAsserts;
-import dk.netarkivet.testutils.LogUtils;
+import dk.netarkivet.testutils.LogbackRecorder;
 import dk.netarkivet.testutils.MessageAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.TestFileUtils;
@@ -146,15 +146,14 @@ public class BitarchiveServerTester {
      */
     @Test
     public void testLogging() throws IOException {
+    	LogbackRecorder lr = LogbackRecorder.startRecorder();
         Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, TestInfo.BITARCHIVE_APP_DIR_1);
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR, TestInfo.BITARCHIVE_SERVER_DIR_1);
         bas = BitarchiveServer.getInstance();
         bas.close();
-        LogUtils.flushLogs("BitarchiveServer");
-        String log = FileUtils.readFile(TestInfo.LOG_FILE);
-        assertFalse("Should have non-empty log", log.isEmpty());
-        FileAsserts.assertFileContains("Log should show bitarchive server created", "Created bitarchive server",
-                TestInfo.LOG_FILE);
+        assertFalse("Should have non-empty log", lr.isEmpty());
+        lr.assertLogContains("Log should show bitarchive server created", "Created bitarchive server");
+        lr.stopRecorder();
     }
 
     /**
@@ -217,6 +216,7 @@ public class BitarchiveServerTester {
      */
     @Test
     public void testCTor() {
+    	LogbackRecorder lr = LogbackRecorder.startRecorder();
         // Set to just over the minimum size guaranteed.
         Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, dirs);
         long extraSpace = 10000000;
@@ -226,9 +226,8 @@ public class BitarchiveServerTester {
         ChannelID anyBa = Channels.getAnyBa();
         JMSConnectionMockupMQ conn = (JMSConnectionMockupMQ) JMSConnectionFactory.getInstance();
         assertEquals("We should not listen to " + anyBa + " if we are out of space", 0, conn.getListeners(anyBa).size());
-        LogUtils.flushLogs(BitarchiveServer.class.getName());
-        FileAsserts.assertFileContains("Log file should have warning about " + "having no space", "WARNING",
-                TestInfo.LOG_FILE);
+        lr.assertLogContains("Log file should have warning about having no space", "Not enough space to guarantee store -- not listening to");
+        lr.stopRecorder();
     }
 
     /**
@@ -554,6 +553,7 @@ public class BitarchiveServerTester {
      */
     @Test
     public void testVisitRemoveAndGetFileMessage() throws Exception {
+    	LogbackRecorder lr = LogbackRecorder.startRecorder();
         String arcFile = TestInfo.BA1_FILENAME;
         String dummyReplicaId = "ONE";
         String checksum = TestInfo.BA1_CHECKSUM;
@@ -580,8 +580,7 @@ public class BitarchiveServerTester {
         bas.visit(m2);
         assertTrue("File should exist after remove attempt with wrong checksum", baFile.exists());
         assertFalse("Backup file should not exist after failed operation.", backupFile.exists());
-        LogUtils.flushLogs(BitarchiveServer.class.getName());
-        FileAsserts.assertFileContains("Log should have given warning", "checksum mismatch", TestInfo.LOG_FILE);
+        lr.assertLogContains("Log should have given warning", "checksum mismatch");
         assertFalse("Message should have notOk status", m2.isOk());
 
         // Verify that operation fails if credentials are wrong:
@@ -591,8 +590,7 @@ public class BitarchiveServerTester {
         bas.visit(m3);
         assertTrue("File should exist after remove attempt with wrong creds", baFile.exists());
         assertFalse("Backup file should not exist after failed operation.", backupFile.exists());
-        LogUtils.flushLogs(BitarchiveServer.class.getName());
-        FileAsserts.assertFileContains("Log should have given warning", "wrong credentials", TestInfo.LOG_FILE);
+        lr.assertLogContains("Log should have given warning", "wrong credentials");
         assertFalse("Message should have notOk status", m3.isOk());
 
         // Verify that operation succeeds in the correct case:
@@ -606,8 +604,7 @@ public class BitarchiveServerTester {
         MessageAsserts.assertMessageOk("Message should say OK", m4);
         assertFalse("File should not exist after removal", baFile.exists());
         assertTrue("Backup file should exist after removal", backupFile.exists());
-        LogUtils.flushLogs(BitarchiveServer.class.getName());
-        FileAsserts.assertFileContains("Log should have given warning", "Removed file", TestInfo.LOG_FILE);
+        lr.assertLogContains("Log should have given warning", "Removed file");
         File f = m4.getData();
         assertNotNull("Msg should have file set", f);
         assertEquals("File should have proper contents", len, f.length());
@@ -624,7 +621,7 @@ public class BitarchiveServerTester {
         } catch (IOFailure e) {
             // expected
         }
-
+        lr.stopRecorder();
     }
 
     @Test
@@ -903,4 +900,5 @@ public class BitarchiveServerTester {
             messagesReceived.add(naMsg);
         }
     }
+
 }
