@@ -22,6 +22,9 @@
  */
 package dk.netarkivet.common.distribute;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -34,6 +37,10 @@ import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.QueueBrowser;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
@@ -42,12 +49,12 @@ import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
-import junit.framework.TestCase;
 
 /**
- * Tests JMSConnection, the class that handles all JMS operations for Netarkivet.
+ * Tests JMSConnection, the class that handles all JMS operations for
+ * Netarkivet.
  */
-public class IntegrityTestSuite extends TestCase {
+public class IntegrityTestSuite {
     /**
      * We need two arbitrary (but different) queues for testing send and reply.
      */
@@ -71,20 +78,20 @@ public class IntegrityTestSuite extends TestCase {
 
     ReloadSettings rs = new ReloadSettings();
 
+    @Before
     public void setUp() {
         rs.setUp();
-        Settings.set(CommonSettings.JMS_BROKER_CLASS,
-                     JMSConnectionSunMQ.class.getName());
+        Settings.set(CommonSettings.JMS_BROKER_CLASS, JMSConnectionSunMQ.class.getName());
         /* Do not send notification by email. Print them to STDOUT. */
-        Settings.set(CommonSettings.NOTIFICATIONS_CLASS,
-                     RememberNotifications.class.getName());
+        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
         JMSConnectionFactory.getInstance().cleanup();
         conn = JMSConnectionFactory.getInstance();
         pes.setUp();
     }
 
+    @After
     public void tearDown() {
-        ChannelsTester.resetChannels();
+        ChannelsTesterHelper.resetChannels();
         JMSConnectionFactory.getInstance().cleanup();
         pes.tearDown();
         rs.tearDown();
@@ -92,10 +99,11 @@ public class IntegrityTestSuite extends TestCase {
 
     /**
      * Verify that we can remove a given MessageListener from a given Queue.
-     * Note that this method does not test that a MessageListener can removed from a Topic
-     * - at the moment we have no need for that.
-     * If the need arises, a test case should be written for Topics as well.
+     * Note that this method does not test that a MessageListener can removed
+     * from a Topic - at the moment we have no need for that. If the need
+     * arises, a test case should be written for Topics as well.
      */
+    @Test
     public void testRemoveListener() {
         TestMessage testMsg = new TestMessage(sendQ, replyQ);
         TestMessageListener listener1 = new TestMessageListener(testMsg);
@@ -109,16 +117,17 @@ public class IntegrityTestSuite extends TestCase {
             try {
                 wait(WAIT_MS);
             } catch (InterruptedException e) {
-                //This is expected
+                // This is expected
             }
         }
 
-        //The test is ok if exactly one of the listeners is ok.
+        // The test is ok if exactly one of the listeners is ok.
         boolean ok = listener1.getOk() ? !listener2.getOk() : listener2.getOk();
-        assertTrue("Expected test message '" + testMsg.toString() +
-                "'\nto be received by exactly one listener within " + WAIT_MS + " milliseconds.", ok);
+        assertTrue("Expected test message '" + testMsg.toString() + "'\nto be received by exactly one listener within "
+                + WAIT_MS + " milliseconds.", ok);
 
-        //Removing listener1 - test that a message will only be received by listener2:
+        // Removing listener1 - test that a message will only be received by
+        // listener2:
         // This also tests fix of bug 235:
         conn.removeListener(sendQ, listener1);
         listener1.resetOkState();
@@ -129,16 +138,15 @@ public class IntegrityTestSuite extends TestCase {
             try {
                 wait(WAIT_MS);
             } catch (InterruptedException e) {
-                //This is expected
+                // This is expected
             }
         }
 
-        assertTrue("Expected test message " + testMsg.toString()
-                + "\nshould be received by listener2 only",
+        assertTrue("Expected test message " + testMsg.toString() + "\nshould be received by listener2 only",
                 !listener1.getOk() && listener2.getOk());
 
-        //Now removing listener2 and setting a third listener
-        //Test that a message is neither received by listener1 nor listener2:
+        // Now removing listener2 and setting a third listener
+        // Test that a message is neither received by listener1 nor listener2:
         conn.removeListener(sendQ, listener2);
         conn.setListener(sendQ, listener3);
         listener1.resetOkState();
@@ -150,42 +158,40 @@ public class IntegrityTestSuite extends TestCase {
             try {
                 wait(WAIT_MS);
             } catch (InterruptedException e) {
-                //This is expected
+                // This is expected
             }
         }
 
-        assertTrue("Expected test message " + testMsg.toString()
-                + "\nshould not be received by neither listener1 "
+        assertTrue("Expected test message " + testMsg.toString() + "\nshould not be received by neither listener1 "
                 + "nor listener2", !listener1.getOk() && !listener2.getOk());
 
         conn.setListener(sendQ, listener1);
 
-        //This should be quite fast, the message is already waiting.
+        // This should be quite fast, the message is already waiting.
         synchronized (this) {
             try {
                 if (!listener1.getOk()) {
                     wait(WAIT_MS);
                 }
             } catch (InterruptedException e) {
-                //This is expected
+                // This is expected
             }
         }
 
-        //The test is ok if exactly one of the listeners is ok.
+        // The test is ok if exactly one of the listeners is ok.
         boolean okAfterRemovalAndReset = listener1.getOk() ? !listener3.getOk() : listener3.getOk();
-        assertTrue("Expected test message " + testMsg.toString()
-                + "\nto be received by either listener1 or listener3 "
+        assertTrue("Expected test message " + testMsg.toString() + "\nto be received by either listener1 or listener3 "
                 + "after reading it", okAfterRemovalAndReset);
 
     }
 
     /**
-     * Verify that a sent message is only delivered to one listener
-     * (this is point-to-point semantics).
+     * Verify that a sent message is only delivered to one listener (this is
+     * point-to-point semantics).
      * <p/>
-     * This is an integrity test because:  It tests that JMS behaves as
-     * expected.
+     * This is an integrity test because: It tests that JMS behaves as expected.
      */
+    @Test
     public void testTwoListenersSend() {
         TestMessage testMsg = new TestMessage(sendQ, replyQ);
         TestMessageListener listener1 = new TestMessageListener(testMsg);
@@ -197,11 +203,11 @@ public class IntegrityTestSuite extends TestCase {
             try {
                 wait(WAIT_MS);
             } catch (InterruptedException e) {
-                //This is expected
+                // This is expected
             }
         }
 
-        //The test is ok if exactly one of the listeners is ok.
+        // The test is ok if exactly one of the listeners is ok.
         int listeners = 0;
         if (listener1.getOk()) {
             listeners++;
@@ -209,23 +215,22 @@ public class IntegrityTestSuite extends TestCase {
         if (listener2.getOk()) {
             listeners++;
         }
-        assertEquals("Expected test message: (" + testMsg.toString() +
-                ") to be received by exactly one listener within " + WAIT_MS + " milliseconds.",
-                1, listeners);
+        assertEquals("Expected test message: (" + testMsg.toString()
+                + ") to be received by exactly one listener within " + WAIT_MS + " milliseconds.", 1, listeners);
     }
 
     /**
      * Test that we can subscribe more than three (3) listeners to a queue and
      * that exactly one receives the message
      * <p/>
-     * This is an integrity test because:  We are testing that JMS itself
-     * behaves correctly.
+     * This is an integrity test because: We are testing that JMS itself behaves
+     * correctly.
      * <p/>
      * This is used for testing the Platform Ed. Enterprise License feature of
-     * queue
-     * Requires a running broker with Platform Ed. Enterprise License
+     * queue Requires a running broker with Platform Ed. Enterprise License
      * (e.g. trial license: /opt/imq/bin/imqbrokerd -license try)
      */
+    @Test
     public void testMoreThanThreeListenersToQueue() {
         TestMessage testMsg = new TestMessage(sendQ, replyQ);
         List<MessageListener> listeners = new ArrayList<MessageListener>(NO_OF_LISTENERS);
@@ -243,7 +248,7 @@ public class IntegrityTestSuite extends TestCase {
                 try {
                     wait(WAIT_MS);
                 } catch (InterruptedException e) {
-                    //This is expected
+                    // This is expected
                 }
             }
         }
@@ -255,13 +260,14 @@ public class IntegrityTestSuite extends TestCase {
             }
         }
 
-        assertTrue("Expected test message " + testMsg.toString() +
-                "to be received by exactly 1 of the " + NO_OF_LISTENERS + " listeners within " + WAIT_MS + " milliseconds. Received " + oks, (oks == 1));
+        assertTrue("Expected test message " + testMsg.toString() + "to be received by exactly 1 of the "
+                + NO_OF_LISTENERS + " listeners within " + WAIT_MS + " milliseconds. Received " + oks, (oks == 1));
     }
 
     /**
      * Verify that a sent message arrives unchanged to a listener.
      */
+    @Test
     public void testListenAndSend() {
         TestMessage testMsg = new TestMessage(sendQ, replyQ);
         TestMessageListener listener = new TestMessageListener(testMsg);
@@ -271,16 +277,17 @@ public class IntegrityTestSuite extends TestCase {
             try {
                 wait(WAIT_MS);
             } catch (InterruptedException e) {
-                //This is expected
+                // This is expected
             }
         }
-        assertTrue("Expected test message >" + testMsg.toString() + "< to have arrived on queue " + replyQ +
-                " within " + WAIT_MS + " milliseconds.", listener.getOk());
+        assertTrue("Expected test message >" + testMsg.toString() + "< to have arrived on queue " + replyQ + " within "
+                + WAIT_MS + " milliseconds.", listener.getOk());
     }
 
     /**
      * Verify that a replied message on a queue arrives unchanged to a listener.
      */
+    @Test
     public void testListenAndReply() {
         TestMessage testMsg = new TestMessage(sendQ, replyQ);
         conn.send(testMsg);
@@ -291,17 +298,18 @@ public class IntegrityTestSuite extends TestCase {
             try {
                 wait(WAIT_MS);
             } catch (InterruptedException e) {
-                //This is expected
+                // This is expected
             }
         }
-        assertTrue("Expected test message " + testMsg.toString() + "to have arrived on queue " + replyQ +
-                " within " + WAIT_MS + " milliseconds", listener.getOk());
+        assertTrue("Expected test message " + testMsg.toString() + "to have arrived on queue " + replyQ + " within "
+                + WAIT_MS + " milliseconds", listener.getOk());
     }
 
     /**
-     * Test that we can subscribe more than one listener to a topic and that they
-     * all receive the message.
+     * Test that we can subscribe more than one listener to a topic and that
+     * they all receive the message.
      */
+    @Test
     public void testNListenersToTopic() {
         TestMessage testMsg = new TestMessage(sendTopic, replyQ);
         List<MessageListener> listeners = new ArrayList<MessageListener>(NO_OF_LISTENERS);
@@ -318,7 +326,7 @@ public class IntegrityTestSuite extends TestCase {
                 try {
                     wait(WAIT_MS);
                 } catch (InterruptedException e) {
-                    //This is expected
+                    // This is expected
                 }
                 boolean all_ok = true;
                 for (int j = 0; j < NO_OF_LISTENERS; j++) {
@@ -339,21 +347,19 @@ public class IntegrityTestSuite extends TestCase {
             }
         }
 
-        assertEquals("Expected test message " + testMsg.toString()
-                + "to be received by exactly " + NO_OF_LISTENERS
-                + " listeners within " + WAIT_MS + " milliseconds, but got "
-                + oks,
-                NO_OF_LISTENERS, oks.size());
+        assertEquals("Expected test message " + testMsg.toString() + "to be received by exactly " + NO_OF_LISTENERS
+                + " listeners within " + WAIT_MS + " milliseconds, but got " + oks, NO_OF_LISTENERS, oks.size());
     }
 
     /**
      * Tests that no messages are generated twice.
      *
-     * @throws Exception On failures
+     * @throws Exception
+     *             On failures
      */
+    @Test
     public void testMsgIds() throws Exception {
-        conn.setListener(Channels.getAnyBa(),
-                new TestMessageListener(new TestMessage(Channels.getAnyBa(), sendQ)));
+        conn.setListener(Channels.getAnyBa(), new TestMessageListener(new TestMessage(Channels.getAnyBa(), sendQ)));
         Set<String> set = new HashSet<String>();
 
         for (int i = 0; i < 100; i++) {
@@ -364,39 +370,40 @@ public class IntegrityTestSuite extends TestCase {
             log.finest("Generated message ID " + msg.getID());
         }
         conn = JMSConnectionFactory.getInstance();
-        for (int i = 0; i < 100; i++) {            
-            NetarkivetMessage msg
-                    = new TestMessage(Channels.getAnyBa(), sendQ);
+        for (int i = 0; i < 100; i++) {
+            NetarkivetMessage msg = new TestMessage(Channels.getAnyBa(), sendQ);
             conn.send(msg);
             assertTrue("No msg ID must be there twice", set.add(msg.getID()));
             Logger log = Logger.getLogger(getClass().getName());
             log.finest("Generated message ID " + msg.getID());
         }
-        //To test messages are unique between processes, run the unittest by two
+        // To test messages are unique between processes, run the unittest by
+        // two
         // JVMs simultanously (increase the number of messages generated or
         // insert delay to have time for starting two processes).
         // Then compare the logs:
         //
-        //$ grep Generated netarkivtesta.log | cut -f 3- > a
-        //$ grep Generated netarkivtestb.log | cut -f 3- > b
-        //$ cat a b | sort | uniq -d
+        // $ grep Generated netarkivtesta.log | cut -f 3- > a
+        // $ grep Generated netarkivtestb.log | cut -f 3- > b
+        // $ cat a b | sort | uniq -d
         //
-        //This should produce no output unless two message IDs are equal.
+        // This should produce no output unless two message IDs are equal.
     }
 
     /**
      * Tries to generate the mysterious NullPointerException of bug 220.
      *
-     * @throws Exception On failures
+     * @throws Exception
+     *             On failures
      */
+    @Test
     public void testProvokeNullPointer() throws Exception {
         Settings.set(CommonSettings.REMOTE_FILE_CLASS, FTPRemoteFile.class.getName());
         File testFile1 = new File("tests/dk/netarkivet/common/distribute/data/originals/arc_record0.txt");
         File LOGFILE = new File("tests/testlogs/netarkivtest.log");
         int tries = 100;
         for (int i = 0; i < tries; i++) {
-            RemoteFile rf = RemoteFileFactory.getInstance(testFile1, true,
-                                                          false, true);
+            RemoteFile rf = RemoteFileFactory.getInstance(testFile1, true, false, true);
             rf.cleanup();
         }
         LogUtils.flushLogs(FTPRemoteFile.class.getName());
@@ -406,35 +413,36 @@ public class IntegrityTestSuite extends TestCase {
     }
 
     /**
-     * Tries to send a message to a Queue.
-     *  - Makes a TestMessageConsumer, that listens to the ArcRepository Queue.
-     *  - Sends a message to that queue.
-     *  - Verifies, that this message is sent and received un-modified.
+     * Tries to send a message to a Queue. - Makes a TestMessageConsumer, that
+     * listens to the ArcRepository Queue. - Sends a message to that queue. -
+     * Verifies, that this message is sent and received un-modified.
      *
-     * @throws Exception On failures
+     * @throws Exception
+     *             On failures
      */
+    @Test
     public void testQueueSendMessage() throws Exception {
         TestMessageConsumer mc = new TestMessageConsumer();
         conn.setListener(Channels.getTheRepos(), mc);
 
-        NetarkivetMessage nMsg = new TestMessage(Channels.getTheRepos(),
-                Channels.getError(), "testQueueSendMessage");
+        NetarkivetMessage nMsg = new TestMessage(Channels.getTheRepos(), Channels.getError(), "testQueueSendMessage");
         synchronized (mc) {
             conn.send(nMsg);
             mc.wait();
         }
-        assertEquals(
-                "Arcrepos queue MessageConsumer should have received message.",
-                nMsg.toString(), mc.nMsg.toString());
+        assertEquals("Arcrepos queue MessageConsumer should have received message.", nMsg.toString(),
+                mc.nMsg.toString());
     }
 
     /**
-     * Sets up 3 message consumers, all listening on the same channel.
-     * Then sends a message on that channel.
-     * Verify, that the message is received by all three consumers.
+     * Sets up 3 message consumers, all listening on the same channel. Then
+     * sends a message on that channel. Verify, that the message is received by
+     * all three consumers.
      *
-     * @throws Exception On failures
+     * @throws Exception
+     *             On failures
      */
+    @Test
     public void testTopicSendMessage() throws Exception {
         TestMessageConsumer mc1 = new TestMessageConsumer();
         TestMessageConsumer mc2 = new TestMessageConsumer();
@@ -443,57 +451,59 @@ public class IntegrityTestSuite extends TestCase {
         conn.setListener(Channels.getAllBa(), mc2);
         conn.setListener(Channels.getAllBa(), mc3);
 
-        NetarkivetMessage nMsg = new TestMessage(Channels.getAllBa(), Channels
-                .getError(), "testTopicSendMessage");
+        NetarkivetMessage nMsg = new TestMessage(Channels.getAllBa(), Channels.getError(), "testTopicSendMessage");
         conn.send(nMsg);
         synchronized (mc1) {
-            if (mc1.nMsg == null) mc1.wait();
+            if (mc1.nMsg == null)
+                mc1.wait();
         }
         synchronized (mc2) {
-            if (mc2.nMsg == null) mc2.wait();
+            if (mc2.nMsg == null)
+                mc2.wait();
         }
         synchronized (mc3) {
-            if (mc3.nMsg == null) mc3.wait();
+            if (mc3.nMsg == null)
+                mc3.wait();
         }
 
-        assertEquals(
-                "Arcrepos queue MessageConsumer should have received message.",
-                nMsg.toString(), mc1.nMsg.toString());
-        assertEquals(
-                "Arcrepos queue MessageConsumer should have received message.",
-                nMsg.toString(), mc2.nMsg.toString());
-        assertEquals(
-                "Arcrepos queue MessageConsumer should have received message.",
-                nMsg.toString(), mc3.nMsg.toString());
+        assertEquals("Arcrepos queue MessageConsumer should have received message.", nMsg.toString(),
+                mc1.nMsg.toString());
+        assertEquals("Arcrepos queue MessageConsumer should have received message.", nMsg.toString(),
+                mc2.nMsg.toString());
+        assertEquals("Arcrepos queue MessageConsumer should have received message.", nMsg.toString(),
+                mc3.nMsg.toString());
     }
-    
-    
+
     /**
-     * Checks that the QueueBrowser created by the <code>JMSConnectionMQ</code> class work correctly. 
-     * @throws JMSException 
-     * @throws InterruptedException 
+     * Checks that the QueueBrowser created by the <code>JMSConnectionMQ</code>
+     * class work correctly.
+     * 
+     * @throws JMSException
+     * @throws InterruptedException
      * @see JMSConnection#createQueueBrowser(ChannelID)
      */
+    @Test
     public void testQueueBrowsing() throws JMSException, InterruptedException {
         QueueBrowser queueBrowser = conn.createQueueBrowser(Channels.getTheRepos());
         TestMessageConsumer mc = new TestMessageConsumer();
-        conn.setListener(Channels.getTheRepos(), mc);        
+        conn.setListener(Channels.getTheRepos(), mc);
 
         assertTrue("Empty queue had size > 0", queueBrowser.getEnumeration().hasMoreElements() == false);
 
         NetarkivetMessage nMsg = new TestMessage(Channels.getTheRepos(), Channels.getError(), "testQueueSendMessage");
-        
+
         synchronized (mc) {
             conn.send(nMsg);
-            assertTrue("Queue didn't have any messages after dispatching job", queueBrowser.getEnumeration().hasMoreElements() == true);
+            assertTrue("Queue didn't have any messages after dispatching job", queueBrowser.getEnumeration()
+                    .hasMoreElements() == true);
             mc.wait();
-        }        
-        
-        assertEquals(
-                "Arcrepos queue MessageConsumer should have received message.",
-                nMsg.toString(), mc.nMsg.toString());
-        
-        assertTrue("Queue not empty after consumation of message", queueBrowser.getEnumeration().hasMoreElements() == false);
+        }
+
+        assertEquals("Arcrepos queue MessageConsumer should have received message.", nMsg.toString(),
+                mc.nMsg.toString());
+
+        assertTrue("Queue not empty after consumation of message",
+                queueBrowser.getEnumeration().hasMoreElements() == false);
     }
 
     private class TestMessageListener implements MessageListener {
@@ -527,9 +537,10 @@ public class IntegrityTestSuite extends TestCase {
      * The only added functionality is that toString() outputs a representation
      * of the "entire visible state" of the message.
      */
-    @SuppressWarnings({ "unused", "serial"})
+    @SuppressWarnings({ "unused", "serial" })
     private static class TestMessage extends NetarkivetMessage {
         String testID;
+
         public TestMessage(ChannelID sendQ, ChannelID recQ) {
             super(sendQ, recQ);
         }
@@ -539,24 +550,28 @@ public class IntegrityTestSuite extends TestCase {
             this.testID = testID;
         }
 
-                @Override
+        @Override
         public int hashCode() {
             final int prime = 31;
             int result = 1;
-            result = prime * result
-                    + ((testID == null) ? 0 : testID.hashCode());
+            result = prime * result + ((testID == null) ? 0 : testID.hashCode());
             return result;
         }
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null) return false;
-            if (getClass() != obj.getClass()) return false;
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
             TestMessage other = (TestMessage) obj;
             if (testID == null) {
-                if (other.testID != null) return false;
-            } else if (!testID.equals(other.testID)) return false;
+                if (other.testID != null)
+                    return false;
+            } else if (!testID.equals(other.testID))
+                return false;
             return true;
         }
 

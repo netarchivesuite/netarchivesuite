@@ -26,7 +26,7 @@ import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveMonitorServer;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveServer;
 import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.distribute.ChannelsTester;
+import dk.netarkivet.common.distribute.ChannelsTesterHelper;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
@@ -78,7 +78,7 @@ public class ServerSetUp {
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         JMSConnectionMockupMQ.clearTestQueues();
 
-        ChannelsTester.resetChannels();
+        ChannelsTesterHelper.resetChannels();
 
         FileUtils.removeRecursively(ARCHIVE_DIR);
         FileUtils.removeRecursively(TEMP_DIR);

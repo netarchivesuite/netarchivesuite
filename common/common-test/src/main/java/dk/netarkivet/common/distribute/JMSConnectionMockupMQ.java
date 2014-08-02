@@ -23,6 +23,18 @@
 
 package dk.netarkivet.common.distribute;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import javax.jms.BytesMessage;
 import javax.jms.Connection;
 import javax.jms.ConnectionConsumer;
@@ -51,18 +63,6 @@ import javax.jms.TextMessage;
 import javax.jms.Topic;
 import javax.jms.TopicSubscriber;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -76,6 +76,7 @@ import dk.netarkivet.common.utils.batch.TestJob;
  * for testing.
  */
 @SuppressWarnings({ "rawtypes", "unused", "serial" })
+
 public class JMSConnectionMockupMQ extends JMSConnection {
     private static final Log log
             = LogFactory.getLog(JMSConnectionMockupMQ.class); 

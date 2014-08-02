@@ -22,7 +22,10 @@
  */
 package dk.netarkivet.common.utils.cdx;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+import org.junit.Test;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
@@ -30,61 +33,40 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * Performs unit tests of the ARCFilenameCDXRecordFilter. Implicitly tests both
  * SimpleCDXRecordFilter and CDXRecordFilter
  */
-public class ARCFilenameCDXRecordFilterTester extends TestCase {
+public class ARCFilenameCDXRecordFilterTester {
 
+    @Test
     public void testConstructor() {
-        try {
-            new ARCFilenameCDXRecordFilter("NETARKIVET_00001.*", "filter1");
-        } catch (Exception e) {
-            fail("Constuctor should not throw exception !");
-        }
+        new ARCFilenameCDXRecordFilter("NETARKIVET_00001.*", "filter1");
     }
 
+    @Test
     public void testGetFiltername() {
-        SimpleCDXRecordFilter cdxfil = new ARCFilenameCDXRecordFilter(
-                "NETARKIVET_00001.*", "filter1");
-        assertEquals("Filtername are not the same !", cdxfil.getFilterName(),
-                     "filter1");
+        SimpleCDXRecordFilter cdxfil = new ARCFilenameCDXRecordFilter("NETARKIVET_00001.*", "filter1");
+        assertEquals("Filtername are not the same !", cdxfil.getFilterName(), "filter1");
     }
 
+    @Test(expected = ArgumentNotValid.class)
     public void testNullFiltername() {
-        try {
-            new ARCFilenameCDXRecordFilter("NETARKIVET_00001.*", null);
-            fail("ArgumentNotValid should have been thrown !");
-        } catch (ArgumentNotValid e) {
-            // expected case
-        }
-
+        new ARCFilenameCDXRecordFilter("NETARKIVET_00001.*", null);
+        fail("ArgumentNotValid should have been thrown !");
     }
 
+    @Test(expected = ArgumentNotValid.class)
     public void testEmptyFiltername() {
-        try {
-            new ARCFilenameCDXRecordFilter("NETARKIVET_00001.*", "");
-            fail("ArgumentNotValid should have been thrown !");
-        } catch (ArgumentNotValid e) {
-            // expected case
-        }
-
+        new ARCFilenameCDXRecordFilter("NETARKIVET_00001.*", "");
+        fail("ArgumentNotValid should have been thrown !");
     }
 
+    @Test(expected = ArgumentNotValid.class)
     public void testEmptyFilenamePattern() {
-        try {
-            new ARCFilenameCDXRecordFilter("", "filter1");
-            fail("ArgumentNotValid should have been thrown !");
-        } catch (ArgumentNotValid e) {
-            // expected case
-        }
-
+        new ARCFilenameCDXRecordFilter("", "filter1");
+        fail("ArgumentNotValid should have been thrown !");
     }
 
+    @Test(expected = ArgumentNotValid.class)
     public void testNullFilenamePattern() {
-        try {
-            new ARCFilenameCDXRecordFilter(null, "filter1");
-            fail("ArgumentNotValid should have been thrown !");
-        } catch (ArgumentNotValid e) {
-            // expected case
-        }
-
+        new ARCFilenameCDXRecordFilter(null, "filter1");
+        fail("ArgumentNotValid should have been thrown !");
     }
-
 }

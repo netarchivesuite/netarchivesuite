@@ -52,6 +52,8 @@ import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.el.ExpressionEvaluator;
 import javax.servlet.jsp.el.VariableResolver;
 
+import org.junit.Ignore;
+
 import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.TestFileUtils;
@@ -65,21 +67,19 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
  * dk.netarkivet.archive.webinterface.BitpreserveFileStatusTester
  */
 @SuppressWarnings({ "rawtypes", "deprecation" })
-
+@Ignore("Not in junit3 test suite")
 public class WebinterfaceTestCase {
     ReloadSettings rs = new ReloadSettings();
 
     public void setUp() throws Exception {
         rs.setUp();
-        TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR,
-                TestInfo.WORKING_DIR);
-   }
+        TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
+    }
 
     public void tearDown() throws Exception {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         rs.tearDown();
     }
-
 
     /**
      * A dummy class implementing only the methods for getting parameters. A
@@ -105,8 +105,7 @@ public class WebinterfaceTestCase {
             throw new NotImplementedException("Not implemented");
         }
 
-        public void setCharacterEncoding(String string)
-                throws UnsupportedEncodingException {
+        public void setCharacterEncoding(String string) throws UnsupportedEncodingException {
             throw new NotImplementedException("Not implemented");
         }
 
@@ -225,31 +224,32 @@ public class WebinterfaceTestCase {
             this.locale = new Locale("en");
         }
 
-        public TestPageContext(ServletRequest request, JspWriter out,
-                               Locale locale) {
+        public TestPageContext(ServletRequest request, JspWriter out, Locale locale) {
             this.request = request;
             this.out = out;
             this.locale = locale;
         }
 
-        public void initialize(Servlet servlet, ServletRequest servletRequest,
-                               ServletResponse servletResponse, String string,
-                               boolean b, int i, boolean b1) throws IOException,
-                                                                    IllegalStateException,
-                                                                    IllegalArgumentException {
-            //To change body of implemented methods use File | Settings | File Templates.
+        public void initialize(Servlet servlet, ServletRequest servletRequest, ServletResponse servletResponse,
+                String string, boolean b, int i, boolean b1) throws IOException, IllegalStateException,
+                IllegalArgumentException {
+            // To change body of implemented methods use File | Settings | File
+            // Templates.
         }
 
         public void release() {
-            //To change body of implemented methods use File | Settings | File Templates.
+            // To change body of implemented methods use File | Settings | File
+            // Templates.
         }
 
         public HttpSession getSession() {
-            return null;  //To change body of implemented methods use File | Settings | File Templates.
+            return null; // To change body of implemented methods use File |
+                         // Settings | File Templates.
         }
 
         public Object getPage() {
-            return null;  //To change body of implemented methods use File | Settings | File Templates.
+            return null; // To change body of implemented methods use File |
+                         // Settings | File Templates.
         }
 
         public ServletRequest getRequest() {
@@ -260,60 +260,73 @@ public class WebinterfaceTestCase {
             return new ServletResponse() {
 
                 public String getCharacterEncoding() {
-                    return null;  //To change body of implemented methods use File | Settings | File Templates.
+                    return null; // To change body of implemented methods use
+                                 // File | Settings | File Templates.
                 }
 
                 public String getContentType() {
-                    return null;  //To change body of implemented methods use File | Settings | File Templates.
+                    return null; // To change body of implemented methods use
+                                 // File | Settings | File Templates.
                 }
 
-                public ServletOutputStream getOutputStream()
-                        throws IOException {
-                    return null;  //To change body of implemented methods use File | Settings | File Templates.
+                public ServletOutputStream getOutputStream() throws IOException {
+                    return null; // To change body of implemented methods use
+                                 // File | Settings | File Templates.
                 }
 
                 public PrintWriter getWriter() throws IOException {
-                    return null;  //To change body of implemented methods use File | Settings | File Templates.
+                    return null; // To change body of implemented methods use
+                                 // File | Settings | File Templates.
                 }
 
                 public void setCharacterEncoding(String string) {
-                    //To change body of implemented methods use File | Settings | File Templates.
+                    // To change body of implemented methods use File | Settings
+                    // | File Templates.
                 }
 
                 public void setContentLength(int i) {
-                    //To change body of implemented methods use File | Settings | File Templates.
+                    // To change body of implemented methods use File | Settings
+                    // | File Templates.
                 }
 
                 public void setContentType(String string) {
-                    //To change body of implemented methods use File | Settings | File Templates.
+                    // To change body of implemented methods use File | Settings
+                    // | File Templates.
                 }
 
                 public void setBufferSize(int i) {
-                    //To change body of implemented methods use File | Settings | File Templates.
+                    // To change body of implemented methods use File | Settings
+                    // | File Templates.
                 }
 
                 public int getBufferSize() {
-                    return 0;  //To change body of implemented methods use File | Settings | File Templates.
+                    return 0; // To change body of implemented methods use File
+                              // | Settings | File Templates.
                 }
 
                 public void flushBuffer() throws IOException {
-                    //To change body of implemented methods use File | Settings | File Templates.
+                    // To change body of implemented methods use File | Settings
+                    // | File Templates.
                 }
 
                 public void resetBuffer() {
-                    //To change body of implemented methods use File | Settings | File Templates.
+                    // To change body of implemented methods use File | Settings
+                    // | File Templates.
                 }
 
                 public boolean isCommitted() {
-                    return false;  //To change body of implemented methods use File | Settings | File Templates.
+                    return false; // To change body of implemented methods use
+                                  // File | Settings | File Templates.
                 }
 
                 public void reset() {
-                    //To change body of implemented methods use File | Settings | File Templates.
+                    // To change body of implemented methods use File | Settings
+                    // | File Templates.
                 }
 
                 public void setLocale(Locale locale) {
-                    //To change body of implemented methods use File | Settings | File Templates.
+                    // To change body of implemented methods use File | Settings
+                    // | File Templates.
                 }
 
                 public Locale getLocale() {
@@ -323,190 +336,222 @@ public class WebinterfaceTestCase {
         }
 
         public Exception getException() {
-            return null;  //To change body of implemented methods use File | Settings | File Templates.
+            return null; // To change body of implemented methods use File |
+                         // Settings | File Templates.
         }
 
         public ServletConfig getServletConfig() {
-            return null;  //To change body of implemented methods use File | Settings | File Templates.
+            return null; // To change body of implemented methods use File |
+                         // Settings | File Templates.
         }
 
         public ServletContext getServletContext() {
             return new ServletContext() {
                 public String getContextPath() {
-                    return null;  //To change body of implemented methods use File | Settings | File Templates.
+                    return null; // To change body of implemented methods use
+                                 // File | Settings | File Templates.
                 }
 
                 public ServletContext getContext(String string) {
-                    return null;  //To change body of implemented methods use File | Settings | File Templates.
+                    return null; // To change body of implemented methods use
+                                 // File | Settings | File Templates.
                 }
 
                 public int getMajorVersion() {
-                    return 0;  //To change body of implemented methods use File | Settings | File Templates.
+                    return 0; // To change body of implemented methods use File
+                              // | Settings | File Templates.
                 }
 
                 public int getMinorVersion() {
-                    return 0;  //To change body of implemented methods use File | Settings | File Templates.
+                    return 0; // To change body of implemented methods use File
+                              // | Settings | File Templates.
                 }
 
                 public String getMimeType(String string) {
-                    return null;  //To change body of implemented methods use File | Settings | File Templates.
+                    return null; // To change body of implemented methods use
+                                 // File | Settings | File Templates.
                 }
 
                 public Set getResourcePaths(String string) {
-                    return null;  //To change body of implemented methods use File | Settings | File Templates.
+                    return null; // To change body of implemented methods use
+                                 // File | Settings | File Templates.
                 }
 
-                public URL getResource(String string)
-                        throws MalformedURLException {
-                    return null;  //To change body of implemented methods use File | Settings | File Templates.
+                public URL getResource(String string) throws MalformedURLException {
+                    return null; // To change body of implemented methods use
+                                 // File | Settings | File Templates.
                 }
 
                 public InputStream getResourceAsStream(String string) {
-                    return null;  //To change body of implemented methods use File | Settings | File Templates.
+                    return null; // To change body of implemented methods use
+                                 // File | Settings | File Templates.
                 }
 
                 public RequestDispatcher getRequestDispatcher(String string) {
                     return new RequestDispatcher() {
 
-                        public void forward(ServletRequest servletRequest,
-                                            ServletResponse servletResponse)
+                        public void forward(ServletRequest servletRequest, ServletResponse servletResponse)
                                 throws ServletException, IOException {
                         }
 
-                        public void include(ServletRequest servletRequest,
-                                            ServletResponse servletResponse)
+                        public void include(ServletRequest servletRequest, ServletResponse servletResponse)
                                 throws ServletException, IOException {
-                            //To change body of implemented methods use File | Settings | File Templates.
+                            // To change body of implemented methods use File |
+                            // Settings | File Templates.
                         }
                     };
                 }
 
                 public RequestDispatcher getNamedDispatcher(String string) {
-                    return null;  //To change body of implemented methods use File | Settings | File Templates.
+                    return null; // To change body of implemented methods use
+                                 // File | Settings | File Templates.
                 }
 
-                public Servlet getServlet(String string)
-                        throws ServletException {
-                    return null;  //To change body of implemented methods use File | Settings | File Templates.
+                public Servlet getServlet(String string) throws ServletException {
+                    return null; // To change body of implemented methods use
+                                 // File | Settings | File Templates.
                 }
 
                 public Enumeration getServlets() {
-                    return null;  //To change body of implemented methods use File | Settings | File Templates.
+                    return null; // To change body of implemented methods use
+                                 // File | Settings | File Templates.
                 }
 
                 public Enumeration getServletNames() {
-                    return null;  //To change body of implemented methods use File | Settings | File Templates.
+                    return null; // To change body of implemented methods use
+                                 // File | Settings | File Templates.
                 }
 
                 public void log(String string) {
-                    //To change body of implemented methods use File | Settings | File Templates.
+                    // To change body of implemented methods use File | Settings
+                    // | File Templates.
                 }
 
                 public void log(Exception exception, String string) {
-                    //To change body of implemented methods use File | Settings | File Templates.
+                    // To change body of implemented methods use File | Settings
+                    // | File Templates.
                 }
 
                 public void log(String string, Throwable throwable) {
-                    //To change body of implemented methods use File | Settings | File Templates.
+                    // To change body of implemented methods use File | Settings
+                    // | File Templates.
                 }
 
                 public String getRealPath(String string) {
-                    return null;  //To change body of implemented methods use File | Settings | File Templates.
+                    return null; // To change body of implemented methods use
+                                 // File | Settings | File Templates.
                 }
 
                 public String getServerInfo() {
-                    return null;  //To change body of implemented methods use File | Settings | File Templates.
+                    return null; // To change body of implemented methods use
+                                 // File | Settings | File Templates.
                 }
 
                 public String getInitParameter(String string) {
-                    return null;  //To change body of implemented methods use File | Settings | File Templates.
+                    return null; // To change body of implemented methods use
+                                 // File | Settings | File Templates.
                 }
 
                 public Enumeration getInitParameterNames() {
-                    return null;  //To change body of implemented methods use File | Settings | File Templates.
+                    return null; // To change body of implemented methods use
+                                 // File | Settings | File Templates.
                 }
 
                 public Object getAttribute(String string) {
-                    return null;  //To change body of implemented methods use File | Settings | File Templates.
+                    return null; // To change body of implemented methods use
+                                 // File | Settings | File Templates.
                 }
 
                 public Enumeration getAttributeNames() {
-                    return null;  //To change body of implemented methods use File | Settings | File Templates.
+                    return null; // To change body of implemented methods use
+                                 // File | Settings | File Templates.
                 }
 
                 public void setAttribute(String string, Object object) {
-                    //To change body of implemented methods use File | Settings | File Templates.
+                    // To change body of implemented methods use File | Settings
+                    // | File Templates.
                 }
 
                 public void removeAttribute(String string) {
-                    //To change body of implemented methods use File | Settings | File Templates.
+                    // To change body of implemented methods use File | Settings
+                    // | File Templates.
                 }
 
                 public String getServletContextName() {
-                    return null;  //To change body of implemented methods use File | Settings | File Templates.
+                    return null; // To change body of implemented methods use
+                                 // File | Settings | File Templates.
                 }
             };
         }
 
-        public void forward(String string) throws ServletException,
-                                                  IOException {
-            //To change body of implemented methods use File | Settings | File Templates.
+        public void forward(String string) throws ServletException, IOException {
+            // To change body of implemented methods use File | Settings | File
+            // Templates.
         }
 
-        public void include(String string)
-                throws ServletException, IOException {
-            //To change body of implemented methods use File | Settings | File Templates.
+        public void include(String string) throws ServletException, IOException {
+            // To change body of implemented methods use File | Settings | File
+            // Templates.
         }
 
-        public void include(String string, boolean b)
-                throws ServletException, IOException {
-            //To change body of implemented methods use File | Settings | File Templates.
+        public void include(String string, boolean b) throws ServletException, IOException {
+            // To change body of implemented methods use File | Settings | File
+            // Templates.
         }
 
-        public void handlePageException(Exception exception)
-                throws ServletException, IOException {
-            //To change body of implemented methods use File | Settings | File Templates.
+        public void handlePageException(Exception exception) throws ServletException, IOException {
+            // To change body of implemented methods use File | Settings | File
+            // Templates.
         }
 
-        public void handlePageException(Throwable throwable)
-                throws ServletException, IOException {
-            //To change body of implemented methods use File | Settings | File Templates.
+        public void handlePageException(Throwable throwable) throws ServletException, IOException {
+            // To change body of implemented methods use File | Settings | File
+            // Templates.
         }
 
         public void setAttribute(String string, Object object) {
-            //To change body of implemented methods use File | Settings | File Templates.
+            // To change body of implemented methods use File | Settings | File
+            // Templates.
         }
 
         public void setAttribute(String string, Object object, int i) {
-            //To change body of implemented methods use File | Settings | File Templates.
+            // To change body of implemented methods use File | Settings | File
+            // Templates.
         }
 
         public Object getAttribute(String string) {
-            return null;  //To change body of implemented methods use File | Settings | File Templates.
+            return null; // To change body of implemented methods use File |
+                         // Settings | File Templates.
         }
 
         public Object getAttribute(String string, int i) {
-            return null;  //To change body of implemented methods use File | Settings | File Templates.
+            return null; // To change body of implemented methods use File |
+                         // Settings | File Templates.
         }
 
         public Object findAttribute(String string) {
-            return null;  //To change body of implemented methods use File | Settings | File Templates.
+            return null; // To change body of implemented methods use File |
+                         // Settings | File Templates.
         }
 
         public void removeAttribute(String string) {
-            //To change body of implemented methods use File | Settings | File Templates.
+            // To change body of implemented methods use File | Settings | File
+            // Templates.
         }
 
         public void removeAttribute(String string, int i) {
-            //To change body of implemented methods use File | Settings | File Templates.
+            // To change body of implemented methods use File | Settings | File
+            // Templates.
         }
 
         public int getAttributesScope(String string) {
-            return 0;  //To change body of implemented methods use File | Settings | File Templates.
+            return 0; // To change body of implemented methods use File |
+                      // Settings | File Templates.
         }
 
         public Enumeration<String> getAttributeNamesInScope(int i) {
-            return null;  //To change body of implemented methods use File | Settings | File Templates.
+            return null; // To change body of implemented methods use File |
+                         // Settings | File Templates.
         }
 
         public JspWriter getOut() {
@@ -514,28 +559,26 @@ public class WebinterfaceTestCase {
         }
 
         public ExpressionEvaluator getExpressionEvaluator() {
-            return null;  //To change body of implemented methods use File | Settings | File Templates.
+            return null; // To change body of implemented methods use File |
+                         // Settings | File Templates.
         }
 
         public VariableResolver getVariableResolver() {
-            return null;  //To change body of implemented methods use File | Settings | File Templates.
+            return null; // To change body of implemented methods use File |
+                         // Settings | File Templates.
         }
 
         public ELContext getELContext() {
-            return null;  //To change body of implemented methods use File | Settings | File Templates.
+            return null; // To change body of implemented methods use File |
+                         // Settings | File Templates.
         }
     }
 
-    public static PageContext getDummyPageContext(final Locale l,
-                                           final ServletRequest request) {
+    public static PageContext getDummyPageContext(final Locale l, final ServletRequest request) {
         return new PageContext() {
-            public void initialize(Servlet servlet,
-                                   ServletRequest servletRequest,
-                                   ServletResponse servletResponse,
-                                   String string,
-                                   boolean b, int i, boolean b1)
-                    throws IOException,
-                           IllegalStateException, IllegalArgumentException {
+            public void initialize(Servlet servlet, ServletRequest servletRequest, ServletResponse servletResponse,
+                    String string, boolean b, int i, boolean b1) throws IOException, IllegalStateException,
+                    IllegalArgumentException {
             }
 
             public void release() {
@@ -563,8 +606,7 @@ public class WebinterfaceTestCase {
                         return null;
                     }
 
-                    public ServletOutputStream getOutputStream()
-                            throws IOException {
+                    public ServletOutputStream getOutputStream() throws IOException {
                         return null;
                     }
 
@@ -622,24 +664,19 @@ public class WebinterfaceTestCase {
                 return null;
             }
 
-            public void forward(String string)
-                    throws ServletException, IOException {
+            public void forward(String string) throws ServletException, IOException {
             }
 
-            public void include(String string)
-                    throws ServletException, IOException {
+            public void include(String string) throws ServletException, IOException {
             }
 
-            public void include(String string, boolean b)
-                    throws ServletException, IOException {
+            public void include(String string, boolean b) throws ServletException, IOException {
             }
 
-            public void handlePageException(Exception exception)
-                    throws ServletException, IOException {
+            public void handlePageException(Exception exception) throws ServletException, IOException {
             }
 
-            public void handlePageException(Throwable throwable)
-                    throws ServletException, IOException {
+            public void handlePageException(Throwable throwable) throws ServletException, IOException {
             }
 
             public void setAttribute(String string, Object object) {

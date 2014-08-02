@@ -43,7 +43,7 @@ import dk.netarkivet.archive.bitarchive.distribute.GetFileMessage;
 import dk.netarkivet.archive.bitarchive.distribute.RemoveAndGetFileMessage;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.ChannelsTester;
+import dk.netarkivet.common.distribute.ChannelsTesterHelper;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
@@ -120,7 +120,7 @@ public class ArcRepositoryTesterGet {
     @Before
     public void setUp() {
         rs.setUp();
-        ChannelsTester.resetChannels();
+        ChannelsTesterHelper.resetChannels();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
 //        ChannelsTester.resetChannels();
 

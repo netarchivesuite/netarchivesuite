@@ -22,10 +22,16 @@
  */
 package dk.netarkivet.wayback.indexer;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.Date;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.wayback.TestInfo;
@@ -34,17 +40,20 @@ import dk.netarkivet.wayback.TestInfo;
 public class IndexerQueueTester extends IndexerTestCase {
 
     @Override
+    @Before
     public void setUp() {
         super.setUp();
         IndexerQueue.resestSingleton();
     }
 
     @Override
+    @After
     public void tearDown() {
         super.tearDown();
         IndexerQueue.resestSingleton();
     }
 
+    @Test
     public void testProduce()
             throws NoSuchFieldException, IllegalAccessException {
         FileNameHarvester.harvestAllFilenames();
@@ -58,6 +67,7 @@ public class IndexerQueueTester extends IndexerTestCase {
         assertEquals("Queue should still have four objects in it", 6, queue.size());
     }
 
+    @Test
     public void testProduceRecent()
             throws NoSuchFieldException, IllegalAccessException {
 

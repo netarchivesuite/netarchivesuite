@@ -22,27 +22,35 @@
  */
 package dk.netarkivet.wayback.indexer;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
 
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.wayback.WaybackSettings;
 
 
+@Ignore("Not referred to from TestSuite")
 public class WaybackIndexerTester extends IndexerTestCase {
 
     File originals = new File("tests/dk/netarkivet/wayback/indexer/data/originals");
     File working = new File("tests/dk/netarkivet/wayback/indexer/data/working");
 
+    @Before
      public void setUp() {
          super.setUp();
         FileUtils.removeRecursively(working);
         TestFileUtils.copyDirectoryNonCVS(originals, working);
       }
 
-
+    @After
     public void tearDown() {
         super.tearDown();
         FileUtils.removeRecursively(working);

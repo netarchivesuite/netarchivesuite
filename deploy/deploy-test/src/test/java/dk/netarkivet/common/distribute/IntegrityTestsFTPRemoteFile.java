@@ -23,6 +23,11 @@
 package dk.netarkivet.common.distribute;
 
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -37,8 +42,8 @@ import java.util.logging.Logger;
 
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
+import org.junit.Ignore;
 
-import junit.framework.TestCase;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -51,12 +56,12 @@ import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
-
 /**
  * Class testing the FTPRemoteFile class.
  */
 @SuppressWarnings({ "unused"})
-public class IntegrityTestsFTPRemoteFile extends TestCase {
+@Ignore("Not in junit3 test suite")
+public class IntegrityTestsFTPRemoteFile {
     private static final File TESTLOGPROP = new File(
             "tests/dk/netarkivet/testlog.prop");
     private static final File LOGFILE = new File(
@@ -79,10 +84,6 @@ public class IntegrityTestsFTPRemoteFile extends TestCase {
     protected final Logger logger = Logger.getLogger(getClass().getName());
 
     ReloadSettings rs = new ReloadSettings();
-
-    public IntegrityTestsFTPRemoteFile(String sTestName) {
-        super(sTestName);
-    }
 
     public void setUp() {
         rs.setUp();

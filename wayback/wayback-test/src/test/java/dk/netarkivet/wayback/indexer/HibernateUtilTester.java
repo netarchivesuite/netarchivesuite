@@ -22,14 +22,18 @@
  */
 package dk.netarkivet.wayback.indexer;
 
-import junit.framework.TestCase;
-import org.hibernate.Session;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-public class HibernateUtilTester extends TestCase {
+import org.hibernate.Session;
+import org.junit.Test;
+
+public class HibernateUtilTester {
 
     /**
      * Tests that we can create an open session.
      */
+    @Test
     public void testGetSession() {
         Session session = HibernateUtil.getSession();
         assertTrue("Session should be connected.", session.isConnected());
