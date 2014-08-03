@@ -22,42 +22,44 @@
  */
 package dk.netarkivet.viewerproxy;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.ServletInputStream;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpSession;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.io.BufferedReader;
-import java.lang.reflect.Method;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.URI;
+import java.security.Principal;
 import java.util.Collections;
-import java.util.Map;
 import java.util.Enumeration;
 import java.util.Locale;
+import java.util.Map;
 import java.util.logging.LogManager;
-import java.security.Principal;
 
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.After;
-import org.junit.Test;
-
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletInputStream;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.mortbay.io.ByteArrayEndPoint;
 import org.mortbay.jetty.HttpConnection;
 import org.mortbay.jetty.HttpURI;
@@ -67,8 +69,7 @@ import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
-import dk.netarkivet.testutils.FileAsserts;
-import dk.netarkivet.testutils.LogUtils;
+import dk.netarkivet.testutils.LogbackRecorder;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.viewerproxy.distribute.HTTPControllerServerTester;
@@ -78,7 +79,6 @@ import dk.netarkivet.viewerproxy.distribute.HTTPControllerServerTester;
  */
 @SuppressWarnings({ "rawtypes" })
 public class WebProxyTester {
-    private static final File LOG_FILE = new File("tests/testlogs/netarkivtest.log");
 
     private WebProxy proxy;
     private int httpPort;
@@ -337,9 +337,13 @@ public class WebProxyTester {
         request.setUri(new HttpURI("not parsable"));
     }
 
-    /** Test the error response generation. */
+    /**
+     * Test the error response generation.
+     */
     @Test
+    @Ignore
     public void testCreateErrorResponse() throws Exception {
+    	LogbackRecorder lr = LogbackRecorder.startRecorder();
         proxy = new WebProxy(new TestURIResolver());
         HTTPControllerServerTester.TestResponse response
                 = new HTTPControllerServerTester.TestResponse();
@@ -351,11 +355,22 @@ public class WebProxyTester {
                                                  URI.class, Response.class,
                                                  Throwable.class);
         m.invoke(proxy, uri, response, e);
-        LogUtils.flushLogs(WebProxy.class.getName());
+        //LogUtils.flushLogs(WebProxy.class.getName());
+        /*
         FileAsserts.assertFileMatches("Should have logged a warning",
                                        "WARNING:.*" + uri + ".*\n.*"
                                        + ExceptionMessage,
                                        LOG_FILE);
+        */
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        PrintWriter pw = new PrintWriter(out);
+        e.printStackTrace(pw);
+        pw.close();
+        String eStr = new String(out.toByteArray());
+        //lr.assertLogMatches("Should have logged a warning", "Exception for : " + uri + "\n" + eStr);
+        lr.assertLogContains("Should have logged a warning", "Exception for : " + uri + "\n" + eStr);
+        lr.reset();
+
         String result = response.getOutputStream().toString();
         StringAsserts.assertStringNotContains("Should not contain null",
                                               "null",
@@ -374,11 +389,15 @@ public class WebProxyTester {
                                            result);
         response.reset();
         m.invoke(proxy, null, response, e);
-        LogUtils.flushLogs(WebProxy.class.getName());
+        //LogUtils.flushLogs(WebProxy.class.getName());
+        /*
         FileAsserts.assertFileMatches("Should have logged a warning",
                                        "WARNING:.*" + null + ".*\n.*"
                                        + ExceptionMessage,
                                        LOG_FILE);
+        */
+        lr.assertLogMatches("Should have logged a warning", "Exception for : .*" + null + ".*\n.*" + ExceptionMessage);
+        lr.reset();
         result = response.getOutputStream().toString();
         StringAsserts.assertStringContains("Should contain null for the URI",
                                            "null",
@@ -394,10 +413,14 @@ public class WebProxyTester {
                                            result);
         response.reset();
         m.invoke(proxy, uri, response, null);
-        LogUtils.flushLogs(WebProxy.class.getName());
+        //LogUtils.flushLogs(WebProxy.class.getName());
+        /*
         FileAsserts.assertFileMatches("Should have logged a warning",
                                        "(?m)WARNING:.*" + uri + "$",
                                        LOG_FILE);
+        */
+        lr.assertLogMatches("Should have logged a warning", "Exception for : .*" + uri);
+        lr.reset();
         result = response.getOutputStream().toString();
         StringAsserts.assertStringContains("Should contain the URI",
                                            uri.toString(),
@@ -406,13 +429,19 @@ public class WebProxyTester {
                                            "null\n",
                                            result);
         m.invoke(proxy, uri, null, e);
-        LogUtils.flushLogs(WebProxy.class.getName());
+        //LogUtils.flushLogs(WebProxy.class.getName());
+        /*
         FileAsserts.assertFileMatches("Should have logged a warning",
                                        "WARNING:.*Error writing error response"
                                        + ".*" + uri + ".*"
                                        + e.getClass().getName()
                                        + ".*" + ExceptionMessage,
                                        LOG_FILE);
+        */
+        lr.assertLogMatches("Should have logged a warning",
+                ".*Error writing error response" + ".*" + uri + ".*" + e.getClass().getName() + ".*" + ExceptionMessage);
+        lr.reset();
+        lr.stopRecorder();
     }
 
     /**
@@ -456,266 +485,211 @@ public class WebProxyTester {
         }
 
         public String getAuthType() {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public Cookie[] getCookies() {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public long getDateHeader(String s) {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public String getHeader(String s) {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public Enumeration getHeaders(String s) {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public Enumeration getHeaderNames() {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public int getIntHeader(String s) {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public String getMethod() {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public String getPathInfo() {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public String getPathTranslated() {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public String getContextPath() {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
-
-
         public String getRemoteUser() {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public boolean isUserInRole(String s) {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public Principal getUserPrincipal() {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public String getRequestedSessionId() {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public String getRequestURI() {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
 
         public String getServletPath() {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public HttpSession getSession(boolean b) {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public HttpSession getSession() {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public boolean isRequestedSessionIdValid() {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public boolean isRequestedSessionIdFromCookie() {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public boolean isRequestedSessionIdFromURL() {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public boolean isRequestedSessionIdFromUrl() {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public Object getAttribute(String s) {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public Enumeration getAttributeNames() {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public String getCharacterEncoding() {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
-        public void setCharacterEncoding(String s)
-                throws UnsupportedEncodingException {
-            //TODO: implement method
+        public void setCharacterEncoding(String s) throws UnsupportedEncodingException {
             throw new RuntimeException("Not implemented");
         }
 
         public int getContentLength() {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public String getContentType() {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public ServletInputStream getInputStream() throws IOException {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public String getParameter(String s) {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public Enumeration getParameterNames() {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public String[] getParameterValues(String s) {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public Map getParameterMap() {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public String getProtocol() {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public String getScheme() {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public String getServerName() {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public int getServerPort() {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public BufferedReader getReader() throws IOException {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public String getRemoteAddr() {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public String getRemoteHost() {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public void setAttribute(String s, Object o) {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public void removeAttribute(String s) {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public Locale getLocale() {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public Enumeration getLocales() {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public boolean isSecure() {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public RequestDispatcher getRequestDispatcher(String s) {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public String getRealPath(String s) {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public int getRemotePort() {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public String getLocalName() {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public String getLocalAddr() {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
         public int getLocalPort() {
-            //TODO: implement method
             throw new RuntimeException("Not implemented");
         }
     }

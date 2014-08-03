@@ -61,8 +61,7 @@ import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriter;
 import dk.netarkivet.testutils.ARCTestUtils;
-import dk.netarkivet.testutils.FileAsserts;
-import dk.netarkivet.testutils.LogUtils;
+import dk.netarkivet.testutils.LogbackRecorder;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
@@ -430,22 +429,17 @@ public class HarvestDocumentationTester {
      */
     @Test
     public void testMoveAwayForeignFiles() throws Exception {
-        Method m = ReflectUtils.getPrivateMethod(HarvestDocumentation.class,
-                                                 "moveAwayForeignFiles",
-                                                 ArchiveProfile.class, File.class, IngestableFiles.class);
+    	LogbackRecorder lr = LogbackRecorder.startRecorder();
+    	Method m = ReflectUtils.getPrivateMethod(HarvestDocumentation.class, "moveAwayForeignFiles",
+        		ArchiveProfile.class, File.class, IngestableFiles.class);
         // Set oldjobs place to a different name to check use of setting.
         Settings.set(HarvesterSettings.HARVEST_CONTROLLER_OLDJOBSDIR,
-                     new File(TestInfo.WORKING_DIR,
-                              "oddjobs").getAbsolutePath());
+                     new File(TestInfo.WORKING_DIR, "oddjobs").getAbsolutePath());
         TestInfo.WORKING_DIR.mkdirs();
-        File arcsDir = new File(TestInfo.WORKING_DIR,
-                                Constants.ARCDIRECTORY_NAME);
-        TestFileUtils.copyDirectoryNonCVS(
-                TestInfo.METADATA_TEST_DIR_INCONSISTENT,
-                arcsDir);
-        FileUtils.copyFile(new File(TestInfo.METADATA_TEST_DIR,
-                                    "arcs/not-an-arc-file.txt"),
-                           new File(arcsDir, "43-metadata-1.arc"));
+        File arcsDir = new File(TestInfo.WORKING_DIR, Constants.ARCDIRECTORY_NAME);
+        TestFileUtils.copyDirectoryNonCVS(TestInfo.METADATA_TEST_DIR_INCONSISTENT, arcsDir);
+        FileUtils.copyFile(new File(TestInfo.METADATA_TEST_DIR, "arcs/not-an-arc-file.txt"),
+        		new File(arcsDir, "43-metadata-1.arc"));
         
     //  JobInfo for harvestId 117
         JobInfo harvestJob = new JobInfoTestImpl(42L, 117L);
@@ -454,10 +448,7 @@ public class HarvestDocumentationTester {
         
         m.invoke(null, ArchiveProfile.ARC_PROFILE, arcsDir, OkIngestables);
         // Check that one file got moved.
-        LogUtils.flushLogs(HarvestDocumentation.class.getName());
-        FileAsserts.assertFileContains("Should have found foreign files",
-                                       "Found files not belonging",
-                                       TestInfo.LOG_FILE);
+        lr.assertLogContains("Should have found foreign files", "Found files not belonging");
         String badFile
                 = "43-117-20051212141241-00000-sb-test-har-001.statsbiblioteket.dk.arc";
         String goodFile
@@ -498,7 +489,7 @@ public class HarvestDocumentationTester {
         assertTrue(
                 "Metadata file " + movedMetadataFile + " should be in oldjobs",
                 movedMetadataFile.exists());
-
+        lr.stopRecorder();
     }
 
     /**
@@ -512,6 +503,7 @@ public class HarvestDocumentationTester {
      */
     @Test
     public void testDocumentHarvestBug722() throws Exception {
+    	LogbackRecorder lr = LogbackRecorder.startRecorder();
         TestInfo.WORKING_DIR.mkdirs();
         File arcsDir = new File(TestInfo.WORKING_DIR,
                                 Constants.ARCDIRECTORY_NAME);
@@ -540,22 +532,19 @@ public class HarvestDocumentationTester {
         HarvestDocumentation.documentHarvest(OkIngestables);
         FileUtils.remove(new File(arcsDir,
                                   "42-117-20051212141241-00001-sb-test-har-001.statsbiblioteket.dk.arc"));
-        LogUtils.flushLogs(HarvestDocumentation.class.getName());
         
         String metadataDirPath = new File(TestInfo.WORKING_DIR, 
                 IngestableFiles.METADATA_SUB_DIR).getAbsolutePath();
         String filename = MetadataFileWriter.getMetadataArchiveFileName(""+ TestInfo.JOB_ID);
-        
-        FileAsserts.assertFileContains(
-                "Should have issued warning about existing metadata-arcfile",
-                "The metadata-file '" + metadataDirPath + "/" + filename + "' already exists, so we don't make another one!",
-                TestInfo.LOG_FILE
-        );
+
+        lr.assertLogContains("Should have issued warning about existing metadata-arcfile",
+                "The metadata-file '" + metadataDirPath + "/" + filename + "' already exists, so we don't make another one!");
 
         String newFileContent = FileUtils.readFile(
                 ingestableFiles.getMetadataArcFiles().get(0));
         assertEquals("File contents should be unchanged", fileContent,
                      newFileContent);
+        lr.stopRecorder();
     }
 
     /**

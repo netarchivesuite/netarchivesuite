@@ -74,9 +74,8 @@ import dk.netarkivet.harvester.harvesting.JobInfoTestImpl;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 import dk.netarkivet.harvester.harvesting.metadata.PersistentJobData.HarvestDefinitionInfo;
 import dk.netarkivet.testutils.ClassAsserts;
-import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.GenericMessageListener;
-import dk.netarkivet.testutils.LogUtils;
+import dk.netarkivet.testutils.LogbackRecorder;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
@@ -171,12 +170,11 @@ public class HarvestControllerServerTester {
      */
     @Test
     public void testServerStarting() throws IOException {
-        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR, TestInfo.SERVER_DIR
-                .getAbsolutePath());
+    	LogbackRecorder lr = LogbackRecorder.startRecorder();
+        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR, TestInfo.SERVER_DIR.getAbsolutePath());
         hcs = HarvestControllerServer.getInstance();
-        LogUtils.flushLogs(HarvestControllerServer.class.getName());
-        FileAsserts.assertFileContains("Log should contain start message.",
-                START_MESSAGE, TestInfo.LOG_FILE);
+        lr.assertLogContains("Log should contain start message.", START_MESSAGE);
+        lr.stopRecorder();
     }
 
     /** Test that if the harvestcontrollerserver cannot start, the HACO listener
@@ -277,14 +275,13 @@ public class HarvestControllerServerTester {
      */
     @Test
     public void testClose() throws IOException {
-        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR, TestInfo.SERVER_DIR
-                .getAbsolutePath());
+    	LogbackRecorder lr = LogbackRecorder.startRecorder();
+        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR, TestInfo.SERVER_DIR.getAbsolutePath());
         hcs = HarvestControllerServer.getInstance();
         hcs.close();
         hcs = null; // so that tearDown does not try to close again !!
-        String logtxt = FileUtils.readFile(TestInfo.LOG_FILE);
-        StringAsserts.assertStringContains("HarvestControllerServer not stopped !",
-                CLOSE_MESSAGE, logtxt);
+        lr.assertLogContains("HarvestControllerServer not stopped !", CLOSE_MESSAGE);
+        lr.stopRecorder();
     }
 
     /**

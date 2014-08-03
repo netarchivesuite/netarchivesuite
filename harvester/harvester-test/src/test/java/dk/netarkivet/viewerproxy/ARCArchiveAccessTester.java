@@ -22,19 +22,9 @@
  */
 package dk.netarkivet.viewerproxy;
 
-import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
-import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.arc.ARCKey;
-import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.testutils.FileAsserts;
-import dk.netarkivet.testutils.LogUtils;
-import dk.netarkivet.testutils.ReflectUtils;
-import dk.netarkivet.testutils.TestFileUtils;
-import dk.netarkivet.testutils.preconfigured.ReloadSettings;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -55,11 +45,22 @@ import java.util.logging.LogManager;
 import org.archive.io.arc.ARCConstants;
 import org.archive.io.arc.ARCRecord;
 import org.archive.io.arc.ARCRecordMetaData;
-
-import static org.junit.Assert.*;
-import org.junit.Before;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+
+import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
+import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.arc.ARCKey;
+import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.testutils.LogbackRecorder;
+import dk.netarkivet.testutils.ReflectUtils;
+import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 
 /**
@@ -262,8 +263,8 @@ public class ARCArchiveAccessTester {
      * @throws Exception
      */
     @Test
-    public void testNullControllerReturn()
-            throws Exception {
+    public void testNullControllerReturn() throws Exception {
+    	LogbackRecorder lr = LogbackRecorder.startRecorder();
         Response response = new TestResponse();
         ARCArchiveAccess nullaaa = new ARCArchiveAccess(nullArcRepos);
         nullaaa.setIndex(TestInfo.ZIPPED_INDEX_DIR);
@@ -273,14 +274,9 @@ public class ARCArchiveAccessTester {
         } catch (IOFailure e) {
             //expected
         }
-        LogUtils.flushLogs(ARCArchiveAccess.class.getName());
-        assertTrue("Log file should exist after flushing",
-                   LOG_FILE.exists());
-        FileAsserts.assertFileContains(
-                "Bitarchive problem must be reported in the log",
-                "ARC file '"
-                + GIF_URL_KEY.getFile()
-                + "' mentioned in index file was not found", LOG_FILE);
+        lr.assertLogContains("Bitarchive problem must be reported in the log",
+                "ARC file '" + GIF_URL_KEY.getFile() + "' mentioned in index file was not found");
+        lr.stopRecorder();
     }
 
     /**

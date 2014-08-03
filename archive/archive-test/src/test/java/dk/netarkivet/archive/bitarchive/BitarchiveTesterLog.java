@@ -44,7 +44,6 @@ import dk.netarkivet.testutils.LogbackRecorder;
 @SuppressWarnings({ "serial" })
 public class BitarchiveTesterLog extends BitarchiveTestCase {
     private static File EXISTING_ARCHIVE_DIR = new File("tests/dk/netarkivet/archive/bitarchive/data/log/existing/");
-    private static File LOG_FILE = new File("tests/testlogs", "netarkivtest.log");
     private static String ARC_FILE_NAME1 = "Upload1.ARC";
     private static String ARC_FILE_NAME2 = "Upload2.ARC";
     private static String ARC_FILE_NAME3 = "Upload3.ARC";

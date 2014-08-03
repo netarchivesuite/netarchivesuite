@@ -25,9 +25,9 @@ package dk.netarkivet.testutils;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Pattern;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.slf4j.LoggerFactory;
 
 // TODO So maybe these methods should be unit-tested... NICL
@@ -80,6 +80,7 @@ public class LogbackRecorder extends ch.qos.logback.core.AppenderBase<ch.qos.log
     		bMatched = (iter.next().getFormattedMessage().indexOf(str) != -1);
     	}
     	if (!bMatched) {
+    		System.out.println("Unable to match in log: " + str);
             Assert.fail(msg);
     	}
     }
@@ -91,6 +92,20 @@ public class LogbackRecorder extends ch.qos.logback.core.AppenderBase<ch.qos.log
     		bMatched = (iter.next().getFormattedMessage().indexOf(str) != -1);
     	}
     	if (bMatched) {
+    		System.out.println("Able to match in log: " + str);
+            Assert.fail(msg);
+    	}
+    }
+
+    public synchronized void assertLogMatches(String msg, String regex) {
+        Pattern pattern = Pattern.compile(regex);
+    	Iterator<ch.qos.logback.classic.spi.ILoggingEvent> iter = events.iterator();
+    	boolean bMatched = false;
+    	while (!bMatched && iter.hasNext()) {
+    		bMatched = pattern.matcher((iter.next().getFormattedMessage())).find();
+    	}
+    	if (!bMatched) {
+    		System.out.println("Unable to match in log: " + regex);
             Assert.fail(msg);
     	}
     }

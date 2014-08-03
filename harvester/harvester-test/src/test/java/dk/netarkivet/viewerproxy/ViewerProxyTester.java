@@ -27,12 +27,12 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.EnumMap;
 
-import org.junit.Before;
-import org.junit.After;
-import org.junit.Test;
 import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelsTesterHelper;
@@ -43,7 +43,7 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.indexserver.distribute.IndexRequestClient;
 import dk.netarkivet.testutils.ClassAsserts;
-import dk.netarkivet.testutils.FileAsserts;
+import dk.netarkivet.testutils.LogbackRecorder;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
@@ -151,10 +151,11 @@ public class ViewerProxyTester {
      */
     @Test
     public void testUnknownInstruction() throws IOException {
+    	LogbackRecorder lr = LogbackRecorder.startRecorder();
         proxy = ViewerProxy.getInstance();
         getURLfromProxyServer("http://" + "netarchivesuite.viewerproxy.invalid" + "/unknown");
-        FileAsserts.assertFileContains("Unknown instruction should get Logged !",
-                "Unknown command", TestInfo.LOG_FILE);
+        lr.assertLogContains("Unknown instruction should get Logged !", "Unknown command");
+        lr.stopRecorder();
     }
 
     /**
