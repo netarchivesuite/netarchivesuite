@@ -15,9 +15,15 @@
             <directory>${project.basedir}/../../unclassified/</directory>
             <includes>
                 <include>archivedatabasedir/**</include>
-                <include>examples/**</include>
                 <include>harvestdefinitionbasedir/**</include>
-                <include>LICENSE.txt</include>
+            </includes>
+            <outputDirectory>/</outputDirectory>
+        </fileSet>
+
+        <fileSet>
+            <directory>${project.basedir}/src/main/resources/</directory>
+            <includes>
+                <include>examples/**</include>
                 <include>README.txt</include>
                 <include>derby.properties</include>
             </includes>
@@ -25,7 +31,7 @@
         </fileSet>
 
         <fileSet>
-            <directory>${project.basedir}/../../unclassified/lib/heritrix/</directory>
+            <directory>${project.basedir}/src/main/resources/heritrix/</directory>
             <includes>
                 <include>modules/**</include>
             </includes>
@@ -33,7 +39,7 @@
         </fileSet>
 
         <fileSet>
-            <directory>${project.basedir}/../../unclassified/lib/</directory>
+            <directory>${project.basedir}/src/main/resources/</directory>
             <includes>
                 <include>heritrix/**</include>
             </includes>
