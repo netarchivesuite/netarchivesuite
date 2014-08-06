@@ -22,6 +22,13 @@
  */
 package dk.netarkivet.archive.arcrepository.bitpreservation;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -41,17 +48,14 @@ import java.util.Map;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.archive.io.arc.ARCReaderFactory;
+import org.archive.io.arc.ARCRecord;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
-
-import org.archive.io.arc.ARCReaderFactory;
-import org.archive.io.arc.ARCRecord;
-import org.mortbay.log.Log;
-
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
 import dk.netarkivet.archive.arcrepositoryadmin.UpdateableAdminData;
@@ -98,6 +102,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 @SuppressWarnings({ "unused", "deprecation" })
 
 public class FileBasedActiveBitPreservationTester {
+    private Log log = LogFactory.getLog(getClass().getName());
     private UseTestRemoteFile rf = new UseTestRemoteFile();
     private ReloadSettings rs = new ReloadSettings();
     private MockupJMS mj = new MockupJMS();
@@ -505,12 +510,12 @@ public class FileBasedActiveBitPreservationTester {
                         if(kvp.getKey().equals(filename)) {
                             return kvp.getValue(); 
                         }
-                        Log.warn("Found unexpected file '" + kvp.getKey() 
+                        log.warn("Found unexpected file '" + kvp.getKey()
                                 + "' while asking replica '" 
                                 + Replica.getReplicaFromId(replicaId) 
                                 + "' for file '" + filename + "'");
                     } catch (ArgumentNotValid e) {
-                        Log.warn("Unexpected error '" + e + "' while asking "
+                        log.warn("Unexpected error '" + e + "' while asking "
                                 + "replica '" + Replica.getReplicaFromId(replicaId) 
                                 + "' for file '" + filename + "'");
                     }

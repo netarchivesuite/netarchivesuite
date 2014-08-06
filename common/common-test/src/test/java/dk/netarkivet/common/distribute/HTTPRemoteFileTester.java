@@ -53,8 +53,8 @@ public class HTTPRemoteFileTester extends TestCase {
         mtf.setUp();
         // Make sure we're using the right HTTP remote file by closing old
         // registries.
-        HTTPSRemoteFileRegistry.getInstance().cleanup();
-        HTTPRemoteFileRegistry.getInstance().cleanup();
+        //HTTPSRemoteFileRegistry.getInstance().cleanup();
+        //HTTPRemoteFileRegistry.getInstance().cleanup();
     }
 
     public void tearDown() {

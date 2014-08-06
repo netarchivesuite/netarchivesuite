@@ -22,36 +22,29 @@
  */
 package dk.netarkivet.common.webinterface;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletInputStream;
-import javax.servlet.ServletRequest;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.servlet.jsp.PageContext;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.security.Principal;
 import java.util.Calendar;
-import java.util.Enumeration;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.After;
-import org.junit.Test;
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.PageContext;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringTree;
-import dk.netarkivet.common.webinterface.WebinterfaceTestCase;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
@@ -391,225 +384,8 @@ public class HTMLUtilsTester {
      * @return
      */
     private HttpServletRequest makeHttpServletRequest(final String requestUrl) {
-        return new HttpServletRequest() {
-
-            public String getAuthType() {
-                return null;
-            }
-
-            public Cookie[] getCookies() {
-                return new Cookie[0];
-            }
-
-            public long getDateHeader(String string) {
-                return 0;
-            }
-
-            public String getHeader(String string) {
-                return null;
-            }
-
-            public Enumeration getHeaders(String string) {
-                return null;
-            }
-
-            public Enumeration getHeaderNames() {
-                return null;
-            }
-
-            public int getIntHeader(String string) {
-                return 0;
-            }
-
-            public String getMethod() {
-                return null;
-            }
-
-            public String getPathInfo() {
-                return null;
-            }
-
-            public String getPathTranslated() {
-                return null;
-            }
-
-            public String getContextPath() {
-                return null;
-            }
-
-            public String getQueryString() {
-                return null;
-            }
-
-            public String getRemoteUser() {
-                return null;
-            }
-
-            public boolean isUserInRole(String string) {
-                return false;
-            }
-
-            public Principal getUserPrincipal() {
-                return null;
-            }
-
-            public String getRequestedSessionId() {
-                return null;
-            }
-
-            public String getRequestURI() {
-                return null;
-            }
-
-            public StringBuffer getRequestURL() {
-                return new StringBuffer(requestUrl);
-            }
-
-            public String getServletPath() {
-                return null;
-            }
-
-            public HttpSession getSession(boolean b) {
-                return null;
-            }
-
-            public HttpSession getSession() {
-                return null;
-            }
-
-            public boolean isRequestedSessionIdValid() {
-                return false;
-            }
-
-            public boolean isRequestedSessionIdFromCookie() {
-                return false;
-            }
-
-            public boolean isRequestedSessionIdFromURL() {
-                return false;
-            }
-
-            public boolean isRequestedSessionIdFromUrl() {
-                return false;
-            }
-
-            public Object getAttribute(String string) {
-                return null;
-            }
-
-            public Enumeration getAttributeNames() {
-                return null;
-            }
-
-            public String getCharacterEncoding() {
-                return null;
-            }
-
-            public void setCharacterEncoding(String string)
-                    throws UnsupportedEncodingException {
-
-            }
-
-            public int getContentLength() {
-                return 0;
-            }
-
-            public String getContentType() {
-                return null;
-            }
-
-            public ServletInputStream getInputStream() throws IOException {
-                return null;
-            }
-
-            public String getParameter(String string) {
-                return null;
-            }
-
-            public Enumeration getParameterNames() {
-                return null;
-            }
-
-            public String[] getParameterValues(String string) {
-                return new String[0];
-            }
-
-            public Map getParameterMap() {
-                return null;
-            }
-
-            public String getProtocol() {
-                return null;
-            }
-
-            public String getScheme() {
-                return null;
-            }
-
-
-            public String getServerName() {
-                return null;
-            }
-
-            public int getServerPort() {
-                return 0;
-            }
-
-            public BufferedReader getReader() throws IOException {
-                return null;
-            }
-
-            public String getRemoteAddr() {
-                return null;
-            }
-
-            public String getRemoteHost() {
-                return null;
-            }
-
-            public void setAttribute(String string, Object object) {
-
-            }
-
-            public void removeAttribute(String string) {
-
-            }
-
-            public Locale getLocale() {
-                return null;
-            }
-
-            public Enumeration getLocales() {
-                return null;
-            }
-
-            public boolean isSecure() {
-                return false;
-            }
-
-            public RequestDispatcher getRequestDispatcher(String string) {
-                return null;
-            }
-
-            public String getRealPath(String string) {
-                return null;
-            }
-
-            public int getRemotePort() {
-                return 0;
-            }
-
-            public String getLocalName() {
-                return null;
-            }
-
-            public String getLocalAddr() {
-                return null;
-            }
-
-            public int getLocalPort() {
-                return 0;
-            }
-        };
+        HttpServletRequest requestStub = mock(HttpServletRequest.class);
+        when(requestStub.getRequestURL()).thenReturn(new StringBuffer(requestUrl));
+        return requestStub;
     }
 }

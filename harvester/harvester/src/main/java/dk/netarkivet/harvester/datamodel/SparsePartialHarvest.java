@@ -98,12 +98,10 @@ public class SparsePartialHarvest extends ExtendableEntity implements Named {
      * @throws ArgumentNotValid if oid, name or comments, or schedule is null,
      *                          or name or schedule is empty.
      */
-    public SparsePartialHarvest(Long oid, String name, String comments,
-                                int numEvents,
-                                Date submissionDate, boolean active,
-                                long edition, String schedule,
-                                Date nextDate, String audience,
-                                Long channelId) {
+    public SparsePartialHarvest(
+            Long oid, String name, String comments, int numEvents, Date submissionDate, boolean active,
+            long edition, String schedule, Date nextDate, String audience, Long channelId) {
+        super(null);
         ArgumentNotValid.checkNotNull(oid, "Long oid");
         ArgumentNotValid.checkNotNullOrEmpty(name, "name");
         ArgumentNotValid.checkNotNull(comments, "comments");
@@ -140,7 +138,6 @@ public class SparsePartialHarvest extends ExtendableEntity implements Named {
         return active;
     }
 
-
     /**
      * Get comments for domain.
      *
@@ -149,7 +146,6 @@ public class SparsePartialHarvest extends ExtendableEntity implements Named {
     public String getComments() {
         return comments;
     }
-
 
     /**
      * Get edition.
@@ -160,7 +156,6 @@ public class SparsePartialHarvest extends ExtendableEntity implements Named {
         return edition;
     }
 
-
     /**
      * Get name.
      *
@@ -169,7 +164,6 @@ public class SparsePartialHarvest extends ExtendableEntity implements Named {
     public String getName() {
         return name;
     }
-
 
     /**
      * Number of events this harvest definition has run.
@@ -180,7 +174,6 @@ public class SparsePartialHarvest extends ExtendableEntity implements Named {
         return numEvents;
     }
 
-
     /**
      * Name of schedule for harvest definition.
      *
@@ -189,7 +182,6 @@ public class SparsePartialHarvest extends ExtendableEntity implements Named {
     public String getScheduleName() {
         return scheduleName;
     }
-
 
     /**
      * Submission date.
@@ -213,20 +205,13 @@ public class SparsePartialHarvest extends ExtendableEntity implements Named {
         return audience;
     }
 
-
 	protected Long getChannelId() {
 		return channelId;
 	}
 
-
-	@Override
+    @Override
     protected int getExtendedFieldType() {
     	return ExtendedFieldTypes.HARVESTDEFINITION;
     }
+
 }
-
-
-
-
-
-

@@ -68,6 +68,7 @@ import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.datamodel.ScheduleDAOTester;
 import dk.netarkivet.harvester.datamodel.StopReason;
 import dk.netarkivet.harvester.datamodel.TemplateDAOTester;
+import dk.netarkivet.harvester.datamodel.dao.DAOProviderFactory;
 import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 import dk.netarkivet.harvester.harvesting.JobInfoTestImpl;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlStatusMessage;
@@ -606,7 +607,11 @@ public class HarvestSchedulerMonitorServerTester {
             new FullHarvest("TestHarvest", "", null,
                     Constants.HERITRIX_MAXOBJECTS_INFINITY,
                     Constants.HERITRIX_MAXBYTES_INFINITY,
-                    Constants.HERITRIX_MAXJOBRUNNINGTIME_INFINITY, false);
+                    Constants.HERITRIX_MAXJOBRUNNINGTIME_INFINITY, false,
+                    DAOProviderFactory.getHarvestDefinitionDAOProvider(),
+                    DAOProviderFactory.getJobDAOProvider(),
+                    DAOProviderFactory.getExtendedFieldDAOProvider(),
+                    DAOProviderFactory.getDomainDAOProvider());
         HarvestDefinitionDAO.getInstance().create(snapshot);
 
         //A job from that harvest
@@ -675,7 +680,11 @@ public class HarvestSchedulerMonitorServerTester {
         snapshot = new FullHarvest("TestHarvest2", "", null,
                 Constants.HERITRIX_MAXOBJECTS_INFINITY, 
                 10L,
-                Constants.DEFAULT_MAX_JOB_RUNNING_TIME, false);
+                Constants.DEFAULT_MAX_JOB_RUNNING_TIME, false,
+                DAOProviderFactory.getHarvestDefinitionDAOProvider(),
+                DAOProviderFactory.getJobDAOProvider(),
+                DAOProviderFactory.getExtendedFieldDAOProvider(),
+                DAOProviderFactory.getDomainDAOProvider());
         HarvestDefinitionDAO.getInstance().create(snapshot);
 
         //A job from that harvest (note: conf is the dr.dk config)

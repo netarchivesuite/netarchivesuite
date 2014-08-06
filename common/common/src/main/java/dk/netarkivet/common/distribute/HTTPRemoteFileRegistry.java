@@ -22,9 +22,6 @@
  */
 package dk.netarkivet.common.distribute;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -35,13 +32,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.mortbay.jetty.Request;
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.bio.SocketConnector;
-import org.mortbay.jetty.handler.AbstractHandler;
-
+import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.handler.AbstractHandler;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.CleanupHook;
@@ -109,16 +109,15 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
      */
     protected void startServer() {
         server = new Server();
-        SocketConnector connector = new SocketConnector();
+        ServerConnector connector = new ServerConnector(server);
         connector.setPort(port);
         server.addConnector(connector);
-        server.addHandler(new HTTPRemoteFileRegistryHandler());
+        server.setHandler(new HTTPRemoteFileRegistryHandler());
         try {
             server.start();
         } catch (Exception e) {
             throw new IOFailure(
-                    "Cannot start HTTPRemoteFile registry on port "
-                    + port, e);
+                    "Cannot start HTTPRemoteFile registry on port " + port, e);
         }
     }
 
@@ -241,19 +240,20 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
         /**
          * A method for handling Jetty requests.
          *
-         * @see AbstractHandler#handle(String, HttpServletRequest,
+         * @see AbstractHandler#handle(String, org.eclipse.jetty.server.Request, HttpServletRequest, HttpServletResponse),
          * HttpServletResponse, int)
          *
          * @param string Unused domain.
          * @param httpServletRequest request object.
          * @param httpServletResponse the response to write to.
-         * @param i Unused state.
          * @throws IOException On trouble in communication.
          * @throws ServletException On servlet trouble.
          */
-        public void handle(String string,
+        @Override public void handle(
+                           String string,
+                           Request baseRequest,
                            HttpServletRequest httpServletRequest,
-                           HttpServletResponse httpServletResponse, int i)
+                           HttpServletResponse httpServletResponse)
                 throws IOException, ServletException {
             // since this is a jetty handle method, we know it is a Jetty
             // request object.

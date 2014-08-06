@@ -22,28 +22,26 @@
  */
 package dk.netarkivet.harvester.webinterface;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletInputStream;
-import javax.servlet.ServletRequest;
-import javax.servlet.jsp.PageContext;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
-import java.util.Enumeration;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.GregorianCalendar;
-import java.util.Calendar;
 
-import dk.netarkivet.common.exceptions.NotImplementedException;
+import javax.servlet.ServletRequest;
+import javax.servlet.jsp.PageContext;
+
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.utils.IteratorUtils;
 import dk.netarkivet.harvester.datamodel.DataModelTestCase;
@@ -52,7 +50,6 @@ import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.PartialHarvest;
 import dk.netarkivet.testutils.CollectionAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
-import static org.junit.Assert.*;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class SelectiveHarvestUtilTester extends DataModelTestCase {
@@ -333,128 +330,6 @@ public class SelectiveHarvestUtilTester extends DataModelTestCase {
     }
 
     private ServletRequest dummyRequest(final Map<String, String[]> confs) {
-        return new ServletRequest() {
-            public Map<String, Object> attributes = new HashMap<String, Object>();
-
-
-            public Object getAttribute(String string) {
-                throw new NotImplementedException("Not implemented");
-            }
-
-            public Enumeration getAttributeNames() {
-                throw new NotImplementedException("Not implemented");
-            }
-
-            public String getCharacterEncoding() {
-                throw new NotImplementedException("Not implemented");
-            }
-
-            public void setCharacterEncoding(String string)
-                    throws UnsupportedEncodingException {
-                throw new NotImplementedException("Not implemented");
-            }
-
-            public int getContentLength() {
-                throw new NotImplementedException("Not implemented");
-            }
-
-            public String getContentType() {
-                throw new NotImplementedException("Not implemented");
-            }
-
-            public ServletInputStream getInputStream() throws IOException {
-                throw new NotImplementedException("Not implemented");
-            }
-
-            public String getParameter(String string) {
-                String[] strings = confs.get(string);
-                return strings == null || strings.length == 0 ? null : strings[0];
-            }
-
-            public Enumeration getParameterNames() {
-                throw new NotImplementedException("Not implemented");
-            }
-
-            public String[] getParameterValues(String string) {
-                throw new NotImplementedException("Not implemented");
-            }
-
-            public Map getParameterMap() {
-                return confs;
-            }
-
-            public String getProtocol() {
-                throw new NotImplementedException("Not implemented");
-            }
-
-            public String getScheme() {
-                throw new NotImplementedException("Not implemented");
-            }
-
-            public String getServerName() {
-                throw new NotImplementedException("Not implemented");
-            }
-
-            public int getServerPort() {
-                throw new NotImplementedException("Not implemented");
-            }
-
-            public BufferedReader getReader() throws IOException {
-                throw new NotImplementedException("Not implemented");
-            }
-
-            public String getRemoteAddr() {
-                throw new NotImplementedException("Not implemented");
-            }
-
-            public String getRemoteHost() {
-                throw new NotImplementedException("Not implemented");
-            }
-
-            public void setAttribute(String string, Object object) {
-                attributes.put(string, object);
-            }
-
-            public void removeAttribute(String string) {
-                throw new NotImplementedException("Not implemented");
-            }
-
-            public Locale getLocale() {
-                throw new NotImplementedException("Not implemented");
-            }
-
-            public Enumeration getLocales() {
-                throw new NotImplementedException("Not implemented");
-            }
-
-            public boolean isSecure() {
-                throw new NotImplementedException("Not implemented");
-            }
-
-            public RequestDispatcher getRequestDispatcher(String string) {
-                throw new NotImplementedException("Not implemented");
-            }
-
-            public String getRealPath(String string) {
-                throw new NotImplementedException("Not implemented");
-            }
-
-            public int getRemotePort() {
-                throw new NotImplementedException("Not implemented");
-            }
-
-            public String getLocalName() {
-                throw new NotImplementedException("Not implemented");
-            }
-
-            public String getLocalAddr() {
-                throw new NotImplementedException("Not implemented");
-            }
-
-            public int getLocalPort() {
-                throw new NotImplementedException("Not implemented");
-            }
-        };
+        return mock(ServletRequest.class);
     }
-
 }

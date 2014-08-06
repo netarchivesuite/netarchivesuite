@@ -22,6 +22,13 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -29,6 +36,9 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
@@ -37,10 +47,6 @@ import dk.netarkivet.harvester.scheduler.jobgen.DefaultJobGenerator;
 import dk.netarkivet.testutils.CollectionAsserts;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  * Unit tests for the class HarvestDefinitionDAO class.
@@ -311,13 +317,11 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
 
         // Check that no rollback errors were logged
         LogUtils.flushLogs(HarvestDefinitionDBDAO.class.getName());
-        FileAsserts.assertFileNotContains("Log contains file after storing.",
-                                          TestInfo.LOG_FILE, "rollback");
+        FileAsserts.assertFileNotContains("Log contains file after storing.", TestInfo.LOG_FILE, "rollback");
 
         // Check that you cannot update a non-existing HD.
-        HarvestDefinition newhd = new PartialHarvest(TestInfo
-                .getAllDefaultConfigurations(), TestInfo.getDefaultSchedule(),
-                                                "notfound", "", "Everybody");
+        HarvestDefinition newhd = new PartialHarvest(TestInfo.getAllDefaultConfigurations(),
+                TestInfo.getDefaultSchedule(), "notfound", "", "Everybody");
         try {
             dao.update(newhd);
             fail("Should not allow update of non-existing HD");

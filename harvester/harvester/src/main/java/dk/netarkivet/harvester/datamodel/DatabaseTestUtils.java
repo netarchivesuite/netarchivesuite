@@ -36,7 +36,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Date;
 import java.util.logging.Logger;
 
 import dk.netarkivet.common.CommonSettings;
@@ -79,15 +78,14 @@ public class DatabaseTestUtils {
         // FIXME: change for h2
         dburi = "jdbc:derby:" + dbfile;
 
-        System.err.println("Populating " + dbfile + " from '" + resourcePath + "' at " + new Date());
+        long startTime = System.currentTimeMillis();
         Connection c = DriverManager.getConnection(dburi + ";create=true");
         c.setAutoCommit(false);  // load faster.
         
         // locate create script first, next to resource
         File createFile = new File(new File(resourcePath).getParentFile(), "create.sql");
         
-        applyStatementsInInputStream(c,
-                checkNotNull(new FileInputStream(createFile), "create.sql"));
+        applyStatementsInInputStream(c, checkNotNull(new FileInputStream(createFile), "create.sql"));
 
         // then populate it.
         FileInputStream is = checkNotNull(new FileInputStream(resourcePath), resourcePath);
@@ -95,7 +93,7 @@ public class DatabaseTestUtils {
 
         c.commit();
         
-        System.err.println("Populated... at " +  new Date());
+        log.fine("Populated " + dbfile + " in " + (System.currentTimeMillis() - startTime) + "(ms)");
         //
         c.close();
 

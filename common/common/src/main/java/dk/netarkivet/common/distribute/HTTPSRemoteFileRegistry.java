@@ -22,12 +22,6 @@
  */
 package dk.netarkivet.common.distribute;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.TrustManagerFactory;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
@@ -36,10 +30,21 @@ import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.SecureRandom;
 
-import org.apache.commons.io.IOUtils;
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.security.SslSocketConnector;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManagerFactory;
 
+import org.apache.commons.io.IOUtils;
+import org.eclipse.jetty.server.HttpConfiguration;
+import org.eclipse.jetty.server.HttpConnectionFactory;
+import org.eclipse.jetty.server.SecureRequestCustomizer;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.SslConnectionFactory;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.Settings;
 
@@ -85,28 +90,18 @@ public class HTTPSRemoteFileRegistry extends HTTPRemoteFileRegistry {
         FileInputStream keyStoreInputStream = null;    
         try {
             keyStoreInputStream = new FileInputStream(KEYSTORE_PATH); 
-            KeyStore store = KeyStore.getInstance(
-                    SUN_JCEKS_KEYSTORE_TYPE);
-            store.load(keyStoreInputStream, 
-                    KEYSTORE_PASSWORD.toCharArray());
-            KeyManagerFactory kmf = KeyManagerFactory.getInstance(
-                    SUN_X509_CERTIFICATE_ALGORITHM);
-            kmf.init(store,
-                     KEY_PASSWORD.toCharArray());
-            TrustManagerFactory tmf = TrustManagerFactory.getInstance(
-                    SUN_X509_CERTIFICATE_ALGORITHM);
+            KeyStore store = KeyStore.getInstance(SUN_JCEKS_KEYSTORE_TYPE);
+            store.load(keyStoreInputStream, KEYSTORE_PASSWORD.toCharArray());
+            KeyManagerFactory kmf = KeyManagerFactory.getInstance(SUN_X509_CERTIFICATE_ALGORITHM);
+            kmf.init(store, KEY_PASSWORD.toCharArray());
+            TrustManagerFactory tmf = TrustManagerFactory.getInstance(SUN_X509_CERTIFICATE_ALGORITHM);
             tmf.init(store);
-            sslContext = SSLContext.getInstance(
-                    SSL_PROTOCOL);
-            sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(),
-                            SecureRandom.getInstance(
-                                    SHA1_PRNG_RANDOM_ALGORITHM));
+            sslContext = SSLContext.getInstance(SSL_PROTOCOL);
+            sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), SecureRandom.getInstance(SHA1_PRNG_RANDOM_ALGORITHM));
         } catch (GeneralSecurityException e) {
-            throw new IOFailure("Unable to create secure environment for"
-                                + " keystore '" + KEYSTORE_PATH + "'", e);
+            throw new IOFailure("Unable to create secure environment for keystore '" + KEYSTORE_PATH + "'", e);
         } catch (IOException e) {
-            throw new IOFailure("Unable to create secure environment for"
-                                + " keystore '" + KEYSTORE_PATH + "'", e);
+            throw new IOFailure("Unable to create secure environment for keystore '" + KEYSTORE_PATH + "'", e);
         } finally {
             IOUtils.closeQuietly(keyStoreInputStream);
         }
@@ -141,19 +136,28 @@ public class HTTPSRemoteFileRegistry extends HTTPRemoteFileRegistry {
     protected void startServer() {
         server = new Server();
 
-        //This sets up a secure connector
-        SslSocketConnector connector = new SslSocketConnector();
-        connector.setKeystore(KEYSTORE_PATH);
-        connector.setPassword(KEYSTORE_PASSWORD);
-        connector.setKeyPassword(KEY_PASSWORD);
-        connector.setTruststore(KEYSTORE_PATH);
-        connector.setTrustPassword(KEYSTORE_PASSWORD);
-        connector.setNeedClientAuth(true);
-        connector.setPort(port);
+        SslContextFactory sslContextFactory = new SslContextFactory();
+        sslContextFactory.setKeyStorePath(KEYSTORE_PATH);
+        sslContextFactory.setKeyStorePassword(KEY_PASSWORD);
+        sslContextFactory.setKeyManagerPassword(KEY_PASSWORD);
+        sslContextFactory.setTrustStorePath(KEYSTORE_PATH);
+        sslContextFactory.setTrustStorePassword(KEY_PASSWORD);
+        sslContextFactory.setNeedClientAuth(true);
 
-        //This initialises the server.        
-        server.addConnector(connector);
-        server.addHandler(new HTTPRemoteFileRegistryHandler());
+        HttpConfiguration http_config = new HttpConfiguration();
+        http_config.setSecureScheme("https");
+        http_config.setSecurePort(port);
+
+        HttpConfiguration https_config = new HttpConfiguration(http_config);
+        https_config.addCustomizer(new SecureRequestCustomizer());
+
+        ServerConnector sslConnector = new ServerConnector(server,
+                new SslConnectionFactory(sslContextFactory,"http/1.1"),
+                new HttpConnectionFactory(https_config));
+        sslConnector.setPort(port);
+
+        server.addConnector(sslConnector);
+        server.setHandler(new HTTPRemoteFileRegistryHandler());
         try {
             server.start();
         } catch (Exception e) {

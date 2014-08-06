@@ -22,8 +22,6 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
-import javax.servlet.jsp.PageContext;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -39,15 +37,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.jsp.PageContext;
+
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.I18n;
+import dk.netarkivet.harvester.datamodel.dao.DAOProviderFactory;
 import dk.netarkivet.harvester.webinterface.EventHarvestUtil;
 
 
@@ -89,7 +89,7 @@ public class PartialHarvest extends HarvestDefinition {
                           String harvestDefName,
                           String comments,
                           String audience) {
-
+        super(DAOProviderFactory.getExtendedFieldDAOProvider());
         ArgumentNotValid.checkNotNull(schedule, "schedule");
         ScheduleDAO.getInstance().read(schedule.getName());
 
@@ -104,8 +104,7 @@ public class PartialHarvest extends HarvestDefinition {
         this.harvestDefName = harvestDefName;
         this.comments = comments;
         this.nextDate = schedule.getFirstEvent(new Date());
-        this.audience = audience; 
-        this.addExtendedFieldValues();
+        this.audience = audience;
     }
     
 
