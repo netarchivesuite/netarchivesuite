@@ -24,19 +24,15 @@
 package dk.netarkivet.monitor.logging;
 
 import java.lang.management.ManagementFactory;
-import java.util.logging.LogRecord;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.management.SingleMBeanObject;
 
-/**
- * A LogRecord to be exposed as an MBean.
- */
-public class CachingLogRecord implements SingleLogRecord {
+public class CachingSLF4JLogRecord implements SingleLogRecord {
 
 	private final int index;
-    private final CachingLogHandler cachingLogHandler;
+    private final CachingSLF4JAppender cachingSLF4JAppender;
     private SingleMBeanObject<SingleLogRecord> singleMBeanObject;
 
     /**
@@ -49,28 +45,23 @@ public class CachingLogRecord implements SingleLogRecord {
      *                          on.
      * @throws IOFailure on any trouble registering.
      */
-    public CachingLogRecord(int index, CachingLogHandler cachingLogHandler) {
-        ArgumentNotValid.checkNotNull(cachingLogHandler, "CachingLogHandler cachingLogHandler");
+    public CachingSLF4JLogRecord(int index, CachingSLF4JAppender cachingSLF4JAppender) {
+        ArgumentNotValid.checkNotNull(cachingSLF4JAppender, "CachingSLF4JAppender cachingSLF4JAppender");
         this.index = index;
-        this.cachingLogHandler = cachingLogHandler;
+        this.cachingSLF4JAppender = cachingSLF4JAppender;
 
         register();
     }
 
-    /**
-     * Get the log record on a given index from the top as a string. This will
-     * be formatted by the formatter from the CachingLogHandler.
-     *
-     * @return A String representation of the LogRecord, or null for none.
-     */
-    public String getRecordString() {
-        LogRecord logRecord = cachingLogHandler.getNthLogRecord(this.index);
-        if (logRecord == null) {
+	@Override
+	public String getRecordString() {
+        String logMsg = cachingSLF4JAppender.getNthLogRecord(this.index);
+        if (logMsg == null) {
             return "";
         } else {
-            return cachingLogHandler.getFormatter().format(logRecord);
+            return logMsg;
         }
-    }
+	}
 
     /**
      * Registers this object as an mbean.
