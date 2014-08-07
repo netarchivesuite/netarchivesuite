@@ -95,8 +95,7 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
     protected HTTPRemoteFileRegistry() {
         port = Settings.getInt(HTTPRemoteFile.HTTPREMOTEFILE_PORT_NUMBER);
         localHostName = SystemUtils.getLocalHostName();
-        registeredFiles = Collections.synchronizedMap(
-                new HashMap<URL, FileInfo>());
+        registeredFiles = Collections.synchronizedMap(new HashMap<URL, FileInfo>());
         random = new Random();
         startServer();
         cleanupHook = new CleanupHook(this);

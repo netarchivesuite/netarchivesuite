@@ -28,6 +28,7 @@ import java.net.URL;
 
 import junit.framework.TestCase;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.ChecksumCalculator;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
@@ -52,19 +53,19 @@ public class HTTPSRemoteFileTester extends TestCase {
         mtf.setUp();
         // Make sure we're using the right HTTP remote file by closing old
         // registries.
-        //HTTPRemoteFileRegistry.getInstance().cleanup();
-        //HTTPSRemoteFileRegistry.getInstance().cleanup();
+        HTTPRemoteFileRegistry.getInstance().cleanup();
+        HTTPSRemoteFileRegistry.getInstance().cleanup();
     }
 
     public void tearDown() {
-        //HTTPRemoteFileRegistry.getInstance().cleanup();
-        //HTTPSRemoteFileRegistry.getInstance().cleanup();
+        HTTPRemoteFileRegistry.getInstance().cleanup();
+        HTTPSRemoteFileRegistry.getInstance().cleanup();
         mtf.tearDown();
         utrf.tearDown();
         rs.tearDown();
     }
 
-    public void ttestCopyto() throws Exception {
+    public void testCopyto() throws Exception {
         //Copying twice with multiple
         HTTPSRemoteFile rf = new ForceRemoteHTTPSRemoteFile(TestInfo.FILE1, false, false, true);
         File tempFile = File.createTempFile("TEST", "COPYTO", TestInfo.WORKING_DIR);
@@ -119,7 +120,7 @@ public class HTTPSRemoteFileTester extends TestCase {
                     TestInfo.FILE1.exists());
     }
 
-    public void ttestCleanup() throws Exception {
+    public void testCleanup() throws Exception {
         HTTPSRemoteFile rf = new ForceRemoteHTTPSRemoteFile(TestInfo.FILE1, false, false, true);
         URL url = rf.url;
         HTTPSRemoteFileRegistry.getInstance().openConnection(url).getInputStream();
@@ -150,13 +151,13 @@ public class HTTPSRemoteFileTester extends TestCase {
     }
 
     public void testGetChecksum() throws Exception {
-        /*HTTPSRemoteFile rf = new ForceRemoteHTTPSRemoteFile(TestInfo.FILE1, false, false, true);
+        HTTPSRemoteFile rf = new ForceRemoteHTTPSRemoteFile(TestInfo.FILE1, false, false, true);
         assertEquals("Should get null (no checksum requested)",
                      null, rf.getChecksum());
         rf = new HTTPSRemoteFileTester.ForceRemoteHTTPSRemoteFile(TestInfo.FILE1,
                                            true, false, true);
         assertEquals("Should get right checksum",
-                     ChecksumCalculator.calculateMd5(TestInfo.FILE1), rf.getChecksum());  */
+                     ChecksumCalculator.calculateMd5(TestInfo.FILE1), rf.getChecksum());
     }
 
     private class ForceRemoteHTTPSRemoteFile extends HTTPSRemoteFile {

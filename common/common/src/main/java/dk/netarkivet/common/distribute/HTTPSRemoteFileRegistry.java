@@ -65,28 +65,23 @@ public class HTTPSRemoteFileRegistry extends HTTPRemoteFileRegistry {
     /** Protocol used in this registry. */
     private static final String PROTOCOL = "https";
     /** A hostname verifier accepting any host. */
-    private static final HostnameVerifier ACCEPTING_HOSTNAME_VERIFIER
-            = new HostnameVerifier() {
+    private static final HostnameVerifier ACCEPTING_HOSTNAME_VERIFIER = new HostnameVerifier() {
         public boolean verify(String string, SSLSession sslSession) {
             return true;
         }
     };
-    /** The path to the keystore containing the certificate used for SSL in
-     * HTTPS connections. */
-    private static final String KEYSTORE_PATH
-            = Settings.get(HTTPSRemoteFile.HTTPSREMOTEFILE_KEYSTORE_FILE);
+    /** The path to the keystore containing the certificate used for SSL in HTTPS connections. */
+    private static final String KEYSTORE_PATH = Settings.get(HTTPSRemoteFile.HTTPSREMOTEFILE_KEYSTORE_FILE);
     /** The keystore password. */
-    private static final String KEYSTORE_PASSWORD = Settings.get(
-            HTTPSRemoteFile.HTTPSREMOTEFILE_KEYSTORE_PASSWORD);
+    private static final String KEYSTORE_PASSWORD = Settings.get(HTTPSRemoteFile.HTTPSREMOTEFILE_KEYSTORE_PASSWORD);
     /** The certificate password. */
-    private static final String KEY_PASSWORD = Settings.get(
-            HTTPSRemoteFile.HTTPSREMOTEFILE_KEY_PASSWORD);
+    private static final String KEY_PASSWORD = Settings.get(HTTPSRemoteFile.HTTPSREMOTEFILE_KEY_PASSWORD);
     /** An SSL context, used for creating SSL connections only accepting this
      * certificate. */
     private final SSLContext sslContext;
-    //This all initialises the ssl context to use the key in the keystore
-    //above.
-    {
+
+    //This all initialises the ssl context to use the key in the keystore above.
+    private HTTPSRemoteFileRegistry () {
         FileInputStream keyStoreInputStream = null;    
         try {
             keyStoreInputStream = new FileInputStream(KEYSTORE_PATH); 
@@ -98,15 +93,12 @@ public class HTTPSRemoteFileRegistry extends HTTPRemoteFileRegistry {
             tmf.init(store);
             sslContext = SSLContext.getInstance(SSL_PROTOCOL);
             sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), SecureRandom.getInstance(SHA1_PRNG_RANDOM_ALGORITHM));
-        } catch (GeneralSecurityException e) {
-            throw new IOFailure("Unable to create secure environment for keystore '" + KEYSTORE_PATH + "'", e);
-        } catch (IOException e) {
+        } catch (GeneralSecurityException|IOException e) {
             throw new IOFailure("Unable to create secure environment for keystore '" + KEYSTORE_PATH + "'", e);
         } finally {
             IOUtils.closeQuietly(keyStoreInputStream);
         }
     }
-
 
     /**
      * Get the unique instance.
@@ -124,7 +116,7 @@ public class HTTPSRemoteFileRegistry extends HTTPRemoteFileRegistry {
 
     /** Get the protocol used for this registry, that is 'https'.
      * @return "https", the protocol. */
-    protected String getProtocol() {
+    @Override  protected String getProtocol() {
         return PROTOCOL;
     }
 
@@ -133,15 +125,15 @@ public class HTTPSRemoteFileRegistry extends HTTPRemoteFileRegistry {
      * files, removes registered files on request, and gives 404 otherwise.
      * Connection to this web host only possible with the shared certificate.
      */
-    protected void startServer() {
+    @Override protected void startServer() {
         server = new Server();
 
         SslContextFactory sslContextFactory = new SslContextFactory();
         sslContextFactory.setKeyStorePath(KEYSTORE_PATH);
-        sslContextFactory.setKeyStorePassword(KEY_PASSWORD);
+        sslContextFactory.setKeyStorePassword(KEYSTORE_PASSWORD);
         sslContextFactory.setKeyManagerPassword(KEY_PASSWORD);
         sslContextFactory.setTrustStorePath(KEYSTORE_PATH);
-        sslContextFactory.setTrustStorePassword(KEY_PASSWORD);
+        sslContextFactory.setTrustStorePassword(KEYSTORE_PASSWORD);
         sslContextFactory.setNeedClientAuth(true);
 
         HttpConfiguration http_config = new HttpConfiguration();
@@ -174,7 +166,7 @@ public class HTTPSRemoteFileRegistry extends HTTPRemoteFileRegistry {
      * @throws IOException If unable to open connection to the URL
      * @throws IOFailure If the connection is not a secure connection
      */
-    protected URLConnection openConnection(URL url) throws IOException {
+    @Override  protected URLConnection openConnection(URL url) throws IOException {
         URLConnection connection = url.openConnection();
         if (!(connection instanceof HttpsURLConnection)) {
             throw new IOFailure("Not a secure URL to remote file: " + url);
