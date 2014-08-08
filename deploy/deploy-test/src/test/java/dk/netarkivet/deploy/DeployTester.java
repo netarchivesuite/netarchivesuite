@@ -379,8 +379,8 @@ public class DeployTester extends TestCase {
 
 	assertEquals("Exit value asserted 1.", 1, pseVal);
         assertTrue("The error message should start with: " 
-                + Constants.MSG_ERROR_LOG_PROPERTY_EXTENSION, 
-                pssMsg.startsWith(Constants.MSG_ERROR_LOG_PROPERTY_EXTENSION));
+                + Constants.MSG_ERROR_JUL_PROPERTY_EXTENSION, 
+                pssMsg.startsWith(Constants.MSG_ERROR_JUL_PROPERTY_EXTENSION));
     }
     
     /**
@@ -535,24 +535,22 @@ public class DeployTester extends TestCase {
      * is missing.
      */
     public void testDeployArgumentsLack4() {
-	String[] args = {
-		TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
-		TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
-		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
-//		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropFile,
-		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
-                TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + databaseName
-	};
-	DeployApplication.main(args);
+    	String[] args = {
+    			TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
+    			TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
+    			TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
+    			//TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropFile,
+    			TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir, TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + databaseName
+    	};
+    	DeployApplication.main(args);
 
-	// get message and exit value
-	int pseVal = pse.getExitValue();
-	String pssMsg = pss.getErr();
+    	// get message and exit value
+    	int pseVal = pse.getExitValue();
+    	String pssMsg = pss.getErr();
 
-	assertEquals("Exit value asserted 1.", 1, pseVal);
-        assertTrue("The error message should start with: " 
-                + Constants.MSG_ERROR_NO_LOG_PROPERTY_FILE_ARG, 
-                pssMsg.startsWith(Constants.MSG_ERROR_NO_LOG_PROPERTY_FILE_ARG));
+    	assertEquals("Exit value asserted 1.", 1, pseVal);
+    	assertTrue("The error message should start with: " + Constants.MSG_ERROR_NO_LOG_CONFIG_FILE_FOUND,
+    			pssMsg.startsWith(Constants.MSG_ERROR_NO_LOG_CONFIG_FILE_FOUND));
     }
 
     /**
@@ -647,8 +645,8 @@ public class DeployTester extends TestCase {
 
 	assertEquals("Exit value asserted 1.", 1, pseVal);
         assertTrue("The error message should start with: " 
-                + Constants.MSG_ERROR_NO_LOG_PROPERTY_FILE_FOUND, 
-                pssMsg.startsWith(Constants.MSG_ERROR_NO_LOG_PROPERTY_FILE_FOUND));
+                + Constants.MSG_ERROR_NO_JUL_PROPERTY_FILE_FOUND, 
+                pssMsg.startsWith(Constants.MSG_ERROR_NO_JUL_PROPERTY_FILE_FOUND));
     }
 
     /**

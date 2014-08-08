@@ -46,7 +46,8 @@ import dk.netarkivet.common.utils.FileUtils;
  * All non-OS specific methods are implemented this machine class.
  */
 public abstract class Machine {
-    /** the log, for logging stuff instead of displaying them directly.*/
+
+	/** the log, for logging stuff instead of displaying them directly.*/
     protected static final Logger log = LoggerFactory.getLogger(Machine.class);
     /** The root-branch for this machine in the XML tree.*/
     protected Element machineRoot;
@@ -64,8 +65,10 @@ public abstract class Machine {
     protected String scriptExtension;
     /** The name of the NetarchiveSuite.zip file.*/
     protected String netarchiveSuiteFileName;
-    /** The inherited log.prop file.*/
-    protected File inheritedLogPropFile;
+    /** The inherited java.util.logging prop file.*/
+    protected File inheriteJulPropFile;
+    /** The inherited SLF4J config file. */
+    protected File inheritedSlf4jConfigFile;
     /** The inherited security.policy file.*/
     protected File inheritedSecurityPolicyFile;
     /** The inherited database file name.*/
@@ -91,7 +94,7 @@ public abstract class Machine {
      * @param param The machine parameters inherited by the parent.
      * @param netarchiveSuiteSource The name of the NetarchiveSuite 
      * package file.
-     * @param logProp The logging property file.
+     * @param julProp The logging property file.
      * @param securityPolicy The security policy file.
      * @param dbFileName The name of the database file.
      * @param archiveDbFileName The name of the archive database file.
@@ -104,21 +107,23 @@ public abstract class Machine {
      */
     public Machine(Element subTreeRoot, XmlStructure parentSettings, 
             Parameters param, String netarchiveSuiteSource,
-            File logProp, File securityPolicy, File dbFileName,
+            File julProp, File slf4JConfig, File securityPolicy, File dbFileName,
             File archiveDbFileName, boolean resetDir, File externalJarFolder) 
             throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(subTreeRoot, "Element subTreeRoot");
         ArgumentNotValid.checkNotNull(parentSettings, "XmlStructure parentSettings");
         ArgumentNotValid.checkNotNull(param, "Parameters param");
         ArgumentNotValid.checkNotNull(netarchiveSuiteSource, "String netarchiveSuiteSource");
-        ArgumentNotValid.checkNotNull(logProp, "File logProp");
+        //ArgumentNotValid.checkNotNull(julProp, "File logProp");
+        //ArgumentNotValid.checkNotNull(slf4JConfig, "File slf4JConfig");
         ArgumentNotValid.checkNotNull(securityPolicy, "File securityPolicy");
 
         settings = new XmlStructure(parentSettings.getRoot());
         machineRoot = subTreeRoot;
         machineParameters = new Parameters(param);
         netarchiveSuiteFileName = netarchiveSuiteSource;
-        inheritedLogPropFile = logProp;
+        inheriteJulPropFile = julProp;
+        inheritedSlf4jConfigFile = slf4JConfig;
         inheritedSecurityPolicyFile = securityPolicy;
         databaseFile = dbFileName;
         arcDatabaseFile = archiveDbFileName;
@@ -213,8 +218,14 @@ public abstract class Machine {
         createRestartScript(machineDirectory);
         // copy the security policy file
         createSecurityPolicyFile(machineDirectory);
-        // create the log property files
-        createLogPropertyFiles(machineDirectory);
+        if (inheriteJulPropFile != null) {
+            // create the java.util.logging property files
+            createJulPropertyFiles(machineDirectory);
+        }
+        if (inheritedSlf4jConfigFile != null) {
+            // create the SLF4J property files
+            createSlf4jConfigFiles(machineDirectory);
+        }
         // create the jmx remote files
         createJmxRemotePasswordFile(machineDirectory);
         createJmxRemoteAccessFile(machineDirectory);
@@ -334,7 +345,7 @@ public abstract class Machine {
     }
 
     /**
-     * Creates a the log property file for every application.
+     * Creates a the java.util.logging property file for every application.
      * This is done by taking the inherited log file and changing 
      * "APPID" in the file into the identification of the application.
      * 
@@ -342,19 +353,19 @@ public abstract class Machine {
      * @throws IOFailure If an error occurred during the creationg of the 
      * log property file.
      */
-    protected void createLogPropertyFiles(File directory) throws IOFailure {
+    protected void createJulPropertyFiles(File directory) throws IOFailure {
         // make log property file for every application
         for (Application app : applications) {
             // make file
-            File logProp = new File(directory, Constants.LOG_PROP_APPLICATION_PREFIX + app.getIdentification()
-                    + Constants.LOG_PROP_APPLICATION_SUFFIX);
+            File logProp = new File(directory, Constants.JUL_PROP_APPLICATION_PREFIX + app.getIdentification()
+                    + Constants.JUL_PROP_APPLICATION_SUFFIX);
             try {
                 // init writer
                 PrintWriter logPrinter = new PrintWriter(logProp, getTargetEncoding());
                 
                 try {
                     // read the inherited log property file.
-                    String prop = FileUtils.readFile(inheritedLogPropFile);
+                    String prop = FileUtils.readFile(inheriteJulPropFile);
 
                     // append stuff!
                     prop = prop.replace(Constants.LOG_PROPERTY_APPLICATION_ID_TAG, app.getIdentification());
@@ -367,6 +378,44 @@ public abstract class Machine {
             } catch (IOException e) {
                 log.warn("IOException while creating log property file:", e);
                 throw new IOFailure("Cannot create log property file.", e);
+            }
+        }
+    }
+
+    /**
+     * Creates a the SLF4J config file for every application.
+     * This is done by taking the inherited log file and changing 
+     * "APPID" in the file into the identification of the application.
+     * 
+     * @param directory The local directory for this machine
+     * @throws IOFailure If an error occurred during the creationg of the 
+     * log property file.
+     */
+    protected void createSlf4jConfigFiles(File directory) throws IOFailure {
+        // make config file for every application
+        for (Application app : applications) {
+            // make file
+            File logProp = new File(directory, Constants.SLF4J_CONFIG_APPLICATION_PREFIX + app.getIdentification()
+                    + Constants.SLF4J_CONFIG_APPLICATION_SUFFIX);
+            try {
+                // init writer
+                PrintWriter logPrinter = new PrintWriter(logProp, getTargetEncoding());
+                
+                try {
+                    // read the inherited log property file.
+                    String prop = FileUtils.readFile(inheritedSlf4jConfigFile);
+
+                    // append stuff!
+                    prop = prop.replace(Constants.LOG_PROPERTY_APPLICATION_ID_TAG, app.getIdentification());
+                    prop = modifyLogProperties(prop);
+                    // write to file.
+                    logPrinter.write(prop);
+                } finally {
+                	logPrinter.close();
+                }
+            } catch (IOException e) {
+                log.warn("IOException while creating SLF4J config file:", e);
+                throw new IOFailure("Cannot create SLF4J config file.", e);
             }
         }
     }
@@ -921,5 +970,5 @@ public abstract class Machine {
 	protected String getTargetEncoding() {
 		return targetEncoding;
 	}
-    
+
 }

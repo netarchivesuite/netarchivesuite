@@ -61,10 +61,10 @@ public class LinuxMachine extends Machine {
      */
     public LinuxMachine(Element subTreeRoot, XmlStructure parentSettings, 
             Parameters param, String netarchiveSuiteSource,
-            File logProp, File securityPolicy, File dbFile,
+            File logProp, File slf4JConfig, File securityPolicy, File dbFile,
             File arcdbFile, boolean resetDir, File externalJarFolder) {
         super(subTreeRoot, parentSettings, param, netarchiveSuiteSource,
-                logProp, securityPolicy, dbFile, arcdbFile, resetDir,
+                logProp, slf4JConfig, securityPolicy, dbFile, arcdbFile, resetDir,
                 externalJarFolder);
         // set operating system
         operatingSystem = Constants.OPERATING_SYSTEM_LINUX_ATTRIBUTE;
@@ -646,14 +646,31 @@ public class LinuxMachine extends Machine {
                             + ScriptConstants.OPTION_SETTINGS 
                             + getConfDirPath() + Constants.PREFIX_SETTINGS
                             + app.getIdentification() 
-                            + Constants.EXTENSION_XML_FILES + Constants.SPACE
+                            + Constants.EXTENSION_XML_FILES
+
+							// TODO check to see if inherited inheriteJulPropFile is not null
+                            + Constants.SPACE
                             + Constants.DASH 
                             + ScriptConstants.OPTION_LOG_COMPLETE
-                            + Constants.SPACE + Constants.DASH 
+
+							// TODO check to see if inherited inheriteJulPropFile is not null
+                            + Constants.SPACE
+                            + Constants.DASH 
                             + ScriptConstants.OPTION_LOG_CONFIG
-                            + getConfDirPath() + Constants.LOG_PREFIX
+                            + getConfDirPath()
+                            + Constants.LOG_PREFIX
                             + app.getIdentification() 
-                            + Constants.EXTENSION_LOG_PROPERTY_FILES
+                            + Constants.EXTENSION_JUL_PROPERTY_FILES
+
+                            // TODO check to see if inheritedSlf4jConfigFile is not null
+                            + Constants.SPACE
+                            + Constants.DASH 
+                            + ScriptConstants.OPTION_LOGBACK_CONFIG
+                            + getConfDirPath()
+                            + Constants.LOGBACK_PREFIX
+                            + app.getIdentification() 
+                            + Constants.EXTENSION_XML_FILES
+
                             + Constants.SPACE + Constants.DASH 
                             + ScriptConstants.OPTION_SECURITY_MANAGER
                             + Constants.SPACE + Constants.DASH 

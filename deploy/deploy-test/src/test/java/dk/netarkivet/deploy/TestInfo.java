@@ -66,7 +66,7 @@ public class TestInfo {
     public static final String ARGUMENT_SECURITY_FILE = 
 	Constants.ARG_INIT_ARG + Constants.ARG_SECURITY_FILE;
     public static final String ARGUMENT_LOG_PROPERTY_FILE = 
-	Constants.ARG_INIT_ARG + Constants.ARG_LOG_PROPERTY_FILE;
+	Constants.ARG_INIT_ARG + Constants.ARG_JUL_PROPERTY_FILE;
     public static final String ARGUMENT_OUTPUT_DIRECTORY = 
 	Constants.ARG_INIT_ARG + Constants.ARG_OUTPUT_DIRECTORY;
     public static final String ARGUMENT_HARVEST_DATABASE_FILE = 
