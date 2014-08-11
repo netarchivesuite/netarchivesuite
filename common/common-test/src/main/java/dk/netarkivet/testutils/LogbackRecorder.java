@@ -30,6 +30,9 @@ import java.util.regex.Pattern;
 import org.junit.Assert;
 import org.slf4j.LoggerFactory;
 
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.spi.FilterReply;
+
 // TODO So maybe these methods should be unit-tested... NICL
 public class LogbackRecorder extends ch.qos.logback.core.AppenderBase<ch.qos.logback.classic.spi.ILoggingEvent> {
 
@@ -125,6 +128,37 @@ public class LogbackRecorder extends ch.qos.logback.core.AppenderBase<ch.qos.log
 		}
     	return index;
     }
+
+	public synchronized void assertLogContainsLevel(String msg, ch.qos.logback.classic.Level level) {
+    	Iterator<ch.qos.logback.classic.spi.ILoggingEvent> iter = events.iterator();
+    	boolean bMatched = false;
+    	while (!bMatched && iter.hasNext()) {
+    		bMatched = (iter.next().getLevel() == level);
+    	}
+    	if (!bMatched) {
+    		System.out.println("Unable to match level=" + level.toString() + " + in log.");
+            Assert.fail(msg);
+    	}
+    }
+
+    public synchronized void assertLogNotContainsLevel(String msg, ch.qos.logback.classic.Level level) {
+    	Iterator<ch.qos.logback.classic.spi.ILoggingEvent> iter = events.iterator();
+    	boolean bMatched = false;
+    	while (!bMatched && iter.hasNext()) {
+    		bMatched = (iter.next().getLevel() == level);
+    	}
+    	if (bMatched) {
+    		System.out.println("Able to match level=" + level.toString() + " + in log.");
+            Assert.fail(msg);
+    	}
+    }
+
+	public static class DenyFilter extends ch.qos.logback.core.filter.Filter<ch.qos.logback.classic.spi.ILoggingEvent> {
+		@Override
+		public FilterReply decide(ILoggingEvent event) {
+			return FilterReply.DENY;
+		}
+	};
 
     public void addFilter(ch.qos.logback.core.filter.Filter<ch.qos.logback.classic.spi.ILoggingEvent> filter, String loggerName) {
     	ch.qos.logback.classic.Logger logger = (ch.qos.logback.classic.Logger)LoggerFactory.getLogger(loggerName);

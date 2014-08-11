@@ -62,7 +62,6 @@ import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
-
 /**
  * Unit tests for ARCArchiveAccess.  This only tests that we connect the CDX
  * lookup with the ARC files ok, because everything else is just being forwarded
@@ -72,8 +71,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 public class ARCArchiveAccessTester {
 
     //Unused files:
-    private static final File MAIN_PATH = new File(
-            "tests/dk/netarkivet/viewerproxy/data/");
+    private static final File MAIN_PATH = new File("tests/dk/netarkivet/viewerproxy/data/");
 
     /**
      * An URL not indexed in CDX_FILE. Initiated in setUp because it can throw
@@ -89,19 +87,12 @@ public class ARCArchiveAccessTester {
      * The key listed for GIF_URL.
      */
     private static final ARCKey GIF_URL_KEY =
-            new ARCKey(
-                    "2-2-20060731110420-00000-sb-test-har-001.statsbiblioteket.dk.arc",
-                    73269);
-
-    private static final File LOG_FILE = new File(
-            "tests/testlogs/netarkivtest.log");
+            new ARCKey("2-2-20060731110420-00000-sb-test-har-001.statsbiblioteket.dk.arc", 73269);
 
     // Set up directories for local archive and bitarchive
-    private static final File BASE_DIR = new File(
-            "tests/dk/netarkivet/viewerproxy/data");
+    private static final File BASE_DIR = new File("tests/dk/netarkivet/viewerproxy/data");
     private static final File ORIGINALS = new File(BASE_DIR, "input");
     private static final File WORKING = new File(BASE_DIR, "working");
-
 
     //A web archive controller that always returns our own test record:
     private ArcRepositoryClient fakeArcRepos;
@@ -387,4 +378,5 @@ public class ARCArchiveAccessTester {
             return Collections.emptyMap();
         }
     }
+
 }

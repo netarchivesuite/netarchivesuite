@@ -25,8 +25,8 @@ package dk.netarkivet.archive.bitarchive.distribute;
 import java.io.File;
 
 public class TestInfo {
-    private static final File BAMON_BASEDIR =
-        new File("tests/dk/netarkivet/archive/bitarchive/distribute/data");
+
+	private static final File BAMON_BASEDIR = new File("tests/dk/netarkivet/archive/bitarchive/distribute/data");
     static final File BAMON_ORIGINALS = new File(BAMON_BASEDIR, "originals");
     static final File BAMON_WORKING = new File(BAMON_BASEDIR, "working") ;
     static final File BAMON_TMP_FILE = new File(BAMON_ORIGINALS,"tmpout.txt");//Non-existing, to put data in
@@ -55,17 +55,12 @@ public class TestInfo {
     static final File UPLOADMESSAGE_TESTFILE_1 = new File(UPLOADMESSAGE_TEMP_DIR, "NetarchiveSuite-store1.arc");
     static final File UPLOADMESSAGE_TESTFILE_2 = new File(UPLOADMESSAGE_TEMP_DIR, "NetarchiveSuite-store2.arc");
 
-    
-    static final File BATCH_ALL_CHECKSUM_OUTPUT_FILE = 
-        new File(BAMON_WORKING, "batch_all_checksum_output.txt");
-    static final File BATCH_ALL_FILENAMES_OUTPUT_FILE = 
-        new File(BAMON_WORKING, "batch_all_filenames_output.txt");
-    static final File BATCH_ONE_CHECKSUM_OUTPUT_FILE =
-        new File(BAMON_WORKING, "batch_one_checksum_output.txt");
+    static final File BATCH_ALL_CHECKSUM_OUTPUT_FILE = new File(BAMON_WORKING, "batch_all_checksum_output.txt");
+    static final File BATCH_ALL_FILENAMES_OUTPUT_FILE = new File(BAMON_WORKING, "batch_all_filenames_output.txt");
+    static final File BATCH_ONE_CHECKSUM_OUTPUT_FILE = new File(BAMON_WORKING, "batch_one_checksum_output.txt");
 
     static final File CORRECT_ARC_FILE = new File(BAMON_WORKING, "file-1.arc");
     static final File BAD_ARC_FILE = new File(BAMON_WORKING, "file-2.arc");
-
 
     //Moved from BitArchiveServerTester:
     static final File BA1_MAINDIR = new File(UPLOADMESSAGE_TEMP_DIR, "bitarchive1");
@@ -77,8 +72,5 @@ public class TestInfo {
     static final File BA1_ORG_FILE = new File(BA1_FILEDIR,BA1_FILENAME);
     static final File BA1_ATTIC_FILE = new File(BA1_ATTICDIR,BA1_FILENAME);
     static final String BA1_CHECKSUM = "d87cc8068fa49f3a4926ce4d1cdf14e1";
-
-    static final File TESTLOGPROP = new File("tests/dk/netarkivet/testlog.prop");
-    static File LOG_FILE = new File("tests/testlogs", "netarkivtest.log");
 
 }

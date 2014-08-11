@@ -31,7 +31,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -39,7 +38,6 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.logging.LogManager;
 
 import javax.jms.Message;
 import javax.jms.MessageListener;
@@ -101,9 +99,6 @@ public class BitarchiveServerTester {
         rs.setUp();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         ChannelsTesterHelper.resetChannels();
-        FileInputStream fis = new FileInputStream(TestInfo.TESTLOGPROP);
-        LogManager.getLogManager().readConfiguration(fis);
-        fis.close();
         utrf.setUp();
         File tmpdir = new File(TestInfo.UPLOADMESSAGE_TEMP_DIR, "commontempdir");
         FileUtils.removeRecursively(WORKING);

@@ -60,6 +60,5 @@ public class TestInfo {
      */
     static final int VALID_ENTRIES_IN_CRAWL_LOG_1 = 30;
     public static final int VALID_ENTRIES_IN_CRAWL_LOG_4 = 13;
-    public static final File LOG_FILE = new File("tests/testlogs/netarkivtest.log");
 
 }

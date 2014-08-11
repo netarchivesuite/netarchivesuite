@@ -34,6 +34,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import dk.netarkivet.common.utils.cdx.CDXRecord;
+import dk.netarkivet.testutils.LogbackRecorder;
+import dk.netarkivet.testutils.LogbackRecorder.DenyFilter;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
@@ -47,8 +49,12 @@ public class ExtractCDXTester {
     private PreserveStdStreams pss = new PreserveStdStreams(true);
     private MoveTestFiles mtf = new MoveTestFiles(TestInfo.DATA_DIR, TestInfo.WORKING_DIR);
 
-    @Before
+	private LogbackRecorder lr;
+
+	@Before
     public void setUp() {
+    	lr = LogbackRecorder.startRecorder();
+    	lr.addFilter(new DenyFilter(), ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
         mtf.setUp();
         pss.setUp();
         pse.setUp();
@@ -59,6 +65,8 @@ public class ExtractCDXTester {
         pse.tearDown();
         pss.tearDown();
         mtf.tearDown();
+    	lr.clearAllFilters(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
+        lr.stopRecorder();
     }
 
     /**
@@ -119,7 +127,7 @@ public class ExtractCDXTester {
      * @return All records from the output cdx file, as a List.
      */
     private List<CDXRecord> getRecords() {
-        List<CDXRecord> result = new ArrayList<CDXRecord>();
+    	List<CDXRecord> result = new ArrayList<CDXRecord>();
         for (String cdxLine : pss.getOut().split("\n")) {
             result.add(new CDXRecord(cdxLine.split("\\s+")));
         }

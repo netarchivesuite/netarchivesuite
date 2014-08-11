@@ -41,8 +41,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.spi.FilterReply;
 import dk.netarkivet.archive.bitarchive.distribute.GetMessage;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
@@ -50,6 +48,7 @@ import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 import dk.netarkivet.testutils.LogbackRecorder;
+import dk.netarkivet.testutils.LogbackRecorder.DenyFilter;
 import dk.netarkivet.testutils.TestMessageListener;
 import dk.netarkivet.testutils.preconfigured.MockupJMS;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
@@ -66,8 +65,7 @@ public class GetRecordTester {
     private PreventSystemExit pse = new PreventSystemExit();
     private PreserveStdStreams pss = new PreserveStdStreams(true);
 
-    private MoveTestFiles mtf = new MoveTestFiles(TestInfo.DATA_DIR,
-            TestInfo.WORKING_DIR);
+    private MoveTestFiles mtf = new MoveTestFiles(TestInfo.DATA_DIR, TestInfo.WORKING_DIR);
 
     private MockupJMS mjms = new MockupJMS();
     TestMessageListener listener;
@@ -77,11 +75,8 @@ public class GetRecordTester {
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         JMSConnectionMockupMQ.clearTestQueues();
         mjms.setUp();
-        listener = new GetListener(
-                TestInfo.TEST_ENTRY_FILENAME,
-                TestInfo.TEST_ENTRY_OFFSET);
-        JMSConnectionFactory.getInstance().setListener(
-                Channels.getTheRepos(), listener);
+        listener = new GetListener(TestInfo.TEST_ENTRY_FILENAME, TestInfo.TEST_ENTRY_OFFSET);
+        JMSConnectionFactory.getInstance().setListener(Channels.getTheRepos(), listener);
         mtf.setUp();
         pss.setUp();
         pse.setUp();
@@ -92,35 +87,26 @@ public class GetRecordTester {
         pse.tearDown();
         pss.tearDown();
         mtf.tearDown();
-        JMSConnectionFactory.getInstance().removeListener(
-                Channels.getTheRepos(), listener);
+        JMSConnectionFactory.getInstance().removeListener(Channels.getTheRepos(), listener);
         mjms.tearDown();
     }
 
     @Test
     public void testMain() {
     	LogbackRecorder lr = LogbackRecorder.startRecorder();
-    	ch.qos.logback.core.filter.Filter<ch.qos.logback.classic.spi.ILoggingEvent> filter = new ch.qos.logback.core.filter.Filter<ch.qos.logback.classic.spi.ILoggingEvent>() {
-			@Override
-			public FilterReply decide(ILoggingEvent event) {
-				return FilterReply.DENY;
-			}
-    	};
-    	lr.addFilter(filter, ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
+    	lr.addFilter(new DenyFilter(), ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
     	try {
             GetRecord.main(new String[]{
-                    TestInfo.INDEX_DIR.getAbsolutePath(),
+            		TestInfo.INDEX_DIR.getAbsolutePath(),
                     TestInfo.TEST_ENTRY_URI
             });
             fail("Should system exit");
         } catch (SecurityException e) {
-            assertEquals("Should have exited normally",
-                         0, pse.getExitValue());
+            assertEquals("Should have exited normally", 0, pse.getExitValue());
         }
         System.out.flush();
         String returnedContent = pss.getOut();
-        assertEquals("Should return content unchanged, but was: "
-                + returnedContent, CONTENT, returnedContent);
+        assertEquals("Should return content unchanged, but was: " + returnedContent, CONTENT, returnedContent);
     	lr.clearAllFilters(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
         lr.stopRecorder();
     }
@@ -133,13 +119,11 @@ public class GetRecordTester {
                     TestInfo.INDEX_DIR.getAbsolutePath()});
             fail("System should exit");
         } catch (SecurityException e) {
-            assertEquals("Should have exited with failure",
-                    1, pse.getExitValue());
+            assertEquals("Should have exited with failure", 1, pse.getExitValue());
         }
         System.out.flush();
         String returned = pss.getErr();
-        assertTrue("Should contain the required arguments: '" + expectedResults
-                + "', but was: '" + returned + "'.", 
+        assertTrue("Should contain the required arguments: '" + expectedResults + "', but was: '" + returned + "'.", 
                 returned.contains(expectedResults));
     }
 

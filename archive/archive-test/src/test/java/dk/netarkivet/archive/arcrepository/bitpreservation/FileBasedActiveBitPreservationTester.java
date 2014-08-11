@@ -86,6 +86,7 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.batch.FileListJob;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
+import dk.netarkivet.testutils.LogbackRecorder;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.preconfigured.MockupJMS;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
@@ -96,9 +97,9 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
  * Unit test for the class FileBasedActiveBitPreservation.
  */
 @SuppressWarnings({ "unused", "deprecation" })
-
 public class FileBasedActiveBitPreservationTester {
-    private UseTestRemoteFile rf = new UseTestRemoteFile();
+
+	private UseTestRemoteFile rf = new UseTestRemoteFile();
     private ReloadSettings rs = new ReloadSettings();
     private MockupJMS mj = new MockupJMS();
     private MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,
@@ -472,7 +473,8 @@ public class FileBasedActiveBitPreservationTester {
     @Ignore("FIXME")
     // FIXME: test temporarily disabled
     public void failingTestGetBitarchiveChecksum() throws Exception {
-        AdminData.getUpdateableInstance().addEntry("foobar", null, "md5-1");
+    	LogbackRecorder lr = LogbackRecorder.startRecorder();
+    	AdminData.getUpdateableInstance().addEntry("foobar", null, "md5-1");
         AdminData.getUpdateableInstance().addEntry("barfu", null, "klaf");
         final Map<Replica, String> results = new HashMap<Replica, String>();
         // Test standard case
@@ -558,11 +560,15 @@ public class FileBasedActiveBitPreservationTester {
         assertEquals("Should have expected size for TWO",
                 0, fps.getReplicaChecksum(TWO).size());
 
+        /*
         LogUtils.flushLogs(getClass().getName());
         FileAsserts.assertFileNotContains("Should have no warning about ONE",
                 TestInfo.LOG_FILE, "while asking 'Replica ONE'");
         FileAsserts.assertFileNotContains("Should have no warning about TWO",
                 TestInfo.LOG_FILE, "while asking 'Replica TWO'");
+        */
+        lr.assertLogNotContains("Should have no warning about ONE", "while asking 'Replica ONE'");
+        lr.assertLogNotContains("Should have no warning about TWO", "while asking 'Replica TWO'");
 
         // Test malformed checksums
         results.clear();
@@ -576,10 +582,9 @@ public class FileBasedActiveBitPreservationTester {
                 0, fps.getReplicaChecksum(TWO).size());
         assertEquals("Should have expected size for THREE",
                 0, fps.getReplicaChecksum(THREE).size());
+        /*
         LogUtils.flushLogs(getClass().getName());
-        
-        FileAsserts.assertFileContains("Should have warning about ONE in logfile: "
-                + FileUtils.readFile(TestInfo.LOG_FILE),
+        FileAsserts.assertFileContains("Should have warning about ONE in logfile: " + FileUtils.readFile(TestInfo.LOG_FILE),
                 //Before: "while asking replica 'Replica One'", 
                 "while asking replica '" + ONE + "'",
                 TestInfo.LOG_FILE);
@@ -588,8 +593,14 @@ public class FileBasedActiveBitPreservationTester {
                 //Before: "while asking replica 'Replica TWO'",
                 "while asking replica '" + TWO + "'",
                 TestInfo.LOG_FILE);
+        */
+        //Before: "while asking replica 'Replica One'", 
+        lr.assertLogContains("Should have warning about ONE in log", "while asking replica '" + ONE + "'");
+        //Before: "while asking replica 'Replica TWO'",
+        lr.assertLogContains("Should have warning about TWO in log", "while asking replica '" + TWO + "'");
 
         // TODO: More funny cases
+        lr.stopRecorder();
     }
 
     private static class DummyBatchMessageReplyServer
@@ -780,42 +791,43 @@ public class FileBasedActiveBitPreservationTester {
             return output;
         }
 
-	public File getAllChecksums(String replicaId) {
-	    try {
-	        BatchStatus bs = batch(new ChecksumJob(), replicaId);
-	        File result = File.createTempFile("all", ".checksum", TestInfo.WORKING_DIR);
-	        bs.copyResults(result);
-	        return result;
-	    } catch(IOException e) {
-	        fail("Got the following error: " + e);
-	    }
-	    // This cannot happen!
-	    return null;
-	}
+    	public File getAllChecksums(String replicaId) {
+    	    try {
+    	        BatchStatus bs = batch(new ChecksumJob(), replicaId);
+    	        File result = File.createTempFile("all", ".checksum", TestInfo.WORKING_DIR);
+    	        bs.copyResults(result);
+    	        return result;
+    	    } catch(IOException e) {
+    	        fail("Got the following error: " + e);
+    	    }
+    	    // This cannot happen!
+    	    return null;
+    	}
 
-	public File getAllFilenames(String replicaId) {
-            try {
-                BatchStatus bs = batch(new FileListJob(), replicaId);
-                File result = File.createTempFile("all", ".filename", TestInfo.WORKING_DIR);
-                bs.copyResults(result);
-                return result;
-            } catch(IOException e) {
-                fail("Got the following error: " + e);
-            }
-            // This cannot happen!
-            return null;
-	}
+    	public File getAllFilenames(String replicaId) {
+                try {
+                    BatchStatus bs = batch(new FileListJob(), replicaId);
+                    File result = File.createTempFile("all", ".filename", TestInfo.WORKING_DIR);
+                    bs.copyResults(result);
+                    return result;
+                } catch(IOException e) {
+                    fail("Got the following error: " + e);
+                }
+                // This cannot happen!
+                return null;
+    	}
 
-	public File correct(String replicaId, String checksum, 
-		File file, String credentials) {
-	    // TODO: something!
-	        throw new NotImplementedException("TODO: ME!");
-	    
-	}
+    	public File correct(String replicaId, String checksum, 
+    		File file, String credentials) {
+    	    // TODO: something!
+    	        throw new NotImplementedException("TODO: ME!");
+    	    
+    	}
 
-	@Override
-	public String getChecksum(String replicaId, String filename) {
-	    throw new NotImplementedException("TODO: ME!");
-	}
+    	@Override
+    	public String getChecksum(String replicaId, String filename) {
+    	    throw new NotImplementedException("TODO: ME!");
+    	}
     }
+
 }

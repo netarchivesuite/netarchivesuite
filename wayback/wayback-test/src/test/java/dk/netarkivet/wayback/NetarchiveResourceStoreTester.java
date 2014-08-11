@@ -124,13 +124,6 @@ public class NetarchiveResourceStoreTester extends IndexerTestCase {
         arc.close();
         ArcRepository.getInstance().close();
         FileUtils.removeRecursively(dk.netarkivet.wayback.TestInfo.WORKING_DIR);
-        FileUtils.remove(TestInfo.LOG_FILE);
-        // Empty the log file.
-        try {
-            new FileOutputStream(dk.netarkivet.wayback.TestInfo.LOG_FILE).close();
-        } catch (Exception e) {
-            // ups
-        }
         super.tearDown();
     }
 

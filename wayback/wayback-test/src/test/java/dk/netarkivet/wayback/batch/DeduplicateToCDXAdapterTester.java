@@ -70,9 +70,7 @@ public class DeduplicateToCDXAdapterTester {
     
     @After
     public void tearDown() {
-
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
-        FileUtils.remove(TestInfo.LOG_FILE);
     }
 
     @Test

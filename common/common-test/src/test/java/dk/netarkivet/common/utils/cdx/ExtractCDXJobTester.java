@@ -265,4 +265,5 @@ public class ExtractCDXJobTester {
 
         return lsNewStr.toString();
     }
+
 }

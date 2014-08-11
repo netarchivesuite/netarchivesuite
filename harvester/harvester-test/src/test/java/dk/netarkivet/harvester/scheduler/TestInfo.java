@@ -40,22 +40,16 @@ public class TestInfo {
     /**
      * The properties-file containing properties for logging in unit-tests.
      */
-    static final File TESTLOGPROP = new File(
-            "tests/dk/netarkivet/testlog.prop");
+    static final File TESTLOGPROP = new File("tests/dk/netarkivet/testlog.prop");
 
-    static final File BASEDIR = new File(
-            "tests/dk/netarkivet/harvester/scheduler/data");
+    static final File BASEDIR = new File("tests/dk/netarkivet/harvester/scheduler/data");
     static final File ORIGINALS_DIR = new File(BASEDIR, "originals");
     static final File WORKING_DIR = new File(BASEDIR, "working");
 
     static File ORDER_FILE = new File(TestInfo.WORKING_DIR, "order.xml");
-    public static final File LOG_FILE = new File(new File("tests/testlogs"), 
-            "netarkivtest.log");
-    
-    static final File orderTemplatesOriginalsDir 
-        = new File(
-                "tests/dk/netarkivet/"
-                + "/harvester/data/originals/order_templates/");
+
+    static final File orderTemplatesOriginalsDir = new File("tests/dk/netarkivet/"
+    		+ "/harvester/data/originals/order_templates/");
     
     public TestInfo() {
     }

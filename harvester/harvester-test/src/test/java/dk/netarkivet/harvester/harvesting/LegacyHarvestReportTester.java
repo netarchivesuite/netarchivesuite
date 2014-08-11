@@ -37,7 +37,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.LogManager;
 
 import org.junit.After;
 import org.junit.Before;
@@ -70,13 +69,7 @@ public class LegacyHarvestReportTester {
         TestInfo.WORKING_DIR.mkdirs();
         File logs = new File(TestInfo.WORKING_DIR, "logs");
         logs.mkdir();
-        TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR,
-                                          TestInfo.WORKING_DIR);
-        FileInputStream fis = new FileInputStream(
-                "tests/dk/netarkivet/testlog.prop");
-        LogManager.getLogManager().reset();
-        FileUtils.removeRecursively(TestInfo.LOG_FILE);
-        LogManager.getLogManager().readConfiguration(fis);
+        TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
     }
 
     @After

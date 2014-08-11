@@ -54,7 +54,8 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
  */
 @Ignore("binary derby database not converted to scripts yet")
 public class HarvestTemplateApplicationTester {
-    PreventSystemExit pse = new PreventSystemExit();
+
+	PreventSystemExit pse = new PreventSystemExit();
     ReloadSettings rs = new ReloadSettings();
     
     InputStream origIn;
@@ -174,7 +175,7 @@ public class HarvestTemplateApplicationTester {
     @Test
     public void testCreateIllegalFile() throws Exception {
         HarvestTemplateApplication.main(new String[]{
-                "create", "foo", TestInfo.LOG_FILE.getAbsolutePath()});
+                "create", "foo", new File(TestInfo.EMPTYDBFILE).getAbsolutePath()});
         assertOutAndErrMatches("Should fail on illegal file.",
                 "^$",
                 ".*netarkivtest.log.*is not readable or is not valid xml.*");
@@ -275,4 +276,5 @@ public class HarvestTemplateApplicationTester {
                         + "default_orderxml\n$",
                 "^$");
     }
+
 }

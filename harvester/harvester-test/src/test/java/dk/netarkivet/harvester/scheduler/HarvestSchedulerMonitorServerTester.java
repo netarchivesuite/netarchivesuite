@@ -73,8 +73,7 @@ import dk.netarkivet.harvester.harvesting.JobInfoTestImpl;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlStatusMessage;
 import dk.netarkivet.harvester.harvesting.report.AbstractHarvestReport;
 import dk.netarkivet.harvester.harvesting.report.LegacyHarvestReport;
-import dk.netarkivet.testutils.FileAsserts;
-import dk.netarkivet.testutils.LogUtils;
+import dk.netarkivet.testutils.LogbackRecorder;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
@@ -85,20 +84,13 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 @Ignore("binary derby database not converted to scripts yet")
 public class HarvestSchedulerMonitorServerTester {
 
-
     public static JobDAO theDAO;
-    public static final File LOG_FILE =
-            new File("tests/testlogs/netarkivtest.log");
-    public static final File BASEDIR =
-            new File("tests/dk/netarkivet/harvester/scheduler/data/");
+    public static final File BASEDIR = new File("tests/dk/netarkivet/harvester/scheduler/data/");
     public static final File ORIGINALS = new File(BASEDIR, "originals");
     public static final File WORKING = new File(BASEDIR, "working");
-    private static final File CRAWL_REPORT =
-        new File(WORKING, "harvestreports/crawl.log");
-    private static final File STOP_REASON_CRAWL_REPORT =
-        new File(WORKING, "harvestreports/stop-reason-crawl.log");
-    private static final StopReason DEFAULT_STOPREASON =
-        StopReason.DOWNLOAD_COMPLETE;
+    private static final File CRAWL_REPORT = new File(WORKING, "harvestreports/crawl.log");
+    private static final File STOP_REASON_CRAWL_REPORT = new File(WORKING, "harvestreports/stop-reason-crawl.log");
+    private static final StopReason DEFAULT_STOPREASON = StopReason.DOWNLOAD_COMPLETE;
     ReloadSettings rs = new ReloadSettings();
     private HarvestSchedulerMonitorServer hsms;
 
@@ -339,8 +331,8 @@ public class HarvestSchedulerMonitorServerTester {
      */
     @Test
     public void testStartedAfterDone() {
-        JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory
-                .getInstance();
+    	LogbackRecorder lr = LogbackRecorder.startRecorder();
+        JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory.getInstance();
         Job j1 = TestInfo.getJob();
         JobDAO.getInstance().create(j1);
         j1.setStatus(JobStatus.NEW);
@@ -378,9 +370,8 @@ public class HarvestSchedulerMonitorServerTester {
                 22, dh.getCountObjectRetrieved());
         assertFalse("Should NOT have two harvests remembered", hist.hasNext());
         // Check log
-        LogUtils.flushLogs(hsms.getClass().getName());
-        FileAsserts.assertFileContains("Failed to log out of order messages",
-                                       "tried to update", LOG_FILE);
+        lr.assertLogContains("Failed to log out of order messages", "tried to update");
+        lr.stopRecorder();
     }
 
     /**
@@ -389,8 +380,7 @@ public class HarvestSchedulerMonitorServerTester {
      */
     @Test
     public void testStartedAfterFailed() {
-        JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory
-                .getInstance();
+        JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory.getInstance();
         Job j1 = TestInfo.getJob();
         JobDAO.getInstance().create(j1);
         j1.setStatus(JobStatus.NEW);
@@ -436,8 +426,8 @@ public class HarvestSchedulerMonitorServerTester {
      */
     @Test
     public void testFailedAfterDone() {
-        JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory
-                .getInstance();
+    	LogbackRecorder lr = LogbackRecorder.startRecorder();
+        JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory.getInstance();
         Job j1 = TestInfo.getJob();
         theDAO.create(j1);
         j1.setStatus(JobStatus.NEW);
@@ -476,9 +466,8 @@ public class HarvestSchedulerMonitorServerTester {
         assertEquals("Unexpected total size of harvest", 270, 
                 dh.getSizeDataRetrieved());
         // Check log
-        LogUtils.flushLogs(hsms.getClass().getName());
-        FileAsserts.assertFileContains("Failed to log out of order messages",
-                                       "Marking job FAILED", LOG_FILE);
+        lr.assertLogContains("Failed to log out of order messages", "Marking job FAILED");
+        lr.stopRecorder();
     }
 
     /**
@@ -486,8 +475,7 @@ public class HarvestSchedulerMonitorServerTester {
      */
     @Test
      public void testDoneAfterFailed() {
-        JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory
-                .getInstance();
+        JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory.getInstance();
         Job j1 = TestInfo.getJob();
         theDAO.create(j1);
         j1.setStatus(JobStatus.NEW);
@@ -535,8 +523,8 @@ public class HarvestSchedulerMonitorServerTester {
       */
     @Test
     public void testDoneAfterSubmitted() {
-        JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory
-                .getInstance();
+    	LogbackRecorder lr = LogbackRecorder.startRecorder();
+        JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory.getInstance();
         Job j1 = TestInfo.getJob();
         theDAO.create(j1);
         j1.setStatus(JobStatus.NEW);
@@ -567,9 +555,8 @@ public class HarvestSchedulerMonitorServerTester {
         assertEquals("Unexpected total size of harvest", 270, 
                 dh.getSizeDataRetrieved());
         // Check log
-        LogUtils.flushLogs(hsms.getClass().getName());
-        FileAsserts.assertFileContains("Failed to log out of order messages",
-                                       "unexpected state", LOG_FILE);
+        lr.assertLogContains("Failed to log out of order messages", "unexpected state");
+        lr.stopRecorder();
     }
 
     /** Test that the stop reason is set correctly.

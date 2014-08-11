@@ -65,7 +65,6 @@ public class DeduplicateToCDXApplicationTester {
     @After
     public void tearDown() {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
-        FileUtils.remove(TestInfo.LOG_FILE);
         System.setOut(orig_std_out);
         System.setOut(orig_std_err);
     }

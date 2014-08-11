@@ -63,7 +63,6 @@ public class IndexerTestCase {
     public void tearDown() {
         HibernateUtil.getSession().getSessionFactory().close();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
-        FileUtils.remove(TestInfo.LOG_FILE);
         if (oldClient != null) {
             System.setProperty(CommonSettings.ARC_REPOSITORY_CLIENT, oldClient);
         } else {

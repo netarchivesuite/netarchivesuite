@@ -69,8 +69,7 @@ import dk.netarkivet.harvester.distribute.HarvesterChannels;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 import dk.netarkivet.harvester.harvesting.report.HarvestReport;
 import dk.netarkivet.harvester.scheduler.JobDispatcher;
-import dk.netarkivet.testutils.FileAsserts;
-import dk.netarkivet.testutils.LogUtils;
+import dk.netarkivet.testutils.LogbackRecorder;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
@@ -80,9 +79,9 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
  */
 @Ignore("Needs to be run in deploy-test according to junit3 TestSuite")
 public class IntegrityTests extends DataModelTestCase {
-    /** The message to write to log when starting the server. */
-    private static final String START_MESSAGE =
-        "Starting HarvestControllerServer.";
+
+	/** The message to write to log when starting the server. */
+    private static final String START_MESSAGE = "Starting HarvestControllerServer.";
 
     TestInfo info = new TestInfo();
 
@@ -333,12 +332,12 @@ public class IntegrityTests extends DataModelTestCase {
      */
     @Test
     @Ignore("Unable to locate element in order.xml")
-    public void testCrawlJob() throws IOException,
-                                      InterruptedException {
-        // make a dummy job
+    public void testCrawlJob() throws IOException, InterruptedException {
+    	LogbackRecorder lr = LogbackRecorder.startRecorder();
+
+    	// make a dummy job
         Job j = TestInfo.getJob();
-        assertTrue("The order.xml for the job must have content!",
-                j.getOrderXMLdoc().hasContent());
+        assertTrue("The order.xml for the job must have content!", j.getOrderXMLdoc().hasContent());
 
         JobDAO.getInstance().create(j);
         j.setStatus(JobStatus.SUBMITTED);
@@ -371,12 +370,8 @@ public class IntegrityTests extends DataModelTestCase {
         //
         // Check requirement that we log crawl start
         //
-        LogUtils.flushLogs(HarvestControllerServer.class.getName());
-        FileAsserts.assertFileContains(
-                "HarvestControllerServer should log starting with "
-                                       + START_MESSAGE,
-                                       START_MESSAGE, TestInfo.LOG_FILE
-        );
+        lr.assertLogContains("HarvestControllerServer should log starting with " + START_MESSAGE, START_MESSAGE);
+
         //
         // should have received two messages - one with status started and one
         // one with status done
@@ -403,7 +398,8 @@ public class IntegrityTests extends DataModelTestCase {
         CrawlStatusMessage csm = listener.messages.get(1);
         HarvestReport dhr = csm.getDomainHarvestReport();
         assertTrue("Should not be empty", dhr.getDomainNames().size() > 0);
-        assertTrue("Did not find expected domain crawled",
-                   dhr.getByteCount("netarkivet.dk") > 0);
+        assertTrue("Did not find expected domain crawled", dhr.getByteCount("netarkivet.dk") > 0);
+        lr.stopRecorder();
     }
+
 }

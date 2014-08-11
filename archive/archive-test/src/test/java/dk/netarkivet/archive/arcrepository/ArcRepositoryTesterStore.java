@@ -22,20 +22,24 @@
  */
 package dk.netarkivet.archive.arcrepository;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.Map;
-import java.util.logging.LogManager;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
 import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
@@ -57,9 +61,8 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.ChecksumCalculator;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.GenericMessageListener;
-import dk.netarkivet.testutils.LogUtils;
+import dk.netarkivet.testutils.LogbackRecorder;
 import dk.netarkivet.testutils.MessageAsserts;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
@@ -67,7 +70,8 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 /** This class tests the store() method of ArcRepository. */
 @SuppressWarnings({ "deprecation", "unchecked" })
 public class ArcRepositoryTesterStore {
-    private UseTestRemoteFile rf = new UseTestRemoteFile();
+
+	private UseTestRemoteFile rf = new UseTestRemoteFile();
 
     /** The directory from where we upload the ARC files. */
     private static final File ORIGINALS_DIR = new File(ServerSetUp.TEST_DIR, "originals");
@@ -76,7 +80,6 @@ public class ArcRepositoryTesterStore {
     private static final File STORABLE_FILE = new File(ORIGINALS_DIR, "NetarchiveSuite-store1.arc");
 
     private ArcRepository arcRepos;
-    private static final File LOG_FILE = new File("tests/testlogs/netarkivtest.log");
     private static final File BATCH_RESULT = new File(ORIGINALS_DIR, "checksum");
     private static final File BATCH_RESULT_WRONG = new File(ORIGINALS_DIR, "checksumwrong");
     private static final File BATCH_RESULT_EMPTY = new File(ORIGINALS_DIR, "checksumempty");
@@ -117,11 +120,6 @@ public class ArcRepositoryTesterStore {
 
         // Create a bit archive server that listens to archive events
         arcRepos = ArcRepository.getInstance();
-
-        FileInputStream fis = new FileInputStream("tests/dk/netarkivet/testlog.prop");
-        LogManager.getLogManager().reset();
-        FileUtils.removeRecursively(LOG_FILE);
-        LogManager.getLogManager().readConfiguration(fis);
     }
 
     @After
@@ -175,7 +173,8 @@ public class ArcRepositoryTesterStore {
     @Ignore("FIXME")
     // FIXME: test temporarily disabled
     public void testStoreFileAlreadyStored() throws InterruptedException, IOException {
-        // Set listeners
+    	LogbackRecorder lr = LogbackRecorder.startRecorder();
+    	// Set listeners
         JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
         GenericMessageListener gmlAnyBa = new GenericMessageListener();
         con.setListener(Channels.getAnyBa(), gmlAnyBa);
@@ -225,9 +224,9 @@ public class ArcRepositoryTesterStore {
                 entry.getChecksum());
 
         // Check log for message
-        LogUtils.flushLogs(ArcRepository.class.getName());
-        FileAsserts.assertFileContains("Should have the log message", "Retrying store of already known file '"
-                + STORABLE_FILE.getName() + "'," + " Already completed: " + true, LOG_FILE);
+        lr.assertLogContains("Should have the log message",
+        		"Retrying store of already known file '" + STORABLE_FILE.getName() + "'," + " Already completed: " + true);
+        lr.stopRecorder();
     }
 
     /**
@@ -348,6 +347,7 @@ public class ArcRepositoryTesterStore {
     @Ignore("FIXME")
     // FIXME: test temporarily disabled
     public void testStoreFailedFile() throws IOException {
+    	LogbackRecorder lr = LogbackRecorder.startRecorder();
         JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
         GenericMessageListener gmlAnyBa = new GenericMessageListener();
         con.setListener(Channels.getAnyBa(), gmlAnyBa);
@@ -401,9 +401,9 @@ public class ArcRepositoryTesterStore {
                 entry.getStoreState(Channels.retrieveReplicaChannelNameFromReplicaId("ONE")));
 
         // Check log for message
-        LogUtils.flushLogs(ArcRepository.class.getName());
-        FileAsserts.assertFileContains("Should have the log message", "Retrying store of already known file '"
-                + STORABLE_FILE.getName() + "', Already completed: " + false, LOG_FILE);
+        lr.assertLogContains("Should have the log message",
+        		"Retrying store of already known file '" + STORABLE_FILE.getName() + "', Already completed: " + false);
+        lr.stopRecorder();
     }
 
     /**
@@ -414,6 +414,7 @@ public class ArcRepositoryTesterStore {
     @Ignore("FIXME")
     // FIXME: test temporarily disabled
     public void testStoreUploadedFile() throws IOException {
+    	LogbackRecorder lr = LogbackRecorder.startRecorder();
         JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
         GenericMessageListener gmlAnyBa = new GenericMessageListener();
         con.setListener(Channels.getAnyBa(), gmlAnyBa);
@@ -467,9 +468,9 @@ public class ArcRepositoryTesterStore {
                 entry.getStoreState(Channels.retrieveReplicaChannelNameFromReplicaId("ONE")));
 
         // Check log for message
-        LogUtils.flushLogs(ArcRepository.class.getName());
-        FileAsserts.assertFileContains("Should have the log message", "Retrying store of already known file '"
-                + STORABLE_FILE.getName() + "'," + " Already completed: " + false, LOG_FILE);
+        lr.assertLogContains("Should have the log message",
+        		"Retrying store of already known file '" + STORABLE_FILE.getName() + "', Already completed: " + false);
+        lr.stopRecorder();
     }
 
     /**
@@ -480,6 +481,7 @@ public class ArcRepositoryTesterStore {
     @Ignore("FIXME")
     // FIXME: test temporarily disabled
     public void testStoreStartedFile() throws IOException {
+    	LogbackRecorder lr = LogbackRecorder.startRecorder();
         JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
         GenericMessageListener gmlAnyBa = new GenericMessageListener();
         con.setListener(Channels.getAnyBa(), gmlAnyBa);
@@ -531,9 +533,9 @@ public class ArcRepositoryTesterStore {
                 entry.getStoreState(Channels.retrieveReplicaChannelNameFromReplicaId("ONE")));
 
         // Check log for message
-        LogUtils.flushLogs(ArcRepository.class.getName());
-        FileAsserts.assertFileContains("Should have the log message", "Retrying store of already known file '"
-                + STORABLE_FILE.getName() + "'," + " Already completed: " + false, LOG_FILE);
+        lr.assertLogContains("Should have the log message",
+        		"Retrying store of already known file '" + STORABLE_FILE.getName() + "', Already completed: " + false);
+        lr.stopRecorder();
     }
 
     /**

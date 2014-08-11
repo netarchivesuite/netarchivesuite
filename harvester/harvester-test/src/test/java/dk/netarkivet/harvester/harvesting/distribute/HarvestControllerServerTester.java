@@ -29,14 +29,12 @@ import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.LogManager;
 
 import javax.jms.JMSException;
 import javax.jms.ObjectMessage;
@@ -87,7 +85,8 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
  */
 @SuppressWarnings("unused")
 public class HarvestControllerServerTester {
-    private UseTestRemoteFile utrf = new UseTestRemoteFile();
+
+	private UseTestRemoteFile utrf = new UseTestRemoteFile();
 
     /** The message to write to log when starting the server. */
     private static final String START_MESSAGE = "Starting HarvestControllerServer.";
@@ -114,15 +113,8 @@ public class HarvestControllerServerTester {
         JMSConnectionMockupMQ.clearTestQueues();
         FileUtils.removeRecursively(TestInfo.SERVER_DIR);
         TestInfo.WORKING_DIR.mkdirs();
-        TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR,
-                TestInfo.WORKING_DIR);
-        TestFileUtils.copyDirectoryNonCVS(TestInfo.TEST_CRAWL_DIR,
-                TestInfo.CRAWL_DIR_COPY);
-        FileInputStream fis = new FileInputStream("tests/dk/netarkivet/testlog.prop");
-        LogManager.getLogManager().reset();
-        FileUtils.removeRecursively(TestInfo.LOG_FILE);
-        LogManager.getLogManager().readConfiguration(fis);
-        fis.close();
+        TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
+        TestFileUtils.copyDirectoryNonCVS(TestInfo.TEST_CRAWL_DIR, TestInfo.CRAWL_DIR_COPY);
         ChannelsTesterHelper.resetChannels();
         utrf.setUp();
         // Out commented to avoid reference to archive module from harvester module.
@@ -539,8 +531,7 @@ public class HarvestControllerServerTester {
     private List<CDXRecord> getCdx(File arcFile) {
         List<CDXRecord> result = new ArrayList<CDXRecord>();
         ByteArrayOutputStream cdxBaos = new ByteArrayOutputStream();
-        BatchLocalFiles batchRunner =
-            new BatchLocalFiles(new File[]{ arcFile });
+        BatchLocalFiles batchRunner = new BatchLocalFiles(new File[]{ arcFile });
         batchRunner.run(new ExtractCDXJob(),cdxBaos);
         for(String cdxLine : cdxBaos.toString().split("\n")) {
             result.add(new CDXRecord(cdxLine.split("\\s+")));

@@ -87,6 +87,7 @@ import dk.netarkivet.harvester.datamodel.DatabaseTestUtils;
 import dk.netarkivet.testutils.ClassAsserts;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
+import dk.netarkivet.testutils.LogbackRecorder;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
@@ -220,8 +221,6 @@ public class ArcRepositoryDatabaseTester {
 
         ArcRepository.getInstance().close();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
-        // Empty the log file.
-        new FileOutputStream(TestInfo.LOG_FILE).close();
         rs.tearDown();
         rf.tearDown();
     }
@@ -292,6 +291,7 @@ public class ArcRepositoryDatabaseTester {
      */
     @Test
     public void testReadChecksum() throws Throwable {
+    	LogbackRecorder lr = LogbackRecorder.startRecorder();
         readChecksum = ArcRepository.class.getDeclaredMethod("readChecksum",
                 new Class[]{File.class, String.class});
         readChecksum.setAccessible(true);
@@ -322,6 +322,7 @@ public class ArcRepositoryDatabaseTester {
 
         assertEquals("Should get right checksum if not on first line",
                 "bonk", callReadChecksum("bar##baz\nfoo##bonk", "foo"));
+        /*
         LogUtils.flushLogs(ArcRepository.class.getName());
         FileAsserts.assertFileContains(
                 "Should have warning about unwanted line",
@@ -330,7 +331,10 @@ public class ArcRepositoryDatabaseTester {
         FileAsserts.assertFileNotContains(
                 "Should have no warning about wanted line",
                 TestInfo.LOG_FILE, "Read unexpected line 'foo##bonk");
-
+*/
+        lr.assertLogContains("Should have warning about unwanted line",
+                "There were an unexpected arc-file name in checksum result for arc-file 'foo'(line: 'bar##baz')");
+        lr.assertLogNotContains("Should have no warning about wanted line", "Read unexpected line 'foo##bonk");
         assertEquals("Should get right checksum if not on last line",
                 "baz", callReadChecksum("bar##baz\nfoo##bonk", "bar"));
 
@@ -360,14 +364,17 @@ public class ArcRepositoryDatabaseTester {
             // This is expected!
         }
 
+        /*
         LogUtils.flushLogs(ArcRepository.class.getName());
         FileAsserts.assertFileContains(
                 "Should have warning about two different checksums",
                 "The arc-file 'foo' was found with two different checksums: bar and notBar.",
                 TestInfo.LOG_FILE);
-
+*/
+        lr.assertLogContains("Should have warning about two different checksums",
+                "The arc-file 'foo' was found with two different checksums: bar and notBar.");
+        lr.stopRecorder();
     }
-
 
     /**
      * Call the readChecksum method with some input and a file to look for.

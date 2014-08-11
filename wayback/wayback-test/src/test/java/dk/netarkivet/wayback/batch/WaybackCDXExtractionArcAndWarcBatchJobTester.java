@@ -23,27 +23,21 @@
 
 package dk.netarkivet.wayback.batch;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.logging.LogManager;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.arc.ARCBatchJob;
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 import dk.netarkivet.common.utils.warc.WARCBatchJob;
-import dk.netarkivet.testutils.LogUtils;
-import dk.netarkivet.wayback.TestInfo;
+import dk.netarkivet.testutils.LogbackRecorder;
 
 
 /**
@@ -68,13 +62,11 @@ public class WaybackCDXExtractionArcAndWarcBatchJobTester {
                 + "'", warcfile.exists());
         blaf = new BatchLocalFiles(new File[] {file});
         blafWarc = new BatchLocalFiles(new File[] {warcfile});
-        FileInputStream fis = new FileInputStream("tests/dk/netarkivet/testlog.prop");
-        LogManager.getLogManager().readConfiguration(fis);
-        fis.close();
     }
 
     @Test
     public void testARCProcess() throws IOException {
+    	LogbackRecorder lr = LogbackRecorder.startRecorder();
         ARCBatchJob job = new WaybackCDXExtractionARCBatchJob();
         OutputStream os = new ByteArrayOutputStream();
         blaf.run(job,os);
@@ -83,18 +75,10 @@ public class WaybackCDXExtractionArcAndWarcBatchJobTester {
         assertFalse("expect a non-empty output", os.toString() == null || os.toString().length()==0);
         assertTrue("Should be no exceptions", job.getExceptions().isEmpty());
         // Check log for "Could not parse errors
-        LogUtils.flushLogs(WaybackCDXExtractionARCBatchJob.class.getName());
-
-        if (TestInfo.LOG_FILE.exists()) {
-            String logtxt = FileUtils.readFile(TestInfo.LOG_FILE);
-            assertNotStringContains("Batchjob results in 'could not parse' errors.",
-                logtxt, "Could not parse");
-        } else {
-            fail("Logging disabled or wrong path to logfile: " 
-                    + TestInfo.LOG_FILE.getAbsolutePath());
-        }
+        lr.assertLogNotContains("Batchjob results in 'could not parse' errors.", "Could not parse");
+        lr.stopRecorder();
     }
-    
+
     /** Asserts that a source string does not contain a given string, and prints
      * out the source string if the target string is found.
      *
@@ -102,6 +86,7 @@ public class WaybackCDXExtractionArcAndWarcBatchJobTester {
      * @param src A string to search through
      * @param str A string to search for
      */
+    /*
     private void assertNotStringContains(String msg, String src, String str) {
         int index = src.indexOf(str);
         if (index != -1) {
@@ -110,6 +95,7 @@ public class WaybackCDXExtractionArcAndWarcBatchJobTester {
             assertEquals(msg, -1, index);
         }
     }
+    */
     
     @Test
     public void testWARCProcess() throws IOException {
