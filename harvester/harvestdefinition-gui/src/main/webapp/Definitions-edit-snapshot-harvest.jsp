@@ -83,9 +83,8 @@ harvestName (Constants.HARVEST_SNAPSHOT_PARAM):
     };
 
     try {
-        SnapshotHarvestDefinition snapshotHarvestDefinition = new SnapshotHarvestDefinition(
-                hdDaoProvider, jobDaoProvider
-        );
+        SnapshotHarvestDefinition snapshotHarvestDefinition = SnapshotHarvestDefinition.
+                createSnapshotHarvestDefinitionWithDefaultDAOs();
         snapshotHarvestDefinition.processRequest(pageContext, I18N);
     } catch (ForwardedToErrorPage e) {
         return;

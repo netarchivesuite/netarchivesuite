@@ -142,10 +142,9 @@ public abstract class ApplicationUtils {
         logAndPrint("Starting " + appName + "\n"
                     + Constants.getVersionString());
         logAndPrint("Java VM: " + System.getProperty("java.version"));
-        logAndPrint("JAVA_HOME: " + System.getenv("JAVA_HOME"));
-        log.info("Using settings files '"
-                    + StringUtils.conjoin(File.pathSeparator,
-                                          Settings.getSettingsFiles()) + "'");
+        logAndPrint("java.home: " + System.getProperty("java.home"));
+        logAndPrint("Working dir: " + System.getProperty("user.dir"));
+        log.info("Using settings files '" + StringUtils.conjoin(File.pathSeparator, Settings.getSettingsFiles()) + "'");
         checkArgs(args);
         dirMustExist(FileUtils.getTempDir());
         Method factoryMethod = null;
@@ -155,8 +154,7 @@ public abstract class ApplicationUtils {
             MBeanConnectorCreator.exposeJMXMBeanServer();
             log.trace("Added remote management for " + appName);
         } catch (Throwable e) {
-            logExceptionAndPrint("Could not add remote management for class "
-                    + appName, e);
+            logExceptionAndPrint("Could not add remote management for class " + appName, e);
             System.exit(EXCEPTION_WHEN_ADDING_MANAGEMENT);
         }
         // Get the factory method
@@ -168,8 +166,7 @@ public abstract class ApplicationUtils {
             }
             logAndPrint(appName + " Running");
         } catch (Throwable e) {
-            logExceptionAndPrint("Class " + appName + " does not have required"
-                                 + "factory method", e);
+            logExceptionAndPrint("Class " + appName + " does not have required" + "factory method", e);
             System.exit(NO_FACTORY_METHOD);
         }
         // Invoke the factory method

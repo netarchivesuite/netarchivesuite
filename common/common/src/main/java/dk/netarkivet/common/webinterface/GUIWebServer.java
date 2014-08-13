@@ -102,19 +102,19 @@ public class GUIWebServer implements CleanupIF {
         //Get a Jetty server.
         server = new Server(port);
 
-        HandlerList handlers = new HandlerList();
+        HandlerList handlerList = new HandlerList();
         //Add web applications
         try {
             for (int i = 0; i < webApps.length; i++) {
-                handlers.addHandler(getWebApplication(webApps[i]));
+                handlerList.addHandler(getWebApplication(webApps[i]));
             }
         } catch (Exception e) {
             throw new IOFailure("Error deploying the webapplications", e);
         }
         //Add default handler, giving 404 page that lists web contexts, and
         //favicon.ico from Jetty
-        handlers.addHandler(new DefaultHandler());
-        server.setHandler(handlers);
+        handlerList.addHandler(new DefaultHandler());
+        server.setHandler(handlerList);
     }
 
     /**

@@ -640,6 +640,15 @@ public class LinuxMachine extends Machine {
                             + ScriptConstants.VALUE_OF_CLASSPATH 
                             + Constants.SEMICOLON);
                     //     JAVA
+                    String securityManagement = "";
+                    if (app.getTotalName().contains("BitarchiveApplication")) {
+                        securityManagement = Constants.SPACE + Constants.DASH
+                                        + ScriptConstants.OPTION_SECURITY_MANAGER
+                                        + Constants.SPACE + Constants.DASH
+                                        + ScriptConstants.OPTION_SECURITY_POLICY
+                                        + getConfDirPath()
+                                        + Constants.SECURITY_POLICY_FILE_NAME ;
+                    }
                     appPrint.println(ScriptConstants.MULTI_SPACE_4
                             + ScriptConstants.JAVA + Constants.SPACE
                             + app.getMachineParameters().writeJavaOptions()
@@ -655,12 +664,7 @@ public class LinuxMachine extends Machine {
                             + getConfDirPath() + Constants.LOG_PREFIX
                             + app.getIdentification() 
                             + Constants.EXTENSION_LOG_PROPERTY_FILES
-                            + Constants.SPACE + Constants.DASH 
-                            + ScriptConstants.OPTION_SECURITY_MANAGER
-                            + Constants.SPACE + Constants.DASH 
-                            + ScriptConstants.OPTION_SECURITY_POLICY
-                            + getConfDirPath() 
-                            + Constants.SECURITY_POLICY_FILE_NAME 
+                            + securityManagement
                             + Constants.SPACE + app.getTotalName()
                             + Constants.SPACE + ScriptConstants.LINUX_DEV_NULL
                             + Constants.SPACE 

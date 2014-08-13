@@ -47,6 +47,7 @@ import dk.netarkivet.harvester.datamodel.HarvestDefinition;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
+import dk.netarkivet.harvester.datamodel.dao.DAOProviderFactory;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO;
 
 /**
@@ -68,6 +69,14 @@ public class SnapshotHarvestDefinition {
         this.jobDaoProvider = jobDaoProvider;
         this.extendedFieldDAOProvider = extendedFieldDAOProvider;
         this.domainDAOProvider = domainDAOProvider;
+    }
+
+    public static SnapshotHarvestDefinition createSnapshotHarvestDefinitionWithDefaultDAOs() {
+        return new SnapshotHarvestDefinition(
+                DAOProviderFactory.getHarvestDefinitionDAOProvider(),
+                DAOProviderFactory.getJobDAOProvider(),
+                DAOProviderFactory.getExtendedFieldDAOProvider(),
+                DAOProviderFactory.getDomainDAOProvider());
     }
 
     /**

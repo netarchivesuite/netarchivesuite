@@ -230,7 +230,7 @@ public abstract class SiteSection {
      */
     public static synchronized List<SiteSection> getSections() {
         if (sections == null) {
-            sections = new ArrayList<SiteSection>();
+            sections = new ArrayList<>();
             String[] sitesections = Settings.getAll(
                     CommonSettings.SITESECTION_CLASS);
             for (String sitesection : sitesections) {
