@@ -84,34 +84,16 @@
     <logger name="org.archive.crawler.framework.ToeThread" level="ERROR" />
     <logger name="org.archive.crawler.prefetch.QuotaEnforcer" level="WARN" />
 
-    <logger name="sun.jmx" level="WARN" />
-    <!-- Reduce noise from the JMSbroker client (NAS-2039) -->
-    <logger name="com.sun.messaging.jmq.jmsclient.AckQueue" level="ERROR" />
-
-    <logger name="com.mchange.v2.c3p0" level="INFO" />
-    <logger name="com.mchange.v2.resourcepool" level="INFO" />
-
     <logger name="org.apache.jsp" level="INFO" />
     <logger name="org.mortbay.jetty.servlet.ServletHandler" level="WARN" />
 
-    <logger name="httpclient.wire.header" level="INFO" />
-    <logger name="org.mortbay.log" level="INFO" />
-
-    <logger name="org.apache.http.wire" level="INFO" />
-    <logger name="org.apache.http.headers" level="INFO" />
-    <logger name="org.apache.http" level="INFO" />
-    <logger name="org.apache.activemq" level="INFO" />
-
-    <logger name="org.bitrepository.protocol" level="INFO" />
-
     <logger name="dk.netarkivet" level="INFO" />
     <logger name="dk.netarkivet.common.distribute.JMSConnection" level="INFO" />
-    <logger name="dk.netarkivet.common.utils.batch.UrlSearch" level="INFO" />
-    <logger name="dk.netarkivet.common.utils.cdx.ExtractCDXJob" level="INFO" />
-    <logger name="dk.netarkivet.common.distribute.HTTPRemoteFileRegistry" level="INFO" />
+
+    <logger name="sun.jmx" level="WARN" />
 
     <logger name="Harvest Definition" level="ERROR" />
-    <logger name="Bit\ Preservation" level="ERROR" />
+    <logger name="Bit Preservation" level="ERROR" />
     <logger name="History" level="ERROR" />
     <logger name="QA" level="ERROR" />
     <logger name="Status" level="ERROR" />

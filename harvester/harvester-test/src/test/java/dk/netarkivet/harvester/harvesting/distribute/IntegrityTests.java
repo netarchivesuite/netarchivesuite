@@ -28,13 +28,11 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.Permission;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.LogManager;
 
 import javax.jms.Message;
 import javax.jms.MessageListener;
@@ -115,12 +113,6 @@ public class IntegrityTests extends DataModelTestCase {
                     + TestInfo.WORKING_DIR.getAbsolutePath());
         }
 
-        try {
-            LogManager.getLogManager().readConfiguration(
-                    new FileInputStream(TestInfo.TESTLOGPROP));
-        } catch (IOException e) {
-            fail("Could not load the testlog.prop file");
-        }
 //        HarvestDAOUtils.resetDAOs();
         Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR,
                      TestInfo.WORKING_DIR.getPath()

@@ -26,14 +26,13 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -48,17 +47,14 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 /**
  * Class testing the FTPRemoteFile class.
  */
-@SuppressWarnings({ "unused" })
 public class FTPRemoteFileTester {
-    private static final File TESTLOGPROP = new File("tests/dk/netarkivet/testlog.prop");
-    private static final File LOGFILE = new File("tests/testlogs/netarkivettest.log");
 
     /** testFile1-3 represents duplicates of TestInfo.TESTXML. */
     private File testFile1;
     private File testFile2;
 
     // A named logger for this class is retrieved
-    protected final Logger logger = Logger.getLogger(getClass().getName());
+    protected final Logger logger = LoggerFactory.getLogger(FTPRemoteFileTester.class);
 
     ReloadSettings rs = new ReloadSettings();
 
@@ -83,15 +79,6 @@ public class FTPRemoteFileTester {
             assertTrue("The test xml file must exist", TestInfo.TESTXML.exists());
             // FileUtils.copyFile(TestInfo.TESTXML, testFile1);
             // FileUtils.copyFile(TestInfo.TESTXML, testFile3);
-
-            /** enable logging as defined in testlog.prop file */
-            try {
-                FileInputStream fis = new FileInputStream(TESTLOGPROP);
-                LogManager.getLogManager().readConfiguration(fis);
-                fis.close();
-            } catch (IOException e) {
-                fail("Could not load the testlog.prop file");
-            }
         } catch (Exception e) {
             fail("Could not setup configuration for");
         }

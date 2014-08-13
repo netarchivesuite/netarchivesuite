@@ -23,30 +23,26 @@
 package dk.netarkivet.archive.arcrepository;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.*;
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
 import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
 import dk.netarkivet.archive.arcrepositoryadmin.UpdateableAdminData;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.utils.ChecksumCalculator;
-import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
-
 
 /**
  * Unit test for webarchive API.
@@ -54,30 +50,26 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
  */
 @SuppressWarnings({"deprecation"})
 public class ArcRepositoryTesterLog {
-    protected final Logger log = Logger.getLogger(getClass().getName());
+
+	protected final Logger log = LoggerFactory.getLogger(ArcRepositoryTesterLog.class);
 
     private UseTestRemoteFile rf = new UseTestRemoteFile();
 
-    private static File CONTROLLER_LOG_FILE 
-    	= new File("tests/testlogs/netarkivtest.log");
+    private static File CONTROLLER_LOG_FILE = new File("tests/testlogs/netarkivtest.log");
 
-    private static final File TEST_DIR =
-            new File("tests/dk/netarkivet/archive/arcrepository/data");
+    private static final File TEST_DIR = new File("tests/dk/netarkivet/archive/arcrepository/data");
 
     /**
      * The directory storing the arcfiles in the already existing bitarchive
      * - including credentials and admin-files.
      */
-    private static final File ORIGINALS_DIR =
-            new File(new File(TEST_DIR, "logging"), "originals");
+    private static final File ORIGINALS_DIR = new File(new File(TEST_DIR, "logging"), "originals");
     
     /**
      * List of files that can be used in the scripts 
      * (content of the ORIGINALS_DIR).
      */
-    private static final List<String> FILES =
-            Arrays.asList(new String[]{"logging1.ARC",
-                                       "logging2.ARC"});
+    private static final List<String> FILES = Arrays.asList(new String[]{"logging1.ARC", "logging2.ARC"});
 
     /**
      * A Controller object.
@@ -88,12 +80,6 @@ public class ArcRepositoryTesterLog {
     public void setUp() throws IOException {
         ServerSetUp.setUp();
         arcRepos = ServerSetUp.getArcRepository();
-        FileInputStream fis = new FileInputStream(
-        		"tests/dk/netarkivet/testlog.prop");
-        LogManager.getLogManager().reset();
-        FileUtils.removeRecursively(CONTROLLER_LOG_FILE);
-        LogManager.getLogManager().readConfiguration(fis);
-        fis.close();
         rf.setUp();
     }
 
@@ -133,8 +119,8 @@ public class ArcRepositoryTesterLog {
         LogUtils.flushLogs(ArcRepository.class.getName());
         FileAsserts.assertFileContains("Log contains file after storing.",
                 fileName, CONTROLLER_LOG_FILE);
-        FileAsserts.assertFileContains("Log should contain the words"
-                                       + " 'Store started' after storing.",
+        FileAsserts.assertFileContains("Log should contain the words 'Store started' after storing.",
                 "Store started", CONTROLLER_LOG_FILE);
     }
+
 }

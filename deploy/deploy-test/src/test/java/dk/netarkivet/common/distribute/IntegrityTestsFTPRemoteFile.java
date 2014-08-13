@@ -37,7 +37,6 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 import org.apache.commons.net.ftp.FTPClient;
@@ -62,11 +61,8 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 @SuppressWarnings({ "unused"})
 @Ignore("Not in junit3 test suite")
 public class IntegrityTestsFTPRemoteFile {
-    private static final File TESTLOGPROP = new File(
-            "tests/dk/netarkivet/testlog.prop");
-    private static final File LOGFILE = new File(
-            "tests/testlogs/netarkivtest.log");
-    private static final String FILE_1_CONTENTS = "The contents of file 1";
+
+	private static final String FILE_1_CONTENTS = "The contents of file 1";
     private static final String FILE_2_CONTENTS = "File 2 contains\n" +
             "this and this\nit also has\nsome more\nlike this\nBurma-Shave";
     private FTPClient theFTPClient;
@@ -103,14 +99,6 @@ public class IntegrityTestsFTPRemoteFile {
             FileUtils.copyFile(TestInfo.TESTXML, testFile1);
             FileUtils.copyFile(TestInfo.TESTXML, testFile2);
             FileUtils.copyFile(TestInfo.TESTXML, testFile3);
-
-            /** enable logging as defined in testlog.prop file*/
-            try {
-                LogManager.getLogManager().readConfiguration(new FileInputStream(
-                        TESTLOGPROP));
-            } catch (IOException e) {
-                fail("Could not load the testlog.prop file");
-            }
         } catch (Exception e) {
             fail("Could not setup configuration for");
         }
@@ -312,4 +300,5 @@ public class IntegrityTestsFTPRemoteFile {
 
         return false;
     }
+
 }

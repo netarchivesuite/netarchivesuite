@@ -28,7 +28,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -37,7 +36,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.LogManager;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -95,9 +93,6 @@ public class AdminDataTester {
                 TestInfo.NON_EMPTY_ADMIN_DATA_DIR);
         Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, TestInfo.TEST_DIR.getAbsolutePath());
         myFile = "arcfileNameForTests";
-        FileInputStream fis = new FileInputStream("tests/dk/netarkivet/testlog.prop");
-        LogManager.getLogManager().readConfiguration(fis);
-        LogUtils.flushLogs(UpdateableAdminData.class.getName());
     }
 
     @After
@@ -317,8 +312,7 @@ public class AdminDataTester {
     // FIXME: test temporarily disabled
     public void testCTOR() {
         // Test invalid settings:
-        Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN,
-                     "/foo/bar/nonExistingDir");
+        Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, "/foo/bar/nonExistingDir");
         try {
             ad = UpdateableAdminData.getUpdateableInstance();
             fail("Should have thrown PermissionDenied");
@@ -338,8 +332,7 @@ public class AdminDataTester {
         Set<String> allFiles = ad.getAllFileNames();
         Set<String> expectedFiles = new HashSet<String>();
         expectedFiles.addAll(Arrays.asList(TestInfo.files));
-        assertEquals("List of files read in should be as expected",
-                expectedFiles, allFiles);
+        assertEquals("List of files read in should be as expected", expectedFiles, allFiles);
     }
 
     /** Test that the admin data is written in a journalling style.
@@ -412,44 +405,31 @@ public class AdminDataTester {
      */
     @Test
     public void testReadCurrentVersion() throws Exception {
-        File datafile = new File(Settings.get(
-                ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN), "admin.data");
+        File datafile = new File(Settings.get(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN), "admin.data");
         // Note: the file 'datafile' does not exist at this point in time.
 
         ad = UpdateableAdminData.getUpdateableInstance();
         //close to force new instance
         ad.close();
         // Now datafile contains one line with contents "0.4"
-        FileAsserts.assertFileNumberOfLines(
-                "Should only contain only one line now, i.e. the version number line",
+        FileAsserts.assertFileNumberOfLines("Should only contain only one line now, i.e. the version number line",
                 datafile, 1);
-        FileAsserts.assertFileContains(
-                "Should contain the versionnumber", "0.4",
+        FileAsserts.assertFileContains("Should contain the versionnumber", "0.4",
                 datafile);
 
-        FileInputStream fis
-            = new FileInputStream("tests/dk/netarkivet/testlog.prop");
-        LogManager.getLogManager().readConfiguration(fis);
-        LogUtils.flushLogs(UpdateableAdminData.class.getName());
         final String filename1 = "foobar";
         String checksum1 = "xxx";
-        ArchiveStoreState dummyStoreState
-            = new ArchiveStoreState(ReplicaStoreState.UPLOAD_STARTED);
-        addLineToFile(datafile, filename1 + " " + checksum1
-                + " " + dummyStoreState.toString());
+        ArchiveStoreState dummyStoreState = new ArchiveStoreState(ReplicaStoreState.UPLOAD_STARTED);
+        addLineToFile(datafile, filename1 + " " + checksum1 + " " + dummyStoreState.toString());
         //System.out.println(datafile.getAbsolutePath() + ":" +
         //        FileUtils.readFile(datafile));
 
         ad = UpdateableAdminData.getUpdateableInstance();
         assertTrue("New entry should turn up", ad.hasEntry(filename1));
-        assertEquals("New entry should have stated checksum",
-                ad.getCheckSum(filename1), checksum1);
-        LogUtils.flushLogs(UpdateableAdminData.class.getName());
+        assertEquals("New entry should have stated checksum", ad.getCheckSum(filename1), checksum1);
         // Can't assume log file exists, but don't want to check it.  So just
         // ensure it's there if it wasn't already.
-        //TestInfo.LOG_DIR.createNewFile();
-        FileAsserts.assertFileNotContains("Should have no warning in log",
-                TestInfo.LOG_DIR, "WARNING");
+        FileAsserts.assertFileNotContains("Should have no warning in log", TestInfo.LOG_DIR, "WARNING");
         final String ba1 = "ba1";
         //close to force new instance
         ad.close();

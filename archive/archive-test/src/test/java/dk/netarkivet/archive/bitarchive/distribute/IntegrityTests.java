@@ -34,14 +34,14 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
 
 import org.apache.commons.net.ftp.FTPClient;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.distribute.ArchiveMessageHandler;
@@ -71,7 +71,11 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
  */
 @Ignore("Needs to be run in deploy-test module according to junit 3 test suite.")
 public class IntegrityTests {
-    private static final String ARC_FILE_NAME = "Upload5.ARC";
+
+    // A named logger for this class is retrieved
+    protected final Logger logger = LoggerFactory.getLogger(IntegrityTests.class);
+
+	private static final String ARC_FILE_NAME = "Upload5.ARC";
     private static final File TEST_DIR = new File("tests/dk/netarkivet/archive/bitarchive/distribute/data/");
     private static final File ORIGINALS_DIR = new File(TEST_DIR, "originals");
     private static final File WORKING_DIR = new File(TEST_DIR, "working");
@@ -83,15 +87,11 @@ public class IntegrityTests {
     private static final int LARGE_MESSAGE_COUNT = 10;
     private FTPClient theFTPClient;
     private ArrayList<String> upLoadedFiles = new ArrayList<String>();
-    private static final File TESTLOGPROP = new File("tests/dk/netarkivet/testlog.prop");
     private static final String FILENAME_TO_GET = "Upload4.ARC";
 
     private static final File BASEDIR = new File("tests/dk/netarkivet/archive/bitarchive/distribute/data");
     private static final File ORIGINALS = new File(BASEDIR, "originals");
     private static final File WORKING = new File(BASEDIR, "working");
-
-    // A named logger for this class is retrieved
-    protected final Logger logger = Logger.getLogger(getClass().getName());
 
     static final ChannelID THE_BAMON = Channels.getTheBamon();
     private static final ChannelID ALL_BA = Channels.getAllBa();
@@ -121,15 +121,6 @@ public class IntegrityTests {
             FileUtils.removeRecursively(TestInfo.UPLOADMESSAGE_TEMP_DIR);
 
             TestFileUtils.copyDirectoryNonCVS(TestInfo.UPLOADMESSAGE_ORIGINALS_DIR, TestInfo.UPLOADMESSAGE_TEMP_DIR);
-
-            /** Enable logging as defined in testlog.prop file. */
-            try {
-                FileInputStream fis = new FileInputStream(TESTLOGPROP);
-                LogManager.getLogManager().readConfiguration();
-                fis.close();
-            } catch (IOException e) {
-                fail("Could not load the testlog.prop file");
-            }
         } catch (Exception e) {
             fail("Could not setup configuration:" + e);
         }
@@ -190,14 +181,14 @@ public class IntegrityTests {
 
                 if (currentUploadedFile != null) {
                     if (!theFTPClient.deleteFile(currentUploadedFile)) {
-                        logger.warning("deleteFile operation failed on " + currentUploadedFile
-                                + ". Reply from ftpserver: " + theFTPClient.getReplyString());
+                        logger.warn("deleteFile operation failed on {}. Reply from ftpserver: {}",
+                        		currentUploadedFile, theFTPClient.getReplyString());
                     }
                 }
             }
 
             if (!theFTPClient.logout()) {
-                logger.warning("logout operation failed. Reply from ftp-server: " + theFTPClient.getReplyString());
+                logger.warn("logout operation failed. Reply from ftp-server: {}", theFTPClient.getReplyString());
             }
 
             theFTPClient.disconnect();
@@ -456,7 +447,7 @@ public class IntegrityTests {
             assertTrue("Store operation failed", theFTPClient.storeFile(testARCFile.getName(), in));
             in.close();
             upLoadedFiles.add(testARCFile.getName());
-            logger.fine("testConstruction: Storing file '" + testARCFile.getName() + "' on ftp-server");
+            logger.debug("testConstruction: Storing file '{}' on ftp-server", testARCFile.getName());
             UploadMessage um = new UploadMessage(to, reply, RemoteFileFactory.getInstance(testARCFile, true, false,
                     true));
             assertTrue("uploadMessage should not be null", um != null);

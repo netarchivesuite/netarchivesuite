@@ -29,7 +29,6 @@ import static org.junit.Assert.fail;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -40,7 +39,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.LogManager;
 
 import org.archive.io.arc.ARCConstants;
 import org.archive.io.arc.ARCRecord;
@@ -125,11 +123,6 @@ public class ARCArchiveAccessTester {
 
         aaa = new ARCArchiveAccess(fakeArcRepos);
         aaa.setIndex(TestInfo.ZIPPED_INDEX_DIR);
-
-        FileInputStream fis
-                = new FileInputStream("tests/dk/netarkivet/testlog.prop");
-        LogManager.getLogManager().readConfiguration(fis);
-        fis.close();
     }
 
     @After

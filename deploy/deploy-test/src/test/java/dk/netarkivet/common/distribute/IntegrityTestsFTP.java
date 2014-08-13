@@ -40,7 +40,6 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 import org.apache.commons.net.ftp.FTPClient;
@@ -63,10 +62,6 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
  */
 @Ignore("Not in junit3 test suite")
 public class IntegrityTestsFTP {
-    private static final File TESTLOGPROP = new File(
-            "tests/dk/netarkivet/testlog.prop");
-    //private static final File LOGFILE = new File(
-    //        "tests/testlogs/netarkivtest.log");
     private static final String FILE_1_CONTENTS = "The contents of file 1";
     private static final String FILE_2_CONTENTS = "File 2 contains\n" +
             "this and this\nit also has\nsome more\nlike this\nBurma-Shave";
@@ -86,33 +81,21 @@ public class IntegrityTestsFTP {
 
     public void setUp() {
         rs.setUp();
-        try {
-            if (!TestInfo.TEMPDIR.exists()) {
-                dk.netarkivet.common.utils.TestInfo.TEMPDIR.mkdir();
-            }
-
-            FileUtils.removeRecursively(TestInfo.TEMPDIR);
-            TestFileUtils.copyDirectoryNonCVS(TestInfo.DATADIR, TestInfo.TEMPDIR);
-
-            /* make 3 duplicates of TestInfo.TESTXML: test1.xml, test2.xml, test3.xml */
-            testFile1 = new File(TestInfo.TEMPDIR, "test1.xml");
-            testFile2 = new File(TestInfo.TEMPDIR, "test2.xml");
-            testFile3 = new File(TestInfo.TEMPDIR, "test3.xml");
-            assertTrue("The test xml file must exist", TestInfo.TESTXML.exists());
-            FileUtils.copyFile(TestInfo.TESTXML, testFile1);
-            FileUtils.copyFile(TestInfo.TESTXML, testFile2);
-            FileUtils.copyFile(TestInfo.TESTXML, testFile3);
-
-            /** enable logging as defined in testlog.prop file. */
-            try {
-                LogManager.getLogManager().readConfiguration(new FileInputStream(
-                        TESTLOGPROP));
-            } catch (IOException e) {
-                fail("Could not load the testlog.prop file");
-            }
-        } catch (Exception e) {
-            fail("Could not setup configuration for");
+        if (!TestInfo.TEMPDIR.exists()) {
+            dk.netarkivet.common.utils.TestInfo.TEMPDIR.mkdir();
         }
+
+        FileUtils.removeRecursively(TestInfo.TEMPDIR);
+        TestFileUtils.copyDirectoryNonCVS(TestInfo.DATADIR, TestInfo.TEMPDIR);
+
+        /* make 3 duplicates of TestInfo.TESTXML: test1.xml, test2.xml, test3.xml */
+        testFile1 = new File(TestInfo.TEMPDIR, "test1.xml");
+        testFile2 = new File(TestInfo.TEMPDIR, "test2.xml");
+        testFile3 = new File(TestInfo.TEMPDIR, "test3.xml");
+        assertTrue("The test xml file must exist", TestInfo.TESTXML.exists());
+        FileUtils.copyFile(TestInfo.TESTXML, testFile1);
+        FileUtils.copyFile(TestInfo.TESTXML, testFile2);
+        FileUtils.copyFile(TestInfo.TESTXML, testFile3);
 
         /* Read ftp-related settings from settings.xml. */
         final String ftpServerName = Settings.get(
@@ -141,8 +124,7 @@ public class IntegrityTestsFTP {
             throw new IOFailure("Connect to " + ftpServerName + ":" + ftpServerPort +
                                 " failed",  e.getCause());
         }
-        
-        
+
         /** Do not send notification by email. Print them to STDOUT. */
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
     }

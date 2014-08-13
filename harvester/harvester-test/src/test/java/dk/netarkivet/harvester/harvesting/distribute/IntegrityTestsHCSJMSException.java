@@ -25,12 +25,9 @@ package dk.netarkivet.harvester.harvesting.distribute;
 
 import static org.junit.Assert.fail;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.security.Permission;
 import java.util.ArrayList;
-import java.util.logging.LogManager;
 
 import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
@@ -87,11 +84,6 @@ public class IntegrityTestsHCSJMSException {
             fail("Could not copy working-files to: " + TestInfo.WORKING_DIR.getAbsolutePath());
         }
 
-        try {
-            LogManager.getLogManager().readConfiguration(new FileInputStream(TestInfo.TESTLOGPROP));
-        } catch (IOException e) {
-            fail("Could not load the testlog.prop file");
-        }
         Settings.set(CommonSettings.JMS_BROKER_CLASS,
                      "dk.netarkivet.common.distribute.JMSConnectionSunMQ");
         ChannelsTesterHelper.resetChannels();

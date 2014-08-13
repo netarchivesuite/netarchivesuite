@@ -27,9 +27,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.logging.LogManager;
 
 import org.junit.After;
 import org.junit.Before;
@@ -45,22 +42,18 @@ import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
-
 /**
  * Unit test for Bitarchive API
  * The CTOR method is tested
  */
 @SuppressWarnings({ "unused"})
 public class BitarchiveTesterCTOR {
-    private static File PATH_TO_TEST =
-            new File("tests/dk/netarkivet/archive/bitarchive/data/ctor");
+
+	private static File PATH_TO_TEST = new File("tests/dk/netarkivet/archive/bitarchive/data/ctor");
     private static File NEW_ARCHIVE_DIR = new File(PATH_TO_TEST, "new");
-    private static File EXISTING_ARCHIVE_NAME =
-            new File(PATH_TO_TEST, "existing");
-    private static File NOACCESS_ARCHIVE_DIR =
-            new File(PATH_TO_TEST, "noaccess");
-    private static File WORKING_ARCHIVE_DIR =
-            new File(PATH_TO_TEST, "working");
+    private static File EXISTING_ARCHIVE_NAME = new File(PATH_TO_TEST, "existing");
+    private static File NOACCESS_ARCHIVE_DIR = new File(PATH_TO_TEST, "noaccess");
+    private static File WORKING_ARCHIVE_DIR = new File(PATH_TO_TEST, "working");
     ReloadSettings rs = new ReloadSettings();
 
     /**
@@ -75,8 +68,7 @@ public class BitarchiveTesterCTOR {
         FileUtils.removeRecursively(NEW_ARCHIVE_DIR);
         try {
             // Copy over the "existing" bit archive.
-            TestFileUtils.copyDirectoryNonCVS(EXISTING_ARCHIVE_NAME,
-                    WORKING_ARCHIVE_DIR);
+            TestFileUtils.copyDirectoryNonCVS(EXISTING_ARCHIVE_NAME, WORKING_ARCHIVE_DIR);
         } catch (IOFailure e) {
             throw new ExceptionInInitializerError(e);
         }
@@ -136,4 +128,5 @@ public class BitarchiveTesterCTOR {
                     "noaccess/filedir", e.getMessage());
         }
     }
+
 }

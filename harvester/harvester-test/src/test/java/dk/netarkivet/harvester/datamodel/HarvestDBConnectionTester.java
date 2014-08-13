@@ -28,13 +28,11 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.logging.LogManager;
 
 import org.junit.After;
 import org.junit.Before;
@@ -60,11 +58,6 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        FileInputStream fis =
-            new FileInputStream("tests/dk/netarkivet/testlog.prop");
-        LogManager.getLogManager().reset();
-        LogManager.getLogManager().readConfiguration(fis);
-        fis.close();
         createTestTable();
       }
 

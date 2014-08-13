@@ -28,7 +28,6 @@ import static org.junit.Assert.fail;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
@@ -43,7 +42,6 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Map;
-import java.util.logging.LogManager;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletInputStream;
@@ -97,11 +95,6 @@ public class WebProxyTester {
         } catch (IOException e) {
            // Expected
         }
-        
-        FileInputStream fis
-                = new FileInputStream("tests/dk/netarkivet/testlog.prop");
-        LogManager.getLogManager().readConfiguration(fis);
-        fis.close();
     }
 
     @After

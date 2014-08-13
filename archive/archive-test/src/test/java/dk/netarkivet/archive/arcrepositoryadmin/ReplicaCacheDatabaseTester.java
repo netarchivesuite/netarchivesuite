@@ -22,6 +22,11 @@
  */
 package dk.netarkivet.archive.arcrepositoryadmin;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.sql.Date;
@@ -30,15 +35,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
-import java.util.logging.LogManager;
 
+import org.apache.commons.collections.IteratorUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
-
-import org.apache.commons.collections.IteratorUtils;
 
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.CommonSettings;
@@ -71,10 +72,7 @@ public class ReplicaCacheDatabaseTester {
         ChannelsTesterHelper.resetChannels();
         ArchiveDBConnection.cleanup();
         
-        LogManager.getLogManager().readConfiguration();
-        LogUtils.flushLogs(ReplicaCacheDatabase.class.getName());
-        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, 
-                RememberNotifications.class.getName());
+        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
         
         /** Setup the database. **/
         String driverName = "org.apache.derby.jdbc.EmbeddedDriver";
@@ -82,17 +80,12 @@ public class ReplicaCacheDatabaseTester {
         FileUtils.removeRecursively(TestInfo.DATABASE_DIR);
         ZipUtils.unzip(TestInfo.DATABASE_FILE, TestInfo.DATABASE_DIR);
         
-        Settings.set(ArchiveSettings.BASEURL_ARCREPOSITORY_ADMIN_DATABASE,
-                TestInfo.DATABASE_URL);
-        Settings.set(ArchiveSettings.MACHINE_ARCREPOSITORY_ADMIN_DATABASE,
-                "");
-        Settings.set(ArchiveSettings.PORT_ARCREPOSITORY_ADMIN_DATABASE,
-                "");
-        Settings.set(ArchiveSettings.DIR_ARCREPOSITORY_ADMIN_DATABASE,
-                "");
+        Settings.set(ArchiveSettings.BASEURL_ARCREPOSITORY_ADMIN_DATABASE, TestInfo.DATABASE_URL);
+        Settings.set(ArchiveSettings.MACHINE_ARCREPOSITORY_ADMIN_DATABASE, "");
+        Settings.set(ArchiveSettings.PORT_ARCREPOSITORY_ADMIN_DATABASE, "");
+        Settings.set(ArchiveSettings.DIR_ARCREPOSITORY_ADMIN_DATABASE, "");
 
-        Settings.set(CommonSettings.NOTIFICATIONS_CLASS,
-                PrintNotifications.class.getName());
+        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, PrintNotifications.class.getName());
         ReplicaCacheDatabase.getInstance().cleanup();
 
         cache = ReplicaCacheDatabase.getInstance();
@@ -114,16 +107,13 @@ public class ReplicaCacheDatabaseTester {
         
         // try handling output from ChecksumJob.
         File csFile = makeTemporaryChecksumFile1();
-        cache.addChecksumInformation(csFile, 
-                Replica.getReplicaFromId("ONE"));
+        cache.addChecksumInformation(csFile, Replica.getReplicaFromId("ONE"));
 
         // try handling output from FilelistJob.
         File flFile = makeTemporaryFilelistFile();
-        cache.addFileListInformation(flFile, 
-                Replica.getReplicaFromId("TWO"));
+        cache.addFileListInformation(flFile,  Replica.getReplicaFromId("TWO"));
 
-        Date dbDate = cache.getDateOfLastMissingFilesUpdate(
-                Replica.getReplicaFromId("TWO"));
+        Date dbDate = cache.getDateOfLastMissingFilesUpdate(Replica.getReplicaFromId("TWO"));
 
         Date afterInsert = new Date(Calendar.getInstance().getTimeInMillis());
 

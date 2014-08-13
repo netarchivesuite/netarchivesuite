@@ -22,12 +22,7 @@
  */
 package dk.netarkivet.wayback.aggregator;
 
-import static org.junit.Assert.fail;
-
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.logging.LogManager;
 
 import org.junit.After;
 import org.junit.Before;
@@ -62,13 +57,6 @@ public class AggregatorTestCase {
 
     @Before
     public void setUp() throws Exception {
-
-        try {
-            LogManager.getLogManager().readConfiguration(new FileInputStream(TESTLOGPROP));
-        } catch (IOException e) {
-            fail("Could not load the testlog.prop file");
-        }
-
         originalSettings.setUp();
 
         System.setProperty(WaybackSettings.WAYBACK_BATCH_OUTPUTDIR, inputDirName);

@@ -28,11 +28,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Iterator;
-import java.util.logging.LogManager;
 
 import javax.jms.JMSException;
 
@@ -104,10 +102,6 @@ public class HarvestSchedulerMonitorServerTester {
     public void setUp() throws IOException, SQLException,
             IllegalAccessException, NoSuchFieldException, ClassNotFoundException {
         rs.setUp();
-        // Start up a log manager
-        FileInputStream fis = new FileInputStream(TestInfo.TESTLOGPROP);
-        LogManager.getLogManager().readConfiguration(fis);
-        fis.close();
 
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         HarvestDAOUtils.resetDAOs();
