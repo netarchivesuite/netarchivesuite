@@ -864,7 +864,7 @@ public class WindowsMachine extends Machine {
                         // TODO check to see if inheritedSlf4jConfigFile is not null
                         + Constants.SPACE
                         + Constants.DASH
-                        + ScriptConstants.OPTION_LOGBACK_CONFIG
+                        + ScriptConstants.OPTION_LOGBACK_CONFIG_WIN
                         + ScriptConstants.doubleBackslashes(getConfDirPath()) 
                         + Constants.LOGBACK_PREFIX
                         + id 

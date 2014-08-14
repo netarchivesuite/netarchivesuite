@@ -63,6 +63,8 @@ public final class ScriptConstants {
     static final String OPTION_LOGBACK_CONFIG = "Dlogback.configurationFile=";
     /** Djava.util.logging.config.file=\"\".*/
     static final String OPTION_LOG_CONFIG_WIN = OPTION_LOG_CONFIG + "\"\"";
+    /** Djava.util.logging.config.file=\"\".*/
+    static final String OPTION_LOGBACK_CONFIG_WIN = OPTION_LOGBACK_CONFIG + "\"\"";
     /** Djava.security.manager.*/
     static final String OPTION_SECURITY_MANAGER = "Djava.security.manager";
     /** Djava.security.policy=.*/
