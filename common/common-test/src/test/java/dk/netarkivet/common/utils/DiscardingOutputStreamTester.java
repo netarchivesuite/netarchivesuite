@@ -22,18 +22,22 @@
  */
 package dk.netarkivet.common.utils;
 
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
 import java.io.OutputStream;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
 
 /**
  * 
  * Unit tests for the DiscardingOutputStream class.   
- *
  */
-public class DiscardingOutputStreamTester extends TestCase{
+// FIXME: Does not close properly if anything fails.
+public class DiscardingOutputStreamTester {
 
+    @Test
     public void testWriteInt() throws IOException {
         OutputStream os = new DiscardingOutputStream();
         try {
@@ -44,6 +48,7 @@ public class DiscardingOutputStreamTester extends TestCase{
         os.close();
     }
 
+    @Test
     public void testWriteBytearray() throws IOException {
         OutputStream os = new DiscardingOutputStream();
         byte[] b = null;
@@ -55,6 +60,7 @@ public class DiscardingOutputStreamTester extends TestCase{
         os.close();
     }
  
+    @Test
     public void testWriteBytearrayWithArgs() throws IOException {
         OutputStream os = new DiscardingOutputStream();
         byte[] b = null;

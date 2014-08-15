@@ -22,7 +22,9 @@
  */
 package dk.netarkivet.common.utils.arc;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 
 /**
  * Created by IntelliJ IDEA.
@@ -31,10 +33,11 @@ import junit.framework.TestCase;
  * Time: 2:38:17 PM
  * To change this template use File | Settings | File Templates.
  */
-public class ARCKeyTester extends TestCase {
+public class ARCKeyTester {
     /** Test that the constructore figures out to use .arc.gz files
      * when given a .dat entry.
      */
+    @Test
     public void testConstructor() {
         ARCKey key1 = new ARCKey("foo.arc", 0);
         assertEquals(key1.getFile().getName(), "foo.arc");

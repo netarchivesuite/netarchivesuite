@@ -25,7 +25,6 @@ package dk.netarkivet.archive.checksum.distribute;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.archive.bitarchive.distribute.GetFileMessage;
 import dk.netarkivet.archive.bitarchive.distribute.GetMessage;
@@ -34,7 +33,7 @@ import dk.netarkivet.archive.bitarchive.distribute.UploadMessage;
 import dk.netarkivet.archive.distribute.ArchiveMessageHandler;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.ChannelsTester;
+import dk.netarkivet.common.distribute.ChannelsTesterHelper;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
@@ -47,6 +46,7 @@ import dk.netarkivet.testutils.ClassAsserts;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -67,7 +67,7 @@ public class ChecksumClientTester {
         rf.setUp();
         mtf.setUp();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
-        ChannelsTester.resetChannels();
+        ChannelsTesterHelper.resetChannels();
         
         Settings.set(CommonSettings.USE_REPLICA_ID, "THREE");
         

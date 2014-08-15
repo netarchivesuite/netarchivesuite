@@ -42,7 +42,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.distribute.ChannelsTester;
+import dk.netarkivet.common.distribute.ChannelsTesterHelper;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -94,7 +94,7 @@ public class IntegrityTestsHCSJMSException {
         }
         Settings.set(CommonSettings.JMS_BROKER_CLASS,
                      "dk.netarkivet.common.distribute.JMSConnectionSunMQ");
-        ChannelsTester.resetChannels();
+        ChannelsTesterHelper.resetChannels();
         HarvestDAOUtils.resetDAOs();
         Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR, TestInfo.SERVER_DIR.getAbsolutePath());
         hs = HarvestControllerServer.getInstance();
@@ -116,7 +116,7 @@ public class IntegrityTestsHCSJMSException {
             hs.close();
         }
         FileUtils.removeRecursively(TestInfo.SERVER_DIR);
-        ChannelsTester.resetChannels();
+        ChannelsTesterHelper.resetChannels();
         HarvestDAOUtils.resetDAOs();
         System.setSecurityManager(originalSM);
         rs.tearDown();

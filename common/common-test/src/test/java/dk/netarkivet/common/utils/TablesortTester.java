@@ -22,22 +22,25 @@
  */
 package dk.netarkivet.common.utils;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+import org.junit.Test;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.TableSort.SortOrder;
-import junit.framework.TestCase;
+
 
 /**
  * Unittests for the {@link TableSort} class. 
  */
-public class TablesortTester extends TestCase {
+public class TablesortTester {
  
-    public TablesortTester(String s) {
-        super(s);
-    }
     /**
      * Test of TableSort constructor.
      * Note: no validation of columnId in TableSort class.
      */
+    @Test
     public void testConstructor() {
         try {
             new TableSort(0, null);
@@ -58,6 +61,7 @@ public class TablesortTester extends TestCase {
         assertEquals(TableSort.SortOrder.DESC, ts.getOrder());
     }
     
+    @Test
     public void testGetters() {
         TableSort ts = new TableSort(0, TableSort.SortOrder.DESC);
         ts.setColumnIdent(99);

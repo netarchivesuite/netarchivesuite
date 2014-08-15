@@ -22,18 +22,8 @@
  */
 package dk.netarkivet.common.tools;
 
-import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.testutils.ARCTestUtils;
-import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
-import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
-import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
-import junit.framework.TestCase;
-
-import org.archive.io.ArchiveRecord;
-import org.archive.io.arc.ARCReader;
-import org.archive.io.arc.ARCReaderFactory;
-import org.archive.io.arc.ARCRecord;
-import org.archive.io.arc.ARCRecordMetaData;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -42,25 +32,44 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Iterator;
 
+import org.archive.io.ArchiveRecord;
+import org.archive.io.arc.ARCReader;
+import org.archive.io.arc.ARCReaderFactory;
+import org.archive.io.arc.ARCRecord;
+import org.archive.io.arc.ARCRecordMetaData;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.testutils.ARCTestUtils;
+import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
+import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
+import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
+
 /**
  * Unit test for the ArcWrap tool.
  */
-public class ArcWrapTester extends TestCase {
+public class ArcWrapTester {
     private PreventSystemExit pse = new PreventSystemExit();
     private PreserveStdStreams pss = new PreserveStdStreams();
-    private MoveTestFiles mtf = new MoveTestFiles(
-            TestInfo.DATA_DIR, TestInfo.WORKING_DIR);
-    
-    public void setUp(){
+    private MoveTestFiles mtf = new MoveTestFiles(TestInfo.DATA_DIR, TestInfo.WORKING_DIR);
+
+    @Before
+    public void setUp() {
         mtf.setUp();
         pss.setUp();
         pse.setUp();
     }
-    public void tearDown(){
+
+    @After
+    public void tearDown() {
         pse.tearDown();
         pss.tearDown();
         mtf.tearDown();
     }
+
+    @Test
     public void testMain() throws IOException {
         String pathname = "tests/dk/netarkivet/common/tools/ArcWrapTester.txt";
         File storeFile = new File(pathname);
@@ -71,26 +80,21 @@ public class ArcWrapTester extends TestCase {
         OutputStream myOut = new FileOutputStream(arcFile);
         System.setOut(new PrintStream(myOut));
         try {
-            ArcWrap.main(new String[]{storeFile.getAbsolutePath(),
-                    arcUri, mime});
+            ArcWrap.main(new String[] { storeFile.getAbsolutePath(), arcUri, mime });
         } catch (SecurityException e) {
-            assertEquals("Should have exited normally",
-                         0, pse.getExitValue());
+            assertEquals("Should have exited normally", 0, pse.getExitValue());
         }
         myOut.close();
-        //Put an ARCReader on top of the file.
+        // Put an ARCReader on top of the file.
         ARCReader r = ARCReaderFactory.get(arcFile);
         Iterator<ArchiveRecord> it = r.iterator();
-        it.next(); //Skip ARC file header
-        //Read the record, checking mime-type, uri and content.
+        it.next(); // Skip ARC file header
+        // Read the record, checking mime-type, uri and content.
         ARCRecord record = (ARCRecord) it.next();
         ARCRecordMetaData meta = record.getMetaData();
-        assertEquals("Should record the object under the given URI",
-                arcUri, meta.getUrl());
-        assertEquals("Should indicate the intended MIME type",
-                mime, meta.getMimetype());
+        assertEquals("Should record the object under the given URI", arcUri, meta.getUrl());
+        assertEquals("Should indicate the intended MIME type", mime, meta.getMimetype());
         String foundContent = ARCTestUtils.readARCRecord(record);
-        assertEquals("Should store content unchanged",
-                FileUtils.readFile(storeFile), foundContent);
+        assertEquals("Should store content unchanged", FileUtils.readFile(storeFile), foundContent);
     }
 }

@@ -22,8 +22,14 @@
  */
 package dk.netarkivet.wayback.aggregator;
 
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 /**
  * Verifies that the <code>IndexAggregator</code> class is able to aggregate CDX
  * index files correctly in larger files, and sort the index entries
@@ -32,12 +38,19 @@ public class IndexAggregatorTest extends AggregatorTestCase {
     private static IndexAggregator aggregator = new IndexAggregator();
 
     @Override
+    @Before
     public void setUp() throws Exception {
         super.setUp();
         new File(tempDirName).mkdirs();
     }
 
+    @Override
+    @After
+    public void tearDown() throws Exception {
+        super.tearDown();
+    }
 
+    @Test
     public void testAggregation() {
         File[] inputFiles = prepareSourceIndex(new String[] {inputFile1Name, inputFile2Name});
         TestIndex testIndex = new TestIndex();
@@ -54,6 +67,7 @@ public class IndexAggregatorTest extends AggregatorTestCase {
      * The <code>IndexAggregator</code> should be able to handle situations with
      * no index files. No index files should be created in this case
      */
+    @Test
     public void testAggregationNoFiles() {
         File[] inputFiles = prepareSourceIndex(new String[] {});
         TestIndex testIndex = new TestIndex();
@@ -66,6 +80,7 @@ public class IndexAggregatorTest extends AggregatorTestCase {
                     !AggregationWorker.TEMP_FILE_INDEX.exists());
     }
 
+    @Test
     public void testAggregationSingleFile() {
         File[] inputFiles = prepareSourceIndex(new String[] {inputFile1Name});
         TestIndex testIndex = new TestIndex();
@@ -77,6 +92,7 @@ public class IndexAggregatorTest extends AggregatorTestCase {
         assertNull("Unexpected content of aggregated index single file", testIndex.compareToIndex(AggregationWorker.TEMP_FILE_INDEX));
     }
 
+    @Test
     public void testMerging() {
         File[] inputFiles1 = prepareSourceIndex(new String[] { inputFile1Name });
         File[] inputFiles2 = prepareSourceIndex(new String[] { inputFile2Name });

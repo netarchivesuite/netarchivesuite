@@ -22,41 +22,44 @@
  */
 package dk.netarkivet.common.utils.batch;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.arc.TestInfo;
-import dk.netarkivet.common.utils.batch.FileBatchJob;
-import dk.netarkivet.common.utils.batch.LoadableJarBatchJob;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
 /**
  * Tests for the LoadableJarBatchJob class.
  *
  */
-public class LoadableJarBatchJobTester extends TestCase {
+public class LoadableJarBatchJobTester {
     MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,
                                           TestInfo.WORKING_DIR);
-    public LoadableJarBatchJobTester(String s) {
-        super(s);
-    }
 
+    @Before
     public void setUp() throws Exception {
-        super.setUp();
         mtf.setUp();
     }
 
+    @After
     public void tearDown() throws Exception {
         mtf.tearDown();
-        super.tearDown();
     }
 
+    @Test
     public void testInitialize() {
         FileBatchJob job = new LoadableJarBatchJob(
         		"dk.netarkivet.common.utils.batch.LoadableTestJob",
@@ -91,6 +94,7 @@ public class LoadableJarBatchJobTester extends TestCase {
                      "initialize() called on inner\n", os.toString());
     }
     
+    @Test
     public void testLoadingJobWithoutPackage() {
         FileBatchJob job = new LoadableJarBatchJob(
         		"ExternalBatchSeveralClassesNoPackage",
@@ -103,6 +107,8 @@ public class LoadableJarBatchJobTester extends TestCase {
         File metadataFile = new File(TestInfo.WORKING_DIR, "2-metadata-1.arc");
         job.processFile(metadataFile, os);
     }
+
+    @Test
     public void testLoadingJobWithPackage() {
         FileBatchJob job = new LoadableJarBatchJob(
         		"batch.ExternalBatchSeveralClassesWithPackage",
@@ -119,6 +125,7 @@ public class LoadableJarBatchJobTester extends TestCase {
     /**
      * Tests the loadable batchjobs with arguments.
      */
+    @Test
     public void testJobWithArguments() {
         List<String> args = new ArrayList<String>();
         args.add(".*");

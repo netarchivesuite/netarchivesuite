@@ -22,13 +22,14 @@
  */
 package dk.netarkivet.harvester.indexserver;
 
-import dk.netarkivet.common.distribute.ChannelsTester;
+import dk.netarkivet.common.distribute.ChannelsTesterHelper;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.harvester.indexserver.IndexServerApplication;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import static org.junit.Assert.*;
+
 import org.junit.Before;
 import org.junit.After;
 import org.junit.Test;
@@ -38,14 +39,14 @@ public class IndexServerTester {
     
     @Before
     public void setUp() {
-        ChannelsTester.resetChannels();
+        ChannelsTesterHelper.resetChannels();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
     }
     
     @After
     public void tearDown() {
         JMSConnectionMockupMQ.clearTestQueues();
-        ChannelsTester.resetChannels();
+        ChannelsTesterHelper.resetChannels();
     }
 
     /**

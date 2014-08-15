@@ -42,7 +42,7 @@ import org.apache.commons.collections.IteratorUtils;
 
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.distribute.ChannelsTester;
+import dk.netarkivet.common.distribute.ChannelsTesterHelper;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.exceptions.IllegalState;
@@ -68,7 +68,7 @@ public class ReplicaCacheDatabaseTester {
     public void setUp() throws Exception {
         rs.setUp();
         mtf.setUp();
-        ChannelsTester.resetChannels();
+        ChannelsTesterHelper.resetChannels();
         ArchiveDBConnection.cleanup();
         
         LogManager.getLogManager().readConfiguration();

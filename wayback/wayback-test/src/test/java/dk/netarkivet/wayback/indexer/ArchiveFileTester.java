@@ -22,7 +22,13 @@
  */
 package dk.netarkivet.wayback.indexer;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
@@ -33,12 +39,14 @@ public class ArchiveFileTester extends IndexerTestCase {
 
 
     @Override
+    @Before
     public void setUp() {
         super.setUp();
         FileUtils.removeRecursively(destDir);
     }
 
     @Override
+    @After
     public void tearDown() {
         super.tearDown();
         FileUtils.removeRecursively(destDir);
@@ -47,6 +55,7 @@ public class ArchiveFileTester extends IndexerTestCase {
     /**
      * Test indexing on an archive arcfile
      */
+    @Test
     public void testIndexerArc() {
         ArchiveFile file = new ArchiveFile();
         file.setFilename("arcfile_withredirects.arc");
@@ -61,6 +70,7 @@ public class ArchiveFileTester extends IndexerTestCase {
     /**
      * Test indexing on a metadata arcfile
      */
+    @Test
     public void testIndexerMetadata() {
         ArchiveFile file = new ArchiveFile();
         file.setFilename("duplicate.metadata.arc");
@@ -71,6 +81,4 @@ public class ArchiveFileTester extends IndexerTestCase {
         assertTrue("Should have a resonable numer of lines in output file",
                    FileUtils.countLines(outputFile) == 15);
     }
-
-
 }

@@ -23,29 +23,32 @@
 
 package dk.netarkivet.common.utils.batch;
 
+import static dk.netarkivet.testutils.CollectionUtils.list;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
-import dk.netarkivet.common.exceptions.NotImplementedException;
-import dk.netarkivet.common.utils.batch.FileBatchJob;
-import static dk.netarkivet.testutils.CollectionUtils.list;
-import dk.netarkivet.testutils.Serial;
+import org.junit.Test;
 
+import dk.netarkivet.common.exceptions.NotImplementedException;
+import dk.netarkivet.testutils.Serial;
 /**
  * A tester suite for an abstract class? Yes, it's true!
  *
  */
 
 @SuppressWarnings({ "serial"})
-public class FileBatchJobTester extends TestCase {
+public class FileBatchJobTester {
 
     /**
      * Tests that the simplest concretization of this class is serializable
      */
+    @Test
     public void testSerializability() throws IOException, ClassNotFoundException {
         FileBatchJob f1 = new ConcreteFileBatchJob();
         f1.processOnlyFileNamed("helloWorld");
@@ -58,6 +61,7 @@ public class FileBatchJobTester extends TestCase {
         return f.getFilenamePattern().pattern();
     }
 
+    @Test
     public void testProcessOnlyFilesNamed() throws Exception {
         FileBatchJob f1 = new ConcreteFileBatchJob();
         assertEquals("Should match everything from the start",
@@ -78,6 +82,7 @@ public class FileBatchJobTester extends TestCase {
                 ".*", f1.getFilenamePattern().pattern());
     }
 
+    @Test
     public void testProcessOnlyFileNamed() throws Exception {
         FileBatchJob f1 = new ConcreteFileBatchJob();
         assertEquals("Should match all files from start",
@@ -102,6 +107,7 @@ public class FileBatchJobTester extends TestCase {
                 "\\Qqux\\E", f1.getFilenamePattern().pattern());
     }
 
+    @Test
     public void testProcessOnlyFilesMatching_Pattern() throws Exception {
         FileBatchJob f1 = new ConcreteFileBatchJob();
         assertEquals("Should have .* pattern from beginning",
@@ -112,6 +118,7 @@ public class FileBatchJobTester extends TestCase {
                 "foo*bar", f1.getFilenamePattern().pattern());
     }
 
+    @Test
     public void testProcessOnlyFilesMatching_ListOfPattern() throws Exception {
         FileBatchJob f1 = new ConcreteFileBatchJob();
         assertEquals("Should have .* pattern from beginning",

@@ -22,16 +22,25 @@
  */
 package dk.netarkivet.common.tools;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
+
 
 /**
  * Tests the ToolRunner using a mocked up tool, which can be induced to throw
  * exceptions through parameters.
  */
 @SuppressWarnings({ "serial"})
-public class ToolRunnerTester extends TestCase {
+public class ToolRunnerTester {
 
     private static SimpleCmdlineToolForTest sctfTest
             = new SimpleCmdlineToolForTest();
@@ -39,11 +48,13 @@ public class ToolRunnerTester extends TestCase {
     private PreventSystemExit pse = new PreventSystemExit();
     private PreserveStdStreams pss = new PreserveStdStreams(true);
 
+    @Before
     public void setUp() {
         pss.setUp();
         pse.setUp();
     }
 
+    @After
     public void tearDown() {
         pse.tearDown();
         pss.tearDown();
@@ -52,6 +63,7 @@ public class ToolRunnerTester extends TestCase {
     /**
      * Test a normal configuration, with the right number of parameters (2).
      */
+    @Test
     public void testNormalRun() {
         try {
             sctfTest.runTheTool("n", "n", "n"); // Run with no exceptions
@@ -67,6 +79,7 @@ public class ToolRunnerTester extends TestCase {
     /**
      * Test using wrong number oo parameters. Must fail.
      */
+    @Test
     public void testWrongNumberOfParameters() {
         try {
             sctfTest.runTheTool("n"); // Run with too few parameters
@@ -81,6 +94,7 @@ public class ToolRunnerTester extends TestCase {
     /**
      * Test where fail is induced during setup.
      */
+    @Test
     public void testFailSetup() {
         try {
             sctfTest.runTheTool("n", "y", "n"); // Force fail during setup
@@ -95,6 +109,7 @@ public class ToolRunnerTester extends TestCase {
     /**
      * Test where fail is induced during main loop / processing ("run" method).
      */
+    @Test
     public void testFailRun() {
         try {
             sctfTest.runTheTool("n", "n", "y"); // Force fail during run
@@ -109,6 +124,7 @@ public class ToolRunnerTester extends TestCase {
     /**
      * Test where fail is induced during main loop / processing ("run" method).
      */
+    @Test
     public void testFailCheckargs() {
         try {
             sctfTest.runTheTool("y", "n", "n"); // Force fail during run

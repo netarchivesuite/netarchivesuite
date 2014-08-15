@@ -54,7 +54,7 @@ import dk.netarkivet.archive.checksum.distribute.GetChecksumMessage;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.ChannelsTester;
+import dk.netarkivet.common.distribute.ChannelsTesterHelper;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
@@ -138,7 +138,7 @@ public class BitarchiveMonitorServerTester {
         mjms.tearDown();
         rls.tearDown();
         RememberNotifications.resetSingleton();
-        ChannelsTester.resetChannels();
+        ChannelsTesterHelper.resetChannels();
     }
 
     /**
@@ -386,7 +386,7 @@ public class BitarchiveMonitorServerTester {
         bamon.cleanup();
         assertTrue("The BAMON should stop listening to THE_BAMON after cleanup",
                 jms.getListeners(Channels.getBaMonForReplica(replicaId)).isEmpty());
-        ChannelsTester.resetChannels();
+        ChannelsTesterHelper.resetChannels();
     }
 
     /**

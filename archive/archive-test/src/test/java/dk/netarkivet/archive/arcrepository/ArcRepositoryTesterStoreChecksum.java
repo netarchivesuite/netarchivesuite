@@ -42,7 +42,7 @@ import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
 import dk.netarkivet.archive.arcrepositoryadmin.UpdateableAdminData;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveClient;
 import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.ChannelsTester;
+import dk.netarkivet.common.distribute.ChannelsTesterHelper;
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
@@ -87,7 +87,7 @@ public class ArcRepositoryTesterStoreChecksum {
     @Before
     public void setUp() {
         rs.setUp();
-        ChannelsTester.resetChannels();
+        ChannelsTesterHelper.resetChannels();
         ServerSetUp.setUp();
         arcRepos = ServerSetUp.getArcRepository();
         rf.setUp();

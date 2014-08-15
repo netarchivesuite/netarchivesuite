@@ -22,41 +22,38 @@
  */
 package dk.netarkivet.common.utils;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
 import org.dom4j.Document;
 import org.dom4j.Node;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
-
 
 /**
  * Unit tests for the class XmlUtils.
  */
-public class XmlUtilsTester extends TestCase {
-    private final MoveTestFiles mtf = new MoveTestFiles(TestInfo.DATADIR,
-            TestInfo.TEMPDIR);
+public class XmlUtilsTester {
+    private final MoveTestFiles mtf = new MoveTestFiles(TestInfo.DATADIR, TestInfo.TEMPDIR);
 
-    public XmlUtilsTester(String s) {
-        super(s);
-    }
-
+    @Before
     public void setUp() throws Exception {
-        super.setUp();
         mtf.setUp();
     }
 
+    @After
     public void tearDown() throws Exception {
         mtf.tearDown();
-        super.tearDown();
     }
 
+    @Test
     public void testSetNode() throws Exception {
         Document doc = XmlUtils.getXmlDoc(TestInfo.XML_FILE_1);
         Node node = doc.selectSingleNode(TestInfo.XML_FILE_1_XPATH_1);
-        assertEquals("Should have original value at start",
-                "Should go away", node.getText());
+        assertEquals("Should have original value at start", "Should go away", node.getText());
         XmlUtils.setNode(doc, TestInfo.XML_FILE_1_XPATH_1, "newValue");
-        assertEquals("Should have new value after setting it",
-                "newValue", node.getText());
+        assertEquals("Should have new value after setting it", "newValue", node.getText());
     }
 }

@@ -23,6 +23,7 @@
 package dk.netarkivet.archive.tools;
 
 import javax.jms.Message;
+
 import java.io.File;
 
 import org.junit.After;
@@ -30,11 +31,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
-
 import dk.netarkivet.archive.bitarchive.distribute.GetFileMessage;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.ChannelsTester;
+import dk.netarkivet.common.distribute.ChannelsTesterHelper;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.utils.Settings;
@@ -59,7 +59,7 @@ public class GetFileTester {
 
     @Before
     public void setUp(){
-        ChannelsTester.resetChannels();
+        ChannelsTesterHelper.resetChannels();
         rs.setUp();
         mjms.setUp();
         listener = new GetFileListener(mtf.working(

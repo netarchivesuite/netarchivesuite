@@ -22,6 +22,11 @@
  */
 package dk.netarkivet.common.distribute;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -38,9 +43,9 @@ import java.util.Iterator;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
-import junit.framework.TestCase;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
+import org.junit.Ignore;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -53,11 +58,11 @@ import dk.netarkivet.common.utils.ZipUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
-
 /**
  * Class testing the FTPRemoteFile class.
  */
-public class IntegrityTestsFTP extends TestCase {
+@Ignore("Not in junit3 test suite")
+public class IntegrityTestsFTP {
     private static final File TESTLOGPROP = new File(
             "tests/dk/netarkivet/testlog.prop");
     //private static final File LOGFILE = new File(
@@ -76,10 +81,6 @@ public class IntegrityTestsFTP extends TestCase {
 
     // A named logger for this class is retrieved
     protected final Logger logger = Logger.getLogger(getClass().getName());
-
-    public IntegrityTestsFTP(String sTestName) {
-        super(sTestName);
-    }
 
     ReloadSettings rs = new ReloadSettings();
 

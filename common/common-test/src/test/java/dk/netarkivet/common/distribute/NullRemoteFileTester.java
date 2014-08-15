@@ -27,13 +27,21 @@
 
 package dk.netarkivet.common.distribute;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
+
+import org.junit.Test;
+
 import dk.netarkivet.common.exceptions.NotImplementedException;
-import junit.framework.TestCase;
 
-public class NullRemoteFileTester extends TestCase {
 
+public class NullRemoteFileTester {
+
+    @Test
     public void testNewInstance() {
         RemoteFile nrf1 = NullRemoteFile.getInstance(null, false, false, false);
         assertTrue(nrf1 instanceof NullRemoteFile);

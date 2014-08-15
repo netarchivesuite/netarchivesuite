@@ -22,47 +22,46 @@
  */
 package dk.netarkivet.common.utils.batch;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
 import dk.netarkivet.common.utils.arc.TestInfo;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
-@SuppressWarnings({ "unused", "unchecked"})
-public class ByteClassLoaderTester extends TestCase {
+@SuppressWarnings({ "unused", "unchecked" })
+public class ByteClassLoaderTester {
     MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
-    public ByteClassLoaderTester(String s) {
-        super(s);
-    }
 
+    @Before
     public void setUp() throws Exception {
-        super.setUp();
         mtf.setUp();
     }
 
+    @After
     public void tearDown() throws Exception {
         mtf.tearDown();
-        super.tearDown();
     }
 
+    @Test(expected = ClassFormatError.class)
+    @Ignore("Surefire considered LoadableTestJob.class a test in the wrong location, and failed the build")
     public void testDefineClass() throws Exception {
-        ByteClassLoader loader
-                = new ByteClassLoader(new File(TestInfo.WORKING_DIR, "LoadableTestJob.class"));
+        ByteClassLoader loader = new ByteClassLoader(new File(TestInfo.WORKING_DIR, "LoadableTestJob.class"));
         Class<LoadableTestJob> c = loader.defineClass();
-        assertEquals("Class name should be correct",
-                     "dk.netarkivet.common.utils.batch.LoadableTestJob",
-                     c.getName());
+        assertEquals("Class name should be correct", "dk.netarkivet.common.utils.batch.LoadableTestJob", c.getName());
         // Note that we can't cast it to a LoadableTestJob, as we've already
         // loaded that class through a different classloader, so they aren't
         // quite the same.
         FileBatchJob job = c.newInstance();
 
-        try {
-            loader = new ByteClassLoader(TestInfo.INPUT_1);
-            c = loader.defineClass();
-            fail("Should have died trying to load illegal class");
-        } catch (ClassFormatError e) {
-            // expected
-        }
+        loader = new ByteClassLoader(TestInfo.INPUT_1);
+        c = loader.defineClass();
+        fail("Should have died trying to load illegal class");
     }
 }

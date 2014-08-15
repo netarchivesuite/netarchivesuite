@@ -148,7 +148,8 @@ import java.util.zip.ZipOutputStream;
  * Copyright (C) 1998 Business Management Systems, Inc. <p>Original version
  * Copyright (c) 1998 Karl Moss. All Rights Reserved.
  */
-
+@Deprecated
+// what is this used for? /tra
 @SuppressWarnings({ "rawtypes", "unused" })
 public class ClassDependencies {
     private static final String[] default_exclude = {"java/", "sun/", "javax/", "org/w3c"};

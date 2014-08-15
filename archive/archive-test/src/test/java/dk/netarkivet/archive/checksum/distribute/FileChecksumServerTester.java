@@ -38,7 +38,7 @@ import dk.netarkivet.archive.checksum.ChecksumFileApplication;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.ChannelsTester;
+import dk.netarkivet.common.distribute.ChannelsTesterHelper;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.RemoteFile;
@@ -79,7 +79,7 @@ public class FileChecksumServerTester {
         Settings.set(CommonSettings.USE_REPLICA_ID, "THREE");
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
 
-        ChannelsTester.resetChannels();
+        ChannelsTesterHelper.resetChannels();
 
         // Create/recreate the checksum.md5 file
         try {

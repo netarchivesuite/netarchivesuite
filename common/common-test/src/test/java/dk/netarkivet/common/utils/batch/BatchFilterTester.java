@@ -22,20 +22,23 @@
  */
 package dk.netarkivet.common.utils.batch;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.awt.datatransfer.MimeTypeParseException;
 
-import dk.netarkivet.common.utils.batch.ARCBatchFilter;
+import org.junit.Test;
 
-
-public class BatchFilterTester extends TestCase {
-    //Our main instance of BatchFilter:
+public class BatchFilterTester {
+    // Our main instance of BatchFilter:
     ARCBatchFilter bf;
 
     /**
      * Verify that we can ask for a no-action filter.
      */
+    @Test
     public void testNoFilter() {
         bf = ARCBatchFilter.NO_FILTER;
     }
@@ -43,6 +46,7 @@ public class BatchFilterTester extends TestCase {
     /**
      * Verify that we can ask for a filter that exludes ARC file headers.
      */
+    @Test
     public void testExcludeFileHeaders() {
         bf = ARCBatchFilter.EXCLUDE_FILE_HEADERS;
     }
@@ -50,15 +54,18 @@ public class BatchFilterTester extends TestCase {
     /**
      * Verify that each possible filter can be identified for what it is.
      */
+    @Test
     public void testIdentifiable() {
         bf = ARCBatchFilter.NO_FILTER;
         assertFalse(bf.equals(ARCBatchFilter.EXCLUDE_FILE_HEADERS));
     }
 
     /**
-    * Test the dk.netarkivet.common.utils.arc.BatchFilter.getMimetypeBatchFilter
-    * Test the validity of the given mimetype
-    */
+     * Test the
+     * dk.netarkivet.common.utils.arc.BatchFilter.getMimetypeBatchFilter Test
+     * the validity of the given mimetype
+     */
+    @Test
     public void testGetMimetype() {
         String invalidMimetype = "test";
         String validMimetype = "text/html";
@@ -66,9 +73,7 @@ public class BatchFilterTester extends TestCase {
 
         try {
             cfilter = ARCBatchFilter.getMimetypeBatchFilter(invalidMimetype);
-            fail(
-                "MimeTypeParseException expected because of invalid mimetype: " +
-                invalidMimetype);
+            fail("MimeTypeParseException expected because of invalid mimetype: " + invalidMimetype);
         } catch (MimeTypeParseException e) {
             // Expected behaviour
         }
@@ -76,17 +81,13 @@ public class BatchFilterTester extends TestCase {
         try {
             cfilter = ARCBatchFilter.getMimetypeBatchFilter(validMimetype);
         } catch (MimeTypeParseException e) {
-            fail(
-                "MimeTypeParseException not expected here with valid mimetype as argument: " +
-                validMimetype);
+            fail("MimeTypeParseException not expected here with valid mimetype as argument: " + validMimetype);
         } catch (Exception e) {
-            fail("Exception " + e +
-                " not expected here with valid mimetype as argument: " +
-                validMimetype);
+            fail("Exception " + e + " not expected here with valid mimetype as argument: " + validMimetype);
         }
-        
+
         assertTrue("The return batchfilter should not be null", cfilter != null);
-        
+
         assertEquals(cfilter.getName(), "MimetypeBatchFilter-text/html");
     }
 }

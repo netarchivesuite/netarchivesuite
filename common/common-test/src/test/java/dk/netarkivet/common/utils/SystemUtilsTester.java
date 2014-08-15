@@ -22,26 +22,23 @@
  */
 package dk.netarkivet.common.utils;
 
-import dk.netarkivet.testutils.CollectionAsserts;
-import junit.framework.Assert;
-import junit.framework.TestCase;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.List;
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.junit.Test;
+
+import dk.netarkivet.testutils.CollectionAsserts;
+
 
 /**
  * Unit tests for the class SystemUtils.
  */
-public class SystemUtilsTester extends TestCase {
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
+public class SystemUtilsTester {
+    @Test
     public void testGetLocalIP() {
         String ip = SystemUtils.getLocalIP();
         String[] parts = ip.split("\\.");
@@ -60,15 +57,17 @@ public class SystemUtilsTester extends TestCase {
 	 * 
 	 * @throws Exception
 	 */
+    @Test
     public void testGetLocalHostName() throws Exception {
         String result = SystemUtils.getLocalHostName();
         //assertFalse("Should not be an IPv4 address: " + result,
         //            Constants.IP_KEY_REGEXP.matcher(result).matches());
         //assertFalse("Should not be an IPv6 address: " + result,
         //            Constants.IPv6_KEY_REGEXP.matcher(result).matches());
-        Assert.assertTrue("hostname not empty string", result.length()>0);
+        assertTrue("hostname not empty string", result.length() > 0);
     }
 
+    @Test
     public void testGetCurrentClasspath() throws Exception {
         List<String> classpath = SystemUtils.getCurrentClasspath();
         String[] systemClassPath

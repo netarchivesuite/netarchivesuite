@@ -22,6 +22,10 @@
  */
 package dk.netarkivet.wayback.batch;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,20 +33,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import junit.framework.TestCase;
 import org.archive.wayback.core.CaptureSearchResult;
 import org.archive.wayback.resourceindex.cdx.CDXLineToSearchResultAdapter;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.wayback.TestInfo;
-import dk.netarkivet.wayback.batch.DeduplicateToCDXAdapter;
-import dk.netarkivet.wayback.batch.DeduplicateToCDXAdapterInterface;
 
 /**
  * Unittest for the class DeduplicateToCDXAdapter.
  */
-public class DeduplicateToCDXAdapterTester extends TestCase {
+public class DeduplicateToCDXAdapterTester {
 
     public static final String DEDUP_CRAWL_LOG = "dedup_crawl_log.txt";
     public static final String DEDUP_CRAWL_STRING = "2009-05-25T13:00:00.992Z   200       " 
@@ -56,7 +60,7 @@ public class DeduplicateToCDXAdapterTester extends TestCase {
     + "sha1:KBHBHEUCX5CN7KB3P2ZVBHGCCIFJNIWH - le:IOException@ExtractorSWF,duplicate:"
     +"\"118657-119-20110428163750-00001-kb-prod-har-004.kb.dk.arc,69676377\",content-size:50842";
     
-    @Override
+    @Before
     public void setUp() {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR,
@@ -64,17 +68,19 @@ public class DeduplicateToCDXAdapterTester extends TestCase {
         //System.out.println(DEDUP_CRAWL_STRING);
     }
     
-    @Override
+    @After
     public void tearDown() {
 
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         FileUtils.remove(TestInfo.LOG_FILE);
     }
 
+    @Test
     public void testCtor() {
       new DeduplicateToCDXAdapter(); 
     }
 
+    @Test
     public void testAdaptLine() {            
         DeduplicateToCDXAdapterInterface adapter = new DeduplicateToCDXAdapter();
         String cdx_line = adapter.adaptLine(DEDUP_CRAWL_STRING);
@@ -92,6 +98,7 @@ public class DeduplicateToCDXAdapterTester extends TestCase {
         
     }
 
+    @Test
     public void testAdaptStream() throws IOException {
         InputStream is = new FileInputStream(new File(TestInfo.WORKING_DIR, DEDUP_CRAWL_LOG));
         OutputStream os = new ByteArrayOutputStream();
