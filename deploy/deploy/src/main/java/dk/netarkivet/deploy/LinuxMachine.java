@@ -641,7 +641,7 @@ public class LinuxMachine extends Machine {
                             + Constants.SEMICOLON);
                     //     JAVA
                     String securityManagement = "";
-                    if (app.getTotalName().contains("BitarchiveApplication")) {
+                    if (app.getTotalName().contains(ScriptConstants.BITARCHIVE_APPLICATION_NAME)) {
                         securityManagement = Constants.SPACE + Constants.DASH
                                         + ScriptConstants.OPTION_SECURITY_MANAGER
                                         + Constants.SPACE + Constants.DASH

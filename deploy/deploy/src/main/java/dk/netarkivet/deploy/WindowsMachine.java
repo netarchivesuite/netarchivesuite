@@ -832,7 +832,7 @@ public class WindowsMachine extends Machine {
                 vbsPrint.println(ScriptConstants.VB_CREATE_SHELL_OBJ);
                 // Set oExec = WshShell.exec( "JAVA" )
                 String securityManagement = "";
-                if (app.getTotalName().contains("BitarchiveApplication")) {
+                if (app.getTotalName().contains(ScriptConstants.BITARCHIVE_APPLICATION_NAME)) {
                     securityManagement = Constants.SPACE + Constants.DASH
                             + ScriptConstants.OPTION_SECURITY_MANAGER
                             + Constants.SPACE + Constants.DASH

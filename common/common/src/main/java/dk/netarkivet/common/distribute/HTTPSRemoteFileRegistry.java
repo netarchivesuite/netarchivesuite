@@ -116,7 +116,8 @@ public class HTTPSRemoteFileRegistry extends HTTPRemoteFileRegistry {
 
     /** Get the protocol used for this registry, that is 'https'.
      * @return "https", the protocol. */
-    @Override  protected String getProtocol() {
+    @Override
+    protected String getProtocol() {
         return PROTOCOL;
     }
 
@@ -125,7 +126,8 @@ public class HTTPSRemoteFileRegistry extends HTTPRemoteFileRegistry {
      * files, removes registered files on request, and gives 404 otherwise.
      * Connection to this web host only possible with the shared certificate.
      */
-    @Override protected void startServer() {
+    @Override
+    protected void startServer() {
         server = new Server();
 
         SslContextFactory sslContextFactory = new SslContextFactory();
@@ -166,7 +168,8 @@ public class HTTPSRemoteFileRegistry extends HTTPRemoteFileRegistry {
      * @throws IOException If unable to open connection to the URL
      * @throws IOFailure If the connection is not a secure connection
      */
-    @Override  protected URLConnection openConnection(URL url) throws IOException {
+    @Override
+    protected URLConnection openConnection(URL url) throws IOException {
         URLConnection connection = url.openConnection();
         if (!(connection instanceof HttpsURLConnection)) {
             throw new IOFailure("Not a secure URL to remote file: " + url);

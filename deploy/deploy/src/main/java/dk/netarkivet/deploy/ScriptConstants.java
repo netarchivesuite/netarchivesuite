@@ -326,6 +326,8 @@ public final class ScriptConstants {
     /** Name of the app called in the harvest database update script. */
     static final String HARVEST_DATABASE_UPDATE_APP =
             "dk.netarkivet.harvester.tools.HarvestdatabaseUpdateApplication";
+
+    static final String BITARCHIVE_APPLICATION_NAME = " BitarchiveApplication";
     
     // VB script
     /** Set WshShell= CreateObject(\"WScript.Shell\").*/
