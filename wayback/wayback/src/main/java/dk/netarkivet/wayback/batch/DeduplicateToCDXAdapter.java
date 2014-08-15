@@ -9,12 +9,12 @@
  * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 2.1 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Lesser Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Lesser Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
@@ -99,10 +99,10 @@ public class DeduplicateToCDXAdapter implements DeduplicateToCDXAdapterInterface
                 result.append(digest).append(" - ");
                 String duplicateRecord = crawlElements[11];
                 if (!duplicateRecord.startsWith(DUPLICATE_MATCHING_STRING)) {
-                    // Probably an Exception starting with "le:" is injected before the 
+                    // Probably an Exception starting with "le:" is injected before the
                     // DUPLICATE_MATCHING_STRING, Try splitting on duplicate:
                     String[] parts = duplicateRecord.split(DUPLICATE_MATCHING_STRING);
-                    if (parts.length == 2) { 
+                    if (parts.length == 2) {
                         String newDuplicateRecord = DUPLICATE_MATCHING_STRING + parts[1];
                         log.warn("Duplicate-record changed from '{}' to '{}'", duplicateRecord, newDuplicateRecord);
                         duplicateRecord = newDuplicateRecord;
@@ -149,7 +149,7 @@ public class DeduplicateToCDXAdapter implements DeduplicateToCDXAdapterInterface
                 }
             }
         } catch (IOException e) {
-            log.error("Exception reading crawl log; {}", e);
+            log.error("Exception reading crawl log;", e);
         }
     }
 }

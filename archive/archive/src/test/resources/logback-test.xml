@@ -26,6 +26,7 @@
 
     <logger name="com.mchange.v2.c3p0" level="INFO" />
     <logger name="com.mchange.v2.resourcepool" level="INFO" />
+    <logger name="com.mchange.v2.async" level="INFO" />
 
     <logger name="org.apache.jsp" level="INFO" />
     <logger name="org.mortbay.jetty.servlet.ServletHandler" level="WARN" />
