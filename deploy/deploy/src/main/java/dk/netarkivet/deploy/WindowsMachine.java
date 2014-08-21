@@ -25,6 +25,8 @@ package dk.netarkivet.deploy;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.dom4j.Element;
 
@@ -36,6 +38,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
  * This class only contains the operating system specific functions.
  */
 public class WindowsMachine extends Machine {
+
     /**
      * The constructor. 
      * Starts by initializing the parent abstract class, then sets the 
@@ -708,8 +711,7 @@ public class WindowsMachine extends Machine {
     protected void windowsStartBatScript(Application app, File directory) 
             throws IOFailure {
         File appStartScript = new File(directory, 
-                Constants.SCRIPT_NAME_LOCAL_START + app.getIdentification() 
-                + scriptExtension);
+                Constants.SCRIPT_NAME_LOCAL_START + app.getIdentification() + scriptExtension);
         try {
             // make print writer for writing to file
             PrintWriter appPrint = new PrintWriter(appStartScript, getTargetEncoding());
@@ -768,6 +770,46 @@ public class WindowsMachine extends Machine {
         }
     }
 
+    protected static final class windowsStartVbsScriptTpl {
+        protected static final String[] mainScript = {
+            "Set WshShell= CreateObject(\"WScript.Shell\")",
+            "WScript.Echo \"JAVA_HOME=\" & javahome",
+            "If javahome = \"\" Then",
+            "  java = \"java\"",
+            "Else",
+            "  java = javahome & \"\\bin\\java\"",
+            "End If",
+            "Set oExec = WshShell.exec(java & \" ${machineparameters} -classpath \"\"${classpath}\"\""
+                + " -Ddk.netarkivet.settings.file=\"\"${confdirpath}settings_${id}.xml\"\""
+                + "${jdklogger}${slf4jlogger}"
+                + " -Djava.security.manager -Djava.security.policy=\"\"${confdirpath}security.policy\"\""
+                + " ${appname}"
+                + "\")",
+            "Set fso= CreateObject(\"Scripting.FileSystemObject\")",
+            "Set f=fso.OpenTextFile(\".\\conf\\${killpsname}\",2,True)",
+            "f.WriteLine \"taskkill /F /PID \" & oExec.ProcessID",
+            "f.close",
+            "Set tf=fso.OpenTextFile(\".\\conf\\${tmprunpsname}\",8,True)",
+            "tf.WriteLine \"running process: \" & oExec.ProcessID",
+            "tf.close",
+            "'Create a new start-log for the application",
+            "CreateObject(\"Scripting.FileSystemObject\").OpenTextFile(\"${startlogname}\", 2, True).close",
+            "Do While oExec.Status = 0",
+            "  WScript.Sleep 1000",
+            "  Do While oExec.StdOut.AtEndOfStream <> True",
+            "    Set outFile = CreateObject(\"Scripting.FileSystemObject\").OpenTextFile(\"${startlogname}\", 8, True)",
+            "    outFile.WriteLine oExec.StdOut.ReadLine",
+            "    outFile.close",
+            "  Loop",
+            "Loop"
+        };
+        protected static final String jdkLogger =
+                " -Dorg.apache.commons.logging.Log=\"\"org.apache.commons.logging.impl.Jdk14Logger\"\""
+                    + " -Djava.util.logging.config.file=\"\"${confdirpath}log_${id}.prop\"\"";
+        protected static final String slf4jLogger =
+                " -Dlogback.configurationFile=\"\"${confdirpath}logback_${id}.xml\"\"";
+    }
+
     /**
      * This function creates the VBscript to start the application.
      * It calls a command for executing the java application, then 
@@ -809,158 +851,41 @@ public class WindowsMachine extends Machine {
      * @throws IOFailure If an error occurred during the creation of the 
      * windows vb script.
      */
-    protected void windowsStartVbsScript(Application app, File directory) 
-            throws IOFailure {
+    protected void windowsStartVbsScript(Application app, File directory) throws IOFailure {
         File appStartSupportScript = new File(directory,
                 Constants.SCRIPT_NAME_LOCAL_START + app.getIdentification() 
                 + Constants.EXTENSION_VBS_FILES);
         try {
             // make print writer for writing to file
-            PrintWriter vbsPrint = new PrintWriter(
-                    appStartSupportScript, getTargetEncoding());
+            PrintWriter vbsPrint = new PrintWriter(appStartSupportScript, getTargetEncoding());
             try {
                 // initiate variables
                 String id = app.getIdentification();
-                String killPsName = Constants.SCRIPT_KILL_PS + id 
-                        + scriptExtension;
-                String tmpRunPsName = Constants.FILE_TEMPORARY_RUN_WINDOWS_NAME
-                        + id;
-                String startLogName = Constants.SCRIPT_NAME_LOCAL_START
-                    + id + Constants.EXTENSION_LOG_FILES;
+                String killPsName = Constants.SCRIPT_KILL_PS + id  + scriptExtension;
+                String tmpRunPsName = Constants.FILE_TEMPORARY_RUN_WINDOWS_NAME + id;
+                String startLogName = Constants.SCRIPT_NAME_LOCAL_START + id + Constants.EXTENSION_LOG_FILES;
 
-                // Set WshShell = CreateObject("WScript.Shell")
-                vbsPrint.println(ScriptConstants.VB_CREATE_SHELL_OBJ);
-                // Set oExec = WshShell.exec( "JAVA" )
-                vbsPrint.println(
-                        ScriptConstants.VB_CREATE_EXECUTE
-                        + ScriptConstants.JAVA + Constants.SPACE 
-                        + app.getMachineParameters().writeJavaOptions()
-                        + Constants.SPACE + Constants.DASH
-                        + ScriptConstants.CLASSPATH + Constants.SPACE
-                        + Constants.QUOTE_MARK + Constants.QUOTE_MARK
-                        + osGetClassPath(app) + Constants.QUOTE_MARK
-                        + Constants.QUOTE_MARK + Constants.SPACE 
-                        + Constants.DASH + ScriptConstants.OPTION_SETTINGS_WIN
-                        + ScriptConstants.doubleBackslashes(getConfDirPath())
-                        + Constants.SETTINGS_PREFIX + id 
-                        + Constants.EXTENSION_XML_FILES + Constants.QUOTE_MARK
-                        + Constants.QUOTE_MARK
-
-						// TODO check to see if inherited inheriteJulPropFile is not null
-                        + Constants.SPACE 
-                        + Constants.DASH
-                        + ScriptConstants.OPTION_LOG_COMPLETE
-
-						// TODO check to see if inherited inheriteJulPropFile is not null
-                        + Constants.SPACE
-                        + Constants.DASH
-                        + ScriptConstants.OPTION_LOG_CONFIG_WIN
-                        + ScriptConstants.doubleBackslashes(getConfDirPath()) 
-                        + Constants.LOG_PREFIX
-                        + id 
-                        + Constants.EXTENSION_JUL_PROPERTY_FILES
-                        + Constants.QUOTE_MARK + Constants.QUOTE_MARK
-
-                        // TODO check to see if inheritedSlf4jConfigFile is not null
-                        + Constants.SPACE
-                        + Constants.DASH
-                        + ScriptConstants.OPTION_LOGBACK_CONFIG_WIN
-                        + ScriptConstants.doubleBackslashes(getConfDirPath()) 
-                        + Constants.LOGBACK_PREFIX
-                        + id 
-                        + Constants.EXTENSION_XML_FILES
-                        + Constants.QUOTE_MARK + Constants.QUOTE_MARK
-
-                        + Constants.SPACE + Constants.DASH
-                        + ScriptConstants.OPTION_SECURITY_MANAGER
-                        + Constants.SPACE + Constants.DASH
-                        + ScriptConstants.OPTION_SECURITY_POLICY_WIN
-                        + ScriptConstants.doubleBackslashes(getConfDirPath())
-                        + Constants.SECURITY_POLICY_FILE_NAME
-                        + Constants.QUOTE_MARK + Constants.QUOTE_MARK
-                        + Constants.SPACE + app.getTotalName() 
-                        + Constants.QUOTE_MARK + Constants.BRACKET_END);
-                // Set fso = CreateObject("Scripting.FileSystemObject")
-                vbsPrint.println(ScriptConstants.VB_CREATE_FSO);
-                // set f = fso.OpenTextFile(".\conf\kill_ps_app.bat", 2, True)
-                vbsPrint.println(ScriptConstants.VB_WRITE_F_PREFIX
-                        + killPsName + ScriptConstants.VB_WRITE_F_SURFIX);
-                // f.WriteLine "taskkill /F /PID " & oExec.ProcessID
-                vbsPrint.println(ScriptConstants.VB_WRITE_F_KILL);
-                // f.close
-                vbsPrint.println(ScriptConstants.VB_WRITE_F_CLOSE);
-                // set tf = fso.OpenTextFile(".\conf\run_app.txt", 2, True)
-                vbsPrint.println(ScriptConstants.VB_WRITE_TF_PREFIX
-                        + tmpRunPsName + ScriptConstants.VB_WRITE_TF_SURFIX);
-                // tf.WriteLine running
-                vbsPrint.println(ScriptConstants.VB_WRITE_TF_CONTENT);
-                // f.close
-                vbsPrint.println(ScriptConstants.VB_WRITE_TF_CLOSE);
-                
-                // 'Create a new start-log for the application
-                vbsPrint.println(ScriptConstants.VB_COMMENT_NEW_START_LOG);
-                // CreateObject("Scripting.FileSystemObject").OpenTextFile(
-                // "start_APP.log", 2, True).close
-                vbsPrint.println(ScriptConstants.VB_OPEN_WRITE_FILE_PREFIX
-                        + startLogName 
-                        + ScriptConstants.VB_OPEN_WRITE_FILE_SUFFIX_2
-                        + ScriptConstants.VB_CLOSE);
-                // Do While oExec.Status = 0
-                vbsPrint.println(ScriptConstants.VB_DO_WHILE_OEXEC_STATUS_0);
-                //   WScript.Sleep 1000
-                vbsPrint.println(ScriptConstants.MULTI_SPACE_2
-                        + ScriptConstants.VB_WSCRIPT_SLEEP_1000);
-                //   Do While oExec.StdOut.AtEndOfStream <> True
-                vbsPrint.println(ScriptConstants.MULTI_SPACE_2
-                        + ScriptConstants.VB_DO_WHILE
-                        + ScriptConstants.VB_OEXEC_STD_OUT
-                        + ScriptConstants.VB_AT_END_OF_STREAM_FALSE);
-                //     Set outFile = CreateObject("Scripting.FileSystemObject")
-                // .OpenTextFile("start_APP.log", 8, True)
-                vbsPrint.println(ScriptConstants.MULTI_SPACE_4
-                        + ScriptConstants.VB_SET_OUTFILE
-                        + ScriptConstants.VB_OPEN_WRITE_FILE_PREFIX
-                        + startLogName
-                        + ScriptConstants.VB_OPEN_WRITE_FILE_SUFFIX_8);
-                //     outFile.WriteLine oExec.StdOut.ReadLine
-                vbsPrint.println(ScriptConstants.MULTI_SPACE_4
-                        + ScriptConstants.VB_OUTFILE_WRITELINE
-                        + ScriptConstants.VB_OEXEC_STD_OUT
-                        + ScriptConstants.VB_READ_LINE);
-                //     outFile.close
-                vbsPrint.println(ScriptConstants.MULTI_SPACE_4
-                        + ScriptConstants.VB_OUTFILE_CLOSE);
-                //   Loop
-                vbsPrint.println(ScriptConstants.MULTI_SPACE_2
-                        + ScriptConstants.VB_LOOP);
-                // Removing the bit that writes to stderr
-                /*
-                //   Do While oExec.StdErr.AtEndOfStream <> True
-                vbsPrint.println(ScriptConstants.MULTI_SPACE_2
-                        + ScriptConstants.VB_DO_WHILE
-                        + ScriptConstants.VB_OEXEC_STD_ERR
-                        + ScriptConstants.VB_AT_END_OF_STREAM_FALSE);
-                //     Set outFile = CreateObject("Scripting.FileSystemObject")
-                // .OpenTextFile("start_APP.log", 8, True)
-                vbsPrint.println(ScriptConstants.MULTI_SPACE_4
-                        + ScriptConstants.VB_SET_OUTFILE
-                        + ScriptConstants.VB_OPEN_WRITE_FILE_PREFIX
-                        + startLogName 
-                        + ScriptConstants.VB_OPEN_WRITE_FILE_SUFFIX_8);
-                //     outFile.WriteLine oExec.StdErr.ReadLine
-                vbsPrint.println(ScriptConstants.MULTI_SPACE_4
-                        + ScriptConstants.VB_OUTFILE_WRITELINE
-                        + ScriptConstants.VB_OEXEC_STD_ERR
-                        + ScriptConstants.VB_READ_LINE);
-                //     outFile.close
-                vbsPrint.println(ScriptConstants.MULTI_SPACE_4 
-                        + ScriptConstants.VB_OUTFILE_CLOSE);
-                //   Loop
-                vbsPrint.println(ScriptConstants.MULTI_SPACE_2
-                        + ScriptConstants.VB_LOOP);
-                        */
-                // Loop
-                vbsPrint.println(ScriptConstants.VB_LOOP);
+                Map<String, String> env = new HashMap<String, String>();
+                env.put("machineparameters", app.getMachineParameters().writeJavaOptions());
+                env.put("classpath", osGetClassPath(app));
+                env.put("confdirpath", ScriptConstants.doubleBackslashes(getConfDirPath()));
+                env.put("id", id);
+                env.put("appname", app.getTotalName());
+                env.put("killpsname", killPsName);
+                env.put("tmprunpsname", tmpRunPsName);
+                env.put("startlogname", startLogName);
+                if (inheriteJulPropFile != null) {
+                    env.put("jdklogger", Template.untemplate(windowsStartVbsScriptTpl.jdkLogger, env, true));
+                } else {
+                    env.put("jdklogger", "");
+                }
+                if (inheritedSlf4jConfigFile != null) {
+                    env.put("slf4jlogger", Template.untemplate(windowsStartVbsScriptTpl.slf4jLogger, env, true));
+                } else {
+                    env.put("slf4jlogger", "");
+                }
+                String str = Template.untemplate(windowsStartVbsScriptTpl.mainScript, env, true, "\r\n");
+                vbsPrint.print(str);
             } finally {
                 // close file
                 vbsPrint.close();
@@ -1613,4 +1538,5 @@ public class WindowsMachine extends Machine {
         System.err.println("An Harvest Database is not supported on a windows "
                 + "machine. Please fix your deploy configuration.");
     }
+
 }

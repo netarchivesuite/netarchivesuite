@@ -30,6 +30,7 @@ import dk.netarkivet.common.utils.StringUtils;
  * scripts and other files for the different machines and applications. 
  */
 public final class ScriptConstants {
+
     /**
      * Private constructor to avoid instantiation of this class.
      */
@@ -735,6 +736,6 @@ public final class ScriptConstants {
         + ""
         + NEWLINE;
    
-    static final String ECHO_DELETING_OLD_LIBRARIES 
-        = "echo removing old libraries if they exist.";
+    static final String ECHO_DELETING_OLD_LIBRARIES = "echo removing old libraries if they exist.";
+
 }

@@ -426,22 +426,19 @@ public final class Constants {
     static final String[] BUILD_SETTING_FILES = {
         "dk/netarkivet/archive/settings.xml",
         "dk/netarkivet/common/settings.xml",
- 	"dk/netarkivet/common/distribute/arcrepository/"
-                + "LocalArcRepositoryClientSettings.xml",
+        "dk/netarkivet/common/distribute/arcrepository/LocalArcRepositoryClientSettings.xml",
         "dk/netarkivet/harvester/settings.xml",
         "dk/netarkivet/monitor/settings.xml",
         "dk/netarkivet/wayback/settings.xml",
-        "dk/netarkivet/archive/arcrepository/distribute/"
-            + "JMSArcRepositoryClientSettings.xml",
-        "dk/netarkivet/harvester/indexserver/distribute/"
-            + "IndexRequestClientSettings.xml",
+        "dk/netarkivet/archive/arcrepository/distribute/JMSArcRepositoryClientSettings.xml",
+        "dk/netarkivet/harvester/indexserver/distribute/IndexRequestClientSettings.xml",
         "dk/netarkivet/common/utils/EMailNotificationsSettings.xml",
         "dk/netarkivet/common/utils/FilebasedFreeSpaceProviderSettings.xml",
         "dk/netarkivet/common/distribute/FTPRemoteFileSettings.xml",
         "dk/netarkivet/common/distribute/HTTPRemoteFileSettings.xml",
         "dk/netarkivet/common/distribute/HTTPSRemoteFileSettings.xml",
         "dk/netarkivet/common/distribute/JMSConnectionSunMQSettings.xml"
-        };
+    };
     /** The path to the complete settings file.*/
     public static final String BUILD_COMPLETE_SETTINGS_FILE_PATH = 
         "dk/netarkivet/deploy/complete_settings.xml";
@@ -625,7 +622,7 @@ public final class Constants {
     public static final String MSG_WARN_ZIPFILE_ALREADY_EXISTS = 
         "Warning: A NetarchiveSuite file already exists. It will be overridden. ";
     
-	/**
+    /**
      * Private constructor to avoid instantiation.
      */
     private Constants() {}
