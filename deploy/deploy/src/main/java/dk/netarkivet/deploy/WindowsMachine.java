@@ -831,6 +831,15 @@ public class WindowsMachine extends Machine {
                 // Set WshShell = CreateObject("WScript.Shell")
                 vbsPrint.println(ScriptConstants.VB_CREATE_SHELL_OBJ);
                 // Set oExec = WshShell.exec( "JAVA" )
+                String securityManagement = "";
+                if (app.getTotalName().contains(ScriptConstants.BITARCHIVE_APPLICATION_NAME)) {
+                    securityManagement = Constants.SPACE + Constants.DASH
+                            + ScriptConstants.OPTION_SECURITY_MANAGER
+                            + Constants.SPACE + Constants.DASH
+                            + ScriptConstants.OPTION_SECURITY_POLICY_WIN
+                            + ScriptConstants.doubleBackslashes(getConfDirPath())
+                            + Constants.SECURITY_POLICY_FILE_NAME;
+                }
                 vbsPrint.println(
                         ScriptConstants.VB_CREATE_EXECUTE
                         + ScriptConstants.JAVA + Constants.SPACE 
@@ -871,12 +880,8 @@ public class WindowsMachine extends Machine {
                         + Constants.EXTENSION_XML_FILES
                         + Constants.QUOTE_MARK + Constants.QUOTE_MARK
 
-                        + Constants.SPACE + Constants.DASH
-                        + ScriptConstants.OPTION_SECURITY_MANAGER
-                        + Constants.SPACE + Constants.DASH
-                        + ScriptConstants.OPTION_SECURITY_POLICY_WIN
-                        + ScriptConstants.doubleBackslashes(getConfDirPath())
-                        + Constants.SECURITY_POLICY_FILE_NAME
+                        + securityManagement
+
                         + Constants.QUOTE_MARK + Constants.QUOTE_MARK
                         + Constants.SPACE + app.getTotalName() 
                         + Constants.QUOTE_MARK + Constants.BRACKET_END);

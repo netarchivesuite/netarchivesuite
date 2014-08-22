@@ -52,6 +52,7 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.IteratorUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.datamodel.dao.DAOProviderFactory;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue;
 import dk.netarkivet.harvester.scheduler.jobgen.DefaultJobGenerator;
@@ -1051,7 +1052,11 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         FullHarvest hd1 = new FullHarvest(
                 "foo", "bar", null, 2, Constants.DEFAULT_MAX_BYTES,
                 Constants.HERITRIX_MAXJOBRUNNINGTIME_INFINITY,
-                false);
+                false,
+                DAOProviderFactory.getHarvestDefinitionDAOProvider(),
+                DAOProviderFactory.getJobDAOProvider(),
+                DAOProviderFactory.getExtendedFieldDAOProvider(),
+                DAOProviderFactory.getDomainDAOProvider());
         hd1.setSubmissionDate(new Date());
         dao.create(hd1);
         FullHarvest hd1a = (FullHarvest) dao.read(hd1.getOid());
@@ -1294,10 +1299,6 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         
         ExtendedFieldValue efv1 = new ExtendedFieldValue(1L, (long)ExtendedFieldTypes.HARVESTDEFINITION, 1L, "foo");
         ExtendedFieldValue efv2 = new ExtendedFieldValue(2L, (long)ExtendedFieldTypes.HARVESTDEFINITION, 1L, "bar");
-        
-        harvestDef1.addExtendedFieldValues();
-        harvestDef2.addExtendedFieldValues();
-        
         assertTrue(harvestDef1.equals(harvestDef2));
         
         Vector<ExtendedFieldValue> efvlist1 = new Vector<ExtendedFieldValue>();
@@ -1321,7 +1322,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
     }
 
     private int generateJobs(HarvestDefinition hd) {
-    	DefaultJobGenerator jobGen = new DefaultJobGenerator();
+        DefaultJobGenerator jobGen = new DefaultJobGenerator();
         return jobGen.generateJobs(hd);
     }
 

@@ -25,6 +25,8 @@ package dk.netarkivet.harvester.datamodel;
 import java.util.Date;
 import java.util.Iterator;
 
+import javax.inject.Provider;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +34,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FilterIterator;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO;
 
 /**
  * This class contains the specific properties and operations of snapshot
@@ -57,9 +60,13 @@ public class FullHarvest extends HarvestDefinition {
     /** a boolean to indicate whether the deduplication index is ready. */
     private boolean indexReady;
 
+    private final Provider<HarvestDefinitionDAO> hdDaoProvider;
+    private final Provider<JobDAO> jobDaoProvider;
+    private final Provider<DomainDAO> domainDAOProvider;
+
     /**
      * Create new instance of FullHarvest configured according to the properties
-     * of the supplied DomainConfiguration.
+     * of the supplied DomainConfiguration. Should only be used by the HarvestFactory class.
      *
      * @param harvestDefName               the name of the harvest definition
      * @param comments                     comments
@@ -75,10 +82,12 @@ public class FullHarvest extends HarvestDefinition {
      *                                     for this harvest.               
      */
     public FullHarvest(String harvestDefName, String comments, Long previousHarvestDefinitionOid, long maxCountObjects,
-    		long maxBytes, long maxJobRunningTime, boolean isIndexReady) {
+    		long maxBytes, long maxJobRunningTime, boolean isIndexReady, Provider<HarvestDefinitionDAO> hdDaoProvider,
+            Provider<JobDAO> jobDaoProvider, Provider<ExtendedFieldDAO> extendedFieldDAOProvide,
+            Provider<DomainDAO> domainDAOProvider) {
+        super(extendedFieldDAOProvide);
         ArgumentNotValid.checkNotNullOrEmpty(harvestDefName, "harvestDefName");
         ArgumentNotValid.checkNotNull(comments, "comments");
-
         this.previousHarvestDefinitionOid = previousHarvestDefinitionOid;
         this.harvestDefName = harvestDefName;
         this.comments = comments;
@@ -87,7 +96,9 @@ public class FullHarvest extends HarvestDefinition {
         this.maxBytes = maxBytes;
         this.maxJobRunningTime = maxJobRunningTime;
         this.indexReady = isIndexReady;
-        this.addExtendedFieldValues();
+        this.hdDaoProvider = hdDaoProvider;
+        this.jobDaoProvider = jobDaoProvider;
+        this.domainDAOProvider = domainDAOProvider;
     }
 
     /**

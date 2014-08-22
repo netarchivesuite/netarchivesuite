@@ -48,6 +48,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.I18n;
+import dk.netarkivet.harvester.datamodel.dao.DAOProviderFactory;
 import dk.netarkivet.harvester.webinterface.EventHarvestUtil;
 
 /**
@@ -85,8 +86,8 @@ public class PartialHarvest extends HarvestDefinition {
      * @param audience             The intended audience for this harvest (could be null)
      */
     public PartialHarvest(List<DomainConfiguration> domainConfigurations, Schedule schedule, String harvestDefName,
-    		String comments, String audience) {
-
+            String comments, String audience) {
+        super(DAOProviderFactory.getExtendedFieldDAOProvider());
         ArgumentNotValid.checkNotNull(schedule, "schedule");
         ScheduleDAO.getInstance().read(schedule.getName());
 
@@ -100,8 +101,7 @@ public class PartialHarvest extends HarvestDefinition {
         this.harvestDefName = harvestDefName;
         this.comments = comments;
         this.nextDate = schedule.getFirstEvent(new Date());
-        this.audience = audience; 
-        this.addExtendedFieldValues();
+        this.audience = audience;
     }
     
 

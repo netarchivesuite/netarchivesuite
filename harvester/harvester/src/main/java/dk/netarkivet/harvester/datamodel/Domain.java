@@ -47,6 +47,7 @@ import dk.netarkivet.common.utils.Named;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.datamodel.dao.DAOProviderFactory;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendableEntity;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue;
@@ -141,6 +142,7 @@ public class Domain extends ExtendableEntity implements Named {
      *                          domains
      */
     protected Domain(String theDomainName) {
+        super(DAOProviderFactory.getExtendedFieldDAOProvider());
         ArgumentNotValid.checkNotNullOrEmpty(theDomainName, "theDomainName");
         if (!DomainUtils.isValidDomainName(theDomainName)) {
             throw new ArgumentNotValid("Domain '" + theDomainName + "' does not match the regexp "
@@ -190,11 +192,8 @@ public class Domain extends ExtendableEntity implements Named {
         DomainConfiguration cfg = new DomainConfiguration(domainDefaultConfig,
                 myDomain, seedlists, new ArrayList<Password>());
         cfg.setOrderXmlName(Settings.get(HarvesterSettings.DOMAIN_DEFAULT_ORDERXML));
-
         cfg.setMaxRequestRate(Integer.parseInt(Settings.get(HarvesterSettings.DOMAIN_CONFIG_MAXRATE)));
-
         myDomain.addConfiguration(cfg);
-        myDomain.addExtendedFieldValues();
 
         return myDomain;
     }

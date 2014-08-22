@@ -43,6 +43,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import ch.qos.logback.classic.Level;
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
 import dk.netarkivet.common.CommonSettings;
@@ -56,7 +57,6 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.ClassAsserts;
 import dk.netarkivet.testutils.FileAsserts;
-import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.LogbackRecorder;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
@@ -405,6 +405,7 @@ public class AdminDataTester {
      */
     @Test
     public void testReadCurrentVersion() throws Exception {
+    	LogbackRecorder lr = LogbackRecorder.startRecorder();
         File datafile = new File(Settings.get(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN), "admin.data");
         // Note: the file 'datafile' does not exist at this point in time.
 
@@ -424,12 +425,15 @@ public class AdminDataTester {
         //System.out.println(datafile.getAbsolutePath() + ":" +
         //        FileUtils.readFile(datafile));
 
+        lr.reset();
+
         ad = UpdateableAdminData.getUpdateableInstance();
         assertTrue("New entry should turn up", ad.hasEntry(filename1));
         assertEquals("New entry should have stated checksum", ad.getCheckSum(filename1), checksum1);
         // Can't assume log file exists, but don't want to check it.  So just
         // ensure it's there if it wasn't already.
-        FileAsserts.assertFileNotContains("Should have no warning in log", TestInfo.LOG_DIR, "WARNING");
+        //FileAsserts.assertFileNotContains("Should have no warning in log", TestInfo.LOG_DIR, "WARNING");
+        lr.assertLogNotContainsLevel("Should have no warning in log", Level.WARN);
         final String ba1 = "ba1";
         //close to force new instance
         ad.close();
@@ -454,11 +458,13 @@ public class AdminDataTester {
         assertEquals("Changed entry should have right state",
                 ReplicaStoreState.UPLOAD_COMPLETED,
                 ad.getState(filename1, ba1));
-        LogUtils.flushLogs(UpdateableAdminData.class.getName());
+        //LogUtils.flushLogs(UpdateableAdminData.class.getName());
+        /*
         FileAsserts.assertFileNotContains("Should have no warning in log",
                 TestInfo.LOG_DIR, "WARNING");
+                */
+        lr.assertLogNotContainsLevel("Should have no warning in log", Level.WARN);
         String filename2 = "barfu";
-
 
         String checksum2 = "yyy";
         addLineToFile(datafile,
@@ -494,8 +500,9 @@ public class AdminDataTester {
         //close to force new instance
         ad.close();
         ad = UpdateableAdminData.getUpdateableInstance();
-        FileAsserts.assertFileNumberOfLines("There should be two entries "
-                + "and one version number in the file", datafile, 2 + 1);
+        FileAsserts.assertFileNumberOfLines("There should be two entries and one version number in the file",
+        		datafile, 2 + 1);
+        lr.stopRecorder();
     }
 
     @Test

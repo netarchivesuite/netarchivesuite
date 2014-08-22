@@ -316,12 +316,12 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
             // Expected
         }
 
+        // Check that no rollback errors were logged
         lr.assertLogNotContains("Log contains file after storing.", "rollback");
 
         // Check that you cannot update a non-existing HD.
-        HarvestDefinition newhd = new PartialHarvest(TestInfo
-                .getAllDefaultConfigurations(), TestInfo.getDefaultSchedule(),
-                                                "notfound", "", "Everybody");
+        HarvestDefinition newhd = new PartialHarvest(TestInfo.getAllDefaultConfigurations(),
+                TestInfo.getDefaultSchedule(), "notfound", "", "Everybody");
         try {
             dao.update(newhd);
             fail("Should not allow update of non-existing HD");

@@ -15,8 +15,8 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <slf4j.version>1.7.7</slf4j.version>
     <!-- maven-java-formatter-plugin -->
-    <maven.compiler.source>1.6</maven.compiler.source>
-    <maven.compiler.target>1.6</maven.compiler.target>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
   </properties>
 
   <modules>
@@ -226,7 +226,7 @@
           </execution>
         </executions>
       </plugin>
-
+<!-- Javadoc fails misserably with JDK8.
       <plugin> 
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId> 
@@ -241,7 +241,7 @@
           </execution> 
         </executions> 
       </plugin>
-
+-->
       <plugin> 
         <!-- explicitly define maven-deploy-plugin after other to force exec order -->
         <groupId>org.apache.maven.plugins</groupId>

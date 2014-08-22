@@ -72,7 +72,7 @@ public class HTTPSRemoteFileTester {
 
     @Test
     public void testCopyto() throws Exception {
-        // Copying twice with multiple
+        //Copying twice with multiple
         HTTPSRemoteFile rf = new ForceRemoteHTTPSRemoteFile(TestInfo.FILE1, false, false, true);
         File tempFile = File.createTempFile("TEST", "COPYTO", TestInfo.WORKING_DIR);
         rf.copyTo(tempFile);
@@ -140,9 +140,12 @@ public class HTTPSRemoteFileTester {
     @Test
     public void testGetChecksum() throws Exception {
         HTTPSRemoteFile rf = new ForceRemoteHTTPSRemoteFile(TestInfo.FILE1, false, false, true);
-        assertEquals("Should get null (no checksum requested)", null, rf.getChecksum());
-        rf = new HTTPSRemoteFileTester.ForceRemoteHTTPSRemoteFile(TestInfo.FILE1, true, false, true);
-        assertEquals("Should get right checksum", ChecksumCalculator.calculateMd5(TestInfo.FILE1), rf.getChecksum());
+        assertEquals("Should get null (no checksum requested)",
+                     null, rf.getChecksum());
+        rf = new HTTPSRemoteFileTester.ForceRemoteHTTPSRemoteFile(TestInfo.FILE1,
+                                           true, false, true);
+        assertEquals("Should get right checksum",
+                     ChecksumCalculator.calculateMd5(TestInfo.FILE1), rf.getChecksum());
     }
 
     private class ForceRemoteHTTPSRemoteFile extends HTTPSRemoteFile {

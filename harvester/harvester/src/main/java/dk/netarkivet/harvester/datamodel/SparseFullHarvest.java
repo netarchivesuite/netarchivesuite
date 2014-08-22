@@ -23,6 +23,7 @@
 package dk.netarkivet.harvester.datamodel;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.harvester.datamodel.dao.DAOProviderFactory;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendableEntity;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
 
@@ -80,9 +81,10 @@ public class SparseFullHarvest extends ExtendableEntity {
      * @throws ArgumentNotValid if oid, name or comments is null, or name is
      *                          empty.
      */
-    public SparseFullHarvest(Long oid, String harvestDefName, String comments, int numEvents, boolean active,
-    		long edition, long maxCountObjects, long maxBytes, long maxJobRunningTime, Long previousFullHarvest,
-    		Long channelId) {
+    public SparseFullHarvest(Long oid, String harvestDefName, String comments, int numEvents, boolean active, 
+            long edition, long maxCountObjects, long maxBytes, long maxJobRunningTime, Long previousFullHarvest,
+            Long channelId) {
+        super(DAOProviderFactory.getExtendedFieldDAOProvider());
         ArgumentNotValid.checkNotNull(oid, "oid");
         ArgumentNotValid.checkNotNullOrEmpty(harvestDefName, "harvestDefName");
         ArgumentNotValid.checkNotNull(comments, "comments");

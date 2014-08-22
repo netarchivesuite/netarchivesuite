@@ -36,7 +36,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Date;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,7 +81,7 @@ public class DatabaseTestUtils {
         // FIXME: change for h2
         dburi = "jdbc:derby:" + dbfile;
 
-        log.debug("Populating {} from '{}' at {}", dbfile, resourcePath, new Date());
+        long startTime = System.currentTimeMillis();
 
         Connection c = DriverManager.getConnection(dburi + ";create=true");
         c.setAutoCommit(false);  // load faster.
@@ -90,8 +89,7 @@ public class DatabaseTestUtils {
         // locate create script first, next to resource
         File createFile = new File(new File(resourcePath).getParentFile(), "create.sql");
         
-        applyStatementsInInputStream(c,
-                checkNotNull(new FileInputStream(createFile), "create.sql"));
+        applyStatementsInInputStream(c, checkNotNull(new FileInputStream(createFile), "create.sql"));
 
         // then populate it.
         FileInputStream is = checkNotNull(new FileInputStream(resourcePath), resourcePath);
@@ -99,7 +97,7 @@ public class DatabaseTestUtils {
 
         c.commit();
         
-        log.debug("Populated... at {}", new Date());
+        log.debug("Populated {} in {}(ms)", dbfile, (System.currentTimeMillis() - startTime));
 
         c.close();
 

@@ -23,12 +23,13 @@
 
 package dk.netarkivet.viewerproxy.distribute;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.jsp.JspWriter;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Locale;
 import java.util.Set;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.jsp.JspWriter;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -104,16 +105,13 @@ public class HTTPControllerClient implements Controller {
      * @param command One of the three parameterless commands START_COMMAND,
      * @param useReturnURL Whether to append the returnURL parameter
      */
-    private void redirectForSimpleCommand(
-            String command, boolean useReturnURL) {
+    protected void redirectForSimpleCommand(String command, boolean useReturnURL) {
         try {
             String url = "http://" + CommandResolver.VIEWERPROXY_COMMAND_NAME
                     + command;
             if (useReturnURL) {
-                ArgumentNotValid.checkNotNullOrEmpty(returnURL,
-                        "String returnURL");
-                url += '?' + HTTPControllerServer.RETURN_URL_PARAMETER + '='
-                        + HTMLUtils.encode(returnURL);
+                ArgumentNotValid.checkNotNullOrEmpty(returnURL, "String returnURL");
+                url += '?' + HTTPControllerServer.RETURN_URL_PARAMETER + '=' + HTMLUtils.encode(returnURL);
             }
             response.sendRedirect(url);
         } catch (IOException e) {

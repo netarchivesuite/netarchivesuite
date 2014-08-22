@@ -59,7 +59,10 @@ harvestName (Constants.HARVEST_SNAPSHOT_PARAM):
                  dk.netarkivet.harvester.webinterface.Constants, 
                  dk.netarkivet.harvester.webinterface.SnapshotHarvestDefinition"
          pageEncoding="UTF-8"
-%><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
+%>
+<%@ page import="javax.inject.Provider" %>
+<%@ page import="dk.netarkivet.harvester.datamodel.JobDAO" %>
+<%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
 /><fmt:setBundle scope="page" basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/><%!
     private static final I18n I18N
@@ -67,8 +70,22 @@ harvestName (Constants.HARVEST_SNAPSHOT_PARAM):
 %><%
     HTMLUtils.setUTF8(request);
 
+    Provider<HarvestDefinitionDAO> hdDaoProvider = new Provider<HarvestDefinitionDAO>() {
+        @Override public HarvestDefinitionDAO get() {
+            return HarvestDefinitionDAO.getInstance();
+        }
+    };
+
+    Provider<JobDAO> jobDaoProvider = new Provider<JobDAO>() {
+        @Override public JobDAO get() {
+            return JobDAO.getInstance();
+        }
+    };
+
     try {
-        SnapshotHarvestDefinition.processRequest(pageContext, I18N);
+        SnapshotHarvestDefinition snapshotHarvestDefinition = SnapshotHarvestDefinition.
+                createSnapshotHarvestDefinitionWithDefaultDAOs();
+        snapshotHarvestDefinition.processRequest(pageContext, I18N);
     } catch (ForwardedToErrorPage e) {
         return;
     }
@@ -82,9 +99,8 @@ harvestName (Constants.HARVEST_SNAPSHOT_PARAM):
     // overwrite with existing harvestdefinition values
     String harvestName = request.getParameter(Constants.HARVEST_PARAM);
     SparseFullHarvest hd = null;
-    HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
     if (harvestName != null) {
-        hd = hddao.getSparseFullHarvest(harvestName);
+        hd = hdDaoProvider.get().getSparseFullHarvest(harvestName);
         if (hd == null) {
             HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
                     "errormsg;harvest.0.does.not.exist", harvestName);
@@ -208,7 +224,7 @@ harvestName (Constants.HARVEST_SNAPSHOT_PARAM):
         <%
             int rowcount = 0;
             for (SparseFullHarvest oldHarvest
-                    : hddao.getAllSparseFullHarvestDefinitions()) {
+                    : hdDaoProvider.get().getAllSparseFullHarvestDefinitions()) {
                 if (oldHarvest.getName().equals(harvestName)) {
                     continue;
                 }
