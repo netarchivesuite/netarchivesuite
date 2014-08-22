@@ -23,12 +23,22 @@
 
 package dk.netarkivet.harvester.webinterface;
 
-import javax.servlet.jsp.PageContext;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.servlet.jsp.PageContext;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.harvester.datamodel.DailyFrequency;
@@ -44,15 +54,13 @@ import dk.netarkivet.harvester.datamodel.WeeklyFrequency;
 /**
  * Unit-test for class ScheduleDefinition.
  */
+@Ignore("binary derby database not converted to scripts yet")
 public class ScheduleDefinitionTester extends HarvesterWebinterfaceTestCase {
 
     private static final String DATE_FORMAT = "dd/M yyyy HH:mm";
     private static ScheduleDAO sdao = null;
 
-    public ScheduleDefinitionTester(String s) {
-        super(s);
-    }
-
+    @Before
     public void setUp() throws Exception {
         super.setUp();
         SimpleDateFormat format = new SimpleDateFormat(DATE_FORMAT);
@@ -63,6 +71,7 @@ public class ScheduleDefinitionTester extends HarvesterWebinterfaceTestCase {
         sdao.create(schedule1);
     }
 
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
     }
@@ -71,6 +80,7 @@ public class ScheduleDefinitionTester extends HarvesterWebinterfaceTestCase {
      * Test that a schedule already in the dao can be updated.
      * @throws ParseException
      */
+    @Test
     public void testProcessRequestUpdateSchedule() throws ParseException {
         Long old_edition = ScheduleDAO.getInstance().read("schedule1").getEdition();
         Map<String, String[]> parameterMap = new HashMap<String, String[]>();
@@ -115,6 +125,7 @@ public class ScheduleDefinitionTester extends HarvesterWebinterfaceTestCase {
      * Test creation of a new hourly schedule running as soon as possible
      * and forever at 15 minutes past the hour
      */
+    @Test
     public void testProcessRequestNewScheduleHourly() {
         Map<String, String[]> parameterMap = new HashMap<String, String[]>();
 
@@ -156,6 +167,7 @@ public class ScheduleDefinitionTester extends HarvesterWebinterfaceTestCase {
      * beginning at a particular time, and continuing forever.
      * @throws ParseException
      */
+    @Test
     public void testProcessRequestNewDailySchedule() throws ParseException {
         String startDateString = "12/01 2007 16:16";
         Date startDate = (new SimpleDateFormat(DATE_FORMAT).parse(startDateString));
@@ -203,6 +215,7 @@ public class ScheduleDefinitionTester extends HarvesterWebinterfaceTestCase {
      * as possible, ending on a specific date.
      * @throws ParseException
      */
+    @Test
     public void testProcessRequestNewWeeklySchedule() throws ParseException {
         String endDateString = "12/01 2007 16:16";
         Date endDate = (new SimpleDateFormat(DATE_FORMAT).parse(endDateString));
@@ -246,6 +259,7 @@ public class ScheduleDefinitionTester extends HarvesterWebinterfaceTestCase {
      * harvests.
      * @throws ParseException
      */
+    @Test
     public void testProcessRequestNewMonthlySchedule() throws ParseException {
         Map<String, String[]> parameterMap = new HashMap<String, String[]>();   
         parameterMap.put(ScheduleDefinition.NAME_PARAMETER, 

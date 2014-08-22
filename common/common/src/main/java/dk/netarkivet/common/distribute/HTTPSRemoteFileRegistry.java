@@ -38,8 +38,13 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManagerFactory;
 
 import org.apache.commons.io.IOUtils;
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.security.SslSocketConnector;
+import org.eclipse.jetty.server.HttpConfiguration;
+import org.eclipse.jetty.server.HttpConnectionFactory;
+import org.eclipse.jetty.server.SecureRequestCustomizer;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.SslConnectionFactory;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.Settings;
@@ -69,8 +74,6 @@ public class HTTPSRemoteFileRegistry extends HTTPRemoteFileRegistry {
         }
     };
 
-    // FIXME So only one private key for all connections?
-
     /** The path to the keystore containing the certificate used for SSL in HTTPS connections. */
     private static final String KEYSTORE_PATH = Settings.get(HTTPSRemoteFile.HTTPSREMOTEFILE_KEYSTORE_FILE);
     /** The keystore password. */
@@ -83,9 +86,8 @@ public class HTTPSRemoteFileRegistry extends HTTPRemoteFileRegistry {
     private final SSLContext sslContext;
 
     // FIXME I think this is what they call a constructor...?!
-    //This all initialises the ssl context to use the key in the keystore
-    //above.
-    {
+    //This all initialises the ssl context to use the key in the keystore above.
+    private HTTPSRemoteFileRegistry () {
         FileInputStream keyStoreInputStream = null;    
         try {
             keyStoreInputStream = new FileInputStream(KEYSTORE_PATH); 
@@ -96,12 +98,9 @@ public class HTTPSRemoteFileRegistry extends HTTPRemoteFileRegistry {
             TrustManagerFactory tmf = TrustManagerFactory.getInstance(SUN_X509_CERTIFICATE_ALGORITHM);
             tmf.init(store);
             sslContext = SSLContext.getInstance(SSL_PROTOCOL);
-            sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(),
-            		SecureRandom.getInstance(SHA1_PRNG_RANDOM_ALGORITHM));
-        } catch (GeneralSecurityException e) {
-            throw new IOFailure("Unable to create secure environment for" + " keystore '" + KEYSTORE_PATH + "'", e);
-        } catch (IOException e) {
-            throw new IOFailure("Unable to create secure environment for" + " keystore '" + KEYSTORE_PATH + "'", e);
+            sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), SecureRandom.getInstance(SHA1_PRNG_RANDOM_ALGORITHM));
+        } catch (GeneralSecurityException|IOException e) {
+            throw new IOFailure("Unable to create secure environment for keystore '" + KEYSTORE_PATH + "'", e);
         } finally {
             IOUtils.closeQuietly(keyStoreInputStream);
         }
@@ -123,6 +122,7 @@ public class HTTPSRemoteFileRegistry extends HTTPRemoteFileRegistry {
 
     /** Get the protocol used for this registry, that is 'https'.
      * @return "https", the protocol. */
+    @Override
     protected String getProtocol() {
         return PROTOCOL;
     }
@@ -132,22 +132,32 @@ public class HTTPSRemoteFileRegistry extends HTTPRemoteFileRegistry {
      * files, removes registered files on request, and gives 404 otherwise.
      * Connection to this web host only possible with the shared certificate.
      */
+    @Override
     protected void startServer() {
         server = new Server();
 
-        //This sets up a secure connector
-        SslSocketConnector connector = new SslSocketConnector();
-        connector.setKeystore(KEYSTORE_PATH);
-        connector.setPassword(KEYSTORE_PASSWORD);
-        connector.setKeyPassword(KEY_PASSWORD);
-        connector.setTruststore(KEYSTORE_PATH);
-        connector.setTrustPassword(KEYSTORE_PASSWORD);
-        connector.setNeedClientAuth(true);
-        connector.setPort(port);
+        SslContextFactory sslContextFactory = new SslContextFactory();
+        sslContextFactory.setKeyStorePath(KEYSTORE_PATH);
+        sslContextFactory.setKeyStorePassword(KEYSTORE_PASSWORD);
+        sslContextFactory.setKeyManagerPassword(KEY_PASSWORD);
+        sslContextFactory.setTrustStorePath(KEYSTORE_PATH);
+        sslContextFactory.setTrustStorePassword(KEYSTORE_PASSWORD);
+        sslContextFactory.setNeedClientAuth(true);
 
-        //This initialises the server.        
-        server.addConnector(connector);
-        server.addHandler(new HTTPRemoteFileRegistryHandler());
+        HttpConfiguration http_config = new HttpConfiguration();
+        http_config.setSecureScheme("https");
+        http_config.setSecurePort(port);
+
+        HttpConfiguration https_config = new HttpConfiguration(http_config);
+        https_config.addCustomizer(new SecureRequestCustomizer());
+
+        ServerConnector sslConnector = new ServerConnector(server,
+                new SslConnectionFactory(sslContextFactory,"http/1.1"),
+                new HttpConnectionFactory(https_config));
+        sslConnector.setPort(port);
+
+        server.addConnector(sslConnector);
+        server.setHandler(new HTTPRemoteFileRegistryHandler());
         try {
             server.start();
         } catch (Exception e) {
@@ -164,6 +174,7 @@ public class HTTPSRemoteFileRegistry extends HTTPRemoteFileRegistry {
      * @throws IOException If unable to open connection to the URL
      * @throws IOFailure If the connection is not a secure connection
      */
+    @Override
     protected URLConnection openConnection(URL url) throws IOException {
         URLConnection connection = url.openConnection();
         if (!(connection instanceof HttpsURLConnection)) {

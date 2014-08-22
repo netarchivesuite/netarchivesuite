@@ -22,10 +22,16 @@
  */
 package dk.netarkivet.archive.bitarchive;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.io.IOException;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
@@ -35,19 +41,19 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
  * Checking if directories for the bitarchive will be given back in the right order
  */
 
-public class BitarchiveAdminTesterONB extends TestCase {
+// FIXME: Move to ONB specific test area.
+@Ignore("Only works for ONB")
+public class BitarchiveAdminTesterONB {
     private BitarchiveAdmin ad;
     private static final String ARC_FILE_NAME = "testfile.arc";
     ReloadSettings rs = new ReloadSettings();
 
-    public BitarchiveAdminTesterONB(String s) {
-        super(s);
-    }
-
+    @Before
     public void setUp() {
         rs.setUp();
     }
 
+    @After
     public void tearDown() {
         if (ad != null) {
             ad.close();
@@ -56,6 +62,7 @@ public class BitarchiveAdminTesterONB extends TestCase {
     }
 
 
+    @Test
     public void testGetFirstBitarchiveDirectory01() throws IOException {
         final String[] TESTDIRS = {
             	"/mnt/brz/brz_datasrc/wa001"
@@ -68,6 +75,7 @@ public class BitarchiveAdminTesterONB extends TestCase {
     	assertEquals("wa001", path.getParentFile().getParentFile().getName());
     }
     
+    @Test
     public void testGetFirstBitarchiveDirectory02() throws IOException {
         final String[] TESTDIRS = {
             	"/mnt/brz/brz_datasrc/wa001",
@@ -81,6 +89,7 @@ public class BitarchiveAdminTesterONB extends TestCase {
     	assertEquals("wa001", path.getParentFile().getParentFile().getName());
     }
     
+    @Test
     public void testGetFirstBitarchiveDirectory03() throws IOException {
         final String[] TESTDIRS = {
             	"/mnt/brz/brz_datasrc/wa001",
@@ -95,6 +104,7 @@ public class BitarchiveAdminTesterONB extends TestCase {
     	assertEquals("wa001", path.getParentFile().getParentFile().getName());
     }
     
+    @Test
     public void testGetFirstBitarchiveDirectory04() throws IOException {
         final String[] TESTDIRS = {
             	"/mnt/brz/brz_datasrc/wa001",
@@ -110,6 +120,7 @@ public class BitarchiveAdminTesterONB extends TestCase {
     	assertEquals("wa001", path.getParentFile().getParentFile().getName());
     }    
 
+    @Test
     public void testGetFirstBitarchiveDirectory05() throws IOException {
         final String[] TESTDIRS = {
             	"/mnt/brz/brz_datasrc/wa001",
@@ -126,6 +137,7 @@ public class BitarchiveAdminTesterONB extends TestCase {
     	assertEquals("wa001", path.getParentFile().getParentFile().getName());
     }    
 
+    @Test
     public void testGetFirstBitarchiveDirectory06() throws IOException {
         final String[] TESTDIRS = {
             	"/mnt/brz/brz_datasrc/wa001",
@@ -143,6 +155,7 @@ public class BitarchiveAdminTesterONB extends TestCase {
     	assertEquals("wa001", path.getParentFile().getParentFile().getName());
     }    
 
+    @Test
     public void testGetFirstBitarchiveDirectory07() throws IOException {
         final String[] TESTDIRS = {
             	"/mnt/brz/brz_datasrc/wa001",
@@ -161,6 +174,7 @@ public class BitarchiveAdminTesterONB extends TestCase {
     	assertEquals("wa001", path.getParentFile().getParentFile().getName());
     }    
 
+    @Test
     public void testGetFirstBitarchiveDirectory08() throws IOException {
         final String[] TESTDIRS = {
             	"/mnt/brz/brz_datasrc/wa001",
@@ -180,7 +194,7 @@ public class BitarchiveAdminTesterONB extends TestCase {
     	assertEquals("wa001", path.getParentFile().getParentFile().getName());
     }    
 
-
+    @Test
     public void testGetFirstBitarchiveDirectory09() throws IOException {
         final String[] TESTDIRS = {
             	"/mnt/brz/brz_datasrc/wa002",
@@ -199,6 +213,7 @@ public class BitarchiveAdminTesterONB extends TestCase {
     	assertEquals("wa002", path.getParentFile().getParentFile().getName());
     }
     
+    @Test
     public void testGetFirstBitarchiveDirectory10() throws IOException {
         final String[] TESTDIRS = {
             	"/mnt/brz/brz_datasrc/wa003",
@@ -216,6 +231,7 @@ public class BitarchiveAdminTesterONB extends TestCase {
     	assertEquals("wa003", path.getParentFile().getParentFile().getName());
     }
     
+    @Test
     public void testGetFirstBitarchiveDirectory11() throws IOException {
         final String[] TESTDIRS = {
             	"/mnt/brz/brz_datasrc/wa004",
@@ -232,6 +248,7 @@ public class BitarchiveAdminTesterONB extends TestCase {
     	assertEquals("wa004", path.getParentFile().getParentFile().getName());
     }
     
+    @Test
     public void testGetFirstBitarchiveDirectory12() throws IOException {
         final String[] TESTDIRS = {
             	"/mnt/brz/brz_datasrc/wa005",
@@ -247,6 +264,7 @@ public class BitarchiveAdminTesterONB extends TestCase {
     	assertEquals("wa005", path.getParentFile().getParentFile().getName());
     }    
 
+    @Test
     public void testGetFirstBitarchiveDirectory13() throws IOException {
         final String[] TESTDIRS = {
             	"/mnt/brz/brz_datasrc/wa006",
@@ -261,6 +279,7 @@ public class BitarchiveAdminTesterONB extends TestCase {
     	assertEquals("wa006", path.getParentFile().getParentFile().getName());
     }    
 
+    @Test
     public void testGetFirstBitarchiveDirectory14() throws IOException {
         final String[] TESTDIRS = {
             	"/mnt/brz/brz_datasrc/wa007",
@@ -274,6 +293,7 @@ public class BitarchiveAdminTesterONB extends TestCase {
     	assertEquals("wa007", path.getParentFile().getParentFile().getName());
     }    
 
+    @Test
     public void testGetFirstBitarchiveDirectory15() throws IOException {
         final String[] TESTDIRS = {
             	"/mnt/brz/brz_datasrc/wa008"

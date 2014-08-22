@@ -281,6 +281,12 @@ public abstract class AbstractJMXHeritrixController implements HeritrixControlle
                 return string.endsWith(".jar");
             }
         });
+
+        // FIXME: Dirty hack around heretrix jars being elsewhere /tra
+        if (jars == null) {
+            jars = new File[0];
+        }
+
         // Reverse sort the file list in order to add in alphabetical order
         // before the basic jars.
         Arrays.sort(jars, new Comparator<File>() {

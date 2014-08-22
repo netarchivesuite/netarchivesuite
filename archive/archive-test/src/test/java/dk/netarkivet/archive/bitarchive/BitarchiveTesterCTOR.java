@@ -22,71 +22,59 @@
  */
 package dk.netarkivet.archive.bitarchive;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.logging.LogManager;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import junit.framework.TestCase;
+import java.io.File;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.testutils.LogbackRecorder;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
-
 
 /**
  * Unit test for Bitarchive API
  * The CTOR method is tested
  */
 @SuppressWarnings({ "unused"})
-public class BitarchiveTesterCTOR extends TestCase {
-    private static File PATH_TO_TEST =
-            new File("tests/dk/netarkivet/archive/bitarchive/data/ctor");
+public class BitarchiveTesterCTOR {
+
+	private static File PATH_TO_TEST = new File("tests/dk/netarkivet/archive/bitarchive/data/ctor");
     private static File NEW_ARCHIVE_DIR = new File(PATH_TO_TEST, "new");
-    private static File EXISTING_ARCHIVE_NAME =
-            new File(PATH_TO_TEST, "existing");
-    private static File NOACCESS_ARCHIVE_DIR =
-            new File(PATH_TO_TEST, "noaccess");
-    private static File WORKING_ARCHIVE_DIR =
-            new File(PATH_TO_TEST, "working");
+    private static File EXISTING_ARCHIVE_NAME = new File(PATH_TO_TEST, "existing");
+    private static File NOACCESS_ARCHIVE_DIR = new File(PATH_TO_TEST, "noaccess");
+    private static File WORKING_ARCHIVE_DIR = new File(PATH_TO_TEST, "working");
     ReloadSettings rs = new ReloadSettings();
 
     /**
      * The properties-file containg properties for logging in unit-tests
      */
-    private static final File TESTLOGPROP = new File("tests/dk/netarkivet/testlog.prop");
-    private static File LOG_FILE = new File("tests/testlogs", "netarkivtest.log");
     private static final String CREDENTIALS = "42";
 
-    public BitarchiveTesterCTOR(String sTestName) {
-        super(sTestName);
-    }
-
+    @Before
     public void setUp() {
         rs.setUp();
-        try {
-            // This forces an emptying of the log file.
-            FileInputStream fis = new FileInputStream(TESTLOGPROP);
-            LogManager.getLogManager().readConfiguration(fis);
-            fis.close();
-        } catch (IOException e) {
-            fail("Could not load the testlog.prop file: " + e);
-        }
         FileUtils.removeRecursively(WORKING_ARCHIVE_DIR);
         FileUtils.removeRecursively(NEW_ARCHIVE_DIR);
         try {
             // Copy over the "existing" bit archive.
-            TestFileUtils.copyDirectoryNonCVS(EXISTING_ARCHIVE_NAME,
-                    WORKING_ARCHIVE_DIR);
+            TestFileUtils.copyDirectoryNonCVS(EXISTING_ARCHIVE_NAME, WORKING_ARCHIVE_DIR);
         } catch (IOFailure e) {
             throw new ExceptionInInitializerError(e);
         }
     }
 
+    @After
     public void tearDown() {
         FileUtils.removeRecursively(WORKING_ARCHIVE_DIR);
         FileUtils.removeRecursively(NEW_ARCHIVE_DIR);
@@ -96,7 +84,9 @@ public class BitarchiveTesterCTOR extends TestCase {
     /**
      * Create bitarchive from scratch, no admin data and log files exists
      */
+    @Test
     public void testFromScratch() {
+    	LogbackRecorder lr = LogbackRecorder.startRecorder();
         assertFalse("No bitarchive should exist before creating it", NEW_ARCHIVE_DIR.exists());
         // Create new test archive and close it
         Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, NEW_ARCHIVE_DIR.getAbsolutePath());
@@ -104,13 +94,15 @@ public class BitarchiveTesterCTOR extends TestCase {
         ba.close();
         // verify that the directory, admin and log files are created
         assertTrue("The archive dir should exist after creation", NEW_ARCHIVE_DIR.exists());
-        assertTrue("Log file should exist after creation", LOG_FILE.exists());
+        assertTrue("Log file should exist after creation", !lr.isEmpty());
+        lr.stopRecorder();
     }
 
     /**
      * Create bitarchive with access denied to location of admin data
      * verify that exceptions are thrown
      */
+    @Test
     public void testAccessDenied() {
         // Make sure archive exists
         assertTrue("Inaccessible archive dir must exist",
@@ -136,4 +128,5 @@ public class BitarchiveTesterCTOR extends TestCase {
                     "noaccess/filedir", e.getMessage());
         }
     }
+
 }

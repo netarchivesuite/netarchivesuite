@@ -58,11 +58,13 @@ public final class ScriptConstants {
     static final String OPTION_LOG_COMPLETE = "Dorg.apache.commons.logging.Log="
         + "org.apache.commons.logging.impl.Jdk14Logger";
     /** Djava.util.logging.config.file=.*/
-    static final String OPTION_LOG_CONFIG = 
-        "Djava.util.logging.config.file=";
+    static final String OPTION_LOG_CONFIG = "Djava.util.logging.config.file=";
+    /** Dlogback.configurationFile=.*/
+    static final String OPTION_LOGBACK_CONFIG = "Dlogback.configurationFile=";
     /** Djava.util.logging.config.file=\"\".*/
-    static final String OPTION_LOG_CONFIG_WIN = 
-        OPTION_LOG_CONFIG + "\"\"";
+    static final String OPTION_LOG_CONFIG_WIN = OPTION_LOG_CONFIG + "\"\"";
+    /** Djava.util.logging.config.file=\"\".*/
+    static final String OPTION_LOGBACK_CONFIG_WIN = OPTION_LOGBACK_CONFIG + "\"\"";
     /** Djava.security.manager.*/
     static final String OPTION_SECURITY_MANAGER = "Djava.security.manager";
     /** Djava.security.policy=.*/
@@ -116,6 +118,8 @@ public final class ScriptConstants {
     static final String LINUX_ERROR_MESSAGE_TO_1 = "2>&1 &"; 
     /** /etc/profile.*/
     static final String ETC_PROFILE = "/etc/profile";
+    /** /etc/profile.*/
+    static final String USER_BASH_PROFILE = "~/.bash_profile";
     /** The linux command for sleeping. sleep.*/
     static final String SLEEP = "sleep";
     /** sleep 2.*/
@@ -324,6 +328,8 @@ public final class ScriptConstants {
     /** Name of the app called in the harvest database update script. */
     static final String HARVEST_DATABASE_UPDATE_APP =
             "dk.netarkivet.harvester.tools.HarvestdatabaseUpdateApplication";
+
+    static final String BITARCHIVE_APPLICATION_NAME = "BitarchiveApplication";
     
     // VB script
     /** Set WshShell= CreateObject(\"WScript.Shell\").*/

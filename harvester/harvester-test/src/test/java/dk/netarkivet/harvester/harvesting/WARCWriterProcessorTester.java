@@ -28,9 +28,12 @@ import org.dom4j.Document;
 
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.XmlUtils;
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
 
-public class WARCWriterProcessorTester extends TestCase {
+
+public class WARCWriterProcessorTester {
 
     private static final String DISK_PATH_XPATH =
             "//crawl-order/controller"
@@ -48,7 +51,7 @@ public class WARCWriterProcessorTester extends TestCase {
     File orderWith;
     
     
-    @Override
+    @Before
     public void setUp(){
         TestInfo.WORKING_DIR.mkdirs();
         DirWith.mkdirs();
@@ -61,12 +64,13 @@ public class WARCWriterProcessorTester extends TestCase {
         orderWithOut = new File(DirWithout, "order_for_testing_warcinfo.xml");
     }
     
-    @Override
+    @After
     public void tearDown(){
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
     }
     
     
+    @Test
     public void testWriteWarcInfoWithScheduleName() {
         // Change disk-path of order.xml to Dir With
         Document doc = XmlUtils.getXmlDoc(orderWith);
@@ -82,6 +86,7 @@ public class WARCWriterProcessorTester extends TestCase {
         //System.out.println(output);
     }
     
+    @Test
     public void testWriteWarcInfoWithoutScheduleName() {
         // Change disk-path of order.xml to DirWithout
         Document doc = XmlUtils.getXmlDoc(orderWithOut);

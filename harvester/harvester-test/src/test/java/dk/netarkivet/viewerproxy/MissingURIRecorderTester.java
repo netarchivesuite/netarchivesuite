@@ -25,29 +25,27 @@ package dk.netarkivet.viewerproxy;
 import java.net.URI;
 import java.util.Set;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
+
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * Tests of the MissingURIRecorder class.
  */
-public class MissingURIRecorderTester extends TestCase {
+public class MissingURIRecorderTester {
     private MissingURIRecorder mur;
 
-    public MissingURIRecorderTester(String s) {
-        super(s);
-    }
-
+    @Before
     public void setUp() {
         mur = new MissingURIRecorder();
     }
 
-    public void tearDown() {
-    }
-
     /** Tests start. Simply tests that urls are recorded after start is called.
      * */
+    @Test
     public void testStartRecordingURIs() throws Exception {
         assertEquals("mur should report no collected urls",
                      0, mur.getRecordedURIs().size());
@@ -63,6 +61,7 @@ public class MissingURIRecorderTester extends TestCase {
     }
 
     /** Tests stop. Tests that urls are NOT recorded after calling stop. */
+    @Test
     public void testStopRecordingURIs() throws Exception {
         assertEquals("mur should report no collected urls",
                      0, mur.getRecordedURIs().size());
@@ -87,6 +86,7 @@ public class MissingURIRecorderTester extends TestCase {
 
     /** Tests clear. Tests that the set of URLs is cleared after calling clear.
      *  */
+    @Test
     public void testClearRecordedURIs() throws Exception {
         assertEquals("mur should report no collected urls",
                      0, mur.getRecordedURIs().size());
@@ -108,6 +108,7 @@ public class MissingURIRecorderTester extends TestCase {
     /** Tests getRecordedURIs. Tests the result of getRecordedURIs before adding
      * a URL, and after adding 1 and 2 URLs. After the second url, the order
      * should be sorted. */
+    @Test
     public void testGetRecordedURIs() throws Exception {
         assertEquals("mur should report no collected urls yet",
                      0, mur.getRecordedURIs().size());
@@ -140,6 +141,7 @@ public class MissingURIRecorderTester extends TestCase {
      * 4) Not Recording URIs and found url reported
      * Only case 1) should add an url to the set.
      */
+    @Test
     public void testNotify() throws Exception {
         try {
             mur.notify(null, 0);

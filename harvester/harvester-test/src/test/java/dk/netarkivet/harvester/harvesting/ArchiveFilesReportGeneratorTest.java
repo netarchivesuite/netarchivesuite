@@ -30,14 +30,12 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.ParseException;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
-/**
- * @author ngiraud
- *
- */
-public class ArchiveFilesReportGeneratorTest extends TestCase {
+public class ArchiveFilesReportGeneratorTest {
 
+    @Test
 	public final void testPatterns() throws ParseException {
 
 		Object[] params = ArchiveFilesReportGenerator.FILE_OPEN_FORMAT.parse(
@@ -69,6 +67,7 @@ public class ArchiveFilesReportGeneratorTest extends TestCase {
 				Long.parseLong((String) params[3]));
 	}
 
+    @Test
 	public final void testReportGeneration() throws IOException {
 
 		File actualReport = null;

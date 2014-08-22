@@ -25,17 +25,20 @@ package dk.netarkivet.harvester.distribute;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.harvester.datamodel.HarvestChannel;
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Test;
+
 
 /**
  * Unittests of the class dk.netarkivet.common.distribute.Channels.
  */
-public class HarvesterChannelsTester extends TestCase {
+public class HarvesterChannelsTester {
     /**
      * Test if static Channels.isTopic(String name) works.
      * Only names containing substring "ALL_BA" is considered a name
      * for a topic.
      */
+    @Test
     public void testIsTopic() {
         ChannelID[]queues = new ChannelID[]{
                 HarvesterChannels.getHarvestJobChannelId(

@@ -22,12 +22,23 @@
  */
 package dk.netarkivet.wayback.indexer;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.List;
+
+import org.junit.Before;
+import org.junit.Test;
 
 @SuppressWarnings({ "unchecked"})
 public class FileNameHarvesterTester extends IndexerTestCase {
 
+    @Before
+    @Override
+    public void setUp() {
+        super.setUp();
+    }
 
+    @Test
     public void testHarvest() {
         FileNameHarvester.harvestAllFilenames();
         ArchiveFileDAO dao = new ArchiveFileDAO();

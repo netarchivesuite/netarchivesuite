@@ -22,24 +22,18 @@
  */
 package dk.netarkivet.harvester.harvesting;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Test;
+
 import org.archive.util.SurtPrefixSet;
 import dk.netarkivet.harvester.harvesting.OnNSDomainsDecideRule;
 
 /**
  * JUNIT test for the class OnNSDomainsDecideRule.
  */
-public class OnNSDomainsDecideRuleTester extends TestCase {
-    public OnNSDomainsDecideRuleTester(String s) {
-        super(s);
-    }
+public class OnNSDomainsDecideRuleTester {
 
-    public void setUp() {
-    }
-
-    public void tearDown() {
-    }
-
+    @Test
     public void testSURTprefixConversionDomains() throws Exception {
 
         /*
@@ -68,6 +62,7 @@ public class OnNSDomainsDecideRuleTester extends TestCase {
 
     }
 
+    @Test
     public void testSURTprefixConversionHosts() throws Exception {
 
         /*
@@ -83,6 +78,7 @@ public class OnNSDomainsDecideRuleTester extends TestCase {
 
     }
 
+    @Test
     public void testSURTprefixConversionPaths() throws Exception {
 
         /*
@@ -98,6 +94,7 @@ public class OnNSDomainsDecideRuleTester extends TestCase {
 
     }
 
+    @Test
     public void testSURTprefixConversionNonValidDomain() throws Exception {
 
         assertEquals(OnNSDomainsDecideRule.NON_VALID_DOMAIN,

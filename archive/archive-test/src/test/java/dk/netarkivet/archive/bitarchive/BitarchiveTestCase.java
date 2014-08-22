@@ -23,11 +23,9 @@
 package dk.netarkivet.archive.bitarchive;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.logging.LogManager;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
 
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.utils.FileUtils;
@@ -38,8 +36,9 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 /** A collection of setup/teardown stuff usable by most bitarchive tests.. */
-public abstract class BitarchiveTestCase extends TestCase {
-    private UseTestRemoteFile rf = new UseTestRemoteFile();
+public abstract class BitarchiveTestCase {
+
+	private UseTestRemoteFile rf = new UseTestRemoteFile();
     protected static Bitarchive archive;
     ReloadSettings rs = new ReloadSettings();
 
@@ -48,29 +47,18 @@ public abstract class BitarchiveTestCase extends TestCase {
      *
      * @param s Name of the test.
      */
-    public BitarchiveTestCase(String s) {
-        super(s);
-    }
 
     protected abstract File getOriginalsDir();
 
+    @Before
     public void setUp() throws Exception {
-        super.setUp();
+        // super.setUp();
         rs.setUp();
         mj.setUp();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         try {
-            // This forces an emptying of the log file.
-            FileInputStream fis = new FileInputStream(TestInfo.TESTLOGPROP);
-            LogManager.getLogManager().readConfiguration(fis);
-            fis.close();
-        } catch (IOException e) {
-            fail("Could not load the testlog.prop file: " + e);
-        }
-        try {
             // Copy over the "existing" bit archive.
-            TestFileUtils.copyDirectoryNonCVS(getOriginalsDir(),
-                                              TestInfo.WORKING_DIR);
+            TestFileUtils.copyDirectoryNonCVS(getOriginalsDir(), TestInfo.WORKING_DIR);
             Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, TestInfo.WORKING_DIR.getAbsolutePath());
             archive = Bitarchive.getInstance();
         } catch (Exception e) {
@@ -79,6 +67,7 @@ public abstract class BitarchiveTestCase extends TestCase {
         rf.setUp();
     }
 
+    @After
     public void tearDown() throws Exception {
         if (archive != null) {
             archive.close();
@@ -87,6 +76,7 @@ public abstract class BitarchiveTestCase extends TestCase {
         mj.tearDown();
         rf.tearDown();
         rs.tearDown();
-        super.tearDown();
+        // super.tearDown();
     }
+
 }

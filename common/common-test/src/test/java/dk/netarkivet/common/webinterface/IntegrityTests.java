@@ -1,0 +1,125 @@
+/*
+ * #%L
+ * Netarchivesuite - common - test
+ * %%
+ * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ *             the National Library of France and the Austrian National Library.
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 2.1 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Lesser Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/lgpl-2.1.html>.
+ * #L%
+ */
+package dk.netarkivet.common.webinterface;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
+import java.security.Permission;
+
+import org.junit.Ignore;
+import org.xml.sax.SAXException;
+
+import com.meterware.httpunit.WebConversation;
+import com.meterware.httpunit.WebResponse;
+
+import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.utils.RememberNotifications;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
+
+/**
+ * Integritytests for the package dk.netarkivet.common.webinterface
+ */
+@Ignore("Not in junit3 test suite")
+public class IntegrityTests {
+    private SecurityManager m;
+    private GUIWebServer gui;
+    ReloadSettings rs = new ReloadSettings();
+
+    public void setUp() throws Exception {
+        rs.setUp();
+        Settings.set(CommonSettings.SITESECTION_WEBAPPLICATION, TestInfo.GUI_WEB_SERVER_JSP_DIRECTORY);
+        // Settings.set(CommonSettings.SITESECTION_DEPLOYPATH,
+        // TestInfo.GUI_WEB_SERVER_WEBBASE);
+        Settings.set(CommonSettings.SITESECTION_CLASS, TestSiteSection.class.getName());
+        Settings.set(CommonSettings.HTTP_PORT_NUMBER, Integer.toString(TestInfo.GUI_WEB_SERVER_PORT));
+
+        m = System.getSecurityManager();
+        SecurityManager manager = new SecurityManager() {
+            public void checkPermission(Permission perm) {
+                if (perm.getName().equals("exitVM")) {
+                    throw new SecurityException("Thou shalt not exit in a unit test");
+                }
+            }
+        };
+        System.setSecurityManager(manager);
+
+        /** Do not send notification by email. Print them to STDOUT. */
+        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
+    }
+
+    public void tearDown() throws Exception {
+        System.setSecurityManager(m);
+        if (gui != null) {
+            gui.cleanup();
+        }
+        rs.tearDown();
+    }
+
+    public void testRun() throws IOException, SAXException {
+        gui = GUIWebServer.getInstance();
+        WebConversation conv = new WebConversation();
+        conv.setExceptionsThrownOnErrorStatus(false);
+        WebResponse resp = conv.getResponse("http://localhost:" + Integer.toString(TestInfo.GUI_WEB_SERVER_PORT) + "/"
+                + TestInfo.GUI_WEB_SERVER_WEBBASE);
+        assertTrue("Expected responsecode 200 for " + resp.getURL() + ", got " + resp.getResponseCode(),
+                resp.getResponseCode() == 200);
+    }
+
+    public void testContextWorksStaticPages() throws IOException, SAXException {
+        GUIWebServer server = GUIWebServer.getInstance();
+        server.startServer();
+        try {
+            WebConversation conv = new WebConversation();
+            conv.setExceptionsThrownOnErrorStatus(false);
+            WebResponse resp = conv.getResponse("http://localhost:" + TestInfo.GUI_WEB_SERVER_PORT + "/"
+                    + TestInfo.GUI_WEB_SERVER_WEBBASE + "/index.html");
+            assertTrue("Expected responsecode 200 for " + resp.getURL() + ", got " + resp.getResponseCode(),
+                    resp.getResponseCode() == 200);
+            assertEquals("Expected title to be 'Test'. Got " + resp.getTitle(), resp.getTitle(), "Test");
+
+        } finally {
+            server.cleanup();
+        }
+    }
+
+    public void testContextWorksJspPages() throws IOException, SAXException {
+        GUIWebServer server = GUIWebServer.getInstance();
+        server.startServer();
+        try {
+            WebConversation conv = new WebConversation();
+            conv.setExceptionsThrownOnErrorStatus(false);
+            WebResponse resp = conv.getResponse("http://localhost:" + TestInfo.GUI_WEB_SERVER_PORT + "/"
+                    + TestInfo.GUI_WEB_SERVER_WEBBASE + "/index.jsp");
+            assertTrue("Expected responsecode 200 for " + resp.getURL() + ", got " + resp.getResponseCode(),
+                    resp.getResponseCode() == 200);
+            assertEquals("Expected title to be 'Test'. Got " + resp.getTitle(), resp.getTitle(), "Test");
+
+        } finally {
+            server.cleanup();
+        }
+    }
+
+}

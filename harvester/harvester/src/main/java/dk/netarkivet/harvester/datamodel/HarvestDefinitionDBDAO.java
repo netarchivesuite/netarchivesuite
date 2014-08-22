@@ -56,6 +56,7 @@ import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.FilterIterator;
 import dk.netarkivet.common.utils.StringUtils;
+import dk.netarkivet.harvester.datamodel.dao.DAOProviderFactory;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedField;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDefaultValue;
@@ -284,15 +285,11 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
      * Read the stored harvest definition for the given ID.
      *
      * @see HarvestDefinitionDAO#read(Long)
-     * @param c
-     *            The used database connection
-     * @param harvestDefinitionID
-     *            An ID number for a harvest definition
+     * @param c The used database connection
+     * @param harvestDefinitionIDAn ID number for a harvest definition
      * @return A harvest definition that has been read from persistent storage.
-     * @throws UnknownID
-     *             if no entry with that ID exists in the database
-     * @throws IOFailure
-     *             If DB-failure occurs?
+     * @throws UnknownID if no entry with that ID exists in the database
+     * @throws IOFailure If DB-failure occurs?
      */
     private HarvestDefinition read(Connection c, Long harvestDefinitionID) throws UnknownID, IOFailure {
         if (!exists(c, harvestDefinitionID)) {
@@ -327,9 +324,20 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 FullHarvest fh;
                 final long prevhd = res.getLong(5);
                 if (!res.wasNull()) {
-                    fh = new FullHarvest(name, comments, prevhd, maxObjects, maxBytes, maxJobRunningtime, isIndexReady);
+                    fh = new FullHarvest(
+                            name, comments, prevhd, maxObjects, maxBytes, maxJobRunningtime, isIndexReady,
+                            DAOProviderFactory.getHarvestDefinitionDAOProvider(),
+                            DAOProviderFactory.getJobDAOProvider(),
+                            DAOProviderFactory.getExtendedFieldDAOProvider(),
+                            DAOProviderFactory.getDomainDAOProvider()
+                            );
                 } else {
-                    fh = new FullHarvest(name, comments, null, maxObjects, maxBytes, maxJobRunningtime, isIndexReady);
+                    fh = new FullHarvest(
+                            name, comments, null, maxObjects,maxBytes, maxJobRunningtime, isIndexReady,
+                            DAOProviderFactory.getHarvestDefinitionDAOProvider(),
+                            DAOProviderFactory.getJobDAOProvider(),
+                            DAOProviderFactory.getExtendedFieldDAOProvider(),
+                            DAOProviderFactory.getDomainDAOProvider());
                 }
                 fh.setSubmissionDate(submissionDate);
                 fh.setNumEvents(numEvents);

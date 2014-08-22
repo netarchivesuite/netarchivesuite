@@ -22,11 +22,16 @@
  */
 package dk.netarkivet.common.distribute.indexserver;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -34,28 +39,29 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
+
 /**
  * Unit tests for the TrivialJobIndexCache class. 
  */
-public class TrivialJobIndexCacheTester extends TestCase {
+public class TrivialJobIndexCacheTester {
     MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,
             TestInfo.WORKING_DIR);
     ReloadSettings rs = new ReloadSettings();
 
-    public TrivialJobIndexCacheTester(String s) {
-        super(s);
-    }
-
+    @Before
     public void setUp() {
         rs.setUp();
         Settings.set(CommonSettings.CACHE_DIR, TestInfo.WORKING_DIR.getAbsolutePath());
         mtf.setUp();
     }
 
+    @After
     public void tearDown() {
         mtf.tearDown();
         rs.tearDown();
     }
+
+    @Test
     public void testCacheData() throws Exception {
         JobIndexCache cache = new TrivialJobIndexCache(RequestType.DEDUP_CRAWL_LOG);
         try {

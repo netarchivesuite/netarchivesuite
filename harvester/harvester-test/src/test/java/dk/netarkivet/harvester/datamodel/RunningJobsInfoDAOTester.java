@@ -25,21 +25,25 @@ package dk.netarkivet.harvester.datamodel;
 import java.util.Set;
 
 import dk.netarkivet.harvester.harvesting.monitor.StartedJobInfo;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 @SuppressWarnings({ "unused"})
 public class RunningJobsInfoDAOTester extends DataModelTestCase {
-    public RunningJobsInfoDAOTester(String sTestName) {
-        super(sTestName);
-    }
 
+    @Before
     public void setUp() throws Exception {
         super.setUp();
     }
 
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
     }
     
+    @Test
     public void testGetInstance() {
     	StartedJobInfo sji = new StartedJobInfo("harvest", 42L);
         RunningJobsInfoDAO dao = RunningJobsInfoDAO.getInstance();

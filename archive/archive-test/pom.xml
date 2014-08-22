@@ -14,10 +14,6 @@
 
   <name>Netarchivesuite - archive - test</name>
 
-  <properties>
-    <test>dk.netarkivet.archive.UnitTesterSuite</test>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -61,6 +57,12 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <scope>test</scope>
+    </dependency>
+
     <!-- Ugly test dependencies. -->
 
     <dependency>
@@ -92,6 +94,9 @@
   <build>
     <testResources>
       <testResource>
+        <directory>src/test/resources</directory>
+      </testResource>
+      <testResource>
         <directory>tests</directory>
       </testResource>
     </testResources>
@@ -105,13 +110,17 @@
             -Xmx768m
             -Dfile.encoding=UTF-8
             -Ddk.netarkivet.settings.file=tests/dk/netarkivet/test-settings.xml
-            -Dorg.apache.commons.logging.log=org.apache.commons.logging.impl.Jdk14Logger
-            -Djava.util.logging.config.file=tests/dk/netarkivet/testlog.prop
             -DXjava.security.manager
             -DXjava.security.policy=tests/dk/netarkivet/ant-test.policy
             -Dorg.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy=org.archive.crawler.frontier.HostnameQueueAssignmentPolicy,org.archive.crawler.frontier.IPQueueAssignmentPolicy,org.archive.crawler.frontier.BucketQueueAssignmentPolicy,org.archive.crawler.frontier.SurtAuthorityQueueAssignmentPolicy,org.archive.crawler.frontier.TopmostAssignedSurtQueueAssignmentPolicy,dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy
-            -Duser.language=en -Duser.country=US -Duser.variant=US
+            -Duser.language=en -Duser.country=US -Duser.variant=US -Duser.timezone=Europe/Copenhagen
           </argLine>
+          <forkCount>1</forkCount>
+          <reuseForks>true</reuseForks>
+          <includes>
+            <!-- consider all java files as tests -->
+            <include>**/*Test*.java</include>
+          </includes>
         </configuration>
       </plugin>
     </plugins>

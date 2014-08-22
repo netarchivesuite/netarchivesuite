@@ -26,27 +26,36 @@ import java.util.List;
 
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveClient;
 import dk.netarkivet.archive.checksum.distribute.ChecksumClient;
-import dk.netarkivet.common.distribute.ChannelsTester;
+import dk.netarkivet.common.distribute.ChannelsTesterHelper;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaType;
 import dk.netarkivet.testutils.ReflectUtils;
-import junit.framework.TestCase;
 
-public class ReplicaClientFactoryTester extends TestCase {
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+
+public class ReplicaClientFactoryTester {
     
+    @Before
     public void setUp() {
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
-        ChannelsTester.resetChannels();
+        ChannelsTesterHelper.resetChannels();
     }
 
+    @After
     public void tearDown() {
         JMSConnectionMockupMQ.clearTestQueues();
     }
     
+    @Test
     public void testUtilityConstructor() {
         ReflectUtils.testUtilityConstructor(ReplicaClientFactory.class);
     }
     
+    @Test
     public void testList() {
         List<ReplicaClient> clients = ReplicaClientFactory.getReplicaClients();
         

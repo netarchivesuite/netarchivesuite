@@ -26,7 +26,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Test;
+
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -37,17 +39,9 @@ import dk.netarkivet.testutils.StringAsserts;
 /**
  * Tests of the SiteSection class.
  */
-public class SiteSectionTester extends TestCase {
-    public SiteSectionTester(String s) {
-        super(s);
-    }
+public class SiteSectionTester {
 
-    public void setUp() {
-    }
-
-    public void tearDown() {
-    }
-
+    @Test
     public void testGetTitle() throws Exception {
         SiteSection site = new SiteSection("testSite", "pref", 2,
                                            new String[][]{
@@ -92,6 +86,7 @@ public class SiteSectionTester extends TestCase {
                    site.getTitle(null, Locale.getDefault()));
     }
 
+    @Test
     public void testSiteSection() throws Exception {
         try {
             new SiteSection(null, "d", 0, new String[][]{},
@@ -239,6 +234,7 @@ public class SiteSectionTester extends TestCase {
      *
      * This is rapported as bug 879.
      */
+    @Test
     public void testGetSections()
             throws InterruptedException, NoSuchFieldException,
                    IllegalAccessException {
@@ -266,6 +262,7 @@ public class SiteSectionTester extends TestCase {
     /**
      * Check dirname.
      */
+    @Test
     public void testGetDirname() throws Exception {
         SiteSection site = new SiteSection("b", "e", 1, new String[][]{
                 {"foo", "bar"}, {"and", "more"}
@@ -282,6 +279,7 @@ public class SiteSectionTester extends TestCase {
      * Test isDeployed
      * @throws Exception
      */
+    @Test
     public void testIsDeployed() throws Exception {
         try {
             SiteSection.isDeployed(null);
@@ -305,6 +303,7 @@ public class SiteSectionTester extends TestCase {
                     SiteSection.isDeployed("Fnord"));
     }
 
+    @Test
     public void testGenerateNavigationTree() throws Exception {
         SiteSection site = new SiteSection("table.job.harvestname", "pref", 2,
                                            new String[][]{

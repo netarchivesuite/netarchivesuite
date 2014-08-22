@@ -38,7 +38,8 @@ import dk.netarkivet.common.utils.FileUtils;
  * Loads the deploy-configuration from an XML file into a XmlStructure.
  */
 public class DeployConfiguration {
-    /** The configuration structure (deployGlobal).*/
+
+	/** The configuration structure (deployGlobal).*/
     private XmlStructure config;
     /** The settings branch of the config.*/
     private XmlStructure settings;
@@ -52,8 +53,10 @@ public class DeployConfiguration {
     private File netarchiveSuiteFile;
     /** The security policy file.*/
     private File secPolicyFile;
-    /** The log property file.*/
-    private File logPropFile;
+    /** The java.util.logging property file.*/
+    private File julPropFile;
+    /** The SLF4J config file.*/
+    private File slf4jConfigFile;
     /** The directory for output.*/
     private File outputDir;
     /** The name of the database.*/
@@ -71,7 +74,7 @@ public class DeployConfiguration {
      * @param deployConfigFileName Name of configuration file.
      * @param netarchiveSuiteFileName Name of installation file.
      * @param secPolicyFileName Name of security policy file.
-     * @param logPropFileName Name of the log property file.
+     * @param julPropFileName Name of the log property file.
      * @param outputDirName Directory for the output.
      * @param dbFileName Name of the database.
      * @param arcdbFileName The name of the archive database.
@@ -85,23 +88,21 @@ public class DeployConfiguration {
      */
     public DeployConfiguration(File deployConfigFileName, 
             File netarchiveSuiteFileName,  File secPolicyFileName, 
-            File logPropFileName, String outputDirName, File dbFileName, 
+            File julPropFileName, File slf4jConfigFileName, String outputDirName, File dbFileName, 
             File arcdbFileName, boolean resetDir, File externalJarFolder,
             String sourceEncoding) 
             throws ArgumentNotValid {
-        ArgumentNotValid.checkNotNull(
-                deployConfigFileName, "No config file");
-        ArgumentNotValid.checkNotNull(
-                netarchiveSuiteFileName, "No installation file");
-        ArgumentNotValid.checkNotNull(
-                secPolicyFileName, "No security file");
-        ArgumentNotValid.checkNotNull(
-                logPropFileName, "No log file");
+        ArgumentNotValid.checkNotNull(deployConfigFileName, "No config file");
+        ArgumentNotValid.checkNotNull(netarchiveSuiteFileName, "No installation file");
+        ArgumentNotValid.checkNotNull(secPolicyFileName, "No security file");
+        //ArgumentNotValid.checkNotNull(julPropFileName, "No julPropFileName file");
+        //ArgumentNotValid.checkNotNull(slf4jConfigFileName, "No slf4jConfigFileName file");
 
         deployConfigFile = deployConfigFileName;
         netarchiveSuiteFile = netarchiveSuiteFileName;
         secPolicyFile = secPolicyFileName;
-        logPropFile = logPropFileName;
+        julPropFile = julPropFileName;
+        slf4jConfigFile = slf4jConfigFileName;
         databaseFileName = dbFileName;
         arcDatabaseFileName = arcdbFileName;
         resetDirectory = resetDir;
@@ -151,7 +152,7 @@ public class DeployConfiguration {
         // get all physical locations into the list
         for(Element elem : physList) {
             physLocs.add(new PhysicalLocation(elem, settings, machineParam,
-                    netarchiveSuiteFile.getName(), logPropFile, 
+                    netarchiveSuiteFile.getName(), julPropFile, slf4jConfigFile, 
                     secPolicyFile, databaseFileName, arcDatabaseFileName, 
                     resetDirectory, jarFolder));
         }
@@ -174,13 +175,11 @@ public class DeployConfiguration {
     private void copyNetarchiveSuiteFile() {
         // initialise the new file. This should have the same name 
         // as the original file, but be placed in the output directory.
-        File newNetarchiveSuiteFile = new File(outputDir, 
-                netarchiveSuiteFile.getName());
+        File newNetarchiveSuiteFile = new File(outputDir, netarchiveSuiteFile.getName());
         try {
             
             // check first scenario
-            if (newNetarchiveSuiteFile.getCanonicalPath().equals(
-                    netarchiveSuiteFile.getCanonicalPath())) {
+            if (newNetarchiveSuiteFile.getCanonicalPath().equals(netarchiveSuiteFile.getCanonicalPath())) {
                 // thus first scenario is true, and nothing should be done.
                 return;
             }
@@ -190,7 +189,7 @@ public class DeployConfiguration {
             if (newNetarchiveSuiteFile.exists()) { 
                 // issue warning
                 System.out.println(Constants.MSG_WARN_ZIPFILE_ALREADY_EXISTS
-                        + newNetarchiveSuiteFile.getCanonicalPath());
+                		+ newNetarchiveSuiteFile.getCanonicalPath());
                 newNetarchiveSuiteFile.delete();
             }
             
@@ -204,10 +203,8 @@ public class DeployConfiguration {
             System.exit(1);
         } catch (IOFailure e1) {
             // handle a IOFailure, can only be thrown by FileUtils.copyFile
-            System.out.println("Unable to copy file '" 
-                    + netarchiveSuiteFile.getAbsolutePath() 
-                    + "' to the destination '" 
-                    + newNetarchiveSuiteFile.getAbsolutePath() + "'.");
+            System.out.println("Unable to copy file '" + netarchiveSuiteFile.getAbsolutePath() 
+                    + "' to the destination '" + newNetarchiveSuiteFile.getAbsolutePath() + "'.");
             e1.printStackTrace();
             System.exit(1);
         }
@@ -222,4 +219,5 @@ public class DeployConfiguration {
             pl.write(outputDir);
         }
     }
+
 }

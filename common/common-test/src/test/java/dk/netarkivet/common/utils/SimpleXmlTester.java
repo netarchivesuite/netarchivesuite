@@ -22,10 +22,18 @@
  */
 package dk.netarkivet.common.utils;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.util.List;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -36,56 +44,50 @@ import dk.netarkivet.testutils.TestFileUtils;
 /**
  * Unit tests for the class SimpleXml.
  */
-public class SimpleXmlTester extends TestCase {
-    public SimpleXmlTester(String sTestName) {
-        super(sTestName);
-    }
 
+public class SimpleXmlTester {
+    @Before
     public void setUp() {
         try {
             if (!dk.netarkivet.common.utils.TestInfo.TEMPDIR.exists()) {
                 TestInfo.TEMPDIR.mkdir();
             }
             FileUtils.removeRecursively(TestInfo.TEMPDIR);
-            TestFileUtils.copyDirectoryNonCVS(
-                    TestInfo.DATADIR,
-                    dk.netarkivet.common.utils.TestInfo.TEMPDIR);
-        }
-        catch (Exception e) {
+            TestFileUtils.copyDirectoryNonCVS(TestInfo.DATADIR, dk.netarkivet.common.utils.TestInfo.TEMPDIR);
+        } catch (Exception e) {
             fail("Could not setup configuration");
         }
     }
 
+    @After
     public void tearDown() {
         FileUtils.removeRecursively(TestInfo.TEMPDIR);
     }
 
     /** Verify that it is possible to load a simple XML file author. */
+    @Test
     public void testLoadAndSave() {
         SimpleXml xml = new SimpleXml(TestInfo.TESTXML);
         String value = xml.getString("dk.netarkivet.test.q");
         assertEquals("Loaded value must exist", "what is the question", value);
 
         List<String> items = xml.getList("dk.netarkivet.test.list1");
-        CollectionAsserts.assertListEquals("Must match stored items",
-                                           items, "item1", "item2", "item3");
+        CollectionAsserts.assertListEquals("Must match stored items", items, "item1", "item2", "item3");
 
         xml.save(TestInfo.NEWXML);
         SimpleXml newxml = new SimpleXml(TestInfo.NEWXML);
         String newvalue = newxml.getString("dk.netarkivet.test.q");
-        assertEquals("Reloaded value must exist",
-                     "what is the question", newvalue);
+        assertEquals("Reloaded value must exist", "what is the question", newvalue);
 
         List<String> newitems = newxml.getList("dk.netarkivet.test.list1");
-        CollectionAsserts.assertListEquals("Must match stored items",
-                                           newitems, "item1", "item2", "item3");
+        CollectionAsserts.assertListEquals("Must match stored items", newitems, "item1", "item2", "item3");
 
         List<String> answers = xml.getList("dk.netarkivet.answer");
-        CollectionAsserts.assertListEquals("Must have both answers",
-                                           answers, "42", "43");
+        CollectionAsserts.assertListEquals("Must have both answers", answers, "42", "43");
     }
 
     /** Verify that it is possible to delete and set a key in a simple XML file. */
+    @Test
     public void testDeleteAndSet() {
         SimpleXml xml = new SimpleXml(TestInfo.TESTXML);
 
@@ -94,27 +96,27 @@ public class SimpleXmlTester extends TestCase {
         xml.add("dk.netarkivet.user", value);
 
         /** verify that the key exists */
-        assertTrue("Key must exist after adding",
-                   xml.hasKey("dk.netarkivet.user"));
+        assertTrue("Key must exist after adding", xml.hasKey("dk.netarkivet.user"));
 
         /** verify that the key and value exists */
         String retrievevalue = xml.getString("dk.netarkivet.user");
-        assertEquals("Inserted key should be correct", "unknown",
-                     retrievevalue);
+        assertEquals("Inserted key should be correct", "unknown", retrievevalue);
     }
 
     /** Check loading of non xml file fails. */
+    @Test
     public void testLoadNonXml() {
         try {
             new SimpleXml(TestInfo.INVALIDXML);
             fail("Loading invalid xml should throw exception");
         } catch (IOFailure e) {
-            //Expected
+            // Expected
         }
 
     }
 
     /** Check loading of unknown file or null file. */
+    @Test
     public void testLoadNonExistingFile() {
         try {
             new SimpleXml((File) null);
@@ -124,62 +126,55 @@ public class SimpleXmlTester extends TestCase {
         }
 
         try {
-            new SimpleXml(
-                    new File("./tests/dk/netarkivet/utils/data/invalid.xml"));
+            new SimpleXml(new File("./tests/dk/netarkivet/utils/data/invalid.xml"));
             fail("Loading unknown file should throw an exception");
         } catch (Exception e) {
             // ok
         }
     }
 
-
+    @Test
     public void testAdd() {
         SimpleXml simpleXml = new SimpleXml(TestInfo.SETTINGS_FILE);
         String key = "settings.test.key";
         String value = "a value";
-        assertFalse("Key should not exist before adding",
-                    simpleXml.hasKey(key));
+        assertFalse("Key should not exist before adding", simpleXml.hasKey(key));
         try {
             simpleXml.add(null, value);
             fail("Should die on null key");
         } catch (ArgumentNotValid e) {
-            //expected
+            // expected
         }
         try {
             simpleXml.add("", value);
             fail("Should die on empty key");
         } catch (ArgumentNotValid e) {
-            //expected
+            // expected
         }
 
         try {
             simpleXml.add(key, (String[]) null);
             fail("Should die on null value");
         } catch (ArgumentNotValid e) {
-            //expected
+            // expected
         }
-        assertFalse("Key should not exist after errors",
-                    simpleXml.hasKey(key));
+        assertFalse("Key should not exist after errors", simpleXml.hasKey(key));
 
         simpleXml.add(key, value);
-        assertTrue("Key should exist after adding",
-                   simpleXml.hasKey(key));
-        assertEquals("Key's value should be the one set",
-                     value, simpleXml.getString(key));
+        assertTrue("Key should exist after adding", simpleXml.hasKey(key));
+        assertEquals("Key's value should be the one set", value, simpleXml.getString(key));
 
         String value2 = "another value";
         simpleXml.add(key, value2);
         simpleXml.add(key, value2);
-        assertTrue("Key should exist after adding",
-                   simpleXml.hasKey(key));
-        assertEquals("Key's value should be the one set first",
-                     value, simpleXml.getString(key));
+        assertTrue("Key should exist after adding", simpleXml.hasKey(key));
+        assertEquals("Key's value should be the one set first", value, simpleXml.getString(key));
 
-        CollectionAsserts.assertListEquals(
-                "Should have values in order after second insert",
-                simpleXml.getList(key), value, value2, value2);
+        CollectionAsserts.assertListEquals("Should have values in order after second insert", simpleXml.getList(key),
+                value, value2, value2);
     }
 
+    @Test
     public void testUpdate() {
         SimpleXml simpleXml = new SimpleXml(TestInfo.SETTINGS_FILE);
         String key = "settings.test.reset";
@@ -189,37 +184,32 @@ public class SimpleXmlTester extends TestCase {
 
         String value2 = "second value";
         simpleXml.update(key, value2);
-        CollectionAsserts.assertListEquals("Should have updated value only",
-                                           simpleXml.getList(key), value2);
+        CollectionAsserts.assertListEquals("Should have updated value only", simpleXml.getList(key), value2);
 
         try {
             simpleXml.update(key, (String[]) null);
             fail("Should die on null value");
         } catch (ArgumentNotValid e) {
-            CollectionAsserts.assertListEquals("Should still have old value",
-                                               simpleXml.getList(key), value2);
+            CollectionAsserts.assertListEquals("Should still have old value", simpleXml.getList(key), value2);
         }
 
         try {
             simpleXml.update(key, value1, null);
             fail("Should die on null value");
         } catch (ArgumentNotValid e) {
-            CollectionAsserts.assertListEquals("Should still have old value",
-                                               simpleXml.getList(key), value2);
+            CollectionAsserts.assertListEquals("Should still have old value", simpleXml.getList(key), value2);
         }
 
         simpleXml.update(key);
         assertFalse("Should not have key any more", simpleXml.hasKey(key));
     }
 
+    @Test
     public void testHasKey() {
         SimpleXml simpleXml = new SimpleXml(TestInfo.SETTINGS_FILE);
-        assertTrue("Should have known key",
-                   simpleXml.hasKey("settings.common.tempDir"));
-        assertFalse("Should not have unknown key",
-                    simpleXml.hasKey("an.unknown.key"));
-        assertFalse("Should not have unknown key under root element",
-                    simpleXml.hasKey("settings.foo.bar"));
+        assertTrue("Should have known key", simpleXml.hasKey("settings.common.tempDir"));
+        assertFalse("Should not have unknown key", simpleXml.hasKey("an.unknown.key"));
+        assertFalse("Should not have unknown key under root element", simpleXml.hasKey("settings.foo.bar"));
         try {
             simpleXml.hasKey(null);
             fail("Should fail on null key");
@@ -235,23 +225,19 @@ public class SimpleXmlTester extends TestCase {
         }
     }
 
+    @Test
     public void testGetTree() {
         SimpleXml xml = new SimpleXml(TestInfo.TESTXML);
         StringTree<String> tree1 = xml.getTree("dk.netarkivet.test.q");
-        assertNotNull("Getting a tree should return non-null",
-                      tree1);
-        assertEquals("Single-leaf tree should just have contents",
-                     "what is the question", tree1.getValue());
+        assertNotNull("Getting a tree should return non-null", tree1);
+        assertEquals("Single-leaf tree should just have contents", "what is the question", tree1.getValue());
 
         StringTree<String> tree2 = xml.getTree("dk.netarkivet.test");
-        assertNotNull("Getting a tree should return non-null",
-                      tree2);
-        assertEquals("Complex tree should have simple sub-tree",
-                     "what is the question", tree2.getSubTree("q").getValue());
-        CollectionAsserts.assertListEquals(
-                "Complex tree should have complex sub-tree",
-                tree2.getLeafMultimap().get("list1"),
-                "item1", "item2", "item3");
+        assertNotNull("Getting a tree should return non-null", tree2);
+        assertEquals("Complex tree should have simple sub-tree", "what is the question", tree2.getSubTree("q")
+                .getValue());
+        CollectionAsserts.assertListEquals("Complex tree should have complex sub-tree",
+                tree2.getLeafMultimap().get("list1"), "item1", "item2", "item3");
 
         try {
             xml.getTree("foo.bar");

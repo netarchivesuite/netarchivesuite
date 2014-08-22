@@ -22,24 +22,13 @@
  */
 package dk.netarkivet.viewerproxy;
 
-import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
-import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.arc.ARCKey;
-import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.testutils.FileAsserts;
-import dk.netarkivet.testutils.LogUtils;
-import dk.netarkivet.testutils.ReflectUtils;
-import dk.netarkivet.testutils.TestFileUtils;
-import dk.netarkivet.testutils.preconfigured.ReloadSettings;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -50,13 +39,26 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.LogManager;
 
 import org.archive.io.arc.ARCConstants;
 import org.archive.io.arc.ARCRecord;
 import org.archive.io.arc.ARCRecordMetaData;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
+import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.arc.ARCKey;
+import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.testutils.LogbackRecorder;
+import dk.netarkivet.testutils.ReflectUtils;
+import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
  * Unit tests for ARCArchiveAccess.  This only tests that we connect the CDX
@@ -64,11 +66,10 @@ import junit.framework.TestCase;
  * and so is (supposed to be) tested elsewhere.
  */
 @SuppressWarnings({ "unused", "unchecked"})
-public class ARCArchiveAccessTester extends TestCase {
+public class ARCArchiveAccessTester {
 
     //Unused files:
-    private static final File MAIN_PATH = new File(
-            "tests/dk/netarkivet/viewerproxy/data/");
+    private static final File MAIN_PATH = new File("tests/dk/netarkivet/viewerproxy/data/");
 
     /**
      * An URL not indexed in CDX_FILE. Initiated in setUp because it can throw
@@ -84,19 +85,12 @@ public class ARCArchiveAccessTester extends TestCase {
      * The key listed for GIF_URL.
      */
     private static final ARCKey GIF_URL_KEY =
-            new ARCKey(
-                    "2-2-20060731110420-00000-sb-test-har-001.statsbiblioteket.dk.arc",
-                    73269);
-
-    private static final File LOG_FILE = new File(
-            "tests/testlogs/netarkivtest.log");
+            new ARCKey("2-2-20060731110420-00000-sb-test-har-001.statsbiblioteket.dk.arc", 73269);
 
     // Set up directories for local archive and bitarchive
-    private static final File BASE_DIR = new File(
-            "tests/dk/netarkivet/viewerproxy/data");
+    private static final File BASE_DIR = new File("tests/dk/netarkivet/viewerproxy/data");
     private static final File ORIGINALS = new File(BASE_DIR, "input");
     private static final File WORKING = new File(BASE_DIR, "working");
-
 
     //A web archive controller that always returns our own test record:
     private ArcRepositoryClient fakeArcRepos;
@@ -109,6 +103,7 @@ public class ARCArchiveAccessTester extends TestCase {
 
     ReloadSettings rs = new ReloadSettings();
 
+    @Before
     public void setUp() throws Exception {
         rs.setUp();
         WRONG_URL = new URI("http://www.test.dk/hest");
@@ -128,13 +123,9 @@ public class ARCArchiveAccessTester extends TestCase {
 
         aaa = new ARCArchiveAccess(fakeArcRepos);
         aaa.setIndex(TestInfo.ZIPPED_INDEX_DIR);
-
-        FileInputStream fis
-                = new FileInputStream("tests/dk/netarkivet/testlog.prop");
-        LogManager.getLogManager().readConfiguration(fis);
-        fis.close();
     }
 
+    @After
     public void tearDown() {
         FileUtils.removeRecursively(WORKING);
         rs.tearDown();
@@ -144,6 +135,7 @@ public class ARCArchiveAccessTester extends TestCase {
      * Verify that the constructor fails if and only if it is given null
      * parameter.
      */
+    @Test
     public void testConstructor() {
         //Verify construction with OK parameters does not fail:
         new ARCArchiveAccess(fakeArcRepos);
@@ -156,6 +148,7 @@ public class ARCArchiveAccessTester extends TestCase {
         }
     }
 
+    @Test
     public void testReadPage() throws Exception {
         Method readPage = ReflectUtils.getPrivateMethod(ARCArchiveAccess.class,
                                                         "readPage",
@@ -175,6 +168,7 @@ public class ARCArchiveAccessTester extends TestCase {
                 "foo", baos.toString());
     }
 
+    @Test
     public void testCreateErrorResponse() throws Exception {
         TestResponse response = new TestResponse();
 
@@ -211,6 +205,7 @@ public class ARCArchiveAccessTester extends TestCase {
      * HTTP response reflecting this situation. For now, we just need it to
      * return ResponseCode.NOT_FOUND and not throw an Exception.
      */
+    @Test
     public void testLookupNonexistingObject() throws Exception {
         Response response = new TestResponse();
         URI uri = new URI("http://does.not.exist");
@@ -226,6 +221,7 @@ public class ARCArchiveAccessTester extends TestCase {
      * @throws IOException
      * @throws InterruptedException
      */
+    @Test
     public void testLookupExistingObject()
             throws IOException, InterruptedException {
         TestResponse response = new TestResponse();
@@ -250,8 +246,9 @@ public class ARCArchiveAccessTester extends TestCase {
      *
      * @throws Exception
      */
-    public void testNullControllerReturn()
-            throws Exception {
+    @Test
+    public void testNullControllerReturn() throws Exception {
+    	LogbackRecorder lr = LogbackRecorder.startRecorder();
         Response response = new TestResponse();
         ARCArchiveAccess nullaaa = new ARCArchiveAccess(nullArcRepos);
         nullaaa.setIndex(TestInfo.ZIPPED_INDEX_DIR);
@@ -261,14 +258,9 @@ public class ARCArchiveAccessTester extends TestCase {
         } catch (IOFailure e) {
             //expected
         }
-        LogUtils.flushLogs(ARCArchiveAccess.class.getName());
-        assertTrue("Log file should exist after flushing",
-                   LOG_FILE.exists());
-        FileAsserts.assertFileContains(
-                "Bitarchive problem must be reported in the log",
-                "ARC file '"
-                + GIF_URL_KEY.getFile()
-                + "' mentioned in index file was not found", LOG_FILE);
+        lr.assertLogContains("Bitarchive problem must be reported in the log",
+                "ARC file '" + GIF_URL_KEY.getFile() + "' mentioned in index file was not found");
+        lr.stopRecorder();
     }
 
     /**
@@ -379,4 +371,5 @@ public class ARCArchiveAccessTester extends TestCase {
             return Collections.emptyMap();
         }
     }
+
 }

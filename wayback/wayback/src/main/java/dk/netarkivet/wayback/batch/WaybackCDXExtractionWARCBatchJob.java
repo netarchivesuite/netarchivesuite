@@ -9,12 +9,12 @@
  * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 2.1 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Lesser Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Lesser Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
@@ -62,9 +62,9 @@ public class WaybackCDXExtractionWARCBatchJob extends WARCBatchJob {
     public WaybackCDXExtractionWARCBatchJob() {
         batchJobTimeout = Constants.ONE_DAY_IN_MILLIES;
     }
-    
-    /** 
-     * Set the filter, so only response records are 
+
+    /**
+     * Set the filter, so only response records are
      * currently processed.
      */
     @Override
@@ -118,7 +118,7 @@ public class WaybackCDXExtractionWARCBatchJob extends WARCBatchJob {
         try {
             csr = aToSAdapter.adapt(record);
         } catch (Exception e) {
-            log.error("Exception processing WARC record: {}", e);
+            log.error("Exception processing WARC record:", e);
         }
         try {
             if (csr != null) {
@@ -128,7 +128,7 @@ public class WaybackCDXExtractionWARCBatchJob extends WARCBatchJob {
         } catch (IOException e) {
             throw new IOFailure("Write error in batch job", e);
         } catch (Exception e) {
-            log.error("Exception processing WARC record: {}", e);
+            log.error("Exception processing WARC record:", e);
         }
     }
 

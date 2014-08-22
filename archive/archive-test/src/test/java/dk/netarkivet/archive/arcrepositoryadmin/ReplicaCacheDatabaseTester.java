@@ -22,6 +22,11 @@
  */
 package dk.netarkivet.archive.arcrepositoryadmin;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.sql.Date;
@@ -30,15 +35,15 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
-import java.util.logging.LogManager;
-
-import junit.framework.TestCase;
 
 import org.apache.commons.collections.IteratorUtils;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.distribute.ChannelsTester;
+import dk.netarkivet.common.distribute.ChannelsTesterHelper;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.exceptions.IllegalState;
@@ -47,12 +52,11 @@ import dk.netarkivet.common.utils.PrintNotifications;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.ZipUtils;
-import dk.netarkivet.testutils.FileAsserts;
-import dk.netarkivet.testutils.LogUtils;
+import dk.netarkivet.testutils.LogbackRecorder;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
-public class ReplicaCacheDatabaseTester extends TestCase {
+public class ReplicaCacheDatabaseTester {
 
     private ReloadSettings rs = new ReloadSettings();
     private ReplicaCacheDatabase cache;
@@ -60,16 +64,14 @@ public class ReplicaCacheDatabaseTester extends TestCase {
     private MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,
             TestInfo.TEST_DIR);
     
+    @Before
     public void setUp() throws Exception {
         rs.setUp();
         mtf.setUp();
-        ChannelsTester.resetChannels();
+        ChannelsTesterHelper.resetChannels();
         ArchiveDBConnection.cleanup();
         
-        LogManager.getLogManager().readConfiguration();
-        LogUtils.flushLogs(ReplicaCacheDatabase.class.getName());
-        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, 
-                RememberNotifications.class.getName());
+        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
         
         /** Setup the database. **/
         String driverName = "org.apache.derby.jdbc.EmbeddedDriver";
@@ -77,47 +79,41 @@ public class ReplicaCacheDatabaseTester extends TestCase {
         FileUtils.removeRecursively(TestInfo.DATABASE_DIR);
         ZipUtils.unzip(TestInfo.DATABASE_FILE, TestInfo.DATABASE_DIR);
         
-        Settings.set(ArchiveSettings.BASEURL_ARCREPOSITORY_ADMIN_DATABASE,
-                TestInfo.DATABASE_URL);
-        Settings.set(ArchiveSettings.MACHINE_ARCREPOSITORY_ADMIN_DATABASE,
-                "");
-        Settings.set(ArchiveSettings.PORT_ARCREPOSITORY_ADMIN_DATABASE,
-                "");
-        Settings.set(ArchiveSettings.DIR_ARCREPOSITORY_ADMIN_DATABASE,
-                "");
+        Settings.set(ArchiveSettings.BASEURL_ARCREPOSITORY_ADMIN_DATABASE, TestInfo.DATABASE_URL);
+        Settings.set(ArchiveSettings.MACHINE_ARCREPOSITORY_ADMIN_DATABASE, "");
+        Settings.set(ArchiveSettings.PORT_ARCREPOSITORY_ADMIN_DATABASE, "");
+        Settings.set(ArchiveSettings.DIR_ARCREPOSITORY_ADMIN_DATABASE, "");
 
-        Settings.set(CommonSettings.NOTIFICATIONS_CLASS,
-                PrintNotifications.class.getName());
+        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, PrintNotifications.class.getName());
         ReplicaCacheDatabase.getInstance().cleanup();
 
         cache = ReplicaCacheDatabase.getInstance();
     }
     
+    @After
     public void tearDown() {
         mtf.tearDown();
         rs.tearDown();
     }
     
     @SuppressWarnings("unchecked")
-    // Irrgggh a 300 line god test method. Way too long method implementing an ill-defined test scope 
-    // with an increasingly difficult-to-follow test state. 
+    @Test
+    // FIXME: Split test up.
     public void testAll() throws Exception {
+    	LogbackRecorder lr = LogbackRecorder.startRecorder();
         Date beforeTest = new Date(Calendar.getInstance().getTimeInMillis());
 
         assertTrue("The database should be empty to begin with.", cache.isEmpty());
         
         // try handling output from ChecksumJob.
         File csFile = makeTemporaryChecksumFile1();
-        cache.addChecksumInformation(csFile, 
-                Replica.getReplicaFromId("ONE"));
+        cache.addChecksumInformation(csFile, Replica.getReplicaFromId("ONE"));
 
         // try handling output from FilelistJob.
         File flFile = makeTemporaryFilelistFile();
-        cache.addFileListInformation(flFile, 
-                Replica.getReplicaFromId("TWO"));
+        cache.addFileListInformation(flFile,  Replica.getReplicaFromId("TWO"));
 
-        Date dbDate = cache.getDateOfLastMissingFilesUpdate(
-                Replica.getReplicaFromId("TWO"));
+        Date dbDate = cache.getDateOfLastMissingFilesUpdate(Replica.getReplicaFromId("TWO"));
 
         Date afterInsert = new Date(Calendar.getInstance().getTimeInMillis());
 
@@ -330,17 +326,15 @@ public class ReplicaCacheDatabaseTester extends TestCase {
         if (stop) {
             return;
         }
-        
-        LogUtils.flushLogs(ReplicaCacheDatabase.class.getName());
-        FileAsserts.assertFileContains("Warning about duplicates should be generated. The log file is: "
-                        + FileUtils.readFile(TestInfo.LOG_DIR),
-                        "WARNING: There have been found multiple files with the name 'TEST1'", 
-                        TestInfo.LOG_DIR);
+
+        lr.assertLogContains("Warning about duplicates should be generated",
+                "There have been found multiple files with the name 'TEST1'");
         
         // cleanup afterwards.
         cache.cleanup();
+        lr.stopRecorder();
     }
-    
+
     private File makeTemporaryDuplicateFilelistFile() throws Exception {
         File res = new File(TestInfo.TEST_DIR, "filelist.out");
         FileWriter fw = new FileWriter(res);

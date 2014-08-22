@@ -22,13 +22,18 @@
  */
 package dk.netarkivet.common.distribute;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import junit.framework.TestCase;
+import java.io.File;
+import java.io.IOException;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -42,26 +47,18 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 /**
  * Class testing the FTPRemoteFile class.
  */
-@SuppressWarnings({ "unused"})
-public class FTPRemoteFileTester extends TestCase {
-    private static final File TESTLOGPROP = new File(
-            "tests/dk/netarkivet/testlog.prop");
-    private static final File LOGFILE =
-            new File("tests/testlogs/netarkivettest.log");
+public class FTPRemoteFileTester {
 
     /** testFile1-3 represents duplicates of TestInfo.TESTXML. */
     private File testFile1;
     private File testFile2;
 
     // A named logger for this class is retrieved
-    protected final Logger logger = Logger.getLogger(getClass().getName());
+    protected final Logger logger = LoggerFactory.getLogger(FTPRemoteFileTester.class);
 
     ReloadSettings rs = new ReloadSettings();
-    
-    public FTPRemoteFileTester(String sTestName) {
-        super(sTestName);
-    }
 
+    @Before
     public void setUp() {
         rs.setUp();
         try {
@@ -72,36 +69,31 @@ public class FTPRemoteFileTester extends TestCase {
             FileUtils.removeRecursively(TestInfo.TEMPDIR);
             TestFileUtils.copyDirectoryNonCVS(TestInfo.DATADIR, TestInfo.TEMPDIR);
 
-            /* make 3 duplicates of TestInfo.TESTXML: test1.xml, test2.xml, test3.xml */
+            /*
+             * make 3 duplicates of TestInfo.TESTXML: test1.xml, test2.xml,
+             * test3.xml
+             */
             testFile1 = new File(TestInfo.TEMPDIR, "test.xml");
             testFile2 = new File(TestInfo.TEMPDIR, "should_not_exist.xml");
-            //testFile3 = new File(TestInfo.TEMPDIR, "test3.xml");
+            // testFile3 = new File(TestInfo.TEMPDIR, "test3.xml");
             assertTrue("The test xml file must exist", TestInfo.TESTXML.exists());
-            //FileUtils.copyFile(TestInfo.TESTXML, testFile1);
-            //FileUtils.copyFile(TestInfo.TESTXML, testFile3);
-
-            /** enable logging as defined in testlog.prop file*/
-            try {
-                FileInputStream fis = new FileInputStream(TESTLOGPROP);
-                LogManager.getLogManager().readConfiguration(fis);
-                fis.close();
-            } catch (IOException e) {
-                fail("Could not load the testlog.prop file");
-            }
+            // FileUtils.copyFile(TestInfo.TESTXML, testFile1);
+            // FileUtils.copyFile(TestInfo.TESTXML, testFile3);
         } catch (Exception e) {
             fail("Could not setup configuration for");
         }
     }
 
+    @After
     public void tearDown() throws IOException {
-        FileUtils.removeRecursively(
-                dk.netarkivet.common.utils.TestInfo.TEMPDIR);
+        FileUtils.removeRecursively(dk.netarkivet.common.utils.TestInfo.TEMPDIR);
         rs.tearDown();
     }
 
     /**
      * Test that we can set and reset test-behaviour to get a TestRemoteFile.
      */
+    @Test
     public void testSetTest() {
         RemoteFile rf;
         try {
@@ -110,8 +102,7 @@ public class FTPRemoteFileTester extends TestCase {
             fail("Should have rejected a non-existing file");
         } catch (ArgumentNotValid e) {
             // Expected -- TestRemoteFile must have an existing file
-            StringAsserts.assertStringContains(
-                    "Should have gotten error message from TestRemoteFile",
+            StringAsserts.assertStringContains("Should have gotten error message from TestRemoteFile",
                     "is not a readable file", e.getCause().getMessage());
         }
 
@@ -122,8 +113,7 @@ public class FTPRemoteFileTester extends TestCase {
             fail("Should have rejected a non-existing file");
         } catch (ArgumentNotValid e) {
             // Expected -- FTPRemoteFile must have an existing file
-            StringAsserts.assertStringContains(
-                    "Should have gotten error message from TestRemoteFile",
+            StringAsserts.assertStringContains("Should have gotten error message from TestRemoteFile",
                     "is not a readable file", e.getCause().getMessage());
         }
 
@@ -137,16 +127,15 @@ public class FTPRemoteFileTester extends TestCase {
             rf = RemoteFileFactory.getInstance(testFile1, true, false, true);
             fail("Should not instantiate interface RemoteFile");
         } catch (ArgumentNotValid e) {
-            //expected
+            // expected
         }
 
         try {
-            Settings.set(CommonSettings.REMOTE_FILE_CLASS,
-                         "dk.netarkivet.common.distribute.NoRemoteFile");
+            Settings.set(CommonSettings.REMOTE_FILE_CLASS, "dk.netarkivet.common.distribute.NoRemoteFile");
             rf = RemoteFileFactory.getInstance(testFile1, true, false, true);
             fail("No getInstance method should exist for NoRemoteFile");
         } catch (IOFailure e) {
-            //Expected
+            // Expected
         }
     }
 

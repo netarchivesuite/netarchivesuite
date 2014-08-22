@@ -38,8 +38,8 @@ import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
  * Contains test information about all harvestdefinition test data.
  */
 public class TestInfo {
-    public static final File DATA_DIR = new File("tests/dk/netarkivet/harvester/harvesting/distribute/data/");
-    public static final File LOG_FILE = new File(new File("tests/testlogs"), "netarkivtest.log");
+
+	public static final File DATA_DIR = new File("tests/dk/netarkivet/harvester/harvesting/distribute/data/");
     public static final int WAIT_TIME = 6000;
     public static ChannelID CLIENT_ID = Channels.getTheSched();
     public static ChannelID SERVER_ID = Channels.getThisReposClient();
@@ -100,7 +100,5 @@ public class TestInfo {
     static Job getJob() {
         return JobUtils.getHighPriorityJob(ORDER_FILE, JobStatus.NEW, "default_orderxml");
     }
-
-    
 
 }

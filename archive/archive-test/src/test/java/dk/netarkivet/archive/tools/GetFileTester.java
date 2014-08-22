@@ -23,14 +23,18 @@
 package dk.netarkivet.archive.tools;
 
 import javax.jms.Message;
+
 import java.io.File;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
+import static org.junit.Assert.*;
 import dk.netarkivet.archive.bitarchive.distribute.GetFileMessage;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.ChannelsTester;
+import dk.netarkivet.common.distribute.ChannelsTesterHelper;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.utils.Settings;
@@ -44,7 +48,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 /**
  * Test the GetFile tool.
  */
-public class GetFileTester extends TestCase {
+public class GetFileTester {
     private PreventSystemExit pse = new PreventSystemExit();
     private PreserveStdStreams pss = new PreserveStdStreams(true);
     private MoveTestFiles mtf = new MoveTestFiles(TestInfo.DATA_DIR,
@@ -53,8 +57,9 @@ public class GetFileTester extends TestCase {
     TestMessageListener listener;
     ReloadSettings rs = new ReloadSettings();
 
+    @Before
     public void setUp(){
-        ChannelsTester.resetChannels();
+        ChannelsTesterHelper.resetChannels();
         rs.setUp();
         mjms.setUp();
         listener = new GetFileListener(mtf.working(
@@ -65,8 +70,9 @@ public class GetFileTester extends TestCase {
         mtf.setUp();
         pss.setUp();
         pse.setUp();
-   
     }
+
+    @After
     public void tearDown(){
         pse.tearDown();
         pss.tearDown();
@@ -79,6 +85,7 @@ public class GetFileTester extends TestCase {
     /**
      * Test that download of a small file succeeds.
      */
+    @Test
     public void testMain() {
         String[] args = new String[]{"test1.arc", new File(TestInfo.DATA_DIR, "download.arc").getPath()};
         
@@ -98,6 +105,7 @@ public class GetFileTester extends TestCase {
                 "Retrieving file 'test1.arc' from replica 'BarOne' as file "));
     }
     
+    @Test
     public void testTooManyArguments() {
         String[] args = new String[]{"arg1.arc", "arg2.arc", "arg3.arc"};
         
@@ -118,6 +126,7 @@ public class GetFileTester extends TestCase {
                         + " filename [destination-file]"));
     }
 
+    @Test
     public void testNoArguments() {
         String[] args = new String[]{};
         
@@ -144,6 +153,7 @@ public class GetFileTester extends TestCase {
      * if the GetFileMessage matches the values given to GetFileListener's constructor,
      * otherwise it sends null file as response.
      */
+
     private static class GetFileListener extends TestMessageListener {
         private String arcFileName;
         private File data = new File(TestInfo.TEST_ENTRY_FILENAME);

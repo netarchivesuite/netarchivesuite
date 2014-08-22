@@ -22,6 +22,12 @@
  */
 package dk.netarkivet.harvester.harvesting;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,10 +37,10 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.LogManager;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.TestRemoteFile;
@@ -43,10 +49,9 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.StopReason;
-import dk.netarkivet.harvester.harvesting.report.LegacyHarvestReport;
 import dk.netarkivet.harvester.harvesting.report.AbstractHarvestReport;
-import dk.netarkivet.testutils.FileAsserts;
-import dk.netarkivet.testutils.LogUtils;
+import dk.netarkivet.harvester.harvesting.report.LegacyHarvestReport;
+import dk.netarkivet.testutils.LogbackRecorder;
 import dk.netarkivet.testutils.Serial;
 import dk.netarkivet.testutils.TestFileUtils;
 
@@ -54,11 +59,9 @@ import dk.netarkivet.testutils.TestFileUtils;
  * unit tests for the abstract class AbstractHarvestReport and its concrete
  * implementation {@link LegacyHarvestReport}.
  */
-public class LegacyHarvestReportTester extends TestCase {
-    public LegacyHarvestReportTester(String s) {
-        super(s);
-    }
+public class LegacyHarvestReportTester {
 
+    @Before
     public void setUp() throws Exception {
         TestRemoteFile.removeRemainingFiles();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
@@ -66,23 +69,19 @@ public class LegacyHarvestReportTester extends TestCase {
         TestInfo.WORKING_DIR.mkdirs();
         File logs = new File(TestInfo.WORKING_DIR, "logs");
         logs.mkdir();
-        TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR,
-                                          TestInfo.WORKING_DIR);
-        FileInputStream fis = new FileInputStream(
-                "tests/dk/netarkivet/testlog.prop");
-        LogManager.getLogManager().reset();
-        FileUtils.removeRecursively(TestInfo.LOG_FILE);
-        LogManager.getLogManager().readConfiguration(fis);
+        TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
     }
 
-
+    @After
     public void tearDown() {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         JMSConnectionMockupMQ.clearTestQueues();
     }
 
 
+    @Test
     public void testConstructor() throws IOException {
+    	LogbackRecorder lr = LogbackRecorder.startRecorder();
         //Test null argument
         try {
             new LegacyHarvestReport(null);
@@ -98,39 +97,29 @@ public class LegacyHarvestReportTester extends TestCase {
                 new File(TestInfo.WORKING_DIR, "logs/crawl.log"));
         HeritrixFiles hf = new HeritrixFiles(TestInfo.WORKING_DIR, new JobInfoTestImpl(1L, 1L));
         new LegacyHarvestReport(hf);
-        LogUtils.flushLogs(LegacyHarvestReport.class.getName());
-        FileAsserts.assertFileContains("Should have log about invalid line",
-                                       "FINE: Invalid line in",
-                                       TestInfo.LOG_FILE);
+        lr.assertLogContains("Should have log about invalid line", "Invalid line in");
 
         //Test success
-        FileUtils.copyFile(
-                TestInfo.REPORT_FILE,
-                new File(TestInfo.WORKING_DIR, "logs/crawl.log"));
+        FileUtils.copyFile(TestInfo.REPORT_FILE, new File(TestInfo.WORKING_DIR, "logs/crawl.log"));
         hf = new HeritrixFiles(TestInfo.WORKING_DIR, new JobInfoTestImpl(1L, 1L));
         AbstractHarvestReport hostReport = new LegacyHarvestReport(hf);
 
-        assertNotNull(
-                "A AbstractHarvestReport should have a non-null set of domain names",
+        assertNotNull("A AbstractHarvestReport should have a non-null set of domain names",
                 hostReport.getDomainNames());
-        assertNotNull(
-                "A AbstractHarvestReport should have a non-null number of object counts",
+        assertNotNull("A AbstractHarvestReport should have a non-null number of object counts",
                 hostReport.getObjectCount("netarkivet.dk"));
-        assertNotNull(
-                "A AbstractHarvestReport should have a non-null number of bytes retrieved",
+        assertNotNull("A AbstractHarvestReport should have a non-null number of bytes retrieved",
                 hostReport.getByteCount("netarkivet.dk"));
+        lr.stopRecorder();
     }
 
+    @Test
     public void testGetDomainNames() throws IOException, FileNotFoundException {
-
-        FileUtils.copyFile(
-                TestInfo.REPORT_FILE,
-                new File(TestInfo.WORKING_DIR, "logs/crawl.log"));
+        FileUtils.copyFile(TestInfo.REPORT_FILE, new File(TestInfo.WORKING_DIR, "logs/crawl.log"));
         HeritrixFiles hf = new HeritrixFiles(TestInfo.WORKING_DIR, new JobInfoTestImpl(1L, 1L));
         AbstractHarvestReport hostReport = new LegacyHarvestReport(hf);
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(
-                new FileInputStream(TestInfo.REPORT_FILE)));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(TestInfo.REPORT_FILE)));
         int lineCnt = 0;
         while (reader.readLine() != null) {
             ++lineCnt;
@@ -138,18 +127,15 @@ public class LegacyHarvestReportTester extends TestCase {
         reader.close();
 
         if (lineCnt > 1) {
-            assertTrue(
-                    "Number of domain names in AbstractHarvestReport should be > 0, assuming "
+            assertTrue("Number of domain names in AbstractHarvestReport should be > 0, assuming "
                     + "that the number of lines in the host-reports.txt file is > 1",
                     hostReport.getDomainNames().size() > 0);
         }
 
         // Number of domain names in AbstractHarvestReport should be less than or equal to
         // the number of lines in the host-reports.txt file (minus 1 , due to header):
-        Assert.assertEquals(
-                "Number of domain names in AbstractHarvestReport should equal testnumber "
-                + TestInfo.NO_OF_TEST_DOMAINS,
-                TestInfo.NO_OF_TEST_DOMAINS, //Expected value
+        assertEquals("Number of domain names in AbstractHarvestReport should equal testnumber "
+        		+ TestInfo.NO_OF_TEST_DOMAINS, TestInfo.NO_OF_TEST_DOMAINS, //Expected value
                 hostReport.getDomainNames().size());
 
         // Check if set of domain names contains normalized domain name TestInfo.TEST_DOMAIN:
@@ -159,7 +145,7 @@ public class LegacyHarvestReportTester extends TestCase {
                            dk.netarkivet.harvester.harvesting.TestInfo.TEST_DOMAIN));
     }
 
-
+    @Test
     public void testGetObjectCount() {
         AbstractHarvestReport hostReport = createValidHeritrixHostsReport();
 
@@ -176,6 +162,7 @@ public class LegacyHarvestReportTester extends TestCase {
     }
 
 
+    @Test
     public void testGetByteCount() {
         AbstractHarvestReport hostReport = createValidHeritrixHostsReport();
 
@@ -191,6 +178,7 @@ public class LegacyHarvestReportTester extends TestCase {
     }
 
     /** Test solution to bugs 391 - hosts report with long values. */
+    @Test
     public void testLongValues() {
         File testFile = TestInfo.LONG_REPORT_FILE;
 
@@ -212,6 +200,7 @@ public class LegacyHarvestReportTester extends TestCase {
      * Test solution to bugs 392 - hosts report with byte counts which add to a
      * long value.
      */
+    @Test
     public void testAddLongValues() {
         File testFile = TestInfo.ADD_LONG_REPORT_FILE;
 
@@ -226,6 +215,7 @@ public class LegacyHarvestReportTester extends TestCase {
     }
 
     /** Test stop reason. */
+    @Test
     public void testStopReason() {
         File testFile = TestInfo.STOP_REASON_REPORT_FILE;
         FileUtils.copyFile(
@@ -248,6 +238,7 @@ public class LegacyHarvestReportTester extends TestCase {
                      hr.getStopReason("bibliotek.dk"));
     }
     
+    @Test
     public void testIDNA() {
         File testFile = TestInfo.IDNA_CRAW_LOG;
         FileUtils.copyFile(
@@ -274,6 +265,7 @@ public class LegacyHarvestReportTester extends TestCase {
      * @throws IOException
      * @throws ClassNotFoundException
      */
+    @Test
     public void testSerializability()
             throws IOException, ClassNotFoundException {
         File testFile = TestInfo.REPORT_FILE;

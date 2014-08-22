@@ -53,23 +53,28 @@ import dk.netarkivet.common.utils.AllDocsCollector;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.harvester.indexserver.CDXDataCache;
 import dk.netarkivet.harvester.indexserver.DedupCrawlLogIndexCache;
+import static org.junit.Assert.*;
+
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
 
 /**
  * Unit test(s) for the DedupCrawlLogIndexCache class.
  */
 public class DedupCrawlLogIndexCacheTester extends CacheTestCase {
-    public DedupCrawlLogIndexCacheTester(String s) {
-        super(s);
-    }
 
+    @Before
     public void setUp() throws Exception {
         super.setUp();
     }
 
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
     }
 
+    @Test
     public void testCombine() throws Exception {
         // These are the origins of job #4 and #1
         Map<String, String> origins = new HashMap<String, String>(8);
@@ -188,6 +193,7 @@ public class DedupCrawlLogIndexCacheTester extends CacheTestCase {
         }
     }
 
+    @Test
     public void testGetSortedCDX() throws Exception {
         CDXDataCache dummyindexcache = new CDXDataCache();
         File cdxUnsorted = dummyindexcache.getCacheFile(4L);
@@ -199,6 +205,7 @@ public class DedupCrawlLogIndexCacheTester extends CacheTestCase {
                 FileUtils.readListFromFile(reader));
     }
 
+    @Test
     public void testGetCacheFile() throws Exception {
         DedupCrawlLogIndexCache cache = new DedupCrawlLogIndexCache();
         File test = cache.getCacheFile(Collections.singleton((1L)));

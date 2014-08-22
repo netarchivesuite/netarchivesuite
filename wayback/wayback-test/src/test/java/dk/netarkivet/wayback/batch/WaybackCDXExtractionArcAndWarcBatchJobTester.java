@@ -23,37 +23,35 @@
 
 package dk.netarkivet.wayback.batch;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.OutputStream;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
-import java.util.logging.LogManager;
+import java.io.OutputStream;
 
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
 
-import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.arc.ARCBatchJob;
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 import dk.netarkivet.common.utils.warc.WARCBatchJob;
-import dk.netarkivet.common.utils.arc.ARCBatchJob;
-import dk.netarkivet.testutils.LogUtils;
-import dk.netarkivet.wayback.TestInfo;
-import dk.netarkivet.wayback.batch.WaybackCDXExtractionARCBatchJob;
-import dk.netarkivet.wayback.batch.WaybackCDXExtractionWARCBatchJob;
+import dk.netarkivet.testutils.LogbackRecorder;
 
 
 /**
  * Unittests for the batchjob WaybackCDXExtractionARCBatchJob
  * and WaybackCDXExtractionWARCBatchJob.
  */
-public class WaybackCDXExtractionArcAndWarcBatchJobTester extends TestCase {
+public class WaybackCDXExtractionArcAndWarcBatchJobTester {
 
     private BatchLocalFiles blaf;
     private BatchLocalFiles blafWarc;
      
 
+    @Before
     public void setUp() throws Exception {
-        super.setUp();
         File file = new File(
                 "tests/dk/netarkivet/wayback/data/originals/arcfile_withredirects.arc");
         File warcfile = new File(
@@ -64,12 +62,11 @@ public class WaybackCDXExtractionArcAndWarcBatchJobTester extends TestCase {
                 + "'", warcfile.exists());
         blaf = new BatchLocalFiles(new File[] {file});
         blafWarc = new BatchLocalFiles(new File[] {warcfile});
-        FileInputStream fis = new FileInputStream("tests/dk/netarkivet/testlog.prop");
-        LogManager.getLogManager().readConfiguration(fis);
-        fis.close();
     }
 
+    @Test
     public void testARCProcess() throws IOException {
+    	LogbackRecorder lr = LogbackRecorder.startRecorder();
         ARCBatchJob job = new WaybackCDXExtractionARCBatchJob();
         OutputStream os = new ByteArrayOutputStream();
         blaf.run(job,os);
@@ -78,18 +75,10 @@ public class WaybackCDXExtractionArcAndWarcBatchJobTester extends TestCase {
         assertFalse("expect a non-empty output", os.toString() == null || os.toString().length()==0);
         assertTrue("Should be no exceptions", job.getExceptions().isEmpty());
         // Check log for "Could not parse errors
-        LogUtils.flushLogs(WaybackCDXExtractionARCBatchJob.class.getName());
-
-        if (TestInfo.LOG_FILE.exists()) {
-            String logtxt = FileUtils.readFile(TestInfo.LOG_FILE);
-            assertNotStringContains("Batchjob results in 'could not parse' errors.",
-                logtxt, "Could not parse");
-        } else {
-            fail("Logging disabled or wrong path to logfile: " 
-                    + TestInfo.LOG_FILE.getAbsolutePath());
-        }
+        lr.assertLogNotContains("Batchjob results in 'could not parse' errors.", "Could not parse");
+        lr.stopRecorder();
     }
-    
+
     /** Asserts that a source string does not contain a given string, and prints
      * out the source string if the target string is found.
      *
@@ -97,6 +86,7 @@ public class WaybackCDXExtractionArcAndWarcBatchJobTester extends TestCase {
      * @param src A string to search through
      * @param str A string to search for
      */
+    /*
     private void assertNotStringContains(String msg, String src, String str) {
         int index = src.indexOf(str);
         if (index != -1) {
@@ -105,9 +95,9 @@ public class WaybackCDXExtractionArcAndWarcBatchJobTester extends TestCase {
             assertEquals(msg, -1, index);
         }
     }
-
+    */
     
-    
+    @Test
     public void testWARCProcess() throws IOException {
         WARCBatchJob job = new WaybackCDXExtractionWARCBatchJob();
         OutputStream os = new ByteArrayOutputStream();

@@ -41,7 +41,8 @@ import dk.netarkivet.common.exceptions.IllegalState;
  * The physical location class.
  */
 public class PhysicalLocation {
-    /** the log, for logging stuff instead of displaying them directly.*/ 
+
+	/** the log, for logging stuff instead of displaying them directly.*/ 
     private static final Logger log = LoggerFactory.getLogger(PhysicalLocation.class);
     /** The root for the branch of this element in the XML-tree.*/
     private Element physLocRoot;
@@ -55,8 +56,10 @@ public class PhysicalLocation {
     private String name;
     /** The inherited name for the NetarchiveSuite file.*/
     private String netarchiveSuiteFileName;
-    /** The inherited log property file.*/
+    /** The inherited java.util.logging property file.*/
     private File logPropFile;
+    /** The inherited SLF4J config file.*/
+    private File slf4JConfigFile;
     /** The inherited security file.*/
     private File securityPolicyFile;
     /** The inherited database file name.*/
@@ -89,7 +92,7 @@ public class PhysicalLocation {
      * netarchiveSuiteSource if either null or empty. 
      */
     public PhysicalLocation(Element subTreeRoot, XmlStructure parentSettings, 
-            Parameters param, String netarchiveSuiteSource, File logProp,
+            Parameters param, String netarchiveSuiteSource, File logProp, File slf4JConfig,
             File securityPolicy, File dbFile, File arcdbFile, boolean resetDir,
             File externalJarFolder) throws ArgumentNotValid {
         // test if valid arguments
@@ -97,7 +100,8 @@ public class PhysicalLocation {
         ArgumentNotValid.checkNotNull(parentSettings, "XmlStructure parentSettings");
         ArgumentNotValid.checkNotNull(param, "Parameters param");
         ArgumentNotValid.checkNotNullOrEmpty(netarchiveSuiteSource, "String netarchiveSuite");
-        ArgumentNotValid.checkNotNull(logProp, "File logProp");
+        //ArgumentNotValid.checkNotNull(logProp, "File logProp");
+        //ArgumentNotValid.checkNotNull(slf4JConfig, "File slf4JConfig");
         ArgumentNotValid.checkNotNull(securityPolicy, "File securityPolicy");
         
         // make a copy of parent, don't use it directly.
@@ -106,6 +110,7 @@ public class PhysicalLocation {
         machineParameters = new Parameters(param);
         netarchiveSuiteFileName = netarchiveSuiteSource;
         logPropFile = logProp;
+        slf4JConfigFile = slf4JConfig;
         securityPolicyFile = securityPolicy;
         databaseFile = dbFile;
         arcDatabaseFile = arcdbFile;
@@ -161,12 +166,12 @@ public class PhysicalLocation {
             // equals (not case-sensitive) 'windows'. Else linux machine
             if (os != null && os.equalsIgnoreCase(Constants.OPERATING_SYSTEM_WINDOWS_ATTRIBUTE)) {
                 machines.add(new WindowsMachine(e, settings, machineParameters,
-                        netarchiveSuiteFileName, logPropFile, 
+                        netarchiveSuiteFileName, logPropFile, slf4JConfigFile,
                         securityPolicyFile, databaseFile, arcDatabaseFile, 
                         resetDirectory, jarFolder));
             } else {
                 machines.add(new LinuxMachine(e, settings, machineParameters,
-                        netarchiveSuiteFileName, logPropFile, 
+                        netarchiveSuiteFileName, logPropFile, slf4JConfigFile,
                         securityPolicyFile, databaseFile, arcDatabaseFile,
                         resetDirectory, jarFolder));
             }

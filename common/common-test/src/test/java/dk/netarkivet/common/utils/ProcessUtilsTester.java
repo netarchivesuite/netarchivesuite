@@ -22,16 +22,20 @@
  */
 package dk.netarkivet.common.utils;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Ignore;
+
 
 /**
  * Unit-test of ProcessUtils class.
  * 
  */
-public class ProcessUtilsTester extends TestCase {
-    public ProcessUtilsTester(String s) {
-        super(s);
-    }
+@Ignore("DISABLED in test suite as is platform dependent")
+public class ProcessUtilsTester {
 
     /**
      * 

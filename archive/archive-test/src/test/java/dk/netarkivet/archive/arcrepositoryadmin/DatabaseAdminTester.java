@@ -22,13 +22,23 @@
  */
 package dk.netarkivet.archive.arcrepositoryadmin;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.Set;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.ChannelsTester;
+import dk.netarkivet.common.distribute.ChannelsTesterHelper;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
@@ -39,12 +49,11 @@ import dk.netarkivet.harvester.datamodel.DatabaseTestUtils;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
-import junit.framework.TestCase;
 
-public class DatabaseAdminTester extends TestCase {
-    private ReloadSettings rs = new ReloadSettings();
-    private MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,
-            TestInfo.TEST_DIR);
+public class DatabaseAdminTester {
+
+	private ReloadSettings rs = new ReloadSettings();
+    private MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR, TestInfo.TEST_DIR);
     
     private UseTestRemoteFile utrf = new UseTestRemoteFile();
     
@@ -52,32 +61,27 @@ public class DatabaseAdminTester extends TestCase {
     Replica TWO = Replica.getReplicaFromId("TWO");
     Replica THREE = Replica.getReplicaFromId("THREE");
 
+    @Before
     public void setUp() throws Exception {
-        ChannelsTester.resetChannels();
+        ChannelsTesterHelper.resetChannels();
         rs.setUp();
         mtf.setUp();
         utrf.setUp();
         
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
 
-        DatabaseTestUtils.takeDatabase(TestInfo.DATABASE_FILE.getAbsolutePath(),
-                TestInfo.DATABASE_DIR);
+        DatabaseTestUtils.takeDatabase(TestInfo.DATABASE_FILE.getAbsolutePath(), TestInfo.DATABASE_DIR);
 
         // define the settings for accessing the database
-        Settings.set(ArchiveSettings.BASEURL_ARCREPOSITORY_ADMIN_DATABASE,
-                TestInfo.DATABASE_URL);
-        Settings.set(ArchiveSettings.MACHINE_ARCREPOSITORY_ADMIN_DATABASE,
-                "");
-        Settings.set(ArchiveSettings.PORT_ARCREPOSITORY_ADMIN_DATABASE,
-                "");
-        Settings.set(ArchiveSettings.DIR_ARCREPOSITORY_ADMIN_DATABASE,
-                "");
+        Settings.set(ArchiveSettings.BASEURL_ARCREPOSITORY_ADMIN_DATABASE, TestInfo.DATABASE_URL);
+        Settings.set(ArchiveSettings.MACHINE_ARCREPOSITORY_ADMIN_DATABASE, "");
+        Settings.set(ArchiveSettings.PORT_ARCREPOSITORY_ADMIN_DATABASE, "");
+        Settings.set(ArchiveSettings.DIR_ARCREPOSITORY_ADMIN_DATABASE, "");
 
-        Settings.set(CommonSettings.NOTIFICATIONS_CLASS,
-                PrintNotifications.class.getName());
-
+        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, PrintNotifications.class.getName());
     }
     
+    @After
     public void tearDown() {
         JMSConnectionMockupMQ.clearTestQueues();
         utrf.setUp();
@@ -86,6 +90,9 @@ public class DatabaseAdminTester extends TestCase {
     }
 
     /** Disabled, fails on Jenkins */
+    @Test
+    @Ignore("FIXME")
+    // FIXME: test temporarily disabled
     public void failingTestArcRepositoryCalls() {
         DatabaseAdmin da = DatabaseAdmin.getInstance();
         
@@ -154,4 +161,5 @@ public class DatabaseAdminTester extends TestCase {
                 + "', but it contained: " + filenames, 
                 filenames.contains(TestInfo.TEST_FILE_1.getName()));
     }
+
 }

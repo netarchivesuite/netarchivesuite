@@ -22,7 +22,12 @@
  */
 package dk.netarkivet.wayback.indexer;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
+
+import org.junit.After;
+import org.junit.Before;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
@@ -34,15 +39,14 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.wayback.TestInfo;
 import dk.netarkivet.wayback.WaybackSettings;
 
-import junit.framework.TestCase;
-
-public class IndexerTestCase extends TestCase {
+public class IndexerTestCase {
     private String oldClient = System.getProperty(CommonSettings.ARC_REPOSITORY_CLIENT);
     private String oldFileDir = System.getProperty("settings.common.arcrepositoryClient.fileDir");
     protected static File tempdir = new File(Settings.get(WaybackSettings.WAYBACK_INDEX_TEMPDIR));
 
     ReloadSettings rs = new ReloadSettings();
 
+    @Before
     public void setUp() {
         rs.setUp();
         System.setProperty(WaybackSettings.HIBERNATE_HBM2DDL_AUTO, "create-drop");
@@ -55,10 +59,10 @@ public class IndexerTestCase extends TestCase {
         assertTrue(ArcRepositoryClientFactory.getPreservationInstance() instanceof LocalArcRepositoryClient);
     }
 
+    @After
     public void tearDown() {
         HibernateUtil.getSession().getSessionFactory().close();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
-        FileUtils.remove(TestInfo.LOG_FILE);
         if (oldClient != null) {
             System.setProperty(CommonSettings.ARC_REPOSITORY_CLIENT, oldClient);
         } else {
@@ -70,10 +74,5 @@ public class IndexerTestCase extends TestCase {
             System.setProperty("settings.common.arcrepositoryClient.fileDir", "");
         }
         rs.tearDown();
-    }
-
-    public void testNothing() {
-        assertTrue("This is here to stop junit complaining that there are no "
-                   + "tests in this class", true);
     }
 }

@@ -27,14 +27,12 @@ import java.util.Map;
 
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldOptions;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
-public class ExtendedFieldOptionsTester extends TestCase {
+public class ExtendedFieldOptionsTester {
 
-    public ExtendedFieldOptionsTester(String s) {
-        super(s);
-    }
-
+    @Test
     public void testOptions() {
     	String line = null;
     	ExtendedFieldOptions eo = null;

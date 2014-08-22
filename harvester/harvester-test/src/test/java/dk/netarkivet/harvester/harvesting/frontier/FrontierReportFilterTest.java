@@ -27,29 +27,32 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Ignore;
+import org.junit.Test;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
-public class FrontierReportFilterTest extends TestCase {
+public class FrontierReportFilterTest {
 
     ReloadSettings rs = new ReloadSettings();
 
-    /* (non-Javadoc)
-     * @see junit.framework.TestCase#setUp()
-     */
-    @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         rs.setUp();
-        super.setUp();
 
         Settings.set(
                 CommonSettings.CACHE_DIR,
                 TestInfo.WORKDIR.getAbsolutePath());
     }
 
+    @After
     public void tearDown() throws Exception {
 
         File[] testDirs = TestInfo.WORKDIR.listFiles(new FileFilter() {
@@ -62,8 +65,6 @@ public class FrontierReportFilterTest extends TestCase {
         for (File dir : testDirs) {
             FileUtils.removeRecursively(dir);
         }
-
-        super.tearDown();
         rs.tearDown();
     }
 
@@ -74,6 +75,8 @@ public class FrontierReportFilterTest extends TestCase {
      * changing the method prefix 
      * from test to TEST);
      */
+    @Test
+    @Ignore("test disabled before migration")
     public final void TESTTopTotalEnqueuesFilter1() throws IOException {
 
         File testSample = new File(
@@ -116,6 +119,7 @@ public class FrontierReportFilterTest extends TestCase {
      * Test the extraction of 200 top queues out of a much smaller report.
      * @throws IOException
      */
+    @Test
     public final void testTopTotalEnqueuesFilter2() throws IOException {
 
         File testSample = new File(

@@ -38,11 +38,7 @@ import dk.netarkivet.monitor.MonitorSettings;
  * COMPLETE_ = path from beyond the settings branch.
  */
 public final class Constants {
-    /**
-     * Private constructor to avoid instantiation.
-     */
-    private Constants() {}
-    
+
     // Single character specific
     /** The empty string, "".*/
     static final String EMPTY = "";
@@ -316,10 +312,15 @@ public final class Constants {
     /** The name of the security policy file.*/
     static final String SECURITY_POLICY_FILE_NAME = "security.policy";
     /** The prefix for the log property file for the application.*/
-    static final String LOG_PROP_APPLICATION_PREFIX = "log_";
+    static final String JUL_PROP_APPLICATION_PREFIX = "log_";
     /** The suffix for the log property file for the application.*/
-    static final String LOG_PROP_APPLICATION_SUFFIX = ".prop";
-    
+    static final String JUL_PROP_APPLICATION_SUFFIX = ".prop";
+
+    /** The prefix for the SLF4J config file for the application.*/
+    static final String SLF4J_CONFIG_APPLICATION_PREFIX = "logback_";
+    /** The suffix for the SLF4J config file for the application.*/
+    static final String SLF4J_CONFIG_APPLICATION_SUFFIX = ".xml";
+
     /** The directory for the harvest database in the unpacked NetarchiveSuite.
      *  The default directory for the database file.
      */
@@ -395,7 +396,7 @@ public final class Constants {
     /** The extension on policy files.*/
     static final String EXTENSION_POLICY_FILES = ".policy";
     /** The extension on property files.*/
-    static final String EXTENSION_LOG_PROPERTY_FILES = ".prop";
+    static final String EXTENSION_JUL_PROPERTY_FILES = ".prop";
     /** The extension on jar files.*/
     static final String EXTENSION_JAR_FILES = ".jar";
     /** The extension on vb-script files.*/
@@ -415,6 +416,8 @@ public final class Constants {
     static final String SETTINGS_PREFIX = "settings_";
     /** Log property prefix. log_.*/
     static final String LOG_PREFIX = "log_";
+    /** Logback config prefix. logback_.*/
+    static final String LOGBACK_PREFIX = "logback_";
     /** Windows directory creation script prefix.*/
     static final String WINDOWS_DIR_CREATE_PREFIX = "dir_";
     
@@ -454,8 +457,10 @@ public final class Constants {
     public static final String ARG_NETARCHIVE_SUITE_FILE = "Z";
     /** For giving the security file as argument. */
     public static final String ARG_SECURITY_FILE = "S";
-    /** For giving the log property file as argument. */
-    public static final String ARG_LOG_PROPERTY_FILE = "L";
+    /** For giving the java.util.loggin property file as argument. */
+    public static final String ARG_JUL_PROPERTY_FILE = "L";
+    /** For giving the SLF4J xml file as argument. */
+    public static final String ARG_SLF4J_CONFIG_FILE = "B";
     /** For giving the optional output directory as argument. */
     public static final String ARG_OUTPUT_DIRECTORY = "O";
     /** For giving the optional database file as argument. */
@@ -519,9 +524,12 @@ public final class Constants {
     /** The error message when no security file is given.*/
     public static final String MSG_ERROR_NO_SECURITY_FILE_ARG = 
         "No security file argument: -S (Must end with '.policy').\n";
-    /** The error message when no log property file is given.*/
-    public static final String MSG_ERROR_NO_LOG_PROPERTY_FILE_ARG = 
+    /** The error message when no java.util.logging property file is given.*/
+    public static final String MSG_ERROR_NO_JUL_PROPERTY_FILE_ARG = 
         "No log property file argument: -L (Must end with '.prop').\n";
+    /** The error message when no log property file is given.*/
+    public static final String MSG_ERROR_NO_SLF4J_CONFIG_FILE_ARG = 
+        "No SLF4J configuration file argument: -B (Must end with '.xml').\n";
     /** The error message when config file does not exist.*/
     public static final String MSG_ERROR_NO_CONFIG_FILE_FOUND = 
         "Reference to non-existing config file (-C argument).";
@@ -531,9 +539,14 @@ public final class Constants {
     /** The error message when security file does not exist.*/
     public static final String MSG_ERROR_NO_SECURITY_FILE_FOUND = 
         "Reference to non-existing security file (-S argument).";
-    /** The error message when log property file does not exist.*/
-    public static final String MSG_ERROR_NO_LOG_PROPERTY_FILE_FOUND = 
+    /** The error message when java.util.logging property file does not exist.*/
+    public static final String MSG_ERROR_NO_JUL_PROPERTY_FILE_FOUND = 
         "Reference to non-existing log property file (-L argument).";
+    /** The error message when SLF4J config file does not exist.*/
+    public static final String MSG_ERROR_NO_SLF4J_CONFIG_FILE_FOUND = 
+        "Reference to non-existing SLF4J config file (-B argument).";
+    public static final String MSG_ERROR_NO_LOG_CONFIG_FILE_FOUND = 
+            "Reference to non-existing log config file (-L/-B argument).";
     /** The error message when database file does not exist.*/
     public static final String MSG_ERROR_NO_DATABASE_FILE_FOUND = 
         "Reference to non-existing database file (-D argument).";
@@ -554,9 +567,12 @@ public final class Constants {
     /** The error message for wrong security file extension.*/
     public static final String MSG_ERROR_SECURITY_EXTENSION = 
         "Security policy file must be '.policy'.\n";
-    /** The error message for wrong log property file extension.*/
-    public static final String MSG_ERROR_LOG_PROPERTY_EXTENSION = 
+    /** The error message for wrong java.util.logging property file extension.*/
+    public static final String MSG_ERROR_JUL_PROPERTY_EXTENSION = 
         "Log property file must be '.prop'.\n";
+    /** The error message for wrong SLF4J config file extension.*/
+    public static final String MSG_ERROR_SLF4J_CONFIG_EXTENSION = 
+        "SLF4J config file must be '.xml'.\n";
     /** The error message for wrong database extension.*/
     public static final String MSG_ERROR_DATABASE_EXTENSION = 
         "Database file must have extension '.jar' or '.zip'";
@@ -603,15 +619,17 @@ public final class Constants {
     /** The warning when more than one jmxremote.access or jmxremote.password 
      * file path is defined.*/
     public static final String MSG_WARN_TOO_MANY_JMXREMOTE_FILE_PATHS = 
-        "Too many instances of jmxremote.password or jmxremote.access "
-        + "files defined.";
+        "Too many instances of jmxremote.password or jmxremote.access files defined.";
     /** The warning when the NetarchiveSuite file will be overridden, since 
      * another file with same name exists.*/
     public static final String MSG_WARN_ZIPFILE_ALREADY_EXISTS = 
-        "Warning: A NetarchiveSuite file already exists. "
-        + "It will be overridden. ";
+        "Warning: A NetarchiveSuite file already exists. It will be overridden. ";
     
-    // functions
+	/**
+     * Private constructor to avoid instantiation.
+     */
+    private Constants() {}
+    
     /**
      * Create the beginning of a scope in XML (e.g. html = \< html \>).
      * 
@@ -619,8 +637,7 @@ public final class Constants {
      * @return The beginning of the XML-scope.
      * @throws ArgumentNotValid If the scope is null or empty.
      */
-    public static String changeToXMLBeginScope(String scope) 
-            throws ArgumentNotValid {
+    public static String changeToXMLBeginScope(String scope) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(scope, "String scope");
         return LESS_THAN + scope + GREATER_THAN;
     }
@@ -632,8 +649,7 @@ public final class Constants {
      * @return The ending of the XML-scope.
      * @throws ArgumentNotValid If the scope is null or empty.
      */
-    public static String changeToXMLEndScope(String scope) 
-            throws ArgumentNotValid {
+    public static String changeToXMLEndScope(String scope)  throws ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(scope, "String scope");
         return LESS_THAN + SLASH + scope + GREATER_THAN;
     }
@@ -646,9 +662,9 @@ public final class Constants {
      * @return Whether the environment name is valid.
      * @throws ArgumentNotValid If the name is null or empty.
      */
-    public static boolean validEnvironmentName(String name) 
-            throws ArgumentNotValid {
+    public static boolean validEnvironmentName(String name) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(name, "String name");
         return Pattern.matches(VALID_REGEX_ENVIRONMENT_NAME, name);
     }
+
 }

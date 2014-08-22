@@ -26,12 +26,12 @@ package dk.netarkivet.harvester.webinterface;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.inject.Provider;
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import dk.netarkivet.common.distribute.indexserver.IndexClientFactory;
 import dk.netarkivet.common.distribute.indexserver.JobIndexCache;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -41,29 +41,44 @@ import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.webinterface.HTMLUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.datamodel.DomainDAO;
 import dk.netarkivet.harvester.datamodel.FullHarvest;
 import dk.netarkivet.harvester.datamodel.HarvestDefinition;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
+import dk.netarkivet.harvester.datamodel.dao.DAOProviderFactory;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO;
 
 /**
  * Contains utility methods for supporting GUI for updating snapshot harvests.
  */
-public final class SnapshotHarvestDefinition {
-    
-    
-    /** The logger to use.    */
-    protected static final Log log = LogFactory.getLog(
-            SnapshotHarvestDefinition.class.getName());
-    
-    /** Default private constructor to avoid class being instantiated. */
-    private SnapshotHarvestDefinition() {
+public class SnapshotHarvestDefinition {
+    protected static final Log log = LogFactory.getLog(SnapshotHarvestDefinition.class);
+    private final Provider<HarvestDefinitionDAO> hdDaoProvider;
+    private final Provider<JobDAO> jobDaoProvider;
+    private final Provider<ExtendedFieldDAO> extendedFieldDAOProvider;
+    private final Provider<DomainDAO> domainDAOProvider;
 
+    public SnapshotHarvestDefinition(
+            Provider<HarvestDefinitionDAO> hdDaoProvider,
+            Provider<JobDAO> jobDaoProvider,
+            Provider<ExtendedFieldDAO> extendedFieldDAOProvider,
+            Provider<DomainDAO> domainDAOProvider) {
+        this.hdDaoProvider = hdDaoProvider;
+        this.jobDaoProvider = jobDaoProvider;
+        this.extendedFieldDAOProvider = extendedFieldDAOProvider;
+        this.domainDAOProvider = domainDAOProvider;
     }
 
-    
-    
+    public static SnapshotHarvestDefinition createSnapshotHarvestDefinitionWithDefaultDAOs() {
+        return new SnapshotHarvestDefinition(
+                DAOProviderFactory.getHarvestDefinitionDAOProvider(),
+                DAOProviderFactory.getJobDAOProvider(),
+                DAOProviderFactory.getExtendedFieldDAOProvider(),
+                DAOProviderFactory.getDomainDAOProvider());
+    }
+
     /**
      * Extracts all required parameters from the request, checks for
      * any inconsistencies, and passes the requisite data to the
@@ -79,7 +94,7 @@ public final class SnapshotHarvestDefinition {
      * to the standard error page, in which case further JSP processing should
      * be aborted.
      */
-    public static void processRequest(PageContext context, I18n i18n) {
+    public void processRequest(PageContext context, I18n i18n) {
         ArgumentNotValid.checkNotNull(context, "PageContext context");
         ArgumentNotValid.checkNotNull(i18n, "I18n i18n");
 
@@ -106,8 +121,7 @@ public final class SnapshotHarvestDefinition {
         Long oldHarvestId = HTMLUtils.parseOptionalLong(context,
                 Constants.OLDSNAPSHOT_PARAM, null);
 
-        HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
-        if (oldHarvestId != null && !hddao.exists(oldHarvestId)) {
+        if (oldHarvestId != null && !hdDaoProvider.get().exists(oldHarvestId)) {
             HTMLUtils.forwardWithErrorMessage(context, i18n,
                     "errormsg;harvestdefinition.0.does.not.exist",
                     oldHarvestId);
@@ -117,7 +131,7 @@ public final class SnapshotHarvestDefinition {
 
         FullHarvest hd;
         if ((request.getParameter(Constants.CREATENEW_PARAM) != null)) {
-            if (hddao.getHarvestDefinition(name) != null) {
+            if (hdDaoProvider.get().getHarvestDefinition(name) != null) {
                 HTMLUtils.forwardWithErrorMessage(context, i18n,
                         "errormsg;harvest.definition.0.already.exists", name);
                 throw new ForwardedToErrorPage("Harvest definition '" + name
@@ -125,11 +139,12 @@ public final class SnapshotHarvestDefinition {
             }
             // Note, object/bytelimit set to default values, if not set
             hd = new FullHarvest(name, comments, oldHarvestId, objectLimit,
-                                 byteLimit, runningtimeLimit, false);
+                                 byteLimit, runningtimeLimit, false,
+                    hdDaoProvider, jobDaoProvider, extendedFieldDAOProvider, domainDAOProvider);
             hd.setActive(false);
-            hddao.create(hd);
+            hdDaoProvider.get().create(hd);
         } else {
-            hd = (FullHarvest) hddao.getHarvestDefinition(name);
+            hd = (FullHarvest) hdDaoProvider.get().getHarvestDefinition(name);
             if (hd == null) {
                 HTMLUtils.forwardWithErrorMessage(context, i18n,
                         "errormsg;harvest.0.does.not.exist", name);
@@ -169,7 +184,7 @@ public final class SnapshotHarvestDefinition {
             
             hd.setPreviousHarvestDefinition(oldHarvestId);
             hd.setComments(comments);
-            hddao.update(hd);
+            hdDaoProvider.get().update(hd);
         }
     }
 
@@ -180,7 +195,7 @@ public final class SnapshotHarvestDefinition {
      * @param i18n Translation information
      * @return True if a harvest definition changed state.
      */
-    public static boolean flipActive(PageContext context, I18n i18n) {
+    public boolean flipActive(PageContext context, I18n i18n) {
         ArgumentNotValid.checkNotNull(context, "PageContext context");
         ArgumentNotValid.checkNotNull(i18n, "I18n i18n");
 
@@ -188,8 +203,7 @@ public final class SnapshotHarvestDefinition {
         String flipactive = request.getParameter(Constants.FLIPACTIVE_PARAM);
         // Change activation if requested
         if (flipactive != null) {
-            HarvestDefinitionDAO dao = HarvestDefinitionDAO.getInstance();
-            HarvestDefinition hd = dao.getHarvestDefinition(flipactive);
+            HarvestDefinition hd = hdDaoProvider.get().getHarvestDefinition(flipactive);
             if (hd != null) {
                 boolean isActive = hd.getActive();
                 boolean useDeduplication = Settings.getBoolean(
@@ -197,15 +211,15 @@ public final class SnapshotHarvestDefinition {
                 if (!isActive) {
                     if (hd instanceof FullHarvest) {
                         FullHarvest fhd = (FullHarvest) hd;
-                        validatePreHd(fhd, context, i18n);
+                        validatePreviousHd(fhd, context, i18n);
                         if (useDeduplication) {
                             // The client for requesting job index.
                             JobIndexCache jobIndexCache
                                 = IndexClientFactory.getDedupCrawllogInstance();
                             Long harvestId = fhd.getOid();
                             Set<Long> jobSet 
-                                = dao.getJobIdsForSnapshotDeduplicationIndex(
-                                        harvestId);
+                                = hdDaoProvider.get().getJobIdsForSnapshotDeduplicationIndex(
+                                    harvestId);
                             jobIndexCache.requestIndex(jobSet, harvestId);
                         } else {
                             // If deduplication disabled set indexReady to true 
@@ -220,7 +234,7 @@ public final class SnapshotHarvestDefinition {
                     }
                 } 
                 hd.setActive(!hd.getActive());
-                dao.update(hd);
+                hdDaoProvider.get().update(hd);
                 return true;
             } else {
                 HTMLUtils.forwardWithErrorMessage(context, i18n,
@@ -243,14 +257,13 @@ public final class SnapshotHarvestDefinition {
      * @param context The context of the web request.
      * @param i18n Translation information
      */
-    private static void validatePreHd(FullHarvest hd, 
+    private void validatePreviousHd(FullHarvest hd,
             PageContext context, I18n i18n) {
         HarvestDefinition preHd = hd.getPreviousHarvestDefinition();
         if (preHd == null) {
             return; // no validation needed
         }
-        
-        JobDAO dao = JobDAO.getInstance();
+
         // This query represents check one
         HarvestStatusQuery hsq1 = new HarvestStatusQuery(preHd.getOid(), 0);
         // This query represents check two
@@ -261,8 +274,8 @@ public final class SnapshotHarvestDefinition {
         chosenStates.add(JobStatus.SUBMITTED);
         chosenStates.add(JobStatus.STARTED);
         hsq2.setJobStatus(chosenStates);
-        HarvestStatus hs1 = dao.getStatusInfo(hsq1);
-        HarvestStatus hs2 = dao.getStatusInfo(hsq2);
+        HarvestStatus hs1 = jobDaoProvider.get().getStatusInfo(hsq1);
+        HarvestStatus hs2 = jobDaoProvider.get().getStatusInfo(hsq2);
         if (hs1.getJobStatusInfo().isEmpty() 
                 || !hs2.getJobStatusInfo().isEmpty()) {
             HTMLUtils.forwardWithErrorMessage(context, i18n,

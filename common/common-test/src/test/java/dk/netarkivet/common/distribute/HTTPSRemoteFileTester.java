@@ -22,11 +22,19 @@
  */
 package dk.netarkivet.common.distribute;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URL;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.ChecksumCalculator;
 import dk.netarkivet.common.utils.FileUtils;
@@ -36,17 +44,13 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 /** Tests for HTTPSRemoteFile */
 
-@SuppressWarnings({ "serial"})
-public class HTTPSRemoteFileTester extends TestCase {
-    MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,
-                                          TestInfo.WORKING_DIR);
+@SuppressWarnings({ "serial" })
+public class HTTPSRemoteFileTester {
+    MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
     UseTestRemoteFile utrf = new UseTestRemoteFile();
     ReloadSettings rs = new ReloadSettings();
 
-    public HTTPSRemoteFileTester(String s) {
-        super(s);
-    }
-
+    @Before
     public void setUp() {
         rs.setUp();
         utrf.setUp();
@@ -57,6 +61,7 @@ public class HTTPSRemoteFileTester extends TestCase {
         HTTPSRemoteFileRegistry.getInstance().cleanup();
     }
 
+    @After
     public void tearDown() {
         HTTPRemoteFileRegistry.getInstance().cleanup();
         HTTPSRemoteFileRegistry.getInstance().cleanup();
@@ -65,98 +70,76 @@ public class HTTPSRemoteFileTester extends TestCase {
         rs.tearDown();
     }
 
+    @Test
     public void testCopyto() throws Exception {
         //Copying twice with multiple
-        HTTPSRemoteFile rf = new ForceRemoteHTTPSRemoteFile(TestInfo.FILE1,
-                                                            false, false, true);
-        File tempFile = File
-                .createTempFile("TEST", "COPYTO", TestInfo.WORKING_DIR);
+        HTTPSRemoteFile rf = new ForceRemoteHTTPSRemoteFile(TestInfo.FILE1, false, false, true);
+        File tempFile = File.createTempFile("TEST", "COPYTO", TestInfo.WORKING_DIR);
         rf.copyTo(tempFile);
         String contents = FileUtils.readFile(TestInfo.FILE1);
-        assertEquals("Files should be equal",
-                     contents,
-                     FileUtils.readFile(tempFile));
-        assertTrue("Original file should still exist when not deletable",
-                   TestInfo.FILE1.exists());
+        assertEquals("Files should be equal", contents, FileUtils.readFile(tempFile));
+        assertTrue("Original file should still exist when not deletable", TestInfo.FILE1.exists());
 
-        File tempFile2 = File
-                .createTempFile("TEST", "COPYTO", TestInfo.WORKING_DIR);
+        File tempFile2 = File.createTempFile("TEST", "COPYTO", TestInfo.WORKING_DIR);
         rf.copyTo(tempFile2);
-        assertEquals("Files should be equal, since multiple was true",
-                     contents,
-                     FileUtils.readFile(tempFile));
-        assertTrue("Original file should still exist when not deletable",
-                   TestInfo.FILE1.exists());
+        assertEquals("Files should be equal, since multiple was true", contents, FileUtils.readFile(tempFile));
+        assertTrue("Original file should still exist when not deletable", TestInfo.FILE1.exists());
 
-        //Copying twice without multiple
-        rf = new ForceRemoteHTTPSRemoteFile(TestInfo.FILE1,
-                                            false, false, false);
-        tempFile = File
-                .createTempFile("TEST", "COPYTO", TestInfo.WORKING_DIR);
+        // Copying twice without multiple
+        rf = new ForceRemoteHTTPSRemoteFile(TestInfo.FILE1, false, false, false);
+        tempFile = File.createTempFile("TEST", "COPYTO", TestInfo.WORKING_DIR);
         rf.copyTo(tempFile);
-        assertEquals("Files should be equal",
-                     contents,
-                     FileUtils.readFile(tempFile));
-        assertTrue("Original file should still exist when not deletable",
-                   TestInfo.FILE1.exists());
+        assertEquals("Files should be equal", contents, FileUtils.readFile(tempFile));
+        assertTrue("Original file should still exist when not deletable", TestInfo.FILE1.exists());
 
-        tempFile2 = File
-                .createTempFile("TEST", "COPYTO", TestInfo.WORKING_DIR);
+        tempFile2 = File.createTempFile("TEST", "COPYTO", TestInfo.WORKING_DIR);
         try {
             rf.copyTo(tempFile2);
             fail("Multiple copies should not be allowed");
         } catch (IOFailure e) {
-            //expected
+            // expected
         }
 
-        //Copying with non-multiple and deletable
-        rf = new ForceRemoteHTTPSRemoteFile(TestInfo.FILE1,
-                                            false, true, false);
-        tempFile = File
-                .createTempFile("TEST", "COPYTO", TestInfo.WORKING_DIR);
+        // Copying with non-multiple and deletable
+        rf = new ForceRemoteHTTPSRemoteFile(TestInfo.FILE1, false, true, false);
+        tempFile = File.createTempFile("TEST", "COPYTO", TestInfo.WORKING_DIR);
         rf.copyTo(tempFile);
-        assertEquals("Files should be equal",
-                     contents,
-                     FileUtils.readFile(tempFile));
-        assertFalse("Original file shouldn't exist anymore",
-                    TestInfo.FILE1.exists());
+        assertEquals("Files should be equal", contents, FileUtils.readFile(tempFile));
+        assertFalse("Original file shouldn't exist anymore", TestInfo.FILE1.exists());
     }
 
+    @Test
     public void testCleanup() throws Exception {
-        HTTPSRemoteFile rf = new ForceRemoteHTTPSRemoteFile(TestInfo.FILE1,
-                                                            false, false, true);
+        HTTPSRemoteFile rf = new ForceRemoteHTTPSRemoteFile(TestInfo.FILE1, false, false, true);
         URL url = rf.url;
         HTTPSRemoteFileRegistry.getInstance().openConnection(url).getInputStream();
         rf.cleanup();
-        assertTrue("File should still exist when not deletable",
-                   TestInfo.FILE1.exists());
+        assertTrue("File should still exist when not deletable", TestInfo.FILE1.exists());
         try {
             HTTPSRemoteFileRegistry.getInstance().openConnection(url).getInputStream();
             fail("Should not be available any longer");
         } catch (FileNotFoundException e) {
-            //expected
+            // expected
         }
 
-        rf = new ForceRemoteHTTPSRemoteFile(TestInfo.FILE1,
-                                            false, true, true);
+        rf = new ForceRemoteHTTPSRemoteFile(TestInfo.FILE1, false, true, true);
         url = rf.url;
         HTTPSRemoteFileRegistry.getInstance().openConnection(url).getInputStream();
         rf.cleanup();
-        assertFalse("File should not exist when deletable",
-                    TestInfo.FILE1.exists());
+        assertFalse("File should not exist when deletable", TestInfo.FILE1.exists());
         try {
             HTTPSRemoteFileRegistry.getInstance().openConnection(url).getInputStream();
             fail("Should not be available any longer");
         } catch (FileNotFoundException e) {
-            //expected
+            // expected
         }
-        //should not throw exception
+        // should not throw exception
         rf.cleanup();
     }
 
+    @Test
     public void testGetChecksum() throws Exception {
-        HTTPSRemoteFile rf = new ForceRemoteHTTPSRemoteFile(TestInfo.FILE1,
-                                                            false, false, true);
+        HTTPSRemoteFile rf = new ForceRemoteHTTPSRemoteFile(TestInfo.FILE1, false, false, true);
         assertEquals("Should get null (no checksum requested)",
                      null, rf.getChecksum());
         rf = new HTTPSRemoteFileTester.ForceRemoteHTTPSRemoteFile(TestInfo.FILE1,
@@ -166,9 +149,7 @@ public class HTTPSRemoteFileTester extends TestCase {
     }
 
     private class ForceRemoteHTTPSRemoteFile extends HTTPSRemoteFile {
-        public ForceRemoteHTTPSRemoteFile(File f, boolean useChecksums,
-                                          boolean fileDeletable,
-                                          boolean multipleDownloads) {
+        public ForceRemoteHTTPSRemoteFile(File f, boolean useChecksums, boolean fileDeletable, boolean multipleDownloads) {
             super(f, useChecksums, fileDeletable, multipleDownloads);
         }
 

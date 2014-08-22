@@ -32,7 +32,11 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 
 import dk.netarkivet.common.distribute.arcrepository.*;
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 import org.archive.io.arc.ARCReader;
 import org.archive.io.arc.ARCReaderFactory;
 import org.archive.io.arc.ARCRecord;
@@ -47,7 +51,7 @@ import dk.netarkivet.common.utils.StreamUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
-public class BitarchiveRecordTester extends TestCase {
+public class BitarchiveRecordTester {
     private UseTestRemoteFile utrf = new UseTestRemoteFile();
     ReloadSettings rs = new ReloadSettings();
     private File testFile = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.ORIGINALS_DIR,
@@ -85,18 +89,18 @@ public class BitarchiveRecordTester extends TestCase {
     private long bigWarcRecordOffset =  100262;
     
     
-    
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         rs.setUp();
         utrf.setUp();
         Settings.set(CommonSettings.BITARCHIVE_LIMIT_FOR_RECORD_DATATRANSFER_IN_FILE,
                      "10000");
         dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR.mkdir();
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR, dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR.getAbsolutePath());
-        super.setUp();
     }
-    protected void tearDown() throws Exception {
-        super.tearDown();
+
+    @After
+    public void tearDown() throws Exception {
         utrf.tearDown();
         FileUtils.removeRecursively(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR);
         rs.tearDown();
@@ -104,6 +108,7 @@ public class BitarchiveRecordTester extends TestCase {
 
     /** Test storing ArcRecord in byte array.
      * @throws IOException */
+    @Test
     public void testGetDataSmallRecord() throws IOException {
         File f = testFile;
         ARCReader ar = ARCReaderFactory.get(f);
@@ -126,6 +131,7 @@ public class BitarchiveRecordTester extends TestCase {
     /** Test storing WArcRecord in byte array.
      * Tests on WarcRecord less than 10000 bytes.
      * @throws IOException */
+    @Test
     public void testGetDataSmallRecordWithWarc() throws IOException {
         File f = warcTestFile;
         WARCReader ar = WARCReaderFactory.get(f);
@@ -154,6 +160,7 @@ public class BitarchiveRecordTester extends TestCase {
      * Test storing ArcRecord in RemoteFile.
      * @throws IOException
      */
+    @Test
     public void testGetDataLargeRecord() throws IOException {
         File f = testFile;
         ARCReader ar = ARCReaderFactory.get(f);
@@ -181,6 +188,7 @@ public class BitarchiveRecordTester extends TestCase {
      * Tests on WarcRecord greater than 10000 bytes.
      * @throws IOException
      */
+    @Test
     public void testGetDataLargeRecordWithWarc() throws IOException {
         File f = warcTestFile;
         WARCReader ar = WARCReaderFactory.get(f);
@@ -209,6 +217,7 @@ public class BitarchiveRecordTester extends TestCase {
      * @throws IOException
      * @throws ClassNotFoundException
      */
+    @Test
     public void testSerializability() throws IOException, ClassNotFoundException {
         File f = testFile;
         ARCReader ar = ARCReaderFactory.get(f);

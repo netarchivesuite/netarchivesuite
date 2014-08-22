@@ -43,6 +43,8 @@ import dk.netarkivet.common.utils.batch.ChecksumJob;
  *
  */
 
+@Deprecated
+// what is this used for? /tra
 public class RunChecksum {
     public static void main(String[] argv) throws IOException {
         if (argv.length > 1) {

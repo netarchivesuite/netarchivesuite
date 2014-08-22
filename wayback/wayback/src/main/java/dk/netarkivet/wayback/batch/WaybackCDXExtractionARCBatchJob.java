@@ -9,12 +9,12 @@
  * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 2.1 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Lesser Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Lesser Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
@@ -93,7 +93,7 @@ public class WaybackCDXExtractionARCBatchJob extends ARCBatchJob {
         log.info("Finishing the {}", this.getClass().getName());
         //No cleanup required
     }
-    
+
     @Override
     public ARCBatchFilter getFilter() {
         return ARCBatchFilter.EXCLUDE_FILE_HEADERS;
@@ -115,7 +115,7 @@ public class WaybackCDXExtractionARCBatchJob extends ARCBatchJob {
             csr = aToSAdapter.adapt(record);
             log.debug("Adapted Record '{}' to '{}'", record.getHeader(), csr);
         } catch (Exception e) {
-            log.error("Exception processing ARC record: {}", e);
+            log.error("Exception processing ARC record:", e);
             return;
         }
         try {
@@ -129,7 +129,7 @@ public class WaybackCDXExtractionARCBatchJob extends ARCBatchJob {
                 log.info("Could not parse '{}'", record.getHeaderString());
             }
         } catch (Exception e) {
-            log.error("Exception processing ARC record: {}", e);
+            log.error("Exception processing ARC record:", e);
         }
     }
 

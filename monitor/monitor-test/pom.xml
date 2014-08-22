@@ -62,6 +62,12 @@
             <scope>test</scope>
         </dependency>
 
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <scope>test</scope>
+    </dependency>
+
         <!--
              Ugly test dependencies.
           -->
@@ -76,6 +82,9 @@
 
     <build>
         <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+      </testResource>
             <testResource>
                 <directory>tests</directory>
             </testResource>
@@ -90,8 +99,6 @@
                         -Xmx768m
                         -Dfile.encoding=UTF-8
                         -Ddk.netarkivet.settings.file=tests/dk/netarkivet/test-settings.xml
-                        -Dorg.apache.commons.logging.log=org.apache.commons.logging.impl.Jdk14Logger
-                        -Djava.util.logging.config.file=tests/dk/netarkivet/testlog.prop
                         -Djava.security.manager
                         -Djava.security.policy=tests/dk/netarkivet/ant-test.policy
                         -Dorg.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy=org.archive.crawler.frontier.HostnameQueueAssignmentPolicy,org.archive.crawler.frontier.IPQueueAssignmentPolicy,org.archive.crawler.frontier.BucketQueueAssignmentPolicy,org.archive.crawler.frontier.SurtAuthorityQueueAssignmentPolicy,org.archive.crawler.frontier.TopmostAssignedSurtQueueAssignmentPolicy,dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy

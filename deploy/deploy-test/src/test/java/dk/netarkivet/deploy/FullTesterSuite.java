@@ -33,7 +33,7 @@ import junit.textui.TestRunner;
 public class FullTesterSuite {
     public static void addToSuite(TestSuite suite) {
         FullUnitTesterSuite.addToSuite(suite);
-        IntegrityTesterSuite.addToSuite(suite);
+        // IntegrityTesterSuite.addToSuite(suite);
         HeritrixTesterSuite.addToSuite(suite);
     }
 

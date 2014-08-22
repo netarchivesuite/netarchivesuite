@@ -23,35 +23,51 @@
 
 package dk.netarkivet.harvester.harvesting.distribute;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageListener;
+import javax.jms.Queue;
+import javax.jms.QueueConnection;
+import javax.jms.QueueReceiver;
+import javax.jms.QueueSession;
+import javax.jms.Session;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
 import com.sun.messaging.QueueConnectionFactory;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
-import dk.netarkivet.common.distribute.ChannelsTester;
+import dk.netarkivet.common.distribute.ChannelsTesterHelper;
 import dk.netarkivet.common.distribute.JMSConnectionSunMQ;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
-import junit.framework.TestCase;
-
-import javax.jms.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * A test of the behaviour if onMessage() hangs when there is more than one
  * listener to a queue.
  */
-public class HangingListenerTest extends TestCase {
+@Ignore("Needs to be running in deploy-test module according to junit3 test suite")
+public class HangingListenerTest {
 
     public static AtomicInteger messages_received = new AtomicInteger(0);
 
+    @Before
     public void setUp(){
         Settings.set(CommonSettings.JMS_BROKER_CLASS, JMSConnectionSunMQ.class.getName());
         //JMSConnection.getInstance();
-        ChannelsTester.resetChannels();
+        ChannelsTesterHelper.resetChannels();
         /* Do not send notification by email. Print them to STDOUT. */
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS, 
                 RememberNotifications.class.getName());
     }
 
+    @After
     public void tearDown() {
         //JMSConnection.getInstance().cleanup();
     }
@@ -64,7 +80,9 @@ public class HangingListenerTest extends TestCase {
      * @throws JMSException
      */
 // Out commented to avoid reference to archive module from harvester module.
-//    public void testNotListeningWhileProcessingSunMQ() throws InterruptedException, JMSException {
+    @Test
+    @Ignore("commented out to avoid reference to archive module")
+    public void testNotListeningWhileProcessingSunMQ() throws InterruptedException, JMSException {
 //        if (!Settings.get(CommonSettings.JMS_BROKER_CLASS).equals(JMSConnectionSunMQ.class.getName())) {
 //            fail("Wrong message queue for test");
 //        }
@@ -98,7 +116,7 @@ public class HangingListenerTest extends TestCase {
 //        assertEquals("Blocking listener should now have been called twice", 2, blocker.called);
 //        con.cleanup();
 //        con2.cleanup();
-//    }
+    }
 
 
     public static class MiniConnectionSunMQ {

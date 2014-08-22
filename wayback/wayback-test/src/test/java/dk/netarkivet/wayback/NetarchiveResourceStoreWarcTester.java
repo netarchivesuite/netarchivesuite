@@ -22,6 +22,12 @@
  */
 package dk.netarkivet.wayback;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -43,6 +49,10 @@ import org.archive.wayback.core.CaptureSearchResult;
 import org.archive.wayback.exception.ResourceNotAvailableException;
 import org.archive.wayback.resourceindex.cdx.CDXLineToSearchResultAdapter;
 import org.archive.wayback.resourcestore.resourcefile.ArcResource;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import dk.netarkivet.archive.arcrepository.ArcRepository;
 import dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient;
@@ -70,6 +80,7 @@ import dk.netarkivet.wayback.indexer.IndexerTestCase;
  * But since we are not using JUnit4 Parameterized testing is to cumbersome.
  */
 @SuppressWarnings({ "unchecked", "rawtypes", "unused" })
+@Ignore("Not in junit 3 TestSuite")
 public class NetarchiveResourceStoreWarcTester extends IndexerTestCase {
 
     NetarchiveResourceStore netarchiveResourceStore = null;
@@ -85,6 +96,7 @@ public class NetarchiveResourceStoreWarcTester extends IndexerTestCase {
     private final String uploadFile = "Upload4.WARC";
 
     @Override
+    @Before
     public void setUp() {
         super.setUp();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
@@ -116,23 +128,18 @@ public class NetarchiveResourceStoreWarcTester extends IndexerTestCase {
     }
 
     @Override
+    @After
     public void tearDown() {
         arc.close();
         ArcRepository.getInstance().close();
         FileUtils.removeRecursively(dk.netarkivet.wayback.TestInfo.WORKING_DIR);
-        FileUtils.remove(TestInfo.LOG_FILE);
-        // Empty the log file.
-        try {
-            new FileOutputStream(dk.netarkivet.wayback.TestInfo.LOG_FILE).close();
-        } catch(Exception e) {
-            //ups
-        }
         super.tearDown();
     }
 
     /**
      * Tests behavior of retriving of null CaptureSearchResult
      */
+    @Test
     public void testFailRetrieveResource() {
         DummyGetMessageReplyServer replyServer = new DummyGetMessageReplyServer();
         replyServer.setBitarchiveRecord(null);
@@ -151,6 +158,7 @@ public class NetarchiveResourceStoreWarcTester extends IndexerTestCase {
 
     }
 
+    @Test
     public void testRetrieveRedirect()
             throws ResourceNotAvailableException, IOException {
         String cdxLine = "netarkivet.dk/ 20090706131100 http://netarkivet.dk/ text/html 302 3I42H3S6NNFQ2MSVX7XZKYAYSCX5QBYJ http://netarkivet.dk/index-da.php 3311 arcfile_withredirects.arc";
@@ -168,6 +176,7 @@ public class NetarchiveResourceStoreWarcTester extends IndexerTestCase {
         assertNotNull(contents);
     }
 
+    @Test
     public void testRetrieveResource()
             throws ResourceNotAvailableException, IOException {
         String cdxLine = "ing.dk/ 20090706131100 http://ing.dk/ text/html 200 Z3UM6JX4FCO6VMVTPM6VBNJPN5D6QLO3 - 3619 arcfile_withredirects.arc";
@@ -231,6 +240,7 @@ public class NetarchiveResourceStoreWarcTester extends IndexerTestCase {
     /**
      * Test ARC record with non http address, like ARC file header
      */
+    @Test
     public void testNonUrlRetrieveResource() {
         DummyGetMessageReplyServer replyServer = new DummyGetMessageReplyServer();
         replyServer.setBitarchiveRecord(null);
@@ -246,6 +256,7 @@ public class NetarchiveResourceStoreWarcTester extends IndexerTestCase {
     /**
      * Test shutdown.
      */
+    @Test
     public void testShutdown() {
             
     }

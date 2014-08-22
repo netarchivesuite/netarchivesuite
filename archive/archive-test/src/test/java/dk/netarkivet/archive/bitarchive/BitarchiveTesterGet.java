@@ -23,7 +23,9 @@
 package dk.netarkivet.archive.bitarchive;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
@@ -32,13 +34,18 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.StreamUtils;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+
 /**
  * This class tests the get() operation of the bit archive.
  *
  */
 public class BitarchiveTesterGet extends BitarchiveTestCase {
-    private static final File ORIGINALS_DIR
-            = new File(new File(TestInfo.DATA_DIR, "get"), "existing");
+    private static final File ORIGINALS_DIR = new File(new File(TestInfo.DATA_DIR, "get"), "existing");
     /** The content of the first arc record (offset=0). */
     private static final String ARC_RECORD_0 = "arc_record0.txt";
     /** Store record 0 in this file, when reading from arc-files. */
@@ -57,9 +64,6 @@ public class BitarchiveTesterGet extends BitarchiveTestCase {
      * @param sTestName
      *            Name of this test.
      */
-    public BitarchiveTesterGet(final String sTestName) {
-        super(sTestName);
-    }
 
     protected File getOriginalsDir() {
         return ORIGINALS_DIR;
@@ -70,6 +74,7 @@ public class BitarchiveTesterGet extends BitarchiveTestCase {
      * Test that a file identifier is given.
      *
      */
+    @Test
     public void testGetNoFile() {
         try {
             archive.get(null, 0);
@@ -77,8 +82,7 @@ public class BitarchiveTesterGet extends BitarchiveTestCase {
         } catch (ArgumentNotValid e) {
             /* Expected case */
         } catch (Exception e) {
-            fail("Null file pointer should have given ArgumentNotValid, not "
-                    + e);
+            fail("Null file pointer should have given ArgumentNotValid, not " + e);
         }
     }
 
@@ -86,15 +90,10 @@ public class BitarchiveTesterGet extends BitarchiveTestCase {
      * Test that the offset is legal (i.e. >0).
      *
      */
+    @Test(expected = ArgumentNotValid.class)
     public void testGetIllegalOffset() {
-        try {
-            archive.get(ARC_FILE_NAME, -1);
-            fail("Sub-zero offset should have given an exception.");
-        } catch (ArgumentNotValid e) {
-            /* Expected case */
-        } catch (Exception e) {
-            fail("Sub-zero offset should have given ArgumentNotValid, not " + e);
-        }
+        archive.get(ARC_FILE_NAME, -1);
+        fail("Sub-zero offset should have given an exception.");
     }
 
     /* **** Part two: Test that errors are treated correctly **** */
@@ -102,73 +101,57 @@ public class BitarchiveTesterGet extends BitarchiveTestCase {
      * Test that an unknown file gives an error.
      *
      */
+    @Test
     public void testGetUnknownFile() {
         BitarchiveRecord bar = archive.get(MISSING_ARC_FILE_NAME, -1);
-        assertNull("Should not receive any record for unknown file, not " +
-                bar, bar);
+        assertNull("Should not receive any record for unknown file, not " + bar, bar);
     }
 
     /**
      * Test that an index beyond the end of the ARC file gives an error.
      *
      */
+    @Test(expected = ArgumentNotValid.class)
     public void testGetIndexTooLarge() {
-        try {
-            archive.get(ARC_FILE_NAME, 10000000);
-            fail("Too large offset should have given an exception.");
-        } catch (ArgumentNotValid e) {
-            /* Expected case */
-        } catch (Exception e) {
-            fail("Too large offset should have given ArgumentNotValid, not "
-                    + e);
-        }
+        archive.get(ARC_FILE_NAME, 10000000);
+        fail("Too large offset should have given an exception.");
     }
 
     /**
      * Test that an index that does not fit an ARC entry gives an error.
      *
      */
+    @Test(expected = IOFailure.class)
     public void testGetIndexNotAligned() {
-        try {
-            archive.get(ARC_FILE_NAME, 1725);
-            fail("Misaligned offset should have given an IOFailure.");
-        } catch (IOFailure e) {
-            /* Expected */
-        }
+        archive.get(ARC_FILE_NAME, 1725);
+        fail("Misaligned offset should have given an IOFailure.");
     }
 
     /* **** Part three: Test that correct code works **** */
     /**
      * Test that a correct query gives the correct file.
+     * 
+     * @throws IOException
      *
      */
-    public void testGetEntry() {
-        try {
+    @Test
+    public void testGetEntry() throws IOException {
             BitarchiveRecord record = archive.get(ARC_FILE_NAME, 0);
             assertNotNull("ARC record should be non-null", record);
-            assertEquals("The arc file name should appear in the record.",
-                         ARC_FILE_NAME, record.getFile());
+        assertEquals("The arc file name should appear in the record.", ARC_FILE_NAME, record.getFile());
             // Write contents of record to ARC_RECORD_0_TMP
             File recordOFile = new File(TestInfo.WORKING_DIR, ARC_RECORD_0_TMP);
             OutputStream os = new FileOutputStream(recordOFile);
             record.getData(os);
             // read targetContents and foundContents from respectively
             // ARC_RECORD_0 ARC_RECORD_0_TMP
-            String targetcontents = FileUtils.readFile(new File(TestInfo.WORKING_DIR,
-                    ARC_RECORD_0));
-            String foundContents = FileUtils.readFile(new File(TestInfo.WORKING_DIR,
-                    ARC_RECORD_0_TMP));
+        String targetcontents = FileUtils.readFile(new File(TestInfo.WORKING_DIR, ARC_RECORD_0));
+        String foundContents = FileUtils.readFile(new File(TestInfo.WORKING_DIR, ARC_RECORD_0_TMP));
             // verify that their contents are identical
-            assertTrue("Strings targetcontents (length = "
-                    + targetcontents.length() + ") and foundContents (length="
+        assertTrue("Strings targetcontents (length = " + targetcontents.length() + ") and foundContents (length="
                     + foundContents.length() + ") should have same length",
                     targetcontents.length() == foundContents.length());
-            assertEquals("The contents should be exactly the same",
-                         targetcontents, foundContents);
-        } catch (Exception e) {
-            fail("Proper ARC file access should not give any exceptions, not "
-                    + e);
-        }
+        assertEquals("The contents should be exactly the same", targetcontents, foundContents);
     }
 
     /**
@@ -178,15 +161,11 @@ public class BitarchiveTesterGet extends BitarchiveTestCase {
         try {
             BitarchiveRecord record = archive.get(ARC_FILE_NAME, 37534);
             assertNotNull("ARC record should be non-null", record);
-            assertEquals("ARC record should be for the right file",
-                         ARC_FILE_NAME, record.getFile());
-            byte[] contents = StreamUtils.inputStreamToBytes(
-                    record.getData(), (int) record.getLength());
-            assertEquals("There should be no contents",
-                         contents.length, 0);
+            assertEquals("ARC record should be for the right file", ARC_FILE_NAME, record.getFile());
+            byte[] contents = StreamUtils.inputStreamToBytes(record.getData(), (int) record.getLength());
+            assertEquals("There should be no contents", contents.length, 0);
         } catch (Exception e) {
-            fail("Proper ARC file access should not give any exceptions, not "
-                    + e);
+            fail("Proper ARC file access should not give any exceptions, not " + e);
         }
     }
 
@@ -198,29 +177,24 @@ public class BitarchiveTesterGet extends BitarchiveTestCase {
         try {
             BitarchiveRecord record = archive.get(ARC_FILE_NAME, 37650);
             assertNotNull("ARC record should be non-null", record);
-            assertEquals("ARC record should be for the right file",
-                         ARC_FILE_NAME, record.getFile());
-            byte[] contents = StreamUtils.inputStreamToBytes(
-                    record.getData(), (int) record.getLength());
-            assertEquals("Contents length should match file",
-                         17111, contents.length);
+            assertEquals("ARC record should be for the right file", ARC_FILE_NAME, record.getFile());
+            byte[] contents = StreamUtils.inputStreamToBytes(record.getData(), (int) record.getLength());
+            assertEquals("Contents length should match file", 17111, contents.length);
         } catch (Exception e) {
-            fail("Proper ARC file access should not give any exceptions, not "
-                    + e);
+            fail("Proper ARC file access should not give any exceptions, not " + e);
         }
     }
 
     /* **** Part four: Test that bug 4 is fixed **** */
     /**
-     * Test that a correct query gives the correct file and that the
-     * ArcRecord is closed so that the file can be deleted afterwards.
+     * Test that a correct query gives the correct file and that the ArcRecord
+     * is closed so that the file can be deleted afterwards.
      */
     public void testArcRecordIsClosedAfterGet() {
         try {
             BitarchiveRecord record = archive.get(ARC_FILE_NAME, 0);
             assertNotNull("ARC record should be non-null", record);
-            assertEquals("ARC record should be for the right file",
-                         ARC_FILE_NAME, record.getFile());
+            assertEquals("ARC record should be for the right file", ARC_FILE_NAME, record.getFile());
 
             // Write contents of record to ARC_RECORD_0_TMP
             File recordOFile = new File(TestInfo.WORKING_DIR, ARC_RECORD_0_TMP);
@@ -228,24 +202,17 @@ public class BitarchiveTesterGet extends BitarchiveTestCase {
             record.getData(os);
             // read targetContents and foundContents from respectively
             // ARC_RECORD_0 ARC_RECORD_0_TMP
-            String targetcontents = FileUtils.readFile(new File(TestInfo.WORKING_DIR,
-                    ARC_RECORD_0));
-            String foundContents = FileUtils.readFile(new File(TestInfo.WORKING_DIR,
-                    ARC_RECORD_0_TMP));
+            String targetcontents = FileUtils.readFile(new File(TestInfo.WORKING_DIR, ARC_RECORD_0));
+            String foundContents = FileUtils.readFile(new File(TestInfo.WORKING_DIR, ARC_RECORD_0_TMP));
             // verify that their contents are identical
-            assertTrue("Strings targetcontents (length = "
-                    + targetcontents.length() + ") and foundContents (length="
+            assertTrue("Strings targetcontents (length = " + targetcontents.length() + ") and foundContents (length="
                     + foundContents.length() + ") should have same length",
                     targetcontents.length() == foundContents.length());
-            assertEquals("Contents should be exactly as expected",
-                         targetcontents, foundContents);
+            assertEquals("Contents should be exactly as expected", targetcontents, foundContents);
         } catch (Exception e) {
-            fail("Proper ARC file access should not give any exceptions, not "
-                    + e);
+            fail("Proper ARC file access should not give any exceptions, not " + e);
         }
         assertTrue("File should be deletable",
-                   FileUtils.removeRecursively(
-                           new File(new File(TestInfo.WORKING_DIR, "filedir"),
-                                    ARC_FILE_NAME)));
+                FileUtils.removeRecursively(new File(new File(TestInfo.WORKING_DIR, "filedir"), ARC_FILE_NAME)));
     }
 }

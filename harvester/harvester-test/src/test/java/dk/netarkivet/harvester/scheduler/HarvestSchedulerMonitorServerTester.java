@@ -23,6 +23,22 @@
 
 package dk.netarkivet.harvester.scheduler;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.Iterator;
+
+import javax.jms.JMSException;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
@@ -31,47 +47,49 @@ import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.harvester.datamodel.*;
+import dk.netarkivet.harvester.datamodel.Constants;
+import dk.netarkivet.harvester.datamodel.DatabaseTestUtils;
+import dk.netarkivet.harvester.datamodel.Domain;
+import dk.netarkivet.harvester.datamodel.DomainConfiguration;
+import dk.netarkivet.harvester.datamodel.DomainDAO;
+import dk.netarkivet.harvester.datamodel.DomainDAOTester;
+import dk.netarkivet.harvester.datamodel.FullHarvest;
+import dk.netarkivet.harvester.datamodel.HarvestChannel;
+import dk.netarkivet.harvester.datamodel.HarvestDAOUtils;
+import dk.netarkivet.harvester.datamodel.HarvestDefinition;
+import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
+import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAOTester;
+import dk.netarkivet.harvester.datamodel.HarvestInfo;
+import dk.netarkivet.harvester.datamodel.Job;
+import dk.netarkivet.harvester.datamodel.JobDAO;
+import dk.netarkivet.harvester.datamodel.JobStatus;
+import dk.netarkivet.harvester.datamodel.ScheduleDAOTester;
+import dk.netarkivet.harvester.datamodel.StopReason;
+import dk.netarkivet.harvester.datamodel.TemplateDAOTester;
+import dk.netarkivet.harvester.datamodel.dao.DAOProviderFactory;
 import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 import dk.netarkivet.harvester.harvesting.JobInfoTestImpl;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlStatusMessage;
 import dk.netarkivet.harvester.harvesting.report.AbstractHarvestReport;
 import dk.netarkivet.harvester.harvesting.report.LegacyHarvestReport;
-import dk.netarkivet.testutils.FileAsserts;
-import dk.netarkivet.testutils.LogUtils;
+import dk.netarkivet.testutils.LogbackRecorder;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
-import junit.framework.TestCase;
-
-import javax.jms.JMSException;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.Iterator;
-import java.util.logging.LogManager;
 
 /**
  * Tests of the class HarvestSchedulerMonitorServer.
  */
 @SuppressWarnings({ "unused"})
-public class HarvestSchedulerMonitorServerTester extends TestCase {
-
+@Ignore("binary derby database not converted to scripts yet")
+public class HarvestSchedulerMonitorServerTester {
 
     public static JobDAO theDAO;
-    public static final File LOG_FILE =
-            new File("tests/testlogs/netarkivtest.log");
-    public static final File BASEDIR =
-            new File("tests/dk/netarkivet/harvester/scheduler/data/");
+    public static final File BASEDIR = new File("tests/dk/netarkivet/harvester/scheduler/data/");
     public static final File ORIGINALS = new File(BASEDIR, "originals");
     public static final File WORKING = new File(BASEDIR, "working");
-    private static final File CRAWL_REPORT =
-        new File(WORKING, "harvestreports/crawl.log");
-    private static final File STOP_REASON_CRAWL_REPORT =
-        new File(WORKING, "harvestreports/stop-reason-crawl.log");
-    private static final StopReason DEFAULT_STOPREASON =
-        StopReason.DOWNLOAD_COMPLETE;
+    private static final File CRAWL_REPORT = new File(WORKING, "harvestreports/crawl.log");
+    private static final File STOP_REASON_CRAWL_REPORT = new File(WORKING, "harvestreports/stop-reason-crawl.log");
+    private static final StopReason DEFAULT_STOPREASON = StopReason.DOWNLOAD_COMPLETE;
     ReloadSettings rs = new ReloadSettings();
     private HarvestSchedulerMonitorServer hsms;
 
@@ -81,13 +99,10 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
     /**
      * setUp method for this set of unit tests.
      */
+    @Before
     public void setUp() throws IOException, SQLException,
             IllegalAccessException, NoSuchFieldException, ClassNotFoundException {
         rs.setUp();
-        // Start up a log manager
-        FileInputStream fis = new FileInputStream(TestInfo.TESTLOGPROP);
-        LogManager.getLogManager().readConfiguration(fis);
-        fis.close();
 
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         HarvestDAOUtils.resetDAOs();
@@ -109,6 +124,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
     /**
      * tearDown method for this set of unit tests.
      */
+    @After
     public void tearDown() throws SQLException, IllegalAccessException, NoSuchFieldException {
         HarvestDAOUtils.resetDAOs();
         FileUtils.removeRecursively(WORKING);
@@ -126,6 +142,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
     /** Tests that default onMessage is used.
      * @throws JMSException
      */
+    @Test
     public void testOnMessageUsesUnpack() throws JMSException {
         NetarkivetMessage nmsg = new CrawlStatusMessage(1, JobStatus.STARTED);
         JMSConnectionMockupMQ.TestObjectMessage omsg
@@ -140,6 +157,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
     /**
      * Test that HSMS actually listens to THE_SCHED (see bug 203).
      */
+    @Test
     public void testListens() {
         JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory
                 .getInstance();
@@ -154,6 +172,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
      * Test that we can call onMessage with the expected sequence of messages
      * for a successful crawl job.
      */
+    @Test
     public void testOnMessageGoodJob() {
         JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory
                 .getInstance();
@@ -195,6 +214,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
      * Tests what happens if a FAILED message arrives with a crawl report. The
      * behavior should be identical to the case with a DONE message.
      */
+    @Test
     public void testOnMessageFailedJobWithReport() {
         JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory
                 .getInstance();
@@ -236,6 +256,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
      * Test that we can do a failed job with no (ie NULL_REMOTE_FILE) crawl
      * report returned.
      */
+    @Test
     public void testOnMessageFailedJobNoReport() {
         JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory
                 .getInstance();
@@ -282,6 +303,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
     /**
      * Test that receiving a message on a NEW job results in an exception.
      */
+    @Test
     public void testMessageWhileNew() {
         Job j1 = TestInfo.getJob();
         JobDAO.getInstance().create(j1);
@@ -302,9 +324,10 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
      * Send a STARTED message after a DONE message. The STARTED message should
      * be ignored.
      */
+    @Test
     public void testStartedAfterDone() {
-        JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory
-                .getInstance();
+    	LogbackRecorder lr = LogbackRecorder.startRecorder();
+        JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory.getInstance();
         Job j1 = TestInfo.getJob();
         JobDAO.getInstance().create(j1);
         j1.setStatus(JobStatus.NEW);
@@ -342,18 +365,17 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
                 22, dh.getCountObjectRetrieved());
         assertFalse("Should NOT have two harvests remembered", hist.hasNext());
         // Check log
-        LogUtils.flushLogs(hsms.getClass().getName());
-        FileAsserts.assertFileContains("Failed to log out of order messages",
-                                       "tried to update", LOG_FILE);
+        lr.assertLogContains("Failed to log out of order messages", "tried to update");
+        lr.stopRecorder();
     }
 
     /**
      * Send a STARTED CrawlStatusMessage after a Failed message.
      * This STARTED message should be ignored.
      */
+    @Test
     public void testStartedAfterFailed() {
-        JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory
-                .getInstance();
+        JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory.getInstance();
         Job j1 = TestInfo.getJob();
         JobDAO.getInstance().create(j1);
         j1.setStatus(JobStatus.NEW);
@@ -397,9 +419,10 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
     /**
      * If FAILED arrives after DONE, the job is marked as FAILED.
      */
+    @Test
     public void testFailedAfterDone() {
-        JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory
-                .getInstance();
+    	LogbackRecorder lr = LogbackRecorder.startRecorder();
+        JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory.getInstance();
         Job j1 = TestInfo.getJob();
         theDAO.create(j1);
         j1.setStatus(JobStatus.NEW);
@@ -438,17 +461,16 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         assertEquals("Unexpected total size of harvest", 270, 
                 dh.getSizeDataRetrieved());
         // Check log
-        LogUtils.flushLogs(hsms.getClass().getName());
-        FileAsserts.assertFileContains("Failed to log out of order messages",
-                                       "Marking job FAILED", LOG_FILE);
+        lr.assertLogContains("Failed to log out of order messages", "Marking job FAILED");
+        lr.stopRecorder();
     }
 
     /**
      * If DONE arrives after FAILED, the job should be marked FAILED.
      */
+    @Test
      public void testDoneAfterFailed() {
-        JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory
-                .getInstance();
+        JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory.getInstance();
         Job j1 = TestInfo.getJob();
         theDAO.create(j1);
         j1.setStatus(JobStatus.NEW);
@@ -494,9 +516,10 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
       * Test that receiving a "DONE" directly after a "SUBMITTED" runs ok
       * but is logged.
       */
+    @Test
     public void testDoneAfterSubmitted() {
-        JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory
-                .getInstance();
+    	LogbackRecorder lr = LogbackRecorder.startRecorder();
+        JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory.getInstance();
         Job j1 = TestInfo.getJob();
         theDAO.create(j1);
         j1.setStatus(JobStatus.NEW);
@@ -527,9 +550,8 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         assertEquals("Unexpected total size of harvest", 270, 
                 dh.getSizeDataRetrieved());
         // Check log
-        LogUtils.flushLogs(hsms.getClass().getName());
-        FileAsserts.assertFileContains("Failed to log out of order messages",
-                                       "unexpected state", LOG_FILE);
+        lr.assertLogContains("Failed to log out of order messages", "unexpected state");
+        lr.stopRecorder();
     }
 
     /** Test that the stop reason is set correctly.
@@ -550,6 +572,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
      * results but use the same crawllog)
      *
       */
+    @Test
     public void testStopReasonSetCorrectly() {
         //Three domains to test on
         DomainDAO.getInstance().create(Domain.getDefaultDomain("kb.dk"));
@@ -565,7 +588,11 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
             new FullHarvest("TestHarvest", "", null,
                     Constants.HERITRIX_MAXOBJECTS_INFINITY,
                     Constants.HERITRIX_MAXBYTES_INFINITY,
-                    Constants.HERITRIX_MAXJOBRUNNINGTIME_INFINITY, false);
+                    Constants.HERITRIX_MAXJOBRUNNINGTIME_INFINITY, false,
+                    DAOProviderFactory.getHarvestDefinitionDAOProvider(),
+                    DAOProviderFactory.getJobDAOProvider(),
+                    DAOProviderFactory.getExtendedFieldDAOProvider(),
+                    DAOProviderFactory.getDomainDAOProvider());
         HarvestDefinitionDAO.getInstance().create(snapshot);
 
         //A job from that harvest
@@ -634,7 +661,11 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         snapshot = new FullHarvest("TestHarvest2", "", null,
                 Constants.HERITRIX_MAXOBJECTS_INFINITY, 
                 10L,
-                Constants.DEFAULT_MAX_JOB_RUNNING_TIME, false);
+                Constants.DEFAULT_MAX_JOB_RUNNING_TIME, false,
+                DAOProviderFactory.getHarvestDefinitionDAOProvider(),
+                DAOProviderFactory.getJobDAOProvider(),
+                DAOProviderFactory.getExtendedFieldDAOProvider(),
+                DAOProviderFactory.getDomainDAOProvider());
         HarvestDefinitionDAO.getInstance().create(snapshot);
 
         //A job from that harvest (note: conf is the dr.dk config)

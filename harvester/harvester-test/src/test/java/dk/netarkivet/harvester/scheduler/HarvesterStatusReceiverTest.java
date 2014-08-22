@@ -24,7 +24,9 @@ package dk.netarkivet.harvester.scheduler;
 
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.harvester.datamodel.HarvestChannelDAO;
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
+
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.harvester.datamodel.HarvestChannel;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
@@ -34,12 +36,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class HarvesterStatusReceiverTest extends TestCase  {
+public class HarvesterStatusReceiverTest {
     private JobDispatcher jobDispatcher;
     private HarvesterStatusReceiver receiver;
     private JMSConnection jmsConnection;
     private HarvestChannelDAO harvestChannelDao;
     
+    @Before
     public void setUp() throws Exception {
         jobDispatcher = mock(JobDispatcher.class);
         jmsConnection = mock(JMSConnection.class);
@@ -47,6 +50,7 @@ public class HarvesterStatusReceiverTest extends TestCase  {
         receiver = new HarvesterStatusReceiver(jobDispatcher, jmsConnection, harvestChannelDao, new HarvestChannelRegistry());
     }
     
+    @Test
     public void testStatusReception() {
         HarvestChannel highChan = new HarvestChannel("FOCUSED", false, true, "");
         HarvesterReadyMessage readyMessage =
@@ -56,6 +60,7 @@ public class HarvesterStatusReceiverTest extends TestCase  {
         verify(jobDispatcher).submitNextNewJob(highChan);
     }
     
+    @Test
     public void testInvalidMessageType() {
         CrawlProgressMessage statusmessage =  new CrawlProgressMessage(1,1);
         receiver.onMessage( JMSConnectionMockupMQ.getObjectMessage(statusmessage));

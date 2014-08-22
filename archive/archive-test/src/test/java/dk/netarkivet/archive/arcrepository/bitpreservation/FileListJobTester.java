@@ -26,8 +26,11 @@ package dk.netarkivet.archive.arcrepository.bitpreservation;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
+import static org.junit.Assert.*;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.batch.FileListJob;
 import dk.netarkivet.testutils.Serial;
@@ -37,23 +40,24 @@ import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
  * Unit tests for FileListJob.
  * TODO Move unittest to common.utils.batch
  */
-public class FileListJobTester extends TestCase {
+public class FileListJobTester {
     private MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,
                                                  TestInfo.WORKING_DIR);
 
+    @Before
     public void setUp() throws Exception {
-        super.setUp();
         mtf.setUp();
     }
 
+    @After
     public void tearDown() throws Exception {
         mtf.tearDown();
-        super.tearDown();
     }
 
     /**
      * Test that FileBatchJob outputs the right data.
      */
+    @Test
     public void testProcessFile() {
         File bitarchive = new File(TestInfo.WORKING_DIR, "bitarchive1");
         File arcfile = new File(bitarchive, "integrity1.ARC");
@@ -69,6 +73,7 @@ public class FileListJobTester extends TestCase {
      * toString() method is dependent on its entire relevant state.
      * @throws Exception On any error
      */
+    @Test
     public void testSerializable() throws Exception {
         FileBatchJob job = new FileListJob();
         FileBatchJob job2 = (FileBatchJob) Serial.serial(job);

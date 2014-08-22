@@ -23,7 +23,9 @@
 package dk.netarkivet.harvester.distribute;
 
 import dk.netarkivet.harvester.datamodel.*;
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Test;
+
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 
@@ -31,10 +33,11 @@ import dk.netarkivet.common.distribute.Channels;
  * Tests the part of ChannelID class that relates to the harvesting module.
  * The rest of ChannelID is tested in dk.netarkivet.common.distribute.ChannelIDTester
  */
-public class ChannelIDTester extends TestCase {
+public class ChannelIDTester {
     /**
      * Test that each channel is equal only to itself.
      */
+    @Test
     public void testChannelIdentity(){
         ChannelID harvestJobChannel = HarvesterChannels.getHarvestJobChannelId(
                 new HarvestChannel("FOCUSED", false, true, ""));

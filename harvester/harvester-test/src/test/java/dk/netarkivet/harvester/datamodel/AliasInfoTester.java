@@ -26,14 +26,16 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Test;
+
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 import dk.netarkivet.testutils.StringAsserts;
 
 /** Test-class for AliasInfo class. */
-public class AliasInfoTester extends TestCase {
+public class AliasInfoTester {
 
     final String nullString = null;
     String emptyString = "";
@@ -42,19 +44,12 @@ public class AliasInfoTester extends TestCase {
     String aliasDomain = "netarkivet.dk";
     String afatherDomain = "kb.dk";
 
-    protected void setUp() throws Exception {
-        super.setUp();
-    }
-
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-
     /*
      * Test method for 'dk.netarkivet.datamodel.AliasInfo.AliasInfo(String, String, Date)'
      * Checks, that ArgumentNotValid exception is thrown when
      * either of the given Domain, the aliasOf, the lastChange attributes is null or empty.
      */
+    @Test
     public void testAliasInfo() {
 
 
@@ -120,6 +115,7 @@ public class AliasInfoTester extends TestCase {
     /*
      * Test get and set-methods.
      */
+    @Test
     public void testSetAndGetters() {
        AliasInfo ai = new AliasInfo(aliasDomain,afatherDomain, realDate);
        assertEquals("getDomain returns wrong value", aliasDomain, ai.getDomain());
@@ -132,6 +128,7 @@ public class AliasInfoTester extends TestCase {
      * tests makeAliasMetadataEntry(List<AliasInfo> aliases, String URL, String mimetype).
      *
      */
+    @Test
     public void testMakeAliasMetadataEntries() {
         List<AliasInfo> emptyAliases = new ArrayList<AliasInfo>();
         List<AliasInfo> fiveAliases = new ArrayList<AliasInfo>();
@@ -218,6 +215,7 @@ public class AliasInfoTester extends TestCase {
                 new String(meta.getData()));
     }
 
+    @Test
     public void testGetExpirationDate() {
         Date now = new Date();
         Date expiredDate = new Date(now.getTime()

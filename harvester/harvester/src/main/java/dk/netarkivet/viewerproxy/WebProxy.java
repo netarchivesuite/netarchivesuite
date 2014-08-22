@@ -22,21 +22,19 @@
  */
 package dk.netarkivet.viewerproxy;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.mortbay.jetty.Handler;
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.handler.DefaultHandler;
-
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.DefaultHandler;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -116,13 +114,9 @@ public class WebProxy extends DefaultHandler
      * @param target URL or name for request. Not used
      * @param request The original request, including URL
      * @param response The object that receives the result
-     * @param dispatch The dispatch mode. Not used.
-     * @see Handler#handle(java.lang.String,
-     *  HttpServletRequest,
-     *HttpServletResponse, int)
      */
-    public void handle(String target, HttpServletRequest request,
-                       HttpServletResponse response, int dispatch) {
+    @Override public void handle(String target, org.eclipse.jetty.server.Request baseRequest,
+            HttpServletRequest request, HttpServletResponse response) {
         HttpResponse netarkivetResponse = new HttpResponse(response);
         HttpRequest netarkivetRequest = new HttpRequest(request);
         try {
@@ -131,10 +125,9 @@ public class WebProxy extends DefaultHandler
             //Generate URI to enforce fail-early of illegal URIs 
             //uri = new URI(request.getRequestURL().toString());
             uriResolver.lookup(netarkivetRequest, netarkivetResponse);
-            ((org.mortbay.jetty.Request) request).setHandled(true);
+            ((org.eclipse.jetty.server.Request) request).setHandled(true);
         } catch (Exception e) {
-            createErrorResponse(netarkivetRequest.getURI(),
-                                netarkivetResponse, e);
+            createErrorResponse(netarkivetRequest.getURI(), netarkivetResponse, e);
         }
     }
 
@@ -261,7 +254,7 @@ public class WebProxy extends DefaultHandler
          *
          * @param htReq A request object to wrap.
          */
-        private HttpRequest(HttpServletRequest htReq) {
+        protected HttpRequest(HttpServletRequest htReq) {
             hr = htReq;
         }
 

@@ -25,11 +25,8 @@ package dk.netarkivet.harvester.datamodel;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -39,19 +36,14 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.logging.Logger;
-import java.util.Date;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.ZipUtils;
-
-//import dk.netarkivet.testutils.ReflectUtils;
 
 /**
  * Utilities to allow testing databases. //FIXME: Rename without Test as these
@@ -59,16 +51,16 @@ import dk.netarkivet.common.utils.ZipUtils;
  */
 public class DatabaseTestUtils {
 
+    protected static final Logger log = LoggerFactory.getLogger(DatabaseTestUtils.class);
+
     private static String dburi;
-    protected static final Logger log = Logger.getLogger(DatabaseTestUtils.class.getName());
 
     /**
      * Get access to the database stored in the given file. This will start a
      * new transaction that will be rolled back with dropDatabase. Only one
      * connection can be taken at a time.
      * 
-     * @param resourcePath
-     *            A file that contains a test database.
+     * @param resourcePath A file that contains a test database.
      * @param dbCreationDir
      * @return a connection to the database stored in the given file
      * @throws SQLException
@@ -89,15 +81,15 @@ public class DatabaseTestUtils {
         // FIXME: change for h2
         dburi = "jdbc:derby:" + dbfile;
 
-        System.err.println("Populating " + dbfile + " from '" + resourcePath + "' at " + new Date());
+        long startTime = System.currentTimeMillis();
+
         Connection c = DriverManager.getConnection(dburi + ";create=true");
         c.setAutoCommit(false);  // load faster.
         
         // locate create script first, next to resource
         File createFile = new File(new File(resourcePath).getParentFile(), "create.sql");
         
-        applyStatementsInInputStream(c,
-                checkNotNull(new FileInputStream(createFile), "create.sql"));
+        applyStatementsInInputStream(c, checkNotNull(new FileInputStream(createFile), "create.sql"));
 
         // then populate it.
         FileInputStream is = checkNotNull(new FileInputStream(resourcePath), resourcePath);
@@ -105,8 +97,8 @@ public class DatabaseTestUtils {
 
         c.commit();
         
-        System.err.println("Populated... at " +  new Date());
-        //
+        log.debug("Populated {} in {}(ms)", dbfile, (System.currentTimeMillis() - startTime));
+
         c.close();
 
         return DriverManager.getConnection(dburi);
@@ -122,7 +114,7 @@ public class DatabaseTestUtils {
         long count = 0;
         try {
             while ((s = br.readLine()) != null) {
-                log.info(br.getLineNumber() + ": " + s);
+                log.debug(br.getLineNumber() + ": " + s);
                 if (s.trim().startsWith("#")) {
                     // skip comments
                 } else if (s.trim().length() == 0) {
@@ -168,8 +160,7 @@ public class DatabaseTestUtils {
      * Get a connection to the given sample harvest definition database and fool
      * the HD DB connect class into thinking it should use that one.
      * 
-     * @param samplefile
-     *            a sample harvest definition database
+     * @param resourcePath Location of the sql files to create and populate the test DB.
      * @param dbCreationDir
      * @return a connection to the given sample harvest definition database
      * @throws SQLException
@@ -177,8 +168,7 @@ public class DatabaseTestUtils {
      * @throws IllegalAccessException
      */
     public static Connection getHDDB(String resourcePath, String dbname, File dbCreationDir) throws SQLException,
-            IOException,
-            IllegalAccessException {
+            IOException, IllegalAccessException {
         return takeDatabase(resourcePath, dbname, dbCreationDir);
     }
 
@@ -193,7 +183,7 @@ public class DatabaseTestUtils {
             DriverManager.getConnection(shutdownUri);
             throw new IOFailure("Failed to shut down database");
         } catch (SQLException e) {
-            log.warning("Expected SQL-exception when shutting down database:" + e);
+            log.warn("Expected SQL-exception when shutting down database:", e);
         }
         // connectionPool.clear();
         // null field instance in DBSpecifics.
@@ -226,7 +216,7 @@ public class DatabaseTestUtils {
      */
     public static void dropHDDB() throws SQLException, NoSuchFieldException, IllegalAccessException {
         dropDatabase();
-        log.info("dropHDDB() 1");
+        log.debug("dropHDDB() 1");
         HarvestDBConnection.cleanup();
     }
 }

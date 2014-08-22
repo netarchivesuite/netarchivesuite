@@ -29,11 +29,15 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.sql.SQLException;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
 
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.ChannelsTester;
+import dk.netarkivet.common.distribute.ChannelsTesterHelper;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.harvester.datamodel.Job;
@@ -44,7 +48,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 /**
  * Unit tests for class DoOneCrawlMessage.
  */
-public class DoOneCrawlMessageTester extends TestCase {
+public class DoOneCrawlMessageTester {
 
     /**
      We use (arbitrarily) THIS_CLIENT as channel for testing.
@@ -52,32 +56,25 @@ public class DoOneCrawlMessageTester extends TestCase {
     private static final ChannelID CHAN1 = Channels.getThisReposClient();
     ReloadSettings rs = new ReloadSettings();
 
-    public DoOneCrawlMessageTester(String sTestName) {
-        super(sTestName);
-    }
-
-    /**
-     * Setup method common to all unittests.
-     */
+    @Before
     public void setUp() throws SQLException, IllegalAccessException,
             IOException, NoSuchFieldException, ClassNotFoundException {
         rs.setUp();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
-        ChannelsTester.resetChannels();
+        ChannelsTesterHelper.resetChannels();
     }
 
-    /**
-     * Teardown method common to all unittests.
-     */
+    @After
     public void tearDown()
             throws SQLException, IllegalAccessException, NoSuchFieldException {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
-        ChannelsTester.resetChannels();
+        ChannelsTesterHelper.resetChannels();
         rs.tearDown();
     }
 
     /** Test one of constructor. */
+    @Test
     public void testCTOR1() {
         try {
             new DoOneCrawlMessage(
@@ -91,6 +88,7 @@ public class DoOneCrawlMessageTester extends TestCase {
     }
 
     /** Test two of constructor. */
+    @Test
     public void testCTOR2() {
         try {
             new DoOneCrawlMessage(
@@ -104,6 +102,7 @@ public class DoOneCrawlMessageTester extends TestCase {
     }
 
     /** Test three of constructor. */
+    @Test
     public void testCTOR3() {
         try {
             new DoOneCrawlMessage(
@@ -118,6 +117,7 @@ public class DoOneCrawlMessageTester extends TestCase {
     }
     
     /** Test four of constructor. */
+    @Test
     public void testCTOR4() {
         try {
             new DoOneCrawlMessage(
@@ -130,6 +130,7 @@ public class DoOneCrawlMessageTester extends TestCase {
     }
     
     /** Test the getJob() method. */
+    @Test
     public void testGetJob() {
         Job j = TestInfo.getJob();
         DoOneCrawlMessage docm = new DoOneCrawlMessage(
@@ -140,6 +141,7 @@ public class DoOneCrawlMessageTester extends TestCase {
     }
     
     /** Test the getMetadata() method. */
+    @Test
     public void testGetMetadata() {
         Job j = TestInfo.getJob();
         DoOneCrawlMessage docm = new DoOneCrawlMessage(
@@ -157,6 +159,7 @@ public class DoOneCrawlMessageTester extends TestCase {
      * Should possible be tested more overall
      * (waiting for NHC to make some kind of framework for testing serialization
      */
+    @Test
     public void testSerialization() {
         Job j = TestInfo.getJob();
         TestInfo.oneMetadata.add(TestInfo.sampleEntry);
@@ -205,6 +208,7 @@ public class DoOneCrawlMessageTester extends TestCase {
         }
     }
     
+    @Test
     public void testHarvestDefinitionInfo() {
         try {
             new HarvestDefinitionInfo("test", "some comments", "testSchedule");
@@ -237,9 +241,5 @@ public class DoOneCrawlMessageTester extends TestCase {
         } catch (ArgumentNotValid e) {
             //
         }
-        
-        
-        
     }
-    
 }

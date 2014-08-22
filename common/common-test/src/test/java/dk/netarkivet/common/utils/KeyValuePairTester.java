@@ -22,28 +22,29 @@
  */
 package dk.netarkivet.common.utils;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import org.junit.Test;
 
 /**
  * 
- * Unit tests for the KeyValuePair class.   
+ * Unit tests for the KeyValuePair class.
  *
  */
-public class KeyValuePairTester extends TestCase{
+public class KeyValuePairTester {
 
+    @Test
     public void testGetValue() {
         KeyValuePair<String, String> pair = new KeyValuePair<String, String>("key", "value");
         assertTrue(pair.getKey().equals("key"));
         assertTrue(pair.getValue().equals("value"));
     }
-    
+
+    @Test(expected = UnsupportedOperationException.class)
     public void testSetValue() {
         KeyValuePair<String, String> pair = new KeyValuePair<String, String>("key", "value");
-        try {
-            pair.setValue("newValue");
-            fail("Should not be able to set value");
-        } catch (UnsupportedOperationException e) {
-            // Expected behaviour
-        }
+        pair.setValue("newValue");
+        fail("Should not be able to set value");
     }
 }

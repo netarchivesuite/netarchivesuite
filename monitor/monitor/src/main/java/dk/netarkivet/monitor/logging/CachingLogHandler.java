@@ -43,15 +43,17 @@ import dk.netarkivet.monitor.MonitorSettings;
  * A LogHandler that keeps the last N messages in memory, and exposes each as a
  * CachingLogRecordMBean.
  */
-
 public class CachingLogHandler extends Handler {
-    /** The size of the logging cache. */
+
+	/** The size of the logging cache. */
     private final int loggingHistorySize;
-    /** The logging cache itself, caching the last
-     * "loggingHistorySize" log entries. */
+
+    /** The logging cache itself, caching the last "loggingHistorySize" log entries. */
     private final List<LogRecord> loggingHistory;
+
     /** The log entries exposed as MBeans. */
     private final List<CachingLogRecord> loggingMBeans;
+
     /** The place in the loggingHistory for the next LogRecord. */ 
     private int currentIndex;
 
@@ -111,7 +113,6 @@ public class CachingLogHandler extends Handler {
         return defaultValue;
     }
 
-
     /**
      * Package private method to get a formatter property. We return an instance
      * of the class named by the "name" property. If the property is not defined
@@ -127,8 +128,7 @@ public class CachingLogHandler extends Handler {
      *         defaultValue otherwise
      */
     @SuppressWarnings("rawtypes")
-    private Formatter getFormatterProperty(String name,
-                                           Formatter defaultValue) {
+    private Formatter getFormatterProperty(String name, Formatter defaultValue) {
         String val = LogManager.getLogManager().getProperty(name);
         try {
             if (val != null) {
@@ -160,13 +160,10 @@ public class CachingLogHandler extends Handler {
         String cname = getClass().getName();
         setLevel(getLevelProperty(cname + ".level", Level.ALL));
         setFilter(getFilterProperty(cname + ".filter", null));
-        setFormatter(getFormatterProperty(cname + ".formatter",
-                                          new SimpleFormatter()));
+        setFormatter(getFormatterProperty(cname + ".formatter", new SimpleFormatter()));
 
-        loggingHistorySize = Settings.getInt(
-                MonitorSettings.LOGGING_HISTORY_SIZE);
-        loggingHistory = Collections.synchronizedList(
-                new ArrayList<LogRecord>(loggingHistorySize));
+        loggingHistorySize = Settings.getInt(MonitorSettings.LOGGING_HISTORY_SIZE);
+        loggingHistory = Collections.synchronizedList(new ArrayList<LogRecord>(loggingHistorySize));
         //Fill out the list with loggingHistorySize null-records.
         loggingHistory.addAll(Arrays.asList(new LogRecord[loggingHistorySize]));
         loggingMBeans = new ArrayList<CachingLogRecord>(loggingHistorySize);
@@ -224,11 +221,10 @@ public class CachingLogHandler extends Handler {
      */
     public LogRecord getNthLogRecord(int n) {
         if ((n < 0) || (n >= loggingHistorySize)) {
-            throw new ArgumentNotValid("Argument 'int n' must be between 0 and "
-                                       + loggingHistorySize + ", but was "
-                                       + n + ".");
+            throw new ArgumentNotValid("Argument 'int n' must be between 0 and " + loggingHistorySize + ", but was "
+                    + n + ".");
         }
-        return loggingHistory.get((currentIndex - n - 1 + loggingHistorySize)
-                                  % loggingHistorySize);
+        return loggingHistory.get((currentIndex - n - 1 + loggingHistorySize) % loggingHistorySize);
     }
+
 }

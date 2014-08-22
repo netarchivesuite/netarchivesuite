@@ -30,25 +30,19 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Test;
+
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 
-public class TimedScheduleTester extends TestCase {
-    public TimedScheduleTester(String s) {
-        super(s);
-    }
-
-    public void setUp() {
-    }
-
-    public void tearDown() {
-    }
+public class TimedScheduleTester {
 
     /**
      * Test that a schedule with a null startDate starts running immediately
      */
+    @Test
     public void testNullStartDate() {
         // Run a job on the 1st of January every year from 2001 to 2005.
         Calendar cal = new GregorianCalendar(2001, Calendar.JANUARY, 1, 9, 30);
@@ -71,6 +65,7 @@ public class TimedScheduleTester extends TestCase {
     /**
      * test that a never-ending schedule (endDate==null) in fact never ends
      */
+    @Test
     public void testNeverEndingSchedule() {
         Calendar cal = new GregorianCalendar(1940, Calendar.APRIL, 9, 9, 30);
         Schedule sched = Schedule.getInstance(cal.getTime(), null,
@@ -90,6 +85,7 @@ public class TimedScheduleTester extends TestCase {
      * the fourth event, test that we get the expected three events
      * @throws Exception
      */
+    @Test
     public void testGetNextEvent1() throws Exception {
         Calendar cal = new GregorianCalendar(1940, Calendar.APRIL, 9, 9, 30);
         Calendar cal2 = new GregorianCalendar(1943, Calendar.APRIL, 9, 9, 29);
@@ -111,6 +107,7 @@ public class TimedScheduleTester extends TestCase {
      * before the fourth event, test that we get the expected three events
      * @throws Exception
      */
+    @Test
     public void testGetNextEvent2() throws Exception {
         Calendar cal = new GregorianCalendar(1940, Calendar.APRIL, 9, 9, 30);
         Calendar cal2 = new GregorianCalendar(1943, Calendar.APRIL, 9, 11, 59);
@@ -133,6 +130,7 @@ public class TimedScheduleTester extends TestCase {
     /** Test of invalid arguments
      * @throws Exception
      */
+    @Test
     public void testExceptions() throws Exception {
         Calendar cal = new GregorianCalendar(1940, Calendar.APRIL, 9, 9, 30);
         Calendar cal2 = new GregorianCalendar(1943, Calendar.APRIL, 9, 9, 29);

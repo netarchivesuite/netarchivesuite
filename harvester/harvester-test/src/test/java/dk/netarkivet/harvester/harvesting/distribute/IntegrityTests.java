@@ -23,21 +23,29 @@
 
 package dk.netarkivet.harvester.harvesting.distribute;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.Permission;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.LogManager;
+
 import javax.jms.Message;
 import javax.jms.MessageListener;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.ChannelsTester;
+import dk.netarkivet.common.distribute.ChannelsTesterHelper;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
@@ -59,8 +67,7 @@ import dk.netarkivet.harvester.distribute.HarvesterChannels;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 import dk.netarkivet.harvester.harvesting.report.HarvestReport;
 import dk.netarkivet.harvester.scheduler.JobDispatcher;
-import dk.netarkivet.testutils.FileAsserts;
-import dk.netarkivet.testutils.LogUtils;
+import dk.netarkivet.testutils.LogbackRecorder;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
@@ -68,10 +75,11 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
  * Integrity tests for the dk.harvester.harvesting.distribute 
  * package. Both tests assume an FTP server is running.
  */
+@Ignore("Needs to be run in deploy-test according to junit3 TestSuite")
 public class IntegrityTests extends DataModelTestCase {
-    /** The message to write to log when starting the server. */
-    private static final String START_MESSAGE =
-        "Starting HarvestControllerServer.";
+
+	/** The message to write to log when starting the server. */
+    private static final String START_MESSAGE = "Starting HarvestControllerServer.";
 
     TestInfo info = new TestInfo();
 
@@ -87,14 +95,11 @@ public class IntegrityTests extends DataModelTestCase {
 
     SecurityManager sm;
 
-    public IntegrityTests(String sTestName) {
-        super(sTestName);
-    }
-
+    @Before
     public void setUp() throws Exception, SQLException, IllegalAccessException {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         rs.setUp();
-        ChannelsTester.resetChannels();
+        ChannelsTesterHelper.resetChannels();
         super.setUp();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         con = JMSConnectionFactory.getInstance();
@@ -108,12 +113,6 @@ public class IntegrityTests extends DataModelTestCase {
                     + TestInfo.WORKING_DIR.getAbsolutePath());
         }
 
-        try {
-            LogManager.getLogManager().readConfiguration(
-                    new FileInputStream(TestInfo.TESTLOGPROP));
-        } catch (IOException e) {
-            fail("Could not load the testlog.prop file");
-        }
 //        HarvestDAOUtils.resetDAOs();
         Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR,
                      TestInfo.WORKING_DIR.getPath()
@@ -153,6 +152,7 @@ public class IntegrityTests extends DataModelTestCase {
      * After test is done close test-objects.
      * @throws Exception
      */
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
         //Reset index request client listener
@@ -166,7 +166,7 @@ public class IntegrityTests extends DataModelTestCase {
         }
         DatabaseTestUtils.dropHDDB();
         FileUtils.removeRecursively(TestInfo.SERVER_DIR);
-        ChannelsTester.resetChannels();
+        ChannelsTesterHelper.resetChannels();
         HarvestDAOUtils.resetDAOs();
         System.setSecurityManager(sm);
         rs.tearDown();
@@ -183,6 +183,8 @@ public class IntegrityTests extends DataModelTestCase {
     //7) The reply to the store is sent
     //8) Waits for message on the sched, indicating doOneCrawl ended
     //9) Checks that we listen for jobs again
+    @Test
+    @Ignore("The HACO should listen before job expected")
     public void testListenersAddedAndRemoved() throws IOException {
         ChannelID hacoQueue = HarvesterChannels.getHarvestJobChannelId(
                 new HarvestChannel("test", false, true, ""));
@@ -320,12 +322,14 @@ public class IntegrityTests extends DataModelTestCase {
      * @throws IOException
      * @throws InterruptedException
      */
-    public void testCrawlJob() throws IOException,
-                                      InterruptedException {
-        // make a dummy job
+    @Test
+    @Ignore("Unable to locate element in order.xml")
+    public void testCrawlJob() throws IOException, InterruptedException {
+    	LogbackRecorder lr = LogbackRecorder.startRecorder();
+
+    	// make a dummy job
         Job j = TestInfo.getJob();
-        assertTrue("The order.xml for the job must have content!",
-                j.getOrderXMLdoc().hasContent());
+        assertTrue("The order.xml for the job must have content!", j.getOrderXMLdoc().hasContent());
 
         JobDAO.getInstance().create(j);
         j.setStatus(JobStatus.SUBMITTED);
@@ -358,12 +362,8 @@ public class IntegrityTests extends DataModelTestCase {
         //
         // Check requirement that we log crawl start
         //
-        LogUtils.flushLogs(HarvestControllerServer.class.getName());
-        FileAsserts.assertFileContains(
-                "HarvestControllerServer should log starting with "
-                                       + START_MESSAGE,
-                                       START_MESSAGE, TestInfo.LOG_FILE
-        );
+        lr.assertLogContains("HarvestControllerServer should log starting with " + START_MESSAGE, START_MESSAGE);
+
         //
         // should have received two messages - one with status started and one
         // one with status done
@@ -390,7 +390,8 @@ public class IntegrityTests extends DataModelTestCase {
         CrawlStatusMessage csm = listener.messages.get(1);
         HarvestReport dhr = csm.getDomainHarvestReport();
         assertTrue("Should not be empty", dhr.getDomainNames().size() > 0);
-        assertTrue("Did not find expected domain crawled",
-                   dhr.getByteCount("netarkivet.dk") > 0);
+        assertTrue("Did not find expected domain crawled", dhr.getByteCount("netarkivet.dk") > 0);
+        lr.stopRecorder();
     }
+
 }

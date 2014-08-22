@@ -27,13 +27,15 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.EnumMap;
 
-import junit.framework.TestCase;
 import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.distribute.ChannelsTester;
+import dk.netarkivet.common.distribute.ChannelsTesterHelper;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.distribute.indexserver.RequestType;
@@ -41,7 +43,7 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.indexserver.distribute.IndexRequestClient;
 import dk.netarkivet.testutils.ClassAsserts;
-import dk.netarkivet.testutils.FileAsserts;
+import dk.netarkivet.testutils.LogbackRecorder;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
@@ -50,7 +52,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 /** 
  * Unit-tests for the ViewerProxy class. 
  */
-public class ViewerProxyTester extends TestCase {
+public class ViewerProxyTester {
     /** Viewerproxy instance to clean up in teardown. */
     ViewerProxy proxy;
 
@@ -59,10 +61,11 @@ public class ViewerProxyTester extends TestCase {
 
     ReloadSettings rs = new ReloadSettings();
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         rs.setUp();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
-        ChannelsTester.resetChannels();
+        ChannelsTesterHelper.resetChannels();
         Settings.set(CommonSettings.REMOTE_FILE_CLASS,
                      "dk.netarkivet.common.distribute.TestRemoteFile");
 
@@ -80,7 +83,8 @@ public class ViewerProxyTester extends TestCase {
         httpClient.setHostConfiguration(hc);
     }
 
-    protected void tearDown() throws NoSuchFieldException,
+    @After
+    public void tearDown() throws NoSuchFieldException,
             IllegalAccessException {
         if (proxy != null) {
             proxy.cleanup();
@@ -97,6 +101,7 @@ public class ViewerProxyTester extends TestCase {
     /**
      * Verifies that the proxyserver is started without errors.
      */
+    @Test
     public void testStartViewerProxy() {
         proxy = ClassAsserts.assertSingleton(ViewerProxy.class);
     }
@@ -104,6 +109,7 @@ public class ViewerProxyTester extends TestCase {
     /**
      * Test that the proxyServer is giving meaningful output when asked for non-existing content
      */
+    @Test
     public void testGetWithNoIndex() throws Exception {
         proxy = ViewerProxy.getInstance();
         String content = getURLfromProxyServer("http://www.nonexistingdomain.test/nonexistingfile.html");
@@ -124,6 +130,7 @@ public class ViewerProxyTester extends TestCase {
      *  for non-existing content.
      * @throws Exception
      */
+    @Test
     public void testLoggingGetNonExistingURL() throws Exception {
         proxy = ViewerProxy.getInstance();
         getURLfromProxyServer("http://" + "netarchivesuite.viewerproxy.invalid"
@@ -142,11 +149,13 @@ public class ViewerProxyTester extends TestCase {
      * Verifies that reception of an unknown instruction
      * is logged.
      */
+    @Test
     public void testUnknownInstruction() throws IOException {
+    	LogbackRecorder lr = LogbackRecorder.startRecorder();
         proxy = ViewerProxy.getInstance();
         getURLfromProxyServer("http://" + "netarchivesuite.viewerproxy.invalid" + "/unknown");
-        FileAsserts.assertFileContains("Unknown instruction should get Logged !",
-                "Unknown command", TestInfo.LOG_FILE);
+        lr.assertLogContains("Unknown instruction should get Logged !", "Unknown command");
+        lr.stopRecorder();
     }
 
     /**

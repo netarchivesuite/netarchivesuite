@@ -25,7 +25,8 @@ package dk.netarkivet.common.distribute;
 
 import java.util.Collection;
 
-import org.mortbay.log.Log;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
@@ -39,6 +40,8 @@ import dk.netarkivet.common.utils.Settings;
  * This singleton class is in charge of giving out the correct channels.
  */
 public class Channels {
+
+	private static final Log log = LogFactory.getLog(Channels.class);
 
     /**
      * Channel type prefixes for the current set of channels.
@@ -412,7 +415,7 @@ public class Channels {
         }
 
         String errMsg = "The current channel name, '" + channelName + "' does not refer to an identification channel";
-        Log.warn(errMsg);
+        log.warn(errMsg);
         throw new UnknownID(errMsg);
     }
 

@@ -22,32 +22,37 @@
  */
 package dk.netarkivet.common.utils;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.util.NoSuchElementException;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import dk.netarkivet.testutils.TestFileUtils;
+
 
 /**
  * Unit tests for the abstract class FileArrayIterator.
  * For this purpose it uses a private class TestIterator
  * that extends FileArrayIterator.
  */
-public class FileArrayIteratorTester extends TestCase {
-    public FileArrayIteratorTester(String s) {
-        super(s);
-    }
+public class FileArrayIteratorTester {
 
+    @Before
     public void setUp() throws Exception {
-        super.setUp();
         FileUtils.removeRecursively(TestInfo.TEMPDIR);
         TestFileUtils.copyDirectoryNonCVS(TestInfo.DATADIR, TestInfo.TEMPDIR);
     }
 
+    @After
     public void tearDown() throws Exception {
         FileUtils.removeRecursively(TestInfo.TEMPDIR);
-        super.tearDown();
     }
 
     /** This test iterator filters out non-existing files. */
@@ -84,6 +89,7 @@ public class FileArrayIteratorTester extends TestCase {
      * Tests bug 193: Even if hasNext() returns true, there may not be a
      * next element.
      */
+    @Test
     public void testNextEmptyList() {
         TestIterator list = new TestIterator(new File[0]);
         assertFalse("List should not claim more elements "
@@ -100,6 +106,7 @@ public class FileArrayIteratorTester extends TestCase {
 
     /** Tests that an element can be taken from the list.
      */
+    @Test
     public void testNextOneElementList() {
         TestIterator list = new TestIterator(
                 new File[] {TestInfo.XML_FILE_1});
@@ -120,6 +127,7 @@ public class FileArrayIteratorTester extends TestCase {
     /** 
      * Tests that a bad element cannot be taken from the list.
      */
+    @Test
     public void testNextBadElementList() {
         TestIterator list = new TestIterator(new File[] {
                 TestInfo.NON_EXISTING_FILE });

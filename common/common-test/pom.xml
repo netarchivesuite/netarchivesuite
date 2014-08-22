@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+<project
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
   xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
 
@@ -13,10 +14,6 @@
   <packaging>jar</packaging>
 
   <name>Netarchivesuite - common - test</name>
-
-  <properties>
-    <test>dk.netarkivet.common.UnitTesterSuite</test>
-  </properties>
 
   <dependencies>
     <dependency>
@@ -43,7 +40,6 @@
     </dependency>
 
     <!-- Test dependencies. -->
-
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -72,6 +68,12 @@
     </dependency>
 
     <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
       <version>2.3</version>
@@ -80,6 +82,7 @@
   </dependencies>
 
   <build>
+<!--     <testSourceDirectory>XX</testSourceDirectory> -->
     <testResources>
       <testResource>
         <directory>src/test/resources</directory>
@@ -91,20 +94,23 @@
 
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <argLine>
             -Xmx768m
             -Dfile.encoding=UTF-8
             -Ddk.netarkivet.settings.file=tests/dk/netarkivet/test-settings.xml
-            -Dorg.apache.commons.logging.log=org.apache.commons.logging.impl.Jdk14Logger
-            -Djava.util.logging.config.file=tests/dk/netarkivet/testlog.prop
             -Djava.security.manager
             -Djava.security.policy=tests/dk/netarkivet/ant-test.policy
             -Dorg.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy=org.archive.crawler.frontier.HostnameQueueAssignmentPolicy,org.archive.crawler.frontier.IPQueueAssignmentPolicy,org.archive.crawler.frontier.BucketQueueAssignmentPolicy,org.archive.crawler.frontier.SurtAuthorityQueueAssignmentPolicy,org.archive.crawler.frontier.TopmostAssignedSurtQueueAssignmentPolicy,dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy
             -Duser.language=en -Duser.country=US -Duser.variant=US
+            -Duser.timezone=Europe/Copenhagen
           </argLine>
+          <forkCount>1</forkCount>
+          <reuseForks>true</reuseForks>
+          <includes>
+            <include>**/*Test*.java</include>
+          </includes>
         </configuration>
       </plugin>
     </plugins>

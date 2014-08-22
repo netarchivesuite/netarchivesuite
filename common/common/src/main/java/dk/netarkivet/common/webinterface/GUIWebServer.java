@@ -26,10 +26,10 @@ import java.io.File;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.handler.DefaultHandler;
-import org.mortbay.jetty.webapp.WebAppContext;
-
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.DefaultHandler;
+import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.webapp.WebAppContext;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -102,20 +102,19 @@ public class GUIWebServer implements CleanupIF {
         //Get a Jetty server.
         server = new Server(port);
 
+        HandlerList handlerList = new HandlerList();
         //Add web applications
         try {
-            for (int i = 0; i < webApps.length;
-                 i++) {
-                addWebApplication(webApps[i]);
+            for (int i = 0; i < webApps.length; i++) {
+                handlerList.addHandler(getWebApplication(webApps[i]));
             }
         } catch (Exception e) {
-            throw new IOFailure(
-                    "Error deploying the webapplications", e);
+            throw new IOFailure("Error deploying the webapplications", e);
         }
-
         //Add default handler, giving 404 page that lists web contexts, and
         //favicon.ico from Jetty
-        server.addHandler(new DefaultHandler());
+        handlerList.addHandler(new DefaultHandler());
+        server.setHandler(handlerList);
     }
 
     /**
@@ -143,12 +142,11 @@ public class GUIWebServer implements CleanupIF {
      *                          webbase doesn't start with '/'.
      * @throws PermissionDenied if the server is already running.
      */
-    private void addWebApplication(String webapp)
+    private WebAppContext getWebApplication(String webapp)
             throws IOFailure, ArgumentNotValid, PermissionDenied {
 
         if (!new File(webapp).exists()) {
-            throw new IOFailure(
-                    "Web application '" + webapp + "' not found");
+            throw new IOFailure("Web application '" + webapp + "' not found");
         }
 
         // Construct webbase from the name of the webapp.
@@ -178,10 +176,10 @@ public class GUIWebServer implements CleanupIF {
             log.info("Deleted existing tempdir '" + tmpdir.getAbsolutePath()
                     + "'");
         }
+        tmpdir.mkdirs();
         webApplication.setTempDirectory(tmpdir);
-        server.addHandler(webApplication);
-        log.info("The web application '" + webapp + "' is now deployed at '"
-                 + webbase + "'");
+        log.info("The web application '" + webapp + "' is now deployed at '" + webbase + "'");
+        return webApplication;
     }
 
     /**

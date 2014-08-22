@@ -23,11 +23,13 @@
 
 package dk.netarkivet.archive.arcrepository.bitpreservation;
 
+import org.junit.Test;
+
 import dk.netarkivet.testutils.ReflectUtils;
-import junit.framework.TestCase;
 
-public class UtilityTester extends TestCase {
+public class UtilityTester {
 
+    @Test
     public void testConstants() {
         ReflectUtils.testUtilityConstructor(Constants.class);
     }

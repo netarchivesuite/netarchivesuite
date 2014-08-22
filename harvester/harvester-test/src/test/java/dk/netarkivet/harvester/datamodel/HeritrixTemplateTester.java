@@ -24,7 +24,9 @@ package dk.netarkivet.harvester.datamodel;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.XmlUtils;
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Test;
+
 
 import org.archive.crawler.deciderules.DecidingScope;
 import org.dom4j.Document;
@@ -36,20 +38,13 @@ import java.util.List;
 
 /** Testclass for class HeritrixTemplate. */
 @SuppressWarnings({ "unchecked"})
-public class HeritrixTemplateTester extends TestCase {
-
-    protected void setUp() throws Exception {
-        super.setUp();
-    }
-
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
+public class HeritrixTemplateTester {
 
     /**
      * Simple test that construction works as intended with or without
      * verification.
      */
+    @Test
     public void testHeritrixTemplate() {
         Document doc = null;
         try {
@@ -246,6 +241,7 @@ public class HeritrixTemplateTester extends TestCase {
     }
 
     /** Test methods getTemplate(), isVerified(). */
+    @Test
     public void testIsVerified() {
         File f = new File(TestInfo.TOPDATADIR, "default_orderxml.xml");
         Document doc = XmlUtils.getXmlDoc(f);
@@ -257,6 +253,7 @@ public class HeritrixTemplateTester extends TestCase {
         assertFalse("Should be false", ht.isVerified());
     }
 
+    @Test
     public void testGetTemplate() {
         File f = new File(TestInfo.TOPDATADIR, "default_orderxml.xml");
         Document doc = XmlUtils.getXmlDoc(f);
@@ -267,6 +264,7 @@ public class HeritrixTemplateTester extends TestCase {
         assertEquals("should have equal contents", templateAsXML, doc.asXML());
     }
     
+    @Test
     public void testForDecidingScope() {
         File f = new File(TestInfo.TOPDATADIR, "default_orderxml.xml");
         Document doc = XmlUtils.getXmlDoc(f);        
@@ -278,8 +276,8 @@ public class HeritrixTemplateTester extends TestCase {
         HeritrixTemplate ht = new HeritrixTemplate(doc);
         assertTrue("Order not verified", ht.isVerified());
     }
-  
-    
+
+    @Test
     public void testEditOrderXML_ArchiveFormat() {
         File f = new File(TestInfo.TOPDATADIR, "default_orderxml.xml");
         Document a = XmlUtils.getXmlDoc(f);
@@ -288,5 +286,4 @@ public class HeritrixTemplateTester extends TestCase {
         a = XmlUtils.getXmlDoc(fwarc);
         HeritrixTemplate.editOrderXML_ArchiveFormat(a, "warc");
     }
-    
 }

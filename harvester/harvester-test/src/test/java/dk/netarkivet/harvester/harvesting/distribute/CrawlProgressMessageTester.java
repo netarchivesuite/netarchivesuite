@@ -23,17 +23,17 @@
 package dk.netarkivet.harvester.harvesting.distribute;
 
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlStatus;
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Test;
+
 
 /**
  * Unit tests for the class
  * {@link CrawlProgressMessage}.
  */
-public class CrawlProgressMessageTester extends TestCase {
+public class CrawlProgressMessageTester {
     
-    protected void setUp() throws Exception {
-    }
-    
+    @Test
     public void testConstructor() {
         long harvestId = 2L;
         long jobId = 42L;

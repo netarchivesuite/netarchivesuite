@@ -54,8 +54,8 @@
           -->
 
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
             <scope>test</scope>
             <optional>true</optional>
         </dependency>
@@ -67,7 +67,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>3.8.1</version>
+            <version>4.11</version>
             <scope>test</scope>
         </dependency>
 
@@ -106,6 +106,9 @@
 
     <build>
         <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+      </testResource>
             <testResource>
                 <directory>tests</directory>
             </testResource>
@@ -120,8 +123,6 @@
                         -Xmx768m
                         -Dfile.encoding=UTF-8
                         -Ddk.netarkivet.settings.file=tests/dk/netarkivet/test-settings.xml
-                        -Dorg.apache.commons.logging.log=org.apache.commons.logging.impl.Jdk14Logger
-                        -Djava.util.logging.config.file=tests/dk/netarkivet/testlog.prop
                         -Djava.security.manager
                         -Djava.security.policy=tests/dk/netarkivet/ant-test.policy
                         -Dorg.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy=org.archive.crawler.frontier.HostnameQueueAssignmentPolicy,org.archive.crawler.frontier.IPQueueAssignmentPolicy,org.archive.crawler.frontier.BucketQueueAssignmentPolicy,org.archive.crawler.frontier.SurtAuthorityQueueAssignmentPolicy,org.archive.crawler.frontier.TopmostAssignedSurtQueueAssignmentPolicy,dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy

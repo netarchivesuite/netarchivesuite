@@ -29,11 +29,11 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.TimeZone;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.dom4j.Document;
 import org.dom4j.io.SAXReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.harvester.webinterface.DefinitionsSiteSection;
@@ -43,8 +43,10 @@ import dk.netarkivet.harvester.webinterface.DefinitionsSiteSection;
  */
 @SuppressWarnings({ "unused"})
 public class TestInfo {
-    protected static final Logger log = Logger.getLogger(TestInfo.class.getName());
-    public static final File TOPDATADIR = new File("./tests/dk/netarkivet/harvester/datamodel/data/");
+
+	protected static final Logger log = LoggerFactory.getLogger(TestInfo.class);
+
+	public static final File TOPDATADIR = new File("./tests/dk/netarkivet/harvester/datamodel/data/");
     public static final File DATADIR = new File(TOPDATADIR, "hadebasedir/");
     public static final File TEMPDIR = new File(TOPDATADIR, "working/");
     //public static final File TEMPDIR = new File("target/working/");
@@ -65,12 +67,9 @@ public class TestInfo {
     public static final String DEFAULT_PW_LIST_NAME = "default_pw_list";
     public static final SeedList seedlist = new SeedList(SEEDLISTNAME, SEEDS1);
 
-    public static final SeedList seedlistJob4 = new SeedList(SEEDLISTNAME_JOB4,
-            SEEDS1_JOB4);
-    public static SeedList seedlist2 = new SeedList(SEEDLISTNAME2,
-            SEEDS2);
-    public static SeedList seedlist3 = new SeedList(SEEDLISTNAME2,
-            SEEDS3);
+    public static final SeedList seedlistJob4 = new SeedList(SEEDLISTNAME_JOB4, SEEDS1_JOB4);
+    public static SeedList seedlist2 = new SeedList(SEEDLISTNAME2, SEEDS2);
+    public static SeedList seedlist3 = new SeedList(SEEDLISTNAME2, SEEDS3);
     public static String DEFAULTCFGNAME = "Default";
     public static String DEFAULTCFGNAMEJOB4 = "Default";
     public static String DEFAULT_SCHEDULE_NAME = "DefaultSchedule";
@@ -94,12 +93,9 @@ public class TestInfo {
     public static final String GUI_WEB_SERVER_WEBBASE = "/jsp";
     //public static final String GUI_WEB_SERVER_JSP_DIRECTORY = "tests/dk/netarkivet/harvester/datamodel/data/jsp";
     public static HourlyFrequency FREQUENCY = new HourlyFrequency(1);
-    public static File HARVEST_DEFINITIONS_DIR = new File(TEMPDIR,
-            "harvestdefinitions");
-    public static File HARVEST_DEFINITION_FILE1 = new File(HARVEST_DEFINITIONS_DIR,
-            "harvestdef_42.xml");
-    public static final File HARVEST_DEFINITION_FILE2 = new File(HARVEST_DEFINITIONS_DIR,
-            "harvestdef_43.xml");
+    public static File HARVEST_DEFINITIONS_DIR = new File(TEMPDIR, "harvestdefinitions");
+    public static File HARVEST_DEFINITION_FILE1 = new File(HARVEST_DEFINITIONS_DIR, "harvestdef_42.xml");
+    public static final File HARVEST_DEFINITION_FILE2 = new File(HARVEST_DEFINITIONS_DIR, "harvestdef_43.xml");
     public static final String HARVESTDEFINITION_WEBBASE = "/HarvestDefinition";
     public static final String HARVESTDEFINITION_JSP_DIR = "webpages/HarvestDefinition";
     public static final int HARVESTDEFINITION_PORT = 4243;
@@ -118,13 +114,13 @@ public class TestInfo {
     public static Date START_DATE = new GregorianCalendar(105, 2, 3, 4, 5, 6).getTime();
     public static Date END_DATE = new GregorianCalendar(106, 2, 3, 4, 5, 6).getTime();
     public static Frequency DEFAULT_FREQ = new DailyFrequency(3);
-    public static Schedule TESTSCHEDULE = new TimedSchedule(START_DATE, END_DATE,
-            DEFAULT_FREQ, TEST_SCHEDULE_NAME, "");
-    public static Schedule DEFAULTSCHEDULE = new TimedSchedule(START_DATE, END_DATE,
-            DEFAULT_FREQ, DEFAULT_SCHEDULE_NAME, "");
+    public static Schedule TESTSCHEDULE = new TimedSchedule(
+    		START_DATE, END_DATE, DEFAULT_FREQ, TEST_SCHEDULE_NAME, "");
+    public static Schedule DEFAULTSCHEDULE = new TimedSchedule(
+    		START_DATE, END_DATE, DEFAULT_FREQ, DEFAULT_SCHEDULE_NAME, "");
     private static final String TESTSCHEDULE_COMMENTS = "No comment";
-    public static Schedule HERE_AND_NOW_SCHEDULE = Schedule.getInstance(null,
-            null, new DailyFrequency(1), HEREANDNOW_SCHEDULE_NAME, TESTSCHEDULE_COMMENTS);
+    public static Schedule HERE_AND_NOW_SCHEDULE = Schedule.getInstance(
+    		null, null, new DailyFrequency(1), HEREANDNOW_SCHEDULE_NAME, TESTSCHEDULE_COMMENTS);
 
     private static final Frequency TWO_HOURLY_FREQUENCY = new HourlyFrequency(2, 42);
     private static final Frequency FIVE_MINUTE_FREQUENCY = new MinuteFrequency(5);
@@ -156,8 +152,7 @@ public class TestInfo {
     public static final String PASSWORD_USERNAME = "Mulder";
     public static final String PASSWORD_PASSWORD = "TrustNo1";
     public static Password password = new Password(PASSWORD_NAME, PASSWORD_COMMENT,
-            PASSWORD_PASSWORD_DOMAIN, PASSWORD_REALM, PASSWORD_USERNAME,
-            PASSWORD_PASSWORD);
+            PASSWORD_PASSWORD_DOMAIN, PASSWORD_REALM, PASSWORD_USERNAME, PASSWORD_PASSWORD);
 
     public static final int STATUS_NEW = 0;
     public static final int STATUS_SUBMITTED = 1;
@@ -177,7 +172,6 @@ public class TestInfo {
 
     public static final int NO_OF_TESTDOMAINS = 7;
 
-    public static File LOG_FILE = new File("tests/testlogs/netarkivtest.log");
     public static final String DBFILE = TOPDATADIR.getAbsolutePath() + "/fullhddb.sql";
     static final String EMPTYDBFILE = TOPDATADIR.getAbsolutePath() + "/emptyhddb.sql";
     public static final File NONEXISTINGDIR =
@@ -228,7 +222,7 @@ public class TestInfo {
             Document orderXMLdoc = reader.read(f);
             return orderXMLdoc;
         } catch (Exception e) {
-            log.log(Level.WARNING, "Could not read file:" + f + ";", e);
+            log.warn("Could not read file:{};", f, e);
             throw new IOFailure("Could not read file:" + f + ";", e);
         }
     }
@@ -244,7 +238,7 @@ public class TestInfo {
 
             return docs;
         } catch (Exception e) {
-            log.log(Level.WARNING, "Could not read settings file.", e);
+            log.warn("Could not read settings file.", e);
             throw new IOFailure("Could not read settings file.", e);
         }
     }

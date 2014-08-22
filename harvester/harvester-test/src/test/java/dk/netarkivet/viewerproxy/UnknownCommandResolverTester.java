@@ -27,7 +27,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
+
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.testutils.StringAsserts;
@@ -36,17 +40,9 @@ import dk.netarkivet.testutils.StringAsserts;
  * Unit-tests of the UnknownCommandResolver class.
  */
 @SuppressWarnings({ "unused"})
-public class UnknownCommandResolverTester extends TestCase {
-    public UnknownCommandResolverTester(String s) {
-        super(s);
-    }
+public class UnknownCommandResolverTester {
 
-    public void setUp() {
-    }
-
-    public void tearDown() {
-    }
-
+    @Test
     public void testLookup() throws Exception {
         URIResolver end = new URIResolver() {
             public int lookup(Request request, Response response) {

@@ -31,8 +31,6 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
-import junit.framework.TestCase;
-
 /**
  * Unit tests for methods in class dk.netarkivet.common.Constants.
  */

@@ -143,7 +143,6 @@ public class TestInfo {
 
     static final long JOB_ID = 42;
     static final long HARVEST_ID = 142L;
-    static final File LOG_FILE = new File("tests/testlogs/netarkivtest.log");
     public static final File HARVEST_INFO_FILE = new File(CRAWLDIR_ORIGINALS_DIR,
                                                           "harvestInfo.xml");
     public static final MetadataEntry sampleEntry = new MetadataEntry(

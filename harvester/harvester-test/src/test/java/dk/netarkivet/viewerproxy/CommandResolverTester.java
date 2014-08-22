@@ -26,24 +26,18 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Test;
+
 
 import dk.netarkivet.common.exceptions.NotImplementedException;
 
 /**
  * Unit-tests for the CommandResolver class.
  */
-public class CommandResolverTester extends TestCase {
-    public CommandResolverTester(String s) {
-        super(s);
-    }
+public class CommandResolverTester {
 
-    public void setUp() {
-    }
-
-    public void tearDown() {
-    }
-
+    @Test
     public void testIsCommandHostRequest() throws Exception {
         assertFalse("Null request should have no host",
                 CommandResolver.isCommandHostRequest(null));

@@ -25,7 +25,6 @@ package dk.netarkivet.archive.checksum.distribute;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.archive.bitarchive.distribute.GetFileMessage;
 import dk.netarkivet.archive.bitarchive.distribute.GetMessage;
@@ -34,7 +33,7 @@ import dk.netarkivet.archive.bitarchive.distribute.UploadMessage;
 import dk.netarkivet.archive.distribute.ArchiveMessageHandler;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.ChannelsTester;
+import dk.netarkivet.common.distribute.ChannelsTesterHelper;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
@@ -47,9 +46,14 @@ import dk.netarkivet.testutils.ClassAsserts;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
-import junit.framework.TestCase;
 
-public class ChecksumClientTester extends TestCase {
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+
+public class ChecksumClientTester {
 
     UseTestRemoteFile rf = new UseTestRemoteFile();
     ReloadSettings rs = new ReloadSettings();
@@ -57,12 +61,13 @@ public class ChecksumClientTester extends TestCase {
     MessageTestHandler handler;
     JMSConnectionMockupMQ con;
     
+    @Before
     public void setUp() {
         rs.setUp();
         rf.setUp();
         mtf.setUp();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
-        ChannelsTester.resetChannels();
+        ChannelsTesterHelper.resetChannels();
         
         Settings.set(CommonSettings.USE_REPLICA_ID, "THREE");
         
@@ -72,6 +77,7 @@ public class ChecksumClientTester extends TestCase {
         con.setListener(Channels.getTheCR(), handler);
     }
     
+    @After
     public void tearDown() {
         JMSConnectionMockupMQ.clearTestQueues();
 
@@ -80,10 +86,12 @@ public class ChecksumClientTester extends TestCase {
         rs.tearDown();
     }
 
+    @Test
     public void testClient() {
         ClassAsserts.assertPrivateConstructor(ChecksumClient.class);
     }
     
+    @Test
     public void testFails() {
         ChecksumClient cc = ChecksumClient.getInstance(Channels.getTheCR());
         
@@ -146,6 +154,7 @@ public class ChecksumClientTester extends TestCase {
         }
     }
     
+    @Test
     public void testValid() {
         ChecksumClient cc = ChecksumClient.getInstance(Channels.getTheCR());
         

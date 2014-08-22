@@ -61,10 +61,10 @@ public class LinuxMachine extends Machine {
      */
     public LinuxMachine(Element subTreeRoot, XmlStructure parentSettings, 
             Parameters param, String netarchiveSuiteSource,
-            File logProp, File securityPolicy, File dbFile,
+            File logProp, File slf4JConfig, File securityPolicy, File dbFile,
             File arcdbFile, boolean resetDir, File externalJarFolder) {
         super(subTreeRoot, parentSettings, param, netarchiveSuiteSource,
-                logProp, securityPolicy, dbFile, arcdbFile, resetDir,
+                logProp, slf4JConfig, securityPolicy, dbFile, arcdbFile, resetDir,
                 externalJarFolder);
         // set operating system
         operatingSystem = Constants.OPERATING_SYSTEM_LINUX_ATTRIBUTE;
@@ -238,9 +238,10 @@ public class LinuxMachine extends Machine {
         StringBuilder res = new StringBuilder();
         res.append(ScriptConstants.SSH + Constants.SPACE);
         res.append(machineUserLogin());
-        res.append(Constants.SPACE + Constants.QUOTE_MARK + Constants.DOT
-                + Constants.SPACE + ScriptConstants.ETC_PROFILE 
-                + Constants.SEMICOLON + Constants.SPACE);
+        res.append(Constants.SPACE + Constants.QUOTE_MARK +
+                Constants.DOT + Constants.SPACE + ScriptConstants.ETC_PROFILE + Constants.SEMICOLON +
+                Constants.DOT + Constants.SPACE + ScriptConstants.USER_BASH_PROFILE + Constants.SEMICOLON
+                + Constants.SPACE);
         res.append(getConfDirPath());
         res.append(Constants.SCRIPT_NAME_START_ALL);
         res.append(scriptExtension);
@@ -387,7 +388,7 @@ public class LinuxMachine extends Machine {
                         + Constants.COLON + Constants.SPACE 
                         + Constants.APOSTROPHE + name + Constants.APOSTROPHE);
 
-                // insert path to kill script for all applications
+                // insert path to start script for each applications
                 for(Application app : applications) {
                     // make name of file
                     String appScript = Constants.DOT + Constants.SLASH
@@ -639,6 +640,15 @@ public class LinuxMachine extends Machine {
                             + ScriptConstants.VALUE_OF_CLASSPATH 
                             + Constants.SEMICOLON);
                     //     JAVA
+                    String securityManagement = "";
+                    if (app.getTotalName().contains(ScriptConstants.BITARCHIVE_APPLICATION_NAME)) {
+                        securityManagement = Constants.SPACE + Constants.DASH
+                                + ScriptConstants.OPTION_SECURITY_MANAGER
+                                + Constants.SPACE + Constants.DASH
+                                + ScriptConstants.OPTION_SECURITY_POLICY
+                                + getConfDirPath()
+                                + Constants.SECURITY_POLICY_FILE_NAME;
+                    }
                     appPrint.println(ScriptConstants.MULTI_SPACE_4
                             + ScriptConstants.JAVA + Constants.SPACE
                             + app.getMachineParameters().writeJavaOptions()
@@ -646,20 +656,33 @@ public class LinuxMachine extends Machine {
                             + ScriptConstants.OPTION_SETTINGS 
                             + getConfDirPath() + Constants.PREFIX_SETTINGS
                             + app.getIdentification() 
-                            + Constants.EXTENSION_XML_FILES + Constants.SPACE
+                            + Constants.EXTENSION_XML_FILES
+
+							// TODO check to see if inherited inheriteJulPropFile is not null
+                            + Constants.SPACE
                             + Constants.DASH 
                             + ScriptConstants.OPTION_LOG_COMPLETE
-                            + Constants.SPACE + Constants.DASH 
+
+							// TODO check to see if inherited inheriteJulPropFile is not null
+                            + Constants.SPACE
+                            + Constants.DASH 
                             + ScriptConstants.OPTION_LOG_CONFIG
-                            + getConfDirPath() + Constants.LOG_PREFIX
+                            + getConfDirPath()
+                            + Constants.LOG_PREFIX
                             + app.getIdentification() 
-                            + Constants.EXTENSION_LOG_PROPERTY_FILES
-                            + Constants.SPACE + Constants.DASH 
-                            + ScriptConstants.OPTION_SECURITY_MANAGER
-                            + Constants.SPACE + Constants.DASH 
-                            + ScriptConstants.OPTION_SECURITY_POLICY
-                            + getConfDirPath() 
-                            + Constants.SECURITY_POLICY_FILE_NAME 
+                            + Constants.EXTENSION_JUL_PROPERTY_FILES
+
+                            // TODO check to see if inheritedSlf4jConfigFile is not null
+                            + Constants.SPACE
+                            + Constants.DASH 
+                            + ScriptConstants.OPTION_LOGBACK_CONFIG
+                            + getConfDirPath()
+                            + Constants.LOGBACK_PREFIX
+                            + app.getIdentification() 
+                            + Constants.EXTENSION_XML_FILES
+
+                            + securityManagement
+
                             + Constants.SPACE + app.getTotalName()
                             + Constants.SPACE + ScriptConstants.LINUX_DEV_NULL
                             + Constants.SPACE 

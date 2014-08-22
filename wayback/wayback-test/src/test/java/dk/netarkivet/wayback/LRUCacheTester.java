@@ -22,14 +22,17 @@
  */
 package dk.netarkivet.wayback;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
 /** TODO complete unittests. */
-@SuppressWarnings({ "unused"})
-public class LRUCacheTester extends TestCase {
-    
+@SuppressWarnings({ "unused" })
+public class LRUCacheTester {
+
+    @Test
     public void testConstructor() {
+        // just to see if the constructor works??
         LRUCache.getInstance();
         LRUCache cache = new LRUCache();
     }
-    
+
 }

@@ -22,36 +22,38 @@
  */
 package dk.netarkivet.common.exceptions;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
+
 
 /**
  * Unit-tests for all Exceptions in this package.
  */
-public class ExceptionsTester extends TestCase {
+public class ExceptionsTester {
 
     private String nullString;
     private String emptyString;
     private String meaningfullString;
 
-    public ExceptionsTester(String s) {
-        super(s);
-    }
 
+    @Before
     public void setUp() {
         nullString = null;
         emptyString = "";
         meaningfullString = "This is a meaningful exception";
     }
 
-    public void tearDown() {
-    }
 
     /**
      * Test PermissionDenied exception.
      */
+    @Test
     public void testPermissionDeniedException() {
         // Test PermissionDenied(String) constructor
         try {
@@ -87,6 +89,7 @@ public class ExceptionsTester extends TestCase {
     /**
      * Test UnknownID exception.
      **/
+    @Test
     public void testUnknownIDException() {
         // Test UnknownID(String) constructor
         try {
@@ -122,6 +125,7 @@ public class ExceptionsTester extends TestCase {
     /**
      * Test NotImplementedException exception.
      **/
+    @Test
     public void testNotImplementedException() {
         // Test NotImplementedException(String) constructor
         try {
@@ -157,6 +161,7 @@ public class ExceptionsTester extends TestCase {
     /**
      * Test IOFailure exception.
      **/
+    @Test
     public void testIOFailureException() {
         // Test IOFailure(String) constructor
         try {
@@ -192,6 +197,7 @@ public class ExceptionsTester extends TestCase {
     /**
      * Test ArgumentNotValid exception.
      **/
+    @Test
     public void testArgumentNotValidException() {
         // Test ArgumentNotValid(String) constructor
         try {
@@ -265,6 +271,7 @@ public class ExceptionsTester extends TestCase {
     /**
      * Test IllegalState(String, Throwable) constructor.
      */
+    @Test
     public void testIllegalState() {
 
         try {
@@ -281,6 +288,7 @@ public class ExceptionsTester extends TestCase {
      * test {@link BatchTermination} constructors.
      * Note that null arguments are currently allowed!
      */
+    @Test
     public void testBatchTermination() {
         final String errMsg = "Batch terminated";
         try {
@@ -312,6 +320,7 @@ public class ExceptionsTester extends TestCase {
      * test {@link HarvestingAbort} constructors.
      * Note that null arguments are currently allowed!
      */
+    @Test
     public void testHarvestingAbort() {
         final String errMsg = "Harvest aborted";
         try {

@@ -22,33 +22,32 @@
  */
 package dk.netarkivet.harvester.indexserver;
 
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.harvester.indexserver.CDXDataCache;
-import dk.netarkivet.harvester.indexserver.CombiningMultiFileBasedCache;
-import dk.netarkivet.harvester.indexserver.CrawlLogDataCache;
-import dk.netarkivet.harvester.indexserver.CrawlLogIndexCache;
-import dk.netarkivet.harvester.indexserver.FullCrawlLogIndexCache;
-import dk.netarkivet.testutils.FileAsserts;
-import dk.netarkivet.testutils.LogUtils;
+import dk.netarkivet.testutils.LogbackRecorder;
 import dk.netarkivet.testutils.ReflectUtils;
 
 /**
  * Testclass for class CrawlLogIndexCache.
  */
 public class CrawlLogIndexCacheTester extends CacheTestCase {
-    public CrawlLogIndexCacheTester(String s) {
-        super(s);
-    }
 
+    @Before
     public void setUp() throws Exception {
         super.setUp();
     }
 
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
     }
@@ -57,6 +56,7 @@ public class CrawlLogIndexCacheTester extends CacheTestCase {
      * Test of private method sortCrawlLog.
      * @throws Exception
      */
+    @Test
     public void testSortCrawlLog() throws Exception {
         File sortedFile = new File(TestInfo.CRAWL_LOG_1.getAbsolutePath() + ".sorted");
         FileUtils.sortCrawlLog(TestInfo.CRAWL_LOG_1, sortedFile);
@@ -87,39 +87,37 @@ public class CrawlLogIndexCacheTester extends CacheTestCase {
      * Test of preparecombine.
      * @throws Exception
      */
-    public void testPrepareCombine()
-            throws NoSuchFieldException, IllegalAccessException {
+    @Test
+    public void testPrepareCombine() throws NoSuchFieldException, IllegalAccessException {
+    	LogbackRecorder lr = LogbackRecorder.startRecorder();
         // Currently only tests that a log message is written
         CrawlLogIndexCache cache = new FullCrawlLogIndexCache();
-        ReflectUtils.getPrivateField(CrawlLogIndexCache.class,
-                                     "cdxcache").set(cache,
-                                                     new CDXDataCache() {
-                                                         public Long cache(Long ID) {
-                                                             if (ID % 3 == 0) {
-                                                                 return null;
-                                                             } else {
-                                                                 return ID;
-                                                             }
-                                                         }
-                                                     });
-        ReflectUtils.getPrivateField(CombiningMultiFileBasedCache.class,
-                                     "rawcache").set(cache,
-                                                     new CrawlLogDataCache() {
-                                                         public File getCacheFile(Long id) {
-                                                             return new File(TestInfo.WORKING_DIR, "cache-" + id);
-                                                         }
+        ReflectUtils.getPrivateField(CrawlLogIndexCache.class, "cdxcache").set(cache,
+                new CDXDataCache() {
+            public Long cache(Long ID) {
+                if (ID % 3 == 0) {
+                    return null;
+                } else {
+                    return ID;
+                }
+            }
+        });
+        ReflectUtils.getPrivateField(CombiningMultiFileBasedCache.class, "rawcache").set(cache,
+                new CrawlLogDataCache() {
+            public File getCacheFile(Long id) {
+                return new File(TestInfo.WORKING_DIR, "cache-" + id);
+            }
 
-                                                         protected Long cacheData(Long id) {
-                                                             return null;
-                                                         }
-                                                     });
+            protected Long cacheData(Long id) {
+                return null;
+            }
+        });
         Set<Long> jobIDs = new HashSet<Long>();
         jobIDs.add(1L);
         cache.prepareCombine(jobIDs);
-        LogUtils.flushLogs(CrawlLogIndexCache.class.getName());
-        FileAsserts.assertFileContains("Should have info about starting index",
-                                       "Starting to generate fullcrawllogindex for the " 
-                                        + jobIDs.size() + " jobs: " + jobIDs,
-                                       TestInfo.LOG_FILE);
+        lr.assertLogContains("Should have info about starting index",
+                "Starting to generate fullcrawllogindex for the " + jobIDs.size() + " jobs: " + jobIDs);
+        lr.stopRecorder();
     }
+
 }

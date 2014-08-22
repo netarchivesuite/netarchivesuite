@@ -64,7 +64,6 @@ public class TestInfo {
         = new File(TEMPDIR, "nonewlinedfile.txt");
     public static final File FILE_WITH_ONE_LINE = new File(TEMPDIR, "onelinedfile.txt");
     public static final File EMPTY_FILE = new File(TEMPDIR, "emptyfile.txt");
-    public static File LOG_FILE = new File("tests/testlogs/netarkivtest.log");
     public static final File ZIPDIR = new File(TEMPDIR, "zipdir");
     public static final File ZIPPED_DIR = new File(TestInfo.ZIPDIR, "zippedDir.zip");
     public static final File ZIPPED_DIR_WITH_SUBDIRS 

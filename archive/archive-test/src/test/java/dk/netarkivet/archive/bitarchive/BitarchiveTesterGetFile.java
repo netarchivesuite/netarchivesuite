@@ -22,55 +22,55 @@
  */
 package dk.netarkivet.archive.bitarchive;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 import java.io.File;
 import java.io.IOException;
 
-import dk.netarkivet.testutils.FileAsserts;
-import dk.netarkivet.testutils.LogUtils;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
+import dk.netarkivet.testutils.LogbackRecorder;
 
 public class BitarchiveTesterGetFile extends BitarchiveTestCase {
-    private static final File ORIGINALS_DIR =
-            new File(new File(TestInfo.DATA_DIR, "getFile"), "originals");
-
-    public BitarchiveTesterGetFile(String s) {
-        super(s);
-    }
+    private static final File ORIGINALS_DIR = new File(new File(TestInfo.DATA_DIR, "getFile"), "originals");
 
     protected File getOriginalsDir() {
         return ORIGINALS_DIR;
     }
 
+    @Before
     public void setUp() throws Exception {
         super.setUp();
     }
 
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
     }
 
+    @Test
     public void testGetFile_Failure() throws Exception {
+    	LogbackRecorder lr = LogbackRecorder.startRecorder();
         String arcFileID = "test";
         File result = archive.getFile(arcFileID);
         assertNull("Non-existing file should give null result", result);
-        LogUtils.flushLogs(Bitarchive.class.getName());
-        FileAsserts.assertFileContains("Log should mention non-success",
-                                       arcFileID + "' not found",
-                                       TestInfo.LOGFILE);
+        lr.assertLogContains("Log should mention non-success", arcFileID + "' not found");
+        lr.stopRecorder();
     }
 
+    @Test
     public void testGetFile_Success() throws IOException {
-        String arcFileID = "Upload1.ARC";
+    	LogbackRecorder lr = LogbackRecorder.startRecorder();
+    	String arcFileID = "Upload1.ARC";
         File result = archive.getFile(arcFileID);
-        assertEquals("Result should be the expected file",
-                     new File(TestInfo.FILE_DIR, arcFileID).getCanonicalPath(),
-                     result.getCanonicalPath());
-        LogUtils.flushLogs(Bitarchive.class.getName());
-        FileAsserts.assertFileContains("Log should mention start",
-                                       "Get file '" + arcFileID,
-                                       TestInfo.LOGFILE);
-        FileAsserts.assertFileContains("Log should mention success",
-                                       "Getting file '" + result,
-                                       TestInfo.LOGFILE);
+        assertEquals("Result should be the expected file", new File(TestInfo.FILE_DIR, arcFileID).getCanonicalPath(),
+                result.getCanonicalPath());
+        lr.assertLogContains("Log should mention start", "Get file '" + arcFileID);
+        lr.assertLogContains("Log should mention success", "Getting file '" + result);
+        lr.stopRecorder();
     }
+
 }

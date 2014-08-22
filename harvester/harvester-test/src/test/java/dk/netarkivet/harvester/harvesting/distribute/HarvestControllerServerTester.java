@@ -22,31 +22,36 @@
  */
 package dk.netarkivet.harvester.harvesting.distribute;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.LogManager;
 
 import javax.jms.JMSException;
 import javax.jms.ObjectMessage;
 
-import dk.netarkivet.harvester.distribute.HarvesterChannels;
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.ChannelsTester;
+import dk.netarkivet.common.distribute.ChannelsTesterHelper;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
-import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
@@ -55,9 +60,9 @@ import dk.netarkivet.common.utils.cdx.CDXRecord;
 import dk.netarkivet.common.utils.cdx.ExtractCDXJob;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.HarvestChannel;
-import dk.netarkivet.harvester.datamodel.HarvestChannelDAO;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobStatus;
+import dk.netarkivet.harvester.distribute.HarvesterChannels;
 import dk.netarkivet.harvester.harvesting.HarvestController;
 import dk.netarkivet.harvester.harvesting.HarvestDocumentation;
 import dk.netarkivet.harvester.harvesting.HeritrixFiles;
@@ -67,9 +72,8 @@ import dk.netarkivet.harvester.harvesting.JobInfoTestImpl;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 import dk.netarkivet.harvester.harvesting.metadata.PersistentJobData.HarvestDefinitionInfo;
 import dk.netarkivet.testutils.ClassAsserts;
-import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.GenericMessageListener;
-import dk.netarkivet.testutils.LogUtils;
+import dk.netarkivet.testutils.LogbackRecorder;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
@@ -80,8 +84,9 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
  * Test HarvestControllerServer.
  */
 @SuppressWarnings("unused")
-public class HarvestControllerServerTester extends TestCase {
-    private UseTestRemoteFile utrf = new UseTestRemoteFile();
+public class HarvestControllerServerTester {
+
+	private UseTestRemoteFile utrf = new UseTestRemoteFile();
 
     /** The message to write to log when starting the server. */
     private static final String START_MESSAGE = "Starting HarvestControllerServer.";
@@ -101,26 +106,16 @@ public class HarvestControllerServerTester extends TestCase {
 
     ReloadSettings rs = new ReloadSettings();
 
-    public HarvestControllerServerTester(String sTestName) {
-        super(sTestName);
-    }
-
+    @Before
     public void setUp() throws Exception {
         rs.setUp();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         JMSConnectionMockupMQ.clearTestQueues();
         FileUtils.removeRecursively(TestInfo.SERVER_DIR);
         TestInfo.WORKING_DIR.mkdirs();
-        TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR,
-                TestInfo.WORKING_DIR);
-        TestFileUtils.copyDirectoryNonCVS(TestInfo.TEST_CRAWL_DIR,
-                TestInfo.CRAWL_DIR_COPY);
-        FileInputStream fis = new FileInputStream("tests/dk/netarkivet/testlog.prop");
-        LogManager.getLogManager().reset();
-        FileUtils.removeRecursively(TestInfo.LOG_FILE);
-        LogManager.getLogManager().readConfiguration(fis);
-        fis.close();
-        ChannelsTester.resetChannels();
+        TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
+        TestFileUtils.copyDirectoryNonCVS(TestInfo.TEST_CRAWL_DIR, TestInfo.CRAWL_DIR_COPY);
+        ChannelsTesterHelper.resetChannels();
         utrf.setUp();
         // Out commented to avoid reference to archive module from harvester module.
         // Settings.set(JMSArcRepositoryClient.ARCREPOSITORY_STORE_RETRIES, "1");
@@ -133,12 +128,7 @@ public class HarvestControllerServerTester extends TestCase {
                 "dk.netarkivet.common.arcrepository.TrivialArcRepositoryClient");
     }
 
-    /**
-     * After test is done close test-objects.
-     * @throws SQLException
-     * @throws IllegalAccessException
-     * @throws NoSuchFieldException
-     */
+    @After
     public void tearDown() throws SQLException, IllegalAccessException, NoSuchFieldException {
         if (hcs != null) {
             hcs.close();
@@ -152,7 +142,7 @@ public class HarvestControllerServerTester extends TestCase {
                 HarvesterSettings.HARVEST_CONTROLLER_OLDJOBSDIR)));
         FileUtils.removeRecursively(new File(Settings.get(
                 HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR)));
-        ChannelsTester.resetChannels();
+        ChannelsTesterHelper.resetChannels();
         utrf.tearDown();
         RememberNotifications.resetSingleton();
         rs.tearDown();
@@ -161,6 +151,7 @@ public class HarvestControllerServerTester extends TestCase {
     /**
      * Test singletonicity.
      */
+    @Test
     public void testIsSingleton() {
         hcs = ClassAsserts.assertSingleton(HarvestControllerServer.class);
     }
@@ -169,18 +160,19 @@ public class HarvestControllerServerTester extends TestCase {
      * Testing that server starts and log-file logs this !
      * @throws IOException
      */
+    @Test
     public void testServerStarting() throws IOException {
-        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR, TestInfo.SERVER_DIR
-                .getAbsolutePath());
+    	LogbackRecorder lr = LogbackRecorder.startRecorder();
+        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR, TestInfo.SERVER_DIR.getAbsolutePath());
         hcs = HarvestControllerServer.getInstance();
-        LogUtils.flushLogs(HarvestControllerServer.class.getName());
-        FileAsserts.assertFileContains("Log should contain start message.",
-                START_MESSAGE, TestInfo.LOG_FILE);
+        lr.assertLogContains("Log should contain start message.", START_MESSAGE);
+        lr.stopRecorder();
     }
 
     /** Test that if the harvestcontrollerserver cannot start, the HACO listener
      * will not be added
      */
+    @Test
     public void testNoListerAddedOnFailure() {
         Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR, "");
         try {
@@ -199,6 +191,7 @@ public class HarvestControllerServerTester extends TestCase {
      * if it is located more than one level below an existing directory in the
      * hierarchy
      */
+    @Test
     public void testCreateServerDir() {
         File server_dir = new File(TestInfo.SERVER_DIR + "/server/server");
         Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR, server_dir
@@ -215,6 +208,7 @@ public class HarvestControllerServerTester extends TestCase {
      * in the IntegrityTester suite
      * @throws InterruptedException
      */
+    @Test
     public synchronized void testMessagesSentByFailedJob()
             throws InterruptedException {
         Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR, TestInfo.SERVER_DIR
@@ -271,15 +265,15 @@ public class HarvestControllerServerTester extends TestCase {
      * Testing close().
      * @throws IOException
      */
+    @Test
     public void testClose() throws IOException {
-        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR, TestInfo.SERVER_DIR
-                .getAbsolutePath());
+    	LogbackRecorder lr = LogbackRecorder.startRecorder();
+        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR, TestInfo.SERVER_DIR.getAbsolutePath());
         hcs = HarvestControllerServer.getInstance();
         hcs.close();
         hcs = null; // so that tearDown does not try to close again !!
-        String logtxt = FileUtils.readFile(TestInfo.LOG_FILE);
-        StringAsserts.assertStringContains("HarvestControllerServer not stopped !",
-                CLOSE_MESSAGE, logtxt);
+        lr.assertLogContains("HarvestControllerServer not stopped !", CLOSE_MESSAGE);
+        lr.stopRecorder();
     }
 
     /**
@@ -287,6 +281,7 @@ public class HarvestControllerServerTester extends TestCase {
      * results in a job-failed message being sent back.
      * @throws JMSException
      */
+    @Test
     public void testJobFailedOnBadMessage() throws JMSException {
         GenericMessageListener listener = new GenericMessageListener();
         JMSConnection con = JMSConnectionFactory.getInstance();
@@ -383,6 +378,7 @@ public class HarvestControllerServerTester extends TestCase {
     /**
      * Tests processing of leftover jobs in the case where all uploads go well.
      */
+    @Test
     public void testProcessHarvestInfoFile() {
         CrawlStatusMessage message
                 = testProcessingOfLeftoverJobs(
@@ -395,6 +391,8 @@ public class HarvestControllerServerTester extends TestCase {
     /**
      * Tests processing of leftover jobs in the case where some uploads fail.
      */
+    @Test
+    @Ignore("IOFailure: The harvestInfoFile is version 0.3")
     public void fallingTestProcessHarvestInfoFileFails() {
         CrawlStatusMessage crawlStatusMessage =
             testProcessingOfLeftoverJobs(
@@ -443,7 +441,8 @@ public class HarvestControllerServerTester extends TestCase {
      * and include dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy
      * Also tests, that heritrix.version is set to Constants.getHeritrixVersion()
      */
-     public void testBug852() {
+    @Test
+    public void testBug852() {
          hcs = HarvestControllerServer.getInstance();
          if (!System.getProperties().containsKey("org.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy")) {
              fail ("org.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy is not defined!!");
@@ -475,6 +474,8 @@ public class HarvestControllerServerTester extends TestCase {
      * @throws IllegalAccessException
      * @throws InvocationTargetException
      */
+    @Test
+    @Ignore("AssertionError: documentHarvest() shouldhave generated final metadata")
     public void failingTestCopyPreharvestMetadata() throws NoSuchMethodException,
             IllegalAccessException, InvocationTargetException {
         //Set up harvest controller, a job some metadata and a crawlDir
@@ -530,8 +531,7 @@ public class HarvestControllerServerTester extends TestCase {
     private List<CDXRecord> getCdx(File arcFile) {
         List<CDXRecord> result = new ArrayList<CDXRecord>();
         ByteArrayOutputStream cdxBaos = new ByteArrayOutputStream();
-        BatchLocalFiles batchRunner =
-            new BatchLocalFiles(new File[]{ arcFile });
+        BatchLocalFiles batchRunner = new BatchLocalFiles(new File[]{ arcFile });
         batchRunner.run(new ExtractCDXJob(),cdxBaos);
         for(String cdxLine : cdxBaos.toString().split("\n")) {
             result.add(new CDXRecord(cdxLine.split("\\s+")));

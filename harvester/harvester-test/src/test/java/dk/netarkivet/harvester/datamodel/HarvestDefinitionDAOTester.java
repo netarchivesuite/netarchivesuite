@@ -22,6 +22,13 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -29,27 +36,28 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.IteratorUtils;
 import dk.netarkivet.harvester.scheduler.jobgen.DefaultJobGenerator;
 import dk.netarkivet.testutils.CollectionAsserts;
-import dk.netarkivet.testutils.FileAsserts;
-import dk.netarkivet.testutils.LogUtils;
+import dk.netarkivet.testutils.LogbackRecorder;
 
 /**
  * Unit tests for the class HarvestDefinitionDAO class.
  */
 public class HarvestDefinitionDAOTester extends DataModelTestCase {
-    public HarvestDefinitionDAOTester(String s) {
-        super(s);
-    }
-
+    @Before
     public void setUp() throws Exception {
         super.setUp();
     }
 
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
     }
@@ -57,6 +65,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
     /**
      * Check that creation of a new HarvestDefinition instance succeeds.
      */
+    @Test
     public void testCreateAndRead() {
         HarvestDefinitionDAO hdDAO = HarvestDefinitionDAO.getInstance();
 
@@ -130,6 +139,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
      * Verify that updating an already modified harvestdefinition throws an
      * exception.
      */
+    @Test
     public void testOptimisticLocking() {
         HarvestDefinitionDAO hdDAO = HarvestDefinitionDAO.getInstance();
 
@@ -162,6 +172,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
     /**
      * Check updating of an existing entry.
      */
+    @Test
     public void testUpdate() {
         HarvestDefinitionDAO hdDAO = HarvestDefinitionDAO.getInstance();
         Long oid = Long.valueOf(42);
@@ -212,6 +223,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
     /**
      * Test for bug #120: HD's seem to be missing after creating a new HD.
      */
+    @Test
     public void testMissingHarvestDefinitionAfterCreate() {
         HarvestDefinitionDAO hdDAO = HarvestDefinitionDAO.getInstance();
 
@@ -257,6 +269,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         HarvestDefinitionDAO.reset();
     }
 
+    @Test
     public void testGetHarvestDefinition() throws Exception {
         HarvestDefinitionDAO dao = HarvestDefinitionDAO.getInstance();
         try {
@@ -279,7 +292,9 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
      * Test that we obey the editions and doesn't allow update of non-existing HDs.
      * Tests bug #468 as well.
      */
+    @Test
     public void testUpdateEditions() {
+    	LogbackRecorder lr = LogbackRecorder.startRecorder();
         HarvestDefinitionDAO dao = HarvestDefinitionDAO.getInstance();
 
         HarvestDefinition hd1 = dao.read(42L);
@@ -302,26 +317,25 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         }
 
         // Check that no rollback errors were logged
-        LogUtils.flushLogs(HarvestDefinitionDBDAO.class.getName());
-        FileAsserts.assertFileNotContains("Log contains file after storing.",
-                                          TestInfo.LOG_FILE, "rollback");
+        lr.assertLogNotContains("Log contains file after storing.", "rollback");
 
         // Check that you cannot update a non-existing HD.
-        HarvestDefinition newhd = new PartialHarvest(TestInfo
-                .getAllDefaultConfigurations(), TestInfo.getDefaultSchedule(),
-                                                "notfound", "", "Everybody");
+        HarvestDefinition newhd = new PartialHarvest(TestInfo.getAllDefaultConfigurations(),
+                TestInfo.getDefaultSchedule(), "notfound", "", "Everybody");
         try {
             dao.update(newhd);
             fail("Should not allow update of non-existing HD");
         } catch (PermissionDenied e) {
             // Expected
         }
+        lr.stopRecorder();
     }
 
     /**
      * Test that HDs with null next date can be read and updated. Test for bug
      * #478.
      */
+    @Test
     public void testNullNextDate() {
         HarvestDefinitionDAO dao = HarvestDefinitionDAO.getInstance();
 
@@ -336,6 +350,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         assertEquals("Should be the same HD before and after saving", hd1, hd2);
     }
 
+    @Test
     public void testGetHarvestRunInfo() throws Exception {
         // enforce migration of domain database.
         DomainDAO dao = DomainDAO.getInstance();
@@ -480,6 +495,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         return j;
     }
 
+    @Test
     public void testGetSparseDomainConfigurations() throws Exception {
         final HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
         try {
@@ -502,6 +518,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         assertFalse("Should return no more configs", it.hasNext());
     }
 
+    @Test
     public void testGetSparsePartialHarvest() throws Exception {
         final HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
         SparsePartialHarvest sph = hddao
@@ -528,6 +545,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
                 .getSparsePartialHarvest("Fnord"));
     }
 
+    @Test
     public void testGetSparsePartialHarvestDefinitions() throws Exception {
         final HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
         boolean excludeInactive = true;
@@ -567,6 +585,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         }
     }
 
+    @Test
     public void testGetSparseFullHarvest() throws Exception {
         final HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
         final String harvestName = "Tværhøstning";
@@ -597,6 +616,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
                 .getSparseFullHarvest("Fnord"));
     }
 
+    @Test
     public void testGetAllSparseFullHarvestDefinitions() throws Exception {
         final HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
         Iterator<SparseFullHarvest> it = hddao
@@ -631,6 +651,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         return cal.getTime();
     }
 
+    @Test
     public void testGetHarvestName() throws Exception {
         final HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
         assertEquals("Should find Tværhøstning for ID 42",
@@ -651,6 +672,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         }
     }
 
+    @Test
     public void testIsSnapshot() throws Exception {
         final HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
         assertFalse("Should find selective harvest for ID 42",
@@ -671,6 +693,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         }
     }
 
+    @Test
     public void testGetDomains() throws Exception {
         HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
         List<String> domains = hddao.getListOfDomainsOfHarvestDefinition(
@@ -686,6 +709,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
     /** Test both implementations of the exist function.
      * @throws Exception
      */
+    @Test
     public void testExists() throws Exception {
         final HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
         long harvestexistsid = 43L;
@@ -726,6 +750,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
      *  Test the {@link HarvestDefinitionDAO#removeDomainConfiguration(
      *  Long, SparseDomainConfiguration)} method.
      */
+    @Test
     public void testRemoveDomainConfiguration() {
         HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
         long partialharvestId = 42L;
@@ -753,6 +778,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
      *  Test the {@link HarvestDefinitionDAO#updateNextdate(
      *  long, java.util.Date)} method.
      */
+    @Test
     public void testUpdateNextDate() {
         HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
         long partialharvestId = 42L;

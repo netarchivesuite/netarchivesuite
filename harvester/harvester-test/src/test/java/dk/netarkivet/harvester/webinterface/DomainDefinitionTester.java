@@ -27,7 +27,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import javax.servlet.jsp.PageContext;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.DomainUtils;
@@ -47,13 +53,22 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue;
  * Definitions-edit-domain.jsp.
  */
 public class DomainDefinitionTester extends HarvesterWebinterfaceTestCase {
-    public DomainDefinitionTester(String s) {
-        super(s);
+
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /**
      * Test Extended Fields
      */
+    @Test
     public void testExtendedFields() {
         ExtendedFieldDAO extDAO = ExtendedFieldDBDAO.getInstance();
         // id 1
@@ -101,6 +116,7 @@ public class DomainDefinitionTester extends HarvesterWebinterfaceTestCase {
     /**
      * Test that we can change the default configuration of a domain.
      */
+    @Test
     public void testChangeDefaultConfiguration() {
         DomainDAO ddao = DomainDAO.getInstance();
         Domain domain = ddao.read("netarkivet.dk");
@@ -130,6 +146,7 @@ public class DomainDefinitionTester extends HarvesterWebinterfaceTestCase {
     /**
      * Test that we can add a new domain configuration.
      */
+    @Test
     public void testAddDomainConfiguration() {
         DomainDAO ddao = DomainDAO.getInstance();
         Map<String, String[]> parameterMap = new HashMap<String, String[]>();
@@ -174,7 +191,8 @@ public class DomainDefinitionTester extends HarvesterWebinterfaceTestCase {
     /**
      * Test that we can change properties of a configuration.
      */
-    public static void testUpdateConfiguration() {
+    @Test
+    public void testUpdateConfiguration() {
         DomainDAO ddao = DomainDAO.getInstance();
         Map<String, String[]> parameterMap = new HashMap<String, String[]>();
         parameterMap.put(Constants.UPDATE_PARAM, new String[]{"1"});
@@ -219,6 +237,7 @@ public class DomainDefinitionTester extends HarvesterWebinterfaceTestCase {
     /**
      * Test that we can update the seeds associated with a given domain.
      */
+    @Test
     public void testUpdateUrlList() {
         DomainDAO ddao = DomainDAO.getInstance();
         Map<String, String[]> parameterMap = new HashMap<String, String[]>();
@@ -250,6 +269,7 @@ public class DomainDefinitionTester extends HarvesterWebinterfaceTestCase {
      * Test that we can update the crawlertraps associated
      * with a domain.
      */
+    @Test
     public void testSetCrawlertraps() {
         DomainDAO ddao = DomainDAO.getInstance();
         Map<String, String[]> parameterMap = new HashMap<String, String[]>();
@@ -280,6 +300,7 @@ public class DomainDefinitionTester extends HarvesterWebinterfaceTestCase {
      * Test for impl. Traffic Reduction Task 4.1.2 - Add alias definition input to
      * interfaces.
      */
+    @Test
     public void testSetAlias() {
         DomainDAO ddao = DomainDAO.getInstance();
         String testAlias = "kb.dk";
@@ -321,6 +342,7 @@ public class DomainDefinitionTester extends HarvesterWebinterfaceTestCase {
     /**
      * Test the makeDomainLink() method.
      */
+    @Test
     public void testMakeDomainLink() {
         String domainName = "foo.dk";
         assertEquals("Should have full HTML link",
