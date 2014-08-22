@@ -49,7 +49,7 @@ import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /** Unit tests for the HTMLUtils utility class. */
-@SuppressWarnings({ "rawtypes", "unused" })
+@SuppressWarnings({ "unused" })
 
 public class HTMLUtilsTester {
     ReloadSettings rs = new ReloadSettings();

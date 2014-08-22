@@ -25,8 +25,6 @@ package dk.netarkivet.archive.bitarchive;
 import java.io.File;
 import java.io.IOException;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

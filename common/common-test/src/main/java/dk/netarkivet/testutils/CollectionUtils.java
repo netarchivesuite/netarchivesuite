@@ -37,6 +37,7 @@ public class CollectionUtils {
      * @param args Objects to put into a list
      * @return A list containing all the objects in that order
      */
+    @SafeVarargs
     public static <T> List<T> list(T... args) {
         return Arrays.asList(args);
     }

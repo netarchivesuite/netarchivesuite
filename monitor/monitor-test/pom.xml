@@ -44,6 +44,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <!-- FIXME: Upgrade to 4.11 and convert testcases -->
             <version>3.8.1</version>
             <scope>test</scope>
         </dependency>

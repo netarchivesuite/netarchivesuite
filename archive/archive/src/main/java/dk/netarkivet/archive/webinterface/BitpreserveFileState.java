@@ -53,7 +53,6 @@ import dk.netarkivet.common.webinterface.HTMLUtils;
  * Class encapsulating methods for handling web requests for
  * ActiveBitPreservation.
  */
-@SuppressWarnings({ "unchecked"})
 public class BitpreserveFileState {
     /** Internationalisation object. */
     private static final I18n I18N

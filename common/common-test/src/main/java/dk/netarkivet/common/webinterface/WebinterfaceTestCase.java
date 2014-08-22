@@ -75,8 +75,8 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
  * ScheduleDefinitionTester, SnapshotHarvestDefinitionTester but also
  * dk.netarkivet.archive.webinterface.BitpreserveFileStatusTester
  */
-@SuppressWarnings({ "rawtypes", "deprecation" })
-@Ignore("Not in junit3 test suite")
+@SuppressWarnings({ "deprecation" })
+@Ignore("Not enabled in junit3 test suite")
 public class WebinterfaceTestCase {
     ReloadSettings rs = new ReloadSettings();
 
@@ -106,7 +106,7 @@ public class WebinterfaceTestCase {
             throw new NotImplementedException("Not implemented");
         }
 
-        public Enumeration getAttributeNames() {
+        public Enumeration<String> getAttributeNames() {
             throw new NotImplementedException("Not implemented");
         }
 
@@ -142,7 +142,7 @@ public class WebinterfaceTestCase {
             return val[0];
         }
 
-        public Enumeration getParameterNames() {
+        public Enumeration<String> getParameterNames() {
             throw new NotImplementedException("Not implemented");
         }
 
@@ -150,7 +150,7 @@ public class WebinterfaceTestCase {
             return parameterMap.get(string);
         }
 
-        public Map getParameterMap() {
+        public Map<String, String[]> getParameterMap() {
             return parameterMap;
         }
 
@@ -194,7 +194,7 @@ public class WebinterfaceTestCase {
             throw new NotImplementedException("Not implemented");
         }
 
-        public Enumeration getLocales() {
+        public Enumeration<Locale> getLocales() {
             throw new NotImplementedException("Not implemented");
         }
 
@@ -426,7 +426,7 @@ public class WebinterfaceTestCase {
                                  // File | Settings | File Templates.
                 }
 
-                public Set getResourcePaths(String string) {
+                public Set<String> getResourcePaths(String string) {
                     return null; // To change body of implemented methods use
                                  // File | Settings | File Templates.
                 }
@@ -466,12 +466,12 @@ public class WebinterfaceTestCase {
                                  // File | Settings | File Templates.
                 }
 
-                public Enumeration getServlets() {
+                public Enumeration<Servlet> getServlets() {
                     return null; // To change body of implemented methods use
                                  // File | Settings | File Templates.
                 }
 
-                public Enumeration getServletNames() {
+                public Enumeration<String> getServletNames() {
                     return null; // To change body of implemented methods use
                                  // File | Settings | File Templates.
                 }
@@ -506,7 +506,7 @@ public class WebinterfaceTestCase {
                                  // File | Settings | File Templates.
                 }
 
-                public Enumeration getInitParameterNames() {
+                public Enumeration<String> getInitParameterNames() {
                     return null; // To change body of implemented methods use
                                  // File | Settings | File Templates.
                 }
@@ -520,7 +520,7 @@ public class WebinterfaceTestCase {
                                  // File | Settings | File Templates.
                 }
 
-                public Enumeration getAttributeNames() {
+                public Enumeration<String> getAttributeNames() {
                     return null; // To change body of implemented methods use
                                  // File | Settings | File Templates.
                 }

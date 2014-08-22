@@ -66,7 +66,7 @@ import dk.netarkivet.viewerproxy.distribute.HTTPControllerServerTester;
  * Test the WebProxy class which wraps a handler in a Jetty server. The testJettyIntegration test verifies the
  * handler <-> Jetty integration, where the remaining tests directly tests the WebProxy methods and inner classes.
  */
-@SuppressWarnings({ "rawtypes" })
+@SuppressWarnings({})
 public class WebProxyTester {
     private static final File LOG_FILE = new File("tests/testlogs/netarkivtest.log");
     private URIResolver uriResolverMock;

@@ -36,7 +36,6 @@ import org.testng.annotations.Test;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-@SuppressWarnings("unused")
 public class DatabaseFullMigrationTest extends StressTest {
 
     @Test(groups = {"guitest","performancetest"})

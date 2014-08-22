@@ -74,14 +74,15 @@ public class ZipUtilsTester {
         assertFalse("Zip file should not exist before", zipFile.exists());
         ZipUtils.zipDirectory(TestInfo.ZIPDIR, zipFile);
         assertTrue("Zip file must exist afterwards", zipFile.exists());
-        ZipFile reader = new ZipFile(zipFile);
-        Enumeration<? extends ZipEntry> entries = reader.entries();
-        while (entries.hasMoreElements()) {
-            ZipEntry entry = entries.nextElement();
-            assertTrue("Zipped file " + entry.getName() + " should be in dir", files.contains(entry.getName()));
-            File file = new File(TestInfo.ZIPDIR, entry.getName());
-            assertEquals("Should have same original size as the file", file.length(), entry.getSize());
-            files.remove(entry.getName());
+        try (ZipFile reader = new ZipFile(zipFile)) {
+            Enumeration<? extends ZipEntry> entries = reader.entries();
+            while (entries.hasMoreElements()) {
+                ZipEntry entry = entries.nextElement();
+                assertTrue("Zipped file " + entry.getName() + " should be in dir", files.contains(entry.getName()));
+                File file = new File(TestInfo.ZIPDIR, entry.getName());
+                assertEquals("Should have same original size as the file", file.length(), entry.getSize());
+                files.remove(entry.getName());
+            }
         }
         assertTrue("Should have zipped all files, but " + files + " remain", files.isEmpty());
 

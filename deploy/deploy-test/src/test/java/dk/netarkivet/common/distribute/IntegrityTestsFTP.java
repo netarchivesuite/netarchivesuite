@@ -204,33 +204,29 @@ public class IntegrityTestsFTP {
         File inputFile = TestInfo.TESTXML;
         File inputFile2 = TestInfo.INVALIDXML;
 
-        InputStream in = new FileInputStream(inputFile);
-        InputStream in2 = new FileInputStream(inputFile2);
+        try (InputStream in = new FileInputStream(inputFile); InputStream in2 = new FileInputStream(inputFile2)) {
 
-        nameOfUploadedFile = inputFile.getName();
-        nameOfUploadedFile2 = inputFile2.getName();
+            nameOfUploadedFile = inputFile.getName();
+            nameOfUploadedFile2 = inputFile2.getName();
 
-        /** try to append data to file on FTP-server */
-        /** Assumption: File does not exist on FTP-server */
-        assertFalse("File should not exist already on server",
-                onServer(nameOfUploadedFile));
+            /** try to append data to file on FTP-server */
+            /** Assumption: File does not exist on FTP-server */
+            assertFalse("File should not exist already on server", onServer(nameOfUploadedFile));
 
-        assertTrue("Appendfile operation failed",
-                theFTPClient.appendFile(nameOfUploadedFile, in));
-        upLoadedFiles.add(nameOfUploadedFile);
-
-        /** try to append data to file on the FTP-server */
-        assertTrue("AppendFile operation 2 failed!",
-                theFTPClient.appendFile(nameOfUploadedFile, in2));
-
-        if (!upLoadedFiles.contains(nameOfUploadedFile)) {
+            assertTrue("Appendfile operation failed", theFTPClient.appendFile(nameOfUploadedFile, in));
             upLoadedFiles.add(nameOfUploadedFile);
-        }
 
-        /** try to store data to a file on the FTP-server */
-        assertTrue("Store operation failed",
-                theFTPClient.storeFile(nameOfUploadedFile2, in));
-        upLoadedFiles.add(nameOfUploadedFile2);
+            /** try to append data to file on the FTP-server */
+            assertTrue("AppendFile operation 2 failed!", theFTPClient.appendFile(nameOfUploadedFile, in2));
+
+            if (!upLoadedFiles.contains(nameOfUploadedFile)) {
+                upLoadedFiles.add(nameOfUploadedFile);
+            }
+
+            /** try to store data to a file on the FTP-server */
+            assertTrue("Store operation failed", theFTPClient.storeFile(nameOfUploadedFile2, in));
+            upLoadedFiles.add(nameOfUploadedFile2);
+        }
     }
 
     /**

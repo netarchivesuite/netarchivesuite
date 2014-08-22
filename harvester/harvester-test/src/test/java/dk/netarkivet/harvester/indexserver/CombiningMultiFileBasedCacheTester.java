@@ -35,8 +35,8 @@ import java.util.Set;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
+import static org.junit.Assert.*;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.harvester.indexserver.CombiningMultiFileBasedCache;
 import dk.netarkivet.harvester.indexserver.FileBasedCache;
@@ -131,7 +131,7 @@ public class CombiningMultiFileBasedCacheTester extends CacheTestCase {
         }
     }
 
-    static <T> List<T> list(T... args) {
+    static List<Integer> list(Integer... args) { // No T due to SafeVarargs.
         return Arrays.asList(args);
     }
 }

@@ -22,12 +22,12 @@
  */
 package dk.netarkivet.testutils;
 
-import junit.framework.Assert;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * Methods that help in doing common reflection tasks.
@@ -86,6 +86,7 @@ public class ReflectUtils {
      * should be private).
      */
     @SuppressWarnings({ "rawtypes" })
+    @Test
 	public static void testUtilityConstructor(Class c) {
         Constructor[] constructors = c.getConstructors();
         

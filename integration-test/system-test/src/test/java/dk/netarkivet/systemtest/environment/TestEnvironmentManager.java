@@ -23,15 +23,18 @@
 package dk.netarkivet.systemtest.environment;
 
 import dk.netarkivet.systemtest.TestLogger;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
+
 import org.apache.commons.io.IOUtils;
 
 /**
@@ -305,6 +308,7 @@ public class TestEnvironmentManager {
      * 
      * @return
      */
+    @SuppressWarnings("unused")
     private String lookupRevisionValue() {
         String revisionValue = null;
         if (System.getProperty("systemtest.version") != null) {

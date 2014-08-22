@@ -29,7 +29,6 @@ import javax.management.MalformedObjectNameException;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
 import java.lang.management.ManagementFactory;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 

@@ -31,7 +31,7 @@ import junit.framework.TestCase;
 public class MonitorSettingsTester extends TestCase {
 
     public void testNoFinalSettingsConstants() {
-        Class c = MonitorSettings.class;
+        Class<MonitorSettings> c = MonitorSettings.class;
         Field[] fields = c.getDeclaredFields();
         for (Field f: fields) {
             // Check that all static public fields are not final

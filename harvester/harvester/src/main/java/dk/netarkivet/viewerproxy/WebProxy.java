@@ -50,7 +50,7 @@ import dk.netarkivet.common.utils.Settings;
  * that the Proxy server builds on.
  *
  */
-@SuppressWarnings({ "deprecation", "unchecked"})
+@SuppressWarnings({ "deprecation" })
 public class WebProxy extends DefaultHandler
         implements URIResolverHandler {
     /** The URI resolver which handles URI lookups. */

@@ -24,9 +24,9 @@ package dk.netarkivet.monitor.jmx;
 
 import javax.management.remote.JMXServiceURL;
 
-import com.sun.jndi.rmi.registry.RegistryContextFactory;
-import junit.framework.TestCase;
+//import com.sun.jndi.rmi.registry.RegistryContextFactory;
 
+import junit.framework.TestCase;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.JMXUtils;
 
@@ -34,8 +34,8 @@ import dk.netarkivet.common.utils.JMXUtils;
 
 public class JMXUtilsTester extends TestCase {
 
-    private static final String JNDI_INITIAL_CONTEXT_PROPERTY =
-        "java.naming.factory.initial";
+    // private static final String JNDI_INITIAL_CONTEXT_PROPERTY =
+    // "java.naming.factory.initial";
     private String defaultServer = "localhost";
 
     public JMXUtilsTester(String arg0) {
@@ -54,6 +54,7 @@ public class JMXUtilsTester extends TestCase {
      * Test method for 'dk.netarkivet.monitor.webinterface.JMXUtils.getUrl(String, int, int)'
      */
     public final void testGetUrl() {
+        @SuppressWarnings("unused")
         JMXServiceURL JmxServiceUrl = JMXUtils.getUrl(defaultServer, 8000, 8100);
     }
 
@@ -62,7 +63,7 @@ public class JMXUtilsTester extends TestCase {
      *
      */
     public final void testGetConnection() {
-        ensureJndiInitialContext();
+        // ensureJndiInitialContext();
         JMXServiceURL JmxServiceUrl = JMXUtils.getUrl(defaultServer, 8000, 8100);
         //JmxServiceUrl = JMXUtils.getUrl("kb-test-adm-001.kb.dk", 8000, 8100);
         try {
@@ -78,20 +79,21 @@ public class JMXUtilsTester extends TestCase {
      * configures the system to use Sun's standard one.
      * This is necessary for RMI connections to work.
      */
-    private static void ensureJndiInitialContext() {
-
-       if (System.getProperty(JNDI_INITIAL_CONTEXT_PROPERTY) == null) {
-           System.setProperty(
-                   JNDI_INITIAL_CONTEXT_PROPERTY,
-                   RegistryContextFactory.class.getCanonicalName());
-           System.out.println("Set property '" + JNDI_INITIAL_CONTEXT_PROPERTY + "' to: "
-                   + RegistryContextFactory.class.getCanonicalName());
-       } else {
-           System.out.println("Property '" + JNDI_INITIAL_CONTEXT_PROPERTY
-                   + "' is set to: "
-                   + System.getProperty(JNDI_INITIAL_CONTEXT_PROPERTY));
-       }
-    }
+    // private static void ensureJndiInitialContext() {
+    //
+    // if (System.getProperty(JNDI_INITIAL_CONTEXT_PROPERTY) == null) {
+    // System.setProperty(
+    // JNDI_INITIAL_CONTEXT_PROPERTY,
+    // RegistryContextFactory.class.getCanonicalName());
+    // System.out.println("Set property '" + JNDI_INITIAL_CONTEXT_PROPERTY +
+    // "' to: "
+    // + RegistryContextFactory.class.getCanonicalName());
+    // } else {
+    // System.out.println("Property '" + JNDI_INITIAL_CONTEXT_PROPERTY
+    // + "' is set to: "
+    // + System.getProperty(JNDI_INITIAL_CONTEXT_PROPERTY));
+    // }
+    // }
 
 
 }

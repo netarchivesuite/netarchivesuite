@@ -51,7 +51,6 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
 /**
  * This class contains the methods for updating data for selective harvests.
  */
-@SuppressWarnings({ "unchecked"})
 public final class SelectiveHarvestUtil {
     /**
      * Utility class. No instances.

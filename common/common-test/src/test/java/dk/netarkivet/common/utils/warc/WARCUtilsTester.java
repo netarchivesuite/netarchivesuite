@@ -23,12 +23,14 @@
 package dk.netarkivet.common.utils.warc;
 
 import java.io.File;
+
+import org.junit.*;
+
+import static org.junit.Assert.*;
+
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import junit.framework.Assert;
-import junit.framework.TestCase;
 
 import org.archive.io.ArchiveRecord;
 import org.archive.io.ArchiveRecordHeader;
@@ -36,6 +38,8 @@ import org.archive.io.warc.WARCReader;
 import org.archive.io.warc.WARCReaderFactory;
 import org.archive.io.warc.WARCWriter;
 import org.archive.util.ArchiveUtils;
+import org.junit.After;
+import org.junit.Before;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
@@ -46,8 +50,8 @@ import dk.netarkivet.testutils.TestFileUtils;
 /**
  * Tests for class WARCUtils.
  */
-@SuppressWarnings({ "unused"})
-public class WARCUtilsTester extends TestCase {
+@SuppressWarnings("unused")
+public class WARCUtilsTester {
 
     private static File OUTFILE_WARC = new File(TestInfo.WORKING_DIR, "outFile.warc");
     private static File OUTFILE1_WARC = new File(TestInfo.WORKING_DIR, "outFile1.warc");
@@ -57,18 +61,14 @@ public class WARCUtilsTester extends TestCase {
     private static File INPUT_2_WARC = new File(TestInfo.WORKING_DIR, "input-2.warc");
     private static File INPUT_3_WARC = new File(TestInfo.WORKING_DIR, "input-3.warc");
     
-    public WARCUtilsTester(String s) {
-        super(s);
-    }
-
+    @Before
     public void setUp() throws Exception {
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR,
                 TestInfo.WORKING_DIR);
-        super.setUp();
     }
 
+    @After
     public void tearDown() throws Exception {
-        super.tearDown();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
     }
 
@@ -76,6 +76,7 @@ public class WARCUtilsTester extends TestCase {
     *
     * @throws Exception
     */
+    @Test
     public void testInsertWARCFile() throws Exception {
         // Test illegal arguments first.
         try {
@@ -108,6 +109,7 @@ public class WARCUtilsTester extends TestCase {
      * @throws IOException
      * @return new WARCWriter 
      */
+
     public static WARCWriter getTestWARCWriter(PrintStream stream, File warcfile)
     throws IOException {
         return 
@@ -118,6 +120,7 @@ public class WARCUtilsTester extends TestCase {
                     );
     }
 
+    @Test
     public void testWarcCopy() {
         try {
             byte[] warcBytes = (

@@ -22,7 +22,6 @@
  */
 package dk.netarkivet.archive.arcrepositoryadmin;
 
-import junit.framework.TestCase;
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.FileUtils;

@@ -47,7 +47,6 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue;
  * Methods exist to generate jobs from this harvest definition.
  *
  */
-@SuppressWarnings("unused")
 public abstract class HarvestDefinition extends ExtendableEntity implements Named {
     protected Long oid;
     protected String harvestDefName;

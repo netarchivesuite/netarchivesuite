@@ -29,6 +29,7 @@ import javax.inject.Provider;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
@@ -52,8 +53,11 @@ public class FullHarvest extends HarvestDefinition {
     /** a boolean to indicate whether the deduplication index is ready. */
     private boolean indexReady;
 
+    @SuppressWarnings("unused")
     private final Provider<HarvestDefinitionDAO> hdDaoProvider;
+    @SuppressWarnings("unused")
     private final Provider<JobDAO> jobDaoProvider;
+    @SuppressWarnings("unused")
     private final Provider<DomainDAO> domainDAOProvider;
 
     /**

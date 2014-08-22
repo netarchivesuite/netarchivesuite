@@ -42,6 +42,8 @@ import java.util.Map;
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.PageContext;
 
+import org.junit.Test;
+
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.utils.IteratorUtils;
 import dk.netarkivet.harvester.datamodel.DataModelTestCase;
@@ -51,15 +53,18 @@ import dk.netarkivet.harvester.datamodel.PartialHarvest;
 import dk.netarkivet.testutils.CollectionAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
 
-@SuppressWarnings({ "unchecked", "rawtypes" })
+
 public class SelectiveHarvestUtilTester extends DataModelTestCase {
 
     /**
-     * Verify that the correct domain configurations are created.
-     * This test handles the normal usage.
+     * Verify that the correct domain configurations are created. This test
+     * handles the normal usage.
      * 
-     * DISABLED 20140528 as it fails intermittently /tra
-     * FIXME: https://sbforge.org/jira/browse/NAS-2320
+     * DISABLED 20140528 as it fails intermittently /tra FIXME:
+     * https://sbforge.org/jira/browse/NAS-2320
+     * 
+     * FIXME: Be certain that annotations in this class as well as in
+     * DataModelTestCase are respected.
      */
     public void DISABLED_20140528_testgetDomainConfigurations() throws NoSuchMethodException,
             IllegalAccessException, InvocationTargetException {
@@ -78,6 +83,7 @@ public class SelectiveHarvestUtilTester extends DataModelTestCase {
         // verify correct configurations are created
         Method getDomainConfigurations = ReflectUtils.getPrivateMethod(
                 SelectiveHarvestUtil.class, "getDomainConfigurations", Map.class);
+        @SuppressWarnings("unchecked")
         List<DomainConfiguration> dc = (List<DomainConfiguration>)
                 getDomainConfigurations.invoke(null, confs);
         assertEquals("2 configurations expected", 2, dc.size() );
@@ -96,6 +102,7 @@ public class SelectiveHarvestUtilTester extends DataModelTestCase {
      * This verifies that the correct domain configurations are added
      * This test handles the normal usage
      */
+    @Test
     public void testaddDomainConfigurations() throws NoSuchMethodException,
             IllegalAccessException, InvocationTargetException {
 
@@ -123,6 +130,7 @@ public class SelectiveHarvestUtilTester extends DataModelTestCase {
     /**
      * Verify that Unknown domain names are reported
      */
+    @Test
     public void testaddInvalidDomainConfigurations()
             throws NoSuchMethodException, IllegalAccessException,
             InvocationTargetException {
@@ -148,6 +156,7 @@ public class SelectiveHarvestUtilTester extends DataModelTestCase {
      * Test the normal update scenario where the definition does
      * not already exist.
      */
+    @Test
     public void testUpdateNew() {
         final Map<String , String[]> confs= new HashMap<String , String[]>();
         confs.put(Constants.UPDATE_PARAM, new String[]{"1"});
@@ -184,6 +193,7 @@ public class SelectiveHarvestUtilTester extends DataModelTestCase {
      * Test the update scenario where we do not add any new domains.
      * not already exist.
      */
+    @Test
     public void testUpdateNoadd() {
         final Map<String , String[]> confs= new HashMap<String , String[]>();
         confs.put(Constants.UPDATE_PARAM, new String[]{"1"});
@@ -221,6 +231,7 @@ public class SelectiveHarvestUtilTester extends DataModelTestCase {
      * Test the normal update scenario where the definition does
      * already exist.
      */
+    @Test
     public void testUpdateExists() {
 
         // To an existing partialharvestden named "Testhøstning"
@@ -270,6 +281,7 @@ public class SelectiveHarvestUtilTester extends DataModelTestCase {
         assertEquals("New default configuration expected", "fuld_dybde", nameList.get(1));
     }
 
+    @Test
     public void testSetNewDate() {
 
         // Make parameters for an update to existing templates.

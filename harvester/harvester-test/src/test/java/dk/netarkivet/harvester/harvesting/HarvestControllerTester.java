@@ -407,9 +407,9 @@ public class HarvestControllerTester {
 //        assertEquals("Should have no failed files", 0, failed.size());
     }
 
-    public static <T> List<T> list(T... objects) {
-        return Arrays.asList(objects);
-    }
+    // public static <T> List<T> list(T... objects) {
+    // return Arrays.asList(objects);
+    // }
 
     @Test
     public void testFindDefaultStopReason() throws Exception {
