@@ -801,6 +801,11 @@ public class WindowsMachine extends Machine {
             "    outFile.WriteLine oExec.StdOut.ReadLine",
             "    outFile.close",
             "  Loop",
+            "  Do While oExec.StdErr.AtEndOfStream <> True",
+            "    Set outFile = CreateObject(\"Scripting.FileSystemObject\").OpenTextFile(\"${startlogname}\", 8, True)",
+            "    outFile.WriteLine oExec.StdErr.ReadLine",
+            "    outFile.close",
+            "  Loop",
             "Loop"
         };
         protected static final String jdkLogger =
