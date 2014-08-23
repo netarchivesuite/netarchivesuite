@@ -22,119 +22,112 @@
  */
 package dk.netarkivet.harvester.webinterface;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
+
+import javax.inject.Provider;
+import javax.servlet.ServletRequest;
 import javax.servlet.jsp.PageContext;
 
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.utils.I18n;
+import dk.netarkivet.harvester.datamodel.DomainDAO;
 import dk.netarkivet.harvester.datamodel.FullHarvest;
+import dk.netarkivet.harvester.datamodel.HarvestDefinition;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
+import dk.netarkivet.harvester.datamodel.JobDAO;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO;
 import dk.netarkivet.testutils.StringAsserts;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
-
 
 /** Unit-test for the SnapshotHarvestDefinition class. */
-public class SnapshotHarvestDefinitionTester extends HarvesterWebinterfaceTestCase {
+public class SnapshotHarvestDefinitionTester {
+    private JobDAO jobDaoMock = mock(JobDAO.class);
+    private Provider<JobDAO> jobDAOProvider = () -> jobDaoMock;
+    private HarvestDefinitionDAO harvestDefinitionDAOMock = mock(HarvestDefinitionDAO.class);
+    private DomainDAO domainDAOMock = mock(DomainDAO.class);
+    private Provider<DomainDAO> domainDAOProvider = () -> domainDAOMock;
+    private ExtendedFieldDAO extendedFieldMock = mock(ExtendedFieldDAO.class);
+    private Provider<ExtendedFieldDAO> extendedFieldDAOProvider = () -> extendedFieldMock;
+    private Provider<HarvestDefinitionDAO> harvestDefinitionDAOProvider = () -> harvestDefinitionDAOMock;
+    private SnapshotHarvestDefinition snapshotHarvestDefinition = new SnapshotHarvestDefinition(
+            harvestDefinitionDAOProvider, jobDAOProvider, extendedFieldDAOProvider, domainDAOProvider);
 
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
-    /**
-     * Tests the SnapshotHarvestDefinition.processRequest() method.
-     *
-     * @throws Exception
-     */
     @Test
     public void testProcessRequest() throws Exception {
-        MockupServletRequest request = new MockupServletRequest();
-        // Should just return with update==null
-        HarvestDefinitionDAO dao = HarvestDefinitionDAO.getInstance();
+        ServletRequest requestStub = mock(ServletRequest.class);
         String newHDname = "fnord";
-        assertNull("Should not have fnord before creation",
-                   dao.getHarvestDefinition(newHDname));
-        I18n I18N = new I18n(
-                dk.netarkivet.common.Constants.TRANSLATIONS_BUNDLE);
-        PageContext pageContext = new HarvesterWebinterfaceTestCase.TestPageContext(
-                request);
-        SnapshotHarvestDefinition.processRequest(pageContext, I18N);
+        I18n I18N = new I18n(dk.netarkivet.common.Constants.TRANSLATIONS_BUNDLE);
+        PageContext pageContext = new HarvesterWebinterfaceTestCase.TestPageContext(requestStub);
 
-        request.addParameter(Constants.UPDATE_PARAM, "yes");
-        request.addParameter(Constants.DOMAIN_PARAM, newHDname);
+        snapshotHarvestDefinition.processRequest(pageContext, I18N);
+        verifyZeroInteractions(harvestDefinitionDAOMock, jobDaoMock);
 
-        assertNull("Should not have fnord before creation",
-                   dao.getHarvestDefinition(newHDname));
-        request.addParameter(Constants.CREATENEW_PARAM, "yes");
-        request.addParameter(Constants.DOMAIN_OBJECTLIMIT_PARAM, "-1");
-        request.addParameter(Constants.DOMAIN_BYTELIMIT_PARAM, "117");
-        request.addParameter(Constants.HARVEST_PARAM, newHDname);
-        request.addParameter(Constants.COMMENTS_PARAM, "You did not see this");
-        assertCallChecksArgument(request, newHDname,
-                                 Constants.HARVEST_PARAM);
-        SnapshotHarvestDefinition.processRequest(pageContext, I18N);
+        when(requestStub.getParameter(Constants.UPDATE_PARAM)).thenReturn("yes");
+        when(requestStub.getParameter(Constants.DOMAIN_PARAM)).thenReturn(newHDname);
+        when(requestStub.getParameter(Constants.CREATENEW_PARAM)).thenReturn("yes");
+        when(requestStub.getParameter(Constants.DOMAIN_OBJECTLIMIT_PARAM)).thenReturn("-1");
+        when(requestStub.getParameter(Constants.DOMAIN_BYTELIMIT_PARAM)).thenReturn("117");
+        when(requestStub.getParameter(Constants.HARVEST_PARAM)).thenReturn(newHDname);
+        when(requestStub.getParameter(Constants.COMMENTS_PARAM)).thenReturn("You did not see this");
+        snapshotHarvestDefinition.processRequest(pageContext, I18N);
 
-        FullHarvest newHD = (FullHarvest) dao.getHarvestDefinition(newHDname);
+        ArgumentCaptor<HarvestDefinition> hdCapture = ArgumentCaptor.forClass(HarvestDefinition.class);
+        verify(harvestDefinitionDAOMock).create(hdCapture.capture());
+        FullHarvest newHD = (FullHarvest)hdCapture.getValue();
+
         assertNotNull("Should have fnord after creation", newHD);
         assertEquals("Should have right name", newHDname, newHD.getName());
         assertEquals("Should have right bytelimit", 117, newHD.getMaxBytes());
-        assertEquals("Should have right comments", "You did not see this",
-                     newHD.getComments());
-        assertNull("Old harvest id should be null",
-                   newHD.getPreviousHarvestDefinition());
-        assertFalse("Should be inactive", newHD.getActive());
-
-        assertCallIsForbidden(request, newHDname, "already exists");
+        assertEquals("Should have right comments", "You did not see this", newHD.getComments());
+        assertNull("Old harvest id should be null", newHD.getPreviousHarvestDefinition());
+        assertFalse("Should initially be inactive", newHD.getActive());
     }
 
-    private void assertCallChecksArgument(MockupServletRequest request,
-                                          String newHDName,
-                                          String toFind) {
-        String removedParameter = request.getParameter(toFind);
+    @Test
+    public void testExistingHarvestDefinition() {
+        ServletRequest requestStub = mock(ServletRequest.class);
+        String newHDname = "fnord";
+        I18n I18N = new I18n(dk.netarkivet.common.Constants.TRANSLATIONS_BUNDLE);
+        PageContext pageContext = new HarvesterWebinterfaceTestCase.TestPageContext(requestStub);
+        when(requestStub.getParameter(Constants.UPDATE_PARAM)).thenReturn("yes");
+        when(requestStub.getParameter(Constants.CREATENEW_PARAM)).thenReturn("yes");
+        when(requestStub.getParameter(Constants.HARVEST_PARAM)).thenReturn(newHDname);
+        when(harvestDefinitionDAOMock.getHarvestDefinition(newHDname)).thenReturn(mock(HarvestDefinition.class));
         try {
-            I18n I18N = new I18n(
-                    dk.netarkivet.common.Constants.TRANSLATIONS_BUNDLE);
-            request.removeParameter(toFind);
-            PageContext pageContext = new HarvesterWebinterfaceTestCase.TestPageContext(
-                    request);
-            SnapshotHarvestDefinition.processRequest(pageContext, I18N);
-            fail("Should complain about missing " + toFind);
+            snapshotHarvestDefinition.processRequest(pageContext, I18N);
+            fail("Should complain about existing harvest definition");
+        } catch (ForwardedToErrorPage e) {
+            assertEquals("Harvest definition '" + newHDname + "' already exists", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testNoHarvestParamInRequest() throws Exception {
+        String newHDname = "fnord";
+        ServletRequest requestStub = mock(ServletRequest.class);
+        I18n I18N = new I18n(dk.netarkivet.common.Constants.TRANSLATIONS_BUNDLE);
+        PageContext pageContext = new HarvesterWebinterfaceTestCase.TestPageContext(requestStub);
+        when(requestStub.getParameter(Constants.UPDATE_PARAM)).thenReturn("yes");
+        when(requestStub.getParameter(Constants.DOMAIN_PARAM)).thenReturn(newHDname);
+        when(requestStub.getParameter(Constants.CREATENEW_PARAM)).thenReturn("yes");
+        when(requestStub.getParameter(Constants.DOMAIN_OBJECTLIMIT_PARAM)).thenReturn("-1");
+        when(requestStub.getParameter(Constants.DOMAIN_BYTELIMIT_PARAM)).thenReturn("117");
+        when(requestStub.getParameter(Constants.COMMENTS_PARAM)).thenReturn("You did not see this");
+        try {
+            snapshotHarvestDefinition.processRequest(pageContext, I18N);
+            fail("Should complain about missing " + Constants.HARVEST_PARAM);
         } catch (ForwardedToErrorPage e) {
             StringAsserts.assertStringContains(
-                    "Should mention " + toFind + " in msg",
-                    toFind, e.getMessage());
+                    "Should mention " + Constants.HARVEST_PARAM + " in msg", Constants.HARVEST_PARAM, e.getMessage());
         }
-        request.addParameter(toFind, removedParameter);
-        HarvestDefinitionDAO dao = HarvestDefinitionDAO.getInstance();
-        assertNull("Should not have fnord before creation",
-                   dao.getHarvestDefinition(newHDName));
     }
-
-    private void assertCallIsForbidden(MockupServletRequest request,
-                                       String newHDName,
-                                       String toFind) {
-        try {
-            I18n I18N = new I18n(
-                    dk.netarkivet.common.Constants.TRANSLATIONS_BUNDLE);
-            PageContext pageContext = new HarvesterWebinterfaceTestCase.TestPageContext(
-                    request);
-            SnapshotHarvestDefinition.processRequest(pageContext, I18N);
-            fail("Should complain about missing " + toFind);
-        } catch (ForwardedToErrorPage e) {
-            StringAsserts.assertStringContains(
-                    "Should mention " + toFind + " in msg",
-                    toFind, e.getMessage());
-        }
-        HarvestDefinitionDAO dao = HarvestDefinitionDAO.getInstance();
-        assertNotNull("Should have fnord after creation",
-                      dao.getHarvestDefinition(newHDName));
-    }
-
 }

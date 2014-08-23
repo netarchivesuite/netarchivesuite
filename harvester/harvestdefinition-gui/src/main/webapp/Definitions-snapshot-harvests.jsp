@@ -45,9 +45,11 @@ flipactive=<harvestDefinition>:
     private static final I18n I18N
             = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
 %><%
+    SnapshotHarvestDefinition snapshotHarvestDefinition =
+            SnapshotHarvestDefinition.createSnapshotHarvestDefinitionWithDefaultDAOs();
     HTMLUtils.setUTF8(request);
     try {
-        if (SnapshotHarvestDefinition.flipActive(pageContext, I18N)) {
+        if (snapshotHarvestDefinition.flipActive(pageContext, I18N)) {
             response.sendRedirect("Definitions-snapshot-harvests.jsp");
             return;
         }

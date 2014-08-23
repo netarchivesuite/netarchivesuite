@@ -782,7 +782,7 @@ public class WindowsMachine extends Machine {
             "Set oExec = WshShell.exec(java & \" ${machineparameters} -classpath \"\"${classpath}\"\""
                 + " -Ddk.netarkivet.settings.file=\"\"${confdirpath}settings_${id}.xml\"\""
                 + "${jdklogger}${slf4jlogger}"
-                + " -Djava.security.manager -Djava.security.policy=\"\"${confdirpath}security.policy\"\""
+                + "${securityManagement}"
                 + " ${appname}"
                 + "\")",
             "Set fso= CreateObject(\"Scripting.FileSystemObject\")",
@@ -794,7 +794,7 @@ public class WindowsMachine extends Machine {
             "tf.close",
             "'Create a new start-log for the application",
             "CreateObject(\"Scripting.FileSystemObject\").OpenTextFile(\"${startlogname}\", 2, True).close",
-            "Do While oExec.Status = 0",
+            "Do While oExec.Status = 0 Or oExec.StdOut.AtEndOfStream <> True Or oExec.StdErr.AtEndOfStream <> True",
             "  WScript.Sleep 1000",
             "  Do While oExec.StdOut.AtEndOfStream <> True",
             "    Set outFile = CreateObject(\"Scripting.FileSystemObject\").OpenTextFile(\"${startlogname}\", 8, True)",
@@ -813,6 +813,8 @@ public class WindowsMachine extends Machine {
                     + " -Djava.util.logging.config.file=\"\"${confdirpath}log_${id}.prop\"\"";
         protected static final String slf4jLogger =
                 " -Dlogback.configurationFile=\"\"${confdirpath}logback_${id}.xml\"\"";
+        protected static final String securityManagement =
+        		" -Djava.security.manager -Djava.security.policy=\"\"${confdirpath}security.policy\"\"";
     }
 
     /**
@@ -888,6 +890,11 @@ public class WindowsMachine extends Machine {
                     env.put("slf4jlogger", Template.untemplate(windowsStartVbsScriptTpl.slf4jLogger, env, true));
                 } else {
                     env.put("slf4jlogger", "");
+                }
+                if (app.getTotalName().contains(ScriptConstants.BITARCHIVE_APPLICATION_NAME)) {
+                    env.put("securityManagement", Template.untemplate(windowsStartVbsScriptTpl.securityManagement, env, true));
+                } else {
+                    env.put("securityManagement", "");
                 }
                 String str = Template.untemplate(windowsStartVbsScriptTpl.mainScript, env, true, "\r\n");
                 vbsPrint.print(str);

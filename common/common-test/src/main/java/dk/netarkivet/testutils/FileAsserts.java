@@ -27,10 +27,14 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import junit.framework.TestCase;
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.core.IsNot;
+import org.junit.Assert;
 
+import junit.framework.TestCase;
 import dk.netarkivet.common.utils.FileUtils;
 
 /**
@@ -52,13 +56,8 @@ public class FileAsserts {
     public static void assertFileContains(String msg, String str, File file) {
         try {
             String contents = FileUtils.readFile(file);
-            int index = contents.indexOf(str);
-            if (index == -1) {
-                System.out.println("Did not find string '" + str + "' in:\n"
-                        + "==START FILE " + file + "==\n" + contents
-                        + "\n==END FILE==");
-                TestCase.fail(msg);
-            }
+            // http://stackoverflow.com/a/1092241/53897
+            Assert.assertThat(contents, CoreMatchers.containsString(str));
         } catch (IOException e) {
             TestCase.fail("Should be able to read " + file + ", but got " + e);
         }
@@ -69,18 +68,15 @@ public class FileAsserts {
      * fail and print the error message.
      *
      * @param msg An explanatory message.
-     * @param pattern A pattern to search for in the file.
+     * @param regexp A pattern to search for in the file.
      * @param file A file to scan.
      */
-    public static void assertFileMatches(String msg, String pattern, File file) {
+    public static void assertFileMatches(String msg, String regexp, File file) {
         try {
             String contents = FileUtils.readFile(file);
-            if (!Pattern.compile(pattern, Pattern.MULTILINE).matcher(contents).find()) {
-                System.out.println("Did not find pattern '" + pattern + "' in:\n"
-                        + "==START FILE " + file + "==\n" + contents
-                        + "\n==END FILE==");
-                TestCase.fail(msg);
-            }
+            Pattern pattern = Pattern.compile(regexp, Pattern.MULTILINE);
+            // https://github.com/derari/cthul/wiki/Matchers#string-matchers
+            Assert.assertThat(contents, org.cthul.matchers.CthulMatchers.containsPattern(pattern));
         } catch (IOException e) {
             TestCase.fail("Should be able to read " + file + ", but got " + e);
         }
@@ -97,12 +93,8 @@ public class FileAsserts {
     public static void assertFileNotContains(String msg, File file, String str) {
         try {
             String contents = FileUtils.readFile(file);
-            int index = contents.indexOf(str);
-            if (index != -1) {
-                System.out.println("Found string " + str + " in " + file
-                        + " with contents:\n====\n" + contents + "\n====");
-                TestCase.fail(msg);
-            }
+            // http://stackoverflow.com/a/1092241/53897
+            Assert.assertThat(contents, IsNot.not(CoreMatchers.containsString(str)));
         } catch (IOException e) {
             TestCase.fail("Should be able to read " + file + ", but got " + e);
         }

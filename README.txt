@@ -27,7 +27,6 @@ maven-java-formatter-plugin can run from the command line with
 
   mvn com.googlecode.maven-java-formatter-plugin:maven-java-formatter-plugin:format
 
-
 Eclipse:
 =======
 

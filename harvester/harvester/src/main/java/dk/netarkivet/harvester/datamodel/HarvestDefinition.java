@@ -26,9 +26,13 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.inject.Provider;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.Named;
+import dk.netarkivet.harvester.datamodel.dao.DAOProviderFactory;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendableEntity;
+import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue;
 
@@ -43,7 +47,6 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue;
  * Methods exist to generate jobs from this harvest definition.
  *
  */
-@SuppressWarnings("unused")
 public abstract class HarvestDefinition extends ExtendableEntity implements Named {
 
 	protected Long oid;
@@ -71,7 +74,12 @@ public abstract class HarvestDefinition extends ExtendableEntity implements Name
 
     /** The id of the associated harvest channel, or null if the default one is to be used. */
     protected Long channelId;
-    
+
+    protected HarvestDefinition(
+            Provider<ExtendedFieldDAO> extendedFieldDAO) {
+        super(extendedFieldDAO);
+    }
+
     /**
      * Create new instance of a PartialHavest configured according
      * to the properties of the supplied DomainConfiguration.
@@ -125,10 +133,13 @@ public abstract class HarvestDefinition extends ExtendableEntity implements Name
                                                 long maxBytes,
                                                 long maxJobRunningTime) {
 
-        return new FullHarvest(harvestDefName, comments,
-                               prevHarvestOid, maxCountObjects, 
-                               maxBytes, maxJobRunningTime,
-                               false);
+        return new FullHarvest(
+                harvestDefName, comments, prevHarvestOid, maxCountObjects,  maxBytes, maxJobRunningTime, false,
+                DAOProviderFactory.getHarvestDefinitionDAOProvider(),
+                DAOProviderFactory.getJobDAOProvider(),
+                DAOProviderFactory.getExtendedFieldDAOProvider(),
+                DAOProviderFactory.getDomainDAOProvider()
+        );
     }
 
 

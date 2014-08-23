@@ -23,25 +23,9 @@
 
 package dk.netarkivet.harvester.datamodel;
 
-import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.RememberNotifications;
-import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.testutils.ReflectUtils;
-import dk.netarkivet.testutils.TestFileUtils;
-import dk.netarkivet.testutils.preconfigured.ReloadSettings;
-import dk.netarkivet.testutils.preconfigured.SetSystemProperty;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.After;
-import org.junit.Test;
-
-
-import org.dom4j.Document;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -49,7 +33,30 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.dom4j.Document;
+import org.junit.After;
+import org.junit.Before;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.RememberNotifications;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.datamodel.dao.DAOProviderFactory;
+import dk.netarkivet.testutils.ReflectUtils;
+import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
+import dk.netarkivet.testutils.preconfigured.SetSystemProperty;
 
 /**
  * A generic superclass for the harvest definition tests.  This
@@ -178,28 +185,44 @@ public class DataModelTestCase {
 				Constants.DEFAULT_MAX_OBJECTS,
 				Constants.DEFAULT_MAX_BYTES,
 				Constants.DEFAULT_MAX_JOB_RUNNING_TIME,
-				false);
+				false,
+                DAOProviderFactory.getHarvestDefinitionDAOProvider(),
+                DAOProviderFactory.getJobDAOProvider(),
+                DAOProviderFactory.getExtendedFieldDAOProvider(),
+                DAOProviderFactory.getDomainDAOProvider());
 		hd2.setSubmissionDate(new GregorianCalendar(1970, Calendar.JANUARY, 1).getTime());
 		hddao.create(hd2);
 		FullHarvest hd3 = new FullHarvest("HD#3", "No comments", hd2.getOid(),
 				Constants.DEFAULT_MAX_OBJECTS,
 				Constants.DEFAULT_MAX_BYTES,
 				Constants.DEFAULT_MAX_JOB_RUNNING_TIME,
-				false);
+				false,
+                DAOProviderFactory.getHarvestDefinitionDAOProvider(),
+                DAOProviderFactory.getJobDAOProvider(),
+                DAOProviderFactory.getExtendedFieldDAOProvider(),
+                DAOProviderFactory.getDomainDAOProvider());
 		hd3.setSubmissionDate(new GregorianCalendar(1970, Calendar.FEBRUARY, 1).getTime());
 		hddao.create(hd3);
 		FullHarvest hd4 = new FullHarvest("HD#4", "No comments", null,
 				Constants.DEFAULT_MAX_OBJECTS,
 				Constants.DEFAULT_MAX_BYTES,
 				Constants.DEFAULT_MAX_JOB_RUNNING_TIME,
-				false);
+				false,
+                DAOProviderFactory.getHarvestDefinitionDAOProvider(),
+                DAOProviderFactory.getJobDAOProvider(),
+                DAOProviderFactory.getExtendedFieldDAOProvider(),
+                DAOProviderFactory.getDomainDAOProvider());
 		hd4.setSubmissionDate(new GregorianCalendar(1970, Calendar.MARCH, 1).getTime());
 		hddao.create(hd4);
 		FullHarvest hd5 = new FullHarvest("HD#5", "No comments", hd4.getOid(),
 				Constants.DEFAULT_MAX_OBJECTS,
 				Constants.DEFAULT_MAX_BYTES,
 				Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 
-				false);
+				false,
+                DAOProviderFactory.getHarvestDefinitionDAOProvider(),
+                DAOProviderFactory.getJobDAOProvider(),
+                DAOProviderFactory.getExtendedFieldDAOProvider(),
+                DAOProviderFactory.getDomainDAOProvider());
 		hd5.setSubmissionDate(new GregorianCalendar(1970, Calendar.APRIL, 1).getTime());
 		hddao.create(hd5);
 

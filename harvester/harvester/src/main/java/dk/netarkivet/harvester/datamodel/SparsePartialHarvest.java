@@ -99,8 +99,10 @@ public class SparsePartialHarvest extends ExtendableEntity implements Named {
      * @throws ArgumentNotValid if oid, name or comments, or schedule is null,
      *                          or name or schedule is empty.
      */
-    public SparsePartialHarvest(Long oid, String name, String comments, int numEvents, Date submissionDate,
-    		boolean active, long edition, String schedule, Date nextDate, String audience, Long channelId) {
+    public SparsePartialHarvest(
+            Long oid, String name, String comments, int numEvents, Date submissionDate, boolean active,
+            long edition, String schedule, Date nextDate, String audience, Long channelId) {
+        super(null);
         ArgumentNotValid.checkNotNull(oid, "Long oid");
         ArgumentNotValid.checkNotNullOrEmpty(name, "name");
         ArgumentNotValid.checkNotNull(comments, "comments");
@@ -208,7 +210,7 @@ public class SparsePartialHarvest extends ExtendableEntity implements Named {
 		return channelId;
 	}
 
-	@Override
+    @Override
     protected int getExtendedFieldType() {
     	return ExtendedFieldTypes.HARVESTDEFINITION;
     }

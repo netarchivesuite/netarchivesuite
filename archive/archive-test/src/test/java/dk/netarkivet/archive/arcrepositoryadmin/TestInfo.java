@@ -32,52 +32,36 @@ import java.util.List;
  * for classes in package arcrepositoryadmin.
  */
 public class TestInfo {
-    /** The main test data directory. */
-    private static final File DATA_DIR =
-            new File("tests/dk/netarkivet/archive/arcrepositoryadmin/data");
 
-    static final File TEST_DIR =
-            new File(DATA_DIR, "working");
-    /**
-     * The test log directory.
-     */
-    static final File LOG_DIR =
-            new File("tests/testlogs/netarkivtest.log");
+	/** The main test data directory. */
+    private static final File DATA_DIR = new File("tests/dk/netarkivet/archive/arcrepositoryadmin/data");
+
+    static final File TEST_DIR = new File(DATA_DIR, "working");
     /**
      * The first archive directory to work on.
      */
-    static final File ARCHIVE_DIR1 =
-            new File(TEST_DIR, "bitarchive1");
+    static final File ARCHIVE_DIR1 = new File(TEST_DIR, "bitarchive1");
     /**
      * The second archive directory to work on.
      */
-    static final File ARCHIVE_DIR2 =
-            new File(TEST_DIR, "bitarchive2");
+    static final File ARCHIVE_DIR2 = new File(TEST_DIR, "bitarchive2");
     /**
      * The directory storing the arcfiles in the already existing bitarchive 
      * - including credentials and admin-files.
      */
-    static final File ORIGINALS_DIR =
-            new File(DATA_DIR, "originals");
-
+    static final File ORIGINALS_DIR = new File(DATA_DIR, "originals");
 
     /**
      * List of files that can be used in the scripts 
      * (content of the ORIGINALS_DIR).
      */
-    static final List<String> GETTABLE_FILENAMES =
-            Arrays.asList(new String[]{"get1.ARC",
-                                       "get2.ARC"});
+    static final List<String> GETTABLE_FILENAMES = Arrays.asList(new String[]{"get1.ARC", "get2.ARC"});
 
-    static final File NON_EMPTY_ADMIN_DATA_DIR_ORIG =
-            new File(DATA_DIR, "admindata");
-    static final File VERSION_03_ADMIN_DATA_DIR_ORIG 
-        = new File(DATA_DIR, "admindata-0.3");
-    static final File NON_EMPTY_ADMIN_DATA_DIR 
-        = new File(TEST_DIR, "admindata");
+    static final File NON_EMPTY_ADMIN_DATA_DIR_ORIG = new File(DATA_DIR, "admindata");
+    static final File VERSION_03_ADMIN_DATA_DIR_ORIG = new File(DATA_DIR, "admindata-0.3");
+    static final File NON_EMPTY_ADMIN_DATA_DIR = new File(TEST_DIR, "admindata");
 
-    static final String[] files = {"some.arc", "are.arc", "equal.arc",
-                                   "other.arc", "files.arc"};
+    static final String[] files = {"some.arc", "are.arc", "equal.arc", "other.arc", "files.arc"};
     
     /** The directory containing the database for DatabaseBasedActiveBitPreservationTester*/
     public static final File DATABASE_DIR = new File(TEST_DIR, "adminDB");
@@ -87,6 +71,6 @@ public class TestInfo {
     /** The file for the archive database.*/
     static final File DATABASE_FILE = new File("archivedatabasedir", "archivedb.jar");
 
-
     public static final File TEST_FILE_1 = new File(TEST_DIR, "test1.arc");
+
 }

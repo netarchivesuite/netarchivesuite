@@ -138,6 +138,9 @@ public abstract class ApplicationUtils {
         String appName = c.getName();
         Settings.set(CommonSettings.APPLICATION_NAME, appName);
         logAndPrint("Starting " + appName + "\n" + Constants.getVersionString());
+        logAndPrint("Java VM: " + System.getProperty("java.version"));
+        logAndPrint("java.home: " + System.getProperty("java.home"));
+        logAndPrint("Working dir: " + System.getProperty("user.dir"));
         log.info("Using settings files '{}'", StringUtils.conjoin(File.pathSeparator, Settings.getSettingsFiles()));
         checkArgs(args);
         dirMustExist(FileUtils.getTempDir());

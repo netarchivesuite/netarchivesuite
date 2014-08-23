@@ -52,8 +52,7 @@ import dk.netarkivet.common.utils.PrintNotifications;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.ZipUtils;
-import dk.netarkivet.testutils.FileAsserts;
-import dk.netarkivet.testutils.LogUtils;
+import dk.netarkivet.testutils.LogbackRecorder;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
@@ -101,6 +100,7 @@ public class ReplicaCacheDatabaseTester {
     @Test
     // FIXME: Split test up.
     public void testAll() throws Exception {
+    	LogbackRecorder lr = LogbackRecorder.startRecorder();
         Date beforeTest = new Date(Calendar.getInstance().getTimeInMillis());
 
         assertTrue("The database should be empty to begin with.", cache.isEmpty());
@@ -326,15 +326,13 @@ public class ReplicaCacheDatabaseTester {
         if (stop) {
             return;
         }
-        
-        LogUtils.flushLogs(ReplicaCacheDatabase.class.getName());
-        FileAsserts.assertFileContains("Warning about duplicates should be generated. The log file is: "
-                        + FileUtils.readFile(TestInfo.LOG_DIR),
-                        "WARNING: There have been found multiple files with the name 'TEST1'", 
-                        TestInfo.LOG_DIR);
+
+        lr.assertLogContains("Warning about duplicates should be generated",
+                "There have been found multiple files with the name 'TEST1'");
         
         // cleanup afterwards.
         cache.cleanup();
+        lr.stopRecorder();
     }
 
     private File makeTemporaryDuplicateFilelistFile() throws Exception {

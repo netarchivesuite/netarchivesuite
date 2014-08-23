@@ -51,10 +51,6 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.FilterIterator;
 import dk.netarkivet.common.utils.StringUtils;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedField;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDefaultValue;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValueDAO;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValueDBDAO;
@@ -862,7 +858,6 @@ public class DomainDBDAO extends DomainDAO {
             d.setDefaultConfiguration(defaultconfig);
             readOwnerInfo(c, d);
             readHistoryInfo(c, d);
-            readExtendedFieldValues(d);
 
             result = d;
         } catch (SQLException e) {
@@ -1504,34 +1499,6 @@ public class DomainDBDAO extends DomainDAO {
         }
     }
 
-    /**
-     * Reads all extended Field values from the database for a domain.
-     * @param d Domain where loaded extended Field Values will be set
-     * 
-     * @throws SQLException
-     *             If database errors occur.
-     * 
-     */
-    private void readExtendedFieldValues(Domain d) throws SQLException {
-        ExtendedFieldDAO dao = ExtendedFieldDAO.getInstance();
-        List<ExtendedField> list = dao.getAll(ExtendedFieldTypes.DOMAIN);
-
-        for (int i = 0; i < list.size(); i++) {
-            ExtendedField ef = list.get(i);
-
-            ExtendedFieldValueDAO dao2 = ExtendedFieldValueDAO.getInstance();
-            ExtendedFieldValue efv = dao2.read(ef.getExtendedFieldID(), d.getID());
-            if (efv == null) {
-                efv = new ExtendedFieldValue();
-                efv.setExtendedFieldID(ef.getExtendedFieldID());
-                efv.setInstanceID(d.getID());
-                efv.setContent(new ExtendedFieldDefaultValue(ef.getDefaultValue(), ef.getFormattingPattern(), ef.getDatatype()).getDBValue());
-            }
-
-            d.addExtendedFieldValue(efv);
-        }
-    }
-    
     @Override
     public DomainConfiguration getDomainConfiguration(String domainName, String configName) {
         DomainHistory history = getDomainHistory(domainName);

@@ -26,16 +26,22 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.inject.Provider;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class ExtendableEntity {
 
-	private static final Logger log = LoggerFactory.getLogger(ExtendableEntity.class);
-	
+    private static final Logger log = LoggerFactory.getLogger(ExtendableEntity.class);
+
     /** List of extended Fields. */
     protected List<ExtendedFieldValue> extendedFieldValues = new ArrayList<ExtendedFieldValue>();
-	
+
+    protected ExtendableEntity(Provider<ExtendedFieldDAO> extendedFieldDAO) {
+        addExtendedFieldValues(extendedFieldDAO);
+    }
+
     /**
      * @return a List of all ExtendedfieldValues.
      */
@@ -98,9 +104,12 @@ public abstract class ExtendableEntity {
     /**
      * Adds Defaultvalues for all extended fields of this entity.
      */
-    public void addExtendedFieldValues() {
-        ExtendedFieldDAO extendedFieldDAO = ExtendedFieldDAO.getInstance();
-        List<ExtendedField> list = extendedFieldDAO.getAll(getExtendedFieldType());
+    protected void addExtendedFieldValues(Provider<ExtendedFieldDAO> extendedFieldDAOProvider) {
+        if (extendedFieldDAOProvider == null) {
+            return; // No extended fields
+        }
+
+        List<ExtendedField> list = extendedFieldDAOProvider.get().getAll(getExtendedFieldType());
 
         Iterator<ExtendedField> it = list.iterator();
         while (it.hasNext()) {
