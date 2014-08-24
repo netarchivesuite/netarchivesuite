@@ -773,6 +773,7 @@ public class WindowsMachine extends Machine {
     protected static final class windowsStartVbsScriptTpl {
         protected static final String[] mainScript = {
             "Set WshShell= CreateObject(\"WScript.Shell\")",
+            "javahome = WshShell.ExpandEnvironmentStrings(\"%JAVA_HOME%\")",
             "WScript.Echo \"JAVA_HOME=\" & javahome",
             "If javahome = \"\" Then",
             "  java = \"java\"",
