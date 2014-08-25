@@ -14,6 +14,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <slf4j.version>1.7.7</slf4j.version>
+    <jwat.version>1.0.1</jwat.version>
     <!-- maven-java-formatter-plugin -->
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
@@ -124,6 +125,12 @@
         <groupId>ch.qos.logback</groupId>
         <artifactId>logback-classic</artifactId>
         <version>1.0.13</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.jwat</groupId>
+        <artifactId>jwat-common</artifactId>
+        <version>${jwat.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
