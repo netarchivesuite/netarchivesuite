@@ -38,17 +38,15 @@ import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 import dk.netarkivet.harvester.datamodel.TemplateDAO;
 
 /**
- * Utility for maintaining harvest-templates from the commandline. With this
- * utility, you can - create new templates - update existing templates -
- * download one or more templates - show all existing templates
+ * Utility for maintaining harvest-templates from the commandline. With this utility, you can - create new templates -
+ * update existing templates - download one or more templates - show all existing templates
  */
 public class HarvestTemplateApplication {
 
     /**
      * The main method of the HarvestTemplateApplication.
      * 
-     * @param args
-     *            array of commandline arguments
+     * @param args array of commandline arguments
      */
     public static void main(final String[] args) {
         if (args.length < 1) {
@@ -92,12 +90,10 @@ public class HarvestTemplateApplication {
     }
 
     /**
-     * Download one or more templates to current working directory. if length of
-     * args is 0, all templates are downloaded. if length of args > 0, the
-     * strings in args are considered to be names of templates to be downloaded.
+     * Download one or more templates to current working directory. if length of args is 0, all templates are
+     * downloaded. if length of args > 0, the strings in args are considered to be names of templates to be downloaded.
      * 
-     * @param args
-     *            String-array containing template-names
+     * @param args String-array containing template-names
      */
     private static void downloadTemplates(final String[] args) {
         TemplateDAO dao = TemplateDAO.getInstance();
@@ -121,11 +117,9 @@ public class HarvestTemplateApplication {
     }
 
     /**
-     * Download the template with a given name. The template is assumed to
-     * exist.
+     * Download the template with a given name. The template is assumed to exist.
      * 
-     * @param templateName
-     *            The name of a given template
+     * @param templateName The name of a given template
      */
     private static void download(final String templateName) {
         System.out.println("Downloading template '" + templateName + "'.");
@@ -144,9 +138,8 @@ public class HarvestTemplateApplication {
     /**
      * Update a given template.
      * 
-     * @param args
-     *            array of commandline-arguments args[0]: templateName args[1]:
-     *            File that should replace an existing template
+     * @param args array of commandline-arguments args[0]: templateName args[1]: File that should replace an existing
+     *            template
      */
     private static void updateTemplate(final String[] args) {
         TemplateDAO dao = TemplateDAO.getInstance();
@@ -177,9 +170,7 @@ public class HarvestTemplateApplication {
     /**
      * Create a new template.
      * 
-     * @param args
-     *            array of commandline-arguments args[0]: templateName args[1]:
-     *            file containing the new template.
+     * @param args array of commandline-arguments args[0]: templateName args[1]: file containing the new template.
      */
     private static void createTemplate(final String[] args) {
         TemplateDAO dao = TemplateDAO.getInstance();

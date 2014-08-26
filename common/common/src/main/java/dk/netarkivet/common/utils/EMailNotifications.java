@@ -40,9 +40,8 @@ public class EMailNotifications extends Notifications {
     private static String DEFAULT_SETTINGS_CLASSPATH = "dk/netarkivet/common/utils/EMailNotificationsSettings.xml";
 
     /*
-     * The static initialiser is called when the class is loaded. It will add
-     * default values for all settings defined in this class, by loading them
-     * from a settings.xml file in classpath.
+     * The static initialiser is called when the class is loaded. It will add default values for all settings defined in
+     * this class, by loading them from a settings.xml file in classpath.
      */
     static {
         Settings.addDefaultClasspathSettings(DEFAULT_SETTINGS_CLASSPATH);
@@ -56,8 +55,7 @@ public class EMailNotifications extends Notifications {
 
     /**
      * <b>settings.common.notifications.sender</b>: <br>
-     * The setting for the sender of email notifications (and receiver of
-     * bounces).
+     * The setting for the sender of email notifications (and receiver of bounces).
      */
     public static String MAIL_SENDER_SETTING = "settings.common.notifications.sender";
 
@@ -78,12 +76,9 @@ public class EMailNotifications extends Notifications {
     /**
      * Sends a notification including an exception.
      *
-     * @param message
-     *            The message to notify about.
-     * @param eventType
-     *            The type of notification
-     * @param e
-     *            The exception to notify about.
+     * @param message The message to notify about.
+     * @param eventType The type of notification
+     * @param e The exception to notify about.
      */
     public void notify(String message, NotificationType eventType, Throwable e) {
         if (message == null) {
@@ -95,12 +90,9 @@ public class EMailNotifications extends Notifications {
     /**
      * Send mailNotications.
      * 
-     * @param message
-     *            The message body itself
-     * @param eventType
-     *            Type of notification
-     * @param e
-     *            An exception (can be null)
+     * @param message The message body itself
+     * @param eventType Type of notification
+     * @param e An exception (can be null)
      */
     private void sendMailNotifications(String message, NotificationType eventType, Throwable e) {
         String subjectPrefix = SUBJECT_PREFIX + "-" + eventType + ": ";

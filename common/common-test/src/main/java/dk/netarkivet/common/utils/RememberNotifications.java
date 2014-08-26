@@ -47,12 +47,9 @@ public class RememberNotifications extends Notifications {
     /**
      * Remember the variables, and print a message to stdout.
      *
-     * @param message
-     *            The message to remember.
-     * @param eventType
-     *            The type of notification event
-     * @param exception
-     *            The exception to remember.
+     * @param message The message to remember.
+     * @param eventType The type of notification event
+     * @param exception The exception to remember.
      */
     public void notify(String message, NotificationType eventType, Throwable exception) {
         this.message = message;

@@ -36,8 +36,7 @@ import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.webinterface.HTMLUtils;
 
 /**
- * Abstract class representing an action to take on the collection of global
- * crawler traps.
+ * Abstract class representing an action to take on the collection of global crawler traps.
  *
  */
 
@@ -46,19 +45,14 @@ public abstract class TrapAction {
     private static final Log log = LogFactory.getLog(TrapAction.class);
 
     /**
-     * This method processes the request to determine which action it
-     * corresponds to and passes the request along accordingly. If it is a
-     * multipart post then it is passed along to a create-or-update instance.
-     * Otherwise if no action is specified, none is taken. Otherwise the request
-     * is passed on to a specific concrete instance of this class for further
-     * processing.
+     * This method processes the request to determine which action it corresponds to and passes the request along
+     * accordingly. If it is a multipart post then it is passed along to a create-or-update instance. Otherwise if no
+     * action is specified, none is taken. Otherwise the request is passed on to a specific concrete instance of this
+     * class for further processing.
      *
-     * @param context
-     *            the original servlet context of the request.
-     * @param i18n
-     *            the internationalisation to be used.
-     * @throws ForwardedToErrorPage
-     *             if an exception is thrown while carrying out the action.
+     * @param context the original servlet context of the request.
+     * @param i18n the internationalisation to be used.
+     * @throws ForwardedToErrorPage if an exception is thrown while carrying out the action.
      */
     public static void processRequest(PageContext context, I18n i18n) throws ForwardedToErrorPage {
         ArgumentNotValid.checkNotNull(context, "PageContext context");
@@ -86,10 +80,8 @@ public abstract class TrapAction {
     /**
      * Method implementing the specific action to take.
      * 
-     * @param context
-     *            the context of the servlet request triggering this action.
-     * @param i18n
-     *            the internationalisation to use for presenting the results.
+     * @param context the context of the servlet request triggering this action.
+     * @param i18n the internationalisation to use for presenting the results.
      */
     protected abstract void doAction(PageContext context, I18n i18n);
 

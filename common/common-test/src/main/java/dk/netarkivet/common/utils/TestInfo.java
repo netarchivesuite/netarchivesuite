@@ -49,7 +49,7 @@ public class TestInfo {
     static final File FILEUTILS_DATADIR = new File(BASEDIR, "fileutils_data");
     static final File CDX_FILTER_TEST_DATA_DIR = new File(FILEUTILS_DATADIR, "cdx-filter");
     static final Set<String> CDX_FILTER_TEST_CDX_FILES = new HashSet<String>(java.util.Arrays.asList(new String[] {
-            "Reader1.cdx", "Reader2.cdx" }));
+            "Reader1.cdx", "Reader2.cdx"}));
     public static final File XML_FILE_1 = new File(TestInfo.TEMPDIR, "test1.xml");
     public static final File XML_FILE_2 = new File(TestInfo.TEMPDIR, "test2.xml");
     public static final String XML_FILE_1_XPATH_1 = "/test/file/attachHere";

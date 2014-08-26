@@ -30,13 +30,13 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.archive.ArchiveRecordBase;
 
 /**
- * A filter class for batch entries. Allows testing whether or not to process an
- * entry without loading the entry data first.
+ * A filter class for batch entries. Allows testing whether or not to process an entry without loading the entry data
+ * first.
  *
- * accept() is given an ArchiveRecord to avoid unnecessary reading and copying
- * of data of records not accepted by filter.
+ * accept() is given an ArchiveRecord to avoid unnecessary reading and copying of data of records not accepted by
+ * filter.
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public abstract class ArchiveBatchFilter implements Serializable {
 
     /** The name of the BatchFilter. */
@@ -45,8 +45,7 @@ public abstract class ArchiveBatchFilter implements Serializable {
     /**
      * Create a new filter with the given name.
      *
-     * @param name
-     *            The name of this filter, for debugging mostly.
+     * @param name The name of this filter, for debugging mostly.
      */
     protected ArchiveBatchFilter(String name) {
         ArgumentNotValid.checkNotNullOrEmpty(name, "String name");
@@ -65,8 +64,7 @@ public abstract class ArchiveBatchFilter implements Serializable {
     /**
      * Check if a given record is accepted (not filtered out) by this filter.
      * 
-     * @param record
-     *            a given archive record
+     * @param record a given archive record
      * @return true, if the given archive record is accepted by this filter
      */
     public abstract boolean accept(ArchiveRecordBase record);
@@ -80,20 +78,17 @@ public abstract class ArchiveBatchFilter implements Serializable {
     };
 
     /**
-     * The ARCRecord url for the filedesc record (the header record of every ARC
-     * File).
+     * The ARCRecord url for the filedesc record (the header record of every ARC File).
      */
     private static final String ARC_FILE_FILEDESC_HEADER_PREFIX = "filedesc";
 
     /**
-     * The name of the filter that filters out the filedesc record and/or
-     * non-response records.
+     * The name of the filter that filters out the filedesc record and/or non-response records.
      */
     private static final String EXCLUDE_NON_RESPONSE_RECORDS_FILTER_NAME = "EXCLUDE_NON_RESPONSE_RECORDS";
 
     /**
-     * The name of the filter that filters out the filedesc record and/or
-     * non-warcinfo records
+     * The name of the filter that filters out the filedesc record and/or non-warcinfo records
      */
     private static final String EXCLUDE_WARCINFO_AND_FILEDESC_RECORDS_FILTER_NAME = "EXCLUDE_WARCINFO_AND_FILEDESC_RECORDS";
 
@@ -147,15 +142,11 @@ public abstract class ArchiveBatchFilter implements Serializable {
     private static final String MIMETYPE_BATCH_FILTER_NAME_PREFIX = "MimetypeBatchFilter-";
 
     /**
-     * Note that the mimetype of the WARC responserecord is not (necessarily)
-     * the same as its payload.
+     * Note that the mimetype of the WARC responserecord is not (necessarily) the same as its payload.
      * 
-     * @param mimetype
-     *            String denoting the mimetype this filter represents
-     * @return a BatchFilter that filters out all ARCRecords, that does not have
-     *         this mimetype
-     * @throws java.awt.datatransfer.MimeTypeParseException
-     *             (if mimetype is invalid)
+     * @param mimetype String denoting the mimetype this filter represents
+     * @return a BatchFilter that filters out all ARCRecords, that does not have this mimetype
+     * @throws java.awt.datatransfer.MimeTypeParseException (if mimetype is invalid)
      */
     public static ArchiveBatchFilter getMimetypeBatchFilter(final String mimetype) throws MimeTypeParseException {
         if (!mimetypeIsOk(mimetype)) {

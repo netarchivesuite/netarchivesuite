@@ -48,8 +48,7 @@ public class ExtendedFieldOptions {
     /**
      * Constructor.
      * 
-     * @param aLines
-     *            Options separated by newlines (Null argument allowed)
+     * @param aLines Options separated by newlines (Null argument allowed)
      */
     public ExtendedFieldOptions(String aLines) {
         lines = aLines;
@@ -126,10 +125,8 @@ public class ExtendedFieldOptions {
     /**
      * Check, if the given key is a valid option.
      * 
-     * @param aKey
-     *            a given option key.
-     * @return true, if the list of options is valid, and there is an option in
-     *         the options map with the given key.
+     * @param aKey a given option key.
+     * @return true, if the list of options is valid, and there is an option in the options map with the given key.
      */
     public boolean isKeyValid(String aKey) {
         if (isValid()) {

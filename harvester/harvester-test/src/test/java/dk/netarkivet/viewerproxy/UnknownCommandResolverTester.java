@@ -39,7 +39,7 @@ import dk.netarkivet.testutils.StringAsserts;
 /**
  * Unit-tests of the UnknownCommandResolver class.
  */
-@SuppressWarnings({ "unused" })
+@SuppressWarnings({"unused"})
 public class UnknownCommandResolverTester {
 
     @Test

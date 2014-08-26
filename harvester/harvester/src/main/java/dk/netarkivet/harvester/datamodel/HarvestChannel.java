@@ -31,22 +31,19 @@ import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.harvester.harvesting.HarvestController;
 
 /**
- * Harvest channels are used to dispatch harvest jobs to specific pools of
- * crawlers. Channels can accept either only snapshot jobs or only focused jobs.
- * Snapshot crawls all use a single hard-coded channel.
+ * Harvest channels are used to dispatch harvest jobs to specific pools of crawlers. Channels can accept either only
+ * snapshot jobs or only focused jobs. Snapshot crawls all use a single hard-coded channel.
  *
- * Harvest channels names must only contain alphanumeric characters, the
- * constraint is enforced at creation time.
+ * Harvest channels names must only contain alphanumeric characters, the constraint is enforced at creation time.
  *
- * {@link HarvestDefinition}s are mapped to a {@link HarvestChannel}, and
- * {@link HarvestController}s listen to jobs sent on a specific channel.
+ * {@link HarvestDefinition}s are mapped to a {@link HarvestChannel}, and {@link HarvestController}s listen to jobs sent
+ * on a specific channel.
  *
- * Harvest channels are stored in the harvest database, as well as mappings to
- * {@link HarvestDefinition}s and {@link HarvestController}s through two
- * association tables.
+ * Harvest channels are stored in the harvest database, as well as mappings to {@link HarvestDefinition}s and
+ * {@link HarvestController}s through two association tables.
  *
- * There must be exactly one channel defined as default for every type of job
- * (snapshot and focused). This constraint will be enforced by the DAO.
+ * There must be exactly one channel defined as default for every type of job (snapshot and focused). This constraint
+ * will be enforced by the DAO.
  *
  * @author ngiraud
  *
@@ -55,8 +52,7 @@ import dk.netarkivet.harvester.harvesting.HarvestController;
 public class HarvestChannel implements Serializable {
 
     /**
-     * The unique {@link dk.netarkivet.harvester.datamodel.HarvestChannel} for
-     * snapshot harvests.
+     * The unique {@link dk.netarkivet.harvester.datamodel.HarvestChannel} for snapshot harvests.
      */
     // public static final HarvestChannel SNAPSHOT = new HarvestChannel();
 
@@ -78,8 +74,7 @@ public class HarvestChannel implements Serializable {
     private boolean isSnapshot;
 
     /**
-     * Whether this channel is the default one for the given type (snapshot or
-     * focused).
+     * Whether this channel is the default one for the given type (snapshot or focused).
      */
     private boolean isDefault;
 
@@ -90,24 +85,18 @@ public class HarvestChannel implements Serializable {
      * Used to build the {@link #SNAPSHOT} singleton only.
      */
     /*
-     * private HarvestChannel() { this.name =
-     * Settings.get(HarvesterSettings.SNAPSHOT_HARVEST_CHANNEL_ID);
+     * private HarvestChannel() { this.name = Settings.get(HarvesterSettings.SNAPSHOT_HARVEST_CHANNEL_ID);
      * this.isSnapshot = true; this.isDefault = true; this.comments = ""; }
      */
 
     /**
      * Constructor from name and comments
      * 
-     * @param name
-     *            channel name
-     * @param isSnapshot
-     *            whether this channels type is snapshot or focused
-     * @param isDefault
-     *            whether this channel is the default one
-     * @param comments
-     *            user comments (snapshot or focused)
-     * @throws ArgumentNotValid
-     *             if the name is incorrect.
+     * @param name channel name
+     * @param isSnapshot whether this channels type is snapshot or focused
+     * @param isDefault whether this channel is the default one
+     * @param comments user comments (snapshot or focused)
+     * @throws ArgumentNotValid if the name is incorrect.
      */
     public HarvestChannel(String name, boolean isSnapshot, boolean isDefault, String comments) {
         if (!isAcceptableName(name)) {
@@ -122,18 +111,12 @@ public class HarvestChannel implements Serializable {
     /**
      * Constructor from persistent storage
      * 
-     * @param id
-     *            the channel id
-     * @param name
-     *            channel name
-     * @param isSnapshot
-     *            whether this channels type is snapshot or focused
-     * @param isDefault
-     *            whether this channel is the default one for the given type
-     * @param comments
-     *            user comments
-     * @throws ArgumentNotValid
-     *             if the name is incorrect.
+     * @param id the channel id
+     * @param name channel name
+     * @param isSnapshot whether this channels type is snapshot or focused
+     * @param isDefault whether this channel is the default one for the given type
+     * @param comments user comments
+     * @throws ArgumentNotValid if the name is incorrect.
      */
     public HarvestChannel(long id, String name, boolean isSnapshot, boolean isDefault, String comments) {
         ArgumentNotValid.checkNotNullOrEmpty(name, "name");
@@ -164,16 +147,14 @@ public class HarvestChannel implements Serializable {
     /**
      * Sets the harvest channel name
      * 
-     * @param name
-     *            the name to set
+     * @param name the name to set
      */
     public void setName(String name) {
         this.name = name;
     }
 
     /**
-     * @return true if this channel is intended for snaphsot harvests, false if
-     *         it is intended for focused ones.
+     * @return true if this channel is intended for snaphsot harvests, false if it is intended for focused ones.
      */
     public boolean isSnapshot() {
         return isSnapshot;
@@ -182,27 +163,23 @@ public class HarvestChannel implements Serializable {
     /**
      * Set the harvest type to snapshot or focused.
      * 
-     * @param isSnapshot
-     *            true if snapshot, false if focused
+     * @param isSnapshot true if snapshot, false if focused
      */
     public void setSnapshot(boolean isSnapshot) {
         this.isSnapshot = isSnapshot;
     }
 
     /**
-     * @return true if the channel is the default one for the harvest type
-     *         (snapshot or focused), false otherwise.
+     * @return true if the channel is the default one for the harvest type (snapshot or focused), false otherwise.
      */
     public boolean isDefault() {
         return isDefault;
     }
 
     /**
-     * Set whether if the channel is the default one for the harvest type
-     * (snapshot or focused).
+     * Set whether if the channel is the default one for the harvest type (snapshot or focused).
      * 
-     * @param isDefault
-     *            true if default, false otherwise
+     * @param isDefault true if default, false otherwise
      */
     public void setDefault(boolean isDefault) {
         this.isDefault = isDefault;
@@ -218,8 +195,7 @@ public class HarvestChannel implements Serializable {
     /**
      * Sets the associated comments
      * 
-     * @param comments
-     *            the comments to set
+     * @param comments the comments to set
      */
     public void setComments(String comments) {
         this.comments = comments;
@@ -239,10 +215,8 @@ public class HarvestChannel implements Serializable {
     /**
      * Returns true if the given input is an acceptable channel name.
      * 
-     * @param input
-     *            the candidate name.
-     * @return true if the name complies to the defined
-     *         {@link #ACCEPTABLE_NAME_PATTERN}, false otherwise
+     * @param input the candidate name.
+     * @return true if the name complies to the defined {@link #ACCEPTABLE_NAME_PATTERN}, false otherwise
      */
     public static boolean isAcceptableName(String input) {
         return input.matches(ACCEPTABLE_NAME_PATTERN);

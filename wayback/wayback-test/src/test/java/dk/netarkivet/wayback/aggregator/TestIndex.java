@@ -30,11 +30,9 @@ import java.util.Iterator;
 import java.util.TreeSet;
 
 /**
- * Reference index able to load file, sort them and compare the result to files
- * created by the aggregator. In effect, this class performs the same
- * functionality as the real aggregator, but is written in pure Java and relies
- * on in-memory index handling. This means that the <code>TestIndex</code> class
- * can only handles small index sets.
+ * Reference index able to load file, sort them and compare the result to files created by the aggregator. In effect,
+ * this class performs the same functionality as the real aggregator, but is written in pure Java and relies on
+ * in-memory index handling. This means that the <code>TestIndex</code> class can only handles small index sets.
  */
 public class TestIndex {
     private TreeSet<String> indexSet = new TreeSet<String>();
@@ -42,20 +40,17 @@ public class TestIndex {
     /**
      * Adds the indexes contained in the indicated file to this objects index
      *
-     * @param indexFile
-     *            Name of the files to add the indexes for
+     * @param indexFile Name of the files to add the indexes for
      */
     public void addIndexesFromFile(File indexFile) {
         indexSet.addAll(indexFileToIndexSet(indexFile));
     }
 
     /**
-     * Adds the indexes contained in the indicated files to this objects index.
-     * Assumes the index file are located in the AggregatorTestCase#inputDirName
-     * directory.
+     * Adds the indexes contained in the indicated files to this objects index. Assumes the index file are located in
+     * the AggregatorTestCase#inputDirName directory.
      *
-     * @param indexFiles
-     *            Names of the files to add the indexes for
+     * @param indexFiles Names of the files to add the indexes for
      */
     public void addIndexesFromFiles(File[] indexFiles) {
         for (int i = 0; i < indexFiles.length; i++) {
@@ -64,13 +59,11 @@ public class TestIndex {
     }
 
     /**
-     * Compares the indicated index to the index maintained in this
-     * <code>testIndex</code>. The operation returns null if all indexes are the
-     * same, including the sorting of the indexes. If thew indexes are different
-     * a string describing the difference is returned
+     * Compares the indicated index to the index maintained in this <code>testIndex</code>. The operation returns null
+     * if all indexes are the same, including the sorting of the indexes. If thew indexes are different a string
+     * describing the difference is returned
      *
-     * @param indexFile
-     *            The file which should be compared to the testindex
+     * @param indexFile The file which should be compared to the testindex
      * @return Null if the indexes are equal, else a difference description.
      */
     public String compareToIndex(File indexFile) {
@@ -96,8 +89,7 @@ public class TestIndex {
     /**
      * Loads all the indexes in a files into a sorted TreeSet
      *
-     * @param indexFile
-     *            The file to load
+     * @param indexFile The file to load
      *
      * @return The sorted set containing the file indexes
      */

@@ -34,8 +34,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 
 /**
- * The structure for the deploy-config. Loads the deploy-configuration from an
- * XML file into a XmlStructure.
+ * The structure for the deploy-config. Loads the deploy-configuration from an XML file into a XmlStructure.
  */
 public class DeployConfiguration {
 
@@ -71,29 +70,17 @@ public class DeployConfiguration {
     /**
      * Constructor. Initialise everything.
      * 
-     * @param deployConfigFileName
-     *            Name of configuration file.
-     * @param netarchiveSuiteFileName
-     *            Name of installation file.
-     * @param secPolicyFileName
-     *            Name of security policy file.
-     * @param julPropFileName
-     *            Name of the log property file.
-     * @param outputDirName
-     *            Directory for the output.
-     * @param dbFileName
-     *            Name of the database.
-     * @param arcdbFileName
-     *            The name of the archive database.
-     * @param resetDir
-     *            Whether the temporary directory should be reset.
-     * @param externalJarFolder
-     *            The folder containing the external jar library files.
-     * @param sourceEncoding
-     *            the encoding to use to read input files
-     * @throws ArgumentNotValid
-     *             If one of the following arguments is null:
-     *             deployConfigFileName netarchiveSuiteFileName,
+     * @param deployConfigFileName Name of configuration file.
+     * @param netarchiveSuiteFileName Name of installation file.
+     * @param secPolicyFileName Name of security policy file.
+     * @param julPropFileName Name of the log property file.
+     * @param outputDirName Directory for the output.
+     * @param dbFileName Name of the database.
+     * @param arcdbFileName The name of the archive database.
+     * @param resetDir Whether the temporary directory should be reset.
+     * @param externalJarFolder The folder containing the external jar library files.
+     * @param sourceEncoding the encoding to use to read input files
+     * @throws ArgumentNotValid If one of the following arguments is null: deployConfigFileName netarchiveSuiteFileName,
      *             secPolicyFileName, logPropFileName.
      */
     public DeployConfiguration(File deployConfigFileName, File netarchiveSuiteFileName, File secPolicyFileName,
@@ -161,14 +148,12 @@ public class DeployConfiguration {
     }
 
     /**
-     * Method for copying the NetarchiveSuite file to output directory. This
-     * handles the following three scenarios:
+     * Method for copying the NetarchiveSuite file to output directory. This handles the following three scenarios:
      * 
      * <ol>
      * <li>outputDir == directory of zip file</li>
      * Do nothing. <br>
-     * <li>outputDir != directory of zip file, but another zip file with same
-     * name exists in the directory</li>
+     * <li>outputDir != directory of zip file, but another zip file with same name exists in the directory</li>
      * Remove the existing file before copy of the given file. <br>
      * <li>outputDir != directory of zip file and no other zip file</li>
      * Copy file to output directory.

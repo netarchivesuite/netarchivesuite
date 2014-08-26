@@ -54,17 +54,12 @@ public class StreamUtils {
     private static final String UTF8_CHARSET = "UTF-8";
 
     /**
-     * Will copy everything from input stream to jsp writer, closing input
-     * stream afterwards. Charset UTF-8 is assumed.
+     * Will copy everything from input stream to jsp writer, closing input stream afterwards. Charset UTF-8 is assumed.
      *
-     * @param in
-     *            Inputstream to copy from
-     * @param out
-     *            JspWriter to copy to
-     * @throws ArgumentNotValid
-     *             if either parameter is null
-     * @throws IOFailure
-     *             if a read or write error happens during copy
+     * @param in Inputstream to copy from
+     * @param out JspWriter to copy to
+     * @throws ArgumentNotValid if either parameter is null
+     * @throws IOFailure if a read or write error happens during copy
      */
     public static void copyInputStreamToJspWriter(InputStream in, JspWriter out) {
         ArgumentNotValid.checkNotNull(in, "InputStream in");
@@ -88,17 +83,12 @@ public class StreamUtils {
     }
 
     /**
-     * Will copy everything from input stream to output stream, closing input
-     * stream afterwards.
+     * Will copy everything from input stream to output stream, closing input stream afterwards.
      *
-     * @param in
-     *            Inputstream to copy from
-     * @param out
-     *            Outputstream to copy to
-     * @throws ArgumentNotValid
-     *             if either parameter is null
-     * @throws IOFailure
-     *             if a read or write error happens during copy
+     * @param in Inputstream to copy from
+     * @param out Outputstream to copy to
+     * @throws ArgumentNotValid if either parameter is null
+     * @throws IOFailure if a read or write error happens during copy
      */
     public static void copyInputStreamToOutputStream(InputStream in, OutputStream out) {
         ArgumentNotValid.checkNotNull(in, "InputStream in");
@@ -134,15 +124,11 @@ public class StreamUtils {
     }
 
     /**
-     * Write document tree to stream. Note, the stream is flushed, but not
-     * closed.
+     * Write document tree to stream. Note, the stream is flushed, but not closed.
      *
-     * @param doc
-     *            the document tree to save.
-     * @param os
-     *            the stream to write xml to
-     * @throws IOFailure
-     *             On trouble writing XML to stream.
+     * @param doc the document tree to save.
+     * @param os the stream to write xml to
+     * @throws IOFailure On trouble writing XML to stream.
      */
     public static void writeXmlToStream(Document doc, OutputStream os) {
         ArgumentNotValid.checkNotNull(doc, "Document doc");
@@ -170,13 +156,10 @@ public class StreamUtils {
     /**
      * Reads an input stream and returns it as a string.
      * 
-     * @param in
-     *            The input stream.
+     * @param in The input stream.
      * @return The string content of the input stream in the UTF8-charset.
-     * @throws ArgumentNotValid
-     *             If the input stream is null.
-     * @throws IOFailure
-     *             If an IOException is caught while reading the inputstream.
+     * @throws ArgumentNotValid If the input stream is null.
+     * @throws IOFailure If an IOException is caught while reading the inputstream.
      */
     public static String getInputStreamAsString(InputStream in) throws ArgumentNotValid, IOFailure {
         ArgumentNotValid.checkNotNull(in, "InputStream in");
@@ -204,10 +187,8 @@ public class StreamUtils {
     /**
      * Convert inputStream to byte array.
      *
-     * @param data
-     *            inputstream
-     * @param dataLength
-     *            length of inputstream (must be larger than 0)
+     * @param data inputstream
+     * @param dataLength length of inputstream (must be larger than 0)
      * @return byte[] containing data in inputstream
      */
     public static byte[] inputStreamToBytes(InputStream data, int dataLength) {

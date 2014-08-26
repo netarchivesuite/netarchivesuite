@@ -101,8 +101,8 @@ public class JobDAOTester extends DataModelTestCase {
     }
 
     /**
-     * This test creates (and stores) a new job and reads it back again Verifies
-     * that state of stored job equals state of original job
+     * This test creates (and stores) a new job and reads it back again Verifies that state of stored job equals state
+     * of original job
      * 
      * @throws SQLException
      */
@@ -191,8 +191,7 @@ public class JobDAOTester extends DataModelTestCase {
     }
 
     /**
-     * This test creates (and stores) a new job, modifies it, and checks that
-     * the modified job can be retrieved.
+     * This test creates (and stores) a new job, modifies it, and checks that the modified job can be retrieved.
      * 
      * @throws SQLException
      */
@@ -263,8 +262,7 @@ public class JobDAOTester extends DataModelTestCase {
     }
 
     /**
-     * Test that the max objects per domain attribute can be updated in
-     * persistent storage.
+     * Test that the max objects per domain attribute can be updated in persistent storage.
      * 
      * @throws Exception
      */
@@ -300,8 +298,7 @@ public class JobDAOTester extends DataModelTestCase {
     }
 
     /*
-     * Check that an apropriate number of jobs of various statuses are found
-     * with getAll()
+     * Check that an apropriate number of jobs of various statuses are found with getAll()
      */
     private void assertJobsFound(String msg, int c_new, int c_submitted, int c_started, int c_failed, int c_done) {
         JobDAO jdao = JobDAO.getInstance();
@@ -504,7 +501,7 @@ public class JobDAOTester extends DataModelTestCase {
 
         Map<String, String[]> params = new HashMap<String, String[]>();
         params.put(HarvestStatusQuery.UI_FIELD.JOB_ID_ORDER.name(),
-                new String[] { HarvestStatusQuery.SORT_ORDER.DESC.name() });
+                new String[] {HarvestStatusQuery.SORT_ORDER.DESC.name()});
         HarvestStatusQuery query = HarvestStatusTester.getTestQuery(params);
         infos = dao.getStatusInfo(query).getJobStatusInfo();
         assertEquals("Query returned wrong number of jobs", 2, infos.size());
@@ -521,12 +518,12 @@ public class JobDAOTester extends DataModelTestCase {
         assertEquals("Should get info on one job with status DONE", 1, infos.size());
 
         params.clear();
-        params.put(HarvestStatusQuery.UI_FIELD.JOB_STATUS.name(), new String[] { JobStatus.DONE.name() });
+        params.put(HarvestStatusQuery.UI_FIELD.JOB_STATUS.name(), new String[] {JobStatus.DONE.name()});
         query = HarvestStatusTester.getTestQuery(params);
         infos = dao.getStatusInfo(query).getJobStatusInfo();
         assertEquals("Should get info on one job with status DONE (ascending)", 1, infos.size());
         params.put(HarvestStatusQuery.UI_FIELD.JOB_ID_ORDER.name(),
-                new String[] { HarvestStatusQuery.SORT_ORDER.DESC.name() });
+                new String[] {HarvestStatusQuery.SORT_ORDER.DESC.name()});
         query = HarvestStatusTester.getTestQuery(params);
         infos = dao.getStatusInfo(query).getJobStatusInfo();
         assertEquals("Should get info on one job with status DONE (descending)", 1, infos.size());
@@ -537,8 +534,7 @@ public class JobDAOTester extends DataModelTestCase {
     }
 
     /**
-     * Test that we can get reasonable status info about jobs from specific
-     * harvest runs.
+     * Test that we can get reasonable status info about jobs from specific harvest runs.
      * 
      * @throws Exception
      */
@@ -685,13 +681,11 @@ public class JobDAOTester extends DataModelTestCase {
      *
      * The following cases are tested:
      *
-     * Unknown job ID. Partial harvests with no previous harvest is present
-     * should return empty list. Partial harvests with two previous harvests
-     * should return jobs from first harvest. Full harvest with no previous full
-     * harvests should return empty list. Full harvest not based on anything but
-     * with previous chain should return that. Full harvest based on something
-     * but with no previous chain should return that. Full harvest based on
-     * something AND with previous chains should return that.
+     * Unknown job ID. Partial harvests with no previous harvest is present should return empty list. Partial harvests
+     * with two previous harvests should return jobs from first harvest. Full harvest with no previous full harvests
+     * should return empty list. Full harvest not based on anything but with previous chain should return that. Full
+     * harvest based on something but with no previous chain should return that. Full harvest based on something AND
+     * with previous chains should return that.
      *
      *
      * @throws Exception
@@ -716,7 +710,7 @@ public class JobDAOTester extends DataModelTestCase {
         assertEquals("Should get empty list on no previous harvest", 0, result.size());
 
         result = dao.getJobIDsForDuplicateReduction(7L);
-        expected = Arrays.asList(new Long[] { 4L, 5L });
+        expected = Arrays.asList(new Long[] {4L, 5L});
         Collections.sort(result);
         Collections.sort(expected);
         assertEquals("Should get previous harvests' job ids in list", expected, result);
@@ -725,19 +719,19 @@ public class JobDAOTester extends DataModelTestCase {
         assertEquals("Should get empty list on no previous harvest", 0, result.size());
 
         result = dao.getJobIDsForDuplicateReduction(10L);
-        expected = Arrays.asList(new Long[] { 8L, 9L });
+        expected = Arrays.asList(new Long[] {8L, 9L});
         Collections.sort(result);
         Collections.sort(expected);
         assertEquals("Should get originating harvests' job ids in list", expected, result);
 
         result = dao.getJobIDsForDuplicateReduction(12L);
-        expected = Arrays.asList(new Long[] { 8L, 9L, 10L, 11L });
+        expected = Arrays.asList(new Long[] {8L, 9L, 10L, 11L});
         Collections.sort(result);
         Collections.sort(expected);
         assertEquals("Should get previous full harvests' job ids in list", expected, result);
 
         result = dao.getJobIDsForDuplicateReduction(14L);
-        expected = Arrays.asList(new Long[] { 8L, 9L, 10L, 11L, 12L, 13L });
+        expected = Arrays.asList(new Long[] {8L, 9L, 10L, 11L, 12L, 13L});
         Collections.sort(result);
         Collections.sort(expected);
         assertEquals("Should get previous full harvests' job ids in list", expected, result);
@@ -767,8 +761,7 @@ public class JobDAOTester extends DataModelTestCase {
         assertEquals("Should have new edition", 1L, newJob1.getEdition());
         assertEquals("Should have new ID", newID, newJob1.getJobID());
         /*
-         * assertNotSame("The harvestnamePrefixes should not be the same",
-         * oldJob1.getHarvestFilenamePrefix(),
+         * assertNotSame("The harvestnamePrefixes should not be the same", oldJob1.getHarvestFilenamePrefix(),
          * newJob1.getHarvestFilenamePrefix());
          */
     }
@@ -790,8 +783,7 @@ public class JobDAOTester extends DataModelTestCase {
     }
 
     /**
-     * Tests method in JobDBDAO.rescheduleJob Now verifies, that the new job has
-     * startdate and enddate set to null.
+     * Tests method in JobDBDAO.rescheduleJob Now verifies, that the new job has startdate and enddate set to null.
      */
     @Test
     public void testRescheduleJob() {

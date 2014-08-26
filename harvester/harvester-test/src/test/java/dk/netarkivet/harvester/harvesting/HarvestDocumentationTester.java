@@ -90,15 +90,13 @@ public class HarvestDocumentationTester {
     }
 
     /**
-     * Unit test of method HarvestDocumentation.documentHarvest(). For
-     * simplicity, this test only covers the normal case; error cases are tested
-     * by the method below.
+     * Unit test of method HarvestDocumentation.documentHarvest(). For simplicity, this test only covers the normal
+     * case; error cases are tested by the method below.
      *
-     * Verifies that after calling the method, a new ARC file is created with
-     * the appropriate name (see getMetadataARCFileName()). Verifies that this
-     * ARC file contains one record of MIME type "application/cdx" per original
-     * ARC file in the dir (and no other records of that type). Verifies that
-     * the CDX records are named appropriately (see getCDXURI()).
+     * Verifies that after calling the method, a new ARC file is created with the appropriate name (see
+     * getMetadataARCFileName()). Verifies that this ARC file contains one record of MIME type "application/cdx" per
+     * original ARC file in the dir (and no other records of that type). Verifies that the CDX records are named
+     * appropriately (see getCDXURI()).
      *
      * @throws IOException
      */
@@ -106,8 +104,7 @@ public class HarvestDocumentationTester {
     @Test
     public void testDocumentHarvestOrdinaryCase() throws IOException {
         /*
-         * Run the method on a working-dir that mirrors
-         * TestInfo.METADATA_TEST_DIR.
+         * Run the method on a working-dir that mirrors TestInfo.METADATA_TEST_DIR.
          */
         TestInfo.WORKING_DIR.mkdirs();
         TestFileUtils.copyDirectoryNonCVS(TestInfo.METADATA_TEST_DIR, TestInfo.WORKING_DIR);
@@ -173,10 +170,9 @@ public class HarvestDocumentationTester {
     }
 
     /**
-     * Unit test of method HarvestDocumentation.documentHarvest(). This unit
-     * test covers the following error cases: - dir does not exist or is not dir
-     * -> IOFailure - the ARC files in dir do not share harvestID and jobID ->
-     * throw UnknownID
+     * Unit test of method HarvestDocumentation.documentHarvest(). This unit test covers the following error cases: -
+     * dir does not exist or is not dir -> IOFailure - the ARC files in dir do not share harvestID and jobID -> throw
+     * UnknownID
      */
     @Test
     public void testDocumentHarvestExceptionalCases() {
@@ -220,9 +216,8 @@ public class HarvestDocumentationTester {
     }
 
     /**
-     * Unit test for HarvestDocumentation.getMetadataARCFileName() Verifies that
-     * the name of the new ARC file ends on .arc and that the parameter is part
-     * of the file name. Also verifies that null parameters are not accepted.
+     * Unit test for HarvestDocumentation.getMetadataARCFileName() Verifies that the name of the new ARC file ends on
+     * .arc and that the parameter is part of the file name. Also verifies that null parameters are not accepted.
      */
     @Test
     public void testGetMetadataARCFileName() {
@@ -240,10 +235,9 @@ public class HarvestDocumentationTester {
     }
 
     /**
-     * Unit test for HarvestDocumentation.getCDXURI() Verfies that the URI
-     * begins with "metadata://netarkivet.dk/crawl/index/cdx?" and that it
-     * contains all four of the method's parameters. Also verifies that null
-     * parameters are not accepted.
+     * Unit test for HarvestDocumentation.getCDXURI() Verfies that the URI begins with
+     * "metadata://netarkivet.dk/crawl/index/cdx?" and that it contains all four of the method's parameters. Also
+     * verifies that null parameters are not accepted.
      */
     @Test
     public void testGetCDXURI() {
@@ -280,8 +274,8 @@ public class HarvestDocumentationTester {
     }
 
     /**
-     * Unit test method for generating a CDX index of an Arc file. FIXME Broken
-     * by http://sbforge.org/jira/browse/NAS-1918
+     * Unit test method for generating a CDX index of an Arc file. FIXME Broken by
+     * http://sbforge.org/jira/browse/NAS-1918
      * 
      * @throws IOException
      */
@@ -378,10 +372,9 @@ public class HarvestDocumentationTester {
     }
 
     /**
-     * Test that any files not part of the current harvest are moved away to the
-     * oldjobsdir during postprocessing. This test includes a check for issue
-     * https://sbforge.org/jira/browse/NAS-2270 which resulted in at most one
-     * old file being movied away.
+     * Test that any files not part of the current harvest are moved away to the oldjobsdir during postprocessing. This
+     * test includes a check for issue https://sbforge.org/jira/browse/NAS-2270 which resulted in at most one old file
+     * being movied away.
      * 
      * @throws Exception
      */
@@ -435,11 +428,10 @@ public class HarvestDocumentationTester {
     }
 
     /**
-     * This tests, that bug 722 is solved. It should document, that we 1)
-     * generate a metadata-arc-file for the harvestjob, if one does not exist 2)
-     * Don't generate metadata-arc file, it already exists but issue a warning
-     * instead. 3) [not testable in this class] only upload the
-     * metadata-arc-file after all other arc-files have been uploaded.
+     * This tests, that bug 722 is solved. It should document, that we 1) generate a metadata-arc-file for the
+     * harvestjob, if one does not exist 2) Don't generate metadata-arc file, it already exists but issue a warning
+     * instead. 3) [not testable in this class] only upload the metadata-arc-file after all other arc-files have been
+     * uploaded.
      *
      * @throws Exception
      */
@@ -480,8 +472,7 @@ public class HarvestDocumentationTester {
     }
 
     /**
-     * Test that all necessary harvest logs, reports and configurations are
-     * stored in the proper way.
+     * Test that all necessary harvest logs, reports and configurations are stored in the proper way.
      *
      * @throws IOException
      */
@@ -565,10 +556,10 @@ public class HarvestDocumentationTester {
 
         String heritrixFilePattern = Settings.get(HarvesterSettings.METADATA_HERITRIX_FILE_PATTERN);
 
-        String[] heritrixFiles = { "order.xml", "harvestInfo.xml", "seeds.txt", "crawl-report.txt",
+        String[] heritrixFiles = {"order.xml", "harvestInfo.xml", "seeds.txt", "crawl-report.txt",
                 "frontier-report.txt", "hosts-report.txt", "mimetype-report.txt", "processors-report.txt",
                 "responsecode-report.txt," + "seeds-report.txt", "crawl.log", "local-errors.log",
-                "progress-statistics.log", "runtime-errors.log", "uri-errors.log", "heritrix.out" };
+                "progress-statistics.log", "runtime-errors.log", "uri-errors.log", "heritrix.out"};
 
         for (String f : heritrixFiles) {
             assertTrue(f + " does not match " + heritrixFilePattern, f.matches(heritrixFilePattern));
@@ -576,8 +567,8 @@ public class HarvestDocumentationTester {
 
         String reportFilePattern = Settings.get(HarvesterSettings.METADATA_REPORT_FILE_PATTERN);
 
-        String[] reportFiles = { "crawl-report.txt", "frontier-report.txt", "hosts-report.txt", "mimetype-report.txt",
-                "processors-report.txt", "responsecode-report.txt," + "seeds-report.txt" };
+        String[] reportFiles = {"crawl-report.txt", "frontier-report.txt", "hosts-report.txt", "mimetype-report.txt",
+                "processors-report.txt", "responsecode-report.txt," + "seeds-report.txt"};
 
         for (String f : reportFiles) {
             assertTrue(f + " does not match " + heritrixFilePattern, f.matches(heritrixFilePattern));
@@ -586,8 +577,8 @@ public class HarvestDocumentationTester {
 
         String logFilePattern = Settings.get(HarvesterSettings.METADATA_LOG_FILE_PATTERN);
 
-        String[] logFiles = { "crawl.log", "local-errors.log", "progress-statistics.log", "runtime-errors.log",
-                "uri-errors.log", "heritrix.out" };
+        String[] logFiles = {"crawl.log", "local-errors.log", "progress-statistics.log", "runtime-errors.log",
+                "uri-errors.log", "heritrix.out"};
 
         for (String f : logFiles) {
             assertTrue(f + " does not match " + heritrixFilePattern, f.matches(heritrixFilePattern));

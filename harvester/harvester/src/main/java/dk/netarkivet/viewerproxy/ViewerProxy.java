@@ -31,20 +31,15 @@ import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.viewerproxy.distribute.HTTPControllerServer;
 
 /**
- * Singleton of a viewerproxy. The viewerproxy consists of: - A JobIndexCache,
- * which is able to retrieve a Lucene index file for a list of jobs - An
- * ArcRepositoryClient used by ARCArchiveAccess - An ARCArchiveAccess, which
- * retrieves objects from an ARC repository - A MissingURIRecorder, which
- * records missing urls - A DelegatingController, which delegates commands to
- * change index and handle missing url collection - An NotifyingURLResolver,
- * which looks up URLs in an ARCArchiveAccess, and notifies Observers about
- * missing URLs, - An UnknownCommandResolver, which generates an error for
- * unknown command urls and pass on non-command urls to the NotifyingURLResolver
- * - A GetDataResolver, which handles certain command urls for getting raw data
- * and pass on the rest to the UnknownCommandResolver, - A HTTPControllerServer,
- * which delegates certain command urls to a controller and pass on the rest to
- * the GetDataResolver, - A WebProxy, which listens for http requests, and sends
- * them to the HTTPControllerServer
+ * Singleton of a viewerproxy. The viewerproxy consists of: - A JobIndexCache, which is able to retrieve a Lucene index
+ * file for a list of jobs - An ArcRepositoryClient used by ARCArchiveAccess - An ARCArchiveAccess, which retrieves
+ * objects from an ARC repository - A MissingURIRecorder, which records missing urls - A DelegatingController, which
+ * delegates commands to change index and handle missing url collection - An NotifyingURLResolver, which looks up URLs
+ * in an ARCArchiveAccess, and notifies Observers about missing URLs, - An UnknownCommandResolver, which generates an
+ * error for unknown command urls and pass on non-command urls to the NotifyingURLResolver - A GetDataResolver, which
+ * handles certain command urls for getting raw data and pass on the rest to the UnknownCommandResolver, - A
+ * HTTPControllerServer, which delegates certain command urls to a controller and pass on the rest to the
+ * GetDataResolver, - A WebProxy, which listens for http requests, and sends them to the HTTPControllerServer
  */
 public class ViewerProxy implements CleanupIF {
     /** The singleton instance of this class. */
@@ -56,17 +51,14 @@ public class ViewerProxy implements CleanupIF {
     /** The unknown Command resolver. */
     private UnknownCommandResolver unknownCommandResolver;
     /**
-     * The data resolver handling the different operations available here,
-     * {@link GetDataResolver#GET_FILE_COMMAND},
-     * {@link GetDataResolver#GET_METADATA_COMMAND},
-     * {@link GetDataResolver#GET_RECORD_COMMAND}.
+     * The data resolver handling the different operations available here, {@link GetDataResolver#GET_FILE_COMMAND},
+     * {@link GetDataResolver#GET_METADATA_COMMAND}, {@link GetDataResolver#GET_RECORD_COMMAND}.
      */
     private GetDataResolver getDataResolver;
     /** The NotifyingURIResolver. */
     private NotifyingURIResolver notifyingURIResolver;
     /**
-     * The indexcache used. Trying to retrieve an index forces this index to be
-     * generated, if it doesn't exist.
+     * The indexcache used. Trying to retrieve an index forces this index to be generated, if it doesn't exist.
      */
     private JobIndexCache luceneIndexCache;
     /** The object responsible for retrieving ARC data. */
@@ -74,8 +66,7 @@ public class ViewerProxy implements CleanupIF {
     /** The Control object for the viewerProxy. See {@link Controller}. */
     private Controller controller;
     /**
-     * This enables us to record missing URL when accessing data through this
-     * proxy.
+     * This enables us to record missing URL when accessing data through this proxy.
      */
     private MissingURIRecorder missingURIRecorder;
     /** This provides read-only access to the data in the archive. */

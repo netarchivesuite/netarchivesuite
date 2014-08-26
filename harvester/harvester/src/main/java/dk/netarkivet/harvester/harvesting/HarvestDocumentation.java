@@ -59,11 +59,10 @@ import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriterWarc;
 import dk.netarkivet.harvester.harvesting.metadata.PersistentJobData;
 
 /**
- * This class contains code for documenting a harvest. Metadata is read from the
- * directories associated with a given harvest-job-attempt (i.e. one
- * DoCrawlMessage sent to a harvest server). The collected metadata are written
- * to a new metadata file that is managed by IngestableFiles. Temporary metadata
- * files will be deleted after this metadata file has been written.
+ * This class contains code for documenting a harvest. Metadata is read from the directories associated with a given
+ * harvest-job-attempt (i.e. one DoCrawlMessage sent to a harvest server). The collected metadata are written to a new
+ * metadata file that is managed by IngestableFiles. Temporary metadata files will be deleted after this metadata file
+ * has been written.
  */
 public class HarvestDocumentation {
 
@@ -81,31 +80,21 @@ public class HarvestDocumentation {
     private static final String CDX_URI_FILENAME_PARAMETER_NAME = "filename";
 
     /**
-     * Documents the harvest under the given dir in a packaged metadata arc file
-     * in a directory 'metadata' under the current dir. Only documents the files
-     * belonging to the given jobID, the rest are moved to oldjobs.
+     * Documents the harvest under the given dir in a packaged metadata arc file in a directory 'metadata' under the
+     * current dir. Only documents the files belonging to the given jobID, the rest are moved to oldjobs.
      *
-     * In the current implementation, the documentation consists of CDX indices
-     * over all ARC files (with one CDX record per harvested ARC file), plus
-     * packaging of log files.
+     * In the current implementation, the documentation consists of CDX indices over all ARC files (with one CDX record
+     * per harvested ARC file), plus packaging of log files.
      *
-     * If this method finishes without an exception, it is guaranteed that
-     * metadata is ready for upload.
+     * If this method finishes without an exception, it is guaranteed that metadata is ready for upload.
      * 
-     * TODO Place preharvestmetadata in IngestableFiles-defined area TODO This
-     * method may be a good place to copy deduplicate information from the crawl
-     * log to the cdx file.
+     * TODO Place preharvestmetadata in IngestableFiles-defined area TODO This method may be a good place to copy
+     * deduplicate information from the crawl log to the cdx file.
      *
-     * @param ingestables
-     *            Information about the finished crawl (crawldir, jobId,
-     *            harvestID).
+     * @param ingestables Information about the finished crawl (crawldir, jobId, harvestID).
      * 
-     * @throws ArgumentNotValid
-     *             if crawlDir is null or does not exist, or if jobID or
-     *             harvestID is negative.
-     * @throws IOFailure
-     *             if - reading ARC files or temporary files fails - writing a
-     *             file to arcFilesDir fails
+     * @throws ArgumentNotValid if crawlDir is null or does not exist, or if jobID or harvestID is negative.
+     * @throws IOFailure if - reading ARC files or temporary files fails - writing a file to arcFilesDir fails
      */
     public static void documentHarvest(IngestableFiles ingestables) throws IOFailure {
         ArgumentNotValid.checkNotNull(ingestables, "ingestables");
@@ -228,11 +217,9 @@ public class HarvestDocumentation {
     }
 
     /**
-     * Restore serialized MetadataEntry objects from the "metadata" subdirectory
-     * of the crawldir.
+     * Restore serialized MetadataEntry objects from the "metadata" subdirectory of the crawldir.
      * 
-     * @param crawlDir
-     *            the given crawl directory
+     * @param crawlDir the given crawl directory
      * @return a set of deserialized MetadataEntry objects
      */
     private static List<MetadataEntry> getStoredMetadata(File crawlDir) {
@@ -246,20 +233,15 @@ public class HarvestDocumentation {
     }
 
     /**
-     * Generates a URI identifying CDX info for one harvested (W)ARC file. In
-     * Netarkivet, all of the parameters below are in the (W)ARC file's name.
+     * Generates a URI identifying CDX info for one harvested (W)ARC file. In Netarkivet, all of the parameters below
+     * are in the (W)ARC file's name.
      * 
-     * @param harvestID
-     *            The number of the harvest that generated the (W)ARC file.
-     * @param jobID
-     *            The number of the job that generated the (W)ARC file.
-     * @param filename
-     *            The name of the ARC or WARC file behind the cdx-data
+     * @param harvestID The number of the harvest that generated the (W)ARC file.
+     * @param jobID The number of the job that generated the (W)ARC file.
+     * @param filename The name of the ARC or WARC file behind the cdx-data
      * @return A URI in the proprietary schema "metadata".
-     * @throws ArgumentNotValid
-     *             if any parameter is null.
-     * @throws UnknownID
-     *             if something goes terribly wrong in our URI construction.
+     * @throws ArgumentNotValid if any parameter is null.
+     * @throws UnknownID if something goes terribly wrong in our URI construction.
      */
     public static URI getCDXURI(String harvestID, String jobID, String filename) throws ArgumentNotValid, UnknownID {
         ArgumentNotValid.checkNotNull(harvestID, "harvestID");
@@ -285,16 +267,12 @@ public class HarvestDocumentation {
     /**
      * Generates a URI identifying CDX info for one harvested ARC file.
      *
-     * @param jobID
-     *            The number of the job that generated the ARC file.
-     * @param filename
-     *            the filename.
+     * @param jobID The number of the job that generated the ARC file.
+     * @param filename the filename.
      * 
      * @return A URI in the proprietary schema "metadata".
-     * @throws ArgumentNotValid
-     *             if any parameter is null.
-     * @throws UnknownID
-     *             if something goes terribly wrong in our URI construction.
+     * @throws ArgumentNotValid if any parameter is null.
+     * @throws UnknownID if something goes terribly wrong in our URI construction.
      */
     public static URI getAlternateCDXURI(long jobID, String filename) throws ArgumentNotValid, UnknownID {
         ArgumentNotValid.checkNotNull(jobID, "jobID");
@@ -319,16 +297,11 @@ public class HarvestDocumentation {
     /**
      * Generate the query part of a CDX URI.
      * 
-     * @param harvestID
-     *            The number of the harvest that generated the ARC file.
-     * @param jobID
-     *            The number of the job that generated the ARC file.
-     * @param timeStamp
-     *            The timestamp in the name of the ARC file.
-     * @param serialNumber
-     *            The serial no. in the name of the ARC file.
-     * @return An appropriate list of assigned parameters, separated by the "&"
-     *         character.
+     * @param harvestID The number of the harvest that generated the ARC file.
+     * @param jobID The number of the job that generated the ARC file.
+     * @param timeStamp The timestamp in the name of the ARC file.
+     * @param serialNumber The serial no. in the name of the ARC file.
+     * @return An appropriate list of assigned parameters, separated by the "&" character.
      */
     private static String getCDXURIQuery(String harvestID, String jobID, String filename) {
         String result = CDX_URI_VERSION_PARAMETERS;
@@ -342,12 +315,9 @@ public class HarvestDocumentation {
     /**
      * Generate the query part of a CDX URI. Alternate version
      * 
-     * @param jobID
-     *            The number of the job that generated the ARC file.
-     * @param filename
-     *            the filename of the arcfile
-     * @return An appropriate list of assigned parameters, separated by the "&"
-     *         character.
+     * @param jobID The number of the job that generated the ARC file.
+     * @param filename the filename of the arcfile
+     * @return An appropriate list of assigned parameters, separated by the "&" character.
      */
     private static String getAlternateCDXURIQuery(long jobID, String filename) {
         String result = ALTERNATE_CDX_URI_VERSION_PARAMETERS;
@@ -357,17 +327,12 @@ public class HarvestDocumentation {
     }
 
     /**
-     * Iterates over the (W)ARC files in the given dir and moves away files that
-     * do not belong to the given job into a "lost-files" directory under
-     * oldjobs named with a timestamp.
+     * Iterates over the (W)ARC files in the given dir and moves away files that do not belong to the given job into a
+     * "lost-files" directory under oldjobs named with a timestamp.
      *
-     * @param archiveProfile
-     *            archive profile including filters, patterns, etc.
-     * @param dir
-     *            A directory containing one or more (W)ARC files.
-     * @param files
-     *            Information about the files produced by heritrix (jobId and
-     *            harvestnamePrefix)
+     * @param archiveProfile archive profile including filters, patterns, etc.
+     * @param dir A directory containing one or more (W)ARC files.
+     * @param files Information about the files produced by heritrix (jobId and harvestnamePrefix)
      */
     private static void moveAwayForeignFiles(ArchiveProfile archiveProfile, File dir, IngestableFiles files) {
         File[] archiveFiles = dir.listFiles(archiveProfile.filename_filter);
@@ -399,25 +364,16 @@ public class HarvestDocumentation {
     }
 
     /**
-     * Write harvestdetails to archive file(s). This includes the order.xml,
-     * seeds.txt, specific settings.xml for certain domains, the
-     * harvestInfo.xml, All available reports (subset of
-     * HeritrixFiles.HERITRIX_REPORTS), All available logs (subset of
-     * HeritrixFiles.HERITRIX_LOGS).
+     * Write harvestdetails to archive file(s). This includes the order.xml, seeds.txt, specific settings.xml for
+     * certain domains, the harvestInfo.xml, All available reports (subset of HeritrixFiles.HERITRIX_REPORTS), All
+     * available logs (subset of HeritrixFiles.HERITRIX_LOGS).
      *
-     * @param jobID
-     *            the given job Id
-     * @param harvestID
-     *            the id for the harvestdefinition, which created this job
-     * @param crawlDir
-     *            the directory where the crawljob took place
-     * @param writer
-     *            an MetadaFileWriter used to store the harvest configuration,
-     *            and harvest logs and reports.
-     * @param heritrixVersion
-     *            the heritrix version used by the harvest.
-     * @throws ArgumentNotValid
-     *             If null arguments occur
+     * @param jobID the given job Id
+     * @param harvestID the id for the harvestdefinition, which created this job
+     * @param crawlDir the directory where the crawljob took place
+     * @param writer an MetadaFileWriter used to store the harvest configuration, and harvest logs and reports.
+     * @param heritrixVersion the heritrix version used by the harvest.
+     * @throws ArgumentNotValid If null arguments occur
      * @return a list of files added to the archive file.
      */
     private static List<File> writeHarvestDetails(long jobID, long harvestID, File crawlDir, MetadataFileWriter mdfw,
@@ -500,11 +456,9 @@ public class HarvestDocumentation {
     }
 
     /**
-     * Finds domain-specific configurations in the settings subdirectory of the
-     * crawl directory.
+     * Finds domain-specific configurations in the settings subdirectory of the crawl directory.
      * 
-     * @param settingsDir
-     *            the given settings directory
+     * @param settingsDir the given settings directory
      * @return the settings file paired with their domain..
      */
     private static Map<File, String> findDomainSpecificSettings(File settingsDir) {
@@ -532,12 +486,9 @@ public class HarvestDocumentation {
     /**
      * Find all domains which have a settings.xml file in the given directory.
      * 
-     * @param directory
-     *            a given directory
-     * @param domainReversed
-     *            the domain reversed
-     * @return a list of domains (in reverse), which contained a file with given
-     *         filename
+     * @param directory a given directory
+     * @param domainReversed the domain reversed
+     * @return a list of domains (in reverse), which contained a file with given filename
      */
     private static List<String> findAllDomainsWithSettings(File directory, String domainReversed) {
         if (!directory.isDirectory()) {
@@ -568,8 +519,7 @@ public class HarvestDocumentation {
     /**
      * Reverses a domain string, e.g. reverses "com.amazon" to "amazon.com"
      * 
-     * @param reversedDomain
-     *            the domain name to reverse
+     * @param reversedDomain the domain name to reverse
      * @return the reversed domain string
      */
     private static String reverseDomainString(String reversedDomain) {

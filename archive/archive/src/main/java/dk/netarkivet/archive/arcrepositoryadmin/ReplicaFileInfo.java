@@ -30,8 +30,7 @@ import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
- * This is a container for the ReplicaFileInfo table in the bitpreservation
- * database.
+ * This is a container for the ReplicaFileInfo table in the bitpreservation database.
  */
 public class ReplicaFileInfo {
     /** The guid. Unique identification key. */
@@ -58,30 +57,18 @@ public class ReplicaFileInfo {
     /**
      * Constructor.
      * 
-     * @param gId
-     *            The guid.
-     * @param rId
-     *            The replicaId.
-     * @param fId
-     *            The fileId.
-     * @param sId
-     *            the segmentId.
-     * @param cs
-     *            The checksum.
-     * @param us
-     *            The uploadstatus.
-     * @param fs
-     *            The fileliststatus.
-     * @param css
-     *            The checksumstatus.
-     * @param fDate
-     *            The date for the last filelist update.
-     * @param cDate
-     *            The date for the last checksum update.
-     * @throws ArgumentNotValid
-     *             If gId or fId is negative, the rId is either null or the
-     *             empty string. The other variables are not validated, since
-     *             they are allowed to be null (e.g. the dates before they are
+     * @param gId The guid.
+     * @param rId The replicaId.
+     * @param fId The fileId.
+     * @param sId the segmentId.
+     * @param cs The checksum.
+     * @param us The uploadstatus.
+     * @param fs The fileliststatus.
+     * @param css The checksumstatus.
+     * @param fDate The date for the last filelist update.
+     * @param cDate The date for the last checksum update.
+     * @throws ArgumentNotValid If gId or fId is negative, the rId is either null or the empty string. The other
+     *             variables are not validated, since they are allowed to be null (e.g. the dates before they are
      *             updated).
      */
     public ReplicaFileInfo(long gId, String rId, long fId, long sId, String cs, int us, int fs, int css, Date fDate,

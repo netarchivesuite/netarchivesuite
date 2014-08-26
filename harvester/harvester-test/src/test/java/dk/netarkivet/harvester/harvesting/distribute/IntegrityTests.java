@@ -72,8 +72,7 @@ import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
- * Integrity tests for the dk.harvester.harvesting.distribute package. Both
- * tests assume an FTP server is running.
+ * Integrity tests for the dk.harvester.harvesting.distribute package. Both tests assume an FTP server is running.
  */
 @Ignore("Needs to be run in deploy-test according to junit3 TestSuite")
 public class IntegrityTests extends DataModelTestCase {
@@ -310,9 +309,8 @@ public class IntegrityTests extends DataModelTestCase {
     }
 
     /**
-     * Checks that we can submit a crawl job, receive the expected
-     * CrawlStatusMessages from a HarvestControllerServer, and that the
-     * resulting crawl log is available and contains the expected data.
+     * Checks that we can submit a crawl job, receive the expected CrawlStatusMessages from a HarvestControllerServer,
+     * and that the resulting crawl log is available and contains the expected data.
      * 
      * @throws IOException
      * @throws InterruptedException

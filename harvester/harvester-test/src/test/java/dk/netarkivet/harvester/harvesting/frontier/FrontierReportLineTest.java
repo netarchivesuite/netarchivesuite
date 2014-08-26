@@ -36,7 +36,7 @@ public class FrontierReportLineTest {
     @Test
     public final void testParseReports() throws IOException {
 
-        String[] files = new String[] { "frontierReport_all_sample_small.txt", "frontierReport_all_sample_atlas502.txt" };
+        String[] files = new String[] {"frontierReport_all_sample_small.txt", "frontierReport_all_sample_atlas502.txt"};
 
         for (String file : files) {
             File report = new File(TestInfo.BASEDIR, file);

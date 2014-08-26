@@ -43,8 +43,8 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringTree;
 
 /**
- * This class encapsulates the bitarchive or checksum replicas. It guarantees
- * that there is only one Replica object per replica id/name.
+ * This class encapsulates the bitarchive or checksum replicas. It guarantees that there is only one Replica object per
+ * replica id/name.
  */
 public class Replica {
 
@@ -58,21 +58,16 @@ public class Replica {
     /** The type of this replica (checksum or bitarchive). */
     private final ReplicaType type;
     /**
-     * List of the replicas we know of. This list is initialized by the "first"
-     * call to initializeKnownReplicasList().
+     * List of the replicas we know of. This list is initialized by the "first" call to initializeKnownReplicasList().
      */
     private static Map<String, Replica> knownReplicas;
 
     /**
-     * Private constructor that makes a new Replica object. These will all be
-     * stored in the knownReplicas map.
+     * Private constructor that makes a new Replica object. These will all be stored in the knownReplicas map.
      * 
-     * @param repId
-     *            Id of the replica (e.g. One)
-     * @param repName
-     *            Name of the replica (e.g. ReplicaOne)
-     * @param repType
-     *            Type of the replica (e.g. biarchive)
+     * @param repId Id of the replica (e.g. One)
+     * @param repName Name of the replica (e.g. ReplicaOne)
+     * @param repType Type of the replica (e.g. biarchive)
      */
     private Replica(String repId, String repName, ReplicaType repType) {
         this.id = repId;
@@ -81,8 +76,8 @@ public class Replica {
     }
 
     /**
-     * Initialize the list of known replicas from settings. This must be called
-     * before using known, but after settings are loaded.
+     * Initialize the list of known replicas from settings. This must be called before using known, but after settings
+     * are loaded.
      */
     private static synchronized void initializeKnownReplicasList() {
         if (knownReplicas == null) {
@@ -103,11 +98,9 @@ public class Replica {
     /**
      * Get an object representing the replica with the given id.
      * 
-     * @param id
-     *            The given name of an replica
+     * @param id The given name of an replica
      * @return an object representing the replica with the given id
-     * @throws UnknownID
-     *             if no replica is known with the given id
+     * @throws UnknownID if no replica is known with the given id
      */
     public static Replica getReplicaFromId(String id) {
         ArgumentNotValid.checkNotNullOrEmpty(id, "String id");
@@ -123,11 +116,9 @@ public class Replica {
     /**
      * Get an object representing the replica with the given name.
      * 
-     * @param name
-     *            The given name of an replica
+     * @param name The given name of an replica
      * @return an object representing the replica with the given name
-     * @throws UnknownID
-     *             if no replica is known with the given name
+     * @throws UnknownID if no replica is known with the given name
      */
     public static Replica getReplicaFromName(String name) {
         ArgumentNotValid.checkNotNullOrEmpty(name, "String name");
@@ -156,8 +147,7 @@ public class Replica {
     /**
      * Check, if a given name is a replica name.
      * 
-     * @param name
-     *            a given name
+     * @param name a given name
      * @return true, if the given name is a replica name, false otherwise
      */
     public static boolean isKnownReplicaName(String name) {
@@ -176,8 +166,7 @@ public class Replica {
     /**
      * Check, if a given id is a replica id.
      * 
-     * @param id
-     *            a given id
+     * @param id a given id
      * @return true, if the given id is a replica id, false otherwise
      */
     public static boolean isKnownReplicaId(String id) {
@@ -287,8 +276,7 @@ public class Replica {
     }
 
     /**
-     * Get the identification channel that corresponds to this replica. Please
-     * do not parse its name!
+     * Get the identification channel that corresponds to this replica. Please do not parse its name!
      * 
      * @return The BaMon ChannelID of this replica.
      */
@@ -307,8 +295,7 @@ public class Replica {
     /**
      * Returns a human-readable representation of the object.
      * 
-     * @return An arbitrary string version of the object. Do not depend on its
-     *         format.
+     * @return An arbitrary string version of the object. Do not depend on its format.
      */
     public String toString() {
         return type.toString() + "Replica (" + id + ") " + name;

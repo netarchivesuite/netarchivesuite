@@ -28,7 +28,7 @@ import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-@SuppressWarnings({ "unused" })
+@SuppressWarnings({"unused"})
 public class HarvestHistoryPageHelper {
     private static final String HARVEST_HISTORY_TABLE_CLASS = "selection_table";
 

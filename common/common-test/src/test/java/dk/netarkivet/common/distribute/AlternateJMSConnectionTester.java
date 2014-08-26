@@ -32,7 +32,7 @@ import dk.netarkivet.common.utils.TimeUtils;
 /**
  * Testclass for testing the exceptionhandling in JMSConnection.
  */
-@SuppressWarnings({ "unused", "serial" })
+@SuppressWarnings({"unused", "serial"})
 @Ignore("Not present in TestSuite")
 public class AlternateJMSConnectionTester {
 

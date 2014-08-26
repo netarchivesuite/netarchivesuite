@@ -54,8 +54,7 @@ public class TimeUtilsTester {
     }
 
     /**
-     * Tests whether the readableTimeInterval function converts numbers
-     * correctly.
+     * Tests whether the readableTimeInterval function converts numbers correctly.
      */
     @Test
     public void testReadability() {

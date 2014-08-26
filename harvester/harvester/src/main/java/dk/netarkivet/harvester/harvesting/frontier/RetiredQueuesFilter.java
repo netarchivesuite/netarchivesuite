@@ -56,8 +56,7 @@ public class RetiredQueuesFilter extends MaxSizeFrontierReportExtract {
     /**
      * Determines whether a given frontier queue is retired, e.g. over budget.
      * 
-     * @param l
-     *            a {@link FrontierReportLine} representing a frontier queue
+     * @param l a {@link FrontierReportLine} representing a frontier queue
      * @return true if the queue is retired, false otherwise.
      * @see WorkQueue#isOverBudget()
      */

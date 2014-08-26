@@ -96,7 +96,7 @@ import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
-@SuppressWarnings({ "unused" })
+@SuppressWarnings({"unused"})
 // FIXME: @Ignore
 @Ignore("test hangs")
 public class ArcRepositoryDatabaseTester {
@@ -143,7 +143,7 @@ public class ArcRepositoryDatabaseTester {
 
     // List of files that can be used in the scripts (content of the
     // ORIGINALS_DIR)
-    private static final List<String> GETTABLE_FILES = Arrays.asList(new String[] { "get1.ARC", "get2.ARC" });
+    private static final List<String> GETTABLE_FILES = Arrays.asList(new String[] {"get1.ARC", "get2.ARC"});
 
     /**
      * LOG - NO LOG!!!!
@@ -158,8 +158,8 @@ public class ArcRepositoryDatabaseTester {
      */
     private static final File STORE_CHECKSUM_DIR = new File(
             "tests/dk/netarkivet/archive/arcrepository/data/store/originals");
-    private static final String[] STORABLE_FILES = new String[] { "NetarchiveSuite-store1.arc",
-            "NetarchiveSuite-store2.arc" };
+    private static final String[] STORABLE_FILES = new String[] {"NetarchiveSuite-store1.arc",
+            "NetarchiveSuite-store2.arc"};
 
     @Before
     public void setUp() throws Exception {
@@ -275,13 +275,12 @@ public class ArcRepositoryDatabaseTester {
     /**
      * Test that the readChecksum() method works as required.
      *
-     * @throws Throwable
-     *             if something are thrown
+     * @throws Throwable if something are thrown
      */
     @Test
     public void testReadChecksum() throws Throwable {
         LogbackRecorder lr = LogbackRecorder.startRecorder();
-        readChecksum = ArcRepository.class.getDeclaredMethod("readChecksum", new Class[] { File.class, String.class });
+        readChecksum = ArcRepository.class.getDeclaredMethod("readChecksum", new Class[] {File.class, String.class});
         readChecksum.setAccessible(true);
 
         try {
@@ -304,13 +303,11 @@ public class ArcRepositoryDatabaseTester {
         assertEquals("Should get right checksum if not on first line", "bonk",
                 callReadChecksum("bar##baz\nfoo##bonk", "foo"));
         /*
-         * LogUtils.flushLogs(ArcRepository.class.getName());
-         * FileAsserts.assertFileContains(
+         * LogUtils.flushLogs(ArcRepository.class.getName()); FileAsserts.assertFileContains(
          * "Should have warning about unwanted line",
-         * "There were an unexpected arc-file name in checksum result for arc-file 'foo'(line: 'bar##baz')"
-         * , TestInfo.LOG_FILE); FileAsserts.assertFileNotContains(
-         * "Should have no warning about wanted line", TestInfo.LOG_FILE,
-         * "Read unexpected line 'foo##bonk");
+         * "There were an unexpected arc-file name in checksum result for arc-file 'foo'(line: 'bar##baz')" ,
+         * TestInfo.LOG_FILE); FileAsserts.assertFileNotContains( "Should have no warning about wanted line",
+         * TestInfo.LOG_FILE, "Read unexpected line 'foo##bonk");
          */
         lr.assertLogContains("Should have warning about unwanted line",
                 "There were an unexpected arc-file name in checksum result for arc-file 'foo'(line: 'bar##baz')");
@@ -341,11 +338,9 @@ public class ArcRepositoryDatabaseTester {
         }
 
         /*
-         * LogUtils.flushLogs(ArcRepository.class.getName());
-         * FileAsserts.assertFileContains(
+         * LogUtils.flushLogs(ArcRepository.class.getName()); FileAsserts.assertFileContains(
          * "Should have warning about two different checksums",
-         * "The arc-file 'foo' was found with two different checksums: bar and notBar."
-         * , TestInfo.LOG_FILE);
+         * "The arc-file 'foo' was found with two different checksums: bar and notBar." , TestInfo.LOG_FILE);
          */
         lr.assertLogContains("Should have warning about two different checksums",
                 "The arc-file 'foo' was found with two different checksums: bar and notBar.");
@@ -355,17 +350,13 @@ public class ArcRepositoryDatabaseTester {
     /**
      * Call the readChecksum method with some input and a file to look for.
      *
-     * @param input
-     *            Will be written to a file that readChecksum reads. Valid input
-     *            is of the form <arcfilename>##<checksum>, but invalid input is
-     *            part of the test.
-     * @param arcfilename
-     *            The name of the arcfile that readChecksum should look for.
+     * @param input Will be written to a file that readChecksum reads. Valid input is of the form
+     *            <arcfilename>##<checksum>, but invalid input is part of the test.
+     * @param arcfilename The name of the arcfile that readChecksum should look for.
      *
      * @return The string found for the given filename.
      *
-     * @throws IOFailure
-     *             when readChecksum does.
+     * @throws IOFailure when readChecksum does.
      */
     public String callReadChecksum(String input, String arcfilename) throws Throwable {
         FileUtils.writeBinaryFile(TestInfo.TMP_FILE, input.getBytes());
@@ -377,8 +368,7 @@ public class ArcRepositoryDatabaseTester {
     }
 
     /**
-     * Tests that ordinary, non-failing execution of a batch job writes output
-     * back to reply message.
+     * Tests that ordinary, non-failing execution of a batch job writes output back to reply message.
      */
     @Test
     public void testNoOfFilesProcessed() {
@@ -391,8 +381,7 @@ public class ArcRepositoryDatabaseTester {
     }
 
     /**
-     * Tests that a checkSum job can write output via a RemoteFile, one line of
-     * output per file.
+     * Tests that a checkSum job can write output via a RemoteFile, one line of output per file.
      */
     @Test
     public void testOrdinaryRunRemoteOutput() {
@@ -431,9 +420,8 @@ public class ArcRepositoryDatabaseTester {
     }
 
     /**
-     * Test that correct checksums are generated in ChecksumJob, i.e. that the
-     * expected checksums are written to the remote file for a given set of
-     * files.
+     * Test that correct checksums are generated in ChecksumJob, i.e. that the expected checksums are written to the
+     * remote file for a given set of files.
      *
      * @throws IOException
      */
@@ -467,8 +455,7 @@ public class ArcRepositoryDatabaseTester {
     }
 
     /**
-     * Verify that ChecksumJob objects can be serialized and deserialized
-     * without harm.
+     * Verify that ChecksumJob objects can be serialized and deserialized without harm.
      *
      * @throws IOException
      * @throws ClassNotFoundException
@@ -525,8 +512,7 @@ public class ArcRepositoryDatabaseTester {
     }
 
     /**
-     * This tests the get()-method for an existing file - getting get File-name
-     * out of the BitarchiveRecord.
+     * This tests the get()-method for an existing file - getting get File-name out of the BitarchiveRecord.
      */
     @Test
     public void testArcrepositoryDatabaseGetFile() throws IOException {
@@ -545,12 +531,10 @@ public class ArcRepositoryDatabaseTester {
     }
 
     /**
-     * this tests get get()-method for an existing file - getting get File-name
-     * out of the BitarchiveRecord.
+     * this tests get get()-method for an existing file - getting get File-name out of the BitarchiveRecord.
      *
-     * FIXME: This test often blocks on the Hudson CI server. Properly something
-     * to do with more restricted permissions (not allow to write to anyfiles
-     * outside of the home dir).
+     * FIXME: This test often blocks on the Hudson CI server. Properly something to do with more restricted permissions
+     * (not allow to write to anyfiles outside of the home dir).
      */
     @Test
     public void failingTestRemoveAndGetFile() throws IOException {
@@ -575,9 +559,8 @@ public class ArcRepositoryDatabaseTester {
     }
 
     /**
-     * this tests the getting of actual data (assuming that the length is not
-     * null) is the length of getData() > 0 the next test checks the first 55
-     * chars !
+     * this tests the getting of actual data (assuming that the length is not null) is the length of getData() > 0 the
+     * next test checks the first 55 chars !
      */
     @Test
     public void testGetData() {
@@ -660,8 +643,7 @@ public class ArcRepositoryDatabaseTester {
     }
 
     /**
-     * Tests that Controller.getCheckSum() behaves as expected when using a
-     * reference to a non-stored file.
+     * Tests that Controller.getCheckSum() behaves as expected when using a reference to a non-stored file.
      */
     @Test
     public void failingTestGetChecksumNotStoredFile() {
@@ -678,9 +660,8 @@ public class ArcRepositoryDatabaseTester {
     }
 
     /**
-     * Tests if an attempt to store an already uploaded/stored file produces the
-     * expected behavior: a PermissionDenied should be thrown, and the original
-     * entry in checksum reference table remains unaffected. Failing, see
+     * Tests if an attempt to store an already uploaded/stored file produces the expected behavior: a PermissionDenied
+     * should be thrown, and the original entry in checksum reference table remains unaffected. Failing, see
      */
     @Test
     public void failingTestStoreFailedAlreadyUploadedChecksum() {

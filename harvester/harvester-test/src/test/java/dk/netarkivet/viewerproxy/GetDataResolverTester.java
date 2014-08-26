@@ -53,7 +53,7 @@ import dk.netarkivet.viewerproxy.distribute.HTTPControllerServerTester;
 /**
  * Unit-tests for the GetDataResolver class.
  */
-@SuppressWarnings({ "unused" })
+@SuppressWarnings({"unused"})
 public class GetDataResolverTester {
     MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
     File tempdir = new File(TestInfo.WORKING_DIR, "commontempdir");

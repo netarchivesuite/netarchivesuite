@@ -36,8 +36,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 public class HeritrixArchiveRecordWrapper extends ArchiveRecordBase {
 
     /**
-     * The original Heritrix record, since it is also the record payload input
-     * stream.
+     * The original Heritrix record, since it is also the record payload input stream.
      */
     protected ArchiveRecord record;
 
@@ -47,8 +46,7 @@ public class HeritrixArchiveRecordWrapper extends ArchiveRecordBase {
     /**
      * Construct a Heritrix record wrapper object.
      * 
-     * @param record
-     *            Heritrix record object
+     * @param record Heritrix record object
      */
     public HeritrixArchiveRecordWrapper(ArchiveRecord record) {
         ArgumentNotValid.checkNotNull(record, "record");

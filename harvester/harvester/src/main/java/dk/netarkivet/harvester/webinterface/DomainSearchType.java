@@ -40,8 +40,7 @@ public enum DomainSearchType {
     /**
      * Helper method that tries to convert a string to a DomainSearchType.
      *
-     * @param type
-     *            a DomainSearchType as string
+     * @param type a DomainSearchType as string
      * @return the DomainSearchType related to a string
      * @throws ArgumentNotValid
      */

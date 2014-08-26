@@ -50,8 +50,7 @@ public class ExtendedFieldValue {
     /**
      * Set the ID of value of the ExtendedField.
      * 
-     * @param extendedFieldValueID
-     *            the ID of the value of the ExtendedField
+     * @param extendedFieldValueID the ID of the value of the ExtendedField
      */
     public void setExtendedFieldValueID(Long extendedFieldValueID) {
         ArgumentNotValid.checkNotNull(extendedFieldValueID, "Long extendedFieldValueID");
@@ -68,8 +67,7 @@ public class ExtendedFieldValue {
     /**
      * Set the ID of the ExtendedField.
      * 
-     * @param extendedFieldID
-     *            the ID of the ExtendedField
+     * @param extendedFieldID the ID of the ExtendedField
      */
     public void setExtendedFieldID(Long extendedFieldID) {
         ArgumentNotValid.checkNotNull(extendedFieldID, "Long extendedFieldID");
@@ -86,8 +84,7 @@ public class ExtendedFieldValue {
     /**
      * Set the content. Null arg is not accepted.
      * 
-     * @param content
-     *            The content of the value
+     * @param content The content of the value
      */
     public void setContent(String content) {
         this.content = content;
@@ -103,8 +100,7 @@ public class ExtendedFieldValue {
     /**
      * Set the instanceId. Null arg is not accepted.
      * 
-     * @param instanceID
-     *            The instanceid
+     * @param instanceID The instanceid
      */
     public void setInstanceID(Long instanceID) {
         this.instanceID = instanceID;
@@ -118,18 +114,12 @@ public class ExtendedFieldValue {
     }
 
     /**
-     * Constructor initializing all instance members. Used when reading from
-     * persistent storage.
+     * Constructor initializing all instance members. Used when reading from persistent storage.
      * 
-     * @param aExtendedFieldValueID
-     *            The ID of the value of the ExtendedField.
-     * @param aExtendedFieldID
-     *            The ID of the ExtendedField.
-     * @param aInstanceID
-     *            The instance id of the value
-     * @param aContent
-     *            The contents of the value (the value itself) TODO argument
-     *            validation
+     * @param aExtendedFieldValueID The ID of the value of the ExtendedField.
+     * @param aExtendedFieldID The ID of the ExtendedField.
+     * @param aInstanceID The instance id of the value
+     * @param aContent The contents of the value (the value itself) TODO argument validation
      */
     public ExtendedFieldValue(Long aExtendedFieldValueID, Long aExtendedFieldID, Long aInstanceID, String aContent) {
         extendedFieldValueID = aExtendedFieldValueID;

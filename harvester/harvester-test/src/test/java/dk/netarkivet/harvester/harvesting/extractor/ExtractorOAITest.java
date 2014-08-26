@@ -37,7 +37,7 @@ import org.archive.net.UURIFactory;
 import org.archive.util.HttpRecorder;
 import org.junit.Test;
 
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class ExtractorOAITest {
 
     public static final String xmlText = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><OAI-PMH xmlns=\"http://www.openarchives.org/OAI/2.0/\" \n"
@@ -88,9 +88,8 @@ public class ExtractorOAITest {
     }
 
     /**
-     * Create a CrawlURI corresponding to this xml and uri. Run the extract
-     * method on it. Check that it now has a new link with
-     * resumptionToken=foobar in the query.
+     * Create a CrawlURI corresponding to this xml and uri. Run the extract method on it. Check that it now has a new
+     * link with resumptionToken=foobar in the query.
      */
     @Test
     public void testExtract() throws URIException, InterruptedException {

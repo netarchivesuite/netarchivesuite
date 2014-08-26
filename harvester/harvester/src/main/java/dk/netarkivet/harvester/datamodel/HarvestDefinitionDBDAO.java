@@ -83,8 +83,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     private static final Logger log = LoggerFactory.getLogger(HarvestDefinitionDBDAO.class);
 
     /**
-     * Comparator used for sorting the UI list of
-     * {@link SparseDomainConfiguration}s. Sorts first by domain name
+     * Comparator used for sorting the UI list of {@link SparseDomainConfiguration}s. Sorts first by domain name
      * alphabetical order, next by configuration name.
      *
      */
@@ -117,11 +116,10 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     }
 
     /**
-     * Create a harvest definition in Database. The harvest definition object
-     * should not have its ID set unless we are in the middle of migrating.
+     * Create a harvest definition in Database. The harvest definition object should not have its ID set unless we are
+     * in the middle of migrating.
      *
-     * @param harvestDefinition
-     *            A new harvest definition to store in the database.
+     * @param harvestDefinition A new harvest definition to store in the database.
      * @return The harvestId for the just created harvest definition.
      * @see HarvestDefinitionDAO#create(HarvestDefinition)
      */
@@ -210,17 +208,12 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     }
 
     /**
-     * Create the entries in the harvest_configs table that connect
-     * PartialHarvests and their configurations.
+     * Create the entries in the harvest_configs table that connect PartialHarvests and their configurations.
      *
-     * @param c
-     *            harvest definition DB connection
-     * @param ph
-     *            The harvest to insert entries for.
-     * @param id
-     *            The id of the harvest -- this may not yet be set on ph
-     * @throws SQLException
-     *             If a database error occurs during the create process.
+     * @param c harvest definition DB connection
+     * @param ph The harvest to insert entries for.
+     * @param id The id of the harvest -- this may not yet be set on ph
+     * @throws SQLException If a database error occurs during the create process.
      */
     private void createHarvestConfigsEntries(Connection c, PartialHarvest ph, long id) throws SQLException {
         PreparedStatement s = c.prepareStatement("DELETE FROM harvest_configs WHERE harvest_id = ?");
@@ -242,12 +235,10 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     }
 
     /**
-     * Generates the next id of a harvest definition. this implementation
-     * retrieves the maximum value of harvest_id in the DB, and returns this
-     * value + 1.
+     * Generates the next id of a harvest definition. this implementation retrieves the maximum value of harvest_id in
+     * the DB, and returns this value + 1.
      *
-     * @param c
-     *            An open connection to the harvestDatabase
+     * @param c An open connection to the harvestDatabase
      * @return The next available ID
      */
     private Long generateNextID(Connection c) {
@@ -262,13 +253,10 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
      * Read the stored harvest definition for the given ID.
      *
      * @see HarvestDefinitionDAO#read(Long)
-     * @param harvestDefinitionID
-     *            An ID number for a harvest definition
+     * @param harvestDefinitionID An ID number for a harvest definition
      * @return A harvest definition that has been read from persistent storage.
-     * @throws UnknownID
-     *             if no entry with that ID exists in the database
-     * @throws IOFailure
-     *             If DB-failure occurs?
+     * @throws UnknownID if no entry with that ID exists in the database
+     * @throws IOFailure If DB-failure occurs?
      */
     @Override
     public synchronized HarvestDefinition read(Long harvestDefinitionID) throws UnknownID, IOFailure {
@@ -284,15 +272,11 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
      * Read the stored harvest definition for the given ID.
      *
      * @see HarvestDefinitionDAO#read(Long)
-     * @param c
-     *            The used database connection
-     * @param harvestDefinitionIDAn
-     *            ID number for a harvest definition
+     * @param c The used database connection
+     * @param harvestDefinitionIDAn ID number for a harvest definition
      * @return A harvest definition that has been read from persistent storage.
-     * @throws UnknownID
-     *             if no entry with that ID exists in the database
-     * @throws IOFailure
-     *             If DB-failure occurs?
+     * @throws UnknownID if no entry with that ID exists in the database
+     * @throws IOFailure If DB-failure occurs?
      */
     private HarvestDefinition read(Connection c, Long harvestDefinitionID) throws UnknownID, IOFailure {
         if (!exists(c, harvestDefinitionID)) {
@@ -427,8 +411,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     /**
      * Update an existing harvest definition with new info.
      *
-     * @param hd
-     *            An updated harvest definition
+     * @param hd An updated harvest definition
      * @see HarvestDefinitionDAO#update(HarvestDefinition)
      */
     public synchronized void update(HarvestDefinition hd) {
@@ -524,13 +507,11 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     }
 
     /**
-     * Activates or deactivates a partial harvest definition. This method is
-     * actually to be used not to have to read from the DB big harvest
-     * definitions and optimize the activation / deactivation, it is sort of a
-     * lightweight version of update.
+     * Activates or deactivates a partial harvest definition. This method is actually to be used not to have to read
+     * from the DB big harvest definitions and optimize the activation / deactivation, it is sort of a lightweight
+     * version of update.
      *
-     * @param harvestDefinition
-     *            the harvest definition object.
+     * @param harvestDefinition the harvest definition object.
      */
     @Override
     public synchronized void flipActive(SparsePartialHarvest harvestDefinition) {
@@ -616,10 +597,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     /**
      * Check if a harvestdefinition exists with the given id.
      *
-     * @param c
-     *            An open connection to the harvestDatabase
-     * @param oid
-     *            A potential identifier for a harvestdefinition
+     * @param c An open connection to the harvestDatabase
+     * @param oid A potential identifier for a harvestdefinition
      * @return true If a harvestdefinition exists with the given id.
      * @see HarvestDefinitionDAO#exists(Long)
      */
@@ -653,11 +632,10 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     /**
      * Gets default configurations for all domains that are not aliases.
      *
-     * This method currently gives an iterator that reads in all domains,
-     * although only on demand, that is: when calling "hasNext".
+     * This method currently gives an iterator that reads in all domains, although only on demand, that is: when calling
+     * "hasNext".
      *
-     * @return Iterator containing the default DomainConfiguration for all
-     *         domains that are not aliases
+     * @return Iterator containing the default DomainConfiguration for all domains that are not aliases
      */
     @Override
     public synchronized Iterator<DomainConfiguration> getSnapShotConfigurations() {
@@ -674,13 +652,11 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     }
 
     /**
-     * Returns a list of IDs of harvest definitions that are ready to be
-     * scheduled.
+     * Returns a list of IDs of harvest definitions that are ready to be scheduled.
      *
-     * @param now
-     *            The current date
-     * @return List of ready harvest definitions. No check is performed for
-     *         whether these are already in the middle of being scheduled.
+     * @param now The current date
+     * @return List of ready harvest definitions. No check is performed for whether these are already in the middle of
+     *         being scheduled.
      */
     @Override
     public Iterable<Long> getReadyHarvestDefinitions(Date now) {
@@ -704,10 +680,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     /**
      * Get the harvest definition that has the given name, if any.
      *
-     * @param name
-     *            The name of a harvest definition.
-     * @return The HarvestDefinition object with that name, or null if none has
-     *         that name.
+     * @param name The name of a harvest definition.
+     * @return The HarvestDefinition object with that name, or null if none has that name.
      */
     @Override
     public synchronized HarvestDefinition getHarvestDefinition(String name) {
@@ -819,15 +793,11 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     }
 
     /**
-     * Get all domain,configuration pairs for a harvest definition in sparse
-     * version for GUI purposes.
+     * Get all domain,configuration pairs for a harvest definition in sparse version for GUI purposes.
      *
-     * @param harvestDefinitionID
-     *            The ID of the harvest definition.
-     * @return Domain,configuration pairs for that HD. Returns an empty iterable
-     *         for unknown harvest definitions.
-     * @throws ArgumentNotValid
-     *             on null argument.
+     * @param harvestDefinitionID The ID of the harvest definition.
+     * @return Domain,configuration pairs for that HD. Returns an empty iterable for unknown harvest definitions.
+     * @throws ArgumentNotValid on null argument.
      */
     @Override
     public List<SparseDomainConfiguration> getSparseDomainConfigurations(Long harvestDefinitionID) {
@@ -841,15 +811,11 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     }
 
     /**
-     * Get all domain,configuration pairs for a harvest definition in sparse
-     * version.
+     * Get all domain,configuration pairs for a harvest definition in sparse version.
      *
-     * @param c
-     *            a connection to the harvest database
-     * @param harvestDefinitionID
-     *            The ID of the harvest definition.
-     * @return Domain,configuration pairs for that HD. Returns an empty iterable
-     *         for unknown harvest definitions.
+     * @param c a connection to the harvest database
+     * @param harvestDefinitionID The ID of the harvest definition.
+     * @return Domain,configuration pairs for that HD. Returns an empty iterable for unknown harvest definitions.
      */
     private List<SparseDomainConfiguration> getSparseDomainConfigurations(Connection c, Long harvestDefinitionID) {
         PreparedStatement s = null;
@@ -874,8 +840,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     }
 
     /**
-     * Get all sparse versions of partial harvests for GUI purposes ordered by
-     * name.
+     * Get all sparse versions of partial harvests for GUI purposes ordered by name.
      *
      * @return An iterable (possibly empty) of SparsePartialHarvests
      */
@@ -917,11 +882,9 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     /**
      * Get a sparse version of a partial harvest for GUI purposes.
      *
-     * @param harvestName
-     *            Name of harvest definition.
+     * @param harvestName Name of harvest definition.
      * @return Sparse version of partial harvest or null for none.
-     * @throws ArgumentNotValid
-     *             on null or empty name.
+     * @throws ArgumentNotValid on null or empty name.
      */
     @Override
     public SparsePartialHarvest getSparsePartialHarvest(String harvestName) {
@@ -993,17 +956,13 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     /**
      * Get the name of a harvest given its ID.
      *
-     * @param harvestDefinitionID
-     *            The ID of a harvest
+     * @param harvestDefinitionID The ID of a harvest
      *
      * @return The name of the given harvest.
      *
-     * @throws ArgumentNotValid
-     *             on null argument
-     * @throws UnknownID
-     *             if no harvest has the given ID.
-     * @throws IOFailure
-     *             on any other error talking to the database
+     * @throws ArgumentNotValid on null argument
+     * @throws UnknownID if no harvest has the given ID.
+     * @throws IOFailure on any other error talking to the database
      */
     @Override
     public String getHarvestName(Long harvestDefinitionID) {
@@ -1038,15 +997,12 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     /**
      * Get whether a given harvest is a snapshot or selective harvest.
      *
-     * @param harvestDefinitionID
-     *            ID of a harvest
+     * @param harvestDefinitionID ID of a harvest
      *
      * @return True if the given harvest is a snapshot harvest, false otherwise.
      *
-     * @throws ArgumentNotValid
-     *             on null argument
-     * @throws UnknownID
-     *             if no harvest has the given ID.
+     * @throws ArgumentNotValid on null argument
+     * @throws UnknownID if no harvest has the given ID.
      */
     @Override
     public boolean isSnapshot(Long harvestDefinitionID) {
@@ -1072,15 +1028,11 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     /**
      * Get a sparse version of a full harvest for GUI purposes.
      *
-     * @param harvestName
-     *            Name of harvest definition.
+     * @param harvestName Name of harvest definition.
      * @return Sparse version of full harvest or null for none.
-     * @throws ArgumentNotValid
-     *             on null or empty name.
-     * @throws UnknownID
-     *             if no harvest has the given ID.
-     * @throws IOFailure
-     *             on any other error talking to the database
+     * @throws ArgumentNotValid on null or empty name.
+     * @throws UnknownID if no harvest has the given ID.
+     * @throws IOFailure on any other error talking to the database
      */
     @Override
     public SparseFullHarvest getSparseFullHarvest(String harvestName) {
@@ -1118,8 +1070,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     /**
      * Get a sorted list of all domain names of a HarvestDefinition.
      *
-     * @param harvestName
-     *            of HarvestDefinition
+     * @param harvestName of HarvestDefinition
      * @return List of all domains of the HarvestDefinition.
      */
     @Override
@@ -1157,10 +1108,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     /**
      * Get a sorted list of all seeds of a Domain in a HarvestDefinition.
      *
-     * @param harvestName
-     *            of HarvestDefinition
-     * @param domainName
-     *            of Domain
+     * @param harvestName of HarvestDefinition
+     * @param domainName of Domain
      * @return List of all seeds of the Domain in the HarvestDefinition.
      */
     @Override
@@ -1242,8 +1191,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     /**
      * Get list of harvests previous to this one.
      * 
-     * @param thisHarvest
-     *            The id of this harvestdefinition
+     * @param thisHarvest The id of this harvestdefinition
      * @return a list of IDs belonging to harvests previous to this one.
      */
     private List<Long> getPreviousFullHarvests(Long thisHarvest) {
@@ -1306,9 +1254,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     }
 
     /*
-     * Removes the entry in harvest_configs, that binds a certain
-     * domainconfiguration to this PartialHarvest. TODO maybe update the edition
-     * as well.
+     * Removes the entry in harvest_configs, that binds a certain domainconfiguration to this PartialHarvest. TODO maybe
+     * update the edition as well.
      */
     @Override
     public void removeDomainConfiguration(Long harvestId, SparseDomainConfiguration key) {
@@ -1434,14 +1381,10 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     /**
      * Saves all extended Field values for a HarvestDefinition in the Database.
      * 
-     * @param c
-     *            Connection to Database
-     * @param h
-     *            HarvestDefinition where loaded extended Field Values will be
-     *            set
+     * @param c Connection to Database
+     * @param h HarvestDefinition where loaded extended Field Values will be set
      *
-     * @throws SQLException
-     *             If database errors occur.
+     * @throws SQLException If database errors occur.
      */
     private void saveExtendedFieldValues(Connection c, HarvestDefinition h) throws SQLException {
         List<ExtendedFieldValue> list = h.getExtendedFieldValues();
@@ -1459,15 +1402,11 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     }
 
     /**
-     * Reads all extended Field values from the database for a
-     * HarvestDefinition.
+     * Reads all extended Field values from the database for a HarvestDefinition.
      * 
-     * @param h
-     *            HarvestDefinition where loaded extended Field Values will be
-     *            set
+     * @param h HarvestDefinition where loaded extended Field Values will be set
      *
-     * @throws SQLException
-     *             If database errors occur.
+     * @throws SQLException If database errors occur.
      *
      */
     private void readExtendedFieldValues(HarvestDefinition h) throws SQLException {
@@ -1475,16 +1414,12 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     }
 
     /**
-     * Reads all extended Field values from the database for a
-     * HarvestDefinitionOid.
+     * Reads all extended Field values from the database for a HarvestDefinitionOid.
      * 
-     * @param aOid
-     *            HarvestDefinition where loaded extended Field Values will be
-     *            set
+     * @param aOid HarvestDefinition where loaded extended Field Values will be set
      * @return a list of ExtendedFieldValues belonging to the given harvest oid
      *
-     * @throws SQLException
-     *             If database errors occur.
+     * @throws SQLException If database errors occur.
      *
      */
     private List<ExtendedFieldValue> getExtendedFieldValues(Long aOid) throws SQLException {

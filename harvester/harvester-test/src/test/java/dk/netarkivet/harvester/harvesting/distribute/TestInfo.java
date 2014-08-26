@@ -71,7 +71,7 @@ public class TestInfo {
     static final String[] FILES_IN_LEFTOVER_JOB_DIR_2 = {
             "42-117-20051212141240-00000-sb-test-har-001.statsbiblioteket.dk.arc",
             "42-117-20051212141240-00001-sb-test-har-001.statsbiblioteket.dk.arc",
-            "42-117-20051212141242-00002-sb-test-har-001.statsbiblioteket.dk.arc" };
+            "42-117-20051212141242-00002-sb-test-har-001.statsbiblioteket.dk.arc"};
     static final String LEFTOVER_JOB_DIR_2_SOME_FILE_PATTERN = "(" + TestInfo.FILES_IN_LEFTOVER_JOB_DIR_2[0] + "|"
             + TestInfo.FILES_IN_LEFTOVER_JOB_DIR_2[1] + "|" + TestInfo.FILES_IN_LEFTOVER_JOB_DIR_2[2] + ")";
     // used by HarvestControllerServerTester#testStoreHarvestInformation()

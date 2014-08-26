@@ -34,16 +34,16 @@ import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor;
 
 /**
  *
- * This class wraps information stored in the Heritrix MBeans, CrawlService and
- * CrawlService.Job, and represents the crawl progress.
+ * This class wraps information stored in the Heritrix MBeans, CrawlService and CrawlService.Job, and represents the
+ * crawl progress.
  *
- * Additionally this object extends {@link HarvesterMessage} so that it can be
- * sent on the JMS bus to be processed by {@link HarvestMonitor}.
+ * Additionally this object extends {@link HarvesterMessage} so that it can be sent on the JMS bus to be processed by
+ * {@link HarvestMonitor}.
  *
  * @see HeritrixLauncher#doCrawl()
  *
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class CrawlProgressMessage extends HarvesterMessage implements Serializable {
 
     /**
@@ -67,8 +67,7 @@ public class CrawlProgressMessage extends HarvesterMessage implements Serializab
          */
         CRAWLER_PAUSED,
         /**
-         * Heritrix has finished crawling, post processing of metadata and ARC
-         * files remains to be done.
+         * Heritrix has finished crawling, post processing of metadata and ARC files remains to be done.
          */
         CRAWLING_FINISHED
     }
@@ -263,8 +262,7 @@ public class CrawlProgressMessage extends HarvesterMessage implements Serializab
     private CrawlStatus status;
 
     /**
-     * A legend, fetched only once, for the
-     * {@link CrawlServiceJobInfo#progressStatistics} property.
+     * A legend, fetched only once, for the {@link CrawlServiceJobInfo#progressStatistics} property.
      */
     private final String progressStatisticsLegend;
 
@@ -275,15 +273,11 @@ public class CrawlProgressMessage extends HarvesterMessage implements Serializab
     private CrawlServiceJobInfo jobStatus = new CrawlServiceJobInfo();
 
     /**
-     * Builds an empty message. MBean wrapper values are not set and the
-     * appropriate getters should be used to do so.
+     * Builds an empty message. MBean wrapper values are not set and the appropriate getters should be used to do so.
      *
-     * @param harvestID
-     *            the harvest definition ID
-     * @param jobId
-     *            the job ID
-     * @param progressStatisticsLegend
-     *            the legend of the progress statistics summary string
+     * @param harvestID the harvest definition ID
+     * @param jobId the job ID
+     * @param progressStatisticsLegend the legend of the progress statistics summary string
      * @see CrawlProgressMessage#progressStatisticsLegend
      */
     public CrawlProgressMessage(long harvestID, long jobId, String progressStatisticsLegend) {
@@ -295,14 +289,11 @@ public class CrawlProgressMessage extends HarvesterMessage implements Serializab
     }
 
     /**
-     * Builds an empty message. MBean wrapper values are not set and the
-     * appropriate getters should be used to do so. The progressStatisticsLegend
-     * is set to the empty string.
+     * Builds an empty message. MBean wrapper values are not set and the appropriate getters should be used to do so.
+     * The progressStatisticsLegend is set to the empty string.
      *
-     * @param harvestID
-     *            the harvest definition ID
-     * @param jobId
-     *            the job ID
+     * @param harvestID the harvest definition ID
+     * @param jobId the job ID
      */
     public CrawlProgressMessage(long harvestID, long jobId) {
         this(harvestID, jobId, "");
@@ -350,13 +341,11 @@ public class CrawlProgressMessage extends HarvesterMessage implements Serializab
     }
 
     /**
-     * Returns true if the crawler has been paused, and thus not supposed to
-     * fetch anything. Heritrix may still be fetching stuff, as it takes some
-     * time for it to go into full pause mode. This method can be used as an
-     * indicator that we should not be worried if Heritrix appears to be idle.
+     * Returns true if the crawler has been paused, and thus not supposed to fetch anything. Heritrix may still be
+     * fetching stuff, as it takes some time for it to go into full pause mode. This method can be used as an indicator
+     * that we should not be worried if Heritrix appears to be idle.
      *
-     * @return True if the crawler has been paused, e.g. by using the Heritrix
-     *         GUI.
+     * @return True if the crawler has been paused, e.g. by using the Heritrix GUI.
      */
     public boolean isPaused() {
         return CrawlStatus.CRAWLER_PAUSED.equals(status);

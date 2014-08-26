@@ -35,8 +35,8 @@ import java.util.Arrays;
 import junit.framework.TestCase;
 
 /**
- * Created by IntelliJ IDEA. User: csr Date: Mar 4, 2005 Time: 2:26:06 PM To
- * change this template use File | Settings | File Templates.
+ * Created by IntelliJ IDEA. User: csr Date: Mar 4, 2005 Time: 2:26:06 PM To change this template use File | Settings |
+ * File Templates.
  */
 public class Serial {
 
@@ -61,16 +61,12 @@ public class Serial {
     }
 
     /**
-     * Check that transient fields are properly initialized after the object has
-     * been serialized and deserialized.
+     * Check that transient fields are properly initialized after the object has been serialized and deserialized.
      *
-     * @param obj
-     *            A Serializable object to test.
-     * @param excludedFields
-     *            Names of fields that we do not care are not initialized after
-     *            deserialization. Could be integers that are properly
-     *            initialized to 0 or the like. Only include fields here if you
-     *            are sure that initialization is not required!
+     * @param obj A Serializable object to test.
+     * @param excludedFields Names of fields that we do not care are not initialized after deserialization. Could be
+     *            integers that are properly initialized to 0 or the like. Only include fields here if you are sure that
+     *            initialization is not required!
      * @throws IOException
      * @throws ClassNotFoundException
      * @throws IllegalAccessException

@@ -37,21 +37,17 @@ import org.archive.io.arc.ARCRecord;
 public class CheckDuplicateReduction {
 
     /**
-     * Utility to validate Deduplication. Uses a crawl.log and a collection of
-     * arc-files
+     * Utility to validate Deduplication. Uses a crawl.log and a collection of arc-files
      * 
-     * Parses the crawl.log and looks for duplicate entries like this:
-     * "2006-07-31T13:26:12.687Z 200 428
-     * http://netarkivet.dk/netarchive_alm/billeder/netarkivet_guidelines_07.gif
-     * E http://netarkivet.dk/index-en.php image/gif #044 20060731112612682+3
-     * Q6TITNTYNWCP3BQIS7L5X7GQPP5FBI3F - duplicate:
+     * Parses the crawl.log and looks for duplicate entries like this: "2006-07-31T13:26:12.687Z 200 428
+     * http://netarkivet.dk/netarchive_alm/billeder/netarkivet_guidelines_07.gif E http://netarkivet.dk/index-en.php
+     * image/gif #044 20060731112612682+3 Q6TITNTYNWCP3BQIS7L5X7GQPP5FBI3F - duplicate:
      * "2-2-20060731110420-00000-sb-test-har-001.statsbiblioteket.dk.arc,84231"
      * 
      * @param crawlLog
      * @param arcfiles
      * @return true, if result is valid.
-     * @throws Exception
-     *             If unable to get absolute path for crawl.log
+     * @throws Exception If unable to get absolute path for crawl.log
      * 
      */
 
@@ -97,8 +93,7 @@ public class CheckDuplicateReduction {
     }
 
     /**
-     * @param args
-     *            crawl.log; directory, where arcs are located
+     * @param args crawl.log; directory, where arcs are located
      * @throws Exception
      */
     public static void main(String[] args) throws Exception {

@@ -27,8 +27,8 @@ import dk.netarkivet.harvester.datamodel.Constants;
 import dk.netarkivet.harvester.harvesting.frontier.FullFrontierReport.ReportIterator;
 
 /**
- * Filters the N active queues (i.e. not exhausted or retired) with the biggest
- * totalEnqueues values. The size of the list is defined by the setting property
+ * Filters the N active queues (i.e. not exhausted or retired) with the biggest totalEnqueues values. The size of the
+ * list is defined by the setting property
  *
  */
 public class TopTotalEnqueuesFilter extends MaxSizeFrontierReportExtract {

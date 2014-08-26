@@ -48,13 +48,10 @@ public class CookieUtils {
     }
 
     /**
-     * Returns the value of a request parameter, or if not found tries to find a
-     * cookie with the same name.
+     * Returns the value of a request parameter, or if not found tries to find a cookie with the same name.
      * 
-     * @param request
-     *            the HTTP request
-     * @param name
-     *            the parameter name
+     * @param request the HTTP request
+     * @param name the parameter name
      * @return the value (never null, may be empty)
      */
     public static final String getParameterValue(HttpServletRequest request, String name) {
@@ -72,14 +69,10 @@ public class CookieUtils {
     /**
      * Set a cookie on the client.
      * 
-     * @param response
-     *            the HTTP response wrapper
-     * @param name
-     *            the cookie name
-     * @param value
-     *            the cookie value
-     * @param lifeSpan
-     *            the cookie TTL as an {@link Lifespan} enum value
+     * @param response the HTTP response wrapper
+     * @param name the cookie name
+     * @param value the cookie value
+     * @param lifeSpan the cookie TTL as an {@link Lifespan} enum value
      */
     public static final void setCookie(HttpServletResponse response, String name, String value, Lifespan lifeSpan) {
         Cookie c = new Cookie(name, value);
@@ -90,12 +83,9 @@ public class CookieUtils {
     /**
      * Set a cookie on the client, with a default lifespan of @see Lifespan#HOUR
      * 
-     * @param response
-     *            the HTTP response wrapper
-     * @param name
-     *            the cookie name
-     * @param value
-     *            the cookie value
+     * @param response the HTTP response wrapper
+     * @param name the cookie name
+     * @param value the cookie value
      */
     public static final void setCookie(HttpServletResponse response, String name, String value) {
         setCookie(response, name, value, Lifespan.HOUR);

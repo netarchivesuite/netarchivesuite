@@ -45,7 +45,7 @@ public class UnitTesterSuite {
     }
 
     public static void main(String[] args) {
-        String[] args2 = { "-noloading", UnitTesterSuite.class.getName() };
+        String[] args2 = {"-noloading", UnitTesterSuite.class.getName()};
         TestRunner.main(args2);
     }
 }

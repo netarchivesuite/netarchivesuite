@@ -99,7 +99,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 /**
  * Unit test for the class FileBasedActiveBitPreservation.
  */
-@SuppressWarnings({ "unused", "deprecation" })
+@SuppressWarnings({"unused", "deprecation"})
 public class FileBasedActiveBitPreservationTester {
 
     private Log log = LogFactory.getLog(getClass().getName());
@@ -154,8 +154,7 @@ public class FileBasedActiveBitPreservationTester {
      *
      * This should check:
      *
-     * That the two files are created with the expected output. What happens if
-     * the expected input isn't there.
+     * That the two files are created with the expected output. What happens if the expected input isn't there.
      *
      * @throws IOException
      */
@@ -231,7 +230,7 @@ public class FileBasedActiveBitPreservationTester {
 
         // Check that missing-files file exists and has correct content
         File missing = WorkFiles.getFile(replicaOne, WorkFiles.MISSING_FILES_BA);
-        String[] expectedContent = { "g.arc", "h.arc" };
+        String[] expectedContent = {"g.arc", "h.arc"};
         String[] actualContent = FileUtils.readFile(missing).split("\n");
         for (int i = 0; i < actualContent.length; i++) {
             actualContent[i] = actualContent[i].trim();
@@ -245,8 +244,8 @@ public class FileBasedActiveBitPreservationTester {
     }
 
     /**
-     * Tests that the correct setup is done when running a checksum batch job
-     * and that the checksum batch job generates the expected output.
+     * Tests that the correct setup is done when running a checksum batch job and that the checksum batch job generates
+     * the expected output.
      *
      * Tests requirements of Assignment 3.1.2
      *
@@ -277,9 +276,8 @@ public class FileBasedActiveBitPreservationTester {
         assertTrue("No output file generated for unsorted output", unsortedOutput.exists());
 
         /*
-         * No longer automatically sorting when not needed File sortedOutput =
-         * new File(outputSubDir, Constants.SORTED_OUTPUT_FILE);
-         * assertTrue("No output file generated for sorted output",
+         * No longer automatically sorting when not needed File sortedOutput = new File(outputSubDir,
+         * Constants.SORTED_OUTPUT_FILE); assertTrue("No output file generated for sorted output",
          * sortedOutput.exists());
          */
 
@@ -287,19 +285,15 @@ public class FileBasedActiveBitPreservationTester {
                 .remainingFiles().size());
 
         /*
-         * assertEquals("The two files containing unsorted output" +
-         * " and sorted output do not have the same size",
+         * assertEquals("The two files containing unsorted output" + " and sorted output do not have the same size",
          * unsortedOutput.length(), sortedOutput.length());
          * 
-         * FileInputStream fis = new FileInputStream(sortedOutput);
-         * BufferedReader in = new BufferedReader(new InputStreamReader(fis));
-         * String line = null; String prevArcFileName = null; while ((line =
-         * in.readLine()) != null) { String arcFileName = line.substring(0,
-         * line.indexOf(Constants.STRING_FILENAME_SEPARATOR)); if
-         * (prevArcFileName != null) {
-         * assertTrue("Batch output is not sorted (lexicographically) " +
-         * "according to ARC file name", arcFileName.compareTo(prevArcFileName)
-         * > 0); } prevArcFileName = arcFileName; } in.close(); fis.close();
+         * FileInputStream fis = new FileInputStream(sortedOutput); BufferedReader in = new BufferedReader(new
+         * InputStreamReader(fis)); String line = null; String prevArcFileName = null; while ((line = in.readLine()) !=
+         * null) { String arcFileName = line.substring(0, line.indexOf(Constants.STRING_FILENAME_SEPARATOR)); if
+         * (prevArcFileName != null) { assertTrue("Batch output is not sorted (lexicographically) " +
+         * "according to ARC file name", arcFileName.compareTo(prevArcFileName) > 0); } prevArcFileName = arcFileName; }
+         * in.close(); fis.close();
          */
 
         // ChecksumJobTester tests that the correct MD5 checksums are generated.
@@ -368,13 +362,11 @@ public class FileBasedActiveBitPreservationTester {
     /**
      * Test normal behaviour of runFileListJob():
      *
-     * It should pick normal or reference dir. It should generate the correct
-     * files. It should restrict itself to specified files. It should check the
-     * number of lines. It should remove the temporary file.
+     * It should pick normal or reference dir. It should generate the correct files. It should restrict itself to
+     * specified files. It should check the number of lines. It should remove the temporary file.
      *
-     * Note that we don't need to test if the expected files are found, as the
-     * file scanning is done in submethods, but it comes automatically when we
-     * check for restriction.
+     * Note that we don't need to test if the expected files are found, as the file scanning is done in submethods, but
+     * it comes automatically when we check for restriction.
      *
      * @throws IOException
      */
@@ -485,9 +477,8 @@ public class FileBasedActiveBitPreservationTester {
 
         /*
          * LogUtils.flushLogs(getClass().getName());
-         * FileAsserts.assertFileNotContains("Should have no warning about ONE",
-         * TestInfo.LOG_FILE, "while asking 'Replica ONE'");
-         * FileAsserts.assertFileNotContains("Should have no warning about TWO",
+         * FileAsserts.assertFileNotContains("Should have no warning about ONE", TestInfo.LOG_FILE,
+         * "while asking 'Replica ONE'"); FileAsserts.assertFileNotContains("Should have no warning about TWO",
          * TestInfo.LOG_FILE, "while asking 'Replica TWO'");
          */
         lr.assertLogNotContains("Should have no warning about ONE", "while asking 'Replica ONE'");
@@ -502,16 +493,12 @@ public class FileBasedActiveBitPreservationTester {
         assertEquals("Should have expected size for TWO", 0, fps.getReplicaChecksum(TWO).size());
         assertEquals("Should have expected size for THREE", 0, fps.getReplicaChecksum(THREE).size());
         /*
-         * LogUtils.flushLogs(getClass().getName());
-         * FileAsserts.assertFileContains
-         * ("Should have warning about ONE in logfile: " +
-         * FileUtils.readFile(TestInfo.LOG_FILE), //Before:
-         * "while asking replica 'Replica One'", "while asking replica '" + ONE
-         * + "'", TestInfo.LOG_FILE); FileAsserts.assertFileContains(
-         * "Should have warning about TWO in logfile: " +
-         * FileUtils.readFile(TestInfo.LOG_FILE), //Before:
-         * "while asking replica 'Replica TWO'", "while asking replica '" + TWO
-         * + "'", TestInfo.LOG_FILE);
+         * LogUtils.flushLogs(getClass().getName()); FileAsserts.assertFileContains
+         * ("Should have warning about ONE in logfile: " + FileUtils.readFile(TestInfo.LOG_FILE), //Before:
+         * "while asking replica 'Replica One'", "while asking replica '" + ONE + "'", TestInfo.LOG_FILE);
+         * FileAsserts.assertFileContains( "Should have warning about TWO in logfile: " +
+         * FileUtils.readFile(TestInfo.LOG_FILE), //Before: "while asking replica 'Replica TWO'",
+         * "while asking replica '" + TWO + "'", TestInfo.LOG_FILE);
          */
         // Before: "while asking replica 'Replica One'",
         lr.assertLogContains("Should have warning about ONE in log", "while asking replica '" + ONE + "'");
@@ -552,14 +539,10 @@ public class FileBasedActiveBitPreservationTester {
         /**
          * The following three methods are used by the ActiveBitPreservation.
          * 
-         * @param job
-         *            a given FileBatchjob
-         * @param file
-         *            a given RemoteFile (ignored)
+         * @param job a given FileBatchjob
+         * @param file a given RemoteFile (ignored)
          * @return BatchStatus
-         * @throws IOException
-         *             If trouble creating temporary files and writing to this
-         *             temporary files.
+         * @throws IOException If trouble creating temporary files and writing to this temporary files.
          */
         public BatchStatus batch(FileBatchJob job, String locationName, RemoteFile file) throws IOException {
             BatchStatus lbs = null;

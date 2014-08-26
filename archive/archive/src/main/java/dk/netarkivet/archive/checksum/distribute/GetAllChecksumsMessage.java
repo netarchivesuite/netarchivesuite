@@ -36,13 +36,12 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 
 /**
- * The GetChecksumMessage has the purpose to retrieve the checksum of all the
- * files. The output is in the form of a file corresponding to the reply file of
- * a ChecksumJob.
+ * The GetChecksumMessage has the purpose to retrieve the checksum of all the files. The output is in the form of a file
+ * corresponding to the reply file of a ChecksumJob.
  * 
  * This is checksum replica alternative to sending a ChecksumBatchJob.
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class GetAllChecksumsMessage extends ArchiveMessage {
 
     private static final Logger log = LoggerFactory.getLogger(GetAllChecksumsMessage.class);
@@ -55,13 +54,9 @@ public class GetAllChecksumsMessage extends ArchiveMessage {
     /**
      * Constructor.
      * 
-     * @param to
-     *            Where this message is headed.
-     * @param replyTo
-     *            Where the reply on this message is sent.
-     * @param repId
-     *            The replica where the job involved in this message is to be
-     *            performed.
+     * @param to Where this message is headed.
+     * @param replyTo Where the reply on this message is sent.
+     * @param repId The replica where the job involved in this message is to be performed.
      */
     public GetAllChecksumsMessage(ChannelID to, ChannelID replyTo, String repId) {
         super(to, replyTo);
@@ -69,16 +64,13 @@ public class GetAllChecksumsMessage extends ArchiveMessage {
     }
 
     /**
-     * Method for setting the resulting file. This file will be retrieved from
-     * the caller of this message. This should be a movable instance since the
-     * temporary file should be removed after is has been retrieved.
+     * Method for setting the resulting file. This file will be retrieved from the caller of this message. This should
+     * be a movable instance since the temporary file should be removed after is has been retrieved.
      * 
      * TODO cleanup if remoteFile already has been set.
      * 
-     * @param file
-     *            The file with the checksum message.
-     * @throws ArgumentNotValid
-     *             If <b>file</b> is null.
+     * @param file The file with the checksum message.
+     * @throws ArgumentNotValid If <b>file</b> is null.
      */
     public void setFile(File file) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(file, "File file");
@@ -87,15 +79,12 @@ public class GetAllChecksumsMessage extends ArchiveMessage {
     }
 
     /**
-     * Method for retrieving the resulting file. This method can only be called
-     * once, since the remoteFile is cleaned up and set to null.
+     * Method for retrieving the resulting file. This method can only be called once, since the remoteFile is cleaned up
+     * and set to null.
      * 
-     * @param toFile
-     *            The file for the remotely retrieved content.
-     * @throws IOFailure
-     *             If the data in the remoteFile already has be retrieved.
-     * @throws ArgumentNotValid
-     *             If <b>toFile</b> is null.
+     * @param toFile The file for the remotely retrieved content.
+     * @throws IOFailure If the data in the remoteFile already has be retrieved.
+     * @throws ArgumentNotValid If <b>toFile</b> is null.
      */
     public void getData(File toFile) throws IOFailure, ArgumentNotValid {
         ArgumentNotValid.checkNotNull(toFile, "File toFile");
@@ -114,8 +103,7 @@ public class GetAllChecksumsMessage extends ArchiveMessage {
     }
 
     /**
-     * Method for retrieving the id for the replica where this message should be
-     * sent.
+     * Method for retrieving the id for the replica where this message should be sent.
      * 
      * @return The id for the replica.
      */
@@ -135,8 +123,7 @@ public class GetAllChecksumsMessage extends ArchiveMessage {
     /**
      * Accept visitation.
      * 
-     * @param v
-     *            The ArchiveMessageVisitor which accepts this message.
+     * @param v The ArchiveMessageVisitor which accepts this message.
      */
     public void accept(ArchiveMessageVisitor v) {
         v.visit(this);

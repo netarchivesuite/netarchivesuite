@@ -77,49 +77,42 @@ public class FileUtils {
     public static final String WARC_GZIPPED_EXTENSION = ".warc.gz";
 
     /**
-     * Pattern matching ARC files, including separator. Note: (?i) means case
-     * insensitive, (\\.gz)? means .gz is optionally matched, and $ means
-     * matches end-of-line. Thus this pattern will match file.arc.gz, file.ARC,
+     * Pattern matching ARC files, including separator. Note: (?i) means case insensitive, (\\.gz)? means .gz is
+     * optionally matched, and $ means matches end-of-line. Thus this pattern will match file.arc.gz, file.ARC,
      * file.aRc.GZ, but not file.ARC.open
      */
     public static final String ARC_PATTERN = "(?i)\\.arc(\\.gz)?$";
 
     /**
-     * Pattern matching open ARC files, including separator . Note: (?i) means
-     * case insensitive, (\\.gz)? means .gz is optionally matched, and $ means
-     * matches end-of-line. Thus this pattern will match file.arc.gz.open,
+     * Pattern matching open ARC files, including separator . Note: (?i) means case insensitive, (\\.gz)? means .gz is
+     * optionally matched, and $ means matches end-of-line. Thus this pattern will match file.arc.gz.open,
      * file.ARC.open, file.arc.GZ.OpEn, but not file.ARC.open.txt
      */
     public static final String OPEN_ARC_PATTERN = "(?i)\\.arc(\\.gz)?\\.open$";
 
     /**
-     * Pattern matching WARC files, including separator. Note: (?i) means case
-     * insensitive, (\\.gz)? means .gz is optionally matched, and $ means
-     * matches end-of-line. Thus this pattern will match file.warc.gz,
-     * file.WARC, file.WaRc.GZ, but not file.WARC.open
+     * Pattern matching WARC files, including separator. Note: (?i) means case insensitive, (\\.gz)? means .gz is
+     * optionally matched, and $ means matches end-of-line. Thus this pattern will match file.warc.gz, file.WARC,
+     * file.WaRc.GZ, but not file.WARC.open
      */
     public static final String WARC_PATTERN = "(?i)\\.warc(\\.gz)?$";
 
     /**
-     * Pattern matching open WARC files, including separator . Note: (?i) means
-     * case insensitive, (\\.gz)? means .gz is optionally matched, and $ means
-     * matches end-of-line. Thus this pattern will match file.warc.gz.open,
+     * Pattern matching open WARC files, including separator . Note: (?i) means case insensitive, (\\.gz)? means .gz is
+     * optionally matched, and $ means matches end-of-line. Thus this pattern will match file.warc.gz.open,
      * file.WARC.open, file.warc.GZ.OpEn, but not file.wARC.open.txt
      */
     public static final String OPEN_WARC_PATTERN = "(?i)\\.warc(\\.gz)?\\.open$";
 
     /**
-     * Pattern matching WARC and ARC files, including separator. Note: (?i)
-     * means case insensitive, (\\.gz)? means .gz is optionally matched, and $
-     * means matches end-of-line. Thus this pattern will match file.warc.gz,
-     * file.WARC, file.WaRc.GZ, file.arc.gz, file.ARC, file.aRc.GZ but not
-     * file.WARC.open or file.ARC.open
+     * Pattern matching WARC and ARC files, including separator. Note: (?i) means case insensitive, (\\.gz)? means .gz
+     * is optionally matched, and $ means matches end-of-line. Thus this pattern will match file.warc.gz, file.WARC,
+     * file.WaRc.GZ, file.arc.gz, file.ARC, file.aRc.GZ but not file.WARC.open or file.ARC.open
      */
     public static final String WARC_ARC_PATTERN = "(?i)\\.(w)?arc(\\.gz)?$";
 
     /**
-     * A FilenameFilter accepting a file if and only if its name (transformed to
-     * lower case) ends on ".cdx".
+     * A FilenameFilter accepting a file if and only if its name (transformed to lower case) ends on ".cdx".
      */
     public static final FilenameFilter CDX_FILE_FILTER = new FilenameFilter() {
         public boolean accept(File directory, String filename) {
@@ -128,8 +121,8 @@ public class FileUtils {
     };
 
     /**
-     * A filter that matches files left open by a crashed Heritrix process.
-     * Don't work on these files while Heritrix is still working on them.
+     * A filter that matches files left open by a crashed Heritrix process. Don't work on these files while Heritrix is
+     * still working on them.
      */
     public static final FilenameFilter OPEN_ARCS_FILTER = new FilenameFilter() {
         public boolean accept(File dir, String name) {
@@ -138,8 +131,8 @@ public class FileUtils {
     };
 
     /**
-     * A filter that matches warcfiles left open by a crashed Heritrix process.
-     * Don't work on these files while Heritrix is still working on them.
+     * A filter that matches warcfiles left open by a crashed Heritrix process. Don't work on these files while Heritrix
+     * is still working on them.
      */
     public static final FilenameFilter OPEN_WARCS_FILTER = new FilenameFilter() {
         public boolean accept(File dir, String name) {
@@ -148,8 +141,7 @@ public class FileUtils {
     };
 
     /**
-     * A filter that matches arc files, that is any file that ends on .arc or
-     * .arc.gz in any case.
+     * A filter that matches arc files, that is any file that ends on .arc or .arc.gz in any case.
      */
     public static final FilenameFilter ARCS_FILTER = new FilenameFilter() {
         public boolean accept(File directory, String filename) {
@@ -158,8 +150,7 @@ public class FileUtils {
     };
 
     /**
-     * A filter that matches warc files, that is any file that ends on .warc or
-     * .warc.gz in any case.
+     * A filter that matches warc files, that is any file that ends on .warc or .warc.gz in any case.
      */
     public static final FilenameFilter WARCS_FILTER = new FilenameFilter() {
         public boolean accept(File directory, String filename) {
@@ -168,8 +159,8 @@ public class FileUtils {
     };
 
     /**
-     * A filter that matches warc and arc files, that is any file that ends on
-     * .warc, .warc.gz, .arc or .arc.gz in any case.
+     * A filter that matches warc and arc files, that is any file that ends on .warc, .warc.gz, .arc or .arc.gz in any
+     * case.
      */
     public static final FilenameFilter WARCS_ARCS_FILTER = new FilenameFilter() {
         public boolean accept(File directory, String filename) {
@@ -183,22 +174,18 @@ public class FileUtils {
     /** How many times we will retry making a directory. */
     private static final int CREATE_DIR_RETRIES = 3;
     /**
-     * Maximum number of IDs we will put in a filename. Above this number, a
-     * checksum of the ids is generated instead. This is done to protect us from
-     * getting filenames too long for the filesystem.
+     * Maximum number of IDs we will put in a filename. Above this number, a checksum of the ids is generated instead.
+     * This is done to protect us from getting filenames too long for the filesystem.
      */
     public static final int MAX_IDS_IN_FILENAME = 4;
 
     /**
      * Remove a file and any subfiles in case of directories.
      *
-     * @param f
-     *            A file to completely and utterly remove.
+     * @param f A file to completely and utterly remove.
      * @return true if the file did exist, false otherwise.
-     * @throws SecurityException
-     *             If a security manager exists and its <code>{@link
-     *                           java.lang.SecurityManager#checkDelete}</code>
-     *             method denies delete access to the file
+     * @throws SecurityException If a security manager exists and its <code>{@link
+     *                           java.lang.SecurityManager#checkDelete}</code> method denies delete access to the file
      */
     public static boolean removeRecursively(File f) {
         ArgumentNotValid.checkNotNull(f, "File f");
@@ -238,15 +225,11 @@ public class FileUtils {
     /**
      * Remove a file.
      * 
-     * @param f
-     *            A file to completely and utterly remove.
+     * @param f A file to completely and utterly remove.
      * @return true if the file did exist, false otherwise.
-     * @throws ArgumentNotValid
-     *             if f is null.
-     * @throws SecurityException
-     *             If a security manager exists and its <code>{@link
-     *                           java.lang.SecurityManager#checkDelete}</code>
-     *             method denies delete access to the file
+     * @throws ArgumentNotValid if f is null.
+     * @throws SecurityException If a security manager exists and its <code>{@link
+     *                           java.lang.SecurityManager#checkDelete}</code> method denies delete access to the file
      */
     public static boolean remove(File f) {
         ArgumentNotValid.checkNotNull(f, "f");
@@ -270,13 +253,11 @@ public class FileUtils {
     }
 
     /**
-     * Returns a valid filename for most filesystems. Exchanges the following
-     * characters:
+     * Returns a valid filename for most filesystems. Exchanges the following characters:
      * <p/>
      * " " -> "_" ":" -> "_" "+" -> "_"
      *
-     * @param filename
-     *            the filename to format correctly
+     * @param filename the filename to format correctly
      * @return a new formatted filename
      */
     public static String formatFilename(String filename) {
@@ -296,16 +277,11 @@ public class FileUtils {
     }
 
     /**
-     * Retrieves all files whose names ends with 'type' from directory 'dir' and
-     * all its subdirectories.
+     * Retrieves all files whose names ends with 'type' from directory 'dir' and all its subdirectories.
      *
-     * @param dir
-     *            Path of base directory
-     * @param files
-     *            Initially, an empty list (e.g. an ArrayList)
-     * @param type
-     *            The extension/ending of the files to retrieve (e.g. ".xml",
-     *            ".ARC")
+     * @param dir Path of base directory
+     * @param files Initially, an empty list (e.g. an ArrayList)
+     * @param type The extension/ending of the files to retrieve (e.g. ".xml", ".ARC")
      * @return A list of files from directory 'dir' and all its subdirectories
      */
     public static List<File> getFilesRecursively(String dir, List<File> files, String type) {
@@ -331,12 +307,9 @@ public class FileUtils {
     /**
      * Load file content into text string.
      *
-     * @param file
-     *            The file to load
+     * @param file The file to load
      * @return file content loaded into text string
-     * @throws java.io.IOException
-     *             If any IO trouble occurs while reading the file, or the file
-     *             cannot be found.
+     * @throws java.io.IOException If any IO trouble occurs while reading the file, or the file cannot be found.
      */
     public static String readFile(File file) throws IOException {
         ArgumentNotValid.checkNotNull(file, "File file");
@@ -358,16 +331,11 @@ public class FileUtils {
     }
 
     /**
-     * Copy file from one location to another. Will silently overwrite an
-     * already existing file.
+     * Copy file from one location to another. Will silently overwrite an already existing file.
      *
-     * @param from
-     *            original to copy
-     * @param to
-     *            destination of copy
-     * @throws IOFailure
-     *             if an io error occurs while copying file, or the original
-     *             file does not exist.
+     * @param from original to copy
+     * @param to destination of copy
+     * @throws IOFailure if an io error occurs while copying file, or the original file does not exist.
      */
     public static void copyFile(File from, File to) {
         ArgumentNotValid.checkNotNull(from, "File from");
@@ -420,16 +388,12 @@ public class FileUtils {
     }
 
     /**
-     * Copy an entire directory from one location to another. Note that this
-     * will silently overwrite old files, just like copyFile().
+     * Copy an entire directory from one location to another. Note that this will silently overwrite old files, just
+     * like copyFile().
      *
-     * @param from
-     *            Original directory (or file, for that matter) to copy.
-     * @param to
-     *            Destination directory, i.e. the 'new name' of the copy of the
-     *            from directory.
-     * @throws IOFailure
-     *             On IO trouble copying files.
+     * @param from Original directory (or file, for that matter) to copy.
+     * @param to Destination directory, i.e. the 'new name' of the copy of the from directory.
+     * @throws IOFailure On IO trouble copying files.
      */
     public static void copyDirectory(File from, File to) throws IOFailure {
         ArgumentNotValid.checkNotNull(from, "File from");
@@ -474,16 +438,12 @@ public class FileUtils {
     }
 
     /**
-     * Read an entire file, byte by byte, into a byte array, ignoring any locale
-     * issues.
+     * Read an entire file, byte by byte, into a byte array, ignoring any locale issues.
      *
-     * @param file
-     *            A file to be read.
+     * @param file A file to be read.
      * @return A byte array with the contents of the file.
-     * @throws IOFailure
-     *             on IO trouble reading the file, or the file does not exist
-     * @throws IndexOutOfBoundsException
-     *             If the file is too large to be in an array.
+     * @throws IOFailure on IO trouble reading the file, or the file does not exist
+     * @throws IndexOutOfBoundsException If the file is too large to be in an array.
      */
     public static byte[] readBinaryFile(File file) throws IOFailure, IndexOutOfBoundsException {
         ArgumentNotValid.checkNotNull(file, "File file");
@@ -526,12 +486,9 @@ public class FileUtils {
     /**
      * Write an entire byte array to a file, ignoring any locale issues.
      *
-     * @param file
-     *            The file to write the data to
-     * @param b
-     *            The byte array to write to the file
-     * @throws IOFailure
-     *             If an exception occurs during the writing.
+     * @param file The file to write the data to
+     * @param b The byte array to write to the file
+     * @throws IOFailure If an exception occurs during the writing.
      */
     public static void writeBinaryFile(File file, byte[] b) {
         ArgumentNotValid.checkNotNull(file, "File file");
@@ -554,8 +511,7 @@ public class FileUtils {
     }
 
     /**
-     * Return a filter that only accepts XML files (ending with .xml),
-     * irrespective of their location.
+     * Return a filter that only accepts XML files (ending with .xml), irrespective of their location.
      *
      * @return A new filter for XML files.
      */
@@ -564,13 +520,10 @@ public class FileUtils {
             /**
              * Tests if a specified file should be included in a file list.
              *
-             * @param dir
-             *            the directory in which the file was found. Unused in
-             *            this implementation of accept.
-             * @param name
-             *            the name of the file.
-             * @return <code>true</code> if and only if the name should be
-             *         included in the file list; <code>false</code> otherwise.
+             * @param dir the directory in which the file was found. Unused in this implementation of accept.
+             * @param name the name of the file.
+             * @return <code>true</code> if and only if the name should be included in the file list; <code>false</code>
+             *         otherwise.
              * @see FilenameFilter#accept(java.io.File, java.lang.String)
              */
             public boolean accept(File dir, String name) {
@@ -582,11 +535,9 @@ public class FileUtils {
     /**
      * Read all lines from a file into a list of strings.
      * 
-     * @param file
-     *            The file to read from.
+     * @param file The file to read from.
      * @return The list of lines.
-     * @throws IOFailure
-     *             on trouble reading the file, or if the file does not exist
+     * @throws IOFailure on trouble reading the file, or if the file does not exist
      */
     public static List<String> readListFromFile(File file) {
         ArgumentNotValid.checkNotNull(file, "File file");
@@ -620,16 +571,10 @@ public class FileUtils {
     /**
      * Writes a collection of strings to a file, each string on one line.
      *
-     * @param file
-     *            A file to write to. The contents of this file will be
-     *            overwritten.
-     * @param collection
-     *            The collection to write. The order it will be written in is
-     *            unspecified.
-     * @throws IOFailure
-     *             if any error occurs writing to the file.
-     * @throws ArgumentNotValid
-     *             if file or collection is null.
+     * @param file A file to write to. The contents of this file will be overwritten.
+     * @param collection The collection to write. The order it will be written in is unspecified.
+     * @throws IOFailure if any error occurs writing to the file.
+     * @throws ArgumentNotValid if file or collection is null.
      */
     public static void writeCollectionToFile(File file, Collection<String> collection) {
         ArgumentNotValid.checkNotNull(file, "file");
@@ -655,13 +600,10 @@ public class FileUtils {
     }
 
     /**
-     * Sort a file into another. The current implementation slurps all lines
-     * into memory. This will not scale forever.
+     * Sort a file into another. The current implementation slurps all lines into memory. This will not scale forever.
      *
-     * @param unsortedFile
-     *            A file to sort
-     * @param sortedOutput
-     *            The file to sort into
+     * @param unsortedFile A file to sort
+     * @param sortedOutput The file to sort into
      */
     public static void makeSortedFile(File unsortedFile, File sortedOutput) {
         ArgumentNotValid.checkNotNull(unsortedFile, "File unsortedFile");
@@ -675,13 +617,10 @@ public class FileUtils {
     /**
      * Remove a line from a given file.
      *
-     * @param line
-     *            The full line to remove
-     * @param file
-     *            The file to remove the line from. This file will be rewritten
-     *            in full, and the entire contents will be kept in memory
-     * @throws UnknownID
-     *             If the file does not exist
+     * @param line The full line to remove
+     * @param file The file to remove the line from. This file will be rewritten in full, and the entire contents will
+     *            be kept in memory
+     * @throws UnknownID If the file does not exist
      */
     public static void removeLineFromFile(String line, File file) {
         ArgumentNotValid.checkNotNull(line, "String line");
@@ -698,17 +637,12 @@ public class FileUtils {
     }
 
     /**
-     * Check if the directory exists and is writable and create it if needed.
-     * The complete path down to the directory is created. If the directory
-     * creation fails a PermissionDenied exception is thrown.
+     * Check if the directory exists and is writable and create it if needed. The complete path down to the directory is
+     * created. If the directory creation fails a PermissionDenied exception is thrown.
      *
-     * @param dir
-     *            The directory to create
-     * @throws ArgumentNotValid
-     *             If dir is null or its name is the empty string
-     * @throws PermissionDenied
-     *             If directory cannot be created for any reason, or is not
-     *             writable.
+     * @param dir The directory to create
+     * @throws ArgumentNotValid If dir is null or its name is the empty string
+     * @throws PermissionDenied If directory cannot be created for any reason, or is not writable.
      * @return true if dir created.
      */
     public static boolean createDir(File dir) throws PermissionDenied {
@@ -744,13 +678,10 @@ public class FileUtils {
     }
 
     /**
-     * Returns the number of bytes free on the file system calling the
-     * FreeSpaceProvider class defined by the setting
-     * CommonSettings.FREESPACE_PROVIDER_CLASS (a.k.a.
-     * settings.common.freespaceprovider.class)
+     * Returns the number of bytes free on the file system calling the FreeSpaceProvider class defined by the setting
+     * CommonSettings.FREESPACE_PROVIDER_CLASS (a.k.a. settings.common.freespaceprovider.class)
      *
-     * @param f
-     *            a given file
+     * @param f a given file
      * @return the number of bytes free defined in the settings.xml
      */
     public static long getBytesFree(File f) {
@@ -758,12 +689,10 @@ public class FileUtils {
     }
 
     /**
-     * @param theFile
-     *            A file to make relative
-     * @param theDir
-     *            A directory
-     * @return the filepath of the theFile relative to theDir. null, if theFile
-     *         is not relative to theDir. null, if theDir is not a directory.
+     * @param theFile A file to make relative
+     * @param theDir A directory
+     * @return the filepath of the theFile relative to theDir. null, if theFile is not relative to theDir. null, if
+     *         theDir is not a directory.
      */
     public static String relativeTo(File theFile, File theDir) {
         ArgumentNotValid.checkNotNull(theFile, "File theFile");
@@ -811,10 +740,8 @@ public class FileUtils {
     /**
      * Count the number of lines in a file.
      * 
-     * @param file
-     *            the file to read
-     * @throws IOFailure
-     *             If an error occurred while reading the file
+     * @param file the file to read
+     * @throws IOFailure If an error occurred while reading the file
      * @return the number of lines in the file
      */
     public static long countLines(File file) {
@@ -841,15 +768,11 @@ public class FileUtils {
     }
 
     /**
-     * Create an InputStream that reads from a file but removes the file when
-     * all data has been read.
+     * Create an InputStream that reads from a file but removes the file when all data has been read.
      *
-     * @param file
-     *            A file to read. This file will be deleted when the inputstream
-     *            is closed, finalized, reaches end-of-file, or when the VM
-     *            closes.
-     * @throws IOFailure
-     *             If an error occurs in creating the ephemeral input stream
+     * @param file A file to read. This file will be deleted when the inputstream is closed, finalized, reaches
+     *            end-of-file, or when the VM closes.
+     * @throws IOFailure If an error occurs in creating the ephemeral input stream
      * @return An InputStream containing the file's contents.
      */
     public static InputStream getEphemeralInputStream(final File file) {
@@ -873,14 +796,12 @@ public class FileUtils {
     }
 
     /**
-     * Makes a valid file from filename passed in String. Ensures that the File
-     * object returned is not null, and that isFile() returns true.
+     * Makes a valid file from filename passed in String. Ensures that the File object returned is not null, and that
+     * isFile() returns true.
      *
-     * @param filename
-     *            The file to create the File object from
+     * @param filename The file to create the File object from
      * @return A valid, non-null File object.
-     * @throws IOFailure
-     *             if file cannot be created.
+     * @throws IOFailure if file cannot be created.
      */
     public static File makeValidFileFromExisting(String filename) throws IOFailure {
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
@@ -898,12 +819,9 @@ public class FileUtils {
     /**
      * Write the entire contents of a file to a stream.
      *
-     * @param f
-     *            A file to write to the stream.
-     * @param out
-     *            The stream to write to.
-     * @throws IOFailure
-     *             If any error occurs while writing the file to a stream
+     * @param f A file to write to the stream.
+     * @param out The stream to write to.
+     * @throws IOFailure If any error occurs while writing the file to a stream
      */
     public static void writeFileToStream(File f, OutputStream out) {
         ArgumentNotValid.checkNotNull(f, "File f");
@@ -930,13 +848,9 @@ public class FileUtils {
     /**
      * Write the contents of a stream into a file.
      *
-     * @param in
-     *            A stream to read from. This stream is not closed by this
-     *            method.
-     * @param f
-     *            The file to write the stream contents into.
-     * @throws IOFailure
-     *             If any error occurs while writing the stream to a file
+     * @param in A stream to read from. This stream is not closed by this method.
+     * @param f The file to write the stream contents into.
+     * @throws IOFailure If any error occurs while writing the stream to a file
      */
     public static void writeStreamToFile(InputStream in, File f) {
         ArgumentNotValid.checkNotNull(f, "File f");
@@ -962,8 +876,8 @@ public class FileUtils {
     }
 
     /**
-     * Get the location of the standard temporary directory. The existence of
-     * this directory should be ensure at the start of every application.
+     * Get the location of the standard temporary directory. The existence of this directory should be ensure at the
+     * start of every application.
      *
      * @return The directory that should be used for temporary files.
      */
@@ -972,13 +886,10 @@ public class FileUtils {
     }
 
     /**
-     * Attempt to move a file using rename, and if that fails, move the file by
-     * copy-and-delete.
+     * Attempt to move a file using rename, and if that fails, move the file by copy-and-delete.
      * 
-     * @param fromFile
-     *            The source
-     * @param toFile
-     *            The target
+     * @param fromFile The source
+     * @param toFile The target
      */
     public static void moveFile(File fromFile, File toFile) {
         ArgumentNotValid.checkNotNull(fromFile, "File fromFile");
@@ -993,12 +904,9 @@ public class FileUtils {
     /**
      * Given a set, generate a reasonable file name from the set.
      * 
-     * @param <T>
-     *            The type of objects, that the Set IDs argument contains.
-     * @param IDs
-     *            A set of IDs.
-     * @param suffix
-     *            A suffix. May be empty string.
+     * @param <T> The type of objects, that the Set IDs argument contains.
+     * @param IDs A set of IDs.
+     * @param suffix A suffix. May be empty string.
      * @return A reasonable file name.
      */
     public static <T extends Comparable<T>> String generateFileNameFromSet(Set<T> IDs, String suffix) {
@@ -1026,13 +934,9 @@ public class FileUtils {
     /**
      * Sort a crawl.log file according to the url.
      *
-     * @param file
-     *            The file containing the unsorted data.
-     * @param toFile
-     *            The file that the sorted data can be put into.
-     * @throws IOFailure
-     *             if there were errors running the sort process, or if the file
-     *             does not exist.
+     * @param file The file containing the unsorted data.
+     * @param toFile The file that the sorted data can be put into.
+     * @throws IOFailure if there were errors running the sort process, or if the file does not exist.
      */
     public static void sortCrawlLog(File file, File toFile) {
         ArgumentNotValid.checkNotNull(file, "File file");
@@ -1059,13 +963,9 @@ public class FileUtils {
     /**
      * Sort a crawl.log file according to the timestamp.
      *
-     * @param file
-     *            The file containing the unsorted data.
-     * @param toFile
-     *            The file that the sorted data can be put into.
-     * @throws IOFailure
-     *             if there were errors running the sort process, or if the file
-     *             does not exist.
+     * @param file The file containing the unsorted data.
+     * @param toFile The file that the sorted data can be put into.
+     * @throws IOFailure if there were errors running the sort process, or if the file does not exist.
      */
     public static void sortCrawlLogOnTimestamp(File file, File toFile) {
         ArgumentNotValid.checkNotNull(file, "File file");
@@ -1090,15 +990,11 @@ public class FileUtils {
     }
 
     /**
-     * Sort a CDX file according to our standard for CDX file sorting. This
-     * method depends on the Unix sort() command.
+     * Sort a CDX file according to our standard for CDX file sorting. This method depends on the Unix sort() command.
      *
-     * @param file
-     *            The raw unsorted CDX file.
-     * @param toFile
-     *            The file that the result will be put into.
-     * @throws IOFailure
-     *             If the file does not exist, or could not be sorted
+     * @param file The raw unsorted CDX file.
+     * @param toFile The file that the result will be put into.
+     * @throws IOFailure If the file does not exist, or could not be sorted
      */
     public static void sortCDX(File file, File toFile) {
         ArgumentNotValid.checkNotNull(file, "File file");
@@ -1124,33 +1020,23 @@ public class FileUtils {
     /**
      * Sort a file using UNIX sort.
      * 
-     * @param file
-     *            the file that you want to sort.
-     * @param toFile
-     *            The destination file.
+     * @param file the file that you want to sort.
+     * @param toFile The destination file.
      */
     public static void sortFile(File file, File toFile) {
         sortCDX(file, toFile);
     }
 
     /**
-     * Creates a new temporary directory with a unique name. This directory will
-     * be deleted automatically at the end of the VM (though behaviour if there
-     * are files in it is undefined). This method will try a limited number of
-     * times to create a directory, using a randomly generated suffix, before
-     * giving up.
+     * Creates a new temporary directory with a unique name. This directory will be deleted automatically at the end of
+     * the VM (though behaviour if there are files in it is undefined). This method will try a limited number of times
+     * to create a directory, using a randomly generated suffix, before giving up.
      *
-     * @param inDir
-     *            The directory where the temporary directory should be created.
-     * @param prefix
-     *            The prefix of the directory name, for identification purposes.
-     * @return A newly created directory that no other calls to createUniqueDir
-     *         returns.
-     * @throws ArgumentNotValid
-     *             if inDir is not an existing directory that can be written to.
-     * @throws IOFailure
-     *             if a free name couldn't be found within a reasonable number
-     *             of tries.
+     * @param inDir The directory where the temporary directory should be created.
+     * @param prefix The prefix of the directory name, for identification purposes.
+     * @return A newly created directory that no other calls to createUniqueDir returns.
+     * @throws ArgumentNotValid if inDir is not an existing directory that can be written to.
+     * @throws IOFailure if a free name couldn't be found within a reasonable number of tries.
      */
     public static File createUniqueTempDir(File inDir, String prefix) {
         ArgumentNotValid.checkNotNull(inDir, "File inDir");
@@ -1182,14 +1068,10 @@ public class FileUtils {
     /**
      * Read the last line in a file. Note this method is not UTF-8 safe.
      *
-     * @param file
-     *            input file to read last line from.
-     * @return The last line in the file (ending newline is irrelevant), returns
-     *         an empty string if file is empty.
-     * @throws ArgumentNotValid
-     *             on null argument, or file is not a readable file.
-     * @throws IOFailure
-     *             on IO trouble reading file.
+     * @param file input file to read last line from.
+     * @return The last line in the file (ending newline is irrelevant), returns an empty string if file is empty.
+     * @throws ArgumentNotValid on null argument, or file is not a readable file.
+     * @throws IOFailure on IO trouble reading file.
      */
     public static String readLastLine(File file) {
         ArgumentNotValid.checkNotNull(file, "File file");
@@ -1232,10 +1114,8 @@ public class FileUtils {
     /**
      * Append the given lines to a file. Each lines is terminated by a newline.
      *
-     * @param file
-     *            A file to append to.
-     * @param lines
-     *            The lines to write.
+     * @param file A file to append to.
+     * @param lines The lines to write.
      */
     public static void appendToFile(File file, String... lines) {
         ArgumentNotValid.checkNotNull(file, "File file");
@@ -1263,11 +1143,9 @@ public class FileUtils {
     /**
      * Loads an file from the class path (for retrieving a file from '.jar').
      * 
-     * @param filePath
-     *            The path of the file.
+     * @param filePath The path of the file.
      * @return The file from the class path.
-     * @throws IOFailure
-     *             If resource cannot be retrieved from the class path.
+     * @throws IOFailure If resource cannot be retrieved from the class path.
      */
     public static File getResourceFileFromClassPath(String filePath) throws IOFailure {
         ArgumentNotValid.checkNotNullOrEmpty(filePath, "String filePath");
@@ -1293,12 +1171,10 @@ public class FileUtils {
     }
 
     /**
-     * Get a humanly readable representation of the file size. If the file is a
-     * directory, the size is the aggregate of the files in the directory except
-     * that subdirectories are ignored. The number is given with 2 decimals.
+     * Get a humanly readable representation of the file size. If the file is a directory, the size is the aggregate of
+     * the files in the directory except that subdirectories are ignored. The number is given with 2 decimals.
      * 
-     * @param aFile
-     *            a File object
+     * @param aFile a File object
      * @return a humanly readable representation of the file size (rounded)
      */
     public static String getHumanReadableFileSize(File aFile) {
@@ -1335,8 +1211,7 @@ public class FileUtils {
     }
 
     /**
-     * @param aDir
-     *            A directory
+     * @param aDir A directory
      * @return true, if the given directory contains files; else returns false
      */
     public static boolean hasFiles(File aDir) {

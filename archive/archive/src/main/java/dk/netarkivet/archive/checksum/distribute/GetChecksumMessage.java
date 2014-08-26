@@ -28,13 +28,11 @@ import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
- * The GetChecksumMessage has the purpose to retrieve the checksum of a specific
- * file.
+ * The GetChecksumMessage has the purpose to retrieve the checksum of a specific file.
  * 
- * This is checksum replica alternative to sending a ChecksumBatchJob, with a
- * filename limitation.
+ * This is checksum replica alternative to sending a ChecksumBatchJob, with a filename limitation.
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class GetChecksumMessage extends ArchiveMessage {
     /** The name of the arc file to retrieve the checksum from. */
     private String arcFilename;
@@ -48,14 +46,10 @@ public class GetChecksumMessage extends ArchiveMessage {
     /**
      * Constructor.
      * 
-     * @param to
-     *            Where this message should be sent.
-     * @param replyTo
-     *            Where the reply for this message should be sent.
-     * @param filename
-     *            The name of the file.
-     * @param repId
-     *            The id of the replica where the message is to be sent.
+     * @param to Where this message should be sent.
+     * @param replyTo Where the reply for this message should be sent.
+     * @param filename The name of the file.
+     * @param repId The id of the replica where the message is to be sent.
      */
     public GetChecksumMessage(ChannelID to, ChannelID replyTo, String filename, String repId) {
         super(to, replyTo);
@@ -86,19 +80,17 @@ public class GetChecksumMessage extends ArchiveMessage {
     }
 
     /**
-     * Retrieves the checksum. This method is intended for the reply. If this
-     * checksum has not been sent, then the value is null.
+     * Retrieves the checksum. This method is intended for the reply. If this checksum has not been sent, then the value
+     * is null.
      * 
-     * @return The retrieved checksum, or null if the entry was not found in the
-     *         archive.
+     * @return The retrieved checksum, or null if the entry was not found in the archive.
      */
     public String getChecksum() {
         return checksum;
     }
 
     /**
-     * Retrieves the variable for telling whether this it currently is a reply
-     * to this message or not.
+     * Retrieves the variable for telling whether this it currently is a reply to this message or not.
      * 
      * @return Whether this is a reply or not.
      */
@@ -107,8 +99,7 @@ public class GetChecksumMessage extends ArchiveMessage {
     }
 
     /**
-     * Set that this is a reply. This should be set when there is replied to
-     * this message. <b>isReply = true</b>.
+     * Set that this is a reply. This should be set when there is replied to this message. <b>isReply = true</b>.
      */
     public void setIsReply() {
         isReply = true;
@@ -117,11 +108,8 @@ public class GetChecksumMessage extends ArchiveMessage {
     /**
      * Method for returning the result of the checksum.
      * 
-     * @param cs
-     *            The checksum.
-     * @throws ArgumentNotValid
-     *             If the checksum which is attempted to be set is either null
-     *             or an empty string.
+     * @param cs The checksum.
+     * @throws ArgumentNotValid If the checksum which is attempted to be set is either null or an empty string.
      */
     public void setChecksum(String cs) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(cs, "String cs");
@@ -132,8 +120,7 @@ public class GetChecksumMessage extends ArchiveMessage {
     /**
      * Accept this message.
      *
-     * @param v
-     *            The message visitor accepting this message.
+     * @param v The message visitor accepting this message.
      */
     public void accept(ArchiveMessageVisitor v) {
         v.visit(this);

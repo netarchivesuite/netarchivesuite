@@ -51,7 +51,7 @@ import dk.netarkivet.common.utils.cdx.CDXRecord;
 /**
  * Methods for generating the batch results needed by the QA pages.
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class Reporting {
     /**
      * Utility class, do not initialise.
@@ -63,24 +63,18 @@ public class Reporting {
     static final String archivefile_suffix = ".*\\.(w)?arc(\\.gz)?";
 
     /**
-     * The suffix for the data arc/warc metadata file created by
-     * NetarchiveSuite.
+     * The suffix for the data arc/warc metadata file created by NetarchiveSuite.
      */
     static final String metadatafile_suffix = "-metadata-[0-9]+\\.(w)?arc(\\.gz)?";
 
     /**
-     * Submit a batch job to list all files for a job, and report result in a
-     * sorted list.
+     * Submit a batch job to list all files for a job, and report result in a sorted list.
      * 
-     * @param jobid
-     *            The job to get files for.
-     * @param harvestprefix
-     *            The harvestprefix for the files produced by heritrix
+     * @param jobid The job to get files for.
+     * @param harvestprefix The harvestprefix for the files produced by heritrix
      * @return A sorted list of files.
-     * @throws ArgumentNotValid
-     *             If jobid is 0 or negative.
-     * @throws IOFailure
-     *             On trouble generating the file list
+     * @throws ArgumentNotValid If jobid is 0 or negative.
+     * @throws IOFailure On trouble generating the file list
      */
     public static List<String> getFilesForJob(int jobid, String harvestprefix) {
         ArgumentNotValid.checkPositive(jobid, "jobid");
@@ -110,16 +104,12 @@ public class Reporting {
     }
 
     /**
-     * Submit a batch job to generate cdx for all metadata files for a job, and
-     * report result in a list.
+     * Submit a batch job to generate cdx for all metadata files for a job, and report result in a list.
      * 
-     * @param jobid
-     *            The job to get cdx for.
+     * @param jobid The job to get cdx for.
      * @return A list of cdx records.
-     * @throws ArgumentNotValid
-     *             If jobid is 0 or negative.
-     * @throws IOFailure
-     *             On trouble generating the cdx
+     * @throws ArgumentNotValid If jobid is 0 or negative.
+     * @throws IOFailure On trouble generating the cdx
      */
     public static List<CDXRecord> getMetadataCDXRecordsForJob(long jobid) {
         ArgumentNotValid.checkPositive(jobid, "jobid");
@@ -160,17 +150,12 @@ public class Reporting {
     }
 
     /**
-     * Submit a batch job to extract the part of a crawl log that is associated
-     * with the given domain and job.
+     * Submit a batch job to extract the part of a crawl log that is associated with the given domain and job.
      * 
-     * @param domain
-     *            The domain to get crawl.log-lines for.
-     * @param jobid
-     *            The jobid to get the crawl.log-lines for.
-     * @return A file containing the crawl.log lines. This file is temporary,
-     *         and should be deleted after use.
-     * @throws ArgumentNotValid
-     *             On negative jobids, or if domain is null or the empty string.
+     * @param domain The domain to get crawl.log-lines for.
+     * @param jobid The jobid to get the crawl.log-lines for.
+     * @return A file containing the crawl.log lines. This file is temporary, and should be deleted after use.
+     * @throws ArgumentNotValid On negative jobids, or if domain is null or the empty string.
      */
     public static File getCrawlLogForDomainInJob(String domain, int jobid) {
         ArgumentNotValid.checkPositive(jobid, "jobid");
@@ -183,8 +168,7 @@ public class Reporting {
     /**
      * Helper method to get result from a batchjob.
      * 
-     * @param batchJob
-     *            a certain FileBatchJob
+     * @param batchJob a certain FileBatchJob
      * @return a file with the result.
      */
     private static File getResultFile(FileBatchJob batchJob) {
@@ -208,13 +192,10 @@ public class Reporting {
     }
 
     /**
-     * Return any crawllog lines for a given jobid matching the given regular
-     * expression.
+     * Return any crawllog lines for a given jobid matching the given regular expression.
      * 
-     * @param jobid
-     *            The jobid
-     * @param regexp
-     *            A regular expression
+     * @param jobid The jobid
+     * @param regexp A regular expression
      * @return a File with the matching lines.
      */
     public static File getCrawlLoglinesMatchingRegexp(int jobid, String regexp) {

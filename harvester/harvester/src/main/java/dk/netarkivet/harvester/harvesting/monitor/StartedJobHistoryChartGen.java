@@ -59,10 +59,8 @@ import dk.netarkivet.harvester.datamodel.NumberUtils;
 import dk.netarkivet.harvester.datamodel.RunningJobsInfoDAO;
 
 /**
- * This class implements a generator for an history chart of a running job. The
- * chart traces the progress percentage and the queued URI count over the crawl
- * time. Charts are rendered in a PNG image file, generated in the webapp
- * directory.
+ * This class implements a generator for an history chart of a running job. The chart traces the progress percentage and
+ * the queued URI count over the crawl time. Charts are rendered in a PNG image file, generated in the webapp directory.
  */
 class StartedJobHistoryChartGen {
 
@@ -70,8 +68,7 @@ class StartedJobHistoryChartGen {
     private static final Logger LOG = LoggerFactory.getLogger(StartedJobHistoryChartGen.class);
 
     /**
-     * Time units used to scale the crawl time values and generate the chart's
-     * time axis ticks.
+     * Time units used to scale the crawl time values and generate the chart's time axis ticks.
      */
     protected static enum TimeAxisResolution {
         /** One second. Tick step is 10s. */
@@ -99,12 +96,9 @@ class StartedJobHistoryChartGen {
         /**
          * Builds a time axis resolution.
          * 
-         * @param seconds
-         *            the actual resolution in seconds
-         * @param scaleSeconds
-         *            the actual "scale" of ticks
-         * @param tickStep
-         *            the number of ticks in one step.
+         * @param seconds the actual resolution in seconds
+         * @param scaleSeconds the actual "scale" of ticks
+         * @param tickStep the number of ticks in one step.
          */
         TimeAxisResolution(int seconds, int scaleSeconds, double tickStep) {
             this.seconds = seconds;
@@ -115,8 +109,7 @@ class StartedJobHistoryChartGen {
         /**
          * Scale down an array of seconds.
          * 
-         * @param timeInSeconds
-         *            An array of seconds
+         * @param timeInSeconds An array of seconds
          * @return a scaled down version of the given array of seconds
          */
         double[] scale(double[] timeInSeconds) {
@@ -128,8 +121,7 @@ class StartedJobHistoryChartGen {
         }
 
         /**
-         * @param seconds
-         *            the seconds
+         * @param seconds the seconds
          * @return the proper timeUnit for the given argument
          */
         static TimeAxisResolution findTimeUnit(double seconds) {
@@ -146,8 +138,7 @@ class StartedJobHistoryChartGen {
     }
 
     /**
-     * A chart generation task. Generates a PNG image for a job progress
-     * history.
+     * A chart generation task. Generates a PNG image for a job progress history.
      */
     private static class ChartGen implements Runnable {
         /** The process that generates the Charts. */
@@ -156,8 +147,7 @@ class StartedJobHistoryChartGen {
         /**
          * Constructor of a ChartGen objector.
          * 
-         * @param gen
-         *            the process that generates the charts.
+         * @param gen the process that generates the charts.
          */
         ChartGen(StartedJobHistoryChartGen gen) {
             super();
@@ -203,14 +193,13 @@ class StartedJobHistoryChartGen {
                     CHART_RESOLUTION[1],
                     null, // no chart title
                     I18N.getString(gen.locale, "running.job.details.chart.legend.crawlTime"),
-                    new String[] { I18N.getString(gen.locale, "running.job.details.chart.legend.progress"),
-                            I18N.getString(gen.locale, "running.job.details.chart.legend.queuedUris") },
+                    new String[] {I18N.getString(gen.locale, "running.job.details.chart.legend.progress"),
+                            I18N.getString(gen.locale, "running.job.details.chart.legend.queuedUris")},
                     NumberUtils.toPrimitiveArray(timeValues),
-                    new double[][] { new double[] { 0, 100 }, null },
-                    new double[][] { NumberUtils.toPrimitiveArray(progressValues),
-                            NumberUtils.toPrimitiveArray(urlValues) },
-                    new Color[] { Color.blue, Color.green.darker() }, new String[] { "%", "" }, false, Color.lightGray
-                            .brighter().brighter());
+                    new double[][] {new double[] {0, 100}, null},
+                    new double[][] {NumberUtils.toPrimitiveArray(progressValues),
+                            NumberUtils.toPrimitiveArray(urlValues)}, new Color[] {Color.blue, Color.green.darker()},
+                    new String[] {"%", ""}, false, Color.lightGray.brighter().brighter());
 
             long genTime = System.currentTimeMillis() - startTime;
             LOG.info(
@@ -246,7 +235,7 @@ class StartedJobHistoryChartGen {
     /**
      * The chart image resolution.
      */
-    private static final int[] CHART_RESOLUTION = new int[] { 600, 450 };
+    private static final int[] CHART_RESOLUTION = new int[] {600, 450};
     /** The dimension of the chart axis. */
     private static final double CHART_AXIS_DIMENSION = 10.0;
     /** The relative path of the output. */
@@ -266,8 +255,7 @@ class StartedJobHistoryChartGen {
     private File chartFile = null;
 
     /**
-     * The locale for internationalizing the chart. The locale is set to the
-     * system default.
+     * The locale for internationalizing the chart. The locale is set to the system default.
      */
     private final Locale locale;
     /** The process controlling the cyclic regeneration of charts. */
@@ -276,8 +264,7 @@ class StartedJobHistoryChartGen {
     /**
      * Constructor. Start generating charts for data belonging to the given job.
      * 
-     * @param jobId
-     *            a job id.
+     * @param jobId a job id.
      */
     StartedJobHistoryChartGen(long jobId) {
         super();
@@ -295,8 +282,7 @@ class StartedJobHistoryChartGen {
     /**
      * Returns the image file.
      * 
-     * @return the image file. Might return null if no file is currently
-     *         available.
+     * @return the image file. Might return null if no file is currently available.
      */
     public synchronized File getChartFile() {
         return chartFile;
@@ -321,32 +307,19 @@ class StartedJobHistoryChartGen {
     /**
      * Generates a chart in PNG format.
      * 
-     * @param outputFile
-     *            the output file, it should exist.
-     * @param pxWidth
-     *            the image width in pixels.
-     * @param pxHeight
-     *            the image height in pixels.
-     * @param chartTitle
-     *            the chart title, may be null.
-     * @param xAxisTitle
-     *            the x axis title
-     * @param yDataSeriesRange
-     *            the axis range (null for auto)
-     * @param yDataSeriesTitles
-     *            the Y axis titles.
-     * @param timeValuesInSeconds
-     *            the time values in seconds
-     * @param yDataSeries
-     *            the Y axis value series.
-     * @param yDataSeriesColors
-     *            the Y axis value series drawing colors.
-     * @param yDataSeriesTickSuffix
-     *            TODO explain argument yDataSeriesTickSuffix
-     * @param drawBorder
-     *            draw, or not, the border.
-     * @param backgroundColor
-     *            the chart background color.
+     * @param outputFile the output file, it should exist.
+     * @param pxWidth the image width in pixels.
+     * @param pxHeight the image height in pixels.
+     * @param chartTitle the chart title, may be null.
+     * @param xAxisTitle the x axis title
+     * @param yDataSeriesRange the axis range (null for auto)
+     * @param yDataSeriesTitles the Y axis titles.
+     * @param timeValuesInSeconds the time values in seconds
+     * @param yDataSeries the Y axis value series.
+     * @param yDataSeriesColors the Y axis value series drawing colors.
+     * @param yDataSeriesTickSuffix TODO explain argument yDataSeriesTickSuffix
+     * @param drawBorder draw, or not, the border.
+     * @param backgroundColor the chart background color.
      */
     final void generatePngChart(File outputFile, int pxWidth, int pxHeight, String chartTitle, String xAxisTitle,
             String[] yDataSeriesTitles, double[] timeValuesInSeconds, double[][] yDataSeriesRange,
@@ -445,28 +418,24 @@ class StartedJobHistoryChartGen {
     /**
      * Create a XYDataset based on the given arguments.
      * 
-     * @param name
-     *            The name
-     * @param timeValues
-     *            The timevalues
-     * @param values
-     *            the values
+     * @param name The name
+     * @param timeValues The timevalues
+     * @param values the values
      * @return a DefaultXYDataset.
      */
     private XYDataset createXYDataSet(String name, double[] timeValues, double[] values) {
 
         DefaultXYDataset ds = new DefaultXYDataset();
-        ds.addSeries(name, new double[][] { timeValues, values });
+        ds.addSeries(name, new double[][] {timeValues, values});
 
         return ds;
     }
 
     /**
-     * Find the maximum of the values given. If this maximum is less than
-     * {@link Double#MIN_VALUE} then {@link Double#MIN_VALUE} is returned.
+     * Find the maximum of the values given. If this maximum is less than {@link Double#MIN_VALUE} then
+     * {@link Double#MIN_VALUE} is returned.
      * 
-     * @param values
-     *            an array of doubles
+     * @param values an array of doubles
      * @return the maximum of the values given
      */
     private double getMaxValue(double[] values) {
@@ -480,10 +449,8 @@ class StartedJobHistoryChartGen {
     /**
      * Set the axis range.
      * 
-     * @param axis
-     *            a numberAxis
-     * @param range
-     *            a range
+     * @param axis a numberAxis
+     * @param range a range
      */
     private void setAxisRange(NumberAxis axis, double[] range) {
         if (range == null || range.length != 2) {

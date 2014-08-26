@@ -70,26 +70,22 @@ public final class Constants {
     /** This is the default number set as max request rate. */
     public static final int DEFAULT_MAX_REQUEST_RATE = 60;
     /**
-     * Max bytes of -1 means infinity (i.e other factors will determine when the
-     * job ends).
+     * Max bytes of -1 means infinity (i.e other factors will determine when the job ends).
      */
     public static final long HERITRIX_MAXBYTES_INFINITY = -1L;
     /**
-     * Max objects of -1 means infinity (i.e other factors will determine when
-     * the job ends).
+     * Max objects of -1 means infinity (i.e other factors will determine when the job ends).
      */
     public static final long HERITRIX_MAXOBJECTS_INFINITY = -1L;
 
     /**
-     * Max job running time of 0 means infinite job running time (i.e other
-     * factors will determine when the job ends).
+     * Max job running time of 0 means infinite job running time (i.e other factors will determine when the job ends).
      */
     public static final long HERITRIX_MAXJOBRUNNINGTIME_INFINITY = 0L;
 
     /**
-     * This is the default number set as max bytes harvested. Set to the max
-     * number of bytes we harvest from any domain per harvest, unless explicitly
-     * deciding otherwise.
+     * This is the default number set as max bytes harvested. Set to the max number of bytes we harvest from any domain
+     * per harvest, unless explicitly deciding otherwise.
      */
     public static final long DEFAULT_MAX_BYTES = Settings.getLong(HarvesterSettings.DOMAIN_CONFIG_MAXBYTES);
 
@@ -97,9 +93,8 @@ public final class Constants {
     public static final long DEFAULT_MAX_OBJECTS = Settings.getLong(HarvesterSettings.DOMAIN_CONFIG_MAXOBJECTS);
 
     /**
-     * The default maximum time in seconds available for each harvesting job.
-     * Set to unlimited (0) in the default settings. Used to restrict the
-     * running time for snapshot harvest jobs.
+     * The default maximum time in seconds available for each harvesting job. Set to unlimited (0) in the default
+     * settings. Used to restrict the running time for snapshot harvest jobs.
      */
     public static final long DEFAULT_MAX_JOB_RUNNING_TIME = Settings
             .getLong(HarvesterSettings.JOBS_MAX_TIME_TO_COMPLETE);
@@ -113,8 +108,7 @@ public final class Constants {
     public static final String NEXT_JOB_ID = "settings.harvester.datamodel.domain.nextJobId";
 
     /**
-     * The name used for the element in order.xml which contains global crawler
-     * traps.
+     * The name used for the element in order.xml which contains global crawler traps.
      */
     public static final String GLOBAL_CRAWLER_TRAPS_ELEMENT_NAME = "dk.netarkivet.global_crawler_traps";
 
@@ -125,8 +119,7 @@ public final class Constants {
     }
 
     /**
-     * Returns a new matcher that matches harvest definition file names and sets
-     * group 1 to be the id part.
+     * Returns a new matcher that matches harvest definition file names and sets group 1 to be the id part.
      *
      * @return A new matcher instance.
      */

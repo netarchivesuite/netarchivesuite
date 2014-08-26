@@ -62,7 +62,7 @@ import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 public class IndexRequestMessageTester {
     private MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
 
-    private static final Set<Long> JOB_SET = new HashSet<Long>(Arrays.asList(new Long[] { 1L, 2L }));
+    private static final Set<Long> JOB_SET = new HashSet<Long>(Arrays.asList(new Long[] {1L, 2L}));
 
     @Before
     public void setUp() {
@@ -199,8 +199,7 @@ public class IndexRequestMessageTester {
     }
 
     /**
-     * Test NAS-2017. Test that included FTPServer information can be retrieved
-     * again.
+     * Test NAS-2017. Test that included FTPServer information can be retrieved again.
      */
     @Test
     public void testMessageWithNonNullRemoteFileSettings() {

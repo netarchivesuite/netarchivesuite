@@ -38,17 +38,14 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.ChecksumJob;
 
 /**
- * Program for uploading data from the filebased FileChecksumArchive to a
- * DatabaseChecksumArchive. The two arguments are
+ * Program for uploading data from the filebased FileChecksumArchive to a DatabaseChecksumArchive. The two arguments are
  * /full/path/to/databaseBaseDirectory and /full/path/to/checksum_CS.md5
  */
 public class LoadDatabaseChecksumArchive {
     /**
      * Main program for the LoadDatabaseChecksumArchive class
      * 
-     * @param args
-     *            two arguments /full/path/to/databaseBaseDirectory and
-     *            /full/path/to/checksum_CS.md5
+     * @param args two arguments /full/path/to/databaseBaseDirectory and /full/path/to/checksum_CS.md5
      * @throws IOFailure
      * @throws DatabaseException
      */

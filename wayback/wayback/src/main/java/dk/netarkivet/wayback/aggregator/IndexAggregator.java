@@ -35,27 +35,21 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.wayback.WaybackSettings;
 
 /**
- * Encapsulates the functionality for sorting and merging index files. Uses the
- * Unix sort cmd for optimized sorting and file merging. Operations in this
- * class are synchronized to avoid multiple jobs running at the same time (by
- * the same object at least).
+ * Encapsulates the functionality for sorting and merging index files. Uses the Unix sort cmd for optimized sorting and
+ * file merging. Operations in this class are synchronized to avoid multiple jobs running at the same time (by the same
+ * object at least).
  */
 public class IndexAggregator {
     /** The logger for this class. */
     private Log log = LogFactory.getLog(getClass().getName());
 
     /**
-     * Generates a sorted CDX index file based on the set of unsorted CDX input
-     * files.
+     * Generates a sorted CDX index file based on the set of unsorted CDX input files.
      * <p>
-     * The operation will not run on a folder which already has a process job
-     * running.
+     * The operation will not run on a folder which already has a process job running.
      *
-     * @param files
-     *            A list of the files to aggregate
-     * @param outputFile
-     *            Name of the outputfile. In case of a empty filesNames array no
-     *            outputFiles will be generated
+     * @param files A list of the files to aggregate
+     * @param outputFile Name of the outputfile. In case of a empty filesNames array no outputFiles will be generated
      */
     public void sortAndMergeFiles(File[] files, File outputFile) {
         processFiles(files, outputFile, null);
@@ -64,11 +58,9 @@ public class IndexAggregator {
     /**
      * Takes a list of sorted files and merges them.
      * 
-     * @param files
-     *            The files to merge.
-     * @param outputFile
-     *            The resulting file containing total sorted set of index lines
-     *            found in all the provided index files
+     * @param files The files to merge.
+     * @param outputFile The resulting file containing total sorted set of index lines found in all the provided index
+     *            files
      */
 
     public void mergeFiles(File[] files, File outputFile) {
@@ -83,14 +75,10 @@ public class IndexAggregator {
      * 
      * Sets the LC_ALL environment variable before making the call.
      *
-     * @param files
-     *            The files to merge and sort
-     * @param outputFile
-     *            The resulting sorted file
-     * @param additionalArgs
-     *            A list af extra arguments, which (if different from null) are
-     *            added to the sort call.<p> Note: If any of the args contain a
-     *            whitespace the call will fail.
+     * @param files The files to merge and sort
+     * @param outputFile The resulting sorted file
+     * @param additionalArgs A list af extra arguments, which (if different from null) are added to the sort call.<p>
+     *            Note: If any of the args contain a whitespace the call will fail.
      */
     private void processFiles(File[] files, File outputFile, List<String> additionalArgs) {
         if (files.length == 0) {

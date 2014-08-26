@@ -43,10 +43,8 @@ public class TableSort {
     /**
      * Constructor.
      * 
-     * @param columnId
-     *            the id of the sorted column
-     * @param sortOrder
-     *            the order of the sort
+     * @param columnId the id of the sorted column
+     * @param sortOrder the order of the sort
      */
     public TableSort(final int columnId, final SortOrder sortOrder) {
         ArgumentNotValid.checkTrue(sortOrder == TableSort.SortOrder.DESC || sortOrder == TableSort.SortOrder.INCR
@@ -68,8 +66,7 @@ public class TableSort {
     /**
      * Set the id of the sorted column.
      * 
-     * @param columnident
-     *            the id of the sorted column
+     * @param columnident the id of the sorted column
      */
     public final void setColumnIdent(final int columnident) {
         columnIdent = columnident;
@@ -87,8 +84,7 @@ public class TableSort {
     /**
      * Set the order of the sort.
      * 
-     * @param sortorder
-     *            the order of the sort
+     * @param sortorder the order of the sort
      */
     public final void setOrder(final SortOrder sortorder) {
         ArgumentNotValid.checkTrue(sortorder == TableSort.SortOrder.DESC || sortorder == TableSort.SortOrder.INCR

@@ -25,18 +25,15 @@ package dk.netarkivet.common.tools;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 
 /**
- * Used to check if firewall ports are open and if the JMS broker is up and
- * responding.
+ * Used to check if firewall ports are open and if the JMS broker is up and responding.
  *
  */
 public class JMSBroker {
 
     /**
-     * Initializes a JMSConnection. If everything is fine it prints "success" to
-     * the console.
+     * Initializes a JMSConnection. If everything is fine it prints "success" to the console.
      *
-     * @param args
-     *            Takes no arguments
+     * @param args Takes no arguments
      */
     public static void main(final String[] args) {
         JMSConnectionFactory.getInstance().cleanup();

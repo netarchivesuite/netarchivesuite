@@ -65,12 +65,10 @@ import org.w3c.dom.Document;
 import dk.netarkivet.harvester.harvesting.metadata.PersistentJobData;
 
 /**
- * WARCWriterProcessor. Goes against the 0.18 version of the WARC specification
- * (which is functionally identical to 0.17 except in the protocol identifier
- * string). See http://archive-access.sourceforge.net/warc/
+ * WARCWriterProcessor. Goes against the 0.18 version of the WARC specification (which is functionally identical to 0.17
+ * except in the protocol identifier string). See http://archive-access.sourceforge.net/warc/
  * 
- * Based on the WARCWriterProcessor in package org.archive.crawler.writer With
- * modifications to the WARC-info record..
+ * Based on the WARCWriterProcessor in package org.archive.crawler.writer With modifications to the WARC-info record..
  * 
  * @author stack
  * @author svc
@@ -87,8 +85,7 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
     }
 
     /**
-     * Key to the full path to the harvestInfo.xml If not set, look for the file
-     * in the same directory as the order.xml
+     * Key to the full path to the harvestInfo.xml If not set, look for the file in the same directory as the order.xml
      */
     public static final String ATTR_HARVESTINFO_PATH = "harvestinfo-path";
 
@@ -99,19 +96,17 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
     public static final String ATTR_WRITE_METADATA = "write-metadata";
 
     /**
-     * Key for whether to write 'revisit' type records when consecutive
-     * identical digest
+     * Key for whether to write 'revisit' type records when consecutive identical digest
      */
     public static final String ATTR_WRITE_REVISIT_FOR_IDENTICAL_DIGESTS = "write-revisit-for-identical-digests";
 
     /**
-     * Key for whether to write 'revisit' type records for server
-     * "304 not modified" responses
+     * Key for whether to write 'revisit' type records for server "304 not modified" responses
      */
     public static final String ATTR_WRITE_REVISIT_FOR_NOT_MODIFIED = "write-revisit-for-not-modified";
 
     /** Default path list. */
-    private static final String[] DEFAULT_PATH = { "warcs" };
+    private static final String[] DEFAULT_PATH = {"warcs"};
 
     protected String[] getDefaultPath() {
         return DEFAULT_PATH;
@@ -121,8 +116,7 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
     private PersistentJobData pjd;
 
     /**
-     * @param name
-     *            Name of this writer.
+     * @param name Name of this writer.
      */
     public WARCWriterProcessor(final String name) {
         super(name, "Netarchivesuite WARCWriter processor (Version 1.0");
@@ -158,13 +152,11 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
     }
 
     /**
-     * Load data from harvestinfo.xml into a PersistentJobData object. If the
-     * attribute ATTR_HARVESTINFO_PATH is not set, assume that harvestInfo.xml
-     * is in the same directory as the order.xml (divined indirectly from the
-     * disk-path attribute
+     * Load data from harvestinfo.xml into a PersistentJobData object. If the attribute ATTR_HARVESTINFO_PATH is not
+     * set, assume that harvestInfo.xml is in the same directory as the order.xml (divined indirectly from the disk-path
+     * attribute
      * 
-     * @param doc
-     *            xmldocument for the order.xml
+     * @param doc xmldocument for the order.xml
      */
     private synchronized void loadPersistentJobData(Document doc) {
         if (pjd != null) {
@@ -187,11 +179,9 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
     /**
      * Writes a CrawlURI and its associated data to store file.
      * 
-     * Currently this method understands the following uri types: dns, http, and
-     * https.
+     * Currently this method understands the following uri types: dns, http, and https.
      * 
-     * @param curi
-     *            CrawlURI to process.
+     * @param curi CrawlURI to process.
      * 
      */
     protected void innerProcess(CrawlURI curi) {
@@ -464,13 +454,10 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
     }
 
     /**
-     * Save a header from the given HTTP operation into the provider headers
-     * under a new name
+     * Save a header from the given HTTP operation into the provider headers under a new name
      * 
-     * @param origName
-     *            header name to get if present
-     * @param method
-     *            http operation containing headers
+     * @param origName header name to get if present
+     * @param method http operation containing headers
      */
     protected void saveHeader(String origName, HttpMethodBase method, ANVLRecord headers, String newName) {
         Header header = method.getResponseHeader(origName);
@@ -559,9 +546,8 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
     }
 
     /**
-     * Return relevant values as header-like fields (here ANVLRecord, but
-     * spec-defined "application/warc-fields" type when written). Field names
-     * from from DCMI Terms and the WARC/0.17 specification.
+     * Return relevant values as header-like fields (here ANVLRecord, but spec-defined "application/warc-fields" type
+     * when written). Field names from from DCMI Terms and the WARC/0.17 specification.
      * 
      * @see org.archive.crawler.framework.WriterPoolProcessor#getFirstrecordBody(java.io.File)
      */
@@ -627,16 +613,12 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
 
         // add fields from harvesInfo.xml version 0.4
         /*
-         * <harvestInfo> <version>0.4</version> <jobId>1</jobId>
-         * <priority>HIGHPRIORITY</priority> <harvestNum>0</harvestNum>
-         * <origHarvestDefinitionID>1</origHarvestDefinitionID>
-         * <maxBytesPerDomain>500000000</maxBytesPerDomain>
-         * <maxObjectsPerDomain>2000</maxObjectsPerDomain>
+         * <harvestInfo> <version>0.4</version> <jobId>1</jobId> <priority>HIGHPRIORITY</priority>
+         * <harvestNum>0</harvestNum> <origHarvestDefinitionID>1</origHarvestDefinitionID>
+         * <maxBytesPerDomain>500000000</maxBytesPerDomain> <maxObjectsPerDomain>2000</maxObjectsPerDomain>
          * <orderXMLName>default_orderxml</orderXMLName>
-         * <origHarvestDefinitionName>netarkivet</origHarvestDefinitionName>
-         * <scheduleName>Once_a_week</scheduleName>
-         * <harvestFilenamePrefix>1-1</harvestFilenamePrefix>
-         * <jobSubmitDate>Some date</jobSubmitDate>
+         * <origHarvestDefinitionName>netarkivet</origHarvestDefinitionName> <scheduleName>Once_a_week</scheduleName>
+         * <harvestFilenamePrefix>1-1</harvestFilenamePrefix> <jobSubmitDate>Some date</jobSubmitDate>
          * <performer>undefined</performer> </harvestInfo>
          */
         String netarchiveSuiteComment = "#added by NetarchiveSuite "

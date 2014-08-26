@@ -43,11 +43,10 @@ import dk.netarkivet.common.utils.archive.ArchiveRecordBase;
 import dk.netarkivet.common.utils.batch.ArchiveBatchFilter;
 
 /**
- * Batchjob that extracts lines referring to a specific domain from a crawl log.
- * The batch job should be restricted to run on metadata files for a specific
- * job only, using the {@link #processOnlyFilesMatching(String)} construct.
+ * Batchjob that extracts lines referring to a specific domain from a crawl log. The batch job should be restricted to
+ * run on metadata files for a specific job only, using the {@link #processOnlyFilesMatching(String)} construct.
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class HarvestedUrlsForDomainBatchJob extends ArchiveBatchJob {
 
     // logger
@@ -62,8 +61,7 @@ public class HarvestedUrlsForDomainBatchJob extends ArchiveBatchJob {
     /**
      * Initialise the batch job.
      *
-     * @param domain
-     *            The domain to get crawl.log lines for.
+     * @param domain The domain to get crawl.log lines for.
      */
     public HarvestedUrlsForDomainBatchJob(String domain) {
         ArgumentNotValid.checkNotNullOrEmpty(domain, "domain");
@@ -78,8 +76,7 @@ public class HarvestedUrlsForDomainBatchJob extends ArchiveBatchJob {
     /**
      * Does nothing, no initialisation is needed.
      * 
-     * @param os
-     *            Not used.
+     * @param os Not used.
      */
     @Override
     public void initialize(OutputStream os) {
@@ -106,15 +103,11 @@ public class HarvestedUrlsForDomainBatchJob extends ArchiveBatchJob {
     /**
      * Process a record on crawl log concerning the given domain to result.
      * 
-     * @param record
-     *            The record to process.
-     * @param os
-     *            The output stream for the result.
+     * @param record The record to process.
+     * @param os The output stream for the result.
      *
-     * @throws ArgumentNotValid
-     *             on null parameters
-     * @throws IOFailure
-     *             on trouble processing the record.
+     * @throws ArgumentNotValid on null parameters
+     * @throws IOFailure on trouble processing the record.
      */
     @Override
     public void processRecord(ArchiveRecordBase record, OutputStream os) {
@@ -171,8 +164,7 @@ public class HarvestedUrlsForDomainBatchJob extends ArchiveBatchJob {
     /**
      * Return domain from urlpart, if feasibly. Return empty string otherwise.
      * 
-     * @param urlpart
-     *            One of the URL part of the crawllog-line.
+     * @param urlpart One of the URL part of the crawllog-line.
      * @return domain from urlpart, if feasibly. Return empty string otherwise
      */
     private String getDomainFromUrlPart(String urlpart) {
@@ -191,8 +183,7 @@ public class HarvestedUrlsForDomainBatchJob extends ArchiveBatchJob {
     /**
      * Does nothing, no finishing is needed.
      * 
-     * @param os
-     *            Not used.
+     * @param os Not used.
      */
     @Override
     public void finish(OutputStream os) {

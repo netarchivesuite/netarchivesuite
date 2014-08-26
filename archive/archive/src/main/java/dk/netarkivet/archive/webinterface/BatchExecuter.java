@@ -66,22 +66,18 @@ public class BatchExecuter extends Thread {
     private Replica rep;
 
     /**
-     * Map for containing the ids for the running batchjobs. Map between the
-     * name of the batchjob and the ID of the batch message.
+     * Map for containing the ids for the running batchjobs. Map between the name of the batchjob and the ID of the
+     * batch message.
      * */
     private static Map<String, String> batchjobs = Collections.synchronizedMap(new HashMap<String, String>());
 
     /**
      * The constructor.
      * 
-     * @param job
-     *            The batchjob to execute.
-     * @param pattern
-     *            The regular expression pattern.
-     * @param replica
-     *            The replica where the batchjob should be executed.
-     * @throws ArgumentNotValid
-     *             If any of the arguments are null.
+     * @param job The batchjob to execute.
+     * @param pattern The regular expression pattern.
+     * @param replica The replica where the batchjob should be executed.
+     * @throws ArgumentNotValid If any of the arguments are null.
      */
     public BatchExecuter(FileBatchJob job, String pattern, Replica replica) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(job, "FileBatchJob job");
@@ -96,8 +92,7 @@ public class BatchExecuter extends Thread {
     /**
      * Execution of the batchjob in its own thread (use start() instead).
      * 
-     * @throws IOFailure
-     *             If an IOException is caught while writing the results.
+     * @throws IOFailure If an IOException is caught while writing the results.
      */
     public void run() throws IOFailure {
         ViewerArcRepositoryClient arcrep = ArcRepositoryClientFactory.getViewerInstance();

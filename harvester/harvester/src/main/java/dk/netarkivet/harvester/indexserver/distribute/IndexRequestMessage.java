@@ -44,10 +44,9 @@ import dk.netarkivet.harvester.distribute.HarvesterMessage;
 import dk.netarkivet.harvester.distribute.HarvesterMessageVisitor;
 
 /**
- * Message for requesting and index from the index server, and for giving back
- * the reply.
+ * Message for requesting and index from the index server, and for giving back the reply.
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class IndexRequestMessage extends HarvesterMessage {
 
     /** The log. */
@@ -58,30 +57,27 @@ public class IndexRequestMessage extends HarvesterMessage {
     /** Type of index is requested. Should always be set. */
     private RequestType requestType;
     /**
-     * List of jobs for which an index _can_ be generated. Should only be set on
-     * reply. Should always be a subset of requestedJobs. If This set is equal
-     * to the requested set, resultFile should also be set.
+     * List of jobs for which an index _can_ be generated. Should only be set on reply. Should always be a subset of
+     * requestedJobs. If This set is equal to the requested set, resultFile should also be set.
      */
     private Set<Long> foundJobs;
 
     /**
-     * The list of files that make up the generated index. Should only be set on
-     * reply, and only if index was generated for all files
+     * The list of files that make up the generated index. Should only be set on reply, and only if index was generated
+     * for all files
      *
-     * if indexIsStoredInDirectory is false, this list must contain exactly one
-     * file (or not have been set yet).
+     * if indexIsStoredInDirectory is false, this list must contain exactly one file (or not have been set yet).
      */
     private List<RemoteFile> resultFiles;
 
     /**
-     * If true, the underlying cache uses a directory to store its files (which
-     * may be zero or more files), otherwise just a single file is used.
+     * If true, the underlying cache uses a directory to store its files (which may be zero or more files), otherwise
+     * just a single file is used.
      */
     private boolean indexIsStoredInDirectory;
 
     /**
-     * If true, return the index to the sender. If false, send IndexReadyMessage
-     * instead.
+     * If true, return the index to the sender. If false, send IndexReadyMessage instead.
      */
     private boolean shouldReturnIndex;
 
@@ -91,25 +87,20 @@ public class IndexRequestMessage extends HarvesterMessage {
     private Long harvestId;
 
     /**
-     * Optionally, the client can decide which connection settings to use for
-     * the RemoteFile. Only applicable when using FTPRemoteFile.
+     * Optionally, the client can decide which connection settings to use for the RemoteFile. Only applicable when using
+     * FTPRemoteFile.
      */
     private RemoteFileSettings optionalConnectionSettings;
 
     /**
-     * Generate an index request message. Receiver is always the index server
-     * channel, replyTo is always this index client.
+     * Generate an index request message. Receiver is always the index server channel, replyTo is always this index
+     * client.
      *
-     * @param requestType
-     *            Type of index requested.
-     * @param jobSet
-     *            Type of index requested.
-     * @param ftpconnectionInfo
-     *            FTP connection parameters to be used (if null, we use the
-     *            local settings)
+     * @param requestType Type of index requested.
+     * @param jobSet Type of index requested.
+     * @param ftpconnectionInfo FTP connection parameters to be used (if null, we use the local settings)
      * 
-     * @throws ArgumentNotValid
-     *             if any argument is null.
+     * @throws ArgumentNotValid if any argument is null.
      */
     public IndexRequestMessage(RequestType requestType, Set<Long> jobSet, RemoteFileSettings ftpconnectionInfo)
             throws ArgumentNotValid {
@@ -124,19 +115,13 @@ public class IndexRequestMessage extends HarvesterMessage {
     }
 
     /**
-     * Generate an IndexRequestMessage that can send its reply to a specific
-     * channel.
+     * Generate an IndexRequestMessage that can send its reply to a specific channel.
      * 
-     * @param requestType
-     *            Type of index requested.
-     * @param jobSet
-     *            Type of index requested.
-     * @param replyTo
-     *            The channel to send the reply to.
-     * @param returnIndex
-     *            If true, include the index in the reply.
-     * @param harvestId
-     *            The harvestId needing this index for its jobs
+     * @param requestType Type of index requested.
+     * @param jobSet Type of index requested.
+     * @param replyTo The channel to send the reply to.
+     * @param returnIndex If true, include the index in the reply.
+     * @param harvestId The harvestId needing this index for its jobs
      */
     public IndexRequestMessage(RequestType requestType, Set<Long> jobSet, ChannelID replyTo, boolean returnIndex,
             Long harvestId) {
@@ -166,9 +151,8 @@ public class IndexRequestMessage extends HarvesterMessage {
     }
 
     /**
-     * @return true, if this index requested should be returned to the caller.
-     *         False, if we instead should send a IndexReadyMessage to the
-     *         HarvestJobManager queue.
+     * @return true, if this index requested should be returned to the caller. False, if we instead should send a
+     *         IndexReadyMessage to the HarvestJobManager queue.
      */
     public boolean mustReturnIndex() {
         return this.shouldReturnIndex;
@@ -177,8 +161,7 @@ public class IndexRequestMessage extends HarvesterMessage {
     /**
      * Calls visit on the visitor.
      * 
-     * @param v
-     *            The visitor of this message.
+     * @param v The visitor of this message.
      * @see HarvesterMessageVisitor
      */
     @Override
@@ -206,10 +189,9 @@ public class IndexRequestMessage extends HarvesterMessage {
     }
 
     /**
-     * Get the set of jobs for which the index is found. This should always be
-     * set on replies, and should always be a subset of the jobs requested. If
-     * set of jobs found jobs is the same as the set of requested jobs, the
-     * index file should also be present.
+     * Get the set of jobs for which the index is found. This should always be set on replies, and should always be a
+     * subset of the jobs requested. If set of jobs found jobs is the same as the set of requested jobs, the index file
+     * should also be present.
      *
      * @return Set of jobs for which the index is found.
      */
@@ -218,15 +200,12 @@ public class IndexRequestMessage extends HarvesterMessage {
     }
 
     /**
-     * On reply, set the set of jobs for which an index is found. This should
-     * always be set on replies, and should always be a subset of the jobs
-     * requested. If set of jobs found jobs is the same as the set of requested
-     * jobs, the index file should also be set.
+     * On reply, set the set of jobs for which an index is found. This should always be set on replies, and should
+     * always be a subset of the jobs requested. If set of jobs found jobs is the same as the set of requested jobs, the
+     * index file should also be set.
      *
-     * @param foundJobs
-     *            The set of jobs for which the index is found
-     * @throws ArgumentNotValid
-     *             on null argument
+     * @param foundJobs The set of jobs for which the index is found
+     * @throws ArgumentNotValid on null argument
      */
     public void setFoundJobs(Set<Long> foundJobs) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(foundJobs, "Set<Long> foundJobs");
@@ -235,12 +214,10 @@ public class IndexRequestMessage extends HarvesterMessage {
     }
 
     /**
-     * The index over the requested jobs. Only set on replies, and only if
-     * foundJobs is the same set as requestedJobs.
+     * The index over the requested jobs. Only set on replies, and only if foundJobs is the same set as requestedJobs.
      *
      * @return index of requested jobs.
-     * @throws IllegalState
-     *             if this message is a multiFile message.
+     * @throws IllegalState if this message is a multiFile message.
      */
     public RemoteFile getResultFile() throws IllegalState {
         if (resultFiles != null) {
@@ -256,10 +233,8 @@ public class IndexRequestMessage extends HarvesterMessage {
     /**
      * Returns the list of result files for the requested jobs.
      *
-     * @return index of requested jobs in the form of several possibly
-     *         co-dependent files.
-     * @throws IllegalState
-     *             if this message is not a multiFile message.
+     * @return index of requested jobs in the form of several possibly co-dependent files.
+     * @throws IllegalState if this message is not a multiFile message.
      */
     public List<RemoteFile> getResultFiles() throws IllegalState {
         if (resultFiles != null) {
@@ -273,15 +248,12 @@ public class IndexRequestMessage extends HarvesterMessage {
     }
 
     /**
-     * On reply, set remote file containing index of requested jobs. Should
-     * _only_ be set when an index over ALL requested jobs is present.
+     * On reply, set remote file containing index of requested jobs. Should _only_ be set when an index over ALL
+     * requested jobs is present.
      *
-     * @param resultFile
-     *            RemoteFile containing index over requested jobs.
-     * @throws ArgumentNotValid
-     *             on null argument.
-     * @throws IllegalState
-     *             if the result file has already been set.
+     * @param resultFile RemoteFile containing index over requested jobs.
+     * @throws ArgumentNotValid on null argument.
+     * @throws IllegalState if the result file has already been set.
      */
     public void setResultFile(RemoteFile resultFile) throws IllegalState, ArgumentNotValid {
         ArgumentNotValid.checkNotNull(resultFile, "RemoteFile resultFile");
@@ -294,15 +266,12 @@ public class IndexRequestMessage extends HarvesterMessage {
     }
 
     /**
-     * Set several result files making up an index of requested jobs. Should
-     * _only_ be set when an index over ALL requested jobs is present.
+     * Set several result files making up an index of requested jobs. Should _only_ be set when an index over ALL
+     * requested jobs is present.
      *
-     * @param resultFiles
-     *            RemoteFiles containing index over requested jobs.
-     * @throws ArgumentNotValid
-     *             on null argument or null element in list.
-     * @throws IllegalState
-     *             if the result files have already been set.
+     * @param resultFiles RemoteFiles containing index over requested jobs.
+     * @throws ArgumentNotValid on null argument or null element in list.
+     * @throws IllegalState if the result files have already been set.
      * */
     public void setResultFiles(List<RemoteFile> resultFiles) throws IllegalState, ArgumentNotValid {
         ArgumentNotValid.checkNotNull(resultFiles, "List<RemoteFile> resultFiles");
@@ -320,8 +289,7 @@ public class IndexRequestMessage extends HarvesterMessage {
     }
 
     /**
-     * If true, this message may carry multiple files that should be stored in a
-     * directory.
+     * If true, this message may carry multiple files that should be stored in a directory.
      *
      * @return True if more than one file may be transferred with this message.
      */
@@ -330,11 +298,9 @@ public class IndexRequestMessage extends HarvesterMessage {
     }
 
     /**
-     * Invoke default method for deserializing object, and reinitialise the
-     * logger.
+     * Invoke default method for deserializing object, and reinitialise the logger.
      *
-     * @param s
-     *            The stream the object is read from.
+     * @param s The stream the object is read from.
      */
     private void readObject(ObjectInputStream s) {
         try {
@@ -347,8 +313,7 @@ public class IndexRequestMessage extends HarvesterMessage {
     /**
      * Invoke default method for serializing object.
      *
-     * @param s
-     *            The stream the object is written to.
+     * @param s The stream the object is written to.
      */
     private void writeObject(ObjectOutputStream s) {
         try {

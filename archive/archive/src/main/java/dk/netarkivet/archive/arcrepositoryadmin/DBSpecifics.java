@@ -32,9 +32,8 @@ import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.SettingsFactory;
 
 /**
- * Abstract collection of DB methods that are not standard SQL. This class is a
- * singleton class whose actual implementation is provided by a subclass as
- * determined by the DB_SPECIFICS_CLASS setting.
+ * Abstract collection of DB methods that are not standard SQL. This class is a singleton class whose actual
+ * implementation is provided by a subclass as determined by the DB_SPECIFICS_CLASS setting.
  *
  */
 public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
@@ -55,33 +54,26 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
     }
 
     /**
-     * Shutdown the database system, if running in embedded mode. Otherwise,
-     * this is ignored.
+     * Shutdown the database system, if running in embedded mode. Otherwise, this is ignored.
      *
      * Will log a warning on errors, but otherwise ignore them.
      */
     public abstract void shutdownDatabase();
 
     /**
-     * Backup the database. For server-based databases, where the administrator
-     * is expected to perform the backups, this method should do nothing. This
-     * method gets called within one hour of the hour-of-day indicated by the
+     * Backup the database. For server-based databases, where the administrator is expected to perform the backups, this
+     * method should do nothing. This method gets called within one hour of the hour-of-day indicated by the
      * DB_BACKUP_INIT_HOUR settings.
      *
-     * @param backupDir
-     *            Directory to which the database should be backed up
-     * @param c
-     *            The connection to the database.
-     * @throws SQLException
-     *             On SQL trouble backing up database
-     * @throws PermissionDenied
-     *             if the directory cannot be created.
+     * @param backupDir Directory to which the database should be backed up
+     * @param c The connection to the database.
+     * @throws SQLException On SQL trouble backing up database
+     * @throws PermissionDenied if the directory cannot be created.
      */
     public abstract void backupDatabase(Connection c, File backupDir) throws SQLException, PermissionDenied;
 
     /**
-     * Get the name of the JDBC driver class that handles interfacing to this
-     * server.
+     * Get the name of the JDBC driver class that handles interfacing to this server.
      *
      * @return The name of a JDBC driver class
      */

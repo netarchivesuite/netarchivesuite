@@ -45,8 +45,7 @@ public class CompleteSettingsTester extends TestCase {
     }
 
     /**
-     * Rebuilds the file src/dk/netarkivet/deploy/default_settings.xml. Eg. this
-     * is not a real test.
+     * Rebuilds the file src/dk/netarkivet/deploy/default_settings.xml. Eg. this is not a real test.
      */
 
     public void testCompleteSettings() throws Exception {

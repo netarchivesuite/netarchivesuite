@@ -46,8 +46,7 @@ import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
- * Tests for the DomainConfiguration class. Also widely tested from other
- * places.
+ * Tests for the DomainConfiguration class. Also widely tested from other places.
  *
  */
 
@@ -76,7 +75,7 @@ public class DomainConfigurationTester extends DataModelTestCase {
         wd.addSeedList(TestInfo.seedlist);
 
         DomainConfiguration newcfg = new DomainConfiguration(TestInfo.CONFIGURATION_NAME, wd,
-                Arrays.asList(new SeedList[] { TestInfo.seedlist }), new ArrayList<Password>());
+                Arrays.asList(new SeedList[] {TestInfo.seedlist}), new ArrayList<Password>());
 
         wd.addConfiguration(newcfg);
         wd.setDefaultConfiguration(newcfg.getName());
@@ -94,9 +93,8 @@ public class DomainConfigurationTester extends DataModelTestCase {
     }
 
     /**
-     * Test that the maxBytes field is stored correctly. This test is added
-     * because the maxBytes field was added after the database was put into
-     * production.
+     * Test that the maxBytes field is stored correctly. This test is added because the maxBytes field was added after
+     * the database was put into production.
      */
     public void testMaxBytes() {
         DomainDAO dao = DomainDAO.getInstance();
@@ -104,7 +102,7 @@ public class DomainConfigurationTester extends DataModelTestCase {
         wd.addSeedList(TestInfo.seedlist);
 
         DomainConfiguration newcfg = new DomainConfiguration(TestInfo.DEFAULTCFGNAME, wd,
-                Arrays.asList(new SeedList[] { TestInfo.seedlist }), new ArrayList<Password>());
+                Arrays.asList(new SeedList[] {TestInfo.seedlist}), new ArrayList<Password>());
         // TODO: Make sure a config always has a valid template?
         newcfg.setOrderXmlName(TestInfo.ORDER_XML_NAME);
         assertEquals("maxBytes should start out at default value", Constants.DEFAULT_MAX_BYTES, newcfg.getMaxBytes());

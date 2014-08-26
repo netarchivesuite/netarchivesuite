@@ -54,33 +54,32 @@ public class DefinitionsSiteSection extends SiteSection {
      */
     public DefinitionsSiteSection() {
         super("sitesection;definitions", "Definitions", PAGES_VISIBLE_IN_MENU, new String[][] {
-                { "selective-harvests", "pagetitle;selective.harvests" },
-                { "snapshot-harvests", "pagetitle;snapshot.harvests" },
-                { "schedules", "pagetitle;schedules" },
-                { "find-domains", "pagetitle;find.domains" },
-                { "create-domain", "pagetitle;create.domain" },
-                { "domain-statistics", "pagetitle;domain.statistics" },
-                { "alias-summary", "pagetitle;alias.summary" },
-                { "edit-harvest-templates", "pagetitle;edit.harvest.templates" },
-                { "edit-global-crawler-traps", "pagetitle;edit.global.crawler.traps" },
-                { "list-extendedfields", "pagetitle;list-extendedfields" },
+                {"selective-harvests", "pagetitle;selective.harvests"},
+                {"snapshot-harvests", "pagetitle;snapshot.harvests"},
+                {"schedules", "pagetitle;schedules"},
+                {"find-domains", "pagetitle;find.domains"},
+                {"create-domain", "pagetitle;create.domain"},
+                {"domain-statistics", "pagetitle;domain.statistics"},
+                {"alias-summary", "pagetitle;alias.summary"},
+                {"edit-harvest-templates", "pagetitle;edit.harvest.templates"},
+                {"edit-global-crawler-traps", "pagetitle;edit.global.crawler.traps"},
+                {"list-extendedfields", "pagetitle;list-extendedfields"},
                 // The pages listed below are not visible in the left menu
-                { "upload-harvest-template", "pagetitle;upload.template" },
-                { "download-harvest-template", "pagetitle;download.template" },
-                { "edit-snapshot-harvest", "pagetitle;snapshot.harvest" },
-                { "edit-selective-harvest", "pagetitle;selective.harvest" },
-                { "edit-domain", "pagetitle;edit.domain" }, { "ingest-domains", "pagetitle;ingest.domains" },
-                { "add-event-seeds", "pagetitle;add.seeds" }, { "edit-domain-config", "pagetitle;edit.configuration" },
-                { "edit-domain-seedlist", "pagetitle;edit.seed.list" }, { "edit-schedule", "pagetitle;edit.schedule" },
-                { "edit-extendedfield", "pagetitle;edit.extendedfield" } }, "HarvestDefinition",
+                {"upload-harvest-template", "pagetitle;upload.template"},
+                {"download-harvest-template", "pagetitle;download.template"},
+                {"edit-snapshot-harvest", "pagetitle;snapshot.harvest"},
+                {"edit-selective-harvest", "pagetitle;selective.harvest"}, {"edit-domain", "pagetitle;edit.domain"},
+                {"ingest-domains", "pagetitle;ingest.domains"}, {"add-event-seeds", "pagetitle;add.seeds"},
+                {"edit-domain-config", "pagetitle;edit.configuration"},
+                {"edit-domain-seedlist", "pagetitle;edit.seed.list"}, {"edit-schedule", "pagetitle;edit.schedule"},
+                {"edit-extendedfield", "pagetitle;edit.extendedfield"}}, "HarvestDefinition",
                 dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
     }
 
     /**
      * Initialise the site section.
      *
-     * @throws UnknownID
-     *             If the default order.xml does not exist.
+     * @throws UnknownID If the default order.xml does not exist.
      */
     public void initialize() {
         // Force migration if needed

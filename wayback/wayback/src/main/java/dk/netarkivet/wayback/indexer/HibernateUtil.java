@@ -32,11 +32,9 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.wayback.WaybackSettings;
 
 /**
- * This class contains a single static utility method which returns a Hibernate
- * session: HibernateUtil.getSession().
+ * This class contains a single static utility method which returns a Hibernate session: HibernateUtil.getSession().
  *
- * The configuration for the session is read from settings.xml in the elements
- * nested under settings/wayback/hibernate.
+ * The configuration for the session is read from settings.xml in the elements nested under settings/wayback/hibernate.
  */
 public class HibernateUtil {
 
@@ -47,8 +45,8 @@ public class HibernateUtil {
     private static final String CONNECTION_PROVIDER_CLASS = "connection.provider_class";
 
     /**
-     * Value indicating use of the c3p0 as connection provider. This is hard
-     * coded and no other connection providers have been tested.
+     * Value indicating use of the c3p0 as connection provider. This is hard coded and no other connection providers
+     * have been tested.
      */
     private static final String ORG_HIBERNATE_CONNECTION_C3_P0_CONNECTION_PROVIDER = "org.hibernate.connection.C3P0ConnectionProvider";
 
@@ -78,15 +76,14 @@ public class HibernateUtil {
     }
 
     /**
-     * The session factory from which sessions are obtained. There is no
-     * accessor supplied for this factory as a reference to it can be obtained
-     * if necessary (e.g. during a cleanup operation) from the Session itself.
+     * The session factory from which sessions are obtained. There is no accessor supplied for this factory as a
+     * reference to it can be obtained if necessary (e.g. during a cleanup operation) from the Session itself.
      */
     private static SessionFactory sessionFactory;
 
     /**
-     * Properties of the hibernate session are loaded from settings.xml. There
-     * is therefore no need for a separate hibernate configuration file.
+     * Properties of the hibernate session are loaded from settings.xml. There is therefore no need for a separate
+     * hibernate configuration file.
      */
     private static void initialiseFactory() {
         if (sessionFactory == null || sessionFactory.isClosed()) {
@@ -148,10 +145,8 @@ public class HibernateUtil {
     }
 
     /**
-     * Get a hibernate session for communicating with the object store for the
-     * wayback indexer. This method has the side effect of creating and
-     * initialising a SessionFactory object if there is no current open
-     * SessionFactory.
+     * Get a hibernate session for communicating with the object store for the wayback indexer. This method has the side
+     * effect of creating and initialising a SessionFactory object if there is no current open SessionFactory.
      * 
      * @return the above mentioned hibernate session.
      */

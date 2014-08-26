@@ -35,7 +35,7 @@ import dk.netarkivet.wayback.batch.copycode.NetarchiveSuiteAggressiveUrlCanonica
 /**
  *
  */
-@SuppressWarnings({ "deprecation" })
+@SuppressWarnings({"deprecation"})
 public class UrlCanonicalizerFactoryTester {
 
     @Test

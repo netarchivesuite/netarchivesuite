@@ -59,7 +59,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 @Ignore("Methods hang in Eclipse test runner")
 public class IndexRequestClientTester {
-    private static final Set<Long> JOB_SET = new HashSet<Long>(Arrays.asList(new Long[] { 2L, 3L, 5L, 7L, 11L }));
+    private static final Set<Long> JOB_SET = new HashSet<Long>(Arrays.asList(new Long[] {2L, 3L, 5L, 7L, 11L}));
 
     private UseTestRemoteFile ulrf = new UseTestRemoteFile();
     private PreventSystemExit pse = new PreventSystemExit();
@@ -101,8 +101,7 @@ public class IndexRequestClientTester {
     }
 
     /**
-     * Verify that factory method - only throws exceptions if given a null value
-     * - returns non-null values.
+     * Verify that factory method - only throws exceptions if given a null value - returns non-null values.
      */
     @Test
     public void testGetInstance() {
@@ -118,10 +117,9 @@ public class IndexRequestClientTester {
     }
 
     /**
-     * Verify that the getJobIndex method - accepts all non-null lists
-     * (including an empty one) - throws exceptions on null - submits an
-     * IndexRequestMessage representing the input - returns the response on the
-     * message to the caller - throws an exception if response is not OK.
+     * Verify that the getJobIndex method - accepts all non-null lists (including an empty one) - throws exceptions on
+     * null - submits an IndexRequestMessage representing the input - returns the response on the message to the caller
+     * - throws an exception if response is not OK.
      */
     @Test
     public void testGetJobIndexFullNonemptySet() throws IOException {
@@ -142,10 +140,9 @@ public class IndexRequestClientTester {
     }
 
     /**
-     * Verify that the getJobIndex method - accepts all non-null lists
-     * (including an empty one) - throws exceptions on null - submits an
-     * IndexRequestMessage representing the input - returns the response on the
-     * message to the caller - throws an exception if response is not OK.
+     * Verify that the getJobIndex method - accepts all non-null lists (including an empty one) - throws exceptions on
+     * null - submits an IndexRequestMessage representing the input - returns the response on the message to the caller
+     * - throws an exception if response is not OK.
      */
     @Test
     @Ignore("FileNotFoundException:...-cache.working")
@@ -168,10 +165,9 @@ public class IndexRequestClientTester {
     }
 
     /**
-     * Verify that the getJobIndex method - accepts all non-null lists
-     * (including an empty one) - throws exceptions on null - submits an
-     * IndexRequestMessage representing the input - returns the response on the
-     * message to the caller - throws an exception if response is not OK.
+     * Verify that the getJobIndex method - accepts all non-null lists (including an empty one) - throws exceptions on
+     * null - submits an IndexRequestMessage representing the input - returns the response on the message to the caller
+     * - throws an exception if response is not OK.
      */
     @Test
     public void testGetJobIndexCdxNonemptySet() throws IOException {

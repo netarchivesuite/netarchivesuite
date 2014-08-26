@@ -37,8 +37,8 @@ import org.junit.Test;
 import dk.netarkivet.testutils.TestFileUtils;
 
 /**
- * Unit tests for the abstract class FileArrayIterator. For this purpose it uses
- * a private class TestIterator that extends FileArrayIterator.
+ * Unit tests for the abstract class FileArrayIterator. For this purpose it uses a private class TestIterator that
+ * extends FileArrayIterator.
  */
 public class FileArrayIteratorTester {
 
@@ -62,11 +62,9 @@ public class FileArrayIteratorTester {
         /**
          * Gives an object created from the given file, or null.
          *
-         * @param o
-         *            The file to read
-         * @return An object of the type iterated over by the list, or null if
-         *         the file does not exist or cannot be used to create an
-         *         appropriate object.
+         * @param o The file to read
+         * @return An object of the type iterated over by the list, or null if the file does not exist or cannot be used
+         *         to create an appropriate object.
          */
         protected String filter(File o) {
             if (o.exists()) {
@@ -85,8 +83,8 @@ public class FileArrayIteratorTester {
     }
 
     /**
-     * Check that the empty list is handled correctly. Tests bug 193: Even if
-     * hasNext() returns true, there may not be a next element.
+     * Check that the empty list is handled correctly. Tests bug 193: Even if hasNext() returns true, there may not be a
+     * next element.
      */
     @Test
     public void testNextEmptyList() {
@@ -106,7 +104,7 @@ public class FileArrayIteratorTester {
      */
     @Test
     public void testNextOneElementList() {
-        TestIterator list = new TestIterator(new File[] { TestInfo.XML_FILE_1 });
+        TestIterator list = new TestIterator(new File[] {TestInfo.XML_FILE_1});
         assertTrue("List should give the next file when it exists", list.hasNext());
         Object d = list.next();
         assertNotNull("We should get a file from the list", d);
@@ -125,7 +123,7 @@ public class FileArrayIteratorTester {
      */
     @Test
     public void testNextBadElementList() {
-        TestIterator list = new TestIterator(new File[] { TestInfo.NON_EXISTING_FILE });
+        TestIterator list = new TestIterator(new File[] {TestInfo.NON_EXISTING_FILE});
         assertFalse("List should not claim more elements " + "when no existing objects are in the list", list.hasNext());
         try {
             list.next();

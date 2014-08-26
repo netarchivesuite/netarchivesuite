@@ -72,13 +72,11 @@ public class DomainDBDAO extends DomainDAO {
     private static final Logger log = LoggerFactory.getLogger(DomainDBDAO.class);
 
     /**
-     * Creates a database-based implementation of the DomainDAO. Will check that
-     * all schemas have correct versions, and update the ones that haven't.
+     * Creates a database-based implementation of the DomainDAO. Will check that all schemas have correct versions, and
+     * update the ones that haven't.
      *
-     * @throws IOFailure
-     *             on trouble updating tables to new versions, or on tables with
-     *             wrong versions that we don't know how to change to expected
-     *             version.
+     * @throws IOFailure on trouble updating tables to new versions, or on tables with wrong versions that we don't know
+     *             how to change to expected version.
      */
     protected DomainDBDAO() {
         Connection connection = HarvestDBConnection.get();
@@ -283,15 +281,11 @@ public class DomainDBDAO extends DomainDAO {
     }
 
     /**
-     * Update the list of passwords for the given domain, keeping IDs where
-     * applicable.
+     * Update the list of passwords for the given domain, keeping IDs where applicable.
      * 
-     * @param c
-     *            A connection to the database
-     * @param d
-     *            A domain to update.
-     * @throws SQLException
-     *             If any database problems occur during the update process.
+     * @param c A connection to the database
+     * @param d A domain to update.
+     * @throws SQLException If any database problems occur during the update process.
      */
     private void updatePasswords(Connection c, Domain d) throws SQLException {
         Map<String, Long> oldNames = DBUtils.selectStringLongMap(c,
@@ -339,15 +333,11 @@ public class DomainDBDAO extends DomainDAO {
     }
 
     /**
-     * Update the list of seedlists for the given domain, keeping IDs where
-     * applicable.
+     * Update the list of seedlists for the given domain, keeping IDs where applicable.
      * 
-     * @param c
-     *            A connection to the database
-     * @param d
-     *            A domain to update.
-     * @throws SQLException
-     *             If any database problems occur during the update process.
+     * @param c A connection to the database
+     * @param d A domain to update.
+     * @throws SQLException If any database problems occur during the update process.
      */
     private void updateSeedlists(Connection c, Domain d) throws SQLException {
         Map<String, Long> oldNames = DBUtils.selectStringLongMap(c, "SELECT name, seedlist_id FROM seedlists "
@@ -391,16 +381,12 @@ public class DomainDBDAO extends DomainDAO {
     }
 
     /**
-     * Update the list of configurations for the given domain, keeping IDs where
-     * applicable. This also builds the xref tables for passwords and seedlists
-     * used in configurations, and so should be run after those are updated.
+     * Update the list of configurations for the given domain, keeping IDs where applicable. This also builds the xref
+     * tables for passwords and seedlists used in configurations, and so should be run after those are updated.
      * 
-     * @param connection
-     *            A connection to the database
-     * @param d
-     *            A domain to update.
-     * @throws SQLException
-     *             If any database problems occur during the update process.
+     * @param connection A connection to the database
+     * @param d A domain to update.
+     * @throws SQLException If any database problems occur during the update process.
      */
     private void updateConfigurations(Connection connection, Domain d) throws SQLException {
         Map<String, Long> oldNames = DBUtils.selectStringLongMap(connection,
@@ -453,15 +439,11 @@ public class DomainDBDAO extends DomainDAO {
     }
 
     /**
-     * Update the list of owner info for the given domain, keeping IDs where
-     * applicable.
+     * Update the list of owner info for the given domain, keeping IDs where applicable.
      * 
-     * @param c
-     *            A connection to the database
-     * @param d
-     *            A domain to update.
-     * @throws SQLException
-     *             If any database problems occur during the update process.
+     * @param c A connection to the database
+     * @param d A domain to update.
+     * @throws SQLException If any database problems occur during the update process.
      */
     private void updateOwnerInfo(Connection c, Domain d) throws SQLException {
         List<Long> oldIDs = DBUtils.selectLongList(c, "SELECT ownerinfo_id FROM ownerinfo " + "WHERE domain_id = ?",
@@ -487,15 +469,11 @@ public class DomainDBDAO extends DomainDAO {
     }
 
     /**
-     * Update the list of harvest info for the given domain, keeping IDs where
-     * applicable.
+     * Update the list of harvest info for the given domain, keeping IDs where applicable.
      * 
-     * @param c
-     *            A connection to the database
-     * @param d
-     *            A domain to update.
-     * @throws SQLException
-     *             If any database problems occur during the update process.
+     * @param c A connection to the database
+     * @param d A domain to update.
+     * @throws SQLException If any database problems occur during the update process.
      */
     private void updateHarvestInfo(Connection c, Domain d) throws SQLException {
         List<Long> oldIDs = DBUtils.selectLongList(c, "SELECT historyinfo.historyinfo_id "
@@ -538,12 +516,9 @@ public class DomainDBDAO extends DomainDAO {
     /**
      * Insert new harvest info for a domain.
      * 
-     * @param c
-     *            A connection to the database
-     * @param d
-     *            A domain to insert on. The domains ID must be correct.
-     * @param harvestInfo
-     *            Harvest info to insert.
+     * @param c A connection to the database
+     * @param d A domain to insert on. The domains ID must be correct.
+     * @param harvestInfo Harvest info to insert.
      */
     private void insertHarvestInfo(Connection c, Domain d, HarvestInfo harvestInfo) {
         PreparedStatement s = null;
@@ -574,14 +549,10 @@ public class DomainDBDAO extends DomainDAO {
     /**
      * Insert new owner info for a domain.
      * 
-     * @param c
-     *            A connection to the database
-     * @param d
-     *            A domain to insert on. The domains ID must be correct.
-     * @param doi
-     *            Owner info to insert.
-     * @throws SQLException
-     *             If any database problems occur during the insertion process.
+     * @param c A connection to the database
+     * @param d A domain to insert on. The domains ID must be correct.
+     * @param doi Owner info to insert.
+     * @throws SQLException If any database problems occur during the insertion process.
      */
     private void insertOwnerInfo(Connection c, Domain d, DomainOwnerInfo doi) throws SQLException {
         PreparedStatement s = c.prepareStatement("INSERT INTO ownerinfo ( domain_id, created, info ) "
@@ -596,14 +567,10 @@ public class DomainDBDAO extends DomainDAO {
     /**
      * Insert new seedlist for a domain.
      * 
-     * @param c
-     *            A connection to the database
-     * @param d
-     *            A domain to insert on. The domains ID must be correct.
-     * @param sl
-     *            Seedlist to insert.
-     * @throws SQLException
-     *             If some database error occurs during the insertion process.
+     * @param c A connection to the database
+     * @param d A domain to insert on. The domains ID must be correct.
+     * @param sl Seedlist to insert.
+     * @throws SQLException If some database error occurs during the insertion process.
      */
     private void insertSeedlist(Connection c, Domain d, SeedList sl) throws SQLException {
         PreparedStatement s = c.prepareStatement("INSERT INTO seedlists ( name, comments, domain_id, seeds ) "
@@ -620,14 +587,10 @@ public class DomainDBDAO extends DomainDAO {
     /**
      * Inserts a new password entry into the database.
      * 
-     * @param c
-     *            A connection to the database
-     * @param d
-     *            A domain to insert on. The domains ID must be correct.
-     * @param p
-     *            A password entry to insert.
-     * @throws SQLException
-     *             If some database error occurs during the insertion process.
+     * @param c A connection to the database
+     * @param d A domain to insert on. The domains ID must be correct.
+     * @param p A password entry to insert.
+     * @throws SQLException If some database error occurs during the insertion process.
      */
     private void insertPassword(Connection c, Domain d, Password p) throws SQLException {
         PreparedStatement s = c.prepareStatement("INSERT INTO passwords "
@@ -646,19 +609,14 @@ public class DomainDBDAO extends DomainDAO {
     }
 
     /**
-     * Insert the basic configuration info into the DB. This does not establish
-     * the connections with seedlists and passwords, use
-     * {create,update}Config{Passwords,Seedlists}Entries for that.
+     * Insert the basic configuration info into the DB. This does not establish the connections with seedlists and
+     * passwords, use {create,update}Config{Passwords,Seedlists}Entries for that.
      * 
-     * @param connection
-     *            A connection to the database
+     * @param connection A connection to the database
      *
-     * @param d
-     *            a domain
-     * @param dc
-     *            a domainconfiguration
-     * @throws SQLException
-     *             If some database error occurs during the insertion process.
+     * @param d a domain
+     * @param dc a domainconfiguration
+     * @throws SQLException If some database error occurs during the insertion process.
      */
     private void insertConfiguration(Connection connection, Domain d, DomainConfiguration dc) throws SQLException {
         long templateId = DBUtils.selectLongValue(connection, "SELECT template_id FROM ordertemplates WHERE name = ?",
@@ -684,17 +642,12 @@ public class DomainDBDAO extends DomainDAO {
     }
 
     /**
-     * Delete all entries in the given crossref table that belong to the
-     * configuration.
+     * Delete all entries in the given crossref table that belong to the configuration.
      * 
-     * @param c
-     *            A connection to the database
-     * @param configId
-     *            The domain configuration to remove entries for.
-     * @param table
-     *            One of "config_passwords" or "config_seedlists"
-     * @throws SQLException
-     *             If any database problems occur during the delete process.
+     * @param c A connection to the database
+     * @param configId The domain configuration to remove entries for.
+     * @param table One of "config_passwords" or "config_seedlists"
+     * @throws SQLException If any database problems occur during the delete process.
      */
     private void deleteConfigFromTable(Connection c, long configId, String table) throws SQLException {
         PreparedStatement s = c.prepareStatement("DELETE FROM " + table + " WHERE " + table + ".config_id = ?");
@@ -703,17 +656,13 @@ public class DomainDBDAO extends DomainDAO {
     }
 
     /**
-     * Delete all entries from the config_passwords table that refer to the
-     * given configuration and insert the current ones.
+     * Delete all entries from the config_passwords table that refer to the given configuration and insert the current
+     * ones.
      * 
-     * @param c
-     *            A connection to the database
-     * @param d
-     *            A domain to operate on
-     * @param dc
-     *            Configuration to update.
-     * @throws SQLException
-     *             If any database problems occur during the update process.
+     * @param c A connection to the database
+     * @param d A domain to operate on
+     * @param dc Configuration to update.
+     * @throws SQLException If any database problems occur during the update process.
      */
     private void updateConfigPasswordsEntries(Connection c, Domain d, DomainConfiguration dc) throws SQLException {
         deleteConfigFromTable(c, dc.getID(), "config_passwords");
@@ -723,15 +672,11 @@ public class DomainDBDAO extends DomainDAO {
     /**
      * Create the xref table for passwords used by configurations.
      * 
-     * @param c
-     *            A connection to the database
-     * @param d
-     *            A domain to operate on.
-     * @param dc
-     *            A configuration to create xref table for.
-     * @throws SQLException
-     *             If any database problems occur during the insertion of
-     *             password entries for the given domain configuration
+     * @param c A connection to the database
+     * @param d A domain to operate on.
+     * @param dc A configuration to create xref table for.
+     * @throws SQLException If any database problems occur during the insertion of password entries for the given domain
+     *             configuration
      */
     private void createConfigPasswordsEntries(Connection c, Domain d, DomainConfiguration dc) throws SQLException {
         PreparedStatement s = c.prepareStatement("INSERT INTO config_passwords " + "( config_id, password_id ) "
@@ -749,18 +694,14 @@ public class DomainDBDAO extends DomainDAO {
     }
 
     /**
-     * Delete all entries from the config_seedlists table that refer to the
-     * given configuration and insert the current ones.
+     * Delete all entries from the config_seedlists table that refer to the given configuration and insert the current
+     * ones.
      * 
-     * @param c
-     *            An open connection to the harvestDatabase.
+     * @param c An open connection to the harvestDatabase.
      *
-     * @param d
-     *            A domain to operate on
-     * @param dc
-     *            Configuration to update.
-     * @throws SQLException
-     *             If any database problems occur during the update process.
+     * @param d A domain to operate on
+     * @param dc Configuration to update.
+     * @throws SQLException If any database problems occur during the update process.
      */
     private void updateConfigSeedlistsEntries(Connection c, Domain d, DomainConfiguration dc) throws SQLException {
         deleteConfigFromTable(c, dc.getID(), "config_seedlists");
@@ -770,15 +711,11 @@ public class DomainDBDAO extends DomainDAO {
     /**
      * Create the xref table for seedlists used by configurations.
      * 
-     * @param c
-     *            A connection to the database
-     * @param d
-     *            A domain to operate on.
-     * @param dc
-     *            A configuration to create xref table for.
-     * @throws SQLException
-     *             If any database problems occur during the insertion of
-     *             seedlist entries for the given domain configuration
+     * @param c A connection to the database
+     * @param d A domain to operate on.
+     * @param dc A configuration to create xref table for.
+     * @throws SQLException If any database problems occur during the insertion of seedlist entries for the given domain
+     *             configuration
      */
     private void createConfigSeedlistsEntries(Connection c, Domain d, DomainConfiguration dc) throws SQLException {
         PreparedStatement s = c.prepareStatement("INSERT INTO config_seedlists " + " ( config_id, seedlist_id ) "
@@ -862,15 +799,11 @@ public class DomainDBDAO extends DomainDAO {
     }
 
     /**
-     * Read the configurations for the domain. This should not be called until
-     * after passwords and seedlists are read.
+     * Read the configurations for the domain. This should not be called until after passwords and seedlists are read.
      * 
-     * @param c
-     *            A connection to the database
-     * @param d
-     *            The domain being read. Its ID must be set.
-     * @throws SQLException
-     *             If database errors occur.
+     * @param c A connection to the database
+     * @param d The domain being read. Its ID must be set.
+     * @throws SQLException If database errors occur.
      */
     private void readConfigurations(Connection c, Domain d) throws SQLException {
         // Read the configurations now that passwords and seedlists exist
@@ -959,12 +892,9 @@ public class DomainDBDAO extends DomainDAO {
     /**
      * Read owner info entries for the domain.
      * 
-     * @param c
-     *            A connection to the database
-     * @param d
-     *            The domain being read. Its ID must be set.
-     * @throws SQLException
-     *             If database errors occur.
+     * @param c A connection to the database
+     * @param d The domain being read. Its ID must be set.
+     * @throws SQLException If database errors occur.
      */
     private void readOwnerInfo(Connection c, Domain d) throws SQLException {
         // Read owner info
@@ -983,12 +913,9 @@ public class DomainDBDAO extends DomainDAO {
     /**
      * Read history info entries for the domain.
      * 
-     * @param c
-     *            A connection to the database
-     * @param d
-     *            The domain being read. Its ID must be set.
-     * @throws SQLException
-     *             If database errors occur.
+     * @param c A connection to the database
+     * @param d The domain being read. Its ID must be set.
+     * @throws SQLException If database errors occur.
      */
     private void readHistoryInfo(Connection c, Domain d) throws SQLException {
         // Read history info
@@ -1023,12 +950,9 @@ public class DomainDBDAO extends DomainDAO {
     /**
      * Read passwords for the domain.
      * 
-     * @param c
-     *            A connection to the database
-     * @param d
-     *            The domain being read. Its ID must be set.
-     * @throws SQLException
-     *             If database errors occur.
+     * @param c A connection to the database
+     * @param d The domain being read. Its ID must be set.
+     * @throws SQLException If database errors occur.
      */
     private void readPasswords(Connection c, Domain d) throws SQLException {
         PreparedStatement s = c.prepareStatement("SELECT password_id, name, comments, url, "
@@ -1046,12 +970,9 @@ public class DomainDBDAO extends DomainDAO {
     /**
      * Read seedlists for the domain.
      * 
-     * @param c
-     *            A connection to the database
-     * @param d
-     *            The domain being read. Its ID must be set.
-     * @throws SQLException
-     *             If database errors occur.
+     * @param c A connection to the database
+     * @param d The domain being read. Its ID must be set.
+     * @throws SQLException If database errors occur.
      */
     private void readSeedlists(Connection c, Domain d) throws SQLException {
         PreparedStatement s = c.prepareStatement("SELECT seedlist_id, name, comments, seeds"
@@ -1073,11 +994,9 @@ public class DomainDBDAO extends DomainDAO {
     /**
      * Make SeedList based on entry from seedlists (id, name, comments, seeds).
      * 
-     * @param res
-     *            a Resultset
+     * @param res a Resultset
      * @return a SeedList based on ResultSet entry.
-     * @throws SQLException
-     *             if unable to get data from database
+     * @throws SQLException if unable to get data from database
      */
     private SeedList getSeedListFromResultset(ResultSet res) throws SQLException {
         final long seedlistId = res.getLong(1);
@@ -1112,10 +1031,8 @@ public class DomainDBDAO extends DomainDAO {
     /**
      * Return true if a domain with the given name exists.
      *
-     * @param c
-     *            an open connection to the harvestDatabase
-     * @param domainName
-     *            a name of a domain
+     * @param c an open connection to the harvestDatabase
+     * @param domainName a name of a domain
      * @return true if a domain with the given name exists, otherwise false.
      */
     private synchronized boolean exists(Connection c, String domainName) {
@@ -1200,8 +1117,7 @@ public class DomainDBDAO extends DomainDAO {
     /**
      * Get the name of the default configuration for the given domain.
      * 
-     * @param domainName
-     *            a name of a domain
+     * @param domainName a name of a domain
      * @return the name of the default configuration for the given domain.
      */
     private String getDefaultDomainConfigurationName(String domainName) {
@@ -1294,13 +1210,11 @@ public class DomainDBDAO extends DomainDAO {
     }
 
     /**
-     * Return all TLDs represented by the domains in the domains table. it was
-     * asked that a level X TLD belong appear in TLD list where the level is <=X
-     * for example bidule.bnf.fr belong to .bnf.fr and to .fr it appear in the
-     * level 1 list of TLD and in the level 2 list
+     * Return all TLDs represented by the domains in the domains table. it was asked that a level X TLD belong appear in
+     * TLD list where the level is <=X for example bidule.bnf.fr belong to .bnf.fr and to .fr it appear in the level 1
+     * list of TLD and in the level 2 list
      * 
-     * @param level
-     *            maximum level of TLD
+     * @param level maximum level of TLD
      * @return a list of TLDs
      * @see DomainDAO#getTLDs(int)
      */
@@ -1443,13 +1357,10 @@ public class DomainDBDAO extends DomainDAO {
     /**
      * Saves all extended Field values for a Domain in the Database.
      * 
-     * @param c
-     *            Connection to Database
-     * @param d
-     *            Domain where loaded extended Field Values will be set
+     * @param c Connection to Database
+     * @param d Domain where loaded extended Field Values will be set
      * 
-     * @throws SQLException
-     *             If database errors occur.
+     * @throws SQLException If database errors occur.
      */
     private void saveExtendedFieldValues(Connection c, Domain d) throws SQLException {
         List<ExtendedFieldValue> list = d.getExtendedFieldValues();
@@ -1548,11 +1459,9 @@ public class DomainDBDAO extends DomainDAO {
     }
 
     /**
-     * Retrieve the crawlertraps for a specific domain. TODO should this method
-     * be public?
+     * Retrieve the crawlertraps for a specific domain. TODO should this method be public?
      * 
-     * @param domainName
-     *            the name of a domain.
+     * @param domainName the name of a domain.
      * @return the crawlertraps for given domain.
      */
     private List<String> getCrawlertraps(String domainName) {

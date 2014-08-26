@@ -41,13 +41,12 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDBDAO;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDataTypes;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDefaultValue;
 
-@SuppressWarnings({ "unused" })
+@SuppressWarnings({"unused"})
 public class ExtendedFieldValueDefinition {
     private static Log log = LogFactory.getLog(ExtendedFieldValueDefinition.class.getName());
 
     /*
-     * Subprocessing of ServletRequest for Extended Fields and update field
-     * content
+     * Subprocessing of ServletRequest for Extended Fields and update field content
      * 
      * @param context The context of this request
      * 

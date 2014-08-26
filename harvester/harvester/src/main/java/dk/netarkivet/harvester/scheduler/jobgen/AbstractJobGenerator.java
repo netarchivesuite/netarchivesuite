@@ -48,14 +48,12 @@ import dk.netarkivet.harvester.datamodel.PartialHarvest;
 import dk.netarkivet.harvester.datamodel.Schedule;
 
 /**
- * A base class for {@link JobGenerator} implementations. It is recommended to
- * extend this class to implement a new job generator.
+ * A base class for {@link JobGenerator} implementations. It is recommended to extend this class to implement a new job
+ * generator.
  * 
- * The base algorithm iterates over domain configurations within the harvest
- * definition, and according to the configuration (
- * {@link HarvesterSettings#JOBGEN_DOMAIN_CONFIG_SUBSET_SIZE}, constitutes a
- * subset of domain configurations from which one or more jobs will be
- * generated.
+ * The base algorithm iterates over domain configurations within the harvest definition, and according to the
+ * configuration ( {@link HarvesterSettings#JOBGEN_DOMAIN_CONFIG_SUBSET_SIZE}, constitutes a subset of domain
+ * configurations from which one or more jobs will be generated.
  */
 abstract class AbstractJobGenerator implements JobGenerator {
 
@@ -125,10 +123,8 @@ abstract class AbstractJobGenerator implements JobGenerator {
     /**
      * Instantiates a new job.
      * 
-     * @param cfg
-     *            the {@link DomainConfiguration} being processed
-     * @param harvest
-     *            the {@link HarvestDefinition} being processed
+     * @param cfg the {@link DomainConfiguration} being processed
+     * @param harvest the {@link HarvestDefinition} being processed
      * @return an instance of {@link Job}
      */
     public static Job getNewJob(HarvestDefinition harvest, DomainConfiguration cfg) {
@@ -146,28 +142,21 @@ abstract class AbstractJobGenerator implements JobGenerator {
     }
 
     /**
-     * Returns a comparator used to sort the subset of
-     * {@link #DOMAIN_CONFIG_SUBSET_SIZE} configurations that are scanned at
-     * each iteration.
+     * Returns a comparator used to sort the subset of {@link #DOMAIN_CONFIG_SUBSET_SIZE} configurations that are
+     * scanned at each iteration.
      * 
-     * @param harvest
-     *            the {@link HarvestDefinition} being processed.
+     * @param harvest the {@link HarvestDefinition} being processed.
      * @return a comparator
      */
     protected abstract Comparator<DomainConfiguration> getDomainConfigurationSubsetComparator(HarvestDefinition harvest);
 
     /**
-     * Create new jobs from a collection of configurations. All configurations
-     * must use the same order.xml file.Jobs
+     * Create new jobs from a collection of configurations. All configurations must use the same order.xml file.Jobs
      *
-     * @param harvest
-     *            the {@link HarvestDefinition} being processed.
-     * @param domainConfSubset
-     *            the configurations to use to create the jobs
+     * @param harvest the {@link HarvestDefinition} being processed.
+     * @param domainConfSubset the configurations to use to create the jobs
      * @return The number of jobs created
-     * @throws ArgumentNotValid
-     *             if any of the parameters is null or if the cfglist does not
-     *             contain any configurations
+     * @throws ArgumentNotValid if any of the parameters is null or if the cfglist does not contain any configurations
      */
     protected abstract int processDomainConfigurationSubset(HarvestDefinition harvest,
             Iterator<DomainConfiguration> domainConfSubset);
@@ -181,30 +170,24 @@ abstract class AbstractJobGenerator implements JobGenerator {
     }
 
     /**
-     * Called by {@link #canAccept(Job, DomainConfiguration)}. Tests the
-     * implementation-specific conditions to accept the given
-     * {@link DomainConfiguration} in the given {@link Job}. It is assumed that
-     * {@link #checkAddDomainConfInvariant(Job, DomainConfiguration)} has
-     * already passed.
+     * Called by {@link #canAccept(Job, DomainConfiguration)}. Tests the implementation-specific conditions to accept
+     * the given {@link DomainConfiguration} in the given {@link Job}. It is assumed that
+     * {@link #checkAddDomainConfInvariant(Job, DomainConfiguration)} has already passed.
      * 
-     * @param job
-     *            the {@link Job} n=being built
-     * @param cfg
-     *            the {@link DomainConfiguration} to test
+     * @param job the {@link Job} n=being built
+     * @param cfg the {@link DomainConfiguration} to test
      * @return true if the configuration passes the conditions.
      */
     protected abstract boolean checkSpecificAcceptConditions(Job job, DomainConfiguration cfg);
 
     /**
-     * Once the job has been filled with {@link DomainConfiguration}s, performs
-     * the following operations:
+     * Once the job has been filled with {@link DomainConfiguration}s, performs the following operations:
      * <ol>
      * <li>Edit the harvest template to add/remove deduplicator configuration.</li>
      * <li></li>
      * </ol>
      * 
-     * @param job
-     *            the job
+     * @param job the job
      */
     protected void editJobOrderXml(Job job) {
         Document doc = job.getOrderXMLdoc();
@@ -231,16 +214,12 @@ abstract class AbstractJobGenerator implements JobGenerator {
      * <ol>
      * <li>The given domain configuration and job are not null.</li>
      * <li>The job does not already contain the given domain configuration.</li>
-     * <li>The domain configuration has the same order xml name as the first
-     * inserted domain config.</li>
+     * <li>The domain configuration has the same order xml name as the first inserted domain config.</li>
      * </ol>
      * 
-     * @param job
-     *            a given Job
-     * @param cfg
-     *            a given DomainConfiguration
-     * @return true, if the given DomainConfiguration can be inserted into the
-     *         given job
+     * @param job a given Job
+     * @param cfg a given DomainConfiguration
+     * @return true, if the given DomainConfiguration can be inserted into the given job
      */
     private boolean checkAddDomainConfInvariant(Job job, DomainConfiguration cfg) {
         ArgumentNotValid.checkNotNull(job, "job");

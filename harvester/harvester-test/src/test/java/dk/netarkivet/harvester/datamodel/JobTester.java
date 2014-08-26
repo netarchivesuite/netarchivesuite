@@ -77,7 +77,7 @@ import dk.netarkivet.testutils.TestFileUtils;
  * Test class for the Job class.
  * 
  */
-@SuppressWarnings({ "unchecked" })
+@SuppressWarnings({"unchecked"})
 public class JobTester extends DataModelTestCase {
 
     private HarvestChannel highChan;
@@ -122,9 +122,9 @@ public class JobTester extends DataModelTestCase {
         dao.update(poelse);
         job = Job.createJob(12342L, highChan, dc, 0);
         seedList = job.getSeedListAsString();
-        for (String s : new String[] { "http://www.xn--plse-gra.dk/enfil", "http://www.xn--plse-gra.dk/enpølse",
+        for (String s : new String[] {"http://www.xn--plse-gra.dk/enfil", "http://www.xn--plse-gra.dk/enpølse",
                 "http://www.uden.dk/enpølse", "http://www.xn--plse-gra.dk:8080/port",
-                "http://www.xn--plse-gra.dk:8090", "www.xn--plse-gra.dk:8091", "www.xn--plse-gra.dk/andenfil" }) {
+                "http://www.xn--plse-gra.dk:8090", "www.xn--plse-gra.dk:8091", "www.xn--plse-gra.dk/andenfil"}) {
             assertTrue("Should contain URL '" + s + "' in '" + seedList + "'", seedList.contains(s));
         }
         // LogUtils.flushLogs(Job.class.getName());
@@ -211,8 +211,7 @@ public class JobTester extends DataModelTestCase {
     }
 
     /**
-     * Tests that it is only permitted to change job status as follows: new ->
-     * submitted -> started -> done -> failed.
+     * Tests that it is only permitted to change job status as follows: new -> submitted -> started -> done -> failed.
      */
     @Test
     public void testOrderSetStatus() {
@@ -242,8 +241,7 @@ public class JobTester extends DataModelTestCase {
     }
 
     /**
-     * Tests that we cannot cause a job status to decrease in ordinal value from
-     * DONE to NEW
+     * Tests that we cannot cause a job status to decrease in ordinal value from DONE to NEW
      */
     @Test
     public void testIllegalJumpInStatus() {
@@ -259,8 +257,7 @@ public class JobTester extends DataModelTestCase {
     }
 
     /**
-     * Tests the single special case where job status can be reduced in ordinal
-     * value from FAILED_REJECTED to FAILED.
+     * Tests the single special case where job status can be reduced in ordinal value from FAILED_REJECTED to FAILED.
      */
     @Test
     public void testLegalJumpInStatus() {
@@ -271,9 +268,8 @@ public class JobTester extends DataModelTestCase {
     }
 
     /**
-     * Test if a configuration is checked with respect to expected number of
-     * objects, and that the domain the domain in this configuration is not
-     * already in job.
+     * Test if a configuration is checked with respect to expected number of objects, and that the domain the domain in
+     * this configuration is not already in job.
      */
     @Test
     public void testCanAcceptByteLimit() {
@@ -497,8 +493,7 @@ public class JobTester extends DataModelTestCase {
     }
 
     /**
-     * Tests that normal jobs have high priority and snapshot jobs have low
-     * priority.
+     * Tests that normal jobs have high priority and snapshot jobs have low priority.
      */
     @Test
     public void testPriority() {
@@ -540,13 +535,10 @@ public class JobTester extends DataModelTestCase {
     }
 
     /**
-     * Tests that it is possible to set the maximum number of objects to be
-     * retrieved per domain i.e. that the order.xml that is used as base for
-     * this Job is edited accordingly.
+     * Tests that it is possible to set the maximum number of objects to be retrieved per domain i.e. that the order.xml
+     * that is used as base for this Job is edited accordingly.
      *
-     * @throws DocumentException
-     *             Thrown if SAXReader() has problems parsing the order.xml
-     *             file.
+     * @throws DocumentException Thrown if SAXReader() has problems parsing the order.xml file.
      */
     @Test
     public void testForceMaxObjectsPerDomain() throws DocumentException {
@@ -629,15 +621,11 @@ public class JobTester extends DataModelTestCase {
     }
 
     /**
-     * Tests that crawlertraps are correctly merged with the order.xml.
-     * Crawlertraps are expressed using MatchesListRegExpDecideRule each listing
-     * the crawlertraps specified for a single domain, e.g. <newObject
-     * name="dr.dk"
-     * class="org.archive.crawler.deciderules.MatchesListRegExpDecideRule">
-     * <string name="decision">REJECT</string> <string
-     * name="list-logic">OR</string> <stringList name='regexp-list'>
-     * <string>xyz.*</string> <string>.*[a-z]+</string> </stringList>
-     * </newObject>
+     * Tests that crawlertraps are correctly merged with the order.xml. Crawlertraps are expressed using
+     * MatchesListRegExpDecideRule each listing the crawlertraps specified for a single domain, e.g. <newObject
+     * name="dr.dk" class="org.archive.crawler.deciderules.MatchesListRegExpDecideRule"> <string
+     * name="decision">REJECT</string> <string name="list-logic">OR</string> <stringList name='regexp-list'>
+     * <string>xyz.*</string> <string>.*[a-z]+</string> </stringList> </newObject>
      */
     @Test
     public void testAddConfigurationUpdatesOrderXml() {
@@ -722,8 +710,8 @@ public class JobTester extends DataModelTestCase {
     }
 
     /**
-     * Test fields are set correctly, especially harvestNum (after bug 544) and
-     * max-bytes since that now uses limit from configuration if present.
+     * Test fields are set correctly, especially harvestNum (after bug 544) and max-bytes since that now uses limit from
+     * configuration if present.
      */
     @Test
     public void testCreateJob() {
@@ -832,8 +820,7 @@ public class JobTester extends DataModelTestCase {
     }
 
     /**
-     * test the method public static List<AliasInfo> Job.getJobAliasInfo(Job
-     * job);
+     * test the method public static List<AliasInfo> Job.getJobAliasInfo(Job job);
      *
      */
     @Test

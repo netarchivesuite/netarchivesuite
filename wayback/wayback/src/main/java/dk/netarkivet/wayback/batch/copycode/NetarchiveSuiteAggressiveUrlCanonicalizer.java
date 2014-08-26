@@ -27,13 +27,11 @@ import org.archive.net.UURI;
 import org.archive.wayback.util.url.AggressiveUrlCanonicalizer;
 
 /**
- * This class overrides the standard wayback canonicalizer in order to use our
- * version of UURIFactory (see Bug 1719). Everything in this class is cut and
- * pasted from wayback's AggressiveUrlCanonicalizer, with substitution of
+ * This class overrides the standard wayback canonicalizer in order to use our version of UURIFactory (see Bug 1719).
+ * Everything in this class is cut and pasted from wayback's AggressiveUrlCanonicalizer, with substitution of
  * NetarchiveSuiteUURIFactory for UURIFactory.
  * 
- * @deprecated use org.archive.wayback.util.url.AggressiveUrlCanonicalizer
- *             instead
+ * @deprecated use org.archive.wayback.util.url.AggressiveUrlCanonicalizer instead
  */
 public class NetarchiveSuiteAggressiveUrlCanonicalizer extends AggressiveUrlCanonicalizer {
 

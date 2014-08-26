@@ -39,9 +39,8 @@ import dk.netarkivet.harvester.harvesting.HarvestController;
 import dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationRequest;
 
 /**
- * Keeps track of the number of {@link HarvesterRegistrationRequest}s that have
- * been received per channel, which allows to know if a
- * {@link HarvestController}s are registered to a given {@link HarvestChannel}.
+ * Keeps track of the number of {@link HarvesterRegistrationRequest}s that have been received per channel, which allows
+ * to know if a {@link HarvestController}s are registered to a given {@link HarvestChannel}.
  */
 public class HarvestChannelRegistry {
 
@@ -88,8 +87,7 @@ public class HarvestChannelRegistry {
     /**
      * Clears any registration data for a given harvester instance id.
      * 
-     * @param harvesterInstanceId
-     *            a harvester instance id
+     * @param harvesterInstanceId a harvester instance id
      */
     private void clearHarvester(final String harvesterInstanceId) {
         ArrayList<String> keysToRemove = new ArrayList<String>();

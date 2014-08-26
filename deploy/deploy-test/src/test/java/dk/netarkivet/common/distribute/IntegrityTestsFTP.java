@@ -89,8 +89,7 @@ public class IntegrityTestsFTP {
         TestFileUtils.copyDirectoryNonCVS(TestInfo.DATADIR, TestInfo.TEMPDIR);
 
         /*
-         * make 3 duplicates of TestInfo.TESTXML: test1.xml, test2.xml,
-         * test3.xml
+         * make 3 duplicates of TestInfo.TESTXML: test1.xml, test2.xml, test3.xml
          */
         testFile1 = new File(TestInfo.TEMPDIR, "test1.xml");
         testFile2 = new File(TestInfo.TEMPDIR, "test2.xml");
@@ -161,18 +160,16 @@ public class IntegrityTestsFTP {
     }
 
     /**
-     * Initially verify that communication with the ftp-server succeeds without
-     * using the RemoteFile. (1) Verify, that you can upload a file to a
-     * ftp-server, and retrieve the same file from this server-server. (2)
-     * Verify, that file was not corrupted in transit author: SVC
+     * Initially verify that communication with the ftp-server succeeds without using the RemoteFile. (1) Verify, that
+     * you can upload a file to a ftp-server, and retrieve the same file from this server-server. (2) Verify, that file
+     * was not corrupted in transit author: SVC
      * 
      * @throws IOException
      */
     public void testConfigSettings() throws IOException {
         /**
-         * this code has been tested with the ftp-server proftpd
-         * (www.proftpd.org), using the configuration stored in CVS here:
-         * /projects/webarkivering/proftpd.org
+         * this code has been tested with the ftp-server proftpd (www.proftpd.org), using the configuration stored in
+         * CVS here: /projects/webarkivering/proftpd.org
          */
         String nameOfUploadedFile;
         String nameOfUploadedFile2;
@@ -212,8 +209,7 @@ public class IntegrityTestsFTP {
      */
     public void testArguments() throws FileNotFoundException {
         /**
-         * test 1: test that FTPRemoteFile.getInstance(null) throws an
-         * ArgumentNotValid exception
+         * test 1: test that FTPRemoteFile.getInstance(null) throws an ArgumentNotValid exception
          */
         try {
             FTPRemoteFile.getInstance(null, true, false, true);
@@ -223,8 +219,7 @@ public class IntegrityTestsFTP {
         }
 
         /**
-         * test 3: test that FTPRemoteFile.appendTo(null) throws an
-         * ArgumentNotValid exception
+         * test 3: test that FTPRemoteFile.appendTo(null) throws an ArgumentNotValid exception
          */
         try {
             RemoteFile rf = FTPRemoteFile.getInstance(testFile1, true, false, true);
@@ -234,8 +229,7 @@ public class IntegrityTestsFTP {
             // Expected
         }
         /**
-         * test 4: test that FTPRemoteFile.copyTo(null) throws an
-         * ArgumentNotValid exception
+         * test 4: test that FTPRemoteFile.copyTo(null) throws an ArgumentNotValid exception
          */
         try {
             RemoteFile rf = FTPRemoteFile.getInstance(testFile2, true, false, true);
@@ -248,9 +242,8 @@ public class IntegrityTestsFTP {
         }
 
         /**
-         * test 5: test that FTPRemoteFile.copyTo(destFile) throws an
-         * ArgumentNotValid exception if destFile is not an acceptable
-         * destinationFile, i.e. the file 'destFile' is writable
+         * test 5: test that FTPRemoteFile.copyTo(destFile) throws an ArgumentNotValid exception if destFile is not an
+         * acceptable destinationFile, i.e. the file 'destFile' is writable
          */
         RemoteFile rf = FTPRemoteFile.getInstance(testFile2, true, false, true);
 
@@ -261,8 +254,7 @@ public class IntegrityTestsFTP {
 
         try {
             rf.copyTo(destFile); /*
-                                  * This operation tries to copy the file to an
-                                  * file, which cannot be created
+                                  * This operation tries to copy the file to an file, which cannot be created
                                   */
             fail("ArgumentNotValid Expected");
         } catch (ArgumentNotValid e) {
@@ -271,8 +263,7 @@ public class IntegrityTestsFTP {
     }
 
     /**
-     * (1) Test, if uploaded and retrieved file are equal (2) test that
-     * rf.getSize() reports the correct value;
+     * (1) Test, if uploaded and retrieved file are equal (2) test that rf.getSize() reports the correct value;
      * 
      * @throws IOException
      */
@@ -291,8 +282,7 @@ public class IntegrityTestsFTP {
         rf.copyTo(newFile);
 
         /**
-         * check, if the original file and the same file retrieved from the
-         * ftp-server contains the same contents
+         * check, if the original file and the same file retrieved from the ftp-server contains the same contents
          */
         byte[] datasend = FileUtils.readBinaryFile(testFile);
         byte[] datareceived = FileUtils.readBinaryFile(newFile);
@@ -328,8 +318,7 @@ public class IntegrityTestsFTP {
     }
 
     /**
-     * Test that multiple uploads of the same file does not clash. Test for bug
-     * #135
+     * Test that multiple uploads of the same file does not clash. Test for bug #135
      * 
      * @throws IOException
      */

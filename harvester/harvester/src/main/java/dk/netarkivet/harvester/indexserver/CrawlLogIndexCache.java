@@ -57,13 +57,10 @@ import dk.netarkivet.common.utils.ZipUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
 
 /**
- * A cache that serves Lucene indices of crawl logs for given job IDs. Uses the
- * DigestIndexer in the deduplicator software:
- * http://deduplicator.sourceforge.net
- * /apidocs/is/hi/bok/deduplicator/DigestIndexer.html Upon combination of
- * underlying files, each file in the Lucene index is gzipped and the compressed
- * versions are stored in the directory given by getCacheFile(). The subclass
- * has to determine in its constructor call which mime types are included.
+ * A cache that serves Lucene indices of crawl logs for given job IDs. Uses the DigestIndexer in the deduplicator
+ * software: http://deduplicator.sourceforge.net /apidocs/is/hi/bok/deduplicator/DigestIndexer.html Upon combination of
+ * underlying files, each file in the Lucene index is gzipped and the compressed versions are stored in the directory
+ * given by getCacheFile(). The subclass has to determine in its constructor call which mime types are included.
  */
 public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Long> implements JobIndexCache {
 
@@ -74,14 +71,12 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
     private final CDXDataCache cdxcache = new CDXDataCache();
 
     /**
-     * the useBlacklist set to true results in docs matching the mimefilter
-     * being ignored.
+     * the useBlacklist set to true results in docs matching the mimefilter being ignored.
      */
     private boolean useBlacklist;
 
     /**
-     * An regular expression for the mimetypes to include or exclude from the
-     * index. See useBlackList.
+     * An regular expression for the mimetypes to include or exclude from the index. See useBlackList.
      */
     private String mimeFilter;
 
@@ -95,12 +90,9 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
     /**
      * Constructor for the CrawlLogIndexCache class.
      * 
-     * @param name
-     *            The name of the CrawlLogIndexCache
-     * @param blacklist
-     *            Shall the mimefilter be considered a blacklist or a whitelist?
-     * @param mimeFilter
-     *            A regular expression for the mimetypes to exclude/include
+     * @param name The name of the CrawlLogIndexCache
+     * @param blacklist Shall the mimefilter be considered a blacklist or a whitelist?
+     * @param mimeFilter A regular expression for the mimetypes to exclude/include
      */
     public CrawlLogIndexCache(String name, boolean blacklist, String mimeFilter) {
         super(name, new CrawlLogDataCache());
@@ -109,13 +101,10 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
     }
 
     /**
-     * Prepare data for combining. This class overrides prepareCombine to make
-     * sure that CDX data is available.
+     * Prepare data for combining. This class overrides prepareCombine to make sure that CDX data is available.
      *
-     * @param ids
-     *            Set of IDs that will be combined.
-     * @return Map of ID->File of data to combine for the IDs where we could
-     *         find data.
+     * @param ids Set of IDs that will be combined.
+     * @return Map of ID->File of data to combine for the IDs where we could find data.
      */
     protected Map<Long, File> prepareCombine(Set<Long> ids) {
         log.info("Starting to generate {} for the {} jobs: {}", getCacheDir().getName(), ids.size(), ids);
@@ -137,12 +126,10 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
     }
 
     /**
-     * Combine a number of crawl.log files into one Lucene index. This index is
-     * placed as gzip files under the directory returned by getCacheFile().
+     * Combine a number of crawl.log files into one Lucene index. This index is placed as gzip files under the directory
+     * returned by getCacheFile().
      *
-     * @param rawfiles
-     *            The map from job ID into crawl.log contents. No null values
-     *            are allowed in this map.
+     * @param rawfiles The map from job ID into crawl.log contents. No null values are allowed in this map.
      */
     protected void combine(Map<Long, File> rawfiles) {
         ++indexingJobCount;
@@ -302,8 +289,7 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
     /**
      * Try to release all resources connected to the given ThreadPoolExecutor.
      * 
-     * @param executor
-     *            a ThreadPoolExecutor
+     * @param executor a ThreadPoolExecutor
      */
     private void closeDownThreadpoolQuietly(ThreadPoolExecutor executor) {
         if (executor == null) {
@@ -326,19 +312,13 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
     }
 
     /**
-     * Ingest a single crawl.log file using the corresponding CDX file to find
-     * offsets.
+     * Ingest a single crawl.log file using the corresponding CDX file to find offsets.
      *
-     * @param id
-     *            ID of a job to ingest.
-     * @param crawllogfile
-     *            The file containing the crawl.log data for the job
-     * @param cdxfile
-     *            The file containing the cdx data for the job
-     * @param options
-     *            The digesting options used.
-     * @param indexer
-     *            The indexer to add to.
+     * @param id ID of a job to ingest.
+     * @param crawllogfile The file containing the crawl.log data for the job
+     * @param cdxfile The file containing the cdx data for the job
+     * @param options The digesting options used.
+     * @param indexer The indexer to add to.
      */
     protected static void indexFile(Long id, File crawllogfile, File cdxfile, DigestIndexer indexer,
             DigestOptions options) {
@@ -382,12 +362,9 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
     /**
      * Get a sorted, temporary CDX file corresponding to the given CDXfile.
      * 
-     * @param cdxFile
-     *            A cdxfile
-     * @return A temporary file with CDX info for that just sorted according to
-     *         the standard CDX sorting rules. This file will be removed at the
-     *         exit of the JVM, but should be attempted removed when it is no
-     *         longer used.
+     * @param cdxFile A cdxfile
+     * @return A temporary file with CDX info for that just sorted according to the standard CDX sorting rules. This
+     *         file will be removed at the exit of the JVM, but should be attempted removed when it is no longer used.
      */
     protected static File getSortedCDX(File cdxFile) {
         try {
@@ -404,11 +381,9 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
     /**
      * Get a sorted, temporary crawl.log file from an unsorted one.
      *
-     * @param file
-     *            The file containing an unsorted crawl.log file.
-     * @return A temporary file containing the entries sorted according to URL.
-     *         The file will be removed upon exit of the JVM, but should be
-     *         attempted removed when it is no longer used.
+     * @param file The file containing an unsorted crawl.log file.
+     * @return A temporary file containing the entries sorted according to URL. The file will be removed upon exit of
+     *         the JVM, but should be attempted removed when it is no longer used.
      */
     protected static File getSortedCrawlLog(File file) {
         try {
@@ -425,11 +400,9 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
     /**
      * Create standard deduplication indexer.
      * 
-     * @param indexLocation
-     *            The full path to the indexing directory
+     * @param indexLocation The full path to the indexing directory
      * @return the created deduplication indexer.
-     * @throws IOException
-     *             If unable to open the index.
+     * @throws IOException If unable to open the index.
      */
     protected static DigestIndexer createStandardIndexer(String indexLocation) throws IOException {
         // Setup Lucene for indexing our crawllogs

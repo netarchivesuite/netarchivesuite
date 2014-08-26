@@ -57,7 +57,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 /**
  * Class testing the FTPRemoteFile class.
  */
-@SuppressWarnings({ "unused" })
+@SuppressWarnings({"unused"})
 @Ignore("Not in junit3 test suite")
 public class IntegrityTestsFTPRemoteFile {
 
@@ -91,8 +91,7 @@ public class IntegrityTestsFTPRemoteFile {
             TestFileUtils.copyDirectoryNonCVS(TestInfo.DATADIR, TestInfo.TEMPDIR);
 
             /*
-             * make 3 duplicates of TestInfo.TESTXML: test1.xml, test2.xml,
-             * test3.xml
+             * make 3 duplicates of TestInfo.TESTXML: test1.xml, test2.xml, test3.xml
              */
             testFile1 = new File(TestInfo.TEMPDIR, "test1.xml");
             testFile2 = new File(TestInfo.TEMPDIR, "test2.xml");
@@ -167,18 +166,16 @@ public class IntegrityTestsFTPRemoteFile {
     }
 
     /**
-     * Initially verify that communication with the ftp-server succeeds without
-     * using the RemoteFile. (1) Verify, that you can upload a file to a
-     * ftp-server, and retrieve the same file from this server-server. (2)
-     * Verify, that file was not corrupted in transit author: SVC
+     * Initially verify that communication with the ftp-server succeeds without using the RemoteFile. (1) Verify, that
+     * you can upload a file to a ftp-server, and retrieve the same file from this server-server. (2) Verify, that file
+     * was not corrupted in transit author: SVC
      * 
      * @throws IOException
      */
     public void testConfigSettings() throws IOException {
         /**
-         * this code has been tested with the ftp-server proftpd
-         * (www.proftpd.org), using the configuration stored in CVS here:
-         * /projects/webarkivering/proftpd.org
+         * this code has been tested with the ftp-server proftpd (www.proftpd.org), using the configuration stored in
+         * CVS here: /projects/webarkivering/proftpd.org
          */
         String nameOfUploadedFile;
         String nameOfUploadedFile2;
@@ -212,8 +209,7 @@ public class IntegrityTestsFTPRemoteFile {
     }
 
     /**
-     * test 1: test that FTPRemoteFile.getInstance(null) throws an
-     * ArgumentNotValid exception
+     * test 1: test that FTPRemoteFile.getInstance(null) throws an ArgumentNotValid exception
      * 
      * @throws FileNotFoundException
      */
@@ -227,8 +223,7 @@ public class IntegrityTestsFTPRemoteFile {
     }
 
     /**
-     * test 3: test that FTPRemoteFile.appendTo(null) throws an ArgumentNotValid
-     * exception
+     * test 3: test that FTPRemoteFile.appendTo(null) throws an ArgumentNotValid exception
      * 
      * @throws FileNotFoundException
      */
@@ -243,8 +238,8 @@ public class IntegrityTestsFTPRemoteFile {
     }
 
     /**
-     * Test that writing to the original file after making a remotefile does not
-     * change the remotefile contents. Test for bug #289
+     * Test that writing to the original file after making a remotefile does not change the remotefile contents. Test
+     * for bug #289
      * 
      * @throws IOException
      */

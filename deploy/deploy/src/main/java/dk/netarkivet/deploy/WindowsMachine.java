@@ -33,39 +33,25 @@ import org.dom4j.Element;
 import dk.netarkivet.common.exceptions.IOFailure;
 
 /**
- * A WindowsMachine is the instance of the abstract machine class, which runs
- * the operating system Windows. This class only contains the operating system
- * specific functions.
+ * A WindowsMachine is the instance of the abstract machine class, which runs the operating system Windows. This class
+ * only contains the operating system specific functions.
  */
 public class WindowsMachine extends Machine {
 
     /**
-     * The constructor. Starts by initializing the parent abstract class, then
-     * sets the operating system dependent variables.
+     * The constructor. Starts by initializing the parent abstract class, then sets the operating system dependent
+     * variables.
      * 
-     * @param root
-     *            The XML root element.
-     * @param parentSettings
-     *            The Settings to be inherited from the PhysicalLocation, where
-     *            this machine is placed.
-     * @param param
-     *            The machine parameters to be inherited from the
-     *            PhysicalLocation.
-     * @param netarchiveSuiteSource
-     *            The name of the NetarchiveSuite package file. Must be '.zip'.
-     * @param logProp
-     *            The logging property file, to be copied into machine
-     *            directory.
-     * @param securityPolicy
-     *            The security policy file, to be copied into machine directory.
-     * @param dbFile
-     *            The harvest definition database file.
-     * @param arcdbFile
-     *            The archive database.
-     * @param resetDir
-     *            Whether the temporary directory should be reset.
-     * @param externalJarFolder
-     *            The folder containing the external jar library files.
+     * @param root The XML root element.
+     * @param parentSettings The Settings to be inherited from the PhysicalLocation, where this machine is placed.
+     * @param param The machine parameters to be inherited from the PhysicalLocation.
+     * @param netarchiveSuiteSource The name of the NetarchiveSuite package file. Must be '.zip'.
+     * @param logProp The logging property file, to be copied into machine directory.
+     * @param securityPolicy The security policy file, to be copied into machine directory.
+     * @param dbFile The harvest definition database file.
+     * @param arcdbFile The archive database.
+     * @param resetDir Whether the temporary directory should be reset.
+     * @param externalJarFolder The folder containing the external jar library files.
      */
     public WindowsMachine(Element root, XmlStructure parentSettings, Parameters param, String netarchiveSuiteSource,
             File logProp, File slf4JConfig, File securityPolicy, File dbFile, File arcdbFile, boolean resetDir,
@@ -78,11 +64,10 @@ public class WindowsMachine extends Machine {
     }
 
     /**
-     * On windows machines console output can cause problems so any uses of
-     * java.util.logging.ConsoleHandler are removed.
+     * On windows machines console output can cause problems so any uses of java.util.logging.ConsoleHandler are
+     * removed.
      * 
-     * @param logProperties
-     *            the original contents of the logging properties file.
+     * @param logProperties the original contents of the logging properties file.
      * @return logging properties with the ConsoleHandler removed
      */
     @Override
@@ -98,37 +83,25 @@ public class WindowsMachine extends Machine {
     }
 
     /**
-     * Creates the operation system specific installation script for this
-     * machine.
+     * Creates the operation system specific installation script for this machine.
      * 
-     * Pseudo code: - echo copying 'NetarchiveSuite.zip' to: 'machine' - scp
-     * 'NetarchiveSuite.zip' 'login'@'machine': - echo unzipping
-     * 'NetarchiveSuite.zip' at: 'machine' - ssh 'login'@'machine' 'unzip'
-     * 'environmentName' -o 'NetarchiveSuite.zip - $'create directories'. - echo
-     * preparing for copying of settings and scripts - if [ $( ssh
-     * 'login'@'machine' cmd /c if exist
-     * 'environmentName'\\conf\\jmxremote.password echo 1 ) ]; then echo Y | ssh
-     * 'login'@'machine' cmd /c cacls
-     * 'environmentName'\\conf\\jmxremote.password /P BITARKIV\\'login':F; fi -
-     * if [ $( ssh 'login'@'machine' cmd /c if exist
-     * 'environmentName'\\conf\\jmxremote.access echo 1 ) ]; then echo Y | ssh
-     * 'login'@'machine' cmd /c cacls 'environmentName'\\conf\\jmxremote.access
-     * /P BITARKIV\\'login':F; fi - echo copying settings and scripts - scp -r
-     * 'machine'/* 'login'@'machine':'environmentName'\\conf\\ - $'apply
-     * database script' - echo make password files readonly * if
-     * 'jmxremote-password-path' != 'jmxremote-password-defaultpath' - ssh
-     * 'login'@'machine' move /Y 'jmxremote-password-defaultpath'
-     * 'jmxremote-password-path' * if 'jmxremote-access-path' !=
-     * 'jmxremote-access-defaultpath' - ssh 'login'@'machine' move /Y
-     * 'jmxremote-access-defaultpath' 'jmxremote-access-path' - echo Y | ssh
-     * 'login'@'machine' cmd /c cacls
-     * 'environmentName'\\'jmxremote-password-path' /P BITARKIV\\'login':R -
-     * echo Y | ssh 'login'@'machine' cmd /c cacls
+     * Pseudo code: - echo copying 'NetarchiveSuite.zip' to: 'machine' - scp 'NetarchiveSuite.zip' 'login'@'machine': -
+     * echo unzipping 'NetarchiveSuite.zip' at: 'machine' - ssh 'login'@'machine' 'unzip' 'environmentName' -o
+     * 'NetarchiveSuite.zip - $'create directories'. - echo preparing for copying of settings and scripts - if [ $( ssh
+     * 'login'@'machine' cmd /c if exist 'environmentName'\\conf\\jmxremote.password echo 1 ) ]; then echo Y | ssh
+     * 'login'@'machine' cmd /c cacls 'environmentName'\\conf\\jmxremote.password /P BITARKIV\\'login':F; fi - if [ $(
+     * ssh 'login'@'machine' cmd /c if exist 'environmentName'\\conf\\jmxremote.access echo 1 ) ]; then echo Y | ssh
+     * 'login'@'machine' cmd /c cacls 'environmentName'\\conf\\jmxremote.access /P BITARKIV\\'login':F; fi - echo
+     * copying settings and scripts - scp -r 'machine'/* 'login'@'machine':'environmentName'\\conf\\ - $'apply database
+     * script' - echo make password files readonly * if 'jmxremote-password-path' != 'jmxremote-password-defaultpath' -
+     * ssh 'login'@'machine' move /Y 'jmxremote-password-defaultpath' 'jmxremote-password-path' * if
+     * 'jmxremote-access-path' != 'jmxremote-access-defaultpath' - ssh 'login'@'machine' move /Y
+     * 'jmxremote-access-defaultpath' 'jmxremote-access-path' - echo Y | ssh 'login'@'machine' cmd /c cacls
+     * 'environmentName'\\'jmxremote-password-path' /P BITARKIV\\'login':R - echo Y | ssh 'login'@'machine' cmd /c cacls
      * 'environmentName'\\'jmxremote-access-path' /P BITARKIV\\'login':R
      * 
-     * variables: 'NetarchiveSuite.zip' = The NetarchiveSuitePackage with '.zip'
-     * extension. 'machine' = The machine name. 'login' = The username for the
-     * machine. 'unzip' = The command for unzipping. 'environmentName' = the
+     * variables: 'NetarchiveSuite.zip' = The NetarchiveSuitePackage with '.zip' extension. 'machine' = The machine
+     * name. 'login' = The username for the machine. 'unzip' = The command for unzipping. 'environmentName' = the
      * environmentName from the configuration file.
      * 
      * $'...' = call other function.
@@ -267,11 +240,10 @@ public class WindowsMachine extends Machine {
     /**
      * Creates the operation system specific killing script for this machine.
      * 
-     * pseudocode: - ssh 'login'@'machine' cmd /c
-     * 'environmentName'\\conf\\killall.bat
+     * pseudocode: - ssh 'login'@'machine' cmd /c 'environmentName'\\conf\\killall.bat
      * 
-     * variables: 'login' = machine user name 'machine' = name of the machine
-     * 'environmentName' = the environmentName from configuration.
+     * variables: 'login' = machine user name 'machine' = name of the machine 'environmentName' = the environmentName
+     * from configuration.
      * 
      * @return Operation system specific part of the killscript.
      */
@@ -293,12 +265,11 @@ public class WindowsMachine extends Machine {
     /**
      * Creates the operation system specific starting script for this machine.
      * 
-     * pseudocode: - ssh 'login'@'machine' cmd /c
-     * 'environmentName'\\conf\\startall.bat - sleep 5 - ssh 'login'@'machine'
-     * "more 'environmentName'\\start_APP.log
+     * pseudocode: - ssh 'login'@'machine' cmd /c 'environmentName'\\conf\\startall.bat - sleep 5 - ssh
+     * 'login'@'machine' "more 'environmentName'\\start_APP.log
      * 
-     * variables: 'login' = machine user name 'machine' = name of the machine
-     * 'environmentName' = the environmentName from configuration.
+     * variables: 'login' = machine user name 'machine' = name of the machine 'environmentName' = the environmentName
+     * from configuration.
      * 
      * @return Operation system specific part of the startscript.
      */
@@ -375,14 +346,11 @@ public class WindowsMachine extends Machine {
     }
 
     /**
-     * This function creates the script to kill all applications on this
-     * machine. The scripts calls all the kill script for each application.
+     * This function creates the script to kill all applications on this machine. The scripts calls all the kill script
+     * for each application.
      * 
-     * @param directory
-     *            The directory for this machine (use global variable?).
-     * @throws IOFailure
-     *             If an error occurred during the creation of the local killall
-     *             script.
+     * @param directory The directory for this machine (use global variable?).
+     * @throws IOFailure If an error occurred during the creation of the local killall script.
      */
     @Override
     protected void createOSLocalKillAllScript(File directory) throws IOFailure {
@@ -418,14 +386,11 @@ public class WindowsMachine extends Machine {
     }
 
     /**
-     * This function creates the script to start all applications on this
-     * machine. The scripts calls all the start script for each application.
+     * This function creates the script to start all applications on this machine. The scripts calls all the start
+     * script for each application.
      * 
-     * @param directory
-     *            The directory for this machine (use global variable?).
-     * @throws IOFailure
-     *             If an error occurred during the creation of the local
-     *             startall script.
+     * @param directory The directory for this machine (use global variable?).
+     * @throws IOFailure If an error occurred during the creation of the local startall script.
      */
     @Override
     protected void createOSLocalStartAllScript(File directory) throws IOFailure {
@@ -461,40 +426,32 @@ public class WindowsMachine extends Machine {
     }
 
     /**
-     * Creates the kill scripts for all the applications. Two script files are
-     * created: kill_app.bat and kill_ps_app.bat.
+     * Creates the kill scripts for all the applications. Two script files are created: kill_app.bat and
+     * kill_ps_app.bat.
      * 
-     * kill_ps_app.bat kills the process of the application. kill_app.bat runs
-     * kill_ps_app.bat if the application is running. run_app tells if the
-     * application is running. It is deleted during kill.
+     * kill_ps_app.bat kills the process of the application. kill_app.bat runs kill_ps_app.bat if the application is
+     * running. run_app tells if the application is running. It is deleted during kill.
      * 
      * The kill_app.bat should have the following structure:
      * 
-     * - ECHO Killing application : app - CD "path" - IF EXIST run_app GOTO KILL
-     * - GOTO NOKILL - - :KILL - cmdrun kill_ps_app.bat - DEL run_app - GOTO
-     * DONE - - :NOKILL - ECHO Cannot kill application. Already running. - -
-     * :DONE
+     * - ECHO Killing application : app - CD "path" - IF EXIST run_app GOTO KILL - GOTO NOKILL - - :KILL - cmdrun
+     * kill_ps_app.bat - DEL run_app - GOTO DONE - - :NOKILL - ECHO Cannot kill application. Already running. - - :DONE
      * 
-     * where: app = application name. path = the path to the ./conf directory.
-     * cmdrun = the windows command to run other batch programs.
+     * where: app = application name. path = the path to the ./conf directory. cmdrun = the windows command to run other
+     * batch programs.
      * 
-     * The kill_ps_app.bat is empty upon creation. When the application is
-     * started, the command to kill the process of he application is written to
-     * this file as the only content. It will look something like this:
+     * The kill_ps_app.bat is empty upon creation. When the application is started, the command to kill the process of
+     * he application is written to this file as the only content. It will look something like this:
      * 
      * - taskkill /F /PID id
      * 
      * where: id = the process identification number of the running application.
      * 
-     * TODO kill the potential heritrix process, created by a harvester. Just
-     * like on Linux/Unix. If we in the future add the possibility of running
-     * heritrix on Windows.
+     * TODO kill the potential heritrix process, created by a harvester. Just like on Linux/Unix. If we in the future
+     * add the possibility of running heritrix on Windows.
      * 
-     * @param directory
-     *            The directory for this machine (use global variable?).
-     * @throws IOFailure
-     *             If an error occurred during the creation of the application
-     *             kill script file.
+     * @param directory The directory for this machine (use global variable?).
+     * @throws IOFailure If an error occurred during the creation of the application kill script file.
      */
     @Override
     protected void createApplicationKillScripts(File directory) throws IOFailure {
@@ -570,12 +527,10 @@ public class WindowsMachine extends Machine {
     /**
      * Creates the start scripts for all the applications.
      * 
-     * It creates the batch and the VBscript for starting the application, which
-     * are called start_app.bat and start_app.vbs respectively. These files are
-     * created in each of their own function.
+     * It creates the batch and the VBscript for starting the application, which are called start_app.bat and
+     * start_app.vbs respectively. These files are created in each of their own function.
      * 
-     * @param directory
-     *            The directory for this machine (use global variable?).
+     * @param directory The directory for this machine (use global variable?).
      * @see #windowsStartBatScript(Application, File)
      * @see #windowsStartVbsScript(Application, File)
      */
@@ -604,27 +559,19 @@ public class WindowsMachine extends Machine {
     }
 
     /**
-     * Creates the batch script for starting the application. It checks if the
-     * application is running and starts the application if it is not the case.
-     * The application is started by calling the start_app.vbs.
+     * Creates the batch script for starting the application. It checks if the application is running and starts the
+     * application if it is not the case. The application is started by calling the start_app.vbs.
      * 
      * The script should be the following:
      * 
-     * - echo Starting windows application : app - cd "path" - if exist
-     * ".\conf\run_app.txt" goto NOSTART - goto START - - :START - cscript
-     * .\conf\start_app.vbs - goto DONE - - :NOSTART - echo Application already
-     * running. - - :DONE
+     * - echo Starting windows application : app - cd "path" - if exist ".\conf\run_app.txt" goto NOSTART - goto START -
+     * - :START - cscript .\conf\start_app.vbs - goto DONE - - :NOSTART - echo Application already running. - - :DONE
      * 
-     * where: app = the name of the application. path = the path to the
-     * installation directory.
+     * where: app = the name of the application. path = the path to the installation directory.
      * 
-     * @param app
-     *            The application to start.
-     * @param directory
-     *            The directory where the script should be placed.
-     * @throws IOFailure
-     *             If an error occurred during the creation of the windows start
-     *             bat script.
+     * @param app The application to start.
+     * @param directory The directory where the script should be placed.
+     * @throws IOFailure If an error occurred during the creation of the windows start bat script.
      */
     protected void windowsStartBatScript(Application app, File directory) throws IOFailure {
         File appStartScript = new File(directory, Constants.SCRIPT_NAME_LOCAL_START + app.getIdentification()
@@ -708,7 +655,7 @@ public class WindowsMachine extends Machine {
                 "  Loop",
                 "  Do While oExec.StdErr.AtEndOfStream <> True",
                 "    Set outFile = CreateObject(\"Scripting.FileSystemObject\").OpenTextFile(\"${startlogname}\", 8, True)",
-                "    outFile.WriteLine oExec.StdErr.ReadLine", "    outFile.close", "  Loop", "Loop" };
+                "    outFile.WriteLine oExec.StdErr.ReadLine", "    outFile.close", "  Loop", "Loop"};
         protected static final String jdkLogger = " -Dorg.apache.commons.logging.Log=\"\"org.apache.commons.logging.impl.Jdk14Logger\"\""
                 + " -Djava.util.logging.config.file=\"\"${confdirpath}log_${id}.prop\"\"";
         protected static final String slf4jLogger = " -Dlogback.configurationFile=\"\"${confdirpath}logback_${id}.xml\"\"";
@@ -716,37 +663,26 @@ public class WindowsMachine extends Machine {
     }
 
     /**
-     * This function creates the VBscript to start the application. It calls a
-     * command for executing the java application, then it writes the way to
-     * kill the process in the kill_ps_app.bat and finally it creates the
+     * This function creates the VBscript to start the application. It calls a command for executing the java
+     * application, then it writes the way to kill the process in the kill_ps_app.bat and finally it creates the
      * run-file.
      * 
-     * It should have the following content: - set WshShell =
-     * CreateObject("WScript.Shell") - set oExec = WshShell.exec( JAVA ) - set
-     * fso = CreateObject("Scripting.FileSystemObject") - set f =
-     * fso.OpenTextFile(".\conf\kill_ps_app.bat", 2, True) - f.WriteLine
-     * "taskkill /F /PID " & oExec.ProcessID - f.close - 'Create a new start-log
-     * for the application -
-     * CreateObject("Scripting.FileSystemObject").OpenTextFile(" start_APP.log",
-     * 2, True).close - Do While oExec.Status = 0 - WScript.Sleep 1000 - Do
-     * While oExec.StdOut.AtEndOfStream <> True - Set outFile =
-     * CreateObject("Scripting.FileSystemObject") .OpenTextFile("start_APP.log",
-     * 8, True) - outFile.WriteLine oExec.StdOut.ReadLine - outFile.close - Loop
-     * - Do While oExec.StdErr.AtEndOfStream <> True - Set outFile =
-     * CreateObject("Scripting.FileSystemObject") .OpenTextFile("start_APP.log",
-     * 8, True) - outFile.WriteLine oExec.StdErr.ReadLine - outFile.close - Loop
-     * - Loop
+     * It should have the following content: - set WshShell = CreateObject("WScript.Shell") - set oExec = WshShell.exec(
+     * JAVA ) - set fso = CreateObject("Scripting.FileSystemObject") - set f =
+     * fso.OpenTextFile(".\conf\kill_ps_app.bat", 2, True) - f.WriteLine "taskkill /F /PID " & oExec.ProcessID - f.close
+     * - 'Create a new start-log for the application -
+     * CreateObject("Scripting.FileSystemObject").OpenTextFile(" start_APP.log", 2, True).close - Do While oExec.Status
+     * = 0 - WScript.Sleep 1000 - Do While oExec.StdOut.AtEndOfStream <> True - Set outFile =
+     * CreateObject("Scripting.FileSystemObject") .OpenTextFile("start_APP.log", 8, True) - outFile.WriteLine
+     * oExec.StdOut.ReadLine - outFile.close - Loop - Do While oExec.StdErr.AtEndOfStream <> True - Set outFile =
+     * CreateObject("Scripting.FileSystemObject") .OpenTextFile("start_APP.log", 8, True) - outFile.WriteLine
+     * oExec.StdErr.ReadLine - outFile.close - Loop - Loop
      * 
-     * where: JAVA = the command for starting the java application (very long).
-     * app = the name of the application.
+     * where: JAVA = the command for starting the java application (very long). app = the name of the application.
      * 
-     * @param app
-     *            The application to start.
-     * @param directory
-     *            The directory where the script should be placed.
-     * @throws IOFailure
-     *             If an error occurred during the creation of the windows vb
-     *             script.
+     * @param app The application to start.
+     * @param directory The directory where the script should be placed.
+     * @throws IOFailure If an error occurred during the creation of the windows vb script.
      */
     protected void windowsStartVbsScript(Application app, File directory) throws IOFailure {
         File appStartSupportScript = new File(directory, Constants.SCRIPT_NAME_LOCAL_START + app.getIdentification()
@@ -803,15 +739,13 @@ public class WindowsMachine extends Machine {
     /**
      * THIS HAS NOT BEEN IMPLEMENTED FOR WINDOWS YET - ONLY LINUX!
      * 
-     * Checks if a specific directory for the database is given in the settings,
-     * and thus if the database should be installed on this machine.
+     * Checks if a specific directory for the database is given in the settings, and thus if the database should be
+     * installed on this machine.
      * 
-     * If no specific database is given (databaseFileName = null) then use the
-     * standard database extracted from NetarchiveSuite.zip. Else send the given
-     * new database to the standard database location.
+     * If no specific database is given (databaseFileName = null) then use the standard database extracted from
+     * NetarchiveSuite.zip. Else send the given new database to the standard database location.
      * 
-     * Extract the database in the standard database location to the specified
-     * database directory.
+     * Extract the database in the standard database location to the specified database directory.
      * 
      * @return The script for installing the database (if needed).
      */
@@ -832,14 +766,12 @@ public class WindowsMachine extends Machine {
     /**
      * THIS HAS NOT BEEN IMPLEMENTED FOR WINDOWS YET - ONLY LINUX!
      * 
-     * Checks if a specific directory for the archive database is given in the
-     * settings, and thus if the archive database should be installed on this
-     * machine.
+     * Checks if a specific directory for the archive database is given in the settings, and thus if the archive
+     * database should be installed on this machine.
      * 
-     * If not specific database is given (archiveDatabaseFileName = null) then
-     * use the default in the NetarchiveSuite.zip package. Else send the new
-     * archive database to the standard database location, and extract it to the
-     * given location.
+     * If not specific database is given (archiveDatabaseFileName = null) then use the default in the
+     * NetarchiveSuite.zip package. Else send the new archive database to the standard database location, and extract it
+     * to the given location.
      * 
      * @return The script for installing the archive database (if needed).
      */
@@ -955,11 +887,9 @@ public class WindowsMachine extends Machine {
     }
 
     /**
-     * Function for creating the directories along the path until the end
-     * directory. Does not create the end directory.
+     * Function for creating the directories along the path until the end directory. Does not create the end directory.
      * 
-     * @param dir
-     *            The path to the directory.
+     * @param dir The path to the directory.
      * @return The script for creating the directory.
      */
     protected String createPathToDir(String dir) {
@@ -1048,14 +978,10 @@ public class WindowsMachine extends Machine {
     }
 
     /**
-     * Function to create the script which installs the new directories. This is
-     * only used for windows machines!
+     * Function to create the script which installs the new directories. This is only used for windows machines!
      * 
-     * @param directory
-     *            The directory to put the file.
-     * @throws IOFailure
-     *             If an error occurred during the creation of the install-dir
-     *             script.
+     * @param directory The directory to put the file.
+     * @throws IOFailure If an error occurred during the creation of the install-dir script.
      */
     @Override
     protected void createInstallDirScript(File directory) throws IOFailure {
@@ -1116,8 +1042,7 @@ public class WindowsMachine extends Machine {
      * 
      * Retrieves the path to the jmxremote.access and jmxremote.password files.
      * 
-     * Moves these files, if they are different from standard. This has to be a
-     * force move (command 'move /Y').
+     * Moves these files, if they are different from standard. This has to be a force move (command 'move /Y').
      * 
      * Makes the jmxremote.access and jmxremote.password files readonly.
      * 
@@ -1240,22 +1165,16 @@ public class WindowsMachine extends Machine {
     }
 
     /**
-     * Creates scripts for restarting all the applications on a machine. This
-     * script should start by killing all the existing processes, and then
-     * starting them again.
+     * Creates scripts for restarting all the applications on a machine. This script should start by killing all the
+     * existing processes, and then starting them again.
      * 
-     * First the killall scripts is called, then wait for 5 seconds for the
-     * applications to be fully terminated, and finally call the startall
-     * script.
+     * First the killall scripts is called, then wait for 5 seconds for the applications to be fully terminated, and
+     * finally call the startall script.
      * 
-     * The createWaitScript is called through this script to create the wait
-     * script which is used by the restart script.
+     * The createWaitScript is called through this script to create the wait script which is used by the restart script.
      * 
-     * @param dir
-     *            The directory where the script file will be placed.
-     * @throws IOFailure
-     *             If the restart script cannot be created, or if the wait
-     *             script cannot be created.
+     * @param dir The directory where the script file will be placed.
+     * @throws IOFailure If the restart script cannot be created, or if the wait script cannot be created.
      */
     @Override
     protected void createRestartScript(File dir) throws IOFailure {
@@ -1303,10 +1222,8 @@ public class WindowsMachine extends Machine {
     /**
      * Creates the script for waiting during restart.
      * 
-     * @param dir
-     *            The directory where the script should be placed.
-     * @throws IOFailure
-     *             If the method fails in creating the wait script.
+     * @param dir The directory where the script should be placed.
+     * @throws IOFailure If the method fails in creating the wait script.
      */
     protected void createWaitScript(File dir) throws IOFailure {
         try {

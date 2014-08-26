@@ -47,10 +47,8 @@ public class AliasInfoTester {
     String afatherDomain = "kb.dk";
 
     /*
-     * Test method for 'dk.netarkivet.datamodel.AliasInfo.AliasInfo(String,
-     * String, Date)' Checks, that ArgumentNotValid exception is thrown when
-     * either of the given Domain, the aliasOf, the lastChange attributes is
-     * null or empty.
+     * Test method for 'dk.netarkivet.datamodel.AliasInfo.AliasInfo(String, String, Date)' Checks, that ArgumentNotValid
+     * exception is thrown when either of the given Domain, the aliasOf, the lastChange attributes is null or empty.
      */
     @Test
     public void testAliasInfo() {
@@ -125,8 +123,7 @@ public class AliasInfoTester {
     }
 
     /***
-     * tests makeAliasMetadataEntry(List<AliasInfo> aliases, String URL, String
-     * mimetype).
+     * tests makeAliasMetadataEntry(List<AliasInfo> aliases, String URL, String mimetype).
      *
      */
     @Test

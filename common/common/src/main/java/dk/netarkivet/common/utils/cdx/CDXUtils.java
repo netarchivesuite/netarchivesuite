@@ -48,17 +48,15 @@ public class CDXUtils {
     private static final Logger log = LoggerFactory.getLogger(CDXUtils.class);
 
     /**
-     * Add cdx info for a given archive file to a given OutputStream. Note, any
-     * exceptions are logged on level FINE but otherwise ignored.
+     * Add cdx info for a given archive file to a given OutputStream. Note, any exceptions are logged on level FINE but
+     * otherwise ignored.
      *
-     * @param archivefile
-     *            A file with archive records
-     * @param cdxstream
-     *            An output stream to add CDX lines to
+     * @param archivefile A file with archive records
+     * @param cdxstream An output stream to add CDX lines to
      */
     public static void writeCDXInfo(File archivefile, OutputStream cdxstream) {
         ArchiveExtractCDXJob job = new ArchiveExtractCDXJob();
-        BatchLocalFiles runner = new BatchLocalFiles(new File[] { archivefile });
+        BatchLocalFiles runner = new BatchLocalFiles(new File[] {archivefile});
         runner.run(job, cdxstream);
         log.trace("Created index for {} records on file '{}'", job.noOfRecordsProcessed(), archivefile);
         Exception[] exceptions = job.getExceptionArray();
@@ -74,22 +72,16 @@ public class CDXUtils {
     }
 
     /**
-     * Applies createCDXRecord() to all ARC/WARC files in a directory, creating
-     * one CDX file per ARC/WARC file. Note, any exceptions during index
-     * generation are logged at level FINE but otherwise ignored. Exceptions
-     * creating any cdx file are logged at level WARNING but otherwise ignored.
-     * CDX files are named as the ARC/WARC files except ".(w)arc" or
-     * ".(w)arc.gz" is extended with ".cdx"
+     * Applies createCDXRecord() to all ARC/WARC files in a directory, creating one CDX file per ARC/WARC file. Note,
+     * any exceptions during index generation are logged at level FINE but otherwise ignored. Exceptions creating any
+     * cdx file are logged at level WARNING but otherwise ignored. CDX files are named as the ARC/WARC files except
+     * ".(w)arc" or ".(w)arc.gz" is extended with ".cdx"
      *
-     * @param archiveProfile
-     *            archive profile including filters, patterns, etc.
-     * @param archiveFileDirectory
-     *            A directory with archive files to generate index for
-     * @param cdxFileDirectory
-     *            A directory to generate CDX files in
-     * @throws ArgumentNotValid
-     *             if any of directories are null or is not an existing
-     *             directory, or if cdxFileDirectory is not writable.
+     * @param archiveProfile archive profile including filters, patterns, etc.
+     * @param archiveFileDirectory A directory with archive files to generate index for
+     * @param cdxFileDirectory A directory to generate CDX files in
+     * @throws ArgumentNotValid if any of directories are null or is not an existing directory, or if cdxFileDirectory
+     *             is not writable.
      */
     public static void generateCDX(ArchiveProfile archiveProfile, File archiveFileDirectory, File cdxFileDirectory)
             throws ArgumentNotValid {

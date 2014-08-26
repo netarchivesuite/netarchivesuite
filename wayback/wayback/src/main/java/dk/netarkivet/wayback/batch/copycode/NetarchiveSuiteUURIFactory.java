@@ -41,12 +41,11 @@ import org.archive.net.UURI;
 import org.archive.util.TextUtils;
 
 /**
- * This is a cut and paste version of the class org.archive.net.UURIFactory, but
- * omitting calls to read system properties. It can therefore be used in batch
- * jobs without violating our security permissions.
+ * This is a cut and paste version of the class org.archive.net.UURIFactory, but omitting calls to read system
+ * properties. It can therefore be used in batch jobs without violating our security permissions.
  * 
  */
-@SuppressWarnings({ "serial", "unused" })
+@SuppressWarnings({"serial", "unused"})
 public class NetarchiveSuiteUURIFactory extends UURI {
     private static final long serialVersionUID = -6146295130382209042L;
 
@@ -115,10 +114,9 @@ public class NetarchiveSuiteUURIFactory extends UURI {
      *
      * --
      * <p>
-     * Below differs from the rfc regex in that... (1) it has java escaping of
-     * regex characters (2) we allow a URI made of a fragment only (Added extra
-     * group so indexing is off by one after scheme). (3) scheme is limited to
-     * legal scheme characters
+     * Below differs from the rfc regex in that... (1) it has java escaping of regex characters (2) we allow a URI made
+     * of a fragment only (Added extra group so indexing is off by one after scheme). (3) scheme is limited to legal
+     * scheme characters
      */
     static final Pattern RFC2396REGEX = Pattern
             .compile("^(([a-zA-Z][a-zA-Z\\+\\-\\.]*):)?((//([^/?#]*))?([^?#]*)(\\?([^#]*))?)?(#(.*))?");
@@ -192,19 +190,17 @@ public class NetarchiveSuiteUURIFactory extends UURI {
     static final Pattern PORTREGEX = Pattern.compile("(.*:)([0-9]+)$");
 
     /**
-     * Characters we'll accept in the domain label part of a URI authority:
-     * ASCII letters-digits-hyphen (LDH) plus underscore, with single
-     * intervening '.' characters.
+     * Characters we'll accept in the domain label part of a URI authority: ASCII letters-digits-hyphen (LDH) plus
+     * underscore, with single intervening '.' characters.
      *
-     * (We accept '_' because DNS servers have tolerated for many years counter
-     * to spec; we also accept dash patterns and ACE prefixes that will be
-     * rejected by IDN-punycoding attempt.)
+     * (We accept '_' because DNS servers have tolerated for many years counter to spec; we also accept dash patterns
+     * and ACE prefixes that will be rejected by IDN-punycoding attempt.)
      */
     static final String ACCEPTABLE_ASCII_DOMAIN = "^(?:[a-zA-Z0-9_-]++(?:\\.)?)++$";
 
     /**
-     * Pattern that looks for case of three or more slashes after the scheme. If
-     * found, we replace them with two only as mozilla does.
+     * Pattern that looks for case of three or more slashes after the scheme. If found, we replace them with two only as
+     * mozilla does.
      */
     static final Pattern HTTP_SCHEME_SLASHES = Pattern.compile("^(https?://)/+(.*)");
 
@@ -234,18 +230,15 @@ public class NetarchiveSuiteUURIFactory extends UURI {
     private NetarchiveSuiteUURIFactory() {
         super();
         /*
-         * String s = System.getProperty(this.getClass().getName() +
-         * SCHEMES_KEY); if (s != null && s.length() > 0) { schemes =
-         * s.split("[, ]+"); Arrays.sort(schemes); } String ignored =
-         * System.getProperty(this.getClass().getName() + IGNORED_SCHEMES_KEY);
-         * if (ignored != null && ignored.length() > 0) { ignoredSchemes =
-         * ignored.split("[, ]+"); Arrays.sort(ignoredSchemes); }
+         * String s = System.getProperty(this.getClass().getName() + SCHEMES_KEY); if (s != null && s.length() > 0) {
+         * schemes = s.split("[, ]+"); Arrays.sort(schemes); } String ignored =
+         * System.getProperty(this.getClass().getName() + IGNORED_SCHEMES_KEY); if (ignored != null && ignored.length()
+         * > 0) { ignoredSchemes = ignored.split("[, ]+"); Arrays.sort(ignoredSchemes); }
          */
     }
 
     /**
-     * @param uri
-     *            URI as string.
+     * @param uri URI as string.
      * @return An instance of UURI
      * @throws URIException
      */
@@ -254,10 +247,8 @@ public class NetarchiveSuiteUURIFactory extends UURI {
     }
 
     /**
-     * @param uri
-     *            URI as string.
-     * @param charset
-     *            Character encoding of the passed uri string.
+     * @param uri URI as string.
+     * @param charset Character encoding of the passed uri string.
      * @return An instance of UURI
      * @throws URIException
      */
@@ -266,10 +257,8 @@ public class NetarchiveSuiteUURIFactory extends UURI {
     }
 
     /**
-     * @param base
-     *            Base uri to use resolving passed relative uri.
-     * @param relative
-     *            URI as string.
+     * @param base Base uri to use resolving passed relative uri.
+     * @param relative URI as string.
      * @return An instance of UURI
      * @throws URIException
      */
@@ -278,12 +267,10 @@ public class NetarchiveSuiteUURIFactory extends UURI {
     }
 
     /**
-     * Test of whether passed String has an allowed URI scheme. First tests if
-     * likely scheme suffix. If so, we then test if its one of the supported
-     * schemes.
+     * Test of whether passed String has an allowed URI scheme. First tests if likely scheme suffix. If so, we then test
+     * if its one of the supported schemes.
      * 
-     * @param possibleUrl
-     *            URL string to examine.
+     * @param possibleUrl URL string to examine.
      * @return True if passed string looks like it could be an URL.
      */
     public static boolean hasSupportedScheme(String possibleUrl) {
@@ -296,8 +283,7 @@ public class NetarchiveSuiteUURIFactory extends UURI {
     }
 
     /**
-     * @param uri
-     *            URI as string.
+     * @param uri URI as string.
      * @return Instance of UURI.
      * @throws URIException
      */
@@ -306,10 +292,8 @@ public class NetarchiveSuiteUURIFactory extends UURI {
     }
 
     /**
-     * @param uri
-     *            URI as string.
-     * @param charset
-     *            Original encoding of the string.
+     * @param uri URI as string.
+     * @param charset Original encoding of the string.
      * @return Instance of UURI.
      * @throws URIException
      */
@@ -323,10 +307,8 @@ public class NetarchiveSuiteUURIFactory extends UURI {
     }
 
     /**
-     * @param base
-     *            UURI to use as a base resolving <code>relative</code>.
-     * @param relative
-     *            Relative URI.
+     * @param base UURI to use as a base resolving <code>relative</code>.
+     * @param relative Relative URI.
      * @return Instance of UURI.
      * @throws URIException
      */
@@ -345,13 +327,11 @@ public class NetarchiveSuiteUURIFactory extends UURI {
     /**
      * Check the generated UURI.
      *
-     * At the least look at length of uuri string. We were seeing case where
-     * before escaping, string was &lt; MAX_URL_LENGTH but after was &gt;.
-     * Letting out a too-big message was causing us troubles later down the
+     * At the least look at length of uuri string. We were seeing case where before escaping, string was &lt;
+     * MAX_URL_LENGTH but after was &gt;. Letting out a too-big message was causing us troubles later down the
      * processing chain.
      * 
-     * @param uuri
-     *            Created uuri to check.
+     * @param uuri Created uuri to check.
      * @return The passed <code>uuri</code> so can easily inline this check.
      * @throws URIException
      */
@@ -365,18 +345,14 @@ public class NetarchiveSuiteUURIFactory extends UURI {
     /**
      * Do heritrix fix-up on passed uri string.
      *
-     * Does heritrix escaping; usually escaping done to make our behavior align
-     * with IEs. This method codifies our experience pulling URIs from the
-     * wilds. Its does all the escaping we want; its output can always be
-     * assumed to be 'escaped' (though perhaps to a laxer standard than the
-     * vanilla HttpClient URI class or official specs might suggest).
+     * Does heritrix escaping; usually escaping done to make our behavior align with IEs. This method codifies our
+     * experience pulling URIs from the wilds. Its does all the escaping we want; its output can always be assumed to be
+     * 'escaped' (though perhaps to a laxer standard than the vanilla HttpClient URI class or official specs might
+     * suggest).
      *
-     * @param uri
-     *            URI as string.
-     * @param base
-     *            May be null.
-     * @param e
-     *            True if the uri is already escaped.
+     * @param uri URI as string.
+     * @param base May be null.
+     * @param e True if the uri is already escaped.
      * @return A fixed up URI string.
      * @throws URIException
      */
@@ -534,8 +510,7 @@ public class NetarchiveSuiteUURIFactory extends UURI {
      * If http(s) scheme, check scheme specific part begins '//'.
      * 
      * @throws URIException
-     * @see <A href="http://www.faqs.org/rfcs/rfc1738.html">Section 3.1. Common
-     *      Internet Scheme Syntax</A>
+     * @see <A href="http://www.faqs.org/rfcs/rfc1738.html">Section 3.1. Common Internet Scheme Syntax</A>
      */
     protected void checkHttpSchemeSpecificPartSlashPrefix(final URI base, final String scheme,
             final String schemeSpecificPart) throws URIException {
@@ -558,12 +533,10 @@ public class NetarchiveSuiteUURIFactory extends UURI {
     }
 
     /**
-     * Fixup 'authority' portion of URI, by removing any stray encoded spaces,
-     * lowercasing any domain names, and applying IDN-punycoding to Unicode
-     * domains.
+     * Fixup 'authority' portion of URI, by removing any stray encoded spaces, lowercasing any domain names, and
+     * applying IDN-punycoding to Unicode domains.
      *
-     * @param uriAuthority
-     *            the authority string to fix
+     * @param uriAuthority the authority string to fix
      * @return fixed version
      * @throws URIException
      */
@@ -612,8 +585,7 @@ public class NetarchiveSuiteUURIFactory extends UURI {
      *
      * We're more lax than the spec. in that we allow underscores.
      *
-     * @param label
-     *            Domain label to fix.
+     * @param label Domain label to fix.
      * @return Return fixed domain label.
      * @throws URIException
      */
@@ -644,12 +616,10 @@ public class NetarchiveSuiteUURIFactory extends UURI {
     }
 
     /**
-     * Ensure that there all characters needing escaping in the passed-in String
-     * are escaped. Stray '%' characters are *not* escaped, as per browser
-     * behavior.
+     * Ensure that there all characters needing escaping in the passed-in String are escaped. Stray '%' characters are
+     * *not* escaped, as per browser behavior.
      *
-     * @param u
-     *            String to escape
+     * @param u String to escape
      * @param charset
      * @return string with any necessary escaping applied
      */
@@ -658,12 +628,10 @@ public class NetarchiveSuiteUURIFactory extends UURI {
     }
 
     /**
-     * Ensure that there all characters needing escaping in the passed-in String
-     * are escaped. Stray '%' characters are *not* escaped, as per browser
-     * behavior.
+     * Ensure that there all characters needing escaping in the passed-in String are escaped. Stray '%' characters are
+     * *not* escaped, as per browser behavior.
      *
-     * @param u
-     *            String to escape
+     * @param u String to escape
      * @param charset
      * @param bitset
      * @return string with any necessary escaping applied
@@ -689,16 +657,12 @@ public class NetarchiveSuiteUURIFactory extends UURI {
     /**
      * Escape any whitespace found.
      *
-     * The parent class takes care of the bulk of escaping. But if any instance
-     * of escaping is found in the URI, then we ask for parent to do NO
-     * escaping. Here we escape any whitespace found irrespective of whether the
-     * uri has already been escaped. We do this for case where uri has been
-     * judged already-escaped only, its been incompletly done and whitespace
-     * remains. Spaces, etc., in the URI are a real pain. Their presence will
-     * break log file and ARC parsing.
+     * The parent class takes care of the bulk of escaping. But if any instance of escaping is found in the URI, then we
+     * ask for parent to do NO escaping. Here we escape any whitespace found irrespective of whether the uri has already
+     * been escaped. We do this for case where uri has been judged already-escaped only, its been incompletly done and
+     * whitespace remains. Spaces, etc., in the URI are a real pain. Their presence will break log file and ARC parsing.
      * 
-     * @param uri
-     *            URI string to check.
+     * @param uri URI string to check.
      * @return uri with spaces escaped if any found.
      */
     protected String escapeWhitespace(String uri) {
@@ -714,10 +678,7 @@ public class NetarchiveSuiteUURIFactory extends UURI {
             if (Character.isWhitespace(c)) {
                 if (buffer == null) {
                     buffer = new MutableString(uri.length() + 2 /*
-                                                                 * If space, two
-                                                                 * extra
-                                                                 * characters
-                                                                 * (at least)
+                                                                 * If space, two extra characters (at least)
                                                                  */
                     );
                     buffer.append(uri.substring(0, i));
@@ -739,11 +700,9 @@ public class NetarchiveSuiteUURIFactory extends UURI {
     }
 
     /**
-     * Check port on passed http authority. Make sure the size is not larger
-     * than allowed: See the 'port' definition on this page,
-     * http://www.kerio.com/manual/wrp/en/418.htm. Also, we've seen port numbers
-     * of '0080' whose leading zeros confuse the parent class. Strip the leading
-     * zeros.
+     * Check port on passed http authority. Make sure the size is not larger than allowed: See the 'port' definition on
+     * this page, http://www.kerio.com/manual/wrp/en/418.htm. Also, we've seen port numbers of '0080' whose leading
+     * zeros confuse the parent class. Strip the leading zeros.
      *
      * @param uriAuthority
      * @return Null or an amended port number.
@@ -778,14 +737,10 @@ public class NetarchiveSuiteUURIFactory extends UURI {
     }
 
     /**
-     * @param b
-     *            Buffer to append to.
-     * @param str
-     *            String to append if not null.
-     * @param substr
-     *            Suffix or prefix to use if <code>str</code> is not null.
-     * @param suffix
-     *            True if <code>substr</code> is a suffix.
+     * @param b Buffer to append to.
+     * @param str String to append if not null.
+     * @param substr Suffix or prefix to use if <code>str</code> is not null.
+     * @param suffix True if <code>substr</code> is a suffix.
      */
     private void appendNonNull(MutableString b, String str, String substr, boolean suffix) {
         if (str != null && str.length() > 0) {
@@ -800,10 +755,8 @@ public class NetarchiveSuiteUURIFactory extends UURI {
     }
 
     /**
-     * @param str
-     *            String to work on.
-     * @param prefix
-     *            Prefix to strip if present.
+     * @param str String to work on.
+     * @param prefix Prefix to strip if present.
      * @return <code>str</code> w/o <code>prefix</code>.
      */
     private String stripPrefix(String str, String prefix) {
@@ -811,10 +764,8 @@ public class NetarchiveSuiteUURIFactory extends UURI {
     }
 
     /**
-     * @param str
-     *            String to work on.
-     * @param tail
-     *            Tail to strip if present.
+     * @param str String to work on.
+     * @param tail Tail to strip if present.
      * @return <code>str</code> w/o <code>tail</code>.
      */
     private static String stripTail(String str, String tail) {
@@ -822,20 +773,16 @@ public class NetarchiveSuiteUURIFactory extends UURI {
     }
 
     /**
-     * @param element
-     *            to examine.
-     * @return Null if passed null or an empty string otherwise
-     *         <code>element</code>.
+     * @param element to examine.
+     * @return Null if passed null or an empty string otherwise <code>element</code>.
      */
     private String checkUriElement(String element) {
         return (element == null || element.length() <= 0) ? null : element;
     }
 
     /**
-     * @param element
-     *            to examine and lowercase if non-null.
-     * @return Null if passed null or an empty string otherwise
-     *         <code>element</code> lowercased.
+     * @param element to examine and lowercase if non-null.
+     * @return Null if passed null or an empty string otherwise <code>element</code> lowercased.
      */
     private String checkUriElementAndLowerCase(String element) {
         String tmp = checkUriElement(element);

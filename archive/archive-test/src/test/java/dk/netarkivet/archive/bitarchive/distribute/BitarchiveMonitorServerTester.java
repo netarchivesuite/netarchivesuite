@@ -93,7 +93,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 /**
  * Unit tests for the BitarchiveMonitorServer class.
  */
-@SuppressWarnings({ "unused", "unchecked", "serial" })
+@SuppressWarnings({"unused", "unchecked", "serial"})
 public class BitarchiveMonitorServerTester {
 
     static final ChannelID THE_BAMON = Channels.getTheBamon();
@@ -147,9 +147,8 @@ public class BitarchiveMonitorServerTester {
     }
 
     /**
-     * Verify that batch jobs do not have to wait for each other. In particular,
-     * check that the postprocessing of one job can overtake the postprocessing
-     * of another.
+     * Verify that batch jobs do not have to wait for each other. In particular, check that the postprocessing of one
+     * job can overtake the postprocessing of another.
      */
     @Test
     public void testParallelBatchJobs() throws InterruptedException {
@@ -221,8 +220,8 @@ public class BitarchiveMonitorServerTester {
     }
 
     /**
-     * Assert that the index'th message in client is a BatchReply to a message
-     * of id=replyOf and with content=expectedResult.
+     * Assert that the index'th message in client is a BatchReply to a message of id=replyOf and with
+     * content=expectedResult.
      */
     private void assertBatchResultIs(TestMessageListener client, int index, String replyOf, String expectedResult) {
         BatchReplyMessage brm = (BatchReplyMessage) client.getAllReceived().get(index);
@@ -244,9 +243,8 @@ public class BitarchiveMonitorServerTester {
     }
 
     /**
-     * Verify that the BA monitor can receive a BatchMessage (on the THE_BAMON
-     * queue) and forward it to the ALL_BA topic. FIXME As it fails, the test
-     * has been renamed to disable the test
+     * Verify that the BA monitor can receive a BatchMessage (on the THE_BAMON queue) and forward it to the ALL_BA
+     * topic. FIXME As it fails, the test has been renamed to disable the test
      */
     @Test
     @Ignore("FIXME")
@@ -273,8 +271,7 @@ public class BitarchiveMonitorServerTester {
     }
 
     /**
-     * Verify that the BA monitor can timeout if no reply is received within the
-     * timeout limit.
+     * Verify that the BA monitor can timeout if no reply is received within the timeout limit.
      * 
      * @throws InterruptedException
      */
@@ -335,9 +332,8 @@ public class BitarchiveMonitorServerTester {
     }
 
     /**
-     * Verify that we can register a heartbeat from a bit archive application,
-     * i.e. that we can receive a heartbeat message and register its data
-     * (originating BA application and timestamp).
+     * Verify that we can register a heartbeat from a bit archive application, i.e. that we can receive a heartbeat
+     * message and register its data (originating BA application and timestamp).
      */
     @Test
     public void testReceiveHeartBeat() {
@@ -368,15 +364,11 @@ public class BitarchiveMonitorServerTester {
     }
 
     /**
-     * Verify that the BitarchiveMonitorServer listens to the expected Channel
-     * (local THE_BAMON), and that it stops listening after cleanup.
+     * Verify that the BitarchiveMonitorServer listens to the expected Channel (local THE_BAMON), and that it stops
+     * listening after cleanup.
      *
-     * @param replicaId
-     *            The replica for which a BitarchiveMonitorServer is constructed
-     *            and tested.
-     * @param otherReplicaId
-     *            A replica which the constructed BitarchiveMonitorServer should
-     *            NOT serve.
+     * @param replicaId The replica for which a BitarchiveMonitorServer is constructed and tested.
+     * @param otherReplicaId A replica which the constructed BitarchiveMonitorServer should NOT serve.
      */
     private void testListeningPerReplica(String replicaId, String otherReplicaId) {
         Settings.set(CommonSettings.USE_REPLICA_ID, replicaId);
@@ -395,8 +387,8 @@ public class BitarchiveMonitorServerTester {
     }
 
     /**
-     * Verify that we can determine which BA applications are 'live' at a given
-     * time. TODO: Make sure that we wait exactly long enough for a heartbeat.
+     * Verify that we can determine which BA applications are 'live' at a given time. TODO: Make sure that we wait
+     * exactly long enough for a heartbeat.
      */
     @Test
     public void testDeterminationOfLiveBAapps() {
@@ -426,9 +418,8 @@ public class BitarchiveMonitorServerTester {
     }
 
     /**
-     * Verify that we can process a BatchEndedMessage from a BA application i.e.
-     * update the internal state of the BA monitor correctly. TODO Update to
-     * reflect new API for batch output
+     * Verify that we can process a BatchEndedMessage from a BA application i.e. update the internal state of the BA
+     * monitor correctly. TODO Update to reflect new API for batch output
      */
     @Test
     public void testProcessBatchEndedMessage() {
@@ -490,8 +481,7 @@ public class BitarchiveMonitorServerTester {
     }
 
     /**
-     * Verify that we are able to declare a batch job completed and a send
-     * BatchReply to the requester.
+     * Verify that we are able to declare a batch job completed and a send BatchReply to the requester.
      */
     @Test
     public void testDeclareBatchJobCompleted() {
@@ -558,8 +548,7 @@ public class BitarchiveMonitorServerTester {
         }
 
         /**
-         * Check that a BatchReplyMessage has been put out on THE_ARCREPOS
-         * queue:
+         * Check that a BatchReplyMessage has been put out on THE_ARCREPOS queue:
          */
         BatchReplyMessage batchReplyMessage = batchReplyListener.getBatchReplyMsg();
         assertTrue("No batch reply found on the queue:" + THE_ARCREPOS, (batchReplyMessage != null));
@@ -569,15 +558,14 @@ public class BitarchiveMonitorServerTester {
     }
 
     /**
-     * Test that monitor can receive and aggregate data from more than one
-     * BitarchiveServer and aggregate the data and upload.
+     * Test that monitor can receive and aggregate data from more than one BitarchiveServer and aggregate the data and
+     * upload.
      * 
      * FIXME Fails on command line
      *
      * @throws ArgumentNotValid
      * @throws UnknownID
-     * @throws IOFailure
-     *             it via RemoteFile
+     * @throws IOFailure it via RemoteFile
      */
     @Test
     @Ignore("FIXME")
@@ -733,11 +721,8 @@ public class BitarchiveMonitorServerTester {
     /**
      * Testing GetAllFilenamesMessage.
      * 
-     * FIXME: Fragile, sometimes fail with:
-     * junit.framework.AssertionFailedError: The listener should have one
-     * message expected:<1> but was:<0> at
-     * dk.netarkivet.archive.bitarchive.distribute
-     * .BitarchiveMonitorServerTester.
+     * FIXME: Fragile, sometimes fail with: junit.framework.AssertionFailedError: The listener should have one message
+     * expected:<1> but was:<0> at dk.netarkivet.archive.bitarchive.distribute .BitarchiveMonitorServerTester.
      * testGetAllFilenamesMessage(BitarchiveMonitorServerTester.java:818)
      */
     @Test
@@ -850,8 +835,7 @@ public class BitarchiveMonitorServerTester {
     }
 
     /**
-     * Tests the opportunity to correct a entry in the archive through
-     * CorrectMessage.
+     * Tests the opportunity to correct a entry in the archive through CorrectMessage.
      * 
      * @throws InterruptedException
      */
@@ -927,8 +911,7 @@ public class BitarchiveMonitorServerTester {
     }
 
     /**
-     * A mockup Bitarchive that knows how to send heartbeats and how to create a
-     * reply of the last received batch job.
+     * A mockup Bitarchive that knows how to send heartbeats and how to create a reply of the last received batch job.
      */
     private static class MockupBitarchiveBatch extends TestMessageListener {
         private String id;
@@ -955,9 +938,8 @@ public class BitarchiveMonitorServerTester {
     }
 
     /**
-     * Cannot use NullRemoteFile in tests, as the BAMON just ignores
-     * NullRemoteFiles. Therefore, we need another passive implementation of
-     * RemoteFile.
+     * Cannot use NullRemoteFile in tests, as the BAMON just ignores NullRemoteFiles. Therefore, we need another passive
+     * implementation of RemoteFile.
      */
     abstract class AltNullRemoteFile implements RemoteFile {
         public void copyTo(File destFile) {
@@ -987,8 +969,7 @@ public class BitarchiveMonitorServerTester {
     }
 
     /**
-     * A RemoteFile that blocks for 5 seconds, then fails, on appendTo(). To
-     * avoid this, call getWaker().appendTo().
+     * A RemoteFile that blocks for 5 seconds, then fails, on appendTo(). To avoid this, call getWaker().appendTo().
      */
     private class BlockingRF extends AltNullRemoteFile {
         private static final String FIRST_STD_MESSAGE = "BLOCKING...";
@@ -1143,7 +1124,7 @@ public class BitarchiveMonitorServerTester {
         pss.setUp();
 
         try {
-            BitarchiveMonitorApplication.main(new String[] { "ERROR" });
+            BitarchiveMonitorApplication.main(new String[] {"ERROR"});
             fail("It should throw an exception ");
         } catch (SecurityException e) {
             // expected !

@@ -50,7 +50,7 @@ import org.junit.Test;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 
-@SuppressWarnings({ "unused", "serial" })
+@SuppressWarnings({"unused", "serial"})
 public class ExtractCDXJobTester {
 
     // Shared instance of BatchLocalFiles
@@ -68,8 +68,8 @@ public class ExtractCDXJobTester {
     @Before
     public void setUp() throws Exception {
         processed = 0;
-        arcBlaf = new BatchLocalFiles(new File[] { TestInfo.ARC_FILE1, new File(TestInfo.ARC_DIR, "input-2.arc"),
-                new File(TestInfo.ARC_DIR, "input-3.arc") });
+        arcBlaf = new BatchLocalFiles(new File[] {TestInfo.ARC_FILE1, new File(TestInfo.ARC_DIR, "input-2.arc"),
+                new File(TestInfo.ARC_DIR, "input-3.arc")});
         FileUtils.createDir(TestInfo.CDX_DIR);
     }
 
@@ -89,8 +89,7 @@ public class ExtractCDXJobTester {
     }
 
     /**
-     * Verify that the job runs without problems and visits all relevant
-     * records.
+     * Verify that the job runs without problems and visits all relevant records.
      */
     @Test
     public void testRun() throws IOException {
@@ -110,9 +109,8 @@ public class ExtractCDXJobTester {
     }
 
     /**
-     * Test the output of CDX data. It is not a requirement that this operation
-     * can be performed several times in a row; the job is allowed to let go of
-     * the CDX data after successfully writing it out.
+     * Test the output of CDX data. It is not a requirement that this operation can be performed several times in a row;
+     * the job is allowed to let go of the CDX data after successfully writing it out.
      */
     @Test
     public void testDumpCDX() throws IOException {
@@ -137,12 +135,12 @@ public class ExtractCDXJobTester {
     }
 
     /*
-     * The CDX content itself is not tested. The requirement on that is that it
-     * is compatible with existing tools. There is an external test for that.
+     * The CDX content itself is not tested. The requirement on that is that it is compatible with existing tools. There
+     * is an external test for that.
      */
     @Test
     public void testMain() throws IOException {
-        File[] arcFiles = new File[] { TestInfo.ARC_FILE1 };
+        File[] arcFiles = new File[] {TestInfo.ARC_FILE1};
 
         ExtractCDXJob job = new ExtractCDXJob();
         BatchLocalFiles blaf = new BatchLocalFiles(arcFiles);
@@ -192,8 +190,7 @@ public class ExtractCDXJobTester {
     }
 
     /**
-     * A class used in testing Serializability. For this test, we need a job
-     * that doesn't finish until asked twice
+     * A class used in testing Serializability. For this test, we need a job that doesn't finish until asked twice
      */
     private static class StubbornJob extends ExtractCDXJob {
         boolean askedBefore = false;
@@ -210,8 +207,7 @@ public class ExtractCDXJobTester {
     /**
      * Utility method for printing Exception arrays on System.out.
      *
-     * @param es
-     *            The Exception array to be printed.
+     * @param es The Exception array to be printed.
      */
     private void printExceptions(Exception[] es) {
         if (es.length > 0) {

@@ -38,11 +38,11 @@ import org.junit.Test;
 /**
  * Unit test for BatchLocalFiles.
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class BatchLocalFilesTester {
     // Reference to test files:
     private static final String INPUT_DIR = "tests/dk/netarkivet/arcutils/data/input/";
-    private static final String[] TEST_FILE_NAMES = { "Reader1.cdx", "Reader2.cdx", "Reader3.cdx" };
+    private static final String[] TEST_FILE_NAMES = {"Reader1.cdx", "Reader2.cdx", "Reader3.cdx"};
 
     // The number of test files:
     private static final int FILES = TEST_FILE_NAMES.length;
@@ -86,8 +86,8 @@ public class BatchLocalFilesTester {
     }
 
     /**
-     * Tests that a job throwing Exception during initialize() does not get
-     * executed, and that a representation of the Exception is thrown.
+     * Tests that a job throwing Exception during initialize() does not get executed, and that a representation of the
+     * Exception is thrown.
      */
     @Test
     public void testOneJob_ExceptionInInitialize() {
@@ -103,8 +103,7 @@ public class BatchLocalFilesTester {
     }
 
     /**
-     * Verifies that thrown Exceptions in process does not interrupt the
-     * processing but is caught and collected.
+     * Verifies that thrown Exceptions in process does not interrupt the processing but is caught and collected.
      */
     @Test
     public void testOneJob_ExceptionInProcess() {
@@ -152,8 +151,7 @@ public class BatchLocalFilesTester {
     }
 
     /**
-     * Verify that batch jobs sequentially does not disturb the results of the
-     * second job.
+     * Verify that batch jobs sequentially does not disturb the results of the second job.
      */
     @Test
     public void testSequentialRuns() {
@@ -165,9 +163,8 @@ public class BatchLocalFilesTester {
     }
 
     /**
-     * Verify that the job gets exposed to the right set of files, and only once
-     * to each. It is not a requirement that the given order of the files is
-     * preserved.
+     * Verify that the job gets exposed to the right set of files, and only once to each. It is not a requirement that
+     * the given order of the files is preserved.
      */
     @Test
     public void testFilesPresented() {
@@ -192,8 +189,7 @@ public class BatchLocalFilesTester {
     }
 
     /**
-     * Tests ordinary, non-failing execution of a batch job with a specified
-     * filename.
+     * Tests ordinary, non-failing execution of a batch job with a specified filename.
      */
     @Test
     public void testSpecifiedFilenameRun() {
@@ -206,8 +202,7 @@ public class BatchLocalFilesTester {
     }
 
     /**
-     * A very simple FileBatchJob that simply counts relevant method calls in
-     * the parents class's designated fields.
+     * A very simple FileBatchJob that simply counts relevant method calls in the parents class's designated fields.
      */
     private class TestBatchJob extends FileBatchJob {
 

@@ -37,16 +37,14 @@ public class CleanupHook extends Thread {
     private CleanupIF app;
 
     /**
-     * The name of the application, which this CleanupHook, should help to
-     * cleanup.
+     * The name of the application, which this CleanupHook, should help to cleanup.
      */
     private String appName;
 
     /**
      * Returns a ShutdownHook thread for an object with a cleanup() method.
      * 
-     * @param app
-     *            the Object to be cleaned up
+     * @param app the Object to be cleaned up
      */
     public CleanupHook(CleanupIF app) {
         ArgumentNotValid.checkNotNull(app, "CleanupIF app");
@@ -55,9 +53,8 @@ public class CleanupHook extends Thread {
     }
 
     /**
-     * Called by the JVM to clean up the object before exiting. The method calls
-     * the cleanup() method Note: System.out.println is added in this method
-     * because logging may or may not be active at this time.
+     * Called by the JVM to clean up the object before exiting. The method calls the cleanup() method Note:
+     * System.out.println is added in this method because logging may or may not be active at this time.
      */
     public void run() {
         Logger log = null;

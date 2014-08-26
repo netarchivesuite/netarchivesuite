@@ -41,8 +41,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 /**
- * Proxy for remote bitarchive. Establishes a JMS connection to the remote
- * bitarchive.
+ * Proxy for remote bitarchive. Establishes a JMS connection to the remote bitarchive.
  */
 public final class BitarchiveClient implements ReplicaClient {
 
@@ -68,14 +67,10 @@ public final class BitarchiveClient implements ReplicaClient {
     /**
      * Establish the connection to the server.
      * 
-     * @param allBaIn
-     *            topic to all bitarchives
-     * @param anyBaIn
-     *            queue to one of the bitarchives
-     * @param theBamonIn
-     *            queue to the bitarchive monitor
-     * @throws IOFailure
-     *             If there is a problem making the connection.
+     * @param allBaIn topic to all bitarchives
+     * @param anyBaIn queue to one of the bitarchives
+     * @param theBamonIn queue to the bitarchive monitor
+     * @throws IOFailure If there is a problem making the connection.
      */
     private BitarchiveClient(ChannelID allBaIn, ChannelID anyBaIn, ChannelID theBamonIn) throws IOFailure {
         this.allBa = allBaIn;
@@ -88,15 +83,11 @@ public final class BitarchiveClient implements ReplicaClient {
     /**
      * Factory that establish the connection to the server.
      * 
-     * @param allBaIn
-     *            topic to all bitarchives
-     * @param anyBaIn
-     *            queue to one of the bitarchives
-     * @param theBamonIn
-     *            queue to the bitarchive monitor
+     * @param allBaIn topic to all bitarchives
+     * @param anyBaIn queue to one of the bitarchives
+     * @param theBamonIn queue to the bitarchive monitor
      * @return A BitarchiveClient
-     * @throws IOFailure
-     *             If there is a problem making the connection.
+     * @throws IOFailure If there is a problem making the connection.
      */
     public static BitarchiveClient getInstance(ChannelID allBaIn, ChannelID anyBaIn, ChannelID theBamonIn)
             throws IOFailure {
@@ -106,10 +97,8 @@ public final class BitarchiveClient implements ReplicaClient {
     /**
      * Submit a get request to the bitarchive.
      * 
-     * @param arcfile
-     *            The file containing the requested record
-     * @param index
-     *            Offset of the ARC record in the file
+     * @param arcfile The file containing the requested record
+     * @param index Offset of the ARC record in the file
      * @return The submitted message or null if an error occured
      */
     public GetMessage get(String arcfile, long index) {
@@ -124,11 +113,10 @@ public final class BitarchiveClient implements ReplicaClient {
     }
 
     /**
-     * Submit an already constructed batch message to the archive. The reply
-     * goes directly back to whoever sent the message.
+     * Submit an already constructed batch message to the archive. The reply goes directly back to whoever sent the
+     * message.
      * 
-     * @param msg
-     *            the message to be processed by the get command.
+     * @param msg the message to be processed by the get command.
      */
     public void sendGetMessage(GetMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
@@ -151,8 +139,7 @@ public final class BitarchiveClient implements ReplicaClient {
     /**
      * Submit an already constructed getfile message to the archive.
      * 
-     * @param msg
-     *            get file message to retrieve.
+     * @param msg get file message to retrieve.
      */
     public void sendGetFileMessage(GetFileMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
@@ -163,8 +150,7 @@ public final class BitarchiveClient implements ReplicaClient {
     /**
      * Forward the message to ALL_BA.
      * 
-     * @param msg
-     *            the message to forward.
+     * @param msg the message to forward.
      */
     public void sendRemoveAndGetFileMessage(RemoveAndGetFileMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
@@ -174,10 +160,8 @@ public final class BitarchiveClient implements ReplicaClient {
     /**
      * Sends a message to terminate a running batchjob.
      * 
-     * @param batchID
-     *            The ID of the batchjob to terminate.
-     * @throws ArgumentNotValid
-     *             If the batchID is either null or the empty string.
+     * @param batchID The ID of the batchjob to terminate.
+     * @throws ArgumentNotValid If the batchID is either null or the empty string.
      */
     public void sendBatchTerminationMessage(String batchID) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(batchID, "String batchID");
@@ -189,12 +173,9 @@ public final class BitarchiveClient implements ReplicaClient {
     /**
      * Submit an upload request to the bitarchive.
      * 
-     * @param rf
-     *            The file to upload.
-     * @throws IOFailure
-     *             If access to file denied.
-     * @throws ArgumentNotValid
-     *             If arcfile is null.
+     * @param rf The file to upload.
+     * @throws IOFailure If access to file denied.
+     * @throws ArgumentNotValid If arcfile is null.
      */
     public void sendUploadMessage(RemoteFile rf) throws IOFailure, ArgumentNotValid {
         ArgumentNotValid.checkNotNull(rf, "rf");
@@ -204,14 +185,12 @@ public final class BitarchiveClient implements ReplicaClient {
     }
 
     /**
-     * Submit an already constructed get message to the archive. This is used by
-     * the ArcRepository when forwarding batch jobs from its clients.
+     * Submit an already constructed get message to the archive. This is used by the ArcRepository when forwarding batch
+     * jobs from its clients.
      * 
-     * @param bMsg
-     *            a BatchMessage.
+     * @param bMsg a BatchMessage.
      * @return The submitted message.
-     * @throws ArgumentNotValid
-     *             If message is null.
+     * @throws ArgumentNotValid If message is null.
      */
     public BatchMessage sendBatchJob(BatchMessage bMsg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(bMsg, "bMsg");
@@ -221,20 +200,14 @@ public final class BitarchiveClient implements ReplicaClient {
     }
 
     /**
-     * Submit a batch job to the archive. This is used by the ArcRepository when
-     * it needs to run batch jobs for its own reasons, i.e. when checksumming a
-     * file as part of the Store operation.
+     * Submit a batch job to the archive. This is used by the ArcRepository when it needs to run batch jobs for its own
+     * reasons, i.e. when checksumming a file as part of the Store operation.
      * 
-     * @param replyChannel
-     *            The channel that the reply of this job should be sent to.
-     * @param job
-     *            The job that should be run on the bit archive handled by this
-     *            client.
+     * @param replyChannel The channel that the reply of this job should be sent to.
+     * @param job The job that should be run on the bit archive handled by this client.
      * @return The submitted message.
-     * @throws ArgumentNotValid
-     *             If any parameter was null.
-     * @throws IOFailure
-     *             If sending the batch message did not succeed.
+     * @throws ArgumentNotValid If any parameter was null.
+     * @throws IOFailure If sending the batch message did not succeed.
      */
     public BatchMessage sendBatchJob(ChannelID replyChannel, FileBatchJob job) throws ArgumentNotValid, IOFailure {
         ArgumentNotValid.checkNotNull(replyChannel, "replyChannel");
@@ -252,13 +225,10 @@ public final class BitarchiveClient implements ReplicaClient {
     }
 
     /**
-     * For correcting an erroneous entry in the archive. The message is sent the
-     * replica for correcting the 'bad' entry.
+     * For correcting an erroneous entry in the archive. The message is sent the replica for correcting the 'bad' entry.
      * 
-     * @param msg
-     *            The correct message to correct the bad entry in the archive.
-     * @throws ArgumentNotValid
-     *             If the CorrectMessage is null.
+     * @param msg The correct message to correct the bad entry in the archive.
+     * @throws ArgumentNotValid If the CorrectMessage is null.
      */
     @Override
     public void sendCorrectMessage(CorrectMessage msg) throws ArgumentNotValid {
@@ -272,11 +242,8 @@ public final class BitarchiveClient implements ReplicaClient {
     /**
      * Method for sending a GetAllFilenamesMessage to a checksum archive.
      * 
-     * @param msg
-     *            The GetAllFilenamesMessage, which will be sent through the jms
-     *            connection to the checksum archive.
-     * @throws ArgumentNotValid
-     *             If the GetAllFilenamesMessage is null.
+     * @param msg The GetAllFilenamesMessage, which will be sent through the jms connection to the checksum archive.
+     * @throws ArgumentNotValid If the GetAllFilenamesMessage is null.
      */
     public void sendGetAllFilenamesMessage(GetAllFilenamesMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "GetAllFilenamesMessage msg");
@@ -290,11 +257,8 @@ public final class BitarchiveClient implements ReplicaClient {
     /**
      * Method for sending the GetAllChecksumMessage to the ChecksumReplica.
      * 
-     * @param msg
-     *            The GetAllChecksumMessage, which will be sent through the jms
-     *            connection to the checksum archive.
-     * @throws ArgumentNotValid
-     *             If the GetAllChecksumsMessage is null.
+     * @param msg The GetAllChecksumMessage, which will be sent through the jms connection to the checksum archive.
+     * @throws ArgumentNotValid If the GetAllChecksumsMessage is null.
      */
     public void sendGetAllChecksumsMessage(GetAllChecksumsMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "GetAllChecksumsMessage msg");
@@ -306,14 +270,10 @@ public final class BitarchiveClient implements ReplicaClient {
     }
 
     /**
-     * Method for retrieving the checksum of a specific arcfile within the
-     * archive.
+     * Method for retrieving the checksum of a specific arcfile within the archive.
      * 
-     * @param msg
-     *            The GetChecksumMessage which will be sent to the checksum
-     *            archive though the jms connection.
-     * @throws ArgumentNotValid
-     *             If the GetChecksumMessage is null.
+     * @param msg The GetChecksumMessage which will be sent to the checksum archive though the jms connection.
+     * @throws ArgumentNotValid If the GetChecksumMessage is null.
      */
     public void sendGetChecksumMessage(GetChecksumMessage msg) throws ArgumentNotValid {
         // Validate arguments
@@ -326,18 +286,12 @@ public final class BitarchiveClient implements ReplicaClient {
     }
 
     /**
-     * Method for retrieving the checksum of a specific arcfile within the
-     * archive.
+     * Method for retrieving the checksum of a specific arcfile within the archive.
      * 
-     * @param replyChannel
-     *            The channel where the reply should be sent.
-     * @param filename
-     *            The GetChecksumMessage which has been sent to the checksum
-     *            archive though the jms connection.
+     * @param replyChannel The channel where the reply should be sent.
+     * @param filename The GetChecksumMessage which has been sent to the checksum archive though the jms connection.
      * @return The GetChecksumMessage which is sent.
-     * @throws ArgumentNotValid
-     *             If the reply channel is null or if the filename is either
-     *             null or the empty string.
+     * @throws ArgumentNotValid If the reply channel is null or if the filename is either null or the empty string.
      */
     public GetChecksumMessage sendGetChecksumMessage(ChannelID replyChannel, String filename) throws ArgumentNotValid {
         // Validate arguments

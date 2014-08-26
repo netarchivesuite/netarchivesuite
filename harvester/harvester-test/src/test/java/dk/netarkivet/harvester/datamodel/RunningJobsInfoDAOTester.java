@@ -30,7 +30,7 @@ import org.junit.Test;
 
 import dk.netarkivet.harvester.harvesting.monitor.StartedJobInfo;
 
-@SuppressWarnings({ "unused" })
+@SuppressWarnings({"unused"})
 public class RunningJobsInfoDAOTester extends DataModelTestCase {
 
     @Before

@@ -41,13 +41,11 @@ import dk.netarkivet.viewerproxy.Constants;
 import dk.netarkivet.viewerproxy.Controller;
 
 /**
- * Client side communication with http controller server. This class works on a
- * specific response object, simply forwarding it to the given url. Thus an
- * instance of this class is a use-once-object.
+ * Client side communication with http controller server. This class works on a specific response object, simply
+ * forwarding it to the given url. Thus an instance of this class is a use-once-object.
  *
- * The class is supposed to be used in JSP pages in order to make sure that the
- * remote URI is requested through the browser, so communication with the
- * HTTPControllerServer is done to the one currently set as viewer proxy.
+ * The class is supposed to be used in JSP pages in order to make sure that the remote URI is requested through the
+ * browser, so communication with the HTTPControllerServer is done to the one currently set as viewer proxy.
  *
  */
 public class HTTPControllerClient implements Controller {
@@ -62,19 +60,13 @@ public class HTTPControllerClient implements Controller {
     private static final I18n I18N = new I18n(Constants.TRANSLATIONS_BUNDLE);
 
     /**
-     * Make an HTTP controller client. Commands are sent using redirect on the
-     * given http response object. For commands with no output, the page is then
-     * forwarded to the response url.
+     * Make an HTTP controller client. Commands are sent using redirect on the given http response object. For commands
+     * with no output, the page is then forwarded to the response url.
      *
-     * @param response
-     *            The response object to use for redirect.
-     * @param out
-     *            The JspWriter used to communicate with the users.
-     * @param returnURL
-     *            The URL to return to afterwards if no output is given. This
-     *            must not be null or not empty if either startRecordingURIs,
-     *            stopRecordingURIs, changeIndex or clearRecordedURIs are
-     *            called.
+     * @param response The response object to use for redirect.
+     * @param out The JspWriter used to communicate with the users.
+     * @param returnURL The URL to return to afterwards if no output is given. This must not be null or not empty if
+     *            either startRecordingURIs, stopRecordingURIs, changeIndex or clearRecordedURIs are called.
      */
     public HTTPControllerClient(HttpServletResponse response, JspWriter out, String returnURL) {
         ArgumentNotValid.checkNotNull(response, "HttpServletResponse response");
@@ -102,13 +94,11 @@ public class HTTPControllerClient implements Controller {
     }
 
     /**
-     * Perform the necessary redirection to execute a simple (parameterless)
-     * command. Checks, that the returnURL is neither null or not empty.
+     * Perform the necessary redirection to execute a simple (parameterless) command. Checks, that the returnURL is
+     * neither null or not empty.
      *
-     * @param command
-     *            One of the three parameterless commands START_COMMAND,
-     * @param useReturnURL
-     *            Whether to append the returnURL parameter
+     * @param command One of the three parameterless commands START_COMMAND,
+     * @param useReturnURL Whether to append the returnURL parameter
      */
     protected void redirectForSimpleCommand(String command, boolean useReturnURL) {
         try {
@@ -124,11 +114,9 @@ public class HTTPControllerClient implements Controller {
     }
 
     /**
-     * Write recorded URIs to response. NOTE! This does not respect the
-     * Controller! The URIs are *not* returned!
+     * Write recorded URIs to response. NOTE! This does not respect the Controller! The URIs are *not* returned!
      * 
-     * @return null in all cases. The URIs are written in response by the
-     *         forwarded call instead.
+     * @return null in all cases. The URIs are written in response by the forwarded call instead.
      */
     public Set<URI> getRecordedURIs() {
         redirectForSimpleCommand(HTTPControllerServer.GET_RECORDED_URIS_COMMAND, false);
@@ -138,14 +126,11 @@ public class HTTPControllerClient implements Controller {
     /**
      * Change current index to work on these jobs. Then return to returnURL.
      *
-     * Since post data cannot be transferred through a regular redirect, we
-     * instead build a page that uses javascript to immediately repost the data
-     * to the url.
+     * Since post data cannot be transferred through a regular redirect, we instead build a page that uses javascript to
+     * immediately repost the data to the url.
      *
-     * @param jobList
-     *            The list of jobs.
-     * @param label
-     *            An arbitrary label that will be used to indicate this index
+     * @param jobList The list of jobs.
+     * @param label An arbitrary label that will be used to indicate this index
      */
     public void changeIndex(Set<Long> jobList, String label) {
         ArgumentNotValid.checkNotNull(jobList, "Set jobList");
@@ -179,14 +164,11 @@ public class HTTPControllerClient implements Controller {
     }
 
     /**
-     * Write the current status of viewerproxy to response. NOTE! This does not
-     * respect the Controller API! The URIs are *not* returned!
+     * Write the current status of viewerproxy to response. NOTE! This does not respect the Controller API! The URIs are
+     * *not* returned!
      * 
-     * @return null. The status is written in response by the forwarded call
-     *         instead.
-     * @param locale
-     *            The locale (da, en, ...) that the response should be written
-     *            using.
+     * @return null. The status is written in response by the forwarded call instead.
+     * @param locale The locale (da, en, ...) that the response should be written using.
      */
     public String getStatus(Locale locale) {
         ArgumentNotValid.checkNotNull(locale, "locale");

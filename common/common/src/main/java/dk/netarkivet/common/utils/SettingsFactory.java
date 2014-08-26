@@ -32,48 +32,34 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 
 /**
- * Generic class for creating class instances from class names given in
- * settings.
+ * Generic class for creating class instances from class names given in settings.
  * 
- * @param <T>
- *            the object-type returned by this class.
+ * @param <T> the object-type returned by this class.
  */
 public class SettingsFactory<T> {
 
     /**
      * Creates a new class of the class given in the settings field.
      *
-     * If the loaded class has a getInstance() method that matches the given
-     * arguments, that will be called to create the class, otherwise a matching
-     * constructor will be called, if it exists. This sequence allows for
-     * creating singletons.
+     * If the loaded class has a getInstance() method that matches the given arguments, that will be called to create
+     * the class, otherwise a matching constructor will be called, if it exists. This sequence allows for creating
+     * singletons.
      *
-     * Due to limitations of the Java Reflection API, the parameters of the
-     * getInstance method declared on the loaded class must match the given
-     * arguments exactly, without subclassing, interface implementation or
-     * unboxing. In particular, since any primitive types are automatically
-     * boxed when passed to this method, getInstance() methods with primitive
-     * type formal parameters will not be found.
+     * Due to limitations of the Java Reflection API, the parameters of the getInstance method declared on the loaded
+     * class must match the given arguments exactly, without subclassing, interface implementation or unboxing. In
+     * particular, since any primitive types are automatically boxed when passed to this method, getInstance() methods
+     * with primitive type formal parameters will not be found.
      *
-     * @param settingsField
-     *            A field in the Settings class.
-     * @param args
-     *            The arguments that will be passed to the getInstance method or
-     *            the constructor. These will also be used to determine which
-     *            getInstance method or constructor to find.
-     * @param <T>
-     *            the object-type returned by this method.
-     * @return A new instance of type T created by calling getInstance() or by
-     *         invoking a constructor.
-     * @throws ArgumentNotValid
-     *             if settingsField is null or the invoked method or constructor
-     *             threw an exception.
-     * @throws IOFailure
-     *             if there are unrecoverable errors reflecting upon the class.
-     * @throws PermissionDenied
-     *             if the class or methods cannot be accessed.
+     * @param settingsField A field in the Settings class.
+     * @param args The arguments that will be passed to the getInstance method or the constructor. These will also be
+     *            used to determine which getInstance method or constructor to find.
+     * @param <T> the object-type returned by this method.
+     * @return A new instance of type T created by calling getInstance() or by invoking a constructor.
+     * @throws ArgumentNotValid if settingsField is null or the invoked method or constructor threw an exception.
+     * @throws IOFailure if there are unrecoverable errors reflecting upon the class.
+     * @throws PermissionDenied if the class or methods cannot be accessed.
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public static <T> T getInstance(String settingsField, Object... args) {
         ArgumentNotValid.checkNotNull(settingsField, "String settingsField");
         String className = Settings.get(settingsField);

@@ -42,8 +42,7 @@ public final class BitarchiveApplication {
      * Runs the BitarchiveApplication. Settings are read from config files
      *
      * @see BitarchiveServer
-     * @param args
-     *            an empty array
+     * @param args an empty array
      */
     public static void main(String[] args) {
         ApplicationUtils.startApp(BitarchiveServer.class, args);

@@ -33,8 +33,7 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.preconfigured.TestConfigurationIF;
 
 /**
- * JobIndexCache mockup that either returns null, throws exception, waits, or
- * returns a file with the given jobids.
+ * JobIndexCache mockup that either returns null, throws exception, waits, or returns a file with the given jobids.
  */
 public class MockupMultiFileBasedCache extends MultiFileBasedCache<Long> implements TestConfigurationIF {
     private Object o;
@@ -117,9 +116,8 @@ public class MockupMultiFileBasedCache extends MultiFileBasedCache<Long> impleme
                 tempDir.mkdir();
                 OutputStream fos = new FileOutputStream(new File(tempDir, "foo"));
                 /*
-                 * for (Long job : jobIDs) { FileOutputStream fos = new
-                 * FileOutputStream( new File(tempDir, job.toString()));
-                 * fos.write(job.intValue()); fos.close(); }
+                 * for (Long job : jobIDs) { FileOutputStream fos = new FileOutputStream( new File(tempDir,
+                 * job.toString())); fos.write(job.intValue()); fos.close(); }
                  */
                 fos.close();
                 return jobIDs;

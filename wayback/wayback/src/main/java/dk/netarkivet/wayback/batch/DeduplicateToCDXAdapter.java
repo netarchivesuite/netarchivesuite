@@ -38,8 +38,7 @@ import org.slf4j.LoggerFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
- * Class containing methods for turning duplicate entries in a crawl log into
- * lines in a CDX index file.
+ * Class containing methods for turning duplicate entries in a crawl log into lines in a CDX index file.
  */
 public class DeduplicateToCDXAdapter implements DeduplicateToCDXAdapterInterface {
 
@@ -47,8 +46,7 @@ public class DeduplicateToCDXAdapter implements DeduplicateToCDXAdapterInterface
     private static final Logger log = LoggerFactory.getLogger(DeduplicateToCDXAdapter.class);
 
     /**
-     * Define SimpleDateFormat objects for the representation of timestamps in
-     * crawl logs and cdx files respectively.
+     * Define SimpleDateFormat objects for the representation of timestamps in crawl logs and cdx files respectively.
      */
     private static final String crawlDateFormatString = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
     private static final String cdxDateFormatString = "yyyyMMddHHmmss";
@@ -56,8 +54,7 @@ public class DeduplicateToCDXAdapter implements DeduplicateToCDXAdapterInterface
     private static final SimpleDateFormat cdxDateFormat = new SimpleDateFormat(cdxDateFormatString);
 
     /**
-     * Pattern representing the part of a crawl log entry describing a duplicate
-     * record.
+     * Pattern representing the part of a crawl log entry describing a duplicate record.
      */
     private static final String duplicateRecordPatternString = "duplicate:\"(.*),(.*)\",(.*)";
     private static final Pattern duplicateRecordPattern = Pattern.compile(duplicateRecordPatternString);
@@ -76,12 +73,10 @@ public class DeduplicateToCDXAdapter implements DeduplicateToCDXAdapterInterface
     }
 
     /**
-     * If the input line is a crawl log entry representing a duplicate then a
-     * CDX entry is written to the output. Otherwise returns null. In the event
-     * of an error returns null.
+     * If the input line is a crawl log entry representing a duplicate then a CDX entry is written to the output.
+     * Otherwise returns null. In the event of an error returns null.
      * 
-     * @param line
-     *            the crawl-log line to be analysed
+     * @param line the crawl-log line to be analysed
      * @return a CDX line (without newline) or null
      */
     @Override
@@ -133,13 +128,11 @@ public class DeduplicateToCDXAdapter implements DeduplicateToCDXAdapterInterface
     }
 
     /**
-     * Reads an input stream representing a crawl log line by line and converts
-     * any lines representing duplicate entries to wayback-compliant cdx lines.
+     * Reads an input stream representing a crawl log line by line and converts any lines representing duplicate entries
+     * to wayback-compliant cdx lines.
      * 
-     * @param is
-     *            The input stream from which data is read.
-     * @param os
-     *            The output stream to which the cdx lines are written.
+     * @param is The input stream from which data is read.
+     * @param os The output stream to which the cdx lines are written.
      */
     public void adaptStream(InputStream is, OutputStream os) {
         ArgumentNotValid.checkNotNull(is, "is");

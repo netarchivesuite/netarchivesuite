@@ -47,11 +47,9 @@ import dk.netarkivet.harvester.scheduler.jobgen.JobGenerator;
 import dk.netarkivet.harvester.scheduler.jobgen.JobGeneratorFactory;
 
 /**
- * Handles the generation of new jobs based on the harvest definitions in
- * persistent storage. The <code>HarvestJobGenerator</code> continuously scans
- * the harvest definition database for harvest which should be run now. If a HD
- * defines a harvest which should be run, a Harvest Job is created in the
- * harvest job database.
+ * Handles the generation of new jobs based on the harvest definitions in persistent storage. The
+ * <code>HarvestJobGenerator</code> continuously scans the harvest definition database for harvest which should be run
+ * now. If a HD defines a harvest which should be run, a Harvest Job is created in the harvest job database.
  */
 public class HarvestJobGenerator implements ComponentLifeCycle {
 
@@ -59,14 +57,14 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
     private static final Logger log = LoggerFactory.getLogger(HarvestJobGenerator.class);
 
     /**
-     * The set of HDs (or rather their OIDs) that are currently being scheduled
-     * in a separate thread. This set is a SynchronizedSet
+     * The set of HDs (or rather their OIDs) that are currently being scheduled in a separate thread. This set is a
+     * SynchronizedSet
      */
     protected static Set<Long> harvestDefinitionsBeingScheduled = Collections.synchronizedSet(new HashSet<Long>());
 
     /**
-     * Used the store the currenttimeMillis when the scheduling of a particular
-     * harvestdefinition # started or when last a warning was issued.
+     * Used the store the currenttimeMillis when the scheduling of a particular harvestdefinition # started or when last
+     * a warning was issued.
      */
     protected static Map<Long, Long> schedulingStartedMap = Collections.synchronizedMap(new HashMap<Long, Long>());
 
@@ -123,14 +121,11 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
         }
 
         /**
-         * Check if jobs should be generated for any ready harvest definitions
-         * for the specified time.
+         * Check if jobs should be generated for any ready harvest definitions for the specified time.
          * 
-         * @param timeToGenerateJobsFor
-         *            Jobs will be generated which should be run at this time.
-         *            Note: In a production system the provided time will
-         *            normally be current time, but during testing we need to
-         *            simulated other points-in-time
+         * @param timeToGenerateJobsFor Jobs will be generated which should be run at this time. Note: In a production
+         *            system the provided time will normally be current time, but during testing we need to simulated
+         *            other points-in-time
          */
         void generateJobs(Date timeToGenerateJobsFor) {
             final Iterable<Long> readyHarvestDefinitions = haDefinitionDAO
@@ -235,14 +230,11 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
         }
 
         /**
-         * Find out if a scheduling takes more than is acceptable currently 5
-         * minutes.
+         * Find out if a scheduling takes more than is acceptable currently 5 minutes.
          * 
-         * @param harvestId
-         *            A given harvestId
-         * @return true, if a scheduling of the given harvestId has taken more
-         *         than 5 minutes, or false, if not or no scheduling for this
-         *         harvestId is underway
+         * @param harvestId A given harvestId
+         * @return true, if a scheduling of the given harvestId has taken more than 5 minutes, or false, if not or no
+         *         scheduling for this harvestId is underway
          */
         private static boolean takesSuspiciouslyLongToSchedule(Long harvestId) {
             // acceptable delay before issuing warning is currently hard-wired

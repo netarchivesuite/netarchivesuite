@@ -64,7 +64,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
  * Unit tests for the JMXUtils class.
  *
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class JMXUtilsTester {
     ReloadSettings rs = new ReloadSettings();
 
@@ -89,19 +89,14 @@ public class JMXUtilsTester {
             // expected
         }
         /*
-         * This code block launches a local jmx service, but it's commented out
-         * because it doesn't test any project code MBeanServer mbs =
-         * MBeanServerFactory.createMBeanServer(); JMXServiceURL url = new
-         * JMXServiceURL("service:jmx:rmi://"); url = new JMXServiceURL("rmi",
-         * "localhost", 1234, ""); Map<String,String[]> credentials = new
-         * HashMap<String,String[]>(1);
-         * credentials.put("jmx.remote.credentials", new String[]{"user",
-         * "pass"}); JMXConnectorServer cs =
-         * JMXConnectorServerFactory.newJMXConnectorServer(url,credentials,mbs);
-         * cs.start(); JMXServiceURL addr = cs.getAddress(); JMXConnector conn1
-         * = JMXConnectorFactory.connect(addr, credentials); //JMXConnector conn
-         * = JMXUtils.getJMXConnector("localhost", 1234, "user", "pass");
-         * conn1.close(); cs.stop();
+         * This code block launches a local jmx service, but it's commented out because it doesn't test any project code
+         * MBeanServer mbs = MBeanServerFactory.createMBeanServer(); JMXServiceURL url = new
+         * JMXServiceURL("service:jmx:rmi://"); url = new JMXServiceURL("rmi", "localhost", 1234, "");
+         * Map<String,String[]> credentials = new HashMap<String,String[]>(1); credentials.put("jmx.remote.credentials",
+         * new String[]{"user", "pass"}); JMXConnectorServer cs =
+         * JMXConnectorServerFactory.newJMXConnectorServer(url,credentials,mbs); cs.start(); JMXServiceURL addr =
+         * cs.getAddress(); JMXConnector conn1 = JMXConnectorFactory.connect(addr, credentials); //JMXConnector conn =
+         * JMXUtils.getJMXConnector("localhost", 1234, "user", "pass"); conn1.close(); cs.stop();
          */
     }
 
@@ -137,9 +132,8 @@ public class JMXUtilsTester {
         /**
          * Create a test MBeanServerConnection that fails a number of times.
          *
-         * @param failCount
-         *            Number of times the getAttribute/executeCommand methods
-         *            should be called before they succeed.
+         * @param failCount Number of times the getAttribute/executeCommand methods should be called before they
+         *            succeed.
          */
         TestMBeanServerConnection(int failCount) {
             this.failCount = failCount;

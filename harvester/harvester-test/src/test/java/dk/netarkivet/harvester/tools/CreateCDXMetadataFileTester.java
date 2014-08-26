@@ -154,7 +154,7 @@ public class CreateCDXMetadataFileTester {
 
         // Check illegal arg: 0
         try {
-            CreateCDXMetadataFile.main(new String[] { "--jobID 0 --harvestnamePrefix 0-1" });
+            CreateCDXMetadataFile.main(new String[] {"--jobID 0 --harvestnamePrefix 0-1"});
             fail("Should System.exit(1) on illegal args");
         } catch (SecurityException e) {
             System.out.flush();
@@ -168,7 +168,7 @@ public class CreateCDXMetadataFileTester {
 
         // Check illegal arg: non-numeral
         try {
-            CreateCDXMetadataFile.main(new String[] { "--jobID foo42bar --harvestnamePrefix 0-1" });
+            CreateCDXMetadataFile.main(new String[] {"--jobID foo42bar --harvestnamePrefix 0-1"});
             fail("Should System.exit(1) on illegal args");
         } catch (SecurityException e) {
             System.out.flush();
@@ -187,7 +187,7 @@ public class CreateCDXMetadataFileTester {
     @Ignore("Does not exit normally")
     public void testRunSingleJob() {
         try {
-            CreateCDXMetadataFile.main(new String[] { "--jobID 4 --harvestnamePrefix 4-1" });
+            CreateCDXMetadataFile.main(new String[] {"--jobID 4 --harvestnamePrefix 4-1"});
         } catch (SecurityException e) {
             assertEquals("Should have exited normally", 0, pse.getExitValue());
         }
@@ -222,28 +222,20 @@ public class CreateCDXMetadataFileTester {
     }
 
     /**
-     * This class is a MessageListener that responds to BatchMessage, simulating
-     * an ArcRepository.
+     * This class is a MessageListener that responds to BatchMessage, simulating an ArcRepository.
      */
     /*
-     * FIXME: Maven-migration Disabling to avoid cyclic dependency to Archive
-     * module through BatchMessage private static class BatchListener extends
-     * TestMessageListener { public BatchListener() { } public void
-     * onMessage(Message o) { super.onMessage(o); NetarkivetMessage nmsg =
-     * received.get(received.size() - 1); if (nmsg instanceof BatchMessage) {
-     * BatchMessage m = (BatchMessage) nmsg; int count = 0; List<File> emptyList
-     * = Collections.emptyList(); RemoteFile rf; try { File output = new
-     * File(TestInfo.WORKING_DIR, "tmpout"); BufferedReader reader = new
-     * BufferedReader(new FileReader( new File(TestInfo.DATA_DIR,
-     * "jobs-2-4-70.cdx"))); FileWriter writer = new FileWriter(output); String
-     * line; Pattern p = Pattern.compile("^(\\S+\\s+){5}" +
-     * m.getJob().getFilenamePattern().pattern() + "(\\s+\\S+){2}$"); while
-     * ((line = reader.readLine()) != null) { if (p.matcher(line).matches()) {
-     * writer.write(line + "\n"); count++; } } reader.close(); writer.close();
-     * rf = new TestRemoteFile(output, false, false, false); } catch
-     * (IOException e) { System.out.println(e); e.printStackTrace(); rf = null;
-     * } JMSConnectionFactory.getInstance().send( new
-     * BatchReplyMessage(m.getReplyTo(), Channels.getError(), m.getID(), count,
-     * emptyList, rf)); } } };
+     * FIXME: Maven-migration Disabling to avoid cyclic dependency to Archive module through BatchMessage private static
+     * class BatchListener extends TestMessageListener { public BatchListener() { } public void onMessage(Message o) {
+     * super.onMessage(o); NetarkivetMessage nmsg = received.get(received.size() - 1); if (nmsg instanceof BatchMessage)
+     * { BatchMessage m = (BatchMessage) nmsg; int count = 0; List<File> emptyList = Collections.emptyList(); RemoteFile
+     * rf; try { File output = new File(TestInfo.WORKING_DIR, "tmpout"); BufferedReader reader = new BufferedReader(new
+     * FileReader( new File(TestInfo.DATA_DIR, "jobs-2-4-70.cdx"))); FileWriter writer = new FileWriter(output); String
+     * line; Pattern p = Pattern.compile("^(\\S+\\s+){5}" + m.getJob().getFilenamePattern().pattern() +
+     * "(\\s+\\S+){2}$"); while ((line = reader.readLine()) != null) { if (p.matcher(line).matches()) {
+     * writer.write(line + "\n"); count++; } } reader.close(); writer.close(); rf = new TestRemoteFile(output, false,
+     * false, false); } catch (IOException e) { System.out.println(e); e.printStackTrace(); rf = null; }
+     * JMSConnectionFactory.getInstance().send( new BatchReplyMessage(m.getReplyTo(), Channels.getError(), m.getID(),
+     * count, emptyList, rf)); } } };
      */
 }

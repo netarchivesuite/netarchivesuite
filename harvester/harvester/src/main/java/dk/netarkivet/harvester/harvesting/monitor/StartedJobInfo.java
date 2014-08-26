@@ -83,8 +83,7 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
     private long queuedFilesCount;
 
     /**
-     * The number of URIS harvested by Heritrix since the beginning of the
-     * crawl.
+     * The number of URIS harvested by Heritrix since the beginning of the crawl.
      */
     private long downloadedFilesCount;
 
@@ -135,10 +134,8 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
     /**
      * Instantiates all readable fields with default values.
      *
-     * @param harvestName
-     *            the name of the harvest
-     * @param jobId
-     *            the ID of the job
+     * @param harvestName the name of the harvest
+     * @param jobId the ID of the job
      */
     public StartedJobInfo(String harvestName, long jobId) {
         this.timestamp = new Date(System.currentTimeMillis());
@@ -198,8 +195,7 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
     }
 
     /**
-     * @return the URL of the Heritrix admin console for the instance crawling
-     *         this job.
+     * @return the URL of the Heritrix admin console for the instance crawling this job.
      */
     public String getHostUrl() {
         return hostUrl;
@@ -350,11 +346,9 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
     }
 
     /**
-     * set the criteria used in the compareTo method that way we can decide how
-     * to sort StartedJobInfo.
+     * set the criteria used in the compareTo method that way we can decide how to sort StartedJobInfo.
      * 
-     * @param criteria
-     *            the criteria we want to use
+     * @param criteria the criteria we want to use
      */
     public void chooseCompareCriteria(StartedJobInfo.Criteria criteria) {
         ArgumentNotValid.checkNotNull(criteria, "criteria can't be null");
@@ -376,8 +370,7 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
     /**
      * Updates the members from a {@link CrawlProgressMessage} instance.
      *
-     * @param msg
-     *            the {@link CrawlProgressMessage} to process.
+     * @param msg the {@link CrawlProgressMessage} to process.
      * @return jobinfo based on the contents of the message.
      */
     public static StartedJobInfo build(CrawlProgressMessage msg) {
@@ -462,136 +455,119 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
     }
 
     /**
-     * @param hostUrl
-     *            the hostUrl to set
+     * @param hostUrl the hostUrl to set
      */
     public void setHostUrl(String hostUrl) {
         this.hostUrl = hostUrl;
     }
 
     /**
-     * @param progress
-     *            the progress to set
+     * @param progress the progress to set
      */
     public void setProgress(double progress) {
         this.progress = progress;
     }
 
     /**
-     * @param queuedFilesCount
-     *            the queuedFilesCount to set
+     * @param queuedFilesCount the queuedFilesCount to set
      */
     public void setQueuedFilesCount(long queuedFilesCount) {
         this.queuedFilesCount = queuedFilesCount;
     }
 
     /**
-     * @param downloadedFilesCount
-     *            the downloadedFilesCount to set
+     * @param downloadedFilesCount the downloadedFilesCount to set
      */
     public void setDownloadedFilesCount(long downloadedFilesCount) {
         this.downloadedFilesCount = downloadedFilesCount;
     }
 
     /**
-     * @param totalQueuesCount
-     *            the totalQueuesCount to set
+     * @param totalQueuesCount the totalQueuesCount to set
      */
     public void setTotalQueuesCount(long totalQueuesCount) {
         this.totalQueuesCount = totalQueuesCount;
     }
 
     /**
-     * @param activeQueuesCount
-     *            the activeQueuesCount to set
+     * @param activeQueuesCount the activeQueuesCount to set
      */
     public void setActiveQueuesCount(long activeQueuesCount) {
         this.activeQueuesCount = activeQueuesCount;
     }
 
     /**
-     * @param exhaustedQueuesCount
-     *            the exhaustedQueuesCount to set
+     * @param exhaustedQueuesCount the exhaustedQueuesCount to set
      */
     public void setExhaustedQueuesCount(long exhaustedQueuesCount) {
         this.exhaustedQueuesCount = exhaustedQueuesCount;
     }
 
     /**
-     * @param elapsedSeconds
-     *            the elapsedSeconds to set
+     * @param elapsedSeconds the elapsedSeconds to set
      */
     public void setElapsedSeconds(long elapsedSeconds) {
         this.elapsedSeconds = elapsedSeconds;
     }
 
     /**
-     * @param currentProcessedKBPerSec
-     *            the currentProcessedKBPerSec to set
+     * @param currentProcessedKBPerSec the currentProcessedKBPerSec to set
      */
     public void setCurrentProcessedKBPerSec(long currentProcessedKBPerSec) {
         this.currentProcessedKBPerSec = currentProcessedKBPerSec;
     }
 
     /**
-     * @param processedKBPerSec
-     *            the processedKBPerSec to set
+     * @param processedKBPerSec the processedKBPerSec to set
      */
     public void setProcessedKBPerSec(long processedKBPerSec) {
         this.processedKBPerSec = processedKBPerSec;
     }
 
     /**
-     * @param currentProcessedDocsPerSec
-     *            the currentProcessedDocsPerSec to set
+     * @param currentProcessedDocsPerSec the currentProcessedDocsPerSec to set
      */
     public void setCurrentProcessedDocsPerSec(double currentProcessedDocsPerSec) {
         this.currentProcessedDocsPerSec = currentProcessedDocsPerSec;
     }
 
     /**
-     * @param processedDocsPerSec
-     *            the processedDocsPerSec to set
+     * @param processedDocsPerSec the processedDocsPerSec to set
      */
     public void setProcessedDocsPerSec(double processedDocsPerSec) {
         this.processedDocsPerSec = processedDocsPerSec;
     }
 
     /**
-     * @param activeToeCount
-     *            the activeToeCount to set
+     * @param activeToeCount the activeToeCount to set
      */
     public void setActiveToeCount(int activeToeCount) {
         this.activeToeCount = activeToeCount;
     }
 
     /**
-     * @param alertsCount
-     *            the alertsCount to set
+     * @param alertsCount the alertsCount to set
      */
     public void setAlertsCount(long alertsCount) {
         this.alertsCount = alertsCount;
     }
 
     /**
-     * @param status
-     *            the status to set
+     * @param status the status to set
      */
     public void setStatus(CrawlStatus status) {
         this.status = status;
     }
 
     /**
-     * @param timestamp
-     *            the timestamp to set
+     * @param timestamp the timestamp to set
      */
     public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
     }
 
     /**
-     * @param retiredQueuesCount
-     *            the retiredQueuesCount to set
+     * @param retiredQueuesCount the retiredQueuesCount to set
      */
     public void setRetiredQueuesCount(long retiredQueuesCount) {
         this.retiredQueuesCount = retiredQueuesCount;

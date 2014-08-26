@@ -45,7 +45,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 /**
  * Unit test for Bitarchive API The CTOR method is tested
  */
-@SuppressWarnings({ "unused" })
+@SuppressWarnings({"unused"})
 public class BitarchiveTesterCTOR {
 
     private static File PATH_TO_TEST = new File("tests/dk/netarkivet/archive/bitarchive/data/ctor");
@@ -98,8 +98,7 @@ public class BitarchiveTesterCTOR {
     }
 
     /**
-     * Create bitarchive with access denied to location of admin data verify
-     * that exceptions are thrown
+     * Create bitarchive with access denied to location of admin data verify that exceptions are thrown
      */
     @Test
     public void testAccessDenied() {

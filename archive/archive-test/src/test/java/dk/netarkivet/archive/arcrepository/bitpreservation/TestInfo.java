@@ -52,8 +52,8 @@ public class TestInfo {
     public static final File CHECKSUM_ARCHIVE_FILE = new File(CHECKSUM_ARCHIVE_DIR, "checksum_THREE.md5");
 
     /** The files known to be present in the bitarchive dirs. */
-    public static final String[] REFERENCE_FILES = new String[] { "integrity1.ARC", "integrity2.ARC",
-            "integrity11.ARC", "integrity12.ARC" };
+    public static final String[] REFERENCE_FILES = new String[] {"integrity1.ARC", "integrity2.ARC", "integrity11.ARC",
+            "integrity12.ARC"};
 
     /** The name of one replica. */
     public static final String REPLICA_ID_ONE = "ONE";
@@ -76,13 +76,11 @@ public class TestInfo {
     public static final String FILE_NOT_IN_ADMIN_DATA = "does.not.exist";
 
     /**
-     * The directory containing the database for
-     * DatabaseBasedActiveBitPreservationTester
+     * The directory containing the database for DatabaseBasedActiveBitPreservationTester
      */
     public static final File DATABASE_DIR = new File(WORKING_DIR, "bitpreservationdb");
     /**
-     * The complete database URL for the
-     * DatabaseBasedActiveBitPreservationTester.
+     * The complete database URL for the DatabaseBasedActiveBitPreservationTester.
      */
     public static final String DATABASE_URL = "jdbc:derby:" + DATABASE_DIR.getPath();
 

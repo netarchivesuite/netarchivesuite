@@ -43,9 +43,8 @@ public class StopReasonTester {
     /**
      * Tests the translation from numbers to stop reasons.
      *
-     * DO NOT CHANGE THESE NUMBERS! StopReason is serialised to database using
-     * these numbers, and they are never expected to change. That would kill an
-     * upgrade with an existing database!
+     * DO NOT CHANGE THESE NUMBERS! StopReason is serialised to database using these numbers, and they are never
+     * expected to change. That would kill an upgrade with an existing database!
      */
     @Test
     public void testGetStopReason() {
@@ -94,8 +93,7 @@ public class StopReasonTester {
     }
 
     /**
-     * Test, that the localized String for a given StopReason is correct. We
-     * only test with english Locale.
+     * Test, that the localized String for a given StopReason is correct. We only test with english Locale.
      */
     @Test
     public void testGetLocalizedString() {

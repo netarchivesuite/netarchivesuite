@@ -47,8 +47,7 @@ public abstract class BitarchiveTestCase {
     /**
      * Make a new BitarchiveTestCase using the given directory for originals.
      *
-     * @param s
-     *            Name of the test.
+     * @param s Name of the test.
      */
 
     protected abstract File getOriginalsDir();

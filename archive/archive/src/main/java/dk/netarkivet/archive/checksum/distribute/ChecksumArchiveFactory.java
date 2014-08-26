@@ -29,8 +29,7 @@ import dk.netarkivet.common.utils.SettingsFactory;
 public class ChecksumArchiveFactory extends SettingsFactory<ChecksumArchive> {
 
     /**
-     * Method for retrieving the current ChecksumArchive instance defined in the
-     * settings.
+     * Method for retrieving the current ChecksumArchive instance defined in the settings.
      * 
      * @return The ChecksumArchive defined in the settings.
      */

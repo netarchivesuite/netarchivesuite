@@ -46,12 +46,11 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.harvester.HarvesterSettings;
 
 /**
- * Wrapper for an URIResolver, which retrieves raw data on given specific URLs,
- * and forwards all others to the wrapped handler. This allows you to get
- * metadata, individual files, and individual records.
+ * Wrapper for an URIResolver, which retrieves raw data on given specific URLs, and forwards all others to the wrapped
+ * handler. This allows you to get metadata, individual files, and individual records.
  *
  */
-@SuppressWarnings({ "serial", "unused" })
+@SuppressWarnings({"serial", "unused"})
 public class GetDataResolver extends CommandResolver {
     /** Logger for this class. */
     private Log log = LogFactory.getLog(getClass().getName());
@@ -62,8 +61,7 @@ public class GetDataResolver extends CommandResolver {
     /** Command for getting a single file from the bitarchive. */
     public static final String GET_FILE_COMMAND = "/getFile";
     /**
-     * Command for getting a specific record (file+offset) from an ARC file in
-     * the bitarchive.
+     * Command for getting a specific record (file+offset) from an ARC file in the bitarchive.
      */
     public static final String GET_RECORD_COMMAND = "/getRecord";
     /** Command for getting all metadata for a single job. */
@@ -83,15 +81,12 @@ public class GetDataResolver extends CommandResolver {
     private static final int FAILED_RESPONSE_CODE = 500;
 
     /**
-     * Make a new GetDataResolver, which calls commands on the arcrepository,
-     * and forwards all other requests to the given URIResolver.
+     * Make a new GetDataResolver, which calls commands on the arcrepository, and forwards all other requests to the
+     * given URIResolver.
      *
-     * @param ur
-     *            The URIResolver to handle all other uris.
-     * @param client
-     *            the arcrepository client
-     * @throws ArgumentNotValid
-     *             if either argument is null.
+     * @param ur The URIResolver to handle all other uris.
+     * @param client the arcrepository client
+     * @throws ArgumentNotValid if either argument is null.
      */
     public GetDataResolver(URIResolver ur, ViewerArcRepositoryClient client) {
         super(ur);
@@ -100,20 +95,15 @@ public class GetDataResolver extends CommandResolver {
     }
 
     /**
-     * Handles parsing of the URL and delegating to relevant methods for known
-     * commands. Commands are: getFile - params: fileName - effect: get the full
-     * file specified by the parameter from the bitarchive. getRecord - params:
-     * fileName,offset - effect: get a single ARC record from the bitarchive.
-     * getMetadata - params: jobID - effect: get all metadata for a single job
-     * from the bitarchive.
+     * Handles parsing of the URL and delegating to relevant methods for known commands. Commands are: getFile - params:
+     * fileName - effect: get the full file specified by the parameter from the bitarchive. getRecord - params:
+     * fileName,offset - effect: get a single ARC record from the bitarchive. getMetadata - params: jobID - effect: get
+     * all metadata for a single job from the bitarchive.
      *
-     * @param request
-     *            The request to check
-     * @param response
-     *            The response to give command results to if it is a command
+     * @param request The request to check
+     * @param response The response to give command results to if it is a command
      * @return Whether this was a command URL
-     * @throws IOFailure
-     *             in any trouble.
+     * @throws IOFailure in any trouble.
      */
     protected boolean executeCommand(Request request, Response response) {
         // If the url is for this host (potential command)
@@ -138,16 +128,11 @@ public class GetDataResolver extends CommandResolver {
     }
 
     /**
-     * Get all metadata for a given job id, and write it to response. Multiple
-     * metadata files will be concatenated.
+     * Get all metadata for a given job id, and write it to response. Multiple metadata files will be concatenated.
      * 
-     * @param request
-     *            A get metadata request; a parameter jobID is expected to be
-     *            set.
-     * @param response
-     *            Metadata will be written to this response.
-     * @throws IOFailure
-     *             in any trouble.
+     * @param request A get metadata request; a parameter jobID is expected to be set.
+     * @param response Metadata will be written to this response.
+     * @throws IOFailure in any trouble.
      */
     private void doGetMetadata(Request request, Response response) {
         String idString = getParameter(request, JOB_ID_PARAMETER);
@@ -179,17 +164,12 @@ public class GetDataResolver extends CommandResolver {
     }
 
     /**
-     * Get a record from an ARC file, and write it to response. If the record
-     * has size greater than settings.viewerproxy.maxSizeInBrowser then a header
-     * is added to turn the response into a file-download.
+     * Get a record from an ARC file, and write it to response. If the record has size greater than
+     * settings.viewerproxy.maxSizeInBrowser then a header is added to turn the response into a file-download.
      * 
-     * @param request
-     *            A get metadata request; parameters arcFile and arcOffset are
-     *            expected to be set.
-     * @param response
-     *            Metadata will be written to this response.
-     * @throws IOFailure
-     *             in any trouble.
+     * @param request A get metadata request; parameters arcFile and arcOffset are expected to be set.
+     * @param response Metadata will be written to this response.
+     * @throws IOFailure in any trouble.
      */
     private void doGetRecord(Request request, Response response) {
         String fileName = getParameter(request, FILE_NAME_PARAMETER);
@@ -224,13 +204,9 @@ public class GetDataResolver extends CommandResolver {
     /**
      * Get a file from bitarchive, and write it to response.
      * 
-     * @param request
-     *            A get metadata request; parameter arcFile is expected to be
-     *            set.
-     * @param response
-     *            File will be written to this response.
-     * @throws IOFailure
-     *             in any trouble.
+     * @param request A get metadata request; parameter arcFile is expected to be set.
+     * @param response File will be written to this response.
+     * @throws IOFailure in any trouble.
      */
     private void doGetFile(Request request, Response response) {
         String fileName = getParameter(request, FILE_NAME_PARAMETER);
@@ -260,13 +236,10 @@ public class GetDataResolver extends CommandResolver {
     /**
      * Get a single parameter out of a parametermap, checking for errors.
      *
-     * @param request
-     *            The request with the parameters
-     * @param name
-     *            The name of the parameter
+     * @param request The request with the parameters
+     * @param name The name of the parameter
      * @return The single value found
-     * @throws IOFailure
-     *             if an error was encountered.
+     * @throws IOFailure if an error was encountered.
      */
     private String getParameter(Request request, String name) {
         String[] values = request.getParameterMap().get(name);
@@ -295,10 +268,8 @@ public class GetDataResolver extends CommandResolver {
         /**
          * Simply write file to output.
          *
-         * @param file
-         *            File to write to output.
-         * @param os
-         *            Outputstream to write to.
+         * @param file File to write to output.
+         * @param os Outputstream to write to.
          * @return true.
          */
         public boolean processFile(File file, OutputStream os) {

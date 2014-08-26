@@ -25,8 +25,7 @@ package dk.netarkivet.harvester.datamodel;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
- * Sparse version for DomainConfiguration class. To be used for GUI purposes
- * only. Immutable.
+ * Sparse version for DomainConfiguration class. To be used for GUI purposes only. Immutable.
  * 
  * @see dk.netarkivet.harvester.datamodel.DomainConfiguration
  *
@@ -40,12 +39,9 @@ public class SparseDomainConfiguration {
     /**
      * Create a sparse configuration.
      *
-     * @param domainName
-     *            Name of domain this is a configuration for.
-     * @param configurationName
-     *            Name of configuration.
-     * @throws ArgumentNotValid
-     *             if either argument is null or empty.
+     * @param domainName Name of domain this is a configuration for.
+     * @param configurationName Name of configuration.
+     * @throws ArgumentNotValid if either argument is null or empty.
      */
     public SparseDomainConfiguration(String domainName, String configurationName) {
         ArgumentNotValid.checkNotNullOrEmpty(domainName, "domainName");
@@ -57,8 +53,7 @@ public class SparseDomainConfiguration {
     /**
      * Alternate constructor taking a DomainConfiguration as input.
      * 
-     * @param dc
-     *            a DomainConfiguration
+     * @param dc a DomainConfiguration
      */
     public SparseDomainConfiguration(DomainConfiguration dc) {
         ArgumentNotValid.checkNotNull(dc, "DomainConfiguration dc");

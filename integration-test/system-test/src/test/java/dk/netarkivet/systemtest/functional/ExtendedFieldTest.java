@@ -49,7 +49,7 @@ public class ExtendedFieldTest extends SeleniumTest {
         extendedIDForTest = method.getName() + "-" + dateFomatter.format(startTime);
     }
 
-    @Test(groups = { "guitest", "functest" })
+    @Test(groups = {"guitest", "functest"})
     public void extendedDomainStringFieldTest() throws Exception {
         addDescription("Tests that String type extended fields works correctly on domains.");
         extendedDomainStringFieldTest(driver, extendedIDForTest);

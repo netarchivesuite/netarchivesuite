@@ -56,11 +56,10 @@ public class ExportFrontierReportCsvQuery {
         }
 
         /**
-         * Extracts the field's value from a servlet request. If the request
-         * does not define the paraeter's value, it is set to the default value.
+         * Extracts the field's value from a servlet request. If the request does not define the paraeter's value, it is
+         * set to the default value.
          *
-         * @param req
-         *            a servlet request
+         * @param req a servlet request
          * @return the field's value
          */
         public String getValue(ServletRequest req) {
@@ -90,10 +89,8 @@ public class ExportFrontierReportCsvQuery {
     /**
      * Performs the export.
      * 
-     * @param context
-     *            the page context
-     * @param i18n
-     *            the internationalization package to use.
+     * @param context the page context
+     * @param i18n the internationalization package to use.
      */
     public void doExport(PageContext context, I18n i18n) {
 

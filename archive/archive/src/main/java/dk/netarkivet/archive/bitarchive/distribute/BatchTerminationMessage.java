@@ -30,7 +30,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 /**
  * Message for telling the bitarchives to terminate a specific batchjob.
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class BatchTerminationMessage extends NetarkivetMessage {
 
     /** The ID of the batchjob to terminate. */
@@ -39,12 +39,9 @@ public class BatchTerminationMessage extends NetarkivetMessage {
     /**
      * Constructor.
      * 
-     * @param to
-     *            Where the message should be sent.
-     * @param batchID
-     *            The ID of the batchjob to terminate.
-     * @throws ArgumentNotValid
-     *             If the batchID is either null or the empty string.
+     * @param to Where the message should be sent.
+     * @param batchID The ID of the batchjob to terminate.
+     * @throws ArgumentNotValid If the batchID is either null or the empty string.
      */
     public BatchTerminationMessage(ChannelID to, String batchID) throws ArgumentNotValid {
         this(to, Channels.getError(), batchID);
@@ -53,14 +50,10 @@ public class BatchTerminationMessage extends NetarkivetMessage {
     /**
      * Constructor.
      * 
-     * @param to
-     *            Where the message should be sent.
-     * @param replyTo
-     *            Where the message is sent from.
-     * @param batchID
-     *            The ID of the batchjob to terminate.
-     * @throws ArgumentNotValid
-     *             If the batchID is either null or the empty string.
+     * @param to Where the message should be sent.
+     * @param replyTo Where the message is sent from.
+     * @param batchID The ID of the batchjob to terminate.
+     * @throws ArgumentNotValid If the batchID is either null or the empty string.
      */
     public BatchTerminationMessage(ChannelID to, ChannelID replyTo, String batchID) throws ArgumentNotValid {
         super(to, replyTo);

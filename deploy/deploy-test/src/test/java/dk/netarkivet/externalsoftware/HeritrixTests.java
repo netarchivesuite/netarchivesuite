@@ -91,18 +91,16 @@ import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
 /**
- * Tests various aspects of launching Heritrix and Heritrix' capabilities. Note
- * that some of these tests require much heap space, so JVM parameter -Xmx512M
- * may be required.
+ * Tests various aspects of launching Heritrix and Heritrix' capabilities. Note that some of these tests require much
+ * heap space, so JVM parameter -Xmx512M may be required.
  *
  *
- * Note: after upgrading to Heritrix 1.14.3, the unittest testBug820() that
- * tests if it is still necessary to use FixedUURI does not work any more.
- * //import org.apache.commons.httpclient.URIException; //import
- * org.archive.net.UURI; //import dk.netarkivet.common.utils.FixedUURI;
+ * Note: after upgrading to Heritrix 1.14.3, the unittest testBug820() that tests if it is still necessary to use
+ * FixedUURI does not work any more. //import org.apache.commons.httpclient.URIException; //import org.archive.net.UURI;
+ * //import dk.netarkivet.common.utils.FixedUURI;
  *
  */
-@SuppressWarnings({ "serial", "unchecked" })
+@SuppressWarnings({"serial", "unchecked"})
 public class HeritrixTests extends TestCase {
 
     protected final static String WRITE_PROCESSORS_XPATH = "/crawl-order/controller/map[@name='write-processors']";
@@ -167,20 +165,14 @@ public class HeritrixTests extends TestCase {
     }
 
     /**
-     * Centralized place for tests to construct a HeritrixLauncher. - Constructs
-     * the given crawlDir. - Copies the given order.xml to the proper place in
-     * the given crawlDir. - Copies the given seeds.txt to the proper place in
-     * the given crawlDir. - Copies the given indexDir to the proper place in
-     * the given crawlDir (index) - Constructs a HeritrixLauncher and returns it
-     * Uses the values of JMX_PASSWORD_FILE and JMX_ACCESS_FILE read in
-     * settings.
+     * Centralized place for tests to construct a HeritrixLauncher. - Constructs the given crawlDir. - Copies the given
+     * order.xml to the proper place in the given crawlDir. - Copies the given seeds.txt to the proper place in the
+     * given crawlDir. - Copies the given indexDir to the proper place in the given crawlDir (index) - Constructs a
+     * HeritrixLauncher and returns it Uses the values of JMX_PASSWORD_FILE and JMX_ACCESS_FILE read in settings.
      * 
-     * @param origOrderXml
-     *            the given order.xml
-     * @param origSeedsFile
-     *            the given seeds file
-     * @param origIndexDir
-     *            the given index directory
+     * @param origOrderXml the given order.xml
+     * @param origSeedsFile the given seeds file
+     * @param origIndexDir the given index directory
      * @return a HeritrixLauncher object
      *
      * @throws IOException
@@ -195,23 +187,16 @@ public class HeritrixTests extends TestCase {
     }
 
     /**
-     * * Centralized place for tests to construct a HeritrixLauncher. -
-     * Constructs the given crawlDir. - Copies the given order.xml to the proper
-     * place in the given crawlDir. - Copies the given seeds.txt to the proper
-     * place in the given crawlDir. - Copies the given indexDir to the proper
-     * place in the given crawlDir (index) - Constructs a HeritrixLauncher and
-     * returns it
+     * * Centralized place for tests to construct a HeritrixLauncher. - Constructs the given crawlDir. - Copies the
+     * given order.xml to the proper place in the given crawlDir. - Copies the given seeds.txt to the proper place in
+     * the given crawlDir. - Copies the given indexDir to the proper place in the given crawlDir (index) - Constructs a
+     * HeritrixLauncher and returns it
      * 
-     * @param origOrderXml
-     *            the given order.xml
-     * @param origSeedsFile
-     *            the given seeds file
-     * @param origIndexDir
-     *            the given index directory
-     * @param jmxPasswordFile
-     *            The jmx password file to be used by Heritrix
-     * @param jmxAccessFile
-     *            The jmx access file to be used by Heritrix
+     * @param origOrderXml the given order.xml
+     * @param origSeedsFile the given seeds file
+     * @param origIndexDir the given index directory
+     * @param jmxPasswordFile The jmx password file to be used by Heritrix
+     * @param jmxAccessFile The jmx access file to be used by Heritrix
      * @return
      */
     private HeritrixLauncher getHeritrixLauncher(File origOrderXml, File origSeedsFile, File origIndexDir,
@@ -257,12 +242,9 @@ public class HeritrixTests extends TestCase {
     /**
      * Run heritrix with the given order, seeds file and index.
      *
-     * @param order
-     *            An order.xml file as per Heritrix specs
-     * @param seeds
-     *            A file with seeds, one per line
-     * @param index
-     *            the lucene-index
+     * @param order An order.xml file as per Heritrix specs
+     * @param seeds A file with seeds, one per line
+     * @param index the lucene-index
      * @throws IOException
      */
     protected void runHeritrix(File order, File seeds, File index) throws IOException {
@@ -272,9 +254,8 @@ public class HeritrixTests extends TestCase {
     }
 
     /**
-     * Check that IOFailure is thrown by the JMXHeritrixController if the
-     * JMXPasswordFile does not exist / is hidden / unreadable / impossible to
-     * open for other reasons.
+     * Check that IOFailure is thrown by the JMXHeritrixController if the JMXPasswordFile does not exist / is hidden /
+     * unreadable / impossible to open for other reasons.
      *
      */
     public void testIOFailureThrown() throws IOException {
@@ -317,15 +298,11 @@ public class HeritrixTests extends TestCase {
     }
 
     /**
-     * Check that all urls in the given array are listed in the crawl log. Calls
-     * fail() at the first url that is not found or if the crawl log is not
-     * found.
+     * Check that all urls in the given array are listed in the crawl log. Calls fail() at the first url that is not
+     * found or if the crawl log is not found.
      *
-     * @param urls
-     *            An array of url strings
-     * @throws IOException
-     *             If TestInfo.HERITRIX_CRAWL_LOG_FILE is not found or is
-     *             unreadable
+     * @param urls An array of url strings
+     * @throws IOException If TestInfo.HERITRIX_CRAWL_LOG_FILE is not found or is unreadable
      */
     protected void assertAllUrlsInCrawlLog(String[] urls) throws IOException {
         String crawlLog = "";
@@ -342,14 +319,11 @@ public class HeritrixTests extends TestCase {
     }
 
     /**
-     * Check that no urls in the given array are listed in the crawl log. Calls
-     * fail() at the first url that is found or if the crawl log is not found.
+     * Check that no urls in the given array are listed in the crawl log. Calls fail() at the first url that is found or
+     * if the crawl log is not found.
      *
-     * @param urls
-     *            An array of url strings
-     * @throws IOException
-     *             If TestInfo.HERITRIX_CRAWL_LOG_FILE is not found or is
-     *             unreadable
+     * @param urls An array of url strings
+     * @throws IOException If TestInfo.HERITRIX_CRAWL_LOG_FILE is not found or is unreadable
      */
     protected void assertNoUrlsInCrawlLog(String[] urls) throws IOException {
         String crawlLog = "";
@@ -384,8 +358,7 @@ public class HeritrixTests extends TestCase {
     }
 
     /**
-     * Test that the launcher actually launches Heritrix and generates at least
-     * one arcfile.
+     * Test that the launcher actually launches Heritrix and generates at least one arcfile.
      * 
      * @throws IOException
      */
@@ -399,7 +372,7 @@ public class HeritrixTests extends TestCase {
         progressLog = FileUtils.readFile(TestInfo.HERITRIX_PROGRESS_LOG_FILE);
 
         // test that crawl.log has registered a known URL
-        assertAllUrlsInCrawlLog(new String[] { TestInfo.SEARCH_FOR_THIS_URL });
+        assertAllUrlsInCrawlLog(new String[] {TestInfo.SEARCH_FOR_THIS_URL});
 
         // test that progress-statistics.log has reported CRAWL ENDED
         StringAsserts.assertStringContains("progress-statistics.log should have reported that the crawl is ended",
@@ -415,10 +388,9 @@ public class HeritrixTests extends TestCase {
     }
 
     /**
-     * Test that the launcher actually launches Heritrix and fetches at least 50
-     * objects from different hosts on tv2.dk (sporten.tv2.dk,
-     * nyheder.tv2.dk.....) and netarkivet.dk by parsing the hosts-report.txt
-     * This number includes the dns-lookups for each host in these domains.
+     * Test that the launcher actually launches Heritrix and fetches at least 50 objects from different hosts on tv2.dk
+     * (sporten.tv2.dk, nyheder.tv2.dk.....) and netarkivet.dk by parsing the hosts-report.txt This number includes the
+     * dns-lookups for each host in these domains.
      * 
      * @throws IOException
      */
@@ -444,8 +416,7 @@ public class HeritrixTests extends TestCase {
     }
 
     /**
-     * Test that the main method works and generates output from known working
-     * crawl.
+     * Test that the main method works and generates output from known working crawl.
      * 
      * @throws IOException
      */
@@ -476,8 +447,7 @@ public class HeritrixTests extends TestCase {
     }
 
     /**
-     * Test that Heritrix can use a URL seed list to define a harvest. This
-     * tests requirement #1.
+     * Test that Heritrix can use a URL seed list to define a harvest. This tests requirement #1.
      * 
      * @throws IOException
      */
@@ -487,21 +457,20 @@ public class HeritrixTests extends TestCase {
         LuceneUtils.makeDummyIndex(tempDir);
         runHeritrix(TestInfo.ORDER_FILE, TestInfo.SEEDS_FILE2, tempDir);
 
-        assertAllUrlsInCrawlLog(new String[] { "http://netarkivet.dk/kildetekster/JavaArcUtils-0.3.tar.gz",
+        assertAllUrlsInCrawlLog(new String[] {"http://netarkivet.dk/kildetekster/JavaArcUtils-0.3.tar.gz",
                 "http://netarkivet.dk/website/press/Bryllup-20040706.pdf",
-                "http://netarkivet.dk/proj/pilot_juli2001.pdf" });
+                "http://netarkivet.dk/proj/pilot_juli2001.pdf"});
 
         // Check that the unintended ones didn't get caught:
         // URLs that have links to the specified files.
-        assertNoUrlsInCrawlLog(new String[] { "http://netarkivet.dk/website/sources/index-da.htm",
+        assertNoUrlsInCrawlLog(new String[] {"http://netarkivet.dk/website/sources/index-da.htm",
                 "http://netarkivet.dk/website/sources/index-en.htm", "http://netarkivet.dk/website/press/index-da.htm",
                 "http://netarkivet.dk/website/press/index-en.htm", "http://netarkivet.dk/pilot-index-da.htm",
-                "http://netarkivet.dk/pilot-index-en.htm" });
+                "http://netarkivet.dk/pilot-index-en.htm"});
     }
 
     /**
-     * Test that Heritrix can limit the number of objects harvested pr. domain.
-     * This tests requirement #7.
+     * Test that Heritrix can limit the number of objects harvested pr. domain. This tests requirement #7.
      * 
      * @throws IOException
      */
@@ -529,8 +498,7 @@ public class HeritrixTests extends TestCase {
     }
 
     /**
-     * Test that Heritrix can limit the number of objects pr. harvest This tests
-     * requirement #7.
+     * Test that Heritrix can limit the number of objects pr. harvest This tests requirement #7.
      * 
      * @throws IOException
      */
@@ -562,8 +530,7 @@ public class HeritrixTests extends TestCase {
     }
 
     /**
-     * Test that Heritrix can handle cookies - setting and changing them. This
-     * tests requirement #28.
+     * Test that Heritrix can handle cookies - setting and changing them. This tests requirement #28.
      * 
      * @throws IOException
      */
@@ -613,9 +580,8 @@ public class HeritrixTests extends TestCase {
     }
 
     /**
-     * Test that Heritrix can use a regular expression to limit a harvest Tests
-     * with regular expression .*(ArcUtils\.[0-9]\.[0-1]|-da.htm).* which takes
-     * the danish index pages and two of three ArcUtil sources.
+     * Test that Heritrix can use a regular expression to limit a harvest Tests with regular expression
+     * .*(ArcUtils\.[0-9]\.[0-1]|-da.htm).* which takes the danish index pages and two of three ArcUtil sources.
      * <p/>
      * This tests requirement #29.
      * 
@@ -628,20 +594,20 @@ public class HeritrixTests extends TestCase {
         runHeritrix(TestInfo.RESTRICTED_URL_ORDER_FILE, TestInfo.SEEDS_FILE, tempDir);
 
         // Check that we got a bunch of the expected ones
-        assertAllUrlsInCrawlLog(new String[] { "http://netarkivet.dk/index-da.php",
+        assertAllUrlsInCrawlLog(new String[] {"http://netarkivet.dk/index-da.php",
                 "http://netarkivet.dk/kildetekster/index-da.php",
-                "http://netarkivet.dk/kildetekster/ProxyViewer-0.1.tar.gz", });
+                "http://netarkivet.dk/kildetekster/ProxyViewer-0.1.tar.gz",});
         // Check that the unintended ones didn't get caught:
         // English index files, 0.2 tarball, gifs, javascript
-        assertNoUrlsInCrawlLog(new String[] { "http://netarkivet.dk/index-en.php",
+        assertNoUrlsInCrawlLog(new String[] {"http://netarkivet.dk/index-en.php",
                 "http://netarkivet.dk/kildetekster/index-en.php",
                 "http://netarkivet.dk/kildetekster/JavaArcUtils-0.3.tar.gz",
-                "http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif" });
+                "http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif"});
     }
 
     /**
-     * Test that the Maxbytes feature is handled correctly by the the current
-     * harvester. Sets maxbytes limit to 500000 bytes.
+     * Test that the Maxbytes feature is handled correctly by the the current harvester. Sets maxbytes limit to 500000
+     * bytes.
      * 
      * @throws DocumentException
      * @throws IOException
@@ -688,8 +654,7 @@ public class HeritrixTests extends TestCase {
     }
 
     /**
-     * Tests, whether org.archive.io.RecoverableIOException from the ARCReader
-     * can be serialized (bug 755)
+     * Tests, whether org.archive.io.RecoverableIOException from the ARCReader can be serialized (bug 755)
      * 
      * @throws IOException
      */
@@ -748,13 +713,10 @@ public class HeritrixTests extends TestCase {
     }
 
     /**
-     * Test that our default order.xml can be validated against the latest
-     * heritrix_settings.xsd. The latest version:
-     * http://cvs.sourceforge.net/viewcvs
-     * .py/archive-crawler/ArchiveOpenCrawler/src/webapps/admin/ This file is
-     * also found in the src distributions in the src/webapps/admin/ directory.
-     * Note: This heritrix_settings.xsd needs now to be in the same directory as
-     * the order-file.
+     * Test that our default order.xml can be validated against the latest heritrix_settings.xsd. The latest version:
+     * http://cvs.sourceforge.net/viewcvs .py/archive-crawler/ArchiveOpenCrawler/src/webapps/admin/ This file is also
+     * found in the src distributions in the src/webapps/admin/ directory. Note: This heritrix_settings.xsd needs now to
+     * be in the same directory as the order-file.
      */
     public void testIfDefaultOrderXmlIsStillValid() {
         File order = TestInfo.DEFAULT_ORDERXML_FILE;
@@ -762,9 +724,8 @@ public class HeritrixTests extends TestCase {
     }
 
     /**
-     * Verify, that FixedUURI solves bug 820, and that the class
-     * org.archive.net.UURI still has the problem. When bug 820 is resolved in
-     * the Heritrix class, this test will fail, and FixedUURI can be removed.
+     * Verify, that FixedUURI solves bug 820, and that the class org.archive.net.UURI still has the problem. When bug
+     * 820 is resolved in the Heritrix class, this test will fail, and FixedUURI can be removed.
      * 
      * @throws URIException
      */
@@ -800,8 +761,7 @@ public class HeritrixTests extends TestCase {
         /** XPaths needed to insert/setup the DeDuplicator. */
 
         /**
-         * sample DeDuplicator block taken from faulty releasetest trial
-         * order.xml.
+         * sample DeDuplicator block taken from faulty releasetest trial order.xml.
          */
         // <map name="write-processors">
         // <newObject name="DeDuplicator"
@@ -869,8 +829,7 @@ public class HeritrixTests extends TestCase {
     }
 
     /**
-     * Test we can harvest from FTP-sites using the FTP processor. Downloads max
-     * 25 files from klid.dk using the seed:
+     * Test we can harvest from FTP-sites using the FTP processor. Downloads max 25 files from klid.dk using the seed:
      * ftp://ftp.klid.dk/OpenOffice/haandbog
      * 
      * @throws Exception
@@ -965,11 +924,9 @@ public class HeritrixTests extends TestCase {
     }
 
     /**
-     * Check, if class exists, and can be loaded. TODO try to instantiate the
-     * class as well.
+     * Check, if class exists, and can be loaded. TODO try to instantiate the class as well.
      * 
-     * @param className
-     *            a name for a class
+     * @param className a name for a class
      * @return true, if class exists, and can be loaded.XS
      */
     private boolean validClass(String className) {
@@ -1035,9 +992,8 @@ public class HeritrixTests extends TestCase {
     }
 
     /*
-     * Utility method to facilitate and update an XML node given a set of legal
-     * values, and a default value. It logs a warning, if the given settingValue
-     * is illegal.
+     * Utility method to facilitate and update an XML node given a set of legal values, and a default value. It logs a
+     * warning, if the given settingValue is illegal.
      */
     private void checkAndSetOrderXMLNode(Document doc, String xpath, String settingName, String settingValue,
             String[] legalValues, String defaultValue) {
@@ -1058,12 +1014,9 @@ public class HeritrixTests extends TestCase {
     /**
      * Set a XmlNode defined by the given XPath to the given value.
      * 
-     * @param doc
-     *            the Document, which is being modified
-     * @param xpath
-     *            the given XPath
-     * @param value
-     *            the given value
+     * @param doc the Document, which is being modified
+     * @param xpath the given XPath
+     * @param value the given value
      */
     private void setOrderXMLNode(Document doc, String xpath, String value) {
         Node xpath_node = doc.selectSingleNode(xpath);

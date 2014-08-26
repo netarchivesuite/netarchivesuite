@@ -29,8 +29,7 @@ import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.DBUtils;
 
 /**
- * Enum class defining the tables of the Harvester database and the required
- * versions of the individual tables.
+ * Enum class defining the tables of the Harvester database and the required versions of the individual tables.
  */
 public enum HarvesterDatabaseTables {
 
@@ -129,8 +128,7 @@ public enum HarvesterDatabaseTables {
         }
     },
     /**
-     * The table containing information about config passwords. Currently not
-     * used.
+     * The table containing information about config passwords. Currently not used.
      */
     CONFIGPASSWORDS {
         static final String NAME = "config_passwords";
@@ -428,12 +426,9 @@ public enum HarvesterDatabaseTables {
      *
      * NB: the provided connection is not closed.
      * 
-     * @param connection
-     *            connection to the database.
-     * @param table
-     *            The table to check up against required version
-     * @throws IllegalState
-     *             if the version isn't as required.
+     * @param connection connection to the database.
+     * @param table The table to check up against required version
+     * @throws IllegalState if the version isn't as required.
      */
     public static void checkVersion(Connection connection, HarvesterDatabaseTables table) {
         ArgumentNotValid.checkNotNull(connection, "Connection connection");

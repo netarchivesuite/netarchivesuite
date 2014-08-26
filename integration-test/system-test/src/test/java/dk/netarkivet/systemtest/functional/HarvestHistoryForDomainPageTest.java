@@ -47,7 +47,7 @@ public class HarvestHistoryForDomainPageTest extends SeleniumTest {
     public void setup(Method method) {
     }
 
-    @Test(groups = { "guitest", "functest", "slow" })
+    @Test(groups = {"guitest", "functest", "slow"})
     public void sortableHistoryTableTest() throws Exception {
         addDescription("Tests that the jobs listed on the 'Harvest History' page for a domain are"
                 + "sortable by clicking on the .");
@@ -145,7 +145,7 @@ public class HarvestHistoryForDomainPageTest extends SeleniumTest {
         assertColumnIsSorted(8, false);
     }
 
-    @Test(groups = { "guitest", "functest", "slow" })
+    @Test(groups = {"guitest", "functest", "slow"})
     public void historyTablePagingTest() throws Exception {
         addDescription("Testes that the paging functionality works correctly " + "for the harvest history");
         addStep("Ensure that at least harvests have finished for the default domain", "");
@@ -210,7 +210,7 @@ public class HarvestHistoryForDomainPageTest extends SeleniumTest {
         }
     }
 
-    @Test(groups = { "guitest", "functest", "slow" })
+    @Test(groups = {"guitest", "functest", "slow"})
     public void historySortedTablePagingTest() throws Exception {
         addDescription("Tests that sorting is maintained when paging through " + "the harvest history");
         addStep("Ensure that at least harvests have finished for the default domain", "");

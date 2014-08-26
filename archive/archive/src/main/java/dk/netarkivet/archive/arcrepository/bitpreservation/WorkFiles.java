@@ -40,29 +40,23 @@ import dk.netarkivet.common.utils.Settings;
  *
  * The following files are encapsulated:
  *
- * "unsorted.txt": Unsorted list of files in a bitarchive "sorted.txt": Sorted
- * list of files in a bitarchive
+ * "unsorted.txt": Unsorted list of files in a bitarchive "sorted.txt": Sorted list of files in a bitarchive
  *
- * "missingba.txt": Files that are missing in a bitarchive
- * "missingadmindata.txt"; Files that are missing from admin data
- * "wrongfiles.txt": Files with wrong checksum??? "referenceba.txt"; File list
- * from reference ba?
+ * "missingba.txt": Files that are missing in a bitarchive "missingadmindata.txt"; Files that are missing from admin
+ * data "wrongfiles.txt": Files with wrong checksum??? "referenceba.txt"; File list from reference ba?
  *
- * "wrongstates.txt"; Files that are in wrong state "insertinadmin.txt"; Files
- * to insert into admin data "deletefromadmin.txt"; Files to delete from admin
- * data "uploadtoba.txt"; Files to upload to the bitarchive "deletefromba.txt";
- * Files to delete from the bitarchive
+ * "wrongstates.txt"; Files that are in wrong state "insertinadmin.txt"; Files to insert into admin data
+ * "deletefromadmin.txt"; Files to delete from admin data "uploadtoba.txt"; Files to upload to the bitarchive
+ * "deletefromba.txt"; Files to delete from the bitarchive
  *
  */
 public enum WorkFiles {
     /**
-     * The MISSING_FILES_BA is the workfile for the list of missing files for a
-     * bitarchive.
+     * The MISSING_FILES_BA is the workfile for the list of missing files for a bitarchive.
      */
     MISSING_FILES_BA,
     /**
-     * The MISSING_FILES_ADMINDATA is the workfile for the list of missing files
-     * for the admin data.
+     * The MISSING_FILES_ADMINDATA is the workfile for the list of missing files for the admin data.
      */
     MISSING_FILES_ADMINDATA,
     /** WRONG_FILES. Files with wrong checksum??? . */
@@ -85,8 +79,7 @@ public enum WorkFiles {
     CHECKSUMS_ON_BA;
 
     /**
-     * Directory and filenames to be used by ActiveBitPreservation when checking
-     * for missing files in a bitarchive.
+     * Directory and filenames to be used by ActiveBitPreservation when checking for missing files in a bitarchive.
      */
     private static final String FILELIST_OUTPUT_DIR = "filelistOutput";
     /** missingFiles . */
@@ -122,14 +115,11 @@ public enum WorkFiles {
     private static final String WRONG_STATES_FILENAME = "wrongstates.txt";
 
     /**
-     * Get the name of the file (sans dir) that corresponds to a given type of
-     * workfile.
+     * Get the name of the file (sans dir) that corresponds to a given type of workfile.
      *
-     * @param fileType
-     *            the type of workfile.
+     * @param fileType the type of workfile.
      * @return A string with the filename (sans dir) of the corresponding file.
-     * @throws IllegalState
-     *             If it is an unsupported file type.
+     * @throws IllegalState If it is an unsupported file type.
      */
     private static String getFileName(WorkFiles fileType) throws IllegalState {
         // check the filetype
@@ -162,14 +152,10 @@ public enum WorkFiles {
     /**
      * Get the directory that files of a given type should go into.
      *
-     * @param rep
-     *            The replica that we're doing bitpreservation for.
-     * @param fileType
-     *            The type of file we will be using.
-     * @return A directory (created if necessary) under the bitpreservation dir
-     *         (see settings) for the file to go into.
-     * @throws IllegalState
-     *             If it is an unsupported file type.
+     * @param rep The replica that we're doing bitpreservation for.
+     * @param fileType The type of file we will be using.
+     * @return A directory (created if necessary) under the bitpreservation dir (see settings) for the file to go into.
+     * @throws IllegalState If it is an unsupported file type.
      */
     private static File getDir(Replica rep, WorkFiles fileType) throws IllegalState {
         // check the type
@@ -197,13 +183,10 @@ public enum WorkFiles {
     }
 
     /**
-     * Get the directory that file listings are to live in, creating it if
-     * necessary.
+     * Get the directory that file listings are to live in, creating it if necessary.
      * 
-     * @param dir
-     *            The directory that the file listings should live under. Note
-     *            that this is not directly derived from the name of the
-     *            replica, as it can also be used for reference file listings.
+     * @param dir The directory that the file listings should live under. Note that this is not directly derived from
+     *            the name of the replica, as it can also be used for reference file listings.
      * @return The directory to put file listings in under the given dir.
      */
     private static File getFilelistOutputDir(File dir) {
@@ -214,11 +197,9 @@ public enum WorkFiles {
     }
 
     /**
-     * Get the base dir for all files related to bitpreservation for a given
-     * bitarchive.
+     * Get the base dir for all files related to bitpreservation for a given bitarchive.
      *
-     * @param replica
-     *            The name of a bitarchive.
+     * @param replica The name of a bitarchive.
      * @return The directory to place bitpreservation for the archive under.
      */
     protected static File getPreservationDir(Replica replica) {
@@ -227,13 +208,10 @@ public enum WorkFiles {
     }
 
     /**
-     * Make a directory object relative to an replica, creating the directory if
-     * necessary.
+     * Make a directory object relative to an replica, creating the directory if necessary.
      *
-     * @param replica
-     *            The replica that we're doing bitpreservation for
-     * @param dirname
-     *            The name of the directory to create
+     * @param replica The replica that we're doing bitpreservation for
+     * @param dirname The name of the directory to create
      * @return An object representing the directory
      */
     private static File makeRelativeDir(Replica replica, String dirname) {
@@ -246,13 +224,10 @@ public enum WorkFiles {
     /**
      * Get a sorted file from an unsorted one, updating if necessary.
      *
-     * @param unsortedFile
-     *            An unsorted file
-     * @return A file that contains the same lines as unsortedFile, but sorted.
-     *         The file will be placed in the same directory as the input file,
-     *         but have the name Constants.SORTED_OUTPUT_FILE defines.
-     * @throws IOFailure
-     *             If the file does not exist.
+     * @param unsortedFile An unsorted file
+     * @return A file that contains the same lines as unsortedFile, but sorted. The file will be placed in the same
+     *         directory as the input file, but have the name Constants.SORTED_OUTPUT_FILE defines.
+     * @throws IOFailure If the file does not exist.
      */
     protected static File getSortedFile(File unsortedFile) throws IOFailure {
         unsortedFile = unsortedFile.getAbsoluteFile();
@@ -270,12 +245,9 @@ public enum WorkFiles {
     /**
      * Method for writing the list of files to a work file.
      * 
-     * @param replica
-     *            The replica for the working file.
-     * @param fileType
-     *            The type of working file.
-     * @param files
-     *            The list of filenames (?) to write to the working file.
+     * @param replica The replica for the working file.
+     * @param fileType The type of working file.
+     * @param files The list of filenames (?) to write to the working file.
      */
     public static void write(Replica replica, WorkFiles fileType, Set<String> files) {
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
@@ -285,13 +257,10 @@ public enum WorkFiles {
     }
 
     /**
-     * Method for retrieving a working file. Note: it is not tested, whether the
-     * file exists.
+     * Method for retrieving a working file. Note: it is not tested, whether the file exists.
      * 
-     * @param rep
-     *            The replica to whom the file corresponds.
-     * @param fileType
-     *            The type of working file.
+     * @param rep The replica to whom the file corresponds.
+     * @param fileType The type of working file.
      * @return The requested working file.
      */
     public static File getFile(Replica rep, WorkFiles fileType) {
@@ -301,15 +270,12 @@ public enum WorkFiles {
     }
 
     /**
-     * Method for retrieving the last modified date of a working file for a
-     * specific replica.
+     * Method for retrieving the last modified date of a working file for a specific replica.
      * 
      * FIXME this might throw odd exceptions if the file does not exist.
      * 
-     * @param rep
-     *            The replica for the working file.
-     * @param fileType
-     *            The type of working file.
+     * @param rep The replica for the working file.
+     * @param fileType The type of working file.
      * @return The last modified date for the working file.
      */
     public static Date getLastUpdate(Replica rep, WorkFiles fileType) {
@@ -321,10 +287,8 @@ public enum WorkFiles {
     /**
      * Method for retrieving the lines of a working file for a specific replica.
      * 
-     * @param replica
-     *            The replica of the working file.
-     * @param fileType
-     *            The type of workfile.
+     * @param replica The replica of the working file.
+     * @param fileType The type of workfile.
      * @return A list containing the lines of the file.
      */
     public static List<String> getLines(Replica replica, WorkFiles fileType) {

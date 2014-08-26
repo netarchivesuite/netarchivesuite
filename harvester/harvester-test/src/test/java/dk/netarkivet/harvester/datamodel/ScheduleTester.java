@@ -97,8 +97,7 @@ public class ScheduleTester extends DataModelTestCase {
     }
 
     /**
-     * Test the first event happens at the given time if the given time is given
-     * as the first possible.
+     * Test the first event happens at the given time if the given time is given as the first possible.
      * 
      * @throws Exception
      */
@@ -113,8 +112,8 @@ public class ScheduleTester extends DataModelTestCase {
     }
 
     /**
-     * Test the first event happens at first time matching frequency
-     * requirements if the given time is given as the first possible.
+     * Test the first event happens at first time matching frequency requirements if the given time is given as the
+     * first possible.
      * 
      * @throws Exception
      */
@@ -147,8 +146,8 @@ public class ScheduleTester extends DataModelTestCase {
     }
 
     /**
-     * Tests that first event happens at first possible time allowed by
-     * frequency requirements if no first time is given.
+     * Tests that first event happens at first possible time allowed by frequency requirements if no first time is
+     * given.
      * 
      * @throws Exception
      */
@@ -192,8 +191,8 @@ public class ScheduleTester extends DataModelTestCase {
     }
 
     /**
-     * Tests that first event happens at given first time if now is before then
-     * but at time allowed by frequency requirements.
+     * Tests that first event happens at given first time if now is before then but at time allowed by frequency
+     * requirements.
      * 
      * @throws Exception
      */

@@ -27,15 +27,14 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 /**
- * Implements a frontier report wrapper that is stored in memory. This
- * implementation is intended for small reports that are the result of the
- * filtering of a full frontier report obtained from Heritrix. This
- * implementation is serializable, so it can be transmitted in a JMS message.
+ * Implements a frontier report wrapper that is stored in memory. This implementation is intended for small reports that
+ * are the result of the filtering of a full frontier report obtained from Heritrix. This implementation is
+ * serializable, so it can be transmitted in a JMS message.
  *
- * The report lines are sorted according to the natural order defined by
- * {@link FrontierReportLine}, e.g. descending size of the queue.
+ * The report lines are sorted according to the natural order defined by {@link FrontierReportLine}, e.g. descending
+ * size of the queue.
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class InMemoryFrontierReport extends AbstractFrontierReport implements Serializable {
 
     /**
@@ -58,8 +57,7 @@ public class InMemoryFrontierReport extends AbstractFrontierReport implements Se
     /**
      * Builds an empty report.
      * 
-     * @param jobName
-     *            the Heritrix job name
+     * @param jobName the Heritrix job name
      */
     public InMemoryFrontierReport(String jobName) {
         super(jobName);

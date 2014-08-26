@@ -43,8 +43,7 @@ public class CleanupSuite {
     /**
      * Add the tests here.
      * 
-     * @param suite
-     *            The testsuite to be added
+     * @param suite The testsuite to be added
      */
     public static void addToSuite(TestSuite suite) {
         suite.addTestSuite(CleanupTester.class);
@@ -52,7 +51,7 @@ public class CleanupSuite {
     }
 
     public static void main(String args[]) {
-        String args2[] = { "-noloading", CleanupSuite.class.getName() };
+        String args2[] = {"-noloading", CleanupSuite.class.getName()};
         TestRunner.main(args2);
     }
 

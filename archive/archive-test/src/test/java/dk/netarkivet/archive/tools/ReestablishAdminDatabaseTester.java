@@ -70,7 +70,7 @@ public class ReestablishAdminDatabaseTester {
 
     @Test
     public void testNonFile() {
-        String[] args = new String[] { TestInfo.DATABASE_ADMIN_DATA_FALSE.getPath() };
+        String[] args = new String[] {TestInfo.DATABASE_ADMIN_DATA_FALSE.getPath()};
         try {
             ReestablishAdminDatabase.main(args);
             fail("Should try to System.exit.");
@@ -89,7 +89,7 @@ public class ReestablishAdminDatabaseTester {
 
     @Test
     public void testNoReadFile() {
-        String[] args = new String[] { TestInfo.DATABASE_ADMIN_DATA_1.getPath() };
+        String[] args = new String[] {TestInfo.DATABASE_ADMIN_DATA_1.getPath()};
         TestInfo.DATABASE_ADMIN_DATA_1.setReadable(false);
 
         try {
@@ -110,7 +110,7 @@ public class ReestablishAdminDatabaseTester {
     @Ignore("FIXME")
     // FIXME: test temporarily disabled
     public void testSuccess() {
-        String[] args = new String[] { TestInfo.DATABASE_ADMIN_DATA_2.getPath() };
+        String[] args = new String[] {TestInfo.DATABASE_ADMIN_DATA_2.getPath()};
         try {
             ReestablishAdminDatabase.main(args);
             fail("The tool should attempt to System.exit");
@@ -129,7 +129,7 @@ public class ReestablishAdminDatabaseTester {
     @Ignore("FIXME")
     // FIXME: test temporarily disabled
     public void testNotEmptyDatabase() {
-        String[] args = new String[] { TestInfo.DATABASE_ADMIN_DATA_2.getPath() };
+        String[] args = new String[] {TestInfo.DATABASE_ADMIN_DATA_2.getPath()};
         try {
             ReestablishAdminDatabase.main(args);
             fail("The tool should attempt to System.exit");

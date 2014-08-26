@@ -43,8 +43,7 @@ import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
- * Alternate unit test class for the TemplateDAO. FIXME Merge with
- * TemplateDAOTester
+ * Alternate unit test class for the TemplateDAO. FIXME Merge with TemplateDAOTester
  */
 public class TemplateDAOTesterAlternate {
     ReloadSettings rs = new ReloadSettings();
@@ -80,8 +79,8 @@ public class TemplateDAOTesterAlternate {
     }
 
     /**
-     * Test that it's possible to get access to an empty templates table. This
-     * tests that Bug 916 is fixed. FIXME merge with TemplateDAOTester
+     * Test that it's possible to get access to an empty templates table. This tests that Bug 916 is fixed. FIXME merge
+     * with TemplateDAOTester
      */
     @Test
     public void testGetinstanceOnEmptyDatabase() {

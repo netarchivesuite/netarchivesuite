@@ -96,7 +96,7 @@ public class GetRecordTester {
         LogbackRecorder lr = LogbackRecorder.startRecorder();
         lr.addFilter(new DenyFilter(), ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
         try {
-            GetRecord.main(new String[] { TestInfo.INDEX_DIR.getAbsolutePath(), TestInfo.TEST_ENTRY_URI });
+            GetRecord.main(new String[] {TestInfo.INDEX_DIR.getAbsolutePath(), TestInfo.TEST_ENTRY_URI});
             fail("Should system exit");
         } catch (SecurityException e) {
             assertEquals("Should have exited normally", 0, pse.getExitValue());
@@ -112,7 +112,7 @@ public class GetRecordTester {
     public void testFail() {
         String expectedResults = "indexfile uri";
         try {
-            GetRecord.main(new String[] { TestInfo.INDEX_DIR.getAbsolutePath() });
+            GetRecord.main(new String[] {TestInfo.INDEX_DIR.getAbsolutePath()});
             fail("System should exit");
         } catch (SecurityException e) {
             assertEquals("Should have exited with failure", 1, pse.getExitValue());
@@ -124,9 +124,8 @@ public class GetRecordTester {
     }
 
     /**
-     * This class is a MessageListener that responds to GetMessage, simulating
-     * an ArcRepository. It sends a constant response if the GetMessage matches
-     * the values given to GetListener's constructor, otherwise it sends a null
+     * This class is a MessageListener that responds to GetMessage, simulating an ArcRepository. It sends a constant
+     * response if the GetMessage matches the values given to GetListener's constructor, otherwise it sends a null
      * record as response.
      */
     private static class GetListener extends TestMessageListener {

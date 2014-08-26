@@ -34,13 +34,10 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 public class NumberUtils {
 
     /**
-     * Return the smallest value of two given positive longs, with the addition
-     * that -1 means infinity.
+     * Return the smallest value of two given positive longs, with the addition that -1 means infinity.
      * 
-     * @param l1
-     *            The first value
-     * @param l2
-     *            The second value
+     * @param l1 The first value
+     * @param l2 The second value
      * @return Smallest value
      */
     public static long minInf(long l1, long l2) {
@@ -54,15 +51,11 @@ public class NumberUtils {
     }
 
     /**
-     * Compare two given positive longs, with the addition that -1 means
-     * infinity.
+     * Compare two given positive longs, with the addition that -1 means infinity.
      * 
-     * @param l1
-     *            The first value
-     * @param l2
-     *            The second value
-     * @return -1 if first value is smallest, 0 if equal, 1 if second value is
-     *         smallest
+     * @param l1 The first value
+     * @param l2 The second value
+     * @return -1 if first value is smallest, 0 if equal, 1 if second value is smallest
      */
     public static int compareInf(long l1, long l2) {
         if (l1 == l2) {
@@ -74,8 +67,7 @@ public class NumberUtils {
     /**
      * Converts a list to an array of primitive values.
      * 
-     * @param list
-     *            the list to convert
+     * @param list the list to convert
      * @return an array of primitive values
      */
     public static final double[] toPrimitiveArray(List<Double> list) {

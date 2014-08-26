@@ -35,7 +35,7 @@ import org.junit.Test;
 import dk.netarkivet.common.utils.arc.TestInfo;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
-@SuppressWarnings({ "unused", "unchecked" })
+@SuppressWarnings({"unused", "unchecked"})
 public class ByteClassLoaderTester {
     MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
 

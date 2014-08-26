@@ -48,9 +48,8 @@ public class FileNameHarvester {
     private static final Logger log = LoggerFactory.getLogger(FileNameHarvester.class);
 
     /**
-     * This method harvests a list of all the files currently in the
-     * arcrepository and appends any new ones found to the ArchiveFile object
-     * store.
+     * This method harvests a list of all the files currently in the arcrepository and appends any new ones found to the
+     * ArchiveFile object store.
      */
     public static synchronized void harvestAllFilenames() {
         ArchiveFileDAO dao = new ArchiveFileDAO();
@@ -79,8 +78,7 @@ public class FileNameHarvester {
     }
 
     /**
-     * This method harvests a list of all the recently added files in the
-     * archive.
+     * This method harvests a list of all the recently added files in the archive.
      */
     public static synchronized void harvestRecentFilenames() {
         ArchiveFileDAO dao = new ArchiveFileDAO();

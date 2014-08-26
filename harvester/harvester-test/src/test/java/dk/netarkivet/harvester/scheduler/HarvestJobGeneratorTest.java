@@ -145,9 +145,8 @@ public class HarvestJobGeneratorTest extends DataModelTestCase {
     }
 
     /**
-     * test that skipping a scheduling because the previous scheduling is still
-     * running, or at least the system still thinks it is running. because the
-     * id of the harvest is contained in the set
+     * test that skipping a scheduling because the previous scheduling is still running, or at least the system still
+     * thinks it is running. because the id of the harvest is contained in the set
      * HarvestJobGenerator#harvestDefinitionsBeingScheduled
      * 
      * @throws Exception

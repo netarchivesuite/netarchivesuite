@@ -43,78 +43,66 @@ import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 
 /**
- * This implementation of the HeritrixController interface starts Heritrix as a
- * separate process and uses JMX to communicate with it. Each instance executes
- * exactly one process that runs exactly one crawl job.
+ * This implementation of the HeritrixController interface starts Heritrix as a separate process and uses JMX to
+ * communicate with it. Each instance executes exactly one process that runs exactly one crawl job.
  * 
  * @deprecated Use the {@link BnfHeritrixController} instead
  */
-@SuppressWarnings({ "unused", "unchecked" })
+@SuppressWarnings({"unused", "unchecked"})
 public class JMXHeritrixController extends AbstractJMXHeritrixController {
 
     /** The logger for this class. */
     private static final Logger log = LoggerFactory.getLogger(JMXHeritrixController.class);
 
     /*
-     * The below commands and attributes are copied from
-     * org.archive.crawler.admin.CrawlJob.
+     * The below commands and attributes are copied from org.archive.crawler.admin.CrawlJob.
      * 
-     * @see <A href=
-     * "http://crawler.archive.org/xref/org/archive/crawler/admin/CrawlJob.html"
-     * > org.archive.crawler.admin.CrawlJob</A>
+     * @see <A href= "http://crawler.archive.org/xref/org/archive/crawler/admin/CrawlJob.html" >
+     * org.archive.crawler.admin.CrawlJob</A>
      * 
-     * These strings are currently not visible from outside the Heritrix class.
-     * See http://webteam.archive.org/jira/browse/HER-1285
+     * These strings are currently not visible from outside the Heritrix class. See
+     * http://webteam.archive.org/jira/browse/HER-1285
      */
     /** The command to submit a new crawljob to the Crawlcontroller. */
     private static final String ADD_JOB_COMMAND = "addJob";
     /**
-     * The command to retrieve progress statistics for the currently running
-     * job.
+     * The command to retrieve progress statistics for the currently running job.
      */
     private static final String PROGRESS_STATISTICS_COMMAND = "progressStatistics";
     /**
-     * The command to retrieve a progress statistics legend for the currently
-     * running job.
+     * The command to retrieve a progress statistics legend for the currently running job.
      */
     private static final String PROGRESS_STATISTICS_LEGEND_COMMAND = "progressStatisticsLegend";
     /**
-     * The attribute for the current download rate in kbytes for the currently
-     * running job.
+     * The attribute for the current download rate in kbytes for the currently running job.
      */
     private static final String CURRENT_KB_RATE_ATTRIBUTE = "CurrentKbRate";
     /** The attribute for the number of currently running process-threads. */
     private static final String THREAD_COUNT_ATTRIBUTE = "ThreadCount";
     /**
-     * The attribute for the number of discovered URIs for the currently running
-     * job.
+     * The attribute for the number of discovered URIs for the currently running job.
      */
     private static final String DISCOVERED_COUNT_ATTRIBUTE = "DiscoveredCount";
     /**
-     * The attribute for the number of downloaded URIs for the currently running
-     * job.
+     * The attribute for the number of downloaded URIs for the currently running job.
      */
     private static final String DOWNLOADED_COUNT_ATTRIBUTE = "DownloadedCount";
     /** The attribute for the status for the currently running job. */
     private static final String STATUS_ATTRIBUTE = "Status";
 
     /*
-     * The below commands and attributes are copied from
-     * org.archive.crawler.Heritrix
+     * The below commands and attributes are copied from org.archive.crawler.Heritrix
      * 
-     * @see <A
-     * href="http://crawler.archive.org/apidocs/org/archive/crawler/Heritrix.html"
-     * > org.archive.crawler.Heritrix</A>
+     * @see <A href="http://crawler.archive.org/apidocs/org/archive/crawler/Heritrix.html" >
+     * org.archive.crawler.Heritrix</A>
      * 
-     * These strings are currently not visible from outside the Heritrix class.
-     * See http://webteam.archive.org/jira/browse/HER-1285
+     * These strings are currently not visible from outside the Heritrix class. See
+     * http://webteam.archive.org/jira/browse/HER-1285
      */
     /*
-     * Note: The Heritrix JMX interface has two apparent ways to stop crawling:
-     * stopCrawling and terminateCurrentJob. stopCrawling merely makes Heritrix
-     * not start any more jobs, but the old jobs continue. Note that if we start
-     * using more than one job at a time, terminateCurrentJob will only stop one
-     * job.
+     * Note: The Heritrix JMX interface has two apparent ways to stop crawling: stopCrawling and terminateCurrentJob.
+     * stopCrawling merely makes Heritrix not start any more jobs, but the old jobs continue. Note that if we start
+     * using more than one job at a time, terminateCurrentJob will only stop one job.
      */
     /** Command to start crawling. */
     private static final String START_CRAWLING_COMMAND = "startCrawling";
@@ -128,17 +116,15 @@ public class JMXHeritrixController extends AbstractJMXHeritrixController {
     private static final String SHUTDOWN_COMMAND = "shutdown";
 
     /**
-     * The part of the Job MBean name that designates the unique id. For some
-     * reason, this is not included in the normal Heritrix definitions in
-     * JmxUtils, otherwise we wouldn't have to define it. I have committed a
-     * feature request: http://webteam.archive.org/jira/browse/HER-1618
+     * The part of the Job MBean name that designates the unique id. For some reason, this is not included in the normal
+     * Heritrix definitions in JmxUtils, otherwise we wouldn't have to define it. I have committed a feature request:
+     * http://webteam.archive.org/jira/browse/HER-1618
      */
     private static final String UID_PROPERTY = "uid";
 
     /**
-     * The name that Heritrix gives to the job we ask it to create. This is part
-     * of the name of the MBean for that job, but we can only retrieve the name
-     * after the MBean has been created.
+     * The name that Heritrix gives to the job we ask it to create. This is part of the name of the MBean for that job,
+     * but we can only retrieve the name after the MBean has been created.
      */
     private String jobName;
 
@@ -146,11 +132,11 @@ public class JMXHeritrixController extends AbstractJMXHeritrixController {
     private String progressStatisticsLegend;
 
     /*
-     * The possible values of a request of the status attribute. Copied from
-     * private values in {@link org.archive.crawler.framework.CrawlController}
+     * The possible values of a request of the status attribute. Copied from private values in {@link
+     * org.archive.crawler.framework.CrawlController}
      * 
-     * These strings are currently not visible from outside the CrawlController
-     * class. See http://webteam.archive.org/jira/browse/HER-1285
+     * These strings are currently not visible from outside the CrawlController class. See
+     * http://webteam.archive.org/jira/browse/HER-1285
      */
     /** The 'NASCENT' status. */
     // private static final String NASCENT_STATUS = "NASCENT";
@@ -176,17 +162,14 @@ public class JMXHeritrixController extends AbstractJMXHeritrixController {
     /**
      * Create a JMXHeritrixController object.
      *
-     * @param files
-     *            Files that are used to set up Heritrix.
+     * @param files Files that are used to set up Heritrix.
      */
     public JMXHeritrixController(HeritrixFiles files) {
         super(files);
     }
 
     /**
-     * @throws IOFailure
-     *             If Heritrix dies before initialization, or we encounter any
-     *             problems during the initialization.
+     * @throws IOFailure If Heritrix dies before initialization, or we encounter any problems during the initialization.
      * @see HeritrixController#initialize()
      */
     public void initialize() {
@@ -215,8 +198,7 @@ public class JMXHeritrixController extends AbstractJMXHeritrixController {
     }
 
     /**
-     * @throws IOFailure
-     *             if unable to communicate with Heritrix
+     * @throws IOFailure if unable to communicate with Heritrix
      * @see HeritrixController#requestCrawlStart()
      */
     public void requestCrawlStart() {
@@ -229,8 +211,7 @@ public class JMXHeritrixController extends AbstractJMXHeritrixController {
     }
 
     /**
-     * @throws IOFailure
-     *             if unable to communicate with Heritrix
+     * @throws IOFailure if unable to communicate with Heritrix
      * @see HeritrixController#beginCrawlStop()
      */
     public void beginCrawlStop() {
@@ -258,9 +239,8 @@ public class JMXHeritrixController extends AbstractJMXHeritrixController {
      * */
     public long getQueuedUriCount() {
         /*
-         * Implementation note: This count is not as precise as what
-         * StatisticsTracker could provide, but it's presently only used in a
-         * warning in the HeritrixLauncher.doCrawlLoop() method.
+         * Implementation note: This count is not as precise as what StatisticsTracker could provide, but it's presently
+         * only used in a warning in the HeritrixLauncher.doCrawlLoop() method.
          */
         Long discoveredUris = (Long) getCrawlJobAttribute(DISCOVERED_COUNT_ATTRIBUTE);
         Long downloadedUris = (Long) getCrawlJobAttribute(DOWNLOADED_COUNT_ATTRIBUTE);
@@ -322,11 +302,10 @@ public class JMXHeritrixController extends AbstractJMXHeritrixController {
     }
 
     /**
-     * Check if the crawl has ended, either because Heritrix finished of its
-     * own, or because we terminated it.
+     * Check if the crawl has ended, either because Heritrix finished of its own, or because we terminated it.
      *
-     * @return True if the crawl has ended, either because Heritrix finished or
-     *         because we terminated it. Otherwise we return false.
+     * @return True if the crawl has ended, either because Heritrix finished or because we terminated it. Otherwise we
+     *         return false.
      * @see HeritrixController#crawlIsEnded()
      */
     public synchronized boolean crawlIsEnded() {
@@ -351,9 +330,8 @@ public class JMXHeritrixController extends AbstractJMXHeritrixController {
     }
 
     /**
-     * Cleanup after an Heritrix process. This entails sending the shutdown
-     * command to the Heritrix process, and killing it forcefully, if it is
-     * still alive after waiting the period of time specified by the
+     * Cleanup after an Heritrix process. This entails sending the shutdown command to the Heritrix process, and killing
+     * it forcefully, if it is still alive after waiting the period of time specified by the
      * CommonSettings.PROCESS_TIMEOUT setting.
      * 
      * @see HeritrixController#cleanup()
@@ -378,23 +356,17 @@ public class JMXHeritrixController extends AbstractJMXHeritrixController {
     }
 
     /**
-     * Get the name of the one job we let this Heritrix run. The handling of
-     * done jobs depends on Heritrix not being in crawl. This call may take
-     * several seconds to finish.
+     * Get the name of the one job we let this Heritrix run. The handling of done jobs depends on Heritrix not being in
+     * crawl. This call may take several seconds to finish.
      *
      * @return The name of the one job that Heritrix has.
-     * @throws IOFailure
-     *             if the job created failed to initialize or didn't appear in
-     *             time.
-     * @throws IllegalState
-     *             if more than one job in done list, or more than one pending
-     *             job
+     * @throws IOFailure if the job created failed to initialize or didn't appear in time.
+     * @throws IllegalState if more than one job in done list, or more than one pending job
      */
     private String getJobName() {
         /*
-         * This is called just after we've told Heritrix to create a job. It may
-         * take a while before the job is actually created, so we have to wait
-         * around a bit.
+         * This is called just after we've told Heritrix to create a job. It may take a while before the job is actually
+         * created, so we have to wait around a bit.
          */
         TabularData pendingJobs = null;
         TabularData doneJobs;
@@ -443,8 +415,7 @@ public class JMXHeritrixController extends AbstractJMXHeritrixController {
     }
 
     /**
-     * Get the name to use for logging on to Heritrix' JMX with full control.
-     * The name cannot be set by the user.
+     * Get the name to use for logging on to Heritrix' JMX with full control. The name cannot be set by the user.
      *
      * @return Name to use when connecting to Heritrix JMX
      */
@@ -455,9 +426,8 @@ public class JMXHeritrixController extends AbstractJMXHeritrixController {
     }
 
     /**
-     * Get the password to use to access the Heritrix JMX as the user returned
-     * by getJMXAdminName(). This password can be set in a file pointed to in
-     * settings.xml.
+     * Get the password to use to access the Heritrix JMX as the user returned by getJMXAdminName(). This password can
+     * be set in a file pointed to in settings.xml.
      * 
      * @return Password for accessing Heritrix JMX
      */
@@ -486,11 +456,8 @@ public class JMXHeritrixController extends AbstractJMXHeritrixController {
     /**
      * Execute a command for the Heritrix process we're running.
      *
-     * @param command
-     *            The command to execute.
-     * @param arguments
-     *            Any arguments to the command. These arguments can only be of
-     *            String type.
+     * @param command The command to execute.
+     * @param arguments Any arguments to the command. These arguments can only be of String type.
      * @return Whatever object was returned by the JMX invocation.
      */
     private Object executeHeritrixCommand(String command, String... arguments) {
@@ -498,14 +465,10 @@ public class JMXHeritrixController extends AbstractJMXHeritrixController {
     }
 
     /**
-     * Execute a command for the Heritrix job. This must only be called after
-     * initialize() has been run.
+     * Execute a command for the Heritrix job. This must only be called after initialize() has been run.
      *
-     * @param command
-     *            The command to execute.
-     * @param arguments
-     *            Any arguments to the command. These arguments can only be of
-     *            String type.
+     * @param command The command to execute.
+     * @param arguments Any arguments to the command. These arguments can only be of String type.
      * @return Whatever object was returned by the JMX invocation.
      */
     private Object executeCrawlJobCommand(String command, String... arguments) {
@@ -515,8 +478,7 @@ public class JMXHeritrixController extends AbstractJMXHeritrixController {
     /**
      * Get an attribute of the Heritrix process we're running.
      *
-     * @param attribute
-     *            The attribute to get.
+     * @param attribute The attribute to get.
      * @return The value of the attribute.
      */
     private Object getHeritrixAttribute(String attribute) {
@@ -524,11 +486,9 @@ public class JMXHeritrixController extends AbstractJMXHeritrixController {
     }
 
     /**
-     * Get an attribute of the Heritrix job. This must only be called after
-     * initialize() has been run.
+     * Get an attribute of the Heritrix job. This must only be called after initialize() has been run.
      *
-     * @param attribute
-     *            The attribute to get.
+     * @param attribute The attribute to get.
      * @return The value of the attribute.
      */
     private Object getCrawlJobAttribute(String attribute) {
@@ -548,8 +508,8 @@ public class JMXHeritrixController extends AbstractJMXHeritrixController {
     }
 
     /**
-     * Get the name for the bean of a single job. This bean does not exist until
-     * after a job has been created using initialize().
+     * Get the name for the bean of a single job. This bean does not exist until after a job has been created using
+     * initialize().
      *
      * @return Bean name, to be passed into JMXUtils#getBeanName(String)
      */

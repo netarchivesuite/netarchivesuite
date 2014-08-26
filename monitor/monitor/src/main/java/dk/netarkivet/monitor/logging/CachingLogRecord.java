@@ -40,16 +40,11 @@ public class CachingLogRecord implements SingleLogRecord {
     private SingleMBeanObject<SingleLogRecord> singleMBeanObject;
 
     /**
-     * Make a caching log record, that exposes a log record at a given index as
-     * an MBean.
+     * Make a caching log record, that exposes a log record at a given index as an MBean.
      *
-     * @param index
-     *            The index of this log record, counted from the top of the
-     *            list.
-     * @param cachingLogHandler
-     *            The caching log handler this is an exposing view on.
-     * @throws IOFailure
-     *             on any trouble registering.
+     * @param index The index of this log record, counted from the top of the list.
+     * @param cachingLogHandler The caching log handler this is an exposing view on.
+     * @throws IOFailure on any trouble registering.
      */
     public CachingLogRecord(int index, CachingLogHandler cachingLogHandler) {
         ArgumentNotValid.checkNotNull(cachingLogHandler, "CachingLogHandler cachingLogHandler");
@@ -60,8 +55,8 @@ public class CachingLogRecord implements SingleLogRecord {
     }
 
     /**
-     * Get the log record on a given index from the top as a string. This will
-     * be formatted by the formatter from the CachingLogHandler.
+     * Get the log record on a given index from the top as a string. This will be formatted by the formatter from the
+     * CachingLogHandler.
      *
      * @return A String representation of the LogRecord, or null for none.
      */

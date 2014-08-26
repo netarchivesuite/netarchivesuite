@@ -54,8 +54,8 @@ import dk.netarkivet.harvester.harvesting.frontier.RetiredQueuesFilter;
 import dk.netarkivet.harvester.harvesting.frontier.TopTotalEnqueuesFilter;
 
 /**
- * Listens for {@link CrawlProgressMessage}s on the proper JMS channel, and
- * stores information to be presented in the monitoring console.
+ * Listens for {@link CrawlProgressMessage}s on the proper JMS channel, and stores information to be presented in the
+ * monitoring console.
  */
 public class HarvestMonitor extends HarvesterMessageHandler implements MessageListener, CleanupIF {
 
@@ -79,9 +79,8 @@ public class HarvestMonitor extends HarvesterMessageHandler implements MessageLi
     }
 
     /**
-     * Close down the HarvestMonitor singleton. This removes the HarvestMonitor
-     * as listener to the JMS scheduler and frontier channels, closes the
-     * persistence container, and resets the singleton.
+     * Close down the HarvestMonitor singleton. This removes the HarvestMonitor as listener to the JMS scheduler and
+     * frontier channels, closes the persistence container, and resets the singleton.
      *
      * @see CleanupIF#cleanup()
      */
@@ -128,8 +127,7 @@ public class HarvestMonitor extends HarvesterMessageHandler implements MessageLi
     /**
      * Cleans up the database on transitions to status DONE and FAILED.
      * 
-     * @param msg
-     *            a {@link JobEndedMessage}
+     * @param msg a {@link JobEndedMessage}
      */
     @Override
     public void visit(JobEndedMessage msg) {
@@ -152,24 +150,20 @@ public class HarvestMonitor extends HarvesterMessageHandler implements MessageLi
     }
 
     /**
-     * Returns the delay in seconds after which a harvest monitor webpage should
-     * refresh itself. This delay is set by overriding the value of the
-     * {@link HarvesterSettings#HARVEST_MONITOR_REFRESH_INTERVAL} property.
+     * Returns the delay in seconds after which a harvest monitor webpage should refresh itself. This delay is set by
+     * overriding the value of the {@link HarvesterSettings#HARVEST_MONITOR_REFRESH_INTERVAL} property.
      * 
-     * @return the delay in seconds after which a harvest monitor webpage should
-     *         refresh itself
+     * @return the delay in seconds after which a harvest monitor webpage should refresh itself
      */
     public static final int getAutoRefreshDelay() {
         return Settings.getInt(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL);
     }
 
     /**
-     * Returns a configurable number of the most recent running job info records
-     * available for the given job ID.
+     * Returns a configurable number of the most recent running job info records available for the given job ID.
      * 
      * @param jobId
-     * @return the most recent running job info records available for the given
-     *         job ID.
+     * @return the most recent running job info records available for the given job ID.
      * @see HarvesterSettings#HARVEST_MONITOR_DISPLAYED_HISTORY_SIZE
      */
     public static StartedJobInfo[] getMostRecentRunningJobInfos(long jobId) {
@@ -179,12 +173,10 @@ public class HarvestMonitor extends HarvesterMessageHandler implements MessageLi
     }
 
     /**
-     * Returns the most recent running job info record available for the given
-     * job ID.
+     * Returns the most recent running job info record available for the given job ID.
      * 
      * @param jobId
-     * @return the most recent running job info records available for the given
-     *         job ID.
+     * @return the most recent running job info records available for the given job ID.
      */
     public static StartedJobInfo getMostRecentRunningJobInfo(long jobId) {
         return RunningJobsInfoDAO.getInstance().getMostRecentByJobId(jobId);
@@ -205,8 +197,7 @@ public class HarvestMonitor extends HarvesterMessageHandler implements MessageLi
     /**
      * Retrieves the latest frontier report stored for the given job ID.
      * 
-     * @param jobId
-     *            the job id
+     * @param jobId the job id
      * @return a frontier report
      */
     public static InMemoryFrontierReport getFrontierReport(long jobId) {
@@ -215,11 +206,9 @@ public class HarvestMonitor extends HarvesterMessageHandler implements MessageLi
     }
 
     /**
-     * Retrieves the latest frontier extract report stored for the given job ID,
-     * that contains only retired queues.
+     * Retrieves the latest frontier extract report stored for the given job ID, that contains only retired queues.
      * 
-     * @param jobId
-     *            the job id
+     * @param jobId the job id
      * @return a frontier report that contains only retired queues.
      */
     public static InMemoryFrontierReport getFrontierRetiredQueues(long jobId) {
@@ -227,11 +216,9 @@ public class HarvestMonitor extends HarvesterMessageHandler implements MessageLi
     }
 
     /**
-     * Retrieves the latest frontier extract report stored for the given job ID,
-     * that contains only exhausted queues.
+     * Retrieves the latest frontier extract report stored for the given job ID, that contains only exhausted queues.
      * 
-     * @param jobId
-     *            the job id
+     * @param jobId the job id
      * @return a frontier report that contains only exhausted queues.
      */
     public static InMemoryFrontierReport getFrontierExhaustedQueues(long jobId) {
@@ -242,13 +229,11 @@ public class HarvestMonitor extends HarvesterMessageHandler implements MessageLi
     private static final String EMPTY_CHART_FILE = "empty-history.png";
 
     /**
-     * Returns the path of the chart image file, relative to the webapp
-     * directory. If no chart is available, returns a default empty image.
+     * Returns the path of the chart image file, relative to the webapp directory. If no chart is available, returns a
+     * default empty image.
      * 
-     * @param jobId
-     *            the job id
-     * @return the path of the chart image file, relative to the webapp
-     *         directory.
+     * @param jobId the job id
+     * @return the path of the chart image file, relative to the webapp directory.
      */
     public static String getChartFilePath(long jobId) {
         if (instance == null) {

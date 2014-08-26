@@ -46,8 +46,7 @@ import dk.netarkivet.harvester.datamodel.ScheduleDAO;
 import dk.netarkivet.harvester.datamodel.SeedList;
 
 /**
- * Unit-tests for the webinterface class
- * dk.netarkivet.harvester.webinterface.EventHarvest.
+ * Unit-tests for the webinterface class dk.netarkivet.harvester.webinterface.EventHarvest.
  */
 public class EventHarvestUtilTester extends HarvesterWebinterfaceTestCase {
 
@@ -76,8 +75,7 @@ public class EventHarvestUtilTester extends HarvesterWebinterfaceTestCase {
     /**
      * Tests the simple case of adding a single seed to an empty harvest.
      * 
-     * FIXME Fails in Hudson. Rember to reinclude the test case in the
-     * webinterface test suite when fixed.
+     * FIXME Fails in Hudson. Rember to reinclude the test case in the webinterface test suite when fixed.
      */
     @Test
     // @Ignore("fails in hudson")
@@ -85,10 +83,10 @@ public class EventHarvestUtilTester extends HarvesterWebinterfaceTestCase {
         String seedlist = "http://www.mydomain.dk/page1.jsp?aparam=avalue";
         Map<String, String[]> parameterMap = new HashMap<String, String[]>();
         TestServletRequest request = new TestServletRequest();
-        parameterMap.put("seeds", new String[] { seedlist });
-        parameterMap.put("orderTemplate", new String[] { "default_orderxml" });
-        parameterMap.put("maxRate", new String[] { "3" });
-        parameterMap.put("maxObjects", new String[] { "4" });
+        parameterMap.put("seeds", new String[] {seedlist});
+        parameterMap.put("orderTemplate", new String[] {"default_orderxml"});
+        parameterMap.put("maxRate", new String[] {"3"});
+        parameterMap.put("maxObjects", new String[] {"4"});
 
         request.setParameterMap(parameterMap);
         I18n I18N = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);

@@ -34,9 +34,8 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 
 /**
- * Thread reponsible for sending out periodic HeartBeatMessages. The
- * BitarchiveServer is closed down if any error occurs whilst sending
- * heartbeats.
+ * Thread reponsible for sending out periodic HeartBeatMessages. The BitarchiveServer is closed down if any error occurs
+ * whilst sending heartbeats.
  *
  */
 public class HeartBeatSender extends TimerTask {
@@ -54,14 +53,10 @@ public class HeartBeatSender extends TimerTask {
     /**
      * Constructs a HearBeatSender that sends heartbeats.
      *
-     * @param inReceiver
-     *            - the receiver to receive the heartbeats
-     * @param inBaServer
-     *            - the BitarchiveServer of this HeartBeatSender
-     * @throws ArgumentNotValid
-     *             - if in_baServer is null
-     * @throws IOFailure
-     *             - if getting an JMSConnection instance fails
+     * @param inReceiver - the receiver to receive the heartbeats
+     * @param inBaServer - the BitarchiveServer of this HeartBeatSender
+     * @throws ArgumentNotValid - if in_baServer is null
+     * @throws IOFailure - if getting an JMSConnection instance fails
      */
     public HeartBeatSender(ChannelID inReceiver, BitarchiveServer inBaServer) throws ArgumentNotValid, IOFailure {
         ArgumentNotValid.checkNotNull(inBaServer, "inBaServer");
@@ -72,8 +67,7 @@ public class HeartBeatSender extends TimerTask {
     }
 
     /**
-     * This is the run method of the thread sending heartbeats. The
-     * BitarchiveServer is closed down if any error occurs.
+     * This is the run method of the thread sending heartbeats. The BitarchiveServer is closed down if any error occurs.
      */
     public void run() {
         try {

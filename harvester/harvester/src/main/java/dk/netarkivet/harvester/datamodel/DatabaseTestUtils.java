@@ -46,8 +46,7 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 
 /**
- * Utilities to allow testing databases. //FIXME: Rename without Test as these
- * are not specifically test related.
+ * Utilities to allow testing databases. //FIXME: Rename without Test as these are not specifically test related.
  */
 public class DatabaseTestUtils {
 
@@ -56,12 +55,10 @@ public class DatabaseTestUtils {
     private static String dburi;
 
     /**
-     * Get access to the database stored in the given file. This will start a
-     * new transaction that will be rolled back with dropDatabase. Only one
-     * connection can be taken at a time.
+     * Get access to the database stored in the given file. This will start a new transaction that will be rolled back
+     * with dropDatabase. Only one connection can be taken at a time.
      * 
-     * @param resourcePath
-     *            A file that contains a test database.
+     * @param resourcePath A file that contains a test database.
      * @param dbCreationDir
      * @return a connection to the database stored in the given file
      * @throws SQLException
@@ -139,12 +136,10 @@ public class DatabaseTestUtils {
     }
 
     /**
-     * Get access to the database stored in the given file. This will start a
-     * new transaction that will be rolled back with dropDatabase. Only one
-     * connection can be taken at a time.
+     * Get access to the database stored in the given file. This will start a new transaction that will be rolled back
+     * with dropDatabase. Only one connection can be taken at a time.
      * 
-     * @param resourcePath
-     *            A file that contains a test database.
+     * @param resourcePath A file that contains a test database.
      * @param dbCreationDir
      * @return a connection to the database stored in the given file
      * @throws SQLException
@@ -157,11 +152,10 @@ public class DatabaseTestUtils {
     }
 
     /**
-     * Get a connection to the given sample harvest definition database and fool
-     * the HD DB connect class into thinking it should use that one.
+     * Get a connection to the given sample harvest definition database and fool the HD DB connect class into thinking
+     * it should use that one.
      * 
-     * @param resourcePath
-     *            Location of the sql files to create and populate the test DB.
+     * @param resourcePath Location of the sql files to create and populate the test DB.
      * @param dbCreationDir
      * @return a connection to the given sample harvest definition database
      * @throws SQLException
@@ -197,14 +191,11 @@ public class DatabaseTestUtils {
 
         f.set(null, null);
         /*
-         * for (Thread t: connectionPool.keySet()) { final Connection connection
-         * = connectionPool.get(t); if (!(connection instanceof
-         * TestDBConnection)) { throw new UnknownID("Illegal connection " +
-         * connection); } try { if (savepoints.containsKey(t)) {
-         * connection.rollback(); // connection.rollback(savepoints.get(t));
-         * savepoints.remove(t); } } catch (SQLException e) {
-         * System.out.println("Can't rollback: " + e); } connection.close(); }
-         * connectionPool.clear();
+         * for (Thread t: connectionPool.keySet()) { final Connection connection = connectionPool.get(t); if
+         * (!(connection instanceof TestDBConnection)) { throw new UnknownID("Illegal connection " + connection); } try
+         * { if (savepoints.containsKey(t)) { connection.rollback(); // connection.rollback(savepoints.get(t));
+         * savepoints.remove(t); } } catch (SQLException e) { System.out.println("Can't rollback: " + e); }
+         * connection.close(); } connectionPool.clear();
          */
     }
 

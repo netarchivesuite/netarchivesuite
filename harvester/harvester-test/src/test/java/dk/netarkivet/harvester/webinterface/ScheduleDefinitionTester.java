@@ -86,15 +86,15 @@ public class ScheduleDefinitionTester extends HarvesterWebinterfaceTestCase {
         Map<String, String[]> parameterMap = new HashMap<String, String[]>();
         String startDateString = "06/09 2005 12:30";
 
-        parameterMap.put(ScheduleDefinition.NAME_PARAMETER, new String[] { "schedule1" });
-        parameterMap.put(ScheduleDefinition.EDITION_PARAMETER, new String[] { "" + old_edition });
-        parameterMap.put(ScheduleDefinition.UPDATE_PARAMETER, new String[] { "1" });
-        parameterMap.put(ScheduleDefinition.FREQUENCY_PARAMETER, new String[] { "1" });
-        parameterMap.put(ScheduleDefinition.TIMESPAN_PARAMETER, new String[] { "weeks" });
-        parameterMap.put(ScheduleDefinition.HARVEST_TIME_PARAMETER, new String[] { "whenever" });
-        parameterMap.put(ScheduleDefinition.BEGIN_AT_PARAMETER, new String[] { "beginning" });
-        parameterMap.put(ScheduleDefinition.FIRST_HARVEST_TIME_PARAMETER, new String[] { startDateString });
-        parameterMap.put(ScheduleDefinition.CONTINUE_PARAMETER, new String[] { "forever" });
+        parameterMap.put(ScheduleDefinition.NAME_PARAMETER, new String[] {"schedule1"});
+        parameterMap.put(ScheduleDefinition.EDITION_PARAMETER, new String[] {"" + old_edition});
+        parameterMap.put(ScheduleDefinition.UPDATE_PARAMETER, new String[] {"1"});
+        parameterMap.put(ScheduleDefinition.FREQUENCY_PARAMETER, new String[] {"1"});
+        parameterMap.put(ScheduleDefinition.TIMESPAN_PARAMETER, new String[] {"weeks"});
+        parameterMap.put(ScheduleDefinition.HARVEST_TIME_PARAMETER, new String[] {"whenever"});
+        parameterMap.put(ScheduleDefinition.BEGIN_AT_PARAMETER, new String[] {"beginning"});
+        parameterMap.put(ScheduleDefinition.FIRST_HARVEST_TIME_PARAMETER, new String[] {startDateString});
+        parameterMap.put(ScheduleDefinition.CONTINUE_PARAMETER, new String[] {"forever"});
 
         final TestServletRequest servletRequest = new TestServletRequest();
         ;
@@ -112,21 +112,20 @@ public class ScheduleDefinitionTester extends HarvesterWebinterfaceTestCase {
     }
 
     /**
-     * Test creation of a new hourly schedule running as soon as possible and
-     * forever at 15 minutes past the hour
+     * Test creation of a new hourly schedule running as soon as possible and forever at 15 minutes past the hour
      */
     @Test
     public void testProcessRequestNewScheduleHourly() {
         Map<String, String[]> parameterMap = new HashMap<String, String[]>();
 
-        parameterMap.put(ScheduleDefinition.NAME_PARAMETER, new String[] { "schedule2" });
-        parameterMap.put(ScheduleDefinition.UPDATE_PARAMETER, new String[] { "1" });
-        parameterMap.put(ScheduleDefinition.FREQUENCY_PARAMETER, new String[] { "3" });
-        parameterMap.put(ScheduleDefinition.TIMESPAN_PARAMETER, new String[] { "hours" });
-        parameterMap.put(ScheduleDefinition.HARVEST_TIME_PARAMETER, new String[] { "aTime" });
-        parameterMap.put(ScheduleDefinition.FREQUENCY_MINUTES_PARAMETER, new String[] { "15" });
-        parameterMap.put(ScheduleDefinition.BEGIN_AT_PARAMETER, new String[] { "asSoonAsPossible" });
-        parameterMap.put(ScheduleDefinition.CONTINUE_PARAMETER, new String[] { "forever" });
+        parameterMap.put(ScheduleDefinition.NAME_PARAMETER, new String[] {"schedule2"});
+        parameterMap.put(ScheduleDefinition.UPDATE_PARAMETER, new String[] {"1"});
+        parameterMap.put(ScheduleDefinition.FREQUENCY_PARAMETER, new String[] {"3"});
+        parameterMap.put(ScheduleDefinition.TIMESPAN_PARAMETER, new String[] {"hours"});
+        parameterMap.put(ScheduleDefinition.HARVEST_TIME_PARAMETER, new String[] {"aTime"});
+        parameterMap.put(ScheduleDefinition.FREQUENCY_MINUTES_PARAMETER, new String[] {"15"});
+        parameterMap.put(ScheduleDefinition.BEGIN_AT_PARAMETER, new String[] {"asSoonAsPossible"});
+        parameterMap.put(ScheduleDefinition.CONTINUE_PARAMETER, new String[] {"forever"});
 
         final TestServletRequest servletRequest = new TestServletRequest();
         ;
@@ -145,8 +144,8 @@ public class ScheduleDefinitionTester extends HarvesterWebinterfaceTestCase {
     }
 
     /**
-     * Test creation of a new daily schedule, running at a particular time,
-     * beginning at a particular time, and continuing forever.
+     * Test creation of a new daily schedule, running at a particular time, beginning at a particular time, and
+     * continuing forever.
      * 
      * @throws ParseException
      */
@@ -155,16 +154,16 @@ public class ScheduleDefinitionTester extends HarvesterWebinterfaceTestCase {
         String startDateString = "12/01 2007 16:16";
         Date startDate = (new SimpleDateFormat(DATE_FORMAT).parse(startDateString));
         Map<String, String[]> parameterMap = new HashMap<String, String[]>();
-        parameterMap.put(ScheduleDefinition.NAME_PARAMETER, new String[] { "schedule2" });
-        parameterMap.put(ScheduleDefinition.UPDATE_PARAMETER, new String[] { "1" });
-        parameterMap.put(ScheduleDefinition.FREQUENCY_PARAMETER, new String[] { "2" });
-        parameterMap.put(ScheduleDefinition.TIMESPAN_PARAMETER, new String[] { "days" });
-        parameterMap.put(ScheduleDefinition.HARVEST_TIME_PARAMETER, new String[] { "aTime" });
-        parameterMap.put(ScheduleDefinition.FREQUENCY_HOURS_PARAMETER, new String[] { "14" });
-        parameterMap.put(ScheduleDefinition.FREQUENCY_MINUTES_PARAMETER, new String[] { "25" });
-        parameterMap.put(ScheduleDefinition.BEGIN_AT_PARAMETER, new String[] { "beginning" });
-        parameterMap.put(ScheduleDefinition.FIRST_HARVEST_TIME_PARAMETER, new String[] { startDateString });
-        parameterMap.put(ScheduleDefinition.CONTINUE_PARAMETER, new String[] { "forever" });
+        parameterMap.put(ScheduleDefinition.NAME_PARAMETER, new String[] {"schedule2"});
+        parameterMap.put(ScheduleDefinition.UPDATE_PARAMETER, new String[] {"1"});
+        parameterMap.put(ScheduleDefinition.FREQUENCY_PARAMETER, new String[] {"2"});
+        parameterMap.put(ScheduleDefinition.TIMESPAN_PARAMETER, new String[] {"days"});
+        parameterMap.put(ScheduleDefinition.HARVEST_TIME_PARAMETER, new String[] {"aTime"});
+        parameterMap.put(ScheduleDefinition.FREQUENCY_HOURS_PARAMETER, new String[] {"14"});
+        parameterMap.put(ScheduleDefinition.FREQUENCY_MINUTES_PARAMETER, new String[] {"25"});
+        parameterMap.put(ScheduleDefinition.BEGIN_AT_PARAMETER, new String[] {"beginning"});
+        parameterMap.put(ScheduleDefinition.FIRST_HARVEST_TIME_PARAMETER, new String[] {startDateString});
+        parameterMap.put(ScheduleDefinition.CONTINUE_PARAMETER, new String[] {"forever"});
 
         final TestServletRequest servletRequest = new TestServletRequest();
         ;
@@ -184,8 +183,7 @@ public class ScheduleDefinitionTester extends HarvesterWebinterfaceTestCase {
     }
 
     /**
-     * Test creation of a new weekly schedule, running at any time and as soon
-     * as possible, ending on a specific date.
+     * Test creation of a new weekly schedule, running at any time and as soon as possible, ending on a specific date.
      * 
      * @throws ParseException
      */
@@ -194,14 +192,14 @@ public class ScheduleDefinitionTester extends HarvesterWebinterfaceTestCase {
         String endDateString = "12/01 2007 16:16";
         Date endDate = (new SimpleDateFormat(DATE_FORMAT).parse(endDateString));
         Map<String, String[]> parameterMap = new HashMap<String, String[]>();
-        parameterMap.put(ScheduleDefinition.NAME_PARAMETER, new String[] { "schedule2" });
-        parameterMap.put(ScheduleDefinition.UPDATE_PARAMETER, new String[] { "1" });
-        parameterMap.put(ScheduleDefinition.FREQUENCY_PARAMETER, new String[] { "5" });
-        parameterMap.put(ScheduleDefinition.TIMESPAN_PARAMETER, new String[] { "weeks" });
-        parameterMap.put(ScheduleDefinition.HARVEST_TIME_PARAMETER, new String[] { "whenever" });
-        parameterMap.put(ScheduleDefinition.BEGIN_AT_PARAMETER, new String[] { "asSoonAsPossible" });
-        parameterMap.put(ScheduleDefinition.CONTINUE_PARAMETER, new String[] { "toTime" });
-        parameterMap.put(ScheduleDefinition.END_HARVEST_TIME_PARAMETER, new String[] { endDateString });
+        parameterMap.put(ScheduleDefinition.NAME_PARAMETER, new String[] {"schedule2"});
+        parameterMap.put(ScheduleDefinition.UPDATE_PARAMETER, new String[] {"1"});
+        parameterMap.put(ScheduleDefinition.FREQUENCY_PARAMETER, new String[] {"5"});
+        parameterMap.put(ScheduleDefinition.TIMESPAN_PARAMETER, new String[] {"weeks"});
+        parameterMap.put(ScheduleDefinition.HARVEST_TIME_PARAMETER, new String[] {"whenever"});
+        parameterMap.put(ScheduleDefinition.BEGIN_AT_PARAMETER, new String[] {"asSoonAsPossible"});
+        parameterMap.put(ScheduleDefinition.CONTINUE_PARAMETER, new String[] {"toTime"});
+        parameterMap.put(ScheduleDefinition.END_HARVEST_TIME_PARAMETER, new String[] {endDateString});
         final TestServletRequest servletRequest = new TestServletRequest();
         ;
         servletRequest.setParameterMap(parameterMap);
@@ -220,23 +218,22 @@ public class ScheduleDefinitionTester extends HarvesterWebinterfaceTestCase {
     }
 
     /**
-     * Test creation of a new monthly schedule, running at a particular time,
-     * starting as soon as possible, and running for a specific number of
-     * harvests.
+     * Test creation of a new monthly schedule, running at a particular time, starting as soon as possible, and running
+     * for a specific number of harvests.
      * 
      * @throws ParseException
      */
     @Test
     public void testProcessRequestNewMonthlySchedule() throws ParseException {
         Map<String, String[]> parameterMap = new HashMap<String, String[]>();
-        parameterMap.put(ScheduleDefinition.NAME_PARAMETER, new String[] { "schedule2" });
-        parameterMap.put(ScheduleDefinition.UPDATE_PARAMETER, new String[] { "1" });
-        parameterMap.put(ScheduleDefinition.FREQUENCY_PARAMETER, new String[] { "2" });
-        parameterMap.put(ScheduleDefinition.TIMESPAN_PARAMETER, new String[] { "months" });
-        parameterMap.put(ScheduleDefinition.HARVEST_TIME_PARAMETER, new String[] { "whenever" });
-        parameterMap.put(ScheduleDefinition.BEGIN_AT_PARAMETER, new String[] { "asSoonAsPossible" });
-        parameterMap.put(ScheduleDefinition.CONTINUE_PARAMETER, new String[] { "numberOfHarvests" });
-        parameterMap.put(ScheduleDefinition.NUMBER_OF_HARVESTS_PARAMETER, new String[] { "20" });
+        parameterMap.put(ScheduleDefinition.NAME_PARAMETER, new String[] {"schedule2"});
+        parameterMap.put(ScheduleDefinition.UPDATE_PARAMETER, new String[] {"1"});
+        parameterMap.put(ScheduleDefinition.FREQUENCY_PARAMETER, new String[] {"2"});
+        parameterMap.put(ScheduleDefinition.TIMESPAN_PARAMETER, new String[] {"months"});
+        parameterMap.put(ScheduleDefinition.HARVEST_TIME_PARAMETER, new String[] {"whenever"});
+        parameterMap.put(ScheduleDefinition.BEGIN_AT_PARAMETER, new String[] {"asSoonAsPossible"});
+        parameterMap.put(ScheduleDefinition.CONTINUE_PARAMETER, new String[] {"numberOfHarvests"});
+        parameterMap.put(ScheduleDefinition.NUMBER_OF_HARVESTS_PARAMETER, new String[] {"20"});
 
         final TestServletRequest servletRequest = new TestServletRequest();
         ;

@@ -25,8 +25,8 @@ package dk.netarkivet.deploy;
 import java.util.Map;
 
 /**
- * Simple template engine functions that replaces ${...} in an array of strings
- * or a single string. Error handling can be deduced from the unit test.
+ * Simple template engine functions that replaces ${...} in an array of strings or a single string. Error handling can
+ * be deduced from the unit test.
  */
 public class Template {
 
@@ -37,17 +37,13 @@ public class Template {
     }
 
     /**
-     * Takes an array of strings and returns a concatenated string with all
-     * ${...} occurrences replaced according to the env map.
+     * Takes an array of strings and returns a concatenated string with all ${...} occurrences replaced according to the
+     * env map.
      * 
-     * @param strArray
-     *            array of strings to be processed with env strings
-     * @param env
-     *            map of replacement strings
-     * @param bFailOnMissing
-     *            throw an exception on missing replacement string or not
-     * @param separator
-     *            separator to insert between lines or null
+     * @param strArray array of strings to be processed with env strings
+     * @param env map of replacement strings
+     * @param bFailOnMissing throw an exception on missing replacement string or not
+     * @param separator separator to insert between lines or null
      * @return concatenated and processed string
      */
     public static String untemplate(String[] strArray, Map<String, String> env, boolean bFailOnMissing, String separator) {
@@ -64,12 +60,9 @@ public class Template {
     /**
      * Takes a string and replaces all ${...} occurrences with env map strings.
      * 
-     * @param str
-     *            string to be processed
-     * @param env
-     *            map of replacement strings
-     * @param bFailOnMissing
-     *            throw an exception on missing replacement string or not
+     * @param str string to be processed
+     * @param env map of replacement strings
+     * @param bFailOnMissing throw an exception on missing replacement string or not
      * @return processed string
      */
     public static String untemplate(String str, Map<String, String> env, boolean bFailOnMissing) {

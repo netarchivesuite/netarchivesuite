@@ -60,9 +60,8 @@ import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlS
 import dk.netarkivet.harvester.harvesting.frontier.FullFrontierReport;
 
 /**
- * This implementation of the HeritrixController interface starts Heritrix as a
- * separate process and uses JMX to communicate with it. Each instance executes
- * exactly one process that runs exactly one crawl job.
+ * This implementation of the HeritrixController interface starts Heritrix as a separate process and uses JMX to
+ * communicate with it. Each instance executes exactly one process that runs exactly one crawl job.
  */
 public class BnfHeritrixController extends AbstractJMXHeritrixController {
 
@@ -70,9 +69,8 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
     private static final Logger log = LoggerFactory.getLogger(BnfHeritrixController.class);
 
     /**
-     * The below commands and attributes are copied from the attributes and
-     * operations exhibited by the Heritrix MBeans of type CrawlJob and
-     * CrawlService.Job, as they appear in JConsole.
+     * The below commands and attributes are copied from the attributes and operations exhibited by the Heritrix MBeans
+     * of type CrawlJob and CrawlService.Job, as they appear in JConsole.
      *
      * Only operations and attributes used in NAS are listed.
      */
@@ -85,11 +83,10 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
         CurrentJob;
 
         /**
-         * Returns the {@link CrawlServiceAttribute} enum value matching the
-         * given name. Throws {@link UnknownID} if no match is found.
+         * Returns the {@link CrawlServiceAttribute} enum value matching the given name. Throws {@link UnknownID} if no
+         * match is found.
          *
-         * @param name
-         *            the attribute name
+         * @param name the attribute name
          * @return the corresponding {@link CrawlServiceAttribute} enum value.
          */
         public static CrawlServiceAttribute fromString(String name) {
@@ -130,13 +127,11 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
         ThreadCount;
 
         /**
-         * Returns the {@link CrawlServiceJobAttribute} enum value matching the
-         * given name. Throws {@link UnknownID} if no match is found.
+         * Returns the {@link CrawlServiceJobAttribute} enum value matching the given name. Throws {@link UnknownID} if
+         * no match is found.
          *
-         * @param name
-         *            the attribute name
-         * @return the corresponding {@link CrawlServiceJobAttribute} enum
-         *         value.
+         * @param name the attribute name
+         * @return the corresponding {@link CrawlServiceJobAttribute} enum value.
          */
         public static CrawlServiceJobAttribute fromString(String name) {
             for (CrawlServiceJobAttribute att : values()) {
@@ -149,8 +144,7 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
     }
 
     /**
-     * Enum class defining the general operations available to the Heritrix
-     * operator.
+     * Enum class defining the general operations available to the Heritrix operator.
      */
     private static enum CrawlServiceOperation {
         /** Adds a new job to an Heritrix instance. */
@@ -168,15 +162,13 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
     }
 
     /**
-     * Enum class defining the Job-operations available to the Heritrix
-     * operator.
+     * Enum class defining the Job-operations available to the Heritrix operator.
      */
     private static enum CrawlServiceJobOperation {
         /** Fetches the progress statistics string from an Heritrix instance. */
         progressStatistics,
         /**
-         * Fetches the progress statistics legend string from an Heritrix
-         * instance.
+         * Fetches the progress statistics legend string from an Heritrix instance.
          */
         progressStatisticsLegend,
         /** Fetches the frontier report. */
@@ -189,17 +181,15 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
     private static final boolean ABORT_IF_CONN_LOST = Settings.getBoolean(HarvesterSettings.ABORT_IF_CONNECTION_LOST);
 
     /**
-     * The part of the Job MBean name that designates the unique id. For some
-     * reason, this is not included in the normal Heritrix definitions in
-     * JmxUtils, otherwise we wouldn't have to define it. I have committed a
-     * feature request: http://webteam.archive.org/jira/browse/HER-1618
+     * The part of the Job MBean name that designates the unique id. For some reason, this is not included in the normal
+     * Heritrix definitions in JmxUtils, otherwise we wouldn't have to define it. I have committed a feature request:
+     * http://webteam.archive.org/jira/browse/HER-1618
      */
     private static final String UID_PROPERTY = "uid";
 
     /**
-     * The name that Heritrix gives to the job we ask it to create. This is part
-     * of the name of the MBean for that job, but we can only retrieve the name
-     * after the MBean has been created.
+     * The name that Heritrix gives to the job we ask it to create. This is part of the name of the MBean for that job,
+     * but we can only retrieve the name after the MBean has been created.
      */
     private String jobName;
 
@@ -221,8 +211,7 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
     /**
      * Create a BnfHeritrixController object.
      *
-     * @param files
-     *            Files that are used to set up Heritrix.
+     * @param files Files that are used to set up Heritrix.
      */
     public BnfHeritrixController(HeritrixFiles files) {
         super(files);
@@ -231,9 +220,7 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
     /**
      * Initialize the JMXconnection to the Heritrix.
      * 
-     * @throws IOFailure
-     *             If Heritrix dies before initialization, or we encounter any
-     *             problems during the initialization.
+     * @throws IOFailure If Heritrix dies before initialization, or we encounter any problems during the initialization.
      * @see HeritrixController#initialize()
      */
     @Override
@@ -296,13 +283,11 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
     }
 
     /**
-     * Cleanup after an Heritrix process. This entails sending the shutdown
-     * command to the Heritrix process, and killing it forcefully, if it is
-     * still alive after waiting the period of time specified by the
+     * Cleanup after an Heritrix process. This entails sending the shutdown command to the Heritrix process, and killing
+     * it forcefully, if it is still alive after waiting the period of time specified by the
      * CommonSettings.PROCESS_TIMEOUT setting.
      * 
-     * @param crawlDir
-     *            the crawldir to cleanup
+     * @param crawlDir the crawldir to cleanup
      * @see HeritrixController#cleanup()
      */
     public void cleanup(File crawlDir) {
@@ -330,11 +315,9 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
     }
 
     /**
-     * Gets a message that stores the information summarizing the crawl
-     * progress.
+     * Gets a message that stores the information summarizing the crawl progress.
      *
-     * @return a message that stores the information summarizing the crawl
-     *         progress.
+     * @return a message that stores the information summarizing the crawl progress.
      */
     public CrawlProgressMessage getCrawlProgress() {
         HeritrixFiles files = getHeritrixFiles();
@@ -357,15 +340,13 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
     }
 
     /**
-     * Retrieve the values of the crawl service attributes and add them to the
-     * CrawlProgressMessage being put together.
+     * Retrieve the values of the crawl service attributes and add them to the CrawlProgressMessage being put together.
      * 
-     * @param cpm
-     *            the crawlProgress message being prepared
+     * @param cpm the crawlProgress message being prepared
      */
     private void getCrawlServiceAttributes(CrawlProgressMessage cpm) {
         List<Attribute> heritrixAtts = getMBeanAttributes(new CrawlServiceAttribute[] {
-                CrawlServiceAttribute.AlertCount, CrawlServiceAttribute.IsCrawling, CrawlServiceAttribute.CurrentJob });
+                CrawlServiceAttribute.AlertCount, CrawlServiceAttribute.IsCrawling, CrawlServiceAttribute.CurrentJob});
 
         CrawlServiceInfo hStatus = cpm.getHeritrixStatus();
         for (Attribute att : heritrixAtts) {
@@ -400,11 +381,10 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
     }
 
     /**
-     * Retrieve the values of the crawl service job attributes and add them to
-     * the CrawlProgressMessage being put together.
+     * Retrieve the values of the crawl service job attributes and add them to the CrawlProgressMessage being put
+     * together.
      * 
-     * @param cpm
-     *            the crawlProgress message being prepared
+     * @param cpm the crawlProgress message being prepared
      */
     private void fetchCrawlServiceJobAttributes(CrawlProgressMessage cpm) {
         String progressStats = (String) executeMBeanOperation(CrawlServiceJobOperation.progressStatistics);
@@ -530,23 +510,17 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
     }
 
     /**
-     * Get the name of the one job we let this Heritrix run. The handling of
-     * done jobs depends on Heritrix not being in crawl. This call may take
-     * several seconds to finish.
+     * Get the name of the one job we let this Heritrix run. The handling of done jobs depends on Heritrix not being in
+     * crawl. This call may take several seconds to finish.
      *
      * @return The name of the one job that Heritrix has.
-     * @throws IOFailure
-     *             if the job created failed to initialize or didn't appear in
-     *             time.
-     * @throws IllegalState
-     *             if more than one job in done list, or more than one pending
-     *             job
+     * @throws IOFailure if the job created failed to initialize or didn't appear in time.
+     * @throws IllegalState if more than one job in done list, or more than one pending job
      */
     private String getJobName() {
         /*
-         * This is called just after we've told Heritrix to create a job. It may
-         * take a while before the job is actually created, so we have to wait
-         * around a bit.
+         * This is called just after we've told Heritrix to create a job. It may take a while before the job is actually
+         * created, so we have to wait around a bit.
          */
         TabularData pendingJobs = null;
         TabularData doneJobs;
@@ -596,12 +570,10 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
     }
 
     /**
-     * Periodically scans the crawl dir to see if Heritrix has finished
-     * generating the crawl reports. The time to wait is bounded by
-     * {@link HarvesterSettings#WAIT_FOR_REPORT_GENERATION_TIMEOUT}.
+     * Periodically scans the crawl dir to see if Heritrix has finished generating the crawl reports. The time to wait
+     * is bounded by {@link HarvesterSettings#WAIT_FOR_REPORT_GENERATION_TIMEOUT}.
      *
-     * @param crawlDir
-     *            the crawl directory to scan.
+     * @param crawlDir the crawl directory to scan.
      */
     private void waitForReportGeneration(File crawlDir) {
         log.info("Started waiting for Heritrix report generation.");
@@ -644,7 +616,7 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
             String status = "";
             try {
                 List<Attribute> atts = getAttributesNoRetry(crawlServiceJobBeanName,
-                        new String[] { CrawlServiceJobAttribute.Status.name() });
+                        new String[] {CrawlServiceJobAttribute.Status.name()});
                 status = (String) atts.get(0).getValue();
             } catch (IOFailure e) {
                 log.warn("IOFailure", e);
@@ -674,10 +646,8 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
     /**
      * Execute a single CrawlServiceOperation.
      *
-     * @param operation
-     *            the operation to execute
-     * @param arguments
-     *            any arguments needed by the operation
+     * @param operation the operation to execute
+     * @param arguments any arguments needed by the operation
      * @return Whatever the command returned.
      */
     private Object executeMBeanOperation(CrawlServiceOperation operation, String... arguments) {
@@ -687,10 +657,8 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
     /**
      * Execute a single CrawlServiceOperation.
      *
-     * @param operation
-     *            the operation to execute
-     * @param arguments
-     *            any arguments needed by the operation
+     * @param operation the operation to execute
+     * @param arguments any arguments needed by the operation
      * @return Whatever the command returned.
      */
     private Object executeMBeanOperation(CrawlServiceJobOperation operation, String... arguments) {
@@ -700,8 +668,7 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
     /**
      * Get the value of several attributes.
      *
-     * @param attributes
-     *            The attributes to get.
+     * @param attributes The attributes to get.
      * @return Whatever the command returned.
      */
     private List<Attribute> getMBeanAttributes(CrawlServiceJobAttribute[] attributes) {
@@ -716,8 +683,7 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
     /**
      * Get the value of several attributes.
      *
-     * @param attributes
-     *            The attributes to get.
+     * @param attributes The attributes to get.
      * @return Whatever the command returned.
      */
     private List<Attribute> getMBeanAttributes(CrawlServiceAttribute[] attributes) {
@@ -732,42 +698,32 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
     /**
      * Execute a command on a bean.
      *
-     * @param beanName
-     *            Name of the bean.
-     * @param operation
-     *            Command to execute.
-     * @param args
-     *            Arguments to the command. Only string arguments are possible
-     *            at the moment.
+     * @param beanName Name of the bean.
+     * @param operation Command to execute.
+     * @param args Arguments to the command. Only string arguments are possible at the moment.
      * @return The return value of the executed command.
      */
     private Object executeOperation(String beanName, String operation, String... args) {
-        return jmxCall(beanName, true, true, new String[] { operation }, args);
+        return jmxCall(beanName, true, true, new String[] {operation}, args);
     }
 
     /**
      * Execute a command on a bean, does not retry if fails.
      *
-     * @param beanName
-     *            Name of the bean.
-     * @param operation
-     *            Command to execute.
-     * @param args
-     *            Arguments to the command. Only string arguments are possible
-     *            at the moment.
+     * @param beanName Name of the bean.
+     * @param operation Command to execute.
+     * @param args Arguments to the command. Only string arguments are possible at the moment.
      * @return The return value of the executed command.
      */
     private Object executeOperationNoRetry(String beanName, String operation, String... args) {
-        return jmxCall(beanName, false, true, new String[] { operation }, args);
+        return jmxCall(beanName, false, true, new String[] {operation}, args);
     }
 
     /**
      * Get the value of several attributes from a bean.
      *
-     * @param beanName
-     *            Name of the bean to get an attribute for.
-     * @param attributes
-     *            Name of the attributes to get.
+     * @param beanName Name of the bean to get an attribute for.
+     * @param attributes Name of the attributes to get.
      * @return Value of the attribute.
      */
     @SuppressWarnings("unchecked")
@@ -776,13 +732,10 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
     }
 
     /**
-     * Get the value of several attributes from a bean, but does not retry if
-     * the fetch fails.
+     * Get the value of several attributes from a bean, but does not retry if the fetch fails.
      *
-     * @param beanName
-     *            Name of the bean to get an attribute for.
-     * @param attributes
-     *            Name of the attributes to get.
+     * @param beanName Name of the bean to get an attribute for.
+     * @param attributes Name of the attributes to get.
      * @return Value of the attribute.
      */
     @SuppressWarnings("unchecked")
@@ -793,17 +746,11 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
     /**
      * Executes a JMX call (attribute read or single operation) on a given bean.
      *
-     * @param beanName
-     *            the MBean name.
-     * @param retry
-     *            if true, will retry a number of times if the operation fails.
-     * @param isOperation
-     *            true if the call is an operation, false if it's an attribute
-     *            read.
-     * @param names
-     *            name of operation or name of attributes
-     * @param args
-     *            optional arguments for operations
+     * @param beanName the MBean name.
+     * @param retry if true, will retry a number of times if the operation fails.
+     * @param isOperation true if the call is an operation, false if it's an attribute read.
+     * @param names name of operation or name of attributes
+     * @param args optional arguments for operations
      * @return the object returned by the distant MBean
      */
     private Object jmxCall(String beanName, boolean retry, boolean isOperation, String[] names, String... args) {

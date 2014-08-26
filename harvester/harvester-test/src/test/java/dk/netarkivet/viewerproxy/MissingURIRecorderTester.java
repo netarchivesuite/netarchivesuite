@@ -96,9 +96,8 @@ public class MissingURIRecorderTester {
     }
 
     /**
-     * Tests getRecordedURIs. Tests the result of getRecordedURIs before adding
-     * a URL, and after adding 1 and 2 URLs. After the second url, the order
-     * should be sorted.
+     * Tests getRecordedURIs. Tests the result of getRecordedURIs before adding a URL, and after adding 1 and 2 URLs.
+     * After the second url, the order should be sorted.
      */
     @Test
     public void testGetRecordedURIs() throws Exception {
@@ -119,11 +118,9 @@ public class MissingURIRecorderTester {
     }
 
     /**
-     * Tests notify. First tests for exception on null argument. Then tests each
-     * of the four cases: 1) Recording URIs and not found url reported 2)
-     * Recording URIs and found url reported 3) Not Recording URIs and not found
-     * url reported 4) Not Recording URIs and found url reported Only case 1)
-     * should add an url to the set.
+     * Tests notify. First tests for exception on null argument. Then tests each of the four cases: 1) Recording URIs
+     * and not found url reported 2) Recording URIs and found url reported 3) Not Recording URIs and not found url
+     * reported 4) Not Recording URIs and found url reported Only case 1) should add an url to the set.
      */
     @Test
     public void testNotify() throws Exception {

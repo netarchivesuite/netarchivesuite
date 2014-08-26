@@ -52,15 +52,11 @@ public class DomainIngester extends Thread {
     private Locale l;
 
     /**
-     * Create a new ingester for a given session and outpout, reading domains
-     * from a file.
+     * Create a new ingester for a given session and outpout, reading domains from a file.
      *
-     * @param out
-     *            The writer that goes into HTML output
-     * @param ingestFile
-     *            The file of domains to ingest.
-     * @param l
-     *            the given locale
+     * @param out The writer that goes into HTML output
+     * @param ingestFile The file of domains to ingest.
+     * @param l the given locale
      */
     public DomainIngester(JspWriter out, File ingestFile, Locale l) {
         // TODO Should we validate the JspWriter
@@ -74,8 +70,8 @@ public class DomainIngester extends Thread {
     }
 
     /**
-     * Starts the ingesting thread. When 'done' is set to true, the thread is
-     * finished, and any exceptions are found in 'e'.
+     * Starts the ingesting thread. When 'done' is set to true, the thread is finished, and any exceptions are found in
+     * 'e'.
      */
     public void run() {
         try {

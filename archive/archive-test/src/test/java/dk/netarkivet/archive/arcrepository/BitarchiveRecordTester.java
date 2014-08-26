@@ -57,11 +57,9 @@ public class BitarchiveRecordTester {
     private File testFile = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.ORIGINALS_DIR,
             "3-3-20070119143010-00000-sb-test-har-001.statsbiblioteket.dk.arc");
     /**
-     * The following warcfile consists of multiple record-types. These unittests
-     * only handle the response-record which is similar to what we now extract
-     * from our arc-files. We use the following record with a normal HTTP
-     * response with mimetype text/html (Record type, offset, ContentBegin,
-     * Length): response, 28917, 393, 1121
+     * The following warcfile consists of multiple record-types. These unittests only handle the response-record which
+     * is similar to what we now extract from our arc-files. We use the following record with a normal HTTP response
+     * with mimetype text/html (Record type, offset, ContentBegin, Length): response, 28917, 393, 1121
      * 
      * (Record type, offset, ContentBegin, Length): response, 955, 345, 621
      * 
@@ -69,24 +67,21 @@ public class BitarchiveRecordTester {
     private File warcTestFile = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.ORIGINALS_DIR,
             "NAS-20100909163324-00000-mette.kb.dk.warc");
     /*
-     * private long warcOffset = 955; private int warcContentBegin = 345;
-     * private long warcRecordLength = 621;
+     * private long warcOffset = 955; private int warcContentBegin = 345; private long warcRecordLength = 621;
      */
     /*
-     * (Record type, url, offset, ContentBegin, Length): response,
-     * http://netarkivet
-     * .dk/netarkivet_alm/billeder/netarkivet_guidelines_20.gif, 81527, 387, 887
-     * (Record type, url, offset, ContentBegin, Length): response,
-     * http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif, 83458, 369, 660
-     * (Record type, url, offset, ContentBegin, Length): response,
-     * http://netarkivet.dk/organisation/index-da.php, 85108, 361, 9291
+     * (Record type, url, offset, ContentBegin, Length): response, http://netarkivet
+     * .dk/netarkivet_alm/billeder/netarkivet_guidelines_20.gif, 81527, 387, 887 (Record type, url, offset,
+     * ContentBegin, Length): response, http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif, 83458, 369, 660 (Record
+     * type, url, offset, ContentBegin, Length): response, http://netarkivet.dk/organisation/index-da.php, 85108, 361,
+     * 9291
      */
 
     private long smallWarcRecordOffset = 85108;
 
     /**
-     * (Record type, url, offset, ContentBegin, Length): response,
-     * http://netarkivet.dk/nyheder/index-da.php, 100262, 357, 14248
+     * (Record type, url, offset, ContentBegin, Length): response, http://netarkivet.dk/nyheder/index-da.php, 100262,
+     * 357, 14248
      **/
     private long bigWarcRecordOffset = 100262;
 
@@ -135,8 +130,7 @@ public class BitarchiveRecordTester {
     }
 
     /**
-     * Test storing WArcRecord in byte array. Tests on WarcRecord less than
-     * 10000 bytes.
+     * Test storing WArcRecord in byte array. Tests on WarcRecord less than 10000 bytes.
      * 
      * @throws IOException
      */
@@ -193,8 +187,7 @@ public class BitarchiveRecordTester {
     }
 
     /**
-     * Test storing WarcRecord in RemoteFile. Tests on WarcRecord greater than
-     * 10000 bytes.
+     * Test storing WarcRecord in RemoteFile. Tests on WarcRecord greater than 10000 bytes.
      * 
      * @throws IOException
      */

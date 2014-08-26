@@ -49,17 +49,14 @@ public class JMXUtilsTester extends TestCase {
     }
 
     /*
-     * Test method for
-     * 'dk.netarkivet.monitor.webinterface.JMXUtils.getUrl(String, int, int)'
+     * Test method for 'dk.netarkivet.monitor.webinterface.JMXUtils.getUrl(String, int, int)'
      */
     public final void testGetUrl() {
         JMXServiceURL JmxServiceUrl = JMXUtils.getUrl(defaultServer, 8000, 8100);
     }
 
     /*
-     * Test method for
-     * 'dk.netarkivet.monitor.webinterface.JMXUtils.getConnection(JMXServiceURL,
-     * Map<String, String[]>)'
+     * Test method for 'dk.netarkivet.monitor.webinterface.JMXUtils.getConnection(JMXServiceURL, Map<String, String[]>)'
      */
     public final void testGetConnection() {
         ensureJndiInitialContext();
@@ -74,8 +71,8 @@ public class JMXUtilsTester extends TestCase {
     }
 
     /**
-     * If no initial JNDI context has been configured, configures the system to
-     * use Sun's standard one. This is necessary for RMI connections to work.
+     * If no initial JNDI context has been configured, configures the system to use Sun's standard one. This is
+     * necessary for RMI connections to work.
      */
     private static void ensureJndiInitialContext() {
 

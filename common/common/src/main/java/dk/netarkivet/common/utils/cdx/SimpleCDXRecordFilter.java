@@ -26,10 +26,9 @@ package dk.netarkivet.common.utils.cdx;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
- * A Simple CDXRecordFilter to be extended. It only implements the filtername
- * method.
+ * A Simple CDXRecordFilter to be extended. It only implements the filtername method.
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public abstract class SimpleCDXRecordFilter implements CDXRecordFilter {
 
     /** Variable holding the filtername. */
@@ -37,10 +36,8 @@ public abstract class SimpleCDXRecordFilter implements CDXRecordFilter {
 
     /**
      *
-     * @param filtername
-     *            - the name of the filter
-     * @throws ArgumentNotValid
-     *             If 'filtername' equals null or the empty string
+     * @param filtername - the name of the filter
+     * @throws ArgumentNotValid If 'filtername' equals null or the empty string
      */
     public SimpleCDXRecordFilter(String filtername) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(filtername, "filtername");
@@ -58,8 +55,7 @@ public abstract class SimpleCDXRecordFilter implements CDXRecordFilter {
     /*
      * (non-Javadoc)
      * 
-     * @see dk.netarkivet.common.utils.cdx.CDXRecordFilter#process(
-     * dk.netarkivet.common.utils.cdx.CDXRecord)
+     * @see dk.netarkivet.common.utils.cdx.CDXRecordFilter#process( dk.netarkivet.common.utils.cdx.CDXRecord)
      */
     public abstract boolean process(CDXRecord cdxrec);
 

@@ -38,7 +38,7 @@ import org.apache.commons.cli.UnrecognizedOptionException;
  *
  * @author Kristinn Sigur&eth;sson
  */
-@SuppressWarnings({ "rawtypes", "unused" })
+@SuppressWarnings({"rawtypes", "unused"})
 public class CommandLineParser {
     private static final String USAGE = "Usage: ";
     private static final String NAME = "DigestIndexer";
@@ -57,13 +57,10 @@ public class CommandLineParser {
     /**
      * Constructor.
      *
-     * @param args
-     *            Command-line arguments to process.
-     * @param out
-     *            PrintStream to write on.
+     * @param args Command-line arguments to process.
+     * @param out PrintStream to write on.
      *
-     * @throws ParseException
-     *             Failed parse of command line.
+     * @throws ParseException Failed parse of command line.
      */
     public CommandLineParser(String[] args, PrintWriter out) throws ParseException {
         super();
@@ -137,10 +134,8 @@ public class CommandLineParser {
      *
      * The JVM exits inside in this method.
      *
-     * @param message
-     *            Message to print before we do usage.
-     * @param exitCode
-     *            Exit code to use in call to System.exit.
+     * @param message Message to print before we do usage.
+     * @param exitCode Exit code to use in call to System.exit.
      */
     public void usage(String message, int exitCode) {
         outputAndExit(message, true, exitCode);
@@ -151,10 +146,8 @@ public class CommandLineParser {
      *
      * The JVM exits inside in this method.
      *
-     * @param message
-     *            Message to print before we do usage.
-     * @param exitCode
-     *            Exit code to use in call to System.exit.
+     * @param message Message to print before we do usage.
+     * @param exitCode Exit code to use in call to System.exit.
      */
     public void message(String message, int exitCode) {
         outputAndExit(message, false, exitCode);
@@ -165,12 +158,9 @@ public class CommandLineParser {
      *
      * Private utility method. JVM exits from inside in this method.
      *
-     * @param message
-     *            Message to print before we do usage.
-     * @param doUsage
-     *            True if we are to print out the usage message.
-     * @param exitCode
-     *            Exit code to use in call to System.exit.
+     * @param message Message to print before we do usage.
+     * @param doUsage True if we are to print out the usage message.
+     * @param exitCode Exit code to use in call to System.exit.
      */
     private void outputAndExit(String message, boolean doUsage, int exitCode) {
         if (message != null) {

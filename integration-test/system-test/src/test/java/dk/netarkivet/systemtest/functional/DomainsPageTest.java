@@ -58,7 +58,7 @@ public class DomainsPageTest extends SeleniumTest {
         domainCounter = 1;
     }
 
-    @Test(groups = { "guitest", "functest" })
+    @Test(groups = {"guitest", "functest"})
     public void domainCreationTest() throws Exception {
         addDescription("Tests that domains can be created correctly.");
         addStep("Click the 'Create domain' link in the left menu under the " + "'Definitions' section",
@@ -85,7 +85,7 @@ public class DomainsPageTest extends SeleniumTest {
                 "New domain not found.");
     }
 
-    @Test(groups = { "guitest", "functest" })
+    @Test(groups = {"guitest", "functest"})
     public void usedConfigurationFilteringTest() {
         addDescription("Tests configurations are filtered correctly when "
                 + "using the 'Show/Hide unused configuration' filter.");
@@ -96,7 +96,7 @@ public class DomainsPageTest extends SeleniumTest {
         addStep("Create a new domain", "The edit domain page should be loaded with only the default "
                 + "config show. The configurations filter state should be that "
                 + "unused configurations are hidden, eg. the filter link " + "text should 'Show unused configurations.");
-        DomainWebTestHelper.createDomain(new String[] { domain1ID });
+        DomainWebTestHelper.createDomain(new String[] {domain1ID});
         List<WebElement> configurationRows = readConfigurationTableRows(driver);
         NASAssert.assertEquals(1, configurationRows.size(), "More than one configuration listed in the new domain");
         NASAssert.assertTrue(configurationRows.get(0).getText().contains("defaultconfig"),
@@ -153,7 +153,7 @@ public class DomainsPageTest extends SeleniumTest {
                 + "'Hide unused configurations' list on the test domain.", "Both configurations should now be listed");
     }
 
-    @Test(groups = { "guitest", "functest" })
+    @Test(groups = {"guitest", "functest"})
     public void usedSeedListsFilteringTest() {
         addDescription("Tests seed lists are filtered correctly when "
                 + "using the 'Show/Hide unused seed list' filter.");
@@ -161,7 +161,7 @@ public class DomainsPageTest extends SeleniumTest {
                 + "seed list show. The seed list filter state should be that "
                 + "unused seed lists are hidden, eg. the filter link " + "text should 'Show unused seed lists.");
         String domain1ID = createDomainID();
-        DomainWebTestHelper.createDomain(new String[] { domain1ID });
+        DomainWebTestHelper.createDomain(new String[] {domain1ID});
         List<WebElement> seedListRows = readSeedListTableRows(driver);
         NASAssert.assertEquals(1, seedListRows.size(), "More than one seed list listed in the new domain");
         NASAssert.assertTrue(seedListRows.get(0).getText().contains("defaultseeds"),
@@ -170,7 +170,7 @@ public class DomainsPageTest extends SeleniumTest {
         addStep("Create a new seed list",
                 "The seed list should not be listed initially as the seed list is hidden by the unused filter");
         String seedList1ID = createSeedListID();
-        DomainWebTestHelper.createSeedList(domain1ID, seedList1ID, new String[] { domain1ID });
+        DomainWebTestHelper.createSeedList(domain1ID, seedList1ID, new String[] {domain1ID});
         NASAssert.assertEquals(1, seedListRows.size(), "More than one seed list listed after second "
                 + "seed list was created. Should have been hidden by unused filter");
 

@@ -74,7 +74,7 @@ public class DeduplicationCDXExtractionBatchJobTester {
     public void testJob() throws IOException {
         File testFile = new File(TestInfo.WORKING_DIR, METADATA_FILENAME);
         assertTrue("file should exist", testFile.isFile());
-        BatchLocalFiles files = new BatchLocalFiles(new File[] { testFile });
+        BatchLocalFiles files = new BatchLocalFiles(new File[] {testFile});
         DeduplicationCDXExtractionBatchJob job = new DeduplicationCDXExtractionBatchJob();
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         files.run(job, os);

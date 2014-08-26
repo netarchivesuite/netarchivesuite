@@ -32,8 +32,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Verifies that the <code>IndexAggregator</code> class is able to aggregate CDX
- * index files correctly in larger files, and sort the index entries
+ * Verifies that the <code>IndexAggregator</code> class is able to aggregate CDX index files correctly in larger files,
+ * and sort the index entries
  */
 public class IndexAggregatorTest extends AggregatorTestCase {
     private static IndexAggregator aggregator = new IndexAggregator();
@@ -53,7 +53,7 @@ public class IndexAggregatorTest extends AggregatorTestCase {
 
     @Test
     public void testAggregation() {
-        File[] inputFiles = prepareSourceIndex(new String[] { inputFile1Name, inputFile2Name });
+        File[] inputFiles = prepareSourceIndex(new String[] {inputFile1Name, inputFile2Name});
         TestIndex testIndex = new TestIndex();
 
         testIndex.addIndexesFromFiles(inputFiles);
@@ -65,8 +65,8 @@ public class IndexAggregatorTest extends AggregatorTestCase {
     }
 
     /**
-     * The <code>IndexAggregator</code> should be able to handle situations with
-     * no index files. No index files should be created in this case
+     * The <code>IndexAggregator</code> should be able to handle situations with no index files. No index files should
+     * be created in this case
      */
     @Test
     public void testAggregationNoFiles() {
@@ -83,7 +83,7 @@ public class IndexAggregatorTest extends AggregatorTestCase {
 
     @Test
     public void testAggregationSingleFile() {
-        File[] inputFiles = prepareSourceIndex(new String[] { inputFile1Name });
+        File[] inputFiles = prepareSourceIndex(new String[] {inputFile1Name});
         TestIndex testIndex = new TestIndex();
 
         testIndex.addIndexesFromFiles(inputFiles);
@@ -96,8 +96,8 @@ public class IndexAggregatorTest extends AggregatorTestCase {
 
     @Test
     public void testMerging() {
-        File[] inputFiles1 = prepareSourceIndex(new String[] { inputFile1Name });
-        File[] inputFiles2 = prepareSourceIndex(new String[] { inputFile2Name });
+        File[] inputFiles1 = prepareSourceIndex(new String[] {inputFile1Name});
+        File[] inputFiles2 = prepareSourceIndex(new String[] {inputFile2Name});
 
         File tempFile1 = new File(testWorkingDirectory, "tempFile1");
         File tempFile2 = new File(testWorkingDirectory, "tempFile2");
@@ -109,7 +109,7 @@ public class IndexAggregatorTest extends AggregatorTestCase {
         testIndex.addIndexesFromFiles(inputFiles1);
         testIndex.addIndexesFromFiles(inputFiles2);
 
-        aggregator.mergeFiles(new File[] { tempFile1, tempFile2 }, AggregationWorker.INTERMEDIATE_INDEX_FILE);
+        aggregator.mergeFiles(new File[] {tempFile1, tempFile2}, AggregationWorker.INTERMEDIATE_INDEX_FILE);
 
         assertNull("Unexpected content of merged index",
                 testIndex.compareToIndex(AggregationWorker.INTERMEDIATE_INDEX_FILE));

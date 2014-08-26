@@ -40,8 +40,7 @@ import dk.netarkivet.monitor.MonitorSettings;
 import dk.netarkivet.monitor.registry.distribute.RegisterHostMessage;
 
 /**
- * The monitor registry client sends messages with JMS to register the host for
- * JMX monitoring.
+ * The monitor registry client sends messages with JMS to register the host for JMX monitoring.
  */
 public final class JMSMonitorRegistryClient implements MonitorRegistryClient, CleanupIF {
     /** The singleton instance of this class. */
@@ -53,13 +52,11 @@ public final class JMSMonitorRegistryClient implements MonitorRegistryClient, Cl
     /** The timer that sends messages. */
     private Timer registryTimer;
     /**
-     * One minute in milliseconds. Used for control of timer task that sends
-     * messages.
+     * One minute in milliseconds. Used for control of timer task that sends messages.
      */
     private static final long MINUTE_IN_MILLISECONDS = 60000L;
     /**
-     * Zero milliseconds from now. Used for control of timer task that sends
-     * messages.
+     * Zero milliseconds from now. Used for control of timer task that sends messages.
      */
     private static final long NOW = 0L;
 
@@ -84,18 +81,13 @@ public final class JMSMonitorRegistryClient implements MonitorRegistryClient, Cl
     }
 
     /**
-     * Register this host for monitoring. Once this method is called it will
-     * reregister for monitoring every minute, to ensure the scheduling is done.
-     * If called again, it will restart the timer that registers the host.
+     * Register this host for monitoring. Once this method is called it will reregister for monitoring every minute, to
+     * ensure the scheduling is done. If called again, it will restart the timer that registers the host.
      * 
-     * @param localHostName
-     *            The name of the host.
-     * @param jmxPort
-     *            The port for JMX connections to the host.
-     * @param rmiPort
-     *            The port for RMI connections for JMX communication.
-     * @throws ArgumentNotValid
-     *             on null or empty hostname, or negative port numbers.
+     * @param localHostName The name of the host.
+     * @param jmxPort The port for JMX connections to the host.
+     * @param rmiPort The port for RMI connections for JMX communication.
+     * @throws ArgumentNotValid on null or empty hostname, or negative port numbers.
      */
     public synchronized void register(final String localHostName, final int jmxPort, final int rmiPort) {
         ArgumentNotValid.checkNotNullOrEmpty(localHostName, "String localHostName");
@@ -132,8 +124,7 @@ public final class JMSMonitorRegistryClient implements MonitorRegistryClient, Cl
     }
 
     /**
-     * Used to clean up a class from within a shutdown hook. Must not do any
-     * logging. Program defensively, please.
+     * Used to clean up a class from within a shutdown hook. Must not do any logging. Program defensively, please.
      */
     public synchronized void cleanup() {
         if (registryTimer != null) {

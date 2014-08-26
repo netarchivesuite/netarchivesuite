@@ -36,8 +36,7 @@ import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 
 /**
- * Handles the dispatching of scheduled harvest to the harvest servers based on
- * the harvests defined in the database.
+ * Handles the dispatching of scheduled harvest to the harvest servers based on the harvests defined in the database.
  * <p>
  */
 public class HarvestJobManager extends LifeCycleComponent {
@@ -45,8 +44,8 @@ public class HarvestJobManager extends LifeCycleComponent {
     private final JMSConnection jmsConnection;
 
     /**
-     * Creates the components handling the harvest job management and hooks them
-     * up to the <code>HarvestJobManager</code>s lifecycle.
+     * Creates the components handling the harvest job management and hooks them up to the
+     * <code>HarvestJobManager</code>s lifecycle.
      */
     public HarvestJobManager() {
         jmsConnection = JMSConnectionFactory.getInstance();

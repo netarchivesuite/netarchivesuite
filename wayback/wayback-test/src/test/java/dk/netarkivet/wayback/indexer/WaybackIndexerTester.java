@@ -56,8 +56,7 @@ public class WaybackIndexerTester extends IndexerTestCase {
     }
 
     /**
-     * ingestInitialFiles should return without doing anything if the specified
-     * file is an empty string.
+     * ingestInitialFiles should return without doing anything if the specified file is an empty string.
      * 
      * @throws NoSuchMethodException
      * @throws InvocationTargetException

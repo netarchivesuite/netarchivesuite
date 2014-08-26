@@ -51,9 +51,8 @@ public class CachingProxyFactoryConnectionTest extends TestCase {
     }
 
     /*
-     * Test method for
-     * 'dk.netarkivet.monitor.jmx.CachingProxyFactoryConnectionFactory.getConnection(String,
-     * int, int, String, String)'
+     * Test method for 'dk.netarkivet.monitor.jmx.CachingProxyFactoryConnectionFactory.getConnection(String, int, int,
+     * String, String)'
      */
     public void testGetConnection() {
         JMXProxyConnectionFactory f = new CachingProxyConnectionFactory(new DummyJMXProxyConnectionFactory());

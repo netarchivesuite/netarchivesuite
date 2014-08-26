@@ -29,27 +29,21 @@ import dk.netarkivet.monitor.distribute.MonitorMessage;
 import dk.netarkivet.monitor.distribute.MonitorMessageVisitor;
 
 /**
- * This type of message is sent to the monitor registry server to register the
- * host for remote JMX monitoring.
+ * This type of message is sent to the monitor registry server to register the host for remote JMX monitoring.
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class RegisterHostMessage extends MonitorMessage {
     /** The HostEntry to register. */
     HostEntry hostEntry;
 
     /**
-     * Creates a message with the JMX host entry for a host registered to the
-     * monitor server.
+     * Creates a message with the JMX host entry for a host registered to the monitor server.
      *
-     * @param name
-     *            The name of the remote host.
-     * @param jmxPort
-     *            The JMX port allocated on the remote host.
-     * @param rmiPort
-     *            The RMI port allocated on the remote host.
+     * @param name The name of the remote host.
+     * @param jmxPort The JMX port allocated on the remote host.
+     * @param rmiPort The RMI port allocated on the remote host.
      *
-     * @throws ArgumentNotValid
-     *             on null or empty hostname, or negative ports.
+     * @throws ArgumentNotValid on null or empty hostname, or negative ports.
      */
     public RegisterHostMessage(String name, int jmxPort, int rmiPort) {
         super(Channels.getTheMonitorServer(), Channels.getError());
@@ -66,8 +60,7 @@ public class RegisterHostMessage extends MonitorMessage {
      *     }
      * </code>
      *
-     * @param v
-     *            A message visitor.
+     * @param v A message visitor.
      *
      * @see MonitorMessageVisitor
      */

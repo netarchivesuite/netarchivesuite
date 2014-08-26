@@ -51,7 +51,7 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
 /**
  * This class contains the methods for updating data for selective harvests.
  */
-@SuppressWarnings({ "unchecked" })
+@SuppressWarnings({"unchecked"})
 public final class SelectiveHarvestUtil {
     /**
      * Utility class. No instances.
@@ -62,15 +62,11 @@ public final class SelectiveHarvestUtil {
     /**
      * Update or create a partial harvest definition.
      * 
-     * @param context
-     *            JSP context of this call. Contains parameters as described in
+     * @param context JSP context of this call. Contains parameters as described in
      *            Definitions-edit-selective-harvest.jsp
-     * @param i18n
-     *            Translation information.
-     * @param unknownDomains
-     *            List to which unknown legal domains are added.
-     * @param illegalDomains
-     *            List to which illegal domains are added,
+     * @param i18n Translation information.
+     * @param unknownDomains List to which unknown legal domains are added.
+     * @param illegalDomains List to which illegal domains are added,
      */
     public static void processRequest(PageContext context, I18n i18n, List<String> unknownDomains,
             List<String> illegalDomains) {
@@ -143,16 +139,12 @@ public final class SelectiveHarvestUtil {
     /**
      * Updates the harvest definition with posted values.
      *
-     * @param context
-     *            The context that the web request processing happens in
-     * @param i18n
-     *            Translation information for this site section.
-     * @param unknownDomains
-     *            List to add unknown but legal domains to.
-     * @param illegalDomains
-     *            List to add illegal domains to.
-     * @return The updated harvest definition. This object holds an edition that
-     *         is legal to use for further updates (adding or deleting domains)
+     * @param context The context that the web request processing happens in
+     * @param i18n Translation information for this site section.
+     * @param unknownDomains List to add unknown but legal domains to.
+     * @param illegalDomains List to add illegal domains to.
+     * @return The updated harvest definition. This object holds an edition that is legal to use for further updates
+     *         (adding or deleting domains)
      */
     private static PartialHarvest updateHarvestDefinition(PageContext context, I18n i18n, List<String> unknownDomains,
             List<String> illegalDomains) {
@@ -209,13 +201,9 @@ public final class SelectiveHarvestUtil {
     /**
      * Delete a domain configuration from a harvestdefinition.
      * 
-     * @param context
-     *            The web server context for the JSP page.
-     * @param i18n
-     *            Translation information for this site section.
-     * @param deleteConfig
-     *            the configuration to delete, in the form of a domain name, a
-     *            colon, a configuration name.
+     * @param context The web server context for the JSP page.
+     * @param i18n Translation information for this site section.
+     * @param deleteConfig the configuration to delete, in the form of a domain name, a colon, a configuration name.
      */
     private static void deleteConfig(PageContext context, I18n i18n, String deleteConfig) {
         HTMLUtils.forwardOnEmptyParameter(context, Constants.HARVEST_PARAM, Constants.SCHEDULE_PARAM);
@@ -241,14 +229,11 @@ public final class SelectiveHarvestUtil {
     }
 
     /**
-     * Extract domain configuration list from a map of parameters. All key that
-     * starts with Constants.DOMAIN_IDENTIFIER are treated as a concatenation of
-     * : DOMAIN_IDENTIFIER + domain name. The corresponding value in the map is
-     * treated as the configuration name Entries that do not match this pattern
-     * are ignored.
+     * Extract domain configuration list from a map of parameters. All key that starts with Constants.DOMAIN_IDENTIFIER
+     * are treated as a concatenation of : DOMAIN_IDENTIFIER + domain name. The corresponding value in the map is
+     * treated as the configuration name Entries that do not match this pattern are ignored.
      * 
-     * @param configurations
-     *            a mapping (domain to its configurations)
+     * @param configurations a mapping (domain to its configurations)
      * @return a list of domain configurations
      */
     private static List<DomainConfiguration> getDomainConfigurations(Map<String, String[]> configurations) {
@@ -267,19 +252,14 @@ public final class SelectiveHarvestUtil {
     }
 
     /**
-     * Given a list of domain configurations and a list of domains, add the
-     * default configurations for the domains to the configuration list. If any
-     * of the domains are unknown, their names are instead appended to the
-     * argument unknownDomains (with newline separation)
+     * Given a list of domain configurations and a list of domains, add the default configurations for the domains to
+     * the configuration list. If any of the domains are unknown, their names are instead appended to the argument
+     * unknownDomains (with newline separation)
      * 
-     * @param dcList
-     *            the initial list of configurations
-     * @param extraDomains
-     *            the domains to be added to dcList with default configurations
-     * @param unknownDomains
-     *            a list to add unknown, legal domains to
-     * @param illegalDomains
-     *            a list to add illegal domains to
+     * @param dcList the initial list of configurations
+     * @param extraDomains the domains to be added to dcList with default configurations
+     * @param unknownDomains a list to add unknown, legal domains to
+     * @param illegalDomains a list to add illegal domains to
      */
     private static void addDomainsToConfigurations(List<DomainConfiguration> dcList, String extraDomains,
             List<String> unknownDomains, List<String> illegalDomains) {
@@ -305,15 +285,11 @@ public final class SelectiveHarvestUtil {
     }
 
     /**
-     * Given a harvest and list of domains, this method creates all the
-     * specified domains and adds them to the harvest with their default
-     * configuration.
+     * Given a harvest and list of domains, this method creates all the specified domains and adds them to the harvest
+     * with their default configuration.
      * 
-     * @param hdd
-     *            The harvest definition to change.
-     * @param domains
-     *            a whitespace-separated list of domains to create and add to
-     *            harvest
+     * @param hdd The harvest definition to change.
+     * @param domains a whitespace-separated list of domains to create and add to harvest
      * @return True if changes were made to hdd.
      */
     private static boolean addDomainsToHarvest(PartialHarvest hdd, String domains) {

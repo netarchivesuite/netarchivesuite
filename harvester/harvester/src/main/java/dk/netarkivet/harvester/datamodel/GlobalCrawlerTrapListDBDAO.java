@@ -50,8 +50,7 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
     private static final Logger log = LoggerFactory.getLogger(GlobalCrawlerTrapListDBDAO.class);
 
     /**
-     * protected constructor of this class. Checks if any migration are needed
-     * before operation starts.
+     * protected constructor of this class. Checks if any migration are needed before operation starts.
      */
     protected GlobalCrawlerTrapListDBDAO() {
         Connection connection = HarvestDBConnection.get();
@@ -71,8 +70,7 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
     /**
      * Returns a list of either all active or all inactive trap lists.
      * 
-     * @param isActive
-     *            whether to return active or inactive lists.
+     * @param isActive whether to return active or inactive lists.
      * @return a list if global crawler trap lists.
      */
     private List<GlobalCrawlerTrapList> getAllByActivity(boolean isActive) {
@@ -227,12 +225,10 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
     private static final String LIST_UPDATE_STMT = "UPDATE global_crawler_trap_lists SET name = ?, description = ?, isActive = ? WHERE global_crawler_trap_list_id = ?";
 
     /**
-     * Update a trap list. In order to update the trap expressions for this
-     * list, we first delete all the existing trap expressions for the list then
-     * add all those in the updated version.
+     * Update a trap list. In order to update the trap expressions for this list, we first delete all the existing trap
+     * expressions for the list then add all those in the updated version.
      * 
-     * @param trapList
-     *            the trap list to update
+     * @param trapList the trap list to update
      */
     @Override
     public void update(GlobalCrawlerTrapList trapList) {
@@ -327,10 +323,8 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
     /**
      * Does crawlertrap with this name already exist.
      * 
-     * @param name
-     *            The name for a crawlertrap
-     * @return true, if a crawlertrap with the given name already exists in the
-     *         database; otherwise false
+     * @param name The name for a crawlertrap
+     * @return true, if a crawlertrap with the given name already exists in the database; otherwise false
      */
     @Override
     public boolean exists(String name) {

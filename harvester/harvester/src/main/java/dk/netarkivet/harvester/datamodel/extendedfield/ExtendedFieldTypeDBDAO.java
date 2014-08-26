@@ -41,8 +41,8 @@ import dk.netarkivet.harvester.datamodel.HarvestDBConnection;
 import dk.netarkivet.harvester.datamodel.HarvesterDatabaseTables;
 
 /**
- * Implementation of the ExtendedFieldTypeDAO interface for creating and
- * accessing extended fields in persistent storage.
+ * Implementation of the ExtendedFieldTypeDAO interface for creating and accessing extended fields in persistent
+ * storage.
  */
 public class ExtendedFieldTypeDBDAO extends ExtendedFieldTypeDAO {
 
@@ -50,8 +50,7 @@ public class ExtendedFieldTypeDBDAO extends ExtendedFieldTypeDAO {
     private static final Logger log = LoggerFactory.getLogger(ExtendedFieldTypeDBDAO.class);
 
     /**
-     * Default constructor of this class. Tries to make any necessary migration
-     * of the database.
+     * Default constructor of this class. Tries to make any necessary migration of the database.
      */
     protected ExtendedFieldTypeDBDAO() {
         Connection connection = HarvestDBConnection.get();
@@ -80,12 +79,9 @@ public class ExtendedFieldTypeDBDAO extends ExtendedFieldTypeDAO {
     /**
      * Tests if exists an ExtendedFieldType with the given ID.
      * 
-     * @param c
-     *            an open connection to the database
-     * @param aExtendedfieldtypeId
-     *            an id belonging to a ExtendedFieldType
-     * @return true, if there exists an ExtendedFieldType with the given ID,
-     *         otherwise returns false.
+     * @param c an open connection to the database
+     * @param aExtendedfieldtypeId an id belonging to a ExtendedFieldType
+     * @return true, if there exists an ExtendedFieldType with the given ID, otherwise returns false.
      */
     private synchronized boolean exists(Connection c, Long aExtendedfieldtypeId) {
         return 1 == DBUtils.selectLongValue(c, "SELECT COUNT(*) FROM extendedfieldtype "
@@ -106,10 +102,8 @@ public class ExtendedFieldTypeDBDAO extends ExtendedFieldTypeDAO {
     /**
      * Read an ExtendedFieldType from database belonging to the given id.
      * 
-     * @param connection
-     *            an open connection to the database
-     * @param aExtendedfieldtypeId
-     *            an id belonging to a ExtendedFieldType
+     * @param connection an open connection to the database
+     * @param aExtendedfieldtypeId an id belonging to a ExtendedFieldType
      * @return an ExtendedFieldType from database belonging to the given id.
      */
     private synchronized ExtendedFieldType read(Connection connection, Long aExtendedfieldtypeId) {

@@ -60,9 +60,8 @@ public class PersistentJobDataTester {
     }
 
     /**
-     * Test constructor for PersistentJobData. 1. Throws ArgumentNotValid, if
-     * file argument null or file does not exist. 2. accepts existing directory
-     * as argument
+     * Test constructor for PersistentJobData. 1. Throws ArgumentNotValid, if file argument null or file does not exist.
+     * 2. accepts existing directory as argument
      */
     @Test
     public void testConstructor() {
@@ -85,11 +84,9 @@ public class PersistentJobDataTester {
     }
 
     /**
-     * Test that the write(Job) method persists all necessary information about
-     * the current harvest-job.
+     * Test that the write(Job) method persists all necessary information about the current harvest-job.
      * 
-     * @throws Exception
-     *             If failure to persist the information or unable to access DB
+     * @throws Exception If failure to persist the information or unable to access DB
      */
     @Test
     public void testWrite() throws Exception {

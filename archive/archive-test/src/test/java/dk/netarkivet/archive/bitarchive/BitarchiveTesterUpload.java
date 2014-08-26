@@ -65,8 +65,7 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
     private static final File ORIGINALS_DIR = new File(new File(TestInfo.DATA_DIR, "upload"), "originals");
 
     /**
-     * The files that are uploaded during the tests and that must be removed
-     * afterwards.
+     * The files that are uploaded during the tests and that must be removed afterwards.
      */
     private static final List<String> UPLOADED_FILES = Arrays.asList("Upload1.ARC", "Upload2.ARC", "Upload3.ARC");
 
@@ -111,8 +110,7 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
 
     /* **** Part two: Test that errors are treated correctly. **** */
     /**
-     * Uploading a file that does not exist should throw an ArgumentNotValid
-     * exception.
+     * Uploading a file that does not exist should throw an ArgumentNotValid exception.
      */
     @Test
     public void testUploadMissingFile() {
@@ -160,8 +158,7 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
     }
 
     /**
-     * Uploading a file that already exists in the archive should throw a
-     * FileAlreadyExists exception.
+     * Uploading a file that already exists in the archive should throw a FileAlreadyExists exception.
      */
     @Test
     @Ignore("FIXME")
@@ -178,8 +175,7 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
     }
 
     /**
-     * Uploading a file that exists (valid reference) and that does not exist in
-     * the archive.
+     * Uploading a file that exists (valid reference) and that does not exist in the archive.
      */
     @Test
     @Ignore("FIXME")
@@ -190,11 +186,10 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
     }
 
     /**
-     * Verify that data do not exist in the archive before uploading the file
-     * and that data are part of the archive after upload.
+     * Verify that data do not exist in the archive before uploading the file and that data are part of the archive
+     * after upload.
      * 
-     * @throws IOException
-     *             If unable to close FileOutputStream.
+     * @throws IOException If unable to close FileOutputStream.
      */
     @Test
     @Ignore("FIXME")
@@ -241,7 +236,7 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
     // FIXME: test temporarily disabled
     public void testUploadUsesDir() {
         final File dir1 = new File(TestInfo.WORKING_DIR, "dir1");
-        setupBitarchiveWithDirs(new String[] { dir1.getAbsolutePath(), });
+        setupBitarchiveWithDirs(new String[] {dir1.getAbsolutePath(),});
         archive.upload(new TestRemoteFile(new File(ORIGINALS_DIR, UPLOADED_FILES.get(2)), false, false, false),
                 UPLOADED_FILES.get(2));
         assertTrue("Should place file in directory " + dir1,

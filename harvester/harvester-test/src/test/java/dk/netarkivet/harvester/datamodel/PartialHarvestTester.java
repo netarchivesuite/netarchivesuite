@@ -65,8 +65,7 @@ public class PartialHarvestTester extends DataModelTestCase {
     }
 
     /**
-     * Test that adding a single seed results in creation of all the appropriate
-     * objects.
+     * Test that adding a single seed results in creation of all the appropriate objects.
      */
     @Test
     public void testAddSeedsSimpleCase() {
@@ -118,8 +117,7 @@ public class PartialHarvestTester extends DataModelTestCase {
     }
 
     /**
-     * Test that adding a single seed results in creation of all the appropriate
-     * objects.
+     * Test that adding a single seed results in creation of all the appropriate objects.
      */
     @Test
     public void testAddSeedsInvalid() {
@@ -148,8 +146,7 @@ public class PartialHarvestTester extends DataModelTestCase {
     }
 
     /**
-     * Tests a) Non-default values for maxLoad, maxObjects b) That omitting
-     * "http://" is not a problem
+     * Tests a) Non-default values for maxLoad, maxObjects b) That omitting "http://" is not a problem
      */
     @Test
     public void testAddSeedsNonDefaultValues() {
@@ -269,8 +266,7 @@ public class PartialHarvestTester extends DataModelTestCase {
     }
 
     /**
-     * test that we can call addSeeds() multiple times and both update existing
-     * configurations and add new ones
+     * test that we can call addSeeds() multiple times and both update existing configurations and add new ones
      */
     @Test
     public void testAddSeedsMultipleAdds() {
@@ -408,8 +404,7 @@ public class PartialHarvestTester extends DataModelTestCase {
     }
 
     /**
-     * test that we can call addSeeds() multiple times and both update existing
-     * configurations and add new ones
+     * test that we can call addSeeds() multiple times and both update existing configurations and add new ones
      */
     @Test
     public void testAddSeedsMiscNewlines() {
@@ -452,8 +447,8 @@ public class PartialHarvestTester extends DataModelTestCase {
     }
 
     /**
-     * Verify that you can delete only DomainConfiguration from the list of
-     * DomainConfigurations associated with a PartialHarvest.
+     * Verify that you can delete only DomainConfiguration from the list of DomainConfigurations associated with a
+     * PartialHarvest.
      */
     @Test
     public void testRemoveDomainconfiguration() {

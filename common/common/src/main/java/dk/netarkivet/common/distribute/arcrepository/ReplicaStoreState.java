@@ -23,9 +23,8 @@
 package dk.netarkivet.common.distribute.arcrepository;
 
 /**
- * This class encapsulates the different upload states, while storing a file in
- * the archive of a replica . Used by the classes ArcRepository, AdminData, and
- * ArcRepositoryEntry.
+ * This class encapsulates the different upload states, while storing a file in the archive of a replica . Used by the
+ * classes ArcRepository, AdminData, and ArcRepositoryEntry.
  * 
  * TODO Needs localisation.
  * 
@@ -40,15 +39,13 @@ public enum ReplicaStoreState {
     /** Data has been successfully uploaded to a replica archive. */
     DATA_UPLOADED,
     /**
-     * Upload to replica archive completed, which means that it has been
-     * verified by a checksumJob.
+     * Upload to replica archive completed, which means that it has been verified by a checksumJob.
      */
     UPLOAD_COMPLETED,
     /** Upload to the replica archive has failed. */
     UPLOAD_FAILED,
     /**
-     * If it is unknown whether a file has been successfully uploaded to a
-     * replica or not. Used in the database.
+     * If it is unknown whether a file has been successfully uploaded to a replica or not. Used in the database.
      */
     UNKNOWN_UPLOAD_STATE;
 

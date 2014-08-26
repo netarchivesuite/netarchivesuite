@@ -29,8 +29,7 @@ package dk.netarkivet.viewerproxy.webinterface;
 public class Constants {
 
     /**
-     * The constructor for this class. Making the constructor private prevents
-     * the class from being instantiated.
+     * The constructor for this class. Making the constructor private prevents the class from being instantiated.
      */
     private Constants() {
     }

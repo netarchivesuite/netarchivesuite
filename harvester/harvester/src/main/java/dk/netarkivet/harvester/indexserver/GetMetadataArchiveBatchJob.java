@@ -37,7 +37,7 @@ import dk.netarkivet.common.utils.archive.ArchiveHeaderBase;
 import dk.netarkivet.common.utils.archive.ArchiveRecordBase;
 
 /** A batch job that extracts metadata. */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class GetMetadataArchiveBatchJob extends ArchiveBatchJob {
 
     /** The logger for this class. */
@@ -51,12 +51,8 @@ public class GetMetadataArchiveBatchJob extends ArchiveBatchJob {
     /**
      * Constructor.
      * 
-     * @param urlMatcher
-     *            A pattern for matching URLs of the desired entries. If null, a
-     *            .* pattern will be used.
-     * @param mimeMatcher
-     *            A pattern for matching mime-types of the desired entries. If
-     *            null, a .* pattern will be used.
+     * @param urlMatcher A pattern for matching URLs of the desired entries. If null, a .* pattern will be used.
+     * @param mimeMatcher A pattern for matching mime-types of the desired entries. If null, a .* pattern will be used.
      * 
      *            The batchJobTimeout is set to one day.
      */
@@ -68,11 +64,9 @@ public class GetMetadataArchiveBatchJob extends ArchiveBatchJob {
     }
 
     /**
-     * Initialize method. Run before the arc-records are being processed.
-     * Currently does nothing.
+     * Initialize method. Run before the arc-records are being processed. Currently does nothing.
      * 
-     * @param os
-     *            The output stream to print any pre-processing data.
+     * @param os The output stream to print any pre-processing data.
      */
     @Override
     public void initialize(OutputStream os) {
@@ -81,13 +75,9 @@ public class GetMetadataArchiveBatchJob extends ArchiveBatchJob {
     /**
      * The method for processing the arc-records.
      * 
-     * @param record
-     *            The arc-record to process.
-     * @param os
-     *            The output stream to write the results of the processing.
-     * @throws IOFailure
-     *             In an IOException is caught during handling of the arc
-     *             record.
+     * @param record The arc-record to process.
+     * @param os The output stream to write the results of the processing.
+     * @throws IOFailure In an IOException is caught during handling of the arc record.
      */
     @Override
     public void processRecord(ArchiveRecordBase record, OutputStream os) throws IOFailure {
@@ -124,9 +114,7 @@ public class GetMetadataArchiveBatchJob extends ArchiveBatchJob {
     /**
      * Method for post-processing the data. Currently does nothing.
      * 
-     * @param os
-     *            The output stream to write the results of the post-processing
-     *            data.
+     * @param os The output stream to write the results of the post-processing data.
      */
     @Override
     public void finish(OutputStream os) {

@@ -30,7 +30,7 @@ public class NASSystemUtil {
      * Defines the standard application setup in the DK test system.
      */
     public static Application[] getApplications() {
-        return new Application[] { new Application("KB-TEST-BAR-015", "BitarchiveServer", null, null, "KBN"),
+        return new Application[] {new Application("KB-TEST-BAR-015", "BitarchiveServer", null, null, "KBN"),
                 new Application("KB-TEST-BAR-014", "BitarchiveServer", "BitApp_1", null, "KBN"),
                 new Application("KB-TEST-BAR-014", "BitarchiveServer", "BitApp_2", null, "KBN"),
                 new Application("KB-TEST-BAR-014", "BitarchiveServer", "BitApp_3", null, "KBN"),
@@ -46,6 +46,6 @@ public class NASSystemUtil {
                 new Application("kb-test-har-004", "HarvestControllerServer", "kbhigh", "HIGHPRIORITY", "KBN"),
                 new Application("kb-test-har-004", "HarvestControllerServer", "kblow002", "LOWPRIORITY", "KBN"),
                 new Application("sb-test-bar-001", "BitarchiveServer", null, null, "SBN"),
-                new Application("sb-test-har-001", "HarvestControllerServer", "sbhigh", "HIGHPRIORITY", "SBN") };
+                new Application("sb-test-har-001", "HarvestControllerServer", "sbhigh", "HIGHPRIORITY", "SBN")};
     }
 }

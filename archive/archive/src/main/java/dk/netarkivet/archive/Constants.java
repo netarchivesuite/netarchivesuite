@@ -37,8 +37,8 @@ public class Constants {
     public static final String FILE_DIRECTORY_NAME = "filedir";
 
     /**
-     * Temporary directory used during upload, where partial files exist, until
-     * moved into directory FILE_DIRECTORY_NAME.
+     * Temporary directory used during upload, where partial files exist, until moved into directory
+     * FILE_DIRECTORY_NAME.
      */
     public static final String TEMPORARY_DIRECTORY_NAME = "tempdir";
 

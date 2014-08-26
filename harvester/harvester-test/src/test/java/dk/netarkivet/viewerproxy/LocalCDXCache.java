@@ -56,17 +56,16 @@ import dk.netarkivet.harvester.HarvesterSettings;
 /**
  * This class handles retrieval and merging of index.cdx files for sets of jobs.
  *
- * It has been designed to allow multiple instances to use the same cache dir
- * without interfering with each other, even if they run in separate VMs.
+ * It has been designed to allow multiple instances to use the same cache dir without interfering with each other, even
+ * if they run in separate VMs.
  *
  * @deprecated Use {@link JobIndexCache}-mechanism instead
  */
-@SuppressWarnings({ "unchecked", "rawtypes", "serial" })
+@SuppressWarnings({"unchecked", "rawtypes", "serial"})
 public class LocalCDXCache implements JobIndexCache {
     /**
-     * Don't put more than this number of job ids in the filename. Above this
-     * number, a checksum of the job ids is generated instead. This is done to
-     * protect us from getting filenames too long for the filesystem.
+     * Don't put more than this number of job ids in the filename. Above this number, a checksum of the job ids is
+     * generated instead. This is done to protect us from getting filenames too long for the filesystem.
      */
     private static final int MAX_JOB_IDS_IN_FILENAME = 4;
     private static final String PREFIX = "job-";
@@ -77,22 +76,20 @@ public class LocalCDXCache implements JobIndexCache {
     private static final String WORK_SUFFIX = ".unsorted";
 
     /**
-     * The directory that we store CDX cache files in. Would like to use a
-     * common dir for ViewerProxy, but it is not defined yet.
+     * The directory that we store CDX cache files in. Would like to use a common dir for ViewerProxy, but it is not
+     * defined yet.
      */
     private static final File CACHE_DIR = new File(new File(Settings.get(HarvesterSettings.VIEWERPROXY_DIR)),
             "viewerproxy/cdxcache");
     /**
-     * How long we sleep between each check for another process having finished
-     * creating an index file.
+     * How long we sleep between each check for another process having finished creating an index file.
      */
     private static final long SLEEP_INTERVAL = 100;
 
     /**
      * Construct a new CDXCache object.
      *
-     * @param arcRepos
-     *            Viewer ArcRepositoryClient
+     * @param arcRepos Viewer ArcRepositoryClient
      */
     public LocalCDXCache(ViewerArcRepositoryClient arcRepos) {
         this.arcRepos = arcRepos;
@@ -100,16 +97,13 @@ public class LocalCDXCache implements JobIndexCache {
     }
 
     /**
-     * Returns the name of the index file for a set of jobIds. This filename
-     * must be unique for these IDs and always give the same for the same set of
-     * IDs. In this implementation, long lists of IDs will be shortened to the
-     * first few IDs followed by an MD5 sum of all the IDs.
+     * Returns the name of the index file for a set of jobIds. This filename must be unique for these IDs and always
+     * give the same for the same set of IDs. In this implementation, long lists of IDs will be shortened to the first
+     * few IDs followed by an MD5 sum of all the IDs.
      * 
-     * @param jobIDs
-     *            Set of job IDs, in no particular order.
-     * @return A File that specifies where the index.cdx data for the job IDs
-     *         should reside. This does not check whether the file exists or
-     *         even if the directory it belongs to exists.
+     * @param jobIDs Set of job IDs, in no particular order.
+     * @return A File that specifies where the index.cdx data for the job IDs should reside. This does not check whether
+     *         the file exists or even if the directory it belongs to exists.
      */
     private File getIndexFile(Set<Long> jobIDs) {
         List<Long> jobIDList = new ArrayList<Long>(jobIDs);
@@ -126,13 +120,10 @@ public class LocalCDXCache implements JobIndexCache {
     }
 
     /**
-     * Get a job index for the given list of IDs. The resulting file contains a
-     * sorted list of the CDX lines for the jobs in question. This method is
-     * safe for asynchronous calling. This method may use a cached version of
-     * the file.
+     * Get a job index for the given list of IDs. The resulting file contains a sorted list of the CDX lines for the
+     * jobs in question. This method is safe for asynchronous calling. This method may use a cached version of the file.
      *
-     * @param jobIDs
-     *            List of job IDs to generate index for.
+     * @param jobIDs List of job IDs to generate index for.
      * @return A file containing an index, and always the full set.
      */
     public Index<Set<Long>> getIndex(Set<Long> jobIDs) {
@@ -153,7 +144,7 @@ public class LocalCDXCache implements JobIndexCache {
                 OutputStream tmpOutput = new FileOutputStream(workFile);
                 retrieveIndex(jobIDs, tmpOutput);
                 tmpOutput.close();
-                ProcessUtils.runProcess(new String[] { "LANG=C" }, "sort", workFile.getAbsolutePath(), "-o",
+                ProcessUtils.runProcess(new String[] {"LANG=C"}, "sort", workFile.getAbsolutePath(), "-o",
                         indexFile.getAbsolutePath());
             } else {
                 while (workFile.exists()) {
@@ -179,13 +170,10 @@ public class LocalCDXCache implements JobIndexCache {
     }
 
     /**
-     * Gets and extract index data from metadata for a given file, squirting
-     * them into the given outputStream.
+     * Gets and extract index data from metadata for a given file, squirting them into the given outputStream.
      *
-     * @param jobIDs
-     *            A jobId to get index data for
-     * @param out
-     *            An OutputStream to place the data in.
+     * @param jobIDs A jobId to get index data for
+     * @param out An OutputStream to place the data in.
      */
     private void retrieveIndex(Set<Long> jobIDs, OutputStream out) {
         List<String> metadataFiles = new ArrayList<String>();
@@ -217,8 +205,7 @@ public class LocalCDXCache implements JobIndexCache {
         /**
          * Initialize the batch job.
          *
-         * @param os
-         *            output stream where output from batch job is returned.
+         * @param os output stream where output from batch job is returned.
          */
         public void initialize(OutputStream os) {
         }
@@ -226,10 +213,8 @@ public class LocalCDXCache implements JobIndexCache {
         /**
          * Routine for a single ARC Record.
          *
-         * @param os
-         *            output stream for output of batch job.
-         * @param record
-         *            the ARC record to work on.
+         * @param os output stream for output of batch job.
+         * @param record the ARC record to work on.
          */
         public void processRecord(ARCRecord record, OutputStream os) {
             if (record.getMetaData().getMimetype().equals(Constants.CDX_MIME_TYPE)) {
@@ -248,8 +233,7 @@ public class LocalCDXCache implements JobIndexCache {
         /**
          * Is called when batch job is finished. Nothing to do.
          *
-         * @param os
-         *            ouput stream for returning output from batchjob.
+         * @param os ouput stream for returning output from batchjob.
          */
         public void finish(OutputStream os) {
         }

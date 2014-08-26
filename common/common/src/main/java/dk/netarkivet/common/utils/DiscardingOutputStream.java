@@ -25,8 +25,8 @@ package dk.netarkivet.common.utils;
 import java.io.OutputStream;
 
 /**
- * An OutputStream implementation that simply discards everything it gets. It
- * overrides all the write methods so that they all execute in constant time.
+ * An OutputStream implementation that simply discards everything it gets. It overrides all the write methods so that
+ * they all execute in constant time.
  */
 class DiscardingOutputStream extends OutputStream {
 

@@ -51,21 +51,17 @@ public interface Controller {
     /**
      * Change current index to work on these jobs.
      *
-     * @param jobList
-     *            The list of jobs.
-     * @param label
-     *            A label this index should be known as
+     * @param jobList The list of jobs.
+     * @param label A label this index should be known as
      */
     void changeIndex(Set<Long> jobList, String label);
 
     /**
-     * Get current status of viewerproxy. The status is not supposed to be
-     * machine parsable. Do not base anything on the content of this status
-     * message, the format may change without notice.
+     * Get current status of viewerproxy. The status is not supposed to be machine parsable. Do not base anything on the
+     * content of this status message, the format may change without notice.
      *
      * @return A human-readable string with current status of the viewerproxy.
-     * @param locale
-     *            Indication of which locale to use for generating the string.
+     * @param locale Indication of which locale to use for generating the string.
      */
     String getStatus(Locale locale);
 }

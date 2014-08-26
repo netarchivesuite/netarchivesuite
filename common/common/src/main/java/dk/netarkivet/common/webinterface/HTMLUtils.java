@@ -101,12 +101,10 @@ public class HTMLUtils {
     }
 
     /**
-     * Url encodes a string in UTF-8. This encodes _all_ non-letter non-number
-     * characters except '-', '_' and '.'. The characters '/' and ':' are
-     * encoded.
+     * Url encodes a string in UTF-8. This encodes _all_ non-letter non-number characters except '-', '_' and '.'. The
+     * characters '/' and ':' are encoded.
      * 
-     * @param s
-     *            the string to encode
+     * @param s the string to encode
      * @return the encoded string
      */
     public static String encode(String s) {
@@ -121,8 +119,7 @@ public class HTMLUtils {
     /**
      * Url decodes a string encoded in UTF-8.
      * 
-     * @param s
-     *            the string to decode
+     * @param s the string to decode
      * @return the decoded string
      */
     public static String decode(String s) {
@@ -135,15 +132,12 @@ public class HTMLUtils {
     }
 
     /**
-     * Prints the header information for the webpages in the GUI. This includes
-     * the navigation menu, and links for changing the language. The title of
-     * the page is generated internationalised from sitesections. If you want to
+     * Prints the header information for the webpages in the GUI. This includes the navigation menu, and links for
+     * changing the language. The title of the page is generated internationalised from sitesections. If you want to
      * specify it, use the overloaded method.
      * 
-     * @param context
-     *            The context of the web page request.
-     * @throws IOException
-     *             if an error occurs during writing of output.
+     * @param context The context of the web page request.
+     * @throws IOException if an error occurs during writing of output.
      */
     public static void generateHeader(PageContext context) throws IOException {
         ArgumentNotValid.checkNotNull(context, "context");
@@ -154,15 +148,12 @@ public class HTMLUtils {
     }
 
     /**
-     * Prints the header information for the webpages in the GUI. This includes
-     * the navigation menu, and links for changing the language. The title of
-     * the page is generated internationalised from sitesections. If you want to
+     * Prints the header information for the webpages in the GUI. This includes the navigation menu, and links for
+     * changing the language. The title of the page is generated internationalised from sitesections. If you want to
      * specify it, use the overloaded method.
      * 
-     * @param context
-     *            The context of the web page request.
-     * @throws IOException
-     *             if an error occurs during writing of output.
+     * @param context The context of the web page request.
+     * @throws IOException if an error occurs during writing of output.
      */
     public static void generateHeader(PageContext context, String... jsToInclude) throws IOException {
         ArgumentNotValid.checkNotNull(context, "context");
@@ -173,17 +164,13 @@ public class HTMLUtils {
     }
 
     /**
-     * Prints the header information for the webpages in the GUI. This includes
-     * the navigation menu, and links for changing the language. The title of
-     * the page is generated internationalised from sitesections. If you want to
+     * Prints the header information for the webpages in the GUI. This includes the navigation menu, and links for
+     * changing the language. The title of the page is generated internationalised from sitesections. If you want to
      * specify it, use the overloaded method.
      * 
-     * @param context
-     *            The context of the web page request.
-     * @param refreshInSeconds
-     *            auto-refresh time in seconds
-     * @throws IOException
-     *             if an error occurs during writing of output.
+     * @param context The context of the web page request.
+     * @param refreshInSeconds auto-refresh time in seconds
+     * @throws IOException if an error occurs during writing of output.
      */
     public static void generateHeader(PageContext context, long refreshInSeconds) throws IOException {
         ArgumentNotValid.checkNotNull(context, "context");
@@ -194,17 +181,13 @@ public class HTMLUtils {
     }
 
     /**
-     * Prints the header information for the webpages in the GUI. This includes
-     * the navigation menu, and links for changing the language.
+     * Prints the header information for the webpages in the GUI. This includes the navigation menu, and links for
+     * changing the language.
      * 
-     * @param title
-     *            An internationalised title of the page.
-     * @param context
-     *            The context of the web page request.
-     * @param jsToInclude
-     *            path(s) to external .js files to include in header.
-     * @throws IOException
-     *             if an error occurs during writing to output.
+     * @param title An internationalised title of the page.
+     * @param context The context of the web page request.
+     * @param jsToInclude path(s) to external .js files to include in header.
+     * @throws IOException if an error occurs during writing to output.
      */
     public static void generateHeader(String title, PageContext context, String... jsToInclude) throws IOException {
         ArgumentNotValid.checkNotNull(title, "title");
@@ -236,17 +219,13 @@ public class HTMLUtils {
     }
 
     /**
-     * Prints the header information for the webpages in the GUI. This includes
-     * the navigation menu, and links for changing the language.
+     * Prints the header information for the webpages in the GUI. This includes the navigation menu, and links for
+     * changing the language.
      * 
-     * @param title
-     *            An internationalised title of the page.
-     * @param context
-     *            The context of the web page request.
-     * @param refreshInSeconds
-     *            auto-refresh time in seconds
-     * @throws IOException
-     *             if an error occurs during writing to output.
+     * @param title An internationalised title of the page.
+     * @param context The context of the web page request.
+     * @param refreshInSeconds auto-refresh time in seconds
+     * @throws IOException if an error occurs during writing to output.
      */
     public static void generateHeader(String title, long refreshInSeconds, PageContext context) throws IOException {
         ArgumentNotValid.checkNotNull(title, "title");
@@ -275,8 +254,7 @@ public class HTMLUtils {
     /**
      * Get the locale according to header context information.
      * 
-     * @param context
-     *            The context of the web page request.
+     * @param context The context of the web page request.
      * @return The locale given in the the page response.
      */
     public static Locale getLocaleObject(PageContext context) {
@@ -285,15 +263,12 @@ public class HTMLUtils {
     }
 
     /**
-     * Prints out links to change languages. Will read locales and names of
-     * languages from settings, and write them as links to the page "lang.jsp".
-     * The locale will be given to this page as a parameter, the name will be
-     * shown as the text of the link
+     * Prints out links to change languages. Will read locales and names of languages from settings, and write them as
+     * links to the page "lang.jsp". The locale will be given to this page as a parameter, the name will be shown as the
+     * text of the link
      * 
-     * @param out
-     *            the writer to which the links are written.
-     * @throws IOException
-     *             if an error occurs during writing of output.
+     * @param out the writer to which the links are written.
+     * @throws IOException if an error occurs during writing of output.
      */
     private static void generateLanguageLinks(JspWriter out) throws IOException {
         out.print("<div class=\"languagelinks\">");
@@ -309,18 +284,13 @@ public class HTMLUtils {
     }
 
     /**
-     * Prints out the navigation tree appearing as a <td>in the left column of
-     * the "main_table" table. Subpages are shown only for the currently-active
-     * main-heading of the sections defined in settings.
+     * Prints out the navigation tree appearing as a <td>in the left column of the "main_table" table. Subpages are
+     * shown only for the currently-active main-heading of the sections defined in settings.
      *
-     * @param out
-     *            the writer to which the output must be written.
-     * @param url
-     *            the url of the page.
-     * @param locale
-     *            The locale selecting the language.
-     * @throws IOException
-     *             if the output cannot be written.
+     * @param out the writer to which the output must be written.
+     * @param url the url of the page.
+     * @param locale The locale selecting the language.
+     * @throws IOException if the output cannot be written.
      */
     private static void generateNavigationTree(JspWriter out, String url, Locale locale) throws IOException {
         out.print("<td valign=\"top\" id=\"menu\">\n");
@@ -340,10 +310,8 @@ public class HTMLUtils {
     /**
      * Writes out footer information to close the page.
      * 
-     * @param out
-     *            the writer to which the information is written
-     * @throws IOException
-     *             if the output cannot be written
+     * @param out the writer to which the information is written
+     * @throws IOException if the output cannot be written
      */
     public static void generateFooter(JspWriter out) throws IOException {
         ArgumentNotValid.checkNotNull(out, "out");
@@ -364,12 +332,9 @@ public class HTMLUtils {
     }
 
     /**
-     * Create a table element containing the given string, escaping HTML values
-     * in the process.
+     * Create a table element containing the given string, escaping HTML values in the process.
      *
-     * @param s
-     *            An unescaped string. Any HTML tags in this string will end up
-     *            escaped away.
+     * @param s An unescaped string. Any HTML tags in this string will end up escaped away.
      * @return The same string escaped and enclosed in td tags.
      */
     public static String makeTableElement(String s) {
@@ -378,12 +343,9 @@ public class HTMLUtils {
     }
 
     /**
-     * Create a table header element containing the given string, escaping HTML
-     * values in the process.
+     * Create a table header element containing the given string, escaping HTML values in the process.
      *
-     * @param contents
-     *            An unescaped string. Any HTML tags in this string will end up
-     *            escaped away.
+     * @param contents An unescaped string. Any HTML tags in this string will end up escaped away.
      * @return The same string escaped and enclosed in th tags.
      */
     public static String makeTableHeader(String contents) {
@@ -392,13 +354,10 @@ public class HTMLUtils {
     }
 
     /**
-     * Create a table row. Note that in contrast to createTableElement and
-     * createTableHeader, the contents are not escaped. They are expected to
-     * contain table elements.
+     * Create a table row. Note that in contrast to createTableElement and createTableHeader, the contents are not
+     * escaped. They are expected to contain table elements.
      *
-     * @param contents
-     *            The contents to put into the table row. The entries will be
-     *            delimited by newline characters.
+     * @param contents The contents to put into the table row. The entries will be delimited by newline characters.
      * @return The same string escaped and enclosed in td tags.
      */
     public static String makeTableRow(String... contents) {
@@ -415,10 +374,9 @@ public class HTMLUtils {
     /**
      * Get an HTML representation of the date given.
      *
-     * @param d
-     *            A date
-     * @return A representation of the date that can be directly inserted into
-     *         an HTML document, or the empty string if d is null.
+     * @param d A date
+     * @return A representation of the date that can be directly inserted into an HTML document, or the empty string if
+     *         d is null.
      * @deprecated Please use <fmt:date> from taglib instead.
      */
     public static String makeDate(Date d) {
@@ -430,11 +388,9 @@ public class HTMLUtils {
     }
 
     /**
-     * Returns the toString() value of an object or a hyphen if the argument is
-     * null.
+     * Returns the toString() value of an object or a hyphen if the argument is null.
      * 
-     * @param o
-     *            the given object
+     * @param o the given object
      * @return o.toString() or "-" if o is null
      */
     public static String nullToHyphen(Object o) {
@@ -448,10 +404,8 @@ public class HTMLUtils {
     /**
      * Escapes HTML special characters ", &, < and > (but not ').
      *
-     * @param input
-     *            a string
-     * @return The string with values escaped. If input is null, the empty
-     *         string is returned.
+     * @param input a string
+     * @return The string with values escaped. If input is null, the empty string is returned.
      */
     public static String escapeHtmlValues(String input) {
         if (input == null) {
@@ -462,12 +416,10 @@ public class HTMLUtils {
     }
 
     /**
-     * Encode a string for use in a URL, then escape characters that must be
-     * escaped in HTML. This must be used whenever unknown strings are used in
-     * URLs that are placed in HTML.
+     * Encode a string for use in a URL, then escape characters that must be escaped in HTML. This must be used whenever
+     * unknown strings are used in URLs that are placed in HTML.
      *
-     * @param input
-     *            A string
+     * @param input A string
      * @return The same string, encoded to be safely placed in a URL in HTML.
      */
     public static String encodeAndEscapeHTML(String input) {
@@ -476,14 +428,12 @@ public class HTMLUtils {
     }
 
     /**
-     * Escapes a string for use in javascript. Replaces " with \" and ' with \',
-     * so e.g. escapeJavascriptQuotes("\"").equals("\\\"") Also, \ and any
-     * non-printable character is escaped for use in javascript
+     * Escapes a string for use in javascript. Replaces " with \" and ' with \', so e.g.
+     * escapeJavascriptQuotes("\"").equals("\\\"") Also, \ and any non-printable character is escaped for use in
+     * javascript
      *
-     * @param input
-     *            a string
-     * @return The string with values escaped. If input is null, the empty
-     *         string is returned.
+     * @param input a string
+     * @return The string with values escaped. If input is null, the empty string is returned.
      */
     public static String escapeJavascriptQuotes(String input) {
         if (input == null) {
@@ -530,11 +480,9 @@ public class HTMLUtils {
     }
 
     /**
-     * Sets the character encoding for reading parameters and content from a
-     * request in a JSP page.
+     * Sets the character encoding for reading parameters and content from a request in a JSP page.
      * 
-     * @param request
-     *            The servlet request object
+     * @param request The servlet request object
      */
     public static void setUTF8(HttpServletRequest request) {
         ArgumentNotValid.checkNotNull(request, "request");
@@ -553,17 +501,12 @@ public class HTMLUtils {
     }
 
     /**
-     * Given a URL in the sitesection hierarchy, returns the corresponding page
-     * title.
+     * Given a URL in the sitesection hierarchy, returns the corresponding page title.
      *
-     * @param url
-     *            a given URL
-     * @param locale
-     *            the current locale
-     * @return the corresponding page title, or string about "(no title)" if no
-     *         title can be found
-     * @throws ArgumentNotValid
-     *             if the given url or locale is null or url is empty.
+     * @param url a given URL
+     * @param locale the current locale
+     * @return the corresponding page title, or string about "(no title)" if no title can be found
+     * @throws ArgumentNotValid if the given url or locale is null or url is empty.
      */
     public static String getTitle(String url, Locale locale) {
         ArgumentNotValid.checkNotNull(locale, "Locale locale");
@@ -579,11 +522,9 @@ public class HTMLUtils {
     }
 
     /**
-     * Get the (CSS) class name for a row in a table. The row count should start
-     * at 0.
+     * Get the (CSS) class name for a row in a table. The row count should start at 0.
      *
-     * @param rowCount
-     *            The number of the row
+     * @param rowCount The number of the row
      * @return A CSS class name that should be the class of the TR element.
      */
     public static String getRowClass(int rowCount) {
@@ -595,13 +536,10 @@ public class HTMLUtils {
     }
 
     /**
-     * Get a locale from cookie, if present. The default request locale
-     * otherwise.
+     * Get a locale from cookie, if present. The default request locale otherwise.
      * 
-     * @param request
-     *            The request to get the locale for.
-     * @return The cookie locale, if present. The default request locale
-     *         otherwise.
+     * @param request The request to get the locale for.
+     * @return The cookie locale, if present. The default request locale otherwise.
      */
     public static String getLocale(HttpServletRequest request) {
         ArgumentNotValid.checkNotNull(request, "request");
@@ -617,24 +555,15 @@ public class HTMLUtils {
     }
 
     /**
-     * Forward to our standard error message page with an internationalized
-     * message. Note that this <em>doesn't</em> throw ForwardedToErrorPage, it
-     * is the job of whoever calls this to do that if not within a JSP page (a
-     * JSP page can just return immediately). All text involved will be
-     * HTML-escaped.
+     * Forward to our standard error message page with an internationalized message. Note that this <em>doesn't</em>
+     * throw ForwardedToErrorPage, it is the job of whoever calls this to do that if not within a JSP page (a JSP page
+     * can just return immediately). All text involved will be HTML-escaped.
      *
-     * @param context
-     *            The context that the error happened in (the JSP-defined
-     *            pageContext, typically)
-     * @param I18N
-     *            The i18n information
-     * @param label
-     *            An i18n label for the error. This label should begin with
-     *            "errormsg;".
-     * @param args
-     *            Any extra args for i18n
-     * @throws IOFailure
-     *             If the forward fails
+     * @param context The context that the error happened in (the JSP-defined pageContext, typically)
+     * @param I18N The i18n information
+     * @param label An i18n label for the error. This label should begin with "errormsg;".
+     * @param args Any extra args for i18n
+     * @throws IOFailure If the forward fails
      */
     public static void forwardWithErrorMessage(PageContext context, I18n I18N, String label, Object... args) {
         // Note that we may not want to be to strict here
@@ -660,24 +589,15 @@ public class HTMLUtils {
     }
 
     /**
-     * Forward to our standard error message page with an internationalized
-     * message. Note that this <em>doesn't</em> throw ForwardedToErrorPage, it
-     * is the job of whoever calls this to do that if not within a JSP page (a
-     * JSP page can just return immediately). The text involved must be
-     * HTML-escaped before passing to this method.
+     * Forward to our standard error message page with an internationalized message. Note that this <em>doesn't</em>
+     * throw ForwardedToErrorPage, it is the job of whoever calls this to do that if not within a JSP page (a JSP page
+     * can just return immediately). The text involved must be HTML-escaped before passing to this method.
      *
-     * @param context
-     *            The context that the error happened in (the JSP-defined
-     *            pageContext, typically)
-     * @param i18n
-     *            The i18n information
-     * @param label
-     *            An i18n label for the error. This label should begin with
-     *            "errormsg;".
-     * @param args
-     *            Any extra args for i18n. These must be valid HTML.
-     * @throws IOFailure
-     *             If the forward fails.
+     * @param context The context that the error happened in (the JSP-defined pageContext, typically)
+     * @param i18n The i18n information
+     * @param label An i18n label for the error. This label should begin with "errormsg;".
+     * @param args Any extra args for i18n. These must be valid HTML.
+     * @throws IOFailure If the forward fails.
      */
     public static void forwardWithRawErrorMessage(PageContext context, I18n i18n, String label, Object... args) {
         // Note that we may not want to be to strict here
@@ -704,26 +624,16 @@ public class HTMLUtils {
     }
 
     /**
-     * Forward to our standard error message page with an internationalized
-     * message, in case of exception. Note that this <em>doesn't</em> throw
-     * ForwardedToErrorPage, it is the job of whoever calls this to do that if
-     * not within a JSP page (a JSP page can just return immediately). All text
-     * involved will be HTML-escaped.
+     * Forward to our standard error message page with an internationalized message, in case of exception. Note that
+     * this <em>doesn't</em> throw ForwardedToErrorPage, it is the job of whoever calls this to do that if not within a
+     * JSP page (a JSP page can just return immediately). All text involved will be HTML-escaped.
      *
-     * @param context
-     *            The context that the error happened in (the JSP-defined
-     *            pageContext, typically)
-     * @param i18n
-     *            The i18n information
-     * @param e
-     *            The exception that is being handled.
-     * @param label
-     *            An i18n label for the error. This label should begin with
-     *            "errormsg;".
-     * @param args
-     *            Any extra args for i18n
-     * @throws IOFailure
-     *             If the forward fails
+     * @param context The context that the error happened in (the JSP-defined pageContext, typically)
+     * @param i18n The i18n information
+     * @param e The exception that is being handled.
+     * @param label An i18n label for the error. This label should begin with "errormsg;".
+     * @param args Any extra args for i18n
+     * @throws IOFailure If the forward fails
      */
     public static void forwardWithErrorMessage(PageContext context, I18n i18n, Throwable e, String label,
             Object... args) {
@@ -750,17 +660,13 @@ public class HTMLUtils {
     }
 
     /**
-     * Checks that the given parameters exist. If any of them do not exist,
-     * forwards to the error page and throws ForwardedToErrorPage.
+     * Checks that the given parameters exist. If any of them do not exist, forwards to the error page and throws
+     * ForwardedToErrorPage.
      *
-     * @param context
-     *            The context of the current JSP page
-     * @param parameters
-     *            List of parameters that must exist
-     * @throws IOFailure
-     *             If the forward fails
-     * @throws ForwardedToErrorPage
-     *             If a parameter is missing
+     * @param context The context of the current JSP page
+     * @param parameters List of parameters that must exist
+     * @throws IOFailure If the forward fails
+     * @throws ForwardedToErrorPage If a parameter is missing
      */
     public static void forwardOnMissingParameter(PageContext context, String... parameters) throws ForwardedToErrorPage {
         // Note that we may not want to be to strict here
@@ -780,19 +686,13 @@ public class HTMLUtils {
     }
 
     /**
-     * Checks that the given parameters exist and are not empty. If any of them
-     * are missing or empty, forwards to the error page and throws
-     * ForwardedToErrorPage. A parameter with only whitespace is considered
-     * empty.
+     * Checks that the given parameters exist and are not empty. If any of them are missing or empty, forwards to the
+     * error page and throws ForwardedToErrorPage. A parameter with only whitespace is considered empty.
      *
-     * @param context
-     *            The context of the current JSP page
-     * @param parameters
-     *            List of parameters that must exist and be non-empty
-     * @throws IOFailure
-     *             If the forward fails
-     * @throws ForwardedToErrorPage
-     *             if a parameter was missing or empty
+     * @param context The context of the current JSP page
+     * @param parameters List of parameters that must exist and be non-empty
+     * @throws IOFailure If the forward fails
+     * @throws ForwardedToErrorPage if a parameter was missing or empty
      */
     public static void forwardOnEmptyParameter(PageContext context, String... parameters) {
         // Note that we may not want to be to strict here
@@ -812,20 +712,14 @@ public class HTMLUtils {
     }
 
     /**
-     * Checks that the given parameter exists and is one of a set of values. If
-     * is is missing or doesn't equal one of the given values, forwards to the
-     * error page and throws ForwardedToErrorPage.
+     * Checks that the given parameter exists and is one of a set of values. If is is missing or doesn't equal one of
+     * the given values, forwards to the error page and throws ForwardedToErrorPage.
      *
-     * @param context
-     *            The context of the current JSP page
-     * @param parameter
-     *            parameter that must exist
-     * @param legalValues
-     *            legal values for the parameter
-     * @throws IOFailure
-     *             If the forward fails
-     * @throws ForwardedToErrorPage
-     *             if the parameter is none of the given values
+     * @param context The context of the current JSP page
+     * @param parameter parameter that must exist
+     * @param legalValues legal values for the parameter
+     * @throws IOFailure If the forward fails
+     * @throws ForwardedToErrorPage if the parameter is none of the given values
      */
     public static void forwardOnIllegalParameter(PageContext context, String parameter, String... legalValues)
             throws ForwardedToErrorPage {
@@ -847,22 +741,16 @@ public class HTMLUtils {
     }
 
     /**
-     * Parses a integer request parameter and checks that it lies within a given
-     * interval. If it doesn't, forwards to an error page and throws
-     * ForwardedToErrorPage.
+     * Parses a integer request parameter and checks that it lies within a given interval. If it doesn't, forwards to an
+     * error page and throws ForwardedToErrorPage.
      *
-     * @param context
-     *            The context this call happens in
-     * @param param
-     *            A parameter to parse.
-     * @param minValue
-     *            The minimum allowed value
-     * @param maxValue
-     *            The maximum allowed value
+     * @param context The context this call happens in
+     * @param param A parameter to parse.
+     * @param minValue The minimum allowed value
+     * @param maxValue The maximum allowed value
      * @return The value x parsed from the string, if minValue <= x <= maxValue
-     * @throws ForwardedToErrorPage
-     *             if the parameter doesn't exist, is not a parseable integer,
-     *             or doesn't lie within the limits.
+     * @throws ForwardedToErrorPage if the parameter doesn't exist, is not a parseable integer, or doesn't lie within
+     *             the limits.
      */
     public static int parseAndCheckInteger(PageContext context, String param, int minValue, int maxValue)
             throws ForwardedToErrorPage {
@@ -893,18 +781,12 @@ public class HTMLUtils {
     /**
      * Parse an optionally present long-value from a request parameter.
      *
-     * @param context
-     *            The context of the web request.
-     * @param param
-     *            The name of the parameter to parse.
-     * @param defaultValue
-     *            A value to return if the parameter is not present (may be
-     *            null).
-     * @return Parsed value or default value if the parameter is missing or
-     *         empty. Null will only be returned if passed as the default value.
-     * @throws ForwardedToErrorPage
-     *             if the parameter is present but not parseable as a long
-     *             value.
+     * @param context The context of the web request.
+     * @param param The name of the parameter to parse.
+     * @param defaultValue A value to return if the parameter is not present (may be null).
+     * @return Parsed value or default value if the parameter is missing or empty. Null will only be returned if passed
+     *         as the default value.
+     * @throws ForwardedToErrorPage if the parameter is present but not parseable as a long value.
      */
     public static Long parseOptionalLong(PageContext context, String param, Long defaultValue) {
         // Note that we may not want to be to strict here
@@ -920,20 +802,13 @@ public class HTMLUtils {
     /**
      * Parse an optionally present date-value from a request parameter.
      *
-     * @param context
-     *            The context of the web request.
-     * @param param
-     *            The name of the parameter to parse
-     * @param format
-     *            The format of the date, in the format defined by
-     *            SimpleDateFormat
-     * @param defaultValue
-     *            A value to return if the parameter is not present (may be
-     *            null)
-     * @return Parsed value or default value if the parameter is missing or
-     *         empty. Null will only be returned if passed as the default value.
-     * @throws ForwardedToErrorPage
-     *             if the parameter is present but not parseable as a date
+     * @param context The context of the web request.
+     * @param param The name of the parameter to parse
+     * @param format The format of the date, in the format defined by SimpleDateFormat
+     * @param defaultValue A value to return if the parameter is not present (may be null)
+     * @return Parsed value or default value if the parameter is missing or empty. Null will only be returned if passed
+     *         as the default value.
+     * @throws ForwardedToErrorPage if the parameter is present but not parseable as a date
      */
     public static Date parseOptionalDate(PageContext context, String param, String format, Date defaultValue) {
         ArgumentNotValid.checkNotNullOrEmpty(param, "String param");
@@ -957,15 +832,11 @@ public class HTMLUtils {
     /**
      * Parse an optionally present boolean from a request parameter.
      *
-     * @param context
-     *            The context of the web request.
-     * @param param
-     *            The name of the parameter to parse
-     * @param defaultValue
-     *            A value to return if the parameter is not present (may be
-     *            null)
-     * @return Parsed value or default value if the parameter is missing or
-     *         empty. Null will only be returned if passed as the default value.
+     * @param context The context of the web request.
+     * @param param The name of the parameter to parse
+     * @param defaultValue A value to return if the parameter is not present (may be null)
+     * @return Parsed value or default value if the parameter is missing or empty. Null will only be returned if passed
+     *         as the default value.
      */
     public static boolean parseOptionalBoolean(PageContext context, String param, boolean defaultValue) {
         ArgumentNotValid.checkNotNullOrEmpty(param, "String param");
@@ -981,12 +852,10 @@ public class HTMLUtils {
     /**
      * Create a localized string representation of the given long.
      * 
-     * @param i
-     *            A long integer
-     * @param context
-     *            The given JSP context
-     * @return a localized string representation of the given long TODO Should
-     *         this method throw ArgumentNotValid if the context is null
+     * @param i A long integer
+     * @param context The given JSP context
+     * @return a localized string representation of the given long TODO Should this method throw ArgumentNotValid if the
+     *         context is null
      */
     public static String localiseLong(long i, PageContext context) {
         NumberFormat nf = NumberFormat.getInstance(HTMLUtils.getLocaleObject(context));
@@ -996,12 +865,10 @@ public class HTMLUtils {
     /**
      * Create a localized string representation of the given long.
      * 
-     * @param i
-     *            A long integer
-     * @param locale
-     *            The given locale.
-     * @return a localized string representation of the given long TODO Should
-     *         this method throw ArgumentNotValid if the locale is null
+     * @param i A long integer
+     * @param locale The given locale.
+     * @return a localized string representation of the given long TODO Should this method throw ArgumentNotValid if the
+     *         locale is null
      */
     public static String localiseLong(long i, Locale locale) {
         NumberFormat nf = NumberFormat.getInstance(locale);
@@ -1011,15 +878,10 @@ public class HTMLUtils {
     /**
      * Parse a given String for a long value.
      * 
-     * @param loc
-     *            The given Locale.
-     * @param paramValue
-     *            The given parameter value
-     * @param parameterName
-     *            The given parameter name (used for debugging)
-     * @param defaultValue
-     *            The default value for the parameter, in case the string cannot
-     *            be parsed
+     * @param loc The given Locale.
+     * @param paramValue The given parameter value
+     * @param parameterName The given parameter name (used for debugging)
+     * @param defaultValue The default value for the parameter, in case the string cannot be parsed
      * @return the long value found in the paramValue
      */
     public static Long parseLong(Locale loc, String paramValue, String parameterName, Long defaultValue) {

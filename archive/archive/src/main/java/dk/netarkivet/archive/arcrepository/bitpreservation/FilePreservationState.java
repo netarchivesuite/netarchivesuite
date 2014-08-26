@@ -55,23 +55,18 @@ public class FilePreservationState implements PreservationState {
     private ArcRepositoryEntry adminStatus;
 
     /**
-     * The checksums of the file in the individual replica. Normally, there will
-     * only be one entry in the list, but it must also handle the case where
-     * multiple copies exist in a replica.
+     * The checksums of the file in the individual replica. Normally, there will only be one entry in the list, but it
+     * must also handle the case where multiple copies exist in a replica.
      */
     private Map<Replica, List<String>> replica2checksum;
 
     /**
      * Create new instance of the preservation status for a file.
      *
-     * @param filename
-     *            The filename to get status for
-     * @param admindata
-     *            The admin data for the file
-     * @param checksumMap
-     *            The map with the checksums for this file in all replicas
-     * @throws ArgumentNotValid
-     *             if filename is null or empty string, or if admindata is null.
+     * @param filename The filename to get status for
+     * @param admindata The admin data for the file
+     * @param checksumMap The map with the checksums for this file in all replicas
+     * @throws ArgumentNotValid if filename is null or empty string, or if admindata is null.
      */
     FilePreservationState(String filename, ArcRepositoryEntry admindata, Map<Replica, List<String>> checksumMap)
             throws ArgumentNotValid {
@@ -86,10 +81,8 @@ public class FilePreservationState implements PreservationState {
     /**
      * Get the checksum of this file in a specific replica.
      *
-     * @param replica
-     *            The replica to get the checksum from.
-     * @return The file's checksum, if it is present in the replica, or "" if it
-     *         either is absent or an error occurred.
+     * @param replica The replica to get the checksum from.
+     * @return The file's checksum, if it is present in the replica, or "" if it either is absent or an error occurred.
      */
     public List<String> getReplicaChecksum(Replica replica) {
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
@@ -110,11 +103,10 @@ public class FilePreservationState implements PreservationState {
     }
 
     /**
-     * Get the status of the file in a replica, according to the admin data.
-     * This returns the status as a string for presentation purposes only.
+     * Get the status of the file in a replica, according to the admin data. This returns the status as a string for
+     * presentation purposes only.
      *
-     * @param replica
-     *            The replica to get status for
+     * @param replica The replica to get status for
      * @return Status that the admin data knows for this file in the replica.
      */
     public String getAdminReplicaState(Replica replica) {
@@ -130,8 +122,7 @@ public class FilePreservationState implements PreservationState {
     /**
      * Get the status of the file in a replica, according to the admin data.
      *
-     * @param replica
-     *            The replica to get status for
+     * @param replica The replica to get status for
      * @return Status that the admin data knows for this file in the replica.
      */
     private ReplicaStoreState getAdminBitarchiveStoreState(Replica replica) {
@@ -142,21 +133,16 @@ public class FilePreservationState implements PreservationState {
     /**
      * Check if the admin data reflect the actual status of the archive.
      *
-     * Admin State checking: For each replica the admin state is compared to the
-     * checksum received from the replica.
+     * Admin State checking: For each replica the admin state is compared to the checksum received from the replica.
      *
-     * If no checksum is received from the replica the valid admin states are
-     * UPLOAD_STARTED and UPLOAD_FAILED. If a checksum is received from the
-     * replica the valid admin state is UPLOAD_COMPLETED Admin checksum
-     * checking: The admin checksum must match the majority of reported
-     * checksums.
+     * If no checksum is received from the replica the valid admin states are UPLOAD_STARTED and UPLOAD_FAILED. If a
+     * checksum is received from the replica the valid admin state is UPLOAD_COMPLETED Admin checksum checking: The
+     * admin checksum must match the majority of reported checksums.
      *
-     * Notice that a valid Admin data record does NOT imply that everything is
-     * ok. Specifically a file may be missing from a replica, or the checksum of
-     * a file in a replica may be wrong.
+     * Notice that a valid Admin data record does NOT imply that everything is ok. Specifically a file may be missing
+     * from a replica, or the checksum of a file in a replica may be wrong.
      *
-     * @return true, if admin data match the state of the replicas, false
-     *         otherwise
+     * @return true, if admin data match the state of the replicas, false otherwise
      */
     public boolean isAdminDataOk() {
         // Check the bitarchive states against the admin information
@@ -187,8 +173,7 @@ public class FilePreservationState implements PreservationState {
     /**
      * Check if the file is missing from a replica.
      *
-     * @param replica
-     *            the replica to check.
+     * @param replica the replica to check.
      * @return true if the file is missing from the replica.
      */
     public boolean fileIsMissing(Replica replica) {
@@ -196,14 +181,11 @@ public class FilePreservationState implements PreservationState {
     }
 
     /**
-     * Returns a reference to a bitarchive replica that contains a version of
-     * the file with the correct checksum.
+     * Returns a reference to a bitarchive replica that contains a version of the file with the correct checksum.
      *
-     * The correct checksum is defined as the checksum that the majority of the
-     * replicas and admin data agree upon.
+     * The correct checksum is defined as the checksum that the majority of the replicas and admin data agree upon.
      *
-     * If no bitarchive replica exists with a correct version of the file null
-     * is returned.
+     * If no bitarchive replica exists with a correct version of the file null is returned.
      *
      * @return the name of the reference replica or null if no reference exists.
      */
@@ -232,11 +214,9 @@ public class FilePreservationState implements PreservationState {
     /**
      * Get a checksum that the whole replica agrees upon, or else "".
      *
-     * @param r
-     *            A replica to get checksum for this file from
-     * @return The checksum for this file in the replica, if all machines that
-     *         have that file agree, otherwise "". If no checksums are found,
-     *         also returns "".
+     * @param r A replica to get checksum for this file from
+     * @return The checksum for this file in the replica, if all machines that have that file agree, otherwise "". If no
+     *         checksums are found, also returns "".
      */
     public String getUniqueChecksum(Replica r) {
         ArgumentNotValid.checkNotNull(r, "Replica r");
@@ -257,8 +237,7 @@ public class FilePreservationState implements PreservationState {
     }
 
     /**
-     * Retrieve checksum that the majority of checksum references
-     * (replicas+admin) agree upon.
+     * Retrieve checksum that the majority of checksum references (replicas+admin) agree upon.
      *
      * @return the reference checksum or "" if no majority exists
      */
@@ -289,14 +268,11 @@ public class FilePreservationState implements PreservationState {
     }
 
     /**
-     * Returns true if the checksum reported by admin data is equal to the
-     * majority checksum. If no majority checksum exists true is also returned.
-     * When this method returns false it is possible to correct the admin
-     * checksum using the majority checksum - when true is returned no better
-     * checksum exists for admin data.
+     * Returns true if the checksum reported by admin data is equal to the majority checksum. If no majority checksum
+     * exists true is also returned. When this method returns false it is possible to correct the admin checksum using
+     * the majority checksum - when true is returned no better checksum exists for admin data.
      *
-     * @return true, if the checksum reported by admin data is equal to the
-     *         majority checksum
+     * @return true, if the checksum reported by admin data is equal to the majority checksum
      */
     public boolean isAdminCheckSumOk() {
         String referenceCheckSum = getReferenceCheckSum();
@@ -307,8 +283,8 @@ public class FilePreservationState implements PreservationState {
     }
 
     /**
-     * Returns a human-readable representation of this object. Do not depend on
-     * this format for anything automated, as it may change at any time.
+     * Returns a human-readable representation of this object. Do not depend on this format for anything automated, as
+     * it may change at any time.
      *
      * @return Description of this object.
      */
@@ -322,8 +298,8 @@ public class FilePreservationState implements PreservationState {
     }
 
     /**
-     * Get the filename, this FilePreservationState is about. Needed to get at
-     * the filename given to constructor, and allow for a better datastructure.
+     * Get the filename, this FilePreservationState is about. Needed to get at the filename given to constructor, and
+     * allow for a better datastructure.
      * 
      * @return the filename
      */

@@ -50,10 +50,9 @@ import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.webinterface.HTMLUtils;
 
 /**
- * Class encapsulating methods for handling web requests for
- * ActiveBitPreservation.
+ * Class encapsulating methods for handling web requests for ActiveBitPreservation.
  */
-@SuppressWarnings({ "unchecked" })
+@SuppressWarnings({"unchecked"})
 public class BitpreserveFileState {
     /** Internationalisation object. */
     private static final I18n I18N = new I18n(dk.netarkivet.archive.Constants.TRANSLATIONS_BUNDLE);
@@ -67,23 +66,17 @@ public class BitpreserveFileState {
     }
 
     /**
-     * Extract the name of the replica (parameter
-     * Constants.BITARCHIVE_NAME_PARAM) and the type of update requested
-     * (parameter Constants.UPDATE_TYPE_PARAM). The latter is set to to
-     * Constants.FIND_MISSING_FILES_OPTION if the request is to update missing
-     * files, or to Constants.CHECKSUM_OPTION if the request is to update the
-     * checksum information.
+     * Extract the name of the replica (parameter Constants.BITARCHIVE_NAME_PARAM) and the type of update requested
+     * (parameter Constants.UPDATE_TYPE_PARAM). The latter is set to to Constants.FIND_MISSING_FILES_OPTION if the
+     * request is to update missing files, or to Constants.CHECKSUM_OPTION if the request is to update the checksum
+     * information.
      *
-     * @param context
-     *            the current JSP context
+     * @param context the current JSP context
      *
-     * @throws ForwardedToErrorPage
-     *             if an unknown bitarchive or update type is posted, or one of
-     *             the two required parameters are missing.
-     * @throws ArgumentNotValid
-     *             If the context is null.
-     * @return an I18N string telling which type of update has just been
-     *         initiated.
+     * @throws ForwardedToErrorPage if an unknown bitarchive or update type is posted, or one of the two required
+     *             parameters are missing.
+     * @throws ArgumentNotValid If the context is null.
+     * @return an I18N string telling which type of update has just been initiated.
      */
     public static String processUpdateRequest(PageContext context) throws ArgumentNotValid, ForwardedToErrorPage {
         ArgumentNotValid.checkNotNull(context, "PageContext context");
@@ -134,26 +127,20 @@ public class BitpreserveFileState {
     /**
      * Processes a missingFiles request.
      *
-     * Parameters of the form
-     * Constants.ADD_COMMAND=&lt;bitarchive&gt;##&lt;filename&gt; causes the
-     * file to be added to that bitarchive, if it is missing.
+     * Parameters of the form Constants.ADD_COMMAND=&lt;bitarchive&gt;##&lt;filename&gt; causes the file to be added to
+     * that bitarchive, if it is missing.
      *
-     * Parameters of the form Constants.GET_INFO_COMMAND=&lt;filename&gt; causes
-     * checksums to be computed for the file in all bitarchives and the
-     * information to be shown in the next update (notice that this information
-     * disappears when the page is next reloaded).
+     * Parameters of the form Constants.GET_INFO_COMMAND=&lt;filename&gt; causes checksums to be computed for the file
+     * in all bitarchives and the information to be shown in the next update (notice that this information disappears
+     * when the page is next reloaded).
      *
-     * @param context
-     *            the current JSP context.
-     * @param res
-     *            the result object. This is updated with result information,
-     *            and expected to be printed to the resulting page.
+     * @param context the current JSP context.
+     * @param res the result object. This is updated with result information, and expected to be printed to the
+     *            resulting page.
      *
      * @return A map of info gathered for files as requested.
-     * @throws ArgumentNotValid
-     *             If the context or res is null.
-     * @throws ForwardedToErrorPage
-     *             if the commands have the wrong number of arguments.
+     * @throws ArgumentNotValid If the context or res is null.
+     * @throws ForwardedToErrorPage if the commands have the wrong number of arguments.
      */
     public static Map<String, PreservationState> processMissingRequest(PageContext context, StringBuilder res)
             throws ArgumentNotValid, ForwardedToErrorPage {
@@ -208,20 +195,14 @@ public class BitpreserveFileState {
     }
 
     /**
-     * Check that an array of strings has the arguments corresponding to a
-     * command.
+     * Check that an array of strings has the arguments corresponding to a command.
      *
-     * @param context
-     *            the JSP context to forward to error to.
-     * @param parts
-     *            Array of arguments given by user.
-     * @param cmd
-     *            The command to match.
-     * @param argnames
-     *            The names of the expected arguments.
+     * @param context the JSP context to forward to error to.
+     * @param parts Array of arguments given by user.
+     * @param cmd The command to match.
+     * @param argnames The names of the expected arguments.
      *
-     * @throws ForwardedToErrorPage
-     *             if the parts are not exactly as many as the arguments.
+     * @throws ForwardedToErrorPage if the parts are not exactly as many as the arguments.
      */
     private static void checkArgs(PageContext context, String[] parts, String cmd, String... argnames)
             throws ForwardedToErrorPage {
@@ -237,29 +218,22 @@ public class BitpreserveFileState {
     /**
      * Processes a checksum request.
      *
-     * The name of a bitarchive must always be given in parameter
-     * Constants.BITARCHIVE_NAME_PARAM.
+     * The name of a bitarchive must always be given in parameter Constants.BITARCHIVE_NAME_PARAM.
      *
-     * If parameter Constants.FILENAME_PARAM is given, file info for that file
-     * will be returned, and all actions will work on that file.
+     * If parameter Constants.FILENAME_PARAM is given, file info for that file will be returned, and all actions will
+     * work on that file.
      *
-     * If parameter Constants.FIX_ADMIN_CHECKSUM_PARAM is given, the admin data
-     * checksum will be fixed for the file.
+     * If parameter Constants.FIX_ADMIN_CHECKSUM_PARAM is given, the admin data checksum will be fixed for the file.
      *
-     * If parameter Constants.CREDENTIALS and Constants.CHECKSUM_PARAM is given,
-     * removes and reuploads a file with that checksum in the given bitarchive,
-     * using the credentials for authorisation.
+     * If parameter Constants.CREDENTIALS and Constants.CHECKSUM_PARAM is given, removes and reuploads a file with that
+     * checksum in the given bitarchive, using the credentials for authorisation.
      *
-     * @param res
-     *            the result object. This is updated with result information,
-     *            and expected to be printed to the resulting page.
-     * @param context
-     *            the current JSP pagecontext.
+     * @param res the result object. This is updated with result information, and expected to be printed to the
+     *            resulting page.
+     * @param context the current JSP pagecontext.
      *
-     * @return The file preservation state for a file, if a filename is given in
-     *         the request. Null otherwise.
-     * @throws ArgumentNotValid
-     *             If the context or res is null.
+     * @return The file preservation state for a file, if a filename is given in the request. Null otherwise.
+     * @throws ArgumentNotValid If the context or res is null.
      */
     public static PreservationState processChecksumRequest(StringBuilder res, PageContext context)
             throws ArgumentNotValid {
@@ -327,13 +301,10 @@ public class BitpreserveFileState {
     /**
      * Create a generic checkbox as used by processMissingRequest.
      *
-     * @param command
-     *            The name of the command
-     * @param args
-     *            Arguments to the command
+     * @param command The name of the command
+     * @param args Arguments to the command
      *
-     * @return A checkbox with the command and arguments in correct format and
-     *         with HTML stuff escaped.
+     * @return A checkbox with the command and arguments in correct format and with HTML stuff escaped.
      */
     public static String makeCheckbox(String command, String... args) {
         ArgumentNotValid.checkNotNull(command, "command");
@@ -354,18 +325,13 @@ public class BitpreserveFileState {
     }
 
     /**
-     * Print HTML formatted state for missing files on a given replica in a
-     * given locale.
+     * Print HTML formatted state for missing files on a given replica in a given locale.
      *
-     * @param out
-     *            The writer to write state to.
-     * @param replica
-     *            The replica to write state for.
-     * @param locale
-     *            The locale to write state in.
+     * @param out The writer to write state to.
+     * @param replica The replica to write state for.
+     * @param locale The locale to write state in.
      *
-     * @throws IOException
-     *             On IO trouble writing state to the writer.
+     * @throws IOException On IO trouble writing state to the writer.
      */
     public static void printMissingFileStateForReplica(JspWriter out, Replica replica, Locale locale)
             throws IOException {
@@ -410,18 +376,13 @@ public class BitpreserveFileState {
     }
 
     /**
-     * Print HTML formatted state for checksum errors on a given replica in a
-     * given locale.
+     * Print HTML formatted state for checksum errors on a given replica in a given locale.
      *
-     * @param out
-     *            The writer to write state to.
-     * @param replica
-     *            The replica to write state for.
-     * @param locale
-     *            The locale to write state in.
+     * @param out The writer to write state to.
+     * @param replica The replica to write state for.
+     * @param locale The locale to write state in.
      *
-     * @throws IOException
-     *             On IO trouble writing state to the writer.
+     * @throws IOException On IO trouble writing state to the writer.
      */
     public static void printChecksumErrorStateForReplica(JspWriter out, Replica replica, Locale locale)
             throws IOException {
@@ -471,17 +432,12 @@ public class BitpreserveFileState {
     /**
      * Print a table row with a file name and a checkbox to request more info.
      *
-     * @param out
-     *            The stream to print to.
-     * @param filename
-     *            The name of the file.
-     * @param rowCount
-     *            The rowcount, used for styling rows.
-     * @param locale
-     *            The current locale for labels.
+     * @param out The stream to print to.
+     * @param filename The name of the file.
+     * @param rowCount The rowcount, used for styling rows.
+     * @param locale The current locale for labels.
      *
-     * @throws IOException
-     *             On trouble writing to stream.
+     * @throws IOException On trouble writing to stream.
      */
     public static void printFileName(JspWriter out, String filename, int rowCount, Locale locale) throws IOException {
         ArgumentNotValid.checkNotNull(out, "JspWriter out");
@@ -497,18 +453,13 @@ public class BitpreserveFileState {
     }
 
     /**
-     * Print a file state table for a file. This will present the state of the
-     * file in admin data and all bitarchives.
+     * Print a file state table for a file. This will present the state of the file in admin data and all bitarchives.
      *
-     * @param out
-     *            The stream to print to.
-     * @param fs
-     *            The file state for the file.
-     * @param locale
-     *            The locale to print labels in.
+     * @param out The stream to print to.
+     * @param fs The file state for the file.
+     * @param locale The locale to print labels in.
      *
-     * @throws IOException
-     *             On trouble printing to a stream.
+     * @throws IOException On trouble printing to a stream.
      */
     public static void printFileState(JspWriter out, PreservationState fs, Locale locale) throws IOException {
         ArgumentNotValid.checkNotNull(out, "JspWriter out");
@@ -534,15 +485,11 @@ public class BitpreserveFileState {
     /**
      * Print a table row with current state of a file in admin data.
      *
-     * @param out
-     *            The stream to print state to.
-     * @param fs
-     *            The file preservation state for that file.
-     * @param locale
-     *            Locale of the labels.
+     * @param out The stream to print state to.
+     * @param fs The file preservation state for that file.
+     * @param locale Locale of the labels.
      *
-     * @throws IOException
-     *             on trouble printing the state.
+     * @throws IOException on trouble printing the state.
      */
     private static void printFileStateForAdminData(JspWriter out, PreservationState fs, Locale locale)
             throws IOException {
@@ -553,17 +500,12 @@ public class BitpreserveFileState {
     /**
      * Print a table row with current state of a file in a given bitarchive.
      *
-     * @param out
-     *            The stream to print state to.
-     * @param baReplica
-     *            The replica of the files.
-     * @param fs
-     *            The file preservation state for that file.
-     * @param locale
-     *            Locale of the labels.
+     * @param out The stream to print state to.
+     * @param baReplica The replica of the files.
+     * @param fs The file preservation state for that file.
+     * @param locale Locale of the labels.
      *
-     * @throws IOException
-     *             If an problem occurs when writing to the JspWriter.
+     * @throws IOException If an problem occurs when writing to the JspWriter.
      */
     private static void printFileStateForBitarchive(JspWriter out, Replica baReplica, PreservationState fs,
             Locale locale) throws IOException {
@@ -574,23 +516,16 @@ public class BitpreserveFileState {
     }
 
     /**
-     * Print checkboxes for changing state for files. This will print two
-     * checkboxes for changing a number of checkboxes, one for getting more
-     * info, one for reestablishing missing files. This method assumes the file
-     * toggleCheckboxes.js to be available in the directory with the page this
-     * method is called from.
+     * Print checkboxes for changing state for files. This will print two checkboxes for changing a number of
+     * checkboxes, one for getting more info, one for reestablishing missing files. This method assumes the file
+     * toggleCheckboxes.js to be available in the directory with the page this method is called from.
      *
-     * @param out
-     *            The stream to print the checkboxes to.
-     * @param locale
-     *            The locale of the labels.
-     * @param numberOfMissingCheckboxes
-     *            The total possible number of missing checkboxes.
-     * @param numberOfUploadableCheckboxes
-     *            The total possible number of reestablish checkboxes.
+     * @param out The stream to print the checkboxes to.
+     * @param locale The locale of the labels.
+     * @param numberOfMissingCheckboxes The total possible number of missing checkboxes.
+     * @param numberOfUploadableCheckboxes The total possible number of reestablish checkboxes.
      *
-     * @throws IOException
-     *             On trouble printing the checkboxes.
+     * @throws IOException On trouble printing the checkboxes.
      */
     public static void printToggleCheckboxes(JspWriter out, Locale locale, int numberOfMissingCheckboxes,
             int numberOfUploadableCheckboxes) throws IOException {
@@ -610,23 +545,16 @@ public class BitpreserveFileState {
     }
 
     /**
-     * Print a checkbox that on click will turn a number of checkboxes of a
-     * certain type on or off.
+     * Print a checkbox that on click will turn a number of checkboxes of a certain type on or off.
      *
-     * @param out
-     *            The stream to print the checkbox to.
-     * @param command
-     *            The type of checkbox.
-     * @param numberOfCheckboxes
-     *            The total number of checksboxes possible to turn on or off.
-     * @param label
-     *            The I18N label for the describing text. An input box with the
-     *            number to change will be added as parameter {0} in this label.
-     * @param locale
-     *            The locale for the checkbox.
+     * @param out The stream to print the checkbox to.
+     * @param command The type of checkbox.
+     * @param numberOfCheckboxes The total number of checksboxes possible to turn on or off.
+     * @param label The I18N label for the describing text. An input box with the number to change will be added as
+     *            parameter {0} in this label.
+     * @param locale The locale for the checkbox.
      *
-     * @throws IOException
-     *             On trouble printing the checkbox.
+     * @throws IOException On trouble printing the checkbox.
      */
     private static void printMultipleToggler(JspWriter out, String command, int numberOfCheckboxes, String label,
             Locale locale) throws IOException {
@@ -641,14 +569,11 @@ public class BitpreserveFileState {
     }
 
     /**
-     * Present a list of checksums in a human-readable form. If size of list is
-     * 0, it returns "No checksum". If size of list is 1, it returns the one
-     * available checksum. Otherwise, it returns toString of the list.
+     * Present a list of checksums in a human-readable form. If size of list is 0, it returns "No checksum". If size of
+     * list is 1, it returns the one available checksum. Otherwise, it returns toString of the list.
      * 
-     * @param csum
-     *            List of checksum strings
-     * @param locale
-     *            The given locale.
+     * @param csum List of checksum strings
+     * @param locale The given locale.
      *
      * @return String presenting the checksums.
      */

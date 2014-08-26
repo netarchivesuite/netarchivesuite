@@ -48,8 +48,7 @@ public class DomainSeedsDefinition {
     }
 
     /**
-     * Utility class gathering together data relating to the editing of a seed
-     * list.
+     * Utility class gathering together data relating to the editing of a seed list.
      */
     public static class UrlInfo {
         private String urlListName;
@@ -70,14 +69,12 @@ public class DomainSeedsDefinition {
     }
 
     /**
-     * Extracts information from a servlet request to update seedlists in a
-     * domain
+     * Extracts information from a servlet request to update seedlists in a domain
      *
      * editUrlList: if not null, we are editing, not updating so return
      *
-     * (urlListName, seedlist) The name of a seedlist and the actual seedlist
-     * for a seedlist to be updated. If urlListName is present and non-empty,
-     * seedlist must also be non-empty.
+     * (urlListName, seedlist) The name of a seedlist and the actual seedlist for a seedlist to be updated. If
+     * urlListName is present and non-empty, seedlist must also be non-empty.
      *
      * @param context
      * @param i18n
@@ -126,12 +123,9 @@ public class DomainSeedsDefinition {
     /**
      * Update a domain from given (checked) seedlist data.
      *
-     * @param domain
-     *            The domain to update.
-     * @param urlInfo
-     *            The seedlist to update
-     * @param comments
-     *            Any comments for this seedlist.
+     * @param domain The domain to update.
+     * @param urlInfo The seedlist to update
+     * @param comments Any comments for this seedlist.
      */
     private static void updateDomain(Domain domain, UrlInfo urlInfo, String comments) {
         // Update/create seedlist

@@ -41,8 +41,7 @@ public class ArchiveStoreState {
     /**
      * Constructor for this class. This sets the lastchanged value to Now.
      * 
-     * @param storestate
-     *            A BitArchiveStoreState
+     * @param storestate A BitArchiveStoreState
      */
     public ArchiveStoreState(ReplicaStoreState storestate) {
         setState(storestate);
@@ -51,10 +50,8 @@ public class ArchiveStoreState {
     /**
      * Constructor for this class.
      * 
-     * @param storestate
-     *            A BitArchiveStoreState
-     * @param lastchanged
-     *            Time for when this state was set
+     * @param storestate A BitArchiveStoreState
+     * @param lastchanged Time for when this state was set
      */
     public ArchiveStoreState(ReplicaStoreState storestate, Date lastchanged) {
         setState(storestate, lastchanged);
@@ -72,12 +69,9 @@ public class ArchiveStoreState {
     /**
      * Sets the current ReplicaStoreState.
      * 
-     * @param state
-     *            The ReplicaStoreState.
-     * @param lastDate
-     *            The lastchanged date.
-     * @throws ArgumentNotValid
-     *             If the state or the lastDate is null.
+     * @param state The ReplicaStoreState.
+     * @param lastDate The lastchanged date.
+     * @throws ArgumentNotValid If the state or the lastDate is null.
      */
     public void setState(ReplicaStoreState state, Date lastDate) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(state, "ReplicaStoreState state");
@@ -88,13 +82,10 @@ public class ArchiveStoreState {
     }
 
     /**
-     * Sets the current ReplicaStoreState. As a sideeffect lastchanged is set to
-     * NOW.
+     * Sets the current ReplicaStoreState. As a sideeffect lastchanged is set to NOW.
      * 
-     * @param state
-     *            the ReplicaStoreState.
-     * @throws ArgumentNotValid
-     *             If the state is null.
+     * @param state the ReplicaStoreState.
+     * @throws ArgumentNotValid If the state is null.
      */
     public void setState(ReplicaStoreState state) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(state, "ReplicaStoreState state");

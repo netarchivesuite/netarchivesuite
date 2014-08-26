@@ -41,7 +41,7 @@ import dk.netarkivet.harvester.webinterface.DefinitionsSiteSection;
 /**
  * Contains test information about all harvest definition test data.
  */
-@SuppressWarnings({ "unused" })
+@SuppressWarnings({"unused"})
 public class TestInfo {
 
     protected static final Logger log = LoggerFactory.getLogger(TestInfo.class);
@@ -106,8 +106,8 @@ public class TestInfo {
     public static final Long HARVESTID = new Long(5678);
     public static final Long UNKNOWN_HARVESTID = new Long(5678);
     public static final File ORDERXMLFILE = new File(BASE_DIR_ORDER_XML_TEMPLATES, "OneLevel-order.xml");
-    public static File[] SETTINGSXMLFILES = { new File(BASE_DIR_ORDER_XML_TEMPLATES, "FullSite-order.xml"),
-            new File(BASE_DIR_ORDER_XML_TEMPLATES, "Max_20_2-order.xml") };
+    public static File[] SETTINGSXMLFILES = {new File(BASE_DIR_ORDER_XML_TEMPLATES, "FullSite-order.xml"),
+            new File(BASE_DIR_ORDER_XML_TEMPLATES, "Max_20_2-order.xml")};
 
     public static Date START_DATE = new GregorianCalendar(105, 2, 3, 4, 5, 6).getTime();
     public static Date END_DATE = new GregorianCalendar(106, 2, 3, 4, 5, 6).getTime();
@@ -184,8 +184,8 @@ public class TestInfo {
     }
 
     /**
-     * Create configuration with the specified name and a harvest history where
-     * objectCount number of objects were most recently harvested.
+     * Create configuration with the specified name and a harvest history where objectCount number of objects were most
+     * recently harvested.
      *
      * @param domainName
      * @param configName
@@ -312,10 +312,9 @@ public class TestInfo {
     }
 
     /**
-     * Creates a harvest definition where all configurations use the same
-     * order.xml. The expected number of objects harvested for each
-     * configuration are: asterix.kb.dk: 100 netarkivet.dk: 1000
-     * www.statsbiblioteket.dk: 2000 dr.dk: 4000
+     * Creates a harvest definition where all configurations use the same order.xml. The expected number of objects
+     * harvested for each configuration are: asterix.kb.dk: 100 netarkivet.dk: 1000 www.statsbiblioteket.dk: 2000 dr.dk:
+     * 4000
      *
      * @return the described definition
      */
@@ -335,11 +334,9 @@ public class TestInfo {
     }
 
     /**
-     * Creates a harvest definition where different order.xml files are used but
-     * where the expected number of objects is identical (1000) The following
-     * order.xml files are used: asterix.kb.dk:Max_20_2-order.xml
-     * netarkivet.dk:OneLevel-order.xml www.statsbiblioteket.dk:
-     * FullSite-order.xml dr.dk: FullSite-order.xml
+     * Creates a harvest definition where different order.xml files are used but where the expected number of objects is
+     * identical (1000) The following order.xml files are used: asterix.kb.dk:Max_20_2-order.xml
+     * netarkivet.dk:OneLevel-order.xml www.statsbiblioteket.dk: FullSite-order.xml dr.dk: FullSite-order.xml
      *
      * @return the described definition
      */

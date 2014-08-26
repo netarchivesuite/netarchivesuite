@@ -35,17 +35,16 @@ public class WaybackSettings {
     private static final String DEFAULT_SETTINGS_CLASSPATH = "dk/netarkivet/wayback/settings.xml";
 
     /*
-     * The static initialiser is called when the class is loaded. It will add
-     * default values for all settings defined in this class, by loading them
-     * from a settings.xml file in classpath.
+     * The static initialiser is called when the class is loaded. It will add default values for all settings defined in
+     * this class, by loading them from a settings.xml file in classpath.
      */
     static {
         Settings.addDefaultClasspathSettings(DEFAULT_SETTINGS_CLASSPATH);
     }
 
     /**
-     * Setting specifying the name of the class used to canonicalize urls. This
-     * class must implement the interface org.archive.wayback.UrlCanonicalizer .
+     * Setting specifying the name of the class used to canonicalize urls. This class must implement the interface
+     * org.archive.wayback.UrlCanonicalizer .
      */
     public static String URL_CANONICALIZER_CLASSNAME = "settings.wayback.urlcanonicalizer.classname";
 
@@ -54,8 +53,7 @@ public class WaybackSettings {
      */
 
     /**
-     * c3p0 is the database connection manager used by hibernate. See c3p0
-     * documentation for their meaning.
+     * c3p0 is the database connection manager used by hibernate. See c3p0 documentation for their meaning.
      */
     public static String C3P0_ACQUIRE_INCREMENT = "settings.wayback.hibernate.c3p0.acquireIncrement";
     public static String C3P0_IDLE_PERIOD = "settings.wayback.hibernate.c3p0.idleTestPeriod";
@@ -64,8 +62,7 @@ public class WaybackSettings {
     public static String C3P0_MIN_SIZE = "settings.wayback.hibernate.c3p0.minSize";
     public static String C3P0_TIMEOUT = "settings.wayback.hibernate.c3p0.timeout";
     /**
-     * These are the hibernate specific properties. See hibernate documentation
-     * for their meaning.
+     * These are the hibernate specific properties. See hibernate documentation for their meaning.
      */
     public static String HIBERNATE_DB_URL = "settings.wayback.hibernate.connectionUrl";
     public static String HIBERNATE_DB_DRIVER = "settings.wayback.hibernate.dbDriverClass";
@@ -89,15 +86,13 @@ public class WaybackSettings {
     public static String WAYBACK_INDEX_TEMPDIR = "settings.wayback.indexer.tempBatchOutputDir";
 
     /**
-     * The directory to which batch output is moved after a batch indexing job
-     * is successfully completed, and from which the output is read by the
-     * aggregator.
+     * The directory to which batch output is moved after a batch indexing job is successfully completed, and from which
+     * the output is read by the aggregator.
      */
     public static String WAYBACK_BATCH_OUTPUTDIR = "settings.wayback.indexer.finalBatchOutputDir";
 
     /**
-     * The maximum number of times an archive file may generate a batch error
-     * during indexing before we give up on it.
+     * The maximum number of times an archive file may generate a batch error during indexing before we give up on it.
      */
     public static String WAYBACK_INDEXER_MAXFAILEDATTEMPTS = "settings.wayback.indexer.maxFailedAttempts";
 
@@ -107,20 +102,18 @@ public class WaybackSettings {
     public static String WAYBACK_INDEXER_PRODUCER_DELAY = "settings.wayback.indexer.producerDelay";
 
     /**
-     * The interval, in milliseconds, between successive fecthes of the complete
-     * file list from the archive.
+     * The interval, in milliseconds, between successive fecthes of the complete file list from the archive.
      */
     public static String WAYBACK_INDEXER_PRODUCER_INTERVAL = "settings.wayback.indexer.producerInterval";
 
     /**
-     * How long ago to fetch newer files from the archive for indexing, measured
-     * in milliseconds since now. Default values is one day (86400000)
+     * How long ago to fetch newer files from the archive for indexing, measured in milliseconds since now. Default
+     * values is one day (86400000)
      */
     public static final String WAYBACK_INDEXER_RECENT_PRODUCER_SINCE = "settings.wayback.indexer.recentProducerSince";
 
     /**
-     * How often to fetch recent files from the archive (milliseconds). Default
-     * values is a half hour (1800000).
+     * How often to fetch recent files from the archive (milliseconds). Default values is a half hour (1800000).
      */
     public static final String WAYBACK_INDEXER_RECENT_PRODUCER_INTERVAL = "settings.wayback.indexer.recentProducerInterval";
 
@@ -130,8 +123,8 @@ public class WaybackSettings {
     public static String WAYBACK_INDEXER_CONSUMER_THREADS = "settings.wayback.indexer.consumerThreads";
 
     /**
-     * A file containing a list of files which have been archived and therefore
-     * do not need to be archived again. This key may be unset.
+     * A file containing a list of files which have been archived and therefore do not need to be archived again. This
+     * key may be unset.
      */
     public static String WAYBACK_INDEXER_INITIAL_FILES = "settings.wayback.indexer.initialFiles";
 
@@ -149,23 +142,20 @@ public class WaybackSettings {
     public static String WAYBACK_AGGREGATOR_AGGREGATION_INTERVAL = "settings.wayback.aggregator.aggregationInterval";
 
     /**
-     * The maximum size of the Intermediate index file in MB. When this limit is
-     * reached a new index file is created and new indexes are added to this
-     * file. In the case of a 0 value, the intermediate index file will always
-     * be merged into the main index file.
+     * The maximum size of the Intermediate index file in MB. When this limit is reached a new index file is created and
+     * new indexes are added to this file. In the case of a 0 value, the intermediate index file will always be merged
+     * into the main index file.
      */
     public static String WAYBACK_AGGREGATOR_MAX_INTERMEDIATE_INDEX_FILE_SIZE = "settings.wayback.aggregator.maxIntermediateIndexFileSize";
 
     /**
-     * The maximum size of the main wayback index file in MB. When this limit is
-     * reached a new index file is created and new indexes are added to this
-     * file. The old index file will be rename to ${finalIndexFileSizeLimit}.
+     * The maximum size of the main wayback index file in MB. When this limit is reached a new index file is created and
+     * new indexes are added to this file. The old index file will be rename to ${finalIndexFileSizeLimit}.
      */
     public static String WAYBACK_AGGREGATOR_MAX_MAIN_INDEX_FILE_SIZE = "settings.wayback.aggregator.maxMainIndexFileSize";
 
     /**
-     * The maximum number of files in the resourcestore cache. The default is
-     * 100.
+     * The maximum number of files in the resourcestore cache. The default is 100.
      */
     public static String WAYBACK_RESOURCESTORE_CACHE_MAXFILES = "settings.wayback.resourcestore.maxfiles";
 

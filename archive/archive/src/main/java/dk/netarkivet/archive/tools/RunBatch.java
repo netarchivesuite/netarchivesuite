@@ -58,44 +58,32 @@ import dk.netarkivet.common.utils.batch.LoadableJarBatchJob;
 /**
  * A command-line tool to run batch jobs in the bitarchive.
  *
- * Usage: java dk.netarkivet.archive.tools.RunBatch with arguments as defined in
- * local class BatchParameters
+ * Usage: java dk.netarkivet.archive.tools.RunBatch with arguments as defined in local class BatchParameters
  *
  * where: <br/>
  * -J&lt;jarfile&gt; is a file containing all the classes needed by a BatchJob <br/>
  * -C&lt;classfile&gt; is a file containing a FileBatchJob implementation <br/>
- * -R&lt;regexp&gt; is a regular expression that will be matched against file
- * names in the archive, by default .* <br/>
- * -B&lt;replica&gt; is the name of the bitarchive replica this should be run
- * on, by default taken from settings. <br/>
- * -O&lt;outputfile&lt; is a file where the output from the batch job will be
- * written. By default, it goes to stdout. <br/>
- * -E&lt;errorFile&gt; is a file where the errors from the batch job will be
- * written. By default, it goes to stderr. <br/>
- * -N&lt;className&gt; is the name of the primary class to be loaded when doing
- * a LoadableJarBatchJob <br/>
- * -A&lt;Arguments&gt; The arguments for the batchjob, separated by '##', e.g.
- * -Aarg1##arg2##... <br/>
+ * -R&lt;regexp&gt; is a regular expression that will be matched against file names in the archive, by default .* <br/>
+ * -B&lt;replica&gt; is the name of the bitarchive replica this should be run on, by default taken from settings. <br/>
+ * -O&lt;outputfile&lt; is a file where the output from the batch job will be written. By default, it goes to stdout. <br/>
+ * -E&lt;errorFile&gt; is a file where the errors from the batch job will be written. By default, it goes to stderr. <br/>
+ * -N&lt;className&gt; is the name of the primary class to be loaded when doing a LoadableJarBatchJob <br/>
+ * -A&lt;Arguments&gt; The arguments for the batchjob, separated by '##', e.g. -Aarg1##arg2##... <br/>
  * Examples: <br/>
- * java dk.netarkivet.archive.tools.RunBatch -CFindMime.class \ -R10-*.arc
- * -BReplicaOne -Omimes <br/>
- * java dk.netarkivet.archive.tools.RunBatch -JFindMime.jar -NFindMime \
- * -R10-*.arc -BReplicaOne -Omimes <br/>
+ * java dk.netarkivet.archive.tools.RunBatch -CFindMime.class \ -R10-*.arc -BReplicaOne -Omimes <br/>
+ * java dk.netarkivet.archive.tools.RunBatch -JFindMime.jar -NFindMime \ -R10-*.arc -BReplicaOne -Omimes <br/>
  * Note that you probably want to set the application instance id setting (
- * {@literal CommonSettings#APPLICATION_INSTANCE_ID}) to something other than
- * its default value to avoid clashing with other channel listeners.
+ * {@literal CommonSettings#APPLICATION_INSTANCE_ID}) to something other than its default value to avoid clashing with
+ * other channel listeners.
  */
 public class RunBatch extends ToolRunnerBase {
     /**
-     * Main method. Runs a batch job in the bitarchive. Setup, teardown and run
-     * is delegated to the RunBatchTool class. Management of this, exception
-     * handling etc. is delegated to ToolRunnerBase class.
+     * Main method. Runs a batch job in the bitarchive. Setup, teardown and run is delegated to the RunBatchTool class.
+     * Management of this, exception handling etc. is delegated to ToolRunnerBase class.
      *
-     * @param argv
-     *            command line parameters as defined in local class
-     *            BatchParameters required: The name of a class-file containing
-     *            an implementation of FileBatchJob Name of jar file which
-     *            includes the class file, and the className
+     * @param argv command line parameters as defined in local class BatchParameters required: The name of a class-file
+     *            containing an implementation of FileBatchJob Name of jar file which includes the class file, and the
+     *            className
      */
     public static void main(String[] argv) {
         RunBatch instance = new RunBatch();
@@ -114,8 +102,8 @@ public class RunBatch extends ToolRunnerBase {
     /** The implementation of SimpleCmdlineTool for RunBatch. */
     private static class RunBatchTool implements SimpleCmdlineTool {
         /**
-         * This instance is declared outside of run method to ensure reliable
-         * teardown in case of exceptions during execution.
+         * This instance is declared outside of run method to ensure reliable teardown in case of exceptions during
+         * execution.
          */
         private ViewerArcRepositoryClient arcrep;
 
@@ -126,14 +114,12 @@ public class RunBatch extends ToolRunnerBase {
         private static final String JARFILELIST_SEPARATOR = ",";
 
         /**
-         * The regular expression that will be matched against file names in the
-         * archive, by default ".*".
+         * The regular expression that will be matched against file names in the archive, by default ".*".
          */
         private String regexp = DEFAULT_REGEXP;
 
         /**
-         * Bitarchive replica where batchjob is to be run. Set to setting use
-         * replica is as default
+         * Bitarchive replica where batchjob is to be run. Set to setting use replica is as default
          */
         private Replica batchReplica = Replica.getReplicaFromId(Settings.get(CommonSettings.USE_REPLICA_ID));
 
@@ -180,16 +166,14 @@ public class RunBatch extends ToolRunnerBase {
         private BatchParameters parms = new BatchParameters();
 
         /**
-         * String to separate the arguments for the batchjob. TODO make into
-         * global constant.
+         * String to separate the arguments for the batchjob. TODO make into global constant.
          * */
         private static final String ARGUMENT_SEPARATOR = "##";
 
         /**
          * Getting FileType from given file name.
          * 
-         * @param fileName
-         *            The file name to get file type from
+         * @param fileName The file name to get file type from
          * @return FileType found from extension of file name
          */
         private FileType getFileType(String fileName) {
@@ -211,15 +195,11 @@ public class RunBatch extends ToolRunnerBase {
         }
 
         /**
-         * Check, if you can write a file named fileName to current working
-         * directory.
+         * Check, if you can write a file named fileName to current working directory.
          * 
-         * @param fileName
-         *            The file name
-         * @param fileTag
-         *            a tag for the fileName
-         * @return true, if you can write such a file; False, if the file
-         *         already exists, or you cannot create the file
+         * @param fileName The file name
+         * @param fileTag a tag for the fileName
+         * @return true, if you can write such a file; False, if the file already exists, or you cannot create the file
          */
         private boolean checkWriteFile(String fileName, String fileTag) {
             if (new File(fileName).exists()) {
@@ -243,8 +223,7 @@ public class RunBatch extends ToolRunnerBase {
         }
 
         /**
-         * Type to encapsulate parameters defined by options to batchjob based
-         * on apache.commons.cli.
+         * Type to encapsulate parameters defined by options to batchjob based on apache.commons.cli.
          */
         private class BatchParameters {
             /**
@@ -257,8 +236,7 @@ public class RunBatch extends ToolRunnerBase {
             protected CommandLine cmd;
 
             /**
-             * Initialize options by setting legal parameters for batch jobs.
-             * Note that all our options has arguments.
+             * Initialize options by setting legal parameters for batch jobs. Note that all our options has arguments.
              */
             public BatchParameters() {
                 final boolean hasArg = true;
@@ -285,8 +263,7 @@ public class RunBatch extends ToolRunnerBase {
             /**
              * Method for parsing the arguments.
              * 
-             * @param args
-             *            The arguments.
+             * @param args The arguments.
              * @return The empty string, or an error message.
              */
             public String parseParameters(String[] args) {
@@ -322,8 +299,7 @@ public class RunBatch extends ToolRunnerBase {
         /**
          * Accept parameters and checks them for validity.
          * 
-         * @param args
-         *            the arguments
+         * @param args the arguments
          * @return true, if given arguments are valid returns false otherwise
          */
         public boolean checkArgs(String... args) {
@@ -488,20 +464,17 @@ public class RunBatch extends ToolRunnerBase {
         }
 
         /**
-         * Create the ArcRepositoryClient instance here for reliable execution
-         * of close method in tearDown.
+         * Create the ArcRepositoryClient instance here for reliable execution of close method in tearDown.
          *
-         * @param args
-         *            the arguments (not used)
+         * @param args the arguments (not used)
          */
         public void setUp(String... args) {
             arcrep = ArcRepositoryClientFactory.getViewerInstance();
         }
 
         /**
-         * Ensure reliable execution of the ArcRepositoryClient.close() method.
-         * Remember to check if arcrep was actually created. Also reliably
-         * cleans up the JMSConnection.
+         * Ensure reliable execution of the ArcRepositoryClient.close() method. Remember to check if arcrep was actually
+         * created. Also reliably cleans up the JMSConnection.
          */
         public void tearDown() {
             if (arcrep != null) {
@@ -511,14 +484,11 @@ public class RunBatch extends ToolRunnerBase {
         }
 
         /**
-         * Perform the actual work. Procure the necessary information from
-         * command line parameters and system settings required to run the
-         * ViewerArcRepositoryClient.batch(), and perform the operation.
-         * Creating and closing the ArcRepositoryClient (arcrep) is done in the
-         * setUp and tearDown methods.
+         * Perform the actual work. Procure the necessary information from command line parameters and system settings
+         * required to run the ViewerArcRepositoryClient.batch(), and perform the operation. Creating and closing the
+         * ArcRepositoryClient (arcrep) is done in the setUp and tearDown methods.
          *
-         * @param args
-         *            the arguments
+         * @param args the arguments
          */
         public void run(String... args) {
             // Arguments are allready checked by checkArgs

@@ -45,11 +45,10 @@ import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 
 /**
- * Test class for the Database utilities in HarvestDBConnection, especially the
- * ones related to backup of the database.
+ * Test class for the Database utilities in HarvestDBConnection, especially the ones related to backup of the database.
  *
  */
-@SuppressWarnings({ "unused" })
+@SuppressWarnings({"unused"})
 public class HarvestDBConnectionTester extends DataModelTestCase {
 
     private File logfile = new File("tests/testlogs/netarkivtest.log");
@@ -66,8 +65,8 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
     }
 
     /**
-     * Simple test if HarvestDBConnection.getDBConnection() works or not. Uses
-     * Settings.DB_URL set in DataModelTestCase.SetUp()
+     * Simple test if HarvestDBConnection.getDBConnection() works or not. Uses Settings.DB_URL set in
+     * DataModelTestCase.SetUp()
      */
     @Test
     public void testGetDBConnection() {
@@ -174,8 +173,7 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
     }
 
     /**
-     * check HarvestDBConnection.setStringMaxLength(). Especially, that bug 970
-     * is solved.
+     * check HarvestDBConnection.setStringMaxLength(). Especially, that bug 970 is solved.
      */
     @Test
     @Ignore("Log parsing did not find expected string")
@@ -232,8 +230,7 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
     }
 
     /**
-     * check HarvestDBConnection.setClobMaxLength(). especially, that bug 970 is
-     * solved.
+     * check HarvestDBConnection.setClobMaxLength(). especially, that bug 970 is solved.
      */
     @Test
     @Ignore("Log parsing did not find expected string")
@@ -295,7 +292,7 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
     @Test
     public void testCreateTable() throws SQLException {
         deleteTableIfExists("dummy");
-        String[] stmts = { "CREATE TABLE dummy (id INT)" };
+        String[] stmts = {"CREATE TABLE dummy (id INT)"};
         HarvestDBConnection.updateTable("dummy", 1, stmts);
         Connection con = HarvestDBConnection.get();
         try {
@@ -311,9 +308,9 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
     public void testCreateAndUpdateTable() throws SQLException {
         deleteTableIfExists("dummy");
 
-        String[] stmts = { "CREATE TABLE dummy (id INT)" };
+        String[] stmts = {"CREATE TABLE dummy (id INT)"};
         HarvestDBConnection.updateTable("dummy", 1, stmts);
-        String[] stmts2 = { "ALTER TABLE dummy ADD new_field INT" };
+        String[] stmts2 = {"ALTER TABLE dummy ADD new_field INT"};
         HarvestDBConnection.updateTable("dummy", 2, stmts2);
         Connection con = HarvestDBConnection.get();
         try {
@@ -386,11 +383,10 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
     }
 
     /**
-     * Delete the given table from the table if it exists. Furthermore delete
-     * the given table from table 'schemaversions'
+     * Delete the given table from the table if it exists. Furthermore delete the given table from table
+     * 'schemaversions'
      * 
-     * @param tablename
-     *            a given table that we want to have deleted
+     * @param tablename a given table that we want to have deleted
      * @throws SQLException
      */
     private void deleteTableIfExists(String tablename) throws SQLException {

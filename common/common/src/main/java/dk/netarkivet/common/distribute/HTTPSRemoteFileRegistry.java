@@ -50,11 +50,9 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.Settings;
 
 /**
- * This is a registry for HTTPS remote file, meant for serving registered files
- * to remote hosts. It will use secure communication using a shared certificate.
- * The embedded webserver handling remote files for HTTPSRemoteFile
- * point-to-point communication. Optimised to use direct transfer on local
- * machine.
+ * This is a registry for HTTPS remote file, meant for serving registered files to remote hosts. It will use secure
+ * communication using a shared certificate. The embedded webserver handling remote files for HTTPSRemoteFile
+ * point-to-point communication. Optimised to use direct transfer on local machine.
  */
 public class HTTPSRemoteFileRegistry extends HTTPRemoteFileRegistry {
 
@@ -74,8 +72,7 @@ public class HTTPSRemoteFileRegistry extends HTTPRemoteFileRegistry {
     };
 
     /**
-     * The path to the keystore containing the certificate used for SSL in HTTPS
-     * connections.
+     * The path to the keystore containing the certificate used for SSL in HTTPS connections.
      */
     private static final String KEYSTORE_PATH = Settings.get(HTTPSRemoteFile.HTTPSREMOTEFILE_KEYSTORE_FILE);
     /** The keystore password. */
@@ -84,8 +81,7 @@ public class HTTPSRemoteFileRegistry extends HTTPRemoteFileRegistry {
     private static final String KEY_PASSWORD = Settings.get(HTTPSRemoteFile.HTTPSREMOTEFILE_KEY_PASSWORD);
 
     /**
-     * An SSL context, used for creating SSL connections only accepting this
-     * certificate.
+     * An SSL context, used for creating SSL connections only accepting this certificate.
      */
     private final SSLContext sslContext;
 
@@ -137,9 +133,8 @@ public class HTTPSRemoteFileRegistry extends HTTPRemoteFileRegistry {
     }
 
     /**
-     * Start the server, including a handler that responds with registered
-     * files, removes registered files on request, and gives 404 otherwise.
-     * Connection to this web host only possible with the shared certificate.
+     * Start the server, including a handler that responds with registered files, removes registered files on request,
+     * and gives 404 otherwise. Connection to this web host only possible with the shared certificate.
      */
     @Override
     protected void startServer() {
@@ -174,16 +169,12 @@ public class HTTPSRemoteFileRegistry extends HTTPRemoteFileRegistry {
     }
 
     /**
-     * Open a connection to an URL in this registry. Thus opens SSL connections
-     * using the certificate above.
+     * Open a connection to an URL in this registry. Thus opens SSL connections using the certificate above.
      *
-     * @param url
-     *            The URL to open connection to.
+     * @param url The URL to open connection to.
      * @return an open connection to the given url
-     * @throws IOException
-     *             If unable to open connection to the URL
-     * @throws IOFailure
-     *             If the connection is not a secure connection
+     * @throws IOException If unable to open connection to the URL
+     * @throws IOFailure If the connection is not a secure connection
      */
     @Override
     protected URLConnection openConnection(URL url) throws IOException {

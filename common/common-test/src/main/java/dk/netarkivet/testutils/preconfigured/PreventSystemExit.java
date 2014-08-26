@@ -27,13 +27,11 @@ import java.security.Permission;
 import dk.netarkivet.common.exceptions.UnknownID;
 
 /**
- * Configures the test environment to block calls to System.exit(), throwing a
- * PermissionDenied instead.
+ * Configures the test environment to block calls to System.exit(), throwing a PermissionDenied instead.
  */
 public class PreventSystemExit implements TestConfigurationIF {
     /**
-     * Saves the original security manager, so that it can be restored in
-     * tearDown()
+     * Saves the original security manager, so that it can be restored in tearDown()
      */
     private SecurityManager originalManager;
     /** Saves latest value given to System.exit() for inspection */
@@ -42,8 +40,7 @@ public class PreventSystemExit implements TestConfigurationIF {
     boolean exitCalled = false;
 
     /**
-     * Stores original SecurityManager and set a new one blocking System.exit()
-     * Calls reset().
+     * Stores original SecurityManager and set a new one blocking System.exit() Calls reset().
      */
     public void setUp() {
         originalManager = System.getSecurityManager();
@@ -77,8 +74,7 @@ public class PreventSystemExit implements TestConfigurationIF {
     /**
      * Looks up the value given to the latest invocation of System.exit()
      * 
-     * @return The int value. Throws UnknownID if System.exit() has not been
-     *         called after reset().
+     * @return The int value. Throws UnknownID if System.exit() has not been called after reset().
      */
     public int getExitValue() {
         if (!exitCalled) {
@@ -88,8 +84,8 @@ public class PreventSystemExit implements TestConfigurationIF {
     }
 
     /**
-     * A SecurityManager that makes System.exit() throw PermissionDenied. Also
-     * stores the value given to System.exit() for subsequent inspection.
+     * A SecurityManager that makes System.exit() throw PermissionDenied. Also stores the value given to System.exit()
+     * for subsequent inspection.
      */
     private class DisallowSystemExitSecurityManager extends SecurityManager {
         public void checkExit(int status) {

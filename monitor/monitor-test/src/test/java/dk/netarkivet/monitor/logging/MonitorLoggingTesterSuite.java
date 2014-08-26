@@ -48,15 +48,14 @@ public class MonitorLoggingTesterSuite {
     /**
      * Add the tests here.
      * 
-     * @param suite
-     *            The testsuite to be added
+     * @param suite The testsuite to be added
      */
     public static void addToSuite(TestSuite suite) {
         suite.addTestSuite(CachingLogHandlerTester.class);
     }
 
     public static void main(String args[]) {
-        String args2[] = { "-noloading", MonitorLoggingTesterSuite.class.getName() };
+        String args2[] = {"-noloading", MonitorLoggingTesterSuite.class.getName()};
         TestRunner.main(args2);
     }
 }

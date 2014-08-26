@@ -31,13 +31,13 @@ import org.archive.io.ArchiveRecord;
 import dk.netarkivet.common.exceptions.NotImplementedException;
 
 /**
- * A filter class for batch entries. Allows testing whether or not to process an
- * entry without loading the entry data first.
+ * A filter class for batch entries. Allows testing whether or not to process an entry without loading the entry data
+ * first.
  *
- * accept() is given an ARCRecord rather than a ShareableARCRecord to avoid
- * unnecessary reading and copying of data of records not accepted by filter.
+ * accept() is given an ARCRecord rather than a ShareableARCRecord to avoid unnecessary reading and copying of data of
+ * records not accepted by filter.
  */
-@SuppressWarnings({ "unused", "serial" })
+@SuppressWarnings({"unused", "serial"})
 public abstract class ArchiveBatchFilter implements Serializable {
     /** A default filter: Accepts everything */
     public static final ArchiveBatchFilter NO_FILTER = new ArchiveBatchFilter("NO_FILTER") {
@@ -77,20 +77,16 @@ public abstract class ArchiveBatchFilter implements Serializable {
     /**
      * Create a new filter with the given name
      *
-     * @param name
-     *            The name of this filter, for debugging mostly.
+     * @param name The name of this filter, for debugging mostly.
      */
     protected ArchiveBatchFilter(String name) {
         /* TODO: Either use the name or remove it. */
     }
 
     /**
-     * @param mimetype
-     *            String denoting the mimetype this filter represents
-     * @return a BatchFilter that filters out all ARCRecords, that does not have
-     *         this mimetype
-     * @throws java.awt.datatransfer.MimeTypeParseException
-     *             (if mimetype is invalid)
+     * @param mimetype String denoting the mimetype this filter represents
+     * @return a BatchFilter that filters out all ARCRecords, that does not have this mimetype
+     * @throws java.awt.datatransfer.MimeTypeParseException (if mimetype is invalid)
      */
     public static ArchiveBatchFilter getMimetypeBatchFilter(final String mimetype) throws MimeTypeParseException {
         if (!mimetypeIsOk(mimetype)) {

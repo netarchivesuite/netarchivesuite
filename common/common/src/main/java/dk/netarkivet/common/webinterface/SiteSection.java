@@ -41,9 +41,8 @@ import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.utils.Settings;
 
 /**
- * This class holds information about one section of the site, including
- * information about what to put in the menu sidebar and how to determine which
- * page you're in.
+ * This class holds information about one section of the site, including information about what to put in the menu
+ * sidebar and how to determine which page you're in.
  *
  */
 public abstract class SiteSection {
@@ -71,24 +70,14 @@ public abstract class SiteSection {
     /**
      * Create a new SiteSection object.
      *
-     * @param mainname
-     *            The name of the entire section used in the sidebar.
-     * @param prefix
-     *            The prefix that all the JSP pages will have.
-     * @param visiblePages
-     *            How many of the pages will be visible in the menu (taken from
-     *            the start of the list).
-     * @param pagesAndTitles
-     *            The actual pages and title-labels, without the prefix and jsp
-     *            extension, involved in the section. They must be given as an
-     *            array of 2-element arrays.
-     * @param dirname
-     *            The top level directory this site section is deployed under.
-     * @param bundle
-     *            The resource bundle with translations of this sitesection.
-     * @throws ArgumentNotValid
-     *             if any of the elements of pagesAndTitles are not a 2-element
-     *             array.
+     * @param mainname The name of the entire section used in the sidebar.
+     * @param prefix The prefix that all the JSP pages will have.
+     * @param visiblePages How many of the pages will be visible in the menu (taken from the start of the list).
+     * @param pagesAndTitles The actual pages and title-labels, without the prefix and jsp extension, involved in the
+     *            section. They must be given as an array of 2-element arrays.
+     * @param dirname The top level directory this site section is deployed under.
+     * @param bundle The resource bundle with translations of this sitesection.
+     * @throws ArgumentNotValid if any of the elements of pagesAndTitles are not a 2-element array.
      */
     public SiteSection(String mainname, String prefix, int visiblePages, String[][] pagesAndTitles, String dirname,
             String bundle) {
@@ -113,14 +102,10 @@ public abstract class SiteSection {
     /**
      * Given a URL, returns the corresponding page title.
      *
-     * @param url
-     *            a given URL.
-     * @param locale
-     *            the current locale.
-     * @return the corresponding page title, or null if it is not in this
-     *         section, or is null.
-     * @throws ArgumentNotValid
-     *             on null locale.
+     * @param url a given URL.
+     * @param locale the current locale.
+     * @return the corresponding page title, or null if it is not in this section, or is null.
+     * @throws ArgumentNotValid on null locale.
      */
     public String getTitle(String url, Locale locale) {
         ArgumentNotValid.checkNotNull(locale, "Locale locale");
@@ -137,20 +122,14 @@ public abstract class SiteSection {
     }
 
     /**
-     * Generate this section's part of the navigation tree (sidebar). This
-     * outputs balanced HTML to the JspWriter. It uses a locale to generate the
-     * right titles.
+     * Generate this section's part of the navigation tree (sidebar). This outputs balanced HTML to the JspWriter. It
+     * uses a locale to generate the right titles.
      *
-     * @param out
-     *            A place to write our HTML
-     * @param url
-     *            The url of the page we're currently viewing. The list of
-     *            subpages will only be displayed if the page we're viewing is
-     *            one that belongs to this section.
-     * @param locale
-     *            The locale to generate the navigation tree for.
-     * @throws IOException
-     *             If there is a problem writing to the page.
+     * @param out A place to write our HTML
+     * @param url The url of the page we're currently viewing. The list of subpages will only be displayed if the page
+     *            we're viewing is one that belongs to this section.
+     * @param locale The locale to generate the navigation tree for.
+     * @throws IOException If there is a problem writing to the page.
      */
     public void generateNavigationTree(JspWriter out, String url, Locale locale) throws IOException {
         String firstPage = pagesAndTitles.keySet().iterator().next();
@@ -182,11 +161,9 @@ public abstract class SiteSection {
     }
 
     /**
-     * Returns the page name from a URL, if the page is in this hierarchy, null
-     * otherwise.
+     * Returns the page name from a URL, if the page is in this hierarchy, null otherwise.
      * 
-     * @param url
-     *            Url to check
+     * @param url Url to check
      * @return Page name, or null for not in this hierarchy.
      */
     private String getPage(String url) {
@@ -218,8 +195,7 @@ public abstract class SiteSection {
     }
 
     /**
-     * Called when the site section is first deployed. Meant to be overridden by
-     * subclasses.
+     * Called when the site section is first deployed. Meant to be overridden by subclasses.
      */
     public abstract void initialize();
 
@@ -229,15 +205,13 @@ public abstract class SiteSection {
     public abstract void close();
 
     /**
-     * The list of sections of the website. Each section has a number of pages,
-     * as defined in the sitesection classes read from settings. These handle
-     * outputting their HTML part of the sidebar, depending on where in the site
-     * we are.
+     * The list of sections of the website. Each section has a number of pages, as defined in the sitesection classes
+     * read from settings. These handle outputting their HTML part of the sidebar, depending on where in the site we
+     * are.
      *
      * @return A list of site sections instantiated from settings.
      *
-     * @throws IOFailure
-     *             if site sections cannot be read from settings.
+     * @throws IOFailure if site sections cannot be read from settings.
      */
     public static synchronized List<SiteSection> getSections() {
         if (sections == null) {
@@ -256,8 +230,8 @@ public abstract class SiteSection {
     }
 
     /**
-     * Clean up sitesections. This method calls close on all deployed site
-     * sections, and resets the list of site sections.
+     * Clean up sitesections. This method calls close on all deployed site sections, and resets the list of site
+     * sections.
      */
     public static synchronized void cleanup() {
         if (sections != null) {
@@ -272,11 +246,9 @@ public abstract class SiteSection {
     /**
      * Check whether a section with a given dirName is deployed.
      *
-     * @param dirName
-     *            The dirName to check for
+     * @param dirName The dirName to check for
      * @return True of deployed, false otherwise.
-     * @throws ArgumentNotValid
-     *             if dirName is null or empty.
+     * @throws ArgumentNotValid if dirName is null or empty.
      */
     public static boolean isDeployed(String dirName) {
         ArgumentNotValid.checkNotNullOrEmpty(dirName, "String dirName");

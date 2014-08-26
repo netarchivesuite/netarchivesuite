@@ -41,8 +41,7 @@ import dk.netarkivet.harvester.harvesting.HarvestDocumentation;
 import dk.netarkivet.harvester.harvesting.IngestableFiles;
 
 /**
- * Abstract base class for Metadata file writer. Implementations must extend
- * this class.
+ * Abstract base class for Metadata file writer. Implementations must extend this class.
  *
  * @author nicl
  */
@@ -56,8 +55,7 @@ public abstract class MetadataFileWriter {
     /** Constant representing the WARC format. */
     protected static final int MDF_WARC = 2;
     /**
-     * Constant representing the metadata Format. Recognized formats are either
-     * MDF_ARC or MDF_WARC
+     * Constant representing the metadata Format. Recognized formats are either MDF_ARC or MDF_WARC
      */
     protected static int metadataFormat = 0;
 
@@ -77,17 +75,13 @@ public abstract class MetadataFileWriter {
     }
 
     /**
-     * Generates a name for an archive(ARC/WARC) file containing metadata
-     * regarding a given job.
+     * Generates a name for an archive(ARC/WARC) file containing metadata regarding a given job.
      *
-     * @param jobID
-     *            The number of the job that generated the archive file.
-     * @return A "flat" file name (i.e. no path) containing the jobID parameter
-     *         and ending on "-metadata-N.(w)arc", where N is the serial number
-     *         of the metadata files for this job, e.g. "42-metadata-1.(w)arc".
-     *         Currently, only one file is ever made.
-     * @throws ArgumentNotValid
-     *             if any parameter was null.
+     * @param jobID The number of the job that generated the archive file.
+     * @return A "flat" file name (i.e. no path) containing the jobID parameter and ending on "-metadata-N.(w)arc",
+     *         where N is the serial number of the metadata files for this job, e.g. "42-metadata-1.(w)arc". Currently,
+     *         only one file is ever made.
+     * @throws ArgumentNotValid if any parameter was null.
      */
     public static String getMetadataArchiveFileName(String jobID) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(jobID, "jobID");
@@ -107,8 +101,7 @@ public abstract class MetadataFileWriter {
     /**
      * Create a writer that writes data to the given archive file.
      * 
-     * @param metadataArchiveFile
-     *            The archive file to write to.
+     * @param metadataArchiveFile The archive file to write to.
      * @return a writer that writes data to the given archive file.
      */
     public static MetadataFileWriter createWriter(File metadataArchiveFile) {
@@ -138,26 +131,18 @@ public abstract class MetadataFileWriter {
     /**
      * Write the given file to the metadata file.
      * 
-     * @param file
-     *            A given file with metadata to write to the metadata archive
-     *            file.
-     * @param uri
-     *            The uri associated with the piece of metadata
-     * @param mime
-     *            The mimetype associated with the piece of metadata
+     * @param file A given file with metadata to write to the metadata archive file.
+     * @param uri The uri associated with the piece of metadata
+     * @param mime The mimetype associated with the piece of metadata
      */
     public abstract void writeFileTo(File file, String uri, String mime);
 
     /**
-     * Writes a File to an ARCWriter, if available, otherwise logs the failure
-     * to the class-logger.
+     * Writes a File to an ARCWriter, if available, otherwise logs the failure to the class-logger.
      * 
-     * @param fileToArchive
-     *            the File to archive
-     * @param URL
-     *            the URL with which it is stored in the arcfile
-     * @param mimetype
-     *            The mimetype of the File-contents
+     * @param fileToArchive the File to archive
+     * @param URL the URL with which it is stored in the arcfile
+     * @param mimetype The mimetype of the File-contents
      * @return true, if file exists, and is written to the arcfile.
      */
     public abstract boolean writeTo(File fileToArchive, String URL, String mimetype);
@@ -165,34 +150,24 @@ public abstract class MetadataFileWriter {
     /**
      * Write a record to the archive file.
      * 
-     * @param uri
-     *            record URI
-     * @param contentType
-     *            content-type of record
-     * @param hostIP
-     *            resource ip-address
-     * @param fetchBeginTimeStamp
-     *            record datetime
-     * @param payload
-     *            A byte array containing the payload
-     * @see org.archive.io.arc.ARCWriter#write(String uri, String contentType,
-     *      String hostIP, long fetchBeginTimeStamp, long recordLength,
-     *      InputStream in)
+     * @param uri record URI
+     * @param contentType content-type of record
+     * @param hostIP resource ip-address
+     * @param fetchBeginTimeStamp record datetime
+     * @param payload A byte array containing the payload
+     * @see org.archive.io.arc.ARCWriter#write(String uri, String contentType, String hostIP, long fetchBeginTimeStamp,
+     *      long recordLength, InputStream in)
      */
     public abstract void write(String uri, String contentType, String hostIP, long fetchBeginTimeStamp, byte[] payload)
             throws java.io.IOException;
 
     /**
-     * Append the files contained in the directory to the metadata archive file,
-     * but only if the filename matches the supplied filter.
+     * Append the files contained in the directory to the metadata archive file, but only if the filename matches the
+     * supplied filter.
      * 
-     * @param parentDir
-     *            directory containing the files to append to metadata
-     * @param filter
-     *            filter describing which files to accept and which to ignore
-     * @param mimetype
-     *            The content-type to write along with the files in the metadata
-     *            output
+     * @param parentDir directory containing the files to append to metadata
+     * @param filter filter describing which files to accept and which to ignore
+     * @param mimetype The content-type to write along with the files in the metadata output
      */
     public void insertFiles(File parentDir, FilenameFilter filter, String mimetype, IngestableFiles files) {
         // For each metadata source file in the parentDir that matches the
@@ -213,15 +188,11 @@ public abstract class MetadataFileWriter {
     }
 
     /**
-     * Parses the name of the given file and generates a URI representation of
-     * it.
+     * Parses the name of the given file and generates a URI representation of it.
      * 
-     * @param cdx
-     *            A CDX file.
-     * @return A URI appropriate for identifying the file's content in
-     *         Netarkivet.
-     * @throws UnknownID
-     *             if something goes terribly wrong in the CDX URI construction
+     * @param cdx A CDX file.
+     * @return A URI appropriate for identifying the file's content in Netarkivet.
+     * @throws UnknownID if something goes terribly wrong in the CDX URI construction
      */
     private static URI getURIforFileName(File cdx, IngestableFiles files) throws UnknownID {
         String extensionToRemove = FileUtils.CDX_EXTENSION;

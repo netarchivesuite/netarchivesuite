@@ -29,8 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Singleton class which maintains the basic data structure and methods for the
- * indexer.
+ * Singleton class which maintains the basic data structure and methods for the indexer.
  */
 public class IndexerQueue {
 
@@ -41,8 +40,7 @@ public class IndexerQueue {
     private static IndexerQueue instance;
 
     /**
-     * This is the basic underlying datastructure of the indexer - a queue of
-     * files waiting to be indexed.
+     * This is the basic underlying datastructure of the indexer - a queue of files waiting to be indexed.
      */
     private static LinkedBlockingQueue<ArchiveFile> queue;
 
@@ -66,8 +64,7 @@ public class IndexerQueue {
     }
 
     /**
-     * Check the database for any new ArchiveFile objects and add them to the
-     * queue.
+     * Check the database for any new ArchiveFile objects and add them to the queue.
      */
     public synchronized void populate() {
         List<ArchiveFile> files = (new ArchiveFileDAO()).getFilesAwaitingIndexing();
@@ -85,9 +82,8 @@ public class IndexerQueue {
     }
 
     /**
-     * Sequentially take objects from the queue and index them, blocking
-     * indefinitely while waiting for new objects to be added to the queue. It
-     * is intended that multiple threads should run this method simultaneously.
+     * Sequentially take objects from the queue and index them, blocking indefinitely while waiting for new objects to
+     * be added to the queue. It is intended that multiple threads should run this method simultaneously.
      */
     public void consume() {
         while (true) {

@@ -36,15 +36,12 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
 
 /**
- * Provides access to general application settings. The settings are retrieved
- * from xml files. XML files may be specified one of two places: 1) Default
- * settings in XML files, specified by class path. These are intended to be
- * packaged in the jar files, to provide a fallback for settings. 2) Overriding
- * settings in XML files in file systems. These are intended to override the
- * necessary values with minimal XML files. The location of these files are
- * either specified by the system property {@link #SETTINGS_FILE_PROPERTY},
- * multiple files can be separated by {@link File#pathSeparator}, that is ':' on
- * linux and ';' on windows; or if that property is not set, the default
+ * Provides access to general application settings. The settings are retrieved from xml files. XML files may be
+ * specified one of two places: 1) Default settings in XML files, specified by class path. These are intended to be
+ * packaged in the jar files, to provide a fallback for settings. 2) Overriding settings in XML files in file systems.
+ * These are intended to override the necessary values with minimal XML files. The location of these files are either
+ * specified by the system property {@link #SETTINGS_FILE_PROPERTY}, multiple files can be separated by
+ * {@link File#pathSeparator}, that is ':' on linux and ';' on windows; or if that property is not set, the default
  * location is {@link #DEFAULT_SETTINGS_FILEPATH}.
  */
 public class Settings {
@@ -53,16 +50,14 @@ public class Settings {
     private static final Logger log = LoggerFactory.getLogger(Settings.class);
 
     /**
-     * The objects representing the contents of the settings xml files. For
-     * handling multithreaded instances this list must be initialised through
-     * the method Collections.synchronizedList().
+     * The objects representing the contents of the settings xml files. For handling multithreaded instances this list
+     * must be initialised through the method Collections.synchronizedList().
      */
     private static final List<SimpleXml> fileSettingsXmlList;
 
     /**
-     * The objects representing the contents of the default settings xml files
-     * in classpath. For handling multithreaded instances this list must be
-     * initialised through the method Collections.synchronizedList().
+     * The objects representing the contents of the default settings xml files in classpath. For handling multithreaded
+     * instances this list must be initialised through the method Collections.synchronizedList().
      */
     private static final List<SimpleXml> defaultClasspathSettingsXmlList;
 
@@ -75,15 +70,13 @@ public class Settings {
     }
 
     /**
-     * This system property specifies alternative position(s) to look for
-     * settings files. If more files are specified, they should be separated by
-     * {@link File#pathSeparatorChar}
+     * This system property specifies alternative position(s) to look for settings files. If more files are specified,
+     * they should be separated by {@link File#pathSeparatorChar}
      */
     public static final String SETTINGS_FILE_PROPERTY = "dk.netarkivet.settings.file";
 
     /**
-     * The file path to look for settings in, if the system property
-     * {@link #SETTINGS_FILE_PROPERTY} is not set.
+     * The file path to look for settings in, if the system property {@link #SETTINGS_FILE_PROPERTY} is not set.
      */
     public static final String DEFAULT_SETTINGS_FILEPATH = "conf/settings.xml";
 
@@ -91,10 +84,8 @@ public class Settings {
     private static long lastModified;
 
     /**
-     * Return the file these settings are read from. If the property given in
-     * the constructor is set, that will be used to determine the file. If it is
-     * not set, the default settings file path given in the constructor will be
-     * used.
+     * Return the file these settings are read from. If the property given in the constructor is set, that will be used
+     * to determine the file. If it is not set, the default settings file path given in the constructor will be used.
      *
      * @return The settings file.
      */
@@ -116,30 +107,24 @@ public class Settings {
     /**
      * Gets a setting. The search order for a given setting is as follows:
      *
-     * First it is checked, if the argument key is set as a System property. If
-     * yes, return this value. If no, we continue the search.
+     * First it is checked, if the argument key is set as a System property. If yes, return this value. If no, we
+     * continue the search.
      *
-     * Secondly, we check, if the setting is in one of the loaded settings xml
-     * files. If the value is there, it is returned. If no, we continue the
-     * search.
+     * Secondly, we check, if the setting is in one of the loaded settings xml files. If the value is there, it is
+     * returned. If no, we continue the search.
      *
-     * Finally, we check if the setting is in one of default settings files from
-     * classpath. If the value is there, it is returned. Otherwise an UnknownId
-     * exception is thrown.
+     * Finally, we check if the setting is in one of default settings files from classpath. If the value is there, it is
+     * returned. Otherwise an UnknownId exception is thrown.
      *
      * Note: The retrieved value can be the empty string
      *
-     * @param key
-     *            name of the setting to retrieve
+     * @param key name of the setting to retrieve
      *
      * @return the retrieved value
      *
-     * @throws ArgumentNotValid
-     *             if key is null or the empty string
-     * @throws UnknownID
-     *             if no setting loaded matches key
-     * @throws IOFailure
-     *             if IO Failure
+     * @throws ArgumentNotValid if key is null or the empty string
+     * @throws UnknownID if no setting loaded matches key
+     * @throws IOFailure if IO Failure
      */
     public static String get(String key) throws UnknownID, IOFailure, ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(key, "String key");
@@ -169,19 +154,14 @@ public class Settings {
     }
 
     /**
-     * Gets a setting as an int. This method calls get(key) and then parses the
-     * value as integer.
+     * Gets a setting as an int. This method calls get(key) and then parses the value as integer.
      *
-     * @param key
-     *            name of the setting to retrieve
+     * @param key name of the setting to retrieve
      *
      * @return the retrieved int
      *
-     * @throws ArgumentNotValid
-     *             if key is null, the empty string or key is not parseable as
-     *             an integer
-     * @throws UnknownID
-     *             if no setting loaded matches key
+     * @throws ArgumentNotValid if key is null, the empty string or key is not parseable as an integer
+     * @throws UnknownID if no setting loaded matches key
      */
     public static int getInt(String key) throws UnknownID, ArgumentNotValid {
         String value = get(key);
@@ -195,19 +175,14 @@ public class Settings {
     }
 
     /**
-     * Gets a setting as a long. This method calls get(key) and then parses the
-     * value as a long.
+     * Gets a setting as a long. This method calls get(key) and then parses the value as a long.
      *
-     * @param key
-     *            name of the setting to retrieve
+     * @param key name of the setting to retrieve
      *
      * @return the retrieved long
      *
-     * @throws ArgumentNotValid
-     *             if key is null, the empty string or key is not parseable as a
-     *             long
-     * @throws UnknownID
-     *             if no setting loaded matches key
+     * @throws ArgumentNotValid if key is null, the empty string or key is not parseable as a long
+     * @throws UnknownID if no setting loaded matches key
      */
     public static long getLong(String key) throws UnknownID, ArgumentNotValid {
         String value = get(key);
@@ -220,19 +195,14 @@ public class Settings {
     }
 
     /**
-     * Gets a setting as a double. This method calls get(key) and then parses
-     * the value as a double.
+     * Gets a setting as a double. This method calls get(key) and then parses the value as a double.
      *
-     * @param key
-     *            name of the setting to retrieve
+     * @param key name of the setting to retrieve
      *
      * @return the retrieved double
      *
-     * @throws ArgumentNotValid
-     *             if key is null, the empty string or key is not parseable as a
-     *             double
-     * @throws UnknownID
-     *             if no setting loaded matches key
+     * @throws ArgumentNotValid if key is null, the empty string or key is not parseable as a double
+     * @throws UnknownID if no setting loaded matches key
      */
     public static double getDouble(String key) throws UnknownID, ArgumentNotValid {
         String value = get(key);
@@ -246,18 +216,14 @@ public class Settings {
     }
 
     /**
-     * Gets a setting as a file. This method calls get(key) and then returns the
-     * value as a file.
+     * Gets a setting as a file. This method calls get(key) and then returns the value as a file.
      *
-     * @param key
-     *            name of the setting to retrieve
+     * @param key name of the setting to retrieve
      *
      * @return the retrieved file
      *
-     * @throws ArgumentNotValid
-     *             if key is null, the empty string
-     * @throws UnknownID
-     *             if no setting loaded matches ke
+     * @throws ArgumentNotValid if key is null, the empty string
+     * @throws UnknownID if no setting loaded matches ke
      */
     public static File getFile(String key) {
         ArgumentNotValid.checkNotNullOrEmpty(key, "String key");
@@ -265,18 +231,14 @@ public class Settings {
     }
 
     /**
-     * Gets a setting as a boolean. This method calls get(key) and then parses
-     * the value as a boolean.
+     * Gets a setting as a boolean. This method calls get(key) and then parses the value as a boolean.
      *
-     * @param key
-     *            name of the setting to retrieve
+     * @param key name of the setting to retrieve
      *
      * @return the retrieved boolean
      *
-     * @throws ArgumentNotValid
-     *             if key is null or the empty string
-     * @throws UnknownID
-     *             if no setting loaded matches key
+     * @throws ArgumentNotValid if key is null or the empty string
+     * @throws UnknownID if no setting loaded matches key
      */
     public static boolean getBoolean(String key) throws UnknownID, ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(key, "String key");
@@ -285,26 +247,20 @@ public class Settings {
     }
 
     /**
-     * Gets a list of settings. First it is checked, if the key is registered as
-     * a System property. If yes, registered value is returned in a list of
-     * length 1. If no, the data loaded from the settings xml files are
-     * examined. If value is there, it is returned in a list. If not, the
-     * default settings from classpath are examined. If values for this setting
-     * are found here, they are returned. Otherwise, an UnknownId exception is
-     * thrown.
+     * Gets a list of settings. First it is checked, if the key is registered as a System property. If yes, registered
+     * value is returned in a list of length 1. If no, the data loaded from the settings xml files are examined. If
+     * value is there, it is returned in a list. If not, the default settings from classpath are examined. If values for
+     * this setting are found here, they are returned. Otherwise, an UnknownId exception is thrown.
      *
-     * Note that the values will not be concatenated, the first place with a
-     * match will define the entire list. Furthemore the list cannot be empty.
+     * Note that the values will not be concatenated, the first place with a match will define the entire list.
+     * Furthemore the list cannot be empty.
      *
-     * @param key
-     *            name of the setting to retrieve
+     * @param key name of the setting to retrieve
      *
      * @return the retrieved values (as a non-empty String array)
      *
-     * @throws ArgumentNotValid
-     *             if key is null or the empty string
-     * @throws UnknownID
-     *             if no setting loaded matches key
+     * @throws ArgumentNotValid if key is null or the empty string
+     * @throws UnknownID if no setting loaded matches key
      */
     public static String[] getAll(String key) throws UnknownID, ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(key, "key");
@@ -312,7 +268,7 @@ public class Settings {
         String val = System.getProperty(key);
         if (val != null) {
             log.debug("value for key found in property:{}", val);
-            return new String[] { val };
+            return new String[] {val};
         }
         if (fileSettingsXmlList.isEmpty()) {
             log.warn("The list of loaded data settings is empty. Is this OK?");
@@ -348,22 +304,16 @@ public class Settings {
     }
 
     /**
-     * Sets the key to one or more values. Calls to this method are forgotten
-     * whenever the {@link #reload()} is executed.
+     * Sets the key to one or more values. Calls to this method are forgotten whenever the {@link #reload()} is
+     * executed.
      *
-     * TODO write these values to its own simpleXml structure, that are not
-     * reset during reload.
+     * TODO write these values to its own simpleXml structure, that are not reset during reload.
      *
-     * @param key
-     *            The settings key to add this under, legal keys are fields in
-     *            this class.
-     * @param values
-     *            The (ordered) list of values to put under this key.
+     * @param key The settings key to add this under, legal keys are fields in this class.
+     * @param values The (ordered) list of values to put under this key.
      *
-     * @throws ArgumentNotValid
-     *             if key or values are null
-     * @throws UnknownID
-     *             if the key does not already exist
+     * @throws ArgumentNotValid if key or values are null
+     * @throws UnknownID if the key does not already exist
      */
     public static void set(String key, String... values) {
         ArgumentNotValid.checkNotNullOrEmpty(key, "key");
@@ -381,12 +331,10 @@ public class Settings {
     }
 
     /**
-     * Reload the settings if they have changed on disk. This behaves exactly as
-     * forceReload, except it only reloads if the data of the file is different
-     * than last time it was loaded.
+     * Reload the settings if they have changed on disk. This behaves exactly as forceReload, except it only reloads if
+     * the data of the file is different than last time it was loaded.
      *
-     * @throws IOFailure
-     *             if settings cannot be loaded
+     * @throws IOFailure if settings cannot be loaded
      */
     public static synchronized void conditionalReload() {
         List<File> settingsFiles = getSettingsFiles();
@@ -401,14 +349,12 @@ public class Settings {
     }
 
     /**
-     * Reloads the settings. This will reload the settings from disk, and forget
-     * all settings that were set with {@link #set}
+     * Reloads the settings. This will reload the settings from disk, and forget all settings that were set with
+     * {@link #set}
      *
-     * The field {@link #lastModified} is updated to timestamp of the settings
-     * file that has been changed most recently.
+     * The field {@link #lastModified} is updated to timestamp of the settings file that has been changed most recently.
      *
-     * @throws IOFailure
-     *             if settings cannot be loaded
+     * @throws IOFailure if settings cannot be loaded
      * @see #conditionalReload()
      */
     public static synchronized void reload() {
@@ -432,11 +378,9 @@ public class Settings {
     }
 
     /**
-     * Add the settings file represented by this path to the list of default
-     * classpath settings.
+     * Add the settings file represented by this path to the list of default classpath settings.
      *
-     * @param defaultClasspathSettingsPath
-     *            the given default classpath setting.
+     * @param defaultClasspathSettingsPath the given default classpath setting.
      */
     public static void addDefaultClasspathSettings(String defaultClasspathSettingsPath) {
         ArgumentNotValid.checkNotNullOrEmpty(defaultClasspathSettingsPath, "String defaultClasspathSettingsPath");
@@ -450,11 +394,10 @@ public class Settings {
     }
 
     /**
-     * Get a tree view of a part of the settings. Note: settings read with this
-     * mechanism do not support overriding with system properties!
+     * Get a tree view of a part of the settings. Note: settings read with this mechanism do not support overriding with
+     * system properties!
      *
-     * @param path
-     *            Dotted path to a unique element in the tree.
+     * @param path Dotted path to a unique element in the tree.
      *
      * @return The part of the setting structure below the element given.
      */

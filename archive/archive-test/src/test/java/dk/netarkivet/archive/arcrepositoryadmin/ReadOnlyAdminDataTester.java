@@ -40,7 +40,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 /**
  * Unit tests for the class ReadOnlyAdminData.
  */
-@SuppressWarnings({ "deprecation" })
+@SuppressWarnings({"deprecation"})
 public class ReadOnlyAdminDataTester {
     ReloadSettings rs = new ReloadSettings();
 

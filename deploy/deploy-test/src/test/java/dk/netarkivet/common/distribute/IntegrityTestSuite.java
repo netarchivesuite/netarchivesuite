@@ -51,8 +51,7 @@ import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
- * Tests JMSConnection, the class that handles all JMS operations for
- * Netarkivet.
+ * Tests JMSConnection, the class that handles all JMS operations for Netarkivet.
  */
 public class IntegrityTestSuite {
     /**
@@ -67,8 +66,7 @@ public class IntegrityTestSuite {
     private static final int WAIT_MS = 3000;
 
     /**
-     * Used in methods testNListenersToTopic and
-     * testMoreThanThreeListenersToQueue, should be set to > 3:
+     * Used in methods testNListenersToTopic and testMoreThanThreeListenersToQueue, should be set to > 3:
      */
     private static final int NO_OF_LISTENERS = 4;
 
@@ -98,10 +96,9 @@ public class IntegrityTestSuite {
     }
 
     /**
-     * Verify that we can remove a given MessageListener from a given Queue.
-     * Note that this method does not test that a MessageListener can removed
-     * from a Topic - at the moment we have no need for that. If the need
-     * arises, a test case should be written for Topics as well.
+     * Verify that we can remove a given MessageListener from a given Queue. Note that this method does not test that a
+     * MessageListener can removed from a Topic - at the moment we have no need for that. If the need arises, a test
+     * case should be written for Topics as well.
      */
     @Test
     public void testRemoveListener() {
@@ -186,8 +183,7 @@ public class IntegrityTestSuite {
     }
 
     /**
-     * Verify that a sent message is only delivered to one listener (this is
-     * point-to-point semantics).
+     * Verify that a sent message is only delivered to one listener (this is point-to-point semantics).
      * <p/>
      * This is an integrity test because: It tests that JMS behaves as expected.
      */
@@ -220,15 +216,12 @@ public class IntegrityTestSuite {
     }
 
     /**
-     * Test that we can subscribe more than three (3) listeners to a queue and
-     * that exactly one receives the message
+     * Test that we can subscribe more than three (3) listeners to a queue and that exactly one receives the message
      * <p/>
-     * This is an integrity test because: We are testing that JMS itself behaves
-     * correctly.
+     * This is an integrity test because: We are testing that JMS itself behaves correctly.
      * <p/>
-     * This is used for testing the Platform Ed. Enterprise License feature of
-     * queue Requires a running broker with Platform Ed. Enterprise License
-     * (e.g. trial license: /opt/imq/bin/imqbrokerd -license try)
+     * This is used for testing the Platform Ed. Enterprise License feature of queue Requires a running broker with
+     * Platform Ed. Enterprise License (e.g. trial license: /opt/imq/bin/imqbrokerd -license try)
      */
     @Test
     public void testMoreThanThreeListenersToQueue() {
@@ -306,8 +299,7 @@ public class IntegrityTestSuite {
     }
 
     /**
-     * Test that we can subscribe more than one listener to a topic and that
-     * they all receive the message.
+     * Test that we can subscribe more than one listener to a topic and that they all receive the message.
      */
     @Test
     public void testNListenersToTopic() {
@@ -354,8 +346,7 @@ public class IntegrityTestSuite {
     /**
      * Tests that no messages are generated twice.
      *
-     * @throws Exception
-     *             On failures
+     * @throws Exception On failures
      */
     @Test
     public void testMsgIds() throws Exception {
@@ -393,8 +384,7 @@ public class IntegrityTestSuite {
     /**
      * Tries to generate the mysterious NullPointerException of bug 220.
      *
-     * @throws Exception
-     *             On failures
+     * @throws Exception On failures
      */
     @Test
     public void testProvokeNullPointer() throws Exception {
@@ -413,12 +403,10 @@ public class IntegrityTestSuite {
     }
 
     /**
-     * Tries to send a message to a Queue. - Makes a TestMessageConsumer, that
-     * listens to the ArcRepository Queue. - Sends a message to that queue. -
-     * Verifies, that this message is sent and received un-modified.
+     * Tries to send a message to a Queue. - Makes a TestMessageConsumer, that listens to the ArcRepository Queue. -
+     * Sends a message to that queue. - Verifies, that this message is sent and received un-modified.
      *
-     * @throws Exception
-     *             On failures
+     * @throws Exception On failures
      */
     @Test
     public void testQueueSendMessage() throws Exception {
@@ -435,12 +423,10 @@ public class IntegrityTestSuite {
     }
 
     /**
-     * Sets up 3 message consumers, all listening on the same channel. Then
-     * sends a message on that channel. Verify, that the message is received by
-     * all three consumers.
+     * Sets up 3 message consumers, all listening on the same channel. Then sends a message on that channel. Verify,
+     * that the message is received by all three consumers.
      *
-     * @throws Exception
-     *             On failures
+     * @throws Exception On failures
      */
     @Test
     public void testTopicSendMessage() throws Exception {
@@ -475,8 +461,7 @@ public class IntegrityTestSuite {
     }
 
     /**
-     * Checks that the QueueBrowser created by the <code>JMSConnectionMQ</code>
-     * class work correctly.
+     * Checks that the QueueBrowser created by the <code>JMSConnectionMQ</code> class work correctly.
      * 
      * @throws JMSException
      * @throws InterruptedException
@@ -533,11 +518,10 @@ public class IntegrityTestSuite {
     }
 
     /**
-     * A simple subclass of NetarkivetMessage to be used for test purposes only.
-     * The only added functionality is that toString() outputs a representation
-     * of the "entire visible state" of the message.
+     * A simple subclass of NetarkivetMessage to be used for test purposes only. The only added functionality is that
+     * toString() outputs a representation of the "entire visible state" of the message.
      */
-    @SuppressWarnings({ "unused", "serial" })
+    @SuppressWarnings({"unused", "serial"})
     private static class TestMessage extends NetarkivetMessage {
         String testID;
 

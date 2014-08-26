@@ -40,8 +40,8 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IllegalState;
 
 /**
- * This class contains the preservation data based on the database data of a
- * given filename. Contains the ReplicaFileInfos corresponding to the file.
+ * This class contains the preservation data based on the database data of a given filename. Contains the
+ * ReplicaFileInfos corresponding to the file.
  */
 public class DatabasePreservationState implements PreservationState {
 
@@ -49,8 +49,8 @@ public class DatabasePreservationState implements PreservationState {
     private static final Logger log = LoggerFactory.getLogger(DatabasePreservationState.class);
 
     /**
-     * The map containing all the entries for in the replicafileinfo table in
-     * the database and the replica they correspond to.
+     * The map containing all the entries for in the replicafileinfo table in the database and the replica they
+     * correspond to.
      */
     private Map<Replica, ReplicaFileInfo> entries = new HashMap<Replica, ReplicaFileInfo>();
     /** The name of the file. */
@@ -59,14 +59,10 @@ public class DatabasePreservationState implements PreservationState {
     /**
      * Constructor.
      * 
-     * @param fileName
-     *            The name of the file.
-     * @param rfis
-     *            A list of the ReplicaFileInfo entries in the database for the
-     *            given file.
-     * @throws ArgumentNotValid
-     *             If the filename is null or the empty string, or if the list
-     *             of ReplicaFileInfos are null or empty.
+     * @param fileName The name of the file.
+     * @param rfis A list of the ReplicaFileInfo entries in the database for the given file.
+     * @throws ArgumentNotValid If the filename is null or the empty string, or if the list of ReplicaFileInfos are null
+     *             or empty.
      */
     public DatabasePreservationState(String fileName, List<ReplicaFileInfo> rfis) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(fileName, "String fileName");
@@ -84,14 +80,10 @@ public class DatabasePreservationState implements PreservationState {
     /**
      * Get the checksum of this file in a specific replica.
      *
-     * @param replica
-     *            The replica to get the checksum from.
-     * @return A list of the checksums for the file within the replica (only
-     *         more than one if there is duplicates in a bitarchive replica). An
-     *         empty list is returned if no file is present or if an error
-     *         occurred.
-     * @throws ArgumentNotValid
-     *             If the replica is null.
+     * @param replica The replica to get the checksum from.
+     * @return A list of the checksums for the file within the replica (only more than one if there is duplicates in a
+     *         bitarchive replica). An empty list is returned if no file is present or if an error occurred.
+     * @throws ArgumentNotValid If the replica is null.
      */
     public List<String> getReplicaChecksum(Replica replica) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
@@ -110,8 +102,8 @@ public class DatabasePreservationState implements PreservationState {
     }
 
     /**
-     * Get the MD5 checksum stored in the admin data. Inherited dummy function.
-     * No admin data for database instance, thus no admin data checksum.
+     * Get the MD5 checksum stored in the admin data. Inherited dummy function. No admin data for database instance,
+     * thus no admin data checksum.
      *
      * @return Checksum value as found in the admin data given at creation.
      */
@@ -121,14 +113,12 @@ public class DatabasePreservationState implements PreservationState {
     }
 
     /**
-     * Get the status of the file in a replica, according to the admin data.
-     * This returns the status as a string for presentation purposes only.
+     * Get the status of the file in a replica, according to the admin data. This returns the status as a string for
+     * presentation purposes only.
      *
-     * @param replica
-     *            The replica to get status for
+     * @param replica The replica to get status for
      * @return Status that the admin data knows for this file in the replica.
-     * @throws ArgumentNotValid
-     *             If the replica is null.
+     * @throws ArgumentNotValid If the replica is null.
      */
     public String getAdminReplicaState(Replica replica) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
@@ -139,8 +129,7 @@ public class DatabasePreservationState implements PreservationState {
     /**
      * INHERITED DUMMY FUNCTION!
      * 
-     * @return true, since a non-existing admin.data is OK for the database
-     *         instance.
+     * @return true, since a non-existing admin.data is OK for the database instance.
      */
     public boolean isAdminDataOk() {
         // No admin data = OK
@@ -148,11 +137,9 @@ public class DatabasePreservationState implements PreservationState {
     }
 
     /**
-     * Returns a reference to a replica that contains a version of the file with
-     * the correct checksum.
+     * Returns a reference to a replica that contains a version of the file with the correct checksum.
      *
-     * The correct checksum is defined as the checksum that the majority of the
-     * replica and admin data agree upon.
+     * The correct checksum is defined as the checksum that the majority of the replica and admin data agree upon.
      *
      * If no replica exists with a correct version of the file null is returned.
      *
@@ -176,13 +163,10 @@ public class DatabasePreservationState implements PreservationState {
     /**
      * Get a checksum that the whole replica agrees upon, or else "".
      *
-     * @param replica
-     *            A replica to get checksum for this file from
-     * @return The checksum for this file in the replica, if all machines that
-     *         have that file agree, otherwise "". If no checksums are found,
-     *         also returns "".
-     * @throws ArgumentNotValid
-     *             If the replica is null.
+     * @param replica A replica to get checksum for this file from
+     * @return The checksum for this file in the replica, if all machines that have that file agree, otherwise "". If no
+     *         checksums are found, also returns "".
+     * @throws ArgumentNotValid If the replica is null.
      */
     public String getUniqueChecksum(Replica replica) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
@@ -198,11 +182,9 @@ public class DatabasePreservationState implements PreservationState {
     /**
      * Check if the file is missing from a replica.
      *
-     * @param replica
-     *            the replica to check
+     * @param replica the replica to check
      * @return true if the file is missing from the replica
-     * @throws ArgumentNotValid
-     *             If the replica is null.
+     * @throws ArgumentNotValid If the replica is null.
      */
     public boolean fileIsMissing(Replica replica) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
@@ -212,11 +194,10 @@ public class DatabasePreservationState implements PreservationState {
     }
 
     /**
-     * THIS IS VOTING! Retrieve checksum that the majority of checksum
-     * references replicas agree upon.
+     * THIS IS VOTING! Retrieve checksum that the majority of checksum references replicas agree upon.
      * 
-     * TODO Voting is already done by the DatabasedActiveBitPreservation. Thus
-     * replace with finding an entry with checksum-status = OK.
+     * TODO Voting is already done by the DatabasedActiveBitPreservation. Thus replace with finding an entry with
+     * checksum-status = OK.
      *
      * @return the reference checksum or "" if no majority exists
      */
@@ -283,14 +264,11 @@ public class DatabasePreservationState implements PreservationState {
     }
 
     /**
-     * Returns true if the checksum reported by admin data is equal to the
-     * majority checksum. If no majority checksum exists true is also returned.
-     * When this method returns false it is possible to correct the admin
-     * checksum using the majority checksum - when true is returned no better
-     * checksum exists for admin data.
+     * Returns true if the checksum reported by admin data is equal to the majority checksum. If no majority checksum
+     * exists true is also returned. When this method returns false it is possible to correct the admin checksum using
+     * the majority checksum - when true is returned no better checksum exists for admin data.
      *
-     * @return true, if the checksum reported by admin data is equal to the
-     *         majority checksum
+     * @return true, if the checksum reported by admin data is equal to the majority checksum
      */
     public boolean isAdminCheckSumOk() {
         // The database is always OK.
@@ -298,8 +276,8 @@ public class DatabasePreservationState implements PreservationState {
     }
 
     /**
-     * Returns a human-readable representation of this object. Do not depend on
-     * this format for anything automated, as it may change at any time.
+     * Returns a human-readable representation of this object. Do not depend on this format for anything automated, as
+     * it may change at any time.
      *
      * @return Description of this object.
      */
@@ -312,8 +290,8 @@ public class DatabasePreservationState implements PreservationState {
     }
 
     /**
-     * Get the filename, this FilePreservationState is about. Needed to get at
-     * the filename given to constructor, and allow for a better datastructure.
+     * Get the filename, this FilePreservationState is about. Needed to get at the filename given to constructor, and
+     * allow for a better datastructure.
      * 
      * @return the filename
      */

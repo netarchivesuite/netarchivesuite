@@ -26,8 +26,8 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.StringUtils;
 
 /**
- * This class contains constants and functions specific for creating the scripts
- * and other files for the different machines and applications.
+ * This class contains constants and functions specific for creating the scripts and other files for the different
+ * machines and applications.
  */
 public final class ScriptConstants {
 
@@ -53,8 +53,7 @@ public final class ScriptConstants {
     /** Ddk.netarkivet.settings.file=\"\". */
     static final String OPTION_SETTINGS_WIN = OPTION_SETTINGS + "\"\"";
     /**
-     * Dorg.apache.commons.logging.Log=" +
-     * "org.apache.commons.logging.impl.Jdk14Logger.
+     * Dorg.apache.commons.logging.Log=" + "org.apache.commons.logging.impl.Jdk14Logger.
      */
     static final String OPTION_LOG_COMPLETE = "Dorg.apache.commons.logging.Log="
             + "org.apache.commons.logging.impl.Jdk14Logger";
@@ -73,10 +72,10 @@ public final class ScriptConstants {
     /** Djava.security.policy=\"\". */
     static final String OPTION_SECURITY_POLICY_WIN = OPTION_SECURITY_POLICY + "\"\"";
     /**
-     * Array of classpaths for libraries used to access the database. Currently:
-     * lib/db/derbynet.jar and lib/db/derby.jar .
+     * Array of classpaths for libraries used to access the database. Currently: lib/db/derbynet.jar and
+     * lib/db/derby.jar .
      */
-    static final String[] DERBY_ACCESS_CLASSPATH = new String[] { "lib/db/derbynet.jar", "lib/db/derby.jar" };
+    static final String[] DERBY_ACCESS_CLASSPATH = new String[] {"lib/db/derbynet.jar", "lib/db/derby.jar"};
     /** org.apache.derby.drda.NetworkServerControl . */
     static final String DERBY_ACCESS_METHOD = "org.apache.derby.drda.NetworkServerControl";
     /** start . */
@@ -381,11 +380,9 @@ public final class ScriptConstants {
     /**
      * The header for the kill all script for the machine.
      * 
-     * @param login
-     *            The login to the machine (username@machinename)
+     * @param login The login to the machine (username@machinename)
      * @return The echo header for killing a machine.
-     * @throws ArgumentNotValid
-     *             If the login is null or the empty string.
+     * @throws ArgumentNotValid If the login is null or the empty string.
      */
     public static String writeKillMachineHeader(String login) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(login, "String login");
@@ -395,11 +392,9 @@ public final class ScriptConstants {
     /**
      * The header for the start all script for the machine.
      * 
-     * @param login
-     *            The login to the machine (username@machinename)
+     * @param login The login to the machine (username@machinename)
      * @return The echo header for killing a machine.
-     * @throws ArgumentNotValid
-     *             If the login is null or the empty string.
+     * @throws ArgumentNotValid If the login is null or the empty string.
      */
     public static String writeStartMachineHeader(String login) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(login, "String login");
@@ -409,11 +404,9 @@ public final class ScriptConstants {
     /**
      * The header for the install all script for the machine.
      * 
-     * @param login
-     *            The login to the machine (username@machinename)
+     * @param login The login to the machine (username@machinename)
      * @return The echo header for killing a machine.
-     * @throws ArgumentNotValid
-     *             If the login is null or the empty string.
+     * @throws ArgumentNotValid If the login is null or the empty string.
      */
     public static String writeInstallMachineHeader(String login) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(login, "String login");
@@ -421,16 +414,13 @@ public final class ScriptConstants {
     }
 
     /**
-     * Changes a string into correct formatted style. The '.vbs' script needs
-     * '\\' instead of '\', which is quite annoying when using regular
-     * expressions, since a final '\' in regular expressions is '\\\\', thus
-     * '\\' = '\\\\\\\\' (8).
+     * Changes a string into correct formatted style. The '.vbs' script needs '\\' instead of '\', which is quite
+     * annoying when using regular expressions, since a final '\' in regular expressions is '\\\\', thus '\\' =
+     * '\\\\\\\\' (8).
      * 
-     * @param path
-     *            The directory path to change to appropriate format.
+     * @param path The directory path to change to appropriate format.
      * @return The formatted path.
-     * @throws ArgumentNotValid
-     *             If the path is null or the empty string.
+     * @throws ArgumentNotValid If the path is null or the empty string.
      */
     public static String doubleBackslashes(String path) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(path, "String path");
@@ -438,16 +428,13 @@ public final class ScriptConstants {
     }
 
     /**
-     * Changes a string into correct formatted style. The '.vbs' script needs
-     * '\\' instead of '\', which is quite annoying when using regular
-     * expressions, since a final '\' in regular expressions is '/', thus '\\' =
-     * '\\\\\\\\' (8).
+     * Changes a string into correct formatted style. The '.vbs' script needs '\\' instead of '\', which is quite
+     * annoying when using regular expressions, since a final '\' in regular expressions is '/', thus '\\' = '\\\\\\\\'
+     * (8).
      * 
-     * @param path
-     *            The directory path to change to appropriate format.
+     * @param path The directory path to change to appropriate format.
      * @return The formatted path.
-     * @throws ArgumentNotValid
-     *             If the path is null or the empty string.
+     * @throws ArgumentNotValid If the path is null or the empty string.
      */
     public static String replaceWindowsDirSeparators(String path) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(path, "String path");
@@ -457,13 +444,10 @@ public final class ScriptConstants {
     /**
      * For giving readonly permission to a directory in the security policy.
      * 
-     * @param dir
-     *            The path to the directory. This has to be formatted to have
-     *            the correct directory separator: '${/}', instead of '/' or
-     *            '\\' for Windows and Linux respectively.
+     * @param dir The path to the directory. This has to be formatted to have the correct directory separator: '${/}',
+     *            instead of '/' or '\\' for Windows and Linux respectively.
      * @return The permission string.
-     * @throws ArgumentNotValid
-     *             If the dir is null or the empty string.
+     * @throws ArgumentNotValid If the dir is null or the empty string.
      */
     public static String writeSecurityPolicyDirPermission(String dir) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(dir, "String dir");
@@ -471,20 +455,14 @@ public final class ScriptConstants {
     }
 
     /**
-     * Creates the script for extracting the processes of a specific
-     * application, depending on the name of the application and the settings
-     * file.
+     * Creates the script for extracting the processes of a specific application, depending on the name of the
+     * application and the settings file.
      * 
-     * @param totalName
-     *            The total name of the application.
-     * @param path
-     *            The path to the directory of the settings file (conf-dir).
-     * @param id
-     *            The identification of the application (name + instanceId).
+     * @param totalName The total name of the application.
+     * @param path The path to the directory of the settings file (conf-dir).
+     * @param id The identification of the application (name + instanceId).
      * @return The script for getting the list of running application.
-     * @throws ArgumentNotValid
-     *             If the totalName, the path or the id is either null or the
-     *             empty string.
+     * @throws ArgumentNotValid If the totalName, the path or the id is either null or the empty string.
      */
     public static String getLinuxPIDS(String totalName, String path, String id) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(totalName, "String totalName");

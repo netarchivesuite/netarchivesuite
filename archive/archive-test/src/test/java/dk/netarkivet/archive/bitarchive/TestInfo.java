@@ -28,8 +28,7 @@ import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 
 /**
- * TestInfo associated with package dk.netarkivet.archive.bitarchive. Contains
- * useful constants.
+ * TestInfo associated with package dk.netarkivet.archive.bitarchive. Contains useful constants.
  */
 public class TestInfo {
     static final File DATA_DIR = new File("tests/dk/netarkivet/archive/bitarchive/data");

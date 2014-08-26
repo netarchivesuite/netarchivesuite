@@ -39,7 +39,7 @@ public class MonitorTesterSuite {
     }
 
     public static void main(String args[]) {
-        String args2[] = { "-noloading", MonitorTesterSuite.class.getName() };
+        String args2[] = {"-noloading", MonitorTesterSuite.class.getName()};
 
         TestRunner.main(args2);
     }

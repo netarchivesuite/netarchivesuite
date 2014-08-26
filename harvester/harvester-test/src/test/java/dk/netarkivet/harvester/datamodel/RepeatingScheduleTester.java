@@ -41,8 +41,8 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 public class RepeatingScheduleTester {
 
     /**
-     * Given a repeating schedule that should run yearly 3 times, check that it
-     * gives the expected events, and no fourth event.
+     * Given a repeating schedule that should run yearly 3 times, check that it gives the expected events, and no fourth
+     * event.
      * 
      * @throws Exception
      */
@@ -63,8 +63,8 @@ public class RepeatingScheduleTester {
     }
 
     /**
-     * Given a repeting schedule that should run yearly at noon 3 times, check
-     * that it gives the expected events, and no fourth event.
+     * Given a repeting schedule that should run yearly at noon 3 times, check that it gives the expected events, and no
+     * fourth event.
      * 
      * @throws Exception
      */
@@ -87,8 +87,7 @@ public class RepeatingScheduleTester {
     }
 
     /**
-     * Test that negative argument on getNextEvent throws ArgumentNotValid
-     * exception.
+     * Test that negative argument on getNextEvent throws ArgumentNotValid exception.
      * 
      * @throws Exception
      */
@@ -107,8 +106,8 @@ public class RepeatingScheduleTester {
     }
 
     /**
-     * Given a repeating schedule check, that given the date of previous event
-     * is null, the date of the next event is also null.
+     * Given a repeating schedule check, that given the date of previous event is null, the date of the next event is
+     * also null.
      */
     @Test
     public void testGetNextEvent3() throws Exception {

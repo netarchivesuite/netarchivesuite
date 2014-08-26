@@ -42,7 +42,7 @@ import org.junit.Test;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class SynchronizerTester {
     private static final ChannelID toQ = Channels.getAnyBa();
     private static final ChannelID replyToQ = Channels.getError();
@@ -81,8 +81,7 @@ public class SynchronizerTester {
     }
 
     /**
-     * Tests that everything works if the correct parameters are submitted to
-     * the Synchronizer.
+     * Tests that everything works if the correct parameters are submitted to the Synchronizer.
      */
     @Test
     @Ignore("A reply should have been received")
@@ -90,8 +89,7 @@ public class SynchronizerTester {
         NetarkivetMessage msg = new TestMessage(toQ, replyToQ);
         Synchronizer sync = new Synchronizer();
         /**
-         * The sender is also the listener. Avoids the need for creating a
-         * separate server thread for replying.
+         * The sender is also the listener. Avoids the need for creating a separate server thread for replying.
          */
         con.setListener(toQ, sync);
         SynchronizerRunner sr = new SynchronizerRunner(sync, msg, 0);
@@ -122,8 +120,7 @@ public class SynchronizerTester {
     }
 
     /**
-     * Tests that the synchronizer doesn't trigger if it gets a wrong message as
-     * a reply.
+     * Tests that the synchronizer doesn't trigger if it gets a wrong message as a reply.
      */
     @Test
     public void testWrongReplyToRequest() {
@@ -131,8 +128,7 @@ public class SynchronizerTester {
         NetarkivetMessage msgOther = new TestMessage(replyToQ, toQ);
         Synchronizer sync = new Synchronizer();
         /**
-         * The sender is also the listener. Avoids the need for creating a
-         * separate server thread for replying.
+         * The sender is also the listener. Avoids the need for creating a separate server thread for replying.
          */
         con.setListener(replyToQ, sync);
         SynchronizerRunner sr = new SynchronizerRunner(sync, msg, 0);
@@ -166,16 +162,14 @@ public class SynchronizerTester {
     }
 
     /**
-     * Tests that sendAndWaitForOneReply isn't triggered if message with wrong
-     * replyOfId is received by onMessage.
+     * Tests that sendAndWaitForOneReply isn't triggered if message with wrong replyOfId is received by onMessage.
      */
     @Test
     public void testOnMessageBehaviourOnWrongReplyID() {
         NetarkivetMessage msg = new TestMessage(toQ, replyToQ, "UNKNOWN_ID");
         Synchronizer sync = new Synchronizer();
         /**
-         * The sender is also the listener. Avoids the need for creating a
-         * separate server thread for replying.
+         * The sender is also the listener. Avoids the need for creating a separate server thread for replying.
          */
         con.setListener(toQ, sync);
         SynchronizerRunner sr = new SynchronizerRunner(sync, msg, 0);
@@ -202,16 +196,14 @@ public class SynchronizerTester {
     }
 
     /**
-     * Tests that sendAndWaitForOneReply is triggered if message with correct
-     * replyOfId is received by onMessage.
+     * Tests that sendAndWaitForOneReply is triggered if message with correct replyOfId is received by onMessage.
      */
     @Test
     public void testOnMessageBehaviourOnCorrectReplyID() {
         NetarkivetMessage msg = new TestMessage(toQ, replyToQ);
         Synchronizer sync = new Synchronizer();
         /**
-         * The sender is also the listener. Avoids the need for creating a
-         * separate server thread for replying.
+         * The sender is also the listener. Avoids the need for creating a separate server thread for replying.
          */
         con.setListener(toQ, sync);
         SynchronizerRunner sr = new SynchronizerRunner(sync, msg, 0);
@@ -242,15 +234,12 @@ public class SynchronizerTester {
     /**
      * This test checks that we handle being woken by other than expected means.
      *
-     * It first sets up a Synchronizer to listen for replies. Then a listener is
-     * added to the toQ that just notifies the message (thus waking the
-     * Synchronizer). While the Synchronizer doesn't leave the method since it
-     * wasn't notified for having received a message, it does call getId() on
-     * the message. Our message counts how many times getId() is called on it.
-     * The first time is when sendAndWaitForOneReply starts, the second time is
-     * when it is mistakenly woken up. When the second getId() is called, we
-     * know we got the false notify and can continue the test. No reply will be
-     * available.
+     * It first sets up a Synchronizer to listen for replies. Then a listener is added to the toQ that just notifies the
+     * message (thus waking the Synchronizer). While the Synchronizer doesn't leave the method since it wasn't notified
+     * for having received a message, it does call getId() on the message. Our message counts how many times getId() is
+     * called on it. The first time is when sendAndWaitForOneReply starts, the second time is when it is mistakenly
+     * woken up. When the second getId() is called, we know we got the false notify and can continue the test. No reply
+     * will be available.
      *
      * DISABLED 20140528 as it failed intermittently.
      */
@@ -275,8 +264,7 @@ public class SynchronizerTester {
         /* This special synchronizer wakes up the listener early */
         Synchronizer sync = new Synchronizer();
         /*
-         * The sender is also the listener. Avoids the need for creating a
-         * separate server thread for replying.
+         * The sender is also the listener. Avoids the need for creating a separate server thread for replying.
          */
         con.setListener(replyToQ, sync);
         con.setListener(toQ, new MessageListener() {
@@ -328,8 +316,7 @@ public class SynchronizerTester {
     }
 
     /**
-     * Tests that a timed-out synchronizer returns null. Disabled, fails
-     * occasionally in Jenkins.
+     * Tests that a timed-out synchronizer returns null. Disabled, fails occasionally in Jenkins.
      */
     @Test
     @Ignore("fails occasionally in Jenkins")
@@ -347,8 +334,7 @@ public class SynchronizerTester {
     }
 
     /**
-     * @param sr
-     *            a Thread wrapper for the Synchronizer.
+     * @param sr a Thread wrapper for the Synchronizer.
      */
     private void waitUntilEnded(SynchronizerRunner sr) {
         int loops = 0;
@@ -380,8 +366,7 @@ public class SynchronizerTester {
     }
 
     /**
-     * Used for testing. Runs a synchronizer.sendAndWaitForOneReply(msg,timeout)
-     * in a new thread.
+     * Used for testing. Runs a synchronizer.sendAndWaitForOneReply(msg,timeout) in a new thread.
      */
     private static class SynchronizerRunner extends Thread {
         private Synchronizer sync;
@@ -418,8 +403,7 @@ public class SynchronizerTester {
     }
 
     /**
-     * An extension of NetarkivetMessage that does not add functionality (except
-     * public constructor).
+     * An extension of NetarkivetMessage that does not add functionality (except public constructor).
      */
     private static class TestMessage extends NetarkivetMessage {
         public TestMessage(ChannelID to, ChannelID replyTo) {

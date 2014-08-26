@@ -44,15 +44,13 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.wayback.WaybackSettings;
 
 /**
- * The WaybackIndexer starts threads to find new files to be indexed and indexes
- * them.
+ * The WaybackIndexer starts threads to find new files to be indexed and indexes them.
  *
- * There is 1 producer thread which runs as a timer thread, for example once a
- * day, and runs first a FileNameHarvester to get a list of all files in the
- * archive after which it fills the indexer queue with any new files found.
+ * There is 1 producer thread which runs as a timer thread, for example once a day, and runs first a FileNameHarvester
+ * to get a list of all files in the archive after which it fills the indexer queue with any new files found.
  *
- * Simultaneously there is a family of consumer threads which wait for the queue
- * to be populated and take elements from it and index them.
+ * Simultaneously there is a family of consumer threads which wait for the queue to be populated and take elements from
+ * it and index them.
  *
  */
 public class WaybackIndexer implements CleanupIF {
@@ -64,10 +62,9 @@ public class WaybackIndexer implements CleanupIF {
     private static WaybackIndexer instance;
 
     /**
-     * Factory method which creates a singleton wayback indexer and sets it
-     * running. It has the side effect of creating the output directories for
-     * the indexer if these do not already exist. It also reads files for the
-     * initial ingest if necessary.
+     * Factory method which creates a singleton wayback indexer and sets it running. It has the side effect of creating
+     * the output directories for the indexer if these do not already exist. It also reads files for the initial ingest
+     * if necessary.
      * 
      * @return the indexer.
      */
@@ -92,8 +89,8 @@ public class WaybackIndexer implements CleanupIF {
     }
 
     /**
-     * The file represented by WAYBACK_INDEXER_INITIAL_FILES is read line by
-     * line and each line is ingested as an already-indexed archive file.
+     * The file represented by WAYBACK_INDEXER_INITIAL_FILES is read line by line and each line is ingested as an
+     * already-indexed archive file.
      */
     private static void ingestInitialFiles() {
         String initialFileString = Settings.get(WaybackSettings.WAYBACK_INDEXER_INITIAL_FILES);
@@ -140,8 +137,7 @@ public class WaybackIndexer implements CleanupIF {
     }
 
     /**
-     * Starts the consumer threads which do the indexing by sending concurrent
-     * batch jobs to the arcrepository.
+     * Starts the consumer threads which do the indexing by sending concurrent batch jobs to the arcrepository.
      */
     private static void startConsumerThreads() {
         int consumerThreads = Settings.getInt(WaybackSettings.WAYBACK_INDEXER_CONSUMER_THREADS);
@@ -161,10 +157,8 @@ public class WaybackIndexer implements CleanupIF {
     }
 
     /**
-     * Starts the producer thread. This thread runs on a timer. It downloads a
-     * list of all files in the archive and adds any new ones to the database.
-     * It then checks the database for unindexed files and adds them to the
-     * queue.
+     * Starts the producer thread. This thread runs on a timer. It downloads a list of all files in the archive and adds
+     * any new ones to the database. It then checks the database for unindexed files and adds them to the queue.
      */
     private static void startProducerThread() {
         Long producerDelay = Settings.getLong(WaybackSettings.WAYBACK_INDEXER_PRODUCER_DELAY);
@@ -196,9 +190,8 @@ public class WaybackIndexer implements CleanupIF {
     }
 
     /**
-     * Performs any necessary cleanup functions. These include cleaning any
-     * partial batch output from the temporary batch output file and closing the
-     * hibernate session factory.
+     * Performs any necessary cleanup functions. These include cleaning any partial batch output from the temporary
+     * batch output file and closing the hibernate session factory.
      */
     public void cleanup() {
         log.info("Cleaning up WaybackIndexer");

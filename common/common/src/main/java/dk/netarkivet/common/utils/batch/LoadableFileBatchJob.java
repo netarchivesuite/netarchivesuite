@@ -41,11 +41,10 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 
 /**
- * This implementation of FileBatchJob is a bridge to a class file given as a
- * File object. The given class will be loaded and used to perform the actions
- * of the FileBatchJob class.
+ * This implementation of FileBatchJob is a bridge to a class file given as a File object. The given class will be
+ * loaded and used to perform the actions of the FileBatchJob class.
  */
-@SuppressWarnings({ "unchecked", "rawtypes", "serial" })
+@SuppressWarnings({"unchecked", "rawtypes", "serial"})
 public class LoadableFileBatchJob extends FileBatchJob {
 
     /** The class logger. */
@@ -63,12 +62,9 @@ public class LoadableFileBatchJob extends FileBatchJob {
     /**
      * Create a new batch job that runs the loaded class.
      * 
-     * @param classFile
-     *            the classfile for the batch job we want to run.
-     * @param arguments
-     *            The arguments for the batchjobs. This can be null.
-     * @throws ArgumentNotValid
-     *             If the classfile is null.
+     * @param classFile the classfile for the batch job we want to run.
+     * @param arguments The arguments for the batchjobs. This can be null.
+     * @throws ArgumentNotValid If the classfile is null.
      */
     public LoadableFileBatchJob(File classFile, List<String> arguments) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(classFile, "File classFile");
@@ -95,11 +91,8 @@ public class LoadableFileBatchJob extends FileBatchJob {
     /**
      * Override of the default way to serialize this class.
      *
-     * @param out
-     *            Stream that the object will be written to.
-     * @throws IOException
-     *             In case there is an error from the underlying stream, or this
-     *             object cannot be serialized.
+     * @param out Stream that the object will be written to.
+     * @throws IOException In case there is an error from the underlying stream, or this object cannot be serialized.
      */
     private void writeObject(ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
@@ -108,26 +101,19 @@ public class LoadableFileBatchJob extends FileBatchJob {
     /**
      * Override of the default way to unserialize an object of this class.
      *
-     * @param in
-     *            Stream that the object can be read from.
-     * @throws IOException
-     *             If there is an error reading from the stream, or the
-     *             serialized object cannot be deserialized due to errors in the
-     *             serialized form.
-     * @throws ClassNotFoundException
-     *             If the class definition of the serialized object cannot be
-     *             found.
+     * @param in Stream that the object can be read from.
+     * @throws IOException If there is an error reading from the stream, or the serialized object cannot be deserialized
+     *             due to errors in the serialized form.
+     * @throws ClassNotFoundException If the class definition of the serialized object cannot be found.
      */
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
     }
 
     /**
-     * Initialize the job before runnning. This is called before the
-     * processFile() calls.
+     * Initialize the job before runnning. This is called before the processFile() calls.
      *
-     * @param os
-     *            the OutputStream to which output should be written
+     * @param os the OutputStream to which output should be written
      */
     public void initialize(OutputStream os) {
         ArgumentNotValid.checkNotNull(os, "OutputStream os");
@@ -138,8 +124,7 @@ public class LoadableFileBatchJob extends FileBatchJob {
     /**
      * Method for initializing the loaded batchjob.
      * 
-     * @throws IOFailure
-     *             If the batchjob cannot be loaded.
+     * @throws IOFailure If the batchjob cannot be loaded.
      */
     protected void loadBatchJob() throws IOFailure {
         ByteClassLoader singleClassLoader = new ByteClassLoader(fileContents);
@@ -182,10 +167,8 @@ public class LoadableFileBatchJob extends FileBatchJob {
     /**
      * Process one file stored in the bit archive.
      *
-     * @param file
-     *            the file to be processed.
-     * @param os
-     *            the OutputStream to which output should be written
+     * @param file the file to be processed.
+     * @param os the OutputStream to which output should be written
      *
      * @return true if the file was successfully processed, false otherwise
      */
@@ -199,8 +182,7 @@ public class LoadableFileBatchJob extends FileBatchJob {
     /**
      * Finish up the job. This is called after the last process() call.
      *
-     * @param os
-     *            the OutputStream to which output should be written
+     * @param os the OutputStream to which output should be written
      */
     public void finish(OutputStream os) {
         ArgumentNotValid.checkNotNull(os, "OutputStream os");

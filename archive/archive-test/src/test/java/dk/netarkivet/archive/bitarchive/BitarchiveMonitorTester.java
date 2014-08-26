@@ -47,7 +47,7 @@ import dk.netarkivet.testutils.preconfigured.MockupJMS;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /** Unit test for BitarchiveMonitorTester */
-@SuppressWarnings({ "rawtypes", "unused" })
+@SuppressWarnings({"rawtypes", "unused"})
 public class BitarchiveMonitorTester {
     private ReloadSettings rs = new ReloadSettings();
 
@@ -88,9 +88,8 @@ public class BitarchiveMonitorTester {
 
         long batchTimeout = msg.getJob().getBatchJobTimeout();
         /*
-         * bitarchiveMonitor.registerBatch("asdfsdf", msg.getReplyTo(),
-         * "asdfsdf", batchTimeout > 0 ? batchTimeout : Settings.getLong(
-         * ArchiveSettings.BITARCHIVE_BATCH_JOB_TIMEOUT) );
+         * bitarchiveMonitor.registerBatch("asdfsdf", msg.getReplyTo(), "asdfsdf", batchTimeout > 0 ? batchTimeout :
+         * Settings.getLong( ArchiveSettings.BITARCHIVE_BATCH_JOB_TIMEOUT) );
          */
 
         assertEquals(batchTimeout, batchTimeout > 0 ? batchTimeout : TestInfo.BITARCHIVE_BATCH_JOB_TIMEOUT);
@@ -103,8 +102,7 @@ public class BitarchiveMonitorTester {
 
         batchTimeout = msg.getJob().getBatchJobTimeout();
         /*
-         * bitarchiveMonitor.registerBatch("asdfsdf", msg.getReplyTo(),
-         * "asdfsdf", batchTimeout > 0 ? batchTimeout :
+         * bitarchiveMonitor.registerBatch("asdfsdf", msg.getReplyTo(), "asdfsdf", batchTimeout > 0 ? batchTimeout :
          * TestInfo.BITARCHIVE_BATCH_JOB_TIMEOUT );
          */
         assertEquals(TestInfo.BITARCHIVE_BATCH_JOB_TIMEOUT, batchTimeout > 0 ? batchTimeout
@@ -112,8 +110,7 @@ public class BitarchiveMonitorTester {
     }
 
     /**
-     * Checks that a bitarchive correctly is removed when its sign of life
-     * expires.
+     * Checks that a bitarchive correctly is removed when its sign of life expires.
      * 
      * @throws NoSuchFieldException
      * @throws SecurityException

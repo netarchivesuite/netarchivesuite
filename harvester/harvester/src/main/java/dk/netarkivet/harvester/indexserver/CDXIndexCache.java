@@ -41,14 +41,12 @@ import dk.netarkivet.common.utils.FileUtils;
 /**
  * A cache that serves CDX index files for job IDs.
  *
- * Notice that since data for some IDs may not be available, the actual cached
- * file might not correspond in its content to what was asked for. For instance,
- * if asking for data for IDs 2, 3, and 4, and 3 fails, a cached file for IDs 2
- * and 4 will be returned. There is currently no way to tell if you got
- * everything you asked for.
+ * Notice that since data for some IDs may not be available, the actual cached file might not correspond in its content
+ * to what was asked for. For instance, if asking for data for IDs 2, 3, and 4, and 3 fails, a cached file for IDs 2 and
+ * 4 will be returned. There is currently no way to tell if you got everything you asked for.
  *
- * This cache uses the Unix sort(1) command as an external process call, as that
- * one is optimized for handling large, disk-based sorts.
+ * This cache uses the Unix sort(1) command as an external process call, as that one is optimized for handling large,
+ * disk-based sorts.
  *
  */
 public class CDXIndexCache extends CombiningMultiFileBasedCache<Long> implements JobIndexCache {
@@ -66,8 +64,7 @@ public class CDXIndexCache extends CombiningMultiFileBasedCache<Long> implements
     /**
      * Combine parts of an index into one big index.
      *
-     * @param filesFound
-     *            A map of IDs and the files caching their content.
+     * @param filesFound A map of IDs and the files caching their content.
      */
     protected void combine(Map<Long, File> filesFound) {
         File resultFile = getCacheFile(filesFound.keySet());
@@ -85,10 +82,8 @@ public class CDXIndexCache extends CombiningMultiFileBasedCache<Long> implements
     /**
      * Concatenate a set of files into a single file.
      *
-     * @param files
-     *            The files to concatenate.
-     * @param resultFile
-     *            The file where the files are concatenated into.
+     * @param files The files to concatenate.
+     * @param resultFile The file where the files are concatenated into.
      */
     private static void concatenateFiles(Collection<File> files, File resultFile) {
         try {

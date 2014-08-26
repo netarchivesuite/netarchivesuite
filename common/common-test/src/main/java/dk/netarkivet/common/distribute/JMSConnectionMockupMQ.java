@@ -72,16 +72,15 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.TestJob;
 
 /**
- * A MockUp message queue, that generates a connection and destinations suitable
- * for testing.
+ * A MockUp message queue, that generates a connection and destinations suitable for testing.
  */
-@SuppressWarnings({ "rawtypes", "unused", "serial" })
+@SuppressWarnings({"rawtypes", "unused", "serial"})
 public class JMSConnectionMockupMQ extends JMSConnection {
     private static final Log log = LogFactory.getLog(JMSConnectionMockupMQ.class);
 
     /**
-     * A set of threads where onMessage has been called. This object is notified
-     * when all threads have finished executing.
+     * A set of threads where onMessage has been called. This object is notified when all threads have finished
+     * executing.
      */
     protected final Set<Thread> concurrentTasksToComplete = Collections.synchronizedSet(new HashSet<Thread>());
     /**
@@ -136,8 +135,7 @@ public class JMSConnectionMockupMQ extends JMSConnection {
     /**
      * Does nothing.
      *
-     * @param e
-     *            The exception to ignore :-)
+     * @param e The exception to ignore :-)
      */
     public void onException(JMSException e) {
         // Ignore
@@ -152,8 +150,7 @@ public class JMSConnectionMockupMQ extends JMSConnection {
     }
 
     /**
-     * Waits until all threads where onMessage has been called have finished
-     * executing.
+     * Waits until all threads where onMessage has been called have finished executing.
      */
     public void waitForConcurrentTasksToFinish() {
         synchronized (concurrentTasksToComplete) {
@@ -170,8 +167,7 @@ public class JMSConnectionMockupMQ extends JMSConnection {
     /**
      * Wrap a NetarkivetMessage into an ObjectMessage
      *
-     * @param nMsg
-     *            a NetarkivetMessage
+     * @param nMsg a NetarkivetMessage
      *
      * @return an ObjectMessage
      */
@@ -186,10 +182,8 @@ public class JMSConnectionMockupMQ extends JMSConnection {
     /**
      * For testing purposes: Set the ID of a message
      *
-     * @param msg
-     *            The message to set the id on
-     * @param id
-     *            the new id
+     * @param msg The message to set the id on
+     * @param id the new id
      */
     public static void updateMsgID(NetarkivetMessage msg, String id) {
         msg.updateId(id);
@@ -204,8 +198,7 @@ public class JMSConnectionMockupMQ extends JMSConnection {
     /**
      * Returns a list of all MessageListeners listening to a particular channel
      *
-     * @param channel
-     *            The channel
+     * @param channel The channel
      * @return list of listeners
      */
     public List<MessageListener> getListeners(ChannelID channel) {

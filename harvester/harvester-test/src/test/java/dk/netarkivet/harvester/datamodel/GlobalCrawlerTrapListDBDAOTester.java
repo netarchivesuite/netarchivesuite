@@ -45,7 +45,7 @@ import dk.netarkivet.common.exceptions.UnknownID;
 /**
  * Unitests for the class GlobalCrawlerTrapListDBDAO.
  */
-@SuppressWarnings({ "unused" })
+@SuppressWarnings({"unused"})
 public class GlobalCrawlerTrapListDBDAOTester extends DataModelTestCase {
 
     GlobalCrawlerTrapList list1;

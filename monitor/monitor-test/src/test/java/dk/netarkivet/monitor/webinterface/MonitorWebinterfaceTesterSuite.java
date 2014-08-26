@@ -51,7 +51,7 @@ public class MonitorWebinterfaceTesterSuite {
     }
 
     public static void main(String args[]) {
-        String args2[] = { "-noloading", MonitorWebinterfaceTesterSuite.class.getName() };
+        String args2[] = {"-noloading", MonitorWebinterfaceTesterSuite.class.getName()};
         TestRunner.main(args2);
     }
 }

@@ -51,9 +51,8 @@ import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
- * BitArchiveAdminData test class. Unfortunately, in unit tests there is no way
- * I can be sure to have two directories with different amounts of space free,
- * so first dir is always used...
+ * BitArchiveAdminData test class. Unfortunately, in unit tests there is no way I can be sure to have two directories
+ * with different amounts of space free, so first dir is always used...
  */
 
 public class BitarchiveAdminTester {
@@ -61,7 +60,7 @@ public class BitarchiveAdminTester {
     public static final File WORKING_DIR = new File(DATA_DIR, "working");
     public static final File BA_DIR_1 = new File(WORKING_DIR, "badir1");
     public static final File BA_DIR_2 = new File(WORKING_DIR, "badir2");
-    public static final String[] BA_DIR_ALL = { BA_DIR_1.getPath(), BA_DIR_2.getPath() };
+    public static final String[] BA_DIR_ALL = {BA_DIR_1.getPath(), BA_DIR_2.getPath()};
     private static final File NOT_BA_DIR = new File(WORKING_DIR, "nobadir");
     public static final File ORIGINALS_DIR = new File(DATA_DIR, "originals");
     private BitarchiveAdmin ad;

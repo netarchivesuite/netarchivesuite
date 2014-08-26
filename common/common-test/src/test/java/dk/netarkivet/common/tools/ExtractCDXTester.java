@@ -41,8 +41,7 @@ import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 
 /**
- * We do not test behaviour on bad ARC files, relying on the unit test of
- * ExtractCDXJob.
+ * We do not test behaviour on bad ARC files, relying on the unit test of ExtractCDXJob.
  */
 public class ExtractCDXTester {
     private PreventSystemExit pse = new PreventSystemExit();
@@ -75,7 +74,7 @@ public class ExtractCDXTester {
     @Test
     public void testMainOneFile() {
         File arcfile = TestInfo.ARC1;
-        ExtractCDX.main(new String[] { arcfile.getAbsolutePath() });
+        ExtractCDX.main(new String[] {arcfile.getAbsolutePath()});
         List<CDXRecord> rList = getRecords();
         assertEquals("Output CDX records should be 1-1 with input ARC file records", 1, rList.size());
         assertMatches(rList, 0, TestInfo.ARC1_URI, TestInfo.ARC1_MIME, TestInfo.ARC1_CONTENT);
@@ -86,7 +85,7 @@ public class ExtractCDXTester {
      */
     @Test
     public void testMainSeveralFiles() {
-        ExtractCDX.main(new String[] { TestInfo.ARC1.getAbsolutePath(), TestInfo.ARC2.getAbsolutePath() });
+        ExtractCDX.main(new String[] {TestInfo.ARC1.getAbsolutePath(), TestInfo.ARC2.getAbsolutePath()});
         List<CDXRecord> rList = getRecords();
         assertEquals("Output CDX records should be 1-1 with input ARC file records", 2, rList.size());
         assertMatches(rList, 0, TestInfo.ARC1_URI, TestInfo.ARC1_MIME, TestInfo.ARC1_CONTENT);
@@ -99,7 +98,7 @@ public class ExtractCDXTester {
     @Test
     public void testMainNonArc() {
         try {
-            ExtractCDX.main(new String[] { TestInfo.ARC1.getAbsolutePath(), TestInfo.INDEX_FILE.getAbsolutePath() });
+            ExtractCDX.main(new String[] {TestInfo.ARC1.getAbsolutePath(), TestInfo.INDEX_FILE.getAbsolutePath()});
             fail("Calling ExtractCDX with non-arc file should System.exit");
         } catch (SecurityException e) {
             // Expected
@@ -135,9 +134,8 @@ public class ExtractCDXTester {
     }
 
     /**
-     * Asserts that the nth record in the given list has the specified uri and
-     * mimetype, and the the length field matches the length of the given
-     * content.
+     * Asserts that the nth record in the given list has the specified uri and mimetype, and the the length field
+     * matches the length of the given content.
      */
     private void assertMatches(List<CDXRecord> rList, int index, String uri, String mime, String content) {
         CDXRecord rec = rList.get(index);

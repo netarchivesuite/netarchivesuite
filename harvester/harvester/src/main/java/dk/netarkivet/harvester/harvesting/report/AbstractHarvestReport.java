@@ -57,34 +57,30 @@ import dk.netarkivet.harvester.harvesting.distribute.DomainStats;
  * Base implementation for a harvest report.
  *
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public abstract class AbstractHarvestReport implements HarvestReport {
 
     /** The logger for this class. */
     private static final Logger log = LoggerFactory.getLogger(AbstractHarvestReport.class);
 
     /**
-     * Strings found in the progress-statistics.log, used to devise the default
-     * stop reason for domains.
+     * Strings found in the progress-statistics.log, used to devise the default stop reason for domains.
      */
     public static enum ProgressStatisticsConstants {
 
         /**
-         * String in crawl.log, that Heritrix writes as the last entry in the
-         * progress-statistics.log.
+         * String in crawl.log, that Heritrix writes as the last entry in the progress-statistics.log.
          */
         ORDERLY_FINISH("CRAWL ENDED"),
 
         /**
-         * This is written when Heritrix terminates the job due to its timelimit
-         * (max-time-sec) being reached.
+         * This is written when Heritrix terminates the job due to its timelimit (max-time-sec) being reached.
          */
         TIMELIMIT_EXCEEDED("Timelimit hit"),
 
         /**
-         * String which shows that the harvest was deliberately aborted from the
-         * Heritrix GUI or forcibly stopped by the Netarchive Suite software due
-         * to an inactivity timeout.
+         * String which shows that the harvest was deliberately aborted from the Heritrix GUI or forcibly stopped by the
+         * Netarchive Suite software due to an inactivity timeout.
          */
         HARVEST_ABORTED("Ended by operator");
 
@@ -94,8 +90,7 @@ public abstract class AbstractHarvestReport implements HarvestReport {
         /**
          * Constructor for this enum class.
          * 
-         * @param pattern
-         *            The pattern associated with a given enum value.
+         * @param pattern The pattern associated with a given enum value.
          */
         ProgressStatisticsConstants(String pattern) {
             this.pattern = pattern;
@@ -110,25 +105,22 @@ public abstract class AbstractHarvestReport implements HarvestReport {
     private transient HeritrixFiles heritrixFiles;
 
     /**
-     * The default reason why we stopped harvesting this domain. This value is
-     * set by looking for a CRAWL ENDED in the crawl.log.
+     * The default reason why we stopped harvesting this domain. This value is set by looking for a CRAWL ENDED in the
+     * crawl.log.
      */
     private StopReason defaultStopReason;
 
     /**
-     * Default constructor that does nothing. The real construction is supposed
-     * to be done in the subclasses by filling out the domainStats map with
-     * crawl results.
+     * Default constructor that does nothing. The real construction is supposed to be done in the subclasses by filling
+     * out the domainStats map with crawl results.
      */
     public AbstractHarvestReport() {
     }
 
     /**
-     * Constructor from Heritrix report files. Subclasses might use a different
-     * set of Heritrix reports.
+     * Constructor from Heritrix report files. Subclasses might use a different set of Heritrix reports.
      * 
-     * @param files
-     *            the set of Heritrix reports.
+     * @param files the set of Heritrix reports.
      */
     public AbstractHarvestReport(HeritrixFiles files) {
         ArgumentNotValid.checkNotNull(files, "files");
@@ -138,8 +130,7 @@ public abstract class AbstractHarvestReport implements HarvestReport {
     }
 
     /**
-     * Pre-processing happens when the report is built just at the end of the
-     * crawl, before the ARC files upload.
+     * Pre-processing happens when the report is built just at the end of the crawl, before the ARC files upload.
      */
     @Override
     public void preProcess(HeritrixFiles files) {
@@ -163,8 +154,7 @@ public abstract class AbstractHarvestReport implements HarvestReport {
     }
 
     /**
-     * Post-processing happens on the scheduler side when ARC files have been
-     * uploaded.
+     * Post-processing happens on the scheduler side when ARC files have been uploaded.
      */
     @Override
     public abstract void postProcess(Job job);
@@ -175,8 +165,7 @@ public abstract class AbstractHarvestReport implements HarvestReport {
     }
 
     /**
-     * Returns the set of domain names that are contained in hosts-report.txt
-     * (i.e. host names mapped to domains)
+     * Returns the set of domain names that are contained in hosts-report.txt (i.e. host names mapped to domains)
      *
      * @return a Set of Strings
      */
@@ -188,11 +177,9 @@ public abstract class AbstractHarvestReport implements HarvestReport {
     /**
      * Get the number of objects found for the given domain.
      *
-     * @param domainName
-     *            A domain name (as given by getDomainNames())
+     * @param domainName A domain name (as given by getDomainNames())
      * @return How many objects were collected for that domain
-     * @throws ArgumentNotValid
-     *             if null or empty domainName
+     * @throws ArgumentNotValid if null or empty domainName
      */
     @Override
     public final Long getObjectCount(String domainName) {
@@ -207,12 +194,9 @@ public abstract class AbstractHarvestReport implements HarvestReport {
     /**
      * Get the number of bytes downloaded for the given domain.
      *
-     * @param domainName
-     *            A domain name (as given by getDomainNames())
-     * @return How many bytes were collected for that domain or null if
-     *         information available for this domain.
-     * @throws ArgumentNotValid
-     *             if null or empty domainName
+     * @param domainName A domain name (as given by getDomainNames())
+     * @return How many bytes were collected for that domain or null if information available for this domain.
+     * @throws ArgumentNotValid if null or empty domainName
      */
     @Override
     public final Long getByteCount(String domainName) {
@@ -227,12 +211,9 @@ public abstract class AbstractHarvestReport implements HarvestReport {
     /**
      * Get the StopReason for the given domain.
      * 
-     * @param domainName
-     *            A domain name (as given by getDomainNames())
-     * @return the StopReason for the given domain or null, if no stopreason
-     *         found for this domain
-     * @throws ArgumentNotValid
-     *             if null or empty domainName
+     * @param domainName A domain name (as given by getDomainNames())
+     * @return the StopReason for the given domain or null, if no stopreason found for this domain
+     * @throws ArgumentNotValid if null or empty domainName
      */
     @Override
     public final StopReason getStopReason(String domainName) {
@@ -252,11 +233,10 @@ public abstract class AbstractHarvestReport implements HarvestReport {
     }
 
     /**
-     * Attempts to get an already existing {@link DomainStats} object for that
-     * domain, and if not found creates one with zero values.
+     * Attempts to get an already existing {@link DomainStats} object for that domain, and if not found creates one with
+     * zero values.
      * 
-     * @param domainName
-     *            the name of the domain to get DomainStats for.
+     * @param domainName the name of the domain to get DomainStats for.
      * @return a DomainStats object for the given domain-name.
      */
     protected DomainStats getOrCreateDomainStats(String domainName) {
@@ -272,13 +252,10 @@ public abstract class AbstractHarvestReport implements HarvestReport {
     /**
      * Find out whether we stopped normally in progress statistics log.
      * 
-     * @param logFile
-     *            A progress-statistics.log file.
-     * @return StopReason.DOWNLOAD_COMPLETE for progress statistics ending with
-     *         CRAWL ENDED, StopReason.DOWNLOAD_UNFINISHED otherwise or if file
-     *         does not exist.
-     * @throws ArgumentNotValid
-     *             on null argument.
+     * @param logFile A progress-statistics.log file.
+     * @return StopReason.DOWNLOAD_COMPLETE for progress statistics ending with CRAWL ENDED,
+     *         StopReason.DOWNLOAD_UNFINISHED otherwise or if file does not exist.
+     * @throws ArgumentNotValid on null argument.
      */
     public static StopReason findDefaultStopReason(File logFile) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(logFile, "File logFile");
@@ -300,13 +277,10 @@ public abstract class AbstractHarvestReport implements HarvestReport {
     }
 
     /**
-     * Computes the domain-name/byte-count and domain-name/object-count and
-     * domain-name/stopreason maps for a crawl.log.
+     * Computes the domain-name/byte-count and domain-name/object-count and domain-name/stopreason maps for a crawl.log.
      *
-     * @param file
-     *            the local file to be processed
-     * @throws IOFailure
-     *             if there is problem reading the file
+     * @param file the local file to be processed
+     * @throws IOFailure if there is problem reading the file
      */
     private void parseCrawlLog(File file) throws IOFailure {
         // read whether or not to disregard the SeedURL information
@@ -346,10 +320,8 @@ public abstract class AbstractHarvestReport implements HarvestReport {
     /**
      * Processes a harvest-line, updating the object and byte maps.
      *
-     * @param line
-     *            the line to process.
-     * @param disregardSeedUrlInfo
-     *            Boolean saying whether or not to disregard SeedURL Information
+     * @param line the line to process.
+     * @param disregardSeedUrlInfo Boolean saying whether or not to disregard SeedURL Information
      */
     private void processHarvestLine(final String line, boolean disregardSeedUrlInfo) throws ArgumentNotValid {
         // A legal crawl log line has at least 11 parts, + optional annotations
@@ -472,14 +444,11 @@ public abstract class AbstractHarvestReport implements HarvestReport {
     }
 
     /**
-     * Extract DomainName from URI string. Does not handle Danish characters in
-     * URI.
+     * Extract DomainName from URI string. Does not handle Danish characters in URI.
      * 
-     * @param uriAsString
-     *            a given URI as string.
+     * @param uriAsString a given URI as string.
      * @return the domainName if possible or null, if not possible
-     * @throws URIException
-     *             If unable to create valid URI from the given string
+     * @throws URIException If unable to create valid URI from the given string
      */
     private String getDomainNameFromURIString(String uriAsString) throws URIException {
         UURI uuri = new FixedUURI(uriAsString, false);

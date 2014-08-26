@@ -28,8 +28,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Utility class for presenting the same interface record header API for both
- * ARC and WARC record headers.
+ * Utility class for presenting the same interface record header API for both ARC and WARC record headers.
  */
 public abstract class ArchiveHeaderBase {
 
@@ -42,8 +41,7 @@ public abstract class ArchiveHeaderBase {
     /**
      * Return a header value object.
      * 
-     * @param key
-     *            header key
+     * @param key header key
      * @return header value object
      */
     public abstract Object getHeaderValue(String key);
@@ -51,8 +49,7 @@ public abstract class ArchiveHeaderBase {
     /**
      * Return a header value string.
      * 
-     * @param key
-     *            header key
+     * @param key header key
      * @return header value string
      */
     public abstract String getHeaderStringValue(String key);

@@ -47,8 +47,8 @@ public class SiteSectionTester {
 
     @Test
     public void testGetTitle() throws Exception {
-        SiteSection site = new SiteSection("testSite", "pref", 2, new String[][] { { "page1", "title1" },
-                { "page2", "pagetitle;details.for.job" }, { "page3", "title3" } }, "HarvestDefinition",
+        SiteSection site = new SiteSection("testSite", "pref", 2, new String[][] { {"page1", "title1"},
+                {"page2", "pagetitle;details.for.job"}, {"page3", "title3"}}, "HarvestDefinition",
                 "dk.netarkivet.harvester.Translations") {
             public void initialize() {
             }
@@ -165,7 +165,7 @@ public class SiteSectionTester {
         }
 
         try {
-            new SiteSection("b", "e", 1, new String[][] { { "foo" } }, "HarvestDefinition",
+            new SiteSection("b", "e", 1, new String[][] {{"foo"}}, "HarvestDefinition",
                     "dk.netarkivet.harvester.Translations") {
                 public void initialize() {
                 }
@@ -178,7 +178,7 @@ public class SiteSectionTester {
         }
 
         try {
-            new SiteSection("b", "e", 1, new String[][] { { "foo", "bar" }, { "and", "some", "more" } },
+            new SiteSection("b", "e", 1, new String[][] { {"foo", "bar"}, {"and", "some", "more"}},
                     "HarvestDefinition", "dk.netarkivet.harvester.Translations") {
                 public void initialize() {
                 }
@@ -191,7 +191,7 @@ public class SiteSectionTester {
         }
 
         try {
-            new SiteSection("b", "e", 1, new String[][] { { "foo", "bar" }, { "and", "some", "more" } },
+            new SiteSection("b", "e", 1, new String[][] { {"foo", "bar"}, {"and", "some", "more"}},
                     "HarvestDefinition", null) {
                 public void initialize() {
                 }
@@ -204,7 +204,7 @@ public class SiteSectionTester {
         }
 
         // Must also be able to create a working object.
-        new SiteSection("b", "e", 1, new String[][] { { "foo", "bar" }, { "and", "more" } }, "HarvestDefinition",
+        new SiteSection("b", "e", 1, new String[][] { {"foo", "bar"}, {"and", "more"}}, "HarvestDefinition",
                 "dk.netarkivet.harvester.Translations") {
             public void initialize() {
             }
@@ -215,11 +215,9 @@ public class SiteSectionTester {
     }
 
     /**
-     * Verify functionality of static method SiteSection.getSections(). TLR have
-     * experienced strange effect, where left menu consisted of the entries
-     * duplicated as follows: Definitioner Definitioner HøstningsStatus
-     * HøstningsStatus Bitbevaring Bitbevaring Kvalitetssikring KvalitetsSikring
-     * Systemstatus Systemstatus
+     * Verify functionality of static method SiteSection.getSections(). TLR have experienced strange effect, where left
+     * menu consisted of the entries duplicated as follows: Definitioner Definitioner HøstningsStatus HøstningsStatus
+     * Bitbevaring Bitbevaring Kvalitetssikring KvalitetsSikring Systemstatus Systemstatus
      *
      * This is rapported as bug 879.
      */
@@ -252,7 +250,7 @@ public class SiteSectionTester {
      */
     @Test
     public void testGetDirname() throws Exception {
-        SiteSection site = new SiteSection("b", "e", 1, new String[][] { { "foo", "bar" }, { "and", "more" } },
+        SiteSection site = new SiteSection("b", "e", 1, new String[][] { {"foo", "bar"}, {"and", "more"}},
                 "HarvestDefinition", "dk.netarkivet.harvester.Translations") {
             public void initialize() {
             }
@@ -288,8 +286,8 @@ public class SiteSectionTester {
 
     @Test
     public void testGenerateNavigationTree() throws Exception {
-        SiteSection site = new SiteSection("table.job.harvestname", "pref", 2, new String[][] { { "page1", "title1" },
-                { "page2", "pagetitle;details.for.job" }, { "page3", "title3" } }, "HarvestDefinition",
+        SiteSection site = new SiteSection("table.job.harvestname", "pref", 2, new String[][] { {"page1", "title1"},
+                {"page2", "pagetitle;details.for.job"}, {"page3", "title3"}}, "HarvestDefinition",
                 "dk.netarkivet.harvester.Translations") {
             public void initialize() {
             }

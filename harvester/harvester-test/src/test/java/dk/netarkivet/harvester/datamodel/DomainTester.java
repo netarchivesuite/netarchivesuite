@@ -127,7 +127,7 @@ public class DomainTester extends DataModelTestCase {
         wd.addSeedList(TestInfo.seedlist);
 
         DomainConfiguration newcfg = new DomainConfiguration("Deep", wd,
-                Arrays.asList(new SeedList[] { TestInfo.seedlist }), new ArrayList<Password>());
+                Arrays.asList(new SeedList[] {TestInfo.seedlist}), new ArrayList<Password>());
 
         newcfg.setOrderXmlName(TestInfo.ORDER_XML_NAME);
         newcfg.setMaxObjects(10);
@@ -207,8 +207,8 @@ public class DomainTester extends DataModelTestCase {
 
         /* Test invalid configuration parameters */
         Domain d = TestInfo.getDefaultDomain();
-        DomainConfiguration cfg = new DomainConfiguration("test", d,
-                Arrays.asList(new SeedList[] { TestInfo.seedlist }), new ArrayList<Password>());
+        DomainConfiguration cfg = new DomainConfiguration("test", d, Arrays.asList(new SeedList[] {TestInfo.seedlist}),
+                new ArrayList<Password>());
 
         try {
             cfg.setOrderXmlName("");
@@ -319,8 +319,8 @@ public class DomainTester extends DataModelTestCase {
     }
 
     /**
-     * Test removal of a configuration. Removing the default configuration is
-     * not allowed. At least one cfg must always exists.
+     * Test removal of a configuration. Removing the default configuration is not allowed. At least one cfg must always
+     * exists.
      */
     @Test
     public void testRemoveConfiguration() {
@@ -331,7 +331,7 @@ public class DomainTester extends DataModelTestCase {
         DomainConfiguration cfg1 = TestInfo.getDefaultConfig(wd);
 
         DomainConfiguration cfg2 = new DomainConfiguration("Another", wd,
-                Arrays.asList(new SeedList[] { TestInfo.seedlist }), new ArrayList<Password>());
+                Arrays.asList(new SeedList[] {TestInfo.seedlist}), new ArrayList<Password>());
         cfg1.setOrderXmlName(TestInfo.ORDER_XML_NAME);
         cfg2.setOrderXmlName(TestInfo.ORDER_XML_NAME);
         wd.addConfiguration(cfg1);
@@ -366,8 +366,8 @@ public class DomainTester extends DataModelTestCase {
     public void testUpdateConfiguration() throws Exception {
         Domain d = Domain.getDefaultDomain(TestInfo.DEFAULTNEWDOMAINNAME);
         DomainConfiguration conf = d.getDefaultConfiguration();
-        final List<SeedList> seedlists = Arrays.asList(new SeedList[] { d.getSeedList(Settings
-                .get(HarvesterSettings.DEFAULT_SEEDLIST)) });
+        final List<SeedList> seedlists = Arrays.asList(new SeedList[] {d.getSeedList(Settings
+                .get(HarvesterSettings.DEFAULT_SEEDLIST))});
         try {
             DomainConfiguration conf2 = new DomainConfiguration(TestInfo.CONFIGURATION_NAMEJOB4, d, seedlists,
                     new ArrayList<Password>());
@@ -378,7 +378,7 @@ public class DomainTester extends DataModelTestCase {
         }
         d.addPassword(TestInfo.password);
         DomainConfiguration conf2 = new DomainConfiguration(conf.getName(), d, seedlists,
-                Arrays.asList(new Password[] { TestInfo.password }));
+                Arrays.asList(new Password[] {TestInfo.password}));
         d.updateConfiguration(conf2);
         DomainConfiguration conf3 = d.getDefaultConfiguration();
         assertEquals("Default config must now equals new config", conf2, conf3);
@@ -500,8 +500,7 @@ public class DomainTester extends DataModelTestCase {
     }
 
     /**
-     * Removing the last seed list is not allowed. At least one seed list must
-     * always exists.
+     * Removing the last seed list is not allowed. At least one seed list must always exists.
      */
     @Test
     public void testRemoveSeedList() {
@@ -532,7 +531,7 @@ public class DomainTester extends DataModelTestCase {
         wd.addConfiguration(cfg1);
 
         DomainConfiguration cfg2 = new DomainConfiguration("Deep", wd,
-                Arrays.asList(new SeedList[] { TestInfo.seedlist }), new ArrayList<Password>());
+                Arrays.asList(new SeedList[] {TestInfo.seedlist}), new ArrayList<Password>());
         wd.addConfiguration(cfg2);
 
         Iterator<DomainConfiguration> cfglist = wd.getAllConfigurations();
@@ -596,12 +595,10 @@ public class DomainTester extends DataModelTestCase {
     }
 
     /*
-     * public void testgetHistoricalDataInvalidParams() { Domain domain =
-     * Domain.getDefaultDomain("itu.dk");
+     * public void testgetHistoricalDataInvalidParams() { Domain domain = Domain.getDefaultDomain("itu.dk");
      * 
-     * try { DomainHistory domainHistory = new DomainHistory(null);
-     * fail("Parameter not be null"); } catch (ArgumentNotValid e) { //expected
-     * } }
+     * try { DomainHistory domainHistory = new DomainHistory(null); fail("Parameter not be null"); } catch
+     * (ArgumentNotValid e) { //expected } }
      */
     // test by adding informations to Harvest
     @Test
@@ -891,8 +888,7 @@ public class DomainTester extends DataModelTestCase {
     }
 
     /**
-     * Test that we have a sensible regexp for checking validity of domain
-     * names.
+     * Test that we have a sensible regexp for checking validity of domain names.
      *
      * @throws Exception
      */
@@ -1061,11 +1057,10 @@ public class DomainTester extends DataModelTestCase {
     }
 
     /**
-     * Tests that bug 891 and 971 is fixed: Automatic sorting of configurations
-     * and seed-lists on domain-page. Fixed by adding new Domain methods that
-     * return sorted lists: getAllConfigurationsAsSortedList(),
-     * getAllSeedListsAsSortedList(), getAllPasswordsAsSortedList() Note these
-     * methods uses Locale to sort according to language
+     * Tests that bug 891 and 971 is fixed: Automatic sorting of configurations and seed-lists on domain-page. Fixed by
+     * adding new Domain methods that return sorted lists: getAllConfigurationsAsSortedList(),
+     * getAllSeedListsAsSortedList(), getAllPasswordsAsSortedList() Note these methods uses Locale to sort according to
+     * language
      */
     @Test
     public void testGetSortedSeedlistAndDomainConfigurationsAndPasswords() {
@@ -1289,10 +1284,8 @@ public class DomainTester extends DataModelTestCase {
     /**
      * Make a clone of param config and let its name be nameOfClone.
      * 
-     * @param config
-     *            a given domainconfig
-     * @param nameOfClone
-     *            The name of the cloned config
+     * @param config a given domainconfig
+     * @param nameOfClone The name of the cloned config
      * @return a clone of config
      */
     private DomainConfiguration cloneConfigWithNewName(DomainConfiguration config, String nameOfClone) {
@@ -1317,10 +1310,8 @@ public class DomainTester extends DataModelTestCase {
     /**
      * Make a clone of the given password with a new name.
      * 
-     * @param thePassword
-     *            a given Password
-     * @param nameOfClone
-     *            the name of the cloned password
+     * @param thePassword a given Password
+     * @param nameOfClone the name of the cloned password
      * @return a clone of thePassword
      */
     private Password clonePasswordWithNewName(Password thePassword, String nameOfClone) {

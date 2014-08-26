@@ -33,9 +33,7 @@ public class ReadOnlyByteArray {
     /**
      * Creates a new instance based on the given array.
      *
-     * @param array
-     *            Array to provide read-only access to. The array will not be
-     *            copied by this class.
+     * @param array Array to provide read-only access to. The array will not be copied by this class.
      */
     public ReadOnlyByteArray(byte[] array) {
         this.array = array;
@@ -53,11 +51,9 @@ public class ReadOnlyByteArray {
     /**
      * Gets the element at the given index.
      *
-     * @param index
-     *            The index to get the element at.
+     * @param index The index to get the element at.
      * @return The byte at the given index.
-     * @throws IndexOutOfBoundsException
-     *             if the index is < 0 or > length()
+     * @throws IndexOutOfBoundsException if the index is < 0 or > length()
      */
     public byte get(int index) {
         return array[index];

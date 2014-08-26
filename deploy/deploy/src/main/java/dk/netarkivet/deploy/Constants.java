@@ -34,8 +34,7 @@ import dk.netarkivet.monitor.MonitorSettings;
 /**
  * Class containing the constant variables.
  * 
- * SETTINGS_ = path to branches from the settings branch. COMPLETE_ = path from
- * beyond the settings branch.
+ * SETTINGS_ = path to branches from the settings branch. COMPLETE_ = path from beyond the settings branch.
  */
 public final class Constants {
 
@@ -182,14 +181,14 @@ public final class Constants {
     static final String[] SETTINGS_HARVEST_SERVERDIR_LEAF = HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR.replace(
             CommonSettings.SETTINGS + ".", "").split("[.]");
     /**
-     * The path to the bitpreservation base dir leaf from settings. Uses the
-     * constant from ArciveSettings, with the 'settings' removed.
+     * The path to the bitpreservation base dir leaf from settings. Uses the constant from ArciveSettings, with the
+     * 'settings' removed.
      */
     static final String[] SETTINGS_ARCHIVE_BP_BASEDIR_LEAF = ArchiveSettings.DIR_ARCREPOSITORY_BITPRESERVATION.replace(
             CommonSettings.SETTINGS + ".", "").split("[.]");
     /**
-     * The path to the arcrepository base dir leaf from settings. Uses the
-     * constant from ArciveSettings, with the 'settings' removed.
+     * The path to the arcrepository base dir leaf from settings. Uses the constant from ArciveSettings, with the
+     * 'settings' removed.
      */
     static final String[] SETTINGS_ARCHIVE_ARC_BASEDIR_LEAF = ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN.replace(
             CommonSettings.SETTINGS + ".", "").split("[.]");
@@ -234,9 +233,9 @@ public final class Constants {
     /** The maximum integer value in a character. */
     public static final int TEST_OFFSET_INTEGER_MAXIMUM_VALUE = 9;
     /** Directories to install under baseFileDir. */
-    public static final String[] BASEFILEDIR_SUBDIRECTORIES = { dk.netarkivet.archive.Constants.FILE_DIRECTORY_NAME,
+    public static final String[] BASEFILEDIR_SUBDIRECTORIES = {dk.netarkivet.archive.Constants.FILE_DIRECTORY_NAME,
             dk.netarkivet.archive.Constants.TEMPORARY_DIRECTORY_NAME,
-            dk.netarkivet.archive.Constants.ATTIC_DIRECTORY_NAME };
+            dk.netarkivet.archive.Constants.ATTIC_DIRECTORY_NAME};
     /**
      * The offset for the digit to replace during test in the monitor jmx port.
      */
@@ -254,13 +253,11 @@ public final class Constants {
      */
     static final int TEST_OFFSET_HERITRIX_GUI_PORT = 2;
     /**
-     * The offset for the digit to replace during test of the port in the
-     * archive database url.
+     * The offset for the digit to replace during test of the port in the archive database url.
      */
     static final int TEST_OFFSET_ARCHIVE_DB_URL_PORT = 2;
     /**
-     * The offset for the digit to replace during test of the port in the
-     * harvest database url.
+     * The offset for the digit to replace during test of the port in the harvest database url.
      */
     static final int TEST_OFFSET_HARVEST_DB_URL_PORT = 2;
     /** The index of the offset part of the test argument. */
@@ -294,33 +291,30 @@ public final class Constants {
     static final String SLF4J_CONFIG_APPLICATION_SUFFIX = ".xml";
 
     /**
-     * The directory for the harvest database in the unpacked NetarchiveSuite.
-     * The default directory for the database file.
+     * The directory for the harvest database in the unpacked NetarchiveSuite. The default directory for the database
+     * file.
      */
     static final String HARVEST_DATABASE_BASE_DIR = "harvestdefinitionbasedir";
     /**
-     * The name of the harvest database in the directory above. The default name
-     * for the database file.
+     * The name of the harvest database in the directory above. The default name for the database file.
      */
     static final String HARVEST_DATABASE_BASE_FILE = "fullhddb.jar";
 
     /**
-     * The path to the base harvestdatabase (the two above combined). This is
-     * the default location for the database.
+     * The path to the base harvestdatabase (the two above combined). This is the default location for the database.
      */
     static final String HARVEST_DATABASE_BASE_PATH = HARVEST_DATABASE_BASE_DIR + SLASH + HARVEST_DATABASE_BASE_FILE;
     /**
-     * The name of the archive database in the database base dir above. This is
-     * the default name of the archive database.
+     * The name of the archive database in the database base dir above. This is the default name of the archive
+     * database.
      */
     static final String ARCHIVE_DATABASE_BASE_FILE = "archivedb.jar";
 
     public static final String ARCHIVE_DATABASE_BASE_DIR = "archivedatabasedir";
 
     /**
-     * The path to the base archive database (the one above combined with the
-     * base database dir). This is the default location for the archive
-     * database.
+     * The path to the base archive database (the one above combined with the base database dir). This is the default
+     * location for the archive database.
      */
     static final String ARCHIVE_DATABASE_BASE_PATH = ARCHIVE_DATABASE_BASE_DIR + SLASH + ARCHIVE_DATABASE_BASE_FILE;
     /** The name of the new modified configuration file for tests. */
@@ -391,7 +385,7 @@ public final class Constants {
 
     // evaluate specific constants
     /** Complete list of settings files to combine to complete settings file. */
-    static final String[] BUILD_SETTING_FILES = { "dk/netarkivet/archive/settings.xml",
+    static final String[] BUILD_SETTING_FILES = {"dk/netarkivet/archive/settings.xml",
             "dk/netarkivet/common/settings.xml",
             "dk/netarkivet/common/distribute/arcrepository/LocalArcRepositoryClientSettings.xml",
             "dk/netarkivet/harvester/settings.xml", "dk/netarkivet/monitor/settings.xml",
@@ -403,7 +397,7 @@ public final class Constants {
             "dk/netarkivet/common/distribute/FTPRemoteFileSettings.xml",
             "dk/netarkivet/common/distribute/HTTPRemoteFileSettings.xml",
             "dk/netarkivet/common/distribute/HTTPSRemoteFileSettings.xml",
-            "dk/netarkivet/common/distribute/JMSConnectionSunMQSettings.xml" };
+            "dk/netarkivet/common/distribute/JMSConnectionSunMQSettings.xml"};
     /** The path to the complete settings file. */
     public static final String BUILD_COMPLETE_SETTINGS_FILE_PATH = "dk/netarkivet/deploy/complete_settings.xml";
     /** The name of the temporary run-file for windows. */
@@ -500,8 +494,7 @@ public final class Constants {
     public static final String MSG_ERROR_NO_BPDB_FILE_FOUND = "Reference to non-existing archive database file "
             + "(-D argument).";
     /**
-     * The error message when the folder with the external jar-library-files
-     * does not exist.
+     * The error message when the folder with the external jar-library-files does not exist.
      */
     public static final String MSG_ERROR_NO_JAR_FOLDER = "Reference to non-existing external jar-folder.";
     /** The error message for wrong deploy-config file extension. */
@@ -530,8 +523,7 @@ public final class Constants {
     /** The error message when IOException during cannocial path of zip file. */
     public static final String MSG_ERROR_ZIP_CANNONICAL_PATH = "The cannonical path of the NetarchiveSuite zip file is invalid.";
     /**
-     * The error message when the environment name for the test instance is
-     * invalid.
+     * The error message when the environment name for the test instance is invalid.
      */
     public static final String MSG_ERROR_INVALID_TEST_ENVIRONMENT_NAME = "The environment name for the test instance was not valid to the "
             + "regular expressions: '" + VALID_REGEX_ENVIRONMENT_NAME + "'. " + "But was given: ";
@@ -547,13 +539,11 @@ public final class Constants {
     /** The error message when the db-kill script cannot be written. */
     public static final String MSG_ERROR_DB_KILL_FILE = "Problems creating the local external_database_kill script.";
     /**
-     * The warning when more than one jmxremote.access or jmxremote.password
-     * file path is defined.
+     * The warning when more than one jmxremote.access or jmxremote.password file path is defined.
      */
     public static final String MSG_WARN_TOO_MANY_JMXREMOTE_FILE_PATHS = "Too many instances of jmxremote.password or jmxremote.access files defined.";
     /**
-     * The warning when the NetarchiveSuite file will be overridden, since
-     * another file with same name exists.
+     * The warning when the NetarchiveSuite file will be overridden, since another file with same name exists.
      */
     public static final String MSG_WARN_ZIPFILE_ALREADY_EXISTS = "Warning: A NetarchiveSuite file already exists. It will be overridden. ";
 
@@ -566,11 +556,9 @@ public final class Constants {
     /**
      * Create the beginning of a scope in XML (e.g. html = \< html \>).
      * 
-     * @param scope
-     *            The name of the XML-scope to have the start created.
+     * @param scope The name of the XML-scope to have the start created.
      * @return The beginning of the XML-scope.
-     * @throws ArgumentNotValid
-     *             If the scope is null or empty.
+     * @throws ArgumentNotValid If the scope is null or empty.
      */
     public static String changeToXMLBeginScope(String scope) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(scope, "String scope");
@@ -580,11 +568,9 @@ public final class Constants {
     /**
      * Create the ending of a scope in XML (e.g. html = \< \html \>).
      * 
-     * @param scope
-     *            The name of the XML-scope to have the end created.
+     * @param scope The name of the XML-scope to have the end created.
      * @return The ending of the XML-scope.
-     * @throws ArgumentNotValid
-     *             If the scope is null or empty.
+     * @throws ArgumentNotValid If the scope is null or empty.
      */
     public static String changeToXMLEndScope(String scope) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(scope, "String scope");
@@ -592,14 +578,11 @@ public final class Constants {
     }
 
     /**
-     * Checks whether a string is valid for environment name. The string is
-     * checked against a regular expression.
+     * Checks whether a string is valid for environment name. The string is checked against a regular expression.
      * 
-     * @param name
-     *            The environment name to validate.
+     * @param name The environment name to validate.
      * @return Whether the environment name is valid.
-     * @throws ArgumentNotValid
-     *             If the name is null or empty.
+     * @throws ArgumentNotValid If the name is null or empty.
      */
     public static boolean validEnvironmentName(String name) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(name, "String name");

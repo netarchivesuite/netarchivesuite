@@ -34,9 +34,8 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 
 /**
- * Converts an asynchronous call to a synchronous call. The method
- * sendAndWaitForOneReply() is a blocking call which responds when a reply is
- * received or returns null on timeout.
+ * Converts an asynchronous call to a synchronous call. The method sendAndWaitForOneReply() is a blocking call which
+ * responds when a reply is received or returns null on timeout.
  *
  */
 public class Synchronizer implements MessageListener {
@@ -47,8 +46,7 @@ public class Synchronizer implements MessageListener {
     private Hashtable<String, NetarkivetMessage> requests;
 
     /**
-     * Collection containing reply messages which have not yet been returned to
-     * the caller.
+     * Collection containing reply messages which have not yet been returned to the caller.
      */
     private Hashtable<String, NetarkivetMessage> replies;
 
@@ -61,11 +59,9 @@ public class Synchronizer implements MessageListener {
     }
 
     /**
-     * Receives replies from a message queue and triggers the blocked call in
-     * sendAndWaitForOneReply().
+     * Receives replies from a message queue and triggers the blocked call in sendAndWaitForOneReply().
      *
-     * @param msg
-     *            an ObjectMessage containing a NetarkivetMessage.
+     * @param msg an ObjectMessage containing a NetarkivetMessage.
      */
     public void onMessage(Message msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
@@ -86,19 +82,14 @@ public class Synchronizer implements MessageListener {
     }
 
     /**
-     * Sends a message to a message queue and blocks the method invocation until
-     * a reply arrives. If it times out a null is returned. If a spurious wakeup
-     * is received and a timeout is set, the method will carry on waiting for
-     * the reply until the total timeout time has been used up. If a spurious
-     * wakeup is received and no timeout is set the method will just go back to
-     * waiting
+     * Sends a message to a message queue and blocks the method invocation until a reply arrives. If it times out a null
+     * is returned. If a spurious wakeup is received and a timeout is set, the method will carry on waiting for the
+     * reply until the total timeout time has been used up. If a spurious wakeup is received and no timeout is set the
+     * method will just go back to waiting
      *
-     * @param msg
-     *            the request message
-     * @param timeout
-     *            the timeout in milliseconds (or zero for no timeout)
-     * @return a reply message from the receiver of the request or null if timed
-     *         out.
+     * @param msg the request message
+     * @param timeout the timeout in milliseconds (or zero for no timeout)
+     * @return a reply message from the receiver of the request or null if timed out.
      */
     public NetarkivetMessage sendAndWaitForOneReply(NetarkivetMessage msg, long timeout) {
         ArgumentNotValid.checkNotNull(msg, "msg");

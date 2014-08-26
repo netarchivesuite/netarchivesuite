@@ -52,8 +52,7 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue;
 
 /**
- * Tests for class DomainDefinition associated with JSP-page
- * Definitions-edit-domain.jsp.
+ * Tests for class DomainDefinition associated with JSP-page Definitions-edit-domain.jsp.
  */
 public class DomainDefinitionTester extends HarvesterWebinterfaceTestCase {
 
@@ -86,20 +85,20 @@ public class DomainDefinitionTester extends HarvesterWebinterfaceTestCase {
 
         DomainDAO ddao = DomainDAO.getInstance();
         Map<String, String[]> parameterMap = new HashMap<String, String[]>();
-        parameterMap.put(Constants.UPDATE_PARAM, new String[] { "1" });
-        parameterMap.put(Constants.DOMAIN_PARAM, new String[] { "netarkivet.dk" });
-        parameterMap.put(Constants.DEFAULT_PARAM, new String[] { "conf2" });
+        parameterMap.put(Constants.UPDATE_PARAM, new String[] {"1"});
+        parameterMap.put(Constants.DOMAIN_PARAM, new String[] {"netarkivet.dk"});
+        parameterMap.put(Constants.DEFAULT_PARAM, new String[] {"conf2"});
         TestServletRequest request = new TestServletRequest();
-        parameterMap.put("configName", new String[] { "new_config" });
-        parameterMap.put("order_xml", new String[] { "OneLevel-order" });
-        parameterMap.put("urlListList", new String[] { "seeds", "defaultseeds" });
-        parameterMap.put(Constants.EDITION_PARAM, new String[] { 1l + "" });
-        parameterMap.put(Constants.CRAWLERTRAPS_PARAM, new String[] { "" });
-        parameterMap.put(Constants.COMMENTS_PARAM, new String[] { "" });
-        parameterMap.put(Constants.ALIAS_PARAM, new String[] { "" });
+        parameterMap.put("configName", new String[] {"new_config"});
+        parameterMap.put("order_xml", new String[] {"OneLevel-order"});
+        parameterMap.put("urlListList", new String[] {"seeds", "defaultseeds"});
+        parameterMap.put(Constants.EDITION_PARAM, new String[] {1l + ""});
+        parameterMap.put(Constants.CRAWLERTRAPS_PARAM, new String[] {""});
+        parameterMap.put(Constants.COMMENTS_PARAM, new String[] {""});
+        parameterMap.put(Constants.ALIAS_PARAM, new String[] {""});
 
-        parameterMap.put(ExtendedFieldConstants.EXTF_PREFIX + "1", new String[] { "test" });
-        parameterMap.put(ExtendedFieldConstants.EXTF_PREFIX + "2", new String[] { "true" });
+        parameterMap.put(ExtendedFieldConstants.EXTF_PREFIX + "1", new String[] {"test"});
+        parameterMap.put(ExtendedFieldConstants.EXTF_PREFIX + "2", new String[] {"true"});
 
         request.setParameterMap(parameterMap);
         I18n I18N = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
@@ -127,13 +126,13 @@ public class DomainDefinitionTester extends HarvesterWebinterfaceTestCase {
         assertEquals("Default configuration should be the default", "defaultconfig", defaultConfig);
         Map<String, String[]> parameterMap = new HashMap<String, String[]>();
         TestServletRequest request = new TestServletRequest();
-        parameterMap.put(Constants.DOMAIN_PARAM, new String[] { "netarkivet.dk" });
-        parameterMap.put(Constants.DEFAULT_PARAM, new String[] { "conf2" });
-        parameterMap.put(Constants.UPDATE_PARAM, new String[] { "1" });
-        parameterMap.put(Constants.EDITION_PARAM, new String[] { edition + "" });
-        parameterMap.put(Constants.CRAWLERTRAPS_PARAM, new String[] { "" });
-        parameterMap.put(Constants.COMMENTS_PARAM, new String[] { "" });
-        parameterMap.put(Constants.ALIAS_PARAM, new String[] { "" });
+        parameterMap.put(Constants.DOMAIN_PARAM, new String[] {"netarkivet.dk"});
+        parameterMap.put(Constants.DEFAULT_PARAM, new String[] {"conf2"});
+        parameterMap.put(Constants.UPDATE_PARAM, new String[] {"1"});
+        parameterMap.put(Constants.EDITION_PARAM, new String[] {edition + ""});
+        parameterMap.put(Constants.CRAWLERTRAPS_PARAM, new String[] {""});
+        parameterMap.put(Constants.COMMENTS_PARAM, new String[] {""});
+        parameterMap.put(Constants.ALIAS_PARAM, new String[] {""});
         request.setParameterMap(parameterMap);
         I18n I18N = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
         PageContext pageContext = new TestPageContext(request);
@@ -149,17 +148,17 @@ public class DomainDefinitionTester extends HarvesterWebinterfaceTestCase {
     public void testAddDomainConfiguration() {
         DomainDAO ddao = DomainDAO.getInstance();
         Map<String, String[]> parameterMap = new HashMap<String, String[]>();
-        parameterMap.put(Constants.UPDATE_PARAM, new String[] { "1" });
-        parameterMap.put(Constants.DOMAIN_PARAM, new String[] { "netarkivet.dk" });
-        parameterMap.put(Constants.DEFAULT_PARAM, new String[] { "conf2" });
+        parameterMap.put(Constants.UPDATE_PARAM, new String[] {"1"});
+        parameterMap.put(Constants.DOMAIN_PARAM, new String[] {"netarkivet.dk"});
+        parameterMap.put(Constants.DEFAULT_PARAM, new String[] {"conf2"});
         TestServletRequest request = new TestServletRequest();
-        parameterMap.put("configName", new String[] { "new_config" });
-        parameterMap.put("order_xml", new String[] { "OneLevel-order" });
-        parameterMap.put("urlListList", new String[] { "seeds", "defaultseeds" });
-        parameterMap.put(Constants.EDITION_PARAM, new String[] { 1l + "" });
-        parameterMap.put(Constants.CRAWLERTRAPS_PARAM, new String[] { "" });
-        parameterMap.put(Constants.COMMENTS_PARAM, new String[] { "" });
-        parameterMap.put(Constants.ALIAS_PARAM, new String[] { "" });
+        parameterMap.put("configName", new String[] {"new_config"});
+        parameterMap.put("order_xml", new String[] {"OneLevel-order"});
+        parameterMap.put("urlListList", new String[] {"seeds", "defaultseeds"});
+        parameterMap.put(Constants.EDITION_PARAM, new String[] {1l + ""});
+        parameterMap.put(Constants.CRAWLERTRAPS_PARAM, new String[] {""});
+        parameterMap.put(Constants.COMMENTS_PARAM, new String[] {""});
+        parameterMap.put(Constants.ALIAS_PARAM, new String[] {""});
         request.setParameterMap(parameterMap);
         I18n I18N = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
         PageContext pageContext = new TestPageContext(request);
@@ -193,17 +192,17 @@ public class DomainDefinitionTester extends HarvesterWebinterfaceTestCase {
     public void testUpdateConfiguration() {
         DomainDAO ddao = DomainDAO.getInstance();
         Map<String, String[]> parameterMap = new HashMap<String, String[]>();
-        parameterMap.put(Constants.UPDATE_PARAM, new String[] { "1" });
-        parameterMap.put(Constants.DOMAIN_PARAM, new String[] { "netarkivet.dk" });
-        parameterMap.put(Constants.DEFAULT_PARAM, new String[] { "conf2" });
+        parameterMap.put(Constants.UPDATE_PARAM, new String[] {"1"});
+        parameterMap.put(Constants.DOMAIN_PARAM, new String[] {"netarkivet.dk"});
+        parameterMap.put(Constants.DEFAULT_PARAM, new String[] {"conf2"});
         TestServletRequest request = new TestServletRequest();
         DomainConfiguration conf = ddao.read("netarkivet.dk").getConfiguration("conf2");
-        parameterMap.put("configName", new String[] { conf.getName() });
-        parameterMap.put("order_xml", new String[] { conf.getOrderXmlName() });
-        parameterMap.put("maxRate", new String[] { "20" });
-        parameterMap.put("maxObjects", new String[] { "10" });
-        parameterMap.put("urlListList", new String[] { "seeds" });
-        parameterMap.put(Constants.EDITION_PARAM, new String[] { 1l + "" });
+        parameterMap.put("configName", new String[] {conf.getName()});
+        parameterMap.put("order_xml", new String[] {conf.getOrderXmlName()});
+        parameterMap.put("maxRate", new String[] {"20"});
+        parameterMap.put("maxObjects", new String[] {"10"});
+        parameterMap.put("urlListList", new String[] {"seeds"});
+        parameterMap.put(Constants.EDITION_PARAM, new String[] {1l + ""});
         request.setParameterMap(parameterMap);
         I18n I18N = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
         PageContext pageContext = new TestPageContext(request);
@@ -234,13 +233,13 @@ public class DomainDefinitionTester extends HarvesterWebinterfaceTestCase {
     public void testUpdateUrlList() {
         DomainDAO ddao = DomainDAO.getInstance();
         Map<String, String[]> parameterMap = new HashMap<String, String[]>();
-        parameterMap.put(Constants.UPDATE_PARAM, new String[] { "1" });
-        parameterMap.put(Constants.DOMAIN_PARAM, new String[] { "netarkivet.dk" });
-        parameterMap.put(Constants.DEFAULT_PARAM, new String[] { "conf2" });
+        parameterMap.put(Constants.UPDATE_PARAM, new String[] {"1"});
+        parameterMap.put(Constants.DOMAIN_PARAM, new String[] {"netarkivet.dk"});
+        parameterMap.put(Constants.DEFAULT_PARAM, new String[] {"conf2"});
         TestServletRequest request = new TestServletRequest();
-        parameterMap.put("urlListName", new String[] { "seeds" });
-        parameterMap.put("seedList", new String[] { "www.netarkivet.dk\nwww.netarchive.dk" });
-        parameterMap.put(Constants.EDITION_PARAM, new String[] { 1l + "" });
+        parameterMap.put("urlListName", new String[] {"seeds"});
+        parameterMap.put("seedList", new String[] {"www.netarkivet.dk\nwww.netarchive.dk"});
+        parameterMap.put(Constants.EDITION_PARAM, new String[] {1l + ""});
         request.setParameterMap(parameterMap);
         I18n I18N = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
         PageContext pageContext = new TestPageContext(request);
@@ -262,14 +261,14 @@ public class DomainDefinitionTester extends HarvesterWebinterfaceTestCase {
     public void testSetCrawlertraps() {
         DomainDAO ddao = DomainDAO.getInstance();
         Map<String, String[]> parameterMap = new HashMap<String, String[]>();
-        parameterMap.put(Constants.UPDATE_PARAM, new String[] { "1" });
-        parameterMap.put(Constants.DOMAIN_PARAM, new String[] { "netarkivet.dk" });
-        parameterMap.put(Constants.DEFAULT_PARAM, new String[] { "conf2" });
+        parameterMap.put(Constants.UPDATE_PARAM, new String[] {"1"});
+        parameterMap.put(Constants.DOMAIN_PARAM, new String[] {"netarkivet.dk"});
+        parameterMap.put(Constants.DEFAULT_PARAM, new String[] {"conf2"});
         TestServletRequest request = new TestServletRequest();
-        parameterMap.put(Constants.CRAWLERTRAPS_PARAM, new String[] { ".*/cgi-bin/.*\n.*/ignore/.*" });
-        parameterMap.put(Constants.COMMENTS_PARAM, new String[] { "" });
-        parameterMap.put(Constants.ALIAS_PARAM, new String[] { "" });
-        parameterMap.put(Constants.EDITION_PARAM, new String[] { 1l + "" });
+        parameterMap.put(Constants.CRAWLERTRAPS_PARAM, new String[] {".*/cgi-bin/.*\n.*/ignore/.*"});
+        parameterMap.put(Constants.COMMENTS_PARAM, new String[] {""});
+        parameterMap.put(Constants.ALIAS_PARAM, new String[] {""});
+        parameterMap.put(Constants.EDITION_PARAM, new String[] {1l + ""});
         request.setParameterMap(parameterMap);
         I18n I18N = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
         PageContext pageContext = new TestPageContext(request);
@@ -283,8 +282,7 @@ public class DomainDefinitionTester extends HarvesterWebinterfaceTestCase {
     }
 
     /**
-     * Test for impl. Traffic Reduction Task 4.1.2 - Add alias definition input
-     * to interfaces.
+     * Test for impl. Traffic Reduction Task 4.1.2 - Add alias definition input to interfaces.
      */
     @Test
     public void testSetAlias() {
@@ -295,36 +293,36 @@ public class DomainDefinitionTester extends HarvesterWebinterfaceTestCase {
             ddao.create(dd);
         }
         Map<String, String[]> parameterMap = new HashMap<String, String[]>();
-        parameterMap.put(Constants.UPDATE_PARAM, new String[] { "1" });
-        parameterMap.put(Constants.DOMAIN_PARAM, new String[] { "netarkivet.dk" });
-        parameterMap.put(Constants.ALIAS_PARAM, new String[] { "kb.dk" });
-        parameterMap.put(Constants.DEFAULT_PARAM, new String[] { "conf2" });
-        parameterMap.put(Constants.EDITION_PARAM, new String[] { 1l + "" });
+        parameterMap.put(Constants.UPDATE_PARAM, new String[] {"1"});
+        parameterMap.put(Constants.DOMAIN_PARAM, new String[] {"netarkivet.dk"});
+        parameterMap.put(Constants.ALIAS_PARAM, new String[] {"kb.dk"});
+        parameterMap.put(Constants.DEFAULT_PARAM, new String[] {"conf2"});
+        parameterMap.put(Constants.EDITION_PARAM, new String[] {1l + ""});
         TestServletRequest request = new TestServletRequest();
-        parameterMap.put(Constants.CRAWLERTRAPS_PARAM, new String[] { "" });
-        parameterMap.put(Constants.COMMENTS_PARAM, new String[] { "" });
+        parameterMap.put(Constants.CRAWLERTRAPS_PARAM, new String[] {""});
+        parameterMap.put(Constants.COMMENTS_PARAM, new String[] {""});
         request.setParameterMap(parameterMap);
         I18n I18N = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
         PageContext pageContext = new TestPageContext(request);
         DomainDefinition.processRequest(pageContext, I18N);
         assertEquals("Netarkivet should be an alias of kb.dk now", "kb.dk", ddao.read("netarkivet.dk").getAliasInfo()
                 .getAliasOf());
-        parameterMap.put(Constants.ALIAS_PARAM, new String[] { "" }); // This
-                                                                      // means
-                                                                      // that
-                                                                      // the
-                                                                      // domain
-                                                                      // is no
-                                                                      // longer
-                                                                      // an
-                                                                      // alias.
-        parameterMap.put(Constants.UPDATE_PARAM, new String[] { "1" });
-        parameterMap.put(Constants.DOMAIN_PARAM, new String[] { "netarkivet.dk" });
+        parameterMap.put(Constants.ALIAS_PARAM, new String[] {""}); // This
+                                                                    // means
+                                                                    // that
+                                                                    // the
+                                                                    // domain
+                                                                    // is no
+                                                                    // longer
+                                                                    // an
+                                                                    // alias.
+        parameterMap.put(Constants.UPDATE_PARAM, new String[] {"1"});
+        parameterMap.put(Constants.DOMAIN_PARAM, new String[] {"netarkivet.dk"});
 
-        parameterMap.put(Constants.DEFAULT_PARAM, new String[] { "conf2" });
-        parameterMap.put(Constants.EDITION_PARAM, new String[] { 2l + "" });
-        parameterMap.put(Constants.CRAWLERTRAPS_PARAM, new String[] { "" });
-        parameterMap.put(Constants.COMMENTS_PARAM, new String[] { "" });
+        parameterMap.put(Constants.DEFAULT_PARAM, new String[] {"conf2"});
+        parameterMap.put(Constants.EDITION_PARAM, new String[] {2l + ""});
+        parameterMap.put(Constants.CRAWLERTRAPS_PARAM, new String[] {""});
+        parameterMap.put(Constants.COMMENTS_PARAM, new String[] {""});
         request = new TestServletRequest();
         request.setParameterMap(parameterMap);
         DomainDefinition.processRequest(pageContext, I18N);

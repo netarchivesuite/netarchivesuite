@@ -46,7 +46,7 @@ import dk.netarkivet.systemtest.page.SelectiveHarvestPageHelper;
 /**
  * The super class for all Selenium based system tests.
  */
-@SuppressWarnings({ "unused" })
+@SuppressWarnings({"unused"})
 public abstract class SeleniumTest extends ExtendedTestCase {
     protected static TestEnvironmentManager environmentManager;
     protected static ApplicationManager applicationManager;
@@ -66,8 +66,8 @@ public abstract class SeleniumTest extends ExtendedTestCase {
     }
 
     /**
-     * Start the test system, either the full system including resetting of
-     * settings/DB, or just reploy of individual component code.
+     * Start the test system, either the full system including resetting of settings/DB, or just reploy of individual
+     * component code.
      */
     private void deployTestSystem() {
         if (System.getProperty("systemtest.deploy", "false").equals("true")) {
@@ -84,8 +84,7 @@ public abstract class SeleniumTest extends ExtendedTestCase {
     }
 
     /**
-     * Defines the default test system startup script to run. May be overridden
-     * by subclasses classes.
+     * Defines the default test system startup script to run. May be overridden by subclasses classes.
      * 
      * @return The startup script to run.
      */
@@ -119,8 +118,7 @@ public abstract class SeleniumTest extends ExtendedTestCase {
     }
 
     /**
-     * Identifies the test on the test system. More concrete this value will be
-     * used for the test environment variable.
+     * Identifies the test on the test system. More concrete this value will be used for the test environment variable.
      */
     protected String getTestX() {
         return System.getProperty("deployable.postfix", "SystemTest");

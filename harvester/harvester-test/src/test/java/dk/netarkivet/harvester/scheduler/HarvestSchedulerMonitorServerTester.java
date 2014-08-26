@@ -79,7 +79,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 /**
  * Tests of the class HarvestSchedulerMonitorServer.
  */
-@SuppressWarnings({ "unused" })
+@SuppressWarnings({"unused"})
 @Ignore("binary derby database not converted to scripts yet")
 public class HarvestSchedulerMonitorServerTester {
 
@@ -165,8 +165,7 @@ public class HarvestSchedulerMonitorServerTester {
     }
 
     /**
-     * Test that we can call onMessage with the expected sequence of messages
-     * for a successful crawl job.
+     * Test that we can call onMessage with the expected sequence of messages for a successful crawl job.
      */
     @Test
     public void testOnMessageGoodJob() {
@@ -201,8 +200,8 @@ public class HarvestSchedulerMonitorServerTester {
     }
 
     /**
-     * Tests what happens if a FAILED message arrives with a crawl report. The
-     * behavior should be identical to the case with a DONE message.
+     * Tests what happens if a FAILED message arrives with a crawl report. The behavior should be identical to the case
+     * with a DONE message.
      */
     @Test
     public void testOnMessageFailedJobWithReport() {
@@ -238,8 +237,7 @@ public class HarvestSchedulerMonitorServerTester {
     }
 
     /**
-     * Test that we can do a failed job with no (ie NULL_REMOTE_FILE) crawl
-     * report returned.
+     * Test that we can do a failed job with no (ie NULL_REMOTE_FILE) crawl report returned.
      */
     @Test
     public void testOnMessageFailedJobNoReport() {
@@ -297,8 +295,7 @@ public class HarvestSchedulerMonitorServerTester {
     }
 
     /**
-     * Send a STARTED message after a DONE message. The STARTED message should
-     * be ignored.
+     * Send a STARTED message after a DONE message. The STARTED message should be ignored.
      */
     @Test
     public void testStartedAfterDone() {
@@ -341,8 +338,7 @@ public class HarvestSchedulerMonitorServerTester {
     }
 
     /**
-     * Send a STARTED CrawlStatusMessage after a Failed message. This STARTED
-     * message should be ignored.
+     * Send a STARTED CrawlStatusMessage after a Failed message. This STARTED message should be ignored.
      */
     @Test
     public void testStartedAfterFailed() {
@@ -466,8 +462,7 @@ public class HarvestSchedulerMonitorServerTester {
     }
 
     /**
-     * Test that receiving a "DONE" directly after a "SUBMITTED" runs ok but is
-     * logged.
+     * Test that receiving a "DONE" directly after a "SUBMITTED" runs ok but is logged.
      */
     @Test
     public void testDoneAfterSubmitted() {
@@ -505,18 +500,14 @@ public class HarvestSchedulerMonitorServerTester {
     /**
      * Test that the stop reason is set correctly.
      *
-     * There are the following cases: Completed domains are set as completed
-     * Domains reaching object limit should be set as object limit reached For
-     * domains reaching the byte limit there are the following cases: - We
-     * reached the harvest byte limit but not yet the config limit - We reached
-     * the config limit
+     * There are the following cases: Completed domains are set as completed Domains reaching object limit should be set
+     * as object limit reached For domains reaching the byte limit there are the following cases: - We reached the
+     * harvest byte limit but not yet the config limit - We reached the config limit
      *
-     * We use a crawl log with the following characteristics: -
-     * statsbiblioteket.dk reached object limit - dr.dk reached byte limit -
-     * kb.dk harvested complete
+     * We use a crawl log with the following characteristics: - statsbiblioteket.dk reached object limit - dr.dk reached
+     * byte limit - kb.dk harvested complete
      *
-     * (netarkivet.dk we fiddle with harvest and config limit to see results but
-     * use the same crawllog)
+     * (netarkivet.dk we fiddle with harvest and config limit to see results but use the same crawllog)
      *
      */
     @Test

@@ -43,16 +43,12 @@ public abstract class DerbySpecifics extends DBSpecifics {
     private static final Logger log = LoggerFactory.getLogger(DerbySpecifics.class);
 
     /**
-     * Get a temporary table for short-time use. The table should be disposed of
-     * with dropTemporaryTable. The table has two columns domain_name
-     * varchar(Constants.MAX_NAME_SIZE) + config_name
-     * varchar(Constants.MAX_NAME_SIZE) All rows in the table must be deleted at
-     * commit or rollback.
+     * Get a temporary table for short-time use. The table should be disposed of with dropTemporaryTable. The table has
+     * two columns domain_name varchar(Constants.MAX_NAME_SIZE) + config_name varchar(Constants.MAX_NAME_SIZE) All rows
+     * in the table must be deleted at commit or rollback.
      *
-     * @param c
-     *            The DB connection to use.
-     * @throws SQLException
-     *             if there is a problem getting the table.
+     * @param c The DB connection to use.
+     * @throws SQLException if there is a problem getting the table.
      * @return The name of the created table
      */
     public String getJobConfigsTmpTable(Connection c) throws SQLException {
@@ -66,14 +62,11 @@ public abstract class DerbySpecifics extends DBSpecifics {
     }
 
     /**
-     * Dispose of a temporary table gotten with getTemporaryTable. This can be
-     * expected to be called from within a finally clause, so it mustn't throw
-     * exceptions.
+     * Dispose of a temporary table gotten with getTemporaryTable. This can be expected to be called from within a
+     * finally clause, so it mustn't throw exceptions.
      *
-     * @param c
-     *            The DB connection to use.
-     * @param tableName
-     *            The name of the temporary table
+     * @param c The DB connection to use.
+     * @param tableName The name of the temporary table
      */
     public void dropJobConfigsTmpTable(Connection c, String tableName) {
         ArgumentNotValid.checkNotNull(c, "Connection c");
@@ -101,56 +94,52 @@ public abstract class DerbySpecifics extends DBSpecifics {
     }
 
     /**
-     * Migrates the 'jobs' table from version 3 to version 4 consisting of a
-     * change of the field forcemaxbytes from int to bigint and setting its
-     * default to -1. Furthermore the default value for field num_configs is set
-     * to 0.
+     * Migrates the 'jobs' table from version 3 to version 4 consisting of a change of the field forcemaxbytes from int
+     * to bigint and setting its default to -1. Furthermore the default value for field num_configs is set to 0.
      * 
-     * @throws IOFailure
-     *             in case of problems in interacting with the database
+     * @throws IOFailure in case of problems in interacting with the database
      */
     protected synchronized void migrateJobsv3tov4() {
         // Change the forcemaxbytes from 'int' to 'bigint'.
         // Procedure for changing the datatype of a derby table was found here:
         // https://issues.apache.org/jira/browse/DERBY-1515
-        String[] sqlStatements = { "ALTER TABLE jobs ADD COLUMN forcemaxbytes_new bigint NOT NULL DEFAULT -1",
+        String[] sqlStatements = {"ALTER TABLE jobs ADD COLUMN forcemaxbytes_new bigint NOT NULL DEFAULT -1",
                 "UPDATE jobs SET forcemaxbytes_new = forcemaxbytes", "ALTER TABLE jobs DROP COLUMN forcemaxbytes",
                 "RENAME COLUMN jobs.forcemaxbytes_new TO forcemaxbytes",
-                "ALTER TABLE jobs ALTER COLUMN num_configs SET DEFAULT 0" };
+                "ALTER TABLE jobs ALTER COLUMN num_configs SET DEFAULT 0"};
         HarvestDBConnection.updateTable("jobs", 4, sqlStatements);
     }
 
     /**
-     * Migrates the 'jobs' table from version 4 to version 5 consisting of
-     * adding new fields 'resubmitted_as_job' and 'submittedDate'.
+     * Migrates the 'jobs' table from version 4 to version 5 consisting of adding new fields 'resubmitted_as_job' and
+     * 'submittedDate'.
      * 
-     * @throws IOFailure
-     *             in case of problems in interacting with the database
+     * @throws IOFailure in case of problems in interacting with the database
      */
     protected synchronized void migrateJobsv4tov5() {
         // Update jobs table to version 5
-        String[] sqlStatements = { "ALTER TABLE jobs ADD COLUMN submitteddate timestamp",
-                "ALTER TABLE jobs ADD COLUMN resubmitted_as_job bigint" };
+        String[] sqlStatements = {"ALTER TABLE jobs ADD COLUMN submitteddate timestamp",
+                "ALTER TABLE jobs ADD COLUMN resubmitted_as_job bigint"};
         HarvestDBConnection.updateTable("jobs", 5, sqlStatements);
     }
 
     /**
-     * Migrates the 'configurations' table from version 3 to version 4. This
-     * consists of altering the default value of field 'maxbytes' to -1.
+     * Migrates the 'configurations' table from version 3 to version 4. This consists of altering the default value of
+     * field 'maxbytes' to -1.
      */
     protected synchronized void migrateConfigurationsv3ov4() {
         // Update configurations table to version 4
-        String[] sqlStatements = { "ALTER TABLE configurations ALTER maxbytes WITH DEFAULT -1" };
+        String[] sqlStatements = {"ALTER TABLE configurations ALTER maxbytes WITH DEFAULT -1"};
         HarvestDBConnection.updateTable("configurations", 4, sqlStatements);
     }
 
     /**
-     * Migrates the 'fullharvests' table from version 2 to version 3. This
-     * consists of altering the default value of field 'maxbytes' to -1.
+     * Migrates the 'fullharvests' table from version 2 to version 3. This consists of altering the default value of
+     * field 'maxbytes' to -1.
      */
     protected synchronized void migrateFullharvestsv2tov3() {
         // Update fullharvests table to version 3
-        String[] sqlStatements = { "ALTER TABLE fullharvests ALTER maxbytes WITH DEFAULT -1" };
+        String[] sqlStatements = {"ALTER TABLE fullharvests ALTER maxbytes WITH DEFAULT -1"};
         HarvestDBConnection.updateTable("fullharvests", 3, sqlStatements);
     }
 
@@ -236,22 +225,22 @@ public abstract class DerbySpecifics extends DBSpecifics {
     // 'configurations', 'fullharvests', and 'jobs'.
 
     /**
-     * Migrates the 'runningjobshistory' table from version 1 to version 2. This
-     * consists of adding the new column 'retiredQueuesCount'.
+     * Migrates the 'runningjobshistory' table from version 1 to version 2. This consists of adding the new column
+     * 'retiredQueuesCount'.
      */
     @Override
     protected void migrateRunningJobsHistoryTableV1ToV2() {
-        String[] sqlStatements = { "ALTER TABLE runningjobshistory ADD COLUMN retiredQueuesCount bigint not null DEFAULT 0" };
+        String[] sqlStatements = {"ALTER TABLE runningjobshistory ADD COLUMN retiredQueuesCount bigint not null DEFAULT 0"};
         HarvestDBConnection.updateTable("runningjobshistory", 2, sqlStatements);
     }
 
     /**
-     * Migrates the 'runningjobsmonitor' table from version 1 to version 2. This
-     * consists of adding the new column 'retiredQueuesCount'.
+     * Migrates the 'runningjobsmonitor' table from version 1 to version 2. This consists of adding the new column
+     * 'retiredQueuesCount'.
      */
     @Override
     protected void migrateRunningJobsMonitorTableV1ToV2() {
-        String[] sqlStatements = { "ALTER TABLE runningjobsmonitor ADD COLUMN retiredQueuesCount bigint not null DEFAULT 0" };
+        String[] sqlStatements = {"ALTER TABLE runningjobsmonitor ADD COLUMN retiredQueuesCount bigint not null DEFAULT 0"};
         HarvestDBConnection.updateTable("runningjobsmonitor", 2, sqlStatements);
     }
 
@@ -260,31 +249,31 @@ public abstract class DerbySpecifics extends DBSpecifics {
         // Change the maxobjects from 'int' to 'bigint'.
         // Procedure for changing the datatype of a derby table was found here:
         // https://issues.apache.org/jira/browse/DERBY-1515
-        String[] sqlStatements = { "ALTER TABLE configurations ADD COLUMN maxobjects_new bigint NOT NULL DEFAULT -1",
+        String[] sqlStatements = {"ALTER TABLE configurations ADD COLUMN maxobjects_new bigint NOT NULL DEFAULT -1",
                 "UPDATE configurations SET maxobjects_new = maxobjects",
                 "ALTER TABLE configurations DROP COLUMN maxobjects",
-                "RENAME COLUMN configurations.maxobjects_new TO maxobjects" };
+                "RENAME COLUMN configurations.maxobjects_new TO maxobjects"};
         HarvestDBConnection.updateTable("configurations", 5, sqlStatements);
     }
 
     @Override
     protected void migrateFullharvestsv3tov4() {
         // Add new bigint field maxjobrunningtime with default 0
-        String[] sqlStatements = { "ALTER TABLE fullharvests ADD COLUMN maxjobrunningtime bigint NOT NULL DEFAULT 0" };
+        String[] sqlStatements = {"ALTER TABLE fullharvests ADD COLUMN maxjobrunningtime bigint NOT NULL DEFAULT 0"};
         HarvestDBConnection.updateTable("fullharvests", 4, sqlStatements);
     }
 
     @Override
     protected void migrateJobsv5tov6() {
         // Add new bigint field with default 0
-        String[] sqlStatements = { "ALTER TABLE jobs ADD COLUMN forcemaxrunningtime bigint NOT NULL DEFAULT 0" };
+        String[] sqlStatements = {"ALTER TABLE jobs ADD COLUMN forcemaxrunningtime bigint NOT NULL DEFAULT 0"};
         HarvestDBConnection.updateTable("jobs", 6, sqlStatements);
     }
 
     @Override
     protected void migrateFullharvestsv4tov5() {
         // Add new bigint field isindexready (0 is not ready, 1 is ready).
-        String[] sqlStatements = { "ALTER TABLE fullharvests ADD COLUMN isindexready int NOT NULL DEFAULT 0" };
+        String[] sqlStatements = {"ALTER TABLE fullharvests ADD COLUMN isindexready int NOT NULL DEFAULT 0"};
         HarvestDBConnection.updateTable("fullharvests", 5, sqlStatements);
     }
 
@@ -323,50 +312,50 @@ public abstract class DerbySpecifics extends DBSpecifics {
 
     @Override
     protected synchronized void migrateJobsv6tov7() {
-        String[] sqlStatements = { "ALTER TABLE jobs ADD COLUMN continuationof BIGINT DEFAULT NULL" };
+        String[] sqlStatements = {"ALTER TABLE jobs ADD COLUMN continuationof BIGINT DEFAULT NULL"};
         HarvestDBConnection.updateTable("jobs", 7, sqlStatements);
     }
 
     @Override
     protected void migrateDomainsv2tov3() {
-        String[] sqlStatements = { "ALTER TABLE domains ADD COLUMN NEW_COLUMN CLOB(64M)",
+        String[] sqlStatements = {"ALTER TABLE domains ADD COLUMN NEW_COLUMN CLOB(64M)",
                 "UPDATE domains SET NEW_COLUMN=crawlertraps", "ALTER TABLE domains DROP COLUMN crawlertraps",
-                "RENAME COLUMN domains.NEW_COLUMN TO crawlertraps" };
+                "RENAME COLUMN domains.NEW_COLUMN TO crawlertraps"};
         HarvestDBConnection.updateTable("domains", 3, sqlStatements);
     }
 
     @Override
     protected void migrateJobsv7tov8() {
-        String[] sqlStatements = { "ALTER TABLE jobs ADD COLUMN creationdate TIMESTAMP DEFAULT NULL" };
+        String[] sqlStatements = {"ALTER TABLE jobs ADD COLUMN creationdate TIMESTAMP DEFAULT NULL"};
         HarvestDBConnection.updateTable("jobs", 8, sqlStatements);
     }
 
     @Override
     protected void migrateJobsv8tov9() {
-        String[] sqlStatements = { "ALTER TABLE jobs ADD COLUMN harvestname_prefix VARCHAR(100) DEFAULT NULL" };
+        String[] sqlStatements = {"ALTER TABLE jobs ADD COLUMN harvestname_prefix VARCHAR(100) DEFAULT NULL"};
         HarvestDBConnection.updateTable("jobs", 9, sqlStatements);
     }
 
     @Override
     protected void migrateHarvestdefinitionsv2tov3() {
-        String[] sqlStatements = { "ALTER TABLE harvestdefinitions ADD COLUMN audience VARCHAR(100) DEFAULT NULL" };
+        String[] sqlStatements = {"ALTER TABLE harvestdefinitions ADD COLUMN audience VARCHAR(100) DEFAULT NULL"};
         HarvestDBConnection.updateTable("harvestdefinitions", 3, sqlStatements);
     }
 
     @Override
     protected void migrateHarvestdefinitionsv3tov4() {
-        String[] sqlStatements = { "ALTER TABLE harvestdefinitions ADD COLUMN channel_id BIGINT DEFAULT NULL" };
+        String[] sqlStatements = {"ALTER TABLE harvestdefinitions ADD COLUMN channel_id BIGINT DEFAULT NULL"};
         HarvestDBConnection.updateTable("harvestdefinitions", 4, sqlStatements);
     }
 
     @Override
     protected void migrateJobsv9tov10() {
-        String[] sqlStatements = { "ALTER TABLE jobs ADD COLUMN channel VARCHAR(300) DEFAULT NULL",
+        String[] sqlStatements = {"ALTER TABLE jobs ADD COLUMN channel VARCHAR(300) DEFAULT NULL",
                 "ALTER TABLE jobs ADD COLUMN snapshot BOOLEAN",
                 "UPDATE jobs SET channel = 'snapshot' WHERE priority=0",
                 "UPDATE jobs SET channel = 'focused' WHERE priority=1",
                 "UPDATE jobs SET snapshot = true WHERE priority=0",
-                "UPDATE jobs SET snapshot = false WHERE priority=1", "ALTER TABLE jobs DROP COLUMN priority" };
+                "UPDATE jobs SET snapshot = false WHERE priority=1", "ALTER TABLE jobs DROP COLUMN priority"};
         HarvestDBConnection.updateTable("jobs", 10, sqlStatements);
     }
 
@@ -380,27 +369,25 @@ public abstract class DerbySpecifics extends DBSpecifics {
                 + "VALUES(\'SNAPSHOT\', true, true, \'Channel for snapshot harvests\')";
         String insertStatementTwo = "INSERT INTO harvestchannel(name, issnapshot, isdefault, comments) "
                 + "VALUES(\'FOCUSED\', false, true, \'Channel for focused harvests\')";
-        HarvestDBConnection.updateTable("harvestchannel", 1, new String[] { createStatement, insertStatementOne,
-                insertStatementTwo });
+        HarvestDBConnection.updateTable("harvestchannel", 1, new String[] {createStatement, insertStatementOne,
+                insertStatementTwo});
     }
 
     /**
-     * Migrates the 'ExtendedFieldTable' from version 1 to version 2 consisting
-     * of adding the maxlen field
+     * Migrates the 'ExtendedFieldTable' from version 1 to version 2 consisting of adding the maxlen field
      */
     protected void migrateExtendedFieldTableV1toV2() {
-        String[] sqlStatements = { "ALTER TABLE extendedfield ADD COLUMN maxlen INT",
-                "ALTER TABLE extendedfield ALTER options SET DATA TYPE VARCHAR(1000)" };
+        String[] sqlStatements = {"ALTER TABLE extendedfield ADD COLUMN maxlen INT",
+                "ALTER TABLE extendedfield ALTER options SET DATA TYPE VARCHAR(1000)"};
         HarvestDBConnection.updateTable("extendedfield", 2, sqlStatements);
     }
 
     /**
-     * Migrates the 'ExtendedFieldValueTable' from version 1 to version 2
-     * changing the maxlen of content to 30000
+     * Migrates the 'ExtendedFieldValueTable' from version 1 to version 2 changing the maxlen of content to 30000
      */
     protected void migrateExtendedFieldTableValueV1toV2() {
-        String[] sqlStatements = { "ALTER TABLE extendedfieldvalue ALTER content SET DATA TYPE VARCHAR(30000)",
-                "ALTER TABLE extendedfieldvalue ALTER content NOT NULL" };
+        String[] sqlStatements = {"ALTER TABLE extendedfieldvalue ALTER content SET DATA TYPE VARCHAR(30000)",
+                "ALTER TABLE extendedfieldvalue ALTER content NOT NULL"};
         HarvestDBConnection.updateTable("extendedfieldvalue", 2, sqlStatements);
     }
 

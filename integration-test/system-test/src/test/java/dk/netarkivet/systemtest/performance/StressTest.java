@@ -86,8 +86,7 @@ public class StressTest extends ExtendedTestCase {
     }
 
     /**
-     * When nodata is true, restore schema only PLUS the ordertemplates table in
-     * the harvestdb.
+     * When nodata is true, restore schema only PLUS the ordertemplates table in the harvestdb.
      * 
      * @param nodata
      * @throws Exception
@@ -190,10 +189,10 @@ public class StressTest extends ExtendedTestCase {
         // Check for Differences. The only allowed differences are in the order
         // of the table fields.
         environmentManager.runCommandWithoutQuotes(envDef
-                + "diff -b -B testdbs_schema.txt.sort proddbs_schema.txt.sort  > test-prod-diff", new int[] { 0, 1 });
+                + "diff -b -B testdbs_schema.txt.sort proddbs_schema.txt.sort  > test-prod-diff", new int[] {0, 1});
         environmentManager.runCommandWithoutQuotes(envDef
-                + "diff -b -B bundleddbs_schema.txt.sort testdbs_schema.txt.sort  > test-bundled-diff", new int[] { 0,
-                1 });
+                + "diff -b -B bundleddbs_schema.txt.sort testdbs_schema.txt.sort  > test-bundled-diff",
+                new int[] {0, 1});
     }
 
 }

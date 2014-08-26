@@ -26,8 +26,7 @@ package dk.netarkivet.archive.arcrepository;
 import java.io.File;
 
 /**
- * Defines test data and directories for the package
- * dk.netarkivet.archive.arcrepository.
+ * Defines test data and directories for the package dk.netarkivet.archive.arcrepository.
  */
 class TestInfo {
 

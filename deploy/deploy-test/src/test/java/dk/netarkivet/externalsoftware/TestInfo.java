@@ -26,13 +26,11 @@ package dk.netarkivet.externalsoftware;
 import java.io.File;
 
 /**
- * Information about directories, and files used by the tests in the
- * dk.netarkivet.externalsoftware package.
+ * Information about directories, and files used by the tests in the dk.netarkivet.externalsoftware package.
  */
 public class TestInfo {
     /**
-     * The data is stored at tests/dk/netarkivet/harvester/harvesting/data to
-     * avoid duplicate templates.
+     * The data is stored at tests/dk/netarkivet/harvester/harvesting/data to avoid duplicate templates.
      */
     static final File TEST_DIR = new File("tests/dk/netarkivet/harvester/harvesting/data/launcher");
     static final File WORKING_DIR = new File(TEST_DIR, "working");

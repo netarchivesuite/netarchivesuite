@@ -29,8 +29,7 @@ package dk.netarkivet.harvester.webinterface;
 public class Constants {
 
     /**
-     * The constructor for this class. Making the constructor private prevents
-     * the class from being instantiated.
+     * The constructor for this class. Making the constructor private prevents the class from being instantiated.
      */
     private Constants() {
     }
@@ -185,9 +184,8 @@ public class Constants {
     public static final String TRAP_DESCRIPTION = "trap_description";
 
     /**
-     * Names of the two directories for the sitesections belonging to the
-     * harvester package, and the directory belonging to the viewerproxy
-     * package.
+     * Names of the two directories for the sitesections belonging to the harvester package, and the directory belonging
+     * to the viewerproxy package.
      */
     public static final String DEFINITIONS_SITESECTION_DIRNAME = "HarvestDefinition";
 
@@ -209,9 +207,8 @@ public class Constants {
     public static final String HOW_OFTEN_FIELD = "howOftenField";
 
     /**
-     * This constant is used as a prefix to identify a request parameter as a
-     * domain/configuration pair. Ie one sets such a pair as
-     * DOMAIN_IDENTIFIER<domainname>=<configname>
+     * This constant is used as a prefix to identify a request parameter as a domain/configuration pair. Ie one sets
+     * such a pair as DOMAIN_IDENTIFIER<domainname>=<configname>
      */
     public static final String DOMAIN_IDENTIFIER = "domain_config_pair_";
 
@@ -232,14 +229,12 @@ public class Constants {
     public static final int DOMAIN_NAME_FIELD_SIZE = 40;
 
     /**
-     * The number of columns when showing the crawlertraps associated with a
-     * domain.
+     * The number of columns when showing the crawlertraps associated with a domain.
      */
     public static final int CRAWLERTRAPS_COLUMNS = 60;
 
     /**
-     * The number of rows when showing the crawlertraps associated with a
-     * domain.
+     * The number of rows when showing the crawlertraps associated with a domain.
      */
     public static final int CRAWLERTRAPS_ROWS = 20;
 
@@ -255,14 +250,12 @@ public class Constants {
     public static final String START_PAGE_PARAMETER = "START_PAGE_INDEX";
 
     /**
-     * Domain query type parameter. Used in the jsp-page
-     * Definitions-find-domains.jsp.
+     * Domain query type parameter. Used in the jsp-page Definitions-find-domains.jsp.
      */
     public static final String DOMAIN_QUERY_TYPE_PARAM = "DOMAIN_QUERY_TYPE";
 
     /**
-     * Domain search key parameter. Used in the jsp-page
-     * Definitions-find-domains.jsp.
+     * Domain search key parameter. Used in the jsp-page Definitions-find-domains.jsp.
      */
     public static final String DOMAIN_QUERY_STRING_PARAM = "DOMAIN_QUERY_STRING";
 

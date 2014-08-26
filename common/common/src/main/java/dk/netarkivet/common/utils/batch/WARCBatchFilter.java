@@ -32,11 +32,10 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.archive.HeritrixArchiveRecordWrapper;
 
 /**
- * A filter class for batch entries. Allows testing whether or not to process an
- * entry without loading the entry data first. The class in itself is abstract
- * but contains implementation of several filters.
+ * A filter class for batch entries. Allows testing whether or not to process an entry without loading the entry data
+ * first. The class in itself is abstract but contains implementation of several filters.
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public abstract class WARCBatchFilter implements Serializable {
 
     /** The name of the BatchFilter. */
@@ -80,8 +79,7 @@ public abstract class WARCBatchFilter implements Serializable {
     /**
      * Create a new filter with the given name.
      * 
-     * @param name
-     *            The name of this filter, for debugging mostly.
+     * @param name The name of this filter, for debugging mostly.
      */
     protected WARCBatchFilter(String name) {
         ArgumentNotValid.checkNotNullOrEmpty(name, "String name");
@@ -98,15 +96,11 @@ public abstract class WARCBatchFilter implements Serializable {
     }
 
     /**
-     * Note that the mimetype of the WARC responserecord is not (necessarily)
-     * the same as its payload.
+     * Note that the mimetype of the WARC responserecord is not (necessarily) the same as its payload.
      * 
-     * @param mimetype
-     *            String denoting the mimetype this filter represents
-     * @return a BatchFilter that filters out all WARCRecords, that does not
-     *         have this mimetype
-     * @throws MimeTypeParseException
-     *             If mimetype is invalid
+     * @param mimetype String denoting the mimetype this filter represents
+     * @return a BatchFilter that filters out all WARCRecords, that does not have this mimetype
+     * @throws MimeTypeParseException If mimetype is invalid
      */
     public static WARCBatchFilter getMimetypeBatchFilter(final String mimetype) throws MimeTypeParseException {
         ArgumentNotValid.checkNotNullOrEmpty(mimetype, "String mimetype");
@@ -131,8 +125,7 @@ public abstract class WARCBatchFilter implements Serializable {
     /**
      * Check, if a certain mimetype is valid.
      * 
-     * @param mimetype
-     *            a given mimetype
+     * @param mimetype a given mimetype
      * @return boolean true, if mimetype matches word/word, otherwise false
      */
     public static boolean mimetypeIsOk(String mimetype) {
@@ -143,8 +136,7 @@ public abstract class WARCBatchFilter implements Serializable {
     /**
      * Check if a given record is accepted (not filtered out) by this filter.
      * 
-     * @param record
-     *            a given WARCRecord
+     * @param record a given WARCRecord
      * @return true, if the given record is accepted by this filter
      */
     public abstract boolean accept(WARCRecord record);

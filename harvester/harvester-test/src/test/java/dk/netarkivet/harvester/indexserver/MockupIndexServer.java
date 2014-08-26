@@ -41,8 +41,7 @@ import dk.netarkivet.harvester.indexserver.distribute.IndexRequestMessage;
 import dk.netarkivet.testutils.preconfigured.TestConfigurationIF;
 
 /**
- * A fake IndexServer that gives one or more files back as specified in its
- * constructor.
+ * A fake IndexServer that gives one or more files back as specified in its constructor.
  */
 public class MockupIndexServer implements TestConfigurationIF, MessageListener {
     private File resultFile;
@@ -51,13 +50,10 @@ public class MockupIndexServer implements TestConfigurationIF, MessageListener {
     private String origDir;
 
     /**
-     * Create a new MockupIndexServer that serves back the given file or
-     * directory of files.
+     * Create a new MockupIndexServer that serves back the given file or directory of files.
      *
-     * @param resultFile
-     *            Files that this IndexServer should return upon request. The
-     *            file (or files if resultFile is a directory) should be
-     *            gzipped, as they will be ungzipped in the receiving end.
+     * @param resultFile Files that this IndexServer should return upon request. The file (or files if resultFile is a
+     *            directory) should be gzipped, as they will be ungzipped in the receiving end.
      */
     public MockupIndexServer(File resultFile) {
         this.resultFile = resultFile;

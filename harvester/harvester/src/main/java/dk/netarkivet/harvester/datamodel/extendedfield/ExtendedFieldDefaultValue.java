@@ -34,8 +34,7 @@ import org.slf4j.LoggerFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
- * Class for constructing, validating, and keeping the default value for a
- * single ExtendedField.
+ * Class for constructing, validating, and keeping the default value for a single ExtendedField.
  */
 public class ExtendedFieldDefaultValue {
 
@@ -43,9 +42,9 @@ public class ExtendedFieldDefaultValue {
     private static final Logger log = LoggerFactory.getLogger(ExtendedFieldDefaultValue.class);
 
     /** Array of strings considered to be "true" values. */
-    protected static final String[] possibleTrueValues = { "true", "t", "1" };
+    protected static final String[] possibleTrueValues = {"true", "t", "1"};
     /** Array of strings considered to be "false" values. */
-    protected static final String[] possibleFalseValues = { "false", "f", "0" };
+    protected static final String[] possibleFalseValues = {"false", "f", "0"};
     /** The valid state of this ExtendedFieldDefaultValue. */
     protected final boolean valid;
 
@@ -59,12 +58,9 @@ public class ExtendedFieldDefaultValue {
     /**
      * Constructor for the ExtendedFieldDefaultValues class.
      * 
-     * @param aValue
-     *            The given default value
-     * @param aFormat
-     *            the given formatting pattern
-     * @param aDatatype
-     *            the given datatype
+     * @param aValue The given default value
+     * @param aFormat the given formatting pattern
+     * @param aDatatype the given datatype
      */
     public ExtendedFieldDefaultValue(String aValue, String aFormat, int aDatatype) {
         value = aValue;
@@ -154,8 +150,7 @@ public class ExtendedFieldDefaultValue {
     /**
      * Check the given string if it can be parsed as a Boolean.
      * 
-     * @param aBooleanValue
-     *            A given boolean
+     * @param aBooleanValue A given boolean
      * @return true, if the given string if it can be parsed as a Boolean.
      */
     private static boolean checkBoolean(final String aBooleanValue) {

@@ -46,9 +46,8 @@ import dk.netarkivet.common.Constants;
 /**
  * A class for building a de-duplication index.
  * <p>
- * The indexing can be done via the command line options (Run with --help
- * parameter to print usage information) or natively embedded in other
- * applications.
+ * The indexing can be done via the command line options (Run with --help parameter to print usage information) or
+ * natively embedded in other applications.
  * <p>
  * This class also defines string constants for the lucene field names.
  *
@@ -64,11 +63,9 @@ public class DigestIndexer {
     /** The content digest as String. **/
     public static final String FIELD_DIGEST = "digest";
     /**
-     * The URLs timestamp (time of fetch). The exact nature of this time may
-     * vary slightly depending on the source (i.e. crawl.log and ARCs contain
-     * slightly different times but both indicate roughly when the document was
-     * obtained. The time is encoded as a String with the Java date format
-     * yyyyMMddHHmmssSSS
+     * The URLs timestamp (time of fetch). The exact nature of this time may vary slightly depending on the source (i.e.
+     * crawl.log and ARCs contain slightly different times but both indicate roughly when the document was obtained. The
+     * time is encoded as a String with the Java date format yyyyMMddHHmmssSSS
      */
     public static final String FIELD_TIMESTAMP = "date";
     /** The document's etag. **/
@@ -76,15 +73,14 @@ public class DigestIndexer {
     /** A stripped (normalized) version of the URL. **/
     public static final String FIELD_URL_NORMALIZED = "url-normalized";
     /**
-     * A field containing meta-data on where the original version of a document
-     * is stored.
+     * A field containing meta-data on where the original version of a document is stored.
      */
     public static final String FIELD_ORIGIN = "origin";
 
     // Indexing modes (by url, by hash or both)
     /**
-     * Index URL enabling lookups by URL. If normalized URLs are included in the
-     * index they will also be indexed and searchable.
+     * Index URL enabling lookups by URL. If normalized URLs are included in the index they will also be indexed and
+     * searchable.
      **/
     public static final String MODE_URL = "URL";
     /** Index HASH enabling lookups by hash (content digest). **/
@@ -120,27 +116,17 @@ public class DigestIndexer {
     private boolean indexDigest = true;
 
     /**
-     * Each instance of this class wraps one Lucene index for writing
-     * deduplication information to it.
+     * Each instance of this class wraps one Lucene index for writing deduplication information to it.
      * 
-     * @param indexLocation
-     *            The location of the index (path).
-     * @param indexingMode
-     *            Index {@link #MODE_URL}, {@link #MODE_HASH} or
-     *            {@link #MODE_BOTH}.
-     * @param includeNormalizedURL
-     *            Should a normalized version of the URL be added to the index.
-     *            See {@link #stripURL(String)}.
-     * @param includeTimestamp
-     *            Should a timestamp be included in the index.
-     * @param includeEtag
-     *            Should an Etag be included in the index.
-     * @param addToExistingIndex
-     *            Are we opening up an existing index. Setting this to false
-     *            will cause any index at <code>indexLocation</code> to be
-     *            overwritten.
-     * @throws IOException
-     *             If an error occurs opening the index.
+     * @param indexLocation The location of the index (path).
+     * @param indexingMode Index {@link #MODE_URL}, {@link #MODE_HASH} or {@link #MODE_BOTH}.
+     * @param includeNormalizedURL Should a normalized version of the URL be added to the index. See
+     *            {@link #stripURL(String)}.
+     * @param includeTimestamp Should a timestamp be included in the index.
+     * @param includeEtag Should an Etag be included in the index.
+     * @param addToExistingIndex Are we opening up an existing index. Setting this to false will cause any index at
+     *            <code>indexLocation</code> to be overwritten.
+     * @throws IOException If an error occurs opening the index.
      */
     public DigestIndexer(String indexLocation, String indexingMode, boolean includeNormalizedURL,
             boolean includeTimestamp, boolean includeEtag, boolean addToExistingIndex) throws IOException {
@@ -171,27 +157,17 @@ public class DigestIndexer {
     /**
      * Writes the contents of a {@link CrawlDataIterator} to this index.
      * <p>
-     * This method may be invoked multiple times with different
-     * CrawlDataIterators until {@link #close} has been called.
+     * This method may be invoked multiple times with different CrawlDataIterators until {@link #close} has been called.
      * 
-     * @param dataIt
-     *            The CrawlDataIterator that provides the data to index.
-     * @param mimefilter
-     *            A regular expression that is used as a filter on the mimetypes
-     *            to include in the index.
-     * @param blacklist
-     *            If true then the <code>mimefilter</code> is used as a
-     *            blacklist for mimetypes. If false then the
+     * @param dataIt The CrawlDataIterator that provides the data to index.
+     * @param mimefilter A regular expression that is used as a filter on the mimetypes to include in the index.
+     * @param blacklist If true then the <code>mimefilter</code> is used as a blacklist for mimetypes. If false then the
      *            <code>mimefilter</code> is treated as a whitelist.
-     * @param defaultOrigin
-     *            If an item is missing an origin, this default value will be
-     *            assigned to it. Can be null if no default origin value should
-     *            be assigned.
-     * @param verbose
-     *            If true then progress information will be sent to System.out.
+     * @param defaultOrigin If an item is missing an origin, this default value will be assigned to it. Can be null if
+     *            no default origin value should be assigned.
+     * @param verbose If true then progress information will be sent to System.out.
      * @return The number of items added to the index.
-     * @throws IOException
-     *             If an error occurs writing the index.
+     * @throws IOException If an error occurs writing the index.
      */
     public long writeToIndex(CrawlDataIterator dataIt, String mimefilter, boolean blacklist, String defaultOrigin,
             boolean verbose) throws IOException {
@@ -201,29 +177,18 @@ public class DigestIndexer {
     /**
      * Writes the contents of a {@link CrawlDataIterator} to this index.
      * <p>
-     * This method may be invoked multiple times with different
-     * CrawlDataIterators until {@link #close} has been called.
+     * This method may be invoked multiple times with different CrawlDataIterators until {@link #close} has been called.
      * 
-     * @param dataIt
-     *            The CrawlDataIterator that provides the data to index.
-     * @param mimefilter
-     *            A regular expression that is used as a filter on the mimetypes
-     *            to include in the index.
-     * @param blacklist
-     *            If true then the <code>mimefilter</code> is used as a
-     *            blacklist for mimetypes. If false then the
+     * @param dataIt The CrawlDataIterator that provides the data to index.
+     * @param mimefilter A regular expression that is used as a filter on the mimetypes to include in the index.
+     * @param blacklist If true then the <code>mimefilter</code> is used as a blacklist for mimetypes. If false then the
      *            <code>mimefilter</code> is treated as a whitelist.
-     * @param defaultOrigin
-     *            If an item is missing an origin, this default value will be
-     *            assigned to it. Can be null if no default origin value should
-     *            be assigned.
-     * @param verbose
-     *            If true then progress information will be sent to System.out.
-     * @param skipDuplicates
-     *            Do not add URLs that are marked as duplicates to the index
+     * @param defaultOrigin If an item is missing an origin, this default value will be assigned to it. Can be null if
+     *            no default origin value should be assigned.
+     * @param verbose If true then progress information will be sent to System.out.
+     * @param skipDuplicates Do not add URLs that are marked as duplicates to the index
      * @return The number of items added to the index.
-     * @throws IOException
-     *             If an error occurs writing the index.
+     * @throws IOException If an error occurs writing the index.
      */
     public long writeToIndex(CrawlDataIterator dataIt, String mimefilter, boolean blacklist, String defaultOrigin,
             boolean verbose, boolean skipDuplicates) throws IOException {
@@ -308,8 +273,7 @@ public class DigestIndexer {
     /**
      * Close the index.
      * 
-     * @throws IOException
-     *             If an error occurs while closing the index.
+     * @throws IOException If an error occurs while closing the index.
      */
     public void close() throws IOException {
         index.close(true);
@@ -317,14 +281,12 @@ public class DigestIndexer {
     }
 
     /**
-     * An aggressive URL normalizer. This methods removes any www[0-9]. segments
-     * from an URL, along with any trailing slashes and all parameters.
+     * An aggressive URL normalizer. This methods removes any www[0-9]. segments from an URL, along with any trailing
+     * slashes and all parameters.
      * <p>
-     * Example: <code>http://www.bok.hi.is/?lang=ice</code> would become
-     * <code>http://bok.hi.is</code>
+     * Example: <code>http://www.bok.hi.is/?lang=ice</code> would become <code>http://bok.hi.is</code>
      * 
-     * @param url
-     *            The url to strip
+     * @param url The url to strip
      * @return A normalized URL.
      */
     public static String stripURL(String url) {
@@ -334,7 +296,7 @@ public class DigestIndexer {
         return url;
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public static void main(String[] args) throws Exception {
         CommandLineParser clp = new CommandLineParser(args, new PrintWriter(System.out));
         long start = System.currentTimeMillis();
@@ -404,8 +366,8 @@ public class DigestIndexer {
         // Get the CrawlDataIterator
         // Get the iterator classname or load default.
         Class cl = Class.forName(iteratorClassName);
-        Constructor co = cl.getConstructor(new Class[] { String.class });
-        CrawlDataIterator iterator = (CrawlDataIterator) co.newInstance(new Object[] { (String) cargs.get(0) });
+        Constructor co = cl.getConstructor(new Class[] {String.class});
+        CrawlDataIterator iterator = (CrawlDataIterator) co.newInstance(new Object[] {(String) cargs.get(0)});
 
         // Print initial stuff
         System.out.println("Indexing: " + cargs.get(0));

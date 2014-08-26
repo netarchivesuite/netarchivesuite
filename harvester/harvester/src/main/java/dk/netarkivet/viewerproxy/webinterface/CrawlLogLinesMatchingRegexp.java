@@ -41,11 +41,10 @@ import dk.netarkivet.common.utils.archive.ArchiveRecordBase;
 import dk.netarkivet.common.utils.batch.ArchiveBatchFilter;
 
 /**
- * Batchjob that extracts lines from a crawl log matching a regular expression
- * The batch job should be restricted to run on metadata files for a specific
- * job only, using the {@link #processOnlyFilesMatching(String)} construct.
+ * Batchjob that extracts lines from a crawl log matching a regular expression The batch job should be restricted to run
+ * on metadata files for a specific job only, using the {@link #processOnlyFilesMatching(String)} construct.
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class CrawlLogLinesMatchingRegexp extends ArchiveBatchJob {
 
     /** The logger. */
@@ -61,8 +60,7 @@ public class CrawlLogLinesMatchingRegexp extends ArchiveBatchJob {
     /**
      * Initialise the batch job.
      *
-     * @param regexp
-     *            The regexp to match in the crawl.log lines.
+     * @param regexp The regexp to match in the crawl.log lines.
      */
     public CrawlLogLinesMatchingRegexp(String regexp) {
         ArgumentNotValid.checkNotNullOrEmpty(regexp, "regexp");
@@ -77,8 +75,7 @@ public class CrawlLogLinesMatchingRegexp extends ArchiveBatchJob {
     /**
      * Does nothing, no initialisation is needed.
      * 
-     * @param os
-     *            Not used.
+     * @param os Not used.
      */
     @Override
     public void initialize(OutputStream os) {
@@ -101,15 +98,11 @@ public class CrawlLogLinesMatchingRegexp extends ArchiveBatchJob {
     /**
      * Process a record on crawl log concerning the given domain to result.
      * 
-     * @param record
-     *            The record to process.
-     * @param os
-     *            The output stream for the result.
+     * @param record The record to process.
+     * @param os The output stream for the result.
      *
-     * @throws ArgumentNotValid
-     *             on null parameters
-     * @throws IOFailure
-     *             on trouble processing the record.
+     * @throws ArgumentNotValid on null parameters
+     * @throws IOFailure on trouble processing the record.
      */
     @Override
     public void processRecord(ArchiveRecordBase record, OutputStream os) {
@@ -138,8 +131,7 @@ public class CrawlLogLinesMatchingRegexp extends ArchiveBatchJob {
     /**
      * Does nothing, no finishing is needed.
      * 
-     * @param os
-     *            Not used.
+     * @param os Not used.
      */
     @Override
     public void finish(OutputStream os) {

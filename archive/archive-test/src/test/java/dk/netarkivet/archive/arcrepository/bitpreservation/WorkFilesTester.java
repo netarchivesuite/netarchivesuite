@@ -63,7 +63,7 @@ public class WorkFilesTester {
     public void testGetSortedFile() throws Exception {
         File f = new File(TestInfo.WORKING_DIR, "does-not-exist");
         assertFalse("Input file should not exist at start", f.exists());
-        final List<String> list1 = Arrays.asList(new String[] { "foo", "bar", "baz", "qux", "qux" });
+        final List<String> list1 = Arrays.asList(new String[] {"foo", "bar", "baz", "qux", "qux"});
         FileUtils.writeCollectionToFile(f, list1);
         File sortedFileRaw = new File(TestInfo.WORKING_DIR, "sorted.txt").getAbsoluteFile();
         assertFalse("Sorted version should not exist before asking for it", sortedFileRaw.exists());
@@ -74,7 +74,7 @@ public class WorkFilesTester {
         CollectionAsserts.assertIteratorEquals("Should have same order contents", list1.iterator(), FileUtils
                 .readListFromFile(sortedFileGen).iterator());
 
-        final List<String> list2 = Arrays.asList(new String[] { "foo2", "bar3", "baz4", "qux", "qux" });
+        final List<String> list2 = Arrays.asList(new String[] {"foo2", "bar3", "baz4", "qux", "qux"});
 
         FileUtils.writeCollectionToFile(f, list2);
         File sortedFileGen2 = WorkFiles.getSortedFile(f);

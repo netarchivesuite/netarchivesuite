@@ -87,7 +87,7 @@ public class GetFileTester {
      */
     @Test
     public void testMain() {
-        String[] args = new String[] { "test1.arc", new File(TestInfo.DATA_DIR, "download.arc").getPath() };
+        String[] args = new String[] {"test1.arc", new File(TestInfo.DATA_DIR, "download.arc").getPath()};
 
         try {
             GetFile.main(args);
@@ -106,7 +106,7 @@ public class GetFileTester {
 
     @Test
     public void testTooManyArguments() {
-        String[] args = new String[] { "arg1.arc", "arg2.arc", "arg3.arc" };
+        String[] args = new String[] {"arg1.arc", "arg2.arc", "arg3.arc"};
 
         try {
             GetFile.main(args);
@@ -143,10 +143,9 @@ public class GetFileTester {
     }
 
     /**
-     * This class is a MessageListener that responds to GetFileMessage,
-     * simulating an ArcRepository. It sends a constant response if the
-     * GetFileMessage matches the values given to GetFileListener's constructor,
-     * otherwise it sends null file as response.
+     * This class is a MessageListener that responds to GetFileMessage, simulating an ArcRepository. It sends a constant
+     * response if the GetFileMessage matches the values given to GetFileListener's constructor, otherwise it sends null
+     * file as response.
      */
 
     private static class GetFileListener extends TestMessageListener {

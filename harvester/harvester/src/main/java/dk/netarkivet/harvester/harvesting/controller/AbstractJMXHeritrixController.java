@@ -60,7 +60,7 @@ import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 /**
  * Abstract base class for JMX-based Heritrix controllers.
  */
-@SuppressWarnings({ "rawtypes" })
+@SuppressWarnings({"rawtypes"})
 public abstract class AbstractJMXHeritrixController implements HeritrixController {
 
     /** The logger for this class. */
@@ -70,8 +70,7 @@ public abstract class AbstractJMXHeritrixController implements HeritrixControlle
     private static final String FILE_PATH_SEPARATOR = ":";
 
     /**
-     * How long we're willing to wait for Heritrix to shutdown in a shutdown
-     * hook.
+     * How long we're willing to wait for Heritrix to shutdown in a shutdown hook.
      */
     private static final long SHUTDOWN_HOOK_MAX_WAIT = 1000L;
 
@@ -79,14 +78,12 @@ public abstract class AbstractJMXHeritrixController implements HeritrixControlle
     private final HeritrixFiles files;
 
     /**
-     * The threads used to collect process output. Only one thread used
-     * presently.
+     * The threads used to collect process output. Only one thread used presently.
      */
     private Set<Thread> collectionThreads = new HashSet<Thread>(1);
 
     /**
-     * The host name for this machine that matches what Heritrix uses in its
-     * MBean names.
+     * The host name for this machine that matches what Heritrix uses in its MBean names.
      */
     private final String hostName;
 
@@ -97,22 +94,21 @@ public abstract class AbstractJMXHeritrixController implements HeritrixControlle
     private final int guiPort = Settings.getInt(HarvesterSettings.HERITRIX_GUI_PORT);
 
     /**
-     * The shutdownHook that takes care of killing our process. This is removed
-     * in cleanup() when the process is shut down.
+     * The shutdownHook that takes care of killing our process. This is removed in cleanup() when the process is shut
+     * down.
      */
     private Thread processKillerHook;
 
     /**
-     * The one-shot Heritrix process created in the constructor. It will only
-     * perform a single crawl before being shut down.
+     * The one-shot Heritrix process created in the constructor. It will only perform a single crawl before being shut
+     * down.
      */
     private final Process heritrixProcess;
 
     /**
      * Create a BnfHeritrixController object.
      *
-     * @param files
-     *            Files that are used to set up Heritrix.
+     * @param files Files that are used to set up Heritrix.
      */
     public AbstractJMXHeritrixController(HeritrixFiles files) {
         ArgumentNotValid.checkNotNull(files, "HeritrixFile files");
@@ -126,21 +122,16 @@ public abstract class AbstractJMXHeritrixController implements HeritrixControlle
         try {
             log.info("Starting Heritrix for {}", this);
             /*
-             * To start Heritrix, we need to do the following (taken from the
-             * Heritrix startup shell script): - set heritrix.home to base dir
-             * of Heritrix stuff - set com.sun.management.jmxremote.port to JMX
-             * port - set com.sun.management.jmxremote.ssl to false - set
-             * com.sun.management.jmxremote.password.file to JMX password file -
-             * set heritrix.out to heritrix_out.log - set
-             * java.protocol.handler.pkgs=org.archive.net - send processOutput &
-             * stderr into heritrix.out - let the Heritrix GUI-webserver listen
-             * on all available network interfaces: This is done with argument
-             * "--bind /" (default is 127.0.0.1) - listen on a specific port
-             * using the port argument: --port <GUI port>
+             * To start Heritrix, we need to do the following (taken from the Heritrix startup shell script): - set
+             * heritrix.home to base dir of Heritrix stuff - set com.sun.management.jmxremote.port to JMX port - set
+             * com.sun.management.jmxremote.ssl to false - set com.sun.management.jmxremote.password.file to JMX
+             * password file - set heritrix.out to heritrix_out.log - set java.protocol.handler.pkgs=org.archive.net -
+             * send processOutput & stderr into heritrix.out - let the Heritrix GUI-webserver listen on all available
+             * network interfaces: This is done with argument "--bind /" (default is 127.0.0.1) - listen on a specific
+             * port using the port argument: --port <GUI port>
              * 
-             * We also need to output something like the following to
-             * heritrix.out: `date Starting heritrix uname -a java -version
-             * JAVA_OPTS ulimit -a
+             * We also need to output something like the following to heritrix.out: `date Starting heritrix uname -a
+             * java -version JAVA_OPTS ulimit -a
              */
             File heritrixOutputFile = files.getHeritrixOutput();
             StringBuilder settingProperty = new StringBuilder();
@@ -253,8 +244,7 @@ public abstract class AbstractJMXHeritrixController implements HeritrixControlle
     }
 
     /**
-     * Get the login name for accessing the Heritrix GUI. This name can be set
-     * in the settings.xml file.
+     * Get the login name for accessing the Heritrix GUI. This name can be set in the settings.xml file.
      *
      * @return Name to use for accessing Heritrix web GUI
      */
@@ -263,8 +253,7 @@ public abstract class AbstractJMXHeritrixController implements HeritrixControlle
     }
 
     /**
-     * Get the login password for accessing the Heritrix GUI. This password can
-     * be set in the settings.xml file.
+     * Get the login password for accessing the Heritrix GUI. This password can be set in the settings.xml file.
      *
      * @return Password to use for accessing the Heritrix GUI
      */
@@ -277,13 +266,11 @@ public abstract class AbstractJMXHeritrixController implements HeritrixControlle
      *
      * At the moment, this involves the following:
      *
-     * Prepend the Jar files from the lib/heritrix/lib dir to the classpath.
-     * Make sure the Heritrix jar file is at the front.
+     * Prepend the Jar files from the lib/heritrix/lib dir to the classpath. Make sure the Heritrix jar file is at the
+     * front.
      *
-     * @param environment
-     *            The environment from a process builder
-     * @throws IOFailure
-     *             If a Heritrix jarfile is not found.
+     * @param environment The environment from a process builder
+     * @throws IOFailure If a Heritrix jarfile is not found.
      */
     private static void updateEnvironment(Map<String, String> environment) {
         List<String> classPathParts = SystemUtils.getCurrentClasspath();
@@ -327,13 +314,11 @@ public abstract class AbstractJMXHeritrixController implements HeritrixControlle
     }
 
     /**
-     * Write various info on the system we're using into the given file. This
-     * info will later get put into metadata for the crawl.
+     * Write various info on the system we're using into the given file. This info will later get put into metadata for
+     * the crawl.
      *
-     * @param outputFile
-     *            A file to write to.
-     * @param builder
-     *            The ProcessBuilder being used to start the Heritrix process
+     * @param outputFile A file to write to.
+     * @param builder The ProcessBuilder being used to start the Heritrix process
      */
     @SuppressWarnings("unchecked")
     private void writeSystemInfo(File outputFile, ProcessBuilder builder) {
@@ -365,10 +350,9 @@ public abstract class AbstractJMXHeritrixController implements HeritrixControlle
     }
 
     /**
-     * Add a shutdown hook that kills the process we've created. Since this hook
-     * will be run only in case of JVM shutdown, it cannot expect that the
-     * standard logging framework is still usable, and therefore writes to
-     * stdout instead.
+     * Add a shutdown hook that kills the process we've created. Since this hook will be run only in case of JVM
+     * shutdown, it cannot expect that the standard logging framework is still usable, and therefore writes to stdout
+     * instead.
      */
     private void addProcessKillerHook() {
         // Make sure that the process gets killed at the very end, at least
@@ -395,8 +379,7 @@ public abstract class AbstractJMXHeritrixController implements HeritrixControlle
     }
 
     /**
-     * Get a string that describes the current controller in terms of job ID,
-     * harvest ID, and crawldir.
+     * Get a string that describes the current controller in terms of job ID, harvest ID, and crawldir.
      *
      * @return A human-readable string describing this controller.
      */
@@ -411,8 +394,7 @@ public abstract class AbstractJMXHeritrixController implements HeritrixControlle
     }
 
     /**
-     * Return true if the Heritrix process has exited, logging the exit value if
-     * so.
+     * Return true if the Heritrix process has exited, logging the exit value if so.
      *
      * @return True if the process has exited.
      */
@@ -476,8 +458,7 @@ public abstract class AbstractJMXHeritrixController implements HeritrixControlle
     }
 
     /**
-     * Return a human-readable description of the job. This will only be visible
-     * in the Heritrix GUI.
+     * Return a human-readable description of the job. This will only be visible in the Heritrix GUI.
      *
      * @return String containing various information grabbed from HeritrixFiles.
      */

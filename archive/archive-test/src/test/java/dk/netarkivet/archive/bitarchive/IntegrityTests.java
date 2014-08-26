@@ -70,11 +70,10 @@ public class IntegrityTests {
      */
     private static final File ORIGINALS_DIR = new File("tests/dk/netarkivet/bitarchive/data/upload/originals/");
     /**
-     * The files that are uploaded during the tests and that must be removed
-     * afterwards.
+     * The files that are uploaded during the tests and that must be removed afterwards.
      */
-    private static final List<String> UPLOADED_FILES = Arrays.asList(new String[] { "Upload1.ARC", "Upload2.ARC",
-            "Upload3.ARC" });
+    private static final List<String> UPLOADED_FILES = Arrays.asList(new String[] {"Upload1.ARC", "Upload2.ARC",
+            "Upload3.ARC"});
     ReloadSettings rs = new ReloadSettings();
 
     /**
@@ -113,13 +112,12 @@ public class IntegrityTests {
     }
 
     /**
-     * Verify that the correct value of free space will be returned, when
-     * calling the DefaultFreeSpaceProvider.
+     * Verify that the correct value of free space will be returned, when calling the DefaultFreeSpaceProvider.
      */
     @Test
     public void testDefaultFreeSpaceProvider() {
         final File dir1 = new File(ARCHIVE_DIR, "dir1");
-        setupBitarchiveWithDirs(new String[] { dir1.getAbsolutePath(), });
+        setupBitarchiveWithDirs(new String[] {dir1.getAbsolutePath(),});
 
         Settings.set(CommonSettings.FREESPACE_PROVIDER_CLASS, "dk.netarkivet.common.utils.DefaultFreeSpaceProvider");
         assertEquals(FileUtils.getBytesFree(new File("/not/existing/dir")), 0);
@@ -131,26 +129,24 @@ public class IntegrityTests {
     }
 
     /**
-     * Verify that the correct value of free space will be returned, when
-     * calling the MockFreeSpaceProvider.
+     * Verify that the correct value of free space will be returned, when calling the MockFreeSpaceProvider.
      */
     @Test
     public void testMockFreeSpaceProvider() {
         final File dir1 = new File(ARCHIVE_DIR, "dir1");
-        setupBitarchiveWithDirs(new String[] { dir1.getAbsolutePath(), });
+        setupBitarchiveWithDirs(new String[] {dir1.getAbsolutePath(),});
 
         Settings.set(CommonSettings.FREESPACE_PROVIDER_CLASS, "dk.netarkivet.common.utils.MockFreeSpaceProvider");
         assertEquals(FileUtils.getBytesFree(ARCHIVE_DIR), MockFreeSpaceProvider.ONETB);
     }
 
     /**
-     * Verify that the correct value of free space will be returned, when
-     * calling the FileSpaceProvider.
+     * Verify that the correct value of free space will be returned, when calling the FileSpaceProvider.
      */
     @Test
     public void testFilebasedFreeSpaceProvider1() {
         final File dir1 = new File(ARCHIVE_DIR, "dir1");
-        setupBitarchiveWithDirs(new String[] { dir1.getAbsolutePath(), });
+        setupBitarchiveWithDirs(new String[] {dir1.getAbsolutePath(),});
 
         File freeSpaceFile = new File(System.getProperty("java.io.tmpdir"), dir1.getName());
 
@@ -180,13 +176,12 @@ public class IntegrityTests {
     }
 
     /**
-     * Verify that the correct value of free space will be returned, when
-     * calling the FileSpaceProvider.
+     * Verify that the correct value of free space will be returned, when calling the FileSpaceProvider.
      */
     @Test
     public void testFilebasedFreeSpaceProvider2() {
         final File dir1 = new File(ARCHIVE_DIR, "dir1");
-        setupBitarchiveWithDirs(new String[] { dir1.getAbsolutePath(), });
+        setupBitarchiveWithDirs(new String[] {dir1.getAbsolutePath(),});
 
         Settings.set(CommonSettings.FREESPACE_PROVIDER_CLASS, "dk.netarkivet.common.utils.FilebasedFreeSpaceProvider");
         Settings.set(FilebasedFreeSpaceProvider.FREESPACEPROVIDER_DIR_SETTING, "/not/existing/dir");
@@ -194,8 +189,7 @@ public class IntegrityTests {
     }
 
     /**
-     * Verify that we spill into the next directory This test requires special
-     * setup to run.
+     * Verify that we spill into the next directory This test requires special setup to run.
      */
     @Test
     @Ignore("FIXME")
@@ -203,7 +197,7 @@ public class IntegrityTests {
     public void testUploadChangesDirectory() {
         final File dir1 = new File(ARCHIVE_DIR, "dir1");
         final File dir2 = new File(ARCHIVE_DIR, "dir2");
-        setupBitarchiveWithDirs(new String[] { dir1.getAbsolutePath(), dir2.getAbsolutePath() });
+        setupBitarchiveWithDirs(new String[] {dir1.getAbsolutePath(), dir2.getAbsolutePath()});
         archive.upload(
                 new TestRemoteFile(new File(ORIGINALS_DIR, (String) UPLOADED_FILES.get(0)), false, false, false),
                 (String) UPLOADED_FILES.get(0));
@@ -217,9 +211,8 @@ public class IntegrityTests {
     }
 
     /**
-     * Verify that we get appropriate errors when we don't have enough space.
-     * This test requires a special setup before actual out of disk space errors
-     * will occur.
+     * Verify that we get appropriate errors when we don't have enough space. This test requires a special setup before
+     * actual out of disk space errors will occur.
      */
     @Test
     @Ignore("FIXME")
@@ -229,7 +222,7 @@ public class IntegrityTests {
         final File localFile2 = new File(ORIGINALS_DIR, (String) UPLOADED_FILES.get(2));
         Settings.set(ArchiveSettings.BITARCHIVE_MIN_SPACE_LEFT, "" + (freeSpace - localFile2.length() - 1));
         final File dir1 = new File(ARCHIVE_DIR, "dir1");
-        setupBitarchiveWithDirs(new String[] { dir1.getAbsolutePath(), });
+        setupBitarchiveWithDirs(new String[] {dir1.getAbsolutePath(),});
         JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
         assertEquals("We should listen to ANY_BA at the start", 1, con.getListeners(Channels.getAnyBa()).size());
         // Try big file

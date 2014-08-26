@@ -31,11 +31,10 @@ import dk.netarkivet.harvester.distribute.HarvesterMessageVisitor;
 import dk.netarkivet.harvester.scheduler.JobDispatcher;
 
 /**
- * The {@link HarvestControllerServer} periodically sends
- * {@link HarvesterReadyMessage}s to the {@link JobDispatcher} to notify it
- * whether it is available for processing a job or already processing one.
+ * The {@link HarvestControllerServer} periodically sends {@link HarvesterReadyMessage}s to the {@link JobDispatcher} to
+ * notify it whether it is available for processing a job or already processing one.
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class HarvesterReadyMessage extends HarvesterMessage implements Serializable {
 
     /** The name of the channel of jobs crawled by the sender. */
@@ -47,10 +46,8 @@ public class HarvesterReadyMessage extends HarvesterMessage implements Serializa
     /**
      * Builds a new message.
      * 
-     * @param harvestChannelName
-     *            the channel of jobs crawled by the sender.
-     * @param applicationInstanceId
-     *            the sender's application instance ID.
+     * @param harvestChannelName the channel of jobs crawled by the sender.
+     * @param applicationInstanceId the sender's application instance ID.
      */
     public HarvesterReadyMessage(String applicationInstanceId, String harvestChannelName) {
         super(HarvesterChannels.getHarvesterStatusChannel(), Channels.getError());

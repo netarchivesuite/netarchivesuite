@@ -37,11 +37,10 @@ public class RegExpExclusionFilter extends ExclusionFilter {
     Collection<Pattern> regexps;
 
     /**
-     * Creates an exclusion filter which will filter out any search result for
-     * which the original url matches any of the specified regular expression.
+     * Creates an exclusion filter which will filter out any search result for which the original url matches any of the
+     * specified regular expression.
      * 
-     * @param regexps
-     *            The regular expressions to match.
+     * @param regexps The regular expressions to match.
      */
     public RegExpExclusionFilter(Collection<Pattern> regexps) {
         this.regexps = regexps;

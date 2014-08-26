@@ -59,11 +59,8 @@ public final class ZipUtils {
     /**
      * Zip the contents of a directory into a file. Does *not* zip recursively.
      *
-     * @param dir
-     *            The directory to zip.
-     * @param into
-     *            The (zip) file to create. The name should typically end in
-     *            .zip, but that is not required.
+     * @param dir The directory to zip.
+     * @param into The (zip) file to create. The name should typically end in .zip, but that is not required.
      */
     public static void zipDirectory(File dir, File into) {
         ArgumentNotValid.checkNotNull(dir, "File dir");
@@ -97,15 +94,11 @@ public final class ZipUtils {
     }
 
     /**
-     * Unzip a zipFile into a directory. This will create subdirectories as
-     * needed.
+     * Unzip a zipFile into a directory. This will create subdirectories as needed.
      *
-     * @param zipFile
-     *            The file to unzip
-     * @param toDir
-     *            The directory to create the files under. This directory will
-     *            be created if necessary. Files in it will be overwritten if
-     *            the filenames match.
+     * @param zipFile The file to unzip
+     * @param toDir The directory to create the files under. This directory will be created if necessary. Files in it
+     *            will be overwritten if the filenames match.
      */
     public static void unzip(File zipFile, File toDir) {
         ArgumentNotValid.checkNotNull(zipFile, "File zipFile");
@@ -146,17 +139,13 @@ public final class ZipUtils {
     }
 
     /**
-     * GZip each of the files in fromDir, placing the result in toDir (which
-     * will be created) with names having .gz appended. All non-file (directory,
-     * link, etc) entries in the source directory will be skipped with a quiet
-     * little log message.
+     * GZip each of the files in fromDir, placing the result in toDir (which will be created) with names having .gz
+     * appended. All non-file (directory, link, etc) entries in the source directory will be skipped with a quiet little
+     * log message.
      *
-     * @param fromDir
-     *            An existing directory
-     * @param toDir
-     *            A directory where gzipped files will be placed. This directory
-     *            must not previously exist. If the operation is not successful,
-     *            the directory will not be created.
+     * @param fromDir An existing directory
+     * @param toDir A directory where gzipped files will be placed. This directory must not previously exist. If the
+     *            operation is not successful, the directory will not be created.
      */
     public static void gzipFiles(File fromDir, File toDir) {
         ArgumentNotValid.checkNotNull(fromDir, "File fromDir");
@@ -192,11 +181,8 @@ public final class ZipUtils {
     /**
      * GZip a file into a given dir. The resulting file will have .gz appended.
      *
-     * @param f
-     *            A file to gzip. This must be a real file, not a directory or
-     *            the like.
-     * @param toDir
-     *            The directory that the gzipped file will be placed in.
+     * @param f A file to gzip. This must be a real file, not a directory or the like.
+     * @param toDir The directory that the gzipped file will be placed in.
      */
     private static void gzipFileInto(File f, File toDir) {
         try {
@@ -222,17 +208,12 @@ public final class ZipUtils {
     }
 
     /**
-     * Gunzip all .gz files in a given directory into another. Files in fromDir
-     * not ending in .gz or not real files will be skipped with a log entry.
+     * Gunzip all .gz files in a given directory into another. Files in fromDir not ending in .gz or not real files will
+     * be skipped with a log entry.
      *
-     * @param fromDir
-     *            The directory containing .gz files
-     * @param toDir
-     *            The directory to place the unzipped files in. This directory
-     *            must not exist beforehand.
-     * @throws IOFailure
-     *             if there are problems creating the output directory or
-     *             gunzipping the files.
+     * @param fromDir The directory containing .gz files
+     * @param toDir The directory to place the unzipped files in. This directory must not exist beforehand.
+     * @throws IOFailure if there are problems creating the output directory or gunzipping the files.
      */
     public static void gunzipFiles(File fromDir, File toDir) {
         ArgumentNotValid.checkNotNull(fromDir, "File fromDir");
@@ -259,15 +240,12 @@ public final class ZipUtils {
     }
 
     /**
-     * Gunzip a single file into a directory. Unlike with the gzip()
-     * command-line tool, the original file is not deleted.
+     * Gunzip a single file into a directory. Unlike with the gzip() command-line tool, the original file is not
+     * deleted.
      *
-     * @param f
-     *            The .gz file to unzip.
-     * @param toDir
-     *            The directory to gunzip into. This directory must exist.
-     * @throws IOFailure
-     *             if there are any problems gunzipping.
+     * @param f The .gz file to unzip.
+     * @param toDir The directory to gunzip into. This directory must exist.
+     * @throws IOFailure if there are any problems gunzipping.
      */
     private static void gunzipInto(File f, File toDir) {
         String fileName = f.getName();
@@ -276,15 +254,12 @@ public final class ZipUtils {
     }
 
     /**
-     * Gunzip a single gzipped file into the given file. Unlike with the gzip()
-     * command-line tool, the original file is not deleted.
+     * Gunzip a single gzipped file into the given file. Unlike with the gzip() command-line tool, the original file is
+     * not deleted.
      *
-     * @param fromFile
-     *            A gzipped file to unzip.
-     * @param toFile
-     *            The file that the contents of fromFile should be gunzipped
-     *            into. This file must be in an existing directory. Existing
-     *            contents of this file will be overwritten.
+     * @param fromFile A gzipped file to unzip.
+     * @param toFile The file that the contents of fromFile should be gunzipped into. This file must be in an existing
+     *            directory. Existing contents of this file will be overwritten.
      */
     public static void gunzipFile(File fromFile, File toFile) {
         ArgumentNotValid.checkNotNull(fromFile, "File fromFile");

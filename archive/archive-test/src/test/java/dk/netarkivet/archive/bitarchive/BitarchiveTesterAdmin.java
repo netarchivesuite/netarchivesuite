@@ -120,8 +120,7 @@ public class BitarchiveTesterAdmin extends BitarchiveTestCase {
     }
 
     /**
-     * Verify that the bitarchive file dirs are all created and writeable after
-     * creating admin.
+     * Verify that the bitarchive file dirs are all created and writeable after creating admin.
      */
     @Test
     public void testCTOR() {

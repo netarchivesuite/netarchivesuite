@@ -39,8 +39,8 @@ import dk.netarkivet.harvester.datamodel.TestInfo;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
- * Unit-test for the GUIWebServer class when the DefinitionsSiteSection is
- * loaded. FIXME Some of these tests can be merged into the GUIWebServerTester.
+ * Unit-test for the GUIWebServer class when the DefinitionsSiteSection is loaded. FIXME Some of these tests can be
+ * merged into the GUIWebServerTester.
  */
 public class HarvestDefinitionGUITester extends DataModelTestCase {
     private GUIWebServer gui;
@@ -102,10 +102,8 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
     }
 
     /**
-     * Test, that GUIWebServer.getInstance throws UnknownID exception if
-     * templates tables does not contain the template with name
-     * Settings.DOMAIN_DEFAULT_ORDERXML This tests the partial solution of bug
-     * 916
+     * Test, that GUIWebServer.getInstance throws UnknownID exception if templates tables does not contain the template
+     * with name Settings.DOMAIN_DEFAULT_ORDERXML This tests the partial solution of bug 916
      * 
      * @throws InterruptedException
      */

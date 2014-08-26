@@ -36,15 +36,13 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
 
 /**
- * Class for combining the different setting files into a complete settings
- * file. The different settings are listed here:
- * {@link Constants#BUILD_SETTING_FILES}
+ * Class for combining the different setting files into a complete settings file. The different settings are listed
+ * here: {@link Constants#BUILD_SETTING_FILES}
  *
- * export NAS_SRC=$HOME/workspace/netarchivesuite cd $NAS_SRC ant jarfiles
- * export CLASSPATH=$NAS_SRC/lib/dk.netarkivet.harvester.jar:$NAS_SRC/lib/dk.
- * netarkivet.archive.jar:\
- * $NAS_SRC/lib/dk.netarkivet.wayback.jar:$NAS_SRC/lib/dk.netarkivet.deploy.jar:
- * cd src java dk.netarkivet.deploy.BuildCompleteSettings
+ * export NAS_SRC=$HOME/workspace/netarchivesuite cd $NAS_SRC ant jarfiles export
+ * CLASSPATH=$NAS_SRC/lib/dk.netarkivet.harvester.jar:$NAS_SRC/lib/dk. netarkivet.archive.jar:\
+ * $NAS_SRC/lib/dk.netarkivet.wayback.jar:$NAS_SRC/lib/dk.netarkivet.deploy.jar: cd src java
+ * dk.netarkivet.deploy.BuildCompleteSettings
  *
  */
 public final class BuildCompleteSettings {
@@ -55,14 +53,10 @@ public final class BuildCompleteSettings {
     }
 
     /**
-     * Run the program. This loads and merges all the setting files into a
-     * single file.
+     * Run the program. This loads and merges all the setting files into a single file.
      *
-     * @param args
-     *            Optional argument for name of complete settings file. E.g.
-     *            /home/myUser/myDir/default_settings.xml
-     * @throws IOException
-     *             For input/output errors.
+     * @param args Optional argument for name of complete settings file. E.g. /home/myUser/myDir/default_settings.xml
+     * @throws IOException For input/output errors.
      */
     public static void main(String[] args) {
         if (args.length < 1) {
@@ -102,11 +96,9 @@ public final class BuildCompleteSettings {
     /**
      * Retrieves the main element from the file.
      *
-     * @param settingFile
-     *            The file to load into an Element. This has to be a temporary
-     *            file, since it is deleted afterwards.
-     * @return The root of the XML structure of the settings file. Returns null
-     *         if problems occurred during reading.
+     * @param settingFile The file to load into an Element. This has to be a temporary file, since it is deleted
+     *            afterwards.
+     * @return The root of the XML structure of the settings file. Returns null if problems occurred during reading.
      */
     private static Element retrieveXmlSettingsTree(File settingFile) {
         try {

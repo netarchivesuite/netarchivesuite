@@ -36,17 +36,16 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 
 /**
- * The GetAllFilenamesMessage is sent to retrieve all the filenames in a
- * specific replica. The result is a file in the same format as a FilelistJob.
+ * The GetAllFilenamesMessage is sent to retrieve all the filenames in a specific replica. The result is a file in the
+ * same format as a FilelistJob.
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class GetAllFilenamesMessage extends ArchiveMessage {
 
     private static final Logger log = LoggerFactory.getLogger(GetAllFilenamesMessage.class);
 
     /**
-     * The file with the current content, which will be retrieved from the
-     * sender of this message.
+     * The file with the current content, which will be retrieved from the sender of this message.
      */
     private RemoteFile remoteFile;
     /** The id for the replica where this message should be sent. */
@@ -55,12 +54,9 @@ public class GetAllFilenamesMessage extends ArchiveMessage {
     /**
      * Constructor.
      * 
-     * @param to
-     *            The channel the message is sent to.
-     * @param replyTo
-     *            The channel the reply is sent to.
-     * @param repId
-     *            The id of the replica.
+     * @param to The channel the message is sent to.
+     * @param replyTo The channel the reply is sent to.
+     * @param repId The id of the replica.
      */
     public GetAllFilenamesMessage(ChannelID to, ChannelID replyTo, String repId) {
         super(to, replyTo);
@@ -69,11 +65,9 @@ public class GetAllFilenamesMessage extends ArchiveMessage {
     }
 
     /**
-     * Method for setting the resulting file. This file will be retrieved from
-     * the caller of this message.
+     * Method for setting the resulting file. This file will be retrieved from the caller of this message.
      * 
-     * @param file
-     *            The file with the checksum message.
+     * @param file The file with the checksum message.
      */
     public void setFile(File file) {
         ArgumentNotValid.checkNotNull(file, "File file");
@@ -84,8 +78,7 @@ public class GetAllFilenamesMessage extends ArchiveMessage {
     /**
      * Method for retrieving the resulting file.
      * 
-     * @param toFile
-     *            The file for the remotely retrieved content.
+     * @param toFile The file for the remotely retrieved content.
      */
     public void getData(File toFile) {
         ArgumentNotValid.checkNotNull(toFile, "File toFile");
@@ -105,8 +98,7 @@ public class GetAllFilenamesMessage extends ArchiveMessage {
     }
 
     /**
-     * Method for retrieving the id for the replica where this message should be
-     * sent.
+     * Method for retrieving the id for the replica where this message should be sent.
      * 
      * @return The id for the replica.
      */
@@ -126,8 +118,7 @@ public class GetAllFilenamesMessage extends ArchiveMessage {
     /**
      * Accept this message.
      *
-     * @param v
-     *            The message visitor accepting this message.
+     * @param v The message visitor accepting this message.
      */
     public void accept(ArchiveMessageVisitor v) {
         v.visit(this);

@@ -37,19 +37,18 @@ import dk.netarkivet.common.tools.ToolRunnerBase;
 /**
  * Method for reestablishing the admin database from a 'admin.data' file.
  */
-@SuppressWarnings({ "deprecation" })
+@SuppressWarnings({"deprecation"})
 public class ReestablishAdminDatabase extends ToolRunnerBase {
     /**
-     * The number of instances required for how many lines to ingest into the
-     * database between printing out, to tell how far we have come.
+     * The number of instances required for how many lines to ingest into the database between printing out, to tell how
+     * far we have come.
      */
     private static final int PRINT_INTERVAL = 10000;
 
     /**
      * Main method. Instantiates the tool and runs it.
      * 
-     * @param argv
-     *            The list of arguments.
+     * @param argv The list of arguments.
      */
     public static void main(String[] argv) {
         ReestablishAdminDatabase instance = new ReestablishAdminDatabase();
@@ -81,8 +80,7 @@ public class ReestablishAdminDatabase extends ToolRunnerBase {
         /**
          * Method for testing validating the arguments.
          * 
-         * @param args
-         *            The list of arguments given to the tool.
+         * @param args The list of arguments given to the tool.
          * @return Whether the arguments are valid.
          */
         public boolean checkArgs(String... args) {
@@ -121,9 +119,8 @@ public class ReestablishAdminDatabase extends ToolRunnerBase {
         }
 
         /**
-         * Write the parameters for this tool. It optionally takes the
-         * admin.data file as argument. If this argument is not given, then it
-         * is assumed to be located in the folder where the tool is run.
+         * Write the parameters for this tool. It optionally takes the admin.data file as argument. If this argument is
+         * not given, then it is assumed to be located in the folder where the tool is run.
          * 
          * @return The parameters for this tool.
          */
@@ -133,13 +130,11 @@ public class ReestablishAdminDatabase extends ToolRunnerBase {
         }
 
         /**
-         * Execution of the tool. Retrieves the lines of the admin file, and
-         * inserts them into the database. Also updates the date for date for
-         * the filelist and checksumslist updates based on the 'last modified'
-         * date of the admin file.
+         * Execution of the tool. Retrieves the lines of the admin file, and inserts them into the database. Also
+         * updates the date for date for the filelist and checksumslist updates based on the 'last modified' date of the
+         * admin file.
          * 
-         * @param args
-         *            The arguments for the tool.
+         * @param args The arguments for the tool.
          */
         @Override
         public void run(String... args) {
@@ -188,11 +183,10 @@ public class ReestablishAdminDatabase extends ToolRunnerBase {
         }
 
         /**
-         * Sets up the variables for the tool based on the arguments. Retrieves
-         * the admin data file and the last modified date for this file.
+         * Sets up the variables for the tool based on the arguments. Retrieves the admin data file and the last
+         * modified date for this file.
          * 
-         * @param args
-         *            The arguments for the tool.
+         * @param args The arguments for the tool.
          */
         @Override
         public void setUp(String... args) {
@@ -210,8 +204,7 @@ public class ReestablishAdminDatabase extends ToolRunnerBase {
         }
 
         /**
-         * Method for cleaning up afterwards. Closes the connection to the
-         * database.
+         * Method for cleaning up afterwards. Closes the connection to the database.
          */
         @Override
         public void tearDown() {

@@ -39,10 +39,9 @@ import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 
 /**
- * Job generator implementation. Generates jobs with a fixed number of domain
- * configurations. Configuration allows to choose a different count for partial
- * and full harvests. The last job generated may have less configurations in it,
- * as job generation happens on a per-harvest basis.
+ * Job generator implementation. Generates jobs with a fixed number of domain configurations. Configuration allows to
+ * choose a different count for partial and full harvests. The last job generated may have less configurations in it, as
+ * job generation happens on a per-harvest basis.
  *
  * @see HarvesterSettings#JOBGEN_FIXED_CONFIG_COUNT_SNAPSHOT
  * @see HarvesterSettings#JOBGEN_FIXED_CONFIG_COUNT_FOCUSED
@@ -68,8 +67,7 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
         /**
          * Constructor from a domain configuration.
          * 
-         * @param cfg
-         *            the related {@link DomainConfiguration}
+         * @param cfg the related {@link DomainConfiguration}
          */
         DomainConfigurationKey(DomainConfiguration cfg) {
             this.orderXmlName = cfg.getOrderXmlName();
@@ -115,10 +113,9 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
     /**
      * Simple marker class to improve code readability.
      * 
-     * Maps jobs currently being filled, for a given harvest definition, with
-     * domain configurations by harvest template name. These jobs keep getting
-     * new configurations until no more configurations are left to process or
-     * the configured size has been reached.
+     * Maps jobs currently being filled, for a given harvest definition, with domain configurations by harvest template
+     * name. These jobs keep getting new configurations until no more configurations are left to process or the
+     * configured size has been reached.
      */
     @SuppressWarnings("serial")
     private class HarvestJobGenerationState extends HashMap<DomainConfigurationKey, Job> {
@@ -137,20 +134,17 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
     }
 
     /**
-     * Constant : how many {@link DomainConfiguration}s we want in a focused
-     * harvest job.
+     * Constant : how many {@link DomainConfiguration}s we want in a focused harvest job.
      */
     private static long CONFIG_COUNT_FOCUSED = Settings.getLong(HarvesterSettings.JOBGEN_FIXED_CONFIG_COUNT_FOCUSED);
 
     /**
-     * Constant : how many {@link DomainConfiguration}s we want in a snapshot
-     * harvest job.
+     * Constant : how many {@link DomainConfiguration}s we want in a snapshot harvest job.
      */
     private static long CONFIG_COUNT_SNAPSHOT = Settings.getLong(HarvesterSettings.JOBGEN_FIXED_CONFIG_COUNT_SNAPSHOT);
 
     /**
-     * Constant : exclude {@link DomainConfiguration}s with a budget of zero
-     * (bytes or objects).
+     * Constant : exclude {@link DomainConfiguration}s with a budget of zero (bytes or objects).
      */
     private static boolean EXCLUDE_ZERO_BUDGET = Settings
             .getBoolean(HarvesterSettings.JOBGEN_FIXED_CONFIG_COUNT_EXCLUDE_ZERO_BUDGET);
@@ -159,10 +153,8 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
     public static FixedDomainConfigurationCountJobGenerator instance;
 
     /**
-     * Maps jobs currently being filled with domain configurations by harvest
-     * template name. These jobs keep getting new configurations until no more
-     * configurations are left to process or the configured size has been
-     * reached.
+     * Maps jobs currently being filled with domain configurations by harvest template name. These jobs keep getting new
+     * configurations until no more configurations are left to process or the configured size has been reached.
      */
     private Map<Long, HarvestJobGenerationState> state;
 
@@ -262,10 +254,8 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
     /**
      * Initializes a new job.
      * 
-     * @param harvest
-     *            the {@link HarvestDefinition} being processed.
-     * @param cfg
-     *            the first {@link DomainConfiguration} for this job.
+     * @param harvest the {@link HarvestDefinition} being processed.
+     * @param cfg the first {@link DomainConfiguration} for this job.
      * @return the {@link Job} instance
      */
     private Job initNewJob(HarvestDefinition harvest, DomainConfiguration cfg) {

@@ -46,8 +46,7 @@ public class CachingSLF4JAppender extends AppenderBase<ILoggingEvent> {
     private final int loggingHistorySize;
 
     /**
-     * The logging cache itself, caching the last "loggingHistorySize" log
-     * entries.
+     * The logging cache itself, caching the last "loggingHistorySize" log entries.
      */
     private final List<String> loggingHistory;
 
@@ -106,8 +105,7 @@ public class CachingSLF4JAppender extends AppenderBase<ILoggingEvent> {
     /**
      * Returns the nth logrecord from the top.
      *
-     * @param n
-     *            The number of the log record to get
+     * @param n The number of the log record to get
      * @return The LogRecord which is number n from the top, or null for none.
      */
     public String getNthLogRecord(int n) {

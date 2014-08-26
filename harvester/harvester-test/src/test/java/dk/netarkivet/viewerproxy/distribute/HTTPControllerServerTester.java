@@ -64,7 +64,7 @@ import dk.netarkivet.viewerproxy.URIResolver;
  * Unit tests for the HTTPControllerServer class.
  *
  */
-@SuppressWarnings({ "deprecation" })
+@SuppressWarnings({"deprecation"})
 public class HTTPControllerServerTester {
     private TestDelegatingController c;
     private TestURIResolver ur;
@@ -110,7 +110,7 @@ public class HTTPControllerServerTester {
                 new TestRequest(new URI("http://" + hostname + "/changeIndex?label=foobar")),
                 new TestRequest(new URI("http://" + hostname + "/changeIndex?label=foobar&returnURL=" + returnUrl)),
                 new TestRequest(new URI("http://" + hostname + "/changeIndex?label=foobar&jobID=" + 1)),
-                new TestRequest(new URI("http://" + hostname + "/changeIndex?returnURL=" + returnUrl + "&jobID=" + 1)) };
+                new TestRequest(new URI("http://" + hostname + "/changeIndex?returnURL=" + returnUrl + "&jobID=" + 1))};
     }
 
     @After
@@ -122,8 +122,7 @@ public class HTTPControllerServerTester {
     }
 
     /**
-     * Tests constructor. The only thing really testable is that it throws
-     * argument not valid on null arguments.
+     * Tests constructor. The only thing really testable is that it throws argument not valid on null arguments.
      *
      * @throws Exception
      */
@@ -145,8 +144,7 @@ public class HTTPControllerServerTester {
     }
 
     /**
-     * Test setURIResolver. Tests null arguments, and that lookup calls are
-     * delegated to this resolver after setting it.
+     * Test setURIResolver. Tests null arguments, and that lookup calls are delegated to this resolver after setting it.
      */
     @Test
     public void testSetURIResolver() throws Exception {
@@ -173,8 +171,7 @@ public class HTTPControllerServerTester {
     }
 
     /**
-     * Tests that command urls go to controller, and other urls go to wrapped
-     * uri resolver.
+     * Tests that command urls go to controller, and other urls go to wrapped uri resolver.
      *
      * @throws Exception
      */

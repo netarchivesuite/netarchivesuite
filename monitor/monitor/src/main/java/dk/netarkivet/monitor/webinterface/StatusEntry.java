@@ -44,8 +44,7 @@ public interface StatusEntry extends Comparable<StatusEntry> {
     String getMachineName();
 
     /**
-     * Get the HTTP port used by the application this status entry is from. Used
-     * for HTTP and self-identification.
+     * Get the HTTP port used by the application this status entry is from. Used for HTTP and self-identification.
      * 
      * @return the HTTP port that the application that this status entry is from
      */
@@ -61,8 +60,7 @@ public interface StatusEntry extends Comparable<StatusEntry> {
     /**
      * Get the instance id of the application that this status entry is from.
      * 
-     * @return the instance id of the application that this status entry is
-     *         from.
+     * @return the instance id of the application that this status entry is from.
      */
     String getApplicationInstanceID();
 
@@ -74,28 +72,23 @@ public interface StatusEntry extends Comparable<StatusEntry> {
     String getHarvestPriority();
 
     /**
-     * Get the replica id of the application that this status entry is
-     * represents.
+     * Get the replica id of the application that this status entry is represents.
      * 
-     * @return the replica id of the application that this status entry is
-     *         represents.
+     * @return the replica id of the application that this status entry is represents.
      */
     String getArchiveReplicaName();
 
     /**
-     * Get the index in the list of most recent log messages that this status
-     * entry is from.
+     * Get the index in the list of most recent log messages that this status entry is from.
      * 
-     * @return the index in the list of most recent log messages that this
-     *         status entry is from.
+     * @return the index in the list of most recent log messages that this status entry is from.
      */
     String getIndex();
 
     /**
      * Get the actual message.
      * 
-     * @param l
-     *            the current locale (only used to translate errormessages)
+     * @param l the current locale (only used to translate errormessages)
      * @return the actual status message
      */
     String getLogMessage(Locale l);

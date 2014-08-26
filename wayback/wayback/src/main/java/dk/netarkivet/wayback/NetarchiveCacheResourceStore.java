@@ -40,9 +40,8 @@ import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
 import dk.netarkivet.common.utils.Settings;
 
 /**
- * This is the connector between netarchivesuite and wayback. And is based on
- * the NetarchiveResourceStore, and the implementations of ResourceStore
- * distributed with wayback-1.4.2.
+ * This is the connector between netarchivesuite and wayback. And is based on the NetarchiveResourceStore, and the
+ * implementations of ResourceStore distributed with wayback-1.4.2.
  *
  */
 public class NetarchiveCacheResourceStore implements ResourceStore {
@@ -67,15 +66,11 @@ public class NetarchiveCacheResourceStore implements ResourceStore {
     }
 
     /**
-     * Transforms search result into a resource, according to the ResourceStore
-     * interface.
+     * Transforms search result into a resource, according to the ResourceStore interface.
      * 
-     * @param captureSearchResult
-     *            the search result.
-     * @return a valid resource containing metadata and a link to the ARC or
-     *         warc-record
-     * @throws ResourceNotAvailableException
-     *             if something went wrong fetching the record.
+     * @param captureSearchResult the search result.
+     * @return a valid resource containing metadata and a link to the ARC or warc-record
+     * @throws ResourceNotAvailableException if something went wrong fetching the record.
      */
     public Resource retrieveResource(CaptureSearchResult captureSearchResult) throws ResourceNotAvailableException {
         long offset;
@@ -117,8 +112,7 @@ public class NetarchiveCacheResourceStore implements ResourceStore {
     /**
      * Shuts down this resource store, closing the arcrepository client.
      * 
-     * @throws IOException
-     *             if an exception ocurred while closing the client.
+     * @throws IOException if an exception ocurred while closing the client.
      */
     public void shutdown() throws IOException {
         // Close JMS connection.

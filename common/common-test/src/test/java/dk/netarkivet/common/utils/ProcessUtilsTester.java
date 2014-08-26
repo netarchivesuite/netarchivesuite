@@ -40,8 +40,7 @@ public class ProcessUtilsTester {
      * 
      * FIXME: This test seems to test a platform dependent functionality.
      * 
-     * It is a bad idea to have unit tests which only works an a specific
-     * platform.
+     * It is a bad idea to have unit tests which only works an a specific platform.
      */
     public void testWaitFor() throws Exception {
         // Test that we can wait for a process that doesn't work

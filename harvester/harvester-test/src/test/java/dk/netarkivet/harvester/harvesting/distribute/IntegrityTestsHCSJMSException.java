@@ -60,8 +60,7 @@ import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
- * An integrity test that tests for how the HarvestControllerClient reacts to
- * the occurrence of an JMSException.
+ * An integrity test that tests for how the HarvestControllerClient reacts to the occurrence of an JMSException.
  */
 public class IntegrityTestsHCSJMSException {
 
@@ -113,8 +112,7 @@ public class IntegrityTestsHCSJMSException {
     }
 
     /**
-     * Test that a Harvester will not die immediately a JMSException is
-     * received.
+     * Test that a Harvester will not die immediately a JMSException is received.
      */
     @Test
     @Ignore("Incorrect handling of 'Cannot connect to JMS' situation")

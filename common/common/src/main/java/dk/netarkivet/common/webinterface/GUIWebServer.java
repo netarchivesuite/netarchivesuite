@@ -41,8 +41,7 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
 
 /**
- * A class representing an HttpServer. This class loads web applications as
- * given in settings.
+ * A class representing an HttpServer. This class loads web applications as given in settings.
  *
  */
 public class GUIWebServer implements CleanupIF {
@@ -68,8 +67,7 @@ public class GUIWebServer implements CleanupIF {
     /**
      * Initialises a GUI Web Server and adds web applications.
      *
-     * @throws IOFailure
-     *             on trouble starting server.
+     * @throws IOFailure on trouble starting server.
      */
     public GUIWebServer() {
         // Read and log settings.
@@ -109,8 +107,7 @@ public class GUIWebServer implements CleanupIF {
     }
 
     /**
-     * Returns the unique instance of this class. If instance is new, starts a
-     * GUI web server.
+     * Returns the unique instance of this class. If instance is new, starts a GUI web server.
      *
      * @return the instance
      */
@@ -123,19 +120,13 @@ public class GUIWebServer implements CleanupIF {
     }
 
     /**
-     * Adds a directory with jsp files on the given basepath of the web server.
-     * Note: This must be done BEFORE starting the server. The webbase is
-     * deduced from the name of the webapp.
+     * Adds a directory with jsp files on the given basepath of the web server. Note: This must be done BEFORE starting
+     * the server. The webbase is deduced from the name of the webapp.
      *
-     * @param webapp
-     *            a directory with jsp files or a war file.
-     * @throws IOFailure
-     *             if directory is not found.
-     * @throws ArgumentNotValid
-     *             if either argument is null or empty or if webbase doesn't
-     *             start with '/'.
-     * @throws PermissionDenied
-     *             if the server is already running.
+     * @param webapp a directory with jsp files or a war file.
+     * @throws IOFailure if directory is not found.
+     * @throws ArgumentNotValid if either argument is null or empty or if webbase doesn't start with '/'.
+     * @throws PermissionDenied if the server is already running.
      */
     private WebAppContext getWebApplication(String webapp) throws IOFailure, ArgumentNotValid, PermissionDenied {
 
@@ -177,8 +168,7 @@ public class GUIWebServer implements CleanupIF {
     /**
      * Starts the jsp web server.
      *
-     * @throws IOFailure
-     *             if the server for any reason cannot be started.
+     * @throws IOFailure if the server for any reason cannot be started.
      */
     public void startServer() {
         // start the server.

@@ -63,16 +63,11 @@ public final class ReplicaCacheHelpers {
     /**
      * Method for checking whether a replicafileinfo is in the database.
      *
-     * @param fileid
-     *            The id of the file.
-     * @param replicaID
-     *            The id of the replica.
-     * @param con
-     *            An open connection to the archive database
+     * @param fileid The id of the file.
+     * @param replicaID The id of the replica.
+     * @param con An open connection to the archive database
      * @return Whether the replicafileinfo was there or not.
-     * @throws IllegalState
-     *             If more than one copy of the replicafileinfo is placed in the
-     *             database.
+     * @throws IllegalState If more than one copy of the replicafileinfo is placed in the database.
      */
     protected static boolean existsReplicaFileInfoInDB(long fileid, String replicaID, Connection con)
             throws IllegalState {
@@ -93,17 +88,12 @@ public final class ReplicaCacheHelpers {
     }
 
     /**
-     * Method for inserting a Replica into the replica table. The replica_guid
-     * is automatically given by the database, and the values in the fields
-     * replica_id, replica_name and replica_type is created from the replica
-     * argument.
+     * Method for inserting a Replica into the replica table. The replica_guid is automatically given by the database,
+     * and the values in the fields replica_id, replica_name and replica_type is created from the replica argument.
      *
-     * @param rep
-     *            The Replica to insert into the replica table.
-     * @param con
-     *            An open connection to the archive database
-     * @throws IOFailure
-     *             If a SQLException is caught.
+     * @param rep The Replica to insert into the replica table.
+     * @param con An open connection to the archive database
+     * @throws IOFailure If a SQLException is caught.
      */
     protected static void insertReplicaIntoDB(Replica rep, Connection con) throws IOFailure {
         PreparedStatement statement = null;
@@ -128,17 +118,13 @@ public final class ReplicaCacheHelpers {
     }
 
     /**
-     * Method to create a new entry in the file table in the database. The
-     * file_id is automatically created by the database, and the argument is
-     * used for the filename for this new entry to the table. This will also
-     * create a replicafileinfo entry for each replica.
+     * Method to create a new entry in the file table in the database. The file_id is automatically created by the
+     * database, and the argument is used for the filename for this new entry to the table. This will also create a
+     * replicafileinfo entry for each replica.
      *
-     * @param filename
-     *            The filename for the new entry in the file table.
-     * @param connection
-     *            An open connection to the archive database
-     * @throws IllegalState
-     *             If the file cannot be inserted into the database.
+     * @param filename The filename for the new entry in the file table.
+     * @param connection An open connection to the archive database
+     * @throws IllegalState If the file cannot be inserted into the database.
      * @return created file_id for the new entry.
      */
     protected static long insertFileIntoDB(String filename, Connection connection) throws IllegalState {
@@ -171,21 +157,16 @@ public final class ReplicaCacheHelpers {
     }
 
     /**
-     * When a new file is inserted into the database, each replica gets a new
-     * entry in the replicafileinfo table for this file. The fields for this new
-     * entry are set to the following: - file_id = argument. - replica_id = The
-     * id of the current replica. - filelist_status = NO_FILELIST_STATUS. -
-     * checksum_status = UNKNOWN. - upload_status = NO_UPLOAD_STATUS.
+     * When a new file is inserted into the database, each replica gets a new entry in the replicafileinfo table for
+     * this file. The fields for this new entry are set to the following: - file_id = argument. - replica_id = The id of
+     * the current replica. - filelist_status = NO_FILELIST_STATUS. - checksum_status = UNKNOWN. - upload_status =
+     * NO_UPLOAD_STATUS.
      *
-     * The replicafileinfo_guid is automatically created by the database, and
-     * the dates are set to null.
+     * The replicafileinfo_guid is automatically created by the database, and the dates are set to null.
      *
-     * @param fileId
-     *            The id for the file.
-     * @param con
-     *            An open connection to the archive database
-     * @throws IllegalState
-     *             If the file could not be entered into the database.
+     * @param fileId The id for the file.
+     * @param con An open connection to the archive database
+     * @throws IllegalState If the file could not be entered into the database.
      */
     protected static void createReplicaFileInfoEntriesInDB(long fileId, Connection con) throws IllegalState {
         PreparedStatement statement = null;
@@ -220,8 +201,7 @@ public final class ReplicaCacheHelpers {
     /**
      * Method for retrieving the replica IDs within the database.
      * 
-     * @param con
-     *            An open connection to the archive database
+     * @param con An open connection to the archive database
      * @return The list of replicaIds from the replica table in the database.
      */
     protected static List<String> retrieveIdsFromReplicaTable(Connection con) {
@@ -236,8 +216,7 @@ public final class ReplicaCacheHelpers {
     /**
      * Method for retrieving all the file IDs within the database.
      * 
-     * @param con
-     *            An open connection to the archive database
+     * @param con An open connection to the archive database
      * @return The list of fileIds from the file table in the database.
      */
     protected static List<String> retrieveIdsFromFileTable(Connection con) {
@@ -252,10 +231,8 @@ public final class ReplicaCacheHelpers {
     /**
      * Method for retrieving all the ReplicaFileInfo GUIDs within the database.
      * 
-     * @param con
-     *            An open connection to the archive database
-     * @return A list of the replicafileinfo_guid for all entries in the
-     *         replicafileinfo table.
+     * @param con An open connection to the archive database
+     * @return A list of the replicafileinfo_guid for all entries in the replicafileinfo table.
      */
     protected static List<String> retrieveIdsFromReplicaFileInfoTable(Connection con) {
         // Make SQL statement for retrieving the replicafileinfo_guids in the
@@ -267,16 +244,12 @@ public final class ReplicaCacheHelpers {
     }
 
     /**
-     * Retrieves the file_id for the corresponding filename. An error is thrown
-     * if no such file_id is found in the file table, and if more than one
-     * instance with the given name is found, then a warning is issued. If more
-     * than one is found, then it is logged and only the first is returned.
+     * Retrieves the file_id for the corresponding filename. An error is thrown if no such file_id is found in the file
+     * table, and if more than one instance with the given name is found, then a warning is issued. If more than one is
+     * found, then it is logged and only the first is returned.
      *
-     * @param filename
-     *            The entry in the filename list where the corresponding file_id
-     *            should be found.
-     * @param con
-     *            An open connection to the archive database
+     * @param filename The entry in the filename list where the corresponding file_id should be found.
+     * @param con An open connection to the archive database
      * @return The file_id for the file, or -1 if the file was not found.
      */
     protected static long retrieveIdForFile(String filename, Connection con) {
@@ -300,16 +273,12 @@ public final class ReplicaCacheHelpers {
     }
 
     /**
-     * Method for retrieving the replicafileinfo_guid for a specific instance
-     * defined from the fileId and the replicaId. If more than one is found,
-     * then it is logged and only the first is returned.
+     * Method for retrieving the replicafileinfo_guid for a specific instance defined from the fileId and the replicaId.
+     * If more than one is found, then it is logged and only the first is returned.
      *
-     * @param fileId
-     *            The identifier for the file.
-     * @param replicaId
-     *            The identifier for the replica.
-     * @param con
-     *            An open connection to the archive database
+     * @param fileId The identifier for the file.
+     * @param replicaId The identifier for the replica.
+     * @param con An open connection to the archive database
      * @return The identifier for the replicafileinfo, or -1 if not found.
      */
     protected static long retrieveReplicaFileInfoGuid(long fileId, String replicaId, Connection con) {
@@ -332,13 +301,10 @@ public final class ReplicaCacheHelpers {
     }
 
     /**
-     * Method for retrieving the list of all the replicafileinfo_guids for a
-     * specific replica.
+     * Method for retrieving the list of all the replicafileinfo_guids for a specific replica.
      *
-     * @param replicaId
-     *            The id for the replica to contain the files.
-     * @param con
-     *            An open connection to the archiveDatabase.
+     * @param replicaId The id for the replica to contain the files.
+     * @param con An open connection to the archiveDatabase.
      * @return The list of all the replicafileinfo_guid.
      */
     protected static Set<Long> retrieveReplicaFileInfoGuidsForReplica(String replicaId, Connection con) {
@@ -351,10 +317,8 @@ public final class ReplicaCacheHelpers {
     /**
      * Method for retrieving the replica type for a specific replica.
      *
-     * @param replicaId
-     *            The id of the replica.
-     * @param con
-     *            An open connection to the archiveDatabase.
+     * @param replicaId The id of the replica.
+     * @param con An open connection to the archiveDatabase.
      * @return The type of the replica.
      */
     protected static ReplicaType retrieveReplicaType(String replicaId, Connection con) {
@@ -365,15 +329,11 @@ public final class ReplicaCacheHelpers {
     }
 
     /**
-     * Method for retrieving the list of replica, where the file with the given
-     * name has the checksum_status 'OK'.
+     * Method for retrieving the list of replica, where the file with the given name has the checksum_status 'OK'.
      *
-     * @param filename
-     *            The name of the file.
-     * @param con
-     *            An open connection to the archive database
-     * @return The list of replicas where the status for the checksum of the
-     *         file is OK.
+     * @param filename The name of the file.
+     * @param con An open connection to the archive database
+     * @return The list of replicas where the status for the checksum of the file is OK.
      */
     protected static List<String> retrieveReplicaIdsWithOKChecksumStatus(String filename, Connection con) {
         // The SQL statement to retrieve the replica_id for the entries in the
@@ -385,14 +345,10 @@ public final class ReplicaCacheHelpers {
     }
 
     /**
-     * Method for retrieving the filename from the entry in the file table which
-     * has the fileId as file_id.
+     * Method for retrieving the filename from the entry in the file table which has the fileId as file_id.
      *
-     * @param fileId
-     *            The file_id of the entry in the file table for which to
-     *            retrieve the filename.
-     * @param con
-     *            An open connection to the archive database
+     * @param fileId The file_id of the entry in the file table for which to retrieve the filename.
+     * @param con An open connection to the archive database
      * @return The filename corresponding to the fileId in the file table.
      */
     protected static String retrieveFilenameForFileId(long fileId, Connection con) {
@@ -402,16 +358,12 @@ public final class ReplicaCacheHelpers {
     }
 
     /**
-     * Method for retrieving the filelist_status for the entry in the
-     * replicafileinfo table associated with the given filename for the replica
-     * identified with a given id.
+     * Method for retrieving the filelist_status for the entry in the replicafileinfo table associated with the given
+     * filename for the replica identified with a given id.
      *
-     * @param filename
-     *            the filename of the file for which you want a status.
-     * @param replicaId
-     *            The identifier of the replica
-     * @param con
-     *            An open connection to the archive database
+     * @param filename the filename of the file for which you want a status.
+     * @param replicaId The identifier of the replica
+     * @param con An open connection to the archive database
      * @return The above mentioned filelist_status of the file
      */
     protected static int retrieveFileListStatusFromReplicaFileInfo(String filename, String replicaId, Connection con) {
@@ -424,9 +376,8 @@ public final class ReplicaCacheHelpers {
     }
 
     /**
-     * This is used for updating a replicafileinfo instance based on the results
-     * of a checksumjob. Updates the following fields for the entry in the
-     * replicafileinfo: <br/>
+     * This is used for updating a replicafileinfo instance based on the results of a checksumjob. Updates the following
+     * fields for the entry in the replicafileinfo: <br/>
      * - checksum = checksum argument. <br/>
      * - upload_status = completed. <br/>
      * - filelist_status = ok. <br/>
@@ -434,12 +385,9 @@ public final class ReplicaCacheHelpers {
      * - checksum_checkdatetime = now. <br/>
      * - filelist_checkdatetime = now.
      *
-     * @param replicafileinfoId
-     *            The unique id for the replicafileinfo.
-     * @param checksum
-     *            The new checksum for the entry.
-     * @param con
-     *            An open connection to the archive database
+     * @param replicafileinfoId The unique id for the replicafileinfo.
+     * @param checksum The new checksum for the entry.
+     * @param con An open connection to the archive database
      */
     protected static void updateReplicaFileInfoChecksum(long replicafileinfoId, String checksum, Connection con) {
         PreparedStatement statement = null;
@@ -468,15 +416,13 @@ public final class ReplicaCacheHelpers {
     }
 
     /**
-     * Method for updating the filelist of a replicafileinfo instance. Updates
-     * the following fields for the entry in the replicafileinfo: <br/>
+     * Method for updating the filelist of a replicafileinfo instance. Updates the following fields for the entry in the
+     * replicafileinfo: <br/>
      * filelist_status = OK. <br/>
      * filelist_checkdatetime = current time.
      *
-     * @param replicafileinfoId
-     *            The id of the replicafileinfo.
-     * @param con
-     *            An open connection to the archive database
+     * @param replicafileinfoId The id of the replicafileinfo.
+     * @param con An open connection to the archive database
      */
     protected static void updateReplicaFileInfoFilelist(long replicafileinfoId, Connection con) {
         PreparedStatement statement = null;
@@ -503,17 +449,15 @@ public final class ReplicaCacheHelpers {
     }
 
     /**
-     * Method for updating the filelist of a replicafileinfo instance. Updates
-     * the following fields for the entry in the replicafileinfo: <br/>
+     * Method for updating the filelist of a replicafileinfo instance. Updates the following fields for the entry in the
+     * replicafileinfo: <br/>
      * filelist_status = missing. <br/>
      * filelist_checkdatetime = current time.
      *
      * The replicafileinfo is in the filelist.
      *
-     * @param replicafileinfoId
-     *            The id of the replicafileinfo.
-     * @param con
-     *            An open connection to the archive database
+     * @param replicafileinfoId The id of the replicafileinfo.
+     * @param con An open connection to the archive database
      */
     protected static void updateReplicaFileInfoMissingFromFilelist(long replicafileinfoId, Connection con) {
         PreparedStatement statement = null;
@@ -542,17 +486,15 @@ public final class ReplicaCacheHelpers {
     }
 
     /**
-     * Method for updating the checksum status of a replicafileinfo instance.
-     * Updates the following fields for the entry in the replicafileinfo: <br/>
+     * Method for updating the checksum status of a replicafileinfo instance. Updates the following fields for the entry
+     * in the replicafileinfo: <br/>
      * checksum_status = CORRUPT. <br/>
      * checksum_checkdatetime = current time.
      *
      * The replicafileinfo is in the filelist.
      *
-     * @param replicafileinfoId
-     *            The id of the replicafileinfo.
-     * @param con
-     *            An open connection to the archive database
+     * @param replicafileinfoId The id of the replicafileinfo.
+     * @param con An open connection to the archive database
      */
     protected static void updateReplicaFileInfoChecksumCorrupt(long replicafileinfoId, Connection con) {
         PreparedStatement statement = null;
@@ -583,12 +525,9 @@ public final class ReplicaCacheHelpers {
     /**
      * Retrieve the guid stored for a filename on a given replica.
      * 
-     * @param filename
-     *            a given filename
-     * @param replicaId
-     *            An identifier for a replica.
-     * @param con
-     *            An open connection to the archive database
+     * @param filename a given filename
+     * @param replicaId An identifier for a replica.
+     * @param con An open connection to the archive database
      * @return the abovementioned guid.
      */
     protected static long retrieveGuidForFilenameOnReplica(String filename, String replicaId, Connection con) {
@@ -601,17 +540,15 @@ public final class ReplicaCacheHelpers {
     }
 
     /**
-     * Method for updating the checksum status of a replicafileinfo instance.
-     * Updates the following fields for the entry in the replicafileinfo: <br/>
+     * Method for updating the checksum status of a replicafileinfo instance. Updates the following fields for the entry
+     * in the replicafileinfo: <br/>
      * checksum_status = UNKNOWN. <br/>
      * checksum_checkdatetime = current time.
      *
      * The replicafileinfo is in the filelist.
      *
-     * @param replicafileinfoId
-     *            The id of the replicafileinfo.
-     * @param con
-     *            An open connection to the archive database
+     * @param replicafileinfoId The id of the replicafileinfo.
+     * @param con An open connection to the archive database
      */
     protected static void updateReplicaFileInfoChecksumUnknown(long replicafileinfoId, Connection con) {
         PreparedStatement statement = null;
@@ -638,18 +575,16 @@ public final class ReplicaCacheHelpers {
     }
 
     /**
-     * Method for updating the checksum status of a replicafileinfo instance.
-     * Updates the following fields for the entry in the replicafileinfo: <br/>
+     * Method for updating the checksum status of a replicafileinfo instance. Updates the following fields for the entry
+     * in the replicafileinfo: <br/>
      * checksum_status = OK. <br/>
      * upload_status = UPLOAD_COMLPETE. <br/>
      * checksum_checkdatetime = current time. <br/>
      * <br/>
      * The file is required to exist in the replica.
      *
-     * @param replicafileinfoId
-     *            The id of the replicafileinfo.
-     * @param con
-     *            An open connection to the archive database
+     * @param replicafileinfoId The id of the replicafileinfo.
+     * @param con An open connection to the archive database
      */
     protected static void updateReplicaFileInfoChecksumOk(long replicafileinfoId, Connection con) {
         PreparedStatement statement = null;
@@ -677,16 +612,14 @@ public final class ReplicaCacheHelpers {
     }
 
     /**
-     * Method for updating the checksum_updated field for a given replica in the
-     * replica table. This is called when a checksum_job has been handled.
+     * Method for updating the checksum_updated field for a given replica in the replica table. This is called when a
+     * checksum_job has been handled.
      *
      * The following fields for the entry in the replica table: <br/>
      * checksum_updated = now.
      *
-     * @param rep
-     *            The replica which has just been updated.
-     * @param con
-     *            An open connection to the archive database
+     * @param rep The replica which has just been updated.
+     * @param con An open connection to the archive database
      */
     protected static void updateChecksumDateForReplica(Replica rep, Connection con) {
         PreparedStatement statement = null;
@@ -706,17 +639,14 @@ public final class ReplicaCacheHelpers {
     }
 
     /**
-     * Method for updating the filelist_updated field for a given replica in the
-     * replica table. This is called when a filelist_job or a checksum_job has
-     * been handled.
+     * Method for updating the filelist_updated field for a given replica in the replica table. This is called when a
+     * filelist_job or a checksum_job has been handled.
      *
      * The following fields for the entry in the replica table: <br/>
      * filelist_updated = now.
      *
-     * @param rep
-     *            The replica which has just been updated.
-     * @param connection
-     *            An open connection to the archive database
+     * @param rep The replica which has just been updated.
+     * @param connection An open connection to the archive database
      */
     protected static void updateFilelistDateForReplica(Replica rep, Connection connection) {
         PreparedStatement statement = null;
@@ -736,19 +666,15 @@ public final class ReplicaCacheHelpers {
     }
 
     /**
-     * Method for setting the filelist_updated field for a given replica in the
-     * replica table to a specified value. This is only called when the
-     * admin.data is converted.
+     * Method for setting the filelist_updated field for a given replica in the replica table to a specified value. This
+     * is only called when the admin.data is converted.
      *
      * The following fields for the entry in the replica table: <br/>
      * filelist_updated = date.
      *
-     * @param rep
-     *            The replica which has just been updated.
-     * @param date
-     *            The date for the last filelist update.
-     * @param con
-     *            An open connection to the archive database
+     * @param rep The replica which has just been updated.
+     * @param date The date for the last filelist update.
+     * @param con An open connection to the archive database
      */
     protected static void setFilelistDateForReplica(Replica rep, Date date, Connection con) {
         PreparedStatement statement = null;
@@ -767,19 +693,15 @@ public final class ReplicaCacheHelpers {
     }
 
     /**
-     * Method for setting the checksum_updated field for a given replica in the
-     * replica table to a specified value. This is only called when the
-     * admin.data is converted.
+     * Method for setting the checksum_updated field for a given replica in the replica table to a specified value. This
+     * is only called when the admin.data is converted.
      *
      * The following fields for the entry in the replica table: <br/>
      * checksum_updated = date.
      *
-     * @param rep
-     *            The replica which has just been updated.
-     * @param date
-     *            The date for the last checksum update.
-     * @param con
-     *            An open connection to the archive database
+     * @param rep The replica which has just been updated.
+     * @param date The date for the last checksum update.
+     * @param con An open connection to the archive database
      */
     protected static void setChecksumlistDateForReplica(Replica rep, Date date, Connection con) {
         PreparedStatement statement = null;
@@ -800,10 +722,8 @@ public final class ReplicaCacheHelpers {
     /**
      * Method for testing whether a replica already is within the database.
      *
-     * @param rep
-     *            The replica to find in the database.
-     * @param con
-     *            An open connection to the archive database
+     * @param rep The replica to find in the database.
+     * @param con An open connection to the archive database
      * @return Whether the replica is found in the database.
      */
     protected static boolean existsReplicaInDB(Replica rep, Connection con) {
@@ -825,10 +745,8 @@ public final class ReplicaCacheHelpers {
     /**
      * Method for retrieving ReplicaFileInfo entry in the database.
      *
-     * @param replicaFileInfoGuid
-     *            The guid for the specific replicafileinfo.
-     * @param con
-     *            An open connection to the archive database
+     * @param replicaFileInfoGuid The guid for the specific replicafileinfo.
+     * @param con An open connection to the archive database
      * @return The replicafileinfo.
      */
     protected static ReplicaFileInfo getReplicaFileInfo(long replicaFileInfoGuid, Connection con) {
@@ -856,15 +774,11 @@ public final class ReplicaCacheHelpers {
     }
 
     /**
-     * Method for retrieving the data for the wanted entries in the
-     * replicafileinfo table. All the replicafileinfo entries with no checksum
-     * defined is ignored.
+     * Method for retrieving the data for the wanted entries in the replicafileinfo table. All the replicafileinfo
+     * entries with no checksum defined is ignored.
      *
-     * @param rfiGuids
-     *            The list of guids for the entries in the replicafileinfo table
-     *            which is wanted.
-     * @param con
-     *            An open connection to the archive database
+     * @param rfiGuids The list of guids for the entries in the replicafileinfo table which is wanted.
+     * @param con An open connection to the archive database
      * @return The complete data for these entries in the replicafileinfo table.
      */
     protected static List<ReplicaFileInfo> retrieveReplicaFileInfosWithChecksum(List<Long> rfiGuids, Connection con) {
@@ -883,20 +797,14 @@ public final class ReplicaCacheHelpers {
     }
 
     /**
-     * Method for updating an entry in the replicafileinfo table. This method
-     * does not update the 'checksum_checkdatetime' and
-     * 'filelist_checkdatetime'.
+     * Method for updating an entry in the replicafileinfo table. This method does not update the
+     * 'checksum_checkdatetime' and 'filelist_checkdatetime'.
      *
-     * @param replicafileinfoGuid
-     *            The guid to update.
-     * @param checksum
-     *            The new checksum for the entry.
-     * @param state
-     *            The state for the upload.
-     * @param con
-     *            An open connection to the archive database
-     * @throws IOFailure
-     *             If an error occurs in the database connection.
+     * @param replicafileinfoGuid The guid to update.
+     * @param checksum The new checksum for the entry.
+     * @param state The state for the upload.
+     * @param con An open connection to the archive database
+     * @throws IOFailure If an error occurs in the database connection.
      */
     protected static void updateReplicaFileInfo(long replicafileinfoGuid, String checksum, ReplicaStoreState state,
             Connection con) throws IOFailure {
@@ -935,22 +843,15 @@ public final class ReplicaCacheHelpers {
     }
 
     /**
-     * Method for updating an entry in the replicafileinfo table. This method
-     * updates the 'checksum_checkdatetime' and 'filelist_checkdatetime' with
-     * the given date argument.
+     * Method for updating an entry in the replicafileinfo table. This method updates the 'checksum_checkdatetime' and
+     * 'filelist_checkdatetime' with the given date argument.
      *
-     * @param replicafileinfoGuid
-     *            The guid to update.
-     * @param checksum
-     *            The new checksum for the entry.
-     * @param date
-     *            The date for the update.
-     * @param state
-     *            The status for the upload.
-     * @param con
-     *            An open connection to the archive database
-     * @throws IOFailure
-     *             If an error occurs in the connection to the database.
+     * @param replicafileinfoGuid The guid to update.
+     * @param checksum The new checksum for the entry.
+     * @param date The date for the update.
+     * @param state The status for the upload.
+     * @param con An open connection to the archive database
+     * @throws IOFailure If an error occurs in the connection to the database.
      */
     protected static void updateReplicaFileInfo(long replicafileinfoGuid, String checksum, Date date,
             ReplicaStoreState state, Connection con) throws IOFailure {
@@ -989,15 +890,12 @@ public final class ReplicaCacheHelpers {
     }
 
     /**
-     * Retrieves the UploadStatus for a specific entry in the replicafileinfo
-     * table identified by the file guid and the replica id.
+     * Retrieves the UploadStatus for a specific entry in the replicafileinfo table identified by the file guid and the
+     * replica id.
      *
-     * @param fileGuid
-     *            The id of the file.
-     * @param repId
-     *            The id of the replica.
-     * @param con
-     *            An open connection to the archive database
+     * @param fileGuid The id of the file.
+     * @param repId The id of the replica.
+     * @param con An open connection to the archive database
      * @return The upload status of the corresponding replicafileinfo entry.
      */
     protected static ReplicaStoreState retrieveUploadStatus(long fileGuid, String repId, Connection con) {
@@ -1008,15 +906,12 @@ public final class ReplicaCacheHelpers {
     }
 
     /**
-     * Retrieves the checksum for a specific entry in the replicafileinfo table
-     * identified by the file guid and the replica id.
+     * Retrieves the checksum for a specific entry in the replicafileinfo table identified by the file guid and the
+     * replica id.
      *
-     * @param fileGuid
-     *            The guid of the file in the file table.
-     * @param repId
-     *            The id of the replica.
-     * @param con
-     *            An open connection to the archive database
+     * @param fileGuid The guid of the file in the file table.
+     * @param repId The id of the replica.
+     * @param con An open connection to the archive database
      * @return The checksum of the corresponding replicafileinfo entry.
      */
     protected static String retrieveChecksumForReplicaFileInfoEntry(long fileGuid, String repId, Connection con) {
@@ -1026,15 +921,12 @@ public final class ReplicaCacheHelpers {
     }
 
     /**
-     * Retrieves the checksum status for a specific entry in the replicafileinfo
-     * table identified by the file guid and the replica id.
+     * Retrieves the checksum status for a specific entry in the replicafileinfo table identified by the file guid and
+     * the replica id.
      *
-     * @param fileGuid
-     *            The guid of the file in the file table.
-     * @param repId
-     *            The id of the replica.
-     * @param con
-     *            An open connection to the archive database
+     * @param fileGuid The guid of the file in the file table.
+     * @param repId The id of the replica.
+     * @param con An open connection to the archive database
      * @return The checksum status of the corresponding replicafileinfo entry.
      */
     protected static ChecksumStatus retrieveChecksumStatusForReplicaFileInfoEntry(long fileGuid, String repId,
@@ -1050,8 +942,7 @@ public final class ReplicaCacheHelpers {
     /**
      * Method for finding the checksum which is present most times in the list.
      *
-     * @param checksums
-     *            The list of checksum to vote about.
+     * @param checksums The list of checksum to vote about.
      * @return The most common checksum, or null if several exists.
      */
     protected static String vote(List<String> checksums) {
@@ -1094,27 +985,20 @@ public final class ReplicaCacheHelpers {
 
     /**
      * The method for voting about the checksum of a file. <br/>
-     * Each entry in the replicafileinfo table containing the file is retrieved.
-     * All the unique checksums are retrieved, e.g. if a checksum is found more
-     * than one, then it is ignored. <br/>
-     * If only one unique checksum is found, then if must be the correct one,
-     * and all the replicas with this file will have their checksum_status set
-     * to 'OK'. <br/>
-     * If more than one checksum is found, then a vote for the correct checksum
-     * is performed. This is done by counting the amount of time each of the
-     * unique checksum is found among the replicafileinfo entries for the
-     * current file. The checksum with most votes is chosen as the correct one,
-     * and the checksum_status for all the replicafileinfo entries with this
-     * checksum is set to 'OK', whereas the replicafileinfo entries with a
-     * different checksum is set to 'CORRUPT'. <br/>
-     * If no winner is found then a warning and a notification is issued, and
-     * the checksum_status for all the replicafileinfo entries with for the
-     * current file is set to 'UNKNOWN'. <br/>
+     * Each entry in the replicafileinfo table containing the file is retrieved. All the unique checksums are retrieved,
+     * e.g. if a checksum is found more than one, then it is ignored. <br/>
+     * If only one unique checksum is found, then if must be the correct one, and all the replicas with this file will
+     * have their checksum_status set to 'OK'. <br/>
+     * If more than one checksum is found, then a vote for the correct checksum is performed. This is done by counting
+     * the amount of time each of the unique checksum is found among the replicafileinfo entries for the current file.
+     * The checksum with most votes is chosen as the correct one, and the checksum_status for all the replicafileinfo
+     * entries with this checksum is set to 'OK', whereas the replicafileinfo entries with a different checksum is set
+     * to 'CORRUPT'. <br/>
+     * If no winner is found then a warning and a notification is issued, and the checksum_status for all the
+     * replicafileinfo entries with for the current file is set to 'UNKNOWN'. <br/>
      *
-     * @param fileId
-     *            The id for the file to vote about.
-     * @param con
-     *            An open connection to the archive database
+     * @param fileId The id for the file to vote about.
+     * @param con An open connection to the archive database
      */
     protected static void fileChecksumVote(long fileId, Connection con) {
         // Get all the replicafileinfo instances for the fileid, though
@@ -1213,14 +1097,10 @@ public final class ReplicaCacheHelpers {
     /**
      * Add information about one file in a given replica.
      * 
-     * @param file
-     *            The name of a file
-     * @param replica
-     *            A replica
-     * @param con
-     *            An open connection to the ArchiveDatabase
-     * @return the ReplicaFileInfo ID for the given filename and replica in the
-     *         database
+     * @param file The name of a file
+     * @param replica A replica
+     * @param con An open connection to the ArchiveDatabase
+     * @return the ReplicaFileInfo ID for the given filename and replica in the database
      */
     protected static long addFileInformation(String file, Replica replica, Connection con) {
         // retrieve the file_id for the file.
@@ -1249,19 +1129,13 @@ public final class ReplicaCacheHelpers {
     }
 
     /**
-     * Process checksum information about one file in a given replica. and
-     * update the database accordingly.
+     * Process checksum information about one file in a given replica. and update the database accordingly.
      * 
-     * @param filename
-     *            The name of a file
-     * @param checksum
-     *            The checksum of that file.
-     * @param replica
-     *            A replica
-     * @param con
-     *            An open connection to the ArchiveDatabase
-     * @return the ReplicaFileInfo ID for the given filename and replica in the
-     *         database
+     * @param filename The name of a file
+     * @param checksum The checksum of that file.
+     * @param replica A replica
+     * @param con An open connection to the ArchiveDatabase
+     * @return the ReplicaFileInfo ID for the given filename and replica in the database
      */
     public static long processChecksumline(String filename, String checksum, Replica replica, Connection con) {
 

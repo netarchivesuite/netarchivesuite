@@ -35,21 +35,18 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * Compares two collections, returning a list of the additions, changes, and
- * deletions between them. A <code>Comparator</code> may be passed as an
- * argument to the constructor, and will thus be used. If not provided, the
- * initial value in the <code>a</code> ("from") collection will be looked at to
- * see if it supports the <code>Comparable</code> interface. If so, its
- * <code>equals</code> and <code>compareTo</code> methods will be invoked on the
- * instances in the "from" and "to" collections; otherwise, for speed, hash
- * codes from the objects will be used instead for comparison.
+ * Compares two collections, returning a list of the additions, changes, and deletions between them. A
+ * <code>Comparator</code> may be passed as an argument to the constructor, and will thus be used. If not provided, the
+ * initial value in the <code>a</code> ("from") collection will be looked at to see if it supports the
+ * <code>Comparable</code> interface. If so, its <code>equals</code> and <code>compareTo</code> methods will be invoked
+ * on the instances in the "from" and "to" collections; otherwise, for speed, hash codes from the objects will be used
+ * instead for comparison.
  *
  * <p>
- * The file FileDiff.java shows an example usage of this class, in an
- * application similar to the Unix "diff" program.
+ * The file FileDiff.java shows an example usage of this class, in an application similar to the Unix "diff" program.
  * </p>
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class Diff {
     /**
      * The source array, AKA the "from" values.
@@ -82,8 +79,7 @@ public class Diff {
     private TreeMap thresh;
 
     /**
-     * Constructs the Diff object for the two arrays, using the given
-     * comparator.
+     * Constructs the Diff object for the two arrays, using the given comparator.
      */
     public Diff(Object[] a, Object[] b, Comparator comp) {
         this.a = a;
@@ -93,26 +89,23 @@ public class Diff {
     }
 
     /**
-     * Constructs the Diff object for the two arrays, using the default
-     * comparison mechanism between the objects, such as <code>equals</code> and
-     * <code>compareTo</code>.
+     * Constructs the Diff object for the two arrays, using the default comparison mechanism between the objects, such
+     * as <code>equals</code> and <code>compareTo</code>.
      */
     public Diff(Object[] a, Object[] b) {
         this(a, b, null);
     }
 
     /**
-     * Constructs the Diff object for the two collections, using the given
-     * comparator.
+     * Constructs the Diff object for the two collections, using the given comparator.
      */
     public Diff(Collection a, Collection b, Comparator comp) {
         this(a.toArray(), b.toArray(), comp);
     }
 
     /**
-     * Constructs the Diff object for the two collections, using the default
-     * comparison mechanism between the objects, such as <code>equals</code> and
-     * <code>compareTo</code>.
+     * Constructs the Diff object for the two collections, using the default comparison mechanism between the objects,
+     * such as <code>equals</code> and <code>compareTo</code>.
      */
     public Diff(Collection a, Collection b) {
         this(a, b, null);
@@ -133,9 +126,8 @@ public class Diff {
     }
 
     /**
-     * Traverses the sequences, seeking the longest common subsequences,
-     * invoking the methods <code>finishedA</code>, <code>finishedB</code>,
-     * <code>onANotB</code>, and <code>onBNotA</code>.
+     * Traverses the sequences, seeking the longest common subsequences, invoking the methods <code>finishedA</code>,
+     * <code>finishedB</code>, <code>onANotB</code>, and <code>onBNotA</code>.
      */
     protected void traverseSequences() {
         Integer[] matches = getLongestCommonSubsequences();
@@ -201,31 +193,29 @@ public class Diff {
     }
 
     /**
-     * Override and return true in order to have <code>finishedA</code> invoked
-     * at the last element in the <code>a</code> array.
+     * Override and return true in order to have <code>finishedA</code> invoked at the last element in the
+     * <code>a</code> array.
      */
     protected boolean callFinishedA() {
         return false;
     }
 
     /**
-     * Override and return true in order to have <code>finishedB</code> invoked
-     * at the last element in the <code>b</code> array.
+     * Override and return true in order to have <code>finishedB</code> invoked at the last element in the
+     * <code>b</code> array.
      */
     protected boolean callFinishedB() {
         return false;
     }
 
     /**
-     * Invoked at the last element in <code>a</code>, if
-     * <code>callFinishedA</code> returns true.
+     * Invoked at the last element in <code>a</code>, if <code>callFinishedA</code> returns true.
      */
     protected void finishedA(int lastA) {
     }
 
     /**
-     * Invoked at the last element in <code>b</code>, if
-     * <code>callFinishedB</code> returns true.
+     * Invoked at the last element in <code>b</code>, if <code>callFinishedB</code> returns true.
      */
     protected void finishedB(int lastB) {
     }
@@ -265,8 +255,7 @@ public class Diff {
     }
 
     /**
-     * Compares the two objects, using the comparator provided with the
-     * constructor, if any.
+     * Compares the two objects, using the comparator provided with the constructor, if any.
      */
     protected boolean equals(Object x, Object y) {
         return comparator == null ? x.equals(y) : comparator.compare(x, y) == 0;
@@ -337,7 +326,7 @@ public class Diff {
                         // nothing
                     } else {
                         Object value = k.intValue() > 0 ? links.get(Integer.valueOf(k.intValue() - 1)) : null;
-                        links.put(k, new Object[] { value, Integer.valueOf(i), j });
+                        links.put(k, new Object[] {value, Integer.valueOf(i), j});
                     }
                 }
             }
@@ -381,8 +370,7 @@ public class Diff {
     }
 
     /**
-     * Returns whether the value in the map for the given index is greater than
-     * the given value.
+     * Returns whether the value in the map for the given index is greater than the given value.
      */
     protected boolean isGreaterThan(Integer index, Integer val) {
         Integer lhs = (Integer) thresh.get(index);
@@ -390,8 +378,7 @@ public class Diff {
     }
 
     /**
-     * Returns whether the value in the map for the given index is less than the
-     * given value.
+     * Returns whether the value in the map for the given index is less than the given value.
      */
     protected boolean isLessThan(Integer index, Integer val) {
         Integer lhs = (Integer) thresh.get(index);
@@ -406,8 +393,7 @@ public class Diff {
     }
 
     /**
-     * Adds the given value to the "end" of the threshold map, that is, with the
-     * greatest index/key.
+     * Adds the given value to the "end" of the threshold map, that is, with the greatest index/key.
      */
     protected void append(Integer value) {
         Integer addIdx = null;

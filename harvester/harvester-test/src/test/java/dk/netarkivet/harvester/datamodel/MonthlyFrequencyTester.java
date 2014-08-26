@@ -48,8 +48,7 @@ public class MonthlyFrequencyTester {
     }
 
     /**
-     * Given a frequency that can start any time, check that first event is
-     * immediate.
+     * Given a frequency that can start any time, check that first event is immediate.
      * 
      * @throws Exception
      */
@@ -65,8 +64,7 @@ public class MonthlyFrequencyTester {
     }
 
     /**
-     * Given a frequency that can start 5th of month 4:22, check that next event
-     * is at first correct time.
+     * Given a frequency that can start 5th of month 4:22, check that next event is at first correct time.
      * 
      * @throws Exception
      */
@@ -88,8 +86,7 @@ public class MonthlyFrequencyTester {
     }
 
     /**
-     * Given a frequency that can start any time, check that next event is after
-     * appropriate period.
+     * Given a frequency that can start any time, check that next event is after appropriate period.
      * 
      * @throws Exception
      */
@@ -106,8 +103,7 @@ public class MonthlyFrequencyTester {
     }
 
     /**
-     * Given a frequency that can start 5th of month 4:22, check that next event
-     * is after appropriate period.
+     * Given a frequency that can start 5th of month 4:22, check that next event is after appropriate period.
      * 
      * @throws Exception
      */
@@ -131,9 +127,8 @@ public class MonthlyFrequencyTester {
     }
 
     /**
-     * Given a frequency that can start 5th of month 4:22, check that next event
-     * is after appropriate period, even given a date that is 5th of month at
-     * 4:22.
+     * Given a frequency that can start 5th of month 4:22, check that next event is after appropriate period, even given
+     * a date that is 5th of month at 4:22.
      * 
      * @throws Exception
      */
@@ -153,8 +148,8 @@ public class MonthlyFrequencyTester {
     }
 
     /**
-     * Given a frequency that can start 31st of month 12:00, check that this
-     * will be on the 29th in February, and 31st in March.
+     * Given a frequency that can start 31st of month 12:00, check that this will be on the 29th in February, and 31st
+     * in March.
      * 
      * @throws Exception
      */
@@ -182,8 +177,8 @@ public class MonthlyFrequencyTester {
     }
 
     /**
-     * Given a frequency that can start 31st of month any time, check that this
-     * will be on the 29th in February, and 29th in March.
+     * Given a frequency that can start 31st of month any time, check that this will be on the 29th in February, and
+     * 29th in March.
      * 
      * @throws Exception
      */
@@ -207,8 +202,8 @@ public class MonthlyFrequencyTester {
     }
 
     /**
-     * Given a frequency that can start 31st of month 12:00, check that this
-     * will be on the 28th in February, and 31st in March.
+     * Given a frequency that can start 31st of month 12:00, check that this will be on the 28th in February, and 31st
+     * in March.
      * 
      * @throws Exception
      */
@@ -238,8 +233,7 @@ public class MonthlyFrequencyTester {
     }
 
     /**
-     * Test validity of arguments (correct number of units), correct time,
-     * correct date.
+     * Test validity of arguments (correct number of units), correct time, correct date.
      */
     @Test
     public void testValidityOfArguments() throws Exception {

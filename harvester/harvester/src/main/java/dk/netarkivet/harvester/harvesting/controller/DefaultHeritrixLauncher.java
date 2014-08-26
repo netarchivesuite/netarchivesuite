@@ -56,8 +56,7 @@ public class DefaultHeritrixLauncher extends HeritrixLauncher {
     /**
      * Constructor for the DefaultHeritrixLauncher.
      * 
-     * @param files
-     *            the Heritrix configuration.
+     * @param files the Heritrix configuration.
      * @throws ArgumentNotValid
      */
     private DefaultHeritrixLauncher(HeritrixFiles files) throws ArgumentNotValid {
@@ -67,15 +66,11 @@ public class DefaultHeritrixLauncher extends HeritrixLauncher {
     /**
      * Get instance of this class.
      *
-     * @param files
-     *            Object encapsulating location of Heritrix crawldir and
-     *            configuration files
+     * @param files Object encapsulating location of Heritrix crawldir and configuration files
      *
      * @return {@link DefaultHeritrixLauncher} object
      *
-     * @throws ArgumentNotValid
-     *             If either order.xml or seeds.txt does not exist, or argument
-     *             files is null.
+     * @throws ArgumentNotValid If either order.xml or seeds.txt does not exist, or argument files is null.
      */
     public static DefaultHeritrixLauncher getInstance(HeritrixFiles files) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(files, "HeritrixFiles files");
@@ -83,18 +78,14 @@ public class DefaultHeritrixLauncher extends HeritrixLauncher {
     }
 
     /**
-     * This method launches heritrix in the following way:</br> 1. copies the
-     * orderfile and the seedsfile to current working directory. </br> 2. sets
-     * up the newly created copy of the orderfile </br> 3. starts the crawler
-     * </br> 4. stops the crawler (Either when heritrix has finished crawling,
-     * or when heritrix is forcefully stopped due to inactivity). </p> The exit
-     * from the while-loop depends on Heritrix calling the crawlEnded() method,
-     * when the crawling is finished. This method is called from the
-     * HarvestControllerServer.onDoOneCrawl() method.
+     * This method launches heritrix in the following way:</br> 1. copies the orderfile and the seedsfile to current
+     * working directory. </br> 2. sets up the newly created copy of the orderfile </br> 3. starts the crawler </br> 4.
+     * stops the crawler (Either when heritrix has finished crawling, or when heritrix is forcefully stopped due to
+     * inactivity). </p> The exit from the while-loop depends on Heritrix calling the crawlEnded() method, when the
+     * crawling is finished. This method is called from the HarvestControllerServer.onDoOneCrawl() method.
      *
-     * @throws IOFailure
-     *             - if the order.xml is invalid if unable to initialize
-     *             Heritrix CrawlController if Heritrix process interrupted
+     * @throws IOFailure - if the order.xml is invalid if unable to initialize Heritrix CrawlController if Heritrix
+     *             process interrupted
      */
     public void doCrawl() throws IOFailure {
         setupOrderfile(getHeritrixFiles());
@@ -124,14 +115,11 @@ public class DefaultHeritrixLauncher extends HeritrixLauncher {
     }
 
     /**
-     * Monitors the crawling performed by Heritrix. Regularly checks whether any
-     * progress is made. If no progress has been made for too long, the crawl is
-     * ended.
+     * Monitors the crawling performed by Heritrix. Regularly checks whether any progress is made. If no progress has
+     * been made for too long, the crawl is ended.
      *
-     * @throws IOFailure
-     *             if the call to HeritrixController.requestCrawlStop() fails.
-     *             Other failures in calls to the controller are caught and
-     *             logged.
+     * @throws IOFailure if the call to HeritrixController.requestCrawlStop() fails. Other failures in calls to the
+     *             controller are caught and logged.
      */
     private void doCrawlLoop() throws IOFailure {
         String errorMessage = "Non-fatal I/O error while communicating with Heritrix during crawl";
@@ -209,11 +197,9 @@ public class DefaultHeritrixLauncher extends HeritrixLauncher {
             if (!crawlIsEnded) {
                 try {
                     /*
-                     * Wait for heritrix to do something. WAIT_PERIOD is the
-                     * interval between checks of whether we have passed
-                     * timeouts. Note that timeouts are defined in the settings,
-                     * while WAIT_PERIOD (being less relevant to the user) is
-                     * defined in this class.
+                     * Wait for heritrix to do something. WAIT_PERIOD is the interval between checks of whether we have
+                     * passed timeouts. Note that timeouts are defined in the settings, while WAIT_PERIOD (being less
+                     * relevant to the user) is defined in this class.
                      */
                     synchronized (this) {
                         wait(1000 * CRAWL_CONTROL_WAIT_PERIOD);

@@ -32,8 +32,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.harvester.datamodel.StopReason;
 
 /**
- * Unit tests for the class
- * dk.netarkivet.harvester.harvesting.distribute.DomainStats.
+ * Unit tests for the class dk.netarkivet.harvester.harvesting.distribute.DomainStats.
  */
 public class DomainStatsTester {
 

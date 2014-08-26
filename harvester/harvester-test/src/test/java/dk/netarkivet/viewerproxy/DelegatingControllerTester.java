@@ -46,7 +46,7 @@ import dk.netarkivet.testutils.StringAsserts;
 /**
  * Tests of DelegatingController class.
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class DelegatingControllerTester {
     private TestMissingURIRecorder mur;
     private TestCDXCache cc;
@@ -66,8 +66,7 @@ public class DelegatingControllerTester {
     }
 
     /**
-     * Tests constructor. Only thing really testable is that ArgumentNotValid is
-     * thrown on null arguments.
+     * Tests constructor. Only thing really testable is that ArgumentNotValid is thrown on null arguments.
      */
     @Test
     public void testController() {
@@ -94,8 +93,7 @@ public class DelegatingControllerTester {
     }
 
     /**
-     * Tests start. This is simply a delegating method, so just tests the mur's
-     * start is called, and nothing else.
+     * Tests start. This is simply a delegating method, so just tests the mur's start is called, and nothing else.
      * 
      * @throws Exception
      */
@@ -110,8 +108,7 @@ public class DelegatingControllerTester {
     }
 
     /**
-     * Tests stop. This is simply a delegating method, so just tests the mur's
-     * stop is called, and nothing else.
+     * Tests stop. This is simply a delegating method, so just tests the mur's stop is called, and nothing else.
      * 
      * @throws Exception
      */
@@ -126,8 +123,7 @@ public class DelegatingControllerTester {
     }
 
     /**
-     * Tests clear. This is simply a delegating method, so just tests the mur's
-     * clear is called, and nothing else.
+     * Tests clear. This is simply a delegating method, so just tests the mur's clear is called, and nothing else.
      * 
      * @throws Exception
      */
@@ -142,9 +138,8 @@ public class DelegatingControllerTester {
     }
 
     /**
-     * Tests getRecordedURIs. This is simply a delegating method, so just tests
-     * the mur's getRecordedURI is called, and nothing else, and also that what
-     * is returned is exactly what the mur returns.
+     * Tests getRecordedURIs. This is simply a delegating method, so just tests the mur's getRecordedURI is called, and
+     * nothing else, and also that what is returned is exactly what the mur returns.
      * 
      * @throws Exception
      */
@@ -161,11 +156,9 @@ public class DelegatingControllerTester {
     }
 
     /**
-     * Tests changeIndex. This is really a mediator between cdxcache and arc
-     * archive access. Tests that argument not valid is not checked on null
-     * argument (this should be checked by the wrapped class), and otherwise
-     * that what happens is exactly that CDXCache.getJobIndex is called, and the
-     * result given to ARCArchiveAccess.setIndex.
+     * Tests changeIndex. This is really a mediator between cdxcache and arc archive access. Tests that argument not
+     * valid is not checked on null argument (this should be checked by the wrapped class), and otherwise that what
+     * happens is exactly that CDXCache.getJobIndex is called, and the result given to ARCArchiveAccess.setIndex.
      *
      */
     @Test

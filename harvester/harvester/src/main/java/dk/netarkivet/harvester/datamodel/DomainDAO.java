@@ -30,8 +30,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.UnknownID;
 
 /**
- * Persistent storage for Domain objects. Configuration information and seeds
- * are stored as well.
+ * Persistent storage for Domain objects. Configuration information and seeds are stored as well.
  *
  */
 public abstract class DomainDAO implements DAO, Iterable<Domain> {
@@ -61,8 +60,7 @@ public abstract class DomainDAO implements DAO, Iterable<Domain> {
     /**
      * Create a domain in persistent storage.
      * 
-     * @param domain
-     *            a given {@link Domain} object.
+     * @param domain a given {@link Domain} object.
      */
     public synchronized void create(Domain domain) {
         Connection c = HarvestDBConnection.get();
@@ -76,8 +74,7 @@ public abstract class DomainDAO implements DAO, Iterable<Domain> {
     /**
      * Create a list of domains in persistent storage.
      * 
-     * @param domains
-     *            a list of {@link Domain} objects.
+     * @param domains a list of {@link Domain} objects.
      */
     public synchronized void create(List<Domain> domains) {
         Connection c = HarvestDBConnection.get();
@@ -93,18 +90,15 @@ public abstract class DomainDAO implements DAO, Iterable<Domain> {
     /**
      * Create a domain in persistent storage.
      * 
-     * @param connection
-     *            a connection to the harvest definition database.
-     * @param domain
-     *            a given {@link Domain} object.
+     * @param connection a connection to the harvest definition database.
+     * @param domain a given {@link Domain} object.
      */
     protected abstract void create(Connection connection, Domain domain);
 
     /**
      * Read a domain from the persistent storage.
      *
-     * @param domainName
-     *            the name of the domain to retrieve
+     * @param domainName the name of the domain to retrieve
      * @return the retrieved Domain
      */
     public synchronized Domain read(String domainName) {
@@ -119,8 +113,7 @@ public abstract class DomainDAO implements DAO, Iterable<Domain> {
     /**
      * Read a domain from the persistent storage known to exist.
      *
-     * @param domainName
-     *            the name of the domain to retrieve
+     * @param domainName the name of the domain to retrieve
      * @return the retrieved Domain
      */
     public synchronized Domain readKnown(String domainName) {
@@ -135,10 +128,8 @@ public abstract class DomainDAO implements DAO, Iterable<Domain> {
     /**
      * Read a domain from the persistent storage.
      *
-     * @param connection
-     *            a connection to the harvest definition database.
-     * @param domainName
-     *            the name of the domain to retrieve
+     * @param connection a connection to the harvest definition database.
+     * @param domainName the name of the domain to retrieve
      * @return the retrieved Domain
      */
     protected abstract Domain read(Connection connection, String domainName);
@@ -146,10 +137,8 @@ public abstract class DomainDAO implements DAO, Iterable<Domain> {
     /**
      * Read a domain from the persistent storage known to exist.
      *
-     * @param connection
-     *            a connection to the harvest definition database.
-     * @param domainName
-     *            the name of the domain to retrieve
+     * @param connection a connection to the harvest definition database.
+     * @param domainName the name of the domain to retrieve
      * @return the retrieved Domain
      */
     protected abstract Domain readKnown(Connection connection, String domainName);
@@ -157,24 +146,18 @@ public abstract class DomainDAO implements DAO, Iterable<Domain> {
     /**
      * Check existence of a domain with the given domainName.
      *
-     * @param domainName
-     *            A given domain name.
+     * @param domainName A given domain name.
      * @return true if the domain exists, false otherwise.
-     * @throws ArgumentNotValid
-     *             if domainName is null or empty.
+     * @throws ArgumentNotValid if domainName is null or empty.
      */
     public abstract boolean exists(String domainName);
 
     /**
      * Update information about existing domain information.
      *
-     * @param domain
-     *            the domain to update
-     * @throws ArgumentNotValid
-     *             if domain is null
-     * @throws UnknownID
-     *             if the Domain domain has not been added previously to
-     *             persistent storage.
+     * @param domain the domain to update
+     * @throws ArgumentNotValid if domain is null
+     * @throws UnknownID if the Domain domain has not been added previously to persistent storage.
      */
     public abstract void update(Domain domain);
 
@@ -202,17 +185,15 @@ public abstract class DomainDAO implements DAO, Iterable<Domain> {
     }
 
     /**
-     * Gets list of all domains in the order expected by snapshot harvest job
-     * generation, that is order by template name, then byte limit (descending),
-     * then domain name.
+     * Gets list of all domains in the order expected by snapshot harvest job generation, that is order by template
+     * name, then byte limit (descending), then domain name.
      *
      * @return List of all added domains
      */
     public abstract Iterator<Domain> getAllDomainsInSnapshotHarvestOrder();
 
     /**
-     * Reset the singleton. Only for use in tests! TODO remove this, no test
-     * methods in business classes!
+     * Reset the singleton. Only for use in tests! TODO remove this, no test methods in business classes!
      */
     static void resetSingleton() {
         instance = null;
@@ -221,10 +202,9 @@ public abstract class DomainDAO implements DAO, Iterable<Domain> {
     /**
      * Find all info about results of a harvest definition.
      *
-     * @param previousHarvestDefinition
-     *            A harvest definition that has already been run.
-     * @return An array of information for all domainconfigurations which were
-     *         harvested by the given harvest definition.
+     * @param previousHarvestDefinition A harvest definition that has already been run.
+     * @return An array of information for all domainconfigurations which were harvested by the given harvest
+     *         definition.
      */
     public abstract Iterator<HarvestInfo> getHarvestInfoBasedOnPreviousHarvestDefinition(
             final HarvestDefinition previousHarvestDefinition);
@@ -232,135 +212,103 @@ public abstract class DomainDAO implements DAO, Iterable<Domain> {
     /**
      * Use a glob-like matcher to find a subset of domains.
      *
-     * In this simple matcher, * stands for any number of arbitrary characters,
-     * and ? stands for one arbitrary character. Including these, the given
-     * string must match the entire domain name.
+     * In this simple matcher, * stands for any number of arbitrary characters, and ? stands for one arbitrary
+     * character. Including these, the given string must match the entire domain name.
      *
-     * @param glob
-     *            A domain name with * and ? wildcards
+     * @param glob A domain name with * and ? wildcards
      * @return List of domain names matching the glob, sorted by name.
      */
     public abstract List<String> getDomains(String glob);
 
     /**
-     * Return whether the given configuration can be deleted. This should be a
-     * fairly lightweight method, but is not likely to be instantaneous. Note
-     * that to increase speed, this method may rely on underlying systems to
-     * enforce transitive invariants. This means that if this method says a
-     * configuration can be deleted, the dao may still reject a delete request.
-     * If this method returns false, deletion will however definitely not be
-     * allowed.
+     * Return whether the given configuration can be deleted. This should be a fairly lightweight method, but is not
+     * likely to be instantaneous. Note that to increase speed, this method may rely on underlying systems to enforce
+     * transitive invariants. This means that if this method says a configuration can be deleted, the dao may still
+     * reject a delete request. If this method returns false, deletion will however definitely not be allowed.
      * 
-     * @param config
-     *            the given configuration
-     * @return true if the he given configuration can be deleted, false
-     *         otherwise
+     * @param config the given configuration
+     * @return true if the he given configuration can be deleted, false otherwise
      */
     public abstract boolean mayDelete(DomainConfiguration config);
 
     /**
-     * Read a Domain from Database, and return the domain information as a
-     * SparseDomain object. We only read information relevant for the GUI
-     * listing.
+     * Read a Domain from Database, and return the domain information as a SparseDomain object. We only read information
+     * relevant for the GUI listing.
      * 
-     * @param domainName
-     *            a given domain
+     * @param domainName a given domain
      * @return a SparseDomain.
-     * @throws ArgumentNotValid
-     *             if domainName is null or empty.
-     * @throws UnknownID
-     *             if domain does not exist
+     * @throws ArgumentNotValid if domainName is null or empty.
+     * @throws UnknownID if domain does not exist
      */
     public abstract SparseDomain readSparse(String domainName);
 
     /**
-     * Return a list of AliasInfo objects. If the given domain is not-null, it
-     * should return AliasInfo objects where AliasInfo.aliasOf == domain
+     * Return a list of AliasInfo objects. If the given domain is not-null, it should return AliasInfo objects where
+     * AliasInfo.aliasOf == domain
      *
-     * @param domain
-     *            a given domain
+     * @param domain a given domain
      * @return a list of AliasInfo objects.
-     * @throws UnknownID
-     *             If the given domain does not exist.
-     *             (!DomainDAO.exists(domain))
-     * @throws ArgumentNotValid
-     *             if domainName is null
+     * @throws UnknownID If the given domain does not exist. (!DomainDAO.exists(domain))
+     * @throws ArgumentNotValid if domainName is null
      */
     public abstract List<AliasInfo> getAliases(String domain);
 
     /**
-     * Get a list of all current alias-relations. The list should be sorted by
-     * increasing last-update. This means any expired aliases will be at the
-     * start of the list, while un-expired aliases will be at the end.
+     * Get a list of all current alias-relations. The list should be sorted by increasing last-update. This means any
+     * expired aliases will be at the start of the list, while un-expired aliases will be at the end.
      *
      * @return a list of all current alias-relations.
      */
     public abstract List<AliasInfo> getAllAliases();
 
     /**
-     * Get a list of all TLDs present in the domains table. IP-numbers
-     * registered are counted together.
+     * Get a list of all TLDs present in the domains table. IP-numbers registered are counted together.
      *
-     * @param level
-     *            maximum level of TLD
-     * @return a list of all TLDs present in the domains table, sorted
-     *         alphabetically.
+     * @param level maximum level of TLD
+     * @return a list of all TLDs present in the domains table, sorted alphabetically.
      */
     public abstract List<TLDInfo> getTLDs(int level);
 
     /**
-     * Get the HarvestInfo object for a certain job and DomainConfiguration
-     * defined by domainName and configName.
+     * Get the HarvestInfo object for a certain job and DomainConfiguration defined by domainName and configName.
      * 
-     * @param domainName
-     *            the name of a given domain
-     * @param configName
-     *            the name of a given configuration
-     * @param job
-     *            the job
-     * @return The HarvestInfo object for a certain job and DomainConfiguration
-     *         or null, if job has not yet been started.
+     * @param domainName the name of a given domain
+     * @param configName the name of a given configuration
+     * @param job the job
+     * @return The HarvestInfo object for a certain job and DomainConfiguration or null, if job has not yet been
+     *         started.
      */
     public abstract HarvestInfo getDomainJobInfo(Job job, String domainName, String configName);
 
     /**
      * Get a list of info about harvests performed on a given domain.
      *
-     * Note that harvest info from before the DB DAOs are unreliable, as
-     * harvests cannot be told apart and no dates are available.
+     * Note that harvest info from before the DB DAOs are unreliable, as harvests cannot be told apart and no dates are
+     * available.
      *
      *
-     * @param domainName
-     *            Domain to get info for.
-     * @param orderBy
-     *            The column attribute to order by.
-     * @param asc
-     *            true if the results should be ordered according to the natural
-     *            order, false if they are to be sorted in reverse.
-     * @return List of DomainHarvestInfo objects with information on that
-     *         domain.
+     * @param domainName Domain to get info for.
+     * @param orderBy The column attribute to order by.
+     * @param asc true if the results should be ordered according to the natural order, false if they are to be sorted
+     *            in reverse.
+     * @return List of DomainHarvestInfo objects with information on that domain.
      *
      */
     public abstract List<DomainHarvestInfo> listDomainHarvestInfo(String domainName, String orderBy, boolean asc);
 
     /**
-     * Get the DomainConfiguration given a specific domainName and a
-     * configurationName.
+     * Get the DomainConfiguration given a specific domainName and a configurationName.
      * 
-     * @param domainName
-     *            The name of a domain
-     * @param configName
-     *            The name of a configuration for this domain
-     * @return the DomainConfiguration, if the specified configuration exists;
-     *         otherwise throws UnknownID
+     * @param domainName The name of a domain
+     * @param configName The name of a configuration for this domain
+     * @return the DomainConfiguration, if the specified configuration exists; otherwise throws UnknownID
      */
     public abstract DomainConfiguration getDomainConfiguration(String domainName, String configName);
 
     /**
      * Get the domainHistory for a specific domain.
      *
-     * @param domainName
-     *            A name of a specific domain.
+     * @param domainName A name of a specific domain.
      * @return the domainHistory for a specific domain.
      */
     public abstract DomainHistory getDomainHistory(String domainName);
@@ -368,28 +316,22 @@ public abstract class DomainDAO implements DAO, Iterable<Domain> {
     /**
      * Use a glob-like matcher to find a subset of domains.
      *
-     * In this simple matcher, * stands for any number of arbitrary characters,
-     * and ? stands for one arbitrary character. Including these, the given
-     * string must match the entire domain name.
+     * In this simple matcher, * stands for any number of arbitrary characters, and ? stands for one arbitrary
+     * character. Including these, the given string must match the entire domain name.
      *
-     * @param glob
-     *            A domain name with * and ? wildcards
-     * @param searchField
-     *            The field in the Domain table to search
+     * @param glob A domain name with * and ? wildcards
+     * @param searchField The field in the Domain table to search
      * @return List of domain names matching the glob, sorted by name.
      */
     public abstract List<String> getDomains(String glob, String searchField);
 
     /**
-     * Read the used configurations name + seedslists for the domain. Note that
-     * even though a list of <code>DomainConfiguration</code> object are
-     * returned, only the name + seeds lists are set.
+     * Read the used configurations name + seedslists for the domain. Note that even though a list of
+     * <code>DomainConfiguration</code> object are returned, only the name + seeds lists are set.
      *
-     * A used configuration is the default configuration + configurations used
-     * in a active harvest definition.
+     * A used configuration is the default configuration + configurations used in a active harvest definition.
      *
-     * @param domainID
-     *            The domain to find the configurations for.
+     * @param domainID The domain to find the configurations for.
      * @return The list of ID for the used configurations.
      */
     public abstract List<Long> findUsedConfigurations(Long domainID);

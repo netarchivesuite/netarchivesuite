@@ -37,8 +37,7 @@ public class DerbyServerSpecifics extends DerbySpecifics {
     }
 
     /**
-     * Get the name of the JDBC driver class that handles interfacing to this
-     * server.
+     * Get the name of the JDBC driver class that handles interfacing to this server.
      *
      * @return The name of a JDBC driver class
      */

@@ -34,96 +34,83 @@ import dk.netarkivet.harvester.harvesting.distribute.JobEndedMessage;
 import dk.netarkivet.harvester.indexserver.distribute.IndexRequestMessage;
 
 /**
- * Interface for all classes which handles harvester-related messages received
- * from a JMS server. This is implemented with a visitor pattern: Upon receipt,
- * the HarvesterMessageHandler.onMessage() method invokes the
- * Harvesteressage.accept() method on the message with itself as argument. The
- * accept() method in turn invokes the HarvesterMessageVisitorvisit() method,
- * using method overloading to invoke the visit method for the message received.
+ * Interface for all classes which handles harvester-related messages received from a JMS server. This is implemented
+ * with a visitor pattern: Upon receipt, the HarvesterMessageHandler.onMessage() method invokes the
+ * Harvesteressage.accept() method on the message with itself as argument. The accept() method in turn invokes the
+ * HarvesterMessageVisitorvisit() method, using method overloading to invoke the visit method for the message received.
  *
- * Thus to handle a message, you should subclass HarvesterMessageHandler and
- * override the visit() method for that kind of message. You should not
- * implement this interface in any other way.
+ * Thus to handle a message, you should subclass HarvesterMessageHandler and override the visit() method for that kind
+ * of message. You should not implement this interface in any other way.
  *
  */
 public interface HarvesterMessageVisitor {
     /**
      * This method should be overridden to handle the receipt of a message.
      *
-     * @param msg
-     *            A received message.
+     * @param msg A received message.
      */
     void visit(CrawlStatusMessage msg);
 
     /**
      * This method should be overridden to handle the receipt of a message.
      *
-     * @param msg
-     *            A received message.
+     * @param msg A received message.
      */
     void visit(DoOneCrawlMessage msg);
 
     /**
      * This method should be overridden to handle the receipt of a message.
      *
-     * @param msg
-     *            A received message.
+     * @param msg A received message.
      */
     void visit(CrawlProgressMessage msg);
 
     /**
      * This method should be overridden to handle the receipt of a message.
      *
-     * @param msg
-     *            A received message.
+     * @param msg A received message.
      */
     void visit(FrontierReportMessage msg);
 
     /**
      * This method should be overridden to handle the receipt of a message.
      *
-     * @param msg
-     *            A received message.
+     * @param msg A received message.
      */
     void visit(JobEndedMessage msg);
 
     /**
      * This method should be overridden to handle the receipt of a message.
      *
-     * @param msg
-     *            A received message.
+     * @param msg A received message.
      */
     void visit(HarvesterReadyMessage msg);
 
     /**
      * This method should be overridden to handle the receipt of a message.
      *
-     * @param msg
-     *            A received message.
+     * @param msg A received message.
      */
     void visit(IndexReadyMessage msg);
 
     /**
      * This method should be overridden to handle the receipt of a message.
      *
-     * @param msg
-     *            A received message.
+     * @param msg A received message.
      */
     void visit(IndexRequestMessage msg);
 
     /**
      * This method should be overridden to handle the receipt of a message.
      *
-     * @param msg
-     *            A received message.
+     * @param msg A received message.
      */
     void visit(HarvesterRegistrationRequest msg);
 
     /**
      * This method should be overridden to handle the receipt of a message.
      *
-     * @param msg
-     *            A received message.
+     * @param msg A received message.
      */
     void visit(HarvesterRegistrationResponse msg);
 

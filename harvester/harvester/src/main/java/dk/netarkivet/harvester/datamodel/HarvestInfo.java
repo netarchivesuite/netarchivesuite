@@ -27,8 +27,7 @@ import java.util.Date;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
- * Summary information about a specific harvest of a domain. This class is
- * immutable.
+ * Summary information about a specific harvest of a domain. This class is immutable.
  */
 public class HarvestInfo {
 
@@ -54,8 +53,7 @@ public class HarvestInfo {
     private final String domainCfgName;
 
     /**
-     * The job that was used to create this info, or null if it cannot be
-     * determined (for old harvestinfo only).
+     * The job that was used to create this info, or null if it cannot be determined (for old harvestinfo only).
      */
     private final Long jobID;
 
@@ -65,20 +63,13 @@ public class HarvestInfo {
     /**
      * Create new harvest info instance.
      * 
-     * @param harvestID
-     *            The id of the harvest
-     * @param domainName
-     *            The name of the Domain
-     * @param domainCfgName
-     *            The name of the Domain configuration
-     * @param date
-     *            The date of the harvest
-     * @param sizeDataRetrieved
-     *            The number of bytes retrieved for this Domain
-     * @param countObjectRetrieved
-     *            The number of objects retrieved for this Domain
-     * @param stopReason
-     *            The reason why the current harvest terminated
+     * @param harvestID The id of the harvest
+     * @param domainName The name of the Domain
+     * @param domainCfgName The name of the Domain configuration
+     * @param date The date of the harvest
+     * @param sizeDataRetrieved The number of bytes retrieved for this Domain
+     * @param countObjectRetrieved The number of objects retrieved for this Domain
+     * @param stopReason The reason why the current harvest terminated
      */
     public HarvestInfo(Long harvestID, String domainName, String domainCfgName, Date date, long sizeDataRetrieved,
             long countObjectRetrieved, StopReason stopReason) {
@@ -88,22 +79,14 @@ public class HarvestInfo {
     /**
      * Create new harvest info instance.
      * 
-     * @param harvestID
-     *            The id of the harvest
-     * @param jobID
-     *            The id of the job, if available
-     * @param domainName
-     *            The name of the Domain
-     * @param domainCfgName
-     *            The name of the Domain configuration
-     * @param date
-     *            The date of the harvest
-     * @param sizeDataRetrieved
-     *            The number of bytes retrieved for this Domain
-     * @param countObjectRetrieved
-     *            The number of objects retrieved for this Domain
-     * @param stopReason
-     *            The reason why the current harvest terminated
+     * @param harvestID The id of the harvest
+     * @param jobID The id of the job, if available
+     * @param domainName The name of the Domain
+     * @param domainCfgName The name of the Domain configuration
+     * @param date The date of the harvest
+     * @param sizeDataRetrieved The number of bytes retrieved for this Domain
+     * @param countObjectRetrieved The number of objects retrieved for this Domain
+     * @param stopReason The reason why the current harvest terminated
      */
     public HarvestInfo(Long harvestID, Long jobID, String domainName, String domainCfgName, Date date,
             long sizeDataRetrieved, long countObjectRetrieved, StopReason stopReason) {
@@ -209,16 +192,14 @@ public class HarvestInfo {
     /**
      * Set the ID of this harvestinfo. Only for use by DBDAO
      * 
-     * @param newid
-     *            the new ID of this harvestinfo
+     * @param newid the new ID of this harvestinfo
      */
     void setID(long newid) {
         this.id = newid;
     }
 
     /**
-     * Check if this harvestinfo has an ID set yet (doesn't happen until the
-     * DBDAO persists it).
+     * Check if this harvestinfo has an ID set yet (doesn't happen until the DBDAO persists it).
      * 
      * @return true, if this harvestinfo has an ID set
      */

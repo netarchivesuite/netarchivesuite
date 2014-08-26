@@ -72,7 +72,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.wayback.indexer.IndexerTestCase;
 
 /** Unit test for testNetarchiveResourceStore */
-@SuppressWarnings({ "unchecked", "rawtypes", "unused" })
+@SuppressWarnings({"unchecked", "rawtypes", "unused"})
 public class NetarchiveResourceStoreTester extends IndexerTestCase {
 
     NetarchiveResourceStore netarchiveResourceStore = null;
@@ -261,10 +261,9 @@ public class NetarchiveResourceStoreTester extends IndexerTestCase {
     }
 
     /**
-     * DummyGetMessageReplyServer, which acts as an intermediate JMS Server.
-     * Functionality: - If ARC file exists read the appropriate data into an ARC
-     * record, and create metadata information - If ARC file doesn't exists,
-     * make dummy ARC record, with no data and dummy metadata information
+     * DummyGetMessageReplyServer, which acts as an intermediate JMS Server. Functionality: - If ARC file exists read
+     * the appropriate data into an ARC record, and create metadata information - If ARC file doesn't exists, make dummy
+     * ARC record, with no data and dummy metadata information
      */
     private static class DummyGetMessageReplyServer implements MessageListener {
         JMSConnection conn = JMSConnectionFactory.getInstance();
@@ -317,8 +316,8 @@ public class NetarchiveResourceStoreTester extends IndexerTestCase {
                         in = new FileInputStream(arcFile);
                         in.skip(netMsg.getIndex());
                         /*
-                         * while(InputStreamUtils.readLine(in).length() == 0) {
-                         * // needed for testUploadDataRetrieveResource }
+                         * while(InputStreamUtils.readLine(in).length() == 0) { // needed for
+                         * testUploadDataRetrieveResource }
                          */
                         int tmp_length = new String(InputStreamUtils.readRawLine(in)).length();
                         headers.put(ARCRecordMetaData.ABSOLUTE_OFFSET_KEY,

@@ -117,8 +117,7 @@ public class HeritrixFilesTester {
     }
 
     /**
-     * Test, that writeOrderXml fails correctly with bad arguments: - null
-     * argument - Document object with no contents.
+     * Test, that writeOrderXml fails correctly with bad arguments: - null argument - Document object with no contents.
      *
      * Bug 871 caused this test to be written.
      */
@@ -151,8 +150,7 @@ public class HeritrixFilesTester {
     }
 
     /**
-     * Test, that writeSeedsTxt fails correctly with bad arguments: - null
-     * argument - empty String
+     * Test, that writeSeedsTxt fails correctly with bad arguments: - null argument - empty String
      *
      * Bug 871 caused this test to be written.
      */
@@ -202,8 +200,8 @@ public class HeritrixFilesTester {
 
     /**
      * Standard HeritrixFiles setup with crawldir = TestInfo.HERITRIX_TEMP_DIR,
-     * jobID=42,harvestID=42,jmxPasswordFile/jmxAccessFile defined as
-     * /path/to/jmxpasswordfile and /path/to/jmxaccessfile respectively
+     * jobID=42,harvestID=42,jmxPasswordFile/jmxAccessFile defined as /path/to/jmxpasswordfile and
+     * /path/to/jmxaccessfile respectively
      * 
      * @return
      */

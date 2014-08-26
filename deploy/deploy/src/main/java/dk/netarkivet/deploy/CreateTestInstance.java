@@ -35,19 +35,17 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 /**
  * This class applies the test variables.
  * 
- * It creates a new instance of the settings where the variables are changed,
- * and then writes it out as a new deploy-configuration file (does not overwrite
- * the original, but creates a new in same directory).
+ * It creates a new instance of the settings where the variables are changed, and then writes it out as a new
+ * deploy-configuration file (does not overwrite the original, but creates a new in same directory).
  * 
- * This class is prompted by our need to be able to install and run multiple
- * instances the NetarchiveSuite in our test-environment simultaneously.
+ * This class is prompted by our need to be able to install and run multiple instances the NetarchiveSuite in our
+ * test-environment simultaneously.
  */
 public class CreateTestInstance {
     /** The source configuration file. */
     private File source;
     /**
-     * The configuration instance. Loaded from the source file, changed and
-     * saved.
+     * The configuration instance. Loaded from the source file, changed and saved.
      */
     private XmlStructure deployConfiguration;
     /** The string value of the calculated offset. */
@@ -70,8 +68,7 @@ public class CreateTestInstance {
     /**
      * The constructor.
      * 
-     * @param configSource
-     *            The source configuration file.
+     * @param configSource The source configuration file.
      */
     public CreateTestInstance(File configSource) {
         ArgumentNotValid.checkNotNull(configSource, "File configSource");
@@ -86,14 +83,10 @@ public class CreateTestInstance {
     /**
      * Function to apply the variables.
      * 
-     * @param offset
-     *            The input offset value (1-9 below httpPort).
-     * @param httpPort
-     *            The new value for the HTTP port.
-     * @param environmentName
-     *            The new value for the environment name.
-     * @param mailReceiver
-     *            The new value for the mailReceiver.
+     * @param offset The input offset value (1-9 below httpPort).
+     * @param httpPort The new value for the HTTP port.
+     * @param environmentName The new value for the environment name.
+     * @param mailReceiver The new value for the mailReceiver.
      */
     public void applyTestArguments(String offset, String httpPort, String environmentName, String mailReceiver) {
         ArgumentNotValid.checkNotNullOrEmpty(offset, "String offset");
@@ -147,8 +140,7 @@ public class CreateTestInstance {
     }
 
     /**
-     * Applies the new variables. Goes through all element instances and applies
-     * the variables.
+     * Applies the new variables. Goes through all element instances and applies the variables.
      */
     @SuppressWarnings("unchecked")
     private void apply() {
@@ -180,8 +172,7 @@ public class CreateTestInstance {
     /**
      * Applies the new variables on a specific element.
      * 
-     * @param e
-     *            The element where the variables are to be applied.
+     * @param e The element where the variables are to be applied.
      */
     private void applyOnElement(Element e) {
         // Check argument valid
@@ -198,11 +189,9 @@ public class CreateTestInstance {
     }
 
     /**
-     * Applies the environment name on the name of the file-directories. Thus:
-     * fileDir -> fileDir/environmentName
+     * Applies the environment name on the name of the file-directories. Thus: fileDir -> fileDir/environmentName
      * 
-     * @param app
-     *            The application where this has to be applied.
+     * @param app The application where this has to be applied.
      */
     private void applyEnvironmentNameOnBaseFileDir(Element app) {
         ArgumentNotValid.checkNotNull(app, "Element app");
@@ -228,10 +217,8 @@ public class CreateTestInstance {
     /**
      * Creates a file containing the new configuration instance.
      * 
-     * @param filename
-     *            The name of the file to be written.
-     * @throws IOException
-     *             If anything goes wrong.
+     * @param filename The name of the file to be written.
+     * @throws IOException If anything goes wrong.
      */
     public void createConfigurationFile(String filename) throws IOException {
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
@@ -259,10 +246,8 @@ public class CreateTestInstance {
         /**
          * The constructor.
          * 
-         * @param i
-         *            The index variable.
-         * @param p
-         *            The path variable.
+         * @param i The index variable.
+         * @param p The path variable.
          */
         public OffsetSystem(int i, String[] p) {
             index = i;
@@ -281,8 +266,7 @@ public class CreateTestInstance {
         /**
          * For retrieving the path.
          * 
-         * @return The path in the xml-structure to the element which should
-         *         have a character changed.
+         * @return The path in the xml-structure to the element which should have a character changed.
          */
         public String[] getPath() {
             return path;

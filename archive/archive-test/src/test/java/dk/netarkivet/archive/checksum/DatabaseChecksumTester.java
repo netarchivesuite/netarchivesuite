@@ -26,7 +26,7 @@ import org.junit.Test;
 
 import com.sleepycat.je.DatabaseException;
 
-@SuppressWarnings({ "unused" })
+@SuppressWarnings({"unused"})
 public class DatabaseChecksumTester {
 
     /**

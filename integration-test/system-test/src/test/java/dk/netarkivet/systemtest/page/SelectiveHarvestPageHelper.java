@@ -64,7 +64,7 @@ public class SelectiveHarvestPageHelper {
      * Creates a selective harvest without comments for the default domain.
      */
     public static void createSelectiveHarvest(String name) {
-        createSelectiveHarvest(name, null, new String[] { HarvestUtils.DEFAULT_DOMAIN });
+        createSelectiveHarvest(name, null, new String[] {HarvestUtils.DEFAULT_DOMAIN});
     }
 
     public static void activateHarvest(String name) {

@@ -32,11 +32,9 @@ import dk.netarkivet.common.exceptions.IOFailure;
 
 public class ARCTestUtils {
     /**
-     * Reads the content of the given record. Does not close the record - that
-     * causes trouble.
+     * Reads the content of the given record. Does not close the record - that causes trouble.
      * 
-     * @param ar
-     *            An ARCRecord to be read
+     * @param ar An ARCRecord to be read
      * @return The content of the record, as a String.
      */
     public static String readARCRecord(ARCRecord ar) {

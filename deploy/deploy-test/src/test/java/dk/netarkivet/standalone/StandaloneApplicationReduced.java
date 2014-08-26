@@ -32,10 +32,9 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.webinterface.GUIWebServer;
 
 /**
- * yet another test application. This application starts an arcrepository,
- * bitarchive, bitarchivemonitor, harvestdefinitionGUI within the same JVM.
- * TestRemoteFile and TestJMSConnection are used, the application therefore does
- * not need access to a JMSBroker nor an FTPServer.
+ * yet another test application. This application starts an arcrepository, bitarchive, bitarchivemonitor,
+ * harvestdefinitionGUI within the same JVM. TestRemoteFile and TestJMSConnection are used, the application therefore
+ * does not need access to a JMSBroker nor an FTPServer.
  *
  * Based on StandaloneApplication Primarily a tool to test the GUI
  */
@@ -44,8 +43,7 @@ public class StandaloneApplicationReduced {
     /**
      * Runs the ArcRepository Application. Settings are read from config files
      *
-     * @param args
-     *            an empty array
+     * @param args an empty array
      */
     public static void main(String[] args) {
         Settings.set(CommonSettings.REMOTE_FILE_CLASS, "dk.netarkivet.common.distribute.TestRemoteFile");

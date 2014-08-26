@@ -97,17 +97,15 @@ public class ArcRepositoryTesterGet {
     public final File TESTLOGPROP = new File("tests/dk/netarkivet/testlog.prop");
 
     /**
-     * List of files that can be used in the scripts (content of the
-     * ORIGINALS_DIR)
+     * List of files that can be used in the scripts (content of the ORIGINALS_DIR)
      */
-    private static final List<String> GETTABLE_FILES = Arrays.asList(new String[] { "get1.ARC", "get2.ARC" });
+    private static final List<String> GETTABLE_FILES = Arrays.asList(new String[] {"get1.ARC", "get2.ARC"});
 
     /** A bitarchive server to communicate with. */
     BitarchiveServer bitArchiveServer;
 
     /**
-     * An ArcRepository that will mediate communication between this class and
-     * the bitarchiver server.
+     * An ArcRepository that will mediate communication between this class and the bitarchiver server.
      */
     ArcRepository arcRepository;
 
@@ -184,9 +182,8 @@ public class ArcRepositoryTesterGet {
     }
 
     /**
-     * this tests get get()-method for an existing file - getting get File-name
-     * out of the BitarchiveRecord. FIXME: this test currently make the
-     * unittestersuite time out on the HUDSON server.
+     * this tests get get()-method for an existing file - getting get File-name out of the BitarchiveRecord. FIXME: this
+     * test currently make the unittestersuite time out on the HUDSON server.
      */
     @Test
     public void failingTArcrepositoryGetFile() throws IOException {
@@ -203,9 +200,8 @@ public class ArcRepositoryTesterGet {
     }
 
     /**
-     * this tests get get()-method for an existing file - getting get File-name
-     * out of the BitarchiveRecord. FIXME: this test currently make the
-     * unittestersuite time out on the HUDSON server.
+     * this tests get get()-method for an existing file - getting get File-name out of the BitarchiveRecord. FIXME: this
+     * test currently make the unittestersuite time out on the HUDSON server.
      */
     @Test
     public void failingTestRemoveAndGetFile() throws IOException {
@@ -230,9 +226,8 @@ public class ArcRepositoryTesterGet {
     }
 
     /**
-     * this tests the getting of actual data (assuming that the length is not
-     * null) is the length of getData() > 0 the next test checks the first 55
-     * chars !
+     * this tests the getting of actual data (assuming that the length is not null) is the length of getData() > 0 the
+     * next test checks the first 55 chars !
      */
     @Test
     public void testGetData() {

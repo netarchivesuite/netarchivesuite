@@ -46,14 +46,11 @@ import dk.netarkivet.common.utils.SystemUtils;
 /**
  * Wrapper class for registering objects of type I as MBeans.
  *
- * The register method will register a given object under an object name,
- * generated with the domain given in constructor, and fields from the Hashtable
- * nameProperties. It is prefilled with values common for all MBeans, but it is
- * expected to be extended after the object is created with additional info.
+ * The register method will register a given object under an object name, generated with the domain given in
+ * constructor, and fields from the Hashtable nameProperties. It is prefilled with values common for all MBeans, but it
+ * is expected to be extended after the object is created with additional info.
  * 
- * @param <I>
- *            The Type of Object to expose as an MBean. Currently only used with
- *            {@link SingleMBeanObject}
+ * @param <I> The Type of Object to expose as an MBean. Currently only used with {@link SingleMBeanObject}
  */
 public class SingleMBeanObject<I> {
 
@@ -67,8 +64,7 @@ public class SingleMBeanObject<I> {
     /** The object to expose as an MBean. */
     private I exposedObject;
     /**
-     * The interface, this SingleMBeanObject should expose on the given
-     * MBeanServer.
+     * The interface, this SingleMBeanObject should expose on the given MBeanServer.
      */
     private Class<I> asInterface;
     /**
@@ -86,21 +82,15 @@ public class SingleMBeanObject<I> {
     private static String HARVESTER_HARVEST_CONTROLLER_CHANNEL = "settings.harvester.harvesting.channel";
 
     /**
-     * Create a single mbean object. This will fill out nameProperties with
-     * default values, and remember the domain and interface given. It will not,
-     * however, register the MBean.
+     * Create a single mbean object. This will fill out nameProperties with default values, and remember the domain and
+     * interface given. It will not, however, register the MBean.
      *
-     * @param domain
-     *            The domain of the MBean.
-     * @param object
-     *            The object to expose as an MBean.
-     * @param asInterface
-     *            The interface this MBean is exposed as.
-     * @param mBeanServer
-     *            The server to register the mbean in.
+     * @param domain The domain of the MBean.
+     * @param object The object to expose as an MBean.
+     * @param asInterface The interface this MBean is exposed as.
+     * @param mBeanServer The server to register the mbean in.
      *
-     * @throws ArgumentNotValid
-     *             If domain is null or empty, or any other argument is null.
+     * @throws ArgumentNotValid If domain is null or empty, or any other argument is null.
      */
     public SingleMBeanObject(String domain, I object, Class<I> asInterface, MBeanServer mBeanServer) {
         ArgumentNotValid.checkNotNullOrEmpty(domain, "String domain");
@@ -139,22 +129,16 @@ public class SingleMBeanObject<I> {
     /**
      * Create a single mbean object.
      *
-     * This is a helper method for the constructor taking a domain, which take
-     * the domain from a preconstructed ObjectName and replaces the
-     * nameProperties with the properties from the given object name. Use this
-     * if you have an object name created already, which you wish to use.
+     * This is a helper method for the constructor taking a domain, which take the domain from a preconstructed
+     * ObjectName and replaces the nameProperties with the properties from the given object name. Use this if you have
+     * an object name created already, which you wish to use.
      *
-     * @param name
-     *            The object name to register under.
-     * @param o
-     *            The object to register.
-     * @param asInterface
-     *            The interface o should implement.
-     * @param mBeanServer
-     *            The mbean server to register o in.
+     * @param name The object name to register under.
+     * @param o The object to register.
+     * @param asInterface The interface o should implement.
+     * @param mBeanServer The mbean server to register o in.
      *
-     * @throws ArgumentNotValid
-     *             on any null parameter.
+     * @throws ArgumentNotValid on any null parameter.
      */
     public SingleMBeanObject(ObjectName name, I o, Class<I> asInterface, MBeanServer mBeanServer) {
         this(name.getDomain(), o, asInterface, mBeanServer);
@@ -163,9 +147,8 @@ public class SingleMBeanObject<I> {
     }
 
     /**
-     * Properties for the ObjectName name. Update these before registering. On
-     * construction, initialised with location, hostname, httpport, priority,
-     * replica, applicationname, applicationinstid.
+     * Properties for the ObjectName name. Update these before registering. On construction, initialised with location,
+     * hostname, httpport, priority, replica, applicationname, applicationinstid.
      *
      * @return Hashtable of the object name properties.
      */
@@ -174,13 +157,11 @@ public class SingleMBeanObject<I> {
     }
 
     /**
-     * Registers this object as a standard MBean, with a name generated from
-     * domain given in constructor and the nameProperties hashTable.
+     * Registers this object as a standard MBean, with a name generated from domain given in constructor and the
+     * nameProperties hashTable.
      *
-     * @throws IllegalState
-     *             if bean is already registered.
-     * @throws IOFailure
-     *             on trouble registering.
+     * @throws IllegalState if bean is already registered.
+     * @throws IOFailure on trouble registering.
      */
     public void register() {
         try {
@@ -197,12 +178,10 @@ public class SingleMBeanObject<I> {
     }
 
     /**
-     * Unregister the object from the MBeanServer. Note: It is not checked that
-     * it is actually this mbean that is registered under the name, this method
-     * simply unregisters any object with this object name.
+     * Unregister the object from the MBeanServer. Note: It is not checked that it is actually this mbean that is
+     * registered under the name, this method simply unregisters any object with this object name.
      *
-     * @throws IOFailure
-     *             on trouble unregistering.
+     * @throws IOFailure on trouble unregistering.
      */
     public void unregister() {
         MBeanServer mbserver = mBeanServer;

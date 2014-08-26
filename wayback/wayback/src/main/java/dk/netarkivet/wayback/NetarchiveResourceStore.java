@@ -47,9 +47,8 @@ import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
 import dk.netarkivet.common.utils.InputStreamUtils;
 
 /**
- * This is the connector between netarchivesuite and wayback. And is based on
- * PrototypeNetarchiveResourceStore.java which was made as a prototype
- * connector.
+ * This is the connector between netarchivesuite and wayback. And is based on PrototypeNetarchiveResourceStore.java
+ * which was made as a prototype connector.
  *
  */
 public class NetarchiveResourceStore implements ResourceStore {
@@ -71,15 +70,11 @@ public class NetarchiveResourceStore implements ResourceStore {
     }
 
     /**
-     * Transforms search result into a resource, according to the ResourceStore
-     * interface.
+     * Transforms search result into a resource, according to the ResourceStore interface.
      * 
-     * @param captureSearchResult
-     *            the search result.
-     * @return a valid resource containing metadata and a link to the ARC
-     *         record.
-     * @throws ResourceNotAvailableException
-     *             if something went wrong fetching record.
+     * @param captureSearchResult the search result.
+     * @return a valid resource containing metadata and a link to the ARC record.
+     * @throws ResourceNotAvailableException if something went wrong fetching record.
      */
     public Resource retrieveResource(CaptureSearchResult captureSearchResult) throws ResourceNotAvailableException {
         long offset;
@@ -150,8 +145,7 @@ public class NetarchiveResourceStore implements ResourceStore {
         // things this way then we should be able to get arcrecord to parse
         // the headers for us.
         /*
-         * metadata.put(ARCRecordMetaData.URL_FIELD_KEY,
-         * captureSearchResult.getOriginalUrl());
+         * metadata.put(ARCRecordMetaData.URL_FIELD_KEY, captureSearchResult.getOriginalUrl());
          */
         try {
             metadata.put(ARCRecordMetaData.IP_HEADER_FIELD_KEY, captureSearchResult.getOriginalHost());
@@ -210,8 +204,7 @@ public class NetarchiveResourceStore implements ResourceStore {
     /**
      * Shuts down this resource store, closing the arcrepository client.
      * 
-     * @throws IOException
-     *             if an exception occurred while closing the client.
+     * @throws IOException if an exception occurred while closing the client.
      */
     public void shutdown() throws IOException {
         // Close JMS connection.

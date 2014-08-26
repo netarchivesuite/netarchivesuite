@@ -33,9 +33,8 @@ import dk.netarkivet.monitor.distribute.MonitorMessageHandler;
 import dk.netarkivet.monitor.registry.MonitorRegistry;
 
 /**
- * The monitor registry server listens on JMS for hosts that wish to register
- * themselves to the service. The registry lists hosts that can be monitored
- * with JMX.
+ * The monitor registry server listens on JMS for hosts that wish to register themselves to the service. The registry
+ * lists hosts that can be monitored with JMX.
  */
 public class MonitorRegistryServer extends MonitorMessageHandler implements CleanupIF {
 
@@ -65,8 +64,7 @@ public class MonitorRegistryServer extends MonitorMessageHandler implements Clea
     /**
      * This method registers the sender as a host to be monitored with JMX.
      *
-     * @throws ArgumentNotValid
-     *             on null parameter.
+     * @throws ArgumentNotValid on null parameter.
      */
     public void visit(RegisterHostMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "RegisterHostMessage msg");

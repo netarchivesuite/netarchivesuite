@@ -46,13 +46,11 @@ import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 
 /**
- * Class encapsulating the Heritrix order.xml. Enables verification that dom4j
- * Document obey the constraints required by our software, specifically the Job
- * class.
+ * Class encapsulating the Heritrix order.xml. Enables verification that dom4j Document obey the constraints required by
+ * our software, specifically the Job class.
  *
- * The class assumes the type of order.xml used in configuring Heritrix version
- * 1.10+. Information about the Heritrix crawler, and its processes and modules
- * can be found in the Heritrix developer and user manuals found on <a
+ * The class assumes the type of order.xml used in configuring Heritrix version 1.10+. Information about the Heritrix
+ * crawler, and its processes and modules can be found in the Heritrix developer and user manuals found on <a
  * href="http://crawler.archive.org">http://crawler.archive.org<a/>
  */
 public class HeritrixTemplate {
@@ -102,16 +100,16 @@ public class HeritrixTemplate {
 
     /**
      * Xpath to check, that all templates use the same ARC archiver path,
-     * {@link dk.netarkivet.common.Constants#ARCDIRECTORY_NAME}. The archive
-     * path tells Heritrix to which directory it shall write its arc files.
+     * {@link dk.netarkivet.common.Constants#ARCDIRECTORY_NAME}. The archive path tells Heritrix to which directory it
+     * shall write its arc files.
      */
     public static final String ARC_ARCHIVER_PATH_XPATH = "/crawl-order/controller/map[@name='write-processors']/"
             + "newObject[@name='Archiver']/stringList[@name='path']/string";
 
     /**
      * Xpath to check, that all templates use the same WARC archiver path,
-     * {@link dk.netarkivet.common.Constants#WARCDIRECTORY_NAME}. The archive
-     * path tells Heritrix to which directory it shall write its arc files.
+     * {@link dk.netarkivet.common.Constants#WARCDIRECTORY_NAME}. The archive path tells Heritrix to which directory it
+     * shall write its arc files.
      */
     public static final String WARC_ARCHIVER_PATH_XPATH = "/crawl-order/controller/map[@name='write-processors']/"
             + "newObject[@name='WARCArchiver']/stringList[@name='path']/string";
@@ -123,8 +121,7 @@ public class HeritrixTemplate {
             + "/string[@name='index-location']";
 
     /**
-     * Xpath for the boolean telling if the deduplicator is enabled in order.xml
-     * documents.
+     * Xpath for the boolean telling if the deduplicator is enabled in order.xml documents.
      */
     public static final String DEDUPLICATOR_ENABLED = HeritrixTemplate.DEDUPLICATOR_XPATH + "/boolean[@name='enabled']";
 
@@ -167,19 +164,16 @@ public class HeritrixTemplate {
             + "/boolean[@name='write-revisit-for-not-modified']";
 
     /**
-     * Map from required xpaths to a regular expression describing legal content
-     * for the path text.
+     * Map from required xpaths to a regular expression describing legal content for the path text.
      */
     private static final Map<String, Pattern> requiredXpaths = new HashMap<String, Pattern>();
 
     /**
-     * A regular expression that matches a whole number, possibly negative, and
-     * with optional whitespace around it.
+     * A regular expression that matches a whole number, possibly negative, and with optional whitespace around it.
      */
     private static final String WHOLE_NUMBER_REGEXP = "\\s*-?[0-9]+\\s*";
     /**
-     * A regular expression that matches everything. Except newlines, unless
-     * DOTALL is given to Pattern.compile().
+     * A regular expression that matches everything. Except newlines, unless DOTALL is given to Pattern.compile().
      */
     private static final String EVERYTHING_REGEXP = ".*";
 
@@ -187,14 +181,12 @@ public class HeritrixTemplate {
     // org.archive.crawler.datamodel.CrawlOrder because they're private there.
 
     /**
-     * A regular expression that matches Heritrix' specs for the user-agent
-     * field in order.xml. It should be used with DOTALL. An example match is
-     * "Org (ourCrawler, see +http://org.org/aPage for details) harvest".
+     * A regular expression that matches Heritrix' specs for the user-agent field in order.xml. It should be used with
+     * DOTALL. An example match is "Org (ourCrawler, see +http://org.org/aPage for details) harvest".
      */
     private static final String USER_AGENT_REGEXP = "\\S+.*\\(.*\\+http(s)?://\\S+\\.\\S+.*\\).*";
     /**
-     * A regular expression that matches Heritrix' specs for the from field.
-     * This should be a valid email address.
+     * A regular expression that matches Heritrix' specs for the from field. This should be a valid email address.
      */
     private static final String FROM_REGEXP = "\\S+@\\S+\\.\\S+";
 
@@ -226,14 +218,10 @@ public class HeritrixTemplate {
     /**
      * Constructor for HeritrixTemplate class.
      * 
-     * @param doc
-     *            the order.xml
-     * @param verify
-     *            If true, verifies if the given dom4j Document contains the
-     *            elements required by our software.
-     * @throws ArgumentNotValid
-     *             if doc is null, or verify is true and doc does not obey the
-     *             constraints required by our software.
+     * @param doc the order.xml
+     * @param verify If true, verifies if the given dom4j Document contains the elements required by our software.
+     * @throws ArgumentNotValid if doc is null, or verify is true and doc does not obey the constraints required by our
+     *             software.
      */
     public HeritrixTemplate(Document doc, boolean verify) {
         ArgumentNotValid.checkNotNull(doc, "Document doc");
@@ -321,13 +309,11 @@ public class HeritrixTemplate {
     }
 
     /**
-     * Method to add a list of crawler traps with a given element name. It is
-     * used both to add per-domain traps and global traps.
+     * Method to add a list of crawler traps with a given element name. It is used both to add per-domain traps and
+     * global traps.
      * 
-     * @param elementName
-     *            The name of the added element.
-     * @param crawlerTraps
-     *            A list of crawler trap regular expressions to add to this job.
+     * @param elementName The name of the added element.
+     * @param crawlerTraps A list of crawler trap regular expressions to add to this job.
      */
     @SuppressWarnings("unchecked")
     public static void editOrderXMLAddCrawlerTraps(Document orderXMLdoc, String elementName, List<String> crawlerTraps) {
@@ -385,23 +371,17 @@ public class HeritrixTemplate {
     }
 
     /**
-     * Updates the order.xml to include a MatchesListRegExpDecideRule for each
-     * crawlertrap associated with for the given DomainConfiguration.
+     * Updates the order.xml to include a MatchesListRegExpDecideRule for each crawlertrap associated with for the given
+     * DomainConfiguration.
      *
      * The added nodes have the form
      *
-     * <newObject name="domain.dk"
-     * class="org.archive.crawler.deciderules.MatchesListRegExpDecideRule">
-     * <string name="decision">REJECT</string> <string
-     * name="list-logic">OR</string> <stringList name="regexp-list">
-     * <string>theFirstRegexp</string> <string>theSecondRegexp</string>
-     * </stringList> </newObject>
+     * <newObject name="domain.dk" class="org.archive.crawler.deciderules.MatchesListRegExpDecideRule"> <string
+     * name="decision">REJECT</string> <string name="list-logic">OR</string> <stringList name="regexp-list">
+     * <string>theFirstRegexp</string> <string>theSecondRegexp</string> </stringList> </newObject>
      *
-     * @param cfg
-     *            The DomainConfiguration for which to generate crawler trap
-     *            deciderules
-     * @throws IllegalState
-     *             If unable to update order.xml due to wrong order.xml format
+     * @param cfg The DomainConfiguration for which to generate crawler trap deciderules
+     * @throws IllegalState If unable to update order.xml due to wrong order.xml format
      */
     public static void editOrderXMLAddPerDomainCrawlerTraps(Document orderXmlDoc, DomainConfiguration cfg) {
         // Get the regexps to exclude
@@ -411,14 +391,11 @@ public class HeritrixTemplate {
     }
 
     /**
-     * Make sure that Heritrix will archive its data in the chosen
-     * archiveFormat.
+     * Make sure that Heritrix will archive its data in the chosen archiveFormat.
      * 
-     * @param orderXML
-     *            the specific heritrix template to modify.
-     * @param archiveFormat
-     *            the chosen archiveformat ('arc' or 'warc' supported) Throws
-     *            ArgumentNotValid If the chosen archiveFormat is not supported.
+     * @param orderXML the specific heritrix template to modify.
+     * @param archiveFormat the chosen archiveformat ('arc' or 'warc' supported) Throws ArgumentNotValid If the chosen
+     *            archiveFormat is not supported.
      */
     public static void editOrderXML_ArchiveFormat(Document orderXML, String archiveFormat) {
         boolean arcMode = false;
@@ -505,8 +482,7 @@ public class HeritrixTemplate {
     }
 
     /**
-     * @param maxJobRunningTime
-     *            Force the harvestjob to end after maxJobRunningTime
+     * @param maxJobRunningTime Force the harvestjob to end after maxJobRunningTime
      */
     public static void editOrderXML_maxJobRunningTime(Document orderXMLdoc, long maxJobRunningTime) {
         // get and set the "max-time-sec" node of the orderXMLdoc
@@ -522,24 +498,16 @@ public class HeritrixTemplate {
     }
 
     /**
-     * Auxiliary method to modify the orderXMLdoc Document with respect to
-     * setting the maximum number of objects to be retrieved per domain. This
-     * method updates 'group-max-fetch-success' element of the QuotaEnforcer
-     * pre-fetch processor node (org.archive.crawler.frontier.BdbFrontier) with
-     * the value of the argument forceMaxObjectsPerDomain
+     * Auxiliary method to modify the orderXMLdoc Document with respect to setting the maximum number of objects to be
+     * retrieved per domain. This method updates 'group-max-fetch-success' element of the QuotaEnforcer pre-fetch
+     * processor node (org.archive.crawler.frontier.BdbFrontier) with the value of the argument forceMaxObjectsPerDomain
      * 
      * @param orderXMLdoc
      *
-     * @param forceMaxObjectsPerDomain
-     *            The maximum number of objects to retrieve per domain, or 0 for
-     *            no limit.
-     * @throws PermissionDenied
-     *             If unable to replace the frontier node of the orderXMLdoc
-     *             Document
-     * @throws IOFailure
-     *             If the group-max-fetch-success element is not found in the
-     *             orderXml. TODO The group-max-fetch-success check should also
-     *             be performed in TemplateDAO.create, TemplateDAO.update
+     * @param forceMaxObjectsPerDomain The maximum number of objects to retrieve per domain, or 0 for no limit.
+     * @throws PermissionDenied If unable to replace the frontier node of the orderXMLdoc Document
+     * @throws IOFailure If the group-max-fetch-success element is not found in the orderXml. TODO The
+     *             group-max-fetch-success check should also be performed in TemplateDAO.create, TemplateDAO.update
      */
     public static void editOrderXML_maxObjectsPerDomain(Document orderXMLdoc, long forceMaxObjectsPerDomain,
             boolean maxObjectsIsSetByQuotaEnforcer) {
@@ -556,27 +524,18 @@ public class HeritrixTemplate {
     }
 
     /**
-     * Activates or deactivate the quota-enforcer, depending on budget
-     * definition. Object limit can be defined either by using the
-     * queue-total-budget property or the quota enforcer. Which is chosen is set
-     * by the argument maxObjectsIsSetByQuotaEnforcer}'s value. So quota
-     * enforcer is set as follows:
+     * Activates or deactivate the quota-enforcer, depending on budget definition. Object limit can be defined either by
+     * using the queue-total-budget property or the quota enforcer. Which is chosen is set by the argument
+     * maxObjectsIsSetByQuotaEnforcer}'s value. So quota enforcer is set as follows:
      * <ul>
-     * <li>Object limit is not set by quota enforcer, disabled only if there is
-     * no byte limit.</li>
-     * <li>Object limit is set by quota enforcer, so it should be enabled
-     * whether a byte or object limit is set.</li>
+     * <li>Object limit is not set by quota enforcer, disabled only if there is no byte limit.</li>
+     * <li>Object limit is set by quota enforcer, so it should be enabled whether a byte or object limit is set.</li>
      * </ul>
      * 
-     * @param orderXMLdoc
-     *            the template to modify
-     * @param maxObjectsIsSetByQuotaEnforcer
-     *            Decides whether the maxObjectsIsSetByQuotaEnforcer or not.
-     * @param forceMaxBytesPerDomain
-     *            The number of max bytes per domain enforced (can be no limit)
-     * @param forceMaxObjectsPerDomain
-     *            The number of max objects per domain enforced (can be no
-     *            limit)
+     * @param orderXMLdoc the template to modify
+     * @param maxObjectsIsSetByQuotaEnforcer Decides whether the maxObjectsIsSetByQuotaEnforcer or not.
+     * @param forceMaxBytesPerDomain The number of max bytes per domain enforced (can be no limit)
+     * @param forceMaxObjectsPerDomain The number of max objects per domain enforced (can be no limit)
      */
     public static void editOrderXML_configureQuotaEnforcer(Document orderXMLdoc,
             boolean maxObjectsIsSetByQuotaEnforcer, long forceMaxBytesPerDomain, long forceMaxObjectsPerDomain) {
@@ -607,23 +566,15 @@ public class HeritrixTemplate {
     }
 
     /**
-     * Auxiliary method to modify the orderXMLdoc Document with respect to
-     * setting the maximum number of bytes to retrieve per domain. This method
-     * updates 'group-max-all-kb' element of the 'QuotaEnforcer' node, which
-     * again is a subelement of 'pre-fetch-processors' node. with the value of
-     * the argument forceMaxBytesPerDomain
+     * Auxiliary method to modify the orderXMLdoc Document with respect to setting the maximum number of bytes to
+     * retrieve per domain. This method updates 'group-max-all-kb' element of the 'QuotaEnforcer' node, which again is a
+     * subelement of 'pre-fetch-processors' node. with the value of the argument forceMaxBytesPerDomain
      *
-     * @param forceMaxBytesPerDomain
-     *            The maximum number of byte to retrieve per domain, or -1 for
-     *            no limit. Note that the number is divided by 1024 before being
-     *            inserted into the orderXml, as Heritrix expects KB.
-     * @throws PermissionDenied
-     *             If unable to replace the QuotaEnforcer node of the
-     *             orderXMLdoc Document
-     * @throws IOFailure
-     *             If the group-max-all-kb element cannot be found. TODO This
-     *             group-max-all-kb check also be performed in
-     *             TemplateDAO.create, TemplateDAO.update
+     * @param forceMaxBytesPerDomain The maximum number of byte to retrieve per domain, or -1 for no limit. Note that
+     *            the number is divided by 1024 before being inserted into the orderXml, as Heritrix expects KB.
+     * @throws PermissionDenied If unable to replace the QuotaEnforcer node of the orderXMLdoc Document
+     * @throws IOFailure If the group-max-all-kb element cannot be found. TODO This group-max-all-kb check also be
+     *             performed in TemplateDAO.create, TemplateDAO.update
      */
     public static void editOrderXML_maxBytesPerDomain(Document orderXMLdoc, long forceMaxBytesPerDomain) {
         // get and set the group-max-all-kb Node of the orderXMLdoc:
@@ -648,8 +599,7 @@ public class HeritrixTemplate {
     /**
      * Return true if the given order.xml file has deduplication enabled.
      *
-     * @param doc
-     *            An order.xml document
+     * @param doc An order.xml document
      *
      * @return True if Deduplicator is enabled.
      */
@@ -660,29 +610,23 @@ public class HeritrixTemplate {
     }
 
     /**
-     * This method prepares the orderfile used by the Heritrix crawler. </p> 1.
-     * alters the orderfile in the following-way: (overriding whatever is in the
-     * orderfile)</br>
+     * This method prepares the orderfile used by the Heritrix crawler. </p> 1. alters the orderfile in the
+     * following-way: (overriding whatever is in the orderfile)</br>
      * <ol>
      * <li>sets the disk-path to the outputdir specified in HeritrixFiles.</li>
      * <li>sets the seedsfile to the seedsfile specified in HeritrixFiles.</li>
-     * <li>sets the prefix of the arcfiles to unique prefix defined in
-     * HeritrixFiles</li>
-     * <li>checks that the arcs-file dir is 'arcs' - to ensure that we know
-     * where the arc-files are when crawl finishes</li>
+     * <li>sets the prefix of the arcfiles to unique prefix defined in HeritrixFiles</li>
+     * <li>checks that the arcs-file dir is 'arcs' - to ensure that we know where the arc-files are when crawl finishes</li>
      *
-     * <li>if deduplication is enabled, sets the node pointing to index
-     * directory for deduplication (see step 3)</li>
+     * <li>if deduplication is enabled, sets the node pointing to index directory for deduplication (see step 3)</li>
      * </ol>
      * 2. saves the orderfile back to disk</p>
      *
-     * 3. if deduplication is enabled in the order.xml, it writes the absolute
-     * path of the lucene index used by the deduplication processor.
+     * 3. if deduplication is enabled in the order.xml, it writes the absolute path of the lucene index used by the
+     * deduplication processor.
      *
-     * @throws IOFailure
-     *             - When the orderfile could not be saved to disk When a
-     *             specific node is not found in the XML-document When the
-     *             SAXReader cannot parse the XML
+     * @throws IOFailure - When the orderfile could not be saved to disk When a specific node is not found in the
+     *             XML-document When the SAXReader cannot parse the XML
      */
     public static void makeOrderfileReadyForHeritrix(HeritrixFiles files) throws IOFailure {
         Document doc = XmlUtils.getXmlDoc(files.getOrderXmlFile());

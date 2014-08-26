@@ -30,8 +30,7 @@ abstract class AbstractFrontierReportFilter implements FrontierReportFilter {
     /**
      * Initialize the filter from arguments.
      * 
-     * @param args
-     *            the arguments as strings.
+     * @param args the arguments as strings.
      */
     public abstract void init(String[] args);
 

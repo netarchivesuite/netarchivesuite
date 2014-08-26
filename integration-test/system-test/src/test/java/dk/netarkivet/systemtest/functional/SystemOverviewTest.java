@@ -42,13 +42,13 @@ import dk.netarkivet.systemtest.page.PageHelper;
 /**
  * Test specification: http://netarchive.dk/suite/TEST1 .
  */
-@SuppressWarnings({ "unused" })
+@SuppressWarnings({"unused"})
 public class SystemOverviewTest extends SeleniumTest {
 
     /**
      * Test specification: http://netarchive.dk/suite/It23JMXMailCheck .
      */
-    @Test(groups = { "guitest", "functest" })
+    @Test(groups = {"guitest", "functest"})
     public void generalTest() throws Exception {
         addDescription("Test specification: http://netarchive.dk/suite/It23JMXMailCheck");
         Set<Application> expectedApplicationSet = new HashSet<Application>(Arrays.asList(NASSystemUtil
@@ -101,8 +101,7 @@ public class SystemOverviewTest extends SeleniumTest {
     }
 
     /**
-     * Reads and return the rows of the system overview table excluding the
-     * headers.
+     * Reads and return the rows of the system overview table excluding the headers.
      * 
      * @return The rows of the system overview table.
      */

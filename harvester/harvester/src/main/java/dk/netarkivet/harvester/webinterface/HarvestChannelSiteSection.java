@@ -35,7 +35,7 @@ import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 /**
  * Site section that creates the menu for harvest channel and mappings.
  */
-@SuppressWarnings({ "unused" })
+@SuppressWarnings({"unused"})
 public class HarvestChannelSiteSection extends SiteSection {
     /** Logger for this class. */
     private Log log = LogFactory.getLog(getClass().getName());
@@ -47,8 +47,8 @@ public class HarvestChannelSiteSection extends SiteSection {
      */
     public HarvestChannelSiteSection() {
         super("sitesection;HarvestChannel", "HarvestChannel", PAGES_VISIBLE_IN_MENU, new String[][] {
-                { "edit-harvest-mappings", "pagetitle;edit.harvest.mappings" },
-                { "edit-harvest-channels", "pagetitle;edit.harvest.channels" }
+                {"edit-harvest-mappings", "pagetitle;edit.harvest.mappings"},
+                {"edit-harvest-channels", "pagetitle;edit.harvest.channels"}
         // The pages listed below are not visible in the left menu
                 }, "HarvestChannel", dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
     }
@@ -56,8 +56,7 @@ public class HarvestChannelSiteSection extends SiteSection {
     /**
      * Initialise the site section.
      * 
-     * @throws UnknownID
-     *             If the default order.xml does not exist.
+     * @throws UnknownID If the default order.xml does not exist.
      */
     public void initialize() {
         HarvestDefinitionDAO.getInstance();

@@ -37,18 +37,15 @@ import dk.netarkivet.common.utils.cdx.ExtractCDXJob;
  *
  * Command line tool for extracting CDX information from given ARC files.
  *
- * Usage: java dk.netarkivet.common.tools.ExtractCDX file1.arc [file2.arc ...] >
- * myindex.cdx
+ * Usage: java dk.netarkivet.common.tools.ExtractCDX file1.arc [file2.arc ...] > myindex.cdx
  *
  * Note: Does not depend on logging - communicates failures on stderr.
  */
 public class ExtractCDX {
     /**
-     * Main method. Extracts CDX from all given files and outputs the index on
-     * stdout.
+     * Main method. Extracts CDX from all given files and outputs the index on stdout.
      * 
-     * @param argv
-     *            A list of (absolute paths to) files to index.
+     * @param argv A list of (absolute paths to) files to index.
      */
     public static void main(String[] argv) {
         if (argv.length == 0) {
@@ -66,11 +63,9 @@ public class ExtractCDX {
     }
 
     /**
-     * Verifies that the filename (absolute path) points to an existing file and
-     * that it is an arc file.
+     * Verifies that the filename (absolute path) points to an existing file and that it is an arc file.
      * 
-     * @param filename
-     *            The filename to verify.
+     * @param filename The filename to verify.
      * @return The arc file, as a File.
      */
     private static File toArcFile(String filename) {
@@ -90,8 +85,7 @@ public class ExtractCDX {
     /**
      * Prints out a message on stderr and exits with an error code.
      * 
-     * @param msg
-     *            The message to print.
+     * @param msg The message to print.
      */
     private static void dieWithError(String msg) {
         System.err.println(msg);
@@ -100,8 +94,7 @@ public class ExtractCDX {
     }
 
     /**
-     * Prints out proper usage of this tool on stderr and exits with an error
-     * code.
+     * Prints out proper usage of this tool on stderr and exits with an error code.
      */
     private static void dieWithUsage() {
         System.err.println("Usage: java " + ExtractCDX.class.getName() + " file1.arc [file2.arc ...]");

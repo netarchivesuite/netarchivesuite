@@ -41,22 +41,19 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 
 /**
- * This class encapsulates one full run of Heritrix by grabbing hold of a
- * CrawlController class. It implements the CrawlController interface.
+ * This class encapsulates one full run of Heritrix by grabbing hold of a CrawlController class. It implements the
+ * CrawlController interface.
  * 
- * @deprecated The JMXHeritrixController offers an implementation that's better
- *             on almost all counts.
+ * @deprecated The JMXHeritrixController offers an implementation that's better on almost all counts.
  * */
 public class DirectHeritrixController implements HeritrixController {
     /**
-     * Has Heritrix finished crawling, yet. This field is set in the method
-     * SimpleCrawlStatusListener.crawlEnded()
+     * Has Heritrix finished crawling, yet. This field is set in the method SimpleCrawlStatusListener.crawlEnded()
      */
     private AtomicBoolean crawlIsEnded = new AtomicBoolean(false);
 
     /**
-     * the controller object, which initializes, starts, and stops a Heritrix
-     * crawl job.
+     * the controller object, which initializes, starts, and stops a Heritrix crawl job.
      */
     CrawlController myController = new CrawlController();
 
@@ -66,8 +63,7 @@ public class DirectHeritrixController implements HeritrixController {
     /**
      * Create a new DirectHeritrixController object with a given set of files.
      *
-     * @param files
-     *            Files for Heritrix to use.
+     * @param files Files for Heritrix to use.
      */
     protected DirectHeritrixController(HeritrixFiles files) {
         ArgumentNotValid.checkNotNull(files, "HeritrixFiles files");
@@ -132,11 +128,9 @@ public class DirectHeritrixController implements HeritrixController {
     }
 
     /**
-     * Add a listener to this crawlController. This is currently only needed to
-     * known when the crawler finished.
+     * Add a listener to this crawlController. This is currently only needed to known when the crawler finished.
      * 
-     * @param listener
-     *            The listener for crawlstatus messages.
+     * @param listener The listener for crawlstatus messages.
      * @see HeritrixController#crawlIsEnded()
      */
     public void addCrawlStatusListener(CrawlStatusListener listener) {
@@ -178,12 +172,10 @@ public class DirectHeritrixController implements HeritrixController {
     }
 
     /**
-     * Returns true if the crawl has ended, either because Heritrix finished or
-     * because we terminated it.
+     * Returns true if the crawl has ended, either because Heritrix finished or because we terminated it.
      *
-     * This implementation returns true, after the CrawlController has ended a
-     * crawl and is about to exit, when it sends a crawlEnded(String
-     * sExitMessage) to all listeners.
+     * This implementation returns true, after the CrawlController has ended a crawl and is about to exit, when it sends
+     * a crawlEnded(String sExitMessage) to all listeners.
      *
      * @return True if Heritrix is entirely done and cleanup can start.
      */
@@ -198,9 +190,8 @@ public class DirectHeritrixController implements HeritrixController {
     }
 
     /**
-     * This version just returns a string that tells the harvester is running
-     * inline. TODO Make this method respond after how the Harvester is really
-     * doing, and not just respond ("Running inline").
+     * This version just returns a string that tells the harvester is running inline. TODO Make this method respond
+     * after how the Harvester is really doing, and not just respond ("Running inline").
      * 
      * @return running inline.
      */
@@ -209,12 +200,10 @@ public class DirectHeritrixController implements HeritrixController {
     }
 
     /**
-     * Class for handling callbacks from Heritrix. Except for logging, all that
-     * happens is that - the constructor sets the value of crawlIsEnded to false
-     * - crawlEnded() callback method sets the value of crawlIsEnded to true.
-     * Note that the callbacks that occur are performed by a "foreign" thread,
-     * initiated by Heritrix. That is the reason that the crawlIsEnded field is
-     * an AtomicBoolean.
+     * Class for handling callbacks from Heritrix. Except for logging, all that happens is that - the constructor sets
+     * the value of crawlIsEnded to false - crawlEnded() callback method sets the value of crawlIsEnded to true. Note
+     * that the callbacks that occur are performed by a "foreign" thread, initiated by Heritrix. That is the reason that
+     * the crawlIsEnded field is an AtomicBoolean.
      *
      * @see org.archive.crawler.event.CrawlStatusListener
      */
@@ -231,8 +220,7 @@ public class DirectHeritrixController implements HeritrixController {
         /**
          * Fired by the crawler, when the crawl has started.
          *
-         * @param s
-         *            Message to attach
+         * @param s Message to attach
          * @see CrawlStatusListener#crawlStarted(java.lang.String)
          */
         public void crawlStarted(String s) {
@@ -240,11 +228,10 @@ public class DirectHeritrixController implements HeritrixController {
         }
 
         /**
-         * Fired by the crawler when the crawl is about to end (no reports
-         * written yet....toe threads might still be running....).
+         * Fired by the crawler when the crawl is about to end (no reports written yet....toe threads might still be
+         * running....).
          *
-         * @param s
-         *            Message to attach
+         * @param s Message to attach
          * @see CrawlStatusListener#crawlEnding(java.lang.String)
          */
         public void crawlEnding(String s) {
@@ -256,8 +243,7 @@ public class DirectHeritrixController implements HeritrixController {
          *
          * Fired by the crawler when the crawl is ended.
          *
-         * @param s
-         *            Message to attach
+         * @param s Message to attach
          * @see CrawlStatusListener#crawlEnded(java.lang.String)
          */
         public void crawlEnded(String s) {
@@ -266,11 +252,9 @@ public class DirectHeritrixController implements HeritrixController {
         }
 
         /**
-         * Fired by the crawler when the crawl is about to pause (toe threads
-         * might still be running.....).
+         * Fired by the crawler when the crawl is about to pause (toe threads might still be running.....).
          *
-         * @param s
-         *            Message to attach
+         * @param s Message to attach
          * @see CrawlStatusListener#crawlPausing(java.lang.String)
          */
         public void crawlPausing(String s) {
@@ -280,8 +264,7 @@ public class DirectHeritrixController implements HeritrixController {
         /**
          * Fired by the crawler when the crawl is paused.
          *
-         * @param s
-         *            Message to attach
+         * @param s Message to attach
          * @see CrawlStatusListener#crawlPaused(java.lang.String)
          */
         public void crawlPaused(String s) {
@@ -291,8 +274,7 @@ public class DirectHeritrixController implements HeritrixController {
         /**
          * Fired by the crawler when the crawl is resuming.
          *
-         * @param s
-         *            Message to attach
+         * @param s Message to attach
          * @see CrawlStatusListener#crawlResuming(java.lang.String)
          */
         public void crawlResuming(String s) {
@@ -300,15 +282,11 @@ public class DirectHeritrixController implements HeritrixController {
         }
 
         /**
-         * Called by CrawlController when checkpointing. Allows checkpointing of
-         * local data.
+         * Called by CrawlController when checkpointing. Allows checkpointing of local data.
          *
-         * @param checkpointDir
-         *            Checkpoint dir. Write checkpoint state here.
-         * @throws Exception
-         *             A fatal exception. Any exceptions that are let out of
-         *             this checkpoint are assumed fatal and terminate further
-         *             checkpoint processing.
+         * @param checkpointDir Checkpoint dir. Write checkpoint state here.
+         * @throws Exception A fatal exception. Any exceptions that are let out of this checkpoint are assumed fatal and
+         *             terminate further checkpoint processing.
          * @see CrawlStatusListener#crawlCheckpoint(java.io.File)
          */
         public void crawlCheckpoint(File checkpointDir) throws Exception {

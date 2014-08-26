@@ -68,8 +68,7 @@ public class WARCUtils {
     /**
      * Create new WARCWriter, writing to warcfile newFile.
      * 
-     * @param newFile
-     *            the WARCfile, that the WARCWriter writes to.
+     * @param newFile the WARCfile, that the WARCWriter writes to.
      * @return new WARCWriter, writing to warcfile newFile.
      */
     public static WARCWriter createWARCWriter(File newFile) {
@@ -102,12 +101,9 @@ public class WARCUtils {
     /**
      * Insert the contents of a WARC file into another WARCFile.
      *
-     * @param warcFile
-     *            An WARC file to read.
-     * @param writer
-     *            A place to write the arc records
-     * @throws IOFailure
-     *             if there are problems reading the file.
+     * @param warcFile An WARC file to read.
+     * @param writer A place to write the arc records
+     * @throws IOFailure if there are problems reading the file.
      */
     public static void insertWARCFile(File warcFile, WARCWriter writer) {
         ArgumentNotValid.checkNotNull(writer, "WARCWriter aw");
@@ -142,11 +138,11 @@ public class WARCUtils {
         ignoreHeadersMap.add("warc-record-id");
         ignoreHeadersMap.add("warc-type");
         ignoreHeadersMap.add("warc-target-uri");
-        String[] headerNames = { "WARC-Type", "WARC-Record-ID", "WARC-Date", "Content-Length", "Content-Type",
+        String[] headerNames = {"WARC-Type", "WARC-Record-ID", "WARC-Date", "Content-Length", "Content-Type",
                 "WARC-Concurrent-To", "WARC-Block-Digest", "WARC-Payload-Digest", "WARC-IP-Address", "WARC-Refers-To",
                 "WARC-Target-URI", "WARC-Truncated", "WARC-Warcinfo-ID", "WARC-Filename", "WARC-Profile",
                 "WARC-Identified-Payload-Type", "WARC-Segment-Origin-ID", "WARC-Segment-Number",
-                "WARC-Segment-Total-Length" };
+                "WARC-Segment-Total-Length"};
         for (int i = 0; i < headerNames.length; ++i) {
             headerNamesCaseMap.put(headerNames[i].toLowerCase(), headerNames[i]);
         }
@@ -157,10 +153,8 @@ public class WARCUtils {
      * 
      * Creates a new unique UUID for the copied record.
      * 
-     * @param aw
-     *            The WARCWriter to output the record on.
-     * @param record
-     *            The record to output
+     * @param aw The WARCWriter to output the record on.
+     * @param record The record to output
      */
     private static void copySingleRecord(WARCWriter aw, WARCRecord record) {
         try {
@@ -233,17 +227,13 @@ public class WARCUtils {
     /**
      * Read the contents (payload) of an WARC record into a byte array.
      * 
-     * @param record
-     *            An WARC record to read from. After reading, the WARC Record
-     *            will no longer have its own data available for reading.
-     * @return A byte array containing the payload of the WARC record. Note that
-     *         the size of the payload is calculated by subtracting the
-     *         contentBegin value from the length of the record (both values
-     *         included in the record header).
-     * @throws IOFailure
-     *             If there is an error reading the data, or if the record is
-     *             longer than Integer.MAX_VALUE (since we can't make bigger
-     *             arrays).
+     * @param record An WARC record to read from. After reading, the WARC Record will no longer have its own data
+     *            available for reading.
+     * @return A byte array containing the payload of the WARC record. Note that the size of the payload is calculated
+     *         by subtracting the contentBegin value from the length of the record (both values included in the record
+     *         header).
+     * @throws IOFailure If there is an error reading the data, or if the record is longer than Integer.MAX_VALUE (since
+     *             we can't make bigger arrays).
      */
     public static byte[] readWARCRecord(WARCRecord record) throws IOFailure {
         ArgumentNotValid.checkNotNull(record, "WARCRecord record");
@@ -290,8 +280,7 @@ public class WARCUtils {
     /**
      * Find out what type of WARC-record this is.
      * 
-     * @param record
-     *            a given WARCRecord
+     * @param record a given WARCRecord
      * @return the type of WARCRecord as a String.
      */
     public static String getRecordType(WARCRecord record) {
@@ -303,8 +292,7 @@ public class WARCUtils {
     /**
      * Check if the given filename represents a WARC file.
      * 
-     * @param filename
-     *            A given filename
+     * @param filename A given filename
      * @return true, if the filename ends with .warc or .warc.gz
      */
     public static boolean isWarc(String filename) {

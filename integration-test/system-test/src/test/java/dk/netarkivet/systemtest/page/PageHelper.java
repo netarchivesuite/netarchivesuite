@@ -105,9 +105,8 @@ public class PageHelper {
     }
 
     /**
-     * In case of button clicks causing page loads this function should be
-     * called to ensure the new page is finished loading before the test is
-     * continued.
+     * In case of button clicks causing page loads this function should be called to ensure the new page is finished
+     * loading before the test is continued.
      */
     public static void waitForPageToLoad() {
         driver.findElement(By.className("systeminfo"));

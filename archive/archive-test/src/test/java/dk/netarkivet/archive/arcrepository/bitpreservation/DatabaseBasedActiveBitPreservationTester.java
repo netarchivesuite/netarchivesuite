@@ -78,7 +78,7 @@ import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
-@SuppressWarnings({ "deprecation", "unused" })
+@SuppressWarnings({"deprecation", "unused"})
 // FIXME: @Ignore
 @Ignore("test hangs")
 public class DatabaseBasedActiveBitPreservationTester {
@@ -134,11 +134,9 @@ public class DatabaseBasedActiveBitPreservationTester {
     }
 
     /**
-     * Test that it correctly identifies a missing file. This test assumes a
-     * clean database.
+     * Test that it correctly identifies a missing file. This test assumes a clean database.
      *
-     * @throws Exception
-     *             If error!
+     * @throws Exception If error!
      */
     @Test
     public void testMissingFiles() throws Exception {
@@ -172,8 +170,7 @@ public class DatabaseBasedActiveBitPreservationTester {
     /**
      * Test that it correctly finds a changed file.
      *
-     * @throws Exception
-     *             if error.
+     * @throws Exception if error.
      */
     @Test
     public void testChangedFiles() throws Exception {
@@ -219,7 +216,7 @@ public class DatabaseBasedActiveBitPreservationTester {
 
         dbabp.replaceChangedFile(REPLICA_THREE, "integrity2.ARC", "XX", "b3bb49b72718b89950f8b861d2e0e2ca");
 
-        Map<String, PreservationState> presMap = dbabp.getPreservationStateMap(new String[] { "integrity11.ARC" });
+        Map<String, PreservationState> presMap = dbabp.getPreservationStateMap(new String[] {"integrity11.ARC"});
 
         assertEquals("The map should only contain a single element", 1, presMap.size());
 

@@ -46,8 +46,7 @@ import dk.netarkivet.monitor.jmx.HostForwarding;
 import dk.netarkivet.monitor.logging.SingleLogRecord;
 
 /**
- * Implementation of StatusEntry, that receives its data from the MBeanServer
- * (JMX).
+ * Implementation of StatusEntry, that receives its data from the MBeanServer (JMX).
  */
 public class JMXStatusEntry implements StatusEntry {
     /** The ObjectName assigned to the MBean for this JMXStatusEntry. */
@@ -65,9 +64,7 @@ public class JMXStatusEntry implements StatusEntry {
     /**
      * Constructor for the JMXStatusEntry.
      *
-     * @param mBeanName
-     *            The ObjectName to be assigned to the MBean representing this
-     *            JMXStatusEntry.
+     * @param mBeanName The ObjectName to be assigned to the MBean representing this JMXStatusEntry.
      */
     public JMXStatusEntry(ObjectName mBeanName) {
         ArgumentNotValid.checkNotNull(mBeanName, "ObjectName mBeanName");
@@ -75,80 +72,68 @@ public class JMXStatusEntry implements StatusEntry {
     }
 
     /**
-     * @return the location designated by the key
-     *         {@link JMXSummaryUtils#JMXPhysLocationProperty}
+     * @return the location designated by the key {@link JMXSummaryUtils#JMXPhysLocationProperty}
      */
     public String getPhysicalLocation() {
         return mBeanName.getKeyProperty(JMXSummaryUtils.JMXPhysLocationProperty);
     }
 
     /**
-     * @return the hostname designated by the key
-     *         {@link JMXSummaryUtils#JMXMachineNameProperty}
+     * @return the hostname designated by the key {@link JMXSummaryUtils#JMXMachineNameProperty}
      */
     public String getMachineName() {
         return mBeanName.getKeyProperty(JMXSummaryUtils.JMXMachineNameProperty);
     }
 
     /**
-     * @return the http-port designated by the key
-     *         {@link JMXSummaryUtils#JMXHttpportProperty}
+     * @return the http-port designated by the key {@link JMXSummaryUtils#JMXHttpportProperty}
      */
     public String getHTTPPort() {
         return mBeanName.getKeyProperty(JMXSummaryUtils.JMXHttpportProperty);
     }
 
     /**
-     * @return the application name designated by the key
-     *         {@link JMXSummaryUtils#JMXApplicationNameProperty}
+     * @return the application name designated by the key {@link JMXSummaryUtils#JMXApplicationNameProperty}
      */
     public String getApplicationName() {
         return mBeanName.getKeyProperty(JMXSummaryUtils.JMXApplicationNameProperty);
     }
 
     /**
-     * @return the application inst id designated by the key
-     *         {@link JMXSummaryUtils#JMXApplicationInstIdProperty}
+     * @return the application inst id designated by the key {@link JMXSummaryUtils#JMXApplicationInstIdProperty}
      */
     public String getApplicationInstanceID() {
         return mBeanName.getKeyProperty(JMXSummaryUtils.JMXApplicationInstIdProperty);
     }
 
     /**
-     * @return the harvest priority designated by the key
-     *         {@link JMXSummaryUtils#JMXHarvestChannelProperty}
+     * @return the harvest priority designated by the key {@link JMXSummaryUtils#JMXHarvestChannelProperty}
      */
     public String getHarvestPriority() {
         return mBeanName.getKeyProperty(JMXSummaryUtils.JMXHarvestChannelProperty);
     }
 
     /**
-     * @return the replica id designated by the key
-     *         {@link JMXSummaryUtils#JMXArchiveReplicaNameProperty}
+     * @return the replica id designated by the key {@link JMXSummaryUtils#JMXArchiveReplicaNameProperty}
      */
     public String getArchiveReplicaName() {
         return mBeanName.getKeyProperty(JMXSummaryUtils.JMXArchiveReplicaNameProperty);
     }
 
     /**
-     * @return the index designated by the key
-     *         {@link JMXSummaryUtils#JMXIndexProperty}
+     * @return the index designated by the key {@link JMXSummaryUtils#JMXIndexProperty}
      */
     public String getIndex() {
         return mBeanName.getKeyProperty(JMXSummaryUtils.JMXIndexProperty);
     }
 
     /**
-     * Gets the log message from this status entry. This implementation actually
-     * talks to an MBeanServer to get the log message. Will return an
-     * explanation if remote host does not respond, throws exception or returns
-     * null.
+     * Gets the log message from this status entry. This implementation actually talks to an MBeanServer to get the log
+     * message. Will return an explanation if remote host does not respond, throws exception or returns null.
      *
-     * @param l
-     *            the current Locale
+     * @param l the current Locale
      * @return A log message.
-     * @throws ArgumentNotValid
-     *             if the current Locale is null
+     * @throws ArgumentNotValid if the current Locale is null
      */
     public String getLogMessage(Locale l) {
         ArgumentNotValid.checkNotNull(l, "l");
@@ -179,14 +164,11 @@ public class JMXStatusEntry implements StatusEntry {
     }
 
     /**
-     * Compares two entries according to first their location, then their
-     * machine name, then their ports, and then their application name, and then
-     * their index.
+     * Compares two entries according to first their location, then their machine name, then their ports, and then their
+     * application name, and then their index.
      *
-     * @param o
-     *            The object to compare with
-     * @return A negative number if this entry comes first, a positive if it
-     *         comes second and 0 if they are equal.
+     * @param o The object to compare with
+     * @return A negative number if this entry comes first, a positive if it comes second and 0 if they are equal.
      */
     public int compareTo(StatusEntry o) {
         int c;
@@ -298,12 +280,9 @@ public class JMXStatusEntry implements StatusEntry {
     /**
      * Query the JMX system for system status mbeans.
      *
-     * @param query
-     *            A JMX request, e.g.
-     *            dk.netarkivet.logging:location=EAST,httpport=8080,*
+     * @param query A JMX request, e.g. dk.netarkivet.logging:location=EAST,httpport=8080,*
      * @return A list of status entries for the mbeans that match the query.
-     * @throws MalformedObjectNameException
-     *             If the query has wrong format.
+     * @throws MalformedObjectNameException If the query has wrong format.
      */
     public static List<StatusEntry> queryJMX(String query) throws MalformedObjectNameException {
         ArgumentNotValid.checkNotNull(query, "query");
@@ -325,14 +304,10 @@ public class JMXStatusEntry implements StatusEntry {
     /**
      * Unregister an JMX MBean instance.
      *
-     * @param query
-     *            A JMX request, for picking the beans to unregister.
-     * @throws MalformedObjectNameException
-     *             if query is malformed.
-     * @throws InstanceNotFoundException
-     *             if the instanced unregistered doesn't exists.
-     * @throws MBeanRegistrationException
-     *             if unregeterBean is thrown.
+     * @param query A JMX request, for picking the beans to unregister.
+     * @throws MalformedObjectNameException if query is malformed.
+     * @throws InstanceNotFoundException if the instanced unregistered doesn't exists.
+     * @throws MBeanRegistrationException if unregeterBean is thrown.
      */
     public static void unregisterJMXInstance(String query) throws MalformedObjectNameException,
             InstanceNotFoundException, MBeanRegistrationException {

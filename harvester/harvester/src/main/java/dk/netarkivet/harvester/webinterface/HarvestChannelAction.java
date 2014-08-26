@@ -56,20 +56,16 @@ public abstract class HarvestChannelAction {
     private static final Log log = LogFactory.getLog(HarvestChannelAction.class);
 
     /**
-     * This method processes the request to determine which action it
-     * corresponds to and passes the request along accordingly. Available
-     * actions are:
+     * This method processes the request to determine which action it corresponds to and passes the request along
+     * accordingly. Available actions are:
      * <ul>
      * <li>create harvest channel</li>
      * <li>map harvest definition to channel</li>
      * </ul>
      *
-     * @param context
-     *            the original servlet context of the request.
-     * @param i18n
-     *            the internationalisation to be used.
-     * @throws ForwardedToErrorPage
-     *             if an exception is thrown while carrying out the action.
+     * @param context the original servlet context of the request.
+     * @param i18n the internationalisation to be used.
+     * @throws ForwardedToErrorPage if an exception is thrown while carrying out the action.
      */
     public static void processRequest(PageContext context, I18n i18n) throws ForwardedToErrorPage {
         ArgumentNotValid.checkNotNull(context, "PageContext context");

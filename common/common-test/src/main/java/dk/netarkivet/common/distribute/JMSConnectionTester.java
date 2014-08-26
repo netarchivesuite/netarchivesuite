@@ -59,12 +59,11 @@ import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
- * Tests JMSConnection, the class that handles all JMS operations for
- * Netarkivet.
+ * Tests JMSConnection, the class that handles all JMS operations for Netarkivet.
  */
 
 @Ignore("Not in junit3 test suite")
-@SuppressWarnings({ "unchecked", "rawtypes", "unused", "serial" })
+@SuppressWarnings({"unchecked", "rawtypes", "unused", "serial"})
 public class JMSConnectionTester {
 
     private SecurityManager originalSecurityManager;
@@ -159,11 +158,10 @@ public class JMSConnectionTester {
     @Test
     public void testResendArgumentsNotNull() {
         /*
-         * Check it is the correct resend method which is invoked and not an
-         * overloaded version in fx. JMSConnectionMockupMQ. Resend should be
-         * declared final.
+         * Check it is the correct resend method which is invoked and not an overloaded version in fx.
+         * JMSConnectionMockupMQ. Resend should be declared final.
          */
-        Class parameterTypes[] = { NetarkivetMessage.class, ChannelID.class };
+        Class parameterTypes[] = {NetarkivetMessage.class, ChannelID.class};
         assertMethodIsFinal(JMSConnection.class, "resend", parameterTypes);
 
         /*
@@ -172,8 +170,7 @@ public class JMSConnectionTester {
         Settings.set(CommonSettings.JMS_BROKER_CLASS, "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
 
         /*
-         * Test if ArgumentNotValid is thrown if null is given as first
-         * parameter.
+         * Test if ArgumentNotValid is thrown if null is given as first parameter.
          */
         try {
             JMSConnectionFactory.getInstance().resend(null, Channels.getError());
@@ -183,8 +180,7 @@ public class JMSConnectionTester {
         }
 
         /*
-         * Test if ArgumentNotValid is thrown if null is given as second
-         * parameter
+         * Test if ArgumentNotValid is thrown if null is given as second parameter
          */
         try {
             JMSConnectionFactory.getInstance().resend(new TestMessage(Channels.getError(), Channels.getError(), ""),
@@ -196,18 +192,16 @@ public class JMSConnectionTester {
     }
 
     /**
-     * Test the resend method. Message shouldn't be sent according to the
-     * address specified in the "to" field of the message. It should be sent to
-     * the address given in the "to" parameter of the resend() method.
+     * Test the resend method. Message shouldn't be sent according to the address specified in the "to" field of the
+     * message. It should be sent to the address given in the "to" parameter of the resend() method.
      */
     @Test
     public void testResendCorrectSendBehaviour() {
         /**
-         * Check it is the correct resend method which is invoked and not an
-         * overloaded version in fx. JMSConnectionMockupMQ. Resend should be
-         * declared final.
+         * Check it is the correct resend method which is invoked and not an overloaded version in fx.
+         * JMSConnectionMockupMQ. Resend should be declared final.
          */
-        Class parameterTypes[] = { NetarkivetMessage.class, ChannelID.class };
+        Class parameterTypes[] = {NetarkivetMessage.class, ChannelID.class};
         assertMethodIsFinal(JMSConnection.class, "resend", parameterTypes);
 
         /**
@@ -249,11 +243,9 @@ public class JMSConnectionTester {
     }
 
     /**
-     * Tests that initconnection actually starts a topic connection and a queue
-     * connection.
+     * Tests that initconnection actually starts a topic connection and a queue connection.
      *
-     * @throws Exception
-     *             On failures
+     * @throws Exception On failures
      */
     @Test
     public void testInitConnection() throws Exception {

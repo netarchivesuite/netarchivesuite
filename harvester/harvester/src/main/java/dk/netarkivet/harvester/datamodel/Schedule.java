@@ -29,18 +29,16 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.Named;
 
 /**
- * This class implements a schedule that can be either repeating or timed,
- * depending on the subclass.
+ * This class implements a schedule that can be either repeating or timed, depending on the subclass.
  *
- * A schedule is a combination of a frequency, defining how often this schedule
- * and at which points in time will trigger an event , plus information about
- * when to start and when to stop triggering events.
+ * A schedule is a combination of a frequency, defining how often this schedule and at which points in time will trigger
+ * an event , plus information about when to start and when to stop triggering events.
  *
- * Methods are provided to check when the first event should happen, and to
- * calculate the next events from the previous event time.
+ * Methods are provided to check when the first event should happen, and to calculate the next events from the previous
+ * event time.
  *
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public abstract class Schedule implements Serializable, Named {
 
     /** Human readable name for the schedule. */
@@ -48,8 +46,7 @@ public abstract class Schedule implements Serializable, Named {
     /** Any comments added by the user. */
     protected String comments;
     /**
-     * first run of job: date, time (hour:min:sec). May be null, meaning at any
-     * time
+     * first run of job: date, time (hour:min:sec). May be null, meaning at any time
      */
     protected Date startDate;
     /** Frequency of runs, possibly with a time it should happen at. */
@@ -60,21 +57,14 @@ public abstract class Schedule implements Serializable, Named {
     private Long id;
 
     /**
-     * Create a new schedule starting at a specific time and going on for an
-     * undefined time.
+     * Create a new schedule starting at a specific time and going on for an undefined time.
      * 
-     * @param startDate
-     *            Time at which the schedule starts happening (though not
-     *            necessarily the time of the first event). May be null, meaning
-     *            at any time.
-     * @param frequency
-     *            How frequently the events should happen
-     * @param name
-     *            The unique name of this schedule.
-     * @param comments
-     *            Comments entered by the user
-     * @throws ArgumentNotValid
-     *             if frequency, name or comments is null, or name is ""
+     * @param startDate Time at which the schedule starts happening (though not necessarily the time of the first
+     *            event). May be null, meaning at any time.
+     * @param frequency How frequently the events should happen
+     * @param name The unique name of this schedule.
+     * @param comments Comments entered by the user
+     * @throws ArgumentNotValid if frequency, name or comments is null, or name is ""
      */
     protected Schedule(Date startDate, Frequency frequency, String name, String comments) {
         ArgumentNotValid.checkNotNullOrEmpty(name, "name");
@@ -89,48 +79,30 @@ public abstract class Schedule implements Serializable, Named {
     }
 
     /**
-     * Get a new Schedule instance for a schedule that runs over a certain
-     * period.
+     * Get a new Schedule instance for a schedule that runs over a certain period.
      *
-     * @param startDate
-     *            The first date an event is allowed to happen. May be null,
-     *            meaning at any time.
-     * @param endDate
-     *            The last date an event is allowed to happen. May be null
-     *            meaning continue forever.
-     * @param freq
-     *            How frequently the events should happen.
-     * @param name
-     *            The name of this schedule.
-     * @param comments
-     *            Comments entered by the user
+     * @param startDate The first date an event is allowed to happen. May be null, meaning at any time.
+     * @param endDate The last date an event is allowed to happen. May be null meaning continue forever.
+     * @param freq How frequently the events should happen.
+     * @param name The name of this schedule.
+     * @param comments Comments entered by the user
      * @return A new Schedule.
-     * @throws ArgumentNotValid
-     *             if frequency, name or comments is null, or name is ""
+     * @throws ArgumentNotValid if frequency, name or comments is null, or name is ""
      */
     public static Schedule getInstance(Date startDate, Date endDate, Frequency freq, String name, String comments) {
         return new TimedSchedule(startDate, endDate, freq, name, comments);
     }
 
     /**
-     * Get a new Schedule instance for a schedule that runs a certain number of
-     * times.
+     * Get a new Schedule instance for a schedule that runs a certain number of times.
      *
-     * @param startDate
-     *            The first date an event is allowed to happen. May be null,
-     *            meaning at any time.
-     * @param repeats
-     *            How many events should happen on this schedule.
-     * @param freq
-     *            How frequently the events should happen.
-     * @param name
-     *            The name of this schedule.
-     * @param comments
-     *            Comments entered by the user
+     * @param startDate The first date an event is allowed to happen. May be null, meaning at any time.
+     * @param repeats How many events should happen on this schedule.
+     * @param freq How frequently the events should happen.
+     * @param name The name of this schedule.
+     * @param comments Comments entered by the user
      * @return A new Schedule.
-     * @throws ArgumentNotValid
-     *             if frequency, name or comments is null, or name is "" or
-     *             repeats is 0 or negative
+     * @throws ArgumentNotValid if frequency, name or comments is null, or name is "" or repeats is 0 or negative
      */
     public static Schedule getInstance(Date startDate, int repeats, Frequency freq, String name, String comments) {
         return new RepeatingSchedule(startDate, repeats, freq, name, comments);
@@ -139,13 +111,10 @@ public abstract class Schedule implements Serializable, Named {
     /**
      * Return the date at which the first event will happen.
      * 
-     * @param now
-     *            The first time it can happen. Will be normalized to only
-     *            second precision, milliseconds are set to 0.
+     * @param now The first time it can happen. Will be normalized to only second precision, milliseconds are set to 0.
      *
      * @return The date of the first event to happen after startDate.
-     * @throws ArgumentNotValid
-     *             if now is null
+     * @throws ArgumentNotValid if now is null
      */
     public Date getFirstEvent(Date now) {
         ArgumentNotValid.checkNotNull(now, "now");
@@ -160,13 +129,10 @@ public abstract class Schedule implements Serializable, Named {
     /**
      * Return the date at which the next event will happen.
      *
-     * @param lastEvent
-     *            The time at which the previous event happened.
-     * @param numPreviousEvents
-     *            How many events have previously happened.
+     * @param lastEvent The time at which the previous event happened.
+     * @param numPreviousEvents How many events have previously happened.
      * @return The date of the next event to happen or null for no more events.
-     * @throws ArgumentNotValid
-     *             if numPreviousEvents is negative
+     * @throws ArgumentNotValid if numPreviousEvents is negative
      */
     public abstract Date getNextEvent(Date lastEvent, int numPreviousEvents);
 
@@ -189,8 +155,7 @@ public abstract class Schedule implements Serializable, Named {
     }
 
     /**
-     * Get the frequency defining how often and when this schedule should be
-     * run.
+     * Get the frequency defining how often and when this schedule should be run.
      *
      * @return The frequency
      */
@@ -201,8 +166,7 @@ public abstract class Schedule implements Serializable, Named {
     /**
      * Autogenerated equals.
      * 
-     * @param o
-     *            The object to compare with
+     * @param o The object to compare with
      * @return Whether objects are equal
      */
     public boolean equals(Object o) {
@@ -251,8 +215,7 @@ public abstract class Schedule implements Serializable, Named {
     /**
      * Set the comments for the schedule.
      * 
-     * @param comments
-     *            The new comments
+     * @param comments The new comments
      */
     public void setComments(String comments) {
         ArgumentNotValid.checkNotNull(comments, "comments");
@@ -271,8 +234,7 @@ public abstract class Schedule implements Serializable, Named {
     /**
      * Set the edition number.
      *
-     * @param theEdition
-     *            The new edition
+     * @param theEdition The new edition
      */
     public void setEdition(long theEdition) {
         edition = theEdition;
@@ -290,16 +252,14 @@ public abstract class Schedule implements Serializable, Named {
     /**
      * Set the ID of this schedule. Only for use by DBDAO
      * 
-     * @param id
-     *            the new ID of this schedule
+     * @param id the new ID of this schedule
      */
     void setID(long id) {
         this.id = id;
     }
 
     /**
-     * Check if this schedule has an ID set yet (doesn't happen until the DBDAO
-     * persists it).
+     * Check if this schedule has an ID set yet (doesn't happen until the DBDAO persists it).
      * 
      * @return true if this schedule has an ID set yet
      */

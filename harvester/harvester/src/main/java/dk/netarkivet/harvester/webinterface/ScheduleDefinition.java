@@ -44,14 +44,12 @@ import dk.netarkivet.harvester.datamodel.ScheduleDAO;
 import dk.netarkivet.harvester.datamodel.WeeklyFrequency;
 
 /**
- * Contains utility methods for creating and editing schedule definitions for
- * harvests.
+ * Contains utility methods for creating and editing schedule definitions for harvests.
  */
 public final class ScheduleDefinition {
 
     /*
-     * Parameters for the Definitions-edit-schedule.jsp page. They should be
-     * self explanatory.
+     * Parameters for the Definitions-edit-schedule.jsp page. They should be self explanatory.
      */
     /** BeginAt parameter. */
     static final String BEGIN_AT_PARAMETER = "beginAt";
@@ -94,46 +92,35 @@ public final class ScheduleDefinition {
     }
 
     /**
-     * Processes the request parameters for the page
-     * Definitions-edit-schedule.jsp The parameters are first checked for
-     * validity. If they are not acceptable, an exception is thrown, otherwise
-     * the parameters are passed on to the methods editScheduleDefinition()
-     * which edits or creates the relevant schedule.
+     * Processes the request parameters for the page Definitions-edit-schedule.jsp The parameters are first checked for
+     * validity. If they are not acceptable, an exception is thrown, otherwise the parameters are passed on to the
+     * methods editScheduleDefinition() which edits or creates the relevant schedule.
      *
-     * update: if set, execute this method name: the name of the schedule If
-     * name is unset and update is unset, the GUI can be used to create a new
-     * schedule. It is an error condition to have name unset and update set.
+     * update: if set, execute this method name: the name of the schedule If name is unset and update is unset, the GUI
+     * can be used to create a new schedule. It is an error condition to have name unset and update set.
      *
-     * edition: the edition of the schedule being edited. If not specified, the
-     * name must not refer to an existing schedule. frequency: castable to an
-     * integer > 0. Actually the period between harvests in units of ...
-     * timespan: allowable values dage, timer, uger, m\u00e5neder
+     * edition: the edition of the schedule being edited. If not specified, the name must not refer to an existing
+     * schedule. frequency: castable to an integer > 0. Actually the period between harvests in units of ... timespan:
+     * allowable values dage, timer, uger, m\u00e5neder
      *
      * harvestTime: allowable values, whenever, aTime
      *
-     * If whenever is set then ignore remaining values in this group
-     * frequency_hours: the hour time for harvesting, integer 0<=x<=23, must be
-     * set if aTime is set and timespan is not "hours" frequency_minutes: the
-     * minute time for harvesting, integer 0<=x<=59, must be set if aTime is set
-     * and timespan is not "hours" frequency_day: the day of the week on which
-     * the harvest is to take place. Allowable values 1-7. Must be set if
-     * timespan is set to "weeks". frequency_date: the date of the month on
-     * which harvests are to occur. Integer 1<=x<=31. Must be set if timespan is
-     * "months"
+     * If whenever is set then ignore remaining values in this group frequency_hours: the hour time for harvesting,
+     * integer 0<=x<=23, must be set if aTime is set and timespan is not "hours" frequency_minutes: the minute time for
+     * harvesting, integer 0<=x<=59, must be set if aTime is set and timespan is not "hours" frequency_day: the day of
+     * the week on which the harvest is to take place. Allowable values 1-7. Must be set if timespan is set to "weeks".
+     * frequency_date: the date of the month on which harvests are to occur. Integer 1<=x<=31. Must be set if timespan
+     * is "months"
      *
-     * beginAt: allowable values "asSoonAsPossible", "beginning". Not null
-     * firstHarvestTime: a date/time field in format DD/MM YYYY hh:mm. Must be
-     * set if beginAt="beginning"
+     * beginAt: allowable values "asSoonAsPossible", "beginning". Not null firstHarvestTime: a date/time field in format
+     * DD/MM YYYY hh:mm. Must be set if beginAt="beginning"
      *
-     * continue: allowable values "forever", "toTime", "numberOfHarvests"
-     * endHarvestTime: a date/time field in format DD/MM YYYY hh:mm. Must be set
-     * if continue="beginning" numberOfHarvests: int > 0. Must be set if
+     * continue: allowable values "forever", "toTime", "numberOfHarvests" endHarvestTime: a date/time field in format
+     * DD/MM YYYY hh:mm. Must be set if continue="beginning" numberOfHarvests: int > 0. Must be set if
      * continue="numberOfHarvests"
      *
-     * @param context
-     *            Context of web request
-     * @param i18n
-     *            I18N information
+     * @param context Context of web request
+     * @param i18n I18N information
      */
     public static void processRequest(PageContext context, I18n i18n) {
         ArgumentNotValid.checkNotNull(context, "PageContext context");
@@ -178,22 +165,14 @@ public final class ScheduleDefinition {
     /**
      * Update or create the schedule in persistent storage.
      * 
-     * @param freq
-     *            The frequency of the schedule
-     * @param startDate
-     *            The start date of the schedule
-     * @param continueS
-     *            The continue-mode of the schedule
-     * @param endDate
-     *            The end date for the schedule (if any)
-     * @param repeats
-     *            How many time should the schedule be repeated
-     * @param name
-     *            The name of the schedule
-     * @param edition
-     *            The edition of the schedule
-     * @param comments
-     *            Any comments associated with the schedule
+     * @param freq The frequency of the schedule
+     * @param startDate The start date of the schedule
+     * @param continueS The continue-mode of the schedule
+     * @param endDate The end date for the schedule (if any)
+     * @param repeats How many time should the schedule be repeated
+     * @param name The name of the schedule
+     * @param edition The edition of the schedule
+     * @param comments Any comments associated with the schedule
      */
     private static void updateSchedule(Frequency freq, Date startDate, String continueS, Date endDate, int repeats,
             String name, long edition, String comments) {
@@ -218,13 +197,11 @@ public final class ScheduleDefinition {
     }
 
     /**
-     * If the beginAt parameter is set then this returns the first time at which
-     * the harvest is to be run. Otherwise it returns null.
+     * If the beginAt parameter is set then this returns the first time at which the harvest is to be run. Otherwise it
+     * returns null.
      * 
-     * @param context
-     *            Web context of the request
-     * @param i18n
-     *            I18N information
+     * @param context Web context of the request
+     * @param i18n I18N information
      * @return the first time to run the harvest
      */
     private static Date getStartDate(PageContext context, I18n i18n) {
@@ -246,13 +223,11 @@ public final class ScheduleDefinition {
     }
 
     /**
-     * If the toTime parameter is set then this returns the last time at which
-     * the harvest is to be run. Otherwise it returns null.
+     * If the toTime parameter is set then this returns the last time at which the harvest is to be run. Otherwise it
+     * returns null.
      * 
-     * @param context
-     *            Web context of the request
-     * @param i18n
-     *            I18N information
+     * @param context Web context of the request
+     * @param i18n I18N information
      * @return the last time to run the harvest
      */
     private static Date getEndDate(PageContext context, I18n i18n) {
@@ -274,13 +249,11 @@ public final class ScheduleDefinition {
     }
 
     /**
-     * Returns a frequency object specifying whether the harvest is to be
-     * minute, hourly, daily, weekly, or monthly and how often it is to be run.
+     * Returns a frequency object specifying whether the harvest is to be minute, hourly, daily, weekly, or monthly and
+     * how often it is to be run.
      * 
-     * @param context
-     *            Web context of the request
-     * @param i18n
-     *            I18N information
+     * @param context Web context of the request
+     * @param i18n I18N information
      * @return the Frequency for the harvest
      */
     private static Frequency getFrequency(PageContext context, I18n i18n) {

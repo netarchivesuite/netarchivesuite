@@ -42,8 +42,7 @@ public class HarvesterChannels {
      */
     private static final String HARVESTER_STATUS_CHANNEL_PREFIX = "HARVESTER_STATUS";
     /**
-     * The one existing instance of the Channels object. Not accessible from the
-     * outside at all.
+     * The one existing instance of the Channels object. Not accessible from the outside at all.
      */
     private static HarvesterChannels instance;
 
@@ -72,8 +71,7 @@ public class HarvesterChannels {
             ChannelID.NO_IP, ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
 
     /**
-     * @return the <code>ChannelID</code> object for the topic used by the
-     *         harvesters to call in ready for new jobs.
+     * @return the <code>ChannelID</code> object for the topic used by the harvesters to call in ready for new jobs.
      */
     public static ChannelID getHarvesterStatusChannel() {
         return getInstance().HARVESTER_STATUS;
@@ -84,10 +82,8 @@ public class HarvesterChannels {
 
     /**
      * Prefix for the channels used to send
-     * {@link dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationRequest}
-     * s and
-     * {@link dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationResponse}
-     * s
+     * {@link dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationRequest} s and
+     * {@link dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationResponse} s
      */
     private static final String HARVEST_CHANNEL_VALIDITY_PREFIX = "HCHAN_VAL_";
 
@@ -95,8 +91,7 @@ public class HarvesterChannels {
             ChannelID.COMMON, ChannelID.NO_IP, ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
 
     /**
-     * Return the queue for sending
-     * {@link dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationRequest}
+     * Return the queue for sending {@link dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationRequest}
      * s.
      *
      * @return the <code>ChannelID</code> object for the queue.
@@ -112,8 +107,7 @@ public class HarvesterChannels {
             ChannelID.COMMON, ChannelID.NO_IP, ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
 
     /**
-     * Return the queue for sending
-     * {@link dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationResponse}
+     * Return the queue for sending {@link dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationResponse}
      * s.
      *
      * @return the <code>ChannelID</code> object for the queue.
@@ -133,8 +127,8 @@ public class HarvesterChannels {
     private static final String JOB_PARTIAL_CHANNEL_PREFIX = "JOB_PARTIAL";
 
     /**
-     * Returns the queue which is used by the scheduler to send doOneCrawl to
-     * Harvest Controllers listening on the given harvest channel.
+     * Returns the queue which is used by the scheduler to send doOneCrawl to Harvest Controllers listening on the given
+     * harvest channel.
      *
      * @return That channel (queue)
      */
@@ -145,8 +139,8 @@ public class HarvesterChannels {
     }
 
     /**
-     * Returns the queue which is used by the scheduler to send doOneCrawl to
-     * Harvest Controllers listening on the given harvest channel.
+     * Returns the queue which is used by the scheduler to send doOneCrawl to Harvest Controllers listening on the given
+     * harvest channel.
      *
      * @return That channel (queue)
      */

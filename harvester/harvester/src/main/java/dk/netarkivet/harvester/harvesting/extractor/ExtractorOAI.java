@@ -38,22 +38,17 @@ import org.archive.net.UURI;
 import org.archive.util.TextUtils;
 
 /**
- * This is a link extractor for use with Heritrix. It will find the
- * resumptionToken in an OAI-PMH listMetadata query and construct the link for
- * the next page of the results. This extractor will not extract any other links
- * so if there are additional urls in the OAI metadata then an additional
- * extractor should be used for these. Typically this means that the extractor
- * chain in the order template will end: <newObject name="ExtractorOAI"
- * class="dk.netarkivet.harvester.harvesting.extractor.ExtractorOAI"> <boolean
- * name="enabled">true</boolean> <newObject name="ExtractorOAI#decide-rules"
- * class="org.archive.crawler.deciderules.DecideRuleSequence"> <map
- * name="rules"/> </newObject> </newObject> <newObject name="ExtractorXML"
- * class="org.archive.crawler.extractor.ExtractorXML"> <boolean
+ * This is a link extractor for use with Heritrix. It will find the resumptionToken in an OAI-PMH listMetadata query and
+ * construct the link for the next page of the results. This extractor will not extract any other links so if there are
+ * additional urls in the OAI metadata then an additional extractor should be used for these. Typically this means that
+ * the extractor chain in the order template will end: <newObject name="ExtractorOAI"
+ * class="dk.netarkivet.harvester.harvesting.extractor.ExtractorOAI"> <boolean name="enabled">true</boolean> <newObject
+ * name="ExtractorOAI#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence"> <map name="rules"/>
+ * </newObject> </newObject> <newObject name="ExtractorXML" class="org.archive.crawler.extractor.ExtractorXML"> <boolean
  * name="enabled">true</boolean> <newObject name="ExtractorXML#decide-rules"
- * class="org.archive.crawler.deciderules.DecideRuleSequence"> <map
- * name="rules"/> </newObject> </newObject>
+ * class="org.archive.crawler.deciderules.DecideRuleSequence"> <map name="rules"/> </newObject> </newObject>
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class ExtractorOAI extends Extractor {
 
     /**
@@ -63,10 +58,8 @@ public class ExtractorOAI extends Extractor {
     public static final String SIMPLE_RESUMPTION_TOKEN_MATCH = "(?i)<resumptionToken>\\s*(.*)\\s*</resumptionToken>";
 
     /**
-     * Regular expression matching the extended resumptionToken with attributes
-     * like this. <resumptionToken cursor="0"
-     * completeListSize="421315">oai_dc/421315
-     * /56151148/100/0/292/x/x/x</resumptionToken> This is seen in OAI targets
+     * Regular expression matching the extended resumptionToken with attributes like this. <resumptionToken cursor="0"
+     * completeListSize="421315">oai_dc/421315 /56151148/100/0/292/x/x/x</resumptionToken> This is seen in OAI targets
      * used by PURE.
      */
     public static final String EXTENDED_RESUMPTION_TOKEN_MATCH = "(?i)<resumptionToken\\s*cursor=\"[0-9]+\"\\s*completeListSize=\"[0-9]+\">\\s*(.*)\\s*</resumptionToken>";
@@ -87,8 +80,7 @@ public class ExtractorOAI extends Extractor {
     /**
      * Constructor for this extractor.
      * 
-     * @param name
-     *            the name of this extractor
+     * @param name the name of this extractor
      */
     public ExtractorOAI(String name) {
         super(name, "Extractor which finds the resumptionToken in an OAI "
@@ -96,12 +88,10 @@ public class ExtractorOAI extends Extractor {
     }
 
     /**
-     * Perform the link extraction on the current crawl uri. This method does
-     * not set linkExtractorFinished() on the current crawlURI, so subsequent
-     * extractors in the chain can find more links.
+     * Perform the link extraction on the current crawl uri. This method does not set linkExtractorFinished() on the
+     * current crawlURI, so subsequent extractors in the chain can find more links.
      * 
-     * @param curi
-     *            the CrawlUI from which to extract the link.
+     * @param curi the CrawlUI from which to extract the link.
      */
     @Override
     protected void extract(CrawlURI curi) {
@@ -155,13 +145,10 @@ public class ExtractorOAI extends Extractor {
     }
 
     /**
-     * Searches for resumption token and adds link if it is found. Returns true
-     * iff a link is added.
+     * Searches for resumption token and adds link if it is found. Returns true iff a link is added.
      * 
-     * @param curi
-     *            the CrawlURI.
-     * @param cs
-     *            the character sequency in which to search.
+     * @param curi the CrawlURI.
+     * @param cs the character sequency in which to search.
      * @return true iff a resumptionToken is found and a link added.
      */
     public boolean processXml(CrawlURI curi, CharSequence cs) {

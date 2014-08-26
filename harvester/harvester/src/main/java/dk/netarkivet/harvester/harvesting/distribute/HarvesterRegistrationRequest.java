@@ -30,20 +30,18 @@ import dk.netarkivet.harvester.harvesting.HarvestController;
 import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor;
 
 /**
- * Message sent by a {@link HarvestController} at startup, to check if the
- * channel name it has been assigned is valid (e.g. registered in the harvest
- * database).
+ * Message sent by a {@link HarvestController} at startup, to check if the channel name it has been assigned is valid
+ * (e.g. registered in the harvest database).
  *
- * The message is sent on a dedicated queue, and processed by the
- * {@link HarvestMonitor}, which checks if the channel name matches a channel
- * defined in the harvest database.
+ * The message is sent on a dedicated queue, and processed by the {@link HarvestMonitor}, which checks if the channel
+ * name matches a channel defined in the harvest database.
  *
  * In reply a {@link HarvesterRegistrationResponse} is sent back.
  *
  * @author ngiraud
  *
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class HarvesterRegistrationRequest extends HarvesterMessage {
 
     /** The harvest channel name to check. */

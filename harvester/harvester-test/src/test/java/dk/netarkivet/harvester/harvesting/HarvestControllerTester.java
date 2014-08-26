@@ -65,8 +65,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 /**
- * Tests for the HarvestController class (which was extracted from
- * HarvestControllerServer).
+ * Tests for the HarvestController class (which was extracted from HarvestControllerServer).
  */
 public class HarvestControllerTester {
     HarvestController hc;
@@ -135,8 +134,7 @@ public class HarvestControllerTester {
     }
 
     /**
-     * Tests the writeHarvestFiles method. FIXME fails when run as part of the
-     * UnitTesterSuite.java. See bug 1912.
+     * Tests the writeHarvestFiles method. FIXME fails when run as part of the UnitTesterSuite.java. See bug 1912.
      *
      * @throws Exception
      */
@@ -155,7 +153,7 @@ public class HarvestControllerTester {
 
         File crawlDir = new File(TestInfo.WORKING_DIR, "testcrawldir");
         FileUtils.createDir(crawlDir);
-        List<MetadataEntry> metadata = Arrays.asList(new MetadataEntry[] { TestInfo.sampleEntry });
+        List<MetadataEntry> metadata = Arrays.asList(new MetadataEntry[] {TestInfo.sampleEntry});
 
         File harvestInfo = new File(crawlDir, "harvestInfo.xml");
         File seedsTxt = new File(crawlDir, "seeds.txt");
@@ -199,8 +197,7 @@ public class HarvestControllerTester {
         assertEquals("Index directory should contain unzipped files", 3, files.getIndexDir().listFiles().length);
 
         /**
-         * Check, that arcsdir is created in the this method. Part of fixing bug
-         * #924.
+         * Check, that arcsdir is created in the this method. Part of fixing bug #924.
          */
         assertTrue("ArcsDir should exist prior to crawl-start", files.getArcsDir().isDirectory());
     }
@@ -218,8 +215,7 @@ public class HarvestControllerTester {
         someJob.setJobID(1L);
 
         /**
-         * Test that empty metadata list does not produce any preharvest
-         * metadata objects in crawldir/metadata.
+         * Test that empty metadata list does not produce any preharvest metadata objects in crawldir/metadata.
          */
         File metadataDir = new File(TestInfo.WORKING_DIR, IngestableFiles.METADATA_SUB_DIR);
         if (metadataDir.exists()) {
@@ -254,9 +250,8 @@ public class HarvestControllerTester {
     }
 
     /**
-     * test constructor behaviour given bad arguments. The introduction of a
-     * factory for the HeritrixLauncher hides the actual cause behind the
-     * message "Error creating singleton of class
+     * test constructor behaviour given bad arguments. The introduction of a factory for the HeritrixLauncher hides the
+     * actual cause behind the message "Error creating singleton of class
      * 'dk.netarkivet.harvester.harvesting.controller.BnfHeritrixLauncher'.
      */
     @Test

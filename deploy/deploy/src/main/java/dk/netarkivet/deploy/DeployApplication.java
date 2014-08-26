@@ -36,11 +36,11 @@ import org.apache.commons.cli.PosixParser;
 import dk.netarkivet.common.utils.Settings;
 
 /**
- * The application that is run to generate install and start/stop scripts for
- * all physical locations, machines and applications.
+ * The application that is run to generate install and start/stop scripts for all physical locations, machines and
+ * applications.
  * 
- * The actual deployment has to be done from an Linux/Unix machine, and this
- * application should therefore not be run on Windows.
+ * The actual deployment has to be done from an Linux/Unix machine, and this application should therefore not be run on
+ * Windows.
  */
 public final class DeployApplication {
 
@@ -80,23 +80,16 @@ public final class DeployApplication {
     /**
      * Run deploy.
      * 
-     * @param args
-     *            The Command-line arguments in no particular order:
+     * @param args The Command-line arguments in no particular order:
      * 
-     *            -C The deploy configuration file (ends with .xml). -Z The
-     *            NetarchiveSuite file to be unpacked (ends with .zip). -S The
-     *            security policy file (ends with .policy). -L The logging
-     *            property file (ends with .prop). -O [OPTIONAL] The output
-     *            directory -D [OPTIONAL] The harvest definition database -T
-     *            [OPTIONAL] The test arguments (httpportoffset, port,
-     *            environmentName, mailReceiver) -R [OPTIONAL] For resetting the
-     *            tempDir (takes arguments 'y' or 'yes') -E [OPTIONAL]
-     *            Evaluating the deployConfig file (arguments: 'y' or 'yes') -A
-     *            [OPTIONAL] For archive database. -J [OPTIONAL] For deploying
-     *            with external jar files. Must be the total path to the
-     *            directory containing jar-files. These external files will be
-     *            placed on every machine, and they have to manually be put into
-     *            the classpath, where they should be used.
+     *            -C The deploy configuration file (ends with .xml). -Z The NetarchiveSuite file to be unpacked (ends
+     *            with .zip). -S The security policy file (ends with .policy). -L The logging property file (ends with
+     *            .prop). -O [OPTIONAL] The output directory -D [OPTIONAL] The harvest definition database -T [OPTIONAL]
+     *            The test arguments (httpportoffset, port, environmentName, mailReceiver) -R [OPTIONAL] For resetting
+     *            the tempDir (takes arguments 'y' or 'yes') -E [OPTIONAL] Evaluating the deployConfig file (arguments:
+     *            'y' or 'yes') -A [OPTIONAL] For archive database. -J [OPTIONAL] For deploying with external jar files.
+     *            Must be the total path to the directory containing jar-files. These external files will be placed on
+     *            every machine, and they have to manually be put into the classpath, where they should be used.
      */
     /**
      * @param args
@@ -227,8 +220,7 @@ public final class DeployApplication {
     /**
      * Checks the configuration file argument and retrieves the file.
      * 
-     * @param deployConfigFileName
-     *            The configuration file argument.
+     * @param deployConfigFileName The configuration file argument.
      */
     private static void initConfigFile(String deployConfigFileName) {
         // check whether deploy-config file name is given as argument
@@ -256,8 +248,7 @@ public final class DeployApplication {
     /**
      * Checks the NetarchiveSuite file argument and retrieves the file.
      * 
-     * @param netarchiveSuiteFileName
-     *            The NetarchiveSuite argument.
+     * @param netarchiveSuiteFileName The NetarchiveSuite argument.
      */
     private static void initNetarchiveSuiteFile(String netarchiveSuiteFileName) {
         // check whether NetarchiveSuite file name is given as argument
@@ -286,8 +277,7 @@ public final class DeployApplication {
     /**
      * Checks the security policy file argument and retrieves the file.
      * 
-     * @param secPolicyFileName
-     *            The security policy argument.
+     * @param secPolicyFileName The security policy argument.
      */
     private static void initSecPolicyFile(String secPolicyFileName) {
         // check whether security policy file name is given as argument
@@ -314,11 +304,9 @@ public final class DeployApplication {
     }
 
     /**
-     * Checks the java.util.logging property file argument and retrieves the
-     * file.
+     * Checks the java.util.logging property file argument and retrieves the file.
      * 
-     * @param julPropFileName
-     *            The java.util.logging property argument.
+     * @param julPropFileName The java.util.logging property argument.
      */
     private static void initJulPropFile(String julPropFileName) {
         // check whether log property file name is given as argument
@@ -347,8 +335,7 @@ public final class DeployApplication {
     /**
      * Checks the SLF4J config file argument and retrieves the file.
      * 
-     * @param slf4jXmlFileName
-     *            The SLF4J config argument.
+     * @param slf4jXmlFileName The SLF4J config argument.
      */
     private static void initSLF4JXmlFile(String slf4jXmlFileName) {
         // check whether SLF4J config file name is given as argument
@@ -377,8 +364,7 @@ public final class DeployApplication {
     /**
      * Checks the database argument (if any) for extension and existence.
      * 
-     * @param databaseFileName
-     *            The name of the database file.
+     * @param databaseFileName The name of the database file.
      */
     private static void initDatabase(String databaseFileName) {
         dbFile = null;
@@ -404,14 +390,12 @@ public final class DeployApplication {
     }
 
     /**
-     * Checks the arguments for resetting the directory. Only the arguments 'y'
-     * or 'yes' resets the database directory. Default is 'no'.
+     * Checks the arguments for resetting the directory. Only the arguments 'y' or 'yes' resets the database directory.
+     * Default is 'no'.
      * 
-     * If another argument than 'y', 'yes', 'n' or 'no' is given, an warning is
-     * given.
+     * If another argument than 'y', 'yes', 'n' or 'no' is given, an warning is given.
      * 
-     * @param resetArgument
-     *            The argument for resetting given.
+     * @param resetArgument The argument for resetting given.
      */
     private static void initReset(String resetArgument) {
         if (resetArgument != null) {
@@ -435,14 +419,11 @@ public final class DeployApplication {
     }
 
     /**
-     * Checks the arguments for evaluating the config file. Only the arguments
-     * 'y' or 'yes' is accepted for evaluation. Anything else (including
-     * argument set to null) does not evaluate the deployConfigFile.
+     * Checks the arguments for evaluating the config file. Only the arguments 'y' or 'yes' is accepted for evaluation.
+     * Anything else (including argument set to null) does not evaluate the deployConfigFile.
      * 
-     * @param evaluateArgument
-     *            The argument for evaluation.
-     * @param encoding
-     *            the encoding to use to read from the input file
+     * @param evaluateArgument The argument for evaluation.
+     * @param encoding the encoding to use to read from the input file
      */
     public static void initEvaluate(String evaluateArgument, String encoding) {
         // check if argument is given and it is acknowledgement ('y' or 'yes')
@@ -459,8 +440,7 @@ public final class DeployApplication {
     /**
      * Checks the argument for the archive database.
      * 
-     * @param arcDbFileName
-     *            The path to the archive database.
+     * @param arcDbFileName The path to the archive database.
      */
     public static void initArchiveDatabase(String arcDbFileName) {
         arcDbFile = null;
@@ -488,8 +468,7 @@ public final class DeployApplication {
     /**
      * Checks the argument for the external jar-folder.
      * 
-     * @param folderName
-     *            The path to the folder. Global path.
+     * @param folderName The path to the folder. Global path.
      */
     public static void initJarFolder(String folderName) {
         externalJarFolder = null;
@@ -508,16 +487,13 @@ public final class DeployApplication {
     /**
      * Applies the test arguments.
      * 
-     * If the test arguments are given correctly, the configuration file is
-     * loaded and changed appropriately, then written to a test configuration
-     * file.
+     * If the test arguments are given correctly, the configuration file is loaded and changed appropriately, then
+     * written to a test configuration file.
      * 
-     * The new test configuration file has the same name as the original
-     * configuration file, except ".xml" is replaced by "_text.xml". Thus
-     * "path/config.xml" -> "path/config_test.xml".
+     * The new test configuration file has the same name as the original configuration file, except ".xml" is replaced
+     * by "_text.xml". Thus "path/config.xml" -> "path/config_test.xml".
      * 
-     * @param testArguments
-     *            The test arguments.
+     * @param testArguments The test arguments.
      */
     private static void initTestArguments(String testArguments) {
         // test if any test arguments (if none, don't apply, just stop).
@@ -600,8 +576,7 @@ public final class DeployApplication {
         /**
          * Parsing the input arguments.
          * 
-         * @param args
-         *            The input arguments.
+         * @param args The input arguments.
          * @return Whether it parsed correctly or not.
          */
         Boolean parseParameters(String[] args) {

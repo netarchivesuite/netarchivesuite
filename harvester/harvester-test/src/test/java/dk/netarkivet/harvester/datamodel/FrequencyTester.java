@@ -29,9 +29,8 @@ import org.junit.Test;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
- * Tests of the abstract Frequency class. Currently, only the static method
- * getNewInstance is tested here. The other tests are performed in the
- * subclasses of Frequency.
+ * Tests of the abstract Frequency class. Currently, only the static method getNewInstance is tested here. The other
+ * tests are performed in the subclasses of Frequency.
  */
 public class FrequencyTester {
     /**

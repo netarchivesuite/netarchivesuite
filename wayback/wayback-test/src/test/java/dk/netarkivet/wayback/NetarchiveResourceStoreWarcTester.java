@@ -75,10 +75,10 @@ import dk.netarkivet.wayback.indexer.IndexerTestCase;
 /**
  * Unit test for testNetarchiveResourceStore with WARC files.
  *
- * This test should be integrated with NetarchiveResourceStoreTester. But since
- * we are not using JUnit4 Parameterized testing is to cumbersome.
+ * This test should be integrated with NetarchiveResourceStoreTester. But since we are not using JUnit4 Parameterized
+ * testing is to cumbersome.
  */
-@SuppressWarnings({ "unchecked", "rawtypes", "unused" })
+@SuppressWarnings({"unchecked", "rawtypes", "unused"})
 @Ignore("Not in junit 3 TestSuite")
 public class NetarchiveResourceStoreWarcTester extends IndexerTestCase {
 
@@ -192,11 +192,9 @@ public class NetarchiveResourceStoreWarcTester extends IndexerTestCase {
      * Test bad ARC record, but with HTTP address
      */
     /*
-     * public void testResourceWithHTTPAddresse() { DummyGetMessageReplyServer
-     * replyServer = new DummyGetMessageReplyServer();
-     * replyServer.setBitarchiveRecord(null); Resource resource = null; try {
-     * resource = netResource.retrieveResource(httpResource); } catch
-     * (ResourceNotAvailableException ex) {
+     * public void testResourceWithHTTPAddresse() { DummyGetMessageReplyServer replyServer = new
+     * DummyGetMessageReplyServer(); replyServer.setBitarchiveRecord(null); Resource resource = null; try { resource =
+     * netResource.retrieveResource(httpResource); } catch (ResourceNotAvailableException ex) {
      * fail("Resource should be avaailable"); } assertNotNull(resource); }
      */
 
@@ -204,26 +202,20 @@ public class NetarchiveResourceStoreWarcTester extends IndexerTestCase {
      * Test valid ARC record
      */
     /*
-     * public void testUploadDataRetrieveResource() { DummyGetMessageReplyServer
-     * replyServer = new DummyGetMessageReplyServer();
-     * replyServer.setBitarchiveRecord(null); Resource resource = null; try {
-     * resource = netarchiveResourceStore.retrieveResource(uploadResource); }
-     * catch (ResourceNotAvailableException e) {
-     * fail("Should not throw excption when retriving valid resource"); }
-     * assertNotNull(resource); assertEquals(200, resource.getStatusCode());
-     * assertEquals(13442, resource.getRecordLength());
+     * public void testUploadDataRetrieveResource() { DummyGetMessageReplyServer replyServer = new
+     * DummyGetMessageReplyServer(); replyServer.setBitarchiveRecord(null); Resource resource = null; try { resource =
+     * netarchiveResourceStore.retrieveResource(uploadResource); } catch (ResourceNotAvailableException e) {
+     * fail("Should not throw excption when retriving valid resource"); } assertNotNull(resource); assertEquals(200,
+     * resource.getStatusCode()); assertEquals(13442, resource.getRecordLength());
      * 
      * 
      * if(resource instanceof ArcResource) { Map metadata =
      * ((ArcResource)resource).getArcRecord().getHeader().getHeaderFields();
      * assertEquals("Offset into file should correspond with read offset",
-     * 2038L,metadata.get(ARCRecordMetaData.ABSOLUTE_OFFSET_KEY));
-     * assertEquals("Mime type not equal to ARC records", "text/html",
-     * metadata.get(ARCRecordMetaData.MIMETYPE_FIELD_KEY));
-     * assertEquals("URL of ARC record not equal to read URL",
-     * "http://www.netarkivet.dk/",
-     * metadata.get(ARCRecordMetaData.URL_FIELD_KEY));
-     * assertEquals("130.226.231.141",
+     * 2038L,metadata.get(ARCRecordMetaData.ABSOLUTE_OFFSET_KEY)); assertEquals("Mime type not equal to ARC records",
+     * "text/html", metadata.get(ARCRecordMetaData.MIMETYPE_FIELD_KEY));
+     * assertEquals("URL of ARC record not equal to read URL", "http://www.netarkivet.dk/",
+     * metadata.get(ARCRecordMetaData.URL_FIELD_KEY)); assertEquals("130.226.231.141",
      * metadata.get(ARCRecordMetaData.IP_HEADER_FIELD_KEY)); } else {
      * fail("Should return a ArcResource at this point in time."); } }
      */
@@ -253,10 +245,9 @@ public class NetarchiveResourceStoreWarcTester extends IndexerTestCase {
     }
 
     /**
-     * DummyGetMessageReplyServer, which acts as an intermediate JMS Server.
-     * Functionality: - If ARC file exists read the appropriate data into an ARC
-     * record, and create metadata information - If ARC file doesn't exists,
-     * make dummy ARC record, with no data and dummy metadata information
+     * DummyGetMessageReplyServer, which acts as an intermediate JMS Server. Functionality: - If ARC file exists read
+     * the appropriate data into an ARC record, and create metadata information - If ARC file doesn't exists, make dummy
+     * ARC record, with no data and dummy metadata information
      */
     private static class DummyGetMessageReplyServer implements MessageListener {
         JMSConnection conn = JMSConnectionFactory.getInstance();
@@ -309,8 +300,8 @@ public class NetarchiveResourceStoreWarcTester extends IndexerTestCase {
                         in = new FileInputStream(arcFile);
                         in.skip(netMsg.getIndex());
                         /*
-                         * while(InputStreamUtils.readLine(in).length() == 0) {
-                         * // needed for testUploadDataRetrieveResource }
+                         * while(InputStreamUtils.readLine(in).length() == 0) { // needed for
+                         * testUploadDataRetrieveResource }
                          */
                         int tmp_length = new String(InputStreamUtils.readRawLine(in)).length();
                         headers.put(ARCRecordMetaData.ABSOLUTE_OFFSET_KEY,

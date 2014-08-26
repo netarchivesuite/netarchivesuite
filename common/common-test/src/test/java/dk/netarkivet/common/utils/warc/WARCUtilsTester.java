@@ -46,7 +46,7 @@ import dk.netarkivet.testutils.TestFileUtils;
 /**
  * Tests for class WARCUtils.
  */
-@SuppressWarnings({ "unused" })
+@SuppressWarnings({"unused"})
 public class WARCUtilsTester extends TestCase {
 
     private static File OUTFILE_WARC = new File(TestInfo.WORKING_DIR, "outFile.warc");
@@ -103,10 +103,8 @@ public class WARCUtilsTester extends TestCase {
     /**
      * Encapsulate WARCWriter creation for test-purposes.
      * 
-     * @param stream
-     *            the PrintStream
-     * @param warcfile
-     *            the destination warcfile
+     * @param stream the PrintStream
+     * @param warcfile the destination warcfile
      * @throws IOException
      * @return new WARCWriter
      */

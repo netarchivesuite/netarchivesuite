@@ -54,8 +54,7 @@ public abstract class ArchiveRecordBase {
     /**
      * Factory method for creating a wrapped Heritrix record.
      * 
-     * @param archiveRecord
-     *            Heritrix archive record
+     * @param archiveRecord Heritrix archive record
      * @return wrapped Heritrix record
      */
     public static ArchiveRecordBase wrapArchiveRecord(ArchiveRecord archiveRecord) {

@@ -30,8 +30,7 @@ import org.junit.Test;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
- * Unit-test for the HistorySiteSection class. FIXME Does not currently test
- * HistorySiteSection functionality.
+ * Unit-test for the HistorySiteSection class. FIXME Does not currently test HistorySiteSection functionality.
  */
 public class HistorySiteSectionTester {
 

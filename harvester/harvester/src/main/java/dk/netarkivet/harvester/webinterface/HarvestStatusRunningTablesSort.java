@@ -47,8 +47,7 @@ public class HarvestStatusRunningTablesSort {
     /**
      * return the ColumnId corresponding to the hash code.
      * 
-     * @param columnIdInt
-     *            the hash code
+     * @param columnIdInt the hash code
      * @return the ColumnId
      * */
     public final ColumnId getColumnIdByHash(final int columnIdInt) {
@@ -78,8 +77,7 @@ public class HarvestStatusRunningTablesSort {
     /**
      * return the ColumnId of the sorted table.
      * 
-     * @param harvestName
-     *            the harvest name
+     * @param harvestName the harvest name
      * @return the ColumnId
      * */
     public final ColumnId getSortedColumnIdentByHarvestName(final String harvestName) {
@@ -93,8 +91,7 @@ public class HarvestStatusRunningTablesSort {
     /**
      * return the SortOrder of the sorted table.
      * 
-     * @param harvestName
-     *            the harvest name
+     * @param harvestName the harvest name
      * @return the SortOrder
      * */
     public final TableSort.SortOrder getSortOrderByHarvestName(final String harvestName) {
@@ -109,10 +106,8 @@ public class HarvestStatusRunningTablesSort {
     /**
      * effect of a click on a column.
      * 
-     * @param harvestName
-     *            the harvest name
-     * @param column
-     *            ColumnId of the clicked column
+     * @param harvestName the harvest name
+     * @param column ColumnId of the clicked column
      * */
     public final void sort(final String harvestName, final ColumnId column) {
         TableSort tbs = getTableSort(harvestName);
@@ -138,10 +133,8 @@ public class HarvestStatusRunningTablesSort {
     /**
      * effect of a click on a column.
      * 
-     * @param harvestName
-     *            the harvest name
-     * @param column
-     *            hashcode of the ColumnId of the clicked column
+     * @param harvestName the harvest name
+     * @param column hashcode of the ColumnId of the clicked column
      * */
     public final void sortByHarvestName(final String harvestName, final int column) {
 
@@ -153,8 +146,7 @@ public class HarvestStatusRunningTablesSort {
     /**
      * return the TableSort object describing the sort.
      * 
-     * @param harvestName
-     *            the harvest name
+     * @param harvestName the harvest name
      * @return the TableSort
      * */
     private TableSort getTableSort(final String harvestName) {

@@ -57,32 +57,22 @@ public final class EventHarvestUtil {
     }
 
     /**
-     * Adds a bunch of configurations to a given PartialHarvest. For full
-     * definitions of the parameters, see Definitions-add-event-seeds.jsp. For
-     * each seed in the list, the following steps are taken: 1) The domain is
-     * parsed out of the seed. If no such domain is known, it is created with
-     * the usual defaults. 2) For each domain, a configuration with the name
-     * &lt;harvestDefinition&gt;_&lt;orderTemplate&gt;_&lt;maxBytes&gt;Bytes is
-     * created unless it already exists. The configuration uses orderTemplate,
-     * and the specified maxBytes. If maxBytes is unspecified, its default value
-     * is used. The configuration is added to the harvest specified by the
+     * Adds a bunch of configurations to a given PartialHarvest. For full definitions of the parameters, see
+     * Definitions-add-event-seeds.jsp. For each seed in the list, the following steps are taken: 1) The domain is
+     * parsed out of the seed. If no such domain is known, it is created with the usual defaults. 2) For each domain, a
+     * configuration with the name &lt;harvestDefinition&gt;_&lt;orderTemplate&gt;_&lt;maxBytes&gt;Bytes is created
+     * unless it already exists. The configuration uses orderTemplate, and the specified maxBytes. If maxBytes is
+     * unspecified, its default value is used. The configuration is added to the harvest specified by the
      * harvestDefinition argument. 3) For each domain, a seedlist with the name
-     * &lt;harvestDefinition&gt;_&lt;orderTemplate&gt;_&lt;maxBytes&gt;Bytes is
-     * created if it does not already exist and the given url is added to it.
-     * This seedlist is the only seedlist associated with the configuration of
-     * the same name.
+     * &lt;harvestDefinition&gt;_&lt;orderTemplate&gt;_&lt;maxBytes&gt;Bytes is created if it does not already exist and
+     * the given url is added to it. This seedlist is the only seedlist associated with the configuration of the same
+     * name.
      *
-     * @param context
-     *            the current JSP context
-     * @param i18n
-     *            the translation information to use in this context
-     * @param eventHarvestName
-     *            The name of the partial harvest to which these seeds are to be
-     *            added
-     * @throws ForwardedToErrorPage
-     *             If maxBytes is not a number, or if any of the seeds is badly
-     *             formatted such that no domain name can be parsed from it, or
-     *             if orderTemplate is not given or unknown.
+     * @param context the current JSP context
+     * @param i18n the translation information to use in this context
+     * @param eventHarvestName The name of the partial harvest to which these seeds are to be added
+     * @throws ForwardedToErrorPage If maxBytes is not a number, or if any of the seeds is badly formatted such that no
+     *             domain name can be parsed from it, or if orderTemplate is not given or unknown.
      */
     public static void addConfigurations(PageContext context, I18n i18n, String eventHarvestName) {
         ArgumentNotValid.checkNotNull(context, "PageContext context");
@@ -136,23 +126,14 @@ public final class EventHarvestUtil {
     /**
      * Add configurations to an existing selective harvest.
      * 
-     * @param context
-     *            The current JSP context
-     * @param i18n
-     *            The translation information to use in this context
-     * @param eventHarvestName
-     *            The name of the partial harvest to which these seeds are to be
-     *            added
-     * @param seeds
-     *            The seeds as a file (each seed on a separate line)
-     * @param maxbytesString
-     *            The given maxbytes as a string
-     * @param maxobjectsString
-     *            The given maxobjects as a string
-     * @param maxrateString
-     *            The given maxrate as a string (currently not used)
-     * @param ordertemplate
-     *            The name of the ordertemplate to use
+     * @param context The current JSP context
+     * @param i18n The translation information to use in this context
+     * @param eventHarvestName The name of the partial harvest to which these seeds are to be added
+     * @param seeds The seeds as a file (each seed on a separate line)
+     * @param maxbytesString The given maxbytes as a string
+     * @param maxobjectsString The given maxobjects as a string
+     * @param maxrateString The given maxrate as a string (currently not used)
+     * @param ordertemplate The name of the ordertemplate to use
      */
     public static void addConfigurationsFromSeedsFile(PageContext context, I18n i18n, String eventHarvestName,
             File seeds, String maxbytesString, String maxobjectsString, String maxrateString, String ordertemplate) {

@@ -67,8 +67,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
     private static final int MAX_URL_LENGTH = 1000;
 
     /**
-     * Defines the order of columns in the runningJobsMonitor table. Used in SQL
-     * queries.
+     * Defines the order of columns in the runningJobsMonitor table. Used in SQL queries.
      */
     private static enum HM_COLUMN {
         jobId, harvestName, elapsedSeconds, hostUrl, progress, queuedFilesCount, totalQueuesCount, activeQueuesCount, retiredQueuesCount, exhaustedQueuesCount, alertsCount, downloadedFilesCount, currentProcessedKBPerSec, processedKBPerSec, currentProcessedDocsPerSec, processedDocsPerSec, activeToeCount, status, tstamp;
@@ -83,8 +82,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
         }
 
         /**
-         * Returns the SQL substring that lists columns according to their
-         * ordinal.
+         * Returns the SQL substring that lists columns according to their ordinal.
          * 
          * @return the SQL substring that lists columns in proper order.
          */
@@ -103,22 +101,20 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
     private static Map<Long, Long> lastSampleDateByJobId = new HashMap<Long, Long>();
 
     /**
-     * Rate in milliseconds at which history records should be sampled for a
-     * running job.
+     * Rate in milliseconds at which history records should be sampled for a running job.
      */
     private static final long HISTORY_SAMPLE_RATE = 1000 * Settings
             .getLong(HarvesterSettings.HARVEST_MONITOR_HISTORY_SAMPLE_RATE);
 
     /**
-     * The constructor of RunningJobsInfoDBDAO. Attempts to update/install the
-     * necessary database tables, if they need to be updated.
+     * The constructor of RunningJobsInfoDBDAO. Attempts to update/install the necessary database tables, if they need
+     * to be updated.
      */
     public RunningJobsInfoDBDAO() {
         Connection connection = HarvestDBConnection.get();
         try {
             /**
-             * Update if necessary the current version of the tables
-             * 'runningJobsHistory', 'runningJobsMonitor' and
+             * Update if necessary the current version of the tables 'runningJobsHistory', 'runningJobsMonitor' and
              * 'frontierReportMonitor'.
              */
             HarvesterDatabaseTables.checkVersion(connection, HarvesterDatabaseTables.RUNNINGJOBSHISTORY);
@@ -130,13 +126,11 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
     }
 
     /**
-     * Stores a {@link StartedJobInfo} record to the persistent storage. The
-     * record is stored in the monitor table, and if the elapsed time since the
-     * last history sample is equal or superior to the history sample rate, also
-     * to the history table.
+     * Stores a {@link StartedJobInfo} record to the persistent storage. The record is stored in the monitor table, and
+     * if the elapsed time since the last history sample is equal or superior to the history sample rate, also to the
+     * history table.
      * 
-     * @param startedJobInfo
-     *            the record to store.
+     * @param startedJobInfo the record to store.
      */
     @Override
     public synchronized void store(StartedJobInfo startedJobInfo) {
@@ -284,13 +278,10 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
     }
 
     /**
-     * Returns an array of all progress records chronologically sorted for the
-     * given job ID.
+     * Returns an array of all progress records chronologically sorted for the given job ID.
      * 
-     * @param jobId
-     *            the job id.
-     * @return an array of all progress records chronologically sorted for the
-     *         given job ID.
+     * @param jobId the job id.
+     * @return an array of all progress records chronologically sorted for the given job ID.
      */
     @Override
     public StartedJobInfo[] getFullJobHistory(long jobId) {
@@ -318,11 +309,9 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
     }
 
     /**
-     * Returns the most recent record for every job, partitioned by harvest
-     * definition name.
+     * Returns the most recent record for every job, partitioned by harvest definition name.
      * 
-     * @return the full listing of started job information, partitioned by
-     *         harvest definition name.
+     * @return the full listing of started job information, partitioned by harvest definition name.
      */
     @Override
     public Map<String, List<StartedJobInfo>> getMostRecentByHarvestName() {
@@ -381,8 +370,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
     }
 
     /**
-     * Returns the ids of jobs for which history records exist as an immutable
-     * set.
+     * Returns the ids of jobs for which history records exist as an immutable set.
      * 
      * @return the ids of jobs for which history records exist.
      */
@@ -427,19 +415,14 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
     }
 
     /**
-     * Returns an array of chronologically sorted progress records for the given
-     * job ID, starting at a given crawl time, and limited to a given number of
-     * record.
+     * Returns an array of chronologically sorted progress records for the given job ID, starting at a given crawl time,
+     * and limited to a given number of record.
      * 
-     * @param jobId
-     *            the job id.
-     * @param startTime
-     *            the crawl time (in seconds) to begin.
-     * @param limit
-     *            the maximum number of records to fetch.
-     * @return an array of chronologically sorted progress records for the given
-     *         job ID, starting at a given crawl time, and limited to a given
-     *         number of record.
+     * @param jobId the job id.
+     * @param startTime the crawl time (in seconds) to begin.
+     * @param limit the maximum number of records to fetch.
+     * @return an array of chronologically sorted progress records for the given job ID, starting at a given crawl time,
+     *         and limited to a given number of record.
      */
     @Override
     public StartedJobInfo[] getMostRecentByJobId(long jobId, long startTime, int limit) {
@@ -476,8 +459,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
     /**
      * Returns the most recent progress record for the given job ID.
      * 
-     * @param jobId
-     *            the job id.
+     * @param jobId the job id.
      * @return the most recent progress record for the given job ID.
      */
     @Override
@@ -527,11 +509,9 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
     }
 
     /**
-     * Removes all records pertaining to the given job ID from the persistent
-     * storage.
+     * Removes all records pertaining to the given job ID from the persistent storage.
      * 
-     * @param jobId
-     *            the job id.
+     * @param jobId the job id.
      * @return the number of deleted records.
      */
     @Override
@@ -592,8 +572,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
         }
 
         /**
-         * Returns the SQL substring that lists columns according to their
-         * ordinal.
+         * Returns the SQL substring that lists columns according to their ordinal.
          * 
          * @return the SQL substring that lists columns in proper order.
          */
@@ -609,12 +588,9 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
     /**
      * Store frontier report data to the persistent storage.
      * 
-     * @param report
-     *            the report to store
-     * @param filterId
-     *            the id of the filter that produced the report
-     * @param jobId
-     *            The ID of the job responsible for this report
+     * @param report the report to store
+     * @param filterId the id of the filter that produced the report
+     * @param jobId The ID of the job responsible for this report
      * @return the update count
      */
     public int storeFrontierReport(String filterId, InMemoryFrontierReport report, Long jobId) {
@@ -705,11 +681,9 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
     }
 
     /**
-     * Correct the given double if it is equal to 4.9E-324. Part of fix for
-     * NAS-2168
+     * Correct the given double if it is equal to 4.9E-324. Part of fix for NAS-2168
      * 
-     * @param value
-     *            A given double
+     * @param value A given double
      * @return 0.0 if value is 4.9E-324, otherwise the value as is
      */
     private double correctNumericIfIllegalAverageCost(double value) {
@@ -754,10 +728,8 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
     /**
      * Retrieve a frontier report from a job id and a given filter class.
      * 
-     * @param jobId
-     *            the job id
-     * @param filterId
-     *            the id of the filter that produced the report
+     * @param jobId the job id
+     * @param filterId the id of the filter that produced the report
      * @return a frontier report
      */
     public InMemoryFrontierReport getFrontierReport(long jobId, String filterId) {
@@ -800,11 +772,9 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
     }
 
     /**
-     * Deletes all frontier report data pertaining to the given job id from the
-     * persistent storage.
+     * Deletes all frontier report data pertaining to the given job id from the persistent storage.
      * 
-     * @param jobId
-     *            the job id
+     * @param jobId the job id
      * @return the update count
      */
     public int deleteFrontierReports(long jobId) {
@@ -838,11 +808,9 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
     /**
      * Get a frontierReportLine from the resultSet.
      * 
-     * @param rs
-     *            the resultset with data from table frontierReportMonitor
+     * @param rs the resultset with data from table frontierReportMonitor
      * @return a frontierReportLine from the resultSet.
-     * @throws SQLException
-     *             If unable to get data from resultSet
+     * @throws SQLException If unable to get data from resultSet
      */
     private FrontierReportLine getLine(ResultSet rs) throws SQLException {
         FrontierReportLine line = new FrontierReportLine();
@@ -865,14 +833,11 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
     }
 
     /**
-     * Get a list of StartedJobInfo objects from a resultset of entries from
-     * runningJobsHistory table.
+     * Get a list of StartedJobInfo objects from a resultset of entries from runningJobsHistory table.
      * 
-     * @param rs
-     *            a resultset with entries from table runningJobsHistory.
+     * @param rs a resultset with entries from table runningJobsHistory.
      * @return a list of StartedJobInfo objects from the resultset
-     * @throws SQLException
-     *             If any problems reading data from the resultset
+     * @throws SQLException If any problems reading data from the resultset
      */
     private List<StartedJobInfo> listFromResultSet(ResultSet rs) throws SQLException {
         List<StartedJobInfo> list = new LinkedList<StartedJobInfo>();

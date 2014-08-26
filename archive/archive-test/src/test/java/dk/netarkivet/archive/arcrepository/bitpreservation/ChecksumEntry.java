@@ -34,8 +34,8 @@ import dk.netarkivet.common.utils.batch.ChecksumJob;
 /**
  * Method for storing a checksum along with its filename.
  * 
- * This class also holds the method for extracting the results of a ChecksumJob
- * into a list of ChecksumEntry, which is used by the BitPreservationDAO.
+ * This class also holds the method for extracting the results of a ChecksumJob into a list of ChecksumEntry, which is
+ * used by the BitPreservationDAO.
  */
 public class ChecksumEntry extends Object {
     /** The name of the file for which the checksum belongs. */
@@ -46,10 +46,8 @@ public class ChecksumEntry extends Object {
     /**
      * Constructor.
      * 
-     * @param filename
-     *            The name of the file.
-     * @param checksum
-     *            The checksum of the file.
+     * @param filename The name of the file.
+     * @param checksum The checksum of the file.
      */
     public ChecksumEntry(String filename, String checksum) {
         this.filename = filename;
@@ -94,15 +92,11 @@ public class ChecksumEntry extends Object {
     }
 
     /**
-     * Method for testing whether a ChecksumEntry is identical to another
-     * ChecksumEntry.
+     * Method for testing whether a ChecksumEntry is identical to another ChecksumEntry.
      * 
-     * @param obj
-     *            The object to evaluate whether it is identical to this
-     *            ChecksumEntry.
-     * @return Whether the argument has the same values as this ChecksumEntry.
-     *         It returns false if the argument is not of type ChecksumEntry, or
-     *         if it has either different filename or different checksum.
+     * @param obj The object to evaluate whether it is identical to this ChecksumEntry.
+     * @return Whether the argument has the same values as this ChecksumEntry. It returns false if the argument is not
+     *         of type ChecksumEntry, or if it has either different filename or different checksum.
      */
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -142,14 +136,11 @@ public class ChecksumEntry extends Object {
     }
 
     /**
-     * Method for changing the resulting file of a checksum job into a list of
-     * ChecksumEntry.
+     * Method for changing the resulting file of a checksum job into a list of ChecksumEntry.
      * 
-     * @param checksumjobOutput
-     *            The file with the output from a checksum job.
+     * @param checksumjobOutput The file with the output from a checksum job.
      * @return The list of the checksum entries.
-     * @throws ArgumentNotValid
-     *             If the checksumjobOutput is null.
+     * @throws ArgumentNotValid If the checksumjobOutput is null.
      */
     public static List<ChecksumEntry> parseChecksumJob(File checksumjobOutput) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(checksumjobOutput, "File checksumjobOutput");

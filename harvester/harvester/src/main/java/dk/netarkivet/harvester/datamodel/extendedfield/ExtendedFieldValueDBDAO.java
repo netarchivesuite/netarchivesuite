@@ -62,14 +62,10 @@ public class ExtendedFieldValueDBDAO extends ExtendedFieldValueDAO {
     /**
      * Create a ExtendedFieldValue in persistent storage.
      * 
-     * @param aConnection
-     *            an open connection to the HarvestDatabase.
-     * @param aExtendedFieldValue
-     *            The ExtendedFieldValue to create in persistent storage
-     * @param aCommit
-     *            Should we commit this or not
-     * @throws SQLException
-     *             In case of Database access problems.
+     * @param aConnection an open connection to the HarvestDatabase.
+     * @param aExtendedFieldValue The ExtendedFieldValue to create in persistent storage
+     * @param aCommit Should we commit this or not
+     * @throws SQLException In case of Database access problems.
      */
     public void create(Connection aConnection, ExtendedFieldValue aExtendedFieldValue, boolean aCommit)
             throws SQLException {
@@ -117,8 +113,7 @@ public class ExtendedFieldValueDBDAO extends ExtendedFieldValueDAO {
     }
 
     /**
-     * @param c
-     *            an open connection to the HarvestDatabase.
+     * @param c an open connection to the HarvestDatabase.
      * @return the ID for next extendedvFieldValue inserted.
      */
     private Long generateNextID(Connection c) {
@@ -169,15 +164,11 @@ public class ExtendedFieldValueDBDAO extends ExtendedFieldValueDAO {
     }
 
     /**
-     * Find out if there already exists in persistent storage a
-     * ExtendedFieldValue with the given id.
+     * Find out if there already exists in persistent storage a ExtendedFieldValue with the given id.
      * 
-     * @param c
-     *            an open connection to the HarvestDatabase.
-     * @param aExtendedFieldValueID
-     *            An id associated with a ExtendedFieldValue
-     * @return true, if there already exists in persistent storage a
-     *         ExtendedFieldValue with the given id.
+     * @param c an open connection to the HarvestDatabase.
+     * @param aExtendedFieldValueID An id associated with a ExtendedFieldValue
+     * @return true, if there already exists in persistent storage a ExtendedFieldValue with the given id.
      */
     private synchronized boolean exists(Connection c, Long aExtendedFieldValueID) {
         return 1 == DBUtils.selectLongValue(c, "SELECT COUNT(*) FROM extendedfieldvalue "
@@ -199,12 +190,9 @@ public class ExtendedFieldValueDBDAO extends ExtendedFieldValueDAO {
     /**
      * Read the ExtendedFieldValue with the given extendedFieldID.
      * 
-     * @param connection
-     *            an open connection to the HarvestDatabase
-     * @param aExtendedFieldID
-     *            A given ID for a ExtendedFieldValue
-     * @param aInstanceID
-     *            A given instanceID
+     * @param connection an open connection to the HarvestDatabase
+     * @param aExtendedFieldID A given ID for a ExtendedFieldValue
+     * @param aInstanceID A given instanceID
      * @return the ExtendedFieldValue with the given extendedFieldID.
      */
     private synchronized ExtendedFieldValue read(Connection connection, Long aExtendedFieldID, Long aInstanceID) {
@@ -240,14 +228,10 @@ public class ExtendedFieldValueDBDAO extends ExtendedFieldValueDAO {
     /**
      * Read a ExtendedFieldValue in persistent storage.
      * 
-     * @param aConnection
-     *            an open connection to the HarvestDatabase
-     * @param aExtendedFieldValue
-     *            The ExtendedFieldValue to update
-     * @param aCommit
-     *            Should we commit this or not
-     * @throws SQLException
-     *             In case of database problems.
+     * @param aConnection an open connection to the HarvestDatabase
+     * @param aExtendedFieldValue The ExtendedFieldValue to update
+     * @param aCommit Should we commit this or not
+     * @throws SQLException In case of database problems.
      */
     public void update(Connection aConnection, ExtendedFieldValue aExtendedFieldValue, boolean aCommit)
             throws SQLException {

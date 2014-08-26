@@ -47,8 +47,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 
 /**
- * This default message handler shields of all unimplemented methods from the
- * ArchiveMessageVisitor interface.
+ * This default message handler shields of all unimplemented methods from the ArchiveMessageVisitor interface.
  *
  * Classes should not implement ArchiveMessageVisitor but extend this class.
  *
@@ -71,8 +70,7 @@ public abstract class ArchiveMessageHandler implements ArchiveMessageVisitor, Me
      *
      * This method catches <b>all</b> exceptions and logs them.
      *
-     * @param msg
-     *            a ObjectMessage
+     * @param msg a ObjectMessage
      *
      */
     public void onMessage(Message msg) {
@@ -90,10 +88,8 @@ public abstract class ArchiveMessageHandler implements ArchiveMessageVisitor, Me
     /**
      * Handles when a handler receives a message it is not prepare to handle.
      *
-     * @param msg
-     *            The received message.
-     * @throws PermissionDenied
-     *             Always
+     * @param msg The received message.
+     * @throws PermissionDenied Always
      */
     private void deny(ArchiveMessage msg) throws PermissionDenied {
         throw new PermissionDenied("'" + this + "' provides no handling for " + msg + " of type "
@@ -101,13 +97,10 @@ public abstract class ArchiveMessageHandler implements ArchiveMessageVisitor, Me
     }
 
     /**
-     * This method should be overridden and implemented by a sub class if
-     * message handling is wanted.
+     * This method should be overridden and implemented by a sub class if message handling is wanted.
      * 
-     * @param msg
-     *            a BatchEndedMessage
-     * @throws PermissionDenied
-     *             when invoked
+     * @param msg a BatchEndedMessage
+     * @throws PermissionDenied when invoked
      */
     public void visit(BatchEndedMessage msg) throws PermissionDenied {
         ArgumentNotValid.checkNotNull(msg, "msg");
@@ -115,13 +108,10 @@ public abstract class ArchiveMessageHandler implements ArchiveMessageVisitor, Me
     }
 
     /**
-     * This method should be overridden and implemented by a sub class if
-     * message handling is wanted.
+     * This method should be overridden and implemented by a sub class if message handling is wanted.
      * 
-     * @param msg
-     *            a BatchMessage
-     * @throws PermissionDenied
-     *             when invoked
+     * @param msg a BatchMessage
+     * @throws PermissionDenied when invoked
      */
     public void visit(BatchMessage msg) throws PermissionDenied {
         ArgumentNotValid.checkNotNull(msg, "msg");
@@ -129,13 +119,10 @@ public abstract class ArchiveMessageHandler implements ArchiveMessageVisitor, Me
     }
 
     /**
-     * This method should be overridden and implemented by a sub class if
-     * message handling is wanted.
+     * This method should be overridden and implemented by a sub class if message handling is wanted.
      * 
-     * @param msg
-     *            a BatchReplyMessage
-     * @throws PermissionDenied
-     *             when invoked
+     * @param msg a BatchReplyMessage
+     * @throws PermissionDenied when invoked
      */
     public void visit(BatchReplyMessage msg) throws PermissionDenied {
         ArgumentNotValid.checkNotNull(msg, "msg");
@@ -143,13 +130,10 @@ public abstract class ArchiveMessageHandler implements ArchiveMessageVisitor, Me
     }
 
     /**
-     * This method should be overridden and implemented by a sub class if
-     * message handling is wanted.
+     * This method should be overridden and implemented by a sub class if message handling is wanted.
      * 
-     * @param msg
-     *            a GetFileMessage
-     * @throws PermissionDenied
-     *             when invoked
+     * @param msg a GetFileMessage
+     * @throws PermissionDenied when invoked
      */
     public void visit(GetFileMessage msg) throws PermissionDenied {
         ArgumentNotValid.checkNotNull(msg, "msg");
@@ -157,13 +141,10 @@ public abstract class ArchiveMessageHandler implements ArchiveMessageVisitor, Me
     }
 
     /**
-     * This method should be overridden and implemented by a sub class if
-     * message handling is wanted.
+     * This method should be overridden and implemented by a sub class if message handling is wanted.
      * 
-     * @param msg
-     *            a GetMessage
-     * @throws PermissionDenied
-     *             when invoked
+     * @param msg a GetMessage
+     * @throws PermissionDenied when invoked
      */
     public void visit(GetMessage msg) throws PermissionDenied {
         ArgumentNotValid.checkNotNull(msg, "msg");
@@ -171,13 +152,10 @@ public abstract class ArchiveMessageHandler implements ArchiveMessageVisitor, Me
     }
 
     /**
-     * This method should be overridden and implemented by a sub class if
-     * message handling is wanted.
+     * This method should be overridden and implemented by a sub class if message handling is wanted.
      * 
-     * @param msg
-     *            a HeartBeatMessage
-     * @throws PermissionDenied
-     *             when invoked
+     * @param msg a HeartBeatMessage
+     * @throws PermissionDenied when invoked
      */
     public void visit(HeartBeatMessage msg) throws PermissionDenied {
         ArgumentNotValid.checkNotNull(msg, "msg");
@@ -185,13 +163,10 @@ public abstract class ArchiveMessageHandler implements ArchiveMessageVisitor, Me
     }
 
     /**
-     * This method should be overridden and implemented by a sub class if
-     * message handling is wanted.
+     * This method should be overridden and implemented by a sub class if message handling is wanted.
      * 
-     * @param msg
-     *            a StoreMessage
-     * @throws PermissionDenied
-     *             when invoked
+     * @param msg a StoreMessage
+     * @throws PermissionDenied when invoked
      */
     public void visit(StoreMessage msg) throws PermissionDenied {
         ArgumentNotValid.checkNotNull(msg, "msg");
@@ -199,13 +174,10 @@ public abstract class ArchiveMessageHandler implements ArchiveMessageVisitor, Me
     }
 
     /**
-     * This method should be overridden and implemented by a sub class if
-     * message handling is wanted.
+     * This method should be overridden and implemented by a sub class if message handling is wanted.
      * 
-     * @param msg
-     *            an UploadMessage
-     * @throws PermissionDenied
-     *             when invoked
+     * @param msg an UploadMessage
+     * @throws PermissionDenied when invoked
      */
     public void visit(UploadMessage msg) throws PermissionDenied {
         ArgumentNotValid.checkNotNull(msg, "msg");
@@ -213,13 +185,10 @@ public abstract class ArchiveMessageHandler implements ArchiveMessageVisitor, Me
     }
 
     /**
-     * This method should be overridden and implemented by a sub class if
-     * message handling is wanted.
+     * This method should be overridden and implemented by a sub class if message handling is wanted.
      * 
-     * @param msg
-     *            a AdminDataMessage
-     * @throws PermissionDenied
-     *             when invoked
+     * @param msg a AdminDataMessage
+     * @throws PermissionDenied when invoked
      */
     public void visit(AdminDataMessage msg) throws PermissionDenied {
         ArgumentNotValid.checkNotNull(msg, "msg");
@@ -227,13 +196,10 @@ public abstract class ArchiveMessageHandler implements ArchiveMessageVisitor, Me
     }
 
     /**
-     * This method should be overridden and implemented by a sub class if
-     * message handling is wanted.
+     * This method should be overridden and implemented by a sub class if message handling is wanted.
      * 
-     * @param msg
-     *            a RemoveAndGetFile
-     * @throws PermissionDenied
-     *             when invoked
+     * @param msg a RemoveAndGetFile
+     * @throws PermissionDenied when invoked
      */
     public void visit(RemoveAndGetFileMessage msg) throws PermissionDenied {
         ArgumentNotValid.checkNotNull(msg, "msg");
@@ -241,13 +207,10 @@ public abstract class ArchiveMessageHandler implements ArchiveMessageVisitor, Me
     }
 
     /**
-     * This method should be overridden and implemented by a sub class if
-     * message handling is wanted.
+     * This method should be overridden and implemented by a sub class if message handling is wanted.
      * 
-     * @param msg
-     *            an CorrectMessage for correcting a record.
-     * @throws PermissionDenied
-     *             when invoked
+     * @param msg an CorrectMessage for correcting a record.
+     * @throws PermissionDenied when invoked
      */
     public void visit(CorrectMessage msg) throws PermissionDenied {
         ArgumentNotValid.checkNotNull(msg, "msg");
@@ -255,13 +218,10 @@ public abstract class ArchiveMessageHandler implements ArchiveMessageVisitor, Me
     }
 
     /**
-     * This method should be overridden and implemented by a sub class if
-     * message handling is wanted.
+     * This method should be overridden and implemented by a sub class if message handling is wanted.
      * 
-     * @param msg
-     *            the GetChecksumMessage
-     * @throws PermissionDenied
-     *             when invoked
+     * @param msg the GetChecksumMessage
+     * @throws PermissionDenied when invoked
      */
     public void visit(GetChecksumMessage msg) throws PermissionDenied {
         ArgumentNotValid.checkNotNull(msg, "msg");
@@ -269,13 +229,10 @@ public abstract class ArchiveMessageHandler implements ArchiveMessageVisitor, Me
     }
 
     /**
-     * This method should be overridden and implemented by a sub class if
-     * message handling is wanted.
+     * This method should be overridden and implemented by a sub class if message handling is wanted.
      * 
-     * @param msg
-     *            the GetAllChecksumMessage
-     * @throws PermissionDenied
-     *             when invoked
+     * @param msg the GetAllChecksumMessage
+     * @throws PermissionDenied when invoked
      */
     public void visit(GetAllChecksumsMessage msg) throws PermissionDenied {
         ArgumentNotValid.checkNotNull(msg, "msg");
@@ -283,13 +240,10 @@ public abstract class ArchiveMessageHandler implements ArchiveMessageVisitor, Me
     }
 
     /**
-     * This method should be overridden and implemented by a sub class if
-     * message handling is wanted.
+     * This method should be overridden and implemented by a sub class if message handling is wanted.
      * 
-     * @param msg
-     *            an GetAllFilenamesMessage
-     * @throws PermissionDenied
-     *             when invoked
+     * @param msg an GetAllFilenamesMessage
+     * @throws PermissionDenied when invoked
      */
     public void visit(GetAllFilenamesMessage msg) throws PermissionDenied {
         ArgumentNotValid.checkNotNull(msg, "msg");

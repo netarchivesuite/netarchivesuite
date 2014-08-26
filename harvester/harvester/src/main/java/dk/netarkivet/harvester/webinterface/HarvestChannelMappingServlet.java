@@ -42,11 +42,10 @@ import dk.netarkivet.harvester.datamodel.HarvestChannelDAO;
 import dk.netarkivet.harvester.webinterface.HarvestChannelAction.ActionType;
 
 /**
- * This class process an Ajax call from the UI to generate a form that allows to
- * map a harvest to a channel.
+ * This class process an Ajax call from the UI to generate a form that allows to map a harvest to a channel.
  * 
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class HarvestChannelMappingServlet extends HttpServlet {
 
     private static final I18n I18N = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);

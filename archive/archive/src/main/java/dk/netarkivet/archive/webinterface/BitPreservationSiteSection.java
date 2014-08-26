@@ -32,8 +32,7 @@ import dk.netarkivet.common.webinterface.SiteSection;
  */
 public class BitPreservationSiteSection extends SiteSection {
     /**
-     * The number of pages visible in the menu. The visible pages: filestatus,
-     * batchoverview
+     * The number of pages visible in the menu. The visible pages: filestatus, batchoverview
      */
     private static final int PAGES_VISIBLE_IN_MENU = 2;
 
@@ -42,21 +41,18 @@ public class BitPreservationSiteSection extends SiteSection {
      */
     public BitPreservationSiteSection() {
         super("mainname;bitpreservation", "Bitpreservation", PAGES_VISIBLE_IN_MENU, new String[][] {
-                { "filestatus", "pagetitle;filestatus" },
-                { "batchoverview", "pagetitle;batchjob.overview" },
+                {"filestatus", "pagetitle;filestatus"},
+                {"batchoverview", "pagetitle;batchjob.overview"},
                 // Pages below is not visible in the menu
-                { "batchjob", "pagetitle;batchjob" },
-                { "batchjob-retrieve", "pagetitle;batchjob.retrieve.resultfile" },
-                { "batchjob-execute", "pagetitle;batchjob.execute" },
-                { "filestatus-checksum", "pagetitle;filestatus.checksum.errors" },
-                { "filestatus-missing", "pagetitle;filestatus.files.missing" },
-                { "filestatus-update", "pagetitle;filestatus.update" } }, "BitPreservation",
-                Constants.TRANSLATIONS_BUNDLE);
+                {"batchjob", "pagetitle;batchjob"}, {"batchjob-retrieve", "pagetitle;batchjob.retrieve.resultfile"},
+                {"batchjob-execute", "pagetitle;batchjob.execute"},
+                {"filestatus-checksum", "pagetitle;filestatus.checksum.errors"},
+                {"filestatus-missing", "pagetitle;filestatus.files.missing"},
+                {"filestatus-update", "pagetitle;filestatus.update"}}, "BitPreservation", Constants.TRANSLATIONS_BUNDLE);
     }
 
     /**
-     * Initialize ActiveBitPreservation singleton. Should speed up the 1st
-     * rendering of the JSP pages.
+     * Initialize ActiveBitPreservation singleton. Should speed up the 1st rendering of the JSP pages.
      */
     public void initialize() {
         ActiveBitPreservationFactory.getInstance();

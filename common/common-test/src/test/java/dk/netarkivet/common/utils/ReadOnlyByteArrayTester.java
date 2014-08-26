@@ -49,7 +49,7 @@ public class ReadOnlyByteArrayTester {
             // Expected
         }
 
-        byte[] notEmptyArray = new byte[] { 22, 42 };
+        byte[] notEmptyArray = new byte[] {22, 42};
         roba = new ReadOnlyByteArray(notEmptyArray);
         assertTrue(roba.length() == 2);
         assertTrue(22 == roba.get(0));

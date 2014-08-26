@@ -53,7 +53,7 @@ public class SelectiveHarvestTest extends SeleniumTest {
     /**
      * Test specification: http://netarchive.dk/suite/It23JMXMailCheck .
      */
-    @Test(groups = { "guitest", "functest" })
+    @Test(groups = {"guitest", "functest"})
     public void selectiveHarvestListingTest() throws Exception {
         addDescription("Verify the functionality of the harvest listings.");
         addStep("Create a selective harvest", "The harvest should be created successfully a be listed in the HD list");

@@ -39,7 +39,7 @@ import org.archive.io.arc.ARCWriter;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.arc.ARCUtils;
 
-@SuppressWarnings({ "unused" })
+@SuppressWarnings({"unused"})
 public class Bug901Tester extends TestCase {
 
     private static final int BLOCKSIZE = 32768;
@@ -63,8 +63,8 @@ public class Bug901Tester extends TestCase {
     }
 
     /**
-     * Test, if bug 901 is fixed. Try to insert 3.0 gb file into an ARC file
-     * file 4000-metadata-2.arc is taken from kb-prod-udv-001.kb.dk:/home/test
+     * Test, if bug 901 is fixed. Try to insert 3.0 gb file into an ARC file file 4000-metadata-2.arc is taken from
+     * kb-prod-udv-001.kb.dk:/home/test
      * 
      * @throws IOException
      */

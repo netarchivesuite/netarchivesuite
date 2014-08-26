@@ -41,43 +41,35 @@ import dk.netarkivet.harvester.datamodel.SeedList;
 import dk.netarkivet.harvester.datamodel.TemplateDAO;
 
 /**
- * Utility class containing methods for processing a GUI-request to update the
- * details of a domain-configuration.
+ * Utility class containing methods for processing a GUI-request to update the details of a domain-configuration.
  *
  */
 
 public class DomainConfigurationDefinition {
 
     /**
-     * Extracts all required parameters from the request, checks for any
-     * inconsistencies, and passes the requisite data to the updateDomain method
-     * for processing. The specified domain configuration is then updated and
-     * the result stored in the database.
+     * Extracts all required parameters from the request, checks for any inconsistencies, and passes the requisite data
+     * to the updateDomain method for processing. The specified domain configuration is then updated and the result
+     * stored in the database.
      *
      * update: This method does nothing if update is not set
      *
      * name: must be the name of a known domain
      *
-     * default: the defaultconfig is set to this value. Must be non-null and a
-     * known configuration of this domain.
+     * default: the defaultconfig is set to this value. Must be non-null and a known configuration of this domain.
      *
      * edition: The edition number the config was originally read as, if any.
      *
-     * (configName, order_xml, maxRate, maxObjects, maxBytes, urlListList[],
-     * passwordList): group specifying a configuration to update or add. If
-     * configName is non null then order_xml must be a known order-xml and
-     * urlListList must contain only known seedlists, (and at least one such).
-     * load, maxObjects, maxBytes, edition must be parsable as integers if
-     * present. passwordList is currently ignored.
+     * (configName, order_xml, maxRate, maxObjects, maxBytes, urlListList[], passwordList): group specifying a
+     * configuration to update or add. If configName is non null then order_xml must be a known order-xml and
+     * urlListList must contain only known seedlists, (and at least one such). load, maxObjects, maxBytes, edition must
+     * be parsable as integers if present. passwordList is currently ignored.
      *
-     * @param context
-     *            The context of this request
-     * @param i18n
-     *            I18n information
+     * @param context The context of this request
+     * @param i18n I18n information
      *
-     * @throws ForwardedToErrorPage
-     *             if a user error has caused forwarding to the error page, in
-     *             which case processing should abort.
+     * @throws ForwardedToErrorPage if a user error has caused forwarding to the error page, in which case processing
+     *             should abort.
      */
     public static void processRequest(PageContext context, I18n i18n) {
         ArgumentNotValid.checkNotNull(context, "PageContext context");
@@ -144,23 +136,14 @@ public class DomainConfigurationDefinition {
     /**
      * Given the parsed values, update or create a configuration in the domain.
      *
-     * @param domain
-     *            The domain
-     * @param configName
-     *            Name of config - if this exists we update, otherwise we create
-     *            a new.
-     * @param orderXml
-     *            Order-template name
-     * @param load
-     *            Request rate
-     * @param maxObjects
-     *            Max objects
-     * @param maxBytes
-     *            Max bytes
-     * @param urlListList
-     *            List of url list names
-     * @param comments
-     *            Comments, or null for none.
+     * @param domain The domain
+     * @param configName Name of config - if this exists we update, otherwise we create a new.
+     * @param orderXml Order-template name
+     * @param load Request rate
+     * @param maxObjects Max objects
+     * @param maxBytes Max bytes
+     * @param urlListList List of url list names
+     * @param comments Comments, or null for none.
      */
     private static void updateDomain(Domain domain, String configName, String orderXml, int load, long maxObjects,
             long maxBytes, String[] urlListList, String comments) {

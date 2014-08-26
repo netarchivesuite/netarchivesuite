@@ -47,9 +47,8 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
 
 /**
- * The ARCArchiveAccess class implements reading of ARC indexes and files. It
- * builds on the Java ARC utils and Lucene indexes, and handles using these in
- * an HTTP context.
+ * The ARCArchiveAccess class implements reading of ARC indexes and files. It builds on the Java ARC utils and Lucene
+ * indexes, and handles using these in an HTTP context.
  */
 public class ARCArchiveAccess implements URIResolver {
     // Class constants
@@ -68,8 +67,7 @@ public class ARCArchiveAccess implements URIResolver {
     private static final String HTML_FOOTER = "</body></html>";
 
     /**
-     * Matches HTTP header lines like HTTP/1.1 404 Page has gone south Groups:
-     * 111 2222222222222222222.
+     * Matches HTTP header lines like HTTP/1.1 404 Page has gone south Groups: 111 2222222222222222222.
      */
     private static final Pattern HTTP_HEADER_PATTERN = Pattern.compile("^HTTP/1\\.[01] (\\d+) (.*)$");
 
@@ -80,18 +78,15 @@ public class ARCArchiveAccess implements URIResolver {
     private final Log log = LogFactory.getLog(getClass().getName());
 
     /**
-     * If the value is true, we will try to lookup w/ ftp instead of http, if we
-     * don't get a hit in the index.
+     * If the value is true, we will try to lookup w/ ftp instead of http, if we don't get a hit in the index.
      */
     private static final boolean tryToLookupUriAsFtp = Settings.getBoolean(HarvesterSettings.TRY_LOOKUP_URI_AS_FTP);
 
     /**
      * Initialise new ARCArchiveAccess with no index file.
      *
-     * @param arcRepositoryClient
-     *            The arcRepositoryClient to use when retrieving
-     * @throws ArgumentNotValid
-     *             if arcRepositoryClient is null.
+     * @param arcRepositoryClient The arcRepositoryClient to use when retrieving
+     * @throws ArgumentNotValid if arcRepositoryClient is null.
      */
     public ARCArchiveAccess(ViewerArcRepositoryClient arcRepositoryClient) {
         ArgumentNotValid.checkNotNull(arcRepositoryClient, "ArcRepositoryClient arcRepositoryClient");
@@ -100,15 +95,11 @@ public class ARCArchiveAccess implements URIResolver {
     }
 
     /**
-     * This method resets the Lucene index this object works on, and replaces it
-     * with the given index.
+     * This method resets the Lucene index this object works on, and replaces it with the given index.
      *
-     * @param index
-     *            The new index file, a directory containing Lucene files.
-     * @throws ArgumentNotValid
-     *             If argument is null
-     * @throws IOFailure
-     *             if the file cannot be read
+     * @param index The new index file, a directory containing Lucene files.
+     * @throws ArgumentNotValid If argument is null
+     * @throws IOFailure if the file cannot be read
      */
     public void setIndex(File index) {
         lookup.setIndex(index);
@@ -117,15 +108,11 @@ public class ARCArchiveAccess implements URIResolver {
     /**
      * Look up a given URI and add its contents to the Response given.
      * 
-     * @param request
-     *            The request to look up record for
-     * @param response
-     *            The response to return to the browser
-     * @return The response code for this page if found, or
-     *         URIResolver.NOT_FOUND otherwise.
+     * @param request The request to look up record for
+     * @param response The response to return to the browser
+     * @return The response code for this page if found, or URIResolver.NOT_FOUND otherwise.
      * @see URIResolver#lookup(Request, Response)
-     * @throws IOFailure
-     *             on trouble looking up the request (timeout, i/o, etc.)
+     * @throws IOFailure on trouble looking up the request (timeout, i/o, etc.)
      */
     public int lookup(Request request, Response response) {
         ArgumentNotValid.checkNotNull(request, "Request request");
@@ -161,13 +148,10 @@ public class ARCArchiveAccess implements URIResolver {
     }
 
     /**
-     * Generate an appropriate response when a URI is not found. If this fails,
-     * it is logged, but otherwise ignored.
+     * Generate an appropriate response when a URI is not found. If this fails, it is logged, but otherwise ignored.
      *
-     * @param uri
-     *            The URI attempted read that could not be found
-     * @param response
-     *            The Response object to write the error response into.
+     * @param uri The URI attempted read that could not be found
+     * @param response The Response object to write the error response into.
      */
     protected void createNotFoundResponse(URI uri, Response response) {
         try {
@@ -187,16 +171,11 @@ public class ARCArchiveAccess implements URIResolver {
     }
 
     /**
-     * Apply filters to HTTP headers. Can be overridden in subclasses. Currently
-     * only removes Transfer-encoding headers.
+     * Apply filters to HTTP headers. Can be overridden in subclasses. Currently only removes Transfer-encoding headers.
      *
-     * @param headername
-     *            The name of the header field, e.g. Content-Type Remember that
-     *            this is not case sensitive
-     * @param headercontents
-     *            The contents of the header field, e.g. text/html
-     * @return A (possibly modified) header contents string, or null if the
-     *         header should be skipped.
+     * @param headername The name of the header field, e.g. Content-Type Remember that this is not case sensitive
+     * @param headercontents The contents of the header field, e.g. text/html
+     * @return A (possibly modified) header contents string, or null if the header should be skipped.
      */
     protected String filterHeader(String headername, String headercontents) {
         // Cannot get chunked output to work, so we must remove
@@ -210,12 +189,9 @@ public class ARCArchiveAccess implements URIResolver {
     /**
      * Write HTTP header, including status and status reason.
      *
-     * @param is
-     *            A stream to read the header from.
-     * @param response
-     *            A Response to write the header, status and reason to.
-     * @throws IOFailure
-     *             If the underlying reads or writes fail.
+     * @param is A stream to read the header from.
+     * @param response A Response to write the header, status and reason to.
+     * @throws IOFailure If the underlying reads or writes fail.
      */
     private void writeHeader(InputStream is, Response response) {
         // Reads until the end of the header (indicated by an empty line)
@@ -254,12 +230,9 @@ public class ARCArchiveAccess implements URIResolver {
     /**
      * Read an entire page body into some stream.
      *
-     * @param content
-     *            The stream to read the page from. Not closed afterwards.
-     * @param out
-     *            The stream to write the results to. Not closed afterwards.
-     * @throws IOFailure
-     *             If the underlying reads or writes fail
+     * @param content The stream to read the page from. Not closed afterwards.
+     * @param out The stream to write the results to. Not closed afterwards.
+     * @throws IOFailure If the underlying reads or writes fail
      */
     private void readPage(InputStream content, OutputStream out) {
         BufferedInputStream page = new BufferedInputStream(content);
@@ -277,15 +250,12 @@ public class ARCArchiveAccess implements URIResolver {
     }
 
     /**
-     * Read a line of bytes from an InputStream. Useful when an InputStream may
-     * contain both text and binary data.
+     * Read a line of bytes from an InputStream. Useful when an InputStream may contain both text and binary data.
      * 
-     * @param inputStream
-     *            A source of data
-     * @return A line of text read from inputStream, with terminating \r\n or \n
-     *         removed, or null if no data is available.
-     * @throws IOException
-     *             on trouble reading from input stream
+     * @param inputStream A source of data
+     * @return A line of text read from inputStream, with terminating \r\n or \n removed, or null if no data is
+     *         available.
+     * @throws IOException on trouble reading from input stream
      */
     private String readLine(InputStream inputStream) throws IOException {
         byte[] rawdata = readRawLine(inputStream);
@@ -307,15 +277,12 @@ public class ARCArchiveAccess implements URIResolver {
     }
 
     /**
-     * Reads a raw line from an InputStream, up till \n. Since HTTP allows \r\n
-     * and \n as terminators, this gets the whole line. This code is adapted
-     * from org.apache.commons.httpclient.HttpParser
+     * Reads a raw line from an InputStream, up till \n. Since HTTP allows \r\n and \n as terminators, this gets the
+     * whole line. This code is adapted from org.apache.commons.httpclient.HttpParser
      *
-     * @param inputStream
-     *            A stream to read from.
+     * @param inputStream A stream to read from.
      * @return Array of bytes read or null if none are available.
-     * @throws IOException
-     *             if the underlying reads fail
+     * @throws IOException if the underlying reads fail
      */
     private static byte[] readRawLine(InputStream inputStream) throws IOException {
         ByteArrayOutputStream buf = new ByteArrayOutputStream();

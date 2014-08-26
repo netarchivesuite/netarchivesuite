@@ -50,7 +50,7 @@ public class MonitorRegistryTesterSuite {
     }
 
     public static void main(String args[]) {
-        String args2[] = { "-noloading", MonitorRegistryTesterSuite.class.getName() };
+        String args2[] = {"-noloading", MonitorRegistryTesterSuite.class.getName()};
         TestRunner.main(args2);
     }
 }

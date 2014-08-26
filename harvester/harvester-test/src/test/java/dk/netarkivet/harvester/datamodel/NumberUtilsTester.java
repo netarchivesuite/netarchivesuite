@@ -31,8 +31,7 @@ import java.util.List;
 import org.junit.Test;
 
 /**
- * Unit test for the utility class NumberUtils. TODO Move class to the common
- * package.
+ * Unit test for the utility class NumberUtils. TODO Move class to the common package.
  * 
  */
 public class NumberUtilsTester {

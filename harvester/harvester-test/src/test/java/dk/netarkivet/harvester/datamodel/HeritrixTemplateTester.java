@@ -40,12 +40,11 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.XmlUtils;
 
 /** Testclass for class HeritrixTemplate. */
-@SuppressWarnings({ "unchecked" })
+@SuppressWarnings({"unchecked"})
 public class HeritrixTemplateTester {
 
     /**
-     * Simple test that construction works as intended with or without
-     * verification.
+     * Simple test that construction works as intended with or without verification.
      */
     @Test
     public void testHeritrixTemplate() {
@@ -70,23 +69,23 @@ public class HeritrixTemplateTester {
             fail("ArgumentNotValid exception not expected with verify set to false: " + e);
         }
 
-        Object[][] orderXmls = { { "default_orderxml.xml", new Callback() {
+        Object[][] orderXmls = { {"default_orderxml.xml", new Callback() {
             @Override
             public void check(File f) {
                 checkArcValues(f);
             }
-        } }, { "default_orderxml_warc.xml", new Callback() {
+        }}, {"default_orderxml_warc.xml", new Callback() {
             @Override
             public void check(File f) {
                 checkWarcValues(f);
             }
-        } }, { "default_orderxml_arc_warc.xml", new Callback() {
+        }}, {"default_orderxml_arc_warc.xml", new Callback() {
             @Override
             public void check(File f) {
                 checkArcValues(f);
                 checkWarcValues(f);
             }
-        } } };
+        }}};
         for (int i = 0; i < orderXmls.length; ++i) {
             checkHeritrixTemplate((String) orderXmls[i][0], (Callback) orderXmls[i][1]);
         }

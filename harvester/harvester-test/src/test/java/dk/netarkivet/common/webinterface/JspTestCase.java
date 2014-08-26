@@ -54,11 +54,10 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 
 /**
- * An attempt at making a subclass of TestCase suitable for testing JSP pages.
- * Only used by HarveststatusPerdomainTester. Is currently not working! FIXME:
- * No tests in it? Delete?
+ * An attempt at making a subclass of TestCase suitable for testing JSP pages. Only used by
+ * HarveststatusPerdomainTester. Is currently not working! FIXME: No tests in it? Delete?
  */
-@SuppressWarnings({ "unused" })
+@SuppressWarnings({"unused"})
 public class JspTestCase {
     protected static final File WEB_BASE_DIR = new File("webpages/HarvestDefinition");
     public static final File TOP_DATA_DIR = new File("tests/dk/netarkivet/harvester/datamodel/data/");
@@ -70,50 +69,36 @@ public class JspTestCase {
     protected StringBuilder output;
 
     /**
-     * Setup for testing a given webpage. Note that all parameters used by the
-     * JSP page must be defined using request.setupAddParameter(). Calling it
-     * multiple times will add parameter values rather than override them.
+     * Setup for testing a given webpage. Note that all parameters used by the JSP page must be defined using
+     * request.setupAddParameter(). Calling it multiple times will add parameter values rather than override them.
      *
-     * @param jspPage
-     *            The name of the page (under webpages/HarvestDefinition)
+     * @param jspPage The name of the page (under webpages/HarvestDefinition)
      */
     @Before
     public void setUp(final String jspPage) throws JasperException, MalformedURLException, ClassNotFoundException,
             IllegalAccessException, InstantiationException {
         /*
-         * ApplicationUtils.dirMustExist(WORKING_DIR); if
-         * (!compiledPages.containsKey(jspPage)) { JspC jspc = new JspC();
-         * jspc.setArgs(new String[] { "-uriroot",
-         * WEB_BASE_DIR.getAbsolutePath(), "-compile", "-d",
-         * WORKING_DIR.getAbsolutePath(), jspPage } ); jspc.execute();
-         * URLClassLoader loader = new URLClassLoader( new URL[] { new
-         * URL("file://" + WORKING_DIR.getAbsolutePath()) } );
-         * Class<HttpJspBase> c = (Class<HttpJspBase>)
-         * loader.loadClass("org.apache.jsp.Harveststatus_002dperdomain_jsp");
-         * compiledPages.put(jspPage, c); }
+         * ApplicationUtils.dirMustExist(WORKING_DIR); if (!compiledPages.containsKey(jspPage)) { JspC jspc = new
+         * JspC(); jspc.setArgs(new String[] { "-uriroot", WEB_BASE_DIR.getAbsolutePath(), "-compile", "-d",
+         * WORKING_DIR.getAbsolutePath(), jspPage } ); jspc.execute(); URLClassLoader loader = new URLClassLoader( new
+         * URL[] { new URL("file://" + WORKING_DIR.getAbsolutePath()) } ); Class<HttpJspBase> c = (Class<HttpJspBase>)
+         * loader.loadClass("org.apache.jsp.Harveststatus_002dperdomain_jsp"); compiledPages.put(jspPage, c); }
          * 
-         * instance = getCompiledPage(jspPage); request = new
-         * MockHttpServletRequest() { String encoding;
+         * instance = getCompiledPage(jspPage); request = new MockHttpServletRequest() { String encoding;
          * 
-         * public StringBuffer getRequestURL() { return new
-         * StringBuffer(jspPage); }
+         * public StringBuffer getRequestURL() { return new StringBuffer(jspPage); }
          * 
          * public String getCharacterEncoding() { return encoding; }
          * 
-         * public void setCharacterEncoding(String s) { encoding = s; } // //
-         * public int getRemotePort() { // throw new
-         * NotImplementedException("Not implemented"); // } // // public String
-         * getLocalName() { // throw new
-         * NotImplementedException("Not implemented"); // } // // public String
-         * getLocalAddr() { // throw new
+         * public void setCharacterEncoding(String s) { encoding = s; } // // public int getRemotePort() { // throw new
+         * NotImplementedException("Not implemented"); // } // // public String getLocalName() { // throw new
+         * NotImplementedException("Not implemented"); // } // // public String getLocalAddr() { // throw new
          * NotImplementedException("Not implemented"); // }
          * 
-         * // public int getLocalPort() { // throw new
-         * NotImplementedException("Not implemented"); // } }; response = new
-         * MockHttpServletResponse();
+         * // public int getLocalPort() { // throw new NotImplementedException("Not implemented"); // } }; response =
+         * new MockHttpServletResponse();
          * 
-         * // Things we want *all* pages to conform to
-         * response.setExpectedContentType("text/html;charset=UTF-8");
+         * // Things we want *all* pages to conform to response.setExpectedContentType("text/html;charset=UTF-8");
          */
     }
 
@@ -130,45 +115,35 @@ public class JspTestCase {
 
     public void runPage() throws IOException, ServletException {
         /*
-         * response.setExpectedErrorNothing(); output = new StringBuilder();
-         * JspFactory factory = new JspFactory() { public PageContext
-         * getPageContext(Servlet servlet, ServletRequest servletRequest,
-         * ServletResponse servletResponse, String s, boolean b, int i, boolean
-         * b1) { final MockPageContext mockPageContext = new MockPageContext() {
-         * // public void include(String s, boolean b) throws ServletException,
-         * // IOException { // throw new
-         * NotImplementedException("Not implemented"); // }
+         * response.setExpectedErrorNothing(); output = new StringBuilder(); JspFactory factory = new JspFactory() {
+         * public PageContext getPageContext(Servlet servlet, ServletRequest servletRequest, ServletResponse
+         * servletResponse, String s, boolean b, int i, boolean b1) { final MockPageContext mockPageContext = new
+         * MockPageContext() { // public void include(String s, boolean b) throws ServletException, // IOException { //
+         * throw new NotImplementedException("Not implemented"); // }
          * 
-         * public void handlePageException(Throwable e) { throw new
-         * IOFailure("Exception in page", e); }
+         * public void handlePageException(Throwable e) { throw new IOFailure("Exception in page", e); }
          * 
          * // public ExpressionEvaluator getExpressionEvaluator() { // throw new
-         * NotImplementedException("Not implemented"); // } // // public
-         * VariableResolver getVariableResolver() { // throw new
-         * NotImplementedException("Not implemented"); // } // // public
-         * ELContext getELContext() { // throw new
-         * NotImplementedException("Not implemented"); // } };
-         * mockPageContext.setJspWriter(new MockJspWriter() { public void
-         * print(String s) { output.append(s); } public void write(String s) {
-         * output.append(s); } }); return mockPageContext; }
+         * NotImplementedException("Not implemented"); // } // // public VariableResolver getVariableResolver() { //
+         * throw new NotImplementedException("Not implemented"); // } // // public ELContext getELContext() { // throw
+         * new NotImplementedException("Not implemented"); // } }; mockPageContext.setJspWriter(new MockJspWriter() {
+         * public void print(String s) { output.append(s); } public void write(String s) { output.append(s); } });
+         * return mockPageContext; }
          * 
          * public void releasePageContext(PageContext pageContext) { }
          * 
          * public JspEngineInfo getEngineInfo() { return null; }
          * 
-         * public JspApplicationContext getJspApplicationContext( ServletContext
-         * servletContext) { throw new
+         * public JspApplicationContext getJspApplicationContext( ServletContext servletContext) { throw new
          * NotImplementedException("Not implemented"); }
          * 
-         * }; JspFactory.setDefaultFactory(factory);
-         * instance._jspService(request, response); response.verify();
+         * }; JspFactory.setDefaultFactory(factory); instance._jspService(request, response); response.verify();
          */
     }
 
     /**
-     * Assert that this page has returned valid XHTML. Unfortunately the initial
-     * newlines caused by the import statements confuse the XHTML parser, so no
-     * pages ever validate:(
+     * Assert that this page has returned valid XHTML. Unfortunately the initial newlines caused by the import
+     * statements confuse the XHTML parser, so no pages ever validate:(
      *
      * @throws SAXException
      * @throws IOException

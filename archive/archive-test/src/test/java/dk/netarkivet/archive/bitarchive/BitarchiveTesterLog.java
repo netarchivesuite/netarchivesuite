@@ -41,7 +41,7 @@ import dk.netarkivet.testutils.LogbackRecorder;
 /**
  * Unit test for Bitarchive API The logging of bitarchive opertions is tested
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class BitarchiveTesterLog extends BitarchiveTestCase {
     private static File EXISTING_ARCHIVE_DIR = new File("tests/dk/netarkivet/archive/bitarchive/data/log/existing/");
     private static String ARC_FILE_NAME1 = "Upload1.ARC";
@@ -65,20 +65,16 @@ public class BitarchiveTesterLog extends BitarchiveTestCase {
     }
 
     /**
-     * Asserts that a source string does not contain a given string, and prints
-     * out the source string if the target string is found.
+     * Asserts that a source string does not contain a given string, and prints out the source string if the target
+     * string is found.
      *
-     * @param msg
-     *            An explanatory message
-     * @param src
-     *            A string to search through
-     * @param str
-     *            A string to search for
+     * @param msg An explanatory message
+     * @param src A string to search through
+     * @param str A string to search for
      */
     /*
-     * // TODO remove old log code private void assertNotStringContains(String
-     * msg, String src, String str) { int index = src.indexOf(str); if (index !=
-     * -1) { System.out.println("Actual string: "); System.out.println(src);
+     * // TODO remove old log code private void assertNotStringContains(String msg, String src, String str) { int index
+     * = src.indexOf(str); if (index != -1) { System.out.println("Actual string: "); System.out.println(src);
      * assertEquals(msg, -1, index); } }
      */
 

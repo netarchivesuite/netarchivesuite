@@ -41,12 +41,10 @@ import dk.netarkivet.common.utils.TimeUtils;
 /**
  * Abstract superclass for easy implementation of remote file.
  *
- * Sub classes should override this class, and do the following: - Implement
- * getChecksum. - Implement getInputStream. - Implement cleanup. - Add
- * getInstance(File, Boolean, Boolean, Boolean)-method to make the file work
- * with the factory.
+ * Sub classes should override this class, and do the following: - Implement getChecksum. - Implement getInputStream. -
+ * Implement cleanup. - Add getInstance(File, Boolean, Boolean, Boolean)-method to make the file work with the factory.
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public abstract class AbstractRemoteFile implements RemoteFile {
 
     /** A named logger for this class. */
@@ -59,26 +57,21 @@ public abstract class AbstractRemoteFile implements RemoteFile {
     /** If true, the file may be deleted after all transfers are done. */
     protected final boolean fileDeletable;
     /**
-     * If true, the file may be downloaded multiple times. Otherwise, the remote
-     * file is invalidated after first transfer.
+     * If true, the file may be downloaded multiple times. Otherwise, the remote file is invalidated after first
+     * transfer.
      */
     protected final boolean multipleDownloads;
     /** The size of the file. */
     protected final long filesize;
 
     /**
-     * Initialise common fields in remote file. Overriding classes should also
-     * initialise checksum field.
+     * Initialise common fields in remote file. Overriding classes should also initialise checksum field.
      *
-     * @param file
-     *            The file to make remote file for.
-     * @param useChecksums
-     *            If true, communications should be checksummed.
-     * @param fileDeletable
-     *            If true, the file may be downloaded multiple times. Otherwise,
-     *            the remote file is invalidated after first transfer.
-     * @param multipleDownloads
-     *            If useChecksums is true, contains the file checksum.
+     * @param file The file to make remote file for.
+     * @param useChecksums If true, communications should be checksummed.
+     * @param fileDeletable If true, the file may be downloaded multiple times. Otherwise, the remote file is
+     *            invalidated after first transfer.
+     * @param multipleDownloads If useChecksums is true, contains the file checksum.
      */
     public AbstractRemoteFile(File file, boolean useChecksums, boolean fileDeletable, boolean multipleDownloads) {
         ArgumentNotValid.checkNotNull(file, "File file");
@@ -93,17 +86,13 @@ public abstract class AbstractRemoteFile implements RemoteFile {
     }
 
     /**
-     * Copy this remote file to the given file. This method will make a
-     * fileoutputstream, and use appendTo to write the remote file to this
-     * stream.
+     * Copy this remote file to the given file. This method will make a fileoutputstream, and use appendTo to write the
+     * remote file to this stream.
      * 
-     * @param destFile
-     *            The file to write the remote file to.
-     * @throws ArgumentNotValid
-     *             on null destFile, or parent to destfile is not a writeable
-     *             directory, or destfile exists and cannot be overwritten.
-     * @throws IOFailure
-     *             on I/O trouble writing remote file to destination.
+     * @param destFile The file to write the remote file to.
+     * @throws ArgumentNotValid on null destFile, or parent to destfile is not a writeable directory, or destfile exists
+     *             and cannot be overwritten.
+     * @throws IOFailure on I/O trouble writing remote file to destination.
      */
     public void copyTo(File destFile) {
         ArgumentNotValid.checkNotNull(destFile, "File destFile");
@@ -159,16 +148,12 @@ public abstract class AbstractRemoteFile implements RemoteFile {
     }
 
     /**
-     * Append this remote file to the given output stream. This method will use
-     * getInputStream to get the remote stream, and then copy that stream to the
-     * given output stream.
+     * Append this remote file to the given output stream. This method will use getInputStream to get the remote stream,
+     * and then copy that stream to the given output stream.
      * 
-     * @param out
-     *            The stream to write the remote file to.
-     * @throws ArgumentNotValid
-     *             if outputstream is null.
-     * @throws IOFailure
-     *             on I/O trouble writing remote file to stream.
+     * @param out The stream to write the remote file to.
+     * @throws ArgumentNotValid if outputstream is null.
+     * @throws IOFailure on I/O trouble writing remote file to stream.
      */
     public void appendTo(OutputStream out) {
         ArgumentNotValid.checkNotNull(out, "OutputStream out");
@@ -176,14 +161,12 @@ public abstract class AbstractRemoteFile implements RemoteFile {
     }
 
     /**
-     * Get an input stream representing the remote file. The returned input
-     * stream should throw IOFailure on close, if checksums are requested, but
-     * do not match. The returned inputstream should call cleanup on close, if
+     * Get an input stream representing the remote file. The returned input stream should throw IOFailure on close, if
+     * checksums are requested, but do not match. The returned inputstream should call cleanup on close, if
      * multipleDownloads is not true.
      * 
      * @return An input stream for the remote file.
-     * @throws IOFailure
-     *             on I/O trouble generating inputstream for remote file.
+     * @throws IOFailure on I/O trouble generating inputstream for remote file.
      */
     public abstract InputStream getInputStream();
 
@@ -204,10 +187,9 @@ public abstract class AbstractRemoteFile implements RemoteFile {
     public abstract String getChecksum();
 
     /**
-     * Invalidate all file handles. If file is deletable, it should be deleted
-     * after this method is called. This method should never throw exceptions,
-     * but only log a warning on trouble. It should be idempotent, meaning it
-     * should be safe to call this method twice.
+     * Invalidate all file handles. If file is deletable, it should be deleted after this method is called. This method
+     * should never throw exceptions, but only log a warning on trouble. It should be idempotent, meaning it should be
+     * safe to call this method twice.
      */
     public abstract void cleanup();
 

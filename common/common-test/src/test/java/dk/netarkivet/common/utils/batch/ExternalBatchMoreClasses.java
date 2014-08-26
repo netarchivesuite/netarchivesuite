@@ -37,36 +37,31 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 
 /**
- * A batch job which returns following statistical information about all files
- * in the bitarchive in which it runs: - short form of metadata filename - date
- * of creation taken from arc-file header - date taken from cdx part - date
- * taken from lines starting on form YYYY-MM-DDT - date taken from process
- * report line - section with statistical data taken from the arc-file
- * consisting of <#urls> <#bytes> <mime-types>
+ * A batch job which returns following statistical information about all files in the bitarchive in which it runs: -
+ * short form of metadata filename - date of creation taken from arc-file header - date taken from cdx part - date taken
+ * from lines starting on form YYYY-MM-DDT - date taken from process report line - section with statistical data taken
+ * from the arc-file consisting of <#urls> <#bytes> <mime-types>
  * 
  * 
- * This is the class which is used to generate the two jarfiles
- * ExternalBatchSeveralClassesNoPackage.jar
+ * This is the class which is used to generate the two jarfiles ExternalBatchSeveralClassesNoPackage.jar
  * ExternalBatchSeveralClassesWithPackage.jar
  */
 
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class ExternalBatchMoreClasses extends FileBatchJob {
     protected transient Log log = LogFactory.getLog(getClass().getName());
 
     /**
      * Initializes fields in this class.
      * 
-     * @param os
-     *            the OutputStream to which data is to be written
+     * @param os the OutputStream to which data is to be written
      */
     public void initialize(OutputStream os) {
 
     }
 
     /**
-     * Invoke default method for deserializing object, and reinitialise the
-     * logger.
+     * Invoke default method for deserializing object, and reinitialise the logger.
      * 
      * @param s
      */
@@ -80,8 +75,8 @@ public class ExternalBatchMoreClasses extends FileBatchJob {
     }
 
     /**
-     * Type to indicate where date was found in metadata-file 0. filedesc, 1.
-     * cdx, 2. on form YYYY-MM-DDT, 3. Processors report
+     * Type to indicate where date was found in metadata-file 0. filedesc, 1. cdx, 2. on form YYYY-MM-DDT, 3. Processors
+     * report
      */
     private static enum DateFoundType {
         FIRSTLINE, CDX, FORMATYMD, PROCREPORT
@@ -98,10 +93,8 @@ public class ExternalBatchMoreClasses extends FileBatchJob {
     /**
      * Checks whether a string only contains digits will return true
      * 
-     * @param s
-     *            String to be checked
-     * @return true if the given string only contains digits (or is an empty
-     *         line), false otherwise
+     * @param s String to be checked
+     * @return true if the given string only contains digits (or is an empty line), false otherwise
      */
     private static boolean isStringNumeric(String s) {
         boolean ok = true;
@@ -116,11 +109,10 @@ public class ExternalBatchMoreClasses extends FileBatchJob {
     }
 
     /**
-     * Remove all extra occurrances in a String, i.e. a " " will only occur once
-     * at a time and there are no start or end space.
+     * Remove all extra occurrances in a String, i.e. a " " will only occur once at a time and there are no start or end
+     * space.
      * 
-     * @param line
-     *            to be trimmed for spaces
+     * @param line to be trimmed for spaces
      * @return string as result of trimmed line
      */
     private String extractTrimedLine(String line) {
@@ -136,16 +128,12 @@ public class ExternalBatchMoreClasses extends FileBatchJob {
     }
 
     /**
-     * Looks for date in given line. This can either be - a date of creation
-     * taken from arc-file header - date taken from cdx part - date taken from
-     * lines starting on form YYYY-MM-DDT - date taken from process report line
-     * If a date is found then the given date array is updated The return value
-     * tells whether a date was found.
+     * Looks for date in given line. This can either be - a date of creation taken from arc-file header - date taken
+     * from cdx part - date taken from lines starting on form YYYY-MM-DDT - date taken from process report line If a
+     * date is found then the given date array is updated The return value tells whether a date was found.
      * 
-     * @param line
-     *            to be searched
-     * @param firstLine
-     *            true if it is the first line of the metadata-file
+     * @param line to be searched
+     * @param firstLine true if it is the first line of the metadata-file
      * @param
      * @return true if date was found, false otherwise
      */
@@ -212,11 +200,10 @@ public class ExternalBatchMoreClasses extends FileBatchJob {
     }
 
     /**
-     * Collects statistical information about files from a metadata arc file and
-     * dates from different parts of the metadatafile.
+     * Collects statistical information about files from a metadata arc file and dates from different parts of the
+     * metadatafile.
      * 
-     * @param file
-     *            processing file
+     * @param file processing file
      * @return string with dates and extracted statistical information
      */
     private String readStatInfoFromFile(File file, String mdFileName) {
@@ -224,10 +211,8 @@ public class ExternalBatchMoreClasses extends FileBatchJob {
         BufferedReader in = null;
 
         /*
-         * Array of read dates on 8 characters (YYYYMMDD). /* Each array
-         * position indicates how the date was found (according to type
-         * DateFoundType) 0. in header, 1. cdx, 2. on form YYYY-MM-DDT, 3.
-         * Processors report
+         * Array of read dates on 8 characters (YYYYMMDD). /* Each array position indicates how the date was found
+         * (according to type DateFoundType) 0. in header, 1. cdx, 2. on form YYYY-MM-DDT, 3. Processors report
          */
         String[] fileDates = new String[4];
 
@@ -253,13 +238,10 @@ public class ExternalBatchMoreClasses extends FileBatchJob {
                 }
 
                 /*
-                 * Read heritrix stat data from arc-file where data is found in
-                 * file section beginning with a heading that contains the text
-                 * '[mime-types]' and [#urls], as f.ex. [#urls] [#bytes]
-                 * [mime-types] or [mime-types] [#urls] [#bytes] The section
-                 * continues with lines with sets of values and ending with an
-                 * empty line or line not split into more than two parts. Note
-                 * that mime-types can include spaces.
+                 * Read heritrix stat data from arc-file where data is found in file section beginning with a heading
+                 * that contains the text '[mime-types]' and [#urls], as f.ex. [#urls] [#bytes] [mime-types] or
+                 * [mime-types] [#urls] [#bytes] The section continues with lines with sets of values and ending with an
+                 * empty line or line not split into more than two parts. Note that mime-types can include spaces.
                  * 
                  * Furthermore try to look for date elsewhere
                  */
@@ -434,21 +416,16 @@ public class ExternalBatchMoreClasses extends FileBatchJob {
     }
 
     /**
-     * Writes file, date and statistical data from a metadata arcfile to the
-     * OutputStream. This data will be on form: <metadata arc file
-     * name>,<date0>,<date1>,<date2>,<date3> <section with statistical data
-     * taken from the arc-file> ending with and empty line. Here - <metadata arc
-     * file name> is on form <job no.>"-metadata-"<no.>".arc" - <datei> are
-     * dates on form YYYYMMDD, found: 0. in header, 1. cdx, 2. on form
-     * YYYY-MM-DDT, 3. Processors report if no date where found, it will be
-     * represented by the empty string. - <section with statistical data taken
-     * from the arc-file> starts with: <#urls> <#bytes> <mime-types> and is
-     * followed by numbers and tekst according to theis header.
+     * Writes file, date and statistical data from a metadata arcfile to the OutputStream. This data will be on form:
+     * <metadata arc file name>,<date0>,<date1>,<date2>,<date3> <section with statistical data taken from the arc-file>
+     * ending with and empty line. Here - <metadata arc file name> is on form <job no.>"-metadata-"<no.>".arc" - <datei>
+     * are dates on form YYYYMMDD, found: 0. in header, 1. cdx, 2. on form YYYY-MM-DDT, 3. Processors report if no date
+     * where found, it will be represented by the empty string. - <section with statistical data taken from the
+     * arc-file> starts with: <#urls> <#bytes> <mime-types> and is followed by numbers and tekst according to theis
+     * header.
      * 
-     * @param file
-     *            an arcfile
-     * @param os
-     *            the OutputStream to which data is to be written
+     * @param file an arcfile
+     * @param os the OutputStream to which data is to be written
      * @return false If listing of this arcfile fails; otherwise true
      */
     public boolean processFile(File file, OutputStream os) {
@@ -484,8 +461,7 @@ public class ExternalBatchMoreClasses extends FileBatchJob {
     /**
      * Does nothing.
      * 
-     * @param os
-     *            the OutputStream to which data is to be written
+     * @param os the OutputStream to which data is to be written
      */
     public void finish(OutputStream os) {
     }

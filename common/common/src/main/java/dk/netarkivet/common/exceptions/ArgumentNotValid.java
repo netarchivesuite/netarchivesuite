@@ -33,21 +33,17 @@ public class ArgumentNotValid extends NetarkivetException {
     /**
      * Constructs new ArgumentNotValid with the specified detail message.
      *
-     * @param message
-     *            The detail message
+     * @param message The detail message
      */
     public ArgumentNotValid(String message) {
         super(message);
     }
 
     /**
-     * Constructs new ArgumentNotValid with the specified detail message and
-     * cause.
+     * Constructs new ArgumentNotValid with the specified detail message and cause.
      *
-     * @param message
-     *            The detail message
-     * @param cause
-     *            The cause
+     * @param message The detail message
+     * @param cause The cause
      */
     public ArgumentNotValid(String message, Throwable cause) {
         super(message, cause);
@@ -56,12 +52,9 @@ public class ArgumentNotValid extends NetarkivetException {
     /**
      * Check if a String argument is null or the empty string.
      *
-     * @param val
-     *            the value to check
-     * @param name
-     *            the name and type of the value being checked
-     * @throws ArgumentNotValid
-     *             if test fails
+     * @param val the value to check
+     * @param name the name and type of the value being checked
+     * @throws ArgumentNotValid if test fails
      */
     public static void checkNotNullOrEmpty(String val, String name) {
         checkNotNull(val, name);
@@ -74,12 +67,9 @@ public class ArgumentNotValid extends NetarkivetException {
     /**
      * Check if an Object argument is null.
      *
-     * @param val
-     *            the value to check
-     * @param name
-     *            the name and type of the value being checked.
-     * @throws ArgumentNotValid
-     *             if test fails
+     * @param val the value to check
+     * @param name the name and type of the value being checked.
+     * @throws ArgumentNotValid if test fails
      */
     public static void checkNotNull(Object val, String name) {
         if (val == null) {
@@ -90,12 +80,9 @@ public class ArgumentNotValid extends NetarkivetException {
     /**
      * Check if an int argument is less than 0.
      *
-     * @param num
-     *            argument to check
-     * @param name
-     *            the name and type of the value being checked.
-     * @throws ArgumentNotValid
-     *             if test fails
+     * @param num argument to check
+     * @param name the name and type of the value being checked.
+     * @throws ArgumentNotValid if test fails
      */
     public static void checkNotNegative(int num, String name) {
         if (num < 0) {
@@ -107,12 +94,9 @@ public class ArgumentNotValid extends NetarkivetException {
     /**
      * Check if a long argument is less than 0.
      *
-     * @param num
-     *            argument to check
-     * @param name
-     *            the name and type of the value being checked.
-     * @throws ArgumentNotValid
-     *             if test fails
+     * @param num argument to check
+     * @param name the name and type of the value being checked.
+     * @throws ArgumentNotValid if test fails
      */
     public static void checkNotNegative(long num, String name) {
         if (num < 0) {
@@ -124,12 +108,9 @@ public class ArgumentNotValid extends NetarkivetException {
     /**
      * Check if an int argument is less than or equal to 0.
      *
-     * @param num
-     *            argument to check
-     * @param name
-     *            the name and type of the value being checked.
-     * @throws ArgumentNotValid
-     *             if test fails
+     * @param num argument to check
+     * @param name the name and type of the value being checked.
+     * @throws ArgumentNotValid if test fails
      */
     public static void checkPositive(int num, String name) {
         if (num <= 0) {
@@ -140,12 +121,9 @@ public class ArgumentNotValid extends NetarkivetException {
     /**
      * Check if a long argument is less than 0.
      *
-     * @param num
-     *            argument to check
-     * @param name
-     *            the name and type of the value being checked.
-     * @throws ArgumentNotValid
-     *             if test fails
+     * @param num argument to check
+     * @param name the name and type of the value being checked.
+     * @throws ArgumentNotValid if test fails
      */
     public static void checkPositive(long num, String name) {
         if (num <= 0) {
@@ -156,12 +134,9 @@ public class ArgumentNotValid extends NetarkivetException {
     /**
      * Check if a List argument is not null and the list is not empty.
      *
-     * @param c
-     *            argument to check
-     * @param name
-     *            the name and type of the value being checked.
-     * @throws ArgumentNotValid
-     *             if test fails
+     * @param c argument to check
+     * @param name the name and type of the value being checked.
+     * @throws ArgumentNotValid if test fails
      */
     public static void checkNotNullOrEmpty(Collection<?> c, String name) {
         checkNotNull(c, name);
@@ -172,15 +147,11 @@ public class ArgumentNotValid extends NetarkivetException {
     }
 
     /**
-     * Check that some condition on input parameters is true and throw an
-     * ArgumentNotValid if it is false.
+     * Check that some condition on input parameters is true and throw an ArgumentNotValid if it is false.
      * 
-     * @param b
-     *            the condition to check
-     * @param s
-     *            the error message to be reported
-     * @throws ArgumentNotValid
-     *             if b is false
+     * @param b the condition to check
+     * @param s the error message to be reported
+     * @throws ArgumentNotValid if b is false
      */
     public static void checkTrue(boolean b, String s) {
         if (!b) {
@@ -191,12 +162,9 @@ public class ArgumentNotValid extends NetarkivetException {
     /**
      * Check, if the given argument is an existing directory.
      * 
-     * @param aDir
-     *            a given File object.
-     * @param name
-     *            Name of object
-     * @throws ArgumentNotValid
-     *             If aDir is not an existing directory
+     * @param aDir a given File object.
+     * @param name Name of object
+     * @throws ArgumentNotValid If aDir is not an existing directory
      */
     public static void checkExistsDirectory(File aDir, String name) {
         checkNotNull(aDir, name);
@@ -209,12 +177,9 @@ public class ArgumentNotValid extends NetarkivetException {
     /**
      * Check, if the given argument is an existing normal file.
      * 
-     * @param aFile
-     *            a given File object.
-     * @param name
-     *            Name of object
-     * @throws ArgumentNotValid
-     *             If aDir is not an existing file
+     * @param aFile a given File object.
+     * @param name Name of object
+     * @throws ArgumentNotValid If aDir is not an existing file
      */
     public static void checkExistsNormalFile(File aFile, String name) {
         checkNotNull(aFile, name);

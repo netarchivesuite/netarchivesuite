@@ -34,8 +34,7 @@ import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
 
 /**
- * A simple message listener that collects the messages given to it and lets you
- * query them
+ * A simple message listener that collects the messages given to it and lets you query them
  *
  */
 
@@ -56,8 +55,7 @@ public class TestMessageListener implements MessageListener {
      * Get the last message received.
      *
      * @return The last message received by the listener.
-     * @throws IndexOutOfBoundsException
-     *             if no messages have been received.
+     * @throws IndexOutOfBoundsException if no messages have been received.
      */
     public NetarkivetMessage getReceived() {
         return received.get(received.size() - 1);
@@ -124,10 +122,9 @@ public class TestMessageListener implements MessageListener {
     /**
      * Looks up the messages that are instances of the given class.
      * 
-     * @param msgClass
-     *            A subclass of NetarkivetMessage, e.g. BatchMessage.class;
-     * @return The instance that was most recently received, or null if no
-     *         messages of the specified type has been received.
+     * @param msgClass A subclass of NetarkivetMessage, e.g. BatchMessage.class;
+     * @return The instance that was most recently received, or null if no messages of the specified type has been
+     *         received.
      */
     @SuppressWarnings("rawtypes")
     public NetarkivetMessage getLastInstance(Class msgClass) {

@@ -91,16 +91,16 @@ public class SeedListTester extends DataModelTestCase {
      */
     @Test
     public void testGetDomainsForHarvestdefinition() {
-        String[] domains = { "wikipedia.org", "orf.at", "kurier.at", "test.at" };
+        String[] domains = {"wikipedia.org", "orf.at", "kurier.at", "test.at"};
         String[][] seeds = {
-                { "http://en.wikipedia.org/wiki/Austrian_National_Library",
+                {"http://en.wikipedia.org/wiki/Austrian_National_Library",
                         "http://fr.wikipedia.org/wiki/Biblioth%C3%A8que_nationale_autrichienne",
-                        "http://de.wikipedia.org/wiki/%C3%96sterreichische_Nationalbibliothek" },
-                { "http://news.orf.at/090603-38954/index.html", "http://sport.orf.at/",
-                        "http://euwahl09.orf.at/stories/1603916/", "http://wetter.orf.at/wie/main?tmp=1421" },
-                { "http://kurier.at/sportundmotor/", "http://kurier.at/freizeitundgesundheit/",
-                        "http://kurier.at/geldundwirtschaft/" },
-                { "http://www.test.at", "http://racing.test.at/", "http://racing.test.at/", "http://racing.test.at/" } };
+                        "http://de.wikipedia.org/wiki/%C3%96sterreichische_Nationalbibliothek"},
+                {"http://news.orf.at/090603-38954/index.html", "http://sport.orf.at/",
+                        "http://euwahl09.orf.at/stories/1603916/", "http://wetter.orf.at/wie/main?tmp=1421"},
+                {"http://kurier.at/sportundmotor/", "http://kurier.at/freizeitundgesundheit/",
+                        "http://kurier.at/geldundwirtschaft/"},
+                {"http://www.test.at", "http://racing.test.at/", "http://racing.test.at/", "http://racing.test.at/"}};
 
         HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
 

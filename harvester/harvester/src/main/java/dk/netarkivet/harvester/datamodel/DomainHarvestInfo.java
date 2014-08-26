@@ -26,8 +26,7 @@ package dk.netarkivet.harvester.datamodel;
 import java.util.Date;
 
 /**
- * DomainConfigPair class for extracted information on harvests on a specific
- * domain.
+ * DomainConfigPair class for extracted information on harvests on a specific domain.
  */
 public class DomainHarvestInfo {
 
@@ -52,38 +51,24 @@ public class DomainHarvestInfo {
     /** How many documents(URIs) were downloaded by this job for this domain. */
     private final long docsDownloaded;
     /**
-     * The reason why the harvestjob stopped harvesting any more URIs from this
-     * domain.
+     * The reason why the harvestjob stopped harvesting any more URIs from this domain.
      */
     private final StopReason reason;
 
     /**
      * Constructor for a DomainHarvestInfo object.
      * 
-     * @param domainName
-     *            The given domain
-     * @param jobID
-     *            The Id of the job that harvested this domain
-     * @param harvestName
-     *            The name of the harvestdefinition behind the job
-     * @param harvestID
-     *            The ID of the harvestdefinition behind the job
-     * @param harvestNum
-     *            The number of the harvest
-     * @param configName
-     *            The name of the configuration
-     * @param startDate
-     *            The date when the harvestjob started
-     * @param endDate
-     *            The date when the harvestjob finished
-     * @param bytesDownloaded
-     *            How many bytes were downloaded by this job for this domain
-     * @param docsDownloaded
-     *            How many documents(URIs) were downloaded by this job for this
-     *            domain.
-     * @param reason
-     *            The reason why the harvestjob stopped harvesting any more URIs
-     *            from this domain.
+     * @param domainName The given domain
+     * @param jobID The Id of the job that harvested this domain
+     * @param harvestName The name of the harvestdefinition behind the job
+     * @param harvestID The ID of the harvestdefinition behind the job
+     * @param harvestNum The number of the harvest
+     * @param configName The name of the configuration
+     * @param startDate The date when the harvestjob started
+     * @param endDate The date when the harvestjob finished
+     * @param bytesDownloaded How many bytes were downloaded by this job for this domain
+     * @param docsDownloaded How many documents(URIs) were downloaded by this job for this domain.
+     * @param reason The reason why the harvestjob stopped harvesting any more URIs from this domain.
      */
     DomainHarvestInfo(String domainName, long jobID, String harvestName, long harvestID, int harvestNum,
             String configName, Date startDate, Date endDate, long bytesDownloaded, long docsDownloaded,
@@ -176,30 +161,25 @@ public class DomainHarvestInfo {
     /**
      * Get the number of bytes that were downloaded by this job for this domain.
      * 
-     * @return The number of bytes that were downloaded by this job for this
-     *         domain.
+     * @return The number of bytes that were downloaded by this job for this domain.
      */
     public long getBytesDownloaded() {
         return bytesDownloaded;
     }
 
     /**
-     * Get the number of documents (URIs) that were downloaded by this job for
-     * this domain.
+     * Get the number of documents (URIs) that were downloaded by this job for this domain.
      * 
-     * @return The number of documents (URIs) that were downloaded by this job
-     *         for this domain.
+     * @return The number of documents (URIs) that were downloaded by this job for this domain.
      */
     public long getDocsDownloaded() {
         return docsDownloaded;
     }
 
     /**
-     * Get the reason why the harvestjob stopped harvesting any more URIs from
-     * this domain.
+     * Get the reason why the harvestjob stopped harvesting any more URIs from this domain.
      * 
-     * @return The reason why the harvestjob stopped harvesting any more URIs
-     *         from this domain.
+     * @return The reason why the harvestjob stopped harvesting any more URIs from this domain.
      */
     public StopReason getStopReason() {
         return reason;

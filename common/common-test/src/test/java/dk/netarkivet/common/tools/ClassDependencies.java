@@ -123,31 +123,26 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 /**
- * This is a utility class for examining a list of class names for all of their
- * dependencies.
+ * This is a utility class for examining a list of class names for all of their dependencies.
  *
  * <p>
- * ClassDependencies will read each class file and search the internal
- * structures for all references to outside classes and resources. The checks
- * are recursive, so all classes will be examined. A list of dependencies will
- * be returned.
+ * ClassDependencies will read each class file and search the internal structures for all references to outside classes
+ * and resources. The checks are recursive, so all classes will be examined. A list of dependencies will be returned.
  *
  * <p>
- * None of the java.* classes will be examined. Additional system packages may
- * be excluded with <code>setExcludes()</code>.
+ * None of the java.* classes will be examined. Additional system packages may be excluded with
+ * <code>setExcludes()</code>.
  *
  * <p>
- * In addition to classes, we look for other resources loaded via
- * <code>Class.getResource()</code> or <code>Class.getResourceAsStream()</code>.
- * If a class calls these methods, then every String constant in the class is
- * checked to see if a file by that name exists on the CLASSPATH in the same
- * directory as the class - in other words where <code>getResource</code> would
- * find it. This heuristic only works if your resource names appear as String
+ * In addition to classes, we look for other resources loaded via <code>Class.getResource()</code> or
+ * <code>Class.getResourceAsStream()</code>. If a class calls these methods, then every String constant in the class is
+ * checked to see if a file by that name exists on the CLASSPATH in the same directory as the class - in other words
+ * where <code>getResource</code> would find it. This heuristic only works if your resource names appear as String
  * constants - which seems to be the case in my practice so far.
  *
  * <p>
- * We can optionally write all the classes and resources found to a zip or jar,
- * or the list of files can be retrieved with <code>getDependencies()</code>.
+ * We can optionally write all the classes and resources found to a zip or jar, or the list of files can be retrieved
+ * with <code>getDependencies()</code>.
  *
  * Copyright (C) 1998 Business Management Systems, Inc.
  * <p>
@@ -155,9 +150,9 @@ import java.util.zip.ZipOutputStream;
  */
 @Deprecated
 // what is this used for? /tra
-@SuppressWarnings({ "rawtypes", "unused" })
+@SuppressWarnings({"rawtypes", "unused"})
 public class ClassDependencies {
-    private static final String[] default_exclude = { "java/", "sun/", "javax/", "org/w3c" };
+    private static final String[] default_exclude = {"java/", "sun/", "javax/", "org/w3c"};
     private String[] m_excludePackageList = default_exclude;
     private final Hashtable<String, String> m_dep = new Hashtable<String, String>();
     private int m_level = 0;
@@ -191,12 +186,10 @@ public class ClassDependencies {
     }
 
     /**
-     * Convert a class path to an array of strings. A class path is a list of
-     * path names separated by the character in the <code>path.separator</code>
-     * system property.
+     * Convert a class path to an array of strings. A class path is a list of path names separated by the character in
+     * the <code>path.separator</code> system property.
      *
-     * @param path
-     *            The classpath as a String
+     * @param path The classpath as a String
      * @return The classpath as an array of String
      */
     public static String[] getClassPath(String path) {
@@ -211,12 +204,10 @@ public class ClassDependencies {
 
     /**
      * <p>
-     * Sets the list of package names to exclude. If the package of the class
-     * starts with any of the names given, the class will be excluded. An
-     * example would be "foo.package".
+     * Sets the list of package names to exclude. If the package of the class starts with any of the names given, the
+     * class will be excluded. An example would be "foo.package".
      *
-     * @param e
-     *            An array of package names to exclude.
+     * @param e An array of package names to exclude.
      */
 
     public void setExcludes(String e[]) {
@@ -233,14 +224,11 @@ public class ClassDependencies {
 
     /**
      * <p>
-     * Start the roll call. After the class list and package exclude list have
-     * been set, this method will perform the class examination. Once complete,
-     * call getDependencies() to get a full list of class dependencies. If an
-     * archive file was specified, the archive file will contain all of the
-     * dependencies.
+     * Start the roll call. After the class list and package exclude list have been set, this method will perform the
+     * class examination. Once complete, call getDependencies() to get a full list of class dependencies. If an archive
+     * file was specified, the archive file will contain all of the dependencies.
      *
-     * @param m_archive
-     *            the output archive or null
+     * @param m_archive the output archive or null
      * @throws Exception
      * @see #getDependencies
      */
@@ -292,8 +280,7 @@ public class ClassDependencies {
     }
 
     /**
-     * Clear the root set and the list of dependencies - leaving this object
-     * ready for reuse.
+     * Clear the root set and the list of dependencies - leaving this object ready for reuse.
      */
     public void clear() {
         m_dep.clear();
@@ -339,8 +326,8 @@ public class ClassDependencies {
     }
 
     /**
-     * Given a class name, open it and return a buffer with the contents. The
-     * class is loaded from the current CLASSPATH setting
+     * Given a class name, open it and return a buffer with the contents. The class is loaded from the current CLASSPATH
+     * setting
      *
      * @param name
      * @return the buffer as an array of byte
@@ -372,8 +359,8 @@ public class ClassDependencies {
     }
 
     /**
-     * Given a resource name and path, open the resource and return a buffer
-     * with the contents. Returns null if not found.
+     * Given a resource name and path, open the resource and return a buffer with the contents. Returns null if not
+     * found.
      *
      * @param name
      * @param path
@@ -442,9 +429,8 @@ public class ClassDependencies {
     }
 
     /**
-     * Given a resource name and jar file name, open the jar file and return a
-     * buffer containing the contents. Returns null if the jar file could not be
-     * found or the resource could not be found.
+     * Given a resource name and jar file name, open the jar file and return a buffer containing the contents. Returns
+     * null if the jar file could not be found or the resource could not be found.
      *
      * @param name
      * @param jarFile
@@ -479,13 +465,10 @@ public class ClassDependencies {
     }
 
     /**
-     * Given a class or resource name and buffer containing the contents,
-     * process the raw bytes of the class file.
+     * Given a class or resource name and buffer containing the contents, process the raw bytes of the class file.
      *
-     * @param className
-     *            the name of the class
-     * @param buf
-     *            The contents of a class-file
+     * @param className the name of the class
+     * @param buf The contents of a class-file
      * @throws Exception
      */
 
@@ -585,13 +568,10 @@ public class ClassDependencies {
     }
 
     /**
-     * Examine a class file to see what resources it uses, especially other
-     * classes.
+     * Examine a class file to see what resources it uses, especially other classes.
      *
-     * @param buf
-     *            byte buffer containing the class-file.
-     * @param className
-     *            the classname under investigation
+     * @param buf byte buffer containing the class-file.
+     * @param className the classname under investigation
      * @return The class-ressources used by the class as an array of String
      * @throws Exception
      */
@@ -759,8 +739,8 @@ public class ClassDependencies {
 
         if (resourceUsed) {
             /*
-             * string constants might be resource file names Those that aren't
-             * will get ignored when the resulting path is not found.
+             * string constants might be resource file names Those that aren't will get ignored when the resulting path
+             * is not found.
              */
             int pos = className.lastIndexOf('/');
             String res = className.substring(0, pos + 1);
@@ -784,12 +764,10 @@ public class ClassDependencies {
     }
 
     /**
-     * Determine if the given class is in our list or is part of a system
-     * package such as java.* or a package specified with
-     * <coded>setExcludes()</code>.
+     * Determine if the given class is in our list or is part of a system package such as java.* or a package specified
+     * with <coded>setExcludes()</code>.
      *
-     * @param name
-     *            The name of a class
+     * @param name The name of a class
      * @return true, if the classname is contained in the package exclude-list
      */
 
@@ -809,8 +787,7 @@ public class ClassDependencies {
     /**
      * Add a class to the root set.
      *
-     * @param name
-     *            the name of a class
+     * @param name the name of a class
      */
     public void addClass(String name) {
         rootSet.addElement(name);
@@ -819,8 +796,7 @@ public class ClassDependencies {
     /**
      * Mark a class or other resource as processed.
      *
-     * @param name
-     *            the name of a class or ressource
+     * @param name the name of a class or ressource
      */
     private void setClassProcessed(String name) {
         // Save the class in our list
@@ -830,10 +806,8 @@ public class ClassDependencies {
     /**
      * Adds the given buffer to the archive with the given name.
      *
-     * @param name
-     *            The name to give to the new entry.
-     * @param buf
-     *            the contents
+     * @param name The name to give to the new entry.
+     * @param buf the contents
      * @throws Exception
      */
     private void addToArchive(String name, byte buf[]) throws Exception {
@@ -851,8 +825,7 @@ public class ClassDependencies {
     }
 
     /**
-     * For display purposes, return a string to indent the proper number of
-     * spaces.
+     * For display purposes, return a string to indent the proper number of spaces.
      *
      * @param name
      */
@@ -861,11 +834,9 @@ public class ClassDependencies {
     }
 
     /**
-     * Return a list of classes found in the current class path for a given
-     * package.
+     * Return a list of classes found in the current class path for a given package.
      *
-     * @param pkg
-     *            the given package
+     * @param pkg the given package
      * @return the list of classes.
      */
     public static String[] packageList(String pkg) {

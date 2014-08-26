@@ -27,11 +27,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * A sparse implementation of a BitSet, that does not require memory linear to
- * the largest index. This is done at the cost of performance, but should be
- * fairly efficient on few set bits.
+ * A sparse implementation of a BitSet, that does not require memory linear to the largest index. This is done at the
+ * cost of performance, but should be fairly efficient on few set bits.
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class SparseBitSet extends BitSet {
 
     /** A set of the indices of bits that are set in this BitSet. */
@@ -289,9 +288,8 @@ public class SparseBitSet extends BitSet {
     }
 
     /**
-     * A hash code for this bit set. Note: The hash codes are not implemented to
-     * be compatible with java.util.BitSet#hashCode(). Implementing that
-     * algorithm would be difficult and inefficient on the current
+     * A hash code for this bit set. Note: The hash codes are not implemented to be compatible with
+     * java.util.BitSet#hashCode(). Implementing that algorithm would be difficult and inefficient on the current
      * implementation.
      * 
      * @return A hashcode.
@@ -301,10 +299,9 @@ public class SparseBitSet extends BitSet {
     }
 
     /**
-     * In contrast with {@link BitSet#size()} this does not return the size in
-     * bytes used to represent this set. Instead, it returns the same as
-     * {@link #length()} for compatibility with {@link BitSet}. The actual space
-     * used is a hashset of size {@link #cardinality()}.
+     * In contrast with {@link BitSet#size()} this does not return the size in bytes used to represent this set.
+     * Instead, it returns the same as {@link #length()} for compatibility with {@link BitSet}. The actual space used is
+     * a hashset of size {@link #cardinality()}.
      * 
      * @return the same as {@link #length()}
      */
@@ -315,16 +312,13 @@ public class SparseBitSet extends BitSet {
     /**
      * Two SparseBitSets are considered equal if they contain the same bits.
      *
-     * Note: A SparseBitSet is never considered equal to a BitSet. This would be
-     * impossible to implement in a way so equality is symmetric, since
-     * {@link BitSet#equals(Object)} is implemented using its private fields to
-     * determine equality.
+     * Note: A SparseBitSet is never considered equal to a BitSet. This would be impossible to implement in a way so
+     * equality is symmetric, since {@link BitSet#equals(Object)} is implemented using its private fields to determine
+     * equality.
      *
-     * @param obj
-     *            The object to compare for equality.
+     * @param obj The object to compare for equality.
      *
-     * @return true, if obj is a SparseBitSet and contains the same bits as this
-     *         object.
+     * @return true, if obj is a SparseBitSet and contains the same bits as this object.
      */
     public boolean equals(Object obj) {
         return obj instanceof SparseBitSet && setbits.equals(((SparseBitSet) obj).setbits);

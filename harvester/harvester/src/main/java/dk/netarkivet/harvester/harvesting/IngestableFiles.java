@@ -39,8 +39,8 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriter;
 
 /**
- * Encapsulation of files to be ingested into the archive. These files are
- * presently placed subdirectories under the crawldir.
+ * Encapsulation of files to be ingested into the archive. These files are presently placed subdirectories under the
+ * crawldir.
  *
  */
 public class IngestableFiles {
@@ -60,8 +60,7 @@ public class IngestableFiles {
     private File crawlDir;
 
     /**
-     * Writer to this jobs metadatafile. This is closed when the metadata is
-     * marked as ready.
+     * Writer to this jobs metadatafile. This is closed when the metadata is marked as ready.
      */
     private MetadataFileWriter writer = null;
 
@@ -73,15 +72,11 @@ public class IngestableFiles {
     private Long harvestId;
 
     /**
-     * Constructor for this class. HeritrixFiles contains information about
-     * crawlDir, jobId, and harvestnameprefix for a specific finished
-     * harvestjob.
+     * Constructor for this class. HeritrixFiles contains information about crawlDir, jobId, and harvestnameprefix for a
+     * specific finished harvestjob.
      * 
-     * @param files
-     *            An instance of HeritrixFiles
-     * @throws ArgumentNotValid
-     *             if null-arguments are given; if jobID < 1; if crawlDir does
-     *             not exist
+     * @param files An instance of HeritrixFiles
+     * @throws ArgumentNotValid if null-arguments are given; if jobID < 1; if crawlDir does not exist
      */
     public IngestableFiles(HeritrixFiles files) {
         ArgumentNotValid.checkNotNull(files, "files");
@@ -103,9 +98,8 @@ public class IngestableFiles {
     }
 
     /**
-     * Check, if the metadatafile already exists. If this is true, metadata has
-     * been successfully generated. If false, either metadata has not finished
-     * being generated, or there was an error generating them.
+     * Check, if the metadatafile already exists. If this is true, metadata has been successfully generated. If false,
+     * either metadata has not finished being generated, or there was an error generating them.
      * 
      * @return true, if it does exist; false otherwise.
      */
@@ -116,24 +110,21 @@ public class IngestableFiles {
     /**
      * Return true if the metadata generation process is known to have failed.
      *
-     * @return True if metadata generation is finished without success, false if
-     *         generation is still ongoing or has been successfully done.
+     * @return True if metadata generation is finished without success, false if generation is still ongoing or has been
+     *         successfully done.
      */
     public boolean isMetadataFailed() {
         return error;
     }
 
     /**
-     * Marks generated metadata as final, closes the writer, and moves the
-     * temporary metadata file to its final position, if successful.
+     * Marks generated metadata as final, closes the writer, and moves the temporary metadata file to its final
+     * position, if successful.
      * 
-     * @param success
-     *            True if metadata was successfully generated, false otherwise.
-     * @throws PermissionDenied
-     *             If the metadata has already been marked as ready, or if no
-     *             metadata file exists upon success.
-     * @throws IOFailure
-     *             if there is an error marking the metadata as ready.
+     * @param success True if metadata was successfully generated, false otherwise.
+     * @throws PermissionDenied If the metadata has already been marked as ready, or if no metadata file exists upon
+     *             success.
+     * @throws IOFailure if there is an error marking the metadata as ready.
      */
     public void setMetadataGenerationSucceeded(boolean success) {
         if (isMetadataReady()) {
@@ -153,13 +144,11 @@ public class IngestableFiles {
     }
 
     /**
-     * Get a MetaDatafileWriter for the temporary metadata file. Successive
-     * calls to this method on the same object will return the same writer. Once
-     * the metadata have been finalized, calling this method will fail.
+     * Get a MetaDatafileWriter for the temporary metadata file. Successive calls to this method on the same object will
+     * return the same writer. Once the metadata have been finalized, calling this method will fail.
      * 
      * @return a MetaDatafileWriter for the temporary metadata file.
-     * @throws PermissionDenied
-     *             if metadata generation is already finished.
+     * @throws PermissionDenied if metadata generation is already finished.
      */
     public MetadataFileWriter getMetadataWriter() {
         if (isMetadataReady()) {
@@ -179,17 +168,15 @@ public class IngestableFiles {
      * Gets the files containing the metadata.
      * 
      * @return the files in the metadata dir
-     * @throws PermissionDenied
-     *             if the metadata file is not ready, either because generation
-     *             is still going on or there was an error generating the
-     *             metadata.
+     * @throws PermissionDenied if the metadata file is not ready, either because generation is still going on or there
+     *             was an error generating the metadata.
      */
     public List<File> getMetadataArcFiles() {
         // Our one known metadata file must exist.
         if (!isMetadataReady()) {
             throw new PermissionDenied("Metadata file " + getMetadataFile().getAbsolutePath() + " does not exist");
         }
-        return Arrays.asList(new File[] { getMetadataFile() });
+        return Arrays.asList(new File[] {getMetadataFile()});
     }
 
     /**
@@ -220,8 +207,7 @@ public class IngestableFiles {
     }
 
     /**
-     * Constructs the TEMPORARY metadata arc file from the crawlDir and the
-     * jobID.
+     * Constructs the TEMPORARY metadata arc file from the crawlDir and the jobID.
      * 
      * @return tmp-metadata arc file as a File
      */
@@ -230,8 +216,7 @@ public class IngestableFiles {
     }
 
     /**
-     * Get a list of all ARC files that should get ingested. Any open files
-     * should be closed with closeOpenFiles first.
+     * Get a list of all ARC files that should get ingested. Any open files should be closed with closeOpenFiles first.
      *
      * @return The ARC files that are ready to get ingested.
      */
@@ -262,8 +247,7 @@ public class IngestableFiles {
     }
 
     /**
-     * Get a list of all WARC files that should get ingested. Any open files
-     * should be closed with closeOpenFiles first.
+     * Get a list of all WARC files that should get ingested. Any open files should be closed with closeOpenFiles first.
      *
      * @return The WARC files that are ready to get ingested.
      */
@@ -280,15 +264,12 @@ public class IngestableFiles {
     }
 
     /**
-     * Close any ".open" files left by a crashed Heritrix. ARC and/or WARC files
-     * ending in .open indicate that Heritrix is still writing to them. If
-     * Heritrix has died, we can just rename them before we upload. This must
-     * not be done while harvesting is still in progress.
+     * Close any ".open" files left by a crashed Heritrix. ARC and/or WARC files ending in .open indicate that Heritrix
+     * is still writing to them. If Heritrix has died, we can just rename them before we upload. This must not be done
+     * while harvesting is still in progress.
      *
-     * @param waitSeconds
-     *            How many seconds to wait before closing files. This may be
-     *            done in order to allow Heritrix to finish writing before we
-     *            close the files.
+     * @param waitSeconds How many seconds to wait before closing files. This may be done in order to allow Heritrix to
+     *            finish writing before we close the files.
      */
     public void closeOpenFiles(int waitSeconds) {
         // wait for Heritrix threads to create and close last arc or warc files
@@ -303,15 +284,12 @@ public class IngestableFiles {
     }
 
     /**
-     * Given an archive sub-directory name and a filter to match against this
-     * method tries to rename the matched files. Files that can not be renamed
-     * generate a log message. The filter should always match files that end
-     * with ".open" as a minimum.
+     * Given an archive sub-directory name and a filter to match against this method tries to rename the matched files.
+     * Files that can not be renamed generate a log message. The filter should always match files that end with ".open"
+     * as a minimum.
      * 
-     * @param archiveDirName
-     *            archive directory name, currently "arc" or "warc"
-     * @param filter
-     *            filename filter used to select ".open" files to rename
+     * @param archiveDirName archive directory name, currently "arc" or "warc"
+     * @param filter filename filter used to select ".open" files to rename
      */
     protected void closeOpenFiles(String archiveDirName, FilenameFilter filter) {
         File arcsdir = new File(crawlDir, archiveDirName);

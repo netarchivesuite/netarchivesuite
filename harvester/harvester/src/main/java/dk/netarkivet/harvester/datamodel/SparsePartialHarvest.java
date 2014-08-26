@@ -76,40 +76,25 @@ public class SparsePartialHarvest extends ExtendableEntity implements Named {
     private String audience;
 
     /**
-     * The id of the associated harvest channel, or null if the default one is
-     * to be used.
+     * The id of the associated harvest channel, or null if the default one is to be used.
      */
     private Long channelId;
 
     /**
      * Create new instance of SparsePartialHarvest.
      *
-     * @param oid
-     *            id of this harvest.
-     * @param name
-     *            the name of the harvest definition.
-     * @param comments
-     *            comments.
-     * @param numEvents
-     *            Number of times this harvest has run.
-     * @param submissionDate
-     *            The submission date.
-     * @param active
-     *            Whether this harvest definition is active.
-     * @param edition
-     *            DAO edition of harvest. used to create this Fullharvest
-     *            definition.
-     * @param schedule
-     *            name of schedule for this harvest.
-     * @param nextDate
-     *            next time this harvest will run (null for never).
-     * @param audience
-     *            The intended audience
-     * @param channelId
-     *            the channel id, or null for the default one
-     * @throws ArgumentNotValid
-     *             if oid, name or comments, or schedule is null, or name or
-     *             schedule is empty.
+     * @param oid id of this harvest.
+     * @param name the name of the harvest definition.
+     * @param comments comments.
+     * @param numEvents Number of times this harvest has run.
+     * @param submissionDate The submission date.
+     * @param active Whether this harvest definition is active.
+     * @param edition DAO edition of harvest. used to create this Fullharvest definition.
+     * @param schedule name of schedule for this harvest.
+     * @param nextDate next time this harvest will run (null for never).
+     * @param audience The intended audience
+     * @param channelId the channel id, or null for the default one
+     * @throws ArgumentNotValid if oid, name or comments, or schedule is null, or name or schedule is empty.
      */
     public SparsePartialHarvest(Long oid, String name, String comments, int numEvents, Date submissionDate,
             boolean active, long edition, String schedule, Date nextDate, String audience, Long channelId) {

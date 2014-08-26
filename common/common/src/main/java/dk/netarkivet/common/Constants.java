@@ -30,12 +30,10 @@ import org.apache.lucene.util.Version;
 /**
  * This class is used for global constants only.
  *
- * If your constant is only to be used in a single package, put it in a
- * Constants-class in that package, and make sure it is package private (no
- * modifiers).
+ * If your constant is only to be used in a single package, put it in a Constants-class in that package, and make sure
+ * it is package private (no modifiers).
  *
- * If your constant is used in a single class only, put it in that class, and
- * make sure it is private.
+ * If your constant is used in a single class only, put it in that class, and make sure it is private.
  *
  * Remember everything placed here MUST be constants.
  *
@@ -50,8 +48,7 @@ public final class Constants {
     /** A full string matcher for an IPv6-address. */
     public static final Pattern IPv6_KEY_REGEXP = Pattern.compile("^([0-9A-F]{1,2}\\:){5}[0-9A-F]{1,2}$");
     /**
-     * The suffix of a regular expression that matches the metadata files. Add
-     * job IDs to the front as necessary.
+     * The suffix of a regular expression that matches the metadata files. Add job IDs to the front as necessary.
      */
     public static final String METADATA_FILE_PATTERN_SUFFIX = "-metadata-[0-9]+.(w)?arc";
     /** The mimetype for a list of CDX entries. */
@@ -64,8 +61,7 @@ public final class Constants {
         /** Code is under codefreeze. The code is a release candidate. */
         CODEFREEZE,
         /**
-         * The code is not production ready. Although it usually compiles, all
-         * code has not necessarily been tested.
+         * The code is not production ready. Although it usually compiles, all code has not necessarily been tested.
          */
         UNSTABLE
     }
@@ -88,10 +84,9 @@ public final class Constants {
     private static final String HERITRIX_VERSION = "1.14.4";
 
     /**
-     * Read this much data when copying data from a file channel. Note that due
-     * to a bug in java, this should never be set larger than Integer.MAX_VALUE,
-     * since a call to fileChannel.transferFrom/To fails with an error while
-     * calling mmap.
+     * Read this much data when copying data from a file channel. Note that due to a bug in java, this should never be
+     * set larger than Integer.MAX_VALUE, since a call to fileChannel.transferFrom/To fails with an error while calling
+     * mmap.
      */
     public static final long IO_CHUNK_SIZE = 65536L;
     /** The directory name of the heritrix directory with arcfiles. */
@@ -99,8 +94,7 @@ public final class Constants {
     /** The directory name of the heritrix directory with warcfiles. */
     public static final String WARCDIRECTORY_NAME = "warcs";
     /**
-     * How big a buffer we use for read()/write() operations on InputStream/
-     * OutputStream.
+     * How big a buffer we use for read()/write() operations on InputStream/ OutputStream.
      */
     public static final int IO_BUFFER_SIZE = 4096;
 
@@ -111,8 +105,7 @@ public final class Constants {
     public static final String TRANSLATIONS_BUNDLE = "dk.netarkivet.common.Translations";
 
     /**
-     * Private constructor that does absolutely nothing. Necessary in order to
-     * prevent initialization.
+     * Private constructor that does absolutely nothing. Necessary in order to prevent initialization.
      */
     private Constants() {
         // Not to be initialised
@@ -147,8 +140,7 @@ public final class Constants {
     }
 
     /**
-     * Get a formatter that can read and write a date in ISO format including
-     * hours/minutes/seconds and timezone.
+     * Get a formatter that can read and write a date in ISO format including hours/minutes/seconds and timezone.
      *
      * @return The formatter.
      */

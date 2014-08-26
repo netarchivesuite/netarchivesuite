@@ -78,7 +78,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 /**
  * Unit tests for the class ArcRepositoryServer.
  */
-@SuppressWarnings({ "deprecation" })
+@SuppressWarnings({"deprecation"})
 public class ArcRepositoryServerTester {
     /**
      * The test log directories for Controller and AdminData.
@@ -104,10 +104,9 @@ public class ArcRepositoryServerTester {
     public final File TESTLOGPROP = new File("tests/dk/netarkivet/testlog.prop");
 
     /**
-     * The files that are uploaded during the tests and that must be removed
-     * afterwards.
+     * The files that are uploaded during the tests and that must be removed afterwards.
      */
-    private static final List<String> STORABLE_FILES = Arrays.asList(new String[] { "get1.ARC", "get2.ARC" });
+    private static final List<String> STORABLE_FILES = Arrays.asList(new String[] {"get1.ARC", "get2.ARC"});
 
     private File file;
 

@@ -44,11 +44,9 @@ public class LuceneUtils {
     static final File EMPTY_CRAWLLOG_FILE = new File(ORIGINALS_DIR, "empty_crawl.log");
 
     /**
-     * Create Dummy Lucene index. uses an empty file as basis for the
-     * lucene-index.
+     * Create Dummy Lucene index. uses an empty file as basis for the lucene-index.
      * 
-     * @param indexLocation
-     *            location of index
+     * @param indexLocation location of index
      * @throws IOFailure
      */
     public static void makeDummyIndex(File indexLocation) throws IOFailure {
@@ -64,12 +62,9 @@ public class LuceneUtils {
     /**
      * Generate a Lucene index from a crawllog, and a CDXReader.
      * 
-     * @param CrawlLog
-     *            some crawllog
-     * @param cdxreader
-     *            some CDXReader
-     * @param indexDir
-     *            Destinationdirector for the Lucene index.
+     * @param CrawlLog some crawllog
+     * @param cdxreader some CDXReader
+     * @param indexDir Destinationdirector for the Lucene index.
      */
     public static void generateIndex(File CrawlLog, BufferedReader cdxreader, File indexDir) {
         ArgumentNotValid.checkNotNull(CrawlLog, "File CrawlLog");
@@ -93,8 +88,7 @@ public class LuceneUtils {
                     includeTimestamp, includeEtag, addToExistingIndex);
 
             /**
-             * The blacklist set to true results in docs matching the mimefilter
-             * being ignored.
+             * The blacklist set to true results in docs matching the mimefilter being ignored.
              */
             boolean blacklist = true;
             final String mimefilter = "^text/.*";

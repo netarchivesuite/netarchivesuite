@@ -50,11 +50,10 @@ public class ScheduleDAOTester extends DataModelTestCase {
     }
 
     /**
-     * Verify that the standard usage works: Get an instance of a ScheduleDAO
-     * create a new schedule and retrieve the stored data from it
+     * Verify that the standard usage works: Get an instance of a ScheduleDAO create a new schedule and retrieve the
+     * stored data from it
      * 
-     * @param schedule
-     *            A schedule to test.
+     * @param schedule A schedule to test.
      */
     public void doTestNormalUsage(final Schedule schedule) {
         ScheduleDAO scheduledao = ScheduleDAO.getInstance();
@@ -111,8 +110,8 @@ public class ScheduleDAOTester extends DataModelTestCase {
     }
 
     /**
-     * Verify that basic exceptions works: Get an instance of a ScheduleDAO
-     * create a null schedule and retrieve null data from it
+     * Verify that basic exceptions works: Get an instance of a ScheduleDAO create a null schedule and retrieve null
+     * data from it
      */
     @Test
     public void testBasicArgumentExceptions() {
@@ -144,9 +143,8 @@ public class ScheduleDAOTester extends DataModelTestCase {
     }
 
     /**
-     * Test retrieval of all schedules DEFAULTSCHEDULE is already there in the
-     * schedules list. add one HERE_AND_NOW_SCHEDULE schedule more and retrieve
-     * and count all schedules
+     * Test retrieval of all schedules DEFAULTSCHEDULE is already there in the schedules list. add one
+     * HERE_AND_NOW_SCHEDULE schedule more and retrieve and count all schedules
      */
     @Test
     public void testGetAllSchedules() {
@@ -178,8 +176,7 @@ public class ScheduleDAOTester extends DataModelTestCase {
     }
 
     /**
-     * Check that updating an entry that has already been modified results in an
-     * IOFailure
+     * Check that updating an entry that has already been modified results in an IOFailure
      * */
     @Test
     public void testOptimisticLocking() {

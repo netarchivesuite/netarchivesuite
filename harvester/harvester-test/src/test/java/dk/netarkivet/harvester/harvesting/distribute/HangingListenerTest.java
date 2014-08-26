@@ -49,8 +49,7 @@ import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
 
 /**
- * A test of the behaviour if onMessage() hangs when there is more than one
- * listener to a queue.
+ * A test of the behaviour if onMessage() hangs when there is more than one listener to a queue.
  */
 @Ignore("Needs to be running in deploy-test module according to junit3 test suite")
 public class HangingListenerTest {
@@ -72,9 +71,8 @@ public class HangingListenerTest {
     }
 
     /**
-     * Tests what happens if we have a blocking listener. It appears that by
-     * default, a listener may pre-queue messages even while it is blocked
-     * processing the previous message. This is not desirable behaviour.
+     * Tests what happens if we have a blocking listener. It appears that by default, a listener may pre-queue messages
+     * even while it is blocked processing the previous message. This is not desirable behaviour.
      * 
      * @throws InterruptedException
      * @throws JMSException

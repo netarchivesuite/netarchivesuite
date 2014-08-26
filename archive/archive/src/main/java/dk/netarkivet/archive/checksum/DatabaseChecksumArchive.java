@@ -59,9 +59,8 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.ChecksumJob;
 
 /**
- * A ChecksumArchive persisted with a Berkeley DB JE Database. Migrating from
- * the {@link FileChecksumArchive} to the DatabaseChecksumArchive is done with
- * the {@link LoadDatabaseChecksumArchive} tool.
+ * A ChecksumArchive persisted with a Berkeley DB JE Database. Migrating from the {@link FileChecksumArchive} to the
+ * DatabaseChecksumArchive is done with the {@link LoadDatabaseChecksumArchive} tool.
  */
 public class DatabaseChecksumArchive implements ChecksumArchive {
 
@@ -87,8 +86,7 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
     private static final String CLASS_DATABASE_NAME = "CLASS";
 
     /**
-     * The Berkeley DB binder for the data object and keyObject in our database,
-     * i.e. Url and Long, respectively.
+     * The Berkeley DB binder for the data object and keyObject in our database, i.e. Url and Long, respectively.
      **/
     private EntryBinding objectBinding;
     private EntryBinding keyBinding;
@@ -102,15 +100,13 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
     private static final String WRONG_FILENAME_SUFFIX = ".checksum";
 
     /**
-     * The file for storing all the deleted entries. Each entry should be: 'date
-     * :' + 'wrongEntry'.
+     * The file for storing all the deleted entries. Each entry should be: 'date :' + 'wrongEntry'.
      */
     private File wrongEntryFile;
 
     /**
-     * Method for obtaining the current singleton instance of this class. If the
-     * instance of this class has not yet been constructed, then it will be
-     * initialised.
+     * Method for obtaining the current singleton instance of this class. If the instance of this class has not yet been
+     * constructed, then it will be initialised.
      * 
      * @return The current instance of this class.
      * @throws Exception
@@ -123,9 +119,8 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
     }
 
     /**
-     * Constructor. Retrieves the minimum space left variable, and ensures the
-     * existence of the archive file. If the file does not exist, then it is
-     * created.
+     * Constructor. Retrieves the minimum space left variable, and ensures the existence of the archive file. If the
+     * file does not exist, then it is created.
      * 
      * @throws Exception
      */
@@ -271,14 +266,11 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
     }
 
     /**
-     * Method for appending a 'wrong' entry in the wrongEntryFile. It will be
-     * noted which time the wrong entry was appended: date + " : " +
-     * wrongRecord.
+     * Method for appending a 'wrong' entry in the wrongEntryFile. It will be noted which time the wrong entry was
+     * appended: date + " : " + wrongRecord.
      * 
-     * @param wrongRecord
-     *            The record to append.
-     * @throws IOFailure
-     *             If the wrong record cannot be appended correctly.
+     * @param wrongRecord The record to append.
+     * @throws IOFailure If the wrong record cannot be appended correctly.
      */
     private synchronized void appendWrongRecordToWrongEntryFile(String wrongRecord) throws IOFailure {
         try {
@@ -368,10 +360,8 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
     /**
      * Update the database with a new filename and its checksum.
      * 
-     * @param filename
-     *            A given filename
-     * @param checksum
-     *            The related checksum
+     * @param filename A given filename
+     * @param checksum The related checksum
      */
     public void put(String filename, String checksum) {
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
@@ -416,13 +406,9 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
     /**
      * Write the contents of the database to the given file.
      * 
-     * @param outputFile
-     *            The outputfile whereto the data is written.
-     * @param writeOnlyFilenames
-     *            If true, we only write the filenames to the files, not the
-     *            checksums
-     * @throws IOException
-     *             If unable to write to file for some reason
+     * @param outputFile The outputfile whereto the data is written.
+     * @param writeOnlyFilenames If true, we only write the filenames to the files, not the checksums
+     * @throws IOException If unable to write to file for some reason
      */
     private void dumpDatabaseToFile(File tempFile, boolean writeOnlyFilenames) throws IOException {
         Cursor cursor = null;

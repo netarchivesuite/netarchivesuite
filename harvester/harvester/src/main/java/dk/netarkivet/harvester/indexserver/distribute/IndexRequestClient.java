@@ -56,8 +56,8 @@ import dk.netarkivet.harvester.indexserver.MultiFileBasedCache;
 /**
  * Client for index request server.
  *
- * Allows to request an index of some type over a list of jobs. Factory method
- * will return the index request client of the type wished.
+ * Allows to request an index of some type over a list of jobs. Factory method will return the index request client of
+ * the type wished.
  */
 public class IndexRequestClient extends MultiFileBasedCache<Long> implements JobIndexCache {
 
@@ -69,9 +69,8 @@ public class IndexRequestClient extends MultiFileBasedCache<Long> implements Job
             + "indexserver/distribute/IndexRequestClientSettings.xml";
 
     /*
-     * The static initialiser is called when the class is loaded. It will add
-     * default values for all settings defined in this class, by loading them
-     * from a settings.xml file in classpath.
+     * The static initialiser is called when the class is loaded. It will add default values for all settings defined in
+     * this class, by loading them from a settings.xml file in classpath.
      */
     static {
         Settings.addDefaultClasspathSettings(defaultSettingsClasspath);
@@ -89,24 +88,22 @@ public class IndexRequestClient extends MultiFileBasedCache<Long> implements Job
 
     /**
      * <b>settings.common.indexClient.indexRequestTimeout</b>: <br>
-     * Setting for the amount of time, in milliseconds, we should wait for
-     * replies when issuing a call to generate an index over some jobs.
+     * Setting for the amount of time, in milliseconds, we should wait for replies when issuing a call to generate an
+     * index over some jobs.
      */
     public static final String INDEXREQUEST_TIMEOUT = "settings.common.indexClient.indexRequestTimeout";
 
     /**
      * <b>settings.common.indexClient.useLocalFtpServer</b>: <br>
-     * Setting for using the ftpserver assigned to the client instead of the one
-     * assigned to the indexserver. Set to false by default.
+     * Setting for using the ftpserver assigned to the client instead of the one assigned to the indexserver. Set to
+     * false by default.
      */
     public static final String INDEXREQUEST_USE_LOCAL_FTPSERVER = "settings.common.indexClient.useLocalFtpServer";
 
     /**
-     * Initialise this client, handling requests of a given type. Start
-     * listening to channel if not done yet.
+     * Initialise this client, handling requests of a given type. Start listening to channel if not done yet.
      *
-     * @param type
-     *            Type of this cache
+     * @param type Type of this cache
      */
     private IndexRequestClient(RequestType type) {
         super(type.name());
@@ -127,14 +124,11 @@ public class IndexRequestClient extends MultiFileBasedCache<Long> implements Job
     }
 
     /**
-     * Factory method returning an IndexRequestClient for the given type of
-     * index cache.
+     * Factory method returning an IndexRequestClient for the given type of index cache.
      *
-     * @param type
-     *            The type of this cache.
+     * @param type The type of this cache.
      * @return The singleton instance dedicated to this type of index requests.
-     * @throws ArgumentNotValid
-     *             if type is null.
+     * @throws ArgumentNotValid if type is null.
      */
     public static synchronized IndexRequestClient getInstance(RequestType type) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(type, "RequestType type");
@@ -147,24 +141,18 @@ public class IndexRequestClient extends MultiFileBasedCache<Long> implements Job
     }
 
     /**
-     * This method makes sure the actual caching of underlying data is done
-     * using the index server. It will convert calls into an IndexRequestMessage
-     * which is sent to the server. The Set&lt;Long&gt; of found jobs, and the
-     * side effect of caching the index, is done using this communication with
-     * the server. The resulting files will be unzipped into the cache dir.
+     * This method makes sure the actual caching of underlying data is done using the index server. It will convert
+     * calls into an IndexRequestMessage which is sent to the server. The Set&lt;Long&gt; of found jobs, and the side
+     * effect of caching the index, is done using this communication with the server. The resulting files will be
+     * unzipped into the cache dir.
      *
-     * This method should not be called directly! Instead call cache() or
-     * getIndex().
+     * This method should not be called directly! Instead call cache() or getIndex().
      *
-     * @param jobSet
-     *            The set of job IDs.
+     * @param jobSet The set of job IDs.
      * @return The set of found job IDs.
-     * @throws ArgumentNotValid
-     *             on null argument; or on wrong parameters in replied message.
-     * @throws IOFailure
-     *             on trouble in communication or invalid reply types.
-     * @throws IllegalState
-     *             if message is not OK.
+     * @throws ArgumentNotValid on null argument; or on wrong parameters in replied message.
+     * @throws IOFailure on trouble in communication or invalid reply types.
+     * @throws IllegalState if message is not OK.
      * @see dk.netarkivet.harvester.indexserver.FileBasedCache#cache
      * @see dk.netarkivet.harvester.indexserver.FileBasedCache#getIndex
      */
@@ -223,19 +211,13 @@ public class IndexRequestClient extends MultiFileBasedCache<Long> implements Job
     }
 
     /**
-     * Gunzip a list of RemoteFiles into a given directory. The actual unzipping
-     * takes place in a temporary directory which gets renamed, so the directory
-     * appears to be created atomically.
+     * Gunzip a list of RemoteFiles into a given directory. The actual unzipping takes place in a temporary directory
+     * which gets renamed, so the directory appears to be created atomically.
      *
-     * @param files
-     *            List of RemoteFiles to gunzip. The RemoteFiles will be deleted
-     *            as part of the process.
-     * @param toDir
-     *            The directory that the gunzipped files will eventually be
-     *            placed in. This directory will be created and filled
-     *            atomically.
-     * @throws IOFailure
-     *             If errors occur during unzipping, e.g. disk full.
+     * @param files List of RemoteFiles to gunzip. The RemoteFiles will be deleted as part of the process.
+     * @param toDir The directory that the gunzipped files will eventually be placed in. This directory will be created
+     *            and filled atomically.
+     * @throws IOFailure If errors occur during unzipping, e.g. disk full.
      */
     private void gunzipToDir(List<RemoteFile> files, File toDir) throws IOFailure {
         File tmpDir = FileUtils.createUniqueTempDir(toDir.getParentFile(), toDir.getName());
@@ -257,16 +239,12 @@ public class IndexRequestClient extends MultiFileBasedCache<Long> implements Job
     }
 
     /**
-     * Unzip a RemoteFile to a given file, deleting the RemoteFile afterwards.
-     * Problems arising while deleting are logged, but do not cause exceptions.
+     * Unzip a RemoteFile to a given file, deleting the RemoteFile afterwards. Problems arising while deleting are
+     * logged, but do not cause exceptions.
      *
-     * @param remoteFile
-     *            A file to download. This file will be attempted deleted after
-     *            successfull unzipping.
-     * @param destFile
-     *            A place to put the unzipped file.
-     * @throws IOFailure
-     *             on any I/O error, e.g. disk full
+     * @param remoteFile A file to download. This file will be attempted deleted after successfull unzipping.
+     * @param destFile A place to put the unzipped file.
+     * @throws IOFailure on any I/O error, e.g. disk full
      */
     private void unzipAndDeleteRemoteFile(RemoteFile remoteFile, File destFile) throws IOFailure {
         File tmpFile = null;
@@ -301,14 +279,12 @@ public class IndexRequestClient extends MultiFileBasedCache<Long> implements Job
     }
 
     /**
-     * Check if we should use local ftpserver or not, provided you are using
-     * FTPRemoteFile as the {@link CommonSettings#REMOTE_FILE_CLASS}. This
-     * always returns false, when {@link CommonSettings#REMOTE_FILE_CLASS} is
-     * not {@link FTPRemoteFile}.
+     * Check if we should use local ftpserver or not, provided you are using FTPRemoteFile as the
+     * {@link CommonSettings#REMOTE_FILE_CLASS}. This always returns false, when
+     * {@link CommonSettings#REMOTE_FILE_CLASS} is not {@link FTPRemoteFile}.
      * 
-     * @return true, if we should use the local ftpserver when retrieving data
-     *         from the indexserver, false, if the indexserver should decide for
-     *         us.
+     * @return true, if we should use the local ftpserver when retrieving data from the indexserver, false, if the
+     *         indexserver should decide for us.
      */
     protected boolean useLocalFtpserver() {
         // check first that RemoteFileClass is FTPRemoteFile
@@ -325,16 +301,11 @@ public class IndexRequestClient extends MultiFileBasedCache<Long> implements Job
     /**
      * Check the reply message is valid.
      * 
-     * @param jobSet
-     *            The requested set of jobs
-     * @param msg
-     *            The message received
-     * @throws ArgumentNotValid
-     *             On wrong parameters in replied message.
-     * @throws IOFailure
-     *             on trouble in communication or invalid reply types.
-     * @throws IllegalState
-     *             if message is not OK.
+     * @param jobSet The requested set of jobs
+     * @param msg The message received
+     * @throws ArgumentNotValid On wrong parameters in replied message.
+     * @throws IOFailure on trouble in communication or invalid reply types.
+     * @throws IllegalState if message is not OK.
      */
     private void checkMessageValid(Set<Long> jobSet, NetarkivetMessage msg) throws IllegalState, IOFailure,
             ArgumentNotValid {
@@ -386,16 +357,11 @@ public class IndexRequestClient extends MultiFileBasedCache<Long> implements Job
     /**
      * Method to request an Index without having the result sent right away.
      * 
-     * @param jobSet
-     *            The set of job IDs.
-     * @param harvestId
-     *            The ID of the harvest requesting this index.
-     * @throws IOFailure
-     *             On trouble in communication or invalid reply types.
-     * @throws IllegalState
-     *             if message is not OK.
-     * @throws ArgumentNotValid
-     *             if the jobSet is null.
+     * @param jobSet The set of job IDs.
+     * @param harvestId The ID of the harvest requesting this index.
+     * @throws IOFailure On trouble in communication or invalid reply types.
+     * @throws IllegalState if message is not OK.
+     * @throws ArgumentNotValid if the jobSet is null.
      */
     public void requestIndex(Set<Long> jobSet, Long harvestId) throws IOFailure, IllegalState, ArgumentNotValid {
         ArgumentNotValid.checkNotNull(jobSet, "Set<Long> id");

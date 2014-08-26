@@ -35,8 +35,8 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
- * Created by IntelliJ IDEA. User: csr Date: Mar 14, 2005 Time: 11:35:26 AM To
- * change this template use File | Settings | File Templates.
+ * Created by IntelliJ IDEA. User: csr Date: Mar 14, 2005 Time: 11:35:26 AM To change this template use File | Settings
+ * | File Templates.
  *
  * setup and teardown methods for connecting to two bitarchives
  */

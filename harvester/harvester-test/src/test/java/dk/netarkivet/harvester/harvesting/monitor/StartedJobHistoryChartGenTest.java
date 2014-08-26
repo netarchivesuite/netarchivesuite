@@ -92,13 +92,12 @@ public class StartedJobHistoryChartGenTest {
         TestInfo.WORKING_DIR.mkdirs();
         pngFile.createNewFile();
 
-        gen.generatePngChart(pngFile, 512, 384, "Test history graph", "Crawl time", new String[] { "Progress", "URL",
-                "Random" }, NumberUtils.toPrimitiveArray(timeValues), new double[][] { new double[] { 0, 100 }, null,
-                null },
-                new double[][] { NumberUtils.toPrimitiveArray(progressValues), NumberUtils.toPrimitiveArray(urlValues),
-                        NumberUtils.toPrimitiveArray(randomValues) },
-                new Color[] { Color.red, Color.blue, Color.green }, new String[] { "%", "", "" }, true, Color.lightGray
-                        .brighter().brighter());
+        gen.generatePngChart(pngFile, 512, 384, "Test history graph", "Crawl time", new String[] {"Progress", "URL",
+                "Random"}, NumberUtils.toPrimitiveArray(timeValues),
+                new double[][] {new double[] {0, 100}, null, null},
+                new double[][] {NumberUtils.toPrimitiveArray(progressValues), NumberUtils.toPrimitiveArray(urlValues),
+                        NumberUtils.toPrimitiveArray(randomValues)}, new Color[] {Color.red, Color.blue, Color.green},
+                new String[] {"%", "", ""}, true, Color.lightGray.brighter().brighter());
 
     }
 
@@ -108,10 +107,9 @@ public class StartedJobHistoryChartGenTest {
         TestInfo.WORKING_DIR.mkdirs();
         pngFile.createNewFile();
 
-        gen.generatePngChart(pngFile, 512, 384, null, "", new String[] { "%", "" }, new double[0], new double[][] {
-                new double[] { 0, 100 }, null }, new double[][] { new double[0], new double[0] }, new Color[] {
-                Color.blue, Color.green.darker() }, new String[] { "", "" }, true, Color.lightGray.brighter()
-                .brighter());
+        gen.generatePngChart(pngFile, 512, 384, null, "", new String[] {"%", ""}, new double[0], new double[][] {
+                new double[] {0, 100}, null}, new double[][] {new double[0], new double[0]}, new Color[] {Color.blue,
+                Color.green.darker()}, new String[] {"", ""}, true, Color.lightGray.brighter().brighter());
 
     }
 
@@ -121,7 +119,7 @@ public class StartedJobHistoryChartGenTest {
     @Test
     public final void testFindTimeUnit() {
 
-        long[] durations = new long[] { 2, // 2s
+        long[] durations = new long[] {2, // 2s
                 2 * 60, // 2min
                 2 * 60 * 60, // 2h
                 14 * 60 * 60, // 16h
@@ -131,9 +129,9 @@ public class StartedJobHistoryChartGenTest {
                 100 * 7 * 24 * 3600 // 100w
         };
 
-        TimeAxisResolution[] expected = new TimeAxisResolution[] { TimeAxisResolution.second,
-                TimeAxisResolution.minute, TimeAxisResolution.hour, TimeAxisResolution.half_day,
-                TimeAxisResolution.day, TimeAxisResolution.week, TimeAxisResolution.week, TimeAxisResolution.week };
+        TimeAxisResolution[] expected = new TimeAxisResolution[] {TimeAxisResolution.second, TimeAxisResolution.minute,
+                TimeAxisResolution.hour, TimeAxisResolution.half_day, TimeAxisResolution.day, TimeAxisResolution.week,
+                TimeAxisResolution.week, TimeAxisResolution.week};
 
         for (int i = 0; i < durations.length; i++) {
             assertEquals(expected[i], TimeAxisResolution.findTimeUnit(durations[i]));

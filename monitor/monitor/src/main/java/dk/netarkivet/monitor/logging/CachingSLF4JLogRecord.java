@@ -36,16 +36,11 @@ public class CachingSLF4JLogRecord implements SingleLogRecord {
     private SingleMBeanObject<SingleLogRecord> singleMBeanObject;
 
     /**
-     * Make a caching log record, that exposes a log record at a given index as
-     * an MBean.
+     * Make a caching log record, that exposes a log record at a given index as an MBean.
      *
-     * @param index
-     *            The index of this log record, counted from the top of the
-     *            list.
-     * @param cachingLogHandler
-     *            The caching log handler this is an exposing view on.
-     * @throws IOFailure
-     *             on any trouble registering.
+     * @param index The index of this log record, counted from the top of the list.
+     * @param cachingLogHandler The caching log handler this is an exposing view on.
+     * @throws IOFailure on any trouble registering.
      */
     public CachingSLF4JLogRecord(int index, CachingSLF4JAppender cachingSLF4JAppender) {
         ArgumentNotValid.checkNotNull(cachingSLF4JAppender, "CachingSLF4JAppender cachingSLF4JAppender");

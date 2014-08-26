@@ -59,8 +59,8 @@ import dk.netarkivet.harvester.webinterface.HarvestStatusQuery;
 import dk.netarkivet.harvester.webinterface.HarvestStatusQuery.SORT_ORDER;
 
 /**
- * A database-based implementation of the JobDAO class. The statements to create
- * the tables are now in scripts/sql/createfullhddb.sql
+ * A database-based implementation of the JobDAO class. The statements to create the tables are now in
+ * scripts/sql/createfullhddb.sql
  */
 public class JobDBDAO extends JobDAO {
 
@@ -68,10 +68,9 @@ public class JobDBDAO extends JobDAO {
     private static final Logger log = LoggerFactory.getLogger(JobDBDAO.class);
 
     /**
-     * Create a new JobDAO implemented using database. This constructor also
-     * tries to upgrade the jobs and jobs_configs tables in the current
-     * database. throws and IllegalState exception, if it is impossible to make
-     * the necessary updates.
+     * Create a new JobDAO implemented using database. This constructor also tries to upgrade the jobs and jobs_configs
+     * tables in the current database. throws and IllegalState exception, if it is impossible to make the necessary
+     * updates.
      */
     protected JobDBDAO() {
         Connection connection = HarvestDBConnection.get();
@@ -84,17 +83,12 @@ public class JobDBDAO extends JobDAO {
     }
 
     /**
-     * Creates an instance in persistent storage of the given job. If the job
-     * doesn't have an ID, one is generated for it.
+     * Creates an instance in persistent storage of the given job. If the job doesn't have an ID, one is generated for
+     * it.
      *
-     * @param job
-     *            a given job to add to persistent storage
-     * @throws PermissionDenied
-     *             If a job already exists in persistent storage with the same
-     *             id as the given job
-     * @throws IOFailure
-     *             If some IOException occurs while writing the job to
-     *             persistent storage
+     * @param job a given job to add to persistent storage
+     * @throws PermissionDenied If a job already exists in persistent storage with the same id as the given job
+     * @throws IOFailure If some IOException occurs while writing the job to persistent storage
      */
     public synchronized void create(Job job) {
         ArgumentNotValid.checkNotNull(job, "Job job");
@@ -172,17 +166,12 @@ public class JobDBDAO extends JobDAO {
     }
 
     /**
-     * Create the entries in the job_configs table for this job. Since some jobs
-     * have up to 10000 configs, this must be optimized. The entries are only
-     * created, if job.configsChanged is true.
+     * Create the entries in the job_configs table for this job. Since some jobs have up to 10000 configs, this must be
+     * optimized. The entries are only created, if job.configsChanged is true.
      *
-     * @param dbconnection
-     *            A connection to work on
-     * @param job
-     *            The job to store entries for
-     * @throws SQLException
-     *             If any problems occur during creation of the new entries in
-     *             the job_configs table.
+     * @param dbconnection A connection to work on
+     * @param job The job to store entries for
+     * @throws SQLException If any problems occur during creation of the new entries in the job_configs table.
      */
     private void createJobConfigsEntries(Connection dbconnection, Job job) throws SQLException {
         if (job.configsChanged) {
@@ -230,8 +219,7 @@ public class JobDBDAO extends JobDAO {
     /**
      * Check whether a particular job exists.
      *
-     * @param jobID
-     *            Id of the job.
+     * @param jobID Id of the job.
      * @return true if the job exists in any state.
      */
     @Override
@@ -249,10 +237,8 @@ public class JobDBDAO extends JobDAO {
     /**
      * Check whether a particular job exists.
      *
-     * @param c
-     *            an open connection to the harvestDatabase
-     * @param jobID
-     *            Id of the job.
+     * @param c an open connection to the harvestDatabase
+     * @param jobID Id of the job.
      * @return true if the job exists in any state.
      */
     private boolean exists(Connection c, Long jobID) {
@@ -262,8 +248,7 @@ public class JobDBDAO extends JobDAO {
     /**
      * Generates the next id of job.
      * 
-     * @param c
-     *            an open connection to the harvestDatabase
+     * @param c an open connection to the harvestDatabase
      * @return id
      */
     private Long generateNextID(Connection c) {
@@ -284,16 +269,11 @@ public class JobDBDAO extends JobDAO {
     /**
      * Update a Job in persistent storage.
      *
-     * @param job
-     *            The Job to update
-     * @throws ArgumentNotValid
-     *             If the Job is null
-     * @throws UnknownID
-     *             If the Job doesn't exist in the DAO
-     * @throws IOFailure
-     *             If writing the job to persistent storage fails
-     * @throws PermissionDenied
-     *             If the job has been updated behind our backs
+     * @param job The Job to update
+     * @throws ArgumentNotValid If the Job is null
+     * @throws UnknownID If the Job doesn't exist in the DAO
+     * @throws IOFailure If writing the job to persistent storage fails
+     * @throws PermissionDenied If the job has been updated behind our backs
      */
     @Override
     public synchronized void update(Job job) {
@@ -373,13 +353,10 @@ public class JobDBDAO extends JobDAO {
     /**
      * Read a single job from the job database.
      *
-     * @param jobID
-     *            ID of the job.
+     * @param jobID ID of the job.
      * @return A Job object
-     * @throws UnknownID
-     *             if the job id does not exist.
-     * @throws IOFailure
-     *             if there was some problem talking to the database.
+     * @throws UnknownID if the job id does not exist.
+     * @throws IOFailure if there was some problem talking to the database.
      */
     @Override
     public Job read(Long jobID) {
@@ -395,15 +372,11 @@ public class JobDBDAO extends JobDAO {
     /**
      * Read a single job from the job database.
      *
-     * @param jobID
-     *            ID of the job.
-     * @param connection
-     *            an open connection to the harvestDatabase
+     * @param jobID ID of the job.
+     * @param connection an open connection to the harvestDatabase
      * @return A Job object
-     * @throws UnknownID
-     *             if the job id does not exist.
-     * @throws IOFailure
-     *             if there was some problem talking to the database.
+     * @throws UnknownID if the job id does not exist.
+     * @throws IOFailure if there was some problem talking to the database.
      */
     private synchronized Job read(Connection connection, Long jobID) {
         if (!exists(connection, jobID)) {
@@ -529,17 +502,13 @@ public class JobDBDAO extends JobDAO {
     }
 
     /**
-     * Try to extract an orderxmldoc from a given Clob. This method is used by
-     * the read() method, which catches the thrown DocumentException.
+     * Try to extract an orderxmldoc from a given Clob. This method is used by the read() method, which catches the
+     * thrown DocumentException.
      * 
-     * @param clob
-     *            a given Clob returned from the database
+     * @param clob a given Clob returned from the database
      * @return a Document object based on the data in the Clob
-     * @throws SQLException
-     *             If data from the clob cannot be fetched.
-     * @throws DocumentException
-     *             If unable to create a Document object based on the data in
-     *             the Clob
+     * @throws SQLException If data from the clob cannot be fetched.
+     * @throws DocumentException If unable to create a Document object based on the data in the Clob
      */
     private Document getOrderXMLdocFromClob(Clob clob) throws SQLException, DocumentException {
         Document doc;
@@ -556,8 +525,7 @@ public class JobDBDAO extends JobDAO {
     /**
      * Return a list of all jobs with the given status, ordered by id.
      *
-     * @param status
-     *            A given status.
+     * @param status A given status.
      * @return A list of all job with given status
      */
     @Override
@@ -581,12 +549,9 @@ public class JobDBDAO extends JobDAO {
     /**
      * Return a list of all job_id's representing jobs with the given status.
      *
-     * @param status
-     *            A given status.
+     * @param status A given status.
      * @return A list of all job_id's representing jobs with given status
-     * @throws ArgumentNotValid
-     *             If the given status is not one of the five valid statuses
-     *             specified in Job.
+     * @throws ArgumentNotValid If the given status is not one of the five valid statuses specified in Job.
      */
     @Override
     public Iterator<Long> getAllJobIds(JobStatus status) {
@@ -653,22 +618,15 @@ public class JobDBDAO extends JobDAO {
     }
 
     /**
-     * Get a list of small and immediately usable status information for given
-     * status and in given order. Is used by getStatusInfo functions in order to
-     * share code (and SQL) TODO should also include given harvest run
+     * Get a list of small and immediately usable status information for given status and in given order. Is used by
+     * getStatusInfo functions in order to share code (and SQL) TODO should also include given harvest run
      * 
-     * @param connection
-     *            an open connection to the harvestDatabase
-     * @param jobStatusCode
-     *            code for jobstatus, -1 if all
-     * @param asc
-     *            true if it is to be sorted in ascending order, false if it is
-     *            to be sorted in descending order
+     * @param connection an open connection to the harvestDatabase
+     * @param jobStatusCode code for jobstatus, -1 if all
+     * @param asc true if it is to be sorted in ascending order, false if it is to be sorted in descending order
      * @return List of JobStatusInfo objects for all jobs.
-     * @throws ArgumentNotValid
-     *             for invalid jobStatusCode
-     * @throws IOFailure
-     *             on trouble getting data from database
+     * @throws ArgumentNotValid for invalid jobStatusCode
+     * @throws IOFailure on trouble getting data from database
      */
     private List<JobStatusInfo> getStatusInfo(Connection connection, int jobStatusCode, boolean asc) {
         // Validate jobStatusCode
@@ -705,16 +663,12 @@ public class JobDBDAO extends JobDAO {
     }
 
     /**
-     * Get a list of small and immediately usable status information for given
-     * job status.
+     * Get a list of small and immediately usable status information for given job status.
      *
-     * @param status
-     *            The status asked for.
+     * @param status The status asked for.
      * @return List of JobStatusInfo objects for all jobs with given job status
-     * @throws ArgumentNotValid
-     *             for invalid jobStatus
-     * @throws IOFailure
-     *             on trouble getting data from database
+     * @throws ArgumentNotValid for invalid jobStatus
+     * @throws IOFailure on trouble getting data from database
      */
     @Override
     public List<JobStatusInfo> getStatusInfo(JobStatus status) {
@@ -728,13 +682,10 @@ public class JobDBDAO extends JobDAO {
     }
 
     /**
-     * Get a list of small and immediately usable status information for given
-     * job status and in given job id order.
+     * Get a list of small and immediately usable status information for given job status and in given job id order.
      *
-     * @param query
-     *            the user query
-     * @throws IOFailure
-     *             on trouble getting data from database
+     * @param query the user query
+     * @throws IOFailure on trouble getting data from database
      */
     @Override
     public HarvestStatus getStatusInfo(HarvestStatusQuery query) {
@@ -771,25 +722,19 @@ public class JobDBDAO extends JobDAO {
     /**
      * Calculate all jobIDs to use for duplication reduction.
      *
-     * More precisely, this method calculates the following: If the job ID
-     * corresponds to a partial harvest, all jobIDs from the previous scheduled
-     * harvest are returned, or the empty list if this harvest hasn't been
-     * scheduled before.
+     * More precisely, this method calculates the following: If the job ID corresponds to a partial harvest, all jobIDs
+     * from the previous scheduled harvest are returned, or the empty list if this harvest hasn't been scheduled before.
      *
-     * If the job ID corresponds to a full harvest, the entire chain of harvests
-     * this is based on is returned, and all jobIDs from the previous chain of
-     * full harvests is returned.
+     * If the job ID corresponds to a full harvest, the entire chain of harvests this is based on is returned, and all
+     * jobIDs from the previous chain of full harvests is returned.
      *
      * This method is synchronized to avoid DB locking.
      *
-     * @param jobID
-     *            The job ID to find duplicate reduction data for.
-     * @return A list of job IDs (possibly empty) of potential previous harvests
-     *         of this job, to use for duplicate reduction.
-     * @throws UnknownID
-     *             if job ID is unknown
-     * @throws IOFailure
-     *             on trouble querying database
+     * @param jobID The job ID to find duplicate reduction data for.
+     * @return A list of job IDs (possibly empty) of potential previous harvests of this job, to use for duplicate
+     *         reduction.
+     * @throws UnknownID if job ID is unknown
+     * @throws IOFailure on trouble querying database
      */
     public synchronized List<Long> getJobIDsForDuplicateReduction(long jobID) throws UnknownID {
 
@@ -817,13 +762,10 @@ public class JobDBDAO extends JobDAO {
     }
 
     /**
-     * Find the harvest definition ids from this chain of snapshot harvests and
-     * the previous chain of snapshot harvests.
+     * Find the harvest definition ids from this chain of snapshot harvests and the previous chain of snapshot harvests.
      * 
-     * @param connection
-     *            an open connection to the harvestDatabase
-     * @param jobID
-     *            The ID of the job
+     * @param connection an open connection to the harvestDatabase
+     * @param jobID The ID of the job
      * @return A (possibly empty) list of harvest definition ids
      */
     private List<Long> getPreviousFullHarvests(Connection connection, long jobID) {
@@ -955,14 +897,11 @@ public class JobDBDAO extends JobDAO {
     }
 
     /**
-     * Helper-method that constructs a list of JobStatusInfo objects from the
-     * given resultset.
+     * Helper-method that constructs a list of JobStatusInfo objects from the given resultset.
      * 
-     * @param res
-     *            a given resultset
+     * @param res a given resultset
      * @return a list of JobStatusInfo objects
-     * @throws SQLException
-     *             If any problem with accessing the data in the ResultSet
+     * @throws SQLException If any problem with accessing the data in the ResultSet
      */
     private List<JobStatusInfo> makeJobStatusInfoListFromResultset(ResultSet res) throws SQLException {
         List<JobStatusInfo> joblist = new ArrayList<JobStatusInfo>();
@@ -997,21 +936,17 @@ public class JobDBDAO extends JobDAO {
         }
 
         /**
-         * @param sqlString
-         *            the sqlString to set
+         * @param sqlString the sqlString to set
          */
         void setSqlString(String sqlString) {
             this.sqlString = sqlString;
         }
 
         /**
-         * Add the given class and given value to the list of paramClasses and
-         * paramValues respectively.
+         * Add the given class and given value to the list of paramClasses and paramValues respectively.
          * 
-         * @param clazz
-         *            a given class.
-         * @param value
-         *            a given value
+         * @param clazz a given class.
+         * @param value a given value
          */
         void addParameter(Class<?> clazz, Object value) {
             paramClasses.addLast(clazz);
@@ -1019,17 +954,13 @@ public class JobDBDAO extends JobDAO {
         }
 
         /**
-         * Prepare a statement for the database that uses the sqlString, and the
-         * paramClasses, and paramValues. Only Integer, Long, String, and Date
-         * values accepted.
+         * Prepare a statement for the database that uses the sqlString, and the paramClasses, and paramValues. Only
+         * Integer, Long, String, and Date values accepted.
          * 
-         * @param c
-         *            an Open connection to the harvestDatabase
+         * @param c an Open connection to the harvestDatabase
          * @return the prepared statement
-         * @throws SQLException
-         *             If unable to prepare the statement
-         * @throws UnknownID
-         *             If one of the parameter classes is unexpected
+         * @throws SQLException If unable to prepare the statement
+         * @throws UnknownID If one of the parameter classes is unexpected
          */
         PreparedStatement getPopulatedStatement(Connection c) throws SQLException {
             PreparedStatement stm = c.prepareStatement(sqlString);
@@ -1062,10 +993,8 @@ public class JobDBDAO extends JobDAO {
     /**
      * Builds a query to fetch jobs according to selection criteria.
      * 
-     * @param query
-     *            the selection criteria.
-     * @param count
-     *            build a count query instead of selecting columns.
+     * @param query the selection criteria.
+     * @param count build a count query instead of selecting columns.
      * @return the proper SQL query.
      */
     private HarvestStatusQueryBuilder buildSqlQuery(HarvestStatusQuery query, boolean count) {
@@ -1178,11 +1107,9 @@ public class JobDBDAO extends JobDAO {
     /**
      * Get Jobstatus for the job with the given id.
      * 
-     * @param jobID
-     *            A given Jobid
+     * @param jobID A given Jobid
      * @return the Jobstatus for the job with the given id.
-     * @throws UnknownID
-     *             if no job exists with id jobID
+     * @throws UnknownID if no job exists with id jobID
      */
     public JobStatus getJobStatus(Long jobID) {
         ArgumentNotValid.checkNotNull(jobID, "Long jobID");

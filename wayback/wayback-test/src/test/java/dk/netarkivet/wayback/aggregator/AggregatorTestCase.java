@@ -32,7 +32,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.wayback.TestInfo;
 import dk.netarkivet.wayback.WaybackSettings;
 
-@SuppressWarnings({ "unused" })
+@SuppressWarnings({"unused"})
 public class AggregatorTestCase {
     protected static final String testWorkingDirectory = "target" + File.separator + "test-data" + File.separator;
 
@@ -51,8 +51,7 @@ public class AggregatorTestCase {
     private final ReloadSettings originalSettings = new ReloadSettings();
 
     /**
-     * See
-     * http://kb-prod-udv-001.kb.dk/twiki/bin/view/Netarkiv/LoggingInUnittests
+     * See http://kb-prod-udv-001.kb.dk/twiki/bin/view/Netarkiv/LoggingInUnittests
      */
     private static final File TESTLOGPROP = new File("tests/dk/netarkivet/testlog.prop");
     private static final File LOGFILE = new File("tests/testlogs/netarkivtest.log");
@@ -83,12 +82,10 @@ public class AggregatorTestCase {
     }
 
     /**
-     * Moves index files from the source directory to the input directory, from
-     * which the index files are consumed by the aggregator.
+     * Moves index files from the source directory to the input directory, from which the index files are consumed by
+     * the aggregator.
      *
-     * @param indexFileNames
-     *            The array of file names from the
-     *            <code>testSourceIndexDir</code> to 'prepare'
+     * @param indexFileNames The array of file names from the <code>testSourceIndexDir</code> to 'prepare'
      * @return A array of files identifying the prepared input files
      */
     protected File[] prepareSourceIndex(String[] indexFileNames) {

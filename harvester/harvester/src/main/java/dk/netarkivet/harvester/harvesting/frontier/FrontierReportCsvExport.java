@@ -29,8 +29,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Utility class implementing the export of a frontier report object to a CSV
- * file.
+ * Utility class implementing the export of a frontier report object to a CSV file.
  */
 public class FrontierReportCsvExport {
 
@@ -82,13 +81,11 @@ public class FrontierReportCsvExport {
     };
 
     /**
-     * Outputs the report as CSV, using the given writer and the given field
-     * separator. Note that writer is not closed by this method.
+     * Outputs the report as CSV, using the given writer and the given field separator. Note that writer is not closed
+     * by this method.
      * 
-     * @param pw
-     *            the writer to output to
-     * @param separator
-     *            the field separator.
+     * @param pw the writer to output to
+     * @param separator the field separator.
      */
     public static void outputAsCsv(InMemoryFrontierReport report, PrintWriter pw, String separator) {
 

@@ -33,20 +33,17 @@ import dk.netarkivet.wayback.batch.copycode.NetarchiveSuiteAggressiveUrlCanonica
 /**
  * A factory for returning a UrlCanonicalizer.
  */
-@SuppressWarnings({ "deprecation" })
+@SuppressWarnings({"deprecation"})
 public class UrlCanonicalizerFactory extends SettingsFactory<UrlCanonicalizer> {
 
     /** Logger for this class. */
     private static final Logger logger = LoggerFactory.getLogger(UrlCanonicalizerFactory.class);
 
     /**
-     * This method returns an instance of the UrlCanonicalizer class specified
-     * in the settings.xml for the dk.netarkivet.wayback module. In the event
-     * that reading this file generates a SecurityException, as may occur in
-     * batch operation if security does not allow System properties to be read,
-     * the method will fall back on returning an instance of the class
-     * dk.netarkivet
-     * .wayback.batch.copycode.NetarchiveSuiteAggressiveUrlCanonicalizer
+     * This method returns an instance of the UrlCanonicalizer class specified in the settings.xml for the
+     * dk.netarkivet.wayback module. In the event that reading this file generates a SecurityException, as may occur in
+     * batch operation if security does not allow System properties to be read, the method will fall back on returning
+     * an instance of the class dk.netarkivet .wayback.batch.copycode.NetarchiveSuiteAggressiveUrlCanonicalizer
      * 
      * @return a canonicalizer for urls
      */

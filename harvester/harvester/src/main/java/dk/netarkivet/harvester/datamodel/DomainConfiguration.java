@@ -37,9 +37,8 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
 
 /**
- * This class describes a configuration for harvesting a domain. It combines a
- * number of seedlists, a number of passwords, an order template, and some
- * specialised settings to define the way to harvest a domain.
+ * This class describes a configuration for harvesting a domain. It combines a number of seedlists, a number of
+ * passwords, an order template, and some specialised settings to define the way to harvest a domain.
  *
  */
 public class DomainConfiguration implements Named {
@@ -54,8 +53,7 @@ public class DomainConfiguration implements Named {
      */
     private String orderXmlName = "";
     /**
-     * maximum number of objects harvested for this configuration in a snapshot
-     * harvest.
+     * maximum number of objects harvested for this configuration in a snapshot harvest.
      */
     private long maxObjects;
     /** The maximum request rate. */
@@ -83,8 +81,8 @@ public class DomainConfiguration implements Named {
     private List<String> crawlertraps;
 
     /**
-     * How many objects should be harvested in a harvest to trust that our
-     * expected size of objects is less than the default number.
+     * How many objects should be harvested in a harvest to trust that our expected size of objects is less than the
+     * default number.
      */
     private static final long MIN_OBJECTS_TO_TRUST_SMALL_EXPECTATION = 50L;
     /** The smallest number of bytes we accept per object. */
@@ -93,14 +91,10 @@ public class DomainConfiguration implements Named {
     /**
      * Create a new configuration for a domain.
      *
-     * @param theConfigName
-     *            The name of this configuration
-     * @param domain
-     *            The domain that this configuration is for
-     * @param seedlists
-     *            Seedlists to use in this configuration.
-     * @param passwords
-     *            Passwords to use in this configuration.
+     * @param theConfigName The name of this configuration
+     * @param domain The domain that this configuration is for
+     * @param seedlists Seedlists to use in this configuration.
+     * @param passwords Passwords to use in this configuration.
      */
     public DomainConfiguration(String theConfigName, Domain domain, List<SeedList> seedlists, List<Password> passwords) {
         // ArgumentNotValid.checkNotNull(domain, "Domain domain");
@@ -108,21 +102,14 @@ public class DomainConfiguration implements Named {
     }
 
     /**
-     * Alternate constructor. TODO Filter all history not relevant for this
-     * configuration
+     * Alternate constructor. TODO Filter all history not relevant for this configuration
      * 
-     * @param theConfigName
-     *            theConfigName The name of this configuration
-     * @param domainName
-     *            The name of the domain that this configuration is for
-     * @param history
-     *            The domainhistory belonging the given domain
-     * @param crawlertraps
-     *            The domainhistory belonging the given domain
-     * @param seedlists
-     *            Seedlists to use in this configuration
-     * @param passwords
-     *            Passwords to use in this configuration.
+     * @param theConfigName theConfigName The name of this configuration
+     * @param domainName The name of the domain that this configuration is for
+     * @param history The domainhistory belonging the given domain
+     * @param crawlertraps The domainhistory belonging the given domain
+     * @param seedlists Seedlists to use in this configuration
+     * @param passwords Passwords to use in this configuration.
      */
     public DomainConfiguration(String theConfigName, String domainName, DomainHistory history,
             List<String> crawlertraps, List<SeedList> seedlists, List<Password> passwords) {
@@ -148,10 +135,8 @@ public class DomainConfiguration implements Named {
     /**
      * Specify the name of the order.xml template to use.
      *
-     * @param ordername
-     *            order.xml template name
-     * @throws ArgumentNotValid
-     *             if filename null or empty
+     * @param ordername order.xml template name
+     * @throws ArgumentNotValid if filename null or empty
      */
     public void setOrderXmlName(String ordername) {
         ArgumentNotValid.checkNotNullOrEmpty(ordername, "ordername");
@@ -161,10 +146,8 @@ public class DomainConfiguration implements Named {
     /**
      * Specify the maximum number of objects to retrieve from the domain.
      *
-     * @param max
-     *            maximum number of objects to retrieve
-     * @throws ArgumentNotValid
-     *             if max<-1
+     * @param max maximum number of objects to retrieve
+     * @throws ArgumentNotValid if max<-1
      */
     public void setMaxObjects(long max) {
         if (max < -MIN_EXPECTATION) {
@@ -179,10 +162,8 @@ public class DomainConfiguration implements Named {
     /**
      * Specify the maximum request rate to use when harvesting data.
      *
-     * @param maxrate
-     *            the maximum request rate
-     * @throws ArgumentNotValid
-     *             if maxrate<0
+     * @param maxrate the maximum request rate
+     * @throws ArgumentNotValid if maxrate<0
      */
     public void setMaxRequestRate(int maxrate) {
         ArgumentNotValid.checkNotNegative(maxrate, "maxrate");
@@ -191,13 +172,10 @@ public class DomainConfiguration implements Named {
     }
 
     /**
-     * Specify the maximum number of bytes to download from a domain in a single
-     * harvest.
+     * Specify the maximum number of bytes to download from a domain in a single harvest.
      *
-     * @param maxBytes
-     *            Maximum number of bytes to download, or -1 for no limit.
-     * @throws ArgumentNotValid
-     *             if maxBytes < -1
+     * @param maxBytes Maximum number of bytes to download, or -1 for no limit.
+     * @throws ArgumentNotValid if maxBytes < -1
      */
     public void setMaxBytes(long maxBytes) {
         if (maxBytes < -MIN_EXPECTATION) {
@@ -229,8 +207,7 @@ public class DomainConfiguration implements Named {
     /**
      * Returns the name of the order xml file used by the domain.
      *
-     * @return name of the order.xml file that should be used when harvesting
-     *         the domain
+     * @return name of the order.xml file that should be used when harvesting the domain
      */
     public String getOrderXmlName() {
         return orderXmlName;
@@ -255,8 +232,7 @@ public class DomainConfiguration implements Named {
     }
 
     /**
-     * Returns the maximum number of bytes to download during a single harvest
-     * of a domain.
+     * Returns the maximum number of bytes to download during a single harvest of a domain.
      * 
      * @return Maximum bytes limit, or -1 for no limit.
      */
@@ -283,19 +259,13 @@ public class DomainConfiguration implements Named {
     }
 
     /**
-     * Add a new seedlist to the configuration. Must exist in the associated
-     * domain and the equal to that seedlist.
+     * Add a new seedlist to the configuration. Must exist in the associated domain and the equal to that seedlist.
      * 
-     * @param seedlist
-     *            the seedlist to add
-     * @param domain
-     *            The domain to check if the seedlist exists
-     * @throws ArgumentNotValid
-     *             if the seedlist is null
-     * @throws UnknownID
-     *             if the seedlist is not defined on the domain
-     * @throws PermissionDenied
-     *             if the seedlist is different from the one on the domain.
+     * @param seedlist the seedlist to add
+     * @param domain The domain to check if the seedlist exists
+     * @throws ArgumentNotValid if the seedlist is null
+     * @throws UnknownID if the seedlist is not defined on the domain
+     * @throws PermissionDenied if the seedlist is different from the one on the domain.
      */
     public void addSeedList(Domain domain, SeedList seedlist) {
         ArgumentNotValid.checkNotNull(seedlist, "seedlist");
@@ -321,10 +291,8 @@ public class DomainConfiguration implements Named {
     /**
      * Add password to the configuration.
      * 
-     * @param password
-     *            to add (must exist in the domain)
-     * @param domain
-     *            the domain where the password should come from.
+     * @param password to add (must exist in the domain)
+     * @param domain the domain where the password should come from.
      */
     public void addPassword(Domain domain, Password password) {
         ArgumentNotValid.checkNotNull(password, "password");
@@ -339,17 +307,13 @@ public class DomainConfiguration implements Named {
     }
 
     /**
-     * Gets the best expectation for how many objects a harvest using this
-     * configuration will retrieve, given a job with a maximum limit pr. domain
+     * Gets the best expectation for how many objects a harvest using this configuration will retrieve, given a job with
+     * a maximum limit pr. domain
      *
-     * @param objectLimit
-     *            The maximum limit, or Constants.HERITRIX_MAXOBJECTS_INFINITY
-     *            for no limit. This limit overrides the limit set on the
-     *            configuration, unless override is in effect.
-     * @param byteLimit
-     *            The maximum number of bytes that will be used as limit in the
-     *            harvest. This limit overrides the limit set on the
-     *            configuration, unless override is in effect.
+     * @param objectLimit The maximum limit, or Constants.HERITRIX_MAXOBJECTS_INFINITY for no limit. This limit
+     *            overrides the limit set on the configuration, unless override is in effect.
+     * @param byteLimit The maximum number of bytes that will be used as limit in the harvest. This limit overrides the
+     *            limit set on the configuration, unless override is in effect.
      * @return The expected number of objects.
      */
     public long getExpectedNumberOfObjects(long objectLimit, long byteLimit) {
@@ -410,18 +374,13 @@ public class DomainConfiguration implements Named {
     }
 
     /**
-     * Return the lowest limit for the two values, or MAX_DOMAIN_SIZE if both
-     * are infinite, which is the max size we harvest from this domain.
+     * Return the lowest limit for the two values, or MAX_DOMAIN_SIZE if both are infinite, which is the max size we
+     * harvest from this domain.
      *
-     * @param objectLimit
-     *            A long value defining an object limit, or 0 for infinite
-     * @param byteLimit
-     *            A long value defining a byte limit, or
-     *            HarvesterSettings.MAX_DOMAIN_SIZE for infinite.
-     * @param expectedObjectSize
-     *            The expected number of bytes per object
-     * @return The lowest of the two boundaries, or MAX_DOMAIN_SIZE if both are
-     *         unlimited.
+     * @param objectLimit A long value defining an object limit, or 0 for infinite
+     * @param byteLimit A long value defining a byte limit, or HarvesterSettings.MAX_DOMAIN_SIZE for infinite.
+     * @param expectedObjectSize The expected number of bytes per object
+     * @return The lowest of the two boundaries, or MAX_DOMAIN_SIZE if both are unlimited.
      *
      */
     public long minObjectsBytesLimit(long objectLimit, long byteLimit, long expectedObjectSize) {
@@ -442,20 +401,15 @@ public class DomainConfiguration implements Named {
     }
 
     /**
-     * How many bytes we can expect the average object of a domain to be. If we
-     * have harvested no objects from this domain before, we use a setting
-     * EXPECTED_AVERAGE_BYTES_PER_OBJECT. If we have objects, we use the
-     * harvestinfo from previous harvests to calculate the harvest, but we only
-     * accept a low estimate if the number of harvested objects is greater than
-     * the setting MIN_OBJECTS_TO_TRUST_SMALL_EXPECTATION.
+     * How many bytes we can expect the average object of a domain to be. If we have harvested no objects from this
+     * domain before, we use a setting EXPECTED_AVERAGE_BYTES_PER_OBJECT. If we have objects, we use the harvestinfo
+     * from previous harvests to calculate the harvest, but we only accept a low estimate if the number of harvested
+     * objects is greater than the setting MIN_OBJECTS_TO_TRUST_SMALL_EXPECTATION.
      *
-     * @param bestInfo
-     *            The best (newest complete or biggest, as per
-     *            getBestHarvestInfoExpectation()) harvest info we have for the
-     *            domain.
-     * @return How large we expect the average object to be. This number will be
-     *         >= MIN_EXPECTATION (unless nothing is harvested and is
-     *         EXPECTED_AVERAGE_BYTES_PER_OBJECT <= 0).
+     * @param bestInfo The best (newest complete or biggest, as per getBestHarvestInfoExpectation()) harvest info we
+     *            have for the domain.
+     * @return How large we expect the average object to be. This number will be >= MIN_EXPECTATION (unless nothing is
+     *         harvested and is EXPECTED_AVERAGE_BYTES_PER_OBJECT <= 0).
      */
     private long getExpectedBytesPerObject(HarvestInfo bestInfo) {
         long defaultExpectation = Settings.getLong(HarvesterSettings.EXPECTED_AVERAGE_BYTES_PER_OBJECT);
@@ -475,8 +429,7 @@ public class DomainConfiguration implements Named {
     /**
      * Set the comments field.
      *
-     * @param comments
-     *            User-entered free-form comments.
+     * @param comments User-entered free-form comments.
      */
     public void setComments(String comments) {
         ArgumentNotValid.checkNotNull(comments, "comments");
@@ -486,8 +439,7 @@ public class DomainConfiguration implements Named {
     /**
      * Remove a password from the list of passwords used in this domain.
      * 
-     * @param passwordName
-     *            Password to Remove.
+     * @param passwordName Password to Remove.
      */
     public void removePassword(String passwordName) {
         ArgumentNotValid.checkNotNullOrEmpty(passwordName, "passwordName");
@@ -505,8 +457,7 @@ public class DomainConfiguration implements Named {
     /**
      * Check whether this domain uses a given password.
      * 
-     * @param passwordName
-     *            The given password
+     * @param passwordName The given password
      * @return whether the given password is used
      */
     public boolean usesPassword(String passwordName) {
@@ -522,12 +473,9 @@ public class DomainConfiguration implements Named {
     /**
      * Sets the used seedlists to the given list. Note: list is copied.
      * 
-     * @param newSeedlists
-     *            The seedlists to use.
-     * @param domain
-     *            The domain where the seedlists should come from
-     * @throws ArgumentNotValid
-     *             if the seedslists are null
+     * @param newSeedlists The seedlists to use.
+     * @param domain The domain where the seedlists should come from
+     * @throws ArgumentNotValid if the seedslists are null
      */
     public void setSeedLists(Domain domain, List<SeedList> newSeedlists) {
         ArgumentNotValid.checkNotNull(newSeedlists, "newSeedlists");
@@ -540,12 +488,9 @@ public class DomainConfiguration implements Named {
     /**
      * Sets the used passwords to the given list. Note: list is copied.
      * 
-     * @param newPasswords
-     *            The passwords to use.
-     * @param domain
-     *            The domain where the passwords should come from
-     * @throws ArgumentNotValid
-     *             if the passwords are null
+     * @param newPasswords The passwords to use.
+     * @param domain The domain where the passwords should come from
+     * @throws ArgumentNotValid if the passwords are null
      */
     public void setPasswords(Domain domain, List<Password> newPasswords) {
         ArgumentNotValid.checkNotNull(newPasswords, "newPasswords");
@@ -567,16 +512,14 @@ public class DomainConfiguration implements Named {
     /**
      * Set the ID of this configuration. Only for use by DBDAO
      * 
-     * @param anId
-     *            use this id for this configuration
+     * @param anId use this id for this configuration
      */
     void setID(long anId) {
         this.id = anId;
     }
 
     /**
-     * Check if this configuration has an ID set yet (doesn't happen until the
-     * DBDAO persists it).
+     * Check if this configuration has an ID set yet (doesn't happen until the DBDAO persists it).
      * 
      * @return true, if the configuration has an ID
      */
@@ -596,8 +539,7 @@ public class DomainConfiguration implements Named {
     /**
      * Set the crawlerltraps for this configuration.
      * 
-     * @param someCrawlertraps
-     *            a list of crawlertraps
+     * @param someCrawlertraps a list of crawlertraps
      */
     public void setCrawlertraps(List<String> someCrawlertraps) {
         this.crawlertraps = someCrawlertraps;
@@ -620,9 +562,7 @@ public class DomainConfiguration implements Named {
     /**
      * Set the domainHistory for this configuration.
      * 
-     * @param newDomainhistory
-     *            the new domainHistory for this configuration( null is accepted
-     *            for no History)
+     * @param newDomainhistory the new domainHistory for this configuration( null is accepted for no History)
      */
     public void setDomainhistory(DomainHistory newDomainhistory) {
         this.domainhistory = newDomainhistory;

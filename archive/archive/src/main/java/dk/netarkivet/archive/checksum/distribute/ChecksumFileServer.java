@@ -45,8 +45,8 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
 
 /**
- * The server for the ChecksumFileApplication. Used for communication between
- * the ArcRepository and the checksum archive.
+ * The server for the ChecksumFileApplication. Used for communication between the ArcRepository and the checksum
+ * archive.
  */
 public class ChecksumFileServer extends ChecksumArchiveServer {
 
@@ -65,12 +65,11 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
     /**
      * Returns the unique instance of this class.
      * 
-     * The server creates an instance of the checksum it creates access to and
-     * starts to listen to a JMS messages on the incoming JMS queue.
+     * The server creates an instance of the checksum it creates access to and starts to listen to a JMS messages on the
+     * incoming JMS queue.
      * <p/>
      * 
-     * Should this do the heart beats to a monitor? This would be quite odd,
-     * since Checksum does not use a monitor.
+     * Should this do the heart beats to a monitor? This would be quite odd, since Checksum does not use a monitor.
      * 
      * @return This instance.
      */
@@ -164,14 +163,11 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
     }
 
     /**
-     * The method for uploading arc files. Note that cleanup of the upload file
-     * embedded in the message is delegated the method
-     * {@link ChecksumArchive#upload(RemoteFile, String)}
+     * The method for uploading arc files. Note that cleanup of the upload file embedded in the message is delegated the
+     * method {@link ChecksumArchive#upload(RemoteFile, String)}
      * 
-     * @param msg
-     *            The upload message, containing the file to upload.
-     * @throws ArgumentNotValid
-     *             If the UploadMessage is null.
+     * @param msg The upload message, containing the file to upload.
+     * @throws ArgumentNotValid If the UploadMessage is null.
      */
     public void visit(UploadMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "UploadMessage msg");
@@ -197,21 +193,16 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
     }
 
     /**
-     * Method for correcting an entry in the archive. It start by ensuring that
-     * the file exists, then it checks the credentials. Then it is checked
-     * whether the "bad entry" does have the "bad checksum". If no problems
-     * occurred, then the bad entry will be corrected by the archive (the bad
-     * entry is removed from the archive file and put into the "wrong entry"
-     * file. Then the new entry is placed in the archive file.
+     * Method for correcting an entry in the archive. It start by ensuring that the file exists, then it checks the
+     * credentials. Then it is checked whether the "bad entry" does have the "bad checksum". If no problems occurred,
+     * then the bad entry will be corrected by the archive (the bad entry is removed from the archive file and put into
+     * the "wrong entry" file. Then the new entry is placed in the archive file.
      * 
-     * If it fails in any of the above, then the method fails (throws an
-     * exception which is caught and use for replying NotOk to the message).
+     * If it fails in any of the above, then the method fails (throws an exception which is caught and use for replying
+     * NotOk to the message).
      * 
-     * @param msg
-     *            The message containing the correct instance of the file to
-     *            correct.
-     * @throws ArgumentNotValid
-     *             If the correct message is null.
+     * @param msg The message containing the correct instance of the file to correct.
+     * @throws ArgumentNotValid If the correct message is null.
      */
     public void visit(CorrectMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "CorrectMessage msg");
@@ -278,11 +269,8 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
     /**
      * Method for retrieving the checksum of a record.
      * 
-     * @param msg
-     *            The GetChecksumMessage which contains the name of the record
-     *            to have its checksum retrieved.
-     * @throws ArgumentNotValid
-     *             If the message is null.
+     * @param msg The GetChecksumMessage which contains the name of the record to have its checksum retrieved.
+     * @throws ArgumentNotValid If the message is null.
      */
     public void visit(GetChecksumMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "GetChecksumMessage msg");
@@ -319,10 +307,8 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
     /**
      * Method for retrieving all the filenames within the archive.
      * 
-     * @param msg
-     *            The GetAllFilenamesMessage.
-     * @throws ArgumentNotValid
-     *             If the GetAllFilenamesMessages is null.
+     * @param msg The GetAllFilenamesMessage.
+     * @throws ArgumentNotValid If the GetAllFilenamesMessages is null.
      */
     public void visit(GetAllFilenamesMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "GetAllFilenamesMessage msg");
@@ -342,13 +328,10 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
     }
 
     /**
-     * Method for retrieving a map containing all the checksums and their
-     * corresponding filenames within the archive.
+     * Method for retrieving a map containing all the checksums and their corresponding filenames within the archive.
      * 
-     * @param msg
-     *            The GetAllChecksumMessage.
-     * @throws ArgumentNotValid
-     *             If the GetAllChecksumMessage is null.
+     * @param msg The GetAllChecksumMessage.
+     * @throws ArgumentNotValid If the GetAllChecksumMessage is null.
      */
     public void visit(GetAllChecksumsMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "GetAllChecksumsMessage msg");

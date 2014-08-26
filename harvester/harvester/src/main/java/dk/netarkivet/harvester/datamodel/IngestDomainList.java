@@ -60,25 +60,20 @@ public class IngestDomainList {
     private DomainDAO dao;
 
     /**
-     * Constructor for the IngestDomainList class. It makes a connection to the
-     * Domains store.
+     * Constructor for the IngestDomainList class. It makes a connection to the Domains store.
      */
     public IngestDomainList() {
         dao = DomainDAO.getInstance();
     }
 
     /**
-     * Adds all new domains from a newline-separated file of domain names. The
-     * file is assumed to be in the UTF-8 format. For large files, a line is
-     * printed to the log, and to the out variable (if not set to null), every
+     * Adds all new domains from a newline-separated file of domain names. The file is assumed to be in the UTF-8
+     * format. For large files, a line is printed to the log, and to the out variable (if not set to null), every
      * PRINT_INTERVAL lines.
      * 
-     * @param domainList
-     *            the file containing the domain names.
-     * @param out
-     *            a stream to which output can be sent. May be null.
-     * @param theLocale
-     *            the given Locale
+     * @param domainList the file containing the domain names.
+     * @param out a stream to which output can be sent. May be null.
+     * @param theLocale the given Locale
      */
     public void updateDomainInfo(File domainList, JspWriter out, Locale theLocale) {
         ArgumentNotValid.checkNotNull(domainList, "File domainList");

@@ -25,8 +25,8 @@ package dk.netarkivet.harvester.harvesting.frontier;
 import dk.netarkivet.harvester.harvesting.frontier.FullFrontierReport.ReportIterator;
 
 /**
- * Filters a frontier report to include only lines that represent exhausted
- * queues. An Heritrix queue is exhausted when its current size is zero.
+ * Filters a frontier report to include only lines that represent exhausted queues. An Heritrix queue is exhausted when
+ * its current size is zero.
  */
 public class ExhaustedQueuesFilter extends MaxSizeFrontierReportExtract {
 

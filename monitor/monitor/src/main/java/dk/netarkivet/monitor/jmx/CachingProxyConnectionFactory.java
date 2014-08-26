@@ -34,8 +34,7 @@ public class CachingProxyConnectionFactory implements JMXProxyConnectionFactory 
     private final JMXProxyConnectionFactory wrappedFactory;
 
     /**
-     * Encapsulates the unit of information for checking the cache. That is, all
-     * information used as arguments for the
+     * Encapsulates the unit of information for checking the cache. That is, all information used as arguments for the
      * JMXProxyFactoryConnectionFactory.getConnection method.
      */
     static class CacheKey {
@@ -46,16 +45,11 @@ public class CachingProxyConnectionFactory implements JMXProxyConnectionFactory 
         /**
          * Constructor for this class.
          *
-         * @param server
-         *            The server name.
-         * @param port
-         *            The JMX port number.
-         * @param rmiPort
-         *            The RMI callback number.
-         * @param userName
-         *            The JMX user name.
-         * @param password
-         *            The JMX password.
+         * @param server The server name.
+         * @param port The JMX port number.
+         * @param rmiPort The RMI callback number.
+         * @param userName The JMX user name.
+         * @param password The JMX password.
          */
         public CacheKey(String server, int port, int rmiPort, String userName, String password) {
             this.server = server;
@@ -68,8 +62,7 @@ public class CachingProxyConnectionFactory implements JMXProxyConnectionFactory 
         /**
          * Equals method, that overrides the Object.equals method.
          *
-         * @param o
-         *            anObject
+         * @param o anObject
          *
          * @return true, if o is equal to this object; else false
          *
@@ -127,20 +120,17 @@ public class CachingProxyConnectionFactory implements JMXProxyConnectionFactory 
     /**
      * Registers the factory to wrap and initializes connection cache.
      *
-     * @param wrappedFactory
-     *            The factory to add caching to.
+     * @param wrappedFactory The factory to add caching to.
      */
     public CachingProxyConnectionFactory(JMXProxyConnectionFactory wrappedFactory) {
         this.wrappedFactory = wrappedFactory;
     }
 
     /**
-     * If (server,port,userName) has been seen before, looks up the cached
-     * connection associated with these values. Otherwise passes the request on
-     * the the wrapped factory, caching the result for future reuse.
+     * If (server,port,userName) has been seen before, looks up the cached connection associated with these values.
+     * Otherwise passes the request on the the wrapped factory, caching the result for future reuse.
      *
-     * @see JMXProxyConnectionFactory#getConnection(String, int, int, String,
-     *      String)
+     * @see JMXProxyConnectionFactory#getConnection(String, int, int, String, String)
      */
     public JMXProxyConnection getConnection(String server, int port, int rmiPort, String userName, String password) {
         ArgumentNotValid.checkNotNullOrEmpty(server, "server");

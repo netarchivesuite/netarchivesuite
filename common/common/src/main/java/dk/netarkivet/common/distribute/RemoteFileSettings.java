@@ -25,10 +25,9 @@ package dk.netarkivet.common.distribute;
 import java.io.Serializable;
 
 /**
- * Container for the RemoteFile settings used by one app, so they can be used by
- * another app.
+ * Container for the RemoteFile settings used by one app, so they can be used by another app.
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class RemoteFileSettings implements Serializable {
 
     /** server host name. */
@@ -46,14 +45,10 @@ public class RemoteFileSettings implements Serializable {
     /**
      * Constructor.
      * 
-     * @param serverName
-     *            The hostname of the server.
-     * @param serverPort
-     *            The port name of the server.
-     * @param userName
-     *            The username used for connecting.
-     * @param userPassword
-     *            The password used for connecting.
+     * @param serverName The hostname of the server.
+     * @param serverPort The port name of the server.
+     * @param userName The username used for connecting.
+     * @param userPassword The password used for connecting.
      */
     public RemoteFileSettings(String serverName, int serverPort, String userName, String userPassword) {
         this.serverName = serverName;

@@ -32,8 +32,7 @@ import java.util.regex.Matcher;
 import org.junit.Test;
 
 /**
- * Unit-tests for the Constants class. Only tests the static method
- * getIdMatcher.
+ * Unit-tests for the Constants class. Only tests the static method getIdMatcher.
  */
 public class ConstantsTester {
 

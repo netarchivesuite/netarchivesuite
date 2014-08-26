@@ -47,15 +47,13 @@ import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 import dk.netarkivet.harvester.harvesting.distribute.DomainStats;
 
 /**
- * This implementation of the harvest report has the same pre-processing as
- * {@link LegacyHarvestReport}, but is intended to be used with a crawl order
- * that sets budget using "queue-total-budget" instead of the QuotaEnforcer (@see
- * {@link HarvesterSettings#OBJECT_LIMIT_SET_BY_QUOTA_ENFORCER}). Hence
- * post-processing cannot rely any more on annotations added by QuotaEnforcer
- * anymore and thus simply compares actual document counts to crawl and
- * configuration budgets.
+ * This implementation of the harvest report has the same pre-processing as {@link LegacyHarvestReport}, but is intended
+ * to be used with a crawl order that sets budget using "queue-total-budget" instead of the QuotaEnforcer (@see
+ * {@link HarvesterSettings#OBJECT_LIMIT_SET_BY_QUOTA_ENFORCER}). Hence post-processing cannot rely any more on
+ * annotations added by QuotaEnforcer anymore and thus simply compares actual document counts to crawl and configuration
+ * budgets.
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class BnfHarvestReport extends AbstractHarvestReport {
 
     /** The logger for this class. */
@@ -64,21 +62,17 @@ public class BnfHarvestReport extends AbstractHarvestReport {
     /**
      * Constructor for this class.
      * 
-     * @param files
-     *            A HeritrixFiles object.
-     * @throws IOFailure
-     *             If the processing of the files goes wrong
+     * @param files A HeritrixFiles object.
+     * @throws IOFailure If the processing of the files goes wrong
      */
     public BnfHarvestReport(HeritrixFiles files) throws IOFailure {
         super(files);
     }
 
     /**
-     * Post-processing happens on the scheduler side when ARC files have been
-     * uploaded.
+     * Post-processing happens on the scheduler side when ARC files have been uploaded.
      * 
-     * @param job
-     *            the actual job.
+     * @param job the actual job.
      */
     @Override
     public void postProcess(Job job) {

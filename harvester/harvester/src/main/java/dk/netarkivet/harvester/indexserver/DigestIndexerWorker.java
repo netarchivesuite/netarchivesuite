@@ -33,8 +33,7 @@ import org.slf4j.LoggerFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
- * This worker class handles the indexing of one single crawl-log and associated
- * cdxfile.
+ * This worker class handles the indexing of one single crawl-log and associated cdxfile.
  */
 public class DigestIndexerWorker implements Callable<Boolean> {
 
@@ -59,18 +58,12 @@ public class DigestIndexerWorker implements Callable<Boolean> {
     /**
      * Constructor for the DigestIndexerWorker.
      * 
-     * @param indexpath
-     *            The full path to the index
-     * @param jobId
-     *            The ID of the job which logfiles are being indexed
-     * @param crawllogfile
-     *            The crawllog from the job
-     * @param cdxFile
-     *            The cdxfile from the job
-     * @param indexingOptions
-     *            The options for the indexing process.
-     * @param taskID
-     *            string defining this task
+     * @param indexpath The full path to the index
+     * @param jobId The ID of the job which logfiles are being indexed
+     * @param crawllogfile The crawllog from the job
+     * @param cdxFile The cdxfile from the job
+     * @param indexingOptions The options for the indexing process.
+     * @param taskID string defining this task
      */
     public DigestIndexerWorker(String indexpath, Long jobId, File crawllogfile, File cdxFile,
             DigestOptions indexingOptions, String taskID) {
@@ -90,8 +83,7 @@ public class DigestIndexerWorker implements Callable<Boolean> {
     /**
      * This method does the actual indexing.
      * 
-     * @return true, if the indexing completes successfully; otherwise it
-     *         returns false
+     * @return true, if the indexing completes successfully; otherwise it returns false
      */
     @Override
     public Boolean call() {

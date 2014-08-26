@@ -40,8 +40,8 @@ import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.Settings;
 
 /**
- * This class handles connections to the harvest definition database, and also
- * defines basic logic for checking versions of tables.
+ * This class handles connections to the harvest definition database, and also defines basic logic for checking versions
+ * of tables.
  *
  * The statements to create the tables are located in:
  * <ul>
@@ -50,12 +50,10 @@ import dk.netarkivet.common.utils.Settings;
  * <li><em>PostgreSQL:</em> scripts/postgresql/netarchivesuite_init.sql</li>
  * </ul>
  *
- * The implementation relies on a connection pool. Once acquired through the
- * get() method, a connection must be explicitly returned to the pool by calling
- * the release(Connection) method.
+ * The implementation relies on a connection pool. Once acquired through the get() method, a connection must be
+ * explicitly returned to the pool by calling the release(Connection) method.
  *
- * THis class is intended to be used statically, and hence cannot be
- * instantiated and is final.
+ * THis class is intended to be used statically, and hence cannot be instantiated and is final.
  */
 public final class HarvestDBConnection {
 
@@ -65,27 +63,24 @@ public final class HarvestDBConnection {
     private static ComboPooledDataSource dataSource = null;
 
     /**
-     * Makes sure that the class can't be instantiated, as it is designed to be
-     * used statically.
+     * Makes sure that the class can't be instantiated, as it is designed to be used statically.
      */
     private HarvestDBConnection() {
 
     }
 
     /**
-     * Get a connection to the harvest definition database from the pool. The
-     * pool is configured via the following configuration properties:
+     * Get a connection to the harvest definition database from the pool. The pool is configured via the following
+     * configuration properties:
      * <ul>
      * <li>@see {@link CommonSettings#DB_POOL_MIN_SIZE}</li>
      * <li>@see {@link CommonSettings#DB_POOL_MAX_SIZE}</li>
      * <li>@see {@link CommonSettings#DB_POOL_ACQ_INC}</li>
      * </ul>
-     * Note that the connection obtained must be returned to the pool by calling
-     * {@link #release(Connection)}.
+     * Note that the connection obtained must be returned to the pool by calling {@link #release(Connection)}.
      * 
      * @return a connection to the harvest definition database
-     * @throws IOFailure
-     *             if we cannot connect to the database (or find the driver).
+     * @throws IOFailure if we cannot connect to the database (or find the driver).
      */
     public static synchronized Connection get() {
         DBSpecifics dbSpec = DBSpecifics.getInstance();
@@ -114,19 +109,14 @@ public final class HarvestDBConnection {
     }
 
     /**
-     * Update a table by executing all the statements in the updates String
-     * array. If newVersion=1 then the table is created. Note that this method
-     * does not make any checks that the SQL statements in the updates parameter
-     * actually update or create the correct table.
+     * Update a table by executing all the statements in the updates String array. If newVersion=1 then the table is
+     * created. Note that this method does not make any checks that the SQL statements in the updates parameter actually
+     * update or create the correct table.
      *
-     * @param table
-     *            The table to update
-     * @param newVersion
-     *            The version that the table should end up at
-     * @param updates
-     *            The SQL update statements that makes the necessary updates.
-     * @throws IOFailure
-     *             in case of problems in interacting with the database
+     * @param table The table to update
+     * @param newVersion The version that the table should end up at
+     * @param updates The SQL update statements that makes the necessary updates.
+     * @throws IOFailure in case of problems in interacting with the database
      */
     protected static void updateTable(final String table, final int newVersion, final String... updates) {
 
@@ -156,9 +146,8 @@ public final class HarvestDBConnection {
     }
 
     /**
-     * Method for retrieving the url for the harvest definition database. This
-     * url will be constructed from the base-url, the machine, the port and the
-     * directory. If the database is internal, then only the base-url should
+     * Method for retrieving the url for the harvest definition database. This url will be constructed from the
+     * base-url, the machine, the port and the directory. If the database is internal, then only the base-url should
      * have a value.
      *
      * @return The url for the harvest definition database.
@@ -218,8 +207,7 @@ public final class HarvestDBConnection {
     /**
      * Helper method to return a connection to the pool.
      * 
-     * @param connection
-     *            a connection
+     * @param connection a connection
      */
     public static synchronized void release(Connection connection) {
         ArgumentNotValid.checkNotNull(connection, "connection");
@@ -233,10 +221,8 @@ public final class HarvestDBConnection {
     /**
      * Initializes the connection pool.
      * 
-     * @param dbSpec
-     *            the object representing the chosen DB target system.
-     * @param jdbcUrl
-     *            the JDBC URL to connect to.
+     * @param dbSpec the object representing the chosen DB target system.
+     * @param jdbcUrl the JDBC URL to connect to.
      * @throws SQLException
      */
     private static void initDataSource(DBSpecifics dbSpec, String jdbcUrl) throws SQLException {

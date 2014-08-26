@@ -34,10 +34,9 @@ import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
- * Message class used by the bit archive monitor to notify the ArcRepository of
- * a completed batch job.
+ * Message class used by the bit archive monitor to notify the ArcRepository of a completed batch job.
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class BatchReplyMessage extends ArchiveMessage {
     /** Number of files processed by the BatchJob. */
     private int noOfFilesProcessed;
@@ -47,29 +46,18 @@ public class BatchReplyMessage extends ArchiveMessage {
     private RemoteFile resultFile;
 
     /**
-     * Message to signal from BitarchiveMonitorServer that the batch job
-     * identified by originatingBatchMsgId is completed. Holds status
-     * information: list of files processed and a list of files on which the
-     * batch job failed
+     * Message to signal from BitarchiveMonitorServer that the batch job identified by originatingBatchMsgId is
+     * completed. Holds status information: list of files processed and a list of files on which the batch job failed
      *
-     * @param to
-     *            The queue to which this message is to be sent. This will
-     *            normally be the ARCREPOS queue
-     * @param replyTo
-     *            The queue that should receive replies.
-     * @param originatingBatchMsgId
-     *            The Id of the BathMessage which gave rise to this reply
-     * @param filesProcessed
-     *            The total number of file processed in this batch job
-     * @param failedFiles
-     *            A Collection of strings with the names of files on which this
-     *            batch job failed. May be null or empty for no errors.
-     * @param resultFile
-     *            The RemoteFile containing the output from the batch job, or
-     *            null if an error occurred that prevented the creation of the
-     *            file.
-     * @throws ArgumentNotValid
-     *             if the input parameters are not meaningful
+     * @param to The queue to which this message is to be sent. This will normally be the ARCREPOS queue
+     * @param replyTo The queue that should receive replies.
+     * @param originatingBatchMsgId The Id of the BathMessage which gave rise to this reply
+     * @param filesProcessed The total number of file processed in this batch job
+     * @param failedFiles A Collection of strings with the names of files on which this batch job failed. May be null or
+     *            empty for no errors.
+     * @param resultFile The RemoteFile containing the output from the batch job, or null if an error occurred that
+     *            prevented the creation of the file.
+     * @throws ArgumentNotValid if the input parameters are not meaningful
      */
     public BatchReplyMessage(ChannelID to, ChannelID replyTo, String originatingBatchMsgId, int filesProcessed,
             Collection<File> failedFiles, RemoteFile resultFile) throws ArgumentNotValid {
@@ -99,8 +87,7 @@ public class BatchReplyMessage extends ArchiveMessage {
     }
 
     /**
-     * Retrieves the collection of files, where this batchjob has failed. (may
-     * be null)
+     * Retrieves the collection of files, where this batchjob has failed. (may be null)
      *
      * @return The collection of failed files
      */
@@ -109,22 +96,19 @@ public class BatchReplyMessage extends ArchiveMessage {
     }
 
     /**
-     * Returns the RemoteFile that contains the output of this batchjob. May be
-     * null if the message is not ok.
+     * Returns the RemoteFile that contains the output of this batchjob. May be null if the message is not ok.
      *
-     * @return the RemoteFile mentioned above. May be null, if the message is
-     *         not ok.
+     * @return the RemoteFile mentioned above. May be null, if the message is not ok.
      */
     public RemoteFile getResultFile() {
         return resultFile;
     }
 
     /**
-     * Should be implemented as a part of the visitor pattern. fx.: public void
-     * accept(ArchiveMessageVisitor v) { v.visit(this); }
+     * Should be implemented as a part of the visitor pattern. fx.: public void accept(ArchiveMessageVisitor v) {
+     * v.visit(this); }
      *
-     * @param v
-     *            A message visitor
+     * @param v A message visitor
      */
     public void accept(ArchiveMessageVisitor v) {
         v.visit(this);

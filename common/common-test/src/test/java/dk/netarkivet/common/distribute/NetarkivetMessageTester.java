@@ -42,7 +42,7 @@ import dk.netarkivet.common.exceptions.PermissionDenied;
 /**
  * Tests the general class for distributed messages in Netarkivet.
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class NetarkivetMessageTester {
     private static final ChannelID toQ = Channels.getAnyBa();
     private static final ChannelID replyToQ = Channels.getError();
@@ -51,8 +51,7 @@ public class NetarkivetMessageTester {
     private static final String ERR_MSG = "<an error message for tests>";
 
     /**
-     * Verify that constructor returns normally when given non-null inputs with
-     * to and replyTo different.
+     * Verify that constructor returns normally when given non-null inputs with to and replyTo different.
      */
     @Test
     public void testConstructor() {
@@ -61,9 +60,8 @@ public class NetarkivetMessageTester {
     }
 
     /**
-     * Verify that constructor fails when "to" equals "replyTo" (this is
-     * disallowed in the current design because it is error-prone. Remove this
-     * unit test if the design changes on this point.
+     * Verify that constructor fails when "to" equals "replyTo" (this is disallowed in the current design because it is
+     * error-prone. Remove this unit test if the design changes on this point.
      */
     @Test
     public void testConstructorSameQueue() {
@@ -149,8 +147,7 @@ public class NetarkivetMessageTester {
     }
 
     /**
-     * Verify that getErrorMsg() returns the given error message, if one was
-     * given.
+     * Verify that getErrorMsg() returns the given error message, if one was given.
      */
     @Test
     public void testErrMsgText() {
@@ -193,8 +190,7 @@ public class NetarkivetMessageTester {
     }
 
     /**
-     * Verify that several calls to isNotOk() results in appended error
-     * messages.
+     * Verify that several calls to isNotOk() results in appended error messages.
      */
     @Test
     public void testMultipleErrMsgs() {
@@ -221,10 +217,8 @@ public class NetarkivetMessageTester {
     /**
      * Verify that the class is Serializable.
      *
-     * @throws IOException
-     *             If I/O fails.
-     * @throws ClassNotFoundException
-     *             If class loading fails.
+     * @throws IOException If I/O fails.
+     * @throws ClassNotFoundException If class loading fails.
      */
     @Test
     public void testSerializability() throws IOException, ClassNotFoundException {
@@ -248,11 +242,9 @@ public class NetarkivetMessageTester {
     }
 
     /**
-     * Returns the relevant state of a NetarkivetMessage instance, encoded as a
-     * String.
+     * Returns the relevant state of a NetarkivetMessage instance, encoded as a String.
      *
-     * @param m
-     *            The message that should be investigated.
+     * @param m The message that should be investigated.
      * @return Its relevant state, as a String.
      */
     private String relevantState(NetarkivetMessage m) {
@@ -261,8 +253,7 @@ public class NetarkivetMessageTester {
     }
 
     /**
-     * An extension of NetarkivetMessage that does not add functionality (except
-     * public constructor).
+     * An extension of NetarkivetMessage that does not add functionality (except public constructor).
      */
     private static class TestMessage extends NetarkivetMessage {
         public TestMessage(ChannelID to, ChannelID replyTo) {

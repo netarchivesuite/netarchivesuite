@@ -23,8 +23,7 @@
 package dk.netarkivet.archive.webinterface;
 
 /**
- * Enumerator for the different types of files the batchjob can be executed
- * upon.
+ * Enumerator for the different types of files the batchjob can be executed upon.
  */
 public enum BatchFileType {
     /** The metadata files. */

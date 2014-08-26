@@ -83,8 +83,8 @@ public class TimedScheduleTester {
     }
 
     /**
-     * Given a timed schedule that should run yearly and end just before the
-     * fourth event, test that we get the expected three events
+     * Given a timed schedule that should run yearly and end just before the fourth event, test that we get the expected
+     * three events
      * 
      * @throws Exception
      */
@@ -106,8 +106,8 @@ public class TimedScheduleTester {
     }
 
     /**
-     * Given a timed schedule that should run yearly at noon and end just before
-     * the fourth event, test that we get the expected three events
+     * Given a timed schedule that should run yearly at noon and end just before the fourth event, test that we get the
+     * expected three events
      * 
      * @throws Exception
      */

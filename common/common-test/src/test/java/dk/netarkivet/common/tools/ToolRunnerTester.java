@@ -35,10 +35,9 @@ import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 
 /**
- * Tests the ToolRunner using a mocked up tool, which can be induced to throw
- * exceptions through parameters.
+ * Tests the ToolRunner using a mocked up tool, which can be induced to throw exceptions through parameters.
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class ToolRunnerTester {
 
     private static SimpleCmdlineToolForTest sctfTest = new SimpleCmdlineToolForTest();

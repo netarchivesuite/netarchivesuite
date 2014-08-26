@@ -66,8 +66,8 @@ import dk.netarkivet.testutils.TestMessageListener;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
- * Test bitarchive client and server As a number of tests only succeed if both
- * the client and server both operate correctly, both are tested together.
+ * Test bitarchive client and server As a number of tests only succeed if both the client and server both operate
+ * correctly, both are tested together.
  */
 @Ignore("Needs to be run in deploy-test module according to junit 3 test suite.")
 public class IntegrityTests {
@@ -135,9 +135,8 @@ public class IntegrityTests {
         theFTPClient = new FTPClient();
 
         /*
-         * try { theFTPClient.setFileType(FTPClient.BINARY_FILE_TYPE); } catch
-         * (IOException e) { throw new IOFailure("Unable to set Transfer mode: "
-         * + e); }
+         * try { theFTPClient.setFileType(FTPClient.BINARY_FILE_TYPE); } catch (IOException e) { throw new
+         * IOFailure("Unable to set Transfer mode: " + e); }
          */
 
         try {
@@ -206,8 +205,8 @@ public class IntegrityTests {
     }
 
     /**
-     * Test that monitor can receive and aggregate data from more than one
-     * BitarchiveServer and aggregate the data and upload it via FTPRemoteFile.
+     * Test that monitor can receive and aggregate data from more than one BitarchiveServer and aggregate the data and
+     * upload it via FTPRemoteFile.
      */
     @Test
     @Ignore("FIXME")
@@ -457,8 +456,7 @@ public class IntegrityTests {
         }
 
         /**
-         * test, if original ARC file still exists, and has the same size as
-         * before
+         * test, if original ARC file still exists, and has the same size as before
          */
         assertEquals("Test-file has been modified!!", fileSize, testARCFile.length());
     }

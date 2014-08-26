@@ -155,8 +155,7 @@ public class DomainDAOTester extends DataModelTestCase {
     }
 
     /**
-     * Check that updating an entry that has already been modified results in an
-     * IOFailure.
+     * Check that updating an entry that has already been modified results in an IOFailure.
      * */
     @Test
     public void testOptimisticLocking() {
@@ -227,8 +226,7 @@ public class DomainDAOTester extends DataModelTestCase {
     }
 
     /**
-     * Test for bug #121: Trying to access a non-existing domain creates part of
-     * the domain structure.
+     * Test for bug #121: Trying to access a non-existing domain creates part of the domain structure.
      */
     @Test
     public void testAccessNonExisting() {
@@ -312,7 +310,7 @@ public class DomainDAOTester extends DataModelTestCase {
                 new HarvestInfo(Long.valueOf(3), domain0.getName(), "fuld_dybde", new Date(200000L), 20, 3,
                         StopReason.OBJECT_LIMIT),
                 new HarvestInfo(Long.valueOf(1), domain0.getName(), "fuld_dybde", new Date(100000L), 10, 4,
-                        StopReason.OBJECT_LIMIT) };
+                        StopReason.OBJECT_LIMIT)};
 
         // clear history
         DomainHistory domainHistory0 = domain0.getHistory();
@@ -341,8 +339,7 @@ public class DomainDAOTester extends DataModelTestCase {
     }
 
     /**
-     * Test that we get the right harvestinfo when asking based on an old
-     * harvestinfo.
+     * Test that we get the right harvestinfo when asking based on an old harvestinfo.
      * 
      * @throws Exception
      */
@@ -460,13 +457,13 @@ public class DomainDAOTester extends DataModelTestCase {
     public void testGetDomains() throws Exception {
         DomainDAO dao = DomainDAO.getInstance();
 
-        checkDomainGlob(dao, "*", new String[] { "dr.dk", "kb.dk", "netarkivet.dk", "statsbiblioteket.dk" });
+        checkDomainGlob(dao, "*", new String[] {"dr.dk", "kb.dk", "netarkivet.dk", "statsbiblioteket.dk"});
 
-        checkDomainGlob(dao, "*et.dk", new String[] { "netarkivet.dk", "statsbiblioteket.dk" });
+        checkDomainGlob(dao, "*et.dk", new String[] {"netarkivet.dk", "statsbiblioteket.dk"});
 
-        checkDomainGlob(dao, "*r*", new String[] { "dr.dk", "netarkivet.dk" });
+        checkDomainGlob(dao, "*r*", new String[] {"dr.dk", "netarkivet.dk"});
 
-        checkDomainGlob(dao, "??.dk", new String[] { "dr.dk", "kb.dk" });
+        checkDomainGlob(dao, "??.dk", new String[] {"dr.dk", "kb.dk"});
     }
 
     private void checkDomainGlob(DomainDAO dao, final String glob, final String[] domains) {
@@ -515,8 +512,7 @@ public class DomainDAOTester extends DataModelTestCase {
     }
 
     /**
-     * Test that we cannot store a domain that drops configs, seedlists or
-     * passwords that are in use.
+     * Test that we cannot store a domain that drops configs, seedlists or passwords that are in use.
      */
     @Test
     public void testDeleteSubparts() {
@@ -692,9 +688,8 @@ public class DomainDAOTester extends DataModelTestCase {
     }
 
     /**
-     * Test getting all domains from database, but in the order that domains are
-     * sorted by - Default configuration template - Default configuration max
-     * byte limit
+     * Test getting all domains from database, but in the order that domains are sorted by - Default configuration
+     * template - Default configuration max byte limit
      */
     @Test
     public void testGetAllDomainsInSnapshotHarvestOrder() {

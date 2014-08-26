@@ -41,13 +41,11 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.batch.WARCBatchFilter;
 
 /**
- * Abstract class defining a batch job to run on a set of WARC files. Each
- * implementation is required to define initialize() , processRecord() and
- * finish() methods. The bitarchive application then ensures that the batch job
- * run initialize(), runs processRecord() on each record in each file in the
- * archive, and then runs finish().
+ * Abstract class defining a batch job to run on a set of WARC files. Each implementation is required to define
+ * initialize() , processRecord() and finish() methods. The bitarchive application then ensures that the batch job run
+ * initialize(), runs processRecord() on each record in each file in the archive, and then runs finish().
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public abstract class WARCBatchJob extends FileBatchJob {
 
     private static final Logger log = LoggerFactory.getLogger(WARCBatchJob.class);
@@ -56,55 +54,44 @@ public abstract class WARCBatchJob extends FileBatchJob {
     protected int noOfRecordsProcessed = 0;
 
     /**
-     * Initialize the job before running. This is called before the
-     * processRecord() calls start coming.
+     * Initialize the job before running. This is called before the processRecord() calls start coming.
      * 
-     * @param os
-     *            The OutputStream to which output data is written
+     * @param os The OutputStream to which output data is written
      */
     public abstract void initialize(OutputStream os);
 
     /**
      * Exceptions should be handled with the handleException() method.
      * 
-     * @param os
-     *            The OutputStream to which output data is written
-     * @param record
-     *            the object to be processed.
+     * @param os The OutputStream to which output data is written
+     * @param record the object to be processed.
      */
     public abstract void processRecord(WARCRecord record, OutputStream os);
 
     /**
      * Finish up the job. This is called after the last processRecord() call.
      * 
-     * @param os
-     *            The OutputStream to which output data is written
+     * @param os The OutputStream to which output data is written
      */
     public abstract void finish(OutputStream os);
 
     /**
-     * returns a BatchFilter object which restricts the set of warc records in
-     * the archive on which this batch-job is performed. The default value is a
-     * neutral filter which allows all records.
+     * returns a BatchFilter object which restricts the set of warc records in the archive on which this batch-job is
+     * performed. The default value is a neutral filter which allows all records.
      *
-     * @return A filter telling which records should be given to
-     *         processRecord().
+     * @return A filter telling which records should be given to processRecord().
      */
     public WARCBatchFilter getFilter() {
         return WARCBatchFilter.NO_FILTER;
     }
 
     /**
-     * Accepts only WARC and WARCGZ files. Runs through all records and calls
-     * processRecord() on every record that is allowed by getFilter(). Does
-     * nothing on a non-arc file.
+     * Accepts only WARC and WARCGZ files. Runs through all records and calls processRecord() on every record that is
+     * allowed by getFilter(). Does nothing on a non-arc file.
      *
-     * @param warcFile
-     *            The WARC or WARCGZ file to be processed.
-     * @param os
-     *            the OutputStream to which output is to be written
-     * @throws ArgumentNotValid
-     *             if either argument is null
+     * @param warcFile The WARC or WARCGZ file to be processed.
+     * @param os the OutputStream to which output is to be written
+     * @throws ArgumentNotValid if either argument is null
      * @return true, if file processed successful, otherwise false
      */
     public final boolean processFile(File warcFile, OutputStream os) throws ArgumentNotValid {
@@ -198,31 +185,23 @@ public abstract class WARCBatchJob extends FileBatchJob {
     /**
      * Private method that handles our exception.
      * 
-     * @param e
-     *            the given exception
-     * @param warcFile
-     *            The WARC File where the exception occurred.
-     * @param index
-     *            The offset in the WARC File where the exception occurred.
+     * @param e the given exception
+     * @param warcFile The WARC File where the exception occurred.
+     * @param index The offset in the WARC File where the exception occurred.
      */
     private void handleOurException(NetarkivetException e, File warcFile, long index) {
         handleException(e, warcFile, index);
     }
 
     /**
-     * When the org.archive.io.arc classes throw IOExceptions while reading,
-     * this is where they go. Subclasses are welcome to override the default
-     * functionality which simply logs and records them in a list. TODO Actually
-     * use the warcfile/index entries in the exception list
+     * When the org.archive.io.arc classes throw IOExceptions while reading, this is where they go. Subclasses are
+     * welcome to override the default functionality which simply logs and records them in a list. TODO Actually use the
+     * warcfile/index entries in the exception list
      *
-     * @param e
-     *            An Exception thrown by the org.archive.io.arc classes.
-     * @param warcfile
-     *            The arcFile that was processed while the Exception was thrown
-     * @param index
-     *            The index (in the WARC file) at which the Exception was thrown
-     * @throws ArgumentNotValid
-     *             if e is null
+     * @param e An Exception thrown by the org.archive.io.arc classes.
+     * @param warcfile The arcFile that was processed while the Exception was thrown
+     * @param index The index (in the WARC file) at which the Exception was thrown
+     * @throws ArgumentNotValid if e is null
      */
     public void handleException(Exception e, File warcfile, long index) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(e, "e");
@@ -233,9 +212,8 @@ public abstract class WARCBatchJob extends FileBatchJob {
     }
 
     /**
-     * Returns a representation of the list of Exceptions recorded for this WARC
-     * batch job. If called by a subclass, a method overriding handleException()
-     * should always call super.handleException().
+     * Returns a representation of the list of Exceptions recorded for this WARC batch job. If called by a subclass, a
+     * method overriding handleException() should always call super.handleException().
      *
      * @return All Exceptions passed to handleException so far.
      */

@@ -38,12 +38,9 @@ public class StringAsserts {
     /**
      * Assert that one string contains another.
      * 
-     * @param msg
-     *            the error message to show in case of failure
-     * @param toFind
-     *            The string to find.
-     * @param toCheck
-     *            The string to look in
+     * @param msg the error message to show in case of failure
+     * @param toFind The string to find.
+     * @param toCheck The string to look in
      */
     public static void assertStringContains(String msg, String toFind, String toCheck) {
         if (!toCheck.contains(toFind)) {
@@ -54,12 +51,9 @@ public class StringAsserts {
     /**
      * Asserts that one string contains a set of substrings
      * 
-     * @param msg
-     *            the error message to show in case of failure
-     * @param toCheck
-     *            The string to look in
-     * @param contents
-     *            the strings to look for
+     * @param msg the error message to show in case of failure
+     * @param toCheck The string to look in
+     * @param contents the strings to look for
      */
     public static void assertStringContains(String msg, String toCheck, String... contents) {
         List<String> failures = new ArrayList<String>();
@@ -81,12 +75,9 @@ public class StringAsserts {
     /**
      * Assert that a string matches a regular expression.
      * 
-     * @param msg
-     *            the error message to show in case of failure
-     * @param toFind
-     *            The string to find
-     * @param toCheck
-     *            The string to look in
+     * @param msg the error message to show in case of failure
+     * @param toFind The string to find
+     * @param toCheck The string to look in
      */
     public static void assertStringMatches(String msg, String toFind, String toCheck) {
         if (!Pattern.compile(toFind, Pattern.MULTILINE | Pattern.DOTALL).matcher(toCheck).find()) {
@@ -97,12 +88,9 @@ public class StringAsserts {
     /**
      * Assert that one string doesn not contain another.
      * 
-     * @param msg
-     *            the error message to show in case of failure
-     * @param toFind
-     *            The string to find.
-     * @param toCheck
-     *            The string to look in
+     * @param msg the error message to show in case of failure
+     * @param toFind The string to find.
+     * @param toCheck The string to look in
      */
     public static void assertStringNotContains(String msg, String toFind, String toCheck) {
         if (toCheck.contains(toFind)) {

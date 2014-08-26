@@ -31,8 +31,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Unit-tests of the abstract URIObserver class. Uses a local class
- * TestURIObserver that extends URIObserver.
+ * Unit-tests of the abstract URIObserver class. Uses a local class TestURIObserver that extends URIObserver.
  */
 public class URIObserverTester {
     private TestURIObserver uriObserver;
@@ -43,8 +42,8 @@ public class URIObserverTester {
     }
 
     /**
-     * Tests that the Observer update method calls URIObservers notify if and
-     * only if update is called with a non-null Response object as argument.
+     * Tests that the Observer update method calls URIObservers notify if and only if update is called with a non-null
+     * Response object as argument.
      * 
      * @throws Exception
      */

@@ -67,11 +67,10 @@ public class FileListJobTester {
     }
 
     /**
-     * Tests serializability of this class, under the assumption that its
-     * toString() method is dependent on its entire relevant state.
+     * Tests serializability of this class, under the assumption that its toString() method is dependent on its entire
+     * relevant state.
      * 
-     * @throws Exception
-     *             On any error
+     * @throws Exception On any error
      */
     @Test
     public void testSerializable() throws Exception {

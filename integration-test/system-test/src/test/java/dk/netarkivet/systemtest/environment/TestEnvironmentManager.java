@@ -38,8 +38,7 @@ import com.jcraft.jsch.Session;
 import dk.netarkivet.systemtest.TestLogger;
 
 /**
- * Provides utilites for performing deployment related commands in the test
- * environment.
+ * Provides utilites for performing deployment related commands in the test environment.
  */
 public class TestEnvironmentManager {
     protected final TestLogger log = new TestLogger(getClass());
@@ -59,9 +58,7 @@ public class TestEnvironmentManager {
      * <li>TESTX = The supplied test name
      * </ul>
      * 
-     * @param testX
-     *            Defines the test name this test should be run under in the
-     *            test system.
+     * @param testX Defines the test name this test should be run under in the test system.
      */
     public TestEnvironmentManager(String testX, String host, int port) {
         TESTX = testX;
@@ -93,50 +90,40 @@ public class TestEnvironmentManager {
     }
 
     /**
-     * Runs the a command on the DEPLOYMENT_SERVER with a command timeout of
-     * 1000 seconds. Delegates to the ${link runCommand(String,int).
+     * Runs the a command on the DEPLOYMENT_SERVER with a command timeout of 1000 seconds. Delegates to the ${link
+     * runCommand(String,int).
      * 
-     * @param remoteCommand
-     *            The command to run on the test server
+     * @param remoteCommand The command to run on the test server
      */
     public void runCommand(String remoteCommand) throws Exception {
         runCommand(remoteCommand, 1000);
     }
 
     /**
-     * Runs the a command on the DEPLOYMENT_SERVER. Delegates to the ${link
-     * runCommand(String,String,String,int).
+     * Runs the a command on the DEPLOYMENT_SERVER. Delegates to the ${link runCommand(String,String,String,int).
      * 
-     * @param remoteCommand
-     *            The server to run the command on.
-     * @param remoteCommand
-     *            The command to run on the test server.
+     * @param remoteCommand The server to run the command on.
+     * @param remoteCommand The command to run on the test server.
      */
     public void runCommand(String server, String remoteCommand) throws Exception {
         runCommand(server, remoteCommand, 1000);
     }
 
     /**
-     * Runs the a command with a command timeout of 1000 seconds. Delegates to
-     * the ${link runCommand(String,String,int).
+     * Runs the a command with a command timeout of 1000 seconds. Delegates to the ${link runCommand(String,String,int).
      * 
-     * @param remoteCommand
-     *            The command to run on the test server.
-     * @param commandTimeout
-     *            The timeout for the command.
+     * @param remoteCommand The command to run on the test server.
+     * @param commandTimeout The timeout for the command.
      */
     public void runCommand(String remoteCommand, int commandTimeout) throws Exception {
         runCommand(null, remoteCommand, commandTimeout);
     }
 
     /**
-     * Run the command the in the TESTX dir. This is the normal way of
-     * separating diffrent test run in parallel.
+     * Run the command the in the TESTX dir. This is the normal way of separating diffrent test run in parallel.
      * 
-     * @param server
-     *            The server to run the command on.
-     * @param remoteCommand
-     *            The command to run on the remote server.
+     * @param server The server to run the command on.
+     * @param remoteCommand The command to run on the remote server.
      */
     public void runTestXCommand(String server, String remoteCommand) throws Exception {
         String testXRemoteCommand = "cd " + getTESTX() + ";" + remoteCommand;
@@ -144,21 +131,15 @@ public class TestEnvironmentManager {
     }
 
     /**
-     * Runs a remote command in the test environment via ssh. The system test
-     * environment variables: are set prior to running the command. Extends the
-     * {@link #runCommand(String)} with the possibility of overriding the
-     * default timeout of 1000 seconds. This may be useful in case of prolong
-     * operations.
+     * Runs a remote command in the test environment via ssh. The system test environment variables: are set prior to
+     * running the command. Extends the {@link #runCommand(String)} with the possibility of overriding the default
+     * timeout of 1000 seconds. This may be useful in case of prolong operations.
      * 
-     * @param server
-     *            The server to run the command on. If this is null the command
-     *            is run on the DEPLOYMENT_SERVER. Commands run other server the
-     *            will command will be executed by ssh to the DEPLOYMENT_SERVER
-     *            and from here ssh to the actual test server.
-     * @param command
-     *            The command to run on the test server.
-     * @param commandTimeout
-     *            The timeout for the command.
+     * @param server The server to run the command on. If this is null the command is run on the DEPLOYMENT_SERVER.
+     *            Commands run other server the will command will be executed by ssh to the DEPLOYMENT_SERVER and from
+     *            here ssh to the actual test server.
+     * @param command The command to run on the test server.
+     * @param commandTimeout The timeout for the command.
      */
     public void runCommand(String server, String command, int commandTimeout) throws Exception {
         if (server == null) {
@@ -177,17 +158,15 @@ public class TestEnvironmentManager {
     }
 
     /**
-     * @param quotes
-     *            the quotes ", ', none or other to use to box the command.
+     * @param quotes the quotes ", ', none or other to use to box the command.
      */
     public void runCommand(String server, String command, int commandTimeout, String quotes) throws Exception {
-        runCommand(server, command, commandTimeout, quotes, new int[] { 0 });
+        runCommand(server, command, commandTimeout, quotes, new int[] {0});
     }
 
     /**
-     * @param positiveExitCodes
-     *            The exit codes to consider the command a success. This will
-     *            normally be only 0, but in case of f.ex. 'diff' 1 is also ok.
+     * @param positiveExitCodes The exit codes to consider the command a success. This will normally be only 0, but in
+     *            case of f.ex. 'diff' 1 is also ok.
      */
     public void runCommand(String server, String command, int commandTimeout, String quotes, int[] positiveExitCodes)
             throws Exception {
@@ -314,9 +293,8 @@ public class TestEnvironmentManager {
     }
 
     /**
-     * The deployment script on the test server expects the 'TIMESTAMP' variable
-     * to be set to the value between the 'NetarchiveSuite-' and '.zip' part of
-     * the NetarchiveSuite zip file in the 'target/deploy' directory.
+     * The deployment script on the test server expects the 'TIMESTAMP' variable to be set to the value between the
+     * 'NetarchiveSuite-' and '.zip' part of the NetarchiveSuite zip file in the 'target/deploy' directory.
      * 
      * @return
      */
@@ -343,12 +321,10 @@ public class TestEnvironmentManager {
     }
 
     /**
-     * Setup public/private key authentication for JSch. The following
-     * attributes are used:
+     * Setup public/private key authentication for JSch. The following attributes are used:
      * <ul>
      * 
-     * @param jsch
-     *            The JSch instance to configure.
+     * @param jsch The JSch instance to configure.
      */
     private void setupJSchIdentity(JSch jsch) throws Exception {
         String userHome = System.getProperty("user.home");

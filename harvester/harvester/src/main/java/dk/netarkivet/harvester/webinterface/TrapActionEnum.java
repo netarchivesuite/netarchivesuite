@@ -28,16 +28,14 @@ import javax.servlet.jsp.PageContext;
 import dk.netarkivet.common.utils.I18n;
 
 /**
- * Represents the various actions which can be carried out to modify Global
- * Crawler Traps.
+ * Represents the various actions which can be carried out to modify Global Crawler Traps.
  *
  */
 
 public enum TrapActionEnum {
 
     /**
-     * Corresponds to uploading of a global crawler trap list, either as a new
-     * list or as an update to an existing list.
+     * Corresponds to uploading of a global crawler trap list, either as a new list or as an update to an existing list.
      */
     CREATE_OR_UPDATE {
         @Override
@@ -82,15 +80,13 @@ public enum TrapActionEnum {
         }
     },
     /**
-     * Do nothing. The existence of a null action is an architectural
-     * convenience.
+     * Do nothing. The existence of a null action is an architectural convenience.
      */
     NULL_ACTION {
         @Override
         public TrapAction getTrapAction() {
             /**
-             * The null action is sufficiently trivial that we can implement it
-             * inline rather than in a separate class.
+             * The null action is sufficiently trivial that we can implement it inline rather than in a separate class.
              */
             return new TrapAction() {
                 @Override

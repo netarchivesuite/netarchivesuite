@@ -35,12 +35,11 @@ import org.archive.util.SurtPrefixSet;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
- * Class that re-creates the SurtPrefixSet to include only domain names
- * according to the domain definition of NetarchiveSuite. The NetarchiveSuite
- * can't use the org.archive.crawler.deciderules.OnDomainsDecideRule because it
+ * Class that re-creates the SurtPrefixSet to include only domain names according to the domain definition of
+ * NetarchiveSuite. The NetarchiveSuite can't use the org.archive.crawler.deciderules.OnDomainsDecideRule because it
  * uses a different domain definition.
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class OnNSDomainsDecideRule extends SurtPrefixedDecideRule {
 
     /**
@@ -54,8 +53,7 @@ public class OnNSDomainsDecideRule extends SurtPrefixedDecideRule {
     /**
      * Constructor for the class OnNSDomainsDecideRule.
      * 
-     * @param s
-     *            The name of this DecideRule
+     * @param s The name of this DecideRule
      */
     public OnNSDomainsDecideRule(String s) {
         super(s);
@@ -67,8 +65,7 @@ public class OnNSDomainsDecideRule extends SurtPrefixedDecideRule {
     }
 
     /**
-     * We override the default readPrefixes, because we want to make our
-     * prefixes.
+     * We override the default readPrefixes, because we want to make our prefixes.
      */
     protected void readPrefixes() {
         buildSurtPrefixSet();
@@ -77,9 +74,8 @@ public class OnNSDomainsDecideRule extends SurtPrefixedDecideRule {
     }
 
     /**
-     * Method that rebuilds the SurtPrefixSet to include only topmost domains -
-     * according to the domain definition in NetarchiveSuite. This is only done
-     * once, during the startup phase?
+     * Method that rebuilds the SurtPrefixSet to include only topmost domains - according to the domain definition in
+     * NetarchiveSuite. This is only done once, during the startup phase?
      */
     protected void myBuildSurtPrefixSet() {
         // make copy of original SurtPrefixSet to loop
@@ -113,13 +109,10 @@ public class OnNSDomainsDecideRule extends SurtPrefixedDecideRule {
     }
 
     /**
-     * Generate the SURT prefix that matches the domain definition of
-     * NetarchiveSuite.
+     * Generate the SURT prefix that matches the domain definition of NetarchiveSuite.
      * 
-     * @param uri
-     *            URL to convert to SURT
-     * @return String with SURT that matches the domain definition of
-     *         NetarchiveSuite
+     * @param uri URL to convert to SURT
+     * @return String with SURT that matches the domain definition of NetarchiveSuite
      */
     protected String prefixFrom(String uri) {
         uri = ArchiveUtils.addImpliedHttpIfNecessary(uri);
@@ -129,9 +122,7 @@ public class OnNSDomainsDecideRule extends SurtPrefixedDecideRule {
     /**
      * Convert a URI to its domain.
      * 
-     * @param uri
-     *            URL to convert to Top most domain-name according to
-     *            NetarchiveSuite definition
+     * @param uri URL to convert to Top most domain-name according to NetarchiveSuite definition
      * @return Domain name
      */
     public static String convertToDomain(String uri) {

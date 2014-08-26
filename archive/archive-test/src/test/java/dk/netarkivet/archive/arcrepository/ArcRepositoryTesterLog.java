@@ -47,7 +47,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 /**
  * Unit test for webarchive API. The logging of webarchive operations is tested.
  */
-@SuppressWarnings({ "deprecation" })
+@SuppressWarnings({"deprecation"})
 public class ArcRepositoryTesterLog {
 
     protected final Logger log = LoggerFactory.getLogger(ArcRepositoryTesterLog.class);
@@ -59,16 +59,14 @@ public class ArcRepositoryTesterLog {
     private static final File TEST_DIR = new File("tests/dk/netarkivet/archive/arcrepository/data");
 
     /**
-     * The directory storing the arcfiles in the already existing bitarchive -
-     * including credentials and admin-files.
+     * The directory storing the arcfiles in the already existing bitarchive - including credentials and admin-files.
      */
     private static final File ORIGINALS_DIR = new File(new File(TEST_DIR, "logging"), "originals");
 
     /**
-     * List of files that can be used in the scripts (content of the
-     * ORIGINALS_DIR).
+     * List of files that can be used in the scripts (content of the ORIGINALS_DIR).
      */
-    private static final List<String> FILES = Arrays.asList(new String[] { "logging1.ARC", "logging2.ARC" });
+    private static final List<String> FILES = Arrays.asList(new String[] {"logging1.ARC", "logging2.ARC"});
 
     /**
      * A Controller object.

@@ -29,8 +29,8 @@ package dk.netarkivet.monitor.logging;
 public interface SingleLogRecord {
 
     /**
-     * Get the log record on a given index from the top as a string. This will
-     * be formatted by some formatter, depending on implementation.
+     * Get the log record on a given index from the top as a string. This will be formatted by some formatter, depending
+     * on implementation.
      *
      * @return A String representation of the LogRecord, or null for none.
      */

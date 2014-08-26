@@ -26,8 +26,7 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.datamodel.Job;
 
 /**
- * Implements another way of prefixing archive files in Netarchivesuite. I.e.
- * collectionName-jobid-harvestid
+ * Implements another way of prefixing archive files in Netarchivesuite. I.e. collectionName-jobid-harvestid
  */
 public class CollectionPrefixNamingConvention implements ArchiveFileNaming {
 
@@ -36,9 +35,8 @@ public class CollectionPrefixNamingConvention implements ArchiveFileNaming {
             + "CollectionPrefixNamingConventionSettings.xml";
 
     /*
-     * The static initialiser is called when the class is loaded. It will add
-     * default values for all settings defined in this class, by loading them
-     * from a settings.xml file in classpath.
+     * The static initialiser is called when the class is loaded. It will add default values for all settings defined in
+     * this class, by loading them from a settings.xml file in classpath.
      */
     static {
         Settings.addDefaultClasspathSettings(defaultSettingsClasspath);

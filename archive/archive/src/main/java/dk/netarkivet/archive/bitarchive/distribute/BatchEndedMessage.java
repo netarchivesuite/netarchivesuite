@@ -36,15 +36,13 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 /**
- * An instance of this class is sent by a bitarchive machine (Bitarchive class)
- * to a BitarchiveMonitorServer to indicate that that single machine has
- * finished processing a batch job.
+ * An instance of this class is sent by a bitarchive machine (Bitarchive class) to a BitarchiveMonitorServer to indicate
+ * that that single machine has finished processing a batch job.
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class BatchEndedMessage extends ArchiveMessage {
     /**
-     * The identifier for the bitarchive application, that performed the
-     * batch-job.
+     * The identifier for the bitarchive application, that performed the batch-job.
      */
     private String baApplicationId;
     /** The identifier for the message, that initiated the batch-job. */
@@ -59,27 +57,20 @@ public class BatchEndedMessage extends ArchiveMessage {
     private List<FileBatchJob.ExceptionOccurrence> exceptions;
 
     /**
-     * Message to signal from a BitarchiveServer to the BitarchiveMonitorServer
-     * that the Bit Archive Application identified by BA_ApplicationId has
-     * completed its part of the batch job.
+     * Message to signal from a BitarchiveServer to the BitarchiveMonitorServer that the Bit Archive Application
+     * identified by BA_ApplicationId has completed its part of the batch job.
      *
-     * Holds status information: list of files processed and a list of ARC files
-     * (file names) on which the batch job failed.
+     * Holds status information: list of files processed and a list of ARC files (file names) on which the batch job
+     * failed.
      *
-     * @param to
-     *            the channel to which this message is to be sent (must be a
-     *            BAMON channel)
-     * @param baAppId
-     *            Identifier for the machine sending this message, usually
-     *            containing the IP address and http port number
-     * @param originatingBatchMsgId
-     *            the Id field from the original batch message
-     * @param rf
-     *            he remote file reference containing the output of the batch
-     *            job (may be null if no output is generated).
-     * @throws ArgumentNotValid
-     *             If the BA_ApplicationId or the originatingBatchMsgId are null
-     *             or empty, or if the channel 'to' is null.
+     * @param to the channel to which this message is to be sent (must be a BAMON channel)
+     * @param baAppId Identifier for the machine sending this message, usually containing the IP address and http port
+     *            number
+     * @param originatingBatchMsgId the Id field from the original batch message
+     * @param rf he remote file reference containing the output of the batch job (may be null if no output is
+     *            generated).
+     * @throws ArgumentNotValid If the BA_ApplicationId or the originatingBatchMsgId are null or empty, or if the
+     *             channel 'to' is null.
      */
     public BatchEndedMessage(ChannelID to, String baAppId, String originatingBatchMsgId, RemoteFile rf)
             throws ArgumentNotValid {
@@ -94,20 +85,15 @@ public class BatchEndedMessage extends ArchiveMessage {
     }
 
     /**
-     * Message to signal from a BitarchiveServer to the BitarchiveMonitorServer
-     * that the Bit Archive Application identified by BA_ApplicationId has
-     * completed its part of the batch job.
+     * Message to signal from a BitarchiveServer to the BitarchiveMonitorServer that the Bit Archive Application
+     * identified by BA_ApplicationId has completed its part of the batch job.
      *
-     * Holds status information: list of files processed and a list of ARC files
-     * (file names) on which the batch job failed.
+     * Holds status information: list of files processed and a list of ARC files (file names) on which the batch job
+     * failed.
      *
-     * @param to
-     *            the channel to which this message is to be sent (must be a
-     *            BAMON channel)
-     * @param originatingBatchMsgId
-     *            the Id field from the original batch message
-     * @param status
-     *            The object containing status info.
+     * @param to the channel to which this message is to be sent (must be a BAMON channel)
+     * @param originatingBatchMsgId the Id field from the original batch message
+     * @param status The object containing status info.
      */
     public BatchEndedMessage(ChannelID to, String originatingBatchMsgId, BatchStatus status) {
         super(to, Channels.getError());
@@ -151,8 +137,7 @@ public class BatchEndedMessage extends ArchiveMessage {
     }
 
     /**
-     * Returns a collection of the names of files on which this batch job.
-     * failed
+     * Returns a collection of the names of files on which this batch job. failed
      * 
      * @return a Collection of strings with the file names
      */
@@ -163,8 +148,7 @@ public class BatchEndedMessage extends ArchiveMessage {
     /**
      * Set the number of files processed in batch job.
      * 
-     * @param number
-     *            The number of processed files
+     * @param number The number of processed files
      */
     public void setNoOfFilesProcessed(int number) {
         noOfFilesProcessed = number;
@@ -173,19 +157,17 @@ public class BatchEndedMessage extends ArchiveMessage {
     /**
      * Set the files that failed in batch job.
      * 
-     * @param files
-     *            The collection of files that failed
+     * @param files The collection of files that failed
      */
     public void setFilesFailed(Collection<File> files) {
         filesFailed = files;
     }
 
     /**
-     * Should be implemented as a part of the visitor pattern. fx.: public void
-     * accept(ArchiveMessageVisitor v) { v.visit(this); }
+     * Should be implemented as a part of the visitor pattern. fx.: public void accept(ArchiveMessageVisitor v) {
+     * v.visit(this); }
      *
-     * @param v
-     *            A message visitor
+     * @param v A message visitor
      */
     public void accept(ArchiveMessageVisitor v) {
         v.visit(this);
@@ -194,8 +176,7 @@ public class BatchEndedMessage extends ArchiveMessage {
     /**
      * Returns the remote file object containing the output of this job.
      * 
-     * @return the remote file object. May be null if this job generates no
-     *         output
+     * @return the remote file object. May be null if this job generates no output
      */
     public RemoteFile getRemoteFile() {
         return rf;

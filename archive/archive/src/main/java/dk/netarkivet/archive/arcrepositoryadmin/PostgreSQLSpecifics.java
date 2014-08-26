@@ -37,8 +37,7 @@ public class PostgreSQLSpecifics extends DBSpecifics {
     private static final Logger log = LoggerFactory.getLogger(PostgreSQLSpecifics.class);
 
     /**
-     * Factory method discoverable by reflection from
-     * SettingsFactory.getInstance().
+     * Factory method discoverable by reflection from SettingsFactory.getInstance().
      * 
      * @return a new instance of theis class.
      */

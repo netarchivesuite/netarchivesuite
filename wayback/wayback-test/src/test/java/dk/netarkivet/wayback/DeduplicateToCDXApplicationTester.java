@@ -73,7 +73,7 @@ public class DeduplicateToCDXApplicationTester {
     public void testGenerateCDX() throws IOException {
         File file1 = new File(TestInfo.WORKING_DIR, "dedup_crawl_log.txt");
         File file2 = new File(TestInfo.WORKING_DIR, "dedup_crawl_log2.txt");
-        String[] files = new String[] { file1.getAbsolutePath(), file2.getAbsolutePath() };
+        String[] files = new String[] {file1.getAbsolutePath(), file2.getAbsolutePath()};
         DeduplicateToCDXApplication app = new DeduplicateToCDXApplication();
         app.generateCDX(files);
         String output = ((ByteArrayOutputStream) new_std_out).toString();

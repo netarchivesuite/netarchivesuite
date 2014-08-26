@@ -32,8 +32,7 @@ import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.harvester.datamodel.HarvestChannel;
 
 /**
- * Tests the part of ChannelID class that relates to the harvesting module. The
- * rest of ChannelID is tested in
+ * Tests the part of ChannelID class that relates to the harvesting module. The rest of ChannelID is tested in
  * dk.netarkivet.common.distribute.ChannelIDTester
  */
 public class ChannelIDTester {
@@ -44,8 +43,8 @@ public class ChannelIDTester {
     public void testChannelIdentity() {
         ChannelID harvestJobChannel = HarvesterChannels.getHarvestJobChannelId(new HarvestChannel("FOCUSED", false,
                 true, ""));
-        ChannelID[] channelArray = { Channels.getAllBa(), harvestJobChannel, Channels.getAnyBa(), Channels.getError(),
-                Channels.getTheRepos(), Channels.getTheBamon(), Channels.getTheSched(), Channels.getThisReposClient() };
+        ChannelID[] channelArray = {Channels.getAllBa(), harvestJobChannel, Channels.getAnyBa(), Channels.getError(),
+                Channels.getTheRepos(), Channels.getTheBamon(), Channels.getTheSched(), Channels.getThisReposClient()};
         for (int i = 0; i < channelArray.length; i++) {
             for (int j = 0; j < channelArray.length; j++) {
                 if (i == j) {

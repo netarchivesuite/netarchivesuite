@@ -72,8 +72,7 @@ public class TemplateDBDAO extends TemplateDAO {
     /**
      * Read an XML order file for the named order XML.
      *
-     * @param orderXmlName
-     *            The name of the order.xml document
+     * @param orderXmlName The name of the order.xml document
      * @return The contents of this order.xml document
      */
     public synchronized HeritrixTemplate read(String orderXmlName) {
@@ -133,11 +132,9 @@ public class TemplateDBDAO extends TemplateDAO {
     /**
      * Return true if the database contains a template with the given name.
      *
-     * @param orderXmlName
-     *            Name of an order.xml template (without .xml).
+     * @param orderXmlName Name of an order.xml template (without .xml).
      * @return True if such a template exists.
-     * @throws ArgumentNotValid
-     *             If the orderXmlName is null or an empty String
+     * @throws ArgumentNotValid If the orderXmlName is null or an empty String
      */
     public synchronized boolean exists(String orderXmlName) {
         ArgumentNotValid.checkNotNullOrEmpty(orderXmlName, "String orderXmlName");
@@ -153,11 +150,9 @@ public class TemplateDBDAO extends TemplateDAO {
     /**
      * Return true if the database contains a template with the given name.
      *
-     * @param orderXmlName
-     *            Name of an order.xml template (without .xml).
+     * @param orderXmlName Name of an order.xml template (without .xml).
      * @return True if such a template exists.
-     * @throws ArgumentNotValid
-     *             If the orderXmlName is null or an empty String
+     * @throws ArgumentNotValid If the orderXmlName is null or an empty String
      */
     private synchronized boolean exists(Connection c, String orderXmlName) {
         int count = DBUtils.selectIntValue(c, "SELECT COUNT(*) FROM ordertemplates WHERE name = ?", orderXmlName);
@@ -167,13 +162,9 @@ public class TemplateDBDAO extends TemplateDAO {
     /**
      * Create a template. The template must not already exist.
      *
-     * @param orderXmlName
-     *            Name of the template.
-     * @param orderXml
-     *            XML documents that is a Heritrix order.xml template.
-     * @throws ArgumentNotValid
-     *             If the orderXmlName is null or an empty String, or the
-     *             orderXml is null.
+     * @param orderXmlName Name of the template.
+     * @param orderXml XML documents that is a Heritrix order.xml template.
+     * @throws ArgumentNotValid If the orderXmlName is null or an empty String, or the orderXml is null.
      */
     public synchronized void create(String orderXmlName, HeritrixTemplate orderXml) {
         ArgumentNotValid.checkNotNullOrEmpty(orderXmlName, "String orderXmlName");
@@ -201,17 +192,11 @@ public class TemplateDBDAO extends TemplateDAO {
     /**
      * Update a template. The template must already exist.
      *
-     * @param orderXmlName
-     *            Name of the template.
-     * @param orderXml
-     *            XML document that is a Heritrix order.xml template.
-     * @throws PermissionDenied
-     *             If the template does not exist
-     * @throws IOFailure
-     *             If the template could not be
-     * @throws ArgumentNotValid
-     *             If the orderXmlName is null or an empty String, or the
-     *             orderXml is null.
+     * @param orderXmlName Name of the template.
+     * @param orderXml XML document that is a Heritrix order.xml template.
+     * @throws PermissionDenied If the template does not exist
+     * @throws IOFailure If the template could not be
+     * @throws ArgumentNotValid If the orderXmlName is null or an empty String, or the orderXml is null.
      */
     public synchronized void update(String orderXmlName, HeritrixTemplate orderXml) {
         ArgumentNotValid.checkNotNullOrEmpty(orderXmlName, "String orderXmlName");

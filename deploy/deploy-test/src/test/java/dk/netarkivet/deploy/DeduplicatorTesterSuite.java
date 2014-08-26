@@ -31,8 +31,8 @@ import junit.textui.TestRunner;
 //import dk.netarkivet.harvester.indexserver.CDXOriginCrawlLogIteratorTester;
 
 /**
- * This class runs all tests of Deduplicator functionality. Must be run as part
- * of deduplicator upgrades. FIXME This doesn't test the Heritrix modules.
+ * This class runs all tests of Deduplicator functionality. Must be run as part of deduplicator upgrades. FIXME This
+ * doesn't test the Heritrix modules.
  *
  */
 
@@ -53,7 +53,7 @@ public class DeduplicatorTesterSuite {
     }
 
     public static void main(String args[]) {
-        String args2[] = { "-noloading", "dk.netarkivet.DeduplicatorTesterSuite" };
+        String args2[] = {"-noloading", "dk.netarkivet.DeduplicatorTesterSuite"};
         TestRunner.main(args2);
     }
 }

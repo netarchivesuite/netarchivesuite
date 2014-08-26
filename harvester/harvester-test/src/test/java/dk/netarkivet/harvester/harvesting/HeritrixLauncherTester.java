@@ -71,11 +71,10 @@ import dk.netarkivet.testutils.XmlAsserts;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
 /**
- * Tests various aspects of launching Heritrix and Heritrix' capabilities. Note
- * that some of these tests require much heap space, so JVM parameter -Xmx512M
- * may be required.
+ * Tests various aspects of launching Heritrix and Heritrix' capabilities. Note that some of these tests require much
+ * heap space, so JVM parameter -Xmx512M may be required.
  */
-@SuppressWarnings({ "deprecation", "unused", "unchecked" })
+@SuppressWarnings({"deprecation", "unused", "unchecked"})
 public class HeritrixLauncherTester {
 
     private MoveTestFiles mtf;
@@ -104,13 +103,11 @@ public class HeritrixLauncherTester {
     }
 
     /**
-     * Centralized place for tests to construct a HeritrixLauncher. - Constructs
-     * the given crawlDir. - Copies the given order.xml to the proper place in
-     * the given crawlDir. - Copies the standard seeds.txt to the proper place
-     * in the given crawlDir. - Constructs a HeritrixLauncher and returns it
+     * Centralized place for tests to construct a HeritrixLauncher. - Constructs the given crawlDir. - Copies the given
+     * order.xml to the proper place in the given crawlDir. - Copies the standard seeds.txt to the proper place in the
+     * given crawlDir. - Constructs a HeritrixLauncher and returns it
      * 
-     * @param origOrderXml
-     *            original order.xml
+     * @param origOrderXml original order.xml
      * @param indexDir
      * @return a HeritrixLauncher used by (most) tests.
      */
@@ -138,12 +135,10 @@ public class HeritrixLauncherTester {
     }
 
     /**
-     * Check that all urls in the given array are listed in the crawl log. Calls
-     * fail() at the first url that is not found or if the crawl log is not
-     * found.
+     * Check that all urls in the given array are listed in the crawl log. Calls fail() at the first url that is not
+     * found or if the crawl log is not found.
      *
-     * @param urls
-     *            An array of url strings
+     * @param urls An array of url strings
      * @throws IOException
      */
     protected void assertAllUrlsInCrawlLog(String[] urls) throws IOException {
@@ -160,11 +155,10 @@ public class HeritrixLauncherTester {
     }
 
     /**
-     * Check that no urls in the given array are listed in the crawl log. Calls
-     * fail() at the first url that is found or if the crawl log is not found.
+     * Check that no urls in the given array are listed in the crawl log. Calls fail() at the first url that is found or
+     * if the crawl log is not found.
      *
-     * @param urls
-     *            An array of url strings
+     * @param urls An array of url strings
      * @throws IOException
      */
     protected void assertNoUrlsInCrawlLog(String[] urls) throws IOException {
@@ -209,8 +203,7 @@ public class HeritrixLauncherTester {
     }
 
     /**
-     * Test that the launcher handles heritrix dying on a bad order file
-     * correctly.
+     * Test that the launcher handles heritrix dying on a bad order file correctly.
      */
     @Test
     public void testStartBadOrderFile() {
@@ -218,8 +211,7 @@ public class HeritrixLauncherTester {
     }
 
     /**
-     * Test that the launcher handles heritrix dying on a order file missing the
-     * disk node correctly.
+     * Test that the launcher handles heritrix dying on a order file missing the disk node correctly.
      */
     @Test
     public void testStartMissingDiskFieldOrderFile() {
@@ -227,8 +219,7 @@ public class HeritrixLauncherTester {
     }
 
     /**
-     * Test that the launcher handles heritrix dying on a order file missing the
-     * arcs-path node correctly.
+     * Test that the launcher handles heritrix dying on a order file missing the arcs-path node correctly.
      */
 
     @Test
@@ -238,8 +229,7 @@ public class HeritrixLauncherTester {
     }
 
     /**
-     * Test that the launcher handles heritrix dying on a order file missing the
-     * seedsfile node correctly.
+     * Test that the launcher handles heritrix dying on a order file missing the seedsfile node correctly.
      */
     @Test
     public void testStartMissingSeedsfileOrderFile() {
@@ -247,8 +237,7 @@ public class HeritrixLauncherTester {
     }
 
     /**
-     * Test that the launcher handles heritrix dying on a order file missing the
-     * seedsfile node correctly.
+     * Test that the launcher handles heritrix dying on a order file missing the seedsfile node correctly.
      */
     @Test
     @Ignore("was commented out")
@@ -293,8 +282,8 @@ public class HeritrixLauncherTester {
     }
 
     /**
-     * Test that starting a job does not throw an Exception. Will fail if
-     * tests/dk/netarkivet/jmxremote.password has other rights than -r------
+     * Test that starting a job does not throw an Exception. Will fail if tests/dk/netarkivet/jmxremote.password has
+     * other rights than -r------
      * 
      * FIXME Fails on Hudson
      * 
@@ -321,10 +310,9 @@ public class HeritrixLauncherTester {
     }
 
     /**
-     * Test that the HostnameQueueAssignmentPolicy returns correct queue-names
-     * for different URLs. The HostnameQueueAssignmentPolicy is the default in
-     * heritrix - our own DomainnameQueueAssignmentPolicy extends this one and
-     * expects that it returns the right values
+     * Test that the HostnameQueueAssignmentPolicy returns correct queue-names for different URLs. The
+     * HostnameQueueAssignmentPolicy is the default in heritrix - our own DomainnameQueueAssignmentPolicy extends this
+     * one and expects that it returns the right values
      */
     @Test
     public void testHostnameQueueAssignmentPolicy() {
@@ -333,8 +321,7 @@ public class HeritrixLauncherTester {
         CandidateURI cauri;
         try {
             /**
-             * First test tests that www.netarkivet.dk goes into a queue called:
-             * www.netarkivet.dk
+             * First test tests that www.netarkivet.dk goes into a queue called: www.netarkivet.dk
              */
             uri = UURIFactory.getInstance("http://www.netarkivet.dk/foo/bar.cgi");
             cauri = new CandidateURI(uri);
@@ -342,8 +329,7 @@ public class HeritrixLauncherTester {
                     "www.netarkivet.dk");
 
             /**
-             * Second test tests that foo.www.netarkivet.dk goes into a queue
-             * called: foo.www.netarkivet.dk
+             * Second test tests that foo.www.netarkivet.dk goes into a queue called: foo.www.netarkivet.dk
              */
             uri = UURIFactory.getInstance("http://foo.www.netarkivet.dk/foo/bar.cgi");
             cauri = new CandidateURI(uri);
@@ -351,8 +337,7 @@ public class HeritrixLauncherTester {
                     "foo.www.netarkivet.dk");
 
             /**
-             * Third test tests that a https-URL goes into a queuename called
-             * www.domainname#443 (default syntax)
+             * Third test tests that a https-URL goes into a queuename called www.domainname#443 (default syntax)
              */
             uri = UURIFactory.getInstance("https://www.netarkivet.dk/foo/bar.php");
             cauri = new CandidateURI(uri);
@@ -364,8 +349,7 @@ public class HeritrixLauncherTester {
     }
 
     /**
-     * Test that the DomainnameQueueAssignmentPolicy returns correct queue-names
-     * for different URL's
+     * Test that the DomainnameQueueAssignmentPolicy returns correct queue-names for different URL's
      */
     @Test
     public void testDomainnameQueueAssignmentPolicy() {
@@ -374,8 +358,7 @@ public class HeritrixLauncherTester {
         CandidateURI cauri;
         try {
             /**
-             * First test tests that www.netarkivet.dk goes into a queue called:
-             * netarkivet.dk
+             * First test tests that www.netarkivet.dk goes into a queue called: netarkivet.dk
              */
             uri = UURIFactory.getInstance("http://www.netarkivet.dk/foo/bar.cgi");
             cauri = new CandidateURI(uri);
@@ -383,8 +366,7 @@ public class HeritrixLauncherTester {
                     "netarkivet.dk");
 
             /**
-             * Second test tests that foo.www.netarkivet.dk goes into a queue
-             * called: netarkivet.dk
+             * Second test tests that foo.www.netarkivet.dk goes into a queue called: netarkivet.dk
              */
             uri = UURIFactory.getInstance("http://foo.www.netarkivet.dk/foo/bar.cgi");
             cauri = new CandidateURI(uri);
@@ -392,8 +374,7 @@ public class HeritrixLauncherTester {
                     dqap.getClassKey(new CrawlController(), cauri), "netarkivet.dk");
 
             /**
-             * Third test tests that a https-URL goes into a queuename called
-             * domainname (default syntax)
+             * Third test tests that a https-URL goes into a queuename called domainname (default syntax)
              */
             uri = UURIFactory.getInstance("https://www.netarkivet.dk/foo/bar.php");
             cauri = new CandidateURI(uri);
@@ -405,9 +386,8 @@ public class HeritrixLauncherTester {
     }
 
     /**
-     * Tests, that the Heritrix order files is setup correctly. FIXME: Changed
-     * from " testSetupOrderFile()" to FailingtestSetupOrderFile(), as it fails
-     * without dummyIndex
+     * Tests, that the Heritrix order files is setup correctly. FIXME: Changed from " testSetupOrderFile()" to
+     * FailingtestSetupOrderFile(), as it fails without dummyIndex
      *
      * @throws NoSuchFieldException
      * @throws IllegalAccessException
@@ -417,8 +397,7 @@ public class HeritrixLauncherTester {
     public void FailingtestSetupOrderFile() throws NoSuchFieldException, IllegalAccessException {
 
         /**
-         * Check the DeduplicationType.NO_DEDUPLICATION type of deduplication is
-         * setup correctly
+         * Check the DeduplicationType.NO_DEDUPLICATION type of deduplication is setup correctly
          */
 
         HeritrixLauncher hl = getHeritrixLauncher(TestInfo.ORDER_FILE_WITH_DEDUPLICATION_DISABLED, null);
@@ -430,8 +409,7 @@ public class HeritrixLauncherTester {
         assertFalse("Should not have deduplication enabled", HeritrixTemplate.isDeduplicationEnabledInTemplate(doc));
 
         /**
-         * Check the DeduplicationType.DEDUPLICATION_USING_THE_DEDUPLICATOR type
-         * of deduplication is setup correctly
+         * Check the DeduplicationType.DEDUPLICATION_USING_THE_DEDUPLICATOR type of deduplication is setup correctly
          */
 
         hl = getHeritrixLauncher(TestInfo.DEDUP_ORDER_FILE, dummyLuceneIndex);
@@ -447,8 +425,7 @@ public class HeritrixLauncherTester {
     }
 
     /**
-     * Tests that HeritricLauncher will fail on an error in
-     * HeritrixController.initialize().
+     * Tests that HeritricLauncher will fail on an error in HeritrixController.initialize().
      * 
      * FIXME Fails in Hudson
      */
@@ -470,8 +447,7 @@ public class HeritrixLauncherTester {
     }
 
     /**
-     * When the an exception is thrown in cleanup, any exceptions thrown in the
-     * initialiser are lost.
+     * When the an exception is thrown in cleanup, any exceptions thrown in the initialiser are lost.
      * 
      * * FIXME Fails in Hudson
      */
@@ -493,8 +469,8 @@ public class HeritrixLauncherTester {
     }
 
     /**
-     * A failure to communicate with heritrix during the crawl should be logged
-     * but not be in any way fatal to the crawl.
+     * A failure to communicate with heritrix during the crawl should be logged but not be in any way fatal to the
+     * crawl.
      * 
      * 
      * * FIXME Fails in Hudson
@@ -512,8 +488,7 @@ public class HeritrixLauncherTester {
     }
 
     /**
-     * A test heritrixController which starts and stops a crawl cleanly but
-     * fails during the crawl itself.
+     * A test heritrixController which starts and stops a crawl cleanly but fails during the crawl itself.
      */
     public static class FailDuringCrawlTestController extends FailingTestController {
 
@@ -643,16 +618,14 @@ public class HeritrixLauncherTester {
     }
 
     /**
-     * A class that closely emulates CrawlController, except it never starts
-     * Heritrix.
+     * A class that closely emulates CrawlController, except it never starts Heritrix.
      */
     public static class TestCrawlController extends DirectHeritrixController {
         private static final long serialVersionUID = 1L;
         /**
          * List of crawl status listeners.
          *
-         * All iterations need to synchronize on this object if they're to avoid
-         * concurrent modification exceptions. See
+         * All iterations need to synchronize on this object if they're to avoid concurrent modification exceptions. See
          * {@link java.util.Collections#synchronizedList(List)}.
          */
         private List<CrawlStatusListener> listeners = new ArrayList<CrawlStatusListener>();
@@ -664,8 +637,7 @@ public class HeritrixLauncherTester {
         /**
          * Register for CrawlStatus events.
          *
-         * @param cl
-         *            a class implementing the CrawlStatusListener interface
+         * @param cl a class implementing the CrawlStatusListener interface
          *
          * @see CrawlStatusListener
          */
@@ -690,8 +662,7 @@ public class HeritrixLauncherTester {
         }
 
         /**
-         * Starting from nothing, set up CrawlController and associated classes
-         * to be ready for a first crawl.
+         * Starting from nothing, set up CrawlController and associated classes to be ready for a first crawl.
          *
          * @param sH
          * @throws InitializationException

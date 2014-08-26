@@ -56,12 +56,10 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 
 /**
- * Wraps an Heritrix full frontier report. As these reports can be big in size,
- * this implementation relies on Berkeley DB direct persistence layer to store
- * the report lines, allowing to store the lines partially in memory, and on
- * disk.
+ * Wraps an Heritrix full frontier report. As these reports can be big in size, this implementation relies on Berkeley
+ * DB direct persistence layer to store the report lines, allowing to store the lines partially in memory, and on disk.
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class FullFrontierReport extends AbstractFrontierReport {
 
     @Persistent
@@ -144,8 +142,7 @@ public class FullFrontierReport extends AbstractFrontierReport {
         /**
          * Returns an iterator on the given sort key.
          * 
-         * @param cursor
-         *            The cursor (sort key) to iterate on.
+         * @param cursor The cursor (sort key) to iterate on.
          */
         ReportIterator(EntityCursor<PersistentLine> cursor) {
             this.cursor = cursor;
@@ -168,8 +165,7 @@ public class FullFrontierReport extends AbstractFrontierReport {
         }
 
         /**
-         * Close method should be called explicitely to free underlying
-         * resources!
+         * Close method should be called explicitely to free underlying resources!
          */
         public void close() {
             try {
@@ -224,8 +220,7 @@ public class FullFrontierReport extends AbstractFrontierReport {
     /**
      * Builds an empty frontier report wrapper.
      * 
-     * @param jobName
-     *            the Heritrix job name
+     * @param jobName the Heritrix job name
      */
     private FullFrontierReport(String jobName) {
         super(jobName);
@@ -263,8 +258,7 @@ public class FullFrontierReport extends AbstractFrontierReport {
     }
 
     /**
-     * Releases all resources once this report is to be discarded. NB this
-     * method MUST be explicitly called!
+     * Releases all resources once this report is to be discarded. NB this method MUST be explicitly called!
      */
     public void dispose() {
 
@@ -299,8 +293,8 @@ public class FullFrontierReport extends AbstractFrontierReport {
     }
 
     /**
-     * Returns an iterator where lines are ordered by primary key order: first
-     * by decreasing totalEnqueues, then by domain name natural order.
+     * Returns an iterator where lines are ordered by primary key order: first by decreasing totalEnqueues, then by
+     * domain name natural order.
      * 
      * @return an iterator on the report lines.
      */
@@ -380,13 +374,11 @@ public class FullFrontierReport extends AbstractFrontierReport {
     }
 
     /**
-     * Generates an Heritrix frontier report wrapper object by parsing the
-     * frontier report returned by the JMX controller as a string.
+     * Generates an Heritrix frontier report wrapper object by parsing the frontier report returned by the JMX
+     * controller as a string.
      * 
-     * @param jobName
-     *            the Heritrix job name
-     * @param contentsAsString
-     *            the text returned by the JMX call
+     * @param jobName the Heritrix job name
+     * @param contentsAsString the text returned by the JMX call
      * @return the report wrapper object
      */
     public static FullFrontierReport parseContentsAsString(String jobName, String contentsAsString) {

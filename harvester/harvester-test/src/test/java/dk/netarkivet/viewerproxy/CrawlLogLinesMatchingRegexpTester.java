@@ -43,8 +43,7 @@ import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.viewerproxy.webinterface.CrawlLogLinesMatchingRegexp;
 
 /**
- * Tester for the class CrawlLogLinesMatchingRegexp used in
- * Reporting.getCrawlLoglinesMatchingRegexp(jobid, regexp);
+ * Tester for the class CrawlLogLinesMatchingRegexp used in Reporting.getCrawlLoglinesMatchingRegexp(jobid, regexp);
  *
  */
 public class CrawlLogLinesMatchingRegexpTester {
@@ -78,7 +77,7 @@ public class CrawlLogLinesMatchingRegexpTester {
 
         File f1 = new File(TestInfo.WORKING_DIR, "1-metadata-1.warc");
         File f = new File(TestInfo.WORKING_DIR, "1-metadata-1.arc");
-        File[] files = new File[] { f1, f };
+        File[] files = new File[] {f1, f};
         BatchLocalFiles blf = new BatchLocalFiles(files);
         blf = new BatchLocalFiles(files);
         OutputStream os2 = new FileOutputStream("tmp1");

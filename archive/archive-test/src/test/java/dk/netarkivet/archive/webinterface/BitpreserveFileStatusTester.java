@@ -66,10 +66,9 @@ import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
- * Unittest for the class
- * dk.netarkivet.archive.webinterface.BitpreserveFileState.
+ * Unittest for the class dk.netarkivet.archive.webinterface.BitpreserveFileState.
  */
-@SuppressWarnings({ "deprecation" })
+@SuppressWarnings({"deprecation"})
 public class BitpreserveFileStatusTester {
     private static final String GET_INFO_METHOD = "getFilePreservationStatus";
     private static final String ADD_METHOD = "reestablishMissingFile";
@@ -138,15 +137,14 @@ public class BitpreserveFileStatusTester {
 
         // First test a working set of params
         Map<String, String[]> args = new HashMap<String, String[]>();
-        args.put(ADD_COMMAND, new String[] { Replica.getReplicaFromId(replicaID1).getName() + STRING_FILENAME_SEPARATOR
-                + filename1 });
-        request.setupAddParameter(ADD_COMMAND, new String[] { Replica.getReplicaFromId(replicaID1).getName()
-                + STRING_FILENAME_SEPARATOR + filename1 });
-        args.put(GET_INFO_COMMAND, new String[] { filename1 });
-        request.setupAddParameter(GET_INFO_COMMAND, new String[] { filename1 });
-        args.put(BITARCHIVE_NAME_PARAM, new String[] { Replica.getReplicaFromId(replicaID1).getName() });
-        request.setupAddParameter(BITARCHIVE_NAME_PARAM,
-                new String[] { Replica.getReplicaFromId(replicaID1).getName() });
+        args.put(ADD_COMMAND, new String[] {Replica.getReplicaFromId(replicaID1).getName() + STRING_FILENAME_SEPARATOR
+                + filename1});
+        request.setupAddParameter(ADD_COMMAND, new String[] {Replica.getReplicaFromId(replicaID1).getName()
+                + STRING_FILENAME_SEPARATOR + filename1});
+        args.put(GET_INFO_COMMAND, new String[] {filename1});
+        request.setupAddParameter(GET_INFO_COMMAND, new String[] {filename1});
+        args.put(BITARCHIVE_NAME_PARAM, new String[] {Replica.getReplicaFromId(replicaID1).getName()});
+        request.setupAddParameter(BITARCHIVE_NAME_PARAM, new String[] {Replica.getReplicaFromId(replicaID1).getName()});
         request.setupGetParameterMap(args);
         request.setupGetParameterNames(new Vector<String>(args.keySet()).elements());
         Map<String, PreservationState> status = BitpreserveFileState.processMissingRequest(
@@ -159,9 +157,8 @@ public class BitpreserveFileStatusTester {
         mockabp.calls.clear();
         request = new MockHttpServletRequest();
         args.clear();
-        args.put(BITARCHIVE_NAME_PARAM, new String[] { Replica.getReplicaFromId(replicaID1).getName() });
-        request.setupAddParameter(BITARCHIVE_NAME_PARAM,
-                new String[] { Replica.getReplicaFromId(replicaID1).getName() });
+        args.put(BITARCHIVE_NAME_PARAM, new String[] {Replica.getReplicaFromId(replicaID1).getName()});
+        request.setupAddParameter(BITARCHIVE_NAME_PARAM, new String[] {Replica.getReplicaFromId(replicaID1).getName()});
         request.setupGetParameterMap(args);
         status = BitpreserveFileState.processMissingRequest(
                 WebinterfaceTestCase.getDummyPageContext(defaultLocale, request), new StringBuilder());
@@ -174,17 +171,16 @@ public class BitpreserveFileStatusTester {
         mockabp.calls.clear();
         request = new MockHttpServletRequest();
         args.clear();
-        args.put(BITARCHIVE_NAME_PARAM, new String[] { Replica.getReplicaFromId(replicaID2).getName() });
-        request.setupAddParameter(BITARCHIVE_NAME_PARAM,
-                new String[] { Replica.getReplicaFromId(replicaID2).getName() });
+        args.put(BITARCHIVE_NAME_PARAM, new String[] {Replica.getReplicaFromId(replicaID2).getName()});
+        request.setupAddParameter(BITARCHIVE_NAME_PARAM, new String[] {Replica.getReplicaFromId(replicaID2).getName()});
         request.setupAddParameter(ADD_COMMAND, new String[] {
                 Replica.getReplicaFromId(replicaID2).getName() + STRING_FILENAME_SEPARATOR + filename1,
-                Replica.getReplicaFromId(replicaID2).getName() + STRING_FILENAME_SEPARATOR + filename1 });
+                Replica.getReplicaFromId(replicaID2).getName() + STRING_FILENAME_SEPARATOR + filename1});
         args.put(ADD_COMMAND, new String[] {
                 Replica.getReplicaFromId(replicaID2).getName() + STRING_FILENAME_SEPARATOR + filename1,
-                Replica.getReplicaFromId(replicaID2).getName() + STRING_FILENAME_SEPARATOR + filename1 });
-        request.setupAddParameter(GET_INFO_COMMAND, new String[] { filename1, filename2, filename1 });
-        args.put(GET_INFO_COMMAND, new String[] { filename1, filename2, filename1 });
+                Replica.getReplicaFromId(replicaID2).getName() + STRING_FILENAME_SEPARATOR + filename1});
+        request.setupAddParameter(GET_INFO_COMMAND, new String[] {filename1, filename2, filename1});
+        args.put(GET_INFO_COMMAND, new String[] {filename1, filename2, filename1});
         request.setupGetParameterMap(args);
         status = BitpreserveFileState.processMissingRequest(
                 WebinterfaceTestCase.getDummyPageContext(defaultLocale, request), new StringBuilder());
@@ -200,11 +196,11 @@ public class BitpreserveFileStatusTester {
         // }
 
         CollectionAsserts.assertIteratorEquals("Should have the args given add",
-                Arrays.asList(new String[] { filename1 + "," + replicaID2, filename1 + "," + replicaID2 }).iterator(),
+                Arrays.asList(new String[] {filename1 + "," + replicaID2, filename1 + "," + replicaID2}).iterator(),
                 mockabp.calls.get(ADD_METHOD).iterator());
 
         CollectionAsserts.assertIteratorEquals("Should have the args given info",
-                Arrays.asList(new String[] { filename1, filename2, filename1 }).iterator(),
+                Arrays.asList(new String[] {filename1, filename2, filename1}).iterator(),
                 mockabp.calls.get(GET_INFO_METHOD).iterator());
     }
 
@@ -225,10 +221,10 @@ public class BitpreserveFileStatusTester {
         // Setup to run find-missing-files
         request = new MockHttpServletRequest();
         request.setupAddParameter(dk.netarkivet.archive.webinterface.Constants.BITARCHIVE_NAME_PARAM,
-                new String[] { Replica.getReplicaFromId("ONE").getName() });
+                new String[] {Replica.getReplicaFromId("ONE").getName()});
 
         request.setupAddParameter(dk.netarkivet.archive.webinterface.Constants.UPDATE_TYPE_PARAM,
-                new String[] { dk.netarkivet.archive.webinterface.Constants.FIND_MISSING_FILES_OPTION });
+                new String[] {dk.netarkivet.archive.webinterface.Constants.FIND_MISSING_FILES_OPTION});
 
         BitpreserveFileState.processUpdateRequest(WebinterfaceTestCase.getDummyPageContext(l, request));
 
@@ -267,8 +263,8 @@ public class BitpreserveFileStatusTester {
 
         // Setup to neither run checksum nor find-missing-files.
         Map<String, String[]> parameters = new HashMap<String, String[]>();
-        parameters.put(dk.netarkivet.archive.webinterface.Constants.BITARCHIVE_NAME_PARAM, new String[] { Replica
-                .getReplicaFromId("ONE").getName() });
+        parameters.put(dk.netarkivet.archive.webinterface.Constants.BITARCHIVE_NAME_PARAM, new String[] {Replica
+                .getReplicaFromId("ONE").getName()});
         parameters.put(dk.netarkivet.archive.webinterface.Constants.FILENAME_PARAM, (String[]) null);
         parameters.put(dk.netarkivet.archive.webinterface.Constants.FIX_ADMIN_CHECKSUM_PARAM, (String[]) null);
         parameters.put(dk.netarkivet.archive.webinterface.Constants.CREDENTIALS_PARAM, (String[]) null);

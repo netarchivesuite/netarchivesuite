@@ -23,10 +23,8 @@
 package dk.netarkivet.harvester.webinterface;
 
 /**
- * Constants primarily used by class ExtendedFieldDefinition and the jsp pages
- * with extendedField functionality. That is:
- * HarvestDefinition/Definitions-edit-extendedfield.jsp
- * HarvestDefinition/Definitions-list-extendedfields.jsp
+ * Constants primarily used by class ExtendedFieldDefinition and the jsp pages with extendedField functionality. That
+ * is: HarvestDefinition/Definitions-edit-extendedfield.jsp HarvestDefinition/Definitions-list-extendedfields.jsp
  * HarvestDefinition/Definitions-edit-domain.jsp
  * 
  */

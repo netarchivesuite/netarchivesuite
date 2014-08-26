@@ -30,13 +30,12 @@ import dk.netarkivet.harvester.distribute.HarvesterMessageVisitor;
 import dk.netarkivet.harvester.scheduler.HarvesterStatusReceiver;
 
 /**
- * Message sent by the {@link HarvesterStatusReceiver} after processing a
- * {@link HarvesterRegistrationRequest} message. It notifies crawlers whether a
- * given harvest channel effectively matches a {@link HarvestChannel} defined in
- * the harvest database.
+ * Message sent by the {@link HarvesterStatusReceiver} after processing a {@link HarvesterRegistrationRequest} message.
+ * It notifies crawlers whether a given harvest channel effectively matches a {@link HarvestChannel} defined in the
+ * harvest database.
  *
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class HarvesterRegistrationResponse extends HarvesterMessage {
 
     /** The harvest channel name. */
@@ -46,21 +45,17 @@ public class HarvesterRegistrationResponse extends HarvesterMessage {
     private final boolean isValid;
 
     /**
-     * Whether the matching {@link HarvestChannel} handles snapshot or focused
-     * harvests. Meaningless if {@link #isValid} is false.
+     * Whether the matching {@link HarvestChannel} handles snapshot or focused harvests. Meaningless if {@link #isValid}
+     * is false.
      */
     private final boolean isSnapshot;
 
     /**
      * Constructor from fields.
      * 
-     * @param harvestChannelName
-     *            the harvest channel name
-     * @param isValid
-     *            whether the given name denotes an existing channel
-     * @param isSnapshot
-     *            true if the channel accepts snapshot harvest, false for
-     *            partial.
+     * @param harvestChannelName the harvest channel name
+     * @param isValid whether the given name denotes an existing channel
+     * @param isSnapshot true if the channel accepts snapshot harvest, false for partial.
      *
      */
     public HarvesterRegistrationResponse(final String harvestChannelName, final boolean isValid,

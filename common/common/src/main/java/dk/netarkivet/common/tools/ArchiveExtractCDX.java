@@ -34,8 +34,7 @@ import dk.netarkivet.common.utils.cdx.ArchiveExtractCDXJob;
 /**
  * Command line tool for extracting CDX information from given ARC/WARC files.
  *
- * Usage: java dk.netarkivet.common.tools.ExtractCDX file1.ext [file2.ext ...] >
- * myindex.cdx
+ * Usage: java dk.netarkivet.common.tools.ExtractCDX file1.ext [file2.ext ...] > myindex.cdx
  *
  * "ext" can be arc, arc.gz, warc or warc.gz
  *
@@ -44,11 +43,9 @@ import dk.netarkivet.common.utils.cdx.ArchiveExtractCDXJob;
 public class ArchiveExtractCDX {
 
     /**
-     * Main method. Extracts CDX from all given files and outputs the index on
-     * stdout.
+     * Main method. Extracts CDX from all given files and outputs the index on stdout.
      * 
-     * @param argv
-     *            A list of (absolute paths to) files to index.
+     * @param argv A list of (absolute paths to) files to index.
      */
     public static void main(String[] argv) {
         if (argv.length == 0) {
@@ -66,11 +63,9 @@ public class ArchiveExtractCDX {
     }
 
     /**
-     * Verifies that the filename (absolute path) points to an existing file and
-     * that it is an arc or warc file.
+     * Verifies that the filename (absolute path) points to an existing file and that it is an arc or warc file.
      * 
-     * @param filename
-     *            The filename to verify.
+     * @param filename The filename to verify.
      * @return The arc or warc file, as a File.
      */
     private static File toArcFile(String filename) {
@@ -90,8 +85,7 @@ public class ArchiveExtractCDX {
     /**
      * Prints out a message on stderr and exits with an error code.
      * 
-     * @param msg
-     *            The message to print.
+     * @param msg The message to print.
      */
     private static void dieWithError(String msg) {
         System.err.println(msg);
@@ -100,8 +94,7 @@ public class ArchiveExtractCDX {
     }
 
     /**
-     * Prints out proper usage of this tool on stderr and exits with an error
-     * code.
+     * Prints out proper usage of this tool on stderr and exits with an error code.
      */
     private static void dieWithUsage() {
         System.err

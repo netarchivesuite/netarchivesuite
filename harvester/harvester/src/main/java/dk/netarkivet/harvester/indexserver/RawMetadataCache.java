@@ -41,9 +41,8 @@ import dk.netarkivet.common.utils.archive.ArchiveBatchJob;
 import dk.netarkivet.harvester.HarvesterSettings;
 
 /**
- * This is an implementation of the RawDataCache specialized for data out of
- * metadata files. It uses regular expressions for matching URL and mime-type of
- * ARC entries for the kind of metadata we want.
+ * This is an implementation of the RawDataCache specialized for data out of metadata files. It uses regular expressions
+ * for matching URL and mime-type of ARC entries for the kind of metadata we want.
  *
  */
 public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCache {
@@ -56,8 +55,7 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
     /** The prefix (cache name) that this cache uses. */
     private final String prefix;
     /**
-     * The arc repository interface. This does not need to be closed, it is a
-     * singleton.
+     * The arc repository interface. This does not need to be closed, it is a singleton.
      */
     private ViewerArcRepositoryClient arcrep = ArcRepositoryClientFactory.getViewerInstance();
 
@@ -65,24 +63,15 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
     private final ArchiveBatchJob job;
 
     /**
-     * Create a new RawMetadataCache. For a given job ID, this will fetch and
-     * cache selected content from metadata files
-     * (&lt;ID&gt;-metadata-[0-9]+.arc). Any entry in a metadata file that
-     * matches both patterns will be returned. The returned data does not
-     * directly indicate which file they were from, though parts intrinsic to
-     * the particular format might.
+     * Create a new RawMetadataCache. For a given job ID, this will fetch and cache selected content from metadata files
+     * (&lt;ID&gt;-metadata-[0-9]+.arc). Any entry in a metadata file that matches both patterns will be returned. The
+     * returned data does not directly indicate which file they were from, though parts intrinsic to the particular
+     * format might.
      *
-     * @param prefix
-     *            A prefix that will be used to distinguish this cache's files
-     *            from other caches'. It will be used for creating a directory,
-     *            so it must not contain characters not legal in directory
-     *            names.
-     * @param urlMatcher
-     *            A pattern for matching URLs of the desired entries. If null, a
-     *            .* pattern will be used.
-     * @param mimeMatcher
-     *            A pattern for matching mime-types of the desired entries. If
-     *            null, a .* pattern will be used.
+     * @param prefix A prefix that will be used to distinguish this cache's files from other caches'. It will be used
+     *            for creating a directory, so it must not contain characters not legal in directory names.
+     * @param urlMatcher A pattern for matching URLs of the desired entries. If null, a .* pattern will be used.
+     * @param mimeMatcher A pattern for matching mime-types of the desired entries. If null, a .* pattern will be used.
      */
     public RawMetadataCache(String prefix, Pattern urlMatcher, Pattern mimeMatcher) {
         super(prefix);
@@ -108,8 +97,7 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
      * Get the file potentially containing (cached) data for a single job.
      *
      * @see FileBasedCache#getCacheFile(Object)
-     * @param id
-     *            The job to find data for.
+     * @param id The job to find data for.
      * @return The file where cache data for the job can be stored.
      */
     @Override
@@ -123,10 +111,8 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
      * Actually cache data for the given ID.
      *
      * @see FileBasedCache#cacheData(Object)
-     * @param id
-     *            A job ID to cache data for.
-     * @return A File containing the data. This file will be the same as
-     *         getCacheFile(ID);
+     * @param id A job ID to cache data for.
+     * @return A File containing the data. This file will be the same as getCacheFile(ID);
      */
     protected Long cacheData(Long id) {
         final String replicaUsed = Settings.get(CommonSettings.USE_REPLICA_ID);

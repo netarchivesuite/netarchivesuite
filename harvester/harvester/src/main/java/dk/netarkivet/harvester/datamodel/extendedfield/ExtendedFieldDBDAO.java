@@ -115,12 +115,10 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
     }
 
     /**
-     * Generates the next id of a extended field. this implementation retrieves
-     * the maximum value of extendedfield_id in the DB, and returns this value +
-     * 1.
+     * Generates the next id of a extended field. this implementation retrieves the maximum value of extendedfield_id in
+     * the DB, and returns this value + 1.
      * 
-     * @param c
-     *            an open connection to the HarvestDatabase
+     * @param c an open connection to the HarvestDatabase
      * 
      * @return The next available ID
      */
@@ -137,8 +135,7 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
     /**
      * Check whether a particular extended Field exists.
      * 
-     * @param aExtendedfieldId
-     *            Id of the extended field.
+     * @param aExtendedfieldId Id of the extended field.
      * @return true if the extended field exists.
      */
     public boolean exists(Long aExtendedfieldId) {
@@ -155,10 +152,8 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
     /**
      * Check, if there exists an ExtendedField with a given ID.
      * 
-     * @param c
-     *            An open connection to the HarvestDatabase
-     * @param aExtendedfieldId
-     *            An Id for a given Extended Field.
+     * @param c An open connection to the HarvestDatabase
+     * @param aExtendedfieldId An Id for a given Extended Field.
      * @return true, if the extended field with the Id exists; otherwise false
      */
     private synchronized boolean exists(Connection c, Long aExtendedfieldId) {
@@ -233,10 +228,8 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
     /**
      * Read an ExtendedField from database.
      * 
-     * @param connection
-     *            A connection to the harvestDatabase
-     * @param aExtendedfieldId
-     *            The ID for a given ExtendedField
+     * @param connection A connection to the harvestDatabase
+     * @param aExtendedfieldId The ID for a given ExtendedField
      * @return An ExtendedField object for the given ID.
      */
     private synchronized ExtendedField read(Connection connection, Long aExtendedfieldId) {

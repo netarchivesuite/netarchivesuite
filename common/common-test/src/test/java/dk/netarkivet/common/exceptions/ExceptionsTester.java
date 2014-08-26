@@ -283,8 +283,7 @@ public class ExceptionsTester {
     }
 
     /**
-     * test {@link BatchTermination} constructors. Note that null arguments are
-     * currently allowed!
+     * test {@link BatchTermination} constructors. Note that null arguments are currently allowed!
      */
     @Test
     public void testBatchTermination() {
@@ -315,8 +314,7 @@ public class ExceptionsTester {
     }
 
     /**
-     * test {@link HarvestingAbort} constructors. Note that null arguments are
-     * currently allowed!
+     * test {@link HarvestingAbort} constructors. Note that null arguments are currently allowed!
      */
     @Test
     public void testHarvestingAbort() {

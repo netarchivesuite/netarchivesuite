@@ -37,8 +37,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 
 /**
- * Class representing one or more global crawler traps, modelled as a list of
- * regular expressions.
+ * Class representing one or more global crawler traps, modelled as a list of regular expressions.
  *
  */
 public class GlobalCrawlerTrapList {
@@ -47,10 +46,9 @@ public class GlobalCrawlerTrapList {
     private int id;
 
     /**
-     * The list of traps. Each item is a regular expression matching url's to be
-     * avoided. In the database, (id, trap) is a primary key for the table
-     * global_crawler_trap_expressions so we model the traps as a Set to avoid
-     * possible duplicates.
+     * The list of traps. Each item is a regular expression matching url's to be avoided. In the database, (id, trap) is
+     * a primary key for the table global_crawler_trap_expressions so we model the traps as a Set to avoid possible
+     * duplicates.
      */
     private Set<String> traps;
 
@@ -66,18 +64,12 @@ public class GlobalCrawlerTrapList {
     /**
      * Protected constructor used by the DAO to create instances of this class.
      *
-     * @param id
-     *            the id of this list.
-     * @param name
-     *            a name by which this list is known.
-     * @param traps
-     *            the set of trap expressions.
-     * @param description
-     *            A textual description of this list (may be null).
-     * @param isActive
-     *            flag indicating whether this list is isActive.
-     * @throws ArgumentNotValid
-     *             if the name is empty or null.
+     * @param id the id of this list.
+     * @param name a name by which this list is known.
+     * @param traps the set of trap expressions.
+     * @param description A textual description of this list (may be null).
+     * @param isActive flag indicating whether this list is isActive.
+     * @throws ArgumentNotValid if the name is empty or null.
      */
     protected GlobalCrawlerTrapList(int id, List<String> traps, String name, String description, boolean isActive)
             throws ArgumentNotValid {
@@ -92,22 +84,14 @@ public class GlobalCrawlerTrapList {
     }
 
     /**
-     * Construct a new GlobalCrawlerTrapList from an input stream consisting of
-     * newline-separated regular expressions.
+     * Construct a new GlobalCrawlerTrapList from an input stream consisting of newline-separated regular expressions.
      * 
-     * @param is
-     *            an input stream from which the list of trap expressions can be
-     *            read.
-     * @param name
-     *            a name by which this list is known.
-     * @param description
-     *            A textual description of this list.
-     * @param isActive
-     *            flag indicating whether this list is isActive.
-     * @throws IOFailure
-     *             if the input stream cannot be found or read.
-     * @throws ArgumentNotValid
-     *             if the input stream is null or the name is null or empty.
+     * @param is an input stream from which the list of trap expressions can be read.
+     * @param name a name by which this list is known.
+     * @param description A textual description of this list.
+     * @param isActive flag indicating whether this list is isActive.
+     * @throws IOFailure if the input stream cannot be found or read.
+     * @throws ArgumentNotValid if the input stream is null or the name is null or empty.
      */
     public GlobalCrawlerTrapList(InputStream is, String name, String description, boolean isActive) throws IOFailure,
             ArgumentNotValid {
@@ -125,16 +109,12 @@ public class GlobalCrawlerTrapList {
     }
 
     /**
-     * A utility method to read the list of traps from an InputStream,
-     * line-by-line.
+     * A utility method to read the list of traps from an InputStream, line-by-line.
      * 
-     * @param is
-     *            The input stream from which to read.
-     * @throws IOFailure
-     *             if the input stream cannot be read.
-     * @throws ArgumentNotValid
-     *             if the input stream is null or if any of the specified traps
-     *             are not valid regular expressions.
+     * @param is The input stream from which to read.
+     * @throws IOFailure if the input stream cannot be read.
+     * @throws ArgumentNotValid if the input stream is null or if any of the specified traps are not valid regular
+     *             expressions.
      */
     public void setTrapsFromInputStream(InputStream is) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(is, "is");
@@ -169,8 +149,7 @@ public class GlobalCrawlerTrapList {
     /**
      * Set the id of this list.
      * 
-     * @param id
-     *            the id.
+     * @param id the id.
      */
     protected void setId(int id) {
         this.id = id;
@@ -188,8 +167,7 @@ public class GlobalCrawlerTrapList {
     /**
      * Set the name of the list.
      * 
-     * @param name
-     *            the name.
+     * @param name the name.
      */
     public void setName(String name) {
         ArgumentNotValid.checkNotNullOrEmpty(name, "name");
@@ -208,8 +186,7 @@ public class GlobalCrawlerTrapList {
     /**
      * Set the trap expressions for this list.
      * 
-     * @param traps
-     *            the trap expressions.
+     * @param traps the trap expressions.
      */
     public void setTraps(Set<String> traps) {
         ArgumentNotValid.checkNotNull(traps, "traps");
@@ -228,8 +205,7 @@ public class GlobalCrawlerTrapList {
     /**
      * Set the description of this list.
      * 
-     * @param description
-     *            the description.
+     * @param description the description.
      */
     public void setDescription(String description) {
         ArgumentNotValid.checkNotNull(description, "description");
@@ -248,8 +224,7 @@ public class GlobalCrawlerTrapList {
     /**
      * Set the activity state of the list.
      * 
-     * @param active
-     *            the activity state.
+     * @param active the activity state.
      */
     public void setActive(boolean active) {
         isActive = active;

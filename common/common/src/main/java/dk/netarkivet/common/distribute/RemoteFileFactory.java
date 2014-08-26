@@ -36,27 +36,21 @@ import dk.netarkivet.common.utils.SettingsFactory;
 /**
  * Factory for creating remote files.
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class RemoteFileFactory extends SettingsFactory<RemoteFile> {
 
     /** A named logger for this class. */
     private static final transient Logger log = LoggerFactory.getLogger(RemoteFileFactory.class);
 
     /**
-     * Create a remote file that handles the transport of the remote file data.
-     * This method is used by the sender to prepare the transport over JMS.
+     * Create a remote file that handles the transport of the remote file data. This method is used by the sender to
+     * prepare the transport over JMS.
      * 
-     * @param file
-     *            The File object to make accessable on another machine
-     * @param useChecksums
-     *            Whether transfers should be doublechecked with checksums.
-     *            Added value is access to checksum of objects.
-     * @param fileDeletable
-     *            If true, the local file will be deleted when it is no longer
-     *            needed.
-     * @param multipleDownloads
-     *            Whether this file should be allowed to be transferred more
-     *            than once.
+     * @param file The File object to make accessable on another machine
+     * @param useChecksums Whether transfers should be doublechecked with checksums. Added value is access to checksum
+     *            of objects.
+     * @param fileDeletable If true, the local file will be deleted when it is no longer needed.
+     * @param multipleDownloads Whether this file should be allowed to be transferred more than once.
      * @return A RemoteFile instance encapsulating the file argument.
      */
     public static RemoteFile getInstance(File file, boolean useChecksums, boolean fileDeletable,
@@ -75,8 +69,8 @@ public class RemoteFileFactory extends SettingsFactory<RemoteFile> {
     }
 
     /**
-     * Get an instance connected to an ArchiveRecord. Records are not deletable
-     * so there is no concept of a "movefile" instance.
+     * Get an instance connected to an ArchiveRecord. Records are not deletable so there is no concept of a "movefile"
+     * instance.
      * 
      * @param record
      * @return the file to be copied.
@@ -86,8 +80,8 @@ public class RemoteFileFactory extends SettingsFactory<RemoteFile> {
     }
 
     /**
-     * Returns true iff the defined RemoteFile class has a factory method with
-     * signature public static RemoteFile getInstance(ArchiveRecord record)
+     * Returns true iff the defined RemoteFile class has a factory method with signature public static RemoteFile
+     * getInstance(ArchiveRecord record)
      * 
      * @return true if using an extended remote file.
      */
@@ -110,8 +104,7 @@ public class RemoteFileFactory extends SettingsFactory<RemoteFile> {
     /**
      * Same as getInstance(file, false, true, false).
      * 
-     * @param file
-     *            The file to move to another computer.
+     * @param file The file to move to another computer.
      */
     public static RemoteFile getMovefileInstance(File file) {
         return getInstance(file, false, true, false);
@@ -120,8 +113,7 @@ public class RemoteFileFactory extends SettingsFactory<RemoteFile> {
     /**
      * Same as getInstance(file, false, false, false, null).
      * 
-     * @param file
-     *            The file to copy to another computer.
+     * @param file The file to copy to another computer.
      */
     public static RemoteFile getCopyfileInstance(File file) {
         return getInstance(file, false, false, false);
@@ -130,8 +122,7 @@ public class RemoteFileFactory extends SettingsFactory<RemoteFile> {
     /**
      * Same as getInstance(file, false, false, false, connectionParams).
      * 
-     * @param file
-     *            The file to copy to another computer.
+     * @param file The file to copy to another computer.
      */
     public static RemoteFile getCopyfileInstance(File file, RemoteFileSettings connectionParams) {
         if (connectionParams != null) {
@@ -144,8 +135,7 @@ public class RemoteFileFactory extends SettingsFactory<RemoteFile> {
     /**
      * Same as getInstance(file, false, false, false).
      * 
-     * @param file
-     *            The file to copy to another computer.
+     * @param file The file to copy to another computer.
      */
     public static RemoteFile getDistributefileInstance(File file) {
         return getInstance(file, true, false, true);

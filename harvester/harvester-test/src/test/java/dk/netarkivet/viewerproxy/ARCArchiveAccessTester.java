@@ -61,24 +61,21 @@ import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
- * Unit tests for ARCArchiveAccess. This only tests that we connect the CDX
- * lookup with the ARC files ok, because everything else is just being forwarded
- * and so is (supposed to be) tested elsewhere.
+ * Unit tests for ARCArchiveAccess. This only tests that we connect the CDX lookup with the ARC files ok, because
+ * everything else is just being forwarded and so is (supposed to be) tested elsewhere.
  */
-@SuppressWarnings({ "unused", "unchecked" })
+@SuppressWarnings({"unused", "unchecked"})
 public class ARCArchiveAccessTester {
 
     // Unused files:
     private static final File MAIN_PATH = new File("tests/dk/netarkivet/viewerproxy/data/");
 
     /**
-     * An URL not indexed in CDX_FILE. Initiated in setUp because it can throw
-     * exception
+     * An URL not indexed in CDX_FILE. Initiated in setUp because it can throw exception
      */
     private static URI WRONG_URL;
     /**
-     * An URL not indexed in CDX_FILE. Initiated in setUp because it can throw
-     * exception
+     * An URL not indexed in CDX_FILE. Initiated in setUp because it can throw exception
      */
     private static URI GIF_URL;
     /**
@@ -131,8 +128,7 @@ public class ARCArchiveAccessTester {
     }
 
     /**
-     * Verify that the constructor fails if and only if it is given null
-     * parameter.
+     * Verify that the constructor fails if and only if it is given null parameter.
      */
     @Test
     public void testConstructor() {
@@ -188,9 +184,8 @@ public class ARCArchiveAccessTester {
     }
 
     /**
-     * Verify that looking up an object that does not exist returns some kind of
-     * HTTP response reflecting this situation. For now, we just need it to
-     * return ResponseCode.NOT_FOUND and not throw an Exception.
+     * Verify that looking up an object that does not exist returns some kind of HTTP response reflecting this
+     * situation. For now, we just need it to return ResponseCode.NOT_FOUND and not throw an Exception.
      */
     @Test
     public void testLookupNonexistingObject() throws Exception {
@@ -218,9 +213,8 @@ public class ARCArchiveAccessTester {
     }
 
     /**
-     * Test that AAA checks for null returns from the controller. This can
-     * happen if a CDX file is not backed by an arc file, or arc repos times
-     * out.
+     * Test that AAA checks for null returns from the controller. This can happen if a CDX file is not backed by an arc
+     * file, or arc repos times out.
      *
      * @throws Exception
      */
@@ -242,8 +236,7 @@ public class ARCArchiveAccessTester {
     }
 
     /**
-     * Fake arc repository client which on get returns a fake record which is
-     * ok.
+     * Fake arc repository client which on get returns a fake record which is ok.
      */
     private class TestArcRepositoryClient extends dk.netarkivet.common.arcrepository.TestArcRepositoryClient {
         public TestArcRepositoryClient() {
@@ -251,8 +244,7 @@ public class ARCArchiveAccessTester {
         }
 
         /**
-         * Returns an OK BitarchiveRecord. Content is simply arcfile name and
-         * index encoded in a stream.
+         * Returns an OK BitarchiveRecord. Content is simply arcfile name and index encoded in a stream.
          */
         public BitarchiveRecord get(String arcFile, long index) {
             final Map<String, Object> metadata = new HashMap<String, Object>();
@@ -284,8 +276,7 @@ public class ARCArchiveAccessTester {
     }
 
     /**
-     * Fake arc repository client which on get returns a fake record which is
-     * null.
+     * Fake arc repository client which on get returns a fake record which is null.
      */
     private class NullArcRepositoryClient extends dk.netarkivet.common.arcrepository.TestArcRepositoryClient {
         public NullArcRepositoryClient() {

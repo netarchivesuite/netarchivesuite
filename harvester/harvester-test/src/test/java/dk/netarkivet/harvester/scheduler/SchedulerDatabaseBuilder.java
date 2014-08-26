@@ -51,11 +51,11 @@ import dk.netarkivet.harvester.datamodel.TimeUnit;
 import dk.netarkivet.testutils.TestFileUtils;
 
 /**
- * This will add the components to an empty NetarchiveSuite database that is
- * necessary for the two unit tests in the SchedulerTesterSuite.
+ * This will add the components to an empty NetarchiveSuite database that is necessary for the two unit tests in the
+ * SchedulerTesterSuite.
  * 
- * Add domain netarkivet.dk with two seedlist Add the three schedules Dagligt,
- * Once_a_day, OnceOnly Add one selective harvestdefinition (isActive=true)
+ * Add domain netarkivet.dk with two seedlist Add the three schedules Dagligt, Once_a_day, OnceOnly Add one selective
+ * harvestdefinition (isActive=true)
  */
 public class SchedulerDatabaseBuilder {
 

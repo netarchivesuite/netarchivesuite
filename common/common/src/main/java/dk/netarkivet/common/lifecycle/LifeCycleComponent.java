@@ -35,8 +35,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * 
  * When extending this class you must:
  * <ol>
- * <li>Add all lifecycle subcomponents with the addChild, before the start
- * method is called.
+ * <li>Add all lifecycle subcomponents with the addChild, before the start method is called.
  * <li>Call the <code>super.start()</code> operation to start the children.
  * <li>Call the <code>super.shutdown</code> operation to
  */
@@ -65,11 +64,10 @@ public class LifeCycleComponent implements ComponentLifeCycle {
     }
 
     /**
-     * Adds a child <code>ComponentLifeCycle</code>. The childs lifecycle will
-     * be managed by by the <code>LifeCycleComponent</code>.
+     * Adds a child <code>ComponentLifeCycle</code>. The childs lifecycle will be managed by by the
+     * <code>LifeCycleComponent</code>.
      * 
-     * @param childComponent
-     *            The child to add
+     * @param childComponent The child to add
      */
     public void addChild(ComponentLifeCycle childComponent) {
         ArgumentNotValid.checkNotNull(childComponent, "Child can not be null");

@@ -36,25 +36,25 @@ import org.archive.io.warc.WARCRecord;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+
 //import dk.netarkivet.common.utils.MD5;
 
 /**
  * Batch job that extracts information to create a CDX file.
  *
- * A CDX file contains sorted lines of metadata from the ARC files, with each
- * line followed by the file and offset the record was found at, and optionally
- * a checksum. See http://www.archive.org/web/researcher/cdx_file_format.php
+ * A CDX file contains sorted lines of metadata from the ARC files, with each line followed by the file and offset the
+ * record was found at, and optionally a checksum. See http://www.archive.org/web/researcher/cdx_file_format.php
  */
-@SuppressWarnings({ "rawtypes", "serial" })
+@SuppressWarnings({"rawtypes", "serial"})
 public class ExtractCDXFromWarcJob extends ArchiveBatchJob {
 
     /**
      * An encoding for the standard included metadata fields without checksum.
      */
-    private static final String[] STD_FIELDS_EXCL_CHECKSUM = { "A", "e", "b", "m", "n", "g", "v" };
+    private static final String[] STD_FIELDS_EXCL_CHECKSUM = {"A", "e", "b", "m", "n", "g", "v"};
 
     /** An encoding for the standard included metadata fields with checksum. */
-    private static final String[] STD_FIELDS_INCL_CHECKSUM = { "A", "e", "b", "m", "n", "g", "v", "c" };
+    private static final String[] STD_FIELDS_INCL_CHECKSUM = {"A", "e", "b", "m", "n", "g", "v", "c"};
 
     /** The fields to be included in CDX output. */
     private String[] fields;
@@ -70,9 +70,7 @@ public class ExtractCDXFromWarcJob extends ArchiveBatchJob {
     /**
      * Constructs a new job for extracting CDX indexes.
      * 
-     * @param includeChecksum
-     *            If true, an MD5 checksum is also written for each record. If
-     *            false, it is not.
+     * @param includeChecksum If true, an MD5 checksum is also written for each record. If false, it is not.
      */
     public ExtractCDXFromWarcJob(boolean includeChecksum) {
         this.fields = includeChecksum ? STD_FIELDS_INCL_CHECKSUM : STD_FIELDS_EXCL_CHECKSUM;
@@ -90,8 +88,7 @@ public class ExtractCDXFromWarcJob extends ArchiveBatchJob {
      * Filter out the filedesc: headers.
      * 
      * @see dk.netarkivet.common.utils.arc.ARCBatchJob#getFilter()
-     * @return The filter that defines what ARC records are wanted in the output
-     *         CDX file.
+     * @return The filter that defines what ARC records are wanted in the output CDX file.
      */
     public ArchiveBatchFilter getFilter() {
         // Per default we want to index all records except ARC file headers:
@@ -110,16 +107,13 @@ public class ExtractCDXFromWarcJob extends ArchiveBatchJob {
     /**
      * Process this entry, reading metadata into the output stream.
      * 
-     * @see dk.netarkivet.common.utils.arc.ARCBatchJob#processRecord(ArchiveRecord,
-     *      OutputStream)
-     * @throws IOFailure
-     *             on trouble reading arc record data
+     * @see dk.netarkivet.common.utils.arc.ARCBatchJob#processRecord(ArchiveRecord, OutputStream)
+     * @throws IOFailure on trouble reading arc record data
      */
     public void processRecord(ArchiveRecord rec, OutputStream os) {
         log.trace("Processing ArchiveRecord with offset: " + rec.getHeader().getOffset());
         /*
-         * Fields are stored in a map so that it's easy to pull them out when
-         * looking at the fieldarray.
+         * Fields are stored in a map so that it's easy to pull them out when looking at the fieldarray.
          */
         Map<String, String> fieldsread = new HashMap<String, String>();
         fieldsread.put("A", rec.getHeader().getUrl());
@@ -142,11 +136,9 @@ public class ExtractCDXFromWarcJob extends ArchiveBatchJob {
         fieldsread.put("n", Long.toString(rec.getHeader().getLength()));
 
         /*
-         * Note about offset: The original dk.netarkivet.ArcUtils.ExtractCDX
-         * yields offsets that are consistently 1 lower than this version, which
-         * pulls the offset value from the org.archive.io.arc-classes. This
-         * difference is that the former classes count the preceeding newline as
-         * part of the ARC header.
+         * Note about offset: The original dk.netarkivet.ArcUtils.ExtractCDX yields offsets that are consistently 1
+         * lower than this version, which pulls the offset value from the org.archive.io.arc-classes. This difference is
+         * that the former classes count the preceeding newline as part of the ARC header.
          */
         fieldsread.put("v", Long.toString(rec.getHeader().getOffset()));
 
@@ -180,11 +172,9 @@ public class ExtractCDXFromWarcJob extends ArchiveBatchJob {
     }
 
     /**
-     * Print the values found for a set of fields. Prints the '-' character for
-     * any null values.
+     * Print the values found for a set of fields. Prints the '-' character for any null values.
      *
-     * @param fieldsread
-     *            A hashtable of values indexed by field letters
+     * @param fieldsread A hashtable of values indexed by field letters
      * @param outstream
      */
     private void printFields(Map fieldsread, OutputStream outstream) {

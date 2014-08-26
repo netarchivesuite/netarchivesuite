@@ -38,12 +38,11 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 /**
  * Tests of the DomainnameQueueAssignmentPolicy.
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class DomainnameQueueAssignmentPolicyTester {
     /**
-     * A key used for the cases when we can't figure out the URI. This is taken
-     * from parent, where it has private access. Parent returns this on things
-     * like about:blank.
+     * A key used for the cases when we can't figure out the URI. This is taken from parent, where it has private
+     * access. Parent returns this on things like about:blank.
      */
     static final String DEFAULT_CLASS_KEY = "default...";
 
@@ -92,8 +91,7 @@ public class DomainnameQueueAssignmentPolicyTester {
     }
 
     /**
-     * Create an arbitrarily bogus CandidateURI. As constructor
-     * "new UURI("", true)" is no longer visible
+     * Create an arbitrarily bogus CandidateURI. As constructor "new UURI("", true)" is no longer visible
      */
     private CandidateURI getCandidateURI(String s) {
         return new CandidateURI() {

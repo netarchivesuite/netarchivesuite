@@ -55,8 +55,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
 
 /**
- * Various JMX-related utility functions. FIXME: Use generic
- * RegistryContextFactory instead of Oracle specific.
+ * Various JMX-related utility functions. FIXME: Use generic RegistryContextFactory instead of Oracle specific.
  */
 @SuppressWarnings("restriction")
 public final class JMXUtils {
@@ -65,8 +64,8 @@ public final class JMXUtils {
     public static final Logger log = LoggerFactory.getLogger(JMXUtils.class);
 
     /**
-     * The system property that Java uses to get an initial context for JNDI.
-     * This must be set for RMI connections to work.
+     * The system property that Java uses to get an initial context for JNDI. This must be set for RMI connections to
+     * work.
      */
     private static final String JNDI_INITIAL_CONTEXT_PROPERTY = "java.naming.factory.initial";
 
@@ -81,9 +80,8 @@ public final class JMXUtils {
     }
 
     /**
-     * The maximum number of times we back off on getting an mbean or a job. The
-     * cumulative time trying is 2^(MAX_TRIES) milliseconds, thus the constant
-     * is defined as log_2(TIMEOUT), as set in settings.
+     * The maximum number of times we back off on getting an mbean or a job. The cumulative time trying is 2^(MAX_TRIES)
+     * milliseconds, thus the constant is defined as log_2(TIMEOUT), as set in settings.
      * 
      * @return The number of tries
      */
@@ -99,8 +97,8 @@ public final class JMXUtils {
     }
 
     /**
-     * If no initial JNDI context has been configured, configures the system to
-     * use Sun's standard one. This is necessary for RMI connections to work.
+     * If no initial JNDI context has been configured, configures the system to use Sun's standard one. This is
+     * necessary for RMI connections to work.
      */
     private static void ensureJndiInitialContext() {
         if (System.getProperty(JNDI_INITIAL_CONTEXT_PROPERTY) == null) {
@@ -114,24 +112,17 @@ public final class JMXUtils {
     }
 
     /**
-     * Constructs the same service URL that JConsole does on the basis of a
-     * server name, a JMX port number, and a RMI port number.
+     * Constructs the same service URL that JConsole does on the basis of a server name, a JMX port number, and a RMI
+     * port number.
      *
-     * Example URL:
-     * service:jmx:rmi://0.0.0.0:9999/jndi/rmi://0.0.0.0:1099/JMXConnector where
-     * RMI port number = 9999, JMX port number = 1099 server = 0.0.0.0 a.k.a
-     * localhost(?).
+     * Example URL: service:jmx:rmi://0.0.0.0:9999/jndi/rmi://0.0.0.0:1099/JMXConnector where RMI port number = 9999,
+     * JMX port number = 1099 server = 0.0.0.0 a.k.a localhost(?).
      *
-     * @param server
-     *            The server that should be connected to using the constructed
-     *            URL.
-     * @param jmxPort
-     *            The number of the JMX port that should be connected to using
-     *            the constructed URL (may not be a negative number)
-     * @param rmiPort
-     *            The number of the RMI port that should be connected to using
-     *            the constructed URL, or -1 if the default RMI port should be
-     *            used.
+     * @param server The server that should be connected to using the constructed URL.
+     * @param jmxPort The number of the JMX port that should be connected to using the constructed URL (may not be a
+     *            negative number)
+     * @param rmiPort The number of the RMI port that should be connected to using the constructed URL, or -1 if the
+     *            default RMI port should be used.
      * @return the constructed URL.
      */
     public static JMXServiceURL getUrl(String server, int jmxPort, int rmiPort) {
@@ -153,21 +144,14 @@ public final class JMXUtils {
     }
 
     /**
-     * Returns a connection to a remote MbeanServer defined by the given
-     * arguments.
+     * Returns a connection to a remote MbeanServer defined by the given arguments.
      * 
-     * @param server
-     *            the remote servername
-     * @param jmxPort
-     *            the remote jmx-port
-     * @param rmiPort
-     *            the remote rmi-port
-     * @param userName
-     *            the username
-     * @param password
-     *            the password
-     * @return a MBeanServerConnection to a remote MbeanServer defined by the
-     *         given arguments.
+     * @param server the remote servername
+     * @param jmxPort the remote jmx-port
+     * @param rmiPort the remote rmi-port
+     * @param userName the username
+     * @param password the password
+     * @return a MBeanServerConnection to a remote MbeanServer defined by the given arguments.
      */
     public static MBeanServerConnection getMBeanServerConnection(String server, int jmxPort, int rmiPort,
             String userName, String password) {
@@ -187,16 +171,11 @@ public final class JMXUtils {
     }
 
     /**
-     * Connects to the given (url-specified) service point, sending the given
-     * credentials as login.
+     * Connects to the given (url-specified) service point, sending the given credentials as login.
      * 
-     * @param url
-     *            The JMX service url of some JVM on some machine.
-     * @param credentials
-     *            a map with (at least) one entry, mapping
-     *            "jmx.remote.credentials" to a String array of length 2. Its
-     *            first item should be the user name. Its second item should be
-     *            the password.
+     * @param url The JMX service url of some JVM on some machine.
+     * @param credentials a map with (at least) one entry, mapping "jmx.remote.credentials" to a String array of length
+     *            2. Its first item should be the user name. Its second item should be the password.
      * @return An MBeanServerConnection representing the connected session.
      */
     public static MBeanServerConnection getMBeanServerConnection(JMXServiceURL url, Map<String, String[]> credentials) {
@@ -211,37 +190,29 @@ public final class JMXUtils {
     }
 
     /**
-     * Packages credentials as an environment for JMX connections. This
-     * packaging has the same form that JConsole uses: a one-entry Map, the
-     * mapping of "jmx.remote.credentials" being an array containing the user
-     * name and the password.
+     * Packages credentials as an environment for JMX connections. This packaging has the same form that JConsole uses:
+     * a one-entry Map, the mapping of "jmx.remote.credentials" being an array containing the user name and the
+     * password.
      * 
-     * @param userName
-     *            The user to login as
-     * @param password
-     *            The password to use for that user
+     * @param userName The user to login as
+     * @param password The password to use for that user
      * @return the packaged credentials
      */
     public static Map<String, String[]> packageCredentials(String userName, String password) {
         ArgumentNotValid.checkNotNullOrEmpty(userName, "String userName");
         ArgumentNotValid.checkNotNullOrEmpty(password, "String password");
         Map<String, String[]> credentials = new HashMap<String, String[]>(1);
-        credentials.put("jmx.remote.credentials", new String[] { userName, password });
+        credentials.put("jmx.remote.credentials", new String[] {userName, password});
         return credentials;
     }
 
     /**
      * Execute a command on a bean.
      * 
-     * @param connection
-     *            Connection to the server holding the bean.
-     * @param beanName
-     *            Name of the bean.
-     * @param command
-     *            Command to execute.
-     * @param arguments
-     *            Arguments to the command. Only string arguments are possible
-     *            at the moment.
+     * @param connection Connection to the server holding the bean.
+     * @param beanName Name of the bean.
+     * @param command Command to execute.
+     * @param arguments Arguments to the command. Only string arguments are possible at the moment.
      * @return The return value of the executed command.
      */
     public static Object executeCommand(MBeanServerConnection connection, String beanName, String command,
@@ -294,12 +265,9 @@ public final class JMXUtils {
     /**
      * Get the value of an attribute from a bean.
      *
-     * @param beanName
-     *            Name of the bean to get an attribute for.
-     * @param attribute
-     *            Name of the attribute to get.
-     * @param connection
-     *            A connection to the JMX server for the bean.
+     * @param beanName Name of the bean to get an attribute for.
+     * @param attribute Name of the attribute to get.
+     * @param connection A connection to the JMX server for the bean.
      * @return Value of the attribute.
      */
     public static Object getAttribute(String beanName, String attribute, MBeanServerConnection connection) {
@@ -348,8 +316,7 @@ public final class JMXUtils {
     /**
      * Get a bean name from a string version.
      *
-     * @param beanName
-     *            String representation of bean name
+     * @param beanName String representation of bean name
      * @return Object representing that bean name.
      */
     public static ObjectName getBeanName(String beanName) {
@@ -364,18 +331,12 @@ public final class JMXUtils {
     /**
      * Get a JMXConnector to a given host and port, using login and password.
      *
-     * @param hostName
-     *            The host to attempt to connect to.
-     * @param jmxPort
-     *            The port on the host to connect to (a non-negative number).
-     * @param login
-     *            The login name to authenticate as (typically "controlRole" or
-     *            "monitorRole".
-     * @param password
-     *            The password for JMX access.
+     * @param hostName The host to attempt to connect to.
+     * @param jmxPort The port on the host to connect to (a non-negative number).
+     * @param login The login name to authenticate as (typically "controlRole" or "monitorRole".
+     * @param password The password for JMX access.
      * @return A JMX connector to the given host and port, using default RMI.
-     * @throws IOFailure
-     *             if connecting to JMX fails.
+     * @throws IOFailure if connecting to JMX fails.
      */
     public static JMXConnector getJMXConnector(String hostName, int jmxPort, final String login, final String password) {
         ArgumentNotValid.checkNotNullOrEmpty(hostName, "String hostName");
@@ -399,9 +360,8 @@ public final class JMXUtils {
                     // Sleep a bit before trying again
                     TimeUtils.exponentialBackoffSleep(retries);
                     /*
-                     * called exponentialBackoffSleep(retries) which used
-                     * Calendar.MILLISECOND as time unit, which means we only
-                     * wait an exponential number of milliseconds.
+                     * called exponentialBackoffSleep(retries) which used Calendar.MILLISECOND as time unit, which means
+                     * we only wait an exponential number of milliseconds.
                      */
                     continue;
                 }
@@ -415,11 +375,9 @@ public final class JMXUtils {
     /**
      * Get a single CompositeData object out of a TabularData structure.
      *
-     * @param items
-     *            TabularData structure as returned from JMX calls.
+     * @param items TabularData structure as returned from JMX calls.
      * @return The one item in the items structure.
-     * @throws ArgumentNotValid
-     *             if there is not exactly one item in items, or items is null.
+     * @throws ArgumentNotValid if there is not exactly one item in items, or items is null.
      */
     public static CompositeData getOneCompositeData(TabularData items) {
         ArgumentNotValid.checkNotNull(items, "TabularData items");
@@ -428,18 +386,13 @@ public final class JMXUtils {
     }
 
     /**
-     * Execute a single command, closing the connector afterwards. If you wish
-     * to hold on to the connector, call
+     * Execute a single command, closing the connector afterwards. If you wish to hold on to the connector, call
      * JMXUtils#executeCommand(MBeanServerConnection, String, String, String[])
      *
-     * @param connector
-     *            A one-shot connector object.
-     * @param beanName
-     *            The name of the bean to execute a command on.
-     * @param command
-     *            The command to execute.
-     * @param arguments
-     *            The arguments to the command (all strings)
+     * @param connector A one-shot connector object.
+     * @param beanName The name of the bean to execute a command on.
+     * @param command The command to execute.
+     * @param arguments The arguments to the command (all strings)
      * @return Whatever the command returned.
      */
     public static Object executeCommand(JMXConnector connector, String beanName, String command, String... arguments) {
@@ -466,16 +419,12 @@ public final class JMXUtils {
     }
 
     /**
-     * Get the value of an attribute, closing the connector afterwards. If you
-     * wish to hold on to the connector, call
+     * Get the value of an attribute, closing the connector afterwards. If you wish to hold on to the connector, call
      * JMXUtils#executeCommand(MBeanServerConnection, String, String, String[])
      *
-     * @param connector
-     *            A one-shot connector object.
-     * @param beanName
-     *            The name of the bean to get an attribute from.
-     * @param attribute
-     *            The attribute to get.
+     * @param connector A one-shot connector object.
+     * @param beanName The name of the bean to get an attribute from.
+     * @param attribute The attribute to get.
      * @return Whatever the command returned.
      */
     public static Object getAttribute(JMXConnector connector, String beanName, String attribute) {

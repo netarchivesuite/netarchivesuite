@@ -64,32 +64,19 @@ public class JobStatusInfo {
     /**
      * Constructor for the JobStatusInfo class.
      * 
-     * @param jobID
-     *            The ID of the job
-     * @param status
-     *            The current status of the Job
-     * @param harvestDefinitionID
-     *            The Id of the harvestdefinition behind this job
-     * @param harvestDefinition
-     *            The name of the harvestdefinition behind this job
-     * @param harvestNum
-     *            The number of times a harvestdefinition has been performed
-     * @param harvestErrors
-     *            Any errors encountered during the actual harvest
-     * @param uploadErrors
-     *            Any errors encountered during the upload of the result files
-     * @param orderXMLname
-     *            The name of the Heritrix Template used by this job
-     * @param domainCount
-     *            The number of domain-configurations used for this job
-     * @param submittedDate
-     *            The time when this job was submitted
-     * @param startDate
-     *            The time when this job started
-     * @param endDate
-     *            The time when this job finished
-     * @param resubmittedAsJobWithID
-     *            The id of the job this job was resubmitted as (possibly null)
+     * @param jobID The ID of the job
+     * @param status The current status of the Job
+     * @param harvestDefinitionID The Id of the harvestdefinition behind this job
+     * @param harvestDefinition The name of the harvestdefinition behind this job
+     * @param harvestNum The number of times a harvestdefinition has been performed
+     * @param harvestErrors Any errors encountered during the actual harvest
+     * @param uploadErrors Any errors encountered during the upload of the result files
+     * @param orderXMLname The name of the Heritrix Template used by this job
+     * @param domainCount The number of domain-configurations used for this job
+     * @param submittedDate The time when this job was submitted
+     * @param startDate The time when this job started
+     * @param endDate The time when this job finished
+     * @param resubmittedAsJobWithID The id of the job this job was resubmitted as (possibly null)
      */
     JobStatusInfo(long jobID, JobStatus status, long harvestDefinitionID, String harvestDefinition, int harvestNum,
             String harvestErrors, String uploadErrors, String orderXMLname, int domainCount, Date submittedDate,
@@ -202,8 +189,7 @@ public class JobStatusInfo {
     }
 
     /**
-     * @return the ID of the job this job was resubmitted as. If null this job
-     *         has not been resubmitted.
+     * @return the ID of the job this job was resubmitted as. If null this job has not been resubmitted.
      */
     public Long getResubmittedAsJob() {
         return this.resubmittedAsJobWithID;

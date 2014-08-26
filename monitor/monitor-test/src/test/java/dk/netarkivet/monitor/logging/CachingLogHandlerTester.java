@@ -45,8 +45,7 @@ import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
- * Test behavior of the CachingLogHandler, and its exposure of log records using
- * JMX.
+ * Test behavior of the CachingLogHandler, and its exposure of log records using JMX.
  */
 public class CachingLogHandlerTester extends TestCase {
     private CachingLogHandler cachingLogHandler;
@@ -81,15 +80,13 @@ public class CachingLogHandlerTester extends TestCase {
     }
 
     /**
-     * Test that the constructor exposes N MBeans, and each can be connected to
-     * and returns the empty string. It is tested that the names of the objects
-     * are generated from: "location" =
-     * Settings.get(CommonSettings.ENVIRONMENT_THIS_PHYSICAL_LOCATION) "machine"
-     * = InetAddress.getLocalHost().getCanonicalHostName() "httpport" =
-     * Settings.get(CommonSettings.HTTP_PORT_NUMBER) "applicationname" =
-     * Settings.get(CommonSettings.APPLICATION_NAME) "applicationinstid" =
-     * Settings.get(CommonSettings.APPLICATIONINSTANCE_ID) "index" = (index in
-     * the cache; 0 is always the most recent log record)
+     * Test that the constructor exposes N MBeans, and each can be connected to and returns the empty string. It is
+     * tested that the names of the objects are generated from: "location" =
+     * Settings.get(CommonSettings.ENVIRONMENT_THIS_PHYSICAL_LOCATION) "machine" =
+     * InetAddress.getLocalHost().getCanonicalHostName() "httpport" = Settings.get(CommonSettings.HTTP_PORT_NUMBER)
+     * "applicationname" = Settings.get(CommonSettings.APPLICATION_NAME) "applicationinstid" =
+     * Settings.get(CommonSettings.APPLICATIONINSTANCE_ID) "index" = (index in the cache; 0 is always the most recent
+     * log record)
      *
      * It is also tested that no MBeans were registered before this call.
      *
@@ -138,8 +135,7 @@ public class CachingLogHandlerTester extends TestCase {
     }
 
     /**
-     * Tests that publish registers the message in memory, so that it is
-     * accessible through JMX.
+     * Tests that publish registers the message in memory, so that it is accessible through JMX.
      *
      * Test that publishing more than 42 messages lets the oldest one fall out.
      *
@@ -220,14 +216,11 @@ public class CachingLogHandlerTester extends TestCase {
     }
 
     /**
-     * Asserts a log record with the message "Log Record <<number>>" is logged
-     * at level <<level>>.
+     * Asserts a log record with the message "Log Record <<number>>" is logged at level <<level>>.
      *
      * @param logRecord
-     * @param number
-     *            The number in the log record message.
-     * @param level
-     *            The logging level of the log record.
+     * @param number The number in the log record message.
+     * @param level The logging level of the log record.
      */
     private static void assertLogRecordLogged(String logRecord, int number, String level) {
         StringAsserts.assertStringContains("Should contain the log message", generateLogMessage(number), logRecord);
@@ -277,8 +270,7 @@ public class CachingLogHandlerTester extends TestCase {
     /**
      * Name a JMX object name as expected by our CachingLogRecordMBean.
      *
-     * @param index
-     *            The index attribute - may be null, for all
+     * @param index The index attribute - may be null, for all
      * @return An ObjectName.
      * @throws MalformedObjectNameException
      */
@@ -296,10 +288,8 @@ public class CachingLogHandlerTester extends TestCase {
     /**
      * Returns a JMX object instance as expected by our CachingLogRecordMBean.
      *
-     * @param mBeanServer
-     *            The MBeanServer to get the object from.
-     * @param index
-     *            Index of LogRecord
+     * @param mBeanServer The MBeanServer to get the object from.
+     * @param index Index of LogRecord
      * @return An ObjectInstance
      * @throws InstanceNotFoundException
      * @throws MalformedObjectNameException

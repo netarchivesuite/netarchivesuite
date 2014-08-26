@@ -39,7 +39,7 @@ import dk.netarkivet.common.utils.FileUtils;
 /**
  * File utilities specific to the test classes.
  */
-@SuppressWarnings({ "unchecked" })
+@SuppressWarnings({"unchecked"})
 public class TestFileUtils {
     public static final FilenameFilter NON_CVS_DIRS_FILTER = new FilenameFilter() {
         public boolean accept(File directory, String filename) {
@@ -54,15 +54,11 @@ public class TestFileUtils {
     };
 
     /**
-     * Copy an entire directory from one location to another, skipping CVS
-     * directories. Note that this will silently overwrite old files, just like
-     * copyFile().
+     * Copy an entire directory from one location to another, skipping CVS directories. Note that this will silently
+     * overwrite old files, just like copyFile().
      *
-     * @param from
-     *            Original directory (or file, for that matter) to copy.
-     * @param to
-     *            Destination directory, i.e. the 'new name' of the copy of the
-     *            from directory.
+     * @param from Original directory (or file, for that matter) to copy.
+     * @param to Destination directory, i.e. the 'new name' of the copy of the from directory.
      * @throws IOFailure
      */
     public static final void copyDirectoryNonCVS(File from, File to) throws IOFailure {
@@ -102,21 +98,15 @@ public class TestFileUtils {
     }
 
     /**
-     * Compares the content of two directories and report all differences in the
-     * returned text string. If no difference are located, an empty string ("")
-     * is returned. All files located in the directories are treated as text
-     * files, and a text comparison is done on a line by line basis. This
-     * function will not work if the dirs contain binary files. No attempt is
-     * made to recover from errors.
+     * Compares the content of two directories and report all differences in the returned text string. If no difference
+     * are located, an empty string ("") is returned. All files located in the directories are treated as text files,
+     * and a text comparison is done on a line by line basis. This function will not work if the dirs contain binary
+     * files. No attempt is made to recover from errors.
      *
-     * @param fstDir
-     *            The directory to compare with sndDir
-     * @param sndDir
-     *            The directory to compare with fstDir
-     * @return A text string describing the differences between the two dirs.
-     *         Empty if no differences are found.
-     * @throws IOFailure
-     *             if there are problems reading the content of the dirs.
+     * @param fstDir The directory to compare with sndDir
+     * @param sndDir The directory to compare with fstDir
+     * @return A text string describing the differences between the two dirs. Empty if no differences are found.
+     * @throws IOFailure if there are problems reading the content of the dirs.
      */
     public static String compareDirsText(File fstDir, File sndDir) throws IOFailure {
         String result = "";
@@ -181,10 +171,8 @@ public class TestFileUtils {
     /**
      * Strips a path prefix from a file name.
      *
-     * @param dir
-     *            The path prefix to remove from the given file's name.
-     * @param f
-     *            The file to remove the path prefix from.
+     * @param dir The path prefix to remove from the given file's name.
+     * @param f The file to remove the path prefix from.
      * @return The name of the file without the specified path prefix.
      */
     private static String removePrefixDir(File dir, File f) {
@@ -194,10 +182,8 @@ public class TestFileUtils {
     /**
      * Return textual description of the differences between two strings.
      * 
-     * @param s1
-     *            strings to compare
-     * @param s2
-     *            strings to compare
+     * @param s1 strings to compare
+     * @param s2 strings to compare
      * @return first line of text that differs
      */
     public static String getDifferences(String s1, String s2) {
@@ -287,15 +273,11 @@ public class TestFileUtils {
     /**
      * Find files recursively that match the given filter.
      *
-     * @param start
-     *            The directory (or file) to start at.
-     * @param filter
-     *            Filter of files to include. All files (including directories)
-     *            are passed to this filter and are included if filter.accept()
-     *            returns true. Subdirectories are scanned whether or not
-     *            filter.accept() returns true for them.
-     * @return List of files (in no particular order) that match the filter. and
-     *         reside under start.
+     * @param start The directory (or file) to start at.
+     * @param filter Filter of files to include. All files (including directories) are passed to this filter and are
+     *            included if filter.accept() returns true. Subdirectories are scanned whether or not filter.accept()
+     *            returns true for them.
+     * @return List of files (in no particular order) that match the filter. and reside under start.
      */
     public static List<File> findFiles(File start, FileFilter filter) {
         List<File> results = new ArrayList<File>();

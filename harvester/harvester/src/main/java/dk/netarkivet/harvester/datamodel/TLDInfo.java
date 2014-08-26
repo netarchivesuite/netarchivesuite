@@ -36,8 +36,7 @@ public class TLDInfo implements Comparable<TLDInfo> {
     /** The name of this TLD. */
     private final String tldName;
     /**
-     * Number of subdomains we have registered under this TLD. All IP addresses
-     * are lumped together as one TLD.
+     * Number of subdomains we have registered under this TLD. All IP addresses are lumped together as one TLD.
      */
     private int count = 0;
     /** The special name for IP adresses, since they have no TLD. */
@@ -46,8 +45,7 @@ public class TLDInfo implements Comparable<TLDInfo> {
     /**
      * Create TLD info holder.
      *
-     * @param name
-     *            The TLD domain name.
+     * @param name The TLD domain name.
      */
     public TLDInfo(String name) {
         ArgumentNotValid.checkNotNullOrEmpty(name, "String name");
@@ -55,8 +53,7 @@ public class TLDInfo implements Comparable<TLDInfo> {
     }
 
     /**
-     * The name of this TLD (e.g. dk, com or museum). IP addresses are
-     * registered under a special "IP address" name.
+     * The name of this TLD (e.g. dk, com or museum). IP addresses are registered under a special "IP address" name.
      *
      * @return TLD name without .
      */
@@ -65,8 +62,7 @@ public class TLDInfo implements Comparable<TLDInfo> {
     }
 
     /**
-     * Number of subdomains we have registered under this TLD. All IP addresses
-     * are lumped together as one TLD.
+     * Number of subdomains we have registered under this TLD. All IP addresses are lumped together as one TLD.
      *
      * @return Number of 2nd-level domains we have registered under this TLD.
      */
@@ -77,11 +73,9 @@ public class TLDInfo implements Comparable<TLDInfo> {
     /**
      * Add a 2nd-level domain to the information for this domain.
      *
-     * This tests that the given domain does in fact belong to this TLD, but not
-     * whether it has been added before.
+     * This tests that the given domain does in fact belong to this TLD, but not whether it has been added before.
      *
-     * @param name
-     *            A name of a domain
+     * @param name A name of a domain
      */
     void addSubdomain(String name) {
         ArgumentNotValid.checkNotNullOrEmpty(name, "String name");
@@ -115,8 +109,7 @@ public class TLDInfo implements Comparable<TLDInfo> {
     }
 
     /**
-     * @return the hashcode for this object which is equal to the hashCode for
-     *         the name of the tld.
+     * @return the hashcode for this object which is equal to the hashCode for the name of the tld.
      * @see Object#hashCode()
      */
     public int hashCode() {
@@ -124,17 +117,15 @@ public class TLDInfo implements Comparable<TLDInfo> {
     }
 
     /**
-     * Compares this object with the specified object for order. Returns a
-     * negative integer, zero, or a positive integer as this object is less
-     * than, equal to, or greater than the specified object.
+     * Compares this object with the specified object for order. Returns a negative integer, zero, or a positive integer
+     * as this object is less than, equal to, or greater than the specified object.
      * <p>
      *
      * @see Comparable#compareTo(Object o)
      *
-     * @param o
-     *            the Object to be compared.
-     * @return a negative integer, zero, or a positive integer as this object is
-     *         less than, equal to, or greater than the specified object.
+     * @param o the Object to be compared.
+     * @return a negative integer, zero, or a positive integer as this object is less than, equal to, or greater than
+     *         the specified object.
      */
     public int compareTo(TLDInfo o) {
         return tldName.compareTo(o.tldName);
@@ -143,8 +134,7 @@ public class TLDInfo implements Comparable<TLDInfo> {
     /**
      * Get the TLD for a given domain.
      *
-     * @param domain
-     *            A domain, as specified by the global domain regexp.
+     * @param domain A domain, as specified by the global domain regexp.
      * @return The TLD of the domain, or a special placeholder for IP addresses.
      */
     static String getTLD(String domain) {
@@ -160,13 +150,10 @@ public class TLDInfo implements Comparable<TLDInfo> {
     }
 
     /**
-     * Get the TLD for a given domain including multilevel TLD. for example
-     * .gouv.fr is level 2 TLD
+     * Get the TLD for a given domain including multilevel TLD. for example .gouv.fr is level 2 TLD
      * 
-     * @param domain
-     *            A domain, as specified by the global domain regexp.
-     * @param maxLevel
-     *            maximum level for TLD (can't be 0).
+     * @param domain A domain, as specified by the global domain regexp.
+     * @param maxLevel maximum level for TLD (can't be 0).
      * @return The TLD of the domain, or a special placeholder for IP addresses.
      */
     static String getMultiLevelTLD(String domain, int maxLevel) {
@@ -190,8 +177,7 @@ public class TLDInfo implements Comparable<TLDInfo> {
     /**
      * Return TLD level of the domain.
      * 
-     * @param domain
-     *            A domain
+     * @param domain A domain
      * @return TLD level of the domain 1 for IP addresses
      */
     static int getTLDLevel(String domain) {

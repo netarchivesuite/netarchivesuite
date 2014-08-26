@@ -52,7 +52,7 @@ import dk.netarkivet.testutils.TestFileUtils;
 /**
  * Unit tests for the class ARCBatchJob.
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class ARCBatchJobTester {
     // Reference to test files:
     private static final File ARC_DIR = new File("tests/dk/netarkivet/common/utils/arc/data/working/");
@@ -79,8 +79,7 @@ public class ARCBatchJobTester {
     /**
      * Utility method for printing Exception arrays on System.out.
      * 
-     * @param es
-     *            The Exception array to be printed.
+     * @param es The Exception array to be printed.
      */
     private void printExceptions(Exception[] es) {
         if (es.length > 0) {
@@ -127,8 +126,8 @@ public class ARCBatchJobTester {
     }
 
     /**
-     * Verifies that thrown Exceptions in process get collected TODO Check more
-     * error conditions -- the exception handling is tricky!
+     * Verifies that thrown Exceptions in process get collected TODO Check more error conditions -- the exception
+     * handling is tricky!
      */
     @Test
     public void testOneJob_ExceptionInProcess() {
@@ -159,8 +158,7 @@ public class ARCBatchJobTester {
     @Test
     public void testFiltering() {
         /*
-         * We do not need to verify that BatchFilter.NO_FILTER is respected, as
-         * this is done in testBatchARCFiles().
+         * We do not need to verify that BatchFilter.NO_FILTER is respected, as this is done in testBatchARCFiles().
          */
         ARCBatchJob job = new TestARCBatchJob() {
             public ARCBatchFilter getFilter() {
@@ -182,8 +180,7 @@ public class ARCBatchJobTester {
     }
 
     /**
-     * Verify that ARCBatchJob objects can be serialized and deserialized
-     * without harm.
+     * Verify that ARCBatchJob objects can be serialized and deserialized without harm.
      */
     @Test
     public void testSerializability() {
@@ -232,8 +229,7 @@ public class ARCBatchJobTester {
     /**
      * Makes the given job process a few null records and handle an Exception.
      * 
-     * @param job
-     *            the given job
+     * @param job the given job
      */
     private void doStuff(SerializableARCBatchJob job) {
         job.processRecord(null, new ByteArrayOutputStream());
@@ -242,8 +238,7 @@ public class ARCBatchJobTester {
     }
 
     /**
-     * Verify that we can also process arc.gz files. FIXME Broken by
-     * http://sbforge.org/jira/browse/NAS-1918
+     * Verify that we can also process arc.gz files. FIXME Broken by http://sbforge.org/jira/browse/NAS-1918
      */
     @Test
     @Ignore("http://sbforge.org/jira/browse/NAS-1918")
@@ -268,9 +263,8 @@ public class ARCBatchJobTester {
     }
 
     /**
-     * A very simple ARCBatchJob that simply counts relevant method calls in the
-     * parents class's designated fields. It also exposes ARCBatchJob's internal
-     * list of Exceptions.
+     * A very simple ARCBatchJob that simply counts relevant method calls in the parents class's designated fields. It
+     * also exposes ARCBatchJob's internal list of Exceptions.
      */
     private class TestARCBatchJob extends ARCBatchJob {
         /**

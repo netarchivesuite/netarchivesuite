@@ -33,11 +33,10 @@ import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
- * Messages requesting store of file. This message is sent to the arc repository
- * which distributes the file to the known bitarchives, and checks the result,
- * and then responds to the sender.
+ * Messages requesting store of file. This message is sent to the arc repository which distributes the file to the known
+ * bitarchives, and checks the result, and then responds to the sender.
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class StoreMessage extends ArchiveMessage {
     /** The actual data. */
     private RemoteFile theRemoteFile;
@@ -45,10 +44,8 @@ public class StoreMessage extends ArchiveMessage {
     /**
      * Construct StoreMessage.
      * 
-     * @param replyTo
-     *            Channel to reply back to
-     * @param arcfile
-     *            The file to store
+     * @param replyTo Channel to reply back to
+     * @param arcfile The file to store
      */
     public StoreMessage(ChannelID replyTo, File arcfile) {
         super(Channels.getTheRepos(), replyTo);
@@ -75,11 +72,10 @@ public class StoreMessage extends ArchiveMessage {
     }
 
     /**
-     * Should be implemented as a part of the visitor pattern. fx.: public void
-     * accept(ArchiveMessageVisitor v) { v.visit(this); }
+     * Should be implemented as a part of the visitor pattern. fx.: public void accept(ArchiveMessageVisitor v) {
+     * v.visit(this); }
      *
-     * @param v
-     *            A message visitor
+     * @param v A message visitor
      */
     public void accept(ArchiveMessageVisitor v) {
         v.visit(this);

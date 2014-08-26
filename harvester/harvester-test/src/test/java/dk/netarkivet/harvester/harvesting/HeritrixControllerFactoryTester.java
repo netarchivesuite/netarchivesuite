@@ -47,7 +47,7 @@ import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 /**
  * Unittest for the HeritrixControllerFactory class.
  */
-@SuppressWarnings({ "unused" })
+@SuppressWarnings({"unused"})
 public class HeritrixControllerFactoryTester {
 
     private MoveTestFiles mtf;
@@ -75,8 +75,7 @@ public class HeritrixControllerFactoryTester {
     }
 
     /**
-     * Test that we can construct a HeritrixController using the setting in
-     * settings.xml
+     * Test that we can construct a HeritrixController using the setting in settings.xml
      */
     @Test
     @Ignore("Heritrix launcher code non functional")
@@ -95,8 +94,7 @@ public class HeritrixControllerFactoryTester {
     }
 
     /**
-     * Test that we can change the implementation of HeritrixController to
-     * construct
+     * Test that we can change the implementation of HeritrixController to construct
      */
     @Test
     public void testGetDefaultHeritrixControllerChangeDefaultSettigs() {

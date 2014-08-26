@@ -42,7 +42,7 @@ public class BatchEndedMessageTester {
     public void setUp() {
         bem = new BatchEndedMessage(Channels.getTheBamon(), "BAId", "MsgId", null);
         bem.setNoOfFilesProcessed(42);
-        bem.setFilesFailed(Arrays.asList(new File[] { new File("failed") }));
+        bem.setFilesFailed(Arrays.asList(new File[] {new File("failed")}));
     }
 
     @After

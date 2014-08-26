@@ -31,8 +31,7 @@ import dk.netarkivet.harvester.datamodel.DomainDAO;
 import dk.netarkivet.harvester.datamodel.DomainHarvestInfo;
 
 /**
- * Used to manage the model used in the domain harvest history page. See
- * Harveststatus-perdomain.jsp.
+ * Used to manage the model used in the domain harvest history page. See Harveststatus-perdomain.jsp.
  */
 public class HarvestHistoryTableHelper {
     public static final String HARVEST_NAME_FIELD = "hdname";
@@ -104,18 +103,16 @@ public class HarvestHistoryTableHelper {
     }
 
     /**
-     * @return the index of the first result on the current page. The result is
-     *         the full list of <code>DomainHarvestInfo</code> objects for this
-     *         domain for the selected sorting.
+     * @return the index of the first result on the current page. The result is the full list of
+     *         <code>DomainHarvestInfo</code> objects for this domain for the selected sorting.
      */
     public long getStartIndex() {
         return startIndex;
     }
 
     /**
-     * @return the index of the last result on the current page. The result is
-     *         the full list of <code>DomainHarvestInfo</code> objects for this
-     *         domain for the selected sorting.
+     * @return the index of the last result on the current page. The result is the full list of
+     *         <code>DomainHarvestInfo</code> objects for this domain for the selected sorting.
      */
     public long getEndIndex() {
         return endIndex;
@@ -129,32 +126,28 @@ public class HarvestHistoryTableHelper {
     }
 
     /**
-     * @return The total number of <code>DomainHarvestInfo</code> objects in the
-     *         db for this domain.
+     * @return The total number of <code>DomainHarvestInfo</code> objects in the db for this domain.
      */
     public long getNumberOfResults() {
         return harvestInfoList.size();
     }
 
     /**
-     * @return <code>true</code> if the next page is available, else
-     *         <code>false</code>
+     * @return <code>true</code> if the next page is available, else <code>false</code>
      */
     public boolean isNextPageAvailable() {
         return HarvestStatus.isNextLinkActive(currentPageSize, getNumberOfResults(), endIndex);
     }
 
     /**
-     * @return <code>true</code> if the previous page is available, else
-     *         <code>false</code>
+     * @return <code>true</code> if the previous page is available, else <code>false</code>
      */
     public boolean isPreviousPageAvailable() {
         return HarvestStatus.isPreviousLinkActive(currentPageSize, getNumberOfResults(), startIndex);
     }
 
     /**
-     * @return A string representing the parameters for the javascripting
-     *         next/previous link functionality.
+     * @return A string representing the parameters for the javascripting next/previous link functionality.
      */
     public String generateParameterStringForPaging() {
         return "'" + Constants.DOMAIN_SEARCH_PARAM + "'," + "'" + domainName + "'," + "'" + Constants.SORT_FIELD_PARAM
@@ -164,11 +157,9 @@ public class HarvestHistoryTableHelper {
     /**
      * Calculates the sort order arrow for the headers of a sortable table
      * 
-     * @param sortField
-     *            The sort field to find a arrow for.
-     * @return The relevant arrow for the indicated field. Will be the reverse
-     *         if the sorting is already on this field else an empty string will
-     *         be returned
+     * @param sortField The sort field to find a arrow for.
+     * @return The relevant arrow for the indicated field. Will be the reverse if the sorting is already on this field
+     *         else an empty string will be returned
      */
     public String getOrderArrow(String sortField) {
         ArgumentNotValid.checkNotNull(sortField, "sortField");
@@ -179,11 +170,10 @@ public class HarvestHistoryTableHelper {
     }
 
     /**
-     * Calculates the reverse sort order for this file. If the field isn't used
-     * for ordering, Constants.SORT_ORDER_ASC is returned.
+     * Calculates the reverse sort order for this file. If the field isn't used for ordering, Constants.SORT_ORDER_ASC
+     * is returned.
      * 
-     * @param sortField
-     *            The sort field to find a new order for.
+     * @param sortField The sort field to find a new order for.
      * @return The relevant asc/desc string.
      */
     public String getOrderAfterClick(String sortField) {

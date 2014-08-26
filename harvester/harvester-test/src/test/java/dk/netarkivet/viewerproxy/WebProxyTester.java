@@ -63,9 +63,8 @@ import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.viewerproxy.distribute.HTTPControllerServerTester;
 
 /**
- * Test the WebProxy class which wraps a handler in a Jetty server. The
- * testJettyIntegration test verifies the handler <-> Jetty integration, where
- * the remaining tests directly tests the WebProxy methods and inner classes.
+ * Test the WebProxy class which wraps a handler in a Jetty server. The testJettyIntegration test verifies the handler
+ * <-> Jetty integration, where the remaining tests directly tests the WebProxy methods and inner classes.
  */
 public class WebProxyTester {
 
@@ -119,8 +118,7 @@ public class WebProxyTester {
     }
 
     /**
-     * Test the general integration of the WebProxy access through the running
-     * Jetty true:
+     * Test the general integration of the WebProxy access through the running Jetty true:
      */
     @Test
     public void testJettyIntegration() throws Exception {
@@ -255,8 +253,8 @@ public class WebProxyTester {
         m.invoke(proxy, uri, response, e);
         // LogUtils.flushLogs(WebProxy.class.getName());
         /*
-         * FileAsserts.assertFileMatches("Should have logged a warning",
-         * "WARNING:.*" + uri + ".*\n.*" + ExceptionMessage, LOG_FILE);
+         * FileAsserts.assertFileMatches("Should have logged a warning", "WARNING:.*" + uri + ".*\n.*" +
+         * ExceptionMessage, LOG_FILE);
          */
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         PrintWriter pw = new PrintWriter(out);
@@ -278,8 +276,8 @@ public class WebProxyTester {
         m.invoke(proxy, null, response, e);
         // LogUtils.flushLogs(WebProxy.class.getName());
         /*
-         * FileAsserts.assertFileMatches("Should have logged a warning",
-         * "WARNING:.*" + null + ".*\n.*" + ExceptionMessage, LOG_FILE);
+         * FileAsserts.assertFileMatches("Should have logged a warning", "WARNING:.*" + null + ".*\n.*" +
+         * ExceptionMessage, LOG_FILE);
          */
         lr.assertLogMatches("Should have logged a warning", "Exception for : .*" + null + ".*\n.*" + ExceptionMessage);
         lr.reset();
@@ -292,8 +290,7 @@ public class WebProxyTester {
         m.invoke(proxy, uri, response, null);
         // LogUtils.flushLogs(WebProxy.class.getName());
         /*
-         * FileAsserts.assertFileMatches("Should have logged a warning",
-         * "(?m)WARNING:.*" + uri + "$", LOG_FILE);
+         * FileAsserts.assertFileMatches("Should have logged a warning", "(?m)WARNING:.*" + uri + "$", LOG_FILE);
          */
         lr.assertLogMatches("Should have logged a warning", "Exception for : .*" + uri);
         lr.reset();
@@ -303,9 +300,8 @@ public class WebProxyTester {
         m.invoke(proxy, uri, null, e);
         // TODO Remove when @Ignore is fixed.
         /*
-         * FileAsserts.assertFileMatches("Should have logged a warning",
-         * "WARNING:.*Error writing error response" + ".*" + uri + ".*" +
-         * e.getClass().getName() + ".*" + ExceptionMessage, LOG_FILE);
+         * FileAsserts.assertFileMatches("Should have logged a warning", "WARNING:.*Error writing error response" + ".*"
+         * + uri + ".*" + e.getClass().getName() + ".*" + ExceptionMessage, LOG_FILE);
          */
         lr.assertLogMatches("Should have logged a warning", ".*Error writing error response" + ".*" + uri + ".*"
                 + e.getClass().getName() + ".*" + ExceptionMessage);
@@ -314,9 +310,8 @@ public class WebProxyTester {
     }
 
     /**
-     * Constructs an instance of the inner class WebProxy.HttpRequest with a url
-     * containing "{" and checks that the resulting uri escapes the curly
-     * brackets correctly.
+     * Constructs an instance of the inner class WebProxy.HttpRequest with a url containing "{" and checks that the
+     * resulting uri escapes the curly brackets correctly.
      * 
      * @throws NoSuchMethodException
      * @throws InvocationTargetException

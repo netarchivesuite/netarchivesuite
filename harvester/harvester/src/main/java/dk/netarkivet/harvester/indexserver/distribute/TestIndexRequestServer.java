@@ -70,11 +70,10 @@ import dk.netarkivet.harvester.indexserver.IndexRequestServerInterface;
  *
  * This class contains a singleton that handles requesting an index over JMS.
  *
- * This has two modes. 1) Given a file with a list of jobIDs, it will always
- * return the same lucene index based on the list of job identifiers in the file
- * regardless of what kind of index the client is requesting. 2) if setting
- * "settings.harvester.indexserver.alwaysSetIsIndexReadyToFalse" is true it will
- * always return the IndexRequestMessage with isindexready set to false.
+ * This has two modes. 1) Given a file with a list of jobIDs, it will always return the same lucene index based on the
+ * list of job identifiers in the file regardless of what kind of index the client is requesting. 2) if setting
+ * "settings.harvester.indexserver.alwaysSetIsIndexReadyToFalse" is true it will always return the IndexRequestMessage
+ * with isindexready set to false.
  */
 public final class TestIndexRequestServer extends HarvesterMessageHandler implements CleanupIF,
         IndexRequestServerInterface {
@@ -87,25 +86,22 @@ public final class TestIndexRequestServer extends HarvesterMessageHandler implem
             + "indexserver/distribute/TestIndexRequestServerSettings.xml";
 
     /*
-     * The static initialiser is called when the class is loaded. It will add
-     * default values for all settings defined in this class, by loading them
-     * from a settings.xml file in classpath.
+     * The static initialiser is called when the class is loaded. It will add default values for all settings defined in
+     * this class, by loading them from a settings.xml file in classpath.
      */
     static {
         Settings.addDefaultClasspathSettings(defaultSettingsClasspath);
     }
 
     /**
-     * <b>settings.harvester.indexserver.fileContainingJobsForTestindex<b>: The
-     * file containing the list of jobids that the test index uses as data. The
-     * default name of the file is "jobids.txt"
+     * <b>settings.harvester.indexserver.fileContainingJobsForTestindex<b>: The file containing the list of jobids that
+     * the test index uses as data. The default name of the file is "jobids.txt"
      */
     public static String JOBS_FOR_TESTINDEX = "settings.harvester.indexserver.indexrequestserver.fileContainingJobsForTestindex";
 
     /**
-     * <b>settings.archive.indexserver.alwaysSetIsIndexReadyToFalse<b>: The
-     * default: false. If set to true, the IndexRequestMessage returned has
-     * always isindexready = false.
+     * <b>settings.archive.indexserver.alwaysSetIsIndexReadyToFalse<b>: The default: false. If set to true, the
+     * IndexRequestMessage returned has always isindexready = false.
      */
     public static String ALWAYS_SET_ISINDEX_READY_TO_FALSE = "settings.harvester.indexserver.indexrequestserver.alwaysSetIsIndexReadyToFalse";
 
@@ -129,8 +125,7 @@ public final class TestIndexRequestServer extends HarvesterMessageHandler implem
     private Timer checkIflisteningTimer = new Timer();
 
     /**
-     * The File containing the list of jobids, that the default index consists
-     * of.
+     * The File containing the list of jobids, that the default index consists of.
      */
     private File jobsForDefaultIndex;
 
@@ -140,14 +135,12 @@ public final class TestIndexRequestServer extends HarvesterMessageHandler implem
     private Set<Long> defaultIDs;
 
     /**
-     * The directory to store backup copies of the currentJobs. In case of the
-     * indexserver crashing.
+     * The directory to store backup copies of the currentJobs. In case of the indexserver crashing.
      */
     private File requestDir;
 
     /**
-     * Initialise index request server with no handlers, listening to the index
-     * JMS channel.
+     * Initialise index request server with no handlers, listening to the index JMS channel.
      */
     private TestIndexRequestServer() {
         maxConcurrentJobs = Settings.getLong(HarvesterSettings.INDEXSERVER_INDEXING_MAXCLIENTS);
@@ -247,13 +240,10 @@ public final class TestIndexRequestServer extends HarvesterMessageHandler implem
     }
 
     /**
-     * Set handler for certain type of index request. If called more than once,
-     * new handler overwrites old one.
+     * Set handler for certain type of index request. If called more than once, new handler overwrites old one.
      *
-     * @param t
-     *            The type of index requested
-     * @param handler
-     *            The handler that should handle this request.
+     * @param t The type of index requested
+     * @param handler The handler that should handle this request.
      */
     public void setHandler(RequestType t, FileBasedCache<Set<Long>> handler) {
         ArgumentNotValid.checkNotNull(t, "RequestType t");
@@ -263,29 +253,22 @@ public final class TestIndexRequestServer extends HarvesterMessageHandler implem
     }
 
     /**
-     * Given a request for an index over a set of job ids, use a cache to try to
-     * create the index, Then reply result.
+     * Given a request for an index over a set of job ids, use a cache to try to create the index, Then reply result.
      *
-     * If for any reason not all requested jobs can be indexed, return the
-     * subset. The client can then retry with this subset, in order to get index
-     * of that subset.
+     * If for any reason not all requested jobs can be indexed, return the subset. The client can then retry with this
+     * subset, in order to get index of that subset.
      *
-     * Values read from the message in order to handle this: - Type of index
-     * requested - will use the index cache of this type - Set of job IDs -
-     * which jobs to generate index for
+     * Values read from the message in order to handle this: - Type of index requested - will use the index cache of
+     * this type - Set of job IDs - which jobs to generate index for
      *
-     * Values written to message before replying: - The subset indexed - may be
-     * the entire set. ALWAYS set unless reply !OK - File with index - ONLY if
-     * subset is entire set, the index requested.
+     * Values written to message before replying: - The subset indexed - may be the entire set. ALWAYS set unless reply
+     * !OK - File with index - ONLY if subset is entire set, the index requested.
      *
-     * This method should ALWAYS reply. May reply with not OK message if: -
-     * Message received was not OK - Request type is null or unknown in message
-     * - Set of job ids is null in message - Cache generation throws exception
+     * This method should ALWAYS reply. May reply with not OK message if: - Message received was not OK - Request type
+     * is null or unknown in message - Set of job ids is null in message - Cache generation throws exception
      *
-     * @param irMsg
-     *            A message requesting an index.
-     * @throws ArgumentNotValid
-     *             on null parameter
+     * @param irMsg A message requesting an index.
+     * @throws ArgumentNotValid on null parameter
      */
     public synchronized void visit(final IndexRequestMessage irMsg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(irMsg, "IndexRequestMessage irMsg");
@@ -331,10 +314,8 @@ public final class TestIndexRequestServer extends HarvesterMessageHandler implem
     /**
      * Save a IndexRequestMessage to disk.
      * 
-     * @param irMsg
-     *            A message to store to disk
-     * @throws IOException
-     *             Throws IOExecption, if unable to save message
+     * @param irMsg A message to store to disk
+     * @throws IOException Throws IOExecption, if unable to save message
      */
     private void saveMsg(IndexRequestMessage irMsg) throws IOException {
         File dest = new File(requestDir, irMsg.getID());
@@ -353,8 +334,7 @@ public final class TestIndexRequestServer extends HarvesterMessageHandler implem
     /**
      * Restore message from serialized state.
      * 
-     * @param serializedObject
-     *            the object stored as a file.
+     * @param serializedObject the object stored as a file.
      * @return the restored message.
      */
     private IndexRequestMessage restoreMessage(File serializedObject) {
@@ -386,12 +366,11 @@ public final class TestIndexRequestServer extends HarvesterMessageHandler implem
     }
 
     /**
-     * Method that handles generating an index; supposed to be run in its own
-     * thread, because it blocks while the index is generated.
+     * Method that handles generating an index; supposed to be run in its own thread, because it blocks while the index
+     * is generated.
      * 
      * @see #visit(IndexRequestMessage)
-     * @param irMsg
-     *            A message requesting an index
+     * @param irMsg A message requesting an index
      */
     private void doGenerateIndex(final IndexRequestMessage irMsg) {
         final boolean mustReturnIndex = irMsg.mustReturnIndex();
@@ -466,8 +445,7 @@ public final class TestIndexRequestServer extends HarvesterMessageHandler implem
     /**
      * Deleted stored file for given message.
      * 
-     * @param irMsg
-     *            a given IndexRequestMessage
+     * @param irMsg a given IndexRequestMessage
      */
     private void deleteStoredMessage(IndexRequestMessage irMsg) {
         File expectedSerializedFile = new File(requestDir, irMsg.getID());
@@ -483,17 +461,11 @@ public final class TestIndexRequestServer extends HarvesterMessageHandler implem
     }
 
     /**
-     * Helper method to check message properties. Will throw exceptions on any
-     * trouble.
+     * Helper method to check message properties. Will throw exceptions on any trouble.
      * 
-     * @param irMsg
-     *            The message to check.
-     * @throws ArgumentNotValid
-     *             If message is not OK, or if the list of jobs or the index
-     *             request type is null.
-     * @throws UnknownID
-     *             If the index request type is of a form that is unknown to the
-     *             server.
+     * @param irMsg The message to check.
+     * @throws ArgumentNotValid If message is not OK, or if the list of jobs or the index request type is null.
+     * @throws UnknownID If the index request type is of a form that is unknown to the server.
      */
     private void checkMessage(final IndexRequestMessage irMsg) throws UnknownID, ArgumentNotValid {
         ArgumentNotValid.checkTrue(irMsg.isOk(), "Message was not OK");
@@ -522,9 +494,8 @@ public final class TestIndexRequestServer extends HarvesterMessageHandler implem
     }
 
     /**
-     * Look for stored messages to be preprocessed, and start processing those.
-     * And start the separate thread that decides if we should listen for
-     * index-requests.
+     * Look for stored messages to be preprocessed, and start processing those. And start the separate thread that
+     * decides if we should listen for index-requests.
      */
     public void start() {
         restoreRequestsfromRequestDir();
@@ -540,8 +511,8 @@ public final class TestIndexRequestServer extends HarvesterMessageHandler implem
     }
 
     /**
-     * Defines the task to repeatedly check the listening status. And begin
-     * listening again, if we are ready for more tasks.
+     * Defines the task to repeatedly check the listening status. And begin listening again, if we are ready for more
+     * tasks.
      */
     private static class ListeningTask extends TimerTask {
 
@@ -551,8 +522,7 @@ public final class TestIndexRequestServer extends HarvesterMessageHandler implem
         /**
          * Constructor for the ListeningTask.
          * 
-         * @param irs
-         *            The indexrequestserver this task should be associated with
+         * @param irs The indexrequestserver this task should be associated with
          */
         ListeningTask(TestIndexRequestServer irs) {
             thisIrs = irs;

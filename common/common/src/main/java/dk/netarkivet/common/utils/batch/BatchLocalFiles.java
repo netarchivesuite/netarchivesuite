@@ -37,9 +37,8 @@ import dk.netarkivet.common.exceptions.BatchTermination;
 import dk.netarkivet.common.utils.Settings;
 
 /**
- * Class for running FileBatchJobs on a set of local files. The constructor
- * takes an array of files to be processed and the run() method takes a
- * FileBatchJob and applies it to each file in turn.
+ * Class for running FileBatchJobs on a set of local files. The constructor takes an array of files to be processed and
+ * the run() method takes a FileBatchJob and applies it to each file in turn.
  */
 public class BatchLocalFiles {
 
@@ -50,21 +49,18 @@ public class BatchLocalFiles {
     private File[] files;
 
     /**
-     * The last time logging was performed. Initial 0 to ensure logging the
-     * first time.
+     * The last time logging was performed. Initial 0 to ensure logging the first time.
      */
     private long lastLoggingDate = 0;
     /** The time when the batchjob was started. */
     private long startTime = 0;
 
     /**
-     * Given an array of files, constructs a BatchLocalFiles instance to be used
-     * in running a batch job over those files.
+     * Given an array of files, constructs a BatchLocalFiles instance to be used in running a batch job over those
+     * files.
      *
-     * @param incomingFiles
-     *            The files that should be used processed by the batchjob
-     * @throws ArgumentNotValid
-     *             if incomingFiles is null or contains a null entry
+     * @param incomingFiles The files that should be used processed by the batchjob
+     * @throws ArgumentNotValid if incomingFiles is null or contains a null entry
      */
     public BatchLocalFiles(File[] incomingFiles) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(incomingFiles, "incomingFiles");
@@ -77,10 +73,8 @@ public class BatchLocalFiles {
     /**
      * Run the given job on the files associated with this object.
      *
-     * @param job
-     *            - the job to be executed
-     * @param os
-     *            - the OutputStream to which output data is written
+     * @param job - the job to be executed
+     * @param os - the OutputStream to which output data is written
      */
     public void run(FileBatchJob job, OutputStream os) {
         ArgumentNotValid.checkNotNull(job, "FileBatchJob job");
@@ -153,12 +147,9 @@ public class BatchLocalFiles {
     /**
      * Process a single file.
      *
-     * @param job
-     *            The job that does the processing
-     * @param file
-     *            The file to process
-     * @param os
-     *            Where to put the output.
+     * @param job The job that does the processing
+     * @param file The file to process
+     * @param os Where to put the output.
      */
     private void processFile(FileBatchJob job, final File file, OutputStream os) {
         log.trace("Started processing of file '{}'.", file.getAbsolutePath());

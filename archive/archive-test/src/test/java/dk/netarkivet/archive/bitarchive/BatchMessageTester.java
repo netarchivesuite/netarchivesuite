@@ -39,11 +39,11 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.testutils.Serial;
 
 /**
- * Created by IntelliJ IDEA. User: csr Date: Mar 3, 2005 Time: 10:29:56 AM To
- * change this template use File | Settings | File Templates.
+ * Created by IntelliJ IDEA. User: csr Date: Mar 3, 2005 Time: 10:29:56 AM To change this template use File | Settings |
+ * File Templates.
  *
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class BatchMessageTester {
     // Need a couple of queues for the constructors for the messages
     private ChannelID q1 = TestInfo.QUEUE_1;

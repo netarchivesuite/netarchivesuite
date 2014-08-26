@@ -52,9 +52,8 @@ import dk.netarkivet.harvester.datamodel.dao.DAOProviderFactory;
 import dk.netarkivet.harvester.webinterface.EventHarvestUtil;
 
 /**
- * This class contains the specific properties and operations of harvest
- * definitions which are not snapshot harvest definitions. I.e. this class
- * models definitions of event and selective harvests.
+ * This class contains the specific properties and operations of harvest definitions which are not snapshot harvest
+ * definitions. I.e. this class models definitions of event and selective harvests.
  *
  */
 public class PartialHarvest extends HarvestDefinition {
@@ -62,8 +61,8 @@ public class PartialHarvest extends HarvestDefinition {
     private static final Logger log = LoggerFactory.getLogger(PartialHarvest.class);
 
     /**
-     * Set of domain configurations being harvested by this harvest. Entries in
-     * this set are unique on configuration name + domain name.
+     * Set of domain configurations being harvested by this harvest. Entries in this set are unique on configuration
+     * name + domain name.
      */
     private Map<SparseDomainConfiguration, DomainConfiguration> domainConfigurations = new HashMap<SparseDomainConfiguration, DomainConfiguration>();
 
@@ -76,19 +75,14 @@ public class PartialHarvest extends HarvestDefinition {
     private Date nextDate;
 
     /**
-     * Create new instance of a PartialHavest configured according to the
-     * properties of the supplied DomainConfiguration.
+     * Create new instance of a PartialHavest configured according to the properties of the supplied
+     * DomainConfiguration.
      *
-     * @param domainConfigurations
-     *            a list of domain configurations
-     * @param schedule
-     *            the harvest definition schedule
-     * @param harvestDefName
-     *            the name of the harvest definition
-     * @param comments
-     *            comments
-     * @param audience
-     *            The intended audience for this harvest (could be null)
+     * @param domainConfigurations a list of domain configurations
+     * @param schedule the harvest definition schedule
+     * @param harvestDefName the name of the harvest definition
+     * @param comments comments
+     * @param audience The intended audience for this harvest (could be null)
      */
     public PartialHarvest(List<DomainConfiguration> domainConfigurations, Schedule schedule, String harvestDefName,
             String comments, String audience) {
@@ -121,8 +115,7 @@ public class PartialHarvest extends HarvestDefinition {
     /**
      * Set the schedule to be used for this harvestdefinition.
      *
-     * @param schedule
-     *            A schedule for when to try harvesting.
+     * @param schedule A schedule for when to try harvesting.
      */
     public void setSchedule(Schedule schedule) {
         ArgumentNotValid.checkNotNull(schedule, "schedule");
@@ -135,8 +128,8 @@ public class PartialHarvest extends HarvestDefinition {
     /**
      * Get the next date this harvest definition should be run.
      *
-     * @return The next date the harvest definition should be run or null, if
-     *         the harvest definition should never run again.
+     * @return The next date the harvest definition should be run or null, if the harvest definition should never run
+     *         again.
      */
     public Date getNextDate() {
         return nextDate;
@@ -145,9 +138,7 @@ public class PartialHarvest extends HarvestDefinition {
     /**
      * Set the next date this harvest definition should be run.
      *
-     * @param nextDate
-     *            The next date the harvest definition should be run. May be
-     *            null, meaning never again.
+     * @param nextDate The next date the harvest definition should be run. May be null, meaning never again.
      */
     public void setNextDate(Date nextDate) {
         this.nextDate = nextDate;
@@ -156,8 +147,7 @@ public class PartialHarvest extends HarvestDefinition {
     /**
      * Remove domainconfiguration from this partialHarvest.
      * 
-     * @param dcKey
-     *            domainConfiguration key
+     * @param dcKey domainConfiguration key
      */
     public void removeDomainConfiguration(SparseDomainConfiguration dcKey) {
         ArgumentNotValid.checkNotNull(dcKey, "DomainConfigurationKey dcKey");
@@ -169,8 +159,7 @@ public class PartialHarvest extends HarvestDefinition {
     /**
      * Add a new domainconfiguration to this PartialHarvest.
      * 
-     * @param newConfiguration
-     *            A new DomainConfiguration
+     * @param newConfiguration A new DomainConfiguration
      */
     public void addDomainConfiguration(DomainConfiguration newConfiguration) {
         ArgumentNotValid.checkNotNull(newConfiguration, "DomainConfiguration newConfiguration");
@@ -202,9 +191,7 @@ public class PartialHarvest extends HarvestDefinition {
     /**
      * Set the list of configurations that this PartialHarvest uses.
      *
-     * @param configs
-     *            List<DomainConfiguration> the configurations that this
-     *            harvestdefinition will use.
+     * @param configs List<DomainConfiguration> the configurations that this harvestdefinition will use.
      */
     public void setDomainConfigurations(List<DomainConfiguration> configs) {
         ArgumentNotValid.checkNotNull(configs, "configs");
@@ -214,11 +201,9 @@ public class PartialHarvest extends HarvestDefinition {
     }
 
     /**
-     * Add the list of configurations to the configuration associated with this
-     * PartialHarvest.
+     * Add the list of configurations to the configuration associated with this PartialHarvest.
      * 
-     * @param configs
-     *            a List of configurations
+     * @param configs a List of configurations
      */
     private void addConfigurations(List<DomainConfiguration> configs) {
         for (DomainConfiguration dc : configs) {
@@ -229,16 +214,14 @@ public class PartialHarvest extends HarvestDefinition {
     /**
      * Add a configuration to this PartialHarvest.
      * 
-     * @param dc
-     *            the given configuration
+     * @param dc the given configuration
      */
     private void addConfiguration(DomainConfiguration dc) {
         domainConfigurations.put(new SparseDomainConfiguration(dc), dc);
     }
 
     /**
-     * Reset the harvest definition to no harvests and next date being the first
-     * possible for the schedule.
+     * Reset the harvest definition to no harvests and next date being the first possible for the schedule.
      */
     public void reset() {
         numEvents = 0;
@@ -248,8 +231,7 @@ public class PartialHarvest extends HarvestDefinition {
     /**
      * Check if this harvest definition should be run, given the time now.
      *
-     * @param now
-     *            The current time
+     * @param now The current time
      * @return true if harvest definition should be run
      */
     public boolean runNow(Date now) {
@@ -288,26 +270,17 @@ public class PartialHarvest extends HarvestDefinition {
     }
 
     /**
-     * Takes a seed list and creates any necessary domains, configurations, and
-     * seedlists to enable them to be harvested with the given template and
-     * other parameters. <A href="https://sbforge.org/jira/browse/NAS-1317">JIRA
-     * issue NAS-1317</A> addresses this issue. Current naming of the seedlists
-     * and domainconfigurations are: one of <br>
-     * harvestdefinitionname + "_" + templateName + "_" + "UnlimitedBytes" (if
-     * maxbytes is negative)<br>
-     * harvestdefinitionname + "_" + templateName + "_" + maxBytes + "Bytes" (if
-     * maxbytes is zero or postive).
+     * Takes a seed list and creates any necessary domains, configurations, and seedlists to enable them to be harvested
+     * with the given template and other parameters. <A href="https://sbforge.org/jira/browse/NAS-1317">JIRA issue
+     * NAS-1317</A> addresses this issue. Current naming of the seedlists and domainconfigurations are: one of <br>
+     * harvestdefinitionname + "_" + templateName + "_" + "UnlimitedBytes" (if maxbytes is negative)<br>
+     * harvestdefinitionname + "_" + templateName + "_" + maxBytes + "Bytes" (if maxbytes is zero or postive).
      * 
-     * @see EventHarvestUtil#addConfigurations(PageContext, I18n, String) for
-     *      details
-     * @param seeds
-     *            a list of the seeds to be added
-     * @param templateName
-     *            the name of the template to be used
-     * @param maxBytes
-     *            Maximum number of bytes to harvest per domain
-     * @param maxObjects
-     *            Maximum number of objects to harvest per domain
+     * @see EventHarvestUtil#addConfigurations(PageContext, I18n, String) for details
+     * @param seeds a list of the seeds to be added
+     * @param templateName the name of the template to be used
+     * @param maxBytes Maximum number of bytes to harvest per domain
+     * @param maxObjects Maximum number of objects to harvest per domain
      */
     public void addSeeds(Set<String> seeds, String templateName, long maxBytes, int maxObjects) {
         ArgumentNotValid.checkNotNull(seeds, "seeds");
@@ -337,17 +310,12 @@ public class PartialHarvest extends HarvestDefinition {
     }
 
     /**
-     * This method is a duplicate of the addSeeds method but for seedsFile
-     * parameter
+     * This method is a duplicate of the addSeeds method but for seedsFile parameter
      * 
-     * @param seedsFile
-     *            a newline-separated File containing the seeds to be added
-     * @param templateName
-     *            the name of the template to be used
-     * @param maxBytes
-     *            Maximum number of bytes to harvest per domain
-     * @param maxObjects
-     *            Maximum number of objects to harvest per domain
+     * @param seedsFile a newline-separated File containing the seeds to be added
+     * @param templateName the name of the template to be used
+     * @param maxBytes Maximum number of bytes to harvest per domain
+     * @param maxObjects Maximum number of objects to harvest per domain
      */
     public void addSeedsFromFile(File seedsFile, String templateName, long maxBytes, int maxObjects) {
         ArgumentNotValid.checkNotNull(seedsFile, "seeds");
@@ -392,12 +360,9 @@ public class PartialHarvest extends HarvestDefinition {
     /**
      * Process each seed.
      * 
-     * @param seed
-     *            The given seed.
-     * @param invalidMessage
-     *            The message builder where the invalid seeds are added.
-     * @param acceptedSeeds
-     *            The set of accepted seeds
+     * @param seed The given seed.
+     * @param invalidMessage The message builder where the invalid seeds are added.
+     * @param acceptedSeeds The set of accepted seeds
      * @return true, if the processed seed is valid or empty.
      */
     private boolean processSeed(String seed, StringBuilder invalidMessage, Map<String, Set<String>> acceptedSeeds) {
@@ -435,14 +400,10 @@ public class PartialHarvest extends HarvestDefinition {
     /**
      * Generate domain configurations for the accepted seeds.
      * 
-     * @param templateName
-     *            The Heritrix template to be used.
-     * @param maxBytes
-     *            The number of max bytes allowed
-     * @param maxObjects
-     *            The number of max objected allowed
-     * @param acceptedSeeds
-     *            The set of accepted seeds
+     * @param templateName The Heritrix template to be used.
+     * @param maxBytes The number of max bytes allowed
+     * @param maxObjects The number of max objected allowed
+     * @param acceptedSeeds The set of accepted seeds
      */
     private void addSeedsToDomain(String templateName, long maxBytes, int maxObjects,
             Map<String, Set<String>> acceptedSeeds) {

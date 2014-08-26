@@ -49,8 +49,7 @@ public class WeeklyFrequencyTester {
     }
 
     /**
-     * Given a frequency that can start any time, check that first event is
-     * immediate.
+     * Given a frequency that can start any time, check that first event is immediate.
      * 
      * @throws Exception
      */
@@ -66,8 +65,7 @@ public class WeeklyFrequencyTester {
     }
 
     /**
-     * Given a frequency that can start Wed at 4:22, check that first event is
-     * first possible Wed 4:22
+     * Given a frequency that can start Wed at 4:22, check that first event is first possible Wed 4:22
      * 
      * @throws Exception
      */
@@ -94,8 +92,7 @@ public class WeeklyFrequencyTester {
     }
 
     /**
-     * Given a frequency that can start any time, check that next event is after
-     * correct period.
+     * Given a frequency that can start any time, check that next event is after correct period.
      * 
      * @throws Exception
      */
@@ -113,8 +110,7 @@ public class WeeklyFrequencyTester {
     }
 
     /**
-     * Given a frequency that can start Mon at 5:23, check that first event is
-     * first possible Mon 5:23.
+     * Given a frequency that can start Mon at 5:23, check that first event is first possible Mon 5:23.
      * 
      * @throws Exception
      */
@@ -143,8 +139,8 @@ public class WeeklyFrequencyTester {
     }
 
     /**
-     * Given a frequency that can start Mon at 5:23, check that first event is
-     * first possible Mon 5:23, given a time that IS actually Mon 5:23.
+     * Given a frequency that can start Mon at 5:23, check that first event is first possible Mon 5:23, given a time
+     * that IS actually Mon 5:23.
      * 
      * @throws Exception
      */

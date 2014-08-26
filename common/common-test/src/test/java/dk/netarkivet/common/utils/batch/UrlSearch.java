@@ -35,16 +35,15 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.arc.ARCBatchJob;
 
 /**
- * The batchjob checks each record whether it has a specific URL and/or specific
- * mimetype (both in the shape of a regular expression). The URLs of the digital
- * objects which matches these constrains are returned.
+ * The batchjob checks each record whether it has a specific URL and/or specific mimetype (both in the shape of a
+ * regular expression). The URLs of the digital objects which matches these constrains are returned.
  */
-@SuppressWarnings({ "serial", "unused" })
+@SuppressWarnings({"serial", "unused"})
 @Resources(value = {
         @Resource(name = "regex", description = "The regular expression for the " + "urls.", type = java.lang.String.class),
         @Resource(name = "mimetype", type = java.lang.String.class),
         @Resource(description = "Batchjob for finding URLs which matches a given"
-                + " regular expression and has a mimetype which matches another" + " regular expression.", type = dk.netarkivet.common.utils.batch.UrlSearch.class) })
+                + " regular expression and has a mimetype which matches another" + " regular expression.", type = dk.netarkivet.common.utils.batch.UrlSearch.class)})
 public class UrlSearch extends ARCBatchJob {
     private String regex;
     private String mimetype;

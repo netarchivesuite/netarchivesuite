@@ -67,8 +67,8 @@ import dk.netarkivet.harvester.harvesting.report.HarvestReport;
 import dk.netarkivet.harvester.harvesting.report.HarvestReportFactory;
 
 /**
- * This class handles all the things in a single harvest that are not related
- * directly related either to launching Heritrix or to handling JMS messages.
+ * This class handles all the things in a single harvest that are not related directly related either to launching
+ * Heritrix or to handling JMS messages.
  *
  */
 public class HarvestController {
@@ -77,20 +77,17 @@ public class HarvestController {
     private static final Logger log = LoggerFactory.getLogger(HarvestController.class);
 
     /**
-     * The singleton instance of this class. Calling cleanup() on the instance
-     * will null this field.
+     * The singleton instance of this class. Calling cleanup() on the instance will null this field.
      */
     private static HarvestController instance;
 
     /**
-     * The max time to wait for heritrix to close last ARC or WARC files (in
-     * secs).
+     * The max time to wait for heritrix to close last ARC or WARC files (in secs).
      */
     private static final int WAIT_FOR_HERITRIX_TIMEOUT_SECS = 5;
 
     /**
-     * The ArcRepositoryClient used to communicate with the ArcRepository to
-     * store the generated arc-files.
+     * The ArcRepositoryClient used to communicate with the ArcRepository to store the generated arc-files.
      */
     private HarvesterArcRepositoryClient arcRepController;
 
@@ -114,10 +111,9 @@ public class HarvestController {
     }
 
     /**
-     * Clean up this singleton, releasing the ArcRepositoryClient and removing
-     * the instance. This instance should not be used after this method has been
-     * called. After this has been called, new calls to getInstance will return
-     * a new instance.
+     * Clean up this singleton, releasing the ArcRepositoryClient and removing the instance. This instance should not be
+     * used after this method has been called. After this has been called, new calls to getInstance will return a new
+     * instance.
      */
     public void cleanup() {
         if (arcRepController != null) {
@@ -134,19 +130,13 @@ public class HarvestController {
     }
 
     /**
-     * Writes the files involved with a harvests. Creates the Heritrix arcs
-     * directory to ensure that this directory exists in advance.
+     * Writes the files involved with a harvests. Creates the Heritrix arcs directory to ensure that this directory
+     * exists in advance.
      *
-     * @param crawldir
-     *            The directory that the crawl should take place in.
-     * @param job
-     *            The Job object containing various harvest setup data.
-     * @param hdi
-     *            The object encapsulating documentary information about the
-     *            harvest.
-     * @param metadataEntries
-     *            Any metadata entries sent along with the job that should be
-     *            stored for later use.
+     * @param crawldir The directory that the crawl should take place in.
+     * @param job The Job object containing various harvest setup data.
+     * @param hdi The object encapsulating documentary information about the harvest.
+     * @param metadataEntries Any metadata entries sent along with the job that should be stored for later use.
      * @return An object encapsulating where these files have been written.
      */
     public HeritrixFiles writeHarvestFiles(File crawldir, Job job, HarvestDefinitionInfo hdi,
@@ -198,14 +188,11 @@ public class HarvestController {
     }
 
     /**
-     * This method attempts to retrieve the Heritrix recover log from the job
-     * which this job tries to continue. If successful, the Heritrix template is
-     * updated accordingly.
+     * This method attempts to retrieve the Heritrix recover log from the job which this job tries to continue. If
+     * successful, the Heritrix template is updated accordingly.
      * 
-     * @param job
-     *            The harvest Job object containing various harvest setup data.
-     * @param files
-     *            Heritrix files related to this harvestjob.
+     * @param job The harvest Job object containing various harvest setup data.
+     * @param files Heritrix files related to this harvestjob.
      */
     private void tryToRetrieveRecoverLog(Job job, HeritrixFiles files) {
         Long previousJob = job.getContinuationOf();
@@ -254,10 +241,8 @@ public class HarvestController {
     /**
      * Insert the correct recoverpath in the order.xml for the given harvestjob.
      * 
-     * @param job
-     *            A harvestjob
-     * @param files
-     *            Heritrix files related to this harvestjob.
+     * @param job A harvestjob
+     * @param files Heritrix files related to this harvestjob.
      */
     private void insertHeritrixRecoverPathInOrderXML(Job job, HeritrixFiles files) {
         Document order = job.getOrderXMLdoc();
@@ -276,14 +261,10 @@ public class HarvestController {
     /**
      * Writes pre-harvest metadata to the "metadata" directory.
      *
-     * @param harvestJob
-     *            a given Job.
-     * @param metadata
-     *            the list of metadata entries to write to metadata file.
-     * @param crawlDir
-     *            the directory, where the metadata will be written.
-     * @throws IOFailure
-     *             If there are errors in writing the metadata.
+     * @param harvestJob a given Job.
+     * @param metadata the list of metadata entries to write to metadata file.
+     * @param crawlDir the directory, where the metadata will be written.
+     * @throws IOFailure If there are errors in writing the metadata.
      */
     private void writePreharvestMetadata(Job harvestJob, List<MetadataEntry> metadata, File crawlDir) throws IOFailure {
         if (metadata.size() == 0) {
@@ -304,13 +285,10 @@ public class HarvestController {
     }
 
     /**
-     * Creates the actual HeritrixLauncher instance and runs it, after the
-     * various setup files have been written.
+     * Creates the actual HeritrixLauncher instance and runs it, after the various setup files have been written.
      *
-     * @param files
-     *            Description of files involved in running Heritrix. Not Null.
-     * @throws ArgumentNotValid
-     *             if an argument isn't valid.
+     * @param files Description of files involved in running Heritrix. Not Null.
+     * @throws ArgumentNotValid if an argument isn't valid.
      */
     public void runHarvest(HeritrixFiles files) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(files, "HeritrixFiles files");
@@ -319,24 +297,17 @@ public class HarvestController {
     }
 
     /**
-     * Controls storing all files involved in a job. The files are 1) The actual
-     * ARC/WARC files, 2) The metadata files The crawl.log is parsed and
-     * information for each domain is generated and stored in a
-     * AbstractHarvestReport object which is sent along in the
-     * crawlstatusmessage.
+     * Controls storing all files involved in a job. The files are 1) The actual ARC/WARC files, 2) The metadata files
+     * The crawl.log is parsed and information for each domain is generated and stored in a AbstractHarvestReport object
+     * which is sent along in the crawlstatusmessage.
      *
-     * Additionally, any leftover open ARC files are closed and harvest
-     * documentation is extracted before upload starts.
+     * Additionally, any leftover open ARC files are closed and harvest documentation is extracted before upload starts.
      *
-     * @param files
-     *            The HeritrixFiles object for this crawl. Not Null.
-     * @param errorMessage
-     *            A place where error messages accumulate. Not Null.
-     * @param failedFiles
-     *            List of files that failed to upload. Not Null.
+     * @param files The HeritrixFiles object for this crawl. Not Null.
+     * @param errorMessage A place where error messages accumulate. Not Null.
+     * @param failedFiles List of files that failed to upload. Not Null.
      * @return An object containing info about the domains harvested.
-     * @throws ArgumentNotValid
-     *             if an argument isn't valid.
+     * @throws ArgumentNotValid if an argument isn't valid.
      */
     public HarvestReport storeFiles(HeritrixFiles files, StringBuilder errorMessage, List<File> failedFiles)
             throws ArgumentNotValid {
@@ -385,12 +356,9 @@ public class HarvestController {
     /**
      * Upload given files to the archive repository.
      *
-     * @param files
-     *            List of (ARC/WARC) files to upload.
-     * @param errorMessage
-     *            Accumulator for error messages.
-     * @param failedFiles
-     *            Accumulator for failed files.
+     * @param files List of (ARC/WARC) files to upload.
+     * @param errorMessage Accumulator for error messages.
+     * @param failedFiles Accumulator for failed files.
      */
     private void uploadFiles(List<File> files, StringBuilder errorMessage, List<File> failedFiles) {
         // Upload all archive files
@@ -415,11 +383,10 @@ public class HarvestController {
     /**
      * Retrieve the list of jobs for deduplicate reduction.
      *
-     * Runs through all metadata entries, finding duplicate reduction entries,
-     * and parsing all jobIDs in them, warning only on errors.
+     * Runs through all metadata entries, finding duplicate reduction entries, and parsing all jobIDs in them, warning
+     * only on errors.
      *
-     * @param metadataEntries
-     *            list of metadataEntries.
+     * @param metadataEntries list of metadataEntries.
      * @return the list of jobs for deduplicate reduction.
      */
     private List<Long> parseJobIDsForDuplicateReduction(List<MetadataEntry> metadataEntries) {
@@ -446,23 +413,17 @@ public class HarvestController {
     }
 
     /**
-     * Get an index for deduplication. This will make a call to the index
-     * server, requesting an index for the given IDs. The files will then be
-     * cached locally.
+     * Get an index for deduplication. This will make a call to the index server, requesting an index for the given IDs.
+     * The files will then be cached locally.
      *
-     * If we request index for IDs that don't exist/have problems, we get a
-     * smaller set of IDs in our cache files, and next time we ask for the same
-     * index, we will call the index server again. This will be handled well,
-     * though, because if the ids are still missing, we will get a reply telling
-     * us to use the cached smaller index anyway.
+     * If we request index for IDs that don't exist/have problems, we get a smaller set of IDs in our cache files, and
+     * next time we ask for the same index, we will call the index server again. This will be handled well, though,
+     * because if the ids are still missing, we will get a reply telling us to use the cached smaller index anyway.
      *
-     * @param metadataEntries
-     *            list of metadataEntries top get jobIDs from.
+     * @param metadataEntries list of metadataEntries top get jobIDs from.
      * @return a directory containing the index itself.
-     * @throws IOFailure
-     *             on errors retrieving the index from the client. FIXME Better
-     *             forgiving handling of no index available Add setting for
-     *             disable deduplication if no index available
+     * @throws IOFailure on errors retrieving the index from the client. FIXME Better forgiving handling of no index
+     *             available Add setting for disable deduplication if no index available
      */
     private File fetchDeduplicateIndex(List<MetadataEntry> metadataEntries) {
         // Get list of jobs, which should be used for duplicate reduction
@@ -487,16 +448,12 @@ public class HarvestController {
     }
 
     /**
-     * Submit a batch job to generate cdx for all metadata files for a job, and
-     * report result in a list.
+     * Submit a batch job to generate cdx for all metadata files for a job, and report result in a list.
      * 
-     * @param jobid
-     *            The job to get cdx for.
+     * @param jobid The job to get cdx for.
      * @return A list of cdx records.
-     * @throws ArgumentNotValid
-     *             If jobid is 0 or negative.
-     * @throws IOFailure
-     *             On trouble generating the cdx
+     * @throws ArgumentNotValid If jobid is 0 or negative.
+     * @throws IOFailure On trouble generating the cdx
      */
     public static List<CDXRecord> getMetadataCDXRecordsForJob(long jobid) {
         ArgumentNotValid.checkPositive(jobid, "jobid");

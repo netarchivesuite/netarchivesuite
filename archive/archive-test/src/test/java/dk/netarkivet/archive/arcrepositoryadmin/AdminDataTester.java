@@ -64,7 +64,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 /**
  * This class tests AdminData save/store methods in general.
  */
-@SuppressWarnings({ "deprecation" })
+@SuppressWarnings({"deprecation"})
 public class AdminDataTester {
 
     /**
@@ -109,8 +109,7 @@ public class AdminDataTester {
     }
 
     /**
-     * Verifies that setReplyInfo(), hasReplyInfo() and getAndRemoveReplyInfo()
-     * work as expected.
+     * Verifies that setReplyInfo(), hasReplyInfo() and getAndRemoveReplyInfo() work as expected.
      * 
      * @throws IOException
      */
@@ -197,9 +196,8 @@ public class AdminDataTester {
     }
 
     /**
-     * Verifies that after closing an AdminData and constructing a new one: -
-     * Checksums are the same - Store states are the same - replyInfoObjects are
-     * removed.
+     * Verifies that after closing an AdminData and constructing a new one: - Checksums are the same - Store states are
+     * the same - replyInfoObjects are removed.
      * 
      * @throws IOException
      */
@@ -243,14 +241,11 @@ public class AdminDataTester {
             assertFalse("Log contains further entries - it should not at this point !", index2 > -1);
         }
         /*
-         * LogUtils.flushLogs(UpdateableAdminData.class.getName()); final File
-         * logfile = TestInfo.LOG_DIR; if (logfile.exists()) { String logtxt =
-         * FileUtils.readFile(logfile);
-         * FileAsserts.assertFileContains("Should contain starting entry",
-         * "AdminData created", logfile); int index =
+         * LogUtils.flushLogs(UpdateableAdminData.class.getName()); final File logfile = TestInfo.LOG_DIR; if
+         * (logfile.exists()) { String logtxt = FileUtils.readFile(logfile);
+         * FileAsserts.assertFileContains("Should contain starting entry", "AdminData created", logfile); int index =
          * logtxt.indexOf("Starting AdminData"); assertFalse(
-         * "Log contains further entries - it should not at this point !",
-         * logtxt.indexOf("<record>", index) > -1); }
+         * "Log contains further entries - it should not at this point !", logtxt.indexOf("<record>", index) > -1); }
          */
         lr.stopRecorder();
     }
@@ -326,8 +321,7 @@ public class AdminDataTester {
     }
 
     /**
-     * Test that the admin data is written in a journalling style. Fixed bug
-     * #324.
+     * Test that the admin data is written in a journalling style. Fixed bug #324.
      * 
      * @throws IOException
      * @throws FileNotFoundException
@@ -388,8 +382,7 @@ public class AdminDataTester {
     }
 
     /**
-     * Test that a valid file can be read, and that an invalid file gives
-     * appropriate log entries and invalid entries.
+     * Test that a valid file can be read, and that an invalid file gives appropriate log entries and invalid entries.
      *
      * @throws Exception
      */
@@ -443,8 +436,7 @@ public class AdminDataTester {
                 ad.getState(filename1, ba1));
         // LogUtils.flushLogs(UpdateableAdminData.class.getName());
         /*
-         * FileAsserts.assertFileNotContains("Should have no warning in log",
-         * TestInfo.LOG_DIR, "WARNING");
+         * FileAsserts.assertFileNotContains("Should have no warning in log", TestInfo.LOG_DIR, "WARNING");
          */
         lr.assertLogNotContainsLevel("Should have no warning in log", Level.WARN);
         String filename2 = "barfu";
@@ -458,14 +450,12 @@ public class AdminDataTester {
                 ad.getState(filename1, ba1));
 
         /*
-         * LogUtils.flushLogs(AdminData.class.getName());
-         * FileAsserts.assertFileContains("Should have a warning in log",
+         * LogUtils.flushLogs(AdminData.class.getName()); FileAsserts.assertFileContains("Should have a warning in log",
          * TestInfo.LOG_DIR, "WARNING: Corrupt admin");
          * 
-         * try { ad.setState(filename2, ba1,
-         * BitArchiveStoreState.DATA_UPLOADED); fail(
-         * "Should have thrown ArgumentNotValid, because the entry exists but is invalid"
-         * ); } catch (ArgumentNotValid e) { // expected }
+         * try { ad.setState(filename2, ba1, BitArchiveStoreState.DATA_UPLOADED); fail(
+         * "Should have thrown ArgumentNotValid, because the entry exists but is invalid" ); } catch (ArgumentNotValid
+         * e) { // expected }
          */
 
         ad.setCheckSum(filename1, checksum1);

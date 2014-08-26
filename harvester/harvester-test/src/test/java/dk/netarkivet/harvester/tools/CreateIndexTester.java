@@ -92,7 +92,7 @@ public class CreateIndexTester {
      */
     @Test
     public void testMain() {
-        String[] args = new String[] { "-tDEDUP", "-l1" };
+        String[] args = new String[] {"-tDEDUP", "-l1"};
 
         TestInfo.CACHE_TEMP_DIR.mkdirs(); // FIXME: Should not be missing.
         ZipUtils.gzipFiles(TestInfo.CACHE_TEMP_DIR, TestInfo.CACHE_OUTPUT_DIR);
@@ -103,7 +103,7 @@ public class CreateIndexTester {
 
     @Test
     public void testBadArguments1() {
-        String[] args = new String[] { "-asdf" };
+        String[] args = new String[] {"-asdf"};
         String expectedMsg = "Parsing of parameters failed: Unrecognized option: -a";
 
         try {
@@ -123,7 +123,7 @@ public class CreateIndexTester {
 
     @Test
     public void testBadArguments2() {
-        String[] args = new String[] { "-tCDX" };
+        String[] args = new String[] {"-tCDX"};
         // String expectedMsg =
         // "Some of the required parameters are missing: -l";
         String expectedMsg = "Some of the required parameters are missing: Missing required option: l";
@@ -145,7 +145,7 @@ public class CreateIndexTester {
 
     @Test
     public void testBadArguments3() {
-        String[] args = new String[] { "-l1" };
+        String[] args = new String[] {"-l1"};
         // String expectedMsg =
         // "Some of the required parameters are missing: -t";
         String expectedMsg = "Some of the required parameters are missing: Missing required option: t";
@@ -167,7 +167,7 @@ public class CreateIndexTester {
 
     @Test
     public void testBadArguments4() {
-        String[] args = new String[] { "-tMYINDEX", "-l1" };
+        String[] args = new String[] {"-tMYINDEX", "-l1"};
         String expectedMsg = "Unknown indextype 'MYINDEX' requested.";
 
         try {
@@ -186,10 +186,9 @@ public class CreateIndexTester {
     }
 
     /**
-     * This class is a MessageListener that responds to GetFileMessage,
-     * simulating an ArcRepository. It sends a constant response if the
-     * GetFileMessage matches the values given to GetFileListener's constructor,
-     * otherwise it sends null file as response.
+     * This class is a MessageListener that responds to GetFileMessage, simulating an ArcRepository. It sends a constant
+     * response if the GetFileMessage matches the values given to GetFileListener's constructor, otherwise it sends null
+     * file as response.
      */
     private static class CreateIndexListener extends TestMessageListener {
         public CreateIndexListener() {

@@ -40,8 +40,7 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.monitor.MonitorSettings;
 
 /**
- * A LogHandler that keeps the last N messages in memory, and exposes each as a
- * CachingLogRecordMBean.
+ * A LogHandler that keeps the last N messages in memory, and exposes each as a CachingLogRecordMBean.
  */
 public class CachingLogHandler extends Handler {
 
@@ -49,8 +48,7 @@ public class CachingLogHandler extends Handler {
     private final int loggingHistorySize;
 
     /**
-     * The logging cache itself, caching the last "loggingHistorySize" log
-     * entries.
+     * The logging cache itself, caching the last "loggingHistorySize" log entries.
      */
     private final List<LogRecord> loggingHistory;
 
@@ -61,18 +59,14 @@ public class CachingLogHandler extends Handler {
     private int currentIndex;
 
     /**
-     * Private method to get a Level property. If the property is not defined or
-     * cannot be parsed we return the given default value.
+     * Private method to get a Level property. If the property is not defined or cannot be parsed we return the given
+     * default value.
      *
-     * This method was copied from java.util.logging.LogManager, where it is
-     * package private :-(
+     * This method was copied from java.util.logging.LogManager, where it is package private :-(
      *
-     * @param name
-     *            The log property name
-     * @param defaultValue
-     *            The level if that property is not specified or unparsable
-     * @return The level from the property if set and parsable, the defaultValue
-     *         otherwise
+     * @param name The log property name
+     * @param defaultValue The level if that property is not specified or unparsable
+     * @return The level from the property if set and parsable, the defaultValue otherwise
      */
     private Level getLevelProperty(String name, Level defaultValue) {
         String val = LogManager.getLogManager().getProperty(name);
@@ -87,19 +81,14 @@ public class CachingLogHandler extends Handler {
     }
 
     /**
-     * private method to get a filter property. We return an instance of the
-     * class named by the "name" property. If the property is not defined or has
-     * problems we return the defaultValue.
+     * private method to get a filter property. We return an instance of the class named by the "name" property. If the
+     * property is not defined or has problems we return the defaultValue.
      *
-     * This method was copied from java.util.logging.LogManager, where it is
-     * package private :-(
+     * This method was copied from java.util.logging.LogManager, where it is package private :-(
      *
-     * @param name
-     *            The log property name
-     * @param defaultValue
-     *            The filter if that property is not specified or unparsable
-     * @return The filter from the property if set and parsable, the
-     *         defaultValue otherwise
+     * @param name The log property name
+     * @param defaultValue The filter if that property is not specified or unparsable
+     * @return The filter from the property if set and parsable, the defaultValue otherwise
      */
     @SuppressWarnings("rawtypes")
     private Filter getFilterProperty(String name, Filter defaultValue) {
@@ -119,19 +108,14 @@ public class CachingLogHandler extends Handler {
     }
 
     /**
-     * Package private method to get a formatter property. We return an instance
-     * of the class named by the "name" property. If the property is not defined
-     * or has problems we return the defaultValue.
+     * Package private method to get a formatter property. We return an instance of the class named by the "name"
+     * property. If the property is not defined or has problems we return the defaultValue.
      *
-     * This method was copied from java.util.logging.LogManager, where it is
-     * package private :-(
+     * This method was copied from java.util.logging.LogManager, where it is package private :-(
      *
-     * @param name
-     *            The log property name
-     * @param defaultValue
-     *            The formatter if that property is not specified or unparsable
-     * @return The formatter from the property if set and parsable, the
-     *         defaultValue otherwise
+     * @param name The log property name
+     * @param defaultValue The formatter if that property is not specified or unparsable
+     * @return The formatter from the property if set and parsable, the defaultValue otherwise
      */
     @SuppressWarnings("rawtypes")
     private Formatter getFormatterProperty(String name, Formatter defaultValue) {
@@ -151,15 +135,13 @@ public class CachingLogHandler extends Handler {
     }
 
     /**
-     * Initialise the handler datastructures, and register MBeans for all log
-     * records. Note this last thing is actually done in the constructor of the
-     * CachingLogRecord.
+     * Initialise the handler datastructures, and register MBeans for all log records. Note this last thing is actually
+     * done in the constructor of the CachingLogRecord.
      *
      * @see dk.netarkivet.common.management.SingleMBeanObject
      * @see SingleLogRecord
      *
-     *      The number of remembered log records is read from the setting
-     *      Settings.LOGGING_HISTORY_SIZE
+     *      The number of remembered log records is read from the setting Settings.LOGGING_HISTORY_SIZE
      */
     public CachingLogHandler() {
         super();
@@ -180,12 +162,10 @@ public class CachingLogHandler extends Handler {
     }
 
     /**
-     * Publish a <tt>LogRecord</tt>. This simply remembers the record in
-     * datastructures, and thus exposes it in an MBean.
+     * Publish a <tt>LogRecord</tt>. This simply remembers the record in datastructures, and thus exposes it in an
+     * MBean.
      *
-     * @param record
-     *            description of the log event. A null record is silently
-     *            ignored and is not published
+     * @param record description of the log event. A null record is silently ignored and is not published
      * @see Handler#publish(LogRecord)
      */
     public void publish(LogRecord record) {
@@ -205,13 +185,11 @@ public class CachingLogHandler extends Handler {
     /**
      * Close the <tt>Handler</tt> and free all associated resources.
      * <p>
-     * The close method will perform a <tt>flush</tt> and then close the
-     * <tt>Handler</tt>. After close has been called this <tt>Handler</tt>
-     * should no longer be used. Method calls may either be silently ignored or
-     * may throw runtime exceptions.
+     * The close method will perform a <tt>flush</tt> and then close the <tt>Handler</tt>. After close has been called
+     * this <tt>Handler</tt> should no longer be used. Method calls may either be silently ignored or may throw runtime
+     * exceptions.
      *
-     * @throws SecurityException
-     *             never.
+     * @throws SecurityException never.
      */
     public void close() throws SecurityException {
         flush();
@@ -225,8 +203,7 @@ public class CachingLogHandler extends Handler {
     /**
      * Returns the nth logrecord from the top.
      *
-     * @param n
-     *            The number of the log record to get
+     * @param n The number of the log record to get
      * @return The LogRecord which is number n from the top, or null for none.
      */
     public LogRecord getNthLogRecord(int n) {

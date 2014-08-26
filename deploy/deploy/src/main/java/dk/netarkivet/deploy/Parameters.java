@@ -30,11 +30,9 @@ import org.dom4j.Element;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
- * The Parameters class contains the machine parameters. These are the user
- * name, the install directory and the parameters for running the Java
- * applications. These are inherited from the parent entity (e.g. the machine
- * inherits the Parameters from the PhysicalLocation), then overwrites its own
- * specified variables.
+ * The Parameters class contains the machine parameters. These are the user name, the install directory and the
+ * parameters for running the Java applications. These are inherited from the parent entity (e.g. the machine inherits
+ * the Parameters from the PhysicalLocation), then overwrites its own specified variables.
  */
 public class Parameters {
     /** The class paths. */
@@ -53,11 +51,8 @@ public class Parameters {
     /**
      * Constructor. Retrieves the parameters from the XML tree.
      * 
-     * @param root
-     *            The root of the branch for the parent instance. This retrieves
-     *            the variables in the branch.
-     * @throws ArgumentNotValid
-     *             If the root is null.
+     * @param root The root of the branch for the parent instance. This retrieves the variables in the branch.
+     * @throws ArgumentNotValid If the root is null.
      */
     public Parameters(XmlStructure root) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(root, "XmlStructure root");
@@ -73,10 +68,8 @@ public class Parameters {
     /**
      * Constructor. Inherits the parameters of the parent instance.
      * 
-     * @param parent
-     *            The parameters of the parent instance.
-     * @throws ArgumentNotValid
-     *             If the parent is null.
+     * @param parent The parameters of the parent instance.
+     * @throws ArgumentNotValid If the parent is null.
      */
     public Parameters(Parameters parent) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(parent, "Parameter parent");
@@ -111,10 +104,8 @@ public class Parameters {
     /**
      * Overwrites the inherited parameters, if the root has new specified.
      * 
-     * @param root
-     *            The root of the current instance.
-     * @throws ArgumentNotValid
-     *             If the root is null.
+     * @param root The root of the current instance.
+     * @throws ArgumentNotValid If the root is null.
      */
     @SuppressWarnings("unchecked")
     public void newParameters(Element root) throws ArgumentNotValid {
@@ -192,8 +183,7 @@ public class Parameters {
     /**
      * For retrieving the install directory parameter.
      * 
-     * @return The install directory element, or empty string if install dir is
-     *         null.
+     * @return The install directory element, or empty string if install dir is null.
      */
     public String getInstallDirValue() {
         if (installDir != null) {
@@ -206,8 +196,7 @@ public class Parameters {
     /**
      * For retrieving the directory for the database.
      * 
-     * @return The database directory element, or empty string if install dir is
-     *         null.
+     * @return The database directory element, or empty string if install dir is null.
      */
     public String getHarvestDatabaseDirValue() {
         if (hdDatabaseDir != null) {
@@ -220,8 +209,7 @@ public class Parameters {
     /**
      * For retrieving the directory for the archive database.
      * 
-     * @return The archive database install directory element, or empty string
-     *         if install dir is null.
+     * @return The archive database install directory element, or empty string if install dir is null.
      */
     public String getArchiveDatabaseDirValue() {
         if (arcDatabaseDir != null) {

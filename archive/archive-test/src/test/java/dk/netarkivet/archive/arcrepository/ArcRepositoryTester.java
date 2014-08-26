@@ -76,7 +76,7 @@ import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
-@SuppressWarnings({ "deprecation", "unchecked", "static-access" })
+@SuppressWarnings({"deprecation", "unchecked", "static-access"})
 public class ArcRepositoryTester {
     /** A repeatedly used reflected method, used across method calls. */
     Method readChecksum;
@@ -156,12 +156,11 @@ public class ArcRepositoryTester {
     /**
      * Test that the readChecksum() method works as required.
      *
-     * @throws Throwable
-     *             if something are thrown
+     * @throws Throwable if something are thrown
      */
     @Test
     public void testReadChecksum() throws Throwable {
-        readChecksum = ArcRepository.class.getDeclaredMethod("readChecksum", new Class[] { File.class, String.class });
+        readChecksum = ArcRepository.class.getDeclaredMethod("readChecksum", new Class[] {File.class, String.class});
         readChecksum.setAccessible(true);
 
         try {
@@ -235,17 +234,13 @@ public class ArcRepositoryTester {
     /**
      * Call the readChecksum method with some input and a file to look for.
      *
-     * @param input
-     *            Will be written to a file that readChecksum reads. Valid input
-     *            is of the form <arcfilename>##<checksum>, but invalid input is
-     *            part of the test.
-     * @param arcfilename
-     *            The name of the arcfile that readChecksum should look for.
+     * @param input Will be written to a file that readChecksum reads. Valid input is of the form
+     *            <arcfilename>##<checksum>, but invalid input is part of the test.
+     * @param arcfilename The name of the arcfile that readChecksum should look for.
      *
      * @return The string found for the given filename.
      *
-     * @throws IOFailure
-     *             when readChecksum does.
+     * @throws IOFailure when readChecksum does.
      */
     public String callReadChecksum(String input, String arcfilename) throws Throwable {
         FileUtils.writeBinaryFile(TestInfo.TMP_FILE, input.getBytes());
@@ -257,17 +252,13 @@ public class ArcRepositoryTester {
     }
 
     /**
-     * Test that the OnBatchReply method updates state and responds correctly.
-     * This is a rather complex test, but should not attempt to test
-     * processCheckSum(). It has to set up the following:
-     * outstandingChecksumFiles should contain an entry replyOfId->arcfilename
-     * msg should contain id, errmsg, resultfile, filesprocessed, filesfailed,
-     * but the channels are not used. ad should contain some checksum for the
-     * arcfilename but no replyinfo -- we can check the effect by seeing
-     * warnings and state.
+     * Test that the OnBatchReply method updates state and responds correctly. This is a rather complex test, but should
+     * not attempt to test processCheckSum(). It has to set up the following: outstandingChecksumFiles should contain an
+     * entry replyOfId->arcfilename msg should contain id, errmsg, resultfile, filesprocessed, filesfailed, but the
+     * channels are not used. ad should contain some checksum for the arcfilename but no replyinfo -- we can check the
+     * effect by seeing warnings and state.
      *
-     * @throws Exception
-     *             if exception is thrown
+     * @throws Exception if exception is thrown
      */
     @Test
     public void DISABLED_testOnBatchReply() throws Exception {
@@ -456,7 +447,7 @@ public class ArcRepositoryTester {
         pss.setUp();
 
         try {
-            ArcRepositoryApplication.main(new String[] { "ERROR" });
+            ArcRepositoryApplication.main(new String[] {"ERROR"});
             fail("It should throw an exception ");
         } catch (SecurityException e) {
             // expected !

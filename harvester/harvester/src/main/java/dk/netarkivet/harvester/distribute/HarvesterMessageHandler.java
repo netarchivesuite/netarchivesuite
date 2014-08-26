@@ -44,8 +44,7 @@ import dk.netarkivet.harvester.harvesting.distribute.JobEndedMessage;
 import dk.netarkivet.harvester.indexserver.distribute.IndexRequestMessage;
 
 /**
- * This default message handler shields of all unimplemented methods from the
- * HarvesterMessageVisitor interface.
+ * This default message handler shields of all unimplemented methods from the HarvesterMessageVisitor interface.
  *
  * Classes should not implement HarvesterMessageVisitor but extend this class.
  *
@@ -67,8 +66,7 @@ public abstract class HarvesterMessageHandler implements HarvesterMessageVisitor
      *
      * This method catches <b>all</b> exceptions and logs them.
      *
-     * @param msg
-     *            an ObjectMessage
+     * @param msg an ObjectMessage
      */
     @Override
     public void onMessage(Message msg) {
@@ -85,10 +83,8 @@ public abstract class HarvesterMessageHandler implements HarvesterMessageVisitor
     /**
      * Handles when a handler receives a message it is not prepare to handle.
      *
-     * @param msg
-     *            The received message.
-     * @throws PermissionDenied
-     *             Always
+     * @param msg The received message.
+     * @throws PermissionDenied Always
      */
     private void deny(HarvesterMessage msg) {
         throw new PermissionDenied("'" + this + "' provides no handling for " + msg + " of type "
@@ -96,13 +92,10 @@ public abstract class HarvesterMessageHandler implements HarvesterMessageVisitor
     }
 
     /**
-     * This method should be overridden and implemented by a sub class if
-     * message handling is wanted.
+     * This method should be overridden and implemented by a sub class if message handling is wanted.
      * 
-     * @param msg
-     *            a CrawlStatusMessage
-     * @throws PermissionDenied
-     *             when invoked
+     * @param msg a CrawlStatusMessage
+     * @throws PermissionDenied when invoked
      */
     @Override
     public void visit(CrawlStatusMessage msg) throws PermissionDenied {
@@ -111,13 +104,10 @@ public abstract class HarvesterMessageHandler implements HarvesterMessageVisitor
     }
 
     /**
-     * This method should be overridden and implemented by a sub class if
-     * message handling is wanted.
+     * This method should be overridden and implemented by a sub class if message handling is wanted.
      * 
-     * @param msg
-     *            a DoOneCrawlMessage
-     * @throws PermissionDenied
-     *             when invoked
+     * @param msg a DoOneCrawlMessage
+     * @throws PermissionDenied when invoked
      */
     @Override
     public void visit(DoOneCrawlMessage msg) throws PermissionDenied {
@@ -126,13 +116,10 @@ public abstract class HarvesterMessageHandler implements HarvesterMessageVisitor
     }
 
     /**
-     * This method should be overridden and implemented by a sub class if
-     * message handling is wanted.
+     * This method should be overridden and implemented by a sub class if message handling is wanted.
      * 
-     * @param msg
-     *            a {@link CrawlProgressMessage}
-     * @throws PermissionDenied
-     *             when invoked
+     * @param msg a {@link CrawlProgressMessage}
+     * @throws PermissionDenied when invoked
      */
     @Override
     public void visit(CrawlProgressMessage msg) {
@@ -141,13 +128,10 @@ public abstract class HarvesterMessageHandler implements HarvesterMessageVisitor
     }
 
     /**
-     * This method should be overridden and implemented by a sub class if
-     * message handling is wanted.
+     * This method should be overridden and implemented by a sub class if message handling is wanted.
      * 
-     * @param msg
-     *            a {@link FrontierReportMessage}
-     * @throws PermissionDenied
-     *             when invoked
+     * @param msg a {@link FrontierReportMessage}
+     * @throws PermissionDenied when invoked
      */
     @Override
     public void visit(FrontierReportMessage msg) {
@@ -156,13 +140,10 @@ public abstract class HarvesterMessageHandler implements HarvesterMessageVisitor
     }
 
     /**
-     * This method should be overridden and implemented by a sub class if
-     * message handling is wanted.
+     * This method should be overridden and implemented by a sub class if message handling is wanted.
      * 
-     * @param msg
-     *            a {@link JobEndedMessage}
-     * @throws PermissionDenied
-     *             when invoked
+     * @param msg a {@link JobEndedMessage}
+     * @throws PermissionDenied when invoked
      */
     @Override
     public void visit(JobEndedMessage msg) {
@@ -171,13 +152,10 @@ public abstract class HarvesterMessageHandler implements HarvesterMessageVisitor
     }
 
     /**
-     * This method should be overridden and implemented by a sub class if
-     * message handling is wanted.
+     * This method should be overridden and implemented by a sub class if message handling is wanted.
      * 
-     * @param msg
-     *            a {@link HarvesterReadyMessage}
-     * @throws PermissionDenied
-     *             when invoked
+     * @param msg a {@link HarvesterReadyMessage}
+     * @throws PermissionDenied when invoked
      */
     @Override
     public void visit(HarvesterReadyMessage msg) {
@@ -186,13 +164,10 @@ public abstract class HarvesterMessageHandler implements HarvesterMessageVisitor
     }
 
     /**
-     * This method should be overridden and implemented by a sub class if
-     * message handling is wanted.
+     * This method should be overridden and implemented by a sub class if message handling is wanted.
      * 
-     * @param msg
-     *            a {@link IndexReadyMessage}
-     * @throws PermissionDenied
-     *             when invoked
+     * @param msg a {@link IndexReadyMessage}
+     * @throws PermissionDenied when invoked
      */
     @Override
     public void visit(IndexReadyMessage msg) {
@@ -201,13 +176,10 @@ public abstract class HarvesterMessageHandler implements HarvesterMessageVisitor
     }
 
     /**
-     * This method should be overridden and implemented by a sub class if
-     * message handling is wanted.
+     * This method should be overridden and implemented by a sub class if message handling is wanted.
      * 
-     * @param msg
-     *            a {@link IndexRequestMessage}
-     * @throws PermissionDenied
-     *             when invoked
+     * @param msg a {@link IndexRequestMessage}
+     * @throws PermissionDenied when invoked
      */
     @Override
     public void visit(IndexRequestMessage msg) {
@@ -216,11 +188,9 @@ public abstract class HarvesterMessageHandler implements HarvesterMessageVisitor
     }
 
     /**
-     * This method should be overridden and implemented by a sub class if
-     * message handling is wanted.
+     * This method should be overridden and implemented by a sub class if message handling is wanted.
      * 
-     * @param msg
-     *            a {@link HarvesterRegistrationRequest}
+     * @param msg a {@link HarvesterRegistrationRequest}
      */
     @Override
     public void visit(HarvesterRegistrationRequest msg) {
@@ -229,11 +199,9 @@ public abstract class HarvesterMessageHandler implements HarvesterMessageVisitor
     }
 
     /**
-     * This method should be overridden and implemented by a sub class if
-     * message handling is wanted.
+     * This method should be overridden and implemented by a sub class if message handling is wanted.
      * 
-     * @param msg
-     *            a {@link HarvesterRegistrationResponse}
+     * @param msg a {@link HarvesterRegistrationResponse}
      */
     @Override
     public void visit(HarvesterRegistrationResponse msg) {

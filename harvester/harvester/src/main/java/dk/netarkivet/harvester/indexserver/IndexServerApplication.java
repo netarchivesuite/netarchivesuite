@@ -40,8 +40,7 @@ public class IndexServerApplication {
     /**
      * Runs the IndexServerApplication. Settings are read from config files
      *
-     * @param args
-     *            an empty array
+     * @param args an empty array
      */
     public static void main(String[] args) {
         ApplicationUtils.startApp(IndexServer.class, args);

@@ -43,9 +43,8 @@ import dk.netarkivet.viewerproxy.Response;
 import dk.netarkivet.viewerproxy.URIResolver;
 
 /**
- * Wrapper for an URIResolver, which calls the controller methods on given
- * specific URLs, and forwards all others to the wrapped handler. This allows
- * you to access control methods by giving specific urls to this class.
+ * Wrapper for an URIResolver, which calls the controller methods on given specific URLs, and forwards all others to the
+ * wrapped handler. This allows you to access control methods by giving specific urls to this class.
  *
  */
 public class HTTPControllerServer extends CommandResolver {
@@ -70,8 +69,7 @@ public class HTTPControllerServer extends CommandResolver {
     static final String GET_STATUS_COMMAND = "/getStatus";
 
     /**
-     * Parameter defining the url to return to after doing start, stop, clear,
-     * or changeIndex.
+     * Parameter defining the url to return to after doing start, stop, clear, or changeIndex.
      */
     static final String RETURN_URL_PARAMETER = "returnURL";
     /** Parameter for ids of jobs to change index to. May be repeated. */
@@ -94,15 +92,12 @@ public class HTTPControllerServer extends CommandResolver {
     private static final int OK_RESPONSE_CODE = 200;
 
     /**
-     * Make a new HTTPControllerServer, which calls commands on the given
-     * controller, and forwards all other requests to the given URIResolver.
+     * Make a new HTTPControllerServer, which calls commands on the given controller, and forwards all other requests to
+     * the given URIResolver.
      *
-     * @param c
-     *            The controller which handles commands given in command URLs.
-     * @param ur
-     *            The URIResolver to handle all other uris.
-     * @throws ArgumentNotValid
-     *             if either argument is null.
+     * @param c The controller which handles commands given in command URLs.
+     * @param ur The URIResolver to handle all other uris.
+     * @throws ArgumentNotValid if either argument is null.
      */
     public HTTPControllerServer(Controller c, URIResolver ur) {
         super(ur);
@@ -111,25 +106,18 @@ public class HTTPControllerServer extends CommandResolver {
     }
 
     /**
-     * Handles parsing of the URL and delegating to relevant methods. The
-     * commands are of the form
-     * http://<<localhostname>>/<<command>>?<<param>>=<<value>>* Known commands
-     * are the following: start - params: returnURL - effect: start url
-     * collection return to returnURL stop - params: returnURL - effect: stop
-     * url collection return to returnURL clear - params: returnURL - effect:
-     * clear url collection return to returnURL getRecordedURIs - params: none -
-     * effect: write url collection to response changeIndex - params: jobID*, -
-     * effect: generate index for jobs, returnURL return to returnURL getStatus
-     * - params: locale - effect: write status to response.
+     * Handles parsing of the URL and delegating to relevant methods. The commands are of the form
+     * http://<<localhostname>>/<<command>>?<<param>>=<<value>>* Known commands are the following: start - params:
+     * returnURL - effect: start url collection return to returnURL stop - params: returnURL - effect: stop url
+     * collection return to returnURL clear - params: returnURL - effect: clear url collection return to returnURL
+     * getRecordedURIs - params: none - effect: write url collection to response changeIndex - params: jobID*, - effect:
+     * generate index for jobs, returnURL return to returnURL getStatus - params: locale - effect: write status to
+     * response.
      *
-     * @param request
-     *            The request to check
-     * @param response
-     *            The response to give command results to if it is a command. If
-     *            the request is one of these commands, the response code is set
-     *            to 303 if page is redirected to return url; 200 if command url
-     *            returns data; otherwise whatever is returned by the wrapped
-     *            resolver
+     * @param request The request to check
+     * @param response The response to give command results to if it is a command. If the request is one of these
+     *            commands, the response code is set to 303 if page is redirected to return url; 200 if command url
+     *            returns data; otherwise whatever is returned by the wrapped resolver
      * @return Whether this was a command URL
      */
     protected boolean executeCommand(Request request, Response response) {
@@ -167,15 +155,12 @@ public class HTTPControllerServer extends CommandResolver {
     }
 
     /**
-     * Check parameter map for exactly the parameter names given. If any are
-     * missing , throws IOFailure naming the expected parameters.
+     * Check parameter map for exactly the parameter names given. If any are missing , throws IOFailure naming the
+     * expected parameters.
      *
-     * @param request
-     *            The request to check parameters in
-     * @param parameterNames
-     *            The parameters to check for.
-     * @throws IOFailure
-     *             on missing parameters.
+     * @param request The request to check parameters in
+     * @param parameterNames The parameters to check for.
+     * @throws IOFailure on missing parameters.
      */
     private void checkParameters(Request request, String... parameterNames) {
         for (String parameter : parameterNames) {
@@ -189,10 +174,8 @@ public class HTTPControllerServer extends CommandResolver {
     /**
      * Helper method to handle start command.
      *
-     * @param request
-     *            The HTTP request we are working on
-     * @param response
-     *            Response to handle result
+     * @param request The HTTP request we are working on
+     * @param response Response to handle result
      */
     private void doStartRecordingURIs(Request request, Response response) {
         setReturnResponseFromParameter(response, request);
@@ -202,10 +185,8 @@ public class HTTPControllerServer extends CommandResolver {
     /**
      * Helper method to handle stop command.
      *
-     * @param request
-     *            The HTTP request we are working on
-     * @param response
-     *            Response to handle result
+     * @param request The HTTP request we are working on
+     * @param response Response to handle result
      */
     private void doStopRecordingURIs(Request request, Response response) {
         setReturnResponseFromParameter(response, request);
@@ -215,10 +196,8 @@ public class HTTPControllerServer extends CommandResolver {
     /**
      * Helper method to handle clear command.
      *
-     * @param request
-     *            The HTTP request we are working on
-     * @param response
-     *            Response to handle result
+     * @param request The HTTP request we are working on
+     * @param response Response to handle result
      */
     private void doClearRecordedURIs(Request request, Response response) {
         setReturnResponseFromParameter(response, request);
@@ -228,10 +207,8 @@ public class HTTPControllerServer extends CommandResolver {
     /**
      * Helper method to handle getRecordedURIs command.
      *
-     * @param request
-     *            The HTTP request we are working on
-     * @param response
-     *            Response to handle result
+     * @param request The HTTP request we are working on
+     * @param response Response to handle result
      */
     private void doGetRecordedURIs(Request request, Response response) {
         checkParameters(request);
@@ -252,10 +229,8 @@ public class HTTPControllerServer extends CommandResolver {
     /**
      * Helper method to handle changeIndex command.
      *
-     * @param request
-     *            The HTTP request we are working on
-     * @param response
-     *            Response to handle result
+     * @param request The HTTP request we are working on
+     * @param response Response to handle result
      */
     private void doChangeIndex(Request request, Response response) {
         checkParameters(request, JOB_ID_PARAMETER);
@@ -276,10 +251,8 @@ public class HTTPControllerServer extends CommandResolver {
     /**
      * Helper method to handle getStatus command.
      *
-     * @param request
-     *            The HTTP request we are working on
-     * @param response
-     *            Response to handle result
+     * @param request The HTTP request we are working on
+     * @param response Response to handle result
      */
     private void doGetStatus(Request request, Response response) {
         String localeString = getParameter(request, LOCALE_PARAMETER);
@@ -294,13 +267,10 @@ public class HTTPControllerServer extends CommandResolver {
     }
 
     /**
-     * Set up the appropriate headers and return code for doing a redirect to
-     * the URL given by the returnURL parameter.
+     * Set up the appropriate headers and return code for doing a redirect to the URL given by the returnURL parameter.
      *
-     * @param response
-     *            The response to set to be a redirect
-     * @param request
-     *            The request to read the returnURL parameter from
+     * @param response The response to set to be a redirect
+     * @param request The request to read the returnURL parameter from
      */
     private void setReturnResponseFromParameter(Response response, Request request) {
         String returnURL = getParameter(request, RETURN_URL_PARAMETER);
@@ -311,14 +281,11 @@ public class HTTPControllerServer extends CommandResolver {
     /**
      * Get a single parameter out of a request.
      *
-     * @param request
-     *            A request to look up parameters in.
-     * @param parameterName
-     *            The name of the parameter to look up.
-     * @return The value of one instance of the parameter in the request. If
-     *         more than one instance exists, an arbitrary one is picked.
-     * @throws IOFailure
-     *             if the parameter is not given.
+     * @param request A request to look up parameters in.
+     * @param parameterName The name of the parameter to look up.
+     * @return The value of one instance of the parameter in the request. If more than one instance exists, an arbitrary
+     *         one is picked.
+     * @throws IOFailure if the parameter is not given.
      */
     private String getParameter(Request request, String parameterName) {
         checkParameters(request, parameterName);

@@ -61,21 +61,16 @@ import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriter;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriterWarc;
 
 /**
- * This tool creates a CDX metadata file for a given job's jobID and
- * harvestPrefix by running a batch job on the bitarchive and processing the
- * results to give a metadata file. Use option -w to select WARC output, and -a
- * to select ARC output: If no option available, then warc mode is selected
+ * This tool creates a CDX metadata file for a given job's jobID and harvestPrefix by running a batch job on the
+ * bitarchive and processing the results to give a metadata file. Use option -w to select WARC output, and -a to select
+ * ARC output: If no option available, then warc mode is selected
  *
- * Usage: java dk.netarkivet.harvester.tools.CreateCDXMetadataFile -w --jobID 2
- * --harvestnamePrefix 2-1 Usage: java
- * dk.netarkivet.harvester.tools.CreateCDXMetadataFile -a --jobID 2
- * --harvestnamePrefix 2-1 Usage: java
- * dk.netarkivet.harvester.tools.CreateCDXMetadataFile --jobID 2
- * --harvestnamePrefix 2-1
+ * Usage: java dk.netarkivet.harvester.tools.CreateCDXMetadataFile -w --jobID 2 --harvestnamePrefix 2-1 Usage: java
+ * dk.netarkivet.harvester.tools.CreateCDXMetadataFile -a --jobID 2 --harvestnamePrefix 2-1 Usage: java
+ * dk.netarkivet.harvester.tools.CreateCDXMetadataFile --jobID 2 --harvestnamePrefix 2-1
  * 
- * The CDX records is slightly different from the one produced normally. As we
- * are not able to extract the timestamp, and harvestID from the (W)
- * arcfilenames, this information is not part of the CXDURI.
+ * The CDX records is slightly different from the one produced normally. As we are not able to extract the timestamp,
+ * and harvestID from the (W) arcfilenames, this information is not part of the CXDURI.
  */
 public class CreateCDXMetadataFile extends ToolRunnerBase {
 
@@ -84,11 +79,10 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
     public static final String usageString = "[-a|w] --jobID X --harvestnamePrefix somePrefix";
 
     /**
-     * Main method. Creates and runs the tool object responsible for batching
-     * over the bitarchive and creating a metadata file for a job.
+     * Main method. Creates and runs the tool object responsible for batching over the bitarchive and creating a
+     * metadata file for a job.
      *
-     * @param argv
-     *            Arguments to the tool: jobID harvestnamePrefix
+     * @param argv Arguments to the tool: jobID harvestnamePrefix
      */
     public static void main(String[] argv) {
         new CreateCDXMetadataFile().runTheTool(argv);
@@ -118,19 +112,16 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
         private ViewerArcRepositoryClient arcrep;
 
         /**
-         * The file pattern that matches an ARC or WARC file name without the
-         * jobID. If combined with a harvestnameprefix, this will match
-         * filenames that begin with the given harvestname prefix.
+         * The file pattern that matches an ARC or WARC file name without the jobID. If combined with a
+         * harvestnameprefix, this will match filenames that begin with the given harvestname prefix.
          * 
          */
         private static final String REMAINING_ARCHIVE_FILE_PATTERN = ".*";
 
         /**
-         * Checks that a valid jobID were given. This does not check whether
-         * jobs actually exist for that ID.
+         * Checks that a valid jobID were given. This does not check whether jobs actually exist for that ID.
          *
-         * @param args
-         *            The args given on the command line.
+         * @param args The args given on the command line.
          * @return True if the args are legal.
          */
         public boolean checkArgs(String... args) {
@@ -198,21 +189,18 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
         }
 
         /**
-         * Create required resources here (the ArcRepositoryClient instance).
-         * Resources created here should be released in tearDown, which is
-         * guaranteed to be run.
+         * Create required resources here (the ArcRepositoryClient instance). Resources created here should be released
+         * in tearDown, which is guaranteed to be run.
          *
-         * @param args
-         *            The arguments that were given on the command line (not
-         *            used here)
+         * @param args The arguments that were given on the command line (not used here)
          */
         public void setUp(String... args) {
             arcrep = ArcRepositoryClientFactory.getViewerInstance();
         }
 
         /**
-         * Closes all resources we are using, which is only the
-         * ArcRepositoryClient. This is guaranteed to be called at shutdown.
+         * Closes all resources we are using, which is only the ArcRepositoryClient. This is guaranteed to be called at
+         * shutdown.
          */
         public void tearDown() {
             if (arcrep != null) {
@@ -225,14 +213,11 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
         }
 
         /**
-         * The workhorse method of this tool: Runs the batch job, copies the
-         * result, then turns the result into a proper metadata file. This
-         * method assumes that the args have already been read by the checkArgs
-         * method, and thus jobId has been parsed, and the isWarcOutputMode
-         * established
+         * The workhorse method of this tool: Runs the batch job, copies the result, then turns the result into a proper
+         * metadata file. This method assumes that the args have already been read by the checkArgs method, and thus
+         * jobId has been parsed, and the isWarcOutputMode established
          *
-         * @param args
-         *            Arguments given on the command line.
+         * @param args Arguments given on the command line.
          */
         public void run(String... args) {
             final long jobID = this.jobId;
@@ -267,18 +252,12 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
         }
 
         /**
-         * Turns a raw CDX file for the given jobID into a metadatafile
-         * containing the CDX lines in one archive record per each ARC or WARC
-         * file indexed. The output is put into a file called
-         * &lt;jobID&gt;-metadata-1.arc.
+         * Turns a raw CDX file for the given jobID into a metadatafile containing the CDX lines in one archive record
+         * per each ARC or WARC file indexed. The output is put into a file called &lt;jobID&gt;-metadata-1.arc.
          *
-         * @param resultFile
-         *            The CDX file returned by a ExtractCDXJob for the given
-         *            jobID.
-         * @param jobID
-         *            The jobID we work on.
-         * @throws IOException
-         *             If an I/O error occurs, or the resultFile does not exist
+         * @param resultFile The CDX file returned by a ExtractCDXJob for the given jobID.
+         * @param jobID The jobID we work on.
+         * @throws IOException If an I/O error occurs, or the resultFile does not exist
          */
         private void arcifyResultFile(File resultFile, long jobID) throws IOException {
             BufferedReader reader = new BufferedReader(new FileReader(resultFile));
@@ -338,18 +317,14 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
         }
 
         /**
-         * Utility method to parse out the parts of a CDX line. If a different
-         * jobID is found in the CDX line than we're given, or the CDX line is
-         * unparsable, we print an error message and return null, expecting
-         * processing to continue.
+         * Utility method to parse out the parts of a CDX line. If a different jobID is found in the CDX line than we're
+         * given, or the CDX line is unparsable, we print an error message and return null, expecting processing to
+         * continue.
          *
-         * @param line
-         *            The line to parse.
-         * @param harvestnamePrefix
-         *            .
-         * @return An object containing the salient parts of the filename of the
-         *         ARC file as mentioned in the given CDX line, or null if the
-         *         filename didn't match the job we're working on.
+         * @param line The line to parse.
+         * @param harvestnamePrefix .
+         * @return An object containing the salient parts of the filename of the ARC file as mentioned in the given CDX
+         *         line, or null if the filename didn't match the job we're working on.
          */
         private String parseLine(String line, String harvestnamePrefix) {
             try {
@@ -369,16 +344,11 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
         /**
          * Writes a full entry of CDX files to the ARCWriter.
          *
-         * @param writer
-         *            The writer we're currently writing to.
-         * @param filename
-         *            The filename of all the entries stored in baos. This is
-         *            used to generate the URI for the entry.
-         * @param bytes
-         *            The bytes of the CDX records to be written under this
+         * @param writer The writer we're currently writing to.
+         * @param filename The filename of all the entries stored in baos. This is used to generate the URI for the
          *            entry.
-         * @throws IOFailure
-         *             if the write fails for any reason
+         * @param bytes The bytes of the CDX records to be written under this entry.
+         * @throws IOFailure if the write fails for any reason
          */
         private void writeCDXEntry(MetadataFileWriter writer, String filename, byte[] bytes) throws IOFailure {
             try {
@@ -390,8 +360,7 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
         }
 
         /**
-         * Return a string describing the parameters accepted by the
-         * CreateCDXMetadataFile tool.
+         * Return a string describing the parameters accepted by the CreateCDXMetadataFile tool.
          *
          * @return String with description of parameters.
          */

@@ -121,8 +121,7 @@ public class IntegrityTester {
     }
 
     /**
-     * This tests that we are actually able to write and read more than 4GB
-     * worth of data using GZip.
+     * This tests that we are actually able to write and read more than 4GB worth of data using GZip.
      *
      * @throws IOException
      */
@@ -184,8 +183,7 @@ public class IntegrityTester {
     }
 
     /**
-     * Test reading two large files: One that should unzip OK, one that should
-     * fail with wrong CRC checksum.
+     * Test reading two large files: One that should unzip OK, one that should fail with wrong CRC checksum.
      * 
      * @throws IOException
      */

@@ -69,13 +69,12 @@ import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
- * A TestCase subclass specifically tailored to test webinterface classes,
- * primarily the classes in dk.netarkivet.harvester.webinterface:
- * HarvestStatusTester, EventHarvestTester, DomainDefinitionTester,
+ * A TestCase subclass specifically tailored to test webinterface classes, primarily the classes in
+ * dk.netarkivet.harvester.webinterface: HarvestStatusTester, EventHarvestTester, DomainDefinitionTester,
  * ScheduleDefinitionTester, SnapshotHarvestDefinitionTester but also
  * dk.netarkivet.archive.webinterface.BitpreserveFileStatusTester
  */
-@SuppressWarnings({ "rawtypes", "deprecation" })
+@SuppressWarnings({"rawtypes", "deprecation"})
 @Ignore("Not in junit3 test suite")
 public class WebinterfaceTestCase {
     ReloadSettings rs = new ReloadSettings();
@@ -91,8 +90,8 @@ public class WebinterfaceTestCase {
     }
 
     /**
-     * A dummy class implementing only the methods for getting parameters. A
-     * single setter method is provided to set the parameter map.
+     * A dummy class implementing only the methods for getting parameters. A single setter method is provided to set the
+     * parameter map.
      */
     public static class TestServletRequest implements ServletRequest {
         Map<String, Object> attributes = new HashMap<String, Object>();

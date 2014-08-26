@@ -56,24 +56,20 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
     private static final Logger log = LoggerFactory.getLogger(MetadataFileWriterWarc.class);
 
     /**
-     * Writer to this jobs metadatafile. This is closed when the metadata is
-     * marked as ready.
+     * Writer to this jobs metadatafile. This is closed when the metadata is marked as ready.
      */
     private WARCWriter writer = null;
 
     /**
-     * The ID of the Warcinfo record. Set when calling the insertInfoRecord
-     * method.
+     * The ID of the Warcinfo record. Set when calling the insertInfoRecord method.
      */
     private URI warcInfoUID = null;
 
     /**
      * Create a <code>MetadataFileWriter</code> for WARC output.
      * 
-     * @param metadataWarcFile
-     *            The WARC output file
-     * @return <code>MetadataFileWriter</code> for writing metadata files in
-     *         WARC
+     * @param metadataWarcFile The WARC output file
+     * @return <code>MetadataFileWriter</code> for writing metadata files in WARC
      */
     public static MetadataFileWriter createWriter(File metadataWarcFile) {
         MetadataFileWriterWarc mtfw = new MetadataFileWriterWarc();
@@ -99,12 +95,10 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
     }
 
     /**
-     * Insert a warcInfoRecord in the WARC-file, if it doesn't already exists.
-     * saves the recordID of the written info-record for future reference to be
-     * used for later in the
+     * Insert a warcInfoRecord in the WARC-file, if it doesn't already exists. saves the recordID of the written
+     * info-record for future reference to be used for later in the
      * 
-     * @param payloadToInfoRecord
-     *            the given payload for this record.
+     * @param payloadToInfoRecord the given payload for this record.
      */
     public void insertInfoRecord(ANVLRecord payloadToInfoRecord) {
         if (warcInfoUID != null) {
@@ -181,8 +175,7 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
     /**
      * Generate encapsulated recordID.
      * 
-     * @param recordID
-     *            A given recordID
+     * @param recordID A given recordID
      * @return An encapsulated recordID.
      */
     private String generateEncapsulatedRecordID(URI recordID) {

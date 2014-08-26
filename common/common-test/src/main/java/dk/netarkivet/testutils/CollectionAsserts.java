@@ -34,19 +34,16 @@ import dk.netarkivet.common.utils.Named;
 /**
  * Utilities for doing asserts on collections.
  */
-@SuppressWarnings({ "rawtypes" })
+@SuppressWarnings({"rawtypes"})
 public class CollectionAsserts {
 
     /**
-     * Test that two iterators contain the same objects in the same order. The
-     * objects are tested using equals(). The iterators will be used by this.
+     * Test that two iterators contain the same objects in the same order. The objects are tested using equals(). The
+     * iterators will be used by this.
      *
-     * @param msg
-     *            Failure message
-     * @param i1
-     *            First iterator
-     * @param i2
-     *            Second iterator
+     * @param msg Failure message
+     * @param i1 First iterator
+     * @param i2 Second iterator
      */
     public static <T> void assertIteratorEquals(String msg, Iterator<T> i1, Iterator<T> i2) {
         while (i1.hasNext() && i2.hasNext()) {
@@ -63,15 +60,11 @@ public class CollectionAsserts {
     }
 
     /**
-     * Assert iterators of Named or String-objects have equal names in any
-     * order.
+     * Assert iterators of Named or String-objects have equal names in any order.
      *
-     * @param message
-     *            Failure message
-     * @param i1
-     *            First iterator
-     * @param i2
-     *            Second iterator
+     * @param message Failure message
+     * @param i1 First iterator
+     * @param i2 Second iterator
      */
     public static void assertIteratorNamedEquals(String message, Iterator i1, Iterator i2) {
         String[] a1 = getSortedArray(i1, message);
@@ -100,12 +93,9 @@ public class CollectionAsserts {
     /**
      * Assert that a list contains the given elements in order
      *
-     * @param msg
-     *            A message in case of failure
-     * @param actual
-     *            A list of objects
-     * @param expected
-     *            The values that the list should contain.
+     * @param msg A message in case of failure
+     * @param actual A list of objects
+     * @param expected The values that the list should contain.
      */
     public static void assertListEquals(String msg, List<? extends Object> actual, Object... expected) {
         if (actual == null) {

@@ -36,16 +36,14 @@ public class OnNSDomainsDecideRuleTester {
     public void testSURTprefixConversionDomains() throws Exception {
 
         /*
-         * First testing that the original way of making URls to SURTs behaves
-         * right on domains
+         * First testing that the original way of making URls to SURTs behaves right on domains
          */
         assertEquals("http://(dk,dr,www,", SurtPrefixSet.prefixFromPlain("www.dr.dk"));
 
         assertEquals("http://(dk,dr,", SurtPrefixSet.prefixFromPlain("http://dr.dk"));
 
         /*
-         * Then testing using OnNSDomainsDecideRule - that defines the domain
-         * using DomainNameQueueAssignmentPolicy
+         * Then testing using OnNSDomainsDecideRule - that defines the domain using DomainNameQueueAssignmentPolicy
          */
 
         OnNSDomainsDecideRule oddr = new OnNSDomainsDecideRule("");
@@ -80,8 +78,7 @@ public class OnNSDomainsDecideRuleTester {
     public void testSURTprefixConversionPaths() throws Exception {
 
         /*
-         * Testing using the 'original' way of transforming URLs to SURTs used
-         * by SurtPrefixesDecideRule
+         * Testing using the 'original' way of transforming URLs to SURTs used by SurtPrefixesDecideRule
          */
 
         assertEquals("http://(com,geocities,www,)/athens/2344/",

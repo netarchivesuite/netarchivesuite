@@ -54,7 +54,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 /**
  * Unit tests for the ArcRepository class.
  */
-@SuppressWarnings({ "deprecation", "unchecked" })
+@SuppressWarnings({"deprecation", "unchecked"})
 public class ArcRepositoryTesterStoreChecksum {
 
     private UseTestRemoteFile rf = new UseTestRemoteFile();
@@ -66,11 +66,10 @@ public class ArcRepositoryTesterStoreChecksum {
      */
     private static final File ORIGINALS_DIR = new File(TEST_DIR, "originals");
     /**
-     * The files that are uploaded during the tests and that must be removed
-     * afterwards.
+     * The files that are uploaded during the tests and that must be removed afterwards.
      */
-    private static final String[] STORABLE_FILES = new String[] { "NetarchiveSuite-store1.arc",
-            "NetarchiveSuite-store2.arc" };
+    private static final String[] STORABLE_FILES = new String[] {"NetarchiveSuite-store1.arc",
+            "NetarchiveSuite-store2.arc"};
 
     ArcRepository arcRepos;
 
@@ -96,8 +95,7 @@ public class ArcRepositoryTesterStoreChecksum {
     }
 
     /**
-     * Tests if the store operation generates and stores a valid checksum in the
-     * reference table (AdminData).
+     * Tests if the store operation generates and stores a valid checksum in the reference table (AdminData).
      */
     @Test
     @Ignore("Upload of 'NetarchiveSuite-store1.arc' timed out on Ubuntu")
@@ -121,8 +119,7 @@ public class ArcRepositoryTesterStoreChecksum {
     }
 
     /**
-     * Tests that Controller.getCheckSum() behaves as expected when using a
-     * reference to a non-stored file.
+     * Tests that Controller.getCheckSum() behaves as expected when using a reference to a non-stored file.
      */
     @Test
     public void testGetChecksumNotStoredFile() {
@@ -139,9 +136,8 @@ public class ArcRepositoryTesterStoreChecksum {
     }
 
     /**
-     * Tests if an attempt to store an already uploaded/stored file produces the
-     * expected behavior: a PermissionDenied should be thrown, and the original
-     * entry in checksum reference table remains unaffected.
+     * Tests if an attempt to store an already uploaded/stored file produces the expected behavior: a PermissionDenied
+     * should be thrown, and the original entry in checksum reference table remains unaffected.
      */
     @Test
     @Ignore("Upload of 'NetarchiveSuite-store1.arc' timed out on Ubuntu")
@@ -187,8 +183,7 @@ public class ArcRepositoryTesterStoreChecksum {
     }
 
     /**
-     * Check what happens if we're being sent a checksum while uploading. Test
-     * for bug #410.
+     * Check what happens if we're being sent a checksum while uploading. Test for bug #410.
      */
     @Test
     public void testStoreChecksumWhileUploading() throws NoSuchMethodException, IllegalAccessException,
@@ -207,10 +202,10 @@ public class ArcRepositoryTesterStoreChecksum {
         ad.setState(arcFileName, ba1Name, ReplicaStoreState.UPLOAD_STARTED);
         ad.setState(arcFileName, ba2Name, ReplicaStoreState.DATA_UPLOADED);
 
-        Method m = ArcRepository.class.getDeclaredMethod("processCheckSum", new Class[] { String.class, String.class,
-                String.class, String.class, boolean.class });
+        Method m = ArcRepository.class.getDeclaredMethod("processCheckSum", new Class[] {String.class, String.class,
+                String.class, String.class, boolean.class});
         m.setAccessible(true);
-        m.invoke(arcRepos, new Object[] { arcFileName, ba1Name, correctChecksum, correctChecksum, true });
+        m.invoke(arcRepos, new Object[] {arcFileName, ba1Name, correctChecksum, correctChecksum, true});
         assertEquals("Should be in state STORE_COMPLETED after correct checksum", ReplicaStoreState.UPLOAD_COMPLETED,
                 ad.getState(arcFileName, ba1Name));
 
@@ -219,7 +214,7 @@ public class ArcRepositoryTesterStoreChecksum {
         ad.addEntry(arcFileName, null, correctChecksum);
         ad.setState(arcFileName, ba1Name, ReplicaStoreState.UPLOAD_STARTED);
         ad.setState(arcFileName, ba2Name, ReplicaStoreState.DATA_UPLOADED);
-        m.invoke(arcRepos, new Object[] { arcFileName, ba1Name, correctChecksum, "wrong checksum", true });
+        m.invoke(arcRepos, new Object[] {arcFileName, ba1Name, correctChecksum, "wrong checksum", true});
         assertEquals("Should go into UPLOAD_FAILED without outstanding remotefile", ReplicaStoreState.UPLOAD_FAILED,
                 ad.getState(arcFileName, ba1Name));
 
@@ -238,7 +233,7 @@ public class ArcRepositoryTesterStoreChecksum {
         // Have to use a real file here, as startUpload will grab the name
         outstandingRemoteFiles.put(arcFileName, new TestRemoteFile(new File(ORIGINALS_DIR, STORABLE_FILES[1]), false,
                 false, false));
-        m.invoke(arcRepos, new Object[] { arcFileName, ba1Name, correctChecksum, "wrong checksum", true });
+        m.invoke(arcRepos, new Object[] {arcFileName, ba1Name, correctChecksum, "wrong checksum", true});
         assertEquals("Wrong checksum should always result in upload failure", ReplicaStoreState.UPLOAD_FAILED,
                 ad.getState(STORABLE_FILES[1], ba1Name));
     }

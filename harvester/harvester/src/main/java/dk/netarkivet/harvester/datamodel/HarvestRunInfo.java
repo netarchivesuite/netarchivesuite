@@ -52,12 +52,9 @@ public class HarvestRunInfo {
     /**
      * Constructor used to read harvest run information from database.
      * 
-     * @param harvestID
-     *            the ID of the harvest job
-     * @param harvestName
-     *            the name of the harvest job
-     * @param runNr
-     *            the run number of this harvest job
+     * @param harvestID the ID of the harvest job
+     * @param harvestName the name of the harvest job
+     * @param runNr the run number of this harvest job
      */
     HarvestRunInfo(long harvestID, String harvestName, int runNr) {
         this.harvestID = harvestID;
@@ -116,8 +113,7 @@ public class HarvestRunInfo {
     /**
      * Get the number of jobs for this run that are in a specific status.
      * 
-     * @param status
-     *            the specific status
+     * @param status the specific status
      * @return the number of jobs for this run that are in a specific status.
      */
     public int getJobCount(JobStatus status) {
@@ -131,8 +127,7 @@ public class HarvestRunInfo {
     /**
      * Set the start Date for this harvest job.
      * 
-     * @param startDate
-     *            the start date
+     * @param startDate the start date
      */
     public void setStartDate(Date startDate) {
         this.startDate = startDate;
@@ -141,8 +136,7 @@ public class HarvestRunInfo {
     /**
      * Set the end Date for this harvest job.
      * 
-     * @param endDate
-     *            The end date
+     * @param endDate The end date
      */
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
@@ -151,8 +145,7 @@ public class HarvestRunInfo {
     /**
      * Set the number of bytes harvested by this job.
      * 
-     * @param bytesHarvested
-     *            number of bytes harvested
+     * @param bytesHarvested number of bytes harvested
      */
     public void setBytesHarvested(long bytesHarvested) {
         this.bytesHarvested = bytesHarvested;
@@ -161,8 +154,7 @@ public class HarvestRunInfo {
     /**
      * Set the number of documents harvested by this job.
      * 
-     * @param docsHarvested
-     *            number of documents harvested
+     * @param docsHarvested number of documents harvested
      */
     public void setDocsHarvested(long docsHarvested) {
         this.docsHarvested = docsHarvested;
@@ -171,10 +163,8 @@ public class HarvestRunInfo {
     /**
      * Update the count for a specific jobstatus.
      * 
-     * @param status
-     *            a certain JobStatus
-     * @param count
-     *            the new count for this JobStatus.
+     * @param status a certain JobStatus
+     * @param count the new count for this JobStatus.
      */
     public void setStatusCount(JobStatus status, int count) {
         jobCounts.put(status, count);

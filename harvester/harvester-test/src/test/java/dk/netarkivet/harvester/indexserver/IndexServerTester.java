@@ -63,7 +63,7 @@ public class IndexServerTester {
         pss.setUp();
 
         try {
-            IndexServerApplication.main(new String[] { "ERROR" });
+            IndexServerApplication.main(new String[] {"ERROR"});
             fail("It should throw an exception ");
         } catch (SecurityException e) {
             // expected !

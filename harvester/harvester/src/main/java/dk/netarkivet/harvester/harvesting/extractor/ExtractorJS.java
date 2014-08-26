@@ -66,7 +66,7 @@ public class ExtractorJS extends Extractor implements CoreAttributeConstants {
     // URIs from http://www.google-analytics.com/urchin.js and only 2
     // good URIs, which are merely one pixel images.
     // TODO: remove this blacklist when JS extractor is improved
-    protected final static String[] EXTRACTOR_URI_EXCEPTIONS = { "http://www.google-analytics.com/urchin.js" };
+    protected final static String[] EXTRACTOR_URI_EXCEPTIONS = {"http://www.google-analytics.com/urchin.js"};
 
     /**
      * @param name
@@ -78,9 +78,7 @@ public class ExtractorJS extends Extractor implements CoreAttributeConstants {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * org.archive.crawler.framework.Processor#process(org.archive.crawler.datamodel
-     * .CrawlURI)
+     * @see org.archive.crawler.framework.Processor#process(org.archive.crawler.datamodel .CrawlURI)
      */
     public void extract(CrawlURI curi) {
         // special-cases, for when we know our current JS extractor does poorly.

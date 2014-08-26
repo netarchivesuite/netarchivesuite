@@ -36,8 +36,8 @@ import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.UnknownID;
 
 /**
- * The administrator class for the ArcRepository when dealing with an database
- * instead of a file (alternative to AdminData).
+ * The administrator class for the ArcRepository when dealing with an database instead of a file (alternative to
+ * AdminData).
  */
 public final class DatabaseAdmin implements Admin {
 
@@ -56,8 +56,7 @@ public final class DatabaseAdmin implements Admin {
     }
 
     /**
-     * Retrieval of a singleton DatabaseAdmin. Ensures that this class is not
-     * instantiated multiple times.
+     * Retrieval of a singleton DatabaseAdmin. Ensures that this class is not instantiated multiple times.
      * 
      * @return The current instance of this class.
      */
@@ -71,15 +70,10 @@ public final class DatabaseAdmin implements Admin {
     /**
      * Method for adding an entry for administration.
      * 
-     * @param filename
-     *            The name of the file to be stored.
-     * @param msg
-     *            The StoreMessage of the entry.
-     * @param checksum
-     *            The checksum of the entry.
-     * @throws ArgumentNotValid
-     *             If either the filename or checksum is either null or the
-     *             empty string.
+     * @param filename The name of the file to be stored.
+     * @param msg The StoreMessage of the entry.
+     * @param checksum The checksum of the entry.
+     * @throws ArgumentNotValid If either the filename or checksum is either null or the empty string.
      */
     @Override
     public void addEntry(String filename, StoreMessage msg, String checksum) throws ArgumentNotValid {
@@ -96,12 +90,9 @@ public final class DatabaseAdmin implements Admin {
     /**
      * Method for telling whether a file entry exists.
      * 
-     * @param filename
-     *            The name of the file, the existence of whose entry is to be
-     *            determined.
+     * @param filename The name of the file, the existence of whose entry is to be determined.
      * @return Whether the entry exists.
-     * @throws ArgumentNotValid
-     *             If the filename is either null or empty.
+     * @throws ArgumentNotValid If the filename is either null or empty.
      */
     @Override
     public boolean hasEntry(String filename) throws ArgumentNotValid {
@@ -114,15 +105,11 @@ public final class DatabaseAdmin implements Admin {
     /**
      * Returns the ReplicaStoreState of a given file in a specific replica.
      * 
-     * @param filename
-     *            The name of the file for the ReplicaStoreState.
-     * @param replicaChannelName
-     *            The name of the identification channel for uniquely
-     *            identifying the replica of for the ReplicaStoreState.
+     * @param filename The name of the file for the ReplicaStoreState.
+     * @param replicaChannelName The name of the identification channel for uniquely identifying the replica of for the
+     *            ReplicaStoreState.
      * @return The ReplicaStoreState of a given file in a specific replica.
-     * @throws ArgumentNotValid
-     *             If the filename or the replica id is null or the empty
-     *             string.
+     * @throws ArgumentNotValid If the filename or the replica id is null or the empty string.
      */
     @Override
     public ReplicaStoreState getState(String filename, String replicaChannelName) throws ArgumentNotValid {
@@ -136,23 +123,16 @@ public final class DatabaseAdmin implements Admin {
     }
 
     /**
-     * Determines whether a given file in a specific replica has a valid replica
-     * store state. By valid means a replica store state other that
-     * UNKNOWN_UPLOAD_STATE.
+     * Determines whether a given file in a specific replica has a valid replica store state. By valid means a replica
+     * store state other that UNKNOWN_UPLOAD_STATE.
      * 
-     * TODO Find out if the assumption that all upload states besides
-     * UNKNOWN_UPLOAD_STATE are acceptable!
+     * TODO Find out if the assumption that all upload states besides UNKNOWN_UPLOAD_STATE are acceptable!
      * 
-     * @param filename
-     *            The name of the file for the ReplicaStoreState.
-     * @param repChannelId
-     *            The identification channel of the replica for the
-     *            ReplicaStoreState.
-     * @return Whether a given file in a specific replica has a valid store
-     *         state.
-     * @throws ArgumentNotValid
-     *             If either the filenames or the replica identification channel
-     *             is null or the empty string.
+     * @param filename The name of the file for the ReplicaStoreState.
+     * @param repChannelId The identification channel of the replica for the ReplicaStoreState.
+     * @return Whether a given file in a specific replica has a valid store state.
+     * @throws ArgumentNotValid If either the filenames or the replica identification channel is null or the empty
+     *             string.
      */
     @Override
     public boolean hasState(String filename, String repChannelId) throws ArgumentNotValid {
@@ -172,16 +152,11 @@ public final class DatabaseAdmin implements Admin {
     /**
      * Sets the store state of an entry to a specific value.
      * 
-     * @param filename
-     *            The name of the file for the entry.
-     * @param repChannelId
-     *            The identification channel of the replica for the entry.
-     * @param state
-     *            The new state for the entry.
-     * @throws ArgumentNotValid
-     *             If the ReplicaStoreState is null, or if either the filename
-     *             or the replica identification channel is either null or the
-     *             empty string.
+     * @param filename The name of the file for the entry.
+     * @param repChannelId The identification channel of the replica for the entry.
+     * @param state The new state for the entry.
+     * @throws ArgumentNotValid If the ReplicaStoreState is null, or if either the filename or the replica
+     *             identification channel is either null or the empty string.
      */
     @Override
     public void setState(String filename, String repChannelId, ReplicaStoreState state) throws ArgumentNotValid {
@@ -199,12 +174,9 @@ public final class DatabaseAdmin implements Admin {
     /**
      * Determines whether the StoreMessage of a given file exists.
      * 
-     * @param filename
-     *            The name of the file to which the existence of the
-     *            StoreMessage should be determined.
+     * @param filename The name of the file to which the existence of the StoreMessage should be determined.
      * @return Whether the StoreMessage of the file exists.
-     * @throws ArgumentNotValid
-     *             If the filename is null or the empty string.
+     * @throws ArgumentNotValid If the filename is null or the empty string.
      */
     @Override
     public boolean hasReplyInfo(String filename) throws ArgumentNotValid {
@@ -217,12 +189,10 @@ public final class DatabaseAdmin implements Admin {
     /**
      * Retrieves the StoreMessage of a specific file.
      * 
-     * @param filename
-     *            The name of the file whose StoreMessage should be retrieved.
-     * @return The StoreMessage corresponding to the file. A null is returned if
-     *         the corresponding StoreMessage is not found.
-     * @throws ArgumentNotValid
-     *             If the filename is either null or the empty string.
+     * @param filename The name of the file whose StoreMessage should be retrieved.
+     * @return The StoreMessage corresponding to the file. A null is returned if the corresponding StoreMessage is not
+     *         found.
+     * @throws ArgumentNotValid If the filename is either null or the empty string.
      */
     @Override
     public StoreMessage removeReplyInfo(String filename) throws ArgumentNotValid {
@@ -233,17 +203,12 @@ public final class DatabaseAdmin implements Admin {
     }
 
     /**
-     * Assign a StoreMessage to a specific filename. If the filename is already
-     * associated with a StoreMessage, then this StoreMessage will be
-     * overwritten by the new StoreMessage.
+     * Assign a StoreMessage to a specific filename. If the filename is already associated with a StoreMessage, then
+     * this StoreMessage will be overwritten by the new StoreMessage.
      * 
-     * @param filename
-     *            The name of the file to have a StoreMessage assigned.
-     * @param msg
-     *            The StoreMessage to be assigned to a file.
-     * @throws ArgumentNotValid
-     *             If the StoreMessage is null or if the filename is either null
-     *             or the empty string.
+     * @param filename The name of the file to have a StoreMessage assigned.
+     * @param msg The StoreMessage to be assigned to a file.
+     * @throws ArgumentNotValid If the StoreMessage is null or if the filename is either null or the empty string.
      */
     @Override
     public void setReplyInfo(String filename, StoreMessage msg) throws ArgumentNotValid {
@@ -257,11 +222,9 @@ public final class DatabaseAdmin implements Admin {
     /**
      * Retrieves the checksum of a given file.
      * 
-     * @param filename
-     *            The name of the file, whose checksum should be retrieved.
+     * @param filename The name of the file, whose checksum should be retrieved.
      * @return The checksum of the file.
-     * @throws ArgumentNotValid
-     *             If the filename is either null or the empty string.
+     * @throws ArgumentNotValid If the filename is either null or the empty string.
      */
     @Override
     public String getCheckSum(String filename) throws ArgumentNotValid {
@@ -279,19 +242,13 @@ public final class DatabaseAdmin implements Admin {
     /**
      * Sets the checksum of a given file.
      * 
-     * It should not be possible to change the checksum in the database through
-     * arcrepository.
+     * It should not be possible to change the checksum in the database through arcrepository.
      * 
-     * @param filename
-     *            The name of the file to have the checksum changed.
-     * @param checksum
-     *            The new checksum for the file.
-     * @throws ArgumentNotValid
-     *             If either the filename or the checksum is either null or the
-     *             empty string.
-     * @throws IllegalState
-     *             Always, since it is not allowed for arcrepository to change
-     *             the checksum of a completed upload.
+     * @param filename The name of the file to have the checksum changed.
+     * @param checksum The new checksum for the file.
+     * @throws ArgumentNotValid If either the filename or the checksum is either null or the empty string.
+     * @throws IllegalState Always, since it is not allowed for arcrepository to change the checksum of a completed
+     *             upload.
      */
     @Override
     public void setCheckSum(String filename, String checksum) throws ArgumentNotValid, IllegalState {
@@ -319,17 +276,12 @@ public final class DatabaseAdmin implements Admin {
     }
 
     /**
-     * Retrieves a set with the name of the files with a specific
-     * ReplicaStoreState in a specific replica.
+     * Retrieves a set with the name of the files with a specific ReplicaStoreState in a specific replica.
      * 
-     * @param rep
-     *            The replica where the files belong.
-     * @param state
-     *            The ReplicaStoreState for the files.
-     * @return A set with the names of the files with a specific
-     *         ReplicaStoreState in a specific replica.
-     * @throws ArgumentNotValid
-     *             If the Replica or the ReplicaStoreState is null.
+     * @param rep The replica where the files belong.
+     * @param state The ReplicaStoreState for the files.
+     * @return A set with the names of the files with a specific ReplicaStoreState in a specific replica.
+     * @throws ArgumentNotValid If the Replica or the ReplicaStoreState is null.
      */
     @Override
     public Set<String> getAllFileNames(Replica rep, ReplicaStoreState state) throws ArgumentNotValid {

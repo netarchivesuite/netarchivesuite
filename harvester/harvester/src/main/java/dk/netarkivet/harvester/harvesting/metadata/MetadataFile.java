@@ -29,8 +29,7 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
 
 /**
- * Wraps information for an Heritrix file that should be stored in the metadata
- * ARC.
+ * Wraps information for an Heritrix file that should be stored in the metadata ARC.
  *
  * Defines a natural order to sort them.
  */
@@ -53,8 +52,7 @@ public class MetadataFile implements Comparable<MetadataFile> {
     }
 
     /**
-     * A string format that is used to build metadata URLs. Parameters are, in
-     * order :
+     * A string format that is used to build metadata URLs. Parameters are, in order :
      * <ol>
      * <li>The organization</li>
      * <li>the file type @see {@link MetadataType}</li>
@@ -75,8 +73,7 @@ public class MetadataFile implements Comparable<MetadataFile> {
     /**
      * A pattern identifying the crawl log metadata entry.
      *
-     * @see dk.netarkivet.harvester.indexserver.CrawlLogDataCache
-     *      #CrawlLogDataCache()
+     * @see dk.netarkivet.harvester.indexserver.CrawlLogDataCache #CrawlLogDataCache()
      */
     public static final String CRAWL_LOG_PATTERN = "metadata://[^/]*/crawl/logs/crawl\\.log.*";
 
@@ -86,20 +83,18 @@ public class MetadataFile implements Comparable<MetadataFile> {
     public static final String RECOVER_LOG_PATTERN = "metadata://[^/]*/crawl/logs/recover\\.gz.*";
 
     /**
-     * The pattern controlling which files in the crawl directory root should be
-     * stored in the metadata ARC.
+     * The pattern controlling which files in the crawl directory root should be stored in the metadata ARC.
      */
     public static final String HERITRIX_FILE_PATTERN = Settings.get(HarvesterSettings.METADATA_HERITRIX_FILE_PATTERN);
 
     /**
-     * The pattern controlling which files in the crawl directory root should be
-     * stored in the metadata ARC as reports.
+     * The pattern controlling which files in the crawl directory root should be stored in the metadata ARC as reports.
      */
     public static final String REPORT_FILE_PATTERN = Settings.get(HarvesterSettings.METADATA_REPORT_FILE_PATTERN);
 
     /**
-     * The pattern controlling which files in the logs subdirectory of the crawl
-     * directory root should be stored in the metadata ARC as log files.
+     * The pattern controlling which files in the logs subdirectory of the crawl directory root should be stored in the
+     * metadata ARC as log files.
      */
     public static final String LOG_FILE_PATTERN = Settings.get(HarvesterSettings.METADATA_LOG_FILE_PATTERN);
 
@@ -109,8 +104,7 @@ public class MetadataFile implements Comparable<MetadataFile> {
     public static final String DOMAIN_SETTINGS_FILE = "settings.xml";
 
     /**
-     * The url representing the record in metadata-arc-file for this metadata
-     * file.
+     * The url representing the record in metadata-arc-file for this metadata file.
      */
     private String url;
     /** The Heritrix metadata file. */
@@ -119,10 +113,9 @@ public class MetadataFile implements Comparable<MetadataFile> {
     private MetadataType type;
 
     /**
-     * Creates a metadata file and finds which metadata type it belongs to.
-     * First the name of a heritrixfile is tested against the reportfile
-     * pattern, then again the logfile pattern. If the name matches neither of
-     * these, it is considered a setup file.
+     * Creates a metadata file and finds which metadata type it belongs to. First the name of a heritrixfile is tested
+     * against the reportfile pattern, then again the logfile pattern. If the name matches neither of these, it is
+     * considered a setup file.
      */
     public MetadataFile(File heritrixFile, Long harvestId, Long jobId, String heritrixVersion) {
         this.heritrixFile = heritrixFile;
@@ -143,16 +136,11 @@ public class MetadataFile implements Comparable<MetadataFile> {
     /**
      * Creates a metadata file for a domain-specific override file.
      * 
-     * @param heritrixFile
-     *            a given heritrix metadata file.
-     * @param harvestId
-     *            The harvestID that the job generating this file is part of.
-     * @param jobId
-     *            The Id of the job generating this file
-     * @param heritrixVersion
-     *            the version of Heritrix generating the file
-     * @param domain
-     *            The name of the domain, this metadata belongs to
+     * @param heritrixFile a given heritrix metadata file.
+     * @param harvestId The harvestID that the job generating this file is part of.
+     * @param jobId The Id of the job generating this file
+     * @param heritrixVersion the version of Heritrix generating the file
+     * @param domain The name of the domain, this metadata belongs to
      */
     public MetadataFile(File heritrixFile, Long harvestId, Long jobId, String heritrixVersion, String domain) {
         this(heritrixFile, harvestId, jobId, heritrixVersion);
@@ -188,19 +176,13 @@ public class MetadataFile implements Comparable<MetadataFile> {
     }
 
     /**
-     * Creates a metadata URL for this file. Metadata URLs are used to retrieve
-     * records in the metadata ARC file.
+     * Creates a metadata URL for this file. Metadata URLs are used to retrieve records in the metadata ARC file.
      * 
-     * @param theType
-     *            The type of metadata for this file.
-     * @param name
-     *            The name of the file.
-     * @param harvestID
-     *            The harvestID that the job is part of.
-     * @param jobID
-     *            The jobID that this file belongs to.
-     * @param heritrixVersion
-     *            The version of Heritrix generating the file.
+     * @param theType The type of metadata for this file.
+     * @param name The name of the file.
+     * @param harvestID The harvestID that the job is part of.
+     * @param jobID The jobID that this file belongs to.
+     * @param heritrixVersion The version of Heritrix generating the file.
      * @return the metadata URL for this file
      */
     private String makeMetadataURL(MetadataType theType, String name, long harvestID, long jobID, String heritrixVersion) {

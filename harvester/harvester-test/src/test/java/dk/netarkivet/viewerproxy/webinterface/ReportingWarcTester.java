@@ -123,11 +123,10 @@ public class ReportingWarcTester {
     }
 
     /**
-     * Tests the method getCrawlLogForDomainInJob. This unit-test also
-     * implicitly tests the class HarvestedUrlsForDomainBatchJob
+     * Tests the method getCrawlLogForDomainInJob. This unit-test also implicitly tests the class
+     * HarvestedUrlsForDomainBatchJob
      * 
-     * @throws Exception
-     *             Now works again after resolving bug NAS-2266
+     * @throws Exception Now works again after resolving bug NAS-2266
      */
     public void testGetCrawlLogForDomainInJob() throws Exception {
         int jobId = 2;
@@ -136,8 +135,7 @@ public class ReportingWarcTester {
         File file = Reporting.getCrawlLogForDomainInJob("netarkivet.dk", jobId);
         List<String> lines = FileUtils.readListFromFile(file);
         /*
-         * int count=0; for (String line: lines) { count++;
-         * //System.out.println("Line #" + count + ": " + line); }
+         * int count=0; for (String line: lines) { count++; //System.out.println("Line #" + count + ": " + line); }
          */
 
         assertTrue("Should have found a result, but found none", lines.size() > 0);

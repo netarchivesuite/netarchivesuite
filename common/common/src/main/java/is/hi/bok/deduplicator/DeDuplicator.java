@@ -60,11 +60,9 @@ import dk.netarkivet.common.utils.AllDocsCollector;
 /**
  * Heritrix compatible processor.
  * <p>
- * Will abort the processing (skip to post processor chain) of CrawlURIs that
- * are deemed <i>duplicates</i>.
+ * Will abort the processing (skip to post processor chain) of CrawlURIs that are deemed <i>duplicates</i>.
  * <p>
- * Duplicate detection can only be performed <i>after</i> the fetch processors
- * have run.
+ * Duplicate detection can only be performed <i>after</i> the fetch processors have run.
  * 
  * @author Kristinn Sigur&eth;sson
  * @author Søren Vejrup Carlsen
@@ -94,11 +92,9 @@ public class DeDuplicator extends Processor implements AdaptiveRevisitAttributeC
     protected boolean skipWriting = DEFAULT_SKIP_WRITE.booleanValue();
 
     /*
-     * Configurable parameters - Index location - Matching mode (By URL
-     * (default) or By Content Digest) - Try equivalent matches - Mime filter -
-     * Filter mode (blacklist (default) or whitelist) - Analysis (None
-     * (default), Timestamp only or Timestamp and ETag) - Log level - Track per
-     * host stats - Origin - Skip writing
+     * Configurable parameters - Index location - Matching mode (By URL (default) or By Content Digest) - Try equivalent
+     * matches - Mime filter - Filter mode (blacklist (default) or whitelist) - Analysis (None (default), Timestamp only
+     * or Timestamp and ETag) - Log level - Track per host stats - Origin - Skip writing
      */
     /** Location of Lucene Index to use for lookups */
     public final static String ATTR_INDEX_LOCATION = "index-location";
@@ -106,47 +102,44 @@ public class DeDuplicator extends Processor implements AdaptiveRevisitAttributeC
 
     /** The matching method in use (by url or content digest) */
     public final static String ATTR_MATCHING_METHOD = "matching-method";
-    public final static String[] AVAILABLE_MATCHING_METHODS = { "By URL", "By content digest" };
+    public final static String[] AVAILABLE_MATCHING_METHODS = {"By URL", "By content digest"};
     public final static String DEFAULT_MATCHING_METHOD = AVAILABLE_MATCHING_METHODS[0];
 
     /**
-     * If an exact match is not made, should the processor try to find an
-     * equivalent match?
+     * If an exact match is not made, should the processor try to find an equivalent match?
      **/
     public final static String ATTR_EQUIVALENT = "try-equivalent";
     public final static Boolean DEFAULT_EQUIVALENT = new Boolean(false);
 
     /**
-     * The filter on mime types. This is either a blacklist or whitelist
-     * depending on ATTR_FILTER_MODE.
+     * The filter on mime types. This is either a blacklist or whitelist depending on ATTR_FILTER_MODE.
      */
     public final static String ATTR_MIME_FILTER = "mime-filter";
     public final static String DEFAULT_MIME_FILTER = "^text/.*";
 
     /**
-     * Is the mime filter a blacklist (do not apply processor to what matches)
-     * or whitelist (apply processor only to what matches).
+     * Is the mime filter a blacklist (do not apply processor to what matches) or whitelist (apply processor only to
+     * what matches).
      */
     public final static String ATTR_FILTER_MODE = "filter-mode";
-    public final static String[] AVAILABLE_FILTER_MODES = { "Blacklist", "Whitelist" };
+    public final static String[] AVAILABLE_FILTER_MODES = {"Blacklist", "Whitelist"};
     public final static String DEFAULT_FILTER_MODE = AVAILABLE_FILTER_MODES[0];
 
     /** Set analysis mode. */
     public final static String ATTR_ANALYSIS_MODE = "analysis-mode";
-    public final static String[] AVAILABLE_ANALYSIS_MODES = { "None", "Timestamp", "Timestamp and ETag" };
+    public final static String[] AVAILABLE_ANALYSIS_MODES = {"None", "Timestamp", "Timestamp and ETag"};
     public final static String DEFAULT_ANALYSIS_MODE = AVAILABLE_ANALYSIS_MODES[0];
 
     /**
-     * Should the content size information be set to zero when a duplicate is
-     * found?
+     * Should the content size information be set to zero when a duplicate is found?
      */
     public final static String ATTR_CHANGE_CONTENT_SIZE = "change-content-size";
     public final static Boolean DEFAULT_CHANGE_CONTENT_SIZE = new Boolean(true);
 
     /** What to write to a log file */
     public final static String ATTR_LOG_LEVEL = "log-level";
-    public final static String[] AVAILABLE_LOG_LEVELS = { Level.SEVERE.toString(), Level.INFO.toString(),
-            Level.FINEST.toString() };
+    public final static String[] AVAILABLE_LOG_LEVELS = {Level.SEVERE.toString(), Level.INFO.toString(),
+            Level.FINEST.toString()};
     public final static String DEFAULT_LOG_LEVEL = AVAILABLE_LOG_LEVELS[0];
 
     /** Should statistics be tracked per host? **/
@@ -158,8 +151,8 @@ public class DeDuplicator extends Processor implements AdaptiveRevisitAttributeC
     public final static String ORIGIN_HANDLING_NONE = "No origin information";
     public final static String ORIGIN_HANDLING_PROCESSOR = "Use processor setting";
     public final static String ORIGIN_HANDLING_INDEX = "Use index information";
-    public final static String[] AVAILABLE_ORIGIN_HANDLING = { ORIGIN_HANDLING_NONE, ORIGIN_HANDLING_PROCESSOR,
-            ORIGIN_HANDLING_INDEX };
+    public final static String[] AVAILABLE_ORIGIN_HANDLING = {ORIGIN_HANDLING_NONE, ORIGIN_HANDLING_PROCESSOR,
+            ORIGIN_HANDLING_INDEX};
     public final static String DEFAULT_ORIGIN_HANDLING = ORIGIN_HANDLING_NONE;
 
     /** Origin of duplicate URLs **/
@@ -364,15 +357,11 @@ public class DeDuplicator extends Processor implements AdaptiveRevisitAttributeC
     }
 
     /**
-     * A utility method for reading attributes. If not found, an error is logged
-     * and the defaultValue is returned.
+     * A utility method for reading attributes. If not found, an error is logged and the defaultValue is returned.
      * 
-     * @param name
-     *            The name of the attribute
-     * @param defaultValue
-     *            A default value to return if an error occurs
-     * @return The value of the attribute or the default value if an error
-     *         occurs
+     * @param name The name of the attribute
+     * @param defaultValue A default value to return if an error occurs
+     * @return The value of the attribute or the default value if an error occurs
      */
     protected Object readAttribute(String name, Object defaultValue) {
         try {
@@ -499,14 +488,10 @@ public class DeDuplicator extends Processor implements AdaptiveRevisitAttributeC
     /**
      * Process a CrawlURI looking up in the index by URL
      * 
-     * @param curi
-     *            The CrawlURI to process
-     * @param currHostStats
-     *            A statistics object for the current host. If per host
-     *            statistics tracking is enabled this must be non null and the
-     *            method will increment appropriate counters on it.
-     * @return The result of the lookup (a Lucene document). If a duplicate is
-     *         not found null is returned.
+     * @param curi The CrawlURI to process
+     * @param currHostStats A statistics object for the current host. If per host statistics tracking is enabled this
+     *            must be non null and the method will increment appropriate counters on it.
+     * @return The result of the lookup (a Lucene document). If a duplicate is not found null is returned.
      */
     protected Document lookupByURL(CrawlURI curi, Statistics currHostStats) {
         // Look the CrawlURI's URL up in the index.
@@ -583,14 +568,10 @@ public class DeDuplicator extends Processor implements AdaptiveRevisitAttributeC
     /**
      * Process a CrawlURI looking up in the index by content digest
      * 
-     * @param curi
-     *            The CrawlURI to process
-     * @param currHostStats
-     *            A statistics object for the current host. If per host
-     *            statistics tracking is enabled this must be non null and the
-     *            method will increment appropriate counters on it.
-     * @return The result of the lookup (a Lucene document). If a duplicate is
-     *         not found null is returned.
+     * @param curi The CrawlURI to process
+     * @param currHostStats A statistics object for the current host. If per host statistics tracking is enabled this
+     *            must be non null and the method will increment appropriate counters on it.
+     * @return The result of the lookup (a Lucene document). If a duplicate is not found null is returned.
      */
     protected Document lookupByDigest(CrawlURI curi, Statistics currHostStats) {
         Document duplicate = null;
@@ -889,10 +870,8 @@ public class DeDuplicator extends Processor implements AdaptiveRevisitAttributeC
     /**
      * Run a simple Lucene query for a single term in a single field.
      *
-     * @param fieldName
-     *            name of the field to look in.
-     * @param value
-     *            The value to query for
+     * @param fieldName name of the field to look in.
+     * @param value The value to query for
      * @returns A Query for the given value in the given field.
      */
     protected Query queryField(String fieldName, String value) {
@@ -917,38 +896,34 @@ class Statistics {
     // General statistics
 
     /**
-     * Number of URIs that make it through the processors exclusion rules and
-     * are processed by it.
+     * Number of URIs that make it through the processors exclusion rules and are processed by it.
      */
     long handledNumber = 0;
 
     /**
-     * Number of URIs that are deemed duplicates and further processing is
-     * aborted
+     * Number of URIs that are deemed duplicates and further processing is aborted
      */
     long duplicateNumber = 0;
 
     /**
-     * Then number of URIs that turned out to have exact URL and content digest
-     * matches.
+     * Then number of URIs that turned out to have exact URL and content digest matches.
      */
     long exactURLDuplicates = 0;
 
     /**
-     * The number of URIs that turned out to have equivalent URL and content
-     * digest matches.
+     * The number of URIs that turned out to have equivalent URL and content digest matches.
      */
     long equivalentURLDuplicates = 0;
 
     /**
-     * The number of URIs that, while having no exact or equivalent matches, do
-     * have exact content digest matches against non-equivalent URIs.
+     * The number of URIs that, while having no exact or equivalent matches, do have exact content digest matches
+     * against non-equivalent URIs.
      */
     long mirrorNumber = 0;
 
     /**
-     * The total amount of data represented by the documents who were deemed
-     * duplicates and excluded from further processing.
+     * The total amount of data represented by the documents who were deemed duplicates and excluded from further
+     * processing.
      */
     long duplicateAmount = 0;
 

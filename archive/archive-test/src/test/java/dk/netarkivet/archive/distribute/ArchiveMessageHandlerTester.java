@@ -294,7 +294,7 @@ public class ArchiveMessageHandlerTester {
         }
     }
 
-    @SuppressWarnings({ "unused", "serial" })
+    @SuppressWarnings({"unused", "serial"})
     private static class TestMessage extends ArchiveMessage {
         private String testID;
         public int acceptCalled = 0;

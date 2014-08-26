@@ -50,9 +50,8 @@ public class FullHarvestTester extends DataModelTestCase {
     }
 
     /**
-     * Test that the maxbytes field is correctly stored and reloaded. This field
-     * is added to the DB after the DB went into production, so unit tests are
-     * needed.
+     * Test that the maxbytes field is correctly stored and reloaded. This field is added to the DB after the DB went
+     * into production, so unit tests are needed.
      * 
      * @throws Exception
      */
@@ -78,9 +77,8 @@ public class FullHarvestTester extends DataModelTestCase {
     }
 
     /**
-     * Test that in getDomainConfigurations() only DomainConfigurations are
-     * returned for Domains which are not aliases, or where the alias
-     * information is expired.
+     * Test that in getDomainConfigurations() only DomainConfigurations are returned for Domains which are not aliases,
+     * or where the alias information is expired.
      */
     @Test
     public void testGetDomainsConfigurations() {
@@ -119,9 +117,8 @@ public class FullHarvestTester extends DataModelTestCase {
     }
 
     /**
-     * This tests the fix to the bug known as FR1773. The requirement is that a
-     * domain for which the status was "Harvesting aborted" on the previous
-     * harvest should not be included in this harvest
+     * This tests the fix to the bug known as FR1773. The requirement is that a domain for which the status was
+     * "Harvesting aborted" on the previous harvest should not be included in this harvest
      */
     @Test
     public void testGetDomainsPreviousHarvestAborted() {
@@ -150,8 +147,7 @@ public class FullHarvestTester extends DataModelTestCase {
     }
 
     /**
-     * Test that the FullHarvester.getDomainConfigurations() part of bug 716 is
-     * fixed.
+     * Test that the FullHarvester.getDomainConfigurations() part of bug 716 is fixed.
      *
      */
     @Test
@@ -181,14 +177,12 @@ public class FullHarvestTester extends DataModelTestCase {
         ddao.update(d);
 
         /**
-         * This code is called in
-         * HarvestSchedulerMonitorServer.processCrawlData() to decide if its
-         * StopReason is StopReason.CONFIG_SIZE_LIMIT;
+         * This code is called in HarvestSchedulerMonitorServer.processCrawlData() to decide if its StopReason is
+         * StopReason.CONFIG_SIZE_LIMIT;
          *
-         * long configMaxBytes = domain.getConfiguration(
-         * configurationMap.get(domainName)).getMaxBytes(); if (configMaxBytes
-         * != Constants.HERITRIX_MAXBYTES_INFINITY && bytesReceived >=
-         * configMaxBytes) { stopReason = StopReason.CONFIG_SIZE_LIMIT;
+         * long configMaxBytes = domain.getConfiguration( configurationMap.get(domainName)).getMaxBytes(); if
+         * (configMaxBytes != Constants.HERITRIX_MAXBYTES_INFINITY && bytesReceived >= configMaxBytes) { stopReason =
+         * StopReason.CONFIG_SIZE_LIMIT;
          */
 
         // Check, that we only have one harvestInfo object defined from previous

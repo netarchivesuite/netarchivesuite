@@ -34,8 +34,8 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  */
 public class CDXRecordTester {
     /**
-     * Test, that the constructor throws an ArgumentNotValid in case of: 1)
-     * argument is null; 2) bad number fields (< 7).
+     * Test, that the constructor throws an ArgumentNotValid in case of: 1) argument is null; 2) bad number fields (<
+     * 7).
      */
     @Test(expected = ArgumentNotValid.class)
     public void testContructorBadArguments1() {
@@ -53,13 +53,13 @@ public class CDXRecordTester {
     }
 
     /**
-     * Test, that the constructor reacts correctly in case of length of argument
-     * is 7 or more. TODO: Shouldn't we log, if fields.length > 7
+     * Test, that the constructor reacts correctly in case of length of argument is 7 or more. TODO: Shouldn't we log,
+     * if fields.length > 7
      */
     @Test
     public void testContructorValidArguments() {
-        String[] fields = new String[] { "http://netarkivet.dk/index.html", "194.255.126.118", "20040511211314",
-                "image/jpeg", "4202", "fyensdk.arc", "422381", "5aae10cf1c10572a240a99ec2a1b3bd7" };
+        String[] fields = new String[] {"http://netarkivet.dk/index.html", "194.255.126.118", "20040511211314",
+                "image/jpeg", "4202", "fyensdk.arc", "422381", "5aae10cf1c10572a240a99ec2a1b3bd7"};
         CDXRecord cr = new CDXRecord(fields);
         assertEquals("URI is not correctly saved in object", fields[0], cr.getURL());
         assertEquals("IP is not correctly saved in object", fields[1], cr.getIP());

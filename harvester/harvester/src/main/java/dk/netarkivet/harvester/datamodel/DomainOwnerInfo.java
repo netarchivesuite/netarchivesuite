@@ -30,7 +30,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * This class manages owner information about a domain. Immutable.
  */
 
-@SuppressWarnings({ "rawtypes" })
+@SuppressWarnings({"rawtypes"})
 public class DomainOwnerInfo implements Comparable {
 
     /** Information about the owner of a domain. */
@@ -45,10 +45,8 @@ public class DomainOwnerInfo implements Comparable {
     /**
      * Create new instance.
      *
-     * @param d
-     *            the date the owner information is registered
-     * @param info
-     *            the owner information
+     * @param d the date the owner information is registered
+     * @param info the owner information
      */
     public DomainOwnerInfo(Date d, String info) {
         ArgumentNotValid.checkNotNull(d, "d");
@@ -87,16 +85,14 @@ public class DomainOwnerInfo implements Comparable {
     /**
      * Set the ID of this ownerinfo. Only for use by DBDAO.
      *
-     * @param newid
-     *            use this id for this ownerinfo
+     * @param newid use this id for this ownerinfo
      */
     void setID(long newid) {
         this.id = newid;
     }
 
     /**
-     * Check if this ownerinfo has an ID set yet (doesn't happen until the DBDAO
-     * persists it).
+     * Check if this ownerinfo has an ID set yet (doesn't happen until the DBDAO persists it).
      *
      * @return true, if this ownerinfo-object has an ID
      */
@@ -107,10 +103,8 @@ public class DomainOwnerInfo implements Comparable {
     /**
      * Compares two DomainOwnerInfo objects using dates.
      *
-     * @param other
-     *            is a non-null DomainOwnerInfo.
-     * @throws ClassCastException
-     *             if <code>other</code> is not an DomainOwnerInfo object.
+     * @param other is a non-null DomainOwnerInfo.
+     * @throws ClassCastException if <code>other</code> is not an DomainOwnerInfo object.
      * @see Comparable#compareTo(java.lang.Object)
      */
     public int compareTo(Object other) {

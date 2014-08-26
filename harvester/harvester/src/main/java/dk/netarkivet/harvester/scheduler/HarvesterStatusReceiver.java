@@ -38,9 +38,8 @@ import dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationReques
 import dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationResponse;
 
 /**
- * Handles the reception of status messages from the harvesters. Will call the
- * {@link #visit(HarvesterReadyMessage)} method when a Ready message is
- * received.
+ * Handles the reception of status messages from the harvesters. Will call the {@link #visit(HarvesterReadyMessage)}
+ * method when a Ready message is received.
  */
 public class HarvesterStatusReceiver extends HarvesterMessageHandler implements ComponentLifeCycle {
 
@@ -58,12 +57,9 @@ public class HarvesterStatusReceiver extends HarvesterMessageHandler implements 
     private final HarvestChannelRegistry harvestChannelRegistry;
 
     /**
-     * @param jobDispatcher
-     *            The <code>JobDispatcher</code> to delegate the dispatching of
-     *            new jobs to, when a 'Ready for job' event is received.
-     * @param jmsConnection
-     *            The JMS connection by which {@link HarvesterReadyMessage} is
-     *            received.
+     * @param jobDispatcher The <code>JobDispatcher</code> to delegate the dispatching of new jobs to, when a 'Ready for
+     *            job' event is received.
+     * @param jmsConnection The JMS connection by which {@link HarvesterReadyMessage} is received.
      */
     public HarvesterStatusReceiver(JobDispatcher jobDispatcher, JMSConnection jmsConnection,
             HarvestChannelDAO harvestChannelDao, HarvestChannelRegistry harvestChannelRegistry) {
@@ -90,8 +86,7 @@ public class HarvesterStatusReceiver extends HarvesterMessageHandler implements 
     /**
      * Tells the dispatcher that it may dispatch a new job.
      * 
-     * @param message
-     *            The message containing the relevant harvester information.
+     * @param message The message containing the relevant harvester information.
      *
      */
     @Override

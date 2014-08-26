@@ -43,8 +43,7 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDefaultValue
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldOptions;
 
 /**
- * Contains utility methods for creating and editing schedule definitions for
- * harvests.
+ * Contains utility methods for creating and editing schedule definitions for harvests.
  */
 public final class ExtendedFieldDefinition {
 
@@ -55,15 +54,11 @@ public final class ExtendedFieldDefinition {
     }
 
     /**
-     * Process an request from the jsp-pages.
-     * HarvestDefinition/Definitions-edit-extendedfield.jsp
-     * HarvestDefinition/Definitions-list-extendedfields.jsp
-     * HarvestDefinition/Definitions-edit-domain.jsp
+     * Process an request from the jsp-pages. HarvestDefinition/Definitions-edit-extendedfield.jsp
+     * HarvestDefinition/Definitions-list-extendedfields.jsp HarvestDefinition/Definitions-edit-domain.jsp
      * 
-     * @param context
-     *            the given JSP-context
-     * @param i18n
-     *            the given I18n object.
+     * @param context the given JSP-context
+     * @param i18n the given I18n object.
      * @return the extendedfield resulting from the processing.
      */
     public static ExtendedField processRequest(PageContext context, I18n i18n) {
@@ -199,8 +194,7 @@ public final class ExtendedFieldDefinition {
     /**
      * Create or update the extendedField in the database.
      * 
-     * @param aExtendedField
-     *            The given extendedfield
+     * @param aExtendedField The given extendedfield
      */
     private static void updateExtendedField(ExtendedField aExtendedField) {
         ExtendedFieldDAO extdao = ExtendedFieldDBDAO.getInstance();
@@ -215,8 +209,7 @@ public final class ExtendedFieldDefinition {
     /**
      * Read and return the Extendedfield for the given id.
      * 
-     * @param aId
-     *            An Id for a specific ExtendedField
+     * @param aId An Id for a specific ExtendedField
      * @return the Extendedfield for the given id.
      */
     public static ExtendedField readExtendedField(String aId) {

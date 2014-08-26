@@ -54,16 +54,14 @@ import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 /**
- * Class representing the monitor for bitarchives. The monitor is used for
- * sending out and combining the results of executing batch jobs.
+ * Class representing the monitor for bitarchives. The monitor is used for sending out and combining the results of
+ * executing batch jobs.
  *
- * Registers outgoing batchjobs to bitarchives, and handles replies from
- * bitarchives, finally notifying observers when all bitarchives have replied,
- * or when the batch times out, after a time specified in settings.
+ * Registers outgoing batchjobs to bitarchives, and handles replies from bitarchives, finally notifying observers when
+ * all bitarchives have replied, or when the batch times out, after a time specified in settings.
  *
- * We wait for replies from bitarchives that are considered live when the batch
- * begins. A bitarchive is considered live if we have heard any activity from it
- * within a time specified in settings.
+ * We wait for replies from bitarchives that are considered live when the batch begins. A bitarchive is considered live
+ * if we have heard any activity from it within a time specified in settings.
  */
 public class BitarchiveMonitor extends Observable implements CleanupIF {
 
@@ -77,9 +75,8 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
     private final long acceptableSignOfLifeDelay;
 
     /**
-     * Map from the ID of batch jobs sent to bitarchives, to tuple class of
-     * status for this batch job. The Map contains all batch jobs currently
-     * running.
+     * Map from the ID of batch jobs sent to bitarchives, to tuple class of status for this batch job. The Map contains
+     * all batch jobs currently running.
      */
     private Map<String, BatchJobStatus> runningBatchJobs = Collections
             .synchronizedMap(new HashMap<String, BatchJobStatus>());
@@ -94,9 +91,8 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
     private static final Logger log = LoggerFactory.getLogger(BitarchiveMonitor.class);
 
     /**
-     * Initialises the bitarchive monitor. During this, the acceptable delay
-     * between signs of life and the timeout setting for batchjobs are read and
-     * logged.
+     * Initialises the bitarchive monitor. During this, the acceptable delay between signs of life and the timeout
+     * setting for batchjobs are read and logged.
      */
     private BitarchiveMonitor() {
         acceptableSignOfLifeDelay = Settings.getLong(ArchiveSettings.BITARCHIVE_ACCEPTABLE_HEARTBEAT_DELAY);
@@ -104,8 +100,7 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
     }
 
     /**
-     * Method for retrieving the current instance. If no instance has been
-     * instantiated, then a new one will be created.
+     * Method for retrieving the current instance. If no instance has been instantiated, then a new one will be created.
      * 
      * @return The current instance of the BitarchiveMonitor.
      */
@@ -117,11 +112,9 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
     }
 
     /**
-     * Registers a sign of life from a bitarchive. This method logs when new bit
-     * archives present themselves.
+     * Registers a sign of life from a bitarchive. This method logs when new bit archives present themselves.
      *
-     * @param appID
-     *            the ID of the bitarchive that generated the life sign
+     * @param appID the ID of the bitarchive that generated the life sign
      */
     public void signOfLife(String appID) {
         ArgumentNotValid.checkNotNullOrEmpty(appID, "String appID");
@@ -136,20 +129,14 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
     /**
      * Register a new batch sent to the bitarchives.
      *
-     * This registers a new batchstatus object, with a list of live bitarchives
-     * awaiting reply, and a timer task letting the job time out after the
-     * specified time.
+     * This registers a new batchstatus object, with a list of live bitarchives awaiting reply, and a timer task letting
+     * the job time out after the specified time.
      *
-     * @param requestID
-     *            The ID of the batch request.
-     * @param requestReplyTo
-     *            The replyTo channel of the batch request.
-     * @param bitarchiveBatchID
-     *            The ID of the batch job sent on to the bit archives.
-     * @param timeout
-     *            Timeout of specific batch job.
-     * @throws ArgumentNotValid
-     *             If any argument is null, or either string is empty.
+     * @param requestID The ID of the batch request.
+     * @param requestReplyTo The replyTo channel of the batch request.
+     * @param bitarchiveBatchID The ID of the batch job sent on to the bit archives.
+     * @param timeout Timeout of specific batch job.
+     * @throws ArgumentNotValid If any argument is null, or either string is empty.
      */
     public void registerBatch(String requestID, ChannelID requestReplyTo, String bitarchiveBatchID, long timeout)
             throws ArgumentNotValid {
@@ -194,33 +181,22 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
     /**
      * Handle a reply received from a bitarchive.
      *
-     * This method registers the information from the bitarchive in the batch
-     * status for this job, if any (otherwise logs and quits).
+     * This method registers the information from the bitarchive in the batch status for this job, if any (otherwise
+     * logs and quits).
      *
-     * If this is the last bitarchive we were missing replies from, notify
-     * observers with the batch status for this job.
+     * If this is the last bitarchive we were missing replies from, notify observers with the batch status for this job.
      * 
      * TODO why are the 'exceptions' argument not used?
      *
-     * @param bitarchiveBatchID
-     *            The ID of the batch job sent on to the bit archives.
-     * @param bitarchiveID
-     *            The ID of the replying bitarchive.
-     * @param noOfFilesProcessed
-     *            The number of files the bitarchive has processed.
-     * @param filesFailed
-     *            A collection of filenames of failed files in that bitarchive.
-     *            Might be null if no files failed.
-     * @param remoteFile
-     *            A remote pointer to a file with results from that bitarchive.
-     *            Might be null if job was not OK.
-     * @param errMsg
-     *            An error message, if the job was not successful on the
-     *            bitarchive, or null for none.
-     * @param exceptions
-     *            A list of exceptions caught during batch processing.
-     * @throws ArgumentNotValid
-     *             If either ID is null.
+     * @param bitarchiveBatchID The ID of the batch job sent on to the bit archives.
+     * @param bitarchiveID The ID of the replying bitarchive.
+     * @param noOfFilesProcessed The number of files the bitarchive has processed.
+     * @param filesFailed A collection of filenames of failed files in that bitarchive. Might be null if no files
+     *            failed.
+     * @param remoteFile A remote pointer to a file with results from that bitarchive. Might be null if job was not OK.
+     * @param errMsg An error message, if the job was not successful on the bitarchive, or null for none.
+     * @param exceptions A list of exceptions caught during batch processing.
+     * @throws ArgumentNotValid If either ID is null.
      */
     public void bitarchiveReply(String bitarchiveBatchID, String bitarchiveID, int noOfFilesProcessed,
             Collection<File> filesFailed, RemoteFile remoteFile, String errMsg,
@@ -249,8 +225,7 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
     /**
      * Notifies observers that the given batch job has ended.
      *
-     * @param batchJobStatus
-     *            The batch job that has ended.
+     * @param batchJobStatus The batch job that has ended.
      */
     private void notifyBatchEnded(BatchJobStatus batchJobStatus) {
         runningBatchJobs.remove(batchJobStatus.bitarchiveBatchID);
@@ -271,9 +246,8 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
     /**
      * Class handling state and updates in batch job status.
      *
-     * This class remembers information about the batchjob sent, and information
-     * from all bitarchive replies received. It also contains information about
-     * the original requester of the batchjob.
+     * This class remembers information about the batchjob sent, and information from all bitarchive replies received.
+     * It also contains information about the original requester of the batchjob.
      */
     public final class BatchJobStatus {
 
@@ -291,8 +265,7 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
         public final ChannelID originalRequestReplyTo;
 
         /**
-         * set containing the bitarchives that were alive when we sent the job,
-         * but haven't answered yet.
+         * set containing the bitarchives that were alive when we sent the job, but haven't answered yet.
          */
         public final Set<String> missingRespondents;
 
@@ -305,8 +278,7 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
         public final Collection<File> filesFailed;
 
         /**
-         * A string with a concatenation of errors. This error message is null,
-         * if the job is successful.
+         * A string with a concatenation of errors. This error message is null, if the job is successful.
          */
         public String errorMessages;
 
@@ -320,23 +292,15 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
         private long batchTimeout;
 
         /**
-         * Initialise the status on a fresh batch request. Apart from the given
-         * values, a file is created to store batch results in.
-         * <b>Sideeffect</b>: BatchTimeout is started here
+         * Initialise the status on a fresh batch request. Apart from the given values, a file is created to store batch
+         * results in. <b>Sideeffect</b>: BatchTimeout is started here
          *
-         * @param originalRequestID
-         *            The ID of the originating request.
-         * @param originalRequestReplyTo
-         *            The reply channel for the originating request.
-         * @param bitarchiveBatchID
-         *            The ID of the job sent to bitarchives.
-         * @param missingRespondents
-         *            List of all live bitarchives, used to know which
-         *            bitarchives to await reply from.
-         * @param timeout
-         *            Timeout for Batch job
-         * @throws IOFailure
-         *             if a file for batch results cannot be made.
+         * @param originalRequestID The ID of the originating request.
+         * @param originalRequestReplyTo The reply channel for the originating request.
+         * @param bitarchiveBatchID The ID of the job sent to bitarchives.
+         * @param missingRespondents List of all live bitarchives, used to know which bitarchives to await reply from.
+         * @param timeout Timeout for Batch job
+         * @throws IOFailure if a file for batch results cannot be made.
          */
         private BatchJobStatus(String originalRequestID, ChannelID originalRequestReplyTo, String bitarchiveBatchID,
                 Set<String> missingRespondents, long timeout) throws IOFailure {
@@ -366,8 +330,7 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
         /**
          * Appends the given message to the current error message.
          *
-         * @param errMsg
-         *            A message describing what went wrong.
+         * @param errMsg A message describing what went wrong.
          */
         public void appendError(String errMsg) {
             if (this.errorMessages == null) {
@@ -380,21 +343,14 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
         /**
          * Updates the status with info from a bitarchive reply.
          *
-         * This will add the results given to the status, and if this was the
-         * last remaining bitarchive, also sends a notification to all observers
-         * of the bitarchive monitor.
+         * This will add the results given to the status, and if this was the last remaining bitarchive, also sends a
+         * notification to all observers of the bitarchive monitor.
          *
-         * @param bitarchiveID
-         *            The ID of the bitarchive that has replied
-         * @param numberOfFilesProcessed
-         *            The number of files processed by that bit archive.
-         * @param failedFiles
-         *            List of files failed in that bit archive.
-         * @param remoteFile
-         *            A pointer to a remote file with results from the
-         *            bitarchive.
-         * @param errMsg
-         *            An error message with errors from that bit archive.
+         * @param bitarchiveID The ID of the bitarchive that has replied
+         * @param numberOfFilesProcessed The number of files processed by that bit archive.
+         * @param failedFiles List of files failed in that bit archive.
+         * @param remoteFile A pointer to a remote file with results from the bitarchive.
+         * @param errMsg An error message with errors from that bit archive.
          */
         private synchronized void updateWithBitarchiveReply(String bitarchiveID, int numberOfFilesProcessed,
                 Collection<File> failedFiles, RemoteFile remoteFile, String errMsg) {
@@ -437,11 +393,10 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
         }
 
         /**
-         * Append a remotefile to the batch result aggregate file. Adds info on
-         * errors while concatenating to the batch status.
+         * Append a remotefile to the batch result aggregate file. Adds info on errors while concatenating to the batch
+         * status.
          *
-         * @param rf
-         *            A remotefile to read from
+         * @param rf A remotefile to read from
          */
         private void appendRemoteFileToAggregateFile(RemoteFile rf) {
             if (rf != null) {
@@ -479,8 +434,8 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
         }
 
         /**
-         * Checks whether this batch job is already being notified about. If
-         * not, it notifies observers with this batch status.
+         * Checks whether this batch job is already being notified about. If not, it notifies observers with this batch
+         * status.
          *
          */
         private synchronized void notifyBatchEnded() {
@@ -494,9 +449,8 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
     }
 
     /**
-     * A timertask that makes batch ended notifications happen after a time
-     * specified in settings has elapsed, even though not all replies have been
-     * received.
+     * A timertask that makes batch ended notifications happen after a time specified in settings has elapsed, even
+     * though not all replies have been received.
      */
     private class BatchTimeoutTask extends TimerTask {
         /** The ID of the batch job this object handles timeout for. */
@@ -505,8 +459,7 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
         /**
          * Initiate a timer task for the given batch job status.
          *
-         * @param bitarchiveBatchID
-         *            The ID of the batch job to monitor timeout for.
+         * @param bitarchiveBatchID The ID of the batch job to monitor timeout for.
          */
         public BatchTimeoutTask(String bitarchiveBatchID) {
             ArgumentNotValid.checkNotNullOrEmpty(bitarchiveBatchID, "String bitarchiveBatchID");
@@ -514,8 +467,7 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
         }
 
         /**
-         * Send a notifications on timeout if a notification is not already
-         * initiated.
+         * Send a notifications on timeout if a notification is not already initiated.
          */
         public void run() {
             // synchronize to ensure timeouts and batchreplies do not interfere

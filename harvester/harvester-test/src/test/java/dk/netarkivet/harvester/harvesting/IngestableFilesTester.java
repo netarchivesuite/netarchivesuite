@@ -68,8 +68,8 @@ public class IngestableFilesTester {
     }
 
     /**
-     * Verify that ordinary construction does not throw Exception. Verify that
-     * constructing with nonexisting crawldir or negative jobID fails.
+     * Verify that ordinary construction does not throw Exception. Verify that constructing with nonexisting crawldir or
+     * negative jobID fails.
      */
     @Test
     public void testConstructor() {
@@ -93,14 +93,12 @@ public class IngestableFilesTester {
     }
 
     /**
-     * Verify that method returns false before metadata has been generated.
-     * Verify that method returns false before metadata generation has finished
-     * (indicated by setMetadataReady()). Verify that method returns true after
+     * Verify that method returns false before metadata has been generated. Verify that method returns false before
+     * metadata generation has finished (indicated by setMetadataReady()). Verify that method returns true after
      * metadata generation has finished.
      *
-     * Note that disallowed actions concerning metdataReady are tested in
-     * another method. Note that rediscovery of metadata is tested in another
-     * method.
+     * Note that disallowed actions concerning metdataReady are tested in another method. Note that rediscovery of
+     * metadata is tested in another method.
      */
     @Test
     public void testGetSetMetadataReady() {
@@ -135,9 +133,8 @@ public class IngestableFilesTester {
     }
 
     /**
-     * Verify that a PermissionDenied is thrown if - metadata is NOT ready and
-     * getMetadataFiles() is called - metadata IS ready and getMetadataArcWriter
-     * is called
+     * Verify that a PermissionDenied is thrown if - metadata is NOT ready and getMetadataFiles() is called - metadata
+     * IS ready and getMetadataArcWriter is called
      */
     @Test
     public void testDisallowedActions() {
@@ -200,8 +197,7 @@ public class IngestableFilesTester {
     }
 
     /**
-     * Verify that IngestableFiles discovers old (final) metadata in the
-     * crawldir.
+     * Verify that IngestableFiles discovers old (final) metadata in the crawldir.
      */
     @Test
     public void testMetadataRediscovery() throws FileNotFoundException, IOException {
@@ -239,8 +235,7 @@ public class IngestableFilesTester {
     }
 
     /**
-     * Verify that a file containing data written to the metadata ARCWriter is
-     * contained in one the returned files.
+     * Verify that a file containing data written to the metadata ARCWriter is contained in one the returned files.
      */
     @Test
     public void testGetMetadataFiles() throws FileNotFoundException, IOException {
@@ -283,10 +278,10 @@ public class IngestableFilesTester {
     public void testCloseOpenFiles() throws Exception {
         // These files should end up closed
         File arcsDir = new File(TestInfo.WORKING_DIR, "arcs");
-        File[] openFiles = new File[] { new File(arcsDir, "test1.arc.open"), new File(arcsDir, "test2.arc.gz.open") };
+        File[] openFiles = new File[] {new File(arcsDir, "test1.arc.open"), new File(arcsDir, "test2.arc.gz.open")};
         // These files should be untouched
-        File[] nonOpenFiles = new File[] { new File(arcsDir, "test3.arcygz.open"), new File(arcsDir, "test4.arc"),
-                new File(arcsDir, "test5.arcagz"), new File(arcsDir, "test6.arcaopen") };
+        File[] nonOpenFiles = new File[] {new File(arcsDir, "test3.arcygz.open"), new File(arcsDir, "test4.arc"),
+                new File(arcsDir, "test5.arcagz"), new File(arcsDir, "test6.arcaopen")};
         for (File openFile : openFiles) {
             openFile.createNewFile();
             assertTrue("Open file '" + openFile + "' should exist before calling closeOpenFiles()", openFile.exists());

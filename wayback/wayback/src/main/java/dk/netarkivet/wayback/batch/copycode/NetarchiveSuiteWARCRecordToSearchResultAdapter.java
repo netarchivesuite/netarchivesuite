@@ -43,13 +43,11 @@ import org.archive.wayback.util.Adapter;
 import org.archive.wayback.util.url.IdentityUrlCanonicalizer;
 
 /**
- * Adapts certain WARCRecords into SearchResults. DNS and response records are
- * mostly straightforward, but SearchResult objects generated from revisit
- * records contain lots of "placeholder" fields, which are expected to be
- * understood by later processes traversing a stream of SearchResult objects.
+ * Adapts certain WARCRecords into SearchResults. DNS and response records are mostly straightforward, but SearchResult
+ * objects generated from revisit records contain lots of "placeholder" fields, which are expected to be understood by
+ * later processes traversing a stream of SearchResult objects.
  * 
- * This is cut'n'pasted from
- * org.archive.wayback.resourcestore.indexer.WARCRecordToSearchResultAdapter
+ * This is cut'n'pasted from org.archive.wayback.resourcestore.indexer.WARCRecordToSearchResultAdapter
  */
 public class NetarchiveSuiteWARCRecordToSearchResultAdapter implements Adapter<WARCRecord, CaptureSearchResult> {
 
@@ -142,8 +140,7 @@ public class NetarchiveSuiteWARCRecordToSearchResultAdapter implements Adapter<W
     // ALL HELPER METHODS BELOW:
 
     /*
-     * Extract all common WARC fields into a CaptureSearchResult. This is the
-     * same for all WARC record types:
+     * Extract all common WARC fields into a CaptureSearchResult. This is the same for all WARC record types:
      * 
      * file, offset, timestamp, digest, urlKey, originalUrl
      */
@@ -194,8 +191,7 @@ public class NetarchiveSuiteWARCRecordToSearchResultAdapter implements Adapter<W
     /**
      * borrowed(copied) from org.archive.io.arc.ARCRecord...
      * 
-     * @param bytes
-     *            Array of bytes to examine for an EOL.
+     * @param bytes Array of bytes to examine for an EOL.
      * @return Count of end-of-line characters or zero if none.
      */
     private int getEolCharsCount(byte[] bytes) {
@@ -231,8 +227,7 @@ public class NetarchiveSuiteWARCRecordToSearchResultAdapter implements Adapter<W
     }
 
     /*
-     * Transform input date to 14-digit timestamp: 2007-08-29T18:00:26Z =>
-     * 20070829180026
+     * Transform input date to 14-digit timestamp: 2007-08-29T18:00:26Z => 20070829180026
      */
     private static String transformWARCDate(final String input) {
 
@@ -249,10 +244,9 @@ public class NetarchiveSuiteWARCRecordToSearchResultAdapter implements Adapter<W
     }
 
     /*
-     * Currently the WARCReader doesn't parse HTTP headers. This method parses
-     * them then calls the common ARC/WARC shared record parsing code, which
-     * addresses HTTP headers, and possibly even parses HTML content to look for
-     * Robot Meta tags.
+     * Currently the WARCReader doesn't parse HTTP headers. This method parses them then calls the common ARC/WARC
+     * shared record parsing code, which addresses HTTP headers, and possibly even parses HTML content to look for Robot
+     * Meta tags.
      */
     private CaptureSearchResult adaptWARCHTTPResponse(CaptureSearchResult result, WARCRecord rec) throws IOException {
 
@@ -305,8 +299,7 @@ public class NetarchiveSuiteWARCRecordToSearchResultAdapter implements Adapter<W
     }
 
     /**
-     * @param annotater
-     *            the annotater to set
+     * @param annotater the annotater to set
      */
     public void setAnnotater(HTTPRecordAnnotater annotater) {
         this.annotater = annotater;

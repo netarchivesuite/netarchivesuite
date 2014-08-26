@@ -49,9 +49,8 @@ import dk.netarkivet.harvester.harvesting.distribute.JobEndedMessage;
 import dk.netarkivet.harvester.harvesting.report.HarvestReport;
 
 /**
- * Submitted harvesting jobs are registered with this singleton. The class
- * listens for CrawlStatusMessages on the THE_SCHED queue and processes
- * completed harvests.
+ * Submitted harvesting jobs are registered with this singleton. The class listens for CrawlStatusMessages on the
+ * THE_SCHED queue and processes completed harvests.
  *
  */
 public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler implements MessageListener,
@@ -69,14 +68,11 @@ public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler imple
     }
 
     /**
-     * Updates the job status from the current status to that specified in
-     * message if it legal to do so. Logs a warning if messages arrive out of
-     * order.
+     * Updates the job status from the current status to that specified in message if it legal to do so. Logs a warning
+     * if messages arrive out of order.
      *
-     * @param cmsg
-     *            The CrawlStatusMessage received
-     * @throws ArgumentNotValid
-     *             if the current job status is Job.STATUS_NEW
+     * @param cmsg The CrawlStatusMessage received
+     * @throws ArgumentNotValid if the current job status is Job.STATUS_NEW
      */
     private void processCrawlStatusMessage(CrawlStatusMessage cmsg) throws ArgumentNotValid {
         long jobID = cmsg.getJobID();
@@ -172,16 +168,12 @@ public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler imple
     }
 
     /**
-     * Takes the crawl report from the job and updates the domain information
-     * with harvesting history. If the crawler was unable to generate a
-     * {@link HarvestReport}, it will do nothing.
+     * Takes the crawl report from the job and updates the domain information with harvesting history. If the crawler
+     * was unable to generate a {@link HarvestReport}, it will do nothing.
      * 
-     * @param job
-     *            the completed job
-     * @param dhr
-     *            the domain harvest report, or null if none available.
-     * @throws ArgumentNotValid
-     *             if job is null
+     * @param job the completed job
+     * @param dhr the domain harvest report, or null if none available.
+     * @throws ArgumentNotValid if job is null
      */
     private void processCrawlData(Job job, HarvestReport dhr) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(job, "job");
@@ -198,8 +190,7 @@ public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler imple
     }
 
     /**
-     * @param msg
-     *            a given CrawlStatusMessage
+     * @param msg a given CrawlStatusMessage
      * @see dk.netarkivet.harvester.distribute.HarvesterMessageHandler#visit(dk.netarkivet.harvester.harvesting.distribute.CrawlStatusMessage)
      */
     public void visit(CrawlStatusMessage msg) {
@@ -208,8 +199,7 @@ public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler imple
     }
 
     /**
-     * Removes the HarvestSchedulerMonitorServer as listener to the JMS
-     * scheduler Channel.
+     * Removes the HarvestSchedulerMonitorServer as listener to the JMS scheduler Channel.
      */
     @Override
     public void shutdown() {
@@ -228,8 +218,7 @@ public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler imple
     /**
      * Process an incoming IndexReadyMessage.
      * 
-     * @param msg
-     *            the message
+     * @param msg the message
      */
     private void processIndexReadyMessage(IndexReadyMessage msg) {
         // Set isindexready to true if Indexisready is true

@@ -81,7 +81,7 @@ public class GetMetadataArchiveBatchJobTester {
 
         GetMetadataArchiveBatchJob job = new GetMetadataArchiveBatchJob(CrawlLogUrlpattern, textPlainMimepattern);
 
-        File[] files = new File[] { f1, f };
+        File[] files = new File[] {f1, f};
         BatchLocalFiles blf = new BatchLocalFiles(files);
         OutputStream os = new FileOutputStream("tmp");
         blf.run(job, os);

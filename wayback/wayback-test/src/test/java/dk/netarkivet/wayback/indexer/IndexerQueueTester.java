@@ -36,7 +36,7 @@ import org.junit.Test;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.wayback.TestInfo;
 
-@SuppressWarnings({ "unchecked" })
+@SuppressWarnings({"unchecked"})
 public class IndexerQueueTester extends IndexerTestCase {
 
     @Override
@@ -88,19 +88,14 @@ public class IndexerQueueTester extends IndexerTestCase {
      * testConsume has been removed from unittestersuite, as it fails.
      */
     /*
-     * public void testConsume() throws NoSuchFieldException,
-     * IllegalAccessException, InterruptedException {
-     * FileNameHarvester.harvest(); IndexerQueue.getInstance().populate();
-     * Runnable consumerRunnable = new Runnable() {
+     * public void testConsume() throws NoSuchFieldException, IllegalAccessException, InterruptedException {
+     * FileNameHarvester.harvest(); IndexerQueue.getInstance().populate(); Runnable consumerRunnable = new Runnable() {
      * 
-     * public void run() { IndexerQueue.getInstance().consume(); } }; (new
-     * Thread(consumerRunnable)).start(); Thread.sleep(100000L); Field
-     * queueField = ReflectUtils.getPrivateField(IndexerQueue.class, "queue");
-     * LinkedBlockingQueue<ArchiveFile> queue =
-     * (LinkedBlockingQueue<ArchiveFile>) queueField.get(null);
-     * assertEquals("DAO should have four indexed files", 4, (new
-     * ArchiveFileDAO()).findByCriteria( Restrictions.eq("indexed",
-     * true)).size()); assertTrue("Queue should be empty now", queue.isEmpty());
+     * public void run() { IndexerQueue.getInstance().consume(); } }; (new Thread(consumerRunnable)).start();
+     * Thread.sleep(100000L); Field queueField = ReflectUtils.getPrivateField(IndexerQueue.class, "queue");
+     * LinkedBlockingQueue<ArchiveFile> queue = (LinkedBlockingQueue<ArchiveFile>) queueField.get(null);
+     * assertEquals("DAO should have four indexed files", 4, (new ArchiveFileDAO()).findByCriteria(
+     * Restrictions.eq("indexed", true)).size()); assertTrue("Queue should be empty now", queue.isEmpty());
      * assertEquals("Should have four files", 4, tempdir.listFiles().length); }
      */
 

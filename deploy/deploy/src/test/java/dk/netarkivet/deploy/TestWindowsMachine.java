@@ -40,37 +40,26 @@ public class TestWindowsMachine extends WindowsMachine {
     }
 
     /**
-     * This function creates the VBscript to start the application. It calls a
-     * command for executing the java application, then it writes the way to
-     * kill the process in the kill_ps_app.bat and finally it creates the
+     * This function creates the VBscript to start the application. It calls a command for executing the java
+     * application, then it writes the way to kill the process in the kill_ps_app.bat and finally it creates the
      * run-file.
      * 
-     * It should have the following content: - set WshShell =
-     * CreateObject("WScript.Shell") - set oExec = WshShell.exec( JAVA ) - set
-     * fso = CreateObject("Scripting.FileSystemObject") - set f =
-     * fso.OpenTextFile(".\conf\kill_ps_app.bat", 2, True) - f.WriteLine
-     * "taskkill /F /PID " & oExec.ProcessID - f.close - 'Create a new start-log
-     * for the application -
-     * CreateObject("Scripting.FileSystemObject").OpenTextFile(" start_APP.log",
-     * 2, True).close - Do While oExec.Status = 0 - WScript.Sleep 1000 - Do
-     * While oExec.StdOut.AtEndOfStream <> True - Set outFile =
-     * CreateObject("Scripting.FileSystemObject") .OpenTextFile("start_APP.log",
-     * 8, True) - outFile.WriteLine oExec.StdOut.ReadLine - outFile.close - Loop
-     * - Do While oExec.StdErr.AtEndOfStream <> True - Set outFile =
-     * CreateObject("Scripting.FileSystemObject") .OpenTextFile("start_APP.log",
-     * 8, True) - outFile.WriteLine oExec.StdErr.ReadLine - outFile.close - Loop
-     * - Loop
+     * It should have the following content: - set WshShell = CreateObject("WScript.Shell") - set oExec = WshShell.exec(
+     * JAVA ) - set fso = CreateObject("Scripting.FileSystemObject") - set f =
+     * fso.OpenTextFile(".\conf\kill_ps_app.bat", 2, True) - f.WriteLine "taskkill /F /PID " & oExec.ProcessID - f.close
+     * - 'Create a new start-log for the application -
+     * CreateObject("Scripting.FileSystemObject").OpenTextFile(" start_APP.log", 2, True).close - Do While oExec.Status
+     * = 0 - WScript.Sleep 1000 - Do While oExec.StdOut.AtEndOfStream <> True - Set outFile =
+     * CreateObject("Scripting.FileSystemObject") .OpenTextFile("start_APP.log", 8, True) - outFile.WriteLine
+     * oExec.StdOut.ReadLine - outFile.close - Loop - Do While oExec.StdErr.AtEndOfStream <> True - Set outFile =
+     * CreateObject("Scripting.FileSystemObject") .OpenTextFile("start_APP.log", 8, True) - outFile.WriteLine
+     * oExec.StdErr.ReadLine - outFile.close - Loop - Loop
      * 
-     * where: JAVA = the command for starting the java application (very long).
-     * app = the name of the application.
+     * where: JAVA = the command for starting the java application (very long). app = the name of the application.
      * 
-     * @param app
-     *            The application to start.
-     * @param directory
-     *            The directory where the script should be placed.
-     * @throws IOFailure
-     *             If an error occurred during the creation of the windows vb
-     *             script.
+     * @param app The application to start.
+     * @param directory The directory where the script should be placed.
+     * @throws IOFailure If an error occurred during the creation of the windows vb script.
      */
     protected void windowsStartVbsScript(Application app, File directory) throws IOFailure {
         File appStartSupportScript = new File(directory, Constants.SCRIPT_NAME_LOCAL_START + app.getIdentification()
@@ -88,8 +77,11 @@ public class TestWindowsMachine extends WindowsMachine {
                 // Set WshShell = CreateObject("WScript.Shell")
                 vbsPrint.println(ScriptConstants.VB_CREATE_SHELL_OBJ);
                 // Set oExec = WshShell.exec( "JAVA" )
-                vbsPrint.println(ScriptConstants.VB_CREATE_EXECUTE + ScriptConstants.JAVA + Constants.SPACE
-                        + app.getMachineParameters().writeJavaOptions() + Constants.SPACE
+                vbsPrint.println(ScriptConstants.VB_CREATE_EXECUTE
+                        + ScriptConstants.JAVA
+                        + Constants.SPACE
+                        + app.getMachineParameters().writeJavaOptions()
+                        + Constants.SPACE
                         + Constants.DASH
                         + ScriptConstants.CLASSPATH
                         + Constants.SPACE
@@ -116,7 +108,8 @@ public class TestWindowsMachine extends WindowsMachine {
 
                         // TODO check to see if inherited inheriteJulPropFile is
                         // not null
-                        + Constants.SPACE + Constants.DASH
+                        + Constants.SPACE
+                        + Constants.DASH
                         + ScriptConstants.OPTION_LOG_CONFIG_WIN
                         + ScriptConstants.doubleBackslashes(getConfDirPath())
                         + Constants.LOG_PREFIX
@@ -178,26 +171,17 @@ public class TestWindowsMachine extends WindowsMachine {
                 vbsPrint.println(ScriptConstants.MULTI_SPACE_2 + ScriptConstants.VB_LOOP);
                 // Removing the bit that writes to stderr
                 /*
-                 * // Do While oExec.StdErr.AtEndOfStream <> True
-                 * vbsPrint.println(ScriptConstants.MULTI_SPACE_2 +
-                 * ScriptConstants.VB_DO_WHILE +
-                 * ScriptConstants.VB_OEXEC_STD_ERR +
+                 * // Do While oExec.StdErr.AtEndOfStream <> True vbsPrint.println(ScriptConstants.MULTI_SPACE_2 +
+                 * ScriptConstants.VB_DO_WHILE + ScriptConstants.VB_OEXEC_STD_ERR +
                  * ScriptConstants.VB_AT_END_OF_STREAM_FALSE); // Set outFile =
-                 * CreateObject("Scripting.FileSystemObject") //
-                 * .OpenTextFile("start_APP.log", 8, True)
-                 * vbsPrint.println(ScriptConstants.MULTI_SPACE_4 +
-                 * ScriptConstants.VB_SET_OUTFILE +
+                 * CreateObject("Scripting.FileSystemObject") // .OpenTextFile("start_APP.log", 8, True)
+                 * vbsPrint.println(ScriptConstants.MULTI_SPACE_4 + ScriptConstants.VB_SET_OUTFILE +
                  * ScriptConstants.VB_OPEN_WRITE_FILE_PREFIX + startLogName +
-                 * ScriptConstants.VB_OPEN_WRITE_FILE_SUFFIX_8); //
-                 * outFile.WriteLine oExec.StdErr.ReadLine
-                 * vbsPrint.println(ScriptConstants.MULTI_SPACE_4 +
-                 * ScriptConstants.VB_OUTFILE_WRITELINE +
-                 * ScriptConstants.VB_OEXEC_STD_ERR +
-                 * ScriptConstants.VB_READ_LINE); // outFile.close
-                 * vbsPrint.println(ScriptConstants.MULTI_SPACE_4 +
-                 * ScriptConstants.VB_OUTFILE_CLOSE); // Loop
-                 * vbsPrint.println(ScriptConstants.MULTI_SPACE_2 +
-                 * ScriptConstants.VB_LOOP);
+                 * ScriptConstants.VB_OPEN_WRITE_FILE_SUFFIX_8); // outFile.WriteLine oExec.StdErr.ReadLine
+                 * vbsPrint.println(ScriptConstants.MULTI_SPACE_4 + ScriptConstants.VB_OUTFILE_WRITELINE +
+                 * ScriptConstants.VB_OEXEC_STD_ERR + ScriptConstants.VB_READ_LINE); // outFile.close
+                 * vbsPrint.println(ScriptConstants.MULTI_SPACE_4 + ScriptConstants.VB_OUTFILE_CLOSE); // Loop
+                 * vbsPrint.println(ScriptConstants.MULTI_SPACE_2 + ScriptConstants.VB_LOOP);
                  */
                 // Loop
                 vbsPrint.println(ScriptConstants.VB_LOOP);

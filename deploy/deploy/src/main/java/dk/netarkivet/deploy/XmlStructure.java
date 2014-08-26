@@ -51,10 +51,8 @@ public class XmlStructure {
     /**
      * Constructor. Create an instance of this data-structure from an XML file.
      * 
-     * @param f
-     *            The XML file
-     * @param encoding
-     *            the encoding to use to read the file
+     * @param f The XML file
+     * @param encoding the encoding to use to read the file
      */
     public XmlStructure(File f, final String encoding) {
         ArgumentNotValid.checkNotNull(f, "File f");
@@ -67,11 +65,9 @@ public class XmlStructure {
     }
 
     /**
-     * Constructor. Creating a new instance of this data-structure from the
-     * branch of another instance.
+     * Constructor. Creating a new instance of this data-structure from the branch of another instance.
      * 
-     * @param subTreeRoot
-     *            The root of the tree for this instance
+     * @param subTreeRoot The root of the tree for this instance
      */
     public XmlStructure(Element subTreeRoot) {
         ArgumentNotValid.checkNotNull(subTreeRoot, "Element tree");
@@ -90,13 +86,10 @@ public class XmlStructure {
     /**
      * Loading the file into the document data structure.
      * 
-     * @param f
-     *            The XML file to be loaded.
-     * @param encoding
-     *            the encoding to use to read the file
+     * @param f The XML file to be loaded.
+     * @param encoding the encoding to use to read the file
      * @return The XML file loaded into the document data structure
-     * @throws IOFailure
-     *             If the file was not correctly read
+     * @throws IOFailure If the file was not correctly read
      */
     private Document loadDocument(File f, final String encoding) throws IOFailure {
         ArgumentNotValid.checkNotNull(f, "File f");
@@ -119,8 +112,7 @@ public class XmlStructure {
     /**
      * Function for retrieving a single specific branch.
      * 
-     * @param name
-     *            The name of the branch
+     * @param name The name of the branch
      * @return The child element of the XML tree structure
      */
     public Element getChild(String name) {
@@ -132,8 +124,7 @@ public class XmlStructure {
      * For receiving a list of specific branches.
      * 
      * 
-     * @param name
-     *            The name of the children to be found.
+     * @param name The name of the children to be found.
      * @return A list of the children with the given name.
      */
     @SuppressWarnings("unchecked")
@@ -154,8 +145,7 @@ public class XmlStructure {
     /**
      * For retrieving the first children along a path.
      * 
-     * @param name
-     *            The path to the child.
+     * @param name The path to the child.
      * @return The child element, or null if no such child exists.
      */
     public Element getSubChild(String... name) {
@@ -178,13 +168,10 @@ public class XmlStructure {
     /**
      * Retrieves the content of a branch deep in tree structure.
      * 
-     * @param name
-     *            Specifies the path in the tree (e.g. in HTML:
-     *            GetSubChildValue("HTML", "HEAD", "TITLE") to get the title of
-     *            a HTML document)
-     * @return The content of the leaf. If it is not a leaf, the entire
-     *         XML-branch is returned. Returns 'null' if the path to the branch
-     *         cannot be found.
+     * @param name Specifies the path in the tree (e.g. in HTML: GetSubChildValue("HTML", "HEAD", "TITLE") to get the
+     *            title of a HTML document)
+     * @return The content of the leaf. If it is not a leaf, the entire XML-branch is returned. Returns 'null' if the
+     *         path to the branch cannot be found.
      */
     public String getSubChildValue(String... name) {
         ArgumentNotValid.checkNotNull(name, "String ...name");
@@ -204,12 +191,10 @@ public class XmlStructure {
     /**
      * Retrieves the content of a branch deep in tree structure.
      * 
-     * @param path
-     *            Specifies the path in the tree (e.g. in HTML:
-     *            GetSubChildValue("HTML", "HEAD", "TITLE") to get the title of
-     *            a HTML document)
-     * @return The content of the leaf. If it is not a leaf, return null.
-     *         Returns 'null' if the path to the branch cannot be found.
+     * @param path Specifies the path in the tree (e.g. in HTML: GetSubChildValue("HTML", "HEAD", "TITLE") to get the
+     *            title of a HTML document)
+     * @return The content of the leaf. If it is not a leaf, return null. Returns 'null' if the path to the branch
+     *         cannot be found.
      */
     public String getLeafValue(String... path) {
         ArgumentNotValid.checkNotNull(path, "String ...name");
@@ -223,15 +208,12 @@ public class XmlStructure {
     }
 
     /**
-     * Retrieves the content of a the leafs deep in the tree structure. It only
-     * retrieves branches at the first path.
+     * Retrieves the content of a the leafs deep in the tree structure. It only retrieves branches at the first path.
      * 
-     * @param path
-     *            Specifies the path in the tree (e.g. in HTML:
-     *            GetSubChildValue("HTML", "HEAD", "TITLE") to get the title of
-     *            a HTML document)
-     * @return The content of the leaf. If no leafs are found then an empty
-     *         collection of strings are returned (new String[0]).
+     * @param path Specifies the path in the tree (e.g. in HTML: GetSubChildValue("HTML", "HEAD", "TITLE") to get the
+     *            title of a HTML document)
+     * @return The content of the leaf. If no leafs are found then an empty collection of strings are returned (new
+     *         String[0]).
      */
     public String[] getLeafValues(String... path) {
         // check argument
@@ -258,8 +240,7 @@ public class XmlStructure {
      * 
      * This is used for the Settings attributes in the deploy.
      * 
-     * @param overwriter
-     *            The settings instance for the current element
+     * @param overwriter The settings instance for the current element
      */
     public void overWrite(Element overwriter) {
         ArgumentNotValid.checkNotNull(overwriter, "Element overwriter");
@@ -271,20 +252,16 @@ public class XmlStructure {
     }
 
     /**
-     * The current tree will be overwritten by the overwriter tree. The new
-     * branches in overwriter will be added to the current tree. For the leafs
-     * which are present in both overwriter and current, the value in the
-     * current-leaf will be overwritten by the overwriter-leaf.
+     * The current tree will be overwritten by the overwriter tree. The new branches in overwriter will be added to the
+     * current tree. For the leafs which are present in both overwriter and current, the value in the current-leaf will
+     * be overwritten by the overwriter-leaf.
      * 
-     * The subtrees which exists in both the overwriter and the current tree,
-     * this function will be run recursively on these subtrees.
+     * The subtrees which exists in both the overwriter and the current tree, this function will be run recursively on
+     * these subtrees.
      * 
-     * @param current
-     *            The base element
-     * @param overwriter
-     *            The element to have its values overwrite the base element
-     * @throws IllegalState
-     *             If a leaf in current is about to be replaced by a tree
+     * @param current The base element
+     * @param overwriter The element to have its values overwrite the base element
+     * @throws IllegalState If a leaf in current is about to be replaced by a tree
      */
     @SuppressWarnings("unchecked")
     private void overWriting(Element current, Element overwriter) throws IllegalState {
@@ -339,12 +316,9 @@ public class XmlStructure {
     /**
      * Overwrites the leaf at the end of the path from the branch.
      * 
-     * @param branch
-     *            The branch where to begin.
-     * @param value
-     *            The value to overwrite the leaf with.
-     * @param path
-     *            The path from the branch to the leaf.
+     * @param branch The branch where to begin.
+     * @param value The value to overwrite the leaf with.
+     * @param path The path from the branch to the leaf.
      */
     public void overWriteOnly(Element branch, String value, String... path) {
         ArgumentNotValid.checkNotNullOrEmpty(value, "String Value");
@@ -367,18 +341,12 @@ public class XmlStructure {
     }
 
     /**
-     * Specific overwrite function for overwriting a specific character in a
-     * string.
+     * Specific overwrite function for overwriting a specific character in a string.
      * 
-     * @param branch
-     *            The initial branch of the XML tree.
-     * @param position
-     *            The position in the String where the character are to be
-     *            changed.
-     * @param value
-     *            The new value of the character to change.
-     * @param path
-     *            The path to the leaf of the string to change.
+     * @param branch The initial branch of the XML tree.
+     * @param position The position in the String where the character are to be changed.
+     * @param value The new value of the character to change.
+     * @param path The path to the leaf of the string to change.
      */
     public void overWriteOnlyInt(Element branch, int position, char value, String... path) {
         ArgumentNotValid.checkNotNull(path, "String path");
@@ -404,11 +372,9 @@ public class XmlStructure {
     }
 
     /**
-     * Creates an dom4j.Element from a String. This string has to be in the XML
-     * format, otherwise return null.
+     * Creates an dom4j.Element from a String. This string has to be in the XML format, otherwise return null.
      * 
-     * @param content
-     *            The content of a String.
+     * @param content The content of a String.
      * @return The Element.
      */
     public static Element makeElementFromString(String content) {
@@ -427,10 +393,8 @@ public class XmlStructure {
     /**
      * This function creates the XML code for the path.
      * 
-     * @param content
-     *            The content at the leaf of the branch.
-     * @param path
-     *            The path to the branch.
+     * @param content The content at the leaf of the branch.
+     * @param path The path to the branch.
      * @return The XML code for the branch with content.
      */
     public static String pathAndContentToXML(String content, String... path) {
@@ -457,14 +421,11 @@ public class XmlStructure {
     }
 
     /**
-     * This function recursively calls it self, and retrieves all the leaf
-     * children from all sibling branches along the path. When a call to it-self
-     * is made, the first string in path is removed.
+     * This function recursively calls it self, and retrieves all the leaf children from all sibling branches along the
+     * path. When a call to it-self is made, the first string in path is removed.
      * 
-     * @param current
-     *            The current element to retrieve children along the path.
-     * @param path
-     *            The path to the leafs.
+     * @param current The current element to retrieve children along the path.
+     * @param path The path to the leafs.
      * @return The complete list of elements which can be found along the path.
      */
     @SuppressWarnings("unchecked")

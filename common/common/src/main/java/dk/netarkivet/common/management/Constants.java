@@ -34,8 +34,7 @@ public final class Constants {
     }
 
     /**
-     * These constant priority keys are also used by the monitor to find the
-     * value in the Translation files.
+     * These constant priority keys are also used by the monitor to find the value in the Translation files.
      */
 
     /** The location key word. */

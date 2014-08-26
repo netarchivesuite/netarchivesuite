@@ -52,9 +52,8 @@ import dk.netarkivet.common.utils.batch.ChecksumJob;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 /**
- * A simple implementation of ArcRepositoryClient that just has a number of
- * local directories where it stores its files. This class doesn't implement
- * credentials checking or checksum storing!
+ * A simple implementation of ArcRepositoryClient that just has a number of local directories where it stores its files.
+ * This class doesn't implement credentials checking or checksum storing!
  */
 public class LocalArcRepositoryClient implements ArcRepositoryClient {
 
@@ -66,17 +65,15 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
             + "LocalArcRepositoryClientSettings.xml";
 
     /*
-     * The static initialiser is called when the class is loaded. It will add
-     * default values for all settings defined in this class, by loading them
-     * from a settings.xml file in classpath.
+     * The static initialiser is called when the class is loaded. It will add default values for all settings defined in
+     * this class, by loading them from a settings.xml file in classpath.
      */
     static {
         Settings.addDefaultClasspathSettings(defaultSettingsClasspath);
     }
 
     /**
-     * List of the directories that we store files in. Non-absolute dirs are
-     * relative to the current directory.
+     * List of the directories that we store files in. Non-absolute dirs are relative to the current directory.
      */
     private final List<File> storageDirs = new ArrayList<File>(1);
 
@@ -101,18 +98,12 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
     }
 
     /**
-     * Store the given file in the ArcRepository. After storing, the file is
-     * deleted.
+     * Store the given file in the ArcRepository. After storing, the file is deleted.
      *
-     * @param file
-     *            A file to be stored. Must exist.
-     * @throws IOFailure
-     *             thrown if store is unsuccessful, or failed to clean up files
-     *             after the store operation.
-     * @throws IllegalState
-     *             if file already exists.
-     * @throws ArgumentNotValid
-     *             if file parameter is null or file is not an existing file.
+     * @param file A file to be stored. Must exist.
+     * @throws IOFailure thrown if store is unsuccessful, or failed to clean up files after the store operation.
+     * @throws IllegalState if file already exists.
+     * @throws ArgumentNotValid if file parameter is null or file is not an existing file.
      */
     @Override
     public void store(File file) throws IOFailure, ArgumentNotValid {
@@ -133,16 +124,11 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
     /**
      * Gets a single ARC record out of the ArcRepository.
      *
-     * @param arcfile
-     *            The name of a file containing the desired record.
-     * @param index
-     *            The offset of the desired record in the file
-     * @return a BitarchiveRecord-object, or null if request times out or object
-     *         is not found.
-     * @throws ArgumentNotValid
-     *             on null or empty filenames, or if index is negative.
-     * @throws IOFailure
-     *             If the get operation failed.
+     * @param arcfile The name of a file containing the desired record.
+     * @param index The offset of the desired record in the file
+     * @return a BitarchiveRecord-object, or null if request times out or object is not found.
+     * @throws ArgumentNotValid on null or empty filenames, or if index is negative.
+     * @throws IOFailure If the get operation failed.
      */
     @Override
     public BitarchiveRecord get(String arcfile, long index) throws ArgumentNotValid {
@@ -182,18 +168,12 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
     /**
      * Retrieves a file from an ArcRepository and places it in a local file.
      *
-     * @param arcfilename
-     *            Name of the arcfile to retrieve.
-     * @param replica
-     *            The bitarchive to retrieve the data from. (Note argument is
-     *            ignored)
-     * @param toFile
-     *            Filename of a place where the file fetched can be put.
-     * @throws ArgumentNotValid
-     *             if arcfilename is null or empty, or if toFile is null
-     * @throws IOFailure
-     *             if there are problems reading or writing file, or the file
-     *             with the given arcfilename could not be found.
+     * @param arcfilename Name of the arcfile to retrieve.
+     * @param replica The bitarchive to retrieve the data from. (Note argument is ignored)
+     * @param toFile Filename of a place where the file fetched can be put.
+     * @throws ArgumentNotValid if arcfilename is null or empty, or if toFile is null
+     * @throws IOFailure if there are problems reading or writing file, or the file with the given arcfilename could not
+     *             be found.
      */
     @Override
     public void getFile(String arcfilename, Replica replica, File toFile) {
@@ -210,24 +190,16 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
     /**
      * Runs a batch job on each file in the ArcRepository.
      *
-     * @param job
-     *            An object that implements the FileBatchJob interface. The
-     *            initialize() method will be called before processing and the
-     *            finish() method will be called afterwards. The process()
-     *            method will be called with each File entry. An optional
-     *            function postProcess() allows handling the combined results of
-     *            the batchjob, e.g. summing the results, sorting, etc.
+     * @param job An object that implements the FileBatchJob interface. The initialize() method will be called before
+     *            processing and the finish() method will be called afterwards. The process() method will be called with
+     *            each File entry. An optional function postProcess() allows handling the combined results of the
+     *            batchjob, e.g. summing the results, sorting, etc.
      *
-     * @param replicaId
-     *            The archive to execute the job on.
-     * @param args
-     *            The arguments for the batchjob. This can be null.
+     * @param replicaId The archive to execute the job on.
+     * @param args The arguments for the batchjob. This can be null.
      * @return The status of the batch job after it ended.
-     * @throws ArgumentNotValid
-     *             If the job is null or the replicaId is either null or the
-     *             empty string.
-     * @throws IOFailure
-     *             If a problem occurs during processing the batchjob.
+     * @throws ArgumentNotValid If the job is null or the replicaId is either null or the empty string.
+     * @throws IOFailure If a problem occurs during processing the batchjob.
      */
     @Override
     public BatchStatus batch(final FileBatchJob job, String replicaId, String... args) throws ArgumentNotValid,
@@ -271,59 +243,42 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
     }
 
     /**
-     * Updates the administrative data in the ArcRepository for a given file and
-     * replica. This implementation does nothing.
+     * Updates the administrative data in the ArcRepository for a given file and replica. This implementation does
+     * nothing.
      *
-     * @param fileName
-     *            The name of a file stored in the ArcRepository.
-     * @param bitarchiveId
-     *            The id of the replica that the administrative data for
-     *            fileName is wrong for.
-     * @param newval
-     *            What the administrative data will be updated to.
+     * @param fileName The name of a file stored in the ArcRepository.
+     * @param bitarchiveId The id of the replica that the administrative data for fileName is wrong for.
+     * @param newval What the administrative data will be updated to.
      */
     @Override
     public void updateAdminData(String fileName, String bitarchiveId, ReplicaStoreState newval) {
     }
 
     /**
-     * Updates the checksum kept in the ArcRepository for a given file. It is
-     * the responsibility of the ArcRepository implementation to ensure that
-     * this checksum matches that of the underlying files. This implementation
-     * does nothing.
+     * Updates the checksum kept in the ArcRepository for a given file. It is the responsibility of the ArcRepository
+     * implementation to ensure that this checksum matches that of the underlying files. This implementation does
+     * nothing.
      *
-     * @param filename
-     *            The name of a file stored in the ArcRepository.
-     * @param checksum
-     *            The new checksum.
+     * @param filename The name of a file stored in the ArcRepository.
+     * @param checksum The new checksum.
      */
     @Override
     public void updateAdminChecksum(String filename, String checksum) {
     }
 
     /**
-     * Remove a file from one part of the ArcRepository, retrieving a copy for
-     * security purposes. This is typically used when repairing a file that has
-     * been corrupted.
+     * Remove a file from one part of the ArcRepository, retrieving a copy for security purposes. This is typically used
+     * when repairing a file that has been corrupted.
      *
-     * @param fileName
-     *            The name of the file to remove.
-     * @param bitarchiveId
-     *            The id of the replica from which to remove the file. Not used
-     *            in this implementation, may be null.
-     * @param checksum
-     *            The checksum of the file to be removed.
-     * @param credentials
-     *            A string that shows that the user is allowed to perform this
-     *            operation.
+     * @param fileName The name of the file to remove.
+     * @param bitarchiveId The id of the replica from which to remove the file. Not used in this implementation, may be
+     *            null.
+     * @param checksum The checksum of the file to be removed.
+     * @param credentials A string that shows that the user is allowed to perform this operation.
      * @return A local copy of the file removed.
-     * @throws ArgumentNotValid
-     *             On null or empty parameters for fileName, checksum or
-     *             credentials.
-     * @throws IOFailure
-     *             On IO trouble.
-     * @throws PermissionDenied
-     *             On wrong MD5 sum or wrong credentials.
+     * @throws ArgumentNotValid On null or empty parameters for fileName, checksum or credentials.
+     * @throws IOFailure On IO trouble.
+     * @throws PermissionDenied On wrong MD5 sum or wrong credentials.
      */
     @Override
     public File removeAndGetFile(String fileName, String bitarchiveId, String checksum, String credentials) {
@@ -354,10 +309,8 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
     /**
      * Returns a File object for a filename if it exists in the archive.
      *
-     * @param filename
-     *            Name of file to find.
-     * @return A File object for the filename if the file exists, otherwise
-     *         null.
+     * @param filename Name of file to find.
+     * @return A File object for the filename if the file exists, otherwise null.
      */
     private File findFile(String filename) {
         for (File dir : storageDirs) {
@@ -372,14 +325,10 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
     /**
      * Method for retrieving the checksums of all the files of the replica.
      * 
-     * @param replicaId
-     *            Inherited dummy argument.
-     * @return A file containing the names and checksum of all the files in the
-     *         system.
-     * @throws ArgumentNotValid
-     *             If the replicaId is either null or the empty string.
-     * @throws IOFailure
-     *             If an unexpected IOException is caught.
+     * @param replicaId Inherited dummy argument.
+     * @return A file containing the names and checksum of all the files in the system.
+     * @throws ArgumentNotValid If the replicaId is either null or the empty string.
+     * @throws IOFailure If an unexpected IOException is caught.
      */
     @Override
     public File getAllChecksums(String replicaId) throws IOFailure, ArgumentNotValid {
@@ -411,13 +360,10 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
     /**
      * Method for retrieving all the filenames of the replica.
      * 
-     * @param replicaId
-     *            Inherited dummy argument.
+     * @param replicaId Inherited dummy argument.
      * @return A file containing the names of all the files.
-     * @throws ArgumentNotValid
-     *             If the replicaId is either null or empty.
-     * @throws IOFailure
-     *             If an IOException is caught.
+     * @throws ArgumentNotValid If the replicaId is either null or empty.
+     * @throws IOFailure If an IOException is caught.
      */
     @Override
     public File getAllFilenames(String replicaId) throws IOFailure, ArgumentNotValid {
@@ -442,22 +388,15 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
     }
 
     /**
-     * Method for correcting a bad entry. Calls 'removeAndGetFile' followed by
-     * 'store'.
+     * Method for correcting a bad entry. Calls 'removeAndGetFile' followed by 'store'.
      * 
-     * @param replicaId
-     *            Inherited dummy argument.
-     * @param checksum
-     *            The checksum of the bad entry.
-     * @param file
-     *            The new file to replace the bad entry.
-     * @param credentials
-     *            The 'password' to allow changing the archive.
+     * @param replicaId Inherited dummy argument.
+     * @param checksum The checksum of the bad entry.
+     * @param file The new file to replace the bad entry.
+     * @param credentials The 'password' to allow changing the archive.
      * @return The bad entry file.
-     * @throws ArgumentNotValid
-     *             If one of the arguments are null, or if a string is empty.
-     * @throws PermissionDenied
-     *             If the credentials or checksum are invalid.
+     * @throws ArgumentNotValid If one of the arguments are null, or if a string is empty.
+     * @throws PermissionDenied If the credentials or checksum are invalid.
      */
     @Override
     public File correct(String replicaId, String checksum, File file, String credentials) throws ArgumentNotValid,
@@ -478,15 +417,10 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
     /**
      * Method for finding the checksum of a file.
      * 
-     * @param replicaId
-     *            Inherited dummy variable.
-     * @param filename
-     *            The name of the file to calculate the checksum.
-     * @return The checksum of the file, or the empty string if the file was not
-     *         found or an error occurred.
-     * @throws ArgumentNotValid
-     *             If the replicaId or the filename is either null or the empty
-     *             string.
+     * @param replicaId Inherited dummy variable.
+     * @param filename The name of the file to calculate the checksum.
+     * @return The checksum of the file, or the empty string if the file was not found or an error occurred.
+     * @throws ArgumentNotValid If the replicaId or the filename is either null or the empty string.
      */
     @Override
     public String getChecksum(String replicaId, String filename) throws ArgumentNotValid {

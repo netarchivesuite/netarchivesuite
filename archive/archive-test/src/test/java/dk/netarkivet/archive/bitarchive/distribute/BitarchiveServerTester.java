@@ -80,7 +80,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 /**
  * Unit tests for the BitarchiveServer class.
  */
-@SuppressWarnings({ "unused", "serial" })
+@SuppressWarnings({"unused", "serial"})
 public class BitarchiveServerTester {
     private UseTestRemoteFile utrf = new UseTestRemoteFile();
 
@@ -89,9 +89,9 @@ public class BitarchiveServerTester {
     private static final File WORKING = TestInfo.UPLOADMESSAGE_TEMP_DIR;
     private static final File BITARCHIVE1 = TestInfo.BA1_MAINDIR;
     private static final File SERVER1 = TestInfo.SERVER1_DIR;
-    private static final String[] dirs = { WORKING.getAbsolutePath() + "m_bitarchive",
+    private static final String[] dirs = {WORKING.getAbsolutePath() + "m_bitarchive",
             WORKING.getAbsolutePath() + "n_bitarchive", WORKING.getAbsolutePath() + "o_bitarchive",
-            WORKING.getAbsolutePath() + "p_bitarchive", };
+            WORKING.getAbsolutePath() + "p_bitarchive",};
     ReloadSettings rs = new ReloadSettings();
 
     @Before
@@ -133,11 +133,9 @@ public class BitarchiveServerTester {
     }
 
     /**
-     * Test that the BitarchiveServer outputs logging information. This verifies
-     * the fix of bug #99.
+     * Test that the BitarchiveServer outputs logging information. This verifies the fix of bug #99.
      *
-     * @throws IOException
-     *             If unable to read the logfile.
+     * @throws IOException If unable to read the logfile.
      */
     @Test
     public void testLogging() throws IOException {
@@ -152,8 +150,8 @@ public class BitarchiveServerTester {
     }
 
     /**
-     * Test that a BitarchiveServer is removed as listener of the ANY_BA queue
-     * when trying to upload a file that cannot fit in the archive.
+     * Test that a BitarchiveServer is removed as listener of the ANY_BA queue when trying to upload a file that cannot
+     * fit in the archive.
      *
      * We currently don't resend the message, but just reply.
      * 
@@ -227,8 +225,7 @@ public class BitarchiveServerTester {
     }
 
     /**
-     * Test that a BitarchiveServer is removed as listener of the ANY_BA queue
-     * when a directory disappears.
+     * Test that a BitarchiveServer is removed as listener of the ANY_BA queue when a directory disappears.
      *
      * We currently don't resend the message, but just reply.
      */
@@ -345,8 +342,7 @@ public class BitarchiveServerTester {
     }
 
     /**
-     * Test the normal operation of trying to get a record of a file which is
-     * not present on this bitarchive.
+     * Test the normal operation of trying to get a record of a file which is not present on this bitarchive.
      */
     @Test
     public void testVisitGetMessageNoSuchFile() {
@@ -367,8 +363,7 @@ public class BitarchiveServerTester {
     }
 
     /**
-     * Test getting an arcrecord of a file which exists but a record which does
-     * not.
+     * Test getting an arcrecord of a file which exists but a record which does not.
      */
     @Test
     public void testVisitGetMessageNoSuchRecord() {
@@ -393,8 +388,7 @@ public class BitarchiveServerTester {
     }
 
     /**
-     * Pass a batch message to BitarchiveServer and test that it replies with an
-     * appropriate BatchEndedMessage.
+     * Pass a batch message to BitarchiveServer and test that it replies with an appropriate BatchEndedMessage.
      */
     @Test
     public void testVisitBatchMessage() throws InterruptedException {
@@ -448,15 +442,12 @@ public class BitarchiveServerTester {
     }
 
     /**
-     * Test that batch messages can run concurrently. THIS UNIT TEST CAN
-     * OCCATIONALLY FAIL DUE TO SOME RACE-CONDITION
+     * Test that batch messages can run concurrently. THIS UNIT TEST CAN OCCATIONALLY FAIL DUE TO SOME RACE-CONDITION
      * 
-     * FIXME: Removed test from unit test suite. Primary purpose of unit test is
-     * regression testing. Tests which 'can occationally fail' therefore defeats
-     * the purpose of unit testing.
+     * FIXME: Removed test from unit test suite. Primary purpose of unit test is regression testing. Tests which 'can
+     * occationally fail' therefore defeats the purpose of unit testing.
      * 
-     * @throws IOException
-     *             If unable to read a file.
+     * @throws IOException If unable to read a file.
      */
     @Test
     public void failingTestVisitBatchMessageThreaded() throws IOException {
@@ -542,8 +533,7 @@ public class BitarchiveServerTester {
     }
 
     /**
-     * Test that a visit(RemoveAndGetMessage) call actually removes (moves) the
-     * file.
+     * Test that a visit(RemoveAndGetMessage) call actually removes (moves) the file.
      * 
      * @throws Exception
      */
@@ -727,12 +717,9 @@ public class BitarchiveServerTester {
     }
 
     /**
-     * FIXME: Disabled, fails on hudson an Eclipse see
-     * http://sbforge.statsbiblioteket
-     * .dk/hudson/job/NetarchiveSuite-unittest/lastCompletedBuild
-     * /testReport/dk.netarkivet
-     * .archive.bitarchive.distribute/BitarchiveServerTester
-     * /testBatchTerminationMessage/
+     * FIXME: Disabled, fails on hudson an Eclipse see http://sbforge.statsbiblioteket
+     * .dk/hudson/job/NetarchiveSuite-unittest/lastCompletedBuild /testReport/dk.netarkivet
+     * .archive.bitarchive.distribute/BitarchiveServerTester /testBatchTerminationMessage/
      */
     @Test
     @Ignore("Not NotOK")
@@ -861,7 +848,7 @@ public class BitarchiveServerTester {
         pss.setUp();
 
         try {
-            BitarchiveApplication.main(new String[] { "ERROR" });
+            BitarchiveApplication.main(new String[] {"ERROR"});
             fail("It should throw an exception ");
         } catch (SecurityException e) {
             // expected !
@@ -876,8 +863,7 @@ public class BitarchiveServerTester {
     }
 
     /**
-     * A generic message listener class which just stores a list of all messages
-     * it receives.
+     * A generic message listener class which just stores a list of all messages it receives.
      */
     public static class GenericMessageListener implements MessageListener {
         /**
@@ -888,8 +874,7 @@ public class BitarchiveServerTester {
         /**
          * Handle the message.
          * 
-         * @param message
-         *            the given message
+         * @param message the given message
          */
         public void onMessage(Message message) {
             NetarkivetMessage naMsg = JMSConnection.unpack(message);

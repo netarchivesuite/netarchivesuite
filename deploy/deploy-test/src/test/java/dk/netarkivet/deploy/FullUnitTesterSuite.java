@@ -29,8 +29,7 @@ import junit.textui.TestRunner;
 import dk.netarkivet.common.CleanupSuite;
 
 /**
- * This class runs the deploy unit tests. Maven runs the unit tests for the
- * other modules.
+ * This class runs the deploy unit tests. Maven runs the unit tests for the other modules.
  */
 public class FullUnitTesterSuite {
     public static void addToSuite(TestSuite suite) {
@@ -58,7 +57,7 @@ public class FullUnitTesterSuite {
     }
 
     public static void main(String[] args) {
-        String[] args2 = { "-noloading", FullUnitTesterSuite.class.getName() };
+        String[] args2 = {"-noloading", FullUnitTesterSuite.class.getName()};
         TestRunner.main(args2);
     }
 }

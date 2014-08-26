@@ -61,7 +61,7 @@ import dk.netarkivet.testutils.CollectionAsserts;
 /**
  * Unit tests for the static methods in the abstract class HarvestDefinition.
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings({"unchecked", "rawtypes"})
 @Ignore("binary derby database not converted to scripts yet")
 public class HarvestDefinitionTester extends DataModelTestCase {
     private Schedule schedule;
@@ -87,15 +87,14 @@ public class HarvestDefinitionTester extends DataModelTestCase {
     public void testValidityOfConstructorArguments() {
 
         /*
-         * Test validity of constructor parameters: (List domainConfigurations,
-         * Schedule schedule, String harvestDefName, String harvestDefComment)
+         * Test validity of constructor parameters: (List domainConfigurations, Schedule schedule, String
+         * harvestDefName, String harvestDefComment)
          * 
          * 1. domainConfigurations: domainConfigurations != null
          * 
          * More checks of validity of each DomainConfiguration?
          * 
-         * 2. schedule must exist: schedule != null && schedule in
-         * ScheduleDAO.getAllSchedules()
+         * 2. schedule must exist: schedule != null && schedule in ScheduleDAO.getAllSchedules()
          * 
          * 3. harvestDefName != null && harvestDefName != ""
          * 
@@ -211,17 +210,13 @@ public class HarvestDefinitionTester extends DataModelTestCase {
     }
 
     /**
-     * Verify that a HarvestDefinition can be created and the correct data
-     * retrieved. FIXME This unittest fails every other time with error
-     * junit.framework.AssertionFailedError: The first event must not happen
-     * before now (Tue Jul 08 20:43:28 CEST 2008), but happens at Tue Jul 08
-     * 20:43:29 CEST 2008 at junit.framework.Assert.fail(Assert.java:47) at
-     * junit.framework.Assert.assertTrue(Assert.java:20) at
-     * dk.netarkivet.harvester
-     * .datamodel.HarvestDefinitionTester.testSetAndGet(HarvestDefinitionTester
-     * .java:248) SVC (09-09-2011) Changed the declaration of Date "before" and
-     * "after" from new Date(System.currentTimeMillis() / 1000 * 1000); to new
-     * Date()
+     * Verify that a HarvestDefinition can be created and the correct data retrieved. FIXME This unittest fails every
+     * other time with error junit.framework.AssertionFailedError: The first event must not happen before now (Tue Jul
+     * 08 20:43:28 CEST 2008), but happens at Tue Jul 08 20:43:29 CEST 2008 at
+     * junit.framework.Assert.fail(Assert.java:47) at junit.framework.Assert.assertTrue(Assert.java:20) at
+     * dk.netarkivet.harvester .datamodel.HarvestDefinitionTester.testSetAndGet(HarvestDefinitionTester .java:248) SVC
+     * (09-09-2011) Changed the declaration of Date "before" and "after" from new Date(System.currentTimeMillis() / 1000
+     * * 1000); to new Date()
      */
     @Test
     // @Ignore
@@ -476,8 +471,8 @@ public class HarvestDefinitionTester extends DataModelTestCase {
     }
 
     /**
-     * Tests that when creating jobs from a harvest definition, we skip some
-     * some jobs if the harvesting has been delayed.
+     * Tests that when creating jobs from a harvest definition, we skip some some jobs if the harvesting has been
+     * delayed.
      */
     @Test
     public void testCreateJobsSkipsEvents() {
@@ -571,11 +566,9 @@ public class HarvestDefinitionTester extends DataModelTestCase {
     }
 
     /**
-     * Verify that jobs are created correctly according to the expected size of
-     * the domains. The size constraint is initially defined so that all domains
-     * fit into the same job. The size constraint is then changed so that two
-     * jobs are created Finally the size constraint is changed so that a job is
-     * created for each domain
+     * Verify that jobs are created correctly according to the expected size of the domains. The size constraint is
+     * initially defined so that all domains fit into the same job. The size constraint is then changed so that two jobs
+     * are created Finally the size constraint is changed so that a job is created for each domain
      */
     @Test
     public void testCreateJobsBySize() {
@@ -634,8 +627,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
     }
 
     /**
-     * Verify that configurations with different order.xml files are separated
-     * into different jobs.
+     * Verify that configurations with different order.xml files are separated into different jobs.
      */
     @Test
     public void testCreateJobsByOrderXml() {
@@ -656,8 +648,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
     }
 
     /**
-     * Verify that jobs are created in a way where the maximum and minimum Total
-     * size limits are obeyed if possible.
+     * Verify that jobs are created in a way where the maximum and minimum Total size limits are obeyed if possible.
      */
     @Test
     public void testCreateJobsByTotalSizeLimits() {
@@ -698,9 +689,8 @@ public class HarvestDefinitionTester extends DataModelTestCase {
     }
 
     /**
-     * Get snapshot harvest definition ready for usage in tests. The
-     * harvestdefinition is persisted using the DAO before a reference is
-     * returned, making it ready for job creation.
+     * Get snapshot harvest definition ready for usage in tests. The harvestdefinition is persisted using the DAO before
+     * a reference is returned, making it ready for job creation.
      *
      * @return snapshot harvest definition
      */
@@ -761,8 +751,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
     }
 
     /**
-     * Verify that the constructor supplied harvest limits are used when
-     * snapshot harvest jobs are created.
+     * Verify that the constructor supplied harvest limits are used when snapshot harvest jobs are created.
      */
     @Test
     public void testCreateSnapShot_maxObjects() {
@@ -920,8 +909,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
     }
 
     /**
-     * Verify that it is possible to set and get the active state of a
-     * harvestDefinition.
+     * Verify that it is possible to set and get the active state of a harvestDefinition.
      */
     @Test
     public void testSetGetActive() {
@@ -945,8 +933,8 @@ public class HarvestDefinitionTester extends DataModelTestCase {
     }
 
     /**
-     * Check that ordering done by CompareConfigsDesc is in the order: -
-     * template first - byte limit second - expected number of objects third.
+     * Check that ordering done by CompareConfigsDesc is in the order: - template first - byte limit second - expected
+     * number of objects third.
      */
     @Test
     public void testCompareConfigsDesc() throws NoSuchFieldException, IllegalAccessException,
@@ -954,7 +942,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         // Make some configs to sort...(Note: Expected number of objects are in
         // this case the same...)
         Domain d = Domain.getDefaultDomain("adomain.dk");
-        List<SeedList> seedlists = Arrays.asList(new SeedList[] { d.getAllSeedLists().next() });
+        List<SeedList> seedlists = Arrays.asList(new SeedList[] {d.getAllSeedLists().next()});
         DomainConfiguration cfg1 = new DomainConfiguration("config1", d, seedlists, new ArrayList<Password>());
         cfg1.setMaxBytes(1000000);
         cfg1.setOrderXmlName("X");
@@ -979,8 +967,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         cfg6.setMaxBytes(3000000);
         cfg6.setOrderXmlName("Y");
         d.addConfiguration(cfg6);
-        List<DomainConfiguration> list = Arrays
-                .asList(new DomainConfiguration[] { cfg1, cfg2, cfg3, cfg4, cfg5, cfg6 });
+        List<DomainConfiguration> list = Arrays.asList(new DomainConfiguration[] {cfg1, cfg2, cfg3, cfg4, cfg5, cfg6});
 
         // Get the private inner class
         Class c = null;
@@ -1009,7 +996,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         assertEquals("Second order template with lowest byte limit expected", cfg5, list.get(5));
 
         // resort
-        list = Arrays.asList(new DomainConfiguration[] { cfg1, cfg2, cfg3, cfg4, cfg5, cfg6 });
+        list = Arrays.asList(new DomainConfiguration[] {cfg1, cfg2, cfg3, cfg4, cfg5, cfg6});
 
         // Make a comparator where the deciding limit is in some cases the
         // harvest limit
@@ -1059,7 +1046,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         cfg6.setDomainhistory(d.getHistory());
 
         // resort
-        list = Arrays.asList(new DomainConfiguration[] { cfg1, cfg2, cfg3, cfg4, cfg5, cfg6 });
+        list = Arrays.asList(new DomainConfiguration[] {cfg1, cfg2, cfg3, cfg4, cfg5, cfg6});
 
         // make a comparator with a high limit
         compareconfigdesc = (Comparator<DomainConfiguration>) declaredConstructor.newInstance(-1, 9000000L);

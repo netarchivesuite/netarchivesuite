@@ -36,37 +36,31 @@ import org.archive.net.UURIFactory;
 import dk.netarkivet.common.utils.DomainUtils;
 
 /**
- * This is a modified version of the {@link DomainnameQueueAssignmentPolicy}
- * where domainname returned is the domainname of the candidateURI except where
- * the domainname of the SeedURI is a different one.
+ * This is a modified version of the {@link DomainnameQueueAssignmentPolicy} where domainname returned is the domainname
+ * of the candidateURI except where the domainname of the SeedURI is a different one.
  * 
  * 
- * Using the domain as the queue-name. The domain is defined as the last two
- * names in the entire hostname or the entirety of an IP address. x.y.z -> y.z
- * y.z -> y.z nn.nn.nn.nn -> nn.nn.nn.nn
+ * Using the domain as the queue-name. The domain is defined as the last two names in the entire hostname or the
+ * entirety of an IP address. x.y.z -> y.z y.z -> y.z nn.nn.nn.nn -> nn.nn.nn.nn
  * 
  */
 public class SeedUriDomainnameQueueAssignmentPolicy extends HostnameQueueAssignmentPolicy {
 
     /**
-     * A key used for the cases when we can't figure out the URI. This is taken
-     * from parent, where it has private access. Parent returns this on things
-     * like about:blank.
+     * A key used for the cases when we can't figure out the URI. This is taken from parent, where it has private
+     * access. Parent returns this on things like about:blank.
      */
     static final String DEFAULT_CLASS_KEY = "default...";
 
     private static final Log log = LogFactory.getLog(SeedUriDomainnameQueueAssignmentPolicy.class);
 
     /**
-     * Return a key for queue names based on domain names (last two parts of
-     * host name) or IP address. They key may include a #<portnr> at the end.
+     * Return a key for queue names based on domain names (last two parts of host name) or IP address. They key may
+     * include a #<portnr> at the end.
      *
-     * @param controller
-     *            The controller the crawl is running on.
-     * @param cauri
-     *            A potential URI.
-     * @return a class key (really an arbitrary string), one of <domainOrIP>,
-     *         <domainOrIP>#<port>, or "default...".
+     * @param controller The controller the crawl is running on.
+     * @param cauri A potential URI.
+     * @return a class key (really an arbitrary string), one of <domainOrIP>, <domainOrIP>#<port>, or "default...".
      * @see HostnameQueueAssignmentPolicy#getClassKey(org.archive.crawler.framework.CrawlController,
      *      org.archive.crawler.datamodel.CandidateURI)
      */
@@ -110,8 +104,7 @@ public class SeedUriDomainnameQueueAssignmentPolicy extends HostnameQueueAssignm
     /**
      * Find a candidate from the source.
      * 
-     * @param cauri
-     *            A potential URI
+     * @param cauri A potential URI
      * @return a candidate from the source or null if none found
      */
     private String getCandidateFromSource(CandidateURI cauri) {

@@ -40,9 +40,8 @@ import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
- * A TestCase subclass specifically tailored to test webinterface classes,
- * primarily the classes in dk.netarkivet.harvester.webinterface:
- * HarvestStatusTester, EventHarvestTester, DomainDefinitionTester,
+ * A TestCase subclass specifically tailored to test webinterface classes, primarily the classes in
+ * dk.netarkivet.harvester.webinterface: HarvestStatusTester, EventHarvestTester, DomainDefinitionTester,
  * ScheduleDefinitionTester, SnapshotHarvestDefinitionTester but also
  * dk.netarkivet.archive.webinterface.BitpreserveFileStatusTester
  */

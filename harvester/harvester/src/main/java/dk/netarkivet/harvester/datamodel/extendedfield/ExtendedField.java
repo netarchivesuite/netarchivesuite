@@ -34,7 +34,7 @@ import dk.netarkivet.harvester.webinterface.ExtendedFieldConstants;
 /**
  * This class represents one Extended Field.
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class ExtendedField implements Serializable {
 
     private static final Logger log = LoggerFactory.getLogger(ExtendedField.class);
@@ -73,8 +73,7 @@ public class ExtendedField implements Serializable {
     /**
      * Set the ID of the extendedField..
      * 
-     * @param extendedFieldID
-     *            the ID of the extendedField..
+     * @param extendedFieldID the ID of the extendedField..
      */
     public void setExtendedFieldID(Long extendedFieldID) {
         ArgumentNotValid.checkNotNull(extendedFieldID, "Long extendedFieldID");
@@ -91,8 +90,7 @@ public class ExtendedField implements Serializable {
     /**
      * Set the name of the extendedFieldTypeID.
      * 
-     * @param extendedFieldTypeID
-     *            an extendedfieldtypeId
+     * @param extendedFieldTypeID an extendedfieldtypeId
      */
     public void setExtendedFieldTypeID(Long extendedFieldTypeID) {
         ArgumentNotValid.checkNotNull(extendedFieldID, "Long extendedFieldID");
@@ -109,8 +107,7 @@ public class ExtendedField implements Serializable {
     /**
      * Set the name of the extendedField.
      * 
-     * @param name
-     *            the name of the extendedField
+     * @param name the name of the extendedField
      */
     public void setName(String name) {
         ArgumentNotValid.checkNotNull(name, "String name");
@@ -127,8 +124,7 @@ public class ExtendedField implements Serializable {
     /**
      * Set a formatting pattern for this extendefield.
      * 
-     * @param aFormattingPattern
-     *            a formatting pattern for this extendedfield
+     * @param aFormattingPattern a formatting pattern for this extendedfield
      */
     public void setFormattingPattern(String aFormattingPattern) {
         ArgumentNotValid.checkNotNull(aFormattingPattern, "String aFormattingPattern");
@@ -145,8 +141,7 @@ public class ExtendedField implements Serializable {
     /**
      * Set the datatype of this extendedField.
      * 
-     * @param datatype
-     *            a datatype for this extendedfield
+     * @param datatype a datatype for this extendedfield
      */
     public void setDatatype(int datatype) {
         this.datatype = datatype;
@@ -162,8 +157,7 @@ public class ExtendedField implements Serializable {
     /**
      * Set the mandatory-state of this extendedField.
      * 
-     * @param mandatory
-     *            A mandatory-state of this extendedField
+     * @param mandatory A mandatory-state of this extendedField
      */
     public void setMandatory(boolean mandatory) {
         this.mandatory = mandatory;
@@ -179,8 +173,7 @@ public class ExtendedField implements Serializable {
     /**
      * Set the sequencenr of this extendedField.
      * 
-     * @param sequencenr
-     *            a new sequencenr of this extendedField.
+     * @param sequencenr a new sequencenr of this extendedField.
      */
     public void setSequencenr(int sequencenr) {
         this.sequencenr = sequencenr;
@@ -196,8 +189,7 @@ public class ExtendedField implements Serializable {
     /**
      * Set the defaultvalue of this extendedField.
      * 
-     * @param defaultValue
-     *            the defaultvalue of this extendedField.
+     * @param defaultValue the defaultvalue of this extendedField.
      */
     public void setDefaultValue(String defaultValue) {
         ArgumentNotValid.checkNotNull(defaultValue, "String defaultValue");
@@ -221,8 +213,7 @@ public class ExtendedField implements Serializable {
     /**
      * Set the maxlen of this extendedField.
      * 
-     * @param aMaxlen
-     *            for this extendedfield
+     * @param aMaxlen for this extendedfield
      */
     public void setMaxlen(int aMaxlen) {
         maxlen = aMaxlen;
@@ -231,8 +222,7 @@ public class ExtendedField implements Serializable {
     /**
      * Set the options of the extendedField.
      * 
-     * @param options
-     *            the options of the extendedField
+     * @param options the options of the extendedField
      */
     public void setOptions(String options) {
         ArgumentNotValid.checkNotNull(options, "String options");
@@ -242,8 +232,7 @@ public class ExtendedField implements Serializable {
     /**
      * Constructor for the extendedfield with only one value - the id.
      * 
-     * @param aExtendedFieldTypeID
-     *            the Id of the extendededfieldtype
+     * @param aExtendedFieldTypeID the Id of the extendededfieldtype
      */
     public ExtendedField(String aExtendedFieldTypeID) {
         ArgumentNotValid.checkNotNull(aExtendedFieldTypeID, "aExtendedFieldTypeID");
@@ -260,26 +249,16 @@ public class ExtendedField implements Serializable {
     /**
      * Constructor for ExtendedField, that requires all data.
      * 
-     * @param aExtendedFieldID
-     *            The extendedfieldId of the extendedfield
-     * @param aExtendedFieldTypeID
-     *            The extendedfieldtypeId of the extendedfield
-     * @param aName
-     *            The name of the extendedfield
-     * @param aFormattingPattern
-     *            The name of the extendedfield
-     * @param aDatatype
-     *            The datatype of the extendedfield
-     * @param aMandatory
-     *            The mandatory state of the extendedfield
-     * @param aSequenceNr
-     *            The sequencenr of the extendedfield
-     * @param aDefaultValue
-     *            The default value of the extendedfield
-     * @param aOptions
-     *            The options of the extendedfield
-     * @param aMaxlen
-     *            The maxlen of the extendedfield
+     * @param aExtendedFieldID The extendedfieldId of the extendedfield
+     * @param aExtendedFieldTypeID The extendedfieldtypeId of the extendedfield
+     * @param aName The name of the extendedfield
+     * @param aFormattingPattern The name of the extendedfield
+     * @param aDatatype The datatype of the extendedfield
+     * @param aMandatory The mandatory state of the extendedfield
+     * @param aSequenceNr The sequencenr of the extendedfield
+     * @param aDefaultValue The default value of the extendedfield
+     * @param aOptions The options of the extendedfield
+     * @param aMaxlen The maxlen of the extendedfield
      */
     public ExtendedField(Long aExtendedFieldID, Long aExtendedFieldTypeID, String aName, String aFormattingPattern,
             int aDatatype, boolean aMandatory, int aSequenceNr, String aDefaultValue, String aOptions, int aMaxlen) {

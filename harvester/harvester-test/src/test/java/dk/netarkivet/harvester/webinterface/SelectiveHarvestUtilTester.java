@@ -51,15 +51,13 @@ import dk.netarkivet.harvester.datamodel.PartialHarvest;
 import dk.netarkivet.testutils.CollectionAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
 
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class SelectiveHarvestUtilTester extends DataModelTestCase {
 
     /**
-     * Verify that the correct domain configurations are created. This test
-     * handles the normal usage.
+     * Verify that the correct domain configurations are created. This test handles the normal usage.
      * 
-     * DISABLED 20140528 as it fails intermittently /tra FIXME:
-     * https://sbforge.org/jira/browse/NAS-2320
+     * DISABLED 20140528 as it fails intermittently /tra FIXME: https://sbforge.org/jira/browse/NAS-2320
      */
     public void DISABLED_20140528_testgetDomainConfigurations() throws NoSuchMethodException, IllegalAccessException,
             InvocationTargetException {
@@ -89,10 +87,8 @@ public class SelectiveHarvestUtilTester extends DataModelTestCase {
     }
 
     /**
-     * Tests the private static method
-     * SelectiveHarvest.addDomainsToConfigurations. This verifies that the
-     * correct domain configurations are added This test handles the normal
-     * usage
+     * Tests the private static method SelectiveHarvest.addDomainsToConfigurations. This verifies that the correct
+     * domain configurations are added This test handles the normal usage
      */
     public void testaddDomainConfigurations() throws NoSuchMethodException, IllegalAccessException,
             InvocationTargetException {
@@ -136,18 +132,17 @@ public class SelectiveHarvestUtilTester extends DataModelTestCase {
     }
 
     /**
-     * Test the normal update scenario where the definition does not already
-     * exist.
+     * Test the normal update scenario where the definition does not already exist.
      */
     public void testUpdateNew() {
         final Map<String, String[]> confs = new HashMap<String, String[]>();
-        confs.put(Constants.UPDATE_PARAM, new String[] { "1" });
-        confs.put(Constants.CREATENEW_PARAM, new String[] { "1" });
-        confs.put(Constants.HARVEST_PARAM, new String[] { "web-test1" });
-        confs.put(Constants.COMMENTS_PARAM, new String[] { "kommentar" });
-        confs.put(Constants.SCHEDULE_PARAM, new String[] { "Hver hele time" });
-        confs.put(Constants.DOMAINLIST_PARAM, new String[] { "netarkivet.dk" });
-        confs.put(Constants.AUDIENCE_PARAM, new String[] { "unittesters" });
+        confs.put(Constants.UPDATE_PARAM, new String[] {"1"});
+        confs.put(Constants.CREATENEW_PARAM, new String[] {"1"});
+        confs.put(Constants.HARVEST_PARAM, new String[] {"web-test1"});
+        confs.put(Constants.COMMENTS_PARAM, new String[] {"kommentar"});
+        confs.put(Constants.SCHEDULE_PARAM, new String[] {"Hver hele time"});
+        confs.put(Constants.DOMAINLIST_PARAM, new String[] {"netarkivet.dk"});
+        confs.put(Constants.AUDIENCE_PARAM, new String[] {"unittesters"});
 
         List<String> unknownDomains = new ArrayList<String>();
         List<String> illegalDomains = new ArrayList<String>();
@@ -169,19 +164,18 @@ public class SelectiveHarvestUtilTester extends DataModelTestCase {
     }
 
     /**
-     * Unit-test for Test the update scenario where we do not add any new
-     * domains. not already exist.
+     * Unit-test for Test the update scenario where we do not add any new domains. not already exist.
      */
     public void testUpdateNoadd() {
         final Map<String, String[]> confs = new HashMap<String, String[]>();
-        confs.put(Constants.UPDATE_PARAM, new String[] { "1" });
-        confs.put(Constants.HARVEST_PARAM, new String[] { "Testhøstning" });
-        confs.put(Constants.COMMENTS_PARAM, new String[] { "kommentar" });
-        confs.put(Constants.SCHEDULE_PARAM, new String[] { "Hver hele time" });
-        confs.put(Constants.DOMAINLIST_PARAM, new String[] { "" });
-        confs.put(Constants.EDITION_PARAM, new String[] { "1" });
-        confs.put(Constants.DOMAIN_IDENTIFIER + "netarkivet.dk", new String[] { "Dansk_netarkiv_fuld_dybde" });
-        confs.put(Constants.AUDIENCE_PARAM, new String[] { "unittesters" });
+        confs.put(Constants.UPDATE_PARAM, new String[] {"1"});
+        confs.put(Constants.HARVEST_PARAM, new String[] {"Testhøstning"});
+        confs.put(Constants.COMMENTS_PARAM, new String[] {"kommentar"});
+        confs.put(Constants.SCHEDULE_PARAM, new String[] {"Hver hele time"});
+        confs.put(Constants.DOMAINLIST_PARAM, new String[] {""});
+        confs.put(Constants.EDITION_PARAM, new String[] {"1"});
+        confs.put(Constants.DOMAIN_IDENTIFIER + "netarkivet.dk", new String[] {"Dansk_netarkiv_fuld_dybde"});
+        confs.put(Constants.AUDIENCE_PARAM, new String[] {"unittesters"});
 
         List<String> unknownDomains = new ArrayList<String>();
         List<String> illegalDomains = new ArrayList<String>();
@@ -212,14 +206,14 @@ public class SelectiveHarvestUtilTester extends DataModelTestCase {
         // and the schedule changed
 
         Map<String, String[]> confs = new HashMap<String, String[]>();
-        confs.put(Constants.UPDATE_PARAM, new String[] { "1" });
-        confs.put(Constants.HARVEST_PARAM, new String[] { "Testhøstning" });
-        confs.put(Constants.COMMENTS_PARAM, new String[] { "kommentar" });
-        confs.put(Constants.SCHEDULE_PARAM, new String[] { "Hver hele time" });
-        confs.put(Constants.DOMAINLIST_PARAM, new String[] { "statsbiblioteket.dk" });
-        confs.put(Constants.EDITION_PARAM, new String[] { "1" });
-        confs.put(Constants.DOMAIN_IDENTIFIER + "netarkivet.dk", new String[] { "Engelsk_netarkiv_et_niveau" });
-        confs.put(Constants.AUDIENCE_PARAM, new String[] { "unittesters" });
+        confs.put(Constants.UPDATE_PARAM, new String[] {"1"});
+        confs.put(Constants.HARVEST_PARAM, new String[] {"Testhøstning"});
+        confs.put(Constants.COMMENTS_PARAM, new String[] {"kommentar"});
+        confs.put(Constants.SCHEDULE_PARAM, new String[] {"Hver hele time"});
+        confs.put(Constants.DOMAINLIST_PARAM, new String[] {"statsbiblioteket.dk"});
+        confs.put(Constants.EDITION_PARAM, new String[] {"1"});
+        confs.put(Constants.DOMAIN_IDENTIFIER + "netarkivet.dk", new String[] {"Engelsk_netarkiv_et_niveau"});
+        confs.put(Constants.AUDIENCE_PARAM, new String[] {"unittesters"});
 
         List<String> unknownDomains = new ArrayList<String>();
         List<String> illegalDomains = new ArrayList<String>();
@@ -254,16 +248,16 @@ public class SelectiveHarvestUtilTester extends DataModelTestCase {
         // Make parameters for an update to existing templates.
         // Be sure to include next date field.
         Map<String, String[]> confs = new HashMap<String, String[]>();
-        confs.put(Constants.UPDATE_PARAM, new String[] { "1" });
-        confs.put(Constants.HARVEST_PARAM, new String[] { "Testhøstning" });
-        confs.put(Constants.COMMENTS_PARAM, new String[] { "kommentar" });
-        confs.put(Constants.SCHEDULE_PARAM, new String[] { "Hver hele time" });
-        confs.put(Constants.EDITION_PARAM, new String[] { "1" });
-        confs.put(Constants.DOMAINLIST_PARAM, new String[] { "" });
-        confs.put(Constants.DOMAIN_IDENTIFIER + "netarkivet.dk", new String[] { "Engelsk_netarkiv_et_niveau" });
-        confs.put(Constants.AUDIENCE_PARAM, new String[] { "unittesters" });
+        confs.put(Constants.UPDATE_PARAM, new String[] {"1"});
+        confs.put(Constants.HARVEST_PARAM, new String[] {"Testhøstning"});
+        confs.put(Constants.COMMENTS_PARAM, new String[] {"kommentar"});
+        confs.put(Constants.SCHEDULE_PARAM, new String[] {"Hver hele time"});
+        confs.put(Constants.EDITION_PARAM, new String[] {"1"});
+        confs.put(Constants.DOMAINLIST_PARAM, new String[] {""});
+        confs.put(Constants.DOMAIN_IDENTIFIER + "netarkivet.dk", new String[] {"Engelsk_netarkiv_et_niveau"});
+        confs.put(Constants.AUDIENCE_PARAM, new String[] {"unittesters"});
 
-        confs.put(Constants.NEXTDATE_PARAM, new String[] { "7/10 2007 12:00" });
+        confs.put(Constants.NEXTDATE_PARAM, new String[] {"7/10 2007 12:00"});
         ServletRequest confRequest = dummyRequest(confs);
 
         // Do the call

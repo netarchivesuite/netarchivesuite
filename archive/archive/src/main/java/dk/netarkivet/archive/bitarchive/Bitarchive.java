@@ -47,9 +47,8 @@ import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 /**
- * The central class in the bit archive. Implements the API: upload(), get(),
- * correct(), batch(). A bit archive is expected to not know about any other bit
- * archives, and is not considered responsible for making MD5 checksums.
+ * The central class in the bit archive. Implements the API: upload(), get(), correct(), batch(). A bit archive is
+ * expected to not know about any other bit archives, and is not considered responsible for making MD5 checksums.
  */
 public class Bitarchive {
 
@@ -63,12 +62,10 @@ public class Bitarchive {
     private static Bitarchive instance;
 
     /**
-     * Create a new Bitarchive with files stored on local disk in one or more
-     * directories. This can reopen an existing bit archive or create a
-     * Bitarchive from scratch, with no files on disk.
+     * Create a new Bitarchive with files stored on local disk in one or more directories. This can reopen an existing
+     * bit archive or create a Bitarchive from scratch, with no files on disk.
      *
-     * @throws PermissionDenied
-     *             if creating directory fails.
+     * @throws PermissionDenied if creating directory fails.
      */
     private Bitarchive() throws PermissionDenied {
         log.debug("Starting bit archive");
@@ -76,8 +73,7 @@ public class Bitarchive {
     }
 
     /**
-     * Release all resources allocated by the bitarchive Ensures that all admin
-     * data and log data are flushed.
+     * Release all resources allocated by the bitarchive Ensures that all admin data and log data are flushed.
      */
     public void close() {
         admin.close();
@@ -85,26 +81,18 @@ public class Bitarchive {
     }
 
     /**
-     * Get an ARC or WARC record out of the archive. Returns null if the archive
-     * file is not found in this bitarchive.
+     * Get an ARC or WARC record out of the archive. Returns null if the archive file is not found in this bitarchive.
      *
-     * @param arcfile
-     *            The name of an Archive file.
-     * @param index
-     *            Index of the Archive record in the file
-     * @return A BitarchiveRecord object for the record in question. This record
-     *         contains the data from the file.
-     * @throws ArgumentNotValid
-     *             If arcfile is null/empty, or if index is out of bounds
-     * @throws IOFailure
-     *             If there were problems reading the arcfile.
-     * @throws UnknownID
-     *             Does it really, and when ?
+     * @param arcfile The name of an Archive file.
+     * @param index Index of the Archive record in the file
+     * @return A BitarchiveRecord object for the record in question. This record contains the data from the file.
+     * @throws ArgumentNotValid If arcfile is null/empty, or if index is out of bounds
+     * @throws IOFailure If there were problems reading the arcfile.
+     * @throws UnknownID Does it really, and when ?
      */
     public BitarchiveRecord get(String arcfile, long index) throws ArgumentNotValid, UnknownID, IOFailure {
         /*
-         * TODO Change return type into RemoteFile. This should only cause
-         * changes in GetFileMessage.
+         * TODO Change return type into RemoteFile. This should only cause changes in GetFileMessage.
          */
         log.info("GET: {}:{}", arcfile, index);
         ArgumentNotValid.checkNotNullOrEmpty(arcfile, "arcfile");
@@ -159,17 +147,11 @@ public class Bitarchive {
     /**
      * Upload an ARC file to this archive.
      *
-     * @param arcfile
-     *            A file to add to the archive.
-     * @param fileName
-     *            the arcfiles filename. The file will be identified in the
-     *            archive by this filename
-     * @throws PermissionDenied
-     *             if arcfile already exists in the archive
-     * @throws IOFailure
-     *             if an IO failure occurs (e.g. running out of disk space)
-     * @throws ArgumentNotValid
-     *             if arcfile is null or the filename is null or empty.
+     * @param arcfile A file to add to the archive.
+     * @param fileName the arcfiles filename. The file will be identified in the archive by this filename
+     * @throws PermissionDenied if arcfile already exists in the archive
+     * @throws IOFailure if an IO failure occurs (e.g. running out of disk space)
+     * @throws ArgumentNotValid if arcfile is null or the filename is null or empty.
      */
     public void upload(RemoteFile arcfile, String fileName) throws PermissionDenied, ArgumentNotValid, IOFailure {
         log.info("Upload: {}", arcfile);
@@ -192,20 +174,14 @@ public class Bitarchive {
     /**
      * Run a batch job on all ARC entries in the archive.
      * <p/>
-     * This currently runs synchronously, and returns only after finish() has
-     * been called.
+     * This currently runs synchronously, and returns only after finish() has been called.
      *
-     * @param bitarchiveAppId
-     *            A String representing the bitarchive AppId.
-     * @param job
-     *            An object that implements the ARCBatchJob interface. The
-     *            initialize() method will be called before processing and the
-     *            finish() method will be called afterwards. The process()
-     *            method will be called with each ARC entry.
-     * @throws ArgumentNotValid
-     *             if job or file is null.
-     * @throws IOFailure
-     *             if there was problems writing to the RemoteFile
+     * @param bitarchiveAppId A String representing the bitarchive AppId.
+     * @param job An object that implements the ARCBatchJob interface. The initialize() method will be called before
+     *            processing and the finish() method will be called afterwards. The process() method will be called with
+     *            each ARC entry.
+     * @throws ArgumentNotValid if job or file is null.
+     * @throws IOFailure if there was problems writing to the RemoteFile
      * @return A localBatchStatus
      */
     public BatchStatus batch(String bitarchiveAppId, final FileBatchJob job) throws ArgumentNotValid, IOFailure {
@@ -252,16 +228,12 @@ public class Bitarchive {
     }
 
     /**
-     * Copies a remote file into the bitarchive storage and returns the storage
-     * position of the file.
+     * Copies a remote file into the bitarchive storage and returns the storage position of the file.
      *
-     * @param arcfile
-     *            The source file.
-     * @param fileName
-     *            the source files filename.
+     * @param arcfile The source file.
+     * @param fileName the source files filename.
      * @return the storage position of the file.
-     * @throws IOFailure
-     *             if an error occurs while copying into the archive.
+     * @throws IOFailure if an error occurs while copying into the archive.
      */
     private File copyRemoteFileToArchive(RemoteFile arcfile, String fileName) throws IOFailure {
         File tempDestination = admin.getTemporaryPath(fileName, arcfile.getSize());
@@ -291,11 +263,9 @@ public class Bitarchive {
     /**
      * Get a file for a given arcFileID.
      * 
-     * @param arcFileID
-     *            name of the file to be retrieved.
+     * @param arcFileID name of the file to be retrieved.
      * @return The file requested or null if not found
-     * @throws ArgumentNotValid
-     *             If arcFileID was null or empty.
+     * @throws ArgumentNotValid If arcFileID was null or empty.
      */
     public File getFile(String arcFileID) throws ArgumentNotValid {
         log.info("Get file '{}'", arcFileID);
@@ -315,8 +285,7 @@ public class Bitarchive {
      * Get the one instance of the bitarchive.
      *
      * @return An instance of the Bitarchive class.
-     * @throws PermissionDenied
-     *             If the storage area used for files is not accessible.
+     * @throws PermissionDenied If the storage area used for files is not accessible.
      */
     public static Bitarchive getInstance() throws PermissionDenied {
         if (instance == null) {

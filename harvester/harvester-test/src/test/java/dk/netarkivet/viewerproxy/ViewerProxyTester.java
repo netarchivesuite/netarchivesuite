@@ -104,8 +104,7 @@ public class ViewerProxyTester {
     }
 
     /**
-     * Test that the proxyServer is giving meaningful output when asked for
-     * non-existing content
+     * Test that the proxyServer is giving meaningful output when asked for non-existing content
      */
     @Test
     public void testGetWithNoIndex() throws Exception {
@@ -125,8 +124,7 @@ public class ViewerProxyTester {
     }
 
     /**
-     * Verifies that the proxyServer is logging when asked for non-existing
-     * content.
+     * Verifies that the proxyServer is logging when asked for non-existing content.
      * 
      * @throws Exception
      */
@@ -156,11 +154,9 @@ public class ViewerProxyTester {
     }
 
     /**
-     * Method used for getting URL-objects from the archive through the
-     * proxyServer.
+     * Method used for getting URL-objects from the archive through the proxyServer.
      * 
-     * @param uri
-     *            the URL to fetch
+     * @param uri the URL to fetch
      * @return the content as a String
      */
     private String getURLfromProxyServer(String uri) throws IOException {

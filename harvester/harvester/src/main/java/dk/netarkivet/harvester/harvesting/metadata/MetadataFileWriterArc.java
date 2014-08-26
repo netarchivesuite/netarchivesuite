@@ -44,16 +44,14 @@ public class MetadataFileWriterArc extends MetadataFileWriter {
     private static final Logger log = LoggerFactory.getLogger(MetadataFileWriterArc.class);
 
     /**
-     * Writer to this jobs metadatafile. This is closed when the metadata is
-     * marked as ready.
+     * Writer to this jobs metadatafile. This is closed when the metadata is marked as ready.
      */
     private ARCWriter writer = null;
 
     /**
      * Create a <code>MetadataFileWriter</code> for ARC output.
      * 
-     * @param metadataARCFile
-     *            The metadata ARC <code>File</code>
+     * @param metadataARCFile The metadata ARC <code>File</code>
      * @return <code>MetadataFileWriter</code> for writing metadata files in ARC
      */
     public static MetadataFileWriter createWriter(File metadataARCFile) {
@@ -85,15 +83,11 @@ public class MetadataFileWriterArc extends MetadataFileWriter {
     }
 
     /**
-     * Writes a File to an ARCWriter, if available, otherwise logs the failure
-     * to the class-logger.
+     * Writes a File to an ARCWriter, if available, otherwise logs the failure to the class-logger.
      * 
-     * @param fileToArchive
-     *            the File to archive
-     * @param URL
-     *            the URL with which it is stored in the arcfile
-     * @param mimetype
-     *            The mimetype of the File-contents
+     * @param fileToArchive the File to archive
+     * @param URL the URL with which it is stored in the arcfile
+     * @param mimetype The mimetype of the File-contents
      * @return true, if file exists, and is written to the arcfile.
      *
      *         TODO I wonder if this is a clone of the ARCUtils method. (nicl)

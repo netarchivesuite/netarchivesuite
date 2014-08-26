@@ -64,11 +64,9 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 /**
- * NB: This class was formerly known as ChecksumJobTester, but it tests
- * batch-functionality more than it tests the class ChecksumJob. Therefore it
- * was moved to this package from ??, but some adjusting still needs to be done.
- * Specifically,some of the test data for this class are still located in the
- * bitpreservation package.
+ * NB: This class was formerly known as ChecksumJobTester, but it tests batch-functionality more than it tests the class
+ * ChecksumJob. Therefore it was moved to this package from ??, but some adjusting still needs to be done.
+ * Specifically,some of the test data for this class are still located in the bitpreservation package.
  */
 public class ArcRepositoryTesterBatch {
     private UseTestRemoteFile rf = new UseTestRemoteFile();
@@ -136,8 +134,7 @@ public class ArcRepositoryTesterBatch {
     }
 
     /**
-     * Tests that ordinary, non-failing execution of a batch job writes output
-     * back to reply message.
+     * Tests that ordinary, non-failing execution of a batch job writes output back to reply message.
      */
     @Test
     public void testNoOfFilesProcessed() {
@@ -150,8 +147,7 @@ public class ArcRepositoryTesterBatch {
     }
 
     /**
-     * Tests that a checkSum job can write output via a RemoteFile, one line of
-     * output per file.
+     * Tests that a checkSum job can write output via a RemoteFile, one line of output per file.
      */
     @Test
     public void testOrdinaryRunRemoteOutput() {
@@ -190,9 +186,8 @@ public class ArcRepositoryTesterBatch {
     }
 
     /**
-     * Test that correct checksums are generated in ChecksumJob, i.e. that the
-     * expected checksums are written to the remote file for a given set of
-     * files.
+     * Test that correct checksums are generated in ChecksumJob, i.e. that the expected checksums are written to the
+     * remote file for a given set of files.
      *
      * @throws IOException
      */
@@ -228,8 +223,7 @@ public class ArcRepositoryTesterBatch {
     }
 
     /**
-     * Verify that ChecksumJob objects can be serialized and deserialized
-     * without harm.
+     * Verify that ChecksumJob objects can be serialized and deserialized without harm.
      *
      * @throws IOException
      * @throws ClassNotFoundException

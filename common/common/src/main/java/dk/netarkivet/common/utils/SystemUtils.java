@@ -45,20 +45,18 @@ public class SystemUtils {
     private static final Logger log = LoggerFactory.getLogger(SystemUtils.class);
 
     /**
-     * Hostname for this machine used when no name can be found, or when the
-     * actual name doesn't matter.
+     * Hostname for this machine used when no name can be found, or when the actual name doesn't matter.
      */
     public static final String LOCALHOST = "localhost";
 
     /**
-     * Name of standard Java property containing class path. Why these names
-     * aren't actually defined as constants anywhere eludes me.
+     * Name of standard Java property containing class path. Why these names aren't actually defined as constants
+     * anywhere eludes me.
      */
     private static final String CLASS_PATH_PROPERTY = "java.class.path";
 
     /**
-     * Looks up the IP number of the local host. Note that Java does not
-     * guarantee that the result is IPv4 or IPv6.
+     * Looks up the IP number of the local host. Note that Java does not guarantee that the result is IPv4 or IPv6.
      * 
      * @return the found IP; returns "UNKNOWNIP" if it could not be found.
      */
@@ -73,11 +71,9 @@ public class SystemUtils {
     }
 
     /**
-     * Get the first hostname available for this machine, or "localhost" if none
-     * are available.
+     * Get the first hostname available for this machine, or "localhost" if none are available.
      *
-     * @return A hostname, as returned by
-     *         InetAddress.getLocalHost().getCanonicalHostName()()
+     * @return A hostname, as returned by InetAddress.getLocalHost().getCanonicalHostName()()
      */
     public static String getLocalHostName() {
         String hostname = LOCALHOST;
@@ -97,13 +93,10 @@ public class SystemUtils {
     }
 
     /**
-     * Check that a given port is not in use. If this method returns normally,
-     * the port is safe to bind.
+     * Check that a given port is not in use. If this method returns normally, the port is safe to bind.
      *
-     * @param port
-     *            Port to check
-     * @throws IOFailure
-     *             if the port cannot be bound.
+     * @param port Port to check
+     * @throws IOFailure if the port cannot be bound.
      */
     public static void checkPortNotUsed(int port) {
         try {
@@ -117,8 +110,8 @@ public class SystemUtils {
     }
 
     /**
-     * Get the current class path entries. Note that this does not work if we've
-     * been invoked with java -jar, as that option silently ignores classpaths.
+     * Get the current class path entries. Note that this does not work if we've been invoked with java -jar, as that
+     * option silently ignores classpaths.
      *
      * @return List of directories/jar files in the current class path.
      */

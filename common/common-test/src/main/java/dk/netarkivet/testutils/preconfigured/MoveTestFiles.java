@@ -51,11 +51,9 @@ public class MoveTestFiles implements TestConfigurationIF {
     }
 
     /**
-     * Recursively set all files readable and writable. Used to ensure working
-     * dir is deletable.
+     * Recursively set all files readable and writable. Used to ensure working dir is deletable.
      * 
-     * @param file
-     *            File or directory to start from.
+     * @param file File or directory to start from.
      */
     private void setReadWrite(File file) {
         file.setReadable(true);

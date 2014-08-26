@@ -29,9 +29,8 @@ import dk.netarkivet.common.utils.SettingsFactory;
 /**
  * A factory for IndexClients.
  *
- * Implementation note: This currently assumes that only one implementation
- * exists, pointed out by the setting settings.common.indexClient.class, but
- * that the cache variant in question is selected by a parameter to its
+ * Implementation note: This currently assumes that only one implementation exists, pointed out by the setting
+ * settings.common.indexClient.class, but that the cache variant in question is selected by a parameter to its
  * getInstance method.
  */
 public class IndexClientFactory extends SettingsFactory<JobIndexCache> {
@@ -46,9 +45,8 @@ public class IndexClientFactory extends SettingsFactory<JobIndexCache> {
     }
 
     /**
-     * Get a cache of Lucene index files for a set of jobs. This index is
-     * intended for deduplication and may contain a subset of the actual entries
-     * for the given jobs in the archive to preserve space and time.
+     * Get a cache of Lucene index files for a set of jobs. This index is intended for deduplication and may contain a
+     * subset of the actual entries for the given jobs in the archive to preserve space and time.
      *
      * @return A cache implementation for Lucene index files for deduplication.
      */
@@ -57,9 +55,8 @@ public class IndexClientFactory extends SettingsFactory<JobIndexCache> {
     }
 
     /**
-     * Get a cache of Lucene index files for a set of jobs. This index is
-     * intended for a viewer, and contains entries for all the records for the
-     * given job.
+     * Get a cache of Lucene index files for a set of jobs. This index is intended for a viewer, and contains entries
+     * for all the records for the given job.
      *
      * @return A cache implementation for Lucene index files for viewing.
      */

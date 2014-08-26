@@ -25,17 +25,15 @@ package dk.netarkivet.monitor;
 import dk.netarkivet.common.utils.Settings;
 
 /**
- * Provides access to monitor settings. The settings are retrieved from an
- * settings.xml file under monitor dir.
+ * Provides access to monitor settings. The settings are retrieved from an settings.xml file under monitor dir.
  */
 public class MonitorSettings {
     /** The default place in classpath where the settings file can be found. */
     private static final String DEFAULT_SETTINGS_CLASSPATH = "dk/netarkivet/monitor/settings.xml";
 
     /*
-     * The static initialiser is called when the class is loaded. It will add
-     * default values for all settings defined in this class, by loading them
-     * from a settings.xml file in classpath.
+     * The static initialiser is called when the class is loaded. It will add default values for all settings defined in
+     * this class, by loading them from a settings.xml file in classpath.
      */
     static {
         Settings.addDefaultClasspathSettings(DEFAULT_SETTINGS_CLASSPATH);
@@ -49,19 +47,15 @@ public class MonitorSettings {
 
     /**
      * <b>settings.monitor.jmxUsername</b>: <br>
-     * The username used to connect to the all MBeanservers started by the
-     * application. The username must correspond to the value stored in the
-     * jmxremote.password file (name defined in setting
-     * settings.common.jmx.passwordFile).
+     * The username used to connect to the all MBeanservers started by the application. The username must correspond to
+     * the value stored in the jmxremote.password file (name defined in setting settings.common.jmx.passwordFile).
      */
     public static String JMX_USERNAME_SETTING = "settings.monitor.jmxUsername";
 
     /**
      * <b>settings.monitor.jmxPassword</b>: <br>
-     * The password used to connect to the all MBeanservers started by the
-     * application. The password must correspond to the value stored in the
-     * jmxremote.password file (name defined in setting
-     * settings.common.jmx.passwordFile).
+     * The password used to connect to the all MBeanservers started by the application. The password must correspond to
+     * the value stored in the jmxremote.password file (name defined in setting settings.common.jmx.passwordFile).
      */
     public static String JMX_PASSWORD_SETTING = "settings.monitor.jmxPassword";
 
@@ -73,9 +67,8 @@ public class MonitorSettings {
 
     /**
      * <b>settings.monitor.jmxProxyTimeout</b>: <br>
-     * The number of milliseconds we wait for a connection to other machines
-     * when we proxy all machines MBeans to one place for monitoring, for
-     * instance in the Status GUI site section.
+     * The number of milliseconds we wait for a connection to other machines when we proxy all machines MBeans to one
+     * place for monitoring, for instance in the Status GUI site section.
      */
     public static String JMX_PROXY_TIMEOUT = "settings.monitor.jmxProxyTimeout";
 
@@ -84,15 +77,13 @@ public class MonitorSettings {
 
     /**
      * <b>settings.monitor.prefferedMaxJMXLogLength</b>: <br/>
-     * The preferred length at which lines in the JMX log will be wrapped.
-     * (default 70)
+     * The preferred length at which lines in the JMX log will be wrapped. (default 70)
      */
     public static String JMX_PREFERRED_MAX_LOG_LENGTH = "settings.monitor.preferredMaxJMXLogLength";
 
     /**
-     * The absolute maximum length at which lines in the JMX log will be
-     * wrapped, even if this means breaking the line within a word. (default
-     * 100)
+     * The absolute maximum length at which lines in the JMX log will be wrapped, even if this means breaking the line
+     * within a word. (default 100)
      */
     public static String JMX_ABSOLUTE_MAX_LOG_LENGTH = "settings.monitor.absoluteMaxJMXLogLength";
 

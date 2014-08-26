@@ -68,8 +68,8 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 /**
- * Test bitarchive client and server As a number of tests only succeed if both
- * the client and server both operate correctly, both are tested together.
+ * Test bitarchive client and server As a number of tests only succeed if both the client and server both operate
+ * correctly, both are tested together.
  */
 public class BitarchiveClientTester {
     private UseTestRemoteFile rf = new UseTestRemoteFile();
@@ -146,8 +146,7 @@ public class BitarchiveClientTester {
     }
 
     /**
-     * Bitarchive server uses mkdir instead of mkdirs to create the location of
-     * admin data.
+     * Bitarchive server uses mkdir instead of mkdirs to create the location of admin data.
      */
     @Test
     public void testBug34() {
@@ -194,8 +193,7 @@ public class BitarchiveClientTester {
     }
 
     /**
-     * Initiate upload and verify that corresponding upload message received by
-     * onUpload message handler.
+     * Initiate upload and verify that corresponding upload message received by onUpload message handler.
      */
     @Test
     @Ignore("FIXME")
@@ -246,8 +244,8 @@ public class BitarchiveClientTester {
     }
 
     /**
-     * Try to upload the same file twice and verify that corresponding error
-     * message received by onUpload message handler.
+     * Try to upload the same file twice and verify that corresponding error message received by onUpload message
+     * handler.
      */
     @Test
     @Ignore("FIXME")
@@ -279,9 +277,8 @@ public class BitarchiveClientTester {
     }
 
     /**
-     * Initiate get request and verify that correct data was received by onGet
-     * message handler. Initiate get request for data not in the archive and
-     * verify correct error message was received by onGet message handler.
+     * Initiate get request and verify that correct data was received by onGet message handler. Initiate get request for
+     * data not in the archive and verify correct error message was received by onGet message handler.
      *
      * @throws IOException
      */
@@ -321,9 +318,8 @@ public class BitarchiveClientTester {
     }
 
     /**
-     * Test the batch(BatchMessage) method. Initiate batch job and verify that
-     * onBatch receives the corresponding message with correct result data from
-     * the batch job.
+     * Test the batch(BatchMessage) method. Initiate batch job and verify that onBatch receives the corresponding
+     * message with correct result data from the batch job.
      */
     @Test
     @Ignore("FIXME")
@@ -338,8 +334,7 @@ public class BitarchiveClientTester {
     }
 
     /**
-     * Verify that the batch(ChannelID,FileBatchJob,RemoteFile) method does not
-     * accept null parameters.
+     * Verify that the batch(ChannelID,FileBatchJob,RemoteFile) method does not accept null parameters.
      */
     @Test
     public void testBatch2NullParameters() {
@@ -361,8 +356,7 @@ public class BitarchiveClientTester {
     }
 
     /**
-     * Verify that the batch(ChannelID,FileBatchJob,RemoteFile) method does not
-     * accept null parameters.
+     * Verify that the batch(ChannelID,FileBatchJob,RemoteFile) method does not accept null parameters.
      */
     @Test
     @Ignore("FIXME")
@@ -378,8 +372,7 @@ public class BitarchiveClientTester {
     }
 
     /**
-     * Utility method for the batch tests. Uploads a file and waits for the
-     * operation to finish.
+     * Utility method for the batch tests. Uploads a file and waits for the operation to finish.
      */
     private void uploadInPreparationOfBatchTest() {
         bac.sendUploadMessage(RemoteFileFactory.getInstance(FILE_TO_UPLOAD, true, false, true));
@@ -387,9 +380,8 @@ public class BitarchiveClientTester {
     }
 
     /**
-     * Utility method for the batch tests. Waits for JMS tasks to finish, then
-     * chekcs that - exactly one reply was generated - that the reply had its OK
-     * flag set to true - that the output file contains a text that indicates
+     * Utility method for the batch tests. Waits for JMS tasks to finish, then chekcs that - exactly one reply was
+     * generated - that the reply had its OK flag set to true - that the output file contains a text that indicates
      * proper processing was done.
      * 
      * @throws Exception

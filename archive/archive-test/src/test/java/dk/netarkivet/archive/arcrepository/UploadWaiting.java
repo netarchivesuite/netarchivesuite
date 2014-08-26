@@ -38,18 +38,13 @@ public class UploadWaiting {
     public static final long SHORT_TIME = 10;
 
     /**
-     * Assuming that someone asked the ArcRepository to store the given file,
-     * waits (but not forever) until all bitarchives are recorded as having
-     * completed (and verified) their upload.
+     * Assuming that someone asked the ArcRepository to store the given file, waits (but not forever) until all
+     * bitarchives are recorded as having completed (and verified) their upload.
      *
-     * @param file
-     *            the file being uploaded
-     * @param o
-     *            an object to synchronize with (for .wait()).
+     * @param file the file being uploaded
+     * @param o an object to synchronize with (for .wait()).
      * @return Waited time in milliseconds
-     * @throws IOFailure
-     *             if the upload is not completed in less than
-     *             Settings.SHORT_TIMEOUT
+     * @throws IOFailure if the upload is not completed in less than Settings.SHORT_TIMEOUT
      */
     public static long waitForUpload(File file, Object o) throws IOFailure {
         long timeout = TestInfo.SHORT_TIMEOUT;

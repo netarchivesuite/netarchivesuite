@@ -46,19 +46,16 @@ import dk.netarkivet.harvester.datamodel.JobStatus;
  * 
  * The semantics of the date filters is as follows:
  * <ol>
- * <li>If only a start date is specified, will fetch jobs whose start date is
- * equal or posterior</li>
- * <li>If only an end date is specified, will fetch jobs whose end date is equal
- * or anterior</li>
- * <li>If both are specified, will fetch jobs whose start and end date are equal
- * or comprised between the specified bounds.</li>
+ * <li>If only a start date is specified, will fetch jobs whose start date is equal or posterior</li>
+ * <li>If only an end date is specified, will fetch jobs whose end date is equal or anterior</li>
+ * <li>If both are specified, will fetch jobs whose start and end date are equal or comprised between the specified
+ * bounds.</li>
  * </ol>
  * 
  * The class enforces that end date is set at a date posterior to start date.
  * 
- * Additionally a sort order (applied to job IDs) can be set (ascending or
- * descending), and the query can be limited to a certain row number and a start
- * index.
+ * Additionally a sort order (applied to job IDs) can be set (ascending or descending), and the query can be limited to
+ * a certain row number and a start index.
  * 
  */
 public class HarvestStatusQuery {
@@ -87,8 +84,7 @@ public class HarvestStatusQuery {
         /**
          * Parse the given argument and return a sorting order.
          * 
-         * @param order
-         *            a given sorting order as string
+         * @param order a given sorting order as string
          * @return a sorting order representing the given string.
          */
         public static SORT_ORDER parse(String order) {
@@ -120,8 +116,8 @@ public class HarvestStatusQuery {
         /** The harvest end date. No default. */
         END_DATE(""),
         /**
-         * The number of results on each page. The default is read from the
-         * setting {@link CommonSettings#HARVEST_STATUS_DFT_PAGE_SIZE}.
+         * The number of results on each page. The default is read from the setting
+         * {@link CommonSettings#HARVEST_STATUS_DFT_PAGE_SIZE}.
          */
         PAGE_SIZE(Settings.get(CommonSettings.HARVEST_STATUS_DFT_PAGE_SIZE)),
         /** The starting page. Default is 1. */
@@ -135,8 +131,7 @@ public class HarvestStatusQuery {
         /**
          * Constructor for the UI_FIELD enum class.
          * 
-         * @param defaultValue
-         *            the default value of the field.
+         * @param defaultValue the default value of the field.
          */
         UI_FIELD(String defaultValue) {
             this.defaultValue = defaultValue;
@@ -145,25 +140,22 @@ public class HarvestStatusQuery {
         /**
          * Get the values stored in the request for this UI_FIELD.
          * 
-         * @param req
-         *            the servlet request
-         * @return the values stored in the request for this UI_FIELD as a
-         *         string array.
+         * @param req the servlet request
+         * @return the values stored in the request for this UI_FIELD as a string array.
          */
         public String[] getValues(ServletRequest req) {
             String[] values = req.getParameterValues(name());
             if (values == null || values.length == 0) {
-                return new String[] { this.defaultValue };
+                return new String[] {this.defaultValue};
             }
             return values;
         }
 
         /**
-         * Extracts the field's value from a servlet request. If the request
-         * does not define the paraeter's value, it is set to the default value.
+         * Extracts the field's value from a servlet request. If the request does not define the paraeter's value, it is
+         * set to the default value.
          * 
-         * @param req
-         *            a servlet request
+         * @param req a servlet request
          * @return the field's value
          */
         public String getValue(ServletRequest req) {
@@ -176,8 +168,8 @@ public class HarvestStatusQuery {
     }
 
     /**
-     * The date format used by the calendar widget. It is actually the same
-     * format as the one represented by the DATE_FORMAT.
+     * The date format used by the calendar widget. It is actually the same format as the one represented by the
+     * DATE_FORMAT.
      */
     public static final String CALENDAR_UI_DATE_FORMAT = "%Y/%m/%d";
 
@@ -215,10 +207,8 @@ public class HarvestStatusQuery {
     /**
      * Builds a default query that will find jobs for a given run of a harvest.
      * 
-     * @param harvestId
-     *            A given harvestId
-     * @param harvestRunNumber
-     *            a given harvestRunNumber
+     * @param harvestId A given harvestId
+     * @param harvestRunNumber a given harvestRunNumber
      */
     public HarvestStatusQuery(long harvestId, long harvestRunNumber) {
         this.harvestId = harvestId;
@@ -226,11 +216,9 @@ public class HarvestStatusQuery {
     }
 
     /**
-     * Builds a query from a servlet request. Unspecified fields are set to
-     * their default value.
+     * Builds a query from a servlet request. Unspecified fields are set to their default value.
      *
-     * @param req
-     *            a servlet request
+     * @param req a servlet request
      */
     public HarvestStatusQuery(ServletRequest req) {
 
@@ -338,8 +326,7 @@ public class HarvestStatusQuery {
     /**
      * Set the harvest name.
      * 
-     * @param harvestName
-     *            The harvest name
+     * @param harvestName The harvest name
      */
     public void setHarvestName(String harvestName) {
         this.harvestName = harvestName;
@@ -360,24 +347,23 @@ public class HarvestStatusQuery {
     }
 
     /**
-     * @return the start date as milliseconds since Epoch or
-     *         {@link HarvestStatusQuery#DATE_NONE} if start date is undefined
+     * @return the start date as milliseconds since Epoch or {@link HarvestStatusQuery#DATE_NONE} if start date is
+     *         undefined
      */
     public long getStartDate() {
         return (startDate == null ? DATE_NONE : startDate.getTime());
     }
 
     /**
-     * @return the end date as milliseconds since Epoch, or
-     *         {@link HarvestStatusQuery#DATE_NONE} if end date is undefined
+     * @return the end date as milliseconds since Epoch, or {@link HarvestStatusQuery#DATE_NONE} if end date is
+     *         undefined
      */
     public long getEndDate() {
         return (endDate == null ? DATE_NONE : endDate.getTime());
     }
 
     /**
-     * @return the start date as a string, or an empty string if start date is
-     *         undefined
+     * @return the start date as a string, or an empty string if start date is undefined
      */
     public String getStartDateAsString() {
         if (startDate == null) {
@@ -387,8 +373,7 @@ public class HarvestStatusQuery {
     }
 
     /**
-     * @return the end date as a string, or an empty string if end date is
-     *         undefined
+     * @return the end date as a string, or an empty string if end date is undefined
      */
     public String getEndDateAsString() {
         if (endDate == null) {
@@ -414,8 +399,7 @@ public class HarvestStatusQuery {
     /**
      * Sets the page size.
      * 
-     * @param pageSize
-     *            a number > 0.
+     * @param pageSize a number > 0.
      */
     public void setPageSize(long pageSize) {
         ArgumentNotValid.checkNotNegative(pageSize, "pageSize");
@@ -432,8 +416,7 @@ public class HarvestStatusQuery {
     /**
      * Define whether or not the harvest name is case sensitive.
      * 
-     * @param isHarvestNameCaseSensitive
-     *            If true, harvestname is case sensitive, otherwise not.
+     * @param isHarvestNameCaseSensitive If true, harvestname is case sensitive, otherwise not.
      */
     public void setCaseSensitiveHarvestName(boolean isHarvestNameCaseSensitive) {
         this.caseSensitiveHarvestName = isHarvestNameCaseSensitive;
@@ -449,8 +432,7 @@ public class HarvestStatusQuery {
     /**
      * Set the selected states in the query.
      * 
-     * @param chosenStates
-     *            the set of selected states.
+     * @param chosenStates the set of selected states.
      */
     public void setJobStatus(Set<JobStatus> chosenStates) {
         this.jobStatuses = chosenStates;

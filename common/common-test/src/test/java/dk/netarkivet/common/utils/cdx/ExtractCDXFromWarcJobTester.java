@@ -54,11 +54,10 @@ import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 import dk.netarkivet.common.utils.batch.FileBatchJob.ExceptionOccurrence;
 
 /**
- * Test class used for investigating CDX generation from WARC-files using a
- * modified ExtractCDXJob class.
+ * Test class used for investigating CDX generation from WARC-files using a modified ExtractCDXJob class.
  * 
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class ExtractCDXFromWarcJobTester {
 
     // Shared instance of BatchLocalFiles
@@ -76,7 +75,7 @@ public class ExtractCDXFromWarcJobTester {
     @Before
     public void setUp() throws Exception {
         processed = 0;
-        warcBlaf = new BatchLocalFiles(new File[] { TestInfo.WARC_FILE1, TestInfo.WARC_FILE2, TestInfo.WARC_FILE3, });
+        warcBlaf = new BatchLocalFiles(new File[] {TestInfo.WARC_FILE1, TestInfo.WARC_FILE2, TestInfo.WARC_FILE3,});
 
         FileUtils.createDir(TestInfo.CDX_DIR);
 
@@ -98,8 +97,7 @@ public class ExtractCDXFromWarcJobTester {
     }
 
     /**
-     * Verify that the job runs without problems and visits all relevant
-     * records.
+     * Verify that the job runs without problems and visits all relevant records.
      */
     @Test
     @Ignore("The correct number of records should be processed expected:<11> but was:<135>")
@@ -224,8 +222,7 @@ public class ExtractCDXFromWarcJobTester {
     }
 
     /**
-     * A class used in testing Serializability. For this test, we need a job
-     * that doesn't finish until asked twice
+     * A class used in testing Serializability. For this test, we need a job that doesn't finish until asked twice
      */
     private static class StubbornJob extends ExtractCDXFromWarcJob {
         boolean askedBefore = false;
@@ -242,8 +239,7 @@ public class ExtractCDXFromWarcJobTester {
     /**
      * Utility method for printing Exception arrays on System.out.
      *
-     * @param es
-     *            The Exception array to be printed.
+     * @param es The Exception array to be printed.
      */
     private void printExceptions(Exception[] es) {
         if (es.length > 0) {

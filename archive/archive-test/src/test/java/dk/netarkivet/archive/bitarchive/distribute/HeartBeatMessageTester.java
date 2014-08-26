@@ -42,8 +42,7 @@ public class HeartBeatMessageTester {
     private ChannelID baMon = Channels.getTheBamon();
 
     /**
-     * Verify that the constructor only fails if it is given a null ChannelID or
-     * a null or empty applicationId:
+     * Verify that the constructor only fails if it is given a null ChannelID or a null or empty applicationId:
      */
     @Test
     public void testConstructor() {
@@ -78,8 +77,7 @@ public class HeartBeatMessageTester {
     }
 
     /**
-     * Verify that getTimestamp(), getApplicationId() and getLogLevel() behave
-     * as expected.
+     * Verify that getTimestamp(), getApplicationId() and getLogLevel() behave as expected.
      */
     @Test
     public void testGetters() {

@@ -80,8 +80,7 @@ public class RunBatchTester {
     }
 
     /**
-     * Tests whether the correct error message is given if no arguments are
-     * given.
+     * Tests whether the correct error message is given if no arguments are given.
      */
     @Test
     public void testNoArguments() {
@@ -103,16 +102,15 @@ public class RunBatchTester {
     }
 
     /**
-     * Tests whether the correct error message is given if too many arguments
-     * are given.
+     * Tests whether the correct error message is given if too many arguments are given.
      */
     @Test
     public void testTooManyArguments() {
         String expectedErrorMessage = "Too many arguments";
-        String[] args = new String[] { "-Jsd", "-Nasdf", "-Basdf", "-Jasdf", "-Oasdf", "-Easdf", "-Easdf", "-Jasdf",
+        String[] args = new String[] {"-Jsd", "-Nasdf", "-Basdf", "-Jasdf", "-Oasdf", "-Easdf", "-Easdf", "-Jasdf",
                 "-Jasdf", "-Jasdf", "-Jasdf", "-Jasdf", "-Jasdf", "-Jasdf", "-Jasdf", "-Jasdf", "-Jasdf", "-Jasdf",
                 "-Jasdf", "-Jasdf", "-Jasdf", "-Jasdf", "-Jasdf", "-Jasdf", "-Jasdf", "-Jasdf", "-Jasdf", "-Jasdf",
-                "-Jasdf", "-Jasdf", "-Jasdf", "-Jasdf", "-Jasdf", "-Jasdf", "-Jasdf", "-Jasdf" };
+                "-Jasdf", "-Jasdf", "-Jasdf", "-Jasdf", "-Jasdf", "-Jasdf", "-Jasdf", "-Jasdf"};
         try {
             RunBatch.main(args);
             fail("An security Exception should be thrown, since we exit here!");
@@ -129,13 +127,12 @@ public class RunBatchTester {
     }
 
     /**
-     * Test whether the correct error message when given neither class nor jar
-     * file.
+     * Test whether the correct error message when given neither class nor jar file.
      */
     @Test
     public void testArgumentsMissingFile() {
         String expectedErrorMessage = "Missing required class file argument (-C) " + "or Jarfile argument (-J)";
-        String[] args = new String[] { "-BNONEEXISTINGREPLICA" };
+        String[] args = new String[] {"-BNONEEXISTINGREPLICA"};
         try {
             RunBatch.main(args);
             fail("RunBatch always tries to 'System.exit'");
@@ -152,13 +149,12 @@ public class RunBatchTester {
     }
 
     /**
-     * Test whether the correct error message when given both class file and jar
-     * file arguments.
+     * Test whether the correct error message when given both class file and jar file arguments.
      */
     @Test
     public void testArgumentsBothClassAndJar() {
         String expectedErrorMessage = "Cannot use option -J and -C at the same time";
-        String[] args = new String[] { "-CClassFile.class", "-JJarFile.jar" };
+        String[] args = new String[] {"-CClassFile.class", "-JJarFile.jar"};
         try {
             RunBatch.main(args);
             fail("RunBatch always tries to 'System.exit'");
@@ -175,14 +171,13 @@ public class RunBatchTester {
     }
 
     /**
-     * Test whether the correct error message when given wrong extension to a
-     * class file.
+     * Test whether the correct error message when given wrong extension to a class file.
      */
     @Test
     public void testArgumentsNotClassFile() {
         String expectedErrorMessage = "Argument '" + TestInfo.BATCH_ARG_ERROR_FILE_EXT
                 + "' is not denoting a class file";
-        String[] args = new String[] { "-C" + TestInfo.BATCH_ARG_ERROR_FILE_EXT };
+        String[] args = new String[] {"-C" + TestInfo.BATCH_ARG_ERROR_FILE_EXT};
         try {
             RunBatch.main(args);
             fail("RunBatch always tries to 'System.exit'");
@@ -199,13 +194,12 @@ public class RunBatchTester {
     }
 
     /**
-     * Test whether the correct error message when given an unreadable class
-     * file.
+     * Test whether the correct error message when given an unreadable class file.
      */
     @Test
     public void testArgumentsCannotReadClassfile() {
         String expectedErrorMessage = "Cannot read class file: '" + TestInfo.BATCH_C_ARG_NOREAD_FILE + "'";
-        String[] args = new String[] { "-C" + TestInfo.BATCH_C_ARG_NOREAD_FILE };
+        String[] args = new String[] {"-C" + TestInfo.BATCH_C_ARG_NOREAD_FILE};
         try {
             RunBatch.main(args);
             fail("RunBatch always tries to 'System.exit'");
@@ -227,7 +221,7 @@ public class RunBatchTester {
     @Test
     public void testArgumentsJarWithoutMethod() {
         String expectedErrorMessage = "Using option -J also requires" + "option -N (the name of the class).";
-        String[] args = new String[] { "-J" + TestInfo.BATCH_ARG_ERROR_FILE_EXT };
+        String[] args = new String[] {"-J" + TestInfo.BATCH_ARG_ERROR_FILE_EXT};
         try {
             RunBatch.main(args);
             fail("RunBatch always tries to 'System.exit'");
@@ -244,13 +238,12 @@ public class RunBatchTester {
     }
 
     /**
-     * Test whether the correct error message when given wrong extension on jar
-     * file.
+     * Test whether the correct error message when given wrong extension on jar file.
      */
     @Test
     public void testArgumentsJarWrongExtension() {
         String expectedErrorMessage = "Argument '" + TestInfo.BATCH_ARG_ERROR_FILE_EXT + "' is not denoting a jar file";
-        String[] args = new String[] { "-J" + TestInfo.BATCH_ARG_ERROR_FILE_EXT, "-Nerror" };
+        String[] args = new String[] {"-J" + TestInfo.BATCH_ARG_ERROR_FILE_EXT, "-Nerror"};
         try {
             RunBatch.main(args);
             fail("RunBatch always tries to 'System.exit'");
@@ -272,7 +265,7 @@ public class RunBatchTester {
     @Test
     public void testArgumentsUnreadableJar() {
         String expectedErrorMessage = "Cannot read jar file: '" + TestInfo.BATCH_J_ARG_NOREAD_FILE + "'";
-        String[] args = new String[] { "-J" + TestInfo.BATCH_J_ARG_NOREAD_FILE, "-Nerror" };
+        String[] args = new String[] {"-J" + TestInfo.BATCH_J_ARG_NOREAD_FILE, "-Nerror"};
         try {
             RunBatch.main(args);
             fail("RunBatch always tries to 'System.exit'");
@@ -295,8 +288,8 @@ public class RunBatchTester {
     public void testArgumentsWrongMethodInJarFile() {
         String expectedErrorMessage = "Cannot create batchjob '" + TestInfo.BATCH_TEST_JAR_ERROR_CLASS
                 + "' from the jarfiles '" + TestInfo.BATCH_TEST_JAR_FILE.getAbsolutePath() + "'";
-        String[] args = new String[] { "-J" + TestInfo.BATCH_TEST_JAR_FILE.getAbsolutePath(),
-                "-N" + TestInfo.BATCH_TEST_JAR_ERROR_CLASS };
+        String[] args = new String[] {"-J" + TestInfo.BATCH_TEST_JAR_FILE.getAbsolutePath(),
+                "-N" + TestInfo.BATCH_TEST_JAR_ERROR_CLASS};
         try {
             RunBatch.main(args);
             fail("RunBatch always tries to 'System.exit'");
@@ -319,8 +312,8 @@ public class RunBatchTester {
     public void testArgumentsUnknownReplica() {
         String expectedErrorMessage = "Unknown replica name '" + TestInfo.BATCH_REPLICA_ERROR
                 + "', known replicas are ";
-        String[] args = new String[] { "-J" + TestInfo.BATCH_TEST_JAR_FILE.getAbsolutePath(),
-                "-N" + TestInfo.BATCH_TEST_JAR_GOOD_CLASS, "-B" + TestInfo.BATCH_REPLICA_ERROR };
+        String[] args = new String[] {"-J" + TestInfo.BATCH_TEST_JAR_FILE.getAbsolutePath(),
+                "-N" + TestInfo.BATCH_TEST_JAR_GOOD_CLASS, "-B" + TestInfo.BATCH_REPLICA_ERROR};
         try {
             RunBatch.main(args);
             fail("RunBatch always tries to 'System.exit'");
@@ -337,16 +330,15 @@ public class RunBatchTester {
     }
 
     /**
-     * Test whether the correct error message when sending to a checksum
-     * replica.
+     * Test whether the correct error message when sending to a checksum replica.
      */
     @Test
     public void testArgumentsChecksumReplica() {
         String expectedErrorMessage = "Can only send a batchjob to a " + "bitarchive replica, and '"
                 + Replica.getReplicaFromName(TestInfo.BATCH_CS_REPLICA_NAME) + "' is of the type '"
                 + Replica.getReplicaFromName(TestInfo.BATCH_CS_REPLICA_NAME).getType() + "'";
-        String[] args = new String[] { "-J" + TestInfo.BATCH_TEST_JAR_FILE.getAbsolutePath(),
-                "-N" + TestInfo.BATCH_TEST_JAR_GOOD_CLASS, "-B" + TestInfo.BATCH_CS_REPLICA_NAME };
+        String[] args = new String[] {"-J" + TestInfo.BATCH_TEST_JAR_FILE.getAbsolutePath(),
+                "-N" + TestInfo.BATCH_TEST_JAR_GOOD_CLASS, "-B" + TestInfo.BATCH_CS_REPLICA_NAME};
         try {
             RunBatch.main(args);
             fail("RunBatch always tries to 'System.exit'");
@@ -369,8 +361,8 @@ public class RunBatchTester {
     public void testArgumentsWrongOutputFile() {
         String expectedErrorMessage = "Output file '" + TestInfo.BATCH_TEST_JAR_FILE.getAbsolutePath()
                 + "' does already exist";
-        String[] args = new String[] { "-J" + TestInfo.BATCH_TEST_JAR_FILE.getAbsolutePath(),
-                "-N" + TestInfo.BATCH_TEST_JAR_GOOD_CLASS, "-O" + TestInfo.BATCH_TEST_JAR_FILE.getAbsolutePath() };
+        String[] args = new String[] {"-J" + TestInfo.BATCH_TEST_JAR_FILE.getAbsolutePath(),
+                "-N" + TestInfo.BATCH_TEST_JAR_GOOD_CLASS, "-O" + TestInfo.BATCH_TEST_JAR_FILE.getAbsolutePath()};
         try {
             RunBatch.main(args);
             fail("RunBatch always tries to 'System.exit'");
@@ -393,8 +385,8 @@ public class RunBatchTester {
     public void testArgumentsWrongErrorFile() {
         String expectedErrorMessage = "Error file '" + TestInfo.BATCH_TEST_JAR_FILE.getAbsolutePath()
                 + "' does already exist";
-        String[] args = new String[] { "-J" + TestInfo.BATCH_TEST_JAR_FILE.getAbsolutePath(),
-                "-N" + TestInfo.BATCH_TEST_JAR_GOOD_CLASS, "-E" + TestInfo.BATCH_TEST_JAR_FILE.getAbsolutePath() };
+        String[] args = new String[] {"-J" + TestInfo.BATCH_TEST_JAR_FILE.getAbsolutePath(),
+                "-N" + TestInfo.BATCH_TEST_JAR_GOOD_CLASS, "-E" + TestInfo.BATCH_TEST_JAR_FILE.getAbsolutePath()};
         try {
             RunBatch.main(args);
             fail("RunBatch always tries to 'System.exit'");
@@ -415,8 +407,8 @@ public class RunBatchTester {
      */
     @Test
     public void testSuccess() {
-        String[] args = new String[] { "-J" + TestInfo.BATCH_TEST_JAR_FILE.getAbsolutePath(),
-                "-N" + TestInfo.BATCH_TEST_JAR_GOOD_CLASS };
+        String[] args = new String[] {"-J" + TestInfo.BATCH_TEST_JAR_FILE.getAbsolutePath(),
+                "-N" + TestInfo.BATCH_TEST_JAR_GOOD_CLASS};
         try {
             RunBatch.main(args);
             fail("RunBatch always tries to 'System.exit'");
@@ -429,9 +421,8 @@ public class RunBatchTester {
     }
 
     /**
-     * This class is a MessageListener that responds to GetMessage, simulating
-     * an ArcRepository. It sends a constant response if the GetMessage matches
-     * the values given to GetListener's constructor, otherwise it sends a null
+     * This class is a MessageListener that responds to GetMessage, simulating an ArcRepository. It sends a constant
+     * response if the GetMessage matches the values given to GetListener's constructor, otherwise it sends a null
      * record as response.
      */
     private static class GetListener extends TestMessageListener {

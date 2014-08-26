@@ -36,13 +36,9 @@ public class ReflectUtils {
     /**
      * Look up a private method and make it accessible for testing.
      *
-     * @param c
-     *            Class to look in.
-     * @param name
-     *            Name of the method.
-     * @param args
-     *            Arguments for the method. Note that primitive types are found
-     *            using XXX.TYPE.
+     * @param c Class to look in.
+     * @param name Name of the method.
+     * @param args Arguments for the method. Note that primitive types are found using XXX.TYPE.
      * @return Method object, accessible for calling.
      * @throws NoSuchMethodException
      */
@@ -55,13 +51,10 @@ public class ReflectUtils {
     /**
      * Look up a private field and make it accessible for testing.
      *
-     * @param c
-     *            The class that declares the field.
-     * @param fieldName
-     *            The name of the field.
+     * @param c The class that declares the field.
+     * @param fieldName The name of the field.
      * @return The field, which can now be set.
-     * @throws NoSuchFieldException
-     *             If there is no such field declared in the class.
+     * @throws NoSuchFieldException If there is no such field declared in the class.
      */
     public static <T> Field getPrivateField(Class<?> c, String fieldName) throws NoSuchFieldException {
         Field f = c.getDeclaredField(fieldName);
@@ -72,11 +65,8 @@ public class ReflectUtils {
     /**
      * Look up a private constructor and make it accessible for testing.
      *
-     * @param c
-     *            Class to look in.
-     * @param args
-     *            Arguments for the constructor. Note that primitive types are
-     *            found using XXX.TYPE.
+     * @param c Class to look in.
+     * @param args Arguments for the constructor. Note that primitive types are found using XXX.TYPE.
      * @return Constructor object, accessible for calling.
      * @throws NoSuchMethodException
      */
@@ -87,10 +77,9 @@ public class ReflectUtils {
     }
 
     /**
-     * Method for testing the constructor of a utility class (the constructor
-     * should be private).
+     * Method for testing the constructor of a utility class (the constructor should be private).
      */
-    @SuppressWarnings({ "rawtypes" })
+    @SuppressWarnings({"rawtypes"})
     public static void testUtilityConstructor(Class c) {
         Constructor[] constructors = c.getConstructors();
 

@@ -39,11 +39,10 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.StreamUtils;
 
 /**
- * A file represented as a RemoteFile. To avoid transferring data to and from a
- * remote machine, when you now, that recipient is a local process. The file is
- * deleted during cleanup.
+ * A file represented as a RemoteFile. To avoid transferring data to and from a remote machine, when you now, that
+ * recipient is a local process. The file is deleted during cleanup.
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class FileRemoteFile implements RemoteFile {
 
     /** The logger for this class. */

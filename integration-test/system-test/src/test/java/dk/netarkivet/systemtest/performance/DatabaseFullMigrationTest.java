@@ -40,7 +40,7 @@ import dk.netarkivet.systemtest.page.PageHelper;
 @SuppressWarnings("unused")
 public class DatabaseFullMigrationTest extends StressTest {
 
-    @Test(groups = { "guitest", "performancetest" })
+    @Test(groups = {"guitest", "performancetest"})
     public void dbFullMigrationTest() throws Exception {
         addDescription("Test complete backup-database ingest from production produces a functional NAS system.");
         doStuff();

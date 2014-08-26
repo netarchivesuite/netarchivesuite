@@ -34,8 +34,8 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 
 /**
- * A tool to force upload of given arc or warc files into the ArcRepository
- * found in settings.xml. All successfully uploaded files are deleted locally.
+ * A tool to force upload of given arc or warc files into the ArcRepository found in settings.xml. All successfully
+ * uploaded files are deleted locally.
  *
  * Usage: java dk.netarkivet.archive.tools.Upload file1 [file2 ...]
  *
@@ -48,15 +48,11 @@ public class Upload {
     }
 
     /**
-     * Main method, uploads given arc files to the ArcRepository. If some file
-     * does not exist or is not an arc file, the methods prints out an error and
-     * calls System.exit(). Successfully uploaded files are deleted locally. If
-     * some arc file cannot be uploaded, the method continues to upload the rest
-     * of the files and does not delete that file.
+     * Main method, uploads given arc files to the ArcRepository. If some file does not exist or is not an arc file, the
+     * methods prints out an error and calls System.exit(). Successfully uploaded files are deleted locally. If some arc
+     * file cannot be uploaded, the method continues to upload the rest of the files and does not delete that file.
      *
-     * @param argv
-     *            A list of absolute paths to the arc files that should be
-     *            uploaded.
+     * @param argv A list of absolute paths to the arc files that should be uploaded.
      */
     public static void main(String[] argv) {
         if (argv.length == 0) {
@@ -93,10 +89,8 @@ public class Upload {
     /**
      * Checks existence and arcness of all input files.
      * 
-     * @param fileNames
-     *            The input files as a String array
-     * @return If all files existed and were arc or warc files, a list of Files
-     *         that is 1-1 with the input files.
+     * @param fileNames The input files as a String array
+     * @return If all files existed and were arc or warc files, a list of Files that is 1-1 with the input files.
      */
     private static List<File> checkExistenceAndArcNess(String[] fileNames) {
         List<File> files = new ArrayList<File>();
@@ -119,10 +113,8 @@ public class Upload {
     /**
      * Attempts to upload a given file.
      *
-     * @param arcRep
-     *            The repository to contact
-     * @param f
-     *            The file to upload. Should exist and be an arc file.
+     * @param arcRep The repository to contact
+     * @param f The file to upload. Should exist and be an arc file.
      * @return true if the upload succeeded, false otherwise.
      */
     private static boolean uploadSingleFile(HarvesterArcRepositoryClient arcRep, File f) {
@@ -140,10 +132,8 @@ public class Upload {
     /**
      * Output a message and a stack trace before exiting with a failure code.
      * 
-     * @param msg
-     *            The message to output
-     * @param e
-     *            The Exception containing the relevant stack trace
+     * @param msg The message to output
+     * @param e The Exception containing the relevant stack trace
      */
     private static void dieWithException(String msg, Exception e) {
         System.err.println(msg + e);

@@ -62,11 +62,9 @@ public class MonitorRegistry {
     /**
      * Register a new JMX host entry.
      * 
-     * @param hostEntry
-     *            The entry to add
+     * @param hostEntry The entry to add
      *
-     * @throws ArgumentNotValid
-     *             if hostEntry is null.
+     * @throws ArgumentNotValid if hostEntry is null.
      */
     public synchronized void register(HostEntry hostEntry) {
         ArgumentNotValid.checkNotNull(hostEntry, "HostEntry hostEntry");

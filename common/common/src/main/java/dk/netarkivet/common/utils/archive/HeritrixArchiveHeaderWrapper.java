@@ -44,7 +44,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 /**
  * Heritrix wrapper implementation of the abstract archive header interface.
  */
-@SuppressWarnings({ "unchecked" })
+@SuppressWarnings({"unchecked"})
 public class HeritrixArchiveHeaderWrapper extends ArchiveHeaderBase {
 
     /** The logger for this class. */
@@ -63,18 +63,16 @@ public class HeritrixArchiveHeaderWrapper extends ArchiveHeaderBase {
     protected ArchiveRecordHeader header;
 
     /**
-     * Map of header fields extracted from the Heritrix header. Only difference
-     * is that the keys are normalized to lower case.
+     * Map of header fields extracted from the Heritrix header. Only difference is that the keys are normalized to lower
+     * case.
      */
     protected Map<String, Object> headerFields = new HashMap<String, Object>();
 
     /**
      * Construct a Heritrix record header wrapper object.
      * 
-     * @param recordWrapper
-     *            wrapped Heritrix header
-     * @param record
-     *            original Heritrix record
+     * @param recordWrapper wrapped Heritrix header
+     * @param record original Heritrix record
      * @return wrapped Heritrix record header
      */
     public static HeritrixArchiveHeaderWrapper wrapArchiveHeader(HeritrixArchiveRecordWrapper recordWrapper,

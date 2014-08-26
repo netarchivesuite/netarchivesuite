@@ -28,8 +28,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Useful constants and variables for running unit tests for classes in package
- * arcrepositoryadmin.
+ * Useful constants and variables for running unit tests for classes in package arcrepositoryadmin.
  */
 public class TestInfo {
 
@@ -46,31 +45,27 @@ public class TestInfo {
      */
     static final File ARCHIVE_DIR2 = new File(TEST_DIR, "bitarchive2");
     /**
-     * The directory storing the arcfiles in the already existing bitarchive -
-     * including credentials and admin-files.
+     * The directory storing the arcfiles in the already existing bitarchive - including credentials and admin-files.
      */
     static final File ORIGINALS_DIR = new File(DATA_DIR, "originals");
 
     /**
-     * List of files that can be used in the scripts (content of the
-     * ORIGINALS_DIR).
+     * List of files that can be used in the scripts (content of the ORIGINALS_DIR).
      */
-    static final List<String> GETTABLE_FILENAMES = Arrays.asList(new String[] { "get1.ARC", "get2.ARC" });
+    static final List<String> GETTABLE_FILENAMES = Arrays.asList(new String[] {"get1.ARC", "get2.ARC"});
 
     static final File NON_EMPTY_ADMIN_DATA_DIR_ORIG = new File(DATA_DIR, "admindata");
     static final File VERSION_03_ADMIN_DATA_DIR_ORIG = new File(DATA_DIR, "admindata-0.3");
     static final File NON_EMPTY_ADMIN_DATA_DIR = new File(TEST_DIR, "admindata");
 
-    static final String[] files = { "some.arc", "are.arc", "equal.arc", "other.arc", "files.arc" };
+    static final String[] files = {"some.arc", "are.arc", "equal.arc", "other.arc", "files.arc"};
 
     /**
-     * The directory containing the database for
-     * DatabaseBasedActiveBitPreservationTester
+     * The directory containing the database for DatabaseBasedActiveBitPreservationTester
      */
     public static final File DATABASE_DIR = new File(TEST_DIR, "adminDB");
     /**
-     * The complete database URL for the
-     * DatabaseBasedActiveBitPreservationTester.
+     * The complete database URL for the DatabaseBasedActiveBitPreservationTester.
      */
     public static final String DATABASE_URL = "jdbc:derby:" + DATABASE_DIR.getAbsolutePath();
 

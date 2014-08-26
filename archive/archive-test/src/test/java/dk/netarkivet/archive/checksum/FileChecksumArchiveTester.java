@@ -97,8 +97,7 @@ public class FileChecksumArchiveTester {
     }
 
     /**
-     * Checks whether the filename for the checksum file is defined correct in
-     * the settings.
+     * Checks whether the filename for the checksum file is defined correct in the settings.
      */
     @Test
     @Ignore("The files should have the same name.  expected:<...t/archive/checksum/d[istribute/data/working/basefiledir]/checksum_THREE.md5> but was:<...t/archive/checksum/d[ata/working/cs]/checksum_THREE.md5>")
@@ -108,15 +107,11 @@ public class FileChecksumArchiveTester {
     }
 
     /**
-     * Check the following: 1. FileChecksumArchiev can perform Upload. 2. The
-     * correct checksums are retrieved from the upload. 3. The correct file can
-     * be retrieved. 4. That the Correct function can be performed. 5. That the
-     * data also is changed appropriately. 6. The old and 'wrong' entries have
-     * been move to the backup file.
+     * Check the following: 1. FileChecksumArchiev can perform Upload. 2. The correct checksums are retrieved from the
+     * upload. 3. The correct file can be retrieved. 4. That the Correct function can be performed. 5. That the data
+     * also is changed appropriately. 6. The old and 'wrong' entries have been move to the backup file.
      * 
-     * @throws Exception
-     *             So it is unnecessary to catch IOExceptions, since the test
-     *             should fail.
+     * @throws Exception So it is unnecessary to catch IOExceptions, since the test should fail.
      */
     @Test
     @Ignore("FIXME")

@@ -23,8 +23,7 @@
 package dk.netarkivet.harvester.harvesting;
 
 /**
- * Interface for selecting partial job information necessary for constructing
- * HeritrixFiles.
+ * Interface for selecting partial job information necessary for constructing HeritrixFiles.
  */
 public interface JobInfo {
 

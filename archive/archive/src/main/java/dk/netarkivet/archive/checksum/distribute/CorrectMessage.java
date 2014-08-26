@@ -35,13 +35,12 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 
 /**
- * The message to correct a bad entry in an archive. <li>In a bitarchive it
- * should replace a corrupted file.</li> <li>In a checksum archive it should
- * replace checksum entry of the file.</li> <br>
- * The message contains the checksum of the 'bad' entry in the archive, which is
- * only corrected if it actually has this 'bad checksum'.
+ * The message to correct a bad entry in an archive. <li>In a bitarchive it should replace a corrupted file.</li> <li>In
+ * a checksum archive it should replace checksum entry of the file.</li> <br>
+ * The message contains the checksum of the 'bad' entry in the archive, which is only corrected if it actually has this
+ * 'bad checksum'.
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class CorrectMessage extends ArchiveMessage {
 
     private static final Logger log = LoggerFactory.getLogger(CorrectMessage.class);
@@ -62,22 +61,13 @@ public class CorrectMessage extends ArchiveMessage {
     /**
      * Constructor. Initializes the variables.
      * 
-     * @param to
-     *            Where the message should be sent.
-     * @param replyTo
-     *            Who is sending this message.
-     * @param badChecksum
-     *            The checksum of the 'bad' entry.
-     * @param rf
-     *            The remote file to replace the 'bad' entry.
-     * @param repId
-     *            The identification of the replica, where this message should
-     *            be sent.
-     * @param cred
-     *            The credentials to allow the correction of an entry.
-     * @throws ArgumentNotValid
-     *             If any of the arguments are null, or any of the strings are
-     *             empty.
+     * @param to Where the message should be sent.
+     * @param replyTo Who is sending this message.
+     * @param badChecksum The checksum of the 'bad' entry.
+     * @param rf The remote file to replace the 'bad' entry.
+     * @param repId The identification of the replica, where this message should be sent.
+     * @param cred The credentials to allow the correction of an entry.
+     * @throws ArgumentNotValid If any of the arguments are null, or any of the strings are empty.
      */
     public CorrectMessage(ChannelID to, ChannelID replyTo, String badChecksum, RemoteFile rf, String repId, String cred)
             throws ArgumentNotValid {
@@ -104,16 +94,12 @@ public class CorrectMessage extends ArchiveMessage {
     }
 
     /**
-     * Retrieves the content of the remoteFile and writes it into the local
-     * file. Note: This is transferred through a remote file handle, and then
-     * the handle is invalidated. This method may only be called once.
+     * Retrieves the content of the remoteFile and writes it into the local file. Note: This is transferred through a
+     * remote file handle, and then the handle is invalidated. This method may only be called once.
      * 
-     * @param toFile
-     *            where to write the content
-     * @throws IOFailure
-     *             on error reading the remote file or writing the local file
-     * @throws ArgumentNotValid
-     *             If <b>toFile</b> is null.
+     * @param toFile where to write the content
+     * @throws IOFailure on error reading the remote file or writing the local file
+     * @throws ArgumentNotValid If <b>toFile</b> is null.
      */
     public void getData(File toFile) throws IOFailure, ArgumentNotValid {
         ArgumentNotValid.checkNotNull(toFile, "toFile");
@@ -145,8 +131,8 @@ public class CorrectMessage extends ArchiveMessage {
     }
 
     /**
-     * Method for retrieving the 'bad' checksum which should correspond to the
-     * checksum of the current entry on this file in the archive.
+     * Method for retrieving the 'bad' checksum which should correspond to the checksum of the current entry on this
+     * file in the archive.
      * 
      * @return The checksum for the archive entry.
      */
@@ -176,8 +162,7 @@ public class CorrectMessage extends ArchiveMessage {
      * Returns the removed file.
      * 
      * @return The removed file.
-     * @throws IOFailure
-     *             If the removed file is null.
+     * @throws IOFailure If the removed file is null.
      */
     public RemoteFile getRemovedFile() throws IOFailure {
         if (removedFile == null) {
@@ -187,13 +172,10 @@ public class CorrectMessage extends ArchiveMessage {
     }
 
     /**
-     * Sets the removed file. This is the file which are returned to the sender
-     * of the message.
+     * Sets the removed file. This is the file which are returned to the sender of the message.
      * 
-     * @param rf
-     *            The removed file which is part of the reply of this message.
-     * @throws ArgumentNotValid
-     *             If the remote file is null.
+     * @param rf The removed file which is part of the reply of this message.
+     * @throws ArgumentNotValid If the remote file is null.
      */
     public void setRemovedFile(RemoteFile rf) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(rf, "RemoteFile rf");
@@ -203,8 +185,7 @@ public class CorrectMessage extends ArchiveMessage {
     /**
      * Accept this message.
      *
-     * @param v
-     *            The message visitor accepting this message.
+     * @param v The message visitor accepting this message.
      */
     public void accept(ArchiveMessageVisitor v) {
         v.visit(this);

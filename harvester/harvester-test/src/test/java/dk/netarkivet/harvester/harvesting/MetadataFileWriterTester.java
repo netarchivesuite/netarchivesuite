@@ -45,7 +45,7 @@ import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriterWarc;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class MetadataFileWriterTester {
     ReloadSettings rs = new ReloadSettings();
     File logsDir;
@@ -124,8 +124,7 @@ public class MetadataFileWriterTester {
     }
 
     /**
-     * This is not run automatically, as this takes a long time to complete (15
-     * seconds).
+     * This is not run automatically, as this takes a long time to complete (15 seconds).
      * 
      * @throws IOException
      */

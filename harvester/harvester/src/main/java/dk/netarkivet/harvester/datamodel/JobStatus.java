@@ -35,13 +35,11 @@ import dk.netarkivet.common.utils.I18n;
 public enum JobStatus {
 
     /**
-     * Job status new is used for a job that has been created but not yet sent
-     * to a JMS queue.
+     * Job status new is used for a job that has been created but not yet sent to a JMS queue.
      */
     NEW,
     /**
-     * Job status submitted is used for a job that has been sent to a JMS queue,
-     * but not yet picked up by a harvester.
+     * Job status submitted is used for a job that has been sent to a JMS queue, but not yet picked up by a harvester.
      */
     SUBMITTED,
     /**
@@ -49,8 +47,7 @@ public enum JobStatus {
      */
     STARTED,
     /**
-     * Job status done is used for a job that a harvester has successfully
-     * finished.
+     * Job status done is used for a job that a harvester has successfully finished.
      */
     DONE,
     /**
@@ -58,14 +55,12 @@ public enum JobStatus {
      */
     FAILED,
     /**
-     * Job status resubmitted is used for a job that had failed and a new job
-     * with this jobs data has been submitted.
+     * Job status resubmitted is used for a job that had failed and a new job with this jobs data has been submitted.
      */
     RESUBMITTED,
     /**
-     * Job status for a job which has failed and which has been rejected for
-     * resubmission. A Job in this status can be returned to status FAILED if it
-     * has been rejected in error.
+     * Job status for a job which has failed and which has been rejected for resubmission. A Job in this status can be
+     * returned to status FAILED if it has been rejected in error.
      */
     FAILED_REJECTED;
 
@@ -95,8 +90,7 @@ public enum JobStatus {
     /**
      * Helper method that gives a proper object from e.g. a DB-stored value.
      *
-     * @param status
-     *            a certain integer
+     * @param status a certain integer
      * @return the JobStatus related to a certain integer
      * @throws ArgumentNotValid
      */
@@ -124,8 +118,7 @@ public enum JobStatus {
     /**
      * Helper method that gives a proper object from e.g. a DB-stored value.
      *
-     * @param status
-     *            a status string
+     * @param status a status string
      * @return the JobStatus related to a string
      * @throws ArgumentNotValid
      */
@@ -141,14 +134,11 @@ public enum JobStatus {
     /**
      * Return a localized human-readable string describing this status.
      *
-     * Strings are read from the harvester translation bundle found in
-     * Translation.properties in this module.
+     * Strings are read from the harvester translation bundle found in Translation.properties in this module.
      *
-     * @param l
-     *            The locale
+     * @param l The locale
      * @return A human readable string for that locale.
-     * @throws ArgumentNotValid
-     *             on null locale.
+     * @throws ArgumentNotValid on null locale.
      */
     public String getLocalizedString(Locale l) {
         ArgumentNotValid.checkNotNull(l, "Locale l");
@@ -175,10 +165,8 @@ public enum JobStatus {
     /**
      * True if it is legal to change from this status to a new status.
      *
-     * @param newStatus
-     *            a new JobStatus
-     * @return true if it is legal to go from the current status to this new
-     *         status
+     * @param newStatus a new JobStatus
+     * @return true if it is legal to go from the current status to this new status
      */
     public boolean legalChange(JobStatus newStatus) {
         ArgumentNotValid.checkNotNull(newStatus, "JobStatus newStatus");

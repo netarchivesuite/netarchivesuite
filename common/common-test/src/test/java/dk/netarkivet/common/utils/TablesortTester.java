@@ -36,8 +36,7 @@ import dk.netarkivet.common.utils.TableSort.SortOrder;
 public class TablesortTester {
 
     /**
-     * Test of TableSort constructor. Note: no validation of columnId in
-     * TableSort class.
+     * Test of TableSort constructor. Note: no validation of columnId in TableSort class.
      */
     @Test
     public void testConstructor() {

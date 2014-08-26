@@ -32,7 +32,7 @@ import dk.netarkivet.wayback.WaybackSettings;
 /**
  * Data Access Object for ArchiveFile instances.
  */
-@SuppressWarnings({ "unchecked" })
+@SuppressWarnings({"unchecked"})
 public class ArchiveFileDAO extends GenericHibernateDAO<ArchiveFile, String> {
 
     /**
@@ -45,8 +45,7 @@ public class ArchiveFileDAO extends GenericHibernateDAO<ArchiveFile, String> {
     /**
      * Returns true iff this file is found in the object store.
      * 
-     * @param filename
-     *            the name of the file.
+     * @param filename the name of the file.
      * @return whether or not the file is already known.
      */
     public boolean exists(String filename) {
@@ -55,10 +54,9 @@ public class ArchiveFileDAO extends GenericHibernateDAO<ArchiveFile, String> {
     }
 
     /**
-     * Returns a list of all files awaiting indexing, ie all files not yet
-     * indexed and which have not failed indexing more than the maximum number
-     * of allowed times. The list is ordered such that previously failed files
-     * are returned last.
+     * Returns a list of all files awaiting indexing, ie all files not yet indexed and which have not failed indexing
+     * more than the maximum number of allowed times. The list is ordered such that previously failed files are returned
+     * last.
      * 
      * @return the list of files awaiting indexing.
      */

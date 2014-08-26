@@ -161,7 +161,7 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
 
         // non-integer resubmit parameter
         Map<String, String[]> parms = new HashMap<String, String[]>();
-        parms.put(Constants.JOB_RESUBMIT_PARAM, new String[] { "x" });
+        parms.put(Constants.JOB_RESUBMIT_PARAM, new String[] {"x"});
         servletRequest.setParameterMap(parms);
         try {
             HarvestStatus.processRequest(new TestPageContext(servletRequest), I18N);
@@ -172,7 +172,7 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
         assertEquals("Should not have generated any new jobs", origJobs, jobDAO.getCountJobs());
 
         // unknown resubmit parameter
-        parms.put(Constants.JOB_RESUBMIT_PARAM, new String[] { "999999" });
+        parms.put(Constants.JOB_RESUBMIT_PARAM, new String[] {"999999"});
         try {
             HarvestStatus.processRequest(new TestPageContext(servletRequest), I18N);
             fail("Should have forwarded me to an error page on unknown job.");
@@ -183,7 +183,7 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
 
         // correct parameter, check resubmit
         JobDAOTester.changeStatus(1, JobStatus.FAILED);
-        parms.put(Constants.JOB_RESUBMIT_PARAM, new String[] { "1" });
+        parms.put(Constants.JOB_RESUBMIT_PARAM, new String[] {"1"});
         HarvestStatus.processRequest(new TestPageContext(servletRequest), I18N);
         assertEquals("Should have generated one new job", origJobs + 1, jobDAO.getCountJobs());
         assertEquals("Old job should have status resubmitted", JobStatus.RESUBMITTED, jobDAO.read(1L).getStatus());
@@ -195,7 +195,7 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
     public void testGetjobStatusList() throws Exception {
 
         Map<String, String[]> params = new HashMap<String, String[]>();
-        params.put(HarvestStatusQuery.UI_FIELD.JOB_ID_ORDER.name(), new String[] { "ASC" });
+        params.put(HarvestStatusQuery.UI_FIELD.JOB_ID_ORDER.name(), new String[] {"ASC"});
         List<JobStatusInfo> l = HarvestStatus.getjobStatusList(getTestQuery(params)).getJobStatusInfo();
         assertEquals("Number of jobs should be 0", 0, l.size());
 
@@ -204,7 +204,7 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
 
         try {
             params.clear();
-            params.put(HarvestStatusQuery.UI_FIELD.JOB_STATUS.name(), new String[] { "bogus" });
+            params.put(HarvestStatusQuery.UI_FIELD.JOB_STATUS.name(), new String[] {"bogus"});
             HarvestStatus.getjobStatusList(getTestQuery(params)).getJobStatusInfo();
             fail("Should have forwarded me to ArgumentNotValid for wrong job status.");
         } catch (ArgumentNotValid e) {
@@ -213,7 +213,7 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
 
         try {
             params.clear();
-            params.put(HarvestStatusQuery.UI_FIELD.JOB_ID_ORDER.name(), new String[] { "XX" });
+            params.put(HarvestStatusQuery.UI_FIELD.JOB_ID_ORDER.name(), new String[] {"XX"});
             HarvestStatus.getjobStatusList(getTestQuery(params)).getJobStatusInfo();
             fail("Should have forwarded me to ArgumentNotValid for unknown sort order.");
         } catch (ArgumentNotValid e) {
@@ -232,7 +232,7 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
 
         // check error on faulty parameter
         Map<String, String[]> parms = new HashMap<String, String[]>();
-        parms.put(HarvestStatusQuery.UI_FIELD.JOB_ID_ORDER.name(), new String[] { "XX" });
+        parms.put(HarvestStatusQuery.UI_FIELD.JOB_ID_ORDER.name(), new String[] {"XX"});
         servletRequest.setParameterMap(parms);
 
         try {
@@ -245,7 +245,7 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
         // check set order parameter
         parms = new HashMap<String, String[]>();
         parms.put(HarvestStatusQuery.UI_FIELD.JOB_ID_ORDER.name(),
-                new String[] { HarvestStatusQuery.SORT_ORDER.DESC.name() });
+                new String[] {HarvestStatusQuery.SORT_ORDER.DESC.name()});
         servletRequest.setParameterMap(parms);
         query = new HarvestStatusQuery(servletRequest);
         assertFalse("Expected descending sort order", query.isSortAscending());
@@ -265,7 +265,7 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
 
         // check error on faulty parameter
         Map<String, String[]> parms = new HashMap<String, String[]>();
-        parms.put(HarvestStatusQuery.UI_FIELD.JOB_ID_ORDER.name(), new String[] { "XX" });
+        parms.put(HarvestStatusQuery.UI_FIELD.JOB_ID_ORDER.name(), new String[] {"XX"});
         servletRequest.setParameterMap(parms);
 
         // FIXME this says that it should forward to error page on wrong order
@@ -281,7 +281,7 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
         }
         // check set order parameter
         parms = new HashMap<String, String[]>();
-        parms.put(HarvestStatusQuery.UI_FIELD.JOB_STATUS.name(), new String[] { JobStatus.FAILED.name() });
+        parms.put(HarvestStatusQuery.UI_FIELD.JOB_STATUS.name(), new String[] {JobStatus.FAILED.name()});
         servletRequest.setParameterMap(parms);
         query = new HarvestStatusQuery(servletRequest);
         assertEquals("Only one statuscode should have selected", query.getSelectedJobStatuses().length, 1);

@@ -39,8 +39,8 @@ import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.NumberUtils;
 
 /**
- * The legacy job generator implementation. Aims at generating jobs that execute
- * in a predictable time by taking advantage of previous crawls statistics.
+ * The legacy job generator implementation. Aims at generating jobs that execute in a predictable time by taking
+ * advantage of previous crawls statistics.
  */
 public class DefaultJobGenerator extends AbstractJobGenerator {
 
@@ -48,10 +48,9 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
     private static final Logger log = LoggerFactory.getLogger(DefaultJobGenerator.class);
 
     /**
-     * Compare two configurations using the following order: 1) Harvest template
-     * 2) Byte limit 3) expected number of object a harvest of the configuration
-     * will produce. The comparison will put the largest configuration first
-     * (with respect to 2) and 3))
+     * Compare two configurations using the following order: 1) Harvest template 2) Byte limit 3) expected number of
+     * object a harvest of the configuration will produce. The comparison will put the largest configuration first (with
+     * respect to 2) and 3))
      */
     public static class CompareConfigsDesc implements Comparator<DomainConfiguration> {
 
@@ -99,8 +98,7 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
             .get(HarvesterSettings.JOBS_MIN_ABSOLUTE_SIZE_DIFFERENCE));
     private final long LIM_MAX_TOTAL_SIZE = Long.parseLong(Settings.get(HarvesterSettings.JOBS_MAX_TOTAL_JOBSIZE));
     /**
-     * Constant : exclude {@link DomainConfiguration}s with a budget of zero
-     * (bytes or objects).
+     * Constant : exclude {@link DomainConfiguration}s with a budget of zero (bytes or objects).
      */
     private final boolean EXCLUDE_ZERO_BUDGET = Settings
             .getBoolean(HarvesterSettings.JOBGEN_FIXED_CONFIG_COUNT_EXCLUDE_ZERO_BUDGET);
@@ -124,17 +122,12 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
     }
 
     /**
-     * Create new jobs from a collection of configurations. All configurations
-     * must use the same order.xml file.Jobs
+     * Create new jobs from a collection of configurations. All configurations must use the same order.xml file.Jobs
      *
-     * @param harvest
-     *            the {@link HarvestDefinition} being processed.
-     * @param domainConfSubset
-     *            the configurations to use to create the jobs
+     * @param harvest the {@link HarvestDefinition} being processed.
+     * @param domainConfSubset the configurations to use to create the jobs
      * @return The number of jobs created
-     * @throws ArgumentNotValid
-     *             if any of the parameters is null or if the cfglist does not
-     *             contain any configurations
+     * @throws ArgumentNotValid if any of the parameters is null or if the cfglist does not contain any configurations
      */
     @Override
     protected int processDomainConfigurationSubset(HarvestDefinition harvest,

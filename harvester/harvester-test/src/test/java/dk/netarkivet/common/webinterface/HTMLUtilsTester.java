@@ -50,7 +50,7 @@ import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /** Unit tests for the HTMLUtils utility class. */
-@SuppressWarnings({ "rawtypes", "unused" })
+@SuppressWarnings({"rawtypes", "unused"})
 public class HTMLUtilsTester {
     ReloadSettings rs = new ReloadSettings();
 
@@ -66,8 +66,7 @@ public class HTMLUtilsTester {
     }
 
     /**
-     * Test expected behaviour: Escape double quotes, newlines and other special
-     * characters.
+     * Test expected behaviour: Escape double quotes, newlines and other special characters.
      *
      * @throws Exception
      */
@@ -198,7 +197,7 @@ public class HTMLUtilsTester {
     @Test
     public void testParseOptionalLong() {
         Map<String, String[]> parameterMap = new HashMap<String, String[]>();
-        parameterMap.put("aLong", new String[] { "10" });
+        parameterMap.put("aLong", new String[] {"10"});
         WebinterfaceTestCase.TestServletRequest request = new WebinterfaceTestCase.TestServletRequest();
         request.setParameterMap(parameterMap);
         // I18n I18N = new
@@ -208,31 +207,31 @@ public class HTMLUtilsTester {
         assertEquals("Should be able to parse simple long", Long.valueOf(10L),
                 HTMLUtils.parseOptionalLong(pageContext, "aLong", -1L));
 
-        parameterMap.put("aLong", new String[] { " -11  " });
+        parameterMap.put("aLong", new String[] {" -11  "});
 
         assertEquals("Should be able to parse spaced negative long", Long.valueOf(-11L),
                 HTMLUtils.parseOptionalLong(pageContext, "aLong", -1L));
 
         assertEquals("Should get default if not set", Long.valueOf(-1L),
                 HTMLUtils.parseOptionalLong(pageContext, "anotherLong", -1L));
-        parameterMap.put("aLong", new String[] { Long.toString(((long) Integer.MAX_VALUE) * 5) });
+        parameterMap.put("aLong", new String[] {Long.toString(((long) Integer.MAX_VALUE) * 5)});
         assertEquals("Should be able to parse large long", new Long(((long) Integer.MAX_VALUE) * 5),
                 HTMLUtils.parseOptionalLong(pageContext, "aLong", -1L));
 
-        parameterMap.put("aLong", new String[] { "" });
+        parameterMap.put("aLong", new String[] {""});
         assertEquals("Should get default from empty param", Long.valueOf(-2L),
                 HTMLUtils.parseOptionalLong(pageContext, "aLong", -2L));
 
-        parameterMap.put("aLong", new String[] { "   " });
+        parameterMap.put("aLong", new String[] {"   "});
         assertEquals("Should get default from space-only param", Long.valueOf(-2L),
                 HTMLUtils.parseOptionalLong(pageContext, "aLong", -2L));
 
-        parameterMap.put("aLong", new String[] { "   " });
+        parameterMap.put("aLong", new String[] {"   "});
         assertEquals("Should get null default from space-only param", null,
                 HTMLUtils.parseOptionalLong(pageContext, "aLong", null));
 
         try {
-            parameterMap.put("noLong", new String[] { "not a long" });
+            parameterMap.put("noLong", new String[] {"not a long"});
             HTMLUtils.parseOptionalLong(pageContext, "noLong", -1L);
             fail("Should have died on bad format");
         } catch (ForwardedToErrorPage e) {
@@ -240,12 +239,10 @@ public class HTMLUtilsTester {
         }
 
         try {
-            parameterMap.put("noLong", new String[] { " 2.5" });
+            parameterMap.put("noLong", new String[] {" 2.5"});
             Long noLong = HTMLUtils.parseOptionalLong(pageContext, "noLong", -1L);
             /*
-             * fail(
-             * "Should have died on float format, but was interpreted as the long value : "
-             * + noLong);
+             * fail( "Should have died on float format, but was interpreted as the long value : " + noLong);
              */
         } catch (ForwardedToErrorPage e) {
             fail("parse method is documented not to use all of a given string as 2.5");
@@ -256,7 +253,7 @@ public class HTMLUtilsTester {
     @Test
     public void testParseOptionalDate() {
         Map<String, String[]> parameterMap = new HashMap<String, String[]>();
-        parameterMap.put("aDate", new String[] { "10/8 2007 6:17" });
+        parameterMap.put("aDate", new String[] {"10/8 2007 6:17"});
         WebinterfaceTestCase.TestServletRequest request = new WebinterfaceTestCase.TestServletRequest();
         request.setParameterMap(parameterMap);
         // I18n I18N = new I18n(
@@ -270,20 +267,20 @@ public class HTMLUtilsTester {
         assertEquals("Should get default if not set", calendar.getTime(),
                 HTMLUtils.parseOptionalDate(pageContext, "anotherDate", "dd/M yyyy HH:mm", calendar.getTime()));
 
-        parameterMap.put("aDate", new String[] { "" });
+        parameterMap.put("aDate", new String[] {""});
         assertEquals("Should get default from empty param", calendar.getTime(),
                 HTMLUtils.parseOptionalDate(pageContext, "aDate", "dd/M yyyy HH:mm", calendar.getTime()));
 
-        parameterMap.put("aDate", new String[] { "   " });
+        parameterMap.put("aDate", new String[] {"   "});
         assertEquals("Should get default from space-only param", calendar.getTime(),
                 HTMLUtils.parseOptionalDate(pageContext, "aDate", "dd/M yyyy HH:mm", calendar.getTime()));
 
-        parameterMap.put("aDate", new String[] { "   " });
+        parameterMap.put("aDate", new String[] {"   "});
         assertEquals("Should get null default from space-only param", null,
                 HTMLUtils.parseOptionalDate(pageContext, "aDate", "dd/M yyyy HH:mm", null));
 
         try {
-            parameterMap.put("noDate", new String[] { "not a date" });
+            parameterMap.put("noDate", new String[] {"not a date"});
             HTMLUtils.parseOptionalDate(pageContext, "noDate", "dd/M yyyy HH:mm", null);
             fail("Should have died on bad format");
         } catch (ForwardedToErrorPage e) {

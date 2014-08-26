@@ -55,8 +55,7 @@ public class Application {
     /** The total name of this instance. */
     private String nameWithNamePath;
     /**
-     * application instance id (optional, used when two application has same
-     * name).
+     * application instance id (optional, used when two application has same name).
      */
     private String applicationInstanceId;
 
@@ -66,14 +65,10 @@ public class Application {
     /**
      * A application is the program to be run on a machine.
      * 
-     * @param subTreeRoot
-     *            The root of this instance in the XML document.
-     * @param parentSettings
-     *            The setting inherited by the parent.
-     * @param param
-     *            The machine parameters inherited by the parent.
-     * @param targetEncoding
-     *            the encoding to use when writing files.
+     * @param subTreeRoot The root of this instance in the XML document.
+     * @param parentSettings The setting inherited by the parent.
+     * @param param The machine parameters inherited by the parent.
+     * @param targetEncoding the encoding to use when writing files.
      */
     public Application(Element subTreeRoot, XmlStructure parentSettings, Parameters param, String targetEncoding) {
         ArgumentNotValid.checkNotNull(subTreeRoot, "Element e");
@@ -140,8 +135,7 @@ public class Application {
     }
 
     /**
-     * Uses the name and the optional applicationId to create an unique
-     * identification for this application.
+     * Uses the name and the optional applicationId to create an unique identification for this application.
      * 
      * @return The unique identification of this application.
      */
@@ -163,12 +157,10 @@ public class Application {
     }
 
     /**
-     * Creates the settings file for this application. This is extracted from
-     * the XMLStructure and put into a specific file. The name of the settings
-     * file for this application is: "settings_" + identification + ".xml".
+     * Creates the settings file for this application. This is extracted from the XMLStructure and put into a specific
+     * file. The name of the settings file for this application is: "settings_" + identification + ".xml".
      * 
-     * @param directory
-     *            The directory where the settings file should be placed.
+     * @param directory The directory where the settings file should be placed.
      */
     public void createSettingsFile(File directory) {
         ArgumentNotValid.checkNotNull(directory, "File directory");
@@ -226,10 +218,8 @@ public class Application {
     /**
      * For acquiring all the values of the leafs at the end of the path.
      * 
-     * @param path
-     *            The path to the branches.
-     * @return The values of the leafs. If no values were found, then an empty
-     *         collection of strings are returned.
+     * @param path The path to the branches.
+     * @return The values of the leafs. If no values were found, then an empty collection of strings are returned.
      */
     public String[] getSettingsValues(String[] path) {
         ArgumentNotValid.checkNotNull(path, "String[] path");

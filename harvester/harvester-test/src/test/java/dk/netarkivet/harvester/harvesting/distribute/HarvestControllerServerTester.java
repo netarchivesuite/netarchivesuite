@@ -171,8 +171,7 @@ public class HarvestControllerServerTester {
     }
 
     /**
-     * Test that if the harvestcontrollerserver cannot start, the HACO listener
-     * will not be added
+     * Test that if the harvestcontrollerserver cannot start, the HACO listener will not be added
      */
     @Test
     public void testNoListerAddedOnFailure() {
@@ -191,9 +190,8 @@ public class HarvestControllerServerTester {
     }
 
     /**
-     * Tests resolution of Bug68 which prevents of creation of server-directory.
-     * if it is located more than one level below an existing directory in the
-     * hierarchy
+     * Tests resolution of Bug68 which prevents of creation of server-directory. if it is located more than one level
+     * below an existing directory in the hierarchy
      */
     @Test
     public void testCreateServerDir() {
@@ -204,10 +202,9 @@ public class HarvestControllerServerTester {
     }
 
     /**
-     * Check that we receive the expected CrawlStatusMessages when we send a
-     * broken job to a HarvestControllerServer. The case of a
-     * correctly-functioning job is more-or-less identical and is to be included
-     * in the IntegrityTester suite
+     * Check that we receive the expected CrawlStatusMessages when we send a broken job to a HarvestControllerServer.
+     * The case of a correctly-functioning job is more-or-less identical and is to be included in the IntegrityTester
+     * suite
      * 
      * @throws InterruptedException
      */
@@ -273,8 +270,8 @@ public class HarvestControllerServerTester {
     }
 
     /**
-     * Tests that sending a doOneCrawlMessage with a value other than submitted
-     * results in a job-failed message being sent back.
+     * Tests that sending a doOneCrawlMessage with a value other than submitted results in a job-failed message being
+     * sent back.
      * 
      * @throws JMSException
      */
@@ -303,19 +300,14 @@ public class HarvestControllerServerTester {
     }
 
     /**
-     * Test that starts (and stops) the HarvestControllerServer and verifies
-     * that found "old jobs" are treated as expected. Thus, an "indirect" test
-     * of method processHarvestInfoFile().
+     * Test that starts (and stops) the HarvestControllerServer and verifies that found "old jobs" are treated as
+     * expected. Thus, an "indirect" test of method processHarvestInfoFile().
      * 
-     * @param crawlDir
-     *            the location of the crawldir
-     * @param numberOfStoreMessagesExpected
-     *            The number of stored messages expected. Usually number of
-     *            files in dir + 1 for metadata arc file.
-     * @param storeFailFile
-     *            If not null, simulate failure on upload of this file
-     * @return The CrawlStatusMessage returned by the HarvestControllerServer
-     *         for the found job.
+     * @param crawlDir the location of the crawldir
+     * @param numberOfStoreMessagesExpected The number of stored messages expected. Usually number of files in dir + 1
+     *            for metadata arc file.
+     * @param storeFailFile If not null, simulate failure on upload of this file
+     * @return The CrawlStatusMessage returned by the HarvestControllerServer for the found job.
      */
     public CrawlStatusMessage testProcessingOfLeftoverJobs(File crawlDir, int numberOfStoreMessagesExpected,
             String storeFailFile) {
@@ -341,9 +333,8 @@ public class HarvestControllerServerTester {
         con.removeListener(Channels.getTheSched(), sched);
 
         /*
-         * The test serverDirs always contain exactly one job with one or more
-         * ARC files. Therefore, starting up the HCS should generate exactly one
-         * FAILED status msg.
+         * The test serverDirs always contain exactly one job with one or more ARC files. Therefore, starting up the HCS
+         * should generate exactly one FAILED status msg.
          */
         assertEquals("Should have received one crawl status message", 1, sched.messagesReceived.size());
         assertEquals("Job status should be FAILED", JobStatus.FAILED,
@@ -358,10 +349,8 @@ public class HarvestControllerServerTester {
         // uploaded.
         int filesInCrawlDirAfterUpload = ("".equals(storeFailFile) ? 0 : 1);
         /*
-         * ToDO Failing assert assertEquals(
-         * "The moved dir should only contain ARC files that couldn't be uploaded."
-         * , filesInCrawlDirAfterUpload,
-         * expected_new_arcs_dir.listFiles(FileUtils.ARCS_FILTER).length);
+         * ToDO Failing assert assertEquals( "The moved dir should only contain ARC files that couldn't be uploaded." ,
+         * filesInCrawlDirAfterUpload, expected_new_arcs_dir.listFiles(FileUtils.ARCS_FILTER).length);
          */
         // Return the CrawlStatusMessage for further analysis.
         return (CrawlStatusMessage) sched.messagesReceived.get(0);
@@ -410,11 +399,9 @@ public class HarvestControllerServerTester {
     }
 
     /**
-     * Test bug 852. the system property
-     * org.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy
-     * must be set by the HarvestControllerServer and include
-     * dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy Also
-     * tests, that heritrix.version is set to Constants.getHeritrixVersion()
+     * Test bug 852. the system property org.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy must be
+     * set by the HarvestControllerServer and include dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy
+     * Also tests, that heritrix.version is set to Constants.getHeritrixVersion()
      */
     @Test
     public void testBug852() {
@@ -439,8 +426,7 @@ public class HarvestControllerServerTester {
     }
 
     /**
-     * Verify that preharvest metadata is found in the final metadata file. See
-     * also bug #738.
+     * Verify that preharvest metadata is found in the final metadata file. See also bug #738.
      * 
      * FIXME Fails in Hudson
      * 
@@ -494,17 +480,16 @@ public class HarvestControllerServerTester {
     }
 
     /**
-     * Runs an ExtractCDXJob on the given, local arc-file and formats the
-     * output. Everything stored in RAM - don't use on large files!
+     * Runs an ExtractCDXJob on the given, local arc-file and formats the output. Everything stored in RAM - don't use
+     * on large files!
      * 
-     * @param arcFile
-     *            An arc-file present on the local system.
+     * @param arcFile An arc-file present on the local system.
      * @return The full CDX index as List of CDXRecords.
      */
     private List<CDXRecord> getCdx(File arcFile) {
         List<CDXRecord> result = new ArrayList<CDXRecord>();
         ByteArrayOutputStream cdxBaos = new ByteArrayOutputStream();
-        BatchLocalFiles batchRunner = new BatchLocalFiles(new File[] { arcFile });
+        BatchLocalFiles batchRunner = new BatchLocalFiles(new File[] {arcFile});
         batchRunner.run(new ExtractCDXJob(), cdxBaos);
         for (String cdxLine : cdxBaos.toString().split("\n")) {
             result.add(new CDXRecord(cdxLine.split("\\s+")));

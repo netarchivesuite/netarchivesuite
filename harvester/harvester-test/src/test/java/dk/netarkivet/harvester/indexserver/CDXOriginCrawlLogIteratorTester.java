@@ -51,7 +51,7 @@ import dk.netarkivet.testutils.TestFileUtils;
  * Test-class for CDXOriginCrawlLogIterator.
  *
  */
-@SuppressWarnings({ "unused" })
+@SuppressWarnings({"unused"})
 public class CDXOriginCrawlLogIteratorTester {
 
     @Before
@@ -204,9 +204,8 @@ public class CDXOriginCrawlLogIteratorTester {
     }
 
     /**
-     * Checks, if the CDXOriginCrawlLogIterator works with password protected
-     * contents, where one crawl.log corresponds with two CDXlines, and the
-     * correct one, (the last one) needs to be selected. bug 680
+     * Checks, if the CDXOriginCrawlLogIterator works with password protected contents, where one crawl.log corresponds
+     * with two CDXlines, and the correct one, (the last one) needs to be selected. bug 680
      * 
      * @throws Exception
      */

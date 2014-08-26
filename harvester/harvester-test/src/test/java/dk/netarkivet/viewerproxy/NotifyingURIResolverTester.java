@@ -51,8 +51,7 @@ public class NotifyingURIResolverTester {
     }
 
     /**
-     * Test constructor. Only thing really testable is that ArgumentNotValid is
-     * thrown on null arguments.
+     * Test constructor. Only thing really testable is that ArgumentNotValid is thrown on null arguments.
      */
     @Test
     public void testNotifyingURIResolver() throws Exception {
@@ -72,8 +71,7 @@ public class NotifyingURIResolverTester {
     }
 
     /**
-     * Test setURIResolver. Tests null arguments, and that lookup calls are
-     * delegated to this resolver after setting it.
+     * Test setURIResolver. Tests null arguments, and that lookup calls are delegated to this resolver after setting it.
      */
     @Test
     public void testSetURIResolver() throws Exception {
@@ -94,10 +92,9 @@ public class NotifyingURIResolverTester {
     }
 
     /**
-     * Tests lookup. Tests that argument is not checked here - that should be
-     * done by the wrapped class. Tests that lookup is delegated to wrapped
-     * class with argument. Also tests that result of this method is given to
-     * the observing class.
+     * Tests lookup. Tests that argument is not checked here - that should be done by the wrapped class. Tests that
+     * lookup is delegated to wrapped class with argument. Also tests that result of this method is given to the
+     * observing class.
      * 
      * @throws Exception
      */

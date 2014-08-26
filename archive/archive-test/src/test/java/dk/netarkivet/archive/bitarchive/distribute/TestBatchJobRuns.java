@@ -35,7 +35,7 @@ import dk.netarkivet.common.utils.batch.ARCBatchFilter;
  * Helper batch job to write number of records processed at finish.
  *
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class TestBatchJobRuns extends ARCBatchJob {
     boolean initialized;
     public int records_processed;

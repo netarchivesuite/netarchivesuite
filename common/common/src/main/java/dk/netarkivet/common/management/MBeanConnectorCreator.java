@@ -46,8 +46,8 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
 
 /**
- * Utility class that handles exposing the platform mbean server using rmi, and
- * using specified ports and password files. <br/>
+ * Utility class that handles exposing the platform mbean server using rmi, and using specified ports and password
+ * files. <br/>
  * <br/>
  *
  * See http://java.sun.com/j2se/1.5.0/docs/guide/jmx/tutorial/security.html <br/>
@@ -70,14 +70,12 @@ public class MBeanConnectorCreator {
     private static final String ENVIRONMENT_PASSWORD_FILE_PROPERTY = "jmx.remote.x.password.file";
 
     /**
-     * Registers an RMI connector to the local mbean server in a private RMI
-     * registry, under the name "jmxrmi". The port for the registry is read from
-     * settings, and the RMI port used for exposing the connector is also read
-     * from settings. Access to the mbean server is restricted by the rules set
-     * in the password file, likewise read from settings.
+     * Registers an RMI connector to the local mbean server in a private RMI registry, under the name "jmxrmi". The port
+     * for the registry is read from settings, and the RMI port used for exposing the connector is also read from
+     * settings. Access to the mbean server is restricted by the rules set in the password file, likewise read from
+     * settings.
      *
-     * @throws IOFailure
-     *             on trouble exposing the server.
+     * @throws IOFailure on trouble exposing the server.
      */
     public static synchronized void exposeJMXMBeanServer() {
         try {

@@ -139,9 +139,8 @@ public class DoOneCrawlMessageTester {
     }
 
     /**
-     * tests serialization - generating 2 DoOneCrawlMessages - put one of them
-     * through serialization/deserialization testing that certain fields in the
-     * two objects are still the same ! Should possible be tested more overall
+     * tests serialization - generating 2 DoOneCrawlMessages - put one of them through serialization/deserialization
+     * testing that certain fields in the two objects are still the same ! Should possible be tested more overall
      * (waiting for NHC to make some kind of framework for testing serialization
      */
     @Test

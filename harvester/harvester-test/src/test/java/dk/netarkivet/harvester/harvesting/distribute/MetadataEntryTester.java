@@ -45,8 +45,7 @@ import dk.netarkivet.harvester.datamodel.Constants;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 
 /**
- * Tests for class MetadataEntry. Note that this class is also tested in other
- * test-classes.
+ * Tests for class MetadataEntry. Note that this class is also tested in other test-classes.
  */
 public class MetadataEntryTester {
     private String aRealURL;
@@ -180,8 +179,7 @@ public class MetadataEntryTester {
     }
 
     /**
-     * Test makeAliasMetadataEntry() returns null if the aliases in the list of
-     * aliases are expired.
+     * Test makeAliasMetadataEntry() returns null if the aliases in the list of aliases are expired.
      */
     @Test
     public void testMakeAliasMetadataEntryReturnsNullWithOnlyExpiredAliases() {

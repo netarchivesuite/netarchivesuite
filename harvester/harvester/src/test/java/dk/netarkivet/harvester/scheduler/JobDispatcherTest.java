@@ -110,7 +110,7 @@ public class JobDispatcherTest {
         String originalDomain = "netarkiv.dk";
         String aliasDomain = "netatarkivalias.dk";
         when(jobMock.getJobAliasInfo()).thenReturn(
-                Arrays.asList(new AliasInfo[] { new AliasInfo("netatarkivalias.dk", "netarkiv.dk", new Date()) }));
+                Arrays.asList(new AliasInfo[] {new AliasInfo("netatarkivalias.dk", "netarkiv.dk", new Date())}));
 
         jobDispatcher.submitNextNewJob(SELECTIVE_HARVEST_CHANNEL);
 
@@ -129,7 +129,7 @@ public class JobDispatcherTest {
         prepareDefaultMockAnswers(SELECTIVE_HARVEST_CHANNEL, jobMock);
         Document doc = OrderXmlBuilder.create().enableDeduplication().getOrderXml();
         when(jobMock.getOrderXMLdoc()).thenReturn(doc);
-        List<Long> jobIDsForDuplicateReduction = Arrays.asList(new Long[] { 1L });
+        List<Long> jobIDsForDuplicateReduction = Arrays.asList(new Long[] {1L});
         when(jobDAO.getJobIDsForDuplicateReduction(jobMock.getJobID())).thenReturn(jobIDsForDuplicateReduction);
 
         jobDispatcher.submitNextNewJob(SELECTIVE_HARVEST_CHANNEL);
@@ -203,7 +203,7 @@ public class JobDispatcherTest {
     }
 
     private void prepareDefaultMockAnswers(HarvestChannel channel, Job job) {
-        Iterator<Long> jobIDIterator = Arrays.asList(new Long[] { job.getJobID() }).iterator();
+        Iterator<Long> jobIDIterator = Arrays.asList(new Long[] {job.getJobID()}).iterator();
         when(jobDAO.getAllJobIds(JobStatus.NEW, channel)).thenReturn(jobIDIterator);
         when(jobDAO.read(job.getJobID())).thenReturn(job);
         when(harvestDefinitionDAO.getHarvestName(harvest.getOid())).thenReturn(harvest.getName());

@@ -42,7 +42,7 @@ public class DeployTesterSuite {
     }
 
     public static void main(String args[]) {
-        String args2[] = { "-noloading", DeployTesterSuite.class.getName() };
+        String args2[] = {"-noloading", DeployTesterSuite.class.getName()};
         TestRunner.main(args2);
     }
 

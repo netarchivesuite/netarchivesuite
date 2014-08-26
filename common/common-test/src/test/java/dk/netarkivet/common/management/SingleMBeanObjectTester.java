@@ -47,7 +47,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 /**
  * This class tests the class dk.netarkivet.common.management.SingleMBeanObject.
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class SingleMBeanObjectTester {
     private ObjectName name;
     private MBeanServer platformMBeanServer;
@@ -87,8 +87,7 @@ public class SingleMBeanObjectTester {
     }
 
     /**
-     * Test constructor: Test nameProperties map is filled correctly, and
-     * exceptions are thrown on wrong arguments.
+     * Test constructor: Test nameProperties map is filled correctly, and exceptions are thrown on wrong arguments.
      *
      * @throws Exception
      */

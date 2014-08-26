@@ -42,25 +42,20 @@ public class DerbyServerSpecifics extends DerbySpecifics {
     }
 
     /**
-     * Inherited function. We do not shut down external derby databases, only
-     * the embedded ones.
+     * Inherited function. We do not shut down external derby databases, only the embedded ones.
      */
     public void shutdownDatabase() {
         log.warn("The external database will not be shut down from within " + "the code.");
     }
 
     /**
-     * Backup the database. For server-based databases, where the administrator
-     * is expected to perform the backups, this method should do nothing. This
-     * method gets called within one hour of the hour-of-day indicated by the
+     * Backup the database. For server-based databases, where the administrator is expected to perform the backups, this
+     * method should do nothing. This method gets called within one hour of the hour-of-day indicated by the
      * DB_BACKUP_INIT_HOUR settings.
      *
-     * @param backupDir
-     *            Directory to which the database should be backed up
-     * @param c
-     *            The connection to the database to backup.
-     * @throws ArgumentNotValid
-     *             If the connection or the backup directory is null.
+     * @param backupDir Directory to which the database should be backed up
+     * @param c The connection to the database to backup.
+     * @throws ArgumentNotValid If the connection or the backup directory is null.
      */
     public void backupDatabase(Connection c, File backupDir) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(backupDir, "File backupDir");
@@ -71,8 +66,7 @@ public class DerbyServerSpecifics extends DerbySpecifics {
     }
 
     /**
-     * Get the name of the JDBC driver class that handles interfacing to this
-     * server.
+     * Get the name of the JDBC driver class that handles interfacing to this server.
      *
      * @return The name of a JDBC driver class
      */

@@ -32,7 +32,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * Container for upload request.
  *
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class UploadMessage extends ArchiveMessage {
     /** the name of the file to upload. */
     private String arcfileName;
@@ -43,12 +43,9 @@ public class UploadMessage extends ArchiveMessage {
     /**
      * Construct UploadMessage.
      * 
-     * @param to
-     *            Channel to message to
-     * @param replyTo
-     *            Channel to reply back to
-     * @param rf
-     *            The RemoteFile to upload
+     * @param to Channel to message to
+     * @param replyTo Channel to reply back to
+     * @param rf The RemoteFile to upload
      */
     public UploadMessage(ChannelID to, ChannelID replyTo, RemoteFile rf) {
         super(to, replyTo);
@@ -76,11 +73,10 @@ public class UploadMessage extends ArchiveMessage {
     }
 
     /**
-     * Should be implemented as a part of the visitor pattern. fx.: public void
-     * accept(ArchiveMessageVisitor v) { v.visit(this); }
+     * Should be implemented as a part of the visitor pattern. fx.: public void accept(ArchiveMessageVisitor v) {
+     * v.visit(this); }
      *
-     * @param v
-     *            A message visitor
+     * @param v A message visitor
      */
     public void accept(ArchiveMessageVisitor v) {
         v.visit(this);

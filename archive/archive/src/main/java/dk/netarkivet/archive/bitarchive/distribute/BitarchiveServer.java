@@ -57,8 +57,8 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
 
 /**
- * Bitarchive container responsible for processing the different classes of
- * message which can be received by a bitarchive and returning appropriate data.
+ * Bitarchive container responsible for processing the different classes of message which can be received by a
+ * bitarchive and returning appropriate data.
  *
  */
 public class BitarchiveServer extends ArchiveMessageHandler implements CleanupIF {
@@ -79,8 +79,7 @@ public class BitarchiveServer extends ArchiveMessageHandler implements CleanupIF
     private static final Logger log = LoggerFactory.getLogger(BitarchiveServer.class);
 
     /**
-     * the thread which sends heartbeat messages from this bitarchive to its
-     * BitarchiveMonitorServer.
+     * the thread which sends heartbeat messages from this bitarchive to its BitarchiveMonitorServer.
      */
     private HeartBeatSender heartBeatSender;
 
@@ -98,19 +97,15 @@ public class BitarchiveServer extends ArchiveMessageHandler implements CleanupIF
     public Map<String, Thread> batchProcesses;
 
     /**
-     * Returns the unique instance of this class The server creates an instance
-     * of the bitarchive it provides access to and starts to listen to JMS
-     * messages on the incomming jms queue
+     * Returns the unique instance of this class The server creates an instance of the bitarchive it provides access to
+     * and starts to listen to JMS messages on the incomming jms queue
      * <p/>
-     * Also, heartbeats are sent out at regular intervals to the Bitarchive
-     * Monitor, to tell that this bitarchive is alive.
+     * Also, heartbeats are sent out at regular intervals to the Bitarchive Monitor, to tell that this bitarchive is
+     * alive.
      *
      * @return the instance
-     * @throws UnknownID
-     *             - if there was no heartbeat frequency defined in settings
-     * @throws ArgumentNotValid
-     *             - if the heartbeat frequency in settings is invalid or either
-     *             argument is null
+     * @throws UnknownID - if there was no heartbeat frequency defined in settings
+     * @throws ArgumentNotValid - if the heartbeat frequency in settings is invalid or either argument is null
      */
     public static synchronized BitarchiveServer getInstance() throws ArgumentNotValid, UnknownID {
         if (instance == null) {
@@ -120,18 +115,15 @@ public class BitarchiveServer extends ArchiveMessageHandler implements CleanupIF
     }
 
     /**
-     * The server creates an instance of the bitarchive it provides access to
-     * and starts to listen to JMS messages on the incomming jms queue
+     * The server creates an instance of the bitarchive it provides access to and starts to listen to JMS messages on
+     * the incomming jms queue
      * <p/>
-     * Also, heartbeats are sent out at regular intervals to the Bitarchive
-     * Monitor, to tell that this bitarchive is alive.
+     * Also, heartbeats are sent out at regular intervals to the Bitarchive Monitor, to tell that this bitarchive is
+     * alive.
      *
-     * @throws UnknownID
-     *             - if there was no heartbeat frequency or temp dir defined in
-     *             settings or if the bitarchiveid cannot be created.
-     * @throws PermissionDenied
-     *             - if the temporary directory or the file directory cannot be
-     *             written
+     * @throws UnknownID - if there was no heartbeat frequency or temp dir defined in settings or if the bitarchiveid
+     *             cannot be created.
+     * @throws PermissionDenied - if the temporary directory or the file directory cannot be written
      */
     private BitarchiveServer() throws UnknownID, PermissionDenied {
         System.setOut(new PrintStream(new LoggingOutputStream(LoggingOutputStream.LoggingLevel.INFO, log, "StdOut: ")));
@@ -183,8 +175,8 @@ public class BitarchiveServer extends ArchiveMessageHandler implements CleanupIF
     }
 
     /**
-     * Ends the heartbeat sender before next loop and removes the server as
-     * listener on allBa and anyBa. Closes the bitarchive. Calls cleanup.
+     * Ends the heartbeat sender before next loop and removes the server as listener on allBa and anyBa. Closes the
+     * bitarchive. Calls cleanup.
      */
     public synchronized void close() {
         log.info("BitarchiveServer {} closing down", getBitarchiveAppId());
@@ -217,13 +209,11 @@ public class BitarchiveServer extends ArchiveMessageHandler implements CleanupIF
     }
 
     /**
-     * Process a get request and send the result back to the client. If the
-     * arcfile is not found on this bitarchive machine, nothing happens.
+     * Process a get request and send the result back to the client. If the arcfile is not found on this bitarchive
+     * machine, nothing happens.
      *
-     * @param msg
-     *            a container for upload request
-     * @throws ArgumentNotValid
-     *             If the message is null.
+     * @param msg a container for upload request
+     * @throws ArgumentNotValid If the message is null.
      */
     @Override
     public void visit(GetMessage msg) throws ArgumentNotValid {
@@ -248,13 +238,11 @@ public class BitarchiveServer extends ArchiveMessageHandler implements CleanupIF
     }
 
     /**
-     * Process a upload request and send the result back to the client. This may
-     * be a very time consuming process and is a blocking call.
+     * Process a upload request and send the result back to the client. This may be a very time consuming process and is
+     * a blocking call.
      *
-     * @param msg
-     *            a container for upload request
-     * @throws ArgumentNotValid
-     *             If the message is null.
+     * @param msg a container for upload request
+     * @throws ArgumentNotValid If the message is null.
      */
     @Override
     public void visit(UploadMessage msg) throws ArgumentNotValid {
@@ -288,23 +276,18 @@ public class BitarchiveServer extends ArchiveMessageHandler implements CleanupIF
     }
 
     /**
-     * Removes an arcfile from the bitarchive and returns the removed file as an
-     * remotefile.
+     * Removes an arcfile from the bitarchive and returns the removed file as an remotefile.
      *
-     * Answers OK if the file is actually removed. Answers notOk if the file
-     * exists with wrong checksum or wrong credentials Doesn't answer if the
-     * file doesn't exist.
+     * Answers OK if the file is actually removed. Answers notOk if the file exists with wrong checksum or wrong
+     * credentials Doesn't answer if the file doesn't exist.
      *
      * This method always generates a warning when deleting a file.
      *
-     * Before the file is removed it is verified that - the file exists in the
-     * bitarchive - the file has the correct checksum - the supplied credentials
-     * are correct
+     * Before the file is removed it is verified that - the file exists in the bitarchive - the file has the correct
+     * checksum - the supplied credentials are correct
      * 
-     * @param msg
-     *            a container for remove request
-     * @throws ArgumentNotValid
-     *             If the RemoveAndGetFileMessage is null.
+     * @param msg a container for remove request
+     * @throws ArgumentNotValid If the RemoveAndGetFileMessage is null.
      */
     @Override
     public void visit(RemoveAndGetFileMessage msg) throws ArgumentNotValid {
@@ -369,10 +352,8 @@ public class BitarchiveServer extends ArchiveMessageHandler implements CleanupIF
     /**
      * Process a batch job and send the result back to the client.
      *
-     * @param msg
-     *            a container for batch jobs
-     * @throws ArgumentNotValid
-     *             If the BatchMessage is null.
+     * @param msg a container for batch jobs
+     * @throws ArgumentNotValid If the BatchMessage is null.
      */
     @Override
     public void visit(final BatchMessage msg) throws ArgumentNotValid {
@@ -459,10 +440,8 @@ public class BitarchiveServer extends ArchiveMessageHandler implements CleanupIF
     /**
      * Process a getFile request and send the result back to the client.
      *
-     * @param msg
-     *            a container for a getfile request
-     * @throws ArgumentNotValid
-     *             If the GetFileMessage is null.
+     * @param msg a container for a getfile request
+     * @throws ArgumentNotValid If the GetFileMessage is null.
      */
     @Override
     public void visit(GetFileMessage msg) throws ArgumentNotValid {
@@ -485,26 +464,22 @@ public class BitarchiveServer extends ArchiveMessageHandler implements CleanupIF
     }
 
     /**
-     * Returns a String that identifies this bit archive application (within the
-     * bit archive, i.e. either with id ONE or TWO)
+     * Returns a String that identifies this bit archive application (within the bit archive, i.e. either with id ONE or
+     * TWO)
      *
-     * @return String with IP address of this host and, if specified, the
-     *         APPLICATION_INSTANCE_ID from settings
+     * @return String with IP address of this host and, if specified, the APPLICATION_INSTANCE_ID from settings
      */
     public String getBitarchiveAppId() {
         return bitarchiveAppId;
     }
 
     /**
-     * Returns a String that identifies this bit archive application (within the
-     * bit archive, i.e. either with id ONE or TWO). The string has the
-     * following form: hostaddress[_applicationinstanceid] fx. "10.0.0.1_appOne"
-     * or just "10.0.0.1", if no applicationinstanceid has been chosen.
+     * Returns a String that identifies this bit archive application (within the bit archive, i.e. either with id ONE or
+     * TWO). The string has the following form: hostaddress[_applicationinstanceid] fx. "10.0.0.1_appOne" or just
+     * "10.0.0.1", if no applicationinstanceid has been chosen.
      *
-     * @return String with IP address of this host and, if specified, the
-     *         APPLICATION_INSTANCE_ID from settings
-     * @throws UnknownID
-     *             - if InetAddress.getLocalHost() failed
+     * @return String with IP address of this host and, if specified, the APPLICATION_INSTANCE_ID from settings
+     * @throws UnknownID - if InetAddress.getLocalHost() failed
      */
     private String createBitarchiveAppId() throws UnknownID {
         String id;

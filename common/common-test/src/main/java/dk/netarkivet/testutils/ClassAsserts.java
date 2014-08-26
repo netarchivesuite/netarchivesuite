@@ -35,20 +35,18 @@ import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.CleanupIF;
 
 /**
- * Utility class containing various method for making assertions on Class
- * objects.
+ * Utility class containing various method for making assertions on Class objects.
  * 
  */
-@SuppressWarnings({ "unchecked" })
+@SuppressWarnings({"unchecked"})
 public class ClassAsserts {
 
     /**
      * Tests the class has a static factory method getInstance()
      * 
-     * @param c
-     *            the class to test
+     * @param c the class to test
      */
-    @SuppressWarnings({ "rawtypes" })
+    @SuppressWarnings({"rawtypes"})
     public static void assertHasFactoryMethod(Class c) {
         Method m = null;
         try {
@@ -62,12 +60,10 @@ public class ClassAsserts {
     }
 
     /**
-     * Tests that a class has a static factory method getInstance() and that it
-     * acts as a singleton. NB This method will create an instance of the class.
-     * It is your responsibility to clean up after yourself.
+     * Tests that a class has a static factory method getInstance() and that it acts as a singleton. NB This method will
+     * create an instance of the class. It is your responsibility to clean up after yourself.
      * 
-     * @param c
-     *            the class to test
+     * @param c the class to test
      * @return the singleton
      */
     public static <T> T assertSingleton(Class<T> c) {
@@ -90,11 +86,9 @@ public class ClassAsserts {
     }
 
     /**
-     * Tests if there are any public constructors. Will fail on any public
-     * constructor, and simply return otherwise.
+     * Tests if there are any public constructors. Will fail on any public constructor, and simply return otherwise.
      *
-     * @param c
-     *            A class to test.
+     * @param c A class to test.
      */
     public static <T> void assertPrivateConstructor(Class<T> c) {
         TestCase.assertEquals("Expect to find no public constructors for " + "class " + c.getName(), 0,
@@ -102,17 +96,12 @@ public class ClassAsserts {
     }
 
     /**
-     * Tests that a class' equals method notice changed fields. Also performs
-     * some testing of the hashCode method, but not as comprehensive.
+     * Tests that a class' equals method notice changed fields. Also performs some testing of the hashCode method, but
+     * not as comprehensive.
      *
-     * @param o1
-     *            An object to test on.
-     * @param o2
-     *            Another object with all fields to be tested set to different
-     *            values from o1
-     * @param excludedFields
-     *            A list of field names of fields that should not be included in
-     *            the test.
+     * @param o1 An object to test on.
+     * @param o2 Another object with all fields to be tested set to different values from o1
+     * @param excludedFields A list of field names of fields that should not be included in the test.
      * @throws IllegalAccessException
      */
     @SuppressWarnings("rawtypes")

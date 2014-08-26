@@ -46,9 +46,8 @@ public class FilebasedFreeSpaceProvider implements FreeSpaceProvider {
     private static String DEFAULT_SETTINGS_CLASSPATH = "dk/netarkivet/common/utils/FilebasedFreeSpaceProvider.xml";
 
     /*
-     * The static initialiser is called when the class is loaded. It will add
-     * default values for all settings defined in this class, by loading them
-     * from a settings.xml file in classpath.
+     * The static initialiser is called when the class is loaded. It will add default values for all settings defined in
+     * this class, by loading them from a settings.xml file in classpath.
      */
     static {
         Settings.addDefaultClasspathSettings(DEFAULT_SETTINGS_CLASSPATH);
@@ -64,13 +63,11 @@ public class FilebasedFreeSpaceProvider implements FreeSpaceProvider {
     private static final String FREESPACEPROVIDER_DIR = Settings.get(FREESPACEPROVIDER_DIR_SETTING);
 
     /**
-     * Returns the number of bytes free which is read out of a file containing
-     * the bytes free information. This file is located in the
-     * FREESPACEPROVIDER_DIR and has the name as parameter f. Will return 0 on
-     * any IO- or Format-Exceptions.
+     * Returns the number of bytes free which is read out of a file containing the bytes free information. This file is
+     * located in the FREESPACEPROVIDER_DIR and has the name as parameter f. Will return 0 on any IO- or
+     * Format-Exceptions.
      *
-     * @param f
-     *            a given file
+     * @param f a given file
      * @return the number of bytes free.
      */
     public long getBytesFree(File f) {

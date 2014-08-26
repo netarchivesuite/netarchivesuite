@@ -39,9 +39,8 @@ import dk.netarkivet.harvester.harvesting.distribute.FrontierReportMessage;
 import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor;
 
 /**
- * Implements the analysis of a full frontier report obtained from Heritrix, as
- * the execution of a sequence of user-defined filters, that each generate a
- * smaller, in-memory frontier report that are sent in a JMS message to the
+ * Implements the analysis of a full frontier report obtained from Heritrix, as the execution of a sequence of
+ * user-defined filters, that each generate a smaller, in-memory frontier report that are sent in a JMS message to the
  * {@link HarvestMonitor}.
  *
  */
@@ -57,9 +56,7 @@ public class FrontierReportAnalyzer implements Runnable {
     /**
      * Builds an analyzer, given an Heritrix controller instance.
      * 
-     * @param heritrixController
-     *            the controller allowing communication with the Heritrix
-     *            crawler instance.
+     * @param heritrixController the controller allowing communication with the Heritrix crawler instance.
      */
     public FrontierReportAnalyzer(BnfHeritrixController heritrixController) {
         super();

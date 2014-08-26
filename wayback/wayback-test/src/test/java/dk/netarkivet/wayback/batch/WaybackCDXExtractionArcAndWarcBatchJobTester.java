@@ -40,8 +40,7 @@ import dk.netarkivet.common.utils.warc.WARCBatchJob;
 import dk.netarkivet.testutils.LogbackRecorder;
 
 /**
- * Unittests for the batchjob WaybackCDXExtractionARCBatchJob and
- * WaybackCDXExtractionWARCBatchJob.
+ * Unittests for the batchjob WaybackCDXExtractionARCBatchJob and WaybackCDXExtractionWARCBatchJob.
  */
 public class WaybackCDXExtractionArcAndWarcBatchJobTester {
 
@@ -54,8 +53,8 @@ public class WaybackCDXExtractionArcAndWarcBatchJobTester {
         File warcfile = new File("tests/dk/netarkivet/wayback/data/originals/warcfile_withredirects.warc");
         assertTrue("ArcFile should exist: '" + file.getAbsolutePath() + "'", file.exists());
         assertTrue("WarcFile should exist: '" + warcfile.getAbsolutePath() + "'", warcfile.exists());
-        blaf = new BatchLocalFiles(new File[] { file });
-        blafWarc = new BatchLocalFiles(new File[] { warcfile });
+        blaf = new BatchLocalFiles(new File[] {file});
+        blafWarc = new BatchLocalFiles(new File[] {warcfile});
     }
 
     @Test
@@ -74,21 +73,16 @@ public class WaybackCDXExtractionArcAndWarcBatchJobTester {
     }
 
     /**
-     * Asserts that a source string does not contain a given string, and prints
-     * out the source string if the target string is found.
+     * Asserts that a source string does not contain a given string, and prints out the source string if the target
+     * string is found.
      *
-     * @param msg
-     *            An explanatory message
-     * @param src
-     *            A string to search through
-     * @param str
-     *            A string to search for
+     * @param msg An explanatory message
+     * @param src A string to search through
+     * @param str A string to search for
      */
     /*
-     * private void assertNotStringContains(String msg, String src, String str)
-     * { int index = src.indexOf(str); if (index != -1) {
-     * System.out.println("Actual string: "); System.out.println(src);
-     * assertEquals(msg, -1, index); } }
+     * private void assertNotStringContains(String msg, String src, String str) { int index = src.indexOf(str); if
+     * (index != -1) { System.out.println("Actual string: "); System.out.println(src); assertEquals(msg, -1, index); } }
      */
 
     @Test

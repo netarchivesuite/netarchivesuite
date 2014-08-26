@@ -74,8 +74,7 @@ public class CDXReaderTester {
     }
 
     /**
-     * Testing different lookup-scenarios ! Finding objects i first-file -
-     * second-file - last-file - prefix-search.....
+     * Testing different lookup-scenarios ! Finding objects i first-file - second-file - last-file - prefix-search.....
      */
     @Test
     public void testGetKey() {
@@ -130,8 +129,8 @@ public class CDXReaderTester {
     }
 
     /**
-     * Testing that prefix-search do not return objects that they were not
-     * supposed to do ! Prefix-search is not an option at the moment
+     * Testing that prefix-search do not return objects that they were not supposed to do ! Prefix-search is not an
+     * option at the moment
      */
     @Test
     public void testGetKeyPrefixFailed() {
@@ -144,8 +143,8 @@ public class CDXReaderTester {
     }
 
     /**
-     * Testing that a single URL could be found i 2 different arc-files - based
-     * on adding a filter before the second search
+     * Testing that a single URL could be found i 2 different arc-files - based on adding a filter before the second
+     * search
      */
     @Test
     public void testGetKeyWithFilter() {
@@ -170,8 +169,7 @@ public class CDXReaderTester {
     }
 
     /**
-     * Testing that nothing could be found when adding a filter with a
-     * non-matching arc-file-name
+     * Testing that nothing could be found when adding a filter with a non-matching arc-file-name
      */
     @Test
     public void testGetKeyWithBadFilter() {
@@ -214,8 +212,7 @@ public class CDXReaderTester {
     }
 
     /**
-     * Testing the method to get all filters (testing only on the number of
-     * filters after adding one filter)
+     * Testing the method to get all filters (testing only on the number of filters after adding one filter)
      */
     @Test
     public void testGetFilters() {

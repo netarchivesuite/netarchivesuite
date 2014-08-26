@@ -30,60 +30,52 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.I18n;
 
 /**
- * Class for containing a reason for stopping the harvesting of a domain. There
- * are five possible reasons:<br>
+ * Class for containing a reason for stopping the harvesting of a domain. There are five possible reasons:<br>
  * 1) We have now harvested the whole domain (DOWNLOAD_COMPLETE) <br>
- * 2) We have now harvested the number of objects allowed from this domain in
- * this iteration (OBJECT_LIMIT) <br>
- * 3) We have now harvested the the number of bytes allowed from this domain in
- * this iteration (SIZE_LIMIT) <br>
- * 4) We stopped harvesting because we hit the per-configuration limit
- * (CONFIG_SIZE_LIMIT) <br>
- * 5) We don't know whether or not the harvesting is completed, because the
- * crawler did not finish in an orderly way (DOWNLOAD_UNFINISHED) <br>
+ * 2) We have now harvested the number of objects allowed from this domain in this iteration (OBJECT_LIMIT) <br>
+ * 3) We have now harvested the the number of bytes allowed from this domain in this iteration (SIZE_LIMIT) <br>
+ * 4) We stopped harvesting because we hit the per-configuration limit (CONFIG_SIZE_LIMIT) <br>
+ * 5) We don't know whether or not the harvesting is completed, because the crawler did not finish in an orderly way
+ * (DOWNLOAD_UNFINISHED) <br>
  *
- * Note: This enum is serialized to the database using the order in which these
- * are defined. Thus the order of stop reasons MUST NOT BE CHANGED!
+ * Note: This enum is serialized to the database using the order in which these are defined. Thus the order of stop
+ * reasons MUST NOT BE CHANGED!
  *
  */
 public enum StopReason {
 
     /**
-     * Stop reason is download complete, when all pages within the scope of the
-     * harvest template have been downloaded.
+     * Stop reason is download complete, when all pages within the scope of the harvest template have been downloaded.
      */
     DOWNLOAD_COMPLETE,
     /**
-     * Stop reason is object limit reached, when the domain reached the maximum
-     * number of objects allowed by the harvest.
+     * Stop reason is object limit reached, when the domain reached the maximum number of objects allowed by the
+     * harvest.
      */
     OBJECT_LIMIT,
     /**
-     * Stop reason is size limit reached, when the domain reached the maximum
-     * number of bytes allowed by the harvest.
+     * Stop reason is size limit reached, when the domain reached the maximum number of bytes allowed by the harvest.
      */
     SIZE_LIMIT,
     /**
-     * Stop reason is configuration size limit reached, when the domain reached
-     * the maximum number of bytes allowed by the configuration.
+     * Stop reason is configuration size limit reached, when the domain reached the maximum number of bytes allowed by
+     * the configuration.
      */
     CONFIG_SIZE_LIMIT,
     /**
-     * Stop reason is download unfinished, when we don't know whether or not the
-     * harvesting is completed, because the crawler did not finish in an orderly
-     * way.
+     * Stop reason is download unfinished, when we don't know whether or not the harvesting is completed, because the
+     * crawler did not finish in an orderly way.
      */
     DOWNLOAD_UNFINISHED,
     /**
-     * Stop reason is configuration object limit reached, when the domain
-     * reached the maximum number of objects allowed by the configuration.
+     * Stop reason is configuration object limit reached, when the domain reached the maximum number of objects allowed
+     * by the configuration.
      */
     CONFIG_OBJECT_LIMIT,
 
     /**
-     * Stop reason is harvesting time limit reached, when the harvester is not
-     * finished with harvesting the domain when the harvester reaches its
-     * time-limit.
+     * Stop reason is harvesting time limit reached, when the harvester is not finished with harvesting the domain when
+     * the harvester reaches its time-limit.
      */
     TIME_LIMIT;
 
@@ -93,8 +85,7 @@ public enum StopReason {
     /**
      * Get the StopReason corresponding to the given positive integer.
      * 
-     * @param stopreasonNum
-     *            a given positive integer
+     * @param stopreasonNum a given positive integer
      * @return the StopReason corresponding to the given positive integer
      * 
      * @see StopReason#ordinal()
@@ -123,8 +114,7 @@ public enum StopReason {
     /**
      * Return a localized string describing a stopreason.
      * 
-     * @param l
-     *            the locale
+     * @param l the locale
      * @return a localized string describing a stopreason.
      */
     public String getLocalizedString(Locale l) {

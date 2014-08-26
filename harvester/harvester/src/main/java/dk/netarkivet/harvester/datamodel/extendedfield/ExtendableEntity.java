@@ -52,8 +52,7 @@ public abstract class ExtendableEntity {
     /**
      * sets a List of extendedFieldValues.
      * 
-     * @param aList
-     *            List of extended Field objects
+     * @param aList List of extended Field objects
      * 
      */
     public void setExtendedFieldValues(List<ExtendedFieldValue> aList) {
@@ -63,8 +62,7 @@ public abstract class ExtendableEntity {
     /**
      * adds a Value to the ExtendedFieldValue List.
      * 
-     * @param aValue
-     *            Valueobject of the extended Field
+     * @param aValue Valueobject of the extended Field
      */
     public void addExtendedFieldValue(ExtendedFieldValue aValue) {
         extendedFieldValues.add(aValue);
@@ -73,8 +71,7 @@ public abstract class ExtendableEntity {
     /**
      * gets a extendedFieldValue by extendedField ID.
      * 
-     * @param aExtendedFieldId
-     *            id of the extendedfield
+     * @param aExtendedFieldId id of the extendedfield
      * 
      * @return ExtendedFieldValue Object
      */
@@ -91,10 +88,8 @@ public abstract class ExtendableEntity {
     /**
      * updates a extendedFieldValue by extendedField Id.
      * 
-     * @param aExtendedFieldId
-     *            id of the extendedfield
-     * @param aContent
-     *            id content to set
+     * @param aExtendedFieldId id of the extendedfield
+     * @param aContent id content to set
      * 
      */
     public void updateExtendedFieldValue(Long aExtendedFieldId, String aContent) {
@@ -129,8 +124,7 @@ public abstract class ExtendableEntity {
     }
 
     /**
-     * abstract method for receiving the ExtendedFieldType for concret class
-     * which inherits ExtendableEntity
+     * abstract method for receiving the ExtendedFieldType for concret class which inherits ExtendableEntity
      * 
      * @return ExtendedFieldType
      */

@@ -51,13 +51,9 @@ public class BitpreservationUpdateThread extends Thread {
     /**
      * Constructor for the BitpreservationUpdateThread.
      * 
-     * @param replica
-     *            The given replica to work on.
-     * @param updateType
-     *            The type of update requested.
-     * @throws ArgumentNotValid
-     *             If either the Replica or the BitpreservationUpdateType is
-     *             null.
+     * @param replica The given replica to work on.
+     * @param updateType The type of update requested.
+     * @throws ArgumentNotValid If either the Replica or the BitpreservationUpdateType is null.
      */
     public BitpreservationUpdateThread(Replica replica, BitpreservationUpdateType updateType) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(replica, "Replica replica");

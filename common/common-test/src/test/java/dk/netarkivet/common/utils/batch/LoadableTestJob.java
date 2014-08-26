@@ -31,11 +31,10 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 
 /**
- * This class is used for loading by LoadableFileBatchJobTester. The compiled
- * class file should be placed under data/originals. Create the jar file with
- * jar cvf <jarfilename> <names of compiled classes>
+ * This class is used for loading by LoadableFileBatchJobTester. The compiled class file should be placed under
+ * data/originals. Create the jar file with jar cvf <jarfilename> <names of compiled classes>
  */
-@SuppressWarnings({ "unchecked", "rawtypes", "serial" })
+@SuppressWarnings({"unchecked", "rawtypes", "serial"})
 public class LoadableTestJob extends FileBatchJob {
     String ourName = "me";
 
@@ -49,11 +48,9 @@ public class LoadableTestJob extends FileBatchJob {
     }
 
     /**
-     * Initialize the job before runnning. This is called before the
-     * processFile() calls
+     * Initialize the job before runnning. This is called before the processFile() calls
      *
-     * @param os
-     *            the OutputStream to which output should be written
+     * @param os the OutputStream to which output should be written
      */
     public void initialize(OutputStream os) {
         try {
@@ -66,10 +63,8 @@ public class LoadableTestJob extends FileBatchJob {
     /**
      * Process one file stored in the bit archive.
      *
-     * @param file
-     *            the file to be processed.
-     * @param os
-     *            the OutputStream to which output should be written
+     * @param file the file to be processed.
+     * @param os the OutputStream to which output should be written
      *
      * @return true if the file was successfully processed, false otherwise
      */
@@ -131,8 +126,7 @@ public class LoadableTestJob extends FileBatchJob {
     /**
      * Finish up the job. This is called after the last process() call.
      *
-     * @param os
-     *            the OutputStream to which output should be written
+     * @param os the OutputStream to which output should be written
      */
     public void finish(OutputStream os) {
         try {
@@ -157,11 +151,9 @@ public class LoadableTestJob extends FileBatchJob {
         }
 
         /**
-         * Initialize the job before runnning. This is called before the
-         * processFile() calls
+         * Initialize the job before runnning. This is called before the processFile() calls
          *
-         * @param os
-         *            the OutputStream to which output should be written
+         * @param os the OutputStream to which output should be written
          */
         public void initialize(OutputStream os) {
             try {
@@ -174,10 +166,8 @@ public class LoadableTestJob extends FileBatchJob {
         /**
          * Process one file stored in the bit archive.
          *
-         * @param file
-         *            the file to be processed.
-         * @param os
-         *            the OutputStream to which output should be written
+         * @param file the file to be processed.
+         * @param os the OutputStream to which output should be written
          *
          * @return true if the file was successfully processed, false otherwise
          */
@@ -193,8 +183,7 @@ public class LoadableTestJob extends FileBatchJob {
         /**
          * Finish up the job. This is called after the last process() call.
          *
-         * @param os
-         *            the OutputStream to which output should be written
+         * @param os the OutputStream to which output should be written
          */
         public void finish(OutputStream os) {
             try {

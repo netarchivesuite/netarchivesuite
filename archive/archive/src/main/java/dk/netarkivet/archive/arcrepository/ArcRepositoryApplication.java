@@ -32,8 +32,7 @@ import dk.netarkivet.common.utils.ApplicationUtils;
 public final class ArcRepositoryApplication {
 
     /**
-     * Constructor. Private to ensure that this utility class cannot be
-     * instantiated.
+     * Constructor. Private to ensure that this utility class cannot be instantiated.
      */
     private ArcRepositoryApplication() {
     }
@@ -41,8 +40,7 @@ public final class ArcRepositoryApplication {
     /**
      * Runs the ArcRepository Application. Settings are read from config files
      *
-     * @param args
-     *            an empty array
+     * @param args an empty array
      */
     public static void main(final String[] args) {
         ApplicationUtils.startApp(ArcRepository.class, args);

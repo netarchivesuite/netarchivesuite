@@ -43,11 +43,10 @@ import dk.netarkivet.systemtest.page.SelectiveHarvestPageHelper;
 public class DatabaseMigrationSanityTest extends StressTest {
 
     /**
-     * Basic sanity test that the current production database can be
-     * consistently upgraded with the latest NAS software. This test is designed
-     * to be cheap to run so it can easily be tested on any snapshot.
+     * Basic sanity test that the current production database can be consistently upgraded with the latest NAS software.
+     * This test is designed to be cheap to run so it can easily be tested on any snapshot.
      */
-    @Test(groups = { "performancetest" })
+    @Test(groups = {"performancetest"})
     public void dbMigrationSanityTest() throws Exception {
         addDescription("Test that database schema ingest from production produces a functional NAS system.");
         doStuff();
@@ -83,7 +82,7 @@ public class DatabaseMigrationSanityTest extends StressTest {
         addFixture("Opening NAS front page.");
         PageHelper.gotoPage(PageHelper.MenuPages.AliasSummary.Frontpage);
         addStep("Ingest some domains", "The domains should be created.");
-        DomainWebTestHelper.createDomain(new String[] { "netarkivet.dk", "kb.dk", "kaarefc.dk" });
+        DomainWebTestHelper.createDomain(new String[] {"netarkivet.dk", "kb.dk", "kaarefc.dk"});
         WebElement element = null;
         try {
             element = driver.findElement(By.tagName("h4"));
@@ -98,8 +97,8 @@ public class DatabaseMigrationSanityTest extends StressTest {
         driver.getPageSource().matches("Number of files:.*[0-9]{2}");
         addStep("Create a selective harvest", "The harvest should be created successfully and be listed in the HD list");
         String harvestId = "harvest_" + (new Date()).getTime();
-        SelectiveHarvestPageHelper.createSelectiveHarvest(harvestId, "a harvest", new String[] { "netarkivet.dk",
-                "kb.dk" });
+        SelectiveHarvestPageHelper.createSelectiveHarvest(harvestId, "a harvest", new String[] {"netarkivet.dk",
+                "kb.dk"});
         NASAssert.assertTrue(driver.getPageSource().contains(harvestId), harvestId
                 + " not found in harvest list after creation");
 

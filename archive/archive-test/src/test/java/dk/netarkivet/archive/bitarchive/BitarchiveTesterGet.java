@@ -54,16 +54,14 @@ public class BitarchiveTesterGet extends BitarchiveTestCase {
     /** An ARC file that must not exist in the ARCHIVE_DIR directory. */
     static final String MISSING_ARC_FILE_NAME = "ShouldNotExist.ARC";
     /**
-     * The name of the ARC file that we're reading. This file must not exist in
-     * the ARCHIVE_DIR directory.
+     * The name of the ARC file that we're reading. This file must not exist in the ARCHIVE_DIR directory.
      */
     static final String ARC_FILE_NAME = "Upload2.ARC";
 
     /**
      * Create a new test object.
      *
-     * @param sTestName
-     *            Name of this test.
+     * @param sTestName Name of this test.
      */
 
     protected File getOriginalsDir() {
@@ -188,8 +186,8 @@ public class BitarchiveTesterGet extends BitarchiveTestCase {
 
     /* **** Part four: Test that bug 4 is fixed **** */
     /**
-     * Test that a correct query gives the correct file and that the ArcRecord
-     * is closed so that the file can be deleted afterwards.
+     * Test that a correct query gives the correct file and that the ArcRecord is closed so that the file can be deleted
+     * afterwards.
      */
     public void testArcRecordIsClosedAfterGet() {
         try {

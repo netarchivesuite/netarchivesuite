@@ -35,20 +35,17 @@ import dk.netarkivet.harvester.indexserver.IndexServer;
 import dk.netarkivet.viewerproxy.ViewerProxy;
 
 /**
- * yet another test application. This application starts an arcrepository,
- * bitarchive, bitarchivemonitor, harvestdefinitionGUI and harvestserver within
- * the same JVM. TestRemoteFile and TestJMSConnection are used, the application
- * therefore does not need access to a JMSBroker nor an FTPServer. Notice that
- * it is possible to complete exactly one harvest-job, because the harvestServer
- * kills the application once it has completed the harvest job.
+ * yet another test application. This application starts an arcrepository, bitarchive, bitarchivemonitor,
+ * harvestdefinitionGUI and harvestserver within the same JVM. TestRemoteFile and TestJMSConnection are used, the
+ * application therefore does not need access to a JMSBroker nor an FTPServer. Notice that it is possible to complete
+ * exactly one harvest-job, because the harvestServer kills the application once it has completed the harvest job.
  *
  */
 public class StandaloneApplication {
     /**
      * Runs the ArcRepository Application. Settings are read from config files
      *
-     * @param args
-     *            an empty array
+     * @param args an empty array
      */
     public static void main(String[] args) {
         Settings.set(CommonSettings.REMOTE_FILE_CLASS, "dk.netarkivet.common.distribute.TestRemoteFile");

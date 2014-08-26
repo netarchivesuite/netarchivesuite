@@ -37,11 +37,10 @@ import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
- * This class contains the information that we keep about each file in the
- * arcrepository: Checksum and the store states for all bitarchives.
+ * This class contains the information that we keep about each file in the arcrepository: Checksum and the store states
+ * for all bitarchives.
  *
- * TODO Maybe don't have the store state info for fully completed stores, or
- * else use a slimmer map for it.
+ * TODO Maybe don't have the store state info for fully completed stores, or else use a slimmer map for it.
  */
 public class ArcRepositoryEntry {
 
@@ -52,50 +51,42 @@ public class ArcRepositoryEntry {
     private String filename;
 
     /**
-     * The checksum of this file. This field is persistent in the admin data
-     * file. This field can never be null. Note: AdminData.setChecksum() can
-     * change this value. Note: ArcRepositoryEntry.setChecksum() can change this
-     * value.
+     * The checksum of this file. This field is persistent in the admin data file. This field can never be null. Note:
+     * AdminData.setChecksum() can change this value. Note: ArcRepositoryEntry.setChecksum() can change this value.
      */
     private String md5sum;
 
     /**
-     * How the upload of this file into the bitarchives went. This field is
-     * persistent in the admin data file. After constructor initialization, this
-     * field should only be set in case of a correct operation (now or earlier).
-     * Note: the value 2 below is a hint to the number of bitarchives in our
-     * system.
+     * How the upload of this file into the bitarchives went. This field is persistent in the admin data file. After
+     * constructor initialization, this field should only be set in case of a correct operation (now or earlier). Note:
+     * the value 2 below is a hint to the number of bitarchives in our system.
      */
     private Map<String, ArchiveStoreState> storeStates = new HashMap<String, ArchiveStoreState>(2);
 
     /**
-     * The information used to reply about this entry being done. Once a reply
-     * has been sent, this entry is set to null. This field is not persistent.
+     * The information used to reply about this entry being done. Once a reply has been sent, this entry is set to null.
+     * This field is not persistent.
      */
     private StoreMessage replyInfo;
 
     /**
-     * String used to separate the different parts of the arcRepositoryEntry,
-     * when we write the entry to persistent storage. Make package private, so
-     * accessable from AdminData
+     * String used to separate the different parts of the arcRepositoryEntry, when we write the entry to persistent
+     * storage. Make package private, so accessable from AdminData
      */
     static final String ENTRY_COMPONENT_SEPARATOR_STRING = " , ";
 
     /**
-     * General delimiter used several places. Used to delimite the different
-     * storestates for the entry in the output() method.
+     * General delimiter used several places. Used to delimite the different storestates for the entry in the output()
+     * method.
      */
     private static final String GENERAL_DELIMITER = " ";
 
     /**
      * Create a new entry with given checksum and replyinfo.
      *
-     * @param filename
-     *            The filename for this entry
-     * @param md5sum
-     *            The checksum for this entry
-     * @param replyInfo
-     *            The one-use-only reply info chunk
+     * @param filename The filename for this entry
+     * @param md5sum The checksum for this entry
+     * @param replyInfo The one-use-only reply info chunk
      */
     public ArcRepositoryEntry(String filename, String md5sum, StoreMessage replyInfo) {
         this.filename = filename;
@@ -104,20 +95,15 @@ public class ArcRepositoryEntry {
     }
 
     /**
-     * Get the ArchiveStoreState for the entry in general. This is computed from
-     * the ArchiveStoreStates for the bitarchives. <br>
-     * 1. If no information about the bitarchives are available, the state
-     * UPLOAD_FAILED with timestamp=NOW is returned <br>
-     * 2. If there are information about one bitarchive, the state of this
-     * bitarchive is returned. <br>
-     * 3. If there are information from more than one bitarchive, A. if the
-     * state of one of the bitarchives equals UPLOAD_FAILED, the state
-     * UPLOAD_FAILED with the latest timestamp is returned B. else, find the
-     * lowest state of the N bitarchives: return this state together with the
-     * the latest timestamp
+     * Get the ArchiveStoreState for the entry in general. This is computed from the ArchiveStoreStates for the
+     * bitarchives. <br>
+     * 1. If no information about the bitarchives are available, the state UPLOAD_FAILED with timestamp=NOW is returned <br>
+     * 2. If there are information about one bitarchive, the state of this bitarchive is returned. <br>
+     * 3. If there are information from more than one bitarchive, A. if the state of one of the bitarchives equals
+     * UPLOAD_FAILED, the state UPLOAD_FAILED with the latest timestamp is returned B. else, find the lowest state of
+     * the N bitarchives: return this state together with the the latest timestamp
      * <p>
-     * Note that the storestate and the timestamp might not come from the same
-     * bitarchive.
+     * Note that the storestate and the timestamp might not come from the same bitarchive.
      *
      * @return the current ArchiveStoreState for the entry in general
      */
@@ -169,13 +155,10 @@ public class ArcRepositoryEntry {
     }
 
     /**
-     * Set the StoreState for a specific bitarchive (set timestamp for last
-     * update to NOW).
+     * Set the StoreState for a specific bitarchive (set timestamp for last update to NOW).
      * 
-     * @param ba
-     *            a bitarchive
-     * @param state
-     *            the new StoreState for this bitarchive.
+     * @param ba a bitarchive
+     * @param state the new StoreState for this bitarchive.
      */
     void setStoreState(String ba, ReplicaStoreState state) {
         ArchiveStoreState ass = new ArchiveStoreState(state);
@@ -183,15 +166,11 @@ public class ArcRepositoryEntry {
     }
 
     /**
-     * Set the StoreState for a specific bitarchive (set timestamp for last
-     * update to lastchanged).
+     * Set the StoreState for a specific bitarchive (set timestamp for last update to lastchanged).
      * 
-     * @param baId
-     *            a bitarchive
-     * @param state
-     *            the new StoreState for this bitarchive.
-     * @param lastchanged
-     *            the time for when the state was changed
+     * @param baId a bitarchive
+     * @param state the new StoreState for this bitarchive.
+     * @param lastchanged the time for when the state was changed
      */
     void setStoreState(String baId, ReplicaStoreState state, Date lastchanged) {
         ArchiveStoreState ass = new ArchiveStoreState(state, lastchanged);
@@ -201,8 +180,7 @@ public class ArcRepositoryEntry {
     /**
      * Get the StoreState for this entry for a given bitarchive or null if none.
      * 
-     * @param baId
-     *            a bitarchive id
+     * @param baId a bitarchive id
      * @return the StoreState for a given bitarchive.
      */
     public ReplicaStoreState getStoreState(String baId) {
@@ -226,8 +204,7 @@ public class ArcRepositoryEntry {
     /**
      * Set the checksum for this entry.
      * 
-     * @param checksum
-     *            the new checksum for this entry
+     * @param checksum the new checksum for this entry
      */
     void setChecksum(String checksum) {
         ArgumentNotValid.checkNotNullOrEmpty(checksum, "String checksum");
@@ -256,8 +233,7 @@ public class ArcRepositoryEntry {
     }
 
     /**
-     * Returns information of whether a ReplyInfo object has been stored with
-     * this entry.
+     * Returns information of whether a ReplyInfo object has been stored with this entry.
      * 
      * @return true, if replyInfo is not null.
      */
@@ -268,8 +244,7 @@ public class ArcRepositoryEntry {
     /**
      * Write this object to persistent storage.
      *
-     * @param o
-     *            A stream to write to.
+     * @param o A stream to write to.
      */
     void output(PrintWriter o) {
         o.print(filename + GENERAL_DELIMITER);
@@ -284,8 +259,7 @@ public class ArcRepositoryEntry {
     /**
      * Check, if a given bitArchive has a StoreState connected to it.
      * 
-     * @param bitArchive
-     *            a given bitarchive
+     * @param bitArchive a given bitarchive
      * @return true, if the given bitArchive has a StoreState connected to it.
      */
     boolean hasStoreState(String bitArchive) {
@@ -295,8 +269,7 @@ public class ArcRepositoryEntry {
     /**
      * Set the replyInfo instance variable.
      * 
-     * @param replyInfo
-     *            The new value for the replyInfo variable.
+     * @param replyInfo The new value for the replyInfo variable.
      */
     void setReplyInfo(StoreMessage replyInfo) {
         if (this.replyInfo != null) {

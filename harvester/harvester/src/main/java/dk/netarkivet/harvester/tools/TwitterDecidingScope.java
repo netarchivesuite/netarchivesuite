@@ -50,18 +50,16 @@ import twitter4j.TwitterFactory;
 import twitter4j.URLEntity;
 
 /**
- * Heritrix CrawlScope that uses the Twitter Search API
- * (https://dev.twitter.com/docs/api/1/get/search) to add seeds to a crawl. The
- * following parameters to twitter search are supported: keywords: a list
- * equivalent twitters "query" text. geo_locations: as defined in the twitter
- * api. language: quivalent to twitter's "lang" parameter. These may be omitted.
- * In practice only "keywords" works well in the current version of twitter.
+ * Heritrix CrawlScope that uses the Twitter Search API (https://dev.twitter.com/docs/api/1/get/search) to add seeds to
+ * a crawl. The following parameters to twitter search are supported: keywords: a list equivalent twitters "query" text.
+ * geo_locations: as defined in the twitter api. language: quivalent to twitter's "lang" parameter. These may be
+ * omitted. In practice only "keywords" works well in the current version of twitter.
  *
  *
- * In addition, the number of results to be considered is determined by the
- * parameters "pages" and "twitter_results_per_page".
+ * In addition, the number of results to be considered is determined by the parameters "pages" and
+ * "twitter_results_per_page".
  */
-@SuppressWarnings({ "deprecation", "serial" })
+@SuppressWarnings({"deprecation", "serial"})
 public class TwitterDecidingScope extends DecidingScope {
 
     /**
@@ -70,8 +68,7 @@ public class TwitterDecidingScope extends DecidingScope {
     static Logger logger = Logger.getLogger(TwitterDecidingScope.class.getName());
 
     /**
-     * Here we define bean properties which specify the search parameters for
-     * Twitter
+     * Here we define bean properties which specify the search parameters for Twitter
      *
      */
 
@@ -94,16 +91,15 @@ public class TwitterDecidingScope extends DecidingScope {
     private int resultsPerPage = 100;
 
     /**
-     * Attribute/value pair. A list of geo_locations to include in the search.
-     * These have the form lat,long,radius,units e.g. 100.1,10.5,25.0,km
+     * Attribute/value pair. A list of geo_locations to include in the search. These have the form lat,long,radius,units
+     * e.g. 100.1,10.5,25.0,km
      */
     public static final String ATTR_GEOLOCATIONS = "geo_locations";
     private StringList geoLocations;
 
     /**
-     * Attribute/value pair. If set, the language to which results are
-     * restricted. Unfortunately the twitter language identification heuristics
-     * are so poor that this option is unusable. (Broken. See
+     * Attribute/value pair. If set, the language to which results are restricted. Unfortunately the twitter language
+     * identification heuristics are so poor that this option is unusable. (Broken. See
      * http://code.google.com/p/twitter-api/issues/detail?id=1942 )
      */
     public static final String ATTR_LANG = "language";
@@ -116,22 +112,19 @@ public class TwitterDecidingScope extends DecidingScope {
     private boolean queueLinks = true;
 
     /**
-     * Attribute/value pair specifying whether the status of discovered users
-     * should be harvested.
+     * Attribute/value pair specifying whether the status of discovered users should be harvested.
      */
     public static final String ATTR_QUEUE_USER_STATUS = "queue_user_status";
     private boolean queueUserStatus = true;
 
     /**
-     * Attribute/value pair specifying whether one should additionally queue all
-     * links embedded in a users status.
+     * Attribute/value pair specifying whether one should additionally queue all links embedded in a users status.
      */
     public static final String ATTR_QUEUE_USER_STATUS_LINKS = "queue_user_status_links";
     private boolean queueUserStatusLinks = true;
 
     /**
-     * Attribute/value pair specifying whether an html search for the given
-     * keyword(s) should also be queued.
+     * Attribute/value pair specifying whether an html search for the given keyword(s) should also be queued.
      */
     public static final String ATTR_QUEUE_KEYWORD_LINKS = "queue_keyword_links";
     private boolean queueKeywordLinks = true;
@@ -141,11 +134,9 @@ public class TwitterDecidingScope extends DecidingScope {
     private int linkCount = 0;
 
     /**
-     * This routine makes any necessary Twitter API calls and queues the content
-     * discovered.
+     * This routine makes any necessary Twitter API calls and queues the content discovered.
      * 
-     * @param controller
-     *            The controller for this crawl.
+     * @param controller The controller for this crawl.
      */
     @Override
     public void initialize(CrawlController controller) {
@@ -182,10 +173,10 @@ public class TwitterDecidingScope extends DecidingScope {
         // empty string so that the main loop is
         // executed at least once.
         if (keywords == null || keywords.isEmpty()) {
-            keywords = new StringList("keywords", "empty keyword list", new String[] { "" });
+            keywords = new StringList("keywords", "empty keyword list", new String[] {""});
         }
         if (geoLocations == null || geoLocations.isEmpty()) {
-            geoLocations = new StringList("geolocations", "empty geolocation list", new String[] { "" });
+            geoLocations = new StringList("geolocations", "empty geolocation list", new String[] {""});
         }
         logger.info("Twitter Scope will queue " + pages + " page(s) of results.");
         // Nested loop over keywords, geo_locations and pages.
@@ -254,8 +245,7 @@ public class TwitterDecidingScope extends DecidingScope {
     /**
      * Adds links to embedded url's and media in a tweet.
      * 
-     * @param tweet
-     *            The tweet from which links are to be extracted.
+     * @param tweet The tweet from which links are to be extracted.
      */
     private void extractEmbeddedLinks(Tweet tweet) {
         final URLEntity[] urlEntities = tweet.getURLEntities();
@@ -277,11 +267,9 @@ public class TwitterDecidingScope extends DecidingScope {
     }
 
     /**
-     * Searches for a given users recent tweets and queues and embedded material
-     * found.
+     * Searches for a given users recent tweets and queues and embedded material found.
      * 
-     * @param user
-     *            The twitter username (without the @ prefix).
+     * @param user The twitter username (without the @ prefix).
      */
     private void queueUserStatusLinks(String user) {
         Query query = new Query();
@@ -306,11 +294,9 @@ public class TwitterDecidingScope extends DecidingScope {
     }
 
     /**
-     * Adds a url as a seed if possible. Otherwise just prints an error
-     * description and returns.
+     * Adds a url as a seed if possible. Otherwise just prints an error description and returns.
      * 
-     * @param tweetUrl
-     *            The url to be added.
+     * @param tweetUrl The url to be added.
      */
     private void addSeedIfLegal(String tweetUrl) {
         try {
@@ -326,8 +312,7 @@ public class TwitterDecidingScope extends DecidingScope {
     /**
      * Constructor for the method. Sets up all known attributes.
      * 
-     * @param name
-     *            the name of this scope.
+     * @param name the name of this scope.
      */
     public TwitterDecidingScope(String name) {
         super(name);
@@ -351,8 +336,7 @@ public class TwitterDecidingScope extends DecidingScope {
     /**
      * Adds a candidate uri as a seed for the crawl.
      * 
-     * @param curi
-     *            The crawl uri to be added.
+     * @param curi The crawl uri to be added.
      * @return whether the uri was added as a seed.
      */
     @Override

@@ -28,12 +28,9 @@ import java.io.OutputStream;
 import org.slf4j.Logger;
 
 /**
- * OutputStream which can be used to redirect all stdout and stderr to a logger.
- * Usage: System.setOut(new PrintStream(new
- * LoggingOutputStream(LoggingOutputStream.LoggingLevel.INFO, log,
- * "StdOut: "))); System.setErr(new PrintStream(new
- * LoggingOutputStream(LoggingOutputStream.LoggingLevel.WARN, log,
- * "StdErr: ")));
+ * OutputStream which can be used to redirect all stdout and stderr to a logger. Usage: System.setOut(new
+ * PrintStream(new LoggingOutputStream(LoggingOutputStream.LoggingLevel.INFO, log, "StdOut: "))); System.setErr(new
+ * PrintStream(new LoggingOutputStream(LoggingOutputStream.LoggingLevel.WARN, log, "StdErr: ")));
  */
 public class LoggingOutputStream extends OutputStream {
 
@@ -57,12 +54,9 @@ public class LoggingOutputStream extends OutputStream {
     /**
      * Constructor for the class.
      * 
-     * @param loggingLevel
-     *            The logging level at which to log messages from this instance.
-     * @param logger
-     *            The logger to which messages will be logged.
-     * @param prefix
-     *            A prefix by which output from this instance can be identified.
+     * @param loggingLevel The logging level at which to log messages from this instance.
+     * @param logger The logger to which messages will be logged.
+     * @param prefix A prefix by which output from this instance can be identified.
      */
     public LoggingOutputStream(LoggingLevel loggingLevel, Logger logger, String prefix) {
         this.loggingLevel = loggingLevel;

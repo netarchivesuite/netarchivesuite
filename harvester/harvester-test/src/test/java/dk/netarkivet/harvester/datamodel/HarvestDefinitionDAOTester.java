@@ -118,8 +118,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
     }
 
     /**
-     * Verify that updating an already modified harvestdefinition throws an
-     * exception.
+     * Verify that updating an already modified harvestdefinition throws an exception.
      */
     @Test
     public void testOptimisticLocking() {
@@ -260,8 +259,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
     }
 
     /**
-     * Test that we obey the editions and doesn't allow update of non-existing
-     * HDs. Tests bug #468 as well.
+     * Test that we obey the editions and doesn't allow update of non-existing HDs. Tests bug #468 as well.
      */
     @Test
     public void testUpdateEditions() {
@@ -303,8 +301,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
     }
 
     /**
-     * Test that HDs with null next date can be read and updated. Test for bug
-     * #478.
+     * Test that HDs with null next date can be read and updated. Test for bug #478.
      */
     @Test
     public void testNullNextDate() {
@@ -421,10 +418,8 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
      * @param run
      * @param domain
      * @param docs
-     * @param bytes
-     *            Number of bytes collected.
-     * @param status
-     *            What status the job should have
+     * @param bytes Number of bytes collected.
+     * @param status What status the job should have
      * @return the newly created job
      */
     private Job addRunInfo(HarvestDefinition hd, int run, String domain, int docs, int bytes, JobStatus status) {
@@ -552,8 +547,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
     }
 
     /**
-     * Get a Date(year, month, year). replaces deprecated Date constructor by
-     * this private method.
+     * Get a Date(year, month, year). replaces deprecated Date constructor by this private method.
      */
     private Date getDate(int year, int month, int day) {
         Calendar cal = new GregorianCalendar(year, month, day);
@@ -647,9 +641,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
     }
 
     /**
-     * Test the
-     * {@link HarvestDefinitionDAO#removeDomainConfiguration(Long, SparseDomainConfiguration)}
-     * method.
+     * Test the {@link HarvestDefinitionDAO#removeDomainConfiguration(Long, SparseDomainConfiguration)} method.
      */
     @Test
     public void testRemoveDomainConfiguration() {
@@ -671,8 +663,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
     }
 
     /**
-     * Test the
-     * {@link HarvestDefinitionDAO#updateNextdate(long, java.util.Date)} method.
+     * Test the {@link HarvestDefinitionDAO#updateNextdate(long, java.util.Date)} method.
      */
     @Test
     public void testUpdateNextDate() {

@@ -32,8 +32,7 @@ public class NASAssert extends Assert {
     // FIXME: http://stackoverflow.com/q/2313229/53897
 
     /**
-     * Improved assert method for set, which prints the difference between the
-     * two sets.
+     * Improved assert method for set, which prints the difference between the two sets.
      * 
      * @param expectedSet
      * @param resultSet

@@ -23,8 +23,7 @@
 package dk.netarkivet.systemtest;
 
 /**
- * Encapsulates the attributes found for an application
- * dk.netarkivet.systemtestoverview page.
+ * Encapsulates the attributes found for an application dk.netarkivet.systemtestoverview page.
  */
 public class Application {
     private final String machine;

@@ -49,8 +49,7 @@ public class HarvesterSettingsTester {
     }
 
     /**
-     * If this test fails, we need to update the SingleMBeanObjectTester#Setup
-     * and ChannelIDTester.
+     * If this test fails, we need to update the SingleMBeanObjectTester#Setup and ChannelIDTester.
      */
     @Test
     public void testHarvestControllerPrioritySettingUnchanged() {

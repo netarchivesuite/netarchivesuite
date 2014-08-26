@@ -74,9 +74,8 @@ public class DomainHistoryTester {
     }
 
     /**
-     * Tests that two harvests on the same date of the same domain but different
-     * configurations and/or harvest definitions can be recorded in harvest
-     * info.
+     * Tests that two harvests on the same date of the same domain but different configurations and/or harvest
+     * definitions can be recorded in harvest info.
      */
     @Test
     public void testMultipleHarvestInfoOnSameDate() throws Exception {

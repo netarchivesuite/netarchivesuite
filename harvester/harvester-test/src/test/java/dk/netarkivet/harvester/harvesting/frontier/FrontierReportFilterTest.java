@@ -70,9 +70,8 @@ public class FrontierReportFilterTest {
     /**
      * Test the extraction of 200 top queues out of a much larger report.
      * 
-     * @throws IOException
-     *             FIXME this test fails, and is therefore disabled by renaming
-     *             it (by changing the method prefix from test to TEST);
+     * @throws IOException FIXME this test fails, and is therefore disabled by renaming it (by changing the method
+     *             prefix from test to TEST);
      */
     @Test
     @Ignore("test disabled before migration")
@@ -149,7 +148,7 @@ public class FrontierReportFilterTest {
                 FileUtils.readFile(testSample));
 
         RetiredQueuesFilter filter = new RetiredQueuesFilter();
-        filter.init(new String[] { "200" });
+        filter.init(new String[] {"200"});
         InMemoryFrontierReport filtered = filter.process(full);
 
         String result = "";
@@ -167,7 +166,7 @@ public class FrontierReportFilterTest {
                 FileUtils.readFile(testSample));
 
         ExhaustedQueuesFilter filter = new ExhaustedQueuesFilter();
-        filter.init(new String[] { "200" });
+        filter.init(new String[] {"200"});
         InMemoryFrontierReport filtered = filter.process(full);
 
         File actualResultsFile = new File(TestInfo.WORKDIR, System.currentTimeMillis() + ".top200.txt");
@@ -192,8 +191,7 @@ public class FrontierReportFilterTest {
 
     /**
      * 
-     * Test CVS export. FIXME is disabled because it fails (by changing the
-     * method prefix from test to TEST);
+     * Test CVS export. FIXME is disabled because it fails (by changing the method prefix from test to TEST);
      */
     public final void TESTCsvExport() throws IOException {
 

@@ -59,11 +59,9 @@ public class ARCReaderUtils {
     /**
      * Dump contents of an Arcfile to destinationDir.
      * 
-     * @param destinationDir
-     *            the directory, where the files are dumped
+     * @param destinationDir the directory, where the files are dumped
      * @param ArcFile
-     * @param excludeFilter
-     *            Don't dump any records with mimetypes matching this string
+     * @param excludeFilter Don't dump any records with mimetypes matching this string
      * @throws IOFailure
      */
     public static void dumpARC(File destinationDir, File ArcFile, String excludeFilter) throws IOFailure {
@@ -130,11 +128,9 @@ public class ARCReaderUtils {
     }
 
     /**
-     * Generates a list of CDXrecords out of an cdxfile. Assumes that the
-     * cdxfile is good quality.
+     * Generates a list of CDXrecords out of an cdxfile. Assumes that the cdxfile is good quality.
      * 
-     * @param cdxFile
-     *            the given cdxfile
+     * @param cdxFile the given cdxfile
      * @return a list of CDXrecords out of an cdxfile.
      */
     private static List<CDXRecord> getCdxRecords(File cdxFile) {
@@ -148,13 +144,11 @@ public class ARCReaderUtils {
     }
 
     /**
-     * This main function dumps the arc-file given to the destination directory
-     * given except the records matching the given excludefilter: Usage:
-     * ARCReaderUtils.main tmpdir ARC-file excludefilter TODO promote the
-     * dumpARC tool to the src-branch
+     * This main function dumps the arc-file given to the destination directory given except the records matching the
+     * given excludefilter: Usage: ARCReaderUtils.main tmpdir ARC-file excludefilter TODO promote the dumpARC tool to
+     * the src-branch
      * 
-     * @param args
-     *            The arguments needed (3 in number).
+     * @param args The arguments needed (3 in number).
      * @throws IOException
      */
     public static void main(String[] args) throws IOException {
@@ -166,15 +160,11 @@ public class ARCReaderUtils {
     }
 
     /**
-     * Copies the content of an InputStream to an OutputStream. This method
-     * constructs an efficient buffer and pipes bytes from stream to stream
-     * through that buffer. The OutputStream is flushed after all bytes have
-     * been copied.
+     * Copies the content of an InputStream to an OutputStream. This method constructs an efficient buffer and pipes
+     * bytes from stream to stream through that buffer. The OutputStream is flushed after all bytes have been copied.
      *
-     * @param content
-     *            Source of the copy operation.
-     * @param out
-     *            Destination of the copy operation.
+     * @param content Source of the copy operation.
+     * @param out Destination of the copy operation.
      */
     private static void copy(InputStream content, OutputStream out) {
         BufferedInputStream page = new BufferedInputStream(content);

@@ -43,7 +43,7 @@ import dk.netarkivet.testutils.Serial;
  *
  */
 
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class FileBatchJobTester {
 
     /**

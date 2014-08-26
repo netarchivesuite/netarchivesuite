@@ -56,8 +56,7 @@ import dk.netarkivet.testutils.Serial;
 import dk.netarkivet.testutils.TestFileUtils;
 
 /**
- * unit tests for the abstract class AbstractHarvestReport and its concrete
- * implementation {@link LegacyHarvestReport}.
+ * unit tests for the abstract class AbstractHarvestReport and its concrete implementation {@link LegacyHarvestReport}.
  */
 public class LegacyHarvestReportTester {
 
@@ -184,8 +183,7 @@ public class LegacyHarvestReportTester {
     }
 
     /**
-     * Test solution to bugs 392 - hosts report with byte counts which add to a
-     * long value.
+     * Test solution to bugs 392 - hosts report with byte counts which add to a long value.
      */
     @Test
     public void testAddLongValues() {

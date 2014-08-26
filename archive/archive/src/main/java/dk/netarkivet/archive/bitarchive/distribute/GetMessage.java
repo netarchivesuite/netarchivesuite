@@ -31,7 +31,7 @@ import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 /**
  * Container for get requests.
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class GetMessage extends ArchiveMessage {
     /** the arcfile to retrieve an record from. */
     private String arcfile;
@@ -43,14 +43,10 @@ public class GetMessage extends ArchiveMessage {
     /**
      * Constructor.
      * 
-     * @param to
-     *            Where the message should be sent.
-     * @param replyTo
-     *            where the reply of this message should be sent.
-     * @param arcfile
-     *            The name of the file to retrieve a arc-record from.
-     * @param index
-     *            The offset of the arc-file.
+     * @param to Where the message should be sent.
+     * @param replyTo where the reply of this message should be sent.
+     * @param arcfile The name of the file to retrieve a arc-record from.
+     * @param index The offset of the arc-file.
      */
     public GetMessage(ChannelID to, ChannelID replyTo, String arcfile, long index) {
         super(to, replyTo);
@@ -79,8 +75,7 @@ public class GetMessage extends ArchiveMessage {
     /**
      * Register retrieved record.
      * 
-     * @param rec
-     *            Record retrieved from arcfile at offset index
+     * @param rec Record retrieved from arcfile at offset index
      */
     public void setRecord(BitarchiveRecord rec) {
         record = rec;
@@ -96,11 +91,10 @@ public class GetMessage extends ArchiveMessage {
     }
 
     /**
-     * Should be implemented as a part of the visitor pattern. fx.: public void
-     * accept(ArchiveMessageVisitor v) { v.visit(this); }
+     * Should be implemented as a part of the visitor pattern. fx.: public void accept(ArchiveMessageVisitor v) {
+     * v.visit(this); }
      *
-     * @param v
-     *            A message visitor
+     * @param v A message visitor
      */
     public void accept(ArchiveMessageVisitor v) {
         v.visit(this);

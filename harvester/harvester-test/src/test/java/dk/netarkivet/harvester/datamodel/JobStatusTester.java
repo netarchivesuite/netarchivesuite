@@ -33,8 +33,7 @@ import org.junit.Test;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
- * Tests of the JobStatus class. Currently, only the static method
- * getLocalizedString is tested here.
+ * Tests of the JobStatus class. Currently, only the static method getLocalizedString is tested here.
  */
 public class JobStatusTester {
 

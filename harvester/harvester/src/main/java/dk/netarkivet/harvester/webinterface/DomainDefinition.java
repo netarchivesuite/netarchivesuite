@@ -62,15 +62,13 @@ public class DomainDefinition {
     }
 
     /**
-     * Extracts all required parameters from the request, checks for any
-     * inconsistencies, and passes the requisite data to the updateDomain method
-     * for processing.
+     * Extracts all required parameters from the request, checks for any inconsistencies, and passes the requisite data
+     * to the updateDomain method for processing.
      *
      * For reference, the parameters for this page look something like
      * http://localhost:8076/HarvestDefinition/Definitions-edit-domain.jsp?
      * update=1&name=netarkivet.dk&default=defaultconfig&configName=&order_xml=&
-     * load=&maxObjects=&urlListName=&seedList=+&passwordName=&passwordDomain=&
-     * passwordRealm=&userName=&password=&
+     * load=&maxObjects=&urlListName=&seedList=+&passwordName=&passwordDomain=& passwordRealm=&userName=&password=&
      * crawlertraps=%2Fcgi-bin%2F*%0D%0A%2Ftrap%2F*%0D%0A
      *
      * update: This method throws an exception if update is not set
@@ -79,24 +77,17 @@ public class DomainDefinition {
      *
      * comments: optional user-entered comments about the domain
      *
-     * default: the defaultconfig is set to this value. Must be non-null and a
-     * known configuration of this domain.
+     * default: the defaultconfig is set to this value. Must be non-null and a known configuration of this domain.
      *
-     * crawlertraps: a newline-separated list of urls to be ignored. May be
-     * empty or null
+     * crawlertraps: a newline-separated list of urls to be ignored. May be empty or null
      *
-     * alias: If set, this domain is an alias of the set domain renewAlias: If
-     * set, the alias date should be renewed
+     * alias: If set, this domain is an alias of the set domain renewAlias: If set, the alias date should be renewed
      * 
-     * @param context
-     *            The context of this request
-     * @param i18n
-     *            I18n information
-     * @throws IOFailure
-     *             on updateerrors in the DAO
-     * @throws ForwardedToErrorPage
-     *             if domain is not found, if the edition is out-of-date, or if
-     *             parameters are missing or invalid
+     * @param context The context of this request
+     * @param i18n I18n information
+     * @throws IOFailure on updateerrors in the DAO
+     * @throws ForwardedToErrorPage if domain is not found, if the edition is out-of-date, or if parameters are missing
+     *             or invalid
      */
     public static void processRequest(PageContext context, I18n i18n) {
         ArgumentNotValid.checkNotNull(context, "PageContext context");
@@ -161,18 +152,12 @@ public class DomainDefinition {
     /**
      * This updates the given domain in the database.
      * 
-     * @param domain
-     *            the given domain
-     * @param defaultConfig
-     *            the name of the default configuration
-     * @param crawlertraps
-     *            the current crawlertraps stated for the domain
-     * @param comments
-     *            User-defined comments for the domain
-     * @param alias
-     *            if this is non-null, this domain is an alias of 'alias'.
-     * @param renewAlias
-     *            true, if alias is to be updated even if it is not changed
+     * @param domain the given domain
+     * @param defaultConfig the name of the default configuration
+     * @param crawlertraps the current crawlertraps stated for the domain
+     * @param comments User-defined comments for the domain
+     * @param alias if this is non-null, this domain is an alias of 'alias'.
+     * @param renewAlias true, if alias is to be updated even if it is not changed
      */
     private static void updateDomain(Domain domain, String defaultConfig, String crawlertraps, String comments,
             String alias, boolean renewAlias) {
@@ -221,20 +206,14 @@ public class DomainDefinition {
     }
 
     /**
-     * Define the cases where we want to update the alias information. 1. The
-     * alias information is updated, if the new alias is null, and the old alias
-     * is different from null 2. The alias information is updated, if the new
-     * alias is different from null, and old alias is null 3. The alias
-     * information is updated, if the new alias is different from null, and the
-     * old alias is different from null, and they are not either not equal, or
-     * renewAlias is true
+     * Define the cases where we want to update the alias information. 1. The alias information is updated, if the new
+     * alias is null, and the old alias is different from null 2. The alias information is updated, if the new alias is
+     * different from null, and old alias is null 3. The alias information is updated, if the new alias is different
+     * from null, and the old alias is different from null, and they are not either not equal, or renewAlias is true
      * 
-     * @param oldAlias
-     *            the old alias (could be null)
-     * @param newAlias
-     *            the new alias (could be null)
-     * @param renewAlias
-     *            should we renew alias, if the alias is unchanged?
+     * @param oldAlias the old alias (could be null)
+     * @param newAlias the new alias (could be null)
+     * @param renewAlias should we renew alias, if the alias is unchanged?
      * @return true, if we want to update the alias information, false otherwise
      */
     private static boolean needToUpdateAlias(String oldAlias, String newAlias, boolean renewAlias) {
@@ -263,10 +242,8 @@ public class DomainDefinition {
     /**
      * Creates domains with default attributes.
      *
-     * @param domains
-     *            a list of domain names
-     * @return List of the non-empty domain names that were not legal domain
-     *         names or already exist.
+     * @param domains a list of domain names
+     * @return List of the non-empty domain names that were not legal domain names or already exist.
      */
     public static List<String> createDomains(String... domains) {
         DomainDAO ddao = DomainDAO.getInstance();
@@ -290,8 +267,7 @@ public class DomainDefinition {
     /**
      * Creates a link to the domain edit page.
      *
-     * @param domain
-     *            The domain to show with a link
+     * @param domain The domain to show with a link
      * @return HTML code with the link and the domain name shown
      */
     public static String makeDomainLink(String domain) {
@@ -302,14 +278,11 @@ public class DomainDefinition {
     }
 
     /**
-     * Creates a url based on the supplied request where all the parameters are
-     * the same, except the <code>ShowUnusedConfigurations</code> boolean, which
-     * is flipped.
+     * Creates a url based on the supplied request where all the parameters are the same, except the
+     * <code>ShowUnusedConfigurations</code> boolean, which is flipped.
      * 
-     * @param request
-     *            The original 'create domain' request to based the new url on.
-     * @return The new url with the <code>ShowUnusedConfigurations</code>
-     *         boolean switched.
+     * @param request The original 'create domain' request to based the new url on.
+     * @return The new url with the <code>ShowUnusedConfigurations</code> boolean switched.
      */
     public static String createDomainUrlWithFlippedShowConfigurations(ServletRequest request) {
         boolean showUnusedConfigurationsParam = Boolean.parseBoolean(request
@@ -325,14 +298,11 @@ public class DomainDefinition {
     }
 
     /**
-     * Creates a url based on the supplied request where all the parameters are
-     * the same, except the <code>ShowUnusedSeedLists</code> boolean, which is
-     * flipped.
+     * Creates a url based on the supplied request where all the parameters are the same, except the
+     * <code>ShowUnusedSeedLists</code> boolean, which is flipped.
      * 
-     * @param request
-     *            The original 'create domain' request to based the new url on.
-     * @return The new url with the <code>ShowUnusedSeedLists</code> boolean
-     *         switched.
+     * @param request The original 'create domain' request to based the new url on.
+     * @return The new url with the <code>ShowUnusedSeedLists</code> boolean switched.
      */
     public static String createDomainUrlWithFlippedShowSeeds(ServletRequest request) {
         boolean showUnusedConfigurationsParam = Boolean.parseBoolean(request
@@ -348,17 +318,12 @@ public class DomainDefinition {
     }
 
     /**
-     * Search for domains matching the following criteria. Should we allow more
-     * than one criteria?
+     * Search for domains matching the following criteria. Should we allow more than one criteria?
      * 
-     * @param context
-     *            the context of the JSP page calling
-     * @param i18n
-     *            The translation properties file used
-     * @param searchQuery
-     *            The given searchQuery for searching for among the domains.
-     * @param searchType
-     *            The given searchCriteria (TODO use Enum instead)
+     * @param context the context of the JSP page calling
+     * @param i18n The translation properties file used
+     * @param searchQuery The given searchQuery for searching for among the domains.
+     * @param searchType The given searchCriteria (TODO use Enum instead)
      * @return the set of domain-names matching the given criteria.
      */
     public static List<String> getDomains(PageContext context, I18n i18n, String searchQuery, String searchType) {
@@ -379,16 +344,13 @@ public class DomainDefinition {
     }
 
     /**
-     * Returns the list of domain configurations which are either used in a
-     * concrete harvest or is a 'default configuration'.
+     * Returns the list of domain configurations which are either used in a concrete harvest or is a 'default
+     * configuration'.
      *
-     * The list is sorted alphabetically by name according to the supplied
-     * locale.
+     * The list is sorted alphabetically by name according to the supplied locale.
      *
-     * @param domain
-     *            The domain to find the used configurations for.
-     * @param locale
-     *            The locale to base the sorting on
+     * @param domain The domain to find the used configurations for.
+     * @param locale The locale to base the sorting on
      * @return A sorted list of used configurations for the supplied domain.
      */
     public static List<DomainConfiguration> getUsedConfiguration(Domain domain, Locale locale) {
@@ -409,8 +371,7 @@ public class DomainDefinition {
     /**
      * Returnes the seed lists associated with the supplied configurations.
      * 
-     * @param configurations
-     *            The configurations to find seed lists for
+     * @param configurations The configurations to find seed lists for
      * @return The seed lists used in the supplied configurations.
      */
     public static List<SeedList> getSeedLists(List<DomainConfiguration> configurations) {

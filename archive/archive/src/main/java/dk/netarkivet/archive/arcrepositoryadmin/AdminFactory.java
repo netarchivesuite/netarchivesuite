@@ -27,8 +27,8 @@ import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.utils.SettingsFactory;
 
 /**
- * Factory class for the admin instance. This creates an instance of the admin
- * structure, which is defined by the settings.
+ * Factory class for the admin instance. This creates an instance of the admin structure, which is defined by the
+ * settings.
  * 
  * @see dk.netarkivet.archive.ArchiveSettings#ADMIN_CLASS
  */

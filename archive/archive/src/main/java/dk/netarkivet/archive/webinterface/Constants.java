@@ -31,18 +31,16 @@ public class Constants {
     /** Parameter name for the bitarchive to perform operation on. */
     public static final String BITARCHIVE_NAME_PARAM = "bitarchive";
     /**
-     * Option for the UPDATE_TYPE_PARAM parameter for the action of running a
-     * batch job for missing files.
+     * Option for the UPDATE_TYPE_PARAM parameter for the action of running a batch job for missing files.
      */
     public static final String FIND_MISSING_FILES_OPTION = "findmissingfiles";
     /**
-     * Option for the UPDATE_TYPE_PARAM parameter for the action of running a
-     * checksum batch job.
+     * Option for the UPDATE_TYPE_PARAM parameter for the action of running a checksum batch job.
      */
     public static final String CHECKSUM_OPTION = "checksum";
     /**
-     * Parameter used by the BitpreserveFileState.processChecksumRequest called
-     * from Bitpreservation-filestatus-checksum.jsp.
+     * Parameter used by the BitpreserveFileState.processChecksumRequest called from
+     * Bitpreservation-filestatus-checksum.jsp.
      */
     public static final String CHECKSUM_PARAM = "checksum";
 
@@ -57,13 +55,11 @@ public class Constants {
     /** Parameter name to select the type of update required. */
     public static final String UPDATE_TYPE_PARAM = "type";
     /**
-     * BitPreservation main Java server page that contains status information
-     * about the bitarchives.
+     * BitPreservation main Java server page that contains status information about the bitarchives.
      */
     public static final String FILESTATUS_PAGE = "Bitpreservation-filestatus.jsp";
     /**
-     * BitPreservation page that checks if any files are missing in one of the
-     * bitarchives.
+     * BitPreservation page that checks if any files are missing in one of the bitarchives.
      */
     public static final String FILESTATUS_MISSING_PAGE = "Bitpreservation-filestatus-missing.jsp";
     /** BitPreservation page that checks files in archive for wrong checksum. */
@@ -88,8 +84,7 @@ public class Constants {
     /** The extension for the error files. */
     public static final String ERROR_FILE_EXTENSION = ".err";
     /**
-     * The separator between the name and the timestamp for result files of
-     * batchjobs.
+     * The separator between the name and the timestamp for result files of batchjobs.
      */
     public static final String NAME_TIMSTAMP_SEPARATOR = "-";
 
@@ -114,10 +109,9 @@ public class Constants {
     /** The regular expression for metadata files. */
     public static final String REGEX_METADATA = "metadata.*";
     /**
-     * The regular expression for content files. This ensures that there is 2
-     * dots in the filename, which is only the case for the content-files (due
-     * to the harvester machine name). Alternatively the following has been
-     * suggested: .*(?<!metadata-[0-9]+).arc
+     * The regular expression for content files. This ensures that there is 2 dots in the filename, which is only the
+     * case for the content-files (due to the harvester machine name). Alternatively the following has been suggested:
+     * .*(?<!metadata-[0-9]+).arc
      */
     public static final String REGEX_CONTENT = "(.*[.]){2}.*";
     /** The size of the &lt;input&gt; HTML code. */

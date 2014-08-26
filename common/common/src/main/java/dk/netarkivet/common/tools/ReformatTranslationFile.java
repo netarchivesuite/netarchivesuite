@@ -33,12 +33,10 @@ import java.io.OutputStreamWriter;
 import java.util.Properties;
 
 /**
- * Program to reformat a a Translation file. This executable takes three
- * parameters :
+ * Program to reformat a a Translation file. This executable takes three parameters :
  * <ol>
  * <li>base properties file, that defines the key ordering</li>
- * <li>properties file to reformat, sorting keys in the order defined by the
- * first file</li>
+ * <li>properties file to reformat, sorting keys in the order defined by the first file</li>
  * <li>character encoding for reformat and output file</li>
  * </ol>
  *
@@ -50,10 +48,8 @@ public class ReformatTranslationFile {
     /**
      * The main program.
      * 
-     * @param args
-     *            the 3 arguments
-     * @throws IOException
-     *             if unable to read or write the files.
+     * @param args the 3 arguments
+     * @throws IOException if unable to read or write the files.
      */
     public static void main(String[] args) throws IOException {
 
