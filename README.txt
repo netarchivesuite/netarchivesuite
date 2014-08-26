@@ -38,3 +38,7 @@ Use Preferences->Java->Code Style->Formatter->[Import] to import eclipse-formatt
 archive-test and harvester-test migrated from junit 3 to junit 4.
 
 /tra 2014-07-24
+
+Sources reformatted to code style (NAS-2351).
+
+/tra 2014-08-26
