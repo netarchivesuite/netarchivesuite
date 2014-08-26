@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 
-	This file contains the default settings used by the TestIndexRequestServer class.
-
-	For documentation of the individual settings, please refer to the javadoc 
-	for dk.netarkivet.archive.indexserver.distribute.TestIndexRequestServer.java 
--->
+<!-- This file contains the default settings used by the TestIndexRequestServer class. For documentation of the individual 
+  settings, please refer to the javadoc for dk.netarkivet.archive.indexserver.distribute.TestIndexRequestServer.java -->
 <settings>
-    <harvester>
-        <indexserver>
-        	<indexrequestserver>
-        		<fileContainingJobsForTestindex>jobids.txt</fileContainingJobsForTestindex>	
-        		<alwaysSetIsIndexReadyToFalse>false</alwaysSetIsIndexReadyToFalse>
-        	</indexrequestserver>
-        </indexserver>
-    </harvester>
+  <harvester>
+    <indexserver>
+      <indexrequestserver>
+        <fileContainingJobsForTestindex>jobids.txt</fileContainingJobsForTestindex>
+        <alwaysSetIsIndexReadyToFalse>false</alwaysSetIsIndexReadyToFalse>
+      </indexrequestserver>
+    </indexserver>
+  </harvester>
 </settings>

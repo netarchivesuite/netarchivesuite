@@ -21,13 +21,13 @@
     </arcrepository>
   </archive>
   <common>
-      <database>
-        <driverclass>org.apache.derby.jdbc.EmbeddedDriver</driverclass>
-        <url>jdbc:derby:harvestdefinitionbasedir/fullhddb</url>
-        <backupInitHour>3</backupInitHour>
-        <specificsclass>dk.netarkivet.harvester.datamodel.DerbySpecifics</specificsclass>
-      </database>
-      <database/>
+    <database>
+      <driverclass>org.apache.derby.jdbc.EmbeddedDriver</driverclass>
+      <url>jdbc:derby:harvestdefinitionbasedir/fullhddb</url>
+      <backupInitHour>3</backupInitHour>
+      <specificsclass>dk.netarkivet.harvester.datamodel.DerbySpecifics</specificsclass>
+    </database>
+    <database />
     <monitorApplicationName>NA</monitorApplicationName>
     <replicas>
       <replica>
@@ -120,7 +120,7 @@
         <defaultMaxrate>100</defaultMaxrate>
         <defaultConfig>defaultconfig</defaultConfig>
       </domain>
-      <domain/>
+      <domain />
     </datamodel>
     <harvesting>
       <serverDir>server</serverDir>
@@ -132,23 +132,23 @@
       </heritrix>
     </harvesting>
     <scheduler>
-      <!-- one week in seconds  - time before jobs terminate -->
+      <!-- one week in seconds - time before jobs terminate -->
       <jobtimeouttime>604800</jobtimeouttime>
       <jobgenerationperiode>60</jobgenerationperiode>
       <jobGen>
-          <class>dk.netarkivet.harvester.scheduler.jobgen.DefaultJobGenerator</class>
-          <domainConfigSubsetSize>10000</domainConfigSubsetSize>
-          <config>
-              <splitByObjectLimit>false</splitByObjectLimit>
-              <maxRelativeSizeDifference>100</maxRelativeSizeDifference>
-              <minAbsoluteSizeDifference>2000</minAbsoluteSizeDifference>
-              <maxTotalSize>2000000</maxTotalSize>
-              <errorFactorPrevResult>10</errorFactorPrevResult>
-              <errorFactorBestGuess>20</errorFactorBestGuess>
-              <expectedAverageBytesPerObject>38000</expectedAverageBytesPerObject>
-              <maxDomainSize>5000</maxDomainSize>
-              <postponeUnregisteredChannel>true</postponeUnregisteredChannel>
-          </config>
+        <class>dk.netarkivet.harvester.scheduler.jobgen.DefaultJobGenerator</class>
+        <domainConfigSubsetSize>10000</domainConfigSubsetSize>
+        <config>
+          <splitByObjectLimit>false</splitByObjectLimit>
+          <maxRelativeSizeDifference>100</maxRelativeSizeDifference>
+          <minAbsoluteSizeDifference>2000</minAbsoluteSizeDifference>
+          <maxTotalSize>2000000</maxTotalSize>
+          <errorFactorPrevResult>10</errorFactorPrevResult>
+          <errorFactorBestGuess>20</errorFactorBestGuess>
+          <expectedAverageBytesPerObject>38000</expectedAverageBytesPerObject>
+          <maxDomainSize>5000</maxDomainSize>
+          <postponeUnregisteredChannel>true</postponeUnregisteredChannel>
+        </config>
       </jobGen>
     </scheduler>
   </harvester>
@@ -157,92 +157,92 @@
       <historySize>100</historySize>
     </logging>
   </monitor>
-<deploy>
-<jmxMonitorRolePassword>DetErIkkeVoresSkyld</jmxMonitorRolePassword>
-<numberOfHosts>13</numberOfHosts>
-<host1>
-<name>kb-prod-har-001.kb.dk</name>
-<jmxport>8100</jmxport>
-<jmxport>8101</jmxport>
-<jmxport>8102</jmxport>
-<jmxport>8103</jmxport>
-<jmxport>8104</jmxport>
-<jmxport>8105</jmxport>
-</host1>
-<host2>
-<name>kb-prod-bar-014.bitarkiv.kb.dk</name>
-<jmxport>8100</jmxport>
-<jmxport>8101</jmxport>
-</host2>
-<host3>
-<name>kb-prod-adm-001.kb.dk</name>
-<jmxport>8100</jmxport>
-<jmxport>8101</jmxport>
-<jmxport>8102</jmxport>
-<jmxport>8103</jmxport>
-<jmxport>8104</jmxport>
-</host3>
-<host4>
-<name>kb-prod-bar-013.bitarkiv.kb.dk</name>
-<jmxport>8100</jmxport>
-<jmxport>8101</jmxport>
-</host4>
-<host5>
-<name>sb-prod-bar-001.statsbiblioteket.dk</name>
-<jmxport>8100</jmxport>
-</host5>
-<host6>
-<name>kb-prod-bar-010.bitarkiv.kb.dk</name>
-<jmxport>8100</jmxport>
-<jmxport>8101</jmxport>
-</host6>
-<host7>
-<name>sb-prod-acs-001.statsbiblioteket.dk</name>
-<jmxport>8100</jmxport>
-</host7>
-<host8>
-<name>sb-prod-har-001.statsbiblioteket.dk</name>
-<jmxport>8100</jmxport>
-<jmxport>8101</jmxport>
-<jmxport>8102</jmxport>
-<jmxport>8103</jmxport>
-<jmxport>8104</jmxport>
-<jmxport>8105</jmxport>
-</host8>
-<host9>
-<name>sb-prod-har-002.statsbiblioteket.dk</name>
-<jmxport>8100</jmxport>
-<jmxport>8101</jmxport>
-<jmxport>8102</jmxport>
-<jmxport>8103</jmxport>
-<jmxport>8104</jmxport>
-<jmxport>8105</jmxport>
-</host9>
-<host10>
-<name>kb-prod-har-002.kb.dk</name>
-<jmxport>8100</jmxport>
-<jmxport>8101</jmxport>
-<jmxport>8102</jmxport>
-<jmxport>8103</jmxport>
-<jmxport>8104</jmxport>
-<jmxport>8105</jmxport>
-</host10>
-<host11>
-<name>kb-prod-bar-011.bitarkiv.kb.dk</name>
-<jmxport>8100</jmxport>
-<jmxport>8101</jmxport>
-</host11>
-<host12>
-<name>kb-prod-bar-012.bitarkiv.kb.dk</name>
-<jmxport>8100</jmxport>
-<jmxport>8101</jmxport>
-</host12>
-<host13>
-<name>kb-prod-acs-001.kb.dk</name>
-<jmxport>8100</jmxport>
-<jmxport>8101</jmxport>
-<jmxport>8102</jmxport>
-</host13>
-</deploy>
+  <deploy>
+    <jmxMonitorRolePassword>DetErIkkeVoresSkyld</jmxMonitorRolePassword>
+    <numberOfHosts>13</numberOfHosts>
+    <host1>
+      <name>kb-prod-har-001.kb.dk</name>
+      <jmxport>8100</jmxport>
+      <jmxport>8101</jmxport>
+      <jmxport>8102</jmxport>
+      <jmxport>8103</jmxport>
+      <jmxport>8104</jmxport>
+      <jmxport>8105</jmxport>
+    </host1>
+    <host2>
+      <name>kb-prod-bar-014.bitarkiv.kb.dk</name>
+      <jmxport>8100</jmxport>
+      <jmxport>8101</jmxport>
+    </host2>
+    <host3>
+      <name>kb-prod-adm-001.kb.dk</name>
+      <jmxport>8100</jmxport>
+      <jmxport>8101</jmxport>
+      <jmxport>8102</jmxport>
+      <jmxport>8103</jmxport>
+      <jmxport>8104</jmxport>
+    </host3>
+    <host4>
+      <name>kb-prod-bar-013.bitarkiv.kb.dk</name>
+      <jmxport>8100</jmxport>
+      <jmxport>8101</jmxport>
+    </host4>
+    <host5>
+      <name>sb-prod-bar-001.statsbiblioteket.dk</name>
+      <jmxport>8100</jmxport>
+    </host5>
+    <host6>
+      <name>kb-prod-bar-010.bitarkiv.kb.dk</name>
+      <jmxport>8100</jmxport>
+      <jmxport>8101</jmxport>
+    </host6>
+    <host7>
+      <name>sb-prod-acs-001.statsbiblioteket.dk</name>
+      <jmxport>8100</jmxport>
+    </host7>
+    <host8>
+      <name>sb-prod-har-001.statsbiblioteket.dk</name>
+      <jmxport>8100</jmxport>
+      <jmxport>8101</jmxport>
+      <jmxport>8102</jmxport>
+      <jmxport>8103</jmxport>
+      <jmxport>8104</jmxport>
+      <jmxport>8105</jmxport>
+    </host8>
+    <host9>
+      <name>sb-prod-har-002.statsbiblioteket.dk</name>
+      <jmxport>8100</jmxport>
+      <jmxport>8101</jmxport>
+      <jmxport>8102</jmxport>
+      <jmxport>8103</jmxport>
+      <jmxport>8104</jmxport>
+      <jmxport>8105</jmxport>
+    </host9>
+    <host10>
+      <name>kb-prod-har-002.kb.dk</name>
+      <jmxport>8100</jmxport>
+      <jmxport>8101</jmxport>
+      <jmxport>8102</jmxport>
+      <jmxport>8103</jmxport>
+      <jmxport>8104</jmxport>
+      <jmxport>8105</jmxport>
+    </host10>
+    <host11>
+      <name>kb-prod-bar-011.bitarkiv.kb.dk</name>
+      <jmxport>8100</jmxport>
+      <jmxport>8101</jmxport>
+    </host11>
+    <host12>
+      <name>kb-prod-bar-012.bitarkiv.kb.dk</name>
+      <jmxport>8100</jmxport>
+      <jmxport>8101</jmxport>
+    </host12>
+    <host13>
+      <name>kb-prod-acs-001.kb.dk</name>
+      <jmxport>8100</jmxport>
+      <jmxport>8101</jmxport>
+      <jmxport>8102</jmxport>
+    </host13>
+  </deploy>
 
 </settings>

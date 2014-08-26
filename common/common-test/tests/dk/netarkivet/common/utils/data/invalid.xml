@@ -2,12 +2,12 @@
 
 <dk>
   netarkivet>
-    <test>
-      <list1>item1</list1>
-      <list1>item2</list1>
-      <list1>item3</list1>
-      <q>what is the question</q>
-    </test>
-    <answer>42</answer>
-  </netarkivet>
+  <test>
+    <list1>item1</list1>
+    <list1>item2</list1>
+    <list1>item3</list1>
+    <q>what is the question</q>
+  </test>
+  <answer>42</answer>
+</netarkivet>
 </dk>

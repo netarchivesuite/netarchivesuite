@@ -1,18 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 
-	This file contains the default settings used by HTTPSRemoteFile class.
-
-	For documentation of the individual settings, please refer to the javadoc
-	for dk.netarkivet.common.distribute.HTTPSRemoteFile.java and 
-	dk.netarkivet.common.distribute.HTTPRemoteFile.java
--->
+<!-- This file contains the default settings used by HTTPSRemoteFile class. For documentation of the individual settings, 
+  please refer to the javadoc for dk.netarkivet.common.distribute.HTTPSRemoteFile.java and dk.netarkivet.common.distribute.HTTPRemoteFile.java -->
 <settings>
-    <common>
-        <remoteFile> <!-- HTTPS connection data-->
-            <port>8100</port>
-            <certificateKeyStore>conf/keystore</certificateKeyStore>
-            <certificateKeyStorePassword>1234</certificateKeyStorePassword>
-            <certificatePassword>1234</certificatePassword>
-        </remoteFile>
-    </common>
+  <common>
+    <remoteFile> <!-- HTTPS connection data -->
+      <port>8100</port>
+      <certificateKeyStore>conf/keystore</certificateKeyStore>
+      <certificateKeyStorePassword>1234</certificateKeyStorePassword>
+      <certificatePassword>1234</certificatePassword>
+    </remoteFile>
+  </common>
 </settings>

@@ -1,15 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 
-	This file contains the default settings used by the LocalArcRepositoryClient
-	class.
-
-	For documentation of the individual settings, please refer to the javadoc for
-	dk.netarkivet.common.distribute.arcrepository.LocalArcRepositoryClient.java 
--->
+<!-- This file contains the default settings used by the LocalArcRepositoryClient class. For documentation of the individual 
+  settings, please refer to the javadoc for dk.netarkivet.common.distribute.arcrepository.LocalArcRepositoryClient.java -->
 <settings>
-    <common>
-        <arcrepositoryClient>
-		<fileDir>ArcRepository</fileDir>
-        </arcrepositoryClient>
-    </common>
+  <common>
+    <arcrepositoryClient>
+      <fileDir>ArcRepository</fileDir>
+    </arcrepositoryClient>
+  </common>
 </settings>

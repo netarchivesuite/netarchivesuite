@@ -11,12 +11,12 @@
     </test>
     <answer>42</answer>
   </netarkivet>
-    <netarkivet>
-        <answer>43</answer>
-    </netarkivet>
-    <heroes>
-        <hero>Batman</hero>
-        <sidekick>Robin</sidekick>
-        <villain>Dr. Evil</villain>
-    </heroes>
+  <netarkivet>
+    <answer>43</answer>
+  </netarkivet>
+  <heroes>
+    <hero>Batman</hero>
+    <sidekick>Robin</sidekick>
+    <villain>Dr. Evil</villain>
+  </heroes>
 </dk>

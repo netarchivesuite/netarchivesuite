@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 
-	This file contains the default settings used by the JMSConnectionSunMQ class.
-
-	For documentation of the individual settings, please refer to the javadoc
-	for dk.netarkivet.common.distribute.JMSConnectionSunMQ.java
--->
+<!-- This file contains the default settings used by the JMSConnectionSunMQ class. For documentation of the individual settings, 
+  please refer to the javadoc for dk.netarkivet.common.distribute.JMSConnectionSunMQ.java -->
 <settings>
-    <common>
-        <jms> <!-- Connection data for JMS-->
-            <broker>localhost</broker>
-            <port>7676</port>
-        </jms>
-    </common>
+  <common>
+    <jms> <!-- Connection data for JMS -->
+      <broker>localhost</broker>
+      <port>7676</port>
+    </jms>
+  </common>
 </settings>

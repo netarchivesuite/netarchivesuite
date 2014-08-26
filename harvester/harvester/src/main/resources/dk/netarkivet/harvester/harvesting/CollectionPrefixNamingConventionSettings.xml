@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- This file contains the default settings used to initialize the 
-     ColllectionPrefixNamingConvention class. For documentation of the usage, please refer to the 
-     javadoc for dk.netarkivet.harvester.harvesting.ColllectionPrefixNamingConvention.java 
--->
+<!-- This file contains the default settings used to initialize the ColllectionPrefixNamingConvention class. For documentation 
+  of the usage, please refer to the javadoc for dk.netarkivet.harvester.harvesting.ColllectionPrefixNamingConvention.java -->
 <settings>
-    <harvester>
-        <harvesting>
-        	<heritrix>
-        		<archiveNaming>
-        		<collectionName>default-collection</collectionName>
-        		</archiveNaming>
-        	</heritrix>
-       	</harvesting>
-    </harvester>
+  <harvester>
+    <harvesting>
+      <heritrix>
+        <archiveNaming>
+          <collectionName>default-collection</collectionName>
+        </archiveNaming>
+      </heritrix>
+    </harvesting>
+  </harvester>
 </settings>

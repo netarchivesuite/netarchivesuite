@@ -5,12 +5,12 @@
     <description>Default Profile</description>
     <operator>Admin</operator>
     <organization>Netarkivet.dk</organization>
-    <audience/>
+    <audience />
     <date>20051107204648</date>
   </meta>
   <controller>
     <string name="settings-directory">settings</string>
-    <string name="disk-path"/>
+    <string name="disk-path" />
     <string name="logs-path">logs</string>
     <string name="checkpoints-path">checkpoints</string>
     <string name="state-path">state</string>
@@ -31,26 +31,26 @@
       <integer name="max-trans-hops">5</integer>
 
       <newObject name="exclude-filter" class="org.archive.crawler.filter.OrFilter">
-                <boolean name="enabled">true</boolean>
-                <boolean name="if-matches-return">true</boolean>
-                <map name="filters">
-                    <newObject name="Test" class="org.archive.crawler.filter.URIRegExpFilter">
-                        <boolean name="enabled">true</boolean>
-                        <boolean name="if-match-return">false</boolean>
+        <boolean name="enabled">true</boolean>
+        <boolean name="if-matches-return">true</boolean>
+        <map name="filters">
+          <newObject name="Test" class="org.archive.crawler.filter.URIRegExpFilter">
+            <boolean name="enabled">true</boolean>
+            <boolean name="if-match-return">false</boolean>
 
-<!--   <string name="regexp">(dns:|http://netarkivet.dk/(robots.txt|.*(ArcUtils.[0-9].[0-1].*|.*-da.php)))</string> -->
-                        <string name="regexp">http://netarkivet.dk/(.*-.[0-9].[2-9].*|netarkivet_alm/.*-en.php)</string>
-                    </newObject>
-		    <newObject name="pathdepth" class="org.archive.crawler.filter.PathDepthFilter">
-		      <boolean name="enabled">true</boolean>
-		      <integer name="max-path-depth">20</integer>
-		      <boolean name="path-less-or-equal-return">false</boolean>
-		    </newObject>
-		    <newObject name="pathologicalpath" class="org.archive.crawler.filter.PathologicalPathFilter">
-		      <boolean name="enabled">true</boolean>
-		      <integer name="repetitions">3</integer>
-		    </newObject>
-                </map>
+            <!-- <string name="regexp">(dns:|http://netarkivet.dk/(robots.txt|.*(ArcUtils.[0-9].[0-1].*|.*-da.php)))</string> -->
+            <string name="regexp">http://netarkivet.dk/(.*-.[0-9].[2-9].*|netarkivet_alm/.*-en.php)</string>
+          </newObject>
+          <newObject name="pathdepth" class="org.archive.crawler.filter.PathDepthFilter">
+            <boolean name="enabled">true</boolean>
+            <integer name="max-path-depth">20</integer>
+            <boolean name="path-less-or-equal-return">false</boolean>
+          </newObject>
+          <newObject name="pathologicalpath" class="org.archive.crawler.filter.PathologicalPathFilter">
+            <boolean name="enabled">true</boolean>
+            <integer name="repetitions">3</integer>
+          </newObject>
+        </map>
       </newObject>
 
       <newObject name="force-accept-filter" class="org.archive.crawler.filter.OrFilter">
@@ -64,7 +64,7 @@
         <boolean name="enabled">true</boolean>
         <boolean name="if-match-return">true</boolean>
         <string name="use-default-patterns">All</string>
-        <string name="regexp"/>
+        <string name="regexp" />
       </newObject>
 
       <newObject name="transitiveFilter" class="org.archive.crawler.filter.TransclusionFilter">
@@ -82,7 +82,7 @@
     <newObject name="robots-honoring-policy" class="org.archive.crawler.datamodel.RobotsHonoringPolicy">
       <string name="type">ignore</string>
       <boolean name="masquerade">false</boolean>
-      <text name="custom-robots"/>
+      <text name="custom-robots" />
       <stringList name="user-agents">
       </stringList>
     </newObject>
@@ -96,7 +96,7 @@
       <integer name="total-bandwidth-usage-KB-sec">0</integer>
       <integer name="max-per-host-bandwidth-usage-KB-sec">0</integer>
       <string name="queue-assignment-policy">org.archive.crawler.frontier.HostnameQueueAssignmentPolicy</string>
-      <string name="force-queue-assignment"/>
+      <string name="force-queue-assignment" />
       <boolean name="pause-at-start">false</boolean>
       <boolean name="pause-at-finish">false</boolean>
       <boolean name="recovery-log-enabled">true</boolean>
@@ -144,7 +144,7 @@
         <boolean name="override-logger">false</boolean>
         <boolean name="recheck-scope">true</boolean>
         <boolean name="block-all">false</boolean>
-        <string name="block-by-regexp"/>
+        <string name="block-by-regexp" />
       </newObject>
       <newObject name="Preprocessor" class="org.archive.crawler.prefetch.PreconditionEnforcer">
         <boolean name="enabled">true</boolean>
@@ -157,53 +157,53 @@
     </map>
 
     <!-- Heritrix fetch processors -->
-        <map name="fetch-processors">
-            <newObject name="DNS" class="org.archive.crawler.fetcher.FetchDNS">
-                <boolean name="enabled">true</boolean>
-		<newObject name="DNS#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
-          		<map name="rules">
-          		</map>
-		</newObject>
-                <boolean name="accept-non-dns-resolves">false</boolean>
-		<boolean name="digest-content">true</boolean>
-		<string name="digest-algorithm">sha1</string>
+    <map name="fetch-processors">
+      <newObject name="DNS" class="org.archive.crawler.fetcher.FetchDNS">
+        <boolean name="enabled">true</boolean>
+        <newObject name="DNS#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
+          <map name="rules">
+          </map>
+        </newObject>
+        <boolean name="accept-non-dns-resolves">false</boolean>
+        <boolean name="digest-content">true</boolean>
+        <string name="digest-algorithm">sha1</string>
 
-            </newObject>
-            <newObject name="HTTP" class="org.archive.crawler.fetcher.FetchHTTP">
-                <boolean name="enabled">true</boolean>
-                <newObject name="HTTP#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
-          		<map name="rules">
-          		</map>
-		</newObject>
-                <newObject name="midfetch-decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
-			<map name="rules">
-          		</map>	
-		</newObject>
-		<integer name="timeout-seconds">1200</integer>
-                <integer name="sotimeout-ms">20000</integer>
-                <integer name="fetch-bandwidth">0</integer>
-                <long name="max-length-bytes">0</long>
-                <boolean name="ignore-cookies">false</boolean>
-                <boolean name="use-bdb-for-cookies">true</boolean>
-                <string name="load-cookies-from-file"/>
-                <string name="save-cookies-to-file"/>
-                <string name="trust-level">open</string>
-                <stringList name="accept-headers">
-                </stringList>
-                <string name="http-proxy-host"/>
-                <string name="http-proxy-port"/>
-                <string name="default-encoding">ISO-8859-1</string>
-		<boolean name="digest-content">true</boolean>
-		<string name="digest-algorithm">sha1</string>
-		<boolean name="send-if-modified-since">true</boolean>
-		<boolean name="send-if-none-match">true</boolean>
-                <boolean name="send-connection-close">true</boolean>
-                <boolean name="send-referer">true</boolean>
-                <boolean name="send-range">false</boolean>
-		<string name="bind-address"/>
-    </newObject>
-        </map> <!-- end of Heritrix Fetch processors -->
-               
+      </newObject>
+      <newObject name="HTTP" class="org.archive.crawler.fetcher.FetchHTTP">
+        <boolean name="enabled">true</boolean>
+        <newObject name="HTTP#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
+          <map name="rules">
+          </map>
+        </newObject>
+        <newObject name="midfetch-decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
+          <map name="rules">
+          </map>
+        </newObject>
+        <integer name="timeout-seconds">1200</integer>
+        <integer name="sotimeout-ms">20000</integer>
+        <integer name="fetch-bandwidth">0</integer>
+        <long name="max-length-bytes">0</long>
+        <boolean name="ignore-cookies">false</boolean>
+        <boolean name="use-bdb-for-cookies">true</boolean>
+        <string name="load-cookies-from-file" />
+        <string name="save-cookies-to-file" />
+        <string name="trust-level">open</string>
+        <stringList name="accept-headers">
+        </stringList>
+        <string name="http-proxy-host" />
+        <string name="http-proxy-port" />
+        <string name="default-encoding">ISO-8859-1</string>
+        <boolean name="digest-content">true</boolean>
+        <string name="digest-algorithm">sha1</string>
+        <boolean name="send-if-modified-since">true</boolean>
+        <boolean name="send-if-none-match">true</boolean>
+        <boolean name="send-connection-close">true</boolean>
+        <boolean name="send-referer">true</boolean>
+        <boolean name="send-range">false</boolean>
+        <string name="bind-address" />
+      </newObject>
+    </map> <!-- end of Heritrix Fetch processors -->
+
     <map name="extract-processors">
       <newObject name="ExtractorHTTP" class="org.archive.crawler.extractor.ExtractorHTTP">
         <boolean name="enabled">true</boolean>
@@ -235,11 +235,11 @@
     </map>
     <map name="write-processors">
 
-    <newObject name="DeDuplicator" class="is.hi.bok.deduplicator.DeDuplicator">
+      <newObject name="DeDuplicator" class="is.hi.bok.deduplicator.DeDuplicator">
         <boolean name="enabled">false</boolean>
         <map name="filters">
         </map>
-        <string name="index-location"/>
+        <string name="index-location" />
         <string name="matching-method">By URL</string>
         <boolean name="try-equivalent">false</boolean>
         <boolean name="change-content-size">false</boolean>
@@ -247,11 +247,11 @@
         <string name="filter-mode">Blacklist</string>
         <string name="analysis-mode">None</string>
         <string name="log-level">SEVERE</string>
-        <string name="origin"/>
+        <string name="origin" />
         <string name="origin-handling">Use index information</string>
         <boolean name="stats-per-host">true</boolean>
-    </newObject>
-    <newObject name="Archiver" class="org.archive.crawler.writer.ARCWriterProcessor">
+      </newObject>
+      <newObject name="Archiver" class="org.archive.crawler.writer.ARCWriterProcessor">
         <boolean name="enabled">true</boolean>
         <map name="filters">
         </map>
@@ -280,21 +280,21 @@
         </map>
         <boolean name="override-logger">false</boolean>
         <boolean name="seed-redirects-new-seed">true</boolean>
-        
+
         <map name="scope-rejected-url-filters">
         </map>
       </newObject>
 
-    <newObject name="Scheduler" class="org.archive.crawler.postprocessor.FrontierScheduler">
+      <newObject name="Scheduler" class="org.archive.crawler.postprocessor.FrontierScheduler">
         <boolean name="enabled">true</boolean>
         <map name="filters">
         </map>
       </newObject>
-    <newObject name="ContentSize" class="dk.netarkivet.harvester.harvesting.ContentSizeAnnotationPostProcessor">
+      <newObject name="ContentSize" class="dk.netarkivet.harvester.harvesting.ContentSizeAnnotationPostProcessor">
         <boolean name="enabled">true</boolean>
         <map name="filters">
         </map>
-    </newObject>
+      </newObject>
 
     </map>
     <map name="loggers">
@@ -302,7 +302,7 @@
         <integer name="interval-seconds">20</integer>
       </newObject>
     </map>
-    <string name="recover-path"/>
+    <string name="recover-path" />
     <boolean name="checkpoint-copy-bdbje-logs">true</boolean>
     <boolean name="recover-retain-failures">false</boolean>
     <newObject name="credential-store" class="org.archive.crawler.datamodel.CredentialStore">

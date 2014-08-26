@@ -4,13 +4,13 @@
     <name>Simple</name>
     <description>Profile: Simple crawl</description>
     <operator>Admin</operator>
-    <organization/>
-    <audience/>
+    <organization />
+    <audience />
     <date>20041124125141</date>
   </meta>
   <controller>
     <string name="settings-directory">settings</string>
-    <string name="disk-path"/>
+    <string name="disk-path" />
     <string name="logs-path">logs</string>
     <string name="checkpoints-path">checkpoints</string>
     <string name="state-path">state</string>
@@ -43,7 +43,7 @@
         <boolean name="enabled">true</boolean>
         <boolean name="if-match-return">true</boolean>
         <string name="use-default-patterns">All</string>
-        <string name="regexp"/>
+        <string name="regexp" />
       </newObject>
       <newObject name="transitiveFilter" class="org.archive.crawler.filter.TransclusionFilter">
         <boolean name="enabled">true</boolean>
@@ -59,7 +59,7 @@
     <newObject name="robots-honoring-policy" class="org.archive.crawler.datamodel.RobotsHonoringPolicy">
       <string name="type">classic</string>
       <boolean name="masquerade">false</boolean>
-      <text name="custom-robots"/>
+      <text name="custom-robots" />
       <stringList name="user-agents">
       </stringList>
     </newObject>
@@ -73,7 +73,7 @@
       <integer name="preference-embed-hops">1</integer>
       <integer name="host-valence">1</integer>
       <boolean name="ip-politeness">false</boolean>
-      <string name="force-queue-assignment"/>
+      <string name="force-queue-assignment" />
       <integer name="total-bandwidth-usage-KB-sec">0</integer>
       <integer name="max-per-host-bandwidth-usage-KB-sec">0</integer>
       <integer name="host-queues-memory-capacity">200</integer>
@@ -103,7 +103,7 @@
         </map>
         <boolean name="recheck-scope">true</boolean>
         <boolean name="block-all">false</boolean>
-        <string name="block-by-regexp"/>
+        <string name="block-by-regexp" />
       </newObject>
       <newObject name="Preprocessor" class="org.archive.crawler.prefetch.PreconditionEnforcer">
         <boolean name="enabled">true</boolean>
@@ -122,12 +122,12 @@
       <newObject name="HTTP" class="org.archive.crawler.fetcher.FetchHTTP">
 
         <boolean name="enabled">true</boolean>
-        <!--Elements relevant for DeDupFetch only-->
+        <!--Elements relevant for DeDupFetch only -->
         <string name="mime-filter">^text/.*</string>
         <string name="filter-mode">Blacklist</string>
         <string name="decision-scheme">Timestamp only</string>
-        <string name="index-location"/>
-        <!--Elements relevant for both FetchHTTP and DeDupFetch-->
+        <string name="index-location" />
+        <!--Elements relevant for both FetchHTTP and DeDupFetch -->
 
         <map name="filters">
         </map>
@@ -136,13 +136,13 @@
         <integer name="timeout-seconds">1200</integer>
         <integer name="sotimeout-ms">20000</integer>
         <long name="max-length-bytes">0</long>
-        <string name="load-cookies-from-file"/>
-        <string name="save-cookies-to-file"/>
+        <string name="load-cookies-from-file" />
+        <string name="save-cookies-to-file" />
         <string name="trust-level">open</string>
         <stringList name="accept-headers">
         </stringList>
-        <string name="http-proxy-host"/>
-        <string name="http-proxy-port"/>
+        <string name="http-proxy-host" />
+        <string name="http-proxy-port" />
         <string name="default-encoding">ISO-8859-1</string>
         <boolean name="sha1-content">true</boolean>
       </newObject>
@@ -178,11 +178,11 @@
     </map>
     <map name="write-processors">
 
-    <newObject name="DeDuplicator" class="is.hi.bok.deduplicator.DeDuplicator">
+      <newObject name="DeDuplicator" class="is.hi.bok.deduplicator.DeDuplicator">
         <boolean name="enabled">false</boolean>
         <map name="filters">
         </map>
-        <string name="index-location"/>
+        <string name="index-location" />
         <string name="matching-method">By URL</string>
         <boolean name="try-equivalent">false</boolean>
         <boolean name="change-content-size">false</boolean>
@@ -190,11 +190,11 @@
         <string name="filter-mode">Blacklist</string>
         <string name="analysis-mode">None</string>
         <string name="log-level">SEVERE</string>
-        <string name="origin"/>
-        <string name="origin-handling"/>
+        <string name="origin" />
+        <string name="origin-handling" />
         <boolean name="stats-per-host">true</boolean>
-    </newObject>
-    <newObject name="Archiver" class="org.archive.crawler.writer.ARCWriterProcessor">
+      </newObject>
+      <newObject name="Archiver" class="org.archive.crawler.writer.ARCWriterProcessor">
         <boolean name="enabled">true</boolean>
         <map name="filters">
         </map>
@@ -234,7 +234,7 @@
         <integer name="interval-seconds">20</integer>
       </newObject>
     </map>
-    <string name="recover-path"/>
+    <string name="recover-path" />
     <boolean name="recover-retain-failures">false</boolean>
     <newObject name="credential-store" class="org.archive.crawler.datamodel.CredentialStore">
       <map name="credentials">

@@ -4,13 +4,13 @@
     <name>default</name>
     <description>Default Profile</description>
     <operator>Admin</operator>
-    <organization/>
-    <audience/>
+    <organization />
+    <audience />
     <date>20050506114725</date>
   </meta>
   <controller>
     <string name="settings-directory">settings</string>
-    <string name="disk-path"/>
+    <string name="disk-path" />
     <string name="logs-path">logs</string>
     <string name="checkpoints-path">checkpoints</string>
     <string name="state-path">state</string>
@@ -46,7 +46,7 @@
         <boolean name="enabled">true</boolean>
         <boolean name="if-match-return">true</boolean>
         <string name="use-default-patterns">All</string>
-        <string name="regexp"/>
+        <string name="regexp" />
       </newObject>
       <newObject name="transitiveFilter" class="org.archive.crawler.filter.TransclusionFilter">
         <boolean name="enabled">true</boolean>
@@ -62,7 +62,7 @@
     <newObject name="robots-honoring-policy" class="org.archive.crawler.datamodel.RobotsHonoringPolicy">
       <string name="type">classic</string>
       <boolean name="masquerade">false</boolean>
-      <text name="custom-robots"/>
+      <text name="custom-robots" />
       <stringList name="user-agents">
       </stringList>
     </newObject>
@@ -76,7 +76,7 @@
       <integer name="preference-embed-hops">1</integer>
       <integer name="host-valence">1</integer>
       <boolean name="ip-politeness">false</boolean>
-      <string name="force-queue-assignment"/>
+      <string name="force-queue-assignment" />
       <integer name="total-bandwidth-usage-KB-sec">0</integer>
       <integer name="max-per-host-bandwidth-usage-KB-sec">0</integer>
       <integer name="host-queues-memory-capacity">200</integer>
@@ -107,7 +107,7 @@
         </map>
         <boolean name="recheck-scope">true</boolean>
         <boolean name="block-all">false</boolean>
-        <string name="block-by-regexp"/>
+        <string name="block-by-regexp" />
       </newObject>
       <newObject name="Preprocessor" class="org.archive.crawler.prefetch.PreconditionEnforcer">
         <boolean name="enabled">true</boolean>
@@ -133,13 +133,13 @@
         <integer name="timeout-seconds">1200</integer>
         <integer name="sotimeout-ms">20000</integer>
         <long name="max-length-bytes">0</long>
-        <string name="load-cookies-from-file"/>
-        <string name="save-cookies-to-file"/>
+        <string name="load-cookies-from-file" />
+        <string name="save-cookies-to-file" />
         <string name="trust-level">open</string>
         <stringList name="accept-headers">
         </stringList>
-        <string name="http-proxy-host"/>
-        <string name="http-proxy-port"/>
+        <string name="http-proxy-host" />
+        <string name="http-proxy-port" />
         <string name="default-encoding">ISO-8859-1</string>
         <boolean name="sha1-content">true</boolean>
         <boolean name="send-connection-close">true</boolean>
@@ -157,8 +157,8 @@
         <boolean name="enabled">true</boolean>
         <map name="filters">
         </map>
-	<boolean name="treat-frames-as-embed-links">true</boolean>
-	<boolean name="ignore-form-action-urls">true</boolean>
+        <boolean name="treat-frames-as-embed-links">true</boolean>
+        <boolean name="ignore-form-action-urls">true</boolean>
       </newObject>
       <newObject name="ExtractorCSS" class="org.archive.crawler.extractor.ExtractorCSS">
         <boolean name="enabled">true</boolean>
@@ -210,16 +210,16 @@
         </map>
       </newObject>
 
-    <newObject name="Scheduler" class="org.archive.crawler.postprocessor.FrontierScheduler">
+      <newObject name="Scheduler" class="org.archive.crawler.postprocessor.FrontierScheduler">
         <boolean name="enabled">true</boolean>
         <map name="filters">
         </map>
       </newObject>
-    <newObject name="ContentSize" class="dk.netarkivet.harvester.harvesting.ContentSizeAnnotationPostProcessor">
+      <newObject name="ContentSize" class="dk.netarkivet.harvester.harvesting.ContentSizeAnnotationPostProcessor">
         <boolean name="enabled">true</boolean>
         <map name="filters">
         </map>
-    </newObject>
+      </newObject>
 
     </map>
     <map name="loggers">
@@ -227,7 +227,7 @@
         <integer name="interval-seconds">20</integer>
       </newObject>
     </map>
-    <string name="recover-path"/>
+    <string name="recover-path" />
     <boolean name="recover-retain-failures">false</boolean>
     <newObject name="credential-store" class="org.archive.crawler.datamodel.CredentialStore">
       <map name="credentials">

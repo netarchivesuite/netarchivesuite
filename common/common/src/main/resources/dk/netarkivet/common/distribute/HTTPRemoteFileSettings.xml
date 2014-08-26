@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 
-	This file contains the default settings used by the HTTPRemoteFile class.
-
-	For documentation of the individual settings, please refer to the javadoc
-	for dk.netarkivet.common.distribute.HTTPRemoteFile.java
--->
+<!-- This file contains the default settings used by the HTTPRemoteFile class. For documentation of the individual settings, 
+  please refer to the javadoc for dk.netarkivet.common.distribute.HTTPRemoteFile.java -->
 <settings>
-    <common>
-        <!-- HTTP connection data-->
-        <remoteFile>
-            <port>8100</port>
-        </remoteFile>
-    </common>
+  <common>
+    <!-- HTTP connection data -->
+    <remoteFile>
+      <port>8100</port>
+    </remoteFile>
+  </common>
 </settings>

@@ -1,18 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 
-    This file contains the default settings used by the harvester module.
-
-    For documentation of the individual settings, please refer to the
-    javadoc for dk.netarkivet.harvester.HarvesterSettings.java
--->
+<!-- This file contains the default settings used by the harvester module. For documentation of the individual settings, 
+  please refer to the javadoc for dk.netarkivet.harvester.HarvesterSettings.java -->
 <settings>
-    <harvester>
-        <harvesting>
-            <metadata>
-                <heritrixFilePattern>.*(\.xml|\.txt|\.log|\.out)</heritrixFilePattern>
-                <reportFilePattern>.*-report.txt</reportFilePattern>
-                <logFilePattern>.*(\.log|\.out)</logFilePattern>
-            </metadata>
-        </harvesting>
-    </harvester>
+  <harvester>
+    <harvesting>
+      <metadata>
+        <heritrixFilePattern>.*(\.xml|\.txt|\.log|\.out)</heritrixFilePattern>
+        <reportFilePattern>.*-report.txt</reportFilePattern>
+        <logFilePattern>.*(\.log|\.out)</logFilePattern>
+      </metadata>
+    </harvesting>
+  </harvester>
 </settings>

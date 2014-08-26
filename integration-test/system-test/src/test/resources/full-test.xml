@@ -1,10 +1,10 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
 
-<suite name="Full Functional Acceptance Test" verbose="1" >
+<suite name="Full Functional Acceptance Test" verbose="1">
   <test name="Full test">
     <groups>
       <run>
-        <include name="functest"/>
+        <include name="functest" />
       </run>
     </groups>
 

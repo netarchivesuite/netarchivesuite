@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <crawl-settings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="heritrix_settings.xsd">
   <meta>
-    <name/>
-    <description/>
+    <name />
+    <description />
     <operator>Admin</operator>
-    <organization/>
-    <audience/>
+    <organization />
+    <audience />
     <date>20050506164537</date>
   </meta>
   <object name="frontier">

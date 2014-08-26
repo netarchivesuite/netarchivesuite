@@ -1,19 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
-       default-init-method="init">
+  default-init-method="init">
 
-<!--  
-		Macro-like substitutions for the overall file: 
-			wayback.basedir: default top level directory for all index, state, 
-			locationdb storage.
--->
+  <!-- Macro-like substitutions for the overall file: wayback.basedir: default top level directory for all index, state, 
+    locationdb storage. -->
 
-  <bean class=
-       "org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
     <property name="properties">
       <value>
         wayback.basedir=/tmp/wayback
@@ -21,36 +16,25 @@
     </property>
   </bean>
 
- <!--
-    Only tested with CDXCollection, possibly work with other collection types
-    as well.
- -->
- <import resource="CDXCollection.xml"/> 
+  <!-- Only tested with CDXCollection, possibly work with other collection types as well. -->
+  <import resource="CDXCollection.xml" />
 
-<!--
-    This is the only AccessPoint defined by default within this wayback.xml
-    Spring configuration file, providing an ArchivalURL Replay UI.
-
-    This AccessPoint currently will provide access only from the machine
-    running Tomcat. To provide external access, replace "localhost.archive.org"
-    with your fully qualified hostname of the computer running Tomcat.
--->
-  <import resource="ArchivalUrlReplay.xml"/>
+  <!-- This is the only AccessPoint defined by default within this wayback.xml Spring configuration file, providing an ArchivalURL 
+    Replay UI. This AccessPoint currently will provide access only from the machine running Tomcat. To provide external access, 
+    replace "localhost.archive.org" with your fully qualified hostname of the computer running Tomcat. -->
+  <import resource="ArchivalUrlReplay.xml" />
   <bean name="8080:wayback" class="org.archive.wayback.webapp.AccessPoint">
     <property name="collection" ref="localcdxcollection" />
     <property name="replay" ref="archivalurlreplay" />
     <property name="query">
       <bean class="org.archive.wayback.query.Renderer">
-        <property name="captureJsp"
-                  value="/WEB-INF/query/CalendarResults.jsp" />
+        <property name="captureJsp" value="/WEB-INF/query/CalendarResults.jsp" />
       </bean>
     </property>
 
     <property name="uriConverter">
-      <bean
-          class="org.archive.wayback.archivalurl.ArchivalUrlResultURIConverter">
-        <property name="replayURIPrefix"
-                  value="http://localhost.archive.org:8080/wayback/"/>
+      <bean class="org.archive.wayback.archivalurl.ArchivalUrlResultURIConverter">
+        <property name="replayURIPrefix" value="http://localhost.archive.org:8080/wayback/" />
       </bean>
     </property>
 
@@ -65,24 +49,17 @@
 
 
 
-<!--
-    The following AccessPoint inherits all configuration from the 8080:wayback
-    AccessPoint, but provides a Proxy Replay UI to the same collection. These
-    two access points can be used simultaneously on the same Tomcat 
-    installation.
-  
-    Note: using this AccessPoint requires adding a "Connector" on port 8090
-         in your Tomcat's server.xml file.
- -->
- 
-  <import resource="ProxyReplay.xml"/>
+  <!-- The following AccessPoint inherits all configuration from the 8080:wayback AccessPoint, but provides a Proxy Replay 
+    UI to the same collection. These two access points can be used simultaneously on the same Tomcat installation. Note: using 
+    this AccessPoint requires adding a "Connector" on port 8090 in your Tomcat's server.xml file. -->
+
+  <import resource="ProxyReplay.xml" />
   <bean name="8090" parent="8080:wayback">
     <property name="urlRoot" value="http://localhost:8090/" />
     <property name="replay" ref="proxyreplay" />
     <property name="uriConverter">
       <bean class="org.archive.wayback.proxy.RedirectResultURIConverter">
-        <property name="redirectURI"
-          value="http://localhost.archive.org:8090/jsp/QueryUI/Redirect.jsp" />
+        <property name="redirectURI" value="http://localhost.archive.org:8090/jsp/QueryUI/Redirect.jsp" />
       </bean>
     </property>
     <property name="parser">

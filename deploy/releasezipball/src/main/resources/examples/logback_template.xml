@@ -1,82 +1,75 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-/*
- *
- * This is a template for the logback configuration file.
- * The following tags should be replaced (automatically replaced by deploy):
- * APPID
- *
--->
+<!-- /* * * This is a template for the logback configuration file. * The following tags should be replaced (automatically 
+  replaced by deploy): * APPID * -->
 <configuration>
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <filter class="ch.qos.logback.classic.filter.LevelFilter">
-            <level>WARN</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>NEUTRAL</onMismatch>
-        </filter>
-        <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{64} - %msg%n</pattern>
-        </encoder>
-    </appender>
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <filter class="ch.qos.logback.classic.filter.LevelFilter">
+      <level>WARN</level>
+      <onMatch>ACCEPT</onMatch>
+      <onMismatch>NEUTRAL</onMismatch>
+    </filter>
+    <encoder>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{64} - %msg%n</pattern>
+    </encoder>
+  </appender>
 
-    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <filter class="ch.qos.logback.classic.filter.LevelFilter">
-            <level>INFO</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>NEUTRAL</onMismatch>
-        </filter>
-        <file>./log/APPID.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!-- daily rollover -->
-            <fileNamePattern>./log/APPID.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-            <timeBasedFileNamingAndTriggeringPolicy
-                class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <!-- or whenever the file size reaches 10MB -->
-                <maxFileSize>10MB</maxFileSize>
-            </timeBasedFileNamingAndTriggeringPolicy>
-            <!-- keep 30 days' worth of history -->
-            <maxHistory>30</maxHistory>
-        </rollingPolicy>
-        <encoder>
-            <charset>UTF-8</charset>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{64} - %msg%n</pattern>
-        </encoder>
-    </appender>
+  <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <filter class="ch.qos.logback.classic.filter.LevelFilter">
+      <level>INFO</level>
+      <onMatch>ACCEPT</onMatch>
+      <onMismatch>NEUTRAL</onMismatch>
+    </filter>
+    <file>./log/APPID.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <!-- daily rollover -->
+      <fileNamePattern>./log/APPID.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+      <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+        <!-- or whenever the file size reaches 10MB -->
+        <maxFileSize>10MB</maxFileSize>
+      </timeBasedFileNamingAndTriggeringPolicy>
+      <!-- keep 30 days' worth of history -->
+      <maxHistory>30</maxHistory>
+    </rollingPolicy>
+    <encoder>
+      <charset>UTF-8</charset>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{64} - %msg%n</pattern>
+    </encoder>
+  </appender>
 
-    <appender name="MONITOR" class="dk.netarkivet.monitor.logging.CachingSLF4JAppender">
-        <filter class="ch.qos.logback.classic.filter.LevelFilter">
-            <level>INFO</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>NEUTRAL</onMismatch>
-        </filter>
-        <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{64} - %msg%n</pattern>
-    </appender>
+  <appender name="MONITOR" class="dk.netarkivet.monitor.logging.CachingSLF4JAppender">
+    <filter class="ch.qos.logback.classic.filter.LevelFilter">
+      <level>INFO</level>
+      <onMatch>ACCEPT</onMatch>
+      <onMismatch>NEUTRAL</onMismatch>
+    </filter>
+    <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{64} - %msg%n</pattern>
+  </appender>
 
-    <logger name="org" level="WARN" />
-    <logger name="org.archive" level="WARN" />
-    <logger name="org.archive.io.arc" level="ERROR" />
-    <logger name="org.archive.crawler.filer" level="ERROR" />
-    <logger name="org.archive.crawler.framework.Filter" level="ERROR" />
-    <logger name="org.archive.crawler.framework.ToeThread" level="ERROR" />
-    <logger name="org.archive.crawler.prefetch.QuotaEnforcer" level="WARN" />
+  <logger name="org" level="WARN" />
+  <logger name="org.archive" level="WARN" />
+  <logger name="org.archive.io.arc" level="ERROR" />
+  <logger name="org.archive.crawler.filer" level="ERROR" />
+  <logger name="org.archive.crawler.framework.Filter" level="ERROR" />
+  <logger name="org.archive.crawler.framework.ToeThread" level="ERROR" />
+  <logger name="org.archive.crawler.prefetch.QuotaEnforcer" level="WARN" />
 
-    <logger name="org.apache.jsp" level="INFO" />
-    <logger name="org.mortbay.jetty.servlet.ServletHandler" level="WARN" />
+  <logger name="org.apache.jsp" level="INFO" />
+  <logger name="org.mortbay.jetty.servlet.ServletHandler" level="WARN" />
 
-    <logger name="dk.netarkivet" level="INFO" />
-    <logger name="dk.netarkivet.common.distribute.JMSConnection" level="INFO" />
+  <logger name="dk.netarkivet" level="INFO" />
+  <logger name="dk.netarkivet.common.distribute.JMSConnection" level="INFO" />
 
-    <logger name="sun.jmx" level="WARN" />
+  <logger name="sun.jmx" level="WARN" />
 
-    <logger name="Harvest Definition" level="ERROR" />
-    <logger name="Bit Preservation" level="ERROR" />
-    <logger name="History" level="ERROR" />
-    <logger name="QA" level="ERROR" />
-    <logger name="Status" level="ERROR" />
+  <logger name="Harvest Definition" level="ERROR" />
+  <logger name="Bit Preservation" level="ERROR" />
+  <logger name="History" level="ERROR" />
+  <logger name="QA" level="ERROR" />
+  <logger name="Status" level="ERROR" />
 
-    <root level="DEBUG">
-        <appender-ref ref="STDOUT" />
-        <appender-ref ref="FILE" />
-        <appender-ref ref="MONITOR" />
-    </root>
+  <root level="DEBUG">
+    <appender-ref ref="STDOUT" />
+    <appender-ref ref="FILE" />
+    <appender-ref ref="MONITOR" />
+  </root>
 </configuration>

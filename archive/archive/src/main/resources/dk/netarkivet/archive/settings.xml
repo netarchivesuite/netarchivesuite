@@ -1,70 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 
-	This file contains the default settings used by the archive module.
-
-	For documentation of the individual settings, please refer to the
-	javadoc for dk.netarkivet.archive.ArchiveSettings.java
--->
+<!-- This file contains the default settings used by the archive module. For documentation of the individual settings, please 
+  refer to the javadoc for dk.netarkivet.archive.ArchiveSettings.java -->
 <settings>
-    <archive>
-        <arcrepository>
-            <baseDir>.</baseDir>
-            <uploadRetries>1</uploadRetries>
-        </arcrepository>
-        <bitarchive>
-            <!-- The default value amounts to 1907 MBytes. -->
-            <minSpaceLeft>2000000000</minSpaceLeft>
-            <!-- The default value amounts to a little less than 10 MBytes. -->
-            <minSpaceRequired>10000000</minSpaceRequired>
-            <baseFileDir>bitarchive</baseFileDir>
-            <!-- The default amounts to one second -->
-            <heartbeatFrequency>1000</heartbeatFrequency>
-            <!-- The default amounts to one minute -->
-            <acceptableHeartbeatDelay>60000</acceptableHeartbeatDelay>
-            <!-- The default value amounts to 14 days. -->
-            <batchMessageTimeout>1209600000</batchMessageTimeout>
-            <!-- The maximum time for handling a GetChecksumMessage. -->
-            <singleChecksumTimeout>600000</singleChecksumTimeout>
-            <thisCredentials>examplecredentials</thisCredentials>
-        </bitarchive>
-        <checksum>
-            <baseDir>checksum</baseDir>
-            <!-- The default value amount of 1 MBytes. -->
-            <minSpaceLeft>1000000</minSpaceLeft>
-            <archive><class>dk.netarkivet.archive.checksum.FileChecksumArchive</class></archive>
-        </checksum>
-        <bitpreservation>
-            <baseDir>bitpreservation</baseDir>
-            <!-- Alternatively DatabaseBasedActiveBitPreservation. -->
-            <class>dk.netarkivet.archive.arcrepository.bitpreservation.FileBasedActiveBitPreservation</class>
-        </bitpreservation>
-        <admin>
-            <class>dk.netarkivet.archive.arcrepositoryadmin.UpdateableAdminData</class>
-            <database>
-                <!-- This database cannot be embedded. -->
-                <class>dk.netarkivet.archive.arcrepositoryadmin.DerbyServerSpecifics</class>
-                <!-- The url is default: jbdc:derby://localhost:1527/admindb -->
-                <baseUrl>jdbc:derby</baseUrl>
-                <machine>localhost</machine>
-                <port>1527</port>
-                <dir>admindb</dir>
-                <username></username>
-                <password></password>
-                <!-- Reconnect to database default: 5 tries with 5 min between-->
-                <reconnectMaxRetries>5</reconnectMaxRetries>
-                <reconnectRetryDelay>300000</reconnectRetryDelay>
-                <validityCheckTimeout>0</validityCheckTimeout>
-                <pool>
-                    <minSize>5</minSize>
-                    <maxSize>10</maxSize>
-                    <acquireInc>5</acquireInc>
-                    <maxStm>0</maxStm>
-                    <maxStmPerConn>0</maxStmPerConn>
-                    <idleConnTestPeriod>30</idleConnTestPeriod>
-                    <idleConnTestQuery></idleConnTestQuery>
-                    <idleConnTestOnCheckin>true</idleConnTestOnCheckin>
-                </pool>
-            </database>
-        </admin>
-    </archive>
+  <archive>
+    <arcrepository>
+      <baseDir>.</baseDir>
+      <uploadRetries>1</uploadRetries>
+    </arcrepository>
+    <bitarchive>
+      <!-- The default value amounts to 1907 MBytes. -->
+      <minSpaceLeft>2000000000</minSpaceLeft>
+      <!-- The default value amounts to a little less than 10 MBytes. -->
+      <minSpaceRequired>10000000</minSpaceRequired>
+      <baseFileDir>bitarchive</baseFileDir>
+      <!-- The default amounts to one second -->
+      <heartbeatFrequency>1000</heartbeatFrequency>
+      <!-- The default amounts to one minute -->
+      <acceptableHeartbeatDelay>60000</acceptableHeartbeatDelay>
+      <!-- The default value amounts to 14 days. -->
+      <batchMessageTimeout>1209600000</batchMessageTimeout>
+      <!-- The maximum time for handling a GetChecksumMessage. -->
+      <singleChecksumTimeout>600000</singleChecksumTimeout>
+      <thisCredentials>examplecredentials</thisCredentials>
+    </bitarchive>
+    <checksum>
+      <baseDir>checksum</baseDir>
+      <!-- The default value amount of 1 MBytes. -->
+      <minSpaceLeft>1000000</minSpaceLeft>
+      <archive>
+        <class>dk.netarkivet.archive.checksum.FileChecksumArchive</class>
+      </archive>
+    </checksum>
+    <bitpreservation>
+      <baseDir>bitpreservation</baseDir>
+      <!-- Alternatively DatabaseBasedActiveBitPreservation. -->
+      <class>dk.netarkivet.archive.arcrepository.bitpreservation.FileBasedActiveBitPreservation</class>
+    </bitpreservation>
+    <admin>
+      <class>dk.netarkivet.archive.arcrepositoryadmin.UpdateableAdminData</class>
+      <database>
+        <!-- This database cannot be embedded. -->
+        <class>dk.netarkivet.archive.arcrepositoryadmin.DerbyServerSpecifics</class>
+        <!-- The url is default: jbdc:derby://localhost:1527/admindb -->
+        <baseUrl>jdbc:derby</baseUrl>
+        <machine>localhost</machine>
+        <port>1527</port>
+        <dir>admindb</dir>
+        <username></username>
+        <password></password>
+        <!-- Reconnect to database default: 5 tries with 5 min between -->
+        <reconnectMaxRetries>5</reconnectMaxRetries>
+        <reconnectRetryDelay>300000</reconnectRetryDelay>
+        <validityCheckTimeout>0</validityCheckTimeout>
+        <pool>
+          <minSize>5</minSize>
+          <maxSize>10</maxSize>
+          <acquireInc>5</acquireInc>
+          <maxStm>0</maxStm>
+          <maxStmPerConn>0</maxStmPerConn>
+          <idleConnTestPeriod>30</idleConnTestPeriod>
+          <idleConnTestQuery></idleConnTestQuery>
+          <idleConnTestOnCheckin>true</idleConnTestOnCheckin>
+        </pool>
+      </database>
+    </admin>
+  </archive>
 </settings>

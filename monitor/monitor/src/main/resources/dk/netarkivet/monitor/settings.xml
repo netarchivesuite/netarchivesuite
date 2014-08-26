@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <settings>
-    <monitor>
-        <jmxUsername>monitorRole</jmxUsername>
-        <jmxPassword>JMX_MONITOR_ROLE_PASSWORD_PLACEHOLDER</jmxPassword>
-        <jmxProxyTimeout>500</jmxProxyTimeout>
-        <logging>
-            <historySize>100</historySize>
-        </logging>
-        <reregisterDelay>1</reregisterDelay>
-        <preferredMaxJMXLogLength>70</preferredMaxJMXLogLength>
-        <absoluteMaxJMXLogLength>100</absoluteMaxJMXLogLength>
-    </monitor>
+  <monitor>
+    <jmxUsername>monitorRole</jmxUsername>
+    <jmxPassword>JMX_MONITOR_ROLE_PASSWORD_PLACEHOLDER</jmxPassword>
+    <jmxProxyTimeout>500</jmxProxyTimeout>
+    <logging>
+      <historySize>100</historySize>
+    </logging>
+    <reregisterDelay>1</reregisterDelay>
+    <preferredMaxJMXLogLength>70</preferredMaxJMXLogLength>
+    <absoluteMaxJMXLogLength>100</absoluteMaxJMXLogLength>
+  </monitor>
 </settings>
