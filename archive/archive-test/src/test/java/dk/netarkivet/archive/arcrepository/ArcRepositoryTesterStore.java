@@ -71,7 +71,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 @SuppressWarnings({ "deprecation", "unchecked" })
 public class ArcRepositoryTesterStore {
 
-	private UseTestRemoteFile rf = new UseTestRemoteFile();
+    private UseTestRemoteFile rf = new UseTestRemoteFile();
 
     /** The directory from where we upload the ARC files. */
     private static final File ORIGINALS_DIR = new File(ServerSetUp.TEST_DIR, "originals");
@@ -173,8 +173,8 @@ public class ArcRepositoryTesterStore {
     @Ignore("FIXME")
     // FIXME: test temporarily disabled
     public void testStoreFileAlreadyStored() throws InterruptedException, IOException {
-    	LogbackRecorder lr = LogbackRecorder.startRecorder();
-    	// Set listeners
+        LogbackRecorder lr = LogbackRecorder.startRecorder();
+        // Set listeners
         JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
         GenericMessageListener gmlAnyBa = new GenericMessageListener();
         con.setListener(Channels.getAnyBa(), gmlAnyBa);
@@ -225,7 +225,8 @@ public class ArcRepositoryTesterStore {
 
         // Check log for message
         lr.assertLogContains("Should have the log message",
-        		"Retrying store of already known file '" + STORABLE_FILE.getName() + "'," + " Already completed: " + true);
+                "Retrying store of already known file '" + STORABLE_FILE.getName() + "'," + " Already completed: "
+                        + true);
         lr.stopRecorder();
     }
 
@@ -347,7 +348,7 @@ public class ArcRepositoryTesterStore {
     @Ignore("FIXME")
     // FIXME: test temporarily disabled
     public void testStoreFailedFile() throws IOException {
-    	LogbackRecorder lr = LogbackRecorder.startRecorder();
+        LogbackRecorder lr = LogbackRecorder.startRecorder();
         JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
         GenericMessageListener gmlAnyBa = new GenericMessageListener();
         con.setListener(Channels.getAnyBa(), gmlAnyBa);
@@ -402,7 +403,7 @@ public class ArcRepositoryTesterStore {
 
         // Check log for message
         lr.assertLogContains("Should have the log message",
-        		"Retrying store of already known file '" + STORABLE_FILE.getName() + "', Already completed: " + false);
+                "Retrying store of already known file '" + STORABLE_FILE.getName() + "', Already completed: " + false);
         lr.stopRecorder();
     }
 
@@ -414,7 +415,7 @@ public class ArcRepositoryTesterStore {
     @Ignore("FIXME")
     // FIXME: test temporarily disabled
     public void testStoreUploadedFile() throws IOException {
-    	LogbackRecorder lr = LogbackRecorder.startRecorder();
+        LogbackRecorder lr = LogbackRecorder.startRecorder();
         JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
         GenericMessageListener gmlAnyBa = new GenericMessageListener();
         con.setListener(Channels.getAnyBa(), gmlAnyBa);
@@ -469,7 +470,7 @@ public class ArcRepositoryTesterStore {
 
         // Check log for message
         lr.assertLogContains("Should have the log message",
-        		"Retrying store of already known file '" + STORABLE_FILE.getName() + "', Already completed: " + false);
+                "Retrying store of already known file '" + STORABLE_FILE.getName() + "', Already completed: " + false);
         lr.stopRecorder();
     }
 
@@ -481,7 +482,7 @@ public class ArcRepositoryTesterStore {
     @Ignore("FIXME")
     // FIXME: test temporarily disabled
     public void testStoreStartedFile() throws IOException {
-    	LogbackRecorder lr = LogbackRecorder.startRecorder();
+        LogbackRecorder lr = LogbackRecorder.startRecorder();
         JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
         GenericMessageListener gmlAnyBa = new GenericMessageListener();
         con.setListener(Channels.getAnyBa(), gmlAnyBa);
@@ -534,7 +535,7 @@ public class ArcRepositoryTesterStore {
 
         // Check log for message
         lr.assertLogContains("Should have the log message",
-        		"Retrying store of already known file '" + STORABLE_FILE.getName() + "', Already completed: " + false);
+                "Retrying store of already known file '" + STORABLE_FILE.getName() + "', Already completed: " + false);
         lr.stopRecorder();
     }
 

@@ -71,29 +71,31 @@ import dk.netarkivet.testutils.XmlAsserts;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
 /**
- * Tests various aspects of launching Heritrix and Heritrix' capabilities.
- * Note that some of these tests require much heap space, so JVM parameter
- * -Xmx512M may be required.
+ * Tests various aspects of launching Heritrix and Heritrix' capabilities. Note
+ * that some of these tests require much heap space, so JVM parameter -Xmx512M
+ * may be required.
  */
-@SuppressWarnings({ "deprecation", "unused", "unchecked"})
+@SuppressWarnings({ "deprecation", "unused", "unchecked" })
 public class HeritrixLauncherTester {
 
     private MoveTestFiles mtf;
     private File dummyLuceneIndex;
 
     public HeritrixLauncherTester() {
-        mtf = new MoveTestFiles (TestInfo.CRAWLDIR_ORIGINALS_DIR, TestInfo.WORKING_DIR);
+        mtf = new MoveTestFiles(TestInfo.CRAWLDIR_ORIGINALS_DIR, TestInfo.WORKING_DIR);
     }
 
     @Before
     public void setUp() throws IOException {
         mtf.setUp();
         dummyLuceneIndex = mtf.newTmpDir();
-        // Uncommented to avoid reference to archive module from harvester module.
-        // 
-        // FIXME This makes HeritrixLauncherTester#testSetupOrderFile fail, as it requires 
+        // Uncommented to avoid reference to archive module from harvester
+        // module.
+        //
+        // FIXME This makes HeritrixLauncherTester#testSetupOrderFile fail, as
+        // it requires
         // this method to be run
-        //dk.netarkivet.archive.indexserver.LuceneUtils.makeDummyIndex(dummyLuceneIndex);
+        // dk.netarkivet.archive.indexserver.LuceneUtils.makeDummyIndex(dummyLuceneIndex);
     }
 
     @After
@@ -102,17 +104,17 @@ public class HeritrixLauncherTester {
     }
 
     /**
-     * Centralized place for tests to construct a HeritrixLauncher.
-     *  - Constructs the given crawlDir.
-     *  - Copies the given order.xml to the proper place in the given crawlDir.
-     *  - Copies the standard seeds.txt to the proper place in the given crawlDir.
-     *  - Constructs a HeritrixLauncher and returns it
-     *  @param origOrderXml original order.xml
-     *  @param indexDir
-     *  @return a HeritrixLauncher used by (most) tests.
+     * Centralized place for tests to construct a HeritrixLauncher. - Constructs
+     * the given crawlDir. - Copies the given order.xml to the proper place in
+     * the given crawlDir. - Copies the standard seeds.txt to the proper place
+     * in the given crawlDir. - Constructs a HeritrixLauncher and returns it
+     * 
+     * @param origOrderXml
+     *            original order.xml
+     * @param indexDir
+     * @return a HeritrixLauncher used by (most) tests.
      */
-    private HeritrixLauncher getHeritrixLauncher(File origOrderXml,
-                                                 File indexDir) {
+    private HeritrixLauncher getHeritrixLauncher(File origOrderXml, File indexDir) {
         File origSeeds = TestInfo.SEEDS_FILE;
         File crawlDir = TestInfo.HERITRIX_TEMP_DIR;
         crawlDir.mkdirs();
@@ -120,15 +122,13 @@ public class HeritrixLauncherTester {
         File seedsTxt = new File(crawlDir, "seeds.txt");
         FileUtils.copyFile(origOrderXml, orderXml);
         FileUtils.copyFile(origSeeds, seedsTxt);
-        HeritrixFiles files = new HeritrixFiles(crawlDir,
-                new JobInfoTestImpl(Long.parseLong(TestInfo.ARC_JOB_ID),
-                                    Long.parseLong(TestInfo.ARC_HARVEST_ID)));
+        HeritrixFiles files = new HeritrixFiles(crawlDir, new JobInfoTestImpl(Long.parseLong(TestInfo.ARC_JOB_ID),
+                Long.parseLong(TestInfo.ARC_HARVEST_ID)));
         // If deduplicationMode != NO_DEDUPLICATION
         // write the zipped index to the indexdir inside the crawldir
-        if (orderXml.exists() && orderXml.length() > 0 &&    
-            HeritrixTemplate.isDeduplicationEnabledInTemplate(XmlUtils.getXmlDoc(orderXml))) {
-            assertNotNull("Must have a non-null index when deduplication is enabled",
-                          indexDir);
+        if (orderXml.exists() && orderXml.length() > 0
+                && HeritrixTemplate.isDeduplicationEnabledInTemplate(XmlUtils.getXmlDoc(orderXml))) {
+            assertNotNull("Must have a non-null index when deduplication is enabled", indexDir);
             files.setIndexDir(indexDir);
             assertTrue("Indexdir should exist now ", files.getIndexDir().isDirectory());
             assertTrue("Indexdir should contain real contents now", files.getIndexDir().listFiles().length > 0);
@@ -136,12 +136,14 @@ public class HeritrixLauncherTester {
 
         return HeritrixLauncherFactory.getInstance(files);
     }
+
     /**
-     * Check that all urls in the given array are listed in the crawl log.
-     * Calls fail() at the first url that is not found or if the crawl log is not
+     * Check that all urls in the given array are listed in the crawl log. Calls
+     * fail() at the first url that is not found or if the crawl log is not
      * found.
      *
-     * @param urls An array of url strings
+     * @param urls
+     *            An array of url strings
      * @throws IOException
      */
     protected void assertAllUrlsInCrawlLog(String[] urls) throws IOException {
@@ -158,11 +160,11 @@ public class HeritrixLauncherTester {
     }
 
     /**
-     * Check that no urls in the given array are listed in the crawl log.
-     * Calls fail() at the first url that is found or if the crawl log is not
-     * found.
+     * Check that no urls in the given array are listed in the crawl log. Calls
+     * fail() at the first url that is found or if the crawl log is not found.
      *
-     * @param urls An array of url strings
+     * @param urls
+     *            An array of url strings
      * @throws IOException
      */
     protected void assertNoUrlsInCrawlLog(String[] urls) throws IOException {
@@ -173,8 +175,7 @@ public class HeritrixLauncherTester {
             if (crawlLog.indexOf(s) != -1) {
                 System.out.println("Crawl log: ");
                 System.out.println(crawlLog);
-                fail("URL " + s + " found in crawl log at " + crawlLog.indexOf(
-                        s));
+                fail("URL " + s + " found in crawl log at " + crawlLog.indexOf(s));
             }
         }
     }
@@ -185,9 +186,7 @@ public class HeritrixLauncherTester {
     @Test
     public void testStartMissingOrderFile() {
         try {
-            HeritrixLauncherFactory.getInstance(
-                    new HeritrixFiles(mtf.newTmpDir(), 
-                            new JobInfoTestImpl(42L, 42L)));
+            HeritrixLauncherFactory.getInstance(new HeritrixFiles(mtf.newTmpDir(), new JobInfoTestImpl(42L, 42L)));
             fail("Expected IOFailure");
         } catch (ArgumentNotValid e) {
             // expected case
@@ -210,7 +209,8 @@ public class HeritrixLauncherTester {
     }
 
     /**
-     * Test that the launcher handles heritrix dying on a bad order file correctly.
+     * Test that the launcher handles heritrix dying on a bad order file
+     * correctly.
      */
     @Test
     public void testStartBadOrderFile() {
@@ -218,7 +218,8 @@ public class HeritrixLauncherTester {
     }
 
     /**
-     * Test that the launcher handles heritrix dying on a order file missing the disk node correctly.
+     * Test that the launcher handles heritrix dying on a order file missing the
+     * disk node correctly.
      */
     @Test
     public void testStartMissingDiskFieldOrderFile() {
@@ -226,8 +227,8 @@ public class HeritrixLauncherTester {
     }
 
     /**
-     * Test that the launcher handles heritrix dying on a order file 
-     * missing the arcs-path node correctly.
+     * Test that the launcher handles heritrix dying on a order file missing the
+     * arcs-path node correctly.
      */
 
     @Test
@@ -237,7 +238,8 @@ public class HeritrixLauncherTester {
     }
 
     /**
-     * Test that the launcher handles heritrix dying on a order file missing the seedsfile node correctly.
+     * Test that the launcher handles heritrix dying on a order file missing the
+     * seedsfile node correctly.
      */
     @Test
     public void testStartMissingSeedsfileOrderFile() {
@@ -245,7 +247,8 @@ public class HeritrixLauncherTester {
     }
 
     /**
-     * Test that the launcher handles heritrix dying on a order file missing the seedsfile node correctly.
+     * Test that the launcher handles heritrix dying on a order file missing the
+     * seedsfile node correctly.
      */
     @Test
     @Ignore("was commented out")
@@ -269,7 +272,7 @@ public class HeritrixLauncherTester {
             // expected case since a searched node could not be found in the bad
             // XML-order-file!
         } catch (IllegalState e) {
-         // expected case since a searched node could not be found in the bad
+            // expected case since a searched node could not be found in the bad
             // XML-order-file!
         }
     }
@@ -289,41 +292,39 @@ public class HeritrixLauncherTester {
         }
     }
 
-    /** Test that starting a job does not throw an Exception.
-     * Will fail if tests/dk/netarkivet/jmxremote.password has other rights 
-     * than -r------ 
+    /**
+     * Test that starting a job does not throw an Exception. Will fail if
+     * tests/dk/netarkivet/jmxremote.password has other rights than -r------
      * 
      * FIXME Fails on Hudson
+     * 
      * @throws NoSuchFieldException
-     * @throws IllegalAccessException */
+     * @throws IllegalAccessException
+     */
     @Test
     @Ignore("Heritrix jar file not found")
-    public void failingTestStartJob()
-            throws NoSuchFieldException, IllegalAccessException {
-        //HeritrixLauncher hl = getHeritrixLauncher(TestInfo.ORDER_FILE, null);
-        //HeritrixLauncher hl = new HeritrixLauncher();
-        //HeritrixFiles files =
-        //        (HeritrixFiles) ReflectUtils.getPrivateField(hl.getClass(),
-        //                                                     "files").get(hl);
-        //ReflectUtils.getPrivateField(hl.getClass(),
-        //		"heritrixController").set(hl, new TestCrawlController(files));
-        Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS, 
+    public void failingTestStartJob() throws NoSuchFieldException, IllegalAccessException {
+        // HeritrixLauncher hl = getHeritrixLauncher(TestInfo.ORDER_FILE, null);
+        // HeritrixLauncher hl = new HeritrixLauncher();
+        // HeritrixFiles files =
+        // (HeritrixFiles) ReflectUtils.getPrivateField(hl.getClass(),
+        // "files").get(hl);
+        // ReflectUtils.getPrivateField(hl.getClass(),
+        // "heritrixController").set(hl, new TestCrawlController(files));
+        Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS,
                 "dk.netarkivet.harvester.harvesting.HeritrixLauncherTester$TestCrawlController");
-        HeritrixLauncher hl = getHeritrixLauncher(
-                TestInfo.ORDER_FILE_WITH_DEDUPLICATION_DISABLED, 
-                null);
+        HeritrixLauncher hl = getHeritrixLauncher(TestInfo.ORDER_FILE_WITH_DEDUPLICATION_DISABLED, null);
         hl.doCrawl();
-        Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS, 
+        Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS,
                 "dk.netarkivet.harvester.harvesting.JMXHeritrixController");
 
     }
 
     /**
      * Test that the HostnameQueueAssignmentPolicy returns correct queue-names
-     * for different URLs.
-     * The HostnameQueueAssignmentPolicy is the default in heritrix
-     * - our own DomainnameQueueAssignmentPolicy extends this one and expects 
-     * that it returns the right values
+     * for different URLs. The HostnameQueueAssignmentPolicy is the default in
+     * heritrix - our own DomainnameQueueAssignmentPolicy extends this one and
+     * expects that it returns the right values
      */
     @Test
     public void testHostnameQueueAssignmentPolicy() {
@@ -332,36 +333,39 @@ public class HeritrixLauncherTester {
         CandidateURI cauri;
         try {
             /**
-             * First test tests that www.netarkivet.dk goes into a queue called: www.netarkivet.dk
+             * First test tests that www.netarkivet.dk goes into a queue called:
+             * www.netarkivet.dk
              */
             uri = UURIFactory.getInstance("http://www.netarkivet.dk/foo/bar.cgi");
             cauri = new CandidateURI(uri);
-            assertEquals("Should get host name from normal URL",
-                         hqap.getClassKey(new CrawlController(),cauri),"www.netarkivet.dk");
+            assertEquals("Should get host name from normal URL", hqap.getClassKey(new CrawlController(), cauri),
+                    "www.netarkivet.dk");
 
             /**
-             * Second test tests that foo.www.netarkivet.dk goes into a queue called: foo.www.netarkivet.dk
+             * Second test tests that foo.www.netarkivet.dk goes into a queue
+             * called: foo.www.netarkivet.dk
              */
             uri = UURIFactory.getInstance("http://foo.www.netarkivet.dk/foo/bar.cgi");
             cauri = new CandidateURI(uri);
-            assertEquals("Should get host name from non-www URL",
-                         hqap.getClassKey(new CrawlController(),cauri),"foo.www.netarkivet.dk");
+            assertEquals("Should get host name from non-www URL", hqap.getClassKey(new CrawlController(), cauri),
+                    "foo.www.netarkivet.dk");
 
             /**
-             * Third test tests that a https-URL goes into a queuename called 
+             * Third test tests that a https-URL goes into a queuename called
              * www.domainname#443 (default syntax)
              */
             uri = UURIFactory.getInstance("https://www.netarkivet.dk/foo/bar.php");
             cauri = new CandidateURI(uri);
             assertEquals("Should get port-extended host name from HTTPS URL",
-                         hqap.getClassKey(new CrawlController(),cauri),"www.netarkivet.dk#443");
+                    hqap.getClassKey(new CrawlController(), cauri), "www.netarkivet.dk#443");
         } catch (URIException e) {
             fail("Should not throw exception on valid URI's");
         }
     }
 
     /**
-     * Test that the DomainnameQueueAssignmentPolicy returns correct queue-names for different URL's
+     * Test that the DomainnameQueueAssignmentPolicy returns correct queue-names
+     * for different URL's
      */
     @Test
     public void testDomainnameQueueAssignmentPolicy() {
@@ -370,84 +374,77 @@ public class HeritrixLauncherTester {
         CandidateURI cauri;
         try {
             /**
-             * First test tests that www.netarkivet.dk goes into a queue called: netarkivet.dk
+             * First test tests that www.netarkivet.dk goes into a queue called:
+             * netarkivet.dk
              */
             uri = UURIFactory.getInstance("http://www.netarkivet.dk/foo/bar.cgi");
             cauri = new CandidateURI(uri);
-            assertEquals("Should get base domain name from normal URL",
-                         dqap.getClassKey(new CrawlController(),cauri),"netarkivet.dk");
+            assertEquals("Should get base domain name from normal URL", dqap.getClassKey(new CrawlController(), cauri),
+                    "netarkivet.dk");
 
             /**
-             * Second test tests that foo.www.netarkivet.dk goes into a queue called: netarkivet.dk
+             * Second test tests that foo.www.netarkivet.dk goes into a queue
+             * called: netarkivet.dk
              */
             uri = UURIFactory.getInstance("http://foo.www.netarkivet.dk/foo/bar.cgi");
             cauri = new CandidateURI(uri);
             assertEquals("Should get base domain name from non-www URL",
-                         dqap.getClassKey(new CrawlController(),cauri),"netarkivet.dk");
+                    dqap.getClassKey(new CrawlController(), cauri), "netarkivet.dk");
 
             /**
-             * Third test tests that a https-URL goes into a queuename called domainname (default syntax)
+             * Third test tests that a https-URL goes into a queuename called
+             * domainname (default syntax)
              */
             uri = UURIFactory.getInstance("https://www.netarkivet.dk/foo/bar.php");
             cauri = new CandidateURI(uri);
-            assertEquals("HTTPS should go into domains queue as well",
-                         "netarkivet.dk",
-                         dqap.getClassKey(new CrawlController(),cauri));
+            assertEquals("HTTPS should go into domains queue as well", "netarkivet.dk",
+                    dqap.getClassKey(new CrawlController(), cauri));
         } catch (URIException e) {
             fail("Should not throw exception on valid URI's");
         }
     }
 
     /**
-     * Tests, that the Heritrix order files is setup correctly.
-     * FIXME: Changed from " testSetupOrderFile()" 
-     * to FailingtestSetupOrderFile(), as it fails without dummyIndex
+     * Tests, that the Heritrix order files is setup correctly. FIXME: Changed
+     * from " testSetupOrderFile()" to FailingtestSetupOrderFile(), as it fails
+     * without dummyIndex
      *
      * @throws NoSuchFieldException
      * @throws IllegalAccessException
      */
     @Test
     @Ignore("apparently fails without dummyIndex")
-    public void FailingtestSetupOrderFile()  throws NoSuchFieldException, IllegalAccessException {
+    public void FailingtestSetupOrderFile() throws NoSuchFieldException, IllegalAccessException {
 
         /**
-         * Check the DeduplicationType.NO_DEDUPLICATION type of deduplication is setup correctly
+         * Check the DeduplicationType.NO_DEDUPLICATION type of deduplication is
+         * setup correctly
          */
 
-        HeritrixLauncher hl = getHeritrixLauncher(
-                TestInfo.ORDER_FILE_WITH_DEDUPLICATION_DISABLED, 
-                null);
+        HeritrixLauncher hl = getHeritrixLauncher(TestInfo.ORDER_FILE_WITH_DEDUPLICATION_DISABLED, null);
         hl.setupOrderfile(hl.getHeritrixFiles());
 
-        File orderFile = new File (TestInfo.HERITRIX_TEMP_DIR, "order.xml");
+        File orderFile = new File(TestInfo.HERITRIX_TEMP_DIR, "order.xml");
         Document doc = XmlUtils.getXmlDoc(orderFile);
         /* check, that deduplicator is not enabled in the order */
-        assertFalse("Should not have deduplication enabled",
-                    HeritrixTemplate.isDeduplicationEnabledInTemplate(doc));
+        assertFalse("Should not have deduplication enabled", HeritrixTemplate.isDeduplicationEnabledInTemplate(doc));
 
         /**
-         * Check the DeduplicationType.DEDUPLICATION_USING_THE_DEDUPLICATOR
-         * type of deduplication is setup correctly
+         * Check the DeduplicationType.DEDUPLICATION_USING_THE_DEDUPLICATOR type
+         * of deduplication is setup correctly
          */
 
-        hl = getHeritrixLauncher(TestInfo.DEDUP_ORDER_FILE,
-                                 dummyLuceneIndex);
+        hl = getHeritrixLauncher(TestInfo.DEDUP_ORDER_FILE, dummyLuceneIndex);
         hl.setupOrderfile(hl.getHeritrixFiles());
 
         // check, that the deduplicator is present in the order
         doc = XmlUtils.getXmlDoc(orderFile);
-        assertTrue("Should have deduplication enabled",
-                   HeritrixTemplate.isDeduplicationEnabledInTemplate(doc));
-        XmlAsserts.assertNodeWithXpath(
-                doc, HeritrixTemplate.DEDUPLICATOR_XPATH);
-        XmlAsserts.assertNodeWithXpath(
-                doc, HeritrixTemplate.DEDUPLICATOR_INDEX_LOCATION_XPATH);
-        XmlAsserts.assertNodeTextInXpath(
-                "Should have set index to right directory",
-                doc, HeritrixTemplate.DEDUPLICATOR_INDEX_LOCATION_XPATH,
-                dummyLuceneIndex.getAbsolutePath());
+        assertTrue("Should have deduplication enabled", HeritrixTemplate.isDeduplicationEnabledInTemplate(doc));
+        XmlAsserts.assertNodeWithXpath(doc, HeritrixTemplate.DEDUPLICATOR_XPATH);
+        XmlAsserts.assertNodeWithXpath(doc, HeritrixTemplate.DEDUPLICATOR_INDEX_LOCATION_XPATH);
+        XmlAsserts.assertNodeTextInXpath("Should have set index to right directory", doc,
+                HeritrixTemplate.DEDUPLICATOR_INDEX_LOCATION_XPATH, dummyLuceneIndex.getAbsolutePath());
     }
-
 
     /**
      * Tests that HeritricLauncher will fail on an error in
@@ -457,20 +454,18 @@ public class HeritrixLauncherTester {
      */
     @Test
     @Ignore("fails in hudson")
-    public void failingTestFailOnInitialize()
-            throws NoSuchFieldException, IllegalAccessException {
-        Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS, 
+    public void failingTestFailOnInitialize() throws NoSuchFieldException, IllegalAccessException {
+        Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS,
                 "dk.netarkivet.harvester.harvesting.HeritrixLauncherTester$SucceedOnCleanupTestController");
-        HeritrixLauncher hl = getHeritrixLauncher(
-                TestInfo.ORDER_FILE_WITH_DEDUPLICATION_DISABLED, null);
+        HeritrixLauncher hl = getHeritrixLauncher(TestInfo.ORDER_FILE_WITH_DEDUPLICATION_DISABLED, null);
         try {
             hl.doCrawl();
             fail("HeritrixLanucher should throw an exception when it fails to initialize");
         } catch (IOFailure e) {
             assertTrue("Error message should be from initialiser", e.getMessage().contains("initialize"));
-            //expected
+            // expected
         }
-        Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS, 
+        Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS,
                 "dk.netarkivet.harvester.harvesting.JMXHeritrixController");
     }
 
@@ -483,19 +478,17 @@ public class HeritrixLauncherTester {
     @Test
     @Ignore("fails in hudson")
     public void failingTestFailOnCleanup() {
-        Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS, 
+        Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS,
                 "dk.netarkivet.harvester.harvesting.HeritrixLauncherTester$FailingTestController");
-        HeritrixLauncher hl = getHeritrixLauncher(
-                TestInfo.ORDER_FILE_WITH_DEDUPLICATION_DISABLED, null);
+        HeritrixLauncher hl = getHeritrixLauncher(TestInfo.ORDER_FILE_WITH_DEDUPLICATION_DISABLED, null);
         try {
             hl.doCrawl();
             fail("HeritrixLanucher should throw an exception when it fails to initialize");
         } catch (IOFailure e) {
-            assertTrue("Error message should be from cleanup", 
-                    e.getMessage().contains("cleanup"));
-            //expected
+            assertTrue("Error message should be from cleanup", e.getMessage().contains("cleanup"));
+            // expected
         }
-        Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS, 
+        Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS,
                 "dk.netarkivet.harvester.harvesting.JMXHeritrixController");
     }
 
@@ -509,19 +502,18 @@ public class HeritrixLauncherTester {
     @Test
     @Ignore("fails in hudson")
     public void failingTestFailDuringCrawl() {
-          Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS,
-          "dk.netarkivet.harvester.harvesting.HeritrixLauncherTester$FailDuringCrawlTestController");
-        HeritrixLauncher hl = getHeritrixLauncher(
-                TestInfo.ORDER_FILE_WITH_DEDUPLICATION_DISABLED, null);
+        Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS,
+                "dk.netarkivet.harvester.harvesting.HeritrixLauncherTester$FailDuringCrawlTestController");
+        HeritrixLauncher hl = getHeritrixLauncher(TestInfo.ORDER_FILE_WITH_DEDUPLICATION_DISABLED, null);
         hl.doCrawl();
-        Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS, 
+        Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS,
                 "dk.netarkivet.harvester.harvesting.JMXHeritrixController");
 
     }
 
     /**
-     * A test heritrixController which starts and stops a crawl cleanly but fails
-     * during the crawl itself.
+     * A test heritrixController which starts and stops a crawl cleanly but
+     * fails during the crawl itself.
      */
     public static class FailDuringCrawlTestController extends FailingTestController {
 
@@ -537,16 +529,14 @@ public class HeritrixLauncherTester {
 
         public void initialize() {
 
-
         }
 
         public void requestCrawlStart() throws IOFailure {
 
-
         }
 
         public boolean atFinish() {
-          return false;
+            return false;
         }
 
         public void beginCrawlStop() {
@@ -557,12 +547,12 @@ public class HeritrixLauncherTester {
         }
 
         public boolean crawlIsEnded() {
-           if (isEndedCalls >= 3) {
-               return true;
-           } else {
-               isEndedCalls++;
-               throw new IOFailure("Failure in crawlIsEnded");
-           }
+            if (isEndedCalls >= 3) {
+                return true;
+            } else {
+                isEndedCalls++;
+                throw new IOFailure("Failure in crawlIsEnded");
+            }
         }
     }
 
@@ -571,60 +561,61 @@ public class HeritrixLauncherTester {
      */
     public static class FailingTestController implements HeritrixController {
 
-        public FailingTestController(HeritrixFiles files) {};
+        public FailingTestController(HeritrixFiles files) {
+        };
 
         public void initialize() {
-            //TODO: implement method
+            // TODO: implement method
             throw new IOFailure("Failed to initialize");
         }
 
         public void requestCrawlStart() throws IOFailure {
-            //TODO: implement method
+            // TODO: implement method
             throw new IOFailure("Not implemented");
         }
 
         public void beginCrawlStop() {
-            //TODO: implement method
+            // TODO: implement method
             throw new IOFailure("Not implemented");
         }
 
         public void requestCrawlStop(String reason) {
-            //TODO: implement method
+            // TODO: implement method
             throw new IOFailure("Not implemented");
         }
 
         public boolean atFinish() {
-            //TODO: implement method
+            // TODO: implement method
             throw new IOFailure("Not implemented");
         }
 
         public boolean crawlIsEnded() {
-            //TODO: implement method
+            // TODO: implement method
             throw new IOFailure("Not implemented");
         }
 
         public int getActiveToeCount() {
-            //TODO: implement method
+            // TODO: implement method
             throw new IOFailure("Not implemented");
         }
 
         public long getQueuedUriCount() {
-            //TODO: implement method
+            // TODO: implement method
             throw new IOFailure("Not implemented");
         }
 
         public int getCurrentProcessedKBPerSec() {
-            //TODO: implement method
+            // TODO: implement method
             throw new IOFailure("Not implemented");
         }
 
         public String getProgressStats() {
-            //TODO: implement method
+            // TODO: implement method
             throw new IOFailure("Not implemented");
         }
 
         public boolean isPaused() {
-            //TODO: implement method
+            // TODO: implement method
             throw new IOFailure("Not implemented");
         }
 
@@ -633,7 +624,7 @@ public class HeritrixLauncherTester {
         }
 
         public String getHarvestInformation() {
-            //TODO: implement method
+            // TODO: implement method
             throw new IOFailure("Not implemented");
         }
     }
@@ -642,176 +633,237 @@ public class HeritrixLauncherTester {
      * A heritrix controller which fails on everything except cleanup
      */
     public static class SucceedOnCleanupTestController extends FailingTestController {
-        public SucceedOnCleanupTestController(HeritrixFiles files) {super(files);}
-        public void cleanup(){return;}
+        public SucceedOnCleanupTestController(HeritrixFiles files) {
+            super(files);
+        }
+
+        public void cleanup() {
+            return;
+        }
     }
 
-
-    /** A class that closely emulates CrawlController, except it never
-    * starts Heritrix.
-    */
+    /**
+     * A class that closely emulates CrawlController, except it never starts
+     * Heritrix.
+     */
     public static class TestCrawlController extends DirectHeritrixController {
-       private static final long serialVersionUID = 1L;
-       /**
-        * List of crawl status listeners.
-        *
-        * All iterations need to synchronize on this object if they're to avoid
-        * concurrent modification exceptions.
-        * See {@link java.util.Collections#synchronizedList(List)}.
-        */
-       private List<CrawlStatusListener> listeners
-       = new ArrayList<CrawlStatusListener>();
+        private static final long serialVersionUID = 1L;
+        /**
+         * List of crawl status listeners.
+         *
+         * All iterations need to synchronize on this object if they're to avoid
+         * concurrent modification exceptions. See
+         * {@link java.util.Collections#synchronizedList(List)}.
+         */
+        private List<CrawlStatusListener> listeners = new ArrayList<CrawlStatusListener>();
 
         public TestCrawlController(HeritrixFiles files) {
             super(files);
         }
 
         /**
-        * Register for CrawlStatus events.
-        *
-        * @param cl a class implementing the CrawlStatusListener interface
-        *
-        * @see CrawlStatusListener
-        */
-       public void addCrawlStatusListener(CrawlStatusListener cl) {
-           synchronized (this.listeners) {
-               this.listeners.add(cl);
-           }
-       }
-
-       /**
-        * Operator requested crawl begin
-        */
-       public void requestCrawlStart() {
-           new Thread() {
-               public void run() {
-                   for (CrawlStatusListener l : listeners) {
-                       l.crawlEnding("Fake over");
-                       l.crawlEnded("Fake all over");
-                   }
-               }
-           }.start();
-       }
-
-       /**
-        * Starting from nothing, set up CrawlController and associated
-        * classes to be ready for a first crawl.
-        *
-        * @param sH
-        * @throws InitializationException
-        */
-       public void initialize(SettingsHandler sH)
-       throws InitializationException {
-
-       }
-
-       public void requestCrawlStop(String test){
-
-       }
-
-       public Frontier getFrontier(){
-           return new TestFrontier();
-       }
-
-       /**
-        * Dummy frontier used by TestCrawlController
-        */
-       @SuppressWarnings("rawtypes")
-       class TestFrontier implements Frontier {
-
-           public void initialize(CrawlController crawlController)
-           throws FatalConfigurationException, IOException {}
-
-           public CrawlURI next() throws InterruptedException, EndedException {return null;}
-
-           public boolean isEmpty() {return false;}
-
-           public void schedule(CandidateURI candidateURI) {}
-
-           public void finished(CrawlURI crawlURI) {}
-
-           public long discoveredUriCount() {return 0;}
-
-           public long queuedUriCount() {return 0;}
-
-           public long finishedUriCount() {return 0;}
-
-           public long succeededFetchCount() {return 0;}
-
-           public long failedFetchCount() {return 0;}
-
-           public long disregardedUriCount() {return 0;}
-
-           public long totalBytesWritten() {return 0;}
-
-           public String oneLineReport() {return null;}
-
-           public String report() {return null;}
-
-           public void importRecoverLog(String s, boolean b) throws IOException {}
-
-           public FrontierMarker getInitialMarker(String s, boolean b) {return null;}
-
-           public ArrayList getURIsList(FrontierMarker frontierMarker, int i, boolean b)
-           throws InvalidFrontierMarkerException {return null;}
-
-           public long deleteURIs(String s) {return 0;}
-
-           public void deleted(CrawlURI crawlURI) {}
-
-           public void considerIncluded(UURI uuri) {}
-
-           public void kickUpdate() {}
-
-           public void pause() {}
-
-           public void unpause() {}
-
-           public void terminate() {}
-
-           public FrontierJournal getFrontierJournal() {return null;}
-
-           public String getClassKey(CandidateURI candidateURI) {return null;}
-
-           public void loadSeeds() {}
-
-           public String[] getReports() {return new String[0];}
-
-           //public void reportTo(String s, PrintWriter printWriter) throws IOException {}
-           public void reportTo(String s, PrintWriter printWriter) {}
-
-           public void reportTo(PrintWriter printWriter) throws IOException {}
-
-           public void singleLineReportTo(PrintWriter printWriter) throws IOException {}
-
-           public String singleLineReport() { return null;}
-
-           public String singleLineLegend(){ return null; }
-           public void start(){}
-           public Frontier.FrontierGroup getGroup(CrawlURI crawlURI) {
-               return null;
-           }
-           public float congestionRatio() {
-               return 0.0f;
-           }
-           public long averageDepth() {
-               return 0L;
-           }
-           public long deepestUri() {
-               return 0L;
-           }
-
-           public long deleteURIs(String arg0, String arg1) {
-        	   return 0L;
-           }
-
-        @Override
-        public void finalTasks() {
-            // TODO Auto-generated method stub
-            
+         * Register for CrawlStatus events.
+         *
+         * @param cl
+         *            a class implementing the CrawlStatusListener interface
+         *
+         * @see CrawlStatusListener
+         */
+        public void addCrawlStatusListener(CrawlStatusListener cl) {
+            synchronized (this.listeners) {
+                this.listeners.add(cl);
+            }
         }
 
+        /**
+         * Operator requested crawl begin
+         */
+        public void requestCrawlStart() {
+            new Thread() {
+                public void run() {
+                    for (CrawlStatusListener l : listeners) {
+                        l.crawlEnding("Fake over");
+                        l.crawlEnded("Fake all over");
+                    }
+                }
+            }.start();
+        }
 
-       }
-   };
+        /**
+         * Starting from nothing, set up CrawlController and associated classes
+         * to be ready for a first crawl.
+         *
+         * @param sH
+         * @throws InitializationException
+         */
+        public void initialize(SettingsHandler sH) throws InitializationException {
+
+        }
+
+        public void requestCrawlStop(String test) {
+
+        }
+
+        public Frontier getFrontier() {
+            return new TestFrontier();
+        }
+
+        /**
+         * Dummy frontier used by TestCrawlController
+         */
+        @SuppressWarnings("rawtypes")
+        class TestFrontier implements Frontier {
+
+            public void initialize(CrawlController crawlController) throws FatalConfigurationException, IOException {
+            }
+
+            public CrawlURI next() throws InterruptedException, EndedException {
+                return null;
+            }
+
+            public boolean isEmpty() {
+                return false;
+            }
+
+            public void schedule(CandidateURI candidateURI) {
+            }
+
+            public void finished(CrawlURI crawlURI) {
+            }
+
+            public long discoveredUriCount() {
+                return 0;
+            }
+
+            public long queuedUriCount() {
+                return 0;
+            }
+
+            public long finishedUriCount() {
+                return 0;
+            }
+
+            public long succeededFetchCount() {
+                return 0;
+            }
+
+            public long failedFetchCount() {
+                return 0;
+            }
+
+            public long disregardedUriCount() {
+                return 0;
+            }
+
+            public long totalBytesWritten() {
+                return 0;
+            }
+
+            public String oneLineReport() {
+                return null;
+            }
+
+            public String report() {
+                return null;
+            }
+
+            public void importRecoverLog(String s, boolean b) throws IOException {
+            }
+
+            public FrontierMarker getInitialMarker(String s, boolean b) {
+                return null;
+            }
+
+            public ArrayList getURIsList(FrontierMarker frontierMarker, int i, boolean b)
+                    throws InvalidFrontierMarkerException {
+                return null;
+            }
+
+            public long deleteURIs(String s) {
+                return 0;
+            }
+
+            public void deleted(CrawlURI crawlURI) {
+            }
+
+            public void considerIncluded(UURI uuri) {
+            }
+
+            public void kickUpdate() {
+            }
+
+            public void pause() {
+            }
+
+            public void unpause() {
+            }
+
+            public void terminate() {
+            }
+
+            public FrontierJournal getFrontierJournal() {
+                return null;
+            }
+
+            public String getClassKey(CandidateURI candidateURI) {
+                return null;
+            }
+
+            public void loadSeeds() {
+            }
+
+            public String[] getReports() {
+                return new String[0];
+            }
+
+            // public void reportTo(String s, PrintWriter printWriter) throws
+            // IOException {}
+            public void reportTo(String s, PrintWriter printWriter) {
+            }
+
+            public void reportTo(PrintWriter printWriter) throws IOException {
+            }
+
+            public void singleLineReportTo(PrintWriter printWriter) throws IOException {
+            }
+
+            public String singleLineReport() {
+                return null;
+            }
+
+            public String singleLineLegend() {
+                return null;
+            }
+
+            public void start() {
+            }
+
+            public Frontier.FrontierGroup getGroup(CrawlURI crawlURI) {
+                return null;
+            }
+
+            public float congestionRatio() {
+                return 0.0f;
+            }
+
+            public long averageDepth() {
+                return 0L;
+            }
+
+            public long deepestUri() {
+                return 0L;
+            }
+
+            public long deleteURIs(String arg0, String arg1) {
+                return 0L;
+            }
+
+            @Override
+            public void finalTasks() {
+                // TODO Auto-generated method stub
+
+            }
+
+        }
+    };
 }

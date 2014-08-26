@@ -38,13 +38,12 @@ import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 import dk.netarkivet.harvester.harvesting.metadata.PersistentJobData.HarvestDefinitionInfo;
 
 /**
- * Container for doOneCrawl request.
- * Contains the crawler job definition.
+ * Container for doOneCrawl request. Contains the crawler job definition.
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({ "serial" })
 public class DoOneCrawlMessage extends HarvesterMessage implements Serializable {
 
-    /** the Job to crawl.    */
+    /** the Job to crawl. */
     private Job submittedJob;
 
     /** The original harvest info. */
@@ -56,13 +55,17 @@ public class DoOneCrawlMessage extends HarvesterMessage implements Serializable 
     /**
      * A NetarkivetMessage that contains a Job for Heritrix.
      *
-     * @param submittedJob    the Job to crawl
-     * @param to      the ChannelID for the Server
-     * @param metadata A list of job-metadata
-     * @throws ArgumentNotValid when submittedJob is null
+     * @param submittedJob
+     *            the Job to crawl
+     * @param to
+     *            the ChannelID for the Server
+     * @param metadata
+     *            A list of job-metadata
+     * @throws ArgumentNotValid
+     *             when submittedJob is null
      */
     public DoOneCrawlMessage(Job submittedJob, ChannelID to, HarvestDefinitionInfo harvestInfo,
-    		List<MetadataEntry> metadata) throws ArgumentNotValid {
+            List<MetadataEntry> metadata) throws ArgumentNotValid {
         super(to, Channels.getError());
         ArgumentNotValid.checkNotNull(submittedJob, "submittedJob");
         ArgumentNotValid.checkNotNull(metadata, "metadata");
@@ -96,26 +99,29 @@ public class DoOneCrawlMessage extends HarvesterMessage implements Serializable 
      * Should be implemented as a part of the visitor pattern. fx.: public void
      * accept(HarvesterMessageVisitor v) { v.visit(this); }
      *
-     * @param v A message visitor
+     * @param v
+     *            A message visitor
      */
     public void accept(HarvesterMessageVisitor v) {
         v.visit(this);
     }
 
-
     /**
      * @return a String that represents the message - only for debugging !
      */
     public String toString() {
-        return super.toString() + " Job: " + submittedJob + ", metadata: " +  metadata;
+        return super.toString() + " Job: " + submittedJob + ", metadata: " + metadata;
     }
 
     /**
      * Method needed to de-serializable an object of this class.
-     * @param s an ObjectInputStream
-     * @throws ClassNotFoundException In case the object read is of unknown
-     * class.
-     * @throws IOException On I/O trouble reading the object.
+     * 
+     * @param s
+     *            an ObjectInputStream
+     * @throws ClassNotFoundException
+     *             In case the object read is of unknown class.
+     * @throws IOException
+     *             On I/O trouble reading the object.
      */
     private void readObject(ObjectInputStream s) throws ClassNotFoundException, IOException {
         s.defaultReadObject();
@@ -123,8 +129,11 @@ public class DoOneCrawlMessage extends HarvesterMessage implements Serializable 
 
     /**
      * Method needed to serializable an object of this class.
-     * @param s an ObjectOutputStream
-     * @throws IOException On I/O trouble writing the object.
+     * 
+     * @param s
+     *            an ObjectOutputStream
+     * @throws IOException
+     *             On I/O trouble writing the object.
      */
     private void writeObject(ObjectOutputStream s) throws IOException {
         s.defaultWriteObject();

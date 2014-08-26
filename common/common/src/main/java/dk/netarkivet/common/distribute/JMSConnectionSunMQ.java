@@ -41,7 +41,6 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.Settings;
 
-
 /**
  * Handles the communication with a Sun JMS broker.
  *
@@ -54,42 +53,48 @@ import dk.netarkivet.common.utils.Settings;
  */
 public class JMSConnectionSunMQ extends JMSConnection {
 
-	/** The log. */
+    /** The log. */
     private static final Logger log = LoggerFactory.getLogger(JMSConnectionSunMQ.class);
 
     /** The default place in classpath where the settings file can be found. */
-    private static String DEFAULT_SETTINGS_CLASSPATH =
-    		"dk/netarkivet/common/distribute/JMSConnectionSunMQSettings.xml";
+    private static String DEFAULT_SETTINGS_CLASSPATH = "dk/netarkivet/common/distribute/JMSConnectionSunMQSettings.xml";
 
     /*
-     * The static initialiser is called when the class is loaded.
-     * It will add default values for all settings defined in this class, by
-     * loading them from a settings.xml file in classpath.
+     * The static initialiser is called when the class is loaded. It will add
+     * default values for all settings defined in this class, by loading them
+     * from a settings.xml file in classpath.
      */
     static {
         Settings.addDefaultClasspathSettings(DEFAULT_SETTINGS_CLASSPATH);
     }
 
-    public static final String[] RECONNECT_ERRORCODES = {
-        "C4000", //Packet acknowledgment failed
-        "C4001", //Write packet failed
-        "C4002", //Read packet failed
-        "C4003", //Connection timed out
-        "C4036", //Server error
-        "C4056", //Received goodbye from broker
-        "C4059", //Session is closed
-        "C4062", //Connection is closed
-        "C4063"  //Consumer is closed
+    public static final String[] RECONNECT_ERRORCODES = { "C4000", // Packet
+                                                                   // acknowledgment
+                                                                   // failed
+            "C4001", // Write packet failed
+            "C4002", // Read packet failed
+            "C4003", // Connection timed out
+            "C4036", // Server error
+            "C4056", // Received goodbye from broker
+            "C4059", // Session is closed
+            "C4062", // Connection is closed
+            "C4063" // Consumer is closed
     };
 
     // NOTE: The constants defining setting names below are left non-final on
     // purpose! Otherwise, the static initialiser that loads default values
     // will not run.
 
-    /** <b>settings.common.jms.broker</b>: <br> The JMS broker host contacted by the JMS connection. */
+    /**
+     * <b>settings.common.jms.broker</b>: <br>
+     * The JMS broker host contacted by the JMS connection.
+     */
     public static String JMS_BROKER_HOST = "settings.common.jms.broker";
 
-    /** <b>settings.common.jms.port</b>: <br> The port the JMS connection should use. */
+    /**
+     * <b>settings.common.jms.port</b>: <br>
+     * The port the JMS connection should use.
+     */
     public static String JMS_BROKER_PORT = "settings.common.jms.port";
 
     private QueueConnection qConnection;
@@ -106,7 +111,8 @@ public class JMSConnectionSunMQ extends JMSConnection {
      *
      * @return A JMSConnection
      *
-     * @throws IOFailure when connection to JMS broker failed
+     * @throws IOFailure
+     *             when connection to JMS broker failed
      */
     public static synchronized JMSConnection getInstance() throws IOFailure {
         if (instance == null) {
@@ -124,14 +130,15 @@ public class JMSConnectionSunMQ extends JMSConnection {
      *
      * @return QueueConnectionFactory
      *
-     * @throws JMSException If unable to create a QueueConnectionfactory with
-     *                      the necessary properties: imqConsumerflowLimit set
-     *                      to 1, imqBrokerHostname and imqBrokerHostPort set to
-     *                      the values defined in our settings.
+     * @throws JMSException
+     *             If unable to create a QueueConnectionfactory with the
+     *             necessary properties: imqConsumerflowLimit set to 1,
+     *             imqBrokerHostname and imqBrokerHostPort set to the values
+     *             defined in our settings.
      */
     protected com.sun.messaging.ConnectionFactory getConnectionFactory() throws JMSException {
-        log.info("Establishing SunMQ JMS Connection to '{}:{}'",
-        		Settings.get(JMS_BROKER_HOST), Settings.getInt(JMS_BROKER_PORT));
+        log.info("Establishing SunMQ JMS Connection to '{}:{}'", Settings.get(JMS_BROKER_HOST),
+                Settings.getInt(JMS_BROKER_PORT));
         com.sun.messaging.ConnectionFactory cFactory = new com.sun.messaging.ConnectionFactory();
         cFactory.setProperty(ConnectionConfiguration.imqBrokerHostName, Settings.get(JMS_BROKER_HOST));
         cFactory.setProperty(ConnectionConfiguration.imqBrokerHostPort, Settings.get(JMS_BROKER_PORT));
@@ -144,11 +151,13 @@ public class JMSConnectionSunMQ extends JMSConnection {
      * Topic. The method depends on the JMS provider being configured to
      * autocreate queues and topics.
      *
-     * @param channelName the name of the queue or topic.
+     * @param channelName
+     *            the name of the queue or topic.
      *
      * @return A queue or topic depending on the channel name.
      *
-     * @throws JMSException If unable to create the destination.
+     * @throws JMSException
+     *             If unable to create the destination.
      */
     protected Destination getDestination(String channelName) throws JMSException {
         boolean isTopic = Channels.isTopic(channelName);
@@ -171,7 +180,8 @@ public class JMSConnectionSunMQ extends JMSConnection {
      * Exceptionhandler for the JMSConnection. Will try to reconnect on errors
      * with error codes defined in the constant RECONNECT_ERRORCODES.
      *
-     * @param e an JMSException
+     * @param e
+     *            an JMSException
      */
     public void onException(JMSException e) {
         ArgumentNotValid.checkNotNull(e, "JMSException e");
@@ -187,7 +197,7 @@ public class JMSConnectionSunMQ extends JMSConnection {
 
     @Override
     public synchronized QueueSession getQueueSession() throws JMSException {
-        if (qConnection == null ) {
+        if (qConnection == null) {
             qConnection = getConnectionFactory().createQueueConnection();
         }
         boolean transacted = false;

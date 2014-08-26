@@ -44,8 +44,8 @@ public abstract class ToolRunnerBase {
     protected abstract SimpleCmdlineTool makeMyTool();
 
     /**
-     * Consolidates that behavior on error is System.exit(1)
-     * (exit with failure).
+     * Consolidates that behavior on error is System.exit(1) (exit with
+     * failure).
      */
     private void exitWithFailure() {
         System.exit(1);
@@ -54,7 +54,9 @@ public abstract class ToolRunnerBase {
     /**
      * A template method implementing default behaviour for showing a message
      * (send to stderr). Can be overridden to ensure logging.
-     * @param msg The message to display
+     * 
+     * @param msg
+     *            The message to display
      */
     protected void showMessage(String msg) {
         System.err.println(msg);
@@ -64,8 +66,9 @@ public abstract class ToolRunnerBase {
      * Passes (command line) parameters to the tool. If an error occured
      * (internalRunTool returned false), exit with failure.
      *
-     * @param args Usually a straight passing of the command line parameters
-     * from a "main" method.
+     * @param args
+     *            Usually a straight passing of the command line parameters from
+     *            a "main" method.
      */
     public void runTheTool(String... args) {
         if (!internalRunTheTool(args)) {
@@ -86,6 +89,7 @@ public abstract class ToolRunnerBase {
         }
         return true;
     }
+
     private boolean setupAndRunIt(SimpleCmdlineTool tool, String... args) {
         try {
             tool.setUp(args);
@@ -98,8 +102,8 @@ public abstract class ToolRunnerBase {
             tool.tearDown();
         }
     }
-    private boolean checkArgsSetupAndRun(SimpleCmdlineTool tool,
-            String... args) {
+
+    private boolean checkArgsSetupAndRun(SimpleCmdlineTool tool, String... args) {
         try {
             if (!tool.checkArgs(args)) {
                 usage(tool);
@@ -111,6 +115,7 @@ public abstract class ToolRunnerBase {
             return false;
         }
     }
+
     private boolean internalRunTheTool(String... args) {
         try {
             SimpleCmdlineTool tool = makeMyTool();
@@ -124,12 +129,12 @@ public abstract class ToolRunnerBase {
     /**
      * Prints usage, delegating the actual parameter description to the tool.
      *
-     * @param tool The tool that we have specialized this class to. Know how
-     * to run and how to describe itself.
+     * @param tool
+     *            The tool that we have specialized this class to. Know how to
+     *            run and how to describe itself.
      */
     private void usage(SimpleCmdlineTool tool) {
-        showMessage("Usage: java " + this.getClass().getName() + " "
-                + tool.listParameters());
+        showMessage("Usage: java " + this.getClass().getName() + " " + tool.listParameters());
         exitWithFailure();
     }
 
@@ -137,9 +142,11 @@ public abstract class ToolRunnerBase {
      * Centralized, rudimentary exception handling. Only option is to print a
      * message, and a stack trace.
      *
-     * @param msg A message from the tool manager (this class), notifying the
-     * user about where the exception occurred.
-     * @param e The exception that occurred.
+     * @param msg
+     *            A message from the tool manager (this class), notifying the
+     *            user about where the exception occurred.
+     * @param e
+     *            The exception that occurred.
      */
     private void exceptionMessage(String msg, Exception e) {
         showMessage(msg);

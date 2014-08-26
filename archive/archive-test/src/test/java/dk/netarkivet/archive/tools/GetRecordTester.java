@@ -71,7 +71,7 @@ public class GetRecordTester {
     TestMessageListener listener;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         JMSConnectionMockupMQ.clearTestQueues();
         mjms.setUp();
@@ -83,7 +83,7 @@ public class GetRecordTester {
     }
 
     @After
-    public void tearDown(){
+    public void tearDown() {
         pse.tearDown();
         pss.tearDown();
         mtf.tearDown();
@@ -93,13 +93,10 @@ public class GetRecordTester {
 
     @Test
     public void testMain() {
-    	LogbackRecorder lr = LogbackRecorder.startRecorder();
-    	lr.addFilter(new DenyFilter(), ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
-    	try {
-            GetRecord.main(new String[]{
-            		TestInfo.INDEX_DIR.getAbsolutePath(),
-                    TestInfo.TEST_ENTRY_URI
-            });
+        LogbackRecorder lr = LogbackRecorder.startRecorder();
+        lr.addFilter(new DenyFilter(), ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
+        try {
+            GetRecord.main(new String[] { TestInfo.INDEX_DIR.getAbsolutePath(), TestInfo.TEST_ENTRY_URI });
             fail("Should system exit");
         } catch (SecurityException e) {
             assertEquals("Should have exited normally", 0, pse.getExitValue());
@@ -107,47 +104,47 @@ public class GetRecordTester {
         System.out.flush();
         String returnedContent = pss.getOut();
         assertEquals("Should return content unchanged, but was: " + returnedContent, CONTENT, returnedContent);
-    	lr.clearAllFilters(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
+        lr.clearAllFilters(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
         lr.stopRecorder();
     }
-    
+
     @Test
     public void testFail() {
         String expectedResults = "indexfile uri";
         try {
-            GetRecord.main(new String[]{
-                    TestInfo.INDEX_DIR.getAbsolutePath()});
+            GetRecord.main(new String[] { TestInfo.INDEX_DIR.getAbsolutePath() });
             fail("System should exit");
         } catch (SecurityException e) {
             assertEquals("Should have exited with failure", 1, pse.getExitValue());
         }
         System.out.flush();
         String returned = pss.getErr();
-        assertTrue("Should contain the required arguments: '" + expectedResults + "', but was: '" + returned + "'.", 
+        assertTrue("Should contain the required arguments: '" + expectedResults + "', but was: '" + returned + "'.",
                 returned.contains(expectedResults));
     }
 
     /**
-     * This class is a MessageListener that responds to GetMessage,
-     * simulating an ArcRepository. It sends a constant response
-     * if the GetMessage matches the values given to GetListener's constructor,
-     * otherwise it sends a null record as response.
+     * This class is a MessageListener that responds to GetMessage, simulating
+     * an ArcRepository. It sends a constant response if the GetMessage matches
+     * the values given to GetListener's constructor, otherwise it sends a null
+     * record as response.
      */
     private static class GetListener extends TestMessageListener {
         private String arcFileName;
         private long offset;
         private ARCRecord myRec;
+
         public GetListener(String arcFileName, long offset) {
             this.arcFileName = arcFileName;
             this.offset = offset;
             try {
-                HashMap<String,Object> map = new HashMap<String,Object>();
+                HashMap<String, Object> map = new HashMap<String, Object>();
                 for (Object o : ARCConstants.REQUIRED_VERSION_1_HEADER_FIELDS) {
-                    //Some pieces of code check the length field, so make sure
+                    // Some pieces of code check the length field, so make sure
                     // this has right value and foo the rest:
                     map.put((String) o, Integer.toString(CONTENT.length()));
                 }
-                //insert dummy offset
+                // insert dummy offset
                 map.put(ARCConstants.ABSOLUTE_OFFSET_KEY, Long.valueOf(0L));
                 ARCRecordMetaData meta = new ARCRecordMetaData("foo", map);
                 InputStream is = new ByteArrayInputStream(CONTENT.getBytes());
@@ -156,14 +153,13 @@ public class GetRecordTester {
                 myRec = null;
             }
         }
+
         public void onMessage(Message o) {
             super.onMessage(o);
-            NetarkivetMessage nmsg =
-                   received.get(received.size() - 1);
+            NetarkivetMessage nmsg = received.get(received.size() - 1);
             if (nmsg instanceof GetMessage) {
                 GetMessage m = (GetMessage) nmsg;
-                if ((arcFileName.equals(m.getArcFile()))
-                        && (offset == m.getIndex())) {
+                if ((arcFileName.equals(m.getArcFile())) && (offset == m.getIndex())) {
                     m.setRecord(new BitarchiveRecord((ArchiveRecord) myRec, m.getArcFile()));
                 } else {
                     m.setRecord(new BitarchiveRecord(null, ""));

@@ -44,21 +44,22 @@ import dk.netarkivet.monitor.MonitorSettings;
 /** Creates RMI-based JMX connections to remote servers. */
 public class RmiProxyConnectionFactory implements JMXProxyConnectionFactory {
 
-	/**
+    /**
      * Returns a JMXProxyFactory for a specific server, jmxport, rmiport,
      * username, and password. Makes sure that an initial context for JNDI has
      * been specified. Then constructs a RMI-based JMXServiceUrl using the
-     * server and port. Finally connects to the URL using the name and
-     * password.
+     * server and port. Finally connects to the URL using the name and password.
      *
-     * @param server   the given remote server
-     * @param jmxPort  the JMX port on that server
-     * @param rmiPort  the RMI port on that server (dedicated to the above
-     *                 jmxPort)
-     * @param userName the userName for access to the MBeanserver on that
-     *                 server
-     * @param password the password for access to the MBeanserver on that
-     *                 server
+     * @param server
+     *            the given remote server
+     * @param jmxPort
+     *            the JMX port on that server
+     * @param rmiPort
+     *            the RMI port on that server (dedicated to the above jmxPort)
+     * @param userName
+     *            the userName for access to the MBeanserver on that server
+     * @param password
+     *            the password for access to the MBeanserver on that server
      *
      * @return a JMXProxyFactory with the above properties.
      */
@@ -98,17 +99,20 @@ public class RmiProxyConnectionFactory implements JMXProxyConnectionFactory {
         /**
          * Proxies an MBean connection with the given parameters.
          *
-         * @param server   the given remote server
-         * @param jmxPort  the JMX port on that server
-         * @param rmiPort  the RMI port on that server (dedicated to the above
-         *                 jmxPort)
-         * @param userName the userName for access to the MBeanserver on that
-         *                 server
-         * @param password the password for access to the MBeanserver on that
-         *                 server
+         * @param server
+         *            the given remote server
+         * @param jmxPort
+         *            the JMX port on that server
+         * @param rmiPort
+         *            the RMI port on that server (dedicated to the above
+         *            jmxPort)
+         * @param userName
+         *            the userName for access to the MBeanserver on that server
+         * @param password
+         *            the password for access to the MBeanserver on that server
          */
         public MBeanServerProxyConnection(final String server, final int jmxPort, final int rmiPort,
-        		final String userName, final String password) {
+                final String userName, final String password) {
             this.server = server;
             this.jmxPort = jmxPort;
             this.rmiPort = rmiPort;
@@ -126,15 +130,15 @@ public class RmiProxyConnectionFactory implements JMXProxyConnectionFactory {
         private void connect() {
             new Thread() {
                 public void run() {
-                    if (connection == null
-                        && connecting.compareAndSet(false, true)) {
+                    if (connection == null && connecting.compareAndSet(false, true)) {
                         try {
-                            connection = JMXUtils.getMBeanServerConnection(
-                            		server, jmxPort, rmiPort, userName, password);
-                            log.info("Connected to remote JMX server '{}', port '{}', rmiPort '{}', user '{}'",
-                            		server, jmxPort, rmiPort, userName);
+                            connection = JMXUtils
+                                    .getMBeanServerConnection(server, jmxPort, rmiPort, userName, password);
+                            log.info("Connected to remote JMX server '{}', port '{}', rmiPort '{}', user '{}'", server,
+                                    jmxPort, rmiPort, userName);
                         } catch (Exception e) {
-                            log.warn("Unable to connect to remote JMX server '{}', port '{}', rmiPort '{}', user '{}'", server, jmxPort, rmiPort, userName, e);
+                            log.warn("Unable to connect to remote JMX server '{}', port '{}', rmiPort '{}', user '{}'",
+                                    server, jmxPort, rmiPort, userName, e);
                         } finally {
                             connecting.set(false);
                             synchronized (connecting) {
@@ -146,8 +150,8 @@ public class RmiProxyConnectionFactory implements JMXProxyConnectionFactory {
             }.start();
         }
 
-        /** 
-         * Sleep until the timeout has occurred, or connection is successful. 
+        /**
+         * Sleep until the timeout has occurred, or connection is successful.
          */
         private void waitForConnection() {
             long timeouttime = System.currentTimeMillis() + JMX_TIMEOUT;
@@ -157,7 +161,7 @@ public class RmiProxyConnectionFactory implements JMXProxyConnectionFactory {
                         connecting.wait(Math.max(timeouttime - System.currentTimeMillis(), 1));
                     }
                 } catch (InterruptedException e) {
-                    //Just ignore it
+                    // Just ignore it
                 }
             }
         }
@@ -165,12 +169,15 @@ public class RmiProxyConnectionFactory implements JMXProxyConnectionFactory {
         /**
          * Return object names from remote location.
          *
-         * @param query The query remote mbeans should match
+         * @param query
+         *            The query remote mbeans should match
          *
          * @return set of names of matching mbeans.
          *
-         * @throws IOFailure        on communication trouble.
-         * @throws ArgumentNotValid on null or empty query.
+         * @throws IOFailure
+         *             on communication trouble.
+         * @throws ArgumentNotValid
+         *             on null or empty query.
          */
         public Set<ObjectName> query(String query) {
             ArgumentNotValid.checkNotNullOrEmpty(query, "String query");
@@ -193,8 +200,8 @@ public class RmiProxyConnectionFactory implements JMXProxyConnectionFactory {
         /**
          * Returns true if this object still can return usable proxies.
          *
-         * @return True if we can return usable proxies.  Otherwise, somebody
-         *         may have to make a new instance of JMXProxyFactory to get new
+         * @return True if we can return usable proxies. Otherwise, somebody may
+         *         have to make a new instance of JMXProxyFactory to get new
          *         proxies.
          */
         public boolean isLive() {
@@ -209,7 +216,8 @@ public class RmiProxyConnectionFactory implements JMXProxyConnectionFactory {
                 this.connection.getMBeanCount();
                 return true;
             } catch (Exception e) {
-                /* Catching the exception appears to be the only way to check
+                /*
+                 * Catching the exception appears to be the only way to check
                  * that the connection is dead.
                  */
                 return false;
@@ -220,11 +228,14 @@ public class RmiProxyConnectionFactory implements JMXProxyConnectionFactory {
          * Uses Java's built-in facilities for creating proxies to remote
          * MBeans. Does not support notifications.
          *
-         * @param name The name of an MBean on the registered 
-         * MBeanServerConnection
-         * @param intf The interface that the returned proxy should implement.
-         * @param <T> the type of class the argument intf is, and the return 
-         * type. 
+         * @param name
+         *            The name of an MBean on the registered
+         *            MBeanServerConnection
+         * @param intf
+         *            The interface that the returned proxy should implement.
+         * @param <T>
+         *            the type of class the argument intf is, and the return
+         *            type.
          * @return an object implementing T. This object forwards all method
          *         calls to the MBean registered under the given name on the
          *         MBeanServerConnection that we use.
@@ -232,7 +243,7 @@ public class RmiProxyConnectionFactory implements JMXProxyConnectionFactory {
         public <T> T createProxy(ObjectName name, Class<T> intf) {
             ArgumentNotValid.checkNotNull(name, "ObjectName name");
             ArgumentNotValid.checkNotNull(intf, "Class<T> intf");
-            //Set true to enable notifications
+            // Set true to enable notifications
             return MBeanServerInvocationHandler.newProxyInstance(connection, name, intf, false);
         }
     }

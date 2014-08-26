@@ -43,8 +43,8 @@ import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor;
  * BnF specific Heritrix launcher, that forces the use of
  * {@link BnfHeritrixController}. Every turn of the crawl control loop, asks the
  * Heritrix controller to generate a progress report as a
- * {@link CrawlProgressMessage} and then send this message on the JMS bus to
- * be consumed by the {@link HarvestMonitor} instance.
+ * {@link CrawlProgressMessage} and then send this message on the JMS bus to be
+ * consumed by the {@link HarvestMonitor} instance.
  */
 public class BnfHeritrixLauncher extends HeritrixLauncher {
 
@@ -54,8 +54,8 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
     /**
      * This class executes a crawl control task, e.g. queries the crawler for
      * progress summary, sends the adequate JMS message to the monitor, and
-     * checks whether the crawl is finished, in which case crawl control will
-     * be ended.
+     * checks whether the crawl is finished, in which case crawl control will be
+     * ended.
      *
      * These tasks are scheduled by a {@link CrawlControlExecutor}.
      */
@@ -88,15 +88,19 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
                 return;
             }
 
-            log.info("Job ID: " + files.getJobID() + ", Harvest ID: " + files.getHarvestID() + ", " + cpm.getHostUrl() + "\n" + cpm.getProgressStatisticsLegend() + "\n" + cpm.getJobStatus().getStatus() + " " + cpm.getJobStatus().getProgressStatistics());
+            log.info("Job ID: " + files.getJobID() + ", Harvest ID: " + files.getHarvestID() + ", " + cpm.getHostUrl()
+                    + "\n" + cpm.getProgressStatisticsLegend() + "\n" + cpm.getJobStatus().getStatus() + " "
+                    + cpm.getJobStatus().getProgressStatistics());
         }
     }
 
     /** Wait time in milliseconds (10s). */
     private static final int SLEEP_TIME_MS = 10 * 60 * 1000;
 
-    /** Frequency in seconds for generating the full harvest report.
-     *  Also serves as delay before the first generation occurs. */
+    /**
+     * Frequency in seconds for generating the full harvest report. Also serves
+     * as delay before the first generation occurs.
+     */
     static final long FRONTIER_REPORT_GEN_FREQUENCY = Settings.getLong(HarvesterSettings.FRONTIER_REPORT_WAIT_TIME);
 
     /** The CrawlController used. */
@@ -106,7 +110,9 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
 
     /**
      * Private constructor for this class.
-     * @param files the files needed by Heritrix to launch a job.
+     * 
+     * @param files
+     *            the files needed by Heritrix to launch a job.
      * @throws ArgumentNotValid
      */
     private BnfHeritrixLauncher(HeritrixFiles files) throws ArgumentNotValid {
@@ -156,9 +162,9 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
 
             // Schedule full frontier report generation
             exec = new PeriodicTaskExecutor(new PeriodicTask("CrawlControl", new CrawlControl(),
-            		CRAWL_CONTROL_WAIT_PERIOD, CRAWL_CONTROL_WAIT_PERIOD),
-                    new PeriodicTask("FrontierReportAnalyzer", new FrontierReportAnalyzer(heritrixController),
-                    		FRONTIER_REPORT_GEN_FREQUENCY, FRONTIER_REPORT_GEN_FREQUENCY));
+                    CRAWL_CONTROL_WAIT_PERIOD, CRAWL_CONTROL_WAIT_PERIOD), new PeriodicTask("FrontierReportAnalyzer",
+                    new FrontierReportAnalyzer(heritrixController), FRONTIER_REPORT_GEN_FREQUENCY,
+                    FRONTIER_REPORT_GEN_FREQUENCY));
 
             while (!crawlIsOver) {
                 // Wait a bit
@@ -179,7 +185,7 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
             throw new RuntimeException("Exception during crawl", e);
         } finally {
             // Stop the crawl control & frontier report analyzer
-            if (exec!= null) {
+            if (exec != null) {
                 exec.shutdown();
             }
 

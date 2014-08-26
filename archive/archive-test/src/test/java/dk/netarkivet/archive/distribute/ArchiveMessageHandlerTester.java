@@ -87,7 +87,8 @@ public class ArchiveMessageHandlerTester {
         TestMessage testMessage = new TestMessage(Channels.getTheRepos(), Channels.getTheBamon(), "42");
         JMSConnectionMockupMQ.updateMsgID(testMessage, "ID89");
         tmh.onMessage(JMSConnectionMockupMQ.getObjectMessage(testMessage));
-        assertEquals("Message should have been unpacked and accept() should have been called", testMessage.acceptCalled, 1);
+        assertEquals("Message should have been unpacked and accept() should have been called",
+                testMessage.acceptCalled, 1);
     }
 
     /*
@@ -122,8 +123,8 @@ public class ArchiveMessageHandlerTester {
     @Test
     public final void testVisitBatchReplyMessage() {
         try {
-            tmh.visit(new BatchReplyMessage(Channels.getTheRepos(), Channels.getTheBamon(), "x",
-                    0, new ArrayList<File>(), null));
+            tmh.visit(new BatchReplyMessage(Channels.getTheRepos(), Channels.getTheBamon(), "x", 0,
+                    new ArrayList<File>(), null));
             fail("Should have thrown a permission denied.");
         } catch (PermissionDenied e) {
             // Expected
@@ -136,8 +137,7 @@ public class ArchiveMessageHandlerTester {
     @Test
     public final void testVisitGetFileMessage() {
         try {
-            tmh.visit(new GetFileMessage(Channels.getTheRepos(), Channels.getTheBamon(), "x",
-            "ONE"));
+            tmh.visit(new GetFileMessage(Channels.getTheRepos(), Channels.getTheBamon(), "x", "ONE"));
             fail("Should have thrown a permission denied.");
         } catch (PermissionDenied e) {
             // Expected
@@ -196,7 +196,8 @@ public class ArchiveMessageHandlerTester {
         String f = fil.getAbsolutePath();
         try {
             fil.createNewFile();
-            tmh.visit(new UploadMessage(Channels.getTheBamon(), Channels.getError(), RemoteFileFactory.getInstance(fil, true, false, true)));
+            tmh.visit(new UploadMessage(Channels.getTheBamon(), Channels.getError(), RemoteFileFactory.getInstance(fil,
+                    true, false, true)));
             fail("Should have thrown a permission denied for " + f);
         } catch (PermissionDenied e) {
             // Expected
@@ -223,8 +224,8 @@ public class ArchiveMessageHandlerTester {
     @Test
     public final void testVisitRemoveAndGetFileMessage() {
         try {
-            tmh.visit(new RemoveAndGetFileMessage(Channels.getTheBamon(), Channels.getError(), 
-                    "filename", "replicaId", "checksum", "credentials"));
+            tmh.visit(new RemoveAndGetFileMessage(Channels.getTheBamon(), Channels.getError(), "filename", "replicaId",
+                    "checksum", "credentials"));
             fail("Should have thrown a permission denied.");
         } catch (PermissionDenied e) {
             // Expected
@@ -240,10 +241,9 @@ public class ArchiveMessageHandlerTester {
         String f = fil.getAbsolutePath();
         try {
             fil.createNewFile();
-            tmh.visit(new CorrectMessage(Channels.getTheBamon(), Channels.getError(), 
-                    "badChecksum", RemoteFileFactory.getInstance(fil, true, false, true),
-                    "replicaId", "credentials"));
-            fail("Should have thrown a permission denied for " +f );
+            tmh.visit(new CorrectMessage(Channels.getTheBamon(), Channels.getError(), "badChecksum", RemoteFileFactory
+                    .getInstance(fil, true, false, true), "replicaId", "credentials"));
+            fail("Should have thrown a permission denied for " + f);
         } catch (PermissionDenied e) {
             // Expected
             FileUtils.remove(fil);
@@ -256,22 +256,20 @@ public class ArchiveMessageHandlerTester {
     @Test
     public final void testVisitGetChecksumMessage() {
         try {
-            tmh.visit(new GetChecksumMessage(Channels.getTheBamon(), 
-                    Channels.getError(), "filename", "replicaId"));
+            tmh.visit(new GetChecksumMessage(Channels.getTheBamon(), Channels.getError(), "filename", "replicaId"));
             fail("Should have thrown a permission denied.");
         } catch (PermissionDenied e) {
             // Expected
         }
     }
-    
+
     /*
      * Class under test for void visit(GetAllChecksumsMessage)
      */
     @Test
     public final void testVisitGetAllChecksumsMessage() {
         try {
-            tmh.visit(new GetAllChecksumsMessage(Channels.getTheBamon(), 
-                    Channels.getError(), "replicaId"));
+            tmh.visit(new GetAllChecksumsMessage(Channels.getTheBamon(), Channels.getError(), "replicaId"));
             fail("Should have thrown a permission denied.");
         } catch (PermissionDenied e) {
             // Expected
@@ -284,8 +282,7 @@ public class ArchiveMessageHandlerTester {
     @Test
     public final void testVisitGetAllFilenamesMessage() {
         try {
-            tmh.visit(new GetAllFilenamesMessage(Channels.getTheBamon(), 
-                    Channels.getError(), "replicaId"));
+            tmh.visit(new GetAllFilenamesMessage(Channels.getTheBamon(), Channels.getError(), "replicaId"));
             fail("Should have thrown a permission denied.");
         } catch (PermissionDenied e) {
             // Expected
@@ -293,10 +290,11 @@ public class ArchiveMessageHandlerTester {
     }
 
     private static class TestMessageHandler extends ArchiveMessageHandler {
-        public TestMessageHandler() {}
+        public TestMessageHandler() {
+        }
     }
 
-    @SuppressWarnings({ "unused", "serial"})
+    @SuppressWarnings({ "unused", "serial" })
     private static class TestMessage extends ArchiveMessage {
         private String testID;
         public int acceptCalled = 0;

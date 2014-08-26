@@ -141,35 +141,37 @@ public class ARCLookupTester {
             // expected
         }
 
-        // TODO Ok retardos, dont use logging files for testing non logging stuff!!
+        // TODO Ok retardos, dont use logging files for testing non logging
+        // stuff!!
         /*
-        try {
-            lookup.setIndex(dk.netarkivet.archive.distribute.arcrepository.TestInfo.LOG_FILE);
-            fail("Should die on non-dir index");
-        } catch (ArgumentNotValid e) {
-            StringAsserts.assertStringContains("Should mention non-directory",
-                    dk.netarkivet.archive.distribute.arcrepository.TestInfo.LOG_FILE.getName(), e.getMessage());
-        }
-
-        // Test that we don't close the Lucene index twice.
-        // Try with a file that fails.
-        try {
-            lookup.setIndex(dk.netarkivet.archive.distribute.arcrepository.TestInfo.LOG_FILE);
-            fail("Should die on non-dir index");
-        } catch (ArgumentNotValid e) {
-            StringAsserts.assertStringContains("Should mention non-directory",
-                    dk.netarkivet.archive.distribute.arcrepository.TestInfo.LOG_FILE.getName(), e.getMessage());
-        }
-
-        // No getting a "can't close" error here.
-        try {
-            lookup.setIndex(dk.netarkivet.archive.distribute.arcrepository.TestInfo.LOG_FILE);
-            fail("Should die on non-dir index");
-        } catch (ArgumentNotValid e) {
-            StringAsserts.assertStringContains("Should mention non-directory",
-                    dk.netarkivet.archive.distribute.arcrepository.TestInfo.LOG_FILE.getName(), e.getMessage());
-        }
-        */
+         * try {
+         * lookup.setIndex(dk.netarkivet.archive.distribute.arcrepository.TestInfo
+         * .LOG_FILE); fail("Should die on non-dir index"); } catch
+         * (ArgumentNotValid e) {
+         * StringAsserts.assertStringContains("Should mention non-directory",
+         * dk.
+         * netarkivet.archive.distribute.arcrepository.TestInfo.LOG_FILE.getName
+         * (), e.getMessage()); }
+         * 
+         * // Test that we don't close the Lucene index twice. // Try with a
+         * file that fails. try {
+         * lookup.setIndex(dk.netarkivet.archive.distribute
+         * .arcrepository.TestInfo.LOG_FILE);
+         * fail("Should die on non-dir index"); } catch (ArgumentNotValid e) {
+         * StringAsserts.assertStringContains("Should mention non-directory",
+         * dk.
+         * netarkivet.archive.distribute.arcrepository.TestInfo.LOG_FILE.getName
+         * (), e.getMessage()); }
+         * 
+         * // No getting a "can't close" error here. try {
+         * lookup.setIndex(dk.netarkivet
+         * .archive.distribute.arcrepository.TestInfo.LOG_FILE);
+         * fail("Should die on non-dir index"); } catch (ArgumentNotValid e) {
+         * StringAsserts.assertStringContains("Should mention non-directory",
+         * dk.
+         * netarkivet.archive.distribute.arcrepository.TestInfo.LOG_FILE.getName
+         * (), e.getMessage()); }
+         */
 
         lookup.setIndex(dk.netarkivet.archive.distribute.arcrepository.TestInfo.INDEX_DIR_2_3);
         // This forces us to close the previous index before setting the new

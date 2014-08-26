@@ -46,12 +46,16 @@ public class IndexAggregator {
 
     /**
      * Generates a sorted CDX index file based on the set of unsorted CDX input
-     * files.<p> The operation will not run on a folder which already has a
-     * process job running.
+     * files.
+     * <p>
+     * The operation will not run on a folder which already has a process job
+     * running.
      *
-     * @param files      A list of the files to aggregate
-     * @param outputFile Name of the outputfile. In case of a empty filesNames
-     *                   array no outputFiles will be generated
+     * @param files
+     *            A list of the files to aggregate
+     * @param outputFile
+     *            Name of the outputfile. In case of a empty filesNames array no
+     *            outputFiles will be generated
      */
     public void sortAndMergeFiles(File[] files, File outputFile) {
         processFiles(files, outputFile, null);
@@ -59,9 +63,12 @@ public class IndexAggregator {
 
     /**
      * Takes a list of sorted files and merges them.
-     * @param files The files to merge.
-     * @param outputFile The resulting file containing total sorted set of index
-     * lines found in all the provided index files                 
+     * 
+     * @param files
+     *            The files to merge.
+     * @param outputFile
+     *            The resulting file containing total sorted set of index lines
+     *            found in all the provided index files
      */
 
     public void mergeFiles(File[] files, File outputFile) {
@@ -73,23 +80,24 @@ public class IndexAggregator {
     /**
      * Calls the Unix sort command with the options <code>$filesNames -o
      * $outputfile -T WaybackSettings#WAYBACK_AGGREGATOR_TEMP_DIR.
-     *
+     * 
      * Sets the LC_ALL environment variable before making the call.
      *
-     * @param files The files to merge and sort
-     * @param outputFile The resulting sorted file
-     * @param additionalArgs A list af extra arguments, which (if different from
-     *                       null) are added to the sort call.<p> Note: If any
-     *                       of the args contain a whitespace the call will
-     *                       fail.
+     * @param files
+     *            The files to merge and sort
+     * @param outputFile
+     *            The resulting sorted file
+     * @param additionalArgs
+     *            A list af extra arguments, which (if different from null) are
+     *            added to the sort call.<p> Note: If any of the args contain a
+     *            whitespace the call will fail.
      */
-    private void processFiles(File[] files, File outputFile,
-                              List<String> additionalArgs) {
+    private void processFiles(File[] files, File outputFile, List<String> additionalArgs) {
         if (files.length == 0) {
-            // Empty file list will cause sort to wait for further input, 
+            // Empty file list will cause sort to wait for further input,
             // and the call will therefore never return
             return;
-        } 
+        }
 
         Process p = null;
 
@@ -99,15 +107,12 @@ public class IndexAggregator {
                 if (files[i].exists() && files[i].isFile()) {
                     inputFileList.add(files[i].getCanonicalPath());
                 } else {
-                    log.warn("File "
-                            + files[i]
-                            + " doesn't exist or isn't a regular file, "
-                            + "dropping from list of files to "
-                            + "sort and merge");
+                    log.warn("File " + files[i] + " doesn't exist or isn't a regular file, "
+                            + "dropping from list of files to " + "sort and merge");
                 }
             }
             List<String> cmd = new LinkedList<String>();
-            // Prepare to run the unix sort command, see sort manual page for 
+            // Prepare to run the unix sort command, see sort manual page for
             // details
             cmd.add("sort");
             cmd.addAll(inputFileList);
@@ -116,11 +121,9 @@ public class IndexAggregator {
             cmd.add("-T");
             cmd.add(Settings.get(WaybackSettings.WAYBACK_AGGREGATOR_TEMP_DIR));
             if (additionalArgs != null && !additionalArgs.isEmpty()) {
-                for (String argument:additionalArgs) {
-                    ArgumentNotValid.checkTrue(
-                            argument.indexOf(' ') == -1,
-                            "The argument '" + argument 
-                                + "' contains spaces, this isn't allowed ");
+                for (String argument : additionalArgs) {
+                    ArgumentNotValid.checkTrue(argument.indexOf(' ') == -1, "The argument '" + argument
+                            + "' contains spaces, this isn't allowed ");
                 }
                 cmd.addAll(additionalArgs);
             }
@@ -132,8 +135,7 @@ public class IndexAggregator {
             p = pb.start();
             p.waitFor();
             if (p.exitValue() != 0) {
-                log.error("Failed to sort index files, sort exited with "
-                        + "return code " + p.exitValue());
+                log.error("Failed to sort index files, sort exited with " + "return code " + p.exitValue());
             }
         } catch (Exception e) {
             log.error("Failed to aggregate indexes ", e);

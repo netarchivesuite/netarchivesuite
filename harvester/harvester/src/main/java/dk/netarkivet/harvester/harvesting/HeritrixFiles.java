@@ -44,15 +44,15 @@ import dk.netarkivet.common.utils.StreamUtils;
 import dk.netarkivet.common.utils.XmlUtils;
 
 /**
- * This class encapsulates all the files that Heritrix gets from our system,
- * and all files we read from Heritrix.
+ * This class encapsulates all the files that Heritrix gets from our system, and
+ * all files we read from Heritrix.
  */
 public class HeritrixFiles {
 
     /** The logger. */
     private static final Logger log = LoggerFactory.getLogger(HeritrixFiles.class);
 
-	/** The directory that crawls are performed in. */
+    /** The directory that crawls are performed in. */
     private final File crawlDir;
     /** The job ID this object represents files for. */
     private final Long jobID;
@@ -61,7 +61,7 @@ public class HeritrixFiles {
 
     /** The prefix we put on generated ARC or WARC files. */
     private final String arcFilePrefix;
-    
+
     /** The JMX password file to be used by Heritrix. */
     private final File jmxPasswordFile;
     /** The JMX access file to be used by Heritrix. */
@@ -72,7 +72,7 @@ public class HeritrixFiles {
 
     /** The name of the seeds.txt file. */
     private static final String SEEDS_TXT_FILENAME = "seeds.txt";
-    
+
     /** The name of the recoverBackup.gz file. */
     private static final String RECOVERBACKUP_GZ_FILENAME = "recoverBackup.gz";
 
@@ -86,17 +86,22 @@ public class HeritrixFiles {
     /** The name of the stdout/stderr file from Heritrix. */
     private static final String OUTPUT_FILENAME = "heritrix.out";
 
-    /** Create a new HeritrixFiles object for a job.
+    /**
+     * Create a new HeritrixFiles object for a job.
      *
-     * @param crawlDir The dir, where the crawl-files are placed.
-     * Assumes, that crawlDir exists already.
-     * @param harvestJob The harvestjob behind this instance of HeritrixFiles
-     * @param jmxPasswordFile The jmx password file to be used by Heritrix.
-     * The existence of this file is checked another place.
-     * @param jmxAccessFile The JMX access file to be used by Heritrix.
-     * The existence of this file is checked another place.
-     * @throws ArgumentNotValid if null crawlDir,
-     *  or non-positive jobID and harvestID.
+     * @param crawlDir
+     *            The dir, where the crawl-files are placed. Assumes, that
+     *            crawlDir exists already.
+     * @param harvestJob
+     *            The harvestjob behind this instance of HeritrixFiles
+     * @param jmxPasswordFile
+     *            The jmx password file to be used by Heritrix. The existence of
+     *            this file is checked another place.
+     * @param jmxAccessFile
+     *            The JMX access file to be used by Heritrix. The existence of
+     *            this file is checked another place.
+     * @throws ArgumentNotValid
+     *             if null crawlDir, or non-positive jobID and harvestID.
      */
     public HeritrixFiles(File crawlDir, JobInfo harvestJob, File jmxPasswordFile, File jmxAccessFile) {
         ArgumentNotValid.checkNotNull(crawlDir, "crawlDir");
@@ -110,28 +115,33 @@ public class HeritrixFiles {
         this.jmxPasswordFile = jmxPasswordFile;
         this.jmxAccessFile = jmxAccessFile;
     }
-    
+
     /**
-     * Alternate constructor that by default reads the jmxPasswordFile,
-       and jmxAccessFile from the current settings.
-     * @param crawlDir The dir, where the crawl-files are placed
-     * @param harvestJob The harvestjob behind this instance of HeritrixFiles
+     * Alternate constructor that by default reads the jmxPasswordFile, and
+     * jmxAccessFile from the current settings.
+     * 
+     * @param crawlDir
+     *            The dir, where the crawl-files are placed
+     * @param harvestJob
+     *            The harvestjob behind this instance of HeritrixFiles
      */
-     public HeritrixFiles(File crawlDir, JobInfo harvestJob) {
-         this(crawlDir, harvestJob, new File(Settings.get(CommonSettings.JMX_PASSWORD_FILE)),
-                 new File(Settings.get(CommonSettings.JMX_ACCESS_FILE)));
-     }
-    
-    /** Returns the directory that crawls are performed inside.
+    public HeritrixFiles(File crawlDir, JobInfo harvestJob) {
+        this(crawlDir, harvestJob, new File(Settings.get(CommonSettings.JMX_PASSWORD_FILE)), new File(
+                Settings.get(CommonSettings.JMX_ACCESS_FILE)));
+    }
+
+    /**
+     * Returns the directory that crawls are performed inside.
      *
-     * @return A directory (that is created as part of harvest setup) that
-     * all of Heritrix' files live in.
+     * @return A directory (that is created as part of harvest setup) that all
+     *         of Heritrix' files live in.
      */
     public File getCrawlDir() {
         return crawlDir;
     }
 
-    /** Returns the prefix used to generate Archive files (ARC or WARC).
+    /**
+     * Returns the prefix used to generate Archive files (ARC or WARC).
      *
      * @return The archive file prefix, currently jobID-harvestID.
      */
@@ -139,58 +149,64 @@ public class HeritrixFiles {
         return this.arcFilePrefix;
     }
 
-    /** Returns the order.xml file object.
+    /**
+     * Returns the order.xml file object.
      *
      * @return A file object for the order.xml file (which may not have been
-     * written yet).
+     *         written yet).
      */
     public File getOrderXmlFile() {
         return new File(crawlDir, ORDER_XML_FILENAME);
     }
 
-    /** Returns the seeds.txt file object.
+    /**
+     * Returns the seeds.txt file object.
      *
      * @return A file object for the seeds.txt file (which may not have been
-     * written yet).
+     *         written yet).
      */
     public File getSeedsTxtFile() {
         return new File(crawlDir, SEEDS_TXT_FILENAME);
     }
-    
-    /** Returns the recoverbackup file object.
-    *
-    * @return A file object for the recoverbackup.gz. file
-    * (which may or may not exist).
-    */
-   public File getRecoverBackupGzFile() {
-       return new File(crawlDir, RECOVERBACKUP_GZ_FILENAME);
-   }
 
-   /**
-    * Try to write the recover-backup file.
-    * @param recoverlog The recoverlog in the form of an InputStream
-    * @return true, if operation succeeds, otherwise false
-    */
-   public boolean writeRecoverBackupfile(InputStream recoverlog) {
-       OutputStream os = null;
-       try {
-           os = new FileOutputStream(getRecoverBackupGzFile());
-           StreamUtils.copyInputStreamToOutputStream(recoverlog, os);
-       } catch (IOException e) {
-           log.debug("The writing of the recoverlog failed: ", e);
-           return false;
-       } finally {
-           IOUtils.closeQuietly(os);
-       }
-       return true;
-   }
-   
-   
+    /**
+     * Returns the recoverbackup file object.
+     *
+     * @return A file object for the recoverbackup.gz. file (which may or may
+     *         not exist).
+     */
+    public File getRecoverBackupGzFile() {
+        return new File(crawlDir, RECOVERBACKUP_GZ_FILENAME);
+    }
+
+    /**
+     * Try to write the recover-backup file.
+     * 
+     * @param recoverlog
+     *            The recoverlog in the form of an InputStream
+     * @return true, if operation succeeds, otherwise false
+     */
+    public boolean writeRecoverBackupfile(InputStream recoverlog) {
+        OutputStream os = null;
+        try {
+            os = new FileOutputStream(getRecoverBackupGzFile());
+            StreamUtils.copyInputStreamToOutputStream(recoverlog, os);
+        } catch (IOException e) {
+            log.debug("The writing of the recoverlog failed: ", e);
+            return false;
+        } finally {
+            IOUtils.closeQuietly(os);
+        }
+        return true;
+    }
+
     /**
      * Writes the given content to the seeds.txt file.
      *
-     * @param seeds The intended content of seeds.txt
-     * @throws ArgumentNotValid if seeds is null or empty
+     * @param seeds
+     *            The intended content of seeds.txt
+     * @throws ArgumentNotValid
+     *             if seeds is null or empty
      */
     public void writeSeedsTxt(String seeds) {
         ArgumentNotValid.checkNotNullOrEmpty(seeds, "String seeds");
@@ -201,8 +217,10 @@ public class HeritrixFiles {
     /**
      * Writes the given order.xml content to the order.xml file.
      *
-     * @param doc The intended content of order.xml
-     * @throws ArgumentNotValid, if doc is null or empty
+     * @param doc
+     *            The intended content of order.xml
+     * @throws ArgumentNotValid
+     *             , if doc is null or empty
      */
     public void writeOrderXml(Document doc) {
         ArgumentNotValid.checkNotNull(doc, "Document doc");
@@ -211,7 +229,8 @@ public class HeritrixFiles {
         XmlUtils.writeXmlToFile(doc, getOrderXmlFile());
     }
 
-    /** Get the file that contains output from Heritrix on stdout/stderr.
+    /**
+     * Get the file that contains output from Heritrix on stdout/stderr.
      *
      * @return File that contains output from Heritrix on stdout/stderr.
      */
@@ -221,8 +240,11 @@ public class HeritrixFiles {
 
     /**
      * Set the deduplicate index dir.
-     * @param indexDir the cache dir containing unzipped files
-     * @throws ArgumentNotValid if indexDir is not a directory or is null
+     * 
+     * @param indexDir
+     *            the cache dir containing unzipped files
+     * @throws ArgumentNotValid
+     *             if indexDir is not a directory or is null
      */
     public void setIndexDir(File indexDir) {
         ArgumentNotValid.checkNotNull(indexDir, "File indexDir");
@@ -233,6 +255,7 @@ public class HeritrixFiles {
 
     /**
      * Returns the index directory, if one has been set.
+     * 
      * @return the index directory or null if no index has been set.
      */
     public File getIndexDir() {
@@ -240,23 +263,20 @@ public class HeritrixFiles {
     }
 
     /**
-     * Return a list of disposable heritrix-files.
-     * Currently the list consists of the File "state.job", and
-     * the directories: "checkpoints", "state", "scratch".
+     * Return a list of disposable heritrix-files. Currently the list consists
+     * of the File "state.job", and the directories: "checkpoints", "state",
+     * "scratch".
      *
      * @return a list of disposable heritrix-files.
      */
     public File[] getDisposableFiles() {
-        return new File[] {
-                new File(crawlDir, "state.job"),
-                new File(crawlDir, "state"),
-                new File(crawlDir, "checkpoints"),
-                new File(crawlDir, "scratch")
-        };
+        return new File[] { new File(crawlDir, "state.job"), new File(crawlDir, "state"),
+                new File(crawlDir, "checkpoints"), new File(crawlDir, "scratch") };
     }
 
     /**
      * Retrieve the crawlLog as a File object.
+     * 
      * @return the crawlLog as a File object.
      */
     public File getCrawlLog() {
@@ -266,6 +286,7 @@ public class HeritrixFiles {
 
     /**
      * Retrieve the progress statistics log as a File object.
+     * 
      * @return the progress statistics log as a File object.
      */
     public File getProgressStatisticsLog() {
@@ -275,6 +296,7 @@ public class HeritrixFiles {
 
     /**
      * Get the job ID.
+     * 
      * @return Job ID this heritrix files object is for.
      */
     public Long getJobID() {
@@ -283,6 +305,7 @@ public class HeritrixFiles {
 
     /**
      * Get the harvest ID.
+     * 
      * @return Harvest ID this heritrix files object is for.
      */
     public Long getHarvestID() {
@@ -292,7 +315,8 @@ public class HeritrixFiles {
     /**
      * Delete statefile etc. and move crawl directory to oldjobs.
      *
-     * @param oldJobsDir Directory to move the rest of any existing files to.
+     * @param oldJobsDir
+     *            Directory to move the rest of any existing files to.
      */
     public void cleanUpAfterHarvest(File oldJobsDir) {
         // delete disposable files
@@ -301,7 +325,7 @@ public class HeritrixFiles {
                 try {
                     FileUtils.removeRecursively(disposable);
                 } catch (IOFailure e) {
-                    //Log harmless trouble
+                    // Log harmless trouble
                     log.debug("Couldn't delete leftover file '{}'", disposable.getAbsolutePath(), e);
                 }
             }
@@ -316,26 +340,27 @@ public class HeritrixFiles {
     }
 
     /**
-     * Helper method to delete the crawl.log and progress statistics log.
-     * Will log errors but otherwise continue.
+     * Helper method to delete the crawl.log and progress statistics log. Will
+     * log errors but otherwise continue.
      */
     public void deleteFinalLogs() {
         try {
             FileUtils.remove(getCrawlLog());
         } catch (IOFailure e) {
-            //Log harmless trouble
+            // Log harmless trouble
             log.debug("Couldn't delete crawl log file.", e);
         }
         try {
             FileUtils.remove(getProgressStatisticsLog());
         } catch (IOFailure e) {
-            //Log harmless trouble
+            // Log harmless trouble
             log.debug("Couldn't delete progress statistics log file.", e);
         }
     }
-    
+
     /**
      * Return the directory, where Heritrix writes its arcfiles.
+     * 
      * @return the directory, where Heritrix writes its arcfiles.
      */
     public File getArcsDir() {
@@ -344,6 +369,7 @@ public class HeritrixFiles {
 
     /**
      * Return the directory, where Heritrix writes its warcfiles.
+     * 
      * @return the directory, where Heritrix writes its warcfiles.
      */
     public File getWarcsDir() {

@@ -35,7 +35,7 @@ import dk.netarkivet.common.management.SingleMBeanObject;
  */
 public class CachingLogRecord implements SingleLogRecord {
 
-	private final int index;
+    private final int index;
     private final CachingLogHandler cachingLogHandler;
     private SingleMBeanObject<SingleLogRecord> singleMBeanObject;
 
@@ -43,11 +43,13 @@ public class CachingLogRecord implements SingleLogRecord {
      * Make a caching log record, that exposes a log record at a given index as
      * an MBean.
      *
-     * @param index             The index of this log record, counted from the
-     *                          top of the list.
-     * @param cachingLogHandler The caching log handler this is an exposing view
-     *                          on.
-     * @throws IOFailure on any trouble registering.
+     * @param index
+     *            The index of this log record, counted from the top of the
+     *            list.
+     * @param cachingLogHandler
+     *            The caching log handler this is an exposing view on.
+     * @throws IOFailure
+     *             on any trouble registering.
      */
     public CachingLogRecord(int index, CachingLogHandler cachingLogHandler) {
         ArgumentNotValid.checkNotNull(cachingLogHandler, "CachingLogHandler cachingLogHandler");
@@ -76,9 +78,8 @@ public class CachingLogRecord implements SingleLogRecord {
      * Registers this object as an mbean.
      */
     private void register() {
-        singleMBeanObject = new SingleMBeanObject<SingleLogRecord>(
-                "dk.netarkivet.common.logging", this, SingleLogRecord.class,
-                ManagementFactory.getPlatformMBeanServer());
+        singleMBeanObject = new SingleMBeanObject<SingleLogRecord>("dk.netarkivet.common.logging", this,
+                SingleLogRecord.class, ManagementFactory.getPlatformMBeanServer());
         singleMBeanObject.getNameProperties().put("index", Integer.toString(this.index));
         singleMBeanObject.register();
     }

@@ -55,8 +55,7 @@ public class RunChecksum {
         if (argv.length == 1) {
             bitarchive = argv[0];
             boolean found = false;
-            final String[] locations = Settings.getAll(
-                    CommonSettings.REPLICA_IDS);
+            final String[] locations = Settings.getAll(CommonSettings.REPLICA_IDS);
             for (String location : locations) {
                 if (bitarchive.equals(location)) {
                     found = true;
@@ -64,8 +63,8 @@ public class RunChecksum {
                 }
             }
             if (!found) {
-                System.out.println("Bitarchive '" + bitarchive + "' not found " +
-                        "among known bitarchives " + Arrays.asList(locations));
+                System.out.println("Bitarchive '" + bitarchive + "' not found " + "among known bitarchives "
+                        + Arrays.asList(locations));
                 dieWithUsage();
             }
         } else {
@@ -79,10 +78,10 @@ public class RunChecksum {
         localFile.deleteOnExit();
         result.copyTo(localFile);
         result.cleanup();
-        System.out.print("*** Checksum done on '" + bitarchive + "', "
-                + lbs.getNoOfFilesProcessed() + " files processed");
+        System.out.print("*** Checksum done on '" + bitarchive + "', " + lbs.getNoOfFilesProcessed()
+                + " files processed");
         if (lbs.getFilesFailed().size() != 0) {
-                System.out.println(", failed files: " + lbs.getFilesFailed());
+            System.out.println(", failed files: " + lbs.getFilesFailed());
         }
         System.out.println(" ***");
         BufferedReader reader = new BufferedReader(new FileReader(localFile));
@@ -97,8 +96,7 @@ public class RunChecksum {
     }
 
     private static void dieWithUsage() {
-        System.out.println("Usage: java " + RunChecksum.class.getName()
-                + " [bitarchive]");
+        System.out.println("Usage: java " + RunChecksum.class.getName() + " [bitarchive]");
         System.out.println("Bitarchive names are defined in settings.xml");
         System.exit(1);
     }

@@ -45,8 +45,7 @@ public class CommonSettingsTester {
         for (Field f : fields) {
             int modifiers = f.getModifiers();
             if (isPublic(modifiers) && isStatic(modifiers)) {
-                assertFalse("CommonSettings: field final: " + f.getName(),
-                        isFinal(modifiers));
+                assertFalse("CommonSettings: field final: " + f.getName(), isFinal(modifiers));
             }
         }
     }

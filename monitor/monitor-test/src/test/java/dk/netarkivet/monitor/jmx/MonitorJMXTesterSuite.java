@@ -51,7 +51,7 @@ public class MonitorJMXTesterSuite {
     }
 
     public static void main(String args[]) {
-        String args2[] = {"-noloading", MonitorJMXTesterSuite.class.getName()};
+        String args2[] = { "-noloading", MonitorJMXTesterSuite.class.getName() };
         TestRunner.main(args2);
     }
 }

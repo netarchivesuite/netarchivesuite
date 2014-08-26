@@ -28,9 +28,11 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.monitor.distribute.MonitorMessage;
 import dk.netarkivet.monitor.distribute.MonitorMessageVisitor;
 
-/** This type of message is sent to the monitor registry server to
- * register the host for remote JMX monitoring.*/
-@SuppressWarnings({ "serial"})
+/**
+ * This type of message is sent to the monitor registry server to register the
+ * host for remote JMX monitoring.
+ */
+@SuppressWarnings({ "serial" })
 public class RegisterHostMessage extends MonitorMessage {
     /** The HostEntry to register. */
     HostEntry hostEntry;
@@ -39,11 +41,15 @@ public class RegisterHostMessage extends MonitorMessage {
      * Creates a message with the JMX host entry for a host registered to the
      * monitor server.
      *
-     * @param name The name of the remote host.
-     * @param jmxPort The JMX port allocated on the remote host.
-     * @param rmiPort The RMI port allocated on the remote host.
+     * @param name
+     *            The name of the remote host.
+     * @param jmxPort
+     *            The JMX port allocated on the remote host.
+     * @param rmiPort
+     *            The RMI port allocated on the remote host.
      *
-     * @throws ArgumentNotValid on null or empty hostname, or negative ports.
+     * @throws ArgumentNotValid
+     *             on null or empty hostname, or negative ports.
      */
     public RegisterHostMessage(String name, int jmxPort, int rmiPort) {
         super(Channels.getTheMonitorServer(), Channels.getError());
@@ -54,14 +60,14 @@ public class RegisterHostMessage extends MonitorMessage {
     }
 
     /**
-     * Should be implemented as a part of the visitor pattern. e.g.:
-     * <code>
+     * Should be implemented as a part of the visitor pattern. e.g.: <code>
      *     public void accept(MonitorMessageVisitor v) {
      *         v.visit(this);
      *     }
      * </code>
      *
-     * @param v A message visitor.
+     * @param v
+     *            A message visitor.
      *
      * @see MonitorMessageVisitor
      */
@@ -69,7 +75,9 @@ public class RegisterHostMessage extends MonitorMessage {
         v.visit(this);
     }
 
-    /** Get the host entry for the host registering.
+    /**
+     * Get the host entry for the host registering.
+     * 
      * @return The host entry.
      */
     public HostEntry getHostEntry() {

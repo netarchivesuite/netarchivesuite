@@ -50,7 +50,7 @@ public class IngestDomainList {
     /** The logger. */
     protected static final Logger log = LoggerFactory.getLogger(IngestDomainList.class);
 
-	/** I18n bundle used by this class. */
+    /** I18n bundle used by this class. */
     private static final I18n I18N = new dk.netarkivet.common.utils.I18n(Constants.TRANSLATIONS_BUNDLE);
 
     /** How often to log progress. */
@@ -60,8 +60,8 @@ public class IngestDomainList {
     private DomainDAO dao;
 
     /**
-     * Constructor for the IngestDomainList class.
-     * It makes a connection to the Domains store.
+     * Constructor for the IngestDomainList class. It makes a connection to the
+     * Domains store.
      */
     public IngestDomainList() {
         dao = DomainDAO.getInstance();
@@ -100,7 +100,7 @@ public class IngestDomainList {
                         log.info(msg);
                         if (print) {
                             out.print(I18N.getString(theLocale, "domain.number.0.1.added.at.2", countDomains,
-                            		domainName, d));
+                                    domainName, d));
                             out.print("<br/>");
                             out.flush();
                         }
@@ -115,7 +115,7 @@ public class IngestDomainList {
                         log.debug("domain '{}' is not a valid domain Name", domainName);
                         if (print) {
                             out.print(I18N.getString(theLocale, "errormsg;domain.0.is.not.a.valid" + ".domainname",
-                            		domainName));
+                                    domainName));
                             out.print("<br/>");
                             out.flush();
                         }
@@ -123,7 +123,8 @@ public class IngestDomainList {
                 } catch (Exception e) {
                     log.debug("Could not create domain '{}'", domainName, e);
                     if (print) {
-                        out.print(I18N.getString(theLocale, "errormsg;unable.to.create" + ".domain.0.due.to.error.1", domainName, e.getMessage()));
+                        out.print(I18N.getString(theLocale, "errormsg;unable.to.create" + ".domain.0.due.to.error.1",
+                                domainName, e.getMessage()));
                         out.print("<br/>\n");
                         out.flush();
                     }

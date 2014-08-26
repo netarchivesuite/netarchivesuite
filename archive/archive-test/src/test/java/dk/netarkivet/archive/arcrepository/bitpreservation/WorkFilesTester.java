@@ -43,8 +43,7 @@ import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
  * Unittest for the class WorkFiles.
  */
 public class WorkFilesTester {
-    private MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,
-                                                  TestInfo.WORKING_DIR);
+    private MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
 
     @Before
     public void setUp() throws Exception {
@@ -59,55 +58,38 @@ public class WorkFilesTester {
     @Test
     public void testGetSortedFile() throws Exception {
         File f = new File(TestInfo.WORKING_DIR, "does-not-exist");
-        assertFalse("Input file should not exist at start",
-                f.exists());
-        final List<String> list1 = Arrays.asList(new String[] {
-                            "foo", "bar", "baz", "qux", "qux"
-                        });
+        assertFalse("Input file should not exist at start", f.exists());
+        final List<String> list1 = Arrays.asList(new String[] { "foo", "bar", "baz", "qux", "qux" });
         FileUtils.writeCollectionToFile(f, list1);
-        File sortedFileRaw =
-                new File(TestInfo.WORKING_DIR, "sorted.txt").getAbsoluteFile();
-        assertFalse("Sorted version should not exist before asking for it",
-                sortedFileRaw.exists());
+        File sortedFileRaw = new File(TestInfo.WORKING_DIR, "sorted.txt").getAbsoluteFile();
+        assertFalse("Sorted version should not exist before asking for it", sortedFileRaw.exists());
         File sortedFileGen = WorkFiles.getSortedFile(f).getAbsoluteFile();
-        assertEquals("Sorted file should have the expected name",
-                sortedFileRaw, sortedFileGen);
-        assertTrue("Sorted version should exist after asking for it",
-                sortedFileGen.exists());
+        assertEquals("Sorted file should have the expected name", sortedFileRaw, sortedFileGen);
+        assertTrue("Sorted version should exist after asking for it", sortedFileGen.exists());
         Collections.sort(list1);
-        CollectionAsserts.assertIteratorEquals("Should have same order contents",
-                list1.iterator(),
-                FileUtils.readListFromFile(sortedFileGen).iterator());
+        CollectionAsserts.assertIteratorEquals("Should have same order contents", list1.iterator(), FileUtils
+                .readListFromFile(sortedFileGen).iterator());
 
-        final List<String> list2 = Arrays.asList(new String[] {
-            "foo2", "bar3", "baz4", "qux", "qux"
-        });
+        final List<String> list2 = Arrays.asList(new String[] { "foo2", "bar3", "baz4", "qux", "qux" });
 
         FileUtils.writeCollectionToFile(f, list2);
         File sortedFileGen2 = WorkFiles.getSortedFile(f);
-        assertEquals("Sorted file should have the expected name",
-                sortedFileRaw, sortedFileGen2);
-        assertTrue("Sorted version should exist after asking for it",
-                sortedFileGen2.exists());
+        assertEquals("Sorted file should have the expected name", sortedFileRaw, sortedFileGen2);
+        assertTrue("Sorted version should exist after asking for it", sortedFileGen2.exists());
         Collections.sort(list2);
-        CollectionAsserts.assertIteratorEquals("Should have same order contents",
-                list2.iterator(),
-                FileUtils.readListFromFile(sortedFileGen2).iterator());
+        CollectionAsserts.assertIteratorEquals("Should have same order contents", list2.iterator(), FileUtils
+                .readListFromFile(sortedFileGen2).iterator());
 
         // Test that we regenerate when needing to
         sortedFileGen2.delete();
         FileUtils.writeCollectionToFile(f, list1);
-        assertFalse("Sorted version should not exist before asking for it",
-                sortedFileRaw.exists());
+        assertFalse("Sorted version should not exist before asking for it", sortedFileRaw.exists());
         sortedFileGen = WorkFiles.getSortedFile(f);
-        assertEquals("Sorted file should have the expected name",
-                sortedFileRaw, sortedFileGen);
-        assertTrue("Sorted version should exist after asking for it",
-                sortedFileGen.exists());
+        assertEquals("Sorted file should have the expected name", sortedFileRaw, sortedFileGen);
+        assertTrue("Sorted version should exist after asking for it", sortedFileGen.exists());
         Collections.sort(list1);
-        CollectionAsserts.assertIteratorEquals("Should have same order contents",
-                list1.iterator(),
-                FileUtils.readListFromFile(sortedFileGen).iterator());
+        CollectionAsserts.assertIteratorEquals("Should have same order contents", list1.iterator(), FileUtils
+                .readListFromFile(sortedFileGen).iterator());
 
         // Test that it fails without input file
         f.delete();
@@ -121,13 +103,13 @@ public class WorkFilesTester {
         final List<String> empty = Collections.emptyList();
         FileUtils.writeCollectionToFile(f, empty);
         sortedFileGen = WorkFiles.getSortedFile(f);
-        assertEquals("Should have no contents",
-                empty, FileUtils.readListFromFile(sortedFileGen));
-        
+        assertEquals("Should have no contents", empty, FileUtils.readListFromFile(sortedFileGen));
+
         // test date for non-existing file.
-        assertEquals("The file should have the date 'Thu Jan 01 01:00:00 CET 1970', but had: "
-                + WorkFiles.getLastUpdate(Replica.getReplicaFromId("THREE"), WorkFiles.FILES_ON_BA), 
-                new Date(0L).getTime(), WorkFiles.getLastUpdate(Replica.getReplicaFromId("ONE"), 
-                WorkFiles.FILES_ON_BA).getTime());
+        assertEquals(
+                "The file should have the date 'Thu Jan 01 01:00:00 CET 1970', but had: "
+                        + WorkFiles.getLastUpdate(Replica.getReplicaFromId("THREE"), WorkFiles.FILES_ON_BA), new Date(
+                        0L).getTime(), WorkFiles.getLastUpdate(Replica.getReplicaFromId("ONE"), WorkFiles.FILES_ON_BA)
+                        .getTime());
     }
 }

@@ -29,7 +29,6 @@ import java.util.Calendar;
 
 import org.junit.Test;
 
-
 /**
  * Unit tests for the TimeUtils class.
  *

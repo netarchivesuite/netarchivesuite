@@ -41,14 +41,14 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.StreamUtils;
 
 /**
- * ByteJarLoader is a ClassLoader that stores java classes in a map where
- * the key to the map is the class name, and the value is the class stored
- * as a byte array.
+ * ByteJarLoader is a ClassLoader that stores java classes in a map where the
+ * key to the map is the class name, and the value is the class stored as a byte
+ * array.
  */
 @SuppressWarnings("serial")
 public class ByteJarLoader extends ClassLoader implements Serializable {
 
-	/** The log. */
+    /** The log. */
     private static final transient Logger log = LoggerFactory.getLogger(ByteJarLoader.class);
 
     /** The map, that holds the class data. */
@@ -64,8 +64,8 @@ public class ByteJarLoader extends ClassLoader implements Serializable {
      * Constructor for the ByteLoader.
      * 
      * @param files
-     *            An array of files, which are assumed to be jar-files, but
-     *            they need not have the extension .jar
+     *            An array of files, which are assumed to be jar-files, but they
+     *            need not have the extension .jar
      */
     public ByteJarLoader(File... files) {
         ArgumentNotValid.checkNotNull(files, "File ... files");
@@ -89,8 +89,8 @@ public class ByteJarLoader extends ClassLoader implements Serializable {
     }
 
     /**
-     * Lookup and return the Class with the given className. 
-     * This method overrides the ClassLoader.findClass method.
+     * Lookup and return the Class with the given className. This method
+     * overrides the ClassLoader.findClass method.
      * 
      * @param className
      *            The name of the class to lookup

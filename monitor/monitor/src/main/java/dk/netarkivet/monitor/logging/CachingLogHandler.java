@@ -45,16 +45,19 @@ import dk.netarkivet.monitor.MonitorSettings;
  */
 public class CachingLogHandler extends Handler {
 
-	/** The size of the logging cache. */
+    /** The size of the logging cache. */
     private final int loggingHistorySize;
 
-    /** The logging cache itself, caching the last "loggingHistorySize" log entries. */
+    /**
+     * The logging cache itself, caching the last "loggingHistorySize" log
+     * entries.
+     */
     private final List<LogRecord> loggingHistory;
 
     /** The log entries exposed as MBeans. */
     private final List<CachingLogRecord> loggingMBeans;
 
-    /** The place in the loggingHistory for the next LogRecord. */ 
+    /** The place in the loggingHistory for the next LogRecord. */
     private int currentIndex;
 
     /**
@@ -64,9 +67,10 @@ public class CachingLogHandler extends Handler {
      * This method was copied from java.util.logging.LogManager, where it is
      * package private :-(
      *
-     * @param name         The log property name
-     * @param defaultValue The level if that property is not specified or
-     *                     unparsable
+     * @param name
+     *            The log property name
+     * @param defaultValue
+     *            The level if that property is not specified or unparsable
      * @return The level from the property if set and parsable, the defaultValue
      *         otherwise
      */
@@ -90,9 +94,10 @@ public class CachingLogHandler extends Handler {
      * This method was copied from java.util.logging.LogManager, where it is
      * package private :-(
      *
-     * @param name         The log property name
-     * @param defaultValue The filter if that property is not specified or
-     *                     unparsable
+     * @param name
+     *            The log property name
+     * @param defaultValue
+     *            The filter if that property is not specified or unparsable
      * @return The filter from the property if set and parsable, the
      *         defaultValue otherwise
      */
@@ -109,7 +114,7 @@ public class CachingLogHandler extends Handler {
             // class or creating an instance.
             // Drop through.
         }
-        // We got an exception.  Return the defaultValue.
+        // We got an exception. Return the defaultValue.
         return defaultValue;
     }
 
@@ -121,9 +126,10 @@ public class CachingLogHandler extends Handler {
      * This method was copied from java.util.logging.LogManager, where it is
      * package private :-(
      *
-     * @param name         The log property name
-     * @param defaultValue The formatter if that property is not specified or
-     *                     unparsable
+     * @param name
+     *            The log property name
+     * @param defaultValue
+     *            The formatter if that property is not specified or unparsable
      * @return The formatter from the property if set and parsable, the
      *         defaultValue otherwise
      */
@@ -140,7 +146,7 @@ public class CachingLogHandler extends Handler {
             // class or creating an instance.
             // Drop through.
         }
-        // We got an exception.  Return the defaultValue.
+        // We got an exception. Return the defaultValue.
         return defaultValue;
     }
 
@@ -164,7 +170,7 @@ public class CachingLogHandler extends Handler {
 
         loggingHistorySize = Settings.getInt(MonitorSettings.LOGGING_HISTORY_SIZE);
         loggingHistory = Collections.synchronizedList(new ArrayList<LogRecord>(loggingHistorySize));
-        //Fill out the list with loggingHistorySize null-records.
+        // Fill out the list with loggingHistorySize null-records.
         loggingHistory.addAll(Arrays.asList(new LogRecord[loggingHistorySize]));
         loggingMBeans = new ArrayList<CachingLogRecord>(loggingHistorySize);
         for (int i = 0; i < loggingHistorySize; i++) {
@@ -177,8 +183,9 @@ public class CachingLogHandler extends Handler {
      * Publish a <tt>LogRecord</tt>. This simply remembers the record in
      * datastructures, and thus exposes it in an MBean.
      *
-     * @param record description of the log event. A null record is silently
-     *               ignored and is not published
+     * @param record
+     *            description of the log event. A null record is silently
+     *            ignored and is not published
      * @see Handler#publish(LogRecord)
      */
     public void publish(LogRecord record) {
@@ -196,13 +203,15 @@ public class CachingLogHandler extends Handler {
     }
 
     /**
-     * Close the <tt>Handler</tt> and free all associated resources. <p> The
-     * close method will perform a <tt>flush</tt> and then close the
-     * <tt>Handler</tt>.   After close has been called this <tt>Handler</tt>
-     * should no longer be used.  Method calls may either be silently ignored or
+     * Close the <tt>Handler</tt> and free all associated resources.
+     * <p>
+     * The close method will perform a <tt>flush</tt> and then close the
+     * <tt>Handler</tt>. After close has been called this <tt>Handler</tt>
+     * should no longer be used. Method calls may either be silently ignored or
      * may throw runtime exceptions.
      *
-     * @throws SecurityException never.
+     * @throws SecurityException
+     *             never.
      */
     public void close() throws SecurityException {
         flush();
@@ -216,7 +225,8 @@ public class CachingLogHandler extends Handler {
     /**
      * Returns the nth logrecord from the top.
      *
-     * @param n The number of the log record to get
+     * @param n
+     *            The number of the log record to get
      * @return The LogRecord which is number n from the top, or null for none.
      */
     public LogRecord getNthLogRecord(int n) {

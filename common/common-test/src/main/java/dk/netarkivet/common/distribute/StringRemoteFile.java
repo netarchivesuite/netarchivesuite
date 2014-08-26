@@ -38,7 +38,7 @@ import dk.netarkivet.common.utils.FileUtils;
  *
  */
 
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({ "serial" })
 public class StringRemoteFile implements RemoteFile {
     /** the contents. */
     String contents;
@@ -56,10 +56,10 @@ public class StringRemoteFile implements RemoteFile {
     }
 
     /**
-     * Copy remotefile to local disk storage.
-     * Used by the data recipient.
+     * Copy remotefile to local disk storage. Used by the data recipient.
      *
-     * @param destFile local File
+     * @param destFile
+     *            local File
      */
     public void copyTo(File destFile) {
         FileUtils.writeBinaryFile(destFile, contents.getBytes());
@@ -68,9 +68,11 @@ public class StringRemoteFile implements RemoteFile {
     /**
      * Write the contents of this remote file to an output stream.
      *
-     * @param out OutputStream that the data will be written to.  This stream
+     * @param out
+     *            OutputStream that the data will be written to. This stream
      *            will not be closed by this operation.
-     * @throws IOFailure If append operation fails
+     * @throws IOFailure
+     *             If append operation fails
      */
     public void appendTo(OutputStream out) {
         try {

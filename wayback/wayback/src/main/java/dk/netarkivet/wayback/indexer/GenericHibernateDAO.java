@@ -32,17 +32,22 @@ import org.hibernate.criterion.Criterion;
 /**
  * An implementation of Generic DAO which is specialised for hibernate object
  * stores.
- * @param <T> The type of the persistent entity.
- * @param <PK> The type of the primary key for the entity.
+ * 
+ * @param <T>
+ *            The type of the persistent entity.
+ * @param <PK>
+ *            The type of the primary key for the entity.
  */
-@SuppressWarnings({ "unchecked"})
+@SuppressWarnings({ "unchecked" })
 public class GenericHibernateDAO<T, PK extends Serializable> implements GenericDAO<T, PK> {
 
     private Class<T> type;
 
     /**
      * Constructor for the class.
-     * @param type the type of the persistent entity managed by this class.
+     * 
+     * @param type
+     *            the type of the persistent entity managed by this class.
      */
     public GenericHibernateDAO(Class<T> type) {
         this.type = type;
@@ -61,7 +66,7 @@ public class GenericHibernateDAO<T, PK extends Serializable> implements GenericD
     @Override
     public T read(PK id) {
         Session sess = getSession();
-        T result =  (T) sess.get(type, id);
+        T result = (T) sess.get(type, id);
         sess.close();
         return result;
     }
@@ -86,18 +91,19 @@ public class GenericHibernateDAO<T, PK extends Serializable> implements GenericD
 
     /**
      * Return a session object for managing instances of this class.
+     * 
      * @return the session.
      */
     protected Session getSession() {
         return HibernateUtil.getSession();
     }
 
-
-
     /**
      * Use this inside subclasses as a convenience method to find objects
      * matching a given criterion.
-     * @param criterion the criteria to be matched.
+     * 
+     * @param criterion
+     *            the criteria to be matched.
      * @return a list of objects matching the criterion.
      */
     protected List<T> findByCriteria(Criterion... criterion) {

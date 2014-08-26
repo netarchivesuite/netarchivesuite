@@ -34,12 +34,10 @@ import java.io.OutputStream;
 import java.util.Set;
 
 /**
- * JobIndexCache mockup that either returns null, throws exception, waits,
- * or returns a file with the given jobids.
+ * JobIndexCache mockup that either returns null, throws exception, waits, or
+ * returns a file with the given jobids.
  */
-public class MockupMultiFileBasedCache
-        extends MultiFileBasedCache<Long>
-        implements TestConfigurationIF {
+public class MockupMultiFileBasedCache extends MultiFileBasedCache<Long> implements TestConfigurationIF {
     private Object o;
     private static final int TIMEOUT = 2000;
 
@@ -50,7 +48,9 @@ public class MockupMultiFileBasedCache
         super("TEST");
     }
 
-    public enum Mode{SILENT, REPLYING, REPLYING_DIR, FAILING, WAITING};
+    public enum Mode {
+        SILENT, REPLYING, REPLYING_DIR, FAILING, WAITING
+    };
 
     private Mode mode = Mode.SILENT;
 
@@ -79,62 +79,60 @@ public class MockupMultiFileBasedCache
     protected Set<Long> cacheData(Set<Long> jobIDs) {
         cacheCalled++;
         cacheParameter = jobIDs;
-        switch(mode) {
-            case SILENT:
-                return null;
-            case WAITING:
-                try {
-                    long before = System.currentTimeMillis();
-                    synchronized(o) {
-                        o.notifyAll();
-                        o.wait(TIMEOUT);
-                        o.notifyAll();
-                    }
-                    woken |= System.currentTimeMillis() - before < TIMEOUT;
+        switch (mode) {
+        case SILENT:
+            return null;
+        case WAITING:
+            try {
+                long before = System.currentTimeMillis();
+                synchronized (o) {
+                    o.notifyAll();
+                    o.wait(TIMEOUT);
+                    o.notifyAll();
+                }
+                woken |= System.currentTimeMillis() - before < TIMEOUT;
 
-                } catch (InterruptedException e) {
-                    return null;
-                }
+            } catch (InterruptedException e) {
                 return null;
-            case REPLYING:
-                try {
-                    File temp = getCacheFile(jobIDs);
-                    temp.deleteOnExit();
-                    FileOutputStream fos = new FileOutputStream(temp);
-                    for (Long job : jobIDs) {
-                        fos.write(job.intValue());
-                    }
-                    fos.close();
-                    return jobIDs;
-                } catch (IOException e) {
-                    System.out.println("Error in mock-up: " + e);
-                    e.printStackTrace();
-                    return null;
+            }
+            return null;
+        case REPLYING:
+            try {
+                File temp = getCacheFile(jobIDs);
+                temp.deleteOnExit();
+                FileOutputStream fos = new FileOutputStream(temp);
+                for (Long job : jobIDs) {
+                    fos.write(job.intValue());
                 }
-            case REPLYING_DIR:
-                try {
-                    File tempDir = getCacheFile(jobIDs);
-                    tempDir.deleteOnExit();
-                    tempDir.mkdir();
-                    OutputStream fos = new FileOutputStream(new File(tempDir, "foo"));
-                    /*
-                    for (Long job : jobIDs) {
-                        FileOutputStream fos = new FileOutputStream(
-                                new File(tempDir, job.toString()));
-                        fos.write(job.intValue());
-                        fos.close();
-                    }*/
-                    fos.close();
-                    return jobIDs;
-                } catch (IOException e) {
-                    System.out.println("Error in mock-up: " + e);
-                    e.printStackTrace();
-                    return null;
-                }
-            case FAILING:
-                throw new IOFailure("This is a failing testhandler!");
-            default:
+                fos.close();
+                return jobIDs;
+            } catch (IOException e) {
+                System.out.println("Error in mock-up: " + e);
+                e.printStackTrace();
                 return null;
+            }
+        case REPLYING_DIR:
+            try {
+                File tempDir = getCacheFile(jobIDs);
+                tempDir.deleteOnExit();
+                tempDir.mkdir();
+                OutputStream fos = new FileOutputStream(new File(tempDir, "foo"));
+                /*
+                 * for (Long job : jobIDs) { FileOutputStream fos = new
+                 * FileOutputStream( new File(tempDir, job.toString()));
+                 * fos.write(job.intValue()); fos.close(); }
+                 */
+                fos.close();
+                return jobIDs;
+            } catch (IOException e) {
+                System.out.println("Error in mock-up: " + e);
+                e.printStackTrace();
+                return null;
+            }
+        case FAILING:
+            throw new IOFailure("This is a failing testhandler!");
+        default:
+            return null;
         }
     }
 }

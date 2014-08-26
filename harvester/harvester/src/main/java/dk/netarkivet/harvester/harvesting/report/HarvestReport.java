@@ -41,8 +41,7 @@ public interface HarvestReport extends Serializable {
     StopReason getDefaultStopReason();
 
     /**
-     * Returns the set of domain names
-     * that are contained in hosts-report.txt
+     * Returns the set of domain names that are contained in hosts-report.txt
      * (i.e. host names mapped to domains)
      *
      * @return a Set of Strings
@@ -52,26 +51,33 @@ public interface HarvestReport extends Serializable {
     /**
      * Get the number of objects found for the given domain.
      *
-     * @param domainName A domain name (as given by getDomainNames())
+     * @param domainName
+     *            A domain name (as given by getDomainNames())
      * @return How many objects were collected for that domain
-     * @throws ArgumentNotValid if null or empty domainName
+     * @throws ArgumentNotValid
+     *             if null or empty domainName
      */
     Long getObjectCount(String domainName) throws ArgumentNotValid;
 
     /**
      * Get the number of bytes downloaded for the given domain.
      *
-     * @param domainName A domain name (as given by getDomainNames())
+     * @param domainName
+     *            A domain name (as given by getDomainNames())
      * @return How many bytes were collected for that domain
-     * @throws ArgumentNotValid if null or empty domainName
+     * @throws ArgumentNotValid
+     *             if null or empty domainName
      */
     Long getByteCount(String domainName) throws ArgumentNotValid;
 
     /**
      * Get the StopReason for the given domain.
-     * @param domainName A domain name (as given by getDomainNames())
+     * 
+     * @param domainName
+     *            A domain name (as given by getDomainNames())
      * @return the StopReason for the given domain.
-     * @throws ArgumentNotValid if null or empty domainName
+     * @throws ArgumentNotValid
+     *             if null or empty domainName
      */
     StopReason getStopReason(String domainName) throws ArgumentNotValid;
 
@@ -82,8 +88,8 @@ public interface HarvestReport extends Serializable {
     void preProcess(HeritrixFiles files);
 
     /**
-     * Post-processing happens on the scheduler side when ARC files
-     * have been uploaded.
+     * Post-processing happens on the scheduler side when ARC files have been
+     * uploaded.
      */
     void postProcess(Job job);
 

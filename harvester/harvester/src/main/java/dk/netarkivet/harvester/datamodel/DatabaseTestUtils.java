@@ -60,7 +60,8 @@ public class DatabaseTestUtils {
      * new transaction that will be rolled back with dropDatabase. Only one
      * connection can be taken at a time.
      * 
-     * @param resourcePath A file that contains a test database.
+     * @param resourcePath
+     *            A file that contains a test database.
      * @param dbCreationDir
      * @return a connection to the database stored in the given file
      * @throws SQLException
@@ -84,11 +85,11 @@ public class DatabaseTestUtils {
         long startTime = System.currentTimeMillis();
 
         Connection c = DriverManager.getConnection(dburi + ";create=true");
-        c.setAutoCommit(false);  // load faster.
-        
+        c.setAutoCommit(false); // load faster.
+
         // locate create script first, next to resource
         File createFile = new File(new File(resourcePath).getParentFile(), "create.sql");
-        
+
         applyStatementsInInputStream(c, checkNotNull(new FileInputStream(createFile), "create.sql"));
 
         // then populate it.
@@ -96,7 +97,7 @@ public class DatabaseTestUtils {
         applyStatementsInInputStream(c, is);
 
         c.commit();
-        
+
         log.debug("Populated {} in {}(ms)", dbfile, (System.currentTimeMillis() - startTime));
 
         c.close();
@@ -104,8 +105,7 @@ public class DatabaseTestUtils {
         return DriverManager.getConnection(dburi);
     }
 
-    private static void applyStatementsInInputStream(Connection connection, InputStream is)
-            throws SQLException,
+    private static void applyStatementsInInputStream(Connection connection, InputStream is) throws SQLException,
             IOException {
         Statement statement = connection.createStatement();
 
@@ -160,7 +160,8 @@ public class DatabaseTestUtils {
      * Get a connection to the given sample harvest definition database and fool
      * the HD DB connect class into thinking it should use that one.
      * 
-     * @param resourcePath Location of the sql files to create and populate the test DB.
+     * @param resourcePath
+     *            Location of the sql files to create and populate the test DB.
      * @param dbCreationDir
      * @return a connection to the given sample harvest definition database
      * @throws SQLException

@@ -40,49 +40,52 @@ import dk.netarkivet.common.utils.KeyValuePair;
  * Class responsible for checksumming a list of files.
  *
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({ "serial" })
 public class ChecksumJob extends FileBatchJob {
 
-    /** The log.*/
+    /** The log. */
     protected static final transient Logger log = LoggerFactory.getLogger(ChecksumJob.class);
-    
-    /** Characters used for separating a file identifier 
-     * from the checksum in the output from a checksum job.
+
+    /**
+     * Characters used for separating a file identifier from the checksum in the
+     * output from a checksum job.
      */
     public static final String STRING_FILENAME_SEPARATOR = "##";
-    
-    /** The constructor.*/
+
+    /** The constructor. */
     public ChecksumJob() {
-        // Keep the batchJobTimeout at default (-1) so it will be overridden 
+        // Keep the batchJobTimeout at default (-1) so it will be overridden
         // by the settings for default batch timeout.
     }
 
     /**
-     * Initialization of a ChecksumJob: a new structure for storing files
-     * failed is created.
+     * Initialization of a ChecksumJob: a new structure for storing files failed
+     * is created.
      * 
-     * @param os The output stream where the output data is written.
+     * @param os
+     *            The output stream where the output data is written.
      * @see FileBatchJob#initialize(OutputStream)
      */
     public void initialize(OutputStream os) {
     }
 
     /**
-     * Generates MD5 checksum for file identified by 'file' and writes
-     * the checksum to the given OutputStream.
-     * Errors during checksumming are logged and files on which checksumming
-     * fails are stored in filesFailed.
+     * Generates MD5 checksum for file identified by 'file' and writes the
+     * checksum to the given OutputStream. Errors during checksumming are logged
+     * and files on which checksumming fails are stored in filesFailed.
      *
-     * @param file The file to process.
-     * @param os The outputStream to write the result to
+     * @param file
+     *            The file to process.
+     * @param os
+     *            The outputStream to write the result to
      * @return false, if errors occurred while processing the file
      * @see FileBatchJob#processFile(File, OutputStream)
      */
     public boolean processFile(File file, OutputStream os) {
         ArgumentNotValid.checkNotNull(file, "file");
         try {
-            os.write((file.getName() + STRING_FILENAME_SEPARATOR
-            		+ ChecksumCalculator.calculateMd5(file) + "\n").getBytes());
+            os.write((file.getName() + STRING_FILENAME_SEPARATOR + ChecksumCalculator.calculateMd5(file) + "\n")
+                    .getBytes());
         } catch (IOException e) {
             log.warn("Checksumming of file {} failed: ", file.getName(), e);
             return false;
@@ -93,16 +96,20 @@ public class ChecksumJob extends FileBatchJob {
     /**
      * Finishing the job requires nothing particular.
      *
-     * @param os The output stream where the output data is written.
+     * @param os
+     *            The output stream where the output data is written.
      * @see FileBatchJob#finish(OutputStream)
      */
     public void finish(OutputStream os) {
     }
 
-    /** Create a line in checksum job format from a filename and a checksum.
+    /**
+     * Create a line in checksum job format from a filename and a checksum.
      *
-     * @param filename A filename (no path)
-     * @param checksum An MD5 checksum
+     * @param filename
+     *            A filename (no path)
+     * @param checksum
+     *            An MD5 checksum
      * @return A string of the correct format for a checksum job output.
      */
     public static String makeLine(String filename, String checksum) {
@@ -111,12 +118,15 @@ public class ChecksumJob extends FileBatchJob {
         return filename + STRING_FILENAME_SEPARATOR + checksum;
     }
 
-    /** Parse a line of output into a key-value pair.
+    /**
+     * Parse a line of output into a key-value pair.
      *
-     * @param line The line to parse, of the form
-     *  <b>filename</b>##<b>checksum</b>
+     * @param line
+     *            The line to parse, of the form
+     *            <b>filename</b>##<b>checksum</b>
      * @return The filename->checksum mapping.
-     * @throws ArgumentNotValid if the line is not on the correct form.
+     * @throws ArgumentNotValid
+     *             if the line is not on the correct form.
      */
     public static KeyValuePair<String, String> parseLine(String line) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(line, "checksum line");
@@ -128,9 +138,10 @@ public class ChecksumJob extends FileBatchJob {
     }
 
     /**
-     * Write a human-readily description of this ChecksumJob object.
-     * Writes out the name of the ChecksumJob, the number of files processed,
-     * and the number of files that failed during processing.
+     * Write a human-readily description of this ChecksumJob object. Writes out
+     * the name of the ChecksumJob, the number of files processed, and the
+     * number of files that failed during processing.
+     * 
      * @return a human-readily description of this ChecksumJob object
      */
     public String toString() {
@@ -147,7 +158,9 @@ public class ChecksumJob extends FileBatchJob {
     /**
      * Invoke default method for deserializing object, and reinitialise the
      * logger.
-     * @param s the InputStream
+     * 
+     * @param s
+     *            the InputStream
      */
     private void readObject(ObjectInputStream s) {
         try {
@@ -159,8 +172,11 @@ public class ChecksumJob extends FileBatchJob {
 
     /**
      * Invoke default method for serializing object.
-     * @param s the OutputStream
-     * @throws IOFailure If an exception is caught during writing of the object.
+     * 
+     * @param s
+     *            the OutputStream
+     * @throws IOFailure
+     *             If an exception is caught during writing of the object.
      */
     private void writeObject(ObjectOutputStream s) throws IOFailure {
         try {

@@ -28,12 +28,11 @@ import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
-
 /**
  * Container for upload request.
  *
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({ "serial" })
 public class UploadMessage extends ArchiveMessage {
     /** the name of the file to upload. */
     private String arcfileName;
@@ -41,12 +40,15 @@ public class UploadMessage extends ArchiveMessage {
     /** The actual data. */
     private RemoteFile theRemoteFile;
 
-
     /**
      * Construct UploadMessage.
-     * @param to      Channel to message to
-     * @param replyTo Channel to reply back to
-     * @param rf The RemoteFile to upload
+     * 
+     * @param to
+     *            Channel to message to
+     * @param replyTo
+     *            Channel to reply back to
+     * @param rf
+     *            The RemoteFile to upload
      */
     public UploadMessage(ChannelID to, ChannelID replyTo, RemoteFile rf) {
         super(to, replyTo);
@@ -55,18 +57,20 @@ public class UploadMessage extends ArchiveMessage {
         theRemoteFile = rf;
     }
 
-  /**
-   * Retrieve name of the uploaded file.
-   * @return current value of arcfileName
-   */
+    /**
+     * Retrieve name of the uploaded file.
+     * 
+     * @return current value of arcfileName
+     */
     public String getArcfileName() {
-      return arcfileName;
+        return arcfileName;
     }
 
-  /**
-   * Get method for field theRemoteFile.
-   * @return Current value of theRemoteFile
-   */
+    /**
+     * Get method for field theRemoteFile.
+     * 
+     * @return Current value of theRemoteFile
+     */
     public RemoteFile getRemoteFile() {
         return theRemoteFile;
     }
@@ -75,7 +79,8 @@ public class UploadMessage extends ArchiveMessage {
      * Should be implemented as a part of the visitor pattern. fx.: public void
      * accept(ArchiveMessageVisitor v) { v.visit(this); }
      *
-     * @param v A message visitor
+     * @param v
+     *            A message visitor
      */
     public void accept(ArchiveMessageVisitor v) {
         v.visit(this);
@@ -83,6 +88,7 @@ public class UploadMessage extends ArchiveMessage {
 
     /**
      * Generate String representation of this object.
+     * 
      * @return String representation of this object
      */
     public String toString() {

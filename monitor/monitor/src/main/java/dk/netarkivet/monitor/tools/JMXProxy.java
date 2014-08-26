@@ -31,26 +31,29 @@ import dk.netarkivet.monitor.jmx.HostForwarding;
 import dk.netarkivet.monitor.logging.SingleLogRecord;
 
 /**
- * This tool will simply reregister all MBeans that matches the given query 
- * from the JMX hosts read in settings, using its own platformmbeanserver.
- * It will then wait forever.
+ * This tool will simply reregister all MBeans that matches the given query from
+ * the JMX hosts read in settings, using its own platformmbeanserver. It will
+ * then wait forever.
  *
- * It can then be connected to with any JMX client, e.g. jconsole.
- * Start this tool with -Dcom.sun.management.jmxremote
+ * It can then be connected to with any JMX client, e.g. jconsole. Start this
+ * tool with -Dcom.sun.management.jmxremote
  *
  */
 public class JMXProxy extends ToolRunnerBase {
 
-    /** Run the tool as described in class comment.
-     * @param args Should take one arg, the query.
+    /**
+     * Run the tool as described in class comment.
+     * 
+     * @param args
+     *            Should take one arg, the query.
      */
     public static void main(String[] args) {
         new JMXProxy().runTheTool(args);
     }
 
     /**
-     * Factory method. Creates and returns the actual workhorse that
-     * does the job.
+     * Factory method. Creates and returns the actual workhorse that does the
+     * job.
      *
      * @return An implementation of the SimpleCmdlineTool interface.
      */
@@ -59,9 +62,9 @@ public class JMXProxy extends ToolRunnerBase {
             /**
              * Check (command line) arguments. There should be one, the query
              *
-             * @param args The command line arguments passed directly
-             *             from a public static void main(String[] args)
-             *             method.
+             * @param args
+             *            The command line arguments passed directly from a
+             *            public static void main(String[] args) method.
              * @return True, if parameters are size 1. False if not.
              */
             public boolean checkArgs(String... args) {
@@ -75,7 +78,8 @@ public class JMXProxy extends ToolRunnerBase {
             /**
              * Does nothing.
              *
-             * @param args Not used.
+             * @param args
+             *            Not used.
              */
             public void setUp(String... args) {
             }
@@ -90,27 +94,24 @@ public class JMXProxy extends ToolRunnerBase {
              * Run the tool. Simply forward all logging mbeans to the local
              * mbean server. Then waits.
              *
-             * @param args Not used.
+             * @param args
+             *            Not used.
              */
             public void run(String... args) {
                 String query = args[0];
-                HostForwarding.getInstance(
-                        SingleLogRecord.class,
-                        ManagementFactory.getPlatformMBeanServer(),
-                        query);
+                HostForwarding.getInstance(SingleLogRecord.class, ManagementFactory.getPlatformMBeanServer(), query);
                 synchronized (this) {
                     try {
                         wait();
                     } catch (InterruptedException e) {
-                        //end the tool nicely on wakeup.
+                        // end the tool nicely on wakeup.
                     }
                 }
             }
 
             /**
-             * Describes the parameters that this tool accepts.
-             * One argument is needed: The query,
-             * e.g dk.netarkivet.common.logging:*
+             * Describes the parameters that this tool accepts. One argument is
+             * needed: The query, e.g dk.netarkivet.common.logging:*
              *
              * @return The parameter description in a String object.
              */

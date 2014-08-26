@@ -27,12 +27,12 @@ import java.io.InputStream;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
- * Simple helper class to store the fact, whether we have a stream which 
+ * Simple helper class to store the fact, whether we have a stream which
  * contains a header or a stream, which does not.
  */
 public class ResultStream {
 
-	/** The inputstream w/ or without a HTTP header. */
+    /** The inputstream w/ or without a HTTP header. */
     private final InputStream inputstream;
 
     /** Does the inputstream contains a HTTP header?. */

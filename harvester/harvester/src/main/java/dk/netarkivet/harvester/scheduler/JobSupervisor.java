@@ -45,7 +45,7 @@ import dk.netarkivet.harvester.datamodel.JobStatus;
  */
 public class JobSupervisor implements ComponentLifeCycle {
 
-	/** The logger to use. */
+    /** The logger to use. */
     private static final Logger log = LoggerFactory.getLogger(JobSupervisor.class);
 
     /** For scheduling tasks */
@@ -112,8 +112,8 @@ public class JobSupervisor implements ComponentLifeCycle {
     }
 
     /**
-     * Stops any job that has been in status STARTED a very long time defined
-     * by the {@link HarvesterSettings#JOB_TIMEOUT_TIME} setting.
+     * Stops any job that has been in status STARTED a very long time defined by
+     * the {@link HarvesterSettings#JOB_TIMEOUT_TIME} setting.
      * 
      * Package protected to allow unit testing.
      */
@@ -130,8 +130,8 @@ public class JobSupervisor implements ComponentLifeCycle {
                 endTime.setTime(job.getActualStart().getTime() + timeDiff);
                 if (new Date().after(endTime)) {
                     final String msg = " Job " + id + " has exceeded its timeout of "
-                            + (jobTimeoutTime / TimeUtils.HOUR_IN_MINUTES) + " minutes." +
-                            " Changing status to " + "FAILED.";
+                            + (jobTimeoutTime / TimeUtils.HOUR_IN_MINUTES) + " minutes." + " Changing status to "
+                            + "FAILED.";
                     log.warn(msg);
                     job.setStatus(JobStatus.FAILED);
                     job.appendHarvestErrors(msg);

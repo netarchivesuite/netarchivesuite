@@ -33,5 +33,5 @@ public class UtilityTester {
     public void testConstants() {
         ReflectUtils.testUtilityConstructor(Constants.class);
     }
-    
+
 }

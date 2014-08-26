@@ -46,22 +46,25 @@ public class BatchLocalFiles {
     /** The class logger. */
     private static final Logger log = LoggerFactory.getLogger(BatchLocalFiles.class);
 
-	/** The list of files to run batch jobs on. */
+    /** The list of files to run batch jobs on. */
     private File[] files;
 
-    /** The last time logging was performed. Initial 0 to ensure logging the first time. */
+    /**
+     * The last time logging was performed. Initial 0 to ensure logging the
+     * first time.
+     */
     private long lastLoggingDate = 0;
-    /** The time when the batchjob was started.*/
+    /** The time when the batchjob was started. */
     private long startTime = 0;
 
     /**
-     * Given an array of files, constructs a BatchLocalFiles instance
-     * to be used in running a batch job over those files.
+     * Given an array of files, constructs a BatchLocalFiles instance to be used
+     * in running a batch job over those files.
      *
-     * @param incomingFiles The files that should be used processed
-     * by the batchjob
-     * @throws ArgumentNotValid if incomingFiles is null or contains
-     * a null entry
+     * @param incomingFiles
+     *            The files that should be used processed by the batchjob
+     * @throws ArgumentNotValid
+     *             if incomingFiles is null or contains a null entry
      */
     public BatchLocalFiles(File[] incomingFiles) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(incomingFiles, "incomingFiles");
@@ -74,8 +77,10 @@ public class BatchLocalFiles {
     /**
      * Run the given job on the files associated with this object.
      *
-     * @param job - the job to be executed
-     * @param os - the OutputStream to which output data is written
+     * @param job
+     *            - the job to be executed
+     * @param os
+     *            - the OutputStream to which output data is written
      */
     public void run(FileBatchJob job, OutputStream os) {
         ArgumentNotValid.checkNotNull(job, "FileBatchJob job");
@@ -91,22 +96,24 @@ public class BatchLocalFiles {
             long logInterval = Settings.getLong(CommonSettings.BATCH_LOGGING_INTERVAL);
             // get the time for starting the batchjob (used for logging).
             startTime = new Date().getTime();
-            //Process each file:
+            // Process each file:
             for (File file : files) {
                 fileCount++;
                 if (job.getFilenamePattern().matcher(file.getName()).matches()) {
                     long currentTime = new Date().getTime();
                     // perform logging if necessary.
-                    if(lastLoggingDate + logInterval < currentTime) {
-                        log.info("The batchjob '{}' has run for {} seconds and has reached file '{}', which is number {} out of {}",
-                        		job.getClass(), (currentTime-startTime)/1000, file.getName(), fileCount, files.length);
+                    if (lastLoggingDate + logInterval < currentTime) {
+                        log.info(
+                                "The batchjob '{}' has run for {} seconds and has reached file '{}', which is number {} out of {}",
+                                job.getClass(), (currentTime - startTime) / 1000, file.getName(), fileCount,
+                                files.length);
                         // set that we have just logged.
                         lastLoggingDate = currentTime;
                     }
                     processFile(job, file, os);
                 }
-                
-                // check whether the batchjob should stop. 
+
+                // check whether the batchjob should stop.
                 if (Thread.currentThread().isInterrupted()) {
                     // log and throw an error (not exception, they are caught!)
                     String errMsg = "The batchjob '" + job.toString() + "' has been interrupted and will terminate!";
@@ -143,11 +150,15 @@ public class BatchLocalFiles {
         }
     }
 
-    /** Process a single file.
+    /**
+     * Process a single file.
      *
-     * @param job The job that does the processing
-     * @param file The file to process
-     * @param os Where to put the output.
+     * @param job
+     *            The job that does the processing
+     * @param file
+     *            The file to process
+     * @param os
+     *            Where to put the output.
      */
     private void processFile(FileBatchJob job, final File file, OutputStream os) {
         log.trace("Started processing of file '{}'.", file.getAbsolutePath());

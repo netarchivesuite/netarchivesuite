@@ -53,17 +53,16 @@ import dk.netarkivet.common.utils.SystemUtils;
 
 /**
  * This is a registry for HTTP remote file, meant for serving registered files
- * to remote hosts.
- * The embedded webserver handling remote files for HTTPRemoteFile
- * point-to-point communication. Optimised to use direct transfer on local
- * machine.
+ * to remote hosts. The embedded webserver handling remote files for
+ * HTTPRemoteFile point-to-point communication. Optimised to use direct transfer
+ * on local machine.
  */
 public class HTTPRemoteFileRegistry implements CleanupIF {
 
     /** Logger for this class. */
     private static final Logger log = LoggerFactory.getLogger(HTTPRemoteFileRegistry.class);
 
-	/** The unique instance. */
+    /** The unique instance. */
     protected static HTTPRemoteFileRegistry instance;
 
     /** Protocol for URLs. */
@@ -81,19 +80,23 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
     /** Instance to create random URLs. */
     private final Random random;
 
-    /** Postfix to add to an URL to get cleanup URL.
-     * We are not using query string, because it behaves strangely in
-     * HttpServletRequest. */
+    /**
+     * Postfix to add to an URL to get cleanup URL. We are not using query
+     * string, because it behaves strangely in HttpServletRequest.
+     */
     private static final String UNREGISTER_URL_POSTFIX = "/unregister";
 
-    /** The embedded webserver. */ 
+    /** The embedded webserver. */
     protected Server server;
     /** The shutdown hook. */
     private CleanupHook cleanupHook;
 
-    /** Initialise the registry. This includes registering an HTTP server for
+    /**
+     * Initialise the registry. This includes registering an HTTP server for
      * getting the files from this machine.
-     * @throws IOFailure if it cannot be initialised.
+     * 
+     * @throws IOFailure
+     *             if it cannot be initialised.
      */
     protected HTTPRemoteFileRegistry() {
         port = Settings.getInt(HTTPRemoteFile.HTTPREMOTEFILE_PORT_NUMBER);
@@ -105,9 +108,12 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
         Runtime.getRuntime().addShutdownHook(cleanupHook);
     }
 
-    /** Start the server, including a handler that responds with registered
+    /**
+     * Start the server, including a handler that responds with registered
      * files, removes registered files on request, and gives 404 otherwise.
-     * @throws IOFailure if it cannot be initialised.
+     * 
+     * @throws IOFailure
+     *             if it cannot be initialised.
      */
     protected void startServer() {
         server = new Server();
@@ -124,13 +130,16 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
 
     /**
      * Get the protocol part of URLs, that is HTTP.
+     * 
      * @return "http", the protocol.
      */
     protected String getProtocol() {
         return PROTOCOL;
     }
 
-    /** Get the unique instance.
+    /**
+     * Get the unique instance.
+     * 
      * @return The unique instance.
      */
     public static synchronized HTTPRemoteFileRegistry getInstance() {
@@ -142,11 +151,16 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
 
     /**
      * Register a file for serving to an endpoint.
-     * @param file The file to register.
-     * @param deletable Whether it should be deleted on cleanup.
+     * 
+     * @param file
+     *            The file to register.
+     * @param deletable
+     *            Whether it should be deleted on cleanup.
      * @return The URL it will be served as. It will be uniquely generated.
-     * @throws ArgumentNotValid on null or unreadable file.
-     * @throws IOFailure on any trouble registerring the file
+     * @throws ArgumentNotValid
+     *             on null or unreadable file.
+     * @throws IOFailure
+     *             on any trouble registerring the file
      */
     public URL registerFile(File file, boolean deletable) {
         ArgumentNotValid.checkNotNull(file, "File file");
@@ -155,14 +169,14 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
         }
         String path;
         URL url;
-        //ensure we get a random and unique URL.
+        // ensure we get a random and unique URL.
         do {
             path = "/" + Integer.toHexString(random.nextInt());
             try {
                 url = new URL(getProtocol(), localHostName, port, path);
             } catch (MalformedURLException e) {
                 throw new IOFailure("Unable to create URL for file '" + file + "'." + " '" + getProtocol() + "', '"
-                		+ localHostName + "', '" + port + "', '" + path + "''", e);
+                        + localHostName + "', '" + port + "', '" + path + "''", e);
             }
         } while (registeredFiles.containsKey(url));
         registeredFiles.put(url, new FileInfo(file, deletable));
@@ -173,18 +187,25 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
     /**
      * Get the url for cleaning up after a remote file registered under some
      * URL.
-     * @param url some URL
+     * 
+     * @param url
+     *            some URL
      * 
      * @return the cleanup url.
-     * @throws MalformedURLException If unable to construct the cleanup url
+     * @throws MalformedURLException
+     *             If unable to construct the cleanup url
      */
-    URL getCleanupUrl(URL url) throws MalformedURLException {        
+    URL getCleanupUrl(URL url) throws MalformedURLException {
         return new URL(url.getProtocol(), url.getHost(), url.getPort(), url.getPath() + UNREGISTER_URL_POSTFIX);
     }
 
-    /** Open a connection to an URL in a registry.
-     * @param url The URL to open connection to.
-     * @throws IOException If unable to open the connection.
+    /**
+     * Open a connection to an URL in a registry.
+     * 
+     * @param url
+     *            The URL to open connection to.
+     * @throws IOException
+     *             If unable to open the connection.
      * @return a connection to an URL in a registry
      */
     protected URLConnection openConnection(URL url) throws IOException {
@@ -200,8 +221,11 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
 
         /**
          * Initialise pair.
-         * @param file The file.
-         * @param deletable Whether it should be deleted on cleanup.
+         * 
+         * @param file
+         *            The file.
+         * @param deletable
+         *            Whether it should be deleted on cleanup.
          */
         FileInfo(File file, boolean deletable) {
             this.file = file;
@@ -211,7 +235,7 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
 
     /** Stops the server and nulls the instance. */
     public void cleanup() {
-        synchronized(HTTPRemoteFileRegistry.class) {
+        synchronized (HTTPRemoteFileRegistry.class) {
             try {
                 server.stop();
             } catch (Exception e) {
@@ -220,30 +244,36 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
             try {
                 Runtime.getRuntime().removeShutdownHook(cleanupHook);
             } catch (Exception e) {
-                //ignore
+                // ignore
             }
             instance = null;
         }
     }
 
-    /** A handler for the registry.
+    /**
+     * A handler for the registry.
      *
-     * It has three ways to behave:
-     * Serve registered files, return 404 on unknown files, and unregister
-     * registered files, depending on the URL.
+     * It has three ways to behave: Serve registered files, return 404 on
+     * unknown files, and unregister registered files, depending on the URL.
      */
     protected class HTTPRemoteFileRegistryHandler extends AbstractHandler {
         /**
          * A method for handling Jetty requests.
          *
-         * @see AbstractHandler#handle(String, org.eclipse.jetty.server.Request, HttpServletRequest, HttpServletResponse),
-         * HttpServletResponse, int)
+         * @see AbstractHandler#handle(String, org.eclipse.jetty.server.Request,
+         *      HttpServletRequest, HttpServletResponse), HttpServletResponse,
+         *      int)
          *
-         * @param string Unused domain.
-         * @param httpServletRequest request object.
-         * @param httpServletResponse the response to write to.
-         * @throws IOException On trouble in communication.
-         * @throws ServletException On servlet trouble.
+         * @param string
+         *            Unused domain.
+         * @param httpServletRequest
+         *            request object.
+         * @param httpServletResponse
+         *            the response to write to.
+         * @throws IOException
+         *             On trouble in communication.
+         * @throws ServletException
+         *             On servlet trouble.
          */
         @Override
         public void handle(String string, Request baseRequest, HttpServletRequest httpServletRequest,

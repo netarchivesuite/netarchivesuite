@@ -30,8 +30,8 @@ import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.utils.FileUtils;
 
 /**
- * Assemble the constants related to an archive format into profiles.
- * Currently only an ARC and WARC profile.
+ * Assemble the constants related to an archive format into profiles. Currently
+ * only an ARC and WARC profile.
  */
 public class ArchiveProfile {
 
@@ -49,10 +49,15 @@ public class ArchiveProfile {
 
     /**
      * Construct an archive profile.
-     * @param filename_filter archive filename filter
-     * @param filename_pattern archive filename string pattern
-     * @param metadataFilenamePattern archive metadata filename regex pattern
-     * @param archive_directory archive directory
+     * 
+     * @param filename_filter
+     *            archive filename filter
+     * @param filename_pattern
+     *            archive filename string pattern
+     * @param metadataFilenamePattern
+     *            archive metadata filename regex pattern
+     * @param archive_directory
+     *            archive directory
      */
     protected ArchiveProfile(FilenameFilter filename_filter, String filename_pattern, Pattern metadataFilenamePattern,
             String archive_directory) {
@@ -68,6 +73,6 @@ public class ArchiveProfile {
 
     /** WARC archive profile. */
     public static final ArchiveProfile WARC_PROFILE = new ArchiveProfile(FileUtils.WARCS_FILTER,
-    		FileUtils.WARC_PATTERN, Pattern.compile("([0-9]+)-metadata-([0-9]+).warc"), Constants.WARCDIRECTORY_NAME);
+            FileUtils.WARC_PATTERN, Pattern.compile("([0-9]+)-metadata-([0-9]+).warc"), Constants.WARCDIRECTORY_NAME);
 
 }

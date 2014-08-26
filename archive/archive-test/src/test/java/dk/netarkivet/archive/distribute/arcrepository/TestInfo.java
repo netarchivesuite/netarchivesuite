@@ -32,7 +32,7 @@ import dk.netarkivet.common.utils.arc.ARCKey;
  */
 public class TestInfo {
 
-	private static final File BASE_DIR = new File("tests/dk/netarkivet/archive/distribute/arcrepository/data");
+    private static final File BASE_DIR = new File("tests/dk/netarkivet/archive/distribute/arcrepository/data");
     public static final File WORKING_DIR = new File(BASE_DIR, "working");
     public static final File ORIGINALS_DIR = new File(BASE_DIR, "originals");
     /**
@@ -44,8 +44,8 @@ public class TestInfo {
     public static URI GIF_URL;
     public static final File LOG_PATH = new File(WORKING_DIR, "tmp");
     /** The key listed for GIF_URL. */
-    public static final ARCKey GIF_URL_KEY =
-            new ARCKey("2-2-20060731110420-00000-sb-test-har-001.statsbiblioteket.dk.arc", 73269);
+    public static final ARCKey GIF_URL_KEY = new ARCKey(
+            "2-2-20060731110420-00000-sb-test-har-001.statsbiblioteket.dk.arc", 73269);
     public static final File SAMPLE_FILE = new File(WORKING_DIR, "testFile.txt");
     public static final File SAMPLE_FILE_COPY = new File(WORKING_DIR, "testCopy.txt");
     public static final File EMPTY_FILE = new File(WORKING_DIR, "zeroByteFile");

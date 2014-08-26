@@ -72,15 +72,13 @@ public class ArcRepositoryTesterGet {
     /**
      * The test log directories for Controller and AdminData.
      */
-    private static final File TEST_DIR = new File(
-            "tests/dk/netarkivet/archive/arcrepository/data/get");
+    private static final File TEST_DIR = new File("tests/dk/netarkivet/archive/arcrepository/data/get");
 
     private static final File ORIGINALS_DIR = new File(TEST_DIR, "originals");
 
     private static final File WORKING_DIR = new File(TEST_DIR, "working");
 
-    private static final File BITARCHIVE_DIR = new File(WORKING_DIR,
-            "bitarchive1");
+    private static final File BITARCHIVE_DIR = new File(WORKING_DIR, "bitarchive1");
 
     private static final File SERVER_DIR = new File(WORKING_DIR, "server1");
 
@@ -97,8 +95,7 @@ public class ArcRepositoryTesterGet {
      * List of files that can be used in the scripts (content of the
      * ORIGINALS_DIR)
      */
-    private static final List<String> GETTABLE_FILES
-            = Arrays.asList(new String[] {"get1.ARC", "get2.ARC" });
+    private static final List<String> GETTABLE_FILES = Arrays.asList(new String[] { "get1.ARC", "get2.ARC" });
 
     /** A bitarchive server to communicate with. */
     BitarchiveServer bitArchiveServer;
@@ -122,7 +119,7 @@ public class ArcRepositoryTesterGet {
         rs.setUp();
         ChannelsTesterHelper.resetChannels();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
-//        ChannelsTester.resetChannels();
+        // ChannelsTester.resetChannels();
 
         rf.setUp();
 
@@ -131,13 +128,10 @@ public class ArcRepositoryTesterGet {
         FileUtils.createDir(CLOG_DIR);
         FileUtils.createDir(ALOG_DIR);
 
-        Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, ALOG_DIR
-                .getAbsolutePath());
+        Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, ALOG_DIR.getAbsolutePath());
 
-        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, BITARCHIVE_DIR
-                .getAbsolutePath());
-        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, SERVER_DIR
-                .getAbsolutePath());
+        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, BITARCHIVE_DIR.getAbsolutePath());
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, SERVER_DIR.getAbsolutePath());
         bitArchiveServer = BitarchiveServer.getInstance();
         arcRepository = ArcRepository.getInstance();
         Settings.set(JMSArcRepositoryClient.ARCREPOSITORY_GET_TIMEOUT, "1000");
@@ -174,8 +168,7 @@ public class ArcRepositoryTesterGet {
      */
     @Test
     public void testGetExistingFile() {
-        BitarchiveRecord bar = client.get(GETTABLE_FILES.get(1),
-                (long) 0);
+        BitarchiveRecord bar = client.get(GETTABLE_FILES.get(1), (long) 0);
 
         // not really much of a test as we just check for no exception
         // better tests follow later
@@ -187,33 +180,27 @@ public class ArcRepositoryTesterGet {
 
     /**
      * this tests get get()-method for an existing file - getting get File-name
-     * out of the BitarchiveRecord.
-     * FIXME: this test currently make the unittestersuite time out on 
-     * the HUDSON server.
+     * out of the BitarchiveRecord. FIXME: this test currently make the
+     * unittestersuite time out on the HUDSON server.
      */
     @Test
     public void failingTArcrepositoryGetFile() throws IOException {
         arcRepository.close();
-        File result = new File(FileUtils.createUniqueTempDir(
-                WORKING_DIR, "testGetFile"), GETTABLE_FILES.get(1));
-        Replica replica = Replica.getReplicaFromId(Settings.get(
-                CommonSettings.USE_REPLICA_ID));
+        File result = new File(FileUtils.createUniqueTempDir(WORKING_DIR, "testGetFile"), GETTABLE_FILES.get(1));
+        Replica replica = Replica.getReplicaFromId(Settings.get(CommonSettings.USE_REPLICA_ID));
         client.getFile(GETTABLE_FILES.get(1), replica, result);
         byte[] buffer = FileUtils.readBinaryFile(result);
-        ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance())
-                .waitForConcurrentTasksToFinish();
+        ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance()).waitForConcurrentTasksToFinish();
         assertNotNull("Buffer should not be null", buffer);
-        byte targetbuffer[] = FileUtils.readBinaryFile(new File(new File(
-                BITARCHIVE_DIR, "filedir"), (String) GETTABLE_FILES.get(1)));
-        assertTrue("Received data and uploaded must be equal", Arrays
-                .equals(buffer, targetbuffer));
+        byte targetbuffer[] = FileUtils.readBinaryFile(new File(new File(BITARCHIVE_DIR, "filedir"),
+                (String) GETTABLE_FILES.get(1)));
+        assertTrue("Received data and uploaded must be equal", Arrays.equals(buffer, targetbuffer));
     }
 
     /**
      * this tests get get()-method for an existing file - getting get File-name
-     * out of the BitarchiveRecord.
-     * FIXME: this test currently make the unittestersuite time out on 
-     * the HUDSON server.
+     * out of the BitarchiveRecord. FIXME: this test currently make the
+     * unittestersuite time out on the HUDSON server.
      */
     @Test
     public void failingTestRemoveAndGetFile() throws IOException {
@@ -221,32 +208,20 @@ public class ArcRepositoryTesterGet {
         client.close();
         client = ArcRepositoryClientFactory.getPreservationInstance();
         new DummyRemoveAndGetFileMessageReplyServer();
-        final File bitarchiveFiledir = new File(
-                Settings.get(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR),
-                "filedir");
-        client.removeAndGetFile(
-                GETTABLE_FILES.get(1),
-                Settings.get(CommonSettings.USE_REPLICA_ID),
-                "42",
-                ChecksumCalculator.calculateMd5(new File(bitarchiveFiledir,
-                        GETTABLE_FILES.get(1)))
-        );
-        File copyOfFile = new File(FileUtils.getTempDir(),
-                GETTABLE_FILES.get(1));
-        assertTrue("Must have copied file to commontempdir",
-                copyOfFile.exists());
+        final File bitarchiveFiledir = new File(Settings.get(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR), "filedir");
+        client.removeAndGetFile(GETTABLE_FILES.get(1), Settings.get(CommonSettings.USE_REPLICA_ID), "42",
+                ChecksumCalculator.calculateMd5(new File(bitarchiveFiledir, GETTABLE_FILES.get(1))));
+        File copyOfFile = new File(FileUtils.getTempDir(), GETTABLE_FILES.get(1));
+        assertTrue("Must have copied file to commontempdir", copyOfFile.exists());
 
         byte[] buffer = FileUtils.readBinaryFile(copyOfFile);
-        ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance())
-                .waitForConcurrentTasksToFinish();
+        ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance()).waitForConcurrentTasksToFinish();
         assertNotNull("Buffer should not be null", buffer);
-        byte targetbuffer[] = FileUtils.readBinaryFile(new File(new File(
-                BITARCHIVE_DIR, "filedir"), GETTABLE_FILES.get(1)));
-        assertTrue("Received data and uploaded must be equal", Arrays
-                .equals(buffer, targetbuffer));
+        byte targetbuffer[] = FileUtils.readBinaryFile(new File(new File(BITARCHIVE_DIR, "filedir"), GETTABLE_FILES
+                .get(1)));
+        assertTrue("Received data and uploaded must be equal", Arrays.equals(buffer, targetbuffer));
 
-        assertEquals("Should have no remote files left on the server",
-                0, TestRemoteFile.remainingFiles().size());
+        assertEquals("Should have no remote files left on the server", 0, TestRemoteFile.remainingFiles().size());
     }
 
     /**
@@ -256,18 +231,16 @@ public class ArcRepositoryTesterGet {
      */
     @Test
     public void testGetData() {
-        BitarchiveRecord bar = client.get(GETTABLE_FILES.get(1),
-                (long) 0);
+        BitarchiveRecord bar = client.get(GETTABLE_FILES.get(1), (long) 0);
 
         if (bar.getLength() == 0L) {
             fail("No data in BitarchiveRecord");
         } else {
-            // BitarchiveRecord.getData() now returns a InputStream 
+            // BitarchiveRecord.getData() now returns a InputStream
             // instead of a byte[]
-            String data = new String(StreamUtils.inputStreamToBytes(bar.getData(),
-                    (int) bar.getLength())).substring(0, 55);
-            assertEquals("First 55 chars of data should be correct", data,
-                    "<?xml version=\"1.0\" "
+            String data = new String(StreamUtils.inputStreamToBytes(bar.getData(), (int) bar.getLength())).substring(0,
+                    55);
+            assertEquals("First 55 chars of data should be correct", data, "<?xml version=\"1.0\" "
                     + "encoding=\"UTF-8\" standalone=\"yes\"?>");
         }
     }
@@ -278,12 +251,10 @@ public class ArcRepositoryTesterGet {
     @Test
     public void testGetIndexOutOfBounds() {
         try {
-            BitarchiveRecord bar = client.get(GETTABLE_FILES.get(1),
-                    (long) 50000000);
-            fail("Index out of bounds should throw exception, but " +
-                 "gave " + bar);
+            BitarchiveRecord bar = client.get(GETTABLE_FILES.get(1), (long) 50000000);
+            fail("Index out of bounds should throw exception, but " + "gave " + bar);
         } catch (Exception e) {
-            //expected
+            // expected
         }
     }
 
@@ -293,16 +264,14 @@ public class ArcRepositoryTesterGet {
     @Test
     public void testGetIllegalIndex() {
         try {
-            BitarchiveRecord bar = client.get(GETTABLE_FILES.get(1),
-                    (long) 5000);
+            BitarchiveRecord bar = client.get(GETTABLE_FILES.get(1), (long) 5000);
             fail("Illegal index should return null, not given " + bar);
         } catch (Exception e) {
-            //expected
+            // expected
         }
     }
 
-    public static class DummyGetFileMessageReplyServer implements
-            MessageListener {
+    public static class DummyGetFileMessageReplyServer implements MessageListener {
 
         JMSConnection conn = JMSConnectionFactory.getInstance();
 
@@ -315,16 +284,13 @@ public class ArcRepositoryTesterGet {
         }
 
         public void onMessage(Message msg) {
-            GetFileMessage netMsg = (GetFileMessage) JMSConnection
-                    .unpack(msg);
-            netMsg.setFile(new File(new File(BITARCHIVE_DIR, "filedir"),
-                    (String) GETTABLE_FILES.get(1)));
+            GetFileMessage netMsg = (GetFileMessage) JMSConnection.unpack(msg);
+            netMsg.setFile(new File(new File(BITARCHIVE_DIR, "filedir"), (String) GETTABLE_FILES.get(1)));
             conn.reply(netMsg);
         }
     }
 
-    public static class DummyRemoveAndGetFileMessageReplyServer implements
-            MessageListener {
+    public static class DummyRemoveAndGetFileMessageReplyServer implements MessageListener {
 
         JMSConnection conn = JMSConnectionFactory.getInstance();
 
@@ -337,10 +303,8 @@ public class ArcRepositoryTesterGet {
         }
 
         public void onMessage(Message msg) {
-            RemoveAndGetFileMessage netMsg
-                    = (RemoveAndGetFileMessage) JMSConnection.unpack(msg);
-            netMsg.setFile(new File(new File(BITARCHIVE_DIR, "filedir"),
-                    GETTABLE_FILES.get(1)));
+            RemoveAndGetFileMessage netMsg = (RemoveAndGetFileMessage) JMSConnection.unpack(msg);
+            netMsg.setFile(new File(new File(BITARCHIVE_DIR, "filedir"), GETTABLE_FILES.get(1)));
             conn.reply(netMsg);
         }
     }

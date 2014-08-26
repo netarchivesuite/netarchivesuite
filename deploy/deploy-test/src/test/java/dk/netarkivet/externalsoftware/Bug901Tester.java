@@ -38,7 +38,7 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.arc.ARCUtils;
 import junit.framework.TestCase;
 
-@SuppressWarnings({ "unused"})
+@SuppressWarnings({ "unused" })
 public class Bug901Tester extends TestCase {
 
     private static final int BLOCKSIZE = 32768;
@@ -46,7 +46,7 @@ public class Bug901Tester extends TestCase {
     public static final String LARGE_FILE = "largeFile";
     static final File TEST_DIR = new File("tests/dk/netarkivet/externalsoftware/data/launcher");
     static final File WORKING_DIR = new File(TEST_DIR, "working");
-    
+
     public Bug901Tester(String arg0) {
         super(arg0);
     }
@@ -60,11 +60,11 @@ public class Bug901Tester extends TestCase {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         super.tearDown();
     }
-    
+
     /**
-     * Test, if bug 901 is fixed.
-     * Try to insert 3.0 gb file into an ARC file
+     * Test, if bug 901 is fixed. Try to insert 3.0 gb file into an ARC file
      * file 4000-metadata-2.arc is taken from kb-prod-udv-001.kb.dk:/home/test
+     * 
      * @throws IOException
      */
     public void testbug901Fixed() throws IOException {
@@ -76,7 +76,7 @@ public class Bug901Tester extends TestCase {
             os.write(block);
         }
         os.close();
-     
+
         File destArc = new File(WORKING_DIR, "veryBig.arc");
         ARCWriter aw = ARCUtils.createARCWriter(destArc);
         ARCUtils.writeFileToARC(aw, largeFile, "http://dummy", "application/null");
@@ -84,12 +84,12 @@ public class Bug901Tester extends TestCase {
         System.out.println("Big file has size: " + destArc.length());
         ARCReader ar = ARCReaderFactory.get(destArc);
         Iterator<ArchiveRecord> iterator = ar.iterator();
-        int recordCount=0;
+        int recordCount = 0;
         while (iterator.hasNext()) {
             ARCRecord r = (ARCRecord) iterator.next();
-            recordCount++;            
+            recordCount++;
         }
-        assertTrue("recordCount must be 2 and not: " + recordCount, recordCount==2);
+        assertTrue("recordCount must be 2 and not: " + recordCount, recordCount == 2);
     }
 
 }

@@ -36,11 +36,10 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-
 /**
  * Unitests for the class GlobalCrawlerTrapListDBDAO.
  */
-@SuppressWarnings({ "unused"})
+@SuppressWarnings({ "unused" })
 public class GlobalCrawlerTrapListDBDAOTester extends DataModelTestCase {
 
     GlobalCrawlerTrapList list1;
@@ -61,7 +60,7 @@ public class GlobalCrawlerTrapListDBDAOTester extends DataModelTestCase {
     @Override
     @After
     public void tearDown() throws Exception {
-       super.tearDown();
+        super.tearDown();
         GlobalCrawlerTrapListDBDAO.reset();
     }
 
@@ -70,20 +69,15 @@ public class GlobalCrawlerTrapListDBDAOTester extends DataModelTestCase {
      */
     @Test
     public void testGetInstance() throws SQLException {
-        GlobalCrawlerTrapListDAO dao1 =
-                GlobalCrawlerTrapListDAO.getInstance();
-        GlobalCrawlerTrapListDAO dao2 =
-                GlobalCrawlerTrapListDAO.getInstance();
+        GlobalCrawlerTrapListDAO dao1 = GlobalCrawlerTrapListDAO.getInstance();
+        GlobalCrawlerTrapListDAO dao2 = GlobalCrawlerTrapListDAO.getInstance();
         assertNotNull("Should get a non null dao instance", dao1);
-        assertEquals("Should get a unique instance (object identity) of dao.",
-                     dao1, dao2);
+        assertEquals("Should get a unique instance (object identity) of dao.", dao1, dao2);
         // Check that the tables exist
         Connection con = HarvestDBConnection.get();
         try {
-            con.prepareStatement("SELECT * from global_crawler_trap_lists")
-            .execute();
-            con.prepareStatement("SELECT * from global_crawler_trap_expressions")
-            .execute();
+            con.prepareStatement("SELECT * from global_crawler_trap_lists").execute();
+            con.prepareStatement("SELECT * from global_crawler_trap_expressions").execute();
         } finally {
             HarvestDBConnection.release(con);
         }
@@ -91,27 +85,25 @@ public class GlobalCrawlerTrapListDBDAOTester extends DataModelTestCase {
 
     @Test
     public void testCreate() {
-       GlobalCrawlerTrapListDAO dao
-               = GlobalCrawlerTrapListDAO.getInstance();
-       int id = dao.create(list1);
-       assertEquals("Should have set list id to returned id", id, list1.getId());
-       try {
-           dao.create(list1);
-           fail("Should throw ArgumentNotValid exception");
-       } catch (ArgumentNotValid e) {
-           // expected
-       }
+        GlobalCrawlerTrapListDAO dao = GlobalCrawlerTrapListDAO.getInstance();
+        int id = dao.create(list1);
+        assertEquals("Should have set list id to returned id", id, list1.getId());
+        try {
+            dao.create(list1);
+            fail("Should throw ArgumentNotValid exception");
+        } catch (ArgumentNotValid e) {
+            // expected
+        }
     }
 
     /**
      * Tests that we can insert an object in the dao and read it back.
      */
     @Test
-   public void testCreateAndRead() {
-       GlobalCrawlerTrapListDAO dao
-               = GlobalCrawlerTrapListDAO.getInstance();
-       int id = dao.create(list1);
-       GlobalCrawlerTrapList list3 = dao.read(id);
+    public void testCreateAndRead() {
+        GlobalCrawlerTrapListDAO dao = GlobalCrawlerTrapListDAO.getInstance();
+        int id = dao.create(list1);
+        GlobalCrawlerTrapList list3 = dao.read(id);
         assertEquals("Should get back the object we inserted.", list1.getTraps(), list3.getTraps());
     }
 
@@ -120,16 +112,14 @@ public class GlobalCrawlerTrapListDBDAOTester extends DataModelTestCase {
      */
     @Test
     public void testDelete() {
-        GlobalCrawlerTrapListDAO dao
-                = GlobalCrawlerTrapListDAO.getInstance();
+        GlobalCrawlerTrapListDAO dao = GlobalCrawlerTrapListDAO.getInstance();
         int id = dao.create(list1);
         dao.delete(id);
         try {
             GlobalCrawlerTrapList list3 = dao.read(id);
-            fail("Should have thrown an exception, not returned :'" + list3 +
-                 "'");
+            fail("Should have thrown an exception, not returned :'" + list3 + "'");
         } catch (UnknownID e) {
-            //expected
+            // expected
         }
     }
 
@@ -138,8 +128,7 @@ public class GlobalCrawlerTrapListDBDAOTester extends DataModelTestCase {
      */
     @Test
     public void testUpdate() {
-          GlobalCrawlerTrapListDAO dao =
-                  GlobalCrawlerTrapListDAO.getInstance();
+        GlobalCrawlerTrapListDAO dao = GlobalCrawlerTrapListDAO.getInstance();
         int id1 = dao.create(list1);
         int id2 = dao.create(list2);
         list2.setDescription("new description");
@@ -157,8 +146,7 @@ public class GlobalCrawlerTrapListDBDAOTester extends DataModelTestCase {
      */
     @Test
     public void testGetAllActive() {
-          GlobalCrawlerTrapListDAO dao =
-                  GlobalCrawlerTrapListDAO.getInstance();
+        GlobalCrawlerTrapListDAO dao = GlobalCrawlerTrapListDAO.getInstance();
         list1.setActive(true);
         list2.setActive(false);
         dao.create(list1);
@@ -169,8 +157,7 @@ public class GlobalCrawlerTrapListDBDAOTester extends DataModelTestCase {
 
     @Test
     public void testGetAllInactive() {
-           GlobalCrawlerTrapListDAO dao =
-                  GlobalCrawlerTrapListDAO.getInstance();
+        GlobalCrawlerTrapListDAO dao = GlobalCrawlerTrapListDAO.getInstance();
         list1.setActive(false);
         list2.setActive(false);
         dao.create(list1);
@@ -180,20 +167,18 @@ public class GlobalCrawlerTrapListDBDAOTester extends DataModelTestCase {
 
     @Test
     public void testGetExpressions() {
-           GlobalCrawlerTrapListDAO dao =
-                  GlobalCrawlerTrapListDAO.getInstance();
+        GlobalCrawlerTrapListDAO dao = GlobalCrawlerTrapListDAO.getInstance();
         list1.setActive(true);
         list2.setActive(true);
         dao.create(list1);
         dao.create(list2);
-        assertEquals("Should combine the two lists to get 9 distinct traps"
-                , 9, dao.getAllActiveTrapExpressions().size());
+        assertEquals("Should combine the two lists to get 9 distinct traps", 9, dao.getAllActiveTrapExpressions()
+                .size());
     }
 
     @Test
-    public void testExists()  {
-        GlobalCrawlerTrapListDAO dao =
-            GlobalCrawlerTrapListDAO.getInstance();
+    public void testExists() {
+        GlobalCrawlerTrapListDAO dao = GlobalCrawlerTrapListDAO.getInstance();
         String name = list1.getName();
         assertFalse("Crawlertrap with name '" + name + "' should not exist now", dao.exists(name));
         dao.create(list1);

@@ -36,18 +36,24 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  */
 public final class StringUtils {
 
-	/**
-	 * Utility class, do not initialise.
-	 */
+    /**
+     * Utility class, do not initialise.
+     */
     private StringUtils() {
     }
 
     /**
      * Replace all occurrences of oldString with newString in a string.
-     * @param sentence the string, where all occurrences of oldString are to be replaced with newString.
-     * @param oldString the oldString.
-     * @param newString the newString.
-     * @return the resulting string, where all occurrences of oldString are replaced with newString.
+     * 
+     * @param sentence
+     *            the string, where all occurrences of oldString are to be
+     *            replaced with newString.
+     * @param oldString
+     *            the oldString.
+     * @param newString
+     *            the newString.
+     * @return the resulting string, where all occurrences of oldString are
+     *         replaced with newString.
      */
     public static String replace(String sentence, String oldString, String newString) {
         StringBuilder newStr = new StringBuilder();
@@ -70,14 +76,17 @@ public final class StringUtils {
     }
 
     /**
-     * Concatenate all objects in a collection with the given separator
-     * between each.  If the Collection is a List, this method will generate
-     * the conjoined string in list order.  If the objects are not Strings,
-     * the toString method will be used to convert them to strings.
+     * Concatenate all objects in a collection with the given separator between
+     * each. If the Collection is a List, this method will generate the
+     * conjoined string in list order. If the objects are not Strings, the
+     * toString method will be used to convert them to strings.
      *
-     * @param sep A string to separate the list items.
-     * @param objects A collection of object to concatenate as a string.
-     * @param <T> The type of objects to conjoin.
+     * @param sep
+     *            A string to separate the list items.
+     * @param objects
+     *            A collection of object to concatenate as a string.
+     * @param <T>
+     *            The type of objects to conjoin.
      * @return The concatenated string, or null if the list was null.
      */
     public static <T> String conjoin(String sep, Collection<T> objects) {
@@ -95,23 +104,28 @@ public final class StringUtils {
     }
 
     /**
-     * Concatenate the string representation of a maximum number of objects in
-     * a collection with a given separator between them. If the Collection is
-     * a List, this method will generate the conjoined string in list order. If
+     * Concatenate the string representation of a maximum number of objects in a
+     * collection with a given separator between them. If the Collection is a
+     * List, this method will generate the conjoined string in list order. If
      * the objects are not Strings, the toString method will be used to convert
      * them to strings.
      *
-     * @param <T> The type of collection.
-     * @param separator The string to separate the entries in the collection
-     * with. This is allowed to be the empty string.
-     * @param objects The collection to have the string representation of its
-     * entries concatenated.
-     * @param max The maximum number of objects in the collection to
-     * concatenate. If this number is 0 or below only the first entry in the
-     * collection is returned.
+     * @param <T>
+     *            The type of collection.
+     * @param separator
+     *            The string to separate the entries in the collection with.
+     *            This is allowed to be the empty string.
+     * @param objects
+     *            The collection to have the string representation of its
+     *            entries concatenated.
+     * @param max
+     *            The maximum number of objects in the collection to
+     *            concatenate. If this number is 0 or below only the first entry
+     *            in the collection is returned.
      * @return The concatenation of the string representation of a limited
-     * amount of entries in the collection.
-     * @throws ArgumentNotValid If the separator or the objects are null.
+     *         amount of entries in the collection.
+     * @throws ArgumentNotValid
+     *             If the separator or the objects are null.
      */
     public static <T> String conjoin(String separator, Collection<T> objects, int max) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(separator, "String separator");
@@ -120,15 +134,15 @@ public final class StringUtils {
         StringBuilder res = new StringBuilder();
         int index = 0;
         // go through all the objects.
-        for(T o : objects) {
-            if(res.length() != 0) {
+        for (T o : objects) {
+            if (res.length() != 0) {
                 res.append(separator);
             }
             res.append(o);
 
             // check if max is reached.
             ++index;
-            if(index > max) {
+            if (index > max) {
                 break;
             }
         }
@@ -137,10 +151,13 @@ public final class StringUtils {
     }
 
     /**
-     * Concatenate all strings in a collection with the given separator between each.
+     * Concatenate all strings in a collection with the given separator between
+     * each.
      *
-     * @param sep A string to separate the list items.
-     * @param strings An array of strings to concatenate.
+     * @param sep
+     *            A string to separate the list items.
+     * @param strings
+     *            An array of strings to concatenate.
      * @return The concatenated string, or null if the list was null.
      */
     public static String conjoin(String sep, String... strings) {
@@ -157,13 +174,16 @@ public final class StringUtils {
         return res.toString();
     }
 
-
     /**
-     * Concatenate all strings in a collection, with the fixed strings appended and prepended to each.
+     * Concatenate all strings in a collection, with the fixed strings appended
+     * and prepended to each.
      *
-     * @param strings A list of strings to join up.
-     * @param pre A string that will be put in front of each string in the list.
-     * @param post A string that will be put after each string in the list.
+     * @param strings
+     *            A list of strings to join up.
+     * @param pre
+     *            A string that will be put in front of each string in the list.
+     * @param post
+     *            A string that will be put after each string in the list.
      * @return The joined string, or null if strings is null.
      */
     public static String surjoin(List<String> strings, String pre, String post) {
@@ -181,10 +201,14 @@ public final class StringUtils {
 
     /**
      * Repeat the string n times.
-     * @param s A string to repeat.
-     * @param n How many times to repeat it.
+     * 
+     * @param s
+     *            A string to repeat.
+     * @param n
+     *            How many times to repeat it.
      * @return A repeated string.
-     * @throws ArgumentNotValid if a negative amount is specified.
+     * @throws ArgumentNotValid
+     *             if a negative amount is specified.
      */
     public static String repeat(String s, int n) {
         ArgumentNotValid.checkNotNegative(n, "int n");
@@ -197,7 +221,9 @@ public final class StringUtils {
 
     /**
      * Change all Strings to Integers.
-     * @param stringArray the given array of Strings to convert.
+     * 
+     * @param stringArray
+     *            the given array of Strings to convert.
      * @return a List of Integers.
      */
     public static List<Integer> parseIntList(String[] stringArray) {
@@ -206,18 +232,21 @@ public final class StringUtils {
             try {
                 resultList.add(Integer.parseInt(element));
             } catch (NumberFormatException e) {
-                throw new ArgumentNotValid("Unable to parse '" +  element + "' as int");
+                throw new ArgumentNotValid("Unable to parse '" + element + "' as int");
             }
         }
         return resultList;
     }
 
     /**
-     * Generate a ellipsis of orgString. If orgString is longer than
-     * maxLength, then we return a String containing the first maxLength
-     * characters and then append  " ..".
-     * @param orgString the original string.
-     * @param maxLength the maximum length of the string before ellipsing it.
+     * Generate a ellipsis of orgString. If orgString is longer than maxLength,
+     * then we return a String containing the first maxLength characters and
+     * then append " ..".
+     * 
+     * @param orgString
+     *            the original string.
+     * @param maxLength
+     *            the maximum length of the string before ellipsing it.
      * @return an ellipsis of orgString.
      */
     public static String makeEllipsis(String orgString, int maxLength) {
@@ -245,7 +274,8 @@ public final class StringUtils {
     /**
      * Formats a duration in seconds as a string of the form "3d 04:12:56".
      *
-     * @param seconds A duration in seconds
+     * @param seconds
+     *            A duration in seconds
      * @return a formatted string of the form "3d 04:12:56"
      */
     public static String formatDuration(long seconds) {
@@ -274,9 +304,11 @@ public final class StringUtils {
 
     /**
      * Leftpad the string with "0", if the string is only one character long.
-     * @param s The given string
+     * 
+     * @param s
+     *            The given string
      * @return Return a string leftpadded with a "0" if the string is only one
-     * character long, Otherwise just return the string.
+     *         character long, Otherwise just return the string.
      */
     private static String formatDurationLpad(final String s) {
         return (s.length() == 1 ? "0" + s : s);
@@ -284,7 +316,9 @@ public final class StringUtils {
 
     /**
      * Formats a numeric percentage, as a decimal number with at most 2 digits.
-     * @param percentage the numeric percentage to format.
+     * 
+     * @param percentage
+     *            the numeric percentage to format.
      * @return a formatted percentage string.
      */
     public static String formatPercentage(double percentage) {
@@ -293,7 +327,9 @@ public final class StringUtils {
 
     /**
      * Formats a numeric percentage, as a decimal number with at most 2 digits.
-     * @param percentage the numeric percentage to format.
+     * 
+     * @param percentage
+     *            the numeric percentage to format.
      * @return a formatted percentage string.
      */
     public static String formatPercentage(long percentage) {
@@ -302,7 +338,9 @@ public final class StringUtils {
 
     /**
      * Formats a number, as a decimal number with at most 2 digits.
-     * @param number the number to format.
+     * 
+     * @param number
+     *            the number to format.
      * @return a formatted number string.
      */
     public static String formatNumber(double number) {
@@ -311,7 +349,9 @@ public final class StringUtils {
 
     /**
      * Formats a number, as a decimal number with at most 2 digits.
-     * @param number the number to format.
+     * 
+     * @param number
+     *            the number to format.
      * @return a formatted number string.
      */
     public static String formatNumber(long number) {
@@ -319,9 +359,11 @@ public final class StringUtils {
     }
 
     /**
-     * Formats the given date (as elapsed milliseconds) using the default
-     * format 'yyyy/MM/dd HH:mm:ss'.
-     * @param millis the date
+     * Formats the given date (as elapsed milliseconds) using the default format
+     * 'yyyy/MM/dd HH:mm:ss'.
+     * 
+     * @param millis
+     *            the date
      * @return a formatted date string
      */
     public synchronized static String formatDate(long millis) {
@@ -331,8 +373,11 @@ public final class StringUtils {
     /**
      * Formats the given date (as elapsed milliseconds) using the provided
      * format pattern.
-     * @param millis the date
-     * @param format the format pattern {@link SimpleDateFormat}
+     * 
+     * @param millis
+     *            the date
+     * @param format
+     *            the format pattern {@link SimpleDateFormat}
      * @return a formatted date string
      */
     public static String formatDate(long millis, String format) {
@@ -340,15 +385,18 @@ public final class StringUtils {
     }
 
     /**
-     * Given an input String, this method splits the String with newlines
-     * into a multiline String with line-lengths approximately lineLength. The
-     * split is made at the first blank space found at more than lineLength
-     * characters
+     * Given an input String, this method splits the String with newlines into a
+     * multiline String with line-lengths approximately lineLength. The split is
+     * made at the first blank space found at more than lineLength characters
      * after the previous split.
-     * @param input the input String.
-     * @param lineLength the desired line length.
+     * 
+     * @param input
+     *            the input String.
+     * @param lineLength
+     *            the desired line length.
      * @return the split String.
-     * @throws ArgumentNotValid if the input is null or the lineLength is not positive
+     * @throws ArgumentNotValid
+     *             if the input is null or the lineLength is not positive
      */
     public static String splitStringOnWhitespace(String input, int lineLength) {
         ArgumentNotValid.checkNotNull(input, "input");
@@ -364,7 +412,7 @@ public final class StringUtils {
                 // We split after the found blank space so check that this is
                 // meaningful.
                 if (foundIndex != -1 && inputLine.length() > foundIndex + 1) {
-                    inputLine = inputLine.substring(0, foundIndex+1) + "\n" + inputLine.substring(foundIndex+1);
+                    inputLine = inputLine.substring(0, foundIndex + 1) + "\n" + inputLine.substring(foundIndex + 1);
                 }
             }
             output.append(inputLine);
@@ -374,14 +422,17 @@ public final class StringUtils {
     }
 
     /**
-     * Given a multi-line input string, this method splits the string so that
-     * no line has length greater than maxLineLength. Any input lines less than
-     * or equal to this length remain unaffected.
-     * @param input  the input String.
-     * @param maxLineLength the maximum permitted line length.
+     * Given a multi-line input string, this method splits the string so that no
+     * line has length greater than maxLineLength. Any input lines less than or
+     * equal to this length remain unaffected.
+     * 
+     * @param input
+     *            the input String.
+     * @param maxLineLength
+     *            the maximum permitted line length.
      * @return the split multi-line String.
-     * @throws ArgumentNotValid if input is null or maxLineLength is
-     * non-positive
+     * @throws ArgumentNotValid
+     *             if input is null or maxLineLength is non-positive
      */
     public static String splitStringForce(String input, int maxLineLength) {
         ArgumentNotValid.checkNotNull(input, "input");
@@ -389,13 +440,13 @@ public final class StringUtils {
         input = input.trim();
         String[] inputLines = input.split("\n");
         StringBuffer output = new StringBuffer();
-        for (String inputLine: inputLines) {
+        for (String inputLine : inputLines) {
             int lastSplittingIndex = 0;
             int currentLineLength = inputLine.length();
             boolean stillSplitting = true;
             while (stillSplitting) {
                 int nextSplittingIndex = lastSplittingIndex + maxLineLength;
-                if (nextSplittingIndex < currentLineLength -1) {
+                if (nextSplittingIndex < currentLineLength - 1) {
                     output.append(inputLine.substring(lastSplittingIndex, nextSplittingIndex));
                     output.append("\n");
                     lastSplittingIndex = nextSplittingIndex;

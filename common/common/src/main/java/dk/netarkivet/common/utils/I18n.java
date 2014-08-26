@@ -37,7 +37,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  */
 public class I18n {
 
-	/** Logger for this class. */
+    /** Logger for this class. */
     private static final Logger log = LoggerFactory.getLogger(I18n.class);
 
     /** Name of the resource bundle. */
@@ -60,15 +60,19 @@ public class I18n {
      * In contrast to {@link java.util.ResourceBundle#getString}, this method is
      * forgiving on errors
      *
-     * @param locale The locale to get the string for
-     * @param label The label of the string in the resource bundle
-     * @param args Any args required for formatting the label
+     * @param locale
+     *            The locale to get the string for
+     * @param label
+     *            The label of the string in the resource bundle
+     * @param args
+     *            Any args required for formatting the label
      * @return The localised string, or the label if the string could not be
-     * found or the format is invalid or does not match the args.
-     * @throws ArgumentNotValid on null or empty local or label.
+     *         found or the format is invalid or does not match the args.
+     * @throws ArgumentNotValid
+     *             on null or empty local or label.
      */
     public String getString(Locale locale, String label, Object... args) {
-        //Arguments checked in helper method.
+        // Arguments checked in helper method.
         return getString(bundleName, locale, label, args);
     }
 
@@ -78,18 +82,23 @@ public class I18n {
      * In contrast to {@link java.util.ResourceBundle#getString}, this method is
      * forgiving on errors
      *
-     * I18n.getString("dk.netarkivet.common.Translations",
-     * Locale.default, "job.unknown.id", 17)
+     * I18n.getString("dk.netarkivet.common.Translations", Locale.default,
+     * "job.unknown.id", 17)
      *
-     * @param bundleName The name of the resource bundle, fully qualified, but
-     * without the properties.
-     * See {@link java.util.ResourceBundle#getBundle(String)}
-     * @param locale The locale to get the string for
-     * @param label The label of the string in the resource bundle
-     * @param args Any args required for formatting the label
+     * @param bundleName
+     *            The name of the resource bundle, fully qualified, but without
+     *            the properties. See
+     *            {@link java.util.ResourceBundle#getBundle(String)}
+     * @param locale
+     *            The locale to get the string for
+     * @param label
+     *            The label of the string in the resource bundle
+     * @param args
+     *            Any args required for formatting the label
      * @return The localised string, or the label if the string could not be
-     * found or the format is invalid or does not match the args.
-     * @throws ArgumentNotValid on null bundleName, locale or label.
+     *         found or the format is invalid or does not match the args.
+     * @throws ArgumentNotValid
+     *             on null bundleName, locale or label.
      */
     public static String getString(String bundleName, Locale locale, String label, Object... args) {
         ArgumentNotValid.checkNotNullOrEmpty(bundleName, "String bundleName");

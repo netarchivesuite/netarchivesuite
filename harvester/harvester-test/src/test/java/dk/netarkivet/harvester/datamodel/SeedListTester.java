@@ -35,9 +35,9 @@ public class SeedListTester extends DataModelTestCase {
     final String HARVESTNAME = "TestHarvest";
     final int TEST = 3;
     final int KURIER = 2;
-    final int ORF= 1;
+    final int ORF = 1;
     final int WIKI = 0;
-    
+
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -52,69 +52,70 @@ public class SeedListTester extends DataModelTestCase {
 
         List<DomainConfiguration> webDomainConfigs = new ArrayList<DomainConfiguration>();
 
-        for (int i=0; i < domains.length; i++) {
+        for (int i = 0; i < domains.length; i++) {
             Domain d = Domain.getDefaultDomain(domains[i]);
-            
+
             String seedStr = "";
-            for (int j=0; j < seeds[i].length; j++) {
+            for (int j = 0; j < seeds[i].length; j++) {
                 seedStr += seeds[i][j] + "\n";
             }
 
             SeedList sl = new SeedList(HARVESTNAME + "_" + domains[i], seedStr);
             d.addSeedList(sl);
-            
+
             List<SeedList> seedlists = new ArrayList<SeedList>();
             seedlists.add(sl);
-            
-            DomainConfiguration cfg = new DomainConfiguration("test", d, 
-            		seedlists, new ArrayList<Password>());
+
+            DomainConfiguration cfg = new DomainConfiguration("test", d, seedlists, new ArrayList<Password>());
             cfg.setOrderXmlName(TestInfo.ORDER_XML_NAME);
             cfg.setMaxObjects(10);
             cfg.setMaxRequestRate(11);
             webDomainConfigs.add(cfg);
 
             d.addConfiguration(cfg);
-            
+
             DomainDAO.getInstance().create(d);
         }
-
 
         ScheduleDAO scheduledao = ScheduleDAO.getInstance();
         Schedule schedule = scheduledao.read("DefaultSchedule");
         String harvestComments = "Some comments";
-        return HarvestDefinition.createPartialHarvest(webDomainConfigs, 
-                schedule, harvestName, harvestComments, "Everybody");
+        return HarvestDefinition.createPartialHarvest(webDomainConfigs, schedule, harvestName, harvestComments,
+                "Everybody");
     }
-    
+
     /**
      * Tests the getHarvestInfo() method.
      */
     @Test
     public void testGetDomainsForHarvestdefinition() {
-        String[] domains = { "wikipedia.org", "orf.at", "kurier.at", "test.at"};
+        String[] domains = { "wikipedia.org", "orf.at", "kurier.at", "test.at" };
         String[][] seeds = {
-                { "http://en.wikipedia.org/wiki/Austrian_National_Library", "http://fr.wikipedia.org/wiki/Biblioth%C3%A8que_nationale_autrichienne", "http://de.wikipedia.org/wiki/%C3%96sterreichische_Nationalbibliothek" },
-                { "http://news.orf.at/090603-38954/index.html", "http://sport.orf.at/", "http://euwahl09.orf.at/stories/1603916/", "http://wetter.orf.at/wie/main?tmp=1421"},
-                { "http://kurier.at/sportundmotor/", "http://kurier.at/freizeitundgesundheit/", "http://kurier.at/geldundwirtschaft/"},
-                { "http://www.test.at", "http://racing.test.at/", "http://racing.test.at/", "http://racing.test.at/"}
-        };
+                { "http://en.wikipedia.org/wiki/Austrian_National_Library",
+                        "http://fr.wikipedia.org/wiki/Biblioth%C3%A8que_nationale_autrichienne",
+                        "http://de.wikipedia.org/wiki/%C3%96sterreichische_Nationalbibliothek" },
+                { "http://news.orf.at/090603-38954/index.html", "http://sport.orf.at/",
+                        "http://euwahl09.orf.at/stories/1603916/", "http://wetter.orf.at/wie/main?tmp=1421" },
+                { "http://kurier.at/sportundmotor/", "http://kurier.at/freizeitundgesundheit/",
+                        "http://kurier.at/geldundwirtschaft/" },
+                { "http://www.test.at", "http://racing.test.at/", "http://racing.test.at/", "http://racing.test.at/" } };
 
         HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
-        
+
         HarvestDefinition hd = makeSelectivePartialHarvestInstance(HARVESTNAME, domains, seeds);
         hd.setSubmissionDate(new Date());
         hddao.create(hd);
-        
+
         List<String> domainList = hddao.getListOfDomainsOfHarvestDefinition(HARVESTNAME);
         List<String> seedList = null;
-        
+
         // kurier.at
         assertEquals(domainList.get(0), domains[KURIER]);
         seedList = hddao.getListOfSeedsOfDomainOfHarvestDefinition(HARVESTNAME, domainList.get(0));
         assertEquals(seedList.get(0), seeds[KURIER][1]);
         assertEquals(seedList.get(1), seeds[KURIER][2]);
         assertEquals(seedList.get(2), seeds[KURIER][0]);
-        
+
         // orf.at
         assertEquals(domainList.get(1), domains[ORF]);
         seedList = hddao.getListOfSeedsOfDomainOfHarvestDefinition(HARVESTNAME, domainList.get(1));
@@ -126,9 +127,10 @@ public class SeedListTester extends DataModelTestCase {
         // test.at
         assertEquals(domainList.get(2), domains[TEST]);
         seedList = hddao.getListOfSeedsOfDomainOfHarvestDefinition(HARVESTNAME, domainList.get(2));
-        assertEquals(seedList.get(0), seeds[TEST][1]);  // duplicate entries should be removed!
+        assertEquals(seedList.get(0), seeds[TEST][1]); // duplicate entries
+                                                       // should be removed!
         assertEquals(seedList.get(1), seeds[TEST][0]);
-        
+
         // wikipedia.org
         assertEquals(domainList.get(3), domains[WIKI]);
         seedList = hddao.getListOfSeedsOfDomainOfHarvestDefinition(HARVESTNAME, domainList.get(3));

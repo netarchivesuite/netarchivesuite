@@ -103,8 +103,7 @@ public class FindRunningJobQuery {
             throw new UnknownID("Domain " + domainName + " is not registered!");
         }
 
-        List<JobStatusInfo> startedJobs = JobDAO.getInstance().getStatusInfo(
-                JobStatus.STARTED);
+        List<JobStatusInfo> startedJobs = JobDAO.getInstance().getStatusInfo(JobStatus.STARTED);
         for (JobStatusInfo jsi : startedJobs) {
             long jobId = jsi.getJobID();
             Job job = JobDAO.getInstance().read(jobId);

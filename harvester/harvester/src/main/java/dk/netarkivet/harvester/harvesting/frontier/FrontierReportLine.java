@@ -32,9 +32,9 @@ import com.sleepycat.persist.model.Persistent;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
- * Wraps a line of the frontier report.
- * As of Heritrix 1.14.4, the format of a frontier report line
- * sequentially lists the following tokens, separated by a whitespace :
+ * Wraps a line of the frontier report. As of Heritrix 1.14.4, the format of a
+ * frontier report line sequentially lists the following tokens, separated by a
+ * whitespace :
  *
  * <ol>
  * <li>queue</li>
@@ -50,27 +50,23 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * <li>lastQueuedUri</li>
  * </ol>
  *
- * This class implements a natural order : comparisons are made :
- * - first by decreasing values of totalEnqueues
- * - secondly by domain name (string natural order)
+ * This class implements a natural order : comparisons are made : - first by
+ * decreasing values of totalEnqueues - secondly by domain name (string natural
+ * order)
  *
  * Thanks to Gordon Mohr at Internet Archive for explaining the exact semantics
  * of the frontier report fields.
  *
  */
 @Persistent
-@SuppressWarnings({ "serial"})
-public class FrontierReportLine
-implements Serializable,
-           Comparable<FrontierReportLine>,
-           FrontierReportLineOrderKey {
+@SuppressWarnings({ "serial" })
+public class FrontierReportLine implements Serializable, Comparable<FrontierReportLine>, FrontierReportLineOrderKey {
 
     /** The logger for this class. */
     private static final Log LOG = LogFactory.getLog(FrontierReportLine.class);
 
     /**
-     * Expected size of string array when we split the line token
-     * across "\\s+".
+     * Expected size of string array when we split the line token across "\\s+".
      */
     private static final int EXPECTED_SPLIT_SEGMENTS = 11;
 
@@ -84,15 +80,15 @@ implements Serializable,
      */
     private String domainName;
 
-    /**  Number of URIs currently in the queue.  */
+    /** Number of URIs currently in the queue. */
     private long currentSize;
 
     /**
-     * Count of total times a URI has been enqueued to this queue;
-     * a measure of the total number of URI instances ever put on this queue.
-     * This can be a larger number than the unique URIs, as some URIs
-     * (most notably DNS/robots when refetched, but possibly other things
-     * force-requeued under advanced usage) may be enqueued more than once.
+     * Count of total times a URI has been enqueued to this queue; a measure of
+     * the total number of URI instances ever put on this queue. This can be a
+     * larger number than the unique URIs, as some URIs (most notably DNS/robots
+     * when refetched, but possibly other things force-requeued under advanced
+     * usage) may be enqueued more than once.
      */
     private long totalEnqueues;
 
@@ -106,13 +102,13 @@ implements Serializable,
     private long sessionBalance;
 
     /**
-     * The 'cost' of the last URI charged against the queue's budgets. If
-     * using a cost policy that makes some URIs more costly than others, this
-     * may indicate the queue has reached more-costly URIs. (Such larger-cost
-     * URIs will be inserted later in the queue, accelerate the depletion of
-     * the session balance, and accelerate progress towards the total queue
-     * budget, which could send the queue into 'retirement'. Thus higher-cost
-     * URIs mean a queue over time gets less of the crawler's cycles.)
+     * The 'cost' of the last URI charged against the queue's budgets. If using
+     * a cost policy that makes some URIs more costly than others, this may
+     * indicate the queue has reached more-costly URIs. (Such larger-cost URIs
+     * will be inserted later in the queue, accelerate the depletion of the
+     * session balance, and accelerate progress towards the total queue budget,
+     * which could send the queue into 'retirement'. Thus higher-cost URIs mean
+     * a queue over time gets less of the crawler's cycles.)
      */
     private double lastCost;
 
@@ -120,8 +116,8 @@ implements Serializable,
     private double averageCost;
 
     /**
-     *  Timestamp of when the last URI came off this queue for processing.
-     *  May give an indication of how long a queue has been empty/inactive.
+     * Timestamp of when the last URI came off this queue for processing. May
+     * give an indication of how long a queue has been empty/inactive.
      */
     private String lastDequeueTime;
 
@@ -146,10 +142,10 @@ implements Serializable,
     private long totalBudget;
 
     /**
-     * The number of URIs from this queue that reached 'finished' status with
-     * an error code (non-retryable errors, or exhausted retries, or other
-     * errors). When nonzero and rising there may be special problems with the
-     * site(s) related to this queue.
+     * The number of URIs from this queue that reached 'finished' status with an
+     * error code (non-retryable errors, or exhausted retries, or other errors).
+     * When nonzero and rising there may be special problems with the site(s)
+     * related to this queue.
      */
     private long errorCount;
 
@@ -172,7 +168,9 @@ implements Serializable,
 
     /**
      * Builds a cloned line.
-     * @param original the line to clone
+     * 
+     * @param original
+     *            the line to clone
      */
     protected FrontierReportLine(FrontierReportLine original) {
         this.averageCost = original.averageCost;
@@ -192,22 +190,23 @@ implements Serializable,
 
     /**
      * Parses the given string.
-     * @param lineToken the string to parse.
+     * 
+     * @param lineToken
+     *            the string to parse.
      */
     FrontierReportLine(String lineToken) {
 
         String[] split = lineToken.split("\\s+");
 
         if (split.length != EXPECTED_SPLIT_SEGMENTS) {
-            throw new ArgumentNotValid("Format of line token '"
-                    + lineToken + "' is not a valid frontier report line!");
+            throw new ArgumentNotValid("Format of line token '" + lineToken + "' is not a valid frontier report line!");
         }
 
         this.domainName = split[0];
         try {
             this.currentSize = parseLong(split[1]);
         } catch (NumberFormatException e) {
-            LOG.warn("Found incorrect formatted currentsize " +  split[1]);
+            LOG.warn("Found incorrect formatted currentsize " + split[1]);
         }
         this.totalEnqueues = parseLong(split[2]);
         this.sessionBalance = parseLong(split[3]);
@@ -216,8 +215,7 @@ implements Serializable,
         String costToken = split[4];
         int leftParenIdx = costToken.indexOf("(");
         this.lastCost = parseDouble(costToken.substring(0, leftParenIdx));
-        this.averageCost = parseDouble(
-                costToken.substring(leftParenIdx + 1, costToken.indexOf(")")));
+        this.averageCost = parseDouble(costToken.substring(leftParenIdx + 1, costToken.indexOf(")")));
         this.lastDequeueTime = split[5];
         this.wakeTime = split[6];
 
@@ -245,7 +243,8 @@ implements Serializable,
     }
 
     /**
-     * @param domainName the domainName to set
+     * @param domainName
+     *            the domainName to set
      */
     public void setDomainName(String domainName) {
         this.domainName = domainName;
@@ -259,7 +258,8 @@ implements Serializable,
     }
 
     /**
-     * @param currentSize the currentSize to set
+     * @param currentSize
+     *            the currentSize to set
      */
     public void setCurrentSize(long currentSize) {
         this.currentSize = currentSize;
@@ -273,7 +273,8 @@ implements Serializable,
     }
 
     /**
-     * @param totalEnqueues the totalEnqueues to set
+     * @param totalEnqueues
+     *            the totalEnqueues to set
      */
     public void setTotalEnqueues(long totalEnqueues) {
         this.totalEnqueues = totalEnqueues;
@@ -287,7 +288,8 @@ implements Serializable,
     }
 
     /**
-     * @param sessionBalance the sessionBalance to set
+     * @param sessionBalance
+     *            the sessionBalance to set
      */
     public void setSessionBalance(long sessionBalance) {
         this.sessionBalance = sessionBalance;
@@ -301,7 +303,8 @@ implements Serializable,
     }
 
     /**
-     * @param lastCost the lastCost to set
+     * @param lastCost
+     *            the lastCost to set
      */
     public void setLastCost(double lastCost) {
         this.lastCost = lastCost;
@@ -315,7 +318,8 @@ implements Serializable,
     }
 
     /**
-     * @param averageCost the averageCost to set
+     * @param averageCost
+     *            the averageCost to set
      */
     public void setAverageCost(double averageCost) {
         this.averageCost = averageCost;
@@ -329,7 +333,8 @@ implements Serializable,
     }
 
     /**
-     * @param lastDequeueTime the lastDequeueTime to set
+     * @param lastDequeueTime
+     *            the lastDequeueTime to set
      */
     public void setLastDequeueTime(String lastDequeueTime) {
         this.lastDequeueTime = lastDequeueTime;
@@ -343,7 +348,8 @@ implements Serializable,
     }
 
     /**
-     * @param wakeTime the wakeTime to set
+     * @param wakeTime
+     *            the wakeTime to set
      */
     public void setWakeTime(String wakeTime) {
         this.wakeTime = wakeTime;
@@ -357,7 +363,8 @@ implements Serializable,
     }
 
     /**
-     * @param totalSpend the totalSpend to set
+     * @param totalSpend
+     *            the totalSpend to set
      */
     public void setTotalSpend(long totalSpend) {
         this.totalSpend = totalSpend;
@@ -371,7 +378,8 @@ implements Serializable,
     }
 
     /**
-     * @param totalBudget the totalBudget to set
+     * @param totalBudget
+     *            the totalBudget to set
      */
     public void setTotalBudget(long totalBudget) {
         this.totalBudget = totalBudget;
@@ -385,7 +393,8 @@ implements Serializable,
     }
 
     /**
-     * @param errorCount the errorCount to set
+     * @param errorCount
+     *            the errorCount to set
      */
     public void setErrorCount(long errorCount) {
         this.errorCount = errorCount;
@@ -399,7 +408,8 @@ implements Serializable,
     }
 
     /**
-     * @param lastPeekUri the lastPeekUri to set
+     * @param lastPeekUri
+     *            the lastPeekUri to set
      */
     public void setLastPeekUri(String lastPeekUri) {
         this.lastPeekUri = lastPeekUri;
@@ -413,7 +423,8 @@ implements Serializable,
     }
 
     /**
-     * @param lastQueuedUri the lastQueuedUri to set
+     * @param lastQueuedUri
+     *            the lastQueuedUri to set
      */
     public void setLastQueuedUri(String lastQueuedUri) {
         this.lastQueuedUri = lastQueuedUri;
@@ -433,8 +444,7 @@ implements Serializable,
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof FrontierReportLine) {
-            return domainName.equals(
-                    ((FrontierReportLine) obj).getDomainName());
+            return domainName.equals(((FrontierReportLine) obj).getDomainName());
         }
         return false;
     }
@@ -457,7 +467,9 @@ implements Serializable,
 
     /**
      * Parses the token.
-     * @param longToken token to parse.
+     * 
+     * @param longToken
+     *            token to parse.
      * @return parsed value or default value if value is empty or unparsable.
      */
     private static long parseLong(String longToken) {
@@ -474,7 +486,9 @@ implements Serializable,
 
     /**
      * Parses the token.
-     * @param dblToken token to parse.
+     * 
+     * @param dblToken
+     *            token to parse.
      * @return parsed value or default value if value is empty or unparsable.
      */
     private static double parseDouble(String dblToken) {

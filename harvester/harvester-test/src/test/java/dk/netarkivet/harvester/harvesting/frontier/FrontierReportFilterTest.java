@@ -47,9 +47,7 @@ public class FrontierReportFilterTest {
     public void setUp() throws Exception {
         rs.setUp();
 
-        Settings.set(
-                CommonSettings.CACHE_DIR,
-                TestInfo.WORKDIR.getAbsolutePath());
+        Settings.set(CommonSettings.CACHE_DIR, TestInfo.WORKDIR.getAbsolutePath());
     }
 
     @After
@@ -70,100 +68,83 @@ public class FrontierReportFilterTest {
 
     /**
      * Test the extraction of 200 top queues out of a much larger report.
+     * 
      * @throws IOException
-     * FIXME this test fails, and is therefore disabled by renaming it (by 
-     * changing the method prefix 
-     * from test to TEST);
+     *             FIXME this test fails, and is therefore disabled by renaming
+     *             it (by changing the method prefix from test to TEST);
      */
     @Test
     @Ignore("test disabled before migration")
     public final void TESTTopTotalEnqueuesFilter1() throws IOException {
 
-        File testSample = new File(
-                TestInfo.BASEDIR, "frontierReport_all_sample_atlas502.txt");
+        File testSample = new File(TestInfo.BASEDIR, "frontierReport_all_sample_atlas502.txt");
 
-        FullFrontierReport full = FullFrontierReport.parseContentsAsString(
-                "test-" + System.currentTimeMillis(),
+        FullFrontierReport full = FullFrontierReport.parseContentsAsString("test-" + System.currentTimeMillis(),
                 FileUtils.readFile(testSample));
 
         TopTotalEnqueuesFilter filter = new TopTotalEnqueuesFilter();
         InMemoryFrontierReport filtered = filter.process(full);
 
-        File actualResultsFile = new File(
-                TestInfo.WORKDIR, System.currentTimeMillis() + ".top200.txt");
+        File actualResultsFile = new File(TestInfo.WORKDIR, System.currentTimeMillis() + ".top200.txt");
 
         PrintWriter pw = new PrintWriter(actualResultsFile);
         // Add header line
         pw.println("queue currentSize totalEnqueues sessionBalance "
-                + "lastCost(averageCost) lastDequeueTime wakeTime "
-                + "totalSpend/totalBudget errorCount "
+                + "lastCost(averageCost) lastDequeueTime wakeTime " + "totalSpend/totalBudget errorCount "
                 + "lastPeekUri lastQueuedUri");
         for (FrontierReportLine l : filtered.getLines()) {
             pw.println(FrontierTestUtils.toString(l));
         }
         pw.close();
 
-        File expectedResults = new File(
-                TestInfo.BASEDIR,
-                "frontierReport_all_sample_atlas502_top200.txt");
-        assertEquals(
-                FileUtils.readFile(expectedResults),
-                FileUtils.readFile(actualResultsFile));
+        File expectedResults = new File(TestInfo.BASEDIR, "frontierReport_all_sample_atlas502_top200.txt");
+        assertEquals(FileUtils.readFile(expectedResults), FileUtils.readFile(actualResultsFile));
 
-        if (! actualResultsFile.delete()) {
+        if (!actualResultsFile.delete()) {
             actualResultsFile.deleteOnExit();
         }
     }
 
     /**
      * Test the extraction of 200 top queues out of a much smaller report.
+     * 
      * @throws IOException
      */
     @Test
     public final void testTopTotalEnqueuesFilter2() throws IOException {
 
-        File testSample = new File(
-                TestInfo.BASEDIR, "frontierReport_all_sample_small.txt");
+        File testSample = new File(TestInfo.BASEDIR, "frontierReport_all_sample_small.txt");
 
-        FullFrontierReport full = FullFrontierReport.parseContentsAsString(
-                "test-" + System.currentTimeMillis(),
+        FullFrontierReport full = FullFrontierReport.parseContentsAsString("test-" + System.currentTimeMillis(),
                 FileUtils.readFile(testSample));
 
         TopTotalEnqueuesFilter filter = new TopTotalEnqueuesFilter();
         InMemoryFrontierReport filtered = filter.process(full);
 
-        File actualResultsFile = new File(
-                TestInfo.WORKDIR, System.currentTimeMillis() + ".top200.txt");
+        File actualResultsFile = new File(TestInfo.WORKDIR, System.currentTimeMillis() + ".top200.txt");
 
         PrintWriter pw = new PrintWriter(actualResultsFile);
         // Add header line
         pw.println("queue currentSize totalEnqueues sessionBalance "
-                + "lastCost(averageCost) lastDequeueTime wakeTime "
-                + "totalSpend/totalBudget errorCount "
+                + "lastCost(averageCost) lastDequeueTime wakeTime " + "totalSpend/totalBudget errorCount "
                 + "lastPeekUri lastQueuedUri");
         for (FrontierReportLine l : filtered.getLines()) {
             pw.println(FrontierTestUtils.toString(l));
         }
         pw.close();
 
-        File expectedResults = new File(
-                TestInfo.BASEDIR,
-                "frontierReport_all_sample_small_sorted.txt");
-        assertEquals(
-                FileUtils.readFile(expectedResults),
-                FileUtils.readFile(actualResultsFile));
+        File expectedResults = new File(TestInfo.BASEDIR, "frontierReport_all_sample_small_sorted.txt");
+        assertEquals(FileUtils.readFile(expectedResults), FileUtils.readFile(actualResultsFile));
 
-        if (! actualResultsFile.delete()) {
+        if (!actualResultsFile.delete()) {
             actualResultsFile.deleteOnExit();
         }
     }
 
     public final void testRetiredQueuesFilter() throws IOException {
-        File testSample = new File(
-                TestInfo.BASEDIR, "frontierReport_all_sample_small.txt");
+        File testSample = new File(TestInfo.BASEDIR, "frontierReport_all_sample_small.txt");
 
-        FullFrontierReport full = FullFrontierReport.parseContentsAsString(
-                "test-" + System.currentTimeMillis(),
+        FullFrontierReport full = FullFrontierReport.parseContentsAsString("test-" + System.currentTimeMillis(),
                 FileUtils.readFile(testSample));
 
         RetiredQueuesFilter filter = new RetiredQueuesFilter();
@@ -179,75 +160,59 @@ public class FrontierReportFilterTest {
     }
 
     public final void testExhaustedQueuesFilter() throws IOException {
-        File testSample = new File(
-                TestInfo.BASEDIR, "frontierReport_all_sample_small.txt");
+        File testSample = new File(TestInfo.BASEDIR, "frontierReport_all_sample_small.txt");
 
-        FullFrontierReport full = FullFrontierReport.parseContentsAsString(
-                "test-" + System.currentTimeMillis(),
+        FullFrontierReport full = FullFrontierReport.parseContentsAsString("test-" + System.currentTimeMillis(),
                 FileUtils.readFile(testSample));
 
         ExhaustedQueuesFilter filter = new ExhaustedQueuesFilter();
         filter.init(new String[] { "200" });
         InMemoryFrontierReport filtered = filter.process(full);
 
-        File actualResultsFile = new File(
-                TestInfo.WORKDIR, System.currentTimeMillis() + ".top200.txt");
+        File actualResultsFile = new File(TestInfo.WORKDIR, System.currentTimeMillis() + ".top200.txt");
 
         PrintWriter pw = new PrintWriter(actualResultsFile);
         // Add header line
         pw.println("queue currentSize totalEnqueues sessionBalance "
-                + "lastCost(averageCost) lastDequeueTime wakeTime "
-                + "totalSpend/totalBudget errorCount "
+                + "lastCost(averageCost) lastDequeueTime wakeTime " + "totalSpend/totalBudget errorCount "
                 + "lastPeekUri lastQueuedUri");
         for (FrontierReportLine l : filtered.getLines()) {
             pw.println(FrontierTestUtils.toString(l));
         }
         pw.close();
 
-        File expectedResults = new File(
-                TestInfo.BASEDIR,
-                "frontierReport_all_sample_atlas502_exhausted.txt");
-        assertEquals(
-                FileUtils.readFile(expectedResults),
-                FileUtils.readFile(actualResultsFile));
+        File expectedResults = new File(TestInfo.BASEDIR, "frontierReport_all_sample_atlas502_exhausted.txt");
+        assertEquals(FileUtils.readFile(expectedResults), FileUtils.readFile(actualResultsFile));
 
-        if (! actualResultsFile.delete()) {
+        if (!actualResultsFile.delete()) {
             actualResultsFile.deleteOnExit();
         }
     }
+
     /**
      * 
-     * Test CVS export.
-     * FIXME is disabled because it fails (by changing the method prefix 
-     * from test to TEST);
+     * Test CVS export. FIXME is disabled because it fails (by changing the
+     * method prefix from test to TEST);
      */
     public final void TESTCsvExport() throws IOException {
 
-        File testSample = new File(
-                TestInfo.BASEDIR, "frontierReport_all_sample_atlas502.txt");
+        File testSample = new File(TestInfo.BASEDIR, "frontierReport_all_sample_atlas502.txt");
 
-        FullFrontierReport full = FullFrontierReport.parseContentsAsString(
-                "test-" + System.currentTimeMillis(),
+        FullFrontierReport full = FullFrontierReport.parseContentsAsString("test-" + System.currentTimeMillis(),
                 FileUtils.readFile(testSample));
 
-        InMemoryFrontierReport topQueues =
-            new TopTotalEnqueuesFilter().process(full);
+        InMemoryFrontierReport topQueues = new TopTotalEnqueuesFilter().process(full);
 
-        File actualResultsFile = new File(
-                TestInfo.WORKDIR, System.currentTimeMillis() + ".csv");
+        File actualResultsFile = new File(TestInfo.WORKDIR, System.currentTimeMillis() + ".csv");
         PrintWriter pw = new PrintWriter(actualResultsFile);
 
         FrontierReportCsvExport.outputAsCsv(topQueues, pw, ";");
         pw.close();
 
-        File expectedResults = new File(
-                TestInfo.BASEDIR,
-                "atlas502_topQueues.csv");
-        assertEquals(
-                FileUtils.readFile(expectedResults),
-                FileUtils.readFile(actualResultsFile));
+        File expectedResults = new File(TestInfo.BASEDIR, "atlas502_topQueues.csv");
+        assertEquals(FileUtils.readFile(expectedResults), FileUtils.readFile(actualResultsFile));
 
-        if (! actualResultsFile.delete()) {
+        if (!actualResultsFile.delete()) {
             actualResultsFile.deleteOnExit();
         }
 
@@ -255,38 +220,30 @@ public class FrontierReportFilterTest {
 
     public final void testTopTotalEnqueuesFilter3() throws IOException {
 
-        File testSample = new File(
-                TestInfo.BASEDIR, "atlas201.fr.csv");
+        File testSample = new File(TestInfo.BASEDIR, "atlas201.fr.csv");
 
-        FullFrontierReport full = FullFrontierReport.parseContentsAsString(
-                "test-" + System.currentTimeMillis(),
+        FullFrontierReport full = FullFrontierReport.parseContentsAsString("test-" + System.currentTimeMillis(),
                 FileUtils.readFile(testSample));
 
         TopTotalEnqueuesFilter filter = new TopTotalEnqueuesFilter();
         InMemoryFrontierReport filtered = filter.process(full);
 
-        File actualResultsFile = new File(
-                TestInfo.WORKDIR, System.currentTimeMillis() + ".top200.txt");
+        File actualResultsFile = new File(TestInfo.WORKDIR, System.currentTimeMillis() + ".top200.txt");
 
         PrintWriter pw = new PrintWriter(actualResultsFile);
         // Add header line
         pw.println("queue currentSize totalEnqueues sessionBalance "
-                + "lastCost(averageCost) lastDequeueTime wakeTime "
-                + "totalSpend/totalBudget errorCount "
+                + "lastCost(averageCost) lastDequeueTime wakeTime " + "totalSpend/totalBudget errorCount "
                 + "lastPeekUri lastQueuedUri");
         for (FrontierReportLine l : filtered.getLines()) {
             pw.println(FrontierTestUtils.toString(l));
         }
         pw.close();
 
-        File expectedResults = new File(
-                TestInfo.BASEDIR,
-                "atlas201.fr.top200.txt");
-        assertEquals(
-                FileUtils.readFile(expectedResults),
-                FileUtils.readFile(actualResultsFile));
+        File expectedResults = new File(TestInfo.BASEDIR, "atlas201.fr.top200.txt");
+        assertEquals(FileUtils.readFile(expectedResults), FileUtils.readFile(actualResultsFile));
 
-        if (! actualResultsFile.delete()) {
+        if (!actualResultsFile.delete()) {
             actualResultsFile.deleteOnExit();
         }
     }

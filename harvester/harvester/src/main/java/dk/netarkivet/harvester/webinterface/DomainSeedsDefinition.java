@@ -48,8 +48,8 @@ public class DomainSeedsDefinition {
     }
 
     /**
-     * Utility class gathering together data relating to the editing
-     * of a seed list.
+     * Utility class gathering together data relating to the editing of a seed
+     * list.
      */
     public static class UrlInfo {
         private String urlListName;
@@ -63,6 +63,7 @@ public class DomainSeedsDefinition {
         public String getUrlListName() {
             return urlListName;
         }
+
         public String getSeedList() {
             return seedList;
         }
@@ -75,9 +76,8 @@ public class DomainSeedsDefinition {
      * editUrlList: if not null, we are editing, not updating so return
      *
      * (urlListName, seedlist) The name of a seedlist and the actual seedlist
-     * for a seedlist to be updated.
-     * If urlListName is present and non-empty, seedlist must also
-     * be non-empty.
+     * for a seedlist to be updated. If urlListName is present and non-empty,
+     * seedlist must also be non-empty.
      *
      * @param context
      * @param i18n
@@ -91,37 +91,30 @@ public class DomainSeedsDefinition {
             return;
         }
 
-        HTMLUtils.forwardOnEmptyParameter(context,
-                Constants.DOMAIN_PARAM, Constants.URLLIST_NAME_PARAM,
+        HTMLUtils.forwardOnEmptyParameter(context, Constants.DOMAIN_PARAM, Constants.URLLIST_NAME_PARAM,
                 Constants.SEED_LIST_PARAMETER);
 
         String name = request.getParameter(Constants.DOMAIN_PARAM).trim();
-        String urlListName
-                = request.getParameter(Constants.URLLIST_NAME_PARAM).trim();
-        String seedList
-                = request.getParameter(Constants.SEED_LIST_PARAMETER).trim();
+        String urlListName = request.getParameter(Constants.URLLIST_NAME_PARAM).trim();
+        String seedList = request.getParameter(Constants.SEED_LIST_PARAMETER).trim();
 
         // check the edition number before updating
-        long edition = HTMLUtils.parseOptionalLong(context,
-                Constants.EDITION_PARAM, -1L);
+        long edition = HTMLUtils.parseOptionalLong(context, Constants.EDITION_PARAM, -1L);
 
         if (!DomainDAO.getInstance().exists(name)) {
-            HTMLUtils.forwardWithErrorMessage(context, i18n,
-                    "errormsg;unknown.domain.0", name);
-            throw new ForwardedToErrorPage("Domain '" + name
-                    + "' does not exist");
+            HTMLUtils.forwardWithErrorMessage(context, i18n, "errormsg;unknown.domain.0", name);
+            throw new ForwardedToErrorPage("Domain '" + name + "' does not exist");
         }
 
         Domain domain = DomainDAO.getInstance().read(name);
 
         if (domain.getEdition() != edition) {
-            HTMLUtils.forwardWithRawErrorMessage(context, i18n,
+            HTMLUtils.forwardWithRawErrorMessage(
+                    context,
+                    i18n,
                     "errormsg;domain.definition.changed.0.retry.1",
-                    "<br/><a href=\"Definitions-edit-domain.jsp?"
-                            + Constants.DOMAIN_PARAM + "="
-                            + HTMLUtils.escapeHtmlValues(HTMLUtils.encode(name))
-                            + "\">",
-                    "</a>");
+                    "<br/><a href=\"Definitions-edit-domain.jsp?" + Constants.DOMAIN_PARAM + "="
+                            + HTMLUtils.escapeHtmlValues(HTMLUtils.encode(name)) + "\">", "</a>");
             throw new ForwardedToErrorPage("Domain '" + name + "' has changed");
         }
 
@@ -130,15 +123,18 @@ public class DomainSeedsDefinition {
         updateDomain(domain, urlInfo, comments);
     }
 
-    /** Update a domain from given (checked) seedlist data.
+    /**
+     * Update a domain from given (checked) seedlist data.
      *
-     * @param domain The domain to update.
-     * @param urlInfo The seedlist to update
-     * @param comments Any comments for this seedlist.
+     * @param domain
+     *            The domain to update.
+     * @param urlInfo
+     *            The seedlist to update
+     * @param comments
+     *            Any comments for this seedlist.
      */
-    private static void updateDomain(Domain domain, UrlInfo urlInfo,
-                                     String comments) {
-        //Update/create seedlist
+    private static void updateDomain(Domain domain, UrlInfo urlInfo, String comments) {
+        // Update/create seedlist
         String seedlistName = urlInfo.getUrlListName();
         SeedList sl = new SeedList(seedlistName, urlInfo.getSeedList());
         if (comments != null) {

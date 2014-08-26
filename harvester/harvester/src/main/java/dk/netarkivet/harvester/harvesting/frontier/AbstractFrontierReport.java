@@ -30,7 +30,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * Base abstract implementation of an Heritrix frontier report wrapper.
  *
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({ "serial" })
 abstract class AbstractFrontierReport implements FrontierReport, Serializable {
 
     /**
@@ -52,7 +52,9 @@ abstract class AbstractFrontierReport implements FrontierReport, Serializable {
 
     /**
      * Initializes an empty Heritrix frontier report wrapper object.
-     * @param jobName the Heritrix job name
+     * 
+     * @param jobName
+     *            the Heritrix job name
      */
     public AbstractFrontierReport(String jobName) {
         ArgumentNotValid.checkNotNullOrEmpty(jobName, "jobName");
@@ -71,14 +73,16 @@ abstract class AbstractFrontierReport implements FrontierReport, Serializable {
     }
 
     /**
-     * @param jobName the jobName to set
+     * @param jobName
+     *            the jobName to set
      */
     protected void setJobName(String jobName) {
         this.jobName = jobName;
     }
 
     /**
-     * @param timestamp the timestamp to set
+     * @param timestamp
+     *            the timestamp to set
      */
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;

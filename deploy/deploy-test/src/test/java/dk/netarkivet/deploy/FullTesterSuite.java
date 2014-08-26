@@ -22,7 +22,6 @@
  */
 package dk.netarkivet.deploy;
 
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
@@ -47,7 +46,7 @@ public class FullTesterSuite {
     }
 
     public static void main(String args[]) {
-        String[] args2 = {"-noloading", "dk.netarkivet.FullTesterSuite"};
+        String[] args2 = { "-noloading", "dk.netarkivet.FullTesterSuite" };
         TestRunner.main(args2);
     }
 }

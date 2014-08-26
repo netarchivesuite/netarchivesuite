@@ -52,7 +52,7 @@ import dk.netarkivet.harvester.harvesting.metadata.PersistentJobData.HarvestDefi
  */
 public class JobDispatcher {
 
-	/** The logger to use.    */
+    /** The logger to use. */
     private static final Logger log = LoggerFactory.getLogger(JobDispatcher.class);
 
     /** Connection to JMS provider. */
@@ -60,10 +60,12 @@ public class JobDispatcher {
 
     private final HarvestDefinitionDAO harvestDefinitionDAO;
     private final JobDAO jobDao;
-    
+
     /**
-     * @param jmsConnection The JMS connection to use.
-     * @param hDao The HarvestDefinitionDAO to use.
+     * @param jmsConnection
+     *            The JMS connection to use.
+     * @param hDao
+     *            The HarvestDefinitionDAO to use.
      */
     public JobDispatcher(JMSConnection jmsConnection, HarvestDefinitionDAO hDao, JobDAO jobDao) {
         log.info("Creating JobDispatcher");
@@ -77,9 +79,11 @@ public class JobDispatcher {
 
     /**
      * Submit the next new job (the one with the lowest ID) with the given
-     * priority, and updates the internal counter as needed. If no jobs are 
+     * priority, and updates the internal counter as needed. If no jobs are
      * ready for the given priority, nothing is done
-     * @param channel the Channel to use for the job.
+     * 
+     * @param channel
+     *            the Channel to use for the job.
      */
     protected void submitNextNewJob(HarvestChannel channel) {
         Job jobToSubmit = prepareNextJobForSubmission(channel);
@@ -89,7 +93,7 @@ public class JobDispatcher {
             log.debug("Submitting new {} job {}", channel.getName(), jobToSubmit.getJobID());
             try {
                 List<MetadataEntry> metadata = createMetadata(jobToSubmit);
-                
+
                 // Extract documentary information about the harvest
                 String hName = harvestDefinitionDAO.getHarvestName(jobToSubmit.getOrigHarvestDefinitionID());
 
@@ -120,7 +124,7 @@ public class JobDispatcher {
                 log.info("Job #{} submitted", jobToSubmit.getJobID());
             } catch (Throwable t) {
                 String message = "Error while dispatching job " + jobToSubmit.getJobID()
-                		+ ". Job status changed to FAILED";
+                        + ". Job status changed to FAILED";
                 log.warn(message, t);
                 if (jobToSubmit != null) {
                     jobToSubmit.setStatus(JobStatus.FAILED);
@@ -131,14 +135,16 @@ public class JobDispatcher {
             }
         }
     }
-    
+
     /**
-     * Will read the next job ready to run from the db and set the job to 
+     * Will read the next job ready to run from the db and set the job to
      * submitted. If no jobs are ready, null will be returned.
      * 
-     * Note the operation is synchronized, so only one thread may start the 
+     * Note the operation is synchronized, so only one thread may start the
      * submission of a job.
-     * @param channel the job channel.
+     * 
+     * @param channel
+     *            the job channel.
      * @return A job ready to be submitted.
      */
     private synchronized Job prepareNextJobForSubmission(HarvestChannel channel) {
@@ -154,36 +160,32 @@ public class JobDispatcher {
             return jobToSubmit;
         }
     }
-    
+
     /**
-     * Creates the metadata for the indicated job. This includes: <ol>
-     * <li> Alias metadata.
-     * <li>DuplicationReduction MetadataEntry, if Deduplication
-     *   //is enabled.
-     * @param job The job to create meta data for.
+     * Creates the metadata for the indicated job. This includes:
+     * <ol>
+     * <li>Alias metadata.
+     * <li>DuplicationReduction MetadataEntry, if Deduplication //is enabled.
+     * 
+     * @param job
+     *            The job to create meta data for.
      */
     private List<MetadataEntry> createMetadata(Job job) {
         List<MetadataEntry> metadata = new ArrayList<MetadataEntry>();
-        MetadataEntry aliasMetadataEntry = MetadataEntry.makeAliasMetadataEntry(
-                job.getJobAliasInfo(),
-                job.getOrigHarvestDefinitionID(),
-                job.getHarvestNum(),
-                job.getJobID()
-        );
+        MetadataEntry aliasMetadataEntry = MetadataEntry.makeAliasMetadataEntry(job.getJobAliasInfo(),
+                job.getOrigHarvestDefinitionID(), job.getHarvestNum(), job.getJobID());
         if (aliasMetadataEntry != null) {
-            // Add an entry documenting that this job 
+            // Add an entry documenting that this job
             // contains domains that has aliases
             metadata.add(aliasMetadataEntry);
         }
 
         if (HeritrixTemplate.isDeduplicationEnabledInTemplate(job.getOrderXMLdoc())) {
             MetadataEntry duplicateReductionMetadataEntry = MetadataEntry.makeDuplicateReductionMetadataEntry(
-                    jobDao.getJobIDsForDuplicateReduction(job.getJobID()),
-                    job.getOrigHarvestDefinitionID(),
-                    job.getHarvestNum(),
-                    job.getJobID()
-            );
-            // Always add a duplicationReductionMetadataEntry when deduplication is enabled
+                    jobDao.getJobIDsForDuplicateReduction(job.getJobID()), job.getOrigHarvestDefinitionID(),
+                    job.getHarvestNum(), job.getJobID());
+            // Always add a duplicationReductionMetadataEntry when deduplication
+            // is enabled
             // even if the list of JobIDs for deduplication is empty!
             metadata.add(duplicateReductionMetadataEntry);
         }
@@ -192,23 +194,33 @@ public class JobDispatcher {
 
     /**
      * Submit an doOneCrawl request to a HarvestControllerServer.
-     * @param job the specific job to send
-     * @param origHarvestName the harvest definition's name
-     * @param origHarvestDesc the harvest definition's description
-     * @param origHarvestSchedule the harvest definition schedule name
-     * @param channel the channel to which the job should be sent
-     * @param metadata pre-harvest metadata to store in arcfile.
-     * @param origHarvestAudience the audience for the data generated by harvest definitions. 
-     * @throws ArgumentNotValid one of the parameters are null
-     * @throws IOFailure if unable to send the doOneCrawl request to a
-     * harvestControllerServer
+     * 
+     * @param job
+     *            the specific job to send
+     * @param origHarvestName
+     *            the harvest definition's name
+     * @param origHarvestDesc
+     *            the harvest definition's description
+     * @param origHarvestSchedule
+     *            the harvest definition schedule name
+     * @param channel
+     *            the channel to which the job should be sent
+     * @param metadata
+     *            pre-harvest metadata to store in arcfile.
+     * @param origHarvestAudience
+     *            the audience for the data generated by harvest definitions.
+     * @throws ArgumentNotValid
+     *             one of the parameters are null
+     * @throws IOFailure
+     *             if unable to send the doOneCrawl request to a
+     *             harvestControllerServer
      */
     public void doOneCrawl(Job job, String origHarvestName, String origHarvestDesc, String origHarvestSchedule,
-            HarvestChannel channel, String origHarvestAudience, List<MetadataEntry> metadata)
-            		throws ArgumentNotValid, IOFailure {
+            HarvestChannel channel, String origHarvestAudience, List<MetadataEntry> metadata) throws ArgumentNotValid,
+            IOFailure {
         ArgumentNotValid.checkNotNull(job, "job");
         ArgumentNotValid.checkNotNull(metadata, "metadata");
-        
+
         if (origHarvestAudience != null && !origHarvestAudience.isEmpty()) {
             job.setHarvestAudience(origHarvestAudience);
         }

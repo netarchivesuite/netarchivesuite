@@ -27,14 +27,14 @@ import java.io.File;
 import java.io.OutputStream;
 
 /**
- * This class implements a batchjob that enables you to delete files
- * from an archive. Note that the default Java Security Policy distributed
- * with NetarchiveSuite does not allow this.
+ * This class implements a batchjob that enables you to delete files from an
+ * archive. Note that the default Java Security Policy distributed with
+ * NetarchiveSuite does not allow this.
  * 
  * @author ngiraud
  * @author svc
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({ "serial" })
 public class FileRemover extends FileBatchJob {
 
     /**

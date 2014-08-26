@@ -25,7 +25,6 @@
  */
 package dk.netarkivet.testutils;
 
-
 /**
  * Represents a difference, as used in <code>Diff</code>. A difference consists
  * of two pairs of starting and ending points, each pair representing either the
@@ -34,8 +33,7 @@ package dk.netarkivet.testutils;
  * if <code>getDeletedEnd()</code> returns -1, then the difference represents an
  * addition.
  */
-public class Difference
-{
+public class Difference {
     public static final int NONE = -1;
 
     /**
@@ -62,20 +60,18 @@ public class Difference
      * Creates the difference for the given start and end points for the
      * deletion and addition.
      */
-    public Difference(int delStart, int delEnd, int addStart, int addEnd)
-    {
+    public Difference(int delStart, int delEnd, int addStart, int addEnd) {
         this.delStart = delStart;
-        this.delEnd   = delEnd;
+        this.delEnd = delEnd;
         this.addStart = addStart;
-        this.addEnd   = addEnd;
+        this.addEnd = addEnd;
     }
 
     /**
      * The point at which the deletion starts, if any. A value equal to
      * <code>NONE</code> means this is an addition.
      */
-    public int getDeletedStart()
-    {
+    public int getDeletedStart() {
         return delStart;
     }
 
@@ -83,8 +79,7 @@ public class Difference
      * The point at which the deletion ends, if any. A value equal to
      * <code>NONE</code> means this is an addition.
      */
-    public int getDeletedEnd()
-    {
+    public int getDeletedEnd() {
         return delEnd;
     }
 
@@ -92,8 +87,7 @@ public class Difference
      * The point at which the addition starts, if any. A value equal to
      * <code>NONE</code> means this must be an addition.
      */
-    public int getAddedStart()
-    {
+    public int getAddedStart() {
         return addStart;
     }
 
@@ -101,8 +95,7 @@ public class Difference
      * The point at which the addition ends, if any. A value equal to
      * <code>NONE</code> means this must be an addition.
      */
-    public int getAddedEnd()
-    {
+    public int getAddedEnd() {
         return addEnd;
     }
 
@@ -110,23 +103,20 @@ public class Difference
      * Sets the point as deleted. The start and end points will be modified to
      * include the given line.
      */
-    public void setDeleted(int line)
-    {
+    public void setDeleted(int line) {
         delStart = Math.min(line, delStart);
-        delEnd   = Math.max(line, delEnd);
+        delEnd = Math.max(line, delEnd);
     }
 
     /**
      * Sets the point as added. The start and end points will be modified to
      * include the given line.
      */
-    public void setAdded(int line)
-    {
+    public void setAdded(int line) {
         addStart = Math.min(line, addStart);
-        addEnd   = Math.max(line, addEnd);
+        addEnd = Math.max(line, addEnd);
     }
 
-    
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -137,7 +127,7 @@ public class Difference
         result = prime * result + delStart;
         return result;
     }
-    
+
     /**
      * Compares this object to the other for equality. Both objects must be of
      * type Difference, with the same starting and ending points.
@@ -165,8 +155,7 @@ public class Difference
     /**
      * Returns a string representation of this difference.
      */
-    public String toString()
-    {
+    public String toString() {
         StringBuffer buf = new StringBuffer();
         buf.append("del: [" + delStart + ", " + delEnd + "]");
         buf.append(" ");

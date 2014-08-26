@@ -39,7 +39,7 @@ import dk.netarkivet.monitor.registry.MonitorRegistry;
  */
 public class MonitorRegistryServer extends MonitorMessageHandler implements CleanupIF {
 
-	private static MonitorRegistryServer instance;
+    private static MonitorRegistryServer instance;
     private static final Logger log = LoggerFactory.getLogger(MonitorRegistryServer.class);
 
     /**
@@ -50,7 +50,9 @@ public class MonitorRegistryServer extends MonitorMessageHandler implements Clea
         log.info("MonitorRegistryServer listening for messages on channel '{}'", Channels.getTheMonitorServer());
     }
 
-    /** Get the registry server singleton.
+    /**
+     * Get the registry server singleton.
+     * 
      * @return The registry server.
      */
     public static MonitorRegistryServer getInstance() {
@@ -63,7 +65,8 @@ public class MonitorRegistryServer extends MonitorMessageHandler implements Clea
     /**
      * This method registers the sender as a host to be monitored with JMX.
      *
-     * @throws ArgumentNotValid on null parameter. 
+     * @throws ArgumentNotValid
+     *             on null parameter.
      */
     public void visit(RegisterHostMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "RegisterHostMessage msg");
@@ -74,8 +77,8 @@ public class MonitorRegistryServer extends MonitorMessageHandler implements Clea
     public void cleanup() {
         // FIXME These commands fail when shutting down properly. (kill $PID)
         // instead of kill -9 $PID. See NAS-1976
-        //JMSConnectionFactory.getInstance().removeListener(
-        //        Channels.getTheMonitorServer(), this);
+        // JMSConnectionFactory.getInstance().removeListener(
+        // Channels.getTheMonitorServer(), this);
     }
 
 }

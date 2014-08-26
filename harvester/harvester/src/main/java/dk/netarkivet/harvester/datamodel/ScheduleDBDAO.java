@@ -44,20 +44,20 @@ import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.FilterIterator;
 
-
 /**
  * A database-based implementation of the ScheduleDAO.
  *
- * The statements to create the tables are now in
- * scripts/sql/createfullhddb.sql and scripts/sql/createfullhddb.mysql.
+ * The statements to create the tables are now in scripts/sql/createfullhddb.sql
+ * and scripts/sql/createfullhddb.mysql.
  */
 public class ScheduleDBDAO extends ScheduleDAO {
 
-	/** The logger. */
+    /** The logger. */
     private static final Logger log = LoggerFactory.getLogger(ScheduleDBDAO.class);
 
-    /** Constructor for this class, that only checks that the
-     * schedules table has the expected version.
+    /**
+     * Constructor for this class, that only checks that the schedules table has
+     * the expected version.
      */
     protected ScheduleDBDAO() {
         Connection connection = HarvestDBConnection.get();
@@ -71,9 +71,12 @@ public class ScheduleDBDAO extends ScheduleDAO {
     /**
      * Create a new schedule.
      *
-     * @param schedule The schedule to create
-     * @throws ArgumentNotValid if schedule is null
-     * @throws PermissionDenied if a schedule already exists
+     * @param schedule
+     *            The schedule to create
+     * @throws ArgumentNotValid
+     *             if schedule is null
+     * @throws PermissionDenied
+     *             if a schedule already exists
      */
     public synchronized void create(Schedule schedule) {
         ArgumentNotValid.checkNotNull(schedule, "schedule");
@@ -87,12 +90,9 @@ public class ScheduleDBDAO extends ScheduleDAO {
                 throw new PermissionDenied(msg);
             }
 
-            s = c.prepareStatement("INSERT INTO schedules "
-                    + "( name, comments, startdate, enddate, maxrepeats, "
-                    + "timeunit, numtimeunits, anytime, onminute, onhour,"
-                    + " ondayofweek, ondayofmonth, edition )"
-                    + "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )",
-                      Statement.RETURN_GENERATED_KEYS);
+            s = c.prepareStatement("INSERT INTO schedules " + "( name, comments, startdate, enddate, maxrepeats, "
+                    + "timeunit, numtimeunits, anytime, onminute, onhour," + " ondayofweek, ondayofmonth, edition )"
+                    + "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )", Statement.RETURN_GENERATED_KEYS);
             setScheduleParameters(s, schedule);
             final long edition = 1;
             s.setLong(13, edition);
@@ -101,22 +101,25 @@ public class ScheduleDBDAO extends ScheduleDAO {
             schedule.setEdition(edition);
         } catch (SQLException e) {
             throw new IOFailure("SQL error while creating schedule " + schedule + "\n"
-            		+ ExceptionUtils.getSQLExceptionCause(e), e);
+                    + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             HarvestDBConnection.release(c);
         }
     }
 
-    /** Sets the first twelve parameters of a Schedule in the order.
-     * name, comments, startdate, enddate, maxrepeats,
-     * timeunit, numtimeunits, anytime, onminute, onhour,
-     * ondayofweek, ondayofmonth
-     * @param s a prepared SQL statement
-     * @param schedule a given schedule.
-     * @throws SQLException If the operation fails.
+    /**
+     * Sets the first twelve parameters of a Schedule in the order. name,
+     * comments, startdate, enddate, maxrepeats, timeunit, numtimeunits,
+     * anytime, onminute, onhour, ondayofweek, ondayofmonth
+     * 
+     * @param s
+     *            a prepared SQL statement
+     * @param schedule
+     *            a given schedule.
+     * @throws SQLException
+     *             If the operation fails.
      */
-    private void setScheduleParameters(PreparedStatement s, Schedule schedule)
-    throws SQLException {
+    private void setScheduleParameters(PreparedStatement s, Schedule schedule) throws SQLException {
         DBUtils.setName(s, 1, schedule, Constants.MAX_NAME_SIZE);
         DBUtils.setComments(s, 2, schedule, Constants.MAX_COMMENT_SIZE);
         final Date startDate = schedule.getStartDate();
@@ -144,13 +147,14 @@ public class ScheduleDBDAO extends ScheduleDAO {
     /**
      * Returns whether a named schedule exists.
      *
-     * @param scheduleName The name of a schedule
+     * @param scheduleName
+     *            The name of a schedule
      * @return True if the schedule exists.
-     * @throws ArgumentNotValid if the schedulename is null or empty
+     * @throws ArgumentNotValid
+     *             if the schedulename is null or empty
      */
     public synchronized boolean exists(String scheduleName) {
-        ArgumentNotValid.checkNotNullOrEmpty(
-                scheduleName, "String scheduleName");
+        ArgumentNotValid.checkNotNullOrEmpty(scheduleName, "String scheduleName");
 
         Connection c = HarvestDBConnection.get();
         try {
@@ -162,8 +166,11 @@ public class ScheduleDBDAO extends ScheduleDAO {
 
     /**
      * Returns whether a named schedule exists.
-     * @param c An open connection to the harvestDatabase.
-     * @param scheduleName The name of a schedule
+     * 
+     * @param c
+     *            An open connection to the harvestDatabase.
+     * @param scheduleName
+     *            The name of a schedule
      * @return True if the schedule exists.
      */
     private synchronized boolean exists(Connection c, String scheduleName) {
@@ -174,20 +181,21 @@ public class ScheduleDBDAO extends ScheduleDAO {
     /**
      * Read an existing schedule.
      *
-     * @param scheduleName the name of the schedule
+     * @param scheduleName
+     *            the name of the schedule
      * @return The schedule read
-     * @throws ArgumentNotValid if schedulename is null or empty
-     * @throws UnknownID        if the schedule doesn't exist
+     * @throws ArgumentNotValid
+     *             if schedulename is null or empty
+     * @throws UnknownID
+     *             if the schedule doesn't exist
      */
     public synchronized Schedule read(String scheduleName) {
         ArgumentNotValid.checkNotNullOrEmpty(scheduleName, "String scheduleName");
         Connection c = HarvestDBConnection.get();
         PreparedStatement s = null;
         try {
-            s = c.prepareStatement("SELECT schedule_id, comments, startdate, "
-                    + "enddate, maxrepeats, timeunit, "
-                    + "numtimeunits, anytime, onminute, "
-                    + "onhour, ondayofweek, ondayofmonth, edition "
+            s = c.prepareStatement("SELECT schedule_id, comments, startdate, " + "enddate, maxrepeats, timeunit, "
+                    + "numtimeunits, anytime, onminute, " + "onhour, ondayofweek, ondayofmonth, edition "
                     + "FROM schedules WHERE name = ?");
             s.setString(1, scheduleName);
             ResultSet rs = s.executeQuery();
@@ -210,11 +218,11 @@ public class ScheduleDBDAO extends ScheduleDAO {
             Integer dayofmonth = DBUtils.getIntegerMaybeNull(rs, 12);
             if (log.isDebugEnabled()) {
                 log.debug("Creating frequency for (timeunit,anytime,numtimeunits,hour, minute, dayofweek, dayofmonth)"
-                		+ " = ({},{},{},{},{},{},{},)",
-                		timeunit, anytime, numtimeunits, minute, hour, dayofweek, dayofmonth);
+                        + " = ({},{},{},{},{},{},{},)", timeunit, anytime, numtimeunits, minute, hour, dayofweek,
+                        dayofmonth);
             }
             Frequency freq = Frequency.getNewInstance(timeunit, anytime, numtimeunits, minute, hour, dayofweek,
-            		dayofmonth);
+                    dayofmonth);
             long edition = rs.getLong(13);
             final Schedule schedule;
             if (isTimedSchedule) {
@@ -227,7 +235,7 @@ public class ScheduleDBDAO extends ScheduleDAO {
             return schedule;
         } catch (SQLException e) {
             throw new IOFailure("SQL error reading schedule " + scheduleName + "\n"
-            		+ ExceptionUtils.getSQLExceptionCause(e), e);
+                    + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(c);
@@ -237,11 +245,15 @@ public class ScheduleDBDAO extends ScheduleDAO {
     /**
      * Update a schedule in the DAO.
      *
-     * @param schedule The schedule to update
-     * @throws ArgumentNotValid If the schedule is null
-     * @throws UnknownID        If the schedule doesn't exist in the DAO
-     * @throws PermissionDenied  If the edition of the schedule to update is
-     *                          older than the DAO's
+     * @param schedule
+     *            The schedule to update
+     * @throws ArgumentNotValid
+     *             If the schedule is null
+     * @throws UnknownID
+     *             If the schedule doesn't exist in the DAO
+     * @throws PermissionDenied
+     *             If the edition of the schedule to update is older than the
+     *             DAO's
      */
     public synchronized void update(Schedule schedule) {
         ArgumentNotValid.checkNotNull(schedule, "schedule");
@@ -253,21 +265,10 @@ public class ScheduleDBDAO extends ScheduleDAO {
                 throw new PermissionDenied("No schedule with name " + schedule.getName() + " exists");
             }
 
-            s = c.prepareStatement("UPDATE schedules "
-                                + "SET name = ?,"
-                                + "    comments = ?,"
-                                + "    startdate = ?,"
-                                + "    enddate = ?,"
-                                + "    maxrepeats = ?,"
-                                + "    timeunit = ?,"
-                                + "    numtimeunits = ?,"
-                                + "    anytime = ?,"
-                                + "    onminute = ?,"
-                                + "    onhour = ?, "
-                                + "    ondayofweek = ?,"
-                                + "    ondayofmonth = ?,"
-                                + "    edition = ?"
-                                + " WHERE name = ? AND edition = ?");
+            s = c.prepareStatement("UPDATE schedules " + "SET name = ?," + "    comments = ?," + "    startdate = ?,"
+                    + "    enddate = ?," + "    maxrepeats = ?," + "    timeunit = ?," + "    numtimeunits = ?,"
+                    + "    anytime = ?," + "    onminute = ?," + "    onhour = ?, " + "    ondayofweek = ?,"
+                    + "    ondayofmonth = ?," + "    edition = ?" + " WHERE name = ? AND edition = ?");
             setScheduleParameters(s, schedule);
             long newEdition = schedule.getEdition() + 1;
             s.setLong(13, newEdition);
@@ -282,7 +283,7 @@ public class ScheduleDBDAO extends ScheduleDAO {
             schedule.setEdition(newEdition);
         } catch (SQLException e) {
             throw new IOFailure("SQL error while creating schedule " + schedule + "\n"
-            		+ ExceptionUtils.getSQLExceptionCause(e), e);
+                    + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             HarvestDBConnection.release(c);
         }
@@ -299,10 +300,11 @@ public class ScheduleDBDAO extends ScheduleDAO {
             List<String> names = DBUtils.selectStringList(c, "SELECT name FROM schedules ORDER BY name");
             return new FilterIterator<String, Schedule>(names.iterator()) {
                 /**
-                 * Returns the object corresponding to the given object,
-                 *  or null if that object is to be skipped.
+                 * Returns the object corresponding to the given object, or null
+                 * if that object is to be skipped.
                  *
-                 * @param s An object in the source iterator domain
+                 * @param s
+                 *            An object in the source iterator domain
                  * @return An object in this iterators domain, or null
                  */
                 public Schedule filter(String s) {

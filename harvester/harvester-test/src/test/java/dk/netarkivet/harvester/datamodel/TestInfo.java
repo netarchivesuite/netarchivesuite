@@ -41,15 +41,15 @@ import dk.netarkivet.harvester.webinterface.DefinitionsSiteSection;
 /**
  * Contains test information about all harvest definition test data.
  */
-@SuppressWarnings({ "unused"})
+@SuppressWarnings({ "unused" })
 public class TestInfo {
 
-	protected static final Logger log = LoggerFactory.getLogger(TestInfo.class);
+    protected static final Logger log = LoggerFactory.getLogger(TestInfo.class);
 
-	public static final File TOPDATADIR = new File("./tests/dk/netarkivet/harvester/datamodel/data/");
+    public static final File TOPDATADIR = new File("./tests/dk/netarkivet/harvester/datamodel/data/");
     public static final File DATADIR = new File(TOPDATADIR, "hadebasedir/");
     public static final File TEMPDIR = new File(TOPDATADIR, "working/");
-    //public static final File TEMPDIR = new File("target/working/");
+    // public static final File TEMPDIR = new File("target/working/");
     public static final String LONG_DOMAIN_LIST = "domainlist/longdomainlist.txt";
     public static final String DOMAIN_LIST = "domainlist/domainlist.txt";
     public static final String INVALID_DOMAIN_LIST = "domainlist/invalid_domainlist.txt";
@@ -91,7 +91,8 @@ public class TestInfo {
 
     public static final int GUI_WEB_SERVER_PORT = 4242;
     public static final String GUI_WEB_SERVER_WEBBASE = "/jsp";
-    //public static final String GUI_WEB_SERVER_JSP_DIRECTORY = "tests/dk/netarkivet/harvester/datamodel/data/jsp";
+    // public static final String GUI_WEB_SERVER_JSP_DIRECTORY =
+    // "tests/dk/netarkivet/harvester/datamodel/data/jsp";
     public static HourlyFrequency FREQUENCY = new HourlyFrequency(1);
     public static File HARVEST_DEFINITIONS_DIR = new File(TEMPDIR, "harvestdefinitions");
     public static File HARVEST_DEFINITION_FILE1 = new File(HARVEST_DEFINITIONS_DIR, "harvestdef_42.xml");
@@ -104,43 +105,40 @@ public class TestInfo {
     public static final Long JOBID = new Long(1234);
     public static final Long HARVESTID = new Long(5678);
     public static final Long UNKNOWN_HARVESTID = new Long(5678);
-    public static final File ORDERXMLFILE = new File(BASE_DIR_ORDER_XML_TEMPLATES,
-            "OneLevel-order.xml");
-    public static File[] SETTINGSXMLFILES = {
-        new File(BASE_DIR_ORDER_XML_TEMPLATES, "FullSite-order.xml"),
-        new File(BASE_DIR_ORDER_XML_TEMPLATES, "Max_20_2-order.xml")
-    };
-    
+    public static final File ORDERXMLFILE = new File(BASE_DIR_ORDER_XML_TEMPLATES, "OneLevel-order.xml");
+    public static File[] SETTINGSXMLFILES = { new File(BASE_DIR_ORDER_XML_TEMPLATES, "FullSite-order.xml"),
+            new File(BASE_DIR_ORDER_XML_TEMPLATES, "Max_20_2-order.xml") };
+
     public static Date START_DATE = new GregorianCalendar(105, 2, 3, 4, 5, 6).getTime();
     public static Date END_DATE = new GregorianCalendar(106, 2, 3, 4, 5, 6).getTime();
     public static Frequency DEFAULT_FREQ = new DailyFrequency(3);
-    public static Schedule TESTSCHEDULE = new TimedSchedule(
-    		START_DATE, END_DATE, DEFAULT_FREQ, TEST_SCHEDULE_NAME, "");
-    public static Schedule DEFAULTSCHEDULE = new TimedSchedule(
-    		START_DATE, END_DATE, DEFAULT_FREQ, DEFAULT_SCHEDULE_NAME, "");
+    public static Schedule TESTSCHEDULE = new TimedSchedule(START_DATE, END_DATE, DEFAULT_FREQ, TEST_SCHEDULE_NAME, "");
+    public static Schedule DEFAULTSCHEDULE = new TimedSchedule(START_DATE, END_DATE, DEFAULT_FREQ,
+            DEFAULT_SCHEDULE_NAME, "");
     private static final String TESTSCHEDULE_COMMENTS = "No comment";
-    public static Schedule HERE_AND_NOW_SCHEDULE = Schedule.getInstance(
-    		null, null, new DailyFrequency(1), HEREANDNOW_SCHEDULE_NAME, TESTSCHEDULE_COMMENTS);
+    public static Schedule HERE_AND_NOW_SCHEDULE = Schedule.getInstance(null, null, new DailyFrequency(1),
+            HEREANDNOW_SCHEDULE_NAME, TESTSCHEDULE_COMMENTS);
 
     private static final Frequency TWO_HOURLY_FREQUENCY = new HourlyFrequency(2, 42);
     private static final Frequency FIVE_MINUTE_FREQUENCY = new MinuteFrequency(5);
     public static final String TESTSCHEDULE_HOURLY_NAME = "Two hours";
-    public static Schedule TESTSCHEDULE_HOURLY = Schedule.getInstance(START_DATE, END_DATE,
-            TWO_HOURLY_FREQUENCY, TESTSCHEDULE_HOURLY_NAME, TESTSCHEDULE_COMMENTS);
+    public static Schedule TESTSCHEDULE_HOURLY = Schedule.getInstance(START_DATE, END_DATE, TWO_HOURLY_FREQUENCY,
+            TESTSCHEDULE_HOURLY_NAME, TESTSCHEDULE_COMMENTS);
     private static final int NUM_REPEATS = 5;
     private static final Frequency THREE_DAYS_FREQUENCY = new DailyFrequency(3);
     public static final String TESTSCHEDULE_DAILY_NAME = "Three days, five times";
-    public static Schedule TESTSCHEDULE_DAILY = Schedule.getInstance(START_DATE, NUM_REPEATS,
-            THREE_DAYS_FREQUENCY, TESTSCHEDULE_DAILY_NAME, TESTSCHEDULE_COMMENTS);
+    public static Schedule TESTSCHEDULE_DAILY = Schedule.getInstance(START_DATE, NUM_REPEATS, THREE_DAYS_FREQUENCY,
+            TESTSCHEDULE_DAILY_NAME, TESTSCHEDULE_COMMENTS);
     private static final Frequency WEEKLY_FREQUENCY = new WeeklyFrequency(1, 3, 4, 5);
     public static final String TESTSCHEDULE_WEEKLY_NAME = "Weekly";
-    public static Schedule TESTSCHEDULE_WEEKLY = Schedule.getInstance(null, null,
-            WEEKLY_FREQUENCY, TESTSCHEDULE_WEEKLY_NAME, TESTSCHEDULE_COMMENTS);
+    public static Schedule TESTSCHEDULE_WEEKLY = Schedule.getInstance(null, null, WEEKLY_FREQUENCY,
+            TESTSCHEDULE_WEEKLY_NAME, TESTSCHEDULE_COMMENTS);
     private static final Frequency MONTHLY_FREQUENCY = new MonthlyFrequency(3);
     public static final String TESTSCHEDULE_MONTHLY_NAME = "Quarterly";
-    public static Schedule TESTSCHEDULE_MONTHLY = Schedule.getInstance(null, NUM_REPEATS,
-            MONTHLY_FREQUENCY, TESTSCHEDULE_MONTHLY_NAME, TESTSCHEDULE_COMMENTS);
-    public static Schedule TESTSCHEDULE_MINUTES = Schedule.getInstance(null, null, FIVE_MINUTE_FREQUENCY, "5minutes", "hello world");
+    public static Schedule TESTSCHEDULE_MONTHLY = Schedule.getInstance(null, NUM_REPEATS, MONTHLY_FREQUENCY,
+            TESTSCHEDULE_MONTHLY_NAME, TESTSCHEDULE_COMMENTS);
+    public static Schedule TESTSCHEDULE_MINUTES = Schedule.getInstance(null, null, FIVE_MINUTE_FREQUENCY, "5minutes",
+            "hello world");
 
     public static final String DOMAIN_NAME = "bt.dk";
     public static final String CONFIGURATION_NAME = "Deep";
@@ -151,8 +149,8 @@ public class TestInfo {
     public static final String PASSWORD_REALM = "SecretLaBOratory";
     public static final String PASSWORD_USERNAME = "Mulder";
     public static final String PASSWORD_PASSWORD = "TrustNo1";
-    public static Password password = new Password(PASSWORD_NAME, PASSWORD_COMMENT,
-            PASSWORD_PASSWORD_DOMAIN, PASSWORD_REALM, PASSWORD_USERNAME, PASSWORD_PASSWORD);
+    public static Password password = new Password(PASSWORD_NAME, PASSWORD_COMMENT, PASSWORD_PASSWORD_DOMAIN,
+            PASSWORD_REALM, PASSWORD_USERNAME, PASSWORD_PASSWORD);
 
     public static final int STATUS_NEW = 0;
     public static final int STATUS_SUBMITTED = 1;
@@ -165,19 +163,15 @@ public class TestInfo {
     public static final int MAX_OBJECTS_PER_DOMAIN = 33;
     public static final File NON_EXISTING_FILE = new File("/no/such/file");
     public static final File TEMP_DOMAIN_DIR = new File(TEMPDIR, "domains");
-    public static final File EXISTING_DOMAIN_DIR =
-            new File(new File(TEMP_DOMAIN_DIR, "dr"), "dr.dk");
-    public static final File EXISTING_DOMAIN_DIR2 =
-            new File(new File(TEMP_DOMAIN_DIR, "kb"), "kb.dk");
+    public static final File EXISTING_DOMAIN_DIR = new File(new File(TEMP_DOMAIN_DIR, "dr"), "dr.dk");
+    public static final File EXISTING_DOMAIN_DIR2 = new File(new File(TEMP_DOMAIN_DIR, "kb"), "kb.dk");
 
     public static final int NO_OF_TESTDOMAINS = 7;
 
     public static final String DBFILE = TOPDATADIR.getAbsolutePath() + "/fullhddb.sql";
     static final String EMPTYDBFILE = TOPDATADIR.getAbsolutePath() + "/emptyhddb.sql";
-    public static final File NONEXISTINGDIR =
-            new File(TEMPDIR, "nonexisting");
-    public static final String HARVESTDEFINITION_SITESECTIONCLASS
-            = DefinitionsSiteSection.class.getName();
+    public static final File NONEXISTINGDIR = new File(TEMPDIR, "nonexisting");
+    public static final String HARVESTDEFINITION_SITESECTIONCLASS = DefinitionsSiteSection.class.getName();
     public static final String CRAWLER_TRAPS_01 = "crawler_traps_01.txt";
     public static final String CRAWLER_TRAPS_02 = "crawler_traps_02.txt";
     public static final String CRAWLER_TRAPS_03 = "crawler_traps_03.txt";
@@ -198,15 +192,14 @@ public class TestInfo {
      * @param objectCount
      * @return a domainConfiguration
      */
-    public static DomainConfiguration createConfig(String domainName, String configName,
-                                                    long objectCount) {
+    public static DomainConfiguration createConfig(String domainName, String configName, long objectCount) {
         DomainDAO dao = DomainDAO.getInstance();
         Domain d = dao.read(domainName);
         DomainConfiguration cfg = d.getConfiguration(configName);
         cfg.setMaxObjects(4000);
         cfg.setMaxBytes(-1);
-        HarvestInfo hi = new HarvestInfo(new Long(1234), d.getName(),
-                cfg.getName(), new Date(), 1L, objectCount, StopReason.DOWNLOAD_COMPLETE);
+        HarvestInfo hi = new HarvestInfo(new Long(1234), d.getName(), cfg.getName(), new Date(), 1L, objectCount,
+                StopReason.DOWNLOAD_COMPLETE);
 
         d.getHistory().addHarvestInfo(hi);
         dao.update(d);
@@ -250,8 +243,7 @@ public class TestInfo {
     public static DomainConfiguration getConfigurationNotDefault(Domain wd) {
         List<SeedList> seedlists = new ArrayList<SeedList>();
         seedlists.add(seedlist);
-        DomainConfiguration cfg = new DomainConfiguration("NotDefault", wd,
-                seedlists, new ArrayList<Password>());
+        DomainConfiguration cfg = new DomainConfiguration("NotDefault", wd, seedlists, new ArrayList<Password>());
         cfg.setOrderXmlName(ORDER_XML_NAME);
         cfg.setMaxObjects(12);
         cfg.setMaxRequestRate(11);
@@ -273,7 +265,6 @@ public class TestInfo {
         wd.addSeedList(seedlist);
         return wd;
     }
-
 
     public static Domain getDefaultDomain() {
         Domain wd = Domain.getDefaultDomain(DEFAULTDOMAINNAME);
@@ -320,15 +311,11 @@ public class TestInfo {
         return configs;
     }
 
-
     /**
-     * Creates a harvest definition where all configurations use
-     * the same order.xml.
-     * The expected number of objects harvested for each configuration are:
-     * asterix.kb.dk: 100
-     * netarkivet.dk: 1000
-     * www.statsbiblioteket.dk: 2000
-     * dr.dk: 4000
+     * Creates a harvest definition where all configurations use the same
+     * order.xml. The expected number of objects harvested for each
+     * configuration are: asterix.kb.dk: 100 netarkivet.dk: 1000
+     * www.statsbiblioteket.dk: 2000 dr.dk: 4000
      *
      * @return the described definition
      */
@@ -336,48 +323,43 @@ public class TestInfo {
         List<DomainConfiguration> configs = new ArrayList<DomainConfiguration>();
         Schedule schedule = DEFAULTSCHEDULE;
 
-        //Note: The configurations have these expectations:
-        //500, 1400, 2400, 4000
+        // Note: The configurations have these expectations:
+        // 500, 1400, 2400, 4000
         configs.add(createConfig("kb.dk", "fuld_dybde", 112));
         configs.add(createConfig("netarkivet.dk", "fuld_dybde", 1112));
         configs.add(createConfig("statsbiblioteket.dk", "fuld_dybde", 2223));
         configs.add(createConfig("dr.dk", "fuld_dybde", 4445));
 
-        return HarvestDefinition.createPartialHarvest(configs, schedule,
-                "SameOrderXml", "All configs. use the same order.xml", DEFAULT_HARVEST_AUDIENCE);
+        return HarvestDefinition.createPartialHarvest(configs, schedule, "SameOrderXml",
+                "All configs. use the same order.xml", DEFAULT_HARVEST_AUDIENCE);
     }
 
     /**
-     * Creates a harvest definition where different order.xml files are used
-     * but where the expected number of objects is identical (1000)
-     * The following order.xml files are used:
-     * asterix.kb.dk:Max_20_2-order.xml
-     * netarkivet.dk:OneLevel-order.xml
-     * www.statsbiblioteket.dk: FullSite-order.xml
-     * dr.dk: FullSite-order.xml
+     * Creates a harvest definition where different order.xml files are used but
+     * where the expected number of objects is identical (1000) The following
+     * order.xml files are used: asterix.kb.dk:Max_20_2-order.xml
+     * netarkivet.dk:OneLevel-order.xml www.statsbiblioteket.dk:
+     * FullSite-order.xml dr.dk: FullSite-order.xml
      *
      * @return the described definition
      */
     public static PartialHarvest getMultipleOrderXmlConfig() {
         List<DomainConfiguration> configs = new ArrayList<DomainConfiguration>();
         Schedule schedule = DEFAULTSCHEDULE;
-        //Expectation: 1400
+        // Expectation: 1400
         configs.add(createConfig("kb.dk", "Asterix_max_20_2", 1112));
         configs.add(createConfig("netarkivet.dk", "Engelsk_netarkiv_et_niveau", 1112));
         configs.add(createConfig("statsbiblioteket.dk", "fuld_dybde", 1112));
         configs.add(createConfig("dr.dk", "fuld_dybde", 1112));
 
-        return HarvestDefinition.createPartialHarvest(configs, schedule,
-                "DifferentOrderXml", "Different order.xml are used",
-                TestInfo.DEFAULT_HARVEST_COMMENT);
+        return HarvestDefinition.createPartialHarvest(configs, schedule, "DifferentOrderXml",
+                "Different order.xml are used", TestInfo.DEFAULT_HARVEST_COMMENT);
     }
-
 
     public static DomainConfiguration getConfig(Domain d, String s) {
         List<SeedList> seedlists = new ArrayList<SeedList>();
         seedlists.add(seedlist);
-        DomainConfiguration cfg = new DomainConfiguration(s, d,
-                seedlists, new ArrayList<Password>());
+        DomainConfiguration cfg = new DomainConfiguration(s, d, seedlists, new ArrayList<Password>());
         cfg.setOrderXmlName(ORDER_XML_NAME);
         cfg.setMaxObjects(10);
         cfg.setMaxRequestRate(11);

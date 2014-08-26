@@ -28,8 +28,8 @@ import javax.servlet.jsp.PageContext;
 import dk.netarkivet.common.utils.I18n;
 
 /**
- * Represents the various actions which can be carried out to modify
- * Global Crawler Traps.
+ * Represents the various actions which can be carried out to modify Global
+ * Crawler Traps.
  *
  */
 
@@ -43,44 +43,49 @@ public enum TrapActionEnum {
         @Override
         public TrapAction getTrapAction() {
             return new TrapCreateOrUpdateAction();
-        }},
+        }
+    },
     /**
      * Action to download an existing list to browser or file.
      */
-    READ{
+    READ {
         @Override
         public TrapAction getTrapAction() {
-           return new TrapReadAction();
-        }},
+            return new TrapReadAction();
+        }
+    },
     /**
      * Action to delete an existing list.
      */
-    DELETE{
+    DELETE {
         @Override
         public TrapAction getTrapAction() {
-            return new TrapDeleteAction();           
-        }},
+            return new TrapDeleteAction();
+        }
+    },
     /**
      * Change an existing list from inactive to active.
      */
-    ACTIVATE{
+    ACTIVATE {
         @Override
         public TrapAction getTrapAction() {
             return new TrapActivationAction(true);
-        }},
+        }
+    },
     /**
      * Change an existing list from active to inactive.
      */
-    DEACTIVATE{
+    DEACTIVATE {
         @Override
         public TrapAction getTrapAction() {
             return new TrapActivationAction(false);
-        }},
+        }
+    },
     /**
      * Do nothing. The existence of a null action is an architectural
      * convenience.
      */
-    NULL_ACTION{
+    NULL_ACTION {
         @Override
         public TrapAction getTrapAction() {
             /**
@@ -93,15 +98,14 @@ public enum TrapActionEnum {
                     return;
                 }
             };
-        }}
-        ;
+        }
+    };
 
     /**
      * Get the concrete TrapAction which can process this request.
+     * 
      * @return the correct TrapAction for this request type.
      */
     public abstract TrapAction getTrapAction();
-
-
 
 }

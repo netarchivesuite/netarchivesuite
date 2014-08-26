@@ -28,8 +28,7 @@ import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
 /**
- * Unit tests for the package monitor.registry 
- * and monitor.registry.distribute
+ * Unit tests for the package monitor.registry and monitor.registry.distribute
  *
  */
 public class MonitorWebinterfaceTesterSuite {
@@ -52,7 +51,7 @@ public class MonitorWebinterfaceTesterSuite {
     }
 
     public static void main(String args[]) {
-        String args2[] = {"-noloading", MonitorWebinterfaceTesterSuite.class.getName()};
+        String args2[] = { "-noloading", MonitorWebinterfaceTesterSuite.class.getName() };
         TestRunner.main(args2);
     }
 }

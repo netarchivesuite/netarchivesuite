@@ -33,23 +33,24 @@ import java.util.zip.GZIPInputStream;
  * Java currently has a bug that does not allow unzipping Gzip files with
  * contents larger than 2GB. The result will be an IOException with the message
  * "Corrupt GZIP trailer". This class works around that bug by ignoring that
- * message for all streams which are uncompressed larger than 2GB.
- * This sacrifices CRC checks for those streams, though.
+ * message for all streams which are uncompressed larger than 2GB. This
+ * sacrifices CRC checks for those streams, though.
  *
- * See sun bug:
- * http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=5092263
+ * See sun bug: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=5092263
  *
  * @see GZIPInputStream
  */
 public class LargeFileGZIPInputStream extends GZIPInputStream {
 
-	/**
+    /**
      * Creates a new input stream with a default buffer size.
-     * @param in the input stream
-     * @throws IOException if an I/O error has occurred.
-     *                     Note: We usually don't allow IOException in our code,
-     *                     but this is done here to closely mimic
-     *                     GZIPInputStream
+     * 
+     * @param in
+     *            the input stream
+     * @throws IOException
+     *             if an I/O error has occurred. Note: We usually don't allow
+     *             IOException in our code, but this is done here to closely
+     *             mimic GZIPInputStream
      */
     public LargeFileGZIPInputStream(InputStream in) throws IOException {
         super(in);
@@ -59,25 +60,27 @@ public class LargeFileGZIPInputStream extends GZIPInputStream {
      * Reads uncompressed data into an array of bytes. Blocks until enough input
      * is available for decompression.
      *
-     * @param buf the buffer into which the data is read
-     * @param off the start offset of the data
-     * @param len the maximum number of bytes read
+     * @param buf
+     *            the buffer into which the data is read
+     * @param off
+     *            the start offset of the data
+     * @param len
+     *            the maximum number of bytes read
      * @return the actual number of bytes read, or -1 if the end of the
      *         compressed input stream is reached
-     * @throws IOException if an I/O error has occurred or the compressed input
-     *                     data is corrupt. Note that size differences are
-     *                     ignored in this workaround class if size is larger
-     *                     than Integer.MAX_VALUE.
-     *                     Note: We usually don't allow IOException in our code,
-     *                     but this is done here to closely mimic
-     *                     GZIPInputStream
+     * @throws IOException
+     *             if an I/O error has occurred or the compressed input data is
+     *             corrupt. Note that size differences are ignored in this
+     *             workaround class if size is larger than Integer.MAX_VALUE.
+     *             Note: We usually don't allow IOException in our code, but
+     *             this is done here to closely mimic GZIPInputStream
      */
     public int read(byte[] buf, int off, int len) throws IOException {
         try {
             return super.read(buf, off, len);
         } catch (IOException e) {
             if (exceptionCausedByJavaException(e)) {
-                //mimic succes
+                // mimic succes
                 eos = true;
                 return -1;
             } else {
@@ -88,16 +91,15 @@ public class LargeFileGZIPInputStream extends GZIPInputStream {
 
     /**
      * Given an IOException caused by read, return whether this is the exception
-     * we are working around. This is the case if
-     * 1) The message is Corrupt GZIP trailer
-     * 2) More then Integer.MAX_VALUE bytes are written
+     * we are working around. This is the case if 1) The message is Corrupt GZIP
+     * trailer 2) More then Integer.MAX_VALUE bytes are written
      *
-     * @param e An IOException thrown by GZIPInputStream.read
+     * @param e
+     *            An IOException thrown by GZIPInputStream.read
      * @return Whether it is one caused by the bug we are working around
      */
     private boolean exceptionCausedByJavaException(IOException e) {
-        return (e.getMessage() != null && e.getMessage().equals("Corrupt GZIP trailer")
-        		&& inf.getBytesWritten() >= Integer.MAX_VALUE);
+        return (e.getMessage() != null && e.getMessage().equals("Corrupt GZIP trailer") && inf.getBytesWritten() >= Integer.MAX_VALUE);
     }
 
 }

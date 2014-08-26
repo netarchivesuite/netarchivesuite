@@ -79,7 +79,7 @@ import dk.netarkivet.harvester.webinterface.HarvestStatusQuery;
  */
 public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
 
-	/** The logger. */
+    /** The logger. */
     private static final Logger log = LoggerFactory.getLogger(HarvestDefinitionDBDAO.class);
 
     /**
@@ -137,8 +137,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
 
             connection.setAutoCommit(false);
             s = connection.prepareStatement("INSERT INTO harvestdefinitions "
-            		+ "( harvest_id, name, comments, numevents, submitted,  isactive, edition, audience ) "
-            		+ "VALUES ( ?, ?, ?, ?, ?, ?, ?,? )");
+                    + "( harvest_id, name, comments, numevents, submitted,  isactive, edition, audience ) "
+                    + "VALUES ( ?, ?, ?, ?, ?, ?, ?,? )");
             s.setLong(1, id);
             DBUtils.setName(s, 2, harvestDefinition, Constants.MAX_NAME_SIZE);
             DBUtils.setComments(s, 3, harvestDefinition, Constants.MAX_COMMENT_SIZE);
@@ -155,8 +155,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             if (harvestDefinition instanceof FullHarvest) {
                 FullHarvest fh = (FullHarvest) harvestDefinition;
                 s = connection.prepareStatement("INSERT INTO fullharvests "
-                		+ "( harvest_id, maxobjects, maxbytes, maxjobrunningtime, previoushd, isindexready)"
-                		+ "VALUES ( ?, ?, ?, ?, ?, ? )");
+                        + "( harvest_id, maxobjects, maxbytes, maxjobrunningtime, previoushd, isindexready)"
+                        + "VALUES ( ?, ?, ?, ?, ?, ? )");
                 s.setLong(1, id);
                 s.setLong(2, fh.getMaxCountObjects());
                 s.setLong(3, fh.getMaxBytes());
@@ -172,9 +172,9 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 PartialHarvest ph = (PartialHarvest) harvestDefinition;
                 // Get schedule id
                 long scheduleId = DBUtils.selectLongValue(connection,
-                		"SELECT schedule_id FROM schedules WHERE name = ?", ph.getSchedule().getName());
+                        "SELECT schedule_id FROM schedules WHERE name = ?", ph.getSchedule().getName());
                 s = connection.prepareStatement("INSERT INTO partialharvests ( harvest_id, schedule_id, nextdate ) "
-                		+ "VALUES ( ?, ?, ? )");
+                        + "VALUES ( ?, ?, ? )");
                 s.setLong(1, id);
                 s.setLong(2, scheduleId);
                 DBUtils.setDateMaybeNull(s, 3, ph.getNextDate());
@@ -182,7 +182,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 createHarvestConfigsEntries(connection, ph, id);
             } else {
                 String message = "Harvest definition " + harvestDefinition + " is of unknown class "
-                                 + harvestDefinition.getClass();
+                        + harvestDefinition.getClass();
                 log.warn(message);
                 throw new ArgumentNotValid(message);
             }
@@ -199,7 +199,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             return id;
         } catch (SQLException e) {
             String message = "SQL error creating harvest definition " + harvestDefinition + " in database" + "\n"
-            		+ ExceptionUtils.getSQLExceptionCause(e);
+                    + ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
@@ -227,11 +227,10 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         s.setLong(1, id);
         s.executeUpdate();
         s.close();
-        s = c.prepareStatement("INSERT INTO harvest_configs "
-                               + "( harvest_id, config_id ) "
-                               + "SELECT ?, config_id FROM configurations, domains "
-                               + "WHERE domains.name = ? AND configurations.name = ?"
-                               + "  AND domains.domain_id = configurations.domain_id");
+        s = c.prepareStatement("INSERT INTO harvest_configs " + "( harvest_id, config_id ) "
+                + "SELECT ?, config_id FROM configurations, domains "
+                + "WHERE domains.name = ? AND configurations.name = ?"
+                + "  AND domains.domain_id = configurations.domain_id");
         Iterator<DomainConfiguration> dcs = ph.getDomainConfigurations();
         while (dcs.hasNext()) {
             DomainConfiguration dc = dcs.next();
@@ -285,11 +284,15 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
      * Read the stored harvest definition for the given ID.
      *
      * @see HarvestDefinitionDAO#read(Long)
-     * @param c The used database connection
-     * @param harvestDefinitionIDAn ID number for a harvest definition
+     * @param c
+     *            The used database connection
+     * @param harvestDefinitionIDAn
+     *            ID number for a harvest definition
      * @return A harvest definition that has been read from persistent storage.
-     * @throws UnknownID if no entry with that ID exists in the database
-     * @throws IOFailure If DB-failure occurs?
+     * @throws UnknownID
+     *             if no entry with that ID exists in the database
+     * @throws IOFailure
+     *             If DB-failure occurs?
      */
     private HarvestDefinition read(Connection c, Long harvestDefinitionID) throws UnknownID, IOFailure {
         if (!exists(c, harvestDefinitionID)) {
@@ -300,14 +303,11 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         log.debug("Reading harvestdefinition w/ id {}", harvestDefinitionID);
         PreparedStatement s = null;
         try {
-            s = c.prepareStatement(
-                    "SELECT name, comments, numevents, submitted, "
+            s = c.prepareStatement("SELECT name, comments, numevents, submitted, "
                     + "previoushd, maxobjects, maxbytes, "
                     + "maxjobrunningtime, isindexready, isactive, edition, audience "
-                    + "FROM harvestdefinitions, fullharvests "
-                    + "WHERE harvestdefinitions.harvest_id = ?"
-                    + "  AND harvestdefinitions.harvest_id "
-                    + " = fullharvests.harvest_id");
+                    + "FROM harvestdefinitions, fullharvests " + "WHERE harvestdefinitions.harvest_id = ?"
+                    + "  AND harvestdefinitions.harvest_id " + " = fullharvests.harvest_id");
             s.setLong(1, harvestDefinitionID);
             ResultSet res = s.executeQuery();
             if (res.next()) {
@@ -324,19 +324,14 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 FullHarvest fh;
                 final long prevhd = res.getLong(5);
                 if (!res.wasNull()) {
-                    fh = new FullHarvest(
-                            name, comments, prevhd, maxObjects, maxBytes, maxJobRunningtime, isIndexReady,
+                    fh = new FullHarvest(name, comments, prevhd, maxObjects, maxBytes, maxJobRunningtime, isIndexReady,
                             DAOProviderFactory.getHarvestDefinitionDAOProvider(),
-                            DAOProviderFactory.getJobDAOProvider(),
-                            DAOProviderFactory.getExtendedFieldDAOProvider(),
-                            DAOProviderFactory.getDomainDAOProvider()
-                            );
+                            DAOProviderFactory.getJobDAOProvider(), DAOProviderFactory.getExtendedFieldDAOProvider(),
+                            DAOProviderFactory.getDomainDAOProvider());
                 } else {
-                    fh = new FullHarvest(
-                            name, comments, null, maxObjects,maxBytes, maxJobRunningtime, isIndexReady,
+                    fh = new FullHarvest(name, comments, null, maxObjects, maxBytes, maxJobRunningtime, isIndexReady,
                             DAOProviderFactory.getHarvestDefinitionDAOProvider(),
-                            DAOProviderFactory.getJobDAOProvider(),
-                            DAOProviderFactory.getExtendedFieldDAOProvider(),
+                            DAOProviderFactory.getJobDAOProvider(), DAOProviderFactory.getExtendedFieldDAOProvider(),
                             DAOProviderFactory.getDomainDAOProvider());
                 }
                 fh.setSubmissionDate(submissionDate);
@@ -354,22 +349,15 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             }
             s.close();
             // No full harvest with that ID, try selective harvest
-            s = c.prepareStatement("SELECT harvestdefinitions.name,"
-                                   + "       harvestdefinitions.comments,"
-                                   + "       harvestdefinitions.numevents,"
-                                   + "       harvestdefinitions.submitted,"
-                                   + "       harvestdefinitions.isactive,"
-                                   + "       harvestdefinitions.edition,"
-                                   + "       harvestdefinitions.audience,"
-                                   + "       schedules.name,"
-                                   + "       partialharvests.nextdate, "
-                                   + "       harvestdefinitions.channel_id "
-                                   + "FROM harvestdefinitions, partialharvests, schedules"
-                                   + " WHERE harvestdefinitions.harvest_id = ?"
-                                   + "   AND harvestdefinitions.harvest_id "
-                                   + "= partialharvests.harvest_id"
-                                   + "   AND schedules.schedule_id "
-                                   + "= partialharvests.schedule_id");
+            s = c.prepareStatement("SELECT harvestdefinitions.name," + "       harvestdefinitions.comments,"
+                    + "       harvestdefinitions.numevents," + "       harvestdefinitions.submitted,"
+                    + "       harvestdefinitions.isactive," + "       harvestdefinitions.edition,"
+                    + "       harvestdefinitions.audience," + "       schedules.name,"
+                    + "       partialharvests.nextdate, " + "       harvestdefinitions.channel_id "
+                    + "FROM harvestdefinitions, partialharvests, schedules"
+                    + " WHERE harvestdefinitions.harvest_id = ?" + "   AND harvestdefinitions.harvest_id "
+                    + "= partialharvests.harvest_id" + "   AND schedules.schedule_id "
+                    + "= partialharvests.schedule_id");
             s.setLong(1, harvestDefinitionID);
             res = s.executeQuery();
             boolean foundPartialHarvest = res.next();
@@ -380,8 +368,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 final String name = res.getString(1);
                 final String comments = res.getString(2);
                 final int numEvents = res.getInt(3);
-                final Date submissionDate = new Date(res.getTimestamp(4)
-                                                             .getTime());
+                final Date submissionDate = new Date(res.getTimestamp(4).getTime());
                 final boolean active = res.getBoolean(5);
                 final long edition = res.getLong(6);
                 final String audience = res.getString(7);
@@ -395,10 +382,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 final DomainDAO domainDao = DomainDAO.getInstance();
                 List<SparseDomainConfiguration> configs = new ArrayList<SparseDomainConfiguration>();
                 s = c.prepareStatement("SELECT domains.name, configurations.name "
-                        + "FROM domains, configurations, harvest_configs "
-                        + "WHERE harvest_id = ?"
-                        + "  AND configurations.config_id "
-                        + "= harvest_configs.config_id"
+                        + "FROM domains, configurations, harvest_configs " + "WHERE harvest_id = ?"
+                        + "  AND configurations.config_id " + "= harvest_configs.config_id"
                         + "  AND configurations.domain_id = domains.domain_id");
                 s.setLong(1, harvestDefinitionID);
                 res = s.executeQuery();
@@ -409,7 +394,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 List<DomainConfiguration> configurations = new ArrayList<DomainConfiguration>();
                 for (SparseDomainConfiguration domainConfig : configs) {
                     configurations.add(domainDao.getDomainConfiguration(domainConfig.getDomainName(),
-                    		domainConfig.getConfigurationName()));
+                            domainConfig.getConfigurationName()));
                 }
 
                 Schedule schedule = ScheduleDAO.getInstance().read(scheduleName);
@@ -431,11 +416,11 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 return ph;
             } else {
                 throw new IllegalState("No entries in fullharvests or partialharvests found for id "
-            + harvestDefinitionID);
+                        + harvestDefinitionID);
             }
         } catch (SQLException e) {
             throw new IOFailure("SQL Error while reading harvest definition " + harvestDefinitionID + "\n"
-            		+ ExceptionUtils.getSQLExceptionCause(e), e);
+                    + ExceptionUtils.getSQLExceptionCause(e), e);
         }
     }
 
@@ -462,10 +447,9 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         PreparedStatement s = null;
         try {
             c.setAutoCommit(false);
-            s = c.prepareStatement("UPDATE harvestdefinitions SET "
-                                   + "name = ?, " + "comments = ?, " + "numevents = ?, "
-                                   + "submitted = ?," + "isactive = ?," + "edition = ?, audience = ? "
-                                   + "WHERE harvest_id = ? AND edition = ?");
+            s = c.prepareStatement("UPDATE harvestdefinitions SET " + "name = ?, " + "comments = ?, "
+                    + "numevents = ?, " + "submitted = ?," + "isactive = ?," + "edition = ?, audience = ? "
+                    + "WHERE harvest_id = ? AND edition = ?");
             DBUtils.setName(s, 1, hd, Constants.MAX_NAME_SIZE);
             DBUtils.setComments(s, 2, hd, Constants.MAX_COMMENT_SIZE);
             s.setInt(3, hd.getNumEvents());
@@ -481,7 +465,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             // Since the HD exists, no rows indicates bad edition
             if (rows == 0) {
                 String message = "Somebody else must have updated " + hd + " since edition " + hd.getEdition()
-                		+ ", not updating";
+                        + ", not updating";
                 log.debug(message);
                 throw new PermissionDenied(message);
             }
@@ -489,7 +473,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             if (hd instanceof FullHarvest) {
                 FullHarvest fh = (FullHarvest) hd;
                 s = c.prepareStatement("UPDATE fullharvests SET previoushd = ?, " + "maxobjects = ?, "
-                		+ "maxbytes = ?, " + "maxjobrunningtime = ?, isindexready = ? " + "WHERE harvest_id = ?");
+                        + "maxbytes = ?, " + "maxjobrunningtime = ?, isindexready = ? " + "WHERE harvest_id = ?");
                 if (preHD != null) {
                     s.setLong(1, preHD.getOid());
                 } else {
@@ -506,8 +490,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             } else if (hd instanceof PartialHarvest) {
                 PartialHarvest ph = (PartialHarvest) hd;
                 s = c.prepareStatement("UPDATE partialharvests SET " + "schedule_id = "
-                		+ "(SELECT schedule_id FROM schedules WHERE schedules.name = ?), " + "nextdate = ? "
-                		+ "WHERE harvest_id = ?");
+                        + "(SELECT schedule_id FROM schedules WHERE schedules.name = ?), " + "nextdate = ? "
+                        + "WHERE harvest_id = ?");
                 s.setString(1, ph.getSchedule().getName());
                 DBUtils.setDateMaybeNull(s, 2, ph.getNextDate());
                 s.setLong(3, ph.getOid());
@@ -531,7 +515,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             hd.setEdition(nextEdition);
         } catch (SQLException e) {
             throw new IOFailure("SQL error while updating harvest definition " + hd + "\n"
-            		+ ExceptionUtils.getSQLExceptionCause(e), e);
+                    + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
             DBUtils.rollbackIfNeeded(c, "updating", hd);
@@ -555,19 +539,17 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         Connection c = HarvestDBConnection.get();
         PreparedStatement s = null;
         try {
-            if (harvestDefinition.getOid() == null
-                || !exists(c, harvestDefinition.getOid())) {
+            if (harvestDefinition.getOid() == null || !exists(c, harvestDefinition.getOid())) {
                 final String message = "Cannot update non-existing " + "harvestdefinition '"
-                		+ harvestDefinition.getName() + "'";
+                        + harvestDefinition.getName() + "'";
                 log.debug(message);
                 throw new PermissionDenied(message);
             }
 
             c.setAutoCommit(false);
-            s = c.prepareStatement("UPDATE harvestdefinitions SET "
-                                   + "name = ?, " + "comments = ?, " + "numevents = ?, "
-                                   + "submitted = ?," + "isactive = ?," + "edition = ?, audience = ? "
-                                   + "WHERE harvest_id = ? AND edition = ?");
+            s = c.prepareStatement("UPDATE harvestdefinitions SET " + "name = ?, " + "comments = ?, "
+                    + "numevents = ?, " + "submitted = ?," + "isactive = ?," + "edition = ?, audience = ? "
+                    + "WHERE harvest_id = ? AND edition = ?");
             DBUtils.setName(s, 1, harvestDefinition, Constants.MAX_NAME_SIZE);
             DBUtils.setComments(s, 2, harvestDefinition, Constants.MAX_COMMENT_SIZE);
             s.setInt(3, harvestDefinition.getNumEvents());
@@ -582,7 +564,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             // Since the HD exists, no rows indicates bad edition
             if (rows == 0) {
                 String message = "Somebody else must have updated " + harvestDefinition + " since edition "
-                		+ harvestDefinition.getEdition() + ", not updating";
+                        + harvestDefinition.getEdition() + ", not updating";
                 log.debug(message);
                 throw new PermissionDenied(message);
             }
@@ -590,8 +572,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
 
             // Now pull more strings
             s = c.prepareStatement("UPDATE partialharvests SET schedule_id = "
-            		+ "(SELECT schedule_id FROM schedules WHERE schedules.name = ?), " + "nextdate = ? "
-            		+ "WHERE harvest_id = ?");
+                    + "(SELECT schedule_id FROM schedules WHERE schedules.name = ?), " + "nextdate = ? "
+                    + "WHERE harvest_id = ?");
             s.setString(1, harvestDefinition.getScheduleName());
             DBUtils.setDateMaybeNull(s, 2, harvestDefinition.getNextDate());
             s.setLong(3, harvestDefinition.getOid());
@@ -601,7 +583,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             c.commit();
         } catch (SQLException e) {
             throw new IOFailure("SQL error while updating harvest definition " + harvestDefinition + "\n"
-            		+ ExceptionUtils.getSQLExceptionCause(e), e);
+                    + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.rollbackIfNeeded(c, "updating", harvestDefinition);
             HarvestDBConnection.release(c);
@@ -614,7 +596,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         Connection c = HarvestDBConnection.get();
         try {
             return 1 == DBUtils.selectIntValue(c, "SELECT COUNT(harvest_id) "
-        + "FROM harvestdefinitions WHERE name = ?", name);
+                    + "FROM harvestdefinitions WHERE name = ?", name);
         } finally {
             HarvestDBConnection.release(c);
         }
@@ -643,7 +625,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
      */
     private boolean exists(Connection c, Long oid) {
         return 1 == DBUtils.selectIntValue(c, "SELECT COUNT(harvest_id) "
-                                              + "FROM harvestdefinitions WHERE harvest_id = ?", oid);
+                + "FROM harvestdefinitions WHERE harvest_id = ?", oid);
     }
 
     /**
@@ -679,8 +661,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
      */
     @Override
     public synchronized Iterator<DomainConfiguration> getSnapShotConfigurations() {
-        return new FilterIterator<Domain,
-        		DomainConfiguration>(DomainDAO.getInstance().getAllDomainsInSnapshotHarvestOrder()) {
+        return new FilterIterator<Domain, DomainConfiguration>(DomainDAO.getInstance()
+                .getAllDomainsInSnapshotHarvestOrder()) {
             public DomainConfiguration filter(Domain domain) {
                 if (domain.getAliasInfo() == null || domain.getAliasInfo().isExpired()) {
                     return domain.getDefaultConfiguration();
@@ -707,8 +689,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         try {
             List<Long> ids = DBUtils.selectLongList(connection, "SELECT fullharvests.harvest_id"
                     + " FROM fullharvests, harvestdefinitions"
-                    + " WHERE harvestdefinitions.harvest_id = fullharvests.harvest_id"
-                    + " AND isactive = ? " + " AND numevents < 1  AND isindexready = ?", true, true);
+                    + " WHERE harvestdefinitions.harvest_id = fullharvests.harvest_id" + " AND isactive = ? "
+                    + " AND numevents < 1  AND isindexready = ?", true, true);
             ids.addAll(DBUtils.selectLongList(connection, "SELECT partialharvests.harvest_id"
                     + " FROM partialharvests, harvestdefinitions"
                     + " WHERE harvestdefinitions.harvest_id = partialharvests.harvest_id"
@@ -744,8 +726,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             }
             return null;
         } catch (SQLException e) {
-            throw new IOFailure("SQL error while getting HD by name" + "\n"
-            		+ ExceptionUtils.getSQLExceptionCause(e), e);
+            throw new IOFailure("SQL error while getting HD by name" + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(c);
@@ -800,10 +781,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             }
             s.close();
             s = c.prepareStatement("SELECT jobs.harvest_num, SUM(historyinfo.bytecount), "
-                    + "SUM(historyinfo.objectcount)," + "COUNT(jobs.status)"
-                    + " FROM jobs, historyinfo "
-                    + " WHERE jobs.harvest_id = ? AND historyinfo.job_id = jobs.job_id"
-                    + " GROUP BY jobs.harvest_num"
+                    + "SUM(historyinfo.objectcount)," + "COUNT(jobs.status)" + " FROM jobs, historyinfo "
+                    + " WHERE jobs.harvest_id = ? AND historyinfo.job_id = jobs.job_id" + " GROUP BY jobs.harvest_num"
                     + " ORDER BY jobs.harvest_num");
             s.setLong(1, harvestID);
             res = s.executeQuery();
@@ -816,21 +795,21 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                     info.setDocsHarvested(res.getLong(3));
                 } else {
                     log.debug("Harvestnum {} for harvestID {} is skipped. Must have arrived between selects",
-                    		harvestNum, harvestID);
+                            harvestNum, harvestID);
                 }
             }
 
             // Make sure that jobs that aren't really done don't have end date.
             for (HarvestRunInfo info : infoList) {
                 if (info.getJobCount(JobStatus.STARTED) != 0 || info.getJobCount(JobStatus.NEW) != 0
-                    || info.getJobCount(JobStatus.SUBMITTED) != 0) {
+                        || info.getJobCount(JobStatus.SUBMITTED) != 0) {
                     info.setEndDate(null);
                 }
             }
             return infoList;
         } catch (SQLException e) {
             String message = "SQL error asking for harvest run info on " + harvestID + " in database" + "\n"
-            		+ ExceptionUtils.getSQLExceptionCause(e);
+                    + ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
@@ -875,8 +854,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     private List<SparseDomainConfiguration> getSparseDomainConfigurations(Connection c, Long harvestDefinitionID) {
         PreparedStatement s = null;
         try {
-            s = c.prepareStatement("SELECT domains.name, configurations.name "
-                    + "FROM domains, configurations," + " harvest_configs "
+            s = c.prepareStatement("SELECT domains.name, configurations.name " + "FROM domains, configurations,"
+                    + " harvest_configs "
                     + "WHERE harvest_id = ?  AND configurations.config_id = harvest_configs.config_id"
                     + " AND configurations.domain_id = domains.domain_id");
             s.setLong(1, harvestDefinitionID);
@@ -903,38 +882,26 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     public Iterable<SparsePartialHarvest> getSparsePartialHarvestDefinitions(boolean excludeInactive) {
         Connection c = HarvestDBConnection.get();
         PreparedStatement s = null;
-        String query = "SELECT harvestdefinitions.harvest_id,"
-                       + "       harvestdefinitions.name,"
-                       + "       harvestdefinitions.comments,"
-                       + "       harvestdefinitions.numevents,"
-                       + "       harvestdefinitions.submitted,"
-                       + "       harvestdefinitions.isactive,"
-                       + "       harvestdefinitions.edition,"
-                       + "       schedules.name,"
-                       + "       partialharvests.nextdate, "
-                       + "       harvestdefinitions.audience, "
-                       + "       harvestdefinitions.channel_id "
-                       + "FROM harvestdefinitions, partialharvests, schedules"
-                       + " WHERE harvestdefinitions.harvest_id "
-                       + "       = partialharvests.harvest_id"
-                       + " AND (harvestdefinitions.isactive " + " = ?"
-                       // This linie is duplicated to allow to select both active
-                       // and inactive HD's.
-                       + " OR harvestdefinitions" +
-                       ".isactive " + " = ?)"
-                       + "   AND schedules.schedule_id "
-                       + "       = partialharvests.schedule_id "
-                       + "ORDER BY harvestdefinitions.name";
+        String query = "SELECT harvestdefinitions.harvest_id," + "       harvestdefinitions.name,"
+                + "       harvestdefinitions.comments," + "       harvestdefinitions.numevents,"
+                + "       harvestdefinitions.submitted," + "       harvestdefinitions.isactive,"
+                + "       harvestdefinitions.edition," + "       schedules.name," + "       partialharvests.nextdate, "
+                + "       harvestdefinitions.audience, " + "       harvestdefinitions.channel_id "
+                + "FROM harvestdefinitions, partialharvests, schedules" + " WHERE harvestdefinitions.harvest_id "
+                + "       = partialharvests.harvest_id" + " AND (harvestdefinitions.isactive "
+                + " = ?"
+                // This linie is duplicated to allow to select both active
+                // and inactive HD's.
+                + " OR harvestdefinitions" + ".isactive " + " = ?)" + "   AND schedules.schedule_id "
+                + "       = partialharvests.schedule_id " + "ORDER BY harvestdefinitions.name";
         try {
             s = DBUtils.prepareStatement(c, query, true, excludeInactive);
             ResultSet res = s.executeQuery();
             List<SparsePartialHarvest> harvests = new ArrayList<SparsePartialHarvest>();
             while (res.next()) {
-                SparsePartialHarvest sph = new SparsePartialHarvest(
-                        res.getLong(1), res.getString(2), res.getString(3),
-                        res.getInt(4), new Date(res.getTimestamp(5).getTime()),
-                        res.getBoolean(6), res.getLong(7), res.getString(8),
-                        DBUtils.getDateMaybeNull(res, 9), res.getString(10),
+                SparsePartialHarvest sph = new SparsePartialHarvest(res.getLong(1), res.getString(2), res.getString(3),
+                        res.getInt(4), new Date(res.getTimestamp(5).getTime()), res.getBoolean(6), res.getLong(7),
+                        res.getString(8), DBUtils.getDateMaybeNull(res, 9), res.getString(10),
                         DBUtils.getLongMaybeNull(res, 11));
                 harvests.add(sph);
             }
@@ -962,29 +929,21 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         Connection c = HarvestDBConnection.get();
         PreparedStatement s = null;
         try {
-            s = c.prepareStatement("SELECT harvestdefinitions.harvest_id,"
-                                   + "       harvestdefinitions.comments,"
-                                   + "       harvestdefinitions.numevents,"
-                                   + "       harvestdefinitions.submitted,"
-                                   + "       harvestdefinitions.isactive,"
-                                   + "       harvestdefinitions.edition,"
-                                   + "       schedules.name,"
-                                   + "       partialharvests.nextdate, "
-                                   + "       harvestdefinitions.audience, "
-                                   + "       harvestdefinitions.channel_id "
-                                   + "FROM harvestdefinitions, partialharvests, schedules"
-                                   + " WHERE harvestdefinitions.name = ?"
-                                   + "   AND harvestdefinitions.harvest_id "
-                                   + "= partialharvests.harvest_id"
-                                   + "   AND schedules.schedule_id "
-                                   + "= partialharvests.schedule_id");
+            s = c.prepareStatement("SELECT harvestdefinitions.harvest_id," + "       harvestdefinitions.comments,"
+                    + "       harvestdefinitions.numevents," + "       harvestdefinitions.submitted,"
+                    + "       harvestdefinitions.isactive," + "       harvestdefinitions.edition,"
+                    + "       schedules.name," + "       partialharvests.nextdate, "
+                    + "       harvestdefinitions.audience, " + "       harvestdefinitions.channel_id "
+                    + "FROM harvestdefinitions, partialharvests, schedules" + " WHERE harvestdefinitions.name = ?"
+                    + "   AND harvestdefinitions.harvest_id " + "= partialharvests.harvest_id"
+                    + "   AND schedules.schedule_id " + "= partialharvests.schedule_id");
             s.setString(1, harvestName);
             ResultSet res = s.executeQuery();
             if (res.next()) {
                 SparsePartialHarvest sph = new SparsePartialHarvest(res.getLong(1), harvestName, res.getString(2),
-                		res.getInt(3), new Date(res.getTimestamp(4).getTime()), res.getBoolean(5), res.getLong(6),
-                		res.getString(7), DBUtils.getDateMaybeNull(res, 8), res.getString(9),
-                		DBUtils.getLongMaybeNull(res, 10));
+                        res.getInt(3), new Date(res.getTimestamp(4).getTime()), res.getBoolean(5), res.getLong(6),
+                        res.getString(7), DBUtils.getDateMaybeNull(res, 8), res.getString(9), DBUtils.getLongMaybeNull(
+                                res, 10));
                 sph.setExtendedFieldValues(getExtendedFieldValues(sph.getOid()));
                 return sph;
             } else {
@@ -1007,27 +966,19 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         Connection c = HarvestDBConnection.get();
         PreparedStatement s = null;
         try {
-            s = c.prepareStatement("SELECT harvestdefinitions.harvest_id,"
-                                   + "       harvestdefinitions.name,"
-                                   + "       harvestdefinitions.comments,"
-                                   + "       harvestdefinitions.numevents,"
-                                   + "       harvestdefinitions.isactive,"
-                                   + "       harvestdefinitions.edition,"
-                                   + "       fullharvests.maxobjects,"
-                                   + "       fullharvests.maxbytes,"
-                                   + "       fullharvests.maxjobrunningtime,"
-                                   + "       fullharvests.previoushd, "
-                                   + "       harvestdefinitions.channel_id "
-                                   + "FROM harvestdefinitions, fullharvests"
-                                   + " WHERE harvestdefinitions.harvest_id "
-                                   + "       = fullharvests.harvest_id");
+            s = c.prepareStatement("SELECT harvestdefinitions.harvest_id," + "       harvestdefinitions.name,"
+                    + "       harvestdefinitions.comments," + "       harvestdefinitions.numevents,"
+                    + "       harvestdefinitions.isactive," + "       harvestdefinitions.edition,"
+                    + "       fullharvests.maxobjects," + "       fullharvests.maxbytes,"
+                    + "       fullharvests.maxjobrunningtime," + "       fullharvests.previoushd, "
+                    + "       harvestdefinitions.channel_id " + "FROM harvestdefinitions, fullharvests"
+                    + " WHERE harvestdefinitions.harvest_id " + "       = fullharvests.harvest_id");
             ResultSet res = s.executeQuery();
-            List<SparseFullHarvest> harvests
-                    = new ArrayList<SparseFullHarvest>();
+            List<SparseFullHarvest> harvests = new ArrayList<SparseFullHarvest>();
             while (res.next()) {
                 SparseFullHarvest sfh = new SparseFullHarvest(res.getLong(1), res.getString(2), res.getString(3),
-                		res.getInt(4), res.getBoolean(5), res.getLong(6), res.getLong(7), res.getLong(8),
-                		res.getLong(9), DBUtils.getLongMaybeNull(res, 10), DBUtils.getLongMaybeNull(res, 11));
+                        res.getInt(4), res.getBoolean(5), res.getLong(6), res.getLong(7), res.getLong(8),
+                        res.getLong(9), DBUtils.getLongMaybeNull(res, 10), DBUtils.getLongMaybeNull(res, 11));
                 harvests.add(sfh);
             }
             return harvests;
@@ -1067,7 +1018,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             while (res.next()) {
                 if (name != null) {
                     throw new IOFailure("Found more than one name for harvest definition " + harvestDefinitionID
-                    		+ ": '" + name + "' and '" + res.getString(1) + "'");
+                            + ": '" + name + "' and '" + res.getString(1) + "'");
                 }
                 name = res.getString(1);
             }
@@ -1077,7 +1028,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             return name;
         } catch (SQLException e) {
             throw new IOFailure("An error occurred finding the name for " + "harvest definition " + harvestDefinitionID
-            		+ "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
+                    + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(c);
@@ -1103,12 +1054,12 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         Connection connection = HarvestDBConnection.get();
         try {
             boolean isSnapshot = DBUtils.selectAny(connection,
-            		"SELECT harvest_id FROM fullharvests WHERE harvest_id = ?", harvestDefinitionID);
+                    "SELECT harvest_id FROM fullharvests WHERE harvest_id = ?", harvestDefinitionID);
             if (isSnapshot) {
                 return true;
             }
             boolean isSelective = DBUtils.selectAny(connection, "SELECT harvest_id FROM partialharvests "
-            		+ "WHERE harvest_id = ?", harvestDefinitionID);
+                    + "WHERE harvest_id = ?", harvestDefinitionID);
             if (isSelective) {
                 return false;
             }
@@ -1137,26 +1088,19 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         Connection c = HarvestDBConnection.get();
         PreparedStatement s = null;
         try {
-            s = c.prepareStatement("SELECT harvestdefinitions.harvest_id,"
-                    + "       harvestdefinitions.comments,"
-                    + "       harvestdefinitions.numevents,"
-                    + "       harvestdefinitions.isactive,"
-                    + "       harvestdefinitions.edition,"
-                    + "       fullharvests.maxobjects,"
-                    + "       fullharvests.maxbytes,"
-                    + "       fullharvests.maxjobrunningtime,"
-                    + "       fullharvests.previoushd, "
-                    + "       harvestdefinitions.channel_id "
-                    + "FROM harvestdefinitions, fullharvests"
-                    + " WHERE harvestdefinitions.name = ?"
-                    + "   AND harvestdefinitions.harvest_id "
-                    + "       = fullharvests.harvest_id");
+            s = c.prepareStatement("SELECT harvestdefinitions.harvest_id," + "       harvestdefinitions.comments,"
+                    + "       harvestdefinitions.numevents," + "       harvestdefinitions.isactive,"
+                    + "       harvestdefinitions.edition," + "       fullharvests.maxobjects,"
+                    + "       fullharvests.maxbytes," + "       fullharvests.maxjobrunningtime,"
+                    + "       fullharvests.previoushd, " + "       harvestdefinitions.channel_id "
+                    + "FROM harvestdefinitions, fullharvests" + " WHERE harvestdefinitions.name = ?"
+                    + "   AND harvestdefinitions.harvest_id " + "       = fullharvests.harvest_id");
             s.setString(1, harvestName);
             ResultSet res = s.executeQuery();
             if (res.next()) {
                 SparseFullHarvest sfh = new SparseFullHarvest(res.getLong(1), harvestName, res.getString(2),
-                		res.getInt(3), res.getBoolean(4), res.getLong(5), res.getLong(6), res.getLong(7),
-                		res.getLong(8), DBUtils.getLongMaybeNull(res, 9), DBUtils.getLongMaybeNull(res, 10));
+                        res.getInt(3), res.getBoolean(4), res.getLong(5), res.getLong(6), res.getLong(7),
+                        res.getLong(8), DBUtils.getLongMaybeNull(res, 9), DBUtils.getLongMaybeNull(res, 10));
 
                 sfh.setExtendedFieldValues(getExtendedFieldValues(sfh.getOid()));
                 return sfh;
@@ -1185,20 +1129,14 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         PreparedStatement s = null;
         try {
             s = c.prepareStatement(
-                    // Note: the DISTINCT below is put in deliberately to fix
-                    // bug 1878: Seeds for domain is shown twice on page
-                    // History/Harveststatus-seeds.jsp
-                    "SELECT DISTINCT domains.name" + " FROM     domains,"
-                    + "          configurations,"
-                    + "          harvest_configs,"
-                    + "          harvestdefinitions"
-                    + " WHERE    configurations.domain_id = domains.domain_id"
-                    + " AND harvest_configs.config_id = "
-                    + "configurations.config_id"
-                    + " AND harvest_configs.harvest_id = "
-                    + "harvestdefinitions.harvest_id"
-                    + " AND harvestdefinitions.name = ?"
-                    + " ORDER BY domains.name");
+            // Note: the DISTINCT below is put in deliberately to fix
+            // bug 1878: Seeds for domain is shown twice on page
+            // History/Harveststatus-seeds.jsp
+            "SELECT DISTINCT domains.name" + " FROM     domains," + "          configurations,"
+                    + "          harvest_configs," + "          harvestdefinitions"
+                    + " WHERE    configurations.domain_id = domains.domain_id" + " AND harvest_configs.config_id = "
+                    + "configurations.config_id" + " AND harvest_configs.harvest_id = "
+                    + "harvestdefinitions.harvest_id" + " AND harvestdefinitions.name = ?" + " ORDER BY domains.name");
             s.setString(1, harvestName);
             ResultSet res = s.executeQuery();
             List<String> domains = new ArrayList<String>();
@@ -1209,7 +1147,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             return domains;
         } catch (SQLException e) {
             throw new IOFailure("SQL error getting seeds of a domain of a harvest definition" + "\n"
-            		+ ExceptionUtils.getSQLExceptionCause(e), e);
+                    + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(c);
@@ -1232,24 +1170,14 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         Connection c = HarvestDBConnection.get();
         PreparedStatement s = null;
         try {
-            s = c.prepareStatement("SELECT seedlists.seeds"
-                                   + " FROM   configurations,"
-                                   + "        harvest_configs,"
-                                   + "        harvestdefinitions,"
-                                   + "        seedlists,"
-                                   + "        config_seedlists,"
-                                   + "        domains"
-                                   + " WHERE  config_seedlists.seedlist_id "
-                                   + "= seedlists.seedlist_id"
-                                   + " AND configurations.config_id "
-                                   + "= config_seedlists.config_id"
-                                   + " AND configurations.config_id "
-                                   + "= harvest_configs.config_id"
-                                   + " AND harvest_configs.harvest_id "
-                                   + "= harvestdefinitions.harvest_id"
-                                   + " AND configurations.domain_id = domains.domain_id"
-                                   + " AND domains.name = ?"
-                                   + " AND harvestdefinitions.name = ?");
+            s = c.prepareStatement("SELECT seedlists.seeds" + " FROM   configurations," + "        harvest_configs,"
+                    + "        harvestdefinitions," + "        seedlists," + "        config_seedlists,"
+                    + "        domains" + " WHERE  config_seedlists.seedlist_id " + "= seedlists.seedlist_id"
+                    + " AND configurations.config_id " + "= config_seedlists.config_id"
+                    + " AND configurations.config_id " + "= harvest_configs.config_id"
+                    + " AND harvest_configs.harvest_id " + "= harvestdefinitions.harvest_id"
+                    + " AND configurations.domain_id = domains.domain_id" + " AND domains.name = ?"
+                    + " AND harvestdefinitions.name = ?");
             s.setString(1, domainName);
             s.setString(2, harvestName);
             ResultSet res = s.executeQuery();
@@ -1270,7 +1198,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                             break;
                         }
                     }
-                    if (!isDuplicate) {  // duplicates will not be added
+                    if (!isDuplicate) { // duplicates will not be added
                         seeds.add(seed);
                     }
                 }
@@ -1313,7 +1241,9 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
 
     /**
      * Get list of harvests previous to this one.
-     * @param thisHarvest The id of this harvestdefinition
+     * 
+     * @param thisHarvest
+     *            The id of this harvestdefinition
      * @return a list of IDs belonging to harvests previous to this one.
      */
     private List<Long> getPreviousFullHarvests(Long thisHarvest) {
@@ -1321,9 +1251,9 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         Connection c = HarvestDBConnection.get();
         // Follow the chain of originating IDs back
         for (Long originatingHarvest = thisHarvest; originatingHarvest != null;
-            // Compute next originatingHarvest
-             originatingHarvest = DBUtils.selectFirstLongValueIfAny(c, "SELECT previoushd FROM fullharvests"
-            		 + " WHERE fullharvests.harvest_id=?", originatingHarvest)) {
+        // Compute next originatingHarvest
+        originatingHarvest = DBUtils.selectFirstLongValueIfAny(c, "SELECT previoushd FROM fullharvests"
+                + " WHERE fullharvests.harvest_id=?", originatingHarvest)) {
             if (!originatingHarvest.equals(thisHarvest)) {
                 results.add(originatingHarvest);
             }
@@ -1337,20 +1267,14 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
 
         // Find the last harvest in the chain before
         Long olderHarvest = DBUtils.selectFirstLongValueIfAny(c, "SELECT fullharvests.harvest_id"
-                + " FROM fullharvests, harvestdefinitions,"
-                + "  harvestdefinitions AS currenthd"
-                + " WHERE currenthd.harvest_id=?"
-                + " AND fullharvests.harvest_id "
-                + "= harvestdefinitions.harvest_id"
-                + " AND harvestdefinitions.submitted "
-                + "< currenthd.submitted"
-                + " ORDER BY harvestdefinitions.submitted "
-                + HarvestStatusQuery.SORT_ORDER.DESC.name(),
-                firstHarvest);
+                + " FROM fullharvests, harvestdefinitions," + "  harvestdefinitions AS currenthd"
+                + " WHERE currenthd.harvest_id=?" + " AND fullharvests.harvest_id " + "= harvestdefinitions.harvest_id"
+                + " AND harvestdefinitions.submitted " + "< currenthd.submitted"
+                + " ORDER BY harvestdefinitions.submitted " + HarvestStatusQuery.SORT_ORDER.DESC.name(), firstHarvest);
         // Follow the chain of originating IDs back
-        for (Long originatingHarvest = olderHarvest; originatingHarvest != null;
-             originatingHarvest = DBUtils.selectFirstLongValueIfAny(c, "SELECT previoushd FROM fullharvests"
-            		 + " WHERE fullharvests.harvest_id=?", originatingHarvest)) {
+        for (Long originatingHarvest = olderHarvest; originatingHarvest != null; originatingHarvest = DBUtils
+                .selectFirstLongValueIfAny(c, "SELECT previoushd FROM fullharvests"
+                        + " WHERE fullharvests.harvest_id=?", originatingHarvest)) {
             results.add(originatingHarvest);
         }
         return results;
@@ -1383,8 +1307,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
 
     /*
      * Removes the entry in harvest_configs, that binds a certain
-     * domainconfiguration to this PartialHarvest.
-     * TODO maybe update the edition as well.
+     * domainconfiguration to this PartialHarvest. TODO maybe update the edition
+     * as well.
      */
     @Override
     public void removeDomainConfiguration(Long harvestId, SparseDomainConfiguration key) {
@@ -1398,10 +1322,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         Connection connection = HarvestDBConnection.get();
         PreparedStatement s = null;
         try {
-            s = connection.prepareStatement(
-                    "DELETE FROM harvest_configs WHERE harvest_id = ? "
-                    + "AND config_id = (SELECT config_id "
-                    + " FROM configurations, domains "
+            s = connection.prepareStatement("DELETE FROM harvest_configs WHERE harvest_id = ? "
+                    + "AND config_id = (SELECT config_id " + " FROM configurations, domains "
                     + "WHERE domains.name = ? AND configurations.name = ?"
                     + "  AND domains.domain_id = configurations.domain_id)");
             s.setLong(1, harvestId);
@@ -1409,11 +1331,12 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             s.setString(3, key.getConfigurationName());
             s.executeUpdate();
         } catch (SQLException e) {
-            log.warn("Exception thrown while removing domainconfiguration: {}", ExceptionUtils.getSQLExceptionCause(e), e);
+            log.warn("Exception thrown while removing domainconfiguration: {}", ExceptionUtils.getSQLExceptionCause(e),
+                    e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
             DBUtils.rollbackIfNeeded(connection, "removing DomainConfiguration from harvest w/id " + harvestId
-            		+ " failed", harvestId);
+                    + " failed", harvestId);
             HarvestDBConnection.release(connection);
         }
     }
@@ -1453,11 +1376,10 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         Connection connection = HarvestDBConnection.get();
         PreparedStatement s = null;
         try {
-            s = connection.prepareStatement("INSERT INTO harvest_configs "
-                                            + "( harvest_id, config_id ) "
-                                            + "SELECT ?, config_id FROM configurations, domains "
-                                            + "WHERE domains.name = ? AND configurations.name = ?"
-                                            + "  AND domains.domain_id = configurations.domain_id");
+            s = connection.prepareStatement("INSERT INTO harvest_configs " + "( harvest_id, config_id ) "
+                    + "SELECT ?, config_id FROM configurations, domains "
+                    + "WHERE domains.name = ? AND configurations.name = ?"
+                    + "  AND domains.domain_id = configurations.domain_id");
             s.setLong(1, ph.getOid());
             s.setString(2, dcKey.getDomainName());
             s.setString(3, dcKey.getConfigurationName());
@@ -1479,7 +1401,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         try {
             createHarvestConfigsEntries(connection, ph, ph.getOid());
         } catch (SQLException e) {
-            log.warn("Exception thrown while resetting domainConfigurations: {}", ExceptionUtils.getSQLExceptionCause(e), e);
+            log.warn("Exception thrown while resetting domainConfigurations: {}",
+                    ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             HarvestDBConnection.release(connection);
         }
@@ -1496,8 +1419,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             s.setLong(1, channel.getId());
             s.setLong(2, harvestDefinitionId);
             if (s.executeUpdate() != 1) {
-                throw new IOFailure("Could not map harvest channel " + channel.getId()
-                                    + " to harvest definition " + harvestDefinitionId);
+                throw new IOFailure("Could not map harvest channel " + channel.getId() + " to harvest definition "
+                        + harvestDefinitionId);
             }
             s.close();
         } catch (SQLException e) {
@@ -1510,8 +1433,12 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
 
     /**
      * Saves all extended Field values for a HarvestDefinition in the Database.
-     * @param c Connection to Database
-     * @param h HarvestDefinition where loaded extended Field Values will be set
+     * 
+     * @param c
+     *            Connection to Database
+     * @param h
+     *            HarvestDefinition where loaded extended Field Values will be
+     *            set
      *
      * @throws SQLException
      *             If database errors occur.
@@ -1532,8 +1459,12 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     }
 
     /**
-     * Reads all extended Field values from the database for a HarvestDefinition.
-     * @param h HarvestDefinition where loaded extended Field Values will be set
+     * Reads all extended Field values from the database for a
+     * HarvestDefinition.
+     * 
+     * @param h
+     *            HarvestDefinition where loaded extended Field Values will be
+     *            set
      *
      * @throws SQLException
      *             If database errors occur.
@@ -1544,8 +1475,12 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     }
 
     /**
-     * Reads all extended Field values from the database for a HarvestDefinitionOid.
-     * @param aOid HarvestDefinition where loaded extended Field Values will be set
+     * Reads all extended Field values from the database for a
+     * HarvestDefinitionOid.
+     * 
+     * @param aOid
+     *            HarvestDefinition where loaded extended Field Values will be
+     *            set
      * @return a list of ExtendedFieldValues belonging to the given harvest oid
      *
      * @throws SQLException
@@ -1568,7 +1503,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 efv = new ExtendedFieldValue();
                 efv.setExtendedFieldID(ef.getExtendedFieldID());
                 efv.setInstanceID(aOid);
-                efv.setContent(new ExtendedFieldDefaultValue(ef.getDefaultValue(), ef.getFormattingPattern(), ef.getDatatype()).getDBValue());
+                efv.setContent(new ExtendedFieldDefaultValue(ef.getDefaultValue(), ef.getFormattingPattern(), ef
+                        .getDatatype()).getDBValue());
             }
 
             extendedFieldValues.add(efv);

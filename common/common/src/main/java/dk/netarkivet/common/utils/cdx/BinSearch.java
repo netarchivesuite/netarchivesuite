@@ -42,13 +42,16 @@ import dk.netarkivet.common.exceptions.IOFailure;
  */
 public class BinSearch {
 
-	/** The logger. */
+    /** The logger. */
     private static final Logger log = LoggerFactory.getLogger(BinSearch.class);
 
-    /** Our own comparison function.  Right now just does prefix match.
+    /**
+     * Our own comparison function. Right now just does prefix match.
      *
-     * @param line A line to find the prefix of
-     * @param pattern The prefix to find.
+     * @param line
+     *            A line to find the prefix of
+     * @param pattern
+     *            The prefix to find.
      * @return A result equivalent to String.compareTo, but only for a prefix.
      */
     private static int compare(String line, String pattern) {
@@ -57,17 +60,20 @@ public class BinSearch {
         return cmp;
     }
 
-    /** Given a file in sorted order and a prefix to search for, return a
-     * an iterable that will return the lines in the files that start with
-     * the prefix, in order.  They will be read lazily from the file.
+    /**
+     * Given a file in sorted order and a prefix to search for, return a an
+     * iterable that will return the lines in the files that start with the
+     * prefix, in order. They will be read lazily from the file.
      *
      * If no matches are found, it will still return an iterable with no
      * entries.
      *
-     * @param file A CDX file to search in.
-     * @param prefix The line prefix to search for.
-     * @return An Iterable object that will return the lines
-     * matching the prefix in the file.
+     * @param file
+     *            A CDX file to search in.
+     * @param prefix
+     *            The line prefix to search for.
+     * @return An Iterable object that will return the lines matching the prefix
+     *         in the file.
      */
     public static Iterable<String> getLinesInFile(File file, String prefix) {
         try {
@@ -93,9 +99,10 @@ public class BinSearch {
         }
     }
 
-    /** An implementation of Iterable that returns lines matching a given
-     * prefix, starting at an offset.  We use compare() to determine if the
-     * prefix matches.
+    /**
+     * An implementation of Iterable that returns lines matching a given prefix,
+     * starting at an offset. We use compare() to determine if the prefix
+     * matches.
      * */
     private static class PrefixIterable implements Iterable<String> {
         /** File we're reading from. */
@@ -105,12 +112,16 @@ public class BinSearch {
         /** Where to start reading - seek to this without reading it. */
         private final long offset;
 
-        /** Construct an Iterable from the given file, offset and prefix.
+        /**
+         * Construct an Iterable from the given file, offset and prefix.
          *
-         * @param file This file will be read when the iterator() is made.
-         * The lines in this file must be sorted alphabetically.
-         * @param offset The place where reading will start from.
-         * @param prefix The prefix of all lines that will be read.
+         * @param file
+         *            This file will be read when the iterator() is made. The
+         *            lines in this file must be sorted alphabetically.
+         * @param offset
+         *            The place where reading will start from.
+         * @param prefix
+         *            The prefix of all lines that will be read.
          */
         public PrefixIterable(File file, long offset, String prefix) {
             this.file = file;
@@ -118,11 +129,13 @@ public class BinSearch {
             this.prefix = prefix;
         }
 
-        /** Return a new iterator that stops (not skips) when the line
-         * read no longer matches the prefix.
-         * @return an iterator that stops (not skips) when the line
-         * read no longer matches the prefix.  When the iterator ends, the
-         * underlying file is closed.
+        /**
+         * Return a new iterator that stops (not skips) when the line read no
+         * longer matches the prefix.
+         * 
+         * @return an iterator that stops (not skips) when the line read no
+         *         longer matches the prefix. When the iterator ends, the
+         *         underlying file is closed.
          */
         public Iterator<String> iterator() {
             final RandomAccessFile infile;
@@ -138,12 +151,14 @@ public class BinSearch {
                 String nextLine = null;
                 boolean finished = false;
 
-                /** Check whether there is a next element.
-                 * Implementation note:  This method has the sideeffect of
-                 * reading a line into its own buffer, if none is already read.
+                /**
+                 * Check whether there is a next element. Implementation note:
+                 * This method has the sideeffect of reading a line into its own
+                 * buffer, if none is already read.
                  *
                  * @return True if there is a next element to be had.
-                 * @throws IOFailure if there is an error reading the file.
+                 * @throws IOFailure
+                 *             if there is an error reading the file.
                  */
                 public boolean hasNext() {
                     if (nextLine != null) {
@@ -169,8 +184,9 @@ public class BinSearch {
                     return true;
                 }
 
-                /** Close the input file and mark us to be done reading,
-                 * so we don't try to read from a closed file.
+                /**
+                 * Close the input file and mark us to be done reading, so we
+                 * don't try to read from a closed file.
                  */
                 private void cleanUp() {
                     try {
@@ -182,11 +198,12 @@ public class BinSearch {
                     }
                 }
 
-                /** Return the next element, if any.
+                /**
+                 * Return the next element, if any.
                  *
                  * @return Next element.
-                 * @throws IOFailure if reading the underlying file causes
-                 * errors.
+                 * @throws IOFailure
+                 *             if reading the underlying file causes errors.
                  */
                 public String next() {
                     if (nextLine == null && !hasNext()) {
@@ -197,13 +214,17 @@ public class BinSearch {
                     return line;
                 }
 
-                /** This iterator doesn't support remove.
-                 * @throws UnsupportedOperationException*/
+                /**
+                 * This iterator doesn't support remove.
+                 * 
+                 * @throws UnsupportedOperationException
+                 */
                 public void remove() {
                     throw new UnsupportedOperationException();
                 }
 
-                /** Ensures that the file pointer is really closed.
+                /**
+                 * Ensures that the file pointer is really closed.
                  *
                  */
                 public void finalize() {
@@ -215,27 +236,27 @@ public class BinSearch {
 
     /**
      * Return the index of the first line in the file to match 'find'. If the
-     * lines in the file are roughly equal length, it reads
-     * O(sqrt(n)) lines, where n is the distance from matchingline to the first
-     * line.
+     * lines in the file are roughly equal length, it reads O(sqrt(n)) lines,
+     * where n is the distance from matchingline to the first line.
      *
      * @param in
      *            The file to search in
      * @param find
      *            The string to match against the first line
      * @param matchingline
-     *            The index to start searching from.  This index must be at
-     *            the start of a line that matches 'find'
+     *            The index to start searching from. This index must be at the
+     *            start of a line that matches 'find'
      * @return The offset into the file of the first line matching 'find'.
      *         Guaranteed to be <= matchingline.
-     * @throws IOException If the matchingLine < 0 or some I/O error occurs.
+     * @throws IOException
+     *             If the matchingLine < 0 or some I/O error occurs.
      */
     private static long findFirstLine(RandomAccessFile in, String find, long matchingline) throws IOException {
         in.seek(matchingline);
         String line = in.readLine();
         if (line == null || compare(line, find) != 0) {
-            final String msg = "Internal: Called findFirstLine without a matching line in '"
-            		+ in + "' byte " + matchingline;
+            final String msg = "Internal: Called findFirstLine without a matching line in '" + in + "' byte "
+                    + matchingline;
             log.warn(msg);
             throw new ArgumentNotValid(msg);
         }
@@ -263,22 +284,26 @@ public class BinSearch {
         while ((line = in.readLine()) != null) {
             if (compare(line, find) == 0) {
                 return pos;
-             }
+            }
             pos = in.getFilePointer();
         }
 
         return -1;
     }
 
-    /** Skip to the next line after the given position by
-     * reading a line.  Note that if the position is at the start
-     * of a line, it will go to the next line.
+    /**
+     * Skip to the next line after the given position by reading a line. Note
+     * that if the position is at the start of a line, it will go to the next
+     * line.
      *
-     * @param in A file to read from
-     * @param pos The position to start at.
-     * @return A new position in the file.  The file's pointer (as given by
-     * getFilePointer()) is updated to match.
-     * @throws IOException If some I/O error occurs
+     * @param in
+     *            A file to read from
+     * @param pos
+     *            The position to start at.
+     * @return A new position in the file. The file's pointer (as given by
+     *         getFilePointer()) is updated to match.
+     * @throws IOException
+     *             If some I/O error occurs
      */
     private static long skipToLine(RandomAccessFile in, long pos) throws IOException {
         in.seek(pos);
@@ -286,16 +311,21 @@ public class BinSearch {
         return in.getFilePointer();
     }
 
-    /** Perform a binary search for a string in a file.
-     * Returns the position of a line that begins with 'find'.
-     * Note that this may not be the first line, if there be duplicates.
-     * @param in the RandomAccessFile
-     * @param find The String to look for in the above file
-     * @throws IOException If some I/O error occurs
+    /**
+     * Perform a binary search for a string in a file. Returns the position of a
+     * line that begins with 'find'. Note that this may not be the first line,
+     * if there be duplicates.
+     * 
+     * @param in
+     *            the RandomAccessFile
+     * @param find
+     *            The String to look for in the above file
+     * @throws IOException
+     *             If some I/O error occurs
      * @return The index of a line matching find, or -1 if none found.
      */
     private static long binSearch(RandomAccessFile in, String find) throws IOException {
-        // The starting position for the binary search.  Always
+        // The starting position for the binary search. Always
         // at the start of a line that's < the wanted line.
         long startpos = 0;
         // Ensure that startpos isn't a match.
@@ -307,7 +337,7 @@ public class BinSearch {
         if (compare(line, find) == 0) {
             return startpos;
         }
-        // The ending position for the binary search.  Always
+        // The ending position for the binary search. Always
         // *after* a line that >= the wanted line (which also means
         // at the start of a line that's > the wanted line, or at EOF
         long endpos = in.length();
@@ -343,17 +373,22 @@ public class BinSearch {
         } while (true);
     }
 
-    /** Returns the position of a line between startpos and endpos.
-     * If no line other than the one starting at startpos can be found,
-     * returns -1. Also sets the file pointer to the start of the line.
-     * @param in The file to read from
-     * @param startpos The lower bound for the position.  Must be the
-     * start of a line.
-     * @param endpos The upper bound for the position.  Must be the start of
-     * a line or EOF.
-     * @return The position of a line s.t. startpos < returnval < endpos,
-     * or -1 if no such line can be found.
-     * @throws IOException If some I/O error occurs
+    /**
+     * Returns the position of a line between startpos and endpos. If no line
+     * other than the one starting at startpos can be found, returns -1. Also
+     * sets the file pointer to the start of the line.
+     * 
+     * @param in
+     *            The file to read from
+     * @param startpos
+     *            The lower bound for the position. Must be the start of a line.
+     * @param endpos
+     *            The upper bound for the position. Must be the start of a line
+     *            or EOF.
+     * @return The position of a line s.t. startpos < returnval < endpos, or -1
+     *         if no such line can be found.
+     * @throws IOException
+     *             If some I/O error occurs
      */
     private static long findMiddleLine(RandomAccessFile in, long startpos, long endpos) throws IOException {
         // First check that there is a middle line at all.

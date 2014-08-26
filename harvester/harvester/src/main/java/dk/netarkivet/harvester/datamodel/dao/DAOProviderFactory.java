@@ -10,7 +10,8 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO;
 public class DAOProviderFactory {
     public static Provider<HarvestDefinitionDAO> getHarvestDefinitionDAOProvider() {
         return new Provider<HarvestDefinitionDAO>() {
-            @Override public HarvestDefinitionDAO get() {
+            @Override
+            public HarvestDefinitionDAO get() {
                 return HarvestDefinitionDAO.getInstance();
             }
         };
@@ -18,7 +19,8 @@ public class DAOProviderFactory {
 
     public static Provider<JobDAO> getJobDAOProvider() {
         return new Provider<JobDAO>() {
-            @Override public JobDAO get() {
+            @Override
+            public JobDAO get() {
                 return JobDAO.getInstance();
             }
         };
@@ -26,7 +28,8 @@ public class DAOProviderFactory {
 
     public static Provider<DomainDAO> getDomainDAOProvider() {
         return new Provider<DomainDAO>() {
-            @Override public DomainDAO get() {
+            @Override
+            public DomainDAO get() {
                 return DomainDAO.getInstance();
             }
         };
@@ -34,7 +37,8 @@ public class DAOProviderFactory {
 
     public static Provider<ExtendedFieldDAO> getExtendedFieldDAOProvider() {
         return new Provider<ExtendedFieldDAO>() {
-            @Override public ExtendedFieldDAO get() {
+            @Override
+            public ExtendedFieldDAO get() {
                 return ExtendedFieldDAO.getInstance();
             }
         };

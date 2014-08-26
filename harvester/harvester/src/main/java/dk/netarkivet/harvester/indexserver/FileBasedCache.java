@@ -43,27 +43,28 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 
 /**
- * A generic cache that stores items in files.  This abstract superclass handles
+ * A generic cache that stores items in files. This abstract superclass handles
  * placement of the cache directory and adding/getting files using the
  * subclasses' methods for generating filenames.
  * 
- * @param <T> The type of cache. 
+ * @param <T>
+ *            The type of cache.
  */
 public abstract class FileBasedCache<T> {
 
     /** Logger. */
     private static final Logger log = LoggerFactory.getLogger(FileBasedCache.class);
 
-	/** Cache directory. */
+    /** Cache directory. */
     protected File cacheDir;
 
     /**
-     * Creates a new FileBasedCache object.  This creates a directory under the
+     * Creates a new FileBasedCache object. This creates a directory under the
      * main cache directory holding cached files.
      *
-     * @param cacheName Name of this cache (enabling sharing among processes).
-     *                  The directory created in the cachedir will have this
-     *                  name.
+     * @param cacheName
+     *            Name of this cache (enabling sharing among processes). The
+     *            directory created in the cachedir will have this name.
      */
     public FileBasedCache(String cacheName) {
         ArgumentNotValid.checkNotNullOrEmpty(cacheName, "cacheName");
@@ -73,9 +74,9 @@ public abstract class FileBasedCache<T> {
     }
 
     /**
-     * Get the directory that the files are cached in.  Subclasses should
-     * override this to create their own directory with this directory.  The
-     * full directory structure will be created if required in the constructor.
+     * Get the directory that the files are cached in. Subclasses should
+     * override this to create their own directory with this directory. The full
+     * directory structure will be created if required in the constructor.
      *
      * @return A directory that cache files can reside in.
      */
@@ -86,8 +87,9 @@ public abstract class FileBasedCache<T> {
     /**
      * Get the file that caches content for the given ID.
      *
-     * @param id Some sort of id that uniquely identifies the item within the
-     *           cache.
+     * @param id
+     *            Some sort of id that uniquely identifies the item within the
+     *            cache.
      *
      * @return A file (possibly nonexistant or empty) that can cache the data
      *         for the id.
@@ -95,15 +97,16 @@ public abstract class FileBasedCache<T> {
     public abstract File getCacheFile(T id);
 
     /**
-     * Fill in actual data in the file in the cache.  This is the workhorse
-     * method that is allowed to modify the cache.  When this method is called,
+     * Fill in actual data in the file in the cache. This is the workhorse
+     * method that is allowed to modify the cache. When this method is called,
      * the cache can assume that getCacheFile(id) does not exist.
      *
-     * @param id Some identifier for the item to be cached.
+     * @param id
+     *            Some identifier for the item to be cached.
      *
-     * @return An id of content actually available.  In most cases, this will be
+     * @return An id of content actually available. In most cases, this will be
      *         the same as id, but for complex I it could be a subset (or null
-     *         if the type argument I is a simple type).  If the return value is
+     *         if the type argument I is a simple type). If the return value is
      *         not the same as id, the file will not contain cached data, and
      *         may not even exist.
      */
@@ -113,26 +116,27 @@ public abstract class FileBasedCache<T> {
      * Ensure that a file containing the appropriate content exists for the ID.
      * If the content cannot be found, this method may return null (if I is a
      * simple type) or an appropriate subset (if I is, say, a Set) indicating
-     * the data that is actually available.  In the latter case, calling cache
-     * on the returned set should always fill the file for that subset (barring
+     * the data that is actually available. In the latter case, calling cache on
+     * the returned set should always fill the file for that subset (barring
      * catastrophic failure).
      *
-     * Locking:  If the file is not immediately found, we enter a file-creation
-     * state.  To avoid corrupted data, we must ensure that only one cache
+     * Locking: If the file is not immediately found, we enter a file-creation
+     * state. To avoid corrupted data, we must ensure that only one cache
      * instance, and only one thread within any instance, creates the file. Thus
      * as long as somebody else seems to be creating the file, we wait and see
-     * if they finish.  This is checked by having an exclusive lock on a
+     * if they finish. This is checked by having an exclusive lock on a
      * ".working" file (we cannot use the result file, as it has to be created
      * to be locked, and we may end up with a different cached file than we
-     * thought, see above).  The .working file itself is irrelevant, only the
+     * thought, see above). The .working file itself is irrelevant, only the
      * lock on it matters.
      *
-     * @param id Some sort of id that uniquely identifies the item within the
-     *           cache.
+     * @param id
+     *            Some sort of id that uniquely identifies the item within the
+     *            cache.
      *
      * @return The id given if it was successfully fetched, otherwise null if
      *         the type parameter I does not allow subsets, or a subset of id if
-     *         it does.  This subset should be immediately cacheable.
+     *         it does. This subset should be immediately cacheable.
      */
     public T cache(T id) {
         ArgumentNotValid.checkNotNull(id, "id");
@@ -142,14 +146,16 @@ public abstract class FileBasedCache<T> {
             FileOutputStream lockFile = new FileOutputStream(fileBehindLockFile);
             FileLock lock = null;
             // Make sure no other thread tries to create this
-            // FIXME welcome to a memory leak, intern strings are never freed from memory again!
+            // FIXME welcome to a memory leak, intern strings are never freed
+            // from memory again!
             log.debug("Waiting to enter synchronization on {}", fileBehindLockFile.getAbsolutePath().intern());
-            // FIXME Potential memory leak. intern() remembers all strings until JVM exits.
+            // FIXME Potential memory leak. intern() remembers all strings until
+            // JVM exits.
             synchronized (fileBehindLockFile.getAbsolutePath().intern()) {
                 try {
                     // Make sure no other process tries to create this.
-                    log.debug("locking filechannel for file '{}' (thread = {})",
-                    		fileBehindLockFile.getAbsolutePath(), Thread.currentThread().getName());
+                    log.debug("locking filechannel for file '{}' (thread = {})", fileBehindLockFile.getAbsolutePath(),
+                            Thread.currentThread().getName());
                     try {
                         lock = lockFile.getChannel().lock();
                     } catch (OverlappingFileLockException e) {
@@ -182,7 +188,8 @@ public abstract class FileBasedCache<T> {
      * Implementations of FileBasedCache may override this to perform the
      * caching more efficiently, if caching overhead per file is large.
      *
-     * @param ids List of IDs that uniquely identify a set of items within the
+     * @param ids
+     *            List of IDs that uniquely identify a set of items within the
      *            cache.
      *
      * @return A map from ID to the files containing cached data for those IDs.
@@ -209,7 +216,8 @@ public abstract class FileBasedCache<T> {
      * If the type I for instance is a Set, you may get an index of only a
      * subset. If I is a File, null may be seen as a subset.
      *
-     * @param id The requested index.
+     * @param id
+     *            The requested index.
      *
      * @return An index over the greatest possible subset, and the subset.
      *
@@ -221,7 +229,7 @@ public abstract class FileBasedCache<T> {
         while (response != null && !response.equals(lastResponse)) {
             if (lastResponse != null) {
                 log.info("Requested index of type '{}' data '{}' not available. Retrying with available subset '{}'",
-                		this.getCacheDir().getName(), lastResponse, response);
+                        this.getCacheDir().getName(), lastResponse, response);
             }
             lastResponse = response;
             response = cache(lastResponse);

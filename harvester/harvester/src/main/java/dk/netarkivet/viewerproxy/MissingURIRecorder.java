@@ -34,13 +34,15 @@ import java.util.TreeSet;
  */
 
 public class MissingURIRecorder extends URIObserver {
-    /** The recorded list of URIs. We use TreeSet which removes duplicates
-     * and sorts the entries. */
-    private Set<URI> uriSet = Collections
-            .synchronizedSortedSet(new TreeSet<URI>());
+    /**
+     * The recorded list of URIs. We use TreeSet which removes duplicates and
+     * sorts the entries.
+     */
+    private Set<URI> uriSet = Collections.synchronizedSortedSet(new TreeSet<URI>());
 
-    /** Indicates whether we are actively recording reported URIs
-     *  at the moment. */
+    /**
+     * Indicates whether we are actively recording reported URIs at the moment.
+     */
     private boolean recordingURIs;
 
     /**
@@ -66,17 +68,22 @@ public class MissingURIRecorder extends URIObserver {
 
     /**
      * Getter for the recorded missing URIs.
+     * 
      * @return the recorded URIs, as a sorted set. Note that this is the primary
-     * copy, so don't modify it!
+     *         copy, so don't modify it!
      */
     public Set<URI> getRecordedURIs() {
         return uriSet;
     }
 
-    /** If we are recording URIs, and the response code is NOT_FOUND, then
-     * add URI to the list of missing URIs.
-     * @param uri The URI observed.
-     * @param responseCode The responsecode of the uri.
+    /**
+     * If we are recording URIs, and the response code is NOT_FOUND, then add
+     * URI to the list of missing URIs.
+     * 
+     * @param uri
+     *            The URI observed.
+     * @param responseCode
+     *            The responsecode of the uri.
      */
     public void notify(URI uri, int responseCode) {
         if (recordingURIs && responseCode == URIResolver.NOT_FOUND) {
@@ -84,7 +91,8 @@ public class MissingURIRecorder extends URIObserver {
         }
     }
 
-    /** Returns whether we are currently collecting URIs.
+    /**
+     * Returns whether we are currently collecting URIs.
      *
      * @return True if we are currently collecting URIs.
      */

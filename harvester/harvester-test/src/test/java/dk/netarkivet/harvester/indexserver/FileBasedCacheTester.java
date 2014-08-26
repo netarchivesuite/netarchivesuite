@@ -39,13 +39,14 @@ public class FileBasedCacheTester {
     @Test
     @Ignore("Log file does not contain expected string")
     public void testGetIndex() throws Exception {
-    	LogbackRecorder lr = LogbackRecorder.startRecorder();
+        LogbackRecorder lr = LogbackRecorder.startRecorder();
         FileBasedCache<String> cache = new FileBasedCache<String>("Test") {
             /**
              * Get the file that caches content for the given ID.
              * 
-             * @param id Some sort of id that uniquely identifies the item
-             *              within the cache.
+             * @param id
+             *            Some sort of id that uniquely identifies the item
+             *            within the cache.
              * @return A file (possibly non-existing or empty) that can cache
              *         the data for the id.
              */
@@ -59,7 +60,8 @@ public class FileBasedCacheTester {
              * method is called, the cache can assume that getCacheFile(id) does
              * not exist.
              * 
-             * @param id Some identifier for the item to be cached.
+             * @param id
+             *            Some identifier for the item to be cached.
              * @return An id of content actually available. In most cases, this
              *         will be the same as id, but for complex I it could be a
              *         subset (or null if the type argument I is a simple type).
@@ -71,13 +73,15 @@ public class FileBasedCacheTester {
             }
 
             String nextId = "";
+
             /**
              * Fill in actual data in the file in the cache. This is the
              * workhorse method that is allowed to modify the cache. When this
              * method is called, the cache can assume that getCacheFile(id) does
              * not exist.
              * 
-             * @param id Some identifier for the item to be cached.
+             * @param id
+             *            Some identifier for the item to be cached.
              * @return An id of content actually available. In most cases, this
              *         will be the same as id, but for complex I it could be a
              *         subset (or null if the type argument I is a simple type).

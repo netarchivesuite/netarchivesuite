@@ -42,7 +42,8 @@ public class TestIndex {
     /**
      * Adds the indexes contained in the indicated file to this objects index
      *
-     * @param indexFile Name of the files to add the indexes for
+     * @param indexFile
+     *            Name of the files to add the indexes for
      */
     public void addIndexesFromFile(File indexFile) {
         indexSet.addAll(indexFileToIndexSet(indexFile));
@@ -53,10 +54,11 @@ public class TestIndex {
      * Assumes the index file are located in the AggregatorTestCase#inputDirName
      * directory.
      *
-     * @param indexFiles Names of the files to add the indexes for
+     * @param indexFiles
+     *            Names of the files to add the indexes for
      */
     public void addIndexesFromFiles(File[] indexFiles) {
-        for(int i = 0;i < indexFiles.length; i++) {
+        for (int i = 0; i < indexFiles.length; i++) {
             indexSet.addAll(indexFileToIndexSet(indexFiles[i]));
         }
     }
@@ -67,7 +69,8 @@ public class TestIndex {
      * same, including the sorting of the indexes. If thew indexes are different
      * a string describing the difference is returned
      *
-     * @param indexFile The file which should be compared to the testindex
+     * @param indexFile
+     *            The file which should be compared to the testindex
      * @return Null if the indexes are equal, else a difference description.
      */
     public String compareToIndex(File indexFile) {
@@ -75,17 +78,15 @@ public class TestIndex {
 
         TreeSet<String> fileIndexSet = indexFileToIndexSet(indexFile);
         if (fileIndexSet.size() != indexSet.size()) {
-            return "The number of indexes ("+fileIndexSet.size()+") are different "
-                   + "from the number("+indexSet.size()+" in the reference index";
+            return "The number of indexes (" + fileIndexSet.size() + ") are different " + "from the number("
+                    + indexSet.size() + " in the reference index";
         }
         Iterator<String> fileIndexIterator = fileIndexSet.iterator();
 
         for (String index : indexSet) {
             String fileIndex = fileIndexIterator.next();
             if (!index.equals(fileIndex)) {
-                result = "Found index difference \n "+
-                    "expected "+index+"\n"+
-                    "but found "+fileIndex;
+                result = "Found index difference \n " + "expected " + index + "\n" + "but found " + fileIndex;
                 return result;
             }
         }
@@ -95,7 +96,8 @@ public class TestIndex {
     /**
      * Loads all the indexes in a files into a sorted TreeSet
      *
-     * @param indexFile The file to load
+     * @param indexFile
+     *            The file to load
      *
      * @return The sorted set containing the file indexes
      */
@@ -108,14 +110,13 @@ public class TestIndex {
                 while ((line = input.readLine()) != null) {
                     indexSet.add(line);
                     boolean DEBUG = false;
-                    if (DEBUG) System.out.println("\nAdding line to set: "+line);
+                    if (DEBUG)
+                        System.out.println("\nAdding line to set: " + line);
                 }
-            }
-            finally {
+            } finally {
                 input.close();
             }
-        }
-        catch (IOException ex) {
+        } catch (IOException ex) {
             ex.printStackTrace();
         }
 

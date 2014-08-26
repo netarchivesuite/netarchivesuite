@@ -45,16 +45,16 @@ import dk.netarkivet.common.utils.TimeUtils;
  * The statements to create the tables are in
  * scripts/sql/createBitpreservationDB.sql
  *
- * The implementation relies on a connection pool. Once acquired through
- * the get() method, a connection must be explicitly returned to the pool
- * by calling the release(Connection) method.
+ * The implementation relies on a connection pool. Once acquired through the
+ * get() method, a connection must be explicitly returned to the pool by calling
+ * the release(Connection) method.
  *
  * THis class is intended to be used statically, and hence cannot be
  * instantiated and is final.
  */
 public final class ArchiveDBConnection {
 
-	/** The class logger. */
+    /** The class logger. */
     private static final Logger log = LoggerFactory.getLogger(ArchiveDBConnection.class);
 
     /** max number of database retries. */
@@ -72,8 +72,8 @@ public final class ArchiveDBConnection {
     }
 
     /**
-     * Get a connection to the harvest definition database from the pool.
-     * The pool is configured via the following configuration properties:
+     * Get a connection to the harvest definition database from the pool. The
+     * pool is configured via the following configuration properties:
      * <ul>
      * <li>@see {@link ArchiveSettings#DB_POOL_MIN_SIZE}</li>
      * <li>@see {@link ArchiveSettings#DB_POOL_MAX_SIZE}</li>
@@ -81,9 +81,10 @@ public final class ArchiveDBConnection {
      * </ul>
      * Note that the connection obtained must be returned to the pool by calling
      * {@link #release(Connection)}.
+     * 
      * @return a connection to the harvest definition database
-     * @throws IOFailure if we cannot connect to the database (or find the
-     * driver).
+     * @throws IOFailure
+     *             if we cannot connect to the database (or find the driver).
      */
     public static synchronized Connection get() {
         DBSpecifics dbSpec = DBSpecifics.getInstance();
@@ -91,7 +92,7 @@ public final class ArchiveDBConnection {
         int tries = 0;
         Connection con = null;
         while (tries < maxdatabaseRetries && con == null) {
-        	++tries;
+            ++tries;
             try {
                 if (dataSource == null) {
                     initDataSource(dbSpec, jdbcUrl);
@@ -121,7 +122,7 @@ public final class ArchiveDBConnection {
         }
         return con;
     }
-        
+
     /**
      * Closes the underlying data source.
      */
@@ -150,21 +151,22 @@ public final class ArchiveDBConnection {
 
     /**
      * Helper method to return a connection to the pool.
-     * @param connection a connection
+     * 
+     * @param connection
+     *            a connection
      */
     public static synchronized void release(Connection connection) {
         ArgumentNotValid.checkNotNull(connection, "connection");
         try {
             connection.close();
         } catch (SQLException e) {
-           log.error("Failed to close connection", e);
+            log.error("Failed to close connection", e);
         }
     }
 
     /**
-     * Method for retrieving the url for the archive database.
-     * This url will be constructed from the base-url, the machine, 
-     * the port and the directory.
+     * Method for retrieving the url for the archive database. This url will be
+     * constructed from the base-url, the machine, the port and the directory.
      * 
      * @return The url for the archive database.
      */
@@ -178,7 +180,7 @@ public final class ArchiveDBConnection {
             res.append("://");
             res.append(tmp);
         }
-        
+
         // append the port part of the url, if it exists.
         tmp = Settings.get(ArchiveSettings.PORT_ARCREPOSITORY_ADMIN_DATABASE);
         if (!tmp.isEmpty()) {
@@ -194,12 +196,15 @@ public final class ArchiveDBConnection {
         }
         return res.toString();
     }
-    
+
     /**
      * Initializes the connection pool.
-     * @param dbSpec the object representing the chosen DB target system.
-     * @param jdbcUrl the JDBC URL to connect to.
-     * @throws SQLException 
+     * 
+     * @param dbSpec
+     *            the object representing the chosen DB target system.
+     * @param jdbcUrl
+     *            the JDBC URL to connect to.
+     * @throws SQLException
      */
     private static void initDataSource(DBSpecifics dbSpec, String jdbcUrl) throws SQLException {
         dataSource = new ComboPooledDataSource();
@@ -215,10 +220,10 @@ public final class ArchiveDBConnection {
             dataSource.setDriverClass(dbSpec.getDriverClassName());
         } catch (PropertyVetoException e) {
             final String message = "Failed to set datasource JDBC driver class '" + dbSpec.getDriverClassName() + "'"
-            		+ "\n";
+                    + "\n";
             throw new IOFailure(message, e);
         }
-        
+
         log.info("Using jdbc url: " + jdbcUrl);
         dataSource.setJdbcUrl(jdbcUrl);
 
@@ -231,8 +236,8 @@ public final class ArchiveDBConnection {
         int testPeriod = Settings.getInt(ArchiveSettings.DB_POOL_IDLE_CONN_TEST_PERIOD);
         if (testPeriod > 0) {
             dataSource.setIdleConnectionTestPeriod(testPeriod);
-            dataSource.setTestConnectionOnCheckin(Settings.getBoolean(
-            		ArchiveSettings.DB_POOL_IDLE_CONN_TEST_ON_CHECKIN));
+            dataSource.setTestConnectionOnCheckin(Settings
+                    .getBoolean(ArchiveSettings.DB_POOL_IDLE_CONN_TEST_ON_CHECKIN));
             String testQuery = Settings.get(ArchiveSettings.DB_POOL_IDLE_CONN_TEST_QUERY);
             if (!testQuery.isEmpty()) {
                 dataSource.setPreferredTestQuery(testQuery);
@@ -242,29 +247,18 @@ public final class ArchiveDBConnection {
         // Configure statement pooling
         dataSource.setMaxStatements(Settings.getInt(ArchiveSettings.DB_POOL_MAX_STM));
         dataSource.setMaxStatementsPerConnection(Settings.getInt(ArchiveSettings.DB_POOL_MAX_STM_PER_CONN));
-        
+
         // FIXME: unreturnedConnectionTimeout for testing.
         dataSource.setUnreturnedConnectionTimeout(10000);
         dataSource.setDebugUnreturnedConnectionStackTraces(true);
 
-        log.info("Connection pool initialized with the following values:\n"
-        		+ "- minPoolSize={}\n"
-        		+ "- maxPoolSize={}\n"
-        		+ "- acquireIncrement={}\n"
-        		+ "- maxStatements={}\n"
-        		+ "- maxStatementsPerConnection={}\n"
-        		+ "- idleConnTestPeriod={}\n"
-        		+ "- idleConnTestQuery='{}'\n"
-        		+ "- idleConnTestOnCheckin={}",
-        		dataSource.getMinPoolSize(),
-        		dataSource.getMaxPoolSize(),
-        		dataSource.getAcquireIncrement(),
-        		dataSource.getMaxStatements(),
-        		dataSource.getMaxStatementsPerConnection(),
-        		dataSource.getIdleConnectionTestPeriod(),
-        		dataSource.getPreferredTestQuery(),
-        		dataSource.isTestConnectionOnCheckin()
-        );
+        log.info("Connection pool initialized with the following values:\n" + "- minPoolSize={}\n"
+                + "- maxPoolSize={}\n" + "- acquireIncrement={}\n" + "- maxStatements={}\n"
+                + "- maxStatementsPerConnection={}\n" + "- idleConnTestPeriod={}\n" + "- idleConnTestQuery='{}'\n"
+                + "- idleConnTestOnCheckin={}", dataSource.getMinPoolSize(), dataSource.getMaxPoolSize(),
+                dataSource.getAcquireIncrement(), dataSource.getMaxStatements(),
+                dataSource.getMaxStatementsPerConnection(), dataSource.getIdleConnectionTestPeriod(),
+                dataSource.getPreferredTestQuery(), dataSource.isTestConnectionOnCheckin());
     }
 
 }

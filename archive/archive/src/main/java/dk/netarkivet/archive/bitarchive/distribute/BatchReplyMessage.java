@@ -37,7 +37,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * Message class used by the bit archive monitor to notify the ArcRepository of
  * a completed batch job.
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({ "serial" })
 public class BatchReplyMessage extends ArchiveMessage {
     /** Number of files processed by the BatchJob. */
     private int noOfFilesProcessed;
@@ -52,31 +52,32 @@ public class BatchReplyMessage extends ArchiveMessage {
      * information: list of files processed and a list of files on which the
      * batch job failed
      *
-     * @param to The queue to which this message is to be sent. This will 
-     * normally be the ARCREPOS queue
-     * @param replyTo The queue that should receive replies.
-     * @param originatingBatchMsgId The Id of the BathMessage which gave rise 
-     * to this reply
-     * @param filesProcessed The total number of file processed in this batch 
-     * job
-     * @param failedFiles A Collection of strings with the names of files on 
-     * which this batch job failed. May be null or empty for no errors.
-     * @param resultFile The RemoteFile containing the output from the batch 
-     * job, or null if an error occurred that prevented the creation of the 
-     * file.
-     * @throws ArgumentNotValid if the input parameters are not meaningful
+     * @param to
+     *            The queue to which this message is to be sent. This will
+     *            normally be the ARCREPOS queue
+     * @param replyTo
+     *            The queue that should receive replies.
+     * @param originatingBatchMsgId
+     *            The Id of the BathMessage which gave rise to this reply
+     * @param filesProcessed
+     *            The total number of file processed in this batch job
+     * @param failedFiles
+     *            A Collection of strings with the names of files on which this
+     *            batch job failed. May be null or empty for no errors.
+     * @param resultFile
+     *            The RemoteFile containing the output from the batch job, or
+     *            null if an error occurred that prevented the creation of the
+     *            file.
+     * @throws ArgumentNotValid
+     *             if the input parameters are not meaningful
      */
-    public BatchReplyMessage(ChannelID to, ChannelID replyTo, 
-            String originatingBatchMsgId, int filesProcessed, 
-            Collection<File> failedFiles, RemoteFile resultFile) 
-            throws ArgumentNotValid {
+    public BatchReplyMessage(ChannelID to, ChannelID replyTo, String originatingBatchMsgId, int filesProcessed,
+            Collection<File> failedFiles, RemoteFile resultFile) throws ArgumentNotValid {
         // replyTo must be set here because it is used by AdminData to work
         // out which bitarchive the batch job operated on
         super(to, replyTo);
-        ArgumentNotValid.checkNotNullOrEmpty(originatingBatchMsgId,
-                "originatingBatchMsgId");
-        ArgumentNotValid.checkTrue(filesProcessed >= 0, 
-                "filesProcessed should not be less than zero");
+        ArgumentNotValid.checkNotNullOrEmpty(originatingBatchMsgId, "originatingBatchMsgId");
+        ArgumentNotValid.checkTrue(filesProcessed >= 0, "filesProcessed should not be less than zero");
 
         this.replyOfId = originatingBatchMsgId;
         this.noOfFilesProcessed = filesProcessed;
@@ -98,8 +99,8 @@ public class BatchReplyMessage extends ArchiveMessage {
     }
 
     /**
-     * Retrieves the collection of files, where this batchjob has failed. 
-     * (may be null)
+     * Retrieves the collection of files, where this batchjob has failed. (may
+     * be null)
      *
      * @return The collection of failed files
      */
@@ -122,7 +123,8 @@ public class BatchReplyMessage extends ArchiveMessage {
      * Should be implemented as a part of the visitor pattern. fx.: public void
      * accept(ArchiveMessageVisitor v) { v.visit(this); }
      *
-     * @param v A message visitor
+     * @param v
+     *            A message visitor
      */
     public void accept(ArchiveMessageVisitor v) {
         v.visit(this);
@@ -134,9 +136,7 @@ public class BatchReplyMessage extends ArchiveMessage {
      * @return A string representing this instance.
      */
     public String toString() {
-        return "BatchReplyMessage for batch job " + replyOfId
-               + "\nFilesProcessed = " + noOfFilesProcessed 
-               + "\nFilesFailed = " + filesFailed.size() + "\n" 
-               + super.toString();
+        return "BatchReplyMessage for batch job " + replyOfId + "\nFilesProcessed = " + noOfFilesProcessed
+                + "\nFilesFailed = " + filesFailed.size() + "\n" + super.toString();
     }
 }

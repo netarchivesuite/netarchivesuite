@@ -28,22 +28,25 @@ import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 
 /**
- * Class encapsulating a request to update AdminData.
- * The message has two different types: changestorestate-type, and
- * changechecksum-type. There is a constructor for each type.
+ * Class encapsulating a request to update AdminData. The message has two
+ * different types: changestorestate-type, and changechecksum-type. There is a
+ * constructor for each type.
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({ "serial" })
 public class AdminDataMessage extends ArchiveMessage {
 
     /** The filename to be updated in AdminData. */
     private String fileName;
     /** The id of the replica, where the file resides. */
     private String replicaId;
-    /** the new storestate for the filename.
-     * Used only when changestorestate is true. */
+    /**
+     * the new storestate for the filename. Used only when changestorestate is
+     * true.
+     */
     private ReplicaStoreState newvalue;
-    /** the new checksum for the filename.
-     * Used only when changechecksum is true. */
+    /**
+     * the new checksum for the filename. Used only when changechecksum is true.
+     */
     private String checksum;
     /** change storestate flag. default = false. */
     private boolean changestorestate = false;
@@ -52,24 +55,30 @@ public class AdminDataMessage extends ArchiveMessage {
 
     /**
      * Constructor used when you change the BitarchiveStoreState.
-     * @param theFileName The filename you want to give a new
-     * BitarchiveStoreState.
-     * @param theReplicaId The ID for the bitarchive where the file resides
-     * @param newval The new BitarchiveStoreState
+     * 
+     * @param theFileName
+     *            The filename you want to give a new BitarchiveStoreState.
+     * @param theReplicaId
+     *            The ID for the bitarchive where the file resides
+     * @param newval
+     *            The new BitarchiveStoreState
      */
-    public AdminDataMessage(String theFileName, String theReplicaId,
-                            ReplicaStoreState newval) {
+    public AdminDataMessage(String theFileName, String theReplicaId, ReplicaStoreState newval) {
         super(Channels.getTheRepos(), Channels.getThisReposClient());
         this.fileName = theFileName;
         this.replicaId = theReplicaId;
         this.newvalue = newval;
         this.changestorestate = true;
     }
+
     /**
-     * Constructor used when you want to change the checksum for
-     * the given filename.
-     * @param theFileName the given filename
-     * @param theChecksum the new checksum for the filename
+     * Constructor used when you want to change the checksum for the given
+     * filename.
+     * 
+     * @param theFileName
+     *            the given filename
+     * @param theChecksum
+     *            the new checksum for the filename
      */
     public AdminDataMessage(String theFileName, String theChecksum) {
         super(Channels.getTheRepos(), Channels.getThisReposClient());
@@ -82,7 +91,8 @@ public class AdminDataMessage extends ArchiveMessage {
      * Should be implemented as a part of the visitor pattern. fx.: public void
      * accept(ArchiveMessageVisitor v) { v.visit(this); }
      *
-     * @param v A message visitor
+     * @param v
+     *            A message visitor
      */
     public void accept(ArchiveMessageVisitor v) {
         v.visit(this);
@@ -116,6 +126,7 @@ public class AdminDataMessage extends ArchiveMessage {
 
     /**
      * Return the state of the changestorestate - flag.
+     * 
      * @return true, if this message is a changestorestate message
      */
     public boolean isChangeStoreState() {
@@ -124,6 +135,7 @@ public class AdminDataMessage extends ArchiveMessage {
 
     /**
      * Return the state of the changechecksum - flag.
+     * 
      * @return true, if this message is a changechecksum message
      */
     public boolean isChangeChecksum() {

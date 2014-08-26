@@ -49,7 +49,7 @@ public class LoadableJarBatchJob extends FileBatchJob {
     /** The log. */
     private static final transient Logger log = LoggerFactory.getLogger(LoadableJarBatchJob.class);
 
-	/** The FileBatchJob that this LoadableJarBatchJob is a wrapper for. */
+    /** The FileBatchJob that this LoadableJarBatchJob is a wrapper for. */
     transient FileBatchJob loadedJob;
 
     /** The ClassLoader of type ByteJarLoader associated with this job. */
@@ -57,19 +57,23 @@ public class LoadableJarBatchJob extends FileBatchJob {
 
     /** The name of the loaded Job. */
     private String jobClass;
-    
-    /** The arguments for instantiating the batchjob.*/
+
+    /** The arguments for instantiating the batchjob. */
     private List<String> args;
 
     /**
      * Load a given class from a jar file.
      * 
-     * @param jarFiles The jar file(s) to load from. This file may also contain 
-     * other classes required by the FileBatchJob class.
-     * @param arguments The arguments for the batchjob.
-     * @param jobClass The class to load initially. This must be a subclass of
-     * FileBatchJob.
-     * @throws ArgumentNotValid If any of the arguments are null.
+     * @param jarFiles
+     *            The jar file(s) to load from. This file may also contain other
+     *            classes required by the FileBatchJob class.
+     * @param arguments
+     *            The arguments for the batchjob.
+     * @param jobClass
+     *            The class to load initially. This must be a subclass of
+     *            FileBatchJob.
+     * @throws ArgumentNotValid
+     *             If any of the arguments are null.
      */
     public LoadableJarBatchJob(String jobClass, List<String> arguments, File... jarFiles) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(jarFiles, "File jarFile");
@@ -87,27 +91,28 @@ public class LoadableJarBatchJob extends FileBatchJob {
         }
         log.info(res.toString());
         multipleClassLoader = new ByteJarLoader(jarFiles);
-        
+
         // Ensure that the batchjob can be loaded.
         loadBatchJob();
     }
-    
+
     /**
      * Method for initialising the batch job.
      * 
-     * @throws IOFailure If the job is not loaded correctly.
+     * @throws IOFailure
+     *             If the job is not loaded correctly.
      */
     private void loadBatchJob() throws IOFailure {
         try {
             Class batchClass = multipleClassLoader.loadClass(jobClass);
-            
+
             if (args.size() == 0) {
                 // just load if no arguments.
                 loadedJob = (FileBatchJob) batchClass.newInstance();
             } else {
                 // get argument classes (string only).
                 Class[] argClasses = new Class[args.size()];
-                for(int i = 0; i < args.size(); i++) {
+                for (int i = 0; i < args.size(); i++) {
                     argClasses[i] = String.class;
                 }
 
@@ -122,7 +127,7 @@ public class LoadableJarBatchJob extends FileBatchJob {
             throw new IOFailure(msg, e);
         } catch (NoSuchMethodException e) {
             final String msg = "No constructor for the arguments '" + args + "' can be found for the batchjob '"
-            		+ jobClass + "'.";
+                    + jobClass + "'.";
             log.warn(msg, e);
             throw new IOFailure(msg, e);
         } catch (InstantiationException e) {
@@ -149,7 +154,7 @@ public class LoadableJarBatchJob extends FileBatchJob {
      */
     public void initialize(OutputStream os) {
         ArgumentNotValid.checkNotNull(os, "os");
-        
+
         // Initialise the loadedJob.
         loadBatchJob();
         loadedJob.initialize(os);
@@ -227,15 +232,15 @@ public class LoadableJarBatchJob extends FileBatchJob {
         ArgumentNotValid.checkNotNull(input, "InputStream input");
         ArgumentNotValid.checkNotNull(output, "OutputStream output");
 
-        // Let the loaded job handle the post processing. 
+        // Let the loaded job handle the post processing.
         log.debug("Post-processing in the loaded batchjob.");
         loadBatchJob();
         return loadedJob.postProcess(input, output);
     }
-    
+
     /**
      * Method for retrieving the name of the loaded class.
-     *  
+     * 
      * @return The name of the loaded class.
      */
     public String getLoadedJobClass() {

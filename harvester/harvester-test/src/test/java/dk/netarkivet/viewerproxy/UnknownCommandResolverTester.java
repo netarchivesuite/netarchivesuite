@@ -39,7 +39,7 @@ import dk.netarkivet.testutils.StringAsserts;
 /**
  * Unit-tests of the UnknownCommandResolver class.
  */
-@SuppressWarnings({ "unused"})
+@SuppressWarnings({ "unused" })
 public class UnknownCommandResolverTester {
 
     @Test
@@ -55,7 +55,7 @@ public class UnknownCommandResolverTester {
             public String reason;
 
             public OutputStream getOutputStream() {
-                //TODO: implement method
+                // TODO: implement method
                 throw new NotImplementedException("Not implemented");
             }
 
@@ -69,7 +69,7 @@ public class UnknownCommandResolverTester {
             }
 
             public void addHeaderField(String name, String value) {
-                //TODO: implement method
+                // TODO: implement method
                 throw new NotImplementedException("Not implemented");
             }
 
@@ -77,27 +77,20 @@ public class UnknownCommandResolverTester {
                 return status;
             }
         };
-        int reply =
-                ucr.lookup(makeRequest("http://www.flarf.smirk"),
-                response);
-        assertEquals("Should get underlying resolver's response",
-                200, reply);
+        int reply = ucr.lookup(makeRequest("http://www.flarf.smirk"), response);
+        assertEquals("Should get underlying resolver's response", 200, reply);
         reply = ucr.lookup(makeRequest("http://129.0.0.1/hest"), response);
-        assertEquals("Should get underlying resolver's response",
-                200, reply);
+        assertEquals("Should get underlying resolver's response", 200, reply);
         try {
-            reply = ucr.lookup(makeRequest("http://"
-                                           + "netarchivesuite.viewerproxy.invalid"
-                                           + "/get"), response);
+            reply = ucr.lookup(makeRequest("http://" + "netarchivesuite.viewerproxy.invalid" + "/get"), response);
             fail("Should give IOFailure on a command");
         } catch (IOFailure e) {
-            StringAsserts.assertStringContains("Should have command in msg",
-                    "get", e.getMessage());
+            StringAsserts.assertStringContains("Should have command in msg", "get", e.getMessage());
         }
     }
 
     private Request makeRequest(final String uri) {
-        return new Request(){
+        return new Request() {
             public URI getURI() {
                 try {
                     return new URI(uri);
@@ -107,7 +100,7 @@ public class UnknownCommandResolverTester {
             }
 
             public Map<String, String[]> getParameterMap() {
-                //TODO: implement method
+                // TODO: implement method
                 throw new NotImplementedException("Not implemented");
             }
         };

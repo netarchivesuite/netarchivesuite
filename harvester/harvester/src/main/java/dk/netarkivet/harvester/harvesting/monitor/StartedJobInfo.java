@@ -48,10 +48,13 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
 
     /** The class logger. */
     private static final Logger log = LoggerFactory.getLogger(StartedJobInfo.class);
-    
-    /**list of the compare criteria.*/
-    public enum Criteria { JOBID, HOST, PROGRESS, ELAPSED, QFILES, TOTALQ, ACTIVEQ, EXHAUSTEDQ };
-    /**current compare criteria.*/
+
+    /** list of the compare criteria. */
+    public enum Criteria {
+        JOBID, HOST, PROGRESS, ELAPSED, QFILES, TOTALQ, ACTIVEQ, EXHAUSTEDQ
+    };
+
+    /** current compare criteria. */
     private StartedJobInfo.Criteria compareCriteria = StartedJobInfo.Criteria.JOBID;
 
     private static final String NOT_AVAILABLE_STRING = "";
@@ -229,6 +232,7 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
     public long getActiveQueuesCount() {
         return activeQueuesCount;
     }
+
     /**
      * @return the number of retired heritrix queues.
      */
@@ -315,12 +319,12 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
     }
 
     @Override
-    public int compareTo(StartedJobInfo o) throws NullPointerException  {
+    public int compareTo(StartedJobInfo o) throws NullPointerException {
 
-        if(o == null) {
+        if (o == null) {
             throw new NullPointerException("StartedJobInfo o can't be null");
         }
-        
+
         if (compareCriteria == StartedJobInfo.Criteria.HOST) {
             return hostUrl.compareTo(o.hostUrl);
         }
@@ -328,54 +332,45 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
             return new Double(progress).compareTo(new Double(o.progress));
         }
         if (compareCriteria == StartedJobInfo.Criteria.ELAPSED) {
-            return Long.valueOf(elapsedSeconds).
-            compareTo(Long.valueOf(o.elapsedSeconds));
+            return Long.valueOf(elapsedSeconds).compareTo(Long.valueOf(o.elapsedSeconds));
         }
         if (compareCriteria == StartedJobInfo.Criteria.QFILES) {
-            return Long.valueOf(queuedFilesCount).
-            compareTo(Long.valueOf(o.queuedFilesCount));
+            return Long.valueOf(queuedFilesCount).compareTo(Long.valueOf(o.queuedFilesCount));
         }
         if (compareCriteria == StartedJobInfo.Criteria.TOTALQ) {
-            return Long.valueOf(totalQueuesCount).
-            compareTo(Long.valueOf(o.totalQueuesCount));
+            return Long.valueOf(totalQueuesCount).compareTo(Long.valueOf(o.totalQueuesCount));
         }
         if (compareCriteria == StartedJobInfo.Criteria.ACTIVEQ) {
-            return Long.valueOf(activeQueuesCount).
-            compareTo(Long.valueOf(o.activeQueuesCount));
+            return Long.valueOf(activeQueuesCount).compareTo(Long.valueOf(o.activeQueuesCount));
         }
         if (compareCriteria == StartedJobInfo.Criteria.EXHAUSTEDQ) {
-            return Long.valueOf(exhaustedQueuesCount).
-            compareTo(Long.valueOf(o.exhaustedQueuesCount));
+            return Long.valueOf(exhaustedQueuesCount).compareTo(Long.valueOf(o.exhaustedQueuesCount));
         }
         return Long.valueOf(jobId).compareTo(Long.valueOf(o.jobId));
     }
 
     /**
-     * set the criteria used in the compareTo method
-     * that way we can decide how to sort StartedJobInfo.
-     * @param criteria the criteria we want to use
+     * set the criteria used in the compareTo method that way we can decide how
+     * to sort StartedJobInfo.
+     * 
+     * @param criteria
+     *            the criteria we want to use
      */
-     public void chooseCompareCriteria(StartedJobInfo.Criteria criteria) {
-         ArgumentNotValid.checkNotNull(criteria, "criteria can't be null");
-         compareCriteria = criteria;
+    public void chooseCompareCriteria(StartedJobInfo.Criteria criteria) {
+        ArgumentNotValid.checkNotNull(criteria, "criteria can't be null");
+        compareCriteria = criteria;
     }
 
     @Override
     public String toString() {
-        return harvestName + " - " + jobId + " {" + "\n\tstatus="
-                + status.name() + "\n\telapsedSeconds=" + elapsedSeconds
-                + "\n\thostUrl=" + hostUrl + "\n\tprogress=" + progress
-                + "\n\tactiveToeCount=" + activeToeCount + "\n\talertsCount="
-                + alertsCount + "\n\tcurrentProcessedKBPerSec="
-                + currentProcessedKBPerSec + "\n\tprocessedKBPerSec="
-                + processedKBPerSec + "\n\tcurrentProcessedDocsPerSec="
-                + currentProcessedDocsPerSec + "\n\tprocessedDocsPerSec="
-                + processedDocsPerSec + "\n\tdownloadedFilesCount="
-                + downloadedFilesCount + "\n\tqueuedFilesCount="
-                + queuedFilesCount + "\n\tactiveQueuesCount="
-                + activeQueuesCount + "\n\texhaustedQueuesCount="
-                + exhaustedQueuesCount + "\n\ttotalQueuesCount="
-                + totalQueuesCount + "\n}";
+        return harvestName + " - " + jobId + " {" + "\n\tstatus=" + status.name() + "\n\telapsedSeconds="
+                + elapsedSeconds + "\n\thostUrl=" + hostUrl + "\n\tprogress=" + progress + "\n\tactiveToeCount="
+                + activeToeCount + "\n\talertsCount=" + alertsCount + "\n\tcurrentProcessedKBPerSec="
+                + currentProcessedKBPerSec + "\n\tprocessedKBPerSec=" + processedKBPerSec
+                + "\n\tcurrentProcessedDocsPerSec=" + currentProcessedDocsPerSec + "\n\tprocessedDocsPerSec="
+                + processedDocsPerSec + "\n\tdownloadedFilesCount=" + downloadedFilesCount + "\n\tqueuedFilesCount="
+                + queuedFilesCount + "\n\tactiveQueuesCount=" + activeQueuesCount + "\n\texhaustedQueuesCount="
+                + exhaustedQueuesCount + "\n\ttotalQueuesCount=" + totalQueuesCount + "\n}";
     }
 
     /**
@@ -388,7 +383,7 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
     public static StartedJobInfo build(CrawlProgressMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "CrawlProgressMessage msg");
         String harvestName = HarvestDefinitionDAO.getInstance().getHarvestName(msg.getHarvestID());
-        
+
         StartedJobInfo sji = new StartedJobInfo(harvestName, msg.getJobID());
 
         CrawlServiceInfo heritrixInfo = msg.getHeritrixStatus();
@@ -426,7 +421,7 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
                     Object[] params = FRONTIER_SHORT_FMT.parse(frontierShortReport);
                     sji.totalQueuesCount = Long.parseLong((String) params[0]);
                     sji.activeQueuesCount = Long.parseLong((String) params[1]);
-                    sji.retiredQueuesCount =Long.parseLong((String) params[6]);
+                    sji.retiredQueuesCount = Long.parseLong((String) params[6]);
                     sji.exhaustedQueuesCount = Long.parseLong((String) params[7]);
                 } catch (ParseException e) {
                     throw new ArgumentNotValid(frontierShortReport, e);
@@ -458,7 +453,7 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
             sji.totalQueuesCount = 0;
             break;
         default:
-        	log.debug("Nothing to do for state: {}", newStatus); 
+            log.debug("Nothing to do for state: {}", newStatus);
             break;
         }
         sji.status = newStatus;
@@ -467,120 +462,136 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
     }
 
     /**
-     * @param hostUrl the hostUrl to set
+     * @param hostUrl
+     *            the hostUrl to set
      */
     public void setHostUrl(String hostUrl) {
         this.hostUrl = hostUrl;
     }
 
     /**
-     * @param progress the progress to set
+     * @param progress
+     *            the progress to set
      */
     public void setProgress(double progress) {
         this.progress = progress;
     }
 
     /**
-     * @param queuedFilesCount the queuedFilesCount to set
+     * @param queuedFilesCount
+     *            the queuedFilesCount to set
      */
     public void setQueuedFilesCount(long queuedFilesCount) {
         this.queuedFilesCount = queuedFilesCount;
     }
 
     /**
-     * @param downloadedFilesCount the downloadedFilesCount to set
+     * @param downloadedFilesCount
+     *            the downloadedFilesCount to set
      */
     public void setDownloadedFilesCount(long downloadedFilesCount) {
         this.downloadedFilesCount = downloadedFilesCount;
     }
 
     /**
-     * @param totalQueuesCount the totalQueuesCount to set
+     * @param totalQueuesCount
+     *            the totalQueuesCount to set
      */
     public void setTotalQueuesCount(long totalQueuesCount) {
         this.totalQueuesCount = totalQueuesCount;
     }
 
     /**
-     * @param activeQueuesCount the activeQueuesCount to set
+     * @param activeQueuesCount
+     *            the activeQueuesCount to set
      */
     public void setActiveQueuesCount(long activeQueuesCount) {
         this.activeQueuesCount = activeQueuesCount;
     }
 
     /**
-     * @param exhaustedQueuesCount the exhaustedQueuesCount to set
+     * @param exhaustedQueuesCount
+     *            the exhaustedQueuesCount to set
      */
     public void setExhaustedQueuesCount(long exhaustedQueuesCount) {
         this.exhaustedQueuesCount = exhaustedQueuesCount;
     }
 
     /**
-     * @param elapsedSeconds the elapsedSeconds to set
+     * @param elapsedSeconds
+     *            the elapsedSeconds to set
      */
     public void setElapsedSeconds(long elapsedSeconds) {
         this.elapsedSeconds = elapsedSeconds;
     }
 
     /**
-     * @param currentProcessedKBPerSec the currentProcessedKBPerSec to set
+     * @param currentProcessedKBPerSec
+     *            the currentProcessedKBPerSec to set
      */
     public void setCurrentProcessedKBPerSec(long currentProcessedKBPerSec) {
         this.currentProcessedKBPerSec = currentProcessedKBPerSec;
     }
 
     /**
-     * @param processedKBPerSec the processedKBPerSec to set
+     * @param processedKBPerSec
+     *            the processedKBPerSec to set
      */
     public void setProcessedKBPerSec(long processedKBPerSec) {
         this.processedKBPerSec = processedKBPerSec;
     }
 
     /**
-     * @param currentProcessedDocsPerSec the currentProcessedDocsPerSec to set
+     * @param currentProcessedDocsPerSec
+     *            the currentProcessedDocsPerSec to set
      */
-    public void setCurrentProcessedDocsPerSec(
-            double currentProcessedDocsPerSec) {
+    public void setCurrentProcessedDocsPerSec(double currentProcessedDocsPerSec) {
         this.currentProcessedDocsPerSec = currentProcessedDocsPerSec;
     }
 
     /**
-     * @param processedDocsPerSec the processedDocsPerSec to set
+     * @param processedDocsPerSec
+     *            the processedDocsPerSec to set
      */
     public void setProcessedDocsPerSec(double processedDocsPerSec) {
         this.processedDocsPerSec = processedDocsPerSec;
     }
 
     /**
-     * @param activeToeCount the activeToeCount to set
+     * @param activeToeCount
+     *            the activeToeCount to set
      */
     public void setActiveToeCount(int activeToeCount) {
         this.activeToeCount = activeToeCount;
     }
 
     /**
-     * @param alertsCount the alertsCount to set
+     * @param alertsCount
+     *            the alertsCount to set
      */
     public void setAlertsCount(long alertsCount) {
         this.alertsCount = alertsCount;
     }
 
     /**
-     * @param status the status to set
+     * @param status
+     *            the status to set
      */
     public void setStatus(CrawlStatus status) {
         this.status = status;
     }
 
     /**
-     * @param timestamp the timestamp to set
+     * @param timestamp
+     *            the timestamp to set
      */
     public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
     }
 
     /**
-     * @param retiredQueuesCount the retiredQueuesCount to set
+     * @param retiredQueuesCount
+     *            the retiredQueuesCount to set
      */
     public void setRetiredQueuesCount(long retiredQueuesCount) {
         this.retiredQueuesCount = retiredQueuesCount;

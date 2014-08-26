@@ -39,8 +39,8 @@ import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.NumberUtils;
 
 /**
- * The legacy job generator implementation. Aims at generating jobs that execute in a
- * predictable time by taking advantage of previous crawls statistics.
+ * The legacy job generator implementation. Aims at generating jobs that execute
+ * in a predictable time by taking advantage of previous crawls statistics.
  */
 public class DefaultJobGenerator extends AbstractJobGenerator {
 
@@ -48,12 +48,10 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
     private static final Logger log = LoggerFactory.getLogger(DefaultJobGenerator.class);
 
     /**
-     * Compare two configurations using the following order:
-     * 1) Harvest template
-     * 2) Byte limit
-     * 3) expected number of object a harvest of the configuration will produce.
-     * The comparison will put the largest configuration first (with respect
-     * to 2) and 3))
+     * Compare two configurations using the following order: 1) Harvest template
+     * 2) Byte limit 3) expected number of object a harvest of the configuration
+     * will produce. The comparison will put the largest configuration first
+     * (with respect to 2) and 3))
      */
     public static class CompareConfigsDesc implements Comparator<DomainConfiguration> {
 
@@ -66,13 +64,13 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
         }
 
         public int compare(DomainConfiguration cfg1, DomainConfiguration cfg2) {
-            //Compare order xml names
+            // Compare order xml names
             int cmp = cfg1.getOrderXmlName().compareTo(cfg2.getOrderXmlName());
             if (cmp != 0) {
                 return cmp;
             }
 
-            //Compare byte limits
+            // Compare byte limits
             long bytelimit1 = NumberUtils.minInf(cfg1.getMaxBytes(), byteLimit);
             long bytelimit2 = NumberUtils.minInf(cfg2.getMaxBytes(), byteLimit);
             cmp = NumberUtils.compareInf(bytelimit2, bytelimit1);
@@ -80,7 +78,7 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
                 return cmp;
             }
 
-            //Compare expected sizes
+            // Compare expected sizes
             long expectedsize1 = cfg1.getExpectedNumberOfObjects(objectLimit, byteLimit);
             long expectedsize2 = cfg2.getExpectedNumberOfObjects(objectLimit, byteLimit);
             long res = expectedsize2 - expectedsize1;
@@ -95,15 +93,17 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
     /**
      * Job limits read from settings during construction.
      */
-    private final long LIM_MAX_REL_SIZE = Long.parseLong(
-    		Settings.get(HarvesterSettings.JOBS_MAX_RELATIVE_SIZE_DIFFERENCE));
-    private final long LIM_MIN_ABS_SIZE = Long.parseLong(
-            Settings.get(HarvesterSettings.JOBS_MIN_ABSOLUTE_SIZE_DIFFERENCE));
-    private final long LIM_MAX_TOTAL_SIZE = Long.parseLong(Settings.get(
-                    HarvesterSettings.JOBS_MAX_TOTAL_JOBSIZE));
-    /** Constant : exclude {@link DomainConfiguration}s with a budget of zero (bytes or objects). */
-    private final boolean EXCLUDE_ZERO_BUDGET = Settings.getBoolean(
-    		HarvesterSettings.JOBGEN_FIXED_CONFIG_COUNT_EXCLUDE_ZERO_BUDGET);
+    private final long LIM_MAX_REL_SIZE = Long.parseLong(Settings
+            .get(HarvesterSettings.JOBS_MAX_RELATIVE_SIZE_DIFFERENCE));
+    private final long LIM_MIN_ABS_SIZE = Long.parseLong(Settings
+            .get(HarvesterSettings.JOBS_MIN_ABSOLUTE_SIZE_DIFFERENCE));
+    private final long LIM_MAX_TOTAL_SIZE = Long.parseLong(Settings.get(HarvesterSettings.JOBS_MAX_TOTAL_JOBSIZE));
+    /**
+     * Constant : exclude {@link DomainConfiguration}s with a budget of zero
+     * (bytes or objects).
+     */
+    private final boolean EXCLUDE_ZERO_BUDGET = Settings
+            .getBoolean(HarvesterSettings.JOBGEN_FIXED_CONFIG_COUNT_EXCLUDE_ZERO_BUDGET);
 
     /** Singleton instance. */
     private static DefaultJobGenerator instance;
@@ -119,27 +119,26 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
     }
 
     @Override
-    protected Comparator<DomainConfiguration> getDomainConfigurationSubsetComparator(
-            HarvestDefinition harvest) {
-        return new  CompareConfigsDesc(
-                harvest.getMaxCountObjects(),
-                harvest.getMaxBytes());
+    protected Comparator<DomainConfiguration> getDomainConfigurationSubsetComparator(HarvestDefinition harvest) {
+        return new CompareConfigsDesc(harvest.getMaxCountObjects(), harvest.getMaxBytes());
     }
 
     /**
-     * Create new jobs from a collection of configurations.
-     * All configurations must use the same order.xml file.Jobs
+     * Create new jobs from a collection of configurations. All configurations
+     * must use the same order.xml file.Jobs
      *
-     * @param harvest the {@link HarvestDefinition} being processed.
-     * @param domainConfSubset the configurations to use to create the jobs
+     * @param harvest
+     *            the {@link HarvestDefinition} being processed.
+     * @param domainConfSubset
+     *            the configurations to use to create the jobs
      * @return The number of jobs created
-     * @throws ArgumentNotValid if any of the parameters is null
-     *                          or if the cfglist does not contain any
-     *                          configurations
+     * @throws ArgumentNotValid
+     *             if any of the parameters is null or if the cfglist does not
+     *             contain any configurations
      */
     @Override
     protected int processDomainConfigurationSubset(HarvestDefinition harvest,
-    		Iterator<DomainConfiguration> domainConfSubset) {
+            Iterator<DomainConfiguration> domainConfSubset) {
         int jobsMade = 0;
         Job job = null;
         log.debug("Adding domainconfigs with the same order.xml for harvest #{}", harvest.getOid());
@@ -147,35 +146,35 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
         while (domainConfSubset.hasNext()) {
             DomainConfiguration cfg = domainConfSubset.next();
             if (EXCLUDE_ZERO_BUDGET && (0 == cfg.getMaxBytes() || 0 == cfg.getMaxObjects())) {
-            	log.info("Config '{}' for '{}'" + " excluded (0{})",
-            			cfg.getName(), cfg.getDomainName(), (cfg.getMaxBytes() == 0 ? " bytes" : " objects"));
-            	continue;
+                log.info("Config '{}' for '{}'" + " excluded (0{})", cfg.getName(), cfg.getDomainName(),
+                        (cfg.getMaxBytes() == 0 ? " bytes" : " objects"));
+                continue;
             }
             // Do we need to create a new Job or is the current job ok
             if ((job == null) || (!canAccept(job, cfg))) {
                 if (job != null) {
                     // If we're done with a job, write it out
-                	++jobsMade;
+                    ++jobsMade;
                     dao.create(job);
                 }
                 job = getNewJob(harvest, cfg);
-                log.trace("Created new job for harvest #{} to add configuration {} for domain {}",
-                		harvest.getOid(), cfg.getName(), cfg.getDomainName());
-                
+                log.trace("Created new job for harvest #{} to add configuration {} for domain {}", harvest.getOid(),
+                        cfg.getName(), cfg.getDomainName());
+
             } else {
                 job.addConfiguration(cfg);
-                log.trace("Added job configuration {} for domain {} to current job for harvest #{}",
-                		cfg.getName(), cfg.getDomainName(), harvest.getOid());
+                log.trace("Added job configuration {} for domain {} to current job for harvest #{}", cfg.getName(),
+                        cfg.getDomainName(), harvest.getOid());
             }
         }
         if (job != null) {
-        	++jobsMade;
+            ++jobsMade;
             editJobOrderXml(job);
             dao.create(job);
             if (log.isTraceEnabled()) {
                 log.trace("Generated job: '{}'", job.toString());
                 StringBuilder logMsg = new StringBuilder("Job configurationsDomain:");
-                for(Map.Entry<String, String> config : job.getDomainConfigurationMap().entrySet()) {
+                for (Map.Entry<String, String> config : job.getDomainConfigurationMap().entrySet()) {
                     logMsg.append("\n ").append(config.getKey()).append(":").append(config.getValue());
                 }
                 log.trace(logMsg.toString());
@@ -195,14 +194,14 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
         long forceMaxBytesPerDomain = job.getForceMaxBytesPerDomain();
         if (splitByObjectLimit) {
             if (NumberUtils.compareInf(cfg.getMaxObjects(), forceMaxObjectsPerDomain) < 0
-                || (job.isConfigurationSetsObjectLimit() && NumberUtils.compareInf(
-                                cfg.getMaxObjects(), forceMaxObjectsPerDomain) != 0)) {
+                    || (job.isConfigurationSetsObjectLimit() && NumberUtils.compareInf(cfg.getMaxObjects(),
+                            forceMaxObjectsPerDomain) != 0)) {
                 return false;
             }
         } else {
             if (NumberUtils.compareInf(cfg.getMaxBytes(), forceMaxBytesPerDomain) < 0
-                    || (job.isConfigurationSetsByteLimit() && NumberUtils.compareInf(cfg.getMaxBytes(), 
-                    		forceMaxBytesPerDomain) != 0)) {
+                    || (job.isConfigurationSetsByteLimit() && NumberUtils.compareInf(cfg.getMaxBytes(),
+                            forceMaxBytesPerDomain) != 0)) {
                 return false;
             }
         }

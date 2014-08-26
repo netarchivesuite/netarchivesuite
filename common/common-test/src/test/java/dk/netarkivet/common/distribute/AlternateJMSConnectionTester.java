@@ -20,9 +20,9 @@
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
  * #L%
  */
- package dk.netarkivet.common.distribute;
+package dk.netarkivet.common.distribute;
 
- import java.util.Calendar;
+import java.util.Calendar;
 
 import org.junit.Ignore;
 
@@ -32,7 +32,7 @@ import dk.netarkivet.common.utils.TimeUtils;
 /**
  * Testclass for testing the exceptionhandling in JMSConnection.
  */
-@SuppressWarnings({ "unused", "serial"})
+@SuppressWarnings({ "unused", "serial" })
 @Ignore("Not present in TestSuite")
 public class AlternateJMSConnectionTester {
 
@@ -42,17 +42,17 @@ public class AlternateJMSConnectionTester {
         NetarkivetMessage msg;
         int msgNr = 0;
         while (msgNr < 50) {
-             msg = new TestMessage(Channels.getError(), Channels.getTheRepos(), "testID" + msgNr);
-             System.out.println("Sending message " +  msgNr);
-             con.send(msg);
-             System.out.println("Message " +  msgNr +  " now sent");
-             TimeUtils.exponentialBackoffSleep(1, Calendar.MINUTE);
-             msgNr++;
+            msg = new TestMessage(Channels.getError(), Channels.getTheRepos(), "testID" + msgNr);
+            System.out.println("Sending message " + msgNr);
+            con.send(msg);
+            System.out.println("Message " + msgNr + " now sent");
+            TimeUtils.exponentialBackoffSleep(1, Calendar.MINUTE);
+            msgNr++;
         }
         con.cleanup();
     }
 
-	private static class TestMessage extends NetarkivetMessage {
+    private static class TestMessage extends NetarkivetMessage {
         private String testID;
 
         public TestMessage(ChannelID to, ChannelID replyTo, String testID) {

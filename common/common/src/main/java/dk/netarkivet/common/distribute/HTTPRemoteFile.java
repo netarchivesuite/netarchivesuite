@@ -42,23 +42,23 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
 
 /**
- * A remote file implemented with point-to-point HTTP communication.
- * Optimised to communicate locally, if file is on the same host.
- * Optimised to transfer 0 byte files inline.
+ * A remote file implemented with point-to-point HTTP communication. Optimised
+ * to communicate locally, if file is on the same host. Optimised to transfer 0
+ * byte files inline.
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({ "serial" })
 public class HTTPRemoteFile extends AbstractRemoteFile {
 
     /** The logger for this class. */
     private static final Logger log = LoggerFactory.getLogger(HTTPRemoteFile.class);
 
-	/** The default place in classpath where the settings file can be found. */
+    /** The default place in classpath where the settings file can be found. */
     private static String DEFAULT_SETTINGS_CLASSPATH = "dk/netarkivet/common/distribute/HTTPRemoteFileSettings.xml";
 
     /*
-     * The static initialiser is called when the class is loaded.
-     * It will add default values for all settings defined in this class, by
-     * loading them from a settings.xml file in classpath.
+     * The static initialiser is called when the class is loaded. It will add
+     * default values for all settings defined in this class, by loading them
+     * from a settings.xml file in classpath.
      */
     static {
         Settings.addDefaultClasspathSettings(DEFAULT_SETTINGS_CLASSPATH);
@@ -75,26 +75,34 @@ public class HTTPRemoteFile extends AbstractRemoteFile {
     // purpose! Otherwise, the static initialiser that loads default values
     // will not run.
 
-    /** 
+    /**
      * <b>settings.common.remoteFile.port</b>: <br>
-     * The setting for the HTTP remotefile port number used. */
+     * The setting for the HTTP remotefile port number used.
+     */
     public static String HTTPREMOTEFILE_PORT_NUMBER = "settings.common.remoteFile.port";
 
     /**
      * Initialises a remote file implemented by point-to-point HTTP
      * communication.
-     * @param file The file to make a remote file for
-     * @param useChecksums Whether communications are checksummed. If true,
-     * getChecksum will also return the checksum.
-     * @param fileDeletable if true, the file given to this method is deletable,
-     * once it is transferred.
-     * @param multipleDownloads if true, the file may be transferred more than
-     * once. Otherwise, all file handles are attempted to be made invalid after
-     * the first transfer, although no guarantees are made.
+     * 
+     * @param file
+     *            The file to make a remote file for
+     * @param useChecksums
+     *            Whether communications are checksummed. If true, getChecksum
+     *            will also return the checksum.
+     * @param fileDeletable
+     *            if true, the file given to this method is deletable, once it
+     *            is transferred.
+     * @param multipleDownloads
+     *            if true, the file may be transferred more than once.
+     *            Otherwise, all file handles are attempted to be made invalid
+     *            after the first transfer, although no guarantees are made.
      *
-     * @throws ArgumentNotValid if file is null, or not a readable file.
-     * @throws IOFailure if checksums are requested, but i/o errors occur while
-     * checksumming.
+     * @throws ArgumentNotValid
+     *             if file is null, or not a readable file.
+     * @throws IOFailure
+     *             if checksums are requested, but i/o errors occur while
+     *             checksumming.
      */
     protected HTTPRemoteFile(File file, boolean useChecksums, boolean fileDeletable, boolean multipleDownloads) {
         super(file, useChecksums, fileDeletable, multipleDownloads);
@@ -114,74 +122,88 @@ public class HTTPRemoteFile extends AbstractRemoteFile {
     /**
      * Initialises a remote file implemented by point-to-point HTTP
      * communication.
-     * @param f The file to make a remote file for
-     * @param useChecksums Whether communications are checksummed. If true,
-     * getChecksum will also return the checksum.
-     * @param fileDeletable if true, the file given to this method is deletable,
-     * once it is transferred.
-     * @param multipleDownloads if true, the file may be transferred more than
-     * once. Otherwise, all file handles are attempted to be made invalid after
-     * the first transfer, although no guarantees are made.
-     * @throws ArgumentNotValid if file is null, or not a readable file.
-     * @throws IOFailure if checksums are requested, but i/o errors occur while
-     * checksumming.
+     * 
+     * @param f
+     *            The file to make a remote file for
+     * @param useChecksums
+     *            Whether communications are checksummed. If true, getChecksum
+     *            will also return the checksum.
+     * @param fileDeletable
+     *            if true, the file given to this method is deletable, once it
+     *            is transferred.
+     * @param multipleDownloads
+     *            if true, the file may be transferred more than once.
+     *            Otherwise, all file handles are attempted to be made invalid
+     *            after the first transfer, although no guarantees are made.
+     * @throws ArgumentNotValid
+     *             if file is null, or not a readable file.
+     * @throws IOFailure
+     *             if checksums are requested, but i/o errors occur while
+     *             checksumming.
      */
-    public static RemoteFile getInstance(File f, Boolean useChecksums, Boolean fileDeletable,
-    		Boolean multipleDownloads) {
+    public static RemoteFile getInstance(File f, Boolean useChecksums, Boolean fileDeletable, Boolean multipleDownloads) {
         return new HTTPRemoteFile(f, useChecksums, fileDeletable, multipleDownloads);
     }
 
-    /** Get the webserver registry for this class of files. Meant to be
+    /**
+     * Get the webserver registry for this class of files. Meant to be
      * subclassed for specialised versions of this file.
-     * @return The reigstry. 
+     * 
+     * @return The reigstry.
      */
     protected HTTPRemoteFileRegistry getRegistry() {
         return HTTPRemoteFileRegistry.getInstance();
     }
 
-    /** Copy this remote file to the given file.
-     * If the file resides on the current machine, remote file transfer is done
-     * locally. Otherwise, the remote file is transferred over http.
-     * If the file is not set to be able to be transferred multiple times, it is
-     * cleaned up after the transfer.
-     * @param destFile The file to write the remote file to.
-     * @throws ArgumentNotValid on null destFile, or parent to destfile is not
-     * a writeable directory, or destfile exists and cannot be overwritten.
-     * @throws IOFailure on I/O trouble writing remote file to destination.
+    /**
+     * Copy this remote file to the given file. If the file resides on the
+     * current machine, remote file transfer is done locally. Otherwise, the
+     * remote file is transferred over http. If the file is not set to be able
+     * to be transferred multiple times, it is cleaned up after the transfer.
+     * 
+     * @param destFile
+     *            The file to write the remote file to.
+     * @throws ArgumentNotValid
+     *             on null destFile, or parent to destfile is not a writeable
+     *             directory, or destfile exists and cannot be overwritten.
+     * @throws IOFailure
+     *             on I/O trouble writing remote file to destination.
      */
     public void copyTo(File destFile) {
         ArgumentNotValid.checkNotNull(destFile, "File destFile");
         destFile = destFile.getAbsoluteFile();
         if ((!destFile.isFile() || !destFile.canWrite())
-        		&& (!destFile.getParentFile().isDirectory() || !destFile.getParentFile().canWrite())) {
+                && (!destFile.getParentFile().isDirectory() || !destFile.getParentFile().canWrite())) {
             throw new ArgumentNotValid("Destfile '" + destFile + "' does not point to a writable file for "
-            		+ "remote file '" + file + "'");
+                    + "remote file '" + file + "'");
         }
         if (isLocal() && fileDeletable && !multipleDownloads && !useChecksums) {
             if (file.renameTo(destFile)) {
-                    cleanup();
+                cleanup();
                 return;
             }
-            //if rename fails we fall back to normal usage.
+            // if rename fails we fall back to normal usage.
         }
         super.copyTo(destFile);
     }
 
-    /** Get an input stream representing the remote file.
-     * If the file resides on the current machine, the input stream is to the
-     * local file. Otherwise, the remote file is transferred over http.
-     * The close method of the input stream will cleanup this handle, and if
-     * checksums are requested, will check the checksums on close.
-     * If the file is not set to be able to be transferred multiple times, it is
-     * cleaned up after the transfer.
+    /**
+     * Get an input stream representing the remote file. If the file resides on
+     * the current machine, the input stream is to the local file. Otherwise,
+     * the remote file is transferred over http. The close method of the input
+     * stream will cleanup this handle, and if checksums are requested, will
+     * check the checksums on close. If the file is not set to be able to be
+     * transferred multiple times, it is cleaned up after the transfer.
+     * 
      * @return An input stream for the remote file.
-     * @throws IOFailure on I/O trouble generating inputstream for remote file.
-     * Also, the returned remote file will throw IOFailure on close, if
-     * checksums are requested, but do not match.
+     * @throws IOFailure
+     *             on I/O trouble generating inputstream for remote file. Also,
+     *             the returned remote file will throw IOFailure on close, if
+     *             checksums are requested, but do not match.
      */
     public InputStream getInputStream() {
         if (filesize == 0) {
-            return new ByteArrayInputStream(new byte[]{});
+            return new ByteArrayInputStream(new byte[] {});
         }
         try {
             InputStream is = null;
@@ -189,7 +211,7 @@ public class HTTPRemoteFile extends AbstractRemoteFile {
                 is = new FileInputStream(file);
             } else {
                 URLConnection urlConnection = getRegistry().openConnection(url);
-                //ensure not getting some cached version
+                // ensure not getting some cached version
                 urlConnection.setUseCaches(false);
                 is = urlConnection.getInputStream();
             }
@@ -199,11 +221,11 @@ public class HTTPRemoteFile extends AbstractRemoteFile {
             return new FilterInputStream(is) {
                 public void close() {
                     if (useChecksums) {
-                        String newChecksum = ChecksumCalculator.toHex(
-                        		((DigestInputStream) in).getMessageDigest().digest());
+                        String newChecksum = ChecksumCalculator.toHex(((DigestInputStream) in).getMessageDigest()
+                                .digest());
                         if (!newChecksum.equals(checksum)) {
                             throw new IOFailure("Checksum mismatch! Expected '" + checksum + "' but was '"
-                            		+ newChecksum + "'");
+                                    + newChecksum + "'");
                         }
                     }
                     if (!multipleDownloads) {
@@ -218,9 +240,9 @@ public class HTTPRemoteFile extends AbstractRemoteFile {
 
     /**
      * Invalidate all file handles, by asking the remote registry to remove the
-     * url for this remote file from the list of shared files.
-     * Invalidating a file handle may delete the original files, if deletable.
-     * This method does not throw exceptions, but will warn on errors.
+     * url for this remote file from the list of shared files. Invalidating a
+     * file handle may delete the original files, if deletable. This method does
+     * not throw exceptions, but will warn on errors.
      */
     public void cleanup() {
         if (filesize == 0) {
@@ -236,14 +258,18 @@ public class HTTPRemoteFile extends AbstractRemoteFile {
         }
     }
 
-    /** Get checksum for file, or null if checksums were not requested.
+    /**
+     * Get checksum for file, or null if checksums were not requested.
+     * 
      * @return checksum for file, or null if checksums were not requested.
      */
     public String getChecksum() {
         return checksum;
     }
 
-    /** Helper method to determine if file resides on local machine.
+    /**
+     * Helper method to determine if file resides on local machine.
+     * 
      * @return true if the file is on the local machine, false otherwise.
      */
     protected boolean isLocal() {
@@ -252,13 +278,14 @@ public class HTTPRemoteFile extends AbstractRemoteFile {
 
     /**
      * Retrieval of the number of retries for retrieving a file from a HTTP
-     * server. 
-     * TODO define a setting for HTTP retries, just like for the FTP retries.
+     * server. TODO define a setting for HTTP retries, just like for the FTP
+     * retries.
+     * 
      * @return The number of retries. Currently a constant: 1.
      */
     @Override
     public int getNumberOfRetries() {
-        // TODO make settings for this. 
+        // TODO make settings for this.
         return 1;
     }
 

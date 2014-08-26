@@ -45,8 +45,10 @@ public class DomainOwnerInfo implements Comparable {
     /**
      * Create new instance.
      *
-     * @param d the date the owner information is registered
-     * @param info the owner information
+     * @param d
+     *            the date the owner information is registered
+     * @param info
+     *            the owner information
      */
     public DomainOwnerInfo(Date d, String info) {
         ArgumentNotValid.checkNotNull(d, "d");
@@ -105,7 +107,8 @@ public class DomainOwnerInfo implements Comparable {
     /**
      * Compares two DomainOwnerInfo objects using dates.
      *
-     * @param other is a non-null DomainOwnerInfo.
+     * @param other
+     *            is a non-null DomainOwnerInfo.
      * @throws ClassCastException
      *             if <code>other</code> is not an DomainOwnerInfo object.
      * @see Comparable#compareTo(java.lang.Object)

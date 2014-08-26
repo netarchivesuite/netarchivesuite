@@ -31,7 +31,6 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-
 /**
  * Unit-tests for all Exceptions in this package.
  */
@@ -41,14 +40,12 @@ public class ExceptionsTester {
     private String emptyString;
     private String meaningfullString;
 
-
     @Before
     public void setUp() {
         nullString = null;
         emptyString = "";
         meaningfullString = "This is a meaningful exception";
     }
-
 
     /**
      * Test PermissionDenied exception.
@@ -284,9 +281,10 @@ public class ExceptionsTester {
             assertEquals("rethrown exception", exception.getMessage());
         }
     }
+
     /**
-     * test {@link BatchTermination} constructors.
-     * Note that null arguments are currently allowed!
+     * test {@link BatchTermination} constructors. Note that null arguments are
+     * currently allowed!
      */
     @Test
     public void testBatchTermination() {
@@ -296,7 +294,7 @@ public class ExceptionsTester {
         } catch (Exception e) {
             fail("Null message should not throw an exception");
         }
-        
+
         try {
             new BatchTermination(emptyString);
         } catch (Exception e) {
@@ -304,21 +302,21 @@ public class ExceptionsTester {
         }
         BatchTermination bt = new BatchTermination(errMsg);
         assertEquals(errMsg, bt.getMessage());
-   
+
         bt = new BatchTermination(nullString, null);
         assertEquals(null, bt.getMessage());
         assertEquals(null, bt.getCause());
-        
+
         IOFailure iof = new IOFailure("Some IO error occurred");
-        
+
         bt = new BatchTermination(errMsg, iof);
         assertEquals(errMsg, bt.getMessage());
         assertEquals(iof, bt.getCause());
     }
-    
+
     /**
-     * test {@link HarvestingAbort} constructors.
-     * Note that null arguments are currently allowed!
+     * test {@link HarvestingAbort} constructors. Note that null arguments are
+     * currently allowed!
      */
     @Test
     public void testHarvestingAbort() {
@@ -328,7 +326,7 @@ public class ExceptionsTester {
         } catch (Exception e) {
             fail("Null message should not throw an exception");
         }
-        
+
         try {
             new HarvestingAbort(emptyString);
         } catch (Exception e) {
@@ -336,13 +334,13 @@ public class ExceptionsTester {
         }
         HarvestingAbort bt = new HarvestingAbort(errMsg);
         assertEquals(errMsg, bt.getMessage());
-   
+
         bt = new HarvestingAbort(nullString, null);
         assertEquals(null, bt.getMessage());
         assertEquals(null, bt.getCause());
-        
+
         IOFailure iof = new IOFailure("Some IO error occurred");
-        
+
         bt = new HarvestingAbort(errMsg, iof);
         assertEquals(errMsg, bt.getMessage());
         assertEquals(iof, bt.getCause());

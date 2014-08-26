@@ -72,13 +72,13 @@ import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
- * Integrity tests for the dk.harvester.harvesting.distribute 
- * package. Both tests assume an FTP server is running.
+ * Integrity tests for the dk.harvester.harvesting.distribute package. Both
+ * tests assume an FTP server is running.
  */
 @Ignore("Needs to be run in deploy-test according to junit3 TestSuite")
 public class IntegrityTests extends DataModelTestCase {
 
-	/** The message to write to log when starting the server. */
+    /** The message to write to log when starting the server. */
     private static final String START_MESSAGE = "Starting HarvestControllerServer.";
 
     TestInfo info = new TestInfo();
@@ -90,7 +90,8 @@ public class IntegrityTests extends DataModelTestCase {
     private boolean done = false;
 
     // Out commented to avoid reference to archive module from harvester module.
-    // MockupIndexServer mis = new MockupIndexServer(new File(TestInfo.ORIGINALS_DIR, "2-3-cache.zip"));
+    // MockupIndexServer mis = new MockupIndexServer(new
+    // File(TestInfo.ORIGINALS_DIR, "2-3-cache.zip"));
     ReloadSettings rs = new ReloadSettings();
 
     SecurityManager sm;
@@ -106,22 +107,18 @@ public class IntegrityTests extends DataModelTestCase {
         FileUtils.removeRecursively(TestInfo.SERVER_DIR);
         TestInfo.WORKING_DIR.mkdirs();
         try {
-            TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, 
-                    TestInfo.WORKING_DIR);
+            TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
         } catch (IOFailure e) {
-            fail("Could not copy working-files to: " 
-                    + TestInfo.WORKING_DIR.getAbsolutePath());
+            fail("Could not copy working-files to: " + TestInfo.WORKING_DIR.getAbsolutePath());
         }
 
-//        HarvestDAOUtils.resetDAOs();
-        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR,
-                     TestInfo.WORKING_DIR.getPath()
-                         + "/harvestControllerServerDir");
+        // HarvestDAOUtils.resetDAOs();
+        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR, TestInfo.WORKING_DIR.getPath()
+                + "/harvestControllerServerDir");
 
         /* Do not send notification by email. Print them to STDOUT. */
-        Settings.set(CommonSettings.NOTIFICATIONS_CLASS,
-                RememberNotifications.class.getName());
-        
+        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
+
         hs = HarvestControllerServer.getInstance();
         jobDispatcher = new JobDispatcher(con, HarvestDefinitionDAO.getInstance(), JobDAO.getInstance());
 
@@ -130,37 +127,40 @@ public class IntegrityTests extends DataModelTestCase {
         System.setSecurityManager(new SecurityManager() {
             public void checkPermission(Permission perm) {
                 if (perm.getName().equals("exitVM")) {
-                    throw new SecurityException("Thou shalt not exit in a "
-                                                + "unit test");
+                    throw new SecurityException("Thou shalt not exit in a " + "unit test");
                 }
             }
         });
         // Copy database to working dir: TestInfo.WORKING_DIR
-//        File databaseJarFile = new File(TestInfo.DATA_DIR, "fullhddb.jar");
-//        DatabaseTestUtils.getHDDB(databaseJarFile, "fullhddb",
-//                TestInfo.WORKING_DIR);
-//        HarvestDAOUtils.resetDAOs();
+        // File databaseJarFile = new File(TestInfo.DATA_DIR, "fullhddb.jar");
+        // DatabaseTestUtils.getHDDB(databaseJarFile, "fullhddb",
+        // TestInfo.WORKING_DIR);
+        // HarvestDAOUtils.resetDAOs();
 
-      // Out commented to avoid reference to archive module from harvester module.
-//        mis.setUp();
+        // Out commented to avoid reference to archive module from harvester
+        // module.
+        // mis.setUp();
 
-      // Out commented to avoid reference to archive module from harvester module.
-       // FileUtils.createDir(IndexRequestClient.getInstance(RequestType.DEDUP_CRAWL_LOG).getCacheDir());
-     }
+        // Out commented to avoid reference to archive module from harvester
+        // module.
+        // FileUtils.createDir(IndexRequestClient.getInstance(RequestType.DEDUP_CRAWL_LOG).getCacheDir());
+    }
 
     /**
      * After test is done close test-objects.
+     * 
      * @throws Exception
      */
     @After
     public void tearDown() throws Exception {
         super.tearDown();
-        //Reset index request client listener
-      // Out commented to avoid reference to archive module from harvester module.
-//        Field field = ReflectUtils.getPrivateField(IndexRequestClient.class,
-//                                                   "synchronizer");
-//        field.set(null, null);
-//        mis.tearDown();
+        // Reset index request client listener
+        // Out commented to avoid reference to archive module from harvester
+        // module.
+        // Field field = ReflectUtils.getPrivateField(IndexRequestClient.class,
+        // "synchronizer");
+        // field.set(null, null);
+        // mis.tearDown();
         if (hs != null) {
             hs.close();
         }
@@ -170,60 +170,57 @@ public class IntegrityTests extends DataModelTestCase {
         HarvestDAOUtils.resetDAOs();
         System.setSecurityManager(sm);
         rs.tearDown();
-   }
+    }
 
-    //This test tests that the HACO does not block (Bug 221).
-    //It runs in the following steps:
-    //1) A Haco is started, and it is checked it listens
-    //2) A listener as added to the ArcRepos queue
-    //3) A crawl job is started on the HACO
-    //4) Sleeps until ArcRepos gets a store message, indicating doOneCrawl runs
-    //5) Before replying, checks that no one listens to the haco queue
-    //6) A listener listens to TheSched
-    //7) The reply to the store is sent
-    //8) Waits for message on the sched, indicating doOneCrawl ended
-    //9) Checks that we listen for jobs again
+    // This test tests that the HACO does not block (Bug 221).
+    // It runs in the following steps:
+    // 1) A Haco is started, and it is checked it listens
+    // 2) A listener as added to the ArcRepos queue
+    // 3) A crawl job is started on the HACO
+    // 4) Sleeps until ArcRepos gets a store message, indicating doOneCrawl runs
+    // 5) Before replying, checks that no one listens to the haco queue
+    // 6) A listener listens to TheSched
+    // 7) The reply to the store is sent
+    // 8) Waits for message on the sched, indicating doOneCrawl ended
+    // 9) Checks that we listen for jobs again
     @Test
     @Ignore("The HACO should listen before job expected")
     public void testListenersAddedAndRemoved() throws IOException {
-        ChannelID hacoQueue = HarvesterChannels.getHarvestJobChannelId(
-                new HarvestChannel("test", false, true, ""));
+        ChannelID hacoQueue = HarvesterChannels.getHarvestJobChannelId(new HarvestChannel("test", false, true, ""));
 
-        //Listener that waits for a message, notifies us, and then waits for
-        //notification before continuing.
-        //Used as arcrepository and scheduler
+        // Listener that waits for a message, notifies us, and then waits for
+        // notification before continuing.
+        // Used as arcrepository and scheduler
         MessageListener listenerDummy = new MessageListener() {
             public void onMessage(Message message) {
                 NetarkivetMessage nMsg = JMSConnection.unpack(message);
-                //wake people up when we get message
-                synchronized(this) {
+                // wake people up when we get message
+                synchronized (this) {
                     done = true;
                     notifyAll();
-                    //then wait
+                    // then wait
                     try {
-                        while(done) {
-                                wait();
+                        while (done) {
+                            wait();
                         }
                     } catch (InterruptedException e) {
                         fail("Interrupted!!");
                     }
                 }
-                //reply when waken
+                // reply when waken
                 con.reply(nMsg);
             }
         };
 
-        //Be ready to receive store messages, and block.
+        // Be ready to receive store messages, and block.
         con.setListener(Channels.getTheRepos(), listenerDummy);
         done = false;
 
-        //Sanity test: Make sure we listen at the start
-        List<MessageListener> listeners =
-                ((JMSConnectionMockupMQ) con).getListeners(hacoQueue);
-        assertEquals("The HACO should listen before job",
-                     1, listeners.size());
+        // Sanity test: Make sure we listen at the start
+        List<MessageListener> listeners = ((JMSConnectionMockupMQ) con).getListeners(hacoQueue);
+        assertEquals("The HACO should listen before job", 1, listeners.size());
 
-        //Prepare job
+        // Prepare job
         Job j = TestInfo.getJob();
         JobDAO.getInstance().create(j);
         j.setStatus(JobStatus.SUBMITTED);
@@ -231,33 +228,32 @@ public class IntegrityTests extends DataModelTestCase {
         // Okay, ready to roll!
         // We send the job, and wait for the uploads now. We expect two files
         // to be uploaded.
-        synchronized(listenerDummy) {
-            //Send the job
-            jobDispatcher.doOneCrawl(j, "test", "test", "test",
-                    new HarvestChannel("test", false, true, ""),
-                    "unittesters",
-                    new ArrayList<MetadataEntry>());
+        synchronized (listenerDummy) {
+            // Send the job
+            jobDispatcher.doOneCrawl(j, "test", "test", "test", new HarvestChannel("test", false, true, ""),
+                    "unittesters", new ArrayList<MetadataEntry>());
 
-            //wait until we know files are uploaded
+            // wait until we know files are uploaded
             while (!done) {
                 try {
-                    //Wait until first store message is received
+                    // Wait until first store message is received
                     listenerDummy.wait();
                 } catch (InterruptedException e) {
                     fail("interrupted");
                 }
             }
-            //Figure out how many more files to wait for.
-            int nooffiles = new File(new File(TestInfo.WORKING_DIR, "harvestControllerServerDir").listFiles()[0], "arcs").listFiles().length; 
+            // Figure out how many more files to wait for.
+            int nooffiles = new File(new File(TestInfo.WORKING_DIR, "harvestControllerServerDir").listFiles()[0],
+                    "arcs").listFiles().length;
 
             for (int i = 0; i < nooffiles; i++) {
-                //Wake up listener to reply to first store message
+                // Wake up listener to reply to first store message
                 done = false;
                 listenerDummy.notifyAll();
 
                 while (!done) {
                     try {
-                        //Wait until next store message is received
+                        // Wait until next store message is received
                         listenerDummy.wait();
                     } catch (InterruptedException e) {
                         fail("interrupted");
@@ -266,22 +262,21 @@ public class IntegrityTests extends DataModelTestCase {
             }
         }
 
-        //done listening for store replies
+        // done listening for store replies
         con.removeListener(Channels.getTheRepos(), listenerDummy);
-        //now listen for crawl ended
+        // now listen for crawl ended
         con.setListener(Channels.getTheSched(), listenerDummy);
 
         // At this point we know we are during the upload process, because we
         // have blocked the process while waiting for upload replies. At that
         // point we should not yet have re-added the listener.
 
-        //Check listener is not there anymore
+        // Check listener is not there anymore
         listeners = ((JMSConnectionMockupMQ) con).getListeners(hacoQueue);
-        assertEquals("Noone should listen to the HACO queue",
-                     0, listeners.size());
+        assertEquals("Noone should listen to the HACO queue", 0, listeners.size());
 
-        //wake listener to send the store reply. Then wait for the scheduler to
-        //receive the crawl done message.
+        // wake listener to send the store reply. Then wait for the scheduler to
+        // receive the crawl done message.
         synchronized (listenerDummy) {
             // Wake listener, so it replies to the second store message
             done = false;
@@ -296,21 +291,20 @@ public class IntegrityTests extends DataModelTestCase {
             }
         }
 
-        //Wait a little for the listener to be readded.
+        // Wait a little for the listener to be readded.
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
-            //Nevermind
+            // Nevermind
         }
 
-        //Check HACO listener is back
+        // Check HACO listener is back
         listeners = ((JMSConnectionMockupMQ) con).getListeners(hacoQueue);
-        assertEquals("The HACO should listen again",
-                     1, listeners.size());
+        assertEquals("The HACO should listen again", 1, listeners.size());
 
-        //wake listener to let it die
+        // wake listener to let it die
         done = false;
-        synchronized(listenerDummy) {
+        synchronized (listenerDummy) {
             listenerDummy.notifyAll();
         }
     }
@@ -319,22 +313,23 @@ public class IntegrityTests extends DataModelTestCase {
      * Checks that we can submit a crawl job, receive the expected
      * CrawlStatusMessages from a HarvestControllerServer, and that the
      * resulting crawl log is available and contains the expected data.
+     * 
      * @throws IOException
      * @throws InterruptedException
      */
     @Test
     @Ignore("Unable to locate element in order.xml")
     public void testCrawlJob() throws IOException, InterruptedException {
-    	LogbackRecorder lr = LogbackRecorder.startRecorder();
+        LogbackRecorder lr = LogbackRecorder.startRecorder();
 
-    	// make a dummy job
+        // make a dummy job
         Job j = TestInfo.getJob();
         assertTrue("The order.xml for the job must have content!", j.getOrderXMLdoc().hasContent());
 
         JobDAO.getInstance().create(j);
         j.setStatus(JobStatus.SUBMITTED);
 
-        //A dummy arcrepository that just replies
+        // A dummy arcrepository that just replies
         MessageListener arcrepDummy = new MessageListener() {
             public void onMessage(Message message) {
                 NetarkivetMessage nMsg = JMSConnection.unpack(message);
@@ -343,18 +338,17 @@ public class IntegrityTests extends DataModelTestCase {
         };
         con.setListener(Channels.getTheRepos(), arcrepDummy);
 
-
         // Use a test listener to make sure that all the expected messages
         // are received in sequence
         CrawlStatusMessageListener listener = new CrawlStatusMessageListener();
         con.setListener(Channels.getTheSched(), listener);
-        //Submit the job
-        //TODO ensure, that we have some alias-metadata to produce here
+        // Submit the job
+        // TODO ensure, that we have some alias-metadata to produce here
         List<MetadataEntry> metadata = new ArrayList<MetadataEntry>();
-        jobDispatcher.doOneCrawl(j, "test", "test", "test", 
-        		new HarvestChannel("test", false, true, ""), "unittesters", metadata);
-        //Note: Since this returns, we need to wait for replymessage
-        synchronized(listener) {
+        jobDispatcher.doOneCrawl(j, "test", "test", "test", new HarvestChannel("test", false, true, ""), "unittesters",
+                metadata);
+        // Note: Since this returns, we need to wait for replymessage
+        synchronized (listener) {
             while (listener.messages.size() < 2) {
                 listener.wait();
             }
@@ -368,22 +362,17 @@ public class IntegrityTests extends DataModelTestCase {
         // should have received two messages - one with status started and one
         // one with status done
         //
-        assertEquals("Should have received two messages", 2,
-                listener.status_codes.size());
-        assertEquals("First message should be STATUS_STARTED",
-                JobStatus.STARTED, listener.status_codes.get(0));
-        assertEquals("Second message should be STATUS_DONE"
-                + listener.messages.get(1).getHarvestErrorDetails(),
+        assertEquals("Should have received two messages", 2, listener.status_codes.size());
+        assertEquals("First message should be STATUS_STARTED", JobStatus.STARTED, listener.status_codes.get(0));
+        assertEquals("Second message should be STATUS_DONE" + listener.messages.get(1).getHarvestErrorDetails(),
                 JobStatus.DONE, listener.status_codes.get(1));
         //
         // Check that JobIDs are correct
         //
-        assertEquals("JobIDs do not match for first message:",
-                     j.getJobID().longValue(),
-                     (listener.jobids.get(0)).longValue());
-        assertEquals("JobIDs do not match for second message:",
-                     j.getJobID().longValue(),
-                     (listener.jobids.get(1)).longValue());
+        assertEquals("JobIDs do not match for first message:", j.getJobID().longValue(),
+                (listener.jobids.get(0)).longValue());
+        assertEquals("JobIDs do not match for second message:", j.getJobID().longValue(),
+                (listener.jobids.get(1)).longValue());
         //
         // Get the crawl log
         //

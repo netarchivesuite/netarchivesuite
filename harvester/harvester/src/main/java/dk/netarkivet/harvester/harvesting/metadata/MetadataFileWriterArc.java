@@ -43,12 +43,17 @@ public class MetadataFileWriterArc extends MetadataFileWriter {
 
     private static final Logger log = LoggerFactory.getLogger(MetadataFileWriterArc.class);
 
-    /** Writer to this jobs metadatafile. This is closed when the metadata is marked as ready. */
+    /**
+     * Writer to this jobs metadatafile. This is closed when the metadata is
+     * marked as ready.
+     */
     private ARCWriter writer = null;
 
     /**
      * Create a <code>MetadataFileWriter</code> for ARC output.
-     * @param metadataARCFile The metadata ARC <code>File</code>
+     * 
+     * @param metadataARCFile
+     *            The metadata ARC <code>File</code>
      * @return <code>MetadataFileWriter</code> for writing metadata files in ARC
      */
     public static MetadataFileWriter createWriter(File metadataARCFile) {
@@ -79,14 +84,19 @@ public class MetadataFileWriterArc extends MetadataFileWriter {
         ARCUtils.writeFileToARC(writer, file, uri, mime);
     }
 
-    /** Writes a File to an ARCWriter, if available,
-     * otherwise logs the failure to the class-logger.
-     * @param fileToArchive the File to archive
-     * @param URL the URL with which it is stored in the arcfile
-     * @param mimetype The mimetype of the File-contents
+    /**
+     * Writes a File to an ARCWriter, if available, otherwise logs the failure
+     * to the class-logger.
+     * 
+     * @param fileToArchive
+     *            the File to archive
+     * @param URL
+     *            the URL with which it is stored in the arcfile
+     * @param mimetype
+     *            The mimetype of the File-contents
      * @return true, if file exists, and is written to the arcfile.
      *
-     * TODO I wonder if this is a clone of the ARCUtils method. (nicl)
+     *         TODO I wonder if this is a clone of the ARCUtils method. (nicl)
      */
     @Override
     public boolean writeTo(File fileToArchive, String URL, String mimetype) {
@@ -108,7 +118,7 @@ public class MetadataFileWriterArc extends MetadataFileWriter {
     /* Copied from the ARCWriter. */
     @Override
     public void write(String uri, String contentType, String hostIP, long fetchBeginTimeStamp, byte[] payload)
-    		throws IOException {
+            throws IOException {
         ByteArrayInputStream in = new ByteArrayInputStream(payload);
         writer.write(uri, contentType, hostIP, fetchBeginTimeStamp, payload.length, in);
     }

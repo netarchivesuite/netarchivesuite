@@ -49,28 +49,22 @@ public class UseTestRemoteFile implements TestConfigurationIF {
             Settings.set(HTTPRemoteFile.HTTPREMOTEFILE_PORT_NUMBER, Integer.toString(5442));
         }
         try {
-            Settings.set(HTTPSRemoteFile.HTTPSREMOTEFILE_KEYSTORE_FILE, 
-                    new File(dk.netarkivet.common.distribute.TestInfo.ORIGINALS_DIR, 
-                            "testkeystore").getPath());
+            Settings.set(HTTPSRemoteFile.HTTPSREMOTEFILE_KEYSTORE_FILE, new File(
+                    dk.netarkivet.common.distribute.TestInfo.ORIGINALS_DIR, "testkeystore").getPath());
         } catch (ArgumentNotValid e) {
-            Settings.set(HTTPSRemoteFile.HTTPSREMOTEFILE_KEYSTORE_FILE,
-                    new File(dk.netarkivet.common.distribute.TestInfo.ORIGINALS_DIR, 
-                            "testkeystore").getPath());
+            Settings.set(HTTPSRemoteFile.HTTPSREMOTEFILE_KEYSTORE_FILE, new File(
+                    dk.netarkivet.common.distribute.TestInfo.ORIGINALS_DIR, "testkeystore").getPath());
         }
         try {
-            Settings.set(HTTPSRemoteFile.HTTPSREMOTEFILE_KEYSTORE_PASSWORD,
-                         "testpass");
+            Settings.set(HTTPSRemoteFile.HTTPSREMOTEFILE_KEYSTORE_PASSWORD, "testpass");
         } catch (ArgumentNotValid e) {
-            Settings.set(HTTPSRemoteFile.HTTPSREMOTEFILE_KEYSTORE_PASSWORD,
-                         "testpass");
+            Settings.set(HTTPSRemoteFile.HTTPSREMOTEFILE_KEYSTORE_PASSWORD, "testpass");
         }
 
         try {
-            Settings.set(HTTPSRemoteFile.HTTPSREMOTEFILE_KEY_PASSWORD,
-                         "testpass2");
+            Settings.set(HTTPSRemoteFile.HTTPSREMOTEFILE_KEY_PASSWORD, "testpass2");
         } catch (ArgumentNotValid e) {
-            Settings.set(HTTPSRemoteFile.HTTPSREMOTEFILE_KEY_PASSWORD,
-                         "testpass2");
+            Settings.set(HTTPSRemoteFile.HTTPSREMOTEFILE_KEY_PASSWORD, "testpass2");
         }
     }
 

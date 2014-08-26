@@ -30,13 +30,17 @@ import java.io.InputStream;
  * This class provides various utilities for inputstreams.
  */
 public class InputStreamUtils {
-    
-    /** Read a line of bytes from an InputStream.  Useful when an InputStream
-     * may contain both text and binary data.
-     * @param inputStream A source of data
-     * @return A line of text read from inputStream, with terminating
-     * \r\n or \n removed, or null if no data is available.
-     * @throws IOException on trouble reading from input stream
+
+    /**
+     * Read a line of bytes from an InputStream. Useful when an InputStream may
+     * contain both text and binary data.
+     * 
+     * @param inputStream
+     *            A source of data
+     * @return A line of text read from inputStream, with terminating \r\n or \n
+     *         removed, or null if no data is available.
+     * @throws IOException
+     *             on trouble reading from input stream
      */
     public static String readLine(InputStream inputStream) throws IOException {
         byte[] rawdata = readRawLine(inputStream);
@@ -46,10 +50,10 @@ public class InputStreamUtils {
         int len = rawdata.length;
         if (len > 0) {
             if (rawdata[len - 1] == '\n') {
-            	--len;
+                --len;
                 if (len > 0) {
                     if (rawdata[len - 1] == '\r') {
-                    	--len;
+                        --len;
                     }
                 }
             }
@@ -57,16 +61,18 @@ public class InputStreamUtils {
         return new String(rawdata, 0, len);
     }
 
-    /** Reads a raw line from an InputStream, up till \n.
-     * Since HTTP allows \r\n and \n as terminators, this gets the whole line.
-     * This code is adapted from org.apache.commons.httpclient.HttpParser
+    /**
+     * Reads a raw line from an InputStream, up till \n. Since HTTP allows \r\n
+     * and \n as terminators, this gets the whole line. This code is adapted
+     * from org.apache.commons.httpclient.HttpParser
      *
-     * @param inputStream A stream to read from.
+     * @param inputStream
+     *            A stream to read from.
      * @return Array of bytes read or null if none are available.
-     * @throws IOException if the underlying reads fail
+     * @throws IOException
+     *             if the underlying reads fail
      */
-    public  static byte[] readRawLine(InputStream inputStream)
-        throws IOException {
+    public static byte[] readRawLine(InputStream inputStream) throws IOException {
         ByteArrayOutputStream buf = new ByteArrayOutputStream();
         int ch;
         while ((ch = inputStream.read()) >= 0) {

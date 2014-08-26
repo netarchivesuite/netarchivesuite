@@ -30,6 +30,7 @@ import java.io.File;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
 /**
  * Verifies that the <code>IndexAggregator</code> class is able to aggregate CDX
  * index files correctly in larger files, and sort the index entries
@@ -52,7 +53,7 @@ public class IndexAggregatorTest extends AggregatorTestCase {
 
     @Test
     public void testAggregation() {
-        File[] inputFiles = prepareSourceIndex(new String[] {inputFile1Name, inputFile2Name});
+        File[] inputFiles = prepareSourceIndex(new String[] { inputFile1Name, inputFile2Name });
         TestIndex testIndex = new TestIndex();
 
         testIndex.addIndexesFromFiles(inputFiles);
@@ -60,7 +61,7 @@ public class IndexAggregatorTest extends AggregatorTestCase {
         aggregator.sortAndMergeFiles(inputFiles, AggregationWorker.TEMP_FILE_INDEX);
 
         String compareResult = testIndex.compareToIndex(AggregationWorker.TEMP_FILE_INDEX);
-        assertNull("Unexpected content of aggregated index: "+compareResult, compareResult);          
+        assertNull("Unexpected content of aggregated index: " + compareResult, compareResult);
     }
 
     /**
@@ -76,20 +77,21 @@ public class IndexAggregatorTest extends AggregatorTestCase {
 
         aggregator.sortAndMergeFiles(inputFiles, AggregationWorker.TEMP_FILE_INDEX);
 
-        assertTrue ("temp index file found after agrregation with no new source index files",
-                    !AggregationWorker.TEMP_FILE_INDEX.exists());
+        assertTrue("temp index file found after agrregation with no new source index files",
+                !AggregationWorker.TEMP_FILE_INDEX.exists());
     }
 
     @Test
     public void testAggregationSingleFile() {
-        File[] inputFiles = prepareSourceIndex(new String[] {inputFile1Name});
+        File[] inputFiles = prepareSourceIndex(new String[] { inputFile1Name });
         TestIndex testIndex = new TestIndex();
 
         testIndex.addIndexesFromFiles(inputFiles);
 
         aggregator.sortAndMergeFiles(inputFiles, AggregationWorker.TEMP_FILE_INDEX);
 
-        assertNull("Unexpected content of aggregated index single file", testIndex.compareToIndex(AggregationWorker.TEMP_FILE_INDEX));
+        assertNull("Unexpected content of aggregated index single file",
+                testIndex.compareToIndex(AggregationWorker.TEMP_FILE_INDEX));
     }
 
     @Test
@@ -97,8 +99,8 @@ public class IndexAggregatorTest extends AggregatorTestCase {
         File[] inputFiles1 = prepareSourceIndex(new String[] { inputFile1Name });
         File[] inputFiles2 = prepareSourceIndex(new String[] { inputFile2Name });
 
-        File tempFile1 = new File(testWorkingDirectory,"tempFile1");
-        File tempFile2 = new File(testWorkingDirectory,"tempFile2");
+        File tempFile1 = new File(testWorkingDirectory, "tempFile1");
+        File tempFile2 = new File(testWorkingDirectory, "tempFile2");
 
         aggregator.sortAndMergeFiles(inputFiles1, tempFile1);
         aggregator.sortAndMergeFiles(inputFiles2, tempFile2);
@@ -107,8 +109,9 @@ public class IndexAggregatorTest extends AggregatorTestCase {
         testIndex.addIndexesFromFiles(inputFiles1);
         testIndex.addIndexesFromFiles(inputFiles2);
 
-        aggregator.mergeFiles(new File[] {tempFile1, tempFile2}, AggregationWorker.INTERMEDIATE_INDEX_FILE);
+        aggregator.mergeFiles(new File[] { tempFile1, tempFile2 }, AggregationWorker.INTERMEDIATE_INDEX_FILE);
 
-        assertNull("Unexpected content of merged index", testIndex.compareToIndex(AggregationWorker.INTERMEDIATE_INDEX_FILE));
+        assertNull("Unexpected content of merged index",
+                testIndex.compareToIndex(AggregationWorker.INTERMEDIATE_INDEX_FILE));
     }
 }

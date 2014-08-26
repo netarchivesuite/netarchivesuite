@@ -63,9 +63,9 @@ public class CachingLogHandlerTester extends TestCase {
 
     public void setUp() {
         rs.setUp();
-        //Get the MBean server
+        // Get the MBean server
         mBeanServer = ManagementFactory.getPlatformMBeanServer();
-        //Set Settings to what we expect
+        // Set Settings to what we expect
         Settings.set(CommonSettings.THIS_PHYSICAL_LOCATION, "physLocationOne");
         Settings.set(CommonSettings.APPLICATION_NAME, "TestApp1");
         Settings.set(MonitorSettings.LOGGING_HISTORY_SIZE, Integer.toString(LOG_HISTORY_SIZE));
@@ -84,15 +84,13 @@ public class CachingLogHandlerTester extends TestCase {
     /**
      * Test that the constructor exposes N MBeans, and each can be connected to
      * and returns the empty string. It is tested that the names of the objects
-     * are generated from: "location" = 
-     * Settings.get(CommonSettings.ENVIRONMENT_THIS_PHYSICAL_LOCATION)
-     * "machine" = InetAddress.getLocalHost().getCanonicalHostName() 
-     * "httpport" = Settings.get(CommonSettings.HTTP_PORT_NUMBER) 
-     * "applicationname" = Settings.get(CommonSettings.APPLICATION_NAME) 
-     * "applicationinstid" =
-     * Settings.get(CommonSettings.APPLICATIONINSTANCE_ID) 
-     * "index" = (index in the cache; 0
-     * is always the most recent log record)
+     * are generated from: "location" =
+     * Settings.get(CommonSettings.ENVIRONMENT_THIS_PHYSICAL_LOCATION) "machine"
+     * = InetAddress.getLocalHost().getCanonicalHostName() "httpport" =
+     * Settings.get(CommonSettings.HTTP_PORT_NUMBER) "applicationname" =
+     * Settings.get(CommonSettings.APPLICATION_NAME) "applicationinstid" =
+     * Settings.get(CommonSettings.APPLICATIONINSTANCE_ID) "index" = (index in
+     * the cache; 0 is always the most recent log record)
      *
      * It is also tested that no MBeans were registered before this call.
      *
@@ -100,51 +98,43 @@ public class CachingLogHandlerTester extends TestCase {
      */
     public void testCachingLogHandler() throws Exception {
 
-        //Check no mbeans of this type before
+        // Check no mbeans of this type before
         int before = mBeanServer.getMBeanCount();
         ObjectName name = getObjectName(-1);
-        assertEquals("Should have 0 mbeans matching object name",
-                     0, mBeanServer.queryNames(name, null).size());
+        assertEquals("Should have 0 mbeans matching object name", 0, mBeanServer.queryNames(name, null).size());
 
-        //Call constructor
+        // Call constructor
         cachingLogHandler = new CachingLogHandler();
 
-        //Check all mbeans are registered
+        // Check all mbeans are registered
         int after = mBeanServer.getMBeanCount();
-        assertEquals(LOG_HISTORY_SIZE + " new MBeans should be registered.",
-                     LOG_HISTORY_SIZE, after - before);
+        assertEquals(LOG_HISTORY_SIZE + " new MBeans should be registered.", LOG_HISTORY_SIZE, after - before);
 
-        //Check 42 mbeans of this type
-        assertEquals("Should have " + LOG_HISTORY_SIZE
-                    + " mbeans matching object name '" + name + "'",
-                     LOG_HISTORY_SIZE,
-                     mBeanServer.queryNames(name, null).size());
+        // Check 42 mbeans of this type
+        assertEquals("Should have " + LOG_HISTORY_SIZE + " mbeans matching object name '" + name + "'",
+                LOG_HISTORY_SIZE, mBeanServer.queryNames(name, null).size());
 
-        //Check two interesting mbeans: The first and the last.
+        // Check two interesting mbeans: The first and the last.
         ObjectInstance mbean = getObjectInstance(mBeanServer, 0);
         assertTrue("Must be of the right type",
-                   SingleLogRecord.class.isAssignableFrom(
-                           Class.forName(mbean.getClassName())));
+                SingleLogRecord.class.isAssignableFrom(Class.forName(mbean.getClassName())));
 
         mbean = getObjectInstance(mBeanServer, LOG_HISTORY_SIZE - 1);
         assertTrue("Must be of the right type",
-                   SingleLogRecord.class.isAssignableFrom(
-                           Class.forName(mbean.getClassName())));
+                SingleLogRecord.class.isAssignableFrom(Class.forName(mbean.getClassName())));
 
-        //Check that there are no more.
+        // Check that there are no more.
         try {
             getObjectInstance(mBeanServer, LOG_HISTORY_SIZE);
             fail("There should be no instance number " + LOG_HISTORY_SIZE);
         } catch (InstanceNotFoundException e) {
-            //Expected
+            // Expected
         }
 
-        //Check they all return the empty string
+        // Check they all return the empty string
         for (int i = 0; i < LOG_HISTORY_SIZE; i++) {
-            String logRecordI
-                    = getLogRecordAtIndex(i, mBeanServer);
-            assertEquals("Should have empty content",
-                         "", logRecordI);
+            String logRecordI = getLogRecordAtIndex(i, mBeanServer);
+            assertEquals("Should have empty content", "", logRecordI);
         }
     }
 
@@ -163,7 +153,7 @@ public class CachingLogHandlerTester extends TestCase {
 
         String logRecord0 = getLogRecordAtIndex(0, mBeanServer);
         String logRecord1 = getLogRecordAtIndex(1, mBeanServer);
-        assertEquals("Should have no log record yet","", logRecord0);
+        assertEquals("Should have no log record yet", "", logRecord0);
 
         cachingLogHandler.publish(generateLogRecord(Level.WARNING, 1));
         logRecord0 = getLogRecordAtIndex(0, mBeanServer);
@@ -181,15 +171,15 @@ public class CachingLogHandlerTester extends TestCase {
         assertLogRecordLogged(logRecord0, 2, "INFO");
         assertLogRecordLogged(logRecord1, 1, "WARNING");
 
-        //Publish 42 log records, with numbers from 42 to 83
+        // Publish 42 log records, with numbers from 42 to 83
         for (int i = LOG_HISTORY_SIZE; i < 2 * LOG_HISTORY_SIZE; i++) {
             cachingLogHandler.publish(generateLogRecord(Level.FINE, i));
         }
 
-        //Check all 42 MBeans
+        // Check all 42 MBeans
         for (int i = 0; i < LOG_HISTORY_SIZE; i++) {
             String logRecordI = getLogRecordAtIndex(i, mBeanServer);
-            //Check content (starting at 83 going down to 42)
+            // Check content (starting at 83 going down to 42)
             assertLogRecordLogged(logRecordI, 2 * LOG_HISTORY_SIZE - 1 - i, "FINE");
         }
     }
@@ -198,29 +188,24 @@ public class CachingLogHandlerTester extends TestCase {
         LogRecord record1 = generateLogRecord(Level.WARNING, 1);
         LogRecord record2 = generateLogRecord(Level.INFO, 2);
         cachingLogHandler = new CachingLogHandler();
-        cachingLogHandler.publish(
-                record1);
-        cachingLogHandler.publish(
-                record2);
-        assertEquals("Should have last record as record 0 from top",
-                     record2, cachingLogHandler.getNthLogRecord(0));
-        assertEquals("Should have first record as record 1 from top",
-                     record1, cachingLogHandler.getNthLogRecord(1));
-        assertNull("Should have null as record 2 from top",
-                   cachingLogHandler.getNthLogRecord(2));
+        cachingLogHandler.publish(record1);
+        cachingLogHandler.publish(record2);
+        assertEquals("Should have last record as record 0 from top", record2, cachingLogHandler.getNthLogRecord(0));
+        assertEquals("Should have first record as record 1 from top", record1, cachingLogHandler.getNthLogRecord(1));
+        assertNull("Should have null as record 2 from top", cachingLogHandler.getNthLogRecord(2));
 
         try {
             cachingLogHandler.getNthLogRecord(-1);
             fail("Should throw ArgumentNotValid on negative");
-        } catch(ArgumentNotValid e) {
-            //expected
+        } catch (ArgumentNotValid e) {
+            // expected
         }
 
         try {
             cachingLogHandler.getNthLogRecord(LOG_HISTORY_SIZE);
             fail("Should throw ArgumentNotValid on too large number");
-        } catch(ArgumentNotValid e) {
-            //expected
+        } catch (ArgumentNotValid e) {
+            // expected
         }
     }
 
@@ -240,8 +225,10 @@ public class CachingLogHandlerTester extends TestCase {
      * at level <<level>>.
      *
      * @param logRecord
-     * @param number    The number in the log record message.
-     * @param level     The logging level of the log record.
+     * @param number
+     *            The number in the log record message.
+     * @param level
+     *            The logging level of the log record.
      */
     private static void assertLogRecordLogged(String logRecord, int number, String level) {
         StringAsserts.assertStringContains("Should contain the log message", generateLogMessage(number), logRecord);
@@ -255,35 +242,30 @@ public class CachingLogHandlerTester extends TestCase {
      * @throws Exception
      */
     public void testClose() throws Exception {
-        //Check no mbeans of this type before
+        // Check no mbeans of this type before
         int before = mBeanServer.getMBeanCount();
         ObjectName name = getObjectName(-1);
-        assertEquals("Should have 0 mbeans matching object name",
-                     0, mBeanServer.queryMBeans(name, null).size());
+        assertEquals("Should have 0 mbeans matching object name", 0, mBeanServer.queryMBeans(name, null).size());
 
-        //Call constructor
+        // Call constructor
         cachingLogHandler = new CachingLogHandler();
 
-        //Check all mbeans are registered
+        // Check all mbeans are registered
         int after = mBeanServer.getMBeanCount();
-        assertEquals("42 new MBeans should be registered.",
-                     LOG_HISTORY_SIZE, after - before);
+        assertEquals("42 new MBeans should be registered.", LOG_HISTORY_SIZE, after - before);
 
-        //Check 42 mbeans of this type
-        assertEquals("Should have 42 mbeans matching object name",
-                     LOG_HISTORY_SIZE,
-                     mBeanServer.queryMBeans(name, null).size());
+        // Check 42 mbeans of this type
+        assertEquals("Should have 42 mbeans matching object name", LOG_HISTORY_SIZE, mBeanServer
+                .queryMBeans(name, null).size());
 
         cachingLogHandler.close();
 
-        //Check all mbeans are unregistered
+        // Check all mbeans are unregistered
         int afterClose = mBeanServer.getMBeanCount();
-        assertEquals("0 MBeans should be registered.",
-                     0, afterClose - before);
+        assertEquals("0 MBeans should be registered.", 0, afterClose - before);
 
-        //Check no mbeans of this type
-        assertEquals("Should have 0 mbeans matching object name",
-                     0, mBeanServer.queryMBeans(name, null).size());
+        // Check no mbeans of this type
+        assertEquals("Should have 0 mbeans matching object name", 0, mBeanServer.queryMBeans(name, null).size());
     }
 
     /**
@@ -296,43 +278,35 @@ public class CachingLogHandlerTester extends TestCase {
     /**
      * Name a JMX object name as expected by our CachingLogRecordMBean.
      *
-     * @param index The index attribute - may be null, for all
+     * @param index
+     *            The index attribute - may be null, for all
      * @return An ObjectName.
      * @throws MalformedObjectNameException
      */
-    private static ObjectName getObjectName(int index) throws
-                                                       MalformedObjectNameException {
-        return new ObjectName("dk.netarkivet.common.logging:"
-                              + Constants.PRIORITY_KEY_LOCATION + "="
-                              + Settings.get(
-                                      CommonSettings.THIS_PHYSICAL_LOCATION)
-                              + "," +  Constants.PRIORITY_KEY_MACHINE + "=" 
-                              + SystemUtils.getLocalHostName() + ","
-                              + Constants.PRIORITY_KEY_HTTP_PORT + "="
-                              + Settings.get(CommonSettings.HTTP_PORT_NUMBER)
-                              + "," + Constants.PRIORITY_KEY_REPLICANAME + "=BarOne,"
-                              + Constants.PRIORITY_KEY_CHANNEL + "=FOCUSED"
-                              + "," + Constants.PRIORITY_KEY_APPLICATIONNAME + "="
-                              + Settings.get(CommonSettings.APPLICATION_NAME)
-                              + "," + Constants.PRIORITY_KEY_APPLICATIONINSTANCEID + "="
-                              + Settings.get(CommonSettings.APPLICATION_INSTANCE_ID)
-                              + "," + (index == -1 ? "*" 
-                                      : Constants.PRIORITY_KEY_INDEX + "=" + index));
+    private static ObjectName getObjectName(int index) throws MalformedObjectNameException {
+        return new ObjectName("dk.netarkivet.common.logging:" + Constants.PRIORITY_KEY_LOCATION + "="
+                + Settings.get(CommonSettings.THIS_PHYSICAL_LOCATION) + "," + Constants.PRIORITY_KEY_MACHINE + "="
+                + SystemUtils.getLocalHostName() + "," + Constants.PRIORITY_KEY_HTTP_PORT + "="
+                + Settings.get(CommonSettings.HTTP_PORT_NUMBER) + "," + Constants.PRIORITY_KEY_REPLICANAME + "=BarOne,"
+                + Constants.PRIORITY_KEY_CHANNEL + "=FOCUSED" + "," + Constants.PRIORITY_KEY_APPLICATIONNAME + "="
+                + Settings.get(CommonSettings.APPLICATION_NAME) + "," + Constants.PRIORITY_KEY_APPLICATIONINSTANCEID
+                + "=" + Settings.get(CommonSettings.APPLICATION_INSTANCE_ID) + ","
+                + (index == -1 ? "*" : Constants.PRIORITY_KEY_INDEX + "=" + index));
     }
 
     /**
      * Returns a JMX object instance as expected by our CachingLogRecordMBean.
      *
-     * @param mBeanServer The MBeanServer to get the object from.
-     * @param index       Index of LogRecord
+     * @param mBeanServer
+     *            The MBeanServer to get the object from.
+     * @param index
+     *            Index of LogRecord
      * @return An ObjectInstance
      * @throws InstanceNotFoundException
      * @throws MalformedObjectNameException
      */
-    private static ObjectInstance getObjectInstance(
-            MBeanServer mBeanServer, int index) throws InstanceNotFoundException,
-                                                       MalformedObjectNameException {
-        return mBeanServer.getObjectInstance(
-                getObjectName(index));
+    private static ObjectInstance getObjectInstance(MBeanServer mBeanServer, int index)
+            throws InstanceNotFoundException, MalformedObjectNameException {
+        return mBeanServer.getObjectInstance(getObjectName(index));
     }
 }

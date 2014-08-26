@@ -29,14 +29,14 @@ import dk.netarkivet.common.utils.SettingsFactory;
 /**
  * A factory for MonitorRegistryClient.
  */
-public class MonitorRegistryClientFactory
-        extends SettingsFactory<MonitorRegistryClient> {
-    /** Returns a new MonitorRegistryClient as defined by the setting
-     * Settings.MONITOR_REGISTRY_CLIENT. 
+public class MonitorRegistryClientFactory extends SettingsFactory<MonitorRegistryClient> {
+    /**
+     * Returns a new MonitorRegistryClient as defined by the setting
+     * Settings.MONITOR_REGISTRY_CLIENT.
+     * 
      * @return A MonitorRegistryClient.
      */
     public static MonitorRegistryClient getInstance() {
-        return SettingsFactory.getInstance(
-                CommonSettings.MONITOR_REGISTRY_CLIENT);
+        return SettingsFactory.getInstance(CommonSettings.MONITOR_REGISTRY_CLIENT);
     }
 }

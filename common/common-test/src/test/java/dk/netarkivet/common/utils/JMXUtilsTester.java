@@ -125,7 +125,8 @@ public class JMXUtilsTester {
         }
         Date now = new Date();
         long time = now.getTime() - then.getTime();
-        assertTrue("Should take at least 2^" + maxJmxRetries + " milliseconds, but was " + time + ", should be "
+        assertTrue(
+                "Should take at least 2^" + maxJmxRetries + " milliseconds, but was " + time + ", should be "
                         + Math.pow(2, maxJmxRetries), time >= Math.pow(2, maxJmxRetries) - 1);
         assertEquals("Should have been called " + maxJmxRetries + " times.", 1, connection.failCount);
     }

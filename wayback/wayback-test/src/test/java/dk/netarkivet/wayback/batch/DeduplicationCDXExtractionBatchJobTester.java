@@ -74,7 +74,7 @@ public class DeduplicationCDXExtractionBatchJobTester {
     public void testJob() throws IOException {
         File testFile = new File(TestInfo.WORKING_DIR, METADATA_FILENAME);
         assertTrue("file should exist", testFile.isFile());
-        BatchLocalFiles files = new BatchLocalFiles(new File[]{testFile});       
+        BatchLocalFiles files = new BatchLocalFiles(new File[] { testFile });
         DeduplicationCDXExtractionBatchJob job = new DeduplicationCDXExtractionBatchJob();
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         files.run(job, os);
@@ -83,7 +83,7 @@ public class DeduplicationCDXExtractionBatchJobTester {
         String[] cdx_lines = results.split("\\n");
         assertTrue("Expect some results", cdx_lines.length > 2);
         CDXLineToSearchResultAdapter adapter = new CDXLineToSearchResultAdapter();
-        for (String cdx_line: cdx_lines) {
+        for (String cdx_line : cdx_lines) {
             CaptureSearchResult csr = adapter.adapt(cdx_line);
             assertNotNull("Expect a mime type for every result", csr.getMimeType());
         }
@@ -92,7 +92,7 @@ public class DeduplicationCDXExtractionBatchJobTester {
     @Test
     public void testJobRealOne() throws IOException {
         DeduplicationCDXExtractionBatchJob job = new DeduplicationCDXExtractionBatchJob();
-        File arcFile =  new File(TestInfo.WORKING_DIR, METADATA_FILENAME_UNREAL_1);
+        File arcFile = new File(TestInfo.WORKING_DIR, METADATA_FILENAME_UNREAL_1);
         assertFalse("file shouldn't exist", arcFile.isFile());
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         job.initialize(os);
@@ -100,34 +100,34 @@ public class DeduplicationCDXExtractionBatchJobTester {
         job.finish(os);
         Exception[] exceptions = job.getExceptionArray();
         assertTrue(exceptions.length == 1);
-        //System.out.println("exception " + exceptions[0]);   
+        // System.out.println("exception " + exceptions[0]);
     }
 
     @Test
     public void testJobRealTwo() throws IOException {
         DeduplicationCDXExtractionBatchJob job2 = new DeduplicationCDXExtractionBatchJob();
-        File arcFile2 =  new File(TestInfo.WORKING_DIR, METADATA_FILENAME_UNREAL_2);
+        File arcFile2 = new File(TestInfo.WORKING_DIR, METADATA_FILENAME_UNREAL_2);
         assertFalse("file should not exist", arcFile2.isFile());
         ByteArrayOutputStream os2 = new ByteArrayOutputStream();
         job2.initialize(os2);
         job2.processFile(arcFile2, os2);
         job2.finish(os2);
-        //os.writeTo(System.out);
+        // os.writeTo(System.out);
         Exception[] exceptions = job2.getExceptionArray();
         assertTrue(exceptions.length == 1);
-        //System.out.println("exception " + exceptions[0]);   
+        // System.out.println("exception " + exceptions[0]);
     }
-    
+
     @Test
     public void testJobRealWarc() throws IOException {
         DeduplicationCDXExtractionBatchJob job3 = new DeduplicationCDXExtractionBatchJob();
-        File warcFile =  new File(TestInfo.WORKING_DIR, METADATA_FILENAME_REAL_1);
+        File warcFile = new File(TestInfo.WORKING_DIR, METADATA_FILENAME_REAL_1);
         assertTrue("file should exist", warcFile.isFile());
         ByteArrayOutputStream os3 = new ByteArrayOutputStream();
         job3.initialize(os3);
         job3.processFile(warcFile, os3);
         job3.finish(os3);
-        //os3.writeTo(System.out);
+        // os3.writeTo(System.out);
         Exception[] exceptions = job3.getExceptionArray();
         assertTrue(exceptions.length == 0);
     }

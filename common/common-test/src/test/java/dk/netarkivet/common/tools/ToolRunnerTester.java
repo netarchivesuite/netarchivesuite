@@ -34,16 +34,14 @@ import org.junit.Test;
 import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 
-
 /**
  * Tests the ToolRunner using a mocked up tool, which can be induced to throw
  * exceptions through parameters.
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({ "serial" })
 public class ToolRunnerTester {
 
-    private static SimpleCmdlineToolForTest sctfTest
-            = new SimpleCmdlineToolForTest();
+    private static SimpleCmdlineToolForTest sctfTest = new SimpleCmdlineToolForTest();
 
     private PreventSystemExit pse = new PreventSystemExit();
     private PreserveStdStreams pss = new PreserveStdStreams(true);
@@ -68,9 +66,8 @@ public class ToolRunnerTester {
         try {
             sctfTest.runTheTool("n", "n", "n"); // Run with no exceptions
         } catch (SecurityException e) {
-            assertEquals("Should have exited normally",
-                         0, pse.getExitValue());
-        }        
+            assertEquals("Should have exited normally", 0, pse.getExitValue());
+        }
         assertTrue(FakeTool.setupCompleted);
         assertTrue(FakeTool.runCompleted);
         assertTrue(FakeTool.teardownCompleted);

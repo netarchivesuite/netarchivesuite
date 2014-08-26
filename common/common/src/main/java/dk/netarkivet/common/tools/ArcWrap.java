@@ -91,8 +91,7 @@ public class ArcWrap extends ToolRunnerBase {
          */
         public void setUp(String... args) {
             try {
-                aw = ARCUtils.getToolsARCWriter(System.out,
-                        new File("dummy.arc"));
+                aw = ARCUtils.getToolsARCWriter(System.out, new File("dummy.arc"));
             } catch (IOException e) {
                 throw new IOFailure(e.getMessage());
             }
@@ -129,9 +128,8 @@ public class ArcWrap extends ToolRunnerBase {
                 // as parameters URI, MIME type, IP, Timestamp, Length and IS
                 String uri = args[1];
                 String mimetype = args[2];
-                aw.write(uri, mimetype, SystemUtils.getLocalIP(), 
-                        content.lastModified(),
-                        content.length(), new FileInputStream(content));
+                aw.write(uri, mimetype, SystemUtils.getLocalIP(), content.lastModified(), content.length(),
+                        new FileInputStream(content));
             } catch (IOException e) {
                 throw new IOFailure(e.getMessage());
             }
@@ -139,6 +137,7 @@ public class ArcWrap extends ToolRunnerBase {
 
         /**
          * Return the list of parameters accepted by the ArcWrapTool class.
+         * 
          * @return the list of parameters accepted
          */
         public String listParameters() {

@@ -29,7 +29,6 @@ import java.util.Map;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
-
 import dk.netarkivet.common.exceptions.NotImplementedException;
 
 /**
@@ -39,28 +38,25 @@ public class CommandResolverTester {
 
     @Test
     public void testIsCommandHostRequest() throws Exception {
-        assertFalse("Null request should have no host",
-                CommandResolver.isCommandHostRequest(null));
-        assertFalse("Request with null uri should have no host",
-                CommandResolver.isCommandHostRequest(new Request() {
-                    public URI getURI() {
-                        return null;
-                    }
+        assertFalse("Null request should have no host", CommandResolver.isCommandHostRequest(null));
+        assertFalse("Request with null uri should have no host", CommandResolver.isCommandHostRequest(new Request() {
+            public URI getURI() {
+                return null;
+            }
 
-                    public Map<String, String[]> getParameterMap() {
-                        throw new NotImplementedException("Not implemented");
-                    }
-                }));
+            public Map<String, String[]> getParameterMap() {
+                throw new NotImplementedException("Not implemented");
+            }
+        }));
         assertFalse("Request with other uri should not be command host",
                 CommandResolver.isCommandHostRequest(makeRequest("http://www.foo.bims")));
         assertTrue("Request with actual localhost name should be command host",
-                CommandResolver.isCommandHostRequest(makeRequest("http://"
-                        + "netarchivesuite.viewerproxy.invalid"
+                CommandResolver.isCommandHostRequest(makeRequest("http://" + "netarchivesuite.viewerproxy.invalid"
                         + "/stop?foo=bar")));
     }
 
     private Request makeRequest(final String uri) {
-        return new Request(){
+        return new Request() {
             public URI getURI() {
                 try {
                     return new URI(uri);

@@ -27,15 +27,13 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 /**
- * Created by IntelliJ IDEA.
- * User: lc
- * Date: Nov 4, 2004
- * Time: 2:38:17 PM
- * To change this template use File | Settings | File Templates.
+ * Created by IntelliJ IDEA. User: lc Date: Nov 4, 2004 Time: 2:38:17 PM To
+ * change this template use File | Settings | File Templates.
  */
 public class ARCKeyTester {
-    /** Test that the constructore figures out to use .arc.gz files
-     * when given a .dat entry.
+    /**
+     * Test that the constructore figures out to use .arc.gz files when given a
+     * .dat entry.
      */
     @Test
     public void testConstructor() {

@@ -60,7 +60,7 @@ public class MockupArcRepositoryClient implements TestConfigurationIF, MessageLi
         msgCount++;
         StoreMessage sm = (StoreMessage) JMSConnection.unpack(message);
         storeMsgs.add(sm);
-        if(failOnFiles.contains(sm.getArcfileName())) {
+        if (failOnFiles.contains(sm.getArcfileName())) {
             sm.setNotOk("Simulating store failed.");
         }
         JMSConnectionFactory.getInstance().resend(sm, sm.getReplyTo());
@@ -74,4 +74,3 @@ public class MockupArcRepositoryClient implements TestConfigurationIF, MessageLi
         return storeMsgs;
     }
 }
-

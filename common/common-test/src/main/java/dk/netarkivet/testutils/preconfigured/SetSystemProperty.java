@@ -23,8 +23,10 @@
 
 package dk.netarkivet.testutils.preconfigured;
 
-/** This class allows setting a system property temporarily.
- * Do not attempt to set it to null, as that will break. */
+/**
+ * This class allows setting a system property temporarily. Do not attempt to
+ * set it to null, as that will break.
+ */
 public class SetSystemProperty implements TestConfigurationIF {
     private String oldValue;
     private String property;

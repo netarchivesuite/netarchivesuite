@@ -27,11 +27,11 @@ package dk.netarkivet.archive.webinterface;
  * upon.
  */
 public enum BatchFileType {
-    /** The metadata files.*/
+    /** The metadata files. */
     Metadata,
-    /** The content files (those not metadata).*/
+    /** The content files (those not metadata). */
     Content,
-    /** Both metadata and content files.*/
+    /** Both metadata and content files. */
     Both;
 
 }

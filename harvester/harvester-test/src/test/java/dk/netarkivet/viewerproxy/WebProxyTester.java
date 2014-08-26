@@ -63,12 +63,13 @@ import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.viewerproxy.distribute.HTTPControllerServerTester;
 
 /**
- * Test the WebProxy class which wraps a handler in a Jetty server. The testJettyIntegration test verifies the
- * handler <-> Jetty integration, where the remaining tests directly tests the WebProxy methods and inner classes.
+ * Test the WebProxy class which wraps a handler in a Jetty server. The
+ * testJettyIntegration test verifies the handler <-> Jetty integration, where
+ * the remaining tests directly tests the WebProxy methods and inner classes.
  */
 public class WebProxyTester {
 
-	private URIResolver uriResolverMock;
+    private URIResolver uriResolverMock;
     private org.eclipse.jetty.server.Request requestMock;
     private org.eclipse.jetty.server.Response responseMock;
 
@@ -77,19 +78,19 @@ public class WebProxyTester {
 
     @Before
     public void setUp() throws IOException {
-        //Check port not in use (since this will fail all tests)
-        
+        // Check port not in use (since this will fail all tests)
+
         httpPort = Settings.getInt(CommonSettings.HTTP_PORT_NUMBER);
         if (httpPort < 1025 || httpPort > 65535) {
             fail("Port must be in the range 1025-65535, not " + httpPort);
-        } 
+        }
         try {
             new Socket(InetAddress.getLocalHost(), httpPort);
             fail("Port already in use before unit test");
         } catch (IOException e) {
-           // Expected
+            // Expected
         }
-        
+
         uriResolverMock = mock(URIResolver.class);
 
         requestMock = mock(org.eclipse.jetty.server.Request.class);
@@ -101,12 +102,12 @@ public class WebProxyTester {
         if (proxy != null) {
             proxy.kill();
         }
-        //Check port not in use (since this might break later tests)
+        // Check port not in use (since this might break later tests)
         try {
             new Socket(InetAddress.getLocalHost(), httpPort);
             fail("Port still in use after killing server");
         } catch (IOException e) {
-            //expected
+            // expected
         }
     }
 
@@ -117,8 +118,9 @@ public class WebProxyTester {
                 WebProxy.HttpRequest.uriEncode(test_string));
     }
 
-    /** Test the general integration of the WebProxy access through the running Jetty
-     * true:
+    /**
+     * Test the general integration of the WebProxy access through the running
+     * Jetty true:
      */
     @Test
     public void testJettyIntegration() throws Exception {
@@ -131,7 +133,7 @@ public class WebProxyTester {
             fail("Port not in use after starting server");
         }
 
-        //GET request
+        // GET request
         HttpClient client = new HttpClient();
         HostConfiguration hc = new HostConfiguration();
         String hostName = SystemUtils.getLocalHostName();
@@ -144,31 +146,33 @@ public class WebProxyTester {
         assertEquals("Body should contain what URI resolver wrote", "Test", get.getResponseBodyAsString());
         get.releaseConnection();
 
-        //POST request
+        // POST request
         PostMethod post = new PostMethod("http://foo2.bar/");
         post.addParameter("a", "x");
         post.addParameter("a", "y");
         client.executeMethod(post);
 
-        //Check request received by URIResolver
+        // Check request received by URIResolver
         assertEquals("URI resolver lookup should be called.", 2, uriResolver.lookupCount);
-        assertEquals("URI resolver lookup should be called with right URI.", new URI("http://foo2.bar/"), uriResolver.lookupRequestArgument);
+        assertEquals("URI resolver lookup should be called with right URI.", new URI("http://foo2.bar/"),
+                uriResolver.lookupRequestArgument);
         assertEquals("Posted parameter should be received.", 1, uriResolver.lookupRequestParameteres.size());
         assertNotNull("Posted parameter should be received.", uriResolver.lookupRequestParameteres.get("a"));
-        assertEquals("Posted parameter should be received.",2, uriResolver.lookupRequestParameteres.get("a").length);
+        assertEquals("Posted parameter should be received.", 2, uriResolver.lookupRequestParameteres.get("a").length);
         assertEquals("Posted parameter should be received.", "x", uriResolver.lookupRequestParameteres.get("a")[0]);
         assertEquals("Posted parameter should be received.", "y", uriResolver.lookupRequestParameteres.get("a")[1]);
         assertEquals("Status code should be what URI resolver gives", 242, post.getStatusCode());
         assertEquals("Body should contain what URI resolver wrote", "Test", post.getResponseBodyAsString());
         post.releaseConnection();
 
-        //Request with parameter and portno
+        // Request with parameter and portno
         get = new GetMethod("http://foo2.bar:8090/?baz=boo");
         client.executeMethod(get);
 
-        //Check request received by URIResolver
+        // Check request received by URIResolver
         assertEquals("URI resolver lookup should be called.", 3, uriResolver.lookupCount);
-        assertEquals("URI resolver 2 lookup should be called with right URI.", new URI("http://foo2.bar:8090/?baz=boo"), uriResolver.lookupRequestArgument);
+        assertEquals("URI resolver 2 lookup should be called with right URI.",
+                new URI("http://foo2.bar:8090/?baz=boo"), uriResolver.lookupRequestArgument);
         assertEquals("Status code should be what URI resolver gives", 242, get.getStatusCode());
         assertEquals("Body should contain what URI resolver wrote", "Test", get.getResponseBodyAsString());
         get.releaseConnection();
@@ -190,22 +194,22 @@ public class WebProxyTester {
     @Test
     public void testKill() throws Exception {
         proxy = new WebProxy(uriResolverMock);
-        //Check port in use
+        // Check port in use
         try {
             new Socket(InetAddress.getLocalHost(), httpPort);
         } catch (IOException e) {
             fail("Port not in use after starting server");
         }
 
-        //Kill server
+        // Kill server
         proxy.kill();
 
-        //Check port not in use
+        // Check port not in use
         try {
             new Socket(InetAddress.getLocalHost(), httpPort);
             fail("Port still in use after killing server");
         } catch (IOException e) {
-            //expected
+            // expected
         }
     }
 
@@ -223,8 +227,9 @@ public class WebProxyTester {
 
         verify(uriResolverMock).lookup(requestArgument.capture(), responseArgument.capture());
 
-        assertEquals( new URI("http://foo.bar/"), requestArgument.getValue().getURI());
-        //The request/response in the delegated handle call should delegate method calls to the original
+        assertEquals(new URI("http://foo.bar/"), requestArgument.getValue().getURI());
+        // The request/response in the delegated handle call should delegate
+        // method calls to the original
         // request/response objects"
 
         responseArgument.getValue().getOutputStream();
@@ -239,110 +244,80 @@ public class WebProxyTester {
     @Test
     @Ignore
     public void testCreateErrorResponse() throws Exception {
-    	LogbackRecorder lr = LogbackRecorder.startRecorder();
+        LogbackRecorder lr = LogbackRecorder.startRecorder();
         proxy = new WebProxy(uriResolverMock);
-        HTTPControllerServerTester.TestResponse response= new HTTPControllerServerTester.TestResponse();
+        HTTPControllerServerTester.TestResponse response = new HTTPControllerServerTester.TestResponse();
         URI uri = new URI("http://www.statsbiblioteket.dk/");
         String ExceptionMessage = "ExceptionTestMessage";
         Exception e = new ArgumentNotValid(ExceptionMessage);
-        Method m = ReflectUtils.getPrivateMethod(WebProxy.class,
-                                                 "createErrorResponse",
-                                                 URI.class, Response.class,
-                                                 Throwable.class);
+        Method m = ReflectUtils.getPrivateMethod(WebProxy.class, "createErrorResponse", URI.class, Response.class,
+                Throwable.class);
         m.invoke(proxy, uri, response, e);
-        //LogUtils.flushLogs(WebProxy.class.getName());
+        // LogUtils.flushLogs(WebProxy.class.getName());
         /*
-        FileAsserts.assertFileMatches("Should have logged a warning",
-                                       "WARNING:.*" + uri + ".*\n.*"
-                                       + ExceptionMessage,
-                                       LOG_FILE);
-        */
+         * FileAsserts.assertFileMatches("Should have logged a warning",
+         * "WARNING:.*" + uri + ".*\n.*" + ExceptionMessage, LOG_FILE);
+         */
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         PrintWriter pw = new PrintWriter(out);
         e.printStackTrace(pw);
         pw.close();
         String eStr = new String(out.toByteArray());
-        //lr.assertLogMatches("Should have logged a warning", "Exception for : " + uri + "\n" + eStr);
+        // lr.assertLogMatches("Should have logged a warning",
+        // "Exception for : " + uri + "\n" + eStr);
         lr.assertLogContains("Should have logged a warning", "Exception for : " + uri + "\n" + eStr);
         lr.reset();
 
         String result = response.getOutputStream().toString();
-        StringAsserts.assertStringNotContains("Should not contain null",
-                                              "null",
-                                              result);
-        StringAsserts.assertStringContains("Should contain the URI",
-                                           uri.toString(),
-                                           result);
-        StringAsserts.assertStringContains("Should contain the Exception",
-                                           ArgumentNotValid.class.getName(),
-                                           result);
-        StringAsserts.assertStringContains("Should contain the Exception msg",
-                                           ExceptionMessage,
-                                           result);
-        StringAsserts.assertStringContains("Should contain the Exception trace",
-                                           "testCreateErrorResponse",
-                                           result);
+        StringAsserts.assertStringNotContains("Should not contain null", "null", result);
+        StringAsserts.assertStringContains("Should contain the URI", uri.toString(), result);
+        StringAsserts.assertStringContains("Should contain the Exception", ArgumentNotValid.class.getName(), result);
+        StringAsserts.assertStringContains("Should contain the Exception msg", ExceptionMessage, result);
+        StringAsserts.assertStringContains("Should contain the Exception trace", "testCreateErrorResponse", result);
         response.reset();
         m.invoke(proxy, null, response, e);
-        //LogUtils.flushLogs(WebProxy.class.getName());
+        // LogUtils.flushLogs(WebProxy.class.getName());
         /*
-        FileAsserts.assertFileMatches("Should have logged a warning",
-                                       "WARNING:.*" + null + ".*\n.*"
-                                       + ExceptionMessage,
-                                       LOG_FILE);
-        */
+         * FileAsserts.assertFileMatches("Should have logged a warning",
+         * "WARNING:.*" + null + ".*\n.*" + ExceptionMessage, LOG_FILE);
+         */
         lr.assertLogMatches("Should have logged a warning", "Exception for : .*" + null + ".*\n.*" + ExceptionMessage);
         lr.reset();
         result = response.getOutputStream().toString();
-        StringAsserts.assertStringContains("Should contain null for the URI",
-                                           "null",
-                                           result);
-        StringAsserts.assertStringContains("Should contain the Exception",
-                                           ArgumentNotValid.class.getName(),
-                                           result);
-        StringAsserts.assertStringContains("Should contain the Exception msg",
-                                           ExceptionMessage,
-                                           result);
-        StringAsserts.assertStringContains("Should contain the Exception trace",
-                                           "testCreateErrorResponse",
-                                           result);
+        StringAsserts.assertStringContains("Should contain null for the URI", "null", result);
+        StringAsserts.assertStringContains("Should contain the Exception", ArgumentNotValid.class.getName(), result);
+        StringAsserts.assertStringContains("Should contain the Exception msg", ExceptionMessage, result);
+        StringAsserts.assertStringContains("Should contain the Exception trace", "testCreateErrorResponse", result);
         response.reset();
         m.invoke(proxy, uri, response, null);
-        //LogUtils.flushLogs(WebProxy.class.getName());
+        // LogUtils.flushLogs(WebProxy.class.getName());
         /*
-        FileAsserts.assertFileMatches("Should have logged a warning",
-                                       "(?m)WARNING:.*" + uri + "$",
-                                       LOG_FILE);
-        */
+         * FileAsserts.assertFileMatches("Should have logged a warning",
+         * "(?m)WARNING:.*" + uri + "$", LOG_FILE);
+         */
         lr.assertLogMatches("Should have logged a warning", "Exception for : .*" + uri);
         lr.reset();
         result = response.getOutputStream().toString();
-        StringAsserts.assertStringContains("Should contain the URI",
-                                           uri.toString(),
-                                           result);
-        StringAsserts.assertStringContains("Should contain null for exception",
-                                           "null\n",
-                                           result);
+        StringAsserts.assertStringContains("Should contain the URI", uri.toString(), result);
+        StringAsserts.assertStringContains("Should contain null for exception", "null\n", result);
         m.invoke(proxy, uri, null, e);
         // TODO Remove when @Ignore is fixed.
         /*
-        FileAsserts.assertFileMatches("Should have logged a warning",
-                                       "WARNING:.*Error writing error response"
-                                       + ".*" + uri + ".*"
-                                       + e.getClass().getName()
-                                       + ".*" + ExceptionMessage,
-                                       LOG_FILE);
-        */
-        lr.assertLogMatches("Should have logged a warning",
-                ".*Error writing error response" + ".*" + uri + ".*" + e.getClass().getName() + ".*" + ExceptionMessage);
+         * FileAsserts.assertFileMatches("Should have logged a warning",
+         * "WARNING:.*Error writing error response" + ".*" + uri + ".*" +
+         * e.getClass().getName() + ".*" + ExceptionMessage, LOG_FILE);
+         */
+        lr.assertLogMatches("Should have logged a warning", ".*Error writing error response" + ".*" + uri + ".*"
+                + e.getClass().getName() + ".*" + ExceptionMessage);
         lr.reset();
         lr.stopRecorder();
     }
 
     /**
-     * Constructs an instance of the inner class WebProxy.HttpRequest with a
-     * url containing "{" and checks that the resulting uri escapes the
-     * curly brackets correctly.
+     * Constructs an instance of the inner class WebProxy.HttpRequest with a url
+     * containing "{" and checks that the resulting uri escapes the curly
+     * brackets correctly.
+     * 
      * @throws NoSuchMethodException
      * @throws InvocationTargetException
      * @throws IllegalAccessException

@@ -31,20 +31,20 @@ import dk.netarkivet.common.utils.ApplicationUtils;
  */
 public class IndexServerApplication {
 
-	/**
-     * Constructor.
-     * Private to avoid internal instantiation of this class.
+    /**
+     * Constructor. Private to avoid internal instantiation of this class.
      */
-    private IndexServerApplication() { }
-    
-   /**
-    * Runs the IndexServerApplication. Settings are read from
-    * config files
-    *
-    * @param args an empty array
-    */
-   public static void main(String[] args) {
-       ApplicationUtils.startApp(IndexServer.class, args);
-   }
+    private IndexServerApplication() {
+    }
+
+    /**
+     * Runs the IndexServerApplication. Settings are read from config files
+     *
+     * @param args
+     *            an empty array
+     */
+    public static void main(String[] args) {
+        ApplicationUtils.startApp(IndexServer.class, args);
+    }
 
 }

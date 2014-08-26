@@ -29,7 +29,6 @@ import java.util.List;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
-
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 import dk.netarkivet.testutils.StringAsserts;
@@ -45,13 +44,13 @@ public class AliasInfoTester {
     String afatherDomain = "kb.dk";
 
     /*
-     * Test method for 'dk.netarkivet.datamodel.AliasInfo.AliasInfo(String, String, Date)'
-     * Checks, that ArgumentNotValid exception is thrown when
-     * either of the given Domain, the aliasOf, the lastChange attributes is null or empty.
+     * Test method for 'dk.netarkivet.datamodel.AliasInfo.AliasInfo(String,
+     * String, Date)' Checks, that ArgumentNotValid exception is thrown when
+     * either of the given Domain, the aliasOf, the lastChange attributes is
+     * null or empty.
      */
     @Test
     public void testAliasInfo() {
-
 
         // Check that allowed arguments are accepted
         try {
@@ -59,7 +58,6 @@ public class AliasInfoTester {
         } catch (ArgumentNotValid e) {
             fail("ArgumentNotValid not expected with valid arguments given to constructor");
         }
-
 
         // check that null or empty arguments are not accepted.
         try {
@@ -105,7 +103,7 @@ public class AliasInfoTester {
 
         // check, that !domain.equals(aliasOf)
         try {
-            new AliasInfo(aliasDomain,aliasDomain, realDate);
+            new AliasInfo(aliasDomain, aliasDomain, realDate);
             fail("ArgumentNotValid expected with domain == aliasOf");
         } catch (ArgumentNotValid e) {
             // expected
@@ -117,15 +115,15 @@ public class AliasInfoTester {
      */
     @Test
     public void testSetAndGetters() {
-       AliasInfo ai = new AliasInfo(aliasDomain,afatherDomain, realDate);
-       assertEquals("getDomain returns wrong value", aliasDomain, ai.getDomain());
-       assertEquals("getAliasOf returns wrong value", afatherDomain, ai.getAliasOf());
-       assertTrue("getLastChange returns wrong value",
-               realDate.equals(ai.getLastChange()));
-      }
+        AliasInfo ai = new AliasInfo(aliasDomain, afatherDomain, realDate);
+        assertEquals("getDomain returns wrong value", aliasDomain, ai.getDomain());
+        assertEquals("getAliasOf returns wrong value", afatherDomain, ai.getAliasOf());
+        assertTrue("getLastChange returns wrong value", realDate.equals(ai.getLastChange()));
+    }
 
     /***
-     * tests makeAliasMetadataEntry(List<AliasInfo> aliases, String URL, String mimetype).
+     * tests makeAliasMetadataEntry(List<AliasInfo> aliases, String URL, String
+     * mimetype).
      *
      */
     @Test
@@ -133,12 +131,8 @@ public class AliasInfoTester {
         List<AliasInfo> emptyAliases = new ArrayList<AliasInfo>();
         List<AliasInfo> fiveAliases = new ArrayList<AliasInfo>();
         List<AliasInfo> expiredAliases = new ArrayList<AliasInfo>();
-        Date expiredDate1 = new Date(System.currentTimeMillis()
-                - Constants.ALIAS_TIMEOUT_IN_MILLISECONDS
-                - 1000L);
-        Date expiredDate2 = new Date(System.currentTimeMillis()
-                - Constants.ALIAS_TIMEOUT_IN_MILLISECONDS
-                - 500L);
+        Date expiredDate1 = new Date(System.currentTimeMillis() - Constants.ALIAS_TIMEOUT_IN_MILLISECONDS - 1000L);
+        Date expiredDate2 = new Date(System.currentTimeMillis() - Constants.ALIAS_TIMEOUT_IN_MILLISECONDS - 500L);
         Date nonExpiredDate = new Date();
         fiveAliases.add(new AliasInfo(aliasDomain, afatherDomain, realDate));
         fiveAliases.add(new AliasInfo("aliasdomain.dk", "fatherdomain.dk", realDate));
@@ -150,7 +144,8 @@ public class AliasInfoTester {
 
         MetadataEntry meta = null;
         // Tests for valid arguments:
-        // List<AliasInfo> aliases, Long origHarvestDefinitionID, int harvestNum, Long jobId)
+        // List<AliasInfo> aliases, Long origHarvestDefinitionID, int
+        // harvestNum, Long jobId)
         Long jobId = Long.valueOf(42L);
         int harvestNum = 1;
         Long origHarvestDefinitionID = Long.valueOf(2L);
@@ -168,8 +163,7 @@ public class AliasInfoTester {
         }
 
         try {
-            MetadataEntry.makeAliasMetadataEntry(emptyAliases, origHarvestDefinitionID,
-                    harvestNum, null);
+            MetadataEntry.makeAliasMetadataEntry(emptyAliases, origHarvestDefinitionID, harvestNum, null);
             fail("Exception expected with null arguments");
         } catch (Exception e) {
             // Expected
@@ -177,7 +171,8 @@ public class AliasInfoTester {
 
         try {
             meta = MetadataEntry.makeAliasMetadataEntry(emptyAliases, origHarvestDefinitionID, harvestNum, jobId);
-            //meta = MetadataEntry.makeAliasMetadataEntry(fiveAliases, "URL is not valid", "text/plain");
+            // meta = MetadataEntry.makeAliasMetadataEntry(fiveAliases,
+            // "URL is not valid", "text/plain");
         } catch (Exception e) {
             fail("Exception not expected with valid arguments");
         }
@@ -185,52 +180,43 @@ public class AliasInfoTester {
 
         /** add check that it does not add expired aliases to the metadataEntry */
         meta = MetadataEntry.makeAliasMetadataEntry(fiveAliases, origHarvestDefinitionID, harvestNum, jobId);
-        // this MetadataEntry should contain URL=metadata://netarkivet/crawl, mimetype=text/plain
-        // and data should contain strings: "netarkivet.dk is an alias for kb.dk", "aliasdomain.dk is an alias for fatherdomain.dk"
+        // this MetadataEntry should contain URL=metadata://netarkivet/crawl,
+        // mimetype=text/plain
+        // and data should contain strings:
+        // "netarkivet.dk is an alias for kb.dk",
+        // "aliasdomain.dk is an alias for fatherdomain.dk"
         // "aliasdomain3.dk is an alias for fatherdomain3.dk"
-        // and data should not contain strings: "aliasdomain1.dk is an alias for fatherdomain1.dk",
-        //                                      "aliasdomain2.dk is an alias for fatherdomain2.dk"
+        // and data should not contain strings:
+        // "aliasdomain1.dk is an alias for fatherdomain1.dk",
+        // "aliasdomain2.dk is an alias for fatherdomain2.dk"
 
-        String expectedURL =
-            String.format("metadata://netarkivet.dk/crawl/setup/aliases?majorversion=1&minorversion=0&harvestid=%s&harvestnum=%s&jobid=%s",
-                    origHarvestDefinitionID, harvestNum, jobId);
-        assertEquals("URL is not correctly written to the MetadataEntry",
-                expectedURL, meta.getURL());
-        assertEquals("Mimetype is not correctly written to the MetadataEntry",
-                "text/plain", meta.getMimeType());
+        String expectedURL = String
+                .format("metadata://netarkivet.dk/crawl/setup/aliases?majorversion=1&minorversion=0&harvestid=%s&harvestnum=%s&jobid=%s",
+                        origHarvestDefinitionID, harvestNum, jobId);
+        assertEquals("URL is not correctly written to the MetadataEntry", expectedURL, meta.getURL());
+        assertEquals("Mimetype is not correctly written to the MetadataEntry", "text/plain", meta.getMimeType());
         StringAsserts.assertStringContains("Alias not correctly written to entry",
-                "netarkivet.dk is an alias for kb.dk",
-                new String(meta.getData()));
+                "netarkivet.dk is an alias for kb.dk", new String(meta.getData()));
         StringAsserts.assertStringContains("Alias not correctly written to entry",
-                "aliasdomain.dk is an alias for fatherdomain.dk",
-                new String(meta.getData()));
+                "aliasdomain.dk is an alias for fatherdomain.dk", new String(meta.getData()));
         StringAsserts.assertStringContains("Alias not correctly written to entry",
-                "aliasdomain3.dk is an alias for fatherdomain3.dk",
-                new String(meta.getData()));
+                "aliasdomain3.dk is an alias for fatherdomain3.dk", new String(meta.getData()));
         StringAsserts.assertStringNotContains("Alias not correctly written to entry",
-                "aliasdomain1.dk is an alias for fatherdomain1.dk",
-                new String(meta.getData()));
+                "aliasdomain1.dk is an alias for fatherdomain1.dk", new String(meta.getData()));
         StringAsserts.assertStringNotContains("Alias not correctly written to entry",
-                "aliasdomain2.dk is an alias for fatherdomain2.dk",
-                new String(meta.getData()));
+                "aliasdomain2.dk is an alias for fatherdomain2.dk", new String(meta.getData()));
     }
 
     @Test
     public void testGetExpirationDate() {
         Date now = new Date();
-        Date expiredDate = new Date(now.getTime()
-                - Constants.ALIAS_TIMEOUT_IN_MILLISECONDS
-                - 500L);
+        Date expiredDate = new Date(now.getTime() - Constants.ALIAS_TIMEOUT_IN_MILLISECONDS - 500L);
 
-        AliasInfo expired = new AliasInfo("aliasdomain2.dk", "fatherdomain2.dk",
-                expiredDate);
-        assertEquals("Expired date should be in the past",
-                new Date(now.getTime() - 500L),
-                expired.getExpirationDate());
+        AliasInfo expired = new AliasInfo("aliasdomain2.dk", "fatherdomain2.dk", expiredDate);
+        assertEquals("Expired date should be in the past", new Date(now.getTime() - 500L), expired.getExpirationDate());
 
         AliasInfo nonExpired = new AliasInfo(aliasDomain, afatherDomain, now);
-        assertEquals("Non-expired date should be in the future",
-                new Date(now.getTime() + Constants.ALIAS_TIMEOUT_IN_MILLISECONDS),
-                nonExpired.getExpirationDate());
+        assertEquals("Non-expired date should be in the future", new Date(now.getTime()
+                + Constants.ALIAS_TIMEOUT_IN_MILLISECONDS), nonExpired.getExpirationDate());
     }
 }

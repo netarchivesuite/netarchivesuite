@@ -33,28 +33,28 @@ import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 public class DBTester {
 
     MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR, TestInfo.TEST_DIR);
-    
+
     @Before
     public void setUp() {
         mtf.setUp();
     }
-    
+
     @After
     public void tearDown() {
         mtf.tearDown();
     }
-    
+
     @Test
     public void testDBConnect() {
         ReflectUtils.testUtilityConstructor(ArchiveDBConnection.class);
     }
-    
+
     @Test
     public void testDerbyServerSpecifics() {
         DerbySpecifics ds = new DerbyServerSpecifics();
-        
+
         ds.shutdownDatabase();
-        
+
         try {
             ds.backupDatabase(null, TestInfo.TEST_DIR);
             fail("Should fail");
@@ -62,13 +62,12 @@ public class DBTester {
             // expected.
         }
     }
-    
+
     @Test
     public void testDerbyEmbeddedSpecifics() {
         DerbySpecifics ds = new DerbyEmbeddedSpecifics();
-        
-        assertEquals("Wrong driver class name.", "org.apache.derby.jdbc.EmbeddedDriver", 
-                ds.getDriverClassName());
+
+        assertEquals("Wrong driver class name.", "org.apache.derby.jdbc.EmbeddedDriver", ds.getDriverClassName());
 
         ds.shutdownDatabase();
 
@@ -78,14 +77,15 @@ public class DBTester {
         } catch (Throwable e) {
             // expected.
         }
-        
+
         // Cannot test the others!
-//        try {
-//            ds.backupDatabase(DriverManager.getConnection("jdbc:derby:;shutdown"), TestInfo.TEST_DIR);
-//            fail("This should not happen!");
-//        } catch (Throwable e) {
-//            System.out.println(e);
-//            e.printStackTrace();
-//        }
+        // try {
+        // ds.backupDatabase(DriverManager.getConnection("jdbc:derby:;shutdown"),
+        // TestInfo.TEST_DIR);
+        // fail("This should not happen!");
+        // } catch (Throwable e) {
+        // System.out.println(e);
+        // e.printStackTrace();
+        // }
     }
 }

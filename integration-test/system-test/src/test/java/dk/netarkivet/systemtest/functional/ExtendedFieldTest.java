@@ -43,23 +43,26 @@ public class ExtendedFieldTest extends SeleniumTest {
     private String extendedIDForTest;
     private DateFormat dateFomatter = new SimpleDateFormat("HHmmss");
 
-    @BeforeMethod(alwaysRun=true)
+    @BeforeMethod(alwaysRun = true)
     public void setup(Method method) {
         Date startTime = new Date();
         extendedIDForTest = method.getName() + "-" + dateFomatter.format(startTime);
     }
 
-    @Test(groups = {"guitest","functest"})
+    @Test(groups = { "guitest", "functest" })
     public void extendedDomainStringFieldTest() throws Exception {
         addDescription("Tests that String type extended fields works correctly on domains.");
         extendedDomainStringFieldTest(driver, extendedIDForTest);
     }
 
     public void extendedDomainStringFieldTest(WebDriver driver, String extendedIDForTest) throws Exception {
-        addStep("Create a new String type field (name:" + extendedIDForTest + ") for domains",
-                "");
+        addStep("Create a new String type field (name:" + extendedIDForTest + ") for domains", "");
         PageHelper.gotoPage(PageHelper.MenuPages.ExtendedFields);
-        driver.findElement(By.linkText("create Extended Field")).click(); // Todo needs more specific find
+        driver.findElement(By.linkText("create Extended Field")).click(); // Todo
+                                                                          // needs
+                                                                          // more
+                                                                          // specific
+                                                                          // find
 
         driver.findElement(By.name("extf_name")).clear();
         driver.findElement(By.name("extf_name")).sendKeys(extendedIDForTest);
@@ -74,14 +77,9 @@ public class ExtendedFieldTest extends SeleniumTest {
         DomainWebTestHelper.editDomain(HarvestUtils.DEFAULT_DOMAIN);
         NASAssert.assertTrue(driver.getPageSource().contains(extendedIDForTest));
 
-        addStep("Fill out the new extended field with a value and save the "
-                        + "updated domain",
-                "");
+        addStep("Fill out the new extended field with a value and save the " + "updated domain", "");
 
-
-        addStep("Reopen the domain",
-                "The new extended field should contain the newly defined value");
+        addStep("Reopen the domain", "The new extended field should contain the newly defined value");
     }
-
 
 }

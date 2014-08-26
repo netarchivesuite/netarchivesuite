@@ -26,12 +26,12 @@ package dk.netarkivet.harvester.indexserver;
 import java.io.File;
 
 /**
- * TestInfo class holding variables used by the tests for the
- * indexserver package.
+ * TestInfo class holding variables used by the tests for the indexserver
+ * package.
  */
 public class TestInfo {
 
-	static final File BASE_DIR = new File("tests/dk/netarkivet/harvester/indexserver/data");
+    static final File BASE_DIR = new File("tests/dk/netarkivet/harvester/indexserver/data");
     static final File ORIGINALS_DIR = new File(BASE_DIR, "originals");
     static final File METADATA_DIR = new File(ORIGINALS_DIR, "metadata");
     static final File WORKING_DIR = new File(BASE_DIR, "working");
@@ -55,7 +55,8 @@ public class TestInfo {
     static final File CDX_CACHE_4 = new File(CDXCACHE_DIR, "4-cache");
     static final File CDX_CACHE_1_SORTED = new File(CDXDATACACHE_DIR, "cdxdata-1-cache.sorted");
     static final File CDX_CACHE_4_SORTED = new File(CDXDATACACHE_DIR, "cdxdata-4-cache.sorted");
-    /** Number of items in CRAWL_LOG_1 that CDXOriginCrawlLogIterator should
+    /**
+     * Number of items in CRAWL_LOG_1 that CDXOriginCrawlLogIterator should
      * return when using 1-cache.
      */
     static final int VALID_ENTRIES_IN_CRAWL_LOG_1 = 30;

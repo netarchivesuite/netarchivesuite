@@ -37,8 +37,9 @@ public final class ReplicaClientFactory {
     /**
      * Private constructor. Prevents instantiation of this class.
      */
-    private ReplicaClientFactory() {}
-    
+    private ReplicaClientFactory() {
+    }
+
     /**
      * Method for retrieving the clients for the correct replicas.
      * 
@@ -60,8 +61,7 @@ public final class ReplicaClientFactory {
             // are 'null' for the checksumarchive.
             if (theCRs[i] == null) {
                 // add a bitarchive client.
-                res.add(BitarchiveClient.getInstance(allBas[i], anyBas[i],
-                        theBamons[i]));
+                res.add(BitarchiveClient.getInstance(allBas[i], anyBas[i], theBamons[i]));
             } else {
                 // add a checksum client.
                 res.add(ChecksumClient.getInstance(theCRs[i]));

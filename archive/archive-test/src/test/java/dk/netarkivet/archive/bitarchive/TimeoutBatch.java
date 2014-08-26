@@ -29,7 +29,7 @@ import java.util.Date;
 
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({ "serial" })
 public class TimeoutBatch extends FileBatchJob {
     Date start;
 
@@ -49,8 +49,6 @@ public class TimeoutBatch extends FileBatchJob {
         }
     }
 
-    
-
     public boolean processFile(File file, OutputStream os) {
         String name = file.getName() + "\n";
         try {
@@ -64,6 +62,6 @@ public class TimeoutBatch extends FileBatchJob {
     }
 
     public void finish(OutputStream os) {
-        System.out.println("time: " + ((new Date()).getTime() - start.getTime()) );
+        System.out.println("time: " + ((new Date()).getTime() - start.getTime()));
     }
 }

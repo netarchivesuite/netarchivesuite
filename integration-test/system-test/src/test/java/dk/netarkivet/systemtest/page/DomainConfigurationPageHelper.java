@@ -60,15 +60,18 @@ public class DomainConfigurationPageHelper {
 
         WebElement table = PageHelper.getWebDriver().findElement(By.className("selection_table"));
         List<WebElement> tr_collection = table.findElements(By.tagName("tr"));
-        for (WebElement webElement:tr_collection) {
+        for (WebElement webElement : tr_collection) {
             List<WebElement> rowCells = webElement.findElements(By.xpath("td"));
-            if (rowCells.size() > 0 && //none header
-                rowCells.get(0).getText().contains(configurationName)) {
+            if (rowCells.size() > 0 && // none header
+                    rowCells.get(0).getText().contains(configurationName)) {
                 webElement.findElement(By.linkText("Edit")).click();
                 break;
             }
         }
-        PageHelper.getWebDriver().findElement(By.name(MAX_OBJECTS_FIELD)); // Ensure page is loaded.
+        PageHelper.getWebDriver().findElement(By.name(MAX_OBJECTS_FIELD)); // Ensure
+                                                                           // page
+                                                                           // is
+                                                                           // loaded.
     }
 
     public static void setMaxObjects(int value) {

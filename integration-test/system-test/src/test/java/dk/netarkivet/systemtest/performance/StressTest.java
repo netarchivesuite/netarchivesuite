@@ -37,17 +37,15 @@ import dk.netarkivet.systemtest.environment.TestEnvironmentManager;
 public class StressTest extends ExtendedTestCase {
     public static final String TESTNAME = "Stresstest";
 
-
-
     /** Handles the bash command functionality in the test environment. */
     protected TestEnvironmentManager environmentManager;
 
-    @BeforeTest (alwaysRun=true)
+    @BeforeTest(alwaysRun = true)
     protected void setupTest() {
         environmentManager = new TestEnvironmentManager(TESTNAME, null, 8073);
     }
 
-    protected void shutdownPreviousTest()  throws Exception{
+    protected void shutdownPreviousTest() throws Exception {
         addFixture("Shutting down any previously running test.");
         environmentManager.runCommand("stop_test.sh");
         addFixture("Cleaning up old test.");
@@ -61,12 +59,11 @@ public class StressTest extends ExtendedTestCase {
         environmentManager.runCommand("start_test.sh");
     }
 
-    protected void shutdownTest()  throws Exception{
+    protected void shutdownTest() throws Exception {
         addFixture("Shutting down the test.");
         environmentManager.runCommand("stop_test.sh");
         environmentManager.runCommand("cleanup_all_test.sh");
     }
-
 
     /**
      * Copying production databases to the relevant test servers.
@@ -79,7 +76,8 @@ public class StressTest extends ExtendedTestCase {
         addFixture("Copying admin db.");
         environmentManager.runCommand("scp -r /home/test/prod-backup/prod_admindb.out test@kb-test-adm-001.kb.dk:/tmp");
         addFixture("Copying harvest db");
-        environmentManager.runCommand("scp -r /home/test/prod-backup/prod_harvestdb.dump.out test@kb-test-adm-001.kb.dk:/tmp");
+        environmentManager
+                .runCommand("scp -r /home/test/prod-backup/prod_harvestdb.dump.out test@kb-test-adm-001.kb.dk:/tmp");
         addFixture("Copying checksum db");
         environmentManager.runCommand("scp -r /home/test/prod-backup/CS test@kb-test-acs-001.kb.dk:/tmp");
     }
@@ -90,7 +88,9 @@ public class StressTest extends ExtendedTestCase {
     }
 
     /**
-     * When nodata is true, restore schema only PLUS the ordertemplates table in the harvestdb.
+     * When nodata is true, restore schema only PLUS the ordertemplates table in
+     * the harvestdb.
+     * 
      * @param nodata
      * @throws Exception
      */
@@ -124,85 +124,78 @@ public class StressTest extends ExtendedTestCase {
         } else {
             addFixture("Ingesting full production admindb backup.");
             environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER,
-                    "pg_restore -U test -d " + TESTNAME.toLowerCase() + "_admindb  --no-owner --schema public /tmp/prod_admindb.out");
+                    "pg_restore -U test -d " + TESTNAME.toLowerCase()
+                            + "_admindb  --no-owner --schema public /tmp/prod_admindb.out");
             addFixture("Ingesting full production harvestdb backup");
             environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER,
-                    "pg_restore -U test -d " + TESTNAME.toLowerCase() + "_harvestdb  --no-owner --schema public /tmp/prod_harvestdb.dump.out");
+                    "pg_restore -U test -d " + TESTNAME.toLowerCase()
+                            + "_harvestdb  --no-owner --schema public /tmp/prod_harvestdb.dump.out");
         }
         addFixture("Replacing checksum database with prod data");
-        environmentManager.runTestXCommand(TestEnvironment.CHECKSUM_SERVER,
-                "rm -rf CS");
-        environmentManager.runTestXCommand(TestEnvironment.CHECKSUM_SERVER,
-                "ln -s /tmp/CS CS");
+        environmentManager.runTestXCommand(TestEnvironment.CHECKSUM_SERVER, "rm -rf CS");
+        environmentManager.runTestXCommand(TestEnvironment.CHECKSUM_SERVER, "ln -s /tmp/CS CS");
     }
-
 
     protected void enableHarvestDatabaseUpgrade() throws Exception {
         addStep("Enabling database upgrade.", "");
-        environmentManager.replaceStringInFile(TestEnvironment.JOB_ADMIN_SERVER,
-                "conf/settings_GUIApplication.xml",
-                "<dir>harvestDatabase/fullhddb</dir>",
-                "<dir>harvestDatabase/fullhddb;upgrade=true</dir>");
+        environmentManager.replaceStringInFile(TestEnvironment.JOB_ADMIN_SERVER, "conf/settings_GUIApplication.xml",
+                "<dir>harvestDatabase/fullhddb</dir>", "<dir>harvestDatabase/fullhddb;upgrade=true</dir>");
     }
 
     protected void upgradeHarvestDatabase() throws Exception {
-        environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER,
-                "export CLASSPATH=" +
-                        "./lib/dk.netarkivet.harvester.jar:" +
-                        "./lib/dk.netarkivet.archive.jar:" +
-                        "./lib/dk.netarkivet.monitor.jar:$CLASSPATH;java " +
-                        "-Xmx1536m  -Ddk.netarkivet.settings.file=./conf/settings_GUIApplication.xml " +
-                        "-Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.Jdk14Logger " +
-                        "-Djava.util.logging.config.file=./conf/log_GUIApplication.prop " +
-                        "-Djava.security.manager -Djava.security.policy=./conf/security.policy " +
-                        "dk.netarkivet.harvester.tools.HarvestdatabaseUpdateApplication " +
-                        "< /dev/null > start_harvestdatabaseUpdateApplication.log 2>&1 ");
+        environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, "export CLASSPATH="
+                + "./lib/dk.netarkivet.harvester.jar:" + "./lib/dk.netarkivet.archive.jar:"
+                + "./lib/dk.netarkivet.monitor.jar:$CLASSPATH;java "
+                + "-Xmx1536m  -Ddk.netarkivet.settings.file=./conf/settings_GUIApplication.xml "
+                + "-Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.Jdk14Logger "
+                + "-Djava.util.logging.config.file=./conf/log_GUIApplication.prop "
+                + "-Djava.security.manager -Djava.security.policy=./conf/security.policy "
+                + "dk.netarkivet.harvester.tools.HarvestdatabaseUpdateApplication "
+                + "< /dev/null > start_harvestdatabaseUpdateApplication.log 2>&1 ");
     }
 
     private void generateDatabaseSchemas() throws Exception {
         environmentManager.runCommandWithoutQuotes("rm -rf /home/test/schemas");
         environmentManager.runCommandWithoutQuotes("mkdir /home/test/schemas");
-        String envDef = "cd /home/test/schemas;" +
-                "export LIBDIR=/home/test/release_software_dist/" + environmentManager.getTESTX() + "/lib/db;" +
-                "export CLASSPATH=$LIBDIR/derby.jar:$LIBDIR/derbytools-10.8.2.2.jar;";
-        //Generate schema for production database
-        environmentManager.runCommandWithoutQuotes(envDef+
-                "java org.apache.derby.tools.dblook " +
-                "-d 'jdbc:derby:/home/test/prod-backup/fullhddb;upgrade=true' " +
-                "-o /home/test/schemas/proddbs_schema.txt");
-        //Generate schema for test database
-        environmentManager.runCommandWithoutQuotes(envDef+
-                "jar xvf /home/test/release_software_dist/" + environmentManager.getTESTX() + "/settings/fullhddb.jar");
-        environmentManager.runCommandWithoutQuotes(envDef+
-                "java org.apache.derby.tools.dblook -d 'jdbc:derby:fullhddb;upgrade=true' -o testdbs_schema.txt");
-        environmentManager.runCommandWithoutQuotes(envDef+
-                "rm -rf fullhddb; rm -rf META-INF");
-        //Generate schema for bundled database
-        environmentManager.runCommandWithoutQuotes(envDef+
-                "jar xvf /home/test/release_software_dist/" + environmentManager.getTESTX() +
-                "/harvestdefinitionbasedir/fullhddb.jar");
-        environmentManager.runCommandWithoutQuotes(envDef+
-                "java org.apache.derby.tools.dblook -d 'jdbc:derby:fullhddb;upgrade=true' -o bundleddbs_schema.txt");
-        environmentManager.runCommandWithoutQuotes(envDef +
-                "rm -rf fullhddb; rm -rf META-INF");
+        String envDef = "cd /home/test/schemas;" + "export LIBDIR=/home/test/release_software_dist/"
+                + environmentManager.getTESTX() + "/lib/db;"
+                + "export CLASSPATH=$LIBDIR/derby.jar:$LIBDIR/derbytools-10.8.2.2.jar;";
+        // Generate schema for production database
+        environmentManager.runCommandWithoutQuotes(envDef + "java org.apache.derby.tools.dblook "
+                + "-d 'jdbc:derby:/home/test/prod-backup/fullhddb;upgrade=true' "
+                + "-o /home/test/schemas/proddbs_schema.txt");
+        // Generate schema for test database
+        environmentManager.runCommandWithoutQuotes(envDef + "jar xvf /home/test/release_software_dist/"
+                + environmentManager.getTESTX() + "/settings/fullhddb.jar");
+        environmentManager.runCommandWithoutQuotes(envDef
+                + "java org.apache.derby.tools.dblook -d 'jdbc:derby:fullhddb;upgrade=true' -o testdbs_schema.txt");
+        environmentManager.runCommandWithoutQuotes(envDef + "rm -rf fullhddb; rm -rf META-INF");
+        // Generate schema for bundled database
+        environmentManager.runCommandWithoutQuotes(envDef + "jar xvf /home/test/release_software_dist/"
+                + environmentManager.getTESTX() + "/harvestdefinitionbasedir/fullhddb.jar");
+        environmentManager.runCommandWithoutQuotes(envDef
+                + "java org.apache.derby.tools.dblook -d 'jdbc:derby:fullhddb;upgrade=true' -o bundleddbs_schema.txt");
+        environmentManager.runCommandWithoutQuotes(envDef + "rm -rf fullhddb; rm -rf META-INF");
     }
 
     private void compareDatabaseSchemas() throws Exception {
         String envDef = "cd /home/test/schemas;";
 
-        //Sort the schemas and remove uninteresting lines
-        environmentManager.runCommandWithoutQuotes(envDef+
-                "grep -v INDEX proddbs_schema.txt|grep -v CONSTRAINT|grep -v ^-- |sort > proddbs_schema.txt.sort");
-        environmentManager.runCommandWithoutQuotes(envDef+
-                "grep -v INDEX testdbs_schema.txt|grep -v CONSTRAINT|grep -v ^-- |sort > testdbs_schema.txt.sort");
-        environmentManager.runCommandWithoutQuotes(envDef+
-                "grep -v INDEX bundleddbs_schema.txt|grep -v CONSTRAINT|grep -v ^-- |sort > bundleddbs_schema.txt.sort");
-        //Check for Differences. The only allowed differences are in the order of the table fields.
-        environmentManager.runCommandWithoutQuotes(envDef+
-                "diff -b -B testdbs_schema.txt.sort proddbs_schema.txt.sort  > test-prod-diff", new int[]{0,1});
-        environmentManager.runCommandWithoutQuotes(envDef+
-                "diff -b -B bundleddbs_schema.txt.sort testdbs_schema.txt.sort  > test-bundled-diff", new int[]{0,1});
+        // Sort the schemas and remove uninteresting lines
+        environmentManager.runCommandWithoutQuotes(envDef
+                + "grep -v INDEX proddbs_schema.txt|grep -v CONSTRAINT|grep -v ^-- |sort > proddbs_schema.txt.sort");
+        environmentManager.runCommandWithoutQuotes(envDef
+                + "grep -v INDEX testdbs_schema.txt|grep -v CONSTRAINT|grep -v ^-- |sort > testdbs_schema.txt.sort");
+        environmentManager
+                .runCommandWithoutQuotes(envDef
+                        + "grep -v INDEX bundleddbs_schema.txt|grep -v CONSTRAINT|grep -v ^-- |sort > bundleddbs_schema.txt.sort");
+        // Check for Differences. The only allowed differences are in the order
+        // of the table fields.
+        environmentManager.runCommandWithoutQuotes(envDef
+                + "diff -b -B testdbs_schema.txt.sort proddbs_schema.txt.sort  > test-prod-diff", new int[] { 0, 1 });
+        environmentManager.runCommandWithoutQuotes(envDef
+                + "diff -b -B bundleddbs_schema.txt.sort testdbs_schema.txt.sort  > test-bundled-diff", new int[] { 0,
+                1 });
     }
-
 
 }

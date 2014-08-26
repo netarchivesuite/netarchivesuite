@@ -40,8 +40,8 @@ import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
 import dk.netarkivet.common.utils.Settings;
 
 /**
- * This is the connector between netarchivesuite and wayback. And is based 
- * on the NetarchiveResourceStore, and the implementations of ResourceStore
+ * This is the connector between netarchivesuite and wayback. And is based on
+ * the NetarchiveResourceStore, and the implementations of ResourceStore
  * distributed with wayback-1.4.2.
  *
  */
@@ -56,69 +56,59 @@ public class NetarchiveCacheResourceStore implements ResourceStore {
     private LRUCache fileCache;
     /** The replica being used by this class. */
     private Replica replicaUsed;
-    
+
     /**
-     *  Constructor.
-     *  Initiates the caching mechanism.
+     * Constructor. Initiates the caching mechanism.
      */
     public NetarchiveCacheResourceStore() {
         fileCache = LRUCache.getInstance();
         client = ArcRepositoryClientFactory.getViewerInstance();
-        replicaUsed = Replica.getReplicaFromId(Settings.get(
-                CommonSettings.USE_REPLICA_ID));
+        replicaUsed = Replica.getReplicaFromId(Settings.get(CommonSettings.USE_REPLICA_ID));
     }
 
     /**
      * Transforms search result into a resource, according to the ResourceStore
      * interface.
-     * @param captureSearchResult the search result.
-     * @return a valid resource containing metadata and a link to the ARC
-     * or warc-record 
-     * @throws ResourceNotAvailableException if something went wrong fetching
-     * the record.
+     * 
+     * @param captureSearchResult
+     *            the search result.
+     * @return a valid resource containing metadata and a link to the ARC or
+     *         warc-record
+     * @throws ResourceNotAvailableException
+     *             if something went wrong fetching the record.
      */
-    public Resource retrieveResource(CaptureSearchResult captureSearchResult)
-            throws ResourceNotAvailableException {
+    public Resource retrieveResource(CaptureSearchResult captureSearchResult) throws ResourceNotAvailableException {
         long offset;
- 
+
         String arcfile = captureSearchResult.getFile();
         offset = captureSearchResult.getOffset();
-    
-        logger.info("Received request for resource from file '" + arcfile
-                + "' at offset '" + offset + "'");
-    
+
+        logger.info("Received request for resource from file '" + arcfile + "' at offset '" + offset + "'");
+
         // Try to lookup the file in the cache
-        // make synchronized to disallow more than one using 
+        // make synchronized to disallow more than one using
         // the cache at any one time
         synchronized (fileCache) {
             File wantedFile = fileCache.get(arcfile);
             try {
                 if (wantedFile != null && wantedFile.exists()) {
-                    logger.debug("Found the file '" + arcfile
-                            + "' in the cache. ");
+                    logger.debug("Found the file '" + arcfile + "' in the cache. ");
                     return ResourceFactory.getResource(wantedFile, offset);
                 } else {
-                    logger.debug("The file '" + arcfile
-                            + "' was not found in the cache. ");
+                    logger.debug("The file '" + arcfile + "' was not found in the cache. ");
                     // Get file from bitarchive, and place it in the cachedir
                     // directory
-                    File fileFromBitarchive = new File(fileCache.getCacheDir(),
-                            arcfile);
+                    File fileFromBitarchive = new File(fileCache.getCacheDir(), arcfile);
                     client.getFile(arcfile, replicaUsed, fileFromBitarchive);
                     // put into the cache
                     fileCache.put(arcfile, fileFromBitarchive);
-                    logger.info("File '" + arcfile
-                            + "' downloaded from archive and put into the cache '"
-                            + fileCache.getCacheDir().getAbsolutePath()
-                            + "'.");
-                    return ResourceFactory.getResource(fileFromBitarchive,
-                            offset);
+                    logger.info("File '" + arcfile + "' downloaded from archive and put into the cache '"
+                            + fileCache.getCacheDir().getAbsolutePath() + "'.");
+                    return ResourceFactory.getResource(fileFromBitarchive, offset);
                 }
             } catch (IOException e) {
                 logger.error("Error looking for non existing resource", e);
-                throw new ResourceNotAvailableException(this.getClass()
-                        .getName()
-                        + "Throws Exception when accessing "
+                throw new ResourceNotAvailableException(this.getClass().getName() + "Throws Exception when accessing "
                         + "CaptureResult given from Wayback.");
             }
         }
@@ -126,7 +116,9 @@ public class NetarchiveCacheResourceStore implements ResourceStore {
 
     /**
      * Shuts down this resource store, closing the arcrepository client.
-     * @throws IOException if an exception ocurred while closing the client.
+     * 
+     * @throws IOException
+     *             if an exception ocurred while closing the client.
      */
     public void shutdown() throws IOException {
         // Close JMS connection.

@@ -35,7 +35,7 @@ public class MySQLSpecifics extends DBSpecifics {
 
     /** The log. */
     private static final Logger log = LoggerFactory.getLogger(MySQLSpecifics.class);
-    
+
     @Override
     public void shutdownDatabase() {
         log.warn("Attempt to shutdown the database ignored. Only meaningful for embedded databases");

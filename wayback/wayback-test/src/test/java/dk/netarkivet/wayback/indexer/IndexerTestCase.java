@@ -53,7 +53,8 @@ public class IndexerTestCase {
         HibernateUtil.getSession().getSessionFactory().close();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
-        System.setProperty(CommonSettings.ARC_REPOSITORY_CLIENT, "dk.netarkivet.common.distribute.arcrepository.LocalArcRepositoryClient");
+        System.setProperty(CommonSettings.ARC_REPOSITORY_CLIENT,
+                "dk.netarkivet.common.distribute.arcrepository.LocalArcRepositoryClient");
         System.setProperty("settings.common.arcrepositoryClient.fileDir", TestInfo.FILE_DIR.getAbsolutePath());
         System.setProperty(CommonSettings.REMOTE_FILE_CLASS, "dk.netarkivet.common.distribute.TestRemoteFile");
         assertTrue(ArcRepositoryClientFactory.getPreservationInstance() instanceof LocalArcRepositoryClient);
@@ -68,7 +69,7 @@ public class IndexerTestCase {
         } else {
             System.setProperty(CommonSettings.ARC_REPOSITORY_CLIENT, "");
         }
-        if (oldFileDir != null ) {
+        if (oldFileDir != null) {
             System.setProperty("settings.common.arcrepositoryClient.fileDir", oldFileDir);
         } else {
             System.setProperty("settings.common.arcrepositoryClient.fileDir", "");

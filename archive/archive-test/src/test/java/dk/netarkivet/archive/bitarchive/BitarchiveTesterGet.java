@@ -136,21 +136,21 @@ public class BitarchiveTesterGet extends BitarchiveTestCase {
      */
     @Test
     public void testGetEntry() throws IOException {
-            BitarchiveRecord record = archive.get(ARC_FILE_NAME, 0);
-            assertNotNull("ARC record should be non-null", record);
+        BitarchiveRecord record = archive.get(ARC_FILE_NAME, 0);
+        assertNotNull("ARC record should be non-null", record);
         assertEquals("The arc file name should appear in the record.", ARC_FILE_NAME, record.getFile());
-            // Write contents of record to ARC_RECORD_0_TMP
-            File recordOFile = new File(TestInfo.WORKING_DIR, ARC_RECORD_0_TMP);
-            OutputStream os = new FileOutputStream(recordOFile);
-            record.getData(os);
-            // read targetContents and foundContents from respectively
-            // ARC_RECORD_0 ARC_RECORD_0_TMP
+        // Write contents of record to ARC_RECORD_0_TMP
+        File recordOFile = new File(TestInfo.WORKING_DIR, ARC_RECORD_0_TMP);
+        OutputStream os = new FileOutputStream(recordOFile);
+        record.getData(os);
+        // read targetContents and foundContents from respectively
+        // ARC_RECORD_0 ARC_RECORD_0_TMP
         String targetcontents = FileUtils.readFile(new File(TestInfo.WORKING_DIR, ARC_RECORD_0));
         String foundContents = FileUtils.readFile(new File(TestInfo.WORKING_DIR, ARC_RECORD_0_TMP));
-            // verify that their contents are identical
+        // verify that their contents are identical
         assertTrue("Strings targetcontents (length = " + targetcontents.length() + ") and foundContents (length="
-                    + foundContents.length() + ") should have same length",
-                    targetcontents.length() == foundContents.length());
+                + foundContents.length() + ") should have same length",
+                targetcontents.length() == foundContents.length());
         assertEquals("The contents should be exactly the same", targetcontents, foundContents);
     }
 

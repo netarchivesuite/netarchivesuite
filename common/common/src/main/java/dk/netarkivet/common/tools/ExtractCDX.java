@@ -37,38 +37,40 @@ import dk.netarkivet.common.utils.cdx.ExtractCDXJob;
  *
  * Command line tool for extracting CDX information from given ARC files.
  *
- * Usage:
- * java dk.netarkivet.common.tools.ExtractCDX file1.arc [file2.arc ...]
- *      > myindex.cdx
+ * Usage: java dk.netarkivet.common.tools.ExtractCDX file1.arc [file2.arc ...] >
+ * myindex.cdx
  *
  * Note: Does not depend on logging - communicates failures on stderr.
  */
 public class ExtractCDX {
     /**
-     * Main method. Extracts CDX from all given files and outputs the index
-     * on stdout.
-     * @param argv A list of (absolute paths to) files to index.
+     * Main method. Extracts CDX from all given files and outputs the index on
+     * stdout.
+     * 
+     * @param argv
+     *            A list of (absolute paths to) files to index.
      */
     public static void main(String[] argv) {
         if (argv.length == 0) {
-            System.err.println("Missing parameter: "
-                    + "Must supply an ARC file to be indexed");
+            System.err.println("Missing parameter: " + "Must supply an ARC file to be indexed");
             dieWithUsage();
         }
         List<File> arcFiles = new ArrayList<File>();
         for (String arg : argv) {
-           File f = toArcFile(arg);
+            File f = toArcFile(arg);
             arcFiles.add(f);
         }
-        File[] arcFileArray = arcFiles.toArray(new File[]{});
+        File[] arcFileArray = arcFiles.toArray(new File[] {});
         BatchLocalFiles batchRunner = new BatchLocalFiles(arcFileArray);
         batchRunner.run(new ExtractCDXJob(), System.out);
     }
 
     /**
-     * Verifies that the filename (absolute path) points to
-     * an existing file and that it is an arc file.
-     * @param filename The filename to verify.
+     * Verifies that the filename (absolute path) points to an existing file and
+     * that it is an arc file.
+     * 
+     * @param filename
+     *            The filename to verify.
      * @return The arc file, as a File.
      */
     private static File toArcFile(String filename) {
@@ -76,19 +78,20 @@ public class ExtractCDX {
         try {
             f = FileUtils.makeValidFileFromExisting(filename).getAbsoluteFile();
             if (!FileUtils.ARCS_FILTER.accept(f.getParentFile(), f.getName())) {
-                dieWithError("Could not accept " + filename
-                        + ": was not an arc file");
+                dieWithError("Could not accept " + filename + ": was not an arc file");
             }
             return f;
         } catch (IOFailure e) {
-           dieWithError("Could not accept " + filename + ":" + e);
-           return null; //Compiler does not recognize System.exit()
+            dieWithError("Could not accept " + filename + ":" + e);
+            return null; // Compiler does not recognize System.exit()
         }
     }
 
     /**
      * Prints out a message on stderr and exits with an error code.
-     * @param msg The message to print.
+     * 
+     * @param msg
+     *            The message to print.
      */
     private static void dieWithError(String msg) {
         System.err.println(msg);
@@ -97,12 +100,11 @@ public class ExtractCDX {
     }
 
     /**
-     * Prints out proper usage of this tool on stderr and exits
-     * with an error code.
+     * Prints out proper usage of this tool on stderr and exits with an error
+     * code.
      */
     private static void dieWithUsage() {
-        System.err.println("Usage: java " + ExtractCDX.class.getName()
-                + " file1.arc [file2.arc ...]");
+        System.err.println("Usage: java " + ExtractCDX.class.getName() + " file1.arc [file2.arc ...]");
         System.exit(1);
     }
 }

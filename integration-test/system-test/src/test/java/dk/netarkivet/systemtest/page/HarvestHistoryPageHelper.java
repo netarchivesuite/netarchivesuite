@@ -28,9 +28,9 @@ import org.openqa.selenium.WebElement;
 import java.util.LinkedList;
 import java.util.List;
 
-@SuppressWarnings({ "unused"})
+@SuppressWarnings({ "unused" })
 public class HarvestHistoryPageHelper {
-    private static final String HARVEST_HISTORY_TABLE_CLASS="selection_table";
+    private static final String HARVEST_HISTORY_TABLE_CLASS = "selection_table";
 
     public static final String HARVEST_NAME_HEADER = "Harvest name";
     public static final String RUN_NUMBER_HEADER = "Run number";
@@ -44,10 +44,10 @@ public class HarvestHistoryPageHelper {
 
     public static List<HarvestHistoryEntry> readHarvestHistory() {
         List<HarvestHistoryEntry> harvestHistory = new LinkedList<HarvestHistoryEntry>();
-        List<WebElement> rows =
-                PageHelper.getWebDriver().findElement(By.className("selection_table")).findElements(By.tagName("tr"));
-        rows.remove(0); //SKip headers
-        for (WebElement rowElement:rows) {
+        List<WebElement> rows = PageHelper.getWebDriver().findElement(By.className("selection_table"))
+                .findElements(By.tagName("tr"));
+        rows.remove(0); // SKip headers
+        for (WebElement rowElement : rows) {
             harvestHistory.add(new HarvestHistoryEntry(rowElement));
         }
         return harvestHistory;
@@ -77,19 +77,29 @@ public class HarvestHistoryPageHelper {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof HarvestHistoryEntry)) return false;
+            if (this == o)
+                return true;
+            if (!(o instanceof HarvestHistoryEntry))
+                return false;
 
             HarvestHistoryEntry that = (HarvestHistoryEntry) o;
 
-            if (!bytesHarvested.equals(that.bytesHarvested)) return false;
-            if (!configuration.equals(that.configuration)) return false;
-            if (!documentsHarvested.equals(that.documentsHarvested)) return false;
-            if (!endTime.equals(that.endTime)) return false;
-            if (!runID.equals(that.runID)) return false;
-            if (!runNumber.equals(that.runNumber)) return false;
-            if (!startTime.equals(that.startTime)) return false;
-            if (!stoppedDueTo.equals(that.stoppedDueTo)) return false;
+            if (!bytesHarvested.equals(that.bytesHarvested))
+                return false;
+            if (!configuration.equals(that.configuration))
+                return false;
+            if (!documentsHarvested.equals(that.documentsHarvested))
+                return false;
+            if (!endTime.equals(that.endTime))
+                return false;
+            if (!runID.equals(that.runID))
+                return false;
+            if (!runNumber.equals(that.runNumber))
+                return false;
+            if (!startTime.equals(that.startTime))
+                return false;
+            if (!stoppedDueTo.equals(that.stoppedDueTo))
+                return false;
 
             return true;
         }
@@ -109,16 +119,10 @@ public class HarvestHistoryPageHelper {
 
         @Override
         public String toString() {
-            return "HarvestHistoryEntry{" +
-                    "runNumber='" + runNumber + '\'' +
-                    ", runID='" + runID + '\'' +
-                    ", configuration='" + configuration + '\'' +
-                    ", startTime='" + startTime + '\'' +
-                    ", endTime='" + endTime + '\'' +
-                    ", bytesHarvested='" + bytesHarvested + '\'' +
-                    ", documentsHarvested='" + documentsHarvested + '\'' +
-                    ", stoppedDueTo='" + stoppedDueTo + '\'' +
-                    '}';
+            return "HarvestHistoryEntry{" + "runNumber='" + runNumber + '\'' + ", runID='" + runID + '\''
+                    + ", configuration='" + configuration + '\'' + ", startTime='" + startTime + '\'' + ", endTime='"
+                    + endTime + '\'' + ", bytesHarvested='" + bytesHarvested + '\'' + ", documentsHarvested='"
+                    + documentsHarvested + '\'' + ", stoppedDueTo='" + stoppedDueTo + '\'' + '}';
         }
     }
 }

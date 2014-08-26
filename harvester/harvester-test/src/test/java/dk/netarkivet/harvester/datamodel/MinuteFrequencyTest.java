@@ -29,7 +29,6 @@ import java.util.GregorianCalendar;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
-
 public class MinuteFrequencyTest {
 
     @Test

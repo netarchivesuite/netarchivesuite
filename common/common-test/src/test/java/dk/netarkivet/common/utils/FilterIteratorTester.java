@@ -91,8 +91,8 @@ public class FilterIteratorTester {
         Iterator<File> list = new TestIterator(new File[0]);
         assertFalse("List should not claim more elements " + "when the list is empty", list.hasNext());
 
-            list.next();
-            fail("Should get NoSuchElementException");
+        list.next();
+        fail("Should get NoSuchElementException");
     }
 
     /**
@@ -106,8 +106,8 @@ public class FilterIteratorTester {
         assertNotNull("We should get a file from the list", d);
         assertFalse("List should have no more file", list.hasNext());
 
-            list.next();
-            fail("Should get NoSuchElementException");
+        list.next();
+        fail("Should get NoSuchElementException");
     }
 
     /**
@@ -117,8 +117,8 @@ public class FilterIteratorTester {
     public void testNextBadElementList() {
         Iterator<File> list = new TestIterator(new File[] { TestInfo.NON_EXISTING_FILE });
         assertFalse("List should not claim more elements " + "when no existing objects are in the list", list.hasNext());
-            list.next();
-            fail("Should get NoSuchElementException");
+        list.next();
+        fail("Should get NoSuchElementException");
     }
 
     /**

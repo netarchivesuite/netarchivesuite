@@ -34,7 +34,7 @@ public class TestInfo {
     public static final File ORIGINALS_DIR = new File(TEST_DIR, "originals");
     /** Subdir to use for working copy. */
     public static final File WORKING_DIR = new File(TEST_DIR, "working");
-    /** The file for the archive database.*/
+    /** The file for the archive database. */
     static final File DATABASE_FILE = new File("archivedatabasedir", "archivedb.jar");
 
     /** A directory with valid bitarchive files. */
@@ -45,16 +45,15 @@ public class TestInfo {
     public static final File FAIL_ARCHIVE_DIR = new File(WORKING_DIR, "bitarchive1_to_fail");
     /** The filedir for the invalid bitarchive. */
     public static final File FAIL_ARCHIVE_FILE_DIR = new File(GOOD_ARCHIVE_DIR, "filedir");
-    
-    /** The directory for containing the files for the checksum replica.*/
+
+    /** The directory for containing the files for the checksum replica. */
     public static final File CHECKSUM_ARCHIVE_DIR = new File(WORKING_DIR, "checksum");
-    /** The checksum archive file for testing the missing files.*/
+    /** The checksum archive file for testing the missing files. */
     public static final File CHECKSUM_ARCHIVE_FILE = new File(CHECKSUM_ARCHIVE_DIR, "checksum_THREE.md5");
 
     /** The files known to be present in the bitarchive dirs. */
-    public static final String[] REFERENCE_FILES = new String[]{
-            "integrity1.ARC", "integrity2.ARC", "integrity11.ARC", "integrity12.ARC"
-    };
+    public static final String[] REFERENCE_FILES = new String[] { "integrity1.ARC", "integrity2.ARC",
+            "integrity11.ARC", "integrity12.ARC" };
 
     /** The name of one replica. */
     public static final String REPLICA_ID_ONE = "ONE";
@@ -67,18 +66,24 @@ public class TestInfo {
     public static final File CORRECT_ADMIN_DATA = new File(WORKING_DIR, "correct.admin.data");
     /** An invalid admin.data file. */
     public static final File ADMIN_DATA = new File(WORKING_DIR, "admin.data");
-    
-    /** File for checksum replica.*/
+
+    /** File for checksum replica. */
     public static final File CHECKSUM_FILE = new File(GOOD_ARCHIVE_DIR, "cs.content");
 
     /** The filename of a file in the valid admin data. */
     public static final String FILE_IN_ADMIN_DATA = "foobar";
     /** The filename of a file not in the valid admin data. */
     public static final String FILE_NOT_IN_ADMIN_DATA = "does.not.exist";
-    
-    /** The directory containing the database for DatabaseBasedActiveBitPreservationTester*/
+
+    /**
+     * The directory containing the database for
+     * DatabaseBasedActiveBitPreservationTester
+     */
     public static final File DATABASE_DIR = new File(WORKING_DIR, "bitpreservationdb");
-    /** The complete database URL for the DatabaseBasedActiveBitPreservationTester. */
+    /**
+     * The complete database URL for the
+     * DatabaseBasedActiveBitPreservationTester.
+     */
     public static final String DATABASE_URL = "jdbc:derby:" + DATABASE_DIR.getPath();
 
 }

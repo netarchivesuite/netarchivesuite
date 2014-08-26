@@ -48,11 +48,8 @@ public class DomainOwnerInfoTester {
             // expected
         }
 
-        assertTrue("Earlier domain owner info should compare less",
-                i1.compareTo(i2) < 0);
-        assertTrue("Later domain owner info should compare greater",
-                i2.compareTo(i3) > 0);
-        assertTrue("Same domain owner info should compare equals",
-                i2.compareTo(i2) == 0);
+        assertTrue("Earlier domain owner info should compare less", i1.compareTo(i2) < 0);
+        assertTrue("Later domain owner info should compare greater", i2.compareTo(i3) > 0);
+        assertTrue("Same domain owner info should compare equals", i2.compareTo(i2) == 0);
     }
 }

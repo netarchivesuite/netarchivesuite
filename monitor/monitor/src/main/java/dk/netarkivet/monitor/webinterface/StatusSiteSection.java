@@ -38,10 +38,8 @@ public class StatusSiteSection extends SiteSection {
      * Create a new status SiteSection object.
      */
     public StatusSiteSection() {
-        super("sitesection;monitor", "Monitor", 1,
-              new String[][]{
-                      {"JMXsummary", "pagetitle;monitor.summary"}
-              }, "Status", Constants.TRANSLATIONS_BUNDLE);
+        super("sitesection;monitor", "Monitor", 1, new String[][] { { "JMXsummary", "pagetitle;monitor.summary" } },
+                "Status", Constants.TRANSLATIONS_BUNDLE);
     }
 
     /**

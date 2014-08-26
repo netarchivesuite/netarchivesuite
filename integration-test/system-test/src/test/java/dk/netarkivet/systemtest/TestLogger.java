@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 /*dk.netarkivet.systemtestger should be used by all the test code to enable separation of test
  * logs from the applications logs.
  */
-public class TestLogger {   
+public class TestLogger {
     private Logger log;
 
     public TestLogger(Class<?> logHandle) {

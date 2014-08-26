@@ -30,7 +30,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 /**
  * Helper class to encapsulate information about one remote JmxConnection.
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({ "serial" })
 public class HostEntry implements Serializable {
     /**
      * The name of the remote host.
@@ -52,9 +52,12 @@ public class HostEntry implements Serializable {
     /**
      * Constructor for the HostEntry helper class.
      *
-     * @param name    The name of the remote host
-     * @param jmxPort The JMX port allocated on the remote host
-     * @param rmiPort The RMI port allocated on the remote host
+     * @param name
+     *            The name of the remote host
+     * @param jmxPort
+     *            The JMX port allocated on the remote host
+     * @param rmiPort
+     *            The RMI port allocated on the remote host
      */
     public HostEntry(String name, int jmxPort, int rmiPort) {
         ArgumentNotValid.checkNotNullOrEmpty(name, "String name");
@@ -68,6 +71,7 @@ public class HostEntry implements Serializable {
 
     /**
      * Get the JMX port for connections.
+     * 
      * @return The jmx port.
      */
     public int getJmxPort() {
@@ -76,6 +80,7 @@ public class HostEntry implements Serializable {
 
     /**
      * Get the host name.
+     * 
      * @return The name.
      */
     public String getName() {
@@ -84,6 +89,7 @@ public class HostEntry implements Serializable {
 
     /**
      * Get the RMI port for connections.
+     * 
      * @return The rmi port.
      */
     public int getRmiPort() {
@@ -92,6 +98,7 @@ public class HostEntry implements Serializable {
 
     /**
      * Get the time this host was last seen alive.
+     * 
      * @return The time this host was last seen alive.
      */
     public Date getTime() {
@@ -107,19 +114,22 @@ public class HostEntry implements Serializable {
      *
      * @see Object#equals(Object)
      *
-     * @param obj The host to compare with.
+     * @param obj
+     *            The host to compare with.
      * @return Whether the two objects represent the same host.
      */
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (!(obj instanceof HostEntry)) return false;
+        if (this == obj)
+            return true;
+        if (!(obj instanceof HostEntry))
+            return false;
 
         final HostEntry hostEntry1 = (HostEntry) obj;
 
-        if (name != null ? !name.equals(hostEntry1.name)
-                : hostEntry1.name != null) return false;
+        if (name != null ? !name.equals(hostEntry1.name) : hostEntry1.name != null)
+            return false;
 
-        if (jmxPort != hostEntry1.jmxPort){
+        if (jmxPort != hostEntry1.jmxPort) {
             return false;
         }
         if (rmiPort != hostEntry1.rmiPort) {
@@ -138,27 +148,30 @@ public class HostEntry implements Serializable {
     public int hashCode() {
         int result;
         result = (name != null ? name.hashCode() : 0);
-        result = 29 * result + jmxPort*1;
-        result = 29 * result + rmiPort*2;
+        result = 29 * result + jmxPort * 1;
+        result = 29 * result + rmiPort * 2;
         return result;
     }
 
     /**
      * Get a human readable representation of this host and ports.
+     * 
      * @return A human readable string.
      */
     public String toString() {
-        return "Host=" + name + ", JMXport=" + jmxPort + ", RMIport=" + rmiPort
-                + ", last seen live at " + time;
+        return "Host=" + name + ", JMXport=" + jmxPort + ", RMIport=" + rmiPort + ", last seen live at " + time;
     }
 
     /**
      * Update the time for when the host was last seen alive.
-     * @param time The time last seen alive.
-     * @throws ArgumentNotValid on null parameter.
+     * 
+     * @param time
+     *            The time last seen alive.
+     * @throws ArgumentNotValid
+     *             on null parameter.
      */
     public void setTime(Date time) {
         ArgumentNotValid.checkNotNull(time, "Date time");
-        this.time=time;
+        this.time = time;
     }
 }

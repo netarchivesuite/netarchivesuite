@@ -35,8 +35,7 @@ public class CompleteSettingsTester extends TestCase {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         FileUtils.removeRecursively(TestInfo.TMPDIR);
 
-        TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR,
-            TestInfo.WORKING_DIR);
+        TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
     }
 
     @Override
@@ -46,16 +45,16 @@ public class CompleteSettingsTester extends TestCase {
     }
 
     /**
-     * Rebuilds the file src/dk/netarkivet/deploy/default_settings.xml. Eg.
-     * this is not a real test.
+     * Rebuilds the file src/dk/netarkivet/deploy/default_settings.xml. Eg. this
+     * is not a real test.
      */
 
     public void testCompleteSettings() throws Exception {
-    	URL url = this.getClass().getClassLoader().getResource("");
+        URL url = this.getClass().getClassLoader().getResource("");
         File file = new File(url.toURI());
-    	// ToDo The generation of the complete settings file should be moved
+        // ToDo The generation of the complete settings file should be moved
         // to the build functionality directly.
-    	File settingsFile = new File(file, "dk/netarkivet/deploy/complete_settings.xml");
-    	BuildCompleteSettings.buildCompleteSettings(settingsFile.getPath());
+        File settingsFile = new File(file, "dk/netarkivet/deploy/complete_settings.xml");
+        BuildCompleteSettings.buildCompleteSettings(settingsFile.getPath());
     }
 }

@@ -75,7 +75,7 @@ public class IntegrityTests {
     // A named logger for this class is retrieved
     protected final Logger logger = LoggerFactory.getLogger(IntegrityTests.class);
 
-	private static final String ARC_FILE_NAME = "Upload5.ARC";
+    private static final String ARC_FILE_NAME = "Upload5.ARC";
     private static final File TEST_DIR = new File("tests/dk/netarkivet/archive/bitarchive/distribute/data/");
     private static final File ORIGINALS_DIR = new File(TEST_DIR, "originals");
     private static final File WORKING_DIR = new File(TEST_DIR, "working");
@@ -181,8 +181,8 @@ public class IntegrityTests {
 
                 if (currentUploadedFile != null) {
                     if (!theFTPClient.deleteFile(currentUploadedFile)) {
-                        logger.warn("deleteFile operation failed on {}. Reply from ftpserver: {}",
-                        		currentUploadedFile, theFTPClient.getReplyString());
+                        logger.warn("deleteFile operation failed on {}. Reply from ftpserver: {}", currentUploadedFile,
+                                theFTPClient.getReplyString());
                     }
                 }
             }

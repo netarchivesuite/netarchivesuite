@@ -38,8 +38,8 @@ import dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationReques
 import dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationResponse;
 
 /**
- * Handles the reception of status messages from the harvesters. Will call the 
- * {@link #visit(HarvesterReadyMessage)} method when a Ready message is 
+ * Handles the reception of status messages from the harvesters. Will call the
+ * {@link #visit(HarvesterReadyMessage)} method when a Ready message is
  * received.
  */
 public class HarvesterStatusReceiver extends HarvesterMessageHandler implements ComponentLifeCycle {
@@ -47,7 +47,7 @@ public class HarvesterStatusReceiver extends HarvesterMessageHandler implements 
     /** The logger to use. */
     private static final Logger log = LoggerFactory.getLogger(HarvesterStatusReceiver.class);
 
-    /** @see HarvesterStatusReceiver#visit(dk.netarkivet.harvester.harvesting.distribute.HarvesterReadyMessage)  */
+    /** @see HarvesterStatusReceiver#visit(dk.netarkivet.harvester.harvesting.distribute.HarvesterReadyMessage) */
     private final JobDispatcher jobDispatcher;
     /** Connection to JMS provider. */
     private final JMSConnection jmsConnection;
@@ -58,13 +58,15 @@ public class HarvesterStatusReceiver extends HarvesterMessageHandler implements 
     private final HarvestChannelRegistry harvestChannelRegistry;
 
     /**
-     * @param jobDispatcher The <code>JobDispatcher</code> to delegate the 
-     * dispatching of new jobs to, when a 'Ready for job' event is received.
-     * @param jmsConnection The JMS connection by which 
-     * {@link HarvesterReadyMessage} is received.
+     * @param jobDispatcher
+     *            The <code>JobDispatcher</code> to delegate the dispatching of
+     *            new jobs to, when a 'Ready for job' event is received.
+     * @param jmsConnection
+     *            The JMS connection by which {@link HarvesterReadyMessage} is
+     *            received.
      */
     public HarvesterStatusReceiver(JobDispatcher jobDispatcher, JMSConnection jmsConnection,
-    		HarvestChannelDAO harvestChannelDao, HarvestChannelRegistry harvestChannelRegistry) {
+            HarvestChannelDAO harvestChannelDao, HarvestChannelRegistry harvestChannelRegistry) {
         ArgumentNotValid.checkNotNull(jobDispatcher, "jobDispatcher");
         ArgumentNotValid.checkNotNull(jmsConnection, "jmsConnection");
         ArgumentNotValid.checkNotNull(harvestChannelDao, "harvestChannelDao");
@@ -87,7 +89,9 @@ public class HarvesterStatusReceiver extends HarvesterMessageHandler implements 
 
     /**
      * Tells the dispatcher that it may dispatch a new job.
-     * @param message The message containing the relevant harvester information.
+     * 
+     * @param message
+     *            The message containing the relevant harvester information.
      *
      */
     @Override
@@ -102,7 +106,7 @@ public class HarvesterStatusReceiver extends HarvesterMessageHandler implements 
     public void visit(HarvesterRegistrationRequest msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
 
-        String harvesterInstanceId = msg.getInstanceId();        
+        String harvesterInstanceId = msg.getInstanceId();
         String channelName = msg.getHarvestChannelName();
 
         boolean isSnapshot = true;
@@ -115,13 +119,13 @@ public class HarvesterStatusReceiver extends HarvesterMessageHandler implements 
         }
 
         if (isValid) {
-        	harvestChannelRegistry.register(channelName, harvesterInstanceId);
+            harvestChannelRegistry.register(channelName, harvesterInstanceId);
         }
 
         // Send the reply
         jmsConnection.send(new HarvesterRegistrationResponse(channelName, isValid, isSnapshot));
-        log.info("Sent a message to notify that harvest channel '{}' is {}",
-        		channelName, (isValid ? "valid." :  "invalid."));
+        log.info("Sent a message to notify that harvest channel '{}' is {}", channelName, (isValid ? "valid."
+                : "invalid."));
     }
 
 }

@@ -34,11 +34,12 @@ import dk.netarkivet.harvester.harvesting.distribute.HarvestControllerServer;
  */
 public class HarvestControllerApplication {
 
-	/**
+    /**
      * Runs the HarvestController Application. Settings are read from config
      * files.
      *
-     * @param args an empty array
+     * @param args
+     *            an empty array
      */
     public static void main(String[] args) {
         ApplicationUtils.startApp(HarvestControllerServer.class, args);

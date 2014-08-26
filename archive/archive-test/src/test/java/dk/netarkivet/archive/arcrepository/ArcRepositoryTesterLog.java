@@ -45,13 +45,12 @@ import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 /**
- * Unit test for webarchive API.
- * The logging of webarchive operations is tested.
+ * Unit test for webarchive API. The logging of webarchive operations is tested.
  */
-@SuppressWarnings({"deprecation"})
+@SuppressWarnings({ "deprecation" })
 public class ArcRepositoryTesterLog {
 
-	protected final Logger log = LoggerFactory.getLogger(ArcRepositoryTesterLog.class);
+    protected final Logger log = LoggerFactory.getLogger(ArcRepositoryTesterLog.class);
 
     private UseTestRemoteFile rf = new UseTestRemoteFile();
 
@@ -60,16 +59,16 @@ public class ArcRepositoryTesterLog {
     private static final File TEST_DIR = new File("tests/dk/netarkivet/archive/arcrepository/data");
 
     /**
-     * The directory storing the arcfiles in the already existing bitarchive
-     * - including credentials and admin-files.
+     * The directory storing the arcfiles in the already existing bitarchive -
+     * including credentials and admin-files.
      */
     private static final File ORIGINALS_DIR = new File(new File(TEST_DIR, "logging"), "originals");
-    
+
     /**
-     * List of files that can be used in the scripts 
-     * (content of the ORIGINALS_DIR).
+     * List of files that can be used in the scripts (content of the
+     * ORIGINALS_DIR).
      */
-    private static final List<String> FILES = Arrays.asList(new String[]{"logging1.ARC", "logging2.ARC"});
+    private static final List<String> FILES = Arrays.asList(new String[] { "logging1.ARC", "logging2.ARC" });
 
     /**
      * A Controller object.
@@ -97,30 +96,25 @@ public class ArcRepositoryTesterLog {
     // FIXME: test temporarily disabled
     public void testLogStore() throws Exception {
         String fileName = FILES.get(0).toString();
-        //store the file;
+        // store the file;
         File f = new File(ORIGINALS_DIR, fileName);
-        
+
         UpdateableAdminData adminData = AdminData.getUpdateableInstance();
-        adminData.addEntry(f.getName(), new StoreMessage(
-                Channels.getThisReposClient(), f), ChecksumCalculator.calculateMd5(
-                f));
-        adminData.setState(f.getName(),
-                Channels.retrieveReplicaChannelFromReplicaId("TWO").getName(),
+        adminData.addEntry(f.getName(), new StoreMessage(Channels.getThisReposClient(), f),
+                ChecksumCalculator.calculateMd5(f));
+        adminData.setState(f.getName(), Channels.retrieveReplicaChannelFromReplicaId("TWO").getName(),
                 ReplicaStoreState.UPLOAD_COMPLETED);
-        adminData.setState(f.getName(),
-                Channels.retrieveReplicaChannelFromReplicaId("THREE").getName(),
+        adminData.setState(f.getName(), Channels.retrieveReplicaChannelFromReplicaId("THREE").getName(),
                 ReplicaStoreState.UPLOAD_COMPLETED);
 
-        
         StoreMessage msg = new StoreMessage(Channels.getError(), f);
         arcRepos.store(msg.getRemoteFile(), msg);
         UploadWaiting.waitForUpload(f, this);
-        //And check for proper logging:
+        // And check for proper logging:
         LogUtils.flushLogs(ArcRepository.class.getName());
-        FileAsserts.assertFileContains("Log contains file after storing.",
-                fileName, CONTROLLER_LOG_FILE);
-        FileAsserts.assertFileContains("Log should contain the words 'Store started' after storing.",
-                "Store started", CONTROLLER_LOG_FILE);
+        FileAsserts.assertFileContains("Log contains file after storing.", fileName, CONTROLLER_LOG_FILE);
+        FileAsserts.assertFileContains("Log should contain the words 'Store started' after storing.", "Store started",
+                CONTROLLER_LOG_FILE);
     }
 
 }

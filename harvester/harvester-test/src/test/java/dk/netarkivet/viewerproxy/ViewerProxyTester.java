@@ -49,8 +49,8 @@ import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
-/** 
- * Unit-tests for the ViewerProxy class. 
+/**
+ * Unit-tests for the ViewerProxy class.
  */
 public class ViewerProxyTester {
     /** Viewerproxy instance to clean up in teardown. */
@@ -66,16 +66,14 @@ public class ViewerProxyTester {
         rs.setUp();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         ChannelsTesterHelper.resetChannels();
-        Settings.set(CommonSettings.REMOTE_FILE_CLASS,
-                     "dk.netarkivet.common.distribute.TestRemoteFile");
+        Settings.set(CommonSettings.REMOTE_FILE_CLASS, "dk.netarkivet.common.distribute.TestRemoteFile");
 
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.ARCHIVE_DIR);
 
         Settings.set(CommonSettings.CACHE_DIR, new File(TestInfo.WORKING_DIR, "cachedir").getAbsolutePath());
-        //Set up an HTTP client that can send commands to our proxy;
-        int httpPort = Integer.parseInt(Settings.get(
-                CommonSettings.HTTP_PORT_NUMBER));
+        // Set up an HTTP client that can send commands to our proxy;
+        int httpPort = Integer.parseInt(Settings.get(CommonSettings.HTTP_PORT_NUMBER));
         httpClient = new HttpClient();
         HostConfiguration hc = new HostConfiguration();
         String hostName = "localhost";
@@ -84,8 +82,7 @@ public class ViewerProxyTester {
     }
 
     @After
-    public void tearDown() throws NoSuchFieldException,
-            IllegalAccessException {
+    public void tearDown() throws NoSuchFieldException, IllegalAccessException {
         if (proxy != null) {
             proxy.cleanup();
         }
@@ -107,7 +104,8 @@ public class ViewerProxyTester {
     }
 
     /**
-     * Test that the proxyServer is giving meaningful output when asked for non-existing content
+     * Test that the proxyServer is giving meaningful output when asked for
+     * non-existing content
      */
     @Test
     public void testGetWithNoIndex() throws Exception {
@@ -121,13 +119,15 @@ public class ViewerProxyTester {
                 + "/changeIndex?returnURL=http://foo/&label=hest&jobID=2&jobID=3");
 
         content = getURLfromProxyServer("http://www.nonexistingdomain.test/nonexistingfile.html");
-        StringAsserts.assertStringContains("Getting NON-existing URL-object out of the archive should give a message !",
-                "Can't find URL", content);
+        StringAsserts
+                .assertStringContains("Getting NON-existing URL-object out of the archive should give a message !",
+                        "Can't find URL", content);
     }
 
     /**
-     * Verifies that the proxyServer is logging when asked
-     *  for non-existing content.
+     * Verifies that the proxyServer is logging when asked for non-existing
+     * content.
+     * 
      * @throws Exception
      */
     @Test
@@ -138,20 +138,17 @@ public class ViewerProxyTester {
         getURLfromProxyServer("http://" + "netarchivesuite.viewerproxy.invalid" + "/startRecordingURIs?returnURL=/");
         String missingUrl = "http://www.nonexistingdomain.test/nonexistingfile.html";
         getURLfromProxyServer(missingUrl);
-        String list = getURLfromProxyServer(
-                "http://" + "netarchivesuite.viewerproxy.invalid" + "/getRecordedURIs");
-        StringAsserts.assertStringContains(
-                "Getting NON-existing URL-object out of the archive should be logged",
+        String list = getURLfromProxyServer("http://" + "netarchivesuite.viewerproxy.invalid" + "/getRecordedURIs");
+        StringAsserts.assertStringContains("Getting NON-existing URL-object out of the archive should be logged",
                 missingUrl, list);
     }
 
     /**
-     * Verifies that reception of an unknown instruction
-     * is logged.
+     * Verifies that reception of an unknown instruction is logged.
      */
     @Test
     public void testUnknownInstruction() throws IOException {
-    	LogbackRecorder lr = LogbackRecorder.startRecorder();
+        LogbackRecorder lr = LogbackRecorder.startRecorder();
         proxy = ViewerProxy.getInstance();
         getURLfromProxyServer("http://" + "netarchivesuite.viewerproxy.invalid" + "/unknown");
         lr.assertLogContains("Unknown instruction should get Logged !", "Unknown command");
@@ -159,8 +156,11 @@ public class ViewerProxyTester {
     }
 
     /**
-     * Method used for getting URL-objects from the archive through the proxyServer.
-     * @param uri the URL to fetch
+     * Method used for getting URL-objects from the archive through the
+     * proxyServer.
+     * 
+     * @param uri
+     *            the URL to fetch
      * @return the content as a String
      */
     private String getURLfromProxyServer(String uri) throws IOException {

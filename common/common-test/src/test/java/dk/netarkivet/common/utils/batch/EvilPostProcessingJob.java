@@ -31,7 +31,7 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.utils.FileUtils;
 
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({ "serial" })
 public class EvilPostProcessingJob extends FileBatchJob {
 
     @Override
@@ -51,23 +51,23 @@ public class EvilPostProcessingJob extends FileBatchJob {
         } catch (Exception e) {
             return false;
         }
-        
+
         return true;
     }
-    
+
     @Override
     public boolean postProcess(InputStream input, OutputStream output) {
         Log log = LogFactory.getLog(this.getClass());
         try {
             File[] files = FileUtils.getTempDir().listFiles();
-            
+
             log.info("directory batch contains " + files.length + " files.");
-            
-            for(File fil : files) {
+
+            for (File fil : files) {
                 log.warn("deleting: " + fil.getName());
                 fil.delete();
             }
-            
+
             return true;
         } catch (Exception e) {
             log.warn(e.getMessage());

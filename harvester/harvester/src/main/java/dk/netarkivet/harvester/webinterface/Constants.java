@@ -36,20 +36,17 @@ public class Constants {
     }
 
     /** Names of various parameters used in the webinterface. */
-    public static final String JOBSTATUS_PARAM
-        = HarvestStatusQuery.UI_FIELD.JOB_STATUS.name();
+    public static final String JOBSTATUS_PARAM = HarvestStatusQuery.UI_FIELD.JOB_STATUS.name();
 
     public static final String JOBIDORDER_PARAM = "jobidorder";
 
     public static final String DOMAIN_SEARCH_PARAM = "domainName";
-    
-    //public static final String DOMAIN
 
-    public static final String HARVEST_ID_PARAM
-        = HarvestStatusQuery.UI_FIELD.HARVEST_ID.name();
+    // public static final String DOMAIN
 
-    public static final String HARVEST_NUM_PARAM
-        = HarvestStatusQuery.UI_FIELD.HARVEST_RUN.name();
+    public static final String HARVEST_ID_PARAM = HarvestStatusQuery.UI_FIELD.HARVEST_ID.name();
+
+    public static final String HARVEST_NUM_PARAM = HarvestStatusQuery.UI_FIELD.HARVEST_RUN.name();
 
     public static final String EDIT_CONFIG_PARAM = "editConfig";
 
@@ -99,7 +96,7 @@ public class Constants {
     public static final String SAVE_PARAM = "save";
 
     public static final String COMMENTS_PARAM = "comments";
-    
+
     public static final String AUDIENCE_PARAM = "audience";
 
     public static final String NEXTDATE_PARAM = "nextdate";
@@ -153,15 +150,15 @@ public class Constants {
     public static final String RENEW_ALIAS_PARAM = "renewAlias";
 
     public static final String UPLOAD_FILE_PARAM = "upload_file";
-    
+
     public static final String IS_NEWEST_FIRST = "is_newest_first";
-    
+
     public static final String DESCENDING = "DESC";
     public static final String ASCENDING = "ASC";
-    
+
     public static final String FALSE = "false";
     public static final String TRUE = "true";
-    
+
     /**
      * Names of some parameters used in management of global crawler traps.
      */
@@ -192,8 +189,7 @@ public class Constants {
      * harvester package, and the directory belonging to the viewerproxy
      * package.
      */
-    public static final String DEFINITIONS_SITESECTION_DIRNAME
-        = "HarvestDefinition";
+    public static final String DEFINITIONS_SITESECTION_DIRNAME = "HarvestDefinition";
 
     public static final String HISTORY_SITESECTION_DIRNAME = "History";
 
@@ -257,27 +253,29 @@ public class Constants {
 
     /** Optional argument for which page of the searchresult to show. */
     public static final String START_PAGE_PARAMETER = "START_PAGE_INDEX";
-    
-    /** Domain query type parameter. Used in the jsp-page
+
+    /**
+     * Domain query type parameter. Used in the jsp-page
      * Definitions-find-domains.jsp.
      */
     public static final String DOMAIN_QUERY_TYPE_PARAM = "DOMAIN_QUERY_TYPE";
-    
-    /** Domain search key parameter. Used in the jsp-page
+
+    /**
+     * Domain search key parameter. Used in the jsp-page
      * Definitions-find-domains.jsp.
      */
-    public static final String DOMAIN_QUERY_STRING_PARAM =  "DOMAIN_QUERY_STRING";
-    
+    public static final String DOMAIN_QUERY_STRING_PARAM = "DOMAIN_QUERY_STRING";
+
     public static final String TRAPS_DOMAIN_SEARCH = "crawlertraps";
-    
+
     public static final String NAME_DOMAIN_SEARCH = "name";
-    
+
     public static final String COMMENTS_DOMAIN_SEARCH = "comments";
-    
+
     /**
      * The default domain search type is name.
      */
     public static final String DEFAULT_DOMAIN_SEARCH_TYPE = NAME_DOMAIN_SEARCH;
-    
+
     public static final String JOB_ORDERING_BY_STARTDATE_PARAM = "ORDERING_BY_STARTDATE";
 }

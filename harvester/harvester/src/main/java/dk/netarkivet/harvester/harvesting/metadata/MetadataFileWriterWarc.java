@@ -55,16 +55,25 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
 
     private static final Logger log = LoggerFactory.getLogger(MetadataFileWriterWarc.class);
 
-    /** Writer to this jobs metadatafile. This is closed when the metadata is marked as ready. */
+    /**
+     * Writer to this jobs metadatafile. This is closed when the metadata is
+     * marked as ready.
+     */
     private WARCWriter writer = null;
-    
-    /** The ID of the Warcinfo record. Set when calling the  insertInfoRecord method. */
+
+    /**
+     * The ID of the Warcinfo record. Set when calling the insertInfoRecord
+     * method.
+     */
     private URI warcInfoUID = null;
-    
+
     /**
      * Create a <code>MetadataFileWriter</code> for WARC output.
-     * @param metadataWarcFile The WARC output file
-     * @return <code>MetadataFileWriter</code> for writing metadata files in WARC
+     * 
+     * @param metadataWarcFile
+     *            The WARC output file
+     * @return <code>MetadataFileWriter</code> for writing metadata files in
+     *         WARC
      */
     public static MetadataFileWriter createWriter(File metadataWarcFile) {
         MetadataFileWriterWarc mtfw = new MetadataFileWriterWarc();
@@ -88,19 +97,20 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
     public File getFile() {
         return writer.getFile();
     }
-    
+
     /**
      * Insert a warcInfoRecord in the WARC-file, if it doesn't already exists.
-     * saves the recordID of the written info-record for future reference 
-     * to be used for later in the 
+     * saves the recordID of the written info-record for future reference to be
+     * used for later in the
      * 
-     * @param payloadToInfoRecord the given payload for this record.
+     * @param payloadToInfoRecord
+     *            the given payload for this record.
      */
-    public void insertInfoRecord(ANVLRecord payloadToInfoRecord){ 
+    public void insertInfoRecord(ANVLRecord payloadToInfoRecord) {
         if (warcInfoUID != null) {
             throw new IllegalState("An WarcInfo record has already been inserted");
         }
-        
+
         String filename = writer.getFile().getName();
         String datestring = ArchiveDateConverter.getWarcDateFormat().format(new Date());
         URI recordId;
@@ -112,15 +122,15 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
         warcInfoUID = recordId;
         ANVLRecord namedFields = new ANVLRecord(1);
         namedFields.addLabelValue("WARC-Filename", filename);
-        
+
         try {
             byte[] payloadAsBytes = payloadToInfoRecord.getUTF8Bytes();
 
             String blockDigest = ChecksumCalculator.calculateSha1(new ByteArrayInputStream(payloadAsBytes));
             namedFields.addLabelValue("WARC-Block-Digest", "sha1:" + blockDigest);
-            
+
             writer.writeWarcinfoRecord(datestring, "application/warc-fields", recordId, namedFields,
-            		(InputStream) new ByteArrayInputStream(payloadAsBytes), payloadAsBytes.length);
+                    (InputStream) new ByteArrayInputStream(payloadAsBytes), payloadAsBytes.length);
         } catch (IOException e) {
             throw new IllegalState("Error inserting warcinfo record", e);
         }
@@ -139,7 +149,7 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
         log.info("{} {}", fileToArchive, fileToArchive.length());
 
         String blockDigest = ChecksumCalculator.calculateSha1(fileToArchive);
-        
+
         String create14DigitDate = ArchiveDateConverter.getWarcDateFormat().format(new Date());
         URI recordId;
         try {
@@ -155,9 +165,9 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
             namedFields.addLabelValue(WARCConstants.HEADER_KEY_BLOCK_DIGEST, "sha1:" + blockDigest);
             namedFields.addLabelValue("WARC-Warcinfo-ID", generateEncapsulatedRecordID(warcInfoUID));
             namedFields.addLabelValue("WARC-IP-Address", SystemUtils.getLocalIP());
-            
+
             writer.writeResourceRecord(URL, create14DigitDate, mimetype, recordId, namedFields, in,
-            		fileToArchive.length());
+                    fileToArchive.length());
         } catch (FileNotFoundException e) {
             throw new IOFailure("Unable to open file: " + fileToArchive.getPath(), e);
         } catch (IOException e) {
@@ -167,10 +177,12 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
         }
         return true;
     }
-    
-    /** 
+
+    /**
      * Generate encapsulated recordID.
-     * @param recordID A given recordID
+     * 
+     * @param recordID
+     *            A given recordID
      * @return An encapsulated recordID.
      */
     private String generateEncapsulatedRecordID(URI recordID) {
@@ -179,8 +191,8 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
 
     @Override
     public void write(String uri, String contentType, String hostIP, long fetchBeginTimeStamp, byte[] payload)
-    		throws java.io.IOException {
-        
+            throws java.io.IOException {
+
         String create14DigitDate = ArchiveDateConverter.getWarcDateFormat().format(new Date(fetchBeginTimeStamp));
         ByteArrayInputStream in = new ByteArrayInputStream(payload);
         String blockDigest = ChecksumCalculator.calculateSha1(in);

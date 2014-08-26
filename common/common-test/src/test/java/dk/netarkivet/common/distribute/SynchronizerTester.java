@@ -42,8 +42,7 @@ import org.junit.Test;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
-
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({ "serial" })
 public class SynchronizerTester {
     private static final ChannelID toQ = Channels.getAnyBa();
     private static final ChannelID replyToQ = Channels.getError();
@@ -67,7 +66,6 @@ public class SynchronizerTester {
         rs.tearDown();
     }
 
-
     /**
      * Verify that sendAndWaitForOneReply() fails when given null first input.
      */
@@ -78,7 +76,7 @@ public class SynchronizerTester {
             sync.sendAndWaitForOneReply(null, 0);
             fail("testSendAndWaitForOneReply() should fail on null input");
         } catch (ArgumentNotValid e) {
-            //Expected
+            // Expected
         }
     }
 
@@ -102,8 +100,8 @@ public class SynchronizerTester {
          * Pretest: Test everything is initialized.
          */
         // Test no messages have been received.
-        assertNull("A reply shouldn't have been received before " +
-                   "request/reply has been dispatched", sr.getReceived());
+        assertNull("A reply shouldn't have been received before " + "request/reply has been dispatched",
+                sr.getReceived());
 
         /**
          * Send one message and check all queues
@@ -120,13 +118,12 @@ public class SynchronizerTester {
         // Check if a message have been received and its
         // the correct message.
         assertNotNull("A reply should have been received", sr.getReceived());
-        assertEquals("The reply message should correspond to the request " +
-                     "message", msg, sr.getReceived());
+        assertEquals("The reply message should correspond to the request " + "message", msg, sr.getReceived());
     }
 
     /**
-     * Tests that the synchronizer doesn't trigger if it gets a wrong message
-     * as a reply.
+     * Tests that the synchronizer doesn't trigger if it gets a wrong message as
+     * a reply.
      */
     @Test
     public void testWrongReplyToRequest() {
@@ -144,8 +141,8 @@ public class SynchronizerTester {
          * Pretest: Test everything is initialized.
          */
         // Test no messages have been received.
-        assertNull("A reply shouldn't have been received before " +
-                   "request/reply has been dispatched", sr.getReceived());
+        assertNull("A reply shouldn't have been received before " + "request/reply has been dispatched",
+                sr.getReceived());
 
         /**
          * Send one message and check all queues.
@@ -155,8 +152,7 @@ public class SynchronizerTester {
         con.send(msgOther);
 
         // Check that no messages have been received.
-        assertNull("A reply shouldn't have been received before reply has " +
-                   "been dispatched", sr.getReceived());
+        assertNull("A reply shouldn't have been received before reply has " + "been dispatched", sr.getReceived());
 
         /**
          * Emulate a wrong message has been received by onMessage()
@@ -165,8 +161,8 @@ public class SynchronizerTester {
         waitUntilEnded(sr);
 
         // Check that no messages have been received.
-        assertNull("A reply shouldn't have been received when incorrect reply" +
-                   " has been dispatched", sr.getReceived());
+        assertNull("A reply shouldn't have been received when incorrect reply" + " has been dispatched",
+                sr.getReceived());
     }
 
     /**
@@ -188,8 +184,8 @@ public class SynchronizerTester {
          * Pretest: Test everything is initialized.
          */
         // Test no messages have been received.
-        assertNull("A reply shouldn't have been received before " +
-                   "request/reply has been dispatched", sr.getReceived());
+        assertNull("A reply shouldn't have been received before " + "request/reply has been dispatched",
+                sr.getReceived());
 
         /**
          * Send one message and check all queues
@@ -201,8 +197,8 @@ public class SynchronizerTester {
         waitUntilEnded(sr);
 
         // Check that no messages have been received.
-        assertNull("A reply shouldn't have been received when incorrect reply" +
-                   " has been dispatched", sr.getReceived());
+        assertNull("A reply shouldn't have been received when incorrect reply" + " has been dispatched",
+                sr.getReceived());
     }
 
     /**
@@ -224,13 +220,13 @@ public class SynchronizerTester {
          * Pretest: Test everything is initialized.
          */
         // Test no messages have been received.
-        assertNull("A reply shouldn't have been received before " +
-                   "request/reply has been dispatched", sr.getReceived());
+        assertNull("A reply shouldn't have been received before " + "request/reply has been dispatched",
+                sr.getReceived());
 
         /**
          * Send one message and check all queues
          */
-        
+
         // 1. Send message
         sr.sendAndWaitForOneReply();
 
@@ -240,13 +236,11 @@ public class SynchronizerTester {
         // 3. Check if a message have been received and its
         // the correct message.
         assertNotNull("A reply should have been received", sr.getReceived());
-        assertEquals("The reply message should correspond to the request " +
-                     "message", msg, sr.getReceived());
+        assertEquals("The reply message should correspond to the request " + "message", msg, sr.getReceived());
     }
 
     /**
-     * This test checks that we handle being woken by other than expected
-     * means.
+     * This test checks that we handle being woken by other than expected means.
      *
      * It first sets up a Synchronizer to listen for replies. Then a listener is
      * added to the toQ that just notifies the message (thus waking the
@@ -255,10 +249,10 @@ public class SynchronizerTester {
      * the message. Our message counts how many times getId() is called on it.
      * The first time is when sendAndWaitForOneReply starts, the second time is
      * when it is mistakenly woken up. When the second getId() is called, we
-     * know we got the false notify and can continue the test.  No reply will be
+     * know we got the false notify and can continue the test. No reply will be
      * available.
      *
-     * DISABLED 20140528 as it failed intermittently.  
+     * DISABLED 20140528 as it failed intermittently.
      */
     @Test
     @Ignore("FIXME: https://sbforge.org/jira/browse/NAS-2320")
@@ -293,15 +287,14 @@ public class SynchronizerTester {
 
             }
         });
-        SynchronizerRunner sr = new SynchronizerRunner(sync, msg,
-                                                       WAIT_TIME);
+        SynchronizerRunner sr = new SynchronizerRunner(sync, msg, WAIT_TIME);
 
         /*
          * Pretest: Test everything is initialized.
          */
         // Test no messages have been received.
-        assertNull("A reply shouldn't have been received before " +
-                   "request/reply has been dispatched", sr.getReceived());
+        assertNull("A reply shouldn't have been received before " + "request/reply has been dispatched",
+                sr.getReceived());
 
         /*
          * Send one message and check all queues
@@ -318,8 +311,8 @@ public class SynchronizerTester {
         } catch (InterruptedException e) {
 
         }
-        assertNull("A reply shouldn't have been received before " +
-                   "request/reply has been dispatched", sr.getReceived());
+        assertNull("A reply shouldn't have been received before " + "request/reply has been dispatched",
+                sr.getReceived());
 
         con.reply(msg);
         // Wait for reply message
@@ -327,17 +320,16 @@ public class SynchronizerTester {
 
         // Check if a message have been received and its
         // the correct message.
-        
-        //FIXME:  Fails intermittently on Mac on home network.
+
+        // FIXME: Fails intermittently on Mac on home network.
         assertNotNull("A reply should have been received", sr.getReceived());
-        
-        assertEquals("The reply message should correspond to the request " +
-                     "message", msg, sr.getReceived());
+
+        assertEquals("The reply message should correspond to the request " + "message", msg, sr.getReceived());
     }
 
     /**
-     * Tests that a timed-out synchronizer returns null.
-     * Disabled, fails occasionally in Jenkins.
+     * Tests that a timed-out synchronizer returns null. Disabled, fails
+     * occasionally in Jenkins.
      */
     @Test
     @Ignore("fails occasionally in Jenkins")
@@ -347,18 +339,16 @@ public class SynchronizerTester {
         MessageListener listener = new DelayedReplier();
         con.setListener(toQ, listener);
         con.setListener(replyToQ, sync);
-        SynchronizerRunner sr = new SynchronizerRunner(sync, msg,
-                                                       WAIT_TIME);
+        SynchronizerRunner sr = new SynchronizerRunner(sync, msg, WAIT_TIME);
         sr.sendAndWaitForOneReply();
         waitUntilEnded(sr);
-        assertTrue("Should have returned from sendAndWaitForOneReply",
-                   sr.isEnded());
-        assertNull("Should have returned null, not " + sr.received,
-                   sr.received);
+        assertTrue("Should have returned from sendAndWaitForOneReply", sr.isEnded());
+        assertNull("Should have returned null, not " + sr.received, sr.received);
     }
 
     /**
-     * @param sr a Thread wrapper for the Synchronizer.
+     * @param sr
+     *            a Thread wrapper for the Synchronizer.
      */
     private void waitUntilEnded(SynchronizerRunner sr) {
         int loops = 0;
@@ -366,18 +356,16 @@ public class SynchronizerTester {
             try {
                 Thread.sleep(TestInfo.SHORT_TIME);
             } catch (InterruptedException e) {
-                //Ignore
+                // Ignore
             }
             loops++;
         }
     }
 
-
     public static class DelayedReplier implements MessageListener {
         public void onMessage(Message message) {
             TestMessage tm = (TestMessage) JMSConnection.unpack(message);
-            TestMessage reply = new TestMessage(tm.getReplyTo(), tm.getTo(),
-                                                tm.getReplyOfId());
+            TestMessage reply = new TestMessage(tm.getReplyTo(), tm.getTo(), tm.getReplyOfId());
             Date d = new Date();
             long finishTime = d.getTime() + DELAY_TIME;
             while (true) {
@@ -391,7 +379,6 @@ public class SynchronizerTester {
         }
     }
 
-
     /**
      * Used for testing. Runs a synchronizer.sendAndWaitForOneReply(msg,timeout)
      * in a new thread.
@@ -403,8 +390,7 @@ public class SynchronizerTester {
         private boolean ended;
         private int timeout;
 
-        public SynchronizerRunner(Synchronizer sync,
-                                  NetarkivetMessage msg, int timeout) {
+        public SynchronizerRunner(Synchronizer sync, NetarkivetMessage msg, int timeout) {
             this.sync = sync;
             this.msg = msg;
             this.received = null;

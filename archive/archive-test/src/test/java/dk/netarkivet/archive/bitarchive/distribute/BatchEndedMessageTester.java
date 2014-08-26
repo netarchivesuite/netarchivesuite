@@ -39,14 +39,14 @@ public class BatchEndedMessageTester {
     private static BatchEndedMessage bem;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         bem = new BatchEndedMessage(Channels.getTheBamon(), "BAId", "MsgId", null);
         bem.setNoOfFilesProcessed(42);
-        bem.setFilesFailed(Arrays.asList(new File[]{new File("failed")}));
+        bem.setFilesFailed(Arrays.asList(new File[] { new File("failed") }));
     }
 
     @After
-    public void tearDown(){
+    public void tearDown() {
         bem = null;
     }
 

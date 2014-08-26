@@ -39,9 +39,9 @@ import dk.netarkivet.harvester.harvesting.HarvestController;
 import dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationRequest;
 
 /**
- * Keeps track of the number of {@link HarvesterRegistrationRequest}s that have been
- * received per channel, which allows to know if a {@link HarvestController}s are
- * registered to a given {@link HarvestChannel}. 
+ * Keeps track of the number of {@link HarvesterRegistrationRequest}s that have
+ * been received per channel, which allows to know if a
+ * {@link HarvestController}s are registered to a given {@link HarvestChannel}.
  */
 public class HarvestChannelRegistry {
 
@@ -52,7 +52,8 @@ public class HarvestChannelRegistry {
 
     public synchronized void register(final String channelName, final String harvesterInstanceId) {
         // First remove any reference to this instanceId
-        // This is done in case a Harvester has been unexpectedly shut down and restarted
+        // This is done in case a Harvester has been unexpectedly shut down and
+        // restarted
         clearHarvester(harvesterInstanceId);
 
         Set<String> instanceIds = harvesterChannelRegistry.get(channelName);
@@ -71,7 +72,7 @@ public class HarvestChannelRegistry {
     }
 
     private void logStatus() {
-    	if (LOG.isInfoEnabled()) {
+        if (LOG.isInfoEnabled()) {
             String msg = HarvestChannelRegistry.class.getSimpleName() + " status:";
             for (String channel : harvesterChannelRegistry.keySet()) {
                 msg += "\n\t- " + channel + " { ";
@@ -81,16 +82,18 @@ public class HarvestChannelRegistry {
                 msg = msg.substring(0, msg.lastIndexOf(",")) + " }";
             }
             LOG.info(msg);
-    	}
+        }
     }
 
     /**
      * Clears any registration data for a given harvester instance id.
-     * @param harvesterInstanceId a harvester instance id
+     * 
+     * @param harvesterInstanceId
+     *            a harvester instance id
      */
     private void clearHarvester(final String harvesterInstanceId) {
         ArrayList<String> keysToRemove = new ArrayList<String>();
-        for (String channel : harvesterChannelRegistry.keySet())  {
+        for (String channel : harvesterChannelRegistry.keySet()) {
             Set<String> instanceIds = harvesterChannelRegistry.get(channel);
             if (instanceIds.contains(harvesterInstanceId)) {
                 instanceIds.remove(harvesterInstanceId);

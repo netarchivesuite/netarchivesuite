@@ -58,8 +58,9 @@ public class GetRecord extends ToolRunnerBase {
      * Management of this, exception handling etc. is delegated to
      * ToolRunnerBase class.
      *
-     * @param argv Takes two command line paramers: - indexdir (the Lucene index
-     *             directory) - uri (the URI to get the record from)
+     * @param argv
+     *            Takes two command line paramers: - indexdir (the Lucene index
+     *            directory) - uri (the URI to get the record from)
      */
     public static void main(String[] argv) {
         GetRecord instance = new GetRecord();
@@ -80,15 +81,16 @@ public class GetRecord extends ToolRunnerBase {
      */
     private static class GetRecordTool implements SimpleCmdlineTool {
         /**
-         * This instance is declared outside of run method to ensure reliable 
+         * This instance is declared outside of run method to ensure reliable
          * teardown in case of exceptions during execution.
          */
         private ViewerArcRepositoryClient arcrep;
 
-        /**     
+        /**
          * Accept only exactly 2 parameters.
          *
-         * @param args the arguments
+         * @param args
+         *            the arguments
          * @return true, if length of args list is 2; returns false otherwise
          */
         public boolean checkArgs(String... args) {
@@ -99,7 +101,8 @@ public class GetRecord extends ToolRunnerBase {
          * Create the ArcRepositoryClient instance here for reliable execution
          * of close method in teardown.
          *
-         * @param args the arguments (not used)
+         * @param args
+         *            the arguments (not used)
          */
         public void setUp(String... args) {
             arcrep = ArcRepositoryClientFactory.getViewerInstance();
@@ -108,8 +111,8 @@ public class GetRecord extends ToolRunnerBase {
 
         /**
          * Ensure reliable execution of the ArcRepositoryClient.close() method.
-         * Remember to check if arcrep was actually created. Also reliably 
-         * clean up JMSConnection.
+         * Remember to check if arcrep was actually created. Also reliably clean
+         * up JMSConnection.
          */
         public void tearDown() {
             if (arcrep != null) {
@@ -119,12 +122,13 @@ public class GetRecord extends ToolRunnerBase {
         }
 
         /**
-         * Perform the actual work. Procure the necessary information to run 
-         * the ARCArchiveAccess from command line parameters and system 
-         * settings, and perform the write. Creating and closing the 
-         * ArcRepositoryClient (arcrep) is done in setup and teardown methods.
+         * Perform the actual work. Procure the necessary information to run the
+         * ARCArchiveAccess from command line parameters and system settings,
+         * and perform the write. Creating and closing the ArcRepositoryClient
+         * (arcrep) is done in setup and teardown methods.
          *
-         * @param args the arguments
+         * @param args
+         *            the arguments
          */
         public void run(String... args) {
             try {
@@ -134,15 +138,12 @@ public class GetRecord extends ToolRunnerBase {
                 lookup.setIndex(new File(indexPath));
                 ResultStream rs = lookup.lookup(new URI(uri));
                 if (rs == null) {
-                    throw new IOFailure(
-                            "Resource missing in index or repository for '"
-                            + uri + "' in '" + indexPath + "'");
+                    throw new IOFailure("Resource missing in index or repository for '" + uri + "' in '" + indexPath
+                            + "'");
                 }
                 processRecord(rs.getInputStream());
             } catch (NetarkivetException e) {
-                throw new IOFailure(
-                        "NetarkivetException while performing "
-                        + "ARCArchiveAccess.lookup", e);
+                throw new IOFailure("NetarkivetException while performing " + "ARCArchiveAccess.lookup", e);
             } catch (URISyntaxException e) {
                 throw new IOFailure("URI has illegal syntax", e);
             }
@@ -151,13 +152,13 @@ public class GetRecord extends ToolRunnerBase {
         /**
          * Copy a record from content to System.out.
          *
-         * @param content The InputStream containing the record to copy to
-         *                System.out.
+         * @param content
+         *            The InputStream containing the record to copy to
+         *            System.out.
          */
         private static void processRecord(InputStream content) {
             try {
-                BufferedReader br = new BufferedReader(
-                        new InputStreamReader(content));
+                BufferedReader br = new BufferedReader(new InputStreamReader(content));
                 try {
                     int i;
                     while ((i = br.read()) != -1) {
@@ -167,9 +168,7 @@ public class GetRecord extends ToolRunnerBase {
                     br.close();
                 }
             } catch (IOException e) {
-                throw new IOFailure(
-                        "Internal error: Could not read InputStream from "
-                        + "repository", e);
+                throw new IOFailure("Internal error: Could not read InputStream from " + "repository", e);
             }
         }
 

@@ -36,13 +36,12 @@ import dk.netarkivet.common.CleanupSuite;
 public class FullUnitTesterSuite {
     public static void addToSuite(TestSuite suite) {
 
-
-//        dk.netarkivet.common.UnitTesterSuite.addToSuite(suite);
-//        dk.netarkivet.harvester.UnitTesterSuite.addToSuite(suite);
-//        dk.netarkivet.archive.UnitTesterSuite.addToSuite(suite);
-//        dk.netarkivet.viewerproxy.UnitTesterSuite.addToSuite(suite);
-//        dk.netarkivet.monitor.UnitTesterSuite.addToSuite(suite);
-//        dk.netarkivet.wayback.UnitTesterSuite.addToSuite(suite);
+        // dk.netarkivet.common.UnitTesterSuite.addToSuite(suite);
+        // dk.netarkivet.harvester.UnitTesterSuite.addToSuite(suite);
+        // dk.netarkivet.archive.UnitTesterSuite.addToSuite(suite);
+        // dk.netarkivet.viewerproxy.UnitTesterSuite.addToSuite(suite);
+        // dk.netarkivet.monitor.UnitTesterSuite.addToSuite(suite);
+        // dk.netarkivet.wayback.UnitTesterSuite.addToSuite(suite);
         dk.netarkivet.deploy.UnitTesterSuite.addToSuite(suite);
         /*
          * Dummy testersuite to cleanup after the tests.
@@ -60,7 +59,7 @@ public class FullUnitTesterSuite {
     }
 
     public static void main(String[] args) {
-        String[] args2 = {"-noloading", FullUnitTesterSuite.class.getName()};
+        String[] args2 = { "-noloading", FullUnitTesterSuite.class.getName() };
         TestRunner.main(args2);
     }
 }

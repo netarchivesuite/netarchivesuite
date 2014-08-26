@@ -75,8 +75,7 @@ import dk.netarkivet.common.utils.batch.FileListJob;
  *
  * Also registers signs of life from the bitarchives in the bitarchive monitor.
  */
-public class BitarchiveMonitorServer extends ArchiveMessageHandler
-        implements Observer, CleanupIF {
+public class BitarchiveMonitorServer extends ArchiveMessageHandler implements Observer, CleanupIF {
 
     /** The unique instance of this class. */
     private static BitarchiveMonitorServer instance;
@@ -89,41 +88,43 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
 
     /** Object that handles logical operations. */
     private BitarchiveMonitor bamon;
-    
-    /** Map for managing the messages, which are made into batchjobs. The String is the ID of the message. */
-    private Map<String, NetarkivetMessage> batchConversions 
-            = new HashMap<String, NetarkivetMessage>();
-    
-    /** Map for containing the batch-message-ids and the batchjobs, 
-     *  for the result files to be post-processed before returned back. */
-    private Map<String, FileBatchJob> batchjobs 
-            = new HashMap<String, FileBatchJob>();
+
+    /**
+     * Map for managing the messages, which are made into batchjobs. The String
+     * is the ID of the message.
+     */
+    private Map<String, NetarkivetMessage> batchConversions = new HashMap<String, NetarkivetMessage>();
+
+    /**
+     * Map for containing the batch-message-ids and the batchjobs, for the
+     * result files to be post-processed before returned back.
+     */
+    private Map<String, FileBatchJob> batchjobs = new HashMap<String, FileBatchJob>();
 
     /**
      * The map for managing the CorrectMessages. This involves three stages.
      * 
-     * In the first, a RemoveAndGetFileMessage is sent, and then the 
-     * CorrectMessage is put in the map along the ID of the 
+     * In the first, a RemoveAndGetFileMessage is sent, and then the
+     * CorrectMessage is put in the map along the ID of the
      * RemoveAndGetFileMessage.
      * 
-     * In the second stage, the reply of the RemoveAndGetFileMessage is used to 
-     * extract the CorrectMessage from the Map. The CorrectMessage is then 
-     * updated with the results from the RemoveAndGetFileMessage. Then an 
-     * UploadMessage is send with the 'correct' file, where the ID of the 
+     * In the second stage, the reply of the RemoveAndGetFileMessage is used to
+     * extract the CorrectMessage from the Map. The CorrectMessage is then
+     * updated with the results from the RemoveAndGetFileMessage. Then an
+     * UploadMessage is send with the 'correct' file, where the ID of the
      * UploadMessage is put into the map along the CorrectMessage.
      * 
-     * In the third stage, the reply of the UploadMessage is used to extract 
-     * the CorrectMessage from the map again, and the results of the 
-     * UploadMessage is used to update the UploadMessage, which is then 
-     * returned.
+     * In the third stage, the reply of the UploadMessage is used to extract the
+     * CorrectMessage from the map again, and the results of the UploadMessage
+     * is used to update the UploadMessage, which is then returned.
      */
-    private Map<String, CorrectMessage> correctMessages =
-        new HashMap<String, CorrectMessage>();
+    private Map<String, CorrectMessage> correctMessages = new HashMap<String, CorrectMessage>();
 
     /**
      * Creates an instance of a BitarchiveMonitorServer.
      *
-     * @throws IOFailure - if an error with the JMSConnection occurs
+     * @throws IOFailure
+     *             - if an error with the JMSConnection occurs
      */
     protected BitarchiveMonitorServer() throws IOFailure {
         bamon = BitarchiveMonitor.getInstance();
@@ -136,7 +137,8 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
      * Returns the unique instance of a BitarchiveMonitorServer.
      *
      * @return the instance
-     * @throws IOFailure - if an error with the JMSConnection occurs
+     * @throws IOFailure
+     *             - if an error with the JMSConnection occurs
      */
     public static synchronized BitarchiveMonitorServer getInstance() throws IOFailure {
         if (instance == null) {
@@ -154,20 +156,22 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
      * The incoming and outgoing batch messages are then registered at the
      * bitarchive monitor.
      *
-     * @param inbMsg The message received
-     * @throws ArgumentNotValid If the BatchMessage is null.
+     * @param inbMsg
+     *            The message received
+     * @throws ArgumentNotValid
+     *             If the BatchMessage is null.
      */
     public void visit(BatchMessage inbMsg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(inbMsg, "BatchMessage inbMsg");
-        
+
         log.info("Received BatchMessage\n{}", inbMsg.toString());
         try {
             BatchMessage outbMsg = new BatchMessage(Channels.getAllBa(), inbMsg.getJob(),
-            		Settings.get(CommonSettings.USE_REPLICA_ID));
+                    Settings.get(CommonSettings.USE_REPLICA_ID));
             con.send(outbMsg);
             long batchTimeout = inbMsg.getJob().getBatchJobTimeout();
             // if batch time out is not a positive number, then use settings.
-            if(batchTimeout <= 0) {
+            if (batchTimeout <= 0) {
                 batchTimeout = Settings.getLong(ArchiveSettings.BITARCHIVE_BATCH_JOB_TIMEOUT);
             }
             bamon.registerBatch(inbMsg.getID(), inbMsg.getReplyTo(), outbMsg.getID(), batchTimeout);
@@ -183,12 +187,14 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
      * This delegates the handling of the reply to the bitarchive monitor, which
      * will notify us if the batch job is now done.
      *
-     * @param beMsg The BatchEndedMessage to be handled.
-     * @throws ArgumentNotValid If the BatchEndedMessage is null.
+     * @param beMsg
+     *            The BatchEndedMessage to be handled.
+     * @throws ArgumentNotValid
+     *             If the BatchEndedMessage is null.
      */
     public void visit(final BatchEndedMessage beMsg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(beMsg, "BatchEndedMessage beMsg");
-        
+
         log.debug("Received batch ended from bitarchive '{}': {}", beMsg.getBitarchiveID(), beMsg);
         bamon.signOfLife(beMsg.getBitarchiveID());
         try {
@@ -196,17 +202,13 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
                 public void run() {
                     // retrieve the error messages.
                     String errorMessages = null;
-                    if(!beMsg.isOk()) {
+                    if (!beMsg.isOk()) {
                         errorMessages = beMsg.getErrMsg();
                     }
                     // send reply to the bitarchive.
-                    bamon.bitarchiveReply(beMsg.getOriginatingBatchMsgID(),
-                                          beMsg.getBitarchiveID(),
-                                          beMsg.getNoOfFilesProcessed(),
-                                          beMsg.getFilesFailed(),
-                                          beMsg.getRemoteFile(),
-                                          errorMessages,
-                                          beMsg.getExceptions());
+                    bamon.bitarchiveReply(beMsg.getOriginatingBatchMsgID(), beMsg.getBitarchiveID(),
+                            beMsg.getNoOfFilesProcessed(), beMsg.getFilesFailed(), beMsg.getRemoteFile(),
+                            errorMessages, beMsg.getExceptions());
                 }
             }.start();
         } catch (Exception e) {
@@ -219,72 +221,76 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
      *
      * Registers a sign of life from a bitarchive.
      *
-     * @param hbMsg the message that represents the sign of life
-     * @throws ArgumentNotValid If the HeartBeatMessage is null.
+     * @param hbMsg
+     *            the message that represents the sign of life
+     * @throws ArgumentNotValid
+     *             If the HeartBeatMessage is null.
      */
     public void visit(HeartBeatMessage hbMsg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(hbMsg, "HeartBeatMessage hbMsg");
-        
+
         try {
             bamon.signOfLife(hbMsg.getBitarchiveID());
         } catch (Exception e) {
             log.warn("Trouble while handling bitarchive sign of life '{}'", hbMsg, e);
         }
     }
-    
+
     /**
      * This is the first step in correcting a bad entry.
      * 
-     * In the first stage, a RemoveAndGetFileMessage is sent, and then the 
-     * CorrectMessage is put in the map along the ID of the 
+     * In the first stage, a RemoveAndGetFileMessage is sent, and then the
+     * CorrectMessage is put in the map along the ID of the
      * RemoveAndGetFileMessage.
      * 
      * See the correctMessages Map.
      * 
-     * @param cm The CorrectMessage to handle.
-     * @throws ArgumentNotValid If the CorrectMessage is null.
+     * @param cm
+     *            The CorrectMessage to handle.
+     * @throws ArgumentNotValid
+     *             If the CorrectMessage is null.
      */
     public void visit(CorrectMessage cm) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(cm, "CorrectMessage cm");
         log.info("Receiving CorrectMessage: {}", cm);
-        
+
         try {
             // Create the RemoveAndGetFileMessage for removing the file.
-            RemoveAndGetFileMessage ragfm = new RemoveAndGetFileMessage(
-                    Channels.getAllBa(), Channels.getTheBamon(), 
-                    cm.getArcfileName(), cm.getReplicaId(), 
-                    cm.getIncorrectChecksum(), cm.getCredentials());
+            RemoveAndGetFileMessage ragfm = new RemoveAndGetFileMessage(Channels.getAllBa(), Channels.getTheBamon(),
+                    cm.getArcfileName(), cm.getReplicaId(), cm.getIncorrectChecksum(), cm.getCredentials());
 
             // Send the message.
             con.send(ragfm);
 
             log.info("Step 1 of handling CorrectMessage. Sending RemoveAndGetFileMessage: {}", ragfm);
 
-            // Put the CorrectMessage into the map along the id of the 
+            // Put the CorrectMessage into the map along the id of the
             // RemoveAndGetFileMessage
             correctMessages.put(ragfm.getID(), cm);
         } catch (Exception e) {
             String errMsg = "An error occurred during step 1 of handling "
-                + " the CorrectMessage: sending RemoveAndGetFileMessage";
+                    + " the CorrectMessage: sending RemoveAndGetFileMessage";
             log.warn(errMsg, e);
             cm.setNotOk(e);
             con.reply(cm);
         }
     }
-    
+
     /**
      * This is the second step in correcting a bad entry.
      * 
-     * In the second stage, the reply of the RemoveAndGetFileMessage is used 
-     * to extract the CorrectMessage from the Map. The CorrectMessage is then 
-     * updated with the results from the RemoveAndGetFileMessage. Then an 
-     * UploadMessage is send with the 'correct' file, where the ID of the 
+     * In the second stage, the reply of the RemoveAndGetFileMessage is used to
+     * extract the CorrectMessage from the Map. The CorrectMessage is then
+     * updated with the results from the RemoveAndGetFileMessage. Then an
+     * UploadMessage is send with the 'correct' file, where the ID of the
      * UploadMessage is put into the map along the CorrectMessage.
      * 
      * See the correctMessages Map.
      * 
-     * @param msg The RemoteAndGetFileMessage.
-     * @throws ArgumentNotValid If the RemoveAndGetFileMessage is null.
+     * @param msg
+     *            The RemoteAndGetFileMessage.
+     * @throws ArgumentNotValid
+     *             If the RemoveAndGetFileMessage is null.
      */
     public void visit(RemoveAndGetFileMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "RemoveAndGetFileMessage msg");
@@ -295,10 +301,9 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
 
         // If the RemoveAndGetFileMessage has failed, then the CorrectMessage
         // has also failed, and should be returned as a fail.
-        if(!msg.isOk()) {
-            String errMsg = "The RemoveAndGetFileMessage has returned the "
-                + "error: '" + msg.getErrMsg() + "'. Reply to CorrectMessage "
-                + "with the same error.";
+        if (!msg.isOk()) {
+            String errMsg = "The RemoveAndGetFileMessage has returned the " + "error: '" + msg.getErrMsg()
+                    + "'. Reply to CorrectMessage " + "with the same error.";
             log.warn(errMsg);
             cm.setNotOk(errMsg);
             con.reply(cm);
@@ -309,7 +314,7 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
             // update the correct message.
             cm.setRemovedFile(msg.getRemoteFile());
 
-            // Create the upload message, send it. 
+            // Create the upload message, send it.
             UploadMessage um = new UploadMessage(Channels.getAllBa(), Channels.getTheBamon(), cm.getCorrectFile());
             con.send(um);
             log.info("Step 2 of handling CorrectMessage. Sending UploadMessage: {}", um);
@@ -318,78 +323,82 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
             correctMessages.put(um.getID(), cm);
         } catch (Exception e) {
             String errMsg = "An error occurred during step 2 of handling "
-                + " the CorrectMessage: sending UploadMessage";
+                    + " the CorrectMessage: sending UploadMessage";
             log.warn(errMsg, e);
             cm.setNotOk(e);
             con.reply(cm);
         }
     }
-    
+
     /**
-     * This is the third step in correcting a bad entry. 
+     * This is the third step in correcting a bad entry.
      * 
-     * In the third stage, the reply of the UploadMessage is used to extract 
-     * the CorrectMessage from the map again, and the results of the 
-     * UploadMessage is used to update the UploadMessage, which is then 
-     * returned.
+     * In the third stage, the reply of the UploadMessage is used to extract the
+     * CorrectMessage from the map again, and the results of the UploadMessage
+     * is used to update the UploadMessage, which is then returned.
      * 
      * See the correctMessages Map.
      * 
-     * @param msg The reply of the UploadMessage.
-     * @throws ArgumentNotValid If the UploadMessage is null.  
+     * @param msg
+     *            The reply of the UploadMessage.
+     * @throws ArgumentNotValid
+     *             If the UploadMessage is null.
      */
     public void visit(UploadMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "UploadMessage msg");
         log.info("Receiving a reply to an UploadMessage: {}", msg);
-        
+
         // retrieve the CorrectMessage.
         CorrectMessage cm = correctMessages.remove(msg.getID());
-        
+
         // handle potential errors.
-        if(!msg.isOk()) {
+        if (!msg.isOk()) {
             cm.setNotOk(msg.getErrMsg());
         }
-        
+
         // reply to the correct message.
         con.reply(cm);
         log.info("Step 3 of handling CorrectMessage. Sending reply for CorrectMessage: '{}'", cm);
     }
-    
+
     /**
-     * Method for handling the GetAllChecksumsMessage.
-     * This message will be made into a batchjob, which will executed on the 
-     * bitarchives. The reply to the batchjob will be handled and uses as reply
-     * to the GetAllChecksumsMessage.
+     * Method for handling the GetAllChecksumsMessage. This message will be made
+     * into a batchjob, which will executed on the bitarchives. The reply to the
+     * batchjob will be handled and uses as reply to the GetAllChecksumsMessage.
      * 
-     * @param msg The GetAllChecksumsMessage, which will be made into a batchjob
-     * and sent to the bitarchives.
-     * @throws ArgumentNotValid If the GetAllChecksumsMessage is null.
+     * @param msg
+     *            The GetAllChecksumsMessage, which will be made into a batchjob
+     *            and sent to the bitarchives.
+     * @throws ArgumentNotValid
+     *             If the GetAllChecksumsMessage is null.
      */
     public void visit(GetAllChecksumsMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "GetAllChecksumsMessage msg");
-        
+
         log.info("Receiving GetAllChecksumsMessage '{}'", msg);
-        
+
         // Create batchjob for the GetAllChecksumsMessage.
         ChecksumJob cj = new ChecksumJob();
-        
+
         // Execute the batchjob.
         executeConvertedBatch(cj, msg);
     }
 
     /**
-     * Method for handling the GetAllFilenamesMessage.
-     * The GetAllFilenamesMessage will be made into a filelist batchjob, which
-     * will be sent to the bitarchives. The reply to the batchjob will then be
-     * used as reply to the GetAllFilenamesMessage.
+     * Method for handling the GetAllFilenamesMessage. The
+     * GetAllFilenamesMessage will be made into a filelist batchjob, which will
+     * be sent to the bitarchives. The reply to the batchjob will then be used
+     * as reply to the GetAllFilenamesMessage.
      * 
-     * @param msg The GetAllFilenamesMessage, which will be made into a batchjob
-     * and sent to the bitarchives.
-     * @throws ArgumentNotValid If the GetAllFilenamesMessage is null.
+     * @param msg
+     *            The GetAllFilenamesMessage, which will be made into a batchjob
+     *            and sent to the bitarchives.
+     * @throws ArgumentNotValid
+     *             If the GetAllFilenamesMessage is null.
      */
     public void visit(GetAllFilenamesMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "GetAllFilenamesMessage msg");
-        
+
         log.info("Receiving GetAllFilenamesMessage '{}'", msg);
 
         // Create batchjob for the GetAllChecksumsMessage.
@@ -400,45 +409,48 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
     }
 
     /**
-     * Method for handling the GetChecksumMessage.
-     * This is made into the batchjob ChecksumsJob which will be limitted to
-     * the specific filename. The batchjob will be executed on the bitarchives
-     * and the reply to the batchjob will be used as reply to the 
-     * GetChecksumMessage. 
+     * Method for handling the GetChecksumMessage. This is made into the
+     * batchjob ChecksumsJob which will be limitted to the specific filename.
+     * The batchjob will be executed on the bitarchives and the reply to the
+     * batchjob will be used as reply to the GetChecksumMessage.
      * 
-     * @param msg The GetAllChecksumsMessage, which will be made into a batchjob
-     * and sent to the bitarchives.
-     * @throws ArgumentNotValid If the GetChecksumMessage is null.
+     * @param msg
+     *            The GetAllChecksumsMessage, which will be made into a batchjob
+     *            and sent to the bitarchives.
+     * @throws ArgumentNotValid
+     *             If the GetChecksumMessage is null.
      */
-    public void visit(GetChecksumMessage msg) throws ArgumentNotValid { 
+    public void visit(GetChecksumMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "GetChecksumMessage msg");
-        
+
         log.info("Receiving GetChecksumsMessage '{}'", msg);
-        
+
         // Create batchjob for the GetAllChecksumsMessage.
         ChecksumJob cj = new ChecksumJob();
         cj.processOnlyFileNamed(msg.getArcfileName());
         cj.setBatchJobTimeout(Settings.getLong(ArchiveSettings.SINGLE_CHECKSUM_TIMEOUT));
-        
+
         // Execute the batchjob.
         executeConvertedBatch(cj, msg);
     }
-    
+
     /**
      * Method for executing messages converted into batchjobs.
      * 
-     * @param job The job to execute.
-     * @param msg The message which is converted into the batchjob.
+     * @param job
+     *            The job to execute.
+     * @param msg
+     *            The message which is converted into the batchjob.
      */
     private void executeConvertedBatch(FileBatchJob job, NetarkivetMessage msg) {
         try {
             BatchMessage outbMsg = new BatchMessage(Channels.getAllBa(), job,
-            		Settings.get(CommonSettings.USE_REPLICA_ID));
+                    Settings.get(CommonSettings.USE_REPLICA_ID));
             con.send(outbMsg);
 
             long batchTimeout = job.getBatchJobTimeout();
             // if batch time out is not a positive number, then use settings.
-            if(batchTimeout <= 0) {
+            if (batchTimeout <= 0) {
                 batchTimeout = Settings.getLong(ArchiveSettings.BITARCHIVE_BATCH_JOB_TIMEOUT);
             }
             bamon.registerBatch(msg.getID(), msg.getReplyTo(), outbMsg.getID(), batchTimeout);
@@ -453,18 +465,20 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
             con.reply(msg);
         }
     }
-    
+
     /**
      * Handles notifications from the bitarchive monitor, that a batch job is
      * complete.
      *
-     * Spawns a new thread in which all the results are wrapped and sent
-     * back in a reply to the originator of this batch request.
+     * Spawns a new thread in which all the results are wrapped and sent back in
+     * a reply to the originator of this batch request.
      *
-     * @param o   the observable object. Should always be the bitarchive
+     * @param o
+     *            the observable object. Should always be the bitarchive
      *            monitor. If it isn't, this notification will be logged and
      *            ignored.
-     * @param arg an argument passed from the bitarchive monitor. This should
+     * @param arg
+     *            an argument passed from the bitarchive monitor. This should
      *            always be a batch status object indicating the end of that
      *            batchjob. If it isn't, this notification will be logged and
      *            ignored.
@@ -488,7 +502,7 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
                 BitarchiveMonitor.BatchJobStatus bjs = (BitarchiveMonitor.BatchJobStatus) arg;
 
                 // Check whether converted message or actual batchjob.
-                if(batchConversions.containsKey(bjs.originalRequestID)) {
+                if (batchConversions.containsKey(bjs.originalRequestID)) {
                     replyConvertedBatch(bjs);
                 } else {
                     doBatchReply(bjs);
@@ -504,7 +518,8 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
      * It will concatenate the results from all the bitarchives in one file, and
      * construct a reply to the originating requester with all information.
      *
-     * @param bjs Status of received messages from bitarchives.
+     * @param bjs
+     *            Status of received messages from bitarchives.
      */
     private void doBatchReply(BitarchiveMonitor.BatchJobStatus bjs) {
         RemoteFile resultsFile = null;
@@ -517,8 +532,8 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
                 if (bj == null) {
                     throw new UnknownID("Only knows: " + batchjobs.keySet());
                 }
-                log.info("Post processing batchjob results for '{}' with id '{}'",
-                		bj.getClass().getName(), bjs.originalRequestID);
+                log.info("Post processing batchjob results for '{}' with id '{}'", bj.getClass().getName(),
+                        bjs.originalRequestID);
                 // perform the post process, and handle whether it succeeded.
                 if (bj.postProcess(new FileInputStream(bjs.batchResultFile), new FileOutputStream(postFile))) {
                     log.debug("Post processing finished.");
@@ -532,8 +547,8 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
                 tryAndDeleteTemporaryFile(postFile);
                 postFile = bjs.batchResultFile;
             }
-            
-            //Get remote file for batch  result
+
+            // Get remote file for batch result
             resultsFile = RemoteFileFactory.getMovefileInstance(postFile);
         } catch (Exception e) {
             log.warn("Make remote file from {}", bjs.batchResultFile, e);
@@ -541,12 +556,8 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
         }
 
         // Make batch reply message
-        BatchReplyMessage brMsg =
-            new BatchReplyMessage(bjs.originalRequestReplyTo,
-                    Channels.getTheBamon(),
-                    bjs.originalRequestID,
-                    bjs.noOfFilesProcessed,
-                    bjs.filesFailed, resultsFile);
+        BatchReplyMessage brMsg = new BatchReplyMessage(bjs.originalRequestReplyTo, Channels.getTheBamon(),
+                bjs.originalRequestID, bjs.noOfFilesProcessed, bjs.filesFailed, resultsFile);
         if (bjs.errorMessages != null) {
             brMsg.setNotOk(bjs.errorMessages);
         }
@@ -557,9 +568,12 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
         log.info("BatchReplyMessage: '{}' sent from BA monitor to queue: '{}'", brMsg, brMsg.getTo());
     }
 
-    /** Helper method to delete temporary files.
-     * Logs at level debug, if it couldn't delete the file.
-     * @param tmpFile the tmpFile that needs to be deleted.
+    /**
+     * Helper method to delete temporary files. Logs at level debug, if it
+     * couldn't delete the file.
+     * 
+     * @param tmpFile
+     *            the tmpFile that needs to be deleted.
      */
     private void tryAndDeleteTemporaryFile(File tmpFile) {
         boolean deleted = tmpFile.delete();
@@ -571,10 +585,11 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
     }
 
     /**
-     * Uses the batchjobstatus on the message converted batchjob to reply on 
-     * the original message.
+     * Uses the batchjobstatus on the message converted batchjob to reply on the
+     * original message.
      * 
-     * @param bjs The status of the batchjob.
+     * @param bjs
+     *            The status of the batchjob.
      */
     private void replyConvertedBatch(BitarchiveMonitor.BatchJobStatus bjs) {
         // Retrieve the message corresponding to the converted batchjob.
@@ -582,9 +597,9 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
         log.info("replying to converted batchjob message : {}", msg);
         if (msg instanceof GetAllChecksumsMessage) {
             replyToGetAllChecksumsMessage(bjs, (GetAllChecksumsMessage) msg);
-        } else if(msg instanceof GetAllFilenamesMessage) {
-            replyToGetAllFilenamesMessage(bjs, (GetAllFilenamesMessage) msg); 
-        } else if(msg instanceof GetChecksumMessage) {
+        } else if (msg instanceof GetAllFilenamesMessage) {
+            replyToGetAllFilenamesMessage(bjs, (GetAllFilenamesMessage) msg);
+        } else if (msg instanceof GetChecksumMessage) {
             replyToGetChecksumMessage(bjs, (GetChecksumMessage) msg);
         } else /* unhandled message type. */{
             String errMsg = "The message cannot be handled '" + msg + "'";
@@ -595,13 +610,14 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
     }
 
     /**
-     * Method for replying to a GetAllChecksumsMessage.
-     * It uses the reply from the batchjob to make a proper reply to the 
-     * GetAllChecksumsMessage. 
+     * Method for replying to a GetAllChecksumsMessage. It uses the reply from
+     * the batchjob to make a proper reply to the GetAllChecksumsMessage.
      * 
-     * @param bjs The BatchJobStatus used to reply to the 
-     * GetAllChecksumsMessage.
-     * @param msg The GetAllChecksumsMessage to reply to.
+     * @param bjs
+     *            The BatchJobStatus used to reply to the
+     *            GetAllChecksumsMessage.
+     * @param msg
+     *            The GetAllChecksumsMessage to reply to.
      */
     private void replyToGetAllChecksumsMessage(BitarchiveMonitor.BatchJobStatus bjs, GetAllChecksumsMessage msg) {
         try {
@@ -621,15 +637,16 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
             con.reply(msg);
         }
     }
-    
+
     /**
-     * Method for replying to a GetAllFilenamesMessage.
-     * It uses the reply from the batchjob to make a proper reply to the 
-     * GetAllFilenamesMessage. 
+     * Method for replying to a GetAllFilenamesMessage. It uses the reply from
+     * the batchjob to make a proper reply to the GetAllFilenamesMessage.
      * 
-     * @param bjs The BatchJobStatus used to reply to the 
-     * GetAllFilenamesMessage.
-     * @param msg The GetAllFilenamesMessage to reply to.
+     * @param bjs
+     *            The BatchJobStatus used to reply to the
+     *            GetAllFilenamesMessage.
+     * @param msg
+     *            The GetAllFilenamesMessage to reply to.
      */
     private void replyToGetAllFilenamesMessage(BitarchiveMonitor.BatchJobStatus bjs, GetAllFilenamesMessage msg) {
         try {
@@ -649,14 +666,15 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
             con.reply(msg);
         }
     }
-    
+
     /**
-     * Method for replying to a GetChecksumMessage.
-     * It uses the reply from the batchjob to make a proper reply to the 
-     * GetChecksumMessage. 
+     * Method for replying to a GetChecksumMessage. It uses the reply from the
+     * batchjob to make a proper reply to the GetChecksumMessage.
      * 
-     * @param bjs The BatchJobStatus to be used for the reply.
-     * @param msg The GetChecksumMessage to reply to.
+     * @param bjs
+     *            The BatchJobStatus to be used for the reply.
+     * @param msg
+     *            The GetChecksumMessage to reply to.
      */
     private void replyToGetChecksumMessage(BitarchiveMonitor.BatchJobStatus bjs, GetChecksumMessage msg) {
         try {
@@ -664,23 +682,23 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
             List<String> output = FileUtils.readListFromFile(bjs.batchResultFile);
 
             if (output.size() < 1) {
-                String errMsg = "The batchjob did not find the file '" + msg.getArcfileName() + "' within the " + "archive.";
+                String errMsg = "The batchjob did not find the file '" + msg.getArcfileName() + "' within the "
+                        + "archive.";
                 log.warn(errMsg);
 
                 throw new IOFailure(errMsg);
             }
             if (output.size() > 1) {
-                // Log that duplicates have been found. 
+                // Log that duplicates have been found.
                 log.warn("The file '{}' was found {} times in the archive. Using the first found '{}' out of '{}'",
-                		msg.getArcfileName(), output.size(), output.get(0), output);
+                        msg.getArcfileName(), output.size(), output.get(0), output);
 
                 // check if any different values.
                 String firstVal = output.get(0);
                 for (int i = 1; i < output.size(); i++) {
                     if (!output.get(i).equals(firstVal)) {
-                        String errorString = "Replica '" + msg.getReplicaId()
-                        		+ "' has unidentical duplicates: '" + firstVal 
-                                + "' and '" + output.get(i) + "'.";
+                        String errorString = "Replica '" + msg.getReplicaId() + "' has unidentical duplicates: '"
+                                + firstVal + "' and '" + output.get(i) + "'.";
                         log.warn(errorString);
                         NotificationsFactory.getInstance().notify(errorString, NotificationType.WARNING);
                     } else {
@@ -692,10 +710,11 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
             // Extract the filename and checksum of the first result.
             KeyValuePair<String, String> firstResult = ChecksumJob.parseLine(output.get(0));
 
-            // Check that the filename has the expected value (the name of 
+            // Check that the filename has the expected value (the name of
             // the requested file).
             if (!msg.getArcfileName().equals(firstResult.getKey())) {
-                String errMsg = "The first result found the file '" + firstResult.getKey() + "' but should have found '" + msg.getArcfileName() + "'.";
+                String errMsg = "The first result found the file '" + firstResult.getKey()
+                        + "' but should have found '" + msg.getArcfileName() + "'.";
                 log.error(errMsg);
                 throw new IOFailure(errMsg);
             }
@@ -705,15 +724,15 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
 
             // cleanup batchjob file
             FileUtils.remove(bjs.batchResultFile);
-        } catch(Throwable t) {
-            msg.setNotOk(t); 
+        } catch (Throwable t) {
+            msg.setNotOk(t);
             log.warn("An error occurred during the handling of the GetChecksumMessage", t);
         } finally {
             log.info("Replying GetChecksumMessage: '{}'.", msg.toString());
 
             // Reply to the original message (set 'isReply').
             msg.setIsReply();
-            con.reply(msg);                    
+            con.reply(msg);
         }
     }
 

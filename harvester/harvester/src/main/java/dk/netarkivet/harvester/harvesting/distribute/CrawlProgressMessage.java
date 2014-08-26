@@ -43,7 +43,7 @@ import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor;
  * @see HeritrixLauncher#doCrawl()
  *
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({ "serial" })
 public class CrawlProgressMessage extends HarvesterMessage implements Serializable {
 
     /**
@@ -66,7 +66,7 @@ public class CrawlProgressMessage extends HarvesterMessage implements Serializab
          * Heritrix is crawling but has been paused by the user.
          */
         CRAWLER_PAUSED,
-         /**
+        /**
          * Heritrix has finished crawling, post processing of metadata and ARC
          * files remains to be done.
          */
@@ -203,8 +203,7 @@ public class CrawlProgressMessage extends HarvesterMessage implements Serializab
             return currentProcessedDocsPerSec;
         }
 
-        public void setCurrentProcessedDocsPerSec(
-                double currentProcessedDocsPerSec) {
+        public void setCurrentProcessedDocsPerSec(double currentProcessedDocsPerSec) {
             this.currentProcessedDocsPerSec = currentProcessedDocsPerSec;
         }
 
@@ -263,7 +262,10 @@ public class CrawlProgressMessage extends HarvesterMessage implements Serializab
     /** The job's status. */
     private CrawlStatus status;
 
-    /** A legend, fetched only once, for the {@link CrawlServiceJobInfo#progressStatistics} property. */
+    /**
+     * A legend, fetched only once, for the
+     * {@link CrawlServiceJobInfo#progressStatistics} property.
+     */
     private final String progressStatisticsLegend;
 
     /** The information provided by the CrawlService MBean. */

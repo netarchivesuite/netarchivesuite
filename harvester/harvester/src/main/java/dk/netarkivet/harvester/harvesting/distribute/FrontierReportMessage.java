@@ -33,7 +33,7 @@ import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor;
  * Sends a frontier report to the {@link HarvestMonitor}.
  *
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({ "serial" })
 public class FrontierReportMessage extends HarvesterMessage {
 
     /** The id of the filter that generated this report. */
@@ -41,14 +41,17 @@ public class FrontierReportMessage extends HarvesterMessage {
 
     /** The report. */
     private InMemoryFrontierReport report;
-    
+
     /** The ID of the job, this message represents. */
     private Long jobID;
 
     /**
      * Builds a frontier report wrapper message.
-     * @param filter the filter that generated the report.
-     * @param report the report to wrap.
+     * 
+     * @param filter
+     *            the filter that generated the report.
+     * @param report
+     *            the report to wrap.
      */
     public FrontierReportMessage(FrontierReportFilter filter, InMemoryFrontierReport report, Long jobID) {
         super(HarvestMonitor.HARVEST_MONITOR_CHANNEL_ID, Channels.getError());
@@ -75,7 +78,7 @@ public class FrontierReportMessage extends HarvesterMessage {
     public InMemoryFrontierReport getReport() {
         return report;
     }
-    
+
     public Long getJobID() {
         return jobID;
     }

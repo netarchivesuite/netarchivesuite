@@ -39,15 +39,15 @@ import dk.netarkivet.common.exceptions.IOFailure;
  * Message requesting a file from a bitarchive. Messages is forwarded through
  * arcrepository, but reponds directly to sender.
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({ "serial" })
 public class GetFileMessage extends ArchiveMessage {
 
-	private static final Logger log = LoggerFactory.getLogger(GetFileMessage.class);
+    private static final Logger log = LoggerFactory.getLogger(GetFileMessage.class);
 
-	/** the file to retrieve. */
+    /** the file to retrieve. */
     private String arcfileName;
 
-    /** The actual data.*/
+    /** The actual data. */
     private RemoteFile remoteFile;
     /** This replica id. */
     private String replicaId;
@@ -55,10 +55,14 @@ public class GetFileMessage extends ArchiveMessage {
     /**
      * Constructor for get file message.
      *
-     * @param to Recipient
-     * @param replyTo Original sender
-     * @param arcfileName The file to retrieve
-     * @param replicaId The bitarchive replica id to retrieve it from.
+     * @param to
+     *            Recipient
+     * @param replyTo
+     *            Original sender
+     * @param arcfileName
+     *            The file to retrieve
+     * @param replicaId
+     *            The bitarchive replica id to retrieve it from.
      */
     public GetFileMessage(ChannelID to, ChannelID replyTo, String arcfileName, String replicaId) {
         super(to, replyTo);
@@ -67,22 +71,27 @@ public class GetFileMessage extends ArchiveMessage {
     }
 
     /**
-     * Set the file this message should return.
-     * Note: This will make a remote file handle fopr the file.
-     * @param data Content of the file to retrieve
+     * Set the file this message should return. Note: This will make a remote
+     * file handle fopr the file.
+     * 
+     * @param data
+     *            Content of the file to retrieve
      */
     public void setFile(File data) {
         remoteFile = RemoteFileFactory.getCopyfileInstance(data);
     }
 
     /**
-     * Writes the the content of the retrieved file into a local file.
-     * Note: This is transferred through a remote file handle, and then the
-     * handle is invalidated. This method may only be called once.
-     * @param toFile where to write the content
-     * @throws IOFailure on error reading the remote file
-     * or writing the local file
-     * @throws ArgumentNotValid If the file is null.
+     * Writes the the content of the retrieved file into a local file. Note:
+     * This is transferred through a remote file handle, and then the handle is
+     * invalidated. This method may only be called once.
+     * 
+     * @param toFile
+     *            where to write the content
+     * @throws IOFailure
+     *             on error reading the remote file or writing the local file
+     * @throws ArgumentNotValid
+     *             If the file is null.
      */
     public void getData(File toFile) throws ArgumentNotValid, IOFailure {
         ArgumentNotValid.checkNotNull(toFile, "toFile");
@@ -93,7 +102,7 @@ public class GetFileMessage extends ArchiveMessage {
         try {
             remoteFile.cleanup();
         } catch (IOFailure e) {
-            //Just log errors on deleting. They are fairly harmless.
+            // Just log errors on deleting. They are fairly harmless.
             // Can't make Logger a field, as this class is Serializable
             log.warn("Could not delete remote file {}", remoteFile.getName());
         }
@@ -102,6 +111,7 @@ public class GetFileMessage extends ArchiveMessage {
 
     /**
      * Retrieve the replica id.
+     * 
      * @return replica id
      */
     public String getReplicaId() {
@@ -110,6 +120,7 @@ public class GetFileMessage extends ArchiveMessage {
 
     /**
      * Get name of the file to retrieve.
+     * 
      * @return file name
      */
     public String getArcfileName() {
@@ -127,7 +138,8 @@ public class GetFileMessage extends ArchiveMessage {
      * Should be implemented as a part of the visitor pattern. fx.: public void
      * accept(ArchiveMessageVisitor v) { v.visit(this); }
      *
-     * @param v A message visitor
+     * @param v
+     *            A message visitor
      */
     public void accept(ArchiveMessageVisitor v) {
         v.visit(this);

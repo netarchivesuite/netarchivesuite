@@ -61,17 +61,20 @@ public abstract class RunningJobsInfoDAO implements DAO {
     }
 
     /**
-     * Stores a {@link StartedJobInfo} record to the persistent storage.
-     * The record is stored in the monitor table, and if the elapsed time since
-     * the last history sample is equal or superior to the history sample rate,
-     * also to the history table.
-     * @param startedJobInfo the record to store.
+     * Stores a {@link StartedJobInfo} record to the persistent storage. The
+     * record is stored in the monitor table, and if the elapsed time since the
+     * last history sample is equal or superior to the history sample rate, also
+     * to the history table.
+     * 
+     * @param startedJobInfo
+     *            the record to store.
      */
     public abstract void store(StartedJobInfo startedJobInfo);
 
     /**
      * Returns the most recent record for every job, partitioned by harvest
      * definition name.
+     * 
      * @return the full listing of started job information, partitioned by
      *         harvest definition name.
      */
@@ -80,28 +83,36 @@ public abstract class RunningJobsInfoDAO implements DAO {
     /**
      * Returns an array of all progress records chronologically sorted for the
      * given job ID.
-     * @param jobId the job id.
+     * 
+     * @param jobId
+     *            the job id.
      * @return an array of all progress records chronologically sorted for the
-     * given job ID.
+     *         given job ID.
      */
     public abstract StartedJobInfo[] getFullJobHistory(long jobId);
 
     /**
-     * Returns an array of progress records chronologically sorted for the
-     * given job ID, starting at a given crawl time, and limited to a given
-     * number of records.
-     * @param jobId the job id.
-     * @param startTime the crawl time (in seconds) to begin.
-     * @param limit the maximum number of records to fetch.
-     * @return an array of progress records chronologically sorted for the
-     * given job ID, starting at a given crawl time, and limited to a given
-     * number of record.
+     * Returns an array of progress records chronologically sorted for the given
+     * job ID, starting at a given crawl time, and limited to a given number of
+     * records.
+     * 
+     * @param jobId
+     *            the job id.
+     * @param startTime
+     *            the crawl time (in seconds) to begin.
+     * @param limit
+     *            the maximum number of records to fetch.
+     * @return an array of progress records chronologically sorted for the given
+     *         job ID, starting at a given crawl time, and limited to a given
+     *         number of record.
      */
     public abstract StartedJobInfo[] getMostRecentByJobId(long jobId, long startTime, int limit);
 
     /**
      * Returns the most recent progress record for the given job ID.
-     * @param jobId the job id.
+     * 
+     * @param jobId
+     *            the job id.
      * @return the most recent progress record for the given job ID.
      */
     public abstract StartedJobInfo getMostRecentByJobId(long jobId);
@@ -109,22 +120,29 @@ public abstract class RunningJobsInfoDAO implements DAO {
     /**
      * Removes all monitor and history records pertaining to the given job ID
      * from the persistent storage.
-     * @param jobId the job id.
+     * 
+     * @param jobId
+     *            the job id.
      * @return the number of deleted records.
      */
     public abstract int removeInfoForJob(long jobId);
 
     /**
      * Store frontier report data to the persistent storage.
-     * @param report the report to store
-     * @param filterId the id of the filter that produced the report
-     * @param jobId The ID of the harvestjob responsible for this report
+     * 
+     * @param report
+     *            the report to store
+     * @param filterId
+     *            the id of the filter that produced the report
+     * @param jobId
+     *            The ID of the harvestjob responsible for this report
      * @return the update count
      */
     public abstract int storeFrontierReport(String filterId, InMemoryFrontierReport report, Long jobId);
 
     /**
      * Returns the list of the available frontier report types.
+     * 
      * @see FrontierReportFilter#getFilterId()
      * @return the list of the available frontier report types.
      */
@@ -132,16 +150,21 @@ public abstract class RunningJobsInfoDAO implements DAO {
 
     /**
      * Retrieve a frontier report from a job id and a given filter class.
-     * @param jobId the job id
-     * @param filterId the id of the filter that produced the report
+     * 
+     * @param jobId
+     *            the job id
+     * @param filterId
+     *            the id of the filter that produced the report
      * @return a frontier report
      */
     public abstract InMemoryFrontierReport getFrontierReport(long jobId, String filterId);
 
     /**
-     * Deletes all frontier report data pertaining to the given job id from
-     * the persistent storage.
-     * @param jobId the job id
+     * Deletes all frontier report data pertaining to the given job id from the
+     * persistent storage.
+     * 
+     * @param jobId
+     *            the job id
      * @return the update count
      */
     public abstract int deleteFrontierReports(long jobId);
@@ -149,6 +172,7 @@ public abstract class RunningJobsInfoDAO implements DAO {
     /**
      * Returns the ids of jobs for which history records exist, as an immutable
      * set.
+     * 
      * @return the ids of jobs for which history records exist.
      */
     public abstract Set<Long> getHistoryRecordIds();

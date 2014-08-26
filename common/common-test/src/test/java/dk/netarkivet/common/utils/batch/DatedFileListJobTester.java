@@ -37,13 +37,10 @@ import java.io.OutputStream;
 import java.io.StringReader;
 import java.util.Date;
 
-
 public class DatedFileListJobTester extends TestCase {
-      MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,
-                                          TestInfo.WORKING_DIR);
+    MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
 
-
-     public void setUp() throws Exception {
+    public void setUp() throws Exception {
         super.setUp();
         mtf.setUp();
     }
@@ -60,24 +57,25 @@ public class DatedFileListJobTester extends TestCase {
         int totalFiles = countLines(os);
         int filesToBeIgnored = 4;
         int filesTouched = 0;
-        for (File file: TestInfo.WORKING_DIR.listFiles()) {
-             if (filesTouched < filesToBeIgnored) {
-                  file.setLastModified(new Date().getTime() - 3600000L);
-                 filesTouched++;
-             } else {
-                 file.setLastModified(new Date().getTime());
-             }
+        for (File file : TestInfo.WORKING_DIR.listFiles()) {
+            if (filesTouched < filesToBeIgnored) {
+                file.setLastModified(new Date().getTime() - 3600000L);
+                filesTouched++;
+            } else {
+                file.setLastModified(new Date().getTime());
+            }
         }
-        //Now there are four files with timestamp one hour ago and the rest with timestamp "now".
+        // Now there are four files with timestamp one hour ago and the rest
+        // with timestamp "now".
         DatedFileListJob job2 = new DatedFileListJob(new Date(new Date().getTime() - 1800000));
         os = new ByteArrayOutputStream();
         processOnDirectory(job2, TestInfo.WORKING_DIR, os);
         assertEquals("Expected the number of files found to exclude those files with timestamp set to one hour ago.",
-                totalFiles-filesToBeIgnored, countLines(os));
+                totalFiles - filesToBeIgnored, countLines(os));
     }
 
     private static void processOnDirectory(FileBatchJob job, File dir, OutputStream os) {
-        for (File file: dir.listFiles()) {
+        for (File file : dir.listFiles()) {
             job.processFile(file, os);
         }
     }
@@ -86,7 +84,7 @@ public class DatedFileListJobTester extends TestCase {
         BufferedReader reader = new BufferedReader(new StringReader(os.toString()));
         int lines = 0;
         while (reader.readLine() != null) {
-             lines++;
+            lines++;
         }
         return lines;
     }

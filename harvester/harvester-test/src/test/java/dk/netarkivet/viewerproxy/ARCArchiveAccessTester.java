@@ -61,14 +61,14 @@ import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
- * Unit tests for ARCArchiveAccess.  This only tests that we connect the CDX
+ * Unit tests for ARCArchiveAccess. This only tests that we connect the CDX
  * lookup with the ARC files ok, because everything else is just being forwarded
  * and so is (supposed to be) tested elsewhere.
  */
-@SuppressWarnings({ "unused", "unchecked"})
+@SuppressWarnings({ "unused", "unchecked" })
 public class ARCArchiveAccessTester {
 
-    //Unused files:
+    // Unused files:
     private static final File MAIN_PATH = new File("tests/dk/netarkivet/viewerproxy/data/");
 
     /**
@@ -84,21 +84,21 @@ public class ARCArchiveAccessTester {
     /**
      * The key listed for GIF_URL.
      */
-    private static final ARCKey GIF_URL_KEY =
-            new ARCKey("2-2-20060731110420-00000-sb-test-har-001.statsbiblioteket.dk.arc", 73269);
+    private static final ARCKey GIF_URL_KEY = new ARCKey(
+            "2-2-20060731110420-00000-sb-test-har-001.statsbiblioteket.dk.arc", 73269);
 
     // Set up directories for local archive and bitarchive
     private static final File BASE_DIR = new File("tests/dk/netarkivet/viewerproxy/data");
     private static final File ORIGINALS = new File(BASE_DIR, "input");
     private static final File WORKING = new File(BASE_DIR, "working");
 
-    //A web archive controller that always returns our own test record:
+    // A web archive controller that always returns our own test record:
     private ArcRepositoryClient fakeArcRepos;
 
-    //A web archive controller that always returns null:
+    // A web archive controller that always returns null:
     private ArcRepositoryClient nullArcRepos;
 
-    //Our main instance of ARCArchiveAccess:
+    // Our main instance of ARCArchiveAccess:
     private ARCArchiveAccess aaa;
 
     ReloadSettings rs = new ReloadSettings();
@@ -107,15 +107,14 @@ public class ARCArchiveAccessTester {
     public void setUp() throws Exception {
         rs.setUp();
         WRONG_URL = new URI("http://www.test.dk/hest");
-        GIF_URL = new URI(
-                "http://netarkivet.dk/netarchive_alm/billeder/spacer.gif");
+        GIF_URL = new URI("http://netarkivet.dk/netarchive_alm/billeder/spacer.gif");
 
-        //We need a controller that doesn't do much more than return a test
+        // We need a controller that doesn't do much more than return a test
         // record:
         fakeArcRepos = new TestArcRepositoryClient();
         nullArcRepos = new NullArcRepositoryClient();
 
-        //Although we also need some real data
+        // Although we also need some real data
         FileUtils.removeRecursively(WORKING);
         TestFileUtils.copyDirectoryNonCVS(ORIGINALS, WORKING);
         Settings.set(HarvesterSettings.VIEWERPROXY_DIR, new File(WORKING, "viewerproxy").getAbsolutePath());
@@ -137,23 +136,21 @@ public class ARCArchiveAccessTester {
      */
     @Test
     public void testConstructor() {
-        //Verify construction with OK parameters does not fail:
+        // Verify construction with OK parameters does not fail:
         new ARCArchiveAccess(fakeArcRepos);
-        //Verify that null parameters makes the constructor fail:
+        // Verify that null parameters makes the constructor fail:
         try {
             new ARCArchiveAccess(null);
             fail("Expected argument not valid on null argument.");
         } catch (ArgumentNotValid e) {
-            //Expected.
+            // Expected.
         }
     }
 
     @Test
     public void testReadPage() throws Exception {
-        Method readPage = ReflectUtils.getPrivateMethod(ARCArchiveAccess.class,
-                                                        "readPage",
-                                                        InputStream.class,
-                                                        OutputStream.class);
+        Method readPage = ReflectUtils.getPrivateMethod(ARCArchiveAccess.class, "readPage", InputStream.class,
+                OutputStream.class);
         // Make an inputstream where read(byte[]) reads two chars at a time
         InputStream in = new ByteArrayInputStream("foo".getBytes()) {
             public int read(byte[] buf) {
@@ -163,9 +160,7 @@ public class ARCArchiveAccessTester {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         readPage.invoke(aaa, in, baos);
         baos.close();
-        assertEquals(
-                "Should get same bytes regardless of bytes read per read()",
-                "foo", baos.toString());
+        assertEquals("Should get same bytes regardless of bytes read per read()", "foo", baos.toString());
     }
 
     @Test
@@ -174,30 +169,22 @@ public class ARCArchiveAccessTester {
 
         aaa.createNotFoundResponse(WRONG_URL, response);
 
-        assertTrue("Url should be in output",
-                   response.bas.toString().contains(WRONG_URL.toString()));
-        assertTrue("Should have content type header",
-                   response.names.contains("Content-type"));
-        assertTrue("Should have test/html header value",
-                   response.values.contains("text/html"));
+        assertTrue("Url should be in output", response.bas.toString().contains(WRONG_URL.toString()));
+        assertTrue("Should have content type header", response.names.contains("Content-type"));
+        assertTrue("Should have test/html header value", response.values.contains("text/html"));
         assertEquals("Should be a 404 URL", 404, response.statusInt);
-        assertEquals("Reason should be as expected", "Not found",
-                     response.reasonStr);
+        assertEquals("Reason should be as expected", "Not found", response.reasonStr);
 
         response = new TestResponse();
 
-        //Test it works twice.
+        // Test it works twice.
         aaa.createNotFoundResponse(WRONG_URL, response);
 
-        assertTrue("Url should be in output",
-                   response.bas.toString().contains(WRONG_URL.toString()));
-        assertTrue("Should have content type header",
-                   response.names.contains("Content-type"));
-        assertTrue("Should have test/html header value",
-                   response.values.contains("text/html"));
+        assertTrue("Url should be in output", response.bas.toString().contains(WRONG_URL.toString()));
+        assertTrue("Should have content type header", response.names.contains("Content-type"));
+        assertTrue("Should have test/html header value", response.values.contains("text/html"));
         assertEquals("Should be a 404 URL", 404, response.statusInt);
-        assertEquals("Reason should be as expected", "Not found",
-                     response.reasonStr);
+        assertEquals("Reason should be as expected", "Not found", response.reasonStr);
     }
 
     /**
@@ -210,9 +197,7 @@ public class ARCArchiveAccessTester {
         Response response = new TestResponse();
         URI uri = new URI("http://does.not.exist");
         int code = aaa.lookup(new TestRequest(uri), response);
-        assertEquals("Should return a NOT_FOUND http code",
-                     URIResolver.NOT_FOUND,
-                     code);
+        assertEquals("Should return a NOT_FOUND http code", URIResolver.NOT_FOUND, code);
     }
 
     /**
@@ -222,21 +207,14 @@ public class ARCArchiveAccessTester {
      * @throws InterruptedException
      */
     @Test
-    public void testLookupExistingObject()
-            throws IOException, InterruptedException {
+    public void testLookupExistingObject() throws IOException, InterruptedException {
         TestResponse response = new TestResponse();
         int code = aaa.lookup(new TestRequest(GIF_URL), response);
-        assertEquals("Should return a FOUND http code",
-                     200,
-                     code);
-        assertEquals("Should have a location header",
-                     1, response.names.size());
-        assertEquals("Should have a location header",
-                     1, response.values.size());
-        assertEquals("Should have a location header",
-                     "Location", response.names.get(0));
-        assertEquals("Should have a location header",
-                     GIF_URL_KEY.getFile().toString(), response.values.get(0));
+        assertEquals("Should return a FOUND http code", 200, code);
+        assertEquals("Should have a location header", 1, response.names.size());
+        assertEquals("Should have a location header", 1, response.values.size());
+        assertEquals("Should have a location header", "Location", response.names.get(0));
+        assertEquals("Should have a location header", GIF_URL_KEY.getFile().toString(), response.values.get(0));
     }
 
     /**
@@ -248,7 +226,7 @@ public class ARCArchiveAccessTester {
      */
     @Test
     public void testNullControllerReturn() throws Exception {
-    	LogbackRecorder lr = LogbackRecorder.startRecorder();
+        LogbackRecorder lr = LogbackRecorder.startRecorder();
         Response response = new TestResponse();
         ARCArchiveAccess nullaaa = new ARCArchiveAccess(nullArcRepos);
         nullaaa.setIndex(TestInfo.ZIPPED_INDEX_DIR);
@@ -256,10 +234,10 @@ public class ARCArchiveAccessTester {
             nullaaa.lookup(new TestRequest(GIF_URL), response);
             fail("Should throw exception if file is in index but gets null");
         } catch (IOFailure e) {
-            //expected
+            // expected
         }
-        lr.assertLogContains("Bitarchive problem must be reported in the log",
-                "ARC file '" + GIF_URL_KEY.getFile() + "' mentioned in index file was not found");
+        lr.assertLogContains("Bitarchive problem must be reported in the log", "ARC file '" + GIF_URL_KEY.getFile()
+                + "' mentioned in index file was not found");
         lr.stopRecorder();
     }
 
@@ -278,30 +256,26 @@ public class ARCArchiveAccessTester {
          */
         public BitarchiveRecord get(String arcFile, long index) {
             final Map<String, Object> metadata = new HashMap<String, Object>();
-            for (String header_field : (List<String>)
-                    ARCConstants.REQUIRED_VERSION_1_HEADER_FIELDS) {
+            for (String header_field : (List<String>) ARCConstants.REQUIRED_VERSION_1_HEADER_FIELDS) {
                 metadata.put(header_field, "");
             }
-            byte[] data = ("HTTP/1.1 200 OK\nLocation: " + arcFile + "\n\n"
-                           + arcFile + " " + index).getBytes();
-            // TODO remove or replace this by something else ? (ARCConstants.LENGTH_HEADER_FIELD_KEY)
+            byte[] data = ("HTTP/1.1 200 OK\nLocation: " + arcFile + "\n\n" + arcFile + " " + index).getBytes();
+            // TODO remove or replace this by something else ?
+            // (ARCConstants.LENGTH_HEADER_FIELD_KEY)
             // does not exist in Heritrix 1.10+
-            //metadata.put(ARCConstants.LENGTH_HEADER_FIELD_KEY,
-            //             Integer.toString(data.length));
-            // Note: ARCRecordMetadata.getLength() now reads the contents of the LENGTH_FIELD_KEY
+            // metadata.put(ARCConstants.LENGTH_HEADER_FIELD_KEY,
+            // Integer.toString(data.length));
+            // Note: ARCRecordMetadata.getLength() now reads the contents of the
+            // LENGTH_FIELD_KEY
             // instead of LENGTH_HEADER_FIELD_KEY
-            metadata.put(ARCConstants.LENGTH_FIELD_KEY,
-                         Integer.toString(data.length));
-            Long dummyOffset = Long.valueOf(
-                    0L); //Note: offset is not stored as a String, but as a Long
+            metadata.put(ARCConstants.LENGTH_FIELD_KEY, Integer.toString(data.length));
+            Long dummyOffset = Long.valueOf(0L); // Note: offset is not stored
+                                                 // as a String, but as a Long
             metadata.put(ARCConstants.ABSOLUTE_OFFSET_KEY, dummyOffset);
 
             try {
-                ARCRecordMetaData meta
-                        = new ARCRecordMetaData(arcFile, metadata);
-                return new BitarchiveRecord(
-                        new ARCRecord(new ByteArrayInputStream(data),
-                                      meta), arcFile);
+                ARCRecordMetaData meta = new ARCRecordMetaData(arcFile, metadata);
+                return new BitarchiveRecord(new ARCRecord(new ByteArrayInputStream(data), meta), arcFile);
             } catch (IOException e) {
                 fail("Cant't create metadata record");
                 return null;

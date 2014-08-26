@@ -30,20 +30,17 @@ import dk.netarkivet.common.utils.SettingsFactory;
  * Creates an instance of the ActiveBitPreservation from on the setting
  * settings.archive.bitpreservation.class.
  * 
- * @see 
- * dk.netarkivet.archive.arcrepository.bitpreservation.ActiveBitPreservation
+ * @see dk.netarkivet.archive.arcrepository.bitpreservation.ActiveBitPreservation
  */
-public class ActiveBitPreservationFactory 
-        extends SettingsFactory<ActiveBitPreservation>{
+public class ActiveBitPreservationFactory extends SettingsFactory<ActiveBitPreservation> {
 
     /**
      * Method for retrieving the current ActiveBitPreservation instance defined
-     * in the settings. 
+     * in the settings.
      * 
      * @return The ActiveBitPreservation defined in the settings.
      */
     public static ActiveBitPreservation getInstance() {
-        return SettingsFactory.getInstance(
-                ArchiveSettings.CLASS_ARCREPOSITORY_BITPRESERVATION);
+        return SettingsFactory.getInstance(ArchiveSettings.CLASS_ARCREPOSITORY_BITPRESERVATION);
     }
 }

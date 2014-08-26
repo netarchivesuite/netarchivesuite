@@ -37,70 +37,60 @@ import org.junit.Before;
 import org.junit.After;
 import org.junit.Test;
 
-
 public class FullFrontierReportTest {
-    
+
     ReloadSettings rs = new ReloadSettings();
 
     @Before
     public void setUp() throws Exception {
         rs.setUp();
-        
-        Settings.set(
-                CommonSettings.CACHE_DIR, 
-                TestInfo.WORKDIR.getAbsolutePath());
+
+        Settings.set(CommonSettings.CACHE_DIR, TestInfo.WORKDIR.getAbsolutePath());
     }
 
     @After
     public void tearDown() throws Exception {
-        
+
         File[] testDirs = TestInfo.WORKDIR.listFiles(new FileFilter() {
             @Override
             public boolean accept(File pathname) {
                 return pathname.isDirectory();
             }
         });
-        
+
         for (File dir : testDirs) {
             FileUtils.removeRecursively(dir);
         }
-        
+
         rs.tearDown();
     }
 
     @Test
     public final void testParseStoreAndDispose() throws IOException {
         for (File reportFile : TestInfo.getFrontierReportSamples()) {
-            FullFrontierReport report = 
-                FullFrontierReport.parseContentsAsString(
-                        "test-" + System.currentTimeMillis(), 
-                        FileUtils.readFile(reportFile));
+            FullFrontierReport report = FullFrontierReport.parseContentsAsString("test-" + System.currentTimeMillis(),
+                    FileUtils.readFile(reportFile));
             report.dispose();
             assertFalse(report.getStorageDir().exists());
         }
     }
-    
+
     @Test
     public final void testAll() throws IOException {
         for (File reportFile : TestInfo.getFrontierReportSamples()) {
-            FullFrontierReport report = 
-                FullFrontierReport.parseContentsAsString(
-                        "test-" + System.currentTimeMillis(), 
-                        FileUtils.readFile(reportFile));
-            
+            FullFrontierReport report = FullFrontierReport.parseContentsAsString("test-" + System.currentTimeMillis(),
+                    FileUtils.readFile(reportFile));
+
             BufferedReader in = new BufferedReader(new FileReader(reportFile));
             String inLine = in.readLine(); // discard header line
-            while((inLine = in.readLine()) != null) {
+            while ((inLine = in.readLine()) != null) {
                 String domainName = inLine.split("\\s+")[0];
-                assertEquals(
-                        inLine, 
-                        FrontierTestUtils.toString(
-                                report.getLineForDomain(domainName)));
+                assertEquals(inLine, FrontierTestUtils.toString(report.getLineForDomain(domainName)));
             }
-            
+
             report.dispose();
             in.close();
-            
+
             assertFalse(report.getStorageDir().exists());
         }
     }

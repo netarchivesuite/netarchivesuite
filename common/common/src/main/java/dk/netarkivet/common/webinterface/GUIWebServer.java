@@ -57,53 +57,43 @@ public class GUIWebServer implements CleanupIF {
      * Logger for this class.
      */
     private Log log = LogFactory.getLog(getClass().getName());
-    
+
     /** The lower limit of acceptable HTTP port-numbers. */
     private static final int HTTP_PORT_NUMBER_LOWER_LIMIT = 1025;
 
     /** The upper limit of acceptable HTTP port-numbers. */
     private static final int HTTP_PORT_NUMBER_UPPER_LIMIT = 65535;
-    
+
     /**
      * Initialises a GUI Web Server and adds web applications.
      *
-     * @throws IOFailure on trouble starting server.
+     * @throws IOFailure
+     *             on trouble starting server.
      */
     public GUIWebServer() {
-        //Read and log settings.
-        int port = Integer.parseInt(Settings.get(
-                CommonSettings.HTTP_PORT_NUMBER));
-        if (port < HTTP_PORT_NUMBER_LOWER_LIMIT 
-                || port > HTTP_PORT_NUMBER_UPPER_LIMIT) {
-            throw new IOFailure(
-                    "Port must be in the range [" 
-                            + HTTP_PORT_NUMBER_LOWER_LIMIT + ", " 
-                            + HTTP_PORT_NUMBER_UPPER_LIMIT + "], not " + port);
+        // Read and log settings.
+        int port = Integer.parseInt(Settings.get(CommonSettings.HTTP_PORT_NUMBER));
+        if (port < HTTP_PORT_NUMBER_LOWER_LIMIT || port > HTTP_PORT_NUMBER_UPPER_LIMIT) {
+            throw new IOFailure("Port must be in the range [" + HTTP_PORT_NUMBER_LOWER_LIMIT + ", "
+                    + HTTP_PORT_NUMBER_UPPER_LIMIT + "], not " + port);
         }
-        //TODO Replace with just one setting. See issue NAS-1687
-        String[] webApps = Settings.getAll(
-                CommonSettings.SITESECTION_WEBAPPLICATION);
+        // TODO Replace with just one setting. See issue NAS-1687
+        String[] webApps = Settings.getAll(CommonSettings.SITESECTION_WEBAPPLICATION);
         String[] classes = Settings.getAll(CommonSettings.SITESECTION_CLASS);
         if (webApps.length != classes.length) {
-            throw new IOFailure(
-                    "Number of webapplications and number of classes defining "
-                    + "the webapps do not match. "
-                    + "Webapps: [" + StringUtils.conjoin(",", webApps) + "]. "
-                    + "]. Classes: [" + StringUtils.conjoin(",", classes)
-                    + "]");
+            throw new IOFailure("Number of webapplications and number of classes defining "
+                    + "the webapps do not match. " + "Webapps: [" + StringUtils.conjoin(",", webApps) + "]. "
+                    + "]. Classes: [" + StringUtils.conjoin(",", classes) + "]");
         }
 
-        log.info("Starting webserver. Port: " + port
-                 + " deployment directories: '"
-                 + StringUtils.conjoin(",", webApps)
-                 + "' classes: '"
-                 + StringUtils.conjoin(",", classes) + "'");
+        log.info("Starting webserver. Port: " + port + " deployment directories: '" + StringUtils.conjoin(",", webApps)
+                + "' classes: '" + StringUtils.conjoin(",", classes) + "'");
 
-        //Get a Jetty server.
+        // Get a Jetty server.
         server = new Server(port);
 
         HandlerList handlerList = new HandlerList();
-        //Add web applications
+        // Add web applications
         try {
             for (int i = 0; i < webApps.length; i++) {
                 handlerList.addHandler(getWebApplication(webApps[i]));
@@ -111,8 +101,8 @@ public class GUIWebServer implements CleanupIF {
         } catch (Exception e) {
             throw new IOFailure("Error deploying the webapplications", e);
         }
-        //Add default handler, giving 404 page that lists web contexts, and
-        //favicon.ico from Jetty
+        // Add default handler, giving 404 page that lists web contexts, and
+        // favicon.ico from Jetty
         handlerList.addHandler(new DefaultHandler());
         server.setHandler(handlerList);
     }
@@ -133,17 +123,20 @@ public class GUIWebServer implements CleanupIF {
 
     /**
      * Adds a directory with jsp files on the given basepath of the web server.
-     * Note: This must be done BEFORE starting the server.
-     * The webbase is deduced from the name of the webapp.
+     * Note: This must be done BEFORE starting the server. The webbase is
+     * deduced from the name of the webapp.
      *
-     * @param webapp  a directory with jsp files or a war file.
-     * @throws IOFailure        if directory is not found.
-     * @throws ArgumentNotValid if either argument is null or empty or if
-     *                          webbase doesn't start with '/'.
-     * @throws PermissionDenied if the server is already running.
+     * @param webapp
+     *            a directory with jsp files or a war file.
+     * @throws IOFailure
+     *             if directory is not found.
+     * @throws ArgumentNotValid
+     *             if either argument is null or empty or if webbase doesn't
+     *             start with '/'.
+     * @throws PermissionDenied
+     *             if the server is already running.
      */
-    private WebAppContext getWebApplication(String webapp)
-            throws IOFailure, ArgumentNotValid, PermissionDenied {
+    private WebAppContext getWebApplication(String webapp) throws IOFailure, ArgumentNotValid, PermissionDenied {
 
         if (!new File(webapp).exists()) {
             throw new IOFailure("Web application '" + webapp + "' not found");
@@ -156,8 +149,7 @@ public class GUIWebServer implements CleanupIF {
         String webbase = "/" + webappFilename;
         final String warSuffix = ".war";
         if (webappFilename.toLowerCase().endsWith(warSuffix)) {
-            webbase = "/" + webappFilename.substring(0, 
-                    webappFilename.length() - warSuffix.length());
+            webbase = "/" + webappFilename.substring(0, webappFilename.length() - warSuffix.length());
         }
 
         for (SiteSection section : SiteSection.getSections()) {
@@ -167,14 +159,13 @@ public class GUIWebServer implements CleanupIF {
             }
         }
         WebAppContext webApplication = new WebAppContext(webapp, webbase);
-        //Do not have a limit on the form size allowed
+        // Do not have a limit on the form size allowed
         webApplication.setMaxFormContentSize(-1);
-        //Use directory in commontempdir for cache
+        // Use directory in commontempdir for cache
         File tmpdir = new File(FileUtils.getTempDir(), webbase);
         if (tmpdir.exists()) {
             FileUtils.removeRecursively(tmpdir);
-            log.info("Deleted existing tempdir '" + tmpdir.getAbsolutePath()
-                    + "'");
+            log.info("Deleted existing tempdir '" + tmpdir.getAbsolutePath() + "'");
         }
         tmpdir.mkdirs();
         webApplication.setTempDirectory(tmpdir);
@@ -185,10 +176,11 @@ public class GUIWebServer implements CleanupIF {
     /**
      * Starts the jsp web server.
      *
-     * @throws IOFailure if the server for any reason cannot be started.
+     * @throws IOFailure
+     *             if the server for any reason cannot be started.
      */
     public void startServer() {
-        //start the server.
+        // start the server.
         try {
             server.start();
         } catch (Exception e) {
@@ -217,7 +209,7 @@ public class GUIWebServer implements CleanupIF {
 
         resetInstance();
     }
-    
+
     /** resetClassInstance. */
     private static synchronized void resetInstance() {
         instance = null;

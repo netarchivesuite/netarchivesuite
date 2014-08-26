@@ -28,11 +28,13 @@ package dk.netarkivet.common.exceptions;
  *
  */
 
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({ "serial" })
 public class IllegalState extends NetarkivetException {
     /**
      * Constructs new IllegalState with the specified detail message and cause.
-     * @param message The detail message
+     * 
+     * @param message
+     *            The detail message
      */
     public IllegalState(String message) {
         super(message);
@@ -40,8 +42,11 @@ public class IllegalState extends NetarkivetException {
 
     /**
      * Constructs new IllegalState with the specified detail message and cause.
-     * @param message The detail message
-     * @param cause The cause
+     * 
+     * @param message
+     *            The detail message
+     * @param cause
+     *            The cause
      */
     public IllegalState(String message, Throwable cause) {
         super(message, cause);

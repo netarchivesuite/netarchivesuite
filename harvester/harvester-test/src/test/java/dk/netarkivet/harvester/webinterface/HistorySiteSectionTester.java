@@ -28,8 +28,8 @@ import org.junit.Test;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
- * Unit-test for the HistorySiteSection class.
- * FIXME Does not currently test HistorySiteSection functionality.
+ * Unit-test for the HistorySiteSection class. FIXME Does not currently test
+ * HistorySiteSection functionality.
  */
 public class HistorySiteSectionTester {
 
@@ -41,20 +41,16 @@ public class HistorySiteSectionTester {
         long harvestID = 10L;
         int harvestRun = 5;
         assertEquals("Should get correctly formatted link for run",
-                "<a href=\"/History/Harveststatus-perharvestrun.jsp?"
-                        + "HARVEST_ID=" + harvestID 
-                        + "&amp;HARVEST_RUN=" + harvestRun
-                        + "&amp;JOB_STATUS=" 
-                        + HarvestStatusQuery.JOBSTATUS_ALL
-                        + "\">" + harvestRun + "</a>",
-                HarvestStatus.makeHarvestRunLink(harvestID, harvestRun));
+                "<a href=\"/History/Harveststatus-perharvestrun.jsp?" + "HARVEST_ID=" + harvestID + "&amp;HARVEST_RUN="
+                        + harvestRun + "&amp;JOB_STATUS=" + HarvestStatusQuery.JOBSTATUS_ALL + "\">" + harvestRun
+                        + "</a>", HarvestStatus.makeHarvestRunLink(harvestID, harvestRun));
         try {
             harvestID = -1L;
             harvestRun = 3;
             HarvestStatus.makeHarvestRunLink(harvestID, harvestRun);
             fail("Should die on negative harvestID");
         } catch (ArgumentNotValid e) {
-            //expected
+            // expected
         }
         try {
             harvestID = 1L;
@@ -62,7 +58,7 @@ public class HistorySiteSectionTester {
             HarvestStatus.makeHarvestRunLink(1, -3);
             fail("Should die on negative harvestRun");
         } catch (ArgumentNotValid e) {
-            //expected
+            // expected
         }
     }
 }

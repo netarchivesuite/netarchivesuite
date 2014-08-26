@@ -32,43 +32,49 @@ import dk.netarkivet.common.utils.FileUtils;
 
 /**
  * This class provides the framework for classes that cache the effort of
- * combining multiple files into one.  For instance, creating a Lucene index
- * out of crawl.log files takes O(nlogn) where n is the number of lines in
- * the files combined.
+ * combining multiple files into one. For instance, creating a Lucene index out
+ * of crawl.log files takes O(nlogn) where n is the number of lines in the files
+ * combined.
  *
- * It is based on an underlying cache of single files.
- * It handles the possibility of some of the files in the underlying cache
- * not being available by telling which files are available rather than by
- * sending an incomplete file.
+ * It is based on an underlying cache of single files. It handles the
+ * possibility of some of the files in the underlying cache not being available
+ * by telling which files are available rather than by sending an incomplete
+ * file.
  * 
- * @param <T> A comparable instance. Must inherit the 
- * java.lang.Comparable interface.
+ * @param <T>
+ *            A comparable instance. Must inherit the java.lang.Comparable
+ *            interface.
  */
 public abstract class CombiningMultiFileBasedCache<T extends Comparable<T>> extends MultiFileBasedCache<T> {
 
     /** The raw data cache that this cache gets data from. */
     protected FileBasedCache<T> rawcache;
 
-    /** Constructor for a CombiningMultiFileBasedCache.
+    /**
+     * Constructor for a CombiningMultiFileBasedCache.
      *
-     * @param name The name of the cache
-     * @param rawcache The underlying cache of single files.
+     * @param name
+     *            The name of the cache
+     * @param rawcache
+     *            The underlying cache of single files.
      */
     protected CombiningMultiFileBasedCache(String name, FileBasedCache<T> rawcache) {
         super(name);
         this.rawcache = rawcache;
     }
 
-    /** This is called when an appropriate file for the ids in question
-     * has not been found.  It is expected to do the actual operations
-     * necessary to get the data.  At the outset, the file for the given
-     * IDs is expected to be not present.
+    /**
+     * This is called when an appropriate file for the ids in question has not
+     * been found. It is expected to do the actual operations necessary to get
+     * the data. At the outset, the file for the given IDs is expected to be not
+     * present.
      *
-     * @param ids The set of identifiers for which we want the corresponding
+     * @param ids
+     *            The set of identifiers for which we want the corresponding
      *            data
      * @return The set of IDs, or subset if data fetching failed for some IDs.
-     * If some IDs failed, the file is not filled, though some data may be
-     * cached at a lower level.
+     *         If some IDs failed, the file is not filled, though some data may
+     *         be cached at a lower level.
      */
     protected Set<T> cacheData(Set<T> ids) {
         Map<T, File> filesFound = prepareCombine(ids);
@@ -81,13 +87,16 @@ public abstract class CombiningMultiFileBasedCache<T extends Comparable<T>> exte
         return filesFound.keySet();
     }
 
-    /** Prepare needed data for performing combine().  This should ensure that
-     * all data is ready to use, or else the ids where the data cannot be
-     * obtained should be missing in the returned set.
-     * @param ids Set of job IDs to get ready to combine
-     * @return The map of ID->file of the data we will combine for each ID.
-     * If subclasses override this method to ensure other data is present,
-     * jobs with missing IDs should be removed from this map.
+    /**
+     * Prepare needed data for performing combine(). This should ensure that all
+     * data is ready to use, or else the ids where the data cannot be obtained
+     * should be missing in the returned set.
+     * 
+     * @param ids
+     *            Set of job IDs to get ready to combine
+     * @return The map of ID->file of the data we will combine for each ID. If
+     *         subclasses override this method to ensure other data is present,
+     *         jobs with missing IDs should be removed from this map.
      */
     protected Map<T, File> prepareCombine(Set<T> ids) {
         Map<T, File> rawdata = rawcache.get(ids);
@@ -101,11 +110,13 @@ public abstract class CombiningMultiFileBasedCache<T extends Comparable<T>> exte
         return filesFound;
     }
 
-    /** Combine a set of files found in the raw data cache to form our
-     * kind of file.
+    /**
+     * Combine a set of files found in the raw data cache to form our kind of
+     * file.
      *
-     * @param filesFound The files that were found for the IDs in the raw
-     * data cache.  The map must not contain any null values.
+     * @param filesFound
+     *            The files that were found for the IDs in the raw data cache.
+     *            The map must not contain any null values.
      */
     protected abstract void combine(Map<T, File> filesFound);
 

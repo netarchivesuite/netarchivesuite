@@ -141,7 +141,7 @@ public class BitarchiveServerTester {
      */
     @Test
     public void testLogging() throws IOException {
-    	LogbackRecorder lr = LogbackRecorder.startRecorder();
+        LogbackRecorder lr = LogbackRecorder.startRecorder();
         Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, TestInfo.BITARCHIVE_APP_DIR_1);
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR, TestInfo.BITARCHIVE_SERVER_DIR_1);
         bas = BitarchiveServer.getInstance();
@@ -211,7 +211,7 @@ public class BitarchiveServerTester {
      */
     @Test
     public void testCTor() {
-    	LogbackRecorder lr = LogbackRecorder.startRecorder();
+        LogbackRecorder lr = LogbackRecorder.startRecorder();
         // Set to just over the minimum size guaranteed.
         Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, dirs);
         long extraSpace = 10000000;
@@ -221,7 +221,8 @@ public class BitarchiveServerTester {
         ChannelID anyBa = Channels.getAnyBa();
         JMSConnectionMockupMQ conn = (JMSConnectionMockupMQ) JMSConnectionFactory.getInstance();
         assertEquals("We should not listen to " + anyBa + " if we are out of space", 0, conn.getListeners(anyBa).size());
-        lr.assertLogContains("Log file should have warning about having no space", "Not enough space to guarantee store -- not listening to");
+        lr.assertLogContains("Log file should have warning about having no space",
+                "Not enough space to guarantee store -- not listening to");
         lr.stopRecorder();
     }
 
@@ -548,7 +549,7 @@ public class BitarchiveServerTester {
      */
     @Test
     public void testVisitRemoveAndGetFileMessage() throws Exception {
-    	LogbackRecorder lr = LogbackRecorder.startRecorder();
+        LogbackRecorder lr = LogbackRecorder.startRecorder();
         String arcFile = TestInfo.BA1_FILENAME;
         String dummyReplicaId = "ONE";
         String checksum = TestInfo.BA1_CHECKSUM;

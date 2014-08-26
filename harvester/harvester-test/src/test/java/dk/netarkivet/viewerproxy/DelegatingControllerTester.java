@@ -41,7 +41,6 @@ import org.junit.Before;
 import org.junit.After;
 import org.junit.Test;
 
-
 /**
  * Tests of DelegatingController class.
  */
@@ -64,8 +63,9 @@ public class DelegatingControllerTester {
         JMSConnectionMockupMQ.getInstance().cleanup();
     }
 
-    /** Tests constructor. Only thing really testable is that ArgumentNotValid
-     * is thrown on null arguments.
+    /**
+     * Tests constructor. Only thing really testable is that ArgumentNotValid is
+     * thrown on null arguments.
      */
     @Test
     public void testController() {
@@ -73,103 +73,94 @@ public class DelegatingControllerTester {
             new DelegatingController(null, cc, aaa);
             fail("Should have thrown ArgumentNotValid");
         } catch (ArgumentNotValid e) {
-            //expected
+            // expected
         }
         try {
             new DelegatingController(mur, null, aaa);
             fail("Should have thrown ArgumentNotValid");
         } catch (ArgumentNotValid e) {
-            //expected
+            // expected
         }
         try {
             new DelegatingController(mur, cc, null);
             fail("Should have thrown ArgumentNotValid");
         } catch (ArgumentNotValid e) {
-            //expected
+            // expected
         }
         new DelegatingController(mur, cc, aaa);
-        //Should not throw ANV
+        // Should not throw ANV
     }
 
-    /** Tests start. This is simply a delegating method, so just tests the
-     * mur's start is called, and nothing else.
+    /**
+     * Tests start. This is simply a delegating method, so just tests the mur's
+     * start is called, and nothing else.
+     * 
      * @throws Exception
      */
     @Test
     public void testStart() throws Exception {
         Controller c = new DelegatingController(mur, cc, aaa);
         c.startRecordingURIs();
-        assertEquals("The mur's start method should be called once",
-                1, mur.startCounter);
-        assertEquals("No more methods should be called",
-                     1, mur.totalCounter);
-        assertEquals("No other classes methods should be called",
-                     0, cc.totalCounter);
-        assertEquals("No other classes methods should be called",
-                     0, aaa.totalCounter);
+        assertEquals("The mur's start method should be called once", 1, mur.startCounter);
+        assertEquals("No more methods should be called", 1, mur.totalCounter);
+        assertEquals("No other classes methods should be called", 0, cc.totalCounter);
+        assertEquals("No other classes methods should be called", 0, aaa.totalCounter);
     }
 
-    /** Tests stop. This is simply a delegating method, so just tests the
-     * mur's stop is called, and nothing else.
+    /**
+     * Tests stop. This is simply a delegating method, so just tests the mur's
+     * stop is called, and nothing else.
+     * 
      * @throws Exception
      */
     @Test
     public void testStop() throws Exception {
         Controller c = new DelegatingController(mur, cc, aaa);
         c.stopRecordingURIs();
-        assertEquals("The mur's stop method should be called once",
-                     1, mur.stopCounter);
-        assertEquals("No more methods should be called",
-                     1, mur.totalCounter);
-        assertEquals("No other classes methods should be called",
-                     0, cc.totalCounter);
-        assertEquals("No other classes methods should be called",
-                     0, aaa.totalCounter);
+        assertEquals("The mur's stop method should be called once", 1, mur.stopCounter);
+        assertEquals("No more methods should be called", 1, mur.totalCounter);
+        assertEquals("No other classes methods should be called", 0, cc.totalCounter);
+        assertEquals("No other classes methods should be called", 0, aaa.totalCounter);
     }
 
-    /** Tests clear. This is simply a delegating method, so just tests the
-     * mur's clear is called, and nothing else.
+    /**
+     * Tests clear. This is simply a delegating method, so just tests the mur's
+     * clear is called, and nothing else.
+     * 
      * @throws Exception
      */
     @Test
     public void testClear() throws Exception {
         Controller c = new DelegatingController(mur, cc, aaa);
         c.clearRecordedURIs();
-        assertEquals("The mur's clear method should be called once",
-                     1, mur.clearCounter);
-        assertEquals("No more methods should be called",
-                     1, mur.totalCounter);
-        assertEquals("No other classes methods should be called",
-                     0, cc.totalCounter);
-        assertEquals("No other classes methods should be called",
-                     0, aaa.totalCounter);
+        assertEquals("The mur's clear method should be called once", 1, mur.clearCounter);
+        assertEquals("No more methods should be called", 1, mur.totalCounter);
+        assertEquals("No other classes methods should be called", 0, cc.totalCounter);
+        assertEquals("No other classes methods should be called", 0, aaa.totalCounter);
     }
 
-    /** Tests getRecordedURIs. This is simply a delegating method, so just tests
+    /**
+     * Tests getRecordedURIs. This is simply a delegating method, so just tests
      * the mur's getRecordedURI is called, and nothing else, and also that what
      * is returned is exactly what the mur returns.
+     * 
      * @throws Exception
      */
     @Test
     public void testGetRecordedURIs() throws Exception {
         Controller c = new DelegatingController(mur, cc, aaa);
         Set<URI> uris = c.getRecordedURIs();
-        assertEquals("The mur's getRecordedURIs method should be called once",
-                     1, mur.getRecordedURICounter);
-        assertEquals("No more methods should be called",
-                     1, mur.totalCounter);
-        assertEquals("No other classes methods should be called",
-                     0, cc.totalCounter);
-        assertEquals("No other classes methods should be called",
-                     0, aaa.totalCounter);
-        assertEquals("Should have received 1 uris as result",
-                     1, uris.size());
-        assertEquals("The uri should be the right result",
-                     new URI("http://foo.bar"), uris.iterator().next());
+        assertEquals("The mur's getRecordedURIs method should be called once", 1, mur.getRecordedURICounter);
+        assertEquals("No more methods should be called", 1, mur.totalCounter);
+        assertEquals("No other classes methods should be called", 0, cc.totalCounter);
+        assertEquals("No other classes methods should be called", 0, aaa.totalCounter);
+        assertEquals("Should have received 1 uris as result", 1, uris.size());
+        assertEquals("The uri should be the right result", new URI("http://foo.bar"), uris.iterator().next());
     }
 
-    /** Tests changeIndex. This is really a mediator between cdxcache and
-     * arc archive access. Tests that argument not valid is not checked on null
+    /**
+     * Tests changeIndex. This is really a mediator between cdxcache and arc
+     * archive access. Tests that argument not valid is not checked on null
      * argument (this should be checked by the wrapped class), and otherwise
      * that what happens is exactly that CDXCache.getJobIndex is called, and the
      * result given to ARCArchiveAccess.setIndex.
@@ -180,71 +171,49 @@ public class DelegatingControllerTester {
         Controller c = new DelegatingController(mur, cc, aaa);
         try {
             c.changeIndex(null, "label");
-            assertEquals("The cc's getJobsIndex method should be called once",
-                         1, cc.getJobIndexCount);
-            assertEquals("The aaa's setIndex method should be called once",
-                         1, aaa.setIndexCount);
-            assertEquals("No mur methods should be called",
-                         0, mur.totalCounter);
-            assertEquals("Should have received null in CDX cache",
-                         null, cc.getJobIndexArgument);
-            assertEquals("Should have received the cc return value in aaa",
-                         new File("/return/data"), aaa.setIndexArgument);
+            assertEquals("The cc's getJobsIndex method should be called once", 1, cc.getJobIndexCount);
+            assertEquals("The aaa's setIndex method should be called once", 1, aaa.setIndexCount);
+            assertEquals("No mur methods should be called", 0, mur.totalCounter);
+            assertEquals("Should have received null in CDX cache", null, cc.getJobIndexArgument);
+            assertEquals("Should have received the cc return value in aaa", new File("/return/data"),
+                    aaa.setIndexArgument);
         } catch (ArgumentNotValid e) {
-            fail("Should NOT throw ArgumentNotValid on null argument."
-                 + "This is just a mediator.");
+            fail("Should NOT throw ArgumentNotValid on null argument." + "This is just a mediator.");
         }
         Set<Long> jobs = new HashSet<Long>();
         try {
             c.changeIndex(jobs, null);
-            assertEquals("The cc's getJobsIndex method should be called once",
-                         2, cc.getJobIndexCount);
-            assertEquals("The aaa' setIndex method should be called once",
-                         2, aaa.setIndexCount);
-            assertEquals("No mur methods should be called",
-                         0, mur.totalCounter);
-            assertEquals("Should have received empty list in CDX cache",
-                         jobs, cc.getJobIndexArgument);
-            assertEquals("Should have received the cc return value in aaa",
-                         new File("/return/data"), aaa.setIndexArgument);
+            assertEquals("The cc's getJobsIndex method should be called once", 2, cc.getJobIndexCount);
+            assertEquals("The aaa' setIndex method should be called once", 2, aaa.setIndexCount);
+            assertEquals("No mur methods should be called", 0, mur.totalCounter);
+            assertEquals("Should have received empty list in CDX cache", jobs, cc.getJobIndexArgument);
+            assertEquals("Should have received the cc return value in aaa", new File("/return/data"),
+                    aaa.setIndexArgument);
         } catch (ArgumentNotValid e) {
-            fail("Should NOT throw ArgumentNotValid on null argument."
-                 + "This is just a mediator.");
+            fail("Should NOT throw ArgumentNotValid on null argument." + "This is just a mediator.");
         }
         try {
             c.changeIndex(jobs, "label");
-            assertEquals("The cc's getJobsIndex method should be called once",
-                         3, cc.getJobIndexCount);
-            assertEquals("The aaa' setIndex method should be called once",
-                         3, aaa.setIndexCount);
-            assertEquals("No mur methods should be called",
-                         0, mur.totalCounter);
-            assertEquals("Should have received the empty list in CDX cache",
-                         jobs, cc.getJobIndexArgument);
-            assertEquals("Should have received the cc return value in aaa",
-                         new File("/return/data"), aaa.setIndexArgument);
+            assertEquals("The cc's getJobsIndex method should be called once", 3, cc.getJobIndexCount);
+            assertEquals("The aaa' setIndex method should be called once", 3, aaa.setIndexCount);
+            assertEquals("No mur methods should be called", 0, mur.totalCounter);
+            assertEquals("Should have received the empty list in CDX cache", jobs, cc.getJobIndexArgument);
+            assertEquals("Should have received the cc return value in aaa", new File("/return/data"),
+                    aaa.setIndexArgument);
         } catch (ArgumentNotValid e) {
-            fail("Should NOT throw ArgumentNotValid on empty list argument."
-                 + "This is just a mediator.");
+            fail("Should NOT throw ArgumentNotValid on empty list argument." + "This is just a mediator.");
         }
         jobs.add(1234L);
         c.changeIndex(jobs, "label");
-        assertEquals("The cc's getJobsIndex method should be called once",
-                     4, cc.getJobIndexCount);
-        assertEquals("The aaa' setIndex method should be called once",
-                     4, aaa.setIndexCount);
-        assertEquals("No mur methods should be called",
-                     0, mur.totalCounter);
-        assertEquals("Should have received the list in CDX cache",
-                     jobs, cc.getJobIndexArgument);
-        assertEquals("Should have received the cc return value in aaa",
-                     new File("/return/data"), aaa.setIndexArgument);
-        StringAsserts.assertStringContains("Should contain label and job "
-                                           + "number in status",
-                                           "label", c.getStatus(Locale.ENGLISH));
-        StringAsserts.assertStringContains("Should contain label and job "
-                                           + "number in status",
-                                           "1234", c.getStatus(Locale.ENGLISH));
+        assertEquals("The cc's getJobsIndex method should be called once", 4, cc.getJobIndexCount);
+        assertEquals("The aaa' setIndex method should be called once", 4, aaa.setIndexCount);
+        assertEquals("No mur methods should be called", 0, mur.totalCounter);
+        assertEquals("Should have received the list in CDX cache", jobs, cc.getJobIndexArgument);
+        assertEquals("Should have received the cc return value in aaa", new File("/return/data"), aaa.setIndexArgument);
+        StringAsserts.assertStringContains("Should contain label and job " + "number in status", "label",
+                c.getStatus(Locale.ENGLISH));
+        StringAsserts.assertStringContains("Should contain label and job " + "number in status", "1234",
+                c.getStatus(Locale.ENGLISH));
     }
 
     public static class TestMissingURIRecorder extends MissingURIRecorder {
@@ -286,6 +255,7 @@ public class DelegatingControllerTester {
         int totalCounter = 0;
         int getJobIndexCount = 0;
         Set<Long> getJobIndexArgument;
+
         public Index<Set<Long>> getIndex(Set<Long> jobIDs) {
             totalCounter++;
             getJobIndexCount++;
@@ -295,7 +265,8 @@ public class DelegatingControllerTester {
 
         @Override
         public void requestIndex(Set<Long> jobSet, Long harvestId) {
-            //To change body of implemented methods use File | Settings | File Templates.
+            // To change body of implemented methods use File | Settings | File
+            // Templates.
         }
     }
 

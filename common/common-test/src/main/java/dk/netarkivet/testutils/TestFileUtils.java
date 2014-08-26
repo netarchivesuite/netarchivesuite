@@ -39,17 +39,14 @@ import dk.netarkivet.common.utils.FileUtils;
 /**
  * File utilities specific to the test classes.
  */
-@SuppressWarnings({ "unchecked"})
+@SuppressWarnings({ "unchecked" })
 public class TestFileUtils {
-    public static final FilenameFilter NON_CVS_DIRS_FILTER =
-            new FilenameFilter() {
-                public boolean accept(File directory, String filename) {
-                    return !((filename.equals("CVS") &&
-                             new File(directory, filename).isDirectory()
-                    || (filename.equals(".svn") &&
-                             new File(directory, filename).isDirectory())));
-                }
-            };
+    public static final FilenameFilter NON_CVS_DIRS_FILTER = new FilenameFilter() {
+        public boolean accept(File directory, String filename) {
+            return !((filename.equals("CVS") && new File(directory, filename).isDirectory() || (filename.equals(".svn") && new File(
+                    directory, filename).isDirectory())));
+        }
+    };
     public static final FileFilter DIRS_ONLY_FILTER = new FileFilter() {
         public boolean accept(File dir) {
             return dir.isDirectory();
@@ -61,20 +58,19 @@ public class TestFileUtils {
      * directories. Note that this will silently overwrite old files, just like
      * copyFile().
      *
-     * @param from Original directory (or file, for that matter) to copy.
-     * @param to   Destination directory, i.e. the 'new name' of the copy of the
-     *             from directory.
+     * @param from
+     *            Original directory (or file, for that matter) to copy.
+     * @param to
+     *            Destination directory, i.e. the 'new name' of the copy of the
+     *            from directory.
      * @throws IOFailure
      */
-    public static final void copyDirectoryNonCVS(File from, File to)
-            throws IOFailure {
+    public static final void copyDirectoryNonCVS(File from, File to) throws IOFailure {
         if (from.isFile()) {
             try {
                 FileUtils.copyFile(from, to);
             } catch (Exception e) {
-                throw new IOFailure("Error copying from "
-                                    + from.getAbsolutePath() + " to "
-                                    + to.getAbsolutePath(), e);
+                throw new IOFailure("Error copying from " + from.getAbsolutePath() + " to " + to.getAbsolutePath(), e);
             }
         } else {
             if (from.getName().equals("CVS")) {
@@ -100,28 +96,29 @@ public class TestFileUtils {
             File[] subfiles = from.listFiles();
 
             for (File subfile : subfiles) {
-                copyDirectoryNonCVS(subfile,
-                                    new File(to, subfile.getName()));
+                copyDirectoryNonCVS(subfile, new File(to, subfile.getName()));
             }
         }
     }
 
     /**
      * Compares the content of two directories and report all differences in the
-     * returned text string. If no difference are located, an empty string ("") is
-     * returned. All files located in the directories are treated as text files,
-     * and a text comparison is done on a line by line basis. This function will
-     * not work if the dirs contain binary files. No attempt is made to recover
-     * from errors.
+     * returned text string. If no difference are located, an empty string ("")
+     * is returned. All files located in the directories are treated as text
+     * files, and a text comparison is done on a line by line basis. This
+     * function will not work if the dirs contain binary files. No attempt is
+     * made to recover from errors.
      *
-     * @param fstDir The directory to compare with sndDir
-     * @param sndDir The directory to compare with fstDir
-     * @return A text string describing the differences between the two dirs. Empty
-     *         if no differences are found.
-     * @throws IOFailure if there are problems reading the content of the dirs.
+     * @param fstDir
+     *            The directory to compare with sndDir
+     * @param sndDir
+     *            The directory to compare with fstDir
+     * @return A text string describing the differences between the two dirs.
+     *         Empty if no differences are found.
+     * @throws IOFailure
+     *             if there are problems reading the content of the dirs.
      */
-    public static String compareDirsText(File fstDir, File sndDir)
-            throws IOFailure {
+    public static String compareDirsText(File fstDir, File sndDir) throws IOFailure {
         String result = "";
 
         // retrieve lists of all files in the two directories
@@ -163,22 +160,19 @@ public class TestFileUtils {
         // The files in each dir should be identical
         try {
             for (String s : fstFilesMap.keySet()) {
-                //Remove all carriage returns to make the comparison work on both Windows and Linux:
-                String fst = FileUtils.readFile(fstFilesMap.get(s)).replaceAll(
-                        "\r", "");
-                String snd = FileUtils.readFile(sndFilesMap.get(s)).replaceAll(
-                        "\r", "");
+                // Remove all carriage returns to make the comparison work on
+                // both Windows and Linux:
+                String fst = FileUtils.readFile(fstFilesMap.get(s)).replaceAll("\r", "");
+                String snd = FileUtils.readFile(sndFilesMap.get(s)).replaceAll("\r", "");
                 if (!fst.equals(snd)) {
                     result += "Target and result differs for:" + s + "\n";
                     result += getDifferences(fst, snd) + "\n";
                 }
             }
         } catch (FileNotFoundException e) {
-            throw new IOFailure(
-                    "While comparing the files in " + fstFilesMap.keySet(), e);
+            throw new IOFailure("While comparing the files in " + fstFilesMap.keySet(), e);
         } catch (IOException e) {
-            throw new IOFailure(
-                    "While comparing the files in " + fstFilesMap.keySet(), e);
+            throw new IOFailure("While comparing the files in " + fstFilesMap.keySet(), e);
         }
 
         return result;
@@ -187,26 +181,29 @@ public class TestFileUtils {
     /**
      * Strips a path prefix from a file name.
      *
-     * @param dir The path prefix to remove from the given file's name.
-     * @param f   The file to remove the path prefix from.
+     * @param dir
+     *            The path prefix to remove from the given file's name.
+     * @param f
+     *            The file to remove the path prefix from.
      * @return The name of the file without the specified path prefix.
      */
     private static String removePrefixDir(File dir, File f) {
         return f.getAbsolutePath().replaceAll(dir.getAbsolutePath(), "");
     }
 
-
     /**
      * Return textual description of the differences between two strings.
-     * @param s1 strings to compare
-     * @param s2 strings to compare
+     * 
+     * @param s1
+     *            strings to compare
+     * @param s2
+     *            strings to compare
      * @return first line of text that differs
      */
     public static String getDifferences(String s1, String s2) {
         String[] startStrings = s1.split("\n");
         String[] endStrings = s2.split("\n");
-        List<Difference> differences =
-                new Diff(startStrings, endStrings).diff();
+        List<Difference> differences = new Diff(startStrings, endStrings).diff();
         StringBuilder res = new StringBuilder();
 
         for (Difference d : differences) {
@@ -226,8 +223,7 @@ public class TestFileUtils {
                 }
             } else {
                 // Modification
-                res.append("Modified " + getDifferenceLines(d, false) + " into "
-                           + getDifferenceLines(d, true) + "\n");
+                res.append("Modified " + getDifferenceLines(d, false) + " into " + getDifferenceLines(d, true) + "\n");
                 for (int i = d.getDeletedStart(); i <= d.getDeletedEnd(); i++) {
                     res.append("< " + startStrings[i] + "\n");
                 }
@@ -265,8 +261,7 @@ public class TestFileUtils {
      * @return a temporary directory using File.createTempFile
      * @throws IOException
      */
-    public static File createTempDir(String prefix, String suffix)
-            throws IOException {
+    public static File createTempDir(String prefix, String suffix) throws IOException {
         File temp = File.createTempFile(prefix, suffix);
         temp.delete();
         temp.mkdir();
@@ -282,24 +277,25 @@ public class TestFileUtils {
      * @return a temporary directory using File.createTempFile
      * @throws IOException
      */
-    public static File createTempDir(String prefix, String suffix,
-                                     File directory) throws IOException {
+    public static File createTempDir(String prefix, String suffix, File directory) throws IOException {
         File temp = File.createTempFile(prefix, suffix, directory);
         temp.delete();
-       temp.mkdir();
-       return temp;
+        temp.mkdir();
+        return temp;
     }
 
-
-    /** Find files recursively that match the given filter.
+    /**
+     * Find files recursively that match the given filter.
      *
-     * @param start The directory (or file) to start at.
-     * @param filter Filter of files to include.  All files (including
-     * directories) are passed to this filter and are included if
-     * filter.accept() returns true.  Subdirectories are scanned whether or
-     * not filter.accept() returns true for them.
-     * @return List of files (in no particular order) that match the filter.
-     * and reside under start.
+     * @param start
+     *            The directory (or file) to start at.
+     * @param filter
+     *            Filter of files to include. All files (including directories)
+     *            are passed to this filter and are included if filter.accept()
+     *            returns true. Subdirectories are scanned whether or not
+     *            filter.accept() returns true for them.
+     * @return List of files (in no particular order) that match the filter. and
+     *         reside under start.
      */
     public static List<File> findFiles(File start, FileFilter filter) {
         List<File> results = new ArrayList<File>();
@@ -314,6 +310,5 @@ public class TestFileUtils {
         }
         return results;
     }
-
 
 }

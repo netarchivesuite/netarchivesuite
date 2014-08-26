@@ -47,22 +47,19 @@ import org.junit.Before;
  * dk.netarkivet.archive.webinterface.BitpreserveFileStatusTester
  */
 public abstract class HarvesterWebinterfaceTestCase extends WebinterfaceTestCase {
-    static final File HARVEST_DEFINITION_BASEDIR
-            = new File(TestInfo.WORKING_DIR, "harvestdefinitionbasedir");
+    static final File HARVEST_DEFINITION_BASEDIR = new File(TestInfo.WORKING_DIR, "harvestdefinitionbasedir");
     ReloadSettings rs = new ReloadSettings();
 
     @Before
     public void setUp() throws Exception {
         super.setUp();
         rs.setUp();
-        TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR,
-                TestInfo.WORKING_DIR);
+        TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
         HarvestDAOUtils.resetDAOs();
         GlobalCrawlerTrapListDBDAO.reset();
 
-        Settings.set(CommonSettings.DB_BASE_URL, "jdbc:derby:"
-                                            + HARVEST_DEFINITION_BASEDIR.getCanonicalPath()
-                                            + "/fullhddb");
+        Settings.set(CommonSettings.DB_BASE_URL, "jdbc:derby:" + HARVEST_DEFINITION_BASEDIR.getCanonicalPath()
+                + "/fullhddb");
         DatabaseTestUtils.getHDDB("./" + TestInfo.DBFILE + "/fullhddb.sql", "fullhddb", HARVEST_DEFINITION_BASEDIR);
         DBSpecifics.getInstance().updateTables();
     }
@@ -70,12 +67,11 @@ public abstract class HarvesterWebinterfaceTestCase extends WebinterfaceTestCase
     @After
     public void tearDown() throws Exception {
         DatabaseTestUtils.dropHDDB();
-      HarvestDAOUtils.resetDAOs();
-      GlobalCrawlerTrapListDBDAO.reset();
+        HarvestDAOUtils.resetDAOs();
+        GlobalCrawlerTrapListDBDAO.reset();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         rs.tearDown();
         super.tearDown();
     }
 
 }
-   

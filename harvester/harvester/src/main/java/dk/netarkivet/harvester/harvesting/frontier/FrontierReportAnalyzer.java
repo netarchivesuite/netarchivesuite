@@ -39,17 +39,16 @@ import dk.netarkivet.harvester.harvesting.distribute.FrontierReportMessage;
 import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor;
 
 /**
- * Implements the analysis of a full frontier report obtained from Heritrix,
- * as the execution of a sequence of user-defined filters, that each generate
- * a smaller, in-memory frontier report that are sent in a JMS message to the
+ * Implements the analysis of a full frontier report obtained from Heritrix, as
+ * the execution of a sequence of user-defined filters, that each generate a
+ * smaller, in-memory frontier report that are sent in a JMS message to the
  * {@link HarvestMonitor}.
  *
  */
 public class FrontierReportAnalyzer implements Runnable {
 
-    /** The logger to use.    */
-    static final Log LOG = LogFactory.getLog(
-            FrontierReportAnalyzer.class);
+    /** The logger to use. */
+    static final Log LOG = LogFactory.getLog(FrontierReportAnalyzer.class);
     /** The controller used to communicate with the Heritrix instance. */
     private final BnfHeritrixController heritrixController;
     /** The last time this Analyzer was executed. */
@@ -57,74 +56,65 @@ public class FrontierReportAnalyzer implements Runnable {
 
     /**
      * Builds an analyzer, given an Heritrix controller instance.
-     * @param heritrixController the controller allowing communication with the
-     * Heritrix crawler instance.
+     * 
+     * @param heritrixController
+     *            the controller allowing communication with the Heritrix
+     *            crawler instance.
      */
-    public FrontierReportAnalyzer(
-            BnfHeritrixController heritrixController) {
+    public FrontierReportAnalyzer(BnfHeritrixController heritrixController) {
         super();
         this.heritrixController = heritrixController;
 
         // Build list of filters from the settings.
 
-        String[] filterClasses = Settings.getAll(
-                HarvesterSettings.FRONTIER_REPORT_FILTER_CLASS);
-        String[] filterArgs = Settings.getAll(
-                HarvesterSettings.FRONTIER_REPORT_FILTER_ARGS);
+        String[] filterClasses = Settings.getAll(HarvesterSettings.FRONTIER_REPORT_FILTER_CLASS);
+        String[] filterArgs = Settings.getAll(HarvesterSettings.FRONTIER_REPORT_FILTER_ARGS);
 
         for (int i = 0; i < filterClasses.length; i++) {
             String fClass = filterClasses[i];
             String[] fArgs = filterArgs[i].split(";");
 
             try {
-                FrontierReportFilter filter =
-                    (FrontierReportFilter) Class.forName(fClass).newInstance();
+                FrontierReportFilter filter = (FrontierReportFilter) Class.forName(fClass).newInstance();
                 filter.init(fArgs);
                 filters.add(filter);
             } catch (InstantiationException e) {
-                LOG.error("Failed to instantiate filter of class "
-                        + fClass, e);
+                LOG.error("Failed to instantiate filter of class " + fClass, e);
             } catch (IllegalAccessException e) {
-                LOG.error("Failed to instantiate filter of class "
-                        + fClass, e);
+                LOG.error("Failed to instantiate filter of class " + fClass, e);
             } catch (ClassNotFoundException e) {
-                LOG.error("Failed to instantiate filter of class "
-                        + fClass, e);
+                LOG.error("Failed to instantiate filter of class " + fClass, e);
             }
         }
     }
 
     /**
      * The filters to apply to the full report, as defined in the settings.
-     *  @see HarvesterSettings#FRONTIER_REPORT_FILTER_CLASS
-     *  @see HarvesterSettings#FRONTIER_REPORT_FILTER_ARGS
+     * 
+     * @see HarvesterSettings#FRONTIER_REPORT_FILTER_CLASS
+     * @see HarvesterSettings#FRONTIER_REPORT_FILTER_ARGS
      */
-    private List<FrontierReportFilter> filters =
-        new LinkedList<FrontierReportFilter>();
+    private List<FrontierReportFilter> filters = new LinkedList<FrontierReportFilter>();
 
     @Override
     public void run() {
         long startTime = System.currentTimeMillis();
         long elapsed = startTime - lastExecTime;
         LOG.info("Will generate full Heritrix frontier report, "
-                + StringUtils.formatDuration(
-                        elapsed / TimeUtils.SECOND_IN_MILLIS)
+                + StringUtils.formatDuration(elapsed / TimeUtils.SECOND_IN_MILLIS)
                 + " elapsed since last generation started.");
         FullFrontierReport ffr = null;
         try {
             ffr = heritrixController.getFullFrontierReport();
         } catch (HarvestingAbort e) {
-            LOG.debug("Unable to retrieve full frontier-reports from Heritrix", 
-                    e);
+            LOG.debug("Unable to retrieve full frontier-reports from Heritrix", e);
             return;
         }
         long endTime = System.currentTimeMillis();
         elapsed = endTime - startTime;
         LOG.info("Generated full Heritrix frontier report in "
-                + (elapsed < TimeUtils.SECOND_IN_MILLIS ? elapsed + " ms"
-                        : StringUtils.formatDuration(
-                            elapsed / TimeUtils.SECOND_IN_MILLIS))
-                + ".");
+                + (elapsed < TimeUtils.SECOND_IN_MILLIS ? elapsed + " ms" : StringUtils.formatDuration(elapsed
+                        / TimeUtils.SECOND_IN_MILLIS)) + ".");
 
         lastExecTime = endTime;
 
@@ -133,15 +123,13 @@ public class FrontierReportAnalyzer implements Runnable {
             InMemoryFrontierReport filtered = filter.process(ffr);
             endTime = System.currentTimeMillis();
             elapsed = endTime - startTime;
-            LOG.info("Applied filter " + filter.getClass().getName()
+            LOG.info("Applied filter "
+                    + filter.getClass().getName()
                     + " to full frontier report, this took "
-                    + (elapsed < TimeUtils.SECOND_IN_MILLIS ? elapsed + " ms"
-                            : StringUtils.formatDuration(
-                                elapsed / TimeUtils.SECOND_IN_MILLIS))
-                    + ".");
+                    + (elapsed < TimeUtils.SECOND_IN_MILLIS ? elapsed + " ms" : StringUtils.formatDuration(elapsed
+                            / TimeUtils.SECOND_IN_MILLIS)) + ".");
             Long jobId = heritrixController.getFiles().getJobID();
-            JMSConnectionFactory.getInstance().send(
-                    new FrontierReportMessage(filter, filtered, jobId));
+            JMSConnectionFactory.getInstance().send(new FrontierReportMessage(filter, filtered, jobId));
         }
 
         ffr.dispose();

@@ -38,20 +38,24 @@ import junit.framework.TestCase;
 import dk.netarkivet.common.utils.FileUtils;
 
 /**
- * Utility functions for asserting statements about files.
- * Notice that using these may cause the files to be re-read several times.
- * This ought to be cheap, but may not be for big files.
+ * Utility functions for asserting statements about files. Notice that using
+ * these may cause the files to be re-read several times. This ought to be
+ * cheap, but may not be for big files.
  *
  */
 
 public class FileAsserts {
-    /** Assert that a given string exists in the file.  If it doesn't,
-     * fail and print the file contents.  If the file couldn't be read,
-     * fail and print the error message.
+    /**
+     * Assert that a given string exists in the file. If it doesn't, fail and
+     * print the file contents. If the file couldn't be read, fail and print the
+     * error message.
      *
-     * @param msg An explanatory message.
-     * @param str A string to find in the file.
-     * @param file A file to scan.
+     * @param msg
+     *            An explanatory message.
+     * @param str
+     *            A string to find in the file.
+     * @param file
+     *            A file to scan.
      */
     public static void assertFileContains(String msg, String str, File file) {
         try {
@@ -63,13 +67,17 @@ public class FileAsserts {
         }
     }
 
-    /** Assert that a given pattern has a match in the file.  If it doesn't,
-     * fail and print the file contents.  If the file couldn't be read,
-     * fail and print the error message.
+    /**
+     * Assert that a given pattern has a match in the file. If it doesn't, fail
+     * and print the file contents. If the file couldn't be read, fail and print
+     * the error message.
      *
-     * @param msg An explanatory message.
-     * @param regexp A pattern to search for in the file.
-     * @param file A file to scan.
+     * @param msg
+     *            An explanatory message.
+     * @param regexp
+     *            A pattern to search for in the file.
+     * @param file
+     *            A file to scan.
      */
     public static void assertFileMatches(String msg, String regexp, File file) {
         try {
@@ -82,13 +90,17 @@ public class FileAsserts {
         }
     }
 
-    /** Assert that a given string exists in the file.  If it doesn't,
-     * fail and print the file contents.  If the file couldn't be read,
-     * fail and print the error message.
+    /**
+     * Assert that a given string exists in the file. If it doesn't, fail and
+     * print the file contents. If the file couldn't be read, fail and print the
+     * error message.
      *
-     * @param msg An explanatory message.
-     * @param file A file to scan.
-     * @param str A string to find in the file.
+     * @param msg
+     *            An explanatory message.
+     * @param file
+     *            A file to scan.
+     * @param str
+     *            A string to find in the file.
      */
     public static void assertFileNotContains(String msg, File file, String str) {
         try {
@@ -102,25 +114,28 @@ public class FileAsserts {
 
     /**
      * Assert that a given file has the expected number of lines If it doesn't,
-     * fail and print the file contents.  If the file couldn't be read,
-     * fail and print the error message.
+     * fail and print the file contents. If the file couldn't be read, fail and
+     * print the error message.
      *
-     * @param msg an explanatory message
-     * @param file the File to check
-     * @param n the expected number of lines
+     * @param msg
+     *            an explanatory message
+     * @param file
+     *            the File to check
+     * @param n
+     *            the expected number of lines
      */
-    public static void assertFileNumberOfLines(String msg, File file, int n){
+    public static void assertFileNumberOfLines(String msg, File file, int n) {
         try {
             BufferedReader r = new BufferedReader(new FileReader(file));
             int i = 0;
             String line = "";
-            while (line != null){
+            while (line != null) {
                 line = r.readLine();
-                if (line != null) i++;
+                if (line != null)
+                    i++;
             }
             if (i != n) {
-                TestCase.fail(msg + ": Expected " + n + " lines in " + file +
-                        " but found only " + i);
+                TestCase.fail(msg + ": Expected " + n + " lines in " + file + " but found only " + i);
             }
             r.close();
         } catch (IOException e) {
@@ -129,15 +144,18 @@ public class FileAsserts {
 
     }
 
-    /** Assert that a given file contains exactly the string given.  This will
+    /**
+     * Assert that a given file contains exactly the string given. This will
      * read the given file's contents into a string.
      *
-     * @param msg An explanatory message
-     * @param toMatch The string that should be the full contents of the file
-     * @param file The file that the string should be in.
+     * @param msg
+     *            An explanatory message
+     * @param toMatch
+     *            The string that should be the full contents of the file
+     * @param file
+     *            The file that the string should be in.
      */
-    public static void assertFileContainsExactly(String msg, String toMatch,
-                                                 File file) {
+    public static void assertFileContainsExactly(String msg, String toMatch, File file) {
         try {
             String contents = FileUtils.readFile(file);
             TestCase.assertEquals(msg, toMatch, contents);

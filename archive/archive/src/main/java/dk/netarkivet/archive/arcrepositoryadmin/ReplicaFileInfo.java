@@ -30,55 +30,66 @@ import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
- * This is a container for the ReplicaFileInfo table in the bitpreservation 
+ * This is a container for the ReplicaFileInfo table in the bitpreservation
  * database.
  */
 public class ReplicaFileInfo {
-    /** The guid. Unique identification key.*/
+    /** The guid. Unique identification key. */
     private long guid;
-    /** The replicaId. The identification of the replica.*/
+    /** The replicaId. The identification of the replica. */
     private String replicaId;
-    /** The id of the file in the file table.*/
+    /** The id of the file in the file table. */
     private long fileId;
-    /** The id of the segment in the segment.*/
+    /** The id of the segment in the segment. */
     private long segmentId;
-    /** The checksum of the file in the segment within the replica.*/
+    /** The checksum of the file in the segment within the replica. */
     private String checksum;
-    /** The uploadstatus.*/
+    /** The uploadstatus. */
     private ReplicaStoreState uploadStatus;
-    /** The filelist status.*/
+    /** The filelist status. */
     private FileListStatus filelistStatus;
-    /** The checksum status.*/
+    /** The checksum status. */
     private ChecksumStatus checksumStatus;
-    /** The date for the last filelist update of the entry.*/
+    /** The date for the last filelist update of the entry. */
     private Date filelistCheckdatetime;
-    /** The date for the last checksum update of the entry.*/ 
+    /** The date for the last checksum update of the entry. */
     private Date checksumCheckdatetime;
-    
+
     /**
      * Constructor.
      * 
-     * @param gId The guid.
-     * @param rId The replicaId.
-     * @param fId The fileId.
-     * @param sId the segmentId.
-     * @param cs The checksum.
-     * @param us The uploadstatus.
-     * @param fs The fileliststatus.
-     * @param css The checksumstatus.
-     * @param fDate The date for the last filelist update.
-     * @param cDate The date for the last checksum update.
-     * @throws ArgumentNotValid If gId or fId is negative, the rId is either
-     * null or the empty string. The other variables are not validated, since
-     * they are allowed to be null (e.g. the dates before they are updated). 
+     * @param gId
+     *            The guid.
+     * @param rId
+     *            The replicaId.
+     * @param fId
+     *            The fileId.
+     * @param sId
+     *            the segmentId.
+     * @param cs
+     *            The checksum.
+     * @param us
+     *            The uploadstatus.
+     * @param fs
+     *            The fileliststatus.
+     * @param css
+     *            The checksumstatus.
+     * @param fDate
+     *            The date for the last filelist update.
+     * @param cDate
+     *            The date for the last checksum update.
+     * @throws ArgumentNotValid
+     *             If gId or fId is negative, the rId is either null or the
+     *             empty string. The other variables are not validated, since
+     *             they are allowed to be null (e.g. the dates before they are
+     *             updated).
      */
-    public ReplicaFileInfo(long gId, String rId, long fId, long sId, String cs,
-            int us, int fs, int css, Date fDate, Date cDate) 
-            throws ArgumentNotValid {
+    public ReplicaFileInfo(long gId, String rId, long fId, long sId, String cs, int us, int fs, int css, Date fDate,
+            Date cDate) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNegative(gId, "long gId");
         ArgumentNotValid.checkNotNullOrEmpty(rId, "String rId");
         ArgumentNotValid.checkNotNegative(fId, "long fId");
-        
+
         this.guid = gId;
         this.replicaId = rId;
         this.fileId = fId;
@@ -90,35 +101,34 @@ public class ReplicaFileInfo {
         this.filelistCheckdatetime = fDate;
         this.checksumCheckdatetime = cDate;
     }
-    
+
     public ReplicaFileInfo(ResultSet res) throws SQLException {
-        this(res.getLong(1), res.getString(2), 
-                res.getLong(3), res.getLong(4), res.getString(5), res.getInt(6),
-                res.getInt(7), res.getInt(8), res.getDate(9), res.getDate(10));
+        this(res.getLong(1), res.getString(2), res.getLong(3), res.getLong(4), res.getString(5), res.getInt(6), res
+                .getInt(7), res.getInt(8), res.getDate(9), res.getDate(10));
     }
-    
-    
+
     /**
      * Retrieves this object as as a string. Contains all the variables.
      * 
      * @return A string representing this object.
      */
     public String toString() {
-        return guid + ":" + replicaId + ":" + fileId + ":" + segmentId + ":"
-                + checksum + ":" + uploadStatus + ":" + filelistStatus + ":"
-                + filelistCheckdatetime + ":" + checksumCheckdatetime;
+        return guid + ":" + replicaId + ":" + fileId + ":" + segmentId + ":" + checksum + ":" + uploadStatus + ":"
+                + filelistStatus + ":" + filelistCheckdatetime + ":" + checksumCheckdatetime;
     }
-    
+
     /**
      * Retrieves the guid.
+     * 
      * @return The guid.
      */
     public long getGuid() {
         return guid;
     }
-    
+
     /**
      * Retrieves the replicaId.
+     * 
      * @return The replicaId.
      */
     public String getReplicaId() {
@@ -127,14 +137,16 @@ public class ReplicaFileInfo {
 
     /**
      * Retrieves the fileId.
+     * 
      * @return The fileId.
      */
     public long getFileId() {
         return fileId;
     }
-    
+
     /**
      * Retrieves the segmentId.
+     * 
      * @return The segmentId.
      */
     public long getSegmentId() {
@@ -143,6 +155,7 @@ public class ReplicaFileInfo {
 
     /**
      * Retrieves the checksum.
+     * 
      * @return The checksum.
      */
     public String getChecksum() {
@@ -151,6 +164,7 @@ public class ReplicaFileInfo {
 
     /**
      * Retrieves the uploadState.
+     * 
      * @return The uploadState.
      */
     public ReplicaStoreState getUploadState() {
@@ -159,14 +173,16 @@ public class ReplicaFileInfo {
 
     /**
      * Retrieves the filelistStatus.
+     * 
      * @return The filelistStatus.
      */
     public FileListStatus getFileListState() {
         return filelistStatus;
     }
-    
+
     /**
      * Retrieves the checksumStatus.
+     * 
      * @return The checksumStatus.
      */
     public ChecksumStatus getChecksumStatus() {
@@ -175,14 +191,16 @@ public class ReplicaFileInfo {
 
     /**
      * Retrieves the filelistCheckdatetime.
+     * 
      * @return The filelistCheckdatetime.
      */
     public Date getFileListCheckDateTime() {
         return filelistCheckdatetime;
     }
-    
+
     /**
      * Retrieves the checksumCheckDatetime.
+     * 
      * @return The checksumCheckDateTime.
      */
     public Date getChecksumCheckdatetime() {

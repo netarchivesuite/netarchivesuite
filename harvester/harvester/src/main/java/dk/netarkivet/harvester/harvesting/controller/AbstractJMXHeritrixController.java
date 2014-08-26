@@ -69,32 +69,43 @@ public abstract class AbstractJMXHeritrixController implements HeritrixControlle
     /** File path Separator. Used to separate the jar-files in the classpath. */
     private static final String FILE_PATH_SEPARATOR = ":";
 
-    /** How long we're willing to wait for Heritrix to shutdown in a shutdown hook. */
+    /**
+     * How long we're willing to wait for Heritrix to shutdown in a shutdown
+     * hook.
+     */
     private static final long SHUTDOWN_HOOK_MAX_WAIT = 1000L;
 
     /** The various files used by Heritrix. */
     private final HeritrixFiles files;
 
-    /** The threads used to collect process output. Only one thread used presently. */
+    /**
+     * The threads used to collect process output. Only one thread used
+     * presently.
+     */
     private Set<Thread> collectionThreads = new HashSet<Thread>(1);
 
-    /** The host name for this machine that matches what Heritrix uses in its MBean names. */
+    /**
+     * The host name for this machine that matches what Heritrix uses in its
+     * MBean names.
+     */
     private final String hostName;
 
     /** The port to use for Heritrix JMX, as set in settings.xml. */
-    private final int jmxPort = Settings
-            .getInt(HarvesterSettings.HERITRIX_JMX_PORT);
+    private final int jmxPort = Settings.getInt(HarvesterSettings.HERITRIX_JMX_PORT);
 
     /** The port to use for Heritrix GUI, as set in settings.xml. */
-    private final int guiPort = Settings
-            .getInt(HarvesterSettings.HERITRIX_GUI_PORT);
+    private final int guiPort = Settings.getInt(HarvesterSettings.HERITRIX_GUI_PORT);
 
-    /** The shutdownHook that takes care of killing our process. This is removed
-     *  in cleanup() when the process is shut down. */
+    /**
+     * The shutdownHook that takes care of killing our process. This is removed
+     * in cleanup() when the process is shut down.
+     */
     private Thread processKillerHook;
 
-    /** The one-shot Heritrix process created in the constructor. It will only
-     *  perform a single crawl before being shut down. */
+    /**
+     * The one-shot Heritrix process created in the constructor. It will only
+     * perform a single crawl before being shut down.
+     */
     private final Process heritrixProcess;
 
     /**
@@ -126,7 +137,7 @@ public abstract class AbstractJMXHeritrixController implements HeritrixControlle
              * on all available network interfaces: This is done with argument
              * "--bind /" (default is 127.0.0.1) - listen on a specific port
              * using the port argument: --port <GUI port>
-             *
+             * 
              * We also need to output something like the following to
              * heritrix.out: `date Starting heritrix uname -a java -version
              * JAVA_OPTS ulimit -a
@@ -170,7 +181,7 @@ public abstract class AbstractJMXHeritrixController implements HeritrixControlle
             String pwAbsolutePath = passwordFile.getAbsolutePath();
             if (!passwordFile.canRead()) {
                 final String errMsg = "Failed to read the password file '" + pwAbsolutePath + "'. "
-                		+ "It is possibly missing.";
+                        + "It is possibly missing.";
                 log.warn(errMsg);
                 throw new IOFailure(errMsg);
             }
@@ -178,7 +189,7 @@ public abstract class AbstractJMXHeritrixController implements HeritrixControlle
             String acAbsolutePath = accessFile.getAbsolutePath();
             if (!accessFile.canRead()) {
                 final String errMsg = "Failed to read the access file '" + acAbsolutePath + "'. "
-                		+ "It is possibly missing.";
+                        + "It is possibly missing.";
                 log.warn(errMsg);
                 throw new IOFailure(errMsg);
             }
@@ -195,7 +206,7 @@ public abstract class AbstractJMXHeritrixController implements HeritrixControlle
 
             String[] args = allOpts.toArray(new String[allOpts.size()]);
             log.info("Starting Heritrix process with args" + Arrays.toString(args));
-            log.debug("The JMX timeout is set to "  + TimeUtils.readableTimeInterval(JMXUtils.getJmxTimeout()));
+            log.debug("The JMX timeout is set to " + TimeUtils.readableTimeInterval(JMXUtils.getJmxTimeout()));
 
             ProcessBuilder builder = new ProcessBuilder(args);
 
@@ -212,13 +223,14 @@ public abstract class AbstractJMXHeritrixController implements HeritrixControlle
             throw new IOFailure("Error starting Heritrix process", e);
         }
     }
+
     /**
      * @return the JMX port for communicating with Heritrix.
      */
     protected int getJmxPort() {
         return jmxPort;
     }
-    
+
     /**
      * @return the HTTP port used by the Heritrix GUI.
      */
@@ -329,8 +341,7 @@ public abstract class AbstractJMXHeritrixController implements HeritrixControlle
         try {
             writer = new PrintWriter(new FileWriter(outputFile));
             writer.println("The Heritrix process is started in the following"
-                    + " environment\n (note that some entries will be"
-                    + " changed by the starting JVM):");
+                    + " environment\n (note that some entries will be" + " changed by the starting JVM):");
             Map<String, String> env = builder.environment();
             List<String> keyList = new ArrayList<String>(env.keySet());
             Collections.sort(keyList);
@@ -371,8 +382,7 @@ public abstract class AbstractJMXHeritrixController implements HeritrixControlle
                     // Process is still alive, kill it.
                     System.out.println("Killing process of " + this);
                     heritrixProcess.destroy();
-                    final Integer exitValue = ProcessUtils.waitFor(
-                            heritrixProcess, SHUTDOWN_HOOK_MAX_WAIT);
+                    final Integer exitValue = ProcessUtils.waitFor(heritrixProcess, SHUTDOWN_HOOK_MAX_WAIT);
                     if (exitValue != null) {
                         System.out.println("Process of " + this + " returned exit code " + exitValue);
                     } else {
@@ -394,7 +404,7 @@ public abstract class AbstractJMXHeritrixController implements HeritrixControlle
     public String toString() {
         if (heritrixProcess != null) {
             return "job " + files.getJobID() + " of harvest " + files.getHarvestID() + " in " + files.getCrawlDir()
-            		+ " running process " + heritrixProcess;
+                    + " running process " + heritrixProcess;
         } else {
             return "job " + files.getJobID() + " of harvest " + files.getHarvestID() + " in " + files.getCrawlDir();
         }
@@ -436,10 +446,14 @@ public abstract class AbstractJMXHeritrixController implements HeritrixControlle
             } else {
                 // If it's not dead now, there's little we can do.
                 log.error("Heritrix process of {} not dead after destroy. Exiting harvest controller. "
-                		+ "Make sure you kill the runaway Heritrix before you restart.", this);
-                NotificationsFactory.getInstance().notify("Heritrix process of " + this + " not dead after destroy. "
-                		+ "Exiting harvest controller. Make sure you kill the runaway Heritrix before you restart.",
-                		NotificationType.ERROR);
+                        + "Make sure you kill the runaway Heritrix before you restart.", this);
+                NotificationsFactory
+                        .getInstance()
+                        .notify("Heritrix process of "
+                                + this
+                                + " not dead after destroy. "
+                                + "Exiting harvest controller. Make sure you kill the runaway Heritrix before you restart.",
+                                NotificationType.ERROR);
                 System.exit(1);
             }
         }
@@ -468,18 +482,14 @@ public abstract class AbstractJMXHeritrixController implements HeritrixControlle
      * @return String containing various information grabbed from HeritrixFiles.
      */
     protected String getJobDescription() {
-        String dedupPart = (files.getIndexDir() != null)
-            ? "with the deduplication index stored in '"
-                + files.getIndexDir().getAbsolutePath() + "'"
-                : "with deduplication disabled";
-        return "Job " + files.getJobID() + " for harvest "
-                + files.getHarvestID() + " performed in " + files.getCrawlDir()
-                + dedupPart + " and "
-                + FileUtils.countLines(files.getSeedsTxtFile()) + " seeds";
+        String dedupPart = (files.getIndexDir() != null) ? "with the deduplication index stored in '"
+                + files.getIndexDir().getAbsolutePath() + "'" : "with deduplication disabled";
+        return "Job " + files.getJobID() + " for harvest " + files.getHarvestID() + " performed in "
+                + files.getCrawlDir() + dedupPart + " and " + FileUtils.countLines(files.getSeedsTxtFile()) + " seeds";
     }
-    
+
     public HeritrixFiles getFiles() {
         return this.files;
     }
-    
+
 }

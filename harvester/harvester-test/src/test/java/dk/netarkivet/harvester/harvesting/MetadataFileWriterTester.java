@@ -49,7 +49,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 public class MetadataFileWriterTester {
     ReloadSettings rs = new ReloadSettings();
     File logsDir;
-    
+
     @Before
     public void setUp() {
         rs.setUp();
@@ -63,7 +63,7 @@ public class MetadataFileWriterTester {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         rs.tearDown();
     }
-    
+
     @Test
     public void testMetadataFileWriterArc() {
         File metafile = new File("metadata.arc");
@@ -79,8 +79,7 @@ public class MetadataFileWriterTester {
         try {
             mdfw.write(uri, "application/binary", "127.0.0.1", ctm, payload);
             mdfw.close();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             fail("Unexpected exception!");
         }
@@ -109,8 +108,7 @@ public class MetadataFileWriterTester {
         try {
             mdfw.write(uri, "application/binary", "127.0.0.1", ctm, payload);
             mdfw.close();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             fail("Unexpected exception!");
         }
@@ -124,14 +122,15 @@ public class MetadataFileWriterTester {
             mfwa.writeFileTo(f, "metadata://netarkivet.dk/crawl/logs/" + f.getName(), "text/plain");
         }
     }
-    
-    /** 
-     * This is not run automatically, as this takes a long time to complete (15 seconds).
+
+    /**
+     * This is not run automatically, as this takes a long time to complete (15
+     * seconds).
      * 
      * @throws IOException
      */
     public void notestMetadataFileWriterWarcMassiveLoadTest() throws IOException {
-        //TODO verify content of produced warc-file to ensure that all is OK
+        // TODO verify content of produced warc-file to ensure that all is OK
         File metafile = new File("metadata.warc");
         MetadataFileWriter mdfw = MetadataFileWriterWarc.createWriter(metafile);
         ((MetadataFileWriterWarc) mdfw).insertInfoRecord(new ANVLRecord());
@@ -141,20 +140,20 @@ public class MetadataFileWriterTester {
         List textArray = new ArrayList<String>();
         textArray.add(someText);
         Set<File> files = new HashSet<File>();
-        for (int i=0; i < 10000; i++) {
+        for (int i = 0; i < 10000; i++) {
             File f = File.createTempFile("metadata", "cdx");
             FileUtils.writeCollectionToFile(f, textArray);
             files.add(f);
         }
         System.out.println("Finished writing files");
         int count = 0;
-        for (File f: files) {
+        for (File f : files) {
             mdfw.writeFileTo(f, "http://netarkivet/ressource-" + count, "text/plain");
             f.delete();
             count++;
         }
         metafile.delete();
         System.out.println("Finished adding files to warc");
-        
+
     }
 }

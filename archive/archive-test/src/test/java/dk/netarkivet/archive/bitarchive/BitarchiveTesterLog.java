@@ -76,16 +76,11 @@ public class BitarchiveTesterLog extends BitarchiveTestCase {
      *            A string to search for
      */
     /*
-    // TODO remove old log code
-    private void assertNotStringContains(String msg, String src, String str) {
-        int index = src.indexOf(str);
-        if (index != -1) {
-            System.out.println("Actual string: ");
-            System.out.println(src);
-            assertEquals(msg, -1, index);
-        }
-    }
-    */
+     * // TODO remove old log code private void assertNotStringContains(String
+     * msg, String src, String str) { int index = src.indexOf(str); if (index !=
+     * -1) { System.out.println("Actual string: "); System.out.println(src);
+     * assertEquals(msg, -1, index); } }
+     */
 
     /**
      * Test logging of upload command
@@ -94,7 +89,7 @@ public class BitarchiveTesterLog extends BitarchiveTestCase {
      */
     @Test
     public void testLogUpload() throws IOException {
-    	LogbackRecorder lr = LogbackRecorder.startRecorder();
+        LogbackRecorder lr = LogbackRecorder.startRecorder();
         lr.assertLogNotContains("Log does not contain file before uploading.", ARC_FILE_NAME1);
 
         archive.upload(new TestRemoteFile(ARC_FILE, false, false, false), ARC_FILE.getName());
@@ -109,18 +104,22 @@ public class BitarchiveTesterLog extends BitarchiveTestCase {
      */
     @Test
     public void testLogGet() throws Exception {
-    	LogbackRecorder lr = LogbackRecorder.startRecorder();
-        //String logtxt = FileUtils.readFile(LOG_FILE);
-        //assertNotStringContains("Unuploaded files are not mentioned in the log.", logtxt, ARC_FILE_NAME2); // clean
-                                                                                                           // log
+        LogbackRecorder lr = LogbackRecorder.startRecorder();
+        // String logtxt = FileUtils.readFile(LOG_FILE);
+        // assertNotStringContains("Unuploaded files are not mentioned in the log.",
+        // logtxt, ARC_FILE_NAME2); // clean
+        // log
         lr.assertLogNotContains("Unuploaded files are not mentioned in the log.", ARC_FILE_NAME2);
 
         archive.get(ARC_FILE_NAME2, 0);
 
-        //FileAsserts.assertFileContains("Log contains file after getting.", ARC_FILE_NAME2, LOG_FILE);
-        //FileAsserts.assertFileContains("Log contains the word get after getting.", "get", LOG_FILE);
+        // FileAsserts.assertFileContains("Log contains file after getting.",
+        // ARC_FILE_NAME2, LOG_FILE);
+        // FileAsserts.assertFileContains("Log contains the word get after getting.",
+        // "get", LOG_FILE);
         lr.assertLogContains("Log contains file after getting.", "GET: " + ARC_FILE_NAME2 + ":0");
-        lr.assertLogContains("Log contains the word get after getting.", "GET: Got 1330 bytes of data from " + ARC_FILE_NAME2 + ":0");
+        lr.assertLogContains("Log contains the word get after getting.", "GET: Got 1330 bytes of data from "
+                + ARC_FILE_NAME2 + ":0");
         lr.stopRecorder();
     }
 
@@ -129,20 +128,21 @@ public class BitarchiveTesterLog extends BitarchiveTestCase {
      */
     @Test
     public void testLogNotGet() throws Exception {
-    	LogbackRecorder lr = LogbackRecorder.startRecorder();
+        LogbackRecorder lr = LogbackRecorder.startRecorder();
         lr.assertLogNotContains("Unuploaded files are not mentioned in the log.", ARC_FILE_NAME3);
 
         archive.get(ARC_FILE_NAME3, 0);
 
         lr.assertLogContains("Log contains file after getting.", "GET: " + ARC_FILE_NAME3 + ":0");
-        lr.assertLogContains("Log contains the word get after not getting.", "Get request for file not on this machine: " + ARC_FILE_NAME3);
+        lr.assertLogContains("Log contains the word get after not getting.",
+                "Get request for file not on this machine: " + ARC_FILE_NAME3);
         lr.stopRecorder();
     }
 
     @Test
     public void testLogBatch() throws Exception {
-    	LogbackRecorder lr = LogbackRecorder.startRecorder();
-    	lr.assertLogNotContains("Batch not mentioned in log before run", "Batch");
+        LogbackRecorder lr = LogbackRecorder.startRecorder();
+        lr.assertLogNotContains("Batch not mentioned in log before run", "Batch");
         // Run the empty batch job.
         try {
             archive.batch(TestInfo.baAppId, new ARCBatchJob() {
@@ -162,7 +162,8 @@ public class BitarchiveTesterLog extends BitarchiveTestCase {
         } catch (Exception e) {
             fail("Batching should not throw " + e);
         }
-        //FileAsserts.assertFileContains("Log should have batch status", "0 failures in processing 0 files", LOG_FILE);
+        // FileAsserts.assertFileContains("Log should have batch status",
+        // "0 failures in processing 0 files", LOG_FILE);
         lr.assertLogContains("Log contains the word 'Batch'.", "Batch");
         lr.assertLogContains("Log contains the phrase 'Batch: Job'.", "Batch: Job");
         lr.assertLogContains("Log should have start indicator", "Starting batch job");

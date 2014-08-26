@@ -39,18 +39,18 @@ import org.testng.annotations.Test;
 import static org.testng.Assert.assertTrue;
 import static org.testng.AssertJUnit.assertEquals;
 
-public class HarvestHistoryForDomainPageTest extends SeleniumTest {;
+public class HarvestHistoryForDomainPageTest extends SeleniumTest {
+    ;
 
-    @BeforeMethod(alwaysRun=true)
+    @BeforeMethod(alwaysRun = true)
     public void setup(Method method) {
     }
 
-    @Test(groups = {"guitest","functest", "slow"})
+    @Test(groups = { "guitest", "functest", "slow" })
     public void sortableHistoryTableTest() throws Exception {
-        addDescription("Tests that the jobs listed on the 'Harvest History' page for a domain are" +
-                "sortable by clicking on the .");
-        addStep("Ensure that the at least two jobs have run for the default domain",
-                "");
+        addDescription("Tests that the jobs listed on the 'Harvest History' page for a domain are"
+                + "sortable by clicking on the .");
+        addStep("Ensure that the at least two jobs have run for the default domain", "");
         HarvestUtils.ensureNumberOfHarvestsForDefaultDomain(2);
 
         addStep("Click the 'Harvest name' header link",
@@ -63,9 +63,8 @@ public class HarvestHistoryForDomainPageTest extends SeleniumTest {;
         PageHelper.waitForPageToLoad();
         assertColumnIsSorted(0, false);
 
-        addStep("Click the 'Run number' header link",
-                "The table should now be sorted alphabetically according to" +
-                        " run number.");
+        addStep("Click the 'Run number' header link", "The table should now be sorted alphabetically according to"
+                + " run number.");
         HarvestUtils.gotoHarvestHistoryForDomain(HarvestUtils.DEFAULT_DOMAIN);
         PageHelper.clickLink(HarvestHistoryPageHelper.RUN_NUMBER_HEADER);
         PageHelper.waitForPageToLoad();
@@ -74,9 +73,8 @@ public class HarvestHistoryForDomainPageTest extends SeleniumTest {;
         PageHelper.waitForPageToLoad();
         assertColumnIsSorted(1, false);
 
-        addStep("Click the 'Run ID' header link",
-                "The table should now be sorted alphabetically according to" +
-                        " run ID.");
+        addStep("Click the 'Run ID' header link", "The table should now be sorted alphabetically according to"
+                + " run ID.");
         HarvestUtils.gotoHarvestHistoryForDomain(HarvestUtils.DEFAULT_DOMAIN);
         PageHelper.clickLink(HarvestHistoryPageHelper.RUN_ID_HEADER);
         PageHelper.waitForPageToLoad();
@@ -85,9 +83,8 @@ public class HarvestHistoryForDomainPageTest extends SeleniumTest {;
         PageHelper.waitForPageToLoad();
         assertColumnIsSorted(2, false);
 
-        addStep("Click the 'Configuration' header link",
-                "The table should now be sorted alphabetically according to" +
-                        " Configuration.");
+        addStep("Click the 'Configuration' header link", "The table should now be sorted alphabetically according to"
+                + " Configuration.");
         HarvestUtils.gotoHarvestHistoryForDomain(HarvestUtils.DEFAULT_DOMAIN);
         PageHelper.clickLink(HarvestHistoryPageHelper.CONFIGURATION_HEADER);
         PageHelper.waitForPageToLoad();
@@ -96,9 +93,8 @@ public class HarvestHistoryForDomainPageTest extends SeleniumTest {;
         PageHelper.waitForPageToLoad();
         assertColumnIsSorted(3, false);
 
-        addStep("Click the 'Start time' header link",
-                "The table should now be sorted alphabetically according to" +
-                        " Start time.");
+        addStep("Click the 'Start time' header link", "The table should now be sorted alphabetically according to"
+                + " Start time.");
         HarvestUtils.gotoHarvestHistoryForDomain(HarvestUtils.DEFAULT_DOMAIN);
         PageHelper.clickLink(HarvestHistoryPageHelper.START_TIME_HEADER);
         PageHelper.waitForPageToLoad();
@@ -107,9 +103,8 @@ public class HarvestHistoryForDomainPageTest extends SeleniumTest {;
         PageHelper.waitForPageToLoad();
         assertColumnIsSorted(4, false);
 
-        addStep("Click the 'End time' header link",
-                "The table should now be sorted alphabetically according to" +
-                        " end time.");
+        addStep("Click the 'End time' header link", "The table should now be sorted alphabetically according to"
+                + " end time.");
         HarvestUtils.gotoHarvestHistoryForDomain(HarvestUtils.DEFAULT_DOMAIN);
         PageHelper.clickLink(HarvestHistoryPageHelper.END_TIME_HEADER);
         PageHelper.waitForPageToLoad();
@@ -149,39 +144,38 @@ public class HarvestHistoryForDomainPageTest extends SeleniumTest {;
         assertColumnIsSorted(8, false);
     }
 
-
-
-
-    @Test(groups = {"guitest","functest", "slow"})
+    @Test(groups = { "guitest", "functest", "slow" })
     public void historyTablePagingTest() throws Exception {
-        addDescription("Testes that the paging functionality works correctly " +
-                "for the harvest history");
-        addStep("Ensure that at least harvests have finished for the default domain","");
+        addDescription("Testes that the paging functionality works correctly " + "for the harvest history");
+        addStep("Ensure that at least harvests have finished for the default domain", "");
         HarvestUtils.ensureNumberOfHarvestsForDefaultDomain(3);
-        List<HarvestHistoryPageHelper.HarvestHistoryEntry> harvestHistory = HarvestHistoryPageHelper.readHarvestHistory();
+        List<HarvestHistoryPageHelper.HarvestHistoryEntry> harvestHistory = HarvestHistoryPageHelper
+                .readHarvestHistory();
         int PAGE_SIZE = 2;
         setHarvestStatusPageSize(PAGE_SIZE);
 
-        addStep("Set the page size to " + PAGE_SIZE,"");
+        addStep("Set the page size to " + PAGE_SIZE, "");
 
         addStep("Goto the harvest history for the default domain",
                 "Only 2 harvests should be listed and the next link should be enabled.");
         HarvestUtils.gotoHarvestHistoryForDomain(HarvestUtils.DEFAULT_DOMAIN);
-        assertEquals("Didn't find the expected 2 harvests on the first page",
-                PageHelper.getWebDriver().findElements(By.xpath(
-                        "//table[@class='selection_table']/tbody/tr[position()>1]")).size(), 2);
+        assertEquals(
+                "Didn't find the expected 2 harvests on the first page",
+                PageHelper.getWebDriver()
+                        .findElements(By.xpath("//table[@class='selection_table']/tbody/tr[position()>1]")).size(), 2);
 
         addStep("Click the next link until the next link disappears",
                 "All the pages should have been listed, 2 at a time");
         int harvestCounter = 0;
-        int numberOfPages = (int)Math.ceil((float)harvestHistory.size()/PAGE_SIZE);
-        for (int pageNumber = 1; pageNumber <= numberOfPages ; pageNumber++) {
-            List<WebElement> rows =
-                    PageHelper.getWebDriver().findElement(By.className("selection_table")).findElements(By.tagName("tr"));
-            rows.remove(0); //Skip headers
-            for (int rowNumber = 0; rowNumber < rows.size() ; rowNumber++) {
+        int numberOfPages = (int) Math.ceil((float) harvestHistory.size() / PAGE_SIZE);
+        for (int pageNumber = 1; pageNumber <= numberOfPages; pageNumber++) {
+            List<WebElement> rows = PageHelper.getWebDriver().findElement(By.className("selection_table"))
+                    .findElements(By.tagName("tr"));
+            rows.remove(0); // Skip headers
+            for (int rowNumber = 0; rowNumber < rows.size(); rowNumber++) {
                 WebElement row = rows.get(rowNumber);
-                assertEquals(new HarvestHistoryPageHelper.HarvestHistoryEntry(row), harvestHistory.get(harvestCounter++));
+                assertEquals(new HarvestHistoryPageHelper.HarvestHistoryEntry(row),
+                        harvestHistory.get(harvestCounter++));
             }
             boolean lastPage = pageNumber == numberOfPages;
             if (!lastPage) {
@@ -194,15 +188,15 @@ public class HarvestHistoryForDomainPageTest extends SeleniumTest {;
         }
 
         addStep("Click the previous link until the previous link disappears.",
-                "All the pages should have been listed, " +
-                        "2 at a time backwards.");
-        for (int pageNumber = numberOfPages; pageNumber >= 1;pageNumber--) {
-            List<WebElement> rows =
-                PageHelper.getWebDriver().findElement(By.className("selection_table")).findElements(By.tagName("tr"));
-            rows.remove(0); //Skip headers
-            for (int rowNumber = rows.size()-1; rowNumber >= 0 ; rowNumber--) {
+                "All the pages should have been listed, " + "2 at a time backwards.");
+        for (int pageNumber = numberOfPages; pageNumber >= 1; pageNumber--) {
+            List<WebElement> rows = PageHelper.getWebDriver().findElement(By.className("selection_table"))
+                    .findElements(By.tagName("tr"));
+            rows.remove(0); // Skip headers
+            for (int rowNumber = rows.size() - 1; rowNumber >= 0; rowNumber--) {
                 WebElement row = rows.get(rowNumber);
-                assertEquals(new HarvestHistoryPageHelper.HarvestHistoryEntry(row), harvestHistory.get(--harvestCounter));
+                assertEquals(new HarvestHistoryPageHelper.HarvestHistoryEntry(row),
+                        harvestHistory.get(--harvestCounter));
             }
             boolean firstPage = pageNumber == 1;
             if (!firstPage) {
@@ -215,33 +209,32 @@ public class HarvestHistoryForDomainPageTest extends SeleniumTest {;
         }
     }
 
-    @Test(groups = {"guitest","functest", "slow"})
+    @Test(groups = { "guitest", "functest", "slow" })
     public void historySortedTablePagingTest() throws Exception {
-        addDescription("Tests that sorting is maintained when paging through " +
-                "the harvest history");
-        addStep("Ensure that at least harvests have finished for the default domain","");
+        addDescription("Tests that sorting is maintained when paging through " + "the harvest history");
+        addStep("Ensure that at least harvests have finished for the default domain", "");
         HarvestUtils.ensureNumberOfHarvestsForDefaultDomain(3);
 
-        addStep("Click the 'End time' header link twice",
-                "The table should now be sorted descending according to" +
-                        " End time. Remember the full list");
+        addStep("Click the 'End time' header link twice", "The table should now be sorted descending according to"
+                + " End time. Remember the full list");
         HarvestUtils.gotoHarvestHistoryForDomain(HarvestUtils.DEFAULT_DOMAIN);
         PageHelper.clickLink(HarvestHistoryPageHelper.END_TIME_HEADER);
         PageHelper.clickLink(HarvestHistoryPageHelper.END_TIME_HEADER);
         PageHelper.waitForPageToLoad();
-        List<HarvestHistoryPageHelper.HarvestHistoryEntry> harvestHistory =
-                HarvestHistoryPageHelper.readHarvestHistory();
+        List<HarvestHistoryPageHelper.HarvestHistoryEntry> harvestHistory = HarvestHistoryPageHelper
+                .readHarvestHistory();
         int PAGE_SIZE = 2;
         setHarvestStatusPageSize(PAGE_SIZE);
 
-        addStep("Set the page size to " + PAGE_SIZE,"");
+        addStep("Set the page size to " + PAGE_SIZE, "");
 
         addStep("Goto the harvest history for the default domain",
                 "Only 2 harvests should be listed and the next link should be enabled.");
         HarvestUtils.gotoHarvestHistoryForDomain(HarvestUtils.DEFAULT_DOMAIN);
-        assertEquals("Didn't find the expected 2 harvests on the first page",
-                PageHelper.getWebDriver().findElements(By.xpath(
-                        "//table[@class='selection_table']/tbody/tr[position()>1]")).size(), 2);
+        assertEquals(
+                "Didn't find the expected 2 harvests on the first page",
+                PageHelper.getWebDriver()
+                        .findElements(By.xpath("//table[@class='selection_table']/tbody/tr[position()>1]")).size(), 2);
 
         addStep("Click the 'End time' header link twice",
                 "The table should now again be sorted descending according to End time.");
@@ -250,18 +243,18 @@ public class HarvestHistoryForDomainPageTest extends SeleniumTest {;
         PageHelper.clickLink(HarvestHistoryPageHelper.END_TIME_HEADER);
         PageHelper.waitForPageToLoad();
 
-        addStep("Click the next link until the next link disappears",
-                "All the pages should have been listed, " +
-                        "in the same order as when the full list was show.");
+        addStep("Click the next link until the next link disappears", "All the pages should have been listed, "
+                + "in the same order as when the full list was show.");
         int harvestCounter = 0;
-        int numberOfPages = (int)Math.ceil((float)harvestHistory.size()/PAGE_SIZE);
-        for (int pageNumber = 1; pageNumber <= numberOfPages ; pageNumber++) {
-            List<WebElement> rows =
-                    PageHelper.getWebDriver().findElement(By.className("selection_table")).findElements(By.tagName("tr"));
-            rows.remove(0); //Skip headers
-            for (int rowNumber = 0; rowNumber < rows.size() ; rowNumber++) {
+        int numberOfPages = (int) Math.ceil((float) harvestHistory.size() / PAGE_SIZE);
+        for (int pageNumber = 1; pageNumber <= numberOfPages; pageNumber++) {
+            List<WebElement> rows = PageHelper.getWebDriver().findElement(By.className("selection_table"))
+                    .findElements(By.tagName("tr"));
+            rows.remove(0); // Skip headers
+            for (int rowNumber = 0; rowNumber < rows.size(); rowNumber++) {
                 WebElement row = rows.get(rowNumber);
-                assertEquals(new HarvestHistoryPageHelper.HarvestHistoryEntry(row), harvestHistory.get(harvestCounter++));
+                assertEquals(new HarvestHistoryPageHelper.HarvestHistoryEntry(row),
+                        harvestHistory.get(harvestCounter++));
             }
             boolean lastPage = pageNumber == numberOfPages;
             if (!lastPage) {
@@ -274,15 +267,15 @@ public class HarvestHistoryForDomainPageTest extends SeleniumTest {;
         }
 
         addStep("Click the previous link until the previous link disappears.",
-                "All the pages should have been listed, " +
-                        "2 at a time backwards.");
-        for (int pageNumber = numberOfPages; pageNumber >= 1;pageNumber--) {
-            List<WebElement> rows =
-                    PageHelper.getWebDriver().findElement(By.className("selection_table")).findElements(By.tagName("tr"));
-            rows.remove(0); //Skip headers
-            for (int rowNumber = rows.size()-1; rowNumber >= 0 ; rowNumber--) {
+                "All the pages should have been listed, " + "2 at a time backwards.");
+        for (int pageNumber = numberOfPages; pageNumber >= 1; pageNumber--) {
+            List<WebElement> rows = PageHelper.getWebDriver().findElement(By.className("selection_table"))
+                    .findElements(By.tagName("tr"));
+            rows.remove(0); // Skip headers
+            for (int rowNumber = rows.size() - 1; rowNumber >= 0; rowNumber--) {
                 WebElement row = rows.get(rowNumber);
-                assertEquals(new HarvestHistoryPageHelper.HarvestHistoryEntry(row), harvestHistory.get(--harvestCounter));
+                assertEquals(new HarvestHistoryPageHelper.HarvestHistoryEntry(row),
+                        harvestHistory.get(--harvestCounter));
             }
             boolean firstPage = pageNumber == 1;
             if (!firstPage) {
@@ -299,27 +292,22 @@ public class HarvestHistoryForDomainPageTest extends SeleniumTest {;
         environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER,
                 "cp conf/settings_GUIApplication.xml conf/settings_GUIApplication.xml.original");
         environmentManager.replaceStringInFile(TestEnvironment.JOB_ADMIN_SERVER, "conf/settings_GUIApplication.xml",
-                "</indexClient>",
-                "</indexClient>" +
-                "<webinterface><harvestStatus><defaultPageSize>" +
-                        size
-                 + "</defaultPageSize></harvestStatus></webinterface>"
-        );
+                "</indexClient>", "</indexClient>" + "<webinterface><harvestStatus><defaultPageSize>" + size
+                        + "</defaultPageSize></harvestStatus></webinterface>");
 
         applicationManager.restartGUI();
     }
 
-    @BeforeMethod(alwaysRun=true)
-    @AfterMethod(alwaysRun=true)
+    @BeforeMethod(alwaysRun = true)
+    @AfterMethod(alwaysRun = true)
     private void cleanupGUIConfiguration() {
         try {
             environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER,
-                    "if [ -f conf/settings_GUIApplication.xml.original ]; then " +
-                            "echo conf/settings_GUIApplication.xml.original exist, moving back.; " +
-                            "conf/kill_GUIApplication.sh; " +
-                            "mv conf/settings_GUIApplication.xml.original conf/settings_GUIApplication.xml; " +
-                            " conf/start_GUIApplication.sh; " +
-                     "fi");
+                    "if [ -f conf/settings_GUIApplication.xml.original ]; then "
+                            + "echo conf/settings_GUIApplication.xml.original exist, moving back.; "
+                            + "conf/kill_GUIApplication.sh; "
+                            + "mv conf/settings_GUIApplication.xml.original conf/settings_GUIApplication.xml; "
+                            + " conf/start_GUIApplication.sh; " + "fi");
             applicationManager.waitForGUIToStart(10);
         } catch (Exception e) {
             e.printStackTrace();
@@ -327,21 +315,19 @@ public class HarvestHistoryForDomainPageTest extends SeleniumTest {;
     }
 
     private void assertColumnIsSorted(int column, boolean ascending) {
-        List<WebElement> rows = PageHelper.getWebDriver().findElements(By.xpath(
-                "//table[@class='selection_table']/tbody/tr[position()>1]"));
+        List<WebElement> rows = PageHelper.getWebDriver().findElements(
+                By.xpath("//table[@class='selection_table']/tbody/tr[position()>1]"));
         String previousValue = null;
-        for (WebElement rowElement:rows) {
+        for (WebElement rowElement : rows) {
             List<WebElement> rowCells = rowElement.findElements(By.xpath("td"));
             String value = rowCells.get(column).getText();
             if (previousValue != null) {
                 if (ascending) {
-                    assertTrue(value.compareTo(previousValue) <= 0,
-                            value + " should be listed after " + previousValue +
-                                    " for ascending");
+                    assertTrue(value.compareTo(previousValue) <= 0, value + " should be listed after " + previousValue
+                            + " for ascending");
                 } else {
-                    assertTrue(value.compareTo(previousValue) >= 0,
-                            value + " should be listed after " + previousValue +
-                                    " for descending");
+                    assertTrue(value.compareTo(previousValue) >= 0, value + " should be listed after " + previousValue
+                            + " for descending");
                 }
             }
         }

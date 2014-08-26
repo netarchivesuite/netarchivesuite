@@ -45,7 +45,7 @@ import dk.netarkivet.harvester.datamodel.HarvesterDatabaseTables;
  */
 public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
 
-	/** The logger for this class. */
+    /** The logger for this class. */
     private static final Logger log = LoggerFactory.getLogger(ExtendedFieldDBDAO.class);
 
     /**
@@ -60,7 +60,7 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
             HarvestDBConnection.release(connection);
         }
     }
-    
+
     @Override
     public synchronized void create(ExtendedField aExtendedField) {
         ArgumentNotValid.checkNotNull(aExtendedField, "aExtendedField");
@@ -77,28 +77,13 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
         PreparedStatement statement = null;
         try {
             connection.setAutoCommit(false);
-            statement = connection.prepareStatement(""
-                    + "INSERT INTO extendedfield "
-                    + "            (extendedfield_id, "
-                    + "             extendedfieldtype_id, "
-                    + "             name, " 
-                    + "             format, "
-                    + "             defaultvalue, " 
-                    + "             options, "
-                    + "             datatype, " 
-                    + "             mandatory, "
-                    + "             sequencenr, " 
-                    + "             maxlen) " 
-                    + "VALUES      (?, "
-                    + "             ?, " 
-                    + "             ?, "
-                    + "             ?, " 
-                    + "             ?, "
-                    + "             ?, " 
-                    + "             ?, "
-                    + "             ?, " 
-                    + "             ?, " 
-                    + "             ?) ");
+            statement = connection.prepareStatement("" + "INSERT INTO extendedfield "
+                    + "            (extendedfield_id, " + "             extendedfieldtype_id, " + "             name, "
+                    + "             format, " + "             defaultvalue, " + "             options, "
+                    + "             datatype, " + "             mandatory, " + "             sequencenr, "
+                    + "             maxlen) " + "VALUES      (?, " + "             ?, " + "             ?, "
+                    + "             ?, " + "             ?, " + "             ?, " + "             ?, "
+                    + "             ?, " + "             ?, " + "             ?) ");
 
             statement.setLong(1, aExtendedField.getExtendedFieldID());
             statement.setLong(2, aExtendedField.getExtendedFieldTypeID());
@@ -107,10 +92,10 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
             statement.setString(5, aExtendedField.getDefaultValue());
             statement.setString(6, aExtendedField.getOptions());
             statement.setInt(7, aExtendedField.getDatatype());
-            // the following conversion from boolean to int is necessary, 
-            // because the database column 'mandatory' is a integer field 
+            // the following conversion from boolean to int is necessary,
+            // because the database column 'mandatory' is a integer field
             // and not a boolean (NAS-2127)
-            statement.setInt(8, aExtendedField.isMandatory()? 1: 0); 
+            statement.setInt(8, aExtendedField.isMandatory() ? 1 : 0);
             statement.setInt(9, aExtendedField.getSequencenr());
             statement.setInt(10, aExtendedField.getMaxlen());
             // TODO
@@ -133,12 +118,15 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
      * Generates the next id of a extended field. this implementation retrieves
      * the maximum value of extendedfield_id in the DB, and returns this value +
      * 1.
-     * @param c an open connection to the HarvestDatabase
+     * 
+     * @param c
+     *            an open connection to the HarvestDatabase
      * 
      * @return The next available ID
      */
     private Long generateNextID(Connection c) {
-    	// FIXME Synchroniazation problem, this is why one should always use identity rows or generators.
+        // FIXME Synchroniazation problem, this is why one should always use
+        // identity rows or generators.
         Long maxVal = DBUtils.selectLongValue(c, "SELECT max(extendedfield_id) FROM extendedfield");
         if (maxVal == null) {
             maxVal = 0L;
@@ -163,13 +151,15 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
             HarvestDBConnection.release(c);
         }
     }
-    
+
     /**
      * Check, if there exists an ExtendedField with a given ID.
-     * @param c An open connection to the HarvestDatabase
-     * @param aExtendedfieldId An Id for a given Extended Field.
-     * @return true, if the extended field with the Id exists; 
-     * otherwise false
+     * 
+     * @param c
+     *            An open connection to the HarvestDatabase
+     * @param aExtendedfieldId
+     *            An Id for a given Extended Field.
+     * @return true, if the extended field with the Id exists; otherwise false
      */
     private synchronized boolean exists(Connection c, Long aExtendedfieldId) {
         return 1 == DBUtils.selectLongValue(c, "SELECT COUNT(*) FROM extendedfield WHERE extendedfield_id = ?",
@@ -191,18 +181,10 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
 
             connection.setAutoCommit(false);
 
-            statement = connection.prepareStatement(""
-                    + "UPDATE extendedfield " 
-            		+ "SET    extendedfield_id = ?, "
-                    + "       extendedfieldtype_id = ?, " 
-            		+ "       name = ?, "
-                    + "       format = ?, " 
-            		+ "       defaultvalue = ?, "
-                    + "       options = ?, " 
-            		+ "       datatype = ?, "
-                    + "       mandatory = ?, " 
-            		+ "       sequencenr = ?, "
-            		+ "       maxlen = ? "
+            statement = connection.prepareStatement("" + "UPDATE extendedfield " + "SET    extendedfield_id = ?, "
+                    + "       extendedfieldtype_id = ?, " + "       name = ?, " + "       format = ?, "
+                    + "       defaultvalue = ?, " + "       options = ?, " + "       datatype = ?, "
+                    + "       mandatory = ?, " + "       sequencenr = ?, " + "       maxlen = ? "
                     + "WHERE  extendedfield_id = ? ");
 
             statement.setLong(1, aExtendedField.getExtendedFieldID());
@@ -212,10 +194,10 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
             statement.setString(5, aExtendedField.getDefaultValue());
             statement.setString(6, aExtendedField.getOptions());
             statement.setInt(7, aExtendedField.getDatatype());
-            // the following conversion from boolean to int is necessary, 
-            // because the database column 'mandatory' is a int field 
+            // the following conversion from boolean to int is necessary,
+            // because the database column 'mandatory' is a int field
             // and not a boolean (NAS-2127)
-            statement.setInt(8, aExtendedField.isMandatory()? 1: 0);
+            statement.setInt(8, aExtendedField.isMandatory() ? 1 : 0);
             statement.setInt(9, aExtendedField.getSequencenr());
             statement.setInt(10, aExtendedField.getMaxlen());
             statement.setLong(11, aExtendedField.getExtendedFieldID());
@@ -224,7 +206,7 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
             log.debug(statement.toString());
 
             statement.executeUpdate();
-            
+
             connection.commit();
         } catch (SQLException e) {
             String message = "SQL error updating extendedfield " + aExtendedField + " in database" + "\n";
@@ -247,11 +229,14 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
             HarvestDBConnection.release(connection);
         }
     }
-    
+
     /**
      * Read an ExtendedField from database.
-     * @param connection A connection to the harvestDatabase
-     * @param aExtendedfieldId The ID for a given ExtendedField 
+     * 
+     * @param connection
+     *            A connection to the harvestDatabase
+     * @param aExtendedfieldId
+     *            The ID for a given ExtendedField
      * @return An ExtendedField object for the given ID.
      */
     private synchronized ExtendedField read(Connection connection, Long aExtendedfieldId) {
@@ -262,17 +247,9 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
         ExtendedField extendedField = null;
         PreparedStatement statement = null;
         try {
-            statement = connection.prepareStatement(""
-                    + "SELECT extendedfieldtype_id, " 
-            		+ "       name, "
-                    + "       format, " 
-            		+ "       defaultvalue, "
-                    + "       options, " 
-            		+ "       datatype, "
-                    + "       mandatory, " 
-            		+ "       sequencenr, "
-            		+ "       maxlen "
-                    + "FROM   extendedfield " 
+            statement = connection.prepareStatement("" + "SELECT extendedfieldtype_id, " + "       name, "
+                    + "       format, " + "       defaultvalue, " + "       options, " + "       datatype, "
+                    + "       mandatory, " + "       sequencenr, " + "       maxlen " + "FROM   extendedfield "
                     + "WHERE  extendedfield_id = ? ");
 
             statement.setLong(1, aExtendedfieldId);
@@ -286,7 +263,7 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
             String options = result.getString(5);
             int datatype = result.getInt(6);
             // TODO maybe this cast is not necessary
-            boolean mandatory = (result.getInt(7) != 0); 
+            boolean mandatory = (result.getInt(7) != 0);
             int sequencenr = result.getInt(8);
             int maxlen = result.getInt(9);
 
@@ -300,12 +277,13 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
             throw new IOFailure(message, e);
         }
     }
+
     @Override
     public synchronized List<ExtendedField> getAll(long aExtendedFieldTypeId) {
         Connection c = HarvestDBConnection.get();
         try {
             List<Long> idList = DBUtils.selectLongList(c, "SELECT extendedfield_id FROM extendedfield "
-            		+ "WHERE extendedfieldtype_id = ? ORDER BY sequencenr ASC", aExtendedFieldTypeId);
+                    + "WHERE extendedfieldtype_id = ? ORDER BY sequencenr ASC", aExtendedFieldTypeId);
             List<ExtendedField> extendedFields = new LinkedList<ExtendedField>();
             for (Long extendedfieldId : idList) {
                 extendedFields.add(read(c, extendedfieldId));

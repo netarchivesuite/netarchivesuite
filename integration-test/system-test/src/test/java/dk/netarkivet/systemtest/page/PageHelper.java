@@ -35,63 +35,28 @@ public class PageHelper {
     private static Map<MenuPages, String> pageMapping = new HashMap<MenuPages, String>();
 
     public static enum MenuPages {
-        Frontpage,
-        SelectiveHarvests,
-        SnapshotHarvests,
-        Schedules,
-        FindDomains,
-        CreateDomain,
-        DomainStatistics,
-        AliasSummary,
-        EditHarvestTemplates,
-        GlobalCrawlerTraps,
-        ExtendedFields,
-        AllJobs,
-        AllJobsPerDomain,
-        RunningJobs,
-        Filestatus,
-        BatchjobOverview,
-        ViewerproxyStatus,
-        OverviewOfTheSystemState
+        Frontpage, SelectiveHarvests, SnapshotHarvests, Schedules, FindDomains, CreateDomain, DomainStatistics, AliasSummary, EditHarvestTemplates, GlobalCrawlerTraps, ExtendedFields, AllJobs, AllJobsPerDomain, RunningJobs, Filestatus, BatchjobOverview, ViewerproxyStatus, OverviewOfTheSystemState
     }
 
     static {
-        pageMapping.put(MenuPages.Frontpage,
-                "HarvestDefinition");
-        pageMapping.put(MenuPages.SelectiveHarvests,
-                "HarvestDefinition/Definitions-selective-harvests.jsp");
-        pageMapping.put(MenuPages.SnapshotHarvests,
-                "HarvestDefinition/Definitions-snapshot-harvests.jsp");
-        pageMapping.put(MenuPages.Schedules,
-                "HarvestDefinition/Definitions-schedules.jsp");
-        pageMapping.put(MenuPages.FindDomains,
-                "HarvestDefinition/Definitions-find-domains.jsp");
-        pageMapping.put(MenuPages.CreateDomain,
-                "HarvestDefinition/Definitions-create-domain.jsp");
-        pageMapping.put(MenuPages.DomainStatistics,
-                "HarvestDefinition/Definitions-domain-statistics.jsp");
-        pageMapping.put(MenuPages.AliasSummary,
-                "HarvestDefinition/Definitions-alias-summary.jsp");
-        pageMapping.put(MenuPages.EditHarvestTemplates,
-                "HarvestDefinition/Definitions-edit-harvest-templates.jsp");
-        pageMapping.put(MenuPages.GlobalCrawlerTraps,
-                "HarvestDefinition/Definitions-edit-global-crawler-traps.jsp");
-        pageMapping.put(MenuPages.ExtendedFields,
-                "HarvestDefinition/Definitions-list-extendedfields.jsp");
-        pageMapping.put(MenuPages.AllJobs,
-                "History/Harveststatus-alljobs.jsp");
-        pageMapping.put(MenuPages.AllJobsPerDomain,
-                "History/Harveststatus-perdomain.jsp");
-        pageMapping.put(MenuPages.RunningJobs,
-                "History/Harveststatus-running.jsp");
-        pageMapping.put(MenuPages.Filestatus,
-                "HarvestDefinition/Definitions-selective-harvests.jsp");
-        pageMapping.put(MenuPages.BatchjobOverview,
-                "BitPreservation/Bitpreservation-filestatus.jsp");
-        pageMapping.put(MenuPages.ViewerproxyStatus,
-                "QA/QA-status.jsp");
-        pageMapping.put(MenuPages.OverviewOfTheSystemState,
-                "Status/Monitor-JMXsummary.jsp");
+        pageMapping.put(MenuPages.Frontpage, "HarvestDefinition");
+        pageMapping.put(MenuPages.SelectiveHarvests, "HarvestDefinition/Definitions-selective-harvests.jsp");
+        pageMapping.put(MenuPages.SnapshotHarvests, "HarvestDefinition/Definitions-snapshot-harvests.jsp");
+        pageMapping.put(MenuPages.Schedules, "HarvestDefinition/Definitions-schedules.jsp");
+        pageMapping.put(MenuPages.FindDomains, "HarvestDefinition/Definitions-find-domains.jsp");
+        pageMapping.put(MenuPages.CreateDomain, "HarvestDefinition/Definitions-create-domain.jsp");
+        pageMapping.put(MenuPages.DomainStatistics, "HarvestDefinition/Definitions-domain-statistics.jsp");
+        pageMapping.put(MenuPages.AliasSummary, "HarvestDefinition/Definitions-alias-summary.jsp");
+        pageMapping.put(MenuPages.EditHarvestTemplates, "HarvestDefinition/Definitions-edit-harvest-templates.jsp");
+        pageMapping.put(MenuPages.GlobalCrawlerTraps, "HarvestDefinition/Definitions-edit-global-crawler-traps.jsp");
+        pageMapping.put(MenuPages.ExtendedFields, "HarvestDefinition/Definitions-list-extendedfields.jsp");
+        pageMapping.put(MenuPages.AllJobs, "History/Harveststatus-alljobs.jsp");
+        pageMapping.put(MenuPages.AllJobsPerDomain, "History/Harveststatus-perdomain.jsp");
+        pageMapping.put(MenuPages.RunningJobs, "History/Harveststatus-running.jsp");
+        pageMapping.put(MenuPages.Filestatus, "HarvestDefinition/Definitions-selective-harvests.jsp");
+        pageMapping.put(MenuPages.BatchjobOverview, "BitPreservation/Bitpreservation-filestatus.jsp");
+        pageMapping.put(MenuPages.ViewerproxyStatus, "QA/QA-status.jsp");
+        pageMapping.put(MenuPages.OverviewOfTheSystemState, "Status/Monitor-JMXsummary.jsp");
     }
 
     public static void gotoPage(MenuPages page) {
@@ -103,6 +68,7 @@ public class PageHelper {
 
     /**
      * Load the page relative to the base ur.
+     * 
      * @param subURL
      */
     public static void gotoSubPage(String subURL) {
@@ -113,6 +79,7 @@ public class PageHelper {
 
     /**
      * Load the page relative to the base url. Doesn't log the page reload
+     * 
      * @param subURL
      */
     public static void reloadSubPage(String subURL) {
@@ -138,8 +105,9 @@ public class PageHelper {
     }
 
     /**
-     * In case of button clicks causing page loads this function should be called to ensure the new page is finished
-     * loading before the test is continued.
+     * In case of button clicks causing page loads this function should be
+     * called to ensure the new page is finished loading before the test is
+     * continued.
      */
     public static void waitForPageToLoad() {
         driver.findElement(By.className("systeminfo"));
@@ -147,8 +115,7 @@ public class PageHelper {
 
     private static void checkInitialization() {
         if (driver == null || baseUrl == null) {
-            throw new IllegalStateException("Failed to goto page, webdriver " +
-                    "and baseurl hasn't been set.");
+            throw new IllegalStateException("Failed to goto page, webdriver " + "and baseurl hasn't been set.");
         }
     }
 }

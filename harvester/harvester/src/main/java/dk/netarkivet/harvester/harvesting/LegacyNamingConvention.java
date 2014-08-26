@@ -24,12 +24,12 @@ package dk.netarkivet.harvester.harvesting;
 
 import dk.netarkivet.harvester.datamodel.Job;
 
-/** 
- * Implements the standard way of prefixing archive files in Netarchivesuite. 
+/**
+ * Implements the standard way of prefixing archive files in Netarchivesuite.
  * I.e. jobid-harvestid
  */
 public class LegacyNamingConvention implements ArchiveFileNaming {
-    
+
     public LegacyNamingConvention() {
     }
 
@@ -37,5 +37,5 @@ public class LegacyNamingConvention implements ArchiveFileNaming {
     public String getPrefix(Job theJob) {
         return theJob.getJobID() + "-" + theJob.getOrigHarvestDefinitionID();
     }
-    
+
 }

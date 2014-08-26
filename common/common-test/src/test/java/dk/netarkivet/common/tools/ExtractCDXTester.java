@@ -49,12 +49,12 @@ public class ExtractCDXTester {
     private PreserveStdStreams pss = new PreserveStdStreams(true);
     private MoveTestFiles mtf = new MoveTestFiles(TestInfo.DATA_DIR, TestInfo.WORKING_DIR);
 
-	private LogbackRecorder lr;
+    private LogbackRecorder lr;
 
-	@Before
+    @Before
     public void setUp() {
-    	lr = LogbackRecorder.startRecorder();
-    	lr.addFilter(new DenyFilter(), ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
+        lr = LogbackRecorder.startRecorder();
+        lr.addFilter(new DenyFilter(), ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
         mtf.setUp();
         pss.setUp();
         pse.setUp();
@@ -65,7 +65,7 @@ public class ExtractCDXTester {
         pse.tearDown();
         pss.tearDown();
         mtf.tearDown();
-    	lr.clearAllFilters(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
+        lr.clearAllFilters(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
         lr.stopRecorder();
     }
 
@@ -127,7 +127,7 @@ public class ExtractCDXTester {
      * @return All records from the output cdx file, as a List.
      */
     private List<CDXRecord> getRecords() {
-    	List<CDXRecord> result = new ArrayList<CDXRecord>();
+        List<CDXRecord> result = new ArrayList<CDXRecord>();
         for (String cdxLine : pss.getOut().split("\n")) {
             result.add(new CDXRecord(cdxLine.split("\\s+")));
         }

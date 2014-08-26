@@ -35,7 +35,8 @@ import com.jcraft.jsch.Session;
 import org.apache.commons.io.IOUtils;
 
 /**
- * Provides utilites for performing deployment related commands in the test environment.
+ * Provides utilites for performing deployment related commands in the test
+ * environment.
  */
 public class TestEnvironmentManager {
     protected final TestLogger log = new TestLogger(getClass());
@@ -46,14 +47,18 @@ public class TestEnvironmentManager {
     private final String MAILRECEIVERS;
 
     /**
-     * The following environment definitions are used <ul>
+     * The following environment definitions are used
+     * <ul>
      * <ul>
      * <li>TIMESTAMP = svn revision
      * <li>GUI_PORT = systemtest.port property or 8071 if undefined
      * <li>MAILRECEIVERS = systemtest.mailreceivers property
      * <li>TESTX = The supplied test name
      * </ul>
-     * @param testX Defines the test name this test should be run under in the test system.
+     * 
+     * @param testX
+     *            Defines the test name this test should be run under in the
+     *            test system.
      */
     public TestEnvironmentManager(String testX, String host, int port) {
         TESTX = testX;
@@ -62,6 +67,7 @@ public class TestEnvironmentManager {
         TIMESTAMP = testX;
         MAILRECEIVERS = System.getProperty("systemtest.mailrecievers");
     }
+
     /**
      * @return The host the gui is run on.
      */
@@ -75,47 +81,59 @@ public class TestEnvironmentManager {
     public String getGuiPort() {
         return GUI_PORT;
     }
-    
+
     /**
      * @return The test name.
      */
     public String getTESTX() {
         return TESTX;
     }
-    
+
     /**
-     * Runs the a command on the DEPLOYMENT_SERVER with a command timeout of 1000 seconds. Delegates to the 
-     * ${link runCommand(String,int).
-     * @param remoteCommand The command to run on the test server
+     * Runs the a command on the DEPLOYMENT_SERVER with a command timeout of
+     * 1000 seconds. Delegates to the ${link runCommand(String,int).
+     * 
+     * @param remoteCommand
+     *            The command to run on the test server
      */
     public void runCommand(String remoteCommand) throws Exception {
         runCommand(remoteCommand, 1000);
     }
-    
+
     /**
-     * Runs the a command on the DEPLOYMENT_SERVER. Delegates to the 
-     * ${link runCommand(String,String,String,int).
-     * @param remoteCommand The server to run the command on.
-     * @param remoteCommand The command to run on the test server.
+     * Runs the a command on the DEPLOYMENT_SERVER. Delegates to the ${link
+     * runCommand(String,String,String,int).
+     * 
+     * @param remoteCommand
+     *            The server to run the command on.
+     * @param remoteCommand
+     *            The command to run on the test server.
      */
     public void runCommand(String server, String remoteCommand) throws Exception {
         runCommand(server, remoteCommand, 1000);
     }
-    
+
     /**
-     * Runs the a command with a command timeout of 1000 seconds. Delegates to the 
-     * ${link runCommand(String,String,int).
-     * @param remoteCommand The command to run on the test server.
-     * @param commandTimeout The timeout for the command.
+     * Runs the a command with a command timeout of 1000 seconds. Delegates to
+     * the ${link runCommand(String,String,int).
+     * 
+     * @param remoteCommand
+     *            The command to run on the test server.
+     * @param commandTimeout
+     *            The timeout for the command.
      */
     public void runCommand(String remoteCommand, int commandTimeout) throws Exception {
         runCommand(null, remoteCommand, commandTimeout);
     }
-    
+
     /**
-     * Run the command the in the TESTX dir. This is the normal way of separating diffrent test run in parallel. 
-     * @param server The server to run the command on.
-     * @param remoteCommand The command to run on the remote server.
+     * Run the command the in the TESTX dir. This is the normal way of
+     * separating diffrent test run in parallel.
+     * 
+     * @param server
+     *            The server to run the command on.
+     * @param remoteCommand
+     *            The command to run on the remote server.
      */
     public void runTestXCommand(String server, String remoteCommand) throws Exception {
         String testXRemoteCommand = "cd " + getTESTX() + ";" + remoteCommand;
@@ -123,59 +141,64 @@ public class TestEnvironmentManager {
     }
 
     /**
-     * Runs a remote command in the test environment via ssh. The system test environment variables:
-     * are set prior to running the command.
-     * Extends the {@link #runCommand(String)} with the possibility of overriding the default
-     * timeout of 1000 seconds. This may be useful in case of prolong operations.
-     * @param server The server to run the command on. If this is null the command is
-     *  run on the DEPLOYMENT_SERVER. Commands run other server the will command will be executed by 
-     *  ssh to the DEPLOYMENT_SERVER and from here ssh to the actual test server. 
-     * @param command The command to run on the test server.
-     * @param commandTimeout The timeout for the command.
+     * Runs a remote command in the test environment via ssh. The system test
+     * environment variables: are set prior to running the command. Extends the
+     * {@link #runCommand(String)} with the possibility of overriding the
+     * default timeout of 1000 seconds. This may be useful in case of prolong
+     * operations.
+     * 
+     * @param server
+     *            The server to run the command on. If this is null the command
+     *            is run on the DEPLOYMENT_SERVER. Commands run other server the
+     *            will command will be executed by ssh to the DEPLOYMENT_SERVER
+     *            and from here ssh to the actual test server.
+     * @param command
+     *            The command to run on the test server.
+     * @param commandTimeout
+     *            The timeout for the command.
      */
-    public void runCommand(String server, String command, int commandTimeout) 
-            throws Exception {
+    public void runCommand(String server, String command, int commandTimeout) throws Exception {
         if (server == null) {
             runCommand(null, command, commandTimeout, "");
         } else {
             runCommand(server, command, commandTimeout, "\"");
         }
     }
-    
+
     public void runCommandWithoutQuotes(String command) throws Exception {
         runCommand(null, command, 1000, "");
     }
-    
+
     public void runCommandWithoutQuotes(String command, int[] positiveExitCodes) throws Exception {
         runCommand(null, command, 1000, "", positiveExitCodes);
     }
 
     /**
-     * @param quotes the quotes ", ', none or other to use to box the command.
+     * @param quotes
+     *            the quotes ", ', none or other to use to box the command.
      */
-    public void runCommand(String server, String command, int commandTimeout, String quotes) 
-            throws Exception {
-        runCommand(server, command, commandTimeout, quotes, new int[]{0});
+    public void runCommand(String server, String command, int commandTimeout, String quotes) throws Exception {
+        runCommand(server, command, commandTimeout, quotes, new int[] { 0 });
     }
-    
+
     /**
-     * @param positiveExitCodes The exit codes to consider the command a success. This will normally be only 0, but in case of
-     * f.ex. 'diff' 1 is also ok.
+     * @param positiveExitCodes
+     *            The exit codes to consider the command a success. This will
+     *            normally be only 0, but in case of f.ex. 'diff' 1 is also ok.
      */
-    public void runCommand(String server, String command, int commandTimeout, String quotes, int[] positiveExitCodes) 
+    public void runCommand(String server, String command, int commandTimeout, String quotes, int[] positiveExitCodes)
             throws Exception {
         RemoteCommand remoteCommand = new RemoteCommand(server, command, quotes);
 
         log.info("Running JSch command: " + remoteCommand);
-        
-        
+
         BufferedReader inReader = null;
         BufferedReader errReader = null;
         JSch jsch = new JSch();
         Session session = jsch.getSession("test", TestEnvironment.DEPLOYMENT_SERVER);
         setupJSchIdentity(jsch);
         session.setConfig("StrictHostKeyChecking", "no");
-        
+
         long startTime = System.currentTimeMillis();
         session.connect();
         Channel channel = session.openChannel("exec");
@@ -193,27 +216,25 @@ public class TestEnvironmentManager {
         errReader = new BufferedReader(new InputStreamReader(err));
 
         int numberOfSecondsWaiting = 0;
-        int maxNumberOfSecondsToWait = 60*10;
+        int maxNumberOfSecondsToWait = 60 * 10;
         while (true) {
             if (channel.isClosed()) {
-                log.info("Command finished in "
-                        + (System.currentTimeMillis() - startTime) / 1000
-                        + " seconds. " + "Exit code was "
-                        + channel.getExitStatus());
+                log.info("Command finished in " + (System.currentTimeMillis() - startTime) / 1000 + " seconds. "
+                        + "Exit code was " + channel.getExitStatus());
                 boolean errorOccured = true;
-                for (int positiveExit:positiveExitCodes) {
+                for (int positiveExit : positiveExitCodes) {
                     if (positiveExit == channel.getExitStatus()) {
                         errorOccured = false;
                         break;
                     }
                 }
-                if (errorOccured || err.available() > 0) { 
+                if (errorOccured || err.available() > 0) {
                     throw new RuntimeException("Failed to run command, exit code " + channel.getExitStatus());
                 }
                 break;
-            } else if ( numberOfSecondsWaiting > maxNumberOfSecondsToWait) {
-                log.info("Command not finished after " + maxNumberOfSecondsToWait + " seconds. " +
-                        "Forcing disconnect.");
+            } else if (numberOfSecondsWaiting > maxNumberOfSecondsToWait) {
+                log.info("Command not finished after " + maxNumberOfSecondsToWait + " seconds. "
+                        + "Forcing disconnect.");
                 channel.disconnect();
                 break;
             }
@@ -222,29 +243,24 @@ public class TestEnvironmentManager {
 
                 String s;
                 while ((s = inReader.readLine()) != null) {
-                    if (!s.trim().isEmpty()) log.debug("ssh: " + s);
+                    if (!s.trim().isEmpty())
+                        log.debug("ssh: " + s);
                 }
                 while ((s = errReader.readLine()) != null) {
-                    if (!s.trim().isEmpty()) log.warn("ssh error: " + s);
+                    if (!s.trim().isEmpty())
+                        log.warn("ssh error: " + s);
                 }
             } catch (InterruptedException ie) {
             }
         }
     }
 
-
     /**
-     * Escape ',', '\' and &.
-     * Runs as TestX command
+     * Escape ',', '\' and &. Runs as TestX command
      */
     public void replaceStringInFile(String server, String file, String stringToReplace, String newString)
             throws Exception {
-        runTestXCommand(server,
-                "sed -i.original 's" + "," +
-                        stringToReplace + "," +
-                        newString + "," +
-                        "g' " +
-                        file);
+        runTestXCommand(server, "sed -i.original 's" + "," + stringToReplace + "," + newString + "," + "g' " + file);
     }
 
     private class RemoteCommand {
@@ -252,11 +268,11 @@ public class TestEnvironmentManager {
         final String environmentSetup;
         final String command;
         final String quotes;
-        
-        public RemoteCommand(String server, String command, String quotes) {       
+
+        public RemoteCommand(String server, String command, String quotes) {
             if (server != null) {
                 sshTunneling = "ssh " + server + " ";
-            }  else {
+            } else {
                 sshTunneling = "";
             }
 
@@ -265,14 +281,12 @@ public class TestEnvironmentManager {
                 setTimestampCommand = "export TIMESTAMP=" + TIMESTAMP;
             }
             String setPortCommand = "export PORT=" + GUI_PORT;
-            String setMailReceiversCommand = "export MAILRECEIVERS="+ MAILRECEIVERS;
+            String setMailReceiversCommand = "export MAILRECEIVERS=" + MAILRECEIVERS;
             String setTestCommand = "export TESTX=" + TESTX;
             String setPathCommand = "source /etc/bashrc;source /etc/profile;source ~/.bash_profile";
 
-            environmentSetup =
-                    setPathCommand + ";" + setTimestampCommand + ";"
-                    + setPortCommand + ";" + setMailReceiversCommand + ";"
-                    + setTestCommand + ";";
+            environmentSetup = setPathCommand + ";" + setTimestampCommand + ";" + setPortCommand + ";"
+                    + setMailReceiversCommand + ";" + setTestCommand + ";";
             this.command = command;
             this.quotes = quotes;
         }
@@ -290,14 +304,12 @@ public class TestEnvironmentManager {
             if (sshTunneling != null && !sshTunneling.equals("")) {
                 sb.append("sshTunneling=" + sshTunneling);
             }
-            sb.append("\n\t" + environmentSetup
-                    + "\n\t" + command);
+            sb.append("\n\t" + environmentSetup + "\n\t" + command);
             return sb.toString();
         }
-        
-        
+
     }
-    
+
     /**
      * The deployment script on the test server expects the 'TIMESTAMP' variable
      * to be set to the value between the 'NetarchiveSuite-' and '.zip' part of
@@ -309,17 +321,15 @@ public class TestEnvironmentManager {
         String revisionValue = null;
         if (System.getProperty("systemtest.version") != null) {
             revisionValue = System.getProperty("systemtest.version");
-        } else { 
+        } else {
             File dir = new File("deploy");
             String[] children = dir.list();
             int testXValueStart = "NetarchiveSuite-".length();
             if (children != null) {
                 for (String fileName : children) {
                     int zipPrefixPos = fileName.indexOf(".zip");
-                    if (fileName.contains("NetarchiveSuite-")
-                        && zipPrefixPos > testXValueStart) {
-                        revisionValue = fileName.substring(testXValueStart,
-                                                           zipPrefixPos);
+                    if (fileName.contains("NetarchiveSuite-") && zipPrefixPos > testXValueStart) {
+                        revisionValue = fileName.substring(testXValueStart, zipPrefixPos);
                     }
                 }
             } else {
@@ -330,18 +340,21 @@ public class TestEnvironmentManager {
     }
 
     /**
-     * Setup public/private key authentication for JSch. The following attributes are used: <ul>
+     * Setup public/private key authentication for JSch. The following
+     * attributes are used:
+     * <ul>
      * 
-     * @param jsch The JSch instance to configure.
+     * @param jsch
+     *            The JSch instance to configure.
      */
     private void setupJSchIdentity(JSch jsch) throws Exception {
-        String userHome =  System.getProperty("user.home");
+        String userHome = System.getProperty("user.home");
         String privateKeyPath = System.getProperty("privateKeyPath", userHome + "/.ssh/id_rsa");
         String publicKeyPath = System.getProperty("publicKeyPath", userHome + "/.ssh/id_rsa.pub");
         String privateKeyPassword = "";
-        byte [] privateKey = IOUtils.toByteArray(new FileInputStream(privateKeyPath));
-        byte [] publicKey = IOUtils.toByteArray(new FileInputStream(publicKeyPath));
-        byte [] passphrase = privateKeyPassword.getBytes(); 
+        byte[] privateKey = IOUtils.toByteArray(new FileInputStream(privateKeyPath));
+        byte[] publicKey = IOUtils.toByteArray(new FileInputStream(publicKeyPath));
+        byte[] passphrase = privateKeyPassword.getBytes();
         jsch.addIdentity("test", privateKey, publicKey, passphrase);
     }
 }

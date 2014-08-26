@@ -29,13 +29,13 @@ import org.archive.net.UURI;
 /**
  * Fixed UURI which extends UURI to fix an NPE bug in getReferencedHost.
  *
- * Pending fix of bug in Heritrix. The bug has been reported, and
- * has number 616: http://webteam.archive.org/jira/browse/HER-616 
+ * Pending fix of bug in Heritrix. The bug has been reported, and has number
+ * 616: http://webteam.archive.org/jira/browse/HER-616
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({ "serial" })
 public class FixedUURI extends UURI {
 
-	protected FixedUURI() {
+    protected FixedUURI() {
         super();
     }
 
@@ -51,10 +51,12 @@ public class FixedUURI extends UURI {
         super(string, b);
     }
 
-    /** Return the hostname for this URI, giving the looked-up host on dns-URLS.
+    /**
+     * Return the hostname for this URI, giving the looked-up host on dns-URLS.
      *
      * @return hostname for this URI, or null if this cannot be calculated.
-     * @throws URIException on serious parse errors.
+     * @throws URIException
+     *             on serious parse errors.
      * @see UURI#getReferencedHost()
      */
     public String getReferencedHost() throws URIException {

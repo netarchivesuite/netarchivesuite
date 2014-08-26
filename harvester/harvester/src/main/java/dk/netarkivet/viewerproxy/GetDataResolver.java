@@ -46,12 +46,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Wrapper for an URIResolver, which retrieves raw data on given
- * specific URLs, and forwards all others to the wrapped handler. This allows
- * you to get metadata, individual files, and individual records.
+ * Wrapper for an URIResolver, which retrieves raw data on given specific URLs,
+ * and forwards all others to the wrapped handler. This allows you to get
+ * metadata, individual files, and individual records.
  *
  */
-@SuppressWarnings({ "serial", "unused"})
+@SuppressWarnings({ "serial", "unused" })
 public class GetDataResolver extends CommandResolver {
     /** Logger for this class. */
     private Log log = LogFactory.getLog(getClass().getName());
@@ -61,8 +61,10 @@ public class GetDataResolver extends CommandResolver {
 
     /** Command for getting a single file from the bitarchive. */
     public static final String GET_FILE_COMMAND = "/getFile";
-    /** Command for getting a specific record (file+offset) from an ARC file
-     * in the bitarchive. */
+    /**
+     * Command for getting a specific record (file+offset) from an ARC file in
+     * the bitarchive.
+     */
     public static final String GET_RECORD_COMMAND = "/getRecord";
     /** Command for getting all metadata for a single job. */
     public static final String GET_METADATA_COMMAND = "/getMetadata";
@@ -71,12 +73,12 @@ public class GetDataResolver extends CommandResolver {
     public static final String FILE_NAME_PARAMETER = "arcFile";
     /** Parameter defining the offset into an ARC file for getting a record. */
     public static final String FILE_OFFSET_PARAMETER = "arcOffset";
-    /** Parameter for ids of jobs to get metadata for.  */
+    /** Parameter for ids of jobs to get metadata for. */
     public static final String JOB_ID_PARAMETER = "jobID";
 
     /** HTTP response code for OK. */
     private static final int OK_RESPONSE_CODE = 200;
-    
+
     /** HTTP response code for failed. */
     private static final int FAILED_RESPONSE_CODE = 500;
 
@@ -84,9 +86,12 @@ public class GetDataResolver extends CommandResolver {
      * Make a new GetDataResolver, which calls commands on the arcrepository,
      * and forwards all other requests to the given URIResolver.
      *
-     * @param ur The URIResolver to handle all other uris.
-     * @param client the arcrepository client
-     * @throws ArgumentNotValid if either argument is null.
+     * @param ur
+     *            The URIResolver to handle all other uris.
+     * @param client
+     *            the arcrepository client
+     * @throws ArgumentNotValid
+     *             if either argument is null.
      */
     public GetDataResolver(URIResolver ur, ViewerArcRepositoryClient client) {
         super(ur);
@@ -95,26 +100,26 @@ public class GetDataResolver extends CommandResolver {
     }
 
     /**
-     * Handles parsing of the URL and delegating to relevant methods for
-     * known commands.  Commands are:
-     * getFile     - params: fileName        - effect: get the full file
-     *                           specified by the parameter from the bitarchive.
-     * getRecord   - params: fileName,offset - effect: get a single ARC record
-     *                           from the bitarchive.
-     * getMetadata - params: jobID           - effect: get all metadata for
-     *                           a single job from the bitarchive.
+     * Handles parsing of the URL and delegating to relevant methods for known
+     * commands. Commands are: getFile - params: fileName - effect: get the full
+     * file specified by the parameter from the bitarchive. getRecord - params:
+     * fileName,offset - effect: get a single ARC record from the bitarchive.
+     * getMetadata - params: jobID - effect: get all metadata for a single job
+     * from the bitarchive.
      *
-     * @param request  The request to check
-     * @param response The response to give command results to if it is a
-     *                 command
+     * @param request
+     *            The request to check
+     * @param response
+     *            The response to give command results to if it is a command
      * @return Whether this was a command URL
-     * @throws IOFailure in any trouble.
+     * @throws IOFailure
+     *             in any trouble.
      */
     protected boolean executeCommand(Request request, Response response) {
-        //If the url is for this host (potential command)
+        // If the url is for this host (potential command)
         if (isCommandHostRequest(request)) {
             log.debug("Executing command " + request.getURI());
-            //get path
+            // get path
             String path = request.getURI().getPath();
             if (path.equals(GetDataResolver.GET_FILE_COMMAND)) {
                 doGetFile(request, response);
@@ -132,12 +137,17 @@ public class GetDataResolver extends CommandResolver {
         return false;
     }
 
-    /** Get all metadata for a given job id, and write it to response. Multiple
+    /**
+     * Get all metadata for a given job id, and write it to response. Multiple
      * metadata files will be concatenated.
-     * @param request A get metadata request; a parameter jobID is expected to
-     * be set.
-     * @param response Metadata will be written to this response.
-     * @throws IOFailure in any trouble.
+     * 
+     * @param request
+     *            A get metadata request; a parameter jobID is expected to be
+     *            set.
+     * @param response
+     *            Metadata will be written to this response.
+     * @throws IOFailure
+     *             in any trouble.
      */
     private void doGetMetadata(Request request, Response response) {
         String idString = getParameter(request, JOB_ID_PARAMETER);
@@ -147,80 +157,80 @@ public class GetDataResolver extends CommandResolver {
             try {
                 Long id = Long.parseLong(idString);
                 FileBatchJob job = new GetFileBatchJob();
-                job.processOnlyFilesMatching(id
-                        + Constants.METADATA_FILE_PATTERN_SUFFIX);
-                BatchStatus b = client.batch(job, Settings.get(
-                        CommonSettings.USE_REPLICA_ID));
-                if (b.getNoOfFilesProcessed() > b.getFilesFailed().size()
-                        && b.hasResultFile()) {
+                job.processOnlyFilesMatching(id + Constants.METADATA_FILE_PATTERN_SUFFIX);
+                BatchStatus b = client.batch(job, Settings.get(CommonSettings.USE_REPLICA_ID));
+                if (b.getNoOfFilesProcessed() > b.getFilesFailed().size() && b.hasResultFile()) {
                     b.appendResults(response.getOutputStream());
                     response.setStatus(OK_RESPONSE_CODE);
                 } else {
                     if (b.getNoOfFilesProcessed() > 0) {
-                        throw new IOFailure("Error finding metadata for job "
-                                + id + ": Processed "
-                                + b.getNoOfFilesProcessed()
-                                + ", failed on files " + b.getFilesFailed());
+                        throw new IOFailure("Error finding metadata for job " + id + ": Processed "
+                                + b.getNoOfFilesProcessed() + ", failed on files " + b.getFilesFailed());
                     } else {
-                        throw new IOFailure("No metadata found for job " + id
-                                + " or error while fetching metadata");
+                        throw new IOFailure("No metadata found for job " + id + " or error while fetching metadata");
                     }
                 }
             } catch (NumberFormatException e) {
-                String errMsg = "The value '" + idString
-                + "' of Parameter jobID is not a parsable job id";
+                String errMsg = "The value '" + idString + "' of Parameter jobID is not a parsable job id";
                 log.warn(errMsg, e);
                 throw new IOFailure(errMsg, e);
             }
         }
     }
 
-    /** Get a record from an ARC file, and write it to response. If the record
+    /**
+     * Get a record from an ARC file, and write it to response. If the record
      * has size greater than settings.viewerproxy.maxSizeInBrowser then a header
      * is added to turn the response into a file-download.
-     * @param request A get metadata request; parameters arcFile and arcOffset
-     * are expected to be set.
-     * @param response Metadata will be written to this response.
-     * @throws IOFailure in any trouble.
+     * 
+     * @param request
+     *            A get metadata request; parameters arcFile and arcOffset are
+     *            expected to be set.
+     * @param response
+     *            Metadata will be written to this response.
+     * @throws IOFailure
+     *             in any trouble.
      */
     private void doGetRecord(Request request, Response response) {
         String fileName = getParameter(request, FILE_NAME_PARAMETER);
-        String offsetString
-                = getParameter(request, FILE_OFFSET_PARAMETER);
-        //TODO in which case will getParameter return null if ever?
+        String offsetString = getParameter(request, FILE_OFFSET_PARAMETER);
+        // TODO in which case will getParameter return null if ever?
         // If yes, handle the else case
         if (fileName != null && offsetString != null) {
             try {
                 Long offset = Long.parseLong(offsetString);
                 BitarchiveRecord record = client.get(fileName, offset);
                 if (record == null) {
-                    throw new IOFailure(
-                            "Null record returned by "
-                            + "ViewerArcRepositoryClient.get("
-                                + fileName + "," + offset + "),");
+                    throw new IOFailure("Null record returned by " + "ViewerArcRepositoryClient.get(" + fileName + ","
+                            + offset + "),");
                 }
                 long maxSize = Settings.getLong(HarvesterSettings.MAXIMUM_OBJECT_IN_BROWSER);
-                //TODO: what happens if the record already has these headers defined?
+                // TODO: what happens if the record already has these headers
+                // defined?
                 if (record.getLength() > maxSize) {
-                    response.addHeaderField("Content-Disposition","Attachment; filename=record.txt");
+                    response.addHeaderField("Content-Disposition", "Attachment; filename=record.txt");
                     response.addHeaderField("Content-Type", "application/octet-stream");
                 }
                 record.getData(response.getOutputStream());
                 response.setStatus(OK_RESPONSE_CODE);
             } catch (NumberFormatException e) {
-                String errMsg = "Unable to parse offsetstring '"
-                    + offsetString + "' as long";
+                String errMsg = "Unable to parse offsetstring '" + offsetString + "' as long";
                 log.warn(errMsg, e);
                 throw new IOFailure(errMsg, e);
             }
         }
     }
 
-    /** Get a file from bitarchive, and write it to response.
-     * @param request A get metadata request; parameter arcFile is expected to
-     * be set.
-     * @param response File will be written to this response.
-     * @throws IOFailure in any trouble.
+    /**
+     * Get a file from bitarchive, and write it to response.
+     * 
+     * @param request
+     *            A get metadata request; parameter arcFile is expected to be
+     *            set.
+     * @param response
+     *            File will be written to this response.
+     * @throws IOFailure
+     *             in any trouble.
      */
     private void doGetFile(Request request, Response response) {
         String fileName = getParameter(request, FILE_NAME_PARAMETER);
@@ -229,14 +239,10 @@ public class GetDataResolver extends CommandResolver {
             try {
                 File tempFile = null;
                 try {
-                    tempFile = File.createTempFile("getFile", "download",
-                            FileUtils.getTempDir());
-                    client.getFile(fileName, Replica.getReplicaFromId(
-                            Settings.get(
-                                    CommonSettings.USE_REPLICA_ID)),
+                    tempFile = File.createTempFile("getFile", "download", FileUtils.getTempDir());
+                    client.getFile(fileName, Replica.getReplicaFromId(Settings.get(CommonSettings.USE_REPLICA_ID)),
                             tempFile);
-                    FileUtils.writeFileToStream(tempFile,
-                            response.getOutputStream());
+                    FileUtils.writeFileToStream(tempFile, response.getOutputStream());
                     response.setStatus(OK_RESPONSE_CODE);
                 } finally {
                     if (tempFile != null) {
@@ -251,22 +257,24 @@ public class GetDataResolver extends CommandResolver {
         }
     }
 
-    /** Get a single parameter out of a parametermap, checking for errors.
+    /**
+     * Get a single parameter out of a parametermap, checking for errors.
      *
-     * @param request The request with the parameters
-     * @param name The name of the parameter
+     * @param request
+     *            The request with the parameters
+     * @param name
+     *            The name of the parameter
      * @return The single value found
-     * @throws IOFailure if an error was encountered.
+     * @throws IOFailure
+     *             if an error was encountered.
      */
-    private String getParameter(Request request,
-                                String name) {
+    private String getParameter(Request request, String name) {
         String[] values = request.getParameterMap().get(name);
         if (values == null || values.length == 0) {
             throw new IOFailure("Missing parameter '" + name + "'");
         }
         if (values.length > 1) {
-            throw new IOFailure("Multiple parameters for '" + name + "': "
-                    + Arrays.asList(values));
+            throw new IOFailure("Multiple parameters for '" + name + "': " + Arrays.asList(values));
         }
         return values[0];
     }
@@ -274,21 +282,23 @@ public class GetDataResolver extends CommandResolver {
     /**
      * The trivial batch job: simply concatenate batched files to output.
      */
-    private static class GetFileBatchJob extends FileBatchJob
-            implements Serializable {
+    private static class GetFileBatchJob extends FileBatchJob implements Serializable {
 
         public GetFileBatchJob() {
-            batchJobTimeout = 10*Constants.ONE_MIN_IN_MILLIES;
+            batchJobTimeout = 10 * Constants.ONE_MIN_IN_MILLIES;
         }
-        
+
         /** Does nothing. */
         public void initialize(OutputStream os) {
         }
 
-        /** Simply write file to output.
+        /**
+         * Simply write file to output.
          *
-         * @param file File to write to output.
-         * @param os Outputstream to write to.
+         * @param file
+         *            File to write to output.
+         * @param os
+         *            Outputstream to write to.
          * @return true.
          */
         public boolean processFile(File file, OutputStream os) {

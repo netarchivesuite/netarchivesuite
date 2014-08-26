@@ -55,9 +55,9 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 @Ignore("binary derby database not converted to scripts yet")
 public class HarvestTemplateApplicationTester {
 
-	PreventSystemExit pse = new PreventSystemExit();
+    PreventSystemExit pse = new PreventSystemExit();
     ReloadSettings rs = new ReloadSettings();
-    
+
     InputStream origIn;
     PrintStream origOut;
     PrintStream origErr;
@@ -74,10 +74,8 @@ public class HarvestTemplateApplicationTester {
         FileUtils.removeRecursively(TestInfo.TEMPDIR);
         TestFileUtils.copyDirectoryNonCVS(TestInfo.DATADIR, TestInfo.TEMPDIR);
         HarvestDAOUtils.resetDAOs();
-        Settings.set(CommonSettings.DB_BASE_URL,
-                "jdbc:derby:" + TestInfo.TEMPDIR.getCanonicalPath() + "/fullhddb");
-        DatabaseTestUtils.getHDDB(TestInfo.DBFILE, "fullhddb",
-                TestInfo.TEMPDIR);
+        Settings.set(CommonSettings.DB_BASE_URL, "jdbc:derby:" + TestInfo.TEMPDIR.getCanonicalPath() + "/fullhddb");
+        DatabaseTestUtils.getHDDB(TestInfo.DBFILE, "fullhddb", TestInfo.TEMPDIR);
         TemplateDAO.getInstance();
 
         origIn = System.in;
@@ -107,26 +105,24 @@ public class HarvestTemplateApplicationTester {
         rs.tearDown();
     }
 
-    /** Check that the locally setup output and error streams match certain
+    /**
+     * Check that the locally setup output and error streams match certain
      * patterns.
      *
      * @param message
      * @param outPattern
      * @param errPattern
      */
-    private void assertOutAndErrMatches(String message, String outPattern,
-                                        String errPattern) {
+    private void assertOutAndErrMatches(String message, String outPattern, String errPattern) {
         outPrintStream.flush();
         errPrintStream.flush();
         String outString = newOut.toString();
         String errString = newErr.toString();
         if (!Pattern.compile(outPattern, Pattern.DOTALL).matcher(outString).matches()) {
-            fail(message + " Pattern " + outPattern + " not matching stdout '"
-                    + outString + "'");
+            fail(message + " Pattern " + outPattern + " not matching stdout '" + outString + "'");
         }
         if (!Pattern.compile(errPattern, Pattern.DOTALL).matcher(errString).matches()) {
-            fail(message + " Pattern " + errPattern + " not matching stderr '"
-                    + errString + "'");
+            fail(message + " Pattern " + errPattern + " not matching stderr '" + errString + "'");
         }
     }
 
@@ -140,141 +136,108 @@ public class HarvestTemplateApplicationTester {
 
     @Test
     public void testMainIllegalCommand() {
-        HarvestTemplateApplication.main(new String[] {"foo"});
-        assertOutAndErrMatches("Should fail on illegal command.", "^$",
-                ".*foo.*not one of the legal commands.*"
-                        + "create.*download.*update.*showall.*");
+        HarvestTemplateApplication.main(new String[] { "foo" });
+        assertOutAndErrMatches("Should fail on illegal command.", "^$", ".*foo.*not one of the legal commands.*"
+                + "create.*download.*update.*showall.*");
     }
 
     @Test
     public void testCreateNoArgs() throws Exception {
-        HarvestTemplateApplication.main(new String[] {"create"});
-        assertOutAndErrMatches("Should fail on missing parameter.",
-                "^$", ".*create.*Wrong number\\(0\\) of arguments.*"
-                + "download.*update.*");
+        HarvestTemplateApplication.main(new String[] { "create" });
+        assertOutAndErrMatches("Should fail on missing parameter.", "^$",
+                ".*create.*Wrong number\\(0\\) of arguments.*" + "download.*update.*");
     }
 
     @Test
     public void testCreateOneArg() throws Exception {
-        HarvestTemplateApplication.main(new String[]{
-                "create", "foo"});
-        assertOutAndErrMatches("Should fail on missing parameter.",
-                "^$", ".*create.*Wrong number\\(1\\) of arguments.*"
-                + "download.*update.*");
+        HarvestTemplateApplication.main(new String[] { "create", "foo" });
+        assertOutAndErrMatches("Should fail on missing parameter.", "^$",
+                ".*create.*Wrong number\\(1\\) of arguments.*" + "download.*update.*");
     }
 
     @Test
     public void testCreateMissingFile() throws Exception {
-        HarvestTemplateApplication.main(new String[]{
-                "create", "foo", "missing-file"});
-        assertOutAndErrMatches("Should fail on missing file.",
-                "^$",
-                ".*missing-file.*is not readable.*");
+        HarvestTemplateApplication.main(new String[] { "create", "foo", "missing-file" });
+        assertOutAndErrMatches("Should fail on missing file.", "^$", ".*missing-file.*is not readable.*");
     }
 
     @Test
     public void testCreateIllegalFile() throws Exception {
-        HarvestTemplateApplication.main(new String[]{
-                "create", "foo", new File(TestInfo.EMPTYDBFILE).getAbsolutePath()});
-        assertOutAndErrMatches("Should fail on illegal file.",
-                "^$",
+        HarvestTemplateApplication.main(new String[] { "create", "foo",
+                new File(TestInfo.EMPTYDBFILE).getAbsolutePath() });
+        assertOutAndErrMatches("Should fail on illegal file.", "^$",
                 ".*netarkivtest.log.*is not readable or is not valid xml.*");
     }
 
     @Test
     public void testCreate() {
-        HarvestTemplateApplication.main(new String[] {
-            "create", "NewTemplate", TestInfo.ORDERXMLFILE.getAbsolutePath()});
-        assertOutAndErrMatches("Should succeed with new file",
-                "^The template 'NewTemplate' has now been created.\n$", "^$");
-        assertTrue("Should have newly created template in DAO",
-                TemplateDAO.getInstance().exists("NewTemplate"));
+        HarvestTemplateApplication
+                .main(new String[] { "create", "NewTemplate", TestInfo.ORDERXMLFILE.getAbsolutePath() });
+        assertOutAndErrMatches("Should succeed with new file", "^The template 'NewTemplate' has now been created.\n$",
+                "^$");
+        assertTrue("Should have newly created template in DAO", TemplateDAO.getInstance().exists("NewTemplate"));
         Document doc = XmlUtils.getXmlDoc(TestInfo.ORDERXMLFILE);
-        assertEquals("Should have same info in doc as in dao",
-                doc.getText(),
-                TemplateDAO.getInstance().read("NewTemplate")
-                    .getTemplate().getText());
+        assertEquals("Should have same info in doc as in dao", doc.getText(),
+                TemplateDAO.getInstance().read("NewTemplate").getTemplate().getText());
     }
 
     @Test
     public void testDownloadTemplatesAll() {
-        HarvestTemplateApplication.main(new String[] {
-                "download"
-        });
-        assertOutAndErrMatches("Should get all templates",
-                "^Downloading template 'FullSite-order'.\n"
-                        + "Downloading template 'Max_20_2-order'.\n"
-                        + "Downloading template 'OneLevel-order'.\n"
-                        + "Downloading template 'default_orderxml'.\n$",
-                "^$");
+        HarvestTemplateApplication.main(new String[] { "download" });
+        assertOutAndErrMatches("Should get all templates", "^Downloading template 'FullSite-order'.\n"
+                + "Downloading template 'Max_20_2-order'.\n" + "Downloading template 'OneLevel-order'.\n"
+                + "Downloading template 'default_orderxml'.\n$", "^$");
         Document doc = XmlUtils.getXmlDoc(new File("OneLevel-order.xml"));
-        assertEquals("Should have same info in downloaded as in DB",
-                TemplateDAO.getInstance().read("OneLevel-order")
-                .getTemplate().getText(),
-                doc.getText());
+        assertEquals("Should have same info in downloaded as in DB", TemplateDAO.getInstance().read("OneLevel-order")
+                .getTemplate().getText(), doc.getText());
     }
 
     @Test
     public void testDownloadTemplatesOne() {
-        HarvestTemplateApplication.main(new String[] {
-                "download", "OneLevel-order"
-        });
-        assertOutAndErrMatches("Should get one template",
-                "^Downloading template 'OneLevel-order'.\n$", "^$");
+        HarvestTemplateApplication.main(new String[] { "download", "OneLevel-order" });
+        assertOutAndErrMatches("Should get one template", "^Downloading template 'OneLevel-order'.\n$", "^$");
     }
 
     @Test
     public void testDownloadTemplatesTwo() {
-        HarvestTemplateApplication.main(new String[] {
-                "download", "OneLevel-order", "NotThere"
-        });
-        assertOutAndErrMatches("Should get one template and one error",
-                "^Downloading template 'OneLevel-order'.\n$",
+        HarvestTemplateApplication.main(new String[] { "download", "OneLevel-order", "NotThere" });
+        assertOutAndErrMatches("Should get one template and one error", "^Downloading template 'OneLevel-order'.\n$",
                 "^Unable to download template 'NotThere'. It does not exist.\n$");
     }
 
     @Test
     public void testUpdateNoArgs() {
-        HarvestTemplateApplication.main(new String[] {"update" });
-        assertOutAndErrMatches("Should fail on missing parameter.",
-                "", ".*update.*Wrong number\\(0\\) of arguments.*"
-                        + "create.*download.*update.*showall.*");
+        HarvestTemplateApplication.main(new String[] { "update" });
+        assertOutAndErrMatches("Should fail on missing parameter.", "", ".*update.*Wrong number\\(0\\) of arguments.*"
+                + "create.*download.*update.*showall.*");
     }
 
     @Test
     public void testUpdateOneArg() {
-        HarvestTemplateApplication.main(new String[] {"update", "foo" });
-        assertOutAndErrMatches("Should fail on missing parameter.",
-                "", ".*update.*Wrong number\\(1\\) of arguments.*"
+        HarvestTemplateApplication.main(new String[] { "update", "foo" });
+        assertOutAndErrMatches("Should fail on missing parameter.", "", ".*update.*Wrong number\\(1\\) of arguments.*"
                 + "create.*download.*update.*showall.*");
     }
 
     @Test
     public void testUpdateNoTemplate() {
-        HarvestTemplateApplication.main(new String[] {"update", "foo", "bar" });
-        assertOutAndErrMatches("Should fail on missing parameter.",
-                "^$",
+        HarvestTemplateApplication.main(new String[] { "update", "foo", "bar" });
+        assertOutAndErrMatches("Should fail on missing parameter.", "^$",
                 ".*There is no template named 'foo'. Use the create.*");
     }
 
     @Test
     public void testUpdateNoFile() {
-        HarvestTemplateApplication.main(new String[]
-                {"update", "OneLevel-order", "missing-file" });
-        assertOutAndErrMatches("Should fail on missing file.",
-                "^$",
+        HarvestTemplateApplication.main(new String[] { "update", "OneLevel-order", "missing-file" });
+        assertOutAndErrMatches("Should fail on missing file.", "^$",
                 ".*missing-file.*could not be read or is not valid xml.*");
     }
 
     @Test
     public void testShowAll() {
-        HarvestTemplateApplication.main(new String[] {"showall"});
-        assertOutAndErrMatches("Should list all templates.",
-                "^FullSite-order\n"
-                        + "Max_20_2-order\n"
-                        + "OneLevel-order\n"
-                        + "default_orderxml\n$",
-                "^$");
+        HarvestTemplateApplication.main(new String[] { "showall" });
+        assertOutAndErrMatches("Should list all templates.", "^FullSite-order\n" + "Max_20_2-order\n"
+                + "OneLevel-order\n" + "default_orderxml\n$", "^$");
     }
 
 }

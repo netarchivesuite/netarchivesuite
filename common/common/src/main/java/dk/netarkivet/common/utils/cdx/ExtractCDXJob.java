@@ -38,14 +38,13 @@ import dk.netarkivet.common.utils.ChecksumCalculator;
 import dk.netarkivet.common.utils.arc.ARCBatchJob;
 import dk.netarkivet.common.utils.batch.ARCBatchFilter;
 
-
-/** Batch job that extracts information to create a CDX file.
+/**
+ * Batch job that extracts information to create a CDX file.
  *
- * A CDX file contains sorted lines of metadata from the ARC files, with
- * each line followed by the file and offset the record was found at, and
- * optionally a checksum.
- * The timeout of this job is 7 days.
- * See http://www.archive.org/web/researcher/cdx_file_format.php
+ * A CDX file contains sorted lines of metadata from the ARC files, with each
+ * line followed by the file and offset the record was found at, and optionally
+ * a checksum. The timeout of this job is 7 days. See
+ * http://www.archive.org/web/researcher/cdx_file_format.php
  */
 
 @SuppressWarnings({ "rawtypes", "serial" })
@@ -55,14 +54,10 @@ public class ExtractCDXJob extends ARCBatchJob {
     private static final Logger log = LoggerFactory.getLogger(ExtractCDXJob.class);
 
     /** An encoding for the standard included metadata fields without checksum. */
-	private static final String[] STD_FIELDS_EXCL_CHECKSUM = {
-		"A", "e", "b", "m", "n", "g", "v"
-    };
+    private static final String[] STD_FIELDS_EXCL_CHECKSUM = { "A", "e", "b", "m", "n", "g", "v" };
 
     /** An encoding for the standard included metadata fields with checksum. */
-    private static final String[] STD_FIELDS_INCL_CHECKSUM = {
-    	"A", "e", "b", "m", "n", "g", "v", "c"
-    };
+    private static final String[] STD_FIELDS_INCL_CHECKSUM = { "A", "e", "b", "m", "n", "g", "v", "c" };
 
     /** The fields to be included in CDX output. */
     private String[] fields;
@@ -72,13 +67,15 @@ public class ExtractCDXJob extends ARCBatchJob {
 
     /**
      * Constructs a new job for extracting CDX indexes.
-     * @param includeChecksum If true, an MD5 checksum is also
-     * written for each record. If false, it is not.
+     * 
+     * @param includeChecksum
+     *            If true, an MD5 checksum is also written for each record. If
+     *            false, it is not.
      */
     public ExtractCDXJob(boolean includeChecksum) {
         this.fields = includeChecksum ? STD_FIELDS_INCL_CHECKSUM : STD_FIELDS_EXCL_CHECKSUM;
         this.includeChecksum = includeChecksum;
-        batchJobTimeout = 7*Constants.ONE_DAY_IN_MILLIES;
+        batchJobTimeout = 7 * Constants.ONE_DAY_IN_MILLIES;
     }
 
     /**
@@ -88,82 +85,90 @@ public class ExtractCDXJob extends ARCBatchJob {
         this(true);
     }
 
-    /** Filter out the filedesc: headers.
+    /**
+     * Filter out the filedesc: headers.
+     * 
      * @see dk.netarkivet.common.utils.arc.ARCBatchJob#getFilter()
-     * @return The filter that defines what ARC records are wanted
-     * in the output CDX file.
+     * @return The filter that defines what ARC records are wanted in the output
+     *         CDX file.
      */
     @Override
     public ARCBatchFilter getFilter() {
-        //Per default we want to index all records except ARC file headers:
+        // Per default we want to index all records except ARC file headers:
         return ARCBatchFilter.EXCLUDE_FILE_HEADERS;
     }
 
     /**
      * Initialize any data needed (none).
+     * 
      * @see dk.netarkivet.common.utils.arc.ARCBatchJob#initialize(OutputStream)
      */
     @Override
     public void initialize(OutputStream os) {
     }
 
-    /** Process this entry, reading metadata into the output stream.
-     * @see dk.netarkivet.common.utils.arc.ARCBatchJob#processRecord(
-     * ARCRecord, OutputStream)
-     * @throws IOFailure on trouble reading arc record data
+    /**
+     * Process this entry, reading metadata into the output stream.
+     * 
+     * @see dk.netarkivet.common.utils.arc.ARCBatchJob#processRecord(ARCRecord,
+     *      OutputStream)
+     * @throws IOFailure
+     *             on trouble reading arc record data
      */
     @Override
     public void processRecord(ARCRecord sar, OutputStream os) {
         log.trace("Processing ARCRecord with offset: {}", sar.getMetaData().getOffset());
         /*
-        * Fields are stored in a map so that it's easy
-        * to pull them out when looking at the
-        * fieldarray.
-        */
-        Map<String, String> fieldsread = new HashMap<String,String>();
+         * Fields are stored in a map so that it's easy to pull them out when
+         * looking at the fieldarray.
+         */
+        Map<String, String> fieldsread = new HashMap<String, String>();
         fieldsread.put("A", sar.getMetaData().getUrl());
         fieldsread.put("e", sar.getMetaData().getIp());
         fieldsread.put("b", sar.getMetaData().getDate());
         fieldsread.put("m", sar.getMetaData().getMimetype());
         fieldsread.put("n", Long.toString(sar.getMetaData().getLength()));
 
-        /* Note about offset:
-        * The original dk.netarkivet.ArcUtils.ExtractCDX
-        * yields offsets that are consistently 1 lower
-        * than this version, which pulls the offset value
-        * from the org.archive.io.arc-classes.
-        * This difference is that the former classes
-        * count the preceeding newline as part of the
-        * ARC header.
-        */
-        fieldsread.put("v", Long.toString(sar.getMetaData().getOffset())); 
+        /*
+         * Note about offset: The original dk.netarkivet.ArcUtils.ExtractCDX
+         * yields offsets that are consistently 1 lower than this version, which
+         * pulls the offset value from the org.archive.io.arc-classes. This
+         * difference is that the former classes count the preceeding newline as
+         * part of the ARC header.
+         */
+        fieldsread.put("v", Long.toString(sar.getMetaData().getOffset()));
         fieldsread.put("g", sar.getMetaData().getArcFile().getName());
 
         /* Only include checksum if necessary: */
         if (includeChecksum) {
             // To avoid taking all of the record into an array, we
-            // slurp it directly from the ARCRecord.  This leaves the
+            // slurp it directly from the ARCRecord. This leaves the
             // sar in an inconsistent state, so it must not be used
             // afterwards.
-            InputStream instream = sar; //Note: ARCRecord extends InputStream
+            InputStream instream = sar; // Note: ARCRecord extends InputStream
             fieldsread.put("c", ChecksumCalculator.calculateMd5(instream));
         }
 
         printFields(fieldsread, os);
     }
 
-    /** End of the batch job.
+    /**
+     * End of the batch job.
+     * 
      * @see dk.netarkivet.common.utils.arc.ARCBatchJob#finish(OutputStream)
      */
     @Override
     public void finish(OutputStream os) {
     }
 
-    /** Print the values found for a set of fields.  Prints the '-'
-     * character for any null values.
+    /**
+     * Print the values found for a set of fields. Prints the '-' character for
+     * any null values.
      *
-     * @param fieldsread A hashtable of values indexed by field letters
-     * @param outstream The outputstream to write the values to 
+     * @param fieldsread
+     *            A hashtable of values indexed by field letters
+     * @param outstream
+     *            The outputstream to write the values to
      */
     private void printFields(Map fieldsread, OutputStream outstream) {
         StringBuffer sb = new StringBuffer();
@@ -180,7 +185,7 @@ public class ExtractCDXJob extends ARCBatchJob {
             throw new IOFailure("Error writing CDX line '" + sb + "' to batch outstream", e);
         }
     }
-    
+
     /**
      * @return Humanly readable description of this instance.
      */

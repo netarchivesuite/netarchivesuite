@@ -28,24 +28,24 @@ import java.util.Iterator;
 import dk.netarkivet.common.utils.FilterIterator;
 
 /**
- * DAO methods for reading templates only.
- * Implemented as a Singleton
+ * DAO methods for reading templates only. Implemented as a Singleton
  *
  */
 public abstract class TemplateDAO implements DAO {
 
-	/** The singleton TemplateDAO. */
+    /** The singleton TemplateDAO. */
     private static TemplateDAO instance;
 
     /**
-     * Constructor for TemplateDAO.
-     * The real construction is done inside the getInstance method.
+     * Constructor for TemplateDAO. The real construction is done inside the
+     * getInstance method.
      */
     TemplateDAO() {
     }
 
     /**
      * Gets the TemplateDAO singleton.
+     * 
      * @return the singleton.
      */
     public static synchronized TemplateDAO getInstance() {
@@ -58,7 +58,8 @@ public abstract class TemplateDAO implements DAO {
     /**
      * Read an orderxml template for the named order XML.
      *
-     * @param orderXmlName The name of the order.xml document
+     * @param orderXmlName
+     *            The name of the order.xml document
      * @return The contents of this order.xml document
      */
     public abstract HeritrixTemplate read(String orderXmlName);
@@ -70,10 +71,10 @@ public abstract class TemplateDAO implements DAO {
      */
     public abstract Iterator<String> getAll();
 
-    /** Returns an iterator of all templates.  Note that this is not the
-     * most efficient way of getting all names of templates, for that just use
-     * getAll().
-     * Implements the Iterable interface.
+    /**
+     * Returns an iterator of all templates. Note that this is not the most
+     * efficient way of getting all names of templates, for that just use
+     * getAll(). Implements the Iterable interface.
      *
      * @return A list of all current templates.
      */
@@ -87,29 +88,37 @@ public abstract class TemplateDAO implements DAO {
 
     /**
      * Check, if there exists a orderxml-template with a given name.
-     * @param orderXmlName a given orderxml name
+     * 
+     * @param orderXmlName
+     *            a given orderxml name
      * @return true, if there exists a orderxml-template with this name
      */
     public abstract boolean exists(String orderXmlName);
 
     /**
      * Create a orderxml-template with a given name.
-     * @param orderXmlName the given name
-     * @param orderXml the Document containing the contents of
-     * this new orderxml-template
+     * 
+     * @param orderXmlName
+     *            the given name
+     * @param orderXml
+     *            the Document containing the contents of this new
+     *            orderxml-template
      */
     public abstract void create(String orderXmlName, HeritrixTemplate orderXml);
 
     /**
-     * Update a specific orderxml-template to contain the contents
-     * of the orderXml argument.
-     * @param orderXmlName the name of a specific orderxml-template
-     * @param orderXml the new contents of this template
+     * Update a specific orderxml-template to contain the contents of the
+     * orderXml argument.
+     * 
+     * @param orderXmlName
+     *            the name of a specific orderxml-template
+     * @param orderXml
+     *            the new contents of this template
      */
     public abstract void update(String orderXmlName, HeritrixTemplate orderXml);
 
     /**
-     * Resets the singleton.  Only for use from tests.
+     * Resets the singleton. Only for use from tests.
      */
     static void resetSingleton() {
         instance = null;

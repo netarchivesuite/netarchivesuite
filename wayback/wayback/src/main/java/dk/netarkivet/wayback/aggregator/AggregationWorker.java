@@ -77,31 +77,28 @@ public class AggregationWorker implements CleanupIF {
      * The Files to store sorted indexes until they have been merge into a
      * intermediate index files.
      */
-    public static final File TEMP_FILE_INDEX = new File(temporaryDir,
-                                                        "temp.index");
+    public static final File TEMP_FILE_INDEX = new File(temporaryDir, "temp.index");
     /**
      * The intermediate Wayback index file currently used to merge new indexes
      * into. If the intermediate files size exceeds the
      * WaybackSettings#WAYBACK_AGGREGATOR_INTERMEDIATE_INDEX_FILE_SIZE_LIMIT
      */
-    public static final File INTERMEDIATE_INDEX_FILE = new File(
-            indexOutputDir, "wayback_intermediate.index");
+    public static final File INTERMEDIATE_INDEX_FILE = new File(indexOutputDir, "wayback_intermediate.index");
     /**
      * The final Wayback index file currently used to intermediate indexes into.
      * A new working file is created and used, when the current file size + new
      * indexes would exceed
      * WaybackSettings#WAYBACK_AGGREGATOR_FINAL_INDEX_FILE_SIZE_LIMIT
      */
-    public static final File FINAL_INDEX_FILE = new File(indexOutputDir,
-                                                         "wayback.index");
+    public static final File FINAL_INDEX_FILE = new File(indexOutputDir, "wayback.index");
 
     /**
-     * Factory method which creates a singleton aggregator and sets it running. 
+     * Factory method which creates a singleton aggregator and sets it running.
      * It has the side effect of creating the output directories for the indexer
-     *  if these do not already exist.
+     * if these do not already exist.
      *
-     * A temp directory is create if it doesn't exist. The aggregator won't
-     * run if a temp directory is already present, as this might indicate an 
+     * A temp directory is create if it doesn't exist. The aggregator won't run
+     * if a temp directory is already present, as this might indicate an
      * instance of the aggregator already running.
      *
      * @return the indexer.
@@ -135,12 +132,10 @@ public class AggregationWorker implements CleanupIF {
                 }
             };
             Timer aggregatorThreadTimer = new Timer("AggregatorThread");
-            aggregatorThreadTimer.schedule(
-                    aggregatorTask, 0, Settings.getLong(
-                            WaybackSettings.WAYBACK_AGGREGATOR_AGGREGATION_INTERVAL));
+            aggregatorThreadTimer.schedule(aggregatorTask, 0,
+                    Settings.getLong(WaybackSettings.WAYBACK_AGGREGATOR_AGGREGATION_INTERVAL));
         } else {
-            throw new IllegalStateException(
-                    "An attempt has been made to start a second aggregation job");
+            throw new IllegalStateException("An attempt has been made to start a second aggregation job");
         }
     }
 
@@ -160,8 +155,7 @@ public class AggregationWorker implements CleanupIF {
 
         if (fileNamesToProcess.length == 0) {
             if (log.isDebugEnabled()) {
-                log.debug("No new raw index files found in '" 
-                        + indexInputDir.getAbsolutePath()
+                log.debug("No new raw index files found in '" + indexInputDir.getAbsolutePath()
                         + "' skipping aggregation");
             }
             return;
@@ -175,10 +169,8 @@ public class AggregationWorker implements CleanupIF {
             if (file.isFile()) {
                 filesToProcess[i] = new File(indexInputDir, fileNamesToProcess[i]);
             } else {
-                throw new ArgumentNotValid(
-                        "Encountered non-regular file '" + file.getName()
-                        + "' in the index input directory '" 
-                        + indexInputDir.getAbsolutePath() + "'");
+                throw new ArgumentNotValid("Encountered non-regular file '" + file.getName()
+                        + "' in the index input directory '" + indexInputDir.getAbsolutePath() + "'");
             }
         }
 
@@ -194,13 +186,10 @@ public class AggregationWorker implements CleanupIF {
         if (!INTERMEDIATE_INDEX_FILE.exists()) {
             TEMP_FILE_INDEX.renameTo(INTERMEDIATE_INDEX_FILE);
         } else {
-            aggregator.mergeFiles(new File[]{TEMP_FILE_INDEX,
-                                             INTERMEDIATE_INDEX_FILE},
-                                  tempIntermediateIndexFile);
+            aggregator.mergeFiles(new File[] { TEMP_FILE_INDEX, INTERMEDIATE_INDEX_FILE }, tempIntermediateIndexFile);
             tempIntermediateIndexFile.renameTo(INTERMEDIATE_INDEX_FILE);
             if (log.isDebugEnabled()) {
-                log.debug("Merged temporary index file into intermediate index "
-                        + "file '"
+                log.debug("Merged temporary index file into intermediate index " + "file '"
                         + INTERMEDIATE_INDEX_FILE.getAbsolutePath() + "'.");
             }
         }
@@ -222,8 +211,8 @@ public class AggregationWorker implements CleanupIF {
      * ?.
      */
     private void handlePossibleIntemediateIndexFileLimit() {
-        if (INTERMEDIATE_INDEX_FILE.length() > 1024 * Settings.getLong(
-                WaybackSettings.WAYBACK_AGGREGATOR_MAX_INTERMEDIATE_INDEX_FILE_SIZE)) {
+        if (INTERMEDIATE_INDEX_FILE.length() > 1024 * Settings
+                .getLong(WaybackSettings.WAYBACK_AGGREGATOR_MAX_INTERMEDIATE_INDEX_FILE_SIZE)) {
             handleFinalIndexFileMerge();
         }
     }
@@ -232,9 +221,8 @@ public class AggregationWorker implements CleanupIF {
      * See package description for the concrete handling of larger index files.
      */
     private void handleFinalIndexFileMerge() {
-        if (INTERMEDIATE_INDEX_FILE.length() + FINAL_INDEX_FILE.length()
-            > 1024 * Settings.getLong(
-                WaybackSettings.WAYBACK_AGGREGATOR_MAX_MAIN_INDEX_FILE_SIZE)) {
+        if (INTERMEDIATE_INDEX_FILE.length() + FINAL_INDEX_FILE.length() > 1024 * Settings
+                .getLong(WaybackSettings.WAYBACK_AGGREGATOR_MAX_MAIN_INDEX_FILE_SIZE)) {
 
             rolloverFinalIndexFiles();
         }
@@ -242,16 +230,13 @@ public class AggregationWorker implements CleanupIF {
         if (!FINAL_INDEX_FILE.exists()) {
             INTERMEDIATE_INDEX_FILE.renameTo(FINAL_INDEX_FILE);
             if (log.isDebugEnabled()) {
-                log.debug("Promoting Intermediate Index file to final index "
-                        + "file '" + FINAL_INDEX_FILE.getAbsolutePath() + "'.");
+                log.debug("Promoting Intermediate Index file to final index " + "file '"
+                        + FINAL_INDEX_FILE.getAbsolutePath() + "'.");
             }
         } else {
-            aggregator.mergeFiles(new File[]{FINAL_INDEX_FILE,
-                                             INTERMEDIATE_INDEX_FILE},
-                                  tempFinalIndexFile);
+            aggregator.mergeFiles(new File[] { FINAL_INDEX_FILE, INTERMEDIATE_INDEX_FILE }, tempFinalIndexFile);
             if (log.isDebugEnabled()) {
-                log.debug(
-                        "Merged intermediate file into final index file");
+                log.debug("Merged intermediate file into final index file");
             }
 
             tempFinalIndexFile.renameTo(FINAL_INDEX_FILE);
@@ -262,8 +247,7 @@ public class AggregationWorker implements CleanupIF {
         try {
             INTERMEDIATE_INDEX_FILE.createNewFile();
         } catch (IOException e) {
-            log.error("Failed to create new Intermediate Index file",
-                      e);
+            log.error("Failed to create new Intermediate Index file", e);
         }
 
     }
@@ -275,17 +259,15 @@ public class AggregationWorker implements CleanupIF {
      */
     private void rolloverFinalIndexFiles() {
         if (log.isInfoEnabled()) {
-            log.info(
-                    "Rolling over the final index files.");
+            log.info("Rolling over the final index files.");
         }
 
         // Get a list of all final wayback index files
-        int numberOverFinalIndexFiles = indexOutputDir.list(
-                new FilenameFilter() {
-                    public boolean accept(File dir, String name) {
-                        return name.indexOf(FINAL_INDEX_FILE.getName()) != -1;
-                    }
-                }).length;
+        int numberOverFinalIndexFiles = indexOutputDir.list(new FilenameFilter() {
+            public boolean accept(File dir, String name) {
+                return name.indexOf(FINAL_INDEX_FILE.getName()) != -1;
+            }
+        }).length;
 
         for (int i = numberOverFinalIndexFiles - 1; i >= 0; i--) {
             String nameOfFileToRename;
@@ -295,8 +277,7 @@ public class AggregationWorker implements CleanupIF {
                 nameOfFileToRename = FINAL_INDEX_FILE.getName() + "." + i;
             }
             File fileToRename = new File(indexOutputDir, nameOfFileToRename);
-            File newName = new File(indexOutputDir,
-                                    FINAL_INDEX_FILE.getName() + "." + (i + 1));
+            File newName = new File(indexOutputDir, FINAL_INDEX_FILE.getName() + "." + (i + 1));
             fileToRename.renameTo(newName);
         }
     }
@@ -307,20 +288,17 @@ public class AggregationWorker implements CleanupIF {
     }
 
     /**
-     * Creates the needed working directories. Also checks whether a temp 
-     * directory exists, which might be an indication of a unclean shutdown. 
+     * Creates the needed working directories. Also checks whether a temp
+     * directory exists, which might be an indication of a unclean shutdown.
      */
     protected void initialize() {
         FileUtils.createDir(indexOutputDir);
         if (temporaryDir.exists()) {
             log.warn("An temporary Aggregator dir ("
-                    + Settings.getFile(
-                            WaybackSettings.WAYBACK_AGGREGATOR_TEMP_DIR)
-                            .getAbsolutePath()
+                    + Settings.getFile(WaybackSettings.WAYBACK_AGGREGATOR_TEMP_DIR).getAbsolutePath()
                     + ") already exists. This indicates that the previous "
                     + "running aggregator wasn't shutdown cleanly. "
-                    + "The temp dirs will be removed and the aggregation "
-                    + "on the indexes will be restarted");
+                    + "The temp dirs will be removed and the aggregation " + "on the indexes will be restarted");
         }
         FileUtils.removeRecursively(temporaryDir);
         FileUtils.createDir(temporaryDir);

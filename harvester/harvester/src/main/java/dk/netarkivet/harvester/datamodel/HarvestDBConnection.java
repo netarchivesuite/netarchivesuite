@@ -50,9 +50,9 @@ import dk.netarkivet.common.utils.Settings;
  * <li><em>PostgreSQL:</em> scripts/postgresql/netarchivesuite_init.sql</li>
  * </ul>
  *
- * The implementation relies on a connection pool. Once acquired through
- * the get() method, a connection must be explicitly returned to the pool
- * by calling the release(Connection) method.
+ * The implementation relies on a connection pool. Once acquired through the
+ * get() method, a connection must be explicitly returned to the pool by calling
+ * the release(Connection) method.
  *
  * THis class is intended to be used statically, and hence cannot be
  * instantiated and is final.
@@ -73,8 +73,8 @@ public final class HarvestDBConnection {
     }
 
     /**
-     * Get a connection to the harvest definition database from the pool.
-     * The pool is configured via the following configuration properties:
+     * Get a connection to the harvest definition database from the pool. The
+     * pool is configured via the following configuration properties:
      * <ul>
      * <li>@see {@link CommonSettings#DB_POOL_MIN_SIZE}</li>
      * <li>@see {@link CommonSettings#DB_POOL_MAX_SIZE}</li>
@@ -82,9 +82,10 @@ public final class HarvestDBConnection {
      * </ul>
      * Note that the connection obtained must be returned to the pool by calling
      * {@link #release(Connection)}.
+     * 
      * @return a connection to the harvest definition database
-     * @throws IOFailure if we cannot connect to the database (or find the
-     * driver).
+     * @throws IOFailure
+     *             if we cannot connect to the database (or find the driver).
      */
     public static synchronized Connection get() {
         DBSpecifics dbSpec = DBSpecifics.getInstance();
@@ -94,7 +95,8 @@ public final class HarvestDBConnection {
             if (dataSource == null) {
                 initDataSource(dbSpec, jdbcUrl);
                 // this is only done for embedded database!
-                // For external databases, use the HarvestdatabaseUpdateApplication tool
+                // For external databases, use the
+                // HarvestdatabaseUpdateApplication tool
                 if (dbSpec instanceof DerbyEmbeddedSpecifics) {
                     dbSpec.updateTables();
                 }
@@ -103,34 +105,35 @@ public final class HarvestDBConnection {
             final Connection connection = dataSource.getConnection();
             return connection;
         } catch (SQLException e) {
-            final String message = "Can't connect to database with DBurl: '"
-                + jdbcUrl + "' using driver '"
-                + dbSpec.getDriverClassName() + "'" + "\n"
-                + ExceptionUtils.getSQLExceptionCause(e);
+            final String message = "Can't connect to database with DBurl: '" + jdbcUrl + "' using driver '"
+                    + dbSpec.getDriverClassName() + "'" + "\n" + ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         }
 
     }
 
-    /** Update a table by executing all the statements in
-     *  the updates String array. If newVersion=1 then the
-     *  table is created. Note that this method does not make
-     *  any checks that the SQL statements in the updates
-     *  parameter actually update or create the correct table.
+    /**
+     * Update a table by executing all the statements in the updates String
+     * array. If newVersion=1 then the table is created. Note that this method
+     * does not make any checks that the SQL statements in the updates parameter
+     * actually update or create the correct table.
      *
-     * @param table The table to update
-     * @param newVersion The version that the table should end up at
-     * @param updates The SQL update statements that makes the necessary
-     * updates.
-     * @throws IOFailure in case of problems in interacting with the database
+     * @param table
+     *            The table to update
+     * @param newVersion
+     *            The version that the table should end up at
+     * @param updates
+     *            The SQL update statements that makes the necessary updates.
+     * @throws IOFailure
+     *             in case of problems in interacting with the database
      */
     protected static void updateTable(final String table, final int newVersion, final String... updates) {
 
         Connection c = get();
         updateTable(c, table, newVersion, updates);
     }
-    
+
     public static void updateTable(Connection c, final String table, final int newVersion, final String... updates) {
         log.info("Updating table '{}' to version {}", table, newVersion);
 
@@ -139,8 +142,8 @@ public final class HarvestDBConnection {
         if (newVersion == 1) {
             updateSchemaversionSql = "INSERT INTO schemaversions(tablename, version) VALUES ('" + table + "', 1)";
         } else {
-            updateSchemaversionSql = "UPDATE schemaversions SET version = "
-                + newVersion + " WHERE tablename = '" + table + "'";
+            updateSchemaversionSql = "UPDATE schemaversions SET version = " + newVersion + " WHERE tablename = '"
+                    + table + "'";
         }
         System.arraycopy(updates, 0, sqlStatements, 0, updates.length);
         sqlStatements[updates.length] = updateSchemaversionSql;
@@ -151,13 +154,12 @@ public final class HarvestDBConnection {
             release(c);
         }
     }
-    
 
     /**
-     * Method for retrieving the url for the harvest definition database.
-     * This url will be constructed from the base-url, the machine,
-     * the port and the directory. If the database is internal, then only the
-     * base-url should have a value.
+     * Method for retrieving the url for the harvest definition database. This
+     * url will be constructed from the base-url, the machine, the port and the
+     * directory. If the database is internal, then only the base-url should
+     * have a value.
      *
      * @return The url for the harvest definition database.
      */
@@ -167,21 +169,21 @@ public final class HarvestDBConnection {
 
         // append the machine part of the url, if it exists.
         String tmp = Settings.get(CommonSettings.DB_MACHINE);
-        if(!tmp.isEmpty()) {
+        if (!tmp.isEmpty()) {
             res.append("://");
             res.append(tmp);
         }
 
         // append the machine part of the url, if it exists.
         tmp = Settings.get(CommonSettings.DB_PORT);
-        if(!tmp.isEmpty()) {
+        if (!tmp.isEmpty()) {
             res.append(":");
             res.append(tmp);
         }
 
         // append the machine part of the url, if it exists.
         tmp = Settings.get(CommonSettings.DB_DIR);
-        if(!tmp.isEmpty()) {
+        if (!tmp.isEmpty()) {
             res.append("/");
             res.append(tmp);
         }
@@ -215,30 +217,35 @@ public final class HarvestDBConnection {
 
     /**
      * Helper method to return a connection to the pool.
-     * @param connection a connection
+     * 
+     * @param connection
+     *            a connection
      */
     public static synchronized void release(Connection connection) {
         ArgumentNotValid.checkNotNull(connection, "connection");
         try {
             connection.close();
         } catch (SQLException e) {
-           log.error("Failed to close connection", e);
+            log.error("Failed to close connection", e);
         }
     }
 
     /**
      * Initializes the connection pool.
-     * @param dbSpec the object representing the chosen DB target system.
-     * @param jdbcUrl the JDBC URL to connect to.
-     * @throws SQLException 
+     * 
+     * @param dbSpec
+     *            the object representing the chosen DB target system.
+     * @param jdbcUrl
+     *            the JDBC URL to connect to.
+     * @throws SQLException
      */
     private static void initDataSource(DBSpecifics dbSpec, String jdbcUrl) throws SQLException {
         dataSource = new ComboPooledDataSource();
         try {
             dataSource.setDriverClass(dbSpec.getDriverClassName());
         } catch (PropertyVetoException e) {
-            final String message = "Failed to set datasource JDBC driver class '"
-            		+ dbSpec.getDriverClassName() + "'" + "\n";
+            final String message = "Failed to set datasource JDBC driver class '" + dbSpec.getDriverClassName() + "'"
+                    + "\n";
             throw new IOFailure(message, e);
         }
         dataSource.setJdbcUrl(jdbcUrl);
@@ -256,13 +263,12 @@ public final class HarvestDBConnection {
         dataSource.setAcquireIncrement(Settings.getInt(CommonSettings.DB_POOL_ACQ_INC));
 
         // Configure idle connection testing
-        int testPeriod =
-            Settings.getInt(CommonSettings.DB_POOL_IDLE_CONN_TEST_PERIOD);
-        //TODO This looks odd. Why is checkin-testing inside this if statement?
+        int testPeriod = Settings.getInt(CommonSettings.DB_POOL_IDLE_CONN_TEST_PERIOD);
+        // TODO This looks odd. Why is checkin-testing inside this if statement?
         if (testPeriod > 0) {
             dataSource.setIdleConnectionTestPeriod(testPeriod);
-            dataSource.setTestConnectionOnCheckin(Settings.getBoolean(
-            		CommonSettings.DB_POOL_IDLE_CONN_TEST_ON_CHECKIN));
+            dataSource
+                    .setTestConnectionOnCheckin(Settings.getBoolean(CommonSettings.DB_POOL_IDLE_CONN_TEST_ON_CHECKIN));
             String testQuery = Settings.get(CommonSettings.DB_POOL_IDLE_CONN_TEST_QUERY);
             if (!testQuery.isEmpty()) {
                 dataSource.setPreferredTestQuery(testQuery);
@@ -273,30 +279,19 @@ public final class HarvestDBConnection {
         dataSource.setMaxStatements(Settings.getInt(CommonSettings.DB_POOL_MAX_STM));
         dataSource.setMaxStatementsPerConnection(Settings.getInt(CommonSettings.DB_POOL_MAX_STM_PER_CONN));
 
-        //dataSource.setTestConnectionOnCheckout(true);
-        //dataSource.setBreakAfterAcquireFailure(false);
-        //dataSource.setAcquireRetryAttempts(10000);
-        //dataSource.setAcquireRetryDelay(10);
+        // dataSource.setTestConnectionOnCheckout(true);
+        // dataSource.setBreakAfterAcquireFailure(false);
+        // dataSource.setAcquireRetryAttempts(10000);
+        // dataSource.setAcquireRetryDelay(10);
 
         if (log.isInfoEnabled()) {
-            log.info("Connection pool initialized with the following values:\n"
-            		+ "- minPoolSize={}\n"
-            		+ "- maxPoolSize={}\n"
-            		+ "- acquireIncrement={}\n"
-            		+ "- maxStatements={}\n"
-            		+ "- maxStatementsPerConnection={}\n"
-            		+ "- idleConnTestPeriod={}\n"
-    				+ "- idleConnTestQuery='{}'\n"
-					+ "- idleConnTestOnCheckin={}",
-					dataSource.getMinPoolSize(),
-					dataSource.getMaxPoolSize(),
-					dataSource.getAcquireIncrement(),
-					dataSource.getMaxStatements(),
-					dataSource.getMaxStatementsPerConnection(),
-					dataSource.getIdleConnectionTestPeriod(),
-					dataSource.getPreferredTestQuery(),
-					dataSource.isTestConnectionOnCheckin()
-			);
+            log.info("Connection pool initialized with the following values:\n" + "- minPoolSize={}\n"
+                    + "- maxPoolSize={}\n" + "- acquireIncrement={}\n" + "- maxStatements={}\n"
+                    + "- maxStatementsPerConnection={}\n" + "- idleConnTestPeriod={}\n" + "- idleConnTestQuery='{}'\n"
+                    + "- idleConnTestOnCheckin={}", dataSource.getMinPoolSize(), dataSource.getMaxPoolSize(),
+                    dataSource.getAcquireIncrement(), dataSource.getMaxStatements(),
+                    dataSource.getMaxStatementsPerConnection(), dataSource.getIdleConnectionTestPeriod(),
+                    dataSource.getPreferredTestQuery(), dataSource.isTestConnectionOnCheckin());
         }
     }
 

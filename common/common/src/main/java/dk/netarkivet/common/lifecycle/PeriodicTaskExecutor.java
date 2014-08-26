@@ -37,11 +37,10 @@ import dk.netarkivet.common.utils.TimeUtils;
 
 /**
  * This class wraps a {@link ScheduledThreadPoolExecutor}, allowing to
- * periodically run one or several {@link Runnable} tasks
- * (fixed rate execution).
- * It actively monitors task execution in a separate "checker" thread, allowing
- * to catch and process any {@link RuntimeException} that would be thrown during
- * task execution, which cannot be done by simply overriding
+ * periodically run one or several {@link Runnable} tasks (fixed rate
+ * execution). It actively monitors task execution in a separate "checker"
+ * thread, allowing to catch and process any {@link RuntimeException} that would
+ * be thrown during task execution, which cannot be done by simply overriding
  * {@link ScheduledThreadPoolExecutor#afterExecute}.
  *
  * TODO Currently {@link RuntimeException} are only caught and logged, but the
@@ -58,13 +57,19 @@ public final class PeriodicTaskExecutor {
      */
     public static class PeriodicTask {
 
-        /** A string identifying the task. It should be unique for this executor, though there is no such check made. */
+        /**
+         * A string identifying the task. It should be unique for this executor,
+         * though there is no such check made.
+         */
         private final String taskId;
 
         /** The actual task implementation. */
         private final Runnable task;
 
-        /** Delay in seconds between starting the executor and the initial task execution. */
+        /**
+         * Delay in seconds between starting the executor and the initial task
+         * execution.
+         */
         private final long secondsBeforeFirstExec;
 
         /** Delay in seconds between two successive task executions. */
@@ -75,12 +80,17 @@ public final class PeriodicTaskExecutor {
 
         /**
          * Builds a new task.
-         * @param taskId the task id string (should be unique)
-         * @param task the actual {@link Runnable} object.
-         * @param secondsBeforeFirstExec the delay in seconds between starting
-         * the executor and the initial task execution.
-         * @param secondsBetweenExec the delay in seconds between two successive
-         * task executions.
+         * 
+         * @param taskId
+         *            the task id string (should be unique)
+         * @param task
+         *            the actual {@link Runnable} object.
+         * @param secondsBeforeFirstExec
+         *            the delay in seconds between starting the executor and the
+         *            initial task execution.
+         * @param secondsBetweenExec
+         *            the delay in seconds between two successive task
+         *            executions.
          */
         public PeriodicTask(String taskId, Runnable task, long secondsBeforeFirstExec, long secondsBetweenExec) {
             super();
@@ -89,11 +99,13 @@ public final class PeriodicTaskExecutor {
             this.secondsBeforeFirstExec = secondsBeforeFirstExec;
             this.secondsBetweenExec = secondsBetweenExec;
         }
-        
+
         /**
-         * Set the designated ScheduledFuture object to the one given 
-         * as argument.
-         * @param future a given ScheduledFuture 
+         * Set the designated ScheduledFuture object to the one given as
+         * argument.
+         * 
+         * @param future
+         *            a given ScheduledFuture
          */
         void setFuture(ScheduledFuture<?> future) {
             this.future = future;
@@ -104,7 +116,10 @@ public final class PeriodicTaskExecutor {
     /** The actual executor. One thread dedicated to each task. */
     private final ScheduledThreadPoolExecutor exec;
 
-    /** Execution status flag, used to control the termination of the checker thread. */
+    /**
+     * Execution status flag, used to control the termination of the checker
+     * thread.
+     */
     private boolean alive = false;
 
     /**
@@ -118,12 +133,16 @@ public final class PeriodicTaskExecutor {
 
     /**
      * Builds an executor for a single task.
-     * @param taskId the task id string (should be unique)
-     * @param task the actual {@link Runnable} object.
-     * @param secondsBeforeFirstExec the delay in seconds between starting
-     * the executor and the initial task execution.
-     * @param secondsBetweenExec the delay in seconds between two successive
-     * task executions.
+     * 
+     * @param taskId
+     *            the task id string (should be unique)
+     * @param task
+     *            the actual {@link Runnable} object.
+     * @param secondsBeforeFirstExec
+     *            the delay in seconds between starting the executor and the
+     *            initial task execution.
+     * @param secondsBetweenExec
+     *            the delay in seconds between two successive task executions.
      */
     public PeriodicTaskExecutor(String taskId, Runnable task, long secondsBeforeFirstExec, long secondsBetweenExec) {
         this(new PeriodicTask(taskId, task, secondsBeforeFirstExec, secondsBetweenExec));
@@ -131,7 +150,9 @@ public final class PeriodicTaskExecutor {
 
     /**
      * Builds an executor for a set of tasks.
-     * @param tasks the task definitions.
+     * 
+     * @param tasks
+     *            the task definitions.
      */
     public PeriodicTaskExecutor(PeriodicTask... tasks) {
         ArgumentNotValid.checkNotNull(tasks, "tasks");
@@ -144,11 +165,8 @@ public final class PeriodicTaskExecutor {
 
         String id = "";
         for (PeriodicTask t : tasks) {
-            ScheduledFuture<?> future = exec.scheduleAtFixedRate(
-                    t.task,
-                    t.secondsBeforeFirstExec,
-                    t.secondsBetweenExec,
-                    TimeUnit.SECONDS);
+            ScheduledFuture<?> future = exec.scheduleAtFixedRate(t.task, t.secondsBeforeFirstExec,
+                    t.secondsBetweenExec, TimeUnit.SECONDS);
             t.setFuture(future);
             id += "_" + t.taskId;
         }

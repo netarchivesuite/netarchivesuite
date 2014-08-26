@@ -35,20 +35,16 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import java.io.File;
 
 /**
- * Created by IntelliJ IDEA.
- * User: csr
- * Date: Mar 14, 2005
- * Time: 11:35:26 AM
- * To change this template use File | Settings | File Templates.
+ * Created by IntelliJ IDEA. User: csr Date: Mar 14, 2005 Time: 11:35:26 AM To
+ * change this template use File | Settings | File Templates.
  *
- *  setup and teardown methods for connecting to two bitarchives
+ * setup and teardown methods for connecting to two bitarchives
  */
 public class ServerSetUp {
     /*
      * The head test directory
      */
-    public static final File TEST_DIR =
-            new File("tests/dk/netarkivet/archive/arcrepository/data/store");
+    public static final File TEST_DIR = new File("tests/dk/netarkivet/archive/arcrepository/data/store");
 
     /** The directory used for controller admindata. */
     private static final File ADMINDATA_DIR = new File(TEST_DIR, "admindata");
@@ -104,7 +100,7 @@ public class ServerSetUp {
         rs.tearDown();
     }
 
-     public static ArcRepository getArcRepository() {
+    public static ArcRepository getArcRepository() {
         return arcRepos;
     }
 }

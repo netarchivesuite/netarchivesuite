@@ -73,13 +73,12 @@ public class DeduplicateToCDXApplicationTester {
     public void testGenerateCDX() throws IOException {
         File file1 = new File(TestInfo.WORKING_DIR, "dedup_crawl_log.txt");
         File file2 = new File(TestInfo.WORKING_DIR, "dedup_crawl_log2.txt");
-        String[] files = new String[] {file1.getAbsolutePath(), file2.getAbsolutePath()};
+        String[] files = new String[] { file1.getAbsolutePath(), file2.getAbsolutePath() };
         DeduplicateToCDXApplication app = new DeduplicateToCDXApplication();
         app.generateCDX(files);
         String output = ((ByteArrayOutputStream) new_std_out).toString();
         String error = ((ByteArrayOutputStream) new_std_err).toString();
         assertTrue("Error string should be empty", error.equals(""));
-        assertTrue("Expect plenty of cdx results, not '" + output + "'",
-                   output.split("\n").length > 20);
+        assertTrue("Expect plenty of cdx results, not '" + output + "'", output.split("\n").length > 20);
     }
 }

@@ -28,21 +28,20 @@ import dk.netarkivet.common.utils.CleanupIF;
 import java.util.HashSet;
 import java.util.Set;
 
-/** Index server.
- * Handles request for lucene indexes of crawl logs and cdx indexes of jobs,
- * using two multifilebasedcache objects as handlers.
+/**
+ * Index server. Handles request for lucene indexes of crawl logs and cdx
+ * indexes of jobs, using two multifilebasedcache objects as handlers.
  *
  * The server sets up handlers for three kinds of indexes (as defined by
- * RequestType):
- * A CDX index, where each index is one file, gzip-compressed.
- * A DEDUP_CRAWL_LOG index, where each index is multiple files, gzip-compressed,
- * making up a Lucene index of non-HTML files.
- * A FULL_CRAWL_LOG index, where each index is multiple files, gzip-compressed,
- * making up a Lucene index of all files.
+ * RequestType): A CDX index, where each index is one file, gzip-compressed. A
+ * DEDUP_CRAWL_LOG index, where each index is multiple files, gzip-compressed,
+ * making up a Lucene index of non-HTML files. A FULL_CRAWL_LOG index, where
+ * each index is multiple files, gzip-compressed, making up a Lucene index of
+ * all files.
  * */
-public class IndexServer implements CleanupIF{
+public class IndexServer implements CleanupIF {
 
-	/** The remote server that hands us indexes. */
+    /** The remote server that hands us indexes. */
     private IndexRequestServerInterface remoteServer;
     /** The singleton instance of this class. */
     private static IndexServer instance;
@@ -52,12 +51,12 @@ public class IndexServer implements CleanupIF{
         FileBasedCache<Set<Long>> cdxCache = new CDXIndexCache();
         FileBasedCache<Set<Long>> dedupCrawlLogCache = new DedupCrawlLogIndexCache();
         FileBasedCache<Set<Long>> fullCrawlLogCache = new FullCrawlLogIndexCache();
-        //prompt the empty indices to pre-generated
+        // prompt the empty indices to pre-generated
         Set<Long> emptySet = new HashSet<Long>();
         cdxCache.getIndex(emptySet);
         dedupCrawlLogCache.getIndex(emptySet);
         fullCrawlLogCache.getIndex(emptySet);
-                 
+
         remoteServer = IndexRequestServerFactory.getInstance();
 
         remoteServer.setHandler(RequestType.CDX, cdxCache);
@@ -66,7 +65,8 @@ public class IndexServer implements CleanupIF{
         remoteServer.start();
     }
 
-    /** Get the unique index server instance.
+    /**
+     * Get the unique index server instance.
      *
      * @return The instance;
      */
@@ -77,7 +77,8 @@ public class IndexServer implements CleanupIF{
         return instance;
     }
 
-    /** Close the server.
+    /**
+     * Close the server.
      */
     public void cleanup() {
         remoteServer.close();

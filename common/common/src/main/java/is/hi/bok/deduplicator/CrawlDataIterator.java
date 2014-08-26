@@ -31,46 +31,53 @@ import java.io.IOException;
  * @author Kristinn Sigur&eth;sson
  */
 public abstract class CrawlDataIterator {
-    
+
     String source;
-    
+
     /**
-     * Constructor. 
+     * Constructor.
      * 
-     * @param source The location of the crawl data. The meaning of this 
-     *               value may vary based on the implementation of concrete
-     *               subclasses. Typically it will refer to a directory or a
-     *               file.
+     * @param source
+     *            The location of the crawl data. The meaning of this value may
+     *            vary based on the implementation of concrete subclasses.
+     *            Typically it will refer to a directory or a file.
      */
-    public CrawlDataIterator(String source){
+    public CrawlDataIterator(String source) {
         this.source = source;
     }
-    
+
     /**
      * Are there more elements?
+     * 
      * @return true if there are more elements, false otherwise
-     * @throws IOException If an error occurs accessing the crawl data.
+     * @throws IOException
+     *             If an error occurs accessing the crawl data.
      */
     public abstract boolean hasNext() throws IOException;
-    
+
     /**
      * Get the next {@link CrawlDataItem}.
+     * 
      * @return the next CrawlDataItem. If there are no further elements then
      *         null will be returned.
-     * @throws IOException If an error occurs accessing the crawl data.
+     * @throws IOException
+     *             If an error occurs accessing the crawl data.
      */
     public abstract CrawlDataItem next() throws IOException;
-    
+
     /**
      * Close any resources held open to read the crawl data.
-     * @throws IOException If an error occurs closing access to crawl data.
+     * 
+     * @throws IOException
+     *             If an error occurs closing access to crawl data.
      */
     public abstract void close() throws IOException;
-    
+
     /**
      * A short, human readable, string about what source this iterator uses.
-     * I.e. "Iterator for Heritrix style crawl.log" etc. 
-     * @return A short, human readable, string about what source this iterator 
+     * I.e. "Iterator for Heritrix style crawl.log" etc.
+     * 
+     * @return A short, human readable, string about what source this iterator
      *         uses.
      */
     public abstract String getSourceType();

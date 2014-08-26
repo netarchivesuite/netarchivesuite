@@ -34,27 +34,28 @@ import dk.netarkivet.common.utils.batch.ChecksumJob;
 /**
  * Method for storing a checksum along with its filename.
  * 
- * This class also holds the method for extracting the results of a 
- * ChecksumJob into a list of ChecksumEntry, which is used by the 
- * BitPreservationDAO.
+ * This class also holds the method for extracting the results of a ChecksumJob
+ * into a list of ChecksumEntry, which is used by the BitPreservationDAO.
  */
 public class ChecksumEntry extends Object {
-    /** The name of the file for which the checksum belongs.*/
+    /** The name of the file for which the checksum belongs. */
     private String filename;
-    /** The checksum of the file.*/
+    /** The checksum of the file. */
     private String checksum;
-    
+
     /**
      * Constructor.
      * 
-     * @param filename The name of the file.
-     * @param checksum The checksum of the file.
+     * @param filename
+     *            The name of the file.
+     * @param checksum
+     *            The checksum of the file.
      */
     public ChecksumEntry(String filename, String checksum) {
         this.filename = filename;
         this.checksum = checksum;
     }
-    
+
     /**
      * Retrieves the filename.
      * 
@@ -63,7 +64,7 @@ public class ChecksumEntry extends Object {
     public String getFilename() {
         return filename;
     }
-    
+
     /**
      * Retrieves the checksum.
      * 
@@ -72,7 +73,7 @@ public class ChecksumEntry extends Object {
     public String getChecksum() {
         return checksum;
     }
-    
+
     /**
      * Retrieval of the hashCode of this instance.
      * 
@@ -82,11 +83,11 @@ public class ChecksumEntry extends Object {
         final int prime = 31;
         int result = 1;
         result = prime * result;
-        if(checksum != null) {
+        if (checksum != null) {
             result += checksum.hashCode();
         }
         result = prime * result;
-        if(filename != null) {
+        if (filename != null) {
             result += filename.hashCode();
         }
         return result;
@@ -94,13 +95,14 @@ public class ChecksumEntry extends Object {
 
     /**
      * Method for testing whether a ChecksumEntry is identical to another
-     * ChecksumEntry. 
-     * 
-     * @param obj The object to evaluate whether it is identical to this 
      * ChecksumEntry.
+     * 
+     * @param obj
+     *            The object to evaluate whether it is identical to this
+     *            ChecksumEntry.
      * @return Whether the argument has the same values as this ChecksumEntry.
-     * It returns false if the argument is not of type ChecksumEntry, or if
-     * it has either different filename or different checksum.
+     *         It returns false if the argument is not of type ChecksumEntry, or
+     *         if it has either different filename or different checksum.
      */
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -126,7 +128,7 @@ public class ChecksumEntry extends Object {
             }
         } else if (!filename.equals(other.filename)) {
             return false;
-        }       
+        }
         return true;
     }
 
@@ -138,20 +140,20 @@ public class ChecksumEntry extends Object {
     public String toString() {
         return filename + "##" + checksum;
     }
-    
+
     /**
-     * Method for changing the resulting file of a checksum job into a list of 
+     * Method for changing the resulting file of a checksum job into a list of
      * ChecksumEntry.
      * 
-     * @param checksumjobOutput The file with the output from a checksum job.
+     * @param checksumjobOutput
+     *            The file with the output from a checksum job.
      * @return The list of the checksum entries.
-     * @throws ArgumentNotValid If the checksumjobOutput is null.
+     * @throws ArgumentNotValid
+     *             If the checksumjobOutput is null.
      */
-    public static List<ChecksumEntry> parseChecksumJob(File checksumjobOutput) 
-            throws ArgumentNotValid {
-        ArgumentNotValid.checkNotNull(checksumjobOutput, 
-                "File checksumjobOutput");
-        
+    public static List<ChecksumEntry> parseChecksumJob(File checksumjobOutput) throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(checksumjobOutput, "File checksumjobOutput");
+
         // make the result list.
         List<ChecksumEntry> res = new ArrayList<ChecksumEntry>();
 

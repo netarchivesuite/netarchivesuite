@@ -31,43 +31,51 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 
 /**
- *  RemoteFile: Interface for encapsulating remote files.
- *  Enables us to transmit large files between system components situated
- *  on different machines.
- *  Our current JMS broker(s) does not allow large message
- *  (i.e. messages > 70 MB).
+ * RemoteFile: Interface for encapsulating remote files. Enables us to transmit
+ * large files between system components situated on different machines. Our
+ * current JMS broker(s) does not allow large message (i.e. messages > 70 MB).
  */
 public interface RemoteFile extends Serializable {
 
     /**
-     * Copy remotefile to local disk storage.
-     * Used by the data recipient
-     * @param destFile local File
-     * @throws IOFailure on communication trouble.
-     * @throws ArgumentNotValid on null parameter or non-writable file
+     * Copy remotefile to local disk storage. Used by the data recipient
+     * 
+     * @param destFile
+     *            local File
+     * @throws IOFailure
+     *             on communication trouble.
+     * @throws ArgumentNotValid
+     *             on null parameter or non-writable file
      */
     void copyTo(File destFile);
 
     /**
      * Write the contents of this remote file to an output stream.
-     * @param out OutputStream that the data will be written to.  This stream
-     * will not be closed by this operation.
-     * @throws IOFailure If append operation fails
-     * @throws ArgumentNotValid on null parameter
+     * 
+     * @param out
+     *            OutputStream that the data will be written to. This stream
+     *            will not be closed by this operation.
+     * @throws IOFailure
+     *             If append operation fails
+     * @throws ArgumentNotValid
+     *             on null parameter
      */
     void appendTo(OutputStream out);
 
     /**
      * Get an inputstream that contains the data transferred in this RemoteFile.
-     * @return A stream object with the data in the object.  Note that the
-     * close() method of this may throw exceptions if e.g. a transmission error
-     * is detected.
-     * @throws IOFailure on communication trouble.
+     * 
+     * @return A stream object with the data in the object. Note that the
+     *         close() method of this may throw exceptions if e.g. a
+     *         transmission error is detected.
+     * @throws IOFailure
+     *             on communication trouble.
      */
     InputStream getInputStream();
 
     /**
      * Return the file name.
+     * 
      * @return the file name
      */
     String getName();
@@ -75,6 +83,7 @@ public interface RemoteFile extends Serializable {
     /**
      * Returns a MD5 Checksum on the file. May return null, if checksums not
      * supported for this operation.
+     * 
      * @return MD5 checksum
      */
     String getChecksum();
@@ -86,6 +95,7 @@ public interface RemoteFile extends Serializable {
 
     /**
      * Returns the total size of the remote file.
+     * 
      * @return Size of the remote file.
      */
     long getSize();

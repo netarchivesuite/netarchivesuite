@@ -27,10 +27,9 @@ import java.util.regex.Matcher;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
-
 /**
- * Unit-tests for the Constants class.
- * Only tests the static method getIdMatcher.
+ * Unit-tests for the Constants class. Only tests the static method
+ * getIdMatcher.
  */
 public class ConstantsTester {
 
@@ -38,8 +37,7 @@ public class ConstantsTester {
     public void testGetIdMatcher() throws Exception {
         Matcher m1 = Constants.getIdMatcher();
         Matcher m2 = Constants.getIdMatcher();
-        assertNotSame("Two calls to getIdMatcher() should return two objects",
-                m1, m2);
+        assertNotSame("Two calls to getIdMatcher() should return two objects", m1, m2);
         m1.reset("foobar_87.xml");
         assertTrue("Should match properly formed string", m1.matches());
         assertEquals("Group 1 should be set to the number", "87", m1.group(1));

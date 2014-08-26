@@ -26,10 +26,14 @@ import java.io.File;
 
 public class TestInfo {
 
-	private static final File BAMON_BASEDIR = new File("tests/dk/netarkivet/archive/bitarchive/distribute/data");
+    private static final File BAMON_BASEDIR = new File("tests/dk/netarkivet/archive/bitarchive/distribute/data");
     static final File BAMON_ORIGINALS = new File(BAMON_BASEDIR, "originals");
-    static final File BAMON_WORKING = new File(BAMON_BASEDIR, "working") ;
-    static final File BAMON_TMP_FILE = new File(BAMON_ORIGINALS,"tmpout.txt");//Non-existing, to put data in
+    static final File BAMON_WORKING = new File(BAMON_BASEDIR, "working");
+    static final File BAMON_TMP_FILE = new File(BAMON_ORIGINALS, "tmpout.txt");// Non-existing,
+                                                                               // to
+                                                                               // put
+                                                                               // data
+                                                                               // in
 
     static final File MONITOR_TEST_DIR = new File("tests/dk/netarkivet/archive/bitarchive/distribute/data/monitor");
     static final File DUMMY_FILE = new File(MONITOR_TEST_DIR, "dummyTestRemoteFile.txt");
@@ -48,10 +52,12 @@ public class TestInfo {
     static final long JUST_A_BIT_LONGER = 20;
 
     static final File DATADIR = new File("tests/dk/netarkivet/archive/bitarchive/distribute/data");
-    static final File TEMPDIR  = new File("tests/dk/netarkivet/archive/bitarchive/distribute/data/working");
+    static final File TEMPDIR = new File("tests/dk/netarkivet/archive/bitarchive/distribute/data/working");
 
-    static final File UPLOADMESSAGE_ORIGINALS_DIR = new File("tests/dk/netarkivet/archive/bitarchive/distribute/data/uploadmessage");
-    static final File UPLOADMESSAGE_TEMP_DIR = new File("tests/dk/netarkivet/archive/bitarchive/distribute/data/working");
+    static final File UPLOADMESSAGE_ORIGINALS_DIR = new File(
+            "tests/dk/netarkivet/archive/bitarchive/distribute/data/uploadmessage");
+    static final File UPLOADMESSAGE_TEMP_DIR = new File(
+            "tests/dk/netarkivet/archive/bitarchive/distribute/data/working");
     static final File UPLOADMESSAGE_TESTFILE_1 = new File(UPLOADMESSAGE_TEMP_DIR, "NetarchiveSuite-store1.arc");
     static final File UPLOADMESSAGE_TESTFILE_2 = new File(UPLOADMESSAGE_TEMP_DIR, "NetarchiveSuite-store2.arc");
 
@@ -62,15 +68,15 @@ public class TestInfo {
     static final File CORRECT_ARC_FILE = new File(BAMON_WORKING, "file-1.arc");
     static final File BAD_ARC_FILE = new File(BAMON_WORKING, "file-2.arc");
 
-    //Moved from BitArchiveServerTester:
+    // Moved from BitArchiveServerTester:
     static final File BA1_MAINDIR = new File(UPLOADMESSAGE_TEMP_DIR, "bitarchive1");
     static final File SERVER1_DIR = new File(UPLOADMESSAGE_TEMP_DIR, "server1");
-    //Files for testing RemoveAndGetFile:
+    // Files for testing RemoveAndGetFile:
     static final String BA1_FILENAME = "NetarchiveSuite-upload1.arc";
     static final File BA1_FILEDIR = new File(BA1_MAINDIR, "filedir");
     static final File BA1_ATTICDIR = new File(BA1_MAINDIR, "atticdir");
-    static final File BA1_ORG_FILE = new File(BA1_FILEDIR,BA1_FILENAME);
-    static final File BA1_ATTIC_FILE = new File(BA1_ATTICDIR,BA1_FILENAME);
+    static final File BA1_ORG_FILE = new File(BA1_FILEDIR, BA1_FILENAME);
+    static final File BA1_ATTIC_FILE = new File(BA1_ATTICDIR, BA1_FILENAME);
     static final String BA1_CHECKSUM = "d87cc8068fa49f3a4926ce4d1cdf14e1";
 
 }

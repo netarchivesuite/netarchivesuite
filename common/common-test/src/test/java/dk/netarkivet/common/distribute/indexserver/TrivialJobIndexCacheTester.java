@@ -39,13 +39,11 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
-
 /**
- * Unit tests for the TrivialJobIndexCache class. 
+ * Unit tests for the TrivialJobIndexCache class.
  */
 public class TrivialJobIndexCacheTester {
-    MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,
-            TestInfo.WORKING_DIR);
+    MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
     ReloadSettings rs = new ReloadSettings();
 
     @Before
@@ -66,16 +64,16 @@ public class TrivialJobIndexCacheTester {
         JobIndexCache cache = new TrivialJobIndexCache(RequestType.DEDUP_CRAWL_LOG);
         try {
             cache.getIndex(Collections.singleton(1L)).getIndexFile().getName();
-            fail("Expected IOFailure on non-existing cache file");                    
+            fail("Expected IOFailure on non-existing cache file");
         } catch (IOFailure e) {
-            //expected
+            // expected
         }
 
         Set<Long> jobs = new HashSet<Long>();
         jobs.add(2L);
         jobs.add(3L);
-        assertEquals("Should give the expected cache with the right jobs",
-                "2-3-DEDUP_CRAWL_LOG-cache", cache.getIndex(jobs).getIndexFile().getName());
+        assertEquals("Should give the expected cache with the right jobs", "2-3-DEDUP_CRAWL_LOG-cache",
+                cache.getIndex(jobs).getIndexFile().getName());
 
     }
 }

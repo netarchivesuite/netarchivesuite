@@ -52,7 +52,7 @@ import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 @Ignore("LoadableTestJob deleted from filesystem as surefire did not like it in the wrong location")
 public class LoadableFileBatchJobTester {
 
-	MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
+    MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
     private static final File FNORD_FILE = new File("fnord");
 
     @Before
@@ -165,7 +165,8 @@ public class LoadableFileBatchJobTester {
         assertNull("Should not have loaded a job after transfer before init", ((LoadableFileBatchJob) job1).loadedJob);
 
         // TODO log refactoring
-        //assertNotNull("Should have a log after transfer before init", ((LoadableFileBatchJob) job1).log);
+        // assertNotNull("Should have a log after transfer before init",
+        // ((LoadableFileBatchJob) job1).log);
 
         baos = new ByteArrayOutputStream();
         job1.initialize(baos);

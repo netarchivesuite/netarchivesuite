@@ -33,17 +33,19 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  *
  * @see NetarkivetMessage
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({ "serial" })
 public abstract class ArchiveMessage extends NetarkivetMessage {
     /**
      * Creates a new ArchiveMessage.
      *
-     * @param to        the initial receiver of the message
-     * @param replyTo   the initial sender of the message
-     * @throws ArgumentNotValid if to==replyTo or there is a null parameter.
+     * @param to
+     *            the initial receiver of the message
+     * @param replyTo
+     *            the initial sender of the message
+     * @throws ArgumentNotValid
+     *             if to==replyTo or there is a null parameter.
      */
-    protected ArchiveMessage(ChannelID to, ChannelID replyTo) 
-            throws ArgumentNotValid {
+    protected ArchiveMessage(ChannelID to, ChannelID replyTo) throws ArgumentNotValid {
         super(to, replyTo);
     }
 
@@ -53,7 +55,8 @@ public abstract class ArchiveMessage extends NetarkivetMessage {
      *
      * @see ArchiveMessageVisitor
      *
-     * @param v A message visitor
+     * @param v
+     *            A message visitor
      */
     public abstract void accept(ArchiveMessageVisitor v);
 }

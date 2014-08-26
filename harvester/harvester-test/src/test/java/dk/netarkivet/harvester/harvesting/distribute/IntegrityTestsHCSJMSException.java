@@ -59,10 +59,9 @@ import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
-
 /**
- * An integrity test that tests for how the HarvestControllerClient reacts
- * to the occurrence of an JMSException.
+ * An integrity test that tests for how the HarvestControllerClient reacts to
+ * the occurrence of an JMSException.
  */
 public class IntegrityTestsHCSJMSException {
 
@@ -84,8 +83,7 @@ public class IntegrityTestsHCSJMSException {
             fail("Could not copy working-files to: " + TestInfo.WORKING_DIR.getAbsolutePath());
         }
 
-        Settings.set(CommonSettings.JMS_BROKER_CLASS,
-                     "dk.netarkivet.common.distribute.JMSConnectionSunMQ");
+        Settings.set(CommonSettings.JMS_BROKER_CLASS, "dk.netarkivet.common.distribute.JMSConnectionSunMQ");
         ChannelsTesterHelper.resetChannels();
         HarvestDAOUtils.resetDAOs();
         Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR, TestInfo.SERVER_DIR.getAbsolutePath());
@@ -93,7 +91,7 @@ public class IntegrityTestsHCSJMSException {
         originalSM = System.getSecurityManager();
         SecurityManager manager = new SecurityManager() {
             public void checkPermission(Permission perm) {
-                if(perm.getName().equals("exitVM")) {
+                if (perm.getName().equals("exitVM")) {
                     notifyAll();
                     throw new SecurityException("Thou shalt not exit in a unit test");
                 }
@@ -115,33 +113,33 @@ public class IntegrityTestsHCSJMSException {
     }
 
     /**
-     * Test that a Harvester will not die immediately a JMSException is received.
+     * Test that a Harvester will not die immediately a JMSException is
+     * received.
      */
     @Test
     @Ignore("Incorrect handling of 'Cannot connect to JMS' situation")
     public void testJMSExceptionWhileCrawling() throws Exception {
-       if (!TestUtils.runningAs("CSR")) {
-                   return;
-               }
+        if (!TestUtils.runningAs("CSR")) {
+            return;
+        }
         // Get the exception handler for the connection
         JMSConnection con = JMSConnectionFactory.getInstance();
         Field queueConnectionField = con.getClass().getSuperclass().getDeclaredField("myQConn");
         queueConnectionField.setAccessible(true);
         QueueConnection qc = (QueueConnection) queueConnectionField.get(con);
         ExceptionListener qel = qc.getExceptionListener();
-        //Start a harvest
+        // Start a harvest
         Job j = TestInfo.getJob();
-        DataModelTestCase.addHarvestDefinitionToDatabaseWithId(
-                j.getOrigHarvestDefinitionID());
+        DataModelTestCase.addHarvestDefinitionToDatabaseWithId(j.getOrigHarvestDefinitionID());
         JobDAO.getInstance().create(j);
         j.setStatus(JobStatus.SUBMITTED);
         JobDispatcher hDisp = new JobDispatcher(con, HarvestDefinitionDAO.getInstance(), JobDAO.getInstance());
         hDisp.doOneCrawl(j, "test", "test", "test", new HarvestChannel("test", false, true, ""), "unittesters",
                 new ArrayList<MetadataEntry>());
-        //Trigger the exception handler - should not try to exit
+        // Trigger the exception handler - should not try to exit
         qel.onException(new JMSException("Some exception"));
         // Wait for harvester to finish and try to exit
-        synchronized(this) {
+        synchronized (this) {
             wait();
         }
         // Should probably now do some tests on the state of the HCS to see

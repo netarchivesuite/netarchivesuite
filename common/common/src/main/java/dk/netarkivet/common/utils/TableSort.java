@@ -29,22 +29,27 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  */
 public class TableSort {
 
-	/**list of the sort order.*/
-    public enum SortOrder { NONE, INCR, DESC };
+    /** list of the sort order. */
+    public enum SortOrder {
+        NONE, INCR, DESC
+    };
 
-    /** id of the sorted column.*/
+    /** id of the sorted column. */
     private int columnIdent = -1;
 
-    /** order of the sort.*/
+    /** order of the sort. */
     private SortOrder order = TableSort.SortOrder.NONE;
 
     /**
      * Constructor.
-     * @param columnId the id of the sorted column
-     * @param sortOrder the order of the sort
+     * 
+     * @param columnId
+     *            the id of the sorted column
+     * @param sortOrder
+     *            the order of the sort
      */
     public TableSort(final int columnId, final SortOrder sortOrder) {
-        ArgumentNotValid.checkTrue( sortOrder == TableSort.SortOrder.DESC || sortOrder == TableSort.SortOrder.INCR
+        ArgumentNotValid.checkTrue(sortOrder == TableSort.SortOrder.DESC || sortOrder == TableSort.SortOrder.INCR
                 || sortOrder == TableSort.SortOrder.NONE, "set order invalid");
 
         columnIdent = columnId;
@@ -53,6 +58,7 @@ public class TableSort {
 
     /**
      * Return the id of the sorted column.
+     * 
      * @return the id of the sorted column
      */
     public final int getColumnIdent() {
@@ -61,7 +67,9 @@ public class TableSort {
 
     /**
      * Set the id of the sorted column.
-     * @param columnident the id of the sorted column
+     * 
+     * @param columnident
+     *            the id of the sorted column
      */
     public final void setColumnIdent(final int columnident) {
         columnIdent = columnident;
@@ -69,6 +77,7 @@ public class TableSort {
 
     /**
      * Return the order of the sort.
+     * 
      * @return the order of the sort
      */
     public final SortOrder getOrder() {
@@ -77,7 +86,9 @@ public class TableSort {
 
     /**
      * Set the order of the sort.
-     * @param sortorder the order of the sort
+     * 
+     * @param sortorder
+     *            the order of the sort
      */
     public final void setOrder(final SortOrder sortorder) {
         ArgumentNotValid.checkTrue(sortorder == TableSort.SortOrder.DESC || sortorder == TableSort.SortOrder.INCR

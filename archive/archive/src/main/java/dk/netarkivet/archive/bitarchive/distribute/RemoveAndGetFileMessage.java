@@ -40,12 +40,12 @@ import dk.netarkivet.common.utils.FileUtils;
  * Message requesting a file to be removed and returned from a bitarchive.
  * Messages is forwarded through arcrepository, but reponds directly to sender.
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({ "serial" })
 public class RemoveAndGetFileMessage extends ArchiveMessage {
 
-	private static final Logger log = LoggerFactory.getLogger(RemoveAndGetFileMessage.class);
+    private static final Logger log = LoggerFactory.getLogger(RemoveAndGetFileMessage.class);
 
-	/**  The file to retrieve. */
+    /** The file to retrieve. */
     private String fileName;
     /** The actual data. */
     private RemoteFile remoteFile;
@@ -60,15 +60,22 @@ public class RemoveAndGetFileMessage extends ArchiveMessage {
 
     /**
      * Constructor.
-     * @param to Where to send the message.
-     * @param replyTo Where the reply of the message should be sent.
-     * @param fileName The name of the file to remove and retrieve.
-     * @param replicaId The id of the replica to sent it to.
-     * @param checksum The checksum of the bad file to remove and retrieve.
-     * @param credentials The right credentials for the operation.
+     * 
+     * @param to
+     *            Where to send the message.
+     * @param replyTo
+     *            Where the reply of the message should be sent.
+     * @param fileName
+     *            The name of the file to remove and retrieve.
+     * @param replicaId
+     *            The id of the replica to sent it to.
+     * @param checksum
+     *            The checksum of the bad file to remove and retrieve.
+     * @param credentials
+     *            The right credentials for the operation.
      */
-    public RemoveAndGetFileMessage(ChannelID to, ChannelID replyTo,  String fileName, String replicaId,
-    		String checksum, String credentials) {
+    public RemoveAndGetFileMessage(ChannelID to, ChannelID replyTo, String fileName, String replicaId, String checksum,
+            String credentials) {
         super(to, replyTo);
         this.fileName = fileName;
         this.replicaId = replicaId;
@@ -77,23 +84,28 @@ public class RemoveAndGetFileMessage extends ArchiveMessage {
     }
 
     /**
-     * Set the file this message should remove and return.
-     * Note: This will make a remote file handle for the file.
-     * @param data Content of the file to retrieve
-     * @throws ArgumentNotValid If the data file is null.
+     * Set the file this message should remove and return. Note: This will make
+     * a remote file handle for the file.
+     * 
+     * @param data
+     *            Content of the file to retrieve
+     * @throws ArgumentNotValid
+     *             If the data file is null.
      */
     public void setFile(File data) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(data, "File data");
-        
+
         remoteFile = RemoteFileFactory.getCopyfileInstance(data);
     }
 
     /**
-     * Writes the the content of the retrieved file into a local file.
-     * Note: This is transferred through a remote file handle, and then the
-     * handle is invalidated. This method may only be called once.
+     * Writes the the content of the retrieved file into a local file. Note:
+     * This is transferred through a remote file handle, and then the handle is
+     * invalidated. This method may only be called once.
+     * 
      * @return file content
-     * @throws IOFailure on error reading the file
+     * @throws IOFailure
+     *             on error reading the file
      */
     public File getData() throws IOFailure {
         // ensure that the remote file exists.
@@ -102,18 +114,18 @@ public class RemoveAndGetFileMessage extends ArchiveMessage {
         }
         // Retrieve the remote file and put it into a temporary file.
         File file = new File(FileUtils.getTempDir(), remoteFile.getName());
-            remoteFile.copyTo(file);
+        remoteFile.copyTo(file);
         try {
             remoteFile.cleanup();
         } catch (IOFailure e) {
-            //Just log errors on deleting. They are fairly harmless.
-            //Note: Do not make a field of this logger, or if you do, remember
-            //to make it transient and reinitialise it in readObject
+            // Just log errors on deleting. They are fairly harmless.
+            // Note: Do not make a field of this logger, or if you do, remember
+            // to make it transient and reinitialise it in readObject
             log.warn("Could not delete" + " remote file " + remoteFile.getName());
         }
         return file;
     }
-    
+
     /**
      * Returns the remote file.
      * 
@@ -125,6 +137,7 @@ public class RemoveAndGetFileMessage extends ArchiveMessage {
 
     /**
      * Retrieve the replica id.
+     * 
      * @return replica id
      */
     public String getReplicaId() {
@@ -133,6 +146,7 @@ public class RemoveAndGetFileMessage extends ArchiveMessage {
 
     /**
      * Get name of the file to retrieve.
+     * 
      * @return file name
      */
     public String getFileName() {
@@ -141,6 +155,7 @@ public class RemoveAndGetFileMessage extends ArchiveMessage {
 
     /**
      * Get the checksum of the file to remove.
+     * 
      * @return the checksum of the file to remove
      */
     public String getCheckSum() {
@@ -149,6 +164,7 @@ public class RemoveAndGetFileMessage extends ArchiveMessage {
 
     /**
      * Get the credentials for the remove operation.
+     * 
      * @return the credentials for the remove operation
      */
     public String getCredentials() {
@@ -166,7 +182,8 @@ public class RemoveAndGetFileMessage extends ArchiveMessage {
      * Should be implemented as a part of the visitor pattern. fx.: public void
      * accept(ArchiveMessageVisitor v) { v.visit(this); }
      *
-     * @param v A message visitor
+     * @param v
+     *            A message visitor
      */
     public void accept(ArchiveMessageVisitor v) {
         v.visit(this);

@@ -41,36 +41,32 @@ import dk.netarkivet.harvester.datamodel.StopReason;
 import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 
 /**
- * Class responsible for generating a domain harvest report from
- * crawl logs created by
- * Heritrix and presenting the relevant information to clients.
+ * Class responsible for generating a domain harvest report from crawl logs
+ * created by Heritrix and presenting the relevant information to clients.
  *
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({ "serial" })
 public class LegacyHarvestReport extends AbstractHarvestReport {
 
     /** The logger for this class. */
     private static final Logger LOG = LoggerFactory.getLogger(LegacyHarvestReport.class);
 
     /**
-     * The constructor gets the data in a crawl.log file,
-     * and parses the file. The crawl.log is described in the Heritrix
-     * user-manual, section 8.2.1:
-     * http://crawler.archive.org/articles/user_manual/analysis.html#logs
-     * Note: Invalid lines are logged and then ignored.
+     * The constructor gets the data in a crawl.log file, and parses the file.
+     * The crawl.log is described in the Heritrix user-manual, section 8.2.1:
+     * http://crawler.archive.org/articles/user_manual/analysis.html#logs Note:
+     * Invalid lines are logged and then ignored.
      *
-     * Each url listed in the file is assigned to a domain,
-     * the total object count and byte count per domain is calculated.
-     * Finally, a StopReason is found for each domain:
-     *  When the response is CrawlURI.S_BLOCKED_BY_QUOTA (
-     *  currently = -5003), the StopReason is set to
-     *  StopReason.SIZE_LIMIT,
-     *      if the annotation equals "Q:group-max-all-kb"  or
-     *  StopReason.OBJECT_LIMIT,
-     *      if the annotation equals "Q:group-max-fetch-successes".
+     * Each url listed in the file is assigned to a domain, the total object
+     * count and byte count per domain is calculated. Finally, a StopReason is
+     * found for each domain: When the response is CrawlURI.S_BLOCKED_BY_QUOTA (
+     * currently = -5003), the StopReason is set to StopReason.SIZE_LIMIT, if
+     * the annotation equals "Q:group-max-all-kb" or StopReason.OBJECT_LIMIT, if
+     * the annotation equals "Q:group-max-fetch-successes".
      *
      *
-     * @param hFiles the Heritrix reports and logs.
+     * @param hFiles
+     *            the Heritrix reports and logs.
      */
     public LegacyHarvestReport(HeritrixFiles hFiles) {
         super(hFiles);
@@ -82,9 +78,11 @@ public class LegacyHarvestReport extends AbstractHarvestReport {
     }
 
     /**
-     * Post-processing happens on the scheduler side when ARC files
-     * have been uploaded.
-     * @param job the actual job.
+     * Post-processing happens on the scheduler side when ARC files have been
+     * uploaded.
+     * 
+     * @param job
+     *            the actual job.
      */
     @Override
     public void postProcess(Job job) {
@@ -97,7 +95,7 @@ public class LegacyHarvestReport extends AbstractHarvestReport {
         // For each domain harvested, check if it corresponds to a
         // domain configuration for this Job and if so add a new HarvestInfo
         // to the DomainHistory of the corresponding Domain object.
-        // TODO  Information about the domains harvested by the crawler
+        // TODO Information about the domains harvested by the crawler
         // without a domain configuration for this job is deleted!
         // Should this information be saved in some way (perhaps stored
         // in metadata.arc-files?)
@@ -124,12 +122,12 @@ public class LegacyHarvestReport extends AbstractHarvestReport {
                 LOG.warn("No count for bytes received found for domain '{}'", domainName);
                 bytesReceived = -1L;
             }
-            //If StopReason is SIZE_LIMIT, we check if it's the harvests' size
-            //limit, or rather a configuration size limit.
+            // If StopReason is SIZE_LIMIT, we check if it's the harvests' size
+            // limit, or rather a configuration size limit.
 
-            //A harvest is considered to have hit the configuration limit if
-            //1) The limit is lowest, or
-            //2) The number of harvested bytes is greater than the limit
+            // A harvest is considered to have hit the configuration limit if
+            // 1) The limit is lowest, or
+            // 2) The number of harvested bytes is greater than the limit
 
             // Note: Even though the per-config-byte-limit might have changed
             // between the time we calculated the job and now, it's okay we
@@ -139,7 +137,7 @@ public class LegacyHarvestReport extends AbstractHarvestReport {
                 long maxBytesPerDomain = job.getMaxBytesPerDomain();
                 long configMaxBytes = domain.getConfiguration(configurationMap.get(domainName)).getMaxBytes();
                 if (NumberUtils.compareInf(configMaxBytes, maxBytesPerDomain) <= 0
-                		|| NumberUtils.compareInf(configMaxBytes, bytesReceived) <= 0) {
+                        || NumberUtils.compareInf(configMaxBytes, bytesReceived) <= 0) {
                     stopReason = StopReason.CONFIG_SIZE_LIMIT;
                 }
             } else if (stopReason == StopReason.OBJECT_LIMIT) {
@@ -150,9 +148,8 @@ public class LegacyHarvestReport extends AbstractHarvestReport {
                 }
             }
             // Create the HarvestInfo object
-            HarvestInfo hi = new HarvestInfo(job.getOrigHarvestDefinitionID(), job.getJobID(), domain.getName(), 
-            		configurationMap.get(domain.getName()), new Date(), bytesReceived, countObjectRetrieved,
-                    stopReason);
+            HarvestInfo hi = new HarvestInfo(job.getOrigHarvestDefinitionID(), job.getJobID(), domain.getName(),
+                    configurationMap.get(domain.getName()), new Date(), bytesReceived, countObjectRetrieved, stopReason);
 
             // Add HarvestInfo to Domain and make data persistent
             // by updating DAO
@@ -162,8 +159,8 @@ public class LegacyHarvestReport extends AbstractHarvestReport {
 
         if (LOG.isInfoEnabled()) {
             long time = System.currentTimeMillis() - startTime;
-            LOG.info("Finished post-processing of harvest report for job {}, operation took {}",
-            		job.getJobID(), StringUtils.formatDuration(time / TimeUtils.SECOND_IN_MILLIS));
+            LOG.info("Finished post-processing of harvest report for job {}, operation took {}", job.getJobID(),
+                    StringUtils.formatDuration(time / TimeUtils.SECOND_IN_MILLIS));
         }
 
     }

@@ -48,45 +48,15 @@ public class TestTemplate {
         Template tpl = new Template();
         Assert.assertNotNull(tpl);
 
-        testCases = new Object[][] {
-                {
-                    new String[] {
-                    }, null,
-                    ""
-                },
-                {
-                    new String[] {
-                            ""
-                    }, null,
-                    ""
-                },
-                {
-                    new String[] {
-                            "Netarkivet.dk",
-                            "NetarchiveSuite"
-                    }, null,
-                    "Netarkivet.dkNetarchiveSuite"
-                },
-                {
-                    new String[] {
-                            "Netarkivet.dk",
-                            "NetarchiveSuite"
-                    }, "",
-                    "Netarkivet.dkNetarchiveSuite"
-                },
-                {
-                    new String[] {
-                            "Netarkivet.dk",
-                            "NetarchiveSuite"
-                    }, "\r\n",
-                    "Netarkivet.dk\r\nNetarchiveSuite\r\n"
-                }
-        };
+        testCases = new Object[][] { { new String[] {}, null, "" }, { new String[] { "" }, null, "" },
+                { new String[] { "Netarkivet.dk", "NetarchiveSuite" }, null, "Netarkivet.dkNetarchiveSuite" },
+                { new String[] { "Netarkivet.dk", "NetarchiveSuite" }, "", "Netarkivet.dkNetarchiveSuite" },
+                { new String[] { "Netarkivet.dk", "NetarchiveSuite" }, "\r\n", "Netarkivet.dk\r\nNetarchiveSuite\r\n" } };
 
-        for (int i=0; i<testCases.length; ++i) {
-            strArray = (String[])testCases[i][0];
-            separator = (String)testCases[i][1];
-            expected = (String)testCases[i][2];
+        for (int i = 0; i < testCases.length; ++i) {
+            strArray = (String[]) testCases[i][0];
+            separator = (String) testCases[i][1];
+            expected = (String) testCases[i][2];
             str = Template.untemplate(strArray, env, false, separator);
             Assert.assertEquals(expected, str);
         }
@@ -95,69 +65,24 @@ public class TestTemplate {
         env.put("nas", "netarkivet.dk");
 
         testCases = new Object[][] {
-                {
-                    "${NAS}",
-                    "NetarchiveSuite",
-                    true, false, null
-                },
-                {
-                    "100$",
-                    "100$",
-                    true, false, null
-                },
-                {
-                    "NA$A",
-                    "NA$A",
-                    true, false, null
-                },
-                {
-                    "NA$$A",
-                    "NA$A",
-                    true, false, null
-                },
-                {
-                    "Welcome to the ${",
-                    "Welcome to the ${",
-                    true, false, null
-                },
-                {
-                    "${${NAS}}",
-                    "}",
-                    false, false, null
-                },
-                {
-                    "${${NAS}}",
-                    "}",
-                    true, true, "Env is missing replacement for: ${NAS"
-                },
-                {
-                    "$${NAS}",
-                    "${NAS}",
-                    true, false, null
-                },
-                {
-                    "Find ${NAS} at ${nas}",
-                    "Find NetarchiveSuite at netarkivet.dk",
-                    true, false, null
-                },
-                {
-                    "Find ${NAS} at ${nAs}",
-                    "Find NetarchiveSuite at ",
-                    false, false, null
-                },
-                {
-                    "Find ${NaS} at ${nas}",
-                    "Find  at netarkivet.dk",
-                    true, true, "Env is missing replacement for: NaS"
-                }
-        };
+                { "${NAS}", "NetarchiveSuite", true, false, null },
+                { "100$", "100$", true, false, null },
+                { "NA$A", "NA$A", true, false, null },
+                { "NA$$A", "NA$A", true, false, null },
+                { "Welcome to the ${", "Welcome to the ${", true, false, null },
+                { "${${NAS}}", "}", false, false, null },
+                { "${${NAS}}", "}", true, true, "Env is missing replacement for: ${NAS" },
+                { "$${NAS}", "${NAS}", true, false, null },
+                { "Find ${NAS} at ${nas}", "Find NetarchiveSuite at netarkivet.dk", true, false, null },
+                { "Find ${NAS} at ${nAs}", "Find NetarchiveSuite at ", false, false, null },
+                { "Find ${NaS} at ${nas}", "Find  at netarkivet.dk", true, true, "Env is missing replacement for: NaS" } };
 
-        for (int i=0; i<testCases.length; ++i) {
-            str = (String)testCases[i][0];
-            expected = (String)testCases[i][1];
-            bFailOnMissing = (Boolean)testCases[i][2];
-            bExceptionExpected = (Boolean)testCases[i][3];
-            expectedMessage = (String)testCases[i][4];
+        for (int i = 0; i < testCases.length; ++i) {
+            str = (String) testCases[i][0];
+            expected = (String) testCases[i][1];
+            bFailOnMissing = (Boolean) testCases[i][2];
+            bExceptionExpected = (Boolean) testCases[i][3];
+            expectedMessage = (String) testCases[i][4];
             try {
                 str = Template.untemplate(str, env, bFailOnMissing);
                 Assert.assertEquals(expected, str);

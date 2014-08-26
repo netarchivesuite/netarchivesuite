@@ -37,15 +37,18 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * which distributes the file to the known bitarchives, and checks the result,
  * and then responds to the sender.
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({ "serial" })
 public class StoreMessage extends ArchiveMessage {
     /** The actual data. */
     private RemoteFile theRemoteFile;
 
     /**
      * Construct StoreMessage.
-     * @param replyTo Channel to reply back to
-     * @param arcfile The file to store
+     * 
+     * @param replyTo
+     *            Channel to reply back to
+     * @param arcfile
+     *            The file to store
      */
     public StoreMessage(ChannelID replyTo, File arcfile) {
         super(Channels.getTheRepos(), replyTo);
@@ -53,18 +56,20 @@ public class StoreMessage extends ArchiveMessage {
         theRemoteFile = RemoteFileFactory.getDistributefileInstance(arcfile);
     }
 
-  /**
-   * Retrieve name of the stored file.
-   * @return current value of arcfileName
-   */
+    /**
+     * Retrieve name of the stored file.
+     * 
+     * @return current value of arcfileName
+     */
     public String getArcfileName() {
-      return theRemoteFile.getName();
+        return theRemoteFile.getName();
     }
 
-  /**
-   * Get method for field theRemoteFile.
-   * @return Current value of theRemoteFile
-   */
+    /**
+     * Get method for field theRemoteFile.
+     * 
+     * @return Current value of theRemoteFile
+     */
     public RemoteFile getRemoteFile() {
         return theRemoteFile;
     }
@@ -73,7 +78,8 @@ public class StoreMessage extends ArchiveMessage {
      * Should be implemented as a part of the visitor pattern. fx.: public void
      * accept(ArchiveMessageVisitor v) { v.visit(this); }
      *
-     * @param v A message visitor
+     * @param v
+     *            A message visitor
      */
     public void accept(ArchiveMessageVisitor v) {
         v.visit(this);
@@ -81,6 +87,7 @@ public class StoreMessage extends ArchiveMessage {
 
     /**
      * Generate String representation of this object.
+     * 
      * @return String representation of this object
      */
     public String toString() {

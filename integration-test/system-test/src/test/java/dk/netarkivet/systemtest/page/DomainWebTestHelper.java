@@ -29,7 +29,7 @@ import org.openqa.selenium.WebDriver;
 import java.util.Arrays;
 
 /**
- * Provides functionality for  commonly used test access to domain web content.
+ * Provides functionality for commonly used test access to domain web content.
  *
  * Will also log webpage interactions.
  */
@@ -46,7 +46,7 @@ public class DomainWebTestHelper {
         PageHelper.gotoPage(PageHelper.MenuPages.CreateDomain);
 
         driver.findElement(By.name("domainlist")).clear();
-        for (String domain:domains) {
+        for (String domain : domains) {
             driver.findElement(By.name("domainlist")).sendKeys(domain + "\n");
         }
 
@@ -58,8 +58,7 @@ public class DomainWebTestHelper {
     }
 
     public static void createSeedList(String domainName, String seedListName, String[] seeds) {
-        TestEventManager.getInstance().addStimuli("Creating configuration" + seedListName +
-                "(" + seeds + ")");
+        TestEventManager.getInstance().addStimuli("Creating configuration" + seedListName + "(" + seeds + ")");
         WebDriver driver = PageHelper.getWebDriver();
         editDomain(domainName);
 
@@ -67,7 +66,7 @@ public class DomainWebTestHelper {
         driver.findElement(By.name("urlListName")).sendKeys(seedListName);
 
         driver.findElement(By.name("seedList")).clear();
-        for (String seed:seeds) {
+        for (String seed : seeds) {
             driver.findElement(By.name("seedList")).sendKeys(seed + "\n");
         }
 

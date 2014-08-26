@@ -35,10 +35,10 @@ import dk.netarkivet.harvester.scheduler.HarvestSchedulerMonitorServer;
 /**
  * This message is sent by the {@link HarvestSchedulerMonitorServer} to the
  * {@link HarvestMonitor} to notify it that a job ended and should not be
- * monitored anymore, and that any resource used to monitor this job
- * should be freed.
+ * monitored anymore, and that any resource used to monitor this job should be
+ * freed.
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({ "serial" })
 public class JobEndedMessage extends HarvesterMessage implements Serializable {
 
     /** The associated job's ID. */
@@ -49,16 +49,19 @@ public class JobEndedMessage extends HarvesterMessage implements Serializable {
 
     /**
      * Constructs a new message.
-     * @param jobId the job ID.
-     * @param jobStatus the job's current status.
+     * 
+     * @param jobId
+     *            the job ID.
+     * @param jobStatus
+     *            the job's current status.
      */
     public JobEndedMessage(long jobId, JobStatus jobStatus) {
         super(HarvestMonitor.HARVEST_MONITOR_CHANNEL_ID, Channels.getError());
         ArgumentNotValid.checkNotNull(jobStatus, "jobStatus");
         this.jobId = jobId;
-        if (! (JobStatus.DONE.equals(jobStatus) || JobStatus.FAILED.equals(jobStatus))) {
+        if (!(JobStatus.DONE.equals(jobStatus) || JobStatus.FAILED.equals(jobStatus))) {
             throw new ArgumentNotValid("Got status '" + jobStatus.name() + "', expected either '"
-            		+ JobStatus.DONE.name() + "' or '" + JobStatus.FAILED.name() + "'");
+                    + JobStatus.DONE.name() + "' or '" + JobStatus.FAILED.name() + "'");
         }
         this.jobStatus = jobStatus;
     }

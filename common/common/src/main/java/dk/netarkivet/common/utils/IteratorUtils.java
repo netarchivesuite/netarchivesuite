@@ -35,7 +35,9 @@ public class IteratorUtils {
 
     /**
      * Turns an iterator into a list.
-     * @param i an iterator
+     * 
+     * @param i
+     *            an iterator
      * @return a List
      */
     public static <T> List<T> toList(Iterator<T> i) {

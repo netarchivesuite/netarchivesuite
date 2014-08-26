@@ -25,14 +25,13 @@ package dk.netarkivet.harvester.datamodel;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
-
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
-/** 
- * Unit tests for the TLDInfo class. 
- */ 
+/**
+ * Unit tests for the TLDInfo class.
+ */
 public class TLDInfoTester {
-    
+
     @Test
     public void testConstructor() {
         TLDInfo info = new TLDInfo("dk");
@@ -44,21 +43,17 @@ public class TLDInfoTester {
         assertEquals("IP Address", info.getName());
         assertEquals(0, info.getCount());
     }
-    
+
     @Test
     public void testAddSubdomain() {
         TLDInfo i = new TLDInfo("um");
-        assertEquals("Should know no subdomains to start with",
-                0, i.getCount());
+        assertEquals("Should know no subdomains to start with", 0, i.getCount());
         i.addSubdomain("foo.um");
-        assertEquals("Should have one after adding one",
-                1, i.getCount());
+        assertEquals("Should have one after adding one", 1, i.getCount());
         i.addSubdomain("foo.bar.um");
-        assertEquals("Should have two after adding a subdomain",
-                2, i.getCount());
+        assertEquals("Should have two after adding a subdomain", 2, i.getCount());
         i.addSubdomain("foo.um");
-        assertEquals("Should have three after adding the same domain",
-                3, i.getCount());
+        assertEquals("Should have three after adding the same domain", 3, i.getCount());
 
         try {
             i.addSubdomain("bar.dk");
@@ -88,7 +83,6 @@ public class TLDInfoTester {
             // expected
         }
 
-        assertEquals("Should have three after failures",
-                3, i.getCount());
+        assertEquals("Should have three after failures", 3, i.getCount());
     }
 }

@@ -37,7 +37,7 @@ import dk.netarkivet.common.utils.StringUtils;
  */
 public class CDXRecord {
 
-	/** The logger for this class. */
+    /** The logger for this class. */
     private static final Logger log = LoggerFactory.getLogger(CDXRecord.class);
 
     /** The uri information in a CDX entry. */
@@ -57,7 +57,9 @@ public class CDXRecord {
 
     /**
      * Helper method to avoid exception in URL decoding.
-     * @param s The string to unescape.
+     * 
+     * @param s
+     *            The string to unescape.
      * @return the unescaped string.
      */
     private static String unescape(String s) {
@@ -72,8 +74,10 @@ public class CDXRecord {
      * Compare two URLs for equality; first URL-unescaping (in UTF-8) all
      * arguments in any query part.
      *
-     * @param url1 The first URL
-     * @param url2 The second URL
+     * @param url1
+     *            The first URL
+     * @param url2
+     *            The second URL
      * @return A boolean indicating whether the URLs are equal
      */
     public static boolean URLsEqual(String url1, String url2) {
@@ -98,10 +102,11 @@ public class CDXRecord {
     /**
      * Constructor for class CDXRecord.
      *
-     * @param fields the given fields of a line i CDX-format.
-     * @throws ArgumentNotValid if argument is null or number of fields is less
-     *                          than 7 or if length or offset does not contain
-     *                          long values.
+     * @param fields
+     *            the given fields of a line i CDX-format.
+     * @throws ArgumentNotValid
+     *             if argument is null or number of fields is less than 7 or if
+     *             length or offset does not contain long values.
      */
     public CDXRecord(String[] fields) {
         ArgumentNotValid.checkNotNull(fields, "String[] fields");
@@ -116,21 +121,23 @@ public class CDXRecord {
                 this.offset = Long.parseLong(fields[6]);
             } catch (NumberFormatException e) {
                 String message = "Could not make CDXRecord - out of fields " + StringUtils.conjoin(",", fields)
-                		+ ". Length or offset was not a parsable long value.";
+                        + ". Length or offset was not a parsable long value.";
                 log.debug(message);
                 throw new ArgumentNotValid(message);
             }
         } else {
             String message = "Could not make CDXRecord - out of " + fields.length + " fields: "
-            		+ StringUtils.conjoin(",", fields);
+                    + StringUtils.conjoin(",", fields);
             log.debug(message);
             throw new ArgumentNotValid(message);
         }
     }
-    
+
     /**
      * Constructor, which tries to parse the given string as a CDXRecord.
-     * @param line a CDXline
+     * 
+     * @param line
+     *            a CDXline
      */
     public CDXRecord(String line) {
         this(line.split(CDXReader.SEPARATOR_REGEX));
@@ -138,6 +145,7 @@ public class CDXRecord {
 
     /**
      * Get the given URL.
+     * 
      * @return the URL
      */
     public String getURL() {
@@ -146,6 +154,7 @@ public class CDXRecord {
 
     /**
      * Get the given IP.
+     * 
      * @return the IP
      */
     public String getIP() {
@@ -154,6 +163,7 @@ public class CDXRecord {
 
     /**
      * Get the given date.
+     * 
      * @return the date
      */
     public String getDate() {
@@ -162,6 +172,7 @@ public class CDXRecord {
 
     /**
      * Get the given mimetype.
+     * 
      * @return The given mimetype
      */
     public String getMimetype() {
@@ -170,6 +181,7 @@ public class CDXRecord {
 
     /**
      * Get the given length.
+     * 
      * @return The given length
      */
     public long getLength() {
@@ -178,6 +190,7 @@ public class CDXRecord {
 
     /**
      * Get the given arcfile.
+     * 
      * @return The given arcfile
      */
     public String getArcfile() {
@@ -186,6 +199,7 @@ public class CDXRecord {
 
     /**
      * Get the given offset.
+     * 
      * @return The given offset
      */
     public long getOffset() {

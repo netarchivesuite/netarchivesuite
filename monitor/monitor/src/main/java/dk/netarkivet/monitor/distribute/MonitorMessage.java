@@ -35,15 +35,17 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  *
  * @see NetarkivetMessage
  */
-@SuppressWarnings({ "serial"})
-public abstract class MonitorMessage extends NetarkivetMessage
-        implements Serializable {
+@SuppressWarnings({ "serial" })
+public abstract class MonitorMessage extends NetarkivetMessage implements Serializable {
     /**
      * Creates a new MonitorMessage.
      *
-     * @param to        the initial receiver of the message
-     * @param replyTo   the initial sender of the message
-     * @throws ArgumentNotValid if to==replyTo or there is a null parameter.
+     * @param to
+     *            the initial receiver of the message
+     * @param replyTo
+     *            the initial sender of the message
+     * @throws ArgumentNotValid
+     *             if to==replyTo or there is a null parameter.
      */
     protected MonitorMessage(ChannelID to, ChannelID replyTo) {
         super(to, replyTo);
@@ -55,7 +57,8 @@ public abstract class MonitorMessage extends NetarkivetMessage
      *
      * @see MonitorMessageVisitor
      *
-     * @param v A message visitor
+     * @param v
+     *            A message visitor
      */
     public abstract void accept(MonitorMessageVisitor v);
 }

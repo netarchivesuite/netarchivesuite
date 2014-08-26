@@ -40,8 +40,7 @@ public class HarvesterChannels {
     /**
      * Prefix for the channel used to sending HarvesterReadyMessages.
      */
-    private static final String
-            HARVESTER_STATUS_CHANNEL_PREFIX = "HARVESTER_STATUS";
+    private static final String HARVESTER_STATUS_CHANNEL_PREFIX = "HARVESTER_STATUS";
     /**
      * The one existing instance of the Channels object. Not accessible from the
      * outside at all.
@@ -60,7 +59,8 @@ public class HarvesterChannels {
         return instance;
     }
 
-    /** Return the queue for the harvest monitor registry.
+    /**
+     * Return the queue for the harvest monitor registry.
      *
      * @return the <code>ChannelID</code> object for the queue.
      */
@@ -68,46 +68,36 @@ public class HarvesterChannels {
         return getInstance().HARVEST_MONITOR;
     }
 
-    private final ChannelID HARVEST_MONITOR = new ChannelID(
-            HARVEST_MONITOR_CHANNEL_PREFIX,
-            ChannelID.COMMON,
-            ChannelID.NO_IP,
-            ChannelID.NO_APPLINST_ID,
-            ChannelID.QUEUE);
+    private final ChannelID HARVEST_MONITOR = new ChannelID(HARVEST_MONITOR_CHANNEL_PREFIX, ChannelID.COMMON,
+            ChannelID.NO_IP, ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
 
     /**
      * @return the <code>ChannelID</code> object for the topic used by the
-     * harvesters to call in ready for new jobs.
+     *         harvesters to call in ready for new jobs.
      */
     public static ChannelID getHarvesterStatusChannel() {
         return getInstance().HARVESTER_STATUS;
     }
 
-    private final ChannelID HARVESTER_STATUS = new ChannelID(
-            HARVESTER_STATUS_CHANNEL_PREFIX,
-            ChannelID.COMMON,
-            ChannelID.NO_IP,
-            ChannelID.NO_APPLINST_ID,
-            ChannelID.TOPIC);
+    private final ChannelID HARVESTER_STATUS = new ChannelID(HARVESTER_STATUS_CHANNEL_PREFIX, ChannelID.COMMON,
+            ChannelID.NO_IP, ChannelID.NO_APPLINST_ID, ChannelID.TOPIC);
 
     /**
      * Prefix for the channels used to send
-     * {@link dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationRequest}s
-     * and
-     * {@link dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationResponse}s
+     * {@link dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationRequest}
+     * s and
+     * {@link dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationResponse}
+     * s
      */
     private static final String HARVEST_CHANNEL_VALIDITY_PREFIX = "HCHAN_VAL_";
 
-    private final ChannelID HARVEST_CHANNEL_VALIDITY_REQUEST = new ChannelID(
-            HARVEST_CHANNEL_VALIDITY_PREFIX + "REQ",
-            ChannelID.COMMON,
-            ChannelID.NO_IP,
-            ChannelID.NO_APPLINST_ID,
-            ChannelID.QUEUE);
+    private final ChannelID HARVEST_CHANNEL_VALIDITY_REQUEST = new ChannelID(HARVEST_CHANNEL_VALIDITY_PREFIX + "REQ",
+            ChannelID.COMMON, ChannelID.NO_IP, ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
 
     /**
      * Return the queue for sending
-     * {@link dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationRequest}s.
+     * {@link dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationRequest}
+     * s.
      *
      * @return the <code>ChannelID</code> object for the queue.
      */
@@ -118,16 +108,13 @@ public class HarvesterChannels {
     /**
      * Prefix for channels related to harvest channel validity messages.
      */
-    private final ChannelID HARVEST_CHANNEL_VALIDITY_RESPONSE = new ChannelID(
-            HARVEST_CHANNEL_VALIDITY_PREFIX + "RESP",
-            ChannelID.COMMON,
-            ChannelID.NO_IP,
-            ChannelID.NO_APPLINST_ID,
-            ChannelID.QUEUE);
+    private final ChannelID HARVEST_CHANNEL_VALIDITY_RESPONSE = new ChannelID(HARVEST_CHANNEL_VALIDITY_PREFIX + "RESP",
+            ChannelID.COMMON, ChannelID.NO_IP, ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
 
     /**
      * Return the queue for sending
-     * {@link dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationResponse}s.
+     * {@link dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationResponse}
+     * s.
      *
      * @return the <code>ChannelID</code> object for the queue.
      */
@@ -152,15 +139,9 @@ public class HarvesterChannels {
      * @return That channel (queue)
      */
     public static ChannelID getHarvestJobChannelId(HarvestChannel harvestChannel) {
-        String prefix = (harvestChannel.isSnapshot()
-                ? JOB_SNAPSHOT_CHANNEL_PREFIX : JOB_PARTIAL_CHANNEL_PREFIX)
-                + "_" + harvestChannel.getName().toUpperCase();
-        return new ChannelID(
-                prefix,
-                ChannelID.COMMON,
-                ChannelID.NO_IP,
-                ChannelID.NO_APPLINST_ID,
-                ChannelID.QUEUE);
+        String prefix = (harvestChannel.isSnapshot() ? JOB_SNAPSHOT_CHANNEL_PREFIX : JOB_PARTIAL_CHANNEL_PREFIX) + "_"
+                + harvestChannel.getName().toUpperCase();
+        return new ChannelID(prefix, ChannelID.COMMON, ChannelID.NO_IP, ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
     }
 
     /**
@@ -170,15 +151,9 @@ public class HarvesterChannels {
      * @return That channel (queue)
      */
     public static ChannelID getHarvestJobChannelId(String harvestChannelName, boolean isSnapshot) {
-        String prefix = (isSnapshot
-                ? JOB_SNAPSHOT_CHANNEL_PREFIX : JOB_PARTIAL_CHANNEL_PREFIX)
-                + "_" + harvestChannelName.toUpperCase();
-        return new ChannelID(
-                prefix,
-                ChannelID.COMMON,
-                ChannelID.NO_IP,
-                ChannelID.NO_APPLINST_ID,
-                ChannelID.QUEUE);
+        String prefix = (isSnapshot ? JOB_SNAPSHOT_CHANNEL_PREFIX : JOB_PARTIAL_CHANNEL_PREFIX) + "_"
+                + harvestChannelName.toUpperCase();
+        return new ChannelID(prefix, ChannelID.COMMON, ChannelID.NO_IP, ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
     }
 
 }

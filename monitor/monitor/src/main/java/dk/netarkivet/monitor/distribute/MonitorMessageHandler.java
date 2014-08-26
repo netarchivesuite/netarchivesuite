@@ -57,7 +57,8 @@ public abstract class MonitorMessageHandler implements MonitorMessageVisitor, Me
      *
      * This method catches <b>all</b> exceptions and logs them.
      *
-     * @param msg a ObjectMessage
+     * @param msg
+     *            a ObjectMessage
      *
      */
     public void onMessage(Message msg) {
@@ -72,21 +73,27 @@ public abstract class MonitorMessageHandler implements MonitorMessageVisitor, Me
         }
     }
 
-    /** Handles when a handler receives a message it is not prepare to handle.
+    /**
+     * Handles when a handler receives a message it is not prepare to handle.
      *
-     * @param msg The received message.
-     * @throws PermissionDenied Always
+     * @param msg
+     *            The received message.
+     * @throws PermissionDenied
+     *             Always
      */
     private void deny(MonitorMessage msg) {
-        throw new PermissionDenied("'" + this + "' provides no handling for " + msg
-        		+ " of type " + msg.getClass().getName() + " and should not be invoked!");
+        throw new PermissionDenied("'" + this + "' provides no handling for " + msg + " of type "
+                + msg.getClass().getName() + " and should not be invoked!");
     }
 
     /**
      * This method should be overridden and implemented by a sub class if
      * message handling is wanted.
-     * @param msg a RegisterHostMessage
-     * @throws PermissionDenied when invoked
+     * 
+     * @param msg
+     *            a RegisterHostMessage
+     * @throws PermissionDenied
+     *             when invoked
      */
     public void visit(RegisterHostMessage msg) throws PermissionDenied {
         ArgumentNotValid.checkNotNull(msg, "RegsiterHostMessage msg");

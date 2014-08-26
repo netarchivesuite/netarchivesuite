@@ -29,8 +29,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Singleton class which maintains the basic data structure and methods for
- * the indexer.
+ * Singleton class which maintains the basic data structure and methods for the
+ * indexer.
  */
 public class IndexerQueue {
 
@@ -40,11 +40,15 @@ public class IndexerQueue {
     /** The unique instance of this class. */
     private static IndexerQueue instance;
 
-    /** This is the basic underlying datastructure of the indexer - a queue of files waiting to be indexed. */
+    /**
+     * This is the basic underlying datastructure of the indexer - a queue of
+     * files waiting to be indexed.
+     */
     private static LinkedBlockingQueue<ArchiveFile> queue;
 
     /**
      * Factory method for obtaining the unique instance of this class.
+     * 
      * @return the instance.
      */
     public static synchronized IndexerQueue getInstance() {
@@ -66,13 +70,12 @@ public class IndexerQueue {
      * queue.
      */
     public synchronized void populate() {
-        List<ArchiveFile> files = (new ArchiveFileDAO())
-                .getFilesAwaitingIndexing();
+        List<ArchiveFile> files = (new ArchiveFileDAO()).getFilesAwaitingIndexing();
         if (!files.isEmpty()) {
             log.info("Will now add '{}' unindexed files from object store to queue (if they are not already queued).",
-            		files.size());
+                    files.size());
         }
-        for (ArchiveFile file: files) {
+        for (ArchiveFile file : files) {
             if (!queue.contains(file)) {
                 log.info("Adding file '{}' to indexing queue.", file.getFilename());
                 queue.add(file);
@@ -83,9 +86,8 @@ public class IndexerQueue {
 
     /**
      * Sequentially take objects from the queue and index them, blocking
-     * indefinitely while waiting for new objects to be added to the queue.
-     * It is intended 
-     * that multiple threads should run this method simultaneously.
+     * indefinitely while waiting for new objects to be added to the queue. It
+     * is intended that multiple threads should run this method simultaneously.
      */
     public void consume() {
         while (true) {
@@ -99,7 +101,7 @@ public class IndexerQueue {
                     log.error("Unexpected interrupt in indexer while waiting for new elements", e);
                 }
                 file.index();
-            } catch (Exception e) {   //Fault Barrier
+            } catch (Exception e) { // Fault Barrier
                 log.warn("Caught exception at fault barrier for {}", Thread.currentThread().getName(), e);
             }
         }

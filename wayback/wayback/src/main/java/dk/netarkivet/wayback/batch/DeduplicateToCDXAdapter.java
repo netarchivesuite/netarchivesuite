@@ -46,13 +46,19 @@ public class DeduplicateToCDXAdapter implements DeduplicateToCDXAdapterInterface
     /** Logger for this class. */
     private static final Logger log = LoggerFactory.getLogger(DeduplicateToCDXAdapter.class);
 
-    /** Define SimpleDateFormat objects for the representation of timestamps in crawl logs and cdx files respectively. */
+    /**
+     * Define SimpleDateFormat objects for the representation of timestamps in
+     * crawl logs and cdx files respectively.
+     */
     private static final String crawlDateFormatString = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
     private static final String cdxDateFormatString = "yyyyMMddHHmmss";
     private static final SimpleDateFormat crawlDateFormat = new SimpleDateFormat(crawlDateFormatString);
     private static final SimpleDateFormat cdxDateFormat = new SimpleDateFormat(cdxDateFormatString);
 
-    /** Pattern representing the part of a crawl log entry describing a duplicate record. */
+    /**
+     * Pattern representing the part of a crawl log entry describing a duplicate
+     * record.
+     */
     private static final String duplicateRecordPatternString = "duplicate:\"(.*),(.*)\",(.*)";
     private static final Pattern duplicateRecordPattern = Pattern.compile(duplicateRecordPatternString);
 
@@ -65,8 +71,7 @@ public class DeduplicateToCDXAdapter implements DeduplicateToCDXAdapterInterface
     /**
      * Default constructor. Initializes the canonicalizer.
      */
-    public
-    DeduplicateToCDXAdapter() {
+    public DeduplicateToCDXAdapter() {
         canonicalizer = UrlCanonicalizerFactory.getDefaultUrlCanonicalizer();
     }
 
@@ -74,7 +79,9 @@ public class DeduplicateToCDXAdapter implements DeduplicateToCDXAdapterInterface
      * If the input line is a crawl log entry representing a duplicate then a
      * CDX entry is written to the output. Otherwise returns null. In the event
      * of an error returns null.
-     * @param line the crawl-log line to be analysed
+     * 
+     * @param line
+     *            the crawl-log line to be analysed
      * @return a CDX line (without newline) or null
      */
     @Override
@@ -84,13 +91,10 @@ public class DeduplicateToCDXAdapter implements DeduplicateToCDXAdapterInterface
                 String[] crawlElements = line.split("\\s+");
                 StringBuffer result = new StringBuffer();
                 String originalUrl = crawlElements[3];
-                String canonicalUrl =
-                        canonicalizer.urlStringToKey(originalUrl);
+                String canonicalUrl = canonicalizer.urlStringToKey(originalUrl);
                 result.append(canonicalUrl).append(' ');
-                String cdxDate = cdxDateFormat.format(
-                        crawlDateFormat.parse(crawlElements[0]));
-                result.append(cdxDate).append(' ')
-                    .append(originalUrl).append(' ');
+                String cdxDate = cdxDateFormat.format(crawlDateFormat.parse(crawlElements[0]));
+                result.append(cdxDate).append(' ').append(originalUrl).append(' ');
                 String mimetype = crawlElements[6];
                 result.append(mimetype).append(' ');
                 String httpCode = crawlElements[1];
@@ -99,7 +103,8 @@ public class DeduplicateToCDXAdapter implements DeduplicateToCDXAdapterInterface
                 result.append(digest).append(" - ");
                 String duplicateRecord = crawlElements[11];
                 if (!duplicateRecord.startsWith(DUPLICATE_MATCHING_STRING)) {
-                    // Probably an Exception starting with "le:" is injected before the
+                    // Probably an Exception starting with "le:" is injected
+                    // before the
                     // DUPLICATE_MATCHING_STRING, Try splitting on duplicate:
                     String[] parts = duplicateRecord.split(DUPLICATE_MATCHING_STRING);
                     if (parts.length == 2) {
@@ -114,10 +119,8 @@ public class DeduplicateToCDXAdapter implements DeduplicateToCDXAdapterInterface
                     String offset = m.group(2);
                     result.append(offset).append(' ').append(arcfile);
                 } else {
-                    throw new ArgumentNotValid("crawl record did not match "
-                                               + "expected pattern for duplicate"
-                                               + " record: '" + duplicateRecord
-                                               + "'");
+                    throw new ArgumentNotValid("crawl record did not match " + "expected pattern for duplicate"
+                            + " record: '" + duplicateRecord + "'");
                 }
                 return result.toString();
             } catch (Exception e) {
@@ -132,15 +135,17 @@ public class DeduplicateToCDXAdapter implements DeduplicateToCDXAdapterInterface
     /**
      * Reads an input stream representing a crawl log line by line and converts
      * any lines representing duplicate entries to wayback-compliant cdx lines.
-     * @param is The input stream from which data is read.
-     * @param os The output stream to which the cdx lines are written.
+     * 
+     * @param is
+     *            The input stream from which data is read.
+     * @param os
+     *            The output stream to which the cdx lines are written.
      */
     public void adaptStream(InputStream is, OutputStream os) {
         ArgumentNotValid.checkNotNull(is, "is");
         ArgumentNotValid.checkNotNull(os, "os");
         try {
-            BufferedReader reader =
-                    new BufferedReader(new InputStreamReader(is));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
             String line;
             while ((line = reader.readLine()) != null) {
                 String cdxLine = adaptLine(line);
