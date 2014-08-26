@@ -23,9 +23,9 @@
 
 package dk.netarkivet.testutils;
 
-import java.util.regex.Pattern;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
 
 import junit.framework.TestCase;
 

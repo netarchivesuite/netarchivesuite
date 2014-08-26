@@ -23,11 +23,12 @@
 
 package dk.netarkivet.testutils;
 
-import javax.jms.Message;
-import javax.jms.MessageListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.jms.Message;
+import javax.jms.MessageListener;
 
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.NetarkivetMessage;

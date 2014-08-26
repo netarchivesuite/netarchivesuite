@@ -22,10 +22,10 @@
  */
 package dk.netarkivet.archive.arcrepositoryadmin;
 
+import java.util.Date;
+
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
-
-import java.util.Date;
 
 /**
  * This class contains a storestate, and the time, when it was last set.

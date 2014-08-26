@@ -22,9 +22,10 @@
  */
 package dk.netarkivet.harvester.webinterface;
 
-import javax.servlet.jsp.JspWriter;
 import java.io.File;
 import java.util.Locale;
+
+import javax.servlet.jsp.JspWriter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

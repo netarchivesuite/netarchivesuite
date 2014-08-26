@@ -28,15 +28,16 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
 
+import junit.framework.TestCase;
+
 import org.archive.io.ArchiveRecord;
+import org.archive.io.arc.ARCReader;
+import org.archive.io.arc.ARCReaderFactory;
 import org.archive.io.arc.ARCRecord;
 import org.archive.io.arc.ARCWriter;
-import org.archive.io.arc.ARCReaderFactory;
-import org.archive.io.arc.ARCReader;
 
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.arc.ARCUtils;
-import junit.framework.TestCase;
 
 @SuppressWarnings({ "unused" })
 public class Bug901Tester extends TestCase {

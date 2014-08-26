@@ -22,18 +22,23 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
-import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.XmlUtils;
-import dk.netarkivet.harvester.HarvesterSettings;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.Iterator;
+
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.XmlUtils;
+import dk.netarkivet.harvester.HarvesterSettings;
 
 /**
  * Unit tests for the class TemplateDAO.

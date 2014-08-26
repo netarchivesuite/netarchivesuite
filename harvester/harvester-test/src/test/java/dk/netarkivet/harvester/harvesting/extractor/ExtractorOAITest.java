@@ -22,12 +22,11 @@
  */
 package dk.netarkivet.harvester.harvesting.extractor;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
-
-import static org.junit.Assert.*;
-import org.junit.Test;
 
 import org.apache.commons.httpclient.URIException;
 import org.archive.crawler.datamodel.CrawlURI;
@@ -36,6 +35,7 @@ import org.archive.crawler.extractor.Link;
 import org.archive.io.ReplayCharSequence;
 import org.archive.net.UURIFactory;
 import org.archive.util.HttpRecorder;
+import org.junit.Test;
 
 @SuppressWarnings({ "serial" })
 public class ExtractorOAITest {

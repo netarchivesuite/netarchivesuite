@@ -23,10 +23,10 @@
 
 package dk.netarkivet.testutils;
 
+import java.util.logging.Logger;
+
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.Settings;
-
-import java.util.logging.Logger;
 
 /**
  * This class allows checking who's running the tests.

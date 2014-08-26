@@ -22,12 +22,14 @@
  */
 package dk.netarkivet.viewerproxy;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.io.OutputStream;
 import java.net.URI;
 import java.util.Collections;
 import java.util.Map;
 
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 

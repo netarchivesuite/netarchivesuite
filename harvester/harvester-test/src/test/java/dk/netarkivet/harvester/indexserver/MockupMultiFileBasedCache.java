@@ -22,16 +22,15 @@
  */
 package dk.netarkivet.harvester.indexserver;
 
-import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.harvester.indexserver.MultiFileBasedCache;
-import dk.netarkivet.testutils.preconfigured.TestConfigurationIF;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Set;
+
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.testutils.preconfigured.TestConfigurationIF;
 
 /**
  * JobIndexCache mockup that either returns null, throws exception, waits, or

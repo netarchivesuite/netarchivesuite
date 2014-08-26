@@ -22,9 +22,9 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-
 import java.util.Date;
+
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * This class manages owner information about a domain. Immutable.

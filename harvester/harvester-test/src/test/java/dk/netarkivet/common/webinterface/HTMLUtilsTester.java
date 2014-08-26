@@ -40,6 +40,7 @@ import javax.servlet.jsp.PageContext;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;

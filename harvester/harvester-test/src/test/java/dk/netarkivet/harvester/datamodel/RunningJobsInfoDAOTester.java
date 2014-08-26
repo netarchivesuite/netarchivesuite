@@ -24,11 +24,11 @@ package dk.netarkivet.harvester.datamodel;
 
 import java.util.Set;
 
-import dk.netarkivet.harvester.harvesting.monitor.StartedJobInfo;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import dk.netarkivet.harvester.harvesting.monitor.StartedJobInfo;
 
 @SuppressWarnings({ "unused" })
 public class RunningJobsInfoDAOTester extends DataModelTestCase {

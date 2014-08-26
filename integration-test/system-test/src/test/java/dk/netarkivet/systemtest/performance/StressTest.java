@@ -23,9 +23,7 @@
 package dk.netarkivet.systemtest.performance;
 
 import org.jaccept.structure.ExtendedTestCase;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
 
 import dk.netarkivet.systemtest.environment.TestEnvironment;
 import dk.netarkivet.systemtest.environment.TestEnvironmentManager;

@@ -22,6 +22,8 @@
  */
 package dk.netarkivet.harvester.harvesting;
 
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.IOException;
 import java.security.SecureRandom;
@@ -32,11 +34,9 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.archive.util.anvl.ANVLRecord;
-
-import org.junit.Before;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriter;

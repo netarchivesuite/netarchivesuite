@@ -24,7 +24,6 @@
 package dk.netarkivet.testutils;
 
 import junit.framework.TestCase;
-
 import dk.netarkivet.common.distribute.NetarkivetMessage;
 
 /**

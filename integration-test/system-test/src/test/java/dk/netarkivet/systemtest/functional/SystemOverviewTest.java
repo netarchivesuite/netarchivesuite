@@ -22,22 +22,22 @@
  */
 package dk.netarkivet.systemtest.functional;
 
+import static org.testng.Assert.fail;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.testng.annotations.Test;
 
 import dk.netarkivet.systemtest.Application;
 import dk.netarkivet.systemtest.NASAssert;
 import dk.netarkivet.systemtest.NASSystemUtil;
 import dk.netarkivet.systemtest.SeleniumTest;
 import dk.netarkivet.systemtest.page.PageHelper;
-
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
-import org.testng.annotations.Test;
-
-import static org.testng.Assert.fail;
 
 /**
  * Test specification: http://netarchive.dk/suite/TEST1 .

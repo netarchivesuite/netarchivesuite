@@ -22,22 +22,23 @@
  */
 package dk.netarkivet.systemtest.functional;
 
+import static org.testng.Assert.assertTrue;
+import static org.testng.AssertJUnit.assertEquals;
+
 import java.lang.reflect.Method;
 import java.util.List;
 
-import dk.netarkivet.systemtest.HarvestUtils;
-import dk.netarkivet.systemtest.SeleniumTest;
-import dk.netarkivet.systemtest.environment.TestEnvironment;
-import dk.netarkivet.systemtest.page.HarvestHistoryPageHelper;
-import dk.netarkivet.systemtest.page.PageHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.assertTrue;
-import static org.testng.AssertJUnit.assertEquals;
+import dk.netarkivet.systemtest.HarvestUtils;
+import dk.netarkivet.systemtest.SeleniumTest;
+import dk.netarkivet.systemtest.environment.TestEnvironment;
+import dk.netarkivet.systemtest.page.HarvestHistoryPageHelper;
+import dk.netarkivet.systemtest.page.PageHelper;
 
 public class HarvestHistoryForDomainPageTest extends SeleniumTest {
     ;

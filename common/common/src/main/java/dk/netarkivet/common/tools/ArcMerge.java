@@ -22,14 +22,14 @@
  */
 package dk.netarkivet.common.tools;
 
-import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.arc.ARCUtils;
+import java.io.File;
+import java.io.IOException;
 
 import org.archive.io.arc.ARCWriter;
 
-import java.io.File;
-import java.io.IOException;
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.arc.ARCUtils;
 
 /**
  * Command line tool for merging several ARC files into a single ARC file.

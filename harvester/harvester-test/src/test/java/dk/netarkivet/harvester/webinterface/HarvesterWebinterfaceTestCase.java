@@ -23,6 +23,11 @@
 
 package dk.netarkivet.harvester.webinterface;
 
+import java.io.File;
+
+import org.junit.After;
+import org.junit.Before;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
@@ -33,11 +38,6 @@ import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDBDAO;
 import dk.netarkivet.harvester.datamodel.HarvestDAOUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
-
-import java.io.File;
-
-import org.junit.After;
-import org.junit.Before;
 
 /**
  * A TestCase subclass specifically tailored to test webinterface classes,

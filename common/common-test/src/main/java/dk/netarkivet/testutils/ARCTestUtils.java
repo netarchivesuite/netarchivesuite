@@ -22,13 +22,13 @@
  */
 package dk.netarkivet.testutils;
 
-import dk.netarkivet.common.exceptions.IOFailure;
-
-import org.archive.io.arc.ARCRecord;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+
+import org.archive.io.arc.ARCRecord;
+
+import dk.netarkivet.common.exceptions.IOFailure;
 
 public class ARCTestUtils {
     /**

@@ -22,10 +22,12 @@
  */
 package dk.netarkivet.harvester.distribute;
 
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
+
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
-import static org.junit.Assert.*;
-import org.junit.Test;
 
 public class IndexReadyMessageTester {
 

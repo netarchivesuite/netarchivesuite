@@ -22,6 +22,16 @@
  */
 package dk.netarkivet.viewerproxy.webinterface;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.io.File;
+import java.util.List;
+
+import org.junit.After;
+import org.junit.Before;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.arcrepository.TrivialArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
@@ -35,11 +45,6 @@ import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.After;
-import java.io.File;
-import java.util.List;
 
 /**
  * Unit tests for Reporting class.

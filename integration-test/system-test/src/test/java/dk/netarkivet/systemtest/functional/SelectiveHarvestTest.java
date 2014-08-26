@@ -27,12 +27,13 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import dk.netarkivet.systemtest.NASAssert;
-import dk.netarkivet.systemtest.SeleniumTest;
-import dk.netarkivet.systemtest.page.SelectiveHarvestPageHelper;
 import org.openqa.selenium.By;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import dk.netarkivet.systemtest.NASAssert;
+import dk.netarkivet.systemtest.SeleniumTest;
+import dk.netarkivet.systemtest.page.SelectiveHarvestPageHelper;
 
 /**
  * Test specification: http://netarchive.dk/suite/TEST1 .

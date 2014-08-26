@@ -22,13 +22,14 @@
  */
 package dk.netarkivet.systemtest.page;
 
-import dk.netarkivet.systemtest.HarvestUtils;
+import java.util.List;
+
 import org.jaccept.TestEventManager;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import java.util.List;
+import dk.netarkivet.systemtest.HarvestUtils;
 
 /**
  * Provides functionality for commonly used test access to domain web content.

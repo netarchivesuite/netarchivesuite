@@ -22,11 +22,11 @@
  */
 package dk.netarkivet.archive.checksum.distribute;
 
+import dk.netarkivet.archive.bitarchive.distribute.UploadMessage;
+import dk.netarkivet.archive.distribute.ArchiveMessageHandler;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.utils.CleanupIF;
-import dk.netarkivet.archive.bitarchive.distribute.UploadMessage;
-import dk.netarkivet.archive.distribute.ArchiveMessageHandler;
 
 /**
  * Any subclass must be invoked through a method called 'getInstance'.

@@ -28,12 +28,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.harvester.indexserver.CDXIndexCache;
-import dk.netarkivet.testutils.FileAsserts;
-import org.junit.Before;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+
+import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.testutils.FileAsserts;
 
 /**
  * Unit test(s) for the CDXIndexCache class.

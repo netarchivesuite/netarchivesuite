@@ -22,14 +22,14 @@
  */
 package dk.netarkivet.archive.bitarchive.distribute;
 
-import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.arc.ARCBatchJob;
-import dk.netarkivet.common.utils.batch.ARCBatchFilter;
-
 import java.io.IOException;
 import java.io.OutputStream;
 
 import org.archive.io.arc.ARCRecord;
+
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.arc.ARCBatchJob;
+import dk.netarkivet.common.utils.batch.ARCBatchFilter;
 
 /**
  * Helper batch job to write number of records processed at finish.

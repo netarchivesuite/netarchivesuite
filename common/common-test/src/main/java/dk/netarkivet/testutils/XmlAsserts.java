@@ -25,6 +25,7 @@ package dk.netarkivet.testutils;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
+
 import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.Element;

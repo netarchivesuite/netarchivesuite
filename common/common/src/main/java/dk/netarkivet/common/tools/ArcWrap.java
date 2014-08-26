@@ -22,16 +22,16 @@
  */
 package dk.netarkivet.common.tools;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+
+import org.archive.io.arc.ARCWriter;
+
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.common.utils.arc.ARCUtils;
-
-import org.archive.io.arc.ARCWriter;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 
 /**
  * Command line tool for creating an ARC file from given data. Uses

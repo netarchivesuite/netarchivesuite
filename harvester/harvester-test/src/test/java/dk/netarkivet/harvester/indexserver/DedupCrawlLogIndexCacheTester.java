@@ -22,6 +22,11 @@
  */
 package dk.netarkivet.harvester.indexserver;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import is.hi.bok.deduplicator.DigestIndexer;
 
 import java.io.File;
@@ -39,7 +44,6 @@ import java.util.zip.GZIPInputStream;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
-
 import org.apache.lucene.search.ConstantScoreQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
@@ -48,16 +52,12 @@ import org.apache.lucene.search.TermRangeFilter;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.MMapDirectory;
 import org.apache.lucene.util.BytesRef;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import dk.netarkivet.common.utils.AllDocsCollector;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.harvester.indexserver.CDXDataCache;
-import dk.netarkivet.harvester.indexserver.DedupCrawlLogIndexCache;
-import static org.junit.Assert.*;
-
-import org.junit.Before;
-import org.junit.After;
-import org.junit.Test;
 
 /**
  * Unit test(s) for the DedupCrawlLogIndexCache class.

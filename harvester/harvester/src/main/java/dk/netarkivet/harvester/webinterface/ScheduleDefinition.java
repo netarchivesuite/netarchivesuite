@@ -23,11 +23,12 @@
 
 package dk.netarkivet.harvester.webinterface;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.jsp.PageContext;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.jsp.PageContext;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;

@@ -22,6 +22,8 @@
  */
 package dk.netarkivet.archive.webinterface;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
@@ -33,15 +35,13 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
 import com.mockobjects.servlet.MockHttpServletRequest;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.webinterface.WebinterfaceTestCase;
 import dk.netarkivet.common.webinterface.JspWriterMockup;
+import dk.netarkivet.common.webinterface.WebinterfaceTestCase;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;

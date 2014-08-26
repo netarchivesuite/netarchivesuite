@@ -26,8 +26,8 @@ import java.io.File;
 
 import dk.netarkivet.archive.arcrepositoryadmin.Admin;
 import dk.netarkivet.archive.arcrepositoryadmin.AdminFactory;
-import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
+import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.exceptions.IOFailure;
 
 /**

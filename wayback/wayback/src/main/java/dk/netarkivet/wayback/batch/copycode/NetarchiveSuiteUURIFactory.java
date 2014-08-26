@@ -22,6 +22,10 @@
  */
 package dk.netarkivet.wayback.batch.copycode;
 
+import gnu.inet.encoding.IDNA;
+import gnu.inet.encoding.IDNAException;
+import it.unimi.dsi.mg4j.util.MutableString;
+
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.BitSet;
@@ -29,10 +33,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import gnu.inet.encoding.IDNA;
-import gnu.inet.encoding.IDNAException;
-import it.unimi.dsi.mg4j.util.MutableString;
 
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;

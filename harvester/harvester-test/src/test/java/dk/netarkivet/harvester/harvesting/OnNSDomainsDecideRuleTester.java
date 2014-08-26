@@ -22,11 +22,10 @@
  */
 package dk.netarkivet.harvester.harvesting;
 
-import static org.junit.Assert.*;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 import org.archive.util.SurtPrefixSet;
-import dk.netarkivet.harvester.harvesting.OnNSDomainsDecideRule;
+import org.junit.Test;
 
 /**
  * JUNIT test for the class OnNSDomainsDecideRule.

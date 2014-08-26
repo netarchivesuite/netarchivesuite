@@ -23,19 +23,14 @@
 
 package dk.netarkivet.harvester.datamodel.extendedfield;
 
-import dk.netarkivet.harvester.datamodel.DataModelTestCase;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedField;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDBDAO;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValueDAO;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValueDBDAO;
-import dk.netarkivet.harvester.webinterface.ExtendedFieldConstants;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import dk.netarkivet.harvester.datamodel.DataModelTestCase;
+import dk.netarkivet.harvester.webinterface.ExtendedFieldConstants;
 
 public class ExtendedFieldValueTester extends DataModelTestCase {
 

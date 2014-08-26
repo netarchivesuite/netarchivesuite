@@ -22,17 +22,20 @@
  */
 package dk.netarkivet.systemtest.environment;
 
-import dk.netarkivet.systemtest.TestLogger;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+
+import org.apache.commons.io.IOUtils;
+
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
-import org.apache.commons.io.IOUtils;
+
+import dk.netarkivet.systemtest.TestLogger;
 
 /**
  * Provides utilites for performing deployment related commands in the test

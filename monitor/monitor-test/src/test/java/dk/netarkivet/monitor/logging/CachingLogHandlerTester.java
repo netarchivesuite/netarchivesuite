@@ -22,19 +22,18 @@
  */
 package dk.netarkivet.monitor.logging;
 
+import java.lang.management.ManagementFactory;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+
 import javax.management.InstanceNotFoundException;
 import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
-import java.lang.management.ManagementFactory;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
 
 import junit.framework.TestCase;
-
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.management.Constants;

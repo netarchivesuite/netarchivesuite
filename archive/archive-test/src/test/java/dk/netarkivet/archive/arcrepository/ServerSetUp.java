@@ -22,6 +22,8 @@
  */
 package dk.netarkivet.archive.arcrepository;
 
+import java.io.File;
+
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveMonitorServer;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveServer;
@@ -31,8 +33,6 @@ import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
-
-import java.io.File;
 
 /**
  * Created by IntelliJ IDEA. User: csr Date: Mar 14, 2005 Time: 11:35:26 AM To

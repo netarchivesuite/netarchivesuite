@@ -22,11 +22,11 @@
  */
 package dk.netarkivet.testutils;
 
-import junit.framework.Assert;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+
+import junit.framework.Assert;
 
 /**
  * Methods that help in doing common reflection tasks.

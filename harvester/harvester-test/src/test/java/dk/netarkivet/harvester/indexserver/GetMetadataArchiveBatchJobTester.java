@@ -23,22 +23,22 @@
 
 package dk.netarkivet.harvester.indexserver;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.regex.Pattern;
 
-import static org.junit.Assert.*;
-import org.junit.Before;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.ZipUtils;
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFile;
-import dk.netarkivet.harvester.indexserver.GetMetadataArchiveBatchJob;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
 public class GetMetadataArchiveBatchJobTester {

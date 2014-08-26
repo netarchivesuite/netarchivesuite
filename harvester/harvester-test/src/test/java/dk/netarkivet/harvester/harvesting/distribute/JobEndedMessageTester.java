@@ -22,10 +22,13 @@
  */
 package dk.netarkivet.harvester.harvesting.distribute;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+import org.junit.Test;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.harvester.datamodel.JobStatus;
-import static org.junit.Assert.*;
-import org.junit.Test;
 
 public class JobEndedMessageTester {
 

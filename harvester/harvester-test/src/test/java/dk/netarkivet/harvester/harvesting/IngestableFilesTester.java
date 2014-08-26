@@ -22,21 +22,24 @@
  */
 package dk.netarkivet.harvester.harvesting;
 
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.exceptions.PermissionDenied;
-import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriter;
-import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
-
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.After;
-import org.junit.Test;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Date;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.PermissionDenied;
+import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriter;
+import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
 public class IngestableFilesTester {
     private static final String MSG = "This a test message from IngestableFilesTester";

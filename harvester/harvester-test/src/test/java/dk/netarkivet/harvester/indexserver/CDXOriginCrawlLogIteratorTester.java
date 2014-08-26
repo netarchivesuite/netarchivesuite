@@ -22,6 +22,13 @@
  */
 package dk.netarkivet.harvester.indexserver;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import is.hi.bok.deduplicator.CrawlDataItem;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -31,15 +38,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import is.hi.bok.deduplicator.CrawlDataItem;
-import static org.junit.Assert.*;
-import org.junit.Before;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.harvester.indexserver.CDXOriginCrawlLogIterator;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
 

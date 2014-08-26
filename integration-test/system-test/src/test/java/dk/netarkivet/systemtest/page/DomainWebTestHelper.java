@@ -22,11 +22,11 @@
  */
 package dk.netarkivet.systemtest.page;
 
+import java.util.Arrays;
+
 import org.jaccept.TestEventManager;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-
-import java.util.Arrays;
 
 /**
  * Provides functionality for commonly used test access to domain web content.

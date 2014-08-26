@@ -23,9 +23,9 @@
 
 package dk.netarkivet.archive.bitarchive;
 
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-
 import java.io.File;
+
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * The representation of an ARC file in the bit archive. This class keeps the

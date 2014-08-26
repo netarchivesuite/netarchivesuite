@@ -22,17 +22,19 @@
  */
 package dk.netarkivet.harvester.indexserver;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import dk.netarkivet.common.distribute.ChannelsTesterHelper;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
-import dk.netarkivet.harvester.indexserver.IndexServerApplication;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
-import static org.junit.Assert.*;
-
-import org.junit.Before;
-import org.junit.After;
-import org.junit.Test;
 
 public class IndexServerTester {
 

@@ -25,12 +25,12 @@ package dk.netarkivet.harvester.harvesting;
 import java.io.File;
 
 import org.dom4j.Document;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.XmlUtils;
-import org.junit.Before;
-import org.junit.After;
-import org.junit.Test;
 
 public class WARCWriterProcessorTester {
 

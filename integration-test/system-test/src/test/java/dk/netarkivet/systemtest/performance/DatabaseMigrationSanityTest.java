@@ -22,12 +22,9 @@
  */
 package dk.netarkivet.systemtest.performance;
 
-import dk.netarkivet.systemtest.NASAssert;
-import dk.netarkivet.systemtest.environment.ApplicationManager;
-import dk.netarkivet.systemtest.environment.TestEnvironment;
-import dk.netarkivet.systemtest.page.DomainWebTestHelper;
-import dk.netarkivet.systemtest.page.PageHelper;
-import dk.netarkivet.systemtest.page.SelectiveHarvestPageHelper;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -35,8 +32,12 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
+import dk.netarkivet.systemtest.NASAssert;
+import dk.netarkivet.systemtest.environment.ApplicationManager;
+import dk.netarkivet.systemtest.environment.TestEnvironment;
+import dk.netarkivet.systemtest.page.DomainWebTestHelper;
+import dk.netarkivet.systemtest.page.PageHelper;
+import dk.netarkivet.systemtest.page.SelectiveHarvestPageHelper;
 
 @SuppressWarnings("static-access")
 public class DatabaseMigrationSanityTest extends StressTest {

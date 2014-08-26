@@ -22,8 +22,6 @@
  */
 package dk.netarkivet.testutils;
 
-import junit.framework.TestCase;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -33,6 +31,8 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+
+import junit.framework.TestCase;
 
 /**
  * Created by IntelliJ IDEA. User: csr Date: Mar 4, 2005 Time: 2:26:06 PM To

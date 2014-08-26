@@ -23,41 +23,21 @@
 
 package dk.netarkivet.harvester.distribute;
 
-import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
-import dk.netarkivet.common.distribute.NetarkivetMessage;
-import dk.netarkivet.common.distribute.indexserver.RequestType;
-import dk.netarkivet.common.exceptions.PermissionDenied;
-import dk.netarkivet.harvester.datamodel.Job;
-import dk.netarkivet.harvester.datamodel.JobStatus;
-import dk.netarkivet.harvester.datamodel.JobUtils;
-import dk.netarkivet.harvester.harvesting.distribute.CrawlStatusMessage;
-import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
-import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
-import dk.netarkivet.harvester.harvesting.metadata.PersistentJobData.HarvestDefinitionInfo;
-import dk.netarkivet.harvester.indexserver.distribute.IndexRequestMessage;
-import dk.netarkivet.testutils.FileAsserts;
-import dk.netarkivet.testutils.LogUtils;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.After;
-import org.junit.Test;
-
-import org.mockito.Mockito;
-
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.ObjectMessage;
-
-import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashSet;
-
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import javax.jms.JMSException;
+import javax.jms.ObjectMessage;
+
+import org.junit.Test;
+
+import dk.netarkivet.common.exceptions.PermissionDenied;
+import dk.netarkivet.harvester.harvesting.distribute.CrawlStatusMessage;
+import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
+import dk.netarkivet.harvester.indexserver.distribute.IndexRequestMessage;
 
 @SuppressWarnings("unused")
 public class HarvesterMessageHandlerTester {

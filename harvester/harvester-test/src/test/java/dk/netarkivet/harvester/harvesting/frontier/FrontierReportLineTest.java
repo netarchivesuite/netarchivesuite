@@ -22,15 +22,14 @@
  */
 package dk.netarkivet.harvester.harvesting.frontier;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-import static org.junit.Assert.*;
 import org.junit.Test;
-
-import dk.netarkivet.harvester.harvesting.frontier.TestInfo;
 
 public class FrontierReportLineTest {
 

@@ -22,11 +22,11 @@
  */
 package dk.netarkivet.monitor.jmx;
 
-import javax.management.ObjectName;
 import java.util.Set;
 
-import junit.framework.TestCase;
+import javax.management.ObjectName;
 
+import junit.framework.TestCase;
 import dk.netarkivet.common.exceptions.NotImplementedException;
 
 /** Unittest for testing the CachingProxyConnectionFactory class. */

@@ -24,8 +24,9 @@ package dk.netarkivet.monitor.jmx;
 
 import javax.management.remote.JMXServiceURL;
 
-import com.sun.jndi.rmi.registry.RegistryContextFactory;
 import junit.framework.TestCase;
+
+import com.sun.jndi.rmi.registry.RegistryContextFactory;
 
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.JMXUtils;
