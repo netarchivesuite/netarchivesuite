@@ -131,6 +131,7 @@ public abstract class AbstractHarvestReport implements HarvestReport {
 
     /**
      * Pre-processing happens when the report is built just at the end of the crawl, before the ARC files upload.
+     * @param files
      */
     @Override
     public void preProcess(HeritrixFiles files) {
@@ -155,6 +156,7 @@ public abstract class AbstractHarvestReport implements HarvestReport {
 
     /**
      * Post-processing happens on the scheduler side when ARC files have been uploaded.
+     * @param job
      */
     @Override
     public abstract void postProcess(Job job);

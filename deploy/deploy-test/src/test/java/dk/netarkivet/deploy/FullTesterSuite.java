@@ -30,12 +30,21 @@ import junit.textui.TestRunner;
  * The FullTesterSuite comprises all our test-suites.
  */
 public class FullTesterSuite {
+
+    /**
+     *
+     * @param suite
+     */
     public static void addToSuite(TestSuite suite) {
         FullUnitTesterSuite.addToSuite(suite);
         // IntegrityTesterSuite.addToSuite(suite);
         HeritrixTesterSuite.addToSuite(suite);
     }
 
+    /**
+     *
+     * @return
+     */
     public static Test suite() {
         TestSuite suite;
         suite = new TestSuite("FullTesterSuite");
@@ -45,6 +54,10 @@ public class FullTesterSuite {
         return suite;
     }
 
+    /**
+     *
+     * @param args
+     */
     public static void main(String args[]) {
         String[] args2 = {"-noloading", "dk.netarkivet.FullTesterSuite"};
         TestRunner.main(args2);

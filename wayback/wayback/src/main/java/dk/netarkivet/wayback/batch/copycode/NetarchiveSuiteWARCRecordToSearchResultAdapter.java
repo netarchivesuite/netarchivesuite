@@ -63,6 +63,9 @@ public class NetarchiveSuiteWARCRecordToSearchResultAdapter implements Adapter<W
 
     private boolean processAll = false;
 
+    /**
+     *
+     */
     public NetarchiveSuiteWARCRecordToSearchResultAdapter() {
         canonicalizer = new IdentityUrlCanonicalizer();
         annotater = new HTTPRecordAnnotater();
@@ -71,6 +74,13 @@ public class NetarchiveSuiteWARCRecordToSearchResultAdapter implements Adapter<W
     /*
      * This just calls adaptInner, returning null if an Exception is thrown:
      */
+
+    /**
+     *
+     * @param rec
+     * @return
+     */
+    
     public CaptureSearchResult adapt(WARCRecord rec) {
         try {
             return adaptInner(rec);
@@ -275,18 +285,34 @@ public class NetarchiveSuiteWARCRecordToSearchResultAdapter implements Adapter<W
         return result;
     }
 
+    /**
+     *
+     * @return
+     */
     public UrlCanonicalizer getCanonicalizer() {
         return canonicalizer;
     }
 
+    /**
+     *
+     * @param canonicalizer
+     */
     public void setCanonicalizer(UrlCanonicalizer canonicalizer) {
         this.canonicalizer = canonicalizer;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isProcessAll() {
         return processAll;
     }
 
+    /**
+     *
+     * @param processAll
+     */
     public void setProcessAll(boolean processAll) {
         this.processAll = processAll;
     }

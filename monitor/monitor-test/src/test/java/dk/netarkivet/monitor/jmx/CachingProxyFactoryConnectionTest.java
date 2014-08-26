@@ -30,14 +30,26 @@ import junit.framework.TestCase;
  */
 public class CachingProxyFactoryConnectionTest extends TestCase {
 
+    /**
+     *
+     * @param arg0
+     */
     public CachingProxyFactoryConnectionTest(String arg0) {
         super(arg0);
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     protected void setUp() throws Exception {
         super.setUp();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     protected void tearDown() throws Exception {
         super.tearDown();
     }
@@ -46,6 +58,11 @@ public class CachingProxyFactoryConnectionTest extends TestCase {
      * Test method for
      * 'dk.netarkivet.monitor.jmx.CachingProxyFactoryConnectionFactory.CachingProxyFactoryConnection(JMXProxyFactoryConnectionFactory)'
      */
+
+    /**
+     *
+     */
+    
     public void testCachingProxyFactoryConnection() {
         JMXProxyConnectionFactory f = new CachingProxyConnectionFactory(new DummyJMXProxyConnectionFactory());
     }
@@ -54,6 +71,11 @@ public class CachingProxyFactoryConnectionTest extends TestCase {
      * Test method for 'dk.netarkivet.monitor.jmx.CachingProxyFactoryConnectionFactory.getConnection(String, int, int,
      * String, String)'
      */
+
+    /**
+     *
+     */
+    
     public void testGetConnection() {
         JMXProxyConnectionFactory f = new CachingProxyConnectionFactory(new DummyJMXProxyConnectionFactory());
         f.getConnection("server", 8001, 8101, "monitorRole", "Deterbareløgn");

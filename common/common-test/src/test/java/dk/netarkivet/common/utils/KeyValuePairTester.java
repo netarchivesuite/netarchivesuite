@@ -34,6 +34,9 @@ import org.junit.Test;
  */
 public class KeyValuePairTester {
 
+    /**
+     *
+     */
     @Test
     public void testGetValue() {
         KeyValuePair<String, String> pair = new KeyValuePair<String, String>("key", "value");
@@ -41,6 +44,9 @@ public class KeyValuePairTester {
         assertTrue(pair.getValue().equals("value"));
     }
 
+    /**
+     *
+     */
     @Test(expected = UnsupportedOperationException.class)
     public void testSetValue() {
         KeyValuePair<String, String> pair = new KeyValuePair<String, String>("key", "value");

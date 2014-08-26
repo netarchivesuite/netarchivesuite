@@ -24,6 +24,10 @@ package dk.netarkivet.archive.checksum.distribute;
 
 import java.io.File;
 
+/**
+ *
+ * @author tra
+ */
 public class TestInfo {
 
     static final File ORIGINAL_DIR = new File("tests/dk/netarkivet/archive/checksum/distribute/data/original");

@@ -1143,6 +1143,10 @@ public class Job implements Serializable, JobInfo {
         return this.continuationOF;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String getHarvestFilenamePrefix() {
         if (this.harvestnamePrefix == null) {

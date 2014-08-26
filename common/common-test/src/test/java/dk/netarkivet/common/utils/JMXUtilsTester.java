@@ -68,6 +68,9 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 public class JMXUtilsTester {
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         rs.setUp();
@@ -75,11 +78,18 @@ public class JMXUtilsTester {
         Settings.set(CommonSettings.JMX_TIMEOUT, "1");
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         rs.tearDown();
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     @Test
     public void testGetJMXConnector() throws IOException {
         try {
@@ -100,6 +110,10 @@ public class JMXUtilsTester {
          */
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testGetAttribute() throws Exception {
         final int maxJmxRetries = JMXUtils.getMaxTries();

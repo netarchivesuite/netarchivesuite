@@ -115,6 +115,10 @@ public class FileBasedActiveBitPreservationTester {
     private static final Replica TWO = Replica.getReplicaFromId(TestInfo.REPLICA_ID_TWO);
     private static final Replica THREE = Replica.getReplicaFromId("THREE");
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         rs.setUp();
@@ -128,6 +132,10 @@ public class FileBasedActiveBitPreservationTester {
         Settings.set(ArchiveSettings.DIR_ARCREPOSITORY_BITPRESERVATION, TestInfo.WORKING_DIR.getAbsolutePath());
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         // Make sure admin data instance is closed.
@@ -251,6 +259,9 @@ public class FileBasedActiveBitPreservationTester {
      *
      * @throws FileNotFoundException
      * @throws IOException
+     * @throws java.lang.NoSuchMethodException
+     * @throws java.lang.reflect.InvocationTargetException
+     * @throws java.lang.IllegalAccessException
      */
     @Test
     public void testRunChecksumJob() throws FileNotFoundException, IOException, NoSuchMethodException,
@@ -300,6 +311,11 @@ public class FileBasedActiveBitPreservationTester {
         acp.close();
     }
 
+    /**
+     *
+     * @throws NoSuchFieldException
+     * @throws IllegalAccessException
+     */
     @Test
     @Ignore("FIXME")
     // FIXME: test temporarily disabled
@@ -320,6 +336,10 @@ public class FileBasedActiveBitPreservationTester {
 
     /**
      * Test for bug #462: Should be able to run checksum jobs in either place.
+     * @throws java.lang.NoSuchFieldException
+     * @throws java.lang.IllegalAccessException
+     * @throws java.lang.NoSuchMethodException
+     * @throws java.lang.reflect.InvocationTargetException
      */
     @Test
     public void testRunChecksumJobElsewhere() throws NoSuchFieldException, IllegalAccessException,
@@ -369,6 +389,9 @@ public class FileBasedActiveBitPreservationTester {
      * it comes automatically when we check for restriction.
      *
      * @throws IOException
+     * @throws java.lang.NoSuchMethodException
+     * @throws java.lang.IllegalAccessException
+     * @throws java.lang.reflect.InvocationTargetException
      */
     @Test
     public void testRunFileListJob() throws IOException, NoSuchMethodException, InvocationTargetException,
@@ -570,6 +593,9 @@ public class FileBasedActiveBitPreservationTester {
         }
     }
 
+    /**
+     *
+     */
     public static class MockupArcRepositoryClient implements ArcRepositoryClient {
         private static MockupArcRepositoryClient instance;
         private BitarchiveRecord overrideGet;
@@ -578,6 +604,10 @@ public class FileBasedActiveBitPreservationTester {
         private BatchStatus overrideBatch;
         private File overrideRemoveAndGetFile;
 
+        /**
+         *
+         * @return
+         */
         public static MockupArcRepositoryClient getInstance() {
             if (instance == null) {
                 instance = new MockupArcRepositoryClient();

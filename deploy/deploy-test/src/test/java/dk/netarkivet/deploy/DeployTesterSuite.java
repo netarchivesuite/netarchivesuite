@@ -26,7 +26,16 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
+/**
+ *
+ * @author tra
+ */
 public class DeployTesterSuite {
+
+    /**
+     *
+     * @return
+     */
     public static Test suite() {
         TestSuite suite;
         suite = new TestSuite(DeployTesterSuite.class.getName());
@@ -36,11 +45,19 @@ public class DeployTesterSuite {
         return suite;
     }
 
+    /**
+     *
+     * @param suite
+     */
     public static void addToSuite(TestSuite suite) {
         suite.addTestSuite(DeployTester.class);
         suite.addTestSuite(CompleteSettingsTester.class);
     }
 
+    /**
+     *
+     * @param args
+     */
     public static void main(String args[]) {
         String args2[] = {"-noloading", DeployTesterSuite.class.getName()};
         TestRunner.main(args2);

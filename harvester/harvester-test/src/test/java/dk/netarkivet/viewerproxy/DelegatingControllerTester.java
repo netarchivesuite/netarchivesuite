@@ -52,6 +52,9 @@ public class DelegatingControllerTester {
     private TestCDXCache cc;
     private TestARCArchiveAccess aaa;
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
@@ -60,6 +63,9 @@ public class DelegatingControllerTester {
         aaa = new TestARCArchiveAccess();
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         JMSConnectionMockupMQ.getInstance().cleanup();
@@ -211,6 +217,9 @@ public class DelegatingControllerTester {
                 c.getStatus(Locale.ENGLISH));
     }
 
+    /**
+     *
+     */
     public static class TestMissingURIRecorder extends MissingURIRecorder {
         int totalCounter = 0;
         int startCounter = 0;
@@ -246,6 +255,9 @@ public class DelegatingControllerTester {
         }
     }
 
+    /**
+     *
+     */
     public static class TestCDXCache implements JobIndexCache {
         int totalCounter = 0;
         int getJobIndexCount = 0;
@@ -265,11 +277,17 @@ public class DelegatingControllerTester {
         }
     }
 
+    /**
+     *
+     */
     public static class TestARCArchiveAccess extends ARCArchiveAccess {
         int totalCounter = 0;
         int setIndexCount = 0;
         File setIndexArgument = null;
 
+        /**
+         *
+         */
         public TestARCArchiveAccess() {
             super(new TestARCRepositoryClient());
         }
@@ -281,7 +299,14 @@ public class DelegatingControllerTester {
         }
     }
 
+    /**
+     *
+     */
     public static class TestARCRepositoryClient extends TestArcRepositoryClient {
+
+        /**
+         *
+         */
         protected TestARCRepositoryClient() {
             super(TestInfo.WORKING_DIR);
             close();

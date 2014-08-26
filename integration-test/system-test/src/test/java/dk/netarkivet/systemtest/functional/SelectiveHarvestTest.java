@@ -43,6 +43,10 @@ public class SelectiveHarvestTest extends SeleniumTest {
     private int harvestCounter = 0;
     private DateFormat dateFomatter = new SimpleDateFormat("HHmmss");
 
+    /**
+     *
+     * @param method
+     */
     @BeforeMethod(alwaysRun = true)
     public void setup(Method method) {
         Date startTime = new Date();
@@ -52,6 +56,7 @@ public class SelectiveHarvestTest extends SeleniumTest {
 
     /**
      * Test specification: http://netarchive.dk/suite/It23JMXMailCheck .
+     * @throws java.lang.Exception
      */
     @Test(groups = {"guitest", "functest"})
     public void selectiveHarvestListingTest() throws Exception {

@@ -40,7 +40,15 @@ public class TestInfo {
      * An archive directory to work on.
      */
     static final File ARCHIVE_DIR = new File(WORKING_DIR, "bitarchive1");
+
+    /**
+     *
+     */
     public static final File ZIPPED_INDEX_DIR = new File(WORKING_DIR, "2-3-cache");
+
+    /**
+     *
+     */
     public static final File ZIPPED_INDEX_DIR2 = new File(WORKING_DIR, "2-4-3-5-cache");
 
 }

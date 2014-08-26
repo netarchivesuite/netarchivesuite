@@ -80,6 +80,7 @@ public class FullHarvest extends HarvestDefinition {
      * @param maxBytes Limit for how many bytes can be fetched per domain
      * @param maxJobRunningTime Limit on how much time can be spent on each job. 0 means no limit
      * @param isIndexReady Is the deduplication index ready for this harvest.
+     * @param jobDaoProvider
      */
     public FullHarvest(String harvestDefName, String comments, Long previousHarvestDefinitionOid, long maxCountObjects,
             long maxBytes, long maxJobRunningTime, boolean isIndexReady, Provider<HarvestDefinitionDAO> hdDaoProvider,

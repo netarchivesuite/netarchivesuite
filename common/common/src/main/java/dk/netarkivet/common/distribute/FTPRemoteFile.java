@@ -246,6 +246,16 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
         return new FTPRemoteFile(localFile, useChecksums, fileDeletable, multipleDownloads, null);
     }
 
+    /**
+     *
+     * @param localFile
+     * @param useChecksums
+     * @param fileDeletable
+     * @param multipleDownloads
+     * @param connectionParams
+     * @return
+     * @throws IOFailure
+     */
     public static RemoteFile getInstance(File localFile, Boolean useChecksums, Boolean fileDeletable,
             Boolean multipleDownloads, RemoteFileSettings connectionParams) throws IOFailure {
         ArgumentNotValid.checkNotNull(localFile, "File remoteFile");
@@ -506,6 +516,10 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
         return FTP_RETRIES;
     }
 
+    /**
+     *
+     * @return
+     */
     public static RemoteFileSettings getRemoteFileSettings() {
         return new RemoteFileSettings(Settings.get(CommonSettings.FTP_SERVER_NAME),
                 Settings.getInt(CommonSettings.FTP_SERVER_PORT), Settings.get(CommonSettings.FTP_USER_NAME),

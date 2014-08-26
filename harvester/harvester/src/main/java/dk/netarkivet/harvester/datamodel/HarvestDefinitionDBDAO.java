@@ -571,6 +571,11 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         }
     }
 
+    /**
+     *
+     * @param name
+     * @return
+     */
     @Override
     public synchronized boolean exists(String name) {
         ArgumentNotValid.checkNotNullOrEmpty(name, "String name");
@@ -583,6 +588,11 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         }
     }
 
+    /**
+     *
+     * @param oid
+     * @return
+     */
     @Override
     public synchronized boolean exists(Long oid) {
         ArgumentNotValid.checkNotNull(oid, "Long oid");
@@ -707,6 +717,11 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         }
     }
 
+    /**
+     *
+     * @param harvestID
+     * @return
+     */
     @Override
     public List<HarvestRunInfo> getHarvestRunInfo(long harvestID) {
         Connection c = HarvestDBConnection.get();
@@ -842,6 +857,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     /**
      * Get all sparse versions of partial harvests for GUI purposes ordered by name.
      *
+     * @param excludeInactive
      * @return An iterable (possibly empty) of SparsePartialHarvests
      */
     public Iterable<SparsePartialHarvest> getSparsePartialHarvestDefinitions(boolean excludeInactive) {
@@ -1164,6 +1180,11 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         }
     }
 
+    /**
+     *
+     * @param harvestId
+     * @return
+     */
     @Override
     public Set<Long> getJobIdsForSnapshotDeduplicationIndex(Long harvestId) {
         ArgumentNotValid.checkNotNull(harvestId, "Long harvestId");
@@ -1228,6 +1249,11 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         return results;
     }
 
+    /**
+     *
+     * @param harvestId
+     * @param newValue
+     */
     @Override
     public void setIndexIsReady(Long harvestId, boolean newValue) {
         if (!isSnapshot(harvestId)) {
@@ -1288,6 +1314,11 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         }
     }
 
+    /**
+     *
+     * @param harvestId
+     * @param nextdate
+     */
     @Override
     public void updateNextdate(long harvestId, Date nextdate) {
         ArgumentNotValid.checkNotNull(harvestId, "Long harvest ID");
@@ -1339,6 +1370,11 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         }
     }
 
+    /**
+     *
+     * @param ph
+     * @param dcList
+     */
     @Override
     public void resetDomainConfigurations(PartialHarvest ph, List<DomainConfiguration> dcList) {
         ArgumentNotValid.checkNotNull(ph, "PartialHarvest ph");
@@ -1355,6 +1391,11 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         }
     }
 
+    /**
+     *
+     * @param harvestDefinitionId
+     * @param channel
+     */
     @Override
     public void mapToHarvestChannel(long harvestDefinitionId, HarvestChannel channel) {
         ArgumentNotValid.checkNotNull(channel, "HarvestChannel channel");

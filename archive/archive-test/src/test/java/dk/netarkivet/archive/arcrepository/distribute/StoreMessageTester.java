@@ -49,6 +49,9 @@ public class StoreMessageTester {
     UseTestRemoteFile rm = new UseTestRemoteFile();
     MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS, TestInfo.WORKING);
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         rs.setUp();
@@ -57,6 +60,9 @@ public class StoreMessageTester {
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         rm.tearDown();
@@ -64,6 +70,9 @@ public class StoreMessageTester {
         mtf.tearDown();
     }
 
+    /**
+     *
+     */
     @Test
     public void testInvalidArguments() {
 
@@ -82,6 +91,9 @@ public class StoreMessageTester {
         }
     }
 
+    /**
+     *
+     */
     @Test
     public void testValid() {
         StoreMessage msg = new StoreMessage(Channels.getError(), TestInfo.ARCFILE);

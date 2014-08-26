@@ -47,6 +47,7 @@ public class SystemOverviewTest extends SeleniumTest {
 
     /**
      * Test specification: http://netarchive.dk/suite/It23JMXMailCheck .
+     * @throws java.lang.Exception
      */
     @Test(groups = {"guitest", "functest"})
     public void generalTest() throws Exception {

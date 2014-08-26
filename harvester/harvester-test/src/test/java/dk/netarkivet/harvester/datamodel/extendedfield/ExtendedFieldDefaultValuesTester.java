@@ -29,8 +29,15 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+/**
+ *
+ * @author tra
+ */
 public class ExtendedFieldDefaultValuesTester {
 
+    /**
+     *
+     */
     @Test
     public void testInValid() {
         ExtendedFieldDefaultValue e = null;
@@ -58,6 +65,9 @@ public class ExtendedFieldDefaultValuesTester {
 
     }
 
+    /**
+     *
+     */
     @Test
     public void testValid() {
         ExtendedFieldDefaultValue e = null;
@@ -95,6 +105,9 @@ public class ExtendedFieldDefaultValuesTester {
         assertTrue(e.isValid());
     }
 
+    /**
+     *
+     */
     @Test
     public void testValuesForDB() {
         ExtendedFieldDefaultValue e = null;

@@ -43,6 +43,9 @@ import dk.netarkivet.testutils.StringAsserts;
  */
 public class StringUtilsTester {
 
+    /**
+     *
+     */
     @Test
     public final void testReplace() {
         String testString = "This is a test $ string \\ , it is nice!";
@@ -56,6 +59,10 @@ public class StringUtilsTester {
                 StringUtils.replace(testString, "cat", "shouldnt work"));
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testConjoinStrings() throws Exception {
         assertEquals("Should give correct conjoined list with strings", "a-b-c", conjoinList("-", "a", "b", "c"));
@@ -79,6 +86,10 @@ public class StringUtilsTester {
         }
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testSurjoin() throws Exception {
         assertEquals("Should give correct surjoin for simple args", ":a/:b/:c/", surjoinList(":", "/", "a", "b", "c"));
@@ -98,6 +109,10 @@ public class StringUtilsTester {
         }
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testRepeat() throws Exception {
         assertEquals("Should repeat single string three times with arg 3", "ababab", StringUtils.repeat("ab", 3));
@@ -110,6 +125,9 @@ public class StringUtilsTester {
         }
     }
 
+    /**
+     *
+     */
     @Test
     public void testSplitString() {
         String input = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam volutpat euismod aliquet. Nullam vestibulum mollis arcu, quis laoreet nibh aliquet et. In at ligula pellentesque magna placerat luctus. Donec mauris nibh, lacinia non feugiat quis, dapibus id orci. Suspendisse sollicitudin suscipit sodales. Mauris interdum consectetur nunc sed interdum. Nulla facilisi. Quisque urna lectus, tempor ut feugiat sit amet, congue eget lectus. Duis eget interdum turpis. Morbi turpis arcu, venenatis ac venenatis nec, pretium ac tellus. Fusce condimentum iaculis sem. Cras eros dui, imperdiet vitae faucibus feugiat, pellentesque eu quam. In dignissim facilisis sollicitudin. Cras tincidunt arcu at lectus tincidunt a porta lorem accumsan. Pellentesque porta, est at viverra sagittis, est elit congue lorem, feugiat lobortis tellus nisl in augue.";
@@ -118,6 +136,9 @@ public class StringUtilsTester {
         assertTrue("Should have split String into multiple lines", output.split("\n").length > 5);
     }
 
+    /**
+     *
+     */
     @Test
     public void testSplitStringAlreadySplit() {
         String input = "Lorem ipsum dolor\n sit amet, consectetur\n adipiscing elit. Aliquam\n volutpat euismod aliquet.\n Nullam vestibulum mol";
@@ -158,6 +179,9 @@ public class StringUtilsTester {
 
     }
 
+    /**
+     *
+     */
     @Test
     public void testSplitStringForce() {
         String input = "abcdefghijkl";
@@ -194,6 +218,9 @@ public class StringUtilsTester {
         }
     }
 
+    /**
+     *
+     */
     @Test
     public void testMakeEllipsis() {
         // if length of input is less than maxSize, then output equals input
@@ -208,6 +235,9 @@ public class StringUtilsTester {
         assertEquals(expectedOutput, output);
     }
 
+    /**
+     *
+     */
     @Test
     public void testFormatDate() {
         String expectedOutput = "1970/01/01 01:00:00";

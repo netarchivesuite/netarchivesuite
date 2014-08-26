@@ -41,6 +41,7 @@ public class NamedUtils {
      * function on named objects. The compare function uses Collator for sorting according to language in loc. The
      * compare function is used as Comparator for the Collection Sorting on Named object Lists.
      *
+     * @param <T>
      * @param loc contains the language sorting must adhere to
      * @param list contains list to be sorted. Objects in the List must implement Named
      */

@@ -55,6 +55,10 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO;
  * Contains utility methods for supporting GUI for updating snapshot harvests.
  */
 public class SnapshotHarvestDefinition {
+
+    /**
+     *
+     */
     protected static final Log log = LogFactory.getLog(SnapshotHarvestDefinition.class);
     private final Provider<HarvestDefinitionDAO> hdDaoProvider;
     private final Provider<JobDAO> jobDaoProvider;
@@ -69,6 +73,10 @@ public class SnapshotHarvestDefinition {
         this.domainDAOProvider = domainDAOProvider;
     }
 
+    /**
+     *
+     * @return
+     */
     public static SnapshotHarvestDefinition createSnapshotHarvestDefinitionWithDefaultDAOs() {
         return new SnapshotHarvestDefinition(DAOProviderFactory.getHarvestDefinitionDAOProvider(),
                 DAOProviderFactory.getJobDAOProvider(), DAOProviderFactory.getExtendedFieldDAOProvider(),

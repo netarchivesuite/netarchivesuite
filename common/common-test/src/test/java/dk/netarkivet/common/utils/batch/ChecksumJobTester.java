@@ -51,10 +51,18 @@ import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 public class ChecksumJobTester {
     private MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
 
+    /**
+     *
+     * @throws Exception
+     */
     public void setUp() throws Exception {
         mtf.setUp();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     public void tearDown() throws Exception {
         mtf.tearDown();
     }
@@ -130,6 +138,9 @@ public class ChecksumJobTester {
         }
     }
 
+    /**
+     *
+     */
     public void testParseLine() {
         KeyValuePair<String, String> pair = ChecksumJob.parseLine("a" + ChecksumJob.STRING_FILENAME_SEPARATOR + "b");
         assertEquals("Should get right key", "a", pair.getKey());

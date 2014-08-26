@@ -43,7 +43,8 @@ public class I18n {
     /** Name of the resource bundle. */
     private final String bundleName;
 
-    /** Make an internationalisation object with the given bundle. */
+    /** Make an internationalisation object with the given bundle.
+     * @param translationsBundle */
     public I18n(String translationsBundle) {
         ArgumentNotValid.checkNotNullOrEmpty(translationsBundle, "String translationsBundle");
         bundleName = translationsBundle;

@@ -31,19 +31,35 @@ import com.sun.jndi.rmi.registry.RegistryContextFactory;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.JMXUtils;
 
+/**
+ *
+ * @author tra
+ */
 public class JMXUtilsTester extends TestCase {
 
     private static final String JNDI_INITIAL_CONTEXT_PROPERTY = "java.naming.factory.initial";
     private String defaultServer = "localhost";
 
+    /**
+     *
+     * @param arg0
+     */
     public JMXUtilsTester(String arg0) {
         super(arg0);
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     protected void setUp() throws Exception {
         super.setUp();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     protected void tearDown() throws Exception {
         super.tearDown();
     }
@@ -51,6 +67,11 @@ public class JMXUtilsTester extends TestCase {
     /*
      * Test method for 'dk.netarkivet.monitor.webinterface.JMXUtils.getUrl(String, int, int)'
      */
+
+    /**
+     *
+     */
+    
     public final void testGetUrl() {
         JMXServiceURL JmxServiceUrl = JMXUtils.getUrl(defaultServer, 8000, 8100);
     }
@@ -58,6 +79,11 @@ public class JMXUtilsTester extends TestCase {
     /*
      * Test method for 'dk.netarkivet.monitor.webinterface.JMXUtils.getConnection(JMXServiceURL, Map<String, String[]>)'
      */
+
+    /**
+     *
+     */
+    
     public final void testGetConnection() {
         ensureJndiInitialContext();
         JMXServiceURL JmxServiceUrl = JMXUtils.getUrl(defaultServer, 8000, 8100);

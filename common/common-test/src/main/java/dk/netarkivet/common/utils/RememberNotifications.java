@@ -28,8 +28,20 @@ package dk.netarkivet.common.utils;
  *
  */
 public class RememberNotifications extends Notifications {
+
+    /**
+     *
+     */
     public NotificationType type;
+
+    /**
+     *
+     */
     public String message;
+
+    /**
+     *
+     */
     public Throwable e;
 
     private static RememberNotifications instance;
@@ -37,6 +49,10 @@ public class RememberNotifications extends Notifications {
     private RememberNotifications() {
     }
 
+    /**
+     *
+     * @return
+     */
     public static synchronized RememberNotifications getInstance() {
         if (instance == null) {
             instance = new RememberNotifications();
@@ -60,6 +76,9 @@ public class RememberNotifications extends Notifications {
         }
     }
 
+    /**
+     *
+     */
     public static synchronized void resetSingleton() {
         instance = null;
     }

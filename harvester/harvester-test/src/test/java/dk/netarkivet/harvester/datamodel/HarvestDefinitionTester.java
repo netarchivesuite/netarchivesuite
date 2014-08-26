@@ -78,11 +78,18 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         Settings.set(HarvesterSettings.SPLIT_BY_OBJECTLIMIT, "false");
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         super.tearDown();
     }
 
+    /**
+     *
+     */
     @Test
     public void testValidityOfConstructorArguments() {
 
@@ -164,6 +171,9 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         }
     }
 
+    /**
+     *
+     */
     @Test
     public void testValidityOfArgumentsNextDate() {
         // Test exceptions for setters of nextDate and numEvents
@@ -185,6 +195,9 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         }
     }
 
+    /**
+     *
+     */
     @Test
     public void testValidityOfArgumentsNumEvents() {
         Domain d = TestInfo.getDefaultDomain();
@@ -540,6 +553,9 @@ public class HarvestDefinitionTester extends DataModelTestCase {
 
     }
 
+    /**
+     *
+     */
     @Test
     public void testReset() {
         Domain d = TestInfo.getDefaultDomain();
@@ -935,6 +951,11 @@ public class HarvestDefinitionTester extends DataModelTestCase {
     /**
      * Check that ordering done by CompareConfigsDesc is in the order: - template first - byte limit second - expected
      * number of objects third.
+     * @throws java.lang.NoSuchFieldException
+     * @throws java.lang.IllegalAccessException
+     * @throws java.lang.InstantiationException
+     * @throws java.lang.reflect.InvocationTargetException
+     * @throws java.lang.NoSuchMethodException
      */
     @Test
     public void testCompareConfigsDesc() throws NoSuchFieldException, IllegalAccessException,
@@ -1061,6 +1082,9 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         assertEquals("Second order template with low byte limit and low " + "expectation expected", cfg3, list.get(5));
     }
 
+    /**
+     *
+     */
     @Test
     public void testEquals() {
         PartialHarvest harvestDef1 = HarvestDefinition.createPartialHarvest(

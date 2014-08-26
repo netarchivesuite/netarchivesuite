@@ -40,13 +40,25 @@ import dk.netarkivet.systemtest.environment.TestEnvironment;
 import dk.netarkivet.systemtest.page.HarvestHistoryPageHelper;
 import dk.netarkivet.systemtest.page.PageHelper;
 
+/**
+ *
+ * @author tra
+ */
 public class HarvestHistoryForDomainPageTest extends SeleniumTest {
     ;
 
+    /**
+     *
+     * @param method
+     */
     @BeforeMethod(alwaysRun = true)
     public void setup(Method method) {
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test(groups = {"guitest", "functest", "slow"})
     public void sortableHistoryTableTest() throws Exception {
         addDescription("Tests that the jobs listed on the 'Harvest History' page for a domain are"
@@ -145,6 +157,10 @@ public class HarvestHistoryForDomainPageTest extends SeleniumTest {
         assertColumnIsSorted(8, false);
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test(groups = {"guitest", "functest", "slow"})
     public void historyTablePagingTest() throws Exception {
         addDescription("Testes that the paging functionality works correctly " + "for the harvest history");
@@ -210,6 +226,10 @@ public class HarvestHistoryForDomainPageTest extends SeleniumTest {
         }
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test(groups = {"guitest", "functest", "slow"})
     public void historySortedTablePagingTest() throws Exception {
         addDescription("Tests that sorting is maintained when paging through " + "the harvest history");

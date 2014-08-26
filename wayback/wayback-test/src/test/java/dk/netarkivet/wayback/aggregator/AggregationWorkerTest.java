@@ -36,9 +36,17 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.wayback.WaybackSettings;
 
+/**
+ *
+ * @author tra
+ */
 public class AggregationWorkerTest extends AggregatorTestCase {
     AggregationWorker worker;
 
+    /**
+     *
+     * @throws Exception
+     */
     @Override
     @Before
     public void setUp() throws Exception {
@@ -48,6 +56,10 @@ public class AggregationWorkerTest extends AggregatorTestCase {
         worker.initialize();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         super.tearDown();

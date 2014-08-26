@@ -45,16 +45,29 @@ import dk.netarkivet.harvester.HarvesterSettings;
  *
  */
 public class TemplateDAOTester extends DataModelTestCase {
+
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         super.setUp();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         super.tearDown();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testGetAll() throws Exception {
         TemplateDAO dao = TemplateDAO.getInstance();
@@ -70,6 +83,10 @@ public class TemplateDAOTester extends DataModelTestCase {
                 sb.toString());
     }
 
+    /**
+     *
+     * @throws DocumentException
+     */
     @Test
     public void testCreate() throws DocumentException {
         TemplateDAO dao = TemplateDAO.getInstance();
@@ -95,6 +112,10 @@ public class TemplateDAOTester extends DataModelTestCase {
         assertEquals("Text of doc2 and doc3 is equal", doc2.asXML(), doc3.asXML());
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testUpdate() throws Exception {
         TemplateDAO dao = TemplateDAO.getInstance();

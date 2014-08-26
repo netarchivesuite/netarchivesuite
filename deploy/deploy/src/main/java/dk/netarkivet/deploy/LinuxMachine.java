@@ -45,6 +45,7 @@ public class LinuxMachine extends Machine {
      * @param param The machine parameters to be inherited from the PhysicalLocation.
      * @param netarchiveSuiteSource The name of the NetarchiveSuite package file. Must end with '.zip'.
      * @param logProp The logging property file, to be copied into machine directory.
+     * @param slf4JConfig
      * @param securityPolicy The security policy file, to be copied into machine directory.
      * @param dbFile The name of the database file.
      * @param arcdbFile The name of the archive file.
@@ -575,6 +576,11 @@ public class LinuxMachine extends Machine {
         }
     }
 
+    /**
+     *
+     * @param app
+     * @return
+     */
     @Override
     protected String osGetClassPath(Application app) {
         StringBuilder res = new StringBuilder();

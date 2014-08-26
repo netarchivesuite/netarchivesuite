@@ -49,6 +49,10 @@ import dk.netarkivet.common.exceptions.IOFailure;
 
 @SuppressWarnings({"serial"})
 public class ExternalBatchMoreClasses extends FileBatchJob {
+
+    /**
+     *
+     */
     protected transient Log log = LogFactory.getLog(getClass().getName());
 
     /**
@@ -133,7 +137,7 @@ public class ExternalBatchMoreClasses extends FileBatchJob {
      * date is found then the given date array is updated The return value tells whether a date was found.
      * 
      * @param line to be searched
-     * @param firstLine true if it is the first line of the metadata-file
+     * @param mdFile
      * @param
      * @return true if date was found, false otherwise
      */

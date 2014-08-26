@@ -52,6 +52,9 @@ public class JobStatusTester {
         assertEquals(JobStatus.FAILED_REJECTED.getLocalizedString(en), "Failed (Rejected for Resubmission)");
     }
 
+    /**
+     *
+     */
     @Test
     public void testLegalChange() {
         JobStatus status = JobStatus.FAILED_REJECTED;
@@ -59,6 +62,9 @@ public class JobStatusTester {
                 status.legalChange(JobStatus.FAILED));
     }
 
+    /**
+     *
+     */
     @Test
     public void testFromOrdinal() {
         assertEquals(JobStatus.NEW, JobStatus.fromOrdinal(0));

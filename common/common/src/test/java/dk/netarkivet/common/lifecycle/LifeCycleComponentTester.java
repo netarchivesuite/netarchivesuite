@@ -24,8 +24,15 @@ package dk.netarkivet.common.lifecycle;
 
 import org.junit.Test;
 
+/**
+ *
+ * @author tra
+ */
 public class LifeCycleComponentTester {
 
+    /**
+     *
+     */
     @Test
     public void canLifeCycleComponentStartAndShutdown() {
         LifeCycleComponent lcc = new LifeCycleComponent();

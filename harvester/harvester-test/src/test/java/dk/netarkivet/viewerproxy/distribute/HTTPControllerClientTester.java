@@ -44,6 +44,10 @@ public class HTTPControllerClientTester {
     HttpServletResponse responseMock = mock(HttpServletResponse.class);
     JspWriter jspWriterMock = mock(JspWriter.class);
 
+    /**
+     *
+     * @throws IOException
+     */
     @Test
     public void testRedirectForSimpleCommand() throws IOException {
         returnUrl = null;
@@ -55,6 +59,10 @@ public class HTTPControllerClientTester {
         verify(responseMock).sendRedirect(addPrefix("fooBar"));
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     @Test
     public void testRedirectForRedirectWithoutReturnUrl() throws IOException {
         returnUrl = null;
@@ -68,6 +76,10 @@ public class HTTPControllerClientTester {
         }
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     @Test
     public void testRedirectWithReturnUrl() throws IOException {
         returnUrl = "anUrl";

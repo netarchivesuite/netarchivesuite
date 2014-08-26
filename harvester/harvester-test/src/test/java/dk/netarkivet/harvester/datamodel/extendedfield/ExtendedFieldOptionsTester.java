@@ -31,8 +31,15 @@ import java.util.Map;
 
 import org.junit.Test;
 
+/**
+ *
+ * @author tra
+ */
 public class ExtendedFieldOptionsTester {
 
+    /**
+     *
+     */
     @Test
     public void testOptions() {
         String line = null;

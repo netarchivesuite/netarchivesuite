@@ -51,6 +51,7 @@ public class RemoteFileFactory extends SettingsFactory<RemoteFile> {
      *            of objects.
      * @param fileDeletable If true, the local file will be deleted when it is no longer needed.
      * @param multipleDownloads Whether this file should be allowed to be transferred more than once.
+     * @param connectionParams
      * @return A RemoteFile instance encapsulating the file argument.
      */
     public static RemoteFile getInstance(File file, boolean useChecksums, boolean fileDeletable,
@@ -61,6 +62,16 @@ public class RemoteFileFactory extends SettingsFactory<RemoteFile> {
     }
 
     /* Same as the above method, but without the required RemoteFileSettings. */
+
+    /**
+     *
+     * @param file
+     * @param useChecksums
+     * @param fileDeletable
+     * @param multipleDownloads
+     * @return
+     */
+    
     public static RemoteFile getInstance(File file, boolean useChecksums, boolean fileDeletable,
             boolean multipleDownloads) {
         ArgumentNotValid.checkNotNull(file, "File file");
@@ -105,6 +116,7 @@ public class RemoteFileFactory extends SettingsFactory<RemoteFile> {
      * Same as getInstance(file, false, true, false).
      * 
      * @param file The file to move to another computer.
+     * @return 
      */
     public static RemoteFile getMovefileInstance(File file) {
         return getInstance(file, false, true, false);
@@ -114,6 +126,7 @@ public class RemoteFileFactory extends SettingsFactory<RemoteFile> {
      * Same as getInstance(file, false, false, false, null).
      * 
      * @param file The file to copy to another computer.
+     * @return 
      */
     public static RemoteFile getCopyfileInstance(File file) {
         return getInstance(file, false, false, false);
@@ -123,6 +136,8 @@ public class RemoteFileFactory extends SettingsFactory<RemoteFile> {
      * Same as getInstance(file, false, false, false, connectionParams).
      * 
      * @param file The file to copy to another computer.
+     * @param connectionParams
+     * @return 
      */
     public static RemoteFile getCopyfileInstance(File file, RemoteFileSettings connectionParams) {
         if (connectionParams != null) {
@@ -136,6 +151,7 @@ public class RemoteFileFactory extends SettingsFactory<RemoteFile> {
      * Same as getInstance(file, false, false, false).
      * 
      * @param file The file to copy to another computer.
+     * @return 
      */
     public static RemoteFile getDistributefileInstance(File file) {
         return getInstance(file, true, false, true);

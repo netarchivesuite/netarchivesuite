@@ -22,10 +22,24 @@
  */
 package dk.netarkivet.systemtest;
 
+/**
+ *
+ * @author tra
+ */
 public interface HarvestingEventListener {
+
+    /**
+     *
+     */
     void harvestStarted();
 
+    /**
+     *
+     */
     void harvestFinished();
 
+    /**
+     *
+     */
     void harvestFailed();
 }

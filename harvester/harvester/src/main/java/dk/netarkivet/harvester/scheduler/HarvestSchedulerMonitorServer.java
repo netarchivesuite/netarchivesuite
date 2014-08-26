@@ -209,6 +209,10 @@ public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler imple
         // Channels.getTheSched(), this);
     }
 
+    /**
+     *
+     * @param msg
+     */
     @Override
     public void visit(IndexReadyMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");

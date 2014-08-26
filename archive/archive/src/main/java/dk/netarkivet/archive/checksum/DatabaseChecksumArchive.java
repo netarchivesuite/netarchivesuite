@@ -122,7 +122,7 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
      * Constructor. Retrieves the minimum space left variable, and ensures the existence of the archive file. If the
      * file does not exist, then it is created.
      * 
-     * @throws Exception
+     * @throws com.sleepycat.je.DatabaseException
      */
     public DatabaseChecksumArchive() throws DatabaseException {
         super();

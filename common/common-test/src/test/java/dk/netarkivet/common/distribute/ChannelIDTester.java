@@ -49,6 +49,9 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 public class ChannelIDTester {
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         rs.setUp();
@@ -58,6 +61,8 @@ public class ChannelIDTester {
 
     /**
      * Verify that a queue instance is serializable.
+     * @throws java.io.IOException
+     * @throws java.lang.ClassNotFoundException
      */
     @Test
     public void testSerializability() throws IOException, ClassNotFoundException {
@@ -79,6 +84,8 @@ public class ChannelIDTester {
 
     /**
      * Verify that a topic instance is Serializable.
+     * @throws java.io.IOException
+     * @throws java.lang.ClassNotFoundException
      */
     @Test
     public void testTopicSerializability() throws IOException, ClassNotFoundException {

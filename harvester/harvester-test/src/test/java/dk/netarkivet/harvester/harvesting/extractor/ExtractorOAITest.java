@@ -37,9 +37,16 @@ import org.archive.net.UURIFactory;
 import org.archive.util.HttpRecorder;
 import org.junit.Test;
 
+/**
+ *
+ * @author tra
+ */
 @SuppressWarnings({"serial"})
 public class ExtractorOAITest {
 
+    /**
+     *
+     */
     public static final String xmlText = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><OAI-PMH xmlns=\"http://www.openarchives.org/OAI/2.0/\" \n"
             + "         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
             + "         xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/\n"
@@ -61,6 +68,10 @@ public class ExtractorOAITest {
             + "\n"
             + "   <resumptionToken>foobar</resumptionToken>\n"
             + "      \n" + "   \n" + "</ListRecords>\n" + "\n" + "</OAI-PMH>\n";
+
+    /**
+     *
+     */
     public static final String uri = "http://www.mtp.hum.ku.dk/library/uni/netarkiv/oai2v3/?verb=ListRecords&metadataPrefix=oai_dc";
 
     class TestReplayCharSequence implements ReplayCharSequence {
@@ -90,6 +101,8 @@ public class ExtractorOAITest {
     /**
      * Create a CrawlURI corresponding to this xml and uri. Run the extract method on it. Check that it now has a new
      * link with resumptionToken=foobar in the query.
+     * @throws org.apache.commons.httpclient.URIException
+     * @throws java.lang.InterruptedException
      */
     @Test
     public void testExtract() throws URIException, InterruptedException {

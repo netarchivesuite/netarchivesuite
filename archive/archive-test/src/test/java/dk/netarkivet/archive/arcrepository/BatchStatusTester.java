@@ -59,18 +59,28 @@ public class BatchStatusTester {
 
     private UseTestRemoteFile utrf = new UseTestRemoteFile();
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         mtf.setUp();
         utrf.setUp();
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         utrf.tearDown();
         mtf.tearDown();
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     @Test
     @Ignore("FIXME")
     // FIXME: test temporarily disabled
@@ -120,6 +130,10 @@ public class BatchStatusTester {
         assertFalse("Should not have made a result file", noSuchFile.exists());
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     @Test
     @Ignore("FIXME")
     // FIXME: test temporarily disabled
@@ -175,6 +189,10 @@ public class BatchStatusTester {
 
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     @Test
     @Ignore("FIXME")
     // FIXME: test temporarily disabled

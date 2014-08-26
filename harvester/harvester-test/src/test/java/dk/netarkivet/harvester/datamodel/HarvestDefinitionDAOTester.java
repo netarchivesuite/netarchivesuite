@@ -52,11 +52,20 @@ import dk.netarkivet.testutils.LogbackRecorder;
  * Unit tests for the class HarvestDefinitionDAO class.
  */
 public class HarvestDefinitionDAOTester extends DataModelTestCase {
+
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         super.setUp();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         super.tearDown();
@@ -239,6 +248,10 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         HarvestDefinitionDAO.reset();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testGetHarvestDefinition() throws Exception {
         HarvestDefinitionDAO dao = HarvestDefinitionDAO.getInstance();
@@ -318,6 +331,10 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         assertEquals("Should be the same HD before and after saving", hd1, hd2);
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testGetHarvestRunInfo() throws Exception {
         // enforce migration of domain database.
@@ -445,6 +462,10 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         return j;
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testGetSparseDomainConfigurations() throws Exception {
         final HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
@@ -465,6 +486,10 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         assertFalse("Should return no more configs", it.hasNext());
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testGetSparsePartialHarvest() throws Exception {
         final HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
@@ -481,6 +506,10 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         assertNull("Should be null on unknown", hddao.getSparsePartialHarvest("Fnord"));
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testGetSparsePartialHarvestDefinitions() throws Exception {
         final HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
@@ -510,6 +539,10 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         }
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testGetSparseFullHarvest() throws Exception {
         final HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
@@ -529,6 +562,10 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         assertNull("Should be null on unknown harvestdefinition", hddao.getSparseFullHarvest("Fnord"));
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testGetAllSparseFullHarvestDefinitions() throws Exception {
         final HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
@@ -554,6 +591,10 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         return cal.getTime();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testGetHarvestName() throws Exception {
         final HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
@@ -573,6 +614,10 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         }
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testIsSnapshot() throws Exception {
         final HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
@@ -592,6 +637,10 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         }
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testGetDomains() throws Exception {
         HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();

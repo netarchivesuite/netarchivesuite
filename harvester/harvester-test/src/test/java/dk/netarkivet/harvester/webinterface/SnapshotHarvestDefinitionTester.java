@@ -62,6 +62,10 @@ public class SnapshotHarvestDefinitionTester {
     private SnapshotHarvestDefinition snapshotHarvestDefinition = new SnapshotHarvestDefinition(
             harvestDefinitionDAOProvider, jobDAOProvider, extendedFieldDAOProvider, domainDAOProvider);
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testProcessRequest() throws Exception {
         ServletRequest requestStub = mock(ServletRequest.class);
@@ -93,6 +97,9 @@ public class SnapshotHarvestDefinitionTester {
         assertFalse("Should initially be inactive", newHD.getActive());
     }
 
+    /**
+     *
+     */
     @Test
     public void testExistingHarvestDefinition() {
         ServletRequest requestStub = mock(ServletRequest.class);
@@ -111,6 +118,10 @@ public class SnapshotHarvestDefinitionTester {
         }
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testNoHarvestParamInRequest() throws Exception {
         String newHDname = "fnord";

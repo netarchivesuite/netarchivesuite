@@ -30,6 +30,9 @@ import junit.framework.TestCase;
 /** Unittestersuite for the MonitorSettings class. */
 public class MonitorSettingsTester extends TestCase {
 
+    /**
+     *
+     */
     public void testNoFinalSettingsConstants() {
         Class c = MonitorSettings.class;
         Field[] fields = c.getDeclaredFields();

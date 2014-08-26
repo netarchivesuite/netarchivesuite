@@ -56,6 +56,10 @@ import dk.netarkivet.testutils.LogbackRecorder;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
+/**
+ *
+ * @author tra
+ */
 public class ReplicaCacheDatabaseTester {
 
     private ReloadSettings rs = new ReloadSettings();
@@ -63,6 +67,10 @@ public class ReplicaCacheDatabaseTester {
     static boolean clear = true;
     private MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR, TestInfo.TEST_DIR);
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         rs.setUp();
@@ -89,12 +97,19 @@ public class ReplicaCacheDatabaseTester {
         cache = ReplicaCacheDatabase.getInstance();
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         mtf.tearDown();
         rs.tearDown();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @SuppressWarnings("unchecked")
     @Test
     // FIXME: Split test up.

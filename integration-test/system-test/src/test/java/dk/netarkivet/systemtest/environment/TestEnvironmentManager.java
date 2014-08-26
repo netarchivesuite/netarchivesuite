@@ -41,6 +41,10 @@ import dk.netarkivet.systemtest.TestLogger;
  * Provides utilites for performing deployment related commands in the test environment.
  */
 public class TestEnvironmentManager {
+
+    /**
+     *
+     */
     protected final TestLogger log = new TestLogger(getClass());
     private final String TESTX;
     private final String GUI_HOST;
@@ -59,6 +63,8 @@ public class TestEnvironmentManager {
      * </ul>
      * 
      * @param testX Defines the test name this test should be run under in the test system.
+     * @param host
+     * @param port
      */
     public TestEnvironmentManager(String testX, String host, int port) {
         TESTX = testX;
@@ -94,6 +100,7 @@ public class TestEnvironmentManager {
      * runCommand(String,int).
      * 
      * @param remoteCommand The command to run on the test server
+     * @throws java.lang.Exception
      */
     public void runCommand(String remoteCommand) throws Exception {
         runCommand(remoteCommand, 1000);
@@ -102,8 +109,10 @@ public class TestEnvironmentManager {
     /**
      * Runs the a command on the DEPLOYMENT_SERVER. Delegates to the ${link runCommand(String,String,String,int).
      * 
+     * @param server
      * @param remoteCommand The server to run the command on.
      * @param remoteCommand The command to run on the test server.
+     * @throws java.lang.Exception
      */
     public void runCommand(String server, String remoteCommand) throws Exception {
         runCommand(server, remoteCommand, 1000);
@@ -114,6 +123,7 @@ public class TestEnvironmentManager {
      * 
      * @param remoteCommand The command to run on the test server.
      * @param commandTimeout The timeout for the command.
+     * @throws java.lang.Exception
      */
     public void runCommand(String remoteCommand, int commandTimeout) throws Exception {
         runCommand(null, remoteCommand, commandTimeout);
@@ -124,6 +134,7 @@ public class TestEnvironmentManager {
      * 
      * @param server The server to run the command on.
      * @param remoteCommand The command to run on the remote server.
+     * @throws java.lang.Exception
      */
     public void runTestXCommand(String server, String remoteCommand) throws Exception {
         String testXRemoteCommand = "cd " + getTESTX() + ";" + remoteCommand;
@@ -140,6 +151,7 @@ public class TestEnvironmentManager {
      *            here ssh to the actual test server.
      * @param command The command to run on the test server.
      * @param commandTimeout The timeout for the command.
+     * @throws java.lang.Exception
      */
     public void runCommand(String server, String command, int commandTimeout) throws Exception {
         if (server == null) {
@@ -149,24 +161,44 @@ public class TestEnvironmentManager {
         }
     }
 
+    /**
+     *
+     * @param command
+     * @throws Exception
+     */
     public void runCommandWithoutQuotes(String command) throws Exception {
         runCommand(null, command, 1000, "");
     }
 
+    /**
+     *
+     * @param command
+     * @param positiveExitCodes
+     * @throws Exception
+     */
     public void runCommandWithoutQuotes(String command, int[] positiveExitCodes) throws Exception {
         runCommand(null, command, 1000, "", positiveExitCodes);
     }
 
     /**
+     * @param server
+     * @param command
      * @param quotes the quotes ", ', none or other to use to box the command.
+     * @param commandTimeout
+     * @throws java.lang.Exception
      */
     public void runCommand(String server, String command, int commandTimeout, String quotes) throws Exception {
         runCommand(server, command, commandTimeout, quotes, new int[] {0});
     }
 
     /**
+     * @param server
+     * @param command
      * @param positiveExitCodes The exit codes to consider the command a success. This will normally be only 0, but in
      *            case of f.ex. 'diff' 1 is also ok.
+     * @param commandTimeout
+     * @param quotes
+     * @throws java.lang.Exception
      */
     public void runCommand(String server, String command, int commandTimeout, String quotes, int[] positiveExitCodes)
             throws Exception {
@@ -239,6 +271,11 @@ public class TestEnvironmentManager {
 
     /**
      * Escape ',', '\' and &. Runs as TestX command
+     * @param server
+     * @param file
+     * @param stringToReplace
+     * @param newString
+     * @throws java.lang.Exception
      */
     public void replaceStringInFile(String server, String file, String stringToReplace, String newString)
             throws Exception {

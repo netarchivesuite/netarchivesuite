@@ -36,6 +36,9 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  */
 public class TLDInfoTester {
 
+    /**
+     *
+     */
     @Test
     public void testConstructor() {
         TLDInfo info = new TLDInfo("dk");
@@ -48,6 +51,9 @@ public class TLDInfoTester {
         assertEquals(0, info.getCount());
     }
 
+    /**
+     *
+     */
     @Test
     public void testAddSubdomain() {
         TLDInfo i = new TLDInfo("um");

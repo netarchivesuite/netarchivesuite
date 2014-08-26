@@ -35,18 +35,40 @@ import org.archive.net.UURI;
 @SuppressWarnings({"serial"})
 public class FixedUURI extends UURI {
 
+    /**
+     *
+     */
     protected FixedUURI() {
         super();
     }
 
+    /**
+     *
+     * @param string
+     * @param b
+     * @param string1
+     * @throws URIException
+     */
     protected FixedUURI(String string, boolean b, String string1) throws URIException {
         super(string, b, string1);
     }
 
+    /**
+     *
+     * @param uuri
+     * @param uuri1
+     * @throws URIException
+     */
     protected FixedUURI(UURI uuri, UURI uuri1) throws URIException {
         super(uuri, uuri1);
     }
 
+    /**
+     *
+     * @param string
+     * @param b
+     * @throws URIException
+     */
     public FixedUURI(String string, boolean b) throws URIException {
         super(string, b);
     }

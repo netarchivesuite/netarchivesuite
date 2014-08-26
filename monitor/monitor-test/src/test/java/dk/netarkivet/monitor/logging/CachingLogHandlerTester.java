@@ -55,10 +55,17 @@ public class CachingLogHandlerTester extends TestCase {
     private static final String LOG_MESSAGE = "Log message ";
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     * @param s
+     */
     public CachingLogHandlerTester(String s) {
         super(s);
     }
 
+    /**
+     *
+     */
     public void setUp() {
         rs.setUp();
         // Get the MBean server
@@ -72,6 +79,9 @@ public class CachingLogHandlerTester extends TestCase {
         Settings.set(CommonSettings.USE_REPLICA_ID, "ONE");
     }
 
+    /**
+     *
+     */
     public void tearDown() {
         if (cachingLogHandler != null) {
             cachingLogHandler.close();
@@ -179,6 +189,10 @@ public class CachingLogHandlerTester extends TestCase {
         }
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     public void testGetNthLogRecord() throws Exception {
         LogRecord record1 = generateLogRecord(Level.WARNING, 1);
         LogRecord record2 = generateLogRecord(Level.INFO, 2);

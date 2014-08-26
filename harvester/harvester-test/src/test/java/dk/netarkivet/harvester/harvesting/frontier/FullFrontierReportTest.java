@@ -40,10 +40,18 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
+/**
+ *
+ * @author tra
+ */
 public class FullFrontierReportTest {
 
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         rs.setUp();
@@ -51,6 +59,10 @@ public class FullFrontierReportTest {
         Settings.set(CommonSettings.CACHE_DIR, TestInfo.WORKDIR.getAbsolutePath());
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
 
@@ -68,6 +80,10 @@ public class FullFrontierReportTest {
         rs.tearDown();
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     @Test
     public final void testParseStoreAndDispose() throws IOException {
         for (File reportFile : TestInfo.getFrontierReportSamples()) {
@@ -78,6 +94,10 @@ public class FullFrontierReportTest {
         }
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     @Test
     public final void testAll() throws IOException {
         for (File reportFile : TestInfo.getFrontierReportSamples()) {

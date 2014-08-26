@@ -72,6 +72,10 @@ public class JobDAOTester extends DataModelTestCase {
     private HarvestChannel highChan;
     private HarvestChannel lowChan;
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -80,12 +84,20 @@ public class JobDAOTester extends DataModelTestCase {
         HarvestDAOUtils.resetDAOs();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         super.tearDown();
         HarvestDAOUtils.resetDAOs();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testGetCountJobs() throws Exception {
         JobDAO dao = JobDAO.getInstance();
@@ -349,6 +361,10 @@ public class JobDAOTester extends DataModelTestCase {
         assertJobsFound("only started and failed jobs", 0, 0, 2, 3, 0);
     }
 
+    /**
+     *
+     * @throws SQLException
+     */
     @Test
     public void testPersistenseOfPriority() throws SQLException {
         // create two jobs with different priority
@@ -423,7 +439,8 @@ public class JobDAOTester extends DataModelTestCase {
         jdao.update((jobs.get(i)));
     }
 
-    /** Test that the job error info is stored correctly. */
+    /** Test that the job error info is stored correctly.
+     * @throws java.lang.Exception */
     @Test
     public void testPersistenceOfJobErrors() throws Exception {
         Domain d = Domain.getDefaultDomain("testdomain.dk");
@@ -766,6 +783,11 @@ public class JobDAOTester extends DataModelTestCase {
          */
     }
 
+    /**
+     *
+     * @param jobID
+     * @param newStatus
+     */
     public static void changeStatus(long jobID, JobStatus newStatus) {
         PreparedStatement s = null;
         Connection c = HarvestDBConnection.get();
@@ -823,6 +845,9 @@ public class JobDAOTester extends DataModelTestCase {
         }
     }
 
+    /**
+     *
+     */
     public static void testGetJobStatusFromId() {
         JobDAO dao = JobDAO.getInstance();
         Iterator<Long> iterator = dao.getAllJobIds();

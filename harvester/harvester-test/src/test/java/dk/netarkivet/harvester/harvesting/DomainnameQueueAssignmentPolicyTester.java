@@ -46,6 +46,10 @@ public class DomainnameQueueAssignmentPolicyTester {
      */
     static final String DEFAULT_CLASS_KEY = "default...";
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testGetClassKey() throws Exception {
         // Check that domain names + port numbers are extracted as expected
@@ -66,6 +70,9 @@ public class DomainnameQueueAssignmentPolicyTester {
 
     }
 
+    /**
+     *
+     */
     @Test
     public void testGetClassKeyPartTwo() {
 
@@ -79,6 +86,10 @@ public class DomainnameQueueAssignmentPolicyTester {
                 policy.getClassKey(null, getCandidateURI("foo.dk#1010#fnord")));
     }
 
+    /**
+     *
+     * @throws URIException
+     */
     @Test
     public void testTopLevelDomains() throws URIException {
         ReloadSettings rs = new ReloadSettings(new File(TestInfo.ORIGINALS_DIR, "topLevelDomains_settings.xml"));

@@ -57,15 +57,27 @@ public class WARCUtilsTester extends TestCase {
     private static File INPUT_2_WARC = new File(TestInfo.WORKING_DIR, "input-2.warc");
     private static File INPUT_3_WARC = new File(TestInfo.WORKING_DIR, "input-3.warc");
 
+    /**
+     *
+     * @param s
+     */
     public WARCUtilsTester(String s) {
         super(s);
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     public void setUp() throws Exception {
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
         super.setUp();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     public void tearDown() throws Exception {
         super.tearDown();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
@@ -118,6 +130,9 @@ public class WARCUtilsTester extends TestCase {
         );
     }
 
+    /**
+     *
+     */
     public void testWarcCopy() {
         try {
             byte[] warcBytes = ("WARC/1.0\r\n"

@@ -37,6 +37,13 @@ import dk.netarkivet.systemtest.HarvestUtils;
  * Will also log webpage interactions.
  */
 public class SelectiveHarvestPageHelper {
+
+    /**
+     *
+     * @param name
+     * @param comments
+     * @param domains
+     */
     public static void createSelectiveHarvest(String name, String comments, String[] domains) {
         TestEventManager.getInstance().addStimuli("Creating harvest " + name);
         WebDriver driver = PageHelper.getWebDriver();
@@ -62,11 +69,16 @@ public class SelectiveHarvestPageHelper {
 
     /**
      * Creates a selective harvest without comments for the default domain.
+     * @param name
      */
     public static void createSelectiveHarvest(String name) {
         createSelectiveHarvest(name, null, new String[] {HarvestUtils.DEFAULT_DOMAIN});
     }
 
+    /**
+     *
+     * @param name
+     */
     public static void activateHarvest(String name) {
         TestEventManager.getInstance().addStimuli("Activating harvest " + name);
         PageHelper.gotoPage(PageHelper.MenuPages.SelectiveHarvests);
@@ -83,6 +95,10 @@ public class SelectiveHarvestPageHelper {
         }
     }
 
+    /**
+     *
+     * @param name
+     */
     public static void deactivateHarvest(String name) {
         TestEventManager.getInstance().addStimuli("Deactivating harvest " + name);
         PageHelper.gotoPage(PageHelper.MenuPages.SelectiveHarvests);
@@ -95,6 +111,9 @@ public class SelectiveHarvestPageHelper {
         }
     }
 
+    /**
+     *
+     */
     public static void deactivateAllHarvests() {
         TestEventManager.getInstance().addStimuli("Deactivating all harvests");
         PageHelper.gotoPage(PageHelper.MenuPages.SelectiveHarvests);

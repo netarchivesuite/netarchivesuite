@@ -207,6 +207,10 @@ public class CommandLineParser {
      * Override so can customize usage output.
      */
     public class DigestHelpFormatter extends HelpFormatter {
+
+        /**
+         *
+         */
         public DigestHelpFormatter() {
             super();
         }

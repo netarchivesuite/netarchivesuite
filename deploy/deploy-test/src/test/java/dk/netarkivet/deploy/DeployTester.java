@@ -30,6 +30,10 @@ import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
+/**
+ *
+ * @author tra
+ */
 public class DeployTester extends TestCase {
 
     ReloadSettings rs = new ReloadSettings();
@@ -46,6 +50,9 @@ public class DeployTester extends TestCase {
     private String databaseName = TestInfo.FILE_DATABASE.getPath();
     private String arcDatabaseName = TestInfo.FILE_BP_DATABASE.getPath();
 
+    /**
+     *
+     */
     public void setUp() {
         rs.setUp();
         pss.setUp();
@@ -56,6 +63,9 @@ public class DeployTester extends TestCase {
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
     }
 
+    /**
+     *
+     */
     public void tearDown() {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         FileUtils.removeRecursively(TestInfo.TMPDIR);

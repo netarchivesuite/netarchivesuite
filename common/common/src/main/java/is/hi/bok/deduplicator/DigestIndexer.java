@@ -296,6 +296,11 @@ public class DigestIndexer {
         return url;
     }
 
+    /**
+     *
+     * @param args
+     * @throws Exception
+     */
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static void main(String[] args) throws Exception {
         CommandLineParser clp = new CommandLineParser(args, new PrintWriter(System.out));

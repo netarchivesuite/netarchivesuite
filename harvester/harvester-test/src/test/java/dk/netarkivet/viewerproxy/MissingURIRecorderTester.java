@@ -38,6 +38,9 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 public class MissingURIRecorderTester {
     private MissingURIRecorder mur;
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         mur = new MissingURIRecorder();
@@ -45,7 +48,8 @@ public class MissingURIRecorderTester {
 
     /**
      * Tests start. Simply tests that urls are recorded after start is called.
-     * */
+     *
+     * @throws java.lang.Exception */
     @Test
     public void testStartRecordingURIs() throws Exception {
         assertEquals("mur should report no collected urls", 0, mur.getRecordedURIs().size());
@@ -58,7 +62,8 @@ public class MissingURIRecorderTester {
         assertEquals("mur should have collected URI", new URI("http://foo.bar"), recordedURIs.iterator().next());
     }
 
-    /** Tests stop. Tests that urls are NOT recorded after calling stop. */
+    /** Tests stop. Tests that urls are NOT recorded after calling stop.
+     * @throws java.lang.Exception */
     @Test
     public void testStopRecordingURIs() throws Exception {
         assertEquals("mur should report no collected urls", 0, mur.getRecordedURIs().size());
@@ -79,7 +84,8 @@ public class MissingURIRecorderTester {
 
     /**
      * Tests clear. Tests that the set of URLs is cleared after calling clear.
-     * */
+     *
+     * @throws java.lang.Exception */
     @Test
     public void testClearRecordedURIs() throws Exception {
         assertEquals("mur should report no collected urls", 0, mur.getRecordedURIs().size());
@@ -98,6 +104,7 @@ public class MissingURIRecorderTester {
     /**
      * Tests getRecordedURIs. Tests the result of getRecordedURIs before adding a URL, and after adding 1 and 2 URLs.
      * After the second url, the order should be sorted.
+     * @throws java.lang.Exception
      */
     @Test
     public void testGetRecordedURIs() throws Exception {
@@ -121,6 +128,7 @@ public class MissingURIRecorderTester {
      * Tests notify. First tests for exception on null argument. Then tests each of the four cases: 1) Recording URIs
      * and not found url reported 2) Recording URIs and found url reported 3) Not Recording URIs and not found url
      * reported 4) Not Recording URIs and found url reported Only case 1) should add an url to the set.
+     * @throws java.lang.Exception
      */
     @Test
     public void testNotify() throws Exception {

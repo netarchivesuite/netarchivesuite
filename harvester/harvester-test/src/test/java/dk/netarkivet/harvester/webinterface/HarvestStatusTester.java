@@ -63,12 +63,20 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
 
     private HarvestChannel testChan;
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         super.setUp();
         testChan = new HarvestChannel("test", false, true, "");
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         super.tearDown();
@@ -87,6 +95,10 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
                 hs.getJobStatusInfo());
     }
 
+    /**
+     *
+     * @throws SQLException
+     */
     @Test
     public void testRejectFailedJob() throws SQLException {
         JobDAO jobDAO = JobDBDAO.getInstance();
@@ -108,6 +120,10 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
 
     }
 
+    /**
+     *
+     * @throws SQLException
+     */
     @Test
     public void testUnrejectRejectedJob() throws SQLException {
         JobDAO jobDAO = JobDBDAO.getInstance();
@@ -127,6 +143,10 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
         }
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testProcessRequest() throws Exception {
 
@@ -191,6 +211,10 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
 
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testGetjobStatusList() throws Exception {
 
@@ -221,6 +245,10 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
         }
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testGetSelectedSortOrder() throws Exception {
         TestServletRequest servletRequest = new TestServletRequest();
@@ -251,6 +279,10 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
         assertFalse("Expected descending sort order", query.isSortAscending());
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testGetSelectedJobStatusCode() throws Exception {
         TestServletRequest servletRequest = new TestServletRequest();
@@ -290,6 +322,11 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
 
     }
 
+    /**
+     *
+     * @param params
+     * @return
+     */
     public static HarvestStatusQuery getTestQuery(Map<String, String[]> params) {
         TestServletRequest req = new TestServletRequest();
         req.setParameterMap(params);

@@ -62,8 +62,15 @@ public class IntegrityTester {
     private static final File SUBDIR3 = new File(WORKING, "subdir3");
     private static final int BLOCKSIZE = 32768;
     private static final long LARGE = ((long) Integer.MAX_VALUE) + 1L;
+
+    /**
+     *
+     */
     public static final String LARGE_FILE = "largeFile";
 
+    /**
+     *
+     */
     public void setUp() {
         rs.setUp();
         FileUtils.removeRecursively(WORKING);
@@ -72,6 +79,9 @@ public class IntegrityTester {
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
     }
 
+    /**
+     *
+     */
     public void tearDown() {
         FileUtils.removeRecursively(WORKING);
         rs.tearDown();
@@ -79,6 +89,7 @@ public class IntegrityTester {
 
     /**
      * test that FileUtils.append can append between two remote files using ftp.
+     * @throws java.io.IOException
      */
     @Test
     public void failingTestAppendRemoteFiles() throws IOException {
@@ -97,7 +108,8 @@ public class IntegrityTester {
         FileAsserts.assertFileContains("Missing content", "2", out_file);
     }
 
-    /** Test that files larger than 2GB can be copied! */
+    /** Test that files larger than 2GB can be copied!
+     * @throws java.io.IOException */
     @Test
     public void failingTestCopyLargeFiles() throws IOException {
         byte[] block = new byte[BLOCKSIZE];
@@ -157,7 +169,8 @@ public class IntegrityTester {
         is.close();
     }
 
-    /** Test that files larger than 2GB can be gzipped and gunzipped! */
+    /** Test that files larger than 2GB can be gzipped and gunzipped!
+     * @throws java.io.IOException */
     @Test
     public void failingTestGZipGUnZipLargeFiles() throws IOException {
         byte[] block = new byte[BLOCKSIZE];

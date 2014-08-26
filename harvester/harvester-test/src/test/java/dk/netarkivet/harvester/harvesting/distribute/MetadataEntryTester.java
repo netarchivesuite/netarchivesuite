@@ -62,6 +62,9 @@ public class MetadataEntryTester {
     private String anInvalidUrl;
     private String anInvalidMimetype;
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         aRealURL = "metadata://netarkivet.dk/crawl/" + "setup/order.xml?version=1.7.1&harvestid=1&jobid=1";
@@ -198,6 +201,8 @@ public class MetadataEntryTester {
 
     /**
      * Test serializability.
+     * @throws java.io.IOException
+     * @throws java.lang.ClassNotFoundException
      */
     @Test
     public void testSerializability() throws IOException, ClassNotFoundException {

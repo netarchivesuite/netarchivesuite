@@ -70,6 +70,7 @@ public class ExtractCDXFromWarcJobTester {
     private int processed;
 
     /**
+     * @throws java.lang.Exception
      * @see TestCase#setUp()
      */
     @Before
@@ -81,6 +82,9 @@ public class ExtractCDXFromWarcJobTester {
 
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         FileUtils.removeRecursively(TestInfo.CDX_DIR);
@@ -98,6 +102,7 @@ public class ExtractCDXFromWarcJobTester {
 
     /**
      * Verify that the job runs without problems and visits all relevant records.
+     * @throws java.io.IOException
      */
     @Test
     @Ignore("The correct number of records should be processed expected:<11> but was:<135>")
@@ -117,6 +122,10 @@ public class ExtractCDXFromWarcJobTester {
         assertEquals("The correct number of records should be processed", TestInfo.NUM_RECORDS, processed);
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testExtractCDXJobWithWarcfilesExcludeChecsum() throws Exception {
         warcJob = new ExtractCDXFromWarcJob(false);
@@ -134,6 +143,10 @@ public class ExtractCDXFromWarcJobTester {
         System.out.println(FileUtils.readFile(TestInfo.CDX_FILE));
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testExtractCDXJobWithWarcfilesIncludeChecksum() throws Exception {
         warcJob = new ExtractCDXFromWarcJob(true);
@@ -151,6 +164,10 @@ public class ExtractCDXFromWarcJobTester {
         System.out.println(FileUtils.readFile(TestInfo.CDX_FILE));
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testWarcIteration() throws Exception {
         warcJob = new ExtractCDXFromWarcJob() {
@@ -169,6 +186,8 @@ public class ExtractCDXFromWarcJobTester {
 
     /**
      * Test whether the class is really Serializable.
+     * @throws java.io.IOException
+     * @throws java.lang.ClassNotFoundException
      */
     @Test
     public void testSerializability() throws IOException, ClassNotFoundException {
@@ -207,6 +226,10 @@ public class ExtractCDXFromWarcJobTester {
         assertTrue("Output from cdx jobs should be the same", Arrays.equals(baos1.toByteArray(), baos2.toByteArray()));
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testWarcReading() throws Exception {
 

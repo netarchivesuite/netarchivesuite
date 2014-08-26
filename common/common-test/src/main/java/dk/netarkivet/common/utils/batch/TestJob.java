@@ -22,18 +22,34 @@
  */
 package dk.netarkivet.common.utils.batch;
 
+/**
+ *
+ * @author tra
+ */
 @SuppressWarnings({"serial"})
 public class TestJob extends ChecksumJob {
     private String testId;
 
+    /**
+     *
+     * @param in_testId
+     */
     public TestJob(String in_testId) {
         testId = in_testId;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getTestId() {
         return testId;
     }
 
+    /**
+     *
+     * @param timeout
+     */
     public void setBatchTimeout(long timeout) {
         batchJobTimeout = timeout;
     }

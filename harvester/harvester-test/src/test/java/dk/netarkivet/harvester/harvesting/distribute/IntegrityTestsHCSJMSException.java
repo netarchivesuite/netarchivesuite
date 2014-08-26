@@ -71,6 +71,9 @@ public class IntegrityTestsHCSJMSException {
     private SecurityManager originalSM;
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         rs.setUp();
@@ -99,6 +102,9 @@ public class IntegrityTestsHCSJMSException {
         System.setSecurityManager(manager);
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         if (hs != null) {
@@ -113,6 +119,7 @@ public class IntegrityTestsHCSJMSException {
 
     /**
      * Test that a Harvester will not die immediately a JMSException is received.
+     * @throws java.lang.Exception
      */
     @Test
     @Ignore("Incorrect handling of 'Cannot connect to JMS' situation")

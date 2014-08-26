@@ -61,6 +61,10 @@ public class BatchLocalFilesTester {
     // Output stream for batch job
     OutputStream os;
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         initialized = 0;

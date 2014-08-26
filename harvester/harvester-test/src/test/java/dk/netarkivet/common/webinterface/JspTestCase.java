@@ -59,13 +59,45 @@ import dk.netarkivet.common.utils.FileUtils;
  */
 @SuppressWarnings({"unused"})
 public class JspTestCase {
+
+    /**
+     *
+     */
     protected static final File WEB_BASE_DIR = new File("webpages/HarvestDefinition");
+
+    /**
+     *
+     */
     public static final File TOP_DATA_DIR = new File("tests/dk/netarkivet/harvester/datamodel/data/");
+
+    /**
+     *
+     */
     protected static final File WORKING_DIR = new File(TOP_DATA_DIR, "working");
+
+    /**
+     *
+     */
     protected static Map<String, Class<HttpJspBase>> compiledPages = new HashMap<String, Class<HttpJspBase>>();
+
+    /**
+     *
+     */
     protected HttpJspBase instance;
+
+    /**
+     *
+     */
     protected MockHttpServletRequest request;
+
+    /**
+     *
+     */
     protected MockHttpServletResponse response;
+
+    /**
+     *
+     */
     protected StringBuilder output;
 
     /**
@@ -73,6 +105,11 @@ public class JspTestCase {
      * request.setupAddParameter(). Calling it multiple times will add parameter values rather than override them.
      *
      * @param jspPage The name of the page (under webpages/HarvestDefinition)
+     * @throws org.apache.jasper.JasperException
+     * @throws java.lang.IllegalAccessException
+     * @throws java.lang.ClassNotFoundException
+     * @throws java.net.MalformedURLException
+     * @throws java.lang.InstantiationException
      */
     @Before
     public void setUp(final String jspPage) throws JasperException, MalformedURLException, ClassNotFoundException,
@@ -102,6 +139,9 @@ public class JspTestCase {
          */
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         FileUtils.removeRecursively(WORKING_DIR);
@@ -113,6 +153,11 @@ public class JspTestCase {
         return instance;
     }
 
+    /**
+     *
+     * @throws IOException
+     * @throws ServletException
+     */
     public void runPage() throws IOException, ServletException {
         /*
          * response.setExpectedErrorNothing(); output = new StringBuilder(); JspFactory factory = new JspFactory() {
@@ -145,8 +190,10 @@ public class JspTestCase {
      * Assert that this page has returned valid XHTML. Unfortunately the initial newlines caused by the import
      * statements confuse the XHTML parser, so no pages ever validate:(
      *
+     * @param xhtml
      * @throws SAXException
      * @throws IOException
+     * @throws javax.xml.parsers.ParserConfigurationException
      */
     public static void assertValidXHTML(String xhtml) throws SAXException, IOException, ParserConfigurationException {
         try {

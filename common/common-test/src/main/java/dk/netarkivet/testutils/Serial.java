@@ -43,6 +43,7 @@ public class Serial {
     /**
      * Serializes an Object, deserializes it, and then returns it.
      * 
+     * @param <T>
      * @param input_object
      * @return Object
      * @throws IOException
@@ -63,6 +64,7 @@ public class Serial {
     /**
      * Check that transient fields are properly initialized after the object has been serialized and deserialized.
      *
+     * @param <T>
      * @param obj A Serializable object to test.
      * @param excludedFields Names of fields that we do not care are not initialized after deserialization. Could be
      *            integers that are properly initialized to 0 or the like. Only include fields here if you are sure that

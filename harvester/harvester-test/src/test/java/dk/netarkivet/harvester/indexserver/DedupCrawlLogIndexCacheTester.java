@@ -64,16 +64,28 @@ import dk.netarkivet.common.utils.FileUtils;
  */
 public class DedupCrawlLogIndexCacheTester extends CacheTestCase {
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         super.setUp();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         super.tearDown();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testCombine() throws Exception {
         // These are the origins of job #4 and #1
@@ -187,6 +199,10 @@ public class DedupCrawlLogIndexCacheTester extends CacheTestCase {
         }
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testGetSortedCDX() throws Exception {
         CDXDataCache dummyindexcache = new CDXDataCache();
@@ -198,6 +214,10 @@ public class DedupCrawlLogIndexCacheTester extends CacheTestCase {
                 FileUtils.readListFromFile(TestInfo.CDX_CACHE_4), FileUtils.readListFromFile(reader));
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testGetCacheFile() throws Exception {
         DedupCrawlLogIndexCache cache = new DedupCrawlLogIndexCache();

@@ -32,6 +32,10 @@ package dk.netarkivet.testutils;
  * returns -1, then the difference represents an addition.
  */
 public class Difference {
+
+    /**
+     *
+     */
     public static final int NONE = -1;
 
     /**
@@ -56,6 +60,10 @@ public class Difference {
 
     /**
      * Creates the difference for the given start and end points for the deletion and addition.
+     * @param delStart
+     * @param delEnd
+     * @param addEnd
+     * @param addStart
      */
     public Difference(int delStart, int delEnd, int addStart, int addEnd) {
         this.delStart = delStart;
@@ -66,6 +74,7 @@ public class Difference {
 
     /**
      * The point at which the deletion starts, if any. A value equal to <code>NONE</code> means this is an addition.
+     * @return 
      */
     public int getDeletedStart() {
         return delStart;
@@ -73,6 +82,7 @@ public class Difference {
 
     /**
      * The point at which the deletion ends, if any. A value equal to <code>NONE</code> means this is an addition.
+     * @return 
      */
     public int getDeletedEnd() {
         return delEnd;
@@ -81,6 +91,7 @@ public class Difference {
     /**
      * The point at which the addition starts, if any. A value equal to <code>NONE</code> means this must be an
      * addition.
+     * @return 
      */
     public int getAddedStart() {
         return addStart;
@@ -88,6 +99,7 @@ public class Difference {
 
     /**
      * The point at which the addition ends, if any. A value equal to <code>NONE</code> means this must be an addition.
+     * @return 
      */
     public int getAddedEnd() {
         return addEnd;
@@ -95,6 +107,7 @@ public class Difference {
 
     /**
      * Sets the point as deleted. The start and end points will be modified to include the given line.
+     * @param line
      */
     public void setDeleted(int line) {
         delStart = Math.min(line, delStart);
@@ -103,6 +116,7 @@ public class Difference {
 
     /**
      * Sets the point as added. The start and end points will be modified to include the given line.
+     * @param line
      */
     public void setAdded(int line) {
         addStart = Math.min(line, addStart);
@@ -123,6 +137,7 @@ public class Difference {
     /**
      * Compares this object to the other for equality. Both objects must be of type Difference, with the same starting
      * and ending points.
+     * @return 
      */
     @Override
     public boolean equals(Object obj) {
@@ -146,6 +161,7 @@ public class Difference {
 
     /**
      * Returns a string representation of this difference.
+     * @return 
      */
     public String toString() {
         StringBuffer buf = new StringBuffer();

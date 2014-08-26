@@ -492,6 +492,10 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
         onDoOneCrawl(msg);
     }
 
+    /**
+     *
+     * @param msg
+     */
     @Override
     public void visit(HarvesterRegistrationResponse msg) {
 

@@ -47,6 +47,10 @@ public class DerbySpecificsTester extends DataModelTestCase {
 
     Logger log = LoggerFactory.getLogger(this.getClass());
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         log.trace("setup() init");
@@ -54,6 +58,10 @@ public class DerbySpecificsTester extends DataModelTestCase {
         log.trace("setup() done");
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         log.trace("tearDown() init");
@@ -69,6 +77,10 @@ public class DerbySpecificsTester extends DataModelTestCase {
 
     }
 
+    /**
+     *
+     * @throws SQLException
+     */
     @Test
     public void testGetTemporaryTable() throws SQLException {
         Connection c = HarvestDBConnection.get();

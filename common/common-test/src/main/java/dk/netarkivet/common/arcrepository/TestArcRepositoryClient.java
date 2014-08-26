@@ -54,6 +54,10 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 // public class TestArcRepositoryClient extends JMSArcRepositoryClient {
 public class TestArcRepositoryClient extends TrivialArcRepositoryClient {
+
+    /**
+     *
+     */
     public File arcDir;
     /** How many times batch has been called */
     public int batchCounter;
@@ -61,14 +65,28 @@ public class TestArcRepositoryClient extends TrivialArcRepositoryClient {
     public boolean batchMustDie;
     /** How many milliseconds the batch should pause before running */
     public int batchPauseMilliseconds;
+
+    /**
+     *
+     */
     public File tmpDir;
 
+    /**
+     *
+     * @param arcdir
+     */
     public TestArcRepositoryClient(File arcdir) {
         super();
         this.arcDir = arcdir;
         tmpDir = FileUtils.getTempDir();
     }
 
+    /**
+     *
+     * @param arcfilename
+     * @param replica
+     * @param toFile
+     */
     @Override
     public void getFile(String arcfilename, Replica replica, File toFile) {
         ArgumentNotValid.checkNotNullOrEmpty(arcfilename, "arcfilename");
@@ -90,6 +108,13 @@ public class TestArcRepositoryClient extends TrivialArcRepositoryClient {
         }
     }
 
+    /**
+     *
+     * @param arcfile
+     * @param index
+     * @return
+     * @throws ArgumentNotValid
+     */
     @Override
     public BitarchiveRecord get(String arcfile, long index) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(arcfile, "arcfile");
@@ -106,6 +131,13 @@ public class TestArcRepositoryClient extends TrivialArcRepositoryClient {
         }
     }
 
+    /**
+     *
+     * @param job
+     * @param replicaId
+     * @param args
+     * @return
+     */
     @Override
     public BatchStatus batch(FileBatchJob job, String replicaId, String... args) {
         batchCounter++;

@@ -36,6 +36,9 @@ import org.junit.Test;
  */
 public class ConstantsTester {
 
+    /**
+     *
+     */
     @Test
     public void is_getHeritrixVersionString_sameAsConstant() {
         Assert.assertEquals("HeritrixVersionString is wrong", "1.14.4", Constants.getHeritrixVersionString());
@@ -43,6 +46,7 @@ public class ConstantsTester {
 
     /**
      * Try to see if getIsoDateFormatter is thread safe.
+     * @throws java.lang.Exception
      */
     @Test
     public void is_getIsoDateFormatter_threadsafe() throws Exception {

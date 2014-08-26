@@ -50,16 +50,27 @@ import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 public class XmlTreeTester {
     private MoveTestFiles mtf = new MoveTestFiles(TestInfo.DATADIR, TestInfo.TEMPDIR);
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         mtf.setUp();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         mtf.tearDown();
     }
 
+    /**
+     *
+     */
     @Test
     public void testGetStringTree() {
         StringTree<String> tree1 = getTree();
@@ -83,6 +94,9 @@ public class XmlTreeTester {
         }
     }
 
+    /**
+     *
+     */
     @Test
     public void testGetSubTree() {
         StringTree<String> tree1 = getTree();
@@ -113,6 +127,9 @@ public class XmlTreeTester {
         }
     }
 
+    /**
+     *
+     */
     @Test
     public void testGetValue() {
         StringTree<String> tree1 = getTree();
@@ -198,6 +215,9 @@ public class XmlTreeTester {
         return tree1;
     }
 
+    /**
+     *
+     */
     @Test
     public void testIsLeaf() {
         StringTree<String> tree1 = getTree();
@@ -209,6 +229,9 @@ public class XmlTreeTester {
         assertFalse("Should have false on non-leaf node", tree1.getSubTree("dk").isLeaf());
     }
 
+    /**
+     *
+     */
     @Test
     public void testGetSubTrees() {
         StringTree<String> tree1 = getTree();
@@ -247,6 +270,9 @@ public class XmlTreeTester {
         assertEquals("Should have found two language objects", 2, languages.size());
     }
 
+    /**
+     *
+     */
     @Test
     public void testGetChildMultimap() {
         StringTree<String> tree1 = getTree();
@@ -270,6 +296,9 @@ public class XmlTreeTester {
         }
     }
 
+    /**
+     *
+     */
     @Test
     public void testGetLeafMultimap() {
         StringTree<String> tree1 = getTree();
@@ -304,6 +333,9 @@ public class XmlTreeTester {
         }
     }
 
+    /**
+     *
+     */
     @Test
     public void testGetChildMap() {
         StringTree<String> tree1 = getTree();
@@ -329,6 +361,9 @@ public class XmlTreeTester {
         }
     }
 
+    /**
+     *
+     */
     @Test
     public void testGetLeafMap() {
         StringTree<String> tree1 = getTree();
@@ -369,6 +404,10 @@ public class XmlTreeTester {
 
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testSelectSingleNode() throws Exception {
         Method selectSingleNode = ReflectUtils.getPrivateMethod(XmlTree.class, "selectSingleNode", String.class);

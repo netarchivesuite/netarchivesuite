@@ -75,6 +75,10 @@ public class WebProxyTester {
     private WebProxy proxy;
     private int httpPort;
 
+    /**
+     *
+     * @throws IOException
+     */
     @Before
     public void setUp() throws IOException {
         // Check port not in use (since this will fail all tests)
@@ -96,6 +100,9 @@ public class WebProxyTester {
         responseMock = mock(org.eclipse.jetty.server.Response.class);
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         if (proxy != null) {
@@ -110,6 +117,9 @@ public class WebProxyTester {
         }
     }
 
+    /**
+     *
+     */
     @Test
     public void testUriEncode() {
         String test_string = "{abcd{fgåæka}";
@@ -119,6 +129,7 @@ public class WebProxyTester {
 
     /**
      * Test the general integration of the WebProxy access through the running Jetty true:
+     * @throws java.lang.Exception
      */
     @Test
     public void testJettyIntegration() throws Exception {
@@ -176,7 +187,8 @@ public class WebProxyTester {
         get.releaseConnection();
     }
 
-    /** Verify that the setURIResolver method changes the uriresolver correctly */
+    /** Verify that the setURIResolver method changes the uriresolver correctly
+     * @throws java.lang.Exception */
     @Test
     public void testSetURIResolver() throws Exception {
         URIResolver uriResolverMock2 = mock(URIResolver.class);
@@ -189,6 +201,10 @@ public class WebProxyTester {
         verifyNoMoreInteractions(uriResolverMock, uriResolverMock2);
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testKill() throws Exception {
         proxy = new WebProxy(uriResolverMock);
@@ -211,6 +227,10 @@ public class WebProxyTester {
         }
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testHandle() throws Exception {
         proxy = new WebProxy(uriResolverMock);
@@ -238,6 +258,7 @@ public class WebProxyTester {
 
     /**
      * Test the error response generation.
+     * @throws java.lang.Exception
      */
     @Test
     @Ignore
@@ -327,12 +348,21 @@ public class WebProxyTester {
         assertEquals("Expect uri to be escaped", "http://somedomain.dk?id=%7B12345%7D", uri.toString());
     }
 
+    /**
+     *
+     */
     public static class TestURIResolver implements URIResolver {
         int lookupCount = 0;
         int totalCount = 0;
         URI lookupRequestArgument;
         private Map<String, String[]> lookupRequestParameteres;
 
+        /**
+         *
+         * @param request
+         * @param response
+         * @return
+         */
         public int lookup(Request request, Response response) {
             lookupCount++;
             totalCount++;

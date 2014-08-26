@@ -99,6 +99,7 @@ public class ExtractCDXFromWarcJob extends ArchiveBatchJob {
     /**
      * Initialize any data needed (none).
      * 
+     * @param os
      * @see dk.netarkivet.common.utils.arc.ARCBatchJob#initialize(OutputStream)
      */
     public void initialize(OutputStream os) {
@@ -107,6 +108,8 @@ public class ExtractCDXFromWarcJob extends ArchiveBatchJob {
     /**
      * Process this entry, reading metadata into the output stream.
      * 
+     * @param rec
+     * @param os
      * @see dk.netarkivet.common.utils.arc.ARCBatchJob#processRecord(ArchiveRecord, OutputStream)
      * @throws IOFailure on trouble reading arc record data
      */
@@ -166,6 +169,7 @@ public class ExtractCDXFromWarcJob extends ArchiveBatchJob {
     /**
      * End of the batch job.
      * 
+     * @param os
      * @see dk.netarkivet.common.utils.arc.ARCBatchJob#finish(OutputStream)
      */
     public void finish(OutputStream os) {

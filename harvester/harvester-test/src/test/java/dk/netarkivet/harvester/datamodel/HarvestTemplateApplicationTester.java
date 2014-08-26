@@ -68,6 +68,12 @@ public class HarvestTemplateApplicationTester {
     PrintStream outPrintStream = new PrintStream(newOut);
     PrintStream errPrintStream = new PrintStream(newErr);
 
+    /**
+     *
+     * @throws SQLException
+     * @throws IllegalAccessException
+     * @throws IOException
+     */
     @Before
     public void setUp() throws SQLException, IllegalAccessException, IOException {
         rs.setUp();
@@ -88,6 +94,10 @@ public class HarvestTemplateApplicationTester {
         pse.setUp();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         pse.tearDown();
@@ -125,6 +135,10 @@ public class HarvestTemplateApplicationTester {
         }
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testMainNoCommand() throws Exception {
         HarvestTemplateApplication.main(new String[0]);
@@ -133,6 +147,9 @@ public class HarvestTemplateApplicationTester {
 
     }
 
+    /**
+     *
+     */
     @Test
     public void testMainIllegalCommand() {
         HarvestTemplateApplication.main(new String[] {"foo"});
@@ -140,6 +157,10 @@ public class HarvestTemplateApplicationTester {
                 + "create.*download.*update.*showall.*");
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testCreateNoArgs() throws Exception {
         HarvestTemplateApplication.main(new String[] {"create"});
@@ -147,6 +168,10 @@ public class HarvestTemplateApplicationTester {
                 ".*create.*Wrong number\\(0\\) of arguments.*" + "download.*update.*");
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testCreateOneArg() throws Exception {
         HarvestTemplateApplication.main(new String[] {"create", "foo"});
@@ -154,12 +179,20 @@ public class HarvestTemplateApplicationTester {
                 ".*create.*Wrong number\\(1\\) of arguments.*" + "download.*update.*");
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testCreateMissingFile() throws Exception {
         HarvestTemplateApplication.main(new String[] {"create", "foo", "missing-file"});
         assertOutAndErrMatches("Should fail on missing file.", "^$", ".*missing-file.*is not readable.*");
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testCreateIllegalFile() throws Exception {
         HarvestTemplateApplication
@@ -168,6 +201,9 @@ public class HarvestTemplateApplicationTester {
                 ".*netarkivtest.log.*is not readable or is not valid xml.*");
     }
 
+    /**
+     *
+     */
     @Test
     public void testCreate() {
         HarvestTemplateApplication
@@ -180,6 +216,9 @@ public class HarvestTemplateApplicationTester {
                 TemplateDAO.getInstance().read("NewTemplate").getTemplate().getText());
     }
 
+    /**
+     *
+     */
     @Test
     public void testDownloadTemplatesAll() {
         HarvestTemplateApplication.main(new String[] {"download"});
@@ -191,12 +230,18 @@ public class HarvestTemplateApplicationTester {
                 .getTemplate().getText(), doc.getText());
     }
 
+    /**
+     *
+     */
     @Test
     public void testDownloadTemplatesOne() {
         HarvestTemplateApplication.main(new String[] {"download", "OneLevel-order"});
         assertOutAndErrMatches("Should get one template", "^Downloading template 'OneLevel-order'.\n$", "^$");
     }
 
+    /**
+     *
+     */
     @Test
     public void testDownloadTemplatesTwo() {
         HarvestTemplateApplication.main(new String[] {"download", "OneLevel-order", "NotThere"});
@@ -204,6 +249,9 @@ public class HarvestTemplateApplicationTester {
                 "^Unable to download template 'NotThere'. It does not exist.\n$");
     }
 
+    /**
+     *
+     */
     @Test
     public void testUpdateNoArgs() {
         HarvestTemplateApplication.main(new String[] {"update"});
@@ -211,6 +259,9 @@ public class HarvestTemplateApplicationTester {
                 + "create.*download.*update.*showall.*");
     }
 
+    /**
+     *
+     */
     @Test
     public void testUpdateOneArg() {
         HarvestTemplateApplication.main(new String[] {"update", "foo"});
@@ -218,6 +269,9 @@ public class HarvestTemplateApplicationTester {
                 + "create.*download.*update.*showall.*");
     }
 
+    /**
+     *
+     */
     @Test
     public void testUpdateNoTemplate() {
         HarvestTemplateApplication.main(new String[] {"update", "foo", "bar"});
@@ -225,6 +279,9 @@ public class HarvestTemplateApplicationTester {
                 ".*There is no template named 'foo'. Use the create.*");
     }
 
+    /**
+     *
+     */
     @Test
     public void testUpdateNoFile() {
         HarvestTemplateApplication.main(new String[] {"update", "OneLevel-order", "missing-file"});
@@ -232,6 +289,9 @@ public class HarvestTemplateApplicationTester {
                 ".*missing-file.*could not be read or is not valid xml.*");
     }
 
+    /**
+     *
+     */
     @Test
     public void testShowAll() {
         HarvestTemplateApplication.main(new String[] {"showall"});

@@ -372,6 +372,11 @@ public class Channels {
         throw new ArgumentNotValid("Did not find a BAMON queue for '" + replicaId + "'");
     }
 
+    /**
+     *
+     * @param replicaId
+     * @return
+     */
     public static ChannelID getTheCrForReplica(String replicaId) {
         ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
         ChannelID[] crs = getAllArchives_CRs();

@@ -60,6 +60,10 @@ public class ScheduleDefinitionTester extends HarvesterWebinterfaceTestCase {
     private static final String DATE_FORMAT = "dd/M yyyy HH:mm";
     private static ScheduleDAO sdao = null;
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -70,6 +74,10 @@ public class ScheduleDefinitionTester extends HarvesterWebinterfaceTestCase {
         sdao.create(schedule1);
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         super.tearDown();

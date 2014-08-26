@@ -205,7 +205,8 @@ public class JMXHeritrixController extends AbstractJMXHeritrixController {
         executeHeritrixCommand(START_CRAWLING_COMMAND);
     }
 
-    /** @see HeritrixController#atFinish() */
+    /**
+     * @return  *  @see HeritrixController#atFinish() */
     public boolean atFinish() {
         return crawlIsEnded();
     }
@@ -218,7 +219,8 @@ public class JMXHeritrixController extends AbstractJMXHeritrixController {
         executeHeritrixCommand(TERMINATE_CURRENT_JOB_COMMAND);
     }
 
-    /** @see HeritrixController#getActiveToeCount() */
+    /**
+     * @return  *  @see HeritrixController#getActiveToeCount() */
     public int getActiveToeCount() {
         Integer activeToeCount = (Integer) getCrawlJobAttribute(THREAD_COUNT_ATTRIBUTE);
         if (activeToeCount == null) {
@@ -227,7 +229,8 @@ public class JMXHeritrixController extends AbstractJMXHeritrixController {
         return activeToeCount;
     }
 
-    /** @see HeritrixController#requestCrawlStop(String) */
+    /**
+     * @param reason *  @see HeritrixController#requestCrawlStop(String) */
     public void requestCrawlStop(String reason) {
         if (!atFinish()) {
             beginCrawlStop();
@@ -235,6 +238,7 @@ public class JMXHeritrixController extends AbstractJMXHeritrixController {
     }
 
     /**
+     * @return 
      * @see HeritrixController#getQueuedUriCount()
      * */
     public long getQueuedUriCount() {
@@ -253,7 +257,8 @@ public class JMXHeritrixController extends AbstractJMXHeritrixController {
         return discoveredUris - downloadedUris;
     }
 
-    /** @see HeritrixController#getCurrentProcessedKBPerSec() */
+    /**
+     * @return  *  @see HeritrixController#getCurrentProcessedKBPerSec() */
     public int getCurrentProcessedKBPerSec() {
         Long currentDownloadRate = (Long) getCrawlJobAttribute(CURRENT_KB_RATE_ATTRIBUTE);
         if (currentDownloadRate == null) {
@@ -262,7 +267,8 @@ public class JMXHeritrixController extends AbstractJMXHeritrixController {
         return currentDownloadRate.intValue();
     }
 
-    /** @see HeritrixController#getProgressStats() */
+    /**
+     * @return  *  @see HeritrixController#getProgressStats() */
     public String getProgressStats() {
         String status = (String) getCrawlJobAttribute(STATUS_ATTRIBUTE);
 
@@ -293,7 +299,8 @@ public class JMXHeritrixController extends AbstractJMXHeritrixController {
         }.start();
     }
 
-    /** @see HeritrixController#isPaused() */
+    /**
+     * @return  *  @see HeritrixController#isPaused() */
     public boolean isPaused() {
         String status = (String) getCrawlJobAttribute(STATUS_ATTRIBUTE);
         log.debug("Heritrix state: '{}'", status);

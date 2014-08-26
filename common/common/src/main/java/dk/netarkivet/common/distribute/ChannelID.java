@@ -64,11 +64,35 @@ public class ChannelID implements Serializable {
      * Constants to make the semantics of parameters to our name constructors more explicit.
      */
     public static final String COMMON = "COMMON";
+
+    /**
+     *
+     */
     public static final boolean INCLUDE_IP = true;
+
+    /**
+     *
+     */
     public static final boolean NO_IP = false;
+
+    /**
+     *
+     */
     public static final boolean INCLUDE_APPLINST_ID = true;
+
+    /**
+     *
+     */
     public static final boolean NO_APPLINST_ID = false;
+
+    /**
+     *
+     */
     public static final boolean TOPIC = true;
+
+    /**
+     *
+     */
     public static final boolean QUEUE = false;
 
     /**

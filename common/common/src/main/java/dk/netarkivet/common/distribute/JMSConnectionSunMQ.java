@@ -66,6 +66,9 @@ public class JMSConnectionSunMQ extends JMSConnection {
         Settings.addDefaultClasspathSettings(DEFAULT_SETTINGS_CLASSPATH);
     }
 
+    /**
+     *
+     */
     public static final String[] RECONNECT_ERRORCODES = {"C4000", // Packet
                                                                   // acknowledgment
                                                                   // failed

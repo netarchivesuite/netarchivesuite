@@ -38,24 +38,40 @@ import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaType;
 import dk.netarkivet.testutils.ReflectUtils;
 
+/**
+ *
+ * @author tra
+ */
 public class ReplicaClientFactoryTester {
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         ChannelsTesterHelper.resetChannels();
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         JMSConnectionMockupMQ.clearTestQueues();
     }
 
+    /**
+     *
+     */
     @Test
     public void testUtilityConstructor() {
         ReflectUtils.testUtilityConstructor(ReplicaClientFactory.class);
     }
 
+    /**
+     *
+     */
     @Test
     public void testList() {
         List<ReplicaClient> clients = ReplicaClientFactory.getReplicaClients();

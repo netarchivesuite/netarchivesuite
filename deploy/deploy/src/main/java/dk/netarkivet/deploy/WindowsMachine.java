@@ -47,6 +47,7 @@ public class WindowsMachine extends Machine {
      * @param param The machine parameters to be inherited from the PhysicalLocation.
      * @param netarchiveSuiteSource The name of the NetarchiveSuite package file. Must be '.zip'.
      * @param logProp The logging property file, to be copied into machine directory.
+     * @param slf4JConfig
      * @param securityPolicy The security policy file, to be copied into machine directory.
      * @param dbFile The harvest definition database file.
      * @param arcdbFile The archive database.
@@ -303,16 +304,28 @@ public class WindowsMachine extends Machine {
         return res.toString();
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     protected String getInstallDirPath() {
         return machineParameters.getInstallDirValue() + Constants.BACKSLASH + getEnvironmentName();
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     protected String getConfDirPath() {
         return getInstallDirPath() + Constants.CONF_DIR_WINDOWS;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     protected String getLibDirPath() {
         return getInstallDirPath() + Constants.LIB_DIR_WINDOWS;
@@ -543,6 +556,11 @@ public class WindowsMachine extends Machine {
         }
     }
 
+    /**
+     *
+     * @param app
+     * @return
+     */
     @Override
     protected String osGetClassPath(Application app) {
         StringBuilder res = new StringBuilder();
@@ -624,7 +642,14 @@ public class WindowsMachine extends Machine {
         }
     }
 
+    /**
+     *
+     */
     protected static final class windowsStartVbsScriptTpl {
+
+        /**
+         *
+         */
         protected static final String[] mainScript = {
                 "Set WshShell= CreateObject(\"WScript.Shell\")",
                 "javahome = WshShell.ExpandEnvironmentStrings(\"%JAVA_HOME%\")",
@@ -656,9 +681,21 @@ public class WindowsMachine extends Machine {
                 "  Do While oExec.StdErr.AtEndOfStream <> True",
                 "    Set outFile = CreateObject(\"Scripting.FileSystemObject\").OpenTextFile(\"${startlogname}\", 8, True)",
                 "    outFile.WriteLine oExec.StdErr.ReadLine", "    outFile.close", "  Loop", "Loop"};
+
+        /**
+         *
+         */
         protected static final String jdkLogger = " -Dorg.apache.commons.logging.Log=\"\"org.apache.commons.logging.impl.Jdk14Logger\"\""
                 + " -Djava.util.logging.config.file=\"\"${confdirpath}log_${id}.prop\"\"";
+
+        /**
+         *
+         */
         protected static final String slf4jLogger = " -Dlogback.configurationFile=\"\"${confdirpath}logback_${id}.xml\"\"";
+
+        /**
+         *
+         */
         protected static final String securityManagement = " -Djava.security.manager -Djava.security.policy=\"\"${confdirpath}security.policy\"\"";
     }
 
@@ -790,6 +827,10 @@ public class WindowsMachine extends Machine {
         return res.toString();
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     protected String osInstallExternalJarFiles() {
         if (jarFolder == null) {
@@ -864,6 +905,12 @@ public class WindowsMachine extends Machine {
         return res.toString();
     }
 
+    /**
+     *
+     * @param dir
+     * @param clean
+     * @return
+     */
     @Override
     protected String scriptCreateDir(String dir, boolean clean) {
         StringBuilder res = new StringBuilder();
@@ -914,6 +961,10 @@ public class WindowsMachine extends Machine {
         return res.toString();
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     protected String getAppDirectories() {
         StringBuilder res = new StringBuilder();
@@ -1031,6 +1082,11 @@ public class WindowsMachine extends Machine {
         }
     }
 
+    /**
+     *
+     * @param path
+     * @return
+     */
     @Override
     protected String changeFileDirPathForSecurity(String path) {
         path += Constants.BACKSLASH + Constants.SECURITY_FILE_DIR_TAG + Constants.BACKSLASH;
@@ -1248,6 +1304,10 @@ public class WindowsMachine extends Machine {
         }
     }
 
+    /**
+     *
+     * @param dir
+     */
     @Override
     protected void createArchiveDatabaseStartScript(File dir) {
         // Ignore if no archive database directory has been defined.
@@ -1261,6 +1321,10 @@ public class WindowsMachine extends Machine {
                 + "machine. Please fix your deploy configuration.");
     }
 
+    /**
+     *
+     * @param dir
+     */
     @Override
     protected void createArchiveDatabaseKillScript(File dir) {
         // Ignore if no archive database directory has been defined.
@@ -1274,6 +1338,10 @@ public class WindowsMachine extends Machine {
                 + "machine. Please fix your deploy configuration.");
     }
 
+    /**
+     *
+     * @param dir
+     */
     @Override
     protected void createHarvestDatabaseStartScript(File dir) {
         // Ignore if no harvest database directory has been defined.
@@ -1287,6 +1355,10 @@ public class WindowsMachine extends Machine {
                 + "machine. Please fix your deploy configuration.");
     }
 
+    /**
+     *
+     * @param dir
+     */
     @Override
     protected void createHarvestDatabaseKillScript(File dir) {
         // Ignore if no harvest database directory has been defined.
@@ -1300,6 +1372,10 @@ public class WindowsMachine extends Machine {
                 + "machine. Please fix your deploy configuration.");
     }
 
+    /**
+     *
+     * @param machineDirectory
+     */
     @Override
     protected void createHarvestDatabaseUpdateScript(File machineDirectory) {
         // Ignore if no harvest database directory has been defined.

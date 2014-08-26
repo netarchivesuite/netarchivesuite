@@ -43,16 +43,40 @@ import dk.netarkivet.common.exceptions.IOFailure;
  */
 @SuppressWarnings({"serial"})
 public class TestRemoteFile extends HTTPRemoteFile implements RemoteFile {
+
+    /**
+     *
+     */
     public boolean failsOnCopy;
 
+    /**
+     *
+     */
     public static Map<RemoteFile, String> remainingRemoteFiles = new WeakHashMap<RemoteFile, String>();
 
+    /**
+     *
+     * @param localFile
+     * @param useChecksum
+     * @param fileDeletable
+     * @param multipleDownloads
+     * @throws IOFailure
+     */
     public TestRemoteFile(File localFile, boolean useChecksum, boolean fileDeletable, boolean multipleDownloads)
             throws IOFailure {
         super(localFile, useChecksum, fileDeletable, multipleDownloads);
         remainingRemoteFiles.put(this, localFile.getName());
     }
 
+    /**
+     *
+     * @param remoteFile
+     * @param useChecksums
+     * @param fileDeletable
+     * @param multipleDownloads
+     * @return
+     * @throws IOFailure
+     */
     public static RemoteFile getInstance(File remoteFile, Boolean useChecksums, Boolean fileDeletable,
             Boolean multipleDownloads) throws IOFailure {
         return new TestRemoteFile(remoteFile, useChecksums, fileDeletable, multipleDownloads);
@@ -77,6 +101,10 @@ public class TestRemoteFile extends HTTPRemoteFile implements RemoteFile {
         super.cleanup();
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isDeleted() {
         return !remainingRemoteFiles.containsKey(this);
     }
@@ -103,6 +131,10 @@ public class TestRemoteFile extends HTTPRemoteFile implements RemoteFile {
         return remainingRemoteFiles.keySet();
     }
 
+    /**
+     *
+     * @return
+     */
     public File getFile() {
         return file;
     }

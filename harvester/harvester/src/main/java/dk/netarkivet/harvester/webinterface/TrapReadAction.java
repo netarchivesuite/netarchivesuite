@@ -43,6 +43,12 @@ import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDBDAO;
  */
 
 public class TrapReadAction extends TrapAction {
+
+    /**
+     *
+     * @param context
+     * @param i18n
+     */
     @Override
     protected void doAction(PageContext context, I18n i18n) {
         HttpServletRequest request = (HttpServletRequest) context.getRequest();

@@ -22,6 +22,10 @@
  */
 package dk.netarkivet.monitor;
 
+/**
+ *
+ * @author tra
+ */
 public class TestInfo {
 
 }

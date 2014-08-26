@@ -31,10 +31,19 @@ import junit.textui.TestRunner;
  * This class runs all tests of Heritrix functionality. Must be run as part of heritrix upgrades.
  */
 public class HeritrixTesterSuite {
+
+    /**
+     *
+     * @param suite
+     */
     public static void addToSuite(TestSuite suite) {
         suite.addTestSuite(dk.netarkivet.externalsoftware.HeritrixTests.class);
     }
 
+    /**
+     *
+     * @return
+     */
     public static Test suite() {
         TestSuite suite;
         suite = new TestSuite(HeritrixTesterSuite.class.getName());
@@ -44,6 +53,10 @@ public class HeritrixTesterSuite {
         return suite;
     }
 
+    /**
+     *
+     * @param args
+     */
     public static void main(String[] args) {
         String[] args2 = {"-noloading", HeritrixTesterSuite.class.getName()};
         TestRunner.main(args2);

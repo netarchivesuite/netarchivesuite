@@ -39,12 +39,17 @@ import dk.netarkivet.systemtest.page.DomainWebTestHelper;
 import dk.netarkivet.systemtest.page.PageHelper;
 import dk.netarkivet.systemtest.page.SelectiveHarvestPageHelper;
 
+/**
+ *
+ * @author tra
+ */
 @SuppressWarnings("static-access")
 public class DatabaseMigrationSanityTest extends StressTest {
 
     /**
      * Basic sanity test that the current production database can be consistently upgraded with the latest NAS software.
      * This test is designed to be cheap to run so it can easily be tested on any snapshot.
+     * @throws java.lang.Exception
      */
     @Test(groups = {"performancetest"})
     public void dbMigrationSanityTest() throws Exception {
@@ -52,6 +57,10 @@ public class DatabaseMigrationSanityTest extends StressTest {
         doStuff();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @BeforeClass
     public void setupTestEnvironment() throws Exception {
         if (true) {
@@ -66,6 +75,10 @@ public class DatabaseMigrationSanityTest extends StressTest {
         }
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     public void teardownTestEnvironment() throws Exception {
         if (true) {
             shutdownTest();

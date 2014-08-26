@@ -74,6 +74,9 @@ public class JobDispatcherTest {
     private Job jobMock = createJob(1);
     private SparsePartialHarvest harvest = createDefaultSparsePartialHarvest();
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         harvestDefinitionDAO = mock(HarvestDefinitionDAO.class);
@@ -84,6 +87,7 @@ public class JobDispatcherTest {
 
     /**
      * Simple test of new job submitting.
+     * @throws org.dom4j.DocumentException
      */
     @Test
     public void testSubmitNewJobs() throws DocumentException {
@@ -103,6 +107,7 @@ public class JobDispatcherTest {
 
     /**
      * Test that runNewJobs generates correct alias information for the job.s
+     * @throws java.sql.SQLException
      */
     @Test
     public void testSubmitNewJobsMakesAliasInfo() throws SQLException {
@@ -123,6 +128,7 @@ public class JobDispatcherTest {
 
     /**
      * Test that runNewJobs makes correct duplication reduction information.
+     * @throws org.dom4j.DocumentException
      */
     @Test
     public void testSubmitNewJobsMakesDuplicateReductionInfo() throws DocumentException {

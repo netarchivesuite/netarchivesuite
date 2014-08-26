@@ -40,6 +40,9 @@ public class ExceptionsTester {
     private String emptyString;
     private String meaningfullString;
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         nullString = null;

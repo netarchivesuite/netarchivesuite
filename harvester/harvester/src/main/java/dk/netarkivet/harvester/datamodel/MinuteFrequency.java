@@ -74,31 +74,56 @@ public class MinuteFrequency extends Frequency {
         return startTime;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Integer getOnMinute() {
         return null;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Integer getOnHour() {
         return null;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Integer getOnDayOfWeek() {
         return null;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Integer getOnDayOfMonth() {
         return null;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public int ordinal() {
         return TimeUnit.MINUTE.ordinal();
     }
 
+    /**
+     *
+     * @param o
+     * @return
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -120,6 +145,10 @@ public class MinuteFrequency extends Frequency {
         return true;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public int hashCode() {
         int result = super.hashCode();

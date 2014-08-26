@@ -36,6 +36,9 @@ import org.junit.Test;
 public class URIObserverTester {
     private TestURIObserver uriObserver;
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         uriObserver = new TestURIObserver();
@@ -67,6 +70,9 @@ public class URIObserverTester {
 
     }
 
+    /**
+     *
+     */
     public static class TestURIObserver extends URIObserver {
         int notifyCount = 0;
         int totalCount = 0;

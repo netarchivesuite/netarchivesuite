@@ -54,15 +54,28 @@ public class DomainSeedsDefinition {
         private String urlListName;
         private String seedList;
 
+        /**
+         *
+         * @param urlListName
+         * @param seedList
+         */
         public UrlInfo(String urlListName, String seedList) {
             this.urlListName = urlListName;
             this.seedList = seedList;
         }
 
+        /**
+         *
+         * @return
+         */
         public String getUrlListName() {
             return urlListName;
         }
 
+        /**
+         *
+         * @return
+         */
         public String getSeedList() {
             return seedList;
         }

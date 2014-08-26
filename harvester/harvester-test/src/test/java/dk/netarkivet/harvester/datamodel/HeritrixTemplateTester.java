@@ -229,6 +229,9 @@ public class HeritrixTemplateTester {
         assertFalse("Should be false", ht.isVerified());
     }
 
+    /**
+     *
+     */
     @Test
     public void testGetTemplate() {
         File f = new File(TestInfo.TOPDATADIR, "default_orderxml.xml");
@@ -240,6 +243,9 @@ public class HeritrixTemplateTester {
         assertEquals("should have equal contents", templateAsXML, doc.asXML());
     }
 
+    /**
+     *
+     */
     @Test
     public void testForDecidingScope() {
         File f = new File(TestInfo.TOPDATADIR, "default_orderxml.xml");
@@ -252,6 +258,9 @@ public class HeritrixTemplateTester {
         assertTrue("Order not verified", ht.isVerified());
     }
 
+    /**
+     *
+     */
     @Test
     public void testEditOrderXML_ArchiveFormat() {
         File f = new File(TestInfo.TOPDATADIR, "default_orderxml.xml");

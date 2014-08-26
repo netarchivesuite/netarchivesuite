@@ -35,6 +35,10 @@ import org.archive.util.anvl.ANVLRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ *
+ * @author tra
+ */
 public class WARCWriterNAS extends WARCWriter {
 
     private static final Logger logger = LoggerFactory.getLogger(WARCWriter.class);
@@ -48,6 +52,7 @@ public class WARCWriterNAS extends WARCWriter {
      * @param f File the <code>out</code> is connected to.
      * @param cmprs Compress the content written.
      * @param a14DigitDate If null, we'll write current time.
+     * @param warcinfoData
      * @throws IOException
      */
     public WARCWriterNAS(final AtomicInteger serialNo, final OutputStream out, final File f, final boolean cmprs,
@@ -58,6 +63,7 @@ public class WARCWriterNAS extends WARCWriter {
     /**
      * Constructor.
      *
+     * @param serialNo
      * @param dirs Where to drop files.
      * @param prefix File prefix to use.
      * @param cmprs Compress the records written.
@@ -70,6 +76,19 @@ public class WARCWriterNAS extends WARCWriter {
         super(serialNo, dirs, prefix, suffix, cmprs, maxSize, warcinfoData);
     }
 
+    /**
+     *
+     * @param type
+     * @param url
+     * @param create14DigitDate
+     * @param mimetype
+     * @param recordId
+     * @param xtraHeaders
+     * @param contentStream
+     * @param contentLength
+     * @param enforceLength
+     * @throws IOException
+     */
     @Override
     protected void writeRecord(final String type, final String url, final String create14DigitDate,
             final String mimetype, final URI recordId, ANVLRecord xtraHeaders, final InputStream contentStream,

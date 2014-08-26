@@ -49,6 +49,11 @@ public class HarvesterRegistrationRequest extends HarvesterMessage {
 
     private final String instanceId;
 
+    /**
+     *
+     * @param harvestChannelName
+     * @param instanceId
+     */
     public HarvesterRegistrationRequest(final String harvestChannelName, final String instanceId) {
         super(HarvesterChannels.getHarvesterRegistrationRequestChannel(), Channels.getError());
         this.harvestChannelName = harvestChannelName;

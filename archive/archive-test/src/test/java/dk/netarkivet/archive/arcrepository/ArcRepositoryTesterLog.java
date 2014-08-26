@@ -50,6 +50,9 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 @SuppressWarnings({"deprecation"})
 public class ArcRepositoryTesterLog {
 
+    /**
+     *
+     */
     protected final Logger log = LoggerFactory.getLogger(ArcRepositoryTesterLog.class);
 
     private UseTestRemoteFile rf = new UseTestRemoteFile();
@@ -73,6 +76,10 @@ public class ArcRepositoryTesterLog {
      */
     ArcRepository arcRepos;
 
+    /**
+     *
+     * @throws IOException
+     */
     @Before
     public void setUp() throws IOException {
         ServerSetUp.setUp();
@@ -80,6 +87,9 @@ public class ArcRepositoryTesterLog {
         rf.setUp();
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         rf.tearDown();
@@ -88,6 +98,7 @@ public class ArcRepositoryTesterLog {
 
     /**
      * Test logging of store command.
+     * @throws java.lang.Exception
      */
     @Test
     @Ignore("FIXME")

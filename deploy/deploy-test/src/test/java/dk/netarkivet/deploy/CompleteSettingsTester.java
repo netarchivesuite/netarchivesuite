@@ -29,7 +29,15 @@ import junit.framework.TestCase;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 
+/**
+ *
+ * @author tra
+ */
 public class CompleteSettingsTester extends TestCase {
+
+    /**
+     *
+     */
     @Override
     public void setUp() {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
@@ -38,6 +46,9 @@ public class CompleteSettingsTester extends TestCase {
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
     }
 
+    /**
+     *
+     */
     @Override
     public void tearDown() {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
@@ -46,6 +57,7 @@ public class CompleteSettingsTester extends TestCase {
 
     /**
      * Rebuilds the file src/dk/netarkivet/deploy/default_settings.xml. Eg. this is not a real test.
+     * @throws java.lang.Exception
      */
 
     public void testCompleteSettings() throws Exception {

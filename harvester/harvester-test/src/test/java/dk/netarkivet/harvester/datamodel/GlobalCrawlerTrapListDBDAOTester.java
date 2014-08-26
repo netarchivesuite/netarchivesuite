@@ -51,6 +51,10 @@ public class GlobalCrawlerTrapListDBDAOTester extends DataModelTestCase {
     GlobalCrawlerTrapList list1;
     GlobalCrawlerTrapList list2;
 
+    /**
+     *
+     * @throws Exception
+     */
     @Override
     @Before
     public void setUp() throws Exception {
@@ -63,6 +67,10 @@ public class GlobalCrawlerTrapListDBDAOTester extends DataModelTestCase {
                 "A Description of list2", true);
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Override
     @After
     public void tearDown() throws Exception {
@@ -72,6 +80,7 @@ public class GlobalCrawlerTrapListDBDAOTester extends DataModelTestCase {
 
     /**
      * tests that we can get a singleton instance of the dao class
+     * @throws java.sql.SQLException
      */
     @Test
     public void testGetInstance() throws SQLException {
@@ -89,6 +98,9 @@ public class GlobalCrawlerTrapListDBDAOTester extends DataModelTestCase {
         }
     }
 
+    /**
+     *
+     */
     @Test
     public void testCreate() {
         GlobalCrawlerTrapListDAO dao = GlobalCrawlerTrapListDAO.getInstance();
@@ -161,6 +173,9 @@ public class GlobalCrawlerTrapListDBDAOTester extends DataModelTestCase {
         assertEquals("Should be list1", list1, dao.getAllActive().get(0));
     }
 
+    /**
+     *
+     */
     @Test
     public void testGetAllInactive() {
         GlobalCrawlerTrapListDAO dao = GlobalCrawlerTrapListDAO.getInstance();
@@ -171,6 +186,9 @@ public class GlobalCrawlerTrapListDBDAOTester extends DataModelTestCase {
         assertEquals("Should be two inactive lists", 2, dao.getAllInActive().size());
     }
 
+    /**
+     *
+     */
     @Test
     public void testGetExpressions() {
         GlobalCrawlerTrapListDAO dao = GlobalCrawlerTrapListDAO.getInstance();
@@ -182,6 +200,9 @@ public class GlobalCrawlerTrapListDBDAOTester extends DataModelTestCase {
                 .size());
     }
 
+    /**
+     *
+     */
     @Test
     public void testExists() {
         GlobalCrawlerTrapListDAO dao = GlobalCrawlerTrapListDAO.getInstance();

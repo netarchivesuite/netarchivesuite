@@ -106,6 +106,10 @@ public class HarvestControllerServerTester {
 
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         rs.setUp();
@@ -130,6 +134,12 @@ public class HarvestControllerServerTester {
                 "dk.netarkivet.common.arcrepository.TrivialArcRepositoryClient");
     }
 
+    /**
+     *
+     * @throws SQLException
+     * @throws IllegalAccessException
+     * @throws NoSuchFieldException
+     */
     @After
     public void tearDown() throws SQLException, IllegalAccessException, NoSuchFieldException {
         if (hcs != null) {

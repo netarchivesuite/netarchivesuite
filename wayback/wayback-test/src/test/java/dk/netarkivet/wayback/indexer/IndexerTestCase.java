@@ -39,13 +39,24 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.wayback.TestInfo;
 import dk.netarkivet.wayback.WaybackSettings;
 
+/**
+ *
+ * @author tra
+ */
 public class IndexerTestCase {
     private String oldClient = System.getProperty(CommonSettings.ARC_REPOSITORY_CLIENT);
     private String oldFileDir = System.getProperty("settings.common.arcrepositoryClient.fileDir");
+
+    /**
+     *
+     */
     protected static File tempdir = new File(Settings.get(WaybackSettings.WAYBACK_INDEX_TEMPDIR));
 
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         rs.setUp();
@@ -60,6 +71,9 @@ public class IndexerTestCase {
         assertTrue(ArcRepositoryClientFactory.getPreservationInstance() instanceof LocalArcRepositoryClient);
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         HibernateUtil.getSession().getSessionFactory().close();

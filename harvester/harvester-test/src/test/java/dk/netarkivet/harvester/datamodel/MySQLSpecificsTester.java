@@ -33,26 +33,44 @@ import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
+/**
+ *
+ * @author tra
+ */
 public class MySQLSpecificsTester {
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         rs.setUp();
         Settings.set(CommonSettings.DB_SPECIFICS_CLASS, "dk.netarkivet.harvester.datamodel.MySQLSpecifics");
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         rs.tearDown();
     }
 
+    /**
+     *
+     */
     @Test
     public void testLoadClass() {
         DBSpecifics instance = DBSpecifics.getInstance(CommonSettings.DB_SPECIFICS_CLASS);
         assertNotNull("instance should not be null", instance);
     }
 
+    /**
+     *
+     */
     @Test
     public void testGetDriverClassName() {
         DBSpecifics instance = DBSpecifics.getInstance(CommonSettings.DB_SPECIFICS_CLASS);

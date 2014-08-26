@@ -59,6 +59,11 @@ public class TrapCreateOrUpdateAction extends TrapAction {
      */
     private static final Log log = LogFactory.getLog(TrapCreateOrUpdateAction.class);
 
+    /**
+     *
+     * @param context
+     * @param i18n
+     */
     @Override
     protected void doAction(PageContext context, I18n i18n) {
         String name = null;

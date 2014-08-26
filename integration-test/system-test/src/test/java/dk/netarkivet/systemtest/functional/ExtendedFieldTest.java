@@ -39,22 +39,40 @@ import dk.netarkivet.systemtest.SeleniumTest;
 import dk.netarkivet.systemtest.page.DomainWebTestHelper;
 import dk.netarkivet.systemtest.page.PageHelper;
 
+/**
+ *
+ * @author tra
+ */
 public class ExtendedFieldTest extends SeleniumTest {
     private String extendedIDForTest;
     private DateFormat dateFomatter = new SimpleDateFormat("HHmmss");
 
+    /**
+     *
+     * @param method
+     */
     @BeforeMethod(alwaysRun = true)
     public void setup(Method method) {
         Date startTime = new Date();
         extendedIDForTest = method.getName() + "-" + dateFomatter.format(startTime);
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test(groups = {"guitest", "functest"})
     public void extendedDomainStringFieldTest() throws Exception {
         addDescription("Tests that String type extended fields works correctly on domains.");
         extendedDomainStringFieldTest(driver, extendedIDForTest);
     }
 
+    /**
+     *
+     * @param driver
+     * @param extendedIDForTest
+     * @throws Exception
+     */
     public void extendedDomainStringFieldTest(WebDriver driver, String extendedIDForTest) throws Exception {
         addStep("Create a new String type field (name:" + extendedIDForTest + ") for domains", "");
         PageHelper.gotoPage(PageHelper.MenuPages.ExtendedFields);

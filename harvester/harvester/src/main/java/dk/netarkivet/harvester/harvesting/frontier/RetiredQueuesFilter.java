@@ -26,8 +26,17 @@ import org.archive.crawler.frontier.WorkQueue;
 
 import dk.netarkivet.harvester.harvesting.frontier.FullFrontierReport.ReportIterator;
 
+/**
+ *
+ * @author tra
+ */
 public class RetiredQueuesFilter extends MaxSizeFrontierReportExtract {
 
+    /**
+     *
+     * @param initialFrontier
+     * @return
+     */
     @Override
     public InMemoryFrontierReport process(FrontierReport initialFrontier) {
         InMemoryFrontierReport result = new InMemoryFrontierReport(initialFrontier.getJobName());

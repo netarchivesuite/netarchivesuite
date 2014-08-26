@@ -34,21 +34,34 @@ import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
+/**
+ *
+ * @author tra
+ */
 public class UploadMessageTester {
 
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         rs.setUp();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         rs.tearDown();
     }
 
+    /**
+     *
+     */
     @Test(expected = ArgumentNotValid.class)
     public void testInvalidArguments() {
         new UploadMessage(Channels.getTheBamon(), Channels.getTheRepos(), //

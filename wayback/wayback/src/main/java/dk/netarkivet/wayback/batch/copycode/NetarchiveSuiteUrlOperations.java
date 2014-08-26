@@ -38,26 +38,57 @@ import org.archive.net.UURI;
 
 public class NetarchiveSuiteUrlOperations {
 
+    /**
+     *
+     */
     public static final String DNS_SCHEME = "dns:";
 
+    /**
+     *
+     */
     public static final String HTTP_SCHEME = "http://";
 
+    /**
+     *
+     */
     public static final String HTTPS_SCHEME = "https://";
 
+    /**
+     *
+     */
     public static final String FTP_SCHEME = "ftp://";
 
+    /**
+     *
+     */
     public static final String MMS_SCHEME = "mms://";
 
+    /**
+     *
+     */
     public static final String RTSP_SCHEME = "rtsp://";
 
     // go brewster
-    public static final String WAIS_SCHEME = "wais://";
 
+    /**
+     *
+     */
+        public static final String WAIS_SCHEME = "wais://";
+
+    /**
+     *
+     */
     public static final String ALL_SCHEMES[] = {HTTP_SCHEME, HTTPS_SCHEME, FTP_SCHEME, MMS_SCHEME, RTSP_SCHEME,
             WAIS_SCHEME};
 
+    /**
+     *
+     */
     public static final char PORT_SEPARATOR = ':';
 
+    /**
+     *
+     */
     public static final char PATH_START = '/';
 
     private static final String CC_TLDS = "ac|ad|ae|af|ag|ai|al|am|an|ao|aq"
@@ -124,6 +155,11 @@ public class NetarchiveSuiteUrlOperations {
         return resolvedURI.getEscapedURI();
     }
 
+    /**
+     *
+     * @param url
+     * @return
+     */
     public static String urlToScheme(final String url) {
         for (final String scheme : ALL_SCHEMES) {
             if (url.startsWith(scheme)) {
@@ -133,6 +169,11 @@ public class NetarchiveSuiteUrlOperations {
         return null;
     }
 
+    /**
+     *
+     * @param scheme
+     * @return
+     */
     public static int schemeToDefaultPort(final String scheme) {
         if (scheme.equals(HTTP_SCHEME)) {
             return 80;
@@ -152,6 +193,11 @@ public class NetarchiveSuiteUrlOperations {
         return -1;
     }
 
+    /**
+     *
+     * @param url
+     * @return
+     */
     public static String urlToHost(String url) {
         if (url.startsWith("dns:")) {
             return url.substring(4);

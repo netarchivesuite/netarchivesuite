@@ -54,8 +54,14 @@ import dk.netarkivet.common.utils.Settings;
 @Ignore("Needs to be running in deploy-test module according to junit3 test suite")
 public class HangingListenerTest {
 
+    /**
+     *
+     */
     public static AtomicInteger messages_received = new AtomicInteger(0);
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         Settings.set(CommonSettings.JMS_BROKER_CLASS, JMSConnectionSunMQ.class.getName());
@@ -65,6 +71,9 @@ public class HangingListenerTest {
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         // JMSConnection.getInstance().cleanup();
@@ -122,11 +131,18 @@ public class HangingListenerTest {
         // con2.cleanup();
     }
 
+    /**
+     *
+     */
     public static class MiniConnectionSunMQ {
 
         QueueSession myQSess;
         QueueConnection myQConn;
 
+        /**
+         *
+         * @throws JMSException
+         */
         public MiniConnectionSunMQ() throws JMSException {
             String host = Settings.get(JMSConnectionSunMQ.JMS_BROKER_HOST);
             String port = Settings.get(JMSConnectionSunMQ.JMS_BROKER_PORT);
@@ -142,32 +158,60 @@ public class HangingListenerTest {
             myQConn.start();
         }
 
+        /**
+         *
+         * @param mq
+         * @param ml
+         * @throws JMSException
+         */
         public void setListener(ChannelID mq, MessageListener ml) throws JMSException {
             Queue queue = new com.sun.messaging.Queue(mq.getName());
             QueueReceiver myQueueReceiver = myQSess.createReceiver(queue);
             myQueueReceiver.setMessageListener(ml);
         }
 
+        /**
+         *
+         * @throws JMSException
+         */
         public void cleanup() throws JMSException {
             myQConn.close();
         }
     }
 
+    /**
+     *
+     */
     public static class BlockingListener implements MessageListener {
 
+        /**
+         *
+         */
         public int called = 0;
         long timeToBlockMS;
         boolean isBlocking;
 
+        /**
+         *
+         */
         public BlockingListener() {
             this(false, 0);
         }
 
+        /**
+         *
+         * @param block
+         * @param timeToBlockMS
+         */
         public BlockingListener(boolean block, long timeToBlockMS) {
             this.timeToBlockMS = timeToBlockMS;
             isBlocking = block;
         }
 
+        /**
+         *
+         * @param message
+         */
         public void onMessage(Message message) {
             called++;
             HangingListenerTest.messages_received.addAndGet(1);

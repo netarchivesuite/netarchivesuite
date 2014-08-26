@@ -64,11 +64,17 @@ public class IndexRequestMessageTester {
 
     private static final Set<Long> JOB_SET = new HashSet<Long>(Arrays.asList(new Long[] {1L, 2L}));
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         mtf.setUp();
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         mtf.tearDown();
@@ -76,6 +82,7 @@ public class IndexRequestMessageTester {
 
     /**
      * Test exceptions in constructor, and default parameters set correctly.
+     * @throws java.lang.Exception
      */
     @Test
     public void testIndexRequestMessage() throws Exception {
@@ -104,6 +111,7 @@ public class IndexRequestMessageTester {
 
     /**
      * Test accept indeed calls the accept accepting indexrequestmessage.
+     * @throws java.lang.Exception
      */
     @Test
     public void testAccept() throws Exception {
@@ -116,6 +124,7 @@ public class IndexRequestMessageTester {
 
     /**
      * Test setter/getter.
+     * @throws java.lang.Exception
      */
     @Test
     public void testSetFoundJobs() throws Exception {
@@ -133,6 +142,7 @@ public class IndexRequestMessageTester {
 
     /**
      * Test setter/getter.
+     * @throws java.lang.Exception
      */
     @Test
     public void testSetResultFiles() throws Exception {
@@ -169,6 +179,10 @@ public class IndexRequestMessageTester {
         }
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     @Test
     public void testSetResultFile() throws IOException {
         IndexRequestMessage irMsg = new IndexRequestMessage(RequestType.CDX, JOB_SET, null);

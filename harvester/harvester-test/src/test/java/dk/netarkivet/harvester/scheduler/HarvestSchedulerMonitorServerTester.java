@@ -83,9 +83,24 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 @Ignore("binary derby database not converted to scripts yet")
 public class HarvestSchedulerMonitorServerTester {
 
+    /**
+     *
+     */
     public static JobDAO theDAO;
+
+    /**
+     *
+     */
     public static final File BASEDIR = new File("tests/dk/netarkivet/harvester/scheduler/data/");
+
+    /**
+     *
+     */
     public static final File ORIGINALS = new File(BASEDIR, "originals");
+
+    /**
+     *
+     */
     public static final File WORKING = new File(BASEDIR, "working");
     private static final File CRAWL_REPORT = new File(WORKING, "harvestreports/crawl.log");
     private static final File STOP_REASON_CRAWL_REPORT = new File(WORKING, "harvestreports/stop-reason-crawl.log");
@@ -98,6 +113,11 @@ public class HarvestSchedulerMonitorServerTester {
 
     /**
      * setUp method for this set of unit tests.
+     * @throws java.io.IOException
+     * @throws java.sql.SQLException
+     * @throws java.lang.IllegalAccessException
+     * @throws java.lang.NoSuchFieldException
+     * @throws java.lang.ClassNotFoundException
      */
     @Before
     public void setUp() throws IOException, SQLException, IllegalAccessException, NoSuchFieldException,
@@ -120,6 +140,9 @@ public class HarvestSchedulerMonitorServerTester {
 
     /**
      * tearDown method for this set of unit tests.
+     * @throws java.sql.SQLException
+     * @throws java.lang.IllegalAccessException
+     * @throws java.lang.NoSuchFieldException
      */
     @After
     public void tearDown() throws SQLException, IllegalAccessException, NoSuchFieldException {

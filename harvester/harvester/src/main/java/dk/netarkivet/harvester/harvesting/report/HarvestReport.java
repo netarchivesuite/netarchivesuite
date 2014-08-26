@@ -37,6 +37,7 @@ public interface HarvestReport extends Serializable {
 
     /**
      * Returns the default stop reason initially assigned to every domain.
+     * @return 
      */
     StopReason getDefaultStopReason();
 
@@ -76,11 +77,13 @@ public interface HarvestReport extends Serializable {
 
     /**
      * Pre-processing happens when the report is built just at the end of the crawl, before the ARC files upload.
+     * @param files
      */
     void preProcess(HeritrixFiles files);
 
     /**
      * Post-processing happens on the scheduler side when ARC files have been uploaded.
+     * @param job
      */
     void postProcess(Job job);
 

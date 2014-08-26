@@ -41,11 +41,18 @@ import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
 
+/**
+ *
+ * @author tra
+ */
 public class JobSupervisorTest {
     private JobSupervisor jobSupervisor;
     private JobDAO jobDaoMock = mock(JobDAO.class);
     private Provider<JobDAO> jobDAOProvider;
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         jobDAOProvider = new Provider<JobDAO>() {
@@ -56,6 +63,9 @@ public class JobSupervisorTest {
         };
     }
 
+    /**
+     *
+     */
     @Test
     public void testCleanOldJobsMultipleJobs() {
         Long jobTimeoutTime = 1L;
@@ -97,6 +107,9 @@ public class JobSupervisorTest {
         verifyNoMoreInteractions(jobDaoMock);
     }
 
+    /**
+     *
+     */
     @Test
     public void testCleanOldJobsNoJobs() {
         Long jobTimeoutTime = 1L;
@@ -111,6 +124,9 @@ public class JobSupervisorTest {
         verifyNoMoreInteractions(jobDaoMock);
     }
 
+    /**
+     *
+     */
     @Test
     public void testRescheduleMultipleSubmittedJobs() {
         Long jobTimeoutTime = 1L;
@@ -127,6 +143,9 @@ public class JobSupervisorTest {
         verifyNoMoreInteractions(jobDaoMock);
     }
 
+    /**
+     *
+     */
     @Test
     public void testRescheduleNoSubmittedJobs() {
         Long jobTimeoutTime = 1L;

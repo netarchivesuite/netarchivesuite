@@ -523,7 +523,16 @@ public class PersistentJobData implements JobInfo {
     protected static class XmlState {
         /** enum for holding OK/NOTOK values. */
         public enum OKSTATE {
-            OK, NOTOK
+
+            /**
+             *
+             */
+            OK,
+
+            /**
+             *
+             */
+            NOTOK
         }
 
         /** the state of the XML. */

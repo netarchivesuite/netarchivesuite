@@ -80,6 +80,10 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
 
     private final HarvestChannelRegistry harvestChannelRegistry;
 
+    /**
+     *
+     * @param harvestChannelRegistry
+     */
     public HarvestJobGenerator(final HarvestChannelRegistry harvestChannelRegistry) {
         this.harvestChannelRegistry = harvestChannelRegistry;
     }

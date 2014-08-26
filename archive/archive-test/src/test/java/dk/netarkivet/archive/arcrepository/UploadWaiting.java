@@ -35,6 +35,9 @@ import dk.netarkivet.common.exceptions.IOFailure;
  */
 public class UploadWaiting {
 
+    /**
+     *
+     */
     public static final long SHORT_TIME = 10;
 
     /**

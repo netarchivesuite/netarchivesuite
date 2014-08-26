@@ -31,7 +31,21 @@ public class TableSort {
 
     /** list of the sort order. */
     public enum SortOrder {
-        NONE, INCR, DESC
+
+        /**
+         *
+         */
+        NONE,
+
+        /**
+         *
+         */
+        INCR,
+
+        /**
+         *
+         */
+        DESC
     };
 
     /** id of the sorted column. */

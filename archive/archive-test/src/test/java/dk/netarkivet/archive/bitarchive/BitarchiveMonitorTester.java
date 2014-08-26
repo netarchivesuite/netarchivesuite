@@ -55,12 +55,18 @@ public class BitarchiveMonitorTester {
 
     private static final Replica ONE = Replica.getReplicaFromId("ONE");
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         rs.setUp();
         mj.setUp();
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         mj.tearDown();

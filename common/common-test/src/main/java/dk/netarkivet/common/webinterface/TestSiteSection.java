@@ -26,6 +26,10 @@ package dk.netarkivet.common.webinterface;
  * A site section for test use.
  */
 public class TestSiteSection extends SiteSection {
+
+    /**
+     *
+     */
     public TestSiteSection() {
         super("Test", "Test", 1, new String[][] {{"Test", "Test"}}, "Test", "Test");
     }

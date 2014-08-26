@@ -58,6 +58,10 @@ public class ReportingTester {
     private File tempdir = new File(working, "commontempdir");
     private File dir;
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         rs.setUp();
@@ -75,6 +79,10 @@ public class ReportingTester {
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, dir);
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         if (tarc != null) {
@@ -88,6 +96,10 @@ public class ReportingTester {
         rs.tearDown();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testGetFilesForJob() throws Exception {
         try {
@@ -108,6 +120,10 @@ public class ReportingTester {
                 Reporting.getFilesForJob(4, "4-2"));
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testGetMetdataCDXRecordsForJob() throws Exception {
         try {

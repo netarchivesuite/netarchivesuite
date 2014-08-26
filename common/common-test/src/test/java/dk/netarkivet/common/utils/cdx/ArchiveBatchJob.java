@@ -230,6 +230,10 @@ public abstract class ArchiveBatchJob extends FileBatchJob {
         return exceptionList;
     }
 
+    /**
+     *
+     * @return
+     */
     public int noOfRecordsProcessed() {
         return noOfRecordsProcessed;
     }

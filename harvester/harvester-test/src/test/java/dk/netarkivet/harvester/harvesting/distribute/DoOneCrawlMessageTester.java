@@ -58,6 +58,14 @@ public class DoOneCrawlMessageTester {
     private static final ChannelID CHAN1 = Channels.getThisReposClient();
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     * @throws SQLException
+     * @throws IllegalAccessException
+     * @throws IOException
+     * @throws NoSuchFieldException
+     * @throws ClassNotFoundException
+     */
     @Before
     public void setUp() throws SQLException, IllegalAccessException, IOException, NoSuchFieldException,
             ClassNotFoundException {
@@ -67,6 +75,12 @@ public class DoOneCrawlMessageTester {
         ChannelsTesterHelper.resetChannels();
     }
 
+    /**
+     *
+     * @throws SQLException
+     * @throws IllegalAccessException
+     * @throws NoSuchFieldException
+     */
     @After
     public void tearDown() throws SQLException, IllegalAccessException, NoSuchFieldException {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
@@ -187,6 +201,9 @@ public class DoOneCrawlMessageTester {
         }
     }
 
+    /**
+     *
+     */
     @Test
     public void testHarvestDefinitionInfo() {
         try {

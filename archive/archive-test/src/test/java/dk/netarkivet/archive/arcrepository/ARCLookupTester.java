@@ -77,9 +77,17 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 public class ARCLookupTester {
     private ViewerArcRepositoryClient realArcRepos;
     private static ARCLookup lookup;
+
+    /**
+     *
+     */
     protected ARCReader arcReader;
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         rs.setUp();
@@ -114,6 +122,10 @@ public class ARCLookupTester {
         lookup.setIndex(dk.netarkivet.archive.distribute.arcrepository.TestInfo.INDEX_DIR_2_3);
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         if (realArcRepos != null) {
@@ -127,6 +139,10 @@ public class ARCLookupTester {
         rs.tearDown();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     @Ignore("FIXME")
     // FIXME: test temporarily disabled
@@ -170,6 +186,7 @@ public class ARCLookupTester {
     /**
      * Test that lookup returns real arcrecord data, and that it is correct TODO: This test is bad: It may not clean up
      * properly on fail, and it is really an integrity test. Move and clean up!
+     * @throws java.lang.Exception
      */
     @Test
     public void testLookup() throws Exception {
@@ -221,6 +238,12 @@ public class ARCLookupTester {
         }
     }
 
+    /**
+     *
+     * @throws NoSuchMethodException
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     */
     @Test
     public void testLuceneLookup() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         Method luceneLookup = ReflectUtils.getPrivateMethod(ARCLookup.class, "luceneLookup", String.class);

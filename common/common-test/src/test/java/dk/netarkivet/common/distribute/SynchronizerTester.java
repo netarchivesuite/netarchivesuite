@@ -42,6 +42,10 @@ import org.junit.Test;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
+/**
+ *
+ * @author tra
+ */
 @SuppressWarnings({"serial"})
 public class SynchronizerTester {
     private static final ChannelID toQ = Channels.getAnyBa();
@@ -53,6 +57,10 @@ public class SynchronizerTester {
 
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     * @throws IOException
+     */
     @Before
     public void setUp() throws IOException {
         rs.setUp();
@@ -61,6 +69,9 @@ public class SynchronizerTester {
         con = JMSConnectionFactory.getInstance();
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         rs.tearDown();
@@ -317,6 +328,7 @@ public class SynchronizerTester {
 
     /**
      * Tests that a timed-out synchronizer returns null. Disabled, fails occasionally in Jenkins.
+     * @throws java.lang.Exception
      */
     @Test
     @Ignore("fails occasionally in Jenkins")
@@ -348,7 +360,15 @@ public class SynchronizerTester {
         }
     }
 
+    /**
+     *
+     */
     public static class DelayedReplier implements MessageListener {
+
+        /**
+         *
+         * @param message
+         */
         public void onMessage(Message message) {
             TestMessage tm = (TestMessage) JMSConnection.unpack(message);
             TestMessage reply = new TestMessage(tm.getReplyTo(), tm.getTo(), tm.getReplyOfId());

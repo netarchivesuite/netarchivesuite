@@ -134,6 +134,9 @@ public class FullFrontierReport extends AbstractFrontierReport {
 
     }
 
+    /**
+     *
+     */
     public class ReportIterator implements Iterator<FrontierReportLine> {
 
         private final EntityCursor<PersistentLine> cursor;
@@ -273,6 +276,10 @@ public class FullFrontierReport extends AbstractFrontierReport {
         FileUtils.removeRecursively(storageDir);
     }
 
+    /**
+     *
+     * @param line
+     */
     @Override
     public void addLine(FrontierReportLine line) {
         try {
@@ -282,6 +289,11 @@ public class FullFrontierReport extends AbstractFrontierReport {
         }
     }
 
+    /**
+     *
+     * @param domainName
+     * @return
+     */
     @Override
     public FrontierReportLine getLineForDomain(String domainName) {
         try {

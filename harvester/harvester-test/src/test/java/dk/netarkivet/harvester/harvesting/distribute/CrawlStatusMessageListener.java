@@ -36,10 +36,26 @@ import dk.netarkivet.harvester.datamodel.JobStatus;
  * Utility class to listen to and record all CrawlStatusMessages
  */
 public class CrawlStatusMessageListener implements MessageListener {
+
+    /**
+     *
+     */
     public ArrayList<JobStatus> status_codes = new ArrayList<JobStatus>();
+
+    /**
+     *
+     */
     public ArrayList<Long> jobids = new ArrayList<Long>();
+
+    /**
+     *
+     */
     public ArrayList<CrawlStatusMessage> messages = new ArrayList<CrawlStatusMessage>();
 
+    /**
+     *
+     * @param message
+     */
     public void onMessage(Message message) {
         NetarkivetMessage naMsg = JMSConnection.unpack(message);
         if (naMsg instanceof CrawlStatusMessage) {

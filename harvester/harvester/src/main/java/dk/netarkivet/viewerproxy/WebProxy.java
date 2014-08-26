@@ -108,6 +108,7 @@ public class WebProxy extends DefaultHandler implements URIResolverHandler {
      * Exceptions will generate an internal server error-page with the details.
      *
      * @param target URL or name for request. Not used
+     * @param baseRequest
      * @param request The original request, including URL
      * @param response The object that receives the result
      */

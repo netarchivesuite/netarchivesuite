@@ -37,15 +37,27 @@ import dk.netarkivet.systemtest.functional.DomainsPageTest;
 import dk.netarkivet.systemtest.functional.ExtendedFieldTest;
 import dk.netarkivet.systemtest.page.PageHelper;
 
+/**
+ *
+ * @author tra
+ */
 @SuppressWarnings("unused")
 public class DatabaseFullMigrationTest extends StressTest {
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test(groups = {"guitest", "performancetest"})
     public void dbFullMigrationTest() throws Exception {
         addDescription("Test complete backup-database ingest from production produces a functional NAS system.");
         doStuff();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @BeforeClass
     public void setupTestEnvironment() throws Exception {
         if (true) {
@@ -59,6 +71,10 @@ public class DatabaseFullMigrationTest extends StressTest {
         }
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @AfterClass
     public void teardownTestEnvironment() throws Exception {
         if (true) {

@@ -26,6 +26,10 @@ import org.junit.Test;
 
 import com.sleepycat.je.DatabaseException;
 
+/**
+ *
+ * @author tra
+ */
 @SuppressWarnings({"unused"})
 public class DatabaseChecksumTester {
 
@@ -37,6 +41,10 @@ public class DatabaseChecksumTester {
         DatabaseChecksumArchive dca = new DatabaseChecksumArchive();
     }
 
+    /**
+     *
+     * @throws DatabaseException
+     */
     @Test
     public void testConstructor() throws DatabaseException {
         DatabaseChecksumArchive dca = new DatabaseChecksumArchive();

@@ -41,6 +41,10 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriter;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
+/**
+ *
+ * @author tra
+ */
 public class IngestableFilesTester {
     private static final String MSG = "This a test message from IngestableFilesTester";
 
@@ -57,11 +61,17 @@ public class IngestableFilesTester {
 
     private MoveTestFiles mtf = new MoveTestFiles(TestInfo.CRAWLDIR_ORIGINALS_DIR, TestInfo.WORKING_DIR);
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         mtf.setUp();
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         mtf.tearDown();
@@ -198,6 +208,8 @@ public class IngestableFilesTester {
 
     /**
      * Verify that IngestableFiles discovers old (final) metadata in the crawldir.
+     * @throws java.io.FileNotFoundException
+     * @throws java.io.IOException
      */
     @Test
     public void testMetadataRediscovery() throws FileNotFoundException, IOException {
@@ -236,6 +248,8 @@ public class IngestableFilesTester {
 
     /**
      * Verify that a file containing data written to the metadata ARCWriter is contained in one the returned files.
+     * @throws java.io.FileNotFoundException
+     * @throws java.io.IOException
      */
     @Test
     public void testGetMetadataFiles() throws FileNotFoundException, IOException {
@@ -255,6 +269,9 @@ public class IngestableFilesTester {
                         + inf.getMetadataArcFiles(), found);
     }
 
+    /**
+     *
+     */
     @Test
     public void testMetadataFailure() {
         HeritrixFiles OkFiles = new HeritrixFiles(TestInfo.WORKING_DIR, acceptableJobInfoForJobOne);

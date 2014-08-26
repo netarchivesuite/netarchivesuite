@@ -103,6 +103,9 @@ public class BitarchiveClientTester {
     private JMSConnectionMockupMQ con;
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         rs.setUp();
@@ -416,6 +419,9 @@ public class BitarchiveClientTester {
         }
     }
 
+    /**
+     *
+     */
     @Test
     @Ignore("FIXME")
     // FIXME: test temporarily disabled
@@ -485,18 +491,66 @@ public class BitarchiveClientTester {
     }
 
     /* Receive and check messages */
+
+    /**
+     *
+     */
+    
     public class MessageTestHandler extends ArchiveMessageHandler {
+
+        /**
+         *
+         */
         public List<UploadMessage> uploadMsg = new ArrayList<UploadMessage>();
+
+        /**
+         *
+         */
         public List<GetMessage> getMsg = new ArrayList<GetMessage>();
+
+        /**
+         *
+         */
         public List<BatchMessage> batchMsg = new ArrayList<BatchMessage>();
+
+        /**
+         *
+         */
         public List<BatchReplyMessage> batchReplyMsg = new ArrayList<BatchReplyMessage>();
+
+        /**
+         *
+         */
         public List<GetFileMessage> getfileMsg = new ArrayList<GetFileMessage>();
+
+        /**
+         *
+         */
         public List<GetAllFilenamesMessage> filenamesMsg = new ArrayList<GetAllFilenamesMessage>();
+
+        /**
+         *
+         */
         public List<GetAllChecksumsMessage> checksumsMsg = new ArrayList<GetAllChecksumsMessage>();
+
+        /**
+         *
+         */
         public List<GetChecksumMessage> getChecksumMsg = new ArrayList<GetChecksumMessage>();
+
+        /**
+         *
+         */
         public List<CorrectMessage> correctMsg = new ArrayList<CorrectMessage>();
+
+        /**
+         *
+         */
         public List<RemoveAndGetFileMessage> ragfMsg = new ArrayList<RemoveAndGetFileMessage>();
 
+        /**
+         *
+         */
         public MessageTestHandler() {
             // System.out.println("MessageTestHandler initiated!");
         }
@@ -541,6 +595,10 @@ public class BitarchiveClientTester {
             correctMsg.add(msg);
         }
 
+        /**
+         *
+         * @return
+         */
         synchronized public int getTotalCount() {
             return (uploadMsg.size() + getMsg.size() + batchMsg.size() + getfileMsg.size() + batchReplyMsg.size());
         }

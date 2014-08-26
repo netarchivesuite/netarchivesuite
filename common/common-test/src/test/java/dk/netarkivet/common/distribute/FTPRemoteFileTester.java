@@ -54,10 +54,17 @@ public class FTPRemoteFileTester {
     private File testFile2;
 
     // A named logger for this class is retrieved
-    protected final Logger logger = LoggerFactory.getLogger(FTPRemoteFileTester.class);
+
+    /**
+     *
+     */
+        protected final Logger logger = LoggerFactory.getLogger(FTPRemoteFileTester.class);
 
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         rs.setUp();
@@ -83,6 +90,10 @@ public class FTPRemoteFileTester {
         }
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     @After
     public void tearDown() throws IOException {
         FileUtils.removeRecursively(dk.netarkivet.common.utils.TestInfo.TEMPDIR);

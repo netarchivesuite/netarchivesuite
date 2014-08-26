@@ -167,6 +167,7 @@ public class ExtendedFTPRemoteFile implements RemoteFile {
      * @param fileDeletable If true, this file will be deleted after upload to FTP.
      * @param multipleDownloads If true, the file will not be removed from FTP server automatically after first
      *            download.
+     * @param connectionParams
      * @return FTPRemoteFile object
      * @throws IOFailure if FTPRemoteFile creation fails
      */

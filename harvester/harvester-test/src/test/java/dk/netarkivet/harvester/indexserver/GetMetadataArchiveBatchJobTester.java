@@ -41,11 +41,18 @@ import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFile;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
+/**
+ *
+ * @author tra
+ */
 public class GetMetadataArchiveBatchJobTester {
 
     MoveTestFiles mtf;
     File metadataDir = new File(TestInfo.WORKING_DIR, "metadata");
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         TestInfo.WORKING_DIR.mkdir();
@@ -55,12 +62,19 @@ public class GetMetadataArchiveBatchJobTester {
         mtf.setUp();
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         mtf.tearDown();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
     }
 
+    /**
+     *
+     * @throws FileNotFoundException
+     */
     @Test
     public void testBatchJob() throws FileNotFoundException {
 

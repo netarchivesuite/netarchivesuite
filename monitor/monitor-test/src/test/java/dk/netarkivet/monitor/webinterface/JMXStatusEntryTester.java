@@ -30,10 +30,17 @@ import javax.management.ObjectName;
 
 import junit.framework.TestCase;
 
+/**
+ *
+ * @author tra
+ */
 public class JMXStatusEntryTester extends TestCase {
 
     private Hashtable<String, String> properties;
 
+    /**
+     *
+     */
     public void setUp() {
         properties = new Hashtable<String, String>();
         properties.put(JMXSummaryUtils.JMXPhysLocationProperty, "EAST");
@@ -46,6 +53,10 @@ public class JMXStatusEntryTester extends TestCase {
         properties.put(JMXSummaryUtils.JMXIndexProperty, "1");
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     public void testConstructor() throws Exception {
         JMXStatusEntry entry = new JMXStatusEntry(ObjectName.getInstance("east", properties));
         assertTrue(entry.getApplicationName().equals("SH"));
@@ -58,6 +69,10 @@ public class JMXStatusEntryTester extends TestCase {
         assertTrue(entry.getHarvestPriority().equals("FOCUSED"));
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     public void testGetLogmessage() throws Exception {
         JMXStatusEntry entry = new JMXStatusEntry(ObjectName.getInstance("east", properties));
         Locale l = new Locale("da");

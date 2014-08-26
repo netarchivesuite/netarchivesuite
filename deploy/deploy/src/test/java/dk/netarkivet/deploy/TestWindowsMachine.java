@@ -30,8 +30,26 @@ import org.dom4j.Element;
 
 import dk.netarkivet.common.exceptions.IOFailure;
 
+/**
+ *
+ * @author tra
+ */
 public class TestWindowsMachine extends WindowsMachine {
 
+    /**
+     *
+     * @param root
+     * @param parentSettings
+     * @param param
+     * @param netarchiveSuiteSource
+     * @param logProp
+     * @param slf4JConfig
+     * @param securityPolicy
+     * @param dbFile
+     * @param arcdbFile
+     * @param resetDir
+     * @param externalJarFolder
+     */
     public TestWindowsMachine(Element root, XmlStructure parentSettings, Parameters param,
             String netarchiveSuiteSource, File logProp, File slf4JConfig, File securityPolicy, File dbFile,
             File arcdbFile, boolean resetDir, File externalJarFolder) {

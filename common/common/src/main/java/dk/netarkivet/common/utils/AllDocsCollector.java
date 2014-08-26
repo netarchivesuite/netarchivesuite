@@ -53,10 +53,17 @@ public class AllDocsCollector extends Collector {
         docs.add(new ScoreDoc(doc + docBase, scorer.score()));
     }
 
+    /**
+     *
+     * @return
+     */
     public List<ScoreDoc> getHits() {
         return docs;
     }
 
+    /**
+     *
+     */
     public void reset() {
         docs.clear();
     }

@@ -41,6 +41,10 @@ public abstract class CacheTestCase {
     private UseTestRemoteFile utrf = new UseTestRemoteFile();
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     * @throws Exception
+     */
     public void setUp() throws Exception {
         rs.setUp();
         // This just is needed to allow an instance of CDXIndexCache to be made
@@ -52,6 +56,10 @@ public abstract class CacheTestCase {
         FileUtils.createDir(new File(TestInfo.WORKING_DIR, "tmp"));
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     public void tearDown() throws Exception {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         ArcRepositoryClientFactory.getViewerInstance().close();

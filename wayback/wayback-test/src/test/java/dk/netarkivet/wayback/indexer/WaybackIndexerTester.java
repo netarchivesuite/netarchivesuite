@@ -36,12 +36,19 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.wayback.WaybackSettings;
 
+/**
+ *
+ * @author tra
+ */
 @Ignore("Not referred to from TestSuite")
 public class WaybackIndexerTester extends IndexerTestCase {
 
     File originals = new File("tests/dk/netarkivet/wayback/indexer/data/originals");
     File working = new File("tests/dk/netarkivet/wayback/indexer/data/working");
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         super.setUp();
@@ -49,6 +56,9 @@ public class WaybackIndexerTester extends IndexerTestCase {
         TestFileUtils.copyDirectoryNonCVS(originals, working);
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         super.tearDown();
@@ -70,6 +80,12 @@ public class WaybackIndexerTester extends IndexerTestCase {
         ingestMethod.invoke(null);
     }
 
+    /**
+     *
+     * @throws NoSuchMethodException
+     * @throws InvocationTargetException
+     * @throws IllegalAccessException
+     */
     public void testIngestInitialFiles() throws NoSuchMethodException, InvocationTargetException,
             IllegalAccessException {
         String file = (new File(working, "initialfiles")).getAbsolutePath();

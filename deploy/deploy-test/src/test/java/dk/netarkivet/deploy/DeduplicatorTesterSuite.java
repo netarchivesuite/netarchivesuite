@@ -37,12 +37,21 @@ import junit.textui.TestRunner;
  */
 
 public class DeduplicatorTesterSuite {
+
+    /**
+     *
+     * @param suite
+     */
     public static void addToSuite(TestSuite suite) {
         // FIXME: deploy cannot see archiver or harvester test classes.
         // suite.addTestSuite(CDXOriginCrawlLogIteratorTester.class);
         // suite.addTestSuite(ARCLookupTester.class);
     }
 
+    /**
+     *
+     * @return
+     */
     public static Test suite() {
         TestSuite suite;
         suite = new TestSuite("DeduplicatorTesterSuite");
@@ -52,6 +61,10 @@ public class DeduplicatorTesterSuite {
         return suite;
     }
 
+    /**
+     *
+     * @param args
+     */
     public static void main(String args[]) {
         String args2[] = {"-noloading", "dk.netarkivet.DeduplicatorTesterSuite"};
         TestRunner.main(args2);

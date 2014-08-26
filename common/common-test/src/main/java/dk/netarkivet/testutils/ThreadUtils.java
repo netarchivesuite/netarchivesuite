@@ -26,9 +26,17 @@ package dk.netarkivet.testutils;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 
+/**
+ *
+ * @author tra
+ */
 public abstract class ThreadUtils {
     private static ThreadGroup rootThreadGroup = null;
 
+    /**
+     *
+     * @return
+     */
     public static Thread[] getAllThreads() {
         final ThreadGroup root = getRootThreadGroup();
         final ThreadMXBean thbean = ManagementFactory.getThreadMXBean();
@@ -43,6 +51,10 @@ public abstract class ThreadUtils {
         return java.util.Arrays.copyOf(threads, n);
     }
 
+    /**
+     *
+     * @return
+     */
     public static ThreadGroup getRootThreadGroup() {
         if (rootThreadGroup != null)
             return rootThreadGroup;

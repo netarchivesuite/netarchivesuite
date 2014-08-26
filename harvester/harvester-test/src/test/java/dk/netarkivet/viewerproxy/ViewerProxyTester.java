@@ -61,6 +61,10 @@ public class ViewerProxyTester {
 
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         rs.setUp();
@@ -81,6 +85,11 @@ public class ViewerProxyTester {
         httpClient.setHostConfiguration(hc);
     }
 
+    /**
+     *
+     * @throws NoSuchFieldException
+     * @throws IllegalAccessException
+     */
     @After
     public void tearDown() throws NoSuchFieldException, IllegalAccessException {
         if (proxy != null) {
@@ -105,6 +114,7 @@ public class ViewerProxyTester {
 
     /**
      * Test that the proxyServer is giving meaningful output when asked for non-existing content
+     * @throws java.lang.Exception
      */
     @Test
     public void testGetWithNoIndex() throws Exception {
@@ -143,6 +153,7 @@ public class ViewerProxyTester {
 
     /**
      * Verifies that reception of an unknown instruction is logged.
+     * @throws java.io.IOException
      */
     @Test
     public void testUnknownInstruction() throws IOException {

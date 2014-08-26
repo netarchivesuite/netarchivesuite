@@ -32,18 +32,33 @@ import org.junit.Test;
 
 import dk.netarkivet.harvester.datamodel.DataModelTestCase;
 
+/**
+ *
+ * @author tra
+ */
 public class ExtendedFieldTester extends DataModelTestCase {
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         super.setUp();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         super.tearDown();
     }
 
+    /**
+     *
+     */
     @Test
     public void testCreateReadUpdateDelete() {
         ExtendedFieldDAO extDAO = ExtendedFieldDBDAO.getInstance();

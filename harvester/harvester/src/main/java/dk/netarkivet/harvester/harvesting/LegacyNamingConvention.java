@@ -29,6 +29,9 @@ import dk.netarkivet.harvester.datamodel.Job;
  */
 public class LegacyNamingConvention implements ArchiveFileNaming {
 
+    /**
+     *
+     */
     public LegacyNamingConvention() {
     }
 

@@ -46,6 +46,12 @@ import dk.netarkivet.common.utils.batch.ChecksumJob;
 @Deprecated
 // what is this used for? /tra
 public class RunChecksum {
+
+    /**
+     *
+     * @param argv
+     * @throws IOException
+     */
     public static void main(String[] argv) throws IOException {
         if (argv.length > 1) {
             System.out.println("Too many arguments");

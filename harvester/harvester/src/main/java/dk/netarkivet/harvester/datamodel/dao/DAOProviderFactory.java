@@ -7,7 +7,16 @@ import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO;
 
+/**
+ *
+ * @author tra
+ */
 public class DAOProviderFactory {
+
+    /**
+     *
+     * @return
+     */
     public static Provider<HarvestDefinitionDAO> getHarvestDefinitionDAOProvider() {
         return new Provider<HarvestDefinitionDAO>() {
             @Override
@@ -26,6 +35,10 @@ public class DAOProviderFactory {
         };
     }
 
+    /**
+     *
+     * @return
+     */
     public static Provider<DomainDAO> getDomainDAOProvider() {
         return new Provider<DomainDAO>() {
             @Override

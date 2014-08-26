@@ -44,6 +44,9 @@ import dk.netarkivet.common.utils.Settings;
 public class ReplicaTester {
     private String[] knownTestIds;
 
+    /**
+     *
+     */
     public ReplicaTester() {
         if (knownTestIds == null) {
             knownTestIds = Settings.getAll(CommonSettings.REPLICA_IDS);
@@ -52,7 +55,11 @@ public class ReplicaTester {
 
     // initializeKnownList is tested in the test of get
     // getName() is tested in the test of get
-    @Test
+
+    /**
+     *
+     */
+        @Test
     public void testGet() {
         assertTrue("Differences in sizes of replica maps", knownTestIds.length == Replica.getKnown().size());
         for (int i = 0; i < knownTestIds.length; i++) {
@@ -67,6 +74,9 @@ public class ReplicaTester {
         }
     }
 
+    /**
+     *
+     */
     @Test
     public void testIsKnownReplica() {
         // Replica ids
@@ -111,6 +121,9 @@ public class ReplicaTester {
         }
     }
 
+    /**
+     *
+     */
     @Test
     public void testGetKnown() {
         // Collection<Location>
@@ -149,6 +162,9 @@ public class ReplicaTester {
         }
     }
 
+    /**
+     *
+     */
     @Test
     public void testGetKnownIds() {
         boolean found;
@@ -189,6 +205,9 @@ public class ReplicaTester {
         ;
     }
 
+    /**
+     *
+     */
     @Test
     public void testGetChannelID() {
         for (Replica rep : Replica.getKnown()) {
@@ -204,6 +223,9 @@ public class ReplicaTester {
         }
     }
 
+    /**
+     *
+     */
     @Test
     public void testToString() {
         for (Replica replica : Replica.getKnown()) {

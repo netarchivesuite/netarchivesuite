@@ -58,6 +58,10 @@ public class GetFileMessageTester {
     private static final File WORKING = TestInfo.UPLOADMESSAGE_TEMP_DIR;
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     * @throws IOException
+     */
     @Before
     public void setUp() throws IOException {
         rs.setUp();
@@ -66,6 +70,9 @@ public class GetFileMessageTester {
         TestFileUtils.copyDirectoryNonCVS(TestInfo.UPLOADMESSAGE_ORIGINALS_DIR, WORKING);
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         FileUtils.removeRecursively(WORKING);
@@ -73,6 +80,12 @@ public class GetFileMessageTester {
         rs.tearDown();
     }
 
+    /**
+     *
+     * @throws IOException
+     * @throws NoSuchFieldException
+     * @throws IllegalAccessException
+     */
     @Test
     @Ignore("FIXME")
     // FIXME: test temporarily disabled

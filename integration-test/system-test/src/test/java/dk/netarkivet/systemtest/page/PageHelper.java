@@ -29,13 +29,109 @@ import org.jaccept.TestEventManager;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
+/**
+ *
+ * @author tra
+ */
 public class PageHelper {
     private static WebDriver driver;
     private static String baseUrl;
     private static Map<MenuPages, String> pageMapping = new HashMap<MenuPages, String>();
 
+    /**
+     *
+     */
     public static enum MenuPages {
-        Frontpage, SelectiveHarvests, SnapshotHarvests, Schedules, FindDomains, CreateDomain, DomainStatistics, AliasSummary, EditHarvestTemplates, GlobalCrawlerTraps, ExtendedFields, AllJobs, AllJobsPerDomain, RunningJobs, Filestatus, BatchjobOverview, ViewerproxyStatus, OverviewOfTheSystemState
+
+        /**
+         *
+         */
+        Frontpage,
+
+        /**
+         *
+         */
+        SelectiveHarvests,
+
+        /**
+         *
+         */
+        SnapshotHarvests,
+
+        /**
+         *
+         */
+        Schedules,
+
+        /**
+         *
+         */
+        FindDomains,
+
+        /**
+         *
+         */
+        CreateDomain,
+
+        /**
+         *
+         */
+        DomainStatistics,
+
+        /**
+         *
+         */
+        AliasSummary,
+
+        /**
+         *
+         */
+        EditHarvestTemplates,
+
+        /**
+         *
+         */
+        GlobalCrawlerTraps,
+
+        /**
+         *
+         */
+        ExtendedFields,
+
+        /**
+         *
+         */
+        AllJobs,
+
+        /**
+         *
+         */
+        AllJobsPerDomain,
+
+        /**
+         *
+         */
+        RunningJobs,
+
+        /**
+         *
+         */
+        Filestatus,
+
+        /**
+         *
+         */
+        BatchjobOverview,
+
+        /**
+         *
+         */
+        ViewerproxyStatus,
+
+        /**
+         *
+         */
+        OverviewOfTheSystemState
     }
 
     static {
@@ -59,6 +155,10 @@ public class PageHelper {
         pageMapping.put(MenuPages.OverviewOfTheSystemState, "Status/Monitor-JMXsummary.jsp");
     }
 
+    /**
+     *
+     * @param page
+     */
     public static void gotoPage(MenuPages page) {
         checkInitialization();
         String pageUrl = pageMapping.get(page);
@@ -87,18 +187,31 @@ public class PageHelper {
         driver.get(baseUrl + "/" + subURL);
     }
 
+    /**
+     *
+     * @param linkText
+     */
     public static void clickLink(String linkText) {
         checkInitialization();
         TestEventManager.getInstance().addStimuli("Clicking '" + linkText + "' link.");
         driver.findElement(By.partialLinkText(linkText)).click();
     }
 
+    /**
+     *
+     * @param theDriver
+     * @param theBaseUrl
+     */
     public static void initialize(WebDriver theDriver, String theBaseUrl) {
         driver = theDriver;
         baseUrl = theBaseUrl;
         checkInitialization();
     }
 
+    /**
+     *
+     * @return
+     */
     public static WebDriver getWebDriver() {
         checkInitialization();
         return driver;

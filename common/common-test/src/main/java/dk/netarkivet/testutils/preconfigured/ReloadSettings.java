@@ -26,19 +26,33 @@ import java.io.File;
 
 import dk.netarkivet.common.utils.Settings;
 
+/**
+ *
+ * @author tra
+ */
 public class ReloadSettings implements TestConfigurationIF {
     private File f;
     private String oldSettingsFilenames;
     private String settingsFileProperty = Settings.SETTINGS_FILE_PROPERTY;
 
+    /**
+     *
+     */
     public ReloadSettings() {
 
     }
 
+    /**
+     *
+     * @param f
+     */
     public ReloadSettings(File f) {
         this.f = f;
     }
 
+    /**
+     *
+     */
     public void setUp() {
         oldSettingsFilenames = System.getProperty(settingsFileProperty);
         if (f != null) {
@@ -47,6 +61,9 @@ public class ReloadSettings implements TestConfigurationIF {
         Settings.reload();
     }
 
+    /**
+     *
+     */
     public void tearDown() {
         if (oldSettingsFilenames != null) {
             System.setProperty(settingsFileProperty, oldSettingsFilenames);

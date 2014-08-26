@@ -46,14 +46,52 @@ public class MockupMultiFileBasedCache extends MultiFileBasedCache<Long> impleme
         super("TEST");
     }
 
+    /**
+     *
+     */
     public enum Mode {
-        SILENT, REPLYING, REPLYING_DIR, FAILING, WAITING
+
+        /**
+         *
+         */
+        SILENT,
+
+        /**
+         *
+         */
+        REPLYING,
+
+        /**
+         *
+         */
+        REPLYING_DIR,
+
+        /**
+         *
+         */
+        FAILING,
+
+        /**
+         *
+         */
+        WAITING
     };
 
     private Mode mode = Mode.SILENT;
 
+    /**
+     *
+     */
     public int cacheCalled = 0;
+
+    /**
+     *
+     */
     public Set<Long> cacheParameter;
+
+    /**
+     *
+     */
     public boolean woken = false;
 
     public void setUp() {
@@ -70,10 +108,19 @@ public class MockupMultiFileBasedCache extends MultiFileBasedCache<Long> impleme
         }
     }
 
+    /**
+     *
+     * @param mode
+     */
     public void setMode(Mode mode) {
         this.mode = mode;
     }
 
+    /**
+     *
+     * @param jobIDs
+     * @return
+     */
     protected Set<Long> cacheData(Set<Long> jobIDs) {
         cacheCalled++;
         cacheParameter = jobIDs;

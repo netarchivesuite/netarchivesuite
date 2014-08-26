@@ -48,17 +48,31 @@ import dk.netarkivet.wayback.TestInfo;
  */
 public class DeduplicateToCDXAdapterTester {
 
+    /**
+     *
+     */
     public static final String DEDUP_CRAWL_LOG = "dedup_crawl_log.txt";
+
+    /**
+     *
+     */
     public static final String DEDUP_CRAWL_STRING = "2009-05-25T13:00:00.992Z   200       "
             + "9717 https://wiki.statsbiblioteket.dk/wiki/summa/img/draft.png LLEE "
             + "https://wiki.statsbiblioteket.dk/wiki/summa/css/screen.css image/png #016 "
             + "20090525130000915+76 sha1:AXH2IFNXC4MUT26SRHRJZHGR3FDAJDNR - duplicate:\"1-1-20090513141823-00008-"
             + "sb-test-har-001.statsbiblioteket.dk.arc,22962264\",content-size:9969";
+
+    /**
+     *
+     */
     public static final String DEDUP_CRAWL_STRING2 = "2011-05-11T16:41:49.968Z 200 50436 http://webtv.metropol.dk/swf/webtv_promohorizontal.swf LLX "
             + "http://www.sporten.dk/sport/fodbold application/x-shockwave-flash #008 20110511164149870+61 "
             + "sha1:KBHBHEUCX5CN7KB3P2ZVBHGCCIFJNIWH - le:IOException@ExtractorSWF,duplicate:"
             + "\"118657-119-20110428163750-00001-kb-prod-har-004.kb.dk.arc,69676377\",content-size:50842";
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
@@ -66,16 +80,25 @@ public class DeduplicateToCDXAdapterTester {
         // System.out.println(DEDUP_CRAWL_STRING);
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
     }
 
+    /**
+     *
+     */
     @Test
     public void testCtor() {
         new DeduplicateToCDXAdapter();
     }
 
+    /**
+     *
+     */
     @Test
     public void testAdaptLine() {
         DeduplicateToCDXAdapterInterface adapter = new DeduplicateToCDXAdapter();
@@ -94,6 +117,10 @@ public class DeduplicateToCDXAdapterTester {
 
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     @Test
     public void testAdaptStream() throws IOException {
         InputStream is = new FileInputStream(new File(TestInfo.WORKING_DIR, DEDUP_CRAWL_LOG));

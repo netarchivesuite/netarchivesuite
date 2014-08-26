@@ -76,10 +76,17 @@ public class IntegrityTestsFTPRemoteFile {
     RemoteFile rf;
 
     // A named logger for this class is retrieved
-    protected final Logger logger = Logger.getLogger(getClass().getName());
+
+    /**
+     *
+     */
+        protected final Logger logger = Logger.getLogger(getClass().getName());
 
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     */
     public void setUp() {
         rs.setUp();
         try {
@@ -130,6 +137,10 @@ public class IntegrityTestsFTPRemoteFile {
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     public void tearDown() throws IOException {
         /** delete all uploaded files on ftp-server and then disconnect */
         Iterator<String> fileIterator = upLoadedFiles.iterator();
@@ -260,6 +271,12 @@ public class IntegrityTestsFTPRemoteFile {
         FileAsserts.assertFileContains("Original file should be unchanged", "a simple string", testFile1);
     }
 
+    /**
+     *
+     * @param nameOfUploadedFile
+     * @return
+     * @throws IOException
+     */
     public boolean onServer(String nameOfUploadedFile) throws IOException {
         assertTrue("theFTPClient should not be null", theFTPClient != null);
 

@@ -78,6 +78,10 @@ public class HTTPControllerServerTester {
 
     private TestRequest[] wrongRequests;
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
@@ -113,6 +117,9 @@ public class HTTPControllerServerTester {
                 new TestRequest(new URI("http://" + hostname + "/changeIndex?returnURL=" + returnUrl + "&jobID=" + 1))};
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         if (TestDelegatingController.arcRep != null) {
@@ -145,6 +152,7 @@ public class HTTPControllerServerTester {
 
     /**
      * Test setURIResolver. Tests null arguments, and that lookup calls are delegated to this resolver after setting it.
+     * @throws java.lang.Exception
      */
     @Test
     public void testSetURIResolver() throws Exception {
@@ -319,6 +327,9 @@ public class HTTPControllerServerTester {
 
     }
 
+    /**
+     *
+     */
     public static class TestDelegatingController extends DelegatingController {
         int totalCounter = 0;
         int startCounter = 0;
@@ -327,9 +338,16 @@ public class HTTPControllerServerTester {
         int getRecordedURICounter = 0;
         int changeIndexCounter = 0;
         Set<Long> changeIndexJobListArgument;
+
+        /**
+         *
+         */
         public static ViewerArcRepositoryClient arcRep;
         String changeIndexLabelParameter;
 
+        /**
+         *
+         */
         public TestDelegatingController() {
             super(new MissingURIRecorder(), new LocalCDXCache(ArcRepositoryClientFactory.getViewerInstance()),
                     new ARCArchiveAccess(arcRep = ArcRepositoryClientFactory.getViewerInstance()));
@@ -374,12 +392,21 @@ public class HTTPControllerServerTester {
         }
     }
 
+    /**
+     *
+     */
     public static class TestURIResolver implements URIResolver {
         int lookupCount = 0;
         int totalCount = 0;
         Response lookupResponseArgument;
         Request lookupRequestArgument;
 
+        /**
+         *
+         * @param request
+         * @param response
+         * @return
+         */
         public int lookup(Request request, Response response) {
             lookupCount++;
             totalCount++;
@@ -389,6 +416,9 @@ public class HTTPControllerServerTester {
         }
     }
 
+    /**
+     *
+     */
     public static class TestResponse implements Response {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         int status = 0;
@@ -416,6 +446,9 @@ public class HTTPControllerServerTester {
             return status;
         }
 
+        /**
+         *
+         */
         public void reset() {
             os = new ByteArrayOutputStream();
             status = 0;
@@ -424,10 +457,21 @@ public class HTTPControllerServerTester {
         }
     }
 
+    /**
+     *
+     */
     public static class TestRequest implements Request {
         private URI uri;
+
+        /**
+         *
+         */
         public Map<String, List<String>> postParameters = new HashMap<String, List<String>>();
 
+        /**
+         *
+         * @param uri
+         */
         public TestRequest(URI uri) {
             this.uri = uri;
         }

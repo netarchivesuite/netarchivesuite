@@ -81,6 +81,12 @@ public abstract class DerbySpecifics extends DBSpecifics {
         }
     }
 
+    /**
+     *
+     * @param limit
+     * @param offset
+     * @return
+     */
     @Override
     public String getOrderByLimitAndOffsetSubClause(long limit, long offset) {
         // LIMIT sub-clause supported by Derby 10.5.3
@@ -88,6 +94,10 @@ public abstract class DerbySpecifics extends DBSpecifics {
         return "OFFSET " + offset + " ROWS FETCH NEXT " + limit + " ROWS ONLY";
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public boolean supportsClob() {
         return true;
@@ -143,6 +153,9 @@ public abstract class DerbySpecifics extends DBSpecifics {
         HarvestDBConnection.updateTable("fullharvests", 3, sqlStatements);
     }
 
+    /**
+     *
+     */
     @Override
     protected void createGlobalCrawlerTrapLists() {
         String createStatement = "CREATE TABLE global_crawler_trap_lists("
@@ -152,6 +165,9 @@ public abstract class DerbySpecifics extends DBSpecifics {
         HarvestDBConnection.updateTable("global_crawler_trap_lists", 1, createStatement);
     }
 
+    /**
+     *
+     */
     @Override
     protected void createGlobalCrawlerTrapExpressions() {
         String createStatement = "CREATE TABLE global_crawler_trap_expressions("
@@ -160,6 +176,9 @@ public abstract class DerbySpecifics extends DBSpecifics {
         HarvestDBConnection.updateTable("global_crawler_trap_expressions", 1, createStatement);
     }
 
+    /**
+     *
+     */
     @Override
     public void createFrontierReportMonitorTable() {
         String createStatement = "CREATE TABLE frontierReportMonitor (" + " jobId bigint NOT NULL, "
@@ -173,6 +192,9 @@ public abstract class DerbySpecifics extends DBSpecifics {
         HarvestDBConnection.updateTable("frontierreportmonitor", 1, createStatement);
     }
 
+    /**
+     *
+     */
     @Override
     public void createRunningJobsHistoryTable() {
         String createStatement = "CREATE TABLE runningJobsHistory (" + "jobId bigint NOT NULL, "
@@ -197,6 +219,9 @@ public abstract class DerbySpecifics extends DBSpecifics {
         }
     }
 
+    /**
+     *
+     */
     @Override
     public void createRunningJobsMonitorTable() {
         String createStatement = "CREATE TABLE runningJobsMonitor (" + "jobId bigint NOT NULL, "
@@ -244,6 +269,9 @@ public abstract class DerbySpecifics extends DBSpecifics {
         HarvestDBConnection.updateTable("runningjobsmonitor", 2, sqlStatements);
     }
 
+    /**
+     *
+     */
     @Override
     protected void migrateConfigurationsv4tov5() {
         // Change the maxobjects from 'int' to 'bigint'.
@@ -256,6 +284,9 @@ public abstract class DerbySpecifics extends DBSpecifics {
         HarvestDBConnection.updateTable("configurations", 5, sqlStatements);
     }
 
+    /**
+     *
+     */
     @Override
     protected void migrateFullharvestsv3tov4() {
         // Add new bigint field maxjobrunningtime with default 0
@@ -263,6 +294,9 @@ public abstract class DerbySpecifics extends DBSpecifics {
         HarvestDBConnection.updateTable("fullharvests", 4, sqlStatements);
     }
 
+    /**
+     *
+     */
     @Override
     protected void migrateJobsv5tov6() {
         // Add new bigint field with default 0
@@ -270,6 +304,9 @@ public abstract class DerbySpecifics extends DBSpecifics {
         HarvestDBConnection.updateTable("jobs", 6, sqlStatements);
     }
 
+    /**
+     *
+     */
     @Override
     protected void migrateFullharvestsv4tov5() {
         // Add new bigint field isindexready (0 is not ready, 1 is ready).
@@ -277,6 +314,9 @@ public abstract class DerbySpecifics extends DBSpecifics {
         HarvestDBConnection.updateTable("fullharvests", 5, sqlStatements);
     }
 
+    /**
+     *
+     */
     @Override
     protected void createExtendedFieldTypeTable() {
         String[] statements = new String[3];
@@ -290,6 +330,9 @@ public abstract class DerbySpecifics extends DBSpecifics {
         HarvestDBConnection.updateTable("extendedfieldtype", 1, statements);
     }
 
+    /**
+     *
+     */
     @Override
     protected void createExtendedFieldTable() {
         String createStatement = "" + "CREATE TABLE extendedfield " + "  ( "
@@ -301,6 +344,9 @@ public abstract class DerbySpecifics extends DBSpecifics {
         HarvestDBConnection.updateTable("extendedfield", 1, createStatement);
     }
 
+    /**
+     *
+     */
     @Override
     protected void createExtendedFieldValueTable() {
         String createStatement = "" + "CREATE TABLE extendedfieldvalue " + "  ( "
@@ -310,12 +356,18 @@ public abstract class DerbySpecifics extends DBSpecifics {
         HarvestDBConnection.updateTable("extendedfieldvalue", 1, createStatement);
     }
 
+    /**
+     *
+     */
     @Override
     protected synchronized void migrateJobsv6tov7() {
         String[] sqlStatements = {"ALTER TABLE jobs ADD COLUMN continuationof BIGINT DEFAULT NULL"};
         HarvestDBConnection.updateTable("jobs", 7, sqlStatements);
     }
 
+    /**
+     *
+     */
     @Override
     protected void migrateDomainsv2tov3() {
         String[] sqlStatements = {"ALTER TABLE domains ADD COLUMN NEW_COLUMN CLOB(64M)",
@@ -324,30 +376,45 @@ public abstract class DerbySpecifics extends DBSpecifics {
         HarvestDBConnection.updateTable("domains", 3, sqlStatements);
     }
 
+    /**
+     *
+     */
     @Override
     protected void migrateJobsv7tov8() {
         String[] sqlStatements = {"ALTER TABLE jobs ADD COLUMN creationdate TIMESTAMP DEFAULT NULL"};
         HarvestDBConnection.updateTable("jobs", 8, sqlStatements);
     }
 
+    /**
+     *
+     */
     @Override
     protected void migrateJobsv8tov9() {
         String[] sqlStatements = {"ALTER TABLE jobs ADD COLUMN harvestname_prefix VARCHAR(100) DEFAULT NULL"};
         HarvestDBConnection.updateTable("jobs", 9, sqlStatements);
     }
 
+    /**
+     *
+     */
     @Override
     protected void migrateHarvestdefinitionsv2tov3() {
         String[] sqlStatements = {"ALTER TABLE harvestdefinitions ADD COLUMN audience VARCHAR(100) DEFAULT NULL"};
         HarvestDBConnection.updateTable("harvestdefinitions", 3, sqlStatements);
     }
 
+    /**
+     *
+     */
     @Override
     protected void migrateHarvestdefinitionsv3tov4() {
         String[] sqlStatements = {"ALTER TABLE harvestdefinitions ADD COLUMN channel_id BIGINT DEFAULT NULL"};
         HarvestDBConnection.updateTable("harvestdefinitions", 4, sqlStatements);
     }
 
+    /**
+     *
+     */
     @Override
     protected void migrateJobsv9tov10() {
         String[] sqlStatements = {"ALTER TABLE jobs ADD COLUMN channel VARCHAR(300) DEFAULT NULL",
@@ -359,6 +426,9 @@ public abstract class DerbySpecifics extends DBSpecifics {
         HarvestDBConnection.updateTable("jobs", 10, sqlStatements);
     }
 
+    /**
+     *
+     */
     @Override
     public void createHarvestChannelTable() {
         String createStatement = "CREATE TABLE harvestchannel ("

@@ -34,6 +34,10 @@ import org.archive.io.arc.ARCReader;
 import org.archive.io.arc.ARCReaderFactory;
 import org.archive.io.arc.ARCRecord;
 
+/**
+ *
+ * @author tra
+ */
 public class CheckDuplicateReduction {
 
     /**
@@ -107,6 +111,10 @@ public class CheckDuplicateReduction {
 
     }
 
+    /**
+     *
+     * @return
+     */
     public static String argsAsString() {
         return " <path crawl.log> <path to arcsdir>";
     }

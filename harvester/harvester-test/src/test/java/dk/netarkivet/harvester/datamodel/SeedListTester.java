@@ -33,6 +33,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ *
+ * @author tra
+ */
 public class SeedListTester extends DataModelTestCase {
     final String HARVESTNAME = "TestHarvest";
     final int TEST = 3;
@@ -40,11 +44,19 @@ public class SeedListTester extends DataModelTestCase {
     final int ORF = 1;
     final int WIKI = 0;
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         super.setUp();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         super.tearDown();

@@ -50,15 +50,27 @@ public class BitarchiveTesterLog extends BitarchiveTestCase {
     private static File ARC_FILE = new File("tests/dk/netarkivet/archive/bitarchive/data/log/originals/",
             ARC_FILE_NAME1);
 
+    /**
+     *
+     * @return
+     */
     protected File getOriginalsDir() {
         return EXISTING_ARCHIVE_DIR;
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         super.setUp();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         super.tearDown();
@@ -97,6 +109,7 @@ public class BitarchiveTesterLog extends BitarchiveTestCase {
 
     /**
      * test logging of get
+     * @throws java.lang.Exception
      */
     @Test
     public void testLogGet() throws Exception {
@@ -121,6 +134,7 @@ public class BitarchiveTesterLog extends BitarchiveTestCase {
 
     /**
      * test logging of get
+     * @throws java.lang.Exception
      */
     @Test
     public void testLogNotGet() throws Exception {
@@ -135,6 +149,10 @@ public class BitarchiveTesterLog extends BitarchiveTestCase {
         lr.stopRecorder();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testLogBatch() throws Exception {
         LogbackRecorder lr = LogbackRecorder.startRecorder();

@@ -48,6 +48,10 @@ public class IntegrityTests {
     private GUIWebServer gui;
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     * @throws Exception
+     */
     public void setUp() throws Exception {
         rs.setUp();
         Settings.set(CommonSettings.SITESECTION_WEBAPPLICATION, TestInfo.GUI_WEB_SERVER_JSP_DIRECTORY);
@@ -70,6 +74,10 @@ public class IntegrityTests {
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     public void tearDown() throws Exception {
         System.setSecurityManager(m);
         if (gui != null) {
@@ -78,6 +86,11 @@ public class IntegrityTests {
         rs.tearDown();
     }
 
+    /**
+     *
+     * @throws IOException
+     * @throws SAXException
+     */
     public void testRun() throws IOException, SAXException {
         gui = GUIWebServer.getInstance();
         WebConversation conv = new WebConversation();
@@ -88,6 +101,11 @@ public class IntegrityTests {
                 resp.getResponseCode() == 200);
     }
 
+    /**
+     *
+     * @throws IOException
+     * @throws SAXException
+     */
     public void testContextWorksStaticPages() throws IOException, SAXException {
         GUIWebServer server = GUIWebServer.getInstance();
         server.startServer();
@@ -105,6 +123,11 @@ public class IntegrityTests {
         }
     }
 
+    /**
+     *
+     * @throws IOException
+     * @throws SAXException
+     */
     public void testContextWorksJspPages() throws IOException, SAXException {
         GUIWebServer server = GUIWebServer.getInstance();
         server.startServer();

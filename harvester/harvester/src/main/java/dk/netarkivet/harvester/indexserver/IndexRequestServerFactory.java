@@ -26,6 +26,10 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.SettingsFactory;
 import dk.netarkivet.harvester.HarvesterSettings;
 
+/**
+ *
+ * @author tra
+ */
 public class IndexRequestServerFactory extends SettingsFactory<IndexRequestServerInterface> {
 
     /**

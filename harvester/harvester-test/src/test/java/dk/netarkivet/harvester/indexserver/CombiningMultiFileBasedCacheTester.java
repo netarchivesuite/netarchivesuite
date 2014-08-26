@@ -46,16 +46,28 @@ import dk.netarkivet.common.exceptions.IOFailure;
  */
 public class CombiningMultiFileBasedCacheTester extends CacheTestCase {
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         super.setUp();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         super.tearDown();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testCacheData() throws Exception {
         final Map<Integer, File> combined = new HashMap<Integer, File>();

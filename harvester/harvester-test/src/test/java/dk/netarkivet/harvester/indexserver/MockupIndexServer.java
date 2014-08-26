@@ -71,18 +71,33 @@ public class MockupIndexServer implements TestConfigurationIF, MessageListener {
         Settings.set(CommonSettings.CACHE_DIR, origDir);
     }
 
+    /**
+     *
+     * @param isOk
+     */
     public void setResponseSuccessfull(boolean isOk) {
         responseOK = isOk;
     }
 
+    /**
+     *
+     */
     public void resetMsgList() {
         msgs.clear();
     }
 
+    /**
+     *
+     * @return
+     */
     public List<IndexRequestMessage> getMsgList() {
         return msgs;
     }
 
+    /**
+     *
+     * @param message
+     */
     public void onMessage(Message message) {
         IndexRequestMessage irm = (IndexRequestMessage) JMSConnection.unpack(message);
         msgs.add(irm);

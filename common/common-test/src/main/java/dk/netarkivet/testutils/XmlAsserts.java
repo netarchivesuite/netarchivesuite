@@ -36,6 +36,13 @@ import org.dom4j.Node;
  *
  */
 public class XmlAsserts {
+
+    /**
+     *
+     * @param theElement
+     * @param attributeName
+     * @param attributeText
+     */
     public static void assertElementHasAttribute(Element theElement, String attributeName, String attributeText) {
         Attribute theAttribute = theElement.attribute(attributeName);
         if (theAttribute == null) {
@@ -48,6 +55,12 @@ public class XmlAsserts {
 
     }
 
+    /**
+     *
+     * @param theElement
+     * @param attributeName
+     * @param attributeText
+     */
     public static void assertElementHasNotAttribute(Element theElement, String attributeName, String attributeText) {
         Attribute theAttribute = theElement.attribute(attributeName);
         if (theAttribute == null) {
@@ -60,6 +73,11 @@ public class XmlAsserts {
 
     }
 
+    /**
+     *
+     * @param doc
+     * @param xpath
+     */
     public static void assertNoNodeWithXpath(Document doc, String xpath) {
         Node theNode = doc.selectSingleNode(xpath);
         if (!(theNode == null)) {
@@ -67,6 +85,11 @@ public class XmlAsserts {
         }
     }
 
+    /**
+     *
+     * @param doc
+     * @param xpath
+     */
     public static void assertNodeWithXpath(Document doc, String xpath) {
         Node theNode = doc.selectSingleNode(xpath);
         if (theNode == null) {
@@ -74,6 +97,13 @@ public class XmlAsserts {
         }
     }
 
+    /**
+     *
+     * @param message
+     * @param doc
+     * @param xpath
+     * @param expected
+     */
     public static void assertNodeTextInXpath(String message, Document doc, String xpath, String expected) {
         Node dedup_index_node = doc.selectSingleNode(xpath);
         Assert.assertEquals(message, expected, dedup_index_node.getText().trim());

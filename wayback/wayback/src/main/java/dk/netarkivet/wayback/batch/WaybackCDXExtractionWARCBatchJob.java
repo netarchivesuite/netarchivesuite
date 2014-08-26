@@ -69,6 +69,7 @@ public class WaybackCDXExtractionWARCBatchJob extends WARCBatchJob {
 
     /**
      * Set the filter, so only response records are currently processed.
+     * @return 
      */
     @Override
     public WARCBatchFilter getFilter() {

@@ -34,6 +34,7 @@ import junit.textui.TestRunner;
 public class MonitorJMXTesterSuite {
     /**
      * Create a test suite just for these tests.
+     * @return 
      */
     public static Test suite() {
         TestSuite suite;
@@ -44,12 +45,17 @@ public class MonitorJMXTesterSuite {
 
     /**
      * Add the tests here.
+     * @param suite
      */
     public static void addToSuite(TestSuite suite) {
         suite.addTestSuite(CachingProxyConnectionFactoryTester.class);
         suite.addTestSuite(JMXUtilsTester.class);
     }
 
+    /**
+     *
+     * @param args
+     */
     public static void main(String args[]) {
         String args2[] = {"-noloading", MonitorJMXTesterSuite.class.getName()};
         TestRunner.main(args2);

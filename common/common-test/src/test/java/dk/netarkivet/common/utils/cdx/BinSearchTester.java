@@ -46,6 +46,7 @@ public class BinSearchTester {
     /**
      * Test that getLinesInFile(File, String) returns the expected lines. Uses the locally defined wrapper method
      * findLinesInFile.
+     * @throws java.io.IOException
      */
     @Test
     public void testGetLinesInFile() throws IOException {
@@ -150,6 +151,7 @@ public class BinSearchTester {
 
     /**
      * Test that findMiddleLine can actually find the right middle line.
+     * @throws java.lang.Exception
      */
     @Test
     public void testFindMiddleLine() throws Exception {

@@ -28,6 +28,10 @@ import static org.junit.Assert.assertTrue;
 import org.hibernate.Session;
 import org.junit.Test;
 
+/**
+ *
+ * @author tra
+ */
 public class HibernateUtilTester {
 
     /**

@@ -74,6 +74,7 @@ public class DeployConfiguration {
      * @param netarchiveSuiteFileName Name of installation file.
      * @param secPolicyFileName Name of security policy file.
      * @param julPropFileName Name of the log property file.
+     * @param slf4jConfigFileName
      * @param outputDirName Directory for the output.
      * @param dbFileName Name of the database.
      * @param arcdbFileName The name of the archive database.

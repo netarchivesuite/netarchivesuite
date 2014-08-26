@@ -78,6 +78,10 @@ import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
+/**
+ *
+ * @author tra
+ */
 @SuppressWarnings({"deprecation", "unused"})
 // FIXME: @Ignore
 @Ignore("test hangs")
@@ -94,6 +98,10 @@ public class DatabaseBasedActiveBitPreservationTester {
     Replica REPLICA_TWO = Replica.getReplicaFromId("TWO");
     Replica REPLICA_THREE = Replica.getReplicaFromId("THREE");
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         rs.setUp();
@@ -114,6 +122,10 @@ public class DatabaseBasedActiveBitPreservationTester {
         Settings.set(ArchiveSettings.DIR_ARCREPOSITORY_BITPRESERVATION, TestInfo.WORKING_DIR.getAbsolutePath());
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         // Make sure the ArcRepositoryClient is closed.
@@ -277,6 +289,7 @@ public class DatabaseBasedActiveBitPreservationTester {
 
     /**
      * Check whether it finds missing files from checksum jobs.
+     * @throws java.lang.Exception
      */
     @Test
     public void testMissingDuringChecksum() throws Exception {
@@ -342,6 +355,9 @@ public class DatabaseBasedActiveBitPreservationTester {
                 abp2 instanceof DatabaseBasedActiveBitPreservation);
     }
 
+    /**
+     *
+     */
     @Test
     public void testFails() {
         dbabp = DatabaseBasedActiveBitPreservation.getInstance();
@@ -418,6 +434,9 @@ public class DatabaseBasedActiveBitPreservationTester {
         return res;
     }
 
+    /**
+     *
+     */
     public static class MockupArcRepositoryClient implements ArcRepositoryClient {
         private static MockupArcRepositoryClient instance;
         private BitarchiveRecord overrideGet;
@@ -426,6 +445,10 @@ public class DatabaseBasedActiveBitPreservationTester {
         private BatchStatus overrideBatch;
         private File overrideRemoveAndGetFile;
 
+        /**
+         *
+         * @return
+         */
         public static MockupArcRepositoryClient getInstance() {
             if (instance == null) {
                 instance = new MockupArcRepositoryClient();

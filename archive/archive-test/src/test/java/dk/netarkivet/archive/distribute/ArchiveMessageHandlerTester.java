@@ -58,12 +58,20 @@ import dk.netarkivet.common.utils.batch.ChecksumJob;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
+/**
+ *
+ * @author tra
+ */
 public class ArchiveMessageHandlerTester {
 
     private TestMessageHandler tmh;
     ReloadSettings rs = new ReloadSettings();
     UseTestRemoteFile rf = new UseTestRemoteFile();
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         ChannelsTesterHelper.resetChannels();
@@ -75,6 +83,10 @@ public class ArchiveMessageHandlerTester {
         tmh = new TestMessageHandler();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         // super.tearDown();
@@ -82,6 +94,9 @@ public class ArchiveMessageHandlerTester {
         rs.tearDown();
     }
 
+    /**
+     *
+     */
     @Test
     public final void testOnMessage() {
         TestMessage testMessage = new TestMessage(Channels.getTheRepos(), Channels.getTheBamon(), "42");
@@ -94,6 +109,11 @@ public class ArchiveMessageHandlerTester {
     /*
      * Class under test for void visit(BatchEndedMessage)
      */
+
+    /**
+     *
+     */
+    
     @Test
     public final void testVisitBatchEndedMessage() {
         try {
@@ -107,6 +127,11 @@ public class ArchiveMessageHandlerTester {
     /*
      * Class under test for void visit(BatchMessage)
      */
+
+    /**
+     *
+     */
+    
     @Test
     public final void testVisitBatchMessage() {
         try {
@@ -120,6 +145,11 @@ public class ArchiveMessageHandlerTester {
     /*
      * Class under test for void visit(BatchReplyMessage)
      */
+
+    /**
+     *
+     */
+    
     @Test
     public final void testVisitBatchReplyMessage() {
         try {
@@ -134,6 +164,11 @@ public class ArchiveMessageHandlerTester {
     /*
      * Class under test for void visit(GetFileMessage)
      */
+
+    /**
+     *
+     */
+    
     @Test
     public final void testVisitGetFileMessage() {
         try {
@@ -147,6 +182,11 @@ public class ArchiveMessageHandlerTester {
     /*
      * Class under test for void visit(GetMessage)
      */
+
+    /**
+     *
+     */
+    
     @Test
     public final void testVisitGetMessage() {
         try {
@@ -160,6 +200,11 @@ public class ArchiveMessageHandlerTester {
     /*
      * Class under test for void visit(HeartBeatMessage)
      */
+
+    /**
+     *
+     */
+    
     @Test
     public final void testVisitHeartBeatMessage() {
         try {
@@ -173,6 +218,12 @@ public class ArchiveMessageHandlerTester {
     /*
      * Class under test for void visit(StoreMessage)
      */
+
+    /**
+     *
+     * @throws IOException
+     */
+    
     @Test
     public final void testVisitStoreMessage() throws IOException {
         File fil = new File(FileUtils.getTempDir(), "X");
@@ -190,6 +241,12 @@ public class ArchiveMessageHandlerTester {
     /*
      * Class under test for void visit(UploadMessage)
      */
+
+    /**
+     *
+     * @throws IOException
+     */
+    
     @Test
     public final void testVisitUploadMessage() throws IOException {
         File fil = new File(FileUtils.getTempDir(), "X");
@@ -208,6 +265,11 @@ public class ArchiveMessageHandlerTester {
     /*
      * Class under test for void visit(AdminDataMessage)
      */
+
+    /**
+     *
+     */
+    
     @Test
     public final void testAdminDataMessage() {
         try {
@@ -221,6 +283,11 @@ public class ArchiveMessageHandlerTester {
     /*
      * Class under test for void visit(RemoveAndGetFileMessage)
      */
+
+    /**
+     *
+     */
+    
     @Test
     public final void testVisitRemoveAndGetFileMessage() {
         try {
@@ -235,6 +302,12 @@ public class ArchiveMessageHandlerTester {
     /*
      * Class under test for void visit(CorrectMessage)
      */
+
+    /**
+     *
+     * @throws IOException
+     */
+    
     @Test
     public final void testVisitCorrectMessage() throws IOException {
         File fil = new File(FileUtils.getTempDir(), "X");
@@ -253,6 +326,11 @@ public class ArchiveMessageHandlerTester {
     /*
      * Class under test for void visit(GetChecksumMessage)
      */
+
+    /**
+     *
+     */
+    
     @Test
     public final void testVisitGetChecksumMessage() {
         try {
@@ -266,6 +344,11 @@ public class ArchiveMessageHandlerTester {
     /*
      * Class under test for void visit(GetAllChecksumsMessage)
      */
+
+    /**
+     *
+     */
+    
     @Test
     public final void testVisitGetAllChecksumsMessage() {
         try {
@@ -279,6 +362,11 @@ public class ArchiveMessageHandlerTester {
     /*
      * Class under test for void visit(GetAllFilenamesMessage)
      */
+
+    /**
+     *
+     */
+    
     @Test
     public final void testVisitGetAllFilenamesMessage() {
         try {

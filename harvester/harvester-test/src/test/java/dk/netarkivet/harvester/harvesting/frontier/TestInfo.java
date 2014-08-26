@@ -25,11 +25,22 @@ package dk.netarkivet.harvester.harvesting.frontier;
 import java.io.File;
 import java.io.FileFilter;
 
+/**
+ *
+ * @author tra
+ */
 public class TestInfo {
 
     // General dirs:
-    protected static final File BASEDIR = new File("tests/dk/netarkivet/harvester/harvesting/frontier/data");
 
+    /**
+     *
+     */
+        protected static final File BASEDIR = new File("tests/dk/netarkivet/harvester/harvesting/frontier/data");
+
+    /**
+     *
+     */
     protected static final File WORKDIR = new File(BASEDIR, "working");
 
     static File[] getFrontierReportSamples() {

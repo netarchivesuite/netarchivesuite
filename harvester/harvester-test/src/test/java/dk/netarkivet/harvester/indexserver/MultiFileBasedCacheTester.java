@@ -46,6 +46,10 @@ public class MultiFileBasedCacheTester {
         }
     };
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testGetCacheFile() throws Exception {
         try {

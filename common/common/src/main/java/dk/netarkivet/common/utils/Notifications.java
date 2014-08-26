@@ -33,6 +33,7 @@ public abstract class Notifications {
      * as the second parameter.
      *
      * @param message The error message to notify about.
+     * @param eventType
      */
     public void notify(String message, NotificationType eventType) {
         notify(message, eventType, null);

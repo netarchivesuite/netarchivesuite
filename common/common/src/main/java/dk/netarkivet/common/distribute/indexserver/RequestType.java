@@ -27,6 +27,19 @@ package dk.netarkivet.common.distribute.indexserver;
  */
 public enum RequestType {
 
-    CDX, DEDUP_CRAWL_LOG, FULL_CRAWL_LOG
+    /**
+     *
+     */
+    CDX,
+
+    /**
+     *
+     */
+    DEDUP_CRAWL_LOG,
+
+    /**
+     *
+     */
+    FULL_CRAWL_LOG
 
 }

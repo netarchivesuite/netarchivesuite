@@ -45,6 +45,7 @@ public class ExceptionUtilsTester {
 
     /**
      * Test that exceptions are printed including all stacktraces, and that nul exceptions are turned into 'null\n'.
+     * @throws java.lang.Exception
      */
     @Test
     public void testGetStackTrace() throws Exception {

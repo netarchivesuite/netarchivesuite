@@ -52,6 +52,13 @@ public class UrlSearch extends ARCBatchJob {
     private long totalCount = 0L;
     private long bothCount = 0L;
 
+    /**
+     *
+     * @param arg1
+     * @param regex
+     * @param mimetype
+     * @throws ArgumentNotValid
+     */
     public UrlSearch(String arg1, String regex, String mimetype) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(regex, "String regex");
         ArgumentNotValid.checkNotNull(mimetype, "String mimetype");

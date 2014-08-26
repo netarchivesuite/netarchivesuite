@@ -77,6 +77,9 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
         return mtfw;
     }
 
+    /**
+     *
+     */
     @Override
     public void close() {
         if (writer != null) {
@@ -89,6 +92,10 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
         writer = null;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public File getFile() {
         return writer.getFile();
@@ -130,11 +137,24 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
         }
     }
 
+    /**
+     *
+     * @param file
+     * @param uri
+     * @param mime
+     */
     @Override
     public void writeFileTo(File file, String uri, String mime) {
         writeTo(file, uri, mime);
     }
 
+    /**
+     *
+     * @param fileToArchive
+     * @param URL
+     * @param mimetype
+     * @return
+     */
     @Override
     public boolean writeTo(File fileToArchive, String URL, String mimetype) {
         if (warcInfoUID == null) {
@@ -182,6 +202,15 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
         return "<" + recordID + ">";
     }
 
+    /**
+     *
+     * @param uri
+     * @param contentType
+     * @param hostIP
+     * @param fetchBeginTimeStamp
+     * @param payload
+     * @throws IOException
+     */
     @Override
     public void write(String uri, String contentType, String hostIP, long fetchBeginTimeStamp, byte[] payload)
             throws java.io.IOException {

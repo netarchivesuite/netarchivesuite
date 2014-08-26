@@ -40,9 +40,21 @@ import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 @SuppressWarnings({"unused"})
 public class WARCReaderTester {
 
+    /**
+     *
+     */
     public static final String ARCHIVE_DIR = "tests/dk/netarkivet/common/utils/warc/data/input/";
+
+    /**
+     *
+     */
     public static final String testFileName = "working.warc";
 
+    /**
+     *
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
     @Test
     public void testARCReaderClose() throws FileNotFoundException, IOException {
         final File testfile = new File(ARCHIVE_DIR + testFileName);

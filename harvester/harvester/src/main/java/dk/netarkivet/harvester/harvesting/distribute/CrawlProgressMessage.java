@@ -86,26 +86,50 @@ public class CrawlProgressMessage extends HarvesterMessage implements Serializab
         /** Contains the UID of the current job. */
         private String currentJob;
 
+        /**
+         *
+         * @return
+         */
         public int getAlertCount() {
             return alertCount;
         }
 
+        /**
+         *
+         * @param alertCount
+         */
         public void setAlertCount(int alertCount) {
             this.alertCount = alertCount;
         }
 
+        /**
+         *
+         * @return
+         */
         public boolean isCrawling() {
             return isCrawling;
         }
 
+        /**
+         *
+         * @param isCrawling
+         */
         public void setCrawling(boolean isCrawling) {
             this.isCrawling = isCrawling;
         }
 
+        /**
+         *
+         * @return
+         */
         public String getCurrentJob() {
             return currentJob;
         }
 
+        /**
+         *
+         * @param currentJob
+         */
         public void setCurrentJob(String currentJob) {
             this.currentJob = currentJob;
         }
@@ -150,82 +174,162 @@ public class CrawlProgressMessage extends HarvesterMessage implements Serializab
         /** The job status. */
         private String status;
 
+        /**
+         *
+         * @return
+         */
         public long getDiscoveredFilesCount() {
             return discoveredFilesCount;
         }
 
+        /**
+         *
+         * @param discoveredFilesCount
+         */
         public void setDiscoveredFilesCount(long discoveredFilesCount) {
             this.discoveredFilesCount = discoveredFilesCount;
         }
 
+        /**
+         *
+         * @return
+         */
         public long getDownloadedFilesCount() {
             return downloadedFilesCount;
         }
 
+        /**
+         *
+         * @param downloadedFilesCount
+         */
         public void setDownloadedFilesCount(long downloadedFilesCount) {
             this.downloadedFilesCount = downloadedFilesCount;
         }
 
+        /**
+         *
+         * @return
+         */
         public String getFrontierShortReport() {
             return frontierShortReport;
         }
 
+        /**
+         *
+         * @param frontierShortReport
+         */
         public void setFrontierShortReport(String frontierShortReport) {
             this.frontierShortReport = frontierShortReport;
         }
 
+        /**
+         *
+         * @return
+         */
         public long getElapsedSeconds() {
             return elapsedSeconds;
         }
 
+        /**
+         *
+         * @param elapsedSeconds
+         */
         public void setElapsedSeconds(long elapsedSeconds) {
             this.elapsedSeconds = elapsedSeconds;
         }
 
+        /**
+         *
+         * @return
+         */
         public long getCurrentProcessedKBPerSec() {
             return currentProcessedKBPerSec;
         }
 
+        /**
+         *
+         * @param currentProcessedKBPerSec
+         */
         public void setCurrentProcessedKBPerSec(long currentProcessedKBPerSec) {
             this.currentProcessedKBPerSec = currentProcessedKBPerSec;
         }
 
+        /**
+         *
+         * @return
+         */
         public long getProcessedKBPerSec() {
             return processedKBPerSec;
         }
 
+        /**
+         *
+         * @param processedKBPerSec
+         */
         public void setProcessedKBPerSec(long processedKBPerSec) {
             this.processedKBPerSec = processedKBPerSec;
         }
 
+        /**
+         *
+         * @return
+         */
         public double getCurrentProcessedDocsPerSec() {
             return currentProcessedDocsPerSec;
         }
 
+        /**
+         *
+         * @param currentProcessedDocsPerSec
+         */
         public void setCurrentProcessedDocsPerSec(double currentProcessedDocsPerSec) {
             this.currentProcessedDocsPerSec = currentProcessedDocsPerSec;
         }
 
+        /**
+         *
+         * @return
+         */
         public double getProcessedDocsPerSec() {
             return processedDocsPerSec;
         }
 
+        /**
+         *
+         * @param processedDocsPerSec
+         */
         public void setProcessedDocsPerSec(double processedDocsPerSec) {
             this.processedDocsPerSec = processedDocsPerSec;
         }
 
+        /**
+         *
+         * @return
+         */
         public int getActiveToeCount() {
             return activeToeCount;
         }
 
+        /**
+         *
+         * @param activeToeCount
+         */
         public void setActiveToeCount(int activeToeCount) {
             this.activeToeCount = activeToeCount;
         }
 
+        /**
+         *
+         * @return
+         */
         public String getProgressStatistics() {
             return progressStatistics;
         }
 
+        /**
+         *
+         * @param progressStatistics
+         */
         public void setProgressStatistics(String progressStatistics) {
             this.progressStatistics = progressStatistics;
         }
@@ -239,10 +343,18 @@ public class CrawlProgressMessage extends HarvesterMessage implements Serializab
             return discoveredFilesCount - downloadedFilesCount;
         }
 
+        /**
+         *
+         * @return
+         */
         public String getStatus() {
             return status;
         }
 
+        /**
+         *
+         * @param status
+         */
         public void setStatus(String status) {
             this.status = status;
         }
@@ -299,38 +411,74 @@ public class CrawlProgressMessage extends HarvesterMessage implements Serializab
         this(harvestID, jobId, "");
     }
 
+    /**
+     *
+     * @return
+     */
     public long getHarvestID() {
         return harvestID;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getHostUrl() {
         return hostUrl;
     }
 
+    /**
+     *
+     * @param hostUrl
+     */
     public void setHostUrl(String hostUrl) {
         this.hostUrl = hostUrl;
     }
 
+    /**
+     *
+     * @return
+     */
     public CrawlStatus getStatus() {
         return status;
     }
 
+    /**
+     *
+     * @param status
+     */
     public void setStatus(CrawlStatus status) {
         this.status = status;
     }
 
+    /**
+     *
+     * @return
+     */
     public long getJobID() {
         return jobID;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getProgressStatisticsLegend() {
         return progressStatisticsLegend;
     }
 
+    /**
+     *
+     * @return
+     */
     public CrawlServiceInfo getHeritrixStatus() {
         return heritrixStatus;
     }
 
+    /**
+     *
+     * @return
+     */
     public CrawlServiceJobInfo getJobStatus() {
         return jobStatus;
     }

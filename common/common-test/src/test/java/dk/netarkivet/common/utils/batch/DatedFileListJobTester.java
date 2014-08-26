@@ -35,19 +35,36 @@ import junit.framework.TestCase;
 import dk.netarkivet.common.utils.arc.TestInfo;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
+/**
+ *
+ * @author tra
+ */
 public class DatedFileListJobTester extends TestCase {
     MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
 
+    /**
+     *
+     * @throws Exception
+     */
     public void setUp() throws Exception {
         super.setUp();
         mtf.setUp();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     public void tearDown() throws Exception {
         mtf.tearDown();
         super.tearDown();
     }
 
+    /**
+     *
+     * @throws IOException
+     * @throws InterruptedException
+     */
     public void testProcess() throws IOException, InterruptedException {
         FileListJob job = new FileListJob();
         ByteArrayOutputStream os = new ByteArrayOutputStream();

@@ -104,6 +104,10 @@ public class HarvestMonitor extends HarvesterMessageHandler implements MessageLi
         return instance;
     }
 
+    /**
+     *
+     * @param msg
+     */
     @Override
     public void visit(CrawlProgressMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
@@ -182,6 +186,10 @@ public class HarvestMonitor extends HarvesterMessageHandler implements MessageLi
         return RunningJobsInfoDAO.getInstance().getMostRecentByJobId(jobId);
     }
 
+    /**
+     *
+     * @param msg
+     */
     @Override
     public void visit(FrontierReportMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");

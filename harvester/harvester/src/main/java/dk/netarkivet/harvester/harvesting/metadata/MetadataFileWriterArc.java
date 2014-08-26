@@ -60,6 +60,9 @@ public class MetadataFileWriterArc extends MetadataFileWriter {
         return mtfw;
     }
 
+    /**
+     *
+     */
     @Override
     public void close() {
         if (writer != null) {
@@ -72,11 +75,21 @@ public class MetadataFileWriterArc extends MetadataFileWriter {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public File getFile() {
         return writer.getFile();
     }
 
+    /**
+     *
+     * @param file
+     * @param uri
+     * @param mime
+     */
     @Override
     public void writeFileTo(File file, String uri, String mime) {
         ARCUtils.writeFileToARC(writer, file, uri, mime);
@@ -110,6 +123,17 @@ public class MetadataFileWriterArc extends MetadataFileWriter {
     }
 
     /* Copied from the ARCWriter. */
+
+    /**
+     *
+     * @param uri
+     * @param contentType
+     * @param hostIP
+     * @param fetchBeginTimeStamp
+     * @param payload
+     * @throws IOException
+     */
+    
     @Override
     public void write(String uri, String contentType, String hostIP, long fetchBeginTimeStamp, byte[] payload)
             throws IOException {

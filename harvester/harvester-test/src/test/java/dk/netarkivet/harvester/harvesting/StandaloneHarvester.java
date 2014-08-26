@@ -32,6 +32,11 @@ import dk.netarkivet.common.utils.FileUtils;
  * in the current directory. A settings.xml file is required in a directory named 'conf'
  */
 public class StandaloneHarvester {
+
+    /**
+     *
+     * @param argv
+     */
     public static void main(String[] argv) {
         if (argv.length != 2 || !new File(argv[0]).exists() || !new File(argv[1]).exists()) {
             System.out.println("Usage: java " + StandaloneHarvester.class.getName()

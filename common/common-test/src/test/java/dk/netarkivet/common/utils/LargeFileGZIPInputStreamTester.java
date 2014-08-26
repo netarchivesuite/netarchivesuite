@@ -41,6 +41,9 @@ public class LargeFileGZIPInputStreamTester {
     private final static File ORIGINALS = new File(BASE_DIR, "data");
     private final static File WORKING = new File(BASE_DIR, "working");
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         FileUtils.removeRecursively(WORKING);

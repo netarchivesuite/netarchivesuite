@@ -34,11 +34,16 @@ import org.dom4j.DocumentFactory;
 import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.testutils.ReflectUtils;
 
+/**
+ *
+ * @author tra
+ */
 public class JobUtils {
 
     /**
      * Get a simple job with low priority
      * 
+     * @param ORDER_FILE
      * @return a simple job with low priority
      */
     public static Job getJobLowPriority(File ORDER_FILE) {
@@ -58,6 +63,9 @@ public class JobUtils {
     /**
      * Get a simple job with high priority.
      * 
+     * @param ONE_LEVEL_ORDER_FILE
+     * @param jobstate
+     * @param templateName
      * @return a simple job with high priority
      */
     public static Job getHighPriorityJob(File ONE_LEVEL_ORDER_FILE, JobStatus jobstate, String templateName) {
@@ -75,6 +83,14 @@ public class JobUtils {
         }
     }
 
+    /**
+     *
+     * @return
+     * @throws NoSuchMethodException
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     * @throws InstantiationException
+     */
     public static Job getSnapshotJobWithSbforgeAsSeed() throws NoSuchMethodException, IllegalAccessException,
             InvocationTargetException, InstantiationException {
         Constructor<Job> c = ReflectUtils.getPrivateConstructor(Job.class, Long.class, Map.class, String.class,

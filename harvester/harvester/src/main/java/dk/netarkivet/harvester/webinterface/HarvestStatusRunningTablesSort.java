@@ -33,7 +33,56 @@ import dk.netarkivet.common.utils.TableSort;
 public class HarvestStatusRunningTablesSort {
     /** list of the column id. */
     public enum ColumnId {
-        NONE, ID, HOST, PROGRESS, ELAPSED, QFILES, TOTALQ, ACTIVEQ, EXHAUSTEDQ, RETIREDQ
+
+        /**
+         *
+         */
+        NONE,
+
+        /**
+         *
+         */
+        ID,
+
+        /**
+         *
+         */
+        HOST,
+
+        /**
+         *
+         */
+        PROGRESS,
+
+        /**
+         *
+         */
+        ELAPSED,
+
+        /**
+         *
+         */
+        QFILES,
+
+        /**
+         *
+         */
+        TOTALQ,
+
+        /**
+         *
+         */
+        ACTIVEQ,
+
+        /**
+         *
+         */
+        EXHAUSTEDQ,
+
+        /**
+         *
+         */
+        RETIREDQ
     };
 
     /** map containing the sort data of each table. */

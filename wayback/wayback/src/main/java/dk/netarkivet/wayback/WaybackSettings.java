@@ -56,23 +56,79 @@ public class WaybackSettings {
      * c3p0 is the database connection manager used by hibernate. See c3p0 documentation for their meaning.
      */
     public static String C3P0_ACQUIRE_INCREMENT = "settings.wayback.hibernate.c3p0.acquireIncrement";
+
+    /**
+     *
+     */
     public static String C3P0_IDLE_PERIOD = "settings.wayback.hibernate.c3p0.idleTestPeriod";
+
+    /**
+     *
+     */
     public static String C3P0_MAX_SIZE = "settings.wayback.hibernate.c3p0.maxSize";
+
+    /**
+     *
+     */
     public static String C3P0_MAX_STATEMENTS = "settings.wayback.hibernate.c3p0.maxStatements";
+
+    /**
+     *
+     */
     public static String C3P0_MIN_SIZE = "settings.wayback.hibernate.c3p0.minSize";
+
+    /**
+     *
+     */
     public static String C3P0_TIMEOUT = "settings.wayback.hibernate.c3p0.timeout";
     /**
      * These are the hibernate specific properties. See hibernate documentation for their meaning.
      */
     public static String HIBERNATE_DB_URL = "settings.wayback.hibernate.connectionUrl";
+
+    /**
+     *
+     */
     public static String HIBERNATE_DB_DRIVER = "settings.wayback.hibernate.dbDriverClass";
+
+    /**
+     *
+     */
     public static String HIBERNATE_REFLECTION_OPTIMIZER = "settings.wayback.hibernate.useReflectionOptimizer";
+
+    /**
+     *
+     */
     public static String HIBERNATE_TRANSACTION_FACTORY = "settings.wayback.hibernate.transactionFactory";
+
+    /**
+     *
+     */
     public static String HIBERNATE_DIALECT = "settings.wayback.hibernate.dialect";
+
+    /**
+     *
+     */
     public static String HIBERNATE_SHOW_SQL = "settings.wayback.hibernate.showSql";
+
+    /**
+     *
+     */
     public static String HIBERNATE_FORMAT_SQL = "settings.wayback.hibernate.formatSql";
+
+    /**
+     *
+     */
     public static String HIBERNATE_HBM2DDL_AUTO = "settings.wayback.hibernate.hbm2ddlAuto";
+
+    /**
+     *
+     */
     public static String HIBERNATE_USERNAME = "settings.wayback.hibernate.user";
+
+    /**
+     *
+     */
     public static String HIBERNATE_PASSWORD = "settings.wayback.hibernate.password";
 
     /**

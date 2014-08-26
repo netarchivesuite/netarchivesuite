@@ -133,50 +133,229 @@ public class NetarchiveSuiteUURIFactory extends UURI {
     // 9: #fragment
     // A: fragment
 
+    /**
+     *
+     */
     public static final String SLASHDOTDOTSLASH = "^(/\\.\\./)+";
+
+    /**
+     *
+     */
     public static final String SLASH = "/";
+
+    /**
+     *
+     */
     public static final String HTTP = "http";
+
+    /**
+     *
+     */
     public static final String HTTP_PORT = ":80";
+
+    /**
+     *
+     */
     public static final String HTTPS = "https";
+
+    /**
+     *
+     */
     public static final String HTTPS_PORT = ":443";
+
+    /**
+     *
+     */
     public static final String DOT = ".";
+
+    /**
+     *
+     */
     public static final String EMPTY_STRING = "";
+
+    /**
+     *
+     */
     public static final String NBSP = "\u00A0";
+
+    /**
+     *
+     */
     public static final String SPACE = " ";
+
+    /**
+     *
+     */
     public static final String ESCAPED_SPACE = "%20";
+
+    /**
+     *
+     */
     public static final String TRAILING_ESCAPED_SPACE = "^(.*)(%20)+$";
+
+    /**
+     *
+     */
     public static final String PIPE = "|";
+
+    /**
+     *
+     */
     public static final String PIPE_PATTERN = "\\|";
+
+    /**
+     *
+     */
     public static final String ESCAPED_PIPE = "%7C";
+
+    /**
+     *
+     */
     public static final String CIRCUMFLEX = "^";
+
+    /**
+     *
+     */
     public static final String CIRCUMFLEX_PATTERN = "\\^";
+
+    /**
+     *
+     */
     public static final String ESCAPED_CIRCUMFLEX = "%5E";
+
+    /**
+     *
+     */
     public static final String QUOT = "\"";
+
+    /**
+     *
+     */
     public static final String ESCAPED_QUOT = "%22";
+
+    /**
+     *
+     */
     public static final String SQUOT = "'";
+
+    /**
+     *
+     */
     public static final String ESCAPED_SQUOT = "%27";
+
+    /**
+     *
+     */
     public static final String APOSTROPH = "`";
+
+    /**
+     *
+     */
     public static final String ESCAPED_APOSTROPH = "%60";
+
+    /**
+     *
+     */
     public static final String LSQRBRACKET = "[";
+
+    /**
+     *
+     */
     public static final String LSQRBRACKET_PATTERN = "\\[";
+
+    /**
+     *
+     */
     public static final String ESCAPED_LSQRBRACKET = "%5B";
+
+    /**
+     *
+     */
     public static final String RSQRBRACKET = "]";
+
+    /**
+     *
+     */
     public static final String RSQRBRACKET_PATTERN = "\\]";
+
+    /**
+     *
+     */
     public static final String ESCAPED_RSQRBRACKET = "%5D";
+
+    /**
+     *
+     */
     public static final String LCURBRACKET = "{";
+
+    /**
+     *
+     */
     public static final String LCURBRACKET_PATTERN = "\\{";
+
+    /**
+     *
+     */
     public static final String ESCAPED_LCURBRACKET = "%7B";
+
+    /**
+     *
+     */
     public static final String RCURBRACKET = "}";
+
+    /**
+     *
+     */
     public static final String RCURBRACKET_PATTERN = "\\}";
+
+    /**
+     *
+     */
     public static final String ESCAPED_RCURBRACKET = "%7D";
+
+    /**
+     *
+     */
     public static final String BACKSLASH = "\\";
+
+    /**
+     *
+     */
     public static final String BACKSLASH_PATTERN = "\\\\";
+
+    /**
+     *
+     */
     public static final String ESCAPED_BACKSLASH = "%5C";
+
+    /**
+     *
+     */
     public static final String STRAY_SPACING = "[\n\r\t]+";
+
+    /**
+     *
+     */
     public static final String IMPROPERESC_REPLACE = "%25$1";
+
+    /**
+     *
+     */
     public static final String IMPROPERESC = "%((?:[^\\p{XDigit}])|(?:.[^\\p{XDigit}])|(?:\\z))";
+
+    /**
+     *
+     */
     public static final String COMMERCIAL_AT = "@";
+
+    /**
+     *
+     */
     public static final char PERCENT_SIGN = '%';
+
+    /**
+     *
+     */
     public static final char COLON = ':';
 
     /**
@@ -222,6 +401,9 @@ public class NetarchiveSuiteUURIFactory extends UURI {
     private String[] schemes = null;
     private String[] ignoredSchemes = null;
 
+    /**
+     *
+     */
     public static final int IGNORED_SCHEME = 9999999;
 
     /**
@@ -509,6 +691,9 @@ public class NetarchiveSuiteUURIFactory extends UURI {
     /**
      * If http(s) scheme, check scheme specific part begins '//'.
      * 
+     * @param base
+     * @param scheme
+     * @param schemeSpecificPart
      * @throws URIException
      * @see <A href="http://www.faqs.org/rfcs/rfc1738.html">Section 3.1. Common Internet Scheme Syntax</A>
      */

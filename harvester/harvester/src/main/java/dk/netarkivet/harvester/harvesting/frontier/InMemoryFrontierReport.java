@@ -72,12 +72,21 @@ public class InMemoryFrontierReport extends AbstractFrontierReport implements Se
         return (FrontierReportLine[]) lines.toArray(new FrontierReportLine[lines.size()]);
     }
 
+    /**
+     *
+     * @param line
+     */
     @Override
     public void addLine(FrontierReportLine line) {
         lines.add(line);
         linesByDomain.put(line.getDomainName(), line);
     }
 
+    /**
+     *
+     * @param domainName
+     * @return
+     */
     @Override
     public FrontierReportLine getLineForDomain(String domainName) {
         return linesByDomain.get(domainName);

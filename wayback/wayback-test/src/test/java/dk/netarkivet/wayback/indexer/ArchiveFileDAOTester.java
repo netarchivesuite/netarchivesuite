@@ -31,18 +31,33 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+/**
+ *
+ * @author tra
+ */
 public class ArchiveFileDAOTester {
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         HibernateUtil.getSession().getSessionFactory().close();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         HibernateUtil.getSession().getSessionFactory().close();
     }
 
+    /**
+     *
+     */
     @Test
     public void testCreateAndRead() {
         ArchiveFile file1 = new ArchiveFile();
@@ -55,6 +70,9 @@ public class ArchiveFileDAOTester {
         assertEquals("File statoi should be the same", file1.isIndexed(), file2.isIndexed());
     }
 
+    /**
+     *
+     */
     @Test
     @Ignore("surefire fails:  GenericJDBC could not insert: [dk.netarki...")
     public void testExists() {
@@ -68,6 +86,9 @@ public class ArchiveFileDAOTester {
         assertTrue(id != null && !id.isEmpty());
     }
 
+    /**
+     *
+     */
     @Test
     @Ignore("surefire fails: ConstraintViolation could not insert:...")
     public void testNotIndexed() {

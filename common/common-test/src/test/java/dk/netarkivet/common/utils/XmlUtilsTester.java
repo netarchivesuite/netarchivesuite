@@ -38,16 +38,28 @@ import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 public class XmlUtilsTester {
     private final MoveTestFiles mtf = new MoveTestFiles(TestInfo.DATADIR, TestInfo.TEMPDIR);
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         mtf.setUp();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         mtf.tearDown();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testSetNode() throws Exception {
         Document doc = XmlUtils.getXmlDoc(TestInfo.XML_FILE_1);

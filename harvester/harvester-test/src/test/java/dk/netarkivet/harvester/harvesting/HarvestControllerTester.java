@@ -76,6 +76,12 @@ public class HarvestControllerTester {
     UseTestRemoteFile rf = new UseTestRemoteFile();
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     * @throws Exception
+     * @throws IllegalAccessException
+     * @throws IOException
+     */
     @Before
     public void setUp() throws Exception, IllegalAccessException, IOException {
         rs.setUp();
@@ -96,6 +102,10 @@ public class HarvestControllerTester {
         // mis.setUp();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         // Uncommented to avoid reference to archive module from harvester
@@ -253,6 +263,7 @@ public class HarvestControllerTester {
      * test constructor behaviour given bad arguments. The introduction of a factory for the HeritrixLauncher hides the
      * actual cause behind the message "Error creating singleton of class
      * 'dk.netarkivet.harvester.harvesting.controller.BnfHeritrixLauncher'.
+     * @throws java.lang.Exception
      */
     @Test
     public void testRunHarvest() throws Exception {
@@ -274,6 +285,10 @@ public class HarvestControllerTester {
         }
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testGenerateHeritrixDomainHarvestReport() throws Exception {
         // Test that an existing crawl.log is used, or null is returned
@@ -305,7 +320,12 @@ public class HarvestControllerTester {
     }
 
     // Uncommented to avoid reference to archive module from harvester module.
-    @Test
+
+    /**
+     *
+     * @throws Exception
+     */
+        @Test
     public void testUploadFiles() throws Exception {
         // hc = HarvestController.getInstance();
         // Field arcrepField = ReflectUtils.getPrivateField(hc.getClass(),
@@ -374,10 +394,20 @@ public class HarvestControllerTester {
         // assertEquals("Should have no failed files", 0, failed.size());
     }
 
+    /**
+     *
+     * @param <T>
+     * @param objects
+     * @return
+     */
     public static <T> List<T> list(T... objects) {
         return Arrays.asList(objects);
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testFindDefaultStopReason() throws Exception {
         try {

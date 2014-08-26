@@ -29,6 +29,10 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.management.SingleMBeanObject;
 
+/**
+ *
+ * @author tra
+ */
 public class CachingSLF4JLogRecord implements SingleLogRecord {
 
     private final int index;
@@ -39,6 +43,7 @@ public class CachingSLF4JLogRecord implements SingleLogRecord {
      * Make a caching log record, that exposes a log record at a given index as an MBean.
      *
      * @param index The index of this log record, counted from the top of the list.
+     * @param cachingSLF4JAppender
      * @param cachingLogHandler The caching log handler this is an exposing view on.
      * @throws IOFailure on any trouble registering.
      */
@@ -50,6 +55,10 @@ public class CachingSLF4JLogRecord implements SingleLogRecord {
         register();
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String getRecordString() {
         String logMsg = cachingSLF4JAppender.getNthLogRecord(this.index);

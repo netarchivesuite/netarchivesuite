@@ -77,6 +77,9 @@ public class FileUtilsTester {
     private static final File RATHER_BIG_FILE = new File(WORKING, "rather_bigfile.txt");
     private static final File SMALL_COMPRESSED_INDEX_DIR = new File(WORKING, "smallindex");
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         // FIXME: Find proper way to be locale neutral in this test
@@ -88,6 +91,9 @@ public class FileUtilsTester {
         rf.setUp();
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         FileUtils.removeRecursively(WORKING);
@@ -162,6 +168,10 @@ public class FileUtilsTester {
         assertEquals("Should report 0 on non-existing dir", 0, free4);
     }
 
+    /**
+     *
+     * @throws InterruptedException
+     */
     @Test
     public void testCreateDir() throws InterruptedException {
         // FIXME NAS-2319
@@ -185,6 +195,10 @@ public class FileUtilsTester {
 
     }
 
+    /**
+     *
+     * @throws InterruptedException
+     */
     @Test
     // FIXME: Rewrite threads to callables.
     public void testCreateDirInParallel() throws InterruptedException {
@@ -231,6 +245,9 @@ public class FileUtilsTester {
         }
     }
 
+    /**
+     *
+     */
     @Test
     public void testCDXFilter() {
         File testDir = TestInfo.CDX_FILTER_TEST_DATA_DIR;
@@ -243,6 +260,9 @@ public class FileUtilsTester {
                 TestInfo.CDX_FILTER_TEST_CDX_FILES, fileNames);
     }
 
+    /**
+     *
+     */
     @Test
     public void testConstantPatterns() {
         assertTrue("Should match", "file.arc.gz".matches(".*" + FileUtils.ARC_PATTERN));
@@ -255,6 +275,10 @@ public class FileUtilsTester {
         assertFalse("Should NOT match", "file.ARC.open.txt".matches(".*" + FileUtils.OPEN_ARC_PATTERN));
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testGetEphemeralInputStream() throws Exception {
         // Check that closing removes the file
@@ -307,6 +331,9 @@ public class FileUtilsTester {
         assertTrue(f.isFile());
     }
 
+    /**
+     *
+     */
     @Test
     public void testMakeValidFileFromExistingMakeAnInvalidFileFromNonExisting() {
         try {
@@ -317,6 +344,10 @@ public class FileUtilsTester {
         }
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testCreateUniqueTempDir() throws Exception {
         // This test cannot ensure the concurrency properties, but it can
@@ -377,6 +408,10 @@ public class FileUtilsTester {
         // }
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testReadLastLine() throws Exception {
         try {
@@ -405,6 +440,9 @@ public class FileUtilsTester {
         assertEquals("Must get correct last line", "", FileUtils.readLastLine(TestInfo.EMPTY_FILE));
     }
 
+    /**
+     *
+     */
     @Test
     public void testAppendToFile() {
         File testFile = new File(WORKING, "test");
@@ -469,6 +507,9 @@ public class FileUtilsTester {
                 FileUtils.formatFilename(previousFilenameTwo));
     }
 
+    /**
+     *
+     */
     @Test
     public void testHasFiles() {
 

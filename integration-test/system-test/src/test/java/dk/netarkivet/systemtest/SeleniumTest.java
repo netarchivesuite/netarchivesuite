@@ -48,13 +48,36 @@ import dk.netarkivet.systemtest.page.SelectiveHarvestPageHelper;
  */
 @SuppressWarnings({"unused"})
 public abstract class SeleniumTest extends ExtendedTestCase {
+
+    /**
+     *
+     */
     protected static TestEnvironmentManager environmentManager;
+
+    /**
+     *
+     */
     protected static ApplicationManager applicationManager;
     private static ReportGenerator reportGenerator;
+
+    /**
+     *
+     */
     protected final TestLogger log = new TestLogger(getClass());
+
+    /**
+     *
+     */
     protected static WebDriver driver;
+
+    /**
+     *
+     */
     protected static String baseUrl;
 
+    /**
+     *
+     */
     @BeforeSuite(alwaysRun = true)
     public void setupTest() {
         environmentManager = new TestEnvironmentManager(getTestX(), "http://kb-test-adm-001.kb.dk", 8071);
@@ -105,6 +128,9 @@ public abstract class SeleniumTest extends ExtendedTestCase {
         HarvestUtils.minimizeDefaultHarvest();
     }
 
+    /**
+     *
+     */
     @AfterSuite(alwaysRun = true)
     public void shutdown() {
         if (driver != null) {
@@ -119,11 +145,16 @@ public abstract class SeleniumTest extends ExtendedTestCase {
 
     /**
      * Identifies the test on the test system. More concrete this value will be used for the test environment variable.
+     * @return 
      */
     protected String getTestX() {
         return System.getProperty("deployable.postfix", "SystemTest");
     }
 
+    /**
+     *
+     * @param result
+     */
     @AfterMethod
     /**
      * Takes care of failure situations. This includes: <ol>

@@ -30,8 +30,15 @@ import org.junit.Test;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.harvester.datamodel.JobStatus;
 
+/**
+ *
+ * @author tra
+ */
 public class JobEndedMessageTester {
 
+    /**
+     *
+     */
     @Test
     public void testJobEndedConstructor() {
         JobEndedMessage msg = new JobEndedMessage(42L, JobStatus.DONE);

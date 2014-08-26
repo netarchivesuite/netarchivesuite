@@ -47,6 +47,10 @@ import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaType;
 import dk.netarkivet.testutils.ReflectUtils;
 
+/**
+ *
+ * @author tra
+ */
 public class FilePreservationStateTester {
 
     /**
@@ -144,6 +148,13 @@ public class FilePreservationStateTester {
         assertTrue("It should contain the General store state", content.contains("General store state: "));
     }
 
+    /**
+     *
+     * @throws NoSuchMethodException
+     * @throws IllegalArgumentException
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     */
     @Test
     public void testError() throws NoSuchMethodException, IllegalArgumentException, IllegalAccessException,
             InvocationTargetException {
@@ -189,7 +200,15 @@ public class FilePreservationStateTester {
     }
 
     // check isAdminDataOk again!
-    @Test
+
+    /**
+     *
+     * @throws NoSuchMethodException
+     * @throws IllegalArgumentException
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     */
+        @Test
     public void testIsAdminDataOk() throws NoSuchMethodException, IllegalArgumentException, IllegalAccessException,
             InvocationTargetException {
         // scenario 1. empty checksum and admin-state completed.
@@ -257,7 +276,16 @@ public class FilePreservationStateTester {
     }
 
     // check getReferenceBitarchive again!
-    @Test
+
+    /**
+     *
+     * @throws NoSuchMethodException
+     * @throws IllegalArgumentException
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     * @throws NoSuchFieldException
+     */
+        @Test
     public void testGetReferenceBitarchive() throws NoSuchMethodException, IllegalArgumentException,
             IllegalAccessException, InvocationTargetException, NoSuchFieldException {
         // scenario 1: no reference checksum.
@@ -314,7 +342,15 @@ public class FilePreservationStateTester {
     }
 
     // test getUniqueChecksum again!
-    @Test
+
+    /**
+     *
+     * @throws NoSuchMethodException
+     * @throws IllegalArgumentException
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     */
+        @Test
     public void testGetUniqueChecksum() throws NoSuchMethodException, IllegalArgumentException, IllegalAccessException,
             InvocationTargetException {
         // scenario 1: two differen checksums for replica

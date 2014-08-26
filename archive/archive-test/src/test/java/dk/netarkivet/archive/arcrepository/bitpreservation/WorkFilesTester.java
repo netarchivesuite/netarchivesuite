@@ -49,16 +49,28 @@ import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 public class WorkFilesTester {
     private MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         mtf.setUp();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         mtf.tearDown();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testGetSortedFile() throws Exception {
         File f = new File(TestInfo.WORKING_DIR, "does-not-exist");

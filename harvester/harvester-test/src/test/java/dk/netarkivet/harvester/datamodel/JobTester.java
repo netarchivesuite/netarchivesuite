@@ -83,6 +83,10 @@ public class JobTester extends DataModelTestCase {
     private HarvestChannel highChan;
     private HarvestChannel lowChan;
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -92,6 +96,10 @@ public class JobTester extends DataModelTestCase {
         lowChan = new HarvestChannel("SNAPSHOT", true, true, "");
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         super.tearDown();
@@ -99,6 +107,7 @@ public class JobTester extends DataModelTestCase {
 
     /**
      * Tests that seedlists have ascii versions added.
+     * @throws java.lang.Exception
      */
     @Test
     public void testDanskTegn() throws Exception {
@@ -134,6 +143,9 @@ public class JobTester extends DataModelTestCase {
         // TestInfo.LOG_FILE, "WARNING");
     }
 
+    /**
+     *
+     */
     @Test
     public void testAddConfigurationMinCountObjects() {
         // Note: The configurations have these expectations:
@@ -164,6 +176,7 @@ public class JobTester extends DataModelTestCase {
 
     /**
      * Verify that a Job can be created and the correct data retrieved.
+     * @throws java.io.IOException
      */
     @Test
     public void testSetAndGet() throws IOException {
@@ -200,6 +213,9 @@ public class JobTester extends DataModelTestCase {
         assertEquals("Date value set expected", d2, job.getActualStop());
     }
 
+    /**
+     *
+     */
     @Test
     public void testGetAndSetStatus() {
         DomainConfiguration dc = TestInfo.getDefaultConfig(TestInfo.getDefaultDomain());
@@ -330,6 +346,9 @@ public class JobTester extends DataModelTestCase {
         // test case and should have been done in Iteration 4.
     }
 
+    /**
+     *
+     */
     @Test
     public void testAddConfiguration() {
         DomainConfiguration defaultConfig = TestInfo.getDefaultConfig(TestInfo.getDefaultDomain());
@@ -506,6 +525,9 @@ public class JobTester extends DataModelTestCase {
         assertEquals("Job should have channel " + lowChan.getName(), lowChan.getName(), job1.getChannel());
     }
 
+    /**
+     *
+     */
     @Test
     public void testCreateSnapShotJob() {
 
@@ -586,6 +608,11 @@ public class JobTester extends DataModelTestCase {
 
     }
 
+    /**
+     *
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     @Test
     public void testSerializability() throws IOException, ClassNotFoundException {
         // make a job:
@@ -740,6 +767,10 @@ public class JobTester extends DataModelTestCase {
 
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testMaxBytes() throws Exception {
         Method m = Job.class.getDeclaredMethod("setMaxBytesPerDomain", Long.TYPE);
@@ -772,6 +803,10 @@ public class JobTester extends DataModelTestCase {
 
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testEditOrderXML_maxBytesPerDomain() throws Exception {
         // Check that order.xml for the job is updated after calling
@@ -795,6 +830,10 @@ public class JobTester extends DataModelTestCase {
                 maxBytesXML);
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testMaxBytesBug652() throws Exception {
         DomainConfiguration defaultConfig = TestInfo.getDefaultConfig(TestInfo.getDefaultDomain());
@@ -860,6 +899,7 @@ public class JobTester extends DataModelTestCase {
 
     /**
      * Test method getSortedSeedList.
+     * @throws java.lang.Exception
      */
     @Test
     public void testGetSortedSeedList() throws Exception {

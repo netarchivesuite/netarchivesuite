@@ -48,9 +48,17 @@ public class CollectionPrefixNamingConvention implements ArchiveFileNaming {
     /** The name of the collection embedded in the names. */
     private static String CollectionName = Settings.get(COLLECTION_SETTING);
 
+    /**
+     *
+     */
     public CollectionPrefixNamingConvention() {
     }
 
+    /**
+     *
+     * @param theJob
+     * @return
+     */
     @Override
     public String getPrefix(Job theJob) {
         return CollectionName + "-" + theJob.getJobID() + "-" + theJob.getOrigHarvestDefinitionID();

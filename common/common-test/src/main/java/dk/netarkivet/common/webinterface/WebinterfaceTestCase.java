@@ -79,11 +79,19 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 public class WebinterfaceTestCase {
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     * @throws Exception
+     */
     public void setUp() throws Exception {
         rs.setUp();
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     public void tearDown() throws Exception {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         rs.tearDown();
@@ -97,6 +105,10 @@ public class WebinterfaceTestCase {
         Map<String, Object> attributes = new HashMap<String, Object>();
         Map<String, String[]> parameterMap = new HashMap<String, String[]>();
 
+        /**
+         *
+         * @param parameterMap
+         */
         public void setParameterMap(Map<String, String[]> parameterMap) {
             this.parameterMap = parameterMap;
         }
@@ -263,16 +275,29 @@ public class WebinterfaceTestCase {
         }
     }
 
+    /**
+     *
+     */
     public static class TestPageContext extends PageContext {
         private final ServletRequest request;
         private JspWriter out;
         private final Locale locale;
 
+        /**
+         *
+         * @param request
+         */
         public TestPageContext(ServletRequest request) {
             this.request = request;
             this.locale = new Locale("en");
         }
 
+        /**
+         *
+         * @param request
+         * @param out
+         * @param locale
+         */
         public TestPageContext(ServletRequest request, JspWriter out, Locale locale) {
             this.request = request;
             this.out = out;
@@ -763,6 +788,12 @@ public class WebinterfaceTestCase {
         }
     }
 
+    /**
+     *
+     * @param l
+     * @param request
+     * @return
+     */
     public static PageContext getDummyPageContext(final Locale l, final ServletRequest request) {
         return new PageContext() {
             public void initialize(Servlet servlet, ServletRequest servletRequest, ServletResponse servletResponse,

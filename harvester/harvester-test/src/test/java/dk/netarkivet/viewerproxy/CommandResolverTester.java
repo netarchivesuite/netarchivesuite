@@ -38,6 +38,10 @@ import dk.netarkivet.common.exceptions.NotImplementedException;
  */
 public class CommandResolverTester {
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testIsCommandHostRequest() throws Exception {
         assertFalse("Null request should have no host", CommandResolver.isCommandHostRequest(null));

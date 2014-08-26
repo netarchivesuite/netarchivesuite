@@ -42,12 +42,20 @@ import dk.netarkivet.testutils.TestFileUtils;
  */
 public class FileArrayIteratorTester {
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         FileUtils.removeRecursively(TestInfo.TEMPDIR);
         TestFileUtils.copyDirectoryNonCVS(TestInfo.DATADIR, TestInfo.TEMPDIR);
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         FileUtils.removeRecursively(TestInfo.TEMPDIR);

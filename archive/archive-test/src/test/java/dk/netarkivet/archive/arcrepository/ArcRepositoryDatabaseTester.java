@@ -96,6 +96,10 @@ import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
+/**
+ *
+ * @author tra
+ */
 @SuppressWarnings({"unused"})
 // FIXME: @Ignore
 @Ignore("test hangs")
@@ -161,6 +165,10 @@ public class ArcRepositoryDatabaseTester {
     private static final String[] STORABLE_FILES = new String[] {"NetarchiveSuite-store1.arc",
             "NetarchiveSuite-store2.arc"};
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         rf.setUp();
@@ -201,6 +209,10 @@ public class ArcRepositoryDatabaseTester {
         testFiles = new File(BITARCHIVE_DIR, "filedir").listFiles(FileUtils.ARCS_FILTER);
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         // BATCH
@@ -355,6 +367,7 @@ public class ArcRepositoryDatabaseTester {
      * @param arcfilename The name of the arcfile that readChecksum should look for.
      *
      * @return The string found for the given filename.
+     * @throws java.lang.Throwable
      *
      * @throws IOFailure when readChecksum does.
      */
@@ -513,6 +526,7 @@ public class ArcRepositoryDatabaseTester {
 
     /**
      * This tests the get()-method for an existing file - getting get File-name out of the BitarchiveRecord.
+     * @throws java.io.IOException
      */
     @Test
     public void testArcrepositoryDatabaseGetFile() throws IOException {
@@ -535,6 +549,7 @@ public class ArcRepositoryDatabaseTester {
      *
      * FIXME: This test often blocks on the Hudson CI server. Properly something to do with more restricted permissions
      * (not allow to write to anyfiles outside of the home dir).
+     * @throws java.io.IOException
      */
     @Test
     public void failingTestRemoveAndGetFile() throws IOException {
@@ -604,18 +619,31 @@ public class ArcRepositoryDatabaseTester {
         }
     }
 
+    /**
+     *
+     */
     public static class DummyGetFileMessageReplyServer implements MessageListener {
 
         JMSConnection conn = JMSConnectionFactory.getInstance();
 
+        /**
+         *
+         */
         public DummyGetFileMessageReplyServer() {
             conn.setListener(Channels.getTheRepos(), this);
         }
 
+        /**
+         *
+         */
         public void close() {
             conn.removeListener(Channels.getTheRepos(), this);
         }
 
+        /**
+         *
+         * @param msg
+         */
         public void onMessage(Message msg) {
             GetFileMessage netMsg = (GetFileMessage) JMSConnection.unpack(msg);
             netMsg.setFile(new File(new File(GET_BITARCHIVE_DIR, "filedir"), (String) GETTABLE_FILES.get(1)));
@@ -623,18 +651,31 @@ public class ArcRepositoryDatabaseTester {
         }
     }
 
+    /**
+     *
+     */
     public static class DummyRemoveAndGetFileMessageReplyServer implements MessageListener {
 
         JMSConnection conn = JMSConnectionFactory.getInstance();
 
+        /**
+         *
+         */
         public DummyRemoveAndGetFileMessageReplyServer() {
             conn.setListener(Channels.getTheRepos(), this);
         }
 
+        /**
+         *
+         */
         public void close() {
             conn.removeListener(Channels.getTheRepos(), this);
         }
 
+        /**
+         *
+         * @param msg
+         */
         public void onMessage(Message msg) {
             RemoveAndGetFileMessage netMsg = (RemoveAndGetFileMessage) JMSConnection.unpack(msg);
             netMsg.setFile(new File(new File(GET_BITARCHIVE_DIR, "filedir"), (String) GETTABLE_FILES.get(1)));

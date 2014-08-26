@@ -32,6 +32,10 @@ import org.junit.Test;
  */
 public class OnNSDomainsDecideRuleTester {
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testSURTprefixConversionDomains() throws Exception {
 
@@ -60,6 +64,10 @@ public class OnNSDomainsDecideRuleTester {
 
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testSURTprefixConversionHosts() throws Exception {
 
@@ -74,6 +82,10 @@ public class OnNSDomainsDecideRuleTester {
 
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testSURTprefixConversionPaths() throws Exception {
 
@@ -89,6 +101,10 @@ public class OnNSDomainsDecideRuleTester {
 
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testSURTprefixConversionNonValidDomain() throws Exception {
 

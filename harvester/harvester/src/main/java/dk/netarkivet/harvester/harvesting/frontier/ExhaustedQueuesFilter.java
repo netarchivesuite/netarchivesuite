@@ -30,6 +30,11 @@ import dk.netarkivet.harvester.harvesting.frontier.FullFrontierReport.ReportIter
  */
 public class ExhaustedQueuesFilter extends MaxSizeFrontierReportExtract {
 
+    /**
+     *
+     * @param initialFrontier
+     * @return
+     */
     @Override
     public InMemoryFrontierReport process(FrontierReport initialFrontier) {
         InMemoryFrontierReport result = new InMemoryFrontierReport(initialFrontier.getJobName());

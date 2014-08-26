@@ -58,6 +58,10 @@ import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
+/**
+ *
+ * @author tra
+ */
 public class IndexRequestServerTester {
     private static final Set<Long> JOB_SET = new HashSet<Long>(Arrays.asList(new Long[] {2L, 4L, 8L, 16L, 32L}));
     private static final Set<Long> JOB_SET2 = new HashSet<Long>(Arrays.asList(new Long[] {1L, 3L, 7L, 15L, 31L}));
@@ -72,6 +76,9 @@ public class IndexRequestServerTester {
     private MockupMultiFileBasedCache mmfbc = new MockupMultiFileBasedCache();
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         rs.setUp();
@@ -83,6 +90,9 @@ public class IndexRequestServerTester {
         mmfbc.setUp();
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         if (server != null) {
@@ -110,6 +120,7 @@ public class IndexRequestServerTester {
     /**
      * Verify that visit() - throws exception on null message or message that is not ok - returns a non-ok message if
      * handler fails with exception or no handler registered
+     * @throws java.lang.InterruptedException
      */
     @Test
     public void testVisitFailures() throws InterruptedException {
@@ -165,6 +176,8 @@ public class IndexRequestServerTester {
     /**
      * Verify that visit() - extracts correct info from message - calls the appropriate handler - encodes the return
      * value appropriately - sends message back as reply
+     * @throws java.io.IOException
+     * @throws java.lang.InterruptedException
      */
     @Test
     @Ignore("travis-ci: IndexRequestServerTester.testVisitNormal:190->subtestVisitNormal:225 Should have received reply expected:<1> but was:<0>")
@@ -244,6 +257,7 @@ public class IndexRequestServerTester {
     /**
      * Verify that a message sent to the index server queue is dispatched to the appropriate handler if non-null and ok.
      * Verify that no call is made if message is null or not ok.
+     * @throws java.lang.InterruptedException
      */
     @Test
     public void testIndexServerListener() throws InterruptedException {
@@ -283,6 +297,7 @@ public class IndexRequestServerTester {
     /**
      * Verify that - setHandler() throws exception on null values - calling setHandler twice on same type replaces first
      * handler
+     * @throws java.lang.InterruptedException
      */
     @Test
     @Ignore("AssertionError: Handler should be called expected:<1> but was:<0>")
@@ -341,6 +356,10 @@ public class IndexRequestServerTester {
         mjic2.tearDown();
     }
 
+    /**
+     *
+     * @throws InterruptedException
+     */
     @Test
     public void testUnblocking() throws InterruptedException {
         mmfbc.setMode(MockupMultiFileBasedCache.Mode.WAITING);

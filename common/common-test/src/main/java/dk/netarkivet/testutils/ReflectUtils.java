@@ -51,6 +51,7 @@ public class ReflectUtils {
     /**
      * Look up a private field and make it accessible for testing.
      *
+     * @param <T>
      * @param c The class that declares the field.
      * @param fieldName The name of the field.
      * @return The field, which can now be set.
@@ -65,6 +66,7 @@ public class ReflectUtils {
     /**
      * Look up a private constructor and make it accessible for testing.
      *
+     * @param <T>
      * @param c Class to look in.
      * @param args Arguments for the constructor. Note that primitive types are found using XXX.TYPE.
      * @return Constructor object, accessible for calling.
@@ -78,6 +80,7 @@ public class ReflectUtils {
 
     /**
      * Method for testing the constructor of a utility class (the constructor should be private).
+     * @param c
      */
     @SuppressWarnings({"rawtypes"})
     public static void testUtilityConstructor(Class c) {

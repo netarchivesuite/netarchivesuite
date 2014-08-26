@@ -39,10 +39,18 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
+/**
+ *
+ * @author tra
+ */
 public class InMemoryFrontierReportTest {
 
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         rs.setUp();
@@ -50,6 +58,10 @@ public class InMemoryFrontierReportTest {
         Settings.set(CommonSettings.CACHE_DIR, TestInfo.WORKDIR.getAbsolutePath());
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
 
@@ -67,6 +79,10 @@ public class InMemoryFrontierReportTest {
         rs.tearDown();
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     @Test
     public void testAll() throws IOException {
         for (File reportFile : TestInfo.getFrontierReportSamples()) {

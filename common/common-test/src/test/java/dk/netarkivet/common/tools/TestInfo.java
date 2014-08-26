@@ -24,6 +24,10 @@ package dk.netarkivet.common.tools;
 
 import java.io.File;
 
+/**
+ *
+ * @author tra
+ */
 public class TestInfo {
     static final File WORKING_DIR = new File("./tests/dk/netarkivet/common/tools/working/");
     static final File DATA_DIR = new File("./tests/dk/netarkivet/common/tools/data/originals");

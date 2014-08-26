@@ -68,36 +68,100 @@ public class DeDupFetchHTTP extends FetchHTTP implements AdaptiveRevisitAttribut
 
     private static Logger logger = Logger.getLogger(FetchHTTP.class.getName());
 
+    /**
+     *
+     */
     protected IndexSearcher index;
+
+    /**
+     *
+     */
     protected IndexReader indexReader;
+
+    /**
+     *
+     */
     protected String mimefilter = DEFAULT_MIME_FILTER;
+
+    /**
+     *
+     */
     protected boolean blacklist = true;
 
     SimpleDateFormat sdfLastModified;
     SimpleDateFormat sdfIndexDate;
 
+    /**
+     *
+     */
     protected long processedURLs = 0;
+
+    /**
+     *
+     */
     protected long unchangedURLs = 0;
 
+    /**
+     *
+     */
     protected boolean useSparseRangeFilter = DEFAULT_USE_SPARSE_RANGE_FILTER;
 
     // Settings.
-    public static final String ATTR_DECISION_SCHEME = "decision-scheme";
+
+    /**
+     *
+     */
+        public static final String ATTR_DECISION_SCHEME = "decision-scheme";
+
+    /**
+     *
+     */
     public static final String SCHEME_TIMESTAMP = "Timestamp only";
+
+    /**
+     *
+     */
     public static final String SCHEME_ETAG = "Etag only";
+
+    /**
+     *
+     */
     public static final String SCHEME_TIMESTAMP_AND_ETAG = "Timestamp AND Etag";
+
+    /**
+     *
+     */
     public static final String SCHEME_TIMESTAMP_OR_ETAG = "Timestamp OR Etag";
+
+    /**
+     *
+     */
     public static final String[] AVAILABLE_DECISION_SCHEMES = {SCHEME_TIMESTAMP, SCHEME_ETAG,
             SCHEME_TIMESTAMP_AND_ETAG, SCHEME_TIMESTAMP_OR_ETAG};
+
+    /**
+     *
+     */
     public static final String DEFAULT_DECISION_SCHEME = SCHEME_TIMESTAMP;
 
+    /**
+     *
+     */
     public static final String ATTR_INDEX_LOCATION = "index-location";
+
+    /**
+     *
+     */
     public static final String DEFAULT_INDEX_LOCATION = "";
 
     /**
      * The filter on mime types. This is either a blacklist or whitelist depending on ATTR_FILTER_MODE.
      */
     public final static String ATTR_MIME_FILTER = "mime-filter";
+
+    /**
+     *
+     */
     public final static String DEFAULT_MIME_FILTER = "^text/.*";
 
     /**
@@ -105,13 +169,29 @@ public class DeDupFetchHTTP extends FetchHTTP implements AdaptiveRevisitAttribut
      * what matches).
      */
     public final static String ATTR_FILTER_MODE = "filter-mode";
+
+    /**
+     *
+     */
     public final static String[] AVAILABLE_FILTER_MODES = {"Blacklist", "Whitelist"};
+
+    /**
+     *
+     */
     public final static String DEFAULT_FILTER_MODE = AVAILABLE_FILTER_MODES[0];
 
     /** Should we use sparse queries (uses less memory at a cost to performance? **/
     public final static String ATTR_USE_SPARSE_RANGE_FILTER = "use-sparse-range-filter";
+
+    /**
+     *
+     */
     public final static Boolean DEFAULT_USE_SPARSE_RANGE_FILTER = new Boolean(false);
 
+    /**
+     *
+     * @param name
+     */
     public DeDupFetchHTTP(String name) {
         super(name);
         setDescription("Fetch HTTP processor that aborts downloading of "
@@ -165,6 +245,13 @@ public class DeDupFetchHTTP extends FetchHTTP implements AdaptiveRevisitAttribut
         addElementToDefinition(t);
     }
 
+    /**
+     *
+     * @param curi
+     * @param method
+     * @param conn
+     * @return
+     */
     protected boolean checkMidfetchAbort(CrawlURI curi, HttpRecorderMethod method, HttpConnection conn) {
         // We'll check for prerequisites here since there is no way to know
         // if the super method returns false because of a prereq or because
@@ -338,11 +425,17 @@ public class DeDupFetchHTTP extends FetchHTTP implements AdaptiveRevisitAttribut
         return null;
     }
 
+    /**
+     *
+     */
     @Override
     public void finalTasks() {
         super.finalTasks();
     }
 
+    /**
+     *
+     */
     @Override
     public void initialTasks() {
         super.initialTasks();
@@ -389,6 +482,10 @@ public class DeDupFetchHTTP extends FetchHTTP implements AdaptiveRevisitAttribut
         }
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String report() {
         StringBuffer ret = new StringBuffer();

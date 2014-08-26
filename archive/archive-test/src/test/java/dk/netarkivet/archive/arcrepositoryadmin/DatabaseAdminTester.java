@@ -50,6 +50,10 @@ import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
+/**
+ *
+ * @author tra
+ */
 public class DatabaseAdminTester {
 
     private ReloadSettings rs = new ReloadSettings();
@@ -61,6 +65,10 @@ public class DatabaseAdminTester {
     Replica TWO = Replica.getReplicaFromId("TWO");
     Replica THREE = Replica.getReplicaFromId("THREE");
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         ChannelsTesterHelper.resetChannels();
@@ -81,6 +89,9 @@ public class DatabaseAdminTester {
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS, PrintNotifications.class.getName());
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         JMSConnectionMockupMQ.clearTestQueues();

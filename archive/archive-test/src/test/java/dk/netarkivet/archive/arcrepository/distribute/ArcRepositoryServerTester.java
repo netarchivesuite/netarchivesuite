@@ -117,6 +117,10 @@ public class ArcRepositoryServerTester {
     ReloadSettings rs = new ReloadSettings();
     UseTestRemoteFile rf = new UseTestRemoteFile();
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         rs.setUp();
@@ -134,6 +138,10 @@ public class ArcRepositoryServerTester {
         con.setListener(Channels.getError(), dummyServer);
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         AdminData.getUpdateableInstance().close();
@@ -338,6 +346,13 @@ public class ArcRepositoryServerTester {
         arc.close();
     }
 
+    /**
+     *
+     * @throws IllegalArgumentException
+     * @throws IllegalAccessException
+     * @throws NoSuchFieldException
+     * @throws InterruptedException
+     */
     @Test
     public void testVisitBadMessages() throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException,
             InterruptedException {
@@ -495,10 +510,20 @@ public class ArcRepositoryServerTester {
         arcServ.close();
     }
 
+    /**
+     *
+     */
     public class CountCallsTestArcRepository extends ArcRepository { // FIXME:MOCK
 
+        /**
+         *
+         */
+        
         public Map<String, Integer> calls = new HashMap<String, Integer>();
 
+        /**
+         *
+         */
         public CountCallsTestArcRepository() {
             super();
         }

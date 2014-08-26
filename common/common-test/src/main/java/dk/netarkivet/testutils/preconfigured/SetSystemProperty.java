@@ -31,16 +31,27 @@ public class SetSystemProperty implements TestConfigurationIF {
     private String property;
     private String newValue;
 
+    /**
+     *
+     * @param property
+     * @param newValue
+     */
     public SetSystemProperty(String property, String newValue) {
         this.property = property;
         this.newValue = newValue;
     }
 
+    /**
+     *
+     */
     public void setUp() {
         oldValue = System.getProperty(property);
         System.setProperty(property, newValue);
     }
 
+    /**
+     *
+     */
     public void tearDown() {
         if (oldValue != null) {
             System.setProperty(property, oldValue);

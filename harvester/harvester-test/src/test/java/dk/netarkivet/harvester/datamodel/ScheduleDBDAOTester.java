@@ -38,16 +38,28 @@ import dk.netarkivet.common.exceptions.PermissionDenied;
 public class ScheduleDBDAOTester extends DataModelTestCase {
     private static final String THIRTY_CHAR_STRING = "123456789012345678901234567890";
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         super.setUp();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         super.tearDown();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testCreateChecksSize() throws Exception {
         Schedule s1 = TestInfo.getDefaultSchedule();

@@ -27,6 +27,10 @@ import java.util.Set;
 
 import org.testng.Assert;
 
+/**
+ *
+ * @author tra
+ */
 public class NASAssert extends Assert {
 
     // FIXME: http://stackoverflow.com/q/2313229/53897

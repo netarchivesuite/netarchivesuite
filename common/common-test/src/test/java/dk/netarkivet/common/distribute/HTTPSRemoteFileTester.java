@@ -50,6 +50,9 @@ public class HTTPSRemoteFileTester {
     UseTestRemoteFile utrf = new UseTestRemoteFile();
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         rs.setUp();
@@ -61,6 +64,9 @@ public class HTTPSRemoteFileTester {
         HTTPSRemoteFileRegistry.getInstance().cleanup();
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         HTTPRemoteFileRegistry.getInstance().cleanup();
@@ -70,6 +76,10 @@ public class HTTPSRemoteFileTester {
         rs.tearDown();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testCopyto() throws Exception {
         // Copying twice with multiple
@@ -108,6 +118,10 @@ public class HTTPSRemoteFileTester {
         assertFalse("Original file shouldn't exist anymore", TestInfo.FILE1.exists());
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testCleanup() throws Exception {
         HTTPSRemoteFile rf = new ForceRemoteHTTPSRemoteFile(TestInfo.FILE1, false, false, true);
@@ -137,6 +151,10 @@ public class HTTPSRemoteFileTester {
         rf.cleanup();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testGetChecksum() throws Exception {
         HTTPSRemoteFile rf = new ForceRemoteHTTPSRemoteFile(TestInfo.FILE1, false, false, true);

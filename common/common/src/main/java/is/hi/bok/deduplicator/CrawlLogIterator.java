@@ -75,6 +75,7 @@ public class CrawlLogIterator extends CrawlDataIterator {
      * Returns true if there are more items available.
      *
      * @return True if at least one more item can be fetched with next().
+     * @throws java.io.IOException
      */
     public boolean hasNext() throws IOException {
         if (next == null) {
@@ -105,6 +106,7 @@ public class CrawlLogIterator extends CrawlDataIterator {
      * next is non-null or there are no more items in the crawl log.
      * <p>
      * Note: This method should only be called when <code>next==null<code>
+     * @throws java.io.IOException
      */
     protected void prepareNext() throws IOException {
         String line;
@@ -210,6 +212,7 @@ public class CrawlLogIterator extends CrawlDataIterator {
 
     /**
      * Closes the crawl.log file.
+     * @throws java.io.IOException
      */
     public void close() throws IOException {
         in.close();

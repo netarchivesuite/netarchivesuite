@@ -37,6 +37,10 @@ import dk.netarkivet.testutils.CollectionAsserts;
  * Unit tests for the class SystemUtils.
  */
 public class SystemUtilsTester {
+
+    /**
+     *
+     */
     @Test
     public void testGetLocalIP() {
         String ip = SystemUtils.getLocalIP();
@@ -63,6 +67,10 @@ public class SystemUtilsTester {
         assertTrue("hostname not empty string", result.length() > 0);
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testGetCurrentClasspath() throws Exception {
         List<String> classpath = SystemUtils.getCurrentClasspath();

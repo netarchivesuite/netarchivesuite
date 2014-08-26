@@ -34,12 +34,39 @@ public class CrawlDataItem {
      */
     public static final String dateFormat = "yyyyMMddHHmmssSSS";
 
+    /**
+     *
+     */
     protected String URL;
+
+    /**
+     *
+     */
     protected String contentDigest;
+
+    /**
+     *
+     */
     protected String timestamp;
+
+    /**
+     *
+     */
     protected String etag;
+
+    /**
+     *
+     */
     protected String mimetype;
+
+    /**
+     *
+     */
     protected String origin;
+
+    /**
+     *
+     */
     protected boolean duplicate;
 
     /**

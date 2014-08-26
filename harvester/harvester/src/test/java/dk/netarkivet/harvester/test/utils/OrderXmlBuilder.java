@@ -29,23 +29,42 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+/**
+ *
+ * @author tra
+ */
 public class OrderXmlBuilder {
     private final Document orderxmlDoc;
     private static DocumentBuilder builder;
 
+    /**
+     *
+     */
     public OrderXmlBuilder() {
         orderxmlDoc = getParser().newDocument();
     }
 
+    /**
+     *
+     * @return
+     */
     public org.dom4j.Document getOrderXml() {
         org.dom4j.io.DOMReader reader = new org.dom4j.io.DOMReader();
         return reader.read(orderxmlDoc);
     }
 
+    /**
+     *
+     * @return
+     */
     public static OrderXmlBuilder create() {
         return new OrderXmlBuilder();
     }
 
+    /**
+     *
+     * @return
+     */
     public OrderXmlBuilder enableDeduplication() {
         Node deduplicationNode = NodeTraverser.create(orderxmlDoc).getChildNode("crawl-order", null)
                 .getChildNode("controller", null).getChildNode("map", "write-processors")

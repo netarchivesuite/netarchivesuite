@@ -43,11 +43,19 @@ import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 public class FileListJobTester {
     private MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         mtf.setUp();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         mtf.tearDown();

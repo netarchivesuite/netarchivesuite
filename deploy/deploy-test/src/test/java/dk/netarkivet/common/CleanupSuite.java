@@ -26,6 +26,10 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
+/**
+ *
+ * @author tra
+ */
 public class CleanupSuite {
 
     /**
@@ -50,6 +54,10 @@ public class CleanupSuite {
 
     }
 
+    /**
+     *
+     * @param args
+     */
     public static void main(String args[]) {
         String args2[] = {"-noloading", CleanupSuite.class.getName()};
         TestRunner.main(args2);

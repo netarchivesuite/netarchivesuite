@@ -50,12 +50,18 @@ public class HeritrixFilesTester {
     private File defaultJmxPasswordFile = new File("/path/to/jmxpasswordfile");
     private File defaultJmxAccessFile = new File("/path/to/jmxaccessfile");
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         TestInfo.WORKING_DIR.mkdirs();
         mjms.setUp();
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         mjms.tearDown();

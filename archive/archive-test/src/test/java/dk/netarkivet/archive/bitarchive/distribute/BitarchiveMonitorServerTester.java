@@ -112,6 +112,9 @@ public class BitarchiveMonitorServerTester {
     private MockupJMS mjms = new MockupJMS();
     private ReloadSettings rls = new ReloadSettings();
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         rls.setUp();
@@ -132,6 +135,9 @@ public class BitarchiveMonitorServerTester {
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR, commontempdir.getAbsolutePath());
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         if (bam_server != null) {
@@ -149,6 +155,7 @@ public class BitarchiveMonitorServerTester {
     /**
      * Verify that batch jobs do not have to wait for each other. In particular, check that the postprocessing of one
      * job can overtake the postprocessing of another.
+     * @throws java.lang.InterruptedException
      */
     @Test
     public void testParallelBatchJobs() throws InterruptedException {
@@ -563,6 +570,7 @@ public class BitarchiveMonitorServerTester {
      * 
      * FIXME Fails on command line
      *
+     * @throws java.lang.InterruptedException
      * @throws ArgumentNotValid
      * @throws UnknownID
      * @throws IOFailure it via RemoteFile
@@ -658,6 +666,8 @@ public class BitarchiveMonitorServerTester {
      * Testing GetAllChecksumMessage.
      * 
      * FIXME: This test is unstable and occasionally fails. Disabled because it
+     * @throws java.lang.InterruptedException
+     * @throws java.io.IOException
      */
     @Test
     @Ignore("FIXME")
@@ -724,6 +734,8 @@ public class BitarchiveMonitorServerTester {
      * FIXME: Fragile, sometimes fail with: junit.framework.AssertionFailedError: The listener should have one message
      * expected:<1> but was:<0> at dk.netarkivet.archive.bitarchive.distribute .BitarchiveMonitorServerTester.
      * testGetAllFilenamesMessage(BitarchiveMonitorServerTester.java:818)
+     * @throws java.lang.InterruptedException
+     * @throws java.io.IOException
      */
     @Test
     @Ignore("FIXME")
@@ -786,6 +798,8 @@ public class BitarchiveMonitorServerTester {
 
     /**
      * Testing GetChecksumMessage.
+     * @throws java.lang.InterruptedException
+     * @throws java.io.IOException
      */
     @Test
     public void testGetChecksumMessage() throws InterruptedException, IOException {

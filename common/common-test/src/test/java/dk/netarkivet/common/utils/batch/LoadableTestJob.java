@@ -38,9 +38,16 @@ import dk.netarkivet.common.utils.FileUtils;
 public class LoadableTestJob extends FileBatchJob {
     String ourName = "me";
 
+    /**
+     *
+     */
     public LoadableTestJob() {
     }
 
+    /**
+     *
+     * @param innerClass
+     */
     public LoadableTestJob(boolean innerClass) {
         if (innerClass) {
             ourName = new InnerClass().innerClassName();
@@ -146,7 +153,14 @@ public class LoadableTestJob extends FileBatchJob {
         }
     }
 
+    /**
+     *
+     */
     public static class InnerBatchJob extends FileBatchJob {
+
+        /**
+         *
+         */
         public InnerBatchJob() {
         }
 

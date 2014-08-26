@@ -34,21 +34,45 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.spi.FilterReply;
 
 // TODO So maybe these methods should be unit-tested... NICL
+
+/**
+ *
+ * @author tra
+ */
 public class LogbackRecorder extends ch.qos.logback.core.AppenderBase<ch.qos.logback.classic.spi.ILoggingEvent> {
 
+    /**
+     *
+     */
     protected static final ch.qos.logback.classic.LoggerContext context = (ch.qos.logback.classic.LoggerContext) LoggerFactory
             .getILoggerFactory();
 
+    /**
+     *
+     */
     protected static final ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) LoggerFactory
             .getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
 
+    /**
+     *
+     */
     protected ch.qos.logback.core.Appender<ch.qos.logback.classic.spi.ILoggingEvent> appender;
 
+    /**
+     *
+     */
     protected List<ch.qos.logback.classic.spi.ILoggingEvent> events = new ArrayList<ch.qos.logback.classic.spi.ILoggingEvent>();
 
+    /**
+     *
+     */
     protected LogbackRecorder() {
     }
 
+    /**
+     *
+     * @return
+     */
     public static LogbackRecorder startRecorder() {
         LogbackRecorder lu = new LogbackRecorder();
         lu.setName("unit-test");
@@ -58,26 +82,46 @@ public class LogbackRecorder extends ch.qos.logback.core.AppenderBase<ch.qos.log
         return lu;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean stopRecorder() {
         stop();
         events.clear();
         return root.detachAppender(this);
     }
 
+    /**
+     *
+     */
     public void reset() {
         events.clear();
     }
 
+    /**
+     *
+     * @param event
+     */
     @Override
     protected synchronized void append(ch.qos.logback.classic.spi.ILoggingEvent event) {
         events.add(event);
         // System.out.println("#\n#" + event.getLoggerName() + "#\n");
     }
 
+    /**
+     *
+     * @return
+     */
     public synchronized boolean isEmpty() {
         return events.isEmpty();
     }
 
+    /**
+     *
+     * @param msg
+     * @param str
+     */
     public synchronized void assertLogContains(String msg, String str) {
         Iterator<ch.qos.logback.classic.spi.ILoggingEvent> iter = events.iterator();
         boolean bMatched = false;
@@ -90,6 +134,11 @@ public class LogbackRecorder extends ch.qos.logback.core.AppenderBase<ch.qos.log
         }
     }
 
+    /**
+     *
+     * @param msg
+     * @param str
+     */
     public synchronized void assertLogNotContains(String msg, String str) {
         Iterator<ch.qos.logback.classic.spi.ILoggingEvent> iter = events.iterator();
         boolean bMatched = false;
@@ -102,6 +151,11 @@ public class LogbackRecorder extends ch.qos.logback.core.AppenderBase<ch.qos.log
         }
     }
 
+    /**
+     *
+     * @param msg
+     * @param regex
+     */
     public synchronized void assertLogMatches(String msg, String regex) {
         Pattern pattern = Pattern.compile(regex);
         Iterator<ch.qos.logback.classic.spi.ILoggingEvent> iter = events.iterator();
@@ -115,6 +169,12 @@ public class LogbackRecorder extends ch.qos.logback.core.AppenderBase<ch.qos.log
         }
     }
 
+    /**
+     *
+     * @param str
+     * @param index
+     * @return
+     */
     public synchronized int logIndexOf(String str, int index) {
         boolean bMatched = false;
         while (index >= 0 && index < events.size() && !bMatched) {
@@ -130,6 +190,11 @@ public class LogbackRecorder extends ch.qos.logback.core.AppenderBase<ch.qos.log
         return index;
     }
 
+    /**
+     *
+     * @param msg
+     * @param level
+     */
     public synchronized void assertLogContainsLevel(String msg, ch.qos.logback.classic.Level level) {
         Iterator<ch.qos.logback.classic.spi.ILoggingEvent> iter = events.iterator();
         boolean bMatched = false;
@@ -142,6 +207,11 @@ public class LogbackRecorder extends ch.qos.logback.core.AppenderBase<ch.qos.log
         }
     }
 
+    /**
+     *
+     * @param msg
+     * @param level
+     */
     public synchronized void assertLogNotContainsLevel(String msg, ch.qos.logback.classic.Level level) {
         Iterator<ch.qos.logback.classic.spi.ILoggingEvent> iter = events.iterator();
         boolean bMatched = false;
@@ -154,6 +224,9 @@ public class LogbackRecorder extends ch.qos.logback.core.AppenderBase<ch.qos.log
         }
     }
 
+    /**
+     *
+     */
     public static class DenyFilter extends ch.qos.logback.core.filter.Filter<ch.qos.logback.classic.spi.ILoggingEvent> {
         @Override
         public FilterReply decide(ILoggingEvent event) {
@@ -161,6 +234,11 @@ public class LogbackRecorder extends ch.qos.logback.core.AppenderBase<ch.qos.log
         }
     };
 
+    /**
+     *
+     * @param filter
+     * @param loggerName
+     */
     public void addFilter(ch.qos.logback.core.filter.Filter<ch.qos.logback.classic.spi.ILoggingEvent> filter,
             String loggerName) {
         ch.qos.logback.classic.Logger logger = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(loggerName);
@@ -174,6 +252,10 @@ public class LogbackRecorder extends ch.qos.logback.core.AppenderBase<ch.qos.log
         }
     }
 
+    /**
+     *
+     * @param loggerName
+     */
     public void clearAllFilters(String loggerName) {
         ch.qos.logback.classic.Logger logger = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(loggerName);
         if (logger != null) {
@@ -186,6 +268,9 @@ public class LogbackRecorder extends ch.qos.logback.core.AppenderBase<ch.qos.log
         }
     }
 
+    /**
+     *
+     */
     public static void listAppenders() {
         ch.qos.logback.classic.LoggerContext context = (ch.qos.logback.classic.LoggerContext) LoggerFactory
                 .getILoggerFactory();

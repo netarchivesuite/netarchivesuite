@@ -73,22 +73,84 @@ public class DeDuplicator extends Processor implements AdaptiveRevisitAttributeC
 
     private static Logger logger = Logger.getLogger(DeDuplicator.class.getName());
 
+    /**
+     *
+     */
     protected IndexSearcher index = null;
+
+    /**
+     *
+     */
     protected IndexReader indexReader = null;
+
+    /**
+     *
+     */
     protected boolean lookupByURL = true;
+
+    /**
+     *
+     */
     protected boolean equivalent = DEFAULT_EQUIVALENT.booleanValue();
+
+    /**
+     *
+     */
     protected String mimefilter = DEFAULT_MIME_FILTER;
+
+    /**
+     *
+     */
     protected boolean blacklist = true;
+
+    /**
+     *
+     */
     protected boolean doTimestampAnalysis = false;
+
+    /**
+     *
+     */
     protected boolean doETagAnalysis = false;
+
+    /**
+     *
+     */
     protected boolean statsPerHost = DEFAULT_STATS_PER_HOST.booleanValue();
+
+    /**
+     *
+     */
     protected boolean changeContentSize = DEFAULT_CHANGE_CONTENT_SIZE.booleanValue();
+
+    /**
+     *
+     */
     protected boolean useOrigin = false;
+
+    /**
+     *
+     */
     protected boolean useOriginFromIndex = false;
+
+    /**
+     *
+     */
     protected boolean useSparseRangeFilter = DEFAULT_USE_SPARSE_RANGE_FILTER;
 
+    /**
+     *
+     */
     protected Statistics stats = null;
+
+    /**
+     *
+     */
     protected HashMap<String, Statistics> perHostStats = null;
+
+    /**
+     *
+     */
     protected boolean skipWriting = DEFAULT_SKIP_WRITE.booleanValue();
 
     /*
@@ -98,23 +160,43 @@ public class DeDuplicator extends Processor implements AdaptiveRevisitAttributeC
      */
     /** Location of Lucene Index to use for lookups */
     public final static String ATTR_INDEX_LOCATION = "index-location";
+
+    /**
+     *
+     */
     public final static String DEFAULT_INDEX_LOCATION = "";
 
     /** The matching method in use (by url or content digest) */
     public final static String ATTR_MATCHING_METHOD = "matching-method";
+
+    /**
+     *
+     */
     public final static String[] AVAILABLE_MATCHING_METHODS = {"By URL", "By content digest"};
+
+    /**
+     *
+     */
     public final static String DEFAULT_MATCHING_METHOD = AVAILABLE_MATCHING_METHODS[0];
 
     /**
      * If an exact match is not made, should the processor try to find an equivalent match?
      **/
     public final static String ATTR_EQUIVALENT = "try-equivalent";
+
+    /**
+     *
+     */
     public final static Boolean DEFAULT_EQUIVALENT = new Boolean(false);
 
     /**
      * The filter on mime types. This is either a blacklist or whitelist depending on ATTR_FILTER_MODE.
      */
     public final static String ATTR_MIME_FILTER = "mime-filter";
+
+    /**
+     *
+     */
     public final static String DEFAULT_MIME_FILTER = "^text/.*";
 
     /**
@@ -122,51 +204,119 @@ public class DeDuplicator extends Processor implements AdaptiveRevisitAttributeC
      * what matches).
      */
     public final static String ATTR_FILTER_MODE = "filter-mode";
+
+    /**
+     *
+     */
     public final static String[] AVAILABLE_FILTER_MODES = {"Blacklist", "Whitelist"};
+
+    /**
+     *
+     */
     public final static String DEFAULT_FILTER_MODE = AVAILABLE_FILTER_MODES[0];
 
     /** Set analysis mode. */
     public final static String ATTR_ANALYSIS_MODE = "analysis-mode";
+
+    /**
+     *
+     */
     public final static String[] AVAILABLE_ANALYSIS_MODES = {"None", "Timestamp", "Timestamp and ETag"};
+
+    /**
+     *
+     */
     public final static String DEFAULT_ANALYSIS_MODE = AVAILABLE_ANALYSIS_MODES[0];
 
     /**
      * Should the content size information be set to zero when a duplicate is found?
      */
     public final static String ATTR_CHANGE_CONTENT_SIZE = "change-content-size";
+
+    /**
+     *
+     */
     public final static Boolean DEFAULT_CHANGE_CONTENT_SIZE = new Boolean(true);
 
     /** What to write to a log file */
     public final static String ATTR_LOG_LEVEL = "log-level";
+
+    /**
+     *
+     */
     public final static String[] AVAILABLE_LOG_LEVELS = {Level.SEVERE.toString(), Level.INFO.toString(),
             Level.FINEST.toString()};
+
+    /**
+     *
+     */
     public final static String DEFAULT_LOG_LEVEL = AVAILABLE_LOG_LEVELS[0];
 
     /** Should statistics be tracked per host? **/
     public final static String ATTR_STATS_PER_HOST = "stats-per-host";
+
+    /**
+     *
+     */
     public final static Boolean DEFAULT_STATS_PER_HOST = new Boolean(false);
 
     /** How should 'origin' be handled **/
     public final static String ATTR_ORIGIN_HANDLING = "origin-handling";
+
+    /**
+     *
+     */
     public final static String ORIGIN_HANDLING_NONE = "No origin information";
+
+    /**
+     *
+     */
     public final static String ORIGIN_HANDLING_PROCESSOR = "Use processor setting";
+
+    /**
+     *
+     */
     public final static String ORIGIN_HANDLING_INDEX = "Use index information";
+
+    /**
+     *
+     */
     public final static String[] AVAILABLE_ORIGIN_HANDLING = {ORIGIN_HANDLING_NONE, ORIGIN_HANDLING_PROCESSOR,
             ORIGIN_HANDLING_INDEX};
+
+    /**
+     *
+     */
     public final static String DEFAULT_ORIGIN_HANDLING = ORIGIN_HANDLING_NONE;
 
     /** Origin of duplicate URLs **/
     public final static String ATTR_ORIGIN = "origin";
+
+    /**
+     *
+     */
     public final static String DEFAULT_ORIGIN = "";
 
     /** Should the writer processor chain be skipped? **/
     public final static String ATTR_SKIP_WRITE = "skip-writing";
+
+    /**
+     *
+     */
     public final static Boolean DEFAULT_SKIP_WRITE = new Boolean(true);
 
     /** Should we use sparse queries (uses less memory at a cost to performance? **/
     public final static String ATTR_USE_SPARSE_RANGE_FILTER = "use-sparse-range-filter";
+
+    /**
+     *
+     */
     public final static Boolean DEFAULT_USE_SPARSE_RANGE_FILTER = new Boolean(false);
 
+    /**
+     *
+     * @param name
+     */
     public DeDuplicator(String name) {
         super(name, "Aborts the processing of URIs (skips to post processing "
                 + "chain) if a duplicate is found in the specified index. "
@@ -278,6 +428,11 @@ public class DeDuplicator extends Processor implements AdaptiveRevisitAttributeC
      * 
      * @see org.archive.crawler.framework.Processor#initialTasks()
      */
+
+    /**
+     *
+     */
+    
     @Override
     protected void initialTasks() {
         // Read settings and set appropriate class variables.
@@ -372,6 +527,11 @@ public class DeDuplicator extends Processor implements AdaptiveRevisitAttributeC
         }
     }
 
+    /**
+     *
+     * @param curi
+     * @throws InterruptedException
+     */
     protected void innerProcess(CrawlURI curi) throws InterruptedException {
         if (curi.isSuccess() == false) {
             // Early return. No point in doing comparison on failed downloads.
@@ -651,6 +811,10 @@ public class DeDuplicator extends Processor implements AdaptiveRevisitAttributeC
         return duplicate;
     }
 
+    /**
+     *
+     * @return
+     */
     public String report() {
         StringBuffer ret = new StringBuffer();
         ret.append("Processor: is.hi.bok.digest.DeDuplicator\n");
@@ -741,6 +905,12 @@ public class DeDuplicator extends Processor implements AdaptiveRevisitAttributeC
         return ret.toString();
     }
 
+    /**
+     *
+     * @param portion
+     * @param total
+     * @return
+     */
     protected static String getPercentage(double portion, double total) {
         double value = portion / total;
         value = value * 100;
@@ -762,6 +932,12 @@ public class DeDuplicator extends Processor implements AdaptiveRevisitAttributeC
         return null;
     }
 
+    /**
+     *
+     * @param curi
+     * @param currHostStats
+     * @param isDuplicate
+     */
     protected void doAnalysis(CrawlURI curi, Statistics currHostStats, boolean isDuplicate) {
         try {
             Query query = queryField(DigestIndexer.FIELD_URL, curi.toString());
@@ -797,6 +973,13 @@ public class DeDuplicator extends Processor implements AdaptiveRevisitAttributeC
         }
     }
 
+    /**
+     *
+     * @param curi
+     * @param urlHit
+     * @param currHostStats
+     * @param isDuplicate
+     */
     protected void doTimestampAnalysis(CrawlURI curi, Document urlHit, Statistics currHostStats, boolean isDuplicate) {
 
         HttpMethod method = (HttpMethod) curi.getObject(CoreAttributeConstants.A_HTTP_TRANSACTION);
@@ -872,6 +1055,7 @@ public class DeDuplicator extends Processor implements AdaptiveRevisitAttributeC
      *
      * @param fieldName name of the field to look in.
      * @param value The value to query for
+     * @return 
      * @returns A Query for the given value in the given field.
      */
     protected Query queryField(String fieldName, String value) {
@@ -887,6 +1071,9 @@ public class DeDuplicator extends Processor implements AdaptiveRevisitAttributeC
         return query;
     }
 
+    /**
+     *
+     */
     @Override
     protected void finalTasks() {
     }

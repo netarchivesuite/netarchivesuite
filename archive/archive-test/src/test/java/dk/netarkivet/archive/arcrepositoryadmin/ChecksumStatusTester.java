@@ -29,8 +29,15 @@ import org.junit.Test;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
+/**
+ *
+ * @author tra
+ */
 public class ChecksumStatusTester {
 
+    /**
+     *
+     */
     @Test(expected = ArgumentNotValid.class)
     public void testFromOrdinal() {
         assertEquals(ChecksumStatus.UNKNOWN, ChecksumStatus.fromOrdinal(0));

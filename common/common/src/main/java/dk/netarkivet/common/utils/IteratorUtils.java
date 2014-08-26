@@ -36,6 +36,7 @@ public class IteratorUtils {
     /**
      * Turns an iterator into a list.
      * 
+     * @param <T>
      * @param i an iterator
      * @return a List
      */

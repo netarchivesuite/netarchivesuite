@@ -155,6 +155,7 @@ public abstract class MetadataFileWriter {
      * @param hostIP resource ip-address
      * @param fetchBeginTimeStamp record datetime
      * @param payload A byte array containing the payload
+     * @throws java.io.IOException
      * @see org.archive.io.arc.ARCWriter#write(String uri, String contentType, String hostIP, long fetchBeginTimeStamp,
      *      long recordLength, InputStream in)
      */
@@ -168,6 +169,7 @@ public abstract class MetadataFileWriter {
      * @param parentDir directory containing the files to append to metadata
      * @param filter filter describing which files to accept and which to ignore
      * @param mimetype The content-type to write along with the files in the metadata output
+     * @param files
      */
     public void insertFiles(File parentDir, FilenameFilter filter, String mimetype, IngestableFiles files) {
         // For each metadata source file in the parentDir that matches the

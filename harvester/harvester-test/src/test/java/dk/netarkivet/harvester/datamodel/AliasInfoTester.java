@@ -50,6 +50,11 @@ public class AliasInfoTester {
      * Test method for 'dk.netarkivet.datamodel.AliasInfo.AliasInfo(String, String, Date)' Checks, that ArgumentNotValid
      * exception is thrown when either of the given Domain, the aliasOf, the lastChange attributes is null or empty.
      */
+
+    /**
+     *
+     */
+    
     @Test
     public void testAliasInfo() {
 
@@ -114,6 +119,11 @@ public class AliasInfoTester {
     /*
      * Test get and set-methods.
      */
+
+    /**
+     *
+     */
+    
     @Test
     public void testSetAndGetters() {
         AliasInfo ai = new AliasInfo(aliasDomain, afatherDomain, realDate);
@@ -207,6 +217,9 @@ public class AliasInfoTester {
                 "aliasdomain2.dk is an alias for fatherdomain2.dk", new String(meta.getData()));
     }
 
+    /**
+     *
+     */
     @Test
     public void testGetExpirationDate() {
         Date now = new Date();

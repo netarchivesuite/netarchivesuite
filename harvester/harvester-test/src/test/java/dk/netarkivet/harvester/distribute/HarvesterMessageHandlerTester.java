@@ -39,10 +39,18 @@ import dk.netarkivet.harvester.harvesting.distribute.CrawlStatusMessage;
 import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
 import dk.netarkivet.harvester.indexserver.distribute.IndexRequestMessage;
 
+/**
+ *
+ * @author tra
+ */
 @SuppressWarnings("unused")
 public class HarvesterMessageHandlerTester {
     private HarvesterMessageHandler harvesterMessageHandlerUT = new TestMessageHandler();
 
+    /**
+     *
+     * @throws JMSException
+     */
     @Test
     public final void testOnMessage() throws JMSException {
         ObjectMessage jmsMessage = mock(ObjectMessage.class);
@@ -55,6 +63,11 @@ public class HarvesterMessageHandlerTester {
     /*
      * Class under test for void visit(CrawlStatusMessage)
      */
+
+    /**
+     *
+     */
+    
     @Test
     public final void testVisitCrawlStatusMessage() {
         try {
@@ -67,6 +80,11 @@ public class HarvesterMessageHandlerTester {
     /*
      * Class under test for void visit(DoOneCrawlMessage)
      */
+
+    /**
+     *
+     */
+    
     @Test
     public final void testVisitDoOneCrawlMessage() {
         try {
@@ -79,6 +97,11 @@ public class HarvesterMessageHandlerTester {
     /*
      * Class under test for void visit(IndexRequestMessage)
      */
+
+    /**
+     *
+     */
+    
     @Test
     public final void testVisitIndexRequestMessage() {
         try {

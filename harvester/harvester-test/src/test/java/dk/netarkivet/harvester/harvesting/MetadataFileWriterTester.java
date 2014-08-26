@@ -45,11 +45,18 @@ import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriterWarc;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
+/**
+ *
+ * @author tra
+ */
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class MetadataFileWriterTester {
     ReloadSettings rs = new ReloadSettings();
     File logsDir;
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         rs.setUp();
@@ -58,12 +65,18 @@ public class MetadataFileWriterTester {
         logsDir = new File(TestInfo.WORKING_DIR, "logs");
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         rs.tearDown();
     }
 
+    /**
+     *
+     */
     @Test
     public void testMetadataFileWriterArc() {
         File metafile = new File("metadata.arc");
@@ -93,6 +106,9 @@ public class MetadataFileWriterTester {
         }
     }
 
+    /**
+     *
+     */
     @Test
     public void testMetadataFileWriterWarc() {
         File metafile = new File("metadata.warc");

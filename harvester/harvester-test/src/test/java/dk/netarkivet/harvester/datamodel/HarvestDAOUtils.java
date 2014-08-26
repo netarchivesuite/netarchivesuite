@@ -30,6 +30,9 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDBDAO;
  */
 public class HarvestDAOUtils {
 
+    /**
+     *
+     */
     public static void resetDAOs() {
         ExtendedFieldDBDAO.reset();
         DomainDAOTester.resetDomainDAO();

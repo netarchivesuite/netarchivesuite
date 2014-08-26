@@ -54,10 +54,17 @@ public class HeritrixControllerFactoryTester {
     private File dummyLuceneIndex;
     private String defaultController;
 
+    /**
+     *
+     */
     public HeritrixControllerFactoryTester() {
         mtf = new MoveTestFiles(TestInfo.CRAWLDIR_ORIGINALS_DIR, TestInfo.WORKING_DIR);
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     @Before
     public void setUp() throws IOException {
         mtf.setUp();
@@ -68,6 +75,9 @@ public class HeritrixControllerFactoryTester {
         defaultController = Settings.get(HarvesterSettings.HERITRIX_CONTROLLER_CLASS);
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         mtf.tearDown();
@@ -121,73 +131,129 @@ public class HeritrixControllerFactoryTester {
         }
     }
 
+    /**
+     *
+     */
     public static class DummyHeritrixController implements HeritrixController {
 
+        /**
+         *
+         * @param dummyArg
+         */
         public DummyHeritrixController(String dummyArg) {
             System.out.println(DummyHeritrixController.class);
             // Just a dummy constructor for testing
         }
 
+        /**
+         *
+         */
         public void initialize() {
             // TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
+        /**
+         *
+         * @throws IOFailure
+         */
         public void requestCrawlStart() throws IOFailure {
             // TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
+        /**
+         *
+         */
         public void beginCrawlStop() {
             // TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
+        /**
+         *
+         * @param reason
+         */
         public void requestCrawlStop(String reason) {
             // TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
+        /**
+         *
+         * @return
+         */
         public boolean atFinish() {
             // TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
+        /**
+         *
+         * @return
+         */
         public boolean crawlIsEnded() {
             // TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
+        /**
+         *
+         * @return
+         */
         public int getActiveToeCount() {
             // TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
+        /**
+         *
+         * @return
+         */
         public long getQueuedUriCount() {
             // TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
+        /**
+         *
+         * @return
+         */
         public int getCurrentProcessedKBPerSec() {
             // TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
+        /**
+         *
+         * @return
+         */
         public String getProgressStats() {
             // TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
+        /**
+         *
+         * @return
+         */
         public boolean isPaused() {
             // TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
+        /**
+         *
+         */
         public void cleanup() {
             // TODO: implement method
             throw new RuntimeException("Not implemented");
         }
 
+        /**
+         *
+         * @return
+         */
         public String getHarvestInformation() {
             // TODO: implement method
             throw new RuntimeException("Not implemented");

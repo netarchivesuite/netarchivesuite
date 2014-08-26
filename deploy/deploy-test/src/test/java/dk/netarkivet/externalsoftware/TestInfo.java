@@ -65,7 +65,15 @@ public class TestInfo {
     static final File HERITRIX_ARCS_DIR = new File(HERITRIX_TEMP_DIR, "arcs");
     static final String SEARCH_FOR_THIS_URL = "http://netarkivet.dk/robots.txt";
     static final int MAX_OBJECTS = 10;
+
+    /**
+     *
+     */
     public static final long JOBID = 42;
+
+    /**
+     *
+     */
     public static final long HARVESTID = 23;
 
     static final File EMPTY_CRAWLLOG_FILE = new File(ORIGINALS_DIR, "empty_crawl.log");

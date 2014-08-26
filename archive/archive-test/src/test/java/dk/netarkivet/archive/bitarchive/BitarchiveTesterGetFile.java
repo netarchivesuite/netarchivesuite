@@ -34,6 +34,10 @@ import org.junit.Test;
 
 import dk.netarkivet.testutils.LogbackRecorder;
 
+/**
+ *
+ * @author tra
+ */
 public class BitarchiveTesterGetFile extends BitarchiveTestCase {
     private static final File ORIGINALS_DIR = new File(new File(TestInfo.DATA_DIR, "getFile"), "originals");
 
@@ -41,16 +45,28 @@ public class BitarchiveTesterGetFile extends BitarchiveTestCase {
         return ORIGINALS_DIR;
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         super.setUp();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         super.tearDown();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testGetFile_Failure() throws Exception {
         LogbackRecorder lr = LogbackRecorder.startRecorder();
@@ -61,6 +77,10 @@ public class BitarchiveTesterGetFile extends BitarchiveTestCase {
         lr.stopRecorder();
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     @Test
     public void testGetFile_Success() throws IOException {
         LogbackRecorder lr = LogbackRecorder.startRecorder();

@@ -48,13 +48,24 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue;
  */
 public abstract class HarvestDefinition extends ExtendableEntity implements Named {
 
+    /**
+     *
+     */
     protected Long oid;
+
+    /**
+     *
+     */
     protected String harvestDefName;
     /** The intended audience for the harvest. */
     protected String audience;
 
     /** The time this harvest definition was first written. */
     protected Date submissionDate;
+
+    /**
+     *
+     */
     protected String comments;
 
     /** Edition is used by the DAO to keep track of changes. */
@@ -87,6 +98,7 @@ public abstract class HarvestDefinition extends ExtendableEntity implements Name
      * @param schedule the harvest definition schedule
      * @param harvestDefName the name of the harvest definition
      * @param comments comments
+     * @param audience
      * @return the newly created PartialHarvest
      */
     public static PartialHarvest createPartialHarvest(List<DomainConfiguration> domainConfigurations,
@@ -377,10 +389,18 @@ public abstract class HarvestDefinition extends ExtendableEntity implements Name
         this.audience = audience;
     }
 
+    /**
+     *
+     * @return
+     */
     public Long getChannelId() {
         return channelId;
     }
 
+    /**
+     *
+     * @param channelId
+     */
     protected void setChannelId(Long channelId) {
         this.channelId = channelId;
     }

@@ -94,6 +94,9 @@ public class ArcRepositoryTesterGet {
 
     private static final File ALOG_DIR = new File(WORKING_DIR, "log/admindata");
 
+    /**
+     *
+     */
     public final File TESTLOGPROP = new File("tests/dk/netarkivet/testlog.prop");
 
     /**
@@ -184,6 +187,7 @@ public class ArcRepositoryTesterGet {
     /**
      * this tests get get()-method for an existing file - getting get File-name out of the BitarchiveRecord. FIXME: this
      * test currently make the unittestersuite time out on the HUDSON server.
+     * @throws java.io.IOException
      */
     @Test
     public void failingTArcrepositoryGetFile() throws IOException {
@@ -202,6 +206,7 @@ public class ArcRepositoryTesterGet {
     /**
      * this tests get get()-method for an existing file - getting get File-name out of the BitarchiveRecord. FIXME: this
      * test currently make the unittestersuite time out on the HUDSON server.
+     * @throws java.io.IOException
      */
     @Test
     public void failingTestRemoveAndGetFile() throws IOException {
@@ -271,18 +276,31 @@ public class ArcRepositoryTesterGet {
         }
     }
 
+    /**
+     *
+     */
     public static class DummyGetFileMessageReplyServer implements MessageListener {
 
         JMSConnection conn = JMSConnectionFactory.getInstance();
 
+        /**
+         *
+         */
         public DummyGetFileMessageReplyServer() {
             conn.setListener(Channels.getTheRepos(), this);
         }
 
+        /**
+         *
+         */
         public void close() {
             conn.removeListener(Channels.getTheRepos(), this);
         }
 
+        /**
+         *
+         * @param msg
+         */
         public void onMessage(Message msg) {
             GetFileMessage netMsg = (GetFileMessage) JMSConnection.unpack(msg);
             netMsg.setFile(new File(new File(BITARCHIVE_DIR, "filedir"), (String) GETTABLE_FILES.get(1)));
@@ -290,18 +308,31 @@ public class ArcRepositoryTesterGet {
         }
     }
 
+    /**
+     *
+     */
     public static class DummyRemoveAndGetFileMessageReplyServer implements MessageListener {
 
         JMSConnection conn = JMSConnectionFactory.getInstance();
 
+        /**
+         *
+         */
         public DummyRemoveAndGetFileMessageReplyServer() {
             conn.setListener(Channels.getTheRepos(), this);
         }
 
+        /**
+         *
+         */
         public void close() {
             conn.removeListener(Channels.getTheRepos(), this);
         }
 
+        /**
+         *
+         * @param msg
+         */
         public void onMessage(Message msg) {
             RemoveAndGetFileMessage netMsg = (RemoveAndGetFileMessage) JMSConnection.unpack(msg);
             netMsg.setFile(new File(new File(BITARCHIVE_DIR, "filedir"), GETTABLE_FILES.get(1)));

@@ -35,12 +35,19 @@ import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.testutils.preconfigured.TestConfigurationIF;
 
+/**
+ *
+ * @author tra
+ */
 public class MockupArcRepositoryClient implements TestConfigurationIF, MessageListener {
     /** Fail on all attempts to store these files */
     private List<String> failOnFiles;
     private int msgCount;
     private List<StoreMessage> storeMsgs;
 
+    /**
+     *
+     */
     public void setUp() {
         failOnFiles = new ArrayList<String>();
         msgCount = 0;
@@ -48,15 +55,26 @@ public class MockupArcRepositoryClient implements TestConfigurationIF, MessageLi
         JMSConnectionFactory.getInstance().setListener(Channels.getTheRepos(), this);
     }
 
+    /**
+     *
+     */
     public void tearDown() {
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         JMSConnectionFactory.getInstance().removeListener(Channels.getTheRepos(), this);
     }
 
+    /**
+     *
+     * @param file
+     */
     public void failOnFile(String file) {
         failOnFiles.add(file);
     }
 
+    /**
+     *
+     * @param message
+     */
     public void onMessage(Message message) {
         msgCount++;
         StoreMessage sm = (StoreMessage) JMSConnection.unpack(message);
@@ -67,10 +85,18 @@ public class MockupArcRepositoryClient implements TestConfigurationIF, MessageLi
         JMSConnectionFactory.getInstance().resend(sm, sm.getReplyTo());
     }
 
+    /**
+     *
+     * @return
+     */
     public int getMsgCount() {
         return msgCount;
     }
 
+    /**
+     *
+     * @return
+     */
     public List<StoreMessage> getStoreMsgs() {
         return storeMsgs;
     }

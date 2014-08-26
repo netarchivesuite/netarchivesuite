@@ -49,6 +49,10 @@ public abstract class HarvesterWebinterfaceTestCase extends WebinterfaceTestCase
     static final File HARVEST_DEFINITION_BASEDIR = new File(TestInfo.WORKING_DIR, "harvestdefinitionbasedir");
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -63,6 +67,10 @@ public abstract class HarvesterWebinterfaceTestCase extends WebinterfaceTestCase
         DBSpecifics.getInstance().updateTables();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         DatabaseTestUtils.dropHDDB();

@@ -130,6 +130,7 @@ public class HarvesterChannels {
      * Returns the queue which is used by the scheduler to send doOneCrawl to Harvest Controllers listening on the given
      * harvest channel.
      *
+     * @param harvestChannel
      * @return That channel (queue)
      */
     public static ChannelID getHarvestJobChannelId(HarvestChannel harvestChannel) {
@@ -142,6 +143,8 @@ public class HarvesterChannels {
      * Returns the queue which is used by the scheduler to send doOneCrawl to Harvest Controllers listening on the given
      * harvest channel.
      *
+     * @param harvestChannelName
+     * @param isSnapshot
      * @return That channel (queue)
      */
     public static ChannelID getHarvestJobChannelId(String harvestChannelName, boolean isSnapshot) {

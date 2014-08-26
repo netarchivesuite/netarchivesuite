@@ -47,6 +47,10 @@ public class WaybackCDXExtractionArcAndWarcBatchJobTester {
     private BatchLocalFiles blaf;
     private BatchLocalFiles blafWarc;
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         File file = new File("tests/dk/netarkivet/wayback/data/originals/arcfile_withredirects.arc");
@@ -57,6 +61,10 @@ public class WaybackCDXExtractionArcAndWarcBatchJobTester {
         blafWarc = new BatchLocalFiles(new File[] {warcfile});
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     @Test
     public void testARCProcess() throws IOException {
         LogbackRecorder lr = LogbackRecorder.startRecorder();
@@ -78,7 +86,7 @@ public class WaybackCDXExtractionArcAndWarcBatchJobTester {
      *
      * @param msg An explanatory message
      * @param src A string to search through
-     * @param str A string to search for
+     * @throws java.io.IOException
      */
     /*
      * private void assertNotStringContains(String msg, String src, String str) { int index = src.indexOf(str); if

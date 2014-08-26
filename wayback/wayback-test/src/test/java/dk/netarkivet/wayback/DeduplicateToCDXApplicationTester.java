@@ -50,6 +50,9 @@ public class DeduplicateToCDXApplicationTester {
     PrintStream orig_std_err;
     OutputStream new_std_err;
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
@@ -62,6 +65,9 @@ public class DeduplicateToCDXApplicationTester {
         System.setOut(new PrintStream(new_std_out));
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
@@ -69,6 +75,10 @@ public class DeduplicateToCDXApplicationTester {
         System.setOut(orig_std_err);
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     @Test
     public void testGenerateCDX() throws IOException {
         File file1 = new File(TestInfo.WORKING_DIR, "dedup_crawl_log.txt");

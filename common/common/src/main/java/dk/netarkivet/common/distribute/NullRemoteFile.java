@@ -37,6 +37,11 @@ import dk.netarkivet.common.exceptions.NotImplementedException;
 public class NullRemoteFile implements RemoteFile {
 
     /**
+     * @param f
+     * @param useChecksums
+     * @param fileDeletable
+     * @param multipleDownloads
+     * @return 
      * @see RemoteFileFactory#getInstance(File, boolean, boolean, boolean)
      */
     public static RemoteFile getInstance(File f, Boolean useChecksums, Boolean fileDeletable, Boolean multipleDownloads) {

@@ -124,6 +124,13 @@ public final class HarvestDBConnection {
         updateTable(c, table, newVersion, updates);
     }
 
+    /**
+     *
+     * @param c
+     * @param table
+     * @param newVersion
+     * @param updates
+     */
     public static void updateTable(Connection c, final String table, final int newVersion, final String... updates) {
         log.info("Updating table '{}' to version {}", table, newVersion);
 

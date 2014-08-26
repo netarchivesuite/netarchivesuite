@@ -53,7 +53,15 @@ public class TestInfo {
     static final File CDX_FILE3 = new File("tests/dk/netarkivet/common/utils/cdx/data/input/Reader3.cdx");
     static final File CDX_FILE4 = new File("tests/dk/netarkivet/common/utils/cdx/data/input/Reader4.cdx");
     static final File MISSING_FILE = new File("tests/dk/netarkivet/common/utils/cdx/data/input/Missing.cdx");
+
+    /**
+     *
+     */
     public static final File TEMP_FILE = new File(CDX_DIR, "tmp");
+
+    /**
+     *
+     */
     public static final File CORRECT_CDX_FILE = new File(ARC_DIR, "fyensdk.cdx-correct");
 
     private TestInfo() {

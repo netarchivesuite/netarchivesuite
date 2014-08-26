@@ -40,10 +40,18 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
+/**
+ *
+ * @author tra
+ */
 public class FrontierReportFilterTest {
 
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         rs.setUp();
@@ -51,6 +59,10 @@ public class FrontierReportFilterTest {
         Settings.set(CommonSettings.CACHE_DIR, TestInfo.WORKDIR.getAbsolutePath());
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
 
@@ -141,6 +153,10 @@ public class FrontierReportFilterTest {
         }
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     public final void testRetiredQueuesFilter() throws IOException {
         File testSample = new File(TestInfo.BASEDIR, "frontierReport_all_sample_small.txt");
 
@@ -159,6 +175,10 @@ public class FrontierReportFilterTest {
         assertTrue(result.isEmpty());
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     public final void testExhaustedQueuesFilter() throws IOException {
         File testSample = new File(TestInfo.BASEDIR, "frontierReport_all_sample_small.txt");
 
@@ -192,6 +212,7 @@ public class FrontierReportFilterTest {
     /**
      * 
      * Test CVS export. FIXME is disabled because it fails (by changing the method prefix from test to TEST);
+     * @throws java.io.IOException
      */
     public final void TESTCsvExport() throws IOException {
 
@@ -217,6 +238,10 @@ public class FrontierReportFilterTest {
 
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     public final void testTopTotalEnqueuesFilter3() throws IOException {
 
         File testSample = new File(TestInfo.BASEDIR, "atlas201.fr.csv");

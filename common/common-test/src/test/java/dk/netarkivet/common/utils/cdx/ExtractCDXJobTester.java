@@ -50,6 +50,10 @@ import org.junit.Test;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 
+/**
+ *
+ * @author tra
+ */
 @SuppressWarnings({"unused", "serial"})
 public class ExtractCDXJobTester {
 
@@ -63,6 +67,7 @@ public class ExtractCDXJobTester {
     private int processed;
 
     /**
+     * @throws java.lang.Exception
      * @see TestCase#setUp()
      */
     @Before
@@ -73,6 +78,9 @@ public class ExtractCDXJobTester {
         FileUtils.createDir(TestInfo.CDX_DIR);
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         FileUtils.removeRecursively(TestInfo.CDX_DIR);
@@ -90,6 +98,7 @@ public class ExtractCDXJobTester {
 
     /**
      * Verify that the job runs without problems and visits all relevant records.
+     * @throws java.io.IOException
      */
     @Test
     public void testRun() throws IOException {
@@ -111,6 +120,7 @@ public class ExtractCDXJobTester {
     /**
      * Test the output of CDX data. It is not a requirement that this operation can be performed several times in a row;
      * the job is allowed to let go of the CDX data after successfully writing it out.
+     * @throws java.io.IOException
      */
     @Test
     public void testDumpCDX() throws IOException {
@@ -138,6 +148,12 @@ public class ExtractCDXJobTester {
      * The CDX content itself is not tested. The requirement on that is that it is compatible with existing tools. There
      * is an external test for that.
      */
+
+    /**
+     *
+     * @throws IOException
+     */
+    
     @Test
     public void testMain() throws IOException {
         File[] arcFiles = new File[] {TestInfo.ARC_FILE1};
@@ -151,6 +167,8 @@ public class ExtractCDXJobTester {
 
     /**
      * Test whether the class is really Serializable.
+     * @throws java.io.IOException
+     * @throws java.lang.ClassNotFoundException
      */
     @Test
     public void testSerializability() throws IOException, ClassNotFoundException {

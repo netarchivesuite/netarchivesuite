@@ -36,14 +36,24 @@ import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 
+/**
+ *
+ * @author tra
+ */
 public class IndexServerTester {
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         ChannelsTesterHelper.resetChannels();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         JMSConnectionMockupMQ.clearTestQueues();

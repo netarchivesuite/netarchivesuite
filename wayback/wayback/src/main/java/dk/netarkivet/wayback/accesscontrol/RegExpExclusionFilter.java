@@ -29,6 +29,10 @@ import org.archive.wayback.core.CaptureSearchResult;
 import org.archive.wayback.resourceindex.filters.ExclusionFilter;
 import org.archive.wayback.util.ObjectFilter;
 
+/**
+ *
+ * @author tra
+ */
 public class RegExpExclusionFilter extends ExclusionFilter {
 
     /**
@@ -46,6 +50,11 @@ public class RegExpExclusionFilter extends ExclusionFilter {
         this.regexps = regexps;
     }
 
+    /**
+     *
+     * @param captureSearchResult
+     * @return
+     */
     @Override
     public int filterObject(CaptureSearchResult captureSearchResult) {
         // Note that the behaviour of the two calls to methods of the class

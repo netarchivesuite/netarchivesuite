@@ -39,9 +39,22 @@ import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
  */
 @SuppressWarnings({"unused"})
 public class ARCReaderTester {
+
+    /**
+     *
+     */
     public static final String ARCHIVE_DIR = "tests/dk/netarkivet/common/utils/arc/data/input/";
+
+    /**
+     *
+     */
     public static final String testFileName = "working.arc";
 
+    /**
+     *
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
     @Test
     public void testARCReaderClose() throws FileNotFoundException, IOException {
         final File testfile = new File(ARCHIVE_DIR + testFileName);

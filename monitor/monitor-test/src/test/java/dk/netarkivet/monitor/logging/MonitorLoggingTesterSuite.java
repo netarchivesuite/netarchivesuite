@@ -54,6 +54,10 @@ public class MonitorLoggingTesterSuite {
         suite.addTestSuite(CachingLogHandlerTester.class);
     }
 
+    /**
+     *
+     * @param args
+     */
     public static void main(String args[]) {
         String args2[] = {"-noloading", MonitorLoggingTesterSuite.class.getName()};
         TestRunner.main(args2);

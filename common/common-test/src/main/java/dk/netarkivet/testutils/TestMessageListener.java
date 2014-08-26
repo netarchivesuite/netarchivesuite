@@ -39,11 +39,22 @@ import dk.netarkivet.common.distribute.NetarkivetMessage;
  */
 
 public class TestMessageListener implements MessageListener {
+
+    /**
+     *
+     */
     protected List<NetarkivetMessage> received = new ArrayList<NetarkivetMessage>();
 
+    /**
+     *
+     */
     public TestMessageListener() {
     }
 
+    /**
+     *
+     * @param msg
+     */
     public void onMessage(Message msg) {
         synchronized (this) {
             NetarkivetMessage content = JMSConnection.unpack(msg);

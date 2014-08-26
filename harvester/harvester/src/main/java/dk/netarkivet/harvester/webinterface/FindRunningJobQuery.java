@@ -45,6 +45,10 @@ public class FindRunningJobQuery {
      * Defines the UI fields and their default values.
      */
     public static enum UI_FIELD {
+
+        /**
+         *
+         */
         DOMAIN_NAME("");
 
         private String defaultValue;
@@ -68,6 +72,10 @@ public class FindRunningJobQuery {
             return value;
         }
 
+        /**
+         *
+         * @return
+         */
         public Object getDefaultValue() {
             return defaultValue;
         }

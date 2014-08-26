@@ -57,16 +57,28 @@ import dk.netarkivet.testutils.TestFileUtils;
 // @SuppressWarnings("resource")
 public class ZipUtilsTester {
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         TestFileUtils.copyDirectoryNonCVS(TestInfo.FILEUTILS_DATADIR, TestInfo.TEMPDIR);
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         FileUtils.removeRecursively(TestInfo.TEMPDIR);
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testZipDirectory() throws Exception {
         Set<String> files = getFileListNonDirectory();
@@ -119,6 +131,10 @@ public class ZipUtilsTester {
         assertFalse("Zipfile should have been overwritten", beforeSize == zipFile.length());
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     @Test
     public void testUnzip() throws IOException {
         File unzipDir = new File(TestInfo.TEMPDIR, "unzip");
@@ -204,6 +220,10 @@ public class ZipUtilsTester {
         return files;
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testGzipFiles() throws Exception {
         Method gzipFiles = ReflectUtils.getPrivateMethod(ZipUtils.class, "gzipFiles", File.class, File.class);

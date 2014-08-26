@@ -29,15 +29,25 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ *
+ * @author tra
+ */
 @SuppressWarnings({"unchecked"})
 public class FileNameHarvesterTester extends IndexerTestCase {
 
+    /**
+     *
+     */
     @Before
     @Override
     public void setUp() {
         super.setUp();
     }
 
+    /**
+     *
+     */
     @Test
     public void testHarvest() {
         FileNameHarvester.harvestAllFilenames();

@@ -31,8 +31,16 @@ import java.io.IOException;
 
 import org.junit.Test;
 
+/**
+ *
+ * @author tra
+ */
 public class FrontierReportLineTest {
 
+    /**
+     *
+     * @throws IOException
+     */
     @Test
     public final void testParseReports() throws IOException {
 
@@ -55,6 +63,9 @@ public class FrontierReportLineTest {
 
     }
 
+    /**
+     *
+     */
     @Test
     public final void testParseDoubleValues() {
 

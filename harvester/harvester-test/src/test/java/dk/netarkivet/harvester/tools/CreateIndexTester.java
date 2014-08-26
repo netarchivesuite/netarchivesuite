@@ -48,6 +48,10 @@ import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
+/**
+ *
+ * @author tra
+ */
 public class CreateIndexTester {
     private PreventSystemExit pse = new PreventSystemExit();
     private PreserveStdStreams pss = new PreserveStdStreams(true);
@@ -56,6 +60,9 @@ public class CreateIndexTester {
     TestMessageListener listener;
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         rs.setUp();
@@ -69,6 +76,9 @@ public class CreateIndexTester {
         pse.setUp();
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         pse.tearDown();
@@ -101,6 +111,9 @@ public class CreateIndexTester {
         CreateIndex.main(args);
     }
 
+    /**
+     *
+     */
     @Test
     public void testBadArguments1() {
         String[] args = new String[] {"-asdf"};
@@ -121,6 +134,9 @@ public class CreateIndexTester {
                 errMsg.contains(expectedMsg));
     }
 
+    /**
+     *
+     */
     @Test
     public void testBadArguments2() {
         String[] args = new String[] {"-tCDX"};
@@ -143,6 +159,9 @@ public class CreateIndexTester {
                 errMsg.contains(expectedMsg));
     }
 
+    /**
+     *
+     */
     @Test
     public void testBadArguments3() {
         String[] args = new String[] {"-l1"};
@@ -165,6 +184,9 @@ public class CreateIndexTester {
                 errMsg.contains(expectedMsg));
     }
 
+    /**
+     *
+     */
     @Test
     public void testBadArguments4() {
         String[] args = new String[] {"-tMYINDEX", "-l1"};

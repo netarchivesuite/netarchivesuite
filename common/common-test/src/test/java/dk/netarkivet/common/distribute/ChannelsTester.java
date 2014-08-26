@@ -45,11 +45,17 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 public class ChannelsTester {
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         rs.setUp();
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         ChannelsTesterHelper.resetChannels();

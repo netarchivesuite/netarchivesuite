@@ -35,35 +35,53 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  */
 public class ARCFilenameCDXRecordFilterTester {
 
+    /**
+     *
+     */
     @Test
     public void testConstructor() {
         new ARCFilenameCDXRecordFilter("NETARKIVET_00001.*", "filter1");
     }
 
+    /**
+     *
+     */
     @Test
     public void testGetFiltername() {
         SimpleCDXRecordFilter cdxfil = new ARCFilenameCDXRecordFilter("NETARKIVET_00001.*", "filter1");
         assertEquals("Filtername are not the same !", cdxfil.getFilterName(), "filter1");
     }
 
+    /**
+     *
+     */
     @Test(expected = ArgumentNotValid.class)
     public void testNullFiltername() {
         new ARCFilenameCDXRecordFilter("NETARKIVET_00001.*", null);
         fail("ArgumentNotValid should have been thrown !");
     }
 
+    /**
+     *
+     */
     @Test(expected = ArgumentNotValid.class)
     public void testEmptyFiltername() {
         new ARCFilenameCDXRecordFilter("NETARKIVET_00001.*", "");
         fail("ArgumentNotValid should have been thrown !");
     }
 
+    /**
+     *
+     */
     @Test(expected = ArgumentNotValid.class)
     public void testEmptyFilenamePattern() {
         new ARCFilenameCDXRecordFilter("", "filter1");
         fail("ArgumentNotValid should have been thrown !");
     }
 
+    /**
+     *
+     */
     @Test(expected = ArgumentNotValid.class)
     public void testNullFilenamePattern() {
         new ARCFilenameCDXRecordFilter(null, "filter1");

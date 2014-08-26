@@ -46,6 +46,10 @@ import dk.netarkivet.testutils.TestFileUtils;
  */
 
 public class SimpleXmlTester {
+
+    /**
+     *
+     */
     @Before
     public void setUp() {
         try {
@@ -59,6 +63,9 @@ public class SimpleXmlTester {
         }
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         FileUtils.removeRecursively(TestInfo.TEMPDIR);
@@ -133,6 +140,9 @@ public class SimpleXmlTester {
         }
     }
 
+    /**
+     *
+     */
     @Test
     public void testAdd() {
         SimpleXml simpleXml = new SimpleXml(TestInfo.SETTINGS_FILE);
@@ -174,6 +184,9 @@ public class SimpleXmlTester {
                 value, value2, value2);
     }
 
+    /**
+     *
+     */
     @Test
     public void testUpdate() {
         SimpleXml simpleXml = new SimpleXml(TestInfo.SETTINGS_FILE);
@@ -204,6 +217,9 @@ public class SimpleXmlTester {
         assertFalse("Should not have key any more", simpleXml.hasKey(key));
     }
 
+    /**
+     *
+     */
     @Test
     public void testHasKey() {
         SimpleXml simpleXml = new SimpleXml(TestInfo.SETTINGS_FILE);
@@ -225,6 +241,9 @@ public class SimpleXmlTester {
         }
     }
 
+    /**
+     *
+     */
     @Test
     public void testGetTree() {
         SimpleXml xml = new SimpleXml(TestInfo.TESTXML);

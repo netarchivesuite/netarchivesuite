@@ -40,6 +40,11 @@ public class FullCrawlLogIndexCache extends CrawlLogIndexCache {
         super("fullcrawllogindex", false, ".*");
     }
 
+    /**
+     *
+     * @param jobSet
+     * @param harvestId
+     */
     @Override
     public void requestIndex(Set<Long> jobSet, Long harvestId) {
         throw new NotImplementedException("This feature is not implemented for this type of cache");

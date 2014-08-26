@@ -46,6 +46,10 @@ import dk.netarkivet.harvester.datamodel.TestInfo;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.SetSystemProperty;
 
+/**
+ *
+ * @author tra
+ */
 @Ignore("binary derby database not converted to scripts yet")
 public class HarvestdatabaseUpdateApplicationTester {
     SetSystemProperty derbyLog = new SetSystemProperty("derby.stream.error.file", new File(
@@ -55,6 +59,7 @@ public class HarvestdatabaseUpdateApplicationTester {
 
     /**
      * Primary use it to create a updated **hddb.jar after database changes.
+     * @throws java.lang.Exception
      */
     @Test
     public void testUpdateFull() throws Exception {
@@ -64,6 +69,7 @@ public class HarvestdatabaseUpdateApplicationTester {
 
     /**
      * Primary use it to create a updated **hddb.jar after database changes.
+     * @throws java.lang.Exception
      */
     @Test
     public void testUpdateEmpty() throws Exception {

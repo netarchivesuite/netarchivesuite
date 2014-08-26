@@ -685,6 +685,7 @@ public class JobDBDAO extends JobDAO {
      * Get a list of small and immediately usable status information for given job status and in given job id order.
      *
      * @param query the user query
+     * @return 
      * @throws IOFailure on trouble getting data from database
      */
     @Override

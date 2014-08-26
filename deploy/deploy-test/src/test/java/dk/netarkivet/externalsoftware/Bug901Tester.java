@@ -39,24 +39,44 @@ import org.archive.io.arc.ARCWriter;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.arc.ARCUtils;
 
+/**
+ *
+ * @author tra
+ */
 @SuppressWarnings({"unused"})
 public class Bug901Tester extends TestCase {
 
     private static final int BLOCKSIZE = 32768;
     private static final long LARGE = ((long) Integer.MAX_VALUE) + 1L;
+
+    /**
+     *
+     */
     public static final String LARGE_FILE = "largeFile";
     static final File TEST_DIR = new File("tests/dk/netarkivet/externalsoftware/data/launcher");
     static final File WORKING_DIR = new File(TEST_DIR, "working");
 
+    /**
+     *
+     * @param arg0
+     */
     public Bug901Tester(String arg0) {
         super(arg0);
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     protected void setUp() throws Exception {
         WORKING_DIR.mkdirs();
         super.setUp();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     protected void tearDown() throws Exception {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         super.tearDown();

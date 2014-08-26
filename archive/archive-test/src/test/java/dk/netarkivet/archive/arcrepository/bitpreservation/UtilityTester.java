@@ -27,8 +27,15 @@ import org.junit.Test;
 
 import dk.netarkivet.testutils.ReflectUtils;
 
+/**
+ *
+ * @author tra
+ */
 public class UtilityTester {
 
+    /**
+     *
+     */
     @Test
     public void testConstants() {
         ReflectUtils.testUtilityConstructor(Constants.class);

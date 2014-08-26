@@ -78,6 +78,10 @@ public class AdminDataTester {
     private String myFile;
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     * @throws IOException
+     */
     @Before
     public void setUp() throws IOException {
         rs.setUp();
@@ -92,6 +96,9 @@ public class AdminDataTester {
         myFile = "arcfileNameForTests";
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         if (ad != null) {
@@ -101,6 +108,9 @@ public class AdminDataTester {
         rs.tearDown();
     }
 
+    /**
+     *
+     */
     @Test
     public void testSingleton() {
         ClassAsserts.assertSingleton(UpdateableAdminData.class);
@@ -471,6 +481,10 @@ public class AdminDataTester {
         lr.stopRecorder();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testMigrateOldToCurrentVersion() throws Exception {
 

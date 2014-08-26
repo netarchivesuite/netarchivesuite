@@ -58,6 +58,10 @@ public class TestInfo {
      * Number of items in CRAWL_LOG_1 that CDXOriginCrawlLogIterator should return when using 1-cache.
      */
     static final int VALID_ENTRIES_IN_CRAWL_LOG_1 = 30;
+
+    /**
+     *
+     */
     public static final int VALID_ENTRIES_IN_CRAWL_LOG_4 = 13;
 
 }

@@ -55,6 +55,9 @@ public abstract class NetarkivetMessage implements Serializable {
     // a delimiter to separate error messages
     static final String ERROR_DELIMITTER = "\n-----------------\n";
 
+    /**
+     *
+     */
     protected String replyOfId;
 
     /**

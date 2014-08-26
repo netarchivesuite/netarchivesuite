@@ -94,6 +94,10 @@ public class BitarchiveServerTester {
             WORKING.getAbsolutePath() + "p_bitarchive",};
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     * @throws IOException
+     */
     @Before
     public void setUp() throws IOException {
         rs.setUp();
@@ -108,6 +112,9 @@ public class BitarchiveServerTester {
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR, tmpdir.getAbsolutePath());
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         if (bas != null) {
@@ -277,6 +284,9 @@ public class BitarchiveServerTester {
         assertTrue("Should have received at least two messages on arcRepos q", listener.messagesReceived.size() >= 2);
     }
 
+    /**
+     *
+     */
     @Test
     @Ignore("Number of listeners on queue not 1.")
     public void testListenerNotRemovedOnErrors() {
@@ -389,6 +399,7 @@ public class BitarchiveServerTester {
 
     /**
      * Pass a batch message to BitarchiveServer and test that it replies with an appropriate BatchEndedMessage.
+     * @throws java.lang.InterruptedException
      */
     @Test
     public void testVisitBatchMessage() throws InterruptedException {
@@ -610,6 +621,10 @@ public class BitarchiveServerTester {
         lr.stopRecorder();
     }
 
+    /**
+     *
+     * @throws InterruptedException
+     */
     @Test
     @Ignore("Not NotOk")
     // FIXME: Not NotOK
@@ -720,6 +735,7 @@ public class BitarchiveServerTester {
      * FIXME: Disabled, fails on hudson an Eclipse see http://sbforge.statsbiblioteket
      * .dk/hudson/job/NetarchiveSuite-unittest/lastCompletedBuild /testReport/dk.netarkivet
      * .archive.bitarchive.distribute/BitarchiveServerTester /testBatchTerminationMessage/
+     * @throws java.lang.InterruptedException
      */
     @Test
     @Ignore("Not NotOK")
@@ -821,6 +837,12 @@ public class BitarchiveServerTester {
                 + ", but was:" + bem.getErrMsg(), bem.getErrMsg().startsWith(BatchTermination.class.getName()));
     }
 
+    /**
+     *
+     * @throws NoSuchFieldException
+     * @throws IllegalArgumentException
+     * @throws IllegalAccessException
+     */
     @Test
     public void testHeartBeatSender() throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
         BitarchiveServer bas = BitarchiveServer.getInstance();

@@ -47,6 +47,10 @@ public class ExportFrontierReportCsvQuery {
      * Defines the UI fields and their default values.
      */
     public static enum UI_FIELD {
+
+        /**
+         *
+         */
         JOB_ID("");
 
         private String defaultValue;
@@ -70,6 +74,10 @@ public class ExportFrontierReportCsvQuery {
             return value;
         }
 
+        /**
+         *
+         * @return
+         */
         public Object getDefaultValue() {
             return defaultValue;
         }
@@ -78,6 +86,10 @@ public class ExportFrontierReportCsvQuery {
 
     private final long jobId;
 
+    /**
+     *
+     * @param req
+     */
     public ExportFrontierReportCsvQuery(ServletRequest req) {
 
         String jobIdStr = UI_FIELD.JOB_ID.getValue(req);

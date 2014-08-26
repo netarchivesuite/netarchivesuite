@@ -55,6 +55,10 @@ import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
+/**
+ *
+ * @author tra
+ */
 public class ChecksumClientTester {
 
     UseTestRemoteFile rf = new UseTestRemoteFile();
@@ -63,6 +67,9 @@ public class ChecksumClientTester {
     MessageTestHandler handler;
     JMSConnectionMockupMQ con;
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         rs.setUp();
@@ -79,6 +86,9 @@ public class ChecksumClientTester {
         con.setListener(Channels.getTheCR(), handler);
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         JMSConnectionMockupMQ.clearTestQueues();
@@ -88,11 +98,17 @@ public class ChecksumClientTester {
         rs.tearDown();
     }
 
+    /**
+     *
+     */
     @Test
     public void testClient() {
         ClassAsserts.assertPrivateConstructor(ChecksumClient.class);
     }
 
+    /**
+     *
+     */
     @Test
     public void testFails() {
         ChecksumClient cc = ChecksumClient.getInstance(Channels.getTheCR());
@@ -150,6 +166,9 @@ public class ChecksumClientTester {
         }
     }
 
+    /**
+     *
+     */
     @Test
     public void testValid() {
         ChecksumClient cc = ChecksumClient.getInstance(Channels.getTheCR());
@@ -209,13 +228,39 @@ public class ChecksumClientTester {
 
     }
 
+    /**
+     *
+     */
     public class MessageTestHandler extends ArchiveMessageHandler {
+
+        /**
+         *
+         */
         public List<UploadMessage> uploadMsg = new ArrayList<UploadMessage>();
+
+        /**
+         *
+         */
         public List<GetAllFilenamesMessage> filenamesMsg = new ArrayList<GetAllFilenamesMessage>();
+
+        /**
+         *
+         */
         public List<GetAllChecksumsMessage> checksumsMsg = new ArrayList<GetAllChecksumsMessage>();
+
+        /**
+         *
+         */
         public List<GetChecksumMessage> getChecksumMsg = new ArrayList<GetChecksumMessage>();
+
+        /**
+         *
+         */
         public List<CorrectMessage> correctMsg = new ArrayList<CorrectMessage>();
 
+        /**
+         *
+         */
         public MessageTestHandler() {
             // System.out.println("MessageTestHandler initiated!");
         }
@@ -240,6 +285,10 @@ public class ChecksumClientTester {
             correctMsg.add(msg);
         }
 
+        /**
+         *
+         * @return
+         */
         synchronized public int getTotalCount() {
             return (uploadMsg.size() + filenamesMsg.size() + checksumsMsg.size() + getChecksumMsg.size());
         }

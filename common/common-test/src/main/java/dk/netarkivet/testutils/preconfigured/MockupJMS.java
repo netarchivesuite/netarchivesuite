@@ -28,9 +28,16 @@ import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.utils.Settings;
 
+/**
+ *
+ * @author tra
+ */
 public class MockupJMS implements TestConfigurationIF {
     private String originalClass;
 
+    /**
+     *
+     */
     @Override
     public void setUp() {
         originalClass = Settings.get(CommonSettings.JMS_BROKER_CLASS);
@@ -39,6 +46,9 @@ public class MockupJMS implements TestConfigurationIF {
         JMSConnectionMockupMQ.clearTestQueues();
     }
 
+    /**
+     *
+     */
     @Override
     public void tearDown() {
         JMSConnectionMockupMQ.clearTestQueues();
@@ -50,6 +60,10 @@ public class MockupJMS implements TestConfigurationIF {
         Settings.set(CommonSettings.JMS_BROKER_CLASS, originalClass);
     }
 
+    /**
+     *
+     * @return
+     */
     public JMSConnection getJMSConnection() {
         return JMSConnectionFactory.getInstance();
     }

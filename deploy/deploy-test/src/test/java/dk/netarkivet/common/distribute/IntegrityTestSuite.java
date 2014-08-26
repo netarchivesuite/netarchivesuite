@@ -76,6 +76,9 @@ public class IntegrityTestSuite {
 
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         rs.setUp();
@@ -87,6 +90,9 @@ public class IntegrityTestSuite {
         pes.setUp();
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         ChannelsTesterHelper.resetChannels();
@@ -569,16 +575,29 @@ public class IntegrityTestSuite {
         }
     }
 
+    /**
+     *
+     */
     public static final class TestMessageConsumer implements MessageListener {
 
+        /**
+         *
+         */
         public NetarkivetMessage nMsg;
 
         JMSConnection con;
 
+        /**
+         *
+         */
         public TestMessageConsumer() {
             con = JMSConnectionFactory.getInstance();
         }
 
+        /**
+         *
+         * @param msg
+         */
         public void onMessage(Message msg) {
             synchronized (this) {
                 nMsg = JMSConnection.unpack(msg);

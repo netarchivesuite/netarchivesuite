@@ -170,6 +170,7 @@ public class WeeklyFrequencyTester {
 
     /**
      * Test validity of arguments.
+     * @throws java.lang.Exception
      */
     @Test
     public void testValidityOfArguments() throws Exception {

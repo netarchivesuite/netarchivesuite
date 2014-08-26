@@ -92,6 +92,7 @@ public class ArcRepositoryTesterBatch {
     ReloadSettings rs = new ReloadSettings();
 
     /**
+     * @throws java.lang.Exception
      * @see TestCase#setUp()
      */
     @Before
@@ -120,6 +121,7 @@ public class ArcRepositoryTesterBatch {
     }
 
     /**
+     * @throws java.lang.Exception
      * @see TestCase#tearDown()
      */
     @After

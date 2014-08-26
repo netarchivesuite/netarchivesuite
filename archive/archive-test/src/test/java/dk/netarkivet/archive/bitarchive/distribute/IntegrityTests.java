@@ -73,7 +73,11 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 public class IntegrityTests {
 
     // A named logger for this class is retrieved
-    protected final Logger logger = LoggerFactory.getLogger(IntegrityTests.class);
+
+    /**
+     *
+     */
+        protected final Logger logger = LoggerFactory.getLogger(IntegrityTests.class);
 
     private static final String ARC_FILE_NAME = "Upload5.ARC";
     private static final File TEST_DIR = new File("tests/dk/netarkivet/archive/bitarchive/distribute/data/");
@@ -103,6 +107,9 @@ public class IntegrityTests {
     BitarchiveMonitorServer bam;
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         rs.setUp();
@@ -207,6 +214,8 @@ public class IntegrityTests {
     /**
      * Test that monitor can receive and aggregate data from more than one BitarchiveServer and aggregate the data and
      * upload it via FTPRemoteFile.
+     * @throws java.lang.InterruptedException
+     * @throws java.io.IOException
      */
     @Test
     @Ignore("FIXME")
@@ -462,15 +471,47 @@ public class IntegrityTests {
     }
 
     /* Receive and check messages */
-    public class MessageTestHandler extends ArchiveMessageHandler {
-        public List<UploadMessage> uploadMsg = new ArrayList<UploadMessage>();
-        public List<GetMessage> getMsg = new ArrayList<GetMessage>();
-        public List<RemoveAndGetFileMessage> removeMsg = new ArrayList<RemoveAndGetFileMessage>();
-        public List<BatchMessage> batchMsg = new ArrayList<BatchMessage>();
-        public List<BatchReplyMessage> batchReplyMsg = new ArrayList<BatchReplyMessage>();
-        public List<GetFileMessage> getfileMsg = new ArrayList<GetFileMessage>();
 
-        public MessageTestHandler() {
+    /**
+     *
+     */
+    
+    public class MessageTestHandler extends ArchiveMessageHandler {
+
+            /**
+             *
+             */
+            public List<UploadMessage> uploadMsg = new ArrayList<UploadMessage>();
+
+            /**
+             *
+             */
+            public List<GetMessage> getMsg = new ArrayList<GetMessage>();
+
+            /**
+             *
+             */
+            public List<RemoveAndGetFileMessage> removeMsg = new ArrayList<RemoveAndGetFileMessage>();
+
+            /**
+             *
+             */
+            public List<BatchMessage> batchMsg = new ArrayList<BatchMessage>();
+
+            /**
+             *
+             */
+            public List<BatchReplyMessage> batchReplyMsg = new ArrayList<BatchReplyMessage>();
+
+            /**
+             *
+             */
+            public List<GetFileMessage> getfileMsg = new ArrayList<GetFileMessage>();
+
+            /**
+             *
+             */
+            public MessageTestHandler() {
         }
 
         synchronized public void visit(UploadMessage msg) {
@@ -497,7 +538,11 @@ public class IntegrityTests {
             batchReplyMsg.add(msg);
         }
 
-        synchronized public int getTotalCount() {
+            /**
+             *
+             * @return
+             */
+            synchronized public int getTotalCount() {
             return (uploadMsg.size() + getMsg.size() + removeMsg.size() + batchMsg.size() + getfileMsg.size() + batchReplyMsg
                     .size());
         }

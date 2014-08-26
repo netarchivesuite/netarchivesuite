@@ -39,16 +39,29 @@ import dk.netarkivet.testutils.FileAsserts;
  * Unit test(s) for the CDXIndexCache class.
  */
 public class CDXIndexCacheTester extends CacheTestCase {
+
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         super.setUp();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         super.tearDown();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testCombine() throws Exception {
         // Check that items are collected, null entries ignored, and all

@@ -42,15 +42,50 @@ import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
  */
 public abstract class HarvestChannelAction {
 
+    /**
+     *
+     */
     public static enum ActionType {
-        createHarvestChannel, mapHarvestToChannel
+
+        /**
+         *
+         */
+        createHarvestChannel,
+
+        /**
+         *
+         */
+        mapHarvestToChannel
     }
 
+    /**
+     *
+     */
     public final static String ACTION = "channelAction";
+
+    /**
+     *
+     */
     public final static String CHANNEL_NAME = "channelName";
+
+    /**
+     *
+     */
     public final static String HARVEST_ID = "harvestId";
+
+    /**
+     *
+     */
     public final static String CHANNEL_ID = "channelId";
+
+    /**
+     *
+     */
     public final static String SNAPSHOT = "channelIsSnapshot";
+
+    /**
+     *
+     */
     public final static String COMMENTS = "channelComments";
 
     private static final Log log = LogFactory.getLog(HarvestChannelAction.class);

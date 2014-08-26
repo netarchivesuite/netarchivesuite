@@ -61,7 +61,7 @@ public class BitarchiveTesterGet extends BitarchiveTestCase {
     /**
      * Create a new test object.
      *
-     * @param sTestName Name of this test.
+     * @return 
      */
 
     protected File getOriginalsDir() {

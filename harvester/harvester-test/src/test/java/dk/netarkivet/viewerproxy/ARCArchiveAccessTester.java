@@ -100,6 +100,10 @@ public class ARCArchiveAccessTester {
 
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         rs.setUp();
@@ -121,6 +125,9 @@ public class ARCArchiveAccessTester {
         aaa.setIndex(TestInfo.ZIPPED_INDEX_DIR);
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         FileUtils.removeRecursively(WORKING);
@@ -143,6 +150,10 @@ public class ARCArchiveAccessTester {
         }
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testReadPage() throws Exception {
         Method readPage = ReflectUtils.getPrivateMethod(ARCArchiveAccess.class, "readPage", InputStream.class,
@@ -159,6 +170,10 @@ public class ARCArchiveAccessTester {
         assertEquals("Should get same bytes regardless of bytes read per read()", "foo", baos.toString());
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testCreateErrorResponse() throws Exception {
         TestResponse response = new TestResponse();
@@ -186,6 +201,7 @@ public class ARCArchiveAccessTester {
     /**
      * Verify that looking up an object that does not exist returns some kind of HTTP response reflecting this
      * situation. For now, we just need it to return ResponseCode.NOT_FOUND and not throw an Exception.
+     * @throws java.lang.Exception
      */
     @Test
     public void testLookupNonexistingObject() throws Exception {
@@ -321,9 +337,16 @@ public class ARCArchiveAccessTester {
         }
     }
 
+    /**
+     *
+     */
     public class TestRequest implements Request {
         private URI uri;
 
+        /**
+         *
+         * @param uri
+         */
         public TestRequest(URI uri) {
             this.uri = uri;
         }

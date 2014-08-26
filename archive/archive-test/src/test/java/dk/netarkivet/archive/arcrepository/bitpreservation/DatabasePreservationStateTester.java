@@ -46,8 +46,15 @@ import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaType;
 import dk.netarkivet.common.exceptions.IllegalState;
 
+/**
+ *
+ * @author tra
+ */
 public class DatabasePreservationStateTester {
 
+    /**
+     *
+     */
     @Test
     public void testState() {
 
@@ -128,6 +135,9 @@ public class DatabasePreservationStateTester {
 
     }
 
+    /**
+     *
+     */
     @Test
     public void testError() {
         long guid = 0L;

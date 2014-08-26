@@ -29,8 +29,15 @@ import org.junit.Test;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
+/**
+ *
+ * @author tra
+ */
 public class FileListStatusTester {
 
+    /**
+     *
+     */
     @Test(expected = ArgumentNotValid.class)
     public void testFromOrdinal() {
         assertEquals(FileListStatus.NO_FILELIST_STATUS, FileListStatus.fromOrdinal(0));

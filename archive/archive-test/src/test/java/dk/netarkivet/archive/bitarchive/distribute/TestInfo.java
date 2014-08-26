@@ -24,6 +24,10 @@ package dk.netarkivet.archive.bitarchive.distribute;
 
 import java.io.File;
 
+/**
+ *
+ * @author tra
+ */
 public class TestInfo {
 
     private static final File BAMON_BASEDIR = new File("tests/dk/netarkivet/archive/bitarchive/distribute/data");

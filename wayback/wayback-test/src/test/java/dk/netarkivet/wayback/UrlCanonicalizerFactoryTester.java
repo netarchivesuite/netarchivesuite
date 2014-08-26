@@ -34,10 +34,14 @@ import dk.netarkivet.wayback.batch.copycode.NetarchiveSuiteAggressiveUrlCanonica
 
 /**
  *
+ * @author tra
  */
 @SuppressWarnings({"deprecation"})
 public class UrlCanonicalizerFactoryTester {
 
+    /**
+     *
+     */
     @Test
     public void testGetDefaultUrlCanonicalizer() {
         UrlCanonicalizer uc1 = UrlCanonicalizerFactory.getDefaultUrlCanonicalizer();

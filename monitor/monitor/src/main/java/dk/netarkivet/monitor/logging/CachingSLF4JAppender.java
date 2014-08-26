@@ -36,10 +36,20 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.monitor.MonitorSettings;
 
+/**
+ *
+ * @author tra
+ */
 public class CachingSLF4JAppender extends AppenderBase<ILoggingEvent> {
 
+    /**
+     *
+     */
     protected String pattern;
 
+    /**
+     *
+     */
     protected PatternLayout layout;
 
     /** The size of the logging cache. */
@@ -56,6 +66,9 @@ public class CachingSLF4JAppender extends AppenderBase<ILoggingEvent> {
     /** The place in the loggingHistory for the next LogRecord. */
     private int currentIndex;
 
+    /**
+     *
+     */
     public CachingSLF4JAppender() {
         layout = new PatternLayout();
         loggingHistorySize = Settings.getInt(MonitorSettings.LOGGING_HISTORY_SIZE);
@@ -69,34 +82,56 @@ public class CachingSLF4JAppender extends AppenderBase<ILoggingEvent> {
         currentIndex = 0;
     }
 
+    /**
+     *
+     * @param context
+     */
     @Override
     public void setContext(Context context) {
         super.setContext(context);
         layout.setContext(this.context);
     }
 
+    /**
+     *
+     */
     @Override
     public void start() {
         super.start();
         layout.start();
     }
 
+    /**
+     *
+     */
     @Override
     public void stop() {
         super.stop();
         layout.stop();
     }
 
+    /**
+     *
+     * @param event
+     */
     @Override
     protected void append(ILoggingEvent event) {
         loggingHistory.set(currentIndex, layout.doLayout(event));
         currentIndex = (currentIndex + 1) % loggingHistorySize;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getPattern() {
         return pattern;
     }
 
+    /**
+     *
+     * @param pattern
+     */
     public void setPattern(String pattern) {
         this.pattern = pattern;
         layout.setPattern(pattern);

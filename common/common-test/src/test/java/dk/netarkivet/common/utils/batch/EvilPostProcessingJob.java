@@ -31,6 +31,10 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.utils.FileUtils;
 
+/**
+ *
+ * @author tra
+ */
 @SuppressWarnings({"serial"})
 public class EvilPostProcessingJob extends FileBatchJob {
 

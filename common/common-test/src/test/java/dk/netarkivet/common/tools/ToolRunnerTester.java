@@ -45,12 +45,18 @@ public class ToolRunnerTester {
     private PreventSystemExit pse = new PreventSystemExit();
     private PreserveStdStreams pss = new PreserveStdStreams(true);
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         pss.setUp();
         pse.setUp();
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         pse.tearDown();

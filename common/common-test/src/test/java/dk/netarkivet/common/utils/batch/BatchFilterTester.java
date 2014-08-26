@@ -31,6 +31,10 @@ import java.awt.datatransfer.MimeTypeParseException;
 
 import org.junit.Test;
 
+/**
+ *
+ * @author tra
+ */
 public class BatchFilterTester {
     // Our main instance of BatchFilter:
     ARCBatchFilter bf;

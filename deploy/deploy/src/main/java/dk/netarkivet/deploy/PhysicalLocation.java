@@ -80,6 +80,7 @@ public class PhysicalLocation {
      * @param param The parameters of the parent (deploy-config).
      * @param netarchiveSuiteSource The name of the NetarchiveSuite file.
      * @param logProp The logging property file.
+     * @param slf4JConfig
      * @param securityPolicy The security policy file.
      * @param dbFile The harvest definition database.
      * @param arcdbFile The archive database.

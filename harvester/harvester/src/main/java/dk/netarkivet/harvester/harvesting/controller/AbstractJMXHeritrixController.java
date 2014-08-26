@@ -469,6 +469,10 @@ public abstract class AbstractJMXHeritrixController implements HeritrixControlle
                 + files.getCrawlDir() + dedupPart + " and " + FileUtils.countLines(files.getSeedsTxtFile()) + " seeds";
     }
 
+    /**
+     *
+     * @return
+     */
     public HeritrixFiles getFiles() {
         return this.files;
     }

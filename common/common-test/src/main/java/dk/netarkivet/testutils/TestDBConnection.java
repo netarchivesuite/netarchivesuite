@@ -58,6 +58,10 @@ public class TestDBConnection implements Connection {
      */
     private Stack<Savepoint> savepoints = new Stack<Savepoint>();
 
+    /**
+     *
+     * @param conn
+     */
     public TestDBConnection(Connection conn) {
         this.conn = conn;
     }

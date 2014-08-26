@@ -74,7 +74,12 @@ public class DataModelTestCase {
     // TODO this method is highly derby-specific. Implement a mechanism, e.g. a
     // command-line system parameter, to switch between derby and MySQL for
     // unit tests.
-    @Before
+
+    /**
+     *
+     * @throws Exception
+     */
+        @Before
     public void setUp() throws Exception {
         // log.info("setup() 1");
         rs.setUp();
@@ -110,6 +115,10 @@ public class DataModelTestCase {
         log.trace("setup() done");
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         log.trace("tearDown() DatabaseTestUtils.dropHDDB()");
@@ -147,6 +156,8 @@ public class DataModelTestCase {
      * Jobs: HD#1, harvest 0: 2,3 Jobs: HD#1, harvest 1: 4,5 Jobs: HD#1, harvest 2: 6,7 Jobs: HD#2, harvest 0: 8,9 Jobs:
      * HD#3, harvest 0: 10,11 Jobs: HD#4, harvest 0: 12,13 Jobs: HD#5, harvest 0: 14,15
      *
+     * @param startJobId
+     * @param endJobId
      */
     public static void createTestJobs(long startJobId, long endJobId) {
         HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
@@ -229,6 +240,11 @@ public class DataModelTestCase {
         return j;
     }
 
+    /**
+     *
+     * @param id
+     * @throws SQLException
+     */
     public static void addHarvestDefinitionToDatabaseWithId(long id) throws SQLException {
         Connection con = HarvestDBConnection.get();
         try {

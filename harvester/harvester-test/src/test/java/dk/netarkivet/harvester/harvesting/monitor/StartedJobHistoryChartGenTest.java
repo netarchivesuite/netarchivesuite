@@ -44,12 +44,20 @@ import dk.netarkivet.harvester.datamodel.NumberUtils;
 import dk.netarkivet.harvester.harvesting.monitor.StartedJobHistoryChartGen.TimeAxisResolution;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
+/**
+ *
+ * @author tra
+ */
 public class StartedJobHistoryChartGenTest {
 
     ReloadSettings rs = new ReloadSettings();
 
     StartedJobHistoryChartGen gen;
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         rs.setUp();
@@ -58,6 +66,10 @@ public class StartedJobHistoryChartGenTest {
         gen = new StartedJobHistoryChartGen(1);
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
@@ -65,6 +77,11 @@ public class StartedJobHistoryChartGenTest {
         gen.cleanup();
     }
 
+    /**
+     *
+     * @throws IOException
+     * @throws ParseException
+     */
     @Test
     public final void testPngGeneration() throws IOException, ParseException {
 
@@ -101,6 +118,11 @@ public class StartedJobHistoryChartGenTest {
 
     }
 
+    /**
+     *
+     * @throws IOException
+     * @throws ParseException
+     */
     public final void testPngGenerationWithNoData() throws IOException, ParseException {
 
         File pngFile = new File(TestInfo.WORKING_DIR, "empty-history.png");

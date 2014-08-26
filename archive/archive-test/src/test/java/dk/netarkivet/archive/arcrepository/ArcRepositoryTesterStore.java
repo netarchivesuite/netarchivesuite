@@ -85,6 +85,9 @@ public class ArcRepositoryTesterStore {
     private static final File BATCH_RESULT_EMPTY = new File(ORIGINALS_DIR, "checksumempty");
     private static final File TEST_DIR = Settings.getFile(CommonSettings.DIR_COMMONTEMPDIR);
 
+    /**
+     *
+     */
     public ArcRepositoryTesterStore() {
     }
 
@@ -99,6 +102,10 @@ public class ArcRepositoryTesterStore {
 
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     * @throws IOException
+     */
     @Before
     public void setUp() throws IOException {
         rs.setUp();
@@ -122,6 +129,9 @@ public class ArcRepositoryTesterStore {
         arcRepos = ArcRepository.getInstance();
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         arcRepos.close();// close down ArcRepository Controller
@@ -167,6 +177,7 @@ public class ArcRepositoryTesterStore {
      * same).
      *
      * @throws InterruptedException
+     * @throws java.io.IOException
      */
     @Test
     @Ignore("FIXME")
@@ -285,6 +296,7 @@ public class ArcRepositoryTesterStore {
     /**
      * Tests that if we call store with a new file, a store message is sent to the bitarchives. Also tests that state is
      * now UPLOAD_STARTED for all bitarchives
+     * @throws java.io.IOException
      */
     @Test
     @Ignore("FIXME")
@@ -341,6 +353,7 @@ public class ArcRepositoryTesterStore {
     /**
      * Tests that if we call store with a file in state FAILED a checksum job is submitted to the bitarchive. Also test
      * that state is changed to UPLOADED
+     * @throws java.io.IOException
      */
     @Test
     @Ignore("FIXME")
@@ -408,6 +421,7 @@ public class ArcRepositoryTesterStore {
     /**
      * Tests that if we call store with a file in state UPLOADED a checksum job is submitted to the bitarchive. Also
      * test that state is still UPLOADED
+     * @throws java.io.IOException
      */
     @Test
     @Ignore("FIXME")
@@ -475,6 +489,7 @@ public class ArcRepositoryTesterStore {
     /**
      * Tests that if we call store with a file in state STARTED a checksum job is submitted to the bitarchive. Also test
      * that state is still STARTED
+     * @throws java.io.IOException
      */
     @Test
     @Ignore("FIXME")
@@ -540,6 +555,7 @@ public class ArcRepositoryTesterStore {
     /**
      * Tests that if we get an OK from a bitarchive, we send a checksum job to check the file. Also test that state is
      * data uploaded
+     * @throws java.io.IOException
      */
     @Test
     @Ignore("FIXME")
@@ -608,6 +624,7 @@ public class ArcRepositoryTesterStore {
     /**
      * Tests that if we get a not OK from a bitarchive, we reply not OK (no other bitarchive is waiting for upload
      * replies). Also test that state is upload failed
+     * @throws java.io.IOException
      */
     @Test
     @Ignore("FIXME")
@@ -673,6 +690,9 @@ public class ArcRepositoryTesterStore {
     /**
      * Tests that a batch reply with correct checksum results in an OK message (all bitarchives are OK) Also test that
      * state is completed
+     * @throws java.io.IOException
+     * @throws java.lang.NoSuchFieldException
+     * @throws java.lang.IllegalAccessException
      */
     @Test
     @Ignore("FIXME")
@@ -744,6 +764,9 @@ public class ArcRepositoryTesterStore {
     /**
      * Tests that a batch reply with un-correct checksum after an upload results in a not OK message, unless some
      * bitarchive is waiting for replies Also test that state is failed
+     * @throws java.io.IOException
+     * @throws java.lang.NoSuchFieldException
+     * @throws java.lang.IllegalAccessException
      */
     @Test
     @Ignore("FIXME")
@@ -811,6 +834,9 @@ public class ArcRepositoryTesterStore {
     /**
      * Tests that a batch reply with no checksum for a file missing upload reply (a retry) results in an attempt to
      * store the file again Also test that state is upload started
+     * @throws java.io.IOException
+     * @throws java.lang.NoSuchFieldException
+     * @throws java.lang.IllegalAccessException
      */
     @Test
     @Ignore("FIXME")

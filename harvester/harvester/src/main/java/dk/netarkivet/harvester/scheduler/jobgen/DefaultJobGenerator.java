@@ -57,6 +57,11 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
         private long objectLimit;
         private long byteLimit;
 
+        /**
+         *
+         * @param objectLimit
+         * @param byteLimit
+         */
         public CompareConfigsDesc(long objectLimit, long byteLimit) {
             this.objectLimit = objectLimit;
             this.byteLimit = byteLimit;
@@ -116,6 +121,11 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
         return instance;
     }
 
+    /**
+     *
+     * @param harvest
+     * @return
+     */
     @Override
     protected Comparator<DomainConfiguration> getDomainConfigurationSubsetComparator(HarvestDefinition harvest) {
         return new CompareConfigsDesc(harvest.getMaxCountObjects(), harvest.getMaxBytes());
@@ -177,6 +187,12 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
         return jobsMade;
     }
 
+    /**
+     *
+     * @param job
+     * @param cfg
+     * @return
+     */
     @Override
     protected boolean checkSpecificAcceptConditions(Job job, DomainConfiguration cfg) {
         // By default byte limit is used as base criterion for splitting a

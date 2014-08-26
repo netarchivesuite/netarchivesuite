@@ -72,6 +72,9 @@ public class TestInfo {
     /** The file for the archive database. */
     static final File DATABASE_FILE = new File("archivedatabasedir", "archivedb.jar");
 
+    /**
+     *
+     */
     public static final File TEST_FILE_1 = new File(TEST_DIR, "test1.arc");
 
 }

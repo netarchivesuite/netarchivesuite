@@ -59,12 +59,21 @@ import dk.netarkivet.testutils.TestFileUtils;
  */
 public class SchedulerDatabaseBuilder {
 
+    /**
+     *
+     * @param args
+     * @throws Exception
+     */
     public static void main(String[] args) throws Exception {
         SchedulerDatabaseBuilder sdb = new SchedulerDatabaseBuilder();
         sdb.doWork();
         sdb.close();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     public SchedulerDatabaseBuilder() throws Exception {
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);

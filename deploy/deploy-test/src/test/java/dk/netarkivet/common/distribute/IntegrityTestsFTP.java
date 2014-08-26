@@ -75,10 +75,17 @@ public class IntegrityTestsFTP {
     private File testFile3;
 
     // A named logger for this class is retrieved
-    protected final Logger logger = Logger.getLogger(getClass().getName());
+
+    /**
+     *
+     */
+        protected final Logger logger = Logger.getLogger(getClass().getName());
 
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     */
     public void setUp() {
         rs.setUp();
         if (!TestInfo.TEMPDIR.exists()) {
@@ -124,6 +131,10 @@ public class IntegrityTestsFTP {
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     public void tearDown() throws IOException {
         /** delete all uploaded files on ftp-server and then disconnect. */
         Iterator<String> fileIterator = upLoadedFiles.iterator();
@@ -350,6 +361,10 @@ public class IntegrityTestsFTP {
         assertEquals("Contents of second file should be preserved", FILE_2_CONTENTS, FileUtils.readFile(newFile));
     }
 
+    /**
+     *
+     * @throws FileNotFoundException
+     */
     public void tet501MFile() throws FileNotFoundException {
         File zipFile = new File(TestInfo.DATADIR, TestInfo.FIVE_HUNDRED_MEGA_FILE_ZIPPED);
         assertTrue("File '" + TestInfo.FIVE_HUNDRED_MEGA_FILE_ZIPPED + " does not exist!", zipFile.exists());
@@ -382,7 +397,14 @@ public class IntegrityTestsFTP {
     // fail("test of serializability not yet implemented!");
     //
     // }
-    public boolean onServer(String nameOfUploadedFile) throws IOException {
+
+    /**
+     *
+     * @param nameOfUploadedFile
+     * @return
+     * @throws IOException
+     */
+        public boolean onServer(String nameOfUploadedFile) throws IOException {
         assertTrue("theFTPClient should not be null", theFTPClient != null);
 
         FTPFile[] listOfFiles = theFTPClient.listFiles();
@@ -401,6 +423,10 @@ public class IntegrityTestsFTP {
         return false;
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     public void testWrongChecksumThrowsError() throws Exception {
         Settings.set(CommonSettings.REMOTE_FILE_CLASS, "dk.netarkivet.common.distribute.FTPRemoteFile");
         RemoteFile rf = RemoteFileFactory.getInstance(testFile2, true, false, true);

@@ -36,7 +36,31 @@ public class LoggingOutputStream extends OutputStream {
 
     /** Enum representing the standard logging levels for commons logging. */
     public static enum LoggingLevel {
-        TRACE, DEBUG, INFO, WARN, ERROR
+
+        /**
+         *
+         */
+        TRACE,
+
+        /**
+         *
+         */
+        DEBUG,
+
+        /**
+         *
+         */
+        INFO,
+
+        /**
+         *
+         */
+        WARN,
+
+        /**
+         *
+         */
+        ERROR
     };
 
     /** The level at which messages are logged. */

@@ -50,6 +50,9 @@ public class ExtractCDXTester {
 
     private LogbackRecorder lr;
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         lr = LogbackRecorder.startRecorder();
@@ -59,6 +62,9 @@ public class ExtractCDXTester {
         pse.setUp();
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         pse.tearDown();

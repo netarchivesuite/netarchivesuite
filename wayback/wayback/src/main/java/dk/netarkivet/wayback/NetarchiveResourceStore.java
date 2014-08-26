@@ -74,7 +74,6 @@ public class NetarchiveResourceStore implements ResourceStore {
      * 
      * @param captureSearchResult the search result.
      * @return a valid resource containing metadata and a link to the ARC record.
-     * @throws ResourceNotAvailableException if something went wrong fetching record.
      */
     public Resource retrieveResource(CaptureSearchResult captureSearchResult) throws ResourceNotAvailableException {
         long offset;

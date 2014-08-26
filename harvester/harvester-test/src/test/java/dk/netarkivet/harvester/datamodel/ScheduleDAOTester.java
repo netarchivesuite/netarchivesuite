@@ -38,12 +38,25 @@ import org.junit.Test;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 
+/**
+ *
+ * @author tra
+ */
 public class ScheduleDAOTester extends DataModelTestCase {
+
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         super.setUp();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         super.tearDown();

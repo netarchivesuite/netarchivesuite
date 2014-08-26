@@ -80,6 +80,9 @@ public class Diff {
 
     /**
      * Constructs the Diff object for the two arrays, using the given comparator.
+     * @param a
+     * @param b
+     * @param comp
      */
     public Diff(Object[] a, Object[] b, Comparator comp) {
         this.a = a;
@@ -91,6 +94,8 @@ public class Diff {
     /**
      * Constructs the Diff object for the two arrays, using the default comparison mechanism between the objects, such
      * as <code>equals</code> and <code>compareTo</code>.
+     * @param a
+     * @param b
      */
     public Diff(Object[] a, Object[] b) {
         this(a, b, null);
@@ -98,6 +103,9 @@ public class Diff {
 
     /**
      * Constructs the Diff object for the two collections, using the given comparator.
+     * @param a
+     * @param b
+     * @param comp
      */
     public Diff(Collection a, Collection b, Comparator comp) {
         this(a.toArray(), b.toArray(), comp);
@@ -106,6 +114,8 @@ public class Diff {
     /**
      * Constructs the Diff object for the two collections, using the default comparison mechanism between the objects,
      * such as <code>equals</code> and <code>compareTo</code>.
+     * @param a
+     * @param b
      */
     public Diff(Collection a, Collection b) {
         this(a, b, null);
@@ -113,6 +123,7 @@ public class Diff {
 
     /**
      * Runs diff and returns the results.
+     * @return 
      */
     public List diff() {
         traverseSequences();
@@ -195,6 +206,7 @@ public class Diff {
     /**
      * Override and return true in order to have <code>finishedA</code> invoked at the last element in the
      * <code>a</code> array.
+     * @return 
      */
     protected boolean callFinishedA() {
         return false;
@@ -203,6 +215,7 @@ public class Diff {
     /**
      * Override and return true in order to have <code>finishedB</code> invoked at the last element in the
      * <code>b</code> array.
+     * @return 
      */
     protected boolean callFinishedB() {
         return false;
@@ -210,18 +223,22 @@ public class Diff {
 
     /**
      * Invoked at the last element in <code>a</code>, if <code>callFinishedA</code> returns true.
+     * @param lastA
      */
     protected void finishedA(int lastA) {
     }
 
     /**
      * Invoked at the last element in <code>b</code>, if <code>callFinishedB</code> returns true.
+     * @param lastB
      */
     protected void finishedB(int lastB) {
     }
 
     /**
      * Invoked for elements in <code>a</code> and not in <code>b</code>.
+     * @param ai
+     * @param bi
      */
     protected void onANotB(int ai, int bi) {
         if (pending == null) {
@@ -233,6 +250,8 @@ public class Diff {
 
     /**
      * Invoked for elements in <code>b</code> and not in <code>a</code>.
+     * @param ai
+     * @param bi
      */
     protected void onBNotA(int ai, int bi) {
         if (pending == null) {
@@ -244,6 +263,8 @@ public class Diff {
 
     /**
      * Invoked for elements matching in <code>a</code> and <code>b</code>.
+     * @param ai
+     * @param bi
      */
     protected void onMatch(int ai, int bi) {
         if (pending == null) {
@@ -256,6 +277,9 @@ public class Diff {
 
     /**
      * Compares the two objects, using the comparator provided with the constructor, if any.
+     * @param x
+     * @param y
+     * @return 
      */
     protected boolean equals(Object x, Object y) {
         return comparator == null ? x.equals(y) : comparator.compare(x, y) == 0;
@@ -263,6 +287,7 @@ public class Diff {
 
     /**
      * Returns an array of the longest common subsequences.
+     * @return 
      */
     public Integer[] getLongestCommonSubsequences() {
         int aStart = 0;
@@ -348,6 +373,8 @@ public class Diff {
 
     /**
      * Converts the map (indexed by java.lang.Integers) into an array.
+     * @param map
+     * @return 
      */
     protected static Integer[] toArray(TreeMap map) {
         int size = map.size() == 0 ? 0 : 1 + ((Integer) map.lastKey()).intValue();
@@ -364,6 +391,8 @@ public class Diff {
 
     /**
      * Returns whether the integer is not zero (including if it is not null).
+     * @param i
+     * @return 
      */
     protected static boolean isNonzero(Integer i) {
         return i != null && i.intValue() != 0;
@@ -371,6 +400,9 @@ public class Diff {
 
     /**
      * Returns whether the value in the map for the given index is greater than the given value.
+     * @param index
+     * @param val
+     * @return 
      */
     protected boolean isGreaterThan(Integer index, Integer val) {
         Integer lhs = (Integer) thresh.get(index);
@@ -379,6 +411,9 @@ public class Diff {
 
     /**
      * Returns whether the value in the map for the given index is less than the given value.
+     * @param index
+     * @param val
+     * @return 
      */
     protected boolean isLessThan(Integer index, Integer val) {
         Integer lhs = (Integer) thresh.get(index);
@@ -387,6 +422,7 @@ public class Diff {
 
     /**
      * Returns the value for the greatest key in the map.
+     * @return 
      */
     protected Integer getLastValue() {
         return (Integer) thresh.get(thresh.lastKey());
@@ -394,6 +430,7 @@ public class Diff {
 
     /**
      * Adds the given value to the "end" of the threshold map, that is, with the greatest index/key.
+     * @param value
      */
     protected void append(Integer value) {
         Integer addIdx = null;
@@ -408,6 +445,9 @@ public class Diff {
 
     /**
      * Inserts the given values into the threshold map.
+     * @param j
+     * @param k
+     * @return 
      */
     protected Integer insert(Integer j, Integer k) {
         if (isNonzero(k) && isGreaterThan(k, j) && isLessThan(Integer.valueOf(k.intValue() - 1), j)) {

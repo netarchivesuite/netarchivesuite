@@ -63,6 +63,10 @@ import dk.netarkivet.harvester.datamodel.WeeklyFrequency;
 import dk.netarkivet.harvester.scheduler.HarvestJobGenerator.JobGeneratorTask;
 import dk.netarkivet.testutils.ThreadUtils;
 
+/**
+ *
+ * @author tra
+ */
 @SuppressWarnings("unused")
 public class HarvestJobGeneratorTest extends DataModelTestCase {
 

@@ -110,6 +110,7 @@ public class WARCExtractCDXJob extends WARCBatchJob {
     /**
      * Process this entry, reading metadata into the output stream.
      * 
+     * @param sar
      * @see dk.netarkivet.common.utils.warc.WARCBatchJob#processRecord(WARCRecord, OutputStream)
      * @throws IOFailure on trouble reading WARC record data
      */

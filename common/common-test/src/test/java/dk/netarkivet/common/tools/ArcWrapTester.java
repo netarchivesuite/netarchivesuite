@@ -55,6 +55,9 @@ public class ArcWrapTester {
     private PreserveStdStreams pss = new PreserveStdStreams();
     private MoveTestFiles mtf = new MoveTestFiles(TestInfo.DATA_DIR, TestInfo.WORKING_DIR);
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         mtf.setUp();
@@ -62,6 +65,9 @@ public class ArcWrapTester {
         pse.setUp();
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         pse.tearDown();
@@ -69,6 +75,10 @@ public class ArcWrapTester {
         mtf.tearDown();
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     @Test
     public void testMain() throws IOException {
         String pathname = "tests/dk/netarkivet/common/tools/ArcWrapTester.txt";

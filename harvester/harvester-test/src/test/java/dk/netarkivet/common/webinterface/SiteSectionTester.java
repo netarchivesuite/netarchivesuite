@@ -45,6 +45,10 @@ import dk.netarkivet.testutils.StringAsserts;
  */
 public class SiteSectionTester {
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testGetTitle() throws Exception {
         SiteSection site = new SiteSection("testSite", "pref", 2, new String[][] { {"page1", "title1"},
@@ -75,6 +79,10 @@ public class SiteSectionTester {
         assertNull("Should generate no title for null url", site.getTitle(null, Locale.getDefault()));
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testSiteSection() throws Exception {
         try {
@@ -220,6 +228,9 @@ public class SiteSectionTester {
      * Bitbevaring Bitbevaring Kvalitetssikring KvalitetsSikring Systemstatus Systemstatus
      *
      * This is rapported as bug 879.
+     * @throws java.lang.InterruptedException
+     * @throws java.lang.NoSuchFieldException
+     * @throws java.lang.IllegalAccessException
      */
     @Test
     public void testGetSections() throws InterruptedException, NoSuchFieldException, IllegalAccessException {
@@ -247,6 +258,7 @@ public class SiteSectionTester {
 
     /**
      * Check dirname.
+     * @throws java.lang.Exception
      */
     @Test
     public void testGetDirname() throws Exception {
@@ -284,6 +296,10 @@ public class SiteSectionTester {
         assertFalse("Should not find undeployed sitesection", SiteSection.isDeployed("Fnord"));
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testGenerateNavigationTree() throws Exception {
         SiteSection site = new SiteSection("table.job.harvestname", "pref", 2, new String[][] { {"page1", "title1"},

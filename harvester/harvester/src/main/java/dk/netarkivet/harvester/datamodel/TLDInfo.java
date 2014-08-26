@@ -89,6 +89,7 @@ public class TLDInfo implements Comparable<TLDInfo> {
     }
 
     /**
+     * @param o
      * @see Object#equals(Object)
      */
     public boolean equals(Object o) {

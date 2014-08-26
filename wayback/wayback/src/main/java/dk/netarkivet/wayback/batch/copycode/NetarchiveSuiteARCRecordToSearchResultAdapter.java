@@ -43,6 +43,9 @@ import org.archive.wayback.util.url.IdentityUrlCanonicalizer;
 public class NetarchiveSuiteARCRecordToSearchResultAdapter implements Adapter<ARCRecord, CaptureSearchResult> {
     private UrlCanonicalizer canonicalizer = null;
 
+    /**
+     *
+     */
     public NetarchiveSuiteARCRecordToSearchResultAdapter() {
         canonicalizer = new IdentityUrlCanonicalizer();
     }
@@ -55,6 +58,13 @@ public class NetarchiveSuiteARCRecordToSearchResultAdapter implements Adapter<AR
      * 
      * @see org.archive.wayback.util.Adapter#adapt(java.lang.Object)
      */
+
+    /**
+     *
+     * @param rec
+     * @return
+     */
+    
     public CaptureSearchResult adapt(ARCRecord rec) {
         try {
             return adaptInner(rec);
@@ -135,10 +145,18 @@ public class NetarchiveSuiteARCRecordToSearchResultAdapter implements Adapter<AR
         return result;
     }
 
+    /**
+     *
+     * @return
+     */
     public UrlCanonicalizer getCanonicalizer() {
         return canonicalizer;
     }
 
+    /**
+     *
+     * @param canonicalizer
+     */
     public void setCanonicalizer(UrlCanonicalizer canonicalizer) {
         this.canonicalizer = canonicalizer;
     }

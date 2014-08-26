@@ -39,6 +39,10 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 public abstract class BitarchiveTestCase {
 
     private UseTestRemoteFile rf = new UseTestRemoteFile();
+
+    /**
+     *
+     */
     protected static Bitarchive archive;
     ReloadSettings rs = new ReloadSettings();
 
@@ -47,11 +51,15 @@ public abstract class BitarchiveTestCase {
     /**
      * Make a new BitarchiveTestCase using the given directory for originals.
      *
-     * @param s Name of the test.
+     * @return 
      */
 
     protected abstract File getOriginalsDir();
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         // super.setUp();
@@ -69,6 +77,10 @@ public abstract class BitarchiveTestCase {
         rf.setUp();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         if (archive != null) {

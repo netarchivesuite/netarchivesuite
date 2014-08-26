@@ -40,6 +40,10 @@ import org.junit.Test;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
+/**
+ *
+ * @author tra
+ */
 public class TimedScheduleTester {
 
     /**

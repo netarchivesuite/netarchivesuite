@@ -36,6 +36,10 @@ import java.util.Arrays;
  */
 public abstract class FileArrayIterator<T> extends FilterIterator<File, T> {
 
+    /**
+     *
+     * @param files
+     */
     protected FileArrayIterator(File[] files) {
         super(Arrays.asList(files).iterator());
     }

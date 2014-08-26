@@ -75,9 +75,15 @@ public class ArcRepositoryTesterStoreChecksum {
 
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     */
     public ArcRepositoryTesterStoreChecksum() {
     }
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         rs.setUp();
@@ -87,6 +93,9 @@ public class ArcRepositoryTesterStoreChecksum {
         rf.setUp();
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         rf.tearDown();
@@ -96,6 +105,7 @@ public class ArcRepositoryTesterStoreChecksum {
 
     /**
      * Tests if the store operation generates and stores a valid checksum in the reference table (AdminData).
+     * @throws java.io.IOException
      */
     @Test
     @Ignore("Upload of 'NetarchiveSuite-store1.arc' timed out on Ubuntu")
@@ -184,6 +194,10 @@ public class ArcRepositoryTesterStoreChecksum {
 
     /**
      * Check what happens if we're being sent a checksum while uploading. Test for bug #410.
+     * @throws java.lang.NoSuchMethodException
+     * @throws java.lang.IllegalAccessException
+     * @throws java.lang.reflect.InvocationTargetException
+     * @throws java.lang.NoSuchFieldException
      */
     @Test
     public void testStoreChecksumWhileUploading() throws NoSuchMethodException, IllegalAccessException,

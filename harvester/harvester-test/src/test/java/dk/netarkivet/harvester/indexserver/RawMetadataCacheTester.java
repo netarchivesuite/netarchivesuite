@@ -47,12 +47,20 @@ import dk.netarkivet.testutils.preconfigured.MockupJMS;
 public class RawMetadataCacheTester extends CacheTestCase {
     MockupJMS mjms = new MockupJMS();
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         super.setUp();
         mjms.setUp();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         mjms.tearDown();
@@ -60,6 +68,10 @@ public class RawMetadataCacheTester extends CacheTestCase {
         super.tearDown();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testGetCacheFileName() throws Exception {
         RawMetadataCache cache = new RawMetadataCache("test1", null, null);
@@ -75,6 +87,10 @@ public class RawMetadataCacheTester extends CacheTestCase {
                 a.toString().contains(" with arguments: URLMatcher = .*, mimeMatcher = .*"));
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testGetCacheDir() throws Exception {
         RawMetadataCache cache = new RawMetadataCache("test2", null, null);
@@ -83,6 +99,10 @@ public class RawMetadataCacheTester extends CacheTestCase {
                 .getParentFile().getName());
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testCacheData() throws Exception {
         TestArcRepositoryClient tarc = new TestArcRepositoryClient(new File(TestInfo.WORKING_DIR, "arcfiles"));

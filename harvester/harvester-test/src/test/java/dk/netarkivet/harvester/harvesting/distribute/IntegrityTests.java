@@ -95,6 +95,12 @@ public class IntegrityTests extends DataModelTestCase {
 
     SecurityManager sm;
 
+    /**
+     *
+     * @throws Exception
+     * @throws SQLException
+     * @throws IllegalAccessException
+     */
     @Before
     public void setUp() throws Exception, SQLException, IllegalAccessException {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
@@ -182,7 +188,12 @@ public class IntegrityTests extends DataModelTestCase {
     // 7) The reply to the store is sent
     // 8) Waits for message on the sched, indicating doOneCrawl ended
     // 9) Checks that we listen for jobs again
-    @Test
+
+    /**
+     *
+     * @throws IOException
+     */
+        @Test
     @Ignore("The HACO should listen before job expected")
     public void testListenersAddedAndRemoved() throws IOException {
         ChannelID hacoQueue = HarvesterChannels.getHarvestJobChannelId(new HarvestChannel("test", false, true, ""));

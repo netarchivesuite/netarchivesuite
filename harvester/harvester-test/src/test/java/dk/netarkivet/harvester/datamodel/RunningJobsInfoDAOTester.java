@@ -30,19 +30,34 @@ import org.junit.Test;
 
 import dk.netarkivet.harvester.harvesting.monitor.StartedJobInfo;
 
+/**
+ *
+ * @author tra
+ */
 @SuppressWarnings({"unused"})
 public class RunningJobsInfoDAOTester extends DataModelTestCase {
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         super.setUp();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         super.tearDown();
     }
 
+    /**
+     *
+     */
     @Test
     public void testGetInstance() {
         StartedJobInfo sji = new StartedJobInfo("harvest", 42L);

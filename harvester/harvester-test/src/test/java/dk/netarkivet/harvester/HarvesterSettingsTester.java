@@ -33,6 +33,9 @@ import org.junit.Test;
 /** Unittestersuite for the HarvesterSettings class. */
 public class HarvesterSettingsTester {
 
+    /**
+     *
+     */
     @Test
     public void testNoFinalSettingsConstants() {
         Class<HarvesterSettings> c = HarvesterSettings.class;

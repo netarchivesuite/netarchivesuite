@@ -44,6 +44,9 @@ public class CDXRecordTester {
         fail("null as argument should throw argumentNotValid");
     }
 
+    /**
+     *
+     */
     @Test(expected = ArgumentNotValid.class)
     public void testContructorBadArguments2() {
         String[] fields = new String[] {};

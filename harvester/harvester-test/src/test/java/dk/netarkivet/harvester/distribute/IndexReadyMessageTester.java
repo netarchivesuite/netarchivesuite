@@ -29,8 +29,15 @@ import org.junit.Test;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 
+/**
+ *
+ * @author tra
+ */
 public class IndexReadyMessageTester {
 
+    /**
+     *
+     */
     @Test
     public void testConstructor() {
         ChannelID replyTo = Channels.getTheIndexServer();

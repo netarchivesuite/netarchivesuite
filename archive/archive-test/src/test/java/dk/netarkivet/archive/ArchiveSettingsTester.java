@@ -32,6 +32,9 @@ import org.junit.Test;
 /** Unittestersuite for the ArchiveSettings class. */
 public class ArchiveSettingsTester {
 
+    /**
+     *
+     */
     @SuppressWarnings("rawtypes")
     @Test
     public void testNoFinalSettingsConstants() {

@@ -88,6 +88,10 @@ public class BitpreserveFileStatusTester {
     ReloadSettings rs = new ReloadSettings();
     MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         rs.setUp();
@@ -105,6 +109,10 @@ public class BitpreserveFileStatusTester {
         // super.setUp();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         AdminData.getUpdateableInstance().close();
@@ -113,11 +121,18 @@ public class BitpreserveFileStatusTester {
         // super.tearDown();
     }
 
+    /**
+     *
+     */
     @Test
     public void testUtilityClass() {
         ReflectUtils.testUtilityConstructor(BitpreserveFileState.class);
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testProcessMissingRequest() throws Exception {
 
@@ -254,6 +269,11 @@ public class BitpreserveFileStatusTester {
         // mockabp.calls.clear();
     }
 
+    /**
+     *
+     * @throws NoSuchFieldException
+     * @throws IllegalAccessException
+     */
     @Test
     public void testProcessChecksumRequest() throws NoSuchFieldException, IllegalAccessException {
         MockFileBasedActiveBitPreservation mockabp = new MockFileBasedActiveBitPreservation();
@@ -279,6 +299,11 @@ public class BitpreserveFileStatusTester {
 
     }
 
+    /**
+     *
+     * @throws NoSuchFieldException
+     * @throws IllegalAccessException
+     */
     @Test
     public void testMakeCheckbox() throws NoSuchFieldException, IllegalAccessException {
         String res = BitpreserveFileState.makeCheckbox("TEST-COMMAND", "TEST-ARG1", "TEST-ARG2");
@@ -292,6 +317,12 @@ public class BitpreserveFileStatusTester {
                         + dk.netarkivet.archive.webinterface.Constants.STRING_FILENAME_SEPARATOR + "TEST-ARG2" + "\""));
     }
 
+    /**
+     *
+     * @throws IOException
+     * @throws NoSuchFieldException
+     * @throws IllegalAccessException
+     */
     @Test
     public void testPrintMissingFileStateForReplica() throws IOException, NoSuchFieldException, IllegalAccessException {
         MockFileBasedActiveBitPreservation fbabp = new MockFileBasedActiveBitPreservation();
@@ -318,6 +349,12 @@ public class BitpreserveFileStatusTester {
         fbabp.calls.clear();
     }
 
+    /**
+     *
+     * @throws IOException
+     * @throws NoSuchFieldException
+     * @throws IllegalAccessException
+     */
     @Test
     public void testPrintChecksumErrorStateForReplica() throws IOException, NoSuchFieldException,
             IllegalAccessException {
@@ -338,6 +375,10 @@ public class BitpreserveFileStatusTester {
         fbabp.calls.clear();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     // Tests both printFileName, printFileState
     public void testPrints() throws Exception {

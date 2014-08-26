@@ -50,6 +50,10 @@ import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
+/**
+ *
+ * @author tra
+ */
 public class RunBatchTester {
     private PreventSystemExit pse = new PreventSystemExit();
     private PreserveStdStreams pss = new PreserveStdStreams(true);
@@ -58,6 +62,9 @@ public class RunBatchTester {
     TestMessageListener listener;
     UseTestRemoteFile rf = new UseTestRemoteFile();
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         pss.setUp();
@@ -69,6 +76,9 @@ public class RunBatchTester {
         rf.setUp();
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         mtf.tearDown();

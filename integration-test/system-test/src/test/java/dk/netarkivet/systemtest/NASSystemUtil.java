@@ -22,12 +22,21 @@
  */
 package dk.netarkivet.systemtest;
 
+/**
+ *
+ * @author tra
+ */
 public class NASSystemUtil {
+
+    /**
+     *
+     */
     public void startSystem() {
     }
 
     /**
      * Defines the standard application setup in the DK test system.
+     * @return 
      */
     public static Application[] getApplications() {
         return new Application[] {new Application("KB-TEST-BAR-015", "BitarchiveServer", null, null, "KBN"),

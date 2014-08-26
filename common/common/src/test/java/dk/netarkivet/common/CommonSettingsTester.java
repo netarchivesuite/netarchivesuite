@@ -37,6 +37,9 @@ import org.junit.Test;
  */
 public class CommonSettingsTester {
 
+    /**
+     *
+     */
     @Test
     public void testNoFinalSettingsConstants() {
         Class<CommonSettings> c = CommonSettings.class;

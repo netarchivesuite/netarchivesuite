@@ -36,6 +36,10 @@ import org.junit.Test;
  */
 public class ConstantsTester {
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testGetIdMatcher() throws Exception {
         Matcher m1 = Constants.getIdMatcher();

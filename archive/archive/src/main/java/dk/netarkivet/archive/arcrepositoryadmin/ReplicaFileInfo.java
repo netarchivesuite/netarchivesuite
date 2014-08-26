@@ -89,6 +89,11 @@ public class ReplicaFileInfo {
         this.checksumCheckdatetime = cDate;
     }
 
+    /**
+     *
+     * @param res
+     * @throws SQLException
+     */
     public ReplicaFileInfo(ResultSet res) throws SQLException {
         this(res.getLong(1), res.getString(2), res.getLong(3), res.getLong(4), res.getString(5), res.getInt(6), res
                 .getInt(7), res.getInt(8), res.getDate(9), res.getDate(10));

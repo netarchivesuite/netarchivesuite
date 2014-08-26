@@ -33,16 +33,27 @@ import dk.netarkivet.systemtest.environment.TestEnvironmentManager;
  */
 @SuppressWarnings("unused")
 public class StressTest extends ExtendedTestCase {
+
+    /**
+     *
+     */
     public static final String TESTNAME = "Stresstest";
 
     /** Handles the bash command functionality in the test environment. */
     protected TestEnvironmentManager environmentManager;
 
+    /**
+     *
+     */
     @BeforeTest(alwaysRun = true)
     protected void setupTest() {
         environmentManager = new TestEnvironmentManager(TESTNAME, null, 8073);
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     protected void shutdownPreviousTest() throws Exception {
         addFixture("Shutting down any previously running test.");
         environmentManager.runCommand("stop_test.sh");
@@ -52,11 +63,19 @@ public class StressTest extends ExtendedTestCase {
         environmentManager.runCommand("prepare_test.sh deploy_config_stresstest.xml");
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     protected void startTestSystem() throws Exception {
         addFixture("Starting Test");
         environmentManager.runCommand("start_test.sh");
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     protected void shutdownTest() throws Exception {
         addFixture("Shutting down the test.");
         environmentManager.runCommand("stop_test.sh");
@@ -65,6 +84,7 @@ public class StressTest extends ExtendedTestCase {
 
     /**
      * Copying production databases to the relevant test servers.
+     * @throws java.lang.Exception
      */
     protected void fetchProductionData() throws Exception {
         addFixture("Copying production databases to the relevant test servers.");
@@ -80,6 +100,10 @@ public class StressTest extends ExtendedTestCase {
         environmentManager.runCommand("scp -r /home/test/prod-backup/CS test@kb-test-acs-001.kb.dk:/tmp");
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     protected void deployComponents() throws Exception {
         addStep("Installing components.", "");
         environmentManager.runCommand("install_test.sh");
@@ -133,12 +157,20 @@ public class StressTest extends ExtendedTestCase {
         environmentManager.runTestXCommand(TestEnvironment.CHECKSUM_SERVER, "ln -s /tmp/CS CS");
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     protected void enableHarvestDatabaseUpgrade() throws Exception {
         addStep("Enabling database upgrade.", "");
         environmentManager.replaceStringInFile(TestEnvironment.JOB_ADMIN_SERVER, "conf/settings_GUIApplication.xml",
                 "<dir>harvestDatabase/fullhddb</dir>", "<dir>harvestDatabase/fullhddb;upgrade=true</dir>");
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     protected void upgradeHarvestDatabase() throws Exception {
         environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, "export CLASSPATH="
                 + "./lib/dk.netarkivet.harvester.jar:" + "./lib/dk.netarkivet.archive.jar:"

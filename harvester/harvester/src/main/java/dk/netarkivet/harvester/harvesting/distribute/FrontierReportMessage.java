@@ -50,6 +50,7 @@ public class FrontierReportMessage extends HarvesterMessage {
      * 
      * @param filter the filter that generated the report.
      * @param report the report to wrap.
+     * @param jobID
      */
     public FrontierReportMessage(FrontierReportFilter filter, InMemoryFrontierReport report, Long jobID) {
         super(HarvestMonitor.HARVEST_MONITOR_CHANNEL_ID, Channels.getError());
@@ -77,6 +78,10 @@ public class FrontierReportMessage extends HarvesterMessage {
         return report;
     }
 
+    /**
+     *
+     * @return
+     */
     public Long getJobID() {
         return jobID;
     }

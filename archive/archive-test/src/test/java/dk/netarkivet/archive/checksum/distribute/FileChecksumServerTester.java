@@ -61,6 +61,10 @@ import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
+/**
+ *
+ * @author tra
+ */
 public class FileChecksumServerTester {
 
     ReloadSettings rs = new ReloadSettings();
@@ -69,6 +73,9 @@ public class FileChecksumServerTester {
 
     ChecksumFileServer cfs;
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         rs.setUp();
@@ -100,6 +107,9 @@ public class FileChecksumServerTester {
         conn = (JMSConnectionMockupMQ) JMSConnectionFactory.getInstance();
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         // ??
@@ -110,6 +120,9 @@ public class FileChecksumServerTester {
         FileUtils.removeRecursively(TestInfo.WORK_DIR);
     }
 
+    /**
+     *
+     */
     @Test
     public void testSingletonicity() {
         ClassAsserts.assertSingleton(ChecksumFileServer.class);
@@ -277,6 +290,10 @@ public class FileChecksumServerTester {
         cfs.close();
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     @Test
     public void testNoInitialFile() throws IOException {
         // Delete the checksum archive file.

@@ -26,6 +26,10 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ *
+ * @author tra
+ */
 public class CookieUtils {
 
     /**
@@ -33,7 +37,25 @@ public class CookieUtils {
      */
     public static enum Lifespan {
 
-        MINUTE(60), HOUR(60 * 60), DAY(24 * 60 * 60), WEEK(7 * 24 * 60 * 60);
+        /**
+         *
+         */
+        MINUTE(60),
+
+        /**
+         *
+         */
+        HOUR(60 * 60),
+
+        /**
+         *
+         */
+        DAY(24 * 60 * 60),
+
+        /**
+         *
+         */
+        WEEK(7 * 24 * 60 * 60);
 
         private final int seconds;
 
@@ -41,6 +63,10 @@ public class CookieUtils {
             this.seconds = seconds;
         }
 
+        /**
+         *
+         * @return
+         */
         public int getSeconds() {
             return seconds;
         }

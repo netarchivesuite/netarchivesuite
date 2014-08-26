@@ -49,12 +49,20 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.arc.TestInfo;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
+/**
+ *
+ * @author tra
+ */
 @Ignore("LoadableTestJob deleted from filesystem as surefire did not like it in the wrong location")
 public class LoadableFileBatchJobTester {
 
     MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
     private static final File FNORD_FILE = new File("fnord");
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         mtf.setUp();
@@ -65,11 +73,18 @@ public class LoadableFileBatchJobTester {
         }
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         mtf.tearDown();
     }
 
+    /**
+     *
+     */
     @Test
     public void testInitialize() {
         FileBatchJob job = new LoadableFileBatchJob(new File(TestInfo.WORKING_DIR, "LoadableTestJob.class"),
@@ -79,6 +94,9 @@ public class LoadableFileBatchJobTester {
         assertEquals("Should have message from loaded class", "initialize() called on me\n", os.toString());
     }
 
+    /**
+     *
+     */
     @Test
     @Ignore("LoadableTestJob deleted from filesystem as surefire did not like it in the wrong location")
     public void testToStringOnJob() {
@@ -119,6 +137,9 @@ public class LoadableFileBatchJobTester {
         assertFalse("Hacked file should not exist", FNORD_FILE.exists());
     }
 
+    /**
+     *
+     */
     @Test
     @Ignore("LoadableTestJob deleted from filesystem as surefire did not like it in the wrong location")
     public void testToString() {
@@ -129,6 +150,9 @@ public class LoadableFileBatchJobTester {
                 job.toString());
     }
 
+    /**
+     *
+     */
     @Test
     public void testFinish() {
         FileBatchJob job = new LoadableFileBatchJob(new File(TestInfo.WORKING_DIR, "LoadableTestJob.class"),
@@ -145,7 +169,8 @@ public class LoadableFileBatchJobTester {
                 + "processFile() called on me with input-1.arc\n" + "finish() called on me\n", os.toString());
     }
 
-    /** FIXME Fails in Hudson */
+    /** FIXME Fails in Hudson
+     * @throws java.lang.Exception */
     @Test
     @Ignore("unknown reason")
     public void failingTestLoadableFileBatchJob() throws Exception {
@@ -289,6 +314,9 @@ public class LoadableFileBatchJobTester {
                 result1.equals(result3));
     }
 
+    /**
+     *
+     */
     @Test
     @Ignore("URLSearch.class deleted as surefire did not like it in the wrong location")
     public void testBatchjobWithArgumentsFail() {

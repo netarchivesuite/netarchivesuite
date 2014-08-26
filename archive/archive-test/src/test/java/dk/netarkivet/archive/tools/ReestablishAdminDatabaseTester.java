@@ -39,12 +39,19 @@ import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
+/**
+ *
+ * @author tra
+ */
 public class ReestablishAdminDatabaseTester {
     private PreventSystemExit pse = new PreventSystemExit();
     private PreserveStdStreams pss = new PreserveStdStreams(true);
     private MoveTestFiles mtf = new MoveTestFiles(TestInfo.DATA_DIR, TestInfo.WORKING_DIR);
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         ArchiveDBConnection.cleanup();
@@ -60,6 +67,9 @@ public class ReestablishAdminDatabaseTester {
 
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         mtf.tearDown();
@@ -68,6 +78,9 @@ public class ReestablishAdminDatabaseTester {
         rs.tearDown();
     }
 
+    /**
+     *
+     */
     @Test
     public void testNonFile() {
         String[] args = new String[] {TestInfo.DATABASE_ADMIN_DATA_FALSE.getPath()};
@@ -87,6 +100,9 @@ public class ReestablishAdminDatabaseTester {
                         + "' is not a valid file."));
     }
 
+    /**
+     *
+     */
     @Test
     public void testNoReadFile() {
         String[] args = new String[] {TestInfo.DATABASE_ADMIN_DATA_1.getPath()};
@@ -106,6 +122,9 @@ public class ReestablishAdminDatabaseTester {
                 errMsg.contains("Cannot read the file '" + TestInfo.DATABASE_ADMIN_DATA_1.getAbsolutePath() + "'"));
     }
 
+    /**
+     *
+     */
     @Test
     @Ignore("FIXME")
     // FIXME: test temporarily disabled
@@ -125,6 +144,9 @@ public class ReestablishAdminDatabaseTester {
         System.err.println(pss.getErr());
     }
 
+    /**
+     *
+     */
     @Test
     @Ignore("FIXME")
     // FIXME: test temporarily disabled

@@ -74,8 +74,19 @@ import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriterWarc;
  */
 public class CreateCDXMetadataFile extends ToolRunnerBase {
 
+    /**
+     *
+     */
     public static final String ARCMODE = "arc";
+
+    /**
+     *
+     */
     public static final String WARCMODE = "warc";
+
+    /**
+     *
+     */
     public static final String usageString = "[-a|w] --jobID X --harvestnamePrefix somePrefix";
 
     /**

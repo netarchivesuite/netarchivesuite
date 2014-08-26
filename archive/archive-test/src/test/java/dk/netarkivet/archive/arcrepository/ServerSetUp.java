@@ -44,6 +44,11 @@ public class ServerSetUp {
     /*
      * The head test directory
      */
+
+    /**
+     *
+     */
+    
     public static final File TEST_DIR = new File("tests/dk/netarkivet/archive/arcrepository/data/store");
 
     /** The directory used for controller admindata. */
@@ -65,6 +70,9 @@ public class ServerSetUp {
 
     static ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     */
     protected static void setUp() {
         rs.setUp();
         Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, ADMINDATA_DIR.getAbsolutePath());
@@ -87,6 +95,9 @@ public class ServerSetUp {
         arcRepos = ArcRepository.getInstance();
     }
 
+    /**
+     *
+     */
     protected static void tearDown() {
         arcRepos.close();// close down ArcRepository Controller
         bitarchive.close();
@@ -100,6 +111,10 @@ public class ServerSetUp {
         rs.tearDown();
     }
 
+    /**
+     *
+     * @return
+     */
     public static ArcRepository getArcRepository() {
         return arcRepos;
     }

@@ -51,6 +51,10 @@ public class FileRemoteFile implements RemoteFile {
     /** The local File where the data is stored. */
     private File dataFile;
 
+    /**
+     *
+     * @param dataFile
+     */
     public FileRemoteFile(File dataFile) {
         ArgumentNotValid.checkNotNull(dataFile, "File dataFile");
         ArgumentNotValid.checkTrue(dataFile.isFile(), "The dataFile with value '" + dataFile.getAbsolutePath()

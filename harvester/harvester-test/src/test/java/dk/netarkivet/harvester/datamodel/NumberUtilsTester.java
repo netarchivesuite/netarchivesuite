@@ -35,7 +35,8 @@ import org.junit.Test;
  * 
  */
 public class NumberUtilsTester {
-    /** Test minimum where -1 means infinite */
+    /** Test minimum where -1 means infinite
+     * @throws java.lang.Exception */
     @Test
     public void testMinInf() throws Exception {
         assertEquals("-1 is greater than all", Long.MAX_VALUE, NumberUtils.minInf(-1L, Long.MAX_VALUE));
@@ -48,7 +49,8 @@ public class NumberUtilsTester {
         assertEquals("On non-infinite, give smallest", 42L, NumberUtils.minInf(42L, 42L));
     }
 
-    /** Test comparing where -1 means infinite */
+    /** Test comparing where -1 means infinite
+     * @throws java.lang.Exception */
     @Test
     public void testCompareInf() throws Exception {
         assertEquals("-1 is greater than all", 1, NumberUtils.compareInf(-1L, Long.MAX_VALUE));
@@ -61,6 +63,9 @@ public class NumberUtilsTester {
         assertEquals("On non-infinite, compare", 0, NumberUtils.compareInf(42L, 42L));
     }
 
+    /**
+     *
+     */
     @Test
     public void testToPrimitiveArray() {
         List<Double> emptyList = new ArrayList<Double>();

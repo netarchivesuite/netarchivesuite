@@ -36,12 +36,20 @@ import dk.netarkivet.harvester.datamodel.HarvestChannelDAO;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
 import dk.netarkivet.harvester.harvesting.distribute.HarvesterReadyMessage;
 
+/**
+ *
+ * @author tra
+ */
 public class HarvesterStatusReceiverTest {
     private JobDispatcher jobDispatcher;
     private HarvesterStatusReceiver receiver;
     private JMSConnection jmsConnection;
     private HarvestChannelDAO harvestChannelDao;
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         jobDispatcher = mock(JobDispatcher.class);
@@ -51,6 +59,9 @@ public class HarvesterStatusReceiverTest {
                 new HarvestChannelRegistry());
     }
 
+    /**
+     *
+     */
     @Test
     public void testStatusReception() {
         HarvestChannel highChan = new HarvestChannel("FOCUSED", false, true, "");
@@ -60,6 +71,9 @@ public class HarvesterStatusReceiverTest {
         verify(jobDispatcher).submitNextNewJob(highChan);
     }
 
+    /**
+     *
+     */
     @Test
     public void testInvalidMessageType() {
         CrawlProgressMessage statusmessage = new CrawlProgressMessage(1, 1);

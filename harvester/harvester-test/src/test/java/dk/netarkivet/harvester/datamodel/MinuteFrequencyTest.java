@@ -30,8 +30,16 @@ import java.util.GregorianCalendar;
 
 import org.junit.Test;
 
+/**
+ *
+ * @author tra
+ */
 public class MinuteFrequencyTest {
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testGetFirstEvent() throws Exception {
         MinuteFrequency minuteFrequency = new MinuteFrequency(5);
@@ -42,6 +50,10 @@ public class MinuteFrequencyTest {
         assertEquals("First event should happen at once.", calendarDate, firstEvent);
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testGetNextEvent() throws Exception {
         MinuteFrequency minuteFrequency = new MinuteFrequency(5);

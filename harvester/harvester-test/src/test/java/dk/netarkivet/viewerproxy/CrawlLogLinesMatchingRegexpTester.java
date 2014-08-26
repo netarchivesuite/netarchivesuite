@@ -51,6 +51,9 @@ public class CrawlLogLinesMatchingRegexpTester {
     MoveTestFiles mtf;
     File metadataDir = new File(TestInfo.WORKING_DIR, "metadata");
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         TestInfo.WORKING_DIR.mkdir();
@@ -60,12 +63,19 @@ public class CrawlLogLinesMatchingRegexpTester {
         mtf.setUp();
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         mtf.tearDown();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
     }
 
+    /**
+     *
+     * @throws FileNotFoundException
+     */
     @Test
     public void testBatchJob() throws FileNotFoundException {
         File ZipOne = new File(metadataDir, "1-metadata-1.warc.zip");

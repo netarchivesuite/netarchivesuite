@@ -27,6 +27,10 @@ import java.io.File;
 
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 
+/**
+ *
+ * @author tra
+ */
 public class TestInfo {
     static final File WORKING_DIR = new File("./tests/dk/netarkivet/archive/tools/working/");
     static final File DATA_DIR = new File("./tests/dk/netarkivet/archive/tools/data/originals");

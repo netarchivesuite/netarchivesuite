@@ -32,8 +32,20 @@ import dk.netarkivet.systemtest.page.DomainConfigurationPageHelper;
 import dk.netarkivet.systemtest.page.PageHelper;
 import dk.netarkivet.systemtest.page.SelectiveHarvestPageHelper;
 
+/**
+ *
+ * @author tra
+ */
 public class HarvestUtils {
+
+    /**
+     *
+     */
     public static String DEFAULT_DOMAIN = "pligtaflevering.dk";
+
+    /**
+     *
+     */
     public static final int MAX_MINUTES_TO_WAIT_FOR_HARVEST = 60;
 
     /**
@@ -52,6 +64,8 @@ public class HarvestUtils {
 
     /**
      * Returns number of harvests run for the indicated domain.
+     * @param domainName
+     * @return 
      */
     public static int getNumberOfHarvestsRun(String domainName) {
         gotoHarvestHistoryForDomain(domainName);
@@ -59,10 +73,19 @@ public class HarvestUtils {
                 .findElements(By.xpath("//table[@class='selection_table']/tbody/tr[position()>1]")).size();
     }
 
+    /**
+     *
+     * @param domainName
+     */
     public static void gotoHarvestHistoryForDomain(String domainName) {
         PageHelper.gotoSubPage("History/Harveststatus-perdomain.jsp?domainName=" + domainName);
     }
 
+    /**
+     *
+     * @param name
+     * @param count
+     */
     public static void runHarvests(String name, int count) {
         Set<String> unfinishedHarvests = new HashSet<String>();
         for (int i = 0; i < count; i++) {
@@ -99,6 +122,9 @@ public class HarvestUtils {
         System.err.println("All harvests finished in " + (System.currentTimeMillis() - starttime) / 1000 + " seconds");
     }
 
+    /**
+     *
+     */
     public static void minimizeDefaultHarvest() {
         DomainConfigurationPageHelper.gotoDefaultConfigurationPage(DEFAULT_DOMAIN);
         DomainConfigurationPageHelper.setMaxObjects(10);

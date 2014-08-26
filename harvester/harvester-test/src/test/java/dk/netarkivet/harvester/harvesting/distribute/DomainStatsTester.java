@@ -44,6 +44,10 @@ public class DomainStatsTester {
     private final StopReason nullStopreason = null;
     private DomainStats domainstats;
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         domainstats = new DomainStats(positiveInitObjectCount, positiveInitByteCount, downloadComplete);

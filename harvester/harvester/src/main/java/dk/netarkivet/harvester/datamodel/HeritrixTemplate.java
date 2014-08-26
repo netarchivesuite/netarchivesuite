@@ -147,19 +147,41 @@ public class HeritrixTemplate {
     public static final String SEEDS_FILE_XPATH = "//crawl-order/controller" + "/newObject[@name='scope']"
             + "/string[@name='seedsfile']";
 
+    /**
+     *
+     */
     public static final String ARCS_ENABLED_XPATH = ARCWRITERPROCESSOR_XPATH + "/boolean[@name='enabled']";
 
     /** Xpath for the WARCs dir in the order.xml. */
     public static final String WARCS_ENABLED_XPATH = WARCWRITERPROCESSOR_XPATH + "/boolean[@name='enabled']";
 
+    /**
+     *
+     */
     public static final String WARCS_WRITE_REQUESTS_XPATH = WARCWRITERPROCESSOR_XPATH
             + "/boolean[@name='write-requests']";
+
+    /**
+     *
+     */
     public static final String WARCS_WRITE_METADATA_XPATH = WARCWRITERPROCESSOR_XPATH
             + "/boolean[@name='write-metadata']";
+
+    /**
+     *
+     */
     public static final String WARCS_SKIP_IDENTICAL_DIGESTS_XPATH = WARCWRITERPROCESSOR_XPATH
             + "/boolean[@name='skip-identical-digests']";
+
+    /**
+     *
+     */
     public static final String WARCS_WRITE_REVISIT_FOR_IDENTICAL_DIGESTS_XPATH = WARCWRITERPROCESSOR_XPATH
             + "/boolean[@name='write-revisit-for-identical-digests']";
+
+    /**
+     *
+     */
     public static final String WARCS_WRITE_REVISIT_FOR_NOT_MODIFIED_XPATH = WARCWRITERPROCESSOR_XPATH
             + "/boolean[@name='write-revisit-for-not-modified']";
 
@@ -312,6 +334,7 @@ public class HeritrixTemplate {
      * Method to add a list of crawler traps with a given element name. It is used both to add per-domain traps and
      * global traps.
      * 
+     * @param orderXMLdoc
      * @param elementName The name of the added element.
      * @param crawlerTraps A list of crawler trap regular expressions to add to this job.
      */
@@ -380,6 +403,7 @@ public class HeritrixTemplate {
      * name="decision">REJECT</string> <string name="list-logic">OR</string> <stringList name="regexp-list">
      * <string>theFirstRegexp</string> <string>theSecondRegexp</string> </stringList> </newObject>
      *
+     * @param orderXmlDoc
      * @param cfg The DomainConfiguration for which to generate crawler trap deciderules
      * @throws IllegalState If unable to update order.xml due to wrong order.xml format
      */
@@ -482,6 +506,7 @@ public class HeritrixTemplate {
     }
 
     /**
+     * @param orderXMLdoc
      * @param maxJobRunningTime Force the harvestjob to end after maxJobRunningTime
      */
     public static void editOrderXML_maxJobRunningTime(Document orderXMLdoc, long maxJobRunningTime) {
@@ -505,6 +530,7 @@ public class HeritrixTemplate {
      * @param orderXMLdoc
      *
      * @param forceMaxObjectsPerDomain The maximum number of objects to retrieve per domain, or 0 for no limit.
+     * @param maxObjectsIsSetByQuotaEnforcer
      * @throws PermissionDenied If unable to replace the frontier node of the orderXMLdoc Document
      * @throws IOFailure If the group-max-fetch-success element is not found in the orderXml. TODO The
      *             group-max-fetch-success check should also be performed in TemplateDAO.create, TemplateDAO.update
@@ -570,6 +596,7 @@ public class HeritrixTemplate {
      * retrieve per domain. This method updates 'group-max-all-kb' element of the 'QuotaEnforcer' node, which again is a
      * subelement of 'pre-fetch-processors' node. with the value of the argument forceMaxBytesPerDomain
      *
+     * @param orderXMLdoc
      * @param forceMaxBytesPerDomain The maximum number of byte to retrieve per domain, or -1 for no limit. Note that
      *            the number is divided by 1024 before being inserted into the orderXml, as Heritrix expects KB.
      * @throws PermissionDenied If unable to replace the QuotaEnforcer node of the orderXMLdoc Document
@@ -625,6 +652,7 @@ public class HeritrixTemplate {
      * 3. if deduplication is enabled in the order.xml, it writes the absolute path of the lucene index used by the
      * deduplication processor.
      *
+     * @param files
      * @throws IOFailure - When the orderfile could not be saved to disk When a specific node is not found in the
      *             XML-document When the SAXReader cannot parse the XML
      */

@@ -36,6 +36,9 @@ import dk.netarkivet.common.utils.TimeUtils;
 @Ignore("Not present in TestSuite")
 public class AlternateJMSConnectionTester {
 
+    /**
+     *
+     */
     public void errorcodesTest() {
         Settings.set(JMSConnectionSunMQ.JMS_BROKER_PORT, "7677");
         JMSConnection con = JMSConnectionFactory.getInstance();

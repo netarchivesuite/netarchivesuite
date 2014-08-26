@@ -59,6 +59,9 @@ public class GetFileTester {
     TestMessageListener listener;
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         ChannelsTesterHelper.resetChannels();
@@ -72,6 +75,9 @@ public class GetFileTester {
         pse.setUp();
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         pse.tearDown();
@@ -104,6 +110,9 @@ public class GetFileTester {
                 errMsg.contains("Retrieving file 'test1.arc' from replica 'BarOne' as file "));
     }
 
+    /**
+     *
+     */
     @Test
     public void testTooManyArguments() {
         String[] args = new String[] {"arg1.arc", "arg2.arc", "arg3.arc"};
@@ -123,6 +132,9 @@ public class GetFileTester {
                 errMsg.contains(GetFile.class.getName() + " filename [destination-file]"));
     }
 
+    /**
+     *
+     */
     @Test
     public void testNoArguments() {
         String[] args = new String[] {};

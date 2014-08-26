@@ -46,10 +46,17 @@ import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
+/**
+ *
+ * @author tra
+ */
 public class BatchGUITester {
     MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         mtf.setUp();
@@ -58,12 +65,18 @@ public class BatchGUITester {
         Settings.set(CommonSettings.BATCHJOBS_BASEDIR, TestInfo.BATCH_DIR.getAbsolutePath());
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         rs.tearDown();
         mtf.tearDown();
     }
 
+    /**
+     *
+     */
     @Test
     public void testUtilityConstructor() {
         ReflectUtils.testUtilityConstructor(BatchGUI.class);
@@ -178,6 +191,12 @@ public class BatchGUITester {
     // BatchGUI.getPageForClass(context);
     // }
 
+    /**
+     *
+     * @throws ArgumentNotValid
+     * @throws IOException
+     */
+    
     @Test
     public void testOverviewPage() throws ArgumentNotValid, IOException {
 

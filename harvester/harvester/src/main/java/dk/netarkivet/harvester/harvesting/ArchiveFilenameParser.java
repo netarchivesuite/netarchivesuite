@@ -22,6 +22,10 @@
  */
 package dk.netarkivet.harvester.harvesting;
 
+/**
+ *
+ * @author tra
+ */
 public abstract class ArchiveFilenameParser {
 
     /** @return the harvestID. */

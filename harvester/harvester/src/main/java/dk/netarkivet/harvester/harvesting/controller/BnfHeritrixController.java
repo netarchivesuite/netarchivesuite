@@ -263,11 +263,18 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
                 + JmxUtils.HOST + "=" + getHostName();
     }
 
+    /**
+     *
+     */
     @Override
     public void requestCrawlStart() {
         executeMBeanOperation(CrawlServiceOperation.startCrawling);
     }
 
+    /**
+     *
+     * @param reason
+     */
     @Override
     public void requestCrawlStop(String reason) {
         executeMBeanOperation(CrawlServiceOperation.terminateCurrentJob);
@@ -868,51 +875,89 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public boolean atFinish() {
         throw new NotImplementedException("Not implemented");
     }
 
+    /**
+     *
+     */
     @Override
     public void beginCrawlStop() {
         throw new NotImplementedException("Not implemented");
     }
 
+    /**
+     *
+     */
     @Override
     public void cleanup() {
         throw new NotImplementedException("Not implemented");
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public boolean crawlIsEnded() {
         throw new NotImplementedException("Not implemented");
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public int getActiveToeCount() {
         throw new NotImplementedException("Not implemented");
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public int getCurrentProcessedKBPerSec() {
         throw new NotImplementedException("Not implemented");
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String getHarvestInformation() {
         throw new NotImplementedException("Not implemented");
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String getProgressStats() {
         throw new NotImplementedException("Not implemented");
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public long getQueuedUriCount() {
         throw new NotImplementedException("Not implemented");
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public boolean isPaused() {
         throw new NotImplementedException("Not implemented");

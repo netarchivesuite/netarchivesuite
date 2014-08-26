@@ -45,11 +45,20 @@ public class StringRemoteFile implements RemoteFile {
     /** the filename. */
     String filename;
 
+    /**
+     *
+     * @param s
+     */
     public StringRemoteFile(String s) {
         this.filename = "unnamed string";
         contents = s;
     }
 
+    /**
+     *
+     * @param filename
+     * @param s
+     */
     public StringRemoteFile(String filename, String s) {
         this.filename = filename;
         contents = s;

@@ -61,6 +61,10 @@ public abstract class ArchiveBatchFilter implements Serializable {
 
     private static final String EXCLUDE_HTTP_ENTRIES_HTTP_PREFIX = "http:";
     private static final String ONLY_HTTP_ENTRIES_FILTER_NAME = "ONLY_HTTP_ENTRIES";
+
+    /**
+     *
+     */
     public static final ArchiveBatchFilter ONLY_HTTP_ENTRIES = new ArchiveBatchFilter(ONLY_HTTP_ENTRIES_FILTER_NAME) {
         public boolean accept(ArchiveRecord record) {
             // return
@@ -112,5 +116,10 @@ public abstract class ArchiveBatchFilter implements Serializable {
         return MIMETYPE_PATTERN.matcher(mimetype).matches();
     }
 
+    /**
+     *
+     * @param record
+     * @return
+     */
     public abstract boolean accept(ArchiveRecord record);
 }

@@ -103,24 +103,48 @@ import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 @SuppressWarnings({"serial", "unchecked"})
 public class HeritrixTests extends TestCase {
 
+    /**
+     *
+     */
     protected final static String WRITE_PROCESSORS_XPATH = "/crawl-order/controller/map[@name='write-processors']";
+
+    /**
+     *
+     */
     protected final static String DEDUPLICATOR_XPATH = WRITE_PROCESSORS_XPATH + "/newObject[@name='DeDuplicator']";
 
+    /**
+     *
+     */
     protected final static String DEDUPLICATOR_INDEX_LOCATION_XPATH = DEDUPLICATOR_XPATH
             + "/string[@name='index-location']";
+
+    /**
+     *
+     */
     protected final static String DEDUPLICATOR_MATCHING_METHOD_XPATH = DEDUPLICATOR_XPATH
             + "/string[@name='matching-method']";
 
+    /**
+     *
+     */
     protected final static String DEDUPLICATOR_ORIGIN_HANDLING_XPATH = DEDUPLICATOR_XPATH
             + "/string[@name='origin-handling']";
 
     private HeritrixLauncher hl;
     private MoveTestFiles mtf;
 
+    /**
+     *
+     */
     public HeritrixTests() {
         mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     public void setUp() throws Exception {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
 
@@ -147,6 +171,9 @@ public class HeritrixTests extends TestCase {
         }
     }
 
+    /**
+     *
+     */
     public void tearDown() {
         // it takes a little while for heritrix to close completely (including
         // all threads)
@@ -257,6 +284,7 @@ public class HeritrixTests extends TestCase {
      * Check that IOFailure is thrown by the JMXHeritrixController if the JMXPasswordFile does not exist / is hidden /
      * unreadable / impossible to open for other reasons.
      *
+     * @throws java.io.IOException
      */
     public void testIOFailureThrown() throws IOException {
         // Here it would make sense to get all the settings files and do the

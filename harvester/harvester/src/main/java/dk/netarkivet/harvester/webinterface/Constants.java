@@ -37,125 +37,317 @@ public class Constants {
     /** Names of various parameters used in the webinterface. */
     public static final String JOBSTATUS_PARAM = HarvestStatusQuery.UI_FIELD.JOB_STATUS.name();
 
+    /**
+     *
+     */
     public static final String JOBIDORDER_PARAM = "jobidorder";
 
+    /**
+     *
+     */
     public static final String DOMAIN_SEARCH_PARAM = "domainName";
 
     // public static final String DOMAIN
 
+    /**
+     *
+     */
+    
     public static final String HARVEST_ID_PARAM = HarvestStatusQuery.UI_FIELD.HARVEST_ID.name();
 
+    /**
+     *
+     */
     public static final String HARVEST_NUM_PARAM = HarvestStatusQuery.UI_FIELD.HARVEST_RUN.name();
 
+    /**
+     *
+     */
     public static final String EDIT_CONFIG_PARAM = "editConfig";
 
+    /**
+     *
+     */
     public static final String DEFAULT_PARAM = "default";
 
+    /**
+     *
+     */
     public static final String EDIT_URLLIST_PARAM = "editUrlList";
 
+    /**
+     *
+     */
     public static final String URLLIST_NAME_PARAM = "urlListName";
 
+    /**
+     *
+     */
     public static final String CRAWLERTRAPS_PARAM = "crawlerTraps";
 
+    /**
+     *
+     */
     public static final String SEED_LIST_PARAMETER = "seedList";
 
+    /**
+     *
+     */
     public static final String INDEXLABEL_PARAM = "indexLabel";
 
+    /**
+     *
+     */
     public static final String SCHEDULE_PARAM = "schedulename";
 
+    /**
+     *
+     */
     public static final String HARVEST_PARAM = "harvestname";
 
+    /**
+     *
+     */
     public static final String HARVEST_ID = "harvestid";
 
+    /**
+     *
+     */
     public static final String COLUMN_PARAM = "column";
 
+    /**
+     *
+     */
     public static final String SORT_FIELD_PARAM = "sort_field";
+
+    /**
+     *
+     */
     public static final String SORT_ORDER_PARAM = "sort_order";
+
+    /**
+     *
+     */
     public static final String SORT_ORDER_ASC = "asc";
+
+    /**
+     *
+     */
     public static final String SORT_ORDER_DESC = "desc";
 
+    /**
+     *
+     */
     public static final String FROM_FILE_PARAM = "fromFile";
 
+    /**
+     *
+     */
     public static final String DOMAINLIST_PARAM = "domainlist";
 
+    /**
+     *
+     */
     public static final String OLDSNAPSHOT_PARAM = "old_snapshot_name";
 
+    /**
+     *
+     */
     public static final String DOMAIN_OBJECTLIMIT_PARAM = "snapshot_object_limit";
 
+    /**
+     *
+     */
     public static final String DOMAIN_BYTELIMIT_PARAM = "snapshot_byte_limit";
 
+    /**
+     *
+     */
     public static final String JOB_TIMELIMIT_PARAM = "snapshot_time_limit";
 
+    /**
+     *
+     */
     public static final String CREATENEW_PARAM = "createnew";
 
+    /**
+     *
+     */
     public static final String UPDATE_PARAM = "update";
 
+    /**
+     *
+     */
     public static final String ADDDOMAINS_PARAM = "addDomains";
 
+    /**
+     *
+     */
     public static final String SAVE_PARAM = "save";
 
+    /**
+     *
+     */
     public static final String COMMENTS_PARAM = "comments";
 
+    /**
+     *
+     */
     public static final String AUDIENCE_PARAM = "audience";
 
+    /**
+     *
+     */
     public static final String NEXTDATE_PARAM = "nextdate";
 
+    /**
+     *
+     */
     public static final String NEXTDATE_SUBMIT = "setnextdate";
 
+    /**
+     *
+     */
     public static final String DELETEDOMAIN_PARAM = "deletedomain";
 
+    /**
+     *
+     */
     public static final String DELETECONFIG_PARAM = "deleteconfig";
 
+    /**
+     *
+     */
     public static final String EDITION_PARAM = "edition";
 
+    /**
+     *
+     */
     public static final String UNKNOWN_DOMAINS_PARAM = "unknownDomains";
 
+    /**
+     *
+     */
     public static final String DOMAIN_PARAM = "name";
 
+    /**
+     *
+     */
     public static final String CONFIG_NAME_PARAM = "configName";
 
+    /**
+     *
+     */
     public static final String ORDER_XML_NAME_PARAM = "order_xml";
 
+    /**
+     *
+     */
     public static final String MAX_RATE_PARAM = "maxRate";
 
+    /**
+     *
+     */
     public static final String MAX_OBJECTS_PARAM = "maxObjects";
 
+    /**
+     *
+     */
     public static final String MAX_BYTES_PARAM = "maxBytes";
 
+    /**
+     *
+     */
     public static final String FLIPACTIVE_PARAM = "flipactive";
 
+    /**
+     *
+     */
     public static final String SHOW_INACTIVE_PARAM = "showInactive";
 
+    /**
+     *
+     */
     public static final String SHOW_UNUSED_CONFIGURATIONS_PARAM = "showUnusedConfigurations";
 
+    /**
+     *
+     */
     public static final String SHOW_UNUSED_SEEDS_PARAM = "showUnusedSeeds";
 
+    /**
+     *
+     */
     public static final String URLLIST_LIST_PARAM = "urlListList";
 
+    /**
+     *
+     */
     public static final String JOB_PARAM = "jobID";
 
+    /**
+     *
+     */
     public static final String JOB_RESUBMIT_PARAM = "resubmit";
 
+    /**
+     *
+     */
     public static final String JOB_REJECT_PARAM = "reject";
 
+    /**
+     *
+     */
     public static final String JOB_UNREJECT_PARAM = "unreject";
 
+    /**
+     *
+     */
     public static final String SEEDS_PARAM = "seeds";
 
+    /**
+     *
+     */
     public static final String ORDER_TEMPLATE_PARAM = "orderTemplate";
 
+    /**
+     *
+     */
     public static final String ALIAS_PARAM = "alias";
 
+    /**
+     *
+     */
     public static final String RENEW_ALIAS_PARAM = "renewAlias";
 
+    /**
+     *
+     */
     public static final String UPLOAD_FILE_PARAM = "upload_file";
 
+    /**
+     *
+     */
     public static final String IS_NEWEST_FIRST = "is_newest_first";
 
+    /**
+     *
+     */
     public static final String DESCENDING = "DESC";
+
+    /**
+     *
+     */
     public static final String ASCENDING = "ASC";
 
+    /**
+     *
+     */
     public static final String FALSE = "false";
+
+    /**
+     *
+     */
     public static final String TRUE = "true";
 
     /**
@@ -163,24 +355,54 @@ public class Constants {
      */
     public static final String TRAP_ID = "trap_id";
 
+    /**
+     *
+     */
     public static final String TRAP_ACTION = "trap_action";
 
+    /**
+     *
+     */
     public static final String TRAP_CREATE = "trap_create";
 
+    /**
+     *
+     */
     public static final String TRAP_DOWNLOAD = "trap_download";
 
+    /**
+     *
+     */
     public static final String TRAP_ACTIVATE = "trap_activate";
 
+    /**
+     *
+     */
     public static final String TRAP_DEACTIVATE = "trap_deactivate";
 
+    /**
+     *
+     */
     public static final String TRAP_CONTENT_TYPE = "trap_content_type";
 
+    /**
+     *
+     */
     public static final String TRAP_NAME = "trap_name";
 
+    /**
+     *
+     */
     public static final String TRAP_IS_ACTIVE = "trap_is_active";
 
+    /**
+     *
+     */
     public static final String TRAP_FILENAME = "trap_filename";
 
+    /**
+     *
+     */
     public static final String TRAP_DESCRIPTION = "trap_description";
 
     /**
@@ -189,8 +411,14 @@ public class Constants {
      */
     public static final String DEFINITIONS_SITESECTION_DIRNAME = "HarvestDefinition";
 
+    /**
+     *
+     */
     public static final String HISTORY_SITESECTION_DIRNAME = "History";
 
+    /**
+     *
+     */
     public static final String QA_SITESECTION_DIRNAME = "QA";
 
     /**
@@ -204,6 +432,9 @@ public class Constants {
     /** Fields used in our calendar functionality. */
     public static final String END_TIME_FIELD = "endTimeField";
 
+    /**
+     *
+     */
     public static final String HOW_OFTEN_FIELD = "howOftenField";
 
     /**
@@ -259,10 +490,19 @@ public class Constants {
      */
     public static final String DOMAIN_QUERY_STRING_PARAM = "DOMAIN_QUERY_STRING";
 
+    /**
+     *
+     */
     public static final String TRAPS_DOMAIN_SEARCH = "crawlertraps";
 
+    /**
+     *
+     */
     public static final String NAME_DOMAIN_SEARCH = "name";
 
+    /**
+     *
+     */
     public static final String COMMENTS_DOMAIN_SEARCH = "comments";
 
     /**
@@ -270,5 +510,8 @@ public class Constants {
      */
     public static final String DEFAULT_DOMAIN_SEARCH_TYPE = NAME_DOMAIN_SEARCH;
 
+    /**
+     *
+     */
     public static final String JOB_ORDERING_BY_STARTDATE_PARAM = "ORDERING_BY_STARTDATE";
 }

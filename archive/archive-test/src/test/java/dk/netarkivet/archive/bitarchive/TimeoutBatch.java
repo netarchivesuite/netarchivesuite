@@ -29,10 +29,17 @@ import java.util.Date;
 
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 
+/**
+ *
+ * @author tra
+ */
 @SuppressWarnings({"serial"})
 public class TimeoutBatch extends FileBatchJob {
     Date start;
 
+    /**
+     *
+     */
     public TimeoutBatch() {
         batchJobTimeout = 1000;
     }

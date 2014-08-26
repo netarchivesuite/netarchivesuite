@@ -197,14 +197,26 @@ public class SparsePartialHarvest extends ExtendableEntity implements Named {
         return oid;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getAudience() {
         return audience;
     }
 
+    /**
+     *
+     * @return
+     */
     protected Long getChannelId() {
         return channelId;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     protected int getExtendedFieldType() {
         return ExtendedFieldTypes.HARVESTDEFINITION;

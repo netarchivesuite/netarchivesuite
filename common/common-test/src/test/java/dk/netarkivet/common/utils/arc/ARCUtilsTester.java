@@ -67,11 +67,19 @@ public class ARCUtilsTester {
     private static File INPUT_2_ARC = new File(TestInfo.WORKING_DIR, "input-2.arc");
     private static File INPUT_3_ARC = new File(TestInfo.WORKING_DIR, "input-3.arc");
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);

@@ -60,6 +60,7 @@ public class HarvesterStatusReceiver extends HarvesterMessageHandler implements 
      * @param jobDispatcher The <code>JobDispatcher</code> to delegate the dispatching of new jobs to, when a 'Ready for
      *            job' event is received.
      * @param jmsConnection The JMS connection by which {@link HarvesterReadyMessage} is received.
+     * @param harvestChannelRegistry
      */
     public HarvesterStatusReceiver(JobDispatcher jobDispatcher, JMSConnection jmsConnection,
             HarvestChannelDAO harvestChannelDao, HarvestChannelRegistry harvestChannelRegistry) {
@@ -97,6 +98,10 @@ public class HarvesterStatusReceiver extends HarvesterMessageHandler implements 
         jobDispatcher.submitNextNewJob(channel);
     }
 
+    /**
+     *
+     * @param msg
+     */
     @Override
     public void visit(HarvesterRegistrationRequest msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");

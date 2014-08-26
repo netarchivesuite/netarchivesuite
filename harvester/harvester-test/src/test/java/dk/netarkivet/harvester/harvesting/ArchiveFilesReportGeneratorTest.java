@@ -34,8 +34,16 @@ import java.text.ParseException;
 
 import org.junit.Test;
 
+/**
+ *
+ * @author tra
+ */
 public class ArchiveFilesReportGeneratorTest {
 
+    /**
+     *
+     * @throws ParseException
+     */
     @Test
     public final void testPatterns() throws ParseException {
 
@@ -55,6 +63,10 @@ public class ArchiveFilesReportGeneratorTest {
         assertEquals(162928L, Long.parseLong((String) params[3]));
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     @Test
     public final void testReportGeneration() throws IOException {
 

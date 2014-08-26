@@ -51,6 +51,10 @@ import dk.netarkivet.common.utils.StreamUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
+/**
+ *
+ * @author tra
+ */
 public class BitarchiveRecordTester {
     private UseTestRemoteFile utrf = new UseTestRemoteFile();
     ReloadSettings rs = new ReloadSettings();
@@ -85,6 +89,10 @@ public class BitarchiveRecordTester {
      **/
     private long bigWarcRecordOffset = 100262;
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         rs.setUp();
@@ -95,6 +103,10 @@ public class BitarchiveRecordTester {
                 dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR.getAbsolutePath());
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         utrf.tearDown();

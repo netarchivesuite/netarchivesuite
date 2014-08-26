@@ -49,6 +49,10 @@ public class BatchMessageTester {
     private ChannelID q1 = TestInfo.QUEUE_1;
     private static FileBatchJob job;
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         job = new TestBatchJob();

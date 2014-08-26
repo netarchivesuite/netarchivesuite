@@ -91,6 +91,7 @@ public abstract class Machine {
      * @param param The machine parameters inherited by the parent.
      * @param netarchiveSuiteSource The name of the NetarchiveSuite package file.
      * @param julProp The logging property file.
+     * @param slf4JConfig
      * @param securityPolicy The security policy file.
      * @param dbFileName The name of the database file.
      * @param archiveDbFileName The name of the archive database file.
@@ -921,6 +922,10 @@ public abstract class Machine {
      */
     protected abstract void createHarvestDatabaseUpdateScript(File machineDirectory);
 
+    /**
+     *
+     * @return
+     */
     protected String getTargetEncoding() {
         return targetEncoding;
     }

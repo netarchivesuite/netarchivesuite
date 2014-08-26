@@ -35,6 +35,10 @@ import org.junit.Test;
  */
 public class TimeUtilsTester {
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testExponentialBackoffSleep() throws Exception {
         long timeStart = System.currentTimeMillis();

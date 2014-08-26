@@ -34,6 +34,7 @@ import junit.textui.TestRunner;
 public class MonitorRegistryTesterSuite {
     /**
      * Create a test suite just for these tests.
+     * @return 
      */
     public static Test suite() {
         TestSuite suite;
@@ -44,11 +45,16 @@ public class MonitorRegistryTesterSuite {
 
     /**
      * Add the tests here.
+     * @param suite
      */
     public static void addToSuite(TestSuite suite) {
         suite.addTestSuite(MonitorRegistryServerTester.class);
     }
 
+    /**
+     *
+     * @param args
+     */
     public static void main(String args[]) {
         String args2[] = {"-noloading", MonitorRegistryTesterSuite.class.getName()};
         TestRunner.main(args2);

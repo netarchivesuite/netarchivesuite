@@ -48,6 +48,8 @@ public class FileBatchJobTester {
 
     /**
      * Tests that the simplest concretization of this class is serializable
+     * @throws java.io.IOException
+     * @throws java.lang.ClassNotFoundException
      */
     @Test
     public void testSerializability() throws IOException, ClassNotFoundException {
@@ -62,6 +64,10 @@ public class FileBatchJobTester {
         return f.getFilenamePattern().pattern();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testProcessOnlyFilesNamed() throws Exception {
         FileBatchJob f1 = new ConcreteFileBatchJob();
@@ -80,6 +86,10 @@ public class FileBatchJobTester {
         assertEquals("Should give an all-matching regexp back", ".*", f1.getFilenamePattern().pattern());
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testProcessOnlyFileNamed() throws Exception {
         FileBatchJob f1 = new ConcreteFileBatchJob();
@@ -104,6 +114,10 @@ public class FileBatchJobTester {
                 .pattern());
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testProcessOnlyFilesMatching_Pattern() throws Exception {
         FileBatchJob f1 = new ConcreteFileBatchJob();
@@ -113,6 +127,10 @@ public class FileBatchJobTester {
         assertEquals("Should have stated regexp as pattern", "foo*bar", f1.getFilenamePattern().pattern());
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testProcessOnlyFilesMatching_ListOfPattern() throws Exception {
         FileBatchJob f1 = new ConcreteFileBatchJob();

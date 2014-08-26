@@ -61,6 +61,9 @@ public class CreateCDXMetadataFileTester {
     File job70MetadataFile = new File("70-metadata-1.arc");
     private UseTestRemoteFile utrf = new UseTestRemoteFile();
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         utrf.setUp();
@@ -73,6 +76,9 @@ public class CreateCDXMetadataFileTester {
         pse.setUp();
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         pse.tearDown();
@@ -183,6 +189,9 @@ public class CreateCDXMetadataFileTester {
         }
     }
 
+    /**
+     *
+     */
     @Test
     @Ignore("Does not exit normally")
     public void testRunSingleJob() {
@@ -205,6 +214,9 @@ public class CreateCDXMetadataFileTester {
                         job4MetadataFile);
     }
 
+    /**
+     *
+     */
     @Test
     @Ignore("was commented out")
     public void testRunFailingJob() {

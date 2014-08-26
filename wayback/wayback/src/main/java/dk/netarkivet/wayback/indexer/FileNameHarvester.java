@@ -42,6 +42,10 @@ import dk.netarkivet.common.utils.batch.DatedFileListJob;
 import dk.netarkivet.common.utils.batch.FileListJob;
 import dk.netarkivet.wayback.WaybackSettings;
 
+/**
+ *
+ * @author tra
+ */
 public class FileNameHarvester {
 
     /** Logger for this class. */

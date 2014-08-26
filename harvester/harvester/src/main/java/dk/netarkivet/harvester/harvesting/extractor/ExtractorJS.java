@@ -58,7 +58,14 @@ public class ExtractorJS extends Extractor implements CoreAttributeConstants {
     // (G1) ' or " with optional leading backslashes
     // (G2) whitespace-free string delimited on boths ends by G1
 
+    /**
+     *
+     */
     protected long numberOfCURIsHandled = 0;
+
+    /**
+     *
+     */
     protected static long numberOfLinksExtracted = 0;
 
     // URIs known to produce false-positives with the current JS extractor.
@@ -66,7 +73,11 @@ public class ExtractorJS extends Extractor implements CoreAttributeConstants {
     // URIs from http://www.google-analytics.com/urchin.js and only 2
     // good URIs, which are merely one pixel images.
     // TODO: remove this blacklist when JS extractor is improved
-    protected final static String[] EXTRACTOR_URI_EXCEPTIONS = {"http://www.google-analytics.com/urchin.js"};
+
+    /**
+     *
+     */
+        protected final static String[] EXTRACTOR_URI_EXCEPTIONS = {"http://www.google-analytics.com/urchin.js"};
 
     /**
      * @param name
@@ -80,6 +91,12 @@ public class ExtractorJS extends Extractor implements CoreAttributeConstants {
      * 
      * @see org.archive.crawler.framework.Processor#process(org.archive.crawler.datamodel .CrawlURI)
      */
+
+    /**
+     *
+     * @param curi
+     */
+    
     public void extract(CrawlURI curi) {
         // special-cases, for when we know our current JS extractor does poorly.
         // TODO: remove this test when JS extractor is improved
@@ -138,6 +155,14 @@ public class ExtractorJS extends Extractor implements CoreAttributeConstants {
         }
     }
 
+    /**
+     *
+     * @param curi
+     * @param cs
+     * @param controller
+     * @param handlingJSFile
+     * @return
+     */
     public static long considerStrings(CrawlURI curi, CharSequence cs, CrawlController controller,
             boolean handlingJSFile) {
         long foundLinks = 0;
@@ -178,6 +203,12 @@ public class ExtractorJS extends Extractor implements CoreAttributeConstants {
      * 
      * @see org.archive.crawler.framework.Processor#report()
      */
+
+    /**
+     *
+     * @return
+     */
+    
     public String report() {
         StringBuffer ret = new StringBuffer();
         ret.append("Processor: dk.netarkivet.harvester.harvesting.extractor.ExtractorJS\n");

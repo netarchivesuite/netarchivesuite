@@ -80,10 +80,17 @@ public class HeritrixLauncherTester {
     private MoveTestFiles mtf;
     private File dummyLuceneIndex;
 
+    /**
+     *
+     */
     public HeritrixLauncherTester() {
         mtf = new MoveTestFiles(TestInfo.CRAWLDIR_ORIGINALS_DIR, TestInfo.WORKING_DIR);
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     @Before
     public void setUp() throws IOException {
         mtf.setUp();
@@ -97,6 +104,9 @@ public class HeritrixLauncherTester {
         // dk.netarkivet.archive.indexserver.LuceneUtils.makeDummyIndex(dummyLuceneIndex);
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         mtf.tearDown();
@@ -428,6 +438,8 @@ public class HeritrixLauncherTester {
      * Tests that HeritricLauncher will fail on an error in HeritrixController.initialize().
      * 
      * FIXME Fails in Hudson
+     * @throws java.lang.NoSuchFieldException
+     * @throws java.lang.IllegalAccessException
      */
     @Test
     @Ignore("fails in hudson")
@@ -494,33 +506,62 @@ public class HeritrixLauncherTester {
 
         private int isEndedCalls = 0;
 
+        /**
+         *
+         * @param files
+         */
         public FailDuringCrawlTestController(HeritrixFiles files) {
             super(files);
         }
 
+        /**
+         *
+         * @param reason
+         */
         public void requestCrawlStop(String reason) {
 
         }
 
+        /**
+         *
+         */
         public void initialize() {
 
         }
 
+        /**
+         *
+         * @throws IOFailure
+         */
         public void requestCrawlStart() throws IOFailure {
 
         }
 
+        /**
+         *
+         * @return
+         */
         public boolean atFinish() {
             return false;
         }
 
+        /**
+         *
+         */
         public void beginCrawlStop() {
         }
 
+        /**
+         *
+         */
         public void cleanup() {
 
         }
 
+        /**
+         *
+         * @return
+         */
         public boolean crawlIsEnded() {
             if (isEndedCalls >= 3) {
                 return true;
@@ -536,68 +577,121 @@ public class HeritrixLauncherTester {
      */
     public static class FailingTestController implements HeritrixController {
 
+        /**
+         *
+         * @param files
+         */
         public FailingTestController(HeritrixFiles files) {
         };
 
+        /**
+         *
+         */
         public void initialize() {
             // TODO: implement method
             throw new IOFailure("Failed to initialize");
         }
 
+        /**
+         *
+         * @throws IOFailure
+         */
         public void requestCrawlStart() throws IOFailure {
             // TODO: implement method
             throw new IOFailure("Not implemented");
         }
 
+        /**
+         *
+         */
         public void beginCrawlStop() {
             // TODO: implement method
             throw new IOFailure("Not implemented");
         }
 
+        /**
+         *
+         * @param reason
+         */
         public void requestCrawlStop(String reason) {
             // TODO: implement method
             throw new IOFailure("Not implemented");
         }
 
+        /**
+         *
+         * @return
+         */
         public boolean atFinish() {
             // TODO: implement method
             throw new IOFailure("Not implemented");
         }
 
+        /**
+         *
+         * @return
+         */
         public boolean crawlIsEnded() {
             // TODO: implement method
             throw new IOFailure("Not implemented");
         }
 
+        /**
+         *
+         * @return
+         */
         public int getActiveToeCount() {
             // TODO: implement method
             throw new IOFailure("Not implemented");
         }
 
+        /**
+         *
+         * @return
+         */
         public long getQueuedUriCount() {
             // TODO: implement method
             throw new IOFailure("Not implemented");
         }
 
+        /**
+         *
+         * @return
+         */
         public int getCurrentProcessedKBPerSec() {
             // TODO: implement method
             throw new IOFailure("Not implemented");
         }
 
+        /**
+         *
+         * @return
+         */
         public String getProgressStats() {
             // TODO: implement method
             throw new IOFailure("Not implemented");
         }
 
+        /**
+         *
+         * @return
+         */
         public boolean isPaused() {
             // TODO: implement method
             throw new IOFailure("Not implemented");
         }
 
+        /**
+         *
+         */
         public void cleanup() {
             throw new IOFailure("cleanup failure");
         }
 
+        /**
+         *
+         * @return
+         */
         public String getHarvestInformation() {
             // TODO: implement method
             throw new IOFailure("Not implemented");
@@ -608,10 +702,18 @@ public class HeritrixLauncherTester {
      * A heritrix controller which fails on everything except cleanup
      */
     public static class SucceedOnCleanupTestController extends FailingTestController {
+
+        /**
+         *
+         * @param files
+         */
         public SucceedOnCleanupTestController(HeritrixFiles files) {
             super(files);
         }
 
+        /**
+         *
+         */
         public void cleanup() {
             return;
         }
@@ -630,6 +732,10 @@ public class HeritrixLauncherTester {
          */
         private List<CrawlStatusListener> listeners = new ArrayList<CrawlStatusListener>();
 
+        /**
+         *
+         * @param files
+         */
         public TestCrawlController(HeritrixFiles files) {
             super(files);
         }
@@ -671,10 +777,18 @@ public class HeritrixLauncherTester {
 
         }
 
+        /**
+         *
+         * @param test
+         */
         public void requestCrawlStop(String test) {
 
         }
 
+        /**
+         *
+         * @return
+         */
         public Frontier getFrontier() {
             return new TestFrontier();
         }

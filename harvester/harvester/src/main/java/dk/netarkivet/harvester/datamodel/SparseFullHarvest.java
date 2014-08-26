@@ -196,10 +196,18 @@ public class SparseFullHarvest extends ExtendableEntity {
         return edition;
     }
 
+    /**
+     *
+     * @return
+     */
     protected Long getChannelId() {
         return channelId;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     protected int getExtendedFieldType() {
         return ExtendedFieldTypes.HARVESTDEFINITION;

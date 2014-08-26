@@ -49,6 +49,9 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 public class SettingsTester {
     ReloadSettings rs = new ReloadSettings(new File(TestInfo.SETTINGSFILENAME));
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         rs.setUp();
@@ -64,6 +67,9 @@ public class SettingsTester {
 
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         FileUtils.removeRecursively(TestInfo.TEMPDIR);

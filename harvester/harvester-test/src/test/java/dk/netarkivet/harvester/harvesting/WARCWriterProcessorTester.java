@@ -32,6 +32,10 @@ import org.junit.Test;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.XmlUtils;
 
+/**
+ *
+ * @author tra
+ */
 public class WARCWriterProcessorTester {
 
     private static final String DISK_PATH_XPATH = "//crawl-order/controller" + "/string[@name='disk-path']";
@@ -47,6 +51,9 @@ public class WARCWriterProcessorTester {
     File orderWithOut;
     File orderWith;
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         TestInfo.WORKING_DIR.mkdirs();
@@ -60,11 +67,17 @@ public class WARCWriterProcessorTester {
         orderWithOut = new File(DirWithout, "order_for_testing_warcinfo.xml");
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
     }
 
+    /**
+     *
+     */
     @Test
     public void testWriteWarcInfoWithScheduleName() {
         // Change disk-path of order.xml to Dir With
@@ -80,6 +93,9 @@ public class WARCWriterProcessorTester {
         // System.out.println(output);
     }
 
+    /**
+     *
+     */
     @Test
     public void testWriteWarcInfoWithoutScheduleName() {
         // Change disk-path of order.xml to DirWithout

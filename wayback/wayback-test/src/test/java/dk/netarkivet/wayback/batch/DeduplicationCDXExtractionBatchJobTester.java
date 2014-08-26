@@ -47,29 +47,53 @@ import dk.netarkivet.wayback.TestInfo;
  */
 public class DeduplicationCDXExtractionBatchJobTester {
 
+    /**
+     *
+     */
     public static final String METADATA_FILENAME = "duplicate.metadata.arc";
     /** The two next files doesn't exist, therefore renamed from REAL to UNREAL */
     public static final String METADATA_FILENAME_UNREAL_1 = "124412-metadata-1.arc";
+
+    /**
+     *
+     */
     public static final String METADATA_FILENAME_UNREAL_2 = "124399-metadata-1.arc";
+
+    /**
+     *
+     */
     public static final String METADATA_FILENAME_REAL_1 = "1-metadata-1.warc";
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
     }
 
+    /**
+     *
+     */
     @Test
     public void testInitialize() {
         DeduplicationCDXExtractionBatchJob job = new DeduplicationCDXExtractionBatchJob();
         job.initialize(new ByteArrayOutputStream());
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     @Test
     public void testJob() throws IOException {
         File testFile = new File(TestInfo.WORKING_DIR, METADATA_FILENAME);
@@ -89,6 +113,10 @@ public class DeduplicationCDXExtractionBatchJobTester {
         }
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     @Test
     public void testJobRealOne() throws IOException {
         DeduplicationCDXExtractionBatchJob job = new DeduplicationCDXExtractionBatchJob();
@@ -103,6 +131,10 @@ public class DeduplicationCDXExtractionBatchJobTester {
         // System.out.println("exception " + exceptions[0]);
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     @Test
     public void testJobRealTwo() throws IOException {
         DeduplicationCDXExtractionBatchJob job2 = new DeduplicationCDXExtractionBatchJob();
@@ -118,6 +150,10 @@ public class DeduplicationCDXExtractionBatchJobTester {
         // System.out.println("exception " + exceptions[0]);
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     @Test
     public void testJobRealWarc() throws IOException {
         DeduplicationCDXExtractionBatchJob job3 = new DeduplicationCDXExtractionBatchJob();

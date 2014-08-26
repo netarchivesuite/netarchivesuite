@@ -128,11 +128,18 @@ public class RegExpExclusionFilterFactory implements ExclusionFilterFactory {
         this.file = file;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public ExclusionFilter get() {
         return new RegExpExclusionFilter(patterns);
     }
 
+    /**
+     *
+     */
     @Override
     public void shutdown() {
         // Nothing to do

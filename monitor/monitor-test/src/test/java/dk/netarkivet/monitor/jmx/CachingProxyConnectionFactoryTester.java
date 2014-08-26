@@ -31,16 +31,31 @@ import dk.netarkivet.common.exceptions.NotImplementedException;
 
 /** Unittest for testing the CachingProxyConnectionFactory class. */
 public class CachingProxyConnectionFactoryTester extends TestCase {
+
+    /**
+     *
+     * @param s
+     */
     public CachingProxyConnectionFactoryTester(String s) {
         super(s);
     }
 
+    /**
+     *
+     */
     public void setUp() {
     }
 
+    /**
+     *
+     */
     public void tearDown() {
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     public void testGetConnection() throws Exception {
         JMXProxyConnectionFactory factory = new JMXProxyConnectionFactory() {
             public JMXProxyConnection getConnection(String server, int port, int rmiPort, String userName,

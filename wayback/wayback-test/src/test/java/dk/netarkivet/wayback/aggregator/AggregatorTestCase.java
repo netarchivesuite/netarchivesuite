@@ -32,20 +32,62 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.wayback.TestInfo;
 import dk.netarkivet.wayback.WaybackSettings;
 
+/**
+ *
+ * @author tra
+ */
 @SuppressWarnings({"unused"})
 public class AggregatorTestCase {
+
+    /**
+     *
+     */
     protected static final String testWorkingDirectory = "target" + File.separator + "test-data" + File.separator;
 
+    /**
+     *
+     */
     protected static final String testSourceIndexDir = TestInfo.DATA_DIR + File.separator + "raw-index-files"
             + File.separator;
+
+    /**
+     *
+     */
     public static final String inputDirName = testWorkingDirectory + "inputDir";
+
+    /**
+     *
+     */
     protected static final String tempDirName = testWorkingDirectory + "tempDir";
+
+    /**
+     *
+     */
     protected static final String outputDirName = testWorkingDirectory + "outPutDir";
 
+    /**
+     *
+     */
     protected static final String inputFile1Name = "index1.txt";
+
+    /**
+     *
+     */
     protected static final String inputFile2Name = "index2.txt";
+
+    /**
+     *
+     */
     protected static final String inputFile3Name = "index3.txt";
+
+    /**
+     *
+     */
     protected static final String inputFile109KName = "index109K.txt";
+
+    /**
+     *
+     */
     protected static final String inputFile155KName = "index155K.txt";
 
     private final ReloadSettings originalSettings = new ReloadSettings();
@@ -56,6 +98,10 @@ public class AggregatorTestCase {
     private static final File TESTLOGPROP = new File("tests/dk/netarkivet/testlog.prop");
     private static final File LOGFILE = new File("tests/testlogs/netarkivtest.log");
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         originalSettings.setUp();
@@ -76,6 +122,10 @@ public class AggregatorTestCase {
         new File(outputDirName).mkdirs();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         originalSettings.tearDown();

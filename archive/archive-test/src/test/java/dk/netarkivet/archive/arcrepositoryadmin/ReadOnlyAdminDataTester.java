@@ -44,6 +44,9 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 public class ReadOnlyAdminDataTester {
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         rs.setUp();
@@ -51,12 +54,19 @@ public class ReadOnlyAdminDataTester {
         Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, TestInfo.TEST_DIR.getAbsolutePath());
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         FileUtils.removeRecursively(TestInfo.TEST_DIR);
         rs.tearDown();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testSynchronize() throws Exception {
         ReadOnlyAdminData ad = ReadOnlyAdminData.getInstance();

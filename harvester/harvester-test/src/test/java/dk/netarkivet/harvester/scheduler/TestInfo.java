@@ -51,6 +51,9 @@ public class TestInfo {
     static final File orderTemplatesOriginalsDir = new File("tests/dk/netarkivet/"
             + "/harvester/data/originals/order_templates/");
 
+    /**
+     *
+     */
     public TestInfo() {
     }
 

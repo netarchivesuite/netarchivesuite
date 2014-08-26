@@ -175,6 +175,9 @@ public class JMSConnectionMockupMQ extends JMSConnection {
         return new TestObjectMessage(nMsg);
     }
 
+    /**
+     *
+     */
     public static void clearTestQueues() {
         JMSConnectionMockupMQ.getInstance().initConnection();
     }
@@ -189,6 +192,9 @@ public class JMSConnectionMockupMQ extends JMSConnection {
         msg.updateId(id);
     }
 
+    /**
+     *
+     */
     public static void useJMSConnectionMockupMQ() {
         // JMSConnectionFactory.getInstance().cleanup();
         Settings.set(CommonSettings.JMS_BROKER_CLASS, "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
@@ -210,6 +216,12 @@ public class JMSConnectionMockupMQ extends JMSConnection {
         }
     }
 
+    /**
+     *
+     * @param job
+     * @param channelID
+     * @return
+     */
     public boolean isSentToChannel(TestJob job, ChannelID channelID) {
         TestDestination destination = destinations.get(channelID.getName());
         for (TestObjectMessage sentMessage : destination.sent) {
@@ -218,24 +230,58 @@ public class JMSConnectionMockupMQ extends JMSConnection {
         return false;
     }
 
+    /**
+     *
+     */
     protected static class TestConnectionFactory implements ConnectionFactory {
+
+        /**
+         *
+         * @return
+         * @throws JMSException
+         */
         public Connection createConnection() throws JMSException {
             return new TestConnection();
         }
 
+        /**
+         *
+         * @param string
+         * @param string1
+         * @return
+         * @throws JMSException
+         */
         public Connection createConnection(String string, String string1) throws JMSException {
             return new TestConnection();
         }
     }
 
+    /**
+     *
+     */
     protected static class TestConnection implements Connection {
+
+        /**
+         *
+         */
         public boolean isStarted = false;
         private ExceptionListener exceptionListener;
 
+        /**
+         *
+         * @param b
+         * @param i
+         * @return
+         * @throws JMSException
+         */
         public Session createSession(boolean b, int i) throws JMSException {
             return new TestSession();
         }
 
+        /**
+         *
+         * @throws JMSException
+         */
         public void start() throws JMSException {
             if (isStarted) {
                 throw new IllegalStateException(this + " already started");
@@ -243,115 +289,261 @@ public class JMSConnectionMockupMQ extends JMSConnection {
             isStarted = true;
         }
 
+        /**
+         *
+         * @throws JMSException
+         */
         public void stop() throws JMSException {
             isStarted = false;
         }
 
+        /**
+         *
+         * @throws JMSException
+         */
         public void close() throws JMSException {
             isStarted = false;
             // TODO: Methods should start throwing exceptions
         }
 
+        /**
+         *
+         * @param exceptionListener
+         * @throws JMSException
+         */
         public void setExceptionListener(ExceptionListener exceptionListener) throws JMSException {
             this.exceptionListener = exceptionListener;
         }
 
+        /**
+         *
+         * @return
+         * @throws JMSException
+         */
         public ExceptionListener getExceptionListener() throws JMSException {
             return this.exceptionListener;
         }
 
+        /**
+         *
+         * @return
+         * @throws JMSException
+         */
         public String getClientID() throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
+        /**
+         *
+         * @param string
+         * @throws JMSException
+         */
         public void setClientID(String string) throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
+        /**
+         *
+         * @return
+         * @throws JMSException
+         */
         public ConnectionMetaData getMetaData() throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
+        /**
+         *
+         * @param destination
+         * @param string
+         * @param serverSessionPool
+         * @param i
+         * @return
+         * @throws JMSException
+         */
         public ConnectionConsumer createConnectionConsumer(Destination destination, String string,
                 ServerSessionPool serverSessionPool, int i) throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
+        /**
+         *
+         * @param topic
+         * @param string
+         * @param string1
+         * @param serverSessionPool
+         * @param i
+         * @return
+         * @throws JMSException
+         */
         public ConnectionConsumer createDurableConnectionConsumer(Topic topic, String string, String string1,
                 ServerSessionPool serverSessionPool, int i) throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
     }
 
+    /**
+     *
+     */
     protected static class TestSession implements Session {
+
+        /**
+         *
+         * @param serializable
+         * @return
+         * @throws JMSException
+         */
         public ObjectMessage createObjectMessage(Serializable serializable) throws JMSException {
             return new TestObjectMessage(serializable);
         }
 
+        /**
+         *
+         * @return
+         * @throws JMSException
+         */
         public BytesMessage createBytesMessage() throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
+        /**
+         *
+         * @param destination
+         * @return
+         * @throws JMSException
+         */
         public MessageProducer createProducer(Destination destination) throws JMSException {
             return new TestMessageProducer(destination);
         }
 
+        /**
+         *
+         * @param destination
+         * @return
+         * @throws JMSException
+         */
         public MessageConsumer createConsumer(Destination destination) throws JMSException {
             return new TestMessageConsumer(destination);
         }
 
+        /**
+         *
+         * @return
+         * @throws JMSException
+         */
         public MapMessage createMapMessage() throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
+        /**
+         *
+         * @return
+         * @throws JMSException
+         */
         public Message createMessage() throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
+        /**
+         *
+         * @return
+         * @throws JMSException
+         */
         public ObjectMessage createObjectMessage() throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
+        /**
+         *
+         * @return
+         * @throws JMSException
+         */
         public StreamMessage createStreamMessage() throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
+        /**
+         *
+         * @return
+         * @throws JMSException
+         */
         public TextMessage createTextMessage() throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
+        /**
+         *
+         * @param string
+         * @return
+         * @throws JMSException
+         */
         public TextMessage createTextMessage(String string) throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
+        /**
+         *
+         * @return
+         * @throws JMSException
+         */
         public boolean getTransacted() throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
+        /**
+         *
+         * @return
+         * @throws JMSException
+         */
         public int getAcknowledgeMode() throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
+        /**
+         *
+         * @throws JMSException
+         */
         public void commit() throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
+        /**
+         *
+         * @throws JMSException
+         */
         public void rollback() throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
+        /**
+         *
+         * @throws JMSException
+         */
         public void close() throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
+        /**
+         *
+         * @throws JMSException
+         */
         public void recover() throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
+        /**
+         *
+         * @return
+         * @throws JMSException
+         */
         public MessageListener getMessageListener() throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
+        /**
+         *
+         * @param messageListener
+         * @throws JMSException
+         */
         public void setMessageListener(MessageListener messageListener) throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
@@ -360,105 +552,240 @@ public class JMSConnectionMockupMQ extends JMSConnection {
             throw new NotImplementedException("Not implemented");
         }
 
+        /**
+         *
+         * @param destination
+         * @param string
+         * @return
+         * @throws JMSException
+         */
         public MessageConsumer createConsumer(Destination destination, String string) throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
+        /**
+         *
+         * @param destination
+         * @param string
+         * @param b
+         * @return
+         * @throws JMSException
+         */
         public MessageConsumer createConsumer(Destination destination, String string, boolean b) throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
+        /**
+         *
+         * @param string
+         * @return
+         * @throws JMSException
+         */
         @Override
         public Queue createQueue(String string) throws JMSException {
             return new TestQueue(string);
         }
 
+        /**
+         *
+         * @param string
+         * @return
+         * @throws JMSException
+         */
         public Topic createTopic(String string) throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
+        /**
+         *
+         * @param topic
+         * @param string
+         * @return
+         * @throws JMSException
+         */
         public TopicSubscriber createDurableSubscriber(Topic topic, String string) throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
+        /**
+         *
+         * @param topic
+         * @param string
+         * @param string1
+         * @param b
+         * @return
+         * @throws JMSException
+         */
         public TopicSubscriber createDurableSubscriber(Topic topic, String string, String string1, boolean b)
                 throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
+        /**
+         *
+         * @param queue
+         * @return
+         * @throws JMSException
+         */
         public QueueBrowser createBrowser(Queue queue) throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
+        /**
+         *
+         * @param queue
+         * @param string
+         * @return
+         * @throws JMSException
+         */
         public QueueBrowser createBrowser(Queue queue, String string) throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
+        /**
+         *
+         * @return
+         * @throws JMSException
+         */
         public TemporaryQueue createTemporaryQueue() throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
+        /**
+         *
+         * @return
+         * @throws JMSException
+         */
         public TemporaryTopic createTemporaryTopic() throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
+        /**
+         *
+         * @param string
+         * @throws JMSException
+         */
         public void unsubscribe(String string) throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
     }
 
+    /**
+     *
+     */
     protected static class TestMessageConsumer implements MessageConsumer {
         private MessageListener listener;
+
+        /**
+         *
+         */
         protected TestDestination destination;
 
+        /**
+         *
+         * @param destination
+         */
         public TestMessageConsumer(Destination destination) {
             this.destination = (TestDestination) destination;
         }
 
+        /**
+         *
+         * @return
+         * @throws JMSException
+         */
         public MessageListener getMessageListener() throws JMSException {
             return listener;
         }
 
+        /**
+         *
+         * @param messageListener
+         * @throws JMSException
+         */
         public void setMessageListener(MessageListener messageListener) throws JMSException {
             listener = messageListener;
             destination.listeners.add(listener);
         }
 
+        /**
+         *
+         * @throws JMSException
+         */
         public void close() throws JMSException {
             // TODO: Methods should start throwing exceptions
             destination.listeners.remove(listener);
             listener = null;
         }
 
+        /**
+         *
+         * @return
+         * @throws JMSException
+         */
         @Override
         public String getMessageSelector() throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
+        /**
+         *
+         * @return
+         * @throws JMSException
+         */
         @Override
         public Message receive() throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
+        /**
+         *
+         * @param l
+         * @return
+         * @throws JMSException
+         */
         @Override
         public Message receive(long l) throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
+        /**
+         *
+         * @return
+         * @throws JMSException
+         */
         public Message receiveNoWait() throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
     }
 
+    /**
+     *
+     */
     public class TestQueueReceiver extends TestMessageConsumer implements QueueReceiver {
+
+        /**
+         *
+         * @param destination
+         */
         public TestQueueReceiver(Destination destination) {
             super(destination);
         }
 
+        /**
+         *
+         * @return
+         * @throws JMSException
+         */
         public Queue getQueue() throws JMSException {
             return (Queue) destination;
         }
 
+        /**
+         *
+         * @return
+         * @throws JMSException
+         */
         @Override
         public Message receiveNoWait() throws JMSException {
             List<TestObjectMessage> messageQueue = ((TestQueue) getQueue()).messageQueue;
@@ -469,24 +796,45 @@ public class JMSConnectionMockupMQ extends JMSConnection {
         }
     }
 
+    /**
+     *
+     */
     protected static class TestMessageProducer implements MessageProducer {
         TestDestination destination;
         List<TestObjectMessage> messages = new ArrayList<TestObjectMessage>();
         private static AtomicInteger id = new AtomicInteger(0);
 
+        /**
+         *
+         * @param destination
+         */
         public TestMessageProducer(Destination destination) {
             this.destination = (TestDestination) destination;
         }
 
+        /**
+         *
+         * @return
+         * @throws JMSException
+         */
         public Destination getDestination() throws JMSException {
             return destination;
         }
 
+        /**
+         *
+         * @throws JMSException
+         */
         public void close() throws JMSException {
             // TODO: Methods should start throwing exceptions
             destination = null;
         }
 
+        /**
+         *
+         * @param message
+         * @throws JMSException
+         */
         public void send(Message message) throws JMSException {
             TestObjectMessage testObjectMessage = (TestObjectMessage) message;
             messages.add(testObjectMessage);
@@ -529,99 +877,241 @@ public class JMSConnectionMockupMQ extends JMSConnection {
 
         }
 
+        /**
+         *
+         * @param b
+         * @throws JMSException
+         */
         public void setDisableMessageID(boolean b) throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
+        /**
+         *
+         * @return
+         * @throws JMSException
+         */
         public boolean getDisableMessageID() throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
+        /**
+         *
+         * @param b
+         * @throws JMSException
+         */
         public void setDisableMessageTimestamp(boolean b) throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
+        /**
+         *
+         * @return
+         * @throws JMSException
+         */
         public boolean getDisableMessageTimestamp() throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
+        /**
+         *
+         * @param i
+         * @throws JMSException
+         */
         public void setDeliveryMode(int i) throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
+        /**
+         *
+         * @return
+         * @throws JMSException
+         */
         public int getDeliveryMode() throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
+        /**
+         *
+         * @param i
+         * @throws JMSException
+         */
         public void setPriority(int i) throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
+        /**
+         *
+         * @return
+         * @throws JMSException
+         */
         public int getPriority() throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
+        /**
+         *
+         * @param l
+         * @throws JMSException
+         */
         public void setTimeToLive(long l) throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
+        /**
+         *
+         * @return
+         * @throws JMSException
+         */
         public long getTimeToLive() throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
+        /**
+         *
+         * @param message
+         * @param i
+         * @param i1
+         * @param l
+         * @throws JMSException
+         */
         public void send(Message message, int i, int i1, long l) throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
+        /**
+         *
+         * @param destination
+         * @param message
+         * @throws JMSException
+         */
         public void send(Destination destination, Message message) throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
 
+        /**
+         *
+         * @param destination
+         * @param message
+         * @param i
+         * @param i1
+         * @param l
+         * @throws JMSException
+         */
         public void send(Destination destination, Message message, int i, int i1, long l) throws JMSException {
             throw new NotImplementedException("Not implemented");
         }
     }
 
+    /**
+     *
+     */
     protected static class TestDestination implements Destination {
+
+        /**
+         *
+         */
         protected String name;
+
+        /**
+         *
+         */
         protected Set<MessageListener> listeners = new HashSet<MessageListener>();
+
+        /**
+         *
+         */
         protected List<TestObjectMessage> sent = new ArrayList<TestObjectMessage>();
     }
 
+    /**
+     *
+     */
     protected static class TestQueue extends TestDestination implements Queue {
+
+        /**
+         *
+         */
         protected List<TestObjectMessage> messageQueue = new ArrayList<TestObjectMessage>();
 
+        /**
+         *
+         * @param name
+         */
         public TestQueue(String name) {
             this.name = name;
         }
 
+        /**
+         *
+         * @return
+         * @throws JMSException
+         */
         public String getQueueName() throws JMSException {
             return name;
         }
     }
 
+    /**
+     *
+     */
     protected static class TestTopic extends TestDestination implements Topic {
+
+        /**
+         *
+         * @param name
+         */
         public TestTopic(String name) {
             this.name = name;
         }
 
+        /**
+         *
+         * @return
+         * @throws JMSException
+         */
         public String getTopicName() throws JMSException {
             return name;
         }
     }
 
+    /**
+     *
+     */
     public static class TestObjectMessage implements ObjectMessage, Serializable {
+
+        /**
+         *
+         */
         protected Serializable serializable;
+
+        /**
+         *
+         */
         public String id;
 
+        /**
+         *
+         * @param serializable
+         */
         public TestObjectMessage(Serializable serializable) {
             this.serializable = serializable;
         }
 
+        /**
+         *
+         * @return
+         * @throws JMSException
+         */
         public Serializable getObject() throws JMSException {
             return serializable;
         }
 
+        /**
+         *
+         * @return
+         * @throws JMSException
+         */
         public String getJMSMessageID() throws JMSException {
             return id;
         }
@@ -629,182 +1119,424 @@ public class JMSConnectionMockupMQ extends JMSConnection {
         // Empty implementation in methods - require to be implemented by the
         // javax.jms.ObjectMessage interface
 
+        /**
+         *
+         * @param object
+         * @throws JMSException
+         */
+        
         public void setObject(Serializable object) throws JMSException {
             throw new NotImplementedException("Empty implementation - dummy method");
         }
 
+        /**
+         *
+         * @param s
+         * @throws JMSException
+         */
         public void setJMSType(String s) throws JMSException {
             throw new NotImplementedException("Empty implementation - dummy method");
         }
 
+        /**
+         *
+         * @param s
+         * @throws JMSException
+         */
         public void setJMSMessageID(String s) throws JMSException {
             throw new NotImplementedException("Empty implementation - dummy method");
         }
 
+        /**
+         *
+         * @return
+         * @throws JMSException
+         */
         public long getJMSTimestamp() throws JMSException {
             throw new NotImplementedException("Empty implementation - dummy method");
         }
 
+        /**
+         *
+         * @param l
+         * @throws JMSException
+         */
         public void setJMSTimestamp(long l) throws JMSException {
             throw new NotImplementedException("Empty implementation - dummy method");
         }
 
+        /**
+         *
+         * @return
+         * @throws JMSException
+         */
         public byte[] getJMSCorrelationIDAsBytes() throws JMSException {
             throw new NotImplementedException("Empty implementation - dummy method");
         }
 
+        /**
+         *
+         * @param bytes
+         * @throws JMSException
+         */
         public void setJMSCorrelationIDAsBytes(byte[] bytes) throws JMSException {
             throw new NotImplementedException("Empty implementation - dummy method");
         }
 
+        /**
+         *
+         * @param s
+         * @throws JMSException
+         */
         public void setJMSCorrelationID(String s) throws JMSException {
             throw new NotImplementedException("Empty implementation - dummy method");
         }
 
+        /**
+         *
+         * @return
+         * @throws JMSException
+         */
         public String getJMSCorrelationID() throws JMSException {
             throw new NotImplementedException("Empty implementation - dummy method");
         }
 
+        /**
+         *
+         * @return
+         * @throws JMSException
+         */
         public Destination getJMSReplyTo() throws JMSException {
             throw new NotImplementedException("Empty implementation - dummy method");
         }
 
+        /**
+         *
+         * @param destination
+         * @throws JMSException
+         */
         public void setJMSReplyTo(Destination destination) throws JMSException {
             throw new NotImplementedException("Empty implementation - dummy method");
         }
 
+        /**
+         *
+         * @return
+         * @throws JMSException
+         */
         public Destination getJMSDestination() throws JMSException {
             throw new NotImplementedException("Empty implementation - dummy method");
         }
 
+        /**
+         *
+         * @param destination
+         * @throws JMSException
+         */
         public void setJMSDestination(Destination destination) throws JMSException {
             throw new NotImplementedException("Empty implementation - dummy method");
         }
 
+        /**
+         *
+         * @return
+         * @throws JMSException
+         */
         public int getJMSDeliveryMode() throws JMSException {
             throw new NotImplementedException("Empty implementation - dummy method");
         }
 
+        /**
+         *
+         * @param i
+         * @throws JMSException
+         */
         public void setJMSDeliveryMode(int i) throws JMSException {
             throw new NotImplementedException("Empty implementation - dummy method");
         }
 
+        /**
+         *
+         * @return
+         * @throws JMSException
+         */
         public boolean getJMSRedelivered() throws JMSException {
             throw new NotImplementedException("Empty implementation - dummy method");
         }
 
+        /**
+         *
+         * @param b
+         * @throws JMSException
+         */
         public void setJMSRedelivered(boolean b) throws JMSException {
             throw new NotImplementedException("Empty implementation - dummy method");
         }
 
+        /**
+         *
+         * @return
+         * @throws JMSException
+         */
         public String getJMSType() throws JMSException {
             throw new NotImplementedException("Empty implementation - dummy method");
         }
 
+        /**
+         *
+         * @return
+         * @throws JMSException
+         */
         public long getJMSExpiration() throws JMSException {
             throw new NotImplementedException("Empty implementation - dummy method");
         }
 
+        /**
+         *
+         * @param l
+         * @throws JMSException
+         */
         public void setJMSExpiration(long l) throws JMSException {
             throw new NotImplementedException("Empty implementation - dummy method");
         }
 
+        /**
+         *
+         * @return
+         * @throws JMSException
+         */
         public int getJMSPriority() throws JMSException {
             throw new NotImplementedException("Empty implementation - dummy method");
         }
 
+        /**
+         *
+         * @param i
+         * @throws JMSException
+         */
         public void setJMSPriority(int i) throws JMSException {
             throw new NotImplementedException("Empty implementation - dummy method");
         }
 
+        /**
+         *
+         * @throws JMSException
+         */
         public void clearProperties() throws JMSException {
             throw new NotImplementedException("Empty implementation - dummy method");
         }
 
+        /**
+         *
+         * @param s
+         * @return
+         * @throws JMSException
+         */
         public boolean propertyExists(String s) throws JMSException {
             throw new NotImplementedException("Empty implementation - dummy method");
         }
 
+        /**
+         *
+         * @param s
+         * @return
+         * @throws JMSException
+         */
         public boolean getBooleanProperty(String s) throws JMSException {
             throw new NotImplementedException("Empty implementation - dummy method");
         }
 
+        /**
+         *
+         * @param s
+         * @return
+         * @throws JMSException
+         */
         public byte getByteProperty(String s) throws JMSException {
             throw new NotImplementedException("Empty implementation - dummy method");
         }
 
+        /**
+         *
+         * @param s
+         * @return
+         * @throws JMSException
+         */
         public short getShortProperty(String s) throws JMSException {
             throw new NotImplementedException("Empty implementation - dummy method");
         }
 
+        /**
+         *
+         * @param s
+         * @return
+         * @throws JMSException
+         */
         public int getIntProperty(String s) throws JMSException {
             throw new NotImplementedException("Empty implementation - dummy method");
         }
 
+        /**
+         *
+         * @param s
+         * @return
+         * @throws JMSException
+         */
         public long getLongProperty(String s) throws JMSException {
             throw new NotImplementedException("Empty implementation - dummy method");
         }
 
+        /**
+         *
+         * @param s
+         * @return
+         * @throws JMSException
+         */
         public float getFloatProperty(String s) throws JMSException {
             throw new NotImplementedException("Empty implementation - dummy method");
         }
 
+        /**
+         *
+         * @param s
+         * @return
+         * @throws JMSException
+         */
         public double getDoubleProperty(String s) throws JMSException {
             throw new NotImplementedException("Empty implementation - dummy method");
         }
 
+        /**
+         *
+         * @param s
+         * @return
+         * @throws JMSException
+         */
         public String getStringProperty(String s) throws JMSException {
             throw new NotImplementedException("Empty implementation - dummy method");
         }
 
+        /**
+         *
+         * @param s
+         * @return
+         * @throws JMSException
+         */
         public Object getObjectProperty(String s) throws JMSException {
             throw new NotImplementedException("Empty implementation - dummy method");
         }
 
+        /**
+         *
+         * @return
+         * @throws JMSException
+         */
         public Enumeration getPropertyNames() throws JMSException {
             throw new NotImplementedException("Empty implementation - dummy method");
         }
 
+        /**
+         *
+         * @param s
+         * @param b
+         * @throws JMSException
+         */
         public void setBooleanProperty(String s, boolean b) throws JMSException {
             throw new NotImplementedException("Empty implementation - dummy method");
         }
 
+        /**
+         *
+         * @param s
+         * @param b
+         * @throws JMSException
+         */
         public void setByteProperty(String s, byte b) throws JMSException {
             throw new NotImplementedException("Empty implementation - dummy method");
         }
 
+        /**
+         *
+         * @param s
+         * @param i
+         * @throws JMSException
+         */
         public void setShortProperty(String s, short i) throws JMSException {
             throw new NotImplementedException("Empty implementation - dummy method");
         }
 
+        /**
+         *
+         * @param s
+         * @param i
+         * @throws JMSException
+         */
         public void setIntProperty(String s, int i) throws JMSException {
             throw new NotImplementedException("Empty implementation - dummy method");
         }
 
+        /**
+         *
+         * @param s
+         * @param l
+         * @throws JMSException
+         */
         public void setLongProperty(String s, long l) throws JMSException {
             throw new NotImplementedException("Empty implementation - dummy method");
         }
 
+        /**
+         *
+         * @param s
+         * @param v
+         * @throws JMSException
+         */
         public void setFloatProperty(String s, float v) throws JMSException {
             throw new NotImplementedException("Empty implementation - dummy method");
         }
 
+        /**
+         *
+         * @param s
+         * @param v
+         * @throws JMSException
+         */
         public void setDoubleProperty(String s, double v) throws JMSException {
             throw new NotImplementedException("Empty implementation - dummy method");
         }
 
+        /**
+         *
+         * @param s
+         * @param s1
+         * @throws JMSException
+         */
         public void setStringProperty(String s, String s1) throws JMSException {
             throw new NotImplementedException("Empty implementation - dummy method");
         }
 
+        /**
+         *
+         * @param s
+         * @param o
+         * @throws JMSException
+         */
         public void setObjectProperty(String s, Object o) throws JMSException {
             throw new NotImplementedException("Empty implementation - dummy method");
         }
 
+        /**
+         *
+         * @throws JMSException
+         */
         public void acknowledge() throws JMSException {
             throw new NotImplementedException("Empty implementation - dummy method");
         }
 
+        /**
+         *
+         * @throws JMSException
+         */
         public void clearBody() throws JMSException {
             throw new NotImplementedException("Empty implementation - dummy method");
         }
@@ -815,10 +1547,18 @@ public class JMSConnectionMockupMQ extends JMSConnection {
 
     } // end WrappedMessage
 
+    /**
+     *
+     */
     protected static class CallOnMessageThread extends Thread {
         private final MessageListener listener;
         private final TestObjectMessage msg;
 
+        /**
+         *
+         * @param listener
+         * @param wMsg
+         */
         public CallOnMessageThread(MessageListener listener, TestObjectMessage wMsg) {
             this.listener = listener;
             this.msg = wMsg;
@@ -840,49 +1580,104 @@ public class JMSConnectionMockupMQ extends JMSConnection {
         }
     }
 
+    /**
+     *
+     */
     public class TestQueueBrowser implements QueueBrowser {
         private final TestQueue queue;
 
+        /**
+         *
+         * @param queue
+         */
         public TestQueueBrowser(TestQueue queue) {
             this.queue = queue;
         }
 
+        /**
+         *
+         * @throws JMSException
+         */
         @Override
         public void close() throws JMSException {
         }
 
+        /**
+         *
+         * @return
+         * @throws JMSException
+         */
         @Override
         public Enumeration getEnumeration() throws JMSException {
             return Collections.enumeration(queue.messageQueue);
         }
 
+        /**
+         *
+         * @return
+         * @throws JMSException
+         */
         @Override
         public String getMessageSelector() throws JMSException {
             return null;
         }
 
+        /**
+         *
+         * @return
+         * @throws JMSException
+         */
         @Override
         public Queue getQueue() throws JMSException {
             return queue;
         }
     }
 
+    /**
+     *
+     */
     public class TestQueueSession extends TestSession implements QueueSession {
+
+        /**
+         *
+         * @param queue
+         * @return
+         * @throws JMSException
+         */
         @Override
         public QueueBrowser createBrowser(Queue queue) throws JMSException {
             return new TestQueueBrowser((TestQueue) getDestination(queue.getQueueName()));
         }
 
+        /**
+         *
+         * @param queue
+         * @return
+         * @throws JMSException
+         */
         @Override
         public QueueReceiver createReceiver(Queue queue) throws JMSException {
             return new TestQueueReceiver((TestQueue) getDestination(queue.getQueueName()));
         }
 
+        /**
+         *
+         * @param arg0
+         * @param arg1
+         * @return
+         * @throws JMSException
+         */
         @Override
         public QueueReceiver createReceiver(Queue arg0, String arg1) throws JMSException {
             return null;
         }
 
+        /**
+         *
+         * @param arg0
+         * @return
+         * @throws JMSException
+         */
         @Override
         public QueueSender createSender(Queue arg0) throws JMSException {
             return null;

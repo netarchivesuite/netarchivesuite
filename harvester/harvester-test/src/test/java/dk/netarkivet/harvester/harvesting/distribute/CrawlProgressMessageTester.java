@@ -33,6 +33,9 @@ import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlS
  */
 public class CrawlProgressMessageTester {
 
+    /**
+     *
+     */
     @Test
     public void testConstructor() {
         long harvestId = 2L;

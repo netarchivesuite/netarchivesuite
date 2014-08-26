@@ -35,20 +35,36 @@ import org.junit.Test;
 import dk.netarkivet.common.utils.arc.TestInfo;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
+/**
+ *
+ * @author tra
+ */
 @SuppressWarnings({"unused", "unchecked"})
 public class ByteClassLoaderTester {
     MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         mtf.setUp();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         mtf.tearDown();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test(expected = ClassFormatError.class)
     @Ignore("Surefire considered LoadableTestJob.class a test in the wrong location, and failed the build")
     public void testDefineClass() throws Exception {

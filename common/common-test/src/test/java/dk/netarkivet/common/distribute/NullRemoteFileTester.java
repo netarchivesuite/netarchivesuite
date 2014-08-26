@@ -38,8 +38,15 @@ import org.junit.Test;
 
 import dk.netarkivet.common.exceptions.NotImplementedException;
 
+/**
+ *
+ * @author tra
+ */
 public class NullRemoteFileTester {
 
+    /**
+     *
+     */
     @Test
     public void testNewInstance() {
         RemoteFile nrf1 = NullRemoteFile.getInstance(null, false, false, false);

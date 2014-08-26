@@ -65,11 +65,19 @@ import dk.netarkivet.harvester.webinterface.ExtendedFieldConstants;
  */
 public class DomainDBDAOTester extends DataModelTestCase {
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         super.setUp();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         super.tearDown();
@@ -144,6 +152,9 @@ public class DomainDBDAOTester extends DataModelTestCase {
         dao.update(d);
     }
 
+    /**
+     *
+     */
     @Test
     public void testIteratorLocking() {
         DomainDAO dao = DomainDAO.getInstance();
@@ -293,6 +304,9 @@ public class DomainDBDAOTester extends DataModelTestCase {
 
     /**
      * Test method for testing DomainDBDAO.getAliases().
+     * @throws java.lang.IllegalAccessException
+     * @throws java.lang.NoSuchFieldException
+     * @throws java.lang.InterruptedException
      */
     @Test
     public void testGetAliases() throws IllegalAccessException, NoSuchFieldException, InterruptedException {
@@ -369,6 +383,9 @@ public class DomainDBDAOTester extends DataModelTestCase {
         assertEquals("Too few or too many AliasInfo objects returned", 2, aliasInfoList.size());
     }
 
+    /**
+     *
+     */
     @Test
     public void testGetTLDs() {
         // create some domains.
@@ -381,6 +398,9 @@ public class DomainDBDAOTester extends DataModelTestCase {
         assertEquals("Should have three IP subdomains", 3, result.get(0).getCount());
     }
 
+    /**
+     *
+     */
     @Test
     public void testGetMultiLevelTLD() {
         // create some domains.
@@ -404,6 +424,9 @@ public class DomainDBDAOTester extends DataModelTestCase {
         assertEquals("test level 2: Should have three IP subdomains", 3, result2.get(0).getCount());
     }
 
+    /**
+     *
+     */
     @Test
     public void testGetCountDomains() {
         // create some domains, ignore invalid domains
@@ -448,6 +471,9 @@ public class DomainDBDAOTester extends DataModelTestCase {
         }
     }
 
+    /**
+     *
+     */
     @Test
     public void testGetDomainHarvestInfo() {
         HarvestDefinitionDAO hdDao = HarvestDefinitionDAO.getInstance();

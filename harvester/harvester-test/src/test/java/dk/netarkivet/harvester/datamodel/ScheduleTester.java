@@ -43,16 +43,27 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  */
 public class ScheduleTester extends DataModelTestCase {
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         super.setUp();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         super.tearDown();
     }
 
+    /**
+     *
+     */
     @Test
     public void testValidityOfArguments() {
         try {
@@ -210,6 +221,9 @@ public class ScheduleTester extends DataModelTestCase {
         assertEquals("First event must happen at noon.", cal.getTime(), first);
     }
 
+    /**
+     *
+     */
     @Test
     public void testEquals() {
         // Three identical schedules:
@@ -262,6 +276,9 @@ public class ScheduleTester extends DataModelTestCase {
         assertFalse("Schedule.equals() does not satisfy null-rule", sch.equals(null));
     }
 
+    /**
+     *
+     */
     @Test
     public void testHashCode() {
 

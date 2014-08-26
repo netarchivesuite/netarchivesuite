@@ -56,12 +56,20 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue;
  */
 public class DomainDefinitionTester extends HarvesterWebinterfaceTestCase {
 
+    /**
+     *
+     * @throws Exception
+     */
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         super.tearDown();

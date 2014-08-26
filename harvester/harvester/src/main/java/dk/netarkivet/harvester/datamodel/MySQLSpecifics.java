@@ -161,16 +161,29 @@ public class MySQLSpecifics extends DBSpecifics {
         HarvestDBConnection.updateTable("global_crawler_trap_expressions", 1, createStatement);
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public boolean supportsClob() {
         return true;
     }
 
+    /**
+     *
+     * @param limit
+     * @param offset
+     * @return
+     */
     @Override
     public String getOrderByLimitAndOffsetSubClause(long limit, long offset) {
         return "LIMIT " + offset + ", " + limit;
     }
 
+    /**
+     *
+     */
     @Override
     public void createFrontierReportMonitorTable() {
         String createStatement = "CREATE TABLE frontierReportMonitor (" + "jobId bigint NOT NULL,"
@@ -188,6 +201,9 @@ public class MySQLSpecifics extends DBSpecifics {
 
     }
 
+    /**
+     *
+     */
     @Override
     public void createRunningJobsHistoryTable() {
         String createStatement = "CREATE TABLE runningJobsHistory (" + "jobId bigint NOT NULL, "
@@ -213,6 +229,9 @@ public class MySQLSpecifics extends DBSpecifics {
         }
     }
 
+    /**
+     *
+     */
     @Override
     public void createRunningJobsMonitorTable() {
         String createStatement = "CREATE TABLE runningJobsMonitor (" + "jobId bigint NOT NULL,"
@@ -260,12 +279,18 @@ public class MySQLSpecifics extends DBSpecifics {
         HarvestDBConnection.updateTable("runningjobsmonitor", 2, sqlStatements);
     }
 
+    /**
+     *
+     */
     @Override
     protected void migrateDomainsv2tov3() {
         String[] sqlStatements = {"ALTER TABLE domains MODIFY crawlertraps LONGTEXT "};
         HarvestDBConnection.updateTable("domains", 3, sqlStatements);
     }
 
+    /**
+     *
+     */
     @Override
     protected void migrateConfigurationsv4tov5() {
         // Update configurations table to version 5
@@ -273,6 +298,9 @@ public class MySQLSpecifics extends DBSpecifics {
         HarvestDBConnection.updateTable("configurations", 5, sqlStatements);
     }
 
+    /**
+     *
+     */
     @Override
     protected void migrateFullharvestsv3tov4() {
         // Update fullharvests table to version 4
@@ -280,6 +308,9 @@ public class MySQLSpecifics extends DBSpecifics {
         HarvestDBConnection.updateTable("fullharvests", 4, sqlStatements);
     }
 
+    /**
+     *
+     */
     @Override
     protected void migrateJobsv5tov6() {
         // Update jobs table to version 6
@@ -288,6 +319,9 @@ public class MySQLSpecifics extends DBSpecifics {
 
     }
 
+    /**
+     *
+     */
     @Override
     protected void migrateFullharvestsv4tov5() {
         // Update fullharvests table to version 4
@@ -295,6 +329,9 @@ public class MySQLSpecifics extends DBSpecifics {
         HarvestDBConnection.updateTable("fullharvests", 5, sqlStatements);
     }
 
+    /**
+     *
+     */
     @Override
     protected void createExtendedFieldTypeTable() {
         String[] statements = new String[3];
@@ -309,6 +346,9 @@ public class MySQLSpecifics extends DBSpecifics {
         HarvestDBConnection.updateTable("extendedfieldtype", 1, statements);
     }
 
+    /**
+     *
+     */
     @Override
     protected void createExtendedFieldTable() {
         String createStatement = "CREATE TABLE extendedfield " + "  ( "
@@ -321,6 +361,9 @@ public class MySQLSpecifics extends DBSpecifics {
         HarvestDBConnection.updateTable("extendedfield", 1, createStatement);
     }
 
+    /**
+     *
+     */
     @Override
     protected void createExtendedFieldValueTable() {
         String createStatement = "CREATE TABLE extendedfieldvalue " + "  ( "
@@ -331,36 +374,54 @@ public class MySQLSpecifics extends DBSpecifics {
         HarvestDBConnection.updateTable("extendedfieldvalue", 1, createStatement);
     }
 
+    /**
+     *
+     */
     @Override
     protected synchronized void migrateJobsv6tov7() {
         String[] sqlStatements = {"ALTER TABLE jobs ADD COLUMN continuationof BIGINT DEFAULT NULL"};
         HarvestDBConnection.updateTable("jobs", 7, sqlStatements);
     }
 
+    /**
+     *
+     */
     @Override
     protected void migrateJobsv7tov8() {
         String[] sqlStatements = {"ALTER TABLE jobs ADD COLUMN creationdate TIMESTAMP"};
         HarvestDBConnection.updateTable("jobs", 8, sqlStatements);
     }
 
+    /**
+     *
+     */
     @Override
     protected void migrateJobsv8tov9() {
         String[] sqlStatements = {"ALTER TABLE jobs ADD COLUMN harvestname_prefix VARCHAR(100)"};
         HarvestDBConnection.updateTable("jobs", 9, sqlStatements);
     }
 
+    /**
+     *
+     */
     @Override
     protected void migrateHarvestdefinitionsv2tov3() {
         String[] sqlStatements = {"ALTER TABLE harvestdefinitions ADD COLUMN audience VARCHAR(100) DEFAULT NULL"};
         HarvestDBConnection.updateTable("harvestdefinitions", 3, sqlStatements);
     }
 
+    /**
+     *
+     */
     @Override
     protected void migrateHarvestdefinitionsv3tov4() {
         String[] sqlStatements = {"ALTER TABLE harvestdefinitions ADD COLUMN channel_id BIGINT DEFAULT NULL"};
         HarvestDBConnection.updateTable("harvestdefinitions", 4, sqlStatements);
     }
 
+    /**
+     *
+     */
     @Override
     protected void migrateJobsv9tov10() {
         String[] sqlStatements = {"ALTER TABLE jobs ADD COLUMN channel VARCHAR(300) DEFAULT NULL",
@@ -371,6 +432,9 @@ public class MySQLSpecifics extends DBSpecifics {
         HarvestDBConnection.updateTable("jobs", 10, sqlStatements);
     }
 
+    /**
+     *
+     */
     @Override
     protected void createHarvestChannelTable() {
         String createStatement = "CREATE TABLE harvestchannel (" + "id BIGINT NOT NULL PRIMARY KEY, "

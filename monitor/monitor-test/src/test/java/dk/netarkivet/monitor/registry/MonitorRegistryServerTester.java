@@ -30,14 +30,24 @@ import dk.netarkivet.common.distribute.monitorregistry.HostEntry;
 import dk.netarkivet.monitor.registry.distribute.MonitorRegistryServer;
 import dk.netarkivet.monitor.registry.distribute.RegisterHostMessage;
 
+/**
+ *
+ * @author tra
+ */
 public class MonitorRegistryServerTester extends TestCase {
 
+    /**
+     *
+     */
     public void setUp() {
         // Out commented to avoid reference to harvester module from monitor
         // module.
         // JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
     }
 
+    /**
+     *
+     */
     public void testGetInstance() {
         MonitorRegistryServer server = null;
         try {
@@ -52,6 +62,9 @@ public class MonitorRegistryServerTester extends TestCase {
         }
     }
 
+    /**
+     *
+     */
     public void testVisit() {
         MonitorRegistryServer server = null;
         try {

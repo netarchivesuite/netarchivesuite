@@ -106,6 +106,7 @@ public class ExtractCDXJob extends ARCBatchJob {
     /**
      * Process this entry, reading metadata into the output stream.
      * 
+     * @param sar
      * @see dk.netarkivet.common.utils.arc.ARCBatchJob#processRecord(ARCRecord, OutputStream)
      * @throws IOFailure on trouble reading arc record data
      */

@@ -34,9 +34,16 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.wayback.WaybackSettings;
 
+/**
+ *
+ * @author tra
+ */
 public class ArchiveFileTester extends IndexerTestCase {
     private final File destDir = Settings.getFile(WaybackSettings.WAYBACK_BATCH_OUTPUTDIR);
 
+    /**
+     *
+     */
     @Override
     @Before
     public void setUp() {
@@ -44,6 +51,9 @@ public class ArchiveFileTester extends IndexerTestCase {
         FileUtils.removeRecursively(destDir);
     }
 
+    /**
+     *
+     */
     @Override
     @After
     public void tearDown() {

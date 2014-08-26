@@ -36,9 +36,16 @@ import org.junit.Test;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.wayback.TestInfo;
 
+/**
+ *
+ * @author tra
+ */
 @SuppressWarnings({"unchecked"})
 public class IndexerQueueTester extends IndexerTestCase {
 
+    /**
+     *
+     */
     @Override
     @Before
     public void setUp() {
@@ -46,6 +53,9 @@ public class IndexerQueueTester extends IndexerTestCase {
         IndexerQueue.resestSingleton();
     }
 
+    /**
+     *
+     */
     @Override
     @After
     public void tearDown() {
@@ -53,6 +63,11 @@ public class IndexerQueueTester extends IndexerTestCase {
         IndexerQueue.resestSingleton();
     }
 
+    /**
+     *
+     * @throws NoSuchFieldException
+     * @throws IllegalAccessException
+     */
     @Test
     public void testProduce() throws NoSuchFieldException, IllegalAccessException {
         FileNameHarvester.harvestAllFilenames();
@@ -64,6 +79,11 @@ public class IndexerQueueTester extends IndexerTestCase {
         assertEquals("Queue should still have four objects in it", 6, queue.size());
     }
 
+    /**
+     *
+     * @throws NoSuchFieldException
+     * @throws IllegalAccessException
+     */
     @Test
     public void testProduceRecent() throws NoSuchFieldException, IllegalAccessException {
 

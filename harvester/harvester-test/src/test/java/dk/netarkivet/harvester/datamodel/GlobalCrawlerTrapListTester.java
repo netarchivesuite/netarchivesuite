@@ -41,12 +41,20 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  */
 public class GlobalCrawlerTrapListTester extends DataModelTestCase {
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     @Override
     public void setUp() throws Exception {
         super.setUp();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     @Override
     public void tearDown() throws Exception {
@@ -55,6 +63,7 @@ public class GlobalCrawlerTrapListTester extends DataModelTestCase {
 
     /**
      * Tests that we can construct a trap list.
+     * @throws java.io.FileNotFoundException
      */
     @Test
     public void testConstructor() throws FileNotFoundException {
@@ -65,6 +74,7 @@ public class GlobalCrawlerTrapListTester extends DataModelTestCase {
 
     /**
      * Tests that the constructor throws expected exceptions on bad data
+     * @throws java.io.FileNotFoundException
      */
     @Test
     public void testConstructorFail() throws FileNotFoundException {

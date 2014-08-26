@@ -60,6 +60,10 @@ import dk.netarkivet.testutils.TestFileUtils;
  */
 public class LegacyHarvestReportTester {
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         TestRemoteFile.removeRemainingFiles();
@@ -71,12 +75,19 @@ public class LegacyHarvestReportTester {
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         JMSConnectionMockupMQ.clearTestQueues();
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     @Test
     public void testConstructor() throws IOException {
         LogbackRecorder lr = LogbackRecorder.startRecorder();
@@ -107,6 +118,11 @@ public class LegacyHarvestReportTester {
         lr.stopRecorder();
     }
 
+    /**
+     *
+     * @throws IOException
+     * @throws FileNotFoundException
+     */
     @Test
     public void testGetDomainNames() throws IOException, FileNotFoundException {
         FileUtils.copyFile(TestInfo.REPORT_FILE, new File(TestInfo.WORKING_DIR, "logs/crawl.log"));
@@ -142,6 +158,9 @@ public class LegacyHarvestReportTester {
                 hostReport.getDomainNames().contains(dk.netarkivet.harvester.harvesting.TestInfo.TEST_DOMAIN));
     }
 
+    /**
+     *
+     */
     @Test
     public void testGetObjectCount() {
         AbstractHarvestReport hostReport = createValidHeritrixHostsReport();
@@ -155,6 +174,9 @@ public class LegacyHarvestReportTester {
 
     }
 
+    /**
+     *
+     */
     @Test
     public void testGetByteCount() {
         AbstractHarvestReport hostReport = createValidHeritrixHostsReport();
@@ -211,6 +233,9 @@ public class LegacyHarvestReportTester {
         assertEquals("no information about bibliotek.dk", null, hr.getStopReason("bibliotek.dk"));
     }
 
+    /**
+     *
+     */
     @Test
     public void testIDNA() {
         File testFile = TestInfo.IDNA_CRAW_LOG;

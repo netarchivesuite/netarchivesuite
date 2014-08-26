@@ -33,6 +33,11 @@ import dk.netarkivet.harvester.harvesting.frontier.FullFrontierReport.ReportIter
  */
 public class TopTotalEnqueuesFilter extends MaxSizeFrontierReportExtract {
 
+    /**
+     *
+     * @param initialFrontier
+     * @return
+     */
     @Override
     public InMemoryFrontierReport process(FrontierReport initialFrontier) {
         if (!(initialFrontier instanceof FullFrontierReport)) {

@@ -54,12 +54,18 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 public class HTMLUtilsTester {
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         rs.setUp();
         SiteSection.cleanup();
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         rs.tearDown();
@@ -86,14 +92,16 @@ public class HTMLUtilsTester {
                         + "\u001C\u001D\u001E\u001F"));
     }
 
-    /** Test URL encoding. */
+    /** Test URL encoding.
+     * @throws java.lang.Exception */
     @Test
     public void testEncode() throws Exception {
         assertEquals("Should encode space as +", "a+b", HTMLUtils.encode("a b"));
         assertEquals("Should encode å in UTF-8", "%C3%A5", HTMLUtils.encode("å"));
     }
 
-    /** Test URL decoding. */
+    /** Test URL decoding.
+     * @throws java.lang.Exception */
     @Test
     public void testDecode() throws Exception {
         assertEquals("Should decode + as space", "a b", HTMLUtils.decode("a+b"));
@@ -102,7 +110,8 @@ public class HTMLUtilsTester {
                 HTMLUtils.decode(HTMLUtils.encode("æblegrød med :// i og ()!!\"#¤%")));
     }
 
-    /** Test header. */
+    /** Test header.
+     * @throws java.lang.Exception */
     @Test
     public void testGenerateHeader() throws Exception {
         JspWriterMockup out = new JspWriterMockup();
@@ -147,7 +156,8 @@ public class HTMLUtilsTester {
         StringAsserts.assertStringContains("Should contain Danish title", "Jobdetaljer", result);
     }
 
-    /** Test footer. */
+    /** Test footer.
+     * @throws java.lang.Exception */
     @Test
     public void testGenerateFooter() throws Exception {
         JspWriterMockup out = new JspWriterMockup();
@@ -183,6 +193,10 @@ public class HTMLUtilsTester {
         assertEquals("Should escape values", "&lt;&gt;'&quot;&amp;amp;", HTMLUtils.escapeHtmlValues("<>'\"&amp;"));
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testGetRowClass() throws Exception {
         assertEquals("Should return white row", "row0", HTMLUtils.getRowClass(0));
@@ -194,6 +208,9 @@ public class HTMLUtilsTester {
         assertEquals("Should return white row", "row0", HTMLUtils.getRowClass(6));
     }
 
+    /**
+     *
+     */
     @Test
     public void testParseOptionalLong() {
         Map<String, String[]> parameterMap = new HashMap<String, String[]>();
@@ -250,6 +267,9 @@ public class HTMLUtilsTester {
 
     }
 
+    /**
+     *
+     */
     @Test
     public void testParseOptionalDate() {
         Map<String, String[]> parameterMap = new HashMap<String, String[]>();

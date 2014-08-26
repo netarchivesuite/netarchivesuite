@@ -55,11 +55,19 @@ public class DomainDAOTester extends DataModelTestCase {
 
     private static final int NUM_DOMAINS = 4;
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         super.setUp();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         super.tearDown();
@@ -260,7 +268,10 @@ public class DomainDAOTester extends DataModelTestCase {
         DomainDAO.resetSingleton();
     }
 
-    /** Set the domain DAO to a specific object. */
+    /** Set the domain DAO to a specific object.
+     * @param dao
+     * @throws java.lang.NoSuchFieldException
+     * @throws java.lang.IllegalAccessException */
     public static void setDomainDAO(DomainDAO dao) throws NoSuchFieldException, IllegalAccessException {
         Field f = ReflectUtils.getPrivateField(DomainDAO.class, "instance");
         f.set(null, dao);
@@ -428,6 +439,10 @@ public class DomainDAOTester extends DataModelTestCase {
                 hi[0].equals(hi2) || hi[1].equals(hi2) || hi[2].equals(hi2));
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testGetCountDomains() throws Exception {
         assertEquals("Must have expected number of domains", 4, DomainDAO.getInstance().getCountDomains());
@@ -453,6 +468,10 @@ public class DomainDAOTester extends DataModelTestCase {
         assertEquals("Crawler traps should be saved as given", definedregexps, foundregexps);
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testGetDomains() throws Exception {
         DomainDAO dao = DomainDAO.getInstance();
@@ -478,6 +497,10 @@ public class DomainDAOTester extends DataModelTestCase {
         }
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testGetDomainHarvestInfo() throws Exception {
         DomainDAO dao = DomainDAO.getInstance();
@@ -661,6 +684,9 @@ public class DomainDAOTester extends DataModelTestCase {
         assertEquals("Should have two passwords after insertion", 2, info.size());
     }
 
+    /**
+     *
+     */
     @Test
     public void testReadSparse() {
         DomainDAO dao = DomainDAO.getInstance();

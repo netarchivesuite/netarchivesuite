@@ -36,6 +36,10 @@ import dk.netarkivet.testutils.LogbackRecorder;
  */
 public class FileBasedCacheTester {
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     @Ignore("Log file does not contain expected string")
     public void testGetIndex() throws Exception {

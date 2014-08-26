@@ -35,6 +35,7 @@ public class CollectionUtils {
     /**
      * Return all the arguments as a list.
      *
+     * @param <T>
      * @param args Objects to put into a list
      * @return A list containing all the objects in that order
      */

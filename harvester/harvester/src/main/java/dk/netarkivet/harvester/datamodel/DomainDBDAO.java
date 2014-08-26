@@ -1099,6 +1099,11 @@ public class DomainDBDAO extends DomainDAO {
         }
     }
 
+    /**
+     *
+     * @param config
+     * @return
+     */
     @Override
     public boolean mayDelete(DomainConfiguration config) {
         ArgumentNotValid.checkNotNull(config, "config");
@@ -1487,6 +1492,11 @@ public class DomainDBDAO extends DomainDAO {
         return Arrays.asList(traps.split("\n"));
     }
 
+    /**
+     *
+     * @param previousHarvestDefinition
+     * @return
+     */
     @Override
     public Iterator<HarvestInfo> getHarvestInfoBasedOnPreviousHarvestDefinition(
             final HarvestDefinition previousHarvestDefinition) {

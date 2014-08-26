@@ -34,6 +34,10 @@ import org.junit.Test;
  */
 public class FileRemoverTester {
 
+    /**
+     *
+     * @throws IOException
+     */
     @Test
     public void testRemoverJob() throws IOException {
         FileBatchJob job = new FileRemover();

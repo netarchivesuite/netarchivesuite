@@ -34,14 +34,50 @@ import dk.netarkivet.harvester.datamodel.DomainHarvestInfo;
  * Used to manage the model used in the domain harvest history page. See Harveststatus-perdomain.jsp.
  */
 public class HarvestHistoryTableHelper {
+
+    /**
+     *
+     */
     public static final String HARVEST_NAME_FIELD = "hdname";
+
+    /**
+     *
+     */
     public static final String HARVEST_NUMBER_FIELD = "harvest_num";
+
+    /**
+     *
+     */
     public static final String JOB_ID_FIELD = "job_id";
+
+    /**
+     *
+     */
     public static final String CONFIGURATION_NAME_FIELD = "configname";
+
+    /**
+     *
+     */
     public static final String START_TIME_FIELD = "startdate";
+
+    /**
+     *
+     */
     public static final String STOP_TIME_FIELD = "enddate";
+
+    /**
+     *
+     */
     public static final String BYTES_HARVESTED_FIELD = "bytecount";
+
+    /**
+     *
+     */
     public static final String DOCUMENTS_HARVESTED_FIELD = "objectcount";
+
+    /**
+     *
+     */
     public static final String STOPPED_DUE_TO_FIELD = "stopreason";
 
     private static final String INC_SORT_ARROW = "&uarr;";
@@ -60,6 +96,13 @@ public class HarvestHistoryTableHelper {
     private long endIndex;
     private List<DomainHarvestInfo> harvestInfoList;
 
+    /**
+     *
+     * @param domainNameParameter
+     * @param sortFieldParameter
+     * @param sortOrderParameter
+     * @param pageIndexParameter
+     */
     public HarvestHistoryTableHelper(String domainNameParameter, String sortFieldParameter, String sortOrderParameter,
             String pageIndexParameter) {
         ArgumentNotValid.checkNotNull(domainNameParameter, "domainName");

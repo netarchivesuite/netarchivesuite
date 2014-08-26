@@ -108,6 +108,7 @@ public class RepeatingScheduleTester {
     /**
      * Given a repeating schedule check, that given the date of previous event is null, the date of the next event is
      * also null.
+     * @throws java.lang.Exception
      */
     @Test
     public void testGetNextEvent3() throws Exception {

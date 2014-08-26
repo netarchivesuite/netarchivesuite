@@ -35,6 +35,12 @@ import org.archive.wayback.util.url.AggressiveUrlCanonicalizer;
  */
 public class NetarchiveSuiteAggressiveUrlCanonicalizer extends AggressiveUrlCanonicalizer {
 
+    /**
+     *
+     * @param urlString
+     * @return
+     * @throws URIException
+     */
     @Override
     public String urlStringToKey(String urlString) throws URIException {
 

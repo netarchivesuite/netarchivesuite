@@ -56,12 +56,36 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
  */
 
 public class BitarchiveAdminTester {
+
+    /**
+     *
+     */
     public static final File DATA_DIR = new File("./tests/dk/netarkivet/archive/bitarchive/data/admindata");
+
+    /**
+     *
+     */
     public static final File WORKING_DIR = new File(DATA_DIR, "working");
+
+    /**
+     *
+     */
     public static final File BA_DIR_1 = new File(WORKING_DIR, "badir1");
+
+    /**
+     *
+     */
     public static final File BA_DIR_2 = new File(WORKING_DIR, "badir2");
+
+    /**
+     *
+     */
     public static final String[] BA_DIR_ALL = {BA_DIR_1.getPath(), BA_DIR_2.getPath()};
     private static final File NOT_BA_DIR = new File(WORKING_DIR, "nobadir");
+
+    /**
+     *
+     */
     public static final File ORIGINALS_DIR = new File(DATA_DIR, "originals");
     private BitarchiveAdmin ad;
     private static final String ARC_FILE_NAME = "testfile.arc";
@@ -69,6 +93,9 @@ public class BitarchiveAdminTester {
     private static final String FILEDIR = "filedir";
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         rs.setUp();
@@ -78,6 +105,9 @@ public class BitarchiveAdminTester {
         ad = BitarchiveAdmin.getInstance();
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         if (ad != null) {
@@ -87,6 +117,10 @@ public class BitarchiveAdminTester {
         rs.tearDown();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testHasEnoughSpace() throws Exception {
         // 1) settings set to 0 bytes required
@@ -104,6 +138,7 @@ public class BitarchiveAdminTester {
 
     /**
      * Fails in Hudson
+     * @throws java.lang.Exception
      */
     @Test
     @Ignore("FIXME")
@@ -127,6 +162,10 @@ public class BitarchiveAdminTester {
                 .getParentFile().getCanonicalPath());
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testGetTemporaryPathThrowsException() throws Exception {
         try {
@@ -166,6 +205,7 @@ public class BitarchiveAdminTester {
 
     /**
      * FIXME Fails in Hudson
+     * @throws java.lang.Exception
      */
     @Test
     @Ignore("FIXME")
@@ -186,6 +226,7 @@ public class BitarchiveAdminTester {
 
     /**
      * Fails in Hudson
+     * @throws java.lang.Exception
      */
     @Test
     @Ignore("FIXME")
@@ -248,6 +289,10 @@ public class BitarchiveAdminTester {
         }
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testGetFiles() throws Exception {
         File[] files = ad.getFiles();
@@ -264,6 +309,10 @@ public class BitarchiveAdminTester {
         assertEquals("Should survive dead dir and still find files", 3, files.length);
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testLookup() throws Exception {
         try {
@@ -287,6 +336,10 @@ public class BitarchiveAdminTester {
         assertNull("Should return null on non-existing file", file);
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testGetInstance() throws Exception {
         ad.close();
@@ -323,6 +376,10 @@ public class BitarchiveAdminTester {
         }
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testGetFilesMatching_All() throws Exception {
         // First test that the getFiles() tests work on getFilesMatching w/.*
@@ -340,6 +397,10 @@ public class BitarchiveAdminTester {
         assertEquals("Should survive dead dir and still find files", 3, files.length);
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testGetFilesMatching_Some() throws Exception {
         // Then test that the regexps are obeyed
@@ -358,6 +419,10 @@ public class BitarchiveAdminTester {
         assertTrue("Should have " + file4path + " but found " + filePaths, filePaths.contains(file4path));
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     @Test
     public void testIsBitarchiveDirectory() throws IOException {
         assertTrue("Should find existing dir", ad.isBitarchiveDirectory(BA_DIR_1));

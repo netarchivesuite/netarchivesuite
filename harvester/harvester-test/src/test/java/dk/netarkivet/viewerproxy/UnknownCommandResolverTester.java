@@ -42,6 +42,10 @@ import dk.netarkivet.testutils.StringAsserts;
 @SuppressWarnings({"unused"})
 public class UnknownCommandResolverTester {
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testLookup() throws Exception {
         URIResolver end = new URIResolver() {

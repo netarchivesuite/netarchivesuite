@@ -116,6 +116,10 @@ public class MetadataFile implements Comparable<MetadataFile> {
      * Creates a metadata file and finds which metadata type it belongs to. First the name of a heritrixfile is tested
      * against the reportfile pattern, then again the logfile pattern. If the name matches neither of these, it is
      * considered a setup file.
+     * @param heritrixFile
+     * @param jobId
+     * @param harvestId
+     * @param heritrixVersion
      */
     public MetadataFile(File heritrixFile, Long harvestId, Long jobId, String heritrixVersion) {
         this.heritrixFile = heritrixFile;
@@ -163,7 +167,8 @@ public class MetadataFile implements Comparable<MetadataFile> {
         return heritrixFile;
     }
 
-    /** First we compare the type ordinals, then the URLs. */
+    /** First we compare the type ordinals, then the URLs.
+     * @param other */
     public int compareTo(MetadataFile other) {
         Integer thisOrdinal = this.type.ordinal();
         Integer otherOrdinal = other.type.ordinal();

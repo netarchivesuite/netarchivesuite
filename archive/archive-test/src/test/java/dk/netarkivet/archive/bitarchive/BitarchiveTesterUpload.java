@@ -75,6 +75,7 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
 
     /**
      * At start of test, set up an archive we can run against.
+     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
@@ -84,6 +85,7 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
 
     /**
      * At end of test, remove any files we managed to upload.
+     * @throws java.lang.Exception
      */
     @After
     public void tearDown() throws Exception {

@@ -412,6 +412,12 @@ public class ClassDependencies {
         return buf;
     }
 
+    /**
+     *
+     * @param jarFile
+     * @return
+     * @throws IOException
+     */
     protected static ZipFile findJar(String jarFile) throws IOException {
         ZipFile zip = ziptbl.get(jarFile);
         if (zip == null) {
@@ -885,6 +891,11 @@ public class ClassDependencies {
         return a;
     }
 
+    /**
+     *
+     * @param argv
+     * @throws Exception
+     */
     public static void main(String[] argv) throws Exception {
         if (argv.length < 1) {
             System.err.print("    $Id$\n" + "    Finds all depencencies of selected classes.\n"
@@ -932,14 +943,25 @@ public class ClassDependencies {
         rc.start(archive);
     }
 
+    /**
+     *
+     */
     public static class IntList {
         private int[] a = new int[8];
         private int size = 0;
 
+        /**
+         *
+         * @return
+         */
         public final int size() {
             return size;
         }
 
+        /**
+         *
+         * @param i
+         */
         public void add(int i) {
             if (size >= a.length) {
                 int[] na = new int[a.length * 2];
@@ -949,10 +971,17 @@ public class ClassDependencies {
             a[size++] = i;
         }
 
+        /**
+         *
+         */
         public void removeAll() {
             size = 0;
         }
 
+        /**
+         *
+         * @return
+         */
         public int[] elements() {
             int[] na = new int[size];
             System.arraycopy(a, 0, na, 0, size);

@@ -96,6 +96,7 @@ public class WARCBatchJobTester {
     }
 
     /**
+     * @throws java.lang.Exception
      * @see TestCase#setUp()
      */
     @Before
@@ -180,6 +181,9 @@ public class WARCBatchJobTester {
         assertEquals("Filtered batch should not throw any exceptions", 0, es.length);
     }
 
+    /**
+     *
+     */
     @Test
     public void testSequentialRuns() {
         testOrdinaryRun();

@@ -67,6 +67,10 @@ public class BitarchiveTesterAdmin extends BitarchiveTestCase {
         super.setUp();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         super.tearDown();

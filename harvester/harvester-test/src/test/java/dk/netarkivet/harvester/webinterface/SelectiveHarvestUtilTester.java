@@ -51,6 +51,10 @@ import dk.netarkivet.harvester.datamodel.PartialHarvest;
 import dk.netarkivet.testutils.CollectionAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
 
+/**
+ *
+ * @author tra
+ */
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class SelectiveHarvestUtilTester extends DataModelTestCase {
 
@@ -58,6 +62,9 @@ public class SelectiveHarvestUtilTester extends DataModelTestCase {
      * Verify that the correct domain configurations are created. This test handles the normal usage.
      * 
      * DISABLED 20140528 as it fails intermittently /tra FIXME: https://sbforge.org/jira/browse/NAS-2320
+     * @throws java.lang.NoSuchMethodException
+     * @throws java.lang.IllegalAccessException
+     * @throws java.lang.reflect.InvocationTargetException
      */
     public void DISABLED_20140528_testgetDomainConfigurations() throws NoSuchMethodException, IllegalAccessException,
             InvocationTargetException {
@@ -89,6 +96,9 @@ public class SelectiveHarvestUtilTester extends DataModelTestCase {
     /**
      * Tests the private static method SelectiveHarvest.addDomainsToConfigurations. This verifies that the correct
      * domain configurations are added This test handles the normal usage
+     * @throws java.lang.NoSuchMethodException
+     * @throws java.lang.IllegalAccessException
+     * @throws java.lang.reflect.InvocationTargetException
      */
     public void testaddDomainConfigurations() throws NoSuchMethodException, IllegalAccessException,
             InvocationTargetException {
@@ -114,6 +124,9 @@ public class SelectiveHarvestUtilTester extends DataModelTestCase {
 
     /**
      * Verify that Unknown domain names are reported
+     * @throws java.lang.NoSuchMethodException
+     * @throws java.lang.reflect.InvocationTargetException
+     * @throws java.lang.IllegalAccessException
      */
     public void testaddInvalidDomainConfigurations() throws NoSuchMethodException, IllegalAccessException,
             InvocationTargetException {
@@ -243,6 +256,9 @@ public class SelectiveHarvestUtilTester extends DataModelTestCase {
         assertEquals("New default configuration expected", "fuld_dybde", nameList.get(1));
     }
 
+    /**
+     *
+     */
     public void testSetNewDate() {
 
         // Make parameters for an update to existing templates.

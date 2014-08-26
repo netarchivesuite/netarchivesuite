@@ -234,6 +234,7 @@ public class MonthlyFrequencyTester {
 
     /**
      * Test validity of arguments (correct number of units), correct time, correct date.
+     * @throws java.lang.Exception
      */
     @Test
     public void testValidityOfArguments() throws Exception {

@@ -89,6 +89,9 @@ public class CrawlStatusMessageTester {
         assertEquals("Don't get back the status we entered", JobStatus.SUBMITTED, csm.getStatusCode());
     }
 
+    /**
+     *
+     */
     @Test
     public void testJobNotFinishedCTORFails() {
         try {
@@ -108,6 +111,8 @@ public class CrawlStatusMessageTester {
 
     /**
      * Test that class is serializable
+     * @throws java.io.IOException
+     * @throws java.lang.ClassNotFoundException
      */
     @Test
     public void testSerializable() throws IOException, ClassNotFoundException {

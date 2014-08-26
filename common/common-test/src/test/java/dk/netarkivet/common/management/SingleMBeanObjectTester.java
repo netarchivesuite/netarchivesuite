@@ -64,6 +64,9 @@ public class SingleMBeanObjectTester {
         }
     }
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         rs.setUp();
@@ -78,6 +81,10 @@ public class SingleMBeanObjectTester {
         platformMBeanServer = ManagementFactory.getPlatformMBeanServer();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         if (platformMBeanServer.isRegistered(name)) {
@@ -176,7 +183,15 @@ public class SingleMBeanObjectTester {
         assertFalse("Nothing should be registered under the name" + name, platformMBeanServer.isRegistered(name));
     }
 
+    /**
+     *
+     */
     public interface MyTestInterface {
+
+        /**
+         *
+         * @return
+         */
         public String getTestString();
     }
 

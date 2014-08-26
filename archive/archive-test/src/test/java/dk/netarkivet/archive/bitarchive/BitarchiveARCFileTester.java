@@ -41,6 +41,10 @@ public class BitarchiveARCFileTester {
     private static final File EXISTING_FILE = new File(TestInfo.ORIGINALS_DIR, "Upload2.ARC");
     private static final File NON__EXISTING__FILE = new File("Test2");
 
+    /**
+     *
+     * @throws IOException
+     */
     @Test
     public void testBitArchiveArcFile() throws IOException {
         try {

@@ -40,6 +40,10 @@ public class GenericMessageListener implements MessageListener {
     /** An ordered list of all messages received by this listener */
     public List<NetarkivetMessage> messagesReceived = new ArrayList<NetarkivetMessage>();
 
+    /**
+     *
+     * @param message
+     */
     public void onMessage(Message message) {
         NetarkivetMessage naMsg = JMSConnection.unpack(message);
         messagesReceived.add(naMsg);

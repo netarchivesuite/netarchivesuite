@@ -43,6 +43,9 @@ public class NotifyingURIResolverTester {
     private TestURIObserver uriObserver;
     private TestResponse response;
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         uriResolver = new TestURIResolver();
@@ -52,6 +55,7 @@ public class NotifyingURIResolverTester {
 
     /**
      * Test constructor. Only thing really testable is that ArgumentNotValid is thrown on null arguments.
+     * @throws java.lang.Exception
      */
     @Test
     public void testNotifyingURIResolver() throws Exception {
@@ -72,6 +76,7 @@ public class NotifyingURIResolverTester {
 
     /**
      * Test setURIResolver. Tests null arguments, and that lookup calls are delegated to this resolver after setting it.
+     * @throws java.lang.Exception
      */
     @Test
     public void testSetURIResolver() throws Exception {
@@ -138,12 +143,21 @@ public class NotifyingURIResolverTester {
         }
     }
 
+    /**
+     *
+     */
     public static class TestURIResolver implements URIResolver {
         int lookupCount = 0;
         int totalCount = 0;
         Response lookupResponseArgument;
         Request lookupRequestArgument;
 
+        /**
+         *
+         * @param request
+         * @param response
+         * @return
+         */
         public int lookup(Request request, Response response) {
             lookupCount++;
             totalCount++;
@@ -153,6 +167,9 @@ public class NotifyingURIResolverTester {
         }
     }
 
+    /**
+     *
+     */
     public static class TestURIObserver extends URIObserver {
         int notifyCount = 0;
         int totalCount = 0;
@@ -167,6 +184,9 @@ public class NotifyingURIResolverTester {
         }
     }
 
+    /**
+     *
+     */
     public static class TestResponse implements Response {
         public OutputStream getOutputStream() {
             return null;
@@ -186,9 +206,16 @@ public class NotifyingURIResolverTester {
         }
     }
 
+    /**
+     *
+     */
     public class TestRequest implements Request {
         private URI uri;
 
+        /**
+         *
+         * @param uri
+         */
         public TestRequest(URI uri) {
             this.uri = uri;
         }

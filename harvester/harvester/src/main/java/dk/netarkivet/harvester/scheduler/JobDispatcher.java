@@ -64,6 +64,7 @@ public class JobDispatcher {
     /**
      * @param jmsConnection The JMS connection to use.
      * @param hDao The HarvestDefinitionDAO to use.
+     * @param jobDao
      */
     public JobDispatcher(JMSConnection jmsConnection, HarvestDefinitionDAO hDao, JobDAO jobDao) {
         log.info("Creating JobDispatcher");

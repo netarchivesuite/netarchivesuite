@@ -30,9 +30,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+/**
+ *
+ * @author tra
+ */
 @RunWith(JUnit4.class)
 public class TestTemplate {
 
+    /**
+     *
+     */
     @Test
     public void test_template() {
         String[] strArray;

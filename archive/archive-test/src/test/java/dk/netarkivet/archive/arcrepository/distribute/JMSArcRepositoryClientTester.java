@@ -100,6 +100,11 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 // FIXME:  Rework raw threads in tests into something controllable by an executor.
 
+/**
+ *
+ * @author tra
+ */
+
 @SuppressWarnings({"rawtypes", "unused", "serial"})
 public class JMSArcRepositoryClientTester {
 
@@ -122,6 +127,10 @@ public class JMSArcRepositoryClientTester {
     UseTestRemoteFile utrf = new UseTestRemoteFile();
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         rs.setUp();
@@ -135,6 +144,10 @@ public class JMSArcRepositoryClientTester {
 
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         if (arc != null) {
@@ -421,6 +434,9 @@ public class JMSArcRepositoryClientTester {
         }
     }
 
+    /**
+     *
+     */
     @Test
     /** Test JMSArcRepositoryClient.batch is distributed. */
     public void testBatch() {
@@ -474,6 +490,11 @@ public class JMSArcRepositoryClientTester {
                 new ArrayList<RemoteFile>(TestRemoteFile.remainingFiles()));
     }
 
+    /**
+     *
+     * @throws IOException
+     * @throws InterruptedException
+     */
     @Test
     public void testStoreTimeouts() throws IOException, InterruptedException {
         // timeout after 1 millisecond
@@ -558,6 +579,10 @@ public class JMSArcRepositoryClientTester {
                 TestRemoteFile.remainingFiles()));
     }
 
+    /**
+     *
+     * @throws InterruptedException
+     */
     @Test
     public void testUpdateAdminData1() throws InterruptedException {
         JMSConnectionMockupMQ jmsCon = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
@@ -586,6 +611,10 @@ public class JMSArcRepositoryClientTester {
         assertTrue("It should be a change store state admin data message", adm.isChangeStoreState());
     }
 
+    /**
+     *
+     * @throws InterruptedException
+     */
     @Test
     public void testUpdateAdminData2() throws InterruptedException {
         JMSConnectionMockupMQ jmsCon = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
@@ -616,6 +645,10 @@ public class JMSArcRepositoryClientTester {
 
     /**
      * Check whether it handles a get all checksums call correctly.
+     * @throws java.lang.InterruptedException
+     * @throws java.io.IOException
+     * @throws java.lang.IllegalAccessException
+     * @throws java.lang.NoSuchFieldException
      */
     @Test
     public void testAllChecksums() throws InterruptedException, IOException, NoSuchFieldException,
@@ -671,6 +704,10 @@ public class JMSArcRepositoryClientTester {
 
     /**
      * Check whether it handles a get all filenames call correctly.
+     * @throws java.lang.InterruptedException
+     * @throws java.lang.IllegalAccessException
+     * @throws java.lang.NoSuchFieldException
+     * @throws java.io.IOException
      */
     @Test
     public void testAllFilenames() throws InterruptedException, IOException, NoSuchFieldException,
@@ -724,6 +761,14 @@ public class JMSArcRepositoryClientTester {
         assertEquals("Expected and received should have the same content.", expected, received);
     }
 
+    /**
+     *
+     * @throws InterruptedException
+     * @throws IOException
+     * @throws NoSuchFieldException
+     * @throws IllegalArgumentException
+     * @throws IllegalAccessException
+     */
     @Test
     public void testGetChecksum() throws InterruptedException, IOException, NoSuchFieldException,
             IllegalArgumentException, IllegalAccessException {
@@ -770,6 +815,14 @@ public class JMSArcRepositoryClientTester {
         assertEquals("Unexpected checksum sent back", "checksum", res);
     }
 
+    /**
+     *
+     * @throws InterruptedException
+     * @throws IOException
+     * @throws NoSuchFieldException
+     * @throws IllegalArgumentException
+     * @throws IllegalAccessException
+     */
     @Test
     @Ignore("FIXME")
     // FIXME: test temporarily disabled
@@ -1008,8 +1061,16 @@ public class JMSArcRepositoryClientTester {
      * A generic message listener class which just stores a list of all messages it receives
      */
     public static class GenericMessageListener implements MessageListener {
+
+        /**
+         *
+         */
         public ArrayList<NetarkivetMessage> messagesReceived = new ArrayList<NetarkivetMessage>();
 
+        /**
+         *
+         * @param message
+         */
         public void onMessage(Message message) {
             try {
                 NetarkivetMessage naMsg = (NetarkivetMessage) ((ObjectMessage) message).getObject();

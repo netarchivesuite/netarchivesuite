@@ -49,6 +49,11 @@ public enum ReplicaStoreState {
      */
     UNKNOWN_UPLOAD_STATE;
 
+    /**
+     *
+     * @param ordinal
+     * @return
+     */
     public static ReplicaStoreState fromOrdinal(int ordinal) {
         switch (ordinal) {
         case 0:

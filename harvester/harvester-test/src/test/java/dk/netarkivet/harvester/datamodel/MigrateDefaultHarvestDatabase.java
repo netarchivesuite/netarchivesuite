@@ -25,6 +25,10 @@ package dk.netarkivet.harvester.datamodel;
 import dk.netarkivet.common.webinterface.SiteSection;
 import dk.netarkivet.harvester.webinterface.DefinitionsSiteSection;
 
+/**
+ *
+ * @author tra
+ */
 public class MigrateDefaultHarvestDatabase {
 
     /**

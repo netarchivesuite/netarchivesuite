@@ -310,6 +310,9 @@ public final class Constants {
      */
     static final String ARCHIVE_DATABASE_BASE_FILE = "archivedb.jar";
 
+    /**
+     *
+     */
     public static final String ARCHIVE_DATABASE_BASE_DIR = "archivedatabasedir";
 
     /**
@@ -487,6 +490,10 @@ public final class Constants {
     public static final String MSG_ERROR_NO_JUL_PROPERTY_FILE_FOUND = "Reference to non-existing log property file (-L argument).";
     /** The error message when SLF4J config file does not exist. */
     public static final String MSG_ERROR_NO_SLF4J_CONFIG_FILE_FOUND = "Reference to non-existing SLF4J config file (-B argument).";
+
+    /**
+     *
+     */
     public static final String MSG_ERROR_NO_LOG_CONFIG_FILE_FOUND = "Reference to non-existing log config file (-L/-B argument).";
     /** The error message when database file does not exist. */
     public static final String MSG_ERROR_NO_DATABASE_FILE_FOUND = "Reference to non-existing database file (-D argument).";

@@ -70,6 +70,9 @@ public class GetRecordTester {
     private MockupJMS mjms = new MockupJMS();
     TestMessageListener listener;
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
@@ -82,6 +85,9 @@ public class GetRecordTester {
         pse.setUp();
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         pse.tearDown();
@@ -91,6 +97,9 @@ public class GetRecordTester {
         mjms.tearDown();
     }
 
+    /**
+     *
+     */
     @Test
     public void testMain() {
         LogbackRecorder lr = LogbackRecorder.startRecorder();
@@ -108,6 +117,9 @@ public class GetRecordTester {
         lr.stopRecorder();
     }
 
+    /**
+     *
+     */
     @Test
     public void testFail() {
         String expectedResults = "indexfile uri";

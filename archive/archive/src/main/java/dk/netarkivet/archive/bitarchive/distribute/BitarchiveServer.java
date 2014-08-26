@@ -397,6 +397,11 @@ public class BitarchiveServer extends ArchiveMessageHandler implements CleanupIF
         batchThread.start();
     }
 
+    /**
+     *
+     * @param msg
+     * @throws ArgumentNotValid
+     */
     public void visit(BatchTerminationMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "BatchTerminationMessage msg");
         log.info("Received BatchTerminationMessage: {}", msg);

@@ -35,6 +35,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ *
+ * @author tra
+ */
 public class SparsePartialHarvestTester extends DataModelTestCase {
     private PartialHarvest harvest;
     private static final String harvestName = "Event Harvest";
@@ -42,6 +46,11 @@ public class SparsePartialHarvestTester extends DataModelTestCase {
     // private static final String order1 = "default_orderxml";
     // private static final String order2 = "OneLevel-order";
 
+    /**
+     *
+     * @throws Exception
+     */
+    
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -50,6 +59,10 @@ public class SparsePartialHarvestTester extends DataModelTestCase {
         HarvestDefinitionDAO.getInstance().create(harvest);
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         super.tearDown();

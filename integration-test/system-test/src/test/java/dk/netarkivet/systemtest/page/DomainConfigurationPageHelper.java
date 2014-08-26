@@ -29,14 +29,42 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+/**
+ *
+ * @author tra
+ */
 public class DomainConfigurationPageHelper {
+
+    /**
+     *
+     */
     public static final String NEW_CONFIGURATION = "New configuration";
 
+    /**
+     *
+     */
     public static final String DEFAULT_DOMAIN_NAME = "defaultconfig";
+
+    /**
+     *
+     */
     public static final String MAX_OBJECTS_FIELD = "maxObjects";
+
+    /**
+     *
+     */
     public static final String MAX_BYTES_FIELD = "maxBytes";
+
+    /**
+     *
+     */
     public static final String COMMENTS = "comments";
 
+    /**
+     *
+     * @param domainName
+     * @param configurationName
+     */
     public static void createConfiguration(String domainName, String configurationName) {
         TestEventManager.getInstance().addStimuli("Creating configuration" + configurationName);
         WebDriver driver = PageHelper.getWebDriver();
@@ -49,11 +77,17 @@ public class DomainConfigurationPageHelper {
 
     /**
      * Goto the edit page for the indicated domains default configuration.
+     * @param domainName
      */
     public static void gotoDefaultConfigurationPage(String domainName) {
         gotoConfigurationPage(domainName, DEFAULT_DOMAIN_NAME);
     }
 
+    /**
+     *
+     * @param domainName
+     * @param configurationName
+     */
     public static void gotoConfigurationPage(String domainName, String configurationName) {
         TestEventManager.getInstance().addStimuli("Updating configuration" + configurationName);
         DomainWebTestHelper.editDomain(domainName);
@@ -74,12 +108,19 @@ public class DomainConfigurationPageHelper {
                                                                            // loaded.
     }
 
+    /**
+     *
+     * @param value
+     */
     public static void setMaxObjects(int value) {
         WebElement maxObjectsField = PageHelper.getWebDriver().findElement(By.name(MAX_OBJECTS_FIELD));
         maxObjectsField.clear();
         maxObjectsField.sendKeys(String.valueOf(value));
     }
 
+    /**
+     *
+     */
     public static void submitChanges() {
         PageHelper.getWebDriver().findElement(By.cssSelector("input[type=\"submit\"]")).click();
     }

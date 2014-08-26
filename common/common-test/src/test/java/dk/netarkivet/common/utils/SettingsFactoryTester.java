@@ -41,16 +41,26 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 public class SettingsFactoryTester {
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         rs.setUp();
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         rs.tearDown();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testGetInstance() throws Exception {
         Settings.set(CommonSettings.ARC_REPOSITORY_CLIENT, Test1.class.getName());

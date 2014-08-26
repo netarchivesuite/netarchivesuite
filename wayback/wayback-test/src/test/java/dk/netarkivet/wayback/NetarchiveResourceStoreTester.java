@@ -87,6 +87,9 @@ public class NetarchiveResourceStoreTester extends IndexerTestCase {
     private final String metadataFile = "2-metadata-1.arc";
     private final String uploadFile = "Upload4.ARC";
 
+    /**
+     *
+     */
     @Override
     @Before
     public void setUp() {
@@ -117,6 +120,9 @@ public class NetarchiveResourceStoreTester extends IndexerTestCase {
         resourceNotAvaliable = new CaptureSearchResult();
     }
 
+    /**
+     *
+     */
     @Override
     @After
     public void tearDown() {
@@ -148,6 +154,11 @@ public class NetarchiveResourceStoreTester extends IndexerTestCase {
 
     }
 
+    /**
+     *
+     * @throws ResourceNotAvailableException
+     * @throws IOException
+     */
     @Test
     public void testRetrieveRedirect() throws ResourceNotAvailableException, IOException {
         String cdxLine = "netarkivet.dk/ 20090706131100 http://netarkivet.dk/ text/html 302 3I42H3S6NNFQ2MSVX7XZKYAYSCX5QBYJ http://netarkivet.dk/index-da.php 3311 arcfile_withredirects.arc";
@@ -165,6 +176,11 @@ public class NetarchiveResourceStoreTester extends IndexerTestCase {
         assertNotNull(contents);
     }
 
+    /**
+     *
+     * @throws ResourceNotAvailableException
+     * @throws IOException
+     */
     @Test
     public void testRetrieveResource() throws ResourceNotAvailableException, IOException {
         String cdxLine = "ing.dk/ 20090706131100 http://ing.dk/ text/html 200 Z3UM6JX4FCO6VMVTPM6VBNJPN5D6QLO3 - 3619 arcfile_withredirects.arc";

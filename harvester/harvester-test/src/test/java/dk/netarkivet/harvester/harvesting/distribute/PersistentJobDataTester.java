@@ -47,6 +47,10 @@ public class PersistentJobDataTester {
     MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
     private File crawldir;
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         mtf.setUp();
@@ -54,6 +58,10 @@ public class PersistentJobDataTester {
         assertTrue("Unable to create crawldir '" + crawldir.getAbsolutePath() + "'", crawldir.mkdir());
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         mtf.tearDown();

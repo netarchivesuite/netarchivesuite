@@ -47,6 +47,10 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
 
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         rs.setUp();
@@ -59,6 +63,10 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         super.tearDown();
@@ -68,6 +76,9 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
         rs.tearDown();
     }
 
+    /**
+     *
+     */
     @Test
     public void testSettingsWebappFault() {
         try {
@@ -79,6 +90,9 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
         }
     }
 
+    /**
+     *
+     */
     @Test
     public void testSettingsPortFault() {
         try {
@@ -90,6 +104,9 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
         }
     }
 
+    /**
+     *
+     */
     @Test
     public void testSettingsPortWrong() {
         Settings.set(CommonSettings.HTTP_PORT_NUMBER, "42");

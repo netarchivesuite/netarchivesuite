@@ -51,7 +51,46 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
 
     /** list of the compare criteria. */
     public enum Criteria {
-        JOBID, HOST, PROGRESS, ELAPSED, QFILES, TOTALQ, ACTIVEQ, EXHAUSTEDQ
+
+        /**
+         *
+         */
+        JOBID,
+
+        /**
+         *
+         */
+        HOST,
+
+        /**
+         *
+         */
+        PROGRESS,
+
+        /**
+         *
+         */
+        ELAPSED,
+
+        /**
+         *
+         */
+        QFILES,
+
+        /**
+         *
+         */
+        TOTALQ,
+
+        /**
+         *
+         */
+        ACTIVEQ,
+
+        /**
+         *
+         */
+        EXHAUSTEDQ
     };
 
     /** current compare criteria. */

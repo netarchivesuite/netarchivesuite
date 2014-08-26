@@ -50,6 +50,9 @@ import dk.netarkivet.common.exceptions.UnknownID;
 @SuppressWarnings({"unused", "unchecked"})
 public class SimpleXml {
 
+    /**
+     *
+     */
     protected static final Logger log = LoggerFactory.getLogger(SimpleXml.class);
 
     /** The underlying XML Document object that we give access to. */

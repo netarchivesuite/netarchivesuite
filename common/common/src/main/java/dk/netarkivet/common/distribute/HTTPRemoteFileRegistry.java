@@ -245,6 +245,7 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
         /**
          * A method for handling Jetty requests.
          *
+         * @param baseRequest
          * @see AbstractHandler#handle(String, org.eclipse.jetty.server.Request, HttpServletRequest,
          *      HttpServletResponse), HttpServletResponse, int)
          *

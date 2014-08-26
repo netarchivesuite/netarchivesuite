@@ -31,6 +31,10 @@ import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.PermissionDenied;
 
+/**
+ *
+ * @author tra
+ */
 public class PostgreSQLSpecifics extends DBSpecifics {
 
     /** The log. */

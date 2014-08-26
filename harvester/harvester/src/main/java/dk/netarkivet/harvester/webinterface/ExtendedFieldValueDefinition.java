@@ -41,6 +41,10 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDBDAO;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDataTypes;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDefaultValue;
 
+/**
+ *
+ * @author tra
+ */
 @SuppressWarnings({"unused"})
 public class ExtendedFieldValueDefinition {
     private static Log log = LogFactory.getLog(ExtendedFieldValueDefinition.class.getName());
@@ -56,6 +60,15 @@ public class ExtendedFieldValueDefinition {
      * 
      * @param type ExtendedFieldType
      */
+
+    /**
+     *
+     * @param context
+     * @param i18n
+     * @param entity
+     * @param type
+     */
+    
     public static void processRequest(PageContext context, I18n i18n, ExtendableEntity entity, int type) {
         ArgumentNotValid.checkNotNull(context, "PageContext context");
         ArgumentNotValid.checkNotNull(i18n, "I18n i18n");

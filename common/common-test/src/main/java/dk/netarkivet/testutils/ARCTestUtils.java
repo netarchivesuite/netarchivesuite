@@ -30,6 +30,10 @@ import org.archive.io.arc.ARCRecord;
 
 import dk.netarkivet.common.exceptions.IOFailure;
 
+/**
+ *
+ * @author tra
+ */
 public class ARCTestUtils {
     /**
      * Reads the content of the given record. Does not close the record - that causes trouble.

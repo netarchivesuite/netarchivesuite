@@ -28,6 +28,10 @@ import java.io.PrintStream;
 
 import dk.netarkivet.common.exceptions.PermissionDenied;
 
+/**
+ *
+ * @author tra
+ */
 public class PreserveStdStreams implements TestConfigurationIF {
     private InputStream origStdIn;
     private PrintStream origStdOut;
@@ -36,10 +40,17 @@ public class PreserveStdStreams implements TestConfigurationIF {
     private ByteArrayOutputStream myErr;
     private boolean overwrite;
 
+    /**
+     *
+     * @param andOverwrite
+     */
     public PreserveStdStreams(boolean andOverwrite) {
         overwrite = andOverwrite;
     }
 
+    /**
+     *
+     */
     public PreserveStdStreams() {
         this(false);
     }
@@ -64,6 +75,10 @@ public class PreserveStdStreams implements TestConfigurationIF {
         System.setErr(origStdErr);
     }
 
+    /**
+     *
+     * @return
+     */
     public String getOut() {
         if (overwrite) {
             return myOut.toString();
@@ -71,6 +86,10 @@ public class PreserveStdStreams implements TestConfigurationIF {
         throw new PermissionDenied("Set overwrite to true to use this facility");
     }
 
+    /**
+     *
+     * @return
+     */
     public String getErr() {
         if (overwrite) {
             return myErr.toString();

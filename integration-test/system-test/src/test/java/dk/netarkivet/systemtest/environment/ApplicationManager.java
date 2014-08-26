@@ -27,14 +27,29 @@ import org.jaccept.TestEventManager;
 import dk.netarkivet.systemtest.TestLogger;
 import dk.netarkivet.systemtest.page.PageHelper;
 
+/**
+ *
+ * @author tra
+ */
 public class ApplicationManager {
+
+    /**
+     *
+     */
     protected final TestLogger log = new TestLogger(getClass());
     private final TestEnvironmentManager environmentManager;
 
+    /**
+     *
+     * @param environmentManager
+     */
     public ApplicationManager(TestEnvironmentManager environmentManager) {
         this.environmentManager = environmentManager;
     }
 
+    /**
+     *
+     */
     public void restartGUI() {
         try {
             log.info("Restarting GUI");
@@ -46,6 +61,9 @@ public class ApplicationManager {
         }
     }
 
+    /**
+     *
+     */
     public void redeployGUI() {
         try {
             log.info("Redeploying GUI");
@@ -62,6 +80,10 @@ public class ApplicationManager {
         }
     }
 
+    /**
+     *
+     * @param maxNumberOfSecondsToWait
+     */
     public void waitForGUIToStart(int maxNumberOfSecondsToWait) {
         int numberOfSecondsToWaiting = 0;
         TestEventManager.getInstance().addStimuli("Waiting for GUI to start.");

@@ -153,6 +153,7 @@ public class HTMLUtils {
      * specify it, use the overloaded method.
      * 
      * @param context The context of the web page request.
+     * @param jsToInclude
      * @throws IOException if an error occurs during writing of output.
      */
     public static void generateHeader(PageContext context, String... jsToInclude) throws IOException {

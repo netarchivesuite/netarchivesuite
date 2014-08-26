@@ -49,6 +49,11 @@ public class GenericHibernateDAO<T, PK extends Serializable> implements GenericD
         this.type = type;
     }
 
+    /**
+     *
+     * @param o
+     * @return
+     */
     @Override
     public PK create(T o) {
         Session sess = getSession();
@@ -59,6 +64,11 @@ public class GenericHibernateDAO<T, PK extends Serializable> implements GenericD
         return key;
     }
 
+    /**
+     *
+     * @param id
+     * @return
+     */
     @Override
     public T read(PK id) {
         Session sess = getSession();
@@ -67,6 +77,10 @@ public class GenericHibernateDAO<T, PK extends Serializable> implements GenericD
         return result;
     }
 
+    /**
+     *
+     * @param o
+     */
     @Override
     public void update(T o) {
         Session sess = getSession();
@@ -76,6 +90,10 @@ public class GenericHibernateDAO<T, PK extends Serializable> implements GenericD
         sess.close();
     }
 
+    /**
+     *
+     * @param o
+     */
     @Override
     public void delete(T o) {
         Session sess = getSession();

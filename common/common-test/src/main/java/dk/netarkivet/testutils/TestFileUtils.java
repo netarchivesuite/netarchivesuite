@@ -41,12 +41,20 @@ import dk.netarkivet.common.utils.FileUtils;
  */
 @SuppressWarnings({"unchecked"})
 public class TestFileUtils {
+
+    /**
+     *
+     */
     public static final FilenameFilter NON_CVS_DIRS_FILTER = new FilenameFilter() {
         public boolean accept(File directory, String filename) {
             return !((filename.equals("CVS") && new File(directory, filename).isDirectory() || (filename.equals(".svn") && new File(
                     directory, filename).isDirectory())));
         }
     };
+
+    /**
+     *
+     */
     public static final FileFilter DIRS_ONLY_FILTER = new FileFilter() {
         public boolean accept(File dir) {
             return dir.isDirectory();

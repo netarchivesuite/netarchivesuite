@@ -63,6 +63,9 @@ public class MBeanConnectorCreator {
 
     private static final Logger log = LoggerFactory.getLogger(MBeanConnectorCreator.class);
 
+    /**
+     *
+     */
     public static boolean isExposed = false;
 
     private static final String SERVICE_JMX_RMI_URL = "service:jmx:rmi://{0}:{1}/jndi/rmi://{0}:{2}/jmxrmi";

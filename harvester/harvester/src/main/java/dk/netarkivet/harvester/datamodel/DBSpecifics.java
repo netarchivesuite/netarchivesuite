@@ -486,6 +486,9 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
         }
     }
 
+    /**
+     *
+     */
     protected abstract void createHarvestChannelTable();
 
     /**

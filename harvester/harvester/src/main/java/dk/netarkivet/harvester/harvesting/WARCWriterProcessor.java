@@ -80,6 +80,10 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
 
     private static final Logger logger = Logger.getLogger(WARCWriterProcessor.class.getName());
 
+    /**
+     *
+     * @return
+     */
     public long getDefaultMaxFileSize() {
         return 1000000000L; // 1 SI giga-byte (109 bytes), per WARC appendix A
     }
@@ -108,6 +112,10 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
     /** Default path list. */
     private static final String[] DEFAULT_PATH = {"warcs"};
 
+    /**
+     *
+     * @return
+     */
     protected String[] getDefaultPath() {
         return DEFAULT_PATH;
     }
@@ -147,6 +155,10 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
         e.setExpertSetting(false);
     }
 
+    /**
+     *
+     * @param serialNo
+     */
     protected void setupPool(final AtomicInteger serialNo) {
         setPool(new WARCWriterPool(serialNo, this, getPoolMaximumActive(), getPoolMaximumWait()));
     }
@@ -212,6 +224,12 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
         }
     }
 
+    /**
+     *
+     * @param lowerCaseScheme
+     * @param curi
+     * @throws IOException
+     */
     protected void write(final String lowerCaseScheme, final CrawlURI curi) throws IOException {
         logger.info("writing warc record for " + curi);
         WriterPoolMember writer = getPool().borrowFile();
@@ -352,6 +370,17 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
         }
     }
 
+    /**
+     *
+     * @param w
+     * @param timestamp
+     * @param baseid
+     * @param curi
+     * @param headers
+     * @param controlConversation
+     * @return
+     * @throws IOException
+     */
     protected URI writeFtpControlConversation(WARCWriter w, String timestamp, URI baseid, CrawlURI curi,
             ANVLRecord headers, String controlConversation) throws IOException {
         final URI uid = qualifyRecordID(baseid, TYPE, METADATA);
@@ -361,6 +390,17 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
         return uid;
     }
 
+    /**
+     *
+     * @param w
+     * @param timestamp
+     * @param mimetype
+     * @param baseid
+     * @param curi
+     * @param namedFields
+     * @return
+     * @throws IOException
+     */
     protected URI writeRequest(final WARCWriter w, final String timestamp, final String mimetype, final URI baseid,
             final CrawlURI curi, final ANVLRecord namedFields) throws IOException {
         final URI uid = qualifyRecordID(baseid, TYPE, REQUEST);
@@ -376,6 +416,17 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
         return uid;
     }
 
+    /**
+     *
+     * @param w
+     * @param timestamp
+     * @param mimetype
+     * @param baseid
+     * @param curi
+     * @param namedFields
+     * @return
+     * @throws IOException
+     */
     protected URI writeResponse(final WARCWriter w, final String timestamp, final String mimetype, final URI baseid,
             final CrawlURI curi, final ANVLRecord namedFields) throws IOException {
         ReplayInputStream ris = curi.getHttpRecorder().getRecordedInput().getReplayInputStream();
@@ -390,6 +441,17 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
         return baseid;
     }
 
+    /**
+     *
+     * @param w
+     * @param timestamp
+     * @param mimetype
+     * @param baseid
+     * @param curi
+     * @param namedFields
+     * @return
+     * @throws IOException
+     */
     protected URI writeResource(final WARCWriter w, final String timestamp, final String mimetype, final URI baseid,
             final CrawlURI curi, final ANVLRecord namedFields) throws IOException {
         ReplayInputStream ris = curi.getHttpRecorder().getRecordedInput().getReplayInputStream();
@@ -404,6 +466,17 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
         return baseid;
     }
 
+    /**
+     *
+     * @param w
+     * @param timestamp
+     * @param mimetype
+     * @param baseid
+     * @param curi
+     * @param namedFields
+     * @return
+     * @throws IOException
+     */
     protected URI writeRevisitDigest(final WARCWriter w, final String timestamp, final String mimetype,
             final URI baseid, final CrawlURI curi, final ANVLRecord namedFields) throws IOException {
         namedFields.addLabelValue(HEADER_KEY_PROFILE, PROFILE_REVISIT_IDENTICAL_DIGEST);
@@ -430,6 +503,16 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
         return baseid;
     }
 
+    /**
+     *
+     * @param w
+     * @param timestamp
+     * @param baseid
+     * @param curi
+     * @param namedFields
+     * @return
+     * @throws IOException
+     */
     protected URI writeRevisitNotModified(final WARCWriter w, final String timestamp, final URI baseid,
             final CrawlURI curi, final ANVLRecord namedFields) throws IOException {
         namedFields.addLabelValue(HEADER_KEY_PROFILE, PROFILE_REVISIT_NOT_MODIFIED);
@@ -458,6 +541,8 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
      * 
      * @param origName header name to get if present
      * @param method http operation containing headers
+     * @param headers
+     * @param newName
      */
     protected void saveHeader(String origName, HttpMethodBase method, ANVLRecord headers, String newName) {
         Header header = method.getResponseHeader(origName);
@@ -466,6 +551,16 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
         }
     }
 
+    /**
+     *
+     * @param w
+     * @param timestamp
+     * @param baseid
+     * @param curi
+     * @param namedFields
+     * @return
+     * @throws IOException
+     */
     protected URI writeMetadata(final WARCWriter w, final String timestamp, final URI baseid, final CrawlURI curi,
             final ANVLRecord namedFields) throws IOException {
         final URI uid = qualifyRecordID(baseid, TYPE, METADATA);
@@ -518,6 +613,11 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
         return uid;
     }
 
+    /**
+     *
+     * @return
+     * @throws IOException
+     */
     protected URI getRecordID() throws IOException {
         URI result;
         try {
@@ -528,6 +628,14 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
         return result;
     }
 
+    /**
+     *
+     * @param base
+     * @param key
+     * @param value
+     * @return
+     * @throws IOException
+     */
     protected URI qualifyRecordID(final URI base, final String key, final String value) throws IOException {
         URI result;
         Map<String, String> qualifiers = new HashMap<String, String>(1);
@@ -540,6 +648,10 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
         return result;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     protected String getFirstrecordStylesheet() {
         return "/warcinfobody.xsl";
@@ -549,6 +661,8 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
      * Return relevant values as header-like fields (here ANVLRecord, but spec-defined "application/warc-fields" type
      * when written). Field names from from DCMI Terms and the WARC/0.17 specification.
      * 
+     * @param orderFile
+     * @return 
      * @see org.archive.crawler.framework.WriterPoolProcessor#getFirstrecordBody(java.io.File)
      */
     @Override
@@ -652,6 +766,12 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
         return record.toString() + netarchiveSuiteComment + "\n" + recordNAS.toString();
     }
 
+    /**
+     *
+     * @param record
+     * @param label
+     * @param value
+     */
     protected void addIfNotBlank(ANVLRecord record, String label, String value) {
         if (StringUtils.isNotBlank(value)) {
             record.addLabelValue(label, value);

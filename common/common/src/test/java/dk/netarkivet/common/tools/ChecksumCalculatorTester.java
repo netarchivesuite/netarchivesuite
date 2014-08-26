@@ -36,8 +36,15 @@ import org.junit.Test;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.ChecksumCalculator;
 
+/**
+ *
+ * @author tra
+ */
 public class ChecksumCalculatorTester {
 
+    /**
+     *
+     */
     @Test
     public void testChecksumCalculator() {
         MessageDigest md;

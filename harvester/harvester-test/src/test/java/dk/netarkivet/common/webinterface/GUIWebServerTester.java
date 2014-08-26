@@ -49,10 +49,26 @@ public class GUIWebServerTester {
 
     private GUIWebServer server;
     ReloadSettings rs = new ReloadSettings();
+
+    /**
+     *
+     */
     public static final File BASEDIR = new File("tests/dk/netarkivet/harvester/scheduler/data/");
+
+    /**
+     *
+     */
     public static final File ORIGINALS = new File(BASEDIR, "originals");
+
+    /**
+     *
+     */
     public static final File WORKING = new File(BASEDIR, "working");
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         rs.setUp();
@@ -78,6 +94,10 @@ public class GUIWebServerTester {
 
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         if (server != null) {
@@ -89,6 +109,9 @@ public class GUIWebServerTester {
         rs.tearDown();
     }
 
+    /**
+     *
+     */
     @Test
     public void testRunningServer() {
         server = new GUIWebServer();
@@ -100,6 +123,10 @@ public class GUIWebServerTester {
         }
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     @Test
     public void testExpectedExceptionsWhenStartingServer() throws IOException {
         Settings.set(CommonSettings.HTTP_PORT_NUMBER, Long.toString(65536L));
@@ -145,6 +172,10 @@ public class GUIWebServerTester {
         socket = null;
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     @Test
     public void testExpectedExceptionsWhenAddingContext() throws IOException {
         // wrong arguments when adding context
@@ -158,6 +189,10 @@ public class GUIWebServerTester {
         }
     }
 
+    /**
+     *
+     * @throws InterruptedException
+     */
     @Test
     public void testStopServer() throws InterruptedException {
         server = new GUIWebServer();

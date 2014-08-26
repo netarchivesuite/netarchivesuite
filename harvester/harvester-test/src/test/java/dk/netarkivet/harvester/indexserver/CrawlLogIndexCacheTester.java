@@ -42,11 +42,19 @@ import dk.netarkivet.testutils.ReflectUtils;
  */
 public class CrawlLogIndexCacheTester extends CacheTestCase {
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         super.setUp();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         super.tearDown();
@@ -86,7 +94,9 @@ public class CrawlLogIndexCacheTester extends CacheTestCase {
     /**
      * Test of preparecombine.
      * 
+     * @throws java.lang.NoSuchFieldException
      * @throws Exception
+     * @throws java.lang.IllegalAccessException
      */
     @Test
     public void testPrepareCombine() throws NoSuchFieldException, IllegalAccessException {

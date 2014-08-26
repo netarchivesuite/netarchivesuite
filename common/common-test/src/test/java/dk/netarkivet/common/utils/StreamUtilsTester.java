@@ -57,6 +57,9 @@ public class StreamUtilsTester {
     private static final File WORKING = new File(BASE_DIR, "working");
     private static final File TESTFILE = new File(WORKING, "streamutilstestfile.txt");
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         rs.setUp();
@@ -65,6 +68,9 @@ public class StreamUtilsTester {
         rf.setUp();
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         FileUtils.removeRecursively(WORKING);
@@ -72,6 +78,10 @@ public class StreamUtilsTester {
         rs.tearDown();
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     @Test
     public void testCopyInputStreamToOutputStream() throws IOException {
         ByteArrayInputStream in = new ByteArrayInputStream("foobar\n".getBytes());
@@ -108,7 +118,8 @@ public class StreamUtilsTester {
         // TODO: Test with streams that cause errors if closed.
     }
 
-    /** test that method copyInputStreamToJspWriter works. */
+    /** test that method copyInputStreamToJspWriter works.
+     * @throws java.lang.Exception */
     @Test
     public void testCopyInputStreamToJspWriter() throws Exception {
         StringBuffer buf = new StringBuffer();
@@ -119,6 +130,10 @@ public class StreamUtilsTester {
         assertEquals(testfileAsString, buf.toString());
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     @Test
     public void testGetInputStreamAsString() throws IOException {
         String testfileAsString = FileUtils.readFile(TESTFILE);

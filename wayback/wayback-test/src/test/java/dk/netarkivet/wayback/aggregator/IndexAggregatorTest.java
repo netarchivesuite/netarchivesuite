@@ -38,6 +38,10 @@ import org.junit.Test;
 public class IndexAggregatorTest extends AggregatorTestCase {
     private static IndexAggregator aggregator = new IndexAggregator();
 
+    /**
+     *
+     * @throws Exception
+     */
     @Override
     @Before
     public void setUp() throws Exception {
@@ -45,12 +49,19 @@ public class IndexAggregatorTest extends AggregatorTestCase {
         new File(tempDirName).mkdirs();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();
     }
 
+    /**
+     *
+     */
     @Test
     public void testAggregation() {
         File[] inputFiles = prepareSourceIndex(new String[] {inputFile1Name, inputFile2Name});
@@ -81,6 +92,9 @@ public class IndexAggregatorTest extends AggregatorTestCase {
                 !AggregationWorker.TEMP_FILE_INDEX.exists());
     }
 
+    /**
+     *
+     */
     @Test
     public void testAggregationSingleFile() {
         File[] inputFiles = prepareSourceIndex(new String[] {inputFile1Name});
@@ -94,6 +108,9 @@ public class IndexAggregatorTest extends AggregatorTestCase {
                 testIndex.compareToIndex(AggregationWorker.TEMP_FILE_INDEX));
     }
 
+    /**
+     *
+     */
     @Test
     public void testMerging() {
         File[] inputFiles1 = prepareSourceIndex(new String[] {inputFile1Name});

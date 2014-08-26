@@ -28,17 +28,29 @@ import java.io.FileFilter;
 import junit.framework.TestCase;
 import dk.netarkivet.common.utils.FileUtils;
 
+/**
+ *
+ * @author tra
+ */
 public class CleanupTester extends TestCase {
 
     private String[] dirsToClean = new String[] {"derbyDB/wayback_indexer_db", "oldjobs"};
 
     private File tmpdir;
 
+    /**
+     *
+     * @throws Exception
+     */
     public void setUp() throws Exception {
         super.setUp();
         tmpdir = FileUtils.getTempDir();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     public void tearDown() throws Exception {
         super.tearDown();
     }

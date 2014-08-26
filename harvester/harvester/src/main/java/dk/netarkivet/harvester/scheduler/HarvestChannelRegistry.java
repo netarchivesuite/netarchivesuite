@@ -49,6 +49,11 @@ public class HarvestChannelRegistry {
 
     private Map<String, Set<String>> harvesterChannelRegistry = new HashMap<String, Set<String>>();
 
+    /**
+     *
+     * @param channelName
+     * @param harvesterInstanceId
+     */
     public synchronized void register(final String channelName, final String harvesterInstanceId) {
         // First remove any reference to this instanceId
         // This is done in case a Harvester has been unexpectedly shut down and
@@ -66,6 +71,11 @@ public class HarvestChannelRegistry {
         logStatus();
     }
 
+    /**
+     *
+     * @param channelName
+     * @return
+     */
     public synchronized boolean isRegistered(final String channelName) {
         return harvesterChannelRegistry.containsKey(channelName);
     }

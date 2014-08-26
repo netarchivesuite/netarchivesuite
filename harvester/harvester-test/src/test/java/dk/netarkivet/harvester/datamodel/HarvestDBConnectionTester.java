@@ -53,12 +53,20 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
 
     private File logfile = new File("tests/testlogs/netarkivtest.log");
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         super.setUp();
         createTestTable();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         super.tearDown();
@@ -174,6 +182,7 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
 
     /**
      * check HarvestDBConnection.setStringMaxLength(). Especially, that bug 970 is solved.
+     * @throws java.sql.SQLException
      */
     @Test
     @Ignore("Log parsing did not find expected string")
@@ -231,6 +240,7 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
 
     /**
      * check HarvestDBConnection.setClobMaxLength(). especially, that bug 970 is solved.
+     * @throws java.sql.SQLException
      */
     @Test
     @Ignore("Log parsing did not find expected string")
@@ -289,6 +299,10 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
         }
     }
 
+    /**
+     *
+     * @throws SQLException
+     */
     @Test
     public void testCreateTable() throws SQLException {
         deleteTableIfExists("dummy");
@@ -304,6 +318,10 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
         }
     }
 
+    /**
+     *
+     * @throws SQLException
+     */
     @Test
     public void testCreateAndUpdateTable() throws SQLException {
         deleteTableIfExists("dummy");
@@ -322,6 +340,15 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
         }
     }
 
+    /**
+     *
+     * @param c
+     * @param id
+     * @param orderxml
+     * @param orderxmldoc
+     * @return
+     * @throws SQLException
+     */
     public PreparedStatement getPreparedStatementForTestingSetStringMaxLength(Connection c, int id, String orderxml,
             String orderxmldoc) throws SQLException {
         PreparedStatement s = c.prepareStatement("INSERT INTO HarvestDBConnectionTester (id, orderxml, orderxmldoc) "
@@ -331,6 +358,15 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
         return s;
     }
 
+    /**
+     *
+     * @param c
+     * @param id
+     * @param orderxml
+     * @param orderxmldoc
+     * @return
+     * @throws SQLException
+     */
     public PreparedStatement getPreparedStatementForTestingSetClobMaxLength(Connection c, int id, String orderxml,
             String orderxmldoc) throws SQLException {
         PreparedStatement s = c.prepareStatement("INSERT INTO HarvestDBConnectionTester (id, orderxml, orderxmldoc) "

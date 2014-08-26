@@ -66,6 +66,10 @@ import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
+/**
+ *
+ * @author tra
+ */
 public class HarvestDocumentationTester {
     ReloadSettings rs = new ReloadSettings();
 
@@ -75,6 +79,9 @@ public class HarvestDocumentationTester {
     private HeritrixFiles filesWithNonexistingDir = new HeritrixFiles(new File("foodoesnotexist"), harvestJob);
     private HeritrixFiles filesWithExistingFileInsteadOfDir = new HeritrixFiles(TestInfo.ORDER_FILE, harvestJob);
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         rs.setUp();
@@ -83,6 +90,9 @@ public class HarvestDocumentationTester {
 
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
@@ -549,6 +559,9 @@ public class HarvestDocumentationTester {
 
     }
 
+    /**
+     *
+     */
     public void testMetadataFilters() {
 
         ReloadSettings rs = new ReloadSettings(new File(TestInfo.ORIGINALS_DIR, "metadata_settings.xml"));

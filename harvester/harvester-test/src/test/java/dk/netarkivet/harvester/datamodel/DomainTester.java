@@ -66,12 +66,25 @@ import dk.netarkivet.harvester.webinterface.DomainDefinition;
 import dk.netarkivet.harvester.webinterface.ExtendedFieldConstants;
 import dk.netarkivet.testutils.CollectionAsserts;
 
+/**
+ *
+ * @author tra
+ */
 public class DomainTester extends DataModelTestCase {
+
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         super.setUp();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         super.tearDown();
@@ -102,6 +115,9 @@ public class DomainTester extends DataModelTestCase {
         assertEquals(true, d.getExtendedFieldValue(new Long(2)).getBooleanValue());
     }
 
+    /**
+     *
+     */
     @Test
     public void testExtendedFields2() {
         ExtendedFieldDAO extDAO = ExtendedFieldDBDAO.getInstance();
@@ -426,6 +442,9 @@ public class DomainTester extends DataModelTestCase {
         }
     }
 
+    /**
+     *
+     */
     @Test
     public void testGetSeedList() {
         Domain wd = Domain.getDefaultDomain(TestInfo.DOMAIN_NAME);
@@ -457,6 +476,9 @@ public class DomainTester extends DataModelTestCase {
         assertNotNull("valid id should return valid list", seedlist);
     }
 
+    /**
+     *
+     */
     @Test
     public void testUpdateSeedList() {
         Domain d = Domain.getDefaultDomain(TestInfo.DEFAULTNEWDOMAINNAME);
@@ -548,7 +570,11 @@ public class DomainTester extends DataModelTestCase {
     }
 
     // add the information about the domain owner
-    @Test
+
+    /**
+     *
+     */
+        @Test
     public void testAddOwnerInfo() {
         // get information about the domain owner
         Date d = new Date();
@@ -562,7 +588,11 @@ public class DomainTester extends DataModelTestCase {
     }
 
     // test invalid values
-    @Test
+
+    /**
+     *
+     */
+        @Test
     public void testAddOwnerInfoInvalidParams() {
 
         Domain dom = Domain.getDefaultDomain("itu.dk");
@@ -576,7 +606,11 @@ public class DomainTester extends DataModelTestCase {
     }
 
     // get all the historical data about the domain
-    @Test
+
+    /**
+     *
+     */
+        @Test
     public void testGetHistoricalData() {
         // get he historical data
         Date date = new Date();
@@ -601,7 +635,11 @@ public class DomainTester extends DataModelTestCase {
      * (ArgumentNotValid e) { //expected } }
      */
     // test by adding informations to Harvest
-    @Test
+
+    /**
+     *
+     */
+        @Test
     public void testAddHarvestInfo() {
         // Domain domain = new Domain("itu.dk");
         DomainHistory domainHistory = new DomainHistory();
@@ -620,7 +658,11 @@ public class DomainTester extends DataModelTestCase {
     }
 
     // test the reason why harvest stopped
-    @Test
+
+    /**
+     *
+     */
+        @Test
     public void testSetStopReason() {
         Long harvestID = new Long(1234);
         StopReason stopReason = StopReason.DOWNLOAD_COMPLETE;
@@ -633,7 +675,11 @@ public class DomainTester extends DataModelTestCase {
     }
 
     // test the number of obtained URLs
-    @Test
+
+    /**
+     *
+     */
+        @Test
     public void testSetCountObjectRetrieved() {
         Long harvestID = new Long(1234);
 
@@ -645,7 +691,11 @@ public class DomainTester extends DataModelTestCase {
     }
 
     // test total amount of data download from the domain
-    @Test
+
+    /**
+     *
+     */
+        @Test
     public void testSetSizeDataRetrieved() {
         Long harvestID = new Long(1234);
 
@@ -658,7 +708,11 @@ public class DomainTester extends DataModelTestCase {
     }
 
     // test create, update and load for the domains
-    @Test
+
+    /**
+     *
+     */
+        @Test
     public void testLoadAndVerifyAllDomainCreated() {
         DomainDAO dao = DomainDAO.getInstance();
         IngestDomainList ingestDList = new IngestDomainList();
@@ -679,7 +733,11 @@ public class DomainTester extends DataModelTestCase {
     }
 
     // test invalid values with constructor
-    @Test
+
+    /**
+     *
+     */
+        @Test
     public void testSetAndGetInvalidValues() {
         Date date = new Date();
         final Long defaultHid = Long.valueOf(1L);
@@ -780,6 +838,10 @@ public class DomainTester extends DataModelTestCase {
         }
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testUpdatePassword() throws Exception {
         Domain d = Domain.getDefaultDomain(TestInfo.DEFAULTNEWDOMAINNAME);
@@ -917,6 +979,10 @@ public class DomainTester extends DataModelTestCase {
                 DomainUtils.isValidDomainName("bar.d"));
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testDomainNameFromHostname() throws Exception {
         Map<String, String> hostnameToDomainname = new HashMap<String, String>();

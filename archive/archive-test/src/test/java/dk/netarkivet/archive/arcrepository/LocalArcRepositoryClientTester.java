@@ -63,6 +63,9 @@ public class LocalArcRepositoryClientTester {
     ReloadSettings rs = new ReloadSettings();
     UseTestRemoteFile utrf = new UseTestRemoteFile();
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         rs.setUp();
@@ -73,6 +76,9 @@ public class LocalArcRepositoryClientTester {
         mtf.setUp();
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         mtf.tearDown();
@@ -80,6 +86,10 @@ public class LocalArcRepositoryClientTester {
         rs.tearDown();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testStore() throws Exception {
         File dir1 = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, "dir1");
@@ -115,6 +125,10 @@ public class LocalArcRepositoryClientTester {
                 dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE_COPY.getName()).exists());
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     @Test
     public void testGetFileMethod() throws IOException {
         File dir1 = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, "dir1");
@@ -143,6 +157,9 @@ public class LocalArcRepositoryClientTester {
         }
     }
 
+    /**
+     *
+     */
     @Test
     public void testBatch() {
         File dir1 = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, "dir1");
@@ -160,6 +177,9 @@ public class LocalArcRepositoryClientTester {
         assertEquals("Should have one file processed at end", 1, status.getNoOfFilesProcessed());
     }
 
+    /**
+     *
+     */
     @Test
     public void testStoreAndGet() {
 
@@ -183,6 +203,10 @@ public class LocalArcRepositoryClientTester {
         assertNotNull(bar);
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     @Test
     public void testNewFunctions() throws IOException {
         Settings.set("settings.common.arcrepositoryClient.fileDir", TestInfo.WORKING_DIR.getAbsolutePath()

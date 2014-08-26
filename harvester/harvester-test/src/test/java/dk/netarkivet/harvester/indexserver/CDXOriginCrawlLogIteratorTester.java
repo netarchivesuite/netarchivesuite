@@ -54,16 +54,28 @@ import dk.netarkivet.testutils.TestFileUtils;
 @SuppressWarnings({"unused"})
 public class CDXOriginCrawlLogIteratorTester {
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     @Test
     public void testOriginCrawlLogIterator() throws IOException {
         BufferedReader cdx = new BufferedReader(new FileReader(TestInfo.CDX_CACHE_4_SORTED));
@@ -141,6 +153,10 @@ public class CDXOriginCrawlLogIteratorTester {
         assertFalse("Should have read all entries", it.hasNext());
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     public void testParseLine() throws Exception {
         List<String> originalLog = FileUtils.readListFromFile(TestInfo.CRAWL_LOG_4_SORTED);
         List<String> logLines = new ArrayList<String>();

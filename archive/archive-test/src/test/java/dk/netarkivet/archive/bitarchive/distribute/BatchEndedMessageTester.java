@@ -35,9 +35,16 @@ import org.junit.Test;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.testutils.Serial;
 
+/**
+ *
+ * @author tra
+ */
 public class BatchEndedMessageTester {
     private static BatchEndedMessage bem;
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         bem = new BatchEndedMessage(Channels.getTheBamon(), "BAId", "MsgId", null);
@@ -45,11 +52,19 @@ public class BatchEndedMessageTester {
         bem.setFilesFailed(Arrays.asList(new File[] {new File("failed")}));
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         bem = null;
     }
 
+    /**
+     *
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     @Test
     public void testSerializability() throws IOException, ClassNotFoundException {
         BatchEndedMessage bem2 = (BatchEndedMessage) Serial.serial(bem);

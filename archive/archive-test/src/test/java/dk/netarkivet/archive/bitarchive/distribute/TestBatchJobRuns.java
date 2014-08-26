@@ -38,6 +38,10 @@ import dk.netarkivet.common.utils.batch.ARCBatchFilter;
 @SuppressWarnings({"serial"})
 public class TestBatchJobRuns extends ARCBatchJob {
     boolean initialized;
+
+    /**
+     *
+     */
     public int records_processed;
     boolean finished;
 

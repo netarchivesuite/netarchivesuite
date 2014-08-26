@@ -53,6 +53,10 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 public class DomainConfigurationTester extends DataModelTestCase {
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         rs.setUp();
@@ -63,12 +67,19 @@ public class DomainConfigurationTester extends DataModelTestCase {
         Settings.set(HarvesterSettings.JOBS_MAX_TOTAL_JOBSIZE, "1000000");
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         super.tearDown();
         rs.tearDown();
     }
 
+    /**
+     *
+     */
     @Test
     public void testConstructorAndSomeGetters() {
         Domain wd = Domain.getDefaultDomain(TestInfo.DOMAIN_NAME);
@@ -166,6 +177,10 @@ public class DomainConfigurationTester extends DataModelTestCase {
         assertTrue("Configuration uses password", conf.usesPassword(TestInfo.PASSWORD_NAME));
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     public void testGetExpectedNumberOfObjects() throws Exception {
         Domain domain = Domain.getDefaultDomain("testdomain01.dk");
         DomainConfiguration dc = domain.getDefaultConfiguration();

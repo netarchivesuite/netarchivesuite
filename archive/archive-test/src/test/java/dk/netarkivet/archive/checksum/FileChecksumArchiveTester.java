@@ -60,6 +60,9 @@ public class FileChecksumArchiveTester {
     ReloadSettings rs = new ReloadSettings();
     UseTestRemoteFile utrf = new UseTestRemoteFile();
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         rs.setUp();
@@ -76,6 +79,9 @@ public class FileChecksumArchiveTester {
         fca = FileChecksumArchive.getInstance();
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);

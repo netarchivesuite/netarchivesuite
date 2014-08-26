@@ -76,6 +76,10 @@ import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
+/**
+ *
+ * @author tra
+ */
 @SuppressWarnings({"deprecation", "unchecked", "static-access"})
 public class ArcRepositoryTester {
     /** A repeatedly used reflected method, used across method calls. */
@@ -83,6 +87,10 @@ public class ArcRepositoryTester {
     ReloadSettings rs = new ReloadSettings();
     static boolean first = true;
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         // reset the channels.
@@ -97,6 +105,10 @@ public class ArcRepositoryTester {
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         ArcRepository.getInstance().close();
@@ -239,6 +251,7 @@ public class ArcRepositoryTester {
      * @param arcfilename The name of the arcfile that readChecksum should look for.
      *
      * @return The string found for the given filename.
+     * @throws java.lang.Throwable
      *
      * @throws IOFailure when readChecksum does.
      */
@@ -328,6 +341,10 @@ public class ArcRepositoryTester {
         lr.stopRecorder();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testOnChecksumReply() throws Exception {
         LogbackRecorder lr = LogbackRecorder.startRecorder();
@@ -364,6 +381,9 @@ public class ArcRepositoryTester {
         lr.stopRecorder();
     }
 
+    /**
+     *
+     */
     @Test
     public void testOldRemoveAndGetFile() {
         LogbackRecorder lr = LogbackRecorder.startRecorder();
@@ -387,6 +407,10 @@ public class ArcRepositoryTester {
         assertEquals("number of messages on queue AllBa", 1, listener.getNumReceived());
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void DSIABLED_testChecksumCalls() throws Exception {
         ArcRepository.getInstance().cleanup();
@@ -395,6 +419,9 @@ public class ArcRepositoryTester {
         DISABLED_testOnBatchReply();
     }
 
+    /**
+     *
+     */
     @Test
     public void testAdminMessages() {
         ArcRepository arc = ArcRepository.getInstance();

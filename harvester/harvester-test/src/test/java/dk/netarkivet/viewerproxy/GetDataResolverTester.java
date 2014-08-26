@@ -62,6 +62,9 @@ public class GetDataResolverTester {
     ReloadSettings rs = new ReloadSettings();
     UseTestRemoteFile utrf = new UseTestRemoteFile();
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         rs.setUp();
@@ -74,6 +77,9 @@ public class GetDataResolverTester {
         arcrep = new TestArcRepositoryClient(TestInfo.WORKING_DIR);
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         arcrep.close();
@@ -83,6 +89,10 @@ public class GetDataResolverTester {
         rs.tearDown();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testExecuteCommand() throws Exception {
         String urlPrefix = "http://" + "netarchivesuite.viewerproxy.invalid";

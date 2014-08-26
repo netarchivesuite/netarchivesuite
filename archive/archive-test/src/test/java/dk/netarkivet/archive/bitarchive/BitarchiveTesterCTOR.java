@@ -60,6 +60,9 @@ public class BitarchiveTesterCTOR {
      */
     private static final String CREDENTIALS = "42";
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         rs.setUp();
@@ -73,6 +76,9 @@ public class BitarchiveTesterCTOR {
         }
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         FileUtils.removeRecursively(WORKING_ARCHIVE_DIR);

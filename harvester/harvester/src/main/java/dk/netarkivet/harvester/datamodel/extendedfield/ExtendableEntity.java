@@ -31,6 +31,10 @@ import javax.inject.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ *
+ * @author tra
+ */
 public abstract class ExtendableEntity {
 
     private static final Logger log = LoggerFactory.getLogger(ExtendableEntity.class);
@@ -38,6 +42,10 @@ public abstract class ExtendableEntity {
     /** List of extended Fields. */
     protected List<ExtendedFieldValue> extendedFieldValues = new ArrayList<ExtendedFieldValue>();
 
+    /**
+     *
+     * @param extendedFieldDAO
+     */
     protected ExtendableEntity(Provider<ExtendedFieldDAO> extendedFieldDAO) {
         addExtendedFieldValues(extendedFieldDAO);
     }

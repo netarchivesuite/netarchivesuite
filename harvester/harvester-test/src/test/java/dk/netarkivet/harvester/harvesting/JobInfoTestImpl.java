@@ -31,6 +31,11 @@ public class JobInfoTestImpl implements JobInfo {
     private Long jobId;
     private Long harvestId;
 
+    /**
+     *
+     * @param jobId
+     * @param harvestId
+     */
     public JobInfoTestImpl(Long jobId, Long harvestId) {
         this.jobId = jobId;
         this.harvestId = harvestId;

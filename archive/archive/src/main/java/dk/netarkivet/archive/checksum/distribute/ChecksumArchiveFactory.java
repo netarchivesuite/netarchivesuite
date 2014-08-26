@@ -26,6 +26,10 @@ import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.checksum.ChecksumArchive;
 import dk.netarkivet.common.utils.SettingsFactory;
 
+/**
+ *
+ * @author tra
+ */
 public class ChecksumArchiveFactory extends SettingsFactory<ChecksumArchive> {
 
     /**

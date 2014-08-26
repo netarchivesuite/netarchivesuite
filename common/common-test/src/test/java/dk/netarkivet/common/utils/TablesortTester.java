@@ -59,6 +59,9 @@ public class TablesortTester {
         assertEquals(TableSort.SortOrder.DESC, ts.getOrder());
     }
 
+    /**
+     *
+     */
     @Test
     public void testGetters() {
         TableSort ts = new TableSort(0, TableSort.SortOrder.DESC);

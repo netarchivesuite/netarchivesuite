@@ -99,6 +99,10 @@ public abstract class HeritrixLauncher {
         return args;
     }
 
+    /**
+     *
+     * @param files
+     */
     public void setupOrderfile(HeritrixFiles files) {
         HeritrixTemplate.makeOrderfileReadyForHeritrix(files);
     }

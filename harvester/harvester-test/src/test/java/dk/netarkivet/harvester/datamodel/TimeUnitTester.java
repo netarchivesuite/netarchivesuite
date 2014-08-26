@@ -34,6 +34,9 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  */
 public class TimeUnitTester {
 
+    /**
+     *
+     */
     @Test
     public void testFromOrdinal() {
         assertEquals(TimeUnit.HOURLY, TimeUnit.fromOrdinal(1));

@@ -54,6 +54,9 @@ public class TrivialArcRepositoryClientTester {
     ReloadSettings rs = new ReloadSettings();
     UseTestRemoteFile utrf = new UseTestRemoteFile();
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         rs.setUp();
@@ -64,6 +67,9 @@ public class TrivialArcRepositoryClientTester {
         mtf.setUp();
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         mtf.tearDown();
@@ -71,6 +77,10 @@ public class TrivialArcRepositoryClientTester {
         rs.tearDown();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testStore() throws Exception {
         ArcRepositoryClient arcrep = new TrivialArcRepositoryClient();

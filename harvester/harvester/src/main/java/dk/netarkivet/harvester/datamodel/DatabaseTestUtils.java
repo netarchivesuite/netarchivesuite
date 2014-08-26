@@ -50,6 +50,9 @@ import dk.netarkivet.common.utils.Settings;
  */
 public class DatabaseTestUtils {
 
+    /**
+     *
+     */
     protected static final Logger log = LoggerFactory.getLogger(DatabaseTestUtils.class);
 
     private static String dburi;
@@ -59,6 +62,7 @@ public class DatabaseTestUtils {
      * with dropDatabase. Only one connection can be taken at a time.
      * 
      * @param resourcePath A file that contains a test database.
+     * @param dbname
      * @param dbCreationDir
      * @return a connection to the database stored in the given file
      * @throws SQLException
@@ -156,6 +160,7 @@ public class DatabaseTestUtils {
      * it should use that one.
      * 
      * @param resourcePath Location of the sql files to create and populate the test DB.
+     * @param dbname
      * @param dbCreationDir
      * @return a connection to the given sample harvest definition database
      * @throws SQLException
@@ -171,6 +176,8 @@ public class DatabaseTestUtils {
      * Drop access to the database that's currently taken.
      * 
      * @throws SQLException
+     * @throws java.lang.NoSuchFieldException
+     * @throws java.lang.IllegalAccessException
      */
     public static void dropDatabase() throws SQLException, NoSuchFieldException, IllegalAccessException {
         try {
@@ -202,7 +209,7 @@ public class DatabaseTestUtils {
     /**
      * Drop the connection to the harvest definition database.
      * 
-     * @throws IllegalAccessException
+     * @throws java.sql.SQLException
      * @throws NoSuchFieldException
      * @throws Exception
      */

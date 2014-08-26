@@ -36,6 +36,10 @@ import org.junit.Test;
 // FIXME: Does not close properly if anything fails.
 public class DiscardingOutputStreamTester {
 
+    /**
+     *
+     * @throws IOException
+     */
     @Test
     public void testWriteInt() throws IOException {
         OutputStream os = new DiscardingOutputStream();
@@ -47,6 +51,10 @@ public class DiscardingOutputStreamTester {
         os.close();
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     @Test
     public void testWriteBytearray() throws IOException {
         OutputStream os = new DiscardingOutputStream();
@@ -59,6 +67,10 @@ public class DiscardingOutputStreamTester {
         os.close();
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     @Test
     public void testWriteBytearrayWithArgs() throws IOException {
         OutputStream os = new DiscardingOutputStream();

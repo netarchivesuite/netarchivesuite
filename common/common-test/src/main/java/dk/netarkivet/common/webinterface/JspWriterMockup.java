@@ -30,8 +30,15 @@ import javax.servlet.jsp.JspWriter;
 
 /** JSP writer that simply writes to a public string writer. */
 public class JspWriterMockup extends JspWriter {
+
+    /**
+     *
+     */
     public StringWriter sw = new StringWriter();
 
+    /**
+     *
+     */
     public JspWriterMockup() {
         super(Integer.MAX_VALUE, false);
     }

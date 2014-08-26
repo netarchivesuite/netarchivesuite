@@ -27,23 +27,46 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+/**
+ *
+ * @author tra
+ */
 public class NodeTraverser {
     private final Document doc;
     private Node currentNode;
 
+    /**
+     *
+     * @param doc
+     */
     public NodeTraverser(Document doc) {
         this.doc = doc;
         currentNode = doc;
     }
 
+    /**
+     *
+     * @return
+     */
     public Node getNode() {
         return currentNode;
     }
 
+    /**
+     *
+     * @param doc
+     * @return
+     */
     public static NodeTraverser create(Document doc) {
         return new NodeTraverser(doc);
     }
 
+    /**
+     *
+     * @param element
+     * @param name
+     * @return
+     */
     public NodeTraverser getChildNode(String element, String name) {
         Node childNode = null;
         NodeList nodes = currentNode.getChildNodes();

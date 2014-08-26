@@ -39,11 +39,18 @@ public class TestInfo {
     static final StopReason DEFAULT_STOPREASON = StopReason.DOWNLOAD_COMPLETE;
 
     // General dirs:
-    protected static final File BASEDIR = new File("tests/dk/netarkivet/harvester/harvesting/data");
+
+    /**
+     *
+     */
+        protected static final File BASEDIR = new File("tests/dk/netarkivet/harvester/harvesting/data");
 
     private static final File FUTURE_BASEDIR = new File("tests/dk/netarkivet/harvester/data");
     private static final File TEMPLATES_DIR = new File(FUTURE_BASEDIR, "originals/order_templates");
 
+    /**
+     *
+     */
     public static final File ONE_LEVEL_ORDER_FILE = new File(TEMPLATES_DIR, "OneLevel-order.xml");
 
     static final File ORIGINALS_DIR = new File(BASEDIR, "originals");
@@ -130,10 +137,26 @@ public class TestInfo {
 
     static final long JOB_ID = 42;
     static final long HARVEST_ID = 142L;
+
+    /**
+     *
+     */
     public static final File HARVEST_INFO_FILE = new File(CRAWLDIR_ORIGINALS_DIR, "harvestInfo.xml");
+
+    /**
+     *
+     */
     public static final MetadataEntry sampleEntry = new MetadataEntry("metadata://netarkivet.dk", "text/plain",
             "DETTE ER NOGET METADATA");
+
+    /**
+     *
+     */
     public static final List<MetadataEntry> emptyMetadata = new ArrayList<MetadataEntry>();
+
+    /**
+     *
+     */
     public static final List<MetadataEntry> oneMetadata = new ArrayList<MetadataEntry>();
 
     static final File EMPTY_CRAWLLOG_FILE = new File(ORDER_AND_SEEDS_ORIGINALS_DIR, "empty_crawl.log");
@@ -141,6 +164,10 @@ public class TestInfo {
     static final File LONG_REPORT_FILE = new File(new File(WORKING_DIR, "harvestreports"), "crawl-long.log");
     static final File ADD_LONG_REPORT_FILE = new File(new File(WORKING_DIR, "harvestreports"), "crawl-addslong.log");
     static final File INVALID_REPORT_FILE = new File(new File(WORKING_DIR, "harvestreports"), "invalid-crawl.log");
+
+    /**
+     *
+     */
     public static final File STOP_REASON_REPORT_FILE = new File(new File(WORKING_DIR, "harvestreports"),
             "stop-reason-crawl.log");
     static final File NON_EXISTING_FILE = new File(new File(WORKING_DIR, "harvestreports"), "must-not-exist.log");
@@ -149,13 +176,30 @@ public class TestInfo {
     static final int NO_OF_OBJECTS_TEST = 37;
     static final int NO_OF_BYTES_TEST = 1162154;
 
+    /**
+     *
+     */
     public static final File IDNA_CRAW_LOG = new File(BASEDIR, "idna/idna-crawllog.txt");
 
+    /**
+     *
+     */
     public static final File ORDER_FOR_TESTING_WARCINFO = new File(WORKING_DIR, "order_for_testing_warcinfo.xml");
+
+    /**
+     *
+     */
     public static final File WARCPROCESSORFILES_DIR = new File(BASEDIR, "warcprocessortestdata");
 
+    /**
+     *
+     */
     public static final String FST_FILENAME = // "42-117-20051212141241-00000-sb-test-har-001.statsbiblioteket.dk.arc";
     "42-117-20051212141241-00001-sb-test-har-001.statsbiblioteket.dk.arc";
+
+    /**
+     *
+     */
     public static final String SND_FILENAME = // "42-117-20051212141241-00001-sb-test-har-001.statsbiblioteket.dk.arc";
     "42-117-20051212141240-00000-sb-test-har-001.statsbiblioteket.dk.arc";
 

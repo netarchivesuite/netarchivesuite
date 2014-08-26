@@ -62,6 +62,9 @@ public class UploadTester {
     /** Max number of store retries. */
     private final int storeRetries = Settings.getInt(JMSArcRepositoryClient.ARCREPOSITORY_STORE_RETRIES);
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         rs.setUp();
@@ -74,6 +77,9 @@ public class UploadTester {
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         marc.tearDown();
@@ -86,6 +92,9 @@ public class UploadTester {
         rs.tearDown();
     }
 
+    /**
+     *
+     */
     @Test
     public void testConstructor() {
         ReflectUtils.testUtilityConstructor(Upload.class);

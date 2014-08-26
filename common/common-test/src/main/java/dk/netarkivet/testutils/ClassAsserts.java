@@ -63,6 +63,7 @@ public class ClassAsserts {
      * Tests that a class has a static factory method getInstance() and that it acts as a singleton. NB This method will
      * create an instance of the class. It is your responsibility to clean up after yourself.
      * 
+     * @param <T>
      * @param c the class to test
      * @return the singleton
      */
@@ -88,6 +89,7 @@ public class ClassAsserts {
     /**
      * Tests if there are any public constructors. Will fail on any public constructor, and simply return otherwise.
      *
+     * @param <T>
      * @param c A class to test.
      */
     public static <T> void assertPrivateConstructor(Class<T> c) {

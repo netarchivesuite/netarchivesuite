@@ -57,6 +57,7 @@ public class DoOneCrawlMessage extends HarvesterMessage implements Serializable 
      *
      * @param submittedJob the Job to crawl
      * @param to the ChannelID for the Server
+     * @param harvestInfo
      * @param metadata A list of job-metadata
      * @throws ArgumentNotValid when submittedJob is null
      */

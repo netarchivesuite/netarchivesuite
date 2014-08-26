@@ -54,6 +54,7 @@ public abstract class ResultSetIterator<T> implements Iterator<T> {
     /**
      * Constructor for this class.
      * 
+     * @param stm
      * @param res a ResultSet for this Iterator to operate on.
      */
     public ResultSetIterator(Statement stm, ResultSet res) {

@@ -34,6 +34,9 @@ import org.junit.Test;
  */
 public class ReadOnlyByteArrayTester {
 
+    /**
+     *
+     */
     @Test
     public void testClassFunctionality() {
 

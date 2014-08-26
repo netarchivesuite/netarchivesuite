@@ -48,6 +48,10 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 public class TemplateDAOTesterAlternate {
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         rs.setUp();
@@ -68,6 +72,10 @@ public class TemplateDAOTesterAlternate {
         TemplateDAO.getInstance();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         DatabaseTestUtils.dropHDDB();

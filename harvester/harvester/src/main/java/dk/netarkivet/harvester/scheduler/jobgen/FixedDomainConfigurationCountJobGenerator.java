@@ -175,17 +175,33 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
         return instance;
     }
 
+    /**
+     *
+     * @param harvest
+     * @return
+     */
     @Override
     protected Comparator<DomainConfiguration> getDomainConfigurationSubsetComparator(HarvestDefinition harvest) {
         return new ConfigNamesComparator();
     }
 
+    /**
+     *
+     * @param job
+     * @param cfg
+     * @return
+     */
     @Override
     protected boolean checkSpecificAcceptConditions(Job job, DomainConfiguration cfg) {
         return job.getDomainConfigurationMap().size() < (job.isSnapshot() ? CONFIG_COUNT_SNAPSHOT
                 : CONFIG_COUNT_FOCUSED);
     }
 
+    /**
+     *
+     * @param harvest
+     * @return
+     */
     @Override
     public int generateJobs(HarvestDefinition harvest) {
         HarvestJobGenerationState jobsUnderConstruction = getStateForHarvest(harvest);
@@ -213,6 +229,12 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
         }
     }
 
+    /**
+     *
+     * @param harvest
+     * @param domainConfSubset
+     * @return
+     */
     @Override
     protected int processDomainConfigurationSubset(HarvestDefinition harvest,
             Iterator<DomainConfiguration> domainConfSubset) {

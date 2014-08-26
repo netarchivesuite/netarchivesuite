@@ -28,20 +28,63 @@ import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
+/**
+ *
+ * @author tra
+ */
 @SuppressWarnings({"unused"})
 public class HarvestHistoryPageHelper {
     private static final String HARVEST_HISTORY_TABLE_CLASS = "selection_table";
 
+    /**
+     *
+     */
     public static final String HARVEST_NAME_HEADER = "Harvest name";
+
+    /**
+     *
+     */
     public static final String RUN_NUMBER_HEADER = "Run number";
+
+    /**
+     *
+     */
     public static final String RUN_ID_HEADER = "Job ID";
+
+    /**
+     *
+     */
     public static final String CONFIGURATION_HEADER = "Configuration";
+
+    /**
+     *
+     */
     public static final String START_TIME_HEADER = "Start time";
+
+    /**
+     *
+     */
     public static final String END_TIME_HEADER = "End time";
+
+    /**
+     *
+     */
     public static final String BYTES_HARVESTED_HEADER = "Bytes Harvested";
+
+    /**
+     *
+     */
     public static final String DOCUMENTS_HARVESTED_HEADER = "Documents Harvested";
+
+    /**
+     *
+     */
     public static final String STOPPED_DUE_TO_HEADER = "Stopped due to";
 
+    /**
+     *
+     * @return
+     */
     public static List<HarvestHistoryEntry> readHarvestHistory() {
         List<HarvestHistoryEntry> harvestHistory = new LinkedList<HarvestHistoryEntry>();
         List<WebElement> rows = PageHelper.getWebDriver().findElement(By.className("selection_table"))
@@ -53,6 +96,9 @@ public class HarvestHistoryPageHelper {
         return harvestHistory;
     }
 
+    /**
+     *
+     */
     public static class HarvestHistoryEntry {
         final String runNumber;
         final String runID;
@@ -63,6 +109,10 @@ public class HarvestHistoryPageHelper {
         final String documentsHarvested;
         final String stoppedDueTo;
 
+        /**
+         *
+         * @param rowElement
+         */
         public HarvestHistoryEntry(WebElement rowElement) {
             List<WebElement> cells = rowElement.findElements(By.xpath("td"));
             this.runNumber = cells.get(0).getText();

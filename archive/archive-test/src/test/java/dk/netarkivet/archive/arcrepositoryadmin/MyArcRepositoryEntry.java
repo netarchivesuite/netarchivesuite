@@ -32,6 +32,12 @@ import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
  */
 public class MyArcRepositoryEntry extends ArcRepositoryEntry {
 
+    /**
+     *
+     * @param filename
+     * @param md5sum
+     * @param replyInfo
+     */
     public MyArcRepositoryEntry(String filename, String md5sum, StoreMessage replyInfo) {
         super(filename, md5sum, replyInfo);
 

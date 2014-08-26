@@ -52,6 +52,10 @@ public class PartialHarvestTester extends DataModelTestCase {
     private static final String order1xml = "default_orderxml";
     private static final String order2xml = "OneLevel-order";
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -59,6 +63,10 @@ public class PartialHarvestTester extends DataModelTestCase {
         harvest = new PartialHarvest(new ArrayList<DomainConfiguration>(), sched, harvestName, "", "Everybody");
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         super.tearDown();

@@ -72,6 +72,9 @@ public class JMSConnectionTester {
     PreventSystemExit pse = new PreventSystemExit();
     MockupJMS mj = new MockupJMS();
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         rs.setUp();
@@ -79,6 +82,9 @@ public class JMSConnectionTester {
         mj.setUp();
     }
 
+    /**
+     *
+     */
     @After
     public void tearDown() {
         mj.tearDown();
@@ -258,6 +264,12 @@ public class JMSConnectionTester {
                 ((JMSConnectionMockupMQ.TestConnection) con.connection).isStarted);
     }
 
+    /**
+     *
+     * @throws JMSException
+     * @throws NoSuchFieldException
+     * @throws IllegalAccessException
+     */
     @Test
     public void testSendToQueue() throws JMSException, NoSuchFieldException, IllegalAccessException {
         Settings.set(CommonSettings.JMS_BROKER_CLASS, "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
@@ -283,6 +295,12 @@ public class JMSConnectionTester {
         assertNotNull("Message should now have an id", msg.getID());
     }
 
+    /**
+     *
+     * @throws JMSException
+     * @throws NoSuchFieldException
+     * @throws IllegalAccessException
+     */
     @Test
     public void testSendToTopic() throws JMSException, NoSuchFieldException, IllegalAccessException {
         Settings.set(CommonSettings.JMS_BROKER_CLASS, "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
@@ -309,6 +327,12 @@ public class JMSConnectionTester {
         assertNotNull("Message should now have an id", msg.getID());
     }
 
+    /**
+     *
+     * @throws JMSException
+     * @throws NoSuchFieldException
+     * @throws IllegalAccessException
+     */
     @Test
     public void testSetListener() throws JMSException, NoSuchFieldException, IllegalAccessException {
         Settings.set(CommonSettings.JMS_BROKER_CLASS, "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
@@ -352,6 +376,11 @@ public class JMSConnectionTester {
         assertEquals("Should have two listeners now", 2, consumerMap.size());
     }
 
+    /**
+     *
+     * @throws NoSuchMethodException
+     * @throws IllegalAccessException
+     */
     @Test
     public void testGetConsumerKey() throws NoSuchMethodException, IllegalAccessException {
         Settings.set(CommonSettings.JMS_BROKER_CLASS, "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
@@ -371,6 +400,12 @@ public class JMSConnectionTester {
                 JMSConnection.getConsumerKey(Channels.getTheBamon().getName(), listener));
     }
 
+    /**
+     *
+     * @throws JMSException
+     * @throws NoSuchFieldException
+     * @throws IllegalAccessException
+     */
     @Test
     public void testReply() throws JMSException, NoSuchFieldException, IllegalAccessException {
         Settings.set(CommonSettings.JMS_BROKER_CLASS, "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
@@ -423,12 +458,26 @@ public class JMSConnectionTester {
         }
     }
 
+    /**
+     *
+     */
     public static class DummyServer implements MessageListener {
 
         private final Logger log = Logger.getLogger(getClass().getName());
 
+        /**
+         *
+         */
         public int msgOK = 0;
+
+        /**
+         *
+         */
         public int msgNotOK = 0;
+
+        /**
+         *
+         */
         public int msgReceived = 0;
 
         /*
@@ -436,12 +485,21 @@ public class JMSConnectionTester {
          * 
          * @see javax.jms.MessageListener#onMessage(javax.jms.Message)
          */
+
+        /**
+         *
+         * @param msg
+         */
+        
         public void onMessage(Message msg) {
             log.fine("DummyServer received message: " + msg);
             NetarkivetMessage netMsg = JMSConnection.unpack(msg);
             msgReceived = (netMsg.isOk() ? ++msgOK : ++msgNotOK);
         }
 
+        /**
+         *
+         */
         public void reset() {
             msgOK = 0;
             msgNotOK = 0;

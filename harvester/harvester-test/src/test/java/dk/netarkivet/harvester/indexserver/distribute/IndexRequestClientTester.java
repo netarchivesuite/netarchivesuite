@@ -57,6 +57,10 @@ import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
+/**
+ *
+ * @author tra
+ */
 @Ignore("Methods hang in Eclipse test runner")
 public class IndexRequestClientTester {
     private static final Set<Long> JOB_SET = new HashSet<Long>(Arrays.asList(new Long[] {2L, 3L, 5L, 7L, 11L}));
@@ -69,6 +73,9 @@ public class IndexRequestClientTester {
     private MockupIndexServer mis;
     ReloadSettings rs = new ReloadSettings();
 
+    /**
+     *
+     */
     @Before
     public void setUp() {
         rs.setUp();
@@ -85,6 +92,11 @@ public class IndexRequestClientTester {
         mis.setUp();
     }
 
+    /**
+     *
+     * @throws NoSuchFieldException
+     * @throws IllegalAccessException
+     */
     @After
     public void tearDown() throws NoSuchFieldException, IllegalAccessException {
         mis.tearDown();
@@ -120,6 +132,7 @@ public class IndexRequestClientTester {
      * Verify that the getJobIndex method - accepts all non-null lists (including an empty one) - throws exceptions on
      * null - submits an IndexRequestMessage representing the input - returns the response on the message to the caller
      * - throws an exception if response is not OK.
+     * @throws java.io.IOException
      */
     @Test
     public void testGetJobIndexFullNonemptySet() throws IOException {
@@ -127,12 +140,19 @@ public class IndexRequestClientTester {
                 JOB_SET);
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     @Test
     public void testGetJobIndexFullEmptySet() throws IOException {
         testNormalDirResponse(IndexRequestClient.getInstance(RequestType.FULL_CRAWL_LOG), RequestType.FULL_CRAWL_LOG,
                 Collections.<Long> emptySet());
     }
 
+    /**
+     *
+     */
     @Test
     public void testGetJobIndexFullFailures() {
         assertFailsOnNull(IndexRequestClient.getInstance(RequestType.FULL_CRAWL_LOG));
@@ -143,6 +163,7 @@ public class IndexRequestClientTester {
      * Verify that the getJobIndex method - accepts all non-null lists (including an empty one) - throws exceptions on
      * null - submits an IndexRequestMessage representing the input - returns the response on the message to the caller
      * - throws an exception if response is not OK.
+     * @throws java.io.IOException
      */
     @Test
     @Ignore("FileNotFoundException:...-cache.working")
@@ -151,12 +172,19 @@ public class IndexRequestClientTester {
                 JOB_SET);
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     @Test
     public void testGetJobIndexDedupEmptySet() throws IOException {
         testNormalDirResponse(IndexRequestClient.getInstance(RequestType.DEDUP_CRAWL_LOG), RequestType.DEDUP_CRAWL_LOG,
                 Collections.<Long> emptySet());
     }
 
+    /**
+     *
+     */
     @Test
     @Ignore("FileNotFoundException: ...-cache.working")
     public void testGetJobIndexDedupFailures() {
@@ -168,12 +196,17 @@ public class IndexRequestClientTester {
      * Verify that the getJobIndex method - accepts all non-null lists (including an empty one) - throws exceptions on
      * null - submits an IndexRequestMessage representing the input - returns the response on the message to the caller
      * - throws an exception if response is not OK.
+     * @throws java.io.IOException
      */
     @Test
     public void testGetJobIndexCdxNonemptySet() throws IOException {
         testNormalFileResponse(IndexRequestClient.getInstance(RequestType.CDX), RequestType.CDX, JOB_SET);
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     @Test(timeout = 60000)
     @Ignore("Hangs in Eclipse")
     public void testGetJobIndexCdxEmptySet() throws IOException {
@@ -181,6 +214,9 @@ public class IndexRequestClientTester {
                 Collections.<Long> emptySet());
     }
 
+    /**
+     *
+     */
     @Test(timeout = 60000)
     @Ignore("Hangs in Eclipse")
     public void testGetJobIndexCdxFailures() {

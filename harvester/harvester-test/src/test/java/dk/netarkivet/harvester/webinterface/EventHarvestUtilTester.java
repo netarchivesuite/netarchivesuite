@@ -67,6 +67,10 @@ public class EventHarvestUtilTester extends HarvesterWebinterfaceTestCase {
         HarvestDefinitionDAO.getInstance().create(harvest);
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         super.tearDown();

@@ -35,6 +35,11 @@ import dk.netarkivet.monitor.webinterface.MonitorWebinterfaceTesterSuite;
  * This class runs all the monitor module unit tests.
  */
 public class UnitTesterSuite {
+
+    /**
+     *
+     * @param suite
+     */
     public static void addToSuite(TestSuite suite) {
         MonitorTesterSuite.addToSuite(suite);
         MonitorLoggingTesterSuite.addToSuite(suite);
@@ -43,6 +48,10 @@ public class UnitTesterSuite {
         MonitorWebinterfaceTesterSuite.addToSuite(suite);
     }
 
+    /**
+     *
+     * @return
+     */
     public static Test suite() {
         TestSuite suite;
         suite = new TestSuite(UnitTesterSuite.class.getName());
@@ -52,6 +61,10 @@ public class UnitTesterSuite {
         return suite;
     }
 
+    /**
+     *
+     * @param args
+     */
     public static void main(String[] args) {
         String[] args2 = {"-noloading", UnitTesterSuite.class.getName()};
         TestRunner.main(args2);

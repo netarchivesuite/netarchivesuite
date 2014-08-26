@@ -34,6 +34,9 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 public class ReplicaTypeTester {
 
+    /**
+     *
+     */
     @Test
     public void testFromOrdinal() {
         assertEquals(ReplicaType.NO_REPLICA_TYPE, ReplicaType.fromOrdinal(0));
@@ -47,6 +50,9 @@ public class ReplicaTypeTester {
         }
     }
 
+    /**
+     *
+     */
     @Test
     public void testFromSetting() {
         try {

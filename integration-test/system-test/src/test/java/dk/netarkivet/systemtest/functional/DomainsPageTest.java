@@ -46,11 +46,19 @@ import dk.netarkivet.systemtest.page.DomainConfigurationPageHelper;
 import dk.netarkivet.systemtest.page.DomainWebTestHelper;
 import dk.netarkivet.systemtest.page.PageHelper;
 
+/**
+ *
+ * @author tra
+ */
 public class DomainsPageTest extends SeleniumTest {
     private String domainIDForTest;
     private int domainCounter = 0;
     private DateFormat dateFomatter = new SimpleDateFormat("HHmmss");
 
+    /**
+     *
+     * @param method
+     */
     @BeforeMethod(alwaysRun = true)
     public void setup(Method method) {
         Date startTime = new Date();
@@ -58,6 +66,10 @@ public class DomainsPageTest extends SeleniumTest {
         domainCounter = 1;
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test(groups = {"guitest", "functest"})
     public void domainCreationTest() throws Exception {
         addDescription("Tests that domains can be created correctly.");
@@ -85,6 +97,9 @@ public class DomainsPageTest extends SeleniumTest {
                 "New domain not found.");
     }
 
+    /**
+     *
+     */
     @Test(groups = {"guitest", "functest"})
     public void usedConfigurationFilteringTest() {
         addDescription("Tests configurations are filtered correctly when "
@@ -92,6 +107,11 @@ public class DomainsPageTest extends SeleniumTest {
         usedConfigurationsTest(driver, createDomainID());
     }
 
+    /**
+     *
+     * @param driver
+     * @param domain1ID
+     */
     public void usedConfigurationsTest(WebDriver driver, String domain1ID) {
         addStep("Create a new domain", "The edit domain page should be loaded with only the default "
                 + "config show. The configurations filter state should be that "
@@ -153,6 +173,9 @@ public class DomainsPageTest extends SeleniumTest {
                 + "'Hide unused configurations' list on the test domain.", "Both configurations should now be listed");
     }
 
+    /**
+     *
+     */
     @Test(groups = {"guitest", "functest"})
     public void usedSeedListsFilteringTest() {
         addDescription("Tests seed lists are filtered correctly when "

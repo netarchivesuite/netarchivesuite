@@ -41,6 +41,7 @@ public class CollectionAsserts {
      * Test that two iterators contain the same objects in the same order. The objects are tested using equals(). The
      * iterators will be used by this.
      *
+     * @param <T>
      * @param msg Failure message
      * @param i1 First iterator
      * @param i2 Second iterator

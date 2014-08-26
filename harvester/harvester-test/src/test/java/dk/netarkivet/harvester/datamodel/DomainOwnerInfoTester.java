@@ -38,6 +38,10 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  */
 public class DomainOwnerInfoTester {
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void testCompareTo() throws Exception {
         DomainOwnerInfo i1 = new DomainOwnerInfo(new Date(1), "foo");

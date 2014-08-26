@@ -57,6 +57,10 @@ public class ReportingWarcTester {
     private File tempdir = new File(working, "commontempdir");
     private File dir;
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         rs.setUp();
@@ -75,6 +79,10 @@ public class ReportingWarcTester {
         TestFileUtils.copyDirectoryNonCVS(TestInfo.WARC_ORIGINALS_DIR, dir);
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         if (tarc != null) {
@@ -88,6 +96,10 @@ public class ReportingWarcTester {
         rs.tearDown();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     public void testGetFilesForJob() throws Exception {
         try {
             Reporting.getFilesForJob(-1, "2-1");
@@ -105,6 +117,10 @@ public class ReportingWarcTester {
                 "2-2-20120903165904-00000-kb-test-har-002.kb.dk.warc", "2-metadata-1.warc");
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     public void testGetMetadataCDXRecordsForJob() throws Exception {
         List<CDXRecord> recordsForJob = Reporting.getMetadataCDXRecordsForJob(2);
         // for (CDXRecord rec : recordsForJob) {

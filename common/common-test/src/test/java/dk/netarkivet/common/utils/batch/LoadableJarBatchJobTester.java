@@ -48,16 +48,27 @@ import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 public class LoadableJarBatchJobTester {
     MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
 
+    /**
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         mtf.setUp();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         mtf.tearDown();
     }
 
+    /**
+     *
+     */
     @Test
     public void testInitialize() {
         FileBatchJob job = new LoadableJarBatchJob("dk.netarkivet.common.utils.batch.LoadableTestJob",
@@ -82,6 +93,9 @@ public class LoadableJarBatchJobTester {
         assertEquals("Should have message from loaded class", "initialize() called on inner\n", os.toString());
     }
 
+    /**
+     *
+     */
     @Test
     public void testLoadingJobWithoutPackage() {
         FileBatchJob job = new LoadableJarBatchJob("ExternalBatchSeveralClassesNoPackage", new ArrayList<String>(),
@@ -93,6 +107,9 @@ public class LoadableJarBatchJobTester {
         job.processFile(metadataFile, os);
     }
 
+    /**
+     *
+     */
     @Test
     public void testLoadingJobWithPackage() {
         FileBatchJob job = new LoadableJarBatchJob("batch.ExternalBatchSeveralClassesWithPackage",

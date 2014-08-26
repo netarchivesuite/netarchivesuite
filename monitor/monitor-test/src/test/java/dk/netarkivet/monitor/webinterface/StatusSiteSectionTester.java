@@ -28,6 +28,9 @@ import dk.netarkivet.common.webinterface.SiteSection;
 /** Unittest for StatusSiteSection class. */
 public class StatusSiteSectionTester extends TestCase {
 
+    /**
+     *
+     */
     public void testMethods() {
         SiteSection s = new StatusSiteSection();
         try {

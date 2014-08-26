@@ -30,21 +30,36 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 
+/**
+ *
+ * @author tra
+ */
 public class MoveTestFiles implements TestConfigurationIF {
     private File originalsDir;
     private File workingDir;
 
+    /**
+     *
+     * @param originalsDir
+     * @param workingDir
+     */
     public MoveTestFiles(File originalsDir, File workingDir) {
         this.originalsDir = originalsDir;
         this.workingDir = workingDir;
     }
 
+    /**
+     *
+     */
     public void setUp() {
         FileUtils.removeRecursively(workingDir);
         workingDir.mkdirs();
         TestFileUtils.copyDirectoryNonCVS(originalsDir, workingDir);
     }
 
+    /**
+     *
+     */
     public void tearDown() {
         setReadWrite(workingDir);
         FileUtils.removeRecursively(workingDir);
@@ -65,6 +80,11 @@ public class MoveTestFiles implements TestConfigurationIF {
         }
     }
 
+    /**
+     *
+     * @param f
+     * @return
+     */
     public File working(File f) {
         if (!f.getAbsolutePath().startsWith(originalsDir.getAbsolutePath())) {
             throw new ArgumentNotValid(f + " is not in " + originalsDir);
@@ -72,6 +92,10 @@ public class MoveTestFiles implements TestConfigurationIF {
         return new File(workingDir, f.getAbsolutePath().substring(originalsDir.getAbsolutePath().length()));
     }
 
+    /**
+     *
+     * @return
+     */
     public File newTmpFile() {
         try {
             return File.createTempFile(this.getClass().getSimpleName(), "Tmp", workingDir);
@@ -80,6 +104,10 @@ public class MoveTestFiles implements TestConfigurationIF {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public File newTmpDir() {
         try {
             File tmpFile = File.createTempFile(this.getClass().getSimpleName(), "Tmp", workingDir);

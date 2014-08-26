@@ -34,12 +34,36 @@ import org.openqa.selenium.WebDriver;
  * Will also log webpage interactions.
  */
 public class DomainWebTestHelper {
+
+    /**
+     *
+     */
     public static final String SHOW_UNUSED_CONFIGURATIONS_LINK = "Show unused configurations";
+
+    /**
+     *
+     */
     public static final String HIDE_UNUSED_CONFIGURATIONS_LINK = "Hide unused configurations";
+
+    /**
+     *
+     */
     public static final String SHOW_UNUSED_SEED_LISTS_LINK = "Show unused seed lists";
+
+    /**
+     *
+     */
     public static final String HIDE_UNUSED_SEED_LISTS_LINK = "Hide unused seed lists";
+
+    /**
+     *
+     */
     public static final String NEW_SEED_LIST = "New seed list";
 
+    /**
+     *
+     * @param domains
+     */
     public static void createDomain(String[] domains) {
         TestEventManager.getInstance().addStimuli("Creating domains" + Arrays.asList(domains));
         WebDriver driver = PageHelper.getWebDriver();
@@ -53,10 +77,20 @@ public class DomainWebTestHelper {
         driver.findElement(By.cssSelector("input[type=\"submit\"]")).click();
     }
 
+    /**
+     *
+     * @param domainName
+     */
     public static void editDomain(String domainName) {
         PageHelper.gotoSubPage("HarvestDefinition/Definitions-edit-domain.jsp?name=" + domainName);
     }
 
+    /**
+     *
+     * @param domainName
+     * @param seedListName
+     * @param seeds
+     */
     public static void createSeedList(String domainName, String seedListName, String[] seeds) {
         TestEventManager.getInstance().addStimuli("Creating configuration" + seedListName + "(" + seeds + ")");
         WebDriver driver = PageHelper.getWebDriver();
