@@ -280,7 +280,7 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
                     String value = curi.isTimeTruncatedFetch() ? NAMED_FIELD_TRUNCATED_VALUE_TIME : curi
                             .isLengthTruncatedFetch() ? NAMED_FIELD_TRUNCATED_VALUE_LENGTH : curi
                             .isHeaderTruncatedFetch() ? NAMED_FIELD_TRUNCATED_VALUE_HEAD :
-                            // TODO: Add this to spec.
+                    // TODO: Add this to spec.
                             TRUNCATED_VALUE_UNSPECIFIED;
                     headers.addLabelValue(HEADER_KEY_TRUNCATED, value);
                 }
@@ -334,7 +334,7 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
                         .isLengthTruncatedFetch() ? NAMED_FIELD_TRUNCATED_VALUE_LENGTH
                         : curi.isHeaderTruncatedFetch() ? NAMED_FIELD_TRUNCATED_VALUE_HEAD :
                         // TODO: Add this to spec.
-                        TRUNCATED_VALUE_UNSPECIFIED;
+                                TRUNCATED_VALUE_UNSPECIFIED;
                 headers.addLabelValue(HEADER_KEY_TRUNCATED, value);
             }
             rid = writeResponse(w, timestamp, HTTP_RESPONSE_MIMETYPE, baseid, curi, headers);
@@ -597,12 +597,12 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
             // }
 
             addIfNotBlank(record, "description", XmlUtils.xpathOrNull(doc, "//meta/description"));
-            addIfNotBlank(record, "robots",
-                    XmlUtils.xpathOrNull(doc, "//newObject[@name='robots-honoring-policy']/string[@name='type']"));
-            addIfNotBlank(record, "http-header-user-agent",
-                    XmlUtils.xpathOrNull(doc, "//map[@name='http-headers']/string[@name='user-agent']"));
-            addIfNotBlank(record, "http-header-from",
-                    XmlUtils.xpathOrNull(doc, "//map[@name='http-headers']/string[@name='from']"));
+            addIfNotBlank(record, "robots", XmlUtils.xpathOrNull(doc,
+                    "//newObject[@name='robots-honoring-policy']/string[@name='type']"));
+            addIfNotBlank(record, "http-header-user-agent", XmlUtils.xpathOrNull(doc,
+                    "//map[@name='http-headers']/string[@name='user-agent']"));
+            addIfNotBlank(record, "http-header-from", XmlUtils.xpathOrNull(doc,
+                    "//map[@name='http-headers']/string[@name='from']"));
             if (pjd == null) {
                 loadPersistentJobData(doc);
             }

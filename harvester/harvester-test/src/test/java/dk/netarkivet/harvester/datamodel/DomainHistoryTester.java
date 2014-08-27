@@ -61,7 +61,7 @@ public class DomainHistoryTester {
         DomainHistory h = setupHarvestInfos();
         List<HarvestInfo> readhislist = new ArrayList<HarvestInfo>();
 
-        for (Iterator<HarvestInfo> i = h.getHarvestInfo(); i.hasNext(); ) {
+        for (Iterator<HarvestInfo> i = h.getHarvestInfo(); i.hasNext();) {
             readhislist.add(i.next());
         }
 
@@ -90,7 +90,7 @@ public class DomainHistoryTester {
                 StopReason.DOWNLOAD_COMPLETE));
         List<HarvestInfo> readhislist = new ArrayList<HarvestInfo>();
 
-        for (Iterator<HarvestInfo> i = h.getHarvestInfo(); i.hasNext(); ) {
+        for (Iterator<HarvestInfo> i = h.getHarvestInfo(); i.hasNext();) {
             readhislist.add(i.next());
         }
 

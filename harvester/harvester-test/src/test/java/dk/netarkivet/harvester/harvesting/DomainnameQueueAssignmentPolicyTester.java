@@ -70,13 +70,13 @@ public class DomainnameQueueAssignmentPolicyTester {
     public void testGetClassKeyPartTwo() {
 
         DomainnameQueueAssignmentPolicy policy = new DomainnameQueueAssignmentPolicy();
-        assertEquals("Should return default key on empty scheme", DEFAULT_CLASS_KEY,
-                policy.getClassKey(null, getCandidateURI("")));
-        assertEquals("Should return default key on hash scheme", DEFAULT_CLASS_KEY,
-                policy.getClassKey(null, getCandidateURI("#")));
+        assertEquals("Should return default key on empty scheme", DEFAULT_CLASS_KEY, policy.getClassKey(null,
+                getCandidateURI("")));
+        assertEquals("Should return default key on hash scheme", DEFAULT_CLASS_KEY, policy.getClassKey(null,
+                getCandidateURI("#")));
         assertEquals("Should return default key on null scheme", DEFAULT_CLASS_KEY, policy.getClassKey(null, null));
-        assertEquals("Should return default key on triple scheme", DEFAULT_CLASS_KEY,
-                policy.getClassKey(null, getCandidateURI("foo.dk#1010#fnord")));
+        assertEquals("Should return default key on triple scheme", DEFAULT_CLASS_KEY, policy.getClassKey(null,
+                getCandidateURI("foo.dk#1010#fnord")));
     }
 
     @Test

@@ -405,8 +405,8 @@ public class BitarchiveServer extends ArchiveMessageHandler implements CleanupIF
 
             // check whether the batchjob is still running.
             if (t == null) {
-                log.info("The batchjob with ID '{}' cannot be found, and must have terminated by it self.",
-                        msg.getTerminateID());
+                log.info("The batchjob with ID '{}' cannot be found, and must have terminated by it self.", msg
+                        .getTerminateID());
                 return;
             }
 

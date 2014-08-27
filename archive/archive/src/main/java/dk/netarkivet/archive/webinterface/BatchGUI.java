@@ -123,8 +123,7 @@ public final class BatchGUI {
      * <p>
      * <br/>
      * - Creates a line with the name of the batchjob.<br/>
-     * - Write the description if the batchjob has a metadata resource annotation description of the batchjob
-     * class.<br/>
+     * - Write the description if the batchjob has a metadata resource annotation description of the batchjob class.<br/>
      * - The last run information, date and size of the error and output files. <br/>
      * - The arguments of the batchjob, with information if they have been defined in the resource annotations of the
      * class.<br/>
@@ -335,16 +334,15 @@ public final class BatchGUI {
      * @param locale The locale language package.
      * @return The HTML code describing the class.
      * @Resource(description="Batchjob for finding URLs which matches a given" +
-     * " regular expression and has a mimetype which matches another" +
-     * " regular expression.", type=dk.netarkivet .common.utils.batch.UrlSearch.class)}
+     * " regular expression and has a mimetype which matches another" + " regular expression.", type=dk.netarkivet
+     * .common.utils.batch.UrlSearch.class)}
      * <p>
      * <br/>
      * <br/>
      * Which gives the UrlSearch batchjob the following description: <br/>
      * <br/>
-     * Description: Batchjob for finding URLs which matches a given regular expression
-     * and has a mimetype which matches another regular expression.
-     * &lt;br/&gt;&lt;br/&gt;
+     * Description: Batchjob for finding URLs which matches a given regular expression and has a mimetype which matches
+     * another regular expression. &lt;br/&gt;&lt;br/&gt;
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
     private static String getClassDescription(Class c, Locale locale) {
@@ -376,8 +374,7 @@ public final class BatchGUI {
      * @param c The class whose constructor should be used.
      * @param locale The language package.
      * @return The HTML code for the arguments for executing the batchjob.
-     * @Resource(name="regex", description="The regular expression for the " + "urls.",
-     * type=java.lang.String.class)<br/>
+     * @Resource(name="regex", description="The regular expression for the " + "urls.", type=java.lang.String.class)<br/>
      * @Resource(name="mimetype", type=java.lang.String.class)<br/>
      * Though the batchjob takes three arguments (thus one undefined). <br/>
      * <br/>
@@ -503,7 +500,7 @@ public final class BatchGUI {
             // match and put into set.
             if (filename.startsWith(batchName)
                     && (filename.endsWith(Constants.ERROR_FILE_EXTENSION) || filename
-                    .endsWith(Constants.OUTPUT_FILE_EXTENSION))) {
+                            .endsWith(Constants.OUTPUT_FILE_EXTENSION))) {
                 String prefix = filename.split("[.]")[0];
                 // the prefix is not added twice, since it is a hash-set.
                 prefixes.add(prefix);
@@ -620,8 +617,7 @@ public final class BatchGUI {
     }
 
     /**
-     * Creates the HTML code for making the radio buttons for choosing which replica the batchjob will be run upon.
-     * <br/>
+     * Creates the HTML code for making the radio buttons for choosing which replica the batchjob will be run upon. <br/>
      * E.g. the default replica settings (with two bitarchive replicas and one checksum replica) will give:<br/>
      * <br/>
      * <p>

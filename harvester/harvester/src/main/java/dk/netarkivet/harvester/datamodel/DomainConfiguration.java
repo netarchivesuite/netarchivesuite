@@ -412,8 +412,8 @@ public class DomainConfiguration implements Named {
     private long getExpectedBytesPerObject(HarvestInfo bestInfo) {
         long defaultExpectation = Settings.getLong(HarvesterSettings.EXPECTED_AVERAGE_BYTES_PER_OBJECT);
         if (bestInfo != null && bestInfo.getCountObjectRetrieved() > 0) {
-            long expectation = Math.max(MIN_EXPECTATION,
-                    bestInfo.getSizeDataRetrieved() / bestInfo.getCountObjectRetrieved());
+            long expectation = Math.max(MIN_EXPECTATION, bestInfo.getSizeDataRetrieved()
+                    / bestInfo.getCountObjectRetrieved());
             if (expectation < defaultExpectation
                     && bestInfo.getCountObjectRetrieved() < MIN_OBJECTS_TO_TRUST_SMALL_EXPECTATION) {
                 return defaultExpectation;
@@ -444,7 +444,7 @@ public class DomainConfiguration implements Named {
         if (!usesPassword(passwordName)) {
             throw new UnknownID("No password named '" + passwordName + "' found in '" + this + "'");
         }
-        for (Iterator<Password> i = passwords.iterator(); i.hasNext(); ) {
+        for (Iterator<Password> i = passwords.iterator(); i.hasNext();) {
             Password p = i.next();
             if (p.getName().equals(passwordName)) {
                 i.remove();

@@ -56,8 +56,8 @@ public class ReplicaTester {
     public void testGet() {
         assertTrue("Differences in sizes of replica maps", knownTestIds.length == Replica.getKnown().size());
         for (int i = 0; i < knownTestIds.length; i++) {
-            assertEquals("Replica id " + knownTestIds[i] + " not known in replica map.",
-                    Replica.getReplicaFromId(knownTestIds[i]).getId(), knownTestIds[i]);
+            assertEquals("Replica id " + knownTestIds[i] + " not known in replica map.", Replica.getReplicaFromId(
+                    knownTestIds[i]).getId(), knownTestIds[i]);
         }
         try {
             Replica.getReplicaFromId("XYZXYZ");
@@ -71,8 +71,8 @@ public class ReplicaTester {
     public void testIsKnownReplica() {
         // Replica ids
         for (int i = 0; i < knownTestIds.length; i++) {
-            assertTrue("Replica id " + knownTestIds[i] + " not known in Location map.",
-                    Replica.isKnownReplicaId(knownTestIds[i]));
+            assertTrue("Replica id " + knownTestIds[i] + " not known in Location map.", Replica
+                    .isKnownReplicaId(knownTestIds[i]));
         }
         if (Replica.isKnownReplicaId("XYZXYZ")) {
             fail("Says it knows Replica id XYZXYZ");
@@ -92,8 +92,8 @@ public class ReplicaTester {
         // Replica names
         String[] knownTestNames = Replica.getKnownNames();
         for (int i = 0; i < knownTestNames.length; i++) {
-            assertTrue("Replica name " + knownTestNames[i] + " not known in Replica map.",
-                    Replica.isKnownReplicaName(knownTestNames[i]));
+            assertTrue("Replica name " + knownTestNames[i] + " not known in Replica map.", Replica
+                    .isKnownReplicaName(knownTestNames[i]));
         }
         if (Replica.isKnownReplicaName("XYZXYZ")) {
             fail("Says it knows Replica name XYZXYZ");
@@ -197,13 +197,13 @@ public class ReplicaTester {
     public void testGetChannelID() {
         for (Replica rep : Replica.getKnown()) {
             if (rep.getType() == ReplicaType.CHECKSUM) {
-                assertEquals("The identification channel for '" + rep + "' a checksum channel.",
-                        Channels.getTheCrForReplica(rep.getId()), rep.getIdentificationChannel());
+                assertEquals("The identification channel for '" + rep + "' a checksum channel.", Channels
+                        .getTheCrForReplica(rep.getId()), rep.getIdentificationChannel());
             } else {
                 assertEquals("If the replica type is not Checksum, then it must be Bitarchive", rep.getType(),
                         ReplicaType.BITARCHIVE);
-                assertEquals("The identification channel for '" + rep + "' a bitarchive channel.",
-                        Channels.getBaMonForReplica(rep.getId()), rep.getIdentificationChannel());
+                assertEquals("The identification channel for '" + rep + "' a bitarchive channel.", Channels
+                        .getBaMonForReplica(rep.getId()), rep.getIdentificationChannel());
             }
         }
     }

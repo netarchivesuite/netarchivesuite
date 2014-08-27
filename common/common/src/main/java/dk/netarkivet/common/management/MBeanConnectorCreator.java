@@ -110,9 +110,8 @@ public class MBeanConnectorCreator {
 
                 if (log.isInfoEnabled()) {
                     log.info("Registered mbean server in registry on port {} communicating on port {} "
-                                    + "using password file '{}'." + "\nService URL is {}", jmxPort, rmiPort,
-                            passwordFile,
-                            url.toString());
+                            + "using password file '{}'." + "\nService URL is {}", jmxPort, rmiPort, passwordFile, url
+                            .toString());
                 }
             }
         } catch (IOException e) {

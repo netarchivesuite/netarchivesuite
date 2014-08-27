@@ -341,8 +341,7 @@ public class PostgreSQLSpecifics extends DBSpecifics {
      * Migrates the 'ExtendedFieldValueTable' from version 1 to version 2 changing the maxlen of content to 30000
      */
     protected void migrateExtendedFieldTableValueV1toV2() {
-        String[] sqlStatements = {
-                "ALTER TABLE extendedfieldvalue ALTER COLUMN content TYPE VARCHAR(30000), ALTER COLUMN content SET NOT NULL"};
+        String[] sqlStatements = {"ALTER TABLE extendedfieldvalue ALTER COLUMN content TYPE VARCHAR(30000), ALTER COLUMN content SET NOT NULL"};
         HarvestDBConnection.updateTable("extendedfieldvalue", 2, sqlStatements);
     }
 

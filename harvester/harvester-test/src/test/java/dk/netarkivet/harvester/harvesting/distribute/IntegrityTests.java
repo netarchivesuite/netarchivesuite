@@ -367,10 +367,10 @@ public class IntegrityTests extends DataModelTestCase {
         //
         // Check that JobIDs are correct
         //
-        assertEquals("JobIDs do not match for first message:", j.getJobID().longValue(),
-                (listener.jobids.get(0)).longValue());
-        assertEquals("JobIDs do not match for second message:", j.getJobID().longValue(),
-                (listener.jobids.get(1)).longValue());
+        assertEquals("JobIDs do not match for first message:", j.getJobID().longValue(), (listener.jobids.get(0))
+                .longValue());
+        assertEquals("JobIDs do not match for second message:", j.getJobID().longValue(), (listener.jobids.get(1))
+                .longValue());
         //
         // Get the crawl log
         //

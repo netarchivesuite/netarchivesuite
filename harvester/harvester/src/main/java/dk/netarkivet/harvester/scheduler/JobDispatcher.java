@@ -165,8 +165,8 @@ public class JobDispatcher {
      */
     private List<MetadataEntry> createMetadata(Job job) {
         List<MetadataEntry> metadata = new ArrayList<MetadataEntry>();
-        MetadataEntry aliasMetadataEntry = MetadataEntry.makeAliasMetadataEntry(job.getJobAliasInfo(),
-                job.getOrigHarvestDefinitionID(), job.getHarvestNum(), job.getJobID());
+        MetadataEntry aliasMetadataEntry = MetadataEntry.makeAliasMetadataEntry(job.getJobAliasInfo(), job
+                .getOrigHarvestDefinitionID(), job.getHarvestNum(), job.getJobID());
         if (aliasMetadataEntry != null) {
             // Add an entry documenting that this job
             // contains domains that has aliases
@@ -174,9 +174,9 @@ public class JobDispatcher {
         }
 
         if (HeritrixTemplate.isDeduplicationEnabledInTemplate(job.getOrderXMLdoc())) {
-            MetadataEntry duplicateReductionMetadataEntry = MetadataEntry.makeDuplicateReductionMetadataEntry(
-                    jobDao.getJobIDsForDuplicateReduction(job.getJobID()), job.getOrigHarvestDefinitionID(),
-                    job.getHarvestNum(), job.getJobID());
+            MetadataEntry duplicateReductionMetadataEntry = MetadataEntry.makeDuplicateReductionMetadataEntry(jobDao
+                    .getJobIDsForDuplicateReduction(job.getJobID()), job.getOrigHarvestDefinitionID(), job
+                    .getHarvestNum(), job.getJobID());
             // Always add a duplicationReductionMetadataEntry when deduplication
             // is enabled
             // even if the list of JobIDs for deduplication is empty!

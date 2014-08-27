@@ -244,13 +244,12 @@ public final class ArchiveDBConnection {
         dataSource.setDebugUnreturnedConnectionStackTraces(true);
 
         log.info("Connection pool initialized with the following values:\n" + "- minPoolSize={}\n"
-                        + "- maxPoolSize={}\n" + "- acquireIncrement={}\n" + "- maxStatements={}\n"
-                        + "- maxStatementsPerConnection={}\n" + "- idleConnTestPeriod={}\n"
-                        + "- idleConnTestQuery='{}'\n"
-                        + "- idleConnTestOnCheckin={}", dataSource.getMinPoolSize(), dataSource.getMaxPoolSize(),
-                dataSource.getAcquireIncrement(), dataSource.getMaxStatements(),
-                dataSource.getMaxStatementsPerConnection(), dataSource.getIdleConnectionTestPeriod(),
-                dataSource.getPreferredTestQuery(), dataSource.isTestConnectionOnCheckin());
+                + "- maxPoolSize={}\n" + "- acquireIncrement={}\n" + "- maxStatements={}\n"
+                + "- maxStatementsPerConnection={}\n" + "- idleConnTestPeriod={}\n" + "- idleConnTestQuery='{}'\n"
+                + "- idleConnTestOnCheckin={}", dataSource.getMinPoolSize(), dataSource.getMaxPoolSize(), dataSource
+                .getAcquireIncrement(), dataSource.getMaxStatements(), dataSource.getMaxStatementsPerConnection(),
+                dataSource.getIdleConnectionTestPeriod(), dataSource.getPreferredTestQuery(), dataSource
+                        .isTestConnectionOnCheckin());
     }
 
 }

@@ -87,10 +87,9 @@ public class Replica {
             List<StringTree<String>> replicaList = replicas.getSubTrees(CommonSettings.REPLICA_TAG);
             for (StringTree<String> replicaTree : replicaList) {
                 String replicaId = replicaTree.getValue(CommonSettings.REPLICAID_TAG);
-                knownReplicas.put(
-                        replicaId,
-                        new Replica(replicaId, replicaTree.getValue(CommonSettings.REPLICANAME_TAG), ReplicaType
-                                .fromSetting(replicaTree.getValue(CommonSettings.REPLICATYPE_TAG))));
+                knownReplicas.put(replicaId, new Replica(replicaId, replicaTree
+                        .getValue(CommonSettings.REPLICANAME_TAG), ReplicaType.fromSetting(replicaTree
+                        .getValue(CommonSettings.REPLICATYPE_TAG))));
             }
         }
     }

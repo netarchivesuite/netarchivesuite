@@ -79,8 +79,8 @@ public abstract class ArchiveBatchJobBase extends FileBatchJob {
     public void handleException(Exception e, File archiveFile, long index) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(e, "e");
 
-        log.debug("Caught exception while running batch job on file {}, position {}:\n{}", archiveFile, index, e,
-                e.getMessage());
+        log.debug("Caught exception while running batch job on file {}, position {}:\n{}", archiveFile, index, e, e
+                .getMessage());
         addException(archiveFile, index, ExceptionOccurrence.UNKNOWN_OFFSET, e);
     }
 

@@ -95,16 +95,16 @@ public class DomainDAOTester extends DataModelTestCase {
         assertEquals("Retrieved data must match stored data", wd.getName(), wd2.getName());
         assertEquals("Retrieved data must match stored data", cfg1.getMaxObjects(), cfg2.getMaxObjects());
         assertEquals("Retrieved data must match stored data", cfg1.getMaxRequestRate(), cfg2.getMaxRequestRate());
-        CollectionAsserts.assertIteratorEquals("Retrieved data must match stored data", cfg1.getSeedLists(),
-                cfg2.getSeedLists());
+        CollectionAsserts.assertIteratorEquals("Retrieved data must match stored data", cfg1.getSeedLists(), cfg2
+                .getSeedLists());
         assertEquals("Retrieved data must match stored data", cfg1.getOrderXmlName(), cfg2.getOrderXmlName());
-        CollectionAsserts.assertIteratorEquals("Retrieved data must match stored data", cfg1.getPasswords(),
-                cfg2.getPasswords());
+        CollectionAsserts.assertIteratorEquals("Retrieved data must match stored data", cfg1.getPasswords(), cfg2
+                .getPasswords());
 
         SeedList seedlist1 = wd.getSeedList(TestInfo.SEEDLISTNAME);
         SeedList seedlist2 = wd2.getSeedList(TestInfo.SEEDLISTNAME);
-        assertEquals("Retrieved data must match stored data", seedlist1.getSeedsAsString(),
-                seedlist2.getSeedsAsString());
+        assertEquals("Retrieved data must match stored data", seedlist1.getSeedsAsString(), seedlist2
+                .getSeedsAsString());
 
         // Test that we can't create it again.
         conn = HarvestDBConnection.get();
@@ -232,8 +232,8 @@ public class DomainDAOTester extends DataModelTestCase {
     public void testAccessNonExisting() {
         DomainDAO dao = DomainDAO.getInstance();
 
-        assertFalse("Domain '" + TestInfo.DEFAULTNEWDOMAINNAME + "' should not exist",
-                dao.exists(TestInfo.DEFAULTNEWDOMAINNAME));
+        assertFalse("Domain '" + TestInfo.DEFAULTNEWDOMAINNAME + "' should not exist", dao
+                .exists(TestInfo.DEFAULTNEWDOMAINNAME));
         try {
             dao.read(TestInfo.DEFAULTNEWDOMAINNAME);
             fail("Should not be able to read '" + TestInfo.DEFAULTNEWDOMAINNAME + "' before creating it");
@@ -241,16 +241,16 @@ public class DomainDAOTester extends DataModelTestCase {
             //
         }
 
-        assertFalse("Domain '" + TestInfo.DEFAULTNEWDOMAINNAME + "' should not exist after failed read",
-                dao.exists(TestInfo.DEFAULTNEWDOMAINNAME));
+        assertFalse("Domain '" + TestInfo.DEFAULTNEWDOMAINNAME + "' should not exist after failed read", dao
+                .exists(TestInfo.DEFAULTNEWDOMAINNAME));
 
         Domain wd = TestInfo.getDefaultNewDomain();
         DomainConfiguration cfg1 = TestInfo.getDefaultConfig(wd);
         wd.addConfiguration(cfg1);
 
         dao.create(wd);
-        assertTrue("Domain '" + TestInfo.DEFAULTNEWDOMAINNAME + "' should exist",
-                dao.exists(TestInfo.DEFAULTNEWDOMAINNAME));
+        assertTrue("Domain '" + TestInfo.DEFAULTNEWDOMAINNAME + "' should exist", dao
+                .exists(TestInfo.DEFAULTNEWDOMAINNAME));
 
         dao.read(TestInfo.DEFAULTNEWDOMAINNAME);
     }
@@ -328,7 +328,7 @@ public class DomainDAOTester extends DataModelTestCase {
 
         List<HarvestInfo> readhislist = new ArrayList<HarvestInfo>();
 
-        for (Iterator<HarvestInfo> i = domainHistory1.getHarvestInfo(); i.hasNext(); ) {
+        for (Iterator<HarvestInfo> i = domainHistory1.getHarvestInfo(); i.hasNext();) {
             readhislist.add(i.next());
         }
 
@@ -418,14 +418,14 @@ public class DomainDAOTester extends DataModelTestCase {
         assertEquals("There should be three pieces of HarvestInfo for harvest," + "but found " + Arrays.asList(hi), 3,
                 hi.length);
 
-        assertTrue("One harvestinfo should be hi0" + hi[0] + "," + hi[1] + "," + hi[2],
-                hi[0].equals(hi0) || hi[1].equals(hi0) || hi[2].equals(hi0));
+        assertTrue("One harvestinfo should be hi0" + hi[0] + "," + hi[1] + "," + hi[2], hi[0].equals(hi0)
+                || hi[1].equals(hi0) || hi[2].equals(hi0));
 
-        assertTrue("One harvestinfo should be hi1" + hi[0] + "," + hi[1] + "," + hi[2],
-                hi[0].equals(hi1) || hi[1].equals(hi1) || hi[2].equals(hi1));
+        assertTrue("One harvestinfo should be hi1" + hi[0] + "," + hi[1] + "," + hi[2], hi[0].equals(hi1)
+                || hi[1].equals(hi1) || hi[2].equals(hi1));
 
-        assertTrue("One harvestinfo should be hi2" + hi[0] + "," + hi[1] + "," + hi[2],
-                hi[0].equals(hi2) || hi[1].equals(hi2) || hi[2].equals(hi2));
+        assertTrue("One harvestinfo should be hi2" + hi[0] + "," + hi[1] + "," + hi[2], hi[0].equals(hi2)
+                || hi[1].equals(hi2) || hi[2].equals(hi2));
     }
 
     @Test
@@ -469,8 +469,8 @@ public class DomainDAOTester extends DataModelTestCase {
     private void checkDomainGlob(DomainDAO dao, final String glob, final String[] domains) {
         List<String> match1 = dao.getDomains(glob);
         List<String> match1res = Arrays.asList(domains);
-        assertEquals("Should find " + domains.length + " domains total, only got " + match1, domains.length,
-                match1.size());
+        assertEquals("Should find " + domains.length + " domains total, only got " + match1, domains.length, match1
+                .size());
         int i = 0;
         for (String s : match1res) {
             assertEquals("Domain " + i + " should be " + s, s, match1.get(i));
@@ -492,8 +492,8 @@ public class DomainDAOTester extends DataModelTestCase {
         dao.update(d);
 
         Domain d2 = dao.read(domainName);
-        assertEquals("Domain should have harvest info after load", 1,
-                IteratorUtils.toList(d2.getHistory().getHarvestInfo()).size());
+        assertEquals("Domain should have harvest info after load", 1, IteratorUtils.toList(
+                d2.getHistory().getHarvestInfo()).size());
         dc = d2.getDefaultConfiguration();
         assertEquals("Default config should have harvest info for job 1", Long.valueOf(1), d2.getHistory()
                 .getMostRecentHarvestInfo(dc.getName()).getJobID());
@@ -507,8 +507,8 @@ public class DomainDAOTester extends DataModelTestCase {
         d2.updateConfiguration(dc);
         dao.update(d2);
         d2 = dao.read(domainName);
-        assertEquals("Domain should now have two more harvest infos", 3,
-                IteratorUtils.toList(d2.getHistory().getHarvestInfo()).size());
+        assertEquals("Domain should now have two more harvest infos", 3, IteratorUtils.toList(
+                d2.getHistory().getHarvestInfo()).size());
     }
 
     /**
@@ -533,8 +533,8 @@ public class DomainDAOTester extends DataModelTestCase {
             dao.update(d);
             fail("Should get exception trying to delete used password");
         } catch (PermissionDenied e) {
-            StringAsserts.assertStringContains("Should mention config in error message",
-                    d.getConfiguration("fuld_dybde").getName(), e.getMessage());
+            StringAsserts.assertStringContains("Should mention config in error message", d.getConfiguration(
+                    "fuld_dybde").getName(), e.getMessage());
         }
         d = dao.read(domainName);
         assertTrue("Undeletable password should still exist in stored version", d.hasPassword("testpassword"));
@@ -558,8 +558,8 @@ public class DomainDAOTester extends DataModelTestCase {
 
         // configurations
         final String defaultConfigName = d.getDefaultConfiguration().getName();
-        assertFalse("mayDelete should not allow deletion of default config " + defaultConfigName,
-                dao.mayDelete(d.getConfiguration(defaultConfigName)));
+        assertFalse("mayDelete should not allow deletion of default config " + defaultConfigName, dao.mayDelete(d
+                .getConfiguration(defaultConfigName)));
         try {
             d.removeConfiguration(defaultConfigName);
             dao.update(d);
@@ -580,31 +580,31 @@ public class DomainDAOTester extends DataModelTestCase {
         hd.setDomainConfigurations(configs);
         hddao.update(hd);
 
-        assertFalse("mayDelete should not allow deletion of config '" + nonDefaultConfigName + "'",
-                dao.mayDelete(d.getConfiguration(nonDefaultConfigName)));
+        assertFalse("mayDelete should not allow deletion of config '" + nonDefaultConfigName + "'", dao.mayDelete(d
+                .getConfiguration(nonDefaultConfigName)));
         try {
             d.removeConfiguration(nonDefaultConfigName);
             dao.update(d);
             fail("Should get error trying to delete used config");
         } catch (PermissionDenied e) {
             // Test that the error gives good output.
-            StringAsserts.assertStringContains("Should mention harvest def in error message", hd.getName(),
-                    e.getMessage());
+            StringAsserts.assertStringContains("Should mention harvest def in error message", hd.getName(), e
+                    .getMessage());
         }
         d = dao.read(domainName);
         assertTrue("Used config should still exist", d.hasConfiguration(nonDefaultConfigName));
 
         // Now take config out of harvest and see it go away
-        assertFalse("mayDelete should not yet allow deletion of " + nonDefaultConfigName,
-                dao.mayDelete(d.getConfiguration(nonDefaultConfigName)));
+        assertFalse("mayDelete should not yet allow deletion of " + nonDefaultConfigName, dao.mayDelete(d
+                .getConfiguration(nonDefaultConfigName)));
         configs.clear();
         configs.add(d.getDefaultConfiguration());
         hddao.addDomainConfiguration(hd, new SparseDomainConfiguration(d.getDefaultConfiguration()));
         hd.setDomainConfigurations(configs);
 
         hddao.update(hd);
-        assertTrue("mayDelete should allow deletion of " + nonDefaultConfigName,
-                dao.mayDelete(d.getConfiguration(nonDefaultConfigName)));
+        assertTrue("mayDelete should allow deletion of " + nonDefaultConfigName, dao.mayDelete(d
+                .getConfiguration(nonDefaultConfigName)));
         d.removeConfiguration(nonDefaultConfigName);
         dao.update(d);
         d = dao.read(domainName);
@@ -718,13 +718,12 @@ public class DomainDAOTester extends DataModelTestCase {
             Domain next = (Domain) i.next();
             DomainConfiguration cfg1 = reference.getDefaultConfiguration();
             DomainConfiguration cfg2 = next.getDefaultConfiguration();
-            assertTrue(
-                    "Order should be right, comparing " + cfg1 + " and " + cfg2 + ":\n(" + cfg1.getOrderXmlName() + ","
-                            + cfg1.getMaxBytes() + "," + cfg1.getDomainName() + ")" + "\n(" + cfg2.getOrderXmlName()
-                            + "," + cfg2.getMaxBytes() + "," + cfg2.getDomainName() + ")",
-                    cfg1.getOrderXmlName().compareTo(cfg2.getOrderXmlName()) < 0
-                            || (cfg1.getOrderXmlName().compareTo(cfg2.getOrderXmlName()) == 0)
-                            && cfg1.getMaxBytes() > cfg2.getMaxBytes());
+            assertTrue("Order should be right, comparing " + cfg1 + " and " + cfg2 + ":\n(" + cfg1.getOrderXmlName()
+                    + "," + cfg1.getMaxBytes() + "," + cfg1.getDomainName() + ")" + "\n(" + cfg2.getOrderXmlName()
+                    + "," + cfg2.getMaxBytes() + "," + cfg2.getDomainName() + ")", cfg1.getOrderXmlName().compareTo(
+                    cfg2.getOrderXmlName()) < 0
+                    || (cfg1.getOrderXmlName().compareTo(cfg2.getOrderXmlName()) == 0)
+                    && cfg1.getMaxBytes() > cfg2.getMaxBytes());
             reference = next;
         }
     }

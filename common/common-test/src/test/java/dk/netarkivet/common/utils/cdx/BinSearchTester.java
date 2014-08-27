@@ -50,14 +50,14 @@ public class BinSearchTester {
     @Test
     public void testGetLinesInFile() throws IOException {
         // Test a failing search
-        assertEquals("Should get no results for non-existing domain", 0,
-                findLinesInFile(TestInfo.CDX_FILE1, "http://fnord/").size());
+        assertEquals("Should get no results for non-existing domain", 0, findLinesInFile(TestInfo.CDX_FILE1,
+                "http://fnord/").size());
         // Test a search beyond the end
-        assertEquals("Should get no results for past-the-end domain", 0,
-                findLinesInFile(TestInfo.CDX_FILE1, "http://xenophile.dk/").size());
+        assertEquals("Should get no results for past-the-end domain", 0, findLinesInFile(TestInfo.CDX_FILE1,
+                "http://xenophile.dk/").size());
         // Test a search beyond the start
-        assertEquals("Should get no results for past-the-start domain", 0,
-                findLinesInFile(TestInfo.CDX_FILE1, "dns:101").size());
+        assertEquals("Should get no results for past-the-start domain", 0, findLinesInFile(TestInfo.CDX_FILE1,
+                "dns:101").size());
         // Test a simple search
         List<String> playerUrls = findLinesInFile(TestInfo.CDX_FILE1, "http://player.");
         assertEquals("Should get exactly 4 lines for player.", 4, playerUrls.size());
@@ -70,8 +70,8 @@ public class BinSearchTester {
         assertTrue("Should have root first", serverDkUrls.get(0).startsWith("http://server-dk.imrworldwide.com/ "));
         assertTrue("Should have root second, too", serverDkUrls.get(1)
                 .startsWith("http://server-dk.imrworldwide.com/ "));
-        assertTrue("Should have different thing third",
-                serverDkUrls.get(2).startsWith("http://server-dk.imrworldwide.com/a1.js "));
+        assertTrue("Should have different thing third", serverDkUrls.get(2).startsWith(
+                "http://server-dk.imrworldwide.com/a1.js "));
 
         // Test that the Iterable can be reused
         Iterable<String> lines = BinSearch.getLinesInFile(TestInfo.CDX_FILE1, "http://server-dk.");

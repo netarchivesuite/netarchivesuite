@@ -366,9 +366,8 @@ public class JMSConnectionTester {
         };
         assertEquals("Should have expected key for topic", Channels.getAllBa().getName() + "##" + listener.toString(),
                 JMSConnection.getConsumerKey(Channels.getAllBa().getName(), listener));
-        assertEquals("Should have expected key for queue",
-                Channels.getTheBamon().getName() + "##" + listener.toString(),
-                JMSConnection.getConsumerKey(Channels.getTheBamon().getName(), listener));
+        assertEquals("Should have expected key for queue", Channels.getTheBamon().getName() + "##"
+                + listener.toString(), JMSConnection.getConsumerKey(Channels.getTheBamon().getName(), listener));
     }
 
     @Test

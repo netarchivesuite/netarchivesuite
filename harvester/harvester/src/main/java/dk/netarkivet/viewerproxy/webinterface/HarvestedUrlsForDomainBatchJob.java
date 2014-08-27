@@ -53,8 +53,8 @@ public class HarvestedUrlsForDomainBatchJob extends ArchiveBatchJob {
     private final Log log = LogFactory.getLog(getClass().getName());
 
     /** Metadata URL for crawl logs. */
-    private static final String SETUP_URL_FORMAT = String.format("metadata://%s/crawl/logs/crawl.log",
-            Settings.get(CommonSettings.ORGANIZATION));
+    private static final String SETUP_URL_FORMAT = String.format("metadata://%s/crawl/logs/crawl.log", Settings
+            .get(CommonSettings.ORGANIZATION));
     /** The domain to extract crawl.log lines for. */
     final String domain;
 
@@ -91,8 +91,8 @@ public class HarvestedUrlsForDomainBatchJob extends ArchiveBatchJob {
                 if (record.bIsWarc) {
                     // In the WARC file the warc-info hasn't a URL. the other
                     // records in the metadata file have that.
-                    return (record.getHeader().getUrl() != null && record.getHeader().getUrl()
-                            .startsWith(SETUP_URL_FORMAT));
+                    return (record.getHeader().getUrl() != null && record.getHeader().getUrl().startsWith(
+                            SETUP_URL_FORMAT));
                 } else {
                     return record.getHeader().getUrl().startsWith(SETUP_URL_FORMAT);
                 }

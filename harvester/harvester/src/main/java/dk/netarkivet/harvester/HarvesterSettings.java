@@ -252,8 +252,7 @@ public class HarvesterSettings {
      * <b>settings.harvester.harvesting.channel</b>: <br>
      * Harvest channel to take jobs from. This is the default channel assigned to the harvest controller.
      *
-     * @see dk.netarkivet.harvester.datamodel.HarvestChannel
-     * <p>
+     * @see dk.netarkivet.harvester.datamodel.HarvestChannel <p>
      * NOTE: this one is also used in SingleMBeanObject parsing information to System state
      */
     public static String HARVEST_CONTROLLER_CHANNEL = "settings.harvester.harvesting.channel";

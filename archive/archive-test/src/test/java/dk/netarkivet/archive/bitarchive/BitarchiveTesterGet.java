@@ -144,8 +144,8 @@ public class BitarchiveTesterGet extends BitarchiveTestCase {
         String foundContents = FileUtils.readFile(new File(TestInfo.WORKING_DIR, ARC_RECORD_0_TMP));
         // verify that their contents are identical
         assertTrue("Strings targetcontents (length = " + targetcontents.length() + ") and foundContents (length="
-                        + foundContents.length() + ") should have same length",
-                targetcontents.length() == foundContents.length());
+                + foundContents.length() + ") should have same length", targetcontents.length() == foundContents
+                .length());
         assertEquals("The contents should be exactly the same", targetcontents, foundContents);
     }
 
@@ -201,13 +201,13 @@ public class BitarchiveTesterGet extends BitarchiveTestCase {
             String foundContents = FileUtils.readFile(new File(TestInfo.WORKING_DIR, ARC_RECORD_0_TMP));
             // verify that their contents are identical
             assertTrue("Strings targetcontents (length = " + targetcontents.length() + ") and foundContents (length="
-                            + foundContents.length() + ") should have same length",
-                    targetcontents.length() == foundContents.length());
+                    + foundContents.length() + ") should have same length", targetcontents.length() == foundContents
+                    .length());
             assertEquals("Contents should be exactly as expected", targetcontents, foundContents);
         } catch (Exception e) {
             fail("Proper ARC file access should not give any exceptions, not " + e);
         }
-        assertTrue("File should be deletable",
-                FileUtils.removeRecursively(new File(new File(TestInfo.WORKING_DIR, "filedir"), ARC_FILE_NAME)));
+        assertTrue("File should be deletable", FileUtils.removeRecursively(new File(new File(TestInfo.WORKING_DIR,
+                "filedir"), ARC_FILE_NAME)));
     }
 }

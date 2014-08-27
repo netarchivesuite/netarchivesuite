@@ -187,8 +187,8 @@ public class ARCLookupTester {
         // Read the expected result from the "local" copy
         String filename = dk.netarkivet.archive.distribute.arcrepository.TestInfo.GIF_URL_KEY.getFile().getName();
         File in = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, filename);
-        arcReader = ARCReaderFactory.get(in,
-                dk.netarkivet.archive.distribute.arcrepository.TestInfo.GIF_URL_KEY.getOffset());
+        arcReader = ARCReaderFactory.get(in, dk.netarkivet.archive.distribute.arcrepository.TestInfo.GIF_URL_KEY
+                .getOffset());
         ARCRecord arc = (ARCRecord) arcReader.get();
         BitarchiveRecord result = new BitarchiveRecord(arc, filename);
         arc.close();

@@ -109,10 +109,10 @@ public class IngestableFilesTester {
         MetadataFileWriter mfw = inf.getMetadataWriter();
 
         writeOneRecord(mfw);
-        assertFalse("isMetadataReady() should return false before all metadata has been generated",
-                inf.isMetadataReady());
-        assertFalse("isMetadataFailed() should return false before all metadata has been generated",
-                inf.isMetadataFailed());
+        assertFalse("isMetadataReady() should return false before all metadata has been generated", inf
+                .isMetadataReady());
+        assertFalse("isMetadataFailed() should return false before all metadata has been generated", inf
+                .isMetadataFailed());
         inf.setMetadataGenerationSucceeded(true);
         assertTrue("isMetadataReady() should return true after metadata has been generated", inf.isMetadataReady());
         assertFalse("isMetadataFailed() should return false after metadata has been generated", inf.isMetadataFailed());
@@ -122,14 +122,14 @@ public class IngestableFilesTester {
         assertFalse("isMetadataFailed() should return false before metadata has been generated", inf.isMetadataFailed());
         mfw = inf.getMetadataWriter();
         writeOneRecord(mfw);
-        assertFalse("isMetadataReady() should return false before all metadata has been generated",
-                inf.isMetadataReady());
-        assertFalse("isMetadataFailed() should return false before all metadata has been generated",
-                inf.isMetadataFailed());
+        assertFalse("isMetadataReady() should return false before all metadata has been generated", inf
+                .isMetadataReady());
+        assertFalse("isMetadataFailed() should return false before all metadata has been generated", inf
+                .isMetadataFailed());
         inf.setMetadataGenerationSucceeded(false);
         assertFalse("isMetadataReady() should return false after metadata has been generated", inf.isMetadataReady());
-        assertTrue("isMetadataFailed() should return true before all metadata has been generated",
-                inf.isMetadataFailed());
+        assertTrue("isMetadataFailed() should return true before all metadata has been generated", inf
+                .isMetadataFailed());
     }
 
     /**
@@ -218,9 +218,8 @@ public class IngestableFilesTester {
                 found = true;
             }
         }
-        assertTrue(
-                "Test metadata should be contained in one of the metadata ARC files " + "but wasn't found in "
-                        + inf.getMetadataArcFiles(), found);
+        assertTrue("Test metadata should be contained in one of the metadata ARC files " + "but wasn't found in "
+                + inf.getMetadataArcFiles(), found);
     }
 
     /**
@@ -250,9 +249,8 @@ public class IngestableFilesTester {
                 found = true;
             }
         }
-        assertTrue(
-                "Test metadata should be contained in one of the metadata ARC files " + "but wasn't found in "
-                        + inf.getMetadataArcFiles(), found);
+        assertTrue("Test metadata should be contained in one of the metadata ARC files " + "but wasn't found in "
+                + inf.getMetadataArcFiles(), found);
     }
 
     @Test
@@ -288,8 +286,8 @@ public class IngestableFilesTester {
         }
         for (File nonOpenFile : nonOpenFiles) {
             nonOpenFile.createNewFile();
-            assertTrue("Open file '" + nonOpenFile + "' should exist before calling closeOpenFiles()",
-                    nonOpenFile.exists());
+            assertTrue("Open file '" + nonOpenFile + "' should exist before calling closeOpenFiles()", nonOpenFile
+                    .exists());
         }
 
         HeritrixFiles OkFiles42 = new HeritrixFiles(TestInfo.WORKING_DIR, acceptableJobInfoForJob42);
@@ -297,15 +295,15 @@ public class IngestableFilesTester {
 
         inf.closeOpenFiles(0);
         for (File openFile1 : openFiles) {
-            assertFalse("Open file '" + openFile1 + "' should not exist after calling closeOpenFiles()",
-                    openFile1.exists());
+            assertFalse("Open file '" + openFile1 + "' should not exist after calling closeOpenFiles()", openFile1
+                    .exists());
             final String path = openFile1.getAbsolutePath();
             assertTrue("Open file '" + openFile1 + "' should have been closed after calling closeOpenFiles()",
                     new File(path.substring(0, path.length() - 5)).exists());
         }
         for (File nonOpenFile1 : nonOpenFiles) {
-            assertTrue("Non-open file '" + nonOpenFile1 + "' should exist after calling closeOpenFiles()",
-                    nonOpenFile1.exists());
+            assertTrue("Non-open file '" + nonOpenFile1 + "' should exist after calling closeOpenFiles()", nonOpenFile1
+                    .exists());
             final String path = nonOpenFile1.getAbsolutePath();
             final String changedPath = path.substring(0, path.length() - 5);
             assertFalse("Changed non-open file '" + changedPath + "' should not exist after calling closeOpenFiles()",

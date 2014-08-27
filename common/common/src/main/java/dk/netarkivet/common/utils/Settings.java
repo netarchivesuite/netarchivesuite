@@ -325,8 +325,8 @@ public class Settings {
         List<File> settingsFiles = getSettingsFiles();
         for (File settingsFile : settingsFiles) {
             if (settingsFile.lastModified() > lastModified) {
-                log.info("Do reload of settings, as the file '{}' has changed since last reload",
-                        settingsFile.getAbsolutePath());
+                log.info("Do reload of settings, as the file '{}' has changed since last reload", settingsFile
+                        .getAbsolutePath());
                 reload();
                 return;
             }
@@ -369,8 +369,8 @@ public class Settings {
      */
     public static void addDefaultClasspathSettings(String defaultClasspathSettingsPath) {
         ArgumentNotValid.checkNotNullOrEmpty(defaultClasspathSettingsPath, "String defaultClasspathSettingsPath");
-        InputStream stream = Thread.currentThread().getContextClassLoader()
-                .getResourceAsStream(defaultClasspathSettingsPath);
+        InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(
+                defaultClasspathSettingsPath);
         if (stream != null) {
             defaultClasspathSettingsXmlList.add(new SimpleXml(stream));
         } else {

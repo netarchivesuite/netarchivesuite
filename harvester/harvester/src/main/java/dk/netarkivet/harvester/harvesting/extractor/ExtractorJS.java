@@ -102,8 +102,7 @@ public class ExtractorJS extends Extractor implements CoreAttributeConstants {
                 && (contentType.indexOf("jscript") < 0)
                 && (contentType.indexOf("ecmascript") < 0)
                 && (!curi.toString().toLowerCase().endsWith(".js"))
-                && (curi.getViaContext() == null || !curi.getViaContext().toString().toLowerCase()
-                .startsWith("script"))) {
+                && (curi.getViaContext() == null || !curi.getViaContext().toString().toLowerCase().startsWith("script"))) {
             return;
         }
 

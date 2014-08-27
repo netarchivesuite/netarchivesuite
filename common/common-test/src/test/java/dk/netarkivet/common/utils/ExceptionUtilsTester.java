@@ -48,8 +48,8 @@ public class ExceptionUtilsTester {
      */
     @Test
     public void testGetStackTrace() throws Exception {
-        assertEquals("Null exceptions should simply return 'null' and a linebreak", "null\n",
-                ExceptionUtils.getStackTrace(null));
+        assertEquals("Null exceptions should simply return 'null' and a linebreak", "null\n", ExceptionUtils
+                .getStackTrace(null));
         String exceptionMessage = "Test";
         ArgumentNotValid cause = new ArgumentNotValid(exceptionMessage);
         ArgumentNotValid throwable = new ArgumentNotValid(exceptionMessage, cause);
@@ -75,8 +75,7 @@ public class ExceptionUtilsTester {
         String message = dk.netarkivet.common.utils.ExceptionUtils.getSQLExceptionCause(ex1);
         System.out.println(message);
         StringAsserts.assertStringContains("Compound exception should contain " + "references to all three "
-                        + "reasons, states, and codes", message, "reason1", "reason2", "reason3", "state1", "state2",
-                "state3",
+                + "reasons, states, and codes", message, "reason1", "reason2", "reason3", "state1", "state2", "state3",
                 "101", "102", "103");
     }
 

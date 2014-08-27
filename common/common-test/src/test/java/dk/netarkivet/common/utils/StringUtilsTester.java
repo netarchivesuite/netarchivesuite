@@ -46,14 +46,14 @@ public class StringUtilsTester {
     @Test
     public final void testReplace() {
         String testString = "This is a test $ string \\ , it is nice!";
-        assertEquals("This is a test new word string \\ , it is nice!",
-                StringUtils.replace(testString, "$", "new word"));
-        assertEquals("This is a test $ string new word , it is nice!",
-                StringUtils.replace(testString, "\\", "new word"));
-        assertEquals("This is a test and it works",
-                StringUtils.replace(testString, "$ string \\ , it is nice!", "and it works"));
-        assertEquals("This is a test $ string \\ , it is nice!",
-                StringUtils.replace(testString, "cat", "shouldnt work"));
+        assertEquals("This is a test new word string \\ , it is nice!", StringUtils
+                .replace(testString, "$", "new word"));
+        assertEquals("This is a test $ string new word , it is nice!", StringUtils
+                .replace(testString, "\\", "new word"));
+        assertEquals("This is a test and it works", StringUtils.replace(testString, "$ string \\ , it is nice!",
+                "and it works"));
+        assertEquals("This is a test $ string \\ , it is nice!", StringUtils
+                .replace(testString, "cat", "shouldnt work"));
     }
 
     @Test
@@ -203,7 +203,8 @@ public class StringUtilsTester {
         assertEquals(input, output);
 
         String expectedOutput = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.".substring(0,
-                input.length() - 6) + " ..";
+                input.length() - 6)
+                + " ..";
         output = StringUtils.makeEllipsis(input, input.length() - 5);
         assertEquals(expectedOutput, output);
     }

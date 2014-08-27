@@ -58,7 +58,7 @@ public class JMXProxy extends ToolRunnerBase {
              * Check (command line) arguments. There should be one, the query
              *
              * @param args The command line arguments passed directly from a public static void main(String[] args)
-             *            method.
+             * method.
              * @return True, if parameters are size 1. False if not.
              */
             public boolean checkArgs(String... args) {

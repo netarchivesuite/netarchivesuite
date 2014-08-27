@@ -254,8 +254,8 @@ public class Domain extends ExtendableEntity implements Named {
      * @param m the map to modify
      * @param name the name of the element to add or update
      * @param addAction when true an add action is performed and en entry with the name is not allowed to exist in the
-     * map before the operation, when false an update operation is performed and an entry must already exists
-     * with the name in the map.
+     * map before the operation, when false an update operation is performed and an entry must already exists with the
+     * name in the map.
      * @param value the object to add to m
      * @param <T> The type contained as values in the map m.
      */
@@ -453,7 +453,7 @@ public class Domain extends ExtendableEntity implements Named {
         for (String cfgname : domainConfigurations.keySet()) {
             DomainConfiguration cfg = domainConfigurations.get(cfgname);
 
-            for (Iterator<SeedList> i = cfg.getSeedLists(); i.hasNext(); ) {
+            for (Iterator<SeedList> i = cfg.getSeedLists(); i.hasNext();) {
                 SeedList seedlist = i.next();
 
                 if (seedlist.getName().equals(name)) {

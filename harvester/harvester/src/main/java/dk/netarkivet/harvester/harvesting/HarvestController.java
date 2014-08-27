@@ -439,8 +439,8 @@ public class HarvestController {
         Set<Long> diffSet = new HashSet<Long>(jobIDsForDuplicateReduction);
         diffSet.removeAll(jobIndex.getIndexSet());
         if (log.isDebugEnabled()) {
-            log.debug("Received deduplication index containing {} jobs. {}", jobIndex.getIndexSet().size(),
-                    ((diffSet.size() > 0) ? "Missing jobs: " + StringUtils.conjoin(",", diffSet) : ""));
+            log.debug("Received deduplication index containing {} jobs. {}", jobIndex.getIndexSet().size(), ((diffSet
+                    .size() > 0) ? "Missing jobs: " + StringUtils.conjoin(",", diffSet) : ""));
         }
 
         return jobIndex.getIndexFile();

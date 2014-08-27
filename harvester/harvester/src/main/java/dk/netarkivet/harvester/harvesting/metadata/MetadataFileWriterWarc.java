@@ -159,8 +159,8 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
             namedFields.addLabelValue("WARC-Warcinfo-ID", generateEncapsulatedRecordID(warcInfoUID));
             namedFields.addLabelValue("WARC-IP-Address", SystemUtils.getLocalIP());
 
-            writer.writeResourceRecord(URL, create14DigitDate, mimetype, recordId, namedFields, in,
-                    fileToArchive.length());
+            writer.writeResourceRecord(URL, create14DigitDate, mimetype, recordId, namedFields, in, fileToArchive
+                    .length());
         } catch (FileNotFoundException e) {
             throw new IOFailure("Unable to open file: " + fileToArchive.getPath(), e);
         } catch (IOException e) {

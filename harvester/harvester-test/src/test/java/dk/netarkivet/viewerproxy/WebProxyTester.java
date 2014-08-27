@@ -113,8 +113,8 @@ public class WebProxyTester {
     @Test
     public void testUriEncode() {
         String test_string = "{abcd{fgåæka}";
-        assertEquals("Should recover original string after decoding", "%7Babcd%7Bfgåæka%7D",
-                WebProxy.HttpRequest.uriEncode(test_string));
+        assertEquals("Should recover original string after decoding", "%7Babcd%7Bfgåæka%7D", WebProxy.HttpRequest
+                .uriEncode(test_string));
     }
 
     /**

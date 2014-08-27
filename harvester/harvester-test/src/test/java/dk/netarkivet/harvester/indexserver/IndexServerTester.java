@@ -73,8 +73,8 @@ public class IndexServerTester {
         pse.tearDown();
 
         assertEquals("Should give exit code 1", 1, pse.getExitValue());
-        assertTrue("Should tell that no arguments are expected.",
-                pss.getOut().contains("This application takes no arguments"));
+        assertTrue("Should tell that no arguments are expected.", pss.getOut().contains(
+                "This application takes no arguments"));
     }
 
     // /**

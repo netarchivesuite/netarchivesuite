@@ -236,8 +236,8 @@ public class SimpleXmlTester {
         assertNotNull("Getting a tree should return non-null", tree2);
         assertEquals("Complex tree should have simple sub-tree", "what is the question", tree2.getSubTree("q")
                 .getValue());
-        CollectionAsserts.assertListEquals("Complex tree should have complex sub-tree",
-                tree2.getLeafMultimap().get("list1"), "item1", "item2", "item3");
+        CollectionAsserts.assertListEquals("Complex tree should have complex sub-tree", tree2.getLeafMultimap().get(
+                "list1"), "item1", "item2", "item3");
 
         try {
             xml.getTree("foo.bar");

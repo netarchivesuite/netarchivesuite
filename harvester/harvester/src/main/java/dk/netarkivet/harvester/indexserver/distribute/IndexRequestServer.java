@@ -332,8 +332,8 @@ public final class IndexRequestServer extends HarvesterMessageHandler implements
                     jobIDs.size(), checksum);
             // Begin synchronization
             synchronized (checksum.intern()) {
-                log.debug("The indexing job of size {} with checksum '{}' is now in the synchronization zone",
-                        jobIDs.size(), checksum);
+                log.debug("The indexing job of size {} with checksum '{}' is now in the synchronization zone", jobIDs
+                        .size(), checksum);
                 Set<Long> foundIDs = handler.cache(jobIDs);
                 irMsg.setFoundJobs(foundIDs);
                 if (foundIDs.equals(jobIDs)) {
@@ -347,8 +347,7 @@ public final class IndexRequestServer extends HarvesterMessageHandler implements
                     }
                 } else if (satisfactoryTresholdReached(foundIDs, jobIDs)) {
                     log.info("Data for full index w/ {} jobs not available. Only found data for {} jobs - "
-                                    + "but satisfactoryTreshold reached, so assuming presence of all data",
-                            jobIDs.size(),
+                            + "but satisfactoryTreshold reached, so assuming presence of all data", jobIDs.size(),
                             foundIDs.size());
                     // Make sure that the index of the data available is
                     // generated
@@ -385,8 +384,8 @@ public final class IndexRequestServer extends HarvesterMessageHandler implements
                     // log.info("Deleting the temporary index "
                     // + cacheFileCreated.getAbsolutePath());
                     // FileUtils.removeRecursively(cacheFileCreated);
-                    log.info("We keep the index '{}', as we don't know if anybody is using it",
-                            cacheFileCreated.getAbsolutePath());
+                    log.info("We keep the index '{}', as we don't know if anybody is using it", cacheFileCreated
+                            .getAbsolutePath());
 
                     // Information needed by recipient to store index in local
                     // cache
@@ -536,8 +535,8 @@ public final class IndexRequestServer extends HarvesterMessageHandler implements
      */
     public void start() {
         restoreRequestsfromRequestDir();
-        log.info("{} indexing jobs in progress that was stored in requestdir: {}", currentJobs.size(),
-                requestDir.getAbsolutePath());
+        log.info("{} indexing jobs in progress that was stored in requestdir: {}", currentJobs.size(), requestDir
+                .getAbsolutePath());
 
         // Define and start thread to observe current jobs:
         // Only job is to look at the isListening atomicBoolean.

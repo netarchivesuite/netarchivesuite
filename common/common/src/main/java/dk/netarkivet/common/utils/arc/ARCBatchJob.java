@@ -105,7 +105,7 @@ public abstract class ARCBatchJob extends FileBatchJob {
         log.info("Processing ARCfile: {}", arcFile.getName());
 
         try { // This outer try-catch block catches all unexpected exceptions
-            // Create an ARCReader and retrieve its Iterator:
+              // Create an ARCReader and retrieve its Iterator:
             ARCReader arcReader = null;
 
             try {
@@ -207,8 +207,8 @@ public abstract class ARCBatchJob extends FileBatchJob {
     public void handleException(Exception e, File arcfile, long index) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(e, "e");
 
-        log.debug("Caught exception while running batch job on file {}, position {}:\n{}", arcfile, index,
-                e.getMessage(), e);
+        log.debug("Caught exception while running batch job on file {}, position {}:\n{}", arcfile, index, e
+                .getMessage(), e);
         addException(arcfile, index, ExceptionOccurrence.UNKNOWN_OFFSET, e);
     }
 

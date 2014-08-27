@@ -123,11 +123,8 @@ public class DomainDBDAO extends DomainDAO {
             long initialEdition = 1;
             s.setLong(4, initialEdition);
             AliasInfo aliasInfo = d.getAliasInfo();
-            DBUtils.setLongMaybeNull(
-                    s,
-                    5,
-                    aliasInfo == null ? null : DBUtils.selectLongValue(connection,
-                            "SELECT domain_id FROM domains WHERE name = ?", aliasInfo.getAliasOf()));
+            DBUtils.setLongMaybeNull(s, 5, aliasInfo == null ? null : DBUtils.selectLongValue(connection,
+                    "SELECT domain_id FROM domains WHERE name = ?", aliasInfo.getAliasOf()));
             DBUtils.setDateMaybeNull(s, 6, aliasInfo == null ? null : aliasInfo.getLastChange());
             s.executeUpdate();
 
@@ -176,7 +173,7 @@ public class DomainDBDAO extends DomainDAO {
             s.setLong(3, d.getID());
             s.executeUpdate();
             s.close();
-            for (Iterator<HarvestInfo> hi = d.getHistory().getHarvestInfo(); hi.hasNext(); ) {
+            for (Iterator<HarvestInfo> hi = d.getHistory().getHarvestInfo(); hi.hasNext();) {
                 insertHarvestInfo(connection, d, hi.next());
             }
 
@@ -209,8 +206,8 @@ public class DomainDBDAO extends DomainDAO {
         try {
             connection.setAutoCommit(false);
             // Domain object may not have ID yet, so get it from the DB
-            long domainID = DBUtils.selectLongValue(connection, "SELECT domain_id FROM domains WHERE name = ?",
-                    d.getName());
+            long domainID = DBUtils.selectLongValue(connection, "SELECT domain_id FROM domains WHERE name = ?", d
+                    .getName());
             if (d.hasID() && d.getID() != domainID) {
                 String message = "Domain " + d + " has wrong id: Has " + d.getID() + ", but persistent store claims "
                         + domainID;
@@ -231,11 +228,8 @@ public class DomainDBDAO extends DomainDAO {
             final long newEdition = d.getEdition() + 1;
             s.setLong(3, newEdition);
             AliasInfo aliasInfo = d.getAliasInfo();
-            DBUtils.setLongMaybeNull(
-                    s,
-                    4,
-                    aliasInfo == null ? null : DBUtils.selectLongValue(connection,
-                            "SELECT domain_id FROM domains WHERE name = ?", aliasInfo.getAliasOf()));
+            DBUtils.setLongMaybeNull(s, 4, aliasInfo == null ? null : DBUtils.selectLongValue(connection,
+                    "SELECT domain_id FROM domains WHERE name = ?", aliasInfo.getAliasOf()));
             DBUtils.setDateMaybeNull(s, 5, aliasInfo == null ? null : aliasInfo.getLastChange());
             s.setLong(6, d.getID());
             s.setLong(7, d.getEdition());
@@ -291,7 +285,7 @@ public class DomainDBDAO extends DomainDAO {
                 "SELECT name, password_id FROM passwords WHERE domain_id = ?", d.getID());
         PreparedStatement s = c.prepareStatement("UPDATE passwords SET " + "comments = ?, " + "url = ?, "
                 + "realm = ?, username = ?, " + "password = ? " + "WHERE name = ? AND domain_id = ?");
-        for (Iterator<Password> pwds = d.getAllPasswords(); pwds.hasNext(); ) {
+        for (Iterator<Password> pwds = d.getAllPasswords(); pwds.hasNext();) {
             Password pwd = pwds.next();
             if (oldNames.containsKey(pwd.getName())) {
                 DBUtils.setComments(s, 1, pwd, Constants.MAX_COMMENT_SIZE);
@@ -343,7 +337,7 @@ public class DomainDBDAO extends DomainDAO {
                 + "WHERE domain_id = ?", d.getID());
         PreparedStatement s = c.prepareStatement("UPDATE seedlists SET comments = ?, " + "seeds = ? "
                 + "WHERE name = ? AND domain_id = ?");
-        for (Iterator<SeedList> sls = d.getAllSeedLists(); sls.hasNext(); ) {
+        for (Iterator<SeedList> sls = d.getAllSeedLists(); sls.hasNext();) {
             SeedList sl = sls.next();
             if (oldNames.containsKey(sl.getName())) {
                 DBUtils.setComments(s, 1, sl, Constants.MAX_COMMENT_SIZE);
@@ -393,7 +387,7 @@ public class DomainDBDAO extends DomainDAO {
         PreparedStatement s = connection.prepareStatement("UPDATE configurations SET comments = ?, "
                 + "template_id = ( SELECT template_id FROM ordertemplates " + "WHERE name = ? ), " + "maxobjects = ?, "
                 + "maxrate = ?, " + "maxbytes = ? " + "WHERE name = ? AND domain_id = ?");
-        for (Iterator<DomainConfiguration> dcs = d.getAllConfigurations(); dcs.hasNext(); ) {
+        for (Iterator<DomainConfiguration> dcs = d.getAllConfigurations(); dcs.hasNext();) {
             DomainConfiguration dc = dcs.next();
 
             if (oldNames.containsKey(dc.getName())) {
@@ -445,8 +439,8 @@ public class DomainDBDAO extends DomainDAO {
      * @throws SQLException If any database problems occur during the update process.
      */
     private void updateOwnerInfo(Connection c, Domain d) throws SQLException {
-        List<Long> oldIDs = DBUtils.selectLongList(c, "SELECT ownerinfo_id FROM ownerinfo " + "WHERE domain_id = ?",
-                d.getID());
+        List<Long> oldIDs = DBUtils.selectLongList(c, "SELECT ownerinfo_id FROM ownerinfo " + "WHERE domain_id = ?", d
+                .getID());
         PreparedStatement s = c.prepareStatement("UPDATE ownerinfo SET " + "created = ?, " + "info = ? "
                 + "WHERE ownerinfo_id = ?");
         for (DomainOwnerInfo doi : d.getAllDomainOwnerInfo()) {
@@ -524,7 +518,7 @@ public class DomainDBDAO extends DomainDAO {
         try {
             // Note that the config_id is grabbed from the configurations table.
             s = c.prepareStatement("INSERT INTO historyinfo " + "( stopreason, objectcount, bytecount, config_id, "
-                            + "job_id, harvest_id, harvest_time ) " + "VALUES ( ?, ?, ?, ?, ?, ?, ? )",
+                    + "job_id, harvest_id, harvest_time ) " + "VALUES ( ?, ?, ?, ?, ?, ?, ? )",
                     Statement.RETURN_GENERATED_KEYS);
             s.setInt(1, harvestInfo.getStopReason().ordinal());
             s.setLong(2, harvestInfo.getCountObjectRetrieved());
@@ -681,7 +675,7 @@ public class DomainDBDAO extends DomainDAO {
                 + "SELECT config_id, password_id " + "  FROM configurations, passwords"
                 + " WHERE configurations.domain_id = ?" + "   AND configurations.name = ?"
                 + "   AND passwords.name = ?" + "   AND passwords.domain_id = configurations.domain_id");
-        for (Iterator<Password> passwords = dc.getPasswords(); passwords.hasNext(); ) {
+        for (Iterator<Password> passwords = dc.getPasswords(); passwords.hasNext();) {
             Password p = passwords.next();
             s.setLong(1, d.getID());
             s.setString(2, dc.getName());
@@ -719,7 +713,7 @@ public class DomainDBDAO extends DomainDAO {
                 + "SELECT configurations.config_id, seedlists.seedlist_id" + "  FROM configurations, seedlists"
                 + " WHERE configurations.name = ?" + "   AND seedlists.name = ?"
                 + "   AND configurations.domain_id = ?" + "   AND seedlists.domain_id = ?");
-        for (Iterator<SeedList> seedlists = dc.getSeedLists(); seedlists.hasNext(); ) {
+        for (Iterator<SeedList> seedlists = dc.getSeedLists(); seedlists.hasNext();) {
             SeedList sl = seedlists.next();
             s.setString(1, dc.getName());
             s.setString(2, sl.getName());
@@ -900,8 +894,8 @@ public class DomainDBDAO extends DomainDAO {
         s.setLong(1, d.getID());
         ResultSet res = s.executeQuery();
         while (res.next()) {
-            final DomainOwnerInfo ownerinfo = new DomainOwnerInfo(new Date(res.getTimestamp(2).getTime()),
-                    res.getString(3));
+            final DomainOwnerInfo ownerinfo = new DomainOwnerInfo(new Date(res.getTimestamp(2).getTime()), res
+                    .getString(3));
             ownerinfo.setID(res.getLong(1));
             d.addOwnerInfo(ownerinfo);
         }
@@ -1104,8 +1098,8 @@ public class DomainDBDAO extends DomainDAO {
         try {
             // Never delete default config and don't delete configs being used.
             return !config.getName().equals(defaultConfigName)
-                    && !DBUtils.selectAny(c, "SELECT config_id" + " FROM harvest_configs WHERE config_id = ?",
-                    config.getID());
+                    && !DBUtils.selectAny(c, "SELECT config_id" + " FROM harvest_configs WHERE config_id = ?", config
+                            .getID());
         } finally {
             HarvestDBConnection.release(c);
         }
@@ -1428,8 +1422,8 @@ public class DomainDBDAO extends DomainDAO {
                 List<Password> passwords = new ArrayList<Password>();
                 while (passwordResultset.next()) {
                     final Password pwd = new Password(passwordResultset.getString(2), passwordResultset.getString(3),
-                            passwordResultset.getString(4), passwordResultset.getString(5),
-                            passwordResultset.getString(6), passwordResultset.getString(7));
+                            passwordResultset.getString(4), passwordResultset.getString(5), passwordResultset
+                                    .getString(6), passwordResultset.getString(7));
                     pwd.setID(passwordResultset.getLong(1));
                     passwords.add(pwd);
                 }
@@ -1489,16 +1483,15 @@ public class DomainDBDAO extends DomainDAO {
         ArgumentNotValid.checkNotNull(previousHarvestDefinition, "previousHarvestDefinition");
         // For each domainConfig, get harvest infos if there is any for the
         // previous harvest definition
-        return new FilterIterator<DomainConfiguration, HarvestInfo>(
-                previousHarvestDefinition.getDomainConfigurations()) {
+        return new FilterIterator<DomainConfiguration, HarvestInfo>(previousHarvestDefinition.getDomainConfigurations()) {
             /**
              * @see FilterIterator#filter(Object)
              */
             protected HarvestInfo filter(DomainConfiguration o) {
                 DomainConfiguration config = o;
                 DomainHistory domainHistory = getDomainHistory(config.getDomainName());
-                HarvestInfo hi = domainHistory.getSpecifiedHarvestInfo(previousHarvestDefinition.getOid(),
-                        config.getName());
+                HarvestInfo hi = domainHistory.getSpecifiedHarvestInfo(previousHarvestDefinition.getOid(), config
+                        .getName());
                 return hi;
             }
         }; // Here ends the above return-statement

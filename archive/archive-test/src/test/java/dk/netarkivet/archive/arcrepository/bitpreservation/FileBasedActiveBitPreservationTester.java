@@ -216,9 +216,8 @@ public class FileBasedActiveBitPreservationTester {
 
         /* Set it up so fileListJob will return expected results. */
         File listingDir = new File(new File(dir, "filelistOutput"), "unsorted.txt");
-        MockupArcRepositoryClient.getInstance().overrideBatch = new BatchStatus("AP1", Collections.<File>emptySet(),
-                5, RemoteFileFactory.getMovefileInstance(listingDir),
-                new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
+        MockupArcRepositoryClient.getInstance().overrideBatch = new BatchStatus("AP1", Collections.<File>emptySet(), 5,
+                RemoteFileFactory.getMovefileInstance(listingDir), new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
         Replica replicaOne = Replica.getReplicaFromId("ONE");
 
         // Run method.
@@ -393,7 +392,7 @@ public class FileBasedActiveBitPreservationTester {
         // Check that wrong counts are caught
         MockupArcRepositoryClient.getInstance().overrideBatch = new BatchStatus("AP1", Collections.<File>emptyList(),
                 17, RemoteFileFactory.getMovefileInstance(new File(TestInfo.WORKING_DIR, "test_file_list_output/"
-                + "filelistOutput/unsorted.txt")), new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
+                        + "filelistOutput/unsorted.txt")), new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
         runFilelistJob.invoke(abp, replica);
 
         abp.close();
@@ -418,8 +417,8 @@ public class FileBasedActiveBitPreservationTester {
                 if (job.getClass().equals(ChecksumJob.class)) {
 
                     if (results.containsKey(Replica.getReplicaFromId(replicaId))) {
-                        return new BatchStatus("AP1", Collections.<File>emptyList(), 1, new StringRemoteFile(
-                                results.get(Replica.getReplicaFromId(replicaId))),
+                        return new BatchStatus("AP1", Collections.<File>emptyList(), 1, new StringRemoteFile(results
+                                .get(Replica.getReplicaFromId(replicaId))),
                                 new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
                     } else {
                         return new BatchStatus("AP1", Collections.<File>emptyList(), 0, null,
@@ -634,9 +633,8 @@ public class FileBasedActiveBitPreservationTester {
                 FileOutputStream os = new FileOutputStream(output);
                 new BatchLocalFiles(in_files).run(job, os);
                 os.close();
-                return new BatchStatus("BA1", Collections.<File>emptyList(), in_files.length,
-                        RemoteFileFactory.getMovefileInstance(output), new ArrayList<FileBatchJob.ExceptionOccurrence>(
-                        0));
+                return new BatchStatus("BA1", Collections.<File>emptyList(), in_files.length, RemoteFileFactory
+                        .getMovefileInstance(output), new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
             } catch (IOException e) {
                 fail("IO error during test");
                 return null;

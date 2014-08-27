@@ -78,8 +78,8 @@ public class MonitorRegistry {
             // TODO WTF?!
             set.remove(hostEntry);
             set.add(hostEntry);
-            log.trace("Updated time for '{}' port {}/{} to {}", hostEntry.getName(), hostEntry.getJmxPort(),
-                    hostEntry.getRmiPort(), hostEntry.getTime());
+            log.trace("Updated time for '{}' port {}/{} to {}", hostEntry.getName(), hostEntry.getJmxPort(), hostEntry
+                    .getRmiPort(), hostEntry.getTime());
         }
     }
 

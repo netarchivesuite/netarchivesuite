@@ -119,8 +119,8 @@ public class HeritrixLauncherTester {
         File seedsTxt = new File(crawlDir, "seeds.txt");
         FileUtils.copyFile(origOrderXml, orderXml);
         FileUtils.copyFile(origSeeds, seedsTxt);
-        HeritrixFiles files = new HeritrixFiles(crawlDir, new JobInfoTestImpl(Long.parseLong(TestInfo.ARC_JOB_ID),
-                Long.parseLong(TestInfo.ARC_HARVEST_ID)));
+        HeritrixFiles files = new HeritrixFiles(crawlDir, new JobInfoTestImpl(Long.parseLong(TestInfo.ARC_JOB_ID), Long
+                .parseLong(TestInfo.ARC_HARVEST_ID)));
         // If deduplicationMode != NO_DEDUPLICATION
         // write the zipped index to the indexdir inside the crawldir
         if (orderXml.exists() && orderXml.length() > 0
@@ -341,8 +341,8 @@ public class HeritrixLauncherTester {
              */
             uri = UURIFactory.getInstance("https://www.netarkivet.dk/foo/bar.php");
             cauri = new CandidateURI(uri);
-            assertEquals("Should get port-extended host name from HTTPS URL",
-                    hqap.getClassKey(new CrawlController(), cauri), "www.netarkivet.dk#443");
+            assertEquals("Should get port-extended host name from HTTPS URL", hqap.getClassKey(new CrawlController(),
+                    cauri), "www.netarkivet.dk#443");
         } catch (URIException e) {
             fail("Should not throw exception on valid URI's");
         }
@@ -378,8 +378,8 @@ public class HeritrixLauncherTester {
              */
             uri = UURIFactory.getInstance("https://www.netarkivet.dk/foo/bar.php");
             cauri = new CandidateURI(uri);
-            assertEquals("HTTPS should go into domains queue as well", "netarkivet.dk",
-                    dqap.getClassKey(new CrawlController(), cauri));
+            assertEquals("HTTPS should go into domains queue as well", "netarkivet.dk", dqap.getClassKey(
+                    new CrawlController(), cauri));
         } catch (URIException e) {
             fail("Should not throw exception on valid URI's");
         }
@@ -683,7 +683,8 @@ public class HeritrixLauncherTester {
         /**
          * Dummy frontier used by TestCrawlController
          */
-        @SuppressWarnings("rawtypes") class TestFrontier implements Frontier {
+        @SuppressWarnings("rawtypes")
+        class TestFrontier implements Frontier {
 
             public void initialize(CrawlController crawlController) throws FatalConfigurationException, IOException {
             }

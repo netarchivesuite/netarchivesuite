@@ -77,15 +77,15 @@ public class WARCUtils {
         try {
             ps = new PrintStream(new FileOutputStream(newFile));
             writer = new WARCWriterNAS(new AtomicInteger(), ps,
-                    // This name is used for the first (file metadata) record
+            // This name is used for the first (file metadata) record
                     newFile, false, // Don't compress
                     // Use current time
                     ArchiveDateConverter.getWarcDateFormat().format(new Date()), null // No
-                    // particular
-                    // file
-                    // metadata
-                    // to
-                    // add
+            // particular
+            // file
+            // metadata
+            // to
+            // add
             );
         } catch (IOException e) {
             if (ps != null) {
@@ -230,8 +230,7 @@ public class WARCUtils {
      * @param record An WARC record to read from. After reading, the WARC Record will no longer have its own data
      * available for reading.
      * @return A byte array containing the payload of the WARC record. Note that the size of the payload is calculated
-     * by subtracting the contentBegin value from the length of the record (both values included in the record
-     * header).
+     * by subtracting the contentBegin value from the length of the record (both values included in the record header).
      * @throws IOFailure If there is an error reading the data, or if the record is longer than Integer.MAX_VALUE (since
      * we can't make bigger arrays).
      */

@@ -178,8 +178,8 @@ public class HostForwarding<T> {
         if (changed) {
             log.info(
                     "Settings '{}' and '{}' has been updated with value from a System property or one of the files: {}",
-                    MonitorSettings.JMX_USERNAME_SETTING, MonitorSettings.JMX_PASSWORD_SETTING,
-                    StringUtils.conjoin(",", Settings.getSettingsFiles()));
+                    MonitorSettings.JMX_USERNAME_SETTING, MonitorSettings.JMX_PASSWORD_SETTING, StringUtils.conjoin(
+                            ",", Settings.getSettingsFiles()));
         }
 
         List<HostEntry> newJmxHosts = new ArrayList<HostEntry>();
@@ -424,8 +424,8 @@ public class HostForwarding<T> {
             // establish or reestablish mbean.
             JMXProxyConnection connection;
             try {
-                connection = connectionFactory.getConnection(hostEntry.getName(), hostEntry.getJmxPort(),
-                        hostEntry.getRmiPort(), getJmxUsername(), getJmxPassword());
+                connection = connectionFactory.getConnection(hostEntry.getName(), hostEntry.getJmxPort(), hostEntry
+                        .getRmiPort(), getJmxUsername(), getJmxPassword());
             } catch (Exception e) {
                 throw new IOFailure("Could not connect to host '" + hostEntry.getName() + ":" + hostEntry.getJmxPort()
                         + "', last seen active at '" + hostEntry.getTime() + "'\n", e);

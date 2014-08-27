@@ -62,9 +62,8 @@ public class DerbyEmbeddedSpecifics extends DerbySpecifics {
             log.warn("Shut down Derby embedded database w/o expected warning");
         } catch (SQLException e) {
             log.info("Embedded Derby database has been shut down");
-            log.debug(
-                    "Shutdown down derby gave (as expected) an exception" + "\n"
-                            + ExceptionUtils.getSQLExceptionCause(e), e);
+            log.debug("Shutdown down derby gave (as expected) an exception" + "\n"
+                    + ExceptionUtils.getSQLExceptionCause(e), e);
         }
     }
 

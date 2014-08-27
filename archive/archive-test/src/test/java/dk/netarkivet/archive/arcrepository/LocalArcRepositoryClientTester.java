@@ -126,14 +126,14 @@ public class LocalArcRepositoryClientTester {
         arcrep.store(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE_COPY);
         assertFalse("Should have removed sample file original",
                 dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE_COPY.exists());
-        arcrep.getFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE_COPY.getName(),
-                Replica.getReplicaFromId(Settings.get(CommonSettings.USE_REPLICA_ID)),
+        arcrep.getFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE_COPY.getName(), Replica
+                .getReplicaFromId(Settings.get(CommonSettings.USE_REPLICA_ID)),
                 dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE_COPY);
         assertTrue("Should have fetched sample file",
                 dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE_COPY.exists());
-        assertEquals("Should have same contents as original",
-                FileUtils.readFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE),
-                FileUtils.readFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE_COPY));
+        assertEquals("Should have same contents as original", FileUtils
+                .readFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE), FileUtils
+                .readFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE_COPY));
         try {
             arcrep.getFile("No Such File", Replica.getReplicaFromId(Settings.get(CommonSettings.USE_REPLICA_ID)),
                     dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE_COPY);
@@ -212,7 +212,7 @@ public class LocalArcRepositoryClientTester {
         File badTest1 = arcrep.correct("ONE", csTest1, test1, "credentials");
 
         assertNotSame("The checksum of test1.arc should have changed.", csTest1, arcrep.getChecksum("ONE", "test1.arc"));
-        assertEquals("test1.arc should have old checksum.", csTest1,
-                dk.netarkivet.common.utils.ChecksumCalculator.calculateMd5(badTest1));
+        assertEquals("test1.arc should have old checksum.", csTest1, dk.netarkivet.common.utils.ChecksumCalculator
+                .calculateMd5(badTest1));
     }
 }

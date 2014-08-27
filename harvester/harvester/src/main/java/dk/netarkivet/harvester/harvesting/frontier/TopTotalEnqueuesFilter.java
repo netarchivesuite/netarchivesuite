@@ -58,8 +58,7 @@ public class TopTotalEnqueuesFilter extends MaxSizeFrontierReportExtract {
                 // Add only lines that are neither retired or exhausted
                 if (fetch.getCurrentSize() > 0
                         && fetch.getSessionBalance() > 0
-                        && (totalBudget == Constants.HERITRIX_MAXOBJECTS_INFINITY
-                        || fetch.getTotalSpend() < totalBudget)) {
+                        && (totalBudget == Constants.HERITRIX_MAXOBJECTS_INFINITY || fetch.getTotalSpend() < totalBudget)) {
                     topRep.addLine(new FrontierReportLine(fetch));
                     addedLines++;
                 }

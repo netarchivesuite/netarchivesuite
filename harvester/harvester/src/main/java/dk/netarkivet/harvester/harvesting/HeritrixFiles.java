@@ -116,8 +116,8 @@ public class HeritrixFiles {
      * @param harvestJob The harvestjob behind this instance of HeritrixFiles
      */
     public HeritrixFiles(File crawlDir, JobInfo harvestJob) {
-        this(crawlDir, harvestJob, new File(Settings.get(CommonSettings.JMX_PASSWORD_FILE)), new File(
-                Settings.get(CommonSettings.JMX_ACCESS_FILE)));
+        this(crawlDir, harvestJob, new File(Settings.get(CommonSettings.JMX_PASSWORD_FILE)), new File(Settings
+                .get(CommonSettings.JMX_ACCESS_FILE)));
     }
 
     /**

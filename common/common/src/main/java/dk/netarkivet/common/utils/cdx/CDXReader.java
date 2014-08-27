@@ -158,8 +158,7 @@ public class CDXReader {
             String firstBrokenLine = null;
             long numBrokenLines = 0;
             try {
-                CDXLINES:
-                for (String s : BinSearch.getLinesInFile(f, uri)) {
+                CDXLINES: for (String s : BinSearch.getLinesInFile(f, uri)) {
                     String[] fieldParts = s.split(SEPARATOR_REGEX);
                     CDXRecord cdxrec;
                     try {

@@ -364,8 +364,8 @@ public class Channels {
         for (ChannelID bamon : bamons) {
             if (bamon != null
                     && bamon.getName().equals(
-                    Settings.get(CommonSettings.ENVIRONMENT_NAME) + CHANNEL_PART_SEPARATOR + replicaId
-                            + CHANNEL_PART_SEPARATOR + THEBAMON_CHANNEL_PREFIX)) {
+                            Settings.get(CommonSettings.ENVIRONMENT_NAME) + CHANNEL_PART_SEPARATOR + replicaId
+                                    + CHANNEL_PART_SEPARATOR + THEBAMON_CHANNEL_PREFIX)) {
                 return bamon;
             }
         }
@@ -378,8 +378,8 @@ public class Channels {
         for (ChannelID cr : crs) {
             if (cr != null
                     && cr.getName().equals(
-                    Settings.get(CommonSettings.ENVIRONMENT_NAME) + CHANNEL_PART_SEPARATOR + replicaId
-                            + CHANNEL_PART_SEPARATOR + THECR_CHANNEL_PREFIX)) {
+                            Settings.get(CommonSettings.ENVIRONMENT_NAME) + CHANNEL_PART_SEPARATOR + replicaId
+                                    + CHANNEL_PART_SEPARATOR + THECR_CHANNEL_PREFIX)) {
                 return cr;
             }
         }

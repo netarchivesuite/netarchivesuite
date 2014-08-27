@@ -203,8 +203,8 @@ public class TwitterDecidingScope extends DecidingScope {
                     if (!geoLocation.equals("")) {
                         String[] locationArray = ((String) geoLocation).split(",");
                         try {
-                            GeoLocation location = new GeoLocation(Double.parseDouble(locationArray[0]),
-                                    Double.parseDouble(locationArray[1]));
+                            GeoLocation location = new GeoLocation(Double.parseDouble(locationArray[0]), Double
+                                    .parseDouble(locationArray[1]));
                             query.setGeoCode(location, Double.parseDouble(locationArray[2]), locationArray[3]);
                         } catch (NumberFormatException e) {
                             e.printStackTrace();

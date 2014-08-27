@@ -118,8 +118,8 @@ public class BitarchiveAdminTester {
         // Note: This might fail if something is writing heavily to the disk
         // during unit test execution.
         long df = FileUtils.getBytesFree(BA_DIR_2);
-        tempfile = ad.getTemporaryPath(ARC_FILE_NAME,
-                df - Settings.getLong(ArchiveSettings.BITARCHIVE_MIN_SPACE_REQUIRED) - 10000);
+        tempfile = ad.getTemporaryPath(ARC_FILE_NAME, df
+                - Settings.getLong(ArchiveSettings.BITARCHIVE_MIN_SPACE_REQUIRED) - 10000);
 
         assertEquals("Filename should be as requested", ARC_FILE_NAME, tempfile.getName());
         assertEquals("File should go to temporary directory", TEMPDIR, tempfile.getParentFile().getName());
@@ -361,10 +361,10 @@ public class BitarchiveAdminTester {
     @Test
     public void testIsBitarchiveDirectory() throws IOException {
         assertTrue("Should find existing dir", ad.isBitarchiveDirectory(BA_DIR_1));
-        assertTrue("Should find existing file's parent dir",
-                ad.isBitarchiveDirectory(new File(BA_DIR_2, "file3").getCanonicalFile().getParentFile()));
-        assertFalse("Should not find file in wrong dir",
-                ad.isBitarchiveDirectory(new File("file1").getCanonicalFile().getParentFile()));
+        assertTrue("Should find existing file's parent dir", ad.isBitarchiveDirectory(new File(BA_DIR_2, "file3")
+                .getCanonicalFile().getParentFile()));
+        assertFalse("Should not find file in wrong dir", ad.isBitarchiveDirectory(new File("file1").getCanonicalFile()
+                .getParentFile()));
         assertFalse("Should not find parent dir", ad.isBitarchiveDirectory(BA_DIR_1.getCanonicalFile().getParentFile()));
         try {
             ad.isBitarchiveDirectory(null);

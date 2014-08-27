@@ -313,8 +313,8 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
             batchTimer.schedule(batchTimeoutTask, batchTimeout);
             this.noOfFilesProcessed = 0;
             try {
-                this.batchResultFile = File.createTempFile(bitarchiveBatchID, "batch_aggregation",
-                        FileUtils.getTempDir());
+                this.batchResultFile = File.createTempFile(bitarchiveBatchID, "batch_aggregation", FileUtils
+                        .getTempDir());
             } catch (IOException e) {
                 log.warn("Unable to create file for batch output");
                 throw new IOFailure("Unable to create file for batch output", e);

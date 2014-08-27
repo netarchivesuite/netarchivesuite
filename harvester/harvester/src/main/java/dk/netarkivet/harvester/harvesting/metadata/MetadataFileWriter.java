@@ -79,8 +79,8 @@ public abstract class MetadataFileWriter {
      *
      * @param jobID The number of the job that generated the archive file.
      * @return A "flat" file name (i.e. no path) containing the jobID parameter and ending on "-metadata-N.(w)arc",
-     * where N is the serial number of the metadata files for this job, e.g. "42-metadata-1.(w)arc". Currently,
-     * only one file is ever made.
+     * where N is the serial number of the metadata files for this job, e.g. "42-metadata-1.(w)arc". Currently, only one
+     * file is ever made.
      * @throws ArgumentNotValid if any parameter was null.
      */
     public static String getMetadataArchiveFileName(String jobID) throws ArgumentNotValid {

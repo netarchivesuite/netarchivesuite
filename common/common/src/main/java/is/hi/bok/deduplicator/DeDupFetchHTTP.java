@@ -108,7 +108,9 @@ public class DeDupFetchHTTP extends FetchHTTP implements AdaptiveRevisitAttribut
     public final static String[] AVAILABLE_FILTER_MODES = {"Blacklist", "Whitelist"};
     public final static String DEFAULT_FILTER_MODE = AVAILABLE_FILTER_MODES[0];
 
-    /** Should we use sparse queries (uses less memory at a cost to performance? * */
+    /**
+     * Should we use sparse queries (uses less memory at a cost to performance? *
+     */
     public final static String ATTR_USE_SPARSE_RANGE_FILTER = "use-sparse-range-filter";
     public final static Boolean DEFAULT_USE_SPARSE_RANGE_FILTER = new Boolean(false);
 

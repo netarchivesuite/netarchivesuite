@@ -150,8 +150,8 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
             // a network. Warn about this.
             if (ftpServerName.equalsIgnoreCase("localhost")) {
                 ftpServerName = SystemUtils.getLocalHostName();
-                log.debug("ftpServerName set to localhost on machine: {}, resetting to {}",
-                        SystemUtils.getLocalHostName(), ftpServerName);
+                log.debug("ftpServerName set to localhost on machine: {}, resetting to {}", SystemUtils
+                        .getLocalHostName(), ftpServerName);
             }
             // A large enough number to make it unlikely that two files are
             // created with the same FTP server name. Already the millisecond
@@ -507,9 +507,9 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
     }
 
     public static RemoteFileSettings getRemoteFileSettings() {
-        return new RemoteFileSettings(Settings.get(CommonSettings.FTP_SERVER_NAME),
-                Settings.getInt(CommonSettings.FTP_SERVER_PORT), Settings.get(CommonSettings.FTP_USER_NAME),
-                Settings.get(CommonSettings.FTP_USER_PASSWORD));
+        return new RemoteFileSettings(Settings.get(CommonSettings.FTP_SERVER_NAME), Settings
+                .getInt(CommonSettings.FTP_SERVER_PORT), Settings.get(CommonSettings.FTP_USER_NAME), Settings
+                .get(CommonSettings.FTP_USER_PASSWORD));
     }
 
 }

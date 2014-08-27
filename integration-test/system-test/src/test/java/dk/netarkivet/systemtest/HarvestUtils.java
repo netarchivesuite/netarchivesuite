@@ -55,8 +55,8 @@ public class HarvestUtils {
      */
     public static int getNumberOfHarvestsRun(String domainName) {
         gotoHarvestHistoryForDomain(domainName);
-        return PageHelper.getWebDriver()
-                .findElements(By.xpath("//table[@class='selection_table']/tbody/tr[position()>1]")).size();
+        return PageHelper.getWebDriver().findElements(
+                By.xpath("//table[@class='selection_table']/tbody/tr[position()>1]")).size();
     }
 
     public static void gotoHarvestHistoryForDomain(String domainName) {

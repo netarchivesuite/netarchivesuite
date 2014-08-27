@@ -66,11 +66,11 @@ public class OnNSDomainsDecideRuleTester {
         /*
          * Testing using the convertPrefixToHost used by OnHostsDecideRule
          */
-        assertEquals("http://(dk,tv2,sporten,)",
-                SurtPrefixSet.convertPrefixToHost(SurtPrefixSet.prefixFromPlain("http://sporten.tv2.dk/fodbold/")));
+        assertEquals("http://(dk,tv2,sporten,)", SurtPrefixSet.convertPrefixToHost(SurtPrefixSet
+                .prefixFromPlain("http://sporten.tv2.dk/fodbold/")));
 
-        assertEquals("http://(com,blogspot,jmvietnam07,)",
-                SurtPrefixSet.convertPrefixToHost(SurtPrefixSet.prefixFromPlain("jmvietnam07.blogspot.com/")));
+        assertEquals("http://(com,blogspot,jmvietnam07,)", SurtPrefixSet.convertPrefixToHost(SurtPrefixSet
+                .prefixFromPlain("jmvietnam07.blogspot.com/")));
 
     }
 
@@ -81,19 +81,19 @@ public class OnNSDomainsDecideRuleTester {
          * Testing using the 'original' way of transforming URLs to SURTs used by SurtPrefixesDecideRule
          */
 
-        assertEquals("http://(com,geocities,www,)/athens/2344/",
-                SurtPrefixSet.prefixFromPlain("http://www.geocities.com/Athens/2344/"));
+        assertEquals("http://(com,geocities,www,)/athens/2344/", SurtPrefixSet
+                .prefixFromPlain("http://www.geocities.com/Athens/2344/"));
 
-        assertEquals("http://(com,geocities,www,)/athens/2344/",
-                SurtPrefixSet.prefixFromPlain("http://www.geocities.com/Athens/2344/index.php"));
+        assertEquals("http://(com,geocities,www,)/athens/2344/", SurtPrefixSet
+                .prefixFromPlain("http://www.geocities.com/Athens/2344/index.php"));
 
     }
 
     @Test
     public void testSURTprefixConversionNonValidDomain() throws Exception {
 
-        assertEquals(OnNSDomainsDecideRule.NON_VALID_DOMAIN,
-                SurtPrefixSet.convertPrefixToHost(SurtPrefixSet.prefixFromPlain("http:/not?valid;bla%¤/(")));
+        assertEquals(OnNSDomainsDecideRule.NON_VALID_DOMAIN, SurtPrefixSet.convertPrefixToHost(SurtPrefixSet
+                .prefixFromPlain("http:/not?valid;bla%¤/(")));
 
     }
 

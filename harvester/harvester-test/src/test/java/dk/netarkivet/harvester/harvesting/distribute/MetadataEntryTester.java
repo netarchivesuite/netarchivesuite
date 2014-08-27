@@ -164,10 +164,10 @@ public class MetadataEntryTester {
         MetadataEntry md1 = new MetadataEntry(
                 "metadata://netarkivet.dk/crawl/setup/aliases?majorversion=1&minorversion=0&harvestid=%s&harvestnum=%s&jobid=%s",
                 aRealMimetype, realData);
-        assertFalse("md1 should not be recognized as a duplicatereduction metadataEntry",
-                md1.isDuplicateReductionMetadataEntry());
-        assertTrue("md should be recognized as a duplicatereduction metadataEntry",
-                md.isDuplicateReductionMetadataEntry());
+        assertFalse("md1 should not be recognized as a duplicatereduction metadataEntry", md1
+                .isDuplicateReductionMetadataEntry());
+        assertTrue("md should be recognized as a duplicatereduction metadataEntry", md
+                .isDuplicateReductionMetadataEntry());
     }
 
     /** Test toString method. */

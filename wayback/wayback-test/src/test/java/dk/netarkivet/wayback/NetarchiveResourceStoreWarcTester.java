@@ -304,8 +304,9 @@ public class NetarchiveResourceStoreWarcTester extends IndexerTestCase {
                          * testUploadDataRetrieveResource }
                          */
                         int tmp_length = new String(InputStreamUtils.readRawLine(in)).length();
-                        headers.put(ARCRecordMetaData.ABSOLUTE_OFFSET_KEY,
-                                ((Long) headers.get(ARCRecordMetaData.ABSOLUTE_OFFSET_KEY)) + tmp_length);
+                        headers.put(ARCRecordMetaData.ABSOLUTE_OFFSET_KEY, ((Long) headers
+                                .get(ARCRecordMetaData.ABSOLUTE_OFFSET_KEY))
+                                + tmp_length);
                         ArchiveRecordHeader header = new ARCRecordMetaData(filename, headers);
                         ARCRecord archiveRecord = new ARCRecord(in, header);
                         bar = new BitarchiveRecord(archiveRecord, filename);

@@ -60,7 +60,7 @@ public class IndexAggregator {
      * 
      * @param files The files to merge.
      * @param outputFile The resulting file containing total sorted set of index lines found in all the provided index
-     *            files
+     * files
      */
 
     public void mergeFiles(File[] files, File outputFile) {
@@ -78,7 +78,7 @@ public class IndexAggregator {
      * @param files The files to merge and sort
      * @param outputFile The resulting sorted file
      * @param additionalArgs A list af extra arguments, which (if different from null) are added to the sort call.<p>
-     *            Note: If any of the args contain a whitespace the call will fail.
+     * Note: If any of the args contain a whitespace the call will fail.
      */
     private void processFiles(File[] files, File outputFile, List<String> additionalArgs) {
         if (files.length == 0) {

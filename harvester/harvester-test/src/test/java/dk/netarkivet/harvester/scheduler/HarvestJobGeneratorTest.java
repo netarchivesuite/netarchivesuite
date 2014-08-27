@@ -126,16 +126,14 @@ public class HarvestJobGeneratorTest extends DataModelTestCase {
         // Check that the right HD's came in
         Job j1 = jobs1.get(0);
         Job j2 = jobs1.get(1);
-        assertTrue("Neither job must be for HD 42",
-                j1.getOrigHarvestDefinitionID() != hd.getOid() && j2.getOrigHarvestDefinitionID() != hd.getOid());
-        assertTrue(
-                "One of the jobs must be for the new HD " + hd1.getOid() + ", but we got " + jobs1,
-                j1.getOrigHarvestDefinitionID().equals(hd1.getOid())
-                        || j2.getOrigHarvestDefinitionID().equals(hd1.getOid()));
-        assertTrue(
-                "One of the jobs must be for the new HD " + hd1.getOid() + ", but we got " + jobs1,
-                j1.getOrigHarvestDefinitionID().equals(hd2.getOid())
-                        || j2.getOrigHarvestDefinitionID().equals(hd2.getOid()));
+        assertTrue("Neither job must be for HD 42", j1.getOrigHarvestDefinitionID() != hd.getOid()
+                && j2.getOrigHarvestDefinitionID() != hd.getOid());
+        assertTrue("One of the jobs must be for the new HD " + hd1.getOid() + ", but we got " + jobs1, j1
+                .getOrigHarvestDefinitionID().equals(hd1.getOid())
+                || j2.getOrigHarvestDefinitionID().equals(hd1.getOid()));
+        assertTrue("One of the jobs must be for the new HD " + hd1.getOid() + ", but we got " + jobs1, j1
+                .getOrigHarvestDefinitionID().equals(hd2.getOid())
+                || j2.getOrigHarvestDefinitionID().equals(hd2.getOid()));
         generateJobs(now);
         List<Job> jobs2 = IteratorUtils.toList(jobdao.getAll(JobStatus.NEW));
         assertEquals("Should generate one more job because we are past the time"

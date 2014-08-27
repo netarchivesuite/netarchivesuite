@@ -82,10 +82,10 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         /* Verify that saved and loaded data identical */
         assertEquals("Retrieved data must match stored data", harvestDef.getName(), harvestDef2.getName());
         assertEquals("Retrieved data must match stored data", harvestDef.getComments(), harvestDef2.getComments());
-        assertEquals("Retrieved data must match stored data", harvestDef.getSubmissionDate(),
-                harvestDef2.getSubmissionDate());
-        CollectionAsserts.assertIteratorNamedEquals("Retrieved data must match stored data",
-                harvestDef.getDomainConfigurations(), harvestDef2.getDomainConfigurations());
+        assertEquals("Retrieved data must match stored data", harvestDef.getSubmissionDate(), harvestDef2
+                .getSubmissionDate());
+        CollectionAsserts.assertIteratorNamedEquals("Retrieved data must match stored data", harvestDef
+                .getDomainConfigurations(), harvestDef2.getDomainConfigurations());
 
         assertEquals("Retrieved data must match stored data", harvestDef.getSchedule(), harvestDef2.getSchedule());
         assertEquals("Retrieved data must match stored data", harvestDef.getNextDate(), harvestDef2.getNextDate());
@@ -110,11 +110,11 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         assertEquals("Retrieved data must match stored data", fHD2.getName(), fHD2_2.getName());
         assertEquals("Retrieved data must match stored data", fHD2.getComments(), fHD2_2.getComments());
         assertEquals("Retrieved data must match stored data", fHD2.getSubmissionDate(), fHD2_2.getSubmissionDate());
-        CollectionAsserts.assertIteratorNamedEquals("Retrieved data must match stored data",
-                fHD2.getDomainConfigurations(), fHD2_2.getDomainConfigurations());
+        CollectionAsserts.assertIteratorNamedEquals("Retrieved data must match stored data", fHD2
+                .getDomainConfigurations(), fHD2_2.getDomainConfigurations());
         assertEquals("Retrieved data must match stored data", fHD2.getNumEvents(), fHD2_2.getNumEvents());
-        assertEquals("Retrieved data must match stored data", fHD2.getPreviousHarvestDefinition(),
-                fHD2_2.getPreviousHarvestDefinition());
+        assertEquals("Retrieved data must match stored data", fHD2.getPreviousHarvestDefinition(), fHD2_2
+                .getPreviousHarvestDefinition());
     }
 
     /**
@@ -289,8 +289,8 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         lr.assertLogNotContains("Log contains file after storing.", "rollback");
 
         // Check that you cannot update a non-existing HD.
-        HarvestDefinition newhd = new PartialHarvest(TestInfo.getAllDefaultConfigurations(),
-                TestInfo.getDefaultSchedule(), "notfound", "", "Everybody");
+        HarvestDefinition newhd = new PartialHarvest(TestInfo.getAllDefaultConfigurations(), TestInfo
+                .getDefaultSchedule(), "notfound", "", "Everybody");
         try {
             dao.update(newhd);
             fail("Should not allow update of non-existing HD");
@@ -377,14 +377,12 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         for (HarvestRunInfo runInfo : runInfos) {
             assertEquals("Should be for hd " + newHd, (Long) newHd.getOid(), (Long) runInfo.getHarvestID());
             assertEquals("Should have right HD name ", newHd.getName(), runInfo.getHarvestName());
-            assertEquals(
-                    "Job states should sum up",
-                    runInfo.getJobCount(),
-                    runInfo.getJobCount(JobStatus.NEW) + runInfo.getJobCount(JobStatus.SUBMITTED)
-                            + runInfo.getJobCount(JobStatus.STARTED) + runInfo.getJobCount(JobStatus.DONE)
-                            + runInfo.getJobCount(JobStatus.FAILED) + runInfo.getJobCount(JobStatus.RESUBMITTED));
-            assertFalse("Should not have end date without start date",
-                    runInfo.getStartDate() == null && runInfo.getEndDate() != null);
+            assertEquals("Job states should sum up", runInfo.getJobCount(), runInfo.getJobCount(JobStatus.NEW)
+                    + runInfo.getJobCount(JobStatus.SUBMITTED) + runInfo.getJobCount(JobStatus.STARTED)
+                    + runInfo.getJobCount(JobStatus.DONE) + runInfo.getJobCount(JobStatus.FAILED)
+                    + runInfo.getJobCount(JobStatus.RESUBMITTED));
+            assertFalse("Should not have end date without start date", runInfo.getStartDate() == null
+                    && runInfo.getEndDate() != null);
             assertTrue("If done, stop should be after start", runInfo.getEndDate() == null
                     || runInfo.getStartDate().before(runInfo.getEndDate()));
         }

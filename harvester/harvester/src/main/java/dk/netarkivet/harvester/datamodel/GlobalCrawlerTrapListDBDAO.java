@@ -132,9 +132,8 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
     /**
      * Statement to insert a new trap list.
      */
-    private static final String INSERT_TRAPLIST_STMT =
-            "INSERT INTO global_crawler_trap_lists (name, description, isActive)"
-                    + "VALUES (?,?,?)";
+    private static final String INSERT_TRAPLIST_STMT = "INSERT INTO global_crawler_trap_lists (name, description, isActive)"
+            + "VALUES (?,?,?)";
 
     /**
      * Statement to insert a new trap expression in a given list.

@@ -196,8 +196,8 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
                 stm.setLong(HM_COLUMN.downloadedFilesCount.rank(), startedJobInfo.getDownloadedFilesCount());
                 stm.setLong(HM_COLUMN.currentProcessedKBPerSec.rank(), startedJobInfo.getCurrentProcessedKBPerSec());
                 stm.setLong(HM_COLUMN.processedKBPerSec.rank(), startedJobInfo.getProcessedKBPerSec());
-                stm.setDouble(HM_COLUMN.currentProcessedDocsPerSec.rank(),
-                        startedJobInfo.getCurrentProcessedDocsPerSec());
+                stm.setDouble(HM_COLUMN.currentProcessedDocsPerSec.rank(), startedJobInfo
+                        .getCurrentProcessedDocsPerSec());
                 stm.setDouble(HM_COLUMN.processedDocsPerSec.rank(), startedJobInfo.getProcessedDocsPerSec());
                 stm.setInt(HM_COLUMN.activeToeCount.rank(), startedJobInfo.getActiveToeCount());
                 stm.setInt(HM_COLUMN.status.rank(), startedJobInfo.getStatus().ordinal());
@@ -250,8 +250,8 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
                 stm.setLong(HM_COLUMN.downloadedFilesCount.rank(), startedJobInfo.getDownloadedFilesCount());
                 stm.setLong(HM_COLUMN.currentProcessedKBPerSec.rank(), startedJobInfo.getCurrentProcessedKBPerSec());
                 stm.setLong(HM_COLUMN.processedKBPerSec.rank(), startedJobInfo.getProcessedKBPerSec());
-                stm.setDouble(HM_COLUMN.currentProcessedDocsPerSec.rank(),
-                        startedJobInfo.getCurrentProcessedDocsPerSec());
+                stm.setDouble(HM_COLUMN.currentProcessedDocsPerSec.rank(), startedJobInfo
+                        .getCurrentProcessedDocsPerSec());
                 stm.setDouble(HM_COLUMN.processedDocsPerSec.rank(), startedJobInfo.getProcessedDocsPerSec());
                 stm.setInt(HM_COLUMN.activeToeCount.rank(), startedJobInfo.getActiveToeCount());
                 stm.setInt(HM_COLUMN.status.rank(), startedJobInfo.getStatus().ordinal());
@@ -845,8 +845,8 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
     private List<StartedJobInfo> listFromResultSet(ResultSet rs) throws SQLException {
         List<StartedJobInfo> list = new LinkedList<StartedJobInfo>();
         while (rs.next()) {
-            StartedJobInfo sji = new StartedJobInfo(rs.getString(HM_COLUMN.harvestName.rank()),
-                    rs.getLong(HM_COLUMN.jobId.rank()));
+            StartedJobInfo sji = new StartedJobInfo(rs.getString(HM_COLUMN.harvestName.rank()), rs
+                    .getLong(HM_COLUMN.jobId.rank()));
             sji.setElapsedSeconds(rs.getLong(HM_COLUMN.elapsedSeconds.rank()));
             sji.setHostUrl(rs.getString(HM_COLUMN.hostUrl.rank()));
             sji.setProgress(rs.getDouble(HM_COLUMN.progress.rank()));

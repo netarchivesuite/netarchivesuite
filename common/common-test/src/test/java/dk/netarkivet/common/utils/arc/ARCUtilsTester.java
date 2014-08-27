@@ -252,18 +252,16 @@ public class ARCUtilsTester {
         // lastmodified value of the inserted file
         // Note: the date is written in IA_notation:
         long lastmodified = INPUT_1_ARC.lastModified();
-        assertTrue("Lastmodified of inserted file should be same as getHeader().getDate()",
-                new Date(lastmodified).equals(ArchiveUtils.getDate(record.getHeader().getDate())));
+        assertTrue("Lastmodified of inserted file should be same as getHeader().getDate()", new Date(lastmodified)
+                .equals(ArchiveUtils.getDate(record.getHeader().getDate())));
 
         // Verify, that payload object is identical with INPUT_1_ARC
         OutputStream os = new FileOutputStream(OUTFILE1_ARC);
         record.dump(os);
-        assertEquals("inserted record should have same size as dumped record", OUTFILE1_ARC.length(),
-                INPUT_1_ARC.length());
-        assertTrue(
-                "inserted record should have same contents as dumped record",
-                FileUtils.readFile(OUTFILE1_ARC.getAbsoluteFile()).equals(
-                        FileUtils.readFile(INPUT_1_ARC.getAbsoluteFile())));
+        assertEquals("inserted record should have same size as dumped record", OUTFILE1_ARC.length(), INPUT_1_ARC
+                .length());
+        assertTrue("inserted record should have same contents as dumped record", FileUtils.readFile(
+                OUTFILE1_ARC.getAbsoluteFile()).equals(FileUtils.readFile(INPUT_1_ARC.getAbsoluteFile())));
     }
 
     /**

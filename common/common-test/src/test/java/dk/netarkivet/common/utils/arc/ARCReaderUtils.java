@@ -81,8 +81,8 @@ public class ARCReaderUtils {
             ARCReader arcReader = ARCReaderFactory.get(ArcFile);
             ARCRecord arc;
             for (CDXRecord record : records) {
-                System.out.println(String.format("Dumping uri '%s' with mimetype %s", record.getURL(),
-                        record.getMimetype()));
+                System.out.println(String.format("Dumping uri '%s' with mimetype %s", record.getURL(), record
+                        .getMimetype()));
                 String filename = getFilename(record.getURL());
                 if (filename == null) {
                     filename = "null";

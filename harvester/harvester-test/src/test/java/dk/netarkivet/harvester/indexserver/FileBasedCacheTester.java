@@ -57,8 +57,8 @@ public class FileBasedCacheTester {
              *
              * @param id Some identifier for the item to be cached.
              * @return An id of content actually available. In most cases, this will be the same as id, but for complex
-             *         I it could be a subset (or null if the type argument I is a simple type). If the return value is
-             *         not the same as id, the file will not contain cached data, and may not even exist.
+             * I it could be a subset (or null if the type argument I is a simple type). If the return value is not the
+             * same as id, the file will not contain cached data, and may not even exist.
              */
             protected String cacheData(String id) {
                 return null;
@@ -72,8 +72,8 @@ public class FileBasedCacheTester {
              *
              * @param id Some identifier for the item to be cached.
              * @return An id of content actually available. In most cases, this will be the same as id, but for complex
-             *         I it could be a subset (or null if the type argument I is a simple type). If the return value is
-             *         not the same as id, the file will not contain cached data, and may not even exist.
+             * I it could be a subset (or null if the type argument I is a simple type). If the return value is not the
+             * same as id, the file will not contain cached data, and may not even exist.
              */
             public String cache(String id) {
                 if (nextId.length() < 4) {

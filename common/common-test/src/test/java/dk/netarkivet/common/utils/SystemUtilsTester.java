@@ -69,12 +69,11 @@ public class SystemUtilsTester {
         CollectionAsserts.assertListEquals("Should return the system" + " class path as a list", classpath,
                 (Object[]) systemClassPath);
         // Test that some version of the standard libraries are in there
-        JARS:
-        for (String jar : new String[] {"commons-fileupload.*\\.jar$", "commons-httpclient.*\\.jar$",
+        JARS: for (String jar : new String[] {"commons-fileupload.*\\.jar$", "commons-httpclient.*\\.jar$",
                 "commons-logging.*\\.jar$", "dom4j-.*\\.jar$", "jaxen-.*\\.jar$", "jetty-.*\\.jar$", "junit-.*\\.jar$",
-                // Removed as not used in common.
-                // "libidn-.*\\.jar$",
-                // "lucene-core-.*\\.jar$"
+        // Removed as not used in common.
+        // "libidn-.*\\.jar$",
+        // "lucene-core-.*\\.jar$"
         }) {
             Matcher m = Pattern.compile(jar).matcher("");
             for (String path : classpath) {

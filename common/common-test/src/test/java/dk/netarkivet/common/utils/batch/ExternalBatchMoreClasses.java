@@ -195,8 +195,8 @@ public class ExternalBatchMoreClasses extends FileBatchJob {
             // Processors report
             int pos = line.indexOf("Processors report - ");
             if (pos >= 0 && line.length() >= pos + 12) {
-                resDateFound.date = line.substring(pos + "Processors report - ".length(),
-                        pos + "Processors report - ".length() + 8);
+                resDateFound.date = line.substring(pos + "Processors report - ".length(), pos
+                        + "Processors report - ".length() + 8);
                 resDateFound.foundType = DateFoundType.PROCREPORT.ordinal();
             }
         }

@@ -107,8 +107,7 @@ public final class DomainUtils {
      *
      * @param hostname A hostname or IP address. Null hostname is not allowed
      * @return A domain name (foo.bar) or IP address, or null if no valid domain could be obtained from the given
-     * hostname. If non-null, the return value is guaranteed to be a valid domain as determined by
-     * isValidDomainName().
+     * hostname. If non-null, the return value is guaranteed to be a valid domain as determined by isValidDomainName().
      */
     public static String domainNameFromHostname(String hostname) {
         ArgumentNotValid.checkNotNull(hostname, "String hostname");

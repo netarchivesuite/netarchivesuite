@@ -340,8 +340,7 @@ public final class Constants {
     /** The name of the harvest database kill script. */
     static final String SCRIPT_NAME_HARVEST_DB_KILL = "kill_external_harvest_database";
     /** The name of the harvest database update script. */
-    static final String SCRIPT_NAME_HARVEST_DB_UPDATE = "update_external_harvest_database";
-    ;
+    static final String SCRIPT_NAME_HARVEST_DB_UPDATE = "update_external_harvest_database";;
     /** The name of the wait script for windows. 'wait'. */
     static final String SCRIPT_NAME_WAIT = "wait";
     /** Prefix for the application kill script. 'kill_' . */
@@ -526,13 +525,11 @@ public final class Constants {
     /**
      * The error message when the environment name for the test instance is invalid.
      */
-    public static final String MSG_ERROR_INVALID_TEST_ENVIRONMENT_NAME =
-            "The environment name for the test instance was not valid to the "
-                    + "regular expressions: '" + VALID_REGEX_ENVIRONMENT_NAME + "'. " + "But was given: ";
+    public static final String MSG_ERROR_INVALID_TEST_ENVIRONMENT_NAME = "The environment name for the test instance was not valid to the "
+            + "regular expressions: '" + VALID_REGEX_ENVIRONMENT_NAME + "'. " + "But was given: ";
     /** The error message when the environment name is invalid. */
-    public static final String MSG_ERROR_INVALID_ENVIRONMENT_NAME =
-            "The environment name must be valid to the regular expression: '"
-                    + VALID_REGEX_ENVIRONMENT_NAME + "'. But the given was: ";
+    public static final String MSG_ERROR_INVALID_ENVIRONMENT_NAME = "The environment name must be valid to the regular expression: '"
+            + VALID_REGEX_ENVIRONMENT_NAME + "'. But the given was: ";
     /** The error message when the wait script file cannot be written. */
     public static final String MSG_ERROR_WAIT_FILE = "Problems creating local wait script.";
     /** The error message when the restart script cannot be written. */

@@ -289,8 +289,8 @@ public class SelectiveHarvestUtilTester extends DataModelTestCase {
         assertEquals("Expected original configuration", "Engelsk_netarkiv_et_niveau", nameList.get(0));
 
         // This checks next date to be correct
-        assertEquals("Should have the new next-date",
-                new GregorianCalendar(2007, Calendar.OCTOBER, 7, 12, 00, 00).getTime(), hdd.getNextDate());
+        assertEquals("Should have the new next-date", new GregorianCalendar(2007, Calendar.OCTOBER, 7, 12, 00, 00)
+                .getTime(), hdd.getNextDate());
     }
 
     private ServletRequest dummyRequest(final Map<String, String[]> confs) {

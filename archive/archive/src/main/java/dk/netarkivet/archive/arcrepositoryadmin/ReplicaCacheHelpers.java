@@ -264,7 +264,7 @@ public final class ReplicaCacheHelpers {
             return -1;
         case 1:
             return files.get(0);
-        // if more than one file, then log it and return the first found.
+            // if more than one file, then log it and return the first found.
         default:
             log.warn("Only one entry in the file table for the name '{}' was expected, but {} was found. "
                     + "The first element is returned.", filename, files.size());

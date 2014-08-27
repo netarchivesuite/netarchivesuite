@@ -327,8 +327,8 @@ public class BitarchiveClientTester {
     public void testBatch1() {
         uploadInPreparationOfBatchTest();
 
-        BatchMessage bMsg = new BatchMessage(THE_BAMON, Channels.getTheRepos(), new TestBatchJobRuns(),
-                Settings.get(CommonSettings.USE_REPLICA_ID));
+        BatchMessage bMsg = new BatchMessage(THE_BAMON, Channels.getTheRepos(), new TestBatchJobRuns(), Settings
+                .get(CommonSettings.USE_REPLICA_ID));
         bac.sendBatchJob(bMsg);
         verifyBatchWentWell();
     }
@@ -427,8 +427,8 @@ public class BitarchiveClientTester {
         con.setListener(Channels.getAllBa(), handler);
         con.setListener(Channels.getAnyBa(), handler);
 
-        assertEquals("The handler should be the only one listening to the queue TheBamon", 1,
-                con.getListeners(Channels.getTheBamon()).size());
+        assertEquals("The handler should be the only one listening to the queue TheBamon", 1, con.getListeners(
+                Channels.getTheBamon()).size());
         // check GetChecksum through function
         NetarkivetMessage msg = bac.sendGetChecksumMessage(Channels.getError(), "filename.arc");
         con.waitForConcurrentTasksToFinish();
@@ -443,8 +443,8 @@ public class BitarchiveClientTester {
         con.waitForConcurrentTasksToFinish();
 
         assertEquals("Another GetChecksumMessage expected to be sent.", 2, handler.getChecksumMsg.size());
-        assertEquals("The received message should be one returned by the function", csMsg,
-                handler.getChecksumMsg.get(1));
+        assertEquals("The received message should be one returned by the function", csMsg, handler.getChecksumMsg
+                .get(1));
 
         // check GetAllChecksums through message
         GetAllChecksumsMessage gcsMsg = new GetAllChecksumsMessage(Channels.getTheBamon(), Channels.getError(),
@@ -466,8 +466,8 @@ public class BitarchiveClientTester {
 
         // check Correct through message
         CorrectMessage corMsg = new CorrectMessage(Channels.getTheBamon(), Channels.getError(), "badChecksum",
-                RemoteFileFactory.getInstance(FILE_TO_UPLOAD, true, false, true),
-                Settings.get(CommonSettings.USE_REPLICA_ID), "credentials");
+                RemoteFileFactory.getInstance(FILE_TO_UPLOAD, true, false, true), Settings
+                        .get(CommonSettings.USE_REPLICA_ID), "credentials");
         bac.sendCorrectMessage(corMsg);
         con.waitForConcurrentTasksToFinish();
 

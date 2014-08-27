@@ -240,8 +240,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
             // the database
             for (Replica rep : Replica.getKnown()) {
                 // Return the checksum, if it has a valid status.
-                if (ReplicaCacheHelpers.retrieveChecksumStatusForReplicaFileInfoEntry(fileId, rep.getId(), con)
-                        == ChecksumStatus.OK) {
+                if (ReplicaCacheHelpers.retrieveChecksumStatusForReplicaFileInfoEntry(fileId, rep.getId(), con) == ChecksumStatus.OK) {
                     return ReplicaCacheHelpers.retrieveChecksumForReplicaFileInfoEntry(fileId, rep.getId(), con);
                 }
             }
@@ -255,10 +254,9 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
             Set<String> checksums = new HashSet<String>();
 
             for (Replica rep : Replica.getKnown()) {
-                if (ReplicaCacheHelpers.retrieveChecksumStatusForReplicaFileInfoEntry(fileId, rep.getId(), con)
-                        != ChecksumStatus.CORRUPT) {
-                    String tmpChecksum = ReplicaCacheHelpers.retrieveChecksumForReplicaFileInfoEntry(fileId,
-                            rep.getId(), con);
+                if (ReplicaCacheHelpers.retrieveChecksumStatusForReplicaFileInfoEntry(fileId, rep.getId(), con) != ChecksumStatus.CORRUPT) {
+                    String tmpChecksum = ReplicaCacheHelpers.retrieveChecksumForReplicaFileInfoEntry(fileId, rep
+                            .getId(), con);
                     if (tmpChecksum != null) {
                         checksums.add(tmpChecksum);
                     } else {
@@ -291,8 +289,8 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
                 } else {
                     // log when it is second time we find this checksum to be
                     // null?
-                    log.debug("Replica '{}' has a null checksum for the file '{}'.", rep.getId(),
-                            ReplicaCacheHelpers.retrieveFilenameForFileId(fileId, con));
+                    log.debug("Replica '{}' has a null checksum for the file '{}'.", rep.getId(), ReplicaCacheHelpers
+                            .retrieveFilenameForFileId(fileId, con));
                 }
             }
 
@@ -964,8 +962,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         }
         // return null if the field has no be set for this replica.
         if (result == null) {
-            log.debug(
-                    "The 'filelist_updated' field has not been set, as no missing files update has been performed yet.");
+            log.debug("The 'filelist_updated' field has not been set, as no missing files update has been performed yet.");
             return null;
         } else {
             // Parse the timestamp into a date.
@@ -1457,8 +1454,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         List<String> rfiIds = ReplicaCacheHelpers.retrieveIdsFromReplicaFileInfoTable(connection);
         res.append("ReplicaFileInfo table : " + rfiIds.size() + "\n");
         res.append("GUID \trepId \tfileId \tchecksum \tus \t\tfls \tcss \tfilelistCheckdate \tchecksumCheckdate\n");
-        res.append(
-                "---------------------------------------------------------------------------------------------------------\n");
+        res.append("---------------------------------------------------------------------------------------------------------\n");
         for (String rfiGUID : rfiIds) {
             // FIXME Replace with one SELECT instead of one SELECT for each row!
             // DOH!

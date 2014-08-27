@@ -87,8 +87,8 @@ public class SettingsFactory<T> {
                 try {
                     return c.newInstance(args);
                 } catch (InvocationTargetException e1) {
-                    throw new ArgumentNotValid("Error creating singleton " + "of class '" + className + "': ",
-                            e1.getCause());
+                    throw new ArgumentNotValid("Error creating singleton " + "of class '" + className + "': ", e1
+                            .getCause());
                 }
             }
             try {

@@ -103,11 +103,11 @@ public final class JMXUtils {
     private static void ensureJndiInitialContext() {
         if (System.getProperty(JNDI_INITIAL_CONTEXT_PROPERTY) == null) {
             System.setProperty(JNDI_INITIAL_CONTEXT_PROPERTY, RegistryContextFactory.class.getCanonicalName());
-            log.info("Set property '{}' to: {}", JNDI_INITIAL_CONTEXT_PROPERTY,
-                    RegistryContextFactory.class.getCanonicalName());
+            log.info("Set property '{}' to: {}", JNDI_INITIAL_CONTEXT_PROPERTY, RegistryContextFactory.class
+                    .getCanonicalName());
         } else {
-            log.debug("Property '{}' is set to: {}", JNDI_INITIAL_CONTEXT_PROPERTY,
-                    System.getProperty(JNDI_INITIAL_CONTEXT_PROPERTY));
+            log.debug("Property '{}' is set to: {}", JNDI_INITIAL_CONTEXT_PROPERTY, System
+                    .getProperty(JNDI_INITIAL_CONTEXT_PROPERTY));
         }
     }
 
@@ -245,8 +245,8 @@ public final class JMXUtils {
                         TimeUtils.exponentialBackoffSleep(tries);
                     }
                 } catch (IOException e) {
-                    log.warn("Exception thrown while executing {} with args {} on {}", command,
-                            Arrays.toString(arguments), beanName, e);
+                    log.warn("Exception thrown while executing {} with args {} on {}", command, Arrays
+                            .toString(arguments), beanName, e);
                     lastException = e;
                     if (tries < maxJmxRetries) {
                         TimeUtils.exponentialBackoffSleep(tries);
@@ -356,8 +356,7 @@ public final class JMXUtils {
                 lastException = e;
                 if (retries < maxJmxRetries
                         && e.getCause() != null
-                        && (e.getCause() instanceof ServiceUnavailableException || e
-                        .getCause() instanceof SocketTimeoutException)) {
+                        && (e.getCause() instanceof ServiceUnavailableException || e.getCause() instanceof SocketTimeoutException)) {
                     // Sleep a bit before trying again
                     TimeUtils.exponentialBackoffSleep(retries);
                     /*

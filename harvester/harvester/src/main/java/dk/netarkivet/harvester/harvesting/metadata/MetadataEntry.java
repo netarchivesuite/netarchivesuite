@@ -170,8 +170,8 @@ public class MetadataEntry implements Serializable {
         String metadataUrl = String.format(DUPLICATEREDUCTION_METADATA_URL_PREFIX_TEMPLATE + METADATA_URL_SUFFIX,
                 organization, origHarvestDefinitionID, harvestNum, jobId);
 
-        return new MetadataEntry(metadataUrl, MIMETYPE_TEXT_PLAIN,
-                StringUtils.conjoin(",", jobIDsForDuplicateReduction));
+        return new MetadataEntry(metadataUrl, MIMETYPE_TEXT_PLAIN, StringUtils
+                .conjoin(",", jobIDsForDuplicateReduction));
     }
 
     /**

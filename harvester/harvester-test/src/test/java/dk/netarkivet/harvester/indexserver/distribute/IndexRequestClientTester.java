@@ -73,8 +73,8 @@ public class IndexRequestClientTester {
     public void setUp() {
         rs.setUp();
         Settings.set(CommonSettings.CACHE_DIR, new File(TestInfo.WORKING_DIR, "cache").getAbsolutePath());
-        Settings.set(CommonSettings.DIR_COMMONTEMPDIR,
-                new File(TestInfo.WORKING_DIR, "commontempdir").getAbsolutePath());
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, new File(TestInfo.WORKING_DIR, "commontempdir")
+                .getAbsolutePath());
 
         ulrf.setUp();
         mjms.setUp();
@@ -177,8 +177,8 @@ public class IndexRequestClientTester {
     @Test(timeout = 60000)
     @Ignore("Hangs in Eclipse")
     public void testGetJobIndexCdxEmptySet() throws IOException {
-        testNormalFileResponse(IndexRequestClient.getInstance(RequestType.CDX), RequestType.CDX,
-                Collections.<Long>emptySet());
+        testNormalFileResponse(IndexRequestClient.getInstance(RequestType.CDX), RequestType.CDX, Collections
+                .<Long>emptySet());
     }
 
     @Test(timeout = 60000)

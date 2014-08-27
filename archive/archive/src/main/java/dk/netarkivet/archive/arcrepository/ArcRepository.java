@@ -253,7 +253,7 @@ public class ArcRepository implements CleanupIF {
             case UPLOAD_STARTED:
             case DATA_UPLOADED:
                 log.debug("Recovery from old upload. StoreState: {}. Sending new Checksum request for verifying "
-                                + "whether the file '{}' has been succesfully uploaded for replica: '{}'", storeState,
+                        + "whether the file '{}' has been succesfully uploaded for replica: '{}'", storeState,
                         filename, replica);
                 // Unknown condition in bitarchive. Test with checksum job.
                 if (storeState == ReplicaStoreState.UPLOAD_FAILED) {
@@ -350,8 +350,7 @@ public class ArcRepository implements CleanupIF {
         for (Replica rep : connectedReplicas.keySet()) {
             try {
                 // retrieve the replica channel and check upload status.
-                if (ad.getState(arcfileName, rep.getIdentificationChannel().getName())
-                        != ReplicaStoreState.UPLOAD_COMPLETED) {
+                if (ad.getState(arcfileName, rep.getIdentificationChannel().getName()) != ReplicaStoreState.UPLOAD_COMPLETED) {
                     return false;
                 }
             } catch (UnknownID e) {
@@ -514,8 +513,8 @@ public class ArcRepository implements CleanupIF {
 
         if (!outstandingChecksumFiles.containsKey(msg.getReplyOfId())) {
             // Message was NOT expected
-            log.warn("Received batchreply message with unknown originating ID {}\n{}\n. Known IDs are: {}",
-                    msg.getReplyOfId(), msg.toString(), outstandingChecksumFiles.keySet().toString());
+            log.warn("Received batchreply message with unknown originating ID {}\n{}\n. Known IDs are: {}", msg
+                    .getReplyOfId(), msg.toString(), outstandingChecksumFiles.keySet().toString());
             return;
         }
 
@@ -592,8 +591,8 @@ public class ArcRepository implements CleanupIF {
 
         // handle the case when unwanted reply.
         if (!outstandingChecksumFiles.containsKey(msg.getID())) {
-            log.warn("Received GetChecksumMessage with unknown originating ID {}\n{}\n. Known IDs are: {}",
-                    msg.getReplyOfId(), msg.toString(), outstandingChecksumFiles.keySet().toString());
+            log.warn("Received GetChecksumMessage with unknown originating ID {}\n{}\n. Known IDs are: {}", msg
+                    .getReplyOfId(), msg.toString(), outstandingChecksumFiles.keySet().toString());
             return;
         }
 

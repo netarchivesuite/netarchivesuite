@@ -144,8 +144,8 @@ public class LocalCDXCache implements JobIndexCache {
                 OutputStream tmpOutput = new FileOutputStream(workFile);
                 retrieveIndex(jobIDs, tmpOutput);
                 tmpOutput.close();
-                ProcessUtils.runProcess(new String[] {"LANG=C"}, "sort", workFile.getAbsolutePath(), "-o",
-                        indexFile.getAbsolutePath());
+                ProcessUtils.runProcess(new String[] {"LANG=C"}, "sort", workFile.getAbsolutePath(), "-o", indexFile
+                        .getAbsolutePath());
             } else {
                 while (workFile.exists()) {
                     try { // Wait till other process ends

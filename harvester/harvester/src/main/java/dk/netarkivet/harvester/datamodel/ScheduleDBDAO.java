@@ -202,7 +202,7 @@ public class ScheduleDBDAO extends ScheduleDAO {
             Integer dayofmonth = DBUtils.getIntegerMaybeNull(rs, 12);
             if (log.isDebugEnabled()) {
                 log.debug("Creating frequency for (timeunit,anytime,numtimeunits,hour, minute, dayofweek, dayofmonth)"
-                                + " = ({},{},{},{},{},{},{},)", timeunit, anytime, numtimeunits, minute, hour, dayofweek,
+                        + " = ({},{},{},{},{},{},{},)", timeunit, anytime, numtimeunits, minute, hour, dayofweek,
                         dayofmonth);
             }
             Frequency freq = Frequency.getNewInstance(timeunit, anytime, numtimeunits, minute, hour, dayofweek,

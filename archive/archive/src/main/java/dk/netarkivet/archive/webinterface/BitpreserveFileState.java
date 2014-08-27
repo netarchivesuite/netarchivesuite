@@ -149,8 +149,8 @@ public class BitpreserveFileState {
         String bitarchiveName = params.get(Constants.BITARCHIVE_NAME_PARAM)[0];
         if (!Replica.isKnownReplicaName(bitarchiveName)) {
             List<String> names = new ArrayList<String>();
-            HTMLUtils.forwardOnIllegalParameter(context, Constants.BITARCHIVE_NAME_PARAM,
-                    StringUtils.conjoin(", ", names.toArray(Replica.getKnownNames())));
+            HTMLUtils.forwardOnIllegalParameter(context, Constants.BITARCHIVE_NAME_PARAM, StringUtils.conjoin(", ",
+                    names.toArray(Replica.getKnownNames())));
         }
         ActiveBitPreservation preserve = ActiveBitPreservationFactory.getInstance();
         Locale l = context.getResponse().getLocale();
@@ -459,9 +459,9 @@ public class BitpreserveFileState {
 
         // Table headers for info table
         out.println("<table>");
-        out.print(HTMLUtils.makeTableRow(HTMLUtils.makeTableHeader(I18N.getString(locale, "replica")),
-                HTMLUtils.makeTableHeader(I18N.getString(locale, "admin.state")),
-                HTMLUtils.makeTableHeader(I18N.getString(locale, "checksum"))));
+        out.print(HTMLUtils.makeTableRow(HTMLUtils.makeTableHeader(I18N.getString(locale, "replica")), HTMLUtils
+                .makeTableHeader(I18N.getString(locale, "admin.state")), HTMLUtils.makeTableHeader(I18N.getString(
+                locale, "checksum"))));
 
         // Admin data info
         printFileStateForAdminData(out, fs, locale);
@@ -483,8 +483,8 @@ public class BitpreserveFileState {
      */
     private static void printFileStateForAdminData(JspWriter out, PreservationState fs, Locale locale)
             throws IOException {
-        out.print(HTMLUtils.makeTableRow(HTMLUtils.makeTableElement(I18N.getString(locale, "admin.data")),
-                HTMLUtils.makeTableElement("-"), HTMLUtils.makeTableElement(fs.getAdminChecksum())));
+        out.print(HTMLUtils.makeTableRow(HTMLUtils.makeTableElement(I18N.getString(locale, "admin.data")), HTMLUtils
+                .makeTableElement("-"), HTMLUtils.makeTableElement(fs.getAdminChecksum())));
     }
 
     /**
@@ -499,9 +499,9 @@ public class BitpreserveFileState {
     private static void printFileStateForBitarchive(JspWriter out, Replica baReplica, PreservationState fs,
             Locale locale) throws IOException {
         log.debug("Printing filestate for bitarchive '" + baReplica.getName() + "'");
-        out.print(HTMLUtils.makeTableRow(HTMLUtils.makeTableElement(baReplica.getName()),
-                HTMLUtils.makeTableElement(fs.getAdminReplicaState(baReplica)),
-                HTMLUtils.makeTableElement(presentChecksum(fs.getReplicaChecksum(baReplica), locale))));
+        out.print(HTMLUtils.makeTableRow(HTMLUtils.makeTableElement(baReplica.getName()), HTMLUtils.makeTableElement(fs
+                .getAdminReplicaState(baReplica)), HTMLUtils.makeTableElement(presentChecksum(fs
+                .getReplicaChecksum(baReplica), locale))));
     }
 
     /**
@@ -547,11 +547,8 @@ public class BitpreserveFileState {
             Locale locale) throws IOException {
         out.print("<input type=\"checkbox\" id=\"toggle" + command + "\" onclick=\"toggleCheckboxes('" + command
                 + "')\"/>");
-        out.print(I18N.getString(
-                locale,
-                label,
-                "<input id=\"toggleAmount" + command + "\" value=\""
-                        + Math.min(numberOfCheckboxes, Constants.MAX_TOGGLE_AMOUNT) + "\" />"));
+        out.print(I18N.getString(locale, label, "<input id=\"toggleAmount" + command + "\" value=\""
+                + Math.min(numberOfCheckboxes, Constants.MAX_TOGGLE_AMOUNT) + "\" />"));
         out.println("<br/> ");
     }
 

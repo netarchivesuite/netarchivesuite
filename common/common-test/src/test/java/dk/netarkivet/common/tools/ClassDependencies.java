@@ -618,8 +618,7 @@ public class ClassDependencies {
         // Now walk through the constant pool looking for entries
         // we are interested in. Others can be ignored, but we need
         // to understand the format so they can be skipped.
-        readcp:
-        for (int i = 1; i < count; i++) {
+        readcp: for (int i = 1; i < count; i++) {
             // Read the tag
             byte tag = in.readByte();
             switch (tag) {

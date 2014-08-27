@@ -161,8 +161,8 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
                 String localindexLocation = tmpFile.getAbsolutePath();
                 Long cached = cdxcache.cache(jobId);
                 if (cached == null) {
-                    log.warn("Skipping the ingest of logs for job {}. Unable to retrieve cdx-file for job.",
-                            entry.getKey());
+                    log.warn("Skipping the ingest of logs for job {}. Unable to retrieve cdx-file for job.", entry
+                            .getKey());
                     continue;
                 }
                 File cachedCDXFile = cdxcache.getCacheFile(cached);
@@ -199,7 +199,7 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
                 Iterator<IndexingState> iterator = outstandingJobs.iterator();
                 if (timeOutTime < System.currentTimeMillis()) {
                     log.warn("Max indexing time exceeded for one index ({}). Indexing stops here, "
-                                    + "although missing subindices for {} jobs",
+                            + "although missing subindices for {} jobs",
                             TimeUtils.readableTimeInterval(combineTimeout), outstandingJobs.size());
                     break;
                 }
@@ -248,7 +248,7 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
             }
 
             log.info("Adding the final {} subindices to main index. "
-                            + "Forcing index to contain max {} files (related to combine task #{})", subindices.size(),
+                    + "Forcing index to contain max {} files (related to combine task #{})", subindices.size(),
                     maxSegments, indexingJobCount);
 
             totalIndex.addIndexes(subindices.toArray(new Directory[0]));

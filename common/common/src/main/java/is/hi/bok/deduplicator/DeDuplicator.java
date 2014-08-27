@@ -163,7 +163,9 @@ public class DeDuplicator extends Processor implements AdaptiveRevisitAttributeC
     public final static String ATTR_SKIP_WRITE = "skip-writing";
     public final static Boolean DEFAULT_SKIP_WRITE = new Boolean(true);
 
-    /** Should we use sparse queries (uses less memory at a cost to performance? * */
+    /**
+     * Should we use sparse queries (uses less memory at a cost to performance? *
+     */
     public final static String ATTR_USE_SPARSE_RANGE_FILTER = "use-sparse-range-filter";
     public final static Boolean DEFAULT_USE_SPARSE_RANGE_FILTER = new Boolean(false);
 

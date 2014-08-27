@@ -157,13 +157,9 @@ public class FileBasedActiveBitPreservation implements ActiveBitPreservation, Cl
         }
 
         if (missingInAdmindata.size() > 0) {
-            log.warn(
-                    "The following {} files are unknown to admindata: {}",
-                    missingInAdmindata.size(),
-                    StringUtils.conjoin(
-                            ",",
-                            new ArrayList<String>(missingInAdmindata).subList(0,
-                                    Math.min(missingInAdmindata.size(), MAX_LIST_SIZE))));
+            log.warn("The following {} files are unknown to admindata: {}", missingInAdmindata.size(), StringUtils
+                    .conjoin(",", new ArrayList<String>(missingInAdmindata).subList(0, Math.min(missingInAdmindata
+                            .size(), MAX_LIST_SIZE))));
         }
 
         // filepreservationStates: map ([filename] -> [filepreservationstate])
@@ -190,8 +186,8 @@ public class FileBasedActiveBitPreservation implements ActiveBitPreservation, Cl
         for (Map.Entry<String, ArcRepositoryEntry> entry : adminInfo.entrySet()) {
             String filename = entry.getKey();
             ArcRepositoryEntry adminFileInfo = entry.getValue();
-            filepreservationStates.put(filename,
-                    new FilePreservationState(filename, adminFileInfo, checksumMaps.get(filename)));
+            filepreservationStates.put(filename, new FilePreservationState(filename, adminFileInfo, checksumMaps
+                    .get(filename)));
         }
         return filepreservationStates;
     }
@@ -232,8 +228,8 @@ public class FileBasedActiveBitPreservation implements ActiveBitPreservation, Cl
             // Get the checksum information from Replica 'rep' as
             // a map ([filename]->[list of checksums]).
             Map<String, List<String>> checksums = getChecksums(rep, filenames);
-            log.debug("Adding checksums for replica '{}' for filenames: {}", rep,
-                    StringUtils.conjoin(",", filenames, MAX_LIST_SIZE));
+            log.debug("Adding checksums for replica '{}' for filenames: {}", rep, StringUtils.conjoin(",", filenames,
+                    MAX_LIST_SIZE));
 
             for (String filename : filenames) {
                 // Update 'checksummaps' datastructure with the checksums
@@ -370,9 +366,8 @@ public class FileBasedActiveBitPreservation implements ActiveBitPreservation, Cl
             log.warn("The "
                     + extraFilesInAdminData.size()
                     + " files '"
-                    + new ArrayList<String>(extraFilesInAdminData).subList(0,
-                    Math.min(extraFilesInAdminData.size(), MAX_LIST_SIZE))
-                    + "' are not present in the replica listing in '"
+                    + new ArrayList<String>(extraFilesInAdminData).subList(0, Math.min(extraFilesInAdminData.size(),
+                            MAX_LIST_SIZE)) + "' are not present in the replica listing in '"
                     + WorkFiles.getPreservationDir(replica).getAbsolutePath() + "'");
         }
 
@@ -388,7 +383,8 @@ public class FileBasedActiveBitPreservation implements ActiveBitPreservation, Cl
             log.warn("The "
                     + extraFilesInRep.size()
                     + " files '"
-                    + new ArrayList<String>(extraFilesInRep).subList(0, Math.min(extraFilesInRep.size(), MAX_LIST_SIZE))
+                    + new ArrayList<String>(extraFilesInRep)
+                            .subList(0, Math.min(extraFilesInRep.size(), MAX_LIST_SIZE))
                     + "' have been found in the replica listing in '"
                     + WorkFiles.getPreservationDir(replica).getAbsolutePath() + "' though they are not known by the "
                     + "system.");
@@ -713,8 +709,8 @@ public class FileBasedActiveBitPreservation implements ActiveBitPreservation, Cl
             log.warn(errmsg, e);
             throw new IOFailure(errmsg, e);
         }
-        log.info("Reestablished {} in {} with copy from {}", fileName, damagedReplica.getName(),
-                referenceArchive.getName());
+        log.info("Reestablished {} in {} with copy from {}", fileName, damagedReplica.getName(), referenceArchive
+                .getName());
         FileUtils.removeLineFromFile(fileName, WorkFiles.getFile(damagedReplica, WorkFiles.MISSING_FILES_BA));
         FileUtils.appendToFile(WorkFiles.getFile(damagedReplica, WorkFiles.FILES_ON_BA), fileName);
     }

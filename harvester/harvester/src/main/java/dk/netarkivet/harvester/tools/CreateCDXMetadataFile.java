@@ -204,8 +204,8 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
         public void tearDown() {
             if (arcrep != null) {
                 arcrep.close();
-                if (arcrep.getClass().getName()
-                        .equals("dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient")) {
+                if (arcrep.getClass().getName().equals(
+                        "dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient")) {
                     JMSConnectionFactory.getInstance().cleanup();
                 }
             }
@@ -304,9 +304,9 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
 
         private void insertWarcInfo(MetadataFileWriterWarc writer, Long jobID) {
             ANVLRecord infoPayload = new ANVLRecord(3);
-            infoPayload.addLabelValue("software",
-                    "NetarchiveSuite/" + dk.netarkivet.common.Constants.getVersionString() + "/"
-                            + dk.netarkivet.common.Constants.PROJECT_WEBSITE);
+            infoPayload.addLabelValue("software", "NetarchiveSuite/"
+                    + dk.netarkivet.common.Constants.getVersionString() + "/"
+                    + dk.netarkivet.common.Constants.PROJECT_WEBSITE);
             infoPayload.addLabelValue("ip", SystemUtils.getLocalIP());
             infoPayload.addLabelValue("hostname", SystemUtils.getLocalHostName());
             infoPayload

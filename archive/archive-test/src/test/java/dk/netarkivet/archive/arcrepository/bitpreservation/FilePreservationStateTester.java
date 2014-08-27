@@ -99,12 +99,12 @@ public class FilePreservationStateTester {
         assertEquals("The admin data should have the common checksum", "checksum", fps.getAdminChecksum());
 
         // check function getAdminBitarchiveState
-        assertEquals("Replica ONE should have UPLOAD_COMPLETED", ReplicaStoreState.UPLOAD_COMPLETED.toString(),
-                fps.getAdminReplicaState(r1));
-        assertEquals("Replica TWO should have UPLOAD_COMPLETED", ReplicaStoreState.UPLOAD_COMPLETED.toString(),
-                fps.getAdminReplicaState(r2));
-        assertEquals("Replica THREE should have UPLOAD_FAILED", ReplicaStoreState.UPLOAD_FAILED.toString(),
-                fps.getAdminReplicaState(r3));
+        assertEquals("Replica ONE should have UPLOAD_COMPLETED", ReplicaStoreState.UPLOAD_COMPLETED.toString(), fps
+                .getAdminReplicaState(r1));
+        assertEquals("Replica TWO should have UPLOAD_COMPLETED", ReplicaStoreState.UPLOAD_COMPLETED.toString(), fps
+                .getAdminReplicaState(r2));
+        assertEquals("Replica THREE should have UPLOAD_FAILED", ReplicaStoreState.UPLOAD_FAILED.toString(), fps
+                .getAdminReplicaState(r3));
 
         // check function isAdminDataOk
         assertFalse("Admin data should not be ok", fps.isAdminDataOk());
@@ -139,8 +139,8 @@ public class FilePreservationStateTester {
 
         // check function toString
         String content = fps.toString();
-        assertTrue("It should contain the filename",
-                content.contains("PreservationStatus for '" + fps.getFilename() + "'"));
+        assertTrue("It should contain the filename", content.contains("PreservationStatus for '" + fps.getFilename()
+                + "'"));
         assertTrue("It should contain the General store state", content.contains("General store state: "));
     }
 

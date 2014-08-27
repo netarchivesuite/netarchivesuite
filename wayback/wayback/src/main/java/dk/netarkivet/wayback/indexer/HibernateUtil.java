@@ -101,11 +101,11 @@ public class HibernateUtil {
                 config.setProperty(HIBERNATE_CONNECTION_URL, Settings.get(WaybackSettings.HIBERNATE_DB_URL));
                 config.setProperty(HIBERNATE_DIALECT, Settings.get(WaybackSettings.HIBERNATE_DIALECT));
                 config.setProperty(HIBERNATE_FORMAT_SQL, Settings.get(WaybackSettings.HIBERNATE_FORMAT_SQL));
-                config.setProperty(HIBERNATE_BYTECODE_USE_REFLECTION_OPTIMIZER,
-                        Settings.get(WaybackSettings.HIBERNATE_REFLECTION_OPTIMIZER));
+                config.setProperty(HIBERNATE_BYTECODE_USE_REFLECTION_OPTIMIZER, Settings
+                        .get(WaybackSettings.HIBERNATE_REFLECTION_OPTIMIZER));
                 config.setProperty(HIBERNATE_HBM2DDL_AUTO, Settings.get(WaybackSettings.HIBERNATE_HBM2DDL_AUTO));
-                config.setProperty(HIBERNATE_TRANSACTION_FACTORY_CLASS,
-                        Settings.get(WaybackSettings.HIBERNATE_TRANSACTION_FACTORY));
+                config.setProperty(HIBERNATE_TRANSACTION_FACTORY_CLASS, Settings
+                        .get(WaybackSettings.HIBERNATE_TRANSACTION_FACTORY));
                 config.setProperty(HIBERNATE_SHOW_SQL, Settings.get(WaybackSettings.HIBERNATE_SHOW_SQL));
                 log.info("Hibernate properties used: " + CONNECTION_PROVIDER_CLASS + " = "
                         + ORG_HIBERNATE_CONNECTION_C3_P0_CONNECTION_PROVIDER + ", " + C3P0_ACQUIRE_INCREMENT + " = "

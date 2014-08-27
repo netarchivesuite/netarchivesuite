@@ -70,9 +70,9 @@ public class SnapshotHarvestDefinition {
     }
 
     public static SnapshotHarvestDefinition createSnapshotHarvestDefinitionWithDefaultDAOs() {
-        return new SnapshotHarvestDefinition(DAOProviderFactory.getHarvestDefinitionDAOProvider(),
-                DAOProviderFactory.getJobDAOProvider(), DAOProviderFactory.getExtendedFieldDAOProvider(),
-                DAOProviderFactory.getDomainDAOProvider());
+        return new SnapshotHarvestDefinition(DAOProviderFactory.getHarvestDefinitionDAOProvider(), DAOProviderFactory
+                .getJobDAOProvider(), DAOProviderFactory.getExtendedFieldDAOProvider(), DAOProviderFactory
+                .getDomainDAOProvider());
     }
 
     /**

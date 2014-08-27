@@ -830,8 +830,7 @@ public class JMSConnectionMockupMQ extends JMSConnection {
                 listener.onMessage(msg);
             }
 
-            Set<Thread> concurrentTasksToComplete = ((JMSConnectionMockupMQ) JMSConnectionMockupMQ
-                    .getInstance()).concurrentTasksToComplete;
+            Set<Thread> concurrentTasksToComplete = ((JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance()).concurrentTasksToComplete;
             synchronized (concurrentTasksToComplete) {
                 concurrentTasksToComplete.remove(Thread.currentThread());
                 if (concurrentTasksToComplete.isEmpty()) {

@@ -211,8 +211,8 @@ public class HarvestDocumentationTester {
         File target1 = new File(metadataDir, MetadataFileWriter.getMetadataArchiveFileName(Long
                 .toString(TestInfo.JOB_ID)));
         assertEquals("Should generate exactly one metadata file", 1, metadataFiles.size());
-        assertTrue("Should generate file " + target1 + " but found only " + metadataFiles.toString(),
-                metadataFiles.contains(target1));
+        assertTrue("Should generate file " + target1 + " but found only " + metadataFiles.toString(), metadataFiles
+                .contains(target1));
     }
 
     /**
@@ -384,8 +384,8 @@ public class HarvestDocumentationTester {
         Method m = ReflectUtils.getPrivateMethod(HarvestDocumentation.class, "moveAwayForeignFiles",
                 ArchiveProfile.class, File.class, IngestableFiles.class);
         // Set oldjobs place to a different name to check use of setting.
-        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_OLDJOBSDIR,
-                new File(TestInfo.WORKING_DIR, "oddjobs").getAbsolutePath());
+        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_OLDJOBSDIR, new File(TestInfo.WORKING_DIR, "oddjobs")
+                .getAbsolutePath());
         TestInfo.WORKING_DIR.mkdirs();
         File arcsDir = new File(TestInfo.WORKING_DIR, Constants.ARCDIRECTORY_NAME);
         TestFileUtils.copyDirectoryNonCVS(TestInfo.METADATA_TEST_DIR_INCONSISTENT, arcsDir);

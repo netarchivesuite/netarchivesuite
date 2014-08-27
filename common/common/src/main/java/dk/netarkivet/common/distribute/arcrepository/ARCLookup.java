@@ -200,8 +200,8 @@ public class ARCLookup {
      *
      * @param uri A URI to look for.
      * @return The file and offset where that URI can be found, or null if it doesn't exist. TODO Does TermRangeFilter
-     * needs to be modified to memory efficient enough. The the optimizations in the previous used
-     * SparseRangeFilter may or may not relevant for Lucene 3.6+
+     * needs to be modified to memory efficient enough. The the optimizations in the previous used SparseRangeFilter may
+     * or may not relevant for Lucene 3.6+
      */
     private ARCKey luceneLookUp(String uri) {
         // SparseRangeFilter + ConstantScoreQuery means we ignore norms,

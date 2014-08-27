@@ -70,7 +70,7 @@ public class ByteJarLoader extends ClassLoader implements Serializable {
         for (File file : files) {
             try {
                 JarFile jarFile = new JarFile(file);
-                for (Enumeration<JarEntry> e = jarFile.entries(); e.hasMoreElements(); ) {
+                for (Enumeration<JarEntry> e = jarFile.entries(); e.hasMoreElements();) {
                     JarEntry entry = e.nextElement();
                     String name = entry.getName();
                     InputStream in = jarFile.getInputStream(entry);

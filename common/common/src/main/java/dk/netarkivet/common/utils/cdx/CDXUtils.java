@@ -99,8 +99,8 @@ public class CDXUtils {
         Map<File, Exception> exceptions = new HashMap<File, Exception>();
         File[] filesToProcess = archiveFileDirectory.listFiles(archiveProfile.filename_filter);
         if (filesToProcess.length == 0) {
-            log.warn("Found no related arcfiles to process in the archive dir '{}'.",
-                    archiveFileDirectory.getAbsolutePath());
+            log.warn("Found no related arcfiles to process in the archive dir '{}'.", archiveFileDirectory
+                    .getAbsolutePath());
         } else {
             log.debug("Found {} related arcfiles to process in the archive dir '{}'.", filesToProcess.length,
                     archiveFileDirectory.getAbsolutePath());

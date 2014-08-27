@@ -251,8 +251,8 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
         // We'll use the arc file prefix to name the job, since the prefix
         // already contains the harvest id and job id.
         HeritrixFiles files = getHeritrixFiles();
-        executeMBeanOperation(CrawlServiceOperation.addJob, files.getOrderXmlFile().getAbsolutePath(),
-                files.getArchiveFilePrefix(), getJobDescription(), files.getSeedsTxtFile().getAbsolutePath());
+        executeMBeanOperation(CrawlServiceOperation.addJob, files.getOrderXmlFile().getAbsolutePath(), files
+                .getArchiveFilePrefix(), getJobDescription(), files.getSeedsTxtFile().getAbsolutePath());
 
         jobName = getJobName();
 
@@ -501,10 +501,8 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
      * @return a Full frontier report.
      */
     public FullFrontierReport getFullFrontierReport() {
-        return FullFrontierReport.parseContentsAsString(
-                jobName,
-                (String) executeOperationNoRetry(crawlServiceJobBeanName,
-                        CrawlServiceJobOperation.frontierReport.name(), "all"));
+        return FullFrontierReport.parseContentsAsString(jobName, (String) executeOperationNoRetry(
+                crawlServiceJobBeanName, CrawlServiceJobOperation.frontierReport.name(), "all"));
     }
 
     /**
@@ -805,9 +803,8 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
      */
     private void initJMXConnection() {
         // Initialize the connection to Heritrix' MBeanServer
-        this.jmxConnector = JMXUtils.getJMXConnector(SystemUtils.LOCALHOST, getJmxPort(),
-                Settings.get(HarvesterSettings.HERITRIX_JMX_USERNAME),
-                Settings.get(HarvesterSettings.HERITRIX_JMX_PASSWORD));
+        this.jmxConnector = JMXUtils.getJMXConnector(SystemUtils.LOCALHOST, getJmxPort(), Settings
+                .get(HarvesterSettings.HERITRIX_JMX_USERNAME), Settings.get(HarvesterSettings.HERITRIX_JMX_PASSWORD));
     }
 
     /**

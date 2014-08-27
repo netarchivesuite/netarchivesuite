@@ -41,9 +41,8 @@ public class HarvesterSettingsTester {
             // Check that all static public fields are not final
             int modifiers = f.getModifiers();
             if (Modifier.isPublic(modifiers) && Modifier.isStatic(modifiers)) {
-                assertFalse(
-                        "public static fields must not be final, " + "but this was violated by field " + f.getName(),
-                        Modifier.isFinal(modifiers));
+                assertFalse("public static fields must not be final, " + "but this was violated by field "
+                        + f.getName(), Modifier.isFinal(modifiers));
             }
         }
     }
@@ -54,7 +53,7 @@ public class HarvesterSettingsTester {
     @Test
     public void testHarvestControllerPrioritySettingUnchanged() {
         assertEquals("The 'HarvesterSettings.HARVEST_CONTROLLER_CHANNEL' " + "setting has changed. Please update "
-                        + "SingleMBeanObjectTester#Setup method", HarvesterSettings.HARVEST_CONTROLLER_CHANNEL,
+                + "SingleMBeanObjectTester#Setup method", HarvesterSettings.HARVEST_CONTROLLER_CHANNEL,
                 "settings.harvester.harvesting.channel");
     }
 }

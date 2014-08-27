@@ -139,8 +139,9 @@ public class IntegrityTestSuite {
             }
         }
 
-        assertTrue("Expected test message " + testMsg.toString() + "\nshould be received by listener2 only",
-                !listener1.getOk() && listener2.getOk());
+        assertTrue("Expected test message " + testMsg.toString() + "\nshould be received by listener2 only", !listener1
+                .getOk()
+                && listener2.getOk());
 
         // Now removing listener2 and setting a third listener
         // Test that a message is neither received by listener1 nor listener2:
@@ -418,8 +419,8 @@ public class IntegrityTestSuite {
             conn.send(nMsg);
             mc.wait();
         }
-        assertEquals("Arcrepos queue MessageConsumer should have received message.", nMsg.toString(),
-                mc.nMsg.toString());
+        assertEquals("Arcrepos queue MessageConsumer should have received message.", nMsg.toString(), mc.nMsg
+                .toString());
     }
 
     /**
@@ -455,12 +456,12 @@ public class IntegrityTestSuite {
             }
         }
 
-        assertEquals("Arcrepos queue MessageConsumer should have received message.", nMsg.toString(),
-                mc1.nMsg.toString());
-        assertEquals("Arcrepos queue MessageConsumer should have received message.", nMsg.toString(),
-                mc2.nMsg.toString());
-        assertEquals("Arcrepos queue MessageConsumer should have received message.", nMsg.toString(),
-                mc3.nMsg.toString());
+        assertEquals("Arcrepos queue MessageConsumer should have received message.", nMsg.toString(), mc1.nMsg
+                .toString());
+        assertEquals("Arcrepos queue MessageConsumer should have received message.", nMsg.toString(), mc2.nMsg
+                .toString());
+        assertEquals("Arcrepos queue MessageConsumer should have received message.", nMsg.toString(), mc3.nMsg
+                .toString());
     }
 
     /**
@@ -487,8 +488,8 @@ public class IntegrityTestSuite {
             mc.wait();
         }
 
-        assertEquals("Arcrepos queue MessageConsumer should have received message.", nMsg.toString(),
-                mc.nMsg.toString());
+        assertEquals("Arcrepos queue MessageConsumer should have received message.", nMsg.toString(), mc.nMsg
+                .toString());
 
         assertTrue("Queue not empty after consumation of message",
                 queueBrowser.getEnumeration().hasMoreElements() == false);

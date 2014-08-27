@@ -175,8 +175,8 @@ public class CreateCDXMetadataFileTester {
             System.err.flush();
             StringAsserts.assertStringContains("Should have usage and errors in stderr",
                     "'foo42bar' is not a valid job ID"
-                            + "\nUsage: java dk.netarkivet.harvester.tools.CreateCDXMetadataFile [-a|w] jobID",
-                    baosErr.toString());
+                            + "\nUsage: java dk.netarkivet.harvester.tools.CreateCDXMetadataFile [-a|w] jobID", baosErr
+                            .toString());
             baosOut.reset();
             baosErr.reset();
         }

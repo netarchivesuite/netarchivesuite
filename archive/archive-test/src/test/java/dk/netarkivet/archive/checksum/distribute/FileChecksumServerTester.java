@@ -204,9 +204,8 @@ public class FileChecksumServerTester {
             assertNotNull("The checksum of file '" + name + "' may not be null.", csMsg.getChecksum());
 
             // check that the entry exists.
-            assertTrue(
-                    "The archive should have a entry for the file with the correct checksum: " + name + "##"
-                            + csMsg.getChecksum(), archive.contains(name + "##" + csMsg.getChecksum()));
+            assertTrue("The archive should have a entry for the file with the correct checksum: " + name + "##"
+                    + csMsg.getChecksum(), archive.contains(name + "##" + csMsg.getChecksum()));
         }
 
         // Retrieve the checksum for the uploaded file from the checksum
@@ -233,9 +232,8 @@ public class FileChecksumServerTester {
         conn.waitForConcurrentTasksToFinish();
 
         assertFalse("It should not be allowed to correct with a wrong credential.", corMsg.isOk());
-        assertTrue(
-                "The error message of the correct message should contain the wrong credentials: " + corMsg.getErrMsg(),
-                corMsg.getErrMsg().contains("ERROR-CREDENTIALS!"));
+        assertTrue("The error message of the correct message should contain the wrong credentials: "
+                + corMsg.getErrMsg(), corMsg.getErrMsg().contains("ERROR-CREDENTIALS!"));
 
         // Check that a valid message will go through.
         corMsg = new CorrectMessage(theCs, arcReposQ, TestInfo.UPLOADFILE_1_CHECKSUM, corFile, "THREE",
@@ -270,9 +268,8 @@ public class FileChecksumServerTester {
         assertFalse("The this correct message should not be OK.", corMsg.isOk());
 
         // test missing functions.
-        assertTrue(
-                "The application id should contain the local IP '" + SystemUtils.getLocalIP() + "' but was '"
-                        + cfs.getAppId() + "'", cfs.getAppId().contains(SystemUtils.getLocalIP()));
+        assertTrue("The application id should contain the local IP '" + SystemUtils.getLocalIP() + "' but was '"
+                + cfs.getAppId() + "'", cfs.getAppId().contains(SystemUtils.getLocalIP()));
 
         cfs.close();
     }
@@ -364,7 +361,7 @@ public class FileChecksumServerTester {
         pse.tearDown();
 
         assertEquals("Should give exit code 1", 1, pse.getExitValue());
-        assertTrue("Should tell that no arguments are expected.",
-                pss.getOut().contains("This application takes no arguments"));
+        assertTrue("Should tell that no arguments are expected.", pss.getOut().contains(
+                "This application takes no arguments"));
     }
 }

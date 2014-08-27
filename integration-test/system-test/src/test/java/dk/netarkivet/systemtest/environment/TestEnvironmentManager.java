@@ -136,8 +136,8 @@ public class TestEnvironmentManager {
      * timeout of 1000 seconds. This may be useful in case of prolong operations.
      *
      * @param server The server to run the command on. If this is null the command is run on the DEPLOYMENT_SERVER.
-     * Commands run other server the will command will be executed by ssh to the DEPLOYMENT_SERVER and from
-     * here ssh to the actual test server.
+     * Commands run other server the will command will be executed by ssh to the DEPLOYMENT_SERVER and from here ssh to
+     * the actual test server.
      * @param command The command to run on the test server.
      * @param commandTimeout The timeout for the command.
      */

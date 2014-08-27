@@ -102,7 +102,7 @@ public abstract class WARCBatchJob extends FileBatchJob {
         log.info("Processing WARCfile: {}", warcFile.getName());
 
         try { // This outer try-catch block catches all unexpected exceptions
-            // Create an WARCReader and retrieve its Iterator:
+              // Create an WARCReader and retrieve its Iterator:
             WARCReader warcReader = null;
 
             try {
@@ -130,8 +130,8 @@ public abstract class WARCBatchJob extends FileBatchJob {
                         if (!getFilter().accept(record)) {
                             continue;
                         }
-                        log.debug("Processing WARCRecord #{} in WARCfile '{}'.", noOfRecordsProcessed,
-                                warcFile.getName());
+                        log.debug("Processing WARCRecord #{} in WARCfile '{}'.", noOfRecordsProcessed, warcFile
+                                .getName());
                         processRecord(record, os);
                         ++noOfRecordsProcessed;
                     } catch (NetarkivetException e) {
@@ -206,8 +206,8 @@ public abstract class WARCBatchJob extends FileBatchJob {
     public void handleException(Exception e, File warcfile, long index) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(e, "e");
 
-        log.debug("Caught exception while running batch job on file {}, position {}:\n{}", warcfile, index,
-                e.getMessage(), e);
+        log.debug("Caught exception while running batch job on file {}, position {}:\n{}", warcfile, index, e
+                .getMessage(), e);
         addException(warcfile, index, ExceptionOccurrence.UNKNOWN_OFFSET, e);
     }
 

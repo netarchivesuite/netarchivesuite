@@ -118,8 +118,8 @@ public class ReportingWarcTester {
         // recordsForJob.get(0).getURL());
         StringAsserts.assertStringMatches("Last record should be cdx", "^metadata://netarkivet.dk/crawl/index/cdx.*",
                 recordsForJob.get(recordsForJob.size() - 1).getURL());
-        CollectionAsserts.assertListEquals("Job 4 not harvested, list should be empty",
-                Reporting.getMetadataCDXRecordsForJob(4));
+        CollectionAsserts.assertListEquals("Job 4 not harvested, list should be empty", Reporting
+                .getMetadataCDXRecordsForJob(4));
     }
 
     /**
@@ -141,8 +141,8 @@ public class ReportingWarcTester {
         assertTrue("Should have found a result, but found none", lines.size() > 0);
         StringAsserts.assertStringContains("First line should be dns", "dns:", lines.get(0));
 
-        StringAsserts.assertStringContains("Last line should be netarkivet.dk", "netarkivet.dk",
-                lines.get(lines.size() - 1));
+        StringAsserts.assertStringContains("Last line should be netarkivet.dk", "netarkivet.dk", lines
+                .get(lines.size() - 1));
         assertEquals("Should have 161 lines", 161, lines.size());
 
         assertEquals("Should have 161 lines", 161, lines.size());
@@ -150,8 +150,8 @@ public class ReportingWarcTester {
         file = Reporting.getCrawlLogForDomainInJob("netarkivet.dk", jobId);
         lines = FileUtils.readListFromFile(file);
         assertTrue("Should have found a result, but found none", lines.size() > 0);
-        StringAsserts.assertStringContains("Last line should be netarkivet.dk", "netarkivet.dk",
-                lines.get(lines.size() - 1));
+        StringAsserts.assertStringContains("Last line should be netarkivet.dk", "netarkivet.dk", lines
+                .get(lines.size() - 1));
         assertEquals("Should have 302 lines", 302, lines.size());
     }
 

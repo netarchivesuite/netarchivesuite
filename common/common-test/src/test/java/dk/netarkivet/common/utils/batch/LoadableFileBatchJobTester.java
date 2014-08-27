@@ -104,9 +104,8 @@ public class LoadableFileBatchJobTester {
         assertTrue("File should have odd length", retval);
         retval = job.processFile(TestInfo.INPUT_2, os);
         assertEquals("Should have added message from process", "initialize() called on me\n"
-                        + "processFile() called on me with input-1.arc\n"
-                        + "processFile() called on me with input-2.arc\n",
-                os.toString());
+                + "processFile() called on me with input-1.arc\n" + "processFile() called on me with input-2.arc\n", os
+                .toString());
         assertFalse("File should have even length", retval);
 
         // try to make hack file via loaded batch file
@@ -126,8 +125,8 @@ public class LoadableFileBatchJobTester {
         FileBatchJob job = new LoadableFileBatchJob(new File(TestInfo.WORKING_DIR, "LoadableTestJob.class"),
                 new ArrayList<String>());
         assertEquals("Should have name ",
-                "dk.netarkivet.common.utils.batch.LoadableFileBatchJob processing LoadableTestJob.class",
-                job.toString());
+                "dk.netarkivet.common.utils.batch.LoadableFileBatchJob processing LoadableTestJob.class", job
+                        .toString());
     }
 
     @Test
@@ -209,8 +208,8 @@ public class LoadableFileBatchJobTester {
             // expected
         }
         assertEquals("Should have added message from process",
-                "processFile() called on me with useclassloadertoclimb\n" + "Trying backwards breakout.\n",
-                baos.toString());
+                "processFile() called on me with useclassloadertoclimb\n" + "Trying backwards breakout.\n", baos
+                        .toString());
 
         baos = new ByteArrayOutputStream();
         final File smashable = new File(TestInfo.WORKING_DIR, "trytosmash");
@@ -255,8 +254,8 @@ public class LoadableFileBatchJobTester {
         String result1 = os.toString();
         assertTrue("expected: Urls matched = 3, but got:\n" + result1, result1.contains("Urls matched = 3"));
         assertTrue("expected: Mimetypes mached = 4, but got:\n" + result1, result1.contains("Mimetypes matched = 4"));
-        assertTrue("expected: Url and Mimetype maches = 3, but got:\n" + result1,
-                result1.contains("Url and Mimetype matches = 3"));
+        assertTrue("expected: Url and Mimetype maches = 3, but got:\n" + result1, result1
+                .contains("Url and Mimetype matches = 3"));
 
         // try with different
         args.clear();
@@ -286,8 +285,8 @@ public class LoadableFileBatchJobTester {
         job.finish(os);
 
         String result3 = os.toString();
-        assertTrue("Expected results to be identical: Results 1\n" + result1 + "\nResults3:\n" + result3,
-                result1.equals(result3));
+        assertTrue("Expected results to be identical: Results 1\n" + result1 + "\nResults3:\n" + result3, result1
+                .equals(result3));
     }
 
     @Test

@@ -105,10 +105,7 @@ public class DomainSeedsDefinition {
         Domain domain = DomainDAO.getInstance().read(name);
 
         if (domain.getEdition() != edition) {
-            HTMLUtils.forwardWithRawErrorMessage(
-                    context,
-                    i18n,
-                    "errormsg;domain.definition.changed.0.retry.1",
+            HTMLUtils.forwardWithRawErrorMessage(context, i18n, "errormsg;domain.definition.changed.0.retry.1",
                     "<br/><a href=\"Definitions-edit-domain.jsp?" + Constants.DOMAIN_PARAM + "="
                             + HTMLUtils.escapeHtmlValues(HTMLUtils.encode(name)) + "\">", "</a>");
             throw new ForwardedToErrorPage("Domain '" + name + "' has changed");

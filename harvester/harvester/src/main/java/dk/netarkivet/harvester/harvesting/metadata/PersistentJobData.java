@@ -529,8 +529,7 @@ public class PersistentJobData implements JobInfo {
         /** the state of the XML. */
         private OKSTATE ok;
         /** The error coming from an xml-validation. */
-        private String error;
-        ;
+        private String error;;
 
         /**
          * Constructor of an XmlState object.

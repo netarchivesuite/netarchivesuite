@@ -45,7 +45,8 @@ public class DefaultHeritrixLauncher extends HeritrixLauncher {
 
     /** How long to wait before aborting a request from a webserver. */
     private static long timeOutInMillisReceivedData = Long.parseLong(Settings
-            .get(HarvesterSettings.CRAWLER_TIMEOUT_NON_RESPONDING)) * MILLIS_PER_SECOND;
+            .get(HarvesterSettings.CRAWLER_TIMEOUT_NON_RESPONDING))
+            * MILLIS_PER_SECOND;
 
     /** How long to wait without any activity before aborting the harvest. */
     private static long timeOutInMillis = Long.parseLong(Settings.get(HarvesterSettings.INACTIVITY_TIMEOUT_IN_SECS))

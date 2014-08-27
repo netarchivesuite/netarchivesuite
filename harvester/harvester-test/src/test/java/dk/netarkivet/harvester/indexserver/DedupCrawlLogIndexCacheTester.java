@@ -109,8 +109,8 @@ public class DedupCrawlLogIndexCacheTester extends CacheTestCase {
         cache.combine(files);
 
         assertTrue("Result file should have contents after combining", resultFile.length() > 0);
-        assertFalse("Should not have left an unzipped lucene index",
-                new File(resultFile.getAbsolutePath().substring(0, resultFile.getAbsolutePath().length() - 4)).exists());
+        assertFalse("Should not have left an unzipped lucene index", new File(resultFile.getAbsolutePath().substring(0,
+                resultFile.getAbsolutePath().length() - 4)).exists());
         File unzipDir = new File(TestInfo.WORKING_DIR, "luceneindex");
         if (!unzipDir.mkdir()) {
             fail("Unable to create unzipDir '" + unzipDir.getAbsolutePath() + "' for luceneindex: ");
@@ -119,8 +119,8 @@ public class DedupCrawlLogIndexCacheTester extends CacheTestCase {
         for (File f : resultFiles) {
             if (f.getName().endsWith(".gz")) {
                 InputStream in = new GZIPInputStream(new FileInputStream(f));
-                FileUtils.writeStreamToFile(in,
-                        new File(unzipDir, f.getName().substring(0, f.getName().length() - ".gz".length())));
+                FileUtils.writeStreamToFile(in, new File(unzipDir, f.getName().substring(0,
+                        f.getName().length() - ".gz".length())));
                 in.close();
             }
         }
@@ -155,8 +155,8 @@ public class DedupCrawlLogIndexCacheTester extends CacheTestCase {
 
         verifySearchResult(origins, index);
 
-        assertTrue("Should have found all origins, but have still " + origins.size() + " left: " + origins,
-                origins.isEmpty());
+        assertTrue("Should have found all origins, but have still " + origins.size() + " left: " + origins, origins
+                .isEmpty());
     }
 
     private void verifySearchResult(Map<String, String> origins, IndexSearcher index) throws IOException {
@@ -194,8 +194,8 @@ public class DedupCrawlLogIndexCacheTester extends CacheTestCase {
 
         File reader = DedupCrawlLogIndexCache.getSortedCDX(cdxUnsorted);
         assertNotNull("Should get a file for an existing job", reader);
-        assertEquals("CDX file returned should have same content as presorted file",
-                FileUtils.readListFromFile(TestInfo.CDX_CACHE_4), FileUtils.readListFromFile(reader));
+        assertEquals("CDX file returned should have same content as presorted file", FileUtils
+                .readListFromFile(TestInfo.CDX_CACHE_4), FileUtils.readListFromFile(reader));
     }
 
     @Test

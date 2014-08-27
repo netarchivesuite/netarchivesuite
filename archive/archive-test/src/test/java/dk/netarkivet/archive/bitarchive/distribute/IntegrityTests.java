@@ -225,8 +225,8 @@ public class IntegrityTests {
         File output_file = new File(WORKING, "batch_output.txt");
 
         // Create a batch message
-        BatchMessage bm = new BatchMessage(Channels.getTheBamon(), Channels.getTheRepos(), new ChecksumJob(),
-                Settings.get(CommonSettings.USE_REPLICA_ID));
+        BatchMessage bm = new BatchMessage(Channels.getTheBamon(), Channels.getTheRepos(), new ChecksumJob(), Settings
+                .get(CommonSettings.USE_REPLICA_ID));
         JMSConnectionMockupMQ.updateMsgID(bm, "testmsgid0");
 
         // Invent two BitarchiveServers and send heartbeats from them
@@ -265,19 +265,18 @@ public class IntegrityTests {
 
         // Now there should also one BatchReplyMessage in the listener and the
         // monitor should have written the data to a remote file we can collect
-        assertEquals("Should have received exactly two messages, but got " + listener.getAllReceived(), 2,
-                listener.getNumReceived());
+        assertEquals("Should have received exactly two messages, but got " + listener.getAllReceived(), 2, listener
+                .getNumReceived());
         List<NetarkivetMessage> received = listener.getAllReceived();
-        for (Iterator<NetarkivetMessage> i = received.iterator(); i.hasNext(); ) {
+        for (Iterator<NetarkivetMessage> i = received.iterator(); i.hasNext();) {
             Object o = i.next();
             if (o instanceof BatchReplyMessage) {
                 ((BatchReplyMessage) o).getResultFile().copyTo(output_file);
             }
         }
 
-        FileAsserts.assertFileNumberOfLines(
-                "Aggregated file should have two " + "lines. Content is: " + FileUtils.readFile(output_file),
-                output_file, 2);
+        FileAsserts.assertFileNumberOfLines("Aggregated file should have two " + "lines. Content is: "
+                + FileUtils.readFile(output_file), output_file, 2);
         FileAsserts.assertFileContains("File contents not as expected", "1", output_file);
         FileAsserts.assertFileContains("File contents not as expected", "2", output_file);
 
@@ -330,8 +329,8 @@ public class IntegrityTests {
             BatchMessage bMsg = new BatchMessage(THE_BAMON, Channels.getThisReposClient(), new TestBatchJobRuns(),
                     Settings.get(CommonSettings.USE_REPLICA_ID));
             bac.sendBatchJob(bMsg);
-            RemoveAndGetFileMessage rMsg = new RemoveAndGetFileMessage(Channels.getTheRepos(),
-                    Channels.getThisReposClient(), FILENAME_TO_GET, "ONE", "FFFF", "42");
+            RemoveAndGetFileMessage rMsg = new RemoveAndGetFileMessage(Channels.getTheRepos(), Channels
+                    .getThisReposClient(), FILENAME_TO_GET, "ONE", "FFFF", "42");
             bac.sendRemoveAndGetFileMessage(rMsg);
         }
         // System.out.println("Sending messages done");
@@ -498,8 +497,7 @@ public class IntegrityTests {
         }
 
         synchronized public int getTotalCount() {
-            return (uploadMsg.size() + getMsg.size() + removeMsg.size() + batchMsg.size() + getfileMsg.size()
-                    + batchReplyMsg
+            return (uploadMsg.size() + getMsg.size() + removeMsg.size() + batchMsg.size() + getfileMsg.size() + batchReplyMsg
                     .size());
         }
 

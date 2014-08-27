@@ -63,8 +63,8 @@ public class TemplateDAOTesterAlternate {
             fail("No connection to Database: " + TestInfo.EMPTYDBFILE);
         }
 
-        assertEquals("DBUrl wrong", Settings.get(CommonSettings.DB_BASE_URL),
-                "jdbc:derby:" + TestInfo.TEMPDIR.getCanonicalPath() + "/emptyhddb");
+        assertEquals("DBUrl wrong", Settings.get(CommonSettings.DB_BASE_URL), "jdbc:derby:"
+                + TestInfo.TEMPDIR.getCanonicalPath() + "/emptyhddb");
         TemplateDAO.getInstance();
     }
 
@@ -92,7 +92,7 @@ public class TemplateDAOTesterAlternate {
                     + "the default template, but threw exception: " + e);
         }
         // verify that templates table is indeed derived of default template
-        assertFalse("Should not contain default template",
-                dao.exists(Settings.get(HarvesterSettings.DOMAIN_DEFAULT_ORDERXML)));
+        assertFalse("Should not contain default template", dao.exists(Settings
+                .get(HarvesterSettings.DOMAIN_DEFAULT_ORDERXML)));
     }
 }

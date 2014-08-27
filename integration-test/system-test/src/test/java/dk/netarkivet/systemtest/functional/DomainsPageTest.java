@@ -128,7 +128,7 @@ public class DomainsPageTest extends SeleniumTest {
                 "Didn't find the defaultconfig as the only configuration");
 
         addStep("Click the 'Show unused configurations' link again, set the second configuration as "
-                        + "default configuration and click save. ",
+                + "default configuration and click save. ",
                 "Only the second configuration should be, as the 'Hide unused configurations' filter has been reset "
                         + "after the save.");
         PageHelper.clickLink(SHOW_UNUSED_CONFIGURATIONS_LINK);
@@ -230,14 +230,14 @@ public class DomainsPageTest extends SeleniumTest {
     }
 
     private List<WebElement> readConfigurationTableRows(WebDriver driver) {
-        List<WebElement> seedListTableRows = driver.findElements(By.className("selection_table")).get(0)
-                .findElements(By.className("row0"));
+        List<WebElement> seedListTableRows = driver.findElements(By.className("selection_table")).get(0).findElements(
+                By.className("row0"));
         return seedListTableRows;
     }
 
     private List<WebElement> readSeedListTableRows(WebDriver driver) {
-        List<WebElement> seedListTableRows = driver.findElements(By.className("selection_table")).get(1)
-                .findElements(By.className("row0"));
+        List<WebElement> seedListTableRows = driver.findElements(By.className("selection_table")).get(1).findElements(
+                By.className("row0"));
         return seedListTableRows;
     }
 }

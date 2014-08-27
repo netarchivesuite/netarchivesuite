@@ -251,8 +251,8 @@ public class PartialHarvestTester extends DataModelTestCase {
         SeedList seedList = mdsli.next();
         assertFalse("Should be one seedlist", mdsli.hasNext());
         List<String> seeds = seedList.getSeeds();
-        assertTrue("Should contain expected seeds",
-                seeds.contains("https://www.asubdomain.mydomain.dk/page1.jsp?aparam=avalue"));
+        assertTrue("Should contain expected seeds", seeds
+                .contains("https://www.asubdomain.mydomain.dk/page1.jsp?aparam=avalue"));
         assertTrue("Should contain expected seeds", seeds.contains("http://www.mydomain.dk/page2.jsp"));
         assertEquals("Seedlist should have two entries", 2, seeds.size());
         // check newdomain seedlist
@@ -393,8 +393,8 @@ public class PartialHarvestTester extends DataModelTestCase {
 
         nodupslist = IteratorUtils.toList(harvest.getDomainConfigurations());
 
-        assertEquals("Should have 1 entry in domain config list after adding" + " same after updates", 1,
-                nodupslist.size());
+        assertEquals("Should have 1 entry in domain config list after adding" + " same after updates", 1, nodupslist
+                .size());
 
         List<DomainConfiguration> list = Collections.emptyList();
         harvest.setDomainConfigurations(list);

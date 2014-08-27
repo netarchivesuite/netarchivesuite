@@ -304,9 +304,9 @@ public class JMSArcRepositoryClient extends Synchronizer implements ArcRepositor
      * remotely while it is running.
      *
      * @param job An object that implements the FileBatchJob interface. The initialize() method will be called before
-     * processing and the finish() method will be called afterwards. The process() method will be called with
-     * each File entry. An optional function postProcess() allows handling the combined results of the
-     * batchjob, e.g. summing the results, sorting, etc.
+     * processing and the finish() method will be called afterwards. The process() method will be called with each File
+     * entry. An optional function postProcess() allows handling the combined results of the batchjob, e.g. summing the
+     * results, sorting, etc.
      * @param replicaId The archive to execute the job on.
      * @param args The arguments for the batchjob.
      * @return The status of the batch job after it ended.
@@ -319,9 +319,9 @@ public class JMSArcRepositoryClient extends Synchronizer implements ArcRepositor
      * Runs a batch job on each file in the ArcRepository.
      *
      * @param job An object that implements the FileBatchJob interface. The initialize() method will be called before
-     * processing and the finish() method will be called afterwards. The process() method will be called with
-     * each File entry. An optional function postProcess() allows handling the combined results of the
-     * batchjob, e.g. summing the results, sorting, etc.
+     * processing and the finish() method will be called afterwards. The process() method will be called with each File
+     * entry. An optional function postProcess() allows handling the combined results of the batchjob, e.g. summing the
+     * results, sorting, etc.
      * @param replicaId The archive to execute the job on.
      * @param args The arguments for the batchjob. This is allowed to be null.
      * @param batchId The id for the batch process.
@@ -346,8 +346,8 @@ public class JMSArcRepositoryClient extends Synchronizer implements ArcRepositor
                 throw new IOFailure(msg);
             }
         }
-        return new BatchStatus(brMsg.getFilesFailed(), brMsg.getNoOfFilesProcessed(), brMsg.getResultFile(),
-                job.getExceptions());
+        return new BatchStatus(brMsg.getFilesFailed(), brMsg.getNoOfFilesProcessed(), brMsg.getResultFile(), job
+                .getExceptions());
     }
 
     /**
@@ -406,8 +406,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements ArcRepositor
      * @return The file that was removed
      * @throws ArgumentNotValid if arguments are null or equal to the empty string
      * @throws IOFailure if we could not delete the remote file, or there was no response to our RemoveAndGetFileMessage
-     * within the allotted time defined by the setting
-     * {@link JMSArcRepositoryClient#ARCREPOSITORY_STORE_TIMEOUT}.
+     * within the allotted time defined by the setting {@link JMSArcRepositoryClient#ARCREPOSITORY_STORE_TIMEOUT}.
      */
     public File removeAndGetFile(String fileName, String bitarchiveId, String checksum, String credentials)
             throws IOFailure, ArgumentNotValid {
@@ -420,8 +419,8 @@ public class JMSArcRepositoryClient extends Synchronizer implements ArcRepositor
                 + bitarchiveId + "'";
         log.warn(msg);
         NotificationsFactory.getInstance().notify(msg, NotificationType.WARNING);
-        RemoveAndGetFileMessage aMsg = new RemoveAndGetFileMessage(Channels.getTheRepos(),
-                Channels.getThisReposClient(), fileName, bitarchiveId, checksum, credentials);
+        RemoveAndGetFileMessage aMsg = new RemoveAndGetFileMessage(Channels.getTheRepos(), Channels
+                .getThisReposClient(), fileName, bitarchiveId, checksum, credentials);
         RemoveAndGetFileMessage replyMsg = (RemoveAndGetFileMessage) sendAndWaitForOneReply(aMsg, storeTimeout);
 
         // The removed file is returned, move to temp location

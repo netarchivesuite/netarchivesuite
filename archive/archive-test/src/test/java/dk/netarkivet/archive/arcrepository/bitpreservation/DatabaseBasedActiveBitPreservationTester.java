@@ -154,17 +154,17 @@ public class DatabaseBasedActiveBitPreservationTester {
         cache.addChecksumInformation(csFile1, REPLICA_THREE);
 
         dbabp = DatabaseBasedActiveBitPreservation.getInstance();
-        assertEquals("Replica '" + REPLICA_THREE + "' should not be missing any files.", 0,
-                dbabp.getNumberOfMissingFiles(REPLICA_THREE));
+        assertEquals("Replica '" + REPLICA_THREE + "' should not be missing any files.", 0, dbabp
+                .getNumberOfMissingFiles(REPLICA_THREE));
         dbabp.findMissingFiles(REPLICA_TWO);
 
-        assertEquals("Replica '" + REPLICA_TWO + "' should only be missing 1 file.", 1,
-                dbabp.getNumberOfMissingFiles(REPLICA_TWO));
-        assertEquals("Replica '" + REPLICA_TWO + "' should only be missing file '" + "integrity7.ARC" + '.',
-                Arrays.asList("integrity7.ARC"), dbabp.getMissingFiles(REPLICA_TWO));
+        assertEquals("Replica '" + REPLICA_TWO + "' should only be missing 1 file.", 1, dbabp
+                .getNumberOfMissingFiles(REPLICA_TWO));
+        assertEquals("Replica '" + REPLICA_TWO + "' should only be missing file '" + "integrity7.ARC" + '.', Arrays
+                .asList("integrity7.ARC"), dbabp.getMissingFiles(REPLICA_TWO));
 
-        assertEquals("Replica '" + REPLICA_THREE + "' should now be missing one file.", 1,
-                dbabp.getNumberOfMissingFiles(REPLICA_THREE));
+        assertEquals("Replica '" + REPLICA_THREE + "' should now be missing one file.", 1, dbabp
+                .getNumberOfMissingFiles(REPLICA_THREE));
     }
 
     /**
@@ -206,11 +206,10 @@ public class DatabaseBasedActiveBitPreservationTester {
                 + Calendar.getInstance().getTimeInMillis() + " but was " + date.getTime(), date.getTime() < Calendar
                 .getInstance().getTimeInMillis());
 
-        assertEquals("Replica '" + REPLICA_THREE + "' should have 2 corrupted files", 2,
-                dbabp.getNumberOfChangedFiles(REPLICA_THREE));
+        assertEquals("Replica '" + REPLICA_THREE + "' should have 2 corrupted files", 2, dbabp
+                .getNumberOfChangedFiles(REPLICA_THREE));
         assertEquals("Replica '" + REPLICA_THREE + "' should have corrupted the files "
-                        + "'integrity11.ARC' and 'integrity12.ARC'.",
-                Arrays.asList("integrity11.ARC", "integrity12.ARC"),
+                + "'integrity11.ARC' and 'integrity12.ARC'.", Arrays.asList("integrity11.ARC", "integrity12.ARC"),
                 dbabp.getChangedFiles(REPLICA_THREE));
 
         dbabp.replaceChangedFile(REPLICA_ONE, "integrity11.ARC", "XX", "399d2f9583da5516d7cdd4dfe3ed3b71");
@@ -224,14 +223,14 @@ public class DatabaseBasedActiveBitPreservationTester {
         PreservationState pres = presMap.get("integrity11.ARC");
         assertNotNull("The preservation state should not be null.", pres);
 
-        assertEquals("It should be upload completely, but not registret yet",
-                ReplicaStoreState.UPLOAD_FAILED.toString(), pres.getAdminReplicaState(REPLICA_THREE));
+        assertEquals("It should be upload completely, but not registret yet", ReplicaStoreState.UPLOAD_FAILED
+                .toString(), pres.getAdminReplicaState(REPLICA_THREE));
 
         dbabp.findChangedFiles(REPLICA_THREE);
 
         pres = dbabp.getPreservationState("integrity11.ARC");
-        assertEquals("It should be now be registreret as upload completely.",
-                ReplicaStoreState.UPLOAD_COMPLETED.toString(), pres.getAdminReplicaState(REPLICA_THREE));
+        assertEquals("It should be now be registreret as upload completely.", ReplicaStoreState.UPLOAD_COMPLETED
+                .toString(), pres.getAdminReplicaState(REPLICA_THREE));
 
         try {
             dbabp.uploadMissingFiles(REPLICA_THREE, "integrity7.ARC");
@@ -305,10 +304,10 @@ public class DatabaseBasedActiveBitPreservationTester {
 
         // verify that all replicas has both files, and no 'wrong' entries.
         assertEquals("Unexpected number of files for " + REPLICA_TWO, 2, cache.getNumberOfFiles(REPLICA_TWO));
-        assertEquals("Unexpected number of missing files for " + REPLICA_TWO, 0,
-                cache.getNumberOfMissingFilesInLastUpdate(REPLICA_TWO));
-        assertEquals("Unexpected number of wrong files for " + REPLICA_TWO, 0,
-                cache.getNumberOfWrongFilesInLastUpdate(REPLICA_TWO));
+        assertEquals("Unexpected number of missing files for " + REPLICA_TWO, 0, cache
+                .getNumberOfMissingFilesInLastUpdate(REPLICA_TWO));
+        assertEquals("Unexpected number of wrong files for " + REPLICA_TWO, 0, cache
+                .getNumberOfWrongFilesInLastUpdate(REPLICA_TWO));
 
         checksumlist.clear();
         checksumlist.add("1.arc##1234");
@@ -319,10 +318,10 @@ public class DatabaseBasedActiveBitPreservationTester {
 
         // verify that replica TWO is missing a file, but has no wrong files.
         assertEquals("Unexpected number of files for " + REPLICA_TWO, 1, cache.getNumberOfFiles(REPLICA_TWO));
-        assertEquals("Unexpected number of missing files for " + REPLICA_TWO, 1,
-                cache.getNumberOfMissingFilesInLastUpdate(REPLICA_TWO));
-        assertEquals("Unexpected number of wrong files for " + REPLICA_TWO, 0,
-                cache.getNumberOfWrongFilesInLastUpdate(REPLICA_TWO));
+        assertEquals("Unexpected number of missing files for " + REPLICA_TWO, 1, cache
+                .getNumberOfMissingFilesInLastUpdate(REPLICA_TWO));
+        assertEquals("Unexpected number of wrong files for " + REPLICA_TWO, 0, cache
+                .getNumberOfWrongFilesInLastUpdate(REPLICA_TWO));
     }
 
     /**
@@ -335,8 +334,8 @@ public class DatabaseBasedActiveBitPreservationTester {
         assertTrue("ActiveBitPreservation default is currently " + FileBasedActiveBitPreservation.class.getName(),
                 abp instanceof FileBasedActiveBitPreservation);
 
-        Settings.set(ArchiveSettings.CLASS_ARCREPOSITORY_BITPRESERVATION,
-                DatabaseBasedActiveBitPreservation.class.getName());
+        Settings.set(ArchiveSettings.CLASS_ARCREPOSITORY_BITPRESERVATION, DatabaseBasedActiveBitPreservation.class
+                .getName());
 
         ActiveBitPreservation abp2 = ActiveBitPreservationFactory.getInstance();
         assertTrue("ActiveBitPreservation should now be " + DatabaseBasedActiveBitPreservation.class.getName(),
@@ -483,9 +482,8 @@ public class DatabaseBasedActiveBitPreservationTester {
                 FileOutputStream os = new FileOutputStream(output);
                 new BatchLocalFiles(in_files).run(job, os);
                 os.close();
-                return new BatchStatus("BA1", Collections.<File>emptyList(), in_files.length,
-                        RemoteFileFactory.getMovefileInstance(output), new ArrayList<FileBatchJob.ExceptionOccurrence>(
-                        0));
+                return new BatchStatus("BA1", Collections.<File>emptyList(), in_files.length, RemoteFileFactory
+                        .getMovefileInstance(output), new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
             } catch (IOException e) {
                 fail("IO error during test");
                 return null;

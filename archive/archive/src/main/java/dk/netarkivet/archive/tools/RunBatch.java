@@ -65,10 +65,8 @@ import dk.netarkivet.common.utils.batch.LoadableJarBatchJob;
  * -C&lt;classfile&gt; is a file containing a FileBatchJob implementation <br/>
  * -R&lt;regexp&gt; is a regular expression that will be matched against file names in the archive, by default .* <br/>
  * -B&lt;replica&gt; is the name of the bitarchive replica this should be run on, by default taken from settings. <br/>
- * -O&lt;outputfile&lt; is a file where the output from the batch job will be written. By default, it goes to stdout.
- * <br/>
- * -E&lt;errorFile&gt; is a file where the errors from the batch job will be written. By default, it goes to stderr.
- * <br/>
+ * -O&lt;outputfile&lt; is a file where the output from the batch job will be written. By default, it goes to stdout. <br/>
+ * -E&lt;errorFile&gt; is a file where the errors from the batch job will be written. By default, it goes to stderr. <br/>
  * -N&lt;className&gt; is the name of the primary class to be loaded when doing a LoadableJarBatchJob <br/>
  * -A&lt;Arguments&gt; The arguments for the batchjob, separated by '##', e.g. -Aarg1##arg2##... <br/>
  * Examples: <br/>
@@ -84,8 +82,7 @@ public class RunBatch extends ToolRunnerBase {
      * Management of this, exception handling etc. is delegated to ToolRunnerBase class.
      *
      * @param argv command line parameters as defined in local class BatchParameters required: The name of a class-file
-     * containing an implementation of FileBatchJob Name of jar file which includes the class file, and the
-     * className
+     * containing an implementation of FileBatchJob Name of jar file which includes the class file, and the className
      */
     public static void main(String[] argv) {
         RunBatch instance = new RunBatch();
@@ -252,10 +249,9 @@ public class RunBatch extends ToolRunnerBase {
 
                 options.addOption(REGEXP_OPTION_KEY, hasArg, "Regular expression for files to be processed "
                         + "(default: '" + regexp + "')");
-                options.addOption(REPLICA_OPTION_KEY, hasArg,
-                        "Name of bitarchive replica where batch must " + "be run " + "(default: '"
-                                + Replica.getReplicaFromId(Settings.get(CommonSettings.USE_REPLICA_ID)).getName()
-                                + "')");
+                options.addOption(REPLICA_OPTION_KEY, hasArg, "Name of bitarchive replica where batch must "
+                        + "be run " + "(default: '"
+                        + Replica.getReplicaFromId(Settings.get(CommonSettings.USE_REPLICA_ID)).getName() + "')");
                 options.addOption(OUTPUTFILE_OPTION_KEY, hasArg, "Output file to contain result (default is "
                         + "stdout)");
                 options.addOption(ERRORFILE_OPTION_KEY, hasArg, "Error file to contain errors from run "

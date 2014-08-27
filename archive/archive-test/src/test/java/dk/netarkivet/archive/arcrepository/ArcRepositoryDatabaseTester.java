@@ -175,14 +175,14 @@ public class ArcRepositoryDatabaseTester {
         Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, TestInfo.WORKING_DIR.getAbsolutePath());
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS, PrintNotifications.class.getName());
 
-        Settings.set(ArchiveSettings.BASEURL_ARCREPOSITORY_ADMIN_DATABASE,
-                "jdbc:derby:" + TestInfo.WORKING_DIR.getAbsolutePath() + "/derivenamefromresource");
+        Settings.set(ArchiveSettings.BASEURL_ARCREPOSITORY_ADMIN_DATABASE, "jdbc:derby:"
+                + TestInfo.WORKING_DIR.getAbsolutePath() + "/derivenamefromresource");
         Settings.set(ArchiveSettings.MACHINE_ARCREPOSITORY_ADMIN_DATABASE, "");
         Settings.set(ArchiveSettings.PORT_ARCREPOSITORY_ADMIN_DATABASE, "");
         Settings.set(ArchiveSettings.DIR_ARCREPOSITORY_ADMIN_DATABASE, "");
         /** Use the class DatabaseAdmin as admin class. */
-        Settings.set(ArchiveSettings.ADMIN_CLASS,
-                dk.netarkivet.archive.arcrepositoryadmin.DatabaseAdmin.class.getName());
+        Settings.set(ArchiveSettings.ADMIN_CLASS, dk.netarkivet.archive.arcrepositoryadmin.DatabaseAdmin.class
+                .getName());
 
         // Batch
         TestFileUtils.copyDirectoryNonCVS(ORIGINALS_DIR, WORKING_DIR);
@@ -300,8 +300,8 @@ public class ArcRepositoryDatabaseTester {
 
         assertEquals("Should get right checksum when matching", "foo", callReadChecksum("bar##foo", "bar"));
 
-        assertEquals("Should get right checksum if not on first line", "bonk",
-                callReadChecksum("bar##baz\nfoo##bonk", "foo"));
+        assertEquals("Should get right checksum if not on first line", "bonk", callReadChecksum("bar##baz\nfoo##bonk",
+                "foo"));
         /*
          * LogUtils.flushLogs(ArcRepository.class.getName()); FileAsserts.assertFileContains(
          * "Should have warning about unwanted line",
@@ -312,8 +312,8 @@ public class ArcRepositoryDatabaseTester {
         lr.assertLogContains("Should have warning about unwanted line",
                 "There were an unexpected arc-file name in checksum result for arc-file 'foo'(line: 'bar##baz')");
         lr.assertLogNotContains("Should have no warning about wanted line", "Read unexpected line 'foo##bonk");
-        assertEquals("Should get right checksum if not on last line", "baz",
-                callReadChecksum("bar##baz\nfoo##bonk", "bar"));
+        assertEquals("Should get right checksum if not on last line", "baz", callReadChecksum("bar##baz\nfoo##bonk",
+                "bar"));
 
         assertEquals("Should get right checksum if empty lines", "bar", callReadChecksum("foo##bar\n\n", "foo"));
 
@@ -322,8 +322,8 @@ public class ArcRepositoryDatabaseTester {
             callReadChecksum("barf", "foobar");
             fail("A checksum output file only containing 'barf' should through IllegalState");
         } catch (IllegalState e) {
-            assertEquals("Not expected error message!", "Read checksum line had unexpected format 'barf'",
-                    e.getMessage());
+            assertEquals("Not expected error message!", "Read checksum line had unexpected format 'barf'", e
+                    .getMessage());
             // This is expected!
         }
         // Check that a entry may not have two different checksums.
@@ -478,10 +478,10 @@ public class ArcRepositoryDatabaseTester {
         job2 = (ChecksumJob) ois.readObject();
         // ois.close();
         // Finally, compare their visible states:
-        assertEquals("The two jobs should have same number of processed files", job1.getNoOfFilesProcessed(),
-                job2.getNoOfFilesProcessed());
-        assertEquals("The two jobs should have identical lists of failed files", job1.getFilesFailed(),
-                job2.getFilesFailed());
+        assertEquals("The two jobs should have same number of processed files", job1.getNoOfFilesProcessed(), job2
+                .getNoOfFilesProcessed());
+        assertEquals("The two jobs should have identical lists of failed files", job1.getFilesFailed(), job2
+                .getFilesFailed());
         assertEquals("The two jobs should have identical String representations", job1.toString(), job2.toString());
     }
 
@@ -516,8 +516,8 @@ public class ArcRepositoryDatabaseTester {
     public void testArcrepositoryDatabaseGetFile() throws IOException {
         arcRepos.close();
         DummyGetFileMessageReplyServer dServer = new DummyGetFileMessageReplyServer();
-        File result = new File(FileUtils.createUniqueTempDir(WORKING_DIR, "testGetFile"),
-                (String) GETTABLE_FILES.get(1));
+        File result = new File(FileUtils.createUniqueTempDir(WORKING_DIR, "testGetFile"), (String) GETTABLE_FILES
+                .get(1));
         Replica replica = Replica.getReplicaFromId(Settings.get(CommonSettings.USE_REPLICA_ID));
         arClient.getFile(GETTABLE_FILES.get(1), replica, result);
         byte[] buffer = FileUtils.readBinaryFile(result);
@@ -670,8 +670,8 @@ public class ArcRepositoryDatabaseTester {
         try {
             file = new File(STORE_CHECKSUM_DIR, STORABLE_FILES[0]);
             orgCheckSum = ChecksumCalculator.calculateMd5(file);
-            admin.addEntry(file.getName(), new StoreMessage(Channels.getThisReposClient(), file),
-                    ChecksumCalculator.calculateMd5(file));
+            admin.addEntry(file.getName(), new StoreMessage(Channels.getThisReposClient(), file), ChecksumCalculator
+                    .calculateMd5(file));
             admin.setState(file.getName(), Channels.retrieveReplicaChannelFromReplicaId("TWO").getName(),
                     ReplicaStoreState.UPLOAD_COMPLETED);
             admin.setState(file.getName(), Channels.retrieveReplicaChannelFromReplicaId("THREE").getName(),

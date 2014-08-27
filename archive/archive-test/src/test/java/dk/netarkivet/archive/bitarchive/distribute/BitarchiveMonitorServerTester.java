@@ -123,12 +123,12 @@ public class BitarchiveMonitorServerTester {
         assertTrue("commontempdir not created", commontempdir.exists());
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         con = (JMSConnectionMockupMQ) JMSConnectionFactory.getInstance();
-        Settings.set(ArchiveSettings.BITARCHIVE_BATCH_JOB_TIMEOUT,
-                String.valueOf(TestInfo.BITARCHIVE_BATCH_MESSAGE_TIMEOUT));
-        Settings.set(ArchiveSettings.BITARCHIVE_HEARTBEAT_FREQUENCY,
-                String.valueOf(TestInfo.BITARCHIVE_HEARTBEAT_FREQUENCY));
-        Settings.set(ArchiveSettings.BITARCHIVE_ACCEPTABLE_HEARTBEAT_DELAY,
-                String.valueOf(TestInfo.BITARCHIVE_ACCEPTABLE_HEARTBEAT_DELAY));
+        Settings.set(ArchiveSettings.BITARCHIVE_BATCH_JOB_TIMEOUT, String
+                .valueOf(TestInfo.BITARCHIVE_BATCH_MESSAGE_TIMEOUT));
+        Settings.set(ArchiveSettings.BITARCHIVE_HEARTBEAT_FREQUENCY, String
+                .valueOf(TestInfo.BITARCHIVE_HEARTBEAT_FREQUENCY));
+        Settings.set(ArchiveSettings.BITARCHIVE_ACCEPTABLE_HEARTBEAT_DELAY, String
+                .valueOf(TestInfo.BITARCHIVE_ACCEPTABLE_HEARTBEAT_DELAY));
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR, commontempdir.getAbsolutePath());
     }
 
@@ -225,12 +225,12 @@ public class BitarchiveMonitorServerTester {
      */
     private void assertBatchResultIs(TestMessageListener client, int index, String replyOf, String expectedResult) {
         BatchReplyMessage brm = (BatchReplyMessage) client.getAllReceived().get(index);
-        assertEquals("Batch-reply no. " + index + " should be response to job '" + replyOf + "'", replyOf,
-                brm.getReplyOfId());
+        assertEquals("Batch-reply no. " + index + " should be response to job '" + replyOf + "'", replyOf, brm
+                .getReplyOfId());
         File tmpFile = mtf.working(TestInfo.BAMON_TMP_FILE);
         brm.getResultFile().copyTo(tmpFile);
-        assertEquals("Should forward batch reply unmodified", expectedResult,
-                new String(FileUtils.readBinaryFile(tmpFile)));
+        assertEquals("Should forward batch reply unmodified", expectedResult, new String(FileUtils
+                .readBinaryFile(tmpFile)));
         tmpFile.delete();
     }
 
@@ -263,8 +263,8 @@ public class BitarchiveMonitorServerTester {
 
         List<BatchMessage> receivedBatchMsgs = ((TestBitarchiveMonitorServer) bam_server).getBatchMsg();
 
-        assertTrue("BA Monitor server was expected to contain the BatchMessage: " + message,
-                receivedBatchMsgs.contains(message));
+        assertTrue("BA Monitor server was expected to contain the BatchMessage: " + message, receivedBatchMsgs
+                .contains(message));
 
         boolean isSentToBA_ALL = con.isSentToChannel(job, ALL_BA);
         assertTrue("Topic ALL_BA was expected to contain the batch message: " + message, isSentToBA_ALL);
@@ -298,8 +298,8 @@ public class BitarchiveMonitorServerTester {
         con.setListener(Channels.getAllBa(), bitarchive);
 
         // send a batch message to the monitor
-        BatchMessage bm = new BatchMessage(THE_BAMON, Channels.getTheRepos(), job,
-                Settings.get(CommonSettings.USE_REPLICA_ID));
+        BatchMessage bm = new BatchMessage(THE_BAMON, Channels.getTheRepos(), job, Settings
+                .get(CommonSettings.USE_REPLICA_ID));
         con.send(bm);
         con.waitForConcurrentTasksToFinish();
 
@@ -346,12 +346,12 @@ public class BitarchiveMonitorServerTester {
         con.waitForConcurrentTasksToFinish();
 
         List<HeartBeatMessage> receivedHeartBeatMsgs = ((TestBitarchiveMonitorServer) bam_server).getHeartBeatMsg();
-        assertTrue("BA Monitor server was expected to contain the HeartBeatMessage: " + message,
-                receivedHeartBeatMsgs.contains(message));
+        assertTrue("BA Monitor server was expected to contain the HeartBeatMessage: " + message, receivedHeartBeatMsgs
+                .contains(message));
 
         Set<String> runningBAApps = getLiveApps(bam_server);
-        assertTrue("BA application with id: " + ba_App_Id + " not found among live BA applications.",
-                runningBAApps.contains(ba_App_Id));
+        assertTrue("BA application with id: " + ba_App_Id + " not found among live BA applications.", runningBAApps
+                .contains(ba_App_Id));
     }
 
     /**
@@ -376,13 +376,13 @@ public class BitarchiveMonitorServerTester {
         BitarchiveMonitorServer bamon = BitarchiveMonitorServer.getInstance();
         assertTrue("The BAMON should listen to THE_BAMON", jms.getListeners(Channels.getBaMonForReplica(replicaId))
                 .contains(bamon));
-        assertEquals("Only the BAMON should listen to THE_BAMON", 1,
-                con.getListeners(Channels.getBaMonForReplica(replicaId)).size());
-        assertFalse("The BAMON should not listen to THE_BAMON for other replicas",
-                jms.getListeners(Channels.getBaMonForReplica(otherReplicaId)).contains(bamon));
+        assertEquals("Only the BAMON should listen to THE_BAMON", 1, con.getListeners(
+                Channels.getBaMonForReplica(replicaId)).size());
+        assertFalse("The BAMON should not listen to THE_BAMON for other replicas", jms.getListeners(
+                Channels.getBaMonForReplica(otherReplicaId)).contains(bamon));
         bamon.cleanup();
-        assertTrue("The BAMON should stop listening to THE_BAMON after cleanup",
-                jms.getListeners(Channels.getBaMonForReplica(replicaId)).isEmpty());
+        assertTrue("The BAMON should stop listening to THE_BAMON after cleanup", jms.getListeners(
+                Channels.getBaMonForReplica(replicaId)).isEmpty());
         ChannelsTesterHelper.resetChannels();
     }
 
@@ -433,9 +433,8 @@ public class BitarchiveMonitorServerTester {
         con.send(hbm);
         con.waitForConcurrentTasksToFinish();
         Set<String> runningBAApps = getLiveApps(bam_server);
-        assertTrue(
-                "The BA monitor's list of running BA applications was expected to contain: " + bas.getBitarchiveAppId(),
-                runningBAApps.contains(bas.getBitarchiveAppId()));
+        assertTrue("The BA monitor's list of running BA applications was expected to contain: "
+                + bas.getBitarchiveAppId(), runningBAApps.contains(bas.getBitarchiveAppId()));
 
         String jobMsgId = "some originatingBatchMsgId";
         BatchEndedMessage batchEndedMessage = new BatchEndedMessage(THE_BAMON, bas.getBitarchiveAppId(), jobMsgId, null);
@@ -458,9 +457,8 @@ public class BitarchiveMonitorServerTester {
             }
         }
 
-        assertTrue(
-                "Expected to find a BatchEndedMessage at BA Monitor, with BA Application Id: "
-                        + bas.getBitarchiveAppId() + " and BatchMessageId: " + jobMsgId, found);
+        assertTrue("Expected to find a BatchEndedMessage at BA Monitor, with BA Application Id: "
+                + bas.getBitarchiveAppId() + " and BatchMessageId: " + jobMsgId, found);
 
     }
 
@@ -495,8 +493,8 @@ public class BitarchiveMonitorServerTester {
         TestJob job = new TestJob("testBatchReceive_ID"); // job is used for
         // carrying an id to
         // recognize later
-        BatchMessage batchMessage = new BatchMessage(THE_BAMON, Channels.getTheRepos(), job,
-                Settings.get(CommonSettings.USE_REPLICA_ID));
+        BatchMessage batchMessage = new BatchMessage(THE_BAMON, Channels.getTheRepos(), job, Settings
+                .get(CommonSettings.USE_REPLICA_ID));
 
         TestBatchReplyListener batchReplyListener = new TestBatchReplyListener();
         con.setListener(THE_ARCREPOS, batchReplyListener);
@@ -529,9 +527,8 @@ public class BitarchiveMonitorServerTester {
             }
         }
 
-        assertTrue(
-                "The BA monitor expected, but did not receive BatchEndedMessage from BA Application:"
-                        + bas1.getBitarchiveAppId(), bas1Done);
+        assertTrue("The BA monitor expected, but did not receive BatchEndedMessage from BA Application:"
+                + bas1.getBitarchiveAppId(), bas1Done);
         assertTrue("The BA monitor received another number of messages than expected. Expected:" + batchEndedMsg.size()
                 + " Received:" + batchEndedCount, batchEndedMsg.size() == batchEndedCount);
 
@@ -583,8 +580,8 @@ public class BitarchiveMonitorServerTester {
         File output_file = new File(TestInfo.BAMON_WORKING, "batch_output.txt");
 
         // Create a batch message
-        BatchMessage bm = new BatchMessage(Channels.getTheBamon(), Channels.getTheRepos(), new ChecksumJob(),
-                Settings.get(CommonSettings.USE_REPLICA_ID));
+        BatchMessage bm = new BatchMessage(Channels.getTheBamon(), Channels.getTheRepos(), new ChecksumJob(), Settings
+                .get(CommonSettings.USE_REPLICA_ID));
         JMSConnectionMockupMQ.updateMsgID(bm, "ID50");
 
         // Invent two BitarchiveServers and send heartbeats from them
@@ -1134,8 +1131,8 @@ public class BitarchiveMonitorServerTester {
         pse.tearDown();
 
         assertEquals("Should give exit code 1", 1, pse.getExitValue());
-        assertTrue("Should tell that no arguments are expected.",
-                pss.getOut().contains("This application takes no arguments"));
+        assertTrue("Should tell that no arguments are expected.", pss.getOut().contains(
+                "This application takes no arguments"));
     }
 
 }

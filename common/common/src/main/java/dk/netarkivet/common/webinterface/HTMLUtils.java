@@ -411,8 +411,8 @@ public class HTMLUtils {
         if (input == null) {
             return "";
         }
-        return input.replaceAll("&", "&amp;").replaceAll("\\\"", "&quot;").replaceAll("<", "&lt;")
-                .replaceAll(">", "&gt;");
+        return input.replaceAll("&", "&amp;").replaceAll("\\\"", "&quot;").replaceAll("<", "&lt;").replaceAll(">",
+                "&gt;");
     }
 
     /**

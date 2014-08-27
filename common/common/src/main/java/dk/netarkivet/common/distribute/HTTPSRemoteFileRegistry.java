@@ -99,8 +99,8 @@ public class HTTPSRemoteFileRegistry extends HTTPRemoteFileRegistry {
             TrustManagerFactory tmf = TrustManagerFactory.getInstance(SUN_X509_CERTIFICATE_ALGORITHM);
             tmf.init(store);
             sslContext = SSLContext.getInstance(SSL_PROTOCOL);
-            sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(),
-                    SecureRandom.getInstance(SHA1_PRNG_RANDOM_ALGORITHM));
+            sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), SecureRandom
+                    .getInstance(SHA1_PRNG_RANDOM_ALGORITHM));
         } catch (GeneralSecurityException | IOException e) {
             throw new IOFailure("Unable to create secure environment for keystore '" + KEYSTORE_PATH + "'", e);
         } finally {

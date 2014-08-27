@@ -88,8 +88,8 @@ public class HarvestControllerTester {
         // Settings.set(JMSArcRepositoryClient.ARCREPOSITORY_STORE_RETRIES,
         // "1");
         Settings.set(CommonSettings.CACHE_DIR, new File(TestInfo.WORKING_DIR, "cacheDir").getAbsolutePath());
-        Settings.set(CommonSettings.DIR_COMMONTEMPDIR,
-                new File(TestInfo.WORKING_DIR, "commontempdir").getAbsolutePath());
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, new File(TestInfo.WORKING_DIR, "commontempdir")
+                .getAbsolutePath());
 
         // Out commented to avoid reference to archive module from harvester
         // module.
@@ -175,9 +175,8 @@ public class HarvestControllerTester {
 
         FileAsserts.assertFileContains("Should have jobID in harvestinfo file", "<jobId>" + j.getJobID() + "</jobId>",
                 harvestInfo);
-        FileAsserts.assertFileContains("Should have harvestID in harvestinfo file",
-                "<origHarvestDefinitionID>" + j.getOrigHarvestDefinitionID() + "</origHarvestDefinitionID>",
-                harvestInfo);
+        FileAsserts.assertFileContains("Should have harvestID in harvestinfo file", "<origHarvestDefinitionID>"
+                + j.getOrigHarvestDefinitionID() + "</origHarvestDefinitionID>", harvestInfo);
         FileAsserts.assertFileContains("Should have correct order.xml file", "OneLevel-order", orderXml);
 
         // Verify that order.xml is a valid HeritrixTemplate
@@ -386,13 +385,11 @@ public class HarvestControllerTester {
         } catch (ArgumentNotValid e) {
             assertTrue("Should contain varable name in exception", e.getMessage().contains("logFile"));
         }
-        assertEquals("Download should be completed", StopReason.DOWNLOAD_COMPLETE,
-                AbstractHarvestReport.findDefaultStopReason(new File(TestInfo.CRAWLDIR_ORIGINALS_DIR,
-                        "logs/progress-statistics.log")));
-        assertEquals("Download should be unfinished", StopReason.DOWNLOAD_UNFINISHED,
-                AbstractHarvestReport.findDefaultStopReason(TestInfo.NON_EXISTING_FILE));
-        assertEquals("Download should be unfinished", StopReason.DOWNLOAD_UNFINISHED,
-                AbstractHarvestReport.findDefaultStopReason(new File(TestInfo.UNFINISHED_CRAWLDIR,
-                        "logs/progress-statistics.log")));
+        assertEquals("Download should be completed", StopReason.DOWNLOAD_COMPLETE, AbstractHarvestReport
+                .findDefaultStopReason(new File(TestInfo.CRAWLDIR_ORIGINALS_DIR, "logs/progress-statistics.log")));
+        assertEquals("Download should be unfinished", StopReason.DOWNLOAD_UNFINISHED, AbstractHarvestReport
+                .findDefaultStopReason(TestInfo.NON_EXISTING_FILE));
+        assertEquals("Download should be unfinished", StopReason.DOWNLOAD_UNFINISHED, AbstractHarvestReport
+                .findDefaultStopReason(new File(TestInfo.UNFINISHED_CRAWLDIR, "logs/progress-statistics.log")));
     }
 }

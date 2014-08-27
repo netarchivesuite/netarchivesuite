@@ -82,7 +82,7 @@ public abstract class ArchiveBatchJob extends ArchiveBatchJobBase {
         log.info("Processing archive file: {}", archiveFile.getName());
 
         try { // This outer try-catch block catches all unexpected exceptions
-            // Create an ArchiveReader and retrieve its Iterator:
+              // Create an ArchiveReader and retrieve its Iterator:
             ArchiveReader archiveReader = null;
 
             try {
@@ -112,8 +112,8 @@ public abstract class ArchiveBatchJob extends ArchiveBatchJobBase {
                         if (!getFilter().accept(record)) {
                             continue;
                         }
-                        log.debug("Processing record #{} in archive file '{}'.", noOfRecordsProcessed,
-                                archiveFile.getName());
+                        log.debug("Processing record #{} in archive file '{}'.", noOfRecordsProcessed, archiveFile
+                                .getName());
                         processRecord(record, os);
                         ++noOfRecordsProcessed;
                     } catch (NetarkivetException e) {

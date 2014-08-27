@@ -47,7 +47,7 @@ public class SiteSectionTester {
 
     @Test
     public void testGetTitle() throws Exception {
-        SiteSection site = new SiteSection("testSite", "pref", 2, new String[][] {{"page1", "title1"},
+        SiteSection site = new SiteSection("testSite", "pref", 2, new String[][] { {"page1", "title1"},
                 {"page2", "pagetitle;details.for.job"}, {"page3", "title3"}}, "HarvestDefinition",
                 "dk.netarkivet.harvester.Translations") {
             public void initialize() {
@@ -56,22 +56,22 @@ public class SiteSectionTester {
             public void close() {
             }
         };
-        assertEquals("Should generate correct title for page1", "title1",
-                site.getTitle("http://foo.dk/HarvestDefinition/pref-page1.jsp", Locale.getDefault()));
-        assertEquals("Should generate correct title for page2 in Danish", "Jobdetaljer",
-                site.getTitle("http://foo.dk/page1/HarvestDefinition/pref-page2.jsp", new Locale("da")));
-        assertEquals("Should generate correct title for page2 in English", "Details for Job",
-                site.getTitle("http://foo.dk/page1/HarvestDefinition/pref-page2.jsp", new Locale("en")));
-        assertNull("Should generate no title for invalid url",
-                site.getTitle("http://foo.d:ge2.jsp", Locale.getDefault()));
-        assertNull("Should generate no title for wrong url",
-                site.getTitle("http://foo.dk/page1/HarvestDefinition/perf-page2.jsp", Locale.getDefault()));
-        assertNull("Should generate no title for wrong url",
-                site.getTitle("http://foo.dk/page1/HarvestDefinition/pref-page2.jp", Locale.getDefault()));
-        assertNull("Should generate no title for wrong url",
-                site.getTitle("http://foo.dk/HarvestDefinition/pref-page2.jsp/page1", Locale.getDefault()));
-        assertNull("Should generate no title for wrong url",
-                site.getTitle("http://foo.dk/NotHD/pref-page2.jsp", Locale.getDefault()));
+        assertEquals("Should generate correct title for page1", "title1", site.getTitle(
+                "http://foo.dk/HarvestDefinition/pref-page1.jsp", Locale.getDefault()));
+        assertEquals("Should generate correct title for page2 in Danish", "Jobdetaljer", site.getTitle(
+                "http://foo.dk/page1/HarvestDefinition/pref-page2.jsp", new Locale("da")));
+        assertEquals("Should generate correct title for page2 in English", "Details for Job", site.getTitle(
+                "http://foo.dk/page1/HarvestDefinition/pref-page2.jsp", new Locale("en")));
+        assertNull("Should generate no title for invalid url", site.getTitle("http://foo.d:ge2.jsp", Locale
+                .getDefault()));
+        assertNull("Should generate no title for wrong url", site.getTitle(
+                "http://foo.dk/page1/HarvestDefinition/perf-page2.jsp", Locale.getDefault()));
+        assertNull("Should generate no title for wrong url", site.getTitle(
+                "http://foo.dk/page1/HarvestDefinition/pref-page2.jp", Locale.getDefault()));
+        assertNull("Should generate no title for wrong url", site.getTitle(
+                "http://foo.dk/HarvestDefinition/pref-page2.jsp/page1", Locale.getDefault()));
+        assertNull("Should generate no title for wrong url", site.getTitle("http://foo.dk/NotHD/pref-page2.jsp", Locale
+                .getDefault()));
         assertNull("Should generate no title for null url", site.getTitle(null, Locale.getDefault()));
     }
 
@@ -153,8 +153,7 @@ public class SiteSectionTester {
         }
 
         try {
-            new SiteSection("b", "e", 1, new String[][] {}, "HarvestDefinition",
-                    "dk.netarkivet.harvester.Translations") {
+            new SiteSection("b", "e", 1, new String[][] {}, "HarvestDefinition", "dk.netarkivet.harvester.Translations") {
                 public void initialize() {
                 }
 
@@ -179,7 +178,7 @@ public class SiteSectionTester {
         }
 
         try {
-            new SiteSection("b", "e", 1, new String[][] {{"foo", "bar"}, {"and", "some", "more"}},
+            new SiteSection("b", "e", 1, new String[][] { {"foo", "bar"}, {"and", "some", "more"}},
                     "HarvestDefinition", "dk.netarkivet.harvester.Translations") {
                 public void initialize() {
                 }
@@ -192,7 +191,7 @@ public class SiteSectionTester {
         }
 
         try {
-            new SiteSection("b", "e", 1, new String[][] {{"foo", "bar"}, {"and", "some", "more"}},
+            new SiteSection("b", "e", 1, new String[][] { {"foo", "bar"}, {"and", "some", "more"}},
                     "HarvestDefinition", null) {
                 public void initialize() {
                 }
@@ -205,7 +204,7 @@ public class SiteSectionTester {
         }
 
         // Must also be able to create a working object.
-        new SiteSection("b", "e", 1, new String[][] {{"foo", "bar"}, {"and", "more"}}, "HarvestDefinition",
+        new SiteSection("b", "e", 1, new String[][] { {"foo", "bar"}, {"and", "more"}}, "HarvestDefinition",
                 "dk.netarkivet.harvester.Translations") {
             public void initialize() {
             }
@@ -241,8 +240,8 @@ public class SiteSectionTester {
                 t.join();
             }
             List<SiteSection> sections = SiteSection.getSections();
-            assertEquals("#sections must be identical length of list returned from " + "Settings",
-                    Settings.getAll(CommonSettings.SITESECTION_CLASS).length, sections.size());
+            assertEquals("#sections must be identical length of list returned from " + "Settings", Settings
+                    .getAll(CommonSettings.SITESECTION_CLASS).length, sections.size());
         }
     }
 
@@ -251,7 +250,7 @@ public class SiteSectionTester {
      */
     @Test
     public void testGetDirname() throws Exception {
-        SiteSection site = new SiteSection("b", "e", 1, new String[][] {{"foo", "bar"}, {"and", "more"}},
+        SiteSection site = new SiteSection("b", "e", 1, new String[][] { {"foo", "bar"}, {"and", "more"}},
                 "HarvestDefinition", "dk.netarkivet.harvester.Translations") {
             public void initialize() {
             }
@@ -287,7 +286,7 @@ public class SiteSectionTester {
 
     @Test
     public void testGenerateNavigationTree() throws Exception {
-        SiteSection site = new SiteSection("table.job.harvestname", "pref", 2, new String[][] {{"page1", "title1"},
+        SiteSection site = new SiteSection("table.job.harvestname", "pref", 2, new String[][] { {"page1", "title1"},
                 {"page2", "pagetitle;details.for.job"}, {"page3", "title3"}}, "HarvestDefinition",
                 "dk.netarkivet.harvester.Translations") {
             public void initialize() {

@@ -144,15 +144,15 @@ public final class ARCUtils {
         try {
             ps = new PrintStream(new FileOutputStream(newFile));
             aw = new ARCWriter(new AtomicInteger(), ps,
-                    // This name is used for the first (file metadata) record
+            // This name is used for the first (file metadata) record
                     newFile, false, // Don't compress
                     // Use current time
                     ArchiveUtils.get14DigitDate(System.currentTimeMillis()), null // No
-                    // particular
-                    // file
-                    // metadata
-                    // to
-                    // add
+            // particular
+            // file
+            // metadata
+            // to
+            // add
             );
         } catch (IOException e) {
             if (ps != null) {
@@ -217,11 +217,11 @@ public final class ARCUtils {
                 // compress
                 // Use current time
                 ArchiveUtils.get14DigitDate(System.currentTimeMillis()), null // //No
-                // particular
-                // file
-                // metadata
-                // to
-                // add
+        // particular
+        // file
+        // metadata
+        // to
+        // add
         );
     }
 

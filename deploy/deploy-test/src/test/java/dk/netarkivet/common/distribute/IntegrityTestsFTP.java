@@ -112,8 +112,8 @@ public class IntegrityTestsFTP {
             theFTPClient.connect(ftpServerName, ftpServerPort);
             assertTrue("Could not login to ' + " + ftpServerName + ":" + ftpServerPort + "' with username,password="
                     + ftpUserName + "," + ftpUserPassword, theFTPClient.login(ftpUserName, ftpUserPassword));
-            assertTrue("Must be possible to set the file type to binary after login",
-                    theFTPClient.setFileType(FTPClient.BINARY_FILE_TYPE));
+            assertTrue("Must be possible to set the file type to binary after login", theFTPClient
+                    .setFileType(FTPClient.BINARY_FILE_TYPE));
         } catch (SocketException e) {
             throw new IOFailure("Connect to " + ftpServerName + ":" + ftpServerPort + " failed", e.getCause());
         } catch (IOException e) {
@@ -276,8 +276,8 @@ public class IntegrityTestsFTP {
         /** register that testFile should now be present on ftp-server */
         upLoadedFTPRemoteFiles.add(rf);
 
-        assertEquals("The size of the file written to the ftp-server " + "should not differ from the original size",
-                rf.getSize(), testFile.length());
+        assertEquals("The size of the file written to the ftp-server " + "should not differ from the original size", rf
+                .getSize(), testFile.length());
 
         rf.copyTo(newFile);
 
@@ -374,7 +374,7 @@ public class IntegrityTestsFTP {
         // " to " + destinationFile);
         /** Check filesizes, and see, if they differ */
         assertEquals("Length of original unzipped file "
-                        + " and unzipped file retrieved from the ftp-server should not differ!", unzippedFile.length(),
+                + " and unzipped file retrieved from the ftp-server should not differ!", unzippedFile.length(),
                 destinationFile.length());
     }
 
@@ -407,8 +407,8 @@ public class IntegrityTestsFTP {
         // upload error to ftp server
         File temp = File.createTempFile("foo", "bar");
         FTPClient client = new FTPClient();
-        client.connect(Settings.get(CommonSettings.FTP_SERVER_NAME),
-                Integer.parseInt(Settings.get(CommonSettings.FTP_SERVER_PORT)));
+        client.connect(Settings.get(CommonSettings.FTP_SERVER_NAME), Integer.parseInt(Settings
+                .get(CommonSettings.FTP_SERVER_PORT)));
         client.login(Settings.get(CommonSettings.FTP_USER_NAME), Settings.get(CommonSettings.FTP_USER_PASSWORD));
         Field field = FTPRemoteFile.class.getDeclaredField("ftpFileName");
         field.setAccessible(true);

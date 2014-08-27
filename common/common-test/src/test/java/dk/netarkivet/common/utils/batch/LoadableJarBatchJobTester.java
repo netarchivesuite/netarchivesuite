@@ -124,8 +124,8 @@ public class LoadableJarBatchJobTester {
         String result1 = os.toString();
         assertTrue("expected: Urls matched = 3, but got:\n" + result1, result1.contains("Urls matched = 3"));
         assertTrue("expected: Mimetypes mached = 4, but got:\n" + result1, result1.contains("Mimetypes matched = 4"));
-        assertTrue("expected: Url and Mimetype maches = 3, but got:\n" + result1,
-                result1.contains("Url and Mimetype matches = 3"));
+        assertTrue("expected: Url and Mimetype maches = 3, but got:\n" + result1, result1
+                .contains("Url and Mimetype matches = 3"));
 
         // try with different
         args.clear();
@@ -157,7 +157,7 @@ public class LoadableJarBatchJobTester {
         job.finish(os);
 
         String result3 = os.toString();
-        assertTrue("Expected results to be identical: Results 1\n" + result1 + "\nResults3:\n" + result3,
-                result1.equals(result3));
+        assertTrue("Expected results to be identical: Results 1\n" + result1 + "\nResults3:\n" + result3, result1
+                .equals(result3));
     }
 }

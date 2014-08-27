@@ -34,6 +34,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 /**
  * Version of RemoteFile that reads/writes a file to local storage.
  * <p>
+ * 
  * <pre>
  * Created by IntelliJ IDEA.
  * User: csr

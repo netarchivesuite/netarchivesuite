@@ -81,10 +81,8 @@ public class ReestablishAdminDatabaseTester {
         int exitCode = pse.getExitValue();
         assertEquals("Did not give expected exit code.", 1, exitCode);
         String errMsg = pss.getErr();
-        assertTrue(
-                "Did not receive correct error message: " + errMsg,
-                errMsg.contains("The file '" + TestInfo.DATABASE_ADMIN_DATA_FALSE.getAbsolutePath()
-                        + "' is not a valid file."));
+        assertTrue("Did not receive correct error message: " + errMsg, errMsg.contains("The file '"
+                + TestInfo.DATABASE_ADMIN_DATA_FALSE.getAbsolutePath() + "' is not a valid file."));
     }
 
     @Test
@@ -102,8 +100,8 @@ public class ReestablishAdminDatabaseTester {
         int exitCode = pse.getExitValue();
         assertEquals("Did not give expected exit code.", 1, exitCode);
         String errMsg = pss.getErr();
-        assertTrue("Did not receive correct error message: " + errMsg,
-                errMsg.contains("Cannot read the file '" + TestInfo.DATABASE_ADMIN_DATA_1.getAbsolutePath() + "'"));
+        assertTrue("Did not receive correct error message: " + errMsg, errMsg.contains("Cannot read the file '"
+                + TestInfo.DATABASE_ADMIN_DATA_1.getAbsolutePath() + "'"));
     }
 
     @Test

@@ -283,8 +283,7 @@ public class MySQLSpecifics extends DBSpecifics {
     @Override
     protected void migrateJobsv5tov6() {
         // Update jobs table to version 6
-        String[] sqlStatements = {
-                "ALTER TABLE jobs ADD COLUMN forcemaxrunningtime bigint NOT NULL DEFAULT 0 AFTER forcemaxcount"};
+        String[] sqlStatements = {"ALTER TABLE jobs ADD COLUMN forcemaxrunningtime bigint NOT NULL DEFAULT 0 AFTER forcemaxcount"};
         HarvestDBConnection.updateTable("jobs", 6, sqlStatements);
 
     }
@@ -401,8 +400,8 @@ public class MySQLSpecifics extends DBSpecifics {
      */
     protected void migrateExtendedFieldTableValueV1toV2() {
         String[] sqlStatements = {
-                // "ALTER TABLE extendedfieldvalue MODIFY content VARCHAR(30000) NOT NULL"
-                "ALTER TABLE extendedfieldvalue MODIFY content TEXT NOT NULL"};
+        // "ALTER TABLE extendedfieldvalue MODIFY content VARCHAR(30000) NOT NULL"
+        "ALTER TABLE extendedfieldvalue MODIFY content TEXT NOT NULL"};
         HarvestDBConnection.updateTable("extendedfieldvalue", 2, sqlStatements);
     }
 

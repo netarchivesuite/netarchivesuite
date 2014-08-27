@@ -139,8 +139,7 @@ public abstract class FileBatchJob implements Serializable {
      * process.
      *
      * @param specifiedPatterns The patterns of file names that this job will operate on. These should not include any
-     * path information, but should match the entire filename (e.g. .*foo.* for any file with foo in the
-     * name).
+     * path information, but should match the entire filename (e.g. .*foo.* for any file with foo in the name).
      */
     public void processOnlyFilesMatching(List<String> specifiedPatterns) {
         ArgumentNotValid.checkNotNull(specifiedPatterns, "specifiedPatterns");
@@ -151,8 +150,7 @@ public abstract class FileBatchJob implements Serializable {
      * Set this job to match only a certain pattern. This will override any previous setting of which files to process.
      *
      * @param specifiedPattern Regular expression of file names that this job will operate on. This should not include
-     * any path information, but should match the entire filename (e.g. .*foo.* for any file with foo in the
-     * name).
+     * any path information, but should match the entire filename (e.g. .*foo.* for any file with foo in the name).
      */
     public void processOnlyFilesMatching(String specifiedPattern) {
         ArgumentNotValid.checkNotNullOrEmpty(specifiedPattern, "specificedPattern");
@@ -227,8 +225,7 @@ public abstract class FileBatchJob implements Serializable {
         } else {
             if (log.isTraceEnabled()) {
                 log.trace("Exception not added, because max exceptions reached. currentFile = {},currentOffset = {},"
-                                + "outputOffset = {}, exception: ", currentFile.getAbsolutePath(), currentOffset,
-                        outputOffset,
+                        + "outputOffset = {}, exception: ", currentFile.getAbsolutePath(), currentOffset, outputOffset,
                         e);
             }
         }

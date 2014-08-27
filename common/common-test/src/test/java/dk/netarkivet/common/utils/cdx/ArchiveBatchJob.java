@@ -99,7 +99,7 @@ public abstract class ArchiveBatchJob extends FileBatchJob {
         log.info("Processing file: " + arcFile.getName());
 
         try { // This outer try-catch block catches all unexpected exceptions
-            // Create an ARCReader and retrieve its Iterator:
+              // Create an ARCReader and retrieve its Iterator:
             ArchiveReader arcReader = null;
 
             try {

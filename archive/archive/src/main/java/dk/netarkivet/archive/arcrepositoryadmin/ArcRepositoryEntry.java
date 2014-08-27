@@ -97,8 +97,7 @@ public class ArcRepositoryEntry {
     /**
      * Get the ArchiveStoreState for the entry in general. This is computed from the ArchiveStoreStates for the
      * bitarchives. <br>
-     * 1. If no information about the bitarchives are available, the state UPLOAD_FAILED with timestamp=NOW is returned
-     * <br>
+     * 1. If no information about the bitarchives are available, the state UPLOAD_FAILED with timestamp=NOW is returned <br>
      * 2. If there are information about one bitarchive, the state of this bitarchive is returned. <br>
      * 3. If there are information from more than one bitarchive, A. if the state of one of the bitarchives equals
      * UPLOAD_FAILED, the state UPLOAD_FAILED with the latest timestamp is returned B. else, find the lowest state of

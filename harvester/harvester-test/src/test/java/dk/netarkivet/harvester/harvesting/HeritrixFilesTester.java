@@ -84,10 +84,10 @@ public class HeritrixFilesTester {
 
         // check, that arcFilePrefix is correctly set
         assertEquals("arcFilePrefix should contain job id and harvest id", "42-42", hf.getArchiveFilePrefix());
-        assertEquals("jmxPasswordFile should be" + defaultJmxPasswordFile.getAbsolutePath(), defaultJmxPasswordFile,
-                hf.getJmxPasswordFile());
-        assertEquals("jmxAccessfile should be" + defaultJmxAccessFile.getAbsolutePath(), defaultJmxAccessFile,
-                hf.getJmxAccessFile());
+        assertEquals("jmxPasswordFile should be" + defaultJmxPasswordFile.getAbsolutePath(), defaultJmxPasswordFile, hf
+                .getJmxPasswordFile());
+        assertEquals("jmxAccessfile should be" + defaultJmxAccessFile.getAbsolutePath(), defaultJmxAccessFile, hf
+                .getJmxAccessFile());
 
     }
 

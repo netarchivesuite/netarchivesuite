@@ -61,8 +61,7 @@ public final class Password implements Named {
      * @param username the username
      * @param password the password
      */
-    public Password(String name, String comments, String passwordDomain, String realm, String username,
-            String password) {
+    public Password(String name, String comments, String passwordDomain, String realm, String username, String password) {
         ArgumentNotValid.checkNotNullOrEmpty(name, "name");
         ArgumentNotValid.checkNotNull(comments, "comments");
         ArgumentNotValid.checkNotNullOrEmpty(passwordDomain, "passwordDomain");

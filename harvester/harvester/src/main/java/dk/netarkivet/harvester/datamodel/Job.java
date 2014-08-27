@@ -386,8 +386,8 @@ public class Job implements Serializable, JobInfo {
      */
     private void addGlobalCrawlerTraps(Document orderXmlDoc) {
         GlobalCrawlerTrapListDAO dao = GlobalCrawlerTrapListDAO.getInstance();
-        HeritrixTemplate.editOrderXMLAddCrawlerTraps(orderXmlDoc, Constants.GLOBAL_CRAWLER_TRAPS_ELEMENT_NAME,
-                dao.getAllActiveTrapExpressions());
+        HeritrixTemplate.editOrderXMLAddCrawlerTraps(orderXmlDoc, Constants.GLOBAL_CRAWLER_TRAPS_ELEMENT_NAME, dao
+                .getAllActiveTrapExpressions());
     }
 
     /**
@@ -429,7 +429,7 @@ public class Job implements Serializable, JobInfo {
 
         // Add the seeds from the configuration to the Job seeds.
         // Take care of duplicates.
-        for (Iterator<SeedList> itt = cfg.getSeedLists(); itt.hasNext(); ) {
+        for (Iterator<SeedList> itt = cfg.getSeedLists(); itt.hasNext();) {
             SeedList seed = itt.next();
             List<String> seeds = seed.getSeeds();
             for (String seedUrl : seeds) {

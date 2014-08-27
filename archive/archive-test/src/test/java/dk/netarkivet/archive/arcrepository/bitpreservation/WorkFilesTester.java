@@ -110,10 +110,8 @@ public class WorkFilesTester {
         assertEquals("Should have no contents", empty, FileUtils.readListFromFile(sortedFileGen));
 
         // test date for non-existing file.
-        assertEquals(
-                "The file should have the date 'Thu Jan 01 01:00:00 CET 1970', but had: "
-                        + WorkFiles.getLastUpdate(Replica.getReplicaFromId("THREE"), WorkFiles.FILES_ON_BA), new Date(
-                        0L).getTime(), WorkFiles.getLastUpdate(Replica.getReplicaFromId("ONE"), WorkFiles.FILES_ON_BA)
-                        .getTime());
+        assertEquals("The file should have the date 'Thu Jan 01 01:00:00 CET 1970', but had: "
+                + WorkFiles.getLastUpdate(Replica.getReplicaFromId("THREE"), WorkFiles.FILES_ON_BA), new Date(0L)
+                .getTime(), WorkFiles.getLastUpdate(Replica.getReplicaFromId("ONE"), WorkFiles.FILES_ON_BA).getTime());
     }
 }

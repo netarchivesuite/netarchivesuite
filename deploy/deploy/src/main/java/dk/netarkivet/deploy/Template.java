@@ -46,8 +46,7 @@ public class Template {
      * @param separator separator to insert between lines or null
      * @return concatenated and processed string
      */
-    public static String untemplate(String[] strArray, Map<String, String> env, boolean bFailOnMissing,
-            String separator) {
+    public static String untemplate(String[] strArray, Map<String, String> env, boolean bFailOnMissing, String separator) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < strArray.length; ++i) {
             sb.append(untemplate(strArray[i], env, bFailOnMissing));

@@ -135,7 +135,7 @@ public class SeedList implements Serializable, Named {
     public String getSeedsAsString() {
         StringWriter urls = new StringWriter();
         PrintWriter urlwriter = new PrintWriter(urls);
-        for (Iterator<String> i = seeds.iterator(); i.hasNext(); ) {
+        for (Iterator<String> i = seeds.iterator(); i.hasNext();) {
             String url = i.next();
             urlwriter.println(url);
         }

@@ -81,8 +81,8 @@ public class JobUtils {
                 Boolean.TYPE, Long.TYPE, Long.TYPE, Long.TYPE, JobStatus.class, String.class, Document.class,
                 String.class, Integer.TYPE, Long.class);
         HarvestChannel lowChan = new HarvestChannel("SNAPSHOT", true, true, "");
-        return c.newInstance(42L, Collections.<String, String>emptyMap(), lowChan.getName(), lowChan.isSnapshot(),
-                -1L, -1L, 0L, JobStatus.STARTED, "default_template", DocumentFactory.getInstance().createDocument(),
+        return c.newInstance(42L, Collections.<String, String>emptyMap(), lowChan.getName(), lowChan.isSnapshot(), -1L,
+                -1L, 0L, JobStatus.STARTED, "default_template", DocumentFactory.getInstance().createDocument(),
                 "http://sbforge.org", 1, null);
     }
 

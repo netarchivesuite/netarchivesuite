@@ -116,8 +116,7 @@ public class HTTPRemoteFile extends AbstractRemoteFile {
      * @throws ArgumentNotValid if file is null, or not a readable file.
      * @throws IOFailure if checksums are requested, but i/o errors occur while checksumming.
      */
-    public static RemoteFile getInstance(File f, Boolean useChecksums, Boolean fileDeletable,
-            Boolean multipleDownloads) {
+    public static RemoteFile getInstance(File f, Boolean useChecksums, Boolean fileDeletable, Boolean multipleDownloads) {
         return new HTTPRemoteFile(f, useChecksums, fileDeletable, multipleDownloads);
     }
 

@@ -124,8 +124,8 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
          * Check if jobs should be generated for any ready harvest definitions for the specified time.
          *
          * @param timeToGenerateJobsFor Jobs will be generated which should be run at this time. Note: In a production
-         * system the provided time will normally be current time, but during testing we need to simulated
-         * other points-in-time
+         * system the provided time will normally be current time, but during testing we need to simulated other
+         * points-in-time
          */
         void generateJobs(Date timeToGenerateJobsFor) {
             final Iterable<Long> readyHarvestDefinitions = haDefinitionDAO
@@ -166,7 +166,7 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                     String channelName = chan.getName();
                     if (postponeUnregisteredChannel && !harvestChannelRegistry.isRegistered(channelName)) {
                         log.info("Harvest channel '{}' has not yet been registered by any harvester, hence harvest "
-                                        + "definition '{}' ({}) cannot be processed by the job generator for now.",
+                                + "definition '{}' ({}) cannot be processed by the job generator for now.",
                                 channelName, harvestDefinition.getName(), id);
                         continue;
                     }
@@ -189,8 +189,8 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                             JobGenerator jobGen = JobGeneratorFactory.getInstance();
                             int jobsMade = jobGen.generateJobs(harvestDefinition);
                             if (jobsMade > 0) {
-                                log.info("Created {} jobs for harvest definition ({})", jobsMade,
-                                        harvestDefinition.getName());
+                                log.info("Created {} jobs for harvest definition ({})", jobsMade, harvestDefinition
+                                        .getName());
                             } else {
                                 String msg = "No jobs created for harvest definition '"
                                         + harvestDefinition.getName()
@@ -221,8 +221,7 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                             harvestDefinitionsBeingScheduled.remove(id);
                             schedulingStartedMap.remove(id);
                             log.debug("Removed HD #{}({}) from list of harvestdefinitions to be scheduled. "
-                                            + "Harvestdefinitions still to be scheduled: {}", id,
-                                    harvestDefinition.getName(),
+                                    + "Harvestdefinitions still to be scheduled: {}", id, harvestDefinition.getName(),
                                     harvestDefinitionsBeingScheduled);
                         }
                     }

@@ -87,14 +87,14 @@ public class TrivialArcRepositoryClientTester {
         assertEquals("Should have 1 files processed after store", 1, status.getNoOfFilesProcessed());
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         status.getResultFile().appendTo(out);
-        assertEquals("Should list the one file",
-                dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE.getName() + "\n", out.toString());
+        assertEquals("Should list the one file", dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE
+                .getName()
+                + "\n", out.toString());
         File f = File.createTempFile("foo", "bar", FileUtils.getTempDir());
-        arcrep.getFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE.getName(),
-                Replica.getReplicaFromId("TWO"), f);
-        assertEquals("Should have expected contents back",
-                ChecksumCalculator
-                        .calculateMd5(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE_COPY),
+        arcrep.getFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE.getName(), Replica
+                .getReplicaFromId("TWO"), f);
+        assertEquals("Should have expected contents back", ChecksumCalculator
+                .calculateMd5(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE_COPY),
                 ChecksumCalculator.calculateMd5(f));
     }
 }

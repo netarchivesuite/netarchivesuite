@@ -112,12 +112,12 @@ public class CachingLogHandlerTester extends TestCase {
 
         // Check two interesting mbeans: The first and the last.
         ObjectInstance mbean = getObjectInstance(mBeanServer, 0);
-        assertTrue("Must be of the right type",
-                SingleLogRecord.class.isAssignableFrom(Class.forName(mbean.getClassName())));
+        assertTrue("Must be of the right type", SingleLogRecord.class.isAssignableFrom(Class.forName(mbean
+                .getClassName())));
 
         mbean = getObjectInstance(mBeanServer, LOG_HISTORY_SIZE - 1);
-        assertTrue("Must be of the right type",
-                SingleLogRecord.class.isAssignableFrom(Class.forName(mbean.getClassName())));
+        assertTrue("Must be of the right type", SingleLogRecord.class.isAssignableFrom(Class.forName(mbean
+                .getClassName())));
 
         // Check that there are no more.
         try {

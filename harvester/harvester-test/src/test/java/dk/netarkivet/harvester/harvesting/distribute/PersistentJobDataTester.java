@@ -100,18 +100,18 @@ public class PersistentJobDataTester {
         PersistentJobData pjdNew = new PersistentJobData(crawldir);
 
         assertEquals("retrieved jobID is not the same as original jobID", testJob.getJobID(), pjdNew.getJobID());
-        assertEquals("retrieved jobpriority is not the same as original job priority", testJob.getChannel(),
-                pjdNew.getChannel());
-        assertEquals("retrived maxBytesPerDomain is not the same as original job maxBytesPerDomain",
-                testJob.getMaxBytesPerDomain(), pjdNew.getMaxBytesPerDomain());
-        assertEquals("retrived maxObjectsPerDomain is not the same as original job maxObjectsPerDomain",
-                testJob.getMaxObjectsPerDomain(), pjdNew.getMaxObjectsPerDomain());
-        assertEquals("retrived harvestNum is not the same as original job harvestNum", testJob.getHarvestNum(),
-                pjdNew.getJobHarvestNum());
+        assertEquals("retrieved jobpriority is not the same as original job priority", testJob.getChannel(), pjdNew
+                .getChannel());
+        assertEquals("retrived maxBytesPerDomain is not the same as original job maxBytesPerDomain", testJob
+                .getMaxBytesPerDomain(), pjdNew.getMaxBytesPerDomain());
+        assertEquals("retrived maxObjectsPerDomain is not the same as original job maxObjectsPerDomain", testJob
+                .getMaxObjectsPerDomain(), pjdNew.getMaxObjectsPerDomain());
+        assertEquals("retrived harvestNum is not the same as original job harvestNum", testJob.getHarvestNum(), pjdNew
+                .getJobHarvestNum());
         assertEquals("retrived orderXMlName is not the same as original job orderXMLName", testJob.getOrderXMLName(),
                 pjdNew.getOrderXMLName());
-        assertEquals("retrived origHarvestDefinitionID is not the same as original ID",
-                testJob.getOrigHarvestDefinitionID(), pjdNew.getOrigHarvestDefinitionID());
+        assertEquals("retrived origHarvestDefinitionID is not the same as original ID", testJob
+                .getOrigHarvestDefinitionID(), pjdNew.getOrigHarvestDefinitionID());
         assertEquals("The value of the performer should be set", pjdNew.getPerformer(), null);
 
         // cleanup after this unit-test.

@@ -53,7 +53,7 @@ public final class ScriptConstants {
     /** Ddk.netarkivet.settings.file=\"\". */
     static final String OPTION_SETTINGS_WIN = OPTION_SETTINGS + "\"\"";
     /**
-     * Dorg.apache.commons.logging.Log=" + "org.apache.commons.logging.impl.Jdk14Logger.
+     * Dorg.apache.commons.logging.Log=" + "org.apache.commons.logging.impl. Jdk14Logger.
      */
     static final String OPTION_LOG_COMPLETE = "Dorg.apache.commons.logging.Log="
             + "org.apache.commons.logging.impl.Jdk14Logger";
@@ -475,216 +475,214 @@ public final class ScriptConstants {
 
     // Headers
     /** The header for the jxmremote.password file. */
-    public static final String JMXREMOTE_PASSWORD_HEADER =
-            "##############################################################"
-                    + NEWLINE
-                    + "#        Password File for Remote JMX Monitoring"
-                    + NEWLINE
-                    + "##############################################################"
-                    + NEWLINE
-                    + "#"
-                    + NEWLINE
-                    + "# Password file for Remote JMX API access to monitoring.  This"
-                    + NEWLINE
-                    + "# file defines the different roles and their passwords.  The access"
-                    + NEWLINE
-                    + "# control file (jmxremote.access by default) defines the allowed"
-                    + NEWLINE
-                    + "# access for each role.  To be functional, a role must have an entry"
-                    + NEWLINE
-                    + "# in both the password and the access files."
-                    + NEWLINE
-                    + "#"
-                    + NEWLINE
-                    + "# Default location of this file is "
-                    + "$JRE/lib/management/jmxremote.password"
-                    + NEWLINE
-                    + "# You can specify an alternate location by specifying a property in"
-                    + NEWLINE
-                    + "# the management config file "
-                    + "$JRE/lib/management/management.properties"
-                    + NEWLINE
-                    + "# or by specifying a system property (See that file for details)."
-                    + NEWLINE
-                    + NEWLINE
-                    + NEWLINE
-                    + "##############################################################"
-                    + NEWLINE
-                    + "#    File permissions of the jmxremote.password file"
-                    + NEWLINE
-                    + "##############################################################"
-                    + NEWLINE
-                    + "#      Since there are cleartext passwords stored in this file,"
-                    + NEWLINE
-                    + "#      this file must be readable by ONLY the owner,"
-                    + NEWLINE
-                    + "#      otherwise the program will exit with an error."
-                    + NEWLINE
-                    + "#"
-                    + NEWLINE
-                    + "# The file format for password and access files "
-                    + "is syntactically the same"
-                    + NEWLINE
-                    + "# as the Properties file format.  The syntax is "
-                    + "described in the Javadoc"
-                    + NEWLINE
-                    + "# for java.util.Properties.load."
-                    + NEWLINE
-                    + "# Typical password file has multiple  lines, "
-                    + "where each line is blank,"
-                    + NEWLINE
-                    + "# a comment (like this one), or a password entry."
-                    + NEWLINE
-                    + "#"
-                    + NEWLINE
-                    + "#"
-                    + NEWLINE
-                    + "# A password entry consists of a role name and an associated"
-                    + NEWLINE
-                    + "# password. "
-                    + " The role name is any string that does not itself contain"
-                    + NEWLINE
-                    + "# spaces or tabs.  The password is again any string that does not"
-                    + NEWLINE
-                    + "# contain spaces or tabs. "
-                    + " Note that passwords appear in the clear in"
-                    + NEWLINE
-                    + "# this file, so it is a good idea not to use valuable passwords."
-                    + NEWLINE
-                    + "#"
-                    + NEWLINE
-                    + "# A given role should have at most one entry in this file. "
-                    + " If a role"
-                    + NEWLINE
-                    + "# has no entry"
-                    + NEWLINE
-                    + "# If multiple entries are found for the same role name, "
-                    + "then the last one"
-                    + NEWLINE
-                    + "# is used."
-                    + NEWLINE
-                    + "#"
-                    + NEWLINE
-                    + "# In a typical installation, this file can be read by anybody on the"
-                    + NEWLINE
-                    + "# local machine, and possibly by people on other machines."
-                    + NEWLINE
-                    + "# For # security, you should either restrict the"
-                    + " access to this file,"
-                    + NEWLINE
-                    + "# or specify another, less accessible file in "
-                    + "the management config file"
-                    + NEWLINE
-                    + "# as described above." + NEWLINE + "#" + NEWLINE;
+    public static final String JMXREMOTE_PASSWORD_HEADER = "##############################################################"
+            + NEWLINE
+            + "#        Password File for Remote JMX Monitoring"
+            + NEWLINE
+            + "##############################################################"
+            + NEWLINE
+            + "#"
+            + NEWLINE
+            + "# Password file for Remote JMX API access to monitoring.  This"
+            + NEWLINE
+            + "# file defines the different roles and their passwords.  The access"
+            + NEWLINE
+            + "# control file (jmxremote.access by default) defines the allowed"
+            + NEWLINE
+            + "# access for each role.  To be functional, a role must have an entry"
+            + NEWLINE
+            + "# in both the password and the access files."
+            + NEWLINE
+            + "#"
+            + NEWLINE
+            + "# Default location of this file is "
+            + "$JRE/lib/management/jmxremote.password"
+            + NEWLINE
+            + "# You can specify an alternate location by specifying a property in"
+            + NEWLINE
+            + "# the management config file "
+            + "$JRE/lib/management/management.properties"
+            + NEWLINE
+            + "# or by specifying a system property (See that file for details)."
+            + NEWLINE
+            + NEWLINE
+            + NEWLINE
+            + "##############################################################"
+            + NEWLINE
+            + "#    File permissions of the jmxremote.password file"
+            + NEWLINE
+            + "##############################################################"
+            + NEWLINE
+            + "#      Since there are cleartext passwords stored in this file,"
+            + NEWLINE
+            + "#      this file must be readable by ONLY the owner,"
+            + NEWLINE
+            + "#      otherwise the program will exit with an error."
+            + NEWLINE
+            + "#"
+            + NEWLINE
+            + "# The file format for password and access files "
+            + "is syntactically the same"
+            + NEWLINE
+            + "# as the Properties file format.  The syntax is "
+            + "described in the Javadoc"
+            + NEWLINE
+            + "# for java.util.Properties.load."
+            + NEWLINE
+            + "# Typical password file has multiple  lines, "
+            + "where each line is blank,"
+            + NEWLINE
+            + "# a comment (like this one), or a password entry."
+            + NEWLINE
+            + "#"
+            + NEWLINE
+            + "#"
+            + NEWLINE
+            + "# A password entry consists of a role name and an associated"
+            + NEWLINE
+            + "# password. "
+            + " The role name is any string that does not itself contain"
+            + NEWLINE
+            + "# spaces or tabs.  The password is again any string that does not"
+            + NEWLINE
+            + "# contain spaces or tabs. "
+            + " Note that passwords appear in the clear in"
+            + NEWLINE
+            + "# this file, so it is a good idea not to use valuable passwords."
+            + NEWLINE
+            + "#"
+            + NEWLINE
+            + "# A given role should have at most one entry in this file. "
+            + " If a role"
+            + NEWLINE
+            + "# has no entry"
+            + NEWLINE
+            + "# If multiple entries are found for the same role name, "
+            + "then the last one"
+            + NEWLINE
+            + "# is used."
+            + NEWLINE
+            + "#"
+            + NEWLINE
+            + "# In a typical installation, this file can be read by anybody on the"
+            + NEWLINE
+            + "# local machine, and possibly by people on other machines."
+            + NEWLINE
+            + "# For # security, you should either restrict the"
+            + " access to this file,"
+            + NEWLINE
+            + "# or specify another, less accessible file in "
+            + "the management config file"
+            + NEWLINE
+            + "# as described above." + NEWLINE + "#" + NEWLINE;
     /** The header for the jmxremote.access file. */
-    public static final String JMXREMOTE_ACCESS_HEADER =
-            "#################################################################"
-                    + "#####"
-                    + NEWLINE
-                    + "#Default Access Control File for Remote JMX(TM) Monitoring"
-                    + NEWLINE
-                    + "################################################################"
-                    + "######"
-                    + NEWLINE
-                    + "#"
-                    + NEWLINE
-                    + "# Access control file for Remote JMX API access to monitoring."
-                    + NEWLINE
-                    + "# This file defines the allowed access for different roles.  The"
-                    + NEWLINE
-                    + "# password file (jmxremote.password by default) defines the "
-                    + "roles and their"
-                    + NEWLINE
-                    + "# passwords.  To be functional, a role must have an entry in"
-                    + NEWLINE
-                    + "# both the password and the access files."
-                    + NEWLINE
-                    + "#"
-                    + NEWLINE
-                    + "# Default location of this file is "
-                    + "$JRE/lib/management/jmxremote.access"
-                    + NEWLINE
-                    + "# You can specify an alternate location by specifying a property in"
-                    + NEWLINE
-                    + "# the management config file "
-                    + "$JRE/lib/management/management.properties"
-                    + NEWLINE
-                    + "# (See that file for details)"
-                    + NEWLINE
-                    + "#"
-                    + NEWLINE
-                    + "# The file format for password and access files is syntactically "
-                    + "the same"
-                    + NEWLINE
-                    + "# as the Properties file format.  The syntax is described in "
-                    + "the Javadoc"
-                    + NEWLINE
-                    + "# for java.util.Properties.load."
-                    + NEWLINE
-                    + "# Typical access file has multiple  lines, where each line is blank,"
-                    + NEWLINE
-                    + "# a comment (like this one), or an access control entry."
-                    + NEWLINE
-                    + "#"
-                    + NEWLINE
-                    + "# An access control entry consists of a role name, and an"
-                    + NEWLINE
-                    + "# associated access level.  The role name is any string that "
-                    + "does not"
-                    + NEWLINE
-                    + "# itself contain spaces or tabs.  It corresponds to an entry in the"
-                    + NEWLINE
-                    + "# password file (jmxremote.password).  The access level is one "
-                    + "of the"
-                    + NEWLINE
-                    + "# following:"
-                    + NEWLINE
-                    + "#       \"readonly\" grants access to read attributes of MBeans."
-                    + NEWLINE
-                    + "#                   For monitoring, this means that a remote "
-                    + "client in this"
-                    + NEWLINE
-                    + "#                   role can read measurements but cannot perform "
-                    + "any action"
-                    + NEWLINE
-                    + "#                   that changes the environment of the "
-                    + "running program."
-                    + NEWLINE
-                    + "#       \"readwrite\" grants access to read and write attributes "
-                    + "of MBeans,"
-                    + NEWLINE
-                    + "#                   to invoke operations on them, and to create "
-                    + "or remove them."
-                    + NEWLINE
-                    + "#                   This access should be granted to only "
-                    + "trusted clients,"
-                    + NEWLINE
-                    + "#                   since they can potentially interfere with "
-                    + "the smooth"
-                    + NEWLINE
-                    + "#                   operation of a running program"
-                    + NEWLINE
-                    + "#"
-                    + NEWLINE
-                    + "# A given role should have at most one entry in this file.  "
-                    + "If a role"
-                    + NEWLINE
-                    + "# has no entry, it has no access."
-                    + NEWLINE
-                    + "# If multiple entries are found for the same role name, "
-                    + "then the last"
-                    + NEWLINE
-                    + "# access entry is used."
-                    + NEWLINE
-                    + "#"
-                    + NEWLINE
-                    + "#"
-                    + NEWLINE
-                    + "# Default access control entries:"
-                    + NEWLINE
-                    + "# o The \"monitorRole\" role has readonly access."
-                    + NEWLINE
-                    + "# o The \"controlRole\" role has readwrite access." + NEWLINE + "" + NEWLINE;
+    public static final String JMXREMOTE_ACCESS_HEADER = "#################################################################"
+            + "#####"
+            + NEWLINE
+            + "#Default Access Control File for Remote JMX(TM) Monitoring"
+            + NEWLINE
+            + "################################################################"
+            + "######"
+            + NEWLINE
+            + "#"
+            + NEWLINE
+            + "# Access control file for Remote JMX API access to monitoring."
+            + NEWLINE
+            + "# This file defines the allowed access for different roles.  The"
+            + NEWLINE
+            + "# password file (jmxremote.password by default) defines the "
+            + "roles and their"
+            + NEWLINE
+            + "# passwords.  To be functional, a role must have an entry in"
+            + NEWLINE
+            + "# both the password and the access files."
+            + NEWLINE
+            + "#"
+            + NEWLINE
+            + "# Default location of this file is "
+            + "$JRE/lib/management/jmxremote.access"
+            + NEWLINE
+            + "# You can specify an alternate location by specifying a property in"
+            + NEWLINE
+            + "# the management config file "
+            + "$JRE/lib/management/management.properties"
+            + NEWLINE
+            + "# (See that file for details)"
+            + NEWLINE
+            + "#"
+            + NEWLINE
+            + "# The file format for password and access files is syntactically "
+            + "the same"
+            + NEWLINE
+            + "# as the Properties file format.  The syntax is described in "
+            + "the Javadoc"
+            + NEWLINE
+            + "# for java.util.Properties.load."
+            + NEWLINE
+            + "# Typical access file has multiple  lines, where each line is blank,"
+            + NEWLINE
+            + "# a comment (like this one), or an access control entry."
+            + NEWLINE
+            + "#"
+            + NEWLINE
+            + "# An access control entry consists of a role name, and an"
+            + NEWLINE
+            + "# associated access level.  The role name is any string that "
+            + "does not"
+            + NEWLINE
+            + "# itself contain spaces or tabs.  It corresponds to an entry in the"
+            + NEWLINE
+            + "# password file (jmxremote.password).  The access level is one "
+            + "of the"
+            + NEWLINE
+            + "# following:"
+            + NEWLINE
+            + "#       \"readonly\" grants access to read attributes of MBeans."
+            + NEWLINE
+            + "#                   For monitoring, this means that a remote "
+            + "client in this"
+            + NEWLINE
+            + "#                   role can read measurements but cannot perform "
+            + "any action"
+            + NEWLINE
+            + "#                   that changes the environment of the "
+            + "running program."
+            + NEWLINE
+            + "#       \"readwrite\" grants access to read and write attributes "
+            + "of MBeans,"
+            + NEWLINE
+            + "#                   to invoke operations on them, and to create "
+            + "or remove them."
+            + NEWLINE
+            + "#                   This access should be granted to only "
+            + "trusted clients,"
+            + NEWLINE
+            + "#                   since they can potentially interfere with "
+            + "the smooth"
+            + NEWLINE
+            + "#                   operation of a running program"
+            + NEWLINE
+            + "#"
+            + NEWLINE
+            + "# A given role should have at most one entry in this file.  "
+            + "If a role"
+            + NEWLINE
+            + "# has no entry, it has no access."
+            + NEWLINE
+            + "# If multiple entries are found for the same role name, "
+            + "then the last"
+            + NEWLINE
+            + "# access entry is used."
+            + NEWLINE
+            + "#"
+            + NEWLINE
+            + "#"
+            + NEWLINE
+            + "# Default access control entries:"
+            + NEWLINE
+            + "# o The \"monitorRole\" role has readonly access."
+            + NEWLINE
+            + "# o The \"controlRole\" role has readwrite access." + NEWLINE + "" + NEWLINE;
 
     static final String ECHO_DELETING_OLD_LIBRARIES = "echo removing old libraries if they exist.";
 

@@ -71,8 +71,8 @@ public class RawMetadataCacheTester extends CacheTestCase {
         // check that the matchers of the batchjob have the correct settings.
         Field job = ReflectUtils.getPrivateField(RawMetadataCache.class, "job");
         ArchiveBatchJob a = (ArchiveBatchJob) job.get(cache);
-        assertTrue("The batchjob should tell which arguments they have.",
-                a.toString().contains(" with arguments: URLMatcher = .*, mimeMatcher = .*"));
+        assertTrue("The batchjob should tell which arguments they have.", a.toString().contains(
+                " with arguments: URLMatcher = .*, mimeMatcher = .*"));
     }
 
     @Test

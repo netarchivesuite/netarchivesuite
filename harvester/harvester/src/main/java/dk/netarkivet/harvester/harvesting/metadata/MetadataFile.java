@@ -185,8 +185,7 @@ public class MetadataFile implements Comparable<MetadataFile> {
      * @param heritrixVersion The version of Heritrix generating the file.
      * @return the metadata URL for this file
      */
-    private String makeMetadataURL(MetadataType theType, String name, long harvestID, long jobID,
-            String heritrixVersion) {
+    private String makeMetadataURL(MetadataType theType, String name, long harvestID, long jobID, String heritrixVersion) {
         return String.format(URL_FORMAT, Settings.get(CommonSettings.ORGANIZATION), theType.name(), name,
                 heritrixVersion, Long.toString(harvestID), Long.toString(jobID));
     }

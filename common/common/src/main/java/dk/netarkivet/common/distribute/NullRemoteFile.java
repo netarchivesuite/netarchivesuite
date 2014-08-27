@@ -38,8 +38,7 @@ public class NullRemoteFile implements RemoteFile {
     /**
      * @see RemoteFileFactory#getInstance(File, boolean, boolean, boolean)
      */
-    public static RemoteFile getInstance(File f, Boolean useChecksums, Boolean fileDeletable,
-            Boolean multipleDownloads) {
+    public static RemoteFile getInstance(File f, Boolean useChecksums, Boolean fileDeletable, Boolean multipleDownloads) {
         return new NullRemoteFile();
     }
 

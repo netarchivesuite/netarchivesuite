@@ -146,8 +146,7 @@ public class HTTPSRemoteFileTester {
     }
 
     private class ForceRemoteHTTPSRemoteFile extends HTTPSRemoteFile {
-        public ForceRemoteHTTPSRemoteFile(File f, boolean useChecksums, boolean fileDeletable,
-                boolean multipleDownloads) {
+        public ForceRemoteHTTPSRemoteFile(File f, boolean useChecksums, boolean fileDeletable, boolean multipleDownloads) {
             super(f, useChecksums, fileDeletable, multipleDownloads);
         }
 

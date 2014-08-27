@@ -272,8 +272,8 @@ public class HTTPControllerServerTester {
         Set<Long> setOfExpectedJobIds = new HashSet<Long>();
         setOfExpectedJobIds.add(Long.valueOf(1L));
         setOfExpectedJobIds.add(Long.valueOf(8L));
-        assertTrue("Should have received job ids '1' and '8'",
-                setOfExpectedJobIds.containsAll(c.changeIndexJobListArgument));
+        assertTrue("Should have received job ids '1' and '8'", setOfExpectedJobIds
+                .containsAll(c.changeIndexJobListArgument));
 
         assertEquals("Should have received label", "myTestLabel", c.changeIndexLabelParameter);
 

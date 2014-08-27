@@ -43,8 +43,7 @@ import dk.netarkivet.common.utils.FileUtils;
 public class TestFileUtils {
     public static final FilenameFilter NON_CVS_DIRS_FILTER = new FilenameFilter() {
         public boolean accept(File directory, String filename) {
-            return !((filename.equals("CVS") && new File(directory, filename).isDirectory() || (filename.equals(".svn")
-                    && new File(
+            return !((filename.equals("CVS") && new File(directory, filename).isDirectory() || (filename.equals(".svn") && new File(
                     directory, filename).isDirectory())));
         }
     };
@@ -276,8 +275,8 @@ public class TestFileUtils {
      *
      * @param start The directory (or file) to start at.
      * @param filter Filter of files to include. All files (including directories) are passed to this filter and are
-     * included if filter.accept() returns true. Subdirectories are scanned whether or not filter.accept()
-     * returns true for them.
+     * included if filter.accept() returns true. Subdirectories are scanned whether or not filter.accept() returns true
+     * for them.
      * @return List of files (in no particular order) that match the filter. and reside under start.
      */
     public static List<File> findFiles(File start, FileFilter filter) {

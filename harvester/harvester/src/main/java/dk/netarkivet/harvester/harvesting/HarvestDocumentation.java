@@ -121,9 +121,9 @@ public class HarvestDocumentation {
             if (mdfw instanceof MetadataFileWriterWarc) {
                 // add warc-info record
                 ANVLRecord infoPayload = new ANVLRecord(3);
-                infoPayload.addLabelValue("software",
-                        "NetarchiveSuite/" + dk.netarkivet.common.Constants.getVersionString() + "/"
-                                + dk.netarkivet.common.Constants.PROJECT_WEBSITE);
+                infoPayload.addLabelValue("software", "NetarchiveSuite/"
+                        + dk.netarkivet.common.Constants.getVersionString() + "/"
+                        + dk.netarkivet.common.Constants.PROJECT_WEBSITE);
                 infoPayload.addLabelValue("ip", SystemUtils.getLocalIP());
                 infoPayload.addLabelValue("hostname", SystemUtils.getLocalHostName());
                 infoPayload.addLabelValue("conformsTo",
@@ -139,16 +139,16 @@ public class HarvestDocumentation {
             List<MetadataEntry> storedMetadata = getStoredMetadata(crawlDir);
             try {
                 for (MetadataEntry m : storedMetadata) {
-                    mdfw.write(m.getURL(), m.getMimeType(), SystemUtils.getLocalIP(), System.currentTimeMillis(),
-                            m.getData());
+                    mdfw.write(m.getURL(), m.getMimeType(), SystemUtils.getLocalIP(), System.currentTimeMillis(), m
+                            .getData());
                 }
             } catch (IOException e) {
                 log.warn("Unable to write pre-metadata to metadata archivefile", e);
             }
 
             // Insert the harvestdetails into metadata archivefile.
-            filesAddedAndNowDeletable = writeHarvestDetails(jobID, harvestID, crawlDir, mdfw,
-                    Constants.getHeritrixVersionString());
+            filesAddedAndNowDeletable = writeHarvestDetails(jobID, harvestID, crawlDir, mdfw, Constants
+                    .getHeritrixVersionString());
             // All these files just added to the metadata archivefile can now be
             // deleted
             // except for the files we need for later processing):
@@ -356,8 +356,8 @@ public class HarvestDocumentation {
             }
         }
         if (!movedFiles.isEmpty()) {
-            log.warn("Found files not belonging to job {}, the following files have been stored for later: {}",
-                    files.getJobId(), movedFiles);
+            log.warn("Found files not belonging to job {}, the following files have been stored for later: {}", files
+                    .getJobId(), movedFiles);
         }
     }
 
@@ -499,8 +499,8 @@ public class HarvestDocumentation {
             // if the given file is a dir, then call
             // the method recursively.
             if (fileInDir.isDirectory()) {
-                List<String> resultList = findAllDomainsWithSettings(fileInDir,
-                        domainReversed + "." + fileInDir.getName());
+                List<String> resultList = findAllDomainsWithSettings(fileInDir, domainReversed + "."
+                        + fileInDir.getName());
                 if (!resultList.isEmpty()) {
                     filesToReturn.addAll(resultList);
                 }

@@ -90,8 +90,8 @@ public class IndexAggregatorTest extends AggregatorTestCase {
 
         aggregator.sortAndMergeFiles(inputFiles, AggregationWorker.TEMP_FILE_INDEX);
 
-        assertNull("Unexpected content of aggregated index single file",
-                testIndex.compareToIndex(AggregationWorker.TEMP_FILE_INDEX));
+        assertNull("Unexpected content of aggregated index single file", testIndex
+                .compareToIndex(AggregationWorker.TEMP_FILE_INDEX));
     }
 
     @Test
@@ -111,7 +111,7 @@ public class IndexAggregatorTest extends AggregatorTestCase {
 
         aggregator.mergeFiles(new File[] {tempFile1, tempFile2}, AggregationWorker.INTERMEDIATE_INDEX_FILE);
 
-        assertNull("Unexpected content of merged index",
-                testIndex.compareToIndex(AggregationWorker.INTERMEDIATE_INDEX_FILE));
+        assertNull("Unexpected content of merged index", testIndex
+                .compareToIndex(AggregationWorker.INTERMEDIATE_INDEX_FILE));
     }
 }

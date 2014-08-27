@@ -175,7 +175,7 @@ public class JobTester extends DataModelTestCase {
         // verify that data can be retrieved from the job again
         assertEquals("Value from CTOR expected", TestInfo.HARVESTID, job.getOrigHarvestDefinitionID());
         Set<String> seeds = new HashSet<String>();
-        for (Iterator<SeedList> i = dc.getSeedLists(); i.hasNext(); ) {
+        for (Iterator<SeedList> i = dc.getSeedLists(); i.hasNext();) {
             SeedList list = (SeedList) i.next();
             seeds.addAll(list.getSeeds());
         }
@@ -284,13 +284,13 @@ public class JobTester extends DataModelTestCase {
             // expected
         }
 
-        assertFalse("Job should not accept configuration asscoiated with domain " + defaultDomain,
-                jobGen.canAccept(job, TestInfo.getConfigurationNotDefault(defaultDomain)));
+        assertFalse("Job should not accept configuration asscoiated with domain " + defaultDomain, jobGen.canAccept(
+                job, TestInfo.getConfigurationNotDefault(defaultDomain)));
 
         // Test with a config associated with another domain:
         DomainConfiguration anotherConfig = TestInfo.getConfigurationNotDefault(TestInfo.getDomainNotDefault());
-        assertTrue("Job should accept configuration associated with domain " + anotherConfig.getDomainName(),
-                jobGen.canAccept(job, anotherConfig));
+        assertTrue("Job should accept configuration associated with domain " + anotherConfig.getDomainName(), jobGen
+                .canAccept(job, anotherConfig));
 
         // Test split according to byte limits
 
@@ -470,8 +470,8 @@ public class JobTester extends DataModelTestCase {
             job.setActualStart(d2);
             assertTrue("No notifications should have been emitted", RememberNotifications.getInstance().message == null);
             job.setActualStop(d1);
-            assertTrue("Argument invalid start later than stop should send an notication",
-                    RememberNotifications.getInstance().message.length() > 0);
+            assertTrue("Argument invalid start later than stop should send an notication", RememberNotifications
+                    .getInstance().message.length() > 0);
         } catch (ArgumentNotValid e) {
             fail("Argument invalid start later than stop should not throw an exception:" + e);
         }
@@ -484,8 +484,8 @@ public class JobTester extends DataModelTestCase {
             job.setActualStop(d1);
             RememberNotifications.resetSingleton();
             job.setActualStart(d2);
-            assertTrue("Argument invalid start later than stop should send an notification",
-                    RememberNotifications.getInstance().message.length() > 0);
+            assertTrue("Argument invalid start later than stop should send an notification", RememberNotifications
+                    .getInstance().message.length() > 0);
         } catch (ArgumentNotValid e) {
             fail("Argument invalid start later than stop should not throw an exception:" + e);
         }
@@ -523,8 +523,8 @@ public class JobTester extends DataModelTestCase {
 
         Job job1 = Job.createSnapShotJob(TestInfo.HARVESTID, lowChan, defaultConfig, TestInfo.MAX_OBJECTS_PER_DOMAIN,
                 -1L, Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 0);
-        assertEquals("forceMaxObjectsPerDomain higher than config limit", defaultConfig.getMaxObjects(),
-                job1.getForceMaxObjectsPerDomain());
+        assertEquals("forceMaxObjectsPerDomain higher than config limit", defaultConfig.getMaxObjects(), job1
+                .getForceMaxObjectsPerDomain());
 
         // Try to set a limit lower than domain config limit, should work
         long jobLimit = defaultConfig.getMaxObjects() - 1;
@@ -562,15 +562,15 @@ public class JobTester extends DataModelTestCase {
 
         // test capping of forceMaxObjectsPerDomain:
         Job job = Job.createJob(TestInfo.HARVESTID, highChan, defaultConfig, 0);
-        assertEquals("forceMaxObjectsPerDomain not capped to domain config", defaultConfig.getMaxObjects(),
-                job.getForceMaxObjectsPerDomain());
+        assertEquals("forceMaxObjectsPerDomain not capped to domain config", defaultConfig.getMaxObjects(), job
+                .getForceMaxObjectsPerDomain());
 
         job = Job.createSnapShotJob(TestInfo.HARVESTID, lowChan, defaultConfig, TestInfo.MAX_OBJECTS_PER_DOMAIN, -1L,
                 Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 0);
 
         // test getForceMaxObjectsPerDomain():
-        assertEquals("Value set in setForceMaxObjectsPerDomain not capped", defaultConfig.getMaxObjects(),
-                job.getForceMaxObjectsPerDomain());
+        assertEquals("Value set in setForceMaxObjectsPerDomain not capped", defaultConfig.getMaxObjects(), job
+                .getForceMaxObjectsPerDomain());
 
         // check if updated in the Document object that the Job object holds:
         // xpath-expression that selects the appropriate node in order.xml:
@@ -607,9 +607,8 @@ public class JobTester extends DataModelTestCase {
         // equals.
         // assertTrue("Job2 should equal job1", job.equals(job2));
 
-        assertEquals(
-                "After serialization the states differed:\n"
-                        + TestFileUtils.getDifferences(relevantState(job), relevantState(job2)), relevantState(job),
+        assertEquals("After serialization the states differed:\n"
+                + TestFileUtils.getDifferences(relevantState(job), relevantState(job2)), relevantState(job),
                 relevantState(job2));
 
         assertTrue(job.getSortedSeedList().equals(job2.getSortedSeedList()));
@@ -804,7 +803,7 @@ public class JobTester extends DataModelTestCase {
                 -1L, // maxBytesPerDomain
                 Constants.DEFAULT_MAX_JOB_RUNNING_TIME, // maxJobRunningTime
                 0 // harvestNum
-        );
+                );
         // test default value of forceMaxObjectsPerDomain:
         assertEquals("No limit of value of forceMaxObjectsPerDomain expected", -1, j.getMaxBytesPerDomain());
         JobDAO jDao = JobDAO.getInstance();

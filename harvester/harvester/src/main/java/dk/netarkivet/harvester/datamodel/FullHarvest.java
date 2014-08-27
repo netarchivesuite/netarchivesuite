@@ -250,12 +250,12 @@ public class FullHarvest extends HarvestDefinition {
             return configuration;
         } catch (UnknownID e) {
             // If the domain doesn't exist, warn
-            log.debug("Previously harvested domain '{}' no longer exists. Ignoring this domain.",
-                    harvestInfo.getDomainName(), e);
+            log.debug("Previously harvested domain '{}' no longer exists. Ignoring this domain.", harvestInfo
+                    .getDomainName(), e);
         } catch (IOFailure e) {
             // If the domain can't be read, warn
-            log.debug("Previously harvested domain '{}' can't be read. Ignoring this domain.",
-                    harvestInfo.getDomainName(), e);
+            log.debug("Previously harvested domain '{}' can't be read. Ignoring this domain.", harvestInfo
+                    .getDomainName(), e);
         }
         return null;
     }

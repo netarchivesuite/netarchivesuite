@@ -115,9 +115,8 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
     @Test
     public void testUploadMissingFile() {
         try {
-            archive.upload(
-                    RemoteFileFactory.getInstance(new File(ORIGINALS_DIR, "ShouldNotExist.ARC"), true, false, true),
-                    "ShouldNotExist.ARC");
+            archive.upload(RemoteFileFactory.getInstance(new File(ORIGINALS_DIR, "ShouldNotExist.ARC"), true, false,
+                    true), "ShouldNotExist.ARC");
             fail("Non-existing file should have given an exception.");
         } catch (ArgumentNotValid e) {
             /* Expected case */
@@ -148,8 +147,8 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
     @Test
     public void testUploadNoDir() {
         try {
-            archive.upload(RemoteFileFactory.getInstance(TestInfo.WORKING_DIR, true, false, true),
-                    TestInfo.WORKING_DIR.getName());
+            archive.upload(RemoteFileFactory.getInstance(TestInfo.WORKING_DIR, true, false, true), TestInfo.WORKING_DIR
+                    .getName());
             fail("Uploading directory should have given an exception.");
         } catch (ArgumentNotValid e) {
             /* Expected case */
@@ -238,8 +237,8 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
         setupBitarchiveWithDirs(new String[] {dir1.getAbsolutePath(),});
         archive.upload(new TestRemoteFile(new File(ORIGINALS_DIR, UPLOADED_FILES.get(2)), false, false, false),
                 UPLOADED_FILES.get(2));
-        assertTrue("Should place file in directory " + dir1,
-                new File(new File(dir1, "filedir"), UPLOADED_FILES.get(2)).exists());
+        assertTrue("Should place file in directory " + dir1, new File(new File(dir1, "filedir"), UPLOADED_FILES.get(2))
+                .exists());
     }
 
     private void setupBitarchiveWithDirs(final String[] dirpaths) {

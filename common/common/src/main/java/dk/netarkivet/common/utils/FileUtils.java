@@ -362,8 +362,8 @@ public class FileUtils {
                     // change size, we might end up in an infinite loop trying
                     // to
                     // copy more bytes than are actually available.
-                    bytesTransferred += in.transferTo(bytesTransferred,
-                            Math.min(Constants.IO_CHUNK_SIZE, in.size() - bytesTransferred), out);
+                    bytesTransferred += in.transferTo(bytesTransferred, Math.min(Constants.IO_CHUNK_SIZE, in.size()
+                            - bytesTransferred), out);
                 } while (bytesTransferred < in.size());
             } finally {
                 if (inStream != null) {
@@ -467,8 +467,7 @@ public class FileUtils {
             try {
                 in = new FileInputStream(file);
                 int bytesRead;
-                for (int i = 0;
-                     i < result.length && (bytesRead = in.read(result, i, result.length - i)) != -1; i += bytesRead) {
+                for (int i = 0; i < result.length && (bytesRead = in.read(result, i, result.length - i)) != -1; i += bytesRead) {
                 }
             } finally {
                 if (in != null) {
@@ -524,7 +523,7 @@ public class FileUtils {
              * @param dir the directory in which the file was found. Unused in this implementation of accept.
              * @param name the name of the file.
              * @return <code>true</code> if and only if the name should be included in the file list; <code>false</code>
-             *         otherwise.
+             * otherwise.
              * @see FilenameFilter#accept(java.io.File, java.lang.String)
              */
             public boolean accept(File dir, String name) {
@@ -1132,8 +1131,8 @@ public class FileUtils {
                 linesAppended++;
             }
         } catch (IOException e) {
-            log.warn("Error appending {} lines to file '{}'. Only appended {} lines. ", lines.length,
-                    file.getAbsolutePath(), linesAppended, e);
+            log.warn("Error appending {} lines to file '{}'. Only appended {} lines. ", lines.length, file
+                    .getAbsolutePath(), linesAppended, e);
         } finally {
             if (writer != null) {
                 writer.close();

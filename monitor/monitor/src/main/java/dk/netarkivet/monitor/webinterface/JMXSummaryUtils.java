@@ -134,8 +134,8 @@ public class JMXSummaryUtils {
             if (CHARACTER_NOT_COLUMN.equals(starredRequest.getParameter(parameter))) {
                 // generate the link, but use the parameter applied to the
                 // table field value.
-                res.append(generateLink(starredRequest, parameter, CHARACTER_SHOW_ALL,
-                        I18N.getString(l, "tablefield;" + parameter)));
+                res.append(generateLink(starredRequest, parameter, CHARACTER_SHOW_ALL, I18N.getString(l, "tablefield;"
+                        + parameter)));
                 res.append(",");
             }
         }

@@ -204,10 +204,10 @@ public class DelegatingControllerTester {
         assertEquals("No mur methods should be called", 0, mur.totalCounter);
         assertEquals("Should have received the list in CDX cache", jobs, cc.getJobIndexArgument);
         assertEquals("Should have received the cc return value in aaa", new File("/return/data"), aaa.setIndexArgument);
-        StringAsserts.assertStringContains("Should contain label and job " + "number in status", "label",
-                c.getStatus(Locale.ENGLISH));
-        StringAsserts.assertStringContains("Should contain label and job " + "number in status", "1234",
-                c.getStatus(Locale.ENGLISH));
+        StringAsserts.assertStringContains("Should contain label and job " + "number in status", "label", c
+                .getStatus(Locale.ENGLISH));
+        StringAsserts.assertStringContains("Should contain label and job " + "number in status", "1234", c
+                .getStatus(Locale.ENGLISH));
     }
 
     public static class TestMissingURIRecorder extends MissingURIRecorder {
