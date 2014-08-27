@@ -43,9 +43,9 @@ import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 /**
  * This class encapsulates one full run of Heritrix by grabbing hold of a CrawlController class. It implements the
  * CrawlController interface.
- * 
+ *
  * @deprecated The JMXHeritrixController offers an implementation that's better on almost all counts.
- * */
+ */
 public class DirectHeritrixController implements HeritrixController {
     /**
      * Has Heritrix finished crawling, yet. This field is set in the method SimpleCrawlStatusListener.crawlEnded()
@@ -129,7 +129,7 @@ public class DirectHeritrixController implements HeritrixController {
 
     /**
      * Add a listener to this crawlController. This is currently only needed to known when the crawler finished.
-     * 
+     *
      * @param listener The listener for crawlstatus messages.
      * @see HeritrixController#crawlIsEnded()
      */
@@ -173,7 +173,7 @@ public class DirectHeritrixController implements HeritrixController {
 
     /**
      * Returns true if the crawl has ended, either because Heritrix finished or because we terminated it.
-     *
+     * <p>
      * This implementation returns true, after the CrawlController has ended a crawl and is about to exit, when it sends
      * a crawlEnded(String sExitMessage) to all listeners.
      *
@@ -192,7 +192,7 @@ public class DirectHeritrixController implements HeritrixController {
     /**
      * This version just returns a string that tells the harvester is running inline. TODO Make this method respond
      * after how the Harvester is really doing, and not just respond ("Running inline").
-     * 
+     *
      * @return running inline.
      */
     public String getHarvestInformation() {
@@ -240,7 +240,7 @@ public class DirectHeritrixController implements HeritrixController {
 
         /**
          * Sets the value of crawlIsEnded to true
-         *
+         * <p>
          * Fired by the crawler when the crawl is ended.
          *
          * @param s Message to attach
@@ -286,7 +286,7 @@ public class DirectHeritrixController implements HeritrixController {
          *
          * @param checkpointDir Checkpoint dir. Write checkpoint state here.
          * @throws Exception A fatal exception. Any exceptions that are let out of this checkpoint are assumed fatal and
-         *             terminate further checkpoint processing.
+         * terminate further checkpoint processing.
          * @see CrawlStatusListener#crawlCheckpoint(java.io.File)
          */
         public void crawlCheckpoint(File checkpointDir) throws Exception {

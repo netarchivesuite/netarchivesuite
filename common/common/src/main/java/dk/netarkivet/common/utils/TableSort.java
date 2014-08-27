@@ -32,7 +32,9 @@ public class TableSort {
     /** list of the sort order. */
     public enum SortOrder {
         NONE, INCR, DESC
-    };
+    }
+
+    ;
 
     /** id of the sorted column. */
     private int columnIdent = -1;
@@ -42,7 +44,7 @@ public class TableSort {
 
     /**
      * Constructor.
-     * 
+     *
      * @param columnId the id of the sorted column
      * @param sortOrder the order of the sort
      */
@@ -56,7 +58,7 @@ public class TableSort {
 
     /**
      * Return the id of the sorted column.
-     * 
+     *
      * @return the id of the sorted column
      */
     public final int getColumnIdent() {
@@ -65,7 +67,7 @@ public class TableSort {
 
     /**
      * Set the id of the sorted column.
-     * 
+     *
      * @param columnident the id of the sorted column
      */
     public final void setColumnIdent(final int columnident) {
@@ -74,7 +76,7 @@ public class TableSort {
 
     /**
      * Return the order of the sort.
-     * 
+     *
      * @return the order of the sort
      */
     public final SortOrder getOrder() {
@@ -83,7 +85,7 @@ public class TableSort {
 
     /**
      * Set the order of the sort.
-     * 
+     *
      * @param sortorder the order of the sort
      */
     public final void setOrder(final SortOrder sortorder) {

@@ -35,13 +35,13 @@ public interface JobIndexCache {
      *
      * @param jobIDs Set of job IDs to generate index for.
      * @return An index, consisting of a file and the set this is an index for. This file must not be modified or
-     *         deleted, since it is part of the cache of data.
+     * deleted, since it is part of the cache of data.
      */
     Index<Set<Long>> getIndex(Set<Long> jobIDs);
 
     /**
      * Request an index from the indexserver. Prepare the index but don't give it to me.
-     * 
+     *
      * @param jobSet Set of job IDs to generate index for.
      * @param harvestId Harvestdefinition associated with this set of jobs
      */

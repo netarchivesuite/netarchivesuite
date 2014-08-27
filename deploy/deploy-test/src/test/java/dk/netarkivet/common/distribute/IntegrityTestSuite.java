@@ -184,7 +184,7 @@ public class IntegrityTestSuite {
 
     /**
      * Verify that a sent message is only delivered to one listener (this is point-to-point semantics).
-     * <p/>
+     * <p>
      * This is an integrity test because: It tests that JMS behaves as expected.
      */
     @Test
@@ -217,9 +217,9 @@ public class IntegrityTestSuite {
 
     /**
      * Test that we can subscribe more than three (3) listeners to a queue and that exactly one receives the message
-     * <p/>
+     * <p>
      * This is an integrity test because: We are testing that JMS itself behaves correctly.
-     * <p/>
+     * <p>
      * This is used for testing the Platform Ed. Enterprise License feature of queue Requires a running broker with
      * Platform Ed. Enterprise License (e.g. trial license: /opt/imq/bin/imqbrokerd -license try)
      */
@@ -440,16 +440,19 @@ public class IntegrityTestSuite {
         NetarkivetMessage nMsg = new TestMessage(Channels.getAllBa(), Channels.getError(), "testTopicSendMessage");
         conn.send(nMsg);
         synchronized (mc1) {
-            if (mc1.nMsg == null)
+            if (mc1.nMsg == null) {
                 mc1.wait();
+            }
         }
         synchronized (mc2) {
-            if (mc2.nMsg == null)
+            if (mc2.nMsg == null) {
                 mc2.wait();
+            }
         }
         synchronized (mc3) {
-            if (mc3.nMsg == null)
+            if (mc3.nMsg == null) {
                 mc3.wait();
+            }
         }
 
         assertEquals("Arcrepos queue MessageConsumer should have received message.", nMsg.toString(),
@@ -462,7 +465,7 @@ public class IntegrityTestSuite {
 
     /**
      * Checks that the QueueBrowser created by the <code>JMSConnectionMQ</code> class work correctly.
-     * 
+     *
      * @throws JMSException
      * @throws InterruptedException
      * @see JMSConnection#createQueueBrowser(ChannelID)
@@ -544,18 +547,23 @@ public class IntegrityTestSuite {
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj)
+            if (this == obj) {
                 return true;
-            if (obj == null)
+            }
+            if (obj == null) {
                 return false;
-            if (getClass() != obj.getClass())
+            }
+            if (getClass() != obj.getClass()) {
                 return false;
+            }
             TestMessage other = (TestMessage) obj;
             if (testID == null) {
-                if (other.testID != null)
+                if (other.testID != null) {
                     return false;
-            } else if (!testID.equals(other.testID))
+                }
+            } else if (!testID.equals(other.testID)) {
                 return false;
+            }
             return true;
         }
 

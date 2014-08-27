@@ -170,5 +170,7 @@ public class GetFileTester {
                 JMSConnectionFactory.getInstance().reply(m);
             }
         }
-    };
+    }
+
+    ;
 }

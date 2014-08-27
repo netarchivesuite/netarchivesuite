@@ -45,7 +45,7 @@ public class HeritrixArchiveRecordWrapper extends ArchiveRecordBase {
 
     /**
      * Construct a Heritrix record wrapper object.
-     * 
+     *
      * @param record Heritrix record object
      */
     public HeritrixArchiveRecordWrapper(ArchiveRecord record) {

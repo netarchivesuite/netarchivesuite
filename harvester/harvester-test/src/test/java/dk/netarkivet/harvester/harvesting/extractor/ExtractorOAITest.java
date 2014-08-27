@@ -40,27 +40,28 @@ import org.junit.Test;
 @SuppressWarnings({"serial"})
 public class ExtractorOAITest {
 
-    public static final String xmlText = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><OAI-PMH xmlns=\"http://www.openarchives.org/OAI/2.0/\" \n"
-            + "         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
-            + "         xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/\n"
-            + "         http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd\"> \n"
-            + " <responseDate>2011-01-24T15:19:38Z</responseDate> \n"
-            + " <request verb=\"ListRecords\"  metadataPrefix=\"oai_dc\">http://www.mtp.hum.ku.dk/library/uni/netarkiv/oai2v3/</request>\n"
-            + " <ListRecords>\n"
-            + "\n"
-            + "\t<record>\n"
-            + "    <header>\n"
-            + "      <identifier>9788772895819,9788763500128</identifier>\n"
-            + "      <datestamp>2010-12-06</datestamp>\n"
-            + "\n"
-            + "    </header>\n"
-            + "    <metadata>\n"
+    public static final String xmlText =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?><OAI-PMH xmlns=\"http://www.openarchives.org/OAI/2.0/\" \n"
+                    + "         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
+                    + "         xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/\n"
+                    + "         http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd\"> \n"
+                    + " <responseDate>2011-01-24T15:19:38Z</responseDate> \n"
+                    + " <request verb=\"ListRecords\"  metadataPrefix=\"oai_dc\">http://www.mtp.hum.ku.dk/library/uni/netarkiv/oai2v3/</request>\n"
+                    + " <ListRecords>\n"
+                    + "\n"
+                    + "\t<record>\n"
+                    + "    <header>\n"
+                    + "      <identifier>9788772895819,9788763500128</identifier>\n"
+                    + "      <datestamp>2010-12-06</datestamp>\n"
+                    + "\n"
+                    + "    </header>\n"
+                    + "    <metadata>\n"
 
-            + "  </metadata>\n"
-            + "  </record>\n"
-            + "\n"
-            + "   <resumptionToken>foobar</resumptionToken>\n"
-            + "      \n" + "   \n" + "</ListRecords>\n" + "\n" + "</OAI-PMH>\n";
+                    + "  </metadata>\n"
+                    + "  </record>\n"
+                    + "\n"
+                    + "   <resumptionToken>foobar</resumptionToken>\n"
+                    + "      \n" + "   \n" + "</ListRecords>\n" + "\n" + "</OAI-PMH>\n";
     public static final String uri = "http://www.mtp.hum.ku.dk/library/uni/netarkiv/oai2v3/?verb=ListRecords&metadataPrefix=oai_dc";
 
     class TestReplayCharSequence implements ReplayCharSequence {

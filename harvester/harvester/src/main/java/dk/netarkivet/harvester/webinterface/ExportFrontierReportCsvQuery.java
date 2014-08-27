@@ -88,7 +88,7 @@ public class ExportFrontierReportCsvQuery {
 
     /**
      * Performs the export.
-     * 
+     *
      * @param context the page context
      * @param i18n the internationalization package to use.
      */

@@ -185,7 +185,7 @@ public class FileUtils {
      * @param f A file to completely and utterly remove.
      * @return true if the file did exist, false otherwise.
      * @throws SecurityException If a security manager exists and its <code>{@link
-     *                           java.lang.SecurityManager#checkDelete}</code> method denies delete access to the file
+     * java.lang.SecurityManager#checkDelete}</code> method denies delete access to the file
      */
     public static boolean removeRecursively(File f) {
         ArgumentNotValid.checkNotNull(f, "File f");
@@ -224,12 +224,12 @@ public class FileUtils {
 
     /**
      * Remove a file.
-     * 
+     *
      * @param f A file to completely and utterly remove.
      * @return true if the file did exist, false otherwise.
      * @throws ArgumentNotValid if f is null.
      * @throws SecurityException If a security manager exists and its <code>{@link
-     *                           java.lang.SecurityManager#checkDelete}</code> method denies delete access to the file
+     * java.lang.SecurityManager#checkDelete}</code> method denies delete access to the file
      */
     public static boolean remove(File f) {
         ArgumentNotValid.checkNotNull(f, "f");
@@ -254,7 +254,7 @@ public class FileUtils {
 
     /**
      * Returns a valid filename for most filesystems. Exchanges the following characters:
-     * <p/>
+     * <p>
      * " " -> "_" ":" -> "_" "+" -> "_"
      *
      * @param filename the filename to format correctly
@@ -467,7 +467,8 @@ public class FileUtils {
             try {
                 in = new FileInputStream(file);
                 int bytesRead;
-                for (int i = 0; i < result.length && (bytesRead = in.read(result, i, result.length - i)) != -1; i += bytesRead) {
+                for (int i = 0;
+                     i < result.length && (bytesRead = in.read(result, i, result.length - i)) != -1; i += bytesRead) {
                 }
             } finally {
                 if (in != null) {
@@ -534,7 +535,7 @@ public class FileUtils {
 
     /**
      * Read all lines from a file into a list of strings.
-     * 
+     *
      * @param file The file to read from.
      * @return The list of lines.
      * @throws IOFailure on trouble reading the file, or if the file does not exist
@@ -619,7 +620,7 @@ public class FileUtils {
      *
      * @param line The full line to remove
      * @param file The file to remove the line from. This file will be rewritten in full, and the entire contents will
-     *            be kept in memory
+     * be kept in memory
      * @throws UnknownID If the file does not exist
      */
     public static void removeLineFromFile(String line, File file) {
@@ -641,9 +642,9 @@ public class FileUtils {
      * created. If the directory creation fails a PermissionDenied exception is thrown.
      *
      * @param dir The directory to create
+     * @return true if dir created.
      * @throws ArgumentNotValid If dir is null or its name is the empty string
      * @throws PermissionDenied If directory cannot be created for any reason, or is not writable.
-     * @return true if dir created.
      */
     public static boolean createDir(File dir) throws PermissionDenied {
         ArgumentNotValid.checkNotNull(dir, "File dir");
@@ -692,7 +693,7 @@ public class FileUtils {
      * @param theFile A file to make relative
      * @param theDir A directory
      * @return the filepath of the theFile relative to theDir. null, if theFile is not relative to theDir. null, if
-     *         theDir is not a directory.
+     * theDir is not a directory.
      */
     public static String relativeTo(File theFile, File theDir) {
         ArgumentNotValid.checkNotNull(theFile, "File theFile");
@@ -739,10 +740,10 @@ public class FileUtils {
 
     /**
      * Count the number of lines in a file.
-     * 
+     *
      * @param file the file to read
-     * @throws IOFailure If an error occurred while reading the file
      * @return the number of lines in the file
+     * @throws IOFailure If an error occurred while reading the file
      */
     public static long countLines(File file) {
         ArgumentNotValid.checkNotNull(file, "file");
@@ -771,9 +772,9 @@ public class FileUtils {
      * Create an InputStream that reads from a file but removes the file when all data has been read.
      *
      * @param file A file to read. This file will be deleted when the inputstream is closed, finalized, reaches
-     *            end-of-file, or when the VM closes.
-     * @throws IOFailure If an error occurs in creating the ephemeral input stream
+     * end-of-file, or when the VM closes.
      * @return An InputStream containing the file's contents.
+     * @throws IOFailure If an error occurs in creating the ephemeral input stream
      */
     public static InputStream getEphemeralInputStream(final File file) {
         ArgumentNotValid.checkNotNull(file, "file");
@@ -887,7 +888,7 @@ public class FileUtils {
 
     /**
      * Attempt to move a file using rename, and if that fails, move the file by copy-and-delete.
-     * 
+     *
      * @param fromFile The source
      * @param toFile The target
      */
@@ -903,7 +904,7 @@ public class FileUtils {
 
     /**
      * Given a set, generate a reasonable file name from the set.
-     * 
+     *
      * @param <T> The type of objects, that the Set IDs argument contains.
      * @param IDs A set of IDs.
      * @param suffix A suffix. May be empty string.
@@ -1019,7 +1020,7 @@ public class FileUtils {
 
     /**
      * Sort a file using UNIX sort.
-     * 
+     *
      * @param file the file that you want to sort.
      * @param toFile The destination file.
      */
@@ -1142,7 +1143,7 @@ public class FileUtils {
 
     /**
      * Loads an file from the class path (for retrieving a file from '.jar').
-     * 
+     *
      * @param filePath The path of the file.
      * @return The file from the class path.
      * @throws IOFailure If resource cannot be retrieved from the class path.
@@ -1173,7 +1174,7 @@ public class FileUtils {
     /**
      * Get a humanly readable representation of the file size. If the file is a directory, the size is the aggregate of
      * the files in the directory except that subdirectories are ignored. The number is given with 2 decimals.
-     * 
+     *
      * @param aFile a File object
      * @return a humanly readable representation of the file size (rounded)
      */

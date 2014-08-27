@@ -42,10 +42,9 @@ import dk.netarkivet.archive.checksum.distribute.GetChecksumMessage;
  * a visitor pattern: Upon receipt, the ArchiveMessageHandler.onMessage() method invokes the ArchiveMessage.accept()
  * method on the message with itself as argument. The accept() method in turn invokes the ArchiveMessageVisitor.visit()
  * method, using method overloading to invoke the visit method for the message received.
- *
+ * <p>
  * Thus to handle a message, you should subclass ArchiveMessageHandler and override the visit() method for that kind of
  * message. You should not implement this interface in any other way.
- *
  */
 public interface ArchiveMessageVisitor {
     /**
@@ -120,28 +119,28 @@ public interface ArchiveMessageVisitor {
 
     /**
      * This method should be overridden to handle the receipt of a message.
-     * 
+     *
      * @param msg A received message.
      */
     void visit(GetChecksumMessage msg);
 
     /**
      * This method should be overridden to handle the receipt of a message.
-     * 
+     *
      * @param msg A received message.
      */
     void visit(GetAllChecksumsMessage msg);
 
     /**
      * This method should be overridden to handle the receipt of a message.
-     * 
+     *
      * @param msg A received message.
      */
     void visit(CorrectMessage msg);
 
     /**
      * This method should be overridden to handle the receipt of a message.
-     * 
+     *
      * @param msg A received message.
      */
     void visit(GetAllFilenamesMessage msg);

@@ -24,7 +24,7 @@ package is.hi.bok.deduplicator;
 
 /**
  * A base class for individual items of crawl data that should be added to the index.
- * 
+ *
  * @author Kristinn Sigur&eth;sson
  */
 public class CrawlDataItem {
@@ -57,14 +57,14 @@ public class CrawlDataItem {
 
     /**
      * Constructor. Creates a new CrawlDataItem with all its data initialized via the constructor.
-     * 
+     *
      * @param URL The URL for this CrawlDataItem
      * @param contentDigest A content digest of the document found at the URL
      * @param timestamp Date of when the content digest was valid for that URL. Format: yyyyMMddHHmmssSSS
      * @param etag Etag for the URL
      * @param mimetype MIME type of the document found at the URL
      * @param origin The origin of the CrawlDataItem (the exact meaning of the origin is outside the scope of this class
-     *            and it may be any String value)
+     * and it may be any String value)
      * @param duplicate True if this CrawlDataItem was marked as duplicate
      */
     public CrawlDataItem(String URL, String contentDigest, String timestamp, String etag, String mimetype,
@@ -80,7 +80,7 @@ public class CrawlDataItem {
 
     /**
      * Returns the URL
-     * 
+     *
      * @return the URL
      */
     public String getURL() {
@@ -89,7 +89,7 @@ public class CrawlDataItem {
 
     /**
      * Set the URL
-     * 
+     *
      * @param URL the new URL
      */
     public void setURL(String URL) {
@@ -98,7 +98,7 @@ public class CrawlDataItem {
 
     /**
      * Returns the documents content digest
-     * 
+     *
      * @return the documents content digest
      */
     public String getContentDigest() {
@@ -107,7 +107,7 @@ public class CrawlDataItem {
 
     /**
      * Set the content digest
-     * 
+     *
      * @param contentDigest The new value of the content digest
      */
     public void setContentDigest(String contentDigest) {
@@ -116,7 +116,7 @@ public class CrawlDataItem {
 
     /**
      * Returns a timestamp for when the URL was fetched in the format: yyyyMMddHHmmssSSS
-     * 
+     *
      * @return the time of the URLs fetching
      */
     public String getTimestamp() {
@@ -125,7 +125,7 @@ public class CrawlDataItem {
 
     /**
      * Set a new timestamp.
-     * 
+     *
      * @param timestamp The new timestamp. It should be in the format: yyyyMMddHHmmssSSS
      */
     public void setTimestamp(String timestamp) {
@@ -136,7 +136,7 @@ public class CrawlDataItem {
      * Returns the etag that was associated with the document.
      * <p>
      * If etag is unavailable null will be returned.
-     * 
+     *
      * @return the etag.
      */
     public String getEtag() {
@@ -145,7 +145,7 @@ public class CrawlDataItem {
 
     /**
      * Set a new Etag
-     * 
+     *
      * @param etag The new etag
      */
     public void setEtag(String etag) {
@@ -154,7 +154,7 @@ public class CrawlDataItem {
 
     /**
      * Returns the mimetype that was associated with the document.
-     * 
+     *
      * @return the mimetype.
      */
     public String getMimeType() {
@@ -163,7 +163,7 @@ public class CrawlDataItem {
 
     /**
      * Set new MIME type.
-     * 
+     *
      * @param mimetype The new MIME type
      */
     public void setMimeType(String mimetype) {
@@ -172,7 +172,7 @@ public class CrawlDataItem {
 
     /**
      * Returns the "origin" that was associated with the document.
-     * 
+     *
      * @return the origin (may be null if none was provided for the document)
      */
     public String getOrigin() {
@@ -181,7 +181,7 @@ public class CrawlDataItem {
 
     /**
      * Set new origin
-     * 
+     *
      * @param origin A new origin.
      */
     public void setOrigin(String origin) {
@@ -190,7 +190,7 @@ public class CrawlDataItem {
 
     /**
      * Returns whether the CrawlDataItem was marked as duplicate.
-     * 
+     *
      * @return true if duplicate, false otherwise
      */
     public boolean isDuplicate() {
@@ -199,7 +199,7 @@ public class CrawlDataItem {
 
     /**
      * Set whether duplicate or not.
-     * 
+     *
      * @param duplicate true if duplicate, false otherwise
      */
     public void setDuplicate(boolean duplicate) {

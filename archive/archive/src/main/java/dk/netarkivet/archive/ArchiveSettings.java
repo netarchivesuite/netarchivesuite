@@ -125,7 +125,7 @@ public class ArchiveSettings {
      * Setting for giving the base URL to the database used by the ReplicaCacheDatabase class. It has the default value:
      * 'jdbc:derby'. Do not retrieve this directly, use in stead the function
      * dk.netarkivet.archive.arcrepositoryadmin.DBConnect.getArchiveUrl().
-     * 
+     * <p>
      * If a specific url is wanted, and not constructed from the 4 different parts, just assign the entire URL to this
      * setting and set the other settings to the empty string.
      */
@@ -179,7 +179,7 @@ public class ArchiveSettings {
      * wait for the database operation used to validate the connection to complete. If the timeout period expires before
      * the operation completes, this method returns false. A value of 0 indicates a timeout is not applied to the
      * database operation.
-     *
+     * <p>
      * {@link java.sql.Connection#isValid(int)}
      */
     public static String DB_CONN_VALID_CHECK_TIMEOUT = "settings.archive.admin.database.validityCheckTimeout";
@@ -207,9 +207,9 @@ public class ArchiveSettings {
      * Configure statement pooling, by setting the global maximum number of pooled prepared statements for a data
      * source. Default value is 0. Note that if both {@link #DB_POOL_MAX_STM} and {@link #DB_POOL_MAX_STM_PER_CONN} are
      * set to zero, statement pooling is fully deactivated.
-     * 
+     *
      * @see <a href="http://www.mchange.com/projects/c3p0/index.html#maxStatements"> c3p0 maxStatements
-     *      documentation</a>
+     * documentation</a>
      */
     public static String DB_POOL_MAX_STM = "settings.archive.admin.database.pool.maxStm";
 
@@ -218,36 +218,36 @@ public class ArchiveSettings {
      * Configure statement pooling, by setting the global maximum number of pooled prepared statements for a data
      * source. Default value is 0. Note that if both {@link #DB_POOL_MAX_STM} and {@link #DB_POOL_MAX_STM_PER_CONN} are
      * set to zero, statement pooling is fully deactivated.
-     * 
+     *
      * @see <a href="http://www.mchange.com/projects/c3p0/index.html#maxStatementsPerConnection"> c3p0
-     *      maxStatementsPerConnection documentation</a>
+     * maxStatementsPerConnection documentation</a>
      */
     public static String DB_POOL_MAX_STM_PER_CONN = "settings.archive.admin.database.pool.maxStmPerConn";
 
     /**
      * <b>settings.archive.admin.database.pool.idleConnTestPeriod</b>: <br>
      * Configure idle connection testing period in seconds. Default is 0, which means no idle connection testing
-     * 
+     *
      * @see <a href="http://www.mchange.com/projects/c3p0/index.html#idleConnectionTestPeriod"> c3p0
-     *      idleConnectionTestPeriod documentation</a>
+     * idleConnectionTestPeriod documentation</a>
      */
     public static String DB_POOL_IDLE_CONN_TEST_PERIOD = "settings.archive.admin.database.pool.idleConnTestPeriod";
 
     /**
      * <b>settings.archive.admin.database.pool.idleConnTestOnCheckin</b>: <br>
      * Configure if a connection validity should be checked when returned to the pool. Default is false.
-     * 
+     *
      * @see <a href="http://www.mchange.com/projects/c3p0/index.html#testConnectionOnCheckin"> c3p0
-     *      testConnectionOnCheckin documentation</a>
+     * testConnectionOnCheckin documentation</a>
      */
     public static String DB_POOL_IDLE_CONN_TEST_ON_CHECKIN = "settings.archive.admin.database.pool.idleConnTestOnCheckin";
 
     /**
      * <b>settings.archive.admin.database.pool.idleConnTestQuery</b>: <br>
      * The SQL query to be used when testing an idle connection. Default is empty, which means using c3p0 defaults.
-     * 
+     *
      * @see <a href="http://www.mchange.com/projects/c3p0/index.html#preferredTestQuery"> c3p0 preferredTestQuery
-     *      documentation</a>
+     * documentation</a>
      */
     public static String DB_POOL_IDLE_CONN_TEST_QUERY = "settings.archive.admin.database.pool.idleConnTestQuery";
 

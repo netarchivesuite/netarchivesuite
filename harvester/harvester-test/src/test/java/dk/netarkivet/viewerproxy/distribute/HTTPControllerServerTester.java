@@ -62,7 +62,6 @@ import dk.netarkivet.viewerproxy.URIResolver;
 
 /**
  * Unit tests for the HTTPControllerServer class.
- *
  */
 @SuppressWarnings({"deprecation"})
 public class HTTPControllerServerTester {

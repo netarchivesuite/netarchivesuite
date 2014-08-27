@@ -50,13 +50,13 @@ public class WeeklyFrequencyTester {
 
     /**
      * Given a frequency that can start any time, check that first event is immediate.
-     * 
+     *
      * @throws Exception
      */
     @Test
     public void testGetFirstEvent1() throws Exception {
         WeeklyFrequency freq = new WeeklyFrequency(4); // Every four days,
-                                                       // anytime
+        // anytime
         Calendar cal = GregorianCalendar.getInstance();
         cal.set(2005, 1, 28, 22, 42);// Feb. 28th.
         Date d1 = cal.getTime();
@@ -66,20 +66,20 @@ public class WeeklyFrequencyTester {
 
     /**
      * Given a frequency that can start Wed at 4:22, check that first event is first possible Wed 4:22
-     * 
+     *
      * @throws Exception
      */
     @Test
     public void testGetFirstEvent2() throws Exception {
         WeeklyFrequency freq = new WeeklyFrequency(4, Calendar.WEDNESDAY, 4, 22); // Every
-                                                                                  // four
-                                                                                  // weeks,
-                                                                                  // on
-                                                                                  // the
-                                                                                  // day,
-                                                                                  // hour
-                                                                                  // and
-                                                                                  // minute
+        // four
+        // weeks,
+        // on
+        // the
+        // day,
+        // hour
+        // and
+        // minute
         Calendar cal = GregorianCalendar.getInstance();
         cal.set(2005, Calendar.FEBRUARY, 28, 22, 42);// Feb. 28th. is a monday
         Date d1 = cal.getTime();
@@ -93,13 +93,13 @@ public class WeeklyFrequencyTester {
 
     /**
      * Given a frequency that can start any time, check that next event is after correct period.
-     * 
+     *
      * @throws Exception
      */
     @Test
     public void testGetNextEvent1() throws Exception {
         WeeklyFrequency freq = new WeeklyFrequency(4); // Every four days,
-                                                       // anytime
+        // anytime
         Calendar cal = GregorianCalendar.getInstance();
         cal.set(2005, 1, 28, 22, 42);// Feb. 28th.
         Date d1 = cal.getTime();
@@ -111,20 +111,20 @@ public class WeeklyFrequencyTester {
 
     /**
      * Given a frequency that can start Mon at 5:23, check that first event is first possible Mon 5:23.
-     * 
+     *
      * @throws Exception
      */
     @Test
     public void testGetNextEvent2() throws Exception {
         WeeklyFrequency freq = new WeeklyFrequency(4, Calendar.MONDAY, 5, 23); // Every
-                                                                               // four
-                                                                               // days,
-                                                                               // on
-                                                                               // the
-                                                                               // day,
-                                                                               // hour
-                                                                               // and
-                                                                               // minute
+        // four
+        // days,
+        // on
+        // the
+        // day,
+        // hour
+        // and
+        // minute
         Calendar cal = GregorianCalendar.getInstance();
         cal.set(2005, Calendar.FEBRUARY, 28, 22, 42); // 28/2 2005 is a Monday
         Date d1 = cal.getTime();
@@ -141,25 +141,25 @@ public class WeeklyFrequencyTester {
     /**
      * Given a frequency that can start Mon at 5:23, check that first event is first possible Mon 5:23, given a time
      * that IS actually Mon 5:23.
-     * 
+     *
      * @throws Exception
      */
     @Test
     public void testGetNextEvent3() throws Exception {
         WeeklyFrequency freq = new WeeklyFrequency(4, Calendar.MONDAY, 5, 23); // Every
-                                                                               // four
-                                                                               // days,
-                                                                               // on
-                                                                               // the
-                                                                               // day,
-                                                                               // hour
-                                                                               // and
-                                                                               // minute
+        // four
+        // days,
+        // on
+        // the
+        // day,
+        // hour
+        // and
+        // minute
         Calendar cal = new GregorianCalendar(2005, Calendar.FEBRUARY, 28, 5, 23); // 28/2
-                                                                                  // 2005
-                                                                                  // is
-                                                                                  // a
-                                                                                  // Monday
+        // 2005
+        // is
+        // a
+        // Monday
         Date d1 = cal.getTime();
         Calendar cal2 = new GregorianCalendar(2005, Calendar.MARCH, 28, 5, 23);
         Date d3 = cal2.getTime();

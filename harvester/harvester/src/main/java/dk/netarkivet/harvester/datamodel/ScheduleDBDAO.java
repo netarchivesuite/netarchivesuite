@@ -46,7 +46,7 @@ import dk.netarkivet.common.utils.FilterIterator;
 
 /**
  * A database-based implementation of the ScheduleDAO.
- *
+ * <p>
  * The statements to create the tables are now in scripts/sql/createfullhddb.sql and scripts/sql/createfullhddb.mysql.
  */
 public class ScheduleDBDAO extends ScheduleDAO {
@@ -105,7 +105,7 @@ public class ScheduleDBDAO extends ScheduleDAO {
     /**
      * Sets the first twelve parameters of a Schedule in the order. name, comments, startdate, enddate, maxrepeats,
      * timeunit, numtimeunits, anytime, onminute, onhour, ondayofweek, ondayofmonth
-     * 
+     *
      * @param s a prepared SQL statement
      * @param schedule a given schedule.
      * @throws SQLException If the operation fails.
@@ -155,7 +155,7 @@ public class ScheduleDBDAO extends ScheduleDAO {
 
     /**
      * Returns whether a named schedule exists.
-     * 
+     *
      * @param c An open connection to the harvestDatabase.
      * @param scheduleName The name of a schedule
      * @return True if the schedule exists.
@@ -202,7 +202,7 @@ public class ScheduleDBDAO extends ScheduleDAO {
             Integer dayofmonth = DBUtils.getIntegerMaybeNull(rs, 12);
             if (log.isDebugEnabled()) {
                 log.debug("Creating frequency for (timeunit,anytime,numtimeunits,hour, minute, dayofweek, dayofmonth)"
-                        + " = ({},{},{},{},{},{},{},)", timeunit, anytime, numtimeunits, minute, hour, dayofweek,
+                                + " = ({},{},{},{},{},{},{},)", timeunit, anytime, numtimeunits, minute, hour, dayofweek,
                         dayofmonth);
             }
             Frequency freq = Frequency.getNewInstance(timeunit, anytime, numtimeunits, minute, hour, dayofweek,

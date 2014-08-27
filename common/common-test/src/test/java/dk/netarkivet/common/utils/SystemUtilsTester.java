@@ -45,12 +45,11 @@ public class SystemUtilsTester {
     }
 
     /**
-     * 
      * Tests getting hostname. This is nearly impossible, but we _can_ check that an IP address is not returned (note:
      * IP number comparison disabled as the method invoked uses getCanonicalHostname which does a reverse DNS lookup
      * which does not return a name but the IP-number if the number is not in DNS (which frequently is the case for
      * residential networks behind a NAT-router), and that it at least does not throw an exception.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -70,11 +69,12 @@ public class SystemUtilsTester {
         CollectionAsserts.assertListEquals("Should return the system" + " class path as a list", classpath,
                 (Object[]) systemClassPath);
         // Test that some version of the standard libraries are in there
-        JARS: for (String jar : new String[] {"commons-fileupload.*\\.jar$", "commons-httpclient.*\\.jar$",
+        JARS:
+        for (String jar : new String[] {"commons-fileupload.*\\.jar$", "commons-httpclient.*\\.jar$",
                 "commons-logging.*\\.jar$", "dom4j-.*\\.jar$", "jaxen-.*\\.jar$", "jetty-.*\\.jar$", "junit-.*\\.jar$",
-        // Removed as not used in common.
-        // "libidn-.*\\.jar$",
-        // "lucene-core-.*\\.jar$"
+                // Removed as not used in common.
+                // "libidn-.*\\.jar$",
+                // "lucene-core-.*\\.jar$"
         }) {
             Matcher m = Pattern.compile(jar).matcher("");
             for (String path : classpath) {

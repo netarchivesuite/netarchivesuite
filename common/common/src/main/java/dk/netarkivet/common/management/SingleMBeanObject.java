@@ -45,11 +45,11 @@ import dk.netarkivet.common.utils.SystemUtils;
 
 /**
  * Wrapper class for registering objects of type I as MBeans.
- *
+ * <p>
  * The register method will register a given object under an object name, generated with the domain given in
  * constructor, and fields from the Hashtable nameProperties. It is prefilled with values common for all MBeans, but it
  * is expected to be extended after the object is created with additional info.
- * 
+ *
  * @param <I> The Type of Object to expose as an MBean. Currently only used with {@link SingleMBeanObject}
  */
 public class SingleMBeanObject<I> {
@@ -89,7 +89,6 @@ public class SingleMBeanObject<I> {
      * @param object The object to expose as an MBean.
      * @param asInterface The interface this MBean is exposed as.
      * @param mBeanServer The server to register the mbean in.
-     *
      * @throws ArgumentNotValid If domain is null or empty, or any other argument is null.
      */
     public SingleMBeanObject(String domain, I object, Class<I> asInterface, MBeanServer mBeanServer) {
@@ -128,7 +127,7 @@ public class SingleMBeanObject<I> {
 
     /**
      * Create a single mbean object.
-     *
+     * <p>
      * This is a helper method for the constructor taking a domain, which take the domain from a preconstructed
      * ObjectName and replaces the nameProperties with the properties from the given object name. Use this if you have
      * an object name created already, which you wish to use.
@@ -137,7 +136,6 @@ public class SingleMBeanObject<I> {
      * @param o The object to register.
      * @param asInterface The interface o should implement.
      * @param mBeanServer The mbean server to register o in.
-     *
      * @throws ArgumentNotValid on any null parameter.
      */
     public SingleMBeanObject(ObjectName name, I o, Class<I> asInterface, MBeanServer mBeanServer) {

@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Derby-specific implementation of DB methods.
- *
+ * <p>
  * This class is intended for potential updates of the database, if it sometime in the future needs to be updated. Since
  * it is the first version of the database, no update method have yet been implemented.
  */

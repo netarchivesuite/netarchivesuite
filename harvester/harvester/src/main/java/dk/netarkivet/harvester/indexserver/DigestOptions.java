@@ -26,7 +26,6 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * Encapsulates the options for the indexing process.
- *
  */
 public class DigestOptions {
 
@@ -46,7 +45,7 @@ public class DigestOptions {
 
     /**
      * Set the needed options used by the DigestIndexer.
-     * 
+     *
      * @param useMimefilterAsBlacklist Are we using the mimeFilter as a black or a whitelist.
      * @param verboseIndexing print logging to stdout while indexing, or not.
      * @param theMimeFilter The given black or whitelist according to mimetype.
@@ -59,7 +58,6 @@ public class DigestOptions {
     }
 
     /**
-     * 
      * @return true if we use the mimefilter as a blacklist; false otherwise
      */
     public boolean getUseBlacklist() {
@@ -67,7 +65,6 @@ public class DigestOptions {
     }
 
     /**
-     * 
      * @return true, if we are verbose; otherwise false
      */
     public boolean getVerboseMode() {
@@ -75,7 +72,6 @@ public class DigestOptions {
     }
 
     /**
-     * 
      * @return the mimefilter
      */
     public String getMimeFilter() {

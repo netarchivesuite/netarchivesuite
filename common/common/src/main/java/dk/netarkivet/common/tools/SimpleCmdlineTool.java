@@ -26,7 +26,6 @@ package dk.netarkivet.common.tools;
 /**
  * A very abstracted interface for simple command line tools. Allows for setup, teardown, argument checking, usage
  * listing and (of course) running.
- *
  */
 public interface SimpleCmdlineTool {
 
@@ -34,7 +33,7 @@ public interface SimpleCmdlineTool {
      * Check (command line) arguments.
      *
      * @param args Usually the command line arguments passed directly from a public static void main(String[] args)
-     *            method.
+     * method.
      * @return True, if parameters are usable. False if not.
      */
     boolean checkArgs(String... args);
@@ -43,7 +42,7 @@ public interface SimpleCmdlineTool {
      * Create any resource which may requires an explicit teardown. Implement teardown in the teardown method.
      *
      * @param args Usually the command line arguments passed directly from a public static void main(String[] args)
-     *            method.
+     * method.
      */
     void setUp(String... args);
 
@@ -57,7 +56,7 @@ public interface SimpleCmdlineTool {
      * Run the tool. Any resources that can be managed without reliable teardown may be created here.
      *
      * @param args Usually the command line arguments passed directly from a public static void main(String[] args)
-     *            method.
+     * method.
      */
     void run(String... args);
 

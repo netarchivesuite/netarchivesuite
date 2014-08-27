@@ -86,7 +86,7 @@ public class HarvestChannelRegistry {
 
     /**
      * Clears any registration data for a given harvester instance id.
-     * 
+     *
      * @param harvesterInstanceId a harvester instance id
      */
     private void clearHarvester(final String harvesterInstanceId) {

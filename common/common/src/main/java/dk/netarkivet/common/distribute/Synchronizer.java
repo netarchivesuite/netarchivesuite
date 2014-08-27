@@ -36,7 +36,6 @@ import dk.netarkivet.common.exceptions.IOFailure;
 /**
  * Converts an asynchronous call to a synchronous call. The method sendAndWaitForOneReply() is a blocking call which
  * responds when a reply is received or returns null on timeout.
- *
  */
 public class Synchronizer implements MessageListener {
 

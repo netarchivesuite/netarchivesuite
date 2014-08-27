@@ -29,7 +29,7 @@ import java.io.OutputStream;
 /**
  * This class implements a batchjob that enables you to delete files from an archive. Note that the default Java
  * Security Policy distributed with NetarchiveSuite does not allow this.
- * 
+ *
  * @author ngiraud
  * @author svc
  */
@@ -38,7 +38,7 @@ public class FileRemover extends FileBatchJob {
 
     /**
      * The method to initialize the batchjob.
-     * 
+     *
      * @param os The OutputStream to which output should be written
      * @see FileBatchJob#initialize(OutputStream)
      */
@@ -49,7 +49,7 @@ public class FileRemover extends FileBatchJob {
     /**
      * This method deletes the file in the argument list. Note that the default Java Security Policy distributed with
      * NetarchiveSuite does not allow this.
-     * 
+     *
      * @param file The file to be processed
      * @param os The OutputStream to which output should be written
      * @return true, if and only if the file is succesfully deleted.
@@ -62,7 +62,7 @@ public class FileRemover extends FileBatchJob {
 
     /**
      * The method to finish the batchjob.
-     * 
+     *
      * @param os The OutputStream to which output should be written
      * @see FileBatchJob#finish(OutputStream)
      */

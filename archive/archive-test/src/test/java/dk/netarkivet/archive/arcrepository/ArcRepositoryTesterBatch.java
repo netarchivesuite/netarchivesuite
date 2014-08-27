@@ -37,8 +37,6 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -62,6 +60,7 @@ import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
+import junit.framework.TestCase;
 
 /**
  * NB: This class was formerly known as ChecksumJobTester, but it tests batch-functionality more than it tests the class

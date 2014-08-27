@@ -74,7 +74,7 @@ public class PhysicalLocation {
     /**
      * The physical locations is referring to the position in the real world where the computers are located. One
      * physical location can contain many machines.
-     * 
+     *
      * @param subTreeRoot The root of this branch in the XML structure.
      * @param parentSettings The settings of the parent (deploy-config).
      * @param param The parameters of the parent (deploy-config).
@@ -86,7 +86,7 @@ public class PhysicalLocation {
      * @param resetDir Whether the temporary directory should be reset.
      * @param externalJarFolder The folder containing the external jar library files.
      * @throws ArgumentNotValid If one of the following arguments are null: subTreeRoot, parentSettings, param, logProp,
-     *             securityPolicy; or if the netarchiveSuiteSource if either null or empty.
+     * securityPolicy; or if the netarchiveSuiteSource if either null or empty.
      */
     public PhysicalLocation(Element subTreeRoot, XmlStructure parentSettings, Parameters param,
             String netarchiveSuiteSource, File logProp, File slf4JConfig, File securityPolicy, File dbFile,
@@ -130,7 +130,7 @@ public class PhysicalLocation {
 
     /**
      * Extract the local variables from the root.
-     * 
+     * <p>
      * It is only the name for this instance. This is then set in settings.
      */
     private void extractVariables() {
@@ -175,7 +175,7 @@ public class PhysicalLocation {
 
     /**
      * Initiate the creation of global scripts and machine scripts.
-     * 
+     *
      * @param directory The directory where the files are to be placed.
      * @throws ArgumentNotValid If the directory is null.
      */
@@ -191,7 +191,7 @@ public class PhysicalLocation {
 
     /**
      * Creates the following scripts for this physical location. * killall. * install. * startall.
-     * 
+     * <p>
      * The scripts for a physical location will only work from Linux/Unix.
      *
      * @param directory The directory where the scripts are to be placed.

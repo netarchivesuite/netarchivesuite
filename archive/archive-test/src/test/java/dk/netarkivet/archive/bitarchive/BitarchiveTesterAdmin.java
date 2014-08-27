@@ -59,7 +59,7 @@ public class BitarchiveTesterAdmin extends BitarchiveTestCase {
 
     /**
      * Create Bitarchive
-     * 
+     *
      * @throws Exception
      */
     @Before
@@ -74,7 +74,7 @@ public class BitarchiveTesterAdmin extends BitarchiveTestCase {
 
     /**
      * Verify that uploading a file adds the appropriate record to admin data.
-     * 
+     *
      * @throws FileNotFoundException
      * @throws PermissionDenied
      * @throws IOException

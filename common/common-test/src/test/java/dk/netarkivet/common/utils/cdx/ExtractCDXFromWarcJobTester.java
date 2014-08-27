@@ -39,8 +39,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.archive.io.ArchiveReader;
 import org.archive.io.ArchiveReaderFactory;
 import org.archive.io.ArchiveRecord;
@@ -52,10 +50,10 @@ import org.junit.Test;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 import dk.netarkivet.common.utils.batch.FileBatchJob.ExceptionOccurrence;
+import junit.framework.TestCase;
 
 /**
  * Test class used for investigating CDX generation from WARC-files using a modified ExtractCDXJob class.
- * 
  */
 @SuppressWarnings({"serial"})
 public class ExtractCDXFromWarcJobTester {
@@ -253,7 +251,7 @@ public class ExtractCDXFromWarcJobTester {
 
     /**
      * Helper method (no longer used).
-     * 
+     *
      * @param psWord
      * @param psReplace
      * @param psNewSeg

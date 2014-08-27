@@ -31,7 +31,6 @@ import dk.netarkivet.common.exceptions.UnknownID;
 
 /**
  * A DAO for reading and writing schedules by name.
- *
  */
 public abstract class ScheduleDAO implements DAO, Iterable<Schedule> {
 
@@ -103,7 +102,7 @@ public abstract class ScheduleDAO implements DAO, Iterable<Schedule> {
 
     /**
      * Get an iterator over the schedules handled by this DAO. Implements the Iterable interface.
-     * 
+     *
      * @return Iterator of all current schedules.
      */
     public Iterator<Schedule> iterator() {
@@ -112,7 +111,7 @@ public abstract class ScheduleDAO implements DAO, Iterable<Schedule> {
 
     /**
      * Get the number of defined schedules.
-     * 
+     *
      * @return The number of defined schedules
      */
     public abstract int getCountSchedules();

@@ -60,7 +60,7 @@ public class ARCKey {
 
     /**
      * Getter for offset.
-     * 
+     *
      * @return The offset into the ARC file used for this key
      */
     public long getOffset() {
@@ -69,7 +69,7 @@ public class ARCKey {
 
     /**
      * Getter for arcFile.
-     * 
+     *
      * @return The ARC file that this entry can be found in
      */
     public File getFile() {

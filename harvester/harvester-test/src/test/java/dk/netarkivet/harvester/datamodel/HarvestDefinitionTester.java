@@ -68,7 +68,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
 
     /**
      * Creating a valid schedule.
-     * 
+     *
      * @throws Exception
      */
     @Before
@@ -875,7 +875,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         List<Job> oldJobs = IteratorUtils.toList(JobDAO.getInstance().getAll());
         new DefaultJobGenerator().generateJobs(fh);
         List<Job> createdJobs = IteratorUtils.toList(JobDAO.getInstance().getAll());
-        for (Iterator<Job> i = createdJobs.iterator(); i.hasNext();) {
+        for (Iterator<Job> i = createdJobs.iterator(); i.hasNext(); ) {
             Job job = i.next();
             for (Job oldjob : oldJobs) {
                 if (job.getJobID().equals(oldjob.getJobID())) {

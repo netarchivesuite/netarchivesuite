@@ -86,7 +86,7 @@ public class DomainIngester extends Thread {
 
     /**
      * Check whether or not the DomainIngester is finished.
-     * 
+     *
      * @return true if finished; false otherwise
      */
     public boolean isDone() {

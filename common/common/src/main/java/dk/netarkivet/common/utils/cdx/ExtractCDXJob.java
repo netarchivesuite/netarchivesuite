@@ -40,7 +40,7 @@ import dk.netarkivet.common.utils.batch.ARCBatchFilter;
 
 /**
  * Batch job that extracts information to create a CDX file.
- *
+ * <p>
  * A CDX file contains sorted lines of metadata from the ARC files, with each line followed by the file and offset the
  * record was found at, and optionally a checksum. The timeout of this job is 7 days. See
  * http://www.archive.org/web/researcher/cdx_file_format.php
@@ -66,7 +66,7 @@ public class ExtractCDXJob extends ARCBatchJob {
 
     /**
      * Constructs a new job for extracting CDX indexes.
-     * 
+     *
      * @param includeChecksum If true, an MD5 checksum is also written for each record. If false, it is not.
      */
     public ExtractCDXJob(boolean includeChecksum) {
@@ -84,9 +84,9 @@ public class ExtractCDXJob extends ARCBatchJob {
 
     /**
      * Filter out the filedesc: headers.
-     * 
-     * @see dk.netarkivet.common.utils.arc.ARCBatchJob#getFilter()
+     *
      * @return The filter that defines what ARC records are wanted in the output CDX file.
+     * @see dk.netarkivet.common.utils.arc.ARCBatchJob#getFilter()
      */
     @Override
     public ARCBatchFilter getFilter() {
@@ -96,7 +96,7 @@ public class ExtractCDXJob extends ARCBatchJob {
 
     /**
      * Initialize any data needed (none).
-     * 
+     *
      * @see dk.netarkivet.common.utils.arc.ARCBatchJob#initialize(OutputStream)
      */
     @Override
@@ -105,9 +105,9 @@ public class ExtractCDXJob extends ARCBatchJob {
 
     /**
      * Process this entry, reading metadata into the output stream.
-     * 
-     * @see dk.netarkivet.common.utils.arc.ARCBatchJob#processRecord(ARCRecord, OutputStream)
+     *
      * @throws IOFailure on trouble reading arc record data
+     * @see dk.netarkivet.common.utils.arc.ARCBatchJob#processRecord(ARCRecord, OutputStream)
      */
     @Override
     public void processRecord(ARCRecord sar, OutputStream os) {
@@ -145,7 +145,7 @@ public class ExtractCDXJob extends ARCBatchJob {
 
     /**
      * End of the batch job.
-     * 
+     *
      * @see dk.netarkivet.common.utils.arc.ARCBatchJob#finish(OutputStream)
      */
     @Override

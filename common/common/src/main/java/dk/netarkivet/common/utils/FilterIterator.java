@@ -29,7 +29,7 @@ import java.util.NoSuchElementException;
 /**
  * An iterator that filters out and converts items from another iterator. Java 1.5 type: FilterIterator<T>,<S>> <S>
  * filter(<T> o);
- * 
+ *
  * @param <T> Type of Iterator
  * @param <S> Type of objects returned by the iterator.
  */
@@ -94,7 +94,7 @@ public abstract class FilterIterator<T, S> implements Iterator<S> {
      *
      * @throws UnsupportedOperationException if the <tt>remove</tt> operation is not supported by this Iterator.
      * @throws IllegalStateException if the <tt>next</tt> method has not yet been called, or the <tt>remove</tt> method
-     *             has already been called after the last call to the <tt>next</tt> method.
+     * has already been called after the last call to the <tt>next</tt> method.
      */
     public void remove() {
         throw new UnsupportedOperationException("Cannot remove from this iterator");

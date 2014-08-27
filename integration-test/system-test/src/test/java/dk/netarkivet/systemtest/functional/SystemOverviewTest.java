@@ -58,7 +58,8 @@ public class SystemOverviewTest extends SeleniumTest {
         int WAIT_INTERVAL = 10;
         addStep("Goto the Systemstate page and wait for the extected number of applications to appear.",
                 expectedApplicationSet.size() + " should appear within " + MAX_SECONDS_TO_WAIT);
-        for (int waitedSeconds = 0; waitedSeconds <= MAX_SECONDS_TO_WAIT; waitedSeconds = waitedSeconds + WAIT_INTERVAL) {
+        for (int waitedSeconds = 0;
+             waitedSeconds <= MAX_SECONDS_TO_WAIT; waitedSeconds = waitedSeconds + WAIT_INTERVAL) {
             PageHelper.reloadSubPage("Status/Monitor-JMXsummary.jsp");
             int numberOfAppsInOverview = retrieveSystemOverviewRows().size();
             log.debug(retrieveSystemOverviewRows().size() + "/" + numberOfApps + " apps appeared " + "in "
@@ -76,7 +77,7 @@ public class SystemOverviewTest extends SeleniumTest {
         // We need to click the 'Instance id' link to differentiate between
         // instances of the same application running on the same machine
         addStep("Click the 'Instance id' link (We need to do this to differentiate between "
-                + "instances of the same application running on the same machine)",
+                        + "instances of the same application running on the same machine)",
                 "Verify that the the expected applications are running as they should.");
         driver.findElement(By.linkText("Instance id")).click();
         PageHelper.waitForPageToLoad();
@@ -102,7 +103,7 @@ public class SystemOverviewTest extends SeleniumTest {
 
     /**
      * Reads and return the rows of the system overview table excluding the headers.
-     * 
+     *
      * @return The rows of the system overview table.
      */
     private List<WebElement> retrieveSystemOverviewRows() {

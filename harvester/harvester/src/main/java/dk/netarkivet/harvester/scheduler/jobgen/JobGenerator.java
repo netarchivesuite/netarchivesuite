@@ -36,7 +36,7 @@ public interface JobGenerator {
     /**
      * Generates a series of jobs for the given harvest definition. Note that a job generator is expected to follow the
      * singleton pattern, so implementations of this method should be thread-safe.
-     * 
+     *
      * @param harvest the harvest definition to process.
      * @return the number of jobs that were generated.
      */

@@ -68,14 +68,13 @@ import dk.netarkivet.harvester.webinterface.HarvestStatusQuery;
 
 /**
  * A database-oriented implementation of the HarvestDefinitionDAO.
- *
+ * <p>
  * The statements to create the tables are located in:
  * <ul>
  * <li><em>Derby:</em> scripts/sql/createfullhddb.sql</li>
  * <li><em>MySQL:</em> scripts/sql/createfullhddb.mysql</li>
  * <li><em>PostgreSQL:</em> scripts/postgresql/netarchivesuite_init.sql</li>
  * </ul>
- *
  */
 public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
 
@@ -85,7 +84,6 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     /**
      * Comparator used for sorting the UI list of {@link SparseDomainConfiguration}s. Sorts first by domain name
      * alphabetical order, next by configuration name.
-     *
      */
     private static class SparseDomainConfigurationComparator implements Comparator<SparseDomainConfiguration> {
 
@@ -252,11 +250,11 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     /**
      * Read the stored harvest definition for the given ID.
      *
-     * @see HarvestDefinitionDAO#read(Long)
      * @param harvestDefinitionID An ID number for a harvest definition
      * @return A harvest definition that has been read from persistent storage.
      * @throws UnknownID if no entry with that ID exists in the database
      * @throws IOFailure If DB-failure occurs?
+     * @see HarvestDefinitionDAO#read(Long)
      */
     @Override
     public synchronized HarvestDefinition read(Long harvestDefinitionID) throws UnknownID, IOFailure {
@@ -271,12 +269,12 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     /**
      * Read the stored harvest definition for the given ID.
      *
-     * @see HarvestDefinitionDAO#read(Long)
      * @param c The used database connection
      * @param harvestDefinitionIDAn ID number for a harvest definition
      * @return A harvest definition that has been read from persistent storage.
      * @throws UnknownID if no entry with that ID exists in the database
      * @throws IOFailure If DB-failure occurs?
+     * @see HarvestDefinitionDAO#read(Long)
      */
     private HarvestDefinition read(Connection c, Long harvestDefinitionID) throws UnknownID, IOFailure {
         if (!exists(c, harvestDefinitionID)) {
@@ -631,7 +629,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
 
     /**
      * Gets default configurations for all domains that are not aliases.
-     *
+     * <p>
      * This method currently gives an iterator that reads in all domains, although only on demand, that is: when calling
      * "hasNext".
      *
@@ -656,7 +654,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
      *
      * @param now The current date
      * @return List of ready harvest definitions. No check is performed for whether these are already in the middle of
-     *         being scheduled.
+     * being scheduled.
      */
     @Override
     public Iterable<Long> getReadyHarvestDefinitions(Date now) {
@@ -796,7 +794,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
      * Get all domain,configuration pairs for a harvest definition in sparse version for GUI purposes.
      *
      * @param harvestDefinitionID The ID of the harvest definition.
-     * @return Domain,configuration pairs for that HD. Returns an empty iterable for unknown harvest definitions.
+     * @return Domain, configuration pairs for that HD. Returns an empty iterable for unknown harvest definitions.
      * @throws ArgumentNotValid on null argument.
      */
     @Override
@@ -815,7 +813,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
      *
      * @param c a connection to the harvest database
      * @param harvestDefinitionID The ID of the harvest definition.
-     * @return Domain,configuration pairs for that HD. Returns an empty iterable for unknown harvest definitions.
+     * @return Domain, configuration pairs for that HD. Returns an empty iterable for unknown harvest definitions.
      */
     private List<SparseDomainConfiguration> getSparseDomainConfigurations(Connection c, Long harvestDefinitionID) {
         PreparedStatement s = null;
@@ -906,7 +904,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 SparsePartialHarvest sph = new SparsePartialHarvest(res.getLong(1), harvestName, res.getString(2),
                         res.getInt(3), new Date(res.getTimestamp(4).getTime()), res.getBoolean(5), res.getLong(6),
                         res.getString(7), DBUtils.getDateMaybeNull(res, 8), res.getString(9), DBUtils.getLongMaybeNull(
-                                res, 10));
+                        res, 10));
                 sph.setExtendedFieldValues(getExtendedFieldValues(sph.getOid()));
                 return sph;
             } else {
@@ -957,9 +955,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
      * Get the name of a harvest given its ID.
      *
      * @param harvestDefinitionID The ID of a harvest
-     *
      * @return The name of the given harvest.
-     *
      * @throws ArgumentNotValid on null argument
      * @throws UnknownID if no harvest has the given ID.
      * @throws IOFailure on any other error talking to the database
@@ -998,9 +994,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
      * Get whether a given harvest is a snapshot or selective harvest.
      *
      * @param harvestDefinitionID ID of a harvest
-     *
      * @return True if the given harvest is a snapshot harvest, false otherwise.
-     *
      * @throws ArgumentNotValid on null argument
      * @throws UnknownID if no harvest has the given ID.
      */
@@ -1080,14 +1074,16 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         PreparedStatement s = null;
         try {
             s = c.prepareStatement(
-            // Note: the DISTINCT below is put in deliberately to fix
-            // bug 1878: Seeds for domain is shown twice on page
-            // History/Harveststatus-seeds.jsp
-            "SELECT DISTINCT domains.name" + " FROM     domains," + "          configurations,"
-                    + "          harvest_configs," + "          harvestdefinitions"
-                    + " WHERE    configurations.domain_id = domains.domain_id" + " AND harvest_configs.config_id = "
-                    + "configurations.config_id" + " AND harvest_configs.harvest_id = "
-                    + "harvestdefinitions.harvest_id" + " AND harvestdefinitions.name = ?" + " ORDER BY domains.name");
+                    // Note: the DISTINCT below is put in deliberately to fix
+                    // bug 1878: Seeds for domain is shown twice on page
+                    // History/Harveststatus-seeds.jsp
+                    "SELECT DISTINCT domains.name" + " FROM     domains," + "          configurations,"
+                            + "          harvest_configs," + "          harvestdefinitions"
+                            + " WHERE    configurations.domain_id = domains.domain_id"
+                            + " AND harvest_configs.config_id = "
+                            + "configurations.config_id" + " AND harvest_configs.harvest_id = "
+                            + "harvestdefinitions.harvest_id" + " AND harvestdefinitions.name = ?"
+                            + " ORDER BY domains.name");
             s.setString(1, harvestName);
             ResultSet res = s.executeQuery();
             List<String> domains = new ArrayList<String>();
@@ -1190,7 +1186,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
 
     /**
      * Get list of harvests previous to this one.
-     * 
+     *
      * @param thisHarvest The id of this harvestdefinition
      * @return a list of IDs belonging to harvests previous to this one.
      */
@@ -1199,9 +1195,9 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         Connection c = HarvestDBConnection.get();
         // Follow the chain of originating IDs back
         for (Long originatingHarvest = thisHarvest; originatingHarvest != null;
-        // Compute next originatingHarvest
-        originatingHarvest = DBUtils.selectFirstLongValueIfAny(c, "SELECT previoushd FROM fullharvests"
-                + " WHERE fullharvests.harvest_id=?", originatingHarvest)) {
+            // Compute next originatingHarvest
+             originatingHarvest = DBUtils.selectFirstLongValueIfAny(c, "SELECT previoushd FROM fullharvests"
+                     + " WHERE fullharvests.harvest_id=?", originatingHarvest)) {
             if (!originatingHarvest.equals(thisHarvest)) {
                 results.add(originatingHarvest);
             }
@@ -1380,10 +1376,9 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
 
     /**
      * Saves all extended Field values for a HarvestDefinition in the Database.
-     * 
+     *
      * @param c Connection to Database
      * @param h HarvestDefinition where loaded extended Field Values will be set
-     *
      * @throws SQLException If database errors occur.
      */
     private void saveExtendedFieldValues(Connection c, HarvestDefinition h) throws SQLException {
@@ -1403,11 +1398,9 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
 
     /**
      * Reads all extended Field values from the database for a HarvestDefinition.
-     * 
+     *
      * @param h HarvestDefinition where loaded extended Field Values will be set
-     *
      * @throws SQLException If database errors occur.
-     *
      */
     private void readExtendedFieldValues(HarvestDefinition h) throws SQLException {
         h.setExtendedFieldValues(getExtendedFieldValues(h.getOid()));
@@ -1415,12 +1408,10 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
 
     /**
      * Reads all extended Field values from the database for a HarvestDefinitionOid.
-     * 
+     *
      * @param aOid HarvestDefinition where loaded extended Field Values will be set
      * @return a list of ExtendedFieldValues belonging to the given harvest oid
-     *
      * @throws SQLException If database errors occur.
-     *
      */
     private List<ExtendedFieldValue> getExtendedFieldValues(Long aOid) throws SQLException {
         List<ExtendedFieldValue> extendedFieldValues = new ArrayList<ExtendedFieldValue>();

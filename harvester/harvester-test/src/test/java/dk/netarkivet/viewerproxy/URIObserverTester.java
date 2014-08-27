@@ -44,7 +44,7 @@ public class URIObserverTester {
     /**
      * Tests that the Observer update method calls URIObservers notify if and only if update is called with a non-null
      * Response object as argument.
-     * 
+     *
      * @throws Exception
      */
     @Test

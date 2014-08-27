@@ -308,14 +308,14 @@ public class DomainDefinitionTester extends HarvesterWebinterfaceTestCase {
         assertEquals("Netarkivet should be an alias of kb.dk now", "kb.dk", ddao.read("netarkivet.dk").getAliasInfo()
                 .getAliasOf());
         parameterMap.put(Constants.ALIAS_PARAM, new String[] {""}); // This
-                                                                    // means
-                                                                    // that
-                                                                    // the
-                                                                    // domain
-                                                                    // is no
-                                                                    // longer
-                                                                    // an
-                                                                    // alias.
+        // means
+        // that
+        // the
+        // domain
+        // is no
+        // longer
+        // an
+        // alias.
         parameterMap.put(Constants.UPDATE_PARAM, new String[] {"1"});
         parameterMap.put(Constants.DOMAIN_PARAM, new String[] {"netarkivet.dk"});
 

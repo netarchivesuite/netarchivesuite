@@ -64,11 +64,11 @@ import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriterWarc;
  * This tool creates a CDX metadata file for a given job's jobID and harvestPrefix by running a batch job on the
  * bitarchive and processing the results to give a metadata file. Use option -w to select WARC output, and -a to select
  * ARC output: If no option available, then warc mode is selected
- *
+ * <p>
  * Usage: java dk.netarkivet.harvester.tools.CreateCDXMetadataFile -w --jobID 2 --harvestnamePrefix 2-1 Usage: java
  * dk.netarkivet.harvester.tools.CreateCDXMetadataFile -a --jobID 2 --harvestnamePrefix 2-1 Usage: java
  * dk.netarkivet.harvester.tools.CreateCDXMetadataFile --jobID 2 --harvestnamePrefix 2-1
- * 
+ * <p>
  * The CDX records is slightly different from the one produced normally. As we are not able to extract the timestamp,
  * and harvestID from the (W) arcfilenames, this information is not part of the CXDURI.
  */
@@ -114,7 +114,6 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
         /**
          * The file pattern that matches an ARC or WARC file name without the jobID. If combined with a
          * harvestnameprefix, this will match filenames that begin with the given harvestname prefix.
-         * 
          */
         private static final String REMAINING_ARCHIVE_FILE_PATTERN = ".*";
 
@@ -324,7 +323,7 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
          * @param line The line to parse.
          * @param harvestnamePrefix .
          * @return An object containing the salient parts of the filename of the ARC file as mentioned in the given CDX
-         *         line, or null if the filename didn't match the job we're working on.
+         * line, or null if the filename didn't match the job we're working on.
          */
         private String parseLine(String line, String harvestnamePrefix) {
             try {
@@ -346,7 +345,7 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
          *
          * @param writer The writer we're currently writing to.
          * @param filename The filename of all the entries stored in baos. This is used to generate the URI for the
-         *            entry.
+         * entry.
          * @param bytes The bytes of the CDX records to be written under this entry.
          * @throws IOFailure if the write fails for any reason
          */

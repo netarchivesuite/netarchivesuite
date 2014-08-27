@@ -104,7 +104,8 @@ public class LoadableFileBatchJobTester {
         assertTrue("File should have odd length", retval);
         retval = job.processFile(TestInfo.INPUT_2, os);
         assertEquals("Should have added message from process", "initialize() called on me\n"
-                + "processFile() called on me with input-1.arc\n" + "processFile() called on me with input-2.arc\n",
+                        + "processFile() called on me with input-1.arc\n"
+                        + "processFile() called on me with input-2.arc\n",
                 os.toString());
         assertFalse("File should have even length", retval);
 

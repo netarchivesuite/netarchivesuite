@@ -85,7 +85,7 @@ public class ExceptionsTester {
 
     /**
      * Test UnknownID exception.
-     **/
+     */
     @Test
     public void testUnknownIDException() {
         // Test UnknownID(String) constructor
@@ -121,7 +121,7 @@ public class ExceptionsTester {
 
     /**
      * Test NotImplementedException exception.
-     **/
+     */
     @Test
     public void testNotImplementedException() {
         // Test NotImplementedException(String) constructor
@@ -157,7 +157,7 @@ public class ExceptionsTester {
 
     /**
      * Test IOFailure exception.
-     **/
+     */
     @Test
     public void testIOFailureException() {
         // Test IOFailure(String) constructor
@@ -193,7 +193,7 @@ public class ExceptionsTester {
 
     /**
      * Test ArgumentNotValid exception.
-     **/
+     */
     @Test
     public void testArgumentNotValidException() {
         // Test ArgumentNotValid(String) constructor

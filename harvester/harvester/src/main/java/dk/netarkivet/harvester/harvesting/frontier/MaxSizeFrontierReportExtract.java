@@ -54,7 +54,7 @@ abstract class MaxSizeFrontierReportExtract extends AbstractFrontierReportFilter
 
     /**
      * Returns the list maximum size.
-     * 
+     *
      * @return the list maximum size.
      */
     int getMaxSize() {

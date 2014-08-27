@@ -25,7 +25,6 @@ package dk.netarkivet.viewerproxy;
 
 /**
  * Interface for classes that use an URI resolver.
- *
  */
 public interface URIResolverHandler {
     /**

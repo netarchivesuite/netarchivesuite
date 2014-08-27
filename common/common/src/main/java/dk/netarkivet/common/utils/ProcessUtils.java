@@ -56,7 +56,7 @@ public class ProcessUtils {
 
     /**
      * Runs an external process that takes no input, discarding its output.
-     * 
+     *
      * @param environment An environment to run the process in (may be null)
      * @param programAndArgs The program and its arguments.
      * @return The return code of the process.
@@ -87,7 +87,7 @@ public class ProcessUtils {
     /**
      * Runs an external process that takes no input, discarding its output. This is a convenience wrapper for
      * runProcess(environment, programAndArgs)
-     * 
+     *
      * @param programAndArgs The program to run and its arguments
      * @return The return code of the process.
      */
@@ -100,7 +100,7 @@ public class ProcessUtils {
      * method just implements a consumer thread to eat the output of a process and so prevent blocking.
      *
      * @param inputStream A stream to read up to end of file. This stream is closed at some point in the future, but not
-     *            necessarily before this method returns.
+     * necessarily before this method returns.
      */
     public static void discardProcessOutput(final InputStream inputStream) {
         makeCollectorThread(inputStream, new DiscardingOutputStream(), -1).start();
@@ -117,7 +117,7 @@ public class ProcessUtils {
      * @param maxCollect The maximum number of bytes to collect, or -1 for no limit
      * @param collectionThreads Set of threads that concurrently collect output
      * @return An object that collects the output. Once the thread returned is finished, the object will no longer be
-     *         written to. The collected output can be retrieved with the toString method.
+     * written to. The collected output can be retrieved with the toString method.
      */
     public static Object collectProcessOutput(final InputStream inputStream, final int maxCollect,
             Set<Thread> collectionThreads) {
@@ -190,7 +190,7 @@ public class ProcessUtils {
 
     /**
      * Reads all contents from a stream, writing some or all to another.
-     * 
+     *
      * @param in InputStream to read from
      * @param out OutputStream to write to
      * @param maxCollect Maximum number of bytes to write to out
@@ -221,7 +221,7 @@ public class ProcessUtils {
     /**
      * Wait for the end of a process, but only for a limited time. This method takes care of the ways waitFor can get
      * interrupted.
-     * 
+     *
      * @param p Process to wait for
      * @param maxWait The maximum number of milliseconds to wait for the process to exit.
      * @return Exit value for process, or null if the process didn't exit within the expected time.
@@ -275,7 +275,7 @@ public class ProcessUtils {
 
     /**
      * Runs a system process (Unix sort) to sort a file.
-     * 
+     *
      * @param inputFile the input file.
      * @param outputFile the output file.
      * @return the process exit code.
@@ -286,7 +286,7 @@ public class ProcessUtils {
 
     /**
      * Runs a system process (Unix sort) to sort a file.
-     * 
+     *
      * @param inputFile the input file.
      * @param outputFile the output file.
      * @param tempDir the directory where to store temporary files (null for default system temp).

@@ -43,7 +43,7 @@ public class CleanupHook extends Thread {
 
     /**
      * Returns a ShutdownHook thread for an object with a cleanup() method.
-     * 
+     *
      * @param app the Object to be cleaned up
      */
     public CleanupHook(CleanupIF app) {

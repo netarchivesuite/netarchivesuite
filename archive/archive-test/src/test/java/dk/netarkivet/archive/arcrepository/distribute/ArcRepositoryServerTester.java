@@ -409,7 +409,7 @@ public class ArcRepositoryServerTester {
 
         // test BatchReplyMessage
         BatchReplyMessage brmsg = new BatchReplyMessage(Channels.getTheRepos(), Channels.getError(),
-                "originatingBatchMsgId", 0, Collections.<File> emptyList(), RemoteFileFactory.getCopyfileInstance(file));
+                "originatingBatchMsgId", 0, Collections.<File>emptyList(), RemoteFileFactory.getCopyfileInstance(file));
         arcServ.visit(brmsg);
         assertTrue("The function 'onBatchReply' should have been called", arc.calls.containsKey("onBatchReply"));
         assertEquals("The function 'onBatchReply' should have been called once.", Integer.valueOf(1),

@@ -68,12 +68,12 @@ public class BatchExecuter extends Thread {
     /**
      * Map for containing the ids for the running batchjobs. Map between the name of the batchjob and the ID of the
      * batch message.
-     * */
+     */
     private static Map<String, String> batchjobs = Collections.synchronizedMap(new HashMap<String, String>());
 
     /**
      * The constructor.
-     * 
+     *
      * @param job The batchjob to execute.
      * @param pattern The regular expression pattern.
      * @param replica The replica where the batchjob should be executed.
@@ -91,7 +91,7 @@ public class BatchExecuter extends Thread {
 
     /**
      * Execution of the batchjob in its own thread (use start() instead).
-     * 
+     *
      * @throws IOFailure If an IOException is caught while writing the results.
      */
     public void run() throws IOFailure {
@@ -185,7 +185,7 @@ public class BatchExecuter extends Thread {
 
     /**
      * Method for retrieving the data for the running batchjobs.
-     * 
+     *
      * @return The set of entries in the map.
      */
     public static Set<Map.Entry<String, String>> getRunningBatchjobs() {

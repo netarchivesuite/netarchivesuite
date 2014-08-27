@@ -351,11 +351,9 @@ public class ArcRepositoryDatabaseTester {
      * Call the readChecksum method with some input and a file to look for.
      *
      * @param input Will be written to a file that readChecksum reads. Valid input is of the form
-     *            <arcfilename>##<checksum>, but invalid input is part of the test.
+     * <arcfilename>##<checksum>, but invalid input is part of the test.
      * @param arcfilename The name of the arcfile that readChecksum should look for.
-     *
      * @return The string found for the given filename.
-     *
      * @throws IOFailure when readChecksum does.
      */
     public String callReadChecksum(String input, String arcfilename) throws Throwable {
@@ -532,7 +530,7 @@ public class ArcRepositoryDatabaseTester {
 
     /**
      * this tests get get()-method for an existing file - getting get File-name out of the BitarchiveRecord.
-     *
+     * <p>
      * FIXME: This test often blocks on the Hudson CI server. Properly something to do with more restricted permissions
      * (not allow to write to anyfiles outside of the home dir).
      */

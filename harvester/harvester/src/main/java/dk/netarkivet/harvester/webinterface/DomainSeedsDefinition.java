@@ -36,7 +36,6 @@ import dk.netarkivet.harvester.datamodel.SeedList;
 
 /**
  * Contains utility methods for updating seedlists from the GUI.
- *
  */
 
 public class DomainSeedsDefinition {
@@ -70,9 +69,9 @@ public class DomainSeedsDefinition {
 
     /**
      * Extracts information from a servlet request to update seedlists in a domain
-     *
+     * <p>
      * editUrlList: if not null, we are editing, not updating so return
-     *
+     * <p>
      * (urlListName, seedlist) The name of a seedlist and the actual seedlist for a seedlist to be updated. If
      * urlListName is present and non-empty, seedlist must also be non-empty.
      *

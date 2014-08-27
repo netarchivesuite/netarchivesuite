@@ -42,7 +42,7 @@ public class WARCWriterNAS extends WARCWriter {
     /**
      * Constructor. Takes a stream. Use with caution. There is no upperbound check on size. Will just keep writing. Only
      * pass Streams that are bounded.
-     * 
+     *
      * @param serialNo used to generate unique file name sequences
      * @param out Where to write.
      * @param f File the <code>out</code> is connected to.

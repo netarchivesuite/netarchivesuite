@@ -33,9 +33,9 @@ import dk.netarkivet.common.utils.arc.ARCUtils;
 
 /**
  * Command line tool for merging several ARC files into a single ARC file.
- *
+ * <p>
  * Usage: java dk.netarkivet.common.tools.ArcMerge file1 [file2] ... > myarchive.arc
- *
+ * <p>
  * Note: Does not depend on logging - communicates failure on stderr
  */
 public class ArcMerge extends ToolRunnerBase {
@@ -44,7 +44,7 @@ public class ArcMerge extends ToolRunnerBase {
      * Main method. Reads all ARC files specified (as arguments) and outputs a merged ARC file on stdout.
      *
      * @param args The command line arguments should be a list of ARC files to be merged. At least one input ARC file
-     *            should be given.
+     * should be given.
      */
     public static void main(String[] args) {
         ArcMerge instance = new ArcMerge();
@@ -65,7 +65,7 @@ public class ArcMerge extends ToolRunnerBase {
 
         /**
          * Accept only at least one parameter.
-         * 
+         *
          * @param args the arguments
          * @return false, if length of args is zero; returns true otherwise
          */
@@ -75,7 +75,7 @@ public class ArcMerge extends ToolRunnerBase {
 
         /**
          * Create the ARCWriter instance here for reliable execution of close method in teardown.
-         * 
+         *
          * @param args the arguments (presently not used)
          */
         public void setUp(String... args) {
@@ -104,7 +104,7 @@ public class ArcMerge extends ToolRunnerBase {
         /**
          * Perform the actual work. Iterate over the input files passed in args (from command line), inert in file and
          * close. Creating and closing the ARCWriter is done in setup and teardown methods.
-         * 
+         *
          * @param args the input files (represented as a String array)
          */
         public void run(String... args) {
@@ -115,7 +115,7 @@ public class ArcMerge extends ToolRunnerBase {
 
         /**
          * Return the list of parameters accepted by the ArcMergeTool class.
-         * 
+         *
          * @return the list of parameters accepted.
          */
         public String listParameters() {

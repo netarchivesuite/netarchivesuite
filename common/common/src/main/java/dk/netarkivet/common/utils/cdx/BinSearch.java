@@ -60,7 +60,7 @@ public class BinSearch {
     /**
      * Given a file in sorted order and a prefix to search for, return a an iterable that will return the lines in the
      * files that start with the prefix, in order. They will be read lazily from the file.
-     *
+     * <p>
      * If no matches are found, it will still return an iterable with no entries.
      *
      * @param file A CDX file to search in.
@@ -94,7 +94,7 @@ public class BinSearch {
     /**
      * An implementation of Iterable that returns lines matching a given prefix, starting at an offset. We use compare()
      * to determine if the prefix matches.
-     * */
+     */
     private static class PrefixIterable implements Iterable<String> {
         /** File we're reading from. */
         private final File file;
@@ -107,7 +107,7 @@ public class BinSearch {
          * Construct an Iterable from the given file, offset and prefix.
          *
          * @param file This file will be read when the iterator() is made. The lines in this file must be sorted
-         *            alphabetically.
+         * alphabetically.
          * @param offset The place where reading will start from.
          * @param prefix The prefix of all lines that will be read.
          */
@@ -119,9 +119,9 @@ public class BinSearch {
 
         /**
          * Return a new iterator that stops (not skips) when the line read no longer matches the prefix.
-         * 
+         *
          * @return an iterator that stops (not skips) when the line read no longer matches the prefix. When the iterator
-         *         ends, the underlying file is closed.
+         * ends, the underlying file is closed.
          */
         public Iterator<String> iterator() {
             final RandomAccessFile infile;
@@ -198,7 +198,7 @@ public class BinSearch {
 
                 /**
                  * This iterator doesn't support remove.
-                 * 
+                 *
                  * @throws UnsupportedOperationException
                  */
                 public void remove() {
@@ -223,7 +223,7 @@ public class BinSearch {
      * @param in The file to search in
      * @param find The string to match against the first line
      * @param matchingline The index to start searching from. This index must be at the start of a line that matches
-     *            'find'
+     * 'find'
      * @return The offset into the file of the first line matching 'find'. Guaranteed to be <= matchingline.
      * @throws IOException If the matchingLine < 0 or some I/O error occurs.
      */
@@ -285,11 +285,11 @@ public class BinSearch {
     /**
      * Perform a binary search for a string in a file. Returns the position of a line that begins with 'find'. Note that
      * this may not be the first line, if there be duplicates.
-     * 
+     *
      * @param in the RandomAccessFile
      * @param find The String to look for in the above file
-     * @throws IOException If some I/O error occurs
      * @return The index of a line matching find, or -1 if none found.
+     * @throws IOException If some I/O error occurs
      */
     private static long binSearch(RandomAccessFile in, String find) throws IOException {
         // The starting position for the binary search. Always
@@ -343,7 +343,7 @@ public class BinSearch {
     /**
      * Returns the position of a line between startpos and endpos. If no line other than the one starting at startpos
      * can be found, returns -1. Also sets the file pointer to the start of the line.
-     * 
+     *
      * @param in The file to read from
      * @param startpos The lower bound for the position. Must be the start of a line.
      * @param endpos The upper bound for the position. Must be the start of a line or EOF.

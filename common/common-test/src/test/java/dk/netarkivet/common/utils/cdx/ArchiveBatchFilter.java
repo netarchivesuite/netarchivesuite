@@ -33,7 +33,7 @@ import dk.netarkivet.common.exceptions.NotImplementedException;
 /**
  * A filter class for batch entries. Allows testing whether or not to process an entry without loading the entry data
  * first.
- *
+ * <p>
  * accept() is given an ARCRecord rather than a ShareableARCRecord to avoid unnecessary reading and copying of data of
  * records not accepted by filter.
  */
@@ -104,7 +104,7 @@ public abstract class ArchiveBatchFilter implements Serializable {
 
     /**
      * Check, if a certain mimetype is valid
-     * 
+     *
      * @param mimetype
      * @return boolean true, if mimetype matches word/word, otherwise false
      */

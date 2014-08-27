@@ -95,7 +95,7 @@ class StartedJobHistoryChartGen {
 
         /**
          * Builds a time axis resolution.
-         * 
+         *
          * @param seconds the actual resolution in seconds
          * @param scaleSeconds the actual "scale" of ticks
          * @param tickStep the number of ticks in one step.
@@ -108,7 +108,7 @@ class StartedJobHistoryChartGen {
 
         /**
          * Scale down an array of seconds.
-         * 
+         *
          * @param timeInSeconds An array of seconds
          * @return a scaled down version of the given array of seconds
          */
@@ -146,7 +146,7 @@ class StartedJobHistoryChartGen {
 
         /**
          * Constructor of a ChartGen objector.
-         * 
+         *
          * @param gen the process that generates the charts.
          */
         ChartGen(StartedJobHistoryChartGen gen) {
@@ -263,7 +263,7 @@ class StartedJobHistoryChartGen {
 
     /**
      * Constructor. Start generating charts for data belonging to the given job.
-     * 
+     *
      * @param jobId a job id.
      */
     StartedJobHistoryChartGen(long jobId) {
@@ -281,7 +281,7 @@ class StartedJobHistoryChartGen {
 
     /**
      * Returns the image file.
-     * 
+     *
      * @return the image file. Might return null if no file is currently available.
      */
     public synchronized File getChartFile() {
@@ -306,7 +306,7 @@ class StartedJobHistoryChartGen {
 
     /**
      * Generates a chart in PNG format.
-     * 
+     *
      * @param outputFile the output file, it should exist.
      * @param pxWidth the image width in pixels.
      * @param pxHeight the image height in pixels.
@@ -417,7 +417,7 @@ class StartedJobHistoryChartGen {
 
     /**
      * Create a XYDataset based on the given arguments.
-     * 
+     *
      * @param name The name
      * @param timeValues The timevalues
      * @param values the values
@@ -434,7 +434,7 @@ class StartedJobHistoryChartGen {
     /**
      * Find the maximum of the values given. If this maximum is less than {@link Double#MIN_VALUE} then
      * {@link Double#MIN_VALUE} is returned.
-     * 
+     *
      * @param values an array of doubles
      * @return the maximum of the values given
      */
@@ -448,7 +448,7 @@ class StartedJobHistoryChartGen {
 
     /**
      * Set the axis range.
-     * 
+     *
      * @param axis a numberAxis
      * @param range a range
      */

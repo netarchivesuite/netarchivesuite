@@ -78,7 +78,7 @@ public abstract class WARCBatchFilter implements Serializable {
 
     /**
      * Create a new filter with the given name.
-     * 
+     *
      * @param name The name of this filter, for debugging mostly.
      */
     protected WARCBatchFilter(String name) {
@@ -88,7 +88,7 @@ public abstract class WARCBatchFilter implements Serializable {
 
     /**
      * Get the name of the filter.
-     * 
+     *
      * @return the name of the filter.
      */
     protected String getName() {
@@ -97,7 +97,7 @@ public abstract class WARCBatchFilter implements Serializable {
 
     /**
      * Note that the mimetype of the WARC responserecord is not (necessarily) the same as its payload.
-     * 
+     *
      * @param mimetype String denoting the mimetype this filter represents
      * @return a BatchFilter that filters out all WARCRecords, that does not have this mimetype
      * @throws MimeTypeParseException If mimetype is invalid
@@ -124,7 +124,7 @@ public abstract class WARCBatchFilter implements Serializable {
 
     /**
      * Check, if a certain mimetype is valid.
-     * 
+     *
      * @param mimetype a given mimetype
      * @return boolean true, if mimetype matches word/word, otherwise false
      */
@@ -135,7 +135,7 @@ public abstract class WARCBatchFilter implements Serializable {
 
     /**
      * Check if a given record is accepted (not filtered out) by this filter.
-     * 
+     *
      * @param record a given WARCRecord
      * @return true, if the given record is accepted by this filter
      */

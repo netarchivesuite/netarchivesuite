@@ -79,7 +79,7 @@ public class ChannelID implements Serializable {
     /**
      * Constructor of channel names. The constructor is package private because we should never use any channels except
      * the ones constructed by our friend Channels.java
-     * 
+     *
      * @param appPref The prefix used for the applications listening to the channel.
      * @param replicaId Name of the replica, or ChannelID.COMMON if channel shared by all replicas.
      * @param useNodeId Whether that IP address of the local node should be included in the channel name.
@@ -93,7 +93,7 @@ public class ChannelID implements Serializable {
 
     /**
      * Constructs a channel name according to the specifications of channels in the NetarchiveSuite Developer Manual.
-     * 
+     *
      * @param appPref The prefix used for the applications listening to the channel.
      * @param replicaId Id of the replica, or ChannelID.COMMON if channel common to all bitarchive replicas.
      * @param useNodeId Whether that IP address of the local node should be included in the channel name.
@@ -139,7 +139,7 @@ public class ChannelID implements Serializable {
 
     /**
      * Pretty-printer.
-     * 
+     *
      * @return a nice String representation of the ChannelID.
      */
     public String toString() {
@@ -150,7 +150,7 @@ public class ChannelID implements Serializable {
      * Method used by Java deserialization. Our coding guidelines prescribes that this method should always be
      * implemented, even if it only calls the default method: http://kb-prod-udv-001.kb.dk/twiki/bin/view/Netarkiv/
      * ImplementeringOgTestAfSerializable See also "Effective Java", pages 219 and 224.
-     * 
+     *
      * @param ois the ObjectInputStream used to read in the object
      * @throws IOFailure if Java could not deserialize the object.
      */
@@ -166,7 +166,7 @@ public class ChannelID implements Serializable {
      * Method used by Java serialization. Our coding guidelines prescribes that this method should always be
      * implemented, even if it only calls the default method: http://kb-prod-udv-001.kb.dk/twiki/bin/view/Netarkiv/
      * ImplementeringOgTestAfSerializable See also "Effective Java", pages 219 and 224.
-     * 
+     *
      * @param oos the ObjectOutputStream used to serialize the object.
      * @throws IOFailure if Java could not serialize the object.
      */
@@ -181,7 +181,7 @@ public class ChannelID implements Serializable {
     /**
      * Implements equality check for ChannelIDs. Useful when these are used as indexes in Java collections, for
      * instance.
-     * 
+     *
      * @param o The object to compare this object with.
      * @return Whether o and this should be considered the same ChannelID.
      */
@@ -201,7 +201,7 @@ public class ChannelID implements Serializable {
 
     /**
      * Computes a hash code based on the channel name and whether it is a topic.
-     * 
+     *
      * @return A hash code for this object.
      */
     public int hashCode() {
@@ -213,7 +213,7 @@ public class ChannelID implements Serializable {
     /**
      * Finds abbreviation for an application name. The abbreviation is only calculated from the application name without
      * path. It is made from the uppercase letters in the name.
-     * 
+     *
      * @param applName application name with full path
      * @return abbreviation for given application name.
      */

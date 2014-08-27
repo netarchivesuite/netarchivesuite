@@ -33,7 +33,7 @@ import dk.netarkivet.systemtest.HarvestUtils;
 
 /**
  * Provides functionality for commonly used test access to domain web content.
- *
+ * <p>
  * Will also log webpage interactions.
  */
 public class SelectiveHarvestPageHelper {

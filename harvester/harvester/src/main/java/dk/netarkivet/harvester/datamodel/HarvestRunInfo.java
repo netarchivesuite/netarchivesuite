@@ -51,7 +51,7 @@ public class HarvestRunInfo {
 
     /**
      * Constructor used to read harvest run information from database.
-     * 
+     *
      * @param harvestID the ID of the harvest job
      * @param harvestName the name of the harvest job
      * @param runNr the run number of this harvest job
@@ -99,7 +99,7 @@ public class HarvestRunInfo {
 
     /**
      * Get the total number of jobs created for this run.
-     * 
+     *
      * @return the total number of jobs created for this run.
      */
     public int getJobCount() {
@@ -112,7 +112,7 @@ public class HarvestRunInfo {
 
     /**
      * Get the number of jobs for this run that are in a specific status.
-     * 
+     *
      * @param status the specific status
      * @return the number of jobs for this run that are in a specific status.
      */
@@ -126,7 +126,7 @@ public class HarvestRunInfo {
 
     /**
      * Set the start Date for this harvest job.
-     * 
+     *
      * @param startDate the start date
      */
     public void setStartDate(Date startDate) {
@@ -135,7 +135,7 @@ public class HarvestRunInfo {
 
     /**
      * Set the end Date for this harvest job.
-     * 
+     *
      * @param endDate The end date
      */
     public void setEndDate(Date endDate) {
@@ -144,7 +144,7 @@ public class HarvestRunInfo {
 
     /**
      * Set the number of bytes harvested by this job.
-     * 
+     *
      * @param bytesHarvested number of bytes harvested
      */
     public void setBytesHarvested(long bytesHarvested) {
@@ -153,7 +153,7 @@ public class HarvestRunInfo {
 
     /**
      * Set the number of documents harvested by this job.
-     * 
+     *
      * @param docsHarvested number of documents harvested
      */
     public void setDocsHarvested(long docsHarvested) {
@@ -162,7 +162,7 @@ public class HarvestRunInfo {
 
     /**
      * Update the count for a specific jobstatus.
-     * 
+     *
      * @param status a certain JobStatus
      * @param count the new count for this JobStatus.
      */

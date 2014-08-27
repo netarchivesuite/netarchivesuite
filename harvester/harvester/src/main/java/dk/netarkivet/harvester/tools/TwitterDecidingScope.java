@@ -54,8 +54,8 @@ import twitter4j.URLEntity;
  * a crawl. The following parameters to twitter search are supported: keywords: a list equivalent twitters "query" text.
  * geo_locations: as defined in the twitter api. language: quivalent to twitter's "lang" parameter. These may be
  * omitted. In practice only "keywords" works well in the current version of twitter.
- *
- *
+ * <p>
+ * <p>
  * In addition, the number of results to be considered is determined by the parameters "pages" and
  * "twitter_results_per_page".
  */
@@ -135,7 +135,7 @@ public class TwitterDecidingScope extends DecidingScope {
 
     /**
      * This routine makes any necessary Twitter API calls and queues the content discovered.
-     * 
+     *
      * @param controller The controller for this crawl.
      */
     @Override
@@ -244,7 +244,7 @@ public class TwitterDecidingScope extends DecidingScope {
 
     /**
      * Adds links to embedded url's and media in a tweet.
-     * 
+     *
      * @param tweet The tweet from which links are to be extracted.
      */
     private void extractEmbeddedLinks(Tweet tweet) {
@@ -268,7 +268,7 @@ public class TwitterDecidingScope extends DecidingScope {
 
     /**
      * Searches for a given users recent tweets and queues and embedded material found.
-     * 
+     *
      * @param user The twitter username (without the @ prefix).
      */
     private void queueUserStatusLinks(String user) {
@@ -295,7 +295,7 @@ public class TwitterDecidingScope extends DecidingScope {
 
     /**
      * Adds a url as a seed if possible. Otherwise just prints an error description and returns.
-     * 
+     *
      * @param tweetUrl The url to be added.
      */
     private void addSeedIfLegal(String tweetUrl) {
@@ -311,7 +311,7 @@ public class TwitterDecidingScope extends DecidingScope {
 
     /**
      * Constructor for the method. Sets up all known attributes.
-     * 
+     *
      * @param name the name of this scope.
      */
     public TwitterDecidingScope(String name) {
@@ -335,7 +335,7 @@ public class TwitterDecidingScope extends DecidingScope {
 
     /**
      * Adds a candidate uri as a seed for the crawl.
-     * 
+     *
      * @param curi The crawl uri to be added.
      * @return whether the uri was added as a seed.
      */

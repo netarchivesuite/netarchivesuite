@@ -60,9 +60,8 @@ public class BitarchiveRecordTester {
      * The following warcfile consists of multiple record-types. These unittests only handle the response-record which
      * is similar to what we now extract from our arc-files. We use the following record with a normal HTTP response
      * with mimetype text/html (Record type, offset, ContentBegin, Length): response, 28917, 393, 1121
-     * 
+     * <p>
      * (Record type, offset, ContentBegin, Length): response, 955, 345, 621
-     * 
      */
     private File warcTestFile = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.ORIGINALS_DIR,
             "NAS-20100909163324-00000-mette.kb.dk.warc");
@@ -82,7 +81,7 @@ public class BitarchiveRecordTester {
     /**
      * (Record type, url, offset, ContentBegin, Length): response, http://netarkivet.dk/nyheder/index-da.php, 100262,
      * 357, 14248
-     **/
+     */
     private long bigWarcRecordOffset = 100262;
 
     @Before
@@ -104,7 +103,7 @@ public class BitarchiveRecordTester {
 
     /**
      * Test storing ArcRecord in byte array.
-     * 
+     *
      * @throws IOException
      */
     @Test
@@ -112,14 +111,14 @@ public class BitarchiveRecordTester {
         File f = testFile;
         ARCReader ar = ARCReaderFactory.get(f);
         ARCRecord record = (ARCRecord) ar.get(2001); // record representing
-                                                     // record of size 9471
-                                                     // bytes
+        // record of size 9471
+        // bytes
         BitarchiveRecord br = new BitarchiveRecord(record, f.getName());
         byte[] contents = StreamUtils.inputStreamToBytes(br.getData(), (int) br.getLength());
         assertEquals("Should have same length", contents.length, br.getLength());
         // getData(outputStream)
         record = (ARCRecord) ar.get(2001); // record representing record of size
-                                           // 9471 bytes
+        // 9471 bytes
         br = new BitarchiveRecord(record, f.getName());
         // Store locally as tmp file
         f = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, "BitarchiveRecordGetData");
@@ -131,7 +130,7 @@ public class BitarchiveRecordTester {
 
     /**
      * Test storing WArcRecord in byte array. Tests on WarcRecord less than 10000 bytes.
-     * 
+     *
      * @throws IOException
      */
     @Test
@@ -160,7 +159,7 @@ public class BitarchiveRecordTester {
 
     /**
      * Test storing ArcRecord in RemoteFile.
-     * 
+     *
      * @throws IOException
      */
     @Test
@@ -168,15 +167,15 @@ public class BitarchiveRecordTester {
         File f = testFile;
         ARCReader ar = ARCReaderFactory.get(f);
         ARCRecord record = (ARCRecord) ar.get(11563); // record representing
-                                                      // record of size 395390
-                                                      // bytes
+        // record of size 395390
+        // bytes
         BitarchiveRecord br = new BitarchiveRecord(record, f.getName());
         byte[] contents = StreamUtils.inputStreamToBytes(br.getData(), (int) br.getLength());
         assertEquals("Should have same length: ", contents.length, br.getLength());
 
         // getData(outputStream)
         record = (ARCRecord) ar.get(11563); // record representing record of
-                                            // size 395390 bytes
+        // size 395390 bytes
         br = new BitarchiveRecord(record, f.getName());
         // Store locally as tmp file
         f = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, "BitarchiveRecordGetData");
@@ -188,7 +187,7 @@ public class BitarchiveRecordTester {
 
     /**
      * Test storing WarcRecord in RemoteFile. Tests on WarcRecord greater than 10000 bytes.
-     * 
+     *
      * @throws IOException
      */
     @Test
@@ -213,7 +212,7 @@ public class BitarchiveRecordTester {
 
     /**
      * Test serializability of this class.
-     * 
+     *
      * @throws IOException
      * @throws ClassNotFoundException
      */
@@ -222,8 +221,8 @@ public class BitarchiveRecordTester {
         File f = testFile;
         ARCReader ar = ARCReaderFactory.get(f);
         ARCRecord record = (ARCRecord) ar.get(11563); // record representing
-                                                      // record of size 395390
-                                                      // bytes
+        // record of size 395390
+        // bytes
         BitarchiveRecord br = new BitarchiveRecord(record, f.getName());
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();

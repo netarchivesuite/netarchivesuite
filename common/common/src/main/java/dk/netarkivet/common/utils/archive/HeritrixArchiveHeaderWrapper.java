@@ -70,7 +70,7 @@ public class HeritrixArchiveHeaderWrapper extends ArchiveHeaderBase {
 
     /**
      * Construct a Heritrix record header wrapper object.
-     * 
+     *
      * @param recordWrapper wrapped Heritrix header
      * @param record original Heritrix record
      * @return wrapped Heritrix record header

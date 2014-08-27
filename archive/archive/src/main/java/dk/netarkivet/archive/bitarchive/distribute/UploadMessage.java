@@ -30,7 +30,6 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * Container for upload request.
- *
  */
 @SuppressWarnings({"serial"})
 public class UploadMessage extends ArchiveMessage {
@@ -42,7 +41,7 @@ public class UploadMessage extends ArchiveMessage {
 
     /**
      * Construct UploadMessage.
-     * 
+     *
      * @param to Channel to message to
      * @param replyTo Channel to reply back to
      * @param rf The RemoteFile to upload
@@ -56,7 +55,7 @@ public class UploadMessage extends ArchiveMessage {
 
     /**
      * Retrieve name of the uploaded file.
-     * 
+     *
      * @return current value of arcfileName
      */
     public String getArcfileName() {
@@ -65,7 +64,7 @@ public class UploadMessage extends ArchiveMessage {
 
     /**
      * Get method for field theRemoteFile.
-     * 
+     *
      * @return Current value of theRemoteFile
      */
     public RemoteFile getRemoteFile() {
@@ -84,7 +83,7 @@ public class UploadMessage extends ArchiveMessage {
 
     /**
      * Generate String representation of this object.
-     * 
+     *
      * @return String representation of this object
      */
     public String toString() {

@@ -34,7 +34,6 @@ import dk.netarkivet.common.exceptions.UnknownID;
 /**
  * A Data Access Object for harvest definitions. This object is a singleton to ensure thread-safety. It handles the
  * transformation from harvest definitions to persistent storage.
- *
  */
 public abstract class HarvestDefinitionDAO implements DAO, Iterable<HarvestDefinition> {
 
@@ -51,7 +50,7 @@ public abstract class HarvestDefinitionDAO implements DAO, Iterable<HarvestDefin
 
     /**
      * Creates the singleton.
-     * 
+     *
      * @return the HarvestDefinitionDAO singleton.
      * @throws IOFailure if unable to create the singleton.
      */
@@ -89,14 +88,14 @@ public abstract class HarvestDefinitionDAO implements DAO, Iterable<HarvestDefin
 
     /**
      * Activates or deactivates a partial harvest definition, depending on its activation status.
-     * 
+     *
      * @param harvestDefinition the harvest definition object
      */
     public abstract void flipActive(SparsePartialHarvest harvestDefinition);
 
     /**
      * Check, if there exists a HarvestDefinition identified by a given OID.
-     * 
+     *
      * @param oid a given OID
      * @return true, if such a harvestdefinition exists.
      */
@@ -104,7 +103,7 @@ public abstract class HarvestDefinitionDAO implements DAO, Iterable<HarvestDefin
 
     /**
      * Check, if there exists a HarvestDefinition identified by a given name.
-     * 
+     *
      * @param name a given name
      * @return true, if such a harvestdefinition exists.
      */
@@ -138,13 +137,13 @@ public abstract class HarvestDefinitionDAO implements DAO, Iterable<HarvestDefin
      *
      * @param now
      * @return IDs of the harvest definitions that are currently ready to be scheduled. Some of these might already be
-     *         in the process of being scheduled.
+     * in the process of being scheduled.
      */
     public abstract Iterable<Long> getReadyHarvestDefinitions(Date now);
 
     /**
      * Get the harvest definition that has the given name, or null, if no harvestdefinition exist with this name.
-     * 
+     *
      * @param name The name of a harvest definition.
      * @return The HarvestDefinition object with that name, or null if none has that name.
      */
@@ -170,7 +169,7 @@ public abstract class HarvestDefinitionDAO implements DAO, Iterable<HarvestDefin
      * Get all domain,configuration pairs for a harvest definition in sparse version for GUI purposes.
      *
      * @param harvestDefinitionID The ID of the harvest definition.
-     * @return Domain,configuration pairs for that HD. Returns an empty list for unknown harvest definitions.
+     * @return Domain, configuration pairs for that HD. Returns an empty list for unknown harvest definitions.
      * @throws ArgumentNotValid on null argument.
      */
     public abstract List<SparseDomainConfiguration> getSparseDomainConfigurations(Long harvestDefinitionID);
@@ -253,7 +252,7 @@ public abstract class HarvestDefinitionDAO implements DAO, Iterable<HarvestDefin
 
     /**
      * Get a collection of jobIds for snapshot deduplication index.
-     * 
+     *
      * @param harvestId the id of the harvest
      * @return a collection of jobIds to create a deduplication index.
      */
@@ -261,7 +260,7 @@ public abstract class HarvestDefinitionDAO implements DAO, Iterable<HarvestDefin
 
     /**
      * Set the isindexready field available for snapshot harvests.
-     * 
+     *
      * @param harvestId the ID of the harvest.
      * @param newValue the new isindexready value
      */
@@ -269,7 +268,7 @@ public abstract class HarvestDefinitionDAO implements DAO, Iterable<HarvestDefin
 
     /**
      * Remove Domain configuration from a specific PartialHarvest.
-     * 
+     *
      * @param harvestId Id for a specific PartialHarvest
      * @param key a SparseDomainConfiguration uniquely identifying the domainconfig.
      */
@@ -278,7 +277,7 @@ public abstract class HarvestDefinitionDAO implements DAO, Iterable<HarvestDefin
     /**
      * Update the given PartialHarvest (i.e. Selective Harvest) with a new time for the next harvestrun. If no selective
      * harvest matching the given id is found in the storage, the method should silently return.
-     * 
+     *
      * @param harvestId A given PartialHarvest id (i.e. Selective Harvest).
      * @param nextdate A new date for the next harvest run.
      */
@@ -286,7 +285,7 @@ public abstract class HarvestDefinitionDAO implements DAO, Iterable<HarvestDefin
 
     /**
      * Add a domainconfiguration to a PartialHarvest.
-     * 
+     *
      * @param hdd a given PartialHarvest
      * @param sparseDomainConfiguration a reduced domainconfiguration object
      */
@@ -294,7 +293,7 @@ public abstract class HarvestDefinitionDAO implements DAO, Iterable<HarvestDefin
 
     /**
      * Reset the list of domainconfiguration for a PartialHarvest.
-     * 
+     *
      * @param hdd a given PartialHarvest
      * @param dcList the new list of domainconfigurations
      */
@@ -302,7 +301,7 @@ public abstract class HarvestDefinitionDAO implements DAO, Iterable<HarvestDefin
 
     /**
      * Maps a harvest definition to a harvest channel.
-     * 
+     *
      * @param harvestDefinitionId the harvest definition id
      * @param channel the harvest channel
      */

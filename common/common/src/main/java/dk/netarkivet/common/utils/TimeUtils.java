@@ -55,7 +55,7 @@ public class TimeUtils {
     /**
      * Sleep for an exponentially backing off amount of time. The mode describes the unit of time as defined by @see
      * java.util.Calendar
-     * 
+     *
      * @param attempt The attempt number, which is the log2 of the number of timeunits spent asleep.
      * @param timeunit the specified timeunit in miliseconds
      * @throws ArgumentNotValid if timeunit is unsupported.
@@ -81,7 +81,7 @@ public class TimeUtils {
     /**
      * Method for translating a time in milliseconds to a human readable String. E.g. the argument "604800000" should
      * result in "7 days".
-     * 
+     *
      * @param millis The amount of milliseconds.
      * @return The human readable string.
      */

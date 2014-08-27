@@ -57,7 +57,7 @@ public class SystemUtils {
 
     /**
      * Looks up the IP number of the local host. Note that Java does not guarantee that the result is IPv4 or IPv6.
-     * 
+     *
      * @return the found IP; returns "UNKNOWNIP" if it could not be found.
      */
     public static String getLocalIP() {

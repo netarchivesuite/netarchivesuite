@@ -268,7 +268,7 @@ public class IntegrityTests {
         assertEquals("Should have received exactly two messages, but got " + listener.getAllReceived(), 2,
                 listener.getNumReceived());
         List<NetarkivetMessage> received = listener.getAllReceived();
-        for (Iterator<NetarkivetMessage> i = received.iterator(); i.hasNext();) {
+        for (Iterator<NetarkivetMessage> i = received.iterator(); i.hasNext(); ) {
             Object o = i.next();
             if (o instanceof BatchReplyMessage) {
                 ((BatchReplyMessage) o).getResultFile().copyTo(output_file);
@@ -323,10 +323,10 @@ public class IntegrityTests {
             // System.out.println("Sending message #" + i);
             bac.get(FILENAME_TO_GET, 0);
             bac.sendUploadMessage(RemoteFileFactory.getInstance(FILE_TO_UPLOAD, true, false, true)); // only
-                                                                                                     // first
-                                                                                                     // upload
-                                                                                                     // will
-                                                                                                     // succeed
+            // first
+            // upload
+            // will
+            // succeed
             BatchMessage bMsg = new BatchMessage(THE_BAMON, Channels.getThisReposClient(), new TestBatchJobRuns(),
                     Settings.get(CommonSettings.USE_REPLICA_ID));
             bac.sendBatchJob(bMsg);
@@ -337,7 +337,7 @@ public class IntegrityTests {
         // System.out.println("Sending messages done");
         System.out.println("Sleeping until active threads are equal to " + beforeCount);
         long maxAllowedExecutionTime = 300000; // Only run this test for max. 5
-                                               // minutes.
+        // minutes.
         long starttime = System.currentTimeMillis();
         while (Thread.activeCount() > beforeCount && System.currentTimeMillis() < starttime + maxAllowedExecutionTime) {
             // System.out.println("Active count:" + Thread.activeCount());
@@ -498,7 +498,8 @@ public class IntegrityTests {
         }
 
         synchronized public int getTotalCount() {
-            return (uploadMsg.size() + getMsg.size() + removeMsg.size() + batchMsg.size() + getfileMsg.size() + batchReplyMsg
+            return (uploadMsg.size() + getMsg.size() + removeMsg.size() + batchMsg.size() + getfileMsg.size()
+                    + batchReplyMsg
                     .size());
         }
 

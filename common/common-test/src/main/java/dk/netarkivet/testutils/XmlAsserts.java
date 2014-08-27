@@ -23,17 +23,16 @@
 
 package dk.netarkivet.testutils;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
-
 import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.Node;
 
+import junit.framework.Assert;
+import junit.framework.TestCase;
+
 /**
  * Helper methods for asserts in Xml documents.
- *
  */
 public class XmlAsserts {
     public static void assertElementHasAttribute(Element theElement, String attributeName, String attributeText) {

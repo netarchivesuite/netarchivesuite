@@ -40,7 +40,7 @@ import dk.netarkivet.common.utils.TimeUtils;
 
 /**
  * Abstract superclass for easy implementation of remote file.
- *
+ * <p>
  * Sub classes should override this class, and do the following: - Implement getChecksum. - Implement getInputStream. -
  * Implement cleanup. - Add getInstance(File, Boolean, Boolean, Boolean)-method to make the file work with the factory.
  */
@@ -70,7 +70,7 @@ public abstract class AbstractRemoteFile implements RemoteFile {
      * @param file The file to make remote file for.
      * @param useChecksums If true, communications should be checksummed.
      * @param fileDeletable If true, the file may be downloaded multiple times. Otherwise, the remote file is
-     *            invalidated after first transfer.
+     * invalidated after first transfer.
      * @param multipleDownloads If useChecksums is true, contains the file checksum.
      */
     public AbstractRemoteFile(File file, boolean useChecksums, boolean fileDeletable, boolean multipleDownloads) {
@@ -88,10 +88,10 @@ public abstract class AbstractRemoteFile implements RemoteFile {
     /**
      * Copy this remote file to the given file. This method will make a fileoutputstream, and use appendTo to write the
      * remote file to this stream.
-     * 
+     *
      * @param destFile The file to write the remote file to.
      * @throws ArgumentNotValid on null destFile, or parent to destfile is not a writeable directory, or destfile exists
-     *             and cannot be overwritten.
+     * and cannot be overwritten.
      * @throws IOFailure on I/O trouble writing remote file to destination.
      */
     public void copyTo(File destFile) {
@@ -150,7 +150,7 @@ public abstract class AbstractRemoteFile implements RemoteFile {
     /**
      * Append this remote file to the given output stream. This method will use getInputStream to get the remote stream,
      * and then copy that stream to the given output stream.
-     * 
+     *
      * @param out The stream to write the remote file to.
      * @throws ArgumentNotValid if outputstream is null.
      * @throws IOFailure on I/O trouble writing remote file to stream.
@@ -164,7 +164,7 @@ public abstract class AbstractRemoteFile implements RemoteFile {
      * Get an input stream representing the remote file. The returned input stream should throw IOFailure on close, if
      * checksums are requested, but do not match. The returned inputstream should call cleanup on close, if
      * multipleDownloads is not true.
-     * 
+     *
      * @return An input stream for the remote file.
      * @throws IOFailure on I/O trouble generating inputstream for remote file.
      */
@@ -172,7 +172,7 @@ public abstract class AbstractRemoteFile implements RemoteFile {
 
     /**
      * Get the name of the remote file.
-     * 
+     *
      * @return The name of the remote file.
      */
     public String getName() {
@@ -181,7 +181,7 @@ public abstract class AbstractRemoteFile implements RemoteFile {
 
     /**
      * Get checksum for file, or null if checksums were not requested.
-     * 
+     *
      * @return checksum for file, or null if checksums were not requested.
      */
     public abstract String getChecksum();
@@ -195,14 +195,14 @@ public abstract class AbstractRemoteFile implements RemoteFile {
 
     /**
      * Method for retrieving the number of retries for retrieving a file.
-     * 
+     *
      * @return The number of retries for retrieving a file.
      */
     public abstract int getNumberOfRetries();
 
     /**
      * Get the size of this remote file.
-     * 
+     *
      * @return The size of this remote file.
      */
     public long getSize() {

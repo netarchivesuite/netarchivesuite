@@ -143,7 +143,6 @@ public class ArcRepository implements CleanupIF {
 
     /**
      * Method for initialising the replica clients.
-     * 
      */
     private void initialiseReplicaClients() {
         // Get channels
@@ -185,7 +184,7 @@ public class ArcRepository implements CleanupIF {
 
     /**
      * Stores a file in all known replicas. It sends out a upload message to all replicas.
-     * 
+     *
      * @param rf The remotefile to be stored.
      * @param replyInfo A StoreMessage used to reply with success or failure.
      * @throws IOFailure If file couldn't be stored.
@@ -254,7 +253,7 @@ public class ArcRepository implements CleanupIF {
             case UPLOAD_STARTED:
             case DATA_UPLOADED:
                 log.debug("Recovery from old upload. StoreState: {}. Sending new Checksum request for verifying "
-                        + "whether the file '{}' has been succesfully uploaded for replica: '{}'", storeState,
+                                + "whether the file '{}' has been succesfully uploaded for replica: '{}'", storeState,
                         filename, replica);
                 // Unknown condition in bitarchive. Test with checksum job.
                 if (storeState == ReplicaStoreState.UPLOAD_FAILED) {
@@ -351,7 +350,8 @@ public class ArcRepository implements CleanupIF {
         for (Replica rep : connectedReplicas.keySet()) {
             try {
                 // retrieve the replica channel and check upload status.
-                if (ad.getState(arcfileName, rep.getIdentificationChannel().getName()) != ReplicaStoreState.UPLOAD_COMPLETED) {
+                if (ad.getState(arcfileName, rep.getIdentificationChannel().getName())
+                        != ReplicaStoreState.UPLOAD_COMPLETED) {
                     return false;
                 }
             } catch (UnknownID e) {
@@ -436,7 +436,7 @@ public class ArcRepository implements CleanupIF {
      * returned. This means that only the channels for the bitarchive should be changed into the bamon channel, e.g.
      * replacing the ALL_BA and ANY_BA identifiers with THE_BAMON. This change does not affect the checksum channel, and
      * is therefore also performed on it.
-     * 
+     *
      * @param channel A channel to the replica.
      * @return The name of the channel which identifies the replica.
      */
@@ -474,7 +474,7 @@ public class ArcRepository implements CleanupIF {
      *
      * @param arcfileName The arcfile that was uploaded.
      * @param replicaChannelName The name of the identification channel for the replica that uploaded it (THE_BAMON for
-     *            bitarchive and THE_CR for checksum).
+     * bitarchive and THE_CR for checksum).
      */
     private synchronized void processDataUploaded(String arcfileName, String replicaChannelName) {
         log.debug("Data uploaded '{}' ,{}", arcfileName, replicaChannelName);
@@ -503,7 +503,7 @@ public class ArcRepository implements CleanupIF {
 
     /**
      * Called when we receive replies on our checksum batch jobs.
-     * 
+     * <p>
      * This does not handle checksum replicas.
      *
      * @param msg a BatchReplyMessage.
@@ -582,7 +582,7 @@ public class ArcRepository implements CleanupIF {
 
     /**
      * The message for handling the results of the GetChecksumMessage.
-     * 
+     *
      * @param msg The message containing the checksum of a specific file.
      */
     public synchronized void onChecksumReply(GetChecksumMessage msg) {
@@ -720,7 +720,7 @@ public class ArcRepository implements CleanupIF {
      * @param replicaChannelName The id of the replica reporting a checksum.
      * @param orgChecksum The original checksum.
      * @param reportedChecksum The checksum calculated by the replica. This value is "", if an error has occurred
-     *            (except reply NOT ok from replica).
+     * (except reply NOT ok from replica).
      * @param checksumReadOk Tells whether the checksum was read ok by batch job.
      */
     private synchronized void processCheckSum(String arcFileName, String replicaChannelName, String orgChecksum,
@@ -855,7 +855,7 @@ public class ArcRepository implements CleanupIF {
 
     /**
      * Change admin data entry for a given file.
-     *
+     * <p>
      * The following information is contained in the given AdminDataMessage: 1) The name of the given file to change the
      * entry for, 2) the name of the bitarchive to modify the entry for, 3) a boolean that says whether or not to
      * replace the checksum for the entry for the given file in AdminData, 4) a replacement for the case where the

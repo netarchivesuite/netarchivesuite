@@ -42,7 +42,6 @@ import dk.netarkivet.harvester.HarvesterSettings;
 
 /**
  * Unit tests for the class TemplateDAO.
- *
  */
 public class TemplateDAOTester extends DataModelTestCase {
     @Before

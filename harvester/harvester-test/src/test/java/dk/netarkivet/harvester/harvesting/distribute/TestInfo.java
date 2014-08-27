@@ -90,7 +90,7 @@ public class TestInfo {
 
     /**
      * Get a simple job with high priority.
-     * 
+     *
      * @return a simple job with high priority
      */
     static Job getJob() {

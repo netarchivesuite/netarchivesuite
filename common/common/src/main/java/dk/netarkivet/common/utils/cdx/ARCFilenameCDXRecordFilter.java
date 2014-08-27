@@ -30,7 +30,6 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * A filter to use in CDXReader when finding CDXRecords matching a filename-pattern.
- *
  */
 @SuppressWarnings({"serial"})
 public class ARCFilenameCDXRecordFilter extends SimpleCDXRecordFilter {
@@ -40,7 +39,7 @@ public class ARCFilenameCDXRecordFilter extends SimpleCDXRecordFilter {
 
     /**
      * Class constructor.
-     * 
+     *
      * @param arcfilenamepattern The filename pattern to be used by this filter
      * @param filtername The name of this filter
      * @throws ArgumentNotValid If any argument are null or an empty string.
@@ -54,7 +53,7 @@ public class ARCFilenameCDXRecordFilter extends SimpleCDXRecordFilter {
 
     /**
      * Get the filename pattern used by this filter.
-     * 
+     *
      * @return the filename pattern used by this filter.
      */
     public String getFilenamePattern() {

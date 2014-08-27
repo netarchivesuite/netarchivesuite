@@ -89,7 +89,7 @@ public class EMailNotifications extends Notifications {
 
     /**
      * Send mailNotications.
-     * 
+     *
      * @param message The message body itself
      * @param eventType Type of notification
      * @param e An exception (can be null)

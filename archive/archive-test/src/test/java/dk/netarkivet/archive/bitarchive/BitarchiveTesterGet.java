@@ -43,7 +43,6 @@ import dk.netarkivet.common.utils.StreamUtils;
 
 /**
  * This class tests the get() operation of the bit archive.
- *
  */
 public class BitarchiveTesterGet extends BitarchiveTestCase {
     private static final File ORIGINALS_DIR = new File(new File(TestInfo.DATA_DIR, "get"), "existing");
@@ -69,9 +68,9 @@ public class BitarchiveTesterGet extends BitarchiveTestCase {
     }
 
     /* **** Part one: Test that the parameters are legal **** */
+
     /**
      * Test that a file identifier is given.
-     *
      */
     @Test
     public void testGetNoFile() {
@@ -87,7 +86,6 @@ public class BitarchiveTesterGet extends BitarchiveTestCase {
 
     /**
      * Test that the offset is legal (i.e. >0).
-     *
      */
     @Test(expected = ArgumentNotValid.class)
     public void testGetIllegalOffset() {
@@ -96,9 +94,9 @@ public class BitarchiveTesterGet extends BitarchiveTestCase {
     }
 
     /* **** Part two: Test that errors are treated correctly **** */
+
     /**
      * Test that an unknown file gives an error.
-     *
      */
     @Test
     public void testGetUnknownFile() {
@@ -108,7 +106,6 @@ public class BitarchiveTesterGet extends BitarchiveTestCase {
 
     /**
      * Test that an index beyond the end of the ARC file gives an error.
-     *
      */
     @Test(expected = ArgumentNotValid.class)
     public void testGetIndexTooLarge() {
@@ -118,7 +115,6 @@ public class BitarchiveTesterGet extends BitarchiveTestCase {
 
     /**
      * Test that an index that does not fit an ARC entry gives an error.
-     *
      */
     @Test(expected = IOFailure.class)
     public void testGetIndexNotAligned() {
@@ -127,11 +123,11 @@ public class BitarchiveTesterGet extends BitarchiveTestCase {
     }
 
     /* **** Part three: Test that correct code works **** */
+
     /**
      * Test that a correct query gives the correct file.
-     * 
-     * @throws IOException
      *
+     * @throws IOException
      */
     @Test
     public void testGetEntry() throws IOException {
@@ -148,7 +144,7 @@ public class BitarchiveTesterGet extends BitarchiveTestCase {
         String foundContents = FileUtils.readFile(new File(TestInfo.WORKING_DIR, ARC_RECORD_0_TMP));
         // verify that their contents are identical
         assertTrue("Strings targetcontents (length = " + targetcontents.length() + ") and foundContents (length="
-                + foundContents.length() + ") should have same length",
+                        + foundContents.length() + ") should have same length",
                 targetcontents.length() == foundContents.length());
         assertEquals("The contents should be exactly the same", targetcontents, foundContents);
     }
@@ -170,7 +166,6 @@ public class BitarchiveTesterGet extends BitarchiveTestCase {
 
     /**
      * Test that an entry with 0xff bytes is read correctly.
-     *
      */
     public void testGet0xFF() {
         try {
@@ -185,6 +180,7 @@ public class BitarchiveTesterGet extends BitarchiveTestCase {
     }
 
     /* **** Part four: Test that bug 4 is fixed **** */
+
     /**
      * Test that a correct query gives the correct file and that the ArcRecord is closed so that the file can be deleted
      * afterwards.
@@ -205,7 +201,7 @@ public class BitarchiveTesterGet extends BitarchiveTestCase {
             String foundContents = FileUtils.readFile(new File(TestInfo.WORKING_DIR, ARC_RECORD_0_TMP));
             // verify that their contents are identical
             assertTrue("Strings targetcontents (length = " + targetcontents.length() + ") and foundContents (length="
-                    + foundContents.length() + ") should have same length",
+                            + foundContents.length() + ") should have same length",
                     targetcontents.length() == foundContents.length());
             assertEquals("Contents should be exactly as expected", targetcontents, foundContents);
         } catch (Exception e) {

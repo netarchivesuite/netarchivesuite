@@ -37,7 +37,7 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
  * Container for batch jobs. Messages of this class should be sent to a BAMON queue from where they are collected by a
  * BitarchiveMonitorServer. The BitarchiveMonitorServer also creates instances of this class and sends them to the
  * individual bitarchive machines.
- *
+ * <p>
  * The response to this message comes in the form of a BatchReplyMessage placed on the senders queue.
  */
 @SuppressWarnings({"serial"})
@@ -54,7 +54,7 @@ public class BatchMessage extends ArchiveMessage {
     /**
      * Creates a BatchMessage object which can be used to initiate a batch job. This is used by BitarchiveMonitorServer
      * to create the message sent to the bitarchive machines.
-     * 
+     * <p>
      * Note: The id for the batchjob is the empty string, which removes the possibility of terminating the batchjob
      * remotely while it is running.
      *
@@ -68,7 +68,7 @@ public class BatchMessage extends ArchiveMessage {
 
     /**
      * Creates a BatchMessage object which can be used to initiate a batch job.
-     * 
+     * <p>
      * Note: The id for the batchjob is the empty string, which removes the possibility of terminating the batchjob
      * remotely while it is running.
      *
@@ -111,7 +111,7 @@ public class BatchMessage extends ArchiveMessage {
 
     /**
      * Retrieves batch job.
-     * 
+     *
      * @return Batch job
      */
     public FileBatchJob getJob() {
@@ -120,7 +120,7 @@ public class BatchMessage extends ArchiveMessage {
 
     /**
      * Returns the replica id.
-     * 
+     *
      * @return the replica id
      */
     public String getReplicaId() {
@@ -129,7 +129,7 @@ public class BatchMessage extends ArchiveMessage {
 
     /**
      * Returns the arguments for the batchjob.
-     * 
+     *
      * @return The arguments for the batchjob.
      */
     public List<String> getArgs() {
@@ -138,7 +138,7 @@ public class BatchMessage extends ArchiveMessage {
 
     /**
      * Returns the predefined ID for the batch process. If no Id is available, then the message id is returned.
-     * 
+     *
      * @return The ID for the batch process, or the message id, if no specific batch id has been declared.
      */
     public String getBatchID() {
@@ -161,7 +161,7 @@ public class BatchMessage extends ArchiveMessage {
 
     /**
      * Retrieval of a string representation of this object.
-     * 
+     *
      * @return A string representation of the instance of class.
      * @see dk.netarkivet.common.distribute.NetarkivetMessage#toString()
      */

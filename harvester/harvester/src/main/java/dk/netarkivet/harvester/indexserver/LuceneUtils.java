@@ -22,9 +22,6 @@
  */
 package dk.netarkivet.harvester.indexserver;
 
-import is.hi.bok.deduplicator.CrawlLogIterator;
-import is.hi.bok.deduplicator.DigestIndexer;
-
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -33,6 +30,8 @@ import java.io.InputStreamReader;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import is.hi.bok.deduplicator.CrawlLogIterator;
+import is.hi.bok.deduplicator.DigestIndexer;
 
 /**
  * Some Lucene Utilities used in some of our tests.
@@ -45,7 +44,7 @@ public class LuceneUtils {
 
     /**
      * Create Dummy Lucene index. uses an empty file as basis for the lucene-index.
-     * 
+     *
      * @param indexLocation location of index
      * @throws IOFailure
      */
@@ -61,7 +60,7 @@ public class LuceneUtils {
 
     /**
      * Generate a Lucene index from a crawllog, and a CDXReader.
-     * 
+     *
      * @param CrawlLog some crawllog
      * @param cdxreader some CDXReader
      * @param indexDir Destinationdirector for the Lucene index.
@@ -80,7 +79,7 @@ public class LuceneUtils {
             // DigestIndexer.MODE_HASH or DigestIndexer.MODE_URL
             String indexingMode = DigestIndexer.MODE_BOTH;
             boolean includeNormalizedURL = false; // used to be 'equivalent'
-                                                  // setting
+            // setting
             boolean includeTimestamp = true; // used to be 'timestamp' setting
             boolean includeEtag = true; // used to be 'etag' setting
             boolean addToExistingIndex = false;

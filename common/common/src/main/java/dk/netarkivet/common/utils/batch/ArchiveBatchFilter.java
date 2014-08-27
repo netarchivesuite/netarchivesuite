@@ -32,7 +32,7 @@ import dk.netarkivet.common.utils.archive.ArchiveRecordBase;
 /**
  * A filter class for batch entries. Allows testing whether or not to process an entry without loading the entry data
  * first.
- *
+ * <p>
  * accept() is given an ArchiveRecord to avoid unnecessary reading and copying of data of records not accepted by
  * filter.
  */
@@ -54,7 +54,7 @@ public abstract class ArchiveBatchFilter implements Serializable {
 
     /**
      * Get the name of the filter.
-     * 
+     *
      * @return the name of the filter.
      */
     protected String getName() {
@@ -63,7 +63,7 @@ public abstract class ArchiveBatchFilter implements Serializable {
 
     /**
      * Check if a given record is accepted (not filtered out) by this filter.
-     * 
+     *
      * @param record a given archive record
      * @return true, if the given archive record is accepted by this filter
      */
@@ -143,7 +143,7 @@ public abstract class ArchiveBatchFilter implements Serializable {
 
     /**
      * Note that the mimetype of the WARC responserecord is not (necessarily) the same as its payload.
-     * 
+     *
      * @param mimetype String denoting the mimetype this filter represents
      * @return a BatchFilter that filters out all ARCRecords, that does not have this mimetype
      * @throws java.awt.datatransfer.MimeTypeParseException (if mimetype is invalid)
@@ -167,7 +167,7 @@ public abstract class ArchiveBatchFilter implements Serializable {
 
     /**
      * Check, if a certain mimetype is valid
-     * 
+     *
      * @param mimetype
      * @return boolean true, if mimetype matches word/word, otherwise false
      */

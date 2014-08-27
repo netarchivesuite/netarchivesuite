@@ -40,7 +40,7 @@ public class BitarchiveARCFile {
     /**
      * Create a new representation of a file in the archive. Note that <code>fn</code> is not necessarily, though
      * probably, the same as <code>fp.getName()</code>.
-     *
+     * <p>
      * Failed lookups should be represented by null references rather than an object representing something that doesn't
      * exist.
      *
@@ -71,7 +71,7 @@ public class BitarchiveARCFile {
     /**
      * Get the ARC name of this file. This is the name that the file can be found under when looking up in the bit
      * archive.
-     * 
+     *
      * @return A String representing the ARC name of this file.
      */
     public String getName() {

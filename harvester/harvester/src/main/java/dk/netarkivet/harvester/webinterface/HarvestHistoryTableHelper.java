@@ -104,7 +104,7 @@ public class HarvestHistoryTableHelper {
 
     /**
      * @return the index of the first result on the current page. The result is the full list of
-     *         <code>DomainHarvestInfo</code> objects for this domain for the selected sorting.
+     * <code>DomainHarvestInfo</code> objects for this domain for the selected sorting.
      */
     public long getStartIndex() {
         return startIndex;
@@ -112,7 +112,7 @@ public class HarvestHistoryTableHelper {
 
     /**
      * @return the index of the last result on the current page. The result is the full list of
-     *         <code>DomainHarvestInfo</code> objects for this domain for the selected sorting.
+     * <code>DomainHarvestInfo</code> objects for this domain for the selected sorting.
      */
     public long getEndIndex() {
         return endIndex;
@@ -156,10 +156,10 @@ public class HarvestHistoryTableHelper {
 
     /**
      * Calculates the sort order arrow for the headers of a sortable table
-     * 
+     *
      * @param sortField The sort field to find a arrow for.
      * @return The relevant arrow for the indicated field. Will be the reverse if the sorting is already on this field
-     *         else an empty string will be returned
+     * else an empty string will be returned
      */
     public String getOrderArrow(String sortField) {
         ArgumentNotValid.checkNotNull(sortField, "sortField");
@@ -172,7 +172,7 @@ public class HarvestHistoryTableHelper {
     /**
      * Calculates the reverse sort order for this file. If the field isn't used for ordering, Constants.SORT_ORDER_ASC
      * is returned.
-     * 
+     *
      * @param sortField The sort field to find a new order for.
      * @return The relevant asc/desc string.
      */

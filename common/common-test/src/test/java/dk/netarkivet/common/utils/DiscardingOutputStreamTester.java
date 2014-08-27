@@ -30,7 +30,6 @@ import java.io.OutputStream;
 import org.junit.Test;
 
 /**
- * 
  * Unit tests for the DiscardingOutputStream class.
  */
 // FIXME: Does not close properly if anything fails.

@@ -50,13 +50,13 @@ public class HourlyFrequencyTester {
 
     /**
      * Given a frequency that can start any time, check that first event is immediate.
-     * 
+     *
      * @throws Exception
      */
     @Test
     public void testGetFirstEvent1() throws Exception {
         HourlyFrequency freq = new HourlyFrequency(3); // Every three hours,
-                                                       // anytime
+        // anytime
         Calendar cal = GregorianCalendar.getInstance();
         cal.set(2005, Calendar.APRIL, 5, 22, 42);
         Date d1 = cal.getTime();
@@ -66,13 +66,13 @@ public class HourlyFrequencyTester {
 
     /**
      * Given a frequency that can start a the 22nd minute, check that first event is at the 22nd minute.
-     * 
+     *
      * @throws Exception
      */
     @Test
     public void testGetFirstEvent2() throws Exception {
         HourlyFrequency freq = new HourlyFrequency(3, 22); // Every three hours,
-                                                           // on the minute
+        // on the minute
         Calendar cal = GregorianCalendar.getInstance();
         cal.set(2005, Calendar.APRIL, 5, 22, 42);
         Date d1 = cal.getTime();
@@ -84,13 +84,13 @@ public class HourlyFrequencyTester {
 
     /**
      * Given a frequency that can start any time, check that next event is after correct period.
-     * 
+     *
      * @throws Exception
      */
     @Test
     public void testGetNextEvent1() throws Exception {
         HourlyFrequency freq = new HourlyFrequency(3); // Every three hours,
-                                                       // anytime
+        // anytime
         Calendar cal = GregorianCalendar.getInstance();
         cal.set(2005, Calendar.APRIL, 5, 22, 42);
         Date d1 = cal.getTime();
@@ -102,13 +102,13 @@ public class HourlyFrequencyTester {
 
     /**
      * Given a frequency that can start at 23rd minute, check that next event is after correct period on 23rd minute.
-     * 
+     *
      * @throws Exception
      */
     @Test
     public void testGetNextEvent2() throws Exception {
         HourlyFrequency freq = new HourlyFrequency(3, 23); // Every three hours,
-                                                           // on the minute
+        // on the minute
         Calendar cal = GregorianCalendar.getInstance();
         cal.set(2005, Calendar.APRIL, 5, 22, 42);
         Date d1 = cal.getTime();
@@ -122,13 +122,13 @@ public class HourlyFrequencyTester {
     /**
      * Given a frequency that can start at 23rd minute, check that next event is after correct period on 23rd minute
      * given a time that is on the 23rd minute.
-     * 
+     *
      * @throws Exception
      */
     @Test
     public void testGetNextEvent3() throws Exception {
         HourlyFrequency freq = new HourlyFrequency(3, 22); // Every three hours,
-                                                           // on the minute
+        // on the minute
         Calendar cal = new GregorianCalendar(2005, Calendar.APRIL, 5, 3, 22);
         Date d1 = cal.getTime();
         Calendar cal2 = new GregorianCalendar(2005, Calendar.APRIL, 5, 6, 22);
@@ -139,7 +139,7 @@ public class HourlyFrequencyTester {
 
     /**
      * Test validity of arguments.
-     * 
+     *
      * @throws Exception
      */
     @Test

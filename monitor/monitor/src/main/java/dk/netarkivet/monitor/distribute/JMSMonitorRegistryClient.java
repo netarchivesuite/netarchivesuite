@@ -70,7 +70,7 @@ public final class JMSMonitorRegistryClient implements MonitorRegistryClient, Cl
 
     /**
      * Get the registry client singleton.
-     * 
+     *
      * @return The registry client.
      */
     public static synchronized JMSMonitorRegistryClient getInstance() {
@@ -83,7 +83,7 @@ public final class JMSMonitorRegistryClient implements MonitorRegistryClient, Cl
     /**
      * Register this host for monitoring. Once this method is called it will reregister for monitoring every minute, to
      * ensure the scheduling is done. If called again, it will restart the timer that registers the host.
-     * 
+     *
      * @param localHostName The name of the host.
      * @param jmxPort The port for JMX connections to the host.
      * @param rmiPort The port for RMI connections for JMX communication.

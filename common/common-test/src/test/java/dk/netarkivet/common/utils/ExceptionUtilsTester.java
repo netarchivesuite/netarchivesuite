@@ -75,7 +75,8 @@ public class ExceptionUtilsTester {
         String message = dk.netarkivet.common.utils.ExceptionUtils.getSQLExceptionCause(ex1);
         System.out.println(message);
         StringAsserts.assertStringContains("Compound exception should contain " + "references to all three "
-                + "reasons, states, and codes", message, "reason1", "reason2", "reason3", "state1", "state2", "state3",
+                        + "reasons, states, and codes", message, "reason1", "reason2", "reason3", "state1", "state2",
+                "state3",
                 "101", "102", "103");
     }
 

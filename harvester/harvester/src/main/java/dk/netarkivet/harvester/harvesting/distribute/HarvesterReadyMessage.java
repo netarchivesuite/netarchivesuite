@@ -45,7 +45,7 @@ public class HarvesterReadyMessage extends HarvesterMessage implements Serializa
 
     /**
      * Builds a new message.
-     * 
+     *
      * @param harvestChannelName the channel of jobs crawled by the sender.
      * @param applicationInstanceId the sender's application instance ID.
      */

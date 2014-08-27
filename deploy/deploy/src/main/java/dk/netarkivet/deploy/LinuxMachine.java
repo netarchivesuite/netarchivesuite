@@ -39,7 +39,7 @@ public class LinuxMachine extends Machine {
     /**
      * The constructor. Starts by initialising the parent abstract class, then sets the operating system dependent
      * variables.
-     * 
+     *
      * @param subTreeRoot The XML root element.
      * @param parentSettings The Settings to be inherited from the PhysicalLocation, where this machine is placed.
      * @param param The machine parameters to be inherited from the PhysicalLocation.
@@ -197,12 +197,12 @@ public class LinuxMachine extends Machine {
 
     /**
      * Creates the operation system specific starting script for this machine.
-     * 
+     * <p>
      * pseudo code: - ssh maclogin ". /etc/profile; conf/startall.sh; sleep 5; cat install/*.log"
-     * 
+     * <p>
      * where: maclogin = login for machine (username@machine). conf = path to /conf directory. install = path to install
      * directory.
-     * 
+     *
      * @return Operation system specific part of the startscript.
      */
     @Override
@@ -236,7 +236,7 @@ public class LinuxMachine extends Machine {
 
     /**
      * Creates the local path to the lib dir.
-     * 
+     *
      * @return The path to the lib dir for ssh.
      */
     protected String getLocalLibDirPath() {
@@ -246,11 +246,11 @@ public class LinuxMachine extends Machine {
     /**
      * This function creates the script to kill all applications on this machine. The scripts calls all the kill script
      * for each application. It also runs the script for killing any external database.
-     * 
+     * <p>
      * pseudo code: - echo Killing all applications at machine: mac - if [ -e ./kill_app.sh ] - ./kill_app.sh - fi - ...
-     * 
+     * <p>
      * where: mac = machine name. app = application name. ... = the same for other applications.
-     * 
+     *
      * @param directory The directory for this machine (use global variable?).
      * @throws IOFailure If an error occurred during the creation of the local killall script.
      */
@@ -296,12 +296,12 @@ public class LinuxMachine extends Machine {
     /**
      * This function creates the script to start all applications on this machine. The scripts calls all the start
      * script for each application. It also runs the script for starting any external database.
-     * 
+     * <p>
      * pseudo code: - echo Starting all applications at machine: mac - if [ -e ./start_app.sh ] - ./start_app.sh - fi -
      * ...
-     * 
+     * <p>
      * where: mac = machine name. app = application name. ... = the same for other applications.
-     * 
+     *
      * @param directory The directory for this machine (use global variable?).
      * @throws IOFailure If an error occurred during the creation of the local startall script.
      */
@@ -348,20 +348,20 @@ public class LinuxMachine extends Machine {
 
     /**
      * Creates the kill scripts for all the applications.
-     * 
+     * <p>
      * The script starts by finding all running processes of the application. If it finds any processes, it kills them.
-     * 
+     * <p>
      * The kill_app.sh should have the following structure:
-     * 
+     * <p>
      * - echo Killing linux application. - #!/bin/bash - PIDS = $(ps -wwfe | grep fullapp | grep -v grep | grep
      * path\settings_app.xml | awk "{print \\$2}") - if [ -n "$PIDS" ]; then - kill -9 $PIDS; - fi
-     * 
+     * <p>
      * Also, if a heritrix process is started, the following is added: - PIDS = $(ps -wwfe | grep heritrix | grep -v
      * grep | grep path\settings_app.xml | awk "{print \\$2}") - if [ -n "$PIDS" ]; then - kill -9 $PIDS; - fi
-     * 
+     * <p>
      * where: path = the path to the ./conf directory. fullapp = the full application name with class path. app = the id
      * of the application (name + instanceId). heritrix = the heritrix class path.
-     * 
+     *
      * @param directory The directory for this machine (use global variable?).
      * @throws IOFailure If an error occured during the creation of the kill application script file.
      */
@@ -467,20 +467,20 @@ public class LinuxMachine extends Machine {
 
     /**
      * Creates the start scripts for all the applications.
-     * 
+     * <p>
      * The application should only be started, if it is not running already. The script starts by finding all running
      * processes of the application. If any processes are found, a new application should not be started. Otherwise
      * start the application.
-     * 
+     * <p>
      * The start_app.sh should have the following structure:
-     * 
+     * <p>
      * - echo Starting linux application: app - cd path - #!/bin/bash - PIDS = $(ps -wwfe | grep fullapp | grep -v grep
      * | grep path\settings_app.xml | awk "{print \\$2}") - if [ -n "$PIDS" ]; then - echo Application already running.
      * - else - export CLASSPATH = cp:$CLASSPATH; - JAVA - fi
-     * 
+     * <p>
      * where: path = the path to the install directory. fullapp = the full name application with java path. app = the
      * name of the application. cp = the classpaths for the application. JAVA = the command to run the java application.
-     * 
+     *
      * @param directory The directory for this machine (use global variable?).
      * @throws IOFailure If an error occurred during the creation of the start application script file.
      */
@@ -729,14 +729,14 @@ public class LinuxMachine extends Machine {
 
     /**
      * Creates the specified directories in the deploy-configuration file.
-     * 
+     * <p>
      * Structure - ssh login cd path; DIRS; CLEANDIR; exit;
-     * 
+     * <p>
      * where: login = username@machine. path = path to install directory. DIRS = the way to create directories. CLEANDIR
      * = the command to clean the tempDir (if chosen as optional)
-     * 
+     * <p>
      * The install creation of DIR has the following structure for directory dir: if [ ! -d dir ]; then mkdir dir; fi;
-     * 
+     *
      * @return The script for creating the directories.
      */
     @Override
@@ -803,7 +803,7 @@ public class LinuxMachine extends Machine {
 
     /**
      * Function for creating the directories along the path until the end directory. Does not create the end directory.
-     * 
+     *
      * @param dir The path to the directory.
      * @return The script for creating the directory.
      */
@@ -883,7 +883,7 @@ public class LinuxMachine extends Machine {
 
     /**
      * Dummy function on linux machine. This is only used for windows machines!
-     * 
+     *
      * @param dir The directory to put the file.
      */
     @Override
@@ -1006,10 +1006,10 @@ public class LinuxMachine extends Machine {
     /**
      * Creates script for restarting all the applications on a machine. This script should start by killing all the
      * existing processes, and then starting them again.
-     * 
+     * <p>
      * First the killall scripts is called, then wait for 5 seconds for the applications to be fully terminated, and
      * finally the startall script is called.
-     * 
+     *
      * @param dir The directory where the script file will be placed.
      * @throws IOFailure If the restart script cannot be created.
      */
@@ -1053,13 +1053,13 @@ public class LinuxMachine extends Machine {
     /**
      * Creates a script for starting the archive database on a given machine. This is only created if the
      * &lt;globalArchiveDatabaseDir&gt; parameter is defined on the machine level.
-     * 
+     * <p>
      * <br/>
      * &gt; #!/bin/bash <br/>
      * &gt; cd InstallDir <br/>
      * &gt; java -cp 'DB-CLASSPATH' org.apache.derby.drda.NetworkServerControl start < /dev/null >
      * start_external_database.log 2>&1 &
-     * 
+     *
      * @param dir The directory where the script will be placed.
      * @throws IOFailure If the script cannot be written.
      */
@@ -1133,14 +1133,14 @@ public class LinuxMachine extends Machine {
     /**
      * Method for generating the command for running the external_admin_database_start script. This should be called
      * before the application on the machines have been started.
-     * 
+     * <p>
      * <br/>
      * &gt; echo Starting external database <br/>
      * &gt; if [ -e ./start_external_admin_database.sh ]; then <br/>
      * &gt; ./start_external_admin_database.sh & <br/>
      * &gt; sleep 5 <br/>
      * &gt; fi
-     * 
+     *
      * @return The command for running external_admin_database_start script.
      */
     protected String callStartArchiveDatabase() {
@@ -1176,18 +1176,18 @@ public class LinuxMachine extends Machine {
     /**
      * Creates a script for killing the archive database on a given machine. This is only created if the
      * &lt;globalArchiveDatabaseDir&gt; parameter is defined on the machine level.
-     * 
+     * <p>
      * The output is appended to the log, thus the '>>' instead of the standard '>' when redirecting the output.
-     * 
+     * <p>
      * <br/>
      * &gt; #!/bin/bash <br/>
      * &gt; cd InstallDir <br/>
      * &gt; java -cp 'DB-CLASSPATH' org.apache.derby.drda.NetworkServerControl shutdown < /dev/null >>
      * start_external_database.log 2>&1 &
-     * 
+     * <p>
      * <br/>
      * where 'PORT' is in the setting: settings.archive.admin.database.port
-     * 
+     *
      * @param dir The directory where the script will be placed.
      * @throws IOFailure If the script cannot be created.
      */
@@ -1253,13 +1253,13 @@ public class LinuxMachine extends Machine {
     /**
      * Method for generating the command for running the external_database_kill script. This should be called when the
      * application on the machines have been killed.
-     * 
+     * <p>
      * <br/>
      * &gt; echo Killing external database <br/>
      * &gt; if [ -e ./kill_external_database.sh ]; then <br/>
      * &gt; ./kill_external_database.sh <br/>
      * &gt; fi
-     * 
+     *
      * @return The command for running external_database_kill script.
      */
     protected String callKillArchiveDatabase() {
@@ -1292,13 +1292,13 @@ public class LinuxMachine extends Machine {
     /**
      * Creates a script for starting the harvest database on a given machine. This is only created if the
      * &lt;deployHarvestDatabaseDir&gt; parameter is defined on the machine level.
-     * 
+     * <p>
      * <br/>
      * &gt; #!/bin/bash <br/>
      * &gt; cd InstallDir <br/>
      * &gt; java -cp 'DB-CLASSPATH' org.apache.derby.drda.NetworkServerControl start < /dev/null >
      * start_external_harvest_database.log 2>&1 &
-     * 
+     *
      * @param dir The directory where the script will be placed.
      * @throws IOFailure If the script cannot be written.
      */
@@ -1370,14 +1370,14 @@ public class LinuxMachine extends Machine {
     /**
      * Method for generating the command for running the external_harvest_database_start script. This should be called
      * before the application on the machines have been started.
-     * 
+     * <p>
      * <br/>
      * &gt; echo Starting external harvest database <br/>
      * &gt; if [ -e ./start_external_harvest_database.sh ]; then <br/>
      * &gt; ./start_external_harvest_database.sh & <br/>
      * &gt; sleep 5 <br/>
      * &gt; fi
-     * 
+     *
      * @return The command for running external_harvest_database_start script.
      */
     protected String callStartHarvestDatabase() {
@@ -1427,18 +1427,18 @@ public class LinuxMachine extends Machine {
     /**
      * Creates a script for killing the harvest database on a given machine. This is only created if the
      * &lt;globalHarvestDatabaseDir&gt; parameter is defined on the machine level.
-     * 
+     * <p>
      * The output is appended to the log, thus the '>>' instead of the standard '>' when redirecting the output.
-     * 
+     * <p>
      * <br/>
      * &gt; #!/bin/bash <br/>
      * &gt; cd InstallDir <br/>
      * &gt; java -cp 'DB-CLASSPATH' org.apache.derby.drda.NetworkServerControl shutdown < /dev/null >>
      * start_external_harvest_database.log 2>&1 &
-     * 
+     * <p>
      * <br/>
      * where 'PORT' is in the setting: settings.common.database.port
-     * 
+     *
      * @param dir The directory where the script will be placed.
      * @throws IOFailure If the script cannot be created.
      */
@@ -1504,13 +1504,13 @@ public class LinuxMachine extends Machine {
     /**
      * Method for generating the command for running the external_database_kill script. This should be called when the
      * application on the machines have been killed.
-     * 
+     * <p>
      * <br/>
      * &gt; echo Killing external harvest database <br/>
      * &gt; if [ -e ./kill_external_harvest_database.sh ]; then <br/>
      * &gt; ./kill_external_harvest_database.sh <br/>
      * &gt; fi
-     * 
+     *
      * @return The command for running external_harvest_database_kill script.
      */
     protected String callKillHarvestDatabase() {
@@ -1543,7 +1543,7 @@ public class LinuxMachine extends Machine {
     /**
      * Method for combining the classpaths for the database access. <br/>
      * E.g. /home/test/NAS/lib/db/derby.jar:/home/test/NAS/lib/db/derbynet.jar
-     * 
+     *
      * @return The combined classpaths for accessing the database.
      */
     private String getDbClasspaths() {

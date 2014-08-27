@@ -247,7 +247,7 @@ public class JobDBDAO extends JobDAO {
 
     /**
      * Generates the next id of job.
-     * 
+     *
      * @param c an open connection to the harvestDatabase
      * @return id
      */
@@ -504,7 +504,7 @@ public class JobDBDAO extends JobDAO {
     /**
      * Try to extract an orderxmldoc from a given Clob. This method is used by the read() method, which catches the
      * thrown DocumentException.
-     * 
+     *
      * @param clob a given Clob returned from the database
      * @return a Document object based on the data in the Clob
      * @throws SQLException If data from the clob cannot be fetched.
@@ -604,7 +604,7 @@ public class JobDBDAO extends JobDAO {
 
     /**
      * Return a list of all job_ids .
-     * 
+     *
      * @return A list of all job_ids
      */
     public Iterator<Long> getAllJobIds() {
@@ -620,7 +620,7 @@ public class JobDBDAO extends JobDAO {
     /**
      * Get a list of small and immediately usable status information for given status and in given order. Is used by
      * getStatusInfo functions in order to share code (and SQL) TODO should also include given harvest run
-     * 
+     *
      * @param connection an open connection to the harvestDatabase
      * @param jobStatusCode code for jobstatus, -1 if all
      * @param asc true if it is to be sorted in ascending order, false if it is to be sorted in descending order
@@ -721,18 +721,18 @@ public class JobDBDAO extends JobDAO {
 
     /**
      * Calculate all jobIDs to use for duplication reduction.
-     *
+     * <p>
      * More precisely, this method calculates the following: If the job ID corresponds to a partial harvest, all jobIDs
      * from the previous scheduled harvest are returned, or the empty list if this harvest hasn't been scheduled before.
-     *
+     * <p>
      * If the job ID corresponds to a full harvest, the entire chain of harvests this is based on is returned, and all
      * jobIDs from the previous chain of full harvests is returned.
-     *
+     * <p>
      * This method is synchronized to avoid DB locking.
      *
      * @param jobID The job ID to find duplicate reduction data for.
      * @return A list of job IDs (possibly empty) of potential previous harvests of this job, to use for duplicate
-     *         reduction.
+     * reduction.
      * @throws UnknownID if job ID is unknown
      * @throws IOFailure on trouble querying database
      */
@@ -763,7 +763,7 @@ public class JobDBDAO extends JobDAO {
 
     /**
      * Find the harvest definition ids from this chain of snapshot harvests and the previous chain of snapshot harvests.
-     * 
+     *
      * @param connection an open connection to the harvestDatabase
      * @param jobID The ID of the job
      * @return A (possibly empty) list of harvest definition ids
@@ -898,7 +898,7 @@ public class JobDBDAO extends JobDAO {
 
     /**
      * Helper-method that constructs a list of JobStatusInfo objects from the given resultset.
-     * 
+     *
      * @param res a given resultset
      * @return a list of JobStatusInfo objects
      * @throws SQLException If any problem with accessing the data in the ResultSet
@@ -909,9 +909,9 @@ public class JobDBDAO extends JobDAO {
             final long jobId = res.getLong(1);
             joblist.add(new JobStatusInfo(jobId, JobStatus.fromOrdinal(res.getInt(2)), res.getLong(3),
                     res.getString(4), res.getInt(5), res.getString(6), res.getString(7), res.getString(8), res
-                            .getInt(9), DBUtils.getDateMaybeNull(res, 10), DBUtils.getDateMaybeNull(res, 11), DBUtils
-                            .getDateMaybeNull(res, 12), DBUtils.getDateMaybeNull(res, 13), DBUtils.getLongMaybeNull(
-                            res, 14)));
+                    .getInt(9), DBUtils.getDateMaybeNull(res, 10), DBUtils.getDateMaybeNull(res, 11), DBUtils
+                    .getDateMaybeNull(res, 12), DBUtils.getDateMaybeNull(res, 13), DBUtils.getLongMaybeNull(
+                    res, 14)));
         }
         return joblist;
     }
@@ -944,7 +944,7 @@ public class JobDBDAO extends JobDAO {
 
         /**
          * Add the given class and given value to the list of paramClasses and paramValues respectively.
-         * 
+         *
          * @param clazz a given class.
          * @param value a given value
          */
@@ -956,7 +956,7 @@ public class JobDBDAO extends JobDAO {
         /**
          * Prepare a statement for the database that uses the sqlString, and the paramClasses, and paramValues. Only
          * Integer, Long, String, and Date values accepted.
-         * 
+         *
          * @param c an Open connection to the harvestDatabase
          * @return the prepared statement
          * @throws SQLException If unable to prepare the statement
@@ -992,7 +992,7 @@ public class JobDBDAO extends JobDAO {
 
     /**
      * Builds a query to fetch jobs according to selection criteria.
-     * 
+     *
      * @param query the selection criteria.
      * @param count build a count query instead of selecting columns.
      * @return the proper SQL query.
@@ -1096,7 +1096,7 @@ public class JobDBDAO extends JobDAO {
             if (pagesize != HarvestStatusQuery.PAGE_SIZE_NONE) {
                 sql.append(" "
                         + DBSpecifics.getInstance().getOrderByLimitAndOffsetSubClause(pagesize,
-                                (query.getStartPageIndex() - 1) * pagesize));
+                        (query.getStartPageIndex() - 1) * pagesize));
             }
         }
 
@@ -1106,7 +1106,7 @@ public class JobDBDAO extends JobDAO {
 
     /**
      * Get Jobstatus for the job with the given id.
-     * 
+     *
      * @param jobID A given Jobid
      * @return the Jobstatus for the job with the given id.
      * @throws UnknownID if no job exists with id jobID

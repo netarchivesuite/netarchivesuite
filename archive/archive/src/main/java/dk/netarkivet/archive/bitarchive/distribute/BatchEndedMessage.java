@@ -59,18 +59,18 @@ public class BatchEndedMessage extends ArchiveMessage {
     /**
      * Message to signal from a BitarchiveServer to the BitarchiveMonitorServer that the Bit Archive Application
      * identified by BA_ApplicationId has completed its part of the batch job.
-     *
+     * <p>
      * Holds status information: list of files processed and a list of ARC files (file names) on which the batch job
      * failed.
      *
      * @param to the channel to which this message is to be sent (must be a BAMON channel)
      * @param baAppId Identifier for the machine sending this message, usually containing the IP address and http port
-     *            number
+     * number
      * @param originatingBatchMsgId the Id field from the original batch message
      * @param rf he remote file reference containing the output of the batch job (may be null if no output is
-     *            generated).
+     * generated).
      * @throws ArgumentNotValid If the BA_ApplicationId or the originatingBatchMsgId are null or empty, or if the
-     *             channel 'to' is null.
+     * channel 'to' is null.
      */
     public BatchEndedMessage(ChannelID to, String baAppId, String originatingBatchMsgId, RemoteFile rf)
             throws ArgumentNotValid {
@@ -87,7 +87,7 @@ public class BatchEndedMessage extends ArchiveMessage {
     /**
      * Message to signal from a BitarchiveServer to the BitarchiveMonitorServer that the Bit Archive Application
      * identified by BA_ApplicationId has completed its part of the batch job.
-     *
+     * <p>
      * Holds status information: list of files processed and a list of ARC files (file names) on which the batch job
      * failed.
      *
@@ -111,7 +111,7 @@ public class BatchEndedMessage extends ArchiveMessage {
 
     /**
      * Returns id information for the bitarchive which generated this message.
-     * 
+     *
      * @return the id information
      */
     public String getBitarchiveID() {
@@ -120,7 +120,7 @@ public class BatchEndedMessage extends ArchiveMessage {
 
     /**
      * Returns the Id of the BatchMessage which originated this message.
-     * 
+     *
      * @return the Id
      */
     public String getOriginatingBatchMsgID() {
@@ -129,7 +129,7 @@ public class BatchEndedMessage extends ArchiveMessage {
 
     /**
      * Returns the number of files processed by this batch job on this machine.
-     * 
+     *
      * @return the number of files processed
      */
     public int getNoOfFilesProcessed() {
@@ -138,7 +138,7 @@ public class BatchEndedMessage extends ArchiveMessage {
 
     /**
      * Returns a collection of the names of files on which this batch job. failed
-     * 
+     *
      * @return a Collection of strings with the file names
      */
     public Collection<File> getFilesFailed() {
@@ -147,7 +147,7 @@ public class BatchEndedMessage extends ArchiveMessage {
 
     /**
      * Set the number of files processed in batch job.
-     * 
+     *
      * @param number The number of processed files
      */
     public void setNoOfFilesProcessed(int number) {
@@ -156,7 +156,7 @@ public class BatchEndedMessage extends ArchiveMessage {
 
     /**
      * Set the files that failed in batch job.
-     * 
+     *
      * @param files The collection of files that failed
      */
     public void setFilesFailed(Collection<File> files) {
@@ -175,7 +175,7 @@ public class BatchEndedMessage extends ArchiveMessage {
 
     /**
      * Returns the remote file object containing the output of this job.
-     * 
+     *
      * @return the remote file object. May be null if this job generates no output
      */
     public RemoteFile getRemoteFile() {
@@ -184,7 +184,7 @@ public class BatchEndedMessage extends ArchiveMessage {
 
     /**
      * Human readable version of this object.
-     * 
+     *
      * @return A human readable version of this object
      */
     public String toString() {

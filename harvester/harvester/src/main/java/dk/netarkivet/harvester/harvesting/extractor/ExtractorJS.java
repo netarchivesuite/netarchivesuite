@@ -40,7 +40,7 @@ import org.archive.util.UriUtils;
 
 /**
  * Processes Javascript files for strings that are likely to be crawlable URIs.
- *
+ * <p>
  * contributor gojomo contributor szznax contributor svc
  */
 public class ExtractorJS extends Extractor implements CoreAttributeConstants {
@@ -84,8 +84,9 @@ public class ExtractorJS extends Extractor implements CoreAttributeConstants {
         // special-cases, for when we know our current JS extractor does poorly.
         // TODO: remove this test when JS extractor is improved
         for (String s : EXTRACTOR_URI_EXCEPTIONS) {
-            if (curi.toString().equals(s))
+            if (curi.toString().equals(s)) {
                 return;
+            }
         }
 
         if (!isHttpTransactionContentToProcess(curi)) {
@@ -101,7 +102,8 @@ public class ExtractorJS extends Extractor implements CoreAttributeConstants {
                 && (contentType.indexOf("jscript") < 0)
                 && (contentType.indexOf("ecmascript") < 0)
                 && (!curi.toString().toLowerCase().endsWith(".js"))
-                && (curi.getViaContext() == null || !curi.getViaContext().toString().toLowerCase().startsWith("script"))) {
+                && (curi.getViaContext() == null || !curi.getViaContext().toString().toLowerCase()
+                .startsWith("script"))) {
             return;
         }
 

@@ -73,7 +73,7 @@ public class HangingListenerTest {
     /**
      * Tests what happens if we have a blocking listener. It appears that by default, a listener may pre-queue messages
      * even while it is blocked processing the previous message. This is not desirable behaviour.
-     * 
+     *
      * @throws InterruptedException
      * @throws JMSException
      */

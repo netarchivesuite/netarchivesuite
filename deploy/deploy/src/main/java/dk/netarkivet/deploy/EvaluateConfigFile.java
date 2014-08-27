@@ -39,7 +39,6 @@ import dk.netarkivet.common.utils.FileUtils;
 /**
  * Class for evaluating a config file. Tests the settings in the config file against default settings to test for
  * wrongly assigned elements.
- * 
  */
 public class EvaluateConfigFile {
 
@@ -52,7 +51,7 @@ public class EvaluateConfigFile {
 
     /**
      * Constructor. Only initialises the config file and settings list.
-     * 
+     *
      * @param deployConfigFile The file to evaluate.
      * @param encoding the encoding to use to read from file
      */
@@ -115,9 +114,9 @@ public class EvaluateConfigFile {
     /**
      * Evaluates a element (has to called with the settings branch). Then tries to evaluate all the branches to the
      * element. The method is called recursively for the children of curElem.
-     * 
+     *
      * @param curElem The current element to evaluate. Null element represents in this context that no settings branch
-     *            exists for the current instance.
+     * exists for the current instance.
      */
     @SuppressWarnings("unchecked")
     private void evaluateElement(Element curElem) {
@@ -147,7 +146,7 @@ public class EvaluateConfigFile {
 
     /**
      * For testing whether a branch with the current path exists.
-     * 
+     *
      * @param settings The root of the default settings XML-tree.
      * @param path The path to the branch to test.
      * @return Whether the branch at the end of the path in the root exists.
@@ -167,7 +166,7 @@ public class EvaluateConfigFile {
 
     /**
      * Gets the path from settings of an element.
-     * 
+     *
      * @param el The element to get the settings path.
      * @return The path from settings to the element, in the XML-tree.
      */

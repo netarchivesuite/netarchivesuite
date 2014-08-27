@@ -71,7 +71,7 @@ public class ArchiveDateConverter {
 
     /**
      * Returns a <code>DateFormat</code> object for ARC date conversion.
-     * 
+     *
      * @return a <code>DateFormat</code> object for ARC date conversion
      */
     public static DateFormat getArcDateFormat() {
@@ -80,7 +80,7 @@ public class ArchiveDateConverter {
 
     /**
      * Returns a <code>DateFormat</code> object for WARC date conversion.
-     * 
+     *
      * @return a <code>DateFormat</code> object for WARC date conversion
      */
     public static DateFormat getWarcDateFormat() {

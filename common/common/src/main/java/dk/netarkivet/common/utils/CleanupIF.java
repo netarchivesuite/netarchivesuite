@@ -25,7 +25,6 @@ package dk.netarkivet.common.utils;
 
 /**
  * Interface for classes which can be cleaned up by a shutdown hook.
- *
  */
 public interface CleanupIF {
 

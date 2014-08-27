@@ -96,7 +96,7 @@ public final class ChecksumCalculator {
      * reading from the stream
      *
      * @param instream An <code>InputStream</code> to calculate the MD5 digest on. The contents of the stream will be
-     *            consumed by this call, but the stream will not be closed.
+     * consumed by this call, but the stream will not be closed.
      * @return The calculated MD5 digest as a string.
      */
     public static String calculateMd5(final InputStream instream) {
@@ -108,7 +108,7 @@ public final class ChecksumCalculator {
      * reading from the stream
      *
      * @param instream An <code>InputStream</code> to calculate the SHA-1 digest on. The contents of the stream will be
-     *            consumed by this call, but the stream will not be closed.
+     * consumed by this call, but the stream will not be closed.
      * @return The calculated SHA-1 digest as a string.
      */
     public static String calculateSha1(final InputStream instream) {
@@ -117,7 +117,7 @@ public final class ChecksumCalculator {
 
     /**
      * Generate an MD5 for a byte array.
-     * 
+     *
      * @param msg The given bytearray
      * @return the MD5 for a byte array
      */
@@ -130,7 +130,7 @@ public final class ChecksumCalculator {
      * from the stream
      *
      * @param instream An <code>InputStream</code> to calculate the digest on. The contents of the stream will be
-     *            consumed by this call, but the stream will not be closed.
+     * consumed by this call, but the stream will not be closed.
      * @param algorithm digest algorithm to use
      * @return The calculated digest as a string.
      */
@@ -171,7 +171,7 @@ public final class ChecksumCalculator {
 
     /**
      * Get a MessageDigest for a specific algorithm.
-     * 
+     *
      * @param algorithm a specific MessageDigest algorithm.
      * @return a MessageDigest for a specific algorithm
      */

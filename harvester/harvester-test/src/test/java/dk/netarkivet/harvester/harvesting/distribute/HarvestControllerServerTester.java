@@ -158,7 +158,7 @@ public class HarvestControllerServerTester {
 
     /**
      * Testing that server starts and log-file logs this !
-     * 
+     *
      * @throws IOException
      */
     @Test
@@ -205,7 +205,7 @@ public class HarvestControllerServerTester {
      * Check that we receive the expected CrawlStatusMessages when we send a broken job to a HarvestControllerServer.
      * The case of a correctly-functioning job is more-or-less identical and is to be included in the IntegrityTester
      * suite
-     * 
+     *
      * @throws InterruptedException
      */
     @Test
@@ -255,7 +255,7 @@ public class HarvestControllerServerTester {
 
     /**
      * Testing close().
-     * 
+     *
      * @throws IOException
      */
     @Test
@@ -272,7 +272,7 @@ public class HarvestControllerServerTester {
     /**
      * Tests that sending a doOneCrawlMessage with a value other than submitted results in a job-failed message being
      * sent back.
-     * 
+     *
      * @throws JMSException
      */
     @Test
@@ -302,10 +302,10 @@ public class HarvestControllerServerTester {
     /**
      * Test that starts (and stops) the HarvestControllerServer and verifies that found "old jobs" are treated as
      * expected. Thus, an "indirect" test of method processHarvestInfoFile().
-     * 
+     *
      * @param crawlDir the location of the crawldir
      * @param numberOfStoreMessagesExpected The number of stored messages expected. Usually number of files in dir + 1
-     *            for metadata arc file.
+     * for metadata arc file.
      * @param storeFailFile If not null, simulate failure on upload of this file
      * @return The CrawlStatusMessage returned by the HarvestControllerServer for the found job.
      */
@@ -427,9 +427,9 @@ public class HarvestControllerServerTester {
 
     /**
      * Verify that preharvest metadata is found in the final metadata file. See also bug #738.
-     * 
+     * <p>
      * FIXME Fails in Hudson
-     * 
+     *
      * @throws NoSuchMethodException
      * @throws IllegalAccessException
      * @throws InvocationTargetException
@@ -482,7 +482,7 @@ public class HarvestControllerServerTester {
     /**
      * Runs an ExtractCDXJob on the given, local arc-file and formats the output. Everything stored in RAM - don't use
      * on large files!
-     * 
+     *
      * @param arcFile An arc-file present on the local system.
      * @return The full CDX index as List of CDXRecords.
      */

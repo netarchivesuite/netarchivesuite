@@ -41,7 +41,7 @@ public class ShutdownHook extends Thread {
 
     /**
      * Returns a ShutdownHook thread for an object with a cleanup() method.
-     * 
+     *
      * @param app the Object to be cleaned up
      */
     public ShutdownHook(LifeCycleComponent app) {

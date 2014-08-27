@@ -71,7 +71,7 @@ public class ChecksumCalculatorTester {
 
     /**
      * Convert a buffer of bytes to a hexadecimal string.
-     * 
+     *
      * @param data The data to convert to hex
      * @param digestLength Assumed digestLength
      * @return The hexadecimal representation of the given data.

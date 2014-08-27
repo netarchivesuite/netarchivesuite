@@ -39,7 +39,6 @@ import dk.netarkivet.viewerproxy.ViewerProxy;
  * harvestdefinitionGUI and harvestserver within the same JVM. TestRemoteFile and TestJMSConnection are used, the
  * application therefore does not need access to a JMSBroker nor an FTPServer. Notice that it is possible to complete
  * exactly one harvest-job, because the harvestServer kills the application once it has completed the harvest job.
- *
  */
 public class StandaloneApplication {
     /**

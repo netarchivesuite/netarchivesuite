@@ -84,7 +84,7 @@ public final class BitarchiveAdmin {
      * Creates a new BitarchiveAdmin object for an existing bit archive. Reads the directories to use from settings.
      *
      * @throws ArgumentNotValid If the settings for minSpaceLeft is non-positive or the setting for minSpaceRequired is
-     *             negative.
+     * negative.
      * @throws PermissionDenied If any of the directories cannot be created or are not writeable.
      * @throws IOFailure If it is not possible to retrieve the canonical file for the directories.
      */
@@ -158,7 +158,7 @@ public final class BitarchiveAdmin {
 
     /**
      * Method for updating the filelist for a given basedir.
-     * 
+     *
      * @param basedir The basedir to update the filelist for.
      * @throws ArgumentNotValid If basedir is null or if it not a proper directory.
      * @throws UnknownID If the basedir cannot be found both the archivedFiles map or the archiveTime map.
@@ -220,7 +220,6 @@ public final class BitarchiveAdmin {
      * @param arcFileName The simple name (i.e. no dirs) of the ARC file.
      * @param requestedSize How large the file is in bytes.
      * @return The path where the arcFile should go.
-     *
      * @throws ArgumentNotValid If arcFileName is null or empty, or requestedSize is negative.
      * @throws IOFailure if there is no more room left to store this file of size=requestedSize
      */
@@ -253,16 +252,15 @@ public final class BitarchiveAdmin {
 
     /**
      * Moves a file from temporary storage to file storage.
-     *
+     * <p>
      * Note: It is checked, if tempLocation resides in directory TEMPORARY_DIRECTORY_NAME and whether the parent of
      * tempLocation is a Bitarchive directory.
      *
      * @param tempLocation The temporary location where the file was stored. This must be a path returned from
-     *            getTemporaryPath
-     *
+     * getTemporaryPath
      * @return The location where the file is now stored
      * @throws IOFailure if tempLocation is not created from getTemporaryPath or file cannot be moved to Storage
-     *             location.
+     * location.
      * @throws ArgumentNotValid If the tempLocation file is null.
      */
     public File moveToStorage(File tempLocation) throws IOFailure, ArgumentNotValid {
@@ -370,9 +368,9 @@ public final class BitarchiveAdmin {
      * Return an array of all files in this archive that match a given regular expression on the filename.
      *
      * @param regexp A precompiled regular expression matching whole filenames. This will probably be given to a
-     *            FilenameFilter
+     * FilenameFilter
      * @return An array of all the files in this bitarchive that exactly match the regular expression on the filename
-     *         (sans paths).
+     * (sans paths).
      */
     public File[] getFilesMatching(final Pattern regexp) {
         ArgumentNotValid.checkNotNull(regexp, "Pattern regexp");
@@ -493,7 +491,6 @@ public final class BitarchiveAdmin {
      * Return the path used to store files that are removed by RemoveAndGetFileMessage.
      *
      * @param existingFile a File object for an existing file in the bitarchive
-     * 
      * @return The full path of the file in the attic dir
      */
     public File getAtticPath(File existingFile) {

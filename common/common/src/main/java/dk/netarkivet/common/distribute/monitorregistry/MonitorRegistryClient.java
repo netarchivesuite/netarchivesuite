@@ -28,7 +28,7 @@ package dk.netarkivet.common.distribute.monitorregistry;
 public interface MonitorRegistryClient {
     /**
      * Register this host for monitoring.
-     * 
+     *
      * @param hostName The name of the host.
      * @param jmxPort The port for JMX communication.
      * @param rmiPort The RMI port for JMX communication.

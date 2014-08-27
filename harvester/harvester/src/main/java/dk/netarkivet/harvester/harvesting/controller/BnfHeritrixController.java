@@ -71,7 +71,7 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
     /**
      * The below commands and attributes are copied from the attributes and operations exhibited by the Heritrix MBeans
      * of type CrawlJob and CrawlService.Job, as they appear in JConsole.
-     *
+     * <p>
      * Only operations and attributes used in NAS are listed.
      */
     private static enum CrawlServiceAttribute {
@@ -100,9 +100,7 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
     }
 
     /**
-     * 
      * Enum listing the different job attributes available.
-     *
      */
     private static enum CrawlServiceJobAttribute {
         /** The time in seconds elapsed since the crawl began. */
@@ -219,7 +217,7 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
 
     /**
      * Initialize the JMXconnection to the Heritrix.
-     * 
+     *
      * @throws IOFailure If Heritrix dies before initialization, or we encounter any problems during the initialization.
      * @see HeritrixController#initialize()
      */
@@ -286,7 +284,7 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
      * Cleanup after an Heritrix process. This entails sending the shutdown command to the Heritrix process, and killing
      * it forcefully, if it is still alive after waiting the period of time specified by the
      * CommonSettings.PROCESS_TIMEOUT setting.
-     * 
+     *
      * @param crawlDir the crawldir to cleanup
      * @see HeritrixController#cleanup()
      */
@@ -341,7 +339,7 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
 
     /**
      * Retrieve the values of the crawl service attributes and add them to the CrawlProgressMessage being put together.
-     * 
+     *
      * @param cpm the crawlProgress message being prepared
      */
     private void getCrawlServiceAttributes(CrawlProgressMessage cpm) {
@@ -383,7 +381,7 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
     /**
      * Retrieve the values of the crawl service job attributes and add them to the CrawlProgressMessage being put
      * together.
-     * 
+     *
      * @param cpm the crawlProgress message being prepared
      */
     private void fetchCrawlServiceJobAttributes(CrawlProgressMessage cpm) {
@@ -499,7 +497,7 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
 
     /**
      * Generates a full frontier report.
-     * 
+     *
      * @return a Full frontier report.
      */
     public FullFrontierReport getFullFrontierReport() {

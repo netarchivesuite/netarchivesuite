@@ -26,7 +26,6 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * Enumeration of the possible ways to search for domains.
- *
  */
 public enum DomainSearchType {
 

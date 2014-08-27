@@ -55,7 +55,7 @@ public abstract class ARCBatchJob extends FileBatchJob {
 
     /**
      * Initialize the job before running. This is called before the processRecord() calls start coming.
-     * 
+     *
      * @param os The OutputStream to which output data is written
      */
     @Override
@@ -63,7 +63,7 @@ public abstract class ARCBatchJob extends FileBatchJob {
 
     /**
      * Exceptions should be handled with the handleException() method.
-     * 
+     *
      * @param os The OutputStream to which output data is written
      * @param record the object to be processed.
      */
@@ -71,7 +71,7 @@ public abstract class ARCBatchJob extends FileBatchJob {
 
     /**
      * Finish up the job. This is called after the last processRecord() call.
-     * 
+     *
      * @param os The OutputStream to which output data is written
      */
     @Override
@@ -93,8 +93,8 @@ public abstract class ARCBatchJob extends FileBatchJob {
      *
      * @param arcFile The ARC or ARCGZ file to be processed.
      * @param os the OutputStream to which output is to be written
-     * @throws ArgumentNotValid if either argument is null
      * @return true, if file processed successful, otherwise false
+     * @throws ArgumentNotValid if either argument is null
      */
     @Override
     public final boolean processFile(File arcFile, OutputStream os) throws ArgumentNotValid {
@@ -105,7 +105,7 @@ public abstract class ARCBatchJob extends FileBatchJob {
         log.info("Processing ARCfile: {}", arcFile.getName());
 
         try { // This outer try-catch block catches all unexpected exceptions
-              // Create an ARCReader and retrieve its Iterator:
+            // Create an ARCReader and retrieve its Iterator:
             ARCReader arcReader = null;
 
             try {
@@ -185,7 +185,7 @@ public abstract class ARCBatchJob extends FileBatchJob {
 
     /**
      * Private method that handles our exception.
-     * 
+     *
      * @param e the given exception
      * @param arcFile The ARCFile where the exception occurred.
      * @param index The offset in the ARCFile where the exception occurred.
@@ -229,7 +229,6 @@ public abstract class ARCBatchJob extends FileBatchJob {
     }
 
     /**
-     * 
      * @return the number of records processed.
      */
     public int noOfRecordsProcessed() {

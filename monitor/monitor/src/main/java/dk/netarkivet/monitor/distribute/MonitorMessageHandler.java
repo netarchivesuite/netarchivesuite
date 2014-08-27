@@ -35,11 +35,10 @@ import dk.netarkivet.monitor.registry.distribute.RegisterHostMessage;
 
 /**
  * This default message handler shields of all unimplemented methods from the MonitorMessageVisitor interface.
- *
+ * <p>
  * Classes should not implement MonitorMessageVisitor but extend this class.
  *
  * @see MonitorMessageVisitor
- *
  */
 public abstract class MonitorMessageHandler implements MonitorMessageVisitor, MessageListener {
 
@@ -53,11 +52,10 @@ public abstract class MonitorMessageHandler implements MonitorMessageVisitor, Me
 
     /**
      * Unpacks and calls accept() on the message object.
-     *
+     * <p>
      * This method catches <b>all</b> exceptions and logs them.
      *
      * @param msg a ObjectMessage
-     *
      */
     public void onMessage(Message msg) {
         ArgumentNotValid.checkNotNull(msg, "Message msg");
@@ -84,7 +82,7 @@ public abstract class MonitorMessageHandler implements MonitorMessageVisitor, Me
 
     /**
      * This method should be overridden and implemented by a sub class if message handling is wanted.
-     * 
+     *
      * @param msg a RegisterHostMessage
      * @throws PermissionDenied when invoked
      */

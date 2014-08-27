@@ -43,10 +43,10 @@ import dk.netarkivet.common.utils.Settings;
 
 /**
  * Handles the communication with a Sun JMS broker.
- *
+ * <p>
  * Methods are implemented to get a connection, as well as queues and topics. The error handling will try to reconnect
  * on given error scenarios.
- *
+ * <p>
  * The warnings and errorcodes reported by Sun Message Queue 4.1 can be found in Appendix A Sun Java System Message
  * Queue 4.1 Developer's Guide for Java Clients: http://docs.sun.com/app/docs/doc/819-7757/aeqgo?a=view
  */
@@ -67,8 +67,8 @@ public class JMSConnectionSunMQ extends JMSConnection {
     }
 
     public static final String[] RECONNECT_ERRORCODES = {"C4000", // Packet
-                                                                  // acknowledgment
-                                                                  // failed
+            // acknowledgment
+            // failed
             "C4001", // Write packet failed
             "C4002", // Read packet failed
             "C4003", // Connection timed out
@@ -108,7 +108,6 @@ public class JMSConnectionSunMQ extends JMSConnection {
      * Intialises an Open Message Queue JMS connection.
      *
      * @return A JMSConnection
-     *
      * @throws IOFailure when connection to JMS broker failed
      */
     public static synchronized JMSConnection getInstance() throws IOFailure {
@@ -120,15 +119,14 @@ public class JMSConnectionSunMQ extends JMSConnection {
 
     /**
      * Returns a new QueueConnectionFactory. This is an SunMQ implementation of QueueConnectionFactory.
-     *
+     * <p>
      * Notice: The return type is explicitly defined with package prefix to avoid name collision with
      * javax.jms.QueueConnectionFactory
      *
      * @return QueueConnectionFactory
-     *
      * @throws JMSException If unable to create a QueueConnectionfactory with the necessary properties:
-     *             imqConsumerflowLimit set to 1, imqBrokerHostname and imqBrokerHostPort set to the values defined in
-     *             our settings.
+     * imqConsumerflowLimit set to 1, imqBrokerHostname and imqBrokerHostPort set to the values defined in
+     * our settings.
      */
     protected com.sun.messaging.ConnectionFactory getConnectionFactory() throws JMSException {
         log.info("Establishing SunMQ JMS Connection to '{}:{}'", Settings.get(JMS_BROKER_HOST),
@@ -145,9 +143,7 @@ public class JMSConnectionSunMQ extends JMSConnection {
      * provider being configured to autocreate queues and topics.
      *
      * @param channelName the name of the queue or topic.
-     *
      * @return A queue or topic depending on the channel name.
-     *
      * @throws JMSException If unable to create the destination.
      */
     protected Destination getDestination(String channelName) throws JMSException {

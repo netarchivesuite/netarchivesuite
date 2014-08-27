@@ -53,9 +53,9 @@ import dk.netarkivet.common.utils.Settings;
  * Class for accessing and manipulating the administrative data for the ArcRepository. In the current implementation, it
  * consists of a file with a number of lines of the form: <filename/> <checksum/> <state/>
  * <timestamp-for-last-state-change/> [,<bitarchive/> <storestatus/> <timestamp-for-last-state-change/>]*
- *
+ * <p>
  * This abstract class is overridden to give either a read/write or a readonly version of this class.
- * 
+ *
  * @deprecated Use the DatabaseAdmin instead.
  */
 @Deprecated
@@ -113,7 +113,7 @@ public abstract class AdminData {
 
     /**
      * Returns the one and only AdminData instance.
-     * 
+     *
      * @return the one and only AdminData instance.
      */
     public static synchronized UpdateableAdminData getUpdateableInstance() {
@@ -122,7 +122,7 @@ public abstract class AdminData {
 
     /**
      * Returns a read-only AdminData instance.
-     * 
+     *
      * @return a read-only AdminData instance.
      */
     public static synchronized ReadOnlyAdminData getReadOnlyInstance() {
@@ -132,7 +132,7 @@ public abstract class AdminData {
 
     /**
      * Check, if there is an entry for a certain arcfile?
-     * 
+     *
      * @param arcfileName A given arcfile
      * @return true, if there is an entry for the given arcfile
      */
@@ -143,7 +143,7 @@ public abstract class AdminData {
 
     /**
      * Return the ArcRepositoryEntry for a certain arcfileName. Returns null, if not found.
-     * 
+     *
      * @param arcfileName a certain filename
      * @return the ArcRepositoryEntry for a certain arcfileName
      */
@@ -172,7 +172,7 @@ public abstract class AdminData {
      *
      * @param arcfileName The file to retrieve the state for
      * @param replicaChannelName The name of the identification channel for the replica the state should be retrieved
-     *            for.
+     * for.
      * @return true if BitArchiveStoreState is registered, false otherwise.
      */
     public boolean hasState(String arcfileName, String replicaChannelName) {
@@ -190,7 +190,7 @@ public abstract class AdminData {
      *
      * @param arcfileName The file to retrieve the state for.
      * @param replicaChannelName The name of the identification channel for the replica the state should be retrieved
-     *            for.
+     * for.
      * @return The storage state.
      * @throws UnknownID When no record exists.
      */
@@ -205,7 +205,7 @@ public abstract class AdminData {
 
     /**
      * Get Checksum for a given arcfile.
-     * 
+     *
      * @param arcfileName Unique reference to file for which to retrieve checksum
      * @return checksum the latest registered reference checksum or null, if no reference checksum is available
      * @throws UnknownID if the file is not registered
@@ -222,7 +222,7 @@ public abstract class AdminData {
     /**
      * Reads the admin data from a file. If the data read is a valid old version the it is converted to the new version
      * and written to disk.
-     * 
+     *
      * @throws IOFailure on trouble reading from file
      */
     protected void read() throws IOFailure {
@@ -352,7 +352,7 @@ public abstract class AdminData {
      * Read the current version (0.4) of the admin data. The current version contains lines of the format <filename/>
      * <checksum/> <state/> <timestamp-for-last-state-change/> [,<bitarchive/> <storestatus/>
      * <timestamp-for-last-state-change/>]*
-     *
+     * <p>
      * The same filename may occur multiple times, but must always have the same checksum. This indicates updates of the
      * storestatus for the file. Updates to checksum happen only during 'correct' operations and cause the entire file
      * to be written, leaving the changed entry with the new checksum only. An entry is considered corrupt (!valid) if
@@ -429,7 +429,7 @@ public abstract class AdminData {
                     // existing entry
                     if (!checksumString.equals(getCheckSum(filename))) {
                         log.warn("Wrong checksum encountered in admin data for known file '{}': Old={} New={}. "
-                                + "Entry removed from admin.data and the remaining line ignored: {}", filename,
+                                        + "Entry removed from admin.data and the remaining line ignored: {}", filename,
                                 getCheckSum(filename), checksumString, s);
                         storeEntries.remove(filename);
                         continue; // Stop processing, and go to next line
@@ -504,7 +504,7 @@ public abstract class AdminData {
 
     /**
      * Return info about current object as String.
-     * 
+     *
      * @return info about current object as String.
      */
     public String toString() {

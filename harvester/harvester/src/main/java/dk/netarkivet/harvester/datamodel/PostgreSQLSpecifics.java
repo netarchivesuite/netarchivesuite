@@ -35,10 +35,9 @@ import dk.netarkivet.common.exceptions.IOFailure;
 
 /**
  * PostgreSQL-specific implementation of DB methods. Intended for PostgreSQL 8.3 and above.
- *
+ * <p>
  * PostgreSQL does not support the CLOB datatype but instead provides a "text" data type. See
  * http://www.postgresql.org/docs/current/static/datatype-character.html.
- *
  */
 public class PostgreSQLSpecifics extends DBSpecifics {
 
@@ -59,8 +58,8 @@ public class PostgreSQLSpecifics extends DBSpecifics {
      * two columns domain_name varchar(Constants.MAX_NAME_SIZE) config_name varchar(Constants.MAX_NAME_SIZE)
      *
      * @param c The DB connection to use.
-     * @throws SQLException if there is a problem getting the table.
      * @return The name of the created table
+     * @throws SQLException if there is a problem getting the table.
      */
     public String getJobConfigsTmpTable(Connection c) throws SQLException {
         ArgumentNotValid.checkNotNull(c, "Connection c");
@@ -342,7 +341,8 @@ public class PostgreSQLSpecifics extends DBSpecifics {
      * Migrates the 'ExtendedFieldValueTable' from version 1 to version 2 changing the maxlen of content to 30000
      */
     protected void migrateExtendedFieldTableValueV1toV2() {
-        String[] sqlStatements = {"ALTER TABLE extendedfieldvalue ALTER COLUMN content TYPE VARCHAR(30000), ALTER COLUMN content SET NOT NULL"};
+        String[] sqlStatements = {
+                "ALTER TABLE extendedfieldvalue ALTER COLUMN content TYPE VARCHAR(30000), ALTER COLUMN content SET NOT NULL"};
         HarvestDBConnection.updateTable("extendedfieldvalue", 2, sqlStatements);
     }
 

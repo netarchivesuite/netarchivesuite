@@ -23,9 +23,6 @@
 
 package dk.netarkivet.harvester.indexserver;
 
-import is.hi.bok.deduplicator.CrawlDataItem;
-import is.hi.bok.deduplicator.CrawlLogIterator;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -36,6 +33,8 @@ import org.slf4j.LoggerFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.cdx.CDXRecord;
+import is.hi.bok.deduplicator.CrawlDataItem;
+import is.hi.bok.deduplicator.CrawlLogIterator;
 
 /**
  * This subclass of CrawlLogIterator adds the layer of digging an origin of the form "arcfile,offset" out of a
@@ -67,7 +66,7 @@ public class CDXOriginCrawlLogIterator extends CrawlLogIterator {
      *
      * @param source File containing a crawl.log sorted by URL (LANG=C sort -k 4b)
      * @param cdx A reader of a sorted CDX file. This is given as a reader so that it may be closed after use
-     *            (CrawlLogIterator provides no close())
+     * (CrawlLogIterator provides no close())
      * @throws IOException If the underlying CrawlLogIterator fails, e.g. due to missing files.
      */
     public CDXOriginCrawlLogIterator(File source, BufferedReader cdx) throws IOException {
@@ -78,11 +77,11 @@ public class CDXOriginCrawlLogIterator extends CrawlLogIterator {
 
     /**
      * Parse a crawl.log line into a valid CrawlDataItem.
-     *
+     * <p>
      * If CrawlLogIterator is ok with this line, we must make sure that it has an origin by finding missing ones in the
      * CDX file. If multiple origins are found in the CDX files, the one that was harvested last is chosen. If no origin
      * can be found, the item is rejected.
-     *
+     * <p>
      * We assume that super.parseLine() delivers us the items in the crawl.log in the given (sorted) order with non-null
      * URLs, though we admit that some undeclared exceptions can be thrown by it.
      *

@@ -33,7 +33,7 @@ public interface ArchiveFileNaming {
     /**
      * Make a prefix to be used by Heritrix. It is optional what information from the harvestjob if any is going to be
      * part of the prefix.
-     * 
+     *
      * @param job the harvestJob
      * @return a prefix to be used by Heritrix
      */

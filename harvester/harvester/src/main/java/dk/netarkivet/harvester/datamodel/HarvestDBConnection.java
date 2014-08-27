@@ -42,17 +42,17 @@ import dk.netarkivet.common.utils.Settings;
 /**
  * This class handles connections to the harvest definition database, and also defines basic logic for checking versions
  * of tables.
- *
+ * <p>
  * The statements to create the tables are located in:
  * <ul>
  * <li><em>Derby:</em> scripts/sql/createfullhddb.sql</li>
  * <li><em>MySQL:</em> scripts/sql/createfullhddb.mysql</li>
  * <li><em>PostgreSQL:</em> scripts/postgresql/netarchivesuite_init.sql</li>
  * </ul>
- *
+ * <p>
  * The implementation relies on a connection pool. Once acquired through the get() method, a connection must be
  * explicitly returned to the pool by calling the release(Connection) method.
- *
+ * <p>
  * THis class is intended to be used statically, and hence cannot be instantiated and is final.
  */
 public final class HarvestDBConnection {
@@ -78,7 +78,7 @@ public final class HarvestDBConnection {
      * <li>@see {@link CommonSettings#DB_POOL_ACQ_INC}</li>
      * </ul>
      * Note that the connection obtained must be returned to the pool by calling {@link #release(Connection)}.
-     * 
+     *
      * @return a connection to the harvest definition database
      * @throws IOFailure if we cannot connect to the database (or find the driver).
      */
@@ -206,7 +206,7 @@ public final class HarvestDBConnection {
 
     /**
      * Helper method to return a connection to the pool.
-     * 
+     *
      * @param connection a connection
      */
     public static synchronized void release(Connection connection) {
@@ -220,7 +220,7 @@ public final class HarvestDBConnection {
 
     /**
      * Initializes the connection pool.
-     * 
+     *
      * @param dbSpec the object representing the chosen DB target system.
      * @param jdbcUrl the JDBC URL to connect to.
      * @throws SQLException
@@ -272,9 +272,10 @@ public final class HarvestDBConnection {
 
         if (log.isInfoEnabled()) {
             log.info("Connection pool initialized with the following values:\n" + "- minPoolSize={}\n"
-                    + "- maxPoolSize={}\n" + "- acquireIncrement={}\n" + "- maxStatements={}\n"
-                    + "- maxStatementsPerConnection={}\n" + "- idleConnTestPeriod={}\n" + "- idleConnTestQuery='{}'\n"
-                    + "- idleConnTestOnCheckin={}", dataSource.getMinPoolSize(), dataSource.getMaxPoolSize(),
+                            + "- maxPoolSize={}\n" + "- acquireIncrement={}\n" + "- maxStatements={}\n"
+                            + "- maxStatementsPerConnection={}\n" + "- idleConnTestPeriod={}\n"
+                            + "- idleConnTestQuery='{}'\n"
+                            + "- idleConnTestOnCheckin={}", dataSource.getMinPoolSize(), dataSource.getMaxPoolSize(),
                     dataSource.getAcquireIncrement(), dataSource.getMaxStatements(),
                     dataSource.getMaxStatementsPerConnection(), dataSource.getIdleConnectionTestPeriod(),
                     dataSource.getPreferredTestQuery(), dataSource.isTestConnectionOnCheckin());

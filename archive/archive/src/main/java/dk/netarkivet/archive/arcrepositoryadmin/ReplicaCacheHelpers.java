@@ -124,8 +124,8 @@ public final class ReplicaCacheHelpers {
      *
      * @param filename The filename for the new entry in the file table.
      * @param connection An open connection to the archive database
-     * @throws IllegalState If the file cannot be inserted into the database.
      * @return created file_id for the new entry.
+     * @throws IllegalState If the file cannot be inserted into the database.
      */
     protected static long insertFileIntoDB(String filename, Connection connection) throws IllegalState {
         log.debug("Insert file '{}' into database", filename);
@@ -161,7 +161,7 @@ public final class ReplicaCacheHelpers {
      * this file. The fields for this new entry are set to the following: - file_id = argument. - replica_id = The id of
      * the current replica. - filelist_status = NO_FILELIST_STATUS. - checksum_status = UNKNOWN. - upload_status =
      * NO_UPLOAD_STATUS.
-     *
+     * <p>
      * The replicafileinfo_guid is automatically created by the database, and the dates are set to null.
      *
      * @param fileId The id for the file.
@@ -200,7 +200,7 @@ public final class ReplicaCacheHelpers {
 
     /**
      * Method for retrieving the replica IDs within the database.
-     * 
+     *
      * @param con An open connection to the archive database
      * @return The list of replicaIds from the replica table in the database.
      */
@@ -215,7 +215,7 @@ public final class ReplicaCacheHelpers {
 
     /**
      * Method for retrieving all the file IDs within the database.
-     * 
+     *
      * @param con An open connection to the archive database
      * @return The list of fileIds from the file table in the database.
      */
@@ -230,7 +230,7 @@ public final class ReplicaCacheHelpers {
 
     /**
      * Method for retrieving all the ReplicaFileInfo GUIDs within the database.
-     * 
+     *
      * @param con An open connection to the archive database
      * @return A list of the replicafileinfo_guid for all entries in the replicafileinfo table.
      */
@@ -264,7 +264,7 @@ public final class ReplicaCacheHelpers {
             return -1;
         case 1:
             return files.get(0);
-            // if more than one file, then log it and return the first found.
+        // if more than one file, then log it and return the first found.
         default:
             log.warn("Only one entry in the file table for the name '{}' was expected, but {} was found. "
                     + "The first element is returned.", filename, files.size());
@@ -453,7 +453,7 @@ public final class ReplicaCacheHelpers {
      * replicafileinfo: <br/>
      * filelist_status = missing. <br/>
      * filelist_checkdatetime = current time.
-     *
+     * <p>
      * The replicafileinfo is in the filelist.
      *
      * @param replicafileinfoId The id of the replicafileinfo.
@@ -490,7 +490,7 @@ public final class ReplicaCacheHelpers {
      * in the replicafileinfo: <br/>
      * checksum_status = CORRUPT. <br/>
      * checksum_checkdatetime = current time.
-     *
+     * <p>
      * The replicafileinfo is in the filelist.
      *
      * @param replicafileinfoId The id of the replicafileinfo.
@@ -524,7 +524,7 @@ public final class ReplicaCacheHelpers {
 
     /**
      * Retrieve the guid stored for a filename on a given replica.
-     * 
+     *
      * @param filename a given filename
      * @param replicaId An identifier for a replica.
      * @param con An open connection to the archive database
@@ -544,7 +544,7 @@ public final class ReplicaCacheHelpers {
      * in the replicafileinfo: <br/>
      * checksum_status = UNKNOWN. <br/>
      * checksum_checkdatetime = current time.
-     *
+     * <p>
      * The replicafileinfo is in the filelist.
      *
      * @param replicafileinfoId The id of the replicafileinfo.
@@ -614,7 +614,7 @@ public final class ReplicaCacheHelpers {
     /**
      * Method for updating the checksum_updated field for a given replica in the replica table. This is called when a
      * checksum_job has been handled.
-     *
+     * <p>
      * The following fields for the entry in the replica table: <br/>
      * checksum_updated = now.
      *
@@ -641,7 +641,7 @@ public final class ReplicaCacheHelpers {
     /**
      * Method for updating the filelist_updated field for a given replica in the replica table. This is called when a
      * filelist_job or a checksum_job has been handled.
-     *
+     * <p>
      * The following fields for the entry in the replica table: <br/>
      * filelist_updated = now.
      *
@@ -668,7 +668,7 @@ public final class ReplicaCacheHelpers {
     /**
      * Method for setting the filelist_updated field for a given replica in the replica table to a specified value. This
      * is only called when the admin.data is converted.
-     *
+     * <p>
      * The following fields for the entry in the replica table: <br/>
      * filelist_updated = date.
      *
@@ -695,7 +695,7 @@ public final class ReplicaCacheHelpers {
     /**
      * Method for setting the checksum_updated field for a given replica in the replica table to a specified value. This
      * is only called when the admin.data is converted.
-     *
+     * <p>
      * The following fields for the entry in the replica table: <br/>
      * checksum_updated = date.
      *
@@ -1096,7 +1096,7 @@ public final class ReplicaCacheHelpers {
 
     /**
      * Add information about one file in a given replica.
-     * 
+     *
      * @param file The name of a file
      * @param replica A replica
      * @param con An open connection to the ArchiveDatabase
@@ -1130,7 +1130,7 @@ public final class ReplicaCacheHelpers {
 
     /**
      * Process checksum information about one file in a given replica. and update the database accordingly.
-     * 
+     *
      * @param filename The name of a file
      * @param checksum The checksum of that file.
      * @param replica A replica

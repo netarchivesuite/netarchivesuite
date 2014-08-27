@@ -57,7 +57,7 @@ public class CDXRecord {
 
     /**
      * Helper method to avoid exception in URL decoding.
-     * 
+     *
      * @param s The string to unescape.
      * @return the unescaped string.
      */
@@ -100,7 +100,7 @@ public class CDXRecord {
      *
      * @param fields the given fields of a line i CDX-format.
      * @throws ArgumentNotValid if argument is null or number of fields is less than 7 or if length or offset does not
-     *             contain long values.
+     * contain long values.
      */
     public CDXRecord(String[] fields) {
         ArgumentNotValid.checkNotNull(fields, "String[] fields");
@@ -129,7 +129,7 @@ public class CDXRecord {
 
     /**
      * Constructor, which tries to parse the given string as a CDXRecord.
-     * 
+     *
      * @param line a CDXline
      */
     public CDXRecord(String line) {
@@ -138,7 +138,7 @@ public class CDXRecord {
 
     /**
      * Get the given URL.
-     * 
+     *
      * @return the URL
      */
     public String getURL() {
@@ -147,7 +147,7 @@ public class CDXRecord {
 
     /**
      * Get the given IP.
-     * 
+     *
      * @return the IP
      */
     public String getIP() {
@@ -156,7 +156,7 @@ public class CDXRecord {
 
     /**
      * Get the given date.
-     * 
+     *
      * @return the date
      */
     public String getDate() {
@@ -165,7 +165,7 @@ public class CDXRecord {
 
     /**
      * Get the given mimetype.
-     * 
+     *
      * @return The given mimetype
      */
     public String getMimetype() {
@@ -174,7 +174,7 @@ public class CDXRecord {
 
     /**
      * Get the given length.
-     * 
+     *
      * @return The given length
      */
     public long getLength() {
@@ -183,7 +183,7 @@ public class CDXRecord {
 
     /**
      * Get the given arcfile.
-     * 
+     *
      * @return The given arcfile
      */
     public String getArcfile() {
@@ -192,7 +192,7 @@ public class CDXRecord {
 
     /**
      * Get the given offset.
-     * 
+     *
      * @return The given offset
      */
     public long getOffset() {

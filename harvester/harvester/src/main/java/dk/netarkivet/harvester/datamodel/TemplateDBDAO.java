@@ -48,7 +48,7 @@ import dk.netarkivet.common.utils.ExceptionUtils;
 
 /**
  * Implements the TemplateDAO with databases.
- *
+ * <p>
  * The statements to create the tables are now in scripts/sql/createfullhddb.sql
  */
 

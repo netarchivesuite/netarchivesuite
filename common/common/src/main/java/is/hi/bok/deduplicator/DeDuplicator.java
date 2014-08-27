@@ -63,7 +63,7 @@ import dk.netarkivet.common.utils.AllDocsCollector;
  * Will abort the processing (skip to post processor chain) of CrawlURIs that are deemed <i>duplicates</i>.
  * <p>
  * Duplicate detection can only be performed <i>after</i> the fetch processors have run.
- * 
+ *
  * @author Kristinn Sigur&eth;sson
  * @author Søren Vejrup Carlsen
  */
@@ -107,7 +107,7 @@ public class DeDuplicator extends Processor implements AdaptiveRevisitAttributeC
 
     /**
      * If an exact match is not made, should the processor try to find an equivalent match?
-     **/
+     */
     public final static String ATTR_EQUIVALENT = "try-equivalent";
     public final static Boolean DEFAULT_EQUIVALENT = new Boolean(false);
 
@@ -142,11 +142,11 @@ public class DeDuplicator extends Processor implements AdaptiveRevisitAttributeC
             Level.FINEST.toString()};
     public final static String DEFAULT_LOG_LEVEL = AVAILABLE_LOG_LEVELS[0];
 
-    /** Should statistics be tracked per host? **/
+    /** Should statistics be tracked per host? * */
     public final static String ATTR_STATS_PER_HOST = "stats-per-host";
     public final static Boolean DEFAULT_STATS_PER_HOST = new Boolean(false);
 
-    /** How should 'origin' be handled **/
+    /** How should 'origin' be handled * */
     public final static String ATTR_ORIGIN_HANDLING = "origin-handling";
     public final static String ORIGIN_HANDLING_NONE = "No origin information";
     public final static String ORIGIN_HANDLING_PROCESSOR = "Use processor setting";
@@ -155,15 +155,15 @@ public class DeDuplicator extends Processor implements AdaptiveRevisitAttributeC
             ORIGIN_HANDLING_INDEX};
     public final static String DEFAULT_ORIGIN_HANDLING = ORIGIN_HANDLING_NONE;
 
-    /** Origin of duplicate URLs **/
+    /** Origin of duplicate URLs * */
     public final static String ATTR_ORIGIN = "origin";
     public final static String DEFAULT_ORIGIN = "";
 
-    /** Should the writer processor chain be skipped? **/
+    /** Should the writer processor chain be skipped? * */
     public final static String ATTR_SKIP_WRITE = "skip-writing";
     public final static Boolean DEFAULT_SKIP_WRITE = new Boolean(true);
 
-    /** Should we use sparse queries (uses less memory at a cost to performance? **/
+    /** Should we use sparse queries (uses less memory at a cost to performance? * */
     public final static String ATTR_USE_SPARSE_RANGE_FILTER = "use-sparse-range-filter";
     public final static Boolean DEFAULT_USE_SPARSE_RANGE_FILTER = new Boolean(false);
 
@@ -358,7 +358,7 @@ public class DeDuplicator extends Processor implements AdaptiveRevisitAttributeC
 
     /**
      * A utility method for reading attributes. If not found, an error is logged and the defaultValue is returned.
-     * 
+     *
      * @param name The name of the attribute
      * @param defaultValue A default value to return if an error occurs
      * @return The value of the attribute or the default value if an error occurs
@@ -487,10 +487,10 @@ public class DeDuplicator extends Processor implements AdaptiveRevisitAttributeC
 
     /**
      * Process a CrawlURI looking up in the index by URL
-     * 
+     *
      * @param curi The CrawlURI to process
      * @param currHostStats A statistics object for the current host. If per host statistics tracking is enabled this
-     *            must be non null and the method will increment appropriate counters on it.
+     * must be non null and the method will increment appropriate counters on it.
      * @return The result of the lookup (a Lucene document). If a duplicate is not found null is returned.
      */
     protected Document lookupByURL(CrawlURI curi, Statistics currHostStats) {
@@ -567,10 +567,10 @@ public class DeDuplicator extends Processor implements AdaptiveRevisitAttributeC
 
     /**
      * Process a CrawlURI looking up in the index by content digest
-     * 
+     *
      * @param curi The CrawlURI to process
      * @param currHostStats A statistics object for the current host. If per host statistics tracking is enabled this
-     *            must be non null and the method will increment appropriate counters on it.
+     * must be non null and the method will increment appropriate counters on it.
      * @return The result of the lookup (a Lucene document). If a duplicate is not found null is returned.
      */
     protected Document lookupByDigest(CrawlURI curi, Statistics currHostStats) {
@@ -927,7 +927,7 @@ class Statistics {
      */
     long duplicateAmount = 0;
 
-    /** The total amount of data represented by all the documents processed **/
+    /** The total amount of data represented by all the documents processed * */
     long totalAmount = 0;
 
     // Timestamp analysis

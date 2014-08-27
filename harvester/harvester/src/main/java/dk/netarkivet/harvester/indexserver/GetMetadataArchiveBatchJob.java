@@ -50,11 +50,11 @@ public class GetMetadataArchiveBatchJob extends ArchiveBatchJob {
 
     /**
      * Constructor.
-     * 
+     *
      * @param urlMatcher A pattern for matching URLs of the desired entries. If null, a .* pattern will be used.
      * @param mimeMatcher A pattern for matching mime-types of the desired entries. If null, a .* pattern will be used.
-     * 
-     *            The batchJobTimeout is set to one day.
+     * <p>
+     * The batchJobTimeout is set to one day.
      */
     public GetMetadataArchiveBatchJob(Pattern urlMatcher, Pattern mimeMatcher) {
         this.urlMatcher = urlMatcher;
@@ -65,7 +65,7 @@ public class GetMetadataArchiveBatchJob extends ArchiveBatchJob {
 
     /**
      * Initialize method. Run before the arc-records are being processed. Currently does nothing.
-     * 
+     *
      * @param os The output stream to print any pre-processing data.
      */
     @Override
@@ -74,7 +74,7 @@ public class GetMetadataArchiveBatchJob extends ArchiveBatchJob {
 
     /**
      * The method for processing the arc-records.
-     * 
+     *
      * @param record The arc-record to process.
      * @param os The output stream to write the results of the processing.
      * @throws IOFailure In an IOException is caught during handling of the arc record.
@@ -113,7 +113,7 @@ public class GetMetadataArchiveBatchJob extends ArchiveBatchJob {
 
     /**
      * Method for post-processing the data. Currently does nothing.
-     * 
+     *
      * @param os The output stream to write the results of the post-processing data.
      */
     @Override
@@ -122,7 +122,7 @@ public class GetMetadataArchiveBatchJob extends ArchiveBatchJob {
 
     /**
      * Humanly readable description of this instance.
-     * 
+     *
      * @return The human readable description of this instance.
      */
     @Override

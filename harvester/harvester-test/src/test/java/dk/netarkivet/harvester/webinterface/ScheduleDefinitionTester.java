@@ -77,7 +77,7 @@ public class ScheduleDefinitionTester extends HarvesterWebinterfaceTestCase {
 
     /**
      * Test that a schedule already in the dao can be updated.
-     * 
+     *
      * @throws ParseException
      */
     @Test
@@ -146,7 +146,7 @@ public class ScheduleDefinitionTester extends HarvesterWebinterfaceTestCase {
     /**
      * Test creation of a new daily schedule, running at a particular time, beginning at a particular time, and
      * continuing forever.
-     * 
+     *
      * @throws ParseException
      */
     @Test
@@ -184,7 +184,7 @@ public class ScheduleDefinitionTester extends HarvesterWebinterfaceTestCase {
 
     /**
      * Test creation of a new weekly schedule, running at any time and as soon as possible, ending on a specific date.
-     * 
+     *
      * @throws ParseException
      */
     @Test
@@ -220,7 +220,7 @@ public class ScheduleDefinitionTester extends HarvesterWebinterfaceTestCase {
     /**
      * Test creation of a new monthly schedule, running at a particular time, starting as soon as possible, and running
      * for a specific number of harvests.
-     * 
+     *
      * @throws ParseException
      */
     @Test

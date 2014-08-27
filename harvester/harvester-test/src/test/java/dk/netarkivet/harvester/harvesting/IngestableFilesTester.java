@@ -96,7 +96,7 @@ public class IngestableFilesTester {
      * Verify that method returns false before metadata has been generated. Verify that method returns false before
      * metadata generation has finished (indicated by setMetadataReady()). Verify that method returns true after
      * metadata generation has finished.
-     *
+     * <p>
      * Note that disallowed actions concerning metdataReady are tested in another method. Note that rediscovery of
      * metadata is tested in another method.
      */

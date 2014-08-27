@@ -155,7 +155,7 @@ public class StreamUtils {
 
     /**
      * Reads an input stream and returns it as a string.
-     * 
+     *
      * @param in The input stream.
      * @return The string content of the input stream in the UTF8-charset.
      * @throws ArgumentNotValid If the input stream is null.

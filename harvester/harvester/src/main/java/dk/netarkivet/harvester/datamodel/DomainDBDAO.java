@@ -57,14 +57,13 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValueDBDAO;
 
 /**
  * A database-based implementation of the DomainDAO.
- *
+ * <p>
  * The statements to create the tables are located in:
  * <ul>
  * <li><em>Derby:</em> scripts/sql/createfullhddb.sql</li>
  * <li><em>MySQL:</em> scripts/sql/createfullhddb.mysql</li>
  * <li><em>PostgreSQL:</em> scripts/postgresql/netarchivesuite_init.sql</li>
  * </ul>
- *
  */
 public class DomainDBDAO extends DomainDAO {
 
@@ -76,7 +75,7 @@ public class DomainDBDAO extends DomainDAO {
      * update the ones that haven't.
      *
      * @throws IOFailure on trouble updating tables to new versions, or on tables with wrong versions that we don't know
-     *             how to change to expected version.
+     * how to change to expected version.
      */
     protected DomainDBDAO() {
         Connection connection = HarvestDBConnection.get();
@@ -177,7 +176,7 @@ public class DomainDBDAO extends DomainDAO {
             s.setLong(3, d.getID());
             s.executeUpdate();
             s.close();
-            for (Iterator<HarvestInfo> hi = d.getHistory().getHarvestInfo(); hi.hasNext();) {
+            for (Iterator<HarvestInfo> hi = d.getHistory().getHarvestInfo(); hi.hasNext(); ) {
                 insertHarvestInfo(connection, d, hi.next());
             }
 
@@ -282,7 +281,7 @@ public class DomainDBDAO extends DomainDAO {
 
     /**
      * Update the list of passwords for the given domain, keeping IDs where applicable.
-     * 
+     *
      * @param c A connection to the database
      * @param d A domain to update.
      * @throws SQLException If any database problems occur during the update process.
@@ -292,7 +291,7 @@ public class DomainDBDAO extends DomainDAO {
                 "SELECT name, password_id FROM passwords WHERE domain_id = ?", d.getID());
         PreparedStatement s = c.prepareStatement("UPDATE passwords SET " + "comments = ?, " + "url = ?, "
                 + "realm = ?, username = ?, " + "password = ? " + "WHERE name = ? AND domain_id = ?");
-        for (Iterator<Password> pwds = d.getAllPasswords(); pwds.hasNext();) {
+        for (Iterator<Password> pwds = d.getAllPasswords(); pwds.hasNext(); ) {
             Password pwd = pwds.next();
             if (oldNames.containsKey(pwd.getName())) {
                 DBUtils.setComments(s, 1, pwd, Constants.MAX_COMMENT_SIZE);
@@ -334,7 +333,7 @@ public class DomainDBDAO extends DomainDAO {
 
     /**
      * Update the list of seedlists for the given domain, keeping IDs where applicable.
-     * 
+     *
      * @param c A connection to the database
      * @param d A domain to update.
      * @throws SQLException If any database problems occur during the update process.
@@ -344,7 +343,7 @@ public class DomainDBDAO extends DomainDAO {
                 + "WHERE domain_id = ?", d.getID());
         PreparedStatement s = c.prepareStatement("UPDATE seedlists SET comments = ?, " + "seeds = ? "
                 + "WHERE name = ? AND domain_id = ?");
-        for (Iterator<SeedList> sls = d.getAllSeedLists(); sls.hasNext();) {
+        for (Iterator<SeedList> sls = d.getAllSeedLists(); sls.hasNext(); ) {
             SeedList sl = sls.next();
             if (oldNames.containsKey(sl.getName())) {
                 DBUtils.setComments(s, 1, sl, Constants.MAX_COMMENT_SIZE);
@@ -383,7 +382,7 @@ public class DomainDBDAO extends DomainDAO {
     /**
      * Update the list of configurations for the given domain, keeping IDs where applicable. This also builds the xref
      * tables for passwords and seedlists used in configurations, and so should be run after those are updated.
-     * 
+     *
      * @param connection A connection to the database
      * @param d A domain to update.
      * @throws SQLException If any database problems occur during the update process.
@@ -394,7 +393,7 @@ public class DomainDBDAO extends DomainDAO {
         PreparedStatement s = connection.prepareStatement("UPDATE configurations SET comments = ?, "
                 + "template_id = ( SELECT template_id FROM ordertemplates " + "WHERE name = ? ), " + "maxobjects = ?, "
                 + "maxrate = ?, " + "maxbytes = ? " + "WHERE name = ? AND domain_id = ?");
-        for (Iterator<DomainConfiguration> dcs = d.getAllConfigurations(); dcs.hasNext();) {
+        for (Iterator<DomainConfiguration> dcs = d.getAllConfigurations(); dcs.hasNext(); ) {
             DomainConfiguration dc = dcs.next();
 
             if (oldNames.containsKey(dc.getName())) {
@@ -440,7 +439,7 @@ public class DomainDBDAO extends DomainDAO {
 
     /**
      * Update the list of owner info for the given domain, keeping IDs where applicable.
-     * 
+     *
      * @param c A connection to the database
      * @param d A domain to update.
      * @throws SQLException If any database problems occur during the update process.
@@ -470,7 +469,7 @@ public class DomainDBDAO extends DomainDAO {
 
     /**
      * Update the list of harvest info for the given domain, keeping IDs where applicable.
-     * 
+     *
      * @param c A connection to the database
      * @param d A domain to update.
      * @throws SQLException If any database problems occur during the update process.
@@ -515,7 +514,7 @@ public class DomainDBDAO extends DomainDAO {
 
     /**
      * Insert new harvest info for a domain.
-     * 
+     *
      * @param c A connection to the database
      * @param d A domain to insert on. The domains ID must be correct.
      * @param harvestInfo Harvest info to insert.
@@ -525,7 +524,7 @@ public class DomainDBDAO extends DomainDAO {
         try {
             // Note that the config_id is grabbed from the configurations table.
             s = c.prepareStatement("INSERT INTO historyinfo " + "( stopreason, objectcount, bytecount, config_id, "
-                    + "job_id, harvest_id, harvest_time ) " + "VALUES ( ?, ?, ?, ?, ?, ?, ? )",
+                            + "job_id, harvest_id, harvest_time ) " + "VALUES ( ?, ?, ?, ?, ?, ?, ? )",
                     Statement.RETURN_GENERATED_KEYS);
             s.setInt(1, harvestInfo.getStopReason().ordinal());
             s.setLong(2, harvestInfo.getCountObjectRetrieved());
@@ -548,7 +547,7 @@ public class DomainDBDAO extends DomainDAO {
 
     /**
      * Insert new owner info for a domain.
-     * 
+     *
      * @param c A connection to the database
      * @param d A domain to insert on. The domains ID must be correct.
      * @param doi Owner info to insert.
@@ -566,7 +565,7 @@ public class DomainDBDAO extends DomainDAO {
 
     /**
      * Insert new seedlist for a domain.
-     * 
+     *
      * @param c A connection to the database
      * @param d A domain to insert on. The domains ID must be correct.
      * @param sl Seedlist to insert.
@@ -586,7 +585,7 @@ public class DomainDBDAO extends DomainDAO {
 
     /**
      * Inserts a new password entry into the database.
-     * 
+     *
      * @param c A connection to the database
      * @param d A domain to insert on. The domains ID must be correct.
      * @param p A password entry to insert.
@@ -611,9 +610,8 @@ public class DomainDBDAO extends DomainDAO {
     /**
      * Insert the basic configuration info into the DB. This does not establish the connections with seedlists and
      * passwords, use {create,update}Config{Passwords,Seedlists}Entries for that.
-     * 
-     * @param connection A connection to the database
      *
+     * @param connection A connection to the database
      * @param d a domain
      * @param dc a domainconfiguration
      * @throws SQLException If some database error occurs during the insertion process.
@@ -643,7 +641,7 @@ public class DomainDBDAO extends DomainDAO {
 
     /**
      * Delete all entries in the given crossref table that belong to the configuration.
-     * 
+     *
      * @param c A connection to the database
      * @param configId The domain configuration to remove entries for.
      * @param table One of "config_passwords" or "config_seedlists"
@@ -658,7 +656,7 @@ public class DomainDBDAO extends DomainDAO {
     /**
      * Delete all entries from the config_passwords table that refer to the given configuration and insert the current
      * ones.
-     * 
+     *
      * @param c A connection to the database
      * @param d A domain to operate on
      * @param dc Configuration to update.
@@ -671,19 +669,19 @@ public class DomainDBDAO extends DomainDAO {
 
     /**
      * Create the xref table for passwords used by configurations.
-     * 
+     *
      * @param c A connection to the database
      * @param d A domain to operate on.
      * @param dc A configuration to create xref table for.
      * @throws SQLException If any database problems occur during the insertion of password entries for the given domain
-     *             configuration
+     * configuration
      */
     private void createConfigPasswordsEntries(Connection c, Domain d, DomainConfiguration dc) throws SQLException {
         PreparedStatement s = c.prepareStatement("INSERT INTO config_passwords " + "( config_id, password_id ) "
                 + "SELECT config_id, password_id " + "  FROM configurations, passwords"
                 + " WHERE configurations.domain_id = ?" + "   AND configurations.name = ?"
                 + "   AND passwords.name = ?" + "   AND passwords.domain_id = configurations.domain_id");
-        for (Iterator<Password> passwords = dc.getPasswords(); passwords.hasNext();) {
+        for (Iterator<Password> passwords = dc.getPasswords(); passwords.hasNext(); ) {
             Password p = passwords.next();
             s.setLong(1, d.getID());
             s.setString(2, dc.getName());
@@ -696,9 +694,8 @@ public class DomainDBDAO extends DomainDAO {
     /**
      * Delete all entries from the config_seedlists table that refer to the given configuration and insert the current
      * ones.
-     * 
-     * @param c An open connection to the harvestDatabase.
      *
+     * @param c An open connection to the harvestDatabase.
      * @param d A domain to operate on
      * @param dc Configuration to update.
      * @throws SQLException If any database problems occur during the update process.
@@ -710,19 +707,19 @@ public class DomainDBDAO extends DomainDAO {
 
     /**
      * Create the xref table for seedlists used by configurations.
-     * 
+     *
      * @param c A connection to the database
      * @param d A domain to operate on.
      * @param dc A configuration to create xref table for.
      * @throws SQLException If any database problems occur during the insertion of seedlist entries for the given domain
-     *             configuration
+     * configuration
      */
     private void createConfigSeedlistsEntries(Connection c, Domain d, DomainConfiguration dc) throws SQLException {
         PreparedStatement s = c.prepareStatement("INSERT INTO config_seedlists " + " ( config_id, seedlist_id ) "
                 + "SELECT configurations.config_id, seedlists.seedlist_id" + "  FROM configurations, seedlists"
                 + " WHERE configurations.name = ?" + "   AND seedlists.name = ?"
                 + "   AND configurations.domain_id = ?" + "   AND seedlists.domain_id = ?");
-        for (Iterator<SeedList> seedlists = dc.getSeedLists(); seedlists.hasNext();) {
+        for (Iterator<SeedList> seedlists = dc.getSeedLists(); seedlists.hasNext(); ) {
             SeedList sl = seedlists.next();
             s.setString(1, dc.getName());
             s.setString(2, sl.getName());
@@ -800,7 +797,7 @@ public class DomainDBDAO extends DomainDAO {
 
     /**
      * Read the configurations for the domain. This should not be called until after passwords and seedlists are read.
-     * 
+     *
      * @param c A connection to the database
      * @param d The domain being read. Its ID must be set.
      * @throws SQLException If database errors occur.
@@ -891,7 +888,7 @@ public class DomainDBDAO extends DomainDAO {
 
     /**
      * Read owner info entries for the domain.
-     * 
+     *
      * @param c A connection to the database
      * @param d The domain being read. Its ID must be set.
      * @throws SQLException If database errors occur.
@@ -912,7 +909,7 @@ public class DomainDBDAO extends DomainDAO {
 
     /**
      * Read history info entries for the domain.
-     * 
+     *
      * @param c A connection to the database
      * @param d The domain being read. Its ID must be set.
      * @throws SQLException If database errors occur.
@@ -949,7 +946,7 @@ public class DomainDBDAO extends DomainDAO {
 
     /**
      * Read passwords for the domain.
-     * 
+     *
      * @param c A connection to the database
      * @param d The domain being read. Its ID must be set.
      * @throws SQLException If database errors occur.
@@ -969,7 +966,7 @@ public class DomainDBDAO extends DomainDAO {
 
     /**
      * Read seedlists for the domain.
-     * 
+     *
      * @param c A connection to the database
      * @param d The domain being read. Its ID must be set.
      * @throws SQLException If database errors occur.
@@ -993,7 +990,7 @@ public class DomainDBDAO extends DomainDAO {
 
     /**
      * Make SeedList based on entry from seedlists (id, name, comments, seeds).
-     * 
+     *
      * @param res a Resultset
      * @return a SeedList based on ResultSet entry.
      * @throws SQLException if unable to get data from database
@@ -1108,7 +1105,7 @@ public class DomainDBDAO extends DomainDAO {
             // Never delete default config and don't delete configs being used.
             return !config.getName().equals(defaultConfigName)
                     && !DBUtils.selectAny(c, "SELECT config_id" + " FROM harvest_configs WHERE config_id = ?",
-                            config.getID());
+                    config.getID());
         } finally {
             HarvestDBConnection.release(c);
         }
@@ -1116,7 +1113,7 @@ public class DomainDBDAO extends DomainDAO {
 
     /**
      * Get the name of the default configuration for the given domain.
-     * 
+     *
      * @param domainName a name of a domain
      * @return the name of the default configuration for the given domain.
      */
@@ -1213,7 +1210,7 @@ public class DomainDBDAO extends DomainDAO {
      * Return all TLDs represented by the domains in the domains table. it was asked that a level X TLD belong appear in
      * TLD list where the level is <=X for example bidule.bnf.fr belong to .bnf.fr and to .fr it appear in the level 1
      * list of TLD and in the level 2 list
-     * 
+     *
      * @param level maximum level of TLD
      * @return a list of TLDs
      * @see DomainDAO#getTLDs(int)
@@ -1356,10 +1353,9 @@ public class DomainDBDAO extends DomainDAO {
 
     /**
      * Saves all extended Field values for a Domain in the Database.
-     * 
+     *
      * @param c Connection to Database
      * @param d Domain where loaded extended Field Values will be set
-     * 
      * @throws SQLException If database errors occur.
      */
     private void saveExtendedFieldValues(Connection c, Domain d) throws SQLException {
@@ -1460,7 +1456,7 @@ public class DomainDBDAO extends DomainDAO {
 
     /**
      * Retrieve the crawlertraps for a specific domain. TODO should this method be public?
-     * 
+     *
      * @param domainName the name of a domain.
      * @return the crawlertraps for given domain.
      */
@@ -1493,7 +1489,8 @@ public class DomainDBDAO extends DomainDAO {
         ArgumentNotValid.checkNotNull(previousHarvestDefinition, "previousHarvestDefinition");
         // For each domainConfig, get harvest infos if there is any for the
         // previous harvest definition
-        return new FilterIterator<DomainConfiguration, HarvestInfo>(previousHarvestDefinition.getDomainConfigurations()) {
+        return new FilterIterator<DomainConfiguration, HarvestInfo>(
+                previousHarvestDefinition.getDomainConfigurations()) {
             /**
              * @see FilterIterator#filter(Object)
              */

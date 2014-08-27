@@ -62,7 +62,7 @@ public class XmlUtils {
 
     /**
      * Read and parse an XML-file, and return a Document object representing this object.
-     * 
+     *
      * @param f a given xml file
      * @return a Document representing the xml file
      * @throws IOFailure if unable to read the xml file or unable to parse the file as XML
@@ -85,7 +85,7 @@ public class XmlUtils {
 
     /**
      * Read and parse an XML stream, and return a Document object representing this object.
-     * 
+     *
      * @param resourceAsStream a given xml document
      * @return a Document representing the xml document
      * @throws IOFailure if unable to read the xml document or unable to parse the document as XML
@@ -220,7 +220,7 @@ public class XmlUtils {
 
     /**
      * Parses a given string to produce a {@link org.w3c.dom.Document} instance.
-     * 
+     *
      * @param xml Some XML text.
      * @return a {@link org.w3c.dom.Document} parsed from the given xml.
      * @throws DocumentException If unable to parse the given text as XML.

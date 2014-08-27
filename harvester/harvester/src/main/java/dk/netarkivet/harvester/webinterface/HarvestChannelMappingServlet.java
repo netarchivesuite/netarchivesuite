@@ -43,7 +43,6 @@ import dk.netarkivet.harvester.webinterface.HarvestChannelAction.ActionType;
 
 /**
  * This class process an Ajax call from the UI to generate a form that allows to map a harvest to a channel.
- * 
  */
 @SuppressWarnings({"serial"})
 public class HarvestChannelMappingServlet extends HttpServlet {
@@ -52,7 +51,6 @@ public class HarvestChannelMappingServlet extends HttpServlet {
 
     /**
      * Enumarate HTTP request parameter names.
-     *
      */
     public static enum Param {
         /**

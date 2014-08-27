@@ -50,10 +50,10 @@ public class NotifyingURIResolver extends Observable implements URIResolver, URI
 
     /**
      * Sets the current URIResolver wrapped.
-     * 
+     *
      * @param anUR URI resolver to wrap.
      * @throws ArgumentNotValid if argument is null.
-     * */
+     */
     public void setURIResolver(URIResolver anUR) {
         ArgumentNotValid.checkNotNull(anUR, "URIResolver anUR");
         this.ur = anUR;
@@ -61,11 +61,11 @@ public class NotifyingURIResolver extends Observable implements URIResolver, URI
 
     /**
      * Passes the uri to the current wrapped resolver and notifies the observer of the result.
-     * 
+     *
      * @param request A given request
      * @param response A given response
-     * @see URIResolver#lookup(Request, Response)
      * @return the response code from the wrapped class
+     * @see URIResolver#lookup(Request, Response)
      */
     public int lookup(Request request, Response response) {
         int responseCode = ur.lookup(request, response);

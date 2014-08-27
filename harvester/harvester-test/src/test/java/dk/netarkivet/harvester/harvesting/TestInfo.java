@@ -80,8 +80,8 @@ public class TestInfo {
     static final File COOKIES_ORDER_FILE = new File(ORDER_AND_SEEDS_ORIGINALS_DIR, "cookies_order.xml");
 
     static final File RESTRICTED_URL_ORDER_FILE =
-    // new File(ORDER_AND_SEEDS_ORIGINALS_DIR, "restricted_url_order.xml");
-    new File(ORDER_AND_SEEDS_ORIGINALS_DIR, "restricted_url_order_org.xml");
+            // new File(ORDER_AND_SEEDS_ORIGINALS_DIR, "restricted_url_order.xml");
+            new File(ORDER_AND_SEEDS_ORIGINALS_DIR, "restricted_url_order_org.xml");
 
     static final File SEEDS_FILE = new File(ORDER_AND_SEEDS_ORIGINALS_DIR, "seeds.txt");
     static final File SEEDS_FILE2 = new File(ORDER_AND_SEEDS_ORIGINALS_DIR, "seeds2.txt");
@@ -155,8 +155,8 @@ public class TestInfo {
     public static final File WARCPROCESSORFILES_DIR = new File(BASEDIR, "warcprocessortestdata");
 
     public static final String FST_FILENAME = // "42-117-20051212141241-00000-sb-test-har-001.statsbiblioteket.dk.arc";
-    "42-117-20051212141241-00001-sb-test-har-001.statsbiblioteket.dk.arc";
+            "42-117-20051212141241-00001-sb-test-har-001.statsbiblioteket.dk.arc";
     public static final String SND_FILENAME = // "42-117-20051212141241-00001-sb-test-har-001.statsbiblioteket.dk.arc";
-    "42-117-20051212141240-00000-sb-test-har-001.statsbiblioteket.dk.arc";
+            "42-117-20051212141240-00000-sb-test-har-001.statsbiblioteket.dk.arc";
 
 }

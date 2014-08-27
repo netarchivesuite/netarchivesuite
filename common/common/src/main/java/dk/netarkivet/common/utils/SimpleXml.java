@@ -62,7 +62,7 @@ public class SimpleXml {
 
     /**
      * Create a new SimpleXml object by loading a file.
-     * 
+     *
      * @param f XML file to load
      */
     public SimpleXml(File f) {
@@ -299,7 +299,7 @@ public class SimpleXml {
 
     /**
      * Return a tree structure reflecting the XML and trimmed values.
-     * 
+     *
      * @param path Dotted path into the xml.
      * @return A tree reflecting the xml at the given path.
      * @throws UnknownID If the path does not exist in the tree or is ambiguous
@@ -319,13 +319,13 @@ public class SimpleXml {
     /**
      * Get an XPath version of the given dotted path. A dotted path foo.bar.baz corresponds to the XML node
      * &lt;foo&gt;&lt;bar&gt;&lt;baz&gt; &lt;/baz&gt;&lt;/bar&gt;&lt;/foo&gt;
-     *
+     * <p>
      * Implementation note: If needed, this could be optimized by keeping a HashMap cache of the XPaths, since they
      * don't change.
      *
      * @param path A dotted path
      * @return An XPath that matches the dotted path equivalent, using "dk:" as namespace prefix for all but the first
-     *         element.
+     * element.
      */
     private XPath getXPath(String path) {
         String[] pathParts = path.split("\\.");

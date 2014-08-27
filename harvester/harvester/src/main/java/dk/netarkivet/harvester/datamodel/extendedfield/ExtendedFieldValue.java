@@ -40,7 +40,6 @@ public class ExtendedFieldValue {
     private Long instanceID;
 
     /**
-     * 
      * @return the ID of the value of the ExtendedField
      */
     public Long getExtendedFieldValueID() {
@@ -49,7 +48,7 @@ public class ExtendedFieldValue {
 
     /**
      * Set the ID of value of the ExtendedField.
-     * 
+     *
      * @param extendedFieldValueID the ID of the value of the ExtendedField
      */
     public void setExtendedFieldValueID(Long extendedFieldValueID) {
@@ -66,7 +65,7 @@ public class ExtendedFieldValue {
 
     /**
      * Set the ID of the ExtendedField.
-     * 
+     *
      * @param extendedFieldID the ID of the ExtendedField
      */
     public void setExtendedFieldID(Long extendedFieldID) {
@@ -83,7 +82,7 @@ public class ExtendedFieldValue {
 
     /**
      * Set the content. Null arg is not accepted.
-     * 
+     *
      * @param content The content of the value
      */
     public void setContent(String content) {
@@ -99,7 +98,7 @@ public class ExtendedFieldValue {
 
     /**
      * Set the instanceId. Null arg is not accepted.
-     * 
+     *
      * @param instanceID The instanceid
      */
     public void setInstanceID(Long instanceID) {
@@ -115,7 +114,7 @@ public class ExtendedFieldValue {
 
     /**
      * Constructor initializing all instance members. Used when reading from persistent storage.
-     * 
+     *
      * @param aExtendedFieldValueID The ID of the value of the ExtendedField.
      * @param aExtendedFieldID The ID of the ExtendedField.
      * @param aInstanceID The instance id of the value

@@ -34,7 +34,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 
 /**
  * Similar to a FilterIterator, but takes a java.sql.ResultSet (which is neither Iterable, Iterator nor Enumeration).
- * 
+ *
  * @param <T> The type returned by the ResultSetIterator
  */
 public abstract class ResultSetIterator<T> implements Iterator<T> {
@@ -53,7 +53,7 @@ public abstract class ResultSetIterator<T> implements Iterator<T> {
 
     /**
      * Constructor for this class.
-     * 
+     *
      * @param res a ResultSet for this Iterator to operate on.
      */
     public ResultSetIterator(Statement stm, ResultSet res) {
@@ -90,7 +90,6 @@ public abstract class ResultSetIterator<T> implements Iterator<T> {
     /**
      * Returns the object corresponding to the given object, or null if that object is to be skipped.
      *
-     *
      * @param result An object in the source iterator domain
      * @return An object in this iterators domain, or null
      */
@@ -120,7 +119,7 @@ public abstract class ResultSetIterator<T> implements Iterator<T> {
      *
      * @throws UnsupportedOperationException if the <tt>remove</tt> operation is not supported by this Iterator.
      * @throws IllegalStateException if the <tt>next</tt> method has not yet been called, or the <tt>remove</tt> method
-     *             has already been called after the last call to the <tt>next</tt> method.
+     * has already been called after the last call to the <tt>next</tt> method.
      */
     public void remove() {
         throw new UnsupportedOperationException("This class does not support remove()");

@@ -45,7 +45,6 @@ import dk.netarkivet.harvester.datamodel.JobDAO;
  *
  * @see HarvesterSettings#JOBGEN_FIXED_CONFIG_COUNT_SNAPSHOT
  * @see HarvesterSettings#JOBGEN_FIXED_CONFIG_COUNT_FOCUSED
- *
  */
 public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenerator {
 
@@ -66,7 +65,7 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
 
         /**
          * Constructor from a domain configuration.
-         * 
+         *
          * @param cfg the related {@link DomainConfiguration}
          */
         DomainConfigurationKey(DomainConfiguration cfg) {
@@ -112,7 +111,7 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
 
     /**
      * Simple marker class to improve code readability.
-     * 
+     * <p>
      * Maps jobs currently being filled, for a given harvest definition, with domain configurations by harvest template
      * name. These jobs keep getting new configurations until no more configurations are left to process or the
      * configured size has been reached.
@@ -253,7 +252,7 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
 
     /**
      * Initializes a new job.
-     * 
+     *
      * @param harvest the {@link HarvestDefinition} being processed.
      * @param cfg the first {@link DomainConfiguration} for this job.
      * @return the {@link Job} instance

@@ -604,7 +604,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
 
     /**
      * Test both implementations of the exist function.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -682,7 +682,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
 
     /**
      * Helper method to simplify the setting of a date from System time.
-     * 
+     *
      * @return
      */
     public static Date getSystemDate() {

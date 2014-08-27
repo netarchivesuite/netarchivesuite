@@ -36,7 +36,6 @@ import dk.netarkivet.common.utils.DBUtils;
 
 /**
  * Derby-specific implementation of DB methods.
- *
  */
 public abstract class DerbySpecifics extends DBSpecifics {
 
@@ -48,8 +47,8 @@ public abstract class DerbySpecifics extends DBSpecifics {
      * in the table must be deleted at commit or rollback.
      *
      * @param c The DB connection to use.
-     * @throws SQLException if there is a problem getting the table.
      * @return The name of the created table
+     * @throws SQLException if there is a problem getting the table.
      */
     public String getJobConfigsTmpTable(Connection c) throws SQLException {
         ArgumentNotValid.checkNotNull(c, "Connection c");
@@ -96,7 +95,7 @@ public abstract class DerbySpecifics extends DBSpecifics {
     /**
      * Migrates the 'jobs' table from version 3 to version 4 consisting of a change of the field forcemaxbytes from int
      * to bigint and setting its default to -1. Furthermore the default value for field num_configs is set to 0.
-     * 
+     *
      * @throws IOFailure in case of problems in interacting with the database
      */
     protected synchronized void migrateJobsv3tov4() {
@@ -113,7 +112,7 @@ public abstract class DerbySpecifics extends DBSpecifics {
     /**
      * Migrates the 'jobs' table from version 4 to version 5 consisting of adding new fields 'resubmitted_as_job' and
      * 'submittedDate'.
-     * 
+     *
      * @throws IOFailure in case of problems in interacting with the database
      */
     protected synchronized void migrateJobsv4tov5() {
@@ -230,7 +229,8 @@ public abstract class DerbySpecifics extends DBSpecifics {
      */
     @Override
     protected void migrateRunningJobsHistoryTableV1ToV2() {
-        String[] sqlStatements = {"ALTER TABLE runningjobshistory ADD COLUMN retiredQueuesCount bigint not null DEFAULT 0"};
+        String[] sqlStatements = {
+                "ALTER TABLE runningjobshistory ADD COLUMN retiredQueuesCount bigint not null DEFAULT 0"};
         HarvestDBConnection.updateTable("runningjobshistory", 2, sqlStatements);
     }
 
@@ -240,7 +240,8 @@ public abstract class DerbySpecifics extends DBSpecifics {
      */
     @Override
     protected void migrateRunningJobsMonitorTableV1ToV2() {
-        String[] sqlStatements = {"ALTER TABLE runningjobsmonitor ADD COLUMN retiredQueuesCount bigint not null DEFAULT 0"};
+        String[] sqlStatements = {
+                "ALTER TABLE runningjobsmonitor ADD COLUMN retiredQueuesCount bigint not null DEFAULT 0"};
         HarvestDBConnection.updateTable("runningjobsmonitor", 2, sqlStatements);
     }
 

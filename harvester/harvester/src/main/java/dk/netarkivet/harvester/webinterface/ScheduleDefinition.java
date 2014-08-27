@@ -95,26 +95,26 @@ public final class ScheduleDefinition {
      * Processes the request parameters for the page Definitions-edit-schedule.jsp The parameters are first checked for
      * validity. If they are not acceptable, an exception is thrown, otherwise the parameters are passed on to the
      * methods editScheduleDefinition() which edits or creates the relevant schedule.
-     *
+     * <p>
      * update: if set, execute this method name: the name of the schedule If name is unset and update is unset, the GUI
      * can be used to create a new schedule. It is an error condition to have name unset and update set.
-     *
+     * <p>
      * edition: the edition of the schedule being edited. If not specified, the name must not refer to an existing
      * schedule. frequency: castable to an integer > 0. Actually the period between harvests in units of ... timespan:
      * allowable values dage, timer, uger, m\u00e5neder
-     *
+     * <p>
      * harvestTime: allowable values, whenever, aTime
-     *
+     * <p>
      * If whenever is set then ignore remaining values in this group frequency_hours: the hour time for harvesting,
      * integer 0<=x<=23, must be set if aTime is set and timespan is not "hours" frequency_minutes: the minute time for
      * harvesting, integer 0<=x<=59, must be set if aTime is set and timespan is not "hours" frequency_day: the day of
      * the week on which the harvest is to take place. Allowable values 1-7. Must be set if timespan is set to "weeks".
      * frequency_date: the date of the month on which harvests are to occur. Integer 1<=x<=31. Must be set if timespan
      * is "months"
-     *
+     * <p>
      * beginAt: allowable values "asSoonAsPossible", "beginning". Not null firstHarvestTime: a date/time field in format
      * DD/MM YYYY hh:mm. Must be set if beginAt="beginning"
-     *
+     * <p>
      * continue: allowable values "forever", "toTime", "numberOfHarvests" endHarvestTime: a date/time field in format
      * DD/MM YYYY hh:mm. Must be set if continue="beginning" numberOfHarvests: int > 0. Must be set if
      * continue="numberOfHarvests"
@@ -164,7 +164,7 @@ public final class ScheduleDefinition {
 
     /**
      * Update or create the schedule in persistent storage.
-     * 
+     *
      * @param freq The frequency of the schedule
      * @param startDate The start date of the schedule
      * @param continueS The continue-mode of the schedule
@@ -199,7 +199,7 @@ public final class ScheduleDefinition {
     /**
      * If the beginAt parameter is set then this returns the first time at which the harvest is to be run. Otherwise it
      * returns null.
-     * 
+     *
      * @param context Web context of the request
      * @param i18n I18N information
      * @return the first time to run the harvest
@@ -225,7 +225,7 @@ public final class ScheduleDefinition {
     /**
      * If the toTime parameter is set then this returns the last time at which the harvest is to be run. Otherwise it
      * returns null.
-     * 
+     *
      * @param context Web context of the request
      * @param i18n I18N information
      * @return the last time to run the harvest
@@ -251,7 +251,7 @@ public final class ScheduleDefinition {
     /**
      * Returns a frequency object specifying whether the harvest is to be minute, hourly, daily, weekly, or monthly and
      * how often it is to be run.
-     * 
+     *
      * @param context Web context of the request
      * @param i18n I18N information
      * @return the Frequency for the harvest

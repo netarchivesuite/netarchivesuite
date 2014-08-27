@@ -75,7 +75,6 @@ import dk.netarkivet.testutils.TestFileUtils;
 
 /**
  * Test class for the Job class.
- * 
  */
 @SuppressWarnings({"unchecked"})
 public class JobTester extends DataModelTestCase {
@@ -176,7 +175,7 @@ public class JobTester extends DataModelTestCase {
         // verify that data can be retrieved from the job again
         assertEquals("Value from CTOR expected", TestInfo.HARVESTID, job.getOrigHarvestDefinitionID());
         Set<String> seeds = new HashSet<String>();
-        for (Iterator<SeedList> i = dc.getSeedLists(); i.hasNext();) {
+        for (Iterator<SeedList> i = dc.getSeedLists(); i.hasNext(); ) {
             SeedList list = (SeedList) i.next();
             seeds.addAll(list.getSeeds());
         }
@@ -633,7 +632,7 @@ public class JobTester extends DataModelTestCase {
         Domain domain = TestInfo.getDefaultDomain();
         DomainConfiguration dc1 = domain.getDefaultConfiguration();
         boolean strictMode = true;
-        domain.setCrawlerTraps(Collections.<String> emptyList(), strictMode);
+        domain.setCrawlerTraps(Collections.<String>emptyList(), strictMode);
         String domain1name = dc1.getDomainName();
 
         // Make a configuration with two crawlertraps
@@ -805,7 +804,7 @@ public class JobTester extends DataModelTestCase {
                 -1L, // maxBytesPerDomain
                 Constants.DEFAULT_MAX_JOB_RUNNING_TIME, // maxJobRunningTime
                 0 // harvestNum
-                );
+        );
         // test default value of forceMaxObjectsPerDomain:
         assertEquals("No limit of value of forceMaxObjectsPerDomain expected", -1, j.getMaxBytesPerDomain());
         JobDAO jDao = JobDAO.getInstance();
@@ -821,7 +820,6 @@ public class JobTester extends DataModelTestCase {
 
     /**
      * test the method public static List<AliasInfo> Job.getJobAliasInfo(Job job);
-     *
      */
     @Test
     public void testgetJobAliasInfo() {
@@ -881,7 +879,7 @@ public class JobTester extends DataModelTestCase {
         j.setSeedList(seeds);
         List<String> list = j.getSortedSeedList();
         assertTrue(list.size() == 18); // verifies that duplicates (Here, the
-                                       // last seed) are removed.
+        // last seed) are removed.
 
         // Find locations of
         // http://www.fyens.dk/fv2007 (1)
@@ -954,7 +952,7 @@ public class JobTester extends DataModelTestCase {
 
     /**
      * Tests that global crawler traps defined in the dao are added to new jobs.
-     * 
+     *
      * @throws FileNotFoundException
      */
     @Test

@@ -57,7 +57,7 @@ public class DatabaseTestUtils {
     /**
      * Get access to the database stored in the given file. This will start a new transaction that will be rolled back
      * with dropDatabase. Only one connection can be taken at a time.
-     * 
+     *
      * @param resourcePath A file that contains a test database.
      * @param dbCreationDir
      * @return a connection to the database stored in the given file
@@ -138,7 +138,7 @@ public class DatabaseTestUtils {
     /**
      * Get access to the database stored in the given file. This will start a new transaction that will be rolled back
      * with dropDatabase. Only one connection can be taken at a time.
-     * 
+     *
      * @param resourcePath A file that contains a test database.
      * @param dbCreationDir
      * @return a connection to the database stored in the given file
@@ -154,7 +154,7 @@ public class DatabaseTestUtils {
     /**
      * Get a connection to the given sample harvest definition database and fool the HD DB connect class into thinking
      * it should use that one.
-     * 
+     *
      * @param resourcePath Location of the sql files to create and populate the test DB.
      * @param dbCreationDir
      * @return a connection to the given sample harvest definition database
@@ -169,7 +169,7 @@ public class DatabaseTestUtils {
 
     /**
      * Drop access to the database that's currently taken.
-     * 
+     *
      * @throws SQLException
      */
     public static void dropDatabase() throws SQLException, NoSuchFieldException, IllegalAccessException {
@@ -201,7 +201,7 @@ public class DatabaseTestUtils {
 
     /**
      * Drop the connection to the harvest definition database.
-     * 
+     *
      * @throws IllegalAccessException
      * @throws NoSuchFieldException
      * @throws Exception

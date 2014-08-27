@@ -85,7 +85,7 @@ public abstract class SeleniumTest extends ExtendedTestCase {
 
     /**
      * Defines the default test system startup script to run. May be overridden by subclasses classes.
-     * 
+     *
      * @return The startup script to run.
      */
     protected String getStartupScript() {
@@ -129,9 +129,9 @@ public abstract class SeleniumTest extends ExtendedTestCase {
      * Takes care of failure situations. This includes: <ol>
      * <li> Generate a a screen dump of the page failing the test.
      * <ol>
-     * 
+     *
      * This method is called by TestNG.
-     * 
+     *
      * @param result The result which TestNG will inject
      */
     public void onFailure(ITestResult result) {

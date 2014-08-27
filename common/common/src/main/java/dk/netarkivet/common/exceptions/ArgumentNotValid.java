@@ -148,7 +148,7 @@ public class ArgumentNotValid extends NetarkivetException {
 
     /**
      * Check that some condition on input parameters is true and throw an ArgumentNotValid if it is false.
-     * 
+     *
      * @param b the condition to check
      * @param s the error message to be reported
      * @throws ArgumentNotValid if b is false
@@ -161,7 +161,7 @@ public class ArgumentNotValid extends NetarkivetException {
 
     /**
      * Check, if the given argument is an existing directory.
-     * 
+     *
      * @param aDir a given File object.
      * @param name Name of object
      * @throws ArgumentNotValid If aDir is not an existing directory
@@ -176,7 +176,7 @@ public class ArgumentNotValid extends NetarkivetException {
 
     /**
      * Check, if the given argument is an existing normal file.
-     * 
+     *
      * @param aFile a given File object.
      * @param name Name of object
      * @throws ArgumentNotValid If aDir is not an existing file

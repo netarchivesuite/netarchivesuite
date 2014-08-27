@@ -26,8 +26,8 @@ import java.util.Set;
 
 import javax.management.ObjectName;
 
-import junit.framework.TestCase;
 import dk.netarkivet.common.exceptions.NotImplementedException;
+import junit.framework.TestCase;
 
 /** Unittest for testing the CachingProxyConnectionFactory class. */
 public class CachingProxyConnectionFactoryTester extends TestCase {

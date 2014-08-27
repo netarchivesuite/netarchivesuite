@@ -30,20 +30,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.CleanupIF;
+import junit.framework.TestCase;
 
 /**
  * Utility class containing various method for making assertions on Class objects.
- * 
  */
 @SuppressWarnings({"unchecked"})
 public class ClassAsserts {
 
     /**
      * Tests the class has a static factory method getInstance()
-     * 
+     *
      * @param c the class to test
      */
     @SuppressWarnings({"rawtypes"})
@@ -62,7 +61,7 @@ public class ClassAsserts {
     /**
      * Tests that a class has a static factory method getInstance() and that it acts as a singleton. NB This method will
      * create an instance of the class. It is your responsibility to clean up after yourself.
-     * 
+     *
      * @param c the class to test
      * @return the singleton
      */

@@ -92,7 +92,7 @@ public class HarvestDocumentationTester {
     /**
      * Unit test of method HarvestDocumentation.documentHarvest(). For simplicity, this test only covers the normal
      * case; error cases are tested by the method below.
-     *
+     * <p>
      * Verifies that after calling the method, a new ARC file is created with the appropriate name (see
      * getMetadataARCFileName()). Verifies that this ARC file contains one record of MIME type "application/cdx" per
      * original ARC file in the dir (and no other records of that type). Verifies that the CDX records are named
@@ -276,7 +276,7 @@ public class HarvestDocumentationTester {
     /**
      * Unit test method for generating a CDX index of an Arc file. FIXME Broken by
      * http://sbforge.org/jira/browse/NAS-1918
-     * 
+     *
      * @throws IOException
      */
     @Test
@@ -375,7 +375,7 @@ public class HarvestDocumentationTester {
      * Test that any files not part of the current harvest are moved away to the oldjobsdir during postprocessing. This
      * test includes a check for issue https://sbforge.org/jira/browse/NAS-2270 which resulted in at most one old file
      * being movied away.
-     * 
+     *
      * @throws Exception
      */
     @Test

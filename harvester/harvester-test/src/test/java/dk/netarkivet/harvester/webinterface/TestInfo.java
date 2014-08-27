@@ -36,5 +36,5 @@ public class TestInfo {
     public static final File ORIGINALS_DIR = new File(BASE_DIR, "originals");
 
     public static final File DBFILE = BASE_DIR; // new File(BASE_DIR,
-                                                // "fullhddb.jar");
+    // "fullhddb.jar");
 }

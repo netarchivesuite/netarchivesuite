@@ -36,7 +36,7 @@ public class DatedFileListJob extends FileListJob {
 
     /**
      * Constructor for this class.
-     * 
+     *
      * @param since The date after which we require files to be listed.
      */
     public DatedFileListJob(Date since) {
@@ -46,11 +46,11 @@ public class DatedFileListJob extends FileListJob {
 
     /**
      * Writes the name of the arcfile to the OutputStream if its lastModified date is more recent than "since".
-     * 
+     *
      * @param file an arcfile
      * @param os the OutputStream to which data is to be written
      * @return false If listing of this arcfile fails because of an error; true if the name is listed or if it is not
-     *         listed because the file is too old.
+     * listed because the file is too old.
      */
     @Override
     public boolean processFile(File file, OutputStream os) {

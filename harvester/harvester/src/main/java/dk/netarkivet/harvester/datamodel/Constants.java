@@ -31,7 +31,6 @@ import dk.netarkivet.harvester.HarvesterSettings;
 
 /**
  * Constants used by the datamodel and webinterface packages.
- *
  */
 public final class Constants {
 
@@ -104,7 +103,7 @@ public final class Constants {
      */
     public static final long ALIAS_TIMEOUT_IN_MILLISECONDS = Settings.getLong(HarvesterSettings.ALIAS_TIMEOUT) * 1000L;
 
-    /** Settings used in JobDBDao after admin machine break down. **/
+    /** Settings used in JobDBDao after admin machine break down. * */
     public static final String NEXT_JOB_ID = "settings.harvester.datamodel.domain.nextJobId";
 
     /**

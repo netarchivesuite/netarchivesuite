@@ -74,7 +74,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
 
         /**
          * Returns the rank in an SQL query (ordinal + 1).
-         * 
+         *
          * @return ordinal() + 1
          */
         int rank() {
@@ -83,7 +83,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
 
         /**
          * Returns the SQL substring that lists columns according to their ordinal.
-         * 
+         *
          * @return the SQL substring that lists columns in proper order.
          */
         static String getColumnsInOrder() {
@@ -129,7 +129,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
      * Stores a {@link StartedJobInfo} record to the persistent storage. The record is stored in the monitor table, and
      * if the elapsed time since the last history sample is equal or superior to the history sample rate, also to the
      * history table.
-     * 
+     *
      * @param startedJobInfo the record to store.
      */
     @Override
@@ -279,7 +279,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
 
     /**
      * Returns an array of all progress records chronologically sorted for the given job ID.
-     * 
+     *
      * @param jobId the job id.
      * @return an array of all progress records chronologically sorted for the given job ID.
      */
@@ -310,7 +310,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
 
     /**
      * Returns the most recent record for every job, partitioned by harvest definition name.
-     * 
+     *
      * @return the full listing of started job information, partitioned by harvest definition name.
      */
     @Override
@@ -371,7 +371,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
 
     /**
      * Returns the ids of jobs for which history records exist as an immutable set.
-     * 
+     *
      * @return the ids of jobs for which history records exist.
      */
     @Override
@@ -417,12 +417,12 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
     /**
      * Returns an array of chronologically sorted progress records for the given job ID, starting at a given crawl time,
      * and limited to a given number of record.
-     * 
+     *
      * @param jobId the job id.
      * @param startTime the crawl time (in seconds) to begin.
      * @param limit the maximum number of records to fetch.
      * @return an array of chronologically sorted progress records for the given job ID, starting at a given crawl time,
-     *         and limited to a given number of record.
+     * and limited to a given number of record.
      */
     @Override
     public StartedJobInfo[] getMostRecentByJobId(long jobId, long startTime, int limit) {
@@ -458,7 +458,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
 
     /**
      * Returns the most recent progress record for the given job ID.
-     * 
+     *
      * @param jobId the job id.
      * @return the most recent progress record for the given job ID.
      */
@@ -510,7 +510,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
 
     /**
      * Removes all records pertaining to the given job ID from the persistent storage.
-     * 
+     *
      * @param jobId the job id.
      * @return the number of deleted records.
      */
@@ -556,14 +556,15 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
      */
     private static enum FR_COLUMN {
         jobId, filterId, tstamp, domainName, currentSize, totalEnqueues, sessionBalance, lastCost, averageCost, // See
-                                                                                                                // NAS-2168
-                                                                                                                // Often
-                                                                                                                // contains
-                                                                                                                // the
-                                                                                                                // illegal
-                                                                                                                // value
-                                                                                                                // 4.9E-324
+        // NAS-2168
+        // Often
+        // contains
+        // the
+        // illegal
+        // value
+        // 4.9E-324
         lastDequeueTime, wakeTime, totalSpend, totalBudget, errorCount, lastPeekUri, lastQueuedUri;
+
         /**
          * @return the rank of a member of the enum class.
          */
@@ -573,7 +574,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
 
         /**
          * Returns the SQL substring that lists columns according to their ordinal.
-         * 
+         *
          * @return the SQL substring that lists columns in proper order.
          */
         static String getColumnsInOrder() {
@@ -583,11 +584,13 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
             }
             return columns.substring(0, columns.lastIndexOf(","));
         }
-    };
+    }
+
+    ;
 
     /**
      * Store frontier report data to the persistent storage.
-     * 
+     *
      * @param report the report to store
      * @param filterId the id of the filter that produced the report
      * @param jobId The ID of the job responsible for this report
@@ -682,7 +685,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
 
     /**
      * Correct the given double if it is equal to 4.9E-324. Part of fix for NAS-2168
-     * 
+     *
      * @param value A given double
      * @return 0.0 if value is 4.9E-324, otherwise the value as is
      */
@@ -697,9 +700,9 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
 
     /**
      * Returns the list of the available frontier report types.
-     * 
-     * @see FrontierReportFilter#getFilterId()
+     *
      * @return the list of the available frontier report types.
+     * @see FrontierReportFilter#getFilterId()
      */
     public String[] getFrontierReportFilterTypes() {
         List<String> filterIds = new ArrayList<String>();
@@ -727,7 +730,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
 
     /**
      * Retrieve a frontier report from a job id and a given filter class.
-     * 
+     *
      * @param jobId the job id
      * @param filterId the id of the filter that produced the report
      * @return a frontier report
@@ -773,7 +776,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
 
     /**
      * Deletes all frontier report data pertaining to the given job id from the persistent storage.
-     * 
+     *
      * @param jobId the job id
      * @return the update count
      */
@@ -807,7 +810,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
 
     /**
      * Get a frontierReportLine from the resultSet.
-     * 
+     *
      * @param rs the resultset with data from table frontierReportMonitor
      * @return a frontierReportLine from the resultSet.
      * @throws SQLException If unable to get data from resultSet
@@ -834,7 +837,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
 
     /**
      * Get a list of StartedJobInfo objects from a resultset of entries from runningJobsHistory table.
-     * 
+     *
      * @param rs a resultset with entries from table runningJobsHistory.
      * @return a list of StartedJobInfo objects from the resultset
      * @throws SQLException If any problems reading data from the resultset

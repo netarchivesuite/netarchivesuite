@@ -48,7 +48,7 @@ import dk.netarkivet.common.utils.FileUtils;
 
 /**
  * The database based active bit preservation. This is the alternative to the FileBasedActiveBitPreservation.
- * 
+ * <p>
  * A database is used to handle the bitpreservation.
  */
 public final class DatabaseBasedActiveBitPreservation implements ActiveBitPreservation, CleanupIF {
@@ -92,7 +92,7 @@ public final class DatabaseBasedActiveBitPreservation implements ActiveBitPreser
 
     /**
      * Method for retrieving the current instance of this class.
-     * 
+     *
      * @return The instance.
      */
     public static synchronized DatabaseBasedActiveBitPreservation getInstance() {
@@ -105,7 +105,7 @@ public final class DatabaseBasedActiveBitPreservation implements ActiveBitPreser
     /**
      * Method for retrieving the filelist from a specific replica. A GetAllFilenamesMessage is sent to the specific
      * replica.
-     * 
+     *
      * @param replica The replica to retrieve the filelist from.
      * @return The names of the files in a File.
      * @throws ArgumentNotValid If the replica is 'null'.
@@ -126,7 +126,7 @@ public final class DatabaseBasedActiveBitPreservation implements ActiveBitPreser
     /**
      * Method for retrieving the checksums from a specific replica. A GetAllChecksumsMessage is sent to the specific
      * replica.
-     * 
+     *
      * @param replica The replica to retrieve the checksums from.
      * @return A file containing the checksumjob results, i.e. a filename##checksum.
      * @throws ArgumentNotValid If the replica is null.
@@ -150,7 +150,7 @@ public final class DatabaseBasedActiveBitPreservation implements ActiveBitPreser
      * Method to reestablish a file missing in a replica. The file is retrieved from a given bitarchive replica, which
      * is known to contain a proper version of this file. The reestablishment is done by first retrieving the file and
      * then sending out a store message with this file. Then any replica who is missing the file will obtain it.
-     * 
+     *
      * @param filename The name of the file to reestablish.
      * @param repWithFile The replica where the file should be retrieved from.
      * @throws IOFailure If the attempt to reestablish the file fails.
@@ -182,7 +182,7 @@ public final class DatabaseBasedActiveBitPreservation implements ActiveBitPreser
 
     /**
      * Method for retrieving a file from a bitarchive (for replacing a bad entry in another replica).
-     * 
+     *
      * @param filename The file to retrieve.
      * @param repWithFile The replica where the file should be retrieved from.
      * @return The file from the bitarchive.
@@ -203,7 +203,7 @@ public final class DatabaseBasedActiveBitPreservation implements ActiveBitPreser
     /**
      * This method is used for making sure, that all replicas are up-to-date before trying to validate the checksums of
      * the files within it.
-     * 
+     * <p>
      * TODO set a time limit for last date to update. This has to be a variable in settings, which should have the
      * default '0', meaning no time limit. If more time has passed than acceptable, then a new checksum job should be
      * run. This has to do with assignment B.2.4 - Bitpreservation scheduler.
@@ -226,7 +226,7 @@ public final class DatabaseBasedActiveBitPreservation implements ActiveBitPreser
     /**
      * The method for retrieving the checksums for all the files within a replica. This method sends the checksum job to
      * the replica archive.
-     * 
+     *
      * @param replica The replica to retrieve the checksums from.
      */
     private void runChecksum(Replica replica) {
@@ -243,7 +243,7 @@ public final class DatabaseBasedActiveBitPreservation implements ActiveBitPreser
 
     /**
      * Retrieves and update the status of a file for a specific replica.
-     * 
+     *
      * @param filename The name of the file.
      */
     private void updateChecksumStatus(String filename) {
@@ -266,10 +266,10 @@ public final class DatabaseBasedActiveBitPreservation implements ActiveBitPreser
     /**
      * The method calculates the number of files which has a wrong checksum for the replica. This simple counts all the
      * entries in the replicafileinfo table for the replica where the filelist_status is set to CORRUPT.
-     * 
+     *
      * @param replica The replica for which to count the number of changed files.
      * @return The number of files for the replica where the checksum does not correspond to the checksum of the same
-     *         file in the other replicas.
+     * file in the other replicas.
      * @throws ArgumentNotValid If the replica is null.
      */
     public long getNumberOfChangedFiles(Replica replica) throws ArgumentNotValid {
@@ -285,10 +285,10 @@ public final class DatabaseBasedActiveBitPreservation implements ActiveBitPreser
      * This method retrieves the name of all the files which has a wrong checksum for the replica. It simple returns the
      * filename of all the entries in the replicafileinfo table for the replica where the filelist_status is set to
      * CORRUPT.
-     * 
+     *
      * @param replica The replica for which the changed files should be found.
      * @return The names of files in the replica where the checksum does not correspond to the checksum of the same file
-     *         in the other replicas.
+     * in the other replicas.
      * @throws ArgumentNotValid If the replica is null.
      */
     public Iterable<String> getChangedFiles(Replica replica) throws ArgumentNotValid {
@@ -303,7 +303,7 @@ public final class DatabaseBasedActiveBitPreservation implements ActiveBitPreser
     /**
      * This method calculates the number of files which are not found in the given replica. This simple counts all the
      * entries in the replicafileinfo table for the replica where the filelist_status is set to MISSING.
-     * 
+     *
      * @param replica The replica for which to count the number of missing files.
      * @return The number of files which is missing in the replica.
      * @throws ArgumentNotValid If the replica is null.
@@ -321,7 +321,7 @@ public final class DatabaseBasedActiveBitPreservation implements ActiveBitPreser
      * This method retrieves the name of all the files which are missing for the given replica. It simple returns the
      * filename of all the entries in the replicafileinfo table for the replica where the filelist_status is set to
      * MISSING.
-     * 
+     *
      * @param replica The replica for which the missing files should be found.
      * @return The names of files in the replica which are missing.
      * @throws ArgumentNotValid If the replica is null.
@@ -338,12 +338,12 @@ public final class DatabaseBasedActiveBitPreservation implements ActiveBitPreser
     /**
      * This method retrieves the date for the latest checksum update was performed for the replica. This means the date
      * for the latest the replica has calculated the checksum of all the files within its archive.
-     * 
+     * <p>
      * This method does not call out to the replicas. It only contacts the local database.
-     * 
+     *
      * @param replica The replica for which the date for last checksum update should be retrieved.
      * @return The date for the last time the checksums has been update. If the checksum update has never occurred, then
-     *         a null is returned.
+     * a null is returned.
      * @throws ArgumentNotValid If the replica is null.
      */
     public Date getDateForChangedFiles(Replica replica) throws ArgumentNotValid {
@@ -358,12 +358,12 @@ public final class DatabaseBasedActiveBitPreservation implements ActiveBitPreser
     /**
      * This method retrieves the date for the latest filelist update was performed for the replica. This means the date
      * for the latest the replica has retrieved the list of all the files within the archive.
-     * 
+     * <p>
      * This method does not call out to the replicas. It only contacts the local database.
-     * 
+     *
      * @param replica The replica for which the date for last filelist update should be retrieved.
      * @return The date for the last time the filelist has been update. If the filelist update has never occurred, then
-     *         a null is returned.
+     * a null is returned.
      * @throws ArgumentNotValid If the replica is null.
      */
     public Date getDateForMissingFiles(Replica replica) throws ArgumentNotValid {
@@ -379,12 +379,12 @@ public final class DatabaseBasedActiveBitPreservation implements ActiveBitPreser
      * The method is used to update the checksum for all the files in a replica. The checksum for the replica is
      * retrieved through GetAllChecksumMessages. This will take a very large amount of time for the bitarchive, but a
      * more limited amount of time for the checksumarchive.
-     * 
+     * <p>
      * The corresponding replicafileinfo entries in the database for the retrieved checksum results will be updated.
      * Then a checksum update will be performed to check for corrupted replicafileinfo.
-     * 
+     * <p>
      * Each replica can only be updated once at the time.
-     * 
+     *
      * @param replica The replica to find the changed files for.
      * @throws ArgumentNotValid If the replica is null.
      */
@@ -419,7 +419,7 @@ public final class DatabaseBasedActiveBitPreservation implements ActiveBitPreser
     /**
      * This method retrieves the filelist for the replica, and then it updates the database with this list of filenames.
      * Each replica can only be updated once at the time.
-     * 
+     *
      * @param replica The replica to find the missing files for.
      * @throws ArgumentNotValid If the replica is null.
      */
@@ -451,7 +451,7 @@ public final class DatabaseBasedActiveBitPreservation implements ActiveBitPreser
 
     /**
      * Method for retrieving the FilePreservationState for a specific file.
-     * 
+     *
      * @param filename The name of the file for whom the FilePreservationState should be retrieved.
      * @return The FilePreservationState for the file.
      * @throws ArgumentNotValid If the filename is null or the empty string.
@@ -478,7 +478,7 @@ public final class DatabaseBasedActiveBitPreservation implements ActiveBitPreser
 
     /**
      * Method for retrieving the FilePreservationState for a list of files.
-     * 
+     *
      * @param filenames The list of filenames whose FilePreservationState should be retrieved.
      * @return A mapping between the filenames and their FilePreservationState.
      * @throws ArgumentNotValid If the list of filenames are null.
@@ -503,7 +503,7 @@ public final class DatabaseBasedActiveBitPreservation implements ActiveBitPreser
      * will not go out to the replica, but only contact the local database. The number of files in the replica is
      * retrieved from the database by counting the amount of files in the replicafileinfo table which belong to the
      * replica and which has the filelist_status set to OK.
-     * 
+     *
      * @param replica The replica for which the number of files should be counted.
      * @return The number of files for a specific replica.
      * @throws ArgumentNotValid If the replica is null.
@@ -545,7 +545,7 @@ public final class DatabaseBasedActiveBitPreservation implements ActiveBitPreser
     /**
      * This method is used to upload missing files to a replica. For each file a good version of this file is found, and
      * it is reestablished on the replicas where it is missing.
-     * 
+     *
      * @param replica The replica where the files are missing.
      * @param filenames The names of the files which are missing in the given replica.
      * @throws ArgumentNotValid If the replica or list of filenames is null, or if the list of filenames is empty.
@@ -597,7 +597,7 @@ public final class DatabaseBasedActiveBitPreservation implements ActiveBitPreser
 
     /**
      * This should reestablish the state for the file.
-     * 
+     *
      * @param filename The name of the file to change the state for.
      * @throws ArgumentNotValid If the filename is invalid.
      * @throws NotImplementedException This will not be implemented.
@@ -612,7 +612,7 @@ public final class DatabaseBasedActiveBitPreservation implements ActiveBitPreser
 
     /**
      * Old method, which refers to the checksum replica part of admin data.
-     * 
+     *
      * @return Nothing, since it always throws an exception.
      * @throws NotImplementedException This method will not be implemented.
      */
@@ -624,7 +624,7 @@ public final class DatabaseBasedActiveBitPreservation implements ActiveBitPreser
 
     /**
      * Old method, which refers to the checksum replica part of admin data.
-     * 
+     *
      * @return Nothing, since it always throws an exception.
      * @throws NotImplementedException This method will not be implemented.
      */
@@ -636,7 +636,7 @@ public final class DatabaseBasedActiveBitPreservation implements ActiveBitPreser
 
     /**
      * Old method, which refers to the checksum replica part of admin data.
-     * 
+     *
      * @param filenames The list of filenames which should be added to admin data.
      * @throws NotImplementedException This method will not be implemented.
      * @throws ArgumentNotValid If filenames invalid.

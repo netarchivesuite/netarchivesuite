@@ -45,7 +45,7 @@ import dk.netarkivet.common.utils.warc.WARCBatchJob;
 
 /**
  * Batch job that extracts information to create a CDX file.
- *
+ * <p>
  * A CDX file contains sorted lines of metadata from the WARC files, with each line followed by the file and offset the
  * record was found at, and optionally a checksum. The timeout of this job is 7 days. See
  * http://www.archive.org/web/researcher/cdx_file_format.php
@@ -70,7 +70,7 @@ public class WARCExtractCDXJob extends WARCBatchJob {
 
     /**
      * Constructs a new job for extracting CDX indexes.
-     * 
+     *
      * @param includeChecksum If true, an MD5 checksum is also written for each record. If false, it is not.
      */
     public WARCExtractCDXJob(boolean includeChecksum) {
@@ -88,9 +88,9 @@ public class WARCExtractCDXJob extends WARCBatchJob {
 
     /**
      * Filters out the NON-RESPONSE records.
-     * 
-     * @see dk.netarkivet.common.utils.warc.WARCBatchJob#getFilter()
+     *
      * @return The filter that defines what WARC records are wanted in the output CDX file.
+     * @see dk.netarkivet.common.utils.warc.WARCBatchJob#getFilter()
      */
     @Override
     public WARCBatchFilter getFilter() {
@@ -100,7 +100,7 @@ public class WARCExtractCDXJob extends WARCBatchJob {
 
     /**
      * Initialize any data needed (none).
-     * 
+     *
      * @see dk.netarkivet.common.utils.warc.WARCBatchJob#initialize(OutputStream)
      */
     @Override
@@ -109,9 +109,9 @@ public class WARCExtractCDXJob extends WARCBatchJob {
 
     /**
      * Process this entry, reading metadata into the output stream.
-     * 
-     * @see dk.netarkivet.common.utils.warc.WARCBatchJob#processRecord(WARCRecord, OutputStream)
+     *
      * @throws IOFailure on trouble reading WARC record data
+     * @see dk.netarkivet.common.utils.warc.WARCBatchJob#processRecord(WARCRecord, OutputStream)
      */
     @Override
     public void processRecord(WARCRecord sar, OutputStream os) {
@@ -186,7 +186,7 @@ public class WARCExtractCDXJob extends WARCBatchJob {
 
     /**
      * End of the batch job.
-     * 
+     *
      * @see dk.netarkivet.common.utils.warc.WARCBatchJob#finish(OutputStream)
      */
     @Override

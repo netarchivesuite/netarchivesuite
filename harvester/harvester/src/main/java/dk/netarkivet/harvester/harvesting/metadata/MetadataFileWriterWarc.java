@@ -49,7 +49,6 @@ import dk.netarkivet.common.utils.warc.WARCUtils;
 
 /**
  * MetadataFileWriter that writes to WARC files.
- * 
  */
 public class MetadataFileWriterWarc extends MetadataFileWriter {
 
@@ -67,7 +66,7 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
 
     /**
      * Create a <code>MetadataFileWriter</code> for WARC output.
-     * 
+     *
      * @param metadataWarcFile The WARC output file
      * @return <code>MetadataFileWriter</code> for writing metadata files in WARC
      */
@@ -97,7 +96,7 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
     /**
      * Insert a warcInfoRecord in the WARC-file, if it doesn't already exists. saves the recordID of the written
      * info-record for future reference to be used for later in the
-     * 
+     *
      * @param payloadToInfoRecord the given payload for this record.
      */
     public void insertInfoRecord(ANVLRecord payloadToInfoRecord) {
@@ -174,7 +173,7 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
 
     /**
      * Generate encapsulated recordID.
-     * 
+     *
      * @param recordID A given recordID
      * @return An encapsulated recordID.
      */

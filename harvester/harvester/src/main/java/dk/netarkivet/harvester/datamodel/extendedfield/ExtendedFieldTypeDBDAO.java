@@ -78,7 +78,7 @@ public class ExtendedFieldTypeDBDAO extends ExtendedFieldTypeDAO {
 
     /**
      * Tests if exists an ExtendedFieldType with the given ID.
-     * 
+     *
      * @param c an open connection to the database
      * @param aExtendedfieldtypeId an id belonging to a ExtendedFieldType
      * @return true, if there exists an ExtendedFieldType with the given ID, otherwise returns false.
@@ -101,7 +101,7 @@ public class ExtendedFieldTypeDBDAO extends ExtendedFieldTypeDAO {
 
     /**
      * Read an ExtendedFieldType from database belonging to the given id.
-     * 
+     *
      * @param connection an open connection to the database
      * @param aExtendedfieldtypeId an id belonging to a ExtendedFieldType
      * @return an ExtendedFieldType from database belonging to the given id.

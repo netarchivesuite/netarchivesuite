@@ -114,7 +114,7 @@ public class ExtendedFTPRemoteFile implements RemoteFile {
      * the factory method cannot find this method directly because the runtime-class of the parameter is not
      * ArchiveRecord. Therefore we also define the two specific overloaded factory methods for ARCRecords and
      * WARCRecord.
-     * 
+     *
      * @param record the record
      * @return the instance
      */
@@ -124,7 +124,7 @@ public class ExtendedFTPRemoteFile implements RemoteFile {
 
     /**
      * Create an instance of this class connected to an ARCRecord.
-     * 
+     *
      * @param record the record
      * @return the instance
      */
@@ -134,7 +134,7 @@ public class ExtendedFTPRemoteFile implements RemoteFile {
 
     /**
      * Create an instance of this class connected to a WARCRecord.
-     * 
+     *
      * @param record the record
      * @return the instance
      */
@@ -149,7 +149,7 @@ public class ExtendedFTPRemoteFile implements RemoteFile {
      * @param useChecksums If true, checksums will be used to check transfers.
      * @param fileDeletable If true, this file will be deleted after upload to FTP.
      * @param multipleDownloads If true, the file will not be removed from FTP server automatically after first
-     *            download.
+     * download.
      * @return FTPRemoteFile object
      * @throws IOFailure if FTPRemoteFile creation fails
      */
@@ -166,7 +166,7 @@ public class ExtendedFTPRemoteFile implements RemoteFile {
      * @param useChecksums If true, checksums will be used to check transfers.
      * @param fileDeletable If true, this file will be deleted after upload to FTP.
      * @param multipleDownloads If true, the file will not be removed from FTP server automatically after first
-     *            download.
+     * download.
      * @return FTPRemoteFile object
      * @throws IOFailure if FTPRemoteFile creation fails
      */
@@ -258,7 +258,7 @@ public class ExtendedFTPRemoteFile implements RemoteFile {
 
     /**
      * Checksums are not available in this implementation. Returns null.
-     * 
+     *
      * @return null
      */
     @Override
@@ -291,9 +291,8 @@ public class ExtendedFTPRemoteFile implements RemoteFile {
     /**
      * For an ARCRecord, this is the length of the record as defined in the header. For a WARCRecods, this is the
      * payload length, defined as the difference between the total record length and the size of the header.
-     * 
-     * @return the length of the record content in bytes.
      *
+     * @return the length of the record content in bytes.
      */
     @Override
     public long getSize() {
@@ -311,7 +310,7 @@ public class ExtendedFTPRemoteFile implements RemoteFile {
 
     /**
      * Creates a RemoteFile instance by uploading the content of the given record to a file on the ftp server.
-     * 
+     *
      * @param record The record to be copied.
      */
     private ExtendedFTPRemoteFile(ArchiveRecord record) {
@@ -371,7 +370,7 @@ public class ExtendedFTPRemoteFile implements RemoteFile {
 
     /**
      * A human readbale description of the object which should be sufficient to identify and track it.
-     * 
+     *
      * @return description of this object.
      */
     public String toString() {
@@ -382,6 +381,7 @@ public class ExtendedFTPRemoteFile implements RemoteFile {
     // be to have some sort of helper class - e.g. an FTPConnectionManager -
     // with
     // a single copy of this code.
+
     /**
      * Create FTPClient and log on to ftp-server, if not already connected to ftp-server. Attempts to set binary mode
      * and passive mode. Will try to login up to FTP_RETRIES times, if login fails.

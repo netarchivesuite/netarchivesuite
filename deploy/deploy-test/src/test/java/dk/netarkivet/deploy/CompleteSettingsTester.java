@@ -25,9 +25,9 @@ package dk.netarkivet.deploy;
 import java.io.File;
 import java.net.URL;
 
-import junit.framework.TestCase;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.TestFileUtils;
+import junit.framework.TestCase;
 
 public class CompleteSettingsTester extends TestCase {
     @Override

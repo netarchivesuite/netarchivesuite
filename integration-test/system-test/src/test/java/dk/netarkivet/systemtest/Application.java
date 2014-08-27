@@ -38,7 +38,7 @@ public class Application {
 
     /**
      * Maps empty strings to null.
-     * 
+     *
      * @param machine
      * @param application
      * @param instance_Id
@@ -73,38 +73,51 @@ public class Application {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         Application other = (Application) obj;
         if (application == null) {
-            if (other.application != null)
+            if (other.application != null) {
                 return false;
-        } else if (!application.equals(other.application))
+            }
+        } else if (!application.equals(other.application)) {
             return false;
+        }
         if (instance_Id == null) {
-            if (other.instance_Id != null)
+            if (other.instance_Id != null) {
                 return false;
-        } else if (!instance_Id.equals(other.instance_Id))
+            }
+        } else if (!instance_Id.equals(other.instance_Id)) {
             return false;
+        }
         if (machine == null) {
-            if (other.machine != null)
+            if (other.machine != null) {
                 return false;
-        } else if (!machine.equals(other.machine))
+            }
+        } else if (!machine.equals(other.machine)) {
             return false;
+        }
         if (priority == null) {
-            if (other.priority != null)
+            if (other.priority != null) {
                 return false;
-        } else if (!priority.equals(other.priority))
+            }
+        } else if (!priority.equals(other.priority)) {
             return false;
+        }
         if (replica == null) {
-            if (other.replica != null)
+            if (other.replica != null) {
                 return false;
-        } else if (!replica.equals(other.replica))
+            }
+        } else if (!replica.equals(other.replica)) {
             return false;
+        }
         return true;
     }
 }

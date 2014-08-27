@@ -41,9 +41,8 @@ import dk.netarkivet.common.distribute.indexserver.JobIndexCache;
 
 /**
  * A tool to ask indices from indexserver on demand.
- *
+ * <p>
  * Usage: java dk.netarkivet.archive.tools.CreateIndex --type cdx|dedup|crawllog [jobid]+
- *
  */
 @SuppressWarnings({"unused"})
 public class CreateIndex {
@@ -61,7 +60,7 @@ public class CreateIndex {
 
     /**
      * The main method that does the parsing of the commandline, and makes the actual index request.
-     * 
+     *
      * @param args the arguments
      */
     public static void main(String[] args) {

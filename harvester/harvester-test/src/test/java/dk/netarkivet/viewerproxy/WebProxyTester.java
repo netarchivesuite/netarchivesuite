@@ -312,7 +312,7 @@ public class WebProxyTester {
     /**
      * Constructs an instance of the inner class WebProxy.HttpRequest with a url containing "{" and checks that the
      * resulting uri escapes the curly brackets correctly.
-     * 
+     *
      * @throws NoSuchMethodException
      * @throws InvocationTargetException
      * @throws IllegalAccessException

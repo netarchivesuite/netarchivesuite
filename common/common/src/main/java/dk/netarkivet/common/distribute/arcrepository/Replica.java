@@ -64,7 +64,7 @@ public class Replica {
 
     /**
      * Private constructor that makes a new Replica object. These will all be stored in the knownReplicas map.
-     * 
+     *
      * @param repId Id of the replica (e.g. One)
      * @param repName Name of the replica (e.g. ReplicaOne)
      * @param repType Type of the replica (e.g. biarchive)
@@ -97,7 +97,7 @@ public class Replica {
 
     /**
      * Get an object representing the replica with the given id.
-     * 
+     *
      * @param id The given name of an replica
      * @return an object representing the replica with the given id
      * @throws UnknownID if no replica is known with the given id
@@ -115,7 +115,7 @@ public class Replica {
 
     /**
      * Get an object representing the replica with the given name.
-     * 
+     *
      * @param name The given name of an replica
      * @return an object representing the replica with the given name
      * @throws UnknownID if no replica is known with the given name
@@ -146,7 +146,7 @@ public class Replica {
 
     /**
      * Check, if a given name is a replica name.
-     * 
+     *
      * @param name a given name
      * @return true, if the given name is a replica name, false otherwise
      */
@@ -165,7 +165,7 @@ public class Replica {
 
     /**
      * Check, if a given id is a replica id.
-     * 
+     *
      * @param id a given id
      * @return true, if the given id is a replica id, false otherwise
      */
@@ -184,7 +184,7 @@ public class Replica {
 
     /**
      * Get all known replicas.
-     * 
+     *
      * @return A unmodifiable view of the currently known replicas.
      */
     public static Collection<Replica> getKnown() {
@@ -194,7 +194,7 @@ public class Replica {
 
     /**
      * Get all known replicas as ids.
-     * 
+     *
      * @return all known replicas as ids
      */
     public static String[] getKnownIds() {
@@ -210,7 +210,7 @@ public class Replica {
 
     /**
      * Get the id of all known replicas as a string set.
-     * 
+     *
      * @return The id of all known replicas as a string set.
      */
     public static Set<String> getKnownIdsAsSet() {
@@ -220,7 +220,7 @@ public class Replica {
 
     /**
      * Get names of all known replicas as string array.
-     * 
+     *
      * @return The names of all known replicas as a string array.
      */
     public static String[] getKnownNames() {
@@ -236,7 +236,7 @@ public class Replica {
 
     /**
      * Get the names of all known replicas as a string set.
-     * 
+     *
      * @return The names of all known replicas as a string set.
      */
     public static Set<String> getKnownNamesAsSet() {
@@ -250,7 +250,7 @@ public class Replica {
 
     /**
      * Get the type of this replica.
-     * 
+     *
      * @return The type of this replica (bitarchive or checksum).
      */
     public ReplicaType getType() {
@@ -259,7 +259,7 @@ public class Replica {
 
     /**
      * Get the id of this replica.
-     * 
+     *
      * @return The id of this replica (also used in queues).
      */
     public String getId() {
@@ -268,7 +268,7 @@ public class Replica {
 
     /**
      * Get the name of this replica.
-     * 
+     *
      * @return The name of this replica is known as in interface.
      */
     public String getName() {
@@ -277,7 +277,7 @@ public class Replica {
 
     /**
      * Get the identification channel that corresponds to this replica. Please do not parse its name!
-     * 
+     *
      * @return The BaMon ChannelID of this replica.
      */
     public ChannelID getIdentificationChannel() {
@@ -294,7 +294,7 @@ public class Replica {
 
     /**
      * Returns a human-readable representation of the object.
-     * 
+     *
      * @return An arbitrary string version of the object. Do not depend on its format.
      */
     public String toString() {

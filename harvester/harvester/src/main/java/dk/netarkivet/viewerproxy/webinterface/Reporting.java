@@ -69,7 +69,7 @@ public class Reporting {
 
     /**
      * Submit a batch job to list all files for a job, and report result in a sorted list.
-     * 
+     *
      * @param jobid The job to get files for.
      * @param harvestprefix The harvestprefix for the files produced by heritrix
      * @return A sorted list of files.
@@ -105,7 +105,7 @@ public class Reporting {
 
     /**
      * Submit a batch job to generate cdx for all metadata files for a job, and report result in a list.
-     * 
+     *
      * @param jobid The job to get cdx for.
      * @return A list of cdx records.
      * @throws ArgumentNotValid If jobid is 0 or negative.
@@ -151,7 +151,7 @@ public class Reporting {
 
     /**
      * Submit a batch job to extract the part of a crawl log that is associated with the given domain and job.
-     * 
+     *
      * @param domain The domain to get crawl.log-lines for.
      * @param jobid The jobid to get the crawl.log-lines for.
      * @return A file containing the crawl.log lines. This file is temporary, and should be deleted after use.
@@ -167,7 +167,7 @@ public class Reporting {
 
     /**
      * Helper method to get result from a batchjob.
-     * 
+     *
      * @param batchJob a certain FileBatchJob
      * @return a file with the result.
      */
@@ -193,7 +193,7 @@ public class Reporting {
 
     /**
      * Return any crawllog lines for a given jobid matching the given regular expression.
-     * 
+     *
      * @param jobid The jobid
      * @param regexp A regular expression
      * @return a File with the matching lines.

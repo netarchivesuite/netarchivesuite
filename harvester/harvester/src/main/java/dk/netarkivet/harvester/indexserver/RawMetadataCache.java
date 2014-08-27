@@ -43,7 +43,6 @@ import dk.netarkivet.harvester.HarvesterSettings;
 /**
  * This is an implementation of the RawDataCache specialized for data out of metadata files. It uses regular expressions
  * for matching URL and mime-type of ARC entries for the kind of metadata we want.
- *
  */
 public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCache {
 
@@ -69,7 +68,7 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
      * format might.
      *
      * @param prefix A prefix that will be used to distinguish this cache's files from other caches'. It will be used
-     *            for creating a directory, so it must not contain characters not legal in directory names.
+     * for creating a directory, so it must not contain characters not legal in directory names.
      * @param urlMatcher A pattern for matching URLs of the desired entries. If null, a .* pattern will be used.
      * @param mimeMatcher A pattern for matching mime-types of the desired entries. If null, a .* pattern will be used.
      */
@@ -96,9 +95,9 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
     /**
      * Get the file potentially containing (cached) data for a single job.
      *
-     * @see FileBasedCache#getCacheFile(Object)
      * @param id The job to find data for.
      * @return The file where cache data for the job can be stored.
+     * @see FileBasedCache#getCacheFile(Object)
      */
     @Override
     public File getCacheFile(Long id) {
@@ -110,9 +109,9 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
     /**
      * Actually cache data for the given ID.
      *
-     * @see FileBasedCache#cacheData(Object)
      * @param id A job ID to cache data for.
      * @return A File containing the data. This file will be the same as getCacheFile(ID);
+     * @see FileBasedCache#cacheData(Object)
      */
     protected Long cacheData(Long id) {
         final String replicaUsed = Settings.get(CommonSettings.USE_REPLICA_ID);

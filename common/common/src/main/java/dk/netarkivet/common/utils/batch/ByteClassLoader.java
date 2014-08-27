@@ -58,7 +58,7 @@ public class ByteClassLoader extends ClassLoader {
     /**
      * Define the class that this class loader knows about. The name of the class is taken from the data given in the
      * constructor.
-     *
+     * <p>
      * Note that this does *not* override any of the java.lang.ClassLoader#defineClass methods. Calling this method
      * directly is the only way to get the class defined by this classloader.
      *

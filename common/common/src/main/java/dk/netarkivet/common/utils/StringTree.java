@@ -32,7 +32,7 @@ import dk.netarkivet.common.exceptions.IllegalState;
  * An interface defining a structure with nodes, subnodes and leaves. This is a recursively defined datastructure, so
  * each instance can be a tree or a leaf. Each is node is named with a String, and each leaf can contain a value of type
  * T. Each non-leaf tree can have any number of subnodes, each identified by a String.
- * 
+ *
  * @param <T> The leaf type
  */
 public interface StringTree<T> {
@@ -48,7 +48,7 @@ public interface StringTree<T> {
      * Get the value of a named sub-leaf.
      *
      * @param name Name of the sub-leaf to get the value of. These are strings, and as a shorthand may specify subtrees
-     *            of subtrees by separating each level with '.', i.e. getSubtrees("subtree.subsubtree").
+     * of subtrees by separating each level with '.', i.e. getSubtrees("subtree.subsubtree").
      * @return The value of the named leaf of this Tree, if it exists.
      * @throws IllegalState if this StringTree does not have exactly one leaf sub-node with the given name.
      * @throws ArgumentNotValid if argument is null or empty.
@@ -67,7 +67,7 @@ public interface StringTree<T> {
      * Get the only subtree with the given name.
      *
      * @param name The name of the subtree. These are strings, and as a shorthand may specify subtrees of subtrees by
-     *            separating each level with '.', i.e. getSubtrees("subtree.subsubtree").
+     * separating each level with '.', i.e. getSubtrees("subtree.subsubtree").
      * @return The single subtree with the given name.
      * @throws IllegalState if this object is a leaf or if there is not exactly one subtree with the given name.
      * @throws ArgumentNotValid if argument is null or empty.
@@ -78,7 +78,7 @@ public interface StringTree<T> {
      * Get the named subtrees.
      *
      * @param name The name of the subtrees. These are strings, and as a shorthand may specify subtrees of subtrees by
-     *            separating each level with '.', i.e. getSubtrees("subtree.subsubtree").
+     * separating each level with '.', i.e. getSubtrees("subtree.subsubtree").
      * @return All subtrees with the given name, or an empty list for none.
      * @throws IllegalState if this object is a leaf.
      * @throws ArgumentNotValid if argument is null or empty.
@@ -95,7 +95,7 @@ public interface StringTree<T> {
 
     /**
      * Get a map of all direct subtrees, assuming that all subtrees are uniquely named.
-     * 
+     *
      * @return Map of all subtrees.
      * @throws IllegalState if this object is a leaf or if there is more than one subtree with the same name.
      */
@@ -113,9 +113,8 @@ public interface StringTree<T> {
      * Get a map of the names and values of all subtrees, assuming that all subtrees are leafs and are uniquely named.
      *
      * @return Map from subtree names to values of their leaves.
-     *
      * @throws IllegalState if this object is a leaf or if the subtrees are not uniquely named, or if any of its
-     *             children are not leaves.
+     * children are not leaves.
      */
     Map<String, T> getLeafMap();
 

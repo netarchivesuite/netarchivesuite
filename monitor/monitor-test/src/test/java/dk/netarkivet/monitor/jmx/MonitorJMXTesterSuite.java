@@ -29,7 +29,6 @@ import junit.textui.TestRunner;
 
 /**
  * Unittestersuite for the dk.netarkivet.monitor.jmx package.
- *
  */
 public class MonitorJMXTesterSuite {
     /**

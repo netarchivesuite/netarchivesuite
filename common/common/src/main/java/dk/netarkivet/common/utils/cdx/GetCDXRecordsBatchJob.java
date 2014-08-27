@@ -35,7 +35,6 @@ import dk.netarkivet.common.utils.arc.ARCBatchJob;
 
 /**
  * Job to get cdx records out of metadata files.
- *
  */
 @SuppressWarnings({"serial"})
 public class GetCDXRecordsBatchJob extends ARCBatchJob {
@@ -56,7 +55,7 @@ public class GetCDXRecordsBatchJob extends ARCBatchJob {
 
     /**
      * Initialize job. Does nothing
-     * 
+     *
      * @param os The output stream (unused in this implementation)
      */
     public void initialize(OutputStream os) {
@@ -64,7 +63,7 @@ public class GetCDXRecordsBatchJob extends ARCBatchJob {
 
     /**
      * Process a single ARCRecord if the record contains cdx.
-     * 
+     *
      * @param sar The record we want to process
      * @param os The output stream to write the result to
      */
@@ -94,7 +93,7 @@ public class GetCDXRecordsBatchJob extends ARCBatchJob {
 
     /**
      * Finish job. Does nothing
-     * 
+     *
      * @param os The Outputstream (unused in this implementation)
      */
     public void finish(OutputStream os) {

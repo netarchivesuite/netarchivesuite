@@ -42,7 +42,6 @@ import dk.netarkivet.harvester.datamodel.TemplateDAO;
 
 /**
  * Utility class containing methods for processing a GUI-request to update the details of a domain-configuration.
- *
  */
 
 public class DomainConfigurationDefinition {
@@ -51,15 +50,15 @@ public class DomainConfigurationDefinition {
      * Extracts all required parameters from the request, checks for any inconsistencies, and passes the requisite data
      * to the updateDomain method for processing. The specified domain configuration is then updated and the result
      * stored in the database.
-     *
+     * <p>
      * update: This method does nothing if update is not set
-     *
+     * <p>
      * name: must be the name of a known domain
-     *
+     * <p>
      * default: the defaultconfig is set to this value. Must be non-null and a known configuration of this domain.
-     *
+     * <p>
      * edition: The edition number the config was originally read as, if any.
-     *
+     * <p>
      * (configName, order_xml, maxRate, maxObjects, maxBytes, urlListList[], passwordList): group specifying a
      * configuration to update or add. If configName is non null then order_xml must be a known order-xml and
      * urlListList must contain only known seedlists, (and at least one such). load, maxObjects, maxBytes, edition must
@@ -67,9 +66,8 @@ public class DomainConfigurationDefinition {
      *
      * @param context The context of this request
      * @param i18n I18n information
-     *
      * @throws ForwardedToErrorPage if a user error has caused forwarding to the error page, in which case processing
-     *             should abort.
+     * should abort.
      */
     public static void processRequest(PageContext context, I18n i18n) {
         ArgumentNotValid.checkNotNull(context, "PageContext context");

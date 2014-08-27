@@ -29,21 +29,21 @@ public interface JobInfo {
 
     /**
      * Get the job ID belonging to a job.
-     * 
+     *
      * @return The job ID belonging to a job.
      */
     Long getJobID();
 
     /**
      * Get the harvest ID belonging to a job.
-     * 
+     *
      * @return The harvest ID belonging to a job.
      */
     Long getOrigHarvestDefinitionID();
 
     /**
      * Get the harvestFilename prefix.
-     * 
+     *
      * @return the harvestFilename prefix.
      */
     String getHarvestFilenamePrefix();

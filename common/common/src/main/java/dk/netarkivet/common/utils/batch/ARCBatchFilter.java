@@ -93,7 +93,7 @@ public abstract class ARCBatchFilter implements Serializable {
 
     /**
      * Get the name of the filter.
-     * 
+     *
      * @return the name of the filter.
      */
     protected String getName() {
@@ -120,7 +120,7 @@ public abstract class ARCBatchFilter implements Serializable {
 
     /**
      * Check, if a certain mimetype is valid.
-     * 
+     *
      * @param mimetype a given mimetype
      * @return boolean true, if mimetype matches word/word, otherwise false
      */
@@ -131,7 +131,7 @@ public abstract class ARCBatchFilter implements Serializable {
 
     /**
      * Check if a given record is accepted (not filtered out) by this filter.
-     * 
+     *
      * @param record a given ARCRecord
      * @return true, if the given record is accepted by this filter
      */

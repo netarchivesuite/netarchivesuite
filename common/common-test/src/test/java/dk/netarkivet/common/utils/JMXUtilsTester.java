@@ -60,9 +60,7 @@ import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
- * 
  * Unit tests for the JMXUtils class.
- *
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class JMXUtilsTester {
@@ -133,7 +131,7 @@ public class JMXUtilsTester {
          * Create a test MBeanServerConnection that fails a number of times.
          *
          * @param failCount Number of times the getAttribute/executeCommand methods should be called before they
-         *            succeed.
+         * succeed.
          */
         TestMBeanServerConnection(int failCount) {
             this.failCount = failCount;

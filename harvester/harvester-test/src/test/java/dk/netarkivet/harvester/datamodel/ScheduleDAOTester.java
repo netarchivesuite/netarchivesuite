@@ -52,7 +52,7 @@ public class ScheduleDAOTester extends DataModelTestCase {
     /**
      * Verify that the standard usage works: Get an instance of a ScheduleDAO create a new schedule and retrieve the
      * stored data from it
-     * 
+     *
      * @param schedule A schedule to test.
      */
     public void doTestNormalUsage(final Schedule schedule) {
@@ -177,7 +177,7 @@ public class ScheduleDAOTester extends DataModelTestCase {
 
     /**
      * Check that updating an entry that has already been modified results in an IOFailure
-     * */
+     */
     @Test
     public void testOptimisticLocking() {
         // create the schedule

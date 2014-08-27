@@ -22,13 +22,13 @@
  */
 package dk.netarkivet.deploy;
 
-import junit.framework.TestCase;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
+import junit.framework.TestCase;
 
 public class DeployTester extends TestCase {
 
@@ -79,10 +79,10 @@ public class DeployTester extends TestCase {
      * script matches the target files stored in SVN. Any change to the output files, will break this test. When the
      * test is broken: Verify that all differences reported by this test are intended and correct, when all output files
      * are verified correct, replace the target files in SVN with the new set of output files.
-     * 
+     * <p>
      * This also tests the consequences of non-default jmxremote files and non-default monitor user-name and Heritrix
      * user-name.
-     * 
+     * <p>
      * Uses only the default databases.
      */
     public void unmaintainableTestDeploy() {

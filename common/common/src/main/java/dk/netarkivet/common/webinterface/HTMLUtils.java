@@ -103,7 +103,7 @@ public class HTMLUtils {
     /**
      * Url encodes a string in UTF-8. This encodes _all_ non-letter non-number characters except '-', '_' and '.'. The
      * characters '/' and ':' are encoded.
-     * 
+     *
      * @param s the string to encode
      * @return the encoded string
      */
@@ -118,7 +118,7 @@ public class HTMLUtils {
 
     /**
      * Url decodes a string encoded in UTF-8.
-     * 
+     *
      * @param s the string to decode
      * @return the decoded string
      */
@@ -135,7 +135,7 @@ public class HTMLUtils {
      * Prints the header information for the webpages in the GUI. This includes the navigation menu, and links for
      * changing the language. The title of the page is generated internationalised from sitesections. If you want to
      * specify it, use the overloaded method.
-     * 
+     *
      * @param context The context of the web page request.
      * @throws IOException if an error occurs during writing of output.
      */
@@ -151,7 +151,7 @@ public class HTMLUtils {
      * Prints the header information for the webpages in the GUI. This includes the navigation menu, and links for
      * changing the language. The title of the page is generated internationalised from sitesections. If you want to
      * specify it, use the overloaded method.
-     * 
+     *
      * @param context The context of the web page request.
      * @throws IOException if an error occurs during writing of output.
      */
@@ -167,7 +167,7 @@ public class HTMLUtils {
      * Prints the header information for the webpages in the GUI. This includes the navigation menu, and links for
      * changing the language. The title of the page is generated internationalised from sitesections. If you want to
      * specify it, use the overloaded method.
-     * 
+     *
      * @param context The context of the web page request.
      * @param refreshInSeconds auto-refresh time in seconds
      * @throws IOException if an error occurs during writing of output.
@@ -183,7 +183,7 @@ public class HTMLUtils {
     /**
      * Prints the header information for the webpages in the GUI. This includes the navigation menu, and links for
      * changing the language.
-     * 
+     *
      * @param title An internationalised title of the page.
      * @param context The context of the web page request.
      * @param jsToInclude path(s) to external .js files to include in header.
@@ -221,7 +221,7 @@ public class HTMLUtils {
     /**
      * Prints the header information for the webpages in the GUI. This includes the navigation menu, and links for
      * changing the language.
-     * 
+     *
      * @param title An internationalised title of the page.
      * @param context The context of the web page request.
      * @param refreshInSeconds auto-refresh time in seconds
@@ -253,7 +253,7 @@ public class HTMLUtils {
 
     /**
      * Get the locale according to header context information.
-     * 
+     *
      * @param context The context of the web page request.
      * @return The locale given in the the page response.
      */
@@ -266,7 +266,7 @@ public class HTMLUtils {
      * Prints out links to change languages. Will read locales and names of languages from settings, and write them as
      * links to the page "lang.jsp". The locale will be given to this page as a parameter, the name will be shown as the
      * text of the link
-     * 
+     *
      * @param out the writer to which the links are written.
      * @throws IOException if an error occurs during writing of output.
      */
@@ -309,7 +309,7 @@ public class HTMLUtils {
 
     /**
      * Writes out footer information to close the page.
-     * 
+     *
      * @param out the writer to which the information is written
      * @throws IOException if the output cannot be written
      */
@@ -376,7 +376,7 @@ public class HTMLUtils {
      *
      * @param d A date
      * @return A representation of the date that can be directly inserted into an HTML document, or the empty string if
-     *         d is null.
+     * d is null.
      * @deprecated Please use <fmt:date> from taglib instead.
      */
     public static String makeDate(Date d) {
@@ -389,7 +389,7 @@ public class HTMLUtils {
 
     /**
      * Returns the toString() value of an object or a hyphen if the argument is null.
-     * 
+     *
      * @param o the given object
      * @return o.toString() or "-" if o is null
      */
@@ -481,7 +481,7 @@ public class HTMLUtils {
 
     /**
      * Sets the character encoding for reading parameters and content from a request in a JSP page.
-     * 
+     *
      * @param request The servlet request object
      */
     public static void setUTF8(HttpServletRequest request) {
@@ -537,7 +537,7 @@ public class HTMLUtils {
 
     /**
      * Get a locale from cookie, if present. The default request locale otherwise.
-     * 
+     *
      * @param request The request to get the locale for.
      * @return The cookie locale, if present. The default request locale otherwise.
      */
@@ -750,7 +750,7 @@ public class HTMLUtils {
      * @param maxValue The maximum allowed value
      * @return The value x parsed from the string, if minValue <= x <= maxValue
      * @throws ForwardedToErrorPage if the parameter doesn't exist, is not a parseable integer, or doesn't lie within
-     *             the limits.
+     * the limits.
      */
     public static int parseAndCheckInteger(PageContext context, String param, int minValue, int maxValue)
             throws ForwardedToErrorPage {
@@ -785,7 +785,7 @@ public class HTMLUtils {
      * @param param The name of the parameter to parse.
      * @param defaultValue A value to return if the parameter is not present (may be null).
      * @return Parsed value or default value if the parameter is missing or empty. Null will only be returned if passed
-     *         as the default value.
+     * as the default value.
      * @throws ForwardedToErrorPage if the parameter is present but not parseable as a long value.
      */
     public static Long parseOptionalLong(PageContext context, String param, Long defaultValue) {
@@ -807,7 +807,7 @@ public class HTMLUtils {
      * @param format The format of the date, in the format defined by SimpleDateFormat
      * @param defaultValue A value to return if the parameter is not present (may be null)
      * @return Parsed value or default value if the parameter is missing or empty. Null will only be returned if passed
-     *         as the default value.
+     * as the default value.
      * @throws ForwardedToErrorPage if the parameter is present but not parseable as a date
      */
     public static Date parseOptionalDate(PageContext context, String param, String format, Date defaultValue) {
@@ -836,7 +836,7 @@ public class HTMLUtils {
      * @param param The name of the parameter to parse
      * @param defaultValue A value to return if the parameter is not present (may be null)
      * @return Parsed value or default value if the parameter is missing or empty. Null will only be returned if passed
-     *         as the default value.
+     * as the default value.
      */
     public static boolean parseOptionalBoolean(PageContext context, String param, boolean defaultValue) {
         ArgumentNotValid.checkNotNullOrEmpty(param, "String param");
@@ -851,11 +851,11 @@ public class HTMLUtils {
 
     /**
      * Create a localized string representation of the given long.
-     * 
+     *
      * @param i A long integer
      * @param context The given JSP context
      * @return a localized string representation of the given long TODO Should this method throw ArgumentNotValid if the
-     *         context is null
+     * context is null
      */
     public static String localiseLong(long i, PageContext context) {
         NumberFormat nf = NumberFormat.getInstance(HTMLUtils.getLocaleObject(context));
@@ -864,11 +864,11 @@ public class HTMLUtils {
 
     /**
      * Create a localized string representation of the given long.
-     * 
+     *
      * @param i A long integer
      * @param locale The given locale.
      * @return a localized string representation of the given long TODO Should this method throw ArgumentNotValid if the
-     *         locale is null
+     * locale is null
      */
     public static String localiseLong(long i, Locale locale) {
         NumberFormat nf = NumberFormat.getInstance(locale);
@@ -877,7 +877,7 @@ public class HTMLUtils {
 
     /**
      * Parse a given String for a long value.
-     * 
+     *
      * @param loc The given Locale.
      * @param paramValue The given parameter value
      * @param parameterName The given parameter name (used for debugging)

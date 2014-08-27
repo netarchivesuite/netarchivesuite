@@ -67,22 +67,22 @@ import dk.netarkivet.harvester.harvesting.report.HarvestReport;
  * This class responds to JMS doOneCrawl messages from the HarvestScheduler and launches a Heritrix crawl with the
  * received job description. The generated ARC files are uploaded to the bitarchives once a harvest job has been
  * completed.
- *
+ * <p>
  * During its operation CrawlStatus messages are sent to the HarvestSchedulerMonitorServer. When starting the actual
  * harvesting a message is sent with status 'STARTED'. When the harvesting has finished a message is sent with either
  * status 'DONE' or 'FAILED'. Either a 'DONE' or 'FAILED' message with result should ALWAYS be sent if at all possible,
  * but only ever one such message per job.
- *
+ * <p>
  * It is necessary to be able to run the Heritrix harvester on several machines and several processes on each machine.
  * Each instance of Heritrix is started and monitored by a HarvestControllerServer.
- *
+ * <p>
  * Initially, all directories under serverdir are scanned for harvestinfo files. If any are found, they are parsed for
  * information, and all remaining files are attempted uploaded to the bitarchive. It will then send back a
  * crawlstatusmessage with status failed.
- *
+ * <p>
  * A new thread is started for each actual crawl, in which the JMS listener is removed. Threading is required since JMS
  * will not let the called thread remove the listener that's being handled.
- *
+ * <p>
  * After a harvestjob has been terminated, either successfully or unsuccessfully, the serverdir is again scanned for
  * harvestInfo files to attempt upload of files not yet uploaded. Then it begins to listen again after new jobs, if
  * there is enough room available on the machine. If not, it logs a warning about this, which is also sent as a
@@ -98,7 +98,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
 
     /**
      * The configured application instance id.
-     * 
+     *
      * @see CommonSettings#APPLICATION_INSTANCE_ID
      */
     private final String applicationInstanceId = Settings.get(CommonSettings.APPLICATION_INSTANCE_ID);
@@ -246,7 +246,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
 
     /**
      * Will be called on shutdown.
-     * 
+     *
      * @see CleanupIF#cleanup()
      */
     public void cleanup() {
@@ -292,20 +292,20 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
      * Checks that we're available to do a crawl, and if so, marks us as unavailable, checks that the job message is
      * well-formed, and starts the thread that the crawl happens in. If an error occurs starting the crawl, we will
      * start listening for messages again.
-     *
+     * <p>
      * The sequence of actions involved in a crawl are:</br> 1. If we are already running, resend the job to the queue
      * and return</br> 2. Check the job for validity</br> 3. Send a CrawlStatus message that crawl has STARTED</br> In a
      * separate thread:</br> 4. Unregister this HACO as listener</br> 5. Create a new crawldir (based on the JobID and a
      * timestamp)</br> 6. Write a harvestInfoFile (using JobID and crawldir) and metadata</br> 7. Instantiate a new
      * HeritrixLauncher</br> 8. Start a crawl</br> 9. Store the generated arc-files and metadata in the known
      * bit-archives </br>10. _Always_ send CrawlStatus DONE or FAILED</br> 11. Move crawldir into oldJobs dir</br>
-     * 
-     * @see #visit(DoOneCrawlMessage) for more details
+     *
      * @param msg The crawl job
      * @throws IOFailure On trouble harvesting, uploading or processing harvestInfo
      * @throws UnknownID if jobID is null in the message
      * @throws ArgumentNotValid if the status of the job is not valid - must be SUBMITTED
      * @throws PermissionDenied
+     * @see #visit(DoOneCrawlMessage) for more details
      */
     private void onDoOneCrawl(final DoOneCrawlMessage msg) throws IOFailure, UnknownID, ArgumentNotValid,
             PermissionDenied {
@@ -417,7 +417,6 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
      * Start listening for new crawl requests again. This actually doesn't re-add a listener, but the listener only gets
      * removed when we're so far committed that we're going to exit at the end. So to start accepting jobs again, we
      * stop resending messages we get.
-     *
      */
     private synchronized void startAcceptingJobs() {
         // allow this haco to receive messages
@@ -426,7 +425,6 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
 
     /**
      * Stop listening for new crawl requests.
-     *
      */
     private void removeListener() {
         log.debug("Removing listener on CHANNEL '{}'", jobChannel);
@@ -533,7 +531,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
      *
      * @param crawlDir The location of harvest-info to be processed
      * @param crawlException any exceptions thrown by the crawl which need to be reported back to the scheduler (may be
-     *            null for success)
+     * null for success)
      * @throws IOFailure if the file cannot be read
      */
     private void processHarvestInfoFile(File crawlDir, Throwable crawlException) throws IOFailure {
@@ -608,7 +606,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
 
         /**
          * Constructor for the HarvesterThread class.
-         * 
+         *
          * @param job a harvesting job
          * @param origHarvestInfo Info about the harvestdefinition that scheduled this job
          * @param metadataEntries metadata associated with the given job
@@ -622,9 +620,9 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
         /**
          * The thread body for the harvester thread. Removes the JMS listener, sets up the files for Heritrix, then
          * passes control to the HarvestController to perform the actual harvest.
-         *
+         * <p>
          * TODO Get file writing into HarvestController as well (requires some rearrangement of the message sending)
-         * 
+         *
          * @throws PermissionDenied if we cannot create the crawl directory.
          * @throws IOFailure if there are problems preparing or running the crawl.
          */
@@ -731,7 +729,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
 
         /**
          * Returns <code>true</code> if the a doOneCrawl is running, else <code>false</code>.
-         * 
+         *
          * @return Whether a crawl running.
          */
         public boolean isRunning() {
@@ -740,7 +738,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
 
         /**
          * Use for changing the running state.
-         * 
+         *
          * @param running The new status
          */
         public synchronized void setRunning(boolean running) {

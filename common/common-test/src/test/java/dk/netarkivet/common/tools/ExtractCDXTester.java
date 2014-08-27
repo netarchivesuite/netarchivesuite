@@ -122,7 +122,7 @@ public class ExtractCDXTester {
 
     /**
      * Parses output from stdOut as a cdx file.
-     * 
+     *
      * @return All records from the output cdx file, as a List.
      */
     private List<CDXRecord> getRecords() {

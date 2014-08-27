@@ -28,7 +28,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * An immutable pair if an index and the set this is an index for.
- * 
+ *
  * @param <I> The type of set, this is an index for.
  */
 public class Index<I> {
@@ -40,10 +40,9 @@ public class Index<I> {
 
     /**
      * Initialise the set.
-     * 
+     *
      * @param indexFile The index file.
      * @param indexSet The set this is an index for. Can be null TODO Should the indexSet be allowed to be null?
-     *
      * @throws ArgumentNotValid if indexFile is null.
      */
     public Index(File indexFile, I indexSet) {
@@ -54,7 +53,7 @@ public class Index<I> {
 
     /**
      * Get the index file.
-     * 
+     *
      * @return The index file.
      */
     public File getIndexFile() {
@@ -63,7 +62,7 @@ public class Index<I> {
 
     /**
      * Get the set this is an index for.
-     * 
+     *
      * @return The set this is an index for.
      */
     public I getIndexSet() {

@@ -188,13 +188,13 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
         if (splitByObjectLimit) {
             if (NumberUtils.compareInf(cfg.getMaxObjects(), forceMaxObjectsPerDomain) < 0
                     || (job.isConfigurationSetsObjectLimit() && NumberUtils.compareInf(cfg.getMaxObjects(),
-                            forceMaxObjectsPerDomain) != 0)) {
+                    forceMaxObjectsPerDomain) != 0)) {
                 return false;
             }
         } else {
             if (NumberUtils.compareInf(cfg.getMaxBytes(), forceMaxBytesPerDomain) < 0
                     || (job.isConfigurationSetsByteLimit() && NumberUtils.compareInf(cfg.getMaxBytes(),
-                            forceMaxBytesPerDomain) != 0)) {
+                    forceMaxBytesPerDomain) != 0)) {
                 return false;
             }
         }

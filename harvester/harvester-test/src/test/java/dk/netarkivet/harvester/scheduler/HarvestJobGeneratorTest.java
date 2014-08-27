@@ -69,9 +69,7 @@ public class HarvestJobGeneratorTest extends DataModelTestCase {
     /**
      * Test that we can get jobs created from HDs.
      *
-     * @throws Exception
-     * 
-     *             Disabled JIRA issue: https://sbforge.org/jira/browse/NAS-2342
+     * @throws Exception Disabled JIRA issue: https://sbforge.org/jira/browse/NAS-2342
      */
     @Test
     // @Ignore("NAS-2342")
@@ -148,7 +146,7 @@ public class HarvestJobGeneratorTest extends DataModelTestCase {
      * test that skipping a scheduling because the previous scheduling is still running, or at least the system still
      * thinks it is running. because the id of the harvest is contained in the set
      * HarvestJobGenerator#harvestDefinitionsBeingScheduled
-     * 
+     *
      * @throws Exception
      */
 
@@ -228,8 +226,9 @@ public class HarvestJobGeneratorTest extends DataModelTestCase {
                     continue;
                 }
             }
-            if (!threadsRemain)
+            if (!threadsRemain) {
                 return;
+            }
         }
         throw new TimeoutException(ThreadUtils.getAllThreads().length
                 + "JobGeneratorTask thread remain after 20 seconds");

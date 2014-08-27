@@ -49,13 +49,13 @@ public class MonthlyFrequencyTester {
 
     /**
      * Given a frequency that can start any time, check that first event is immediate.
-     * 
+     *
      * @throws Exception
      */
     @Test
     public void testGetFirstEvent1() throws Exception {
         MonthlyFrequency freq = new MonthlyFrequency(4); // Every four months,
-                                                         // anytime
+        // anytime
         Calendar cal = GregorianCalendar.getInstance();
         cal.set(2005, Calendar.AUGUST, 25, 22, 42);
         Date d1 = cal.getTime();
@@ -65,16 +65,16 @@ public class MonthlyFrequencyTester {
 
     /**
      * Given a frequency that can start 5th of month 4:22, check that next event is at first correct time.
-     * 
+     *
      * @throws Exception
      */
     @Test
     public void testGetFirstEvent2() throws Exception {
         MonthlyFrequency freq = new MonthlyFrequency(4, 5, 4, 22); // Every four
-                                                                   // months, on
-                                                                   // the day
-                                                                   // hour and
-                                                                   // minute
+        // months, on
+        // the day
+        // hour and
+        // minute
         Calendar cal = new GregorianCalendar(2005, Calendar.AUGUST, 25, 22, 42);
         Date d1 = cal.getTime();
         cal.add(Calendar.MINUTE, ((60 + 22) - 42));
@@ -87,13 +87,13 @@ public class MonthlyFrequencyTester {
 
     /**
      * Given a frequency that can start any time, check that next event is after appropriate period.
-     * 
+     *
      * @throws Exception
      */
     @Test
     public void testGetNextEvent1() throws Exception {
         MonthlyFrequency freq = new MonthlyFrequency(4); // Every four months,
-                                                         // anytime
+        // anytime
         Calendar cal = new GregorianCalendar(2005, Calendar.AUGUST, 25, 22, 42);
         Date d1 = cal.getTime();
         cal.add(Calendar.MONTH, 4);
@@ -104,16 +104,16 @@ public class MonthlyFrequencyTester {
 
     /**
      * Given a frequency that can start 5th of month 4:22, check that next event is after appropriate period.
-     * 
+     *
      * @throws Exception
      */
     @Test
     public void testGetNextEvent2() throws Exception {
         MonthlyFrequency freq = new MonthlyFrequency(4, 5, 5, 23); // Every four
-                                                                   // months, on
-                                                                   // the day
-                                                                   // hour and
-                                                                   // minute
+        // months, on
+        // the day
+        // hour and
+        // minute
         Calendar cal = new GregorianCalendar(2005, Calendar.AUGUST, 25, 22, 42);
         Date d1 = cal.getTime();
         cal.add(Calendar.MONTH, 4);
@@ -129,16 +129,16 @@ public class MonthlyFrequencyTester {
     /**
      * Given a frequency that can start 5th of month 4:22, check that next event is after appropriate period, even given
      * a date that is 5th of month at 4:22.
-     * 
+     *
      * @throws Exception
      */
     @Test
     public void testGetNextEvent3() throws Exception {
         MonthlyFrequency freq = new MonthlyFrequency(4, 5, 5, 23); // Every four
-                                                                   // months, on
-                                                                   // the day
-                                                                   // hour and
-                                                                   // minute
+        // months, on
+        // the day
+        // hour and
+        // minute
         Calendar cal = new GregorianCalendar(2005, Calendar.AUGUST, 5, 5, 23);
         Date d1 = cal.getTime();
         Calendar cal2 = new GregorianCalendar(2005, Calendar.DECEMBER, 5, 5, 23);
@@ -150,18 +150,18 @@ public class MonthlyFrequencyTester {
     /**
      * Given a frequency that can start 31st of month 12:00, check that this will be on the 29th in February, and 31st
      * in March.
-     * 
+     *
      * @throws Exception
      */
     @Test
     public void testGetNextEvent4() throws Exception {
         MonthlyFrequency freq = new MonthlyFrequency(1, 31, 12, 0); // Every
-                                                                    // four
-                                                                    // months,
-                                                                    // on the
-                                                                    // day hour
-                                                                    // and
-                                                                    // minute
+        // four
+        // months,
+        // on the
+        // day hour
+        // and
+        // minute
         Calendar cal = new GregorianCalendar(2005, Calendar.JANUARY, 31, 12, 0);
         Date d1 = cal.getTime();
         Calendar cal2 = new GregorianCalendar(2005, Calendar.FEBRUARY, 28, 12, 0);
@@ -179,14 +179,14 @@ public class MonthlyFrequencyTester {
     /**
      * Given a frequency that can start 31st of month any time, check that this will be on the 29th in February, and
      * 29th in March.
-     * 
+     *
      * @throws Exception
      */
     @Test
     public void testGetNextEvent5() throws Exception {
         MonthlyFrequency freq = new MonthlyFrequency(1); // Every four months,
-                                                         // on the day hour and
-                                                         // minute
+        // on the day hour and
+        // minute
         Calendar cal = new GregorianCalendar(2004, Calendar.JANUARY, 31, 12, 0);
         Date d1 = cal.getTime();
         Calendar cal2 = new GregorianCalendar(2004, Calendar.FEBRUARY, 29, 12, 0);
@@ -204,18 +204,18 @@ public class MonthlyFrequencyTester {
     /**
      * Given a frequency that can start 31st of month 12:00, check that this will be on the 28th in February, and 31st
      * in March.
-     * 
+     *
      * @throws Exception
      */
     @Test
     public void testGetNextEvent6() throws Exception {
         MonthlyFrequency freq = new MonthlyFrequency(1, 31, 12, 0); // Every
-                                                                    // four
-                                                                    // months,
-                                                                    // on the
-                                                                    // day hour
-                                                                    // and
-                                                                    // minute
+        // four
+        // months,
+        // on the
+        // day hour
+        // and
+        // minute
         Calendar cal = new GregorianCalendar(2005, Calendar.JANUARY, 30, 15, 0);
         Date d = cal.getTime();
         Calendar cal1 = new GregorianCalendar(2005, Calendar.JANUARY, 31, 12, 0);
@@ -308,10 +308,10 @@ public class MonthlyFrequencyTester {
         }
 
         MonthlyFrequency freq = new MonthlyFrequency(4, 5, 5, 23); // Every four
-                                                                   // months, on
-                                                                   // the day
-                                                                   // hour and
-                                                                   // minute
+        // months, on
+        // the day
+        // hour and
+        // minute
         try {
             freq.getFirstEvent(null);
             fail("should throw exception");

@@ -33,18 +33,18 @@ import dk.netarkivet.common.exceptions.PermissionDenied;
 
 /**
  * Generic class for creating class instances from class names given in settings.
- * 
+ *
  * @param <T> the object-type returned by this class.
  */
 public class SettingsFactory<T> {
 
     /**
      * Creates a new class of the class given in the settings field.
-     *
+     * <p>
      * If the loaded class has a getInstance() method that matches the given arguments, that will be called to create
      * the class, otherwise a matching constructor will be called, if it exists. This sequence allows for creating
      * singletons.
-     *
+     * <p>
      * Due to limitations of the Java Reflection API, the parameters of the getInstance method declared on the loaded
      * class must match the given arguments exactly, without subclassing, interface implementation or unboxing. In
      * particular, since any primitive types are automatically boxed when passed to this method, getInstance() methods
@@ -52,7 +52,7 @@ public class SettingsFactory<T> {
      *
      * @param settingsField A field in the Settings class.
      * @param args The arguments that will be passed to the getInstance method or the constructor. These will also be
-     *            used to determine which getInstance method or constructor to find.
+     * used to determine which getInstance method or constructor to find.
      * @param <T> the object-type returned by this method.
      * @return A new instance of type T created by calling getInstance() or by invoking a constructor.
      * @throws ArgumentNotValid if settingsField is null or the invoked method or constructor threw an exception.

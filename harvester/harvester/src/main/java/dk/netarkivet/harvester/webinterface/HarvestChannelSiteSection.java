@@ -49,13 +49,13 @@ public class HarvestChannelSiteSection extends SiteSection {
         super("sitesection;HarvestChannel", "HarvestChannel", PAGES_VISIBLE_IN_MENU, new String[][] {
                 {"edit-harvest-mappings", "pagetitle;edit.harvest.mappings"},
                 {"edit-harvest-channels", "pagetitle;edit.harvest.channels"}
-        // The pages listed below are not visible in the left menu
-                }, "HarvestChannel", dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
+                // The pages listed below are not visible in the left menu
+        }, "HarvestChannel", dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
     }
 
     /**
      * Initialise the site section.
-     * 
+     *
      * @throws UnknownID If the default order.xml does not exist.
      */
     public void initialize() {

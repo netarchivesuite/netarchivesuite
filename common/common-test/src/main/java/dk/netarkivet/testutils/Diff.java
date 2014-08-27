@@ -41,7 +41,7 @@ import java.util.TreeMap;
  * <code>Comparable</code> interface. If so, its <code>equals</code> and <code>compareTo</code> methods will be invoked
  * on the instances in the "from" and "to" collections; otherwise, for speed, hash codes from the objects will be used
  * instead for comparison.
- *
+ * <p>
  * <p>
  * The file FileDiff.java shows an example usage of this class, in an application similar to the Unix "diff" program.
  * </p>

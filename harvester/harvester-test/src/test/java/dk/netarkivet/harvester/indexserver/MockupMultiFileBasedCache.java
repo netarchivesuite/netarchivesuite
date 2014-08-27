@@ -48,7 +48,9 @@ public class MockupMultiFileBasedCache extends MultiFileBasedCache<Long> impleme
 
     public enum Mode {
         SILENT, REPLYING, REPLYING_DIR, FAILING, WAITING
-    };
+    }
+
+    ;
 
     private Mode mode = Mode.SILENT;
 

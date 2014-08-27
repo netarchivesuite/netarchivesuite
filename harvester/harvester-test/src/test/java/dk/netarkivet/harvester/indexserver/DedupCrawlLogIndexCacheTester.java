@@ -27,7 +27,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import is.hi.bok.deduplicator.DigestIndexer;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -58,6 +57,7 @@ import org.junit.Test;
 
 import dk.netarkivet.common.utils.AllDocsCollector;
 import dk.netarkivet.common.utils.FileUtils;
+import is.hi.bok.deduplicator.DigestIndexer;
 
 /**
  * Unit test(s) for the DedupCrawlLogIndexCache class.

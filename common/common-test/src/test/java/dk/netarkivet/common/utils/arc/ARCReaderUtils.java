@@ -47,7 +47,6 @@ import dk.netarkivet.common.utils.cdx.CDXUtils;
 
 /**
  * Utilities to extract contents from arcfiles.
- *
  */
 public class ARCReaderUtils {
 
@@ -58,7 +57,7 @@ public class ARCReaderUtils {
 
     /**
      * Dump contents of an Arcfile to destinationDir.
-     * 
+     *
      * @param destinationDir the directory, where the files are dumped
      * @param ArcFile
      * @param excludeFilter Don't dump any records with mimetypes matching this string
@@ -129,7 +128,7 @@ public class ARCReaderUtils {
 
     /**
      * Generates a list of CDXrecords out of an cdxfile. Assumes that the cdxfile is good quality.
-     * 
+     *
      * @param cdxFile the given cdxfile
      * @return a list of CDXrecords out of an cdxfile.
      */
@@ -147,7 +146,7 @@ public class ARCReaderUtils {
      * This main function dumps the arc-file given to the destination directory given except the records matching the
      * given excludefilter: Usage: ARCReaderUtils.main tmpdir ARC-file excludefilter TODO promote the dumpARC tool to
      * the src-branch
-     * 
+     *
      * @param args The arguments needed (3 in number).
      * @throws IOException
      */

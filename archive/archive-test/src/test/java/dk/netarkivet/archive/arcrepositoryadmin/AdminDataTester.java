@@ -110,7 +110,7 @@ public class AdminDataTester {
 
     /**
      * Verifies that setReplyInfo(), hasReplyInfo() and getAndRemoveReplyInfo() work as expected.
-     * 
+     *
      * @throws IOException
      */
     @Test
@@ -169,7 +169,7 @@ public class AdminDataTester {
 
     /**
      * Verifies that setState() and getState() work as expected.
-     * 
+     *
      * @throws FileNotFoundException
      */
     @Test
@@ -198,7 +198,7 @@ public class AdminDataTester {
     /**
      * Verifies that after closing an AdminData and constructing a new one: - Checksums are the same - Store states are
      * the same - replyInfoObjects are removed.
-     * 
+     *
      * @throws IOException
      */
     @Test
@@ -225,7 +225,7 @@ public class AdminDataTester {
 
     /**
      * Tests that admin data starts with an empty or no log.
-     * 
+     *
      * @throws IOException
      */
     @Test
@@ -322,7 +322,7 @@ public class AdminDataTester {
 
     /**
      * Test that the admin data is written in a journalling style. Fixed bug #324.
-     * 
+     *
      * @throws IOException
      * @throws FileNotFoundException
      */

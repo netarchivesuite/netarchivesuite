@@ -190,25 +190,25 @@ public class BatchGUITester {
             @Override
             public int getRemotePort() {
                 return 0; // To change body of implemented methods use File |
-                          // Settings | File Templates.
+                // Settings | File Templates.
             }
 
             @Override
             public String getLocalName() {
                 return null; // To change body of implemented methods use File |
-                             // Settings | File Templates.
+                // Settings | File Templates.
             }
 
             @Override
             public String getLocalAddr() {
                 return null; // To change body of implemented methods use File |
-                             // Settings | File Templates.
+                // Settings | File Templates.
             }
 
             @Override
             public int getLocalPort() {
                 return 0; // To change body of implemented methods use File |
-                          // Settings | File Templates.
+                // Settings | File Templates.
             }
         };
         Locale l = new Locale("en");
@@ -241,25 +241,25 @@ public class BatchGUITester {
             @Override
             public int getRemotePort() {
                 return 0; // To change body of implemented methods use File |
-                          // Settings | File Templates.
+                // Settings | File Templates.
             }
 
             @Override
             public String getLocalName() {
                 return null; // To change body of implemented methods use File |
-                             // Settings | File Templates.
+                // Settings | File Templates.
             }
 
             @Override
             public String getLocalAddr() {
                 return null; // To change body of implemented methods use File |
-                             // Settings | File Templates.
+                // Settings | File Templates.
             }
 
             @Override
             public int getLocalPort() {
                 return 0; // To change body of implemented methods use File |
-                          // Settings | File Templates.
+                // Settings | File Templates.
             }
         };
         request.setupAddParameter(Constants.FILETYPE_PARAMETER, BatchFileType.Metadata.toString());

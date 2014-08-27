@@ -43,7 +43,6 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
  * Unit tests for the Settings class.
- * 
  */
 @SuppressWarnings({"rawtypes"})
 public class SettingsTester {

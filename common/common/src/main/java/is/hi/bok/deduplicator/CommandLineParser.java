@@ -48,7 +48,6 @@ public class CommandLineParser {
 
     /**
      * Block default construction.
-     *
      */
     private CommandLineParser() {
         super();
@@ -59,7 +58,6 @@ public class CommandLineParser {
      *
      * @param args Command-line arguments to process.
      * @param out PrintStream to write on.
-     *
      * @throws ParseException Failed parse of command line.
      */
     public CommandLineParser(String[] args, PrintWriter out) throws ParseException {
@@ -131,7 +129,7 @@ public class CommandLineParser {
 
     /**
      * Print message then usage then exit.
-     *
+     * <p>
      * The JVM exits inside in this method.
      *
      * @param message Message to print before we do usage.
@@ -143,7 +141,7 @@ public class CommandLineParser {
 
     /**
      * Print message and then exit.
-     *
+     * <p>
      * The JVM exits inside in this method.
      *
      * @param message Message to print before we do usage.
@@ -155,7 +153,7 @@ public class CommandLineParser {
 
     /**
      * Print out optional message an optional usage and then exit.
-     *
+     * <p>
      * Private utility method. JVM exits from inside in this method.
      *
      * @param message Message to print before we do usage.

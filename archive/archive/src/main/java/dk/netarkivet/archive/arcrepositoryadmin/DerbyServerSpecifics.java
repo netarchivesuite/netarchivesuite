@@ -34,7 +34,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 public class DerbyServerSpecifics extends DerbySpecifics {
     /**
      * Get an instance of the Server Derby specifics.
-     * 
+     *
      * @return Instance of the Derby specifics implementation
      */
     public static DBSpecifics getInstance() {

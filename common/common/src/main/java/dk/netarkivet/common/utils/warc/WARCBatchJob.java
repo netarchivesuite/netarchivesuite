@@ -55,14 +55,14 @@ public abstract class WARCBatchJob extends FileBatchJob {
 
     /**
      * Initialize the job before running. This is called before the processRecord() calls start coming.
-     * 
+     *
      * @param os The OutputStream to which output data is written
      */
     public abstract void initialize(OutputStream os);
 
     /**
      * Exceptions should be handled with the handleException() method.
-     * 
+     *
      * @param os The OutputStream to which output data is written
      * @param record the object to be processed.
      */
@@ -70,7 +70,7 @@ public abstract class WARCBatchJob extends FileBatchJob {
 
     /**
      * Finish up the job. This is called after the last processRecord() call.
-     * 
+     *
      * @param os The OutputStream to which output data is written
      */
     public abstract void finish(OutputStream os);
@@ -91,8 +91,8 @@ public abstract class WARCBatchJob extends FileBatchJob {
      *
      * @param warcFile The WARC or WARCGZ file to be processed.
      * @param os the OutputStream to which output is to be written
-     * @throws ArgumentNotValid if either argument is null
      * @return true, if file processed successful, otherwise false
+     * @throws ArgumentNotValid if either argument is null
      */
     public final boolean processFile(File warcFile, OutputStream os) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(warcFile, "warcFile");
@@ -102,7 +102,7 @@ public abstract class WARCBatchJob extends FileBatchJob {
         log.info("Processing WARCfile: {}", warcFile.getName());
 
         try { // This outer try-catch block catches all unexpected exceptions
-              // Create an WARCReader and retrieve its Iterator:
+            // Create an WARCReader and retrieve its Iterator:
             WARCReader warcReader = null;
 
             try {
@@ -184,7 +184,7 @@ public abstract class WARCBatchJob extends FileBatchJob {
 
     /**
      * Private method that handles our exception.
-     * 
+     *
      * @param e the given exception
      * @param warcFile The WARC File where the exception occurred.
      * @param index The offset in the WARC File where the exception occurred.
@@ -228,7 +228,6 @@ public abstract class WARCBatchJob extends FileBatchJob {
     }
 
     /**
-     * 
      * @return the number of records processed.
      */
     public int noOfRecordsProcessed() {

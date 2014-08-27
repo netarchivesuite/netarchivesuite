@@ -25,10 +25,10 @@ package dk.netarkivet.monitor.registry;
 import java.util.Map;
 import java.util.Set;
 
-import junit.framework.TestCase;
 import dk.netarkivet.common.distribute.monitorregistry.HostEntry;
 import dk.netarkivet.monitor.registry.distribute.MonitorRegistryServer;
 import dk.netarkivet.monitor.registry.distribute.RegisterHostMessage;
+import junit.framework.TestCase;
 
 public class MonitorRegistryServerTester extends TestCase {
 

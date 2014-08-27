@@ -163,7 +163,7 @@ public class IntegrityTestsFTP {
      * Initially verify that communication with the ftp-server succeeds without using the RemoteFile. (1) Verify, that
      * you can upload a file to a ftp-server, and retrieve the same file from this server-server. (2) Verify, that file
      * was not corrupted in transit author: SVC
-     * 
+     *
      * @throws IOException
      */
     public void testConfigSettings() throws IOException {
@@ -204,7 +204,7 @@ public class IntegrityTestsFTP {
 
     /**
      * test arguments extensively
-     * 
+     *
      * @throws FileNotFoundException
      */
     public void testArguments() throws FileNotFoundException {
@@ -264,7 +264,7 @@ public class IntegrityTestsFTP {
 
     /**
      * (1) Test, if uploaded and retrieved file are equal (2) test that rf.getSize() reports the correct value;
-     * 
+     *
      * @throws IOException
      */
     public void testUploadAndRetrieve() throws IOException {
@@ -292,7 +292,7 @@ public class IntegrityTestsFTP {
 
     /**
      * Check that the delete method can delete a file on the ftp server
-     * 
+     *
      * @throws FileNotFoundException
      */
     public void testDelete() throws FileNotFoundException {
@@ -319,7 +319,7 @@ public class IntegrityTestsFTP {
 
     /**
      * Test that multiple uploads of the same file does not clash. Test for bug #135
-     * 
+     *
      * @throws IOException
      */
     public void testDoubleUpload() throws IOException {
@@ -374,7 +374,7 @@ public class IntegrityTestsFTP {
         // " to " + destinationFile);
         /** Check filesizes, and see, if they differ */
         assertEquals("Length of original unzipped file "
-                + " and unzipped file retrieved from the ftp-server should not differ!", unzippedFile.length(),
+                        + " and unzipped file retrieved from the ftp-server should not differ!", unzippedFile.length(),
                 destinationFile.length());
     }
 

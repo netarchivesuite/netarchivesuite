@@ -61,7 +61,7 @@ public class LoadableFileBatchJob extends FileBatchJob {
 
     /**
      * Create a new batch job that runs the loaded class.
-     * 
+     *
      * @param classFile the classfile for the batch job we want to run.
      * @param arguments The arguments for the batchjobs. This can be null.
      * @throws ArgumentNotValid If the classfile is null.
@@ -81,7 +81,7 @@ public class LoadableFileBatchJob extends FileBatchJob {
 
     /**
      * Override of the default toString to include name of loaded class.
-     * 
+     *
      * @return string representation of this class.
      */
     public String toString() {
@@ -103,7 +103,7 @@ public class LoadableFileBatchJob extends FileBatchJob {
      *
      * @param in Stream that the object can be read from.
      * @throws IOException If there is an error reading from the stream, or the serialized object cannot be deserialized
-     *             due to errors in the serialized form.
+     * due to errors in the serialized form.
      * @throws ClassNotFoundException If the class definition of the serialized object cannot be found.
      */
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
@@ -123,7 +123,7 @@ public class LoadableFileBatchJob extends FileBatchJob {
 
     /**
      * Method for initializing the loaded batchjob.
-     * 
+     *
      * @throws IOFailure If the batchjob cannot be loaded.
      */
     protected void loadBatchJob() throws IOFailure {
@@ -169,7 +169,6 @@ public class LoadableFileBatchJob extends FileBatchJob {
      *
      * @param file the file to be processed.
      * @param os the OutputStream to which output should be written
-     *
      * @return true if the file was successfully processed, false otherwise
      */
     public boolean processFile(File file, OutputStream os) {

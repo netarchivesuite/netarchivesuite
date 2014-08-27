@@ -43,7 +43,7 @@ import dk.netarkivet.common.utils.batch.ArchiveBatchFilter;
 
 /**
  * Batch job that extracts information to create a CDX file.
- *
+ * <p>
  * A CDX file contains sorted lines of metadata from the ARC/WARC files, with each line followed by the file and offset
  * the record was found at, and optionally a checksum. The timeout of this job is 7 days. See
  * http://www.archive.org/web/researcher/cdx_file_format.php
@@ -68,7 +68,7 @@ public class ArchiveExtractCDXJob extends ArchiveBatchJob {
 
     /**
      * Constructs a new job for extracting CDX indexes.
-     * 
+     *
      * @param includeChecksum If true, an MD5 checksum is also written for each record. If false, it is not.
      */
     public ArchiveExtractCDXJob(boolean includeChecksum) {
@@ -86,9 +86,9 @@ public class ArchiveExtractCDXJob extends ArchiveBatchJob {
 
     /**
      * Filters out the NON-RESPONSE records.
-     * 
-     * @see dk.netarkivet.common.utils.archive.ArchiveBatchJob#getFilter()
+     *
      * @return The filter that defines what ARC/WARC records are wanted in the output CDX file.
+     * @see dk.netarkivet.common.utils.archive.ArchiveBatchJob#getFilter()
      */
     @Override
     public ArchiveBatchFilter getFilter() {
@@ -97,7 +97,7 @@ public class ArchiveExtractCDXJob extends ArchiveBatchJob {
 
     /**
      * Initialize any data needed (none).
-     * 
+     *
      * @see dk.netarkivet.common.utils.archive.ArchiveBatchJob#initialize(OutputStream)
      */
     @Override
@@ -106,9 +106,9 @@ public class ArchiveExtractCDXJob extends ArchiveBatchJob {
 
     /**
      * Process this entry, reading metadata into the output stream.
-     * 
-     * @see dk.netarkivet.common.utils.archive.ArchiveBatchJob#processRecord(ArchiveRecordBase, OutputStream)
+     *
      * @throws IOFailure on trouble reading arc record data
+     * @see dk.netarkivet.common.utils.archive.ArchiveBatchJob#processRecord(ArchiveRecordBase, OutputStream)
      */
     @Override
     public void processRecord(ArchiveRecordBase record, OutputStream os) {
@@ -178,7 +178,7 @@ public class ArchiveExtractCDXJob extends ArchiveBatchJob {
 
     /**
      * End of the batch job.
-     * 
+     *
      * @see dk.netarkivet.common.utils.arc.ARCBatchJob#finish(OutputStream)
      */
     @Override

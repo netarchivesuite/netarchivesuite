@@ -49,7 +49,7 @@ public abstract class ArchiveBatchJob extends ArchiveBatchJobBase {
 
     /**
      * Exceptions should be handled with the handleException() method.
-     * 
+     *
      * @param os The OutputStream to which output data is written
      * @param record the object to be processed.
      */
@@ -71,8 +71,8 @@ public abstract class ArchiveBatchJob extends ArchiveBatchJobBase {
      *
      * @param archiveFile The arc(.gz) or warc(.gz) file to be processed.
      * @param os the OutputStream to which output is to be written
-     * @throws ArgumentNotValid if either argument is null
      * @return true, if file processed successful, otherwise false
+     * @throws ArgumentNotValid if either argument is null
      */
     public final boolean processFile(File archiveFile, OutputStream os) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(archiveFile, "archiveFile");
@@ -82,7 +82,7 @@ public abstract class ArchiveBatchJob extends ArchiveBatchJobBase {
         log.info("Processing archive file: {}", archiveFile.getName());
 
         try { // This outer try-catch block catches all unexpected exceptions
-              // Create an ArchiveReader and retrieve its Iterator:
+            // Create an ArchiveReader and retrieve its Iterator:
             ArchiveReader archiveReader = null;
 
             try {

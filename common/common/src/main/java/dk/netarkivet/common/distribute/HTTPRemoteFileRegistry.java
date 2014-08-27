@@ -92,7 +92,7 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
 
     /**
      * Initialise the registry. This includes registering an HTTP server for getting the files from this machine.
-     * 
+     *
      * @throws IOFailure if it cannot be initialised.
      */
     protected HTTPRemoteFileRegistry() {
@@ -108,7 +108,7 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
     /**
      * Start the server, including a handler that responds with registered files, removes registered files on request,
      * and gives 404 otherwise.
-     * 
+     *
      * @throws IOFailure if it cannot be initialised.
      */
     protected void startServer() {
@@ -126,7 +126,7 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
 
     /**
      * Get the protocol part of URLs, that is HTTP.
-     * 
+     *
      * @return "http", the protocol.
      */
     protected String getProtocol() {
@@ -135,7 +135,7 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
 
     /**
      * Get the unique instance.
-     * 
+     *
      * @return The unique instance.
      */
     public static synchronized HTTPRemoteFileRegistry getInstance() {
@@ -147,7 +147,7 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
 
     /**
      * Register a file for serving to an endpoint.
-     * 
+     *
      * @param file The file to register.
      * @param deletable Whether it should be deleted on cleanup.
      * @return The URL it will be served as. It will be uniquely generated.
@@ -178,9 +178,8 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
 
     /**
      * Get the url for cleaning up after a remote file registered under some URL.
-     * 
+     *
      * @param url some URL
-     * 
      * @return the cleanup url.
      * @throws MalformedURLException If unable to construct the cleanup url
      */
@@ -190,10 +189,10 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
 
     /**
      * Open a connection to an URL in a registry.
-     * 
+     *
      * @param url The URL to open connection to.
-     * @throws IOException If unable to open the connection.
      * @return a connection to an URL in a registry
+     * @throws IOException If unable to open the connection.
      */
     protected URLConnection openConnection(URL url) throws IOException {
         return url.openConnection();
@@ -208,7 +207,7 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
 
         /**
          * Initialise pair.
-         * 
+         *
          * @param file The file.
          * @param deletable Whether it should be deleted on cleanup.
          */
@@ -237,7 +236,7 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
 
     /**
      * A handler for the registry.
-     *
+     * <p>
      * It has three ways to behave: Serve registered files, return 404 on unknown files, and unregister registered
      * files, depending on the URL.
      */
@@ -245,14 +244,13 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
         /**
          * A method for handling Jetty requests.
          *
-         * @see AbstractHandler#handle(String, org.eclipse.jetty.server.Request, HttpServletRequest,
-         *      HttpServletResponse), HttpServletResponse, int)
-         *
          * @param string Unused domain.
          * @param httpServletRequest request object.
          * @param httpServletResponse the response to write to.
          * @throws IOException On trouble in communication.
          * @throws ServletException On servlet trouble.
+         * @see AbstractHandler#handle(String, org.eclipse.jetty.server.Request, HttpServletRequest,
+         * HttpServletResponse), HttpServletResponse, int)
          */
         @Override
         public void handle(String string, Request baseRequest, HttpServletRequest httpServletRequest,

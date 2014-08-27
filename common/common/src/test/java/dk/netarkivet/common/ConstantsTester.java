@@ -83,7 +83,8 @@ public class ConstantsTester {
         for (Thread t : threads) {
             t.start();
         }
-        WAITLOOP: do {
+        WAITLOOP:
+        do {
             Thread.sleep(10);
             if (failed[0]) {
                 break;

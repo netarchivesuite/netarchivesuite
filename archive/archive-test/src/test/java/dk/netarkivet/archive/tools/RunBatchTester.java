@@ -442,5 +442,7 @@ public class RunBatchTester {
                 JMSConnectionFactory.getInstance().send(brm);
             }
         }
-    };
+    }
+
+    ;
 }

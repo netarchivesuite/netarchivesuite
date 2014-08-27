@@ -38,7 +38,7 @@ public class PostgreSQLSpecifics extends DBSpecifics {
 
     /**
      * Factory method discoverable by reflection from SettingsFactory.getInstance().
-     * 
+     *
      * @return a new instance of theis class.
      */
     public static DBSpecifics getInstance() {

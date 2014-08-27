@@ -38,7 +38,6 @@ import dk.netarkivet.common.utils.KeyValuePair;
 
 /**
  * Class responsible for checksumming a list of files.
- *
  */
 @SuppressWarnings({"serial"})
 public class ChecksumJob extends FileBatchJob {
@@ -59,7 +58,7 @@ public class ChecksumJob extends FileBatchJob {
 
     /**
      * Initialization of a ChecksumJob: a new structure for storing files failed is created.
-     * 
+     *
      * @param os The output stream where the output data is written.
      * @see FileBatchJob#initialize(OutputStream)
      */
@@ -128,7 +127,7 @@ public class ChecksumJob extends FileBatchJob {
     /**
      * Write a human-readily description of this ChecksumJob object. Writes out the name of the ChecksumJob, the number
      * of files processed, and the number of files that failed during processing.
-     * 
+     *
      * @return a human-readily description of this ChecksumJob object
      */
     public String toString() {
@@ -144,7 +143,7 @@ public class ChecksumJob extends FileBatchJob {
 
     /**
      * Invoke default method for deserializing object, and reinitialise the logger.
-     * 
+     *
      * @param s the InputStream
      */
     private void readObject(ObjectInputStream s) {
@@ -157,7 +156,7 @@ public class ChecksumJob extends FileBatchJob {
 
     /**
      * Invoke default method for serializing object.
-     * 
+     *
      * @param s the OutputStream
      * @throws IOFailure If an exception is caught during writing of the object.
      */

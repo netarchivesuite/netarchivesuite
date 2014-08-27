@@ -29,13 +29,12 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * Number related utilities.
- *
  */
 public class NumberUtils {
 
     /**
      * Return the smallest value of two given positive longs, with the addition that -1 means infinity.
-     * 
+     *
      * @param l1 The first value
      * @param l2 The second value
      * @return Smallest value
@@ -52,7 +51,7 @@ public class NumberUtils {
 
     /**
      * Compare two given positive longs, with the addition that -1 means infinity.
-     * 
+     *
      * @param l1 The first value
      * @param l2 The second value
      * @return -1 if first value is smallest, 0 if equal, 1 if second value is smallest
@@ -66,7 +65,7 @@ public class NumberUtils {
 
     /**
      * Converts a list to an array of primitive values.
-     * 
+     *
      * @param list the list to convert
      * @return an array of primitive values
      */

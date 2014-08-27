@@ -28,7 +28,7 @@ import dk.netarkivet.common.utils.SettingsFactory;
 
 /**
  * A factory for IndexClients.
- *
+ * <p>
  * Implementation note: This currently assumes that only one implementation exists, pointed out by the setting
  * settings.common.indexClient.class, but that the cache variant in question is selected by a parameter to its
  * getInstance method.
@@ -37,7 +37,7 @@ public class IndexClientFactory extends SettingsFactory<JobIndexCache> {
 
     /**
      * Get a cache of CDX files for a set of jobs.
-     * 
+     *
      * @return A cache implementation for CDX files.
      */
     public static JobIndexCache getCDXInstance() {

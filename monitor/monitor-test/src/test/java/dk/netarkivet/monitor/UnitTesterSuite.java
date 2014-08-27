@@ -23,13 +23,13 @@
 
 package dk.netarkivet.monitor;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import junit.textui.TestRunner;
 import dk.netarkivet.monitor.jmx.MonitorJMXTesterSuite;
 import dk.netarkivet.monitor.logging.MonitorLoggingTesterSuite;
 import dk.netarkivet.monitor.registry.MonitorRegistryTesterSuite;
 import dk.netarkivet.monitor.webinterface.MonitorWebinterfaceTesterSuite;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import junit.textui.TestRunner;
 
 /**
  * This class runs all the monitor module unit tests.

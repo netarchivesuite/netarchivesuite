@@ -39,7 +39,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 /**
  * This class contains the information that we keep about each file in the arcrepository: Checksum and the store states
  * for all bitarchives.
- *
+ * <p>
  * TODO Maybe don't have the store state info for fully completed stores, or else use a slimmer map for it.
  */
 public class ArcRepositoryEntry {
@@ -97,7 +97,8 @@ public class ArcRepositoryEntry {
     /**
      * Get the ArchiveStoreState for the entry in general. This is computed from the ArchiveStoreStates for the
      * bitarchives. <br>
-     * 1. If no information about the bitarchives are available, the state UPLOAD_FAILED with timestamp=NOW is returned <br>
+     * 1. If no information about the bitarchives are available, the state UPLOAD_FAILED with timestamp=NOW is returned
+     * <br>
      * 2. If there are information about one bitarchive, the state of this bitarchive is returned. <br>
      * 3. If there are information from more than one bitarchive, A. if the state of one of the bitarchives equals
      * UPLOAD_FAILED, the state UPLOAD_FAILED with the latest timestamp is returned B. else, find the lowest state of
@@ -156,7 +157,7 @@ public class ArcRepositoryEntry {
 
     /**
      * Set the StoreState for a specific bitarchive (set timestamp for last update to NOW).
-     * 
+     *
      * @param ba a bitarchive
      * @param state the new StoreState for this bitarchive.
      */
@@ -167,7 +168,7 @@ public class ArcRepositoryEntry {
 
     /**
      * Set the StoreState for a specific bitarchive (set timestamp for last update to lastchanged).
-     * 
+     *
      * @param baId a bitarchive
      * @param state the new StoreState for this bitarchive.
      * @param lastchanged the time for when the state was changed
@@ -179,7 +180,7 @@ public class ArcRepositoryEntry {
 
     /**
      * Get the StoreState for this entry for a given bitarchive or null if none.
-     * 
+     *
      * @param baId a bitarchive id
      * @return the StoreState for a given bitarchive.
      */
@@ -194,7 +195,7 @@ public class ArcRepositoryEntry {
 
     /**
      * Get the filename for this entry.
-     * 
+     *
      * @return the filename for this entry
      */
     String getFilename() {
@@ -203,7 +204,7 @@ public class ArcRepositoryEntry {
 
     /**
      * Set the checksum for this entry.
-     * 
+     *
      * @param checksum the new checksum for this entry
      */
     void setChecksum(String checksum) {
@@ -213,7 +214,7 @@ public class ArcRepositoryEntry {
 
     /**
      * Get the checksum for this entry.
-     * 
+     *
      * @return the stored checksum for this entry
      */
     public String getChecksum() {
@@ -222,7 +223,7 @@ public class ArcRepositoryEntry {
 
     /**
      * Get the reply info and remove it from the entry.
-     * 
+     *
      * @return A reply info object that nobody else has gotten or will get.
      */
     StoreMessage getAndRemoveReplyInfo() {
@@ -234,7 +235,7 @@ public class ArcRepositoryEntry {
 
     /**
      * Returns information of whether a ReplyInfo object has been stored with this entry.
-     * 
+     *
      * @return true, if replyInfo is not null.
      */
     boolean hasReplyInfo() {
@@ -258,7 +259,7 @@ public class ArcRepositoryEntry {
 
     /**
      * Check, if a given bitArchive has a StoreState connected to it.
-     * 
+     *
      * @param bitArchive a given bitarchive
      * @return true, if the given bitArchive has a StoreState connected to it.
      */
@@ -268,7 +269,7 @@ public class ArcRepositoryEntry {
 
     /**
      * Set the replyInfo instance variable.
-     * 
+     *
      * @param replyInfo The new value for the replyInfo variable.
      */
     void setReplyInfo(StoreMessage replyInfo) {

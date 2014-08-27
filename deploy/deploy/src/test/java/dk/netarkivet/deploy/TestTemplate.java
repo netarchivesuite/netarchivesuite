@@ -48,7 +48,7 @@ public class TestTemplate {
         Template tpl = new Template();
         Assert.assertNotNull(tpl);
 
-        testCases = new Object[][] { {new String[] {}, null, ""}, {new String[] {""}, null, ""},
+        testCases = new Object[][] {{new String[] {}, null, ""}, {new String[] {""}, null, ""},
                 {new String[] {"Netarkivet.dk", "NetarchiveSuite"}, null, "Netarkivet.dkNetarchiveSuite"},
                 {new String[] {"Netarkivet.dk", "NetarchiveSuite"}, "", "Netarkivet.dkNetarchiveSuite"},
                 {new String[] {"Netarkivet.dk", "NetarchiveSuite"}, "\r\n", "Netarkivet.dk\r\nNetarchiveSuite\r\n"}};
@@ -64,7 +64,7 @@ public class TestTemplate {
         env.put("NAS", "NetarchiveSuite");
         env.put("nas", "netarkivet.dk");
 
-        testCases = new Object[][] { {"${NAS}", "NetarchiveSuite", true, false, null},
+        testCases = new Object[][] {{"${NAS}", "NetarchiveSuite", true, false, null},
                 {"100$", "100$", true, false, null}, {"NA$A", "NA$A", true, false, null},
                 {"NA$$A", "NA$A", true, false, null}, {"Welcome to the ${", "Welcome to the ${", true, false, null},
                 {"${${NAS}}", "}", false, false, null},

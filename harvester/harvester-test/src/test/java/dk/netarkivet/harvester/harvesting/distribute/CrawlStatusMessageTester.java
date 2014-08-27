@@ -118,7 +118,7 @@ public class CrawlStatusMessageTester {
 
     /**
      * Returns a string representation of the information to be serialized in a CrawlStatusMessage
-     * 
+     *
      * @param csm the CrawlstatusMessage
      * @return the string representation
      */

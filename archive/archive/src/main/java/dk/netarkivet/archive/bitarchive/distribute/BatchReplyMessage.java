@@ -54,9 +54,9 @@ public class BatchReplyMessage extends ArchiveMessage {
      * @param originatingBatchMsgId The Id of the BathMessage which gave rise to this reply
      * @param filesProcessed The total number of file processed in this batch job
      * @param failedFiles A Collection of strings with the names of files on which this batch job failed. May be null or
-     *            empty for no errors.
+     * empty for no errors.
      * @param resultFile The RemoteFile containing the output from the batch job, or null if an error occurred that
-     *            prevented the creation of the file.
+     * prevented the creation of the file.
      * @throws ArgumentNotValid if the input parameters are not meaningful
      */
     public BatchReplyMessage(ChannelID to, ChannelID replyTo, String originatingBatchMsgId, int filesProcessed,

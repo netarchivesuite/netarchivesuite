@@ -23,9 +23,6 @@
 
 package dk.netarkivet.harvester.indexserver;
 
-import is.hi.bok.deduplicator.CrawlDataIterator;
-import is.hi.bok.deduplicator.DigestIndexer;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -55,6 +52,8 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.TimeUtils;
 import dk.netarkivet.common.utils.ZipUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
+import is.hi.bok.deduplicator.CrawlDataIterator;
+import is.hi.bok.deduplicator.DigestIndexer;
 
 /**
  * A cache that serves Lucene indices of crawl logs for given job IDs. Uses the DigestIndexer in the deduplicator
@@ -89,7 +88,7 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
 
     /**
      * Constructor for the CrawlLogIndexCache class.
-     * 
+     *
      * @param name The name of the CrawlLogIndexCache
      * @param blacklist Shall the mimefilter be considered a blacklist or a whitelist?
      * @param mimeFilter A regular expression for the mimetypes to exclude/include
@@ -200,7 +199,7 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
                 Iterator<IndexingState> iterator = outstandingJobs.iterator();
                 if (timeOutTime < System.currentTimeMillis()) {
                     log.warn("Max indexing time exceeded for one index ({}). Indexing stops here, "
-                            + "although missing subindices for {} jobs",
+                                    + "although missing subindices for {} jobs",
                             TimeUtils.readableTimeInterval(combineTimeout), outstandingJobs.size());
                     break;
                 }
@@ -249,7 +248,7 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
             }
 
             log.info("Adding the final {} subindices to main index. "
-                    + "Forcing index to contain max {} files (related to combine task #{})", subindices.size(),
+                            + "Forcing index to contain max {} files (related to combine task #{})", subindices.size(),
                     maxSegments, indexingJobCount);
 
             totalIndex.addIndexes(subindices.toArray(new Directory[0]));
@@ -288,7 +287,7 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
 
     /**
      * Try to release all resources connected to the given ThreadPoolExecutor.
-     * 
+     *
      * @param executor a ThreadPoolExecutor
      */
     private void closeDownThreadpoolQuietly(ThreadPoolExecutor executor) {
@@ -361,10 +360,10 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
 
     /**
      * Get a sorted, temporary CDX file corresponding to the given CDXfile.
-     * 
+     *
      * @param cdxFile A cdxfile
      * @return A temporary file with CDX info for that just sorted according to the standard CDX sorting rules. This
-     *         file will be removed at the exit of the JVM, but should be attempted removed when it is no longer used.
+     * file will be removed at the exit of the JVM, but should be attempted removed when it is no longer used.
      */
     protected static File getSortedCDX(File cdxFile) {
         try {
@@ -383,7 +382,7 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
      *
      * @param file The file containing an unsorted crawl.log file.
      * @return A temporary file containing the entries sorted according to URL. The file will be removed upon exit of
-     *         the JVM, but should be attempted removed when it is no longer used.
+     * the JVM, but should be attempted removed when it is no longer used.
      */
     protected static File getSortedCrawlLog(File file) {
         try {
@@ -399,7 +398,7 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
 
     /**
      * Create standard deduplication indexer.
-     * 
+     *
      * @param indexLocation The full path to the indexing directory
      * @return the created deduplication indexer.
      * @throws IOException If unable to open the index.

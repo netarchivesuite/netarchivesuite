@@ -61,7 +61,7 @@ public class ByteJarLoader extends ClassLoader implements Serializable {
 
     /**
      * Constructor for the ByteLoader.
-     * 
+     *
      * @param files An array of files, which are assumed to be jar-files, but they need not have the extension .jar
      */
     public ByteJarLoader(File... files) {
@@ -70,7 +70,7 @@ public class ByteJarLoader extends ClassLoader implements Serializable {
         for (File file : files) {
             try {
                 JarFile jarFile = new JarFile(file);
-                for (Enumeration<JarEntry> e = jarFile.entries(); e.hasMoreElements();) {
+                for (Enumeration<JarEntry> e = jarFile.entries(); e.hasMoreElements(); ) {
                     JarEntry entry = e.nextElement();
                     String name = entry.getName();
                     InputStream in = jarFile.getInputStream(entry);
@@ -87,11 +87,10 @@ public class ByteJarLoader extends ClassLoader implements Serializable {
 
     /**
      * Lookup and return the Class with the given className. This method overrides the ClassLoader.findClass method.
-     * 
+     *
      * @param className The name of the class to lookup
-     * @throws ClassNotFoundException If the class could not be found
      * @return the Class with the given className.
-     * 
+     * @throws ClassNotFoundException If the class could not be found
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
     public Class findClass(String className) throws ClassNotFoundException {

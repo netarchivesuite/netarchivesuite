@@ -39,21 +39,21 @@ public abstract class ArchiveRecordBase {
 
     /**
      * Return the wrapped Heritrix archive header
-     * 
+     *
      * @return the wrapped Heritrix archive header
      */
     public abstract ArchiveHeaderBase getHeader();
 
     /**
      * Return the payload input stream.
-     * 
+     *
      * @return the payload input stream
      */
     public abstract InputStream getInputStream();
 
     /**
      * Factory method for creating a wrapped Heritrix record.
-     * 
+     *
      * @param archiveRecord Heritrix archive record
      * @return wrapped Heritrix record
      */

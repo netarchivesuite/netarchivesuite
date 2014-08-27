@@ -25,7 +25,6 @@ package dk.netarkivet.archive.arcrepository.bitpreservation;
 
 /**
  * Constants used in bit preservation.
- *
  */
 public final class Constants {
 

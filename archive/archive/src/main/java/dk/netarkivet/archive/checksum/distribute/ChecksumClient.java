@@ -44,7 +44,7 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 /**
  * Proxy for remote checksum archive. Establishes the jms connection to the remote checksum archive.
- * 
+ * <p>
  * Can be used in combination with any type of ChecksumServerAPI.
  */
 public class ChecksumClient implements ReplicaClient {
@@ -62,7 +62,7 @@ public class ChecksumClient implements ReplicaClient {
 
     /**
      * The constructor. Cannot be used directly, use getInstance instead.
-     * 
+     *
      * @param theCRin The channel for contacting the checksum archive.
      * @throws IOFailure If there is a problem with the connection.
      */
@@ -74,7 +74,7 @@ public class ChecksumClient implements ReplicaClient {
 
     /**
      * The method for invoking an instance of this class.
-     * 
+     *
      * @param theCRin The channel for contacting the checksum archive.
      * @return A new instance.
      * @throws IOFailure If there is a problem with the connection.
@@ -92,7 +92,7 @@ public class ChecksumClient implements ReplicaClient {
     /**
      * Method for sending correct messages to the replica. This CorrectMessage is used to correct a bad entry in the
      * archive.
-     * 
+     *
      * @param msg The CorrectMessage to send to the replica.
      * @throws ArgumentNotValid If the CorrectMessage is null.
      */
@@ -108,7 +108,7 @@ public class ChecksumClient implements ReplicaClient {
 
     /**
      * Method for sending a GetAllFilenamesMessage to a checksum archive.
-     * 
+     *
      * @param msg The GetAllFilenamesMessage, which will be send through the jms connection to the checksum archive.
      * @throws ArgumentNotValid If the GetAllFilenamesMessage is null.
      */
@@ -123,7 +123,7 @@ public class ChecksumClient implements ReplicaClient {
 
     /**
      * Method for sending the GetAllChecksumMessage to the ChecksumReplica.
-     * 
+     *
      * @param msg The GetAllChecksumMessage, which will be sent through the jms connection to the checksum archive.
      * @throws ArgumentNotValid If the GetAllChecksumsMessage is null.
      */
@@ -138,7 +138,7 @@ public class ChecksumClient implements ReplicaClient {
 
     /**
      * Method for retrieving the checksum of a specific arcfile within the archive.
-     * 
+     *
      * @param msg The GetChecksumMessage which will be sent to the checksum archive though the jms connection.
      */
     public void sendGetChecksumMessage(GetChecksumMessage msg) {
@@ -153,7 +153,7 @@ public class ChecksumClient implements ReplicaClient {
 
     /**
      * Method for retrieving the checksum of a specific arcfile within the archive.
-     * 
+     *
      * @param replyChannel The channel where the reply should be sent.
      * @param filename The GetChecksumMessage which has been sent to the checksum archive though the jms connection.
      * @return The GetChecksumMessage which is sent.
@@ -176,7 +176,7 @@ public class ChecksumClient implements ReplicaClient {
 
     /**
      * Method for retrieving the type of replica. In this case the replica is a checksum replica.
-     * 
+     *
      * @return The type of this replica, in this case Checksum replica.
      */
     public ReplicaType getType() {
@@ -186,7 +186,7 @@ public class ChecksumClient implements ReplicaClient {
     /**
      * Method for uploading a file to the archive. This is only uploaded to one of the archives, not all of them. Thus
      * using the 'any' channel.
-     * 
+     *
      * @param rf The file to upload to the archive.
      * @throws ArgumentNotValid If the remote file is null.
      */
@@ -205,7 +205,7 @@ public class ChecksumClient implements ReplicaClient {
     /**
      * Method for sending batch job messages to the replica. This is not allowed since this archive at the end of this
      * client is a checksum archive, which cannot handle batch jobs.
-     * 
+     *
      * @param replyChannel The channel where the reply should be sent.
      * @param job The batchjob to execute.
      * @return Nothing. It always throws an exception, since it is not allowed to run batchjobs on a checksum archive.
@@ -225,7 +225,7 @@ public class ChecksumClient implements ReplicaClient {
     /**
      * Method for sending batch job messages to the replica. This is not allowed since this archive at the end of this
      * client is a checksum archive, which cannot handle batch jobs.
-     * 
+     *
      * @param msg The batch message.
      * @return Nothing. It always throws an exception, since it is not allowed to run batchjobs on a checksum archive.
      * @throws IllegalState Always. Since it is not legal to send a batchjob to a checksum replica.
@@ -242,7 +242,7 @@ public class ChecksumClient implements ReplicaClient {
     /**
      * This method is intended to retrieve a record from an arc-file within the archive. But since this handles checksum
      * archive, it does not have the actual arc-files, and this function should therefore fail.
-     * 
+     *
      * @param msg The GetMessage for retrieving the arc-record from the archive.
      * @throws IllegalState Always. Since checksum replicas cannot handle this kind of messages.
      * @throws ArgumentNotValid If the message is null.
@@ -258,7 +258,7 @@ public class ChecksumClient implements ReplicaClient {
     /**
      * This method is intended to retrieve an arc-file from the archive. But since this handles checksum archive, it
      * does not have the actual arc-files, and this function should therefore fail.
-     * 
+     *
      * @param gfm The GetFileMessage for retrieving the arc-file from the archive.
      * @throws IllegalState Always. Since checksum replicas cannot handle this kind of messages.
      * @throws ArgumentNotValid If the message is null.
@@ -274,7 +274,7 @@ public class ChecksumClient implements ReplicaClient {
     /**
      * This method is intended to retrieve an arc-file from the archive. But since this handles checksum archive, it
      * does not have the actual arc-files, and this function should therefore fail.
-     * 
+     *
      * @param msg The RemoveAndGetFileMessage for removing and retrieving an arc-file from the archive.
      * @throws IllegalState Always. Since checksum replicas cannot handle this kind of messages.
      * @throws ArgumentNotValid If the message is null.

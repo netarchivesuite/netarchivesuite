@@ -55,7 +55,6 @@ import dk.netarkivet.harvester.harvesting.distribute.DomainStats;
 
 /**
  * Base implementation for a harvest report.
- *
  */
 @SuppressWarnings({"serial"})
 public abstract class AbstractHarvestReport implements HarvestReport {
@@ -89,7 +88,7 @@ public abstract class AbstractHarvestReport implements HarvestReport {
 
         /**
          * Constructor for this enum class.
-         * 
+         *
          * @param pattern The pattern associated with a given enum value.
          */
         ProgressStatisticsConstants(String pattern) {
@@ -119,7 +118,7 @@ public abstract class AbstractHarvestReport implements HarvestReport {
 
     /**
      * Constructor from Heritrix report files. Subclasses might use a different set of Heritrix reports.
-     * 
+     *
      * @param files the set of Heritrix reports.
      */
     public AbstractHarvestReport(HeritrixFiles files) {
@@ -210,7 +209,7 @@ public abstract class AbstractHarvestReport implements HarvestReport {
 
     /**
      * Get the StopReason for the given domain.
-     * 
+     *
      * @param domainName A domain name (as given by getDomainNames())
      * @return the StopReason for the given domain or null, if no stopreason found for this domain
      * @throws ArgumentNotValid if null or empty domainName
@@ -235,7 +234,7 @@ public abstract class AbstractHarvestReport implements HarvestReport {
     /**
      * Attempts to get an already existing {@link DomainStats} object for that domain, and if not found creates one with
      * zero values.
-     * 
+     *
      * @param domainName the name of the domain to get DomainStats for.
      * @return a DomainStats object for the given domain-name.
      */
@@ -251,10 +250,10 @@ public abstract class AbstractHarvestReport implements HarvestReport {
 
     /**
      * Find out whether we stopped normally in progress statistics log.
-     * 
+     *
      * @param logFile A progress-statistics.log file.
      * @return StopReason.DOWNLOAD_COMPLETE for progress statistics ending with CRAWL ENDED,
-     *         StopReason.DOWNLOAD_UNFINISHED otherwise or if file does not exist.
+     * StopReason.DOWNLOAD_UNFINISHED otherwise or if file does not exist.
      * @throws ArgumentNotValid on null argument.
      */
     public static StopReason findDefaultStopReason(File logFile) throws ArgumentNotValid {
@@ -445,7 +444,7 @@ public abstract class AbstractHarvestReport implements HarvestReport {
 
     /**
      * Extract DomainName from URI string. Does not handle Danish characters in URI.
-     * 
+     *
      * @param uriAsString a given URI as string.
      * @return the domainName if possible or null, if not possible
      * @throws URIException If unable to create valid URI from the given string

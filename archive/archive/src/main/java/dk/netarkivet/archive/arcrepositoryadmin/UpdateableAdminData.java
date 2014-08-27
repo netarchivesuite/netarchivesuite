@@ -42,9 +42,9 @@ import dk.netarkivet.common.exceptions.UnknownID;
  * Class for accessing and manipulating the administrative data for the ArcRepository. In the current implementation, it
  * consists of a file with a number of lines of the form: filename checksum state timestamp-for-last-state-change [,
  * bitarchive> storestatus timestamp-for-last-state-change]*
- *
+ * <p>
  * If a line in the admin data file is corrupt, the entry is removed from admindata.
- *
+ * <p>
  * Notes: If the admindata file does not exist on start-up, the file is created in the constructor. If the admindata
  * file on start-up is the oldversion, the admindata file is migrated to the new version.
  *
@@ -61,7 +61,7 @@ public class UpdateableAdminData extends AdminData implements Admin {
 
     /**
      * Constructor for the UpdateableAdminData class. Reads the admindata file if it exists, creates it otherwise
-     * 
+     *
      * @throws PermissionDenied if admin data directory is not accessible
      * @throws IOFailure if there is trouble reading or creating the admin data file
      */
@@ -78,9 +78,9 @@ public class UpdateableAdminData extends AdminData implements Admin {
 
     /**
      * Get the singleton instance.
-     * 
+     *
      * @return The singleton
-     * */
+     */
     public static UpdateableAdminData getInstance() {
         if (UpdateableAdminData.instance == null) {
             UpdateableAdminData.instance = new UpdateableAdminData();
@@ -90,7 +90,7 @@ public class UpdateableAdminData extends AdminData implements Admin {
 
     /**
      * Add new entry to the admin data, and persist it to disk.
-     * 
+     *
      * @param filename A filename
      * @param replyInfo A replyInfo for this entry (may be null)
      * @param checksum The Checksum for this file
@@ -101,7 +101,7 @@ public class UpdateableAdminData extends AdminData implements Admin {
 
     /**
      * Add new entry to the admin data, and persist it to disk, if persistNow set to true.
-     * 
+     *
      * @param filename A filename
      * @param replyInfo A replyInfo for this entry (may be null)
      * @param checksum The Checksum for this file
@@ -185,7 +185,7 @@ public class UpdateableAdminData extends AdminData implements Admin {
 
     /**
      * Set/update the checksum for a given arcfileName in the admindata.
-     * 
+     *
      * @param fileName Unique name of file for which to store checksum
      * @param checkSum The generated (MD5) checksum to be stored in reference table
      * @throws UnknownID if the file is not already registered.
@@ -208,7 +208,7 @@ public class UpdateableAdminData extends AdminData implements Admin {
      * new admindata (in order to flush out repeated entries created during uploads) and b) when performing a correct
      * (to ensure that an arcfile only has one checksum). The write is done atomically, i.e. either the old file is kept
      * or the entire new file is written.
-     * 
+     *
      * @throws IOFailure on trouble writing to file
      */
     private void write() throws IOFailure {
@@ -268,7 +268,7 @@ public class UpdateableAdminData extends AdminData implements Admin {
 
     /**
      * Write a particular entry to the admin data file. This will append the data to the end of the file.
-     * 
+     *
      * @param filename the name of the file which entry is to written to admin data file
      * @throws IOFailure If an exception occurs when accessing the file.
      */

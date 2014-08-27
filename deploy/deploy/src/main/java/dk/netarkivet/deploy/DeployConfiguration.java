@@ -69,7 +69,7 @@ public class DeployConfiguration {
 
     /**
      * Constructor. Initialise everything.
-     * 
+     *
      * @param deployConfigFileName Name of configuration file.
      * @param netarchiveSuiteFileName Name of installation file.
      * @param secPolicyFileName Name of security policy file.
@@ -81,7 +81,7 @@ public class DeployConfiguration {
      * @param externalJarFolder The folder containing the external jar library files.
      * @param sourceEncoding the encoding to use to read input files
      * @throws ArgumentNotValid If one of the following arguments is null: deployConfigFileName netarchiveSuiteFileName,
-     *             secPolicyFileName, logPropFileName.
+     * secPolicyFileName, logPropFileName.
      */
     public DeployConfiguration(File deployConfigFileName, File netarchiveSuiteFileName, File secPolicyFileName,
             File julPropFileName, File slf4jConfigFileName, String outputDirName, File dbFileName, File arcdbFileName,
@@ -149,7 +149,7 @@ public class DeployConfiguration {
 
     /**
      * Method for copying the NetarchiveSuite file to output directory. This handles the following three scenarios:
-     * 
+     * <p>
      * <ol>
      * <li>outputDir == directory of zip file</li>
      * Do nothing. <br>

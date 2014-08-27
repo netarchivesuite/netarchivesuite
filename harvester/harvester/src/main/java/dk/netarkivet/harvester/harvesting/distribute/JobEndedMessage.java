@@ -47,7 +47,7 @@ public class JobEndedMessage extends HarvesterMessage implements Serializable {
 
     /**
      * Constructs a new message.
-     * 
+     *
      * @param jobId the job ID.
      * @param jobStatus the job's current status.
      */

@@ -62,9 +62,9 @@ public class LoadableJarBatchJob extends FileBatchJob {
 
     /**
      * Load a given class from a jar file.
-     * 
+     *
      * @param jarFiles The jar file(s) to load from. This file may also contain other classes required by the
-     *            FileBatchJob class.
+     * FileBatchJob class.
      * @param arguments The arguments for the batchjob.
      * @param jobClass The class to load initially. This must be a subclass of FileBatchJob.
      * @throws ArgumentNotValid If any of the arguments are null.
@@ -92,7 +92,7 @@ public class LoadableJarBatchJob extends FileBatchJob {
 
     /**
      * Method for initialising the batch job.
-     * 
+     *
      * @throws IOFailure If the job is not loaded correctly.
      */
     private void loadBatchJob() throws IOFailure {
@@ -140,7 +140,7 @@ public class LoadableJarBatchJob extends FileBatchJob {
 
     /**
      * Initialize the job before running. This is called before the processFile() calls.
-     * 
+     *
      * @param os the OutputStream to which output should be written
      */
     public void initialize(OutputStream os) {
@@ -153,10 +153,9 @@ public class LoadableJarBatchJob extends FileBatchJob {
 
     /**
      * Process one file stored in the bit archive.
-     * 
+     *
      * @param file the file to be processed.
      * @param os the OutputStream to which output should be written
-     * 
      * @return true if the file was successfully processed, false otherwise
      */
     public boolean processFile(File file, OutputStream os) {
@@ -167,7 +166,7 @@ public class LoadableJarBatchJob extends FileBatchJob {
 
     /**
      * Finish the job. This is called after the last process() call.
-     * 
+     *
      * @param os the OutputStream to which output should be written
      */
     public void finish(OutputStream os) {
@@ -178,7 +177,7 @@ public class LoadableJarBatchJob extends FileBatchJob {
     /**
      * Human readable representation of this object. Overrides FileBatchJob.toString to include name of loaded
      * jar/class.
-     * 
+     *
      * @return a Human readable representation of this class
      */
     public String toString() {
@@ -187,7 +186,7 @@ public class LoadableJarBatchJob extends FileBatchJob {
 
     /**
      * Override of the default way to serialize this class.
-     * 
+     *
      * @param out Stream that the object will be written to.
      * @throws IOException In case there is an error from the underlying stream, or this object cannot be serialized.
      */
@@ -197,10 +196,10 @@ public class LoadableJarBatchJob extends FileBatchJob {
 
     /**
      * Override of the default way to deserialize an object of this class.
-     * 
+     *
      * @param in Stream that the object can be read from.
      * @throws IOException If there is an error reading from the stream, or the serialized object cannot be deserialized
-     *             due to errors in the serialized form.
+     * due to errors in the serialized form.
      * @throws ClassNotFoundException If the class definition of the serialized object cannot be found.
      */
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
@@ -220,7 +219,7 @@ public class LoadableJarBatchJob extends FileBatchJob {
 
     /**
      * Method for retrieving the name of the loaded class.
-     * 
+     *
      * @return The name of the loaded class.
      */
     public String getLoadedJobClass() {

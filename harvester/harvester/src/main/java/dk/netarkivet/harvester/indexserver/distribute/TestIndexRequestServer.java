@@ -67,9 +67,9 @@ import dk.netarkivet.harvester.indexserver.IndexRequestServerInterface;
 
 /**
  * Index request server singleton.
- *
+ * <p>
  * This class contains a singleton that handles requesting an index over JMS.
- *
+ * <p>
  * This has two modes. 1) Given a file with a list of jobIDs, it will always return the same lucene index based on the
  * list of job identifiers in the file regardless of what kind of index the client is requesting. 2) if setting
  * "settings.harvester.indexserver.alwaysSetIsIndexReadyToFalse" is true it will always return the IndexRequestMessage
@@ -254,16 +254,16 @@ public final class TestIndexRequestServer extends HarvesterMessageHandler implem
 
     /**
      * Given a request for an index over a set of job ids, use a cache to try to create the index, Then reply result.
-     *
+     * <p>
      * If for any reason not all requested jobs can be indexed, return the subset. The client can then retry with this
      * subset, in order to get index of that subset.
-     *
+     * <p>
      * Values read from the message in order to handle this: - Type of index requested - will use the index cache of
      * this type - Set of job IDs - which jobs to generate index for
-     *
+     * <p>
      * Values written to message before replying: - The subset indexed - may be the entire set. ALWAYS set unless reply
      * !OK - File with index - ONLY if subset is entire set, the index requested.
-     *
+     * <p>
      * This method should ALWAYS reply. May reply with not OK message if: - Message received was not OK - Request type
      * is null or unknown in message - Set of job ids is null in message - Cache generation throws exception
      *
@@ -313,7 +313,7 @@ public final class TestIndexRequestServer extends HarvesterMessageHandler implem
 
     /**
      * Save a IndexRequestMessage to disk.
-     * 
+     *
      * @param irMsg A message to store to disk
      * @throws IOException Throws IOExecption, if unable to save message
      */
@@ -333,7 +333,7 @@ public final class TestIndexRequestServer extends HarvesterMessageHandler implem
 
     /**
      * Restore message from serialized state.
-     * 
+     *
      * @param serializedObject the object stored as a file.
      * @return the restored message.
      */
@@ -368,9 +368,9 @@ public final class TestIndexRequestServer extends HarvesterMessageHandler implem
     /**
      * Method that handles generating an index; supposed to be run in its own thread, because it blocks while the index
      * is generated.
-     * 
-     * @see #visit(IndexRequestMessage)
+     *
      * @param irMsg A message requesting an index
+     * @see #visit(IndexRequestMessage)
      */
     private void doGenerateIndex(final IndexRequestMessage irMsg) {
         final boolean mustReturnIndex = irMsg.mustReturnIndex();
@@ -387,7 +387,7 @@ public final class TestIndexRequestServer extends HarvesterMessageHandler implem
                 defaultIDs = foundIDs;
             }
             irMsg.setFoundJobs(requestedJobIDs); // Say that everything was
-                                                 // found
+            // found
 
             log.info("Returning default index");
 
@@ -444,7 +444,7 @@ public final class TestIndexRequestServer extends HarvesterMessageHandler implem
 
     /**
      * Deleted stored file for given message.
-     * 
+     *
      * @param irMsg a given IndexRequestMessage
      */
     private void deleteStoredMessage(IndexRequestMessage irMsg) {
@@ -462,7 +462,7 @@ public final class TestIndexRequestServer extends HarvesterMessageHandler implem
 
     /**
      * Helper method to check message properties. Will throw exceptions on any trouble.
-     * 
+     *
      * @param irMsg The message to check.
      * @throws ArgumentNotValid If message is not OK, or if the list of jobs or the index request type is null.
      * @throws UnknownID If the index request type is of a form that is unknown to the server.
@@ -521,7 +521,7 @@ public final class TestIndexRequestServer extends HarvesterMessageHandler implem
 
         /**
          * Constructor for the ListeningTask.
-         * 
+         *
          * @param irs The indexrequestserver this task should be associated with
          */
         ListeningTask(TestIndexRequestServer irs) {

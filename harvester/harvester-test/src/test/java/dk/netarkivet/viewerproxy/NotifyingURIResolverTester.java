@@ -95,7 +95,7 @@ public class NotifyingURIResolverTester {
      * Tests lookup. Tests that argument is not checked here - that should be done by the wrapped class. Tests that
      * lookup is delegated to wrapped class with argument. Also tests that result of this method is given to the
      * observing class.
-     * 
+     *
      * @throws Exception
      */
     @Test

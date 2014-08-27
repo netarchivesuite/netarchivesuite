@@ -111,14 +111,13 @@ public class BitarchiveMonitorTester {
 
     /**
      * Checks that a bitarchive correctly is removed when its sign of life expires.
-     * 
+     *
      * @throws NoSuchFieldException
      * @throws SecurityException
      * @throws NoSuchMethodException
      * @throws InvocationTargetException
      * @throws IllegalAccessException
      * @throws IllegalArgumentException
-     * 
      */
     @Test
     public void testBitarchiveLifeTimeout() throws SecurityException, NoSuchFieldException, NoSuchMethodException,

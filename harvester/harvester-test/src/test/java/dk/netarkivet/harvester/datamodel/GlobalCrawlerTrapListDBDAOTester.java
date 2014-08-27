@@ -148,7 +148,6 @@ public class GlobalCrawlerTrapListDBDAOTester extends DataModelTestCase {
 
     /**
      * Tests that we can get a list of active traplists
-     *
      */
     @Test
     public void testGetAllActive() {

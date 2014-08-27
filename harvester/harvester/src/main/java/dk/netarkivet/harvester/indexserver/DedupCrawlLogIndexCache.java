@@ -31,7 +31,6 @@ import dk.netarkivet.common.exceptions.NotImplementedException;
  * A cache of crawl log indices appropriate for the Icelandic deduplicator code, excluding all text entries.
  *
  * @see CrawlLogIndexCache
- *
  */
 public class DedupCrawlLogIndexCache extends CrawlLogIndexCache {
 

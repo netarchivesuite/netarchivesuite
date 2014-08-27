@@ -61,7 +61,7 @@ public abstract class CommandResolver implements URIResolverHandler, URIResolver
     /**
      * Parses the given URI and executes commands for all command URLs. The possible commands are of the form
      * http://<<localhostname>>/<<command>>?<<param>>=<<value>>* where command and param are defined in the subclass.
-     *
+     * <p>
      * If uri is none of these, the uri and response are forwarded to the wrapped URI resolver.
      *
      * @param request The HTTP request we are working on

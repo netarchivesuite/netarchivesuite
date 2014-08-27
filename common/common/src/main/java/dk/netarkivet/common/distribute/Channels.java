@@ -159,7 +159,7 @@ public class Channels {
      * Returns the queue on which HarvestControllers reply with status messages to the HarvestScheduler.
      *
      * @return the <code>ChannelID</code> object for the queue on which HarvestControllers reply with status messages to
-     *         the HarvestScheduler
+     * the HarvestScheduler
      */
     public static ChannelID getTheSched() {
         return getInstance().THE_SCHED;
@@ -230,7 +230,7 @@ public class Channels {
      * Returns the channels for the all Checksum replicas.
      *
      * @return An array of THE_CR channels - one for each replica, though only the checksum replicas have values (the
-     *         others are null).
+     * others are null).
      */
     public static final ChannelID[] getAllArchives_CRs() {
         return getInstance().THE_CR_ARRAY;
@@ -364,8 +364,8 @@ public class Channels {
         for (ChannelID bamon : bamons) {
             if (bamon != null
                     && bamon.getName().equals(
-                            Settings.get(CommonSettings.ENVIRONMENT_NAME) + CHANNEL_PART_SEPARATOR + replicaId
-                                    + CHANNEL_PART_SEPARATOR + THEBAMON_CHANNEL_PREFIX)) {
+                    Settings.get(CommonSettings.ENVIRONMENT_NAME) + CHANNEL_PART_SEPARATOR + replicaId
+                            + CHANNEL_PART_SEPARATOR + THEBAMON_CHANNEL_PREFIX)) {
                 return bamon;
             }
         }
@@ -378,8 +378,8 @@ public class Channels {
         for (ChannelID cr : crs) {
             if (cr != null
                     && cr.getName().equals(
-                            Settings.get(CommonSettings.ENVIRONMENT_NAME) + CHANNEL_PART_SEPARATOR + replicaId
-                                    + CHANNEL_PART_SEPARATOR + THECR_CHANNEL_PREFIX)) {
+                    Settings.get(CommonSettings.ENVIRONMENT_NAME) + CHANNEL_PART_SEPARATOR + replicaId
+                            + CHANNEL_PART_SEPARATOR + THECR_CHANNEL_PREFIX)) {
                 return cr;
             }
         }
@@ -483,7 +483,7 @@ public class Channels {
 
     /**
      * Is a given name a ChannelName for a Topic or a Queue.
-     * 
+     *
      * @param name a given name
      * @return true, if arg name contains the string "_ALL_"
      */

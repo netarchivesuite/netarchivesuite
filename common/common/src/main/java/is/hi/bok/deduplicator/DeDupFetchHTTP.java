@@ -55,7 +55,7 @@ import dk.netarkivet.common.utils.AllDocsCollector;
  * An extension of Heritrix's {@link org.archive.crawler.fetcher.FetchHTTP} processor for downloading HTTP documents.
  * This extension adds a check after the content header has been downloaded that compares the 'last-modified' and or
  * 'last-etag' values from the header against information stored in an appropriate index.
- * 
+ *
  * @author Kristinn Sigur&eth;sson
  * @author Søren Vejrup Carlsen
  * @see is.hi.bok.deduplicator.DigestIndexer
@@ -108,7 +108,7 @@ public class DeDupFetchHTTP extends FetchHTTP implements AdaptiveRevisitAttribut
     public final static String[] AVAILABLE_FILTER_MODES = {"Blacklist", "Whitelist"};
     public final static String DEFAULT_FILTER_MODE = AVAILABLE_FILTER_MODES[0];
 
-    /** Should we use sparse queries (uses less memory at a cost to performance? **/
+    /** Should we use sparse queries (uses less memory at a cost to performance? * */
     public final static String ATTR_USE_SPARSE_RANGE_FILTER = "use-sparse-range-filter";
     public final static Boolean DEFAULT_USE_SPARSE_RANGE_FILTER = new Boolean(false);
 
@@ -191,10 +191,10 @@ public class DeDupFetchHTTP extends FetchHTTP implements AdaptiveRevisitAttribut
 
     /**
      * Compare the header infomation for 'last-modified' and/or 'etag' against data in the index.
-     * 
+     *
      * @param curi The Crawl URI being processed.
      * @return True if header infomation indicates that the document has not changed since the crawl that the index is
-     *         based on was performed.
+     * based on was performed.
      */
     protected boolean isDuplicate(CrawlURI curi) {
         boolean ret = false;
@@ -232,7 +232,7 @@ public class DeDupFetchHTTP extends FetchHTTP implements AdaptiveRevisitAttribut
      * Checks if the 'last-modified' in the HTTP header and compares it against the timestamp in the supplied Lucene
      * document. If both dates are found and the header's date is older then the datestamp indicates non-change.
      * Otherwise a change must be assumed.
-     * 
+     *
      * @param method HTTPMethod that allows access to the relevant HTTP header
      * @param doc The Lucene document to compare against
      * @return True if a the header and document data indicates a non-change. False otherwise.
@@ -263,7 +263,7 @@ public class DeDupFetchHTTP extends FetchHTTP implements AdaptiveRevisitAttribut
     /**
      * Checks if the 'etag' in the HTTP header and compares it against the etag in the supplied Lucene document. If both
      * dates are found and match then the datestamp indicate non-change. Otherwise a change must be assumed.
-     * 
+     *
      * @param method HTTPMethod that allows access to the relevant HTTP header
      * @param doc The Lucene document to compare against
      * @return True if a the header and document data indicates a non-change. False otherwise.
@@ -286,7 +286,7 @@ public class DeDupFetchHTTP extends FetchHTTP implements AdaptiveRevisitAttribut
     /**
      * Searches the index for the URL of the given CrawlURI. If multiple hits are found the most recent one is returned
      * if the index included the timestamp, otherwise a random one is returned. If no hit is found null is returned.
-     * 
+     *
      * @param curi The CrawlURI to search for
      * @return the index Document matching the URI or null if none was found
      */

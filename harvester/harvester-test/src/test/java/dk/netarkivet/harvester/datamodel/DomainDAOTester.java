@@ -156,7 +156,7 @@ public class DomainDAOTester extends DataModelTestCase {
 
     /**
      * Check that updating an entry that has already been modified results in an IOFailure.
-     * */
+     */
     @Test
     public void testOptimisticLocking() {
         DomainDAO dao = DomainDAO.getInstance();
@@ -268,7 +268,7 @@ public class DomainDAOTester extends DataModelTestCase {
 
     /**
      * Test that an existing domain can be read.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -293,7 +293,7 @@ public class DomainDAOTester extends DataModelTestCase {
 
     /**
      * Test HarvestInfo read and write.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -328,7 +328,7 @@ public class DomainDAOTester extends DataModelTestCase {
 
         List<HarvestInfo> readhislist = new ArrayList<HarvestInfo>();
 
-        for (Iterator<HarvestInfo> i = domainHistory1.getHarvestInfo(); i.hasNext();) {
+        for (Iterator<HarvestInfo> i = domainHistory1.getHarvestInfo(); i.hasNext(); ) {
             readhislist.add(i.next());
         }
 
@@ -340,7 +340,7 @@ public class DomainDAOTester extends DataModelTestCase {
 
     /**
      * Test that we get the right harvestinfo when asking based on an old harvestinfo.
-     * 
+     *
      * @throws Exception
      */
     @Test

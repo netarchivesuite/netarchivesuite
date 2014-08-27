@@ -154,7 +154,7 @@ public class DatabaseAdminTester {
 
         filenames = da.getAllFileNames(THREE, ReplicaStoreState.UPLOAD_COMPLETED);
         assertTrue("The list of files with state UPLOAD_COMPLETED for replica " + "THREE should contain the file: '"
-                + TestInfo.TEST_FILE_1.getName() + "', but it contained: " + filenames,
+                        + TestInfo.TEST_FILE_1.getName() + "', but it contained: " + filenames,
                 filenames.contains(TestInfo.TEST_FILE_1.getName()));
     }
 

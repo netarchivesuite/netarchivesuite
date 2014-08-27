@@ -48,7 +48,7 @@ public class ArchiveProfile {
 
     /**
      * Construct an archive profile.
-     * 
+     *
      * @param filename_filter archive filename filter
      * @param filename_pattern archive filename string pattern
      * @param metadataFilenamePattern archive metadata filename regex pattern

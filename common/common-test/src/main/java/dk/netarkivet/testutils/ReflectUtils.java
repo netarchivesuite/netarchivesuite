@@ -30,7 +30,6 @@ import junit.framework.Assert;
 
 /**
  * Methods that help in doing common reflection tasks.
- *
  */
 public class ReflectUtils {
     /**

@@ -76,8 +76,7 @@ public class HTTPSRemoteFile extends HTTPRemoteFile {
      * @param useChecksums Whether communications are checksummed. If true, getChecksum will also return the checksum.
      * @param fileDeletable if true, the file given to this method is deletable, once it is transferred.
      * @param multipleDownloads if true, the file may be transferred more than once. Otherwise, all file handles are
-     *            attempted to be made invalid after the first transfer, although no guarantees are made.
-     *
+     * attempted to be made invalid after the first transfer, although no guarantees are made.
      * @throws ArgumentNotValid if file is null, or not a readable file.
      * @throws IOFailure if checksums are requested, but i/o errors occur while checksumming.
      */
@@ -87,16 +86,17 @@ public class HTTPSRemoteFile extends HTTPRemoteFile {
 
     /**
      * Initialises a remote file implemented by point-to-point HTTPS communication.
-     * 
+     *
      * @param f The file to make a remote file for
      * @param useChecksums Whether communications are checksummed. If true, getChecksum will also return the checksum.
      * @param fileDeletable if true, the file given to this method is deletable, once it is transferred.
      * @param multipleDownloads if true, the file may be transferred more than once. Otherwise, all file handles are
-     *            attempted to be made invalid after the first transfer, although no guarantees are made.
+     * attempted to be made invalid after the first transfer, although no guarantees are made.
      * @throws ArgumentNotValid if file is null, or not a readable file.
      * @throws IOFailure if checksums are requested, but i/o errors occur while checksumming.
      */
-    public static RemoteFile getInstance(File f, Boolean useChecksums, Boolean fileDeletable, Boolean multipleDownloads) {
+    public static RemoteFile getInstance(File f, Boolean useChecksums, Boolean fileDeletable,
+            Boolean multipleDownloads) {
         return new HTTPSRemoteFile(f, useChecksums, fileDeletable, multipleDownloads);
     }
 

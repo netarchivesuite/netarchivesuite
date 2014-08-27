@@ -130,7 +130,7 @@ public class SeedListTester extends DataModelTestCase {
         assertEquals(domainList.get(2), domains[TEST]);
         seedList = hddao.getListOfSeedsOfDomainOfHarvestDefinition(HARVESTNAME, domainList.get(2));
         assertEquals(seedList.get(0), seeds[TEST][1]); // duplicate entries
-                                                       // should be removed!
+        // should be removed!
         assertEquals(seedList.get(1), seeds[TEST][0]);
 
         // wikipedia.org

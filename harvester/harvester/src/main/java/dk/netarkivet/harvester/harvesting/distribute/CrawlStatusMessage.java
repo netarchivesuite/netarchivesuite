@@ -35,9 +35,8 @@ import dk.netarkivet.harvester.harvesting.report.HarvestReport;
 /**
  * Instances of this class are sent by a HarvestControllerServer to the THE_SCHED queue to indicate the progress of a
  * heritrix crawl. They are collected and processed by the HarvestSchedulerMonitorServer.
- * <p/>
+ * <p>
  * This class is immutable
- *
  */
 @SuppressWarnings({"serial"})
 public class CrawlStatusMessage extends HarvesterMessage implements Serializable {
@@ -63,7 +62,7 @@ public class CrawlStatusMessage extends HarvesterMessage implements Serializable
      * @param jobID the unique identifier for the crawl job to which this message refers
      * @param statusCode All values are accepted, except null
      * @param harvestReport A calculated domain harvest report produced by the crawl. May be null for no domain harvest
-     *            report.
+     * report.
      * @throws ArgumentNotValid If invalid arguments: jobID < 0L statusCode == null
      */
     public CrawlStatusMessage(long jobID, JobStatus statusCode, HarvestReport harvestReport) {
@@ -77,7 +76,7 @@ public class CrawlStatusMessage extends HarvesterMessage implements Serializable
 
     /**
      * Alternate constructor, which does not have the DomainHarvestreport as argument.
-     * 
+     *
      * @param jobID (see description for the other constructor)
      * @param statusCode (see description for the other constructor)
      * @see CrawlStatusMessage#CrawlStatusMessage(long, JobStatus, HarvestReport)
@@ -88,7 +87,7 @@ public class CrawlStatusMessage extends HarvesterMessage implements Serializable
 
     /**
      * Returns the jobID of this crawl job.
-     * 
+     *
      * @return the jobID
      */
     public long getJobID() {
@@ -97,7 +96,7 @@ public class CrawlStatusMessage extends HarvesterMessage implements Serializable
 
     /**
      * Returns the status code of this crawl job.
-     * 
+     *
      * @return the status code
      */
     public JobStatus getStatusCode() {
@@ -141,7 +140,7 @@ public class CrawlStatusMessage extends HarvesterMessage implements Serializable
 
     /**
      * Get-method for private field harvestErrors.
-     * 
+     *
      * @return harvestErrors
      */
     public String getHarvestErrors() {
@@ -150,7 +149,7 @@ public class CrawlStatusMessage extends HarvesterMessage implements Serializable
 
     /**
      * Set-method for private field harvestErrors.
-     * 
+     *
      * @param harvestErrors The value for harvest errors.
      * @throws ArgumentNotValid if null argument
      */
@@ -161,7 +160,7 @@ public class CrawlStatusMessage extends HarvesterMessage implements Serializable
 
     /**
      * Get-method for private field harvestErrorDetails.
-     * 
+     *
      * @return harvestErrorDetails
      */
     public String getHarvestErrorDetails() {
@@ -170,7 +169,7 @@ public class CrawlStatusMessage extends HarvesterMessage implements Serializable
 
     /**
      * Set-method for private field harvestErrorDetails.
-     * 
+     *
      * @param harvestErrorDetails The value for harvest error details.
      * @throws ArgumentNotValid if null argument
      */
@@ -181,7 +180,7 @@ public class CrawlStatusMessage extends HarvesterMessage implements Serializable
 
     /**
      * Get-method for private field uploadErrors.
-     * 
+     *
      * @return uploadErrors
      */
     public String getUploadErrors() {
@@ -190,7 +189,7 @@ public class CrawlStatusMessage extends HarvesterMessage implements Serializable
 
     /**
      * Set-method for private field uploadErrors.
-     * 
+     *
      * @param uploadErrors The value for upload errors.
      * @throws ArgumentNotValid if null argument
      */
@@ -201,7 +200,7 @@ public class CrawlStatusMessage extends HarvesterMessage implements Serializable
 
     /**
      * Get-method for private field uploadErrorDetails.
-     * 
+     *
      * @return uploadErrorDetails
      */
     public String getUploadErrorDetails() {
@@ -210,7 +209,7 @@ public class CrawlStatusMessage extends HarvesterMessage implements Serializable
 
     /**
      * Set-method for private field uploadErrorDetails.
-     * 
+     *
      * @param uploadErrorDetails The value for upload error details.
      * @throws ArgumentNotValid if null argument
      */

@@ -56,14 +56,14 @@ public interface PreservationState {
 
     /**
      * Check if the admin data reflect the actual status of the archive.
-     *
+     * <p>
      * Admin State checking: For each bitarchive the admin state is compared to the checksum received from the
      * bitarchive.
-     *
+     * <p>
      * If no checksum is received from the bitarchive the valid admin states are UPLOAD_STARTED and UPLOAD_FAILED. If a
      * checksum is received from the bitarchive the valid admin state is UPLOAD_COMPLETED Admin checksum checking: The
      * admin checksum must match the majority of reported checksums.
-     *
+     * <p>
      * Notice that a valid Admin data record does NOT imply that everything is ok. Specifically a file may be missing
      * from a bitarchive, or the checksum of a file in a bitarchive may be wrong.
      *
@@ -73,9 +73,9 @@ public interface PreservationState {
 
     /**
      * Returns a reference to a bitarchive that contains a version of the file with the correct checksum.
-     *
+     * <p>
      * The correct checksum is defined as the checksum that the majority of the bitarchives and admin data agree upon.
-     *
+     * <p>
      * If no bitarchive exists with a correct version of the file null is returned.
      *
      * @return the name of the reference bitarchive or null if no reference exists
@@ -87,8 +87,7 @@ public interface PreservationState {
      *
      * @param replica A replica to get checksum for this file from
      * @return The checksum for this file in the replica, if all machines that have that file agree, otherwise "". If no
-     *         checksums are found, also returns "".
-     *
+     * checksums are found, also returns "".
      */
     String getUniqueChecksum(Replica replica);
 
@@ -127,7 +126,7 @@ public interface PreservationState {
     /**
      * Get the filename, this FilePreservationState is about. Needed to get at the filename given to constructor, and
      * allow for a better datastructure.
-     * 
+     *
      * @return the filename
      */
     String getFilename();

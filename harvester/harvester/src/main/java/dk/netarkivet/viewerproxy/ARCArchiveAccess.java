@@ -107,12 +107,12 @@ public class ARCArchiveAccess implements URIResolver {
 
     /**
      * Look up a given URI and add its contents to the Response given.
-     * 
+     *
      * @param request The request to look up record for
      * @param response The response to return to the browser
      * @return The response code for this page if found, or URIResolver.NOT_FOUND otherwise.
-     * @see URIResolver#lookup(Request, Response)
      * @throws IOFailure on trouble looking up the request (timeout, i/o, etc.)
+     * @see URIResolver#lookup(Request, Response)
      */
     public int lookup(Request request, Response response) {
         ArgumentNotValid.checkNotNull(request, "Request request");
@@ -251,10 +251,10 @@ public class ARCArchiveAccess implements URIResolver {
 
     /**
      * Read a line of bytes from an InputStream. Useful when an InputStream may contain both text and binary data.
-     * 
+     *
      * @param inputStream A source of data
      * @return A line of text read from inputStream, with terminating \r\n or \n removed, or null if no data is
-     *         available.
+     * available.
      * @throws IOException on trouble reading from input stream
      */
     private String readLine(InputStream inputStream) throws IOException {

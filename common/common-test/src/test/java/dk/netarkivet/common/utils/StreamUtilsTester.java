@@ -43,9 +43,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 /**
- * 
  * Unit tests for the StreamUtils class.
- *
  */
 public class StreamUtilsTester {
 

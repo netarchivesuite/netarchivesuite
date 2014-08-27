@@ -53,14 +53,13 @@ import dk.netarkivet.common.Constants;
  *
  * @author Kristinn Sigur&eth;sson
  * @author Søren Vejrup Carlsen
- * 
  */
 public class DigestIndexer {
 
     // Lucene index field names
-    /** The URL. **/
+    /** The URL. * */
     public static final String FIELD_URL = "url";
-    /** The content digest as String. **/
+    /** The content digest as String. * */
     public static final String FIELD_DIGEST = "digest";
     /**
      * The URLs timestamp (time of fetch). The exact nature of this time may vary slightly depending on the source (i.e.
@@ -68,9 +67,9 @@ public class DigestIndexer {
      * time is encoded as a String with the Java date format yyyyMMddHHmmssSSS
      */
     public static final String FIELD_TIMESTAMP = "date";
-    /** The document's etag. **/
+    /** The document's etag. * */
     public static final String FIELD_ETAG = "etag";
-    /** A stripped (normalized) version of the URL. **/
+    /** A stripped (normalized) version of the URL. * */
     public static final String FIELD_URL_NORMALIZED = "url-normalized";
     /**
      * A field containing meta-data on where the original version of a document is stored.
@@ -81,17 +80,17 @@ public class DigestIndexer {
     /**
      * Index URL enabling lookups by URL. If normalized URLs are included in the index they will also be indexed and
      * searchable.
-     **/
+     */
     public static final String MODE_URL = "URL";
-    /** Index HASH enabling lookups by hash (content digest). **/
+    /** Index HASH enabling lookups by hash (content digest). * */
     public static final String MODE_HASH = "HASH";
-    /** Both URL and hash are indexed. **/
+    /** Both URL and hash are indexed. * */
     public static final String MODE_BOTH = "BOTH";
 
     /** Lucene Storage used by the indexwriter. */
     private Directory luceneDirectory;
 
-    /** The index being manipulated. **/
+    /** The index being manipulated. * */
     private IndexWriter index;
 
     /**
@@ -117,15 +116,15 @@ public class DigestIndexer {
 
     /**
      * Each instance of this class wraps one Lucene index for writing deduplication information to it.
-     * 
+     *
      * @param indexLocation The location of the index (path).
      * @param indexingMode Index {@link #MODE_URL}, {@link #MODE_HASH} or {@link #MODE_BOTH}.
      * @param includeNormalizedURL Should a normalized version of the URL be added to the index. See
-     *            {@link #stripURL(String)}.
+     * {@link #stripURL(String)}.
      * @param includeTimestamp Should a timestamp be included in the index.
      * @param includeEtag Should an Etag be included in the index.
      * @param addToExistingIndex Are we opening up an existing index. Setting this to false will cause any index at
-     *            <code>indexLocation</code> to be overwritten.
+     * <code>indexLocation</code> to be overwritten.
      * @throws IOException If an error occurs opening the index.
      */
     public DigestIndexer(String indexLocation, String indexingMode, boolean includeNormalizedURL,
@@ -158,13 +157,13 @@ public class DigestIndexer {
      * Writes the contents of a {@link CrawlDataIterator} to this index.
      * <p>
      * This method may be invoked multiple times with different CrawlDataIterators until {@link #close} has been called.
-     * 
+     *
      * @param dataIt The CrawlDataIterator that provides the data to index.
      * @param mimefilter A regular expression that is used as a filter on the mimetypes to include in the index.
      * @param blacklist If true then the <code>mimefilter</code> is used as a blacklist for mimetypes. If false then the
-     *            <code>mimefilter</code> is treated as a whitelist.
+     * <code>mimefilter</code> is treated as a whitelist.
      * @param defaultOrigin If an item is missing an origin, this default value will be assigned to it. Can be null if
-     *            no default origin value should be assigned.
+     * no default origin value should be assigned.
      * @param verbose If true then progress information will be sent to System.out.
      * @return The number of items added to the index.
      * @throws IOException If an error occurs writing the index.
@@ -178,13 +177,13 @@ public class DigestIndexer {
      * Writes the contents of a {@link CrawlDataIterator} to this index.
      * <p>
      * This method may be invoked multiple times with different CrawlDataIterators until {@link #close} has been called.
-     * 
+     *
      * @param dataIt The CrawlDataIterator that provides the data to index.
      * @param mimefilter A regular expression that is used as a filter on the mimetypes to include in the index.
      * @param blacklist If true then the <code>mimefilter</code> is used as a blacklist for mimetypes. If false then the
-     *            <code>mimefilter</code> is treated as a whitelist.
+     * <code>mimefilter</code> is treated as a whitelist.
      * @param defaultOrigin If an item is missing an origin, this default value will be assigned to it. Can be null if
-     *            no default origin value should be assigned.
+     * no default origin value should be assigned.
      * @param verbose If true then progress information will be sent to System.out.
      * @param skipDuplicates Do not add URLs that are marked as duplicates to the index
      * @return The number of items added to the index.
@@ -219,7 +218,6 @@ public class DigestIndexer {
     }
 
     /**
-     * 
      * @param item
      * @param defaultOrigin
      * @return
@@ -272,7 +270,7 @@ public class DigestIndexer {
 
     /**
      * Close the index.
-     * 
+     *
      * @throws IOException If an error occurs while closing the index.
      */
     public void close() throws IOException {
@@ -285,7 +283,7 @@ public class DigestIndexer {
      * slashes and all parameters.
      * <p>
      * Example: <code>http://www.bok.hi.is/?lang=ice</code> would become <code>http://bok.hi.is</code>
-     * 
+     *
      * @param url The url to strip
      * @return A normalized URL.
      */

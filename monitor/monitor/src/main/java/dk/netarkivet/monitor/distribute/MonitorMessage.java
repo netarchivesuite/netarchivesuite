@@ -51,9 +51,8 @@ public abstract class MonitorMessage extends NetarkivetMessage implements Serial
      * Should be implemented as a part of the visitor pattern. e.g.: public void accept(MonitorMessageVisitor v) {
      * v.visit(this); }
      *
-     * @see MonitorMessageVisitor
-     *
      * @param v A message visitor
+     * @see MonitorMessageVisitor
      */
     public abstract void accept(MonitorMessageVisitor v);
 }

@@ -42,7 +42,7 @@ import dk.netarkivet.common.utils.FileUtils;
 public class DerbyEmbeddedSpecifics extends DerbySpecifics {
     /**
      * Get an instance of the Embedded Derby specifics.
-     * 
+     *
      * @return Instance of the Derby specifics implementation
      */
     public static DBSpecifics getInstance() {
@@ -51,7 +51,7 @@ public class DerbyEmbeddedSpecifics extends DerbySpecifics {
 
     /**
      * Shutdown the database system, if running in embedded mode. Otherwise, this is ignored.
-     * <p/>
+     * <p>
      * Will log a warning on errors, but otherwise ignore them.
      */
     public void shutdownDatabase() {

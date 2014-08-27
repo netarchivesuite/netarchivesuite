@@ -58,7 +58,7 @@ public class ChannelsTester {
 
     /**
      * This test checks that changing settings and resetting actually changes things.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -76,7 +76,7 @@ public class ChannelsTester {
 
     /**
      * This test checks that changing settings and resetting actually changes things.
-     * 
+     *
      * @throws Exception
      */
     @Test

@@ -30,10 +30,9 @@ import dk.netarkivet.monitor.registry.distribute.RegisterHostMessage;
  * a visitor pattern: Upon receipt, the MonitorMessageHandler.onMessage() method invokes the MonitorMessage.accept()
  * method on the message with itself as argument. The accept() method in turn invokes the MonitorMessageVisitor.visit()
  * method, using method overloading to invoke the visit method for the message received.
- *
+ * <p>
  * Thus to handle a message, you should subclass MonitorMessageHandler and override the visit() method for that kind of
  * message. You should not implement this interface in any other way.
- *
  */
 public interface MonitorMessageVisitor {
     /**

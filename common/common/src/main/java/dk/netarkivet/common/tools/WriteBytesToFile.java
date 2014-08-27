@@ -36,7 +36,7 @@ import java.nio.channels.FileChannel;
 public class WriteBytesToFile {
     /**
      * Writes a large number of bytes to a given file.
-     * 
+     *
      * @param args args[0] is the number of bytes to write args[1] the name of the output file
      * @throws IOException If unable to write to output file
      */

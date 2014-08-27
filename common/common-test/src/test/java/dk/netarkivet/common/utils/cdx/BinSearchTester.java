@@ -83,7 +83,7 @@ public class BinSearchTester {
 
     /**
      * Test the BinSearch.getLinesInFile(File, String) with Danish letters.
-     * 
+     * <p>
      * FIXME Fails in Hudson (Properly because the test is dependent on the environment lang settings )
      */
     @Test
@@ -115,7 +115,7 @@ public class BinSearchTester {
 
     /**
      * Wrapper around getLinesInFile that turns them into a List.
-     * 
+     *
      * @param file The file to search in
      * @param find The string to look for in the file.
      * @return a List of lines that matches the String given by arg find.
@@ -126,7 +126,7 @@ public class BinSearchTester {
 
     /**
      * Test that skipToLine goes to the expected place, and puts the file pointer there.
-     * 
+     *
      * @throws Exception
      */
     @Test

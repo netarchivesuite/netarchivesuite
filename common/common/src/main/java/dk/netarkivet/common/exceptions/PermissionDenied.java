@@ -30,7 +30,7 @@ package dk.netarkivet.common.exceptions;
 public class PermissionDenied extends NetarkivetException {
     /**
      * Constructs new PermissionDenied with the specified detail message.
-     * 
+     *
      * @param message The detail message
      */
     public PermissionDenied(String message) {
@@ -39,7 +39,7 @@ public class PermissionDenied extends NetarkivetException {
 
     /**
      * Constructs new PermissionDenied with the specified detail message and cause.
-     * 
+     *
      * @param message The detail message
      * @param cause The cause
      */

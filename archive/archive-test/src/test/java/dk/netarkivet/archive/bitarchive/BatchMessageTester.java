@@ -41,7 +41,6 @@ import dk.netarkivet.testutils.Serial;
 /**
  * Created by IntelliJ IDEA. User: csr Date: Mar 3, 2005 Time: 10:29:56 AM To change this template use File | Settings |
  * File Templates.
- *
  */
 @SuppressWarnings({"serial"})
 public class BatchMessageTester {

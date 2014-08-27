@@ -33,18 +33,16 @@ import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 import dk.netarkivet.common.utils.cdx.ExtractCDXJob;
 
 /**
- *
- *
  * Command line tool for extracting CDX information from given ARC files.
- *
+ * <p>
  * Usage: java dk.netarkivet.common.tools.ExtractCDX file1.arc [file2.arc ...] > myindex.cdx
- *
+ * <p>
  * Note: Does not depend on logging - communicates failures on stderr.
  */
 public class ExtractCDX {
     /**
      * Main method. Extracts CDX from all given files and outputs the index on stdout.
-     * 
+     *
      * @param argv A list of (absolute paths to) files to index.
      */
     public static void main(String[] argv) {
@@ -64,7 +62,7 @@ public class ExtractCDX {
 
     /**
      * Verifies that the filename (absolute path) points to an existing file and that it is an arc file.
-     * 
+     *
      * @param filename The filename to verify.
      * @return The arc file, as a File.
      */
@@ -84,7 +82,7 @@ public class ExtractCDX {
 
     /**
      * Prints out a message on stderr and exits with an error code.
-     * 
+     *
      * @param msg The message to print.
      */
     private static void dieWithError(String msg) {

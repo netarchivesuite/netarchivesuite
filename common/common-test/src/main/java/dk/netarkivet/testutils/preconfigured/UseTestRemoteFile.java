@@ -34,7 +34,6 @@ import dk.netarkivet.common.utils.Settings;
 
 /**
  * A preconfigure class for using TestRemoteFile instead of FTP
- *
  */
 
 public class UseTestRemoteFile implements TestConfigurationIF {

@@ -37,7 +37,9 @@ public class LoggingOutputStream extends OutputStream {
     /** Enum representing the standard logging levels for commons logging. */
     public static enum LoggingLevel {
         TRACE, DEBUG, INFO, WARN, ERROR
-    };
+    }
+
+    ;
 
     /** The level at which messages are logged. */
     private LoggingLevel loggingLevel;
@@ -53,7 +55,7 @@ public class LoggingOutputStream extends OutputStream {
 
     /**
      * Constructor for the class.
-     * 
+     *
      * @param loggingLevel The logging level at which to log messages from this instance.
      * @param logger The logger to which messages will be logged.
      * @param prefix A prefix by which output from this instance can be identified.

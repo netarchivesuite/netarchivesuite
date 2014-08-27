@@ -124,26 +124,26 @@ import java.util.zip.ZipOutputStream;
 
 /**
  * This is a utility class for examining a list of class names for all of their dependencies.
- *
+ * <p>
  * <p>
  * ClassDependencies will read each class file and search the internal structures for all references to outside classes
  * and resources. The checks are recursive, so all classes will be examined. A list of dependencies will be returned.
- *
+ * <p>
  * <p>
  * None of the java.* classes will be examined. Additional system packages may be excluded with
  * <code>setExcludes()</code>.
- *
+ * <p>
  * <p>
  * In addition to classes, we look for other resources loaded via <code>Class.getResource()</code> or
  * <code>Class.getResourceAsStream()</code>. If a class calls these methods, then every String constant in the class is
  * checked to see if a file by that name exists on the CLASSPATH in the same directory as the class - in other words
  * where <code>getResource</code> would find it. This heuristic only works if your resource names appear as String
  * constants - which seems to be the case in my practice so far.
- *
+ * <p>
  * <p>
  * We can optionally write all the classes and resources found to a zip or jar, or the list of files can be retrieved
  * with <code>getDependencies()</code>.
- *
+ * <p>
  * Copyright (C) 1998 Business Management Systems, Inc.
  * <p>
  * Original version Copyright (c) 1998 Karl Moss. All Rights Reserved.
@@ -161,12 +161,12 @@ public class ClassDependencies {
     private static final String[] classPath = getClassPath();
     private final Vector<String> rootSet = new Vector<String>();
     private static final Hashtable<String, ZipFile> ziptbl = new Hashtable<String, ZipFile>(); // cache
-                                                                                               // jars
+    // jars
 
     // reuse these data structures for getClassResources()
     private final IntList classInfo = new IntList(); // which names are classes
     private final IntList stringTbl = new IntList(); // which entries are
-                                                     // Strings
+    // Strings
     private final Vector<Pair> methInfo = new Vector<Pair>();
 
     private static final FilenameFilter classFilter = new FilenameFilter() {
@@ -618,7 +618,8 @@ public class ClassDependencies {
         // Now walk through the constant pool looking for entries
         // we are interested in. Others can be ignored, but we need
         // to understand the format so they can be skipped.
-        readcp: for (int i = 1; i < count; i++) {
+        readcp:
+        for (int i = 1; i < count; i++) {
             // Read the tag
             byte tag = in.readByte();
             switch (tag) {
@@ -680,7 +681,7 @@ public class ClassDependencies {
         in.close();
 
         Vector<String> v = new Vector<String>(); // collect resources used by
-                                                 // this class
+        // this class
 
         // Walk through our vector of class name
         // index values and get the actual class names

@@ -26,7 +26,6 @@ import junit.framework.TestCase;
 
 /**
  * Tests the CachingProxyFactoryConnectionFactory class.
- *
  */
 public class CachingProxyFactoryConnectionTest extends TestCase {
 

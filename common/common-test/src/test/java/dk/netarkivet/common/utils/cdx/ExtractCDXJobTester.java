@@ -40,8 +40,6 @@ import java.io.OutputStream;
 import java.io.StringReader;
 import java.util.Arrays;
 
-import junit.framework.TestCase;
-
 import org.archive.io.arc.ARCRecord;
 import org.junit.After;
 import org.junit.Before;
@@ -49,6 +47,7 @@ import org.junit.Test;
 
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
+import junit.framework.TestCase;
 
 @SuppressWarnings({"unused", "serial"})
 public class ExtractCDXJobTester {
@@ -221,7 +220,7 @@ public class ExtractCDXJobTester {
 
     /**
      * Helper method (no longer used).
-     * 
+     *
      * @param psWord
      * @param psReplace
      * @param psNewSeg

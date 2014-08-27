@@ -52,7 +52,7 @@ public abstract class ExtendedFieldDAO implements DAO {
 
     /**
      * Check if an extendedfield exists for a given ID.
-     * 
+     *
      * @param aExtendedfieldId a given ID.
      * @return true, if an extendedfield exists for the given ID
      */

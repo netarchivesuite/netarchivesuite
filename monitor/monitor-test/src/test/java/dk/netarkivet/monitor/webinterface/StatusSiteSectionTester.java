@@ -22,8 +22,8 @@
  */
 package dk.netarkivet.monitor.webinterface;
 
-import junit.framework.TestCase;
 import dk.netarkivet.common.webinterface.SiteSection;
+import junit.framework.TestCase;
 
 /** Unittest for StatusSiteSection class. */
 public class StatusSiteSectionTester extends TestCase {

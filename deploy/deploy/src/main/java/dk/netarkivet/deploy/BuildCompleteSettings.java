@@ -38,12 +38,11 @@ import dk.netarkivet.common.utils.FileUtils;
 /**
  * Class for combining the different setting files into a complete settings file. The different settings are listed
  * here: {@link Constants#BUILD_SETTING_FILES}
- *
+ * <p>
  * export NAS_SRC=$HOME/workspace/netarchivesuite cd $NAS_SRC ant jarfiles export
  * CLASSPATH=$NAS_SRC/lib/dk.netarkivet.harvester.jar:$NAS_SRC/lib/dk. netarkivet.archive.jar:\
  * $NAS_SRC/lib/dk.netarkivet.wayback.jar:$NAS_SRC/lib/dk.netarkivet.deploy.jar: cd src java
  * dk.netarkivet.deploy.BuildCompleteSettings
- *
  */
 public final class BuildCompleteSettings {
     /**
@@ -97,7 +96,7 @@ public final class BuildCompleteSettings {
      * Retrieves the main element from the file.
      *
      * @param settingFile The file to load into an Element. This has to be a temporary file, since it is deleted
-     *            afterwards.
+     * afterwards.
      * @return The root of the XML structure of the settings file. Returns null if problems occurred during reading.
      */
     private static Element retrieveXmlSettingsTree(File settingFile) {

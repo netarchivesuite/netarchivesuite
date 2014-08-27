@@ -162,7 +162,7 @@ public class ArcRepositoryTesterStore {
     /**
      * Tests the scenario where a file has been stored, but the confirmation was lost, so that the harvester will want
      * to store the file again.
-     *
+     * <p>
      * If the first store() was successful, the second one should be too (providing the file name and the MD5 is the
      * same).
      *
@@ -708,7 +708,7 @@ public class ArcRepositoryTesterStore {
 
         // Deliver message
         BatchReplyMessage msg = new BatchReplyMessage(Channels.getTheRepos(),
-                Channels.retrieveReplicaChannelFromReplicaId("ONE"), "Msg-id-0", 1, Collections.<File> emptyList(),
+                Channels.retrieveReplicaChannelFromReplicaId("ONE"), "Msg-id-0", 1, Collections.<File>emptyList(),
                 RemoteFileFactory.getInstance(BATCH_RESULT, true, false, true));
         JMSConnectionMockupMQ.updateMsgID(msg, "Msg-id-1");
         arcRepos.onBatchReply(msg);
@@ -775,7 +775,7 @@ public class ArcRepositoryTesterStore {
 
         // Deliver message
         BatchReplyMessage msg = new BatchReplyMessage(Channels.getTheRepos(),
-                Channels.retrieveReplicaChannelFromReplicaId("ONE"), "Msg-id-0", 1, Collections.<File> emptyList(),
+                Channels.retrieveReplicaChannelFromReplicaId("ONE"), "Msg-id-0", 1, Collections.<File>emptyList(),
                 RemoteFileFactory.getInstance(BATCH_RESULT_WRONG, true, false, true));
         JMSConnectionMockupMQ.updateMsgID(msg, "Msg-id-1");
         arcRepos.onBatchReply(msg);
@@ -842,7 +842,7 @@ public class ArcRepositoryTesterStore {
 
         // Deliver message
         BatchReplyMessage msg = new BatchReplyMessage(Channels.getTheRepos(),
-                Channels.retrieveReplicaChannelFromReplicaId("ONE"), "Msg-id-0", 0, Collections.<File> emptyList(),
+                Channels.retrieveReplicaChannelFromReplicaId("ONE"), "Msg-id-0", 0, Collections.<File>emptyList(),
                 RemoteFileFactory.getInstance(BATCH_RESULT_EMPTY, true, false, true));
         JMSConnectionMockupMQ.updateMsgID(msg, "Msg-id-1");
         arcRepos.onBatchReply(msg);

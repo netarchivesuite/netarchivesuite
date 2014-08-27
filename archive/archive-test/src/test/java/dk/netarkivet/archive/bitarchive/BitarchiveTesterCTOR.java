@@ -117,9 +117,9 @@ public class BitarchiveTesterCTOR {
             Bitarchive ba = Bitarchive.getInstance();
             ba.close();
             fail("Accessing read-only archive should throw exception"); // do
-                                                                        // not
-                                                                        // come
-                                                                        // here
+            // not
+            // come
+            // here
         } catch (PermissionDenied e) {
             // Expected case
             StringAsserts.assertStringContains("Should mention noaccess dir", "noaccess/filedir", e.getMessage());

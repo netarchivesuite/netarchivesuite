@@ -98,7 +98,7 @@ public final class ZipUtils {
      *
      * @param zipFile The file to unzip
      * @param toDir The directory to create the files under. This directory will be created if necessary. Files in it
-     *            will be overwritten if the filenames match.
+     * will be overwritten if the filenames match.
      */
     public static void unzip(File zipFile, File toDir) {
         ArgumentNotValid.checkNotNull(zipFile, "File zipFile");
@@ -145,7 +145,7 @@ public final class ZipUtils {
      *
      * @param fromDir An existing directory
      * @param toDir A directory where gzipped files will be placed. This directory must not previously exist. If the
-     *            operation is not successful, the directory will not be created.
+     * operation is not successful, the directory will not be created.
      */
     public static void gzipFiles(File fromDir, File toDir) {
         ArgumentNotValid.checkNotNull(fromDir, "File fromDir");
@@ -259,7 +259,7 @@ public final class ZipUtils {
      *
      * @param fromFile A gzipped file to unzip.
      * @param toFile The file that the contents of fromFile should be gunzipped into. This file must be in an existing
-     *            directory. Existing contents of this file will be overwritten.
+     * directory. Existing contents of this file will be overwritten.
      */
     public static void gunzipFile(File fromFile, File toFile) {
         ArgumentNotValid.checkNotNull(fromFile, "File fromFile");

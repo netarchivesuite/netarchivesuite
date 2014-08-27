@@ -29,7 +29,6 @@ import junit.textui.TestRunner;
 
 /**
  * Unit tests for the package monitor.registry and monitor.registry.distribute
- *
  */
 public class MonitorRegistryTesterSuite {
     /**

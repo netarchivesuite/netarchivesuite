@@ -61,7 +61,7 @@ public class CachingLogHandler extends Handler {
     /**
      * Private method to get a Level property. If the property is not defined or cannot be parsed we return the given
      * default value.
-     *
+     * <p>
      * This method was copied from java.util.logging.LogManager, where it is package private :-(
      *
      * @param name The log property name
@@ -83,7 +83,7 @@ public class CachingLogHandler extends Handler {
     /**
      * private method to get a filter property. We return an instance of the class named by the "name" property. If the
      * property is not defined or has problems we return the defaultValue.
-     *
+     * <p>
      * This method was copied from java.util.logging.LogManager, where it is package private :-(
      *
      * @param name The log property name
@@ -110,7 +110,7 @@ public class CachingLogHandler extends Handler {
     /**
      * Package private method to get a formatter property. We return an instance of the class named by the "name"
      * property. If the property is not defined or has problems we return the defaultValue.
-     *
+     * <p>
      * This method was copied from java.util.logging.LogManager, where it is package private :-(
      *
      * @param name The log property name
@@ -140,8 +140,8 @@ public class CachingLogHandler extends Handler {
      *
      * @see dk.netarkivet.common.management.SingleMBeanObject
      * @see SingleLogRecord
-     *
-     *      The number of remembered log records is read from the setting Settings.LOGGING_HISTORY_SIZE
+     * <p>
+     * The number of remembered log records is read from the setting Settings.LOGGING_HISTORY_SIZE
      */
     public CachingLogHandler() {
         super();

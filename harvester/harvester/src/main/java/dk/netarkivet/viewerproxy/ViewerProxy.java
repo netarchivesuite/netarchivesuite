@@ -89,7 +89,7 @@ public class ViewerProxy implements CleanupIF {
 
     /**
      * Get singleton instance of viewerproxy. See class comment for details.
-     * 
+     *
      * @return The viewerproxy instance.
      */
     public static ViewerProxy getInstance() {

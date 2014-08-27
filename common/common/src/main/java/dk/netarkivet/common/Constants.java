@@ -29,16 +29,15 @@ import org.apache.lucene.util.Version;
 
 /**
  * This class is used for global constants only.
- *
+ * <p>
  * If your constant is only to be used in a single package, put it in a Constants-class in that package, and make sure
  * it is package private (no modifiers).
- *
+ * <p>
  * If your constant is used in a single class only, put it in that class, and make sure it is private.
- *
+ * <p>
  * Remember everything placed here MUST be constants.
- *
+ * <p>
  * This class is never instantiated, so thread security is not an issue.
- *
  */
 public final class Constants {
     /** The pattern for an IP-address key. */

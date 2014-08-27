@@ -124,7 +124,7 @@ public class HTTPSRemoteFileRegistry extends HTTPRemoteFileRegistry {
 
     /**
      * Get the protocol used for this registry, that is 'https'.
-     * 
+     *
      * @return "https", the protocol.
      */
     @Override

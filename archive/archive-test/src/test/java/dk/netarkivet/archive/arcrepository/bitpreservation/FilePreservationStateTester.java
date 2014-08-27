@@ -51,7 +51,7 @@ public class FilePreservationStateTester {
 
     /**
      * Tests the standard way of using the FilePreservationState.
-     * 
+     *
      * @throws NoSuchMethodException
      * @throws IllegalArgumentException
      * @throws IllegalAccessException

@@ -79,13 +79,13 @@ public class SnapshotHarvestDefinition {
      * Extracts all required parameters from the request, checks for any inconsistencies, and passes the requisite data
      * to the updateHarvestDefinition method for processing. If the "update" parameter is not set, this method does
      * nothing.
-     *
+     * <p>
      * The parameters in the request are defined in Definitions-edit-snapshot-harvest.jsp.
      *
      * @param context The context of the web request.
      * @param i18n Translation information
      * @throws ForwardedToErrorPage if an error happened that caused a forward to the standard error page, in which case
-     *             further JSP processing should be aborted.
+     * further JSP processing should be aborted.
      */
     public void processRequest(PageContext context, I18n i18n) {
         ArgumentNotValid.checkNotNull(context, "PageContext context");
@@ -220,7 +220,7 @@ public class SnapshotHarvestDefinition {
      * Validate the previous harvestDefinition of this FullHarvest. The validation checks, that the given hs arguments
      * represents a completed Fullharvest: Check 1: It has one or more jobs. Check 2: None of the jobs have status
      * NEW,SUBMITTED, or STARTED.
-     * 
+     *
      * @param hd A given FullHarvest
      * @param context The context of the web request.
      * @param i18n Translation information

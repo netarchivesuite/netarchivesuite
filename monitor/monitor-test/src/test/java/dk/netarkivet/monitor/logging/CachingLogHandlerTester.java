@@ -33,7 +33,6 @@ import javax.management.MalformedObjectNameException;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
 
-import junit.framework.TestCase;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.management.Constants;
@@ -43,6 +42,7 @@ import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.monitor.MonitorSettings;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
+import junit.framework.TestCase;
 
 /**
  * Test behavior of the CachingLogHandler, and its exposure of log records using JMX.
@@ -87,7 +87,7 @@ public class CachingLogHandlerTester extends TestCase {
      * "applicationname" = Settings.get(CommonSettings.APPLICATION_NAME) "applicationinstid" =
      * Settings.get(CommonSettings.APPLICATIONINSTANCE_ID) "index" = (index in the cache; 0 is always the most recent
      * log record)
-     *
+     * <p>
      * It is also tested that no MBeans were registered before this call.
      *
      * @throws Exception
@@ -136,9 +136,9 @@ public class CachingLogHandlerTester extends TestCase {
 
     /**
      * Tests that publish registers the message in memory, so that it is accessible through JMX.
-     *
+     * <p>
      * Test that publishing more than 42 messages lets the oldest one fall out.
-     *
+     * <p>
      * Tests that publishing more than a set
      *
      * @throws Exception

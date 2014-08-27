@@ -30,7 +30,7 @@ public abstract class NetarkivetException extends RuntimeException {
 
     /**
      * Constructs new NetarkivetException with the specified detail message.
-     * 
+     *
      * @param message The detail message
      */
     public NetarkivetException(String message) {
@@ -39,7 +39,7 @@ public abstract class NetarkivetException extends RuntimeException {
 
     /**
      * Constructs new NetarkivetException with the specified detail message and cause.
-     * 
+     *
      * @param message The detail message
      * @param cause The cause
      */

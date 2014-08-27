@@ -29,9 +29,8 @@ import java.util.Map;
 /**
  * The Request interface is a very minimal version of a HTTP request. We use this to decouple the main parts of the
  * proxy server from a given implementation.
- *
+ * <p>
  * This should be kept to a proper subset of javax.servlet.ServletRequest
- *
  */
 public interface Request {
 
@@ -45,7 +44,7 @@ public interface Request {
     /**
      * Get all parameters in this request. Note: This may only be accessible while handling the request, and invalidated
      * when the request is handled.
-     * 
+     *
      * @return a map from parameter names to parameter values
      */
     Map<String, String[]> getParameterMap();

@@ -44,7 +44,7 @@ public class RemoteFileSettings implements Serializable {
 
     /**
      * Constructor.
-     * 
+     *
      * @param serverName The hostname of the server.
      * @param serverPort The port name of the server.
      * @param userName The username used for connecting.
@@ -58,7 +58,6 @@ public class RemoteFileSettings implements Serializable {
     }
 
     /**
-     * 
      * @return servername
      */
     public String getServerName() {
@@ -66,7 +65,6 @@ public class RemoteFileSettings implements Serializable {
     }
 
     /**
-     * 
      * @return server port.
      */
     public int getServerPort() {
@@ -74,7 +72,6 @@ public class RemoteFileSettings implements Serializable {
     }
 
     /**
-     * 
      * @return user name
      */
     public String getUserName() {
@@ -82,7 +79,6 @@ public class RemoteFileSettings implements Serializable {
     }
 
     /**
-     * 
      * @return user password
      */
     public String getUserPassword() {

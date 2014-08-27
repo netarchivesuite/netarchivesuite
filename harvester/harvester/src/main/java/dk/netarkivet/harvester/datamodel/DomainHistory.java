@@ -31,7 +31,6 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * Container for the historical information available for a domain.
- *
  */
 public class DomainHistory {
 
@@ -68,7 +67,7 @@ public class DomainHistory {
      * Get all harvest information domain history.
      *
      * @return Iterator of harvest information registered for this domain. The information is sorted by date with the
-     *         most recent information as the first entry.
+     * most recent information as the first entry.
      */
     public Iterator<HarvestInfo> getHarvestInfo() {
         return harvestInfo.iterator();
@@ -129,11 +128,11 @@ public class DomainHistory {
     /**
      * Return the most recent harvestresult for the configuration identified by name that was a complete harvest of the
      * domain.
-     * 
+     *
      * @param configName The name of the configuration
      * @param history The domainHistory for a domain
      * @return the most recent harvestresult for the configuration identified by name that was a complete harvest of the
-     *         domain.
+     * domain.
      */
     public static HarvestInfo getBestHarvestInfoExpectation(String configName, DomainHistory history) {
         ArgumentNotValid.checkNotNullOrEmpty(configName, "String configName");

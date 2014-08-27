@@ -30,7 +30,7 @@ import dk.netarkivet.harvester.HarvesterSettings;
 
 /**
  * Wraps information for an Heritrix file that should be stored in the metadata ARC.
- *
+ * <p>
  * Defines a natural order to sort them.
  */
 public class MetadataFile implements Comparable<MetadataFile> {
@@ -135,7 +135,7 @@ public class MetadataFile implements Comparable<MetadataFile> {
 
     /**
      * Creates a metadata file for a domain-specific override file.
-     * 
+     *
      * @param heritrixFile a given heritrix metadata file.
      * @param harvestId The harvestID that the job generating this file is part of.
      * @param jobId The Id of the job generating this file
@@ -156,7 +156,7 @@ public class MetadataFile implements Comparable<MetadataFile> {
 
     /**
      * Returns the actual file.
-     * 
+     *
      * @return the actual file.
      */
     public File getHeritrixFile() {
@@ -177,7 +177,7 @@ public class MetadataFile implements Comparable<MetadataFile> {
 
     /**
      * Creates a metadata URL for this file. Metadata URLs are used to retrieve records in the metadata ARC file.
-     * 
+     *
      * @param theType The type of metadata for this file.
      * @param name The name of the file.
      * @param harvestID The harvestID that the job is part of.
@@ -185,7 +185,8 @@ public class MetadataFile implements Comparable<MetadataFile> {
      * @param heritrixVersion The version of Heritrix generating the file.
      * @return the metadata URL for this file
      */
-    private String makeMetadataURL(MetadataType theType, String name, long harvestID, long jobID, String heritrixVersion) {
+    private String makeMetadataURL(MetadataType theType, String name, long harvestID, long jobID,
+            String heritrixVersion) {
         return String.format(URL_FORMAT, Settings.get(CommonSettings.ORGANIZATION), theType.name(), name,
                 heritrixVersion, Long.toString(harvestID), Long.toString(jobID));
     }

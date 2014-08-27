@@ -27,9 +27,8 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * A container for miscellaneous information about a TLD.
- *
+ * <p>
  * Currently contains the TLD name and a count of subdomains.
- *
  */
 public class TLDInfo implements Comparable<TLDInfo> {
 
@@ -72,7 +71,7 @@ public class TLDInfo implements Comparable<TLDInfo> {
 
     /**
      * Add a 2nd-level domain to the information for this domain.
-     *
+     * <p>
      * This tests that the given domain does in fact belong to this TLD, but not whether it has been added before.
      *
      * @param name A name of a domain
@@ -121,11 +120,10 @@ public class TLDInfo implements Comparable<TLDInfo> {
      * as this object is less than, equal to, or greater than the specified object.
      * <p>
      *
-     * @see Comparable#compareTo(Object o)
-     *
      * @param o the Object to be compared.
      * @return a negative integer, zero, or a positive integer as this object is less than, equal to, or greater than
-     *         the specified object.
+     * the specified object.
+     * @see Comparable#compareTo(Object o)
      */
     public int compareTo(TLDInfo o) {
         return tldName.compareTo(o.tldName);
@@ -151,7 +149,7 @@ public class TLDInfo implements Comparable<TLDInfo> {
 
     /**
      * Get the TLD for a given domain including multilevel TLD. for example .gouv.fr is level 2 TLD
-     * 
+     *
      * @param domain A domain, as specified by the global domain regexp.
      * @param maxLevel maximum level for TLD (can't be 0).
      * @return The TLD of the domain, or a special placeholder for IP addresses.
@@ -176,7 +174,7 @@ public class TLDInfo implements Comparable<TLDInfo> {
 
     /**
      * Return TLD level of the domain.
-     * 
+     *
      * @param domain A domain
      * @return TLD level of the domain 1 for IP addresses
      */

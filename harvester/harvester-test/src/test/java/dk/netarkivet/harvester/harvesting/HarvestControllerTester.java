@@ -204,7 +204,7 @@ public class HarvestControllerTester {
 
     /**
      * Test that writePreharvestMetadata() does what it's supposed to do.
-     * 
+     *
      * @throws Exception
      */
     @Test

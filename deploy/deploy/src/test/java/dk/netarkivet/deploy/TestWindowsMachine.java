@@ -43,7 +43,7 @@ public class TestWindowsMachine extends WindowsMachine {
      * This function creates the VBscript to start the application. It calls a command for executing the java
      * application, then it writes the way to kill the process in the kill_ps_app.bat and finally it creates the
      * run-file.
-     * 
+     * <p>
      * It should have the following content: - set WshShell = CreateObject("WScript.Shell") - set oExec = WshShell.exec(
      * JAVA ) - set fso = CreateObject("Scripting.FileSystemObject") - set f =
      * fso.OpenTextFile(".\conf\kill_ps_app.bat", 2, True) - f.WriteLine "taskkill /F /PID " & oExec.ProcessID - f.close
@@ -54,9 +54,9 @@ public class TestWindowsMachine extends WindowsMachine {
      * oExec.StdOut.ReadLine - outFile.close - Loop - Do While oExec.StdErr.AtEndOfStream <> True - Set outFile =
      * CreateObject("Scripting.FileSystemObject") .OpenTextFile("start_APP.log", 8, True) - outFile.WriteLine
      * oExec.StdErr.ReadLine - outFile.close - Loop - Loop
-     * 
+     * <p>
      * where: JAVA = the command for starting the java application (very long). app = the name of the application.
-     * 
+     *
      * @param app The application to start.
      * @param directory The directory where the script should be placed.
      * @throws IOFailure If an error occurred during the creation of the windows vb script.

@@ -32,7 +32,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * Takes care of the lifecycling of subcomponents(children).
- * 
+ * <p>
  * When extending this class you must:
  * <ol>
  * <li>Add all lifecycle subcomponents with the addChild, before the start method is called.
@@ -66,7 +66,7 @@ public class LifeCycleComponent implements ComponentLifeCycle {
     /**
      * Adds a child <code>ComponentLifeCycle</code>. The childs lifecycle will be managed by by the
      * <code>LifeCycleComponent</code>.
-     * 
+     *
      * @param childComponent The child to add
      */
     public void addChild(ComponentLifeCycle childComponent) {

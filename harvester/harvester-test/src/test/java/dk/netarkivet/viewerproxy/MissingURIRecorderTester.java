@@ -45,7 +45,7 @@ public class MissingURIRecorderTester {
 
     /**
      * Tests start. Simply tests that urls are recorded after start is called.
-     * */
+     */
     @Test
     public void testStartRecordingURIs() throws Exception {
         assertEquals("mur should report no collected urls", 0, mur.getRecordedURIs().size());
@@ -79,7 +79,7 @@ public class MissingURIRecorderTester {
 
     /**
      * Tests clear. Tests that the set of URLs is cleared after calling clear.
-     * */
+     */
     @Test
     public void testClearRecordedURIs() throws Exception {
         assertEquals("mur should report no collected urls", 0, mur.getRecordedURIs().size());

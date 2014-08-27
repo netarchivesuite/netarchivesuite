@@ -29,13 +29,12 @@ import junit.textui.TestRunner;
 
 /**
  * Testsuite for the package dk.netarkivet.common.logging.
- *
  */
 
 public class MonitorLoggingTesterSuite {
     /**
      * Create a test suite just for these tests.
-     * 
+     *
      * @return this testsuite
      */
     public static Test suite() {
@@ -47,7 +46,7 @@ public class MonitorLoggingTesterSuite {
 
     /**
      * Add the tests here.
-     * 
+     *
      * @param suite The testsuite to be added
      */
     public static void addToSuite(TestSuite suite) {

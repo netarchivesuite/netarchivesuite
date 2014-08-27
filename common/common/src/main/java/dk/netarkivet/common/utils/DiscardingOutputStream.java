@@ -32,7 +32,7 @@ class DiscardingOutputStream extends OutputStream {
 
     /**
      * Discard a single byte of data.
-     * 
+     *
      * @see OutputStream#write(int)
      */
     public void write(int i) {
@@ -40,7 +40,7 @@ class DiscardingOutputStream extends OutputStream {
 
     /**
      * Discard many bytes of data, efficiently.
-     * 
+     *
      * @see OutputStream#write(byte[], int, int)
      */
     public void write(byte[] buffer, int offset, int amount) {
@@ -48,7 +48,7 @@ class DiscardingOutputStream extends OutputStream {
 
     /**
      * Discard all the data we can, efficiently.
-     * 
+     *
      * @see OutputStream#write(byte[])
      */
     public void write(byte[] buffer) {

@@ -43,21 +43,21 @@ public abstract class ArchiveBatchJobBase extends FileBatchJob {
 
     /**
      * Initialize the job before running. This is called before the processRecord() calls start coming.
-     * 
+     *
      * @param os The OutputStream to which output data is written
      */
     public abstract void initialize(OutputStream os);
 
     /**
      * Finish up the job. This is called after the last processRecord() call.
-     * 
+     *
      * @param os The OutputStream to which output data is written
      */
     public abstract void finish(OutputStream os);
 
     /**
      * Private method that handles our exception.
-     * 
+     *
      * @param e the given exception
      * @param archiveFile The archive file where the exception occurred.
      * @param index The offset in the archive file where the exception occurred.
@@ -102,7 +102,7 @@ public abstract class ArchiveBatchJobBase extends FileBatchJob {
 
     /**
      * Returns the number of records processed.
-     * 
+     *
      * @return the number of records processed.
      */
     public int noOfRecordsProcessed() {

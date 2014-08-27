@@ -40,10 +40,12 @@ import dk.netarkivet.common.utils.arc.ARCBatchJob;
  */
 @SuppressWarnings({"serial", "unused"})
 @Resources(value = {
-        @Resource(name = "regex", description = "The regular expression for the " + "urls.", type = java.lang.String.class),
+        @Resource(name = "regex", description = "The regular expression for the " + "urls.",
+                type = java.lang.String.class),
         @Resource(name = "mimetype", type = java.lang.String.class),
         @Resource(description = "Batchjob for finding URLs which matches a given"
-                + " regular expression and has a mimetype which matches another" + " regular expression.", type = dk.netarkivet.common.utils.batch.UrlSearch.class)})
+                + " regular expression and has a mimetype which matches another" + " regular expression.",
+                type = dk.netarkivet.common.utils.batch.UrlSearch.class)})
 public class UrlSearch extends ARCBatchJob {
     private String regex;
     private String mimetype;

@@ -35,7 +35,6 @@ public abstract class SimpleCDXRecordFilter implements CDXRecordFilter {
     private String filtername;
 
     /**
-     *
      * @param filtername - the name of the filter
      * @throws ArgumentNotValid If 'filtername' equals null or the empty string
      */
@@ -45,7 +44,6 @@ public abstract class SimpleCDXRecordFilter implements CDXRecordFilter {
     }
 
     /**
-     *
      * @return the filter name
      */
     public String getFilterName() {

@@ -43,7 +43,7 @@ public class RepeatingScheduleTester {
     /**
      * Given a repeating schedule that should run yearly 3 times, check that it gives the expected events, and no fourth
      * event.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -65,7 +65,7 @@ public class RepeatingScheduleTester {
     /**
      * Given a repeting schedule that should run yearly at noon 3 times, check that it gives the expected events, and no
      * fourth event.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -88,7 +88,7 @@ public class RepeatingScheduleTester {
 
     /**
      * Test that negative argument on getNextEvent throws ArgumentNotValid exception.
-     * 
+     *
      * @throws Exception
      */
     @Test

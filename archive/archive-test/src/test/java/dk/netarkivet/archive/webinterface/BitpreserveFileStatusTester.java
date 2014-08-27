@@ -206,7 +206,7 @@ public class BitpreserveFileStatusTester {
 
     /**
      * FIXME fails after new threadbased implementation
-     * 
+     *
      * @throws NoSuchFieldException
      * @throws IllegalAccessException
      */

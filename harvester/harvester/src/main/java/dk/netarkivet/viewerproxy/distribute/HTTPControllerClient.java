@@ -43,10 +43,9 @@ import dk.netarkivet.viewerproxy.Controller;
 /**
  * Client side communication with http controller server. This class works on a specific response object, simply
  * forwarding it to the given url. Thus an instance of this class is a use-once-object.
- *
+ * <p>
  * The class is supposed to be used in JSP pages in order to make sure that the remote URI is requested through the
  * browser, so communication with the HTTPControllerServer is done to the one currently set as viewer proxy.
- *
  */
 public class HTTPControllerClient implements Controller {
     /** The response we are working on. */
@@ -66,7 +65,7 @@ public class HTTPControllerClient implements Controller {
      * @param response The response object to use for redirect.
      * @param out The JspWriter used to communicate with the users.
      * @param returnURL The URL to return to afterwards if no output is given. This must not be null or not empty if
-     *            either startRecordingURIs, stopRecordingURIs, changeIndex or clearRecordedURIs are called.
+     * either startRecordingURIs, stopRecordingURIs, changeIndex or clearRecordedURIs are called.
      */
     public HTTPControllerClient(HttpServletResponse response, JspWriter out, String returnURL) {
         ArgumentNotValid.checkNotNull(response, "HttpServletResponse response");
@@ -115,7 +114,7 @@ public class HTTPControllerClient implements Controller {
 
     /**
      * Write recorded URIs to response. NOTE! This does not respect the Controller! The URIs are *not* returned!
-     * 
+     *
      * @return null in all cases. The URIs are written in response by the forwarded call instead.
      */
     public Set<URI> getRecordedURIs() {
@@ -125,7 +124,7 @@ public class HTTPControllerClient implements Controller {
 
     /**
      * Change current index to work on these jobs. Then return to returnURL.
-     *
+     * <p>
      * Since post data cannot be transferred through a regular redirect, we instead build a page that uses javascript to
      * immediately repost the data to the url.
      *
@@ -166,9 +165,9 @@ public class HTTPControllerClient implements Controller {
     /**
      * Write the current status of viewerproxy to response. NOTE! This does not respect the Controller API! The URIs are
      * *not* returned!
-     * 
-     * @return null. The status is written in response by the forwarded call instead.
+     *
      * @param locale The locale (da, en, ...) that the response should be written using.
+     * @return null. The status is written in response by the forwarded call instead.
      */
     public String getStatus(Locale locale) {
         ArgumentNotValid.checkNotNull(locale, "locale");

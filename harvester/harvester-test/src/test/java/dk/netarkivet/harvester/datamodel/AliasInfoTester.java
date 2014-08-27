@@ -122,9 +122,8 @@ public class AliasInfoTester {
         assertTrue("getLastChange returns wrong value", realDate.equals(ai.getLastChange()));
     }
 
-    /***
+    /**
      * tests makeAliasMetadataEntry(List<AliasInfo> aliases, String URL, String mimetype).
-     *
      */
     @Test
     public void testMakeAliasMetadataEntries() {

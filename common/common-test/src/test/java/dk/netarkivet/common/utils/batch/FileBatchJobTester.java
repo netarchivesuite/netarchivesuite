@@ -40,7 +40,6 @@ import dk.netarkivet.testutils.Serial;
 
 /**
  * A tester suite for an abstract class? Yes, it's true!
- *
  */
 
 @SuppressWarnings({"serial"})

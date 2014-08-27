@@ -32,9 +32,7 @@ import org.junit.Test;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
- * 
  * Unit tests for the DomainOwner class.
- *
  */
 public class DomainOwnerInfoTester {
 

@@ -35,9 +35,9 @@ public interface BitPreservationDAO extends CleanupIF {
     /**
      * Given the output of a checksum job, add the results to the database. NOTE: the Checksum version of Replica must
      * be implemented with output in the same form as checksumJobOutput for implementation of bitArchive replicas
-     * 
+     *
      * @param checksumOutput The parsed output of a GetAllChecksumMessage as a File with ChecksumJob lines, i.e.
-     *            filename##checksum.
+     * filename##checksum.
      * @param replica The replica this checksum job is for.
      */
     void addChecksumInformation(File checksumOutput, Replica replica);
@@ -45,7 +45,7 @@ public interface BitPreservationDAO extends CleanupIF {
     /**
      * Given the output of a file list job, add the results to the database. NOTE: the Checksum version of Replica must
      * be implemented with output in the same form as filelistJobOutput for implementation of bitArchive replicas
-     * 
+     *
      * @param filelistOutput A file with a list of filenames for the given replica.
      * @param replica The replica this filelist job is for.
      */
@@ -55,7 +55,7 @@ public interface BitPreservationDAO extends CleanupIF {
      * Return files with upload_status = COMPLETE for the replica, but the filelist_status = MISSING. This is done by
      * querying the database for files with no or different update date from the last known update date for bitarchive,
      * but which are present from admin data.
-     * 
+     *
      * @param replica The replica to check for.
      * @return The list of missing files for a specific replica.
      */
@@ -65,7 +65,7 @@ public interface BitPreservationDAO extends CleanupIF {
      * Return files with filelist_status CORRUPT for the replica, but not present in the last missing files job. This is
      * done by querying the database for files with different checksum from the checksum in the last known update date
      * for bitarchive, but which are present from admin data.
-     * 
+     *
      * @param replica The replica to check for.
      * @return The list of wrong files for the replica in the last update.
      */
@@ -73,7 +73,7 @@ public interface BitPreservationDAO extends CleanupIF {
 
     /**
      * Return the count of missing files for replica.
-     * 
+     *
      * @param replica The replica to get the count for.
      * @return The count of missing files for a replica.
      */
@@ -81,7 +81,7 @@ public interface BitPreservationDAO extends CleanupIF {
 
     /**
      * Return the count of corrupt files for replica.
-     * 
+     *
      * @param replica The replica to get the count for.
      * @return The number of wrong files for a replica.
      */
@@ -89,7 +89,7 @@ public interface BitPreservationDAO extends CleanupIF {
 
     /**
      * Returns the count of files in the replica which is not missing.
-     * 
+     *
      * @param replica The replica to have the files.
      * @return The number of files, which does not have filelist_status = MISSING.
      */
@@ -97,7 +97,7 @@ public interface BitPreservationDAO extends CleanupIF {
 
     /**
      * Get the date for the last file list job.
-     * 
+     *
      * @param replica The replica to get the date for.
      * @return The date of the last missing files update for the replica.
      */
@@ -105,7 +105,7 @@ public interface BitPreservationDAO extends CleanupIF {
 
     /**
      * Get the date for the last file list job.
-     * 
+     *
      * @param replica The replica to get the date for.
      * @return The date of the last wrong file update for the replica.
      */
@@ -113,7 +113,7 @@ public interface BitPreservationDAO extends CleanupIF {
 
     /**
      * Method for retrieving a replica which has the file and the checksum_status = OK.
-     * 
+     *
      * @param filename The name of the file.
      * @return A replica which contains the file, or null if no such replica can be found.
      */
@@ -121,7 +121,7 @@ public interface BitPreservationDAO extends CleanupIF {
 
     /**
      * Method for retrieving a replica which has the file and the checksum_status = OK.
-     * 
+     *
      * @param filename The name of the file.
      * @param badReplica A replica which is known to contain a corrupt instance of this file.
      * @return A replica which contains the file, or null if no such replica can be found.
@@ -140,14 +140,14 @@ public interface BitPreservationDAO extends CleanupIF {
      * for some replica, then based on a checksum vote, a specific checksum is chosen as the 'correct' one, and the
      * entries with another checksum than the 'correct one' will be marked as corrupt. If no winner of the voting is
      * found, the all instances will be chosen to have 'UNKNOWN' checksum status.
-     * 
+     *
      * @param filename The name of the file to update the status for.
      */
     void updateChecksumStatus(String filename);
 
     /**
      * Method for retrieving the entry in the replicafileinfo table for a given file and replica.
-     * 
+     *
      * @param filename The name of the file for the entry.
      * @param replica The replica of the entry.
      * @return The replicafileinfo entry corresponding to the given filename and replica.
@@ -156,7 +156,7 @@ public interface BitPreservationDAO extends CleanupIF {
 
     /**
      * Method for updating a specific entry in the replicafileinfo table.
-     * 
+     *
      * @param filename Name of the file.
      * @param checksum The checksum of the file.
      * @param replica The replica where the file exists.

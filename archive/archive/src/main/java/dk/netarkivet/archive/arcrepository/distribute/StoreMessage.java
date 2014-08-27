@@ -43,7 +43,7 @@ public class StoreMessage extends ArchiveMessage {
 
     /**
      * Construct StoreMessage.
-     * 
+     *
      * @param replyTo Channel to reply back to
      * @param arcfile The file to store
      */
@@ -55,7 +55,7 @@ public class StoreMessage extends ArchiveMessage {
 
     /**
      * Retrieve name of the stored file.
-     * 
+     *
      * @return current value of arcfileName
      */
     public String getArcfileName() {
@@ -64,7 +64,7 @@ public class StoreMessage extends ArchiveMessage {
 
     /**
      * Get method for field theRemoteFile.
-     * 
+     *
      * @return Current value of theRemoteFile
      */
     public RemoteFile getRemoteFile() {
@@ -83,7 +83,7 @@ public class StoreMessage extends ArchiveMessage {
 
     /**
      * Generate String representation of this object.
-     * 
+     *
      * @return String representation of this object
      */
     public String toString() {

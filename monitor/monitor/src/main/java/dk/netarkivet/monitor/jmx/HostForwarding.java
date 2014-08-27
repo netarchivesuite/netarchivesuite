@@ -88,7 +88,7 @@ public class HostForwarding<T> {
 
     /**
      * Set the JMX-username with a new value. Null or empty username is not allowed.
-     * 
+     *
      * @param newJmxUsername New value for the JMX-username
      */
     private synchronized void setJmxUsername(String newJmxUsername) {
@@ -111,7 +111,7 @@ public class HostForwarding<T> {
 
     /**
      * Set the JMX-password with a new value. Null or empty password is not allowed.
-     * 
+     *
      * @param newJmxPassword New value for the JMX-password
      */
     private synchronized void setJmxPassword(String newJmxPassword) {
@@ -153,7 +153,6 @@ public class HostForwarding<T> {
      * @param mBeanServer The MBean server to register proxy mbeans in.
      * @param query The query for which we should proxy matching mbeans on remote servers.
      * @param <T> The type of HostForwarding to return.
-     *
      * @return This host forwarding instance.
      */
     public static synchronized <T> HostForwarding getInstance(Class<T> asInterface, MBeanServer mBeanServer,
@@ -294,7 +293,6 @@ public class HostForwarding<T> {
      * on the remote object.
      *
      * @param hostEntry The host to connect to.
-     *
      * @throws IOFailure if remote host cannot be connected to.
      */
     private synchronized void createProxyMBeansForHost(HostEntry hostEntry) {
@@ -324,7 +322,6 @@ public class HostForwarding<T> {
      * Returns the domain from a given query. Used for constructing an error-mbean-name on connection trouble.
      *
      * @param aMBeanQuery The query to return the domain from.
-     *
      * @return the domain from a given query.
      */
     private String queryToDomain(String aMBeanQuery) {
@@ -377,9 +374,7 @@ public class HostForwarding<T> {
          * @param proxy The error mbean that invoked this, ignored.
          * @param method The method attempted invoked, ignored.
          * @param args The arguments for the method, ignored.
-         *
          * @return A string with success or failure.
-         *
          * @throws Throwable Shouldn't throw exceptions.
          */
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -420,9 +415,7 @@ public class HostForwarding<T> {
          * @param proxy This proxying object. Ignored.
          * @param method The method invoked. This is called on the remote mbean.
          * @param args The arguments to the method. These are given to the remote mbean.
-         *
          * @return Whatever the remote mbean returns.
-         *
          * @throws IOFailure On trouble establishing the connection.
          * @throws javax.management.RuntimeMBeanException On exceptions in the mbean invocations.
          * @throws Throwable What ever the remote mbean has thrown.

@@ -67,9 +67,8 @@ public final class EMailUtils {
      * @param from The sender of the email.
      * @param subject The subject of the email.
      * @param body The body of the email.
-     *
      * @throws ArgumentNotValid If either parameter is null, if to, from or subject is the empty string, if to or from
-     *             does not contain valid email adresses.
+     * does not contain valid email adresses.
      * @throws IOFailure If the message cannot be sent for some reason.
      */
     public static void sendEmail(String to, String from, String subject, String body) {
@@ -80,16 +79,14 @@ public final class EMailUtils {
      * Send an email, possibly forgiving errors.
      *
      * @param to The recipient of the email. Separate multiple recipients with commas. Supports only adresses of the
-     *            type 'john@doe.dk', not 'John Doe <john@doe.dk>'
+     * type 'john@doe.dk', not 'John Doe <john@doe.dk>'
      * @param from The sender of the email.
      * @param subject The subject of the email.
      * @param body The body of the email.
      * @param forgive On true, will send the email even on invalid email addresses, if at least one recipient can be
-     *            set, on false, will throw exceptions on any invalid email address.
-     *
-     *
+     * set, on false, will throw exceptions on any invalid email address.
      * @throws ArgumentNotValid If either parameter is null, if to, from or subject is the empty string, or no recipient
-     *             can be set. If "forgive" is false, also on any invalid to or from address.
+     * can be set. If "forgive" is false, also on any invalid to or from address.
      * @throws IOFailure If the message cannot be sent for some reason.
      */
     public static void sendEmail(String to, String from, String subject, String body, boolean forgive) {

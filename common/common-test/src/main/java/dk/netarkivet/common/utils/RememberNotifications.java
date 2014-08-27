@@ -25,7 +25,6 @@ package dk.netarkivet.common.utils;
 
 /**
  * Mockup that simply remembers its last calls in two public fields.
- *
  */
 public class RememberNotifications extends Notifications {
     public NotificationType type;

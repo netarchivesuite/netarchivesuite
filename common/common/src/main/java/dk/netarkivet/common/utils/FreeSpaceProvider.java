@@ -27,7 +27,6 @@ import java.io.File;
 
 /**
  * This interface encapsulates providing the number of bytes free on the file system.
- *
  */
 public interface FreeSpaceProvider {
 

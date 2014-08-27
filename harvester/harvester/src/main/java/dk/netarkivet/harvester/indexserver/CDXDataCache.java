@@ -29,7 +29,6 @@ import dk.netarkivet.harvester.harvesting.metadata.MetadataFile;
 
 /**
  * A RawDataCache that serves files with CDX data.
- *
  */
 public class CDXDataCache extends RawMetadataCache {
 

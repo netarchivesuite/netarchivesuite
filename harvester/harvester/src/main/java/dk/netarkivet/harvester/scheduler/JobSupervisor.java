@@ -93,7 +93,7 @@ public class JobSupervisor implements ComponentLifeCycle {
 
     /**
      * Reschedule all jobs with JobStatus SUBMITTED. Runs in a separate thread to avoid blocking.
-     * 
+     * <p>
      * Package protected to allow unit testing.
      */
     void rescheduleLeftOverJobs() {
@@ -111,7 +111,7 @@ public class JobSupervisor implements ComponentLifeCycle {
     /**
      * Stops any job that has been in status STARTED a very long time defined by the
      * {@link HarvesterSettings#JOB_TIMEOUT_TIME} setting.
-     * 
+     * <p>
      * Package protected to allow unit testing.
      */
     void cleanOldJobs() {

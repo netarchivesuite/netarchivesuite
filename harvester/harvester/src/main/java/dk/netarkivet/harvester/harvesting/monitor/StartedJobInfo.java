@@ -41,7 +41,7 @@ import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlS
 
 /**
  * This class is a simple bean storing information about a started job.
- *
+ * <p>
  * This class is a persistent entity as per Berkeley DB JE DPL API.
  */
 public class StartedJobInfo implements Comparable<StartedJobInfo> {
@@ -52,7 +52,9 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
     /** list of the compare criteria. */
     public enum Criteria {
         JOBID, HOST, PROGRESS, ELAPSED, QFILES, TOTALQ, ACTIVEQ, EXHAUSTEDQ
-    };
+    }
+
+    ;
 
     /** current compare criteria. */
     private StartedJobInfo.Criteria compareCriteria = StartedJobInfo.Criteria.JOBID;
@@ -347,7 +349,7 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
 
     /**
      * set the criteria used in the compareTo method that way we can decide how to sort StartedJobInfo.
-     * 
+     *
      * @param criteria the criteria we want to use
      */
     public void chooseCompareCriteria(StartedJobInfo.Criteria criteria) {

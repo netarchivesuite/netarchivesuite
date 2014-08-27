@@ -36,8 +36,6 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.archive.io.arc.ARCRecord;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -48,6 +46,7 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.batch.ARCBatchFilter;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.testutils.TestFileUtils;
+import junit.framework.TestCase;
 
 /**
  * Unit tests for the class ARCBatchJob.
@@ -78,7 +77,7 @@ public class ARCBatchJobTester {
 
     /**
      * Utility method for printing Exception arrays on System.out.
-     * 
+     *
      * @param es The Exception array to be printed.
      */
     private void printExceptions(Exception[] es) {
@@ -228,7 +227,7 @@ public class ARCBatchJobTester {
 
     /**
      * Makes the given job process a few null records and handle an Exception.
-     * 
+     *
      * @param job the given job
      */
     private void doStuff(SerializableARCBatchJob job) {
@@ -268,8 +267,8 @@ public class ARCBatchJobTester {
      */
     private class TestARCBatchJob extends ARCBatchJob {
         /**
-         * @see ARCBatchJob#getFilter()
          * @return A filter that allows all records.
+         * @see ARCBatchJob#getFilter()
          */
         public ARCBatchFilter getFilter() {
             return ARCBatchFilter.NO_FILTER;
@@ -304,8 +303,8 @@ public class ARCBatchJobTester {
 
     private static class SerializableARCBatchJob extends ARCBatchJob {
         /**
-         * @see ARCBatchJob#getFilter()
          * @return A filter that allows all records.
+         * @see ARCBatchJob#getFilter()
          */
         public ARCBatchFilter getFilter() {
             return ARCBatchFilter.NO_FILTER;

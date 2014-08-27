@@ -87,7 +87,7 @@ public class GlobalCrawlerTrapListTester extends DataModelTestCase {
 
     /**
      * Unit test for https://sbforge.org/jira/browse/NAS-1793
-     * 
+     *
      * @throws FileNotFoundException
      */
     @Test

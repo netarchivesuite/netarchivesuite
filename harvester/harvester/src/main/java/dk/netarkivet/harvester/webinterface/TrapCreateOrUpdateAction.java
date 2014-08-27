@@ -49,7 +49,6 @@ import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDBDAO;
 /**
  * This action processes multipart uploads to either create or update a global crawler trap list. The choice of which
  * action to carry out is determined by whether the TRAP_ID is specified in the request.
- *
  */
 @SuppressWarnings({"unchecked"})
 public class TrapCreateOrUpdateAction extends TrapAction {

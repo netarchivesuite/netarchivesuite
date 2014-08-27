@@ -125,7 +125,7 @@ public class ReportingWarcTester {
     /**
      * Tests the method getCrawlLogForDomainInJob. This unit-test also implicitly tests the class
      * HarvestedUrlsForDomainBatchJob
-     * 
+     *
      * @throws Exception Now works again after resolving bug NAS-2266
      */
     public void testGetCrawlLogForDomainInJob() throws Exception {

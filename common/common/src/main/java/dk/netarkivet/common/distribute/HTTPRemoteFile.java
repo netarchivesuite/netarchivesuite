@@ -81,13 +81,12 @@ public class HTTPRemoteFile extends AbstractRemoteFile {
 
     /**
      * Initialises a remote file implemented by point-to-point HTTP communication.
-     * 
+     *
      * @param file The file to make a remote file for
      * @param useChecksums Whether communications are checksummed. If true, getChecksum will also return the checksum.
      * @param fileDeletable if true, the file given to this method is deletable, once it is transferred.
      * @param multipleDownloads if true, the file may be transferred more than once. Otherwise, all file handles are
-     *            attempted to be made invalid after the first transfer, although no guarantees are made.
-     *
+     * attempted to be made invalid after the first transfer, although no guarantees are made.
      * @throws ArgumentNotValid if file is null, or not a readable file.
      * @throws IOFailure if checksums are requested, but i/o errors occur while checksumming.
      */
@@ -108,22 +107,23 @@ public class HTTPRemoteFile extends AbstractRemoteFile {
 
     /**
      * Initialises a remote file implemented by point-to-point HTTP communication.
-     * 
+     *
      * @param f The file to make a remote file for
      * @param useChecksums Whether communications are checksummed. If true, getChecksum will also return the checksum.
      * @param fileDeletable if true, the file given to this method is deletable, once it is transferred.
      * @param multipleDownloads if true, the file may be transferred more than once. Otherwise, all file handles are
-     *            attempted to be made invalid after the first transfer, although no guarantees are made.
+     * attempted to be made invalid after the first transfer, although no guarantees are made.
      * @throws ArgumentNotValid if file is null, or not a readable file.
      * @throws IOFailure if checksums are requested, but i/o errors occur while checksumming.
      */
-    public static RemoteFile getInstance(File f, Boolean useChecksums, Boolean fileDeletable, Boolean multipleDownloads) {
+    public static RemoteFile getInstance(File f, Boolean useChecksums, Boolean fileDeletable,
+            Boolean multipleDownloads) {
         return new HTTPRemoteFile(f, useChecksums, fileDeletable, multipleDownloads);
     }
 
     /**
      * Get the webserver registry for this class of files. Meant to be subclassed for specialised versions of this file.
-     * 
+     *
      * @return The reigstry.
      */
     protected HTTPRemoteFileRegistry getRegistry() {
@@ -134,10 +134,10 @@ public class HTTPRemoteFile extends AbstractRemoteFile {
      * Copy this remote file to the given file. If the file resides on the current machine, remote file transfer is done
      * locally. Otherwise, the remote file is transferred over http. If the file is not set to be able to be transferred
      * multiple times, it is cleaned up after the transfer.
-     * 
+     *
      * @param destFile The file to write the remote file to.
      * @throws ArgumentNotValid on null destFile, or parent to destfile is not a writeable directory, or destfile exists
-     *             and cannot be overwritten.
+     * and cannot be overwritten.
      * @throws IOFailure on I/O trouble writing remote file to destination.
      */
     public void copyTo(File destFile) {
@@ -163,10 +163,10 @@ public class HTTPRemoteFile extends AbstractRemoteFile {
      * to the local file. Otherwise, the remote file is transferred over http. The close method of the input stream will
      * cleanup this handle, and if checksums are requested, will check the checksums on close. If the file is not set to
      * be able to be transferred multiple times, it is cleaned up after the transfer.
-     * 
+     *
      * @return An input stream for the remote file.
      * @throws IOFailure on I/O trouble generating inputstream for remote file. Also, the returned remote file will
-     *             throw IOFailure on close, if checksums are requested, but do not match.
+     * throw IOFailure on close, if checksums are requested, but do not match.
      */
     public InputStream getInputStream() {
         if (filesize == 0) {
@@ -226,7 +226,7 @@ public class HTTPRemoteFile extends AbstractRemoteFile {
 
     /**
      * Get checksum for file, or null if checksums were not requested.
-     * 
+     *
      * @return checksum for file, or null if checksums were not requested.
      */
     public String getChecksum() {
@@ -235,7 +235,7 @@ public class HTTPRemoteFile extends AbstractRemoteFile {
 
     /**
      * Helper method to determine if file resides on local machine.
-     * 
+     *
      * @return true if the file is on the local machine, false otherwise.
      */
     protected boolean isLocal() {
@@ -245,7 +245,7 @@ public class HTTPRemoteFile extends AbstractRemoteFile {
     /**
      * Retrieval of the number of retries for retrieving a file from a HTTP server. TODO define a setting for HTTP
      * retries, just like for the FTP retries.
-     * 
+     *
      * @return The number of retries. Currently a constant: 1.
      */
     @Override

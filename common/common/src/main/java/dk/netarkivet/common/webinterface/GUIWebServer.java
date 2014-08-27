@@ -42,7 +42,6 @@ import dk.netarkivet.common.utils.StringUtils;
 
 /**
  * A class representing an HttpServer. This class loads web applications as given in settings.
- *
  */
 public class GUIWebServer implements CleanupIF {
     /**

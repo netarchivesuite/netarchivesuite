@@ -130,7 +130,7 @@ public class IndexRequestClientTester {
     @Test
     public void testGetJobIndexFullEmptySet() throws IOException {
         testNormalDirResponse(IndexRequestClient.getInstance(RequestType.FULL_CRAWL_LOG), RequestType.FULL_CRAWL_LOG,
-                Collections.<Long> emptySet());
+                Collections.<Long>emptySet());
     }
 
     @Test
@@ -154,7 +154,7 @@ public class IndexRequestClientTester {
     @Test
     public void testGetJobIndexDedupEmptySet() throws IOException {
         testNormalDirResponse(IndexRequestClient.getInstance(RequestType.DEDUP_CRAWL_LOG), RequestType.DEDUP_CRAWL_LOG,
-                Collections.<Long> emptySet());
+                Collections.<Long>emptySet());
     }
 
     @Test
@@ -178,7 +178,7 @@ public class IndexRequestClientTester {
     @Ignore("Hangs in Eclipse")
     public void testGetJobIndexCdxEmptySet() throws IOException {
         testNormalFileResponse(IndexRequestClient.getInstance(RequestType.CDX), RequestType.CDX,
-                Collections.<Long> emptySet());
+                Collections.<Long>emptySet());
     }
 
     @Test(timeout = 60000)

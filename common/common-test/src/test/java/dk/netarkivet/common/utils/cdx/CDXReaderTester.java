@@ -38,13 +38,12 @@ import dk.netarkivet.common.utils.arc.ARCKey;
 
 /**
  * Performs unit tests of the CDXReader class.
- *
  */
 public class CDXReaderTester {
 
     /**
      * Testing the constructor.
-     * 
+     *
      * @throws FileNotFoundException
      */
     @Test

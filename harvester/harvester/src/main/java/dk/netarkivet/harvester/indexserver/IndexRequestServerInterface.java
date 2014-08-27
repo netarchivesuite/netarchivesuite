@@ -33,7 +33,7 @@ public interface IndexRequestServerInterface {
 
     /**
      * Define a FileBasedCache class to handle the given type of requests.
-     * 
+     *
      * @param type a given request type
      * @param cache the FileBasedCache class to handle this request type
      */

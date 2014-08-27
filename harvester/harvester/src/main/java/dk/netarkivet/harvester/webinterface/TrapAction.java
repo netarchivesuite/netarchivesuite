@@ -37,7 +37,6 @@ import dk.netarkivet.common.webinterface.HTMLUtils;
 
 /**
  * Abstract class representing an action to take on the collection of global crawler traps.
- *
  */
 
 public abstract class TrapAction {
@@ -79,7 +78,7 @@ public abstract class TrapAction {
 
     /**
      * Method implementing the specific action to take.
-     * 
+     *
      * @param context the context of the servlet request triggering this action.
      * @param i18n the internationalisation to use for presenting the results.
      */

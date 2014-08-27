@@ -31,7 +31,6 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * immutable though).
  *
  * @see Domain
- *
  */
 public class SparseDomain {
 

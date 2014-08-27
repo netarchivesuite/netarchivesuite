@@ -40,7 +40,7 @@ public class HarvestUtils {
      * Ensures that the number of selelective harvests have run for the default domain. Existingharvests -
      * requiredNumberOfHarvests are started as part of this method, and the method returns when the harvests are
      * finished.
-     * 
+     *
      * @param requiredNumberOfHarvests The number of harvests which must have run when this method returns.
      */
     public static void ensureNumberOfHarvestsForDefaultDomain(int requiredNumberOfHarvests) {

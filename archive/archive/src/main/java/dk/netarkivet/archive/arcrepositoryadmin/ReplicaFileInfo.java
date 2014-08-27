@@ -56,7 +56,7 @@ public class ReplicaFileInfo {
 
     /**
      * Constructor.
-     * 
+     *
      * @param gId The guid.
      * @param rId The replicaId.
      * @param fId The fileId.
@@ -68,8 +68,8 @@ public class ReplicaFileInfo {
      * @param fDate The date for the last filelist update.
      * @param cDate The date for the last checksum update.
      * @throws ArgumentNotValid If gId or fId is negative, the rId is either null or the empty string. The other
-     *             variables are not validated, since they are allowed to be null (e.g. the dates before they are
-     *             updated).
+     * variables are not validated, since they are allowed to be null (e.g. the dates before they are
+     * updated).
      */
     public ReplicaFileInfo(long gId, String rId, long fId, long sId, String cs, int us, int fs, int css, Date fDate,
             Date cDate) throws ArgumentNotValid {
@@ -96,7 +96,7 @@ public class ReplicaFileInfo {
 
     /**
      * Retrieves this object as as a string. Contains all the variables.
-     * 
+     *
      * @return A string representing this object.
      */
     public String toString() {
@@ -106,7 +106,7 @@ public class ReplicaFileInfo {
 
     /**
      * Retrieves the guid.
-     * 
+     *
      * @return The guid.
      */
     public long getGuid() {
@@ -115,7 +115,7 @@ public class ReplicaFileInfo {
 
     /**
      * Retrieves the replicaId.
-     * 
+     *
      * @return The replicaId.
      */
     public String getReplicaId() {
@@ -124,7 +124,7 @@ public class ReplicaFileInfo {
 
     /**
      * Retrieves the fileId.
-     * 
+     *
      * @return The fileId.
      */
     public long getFileId() {
@@ -133,7 +133,7 @@ public class ReplicaFileInfo {
 
     /**
      * Retrieves the segmentId.
-     * 
+     *
      * @return The segmentId.
      */
     public long getSegmentId() {
@@ -142,7 +142,7 @@ public class ReplicaFileInfo {
 
     /**
      * Retrieves the checksum.
-     * 
+     *
      * @return The checksum.
      */
     public String getChecksum() {
@@ -151,7 +151,7 @@ public class ReplicaFileInfo {
 
     /**
      * Retrieves the uploadState.
-     * 
+     *
      * @return The uploadState.
      */
     public ReplicaStoreState getUploadState() {
@@ -160,7 +160,7 @@ public class ReplicaFileInfo {
 
     /**
      * Retrieves the filelistStatus.
-     * 
+     *
      * @return The filelistStatus.
      */
     public FileListStatus getFileListState() {
@@ -169,7 +169,7 @@ public class ReplicaFileInfo {
 
     /**
      * Retrieves the checksumStatus.
-     * 
+     *
      * @return The checksumStatus.
      */
     public ChecksumStatus getChecksumStatus() {
@@ -178,7 +178,7 @@ public class ReplicaFileInfo {
 
     /**
      * Retrieves the filelistCheckdatetime.
-     * 
+     *
      * @return The filelistCheckdatetime.
      */
     public Date getFileListCheckDateTime() {
@@ -187,7 +187,7 @@ public class ReplicaFileInfo {
 
     /**
      * Retrieves the checksumCheckDatetime.
-     * 
+     *
      * @return The checksumCheckDateTime.
      */
     public Date getChecksumCheckdatetime() {

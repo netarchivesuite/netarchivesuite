@@ -24,14 +24,14 @@ package dk.netarkivet.monitor.jmx;
 
 /**
  * Common interface for objects that supply JMX connections to remote servers.
- *
+ * <p>
  * This interface does not specify which protocol to use for connection, nor whether previously created connections will
  * be cached for reuse.
  */
 public interface JMXProxyConnectionFactory {
     /**
      * Establish a JMX connection to a remote server.
-     * 
+     *
      * @param server The name of remote server to connect to.
      * @param port The port to connect to on the remote server.
      * @param rmiPort The RMI-port to use in this connection.

@@ -26,7 +26,6 @@ import dk.netarkivet.common.utils.ApplicationUtils;
 
 /**
  * This class is used to start the ViewerProxy application. This starts a GUI which can be used to browse the archive.
- *
  */
 public class ViewerProxyApplication {
     /**

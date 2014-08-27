@@ -31,15 +31,13 @@ import org.junit.Ignore;
 
 /**
  * Unit-test of ProcessUtils class.
- * 
  */
 @Ignore("DISABLED in test suite as is platform dependent")
 public class ProcessUtilsTester {
 
     /**
-     * 
      * FIXME: This test seems to test a platform dependent functionality.
-     * 
+     * <p>
      * It is a bad idea to have unit tests which only works an a specific platform.
      */
     public void testWaitFor() throws Exception {

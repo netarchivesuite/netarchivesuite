@@ -50,7 +50,7 @@ public class DailyFrequencyTester {
 
     /**
      * Given a frequency that can start any time, check that first event is immediate.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -65,14 +65,14 @@ public class DailyFrequencyTester {
 
     /**
      * Given a frequency that can start at 4:22, check that first event starts first time it is 4:22.
-     * 
+     *
      * @throws Exception
      */
     @Test
     public void testGetFirstEvent2() throws Exception {
         DailyFrequency freq = new DailyFrequency(4, 4, 22); // Every four days,
-                                                            // on the hour and
-                                                            // minute
+        // on the hour and
+        // minute
         Calendar cal = GregorianCalendar.getInstance();
         cal.set(2005, Calendar.JUNE, 12, 22, 42);
         Date d1 = cal.getTime();
@@ -85,7 +85,7 @@ public class DailyFrequencyTester {
 
     /**
      * Given a frequency that can start any time, check that next event starts after the correct period.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -101,14 +101,14 @@ public class DailyFrequencyTester {
 
     /**
      * Given a frequency that can start 5:23, check that next event starts at 5:23 after the correct period.
-     * 
+     *
      * @throws Exception
      */
     @Test
     public void testGetNextEvent2() throws Exception {
         DailyFrequency freq = new DailyFrequency(4, 5, 23); // Every four days,
-                                                            // on the hour and
-                                                            // minute
+        // on the hour and
+        // minute
         Calendar cal = GregorianCalendar.getInstance();
         cal.set(2005, Calendar.JUNE, 12, 22, 42);
         Date d1 = cal.getTime();
@@ -123,14 +123,14 @@ public class DailyFrequencyTester {
     /**
      * Given a frequency that can start 5:23, check that next event starts at 5:23 after the correct period, given a
      * time that is actually 5:23.
-     * 
+     *
      * @throws Exception
      */
     @Test
     public void testGetNextEvent3() throws Exception {
         DailyFrequency freq = new DailyFrequency(4, 5, 23); // Every four days,
-                                                            // on the hour and
-                                                            // minute
+        // on the hour and
+        // minute
         Calendar cal = new GregorianCalendar(2005, Calendar.JUNE, 12, 5, 23);
         Date d1 = cal.getTime();
         Calendar cal2 = new GregorianCalendar(2005, Calendar.JUNE, 16, 5, 23);
@@ -141,7 +141,7 @@ public class DailyFrequencyTester {
 
     /**
      * Test validity of arguments.
-     * 
+     *
      * @throws Exception
      */
     @Test

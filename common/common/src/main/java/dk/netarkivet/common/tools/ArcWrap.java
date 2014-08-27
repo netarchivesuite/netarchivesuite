@@ -46,7 +46,7 @@ public class ArcWrap extends ToolRunnerBase {
      * exception handling etc. is delegated to ToolRunnerBase class.
      *
      * @param args Takes three command line parameters: - input file (the content to archive) - uri (the name to record
-     *            the content by) - mime-type (the type to record for the content)
+     * the content by) - mime-type (the type to record for the content)
      */
     public static void main(String[] args) {
         ArcWrap instance = new ArcWrap();
@@ -125,7 +125,7 @@ public class ArcWrap extends ToolRunnerBase {
 
         /**
          * Return the list of parameters accepted by the ArcWrapTool class.
-         * 
+         *
          * @return the list of parameters accepted
          */
         public String listParameters() {

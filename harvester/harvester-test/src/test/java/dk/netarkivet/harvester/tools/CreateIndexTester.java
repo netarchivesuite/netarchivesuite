@@ -209,5 +209,7 @@ public class CreateIndexTester {
                 JMSConnectionFactory.getInstance().reply(nmsg);
             }
         }
-    };
+    }
+
+    ;
 }

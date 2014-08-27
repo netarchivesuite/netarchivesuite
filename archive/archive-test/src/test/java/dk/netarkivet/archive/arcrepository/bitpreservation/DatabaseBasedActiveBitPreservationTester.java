@@ -209,7 +209,8 @@ public class DatabaseBasedActiveBitPreservationTester {
         assertEquals("Replica '" + REPLICA_THREE + "' should have 2 corrupted files", 2,
                 dbabp.getNumberOfChangedFiles(REPLICA_THREE));
         assertEquals("Replica '" + REPLICA_THREE + "' should have corrupted the files "
-                + "'integrity11.ARC' and 'integrity12.ARC'.", Arrays.asList("integrity11.ARC", "integrity12.ARC"),
+                        + "'integrity11.ARC' and 'integrity12.ARC'.",
+                Arrays.asList("integrity11.ARC", "integrity12.ARC"),
                 dbabp.getChangedFiles(REPLICA_THREE));
 
         dbabp.replaceChangedFile(REPLICA_ONE, "integrity11.ARC", "XX", "399d2f9583da5516d7cdd4dfe3ed3b71");
@@ -482,9 +483,9 @@ public class DatabaseBasedActiveBitPreservationTester {
                 FileOutputStream os = new FileOutputStream(output);
                 new BatchLocalFiles(in_files).run(job, os);
                 os.close();
-                return new BatchStatus("BA1", Collections.<File> emptyList(), in_files.length,
+                return new BatchStatus("BA1", Collections.<File>emptyList(), in_files.length,
                         RemoteFileFactory.getMovefileInstance(output), new ArrayList<FileBatchJob.ExceptionOccurrence>(
-                                0));
+                        0));
             } catch (IOException e) {
                 fail("IO error during test");
                 return null;

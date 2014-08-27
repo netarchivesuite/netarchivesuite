@@ -72,7 +72,7 @@ public class ExtendedField implements Serializable {
 
     /**
      * Set the ID of the extendedField..
-     * 
+     *
      * @param extendedFieldID the ID of the extendedField..
      */
     public void setExtendedFieldID(Long extendedFieldID) {
@@ -89,7 +89,7 @@ public class ExtendedField implements Serializable {
 
     /**
      * Set the name of the extendedFieldTypeID.
-     * 
+     *
      * @param extendedFieldTypeID an extendedfieldtypeId
      */
     public void setExtendedFieldTypeID(Long extendedFieldTypeID) {
@@ -106,7 +106,7 @@ public class ExtendedField implements Serializable {
 
     /**
      * Set the name of the extendedField.
-     * 
+     *
      * @param name the name of the extendedField
      */
     public void setName(String name) {
@@ -123,7 +123,7 @@ public class ExtendedField implements Serializable {
 
     /**
      * Set a formatting pattern for this extendefield.
-     * 
+     *
      * @param aFormattingPattern a formatting pattern for this extendedfield
      */
     public void setFormattingPattern(String aFormattingPattern) {
@@ -140,7 +140,7 @@ public class ExtendedField implements Serializable {
 
     /**
      * Set the datatype of this extendedField.
-     * 
+     *
      * @param datatype a datatype for this extendedfield
      */
     public void setDatatype(int datatype) {
@@ -156,7 +156,7 @@ public class ExtendedField implements Serializable {
 
     /**
      * Set the mandatory-state of this extendedField.
-     * 
+     *
      * @param mandatory A mandatory-state of this extendedField
      */
     public void setMandatory(boolean mandatory) {
@@ -172,7 +172,7 @@ public class ExtendedField implements Serializable {
 
     /**
      * Set the sequencenr of this extendedField.
-     * 
+     *
      * @param sequencenr a new sequencenr of this extendedField.
      */
     public void setSequencenr(int sequencenr) {
@@ -188,7 +188,7 @@ public class ExtendedField implements Serializable {
 
     /**
      * Set the defaultvalue of this extendedField.
-     * 
+     *
      * @param defaultValue the defaultvalue of this extendedField.
      */
     public void setDefaultValue(String defaultValue) {
@@ -212,7 +212,7 @@ public class ExtendedField implements Serializable {
 
     /**
      * Set the maxlen of this extendedField.
-     * 
+     *
      * @param aMaxlen for this extendedfield
      */
     public void setMaxlen(int aMaxlen) {
@@ -221,7 +221,7 @@ public class ExtendedField implements Serializable {
 
     /**
      * Set the options of the extendedField.
-     * 
+     *
      * @param options the options of the extendedField
      */
     public void setOptions(String options) {
@@ -231,7 +231,7 @@ public class ExtendedField implements Serializable {
 
     /**
      * Constructor for the extendedfield with only one value - the id.
-     * 
+     *
      * @param aExtendedFieldTypeID the Id of the extendededfieldtype
      */
     public ExtendedField(String aExtendedFieldTypeID) {
@@ -248,7 +248,7 @@ public class ExtendedField implements Serializable {
 
     /**
      * Constructor for ExtendedField, that requires all data.
-     * 
+     *
      * @param aExtendedFieldID The extendedfieldId of the extendedfield
      * @param aExtendedFieldTypeID The extendedfieldtypeId of the extendedfield
      * @param aName The name of the extendedfield

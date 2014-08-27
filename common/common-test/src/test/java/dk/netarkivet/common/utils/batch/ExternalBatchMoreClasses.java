@@ -41,8 +41,8 @@ import dk.netarkivet.common.exceptions.IOFailure;
  * short form of metadata filename - date of creation taken from arc-file header - date taken from cdx part - date taken
  * from lines starting on form YYYY-MM-DDT - date taken from process report line - section with statistical data taken
  * from the arc-file consisting of <#urls> <#bytes> <mime-types>
- * 
- * 
+ * <p>
+ * <p>
  * This is the class which is used to generate the two jarfiles ExternalBatchSeveralClassesNoPackage.jar
  * ExternalBatchSeveralClassesWithPackage.jar
  */
@@ -53,7 +53,7 @@ public class ExternalBatchMoreClasses extends FileBatchJob {
 
     /**
      * Initializes fields in this class.
-     * 
+     *
      * @param os the OutputStream to which data is to be written
      */
     public void initialize(OutputStream os) {
@@ -62,7 +62,7 @@ public class ExternalBatchMoreClasses extends FileBatchJob {
 
     /**
      * Invoke default method for deserializing object, and reinitialise the logger.
-     * 
+     *
      * @param s
      */
     private void readObject(ObjectInputStream s) {
@@ -80,7 +80,9 @@ public class ExternalBatchMoreClasses extends FileBatchJob {
      */
     private static enum DateFoundType {
         FIRSTLINE, CDX, FORMATYMD, PROCREPORT
-    };
+    }
+
+    ;
 
     /**
      * Type to include both a date and where it was found in metadata-file
@@ -88,11 +90,13 @@ public class ExternalBatchMoreClasses extends FileBatchJob {
     private static class DateAndFoundType {
         String date = "";
         int foundType = -1; // corresponding to DateFoundType ordinal
-    };
+    }
+
+    ;
 
     /**
      * Checks whether a string only contains digits will return true
-     * 
+     *
      * @param s String to be checked
      * @return true if the given string only contains digits (or is an empty line), false otherwise
      */
@@ -111,7 +115,7 @@ public class ExternalBatchMoreClasses extends FileBatchJob {
     /**
      * Remove all extra occurrances in a String, i.e. a " " will only occur once at a time and there are no start or end
      * space.
-     * 
+     *
      * @param line to be trimmed for spaces
      * @return string as result of trimmed line
      */
@@ -131,7 +135,7 @@ public class ExternalBatchMoreClasses extends FileBatchJob {
      * Looks for date in given line. This can either be - a date of creation taken from arc-file header - date taken
      * from cdx part - date taken from lines starting on form YYYY-MM-DDT - date taken from process report line If a
      * date is found then the given date array is updated The return value tells whether a date was found.
-     * 
+     *
      * @param line to be searched
      * @param firstLine true if it is the first line of the metadata-file
      * @param
@@ -202,7 +206,7 @@ public class ExternalBatchMoreClasses extends FileBatchJob {
     /**
      * Collects statistical information about files from a metadata arc file and dates from different parts of the
      * metadatafile.
-     * 
+     *
      * @param file processing file
      * @return string with dates and extracted statistical information
      */
@@ -423,7 +427,7 @@ public class ExternalBatchMoreClasses extends FileBatchJob {
      * where found, it will be represented by the empty string. - <section with statistical data taken from the
      * arc-file> starts with: <#urls> <#bytes> <mime-types> and is followed by numbers and tekst according to theis
      * header.
-     * 
+     *
      * @param file an arcfile
      * @param os the OutputStream to which data is to be written
      * @return false If listing of this arcfile fails; otherwise true
@@ -460,7 +464,7 @@ public class ExternalBatchMoreClasses extends FileBatchJob {
 
     /**
      * Does nothing.
-     * 
+     *
      * @param os the OutputStream to which data is to be written
      */
     public void finish(OutputStream os) {

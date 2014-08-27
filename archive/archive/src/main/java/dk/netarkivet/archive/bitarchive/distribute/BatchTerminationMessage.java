@@ -38,7 +38,7 @@ public class BatchTerminationMessage extends NetarkivetMessage {
 
     /**
      * Constructor.
-     * 
+     *
      * @param to Where the message should be sent.
      * @param batchID The ID of the batchjob to terminate.
      * @throws ArgumentNotValid If the batchID is either null or the empty string.
@@ -49,7 +49,7 @@ public class BatchTerminationMessage extends NetarkivetMessage {
 
     /**
      * Constructor.
-     * 
+     *
      * @param to Where the message should be sent.
      * @param replyTo Where the message is sent from.
      * @param batchID The ID of the batchjob to terminate.
@@ -63,7 +63,7 @@ public class BatchTerminationMessage extends NetarkivetMessage {
 
     /**
      * Method for retrieving the ID of the batchjob to terminate.
-     * 
+     *
      * @return The ID of the batchjob to terminate.
      */
     public String getTerminateID() {
@@ -72,7 +72,7 @@ public class BatchTerminationMessage extends NetarkivetMessage {
 
     /**
      * Extends the default toString of NetarkiveMessage with the terminateID.
-     * 
+     *
      * @return The string representation of this message.
      */
     public String toString() {

@@ -42,7 +42,6 @@ import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor;
  * Implements the analysis of a full frontier report obtained from Heritrix, as the execution of a sequence of
  * user-defined filters, that each generate a smaller, in-memory frontier report that are sent in a JMS message to the
  * {@link HarvestMonitor}.
- *
  */
 public class FrontierReportAnalyzer implements Runnable {
 
@@ -55,7 +54,7 @@ public class FrontierReportAnalyzer implements Runnable {
 
     /**
      * Builds an analyzer, given an Heritrix controller instance.
-     * 
+     *
      * @param heritrixController the controller allowing communication with the Heritrix crawler instance.
      */
     public FrontierReportAnalyzer(BnfHeritrixController heritrixController) {
@@ -87,7 +86,7 @@ public class FrontierReportAnalyzer implements Runnable {
 
     /**
      * The filters to apply to the full report, as defined in the settings.
-     * 
+     *
      * @see HarvesterSettings#FRONTIER_REPORT_FILTER_CLASS
      * @see HarvesterSettings#FRONTIER_REPORT_FILTER_ARGS
      */
@@ -111,7 +110,7 @@ public class FrontierReportAnalyzer implements Runnable {
         elapsed = endTime - startTime;
         LOG.info("Generated full Heritrix frontier report in "
                 + (elapsed < TimeUtils.SECOND_IN_MILLIS ? elapsed + " ms" : StringUtils.formatDuration(elapsed
-                        / TimeUtils.SECOND_IN_MILLIS)) + ".");
+                / TimeUtils.SECOND_IN_MILLIS)) + ".");
 
         lastExecTime = endTime;
 
@@ -124,7 +123,7 @@ public class FrontierReportAnalyzer implements Runnable {
                     + filter.getClass().getName()
                     + " to full frontier report, this took "
                     + (elapsed < TimeUtils.SECOND_IN_MILLIS ? elapsed + " ms" : StringUtils.formatDuration(elapsed
-                            / TimeUtils.SECOND_IN_MILLIS)) + ".");
+                    / TimeUtils.SECOND_IN_MILLIS)) + ".");
             Long jobId = heritrixController.getFiles().getJobID();
             JMSConnectionFactory.getInstance().send(new FrontierReportMessage(filter, filtered, jobId));
         }

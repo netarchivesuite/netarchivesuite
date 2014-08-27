@@ -40,7 +40,7 @@ public class ResultStream {
     /**
      * Create a ResultStream with the given inputStream and information of whether or not the inputStream contains a
      * header.
-     * 
+     *
      * @param inputstream An inputStream w/ the data for a stored URI
      * @param containsHeader true, if the stream contains a header, otherwise false
      */
@@ -51,7 +51,6 @@ public class ResultStream {
     }
 
     /**
-     * 
      * @return the inputstream
      */
     public InputStream getInputStream() {
@@ -59,7 +58,6 @@ public class ResultStream {
     }
 
     /**
-     * 
      * @return true, if the resultStream contains a header; otherwise false.
      */
     public boolean containsHeader() {

@@ -30,6 +30,7 @@ import dk.netarkivet.common.utils.Settings;
 public class CommonSettings {
     /** The default place in classpath where the settings file can be found. */
     private static final String DEFAULT_SETTINGS_CLASSPATH = "dk/netarkivet/common/settings.xml";
+
     /*
      * The static initialiser is called when the class is loaded. It will add default values for all settings defined in
      * this class, by loading them from a settings.xml file in classpath.
@@ -75,7 +76,7 @@ public class CommonSettings {
     /**
      * <b>settings.common.jms.retries</b>: <br>
      * Selects the number of times the JMS connection tries to reconnect to the broker.
-     * */
+     */
     public static String JMS_BROKER_RETRIES = "settings.common.jms.retries";
 
     /**
@@ -138,7 +139,7 @@ public class CommonSettings {
      * setting is set to true, then it will be configured to use the common temp dir defined by common.settings.tempDir.
      * By default the value is false (use system temp), which is the legacy behavior. This setting is part of the fix
      * for Jira issue NAS-1995.
-     * 
+     *
      * @see #DIR_COMMONTEMPDIR
      */
     public static String UNIX_SORT_USE_COMMON_TEMP_DIR = "settings.common.unixSort.useCommonTempDir";
@@ -187,7 +188,7 @@ public class CommonSettings {
      * <b>settings.common.jmx.passwordFile</b>: <br>
      * The password file, containing information about who may connect to the beans. The file has a format defined by
      * the JMX standard,
-     * 
+     *
      * @see <URL:http://java.sun.com/j2se/1.5.0/docs/guide/management/agent.html# PasswordAccessFiles>
      */
     public static String JMX_PASSWORD_FILE = "settings.common.jmx.passwordFile";
@@ -196,7 +197,7 @@ public class CommonSettings {
      * <b>settings.common.jmx.accessFile</b>: <br>
      * The access file, containing information about who have which JMX roles have which access privileges. The file has
      * a format defined by the JMX standard,
-     * 
+     *
      * @see <URL:http://java.sun.com/j2se/1.5.0/docs/guide/management/agent.html# PasswordAccessFiles>
      */
     public static String JMX_ACCESS_FILE = "settings.common.jmx.accessFile";
@@ -301,7 +302,7 @@ public class CommonSettings {
      * wait for the database operation used to validate the connection to complete. If the timeout period expires before
      * the operation completes, this method returns false. A value of 0 indicates a timeout is not applied to the
      * database operation.
-     *
+     * <p>
      * {@link java.sql.Connection#isValid(int)}
      */
     public static String DB_CONN_VALID_CHECK_TIMEOUT = "settings.common.database.validityCheckTimeout";
@@ -329,7 +330,7 @@ public class CommonSettings {
      * Configure statement pooling, by setting the global maximum number of pooled prepared statements for a data
      * source. Default value is 0. Note that if both {@link #DB_POOL_MAX_STM} and {@link #DB_POOL_MAX_STM_PER_CONN} are
      * set to zero, statement pooling is fully deactivated.
-     * 
+     *
      * @see <a href="http://www.mchange.com/projects/c3p0/index.html">c3p0 documentation</a>
      */
     public static String DB_POOL_MAX_STM = "settings.common.database.pool.maxStm";
@@ -339,7 +340,7 @@ public class CommonSettings {
      * Configure statement pooling, by setting the global maximum number of pooled prepared statements for a data
      * source. Default value is 0. Note that if both {@link #DB_POOL_MAX_STM} and {@link #DB_POOL_MAX_STM_PER_CONN} are
      * set to zero, statement pooling is fully deactivated.
-     * 
+     *
      * @see <a href="http://www.mchange.com/projects/c3p0/index.html">c3p0 documentation</a>
      */
     public static String DB_POOL_MAX_STM_PER_CONN = "settings.common.database.pool.maxStmPerConn";
@@ -347,7 +348,7 @@ public class CommonSettings {
     /**
      * <b>settings.common.database.pool.idleConnTestPeriod</b>: <br>
      * Configure idle connection testing period in seconds. Default is 0, which means no idle connection testing
-     * 
+     *
      * @see <a href= "http://www.mchange.com/projects/c3p0/index.html#idleConnectionTestPeriod" />
      */
     public static String DB_POOL_IDLE_CONN_TEST_PERIOD = "settings.common.database.pool.idleConnTestPeriod";
@@ -355,7 +356,7 @@ public class CommonSettings {
     /**
      * <b>settings.common.database.pool.idleConnTestOnCheckin</b>: <br>
      * Configure if a connection validity should be checked when returned to the pool. Default is false.
-     * 
+     *
      * @see <a href= "http://www.mchange.com/projects/c3p0/index.html#testConnectionOnCheckin" />
      */
     public static String DB_POOL_IDLE_CONN_TEST_ON_CHECKIN = "settings.common.database.pool.idleConnTestOnCheckin";
@@ -363,7 +364,7 @@ public class CommonSettings {
     /**
      * <b>settings.common.database.pool.idleConnTestQuery</b>: <br>
      * The SQL query to be used when testing an idle connection. Default is empty, which means using c3p0 defaults.
-     * 
+     *
      * @see <a href= "http://www.mchange.com/projects/c3p0/index.html#preferredTestQuery" />
      */
     public static String DB_POOL_IDLE_CONN_TEST_QUERY = "settings.common.database.pool.idleConnTestQuery";

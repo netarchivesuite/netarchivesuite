@@ -94,7 +94,7 @@ public class DelegatingControllerTester {
 
     /**
      * Tests start. This is simply a delegating method, so just tests the mur's start is called, and nothing else.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -109,7 +109,7 @@ public class DelegatingControllerTester {
 
     /**
      * Tests stop. This is simply a delegating method, so just tests the mur's stop is called, and nothing else.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -124,7 +124,7 @@ public class DelegatingControllerTester {
 
     /**
      * Tests clear. This is simply a delegating method, so just tests the mur's clear is called, and nothing else.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -140,7 +140,7 @@ public class DelegatingControllerTester {
     /**
      * Tests getRecordedURIs. This is simply a delegating method, so just tests the mur's getRecordedURI is called, and
      * nothing else, and also that what is returned is exactly what the mur returns.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -159,7 +159,6 @@ public class DelegatingControllerTester {
      * Tests changeIndex. This is really a mediator between cdxcache and arc archive access. Tests that argument not
      * valid is not checked on null argument (this should be checked by the wrapped class), and otherwise that what
      * happens is exactly that CDXCache.getJobIndex is called, and the result given to ARCArchiveAccess.setIndex.
-     *
      */
     @Test
     public void testChangeIndex() {

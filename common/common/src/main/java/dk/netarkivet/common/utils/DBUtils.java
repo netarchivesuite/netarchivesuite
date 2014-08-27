@@ -50,7 +50,6 @@ import dk.netarkivet.common.exceptions.PermissionDenied;
 
 /**
  * Various database related utilities.
- *
  */
 public final class DBUtils {
 
@@ -91,7 +90,7 @@ public final class DBUtils {
     /**
      * Execute an SQL statement and return the single int in the result set. This variant takes a query string and a
      * single string arg and combines them to form a normal query.
-     *
+     * <p>
      * NB: the method does not close the provided connection.
      *
      * @param connection connection to database.
@@ -123,7 +122,7 @@ public final class DBUtils {
      *
      * @param s A prepared statement
      * @return The long result, or null if the result was a null value Note that a null value is not the same as no
-     *         result rows.
+     * result rows.
      * @throws IOFailure if the statement didn't result in exactly one row with a long or null value
      */
     public static Long selectLongValue(PreparedStatement s) {
@@ -149,7 +148,7 @@ public final class DBUtils {
     /**
      * Execute an SQL statement and return the single long in the result set. This variant takes a query string and a
      * single string arg and combines them to form a normal query.
-     *
+     * <p>
      * NB: the provided connection is not closed.
      *
      * @param connection connection to database.
@@ -178,14 +177,14 @@ public final class DBUtils {
 
     /**
      * Execute an SQL statement and return the first long in the result set, or null if resultset is empty.
-     *
+     * <p>
      * NB: the provided connection is not closed.
      *
      * @param connection connection to database.
      * @param query a query with ? for parameters (must not be null or empty string)
      * @param args parameters of type string, int, long or boolean
      * @return The long result, or will return null in one of the two following cases: There is no results, or the first
-     *         result is a null-value.
+     * result is a null-value.
      * @throws IOFailure on SQL errors.
      */
     public static Long selectFirstLongValueIfAny(Connection connection, String query, Object... args) {
@@ -212,7 +211,7 @@ public final class DBUtils {
 
     /**
      * Prepare a statement given a query string and some args.
-     *
+     * <p>
      * NB: the provided connection is not closed.
      *
      * @param c a Database connection
@@ -221,7 +220,7 @@ public final class DBUtils {
      * @return a prepared statement
      * @throws SQLException If unable to prepare a statement
      * @throws ArgumentNotValid If unable to handle type of one the args, or the arguments are either null or an empty
-     *             String.
+     * String.
      */
     public static PreparedStatement prepareStatement(Connection c, String query, Object... args) throws SQLException {
         ArgumentNotValid.checkNotNull(c, "Connection c");
@@ -251,7 +250,7 @@ public final class DBUtils {
 
     /**
      * Prepare a statement for iteration given a query string, fetch size and some args.
-     *
+     * <p>
      * NB: the provided connection is not closed.
      *
      * @param c a Database connection
@@ -261,7 +260,7 @@ public final class DBUtils {
      * @return a prepared statement
      * @throws SQLException If unable to prepare a statement
      * @throws ArgumentNotValid If unable to handle type of one the args, or the arguments are either null or an empty
-     *             String.
+     * String.
      */
     public static PreparedStatement prepareStatement(Connection c, int fetchSize, String query, Object... args)
             throws SQLException {
@@ -296,14 +295,14 @@ public final class DBUtils {
     /**
      * Execute an SQL statement and return the list of strings in its result set. This uses specifically the harvester
      * database.
-     *
+     * <p>
      * NB: the provided connection is not closed.
      *
      * @param connection connection to the database.
      * @param query the given sql-query (must not be null or empty)
      * @param args The arguments to insert into this query (must not be null)
-     * @throws IOFailure If this query fails
      * @return the list of strings in its result set
+     * @throws IOFailure If this query fails
      */
     public static List<String> selectStringList(Connection connection, String query, Object... args) {
         ArgumentNotValid.checkNotNull(connection, "Connection connection");
@@ -333,14 +332,14 @@ public final class DBUtils {
 
     /**
      * Execute an SQL statement and return the list of strings -> id mappings in its result set.
-     *
+     * <p>
      * NB: the provided connection is not closed.
      *
      * @param connection connection to the database.
      * @param query the given sql-query (must not be null or empty string)
      * @param args The arguments to insert into this query
-     * @throws SQLException If this query fails
      * @return the list of strings -> id mappings
+     * @throws SQLException If this query fails
      */
     public static Map<String, Long> selectStringLongMap(Connection connection, String query, Object... args)
             throws SQLException {
@@ -371,7 +370,7 @@ public final class DBUtils {
 
     /**
      * Execute an SQL statement and return the list of Long-objects in its result set.
-     *
+     * <p>
      * NB: the provided connection is not closed.
      *
      * @param connection connection to the database.
@@ -406,7 +405,7 @@ public final class DBUtils {
 
     /**
      * Return an iterator to a list of Longs.
-     * 
+     *
      * @param connection an open connection to the database
      * @param query The given sql-query (must not be null or empty string)
      * @param args The arguments to insert into this query
@@ -441,7 +440,7 @@ public final class DBUtils {
 
     /**
      * Execute an SQL statement and return the set of Long-objects in its result set.
-     *
+     * <p>
      * NB: the provided connection is not closed.
      *
      * @param connection connection to the database.
@@ -480,7 +479,7 @@ public final class DBUtils {
      * @param s A statement created with Statement.RETURN_GENERATED_KEYS
      * @return The single generated key
      * @throws SQLException If a database access error occurs or the PreparedStatement is closed, or the JDBC driver
-     *             does not support the setGeneratedKeys() method
+     * does not support the setGeneratedKeys() method
      */
     public static long getGeneratedID(PreparedStatement s) throws SQLException {
         ArgumentNotValid.checkNotNull(s, "PreparedStatement s");
@@ -493,7 +492,7 @@ public final class DBUtils {
 
     /**
      * Returns the version of a table according to schemaversions, or 0 for the initial, unnumbered version.
-     *
+     * <p>
      * NB: the provided connection is not closed
      *
      * @param connection connection to the database.
@@ -533,7 +532,7 @@ public final class DBUtils {
     /**
      * Set String Max Length. If contents.length() > maxSize, contents is truncated to contain the first maxSize
      * characters of the contents, and a warning is logged.
-     * 
+     *
      * @param s a Prepared Statement
      * @param fieldNum a index into the above statement
      * @param contents the contents
@@ -585,7 +584,7 @@ public final class DBUtils {
 
     /**
      * Set the name of a Named object into the given field.
-     * 
+     *
      * @param s a prepared statement
      * @param fieldNum the index of the given field to be set
      * @param o the Named object
@@ -627,12 +626,12 @@ public final class DBUtils {
 
     /**
      * Get a Date from a column in the resultset. Returns null, if the value in the column is NULL.
-     * 
+     *
      * @param rs the resultSet
      * @param columnIndex The given column, where the Date resides
      * @return a Date from a column in the resultset
      * @throws SQLException If columnIndex does not correspond to a parameter marker in the ResultSet, or a database
-     *             access error occurs or this method is called on a closed ResultSet
+     * access error occurs or this method is called on a closed ResultSet
      */
     public static Date getDateMaybeNull(ResultSet rs, final int columnIndex) throws SQLException {
         ArgumentNotValid.checkNotNull(rs, "ResultSet rs");
@@ -656,7 +655,7 @@ public final class DBUtils {
      * transaction, otherwise nothing will happen. If autoCommit is true then no action is taken. This method should be
      * called in a finally block with no DB updates after the last commit. Thus exceptions while closing are ignored,
      * but logged as warnings.
-     *
+     * <p>
      * NB: the provided connection is not closed.
      *
      * @param c the db-connection
@@ -679,7 +678,7 @@ public final class DBUtils {
     /**
      * Set the CLOB maxlength. If contents.length() > maxSize, contents is truncated to contain the first maxSize
      * characters of the contents, and a warning is logged.
-     * 
+     *
      * @param s a prepared statement
      * @param fieldNum the field-index, where the contents are inserted
      * @param contents the contents
@@ -687,7 +686,7 @@ public final class DBUtils {
      * @param o the Object, which is assumed to have a field named fieldName
      * @param fieldName a given field (Assumed to present in Object o)
      * @throws SQLException If fieldNum does not correspond to a parameter marker in the PreparedStatement, or a
-     *             database access error occurs or this method is called on a closed PreparedStatement
+     * database access error occurs or this method is called on a closed PreparedStatement
      */
     public static void setClobMaxLength(PreparedStatement s, int fieldNum, String contents, long maxSize, Object o,
             String fieldName) throws SQLException {
@@ -695,7 +694,7 @@ public final class DBUtils {
         if (contents != null) {
             if (contents.length() > maxSize) {
                 log.warn("The field '{}' is {} characters long, which is {} longer than the allowed {} characters. "
-                        + "The contents is now truncated to length {}", fieldName, contents.length(),
+                                + "The contents is now truncated to length {}", fieldName, contents.length(),
                         (contents.length() - maxSize), maxSize, maxSize);
                 // This caused OOM if both the 'contents' and o.toString() was
                 // large
@@ -720,12 +719,12 @@ public final class DBUtils {
 
     /**
      * Insert a long value (which could be null) into the given field of a statement.
-     * 
+     *
      * @param s a prepared Statement
      * @param i the number of a given field in the prepared statement
      * @param value the long value to insert (maybe null)
      * @throws SQLException If i does not correspond to a parameter marker in the PreparedStatement, or a database
-     *             access error occurs or this method is called on a closed PreparedStatement
+     * access error occurs or this method is called on a closed PreparedStatement
      */
     public static void setLongMaybeNull(PreparedStatement s, int i, Long value) throws SQLException {
         ArgumentNotValid.checkNotNull(s, "PreparedStatement s");
@@ -738,12 +737,12 @@ public final class DBUtils {
 
     /**
      * Insert an Integer in prepared statement.
-     * 
+     *
      * @param s a prepared statement
      * @param i the index of the statement, where the Integer should be inserted
      * @param value The Integer to insert (maybe null)
      * @throws SQLException If i does not correspond to a parameter marker in the PreparedStatement, or a database
-     *             access error occurs or this method is called on a closed PreparedStatement
+     * access error occurs or this method is called on a closed PreparedStatement
      */
     public static void setIntegerMaybeNull(PreparedStatement s, int i, Integer value) throws SQLException {
         ArgumentNotValid.checkNotNull(s, "PreparedStatement s");
@@ -757,12 +756,12 @@ public final class DBUtils {
 
     /**
      * Get an Integer from the resultSet in column i.
-     * 
+     *
      * @param rs the resultset
      * @param i the column where the wanted Integer resides
      * @return an Integer object located in column i in the resultset
      * @throws SQLException If the columnIndex is not valid, or a database access error occurs or this method is called
-     *             on a closed result set
+     * on a closed result set
      */
     public static Integer getIntegerMaybeNull(ResultSet rs, int i) throws SQLException {
         ArgumentNotValid.checkNotNull(rs, "ResultSet rs");
@@ -775,12 +774,12 @@ public final class DBUtils {
 
     /**
      * Get a Long from the resultSet in column i.
-     * 
+     *
      * @param rs the resultset
      * @param i the column where the wanted Long resides
      * @return a Long object located in column i in the resultset
      * @throws SQLException If the columnIndex is not valid, or a database access error occurs or this method is called
-     *             on a closed result set
+     * on a closed result set
      */
     public static Long getLongMaybeNull(ResultSet rs, int i) throws SQLException {
         ArgumentNotValid.checkNotNull(rs, "ResultSet rs");
@@ -793,12 +792,12 @@ public final class DBUtils {
 
     /**
      * Return a description of where an object is used elsewhere in the database, or null.
-     *
+     * <p>
      * NB: the provided connection is not closed.
      *
      * @param connection connection to the database.
      * @param select A select statement finding the names of other uses. The statement should result in exactly one
-     *            column of string values.
+     * column of string values.
      * @param victim The object being used.
      * @param args Any objects that may be used to prepare the select statement.
      * @return A string describing the usages, or null if no usages were found.
@@ -830,7 +829,7 @@ public final class DBUtils {
     /**
      * Execute an SQL statement and return the single string in the result set. This variant takes a query string and a
      * single string arg and combines them to form a normal query.
-     *
+     * <p>
      * This assumes the connection is to the harvester database.
      *
      * @param connection connection to the database.
@@ -863,7 +862,7 @@ public final class DBUtils {
      *
      * @param s A prepared statement
      * @return The string result, or null if the result was a null value Note that a null value is not the same as no
-     *         result rows.
+     * result rows.
      * @throws IOFailure if the statement didn't result in exactly one row with a string or null value
      */
     public static String selectStringValue(PreparedStatement s) {
@@ -888,7 +887,7 @@ public final class DBUtils {
 
     /**
      * Execute an SQL query and return whether the result contains any rows.
-     *
+     * <p>
      * NB: the provided connection is not closed.
      *
      * @param connection connection to the database.
@@ -928,7 +927,7 @@ public final class DBUtils {
     /**
      * Update a database by executing all the statements in the updates String array. NOTE: this must NOT be used for
      * tables under version control It must only be used in connection with temporary tables e.g. used for backup.
-     *
+     * <p>
      * NB: the method does not close the provided connection.
      *
      * @param connection connection to the database.
@@ -965,7 +964,7 @@ public final class DBUtils {
     /**
      * Close a statement, if not closed already Note: This does not throw any a SQLException, because it is always
      * called inside a finally-clause. Exceptions are logged as warnings, though.
-     * 
+     *
      * @param s a statement
      */
     public static void closeStatementIfOpen(Statement s) {

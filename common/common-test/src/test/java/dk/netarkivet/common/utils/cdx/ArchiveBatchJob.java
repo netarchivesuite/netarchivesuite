@@ -39,7 +39,6 @@ import dk.netarkivet.common.exceptions.NetarkivetException;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 /**
- *
  * Abstract class defining a batch job to run on an archive with ARC or WARC files. Each implementation is required to
  * define initialize() , processRecord() and finish() methods. The bitarchive application then ensures that the batch
  * job run initialize(), runs processRecord() on each record in each file in the archive, and then runs finish().
@@ -52,14 +51,14 @@ public abstract class ArchiveBatchJob extends FileBatchJob {
 
     /**
      * Initialize the job before runnning. This is called before the processRecord() calls start coming.
-     * 
+     *
      * @param os The OutputStream to which output data is written
      */
     public abstract void initialize(OutputStream os);
 
     /**
      * Exceptions should be handled with the handleException() method.
-     * 
+     *
      * @param os The OutputStream to which output data is written
      * @param record the object to be processed.
      */
@@ -67,7 +66,7 @@ public abstract class ArchiveBatchJob extends FileBatchJob {
 
     /**
      * Finish up the job. This is called after the last processRecord() call.
-     * 
+     *
      * @param os The OutputStream to which output data is written
      */
     public abstract void finish(OutputStream os);
@@ -88,8 +87,8 @@ public abstract class ArchiveBatchJob extends FileBatchJob {
      *
      * @param arcFile The ARC or ARCGZ file to be processed.
      * @param os the OutputStream to which output is to be written
-     * @throws ArgumentNotValid if either argument is null
      * @return true, if file processed successful, otherwise false
+     * @throws ArgumentNotValid if either argument is null
      */
     public final boolean processFile(File arcFile, OutputStream os) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(arcFile, "arcFile");
@@ -100,7 +99,7 @@ public abstract class ArchiveBatchJob extends FileBatchJob {
         log.info("Processing file: " + arcFile.getName());
 
         try { // This outer try-catch block catches all unexpected exceptions
-              // Create an ARCReader and retrieve its Iterator:
+            // Create an ARCReader and retrieve its Iterator:
             ArchiveReader arcReader = null;
 
             try {
@@ -139,7 +138,7 @@ public abstract class ArchiveBatchJob extends FileBatchJob {
                         processRecord(record, os);
                         ++noOfRecordsProcessed;
                     } catch (NetarkivetException e) { // Our exceptions don't
-                                                      // stop us
+                        // stop us
                         success = false;
 
                         // With our exceptions, we assume that just the

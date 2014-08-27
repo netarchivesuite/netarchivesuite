@@ -40,7 +40,6 @@ import dk.netarkivet.common.utils.batch.ChecksumJob;
 
 /**
  * A tool that runs a checksum job on a bitarchive, outputting the results.
- *
  */
 
 @Deprecated

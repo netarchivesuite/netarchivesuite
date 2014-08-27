@@ -54,12 +54,12 @@ import dk.netarkivet.common.utils.batch.ChecksumJob;
 
 /**
  * A checksum archive in the form of a file (as alternative to a database).<br>
- * 
+ * <p>
  * Each entry in the file is on its own line, thus the number of lines is the number of entries.<br>
  * The entries on a line is in the format of a ChecksumJob: <br>
  * <b>'filename' + ## + 'checksum'</b> <br>
  * The lines are not sorted.
- * 
+ * <p>
  * If no file exists when the class is instantiated then it will be created, and if an 'admin.data' file exists, then it
  * will be loaded and put into the archive file.
  */
@@ -107,7 +107,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
     /**
      * This map consists of the archive loaded into the memory. It is faster to use a memory archive than the the
      * checksum file, though all entries must exist both in the file and the memory.
-     * 
+     * <p>
      * Map(file -> checksum).
      */
     private Map<String, String> checksumArchive = Collections.synchronizedMap(new HashMap<String, String>());
@@ -118,7 +118,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
     /**
      * Method for obtaining the current singleton instance of this class. If the instance of this class has not yet been
      * constructed, then it will be initialised.
-     * 
+     *
      * @return The current instance of this class.
      */
     public static synchronized FileChecksumArchive getInstance() {
@@ -131,7 +131,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
     /**
      * Constructor. Retrieves the minimum space left variable, and ensures the existence of the archive file. If the
      * file does not exist, then it is created.
-     * 
+     *
      * @throws ArgumentNotValid If the variable minimum space left is smaller than zero.
      * @throws IOFailure If the checksum file cannot be created.
      */
@@ -153,7 +153,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
 
     /**
      * Method for retrieving the name of the checksum file.
-     * 
+     *
      * @return The checksum file name.
      */
     public String getFileName() {
@@ -162,7 +162,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
 
     /**
      * Method for retrieving the name of the wrongEntryFile.
-     * 
+     *
      * @return The wrong entry file name.
      */
     public String getWrongEntryFilename() {
@@ -171,7 +171,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
 
     /**
      * Method for testing where there is enough space left on local drive.
-     * 
+     *
      * @return Whether there is enough space left.
      */
     public boolean hasEnoughSpace() {
@@ -184,7 +184,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
 
     /**
      * Method for testing whether there is enough left on the local drive for recreating the checksum file.
-     * 
+     *
      * @return False only if there is not enough space left.
      */
     private boolean hasEnoughSpaceForRecreate() {
@@ -252,7 +252,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
      * Loads an existing checksum archive file into the memory. This will go through every line, and if the line is
      * valid, then it is loaded into the checksumArchive map in the memory. If the line is invalid then a warning is
      * issued and the line is put into the wrongEntryFile.
-     * 
+     * <p>
      * If a bad entry is found, then the archive file has to be recreated afterwards, since the bad entry otherwise
      * still would be in the archive file.
      */
@@ -388,7 +388,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
      * Recreates the archive file from the memory. Makes a new file which contains the entire archive, and then move the
      * new archive file on top of the old one. This is used when to recreate the archive file, when an record has been
      * removed.
-     * 
+     *
      * @throws IOFailure If a problem occur when writing the new file.
      */
     private void recreateArchiveFile() throws IOFailure {
@@ -434,7 +434,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
 
     /**
      * Creates the string for the name of the checksum file. E.g. checksum_REPLICA.md5.
-     * 
+     *
      * @return The name of the file.
      */
     private String makeChecksumFileName() {
@@ -443,7 +443,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
 
     /**
      * Creates the string for the name of the recreate file. E.g. recreate_REPLICA.checksum.
-     * 
+     *
      * @return The name of the file for recreating the checksum file.
      */
     private String makeRecreateFileName() {
@@ -452,7 +452,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
 
     /**
      * Creates the string for the name of the wrongEntryFile. E.g. removed_REPLICA.checksum
-     * 
+     *
      * @return The name of the wrongEntryFile.
      */
     private String makeWrongEntryFileName() {
@@ -462,9 +462,9 @@ public final class FileChecksumArchive implements ChecksumArchive {
     /**
      * Method for validating a file for use as checksum file. This basically checks whether the file exists, whether it
      * is a directory instead of a file, and whether it is writable.
-     * 
+     * <p>
      * It has to exist and be writable, but it may not be a directory.
-     * 
+     *
      * @param file The file to validate.
      * @return Whether the file is valid.
      */
@@ -484,7 +484,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
 
     /**
      * Appending an checksum archive entry to the checksum file. The record string is created and appended to the file.
-     * 
+     *
      * @param filename The name of the file to add.
      * @param checksum The checksum of the file to add.
      * @throws IOFailure If something is wrong when writing to the file.
@@ -521,7 +521,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
     /**
      * Method for appending a 'wrong' entry in the wrongEntryFile. It will be written when the wrong entry was appended:
      * date + " : " + wrongRecord.
-     * 
+     *
      * @param wrongRecord The record to append.
      * @throws IOFailure If the wrong record cannot be appended correctly.
      */
@@ -546,7 +546,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
 
     /**
      * The method for uploading a file to the archive.
-     * 
+     *
      * @param file The remote file containing the file to be uploaded.
      * @param filename The name of the arcFile.
      * @throws ArgumentNotValid If the RemoteFile is null or if the filename is not valid.
@@ -593,7 +593,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
 
     /**
      * Method for retrieving the checksum of a record, based on the filename.
-     * 
+     *
      * @param filename The name of the file to have recorded in the archive.
      * @return The checksum of a record, or null if it was not found.
      * @throws ArgumentNotValid If the filename is not valid (null or empty).
@@ -611,7 +611,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
 
     /**
      * Method for checking whether an entry exists within the archive.
-     * 
+     *
      * @param filename The name of the file whose entry in the archive should be determined.
      * @return Whether an entry with the filename was found.
      */
@@ -625,7 +625,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
 
     /**
      * Method for calculating the checksum of a file.
-     * 
+     *
      * @param f The file to calculate the checksum of.
      * @return The checksum of the file.
      * @throws IOFailure If a IOException is caught during the calculation of the MD5-checksum.
@@ -637,7 +637,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
 
     /**
      * Method for calculating the checksum of a inputstream.
-     * 
+     *
      * @param is The inputstream to calculate the checksum of.
      * @return The checksum of the inputstream.
      * @throws IOFailure If a error occurs during the generation of the MD5 checksum.
@@ -651,15 +651,15 @@ public final class FileChecksumArchive implements ChecksumArchive {
      * Method for correcting a bad entry from the archive. The current incorrect entry is put into the wrongEntryFile.
      * Then it calculates the checksum and corrects the entry for the file, and then the checksum file is recreated from
      * the archive in the memory.
-     * 
+     *
      * @param filename The name of the file whose record should be removed.
      * @param correctFile The file that should replace the current entry
      * @return A file containing the removed entry.
      * @throws ArgumentNotValid If one of the arguments are not valid.
      * @throws IOFailure If the entry cannot be corrected. Either the bad entry cannot be stored, or the new checksum
-     *             file cannot be created. Or if a file for the removed entry cannot be created.
+     * file cannot be created. Or if a file for the removed entry cannot be created.
      * @throws IllegalState If no such entry exists to be corrected, or if the entry has a different checksum than the
-     *             incorrectChecksum.
+     * incorrectChecksum.
      */
     @Override
     public File correct(String filename, File correctFile) throws IOFailure, ArgumentNotValid, IllegalState {
@@ -724,7 +724,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
     /**
      * Method for retrieving the archive as a temporary file containing the checksum entries. Each line should contain
      * one checksum entry in the format produced by the ChecksumJob.
-     * 
+     *
      * @return A temporary checksum file, which is a copy of the archive file.
      * @throws IOFailure If problems occurs during the creation of the file.
      */
@@ -749,7 +749,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
 
     /**
      * Method for retrieving the names of all the files within the archive as a temporary file.
-     * 
+     *
      * @return A temporary file containing the list of all the filenames. This file has one filename per line.
      * @throws IOFailure If problems occurs during the creation of the file.
      */
@@ -783,7 +783,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
 
     /**
      * Ensures that the file and memory archives are identical.
-     * 
+     * <p>
      * The timestamp of last communication with the file (read/write) will be checked whether it corresponds the 'last
      * modified' date of the file. If they are different, then the memory archive is reloaded from the file.
      */

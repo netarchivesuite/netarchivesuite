@@ -78,7 +78,7 @@ public class JobDispatcher {
     /**
      * Submit the next new job (the one with the lowest ID) with the given priority, and updates the internal counter as
      * needed. If no jobs are ready for the given priority, nothing is done
-     * 
+     *
      * @param channel the Channel to use for the job.
      */
     protected void submitNextNewJob(HarvestChannel channel) {
@@ -135,9 +135,9 @@ public class JobDispatcher {
     /**
      * Will read the next job ready to run from the db and set the job to submitted. If no jobs are ready, null will be
      * returned.
-     * 
+     * <p>
      * Note the operation is synchronized, so only one thread may start the submission of a job.
-     * 
+     *
      * @param channel the job channel.
      * @return A job ready to be submitted.
      */
@@ -160,7 +160,7 @@ public class JobDispatcher {
      * <ol>
      * <li>Alias metadata.
      * <li>DuplicationReduction MetadataEntry, if Deduplication //is enabled.
-     * 
+     *
      * @param job The job to create meta data for.
      */
     private List<MetadataEntry> createMetadata(Job job) {
@@ -187,7 +187,7 @@ public class JobDispatcher {
 
     /**
      * Submit an doOneCrawl request to a HarvestControllerServer.
-     * 
+     *
      * @param job the specific job to send
      * @param origHarvestName the harvest definition's name
      * @param origHarvestDesc the harvest definition's description

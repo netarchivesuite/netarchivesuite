@@ -135,7 +135,7 @@ public class ReportingTester {
     /**
      * Tests the method getCrawlLogForDomainInJob. This unit-test also implicitly tests the class
      * HarvestedUrlsForDomainBatchJob
-     * 
+     *
      * @throws Exception
      */
     @Test

@@ -32,7 +32,7 @@ public class FreeSpaceProviderFactory extends SettingsFactory<Notifications> {
 
     /**
      * Get a FreeSpaceProvider instance to inform about the free space.
-     * 
+     *
      * @return The FreeSpaceProvider instance.
      */
     public static FreeSpaceProvider getInstance() {

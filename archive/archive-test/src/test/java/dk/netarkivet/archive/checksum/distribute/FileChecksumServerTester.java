@@ -122,7 +122,7 @@ public class FileChecksumServerTester {
      * retrieve the checksum. - The retrieved checksum has the correct precalculated checksum. - It is possible to
      * correct the file, and it new has a different value. - That the new value equals a precalculated checksum for the
      * new file.
-     * 
+     *
      * @throws IOException If file handling error in test.
      */
 

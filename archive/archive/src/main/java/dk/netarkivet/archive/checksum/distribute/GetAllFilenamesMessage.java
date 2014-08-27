@@ -53,7 +53,7 @@ public class GetAllFilenamesMessage extends ArchiveMessage {
 
     /**
      * Constructor.
-     * 
+     *
      * @param to The channel the message is sent to.
      * @param replyTo The channel the reply is sent to.
      * @param repId The id of the replica.
@@ -66,7 +66,7 @@ public class GetAllFilenamesMessage extends ArchiveMessage {
 
     /**
      * Method for setting the resulting file. This file will be retrieved from the caller of this message.
-     * 
+     *
      * @param file The file with the checksum message.
      */
     public void setFile(File file) {
@@ -77,7 +77,7 @@ public class GetAllFilenamesMessage extends ArchiveMessage {
 
     /**
      * Method for retrieving the resulting file.
-     * 
+     *
      * @param toFile The file for the remotely retrieved content.
      */
     public void getData(File toFile) {
@@ -99,7 +99,7 @@ public class GetAllFilenamesMessage extends ArchiveMessage {
 
     /**
      * Method for retrieving the id for the replica where this message should be sent.
-     * 
+     *
      * @return The id for the replica.
      */
     public String getReplicaId() {
@@ -108,7 +108,7 @@ public class GetAllFilenamesMessage extends ArchiveMessage {
 
     /**
      * Retrieval of a string representation of this instance.
-     * 
+     *
      * @return A string representation of this instance.
      */
     public String toString() {

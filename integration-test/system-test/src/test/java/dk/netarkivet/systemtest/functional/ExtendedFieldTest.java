@@ -59,10 +59,10 @@ public class ExtendedFieldTest extends SeleniumTest {
         addStep("Create a new String type field (name:" + extendedIDForTest + ") for domains", "");
         PageHelper.gotoPage(PageHelper.MenuPages.ExtendedFields);
         driver.findElement(By.linkText("create Extended Field")).click(); // Todo
-                                                                          // needs
-                                                                          // more
-                                                                          // specific
-                                                                          // find
+        // needs
+        // more
+        // specific
+        // find
 
         driver.findElement(By.name("extf_name")).clear();
         driver.findElement(By.name("extf_name")).sendKeys(extendedIDForTest);

@@ -82,7 +82,7 @@ public final class JMXUtils {
     /**
      * The maximum number of times we back off on getting an mbean or a job. The cumulative time trying is 2^(MAX_TRIES)
      * milliseconds, thus the constant is defined as log_2(TIMEOUT), as set in settings.
-     * 
+     *
      * @return The number of tries
      */
     public static int getMaxTries() {
@@ -114,15 +114,15 @@ public final class JMXUtils {
     /**
      * Constructs the same service URL that JConsole does on the basis of a server name, a JMX port number, and a RMI
      * port number.
-     *
+     * <p>
      * Example URL: service:jmx:rmi://0.0.0.0:9999/jndi/rmi://0.0.0.0:1099/JMXConnector where RMI port number = 9999,
      * JMX port number = 1099 server = 0.0.0.0 a.k.a localhost(?).
      *
      * @param server The server that should be connected to using the constructed URL.
      * @param jmxPort The number of the JMX port that should be connected to using the constructed URL (may not be a
-     *            negative number)
+     * negative number)
      * @param rmiPort The number of the RMI port that should be connected to using the constructed URL, or -1 if the
-     *            default RMI port should be used.
+     * default RMI port should be used.
      * @return the constructed URL.
      */
     public static JMXServiceURL getUrl(String server, int jmxPort, int rmiPort) {
@@ -145,7 +145,7 @@ public final class JMXUtils {
 
     /**
      * Returns a connection to a remote MbeanServer defined by the given arguments.
-     * 
+     *
      * @param server the remote servername
      * @param jmxPort the remote jmx-port
      * @param rmiPort the remote rmi-port
@@ -172,10 +172,10 @@ public final class JMXUtils {
 
     /**
      * Connects to the given (url-specified) service point, sending the given credentials as login.
-     * 
+     *
      * @param url The JMX service url of some JVM on some machine.
      * @param credentials a map with (at least) one entry, mapping "jmx.remote.credentials" to a String array of length
-     *            2. Its first item should be the user name. Its second item should be the password.
+     * 2. Its first item should be the user name. Its second item should be the password.
      * @return An MBeanServerConnection representing the connected session.
      */
     public static MBeanServerConnection getMBeanServerConnection(JMXServiceURL url, Map<String, String[]> credentials) {
@@ -193,7 +193,7 @@ public final class JMXUtils {
      * Packages credentials as an environment for JMX connections. This packaging has the same form that JConsole uses:
      * a one-entry Map, the mapping of "jmx.remote.credentials" being an array containing the user name and the
      * password.
-     * 
+     *
      * @param userName The user to login as
      * @param password The password to use for that user
      * @return the packaged credentials
@@ -208,7 +208,7 @@ public final class JMXUtils {
 
     /**
      * Execute a command on a bean.
-     * 
+     *
      * @param connection Connection to the server holding the bean.
      * @param beanName Name of the bean.
      * @param command Command to execute.
@@ -356,7 +356,8 @@ public final class JMXUtils {
                 lastException = e;
                 if (retries < maxJmxRetries
                         && e.getCause() != null
-                        && (e.getCause() instanceof ServiceUnavailableException || e.getCause() instanceof SocketTimeoutException)) {
+                        && (e.getCause() instanceof ServiceUnavailableException || e
+                        .getCause() instanceof SocketTimeoutException)) {
                     // Sleep a bit before trying again
                     TimeUtils.exponentialBackoffSleep(retries);
                     /*

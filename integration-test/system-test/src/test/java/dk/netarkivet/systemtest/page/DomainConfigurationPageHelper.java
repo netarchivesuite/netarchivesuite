@@ -69,9 +69,9 @@ public class DomainConfigurationPageHelper {
             }
         }
         PageHelper.getWebDriver().findElement(By.name(MAX_OBJECTS_FIELD)); // Ensure
-                                                                           // page
-                                                                           // is
-                                                                           // loaded.
+        // page
+        // is
+        // loaded.
     }
 
     public static void setMaxObjects(int value) {

@@ -44,7 +44,7 @@ import dk.netarkivet.common.tools.ToolRunnerBase;
 
 /**
  * A command-line tool to get ARC records from the bitarchive. Requires an Lucene index file
- *
+ * <p>
  * Usage: java dk.netarkivet.archive.tools.GetRecord indexfile uri > myrecord.arcrec
  */
 
@@ -55,7 +55,7 @@ public class GetRecord extends ToolRunnerBase {
      * the GetRecordTool class. Management of this, exception handling etc. is delegated to ToolRunnerBase class.
      *
      * @param argv Takes two command line paramers: - indexdir (the Lucene index directory) - uri (the URI to get the
-     *            record from)
+     * record from)
      */
     public static void main(String[] argv) {
         GetRecord instance = new GetRecord();
@@ -64,7 +64,7 @@ public class GetRecord extends ToolRunnerBase {
 
     /**
      * Method for creating the simple command line tool.
-     * 
+     *
      * @return The commandline tool for GetRecord.
      */
     protected SimpleCmdlineTool makeMyTool() {

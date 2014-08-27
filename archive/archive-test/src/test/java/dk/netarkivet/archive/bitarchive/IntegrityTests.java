@@ -160,11 +160,12 @@ public class IntegrityTests {
             fail("Exception not expected! + " + ex);
             ;
         } finally {
-            if (fw != null)
+            if (fw != null) {
                 try {
                     fw.close();
                 } catch (Exception ex) {
                 }
+            }
         }
 
         Settings.set(CommonSettings.FREESPACE_PROVIDER_CLASS, "dk.netarkivet.common.utils.FilebasedFreeSpaceProvider");

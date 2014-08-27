@@ -27,7 +27,7 @@ import java.util.Map;
 
 /**
  * A generic Map.Entry class, useful for returning key-value-like results.
- * 
+ *
  * @param <K> the Object type used as key
  * @param <V> the Object type used as value
  */
@@ -40,7 +40,7 @@ public class KeyValuePair<K, V> implements Map.Entry<K, V> {
 
     /**
      * Constructs a Key-Value pair using the given key and value.
-     * 
+     *
      * @param k The key object
      * @param v The value object
      */
@@ -69,7 +69,7 @@ public class KeyValuePair<K, V> implements Map.Entry<K, V> {
 
     /**
      * Replaces the value corresponding to this entry with the specified value (optional operation).
-     * 
+     *
      * @param newValue new value to be stored in this entry.
      * @return old value corresponding to the entry.
      * @throws UnsupportedOperationException if the <tt>put</tt> operation is not supported by the backing map.

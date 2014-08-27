@@ -25,7 +25,6 @@ package dk.netarkivet.archive.webinterface;
 
 /**
  * Constants for the bitarchive webinterface.
- *
  */
 public class Constants {
     /** Parameter name for the bitarchive to perform operation on. */

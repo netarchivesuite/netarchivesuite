@@ -74,7 +74,7 @@ public class CrawlLogLinesMatchingRegexp extends ArchiveBatchJob {
 
     /**
      * Does nothing, no initialisation is needed.
-     * 
+     *
      * @param os Not used.
      */
     @Override
@@ -97,10 +97,9 @@ public class CrawlLogLinesMatchingRegexp extends ArchiveBatchJob {
 
     /**
      * Process a record on crawl log concerning the given domain to result.
-     * 
+     *
      * @param record The record to process.
      * @param os The output stream for the result.
-     *
      * @throws ArgumentNotValid on null parameters
      * @throws IOFailure on trouble processing the record.
      */
@@ -130,7 +129,7 @@ public class CrawlLogLinesMatchingRegexp extends ArchiveBatchJob {
 
     /**
      * Does nothing, no finishing is needed.
-     * 
+     *
      * @param os Not used.
      */
     @Override

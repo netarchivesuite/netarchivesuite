@@ -68,7 +68,7 @@ public class GetFileMessage extends ArchiveMessage {
 
     /**
      * Set the file this message should return. Note: This will make a remote file handle fopr the file.
-     * 
+     *
      * @param data Content of the file to retrieve
      */
     public void setFile(File data) {
@@ -78,7 +78,7 @@ public class GetFileMessage extends ArchiveMessage {
     /**
      * Writes the the content of the retrieved file into a local file. Note: This is transferred through a remote file
      * handle, and then the handle is invalidated. This method may only be called once.
-     * 
+     *
      * @param toFile where to write the content
      * @throws IOFailure on error reading the remote file or writing the local file
      * @throws ArgumentNotValid If the file is null.
@@ -101,7 +101,7 @@ public class GetFileMessage extends ArchiveMessage {
 
     /**
      * Retrieve the replica id.
-     * 
+     *
      * @return replica id
      */
     public String getReplicaId() {
@@ -110,7 +110,7 @@ public class GetFileMessage extends ArchiveMessage {
 
     /**
      * Get name of the file to retrieve.
-     * 
+     *
      * @return file name
      */
     public String getArcfileName() {
@@ -136,7 +136,7 @@ public class GetFileMessage extends ArchiveMessage {
 
     /**
      * Retrieval of a string representation of this instance.
-     * 
+     *
      * @return The string representing this instance.
      * @see dk.netarkivet.common.distribute.NetarkivetMessage#toString()
      */

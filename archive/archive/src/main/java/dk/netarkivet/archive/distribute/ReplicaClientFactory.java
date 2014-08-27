@@ -42,7 +42,7 @@ public final class ReplicaClientFactory {
 
     /**
      * Method for retrieving the clients for the correct replicas.
-     * 
+     *
      * @return The clients to the different replicas as a list.
      */
     public static List<ReplicaClient> getReplicaClients() {

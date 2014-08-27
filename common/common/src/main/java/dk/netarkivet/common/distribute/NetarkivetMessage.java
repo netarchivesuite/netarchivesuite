@@ -59,11 +59,11 @@ public abstract class NetarkivetMessage implements Serializable {
 
     /**
      * Creates a new NetarkivetMessage.
-     * 
+     *
      * @param to the initial receiver of the message
      * @param replyTo the initial sender of the message
      * @throws ArgumentNotValid if to==replyTo, the replyTo parameter is a topic instead of a queue, or there is a null
-     *             parameter.
+     * parameter.
      */
     protected NetarkivetMessage(ChannelID to, ChannelID replyTo) {
         ArgumentNotValid.checkNotNull(to, "to");
@@ -87,7 +87,7 @@ public abstract class NetarkivetMessage implements Serializable {
 
     /**
      * Did an error occur when processing the message.
-     * 
+     *
      * @return true if no error occurred, otherwise false
      */
     public boolean isOk() {
@@ -96,7 +96,7 @@ public abstract class NetarkivetMessage implements Serializable {
 
     /**
      * Set or append error message. Sets isOk field to false.
-     * 
+     *
      * @param err error message
      */
     public void setNotOk(String err) {
@@ -120,9 +120,9 @@ public abstract class NetarkivetMessage implements Serializable {
 
     /**
      * Retrieve error message.
-     * 
-     * @throws PermissionDenied if the message is not an error message
+     *
      * @return error message
+     * @throws PermissionDenied if the message is not an error message
      */
     public String getErrMsg() throws PermissionDenied {
         if (isOk) {
@@ -134,7 +134,7 @@ public abstract class NetarkivetMessage implements Serializable {
     /**
      * Retrieve message id. Note that message ID is not set until message is sent, and this method must not be called
      * before then.
-     * 
+     *
      * @return message id
      * @throws PermissionDenied If the message has not yet been sent.
      */
@@ -162,7 +162,7 @@ public abstract class NetarkivetMessage implements Serializable {
     /**
      * Retrieve replyOfId. This is set by subclasses of NetarkivetMessage, to indicate that this is a reply of some
      * other message. If the subclass doesn't set replyOfId, this method behaves like getId.
-     * 
+     *
      * @return replyOfId
      */
     public synchronized String getReplyOfId() {
@@ -175,7 +175,7 @@ public abstract class NetarkivetMessage implements Serializable {
 
     /**
      * Retrieve initial destination.
-     * 
+     *
      * @return initial destination
      */
     public ChannelID getTo() {
@@ -184,7 +184,7 @@ public abstract class NetarkivetMessage implements Serializable {
 
     /**
      * Retrieve specified reply channel.
-     * 
+     *
      * @return initial origin
      */
     public ChannelID getReplyTo() {
@@ -193,7 +193,7 @@ public abstract class NetarkivetMessage implements Serializable {
 
     /**
      * Returns a string containing: <id>: To <toName> ReplyTo <replyToName> <isOK> [:error message].
-     * 
+     *
      * @return String representation of Message.
      */
     public String toString() {
@@ -205,7 +205,7 @@ public abstract class NetarkivetMessage implements Serializable {
 
     /**
      * Invoke default method for deserializing object.
-     * 
+     *
      * @param s The stream the object is read from.
      */
     private void readObject(ObjectInputStream s) {
@@ -218,7 +218,7 @@ public abstract class NetarkivetMessage implements Serializable {
 
     /**
      * Invoke default method for serializing object.
-     * 
+     *
      * @param s The stream the object is written to.
      */
     private void writeObject(ObjectOutputStream s) {
@@ -231,7 +231,7 @@ public abstract class NetarkivetMessage implements Serializable {
 
     /**
      * Check, if a given message has been sent yet. If the message has a null id, it hasn't been sent yet.
-     * 
+     *
      * @return true, if message has been sent yet, false otherwise.
      */
     public synchronized boolean hasBeenSent() {

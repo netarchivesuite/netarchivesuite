@@ -43,10 +43,10 @@ public class ExceptionUtils {
     /**
      * Prints the stacktrace of an exception to a String. Why this functionality is not included in the standard java
      * libraries is anybody's guess.
-     * 
+     *
      * @param aThrowable An exception
      * @return String containing a stacktrace of exception aThrowable. Will return the string "null" and a linebreak if
-     *         aThrowable is null.
+     * aThrowable is null.
      */
     public static String getStackTrace(Throwable aThrowable) {
         final Writer result = new StringWriter();
@@ -62,7 +62,7 @@ public class ExceptionUtils {
     /**
      * SQLExceptions have their own stack of causes accessed via the getNextException() method. This utility provides a
      * string representation of those causes for use in logging or rethrowing
-     * 
+     *
      * @param e the original top-level exception
      * @return a String describing the exception
      */

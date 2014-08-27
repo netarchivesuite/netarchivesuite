@@ -57,16 +57,18 @@ import dk.netarkivet.common.utils.batch.LoadableJarBatchJob;
 
 /**
  * A command-line tool to run batch jobs in the bitarchive.
- *
+ * <p>
  * Usage: java dk.netarkivet.archive.tools.RunBatch with arguments as defined in local class BatchParameters
- *
+ * <p>
  * where: <br/>
  * -J&lt;jarfile&gt; is a file containing all the classes needed by a BatchJob <br/>
  * -C&lt;classfile&gt; is a file containing a FileBatchJob implementation <br/>
  * -R&lt;regexp&gt; is a regular expression that will be matched against file names in the archive, by default .* <br/>
  * -B&lt;replica&gt; is the name of the bitarchive replica this should be run on, by default taken from settings. <br/>
- * -O&lt;outputfile&lt; is a file where the output from the batch job will be written. By default, it goes to stdout. <br/>
- * -E&lt;errorFile&gt; is a file where the errors from the batch job will be written. By default, it goes to stderr. <br/>
+ * -O&lt;outputfile&lt; is a file where the output from the batch job will be written. By default, it goes to stdout.
+ * <br/>
+ * -E&lt;errorFile&gt; is a file where the errors from the batch job will be written. By default, it goes to stderr.
+ * <br/>
  * -N&lt;className&gt; is the name of the primary class to be loaded when doing a LoadableJarBatchJob <br/>
  * -A&lt;Arguments&gt; The arguments for the batchjob, separated by '##', e.g. -Aarg1##arg2##... <br/>
  * Examples: <br/>
@@ -82,8 +84,8 @@ public class RunBatch extends ToolRunnerBase {
      * Management of this, exception handling etc. is delegated to ToolRunnerBase class.
      *
      * @param argv command line parameters as defined in local class BatchParameters required: The name of a class-file
-     *            containing an implementation of FileBatchJob Name of jar file which includes the class file, and the
-     *            className
+     * containing an implementation of FileBatchJob Name of jar file which includes the class file, and the
+     * className
      */
     public static void main(String[] argv) {
         RunBatch instance = new RunBatch();
@@ -92,7 +94,7 @@ public class RunBatch extends ToolRunnerBase {
 
     /**
      * Create an instance of the actual RunBatchTool.
-     * 
+     *
      * @return an instance of RunBatchTool.
      */
     protected SimpleCmdlineTool makeMyTool() {
@@ -137,7 +139,9 @@ public class RunBatch extends ToolRunnerBase {
         /** File types in input parameter. */
         private enum FileType {
             OTHER, JAR, CLASS
-        };
+        }
+
+        ;
 
         /** File suffix denoting FileType.CLASS. */
         private static final String CLASS_FILE_SUFFIX = ".class";
@@ -167,12 +171,12 @@ public class RunBatch extends ToolRunnerBase {
 
         /**
          * String to separate the arguments for the batchjob. TODO make into global constant.
-         * */
+         */
         private static final String ARGUMENT_SEPARATOR = "##";
 
         /**
          * Getting FileType from given file name.
-         * 
+         *
          * @param fileName The file name to get file type from
          * @return FileType found from extension of file name
          */
@@ -196,7 +200,7 @@ public class RunBatch extends ToolRunnerBase {
 
         /**
          * Check, if you can write a file named fileName to current working directory.
-         * 
+         *
          * @param fileName The file name
          * @param fileTag a tag for the fileName
          * @return true, if you can write such a file; False, if the file already exists, or you cannot create the file
@@ -262,7 +266,7 @@ public class RunBatch extends ToolRunnerBase {
 
             /**
              * Method for parsing the arguments.
-             * 
+             *
              * @param args The arguments.
              * @return The empty string, or an error message.
              */
@@ -278,7 +282,7 @@ public class RunBatch extends ToolRunnerBase {
 
             /**
              * Method for retrieving the arguments of this instance.
-             * 
+             *
              * @return The list of arguments, ready to be printed to system out.
              */
             public String listArguments() {
@@ -298,7 +302,7 @@ public class RunBatch extends ToolRunnerBase {
 
         /**
          * Accept parameters and checks them for validity.
-         * 
+         *
          * @param args the arguments
          * @return true, if given arguments are valid returns false otherwise
          */

@@ -67,7 +67,7 @@ public class WARCUtils {
 
     /**
      * Create new WARCWriter, writing to warcfile newFile.
-     * 
+     *
      * @param newFile the WARCfile, that the WARCWriter writes to.
      * @return new WARCWriter, writing to warcfile newFile.
      */
@@ -77,15 +77,15 @@ public class WARCUtils {
         try {
             ps = new PrintStream(new FileOutputStream(newFile));
             writer = new WARCWriterNAS(new AtomicInteger(), ps,
-            // This name is used for the first (file metadata) record
+                    // This name is used for the first (file metadata) record
                     newFile, false, // Don't compress
                     // Use current time
                     ArchiveDateConverter.getWarcDateFormat().format(new Date()), null // No
-                                                                                      // particular
-                                                                                      // file
-                                                                                      // metadata
-                                                                                      // to
-                                                                                      // add
+                    // particular
+                    // file
+                    // metadata
+                    // to
+                    // add
             );
         } catch (IOException e) {
             if (ps != null) {
@@ -150,9 +150,9 @@ public class WARCUtils {
 
     /**
      * Writes the given WARCRecord on the given WARCWriter.
-     * 
+     * <p>
      * Creates a new unique UUID for the copied record.
-     * 
+     *
      * @param aw The WARCWriter to output the record on.
      * @param record The record to output
      */
@@ -226,14 +226,14 @@ public class WARCUtils {
 
     /**
      * Read the contents (payload) of an WARC record into a byte array.
-     * 
+     *
      * @param record An WARC record to read from. After reading, the WARC Record will no longer have its own data
-     *            available for reading.
+     * available for reading.
      * @return A byte array containing the payload of the WARC record. Note that the size of the payload is calculated
-     *         by subtracting the contentBegin value from the length of the record (both values included in the record
-     *         header).
+     * by subtracting the contentBegin value from the length of the record (both values included in the record
+     * header).
      * @throws IOFailure If there is an error reading the data, or if the record is longer than Integer.MAX_VALUE (since
-     *             we can't make bigger arrays).
+     * we can't make bigger arrays).
      */
     public static byte[] readWARCRecord(WARCRecord record) throws IOFailure {
         ArgumentNotValid.checkNotNull(record, "WARCRecord record");
@@ -279,7 +279,7 @@ public class WARCUtils {
 
     /**
      * Find out what type of WARC-record this is.
-     * 
+     *
      * @param record a given WARCRecord
      * @return the type of WARCRecord as a String.
      */
@@ -291,7 +291,7 @@ public class WARCUtils {
 
     /**
      * Check if the given filename represents a WARC file.
-     * 
+     *
      * @param filename A given filename
      * @return true, if the filename ends with .warc or .warc.gz
      */

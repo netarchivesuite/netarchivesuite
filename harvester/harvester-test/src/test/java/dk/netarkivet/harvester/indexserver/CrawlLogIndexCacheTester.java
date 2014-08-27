@@ -54,7 +54,7 @@ public class CrawlLogIndexCacheTester extends CacheTestCase {
 
     /**
      * Test of private method sortCrawlLog.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -85,7 +85,7 @@ public class CrawlLogIndexCacheTester extends CacheTestCase {
 
     /**
      * Test of preparecombine.
-     * 
+     *
      * @throws Exception
      */
     @Test

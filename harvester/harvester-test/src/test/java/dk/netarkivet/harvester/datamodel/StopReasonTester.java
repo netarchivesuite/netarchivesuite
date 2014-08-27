@@ -42,7 +42,7 @@ public class StopReasonTester {
 
     /**
      * Tests the translation from numbers to stop reasons.
-     *
+     * <p>
      * DO NOT CHANGE THESE NUMBERS! StopReason is serialised to database using these numbers, and they are never
      * expected to change. That would kill an upgrade with an existing database!
      */
@@ -99,26 +99,27 @@ public class StopReasonTester {
     public void testGetLocalizedString() {
         Locale l = new Locale("en");
         assertEquals("StopReason.DOWNLOAD_UNFINISHED.getLocalizedString(l) "
-                + "should return correct String for english Locale",
+                        + "should return correct String for english Locale",
                 StopReason.DOWNLOAD_UNFINISHED.getLocalizedString(l),
                 I18N.getString(l, "stopreason.download.unfinished"));
 
         assertEquals("StopReason.DOWNLOAD_COMPLETE.getLocalizedString(l) "
-                + "should return correct String for english Locale",
+                        + "should return correct String for english Locale",
                 StopReason.DOWNLOAD_COMPLETE.getLocalizedString(l), I18N.getString(l, "stopreason.complete"));
 
         assertEquals("StopReason.CONFIG_OBJECT_LIMIT.getLocalizedString(l) "
-                + "should return correct String for english Locale",
+                        + "should return correct String for english Locale",
                 StopReason.CONFIG_OBJECT_LIMIT.getLocalizedString(l),
                 I18N.getString(l, "stopreason.max.domainobjects.limit.reached"));
 
         assertEquals("StopReason.CONFIG_SIZE_LIMIT.getLocalizedString(l) "
-                + "should return correct String for english Locale",
+                        + "should return correct String for english Locale",
                 StopReason.CONFIG_SIZE_LIMIT.getLocalizedString(l),
                 I18N.getString(l, "stopreason.max.domainconfig.limit.reached"));
 
         assertEquals("StopReason.OBJECT_LIMIT.getLocalizedString(l) "
-                + "should return correct String for english Locale", StopReason.OBJECT_LIMIT.getLocalizedString(l),
+                        + "should return correct String for english Locale",
+                StopReason.OBJECT_LIMIT.getLocalizedString(l),
                 I18N.getString(l, "stopreason.max.objects.limit.reached"));
 
         assertEquals(

@@ -58,7 +58,7 @@ public class HarvestStatus {
 
     /**
      * Constructor for the HarvestStatus class.
-     * 
+     *
      * @param fullResultsCount The total number of entries in the full resultset
      * @param jobs The list of jobs
      */
@@ -83,9 +83,9 @@ public class HarvestStatus {
 
     /**
      * Process a request from Harveststatus-alljobs.
-     * 
+     * <p>
      * Will resubmit a job if requested, otherwise do nothing.
-     * 
+     *
      * @param context The web context used for processing
      * @param i18n The resource i18n context.
      * @throws ForwardedToErrorPage If an error occurs that stops processing and forwards the user to an error page.
@@ -116,7 +116,7 @@ public class HarvestStatus {
     /**
      * Marks a failed job as rejected for resubmission. Throws a ForwardedToErrorPage if jobID is null or if it refers
      * to a job that is not in the state FAILED to start with.
-     * 
+     *
      * @param context the context for forwarding errors
      * @param i18n the internationalisation to use
      * @param jobID the job to reject
@@ -145,7 +145,7 @@ public class HarvestStatus {
 
     /**
      * Marks as failed. Throws a ForwardedToErrorPage if the job is not in the state FAILED_REJECTED to start with.
-     * 
+     *
      * @param context the context for forwarding errors
      * @param i18n the internationalisation to use
      * @param jobID the job to unreject
@@ -173,7 +173,7 @@ public class HarvestStatus {
 
     /**
      * Helpermethod to resubmit a job with a given jobID.
-     * 
+     *
      * @param context the current pageContext (used in error-handling only)
      * @param i18n the given internalisation object.
      * @param jobID The ID for the job that we want to resubmit.
@@ -208,7 +208,7 @@ public class HarvestStatus {
 
     /**
      * Calculate list of job information to be shown.
-     * 
+     *
      * @param query the query with its filters.
      * @return a list of job status info objects
      */
@@ -219,7 +219,7 @@ public class HarvestStatus {
 
     /**
      * Check if next link is active.
-     * 
+     *
      * @param pageSize the size of the page
      * @param totalResultsCount the number of results.
      * @param endIndex the index of the last result shown on this page
@@ -234,7 +234,7 @@ public class HarvestStatus {
 
     /**
      * Check if previous link is active.
-     * 
+     *
      * @param pageSize the size of the page
      * @param totalResultsCount the number of results.
      * @param startIndex the index of the first result shown on this page

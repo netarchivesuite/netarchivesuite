@@ -33,7 +33,6 @@ import org.junit.Test;
 
 /**
  * Test that all the public static fields for the CommonSettings class are <i>not</i> final.
- * 
  */
 public class CommonSettingsTester {
 

@@ -40,7 +40,7 @@ import dk.netarkivet.common.utils.TimeUtils;
  * tasks (fixed rate execution). It actively monitors task execution in a separate "checker" thread, allowing to catch
  * and process any {@link RuntimeException} that would be thrown during task execution, which cannot be done by simply
  * overriding {@link ScheduledThreadPoolExecutor#afterExecute}.
- *
+ * <p>
  * TODO Currently {@link RuntimeException} are only caught and logged, but the executor stops scheduling future
  * executions. We should implement a configurable restart mechanism, possibly with exception filtering.
  */
@@ -75,11 +75,11 @@ public final class PeriodicTaskExecutor {
 
         /**
          * Builds a new task.
-         * 
+         *
          * @param taskId the task id string (should be unique)
          * @param task the actual {@link Runnable} object.
          * @param secondsBeforeFirstExec the delay in seconds between starting the executor and the initial task
-         *            execution.
+         * execution.
          * @param secondsBetweenExec the delay in seconds between two successive task executions.
          */
         public PeriodicTask(String taskId, Runnable task, long secondsBeforeFirstExec, long secondsBetweenExec) {
@@ -92,7 +92,7 @@ public final class PeriodicTaskExecutor {
 
         /**
          * Set the designated ScheduledFuture object to the one given as argument.
-         * 
+         *
          * @param future a given ScheduledFuture
          */
         void setFuture(ScheduledFuture<?> future) {
@@ -120,7 +120,7 @@ public final class PeriodicTaskExecutor {
 
     /**
      * Builds an executor for a single task.
-     * 
+     *
      * @param taskId the task id string (should be unique)
      * @param task the actual {@link Runnable} object.
      * @param secondsBeforeFirstExec the delay in seconds between starting the executor and the initial task execution.
@@ -132,7 +132,7 @@ public final class PeriodicTaskExecutor {
 
     /**
      * Builds an executor for a set of tasks.
-     * 
+     *
      * @param tasks the task definitions.
      */
     public PeriodicTaskExecutor(PeriodicTask... tasks) {

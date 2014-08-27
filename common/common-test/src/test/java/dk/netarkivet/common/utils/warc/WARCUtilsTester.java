@@ -27,9 +27,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
-
 import org.archive.io.ArchiveRecord;
 import org.archive.io.ArchiveRecordHeader;
 import org.archive.io.warc.WARCReader;
@@ -42,6 +39,8 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.arc.TestInfo;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
+import junit.framework.Assert;
+import junit.framework.TestCase;
 
 /**
  * Tests for class WARCUtils.
@@ -102,18 +101,18 @@ public class WARCUtilsTester extends TestCase {
 
     /**
      * Encapsulate WARCWriter creation for test-purposes.
-     * 
+     *
      * @param stream the PrintStream
      * @param warcfile the destination warcfile
-     * @throws IOException
      * @return new WARCWriter
+     * @throws IOException
      */
     public static WARCWriter getTestWARCWriter(PrintStream stream, File warcfile) throws IOException {
         return new WARCWriterNAS(new AtomicInteger(), stream, warcfile, false, // Don't
-                                                                               // compress
+                // compress
                 ArchiveUtils.get14DigitDate(System.currentTimeMillis()), // Use
-                                                                         // current
-                                                                         // time
+                // current
+                // time
                 null // No particular file metadata to add
         );
     }

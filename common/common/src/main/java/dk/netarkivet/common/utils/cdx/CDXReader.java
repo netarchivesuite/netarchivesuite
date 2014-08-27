@@ -110,7 +110,6 @@ public class CDXReader {
 
     /**
      * Remove all CDXRecordFilters.
-     *
      */
     public void removeAllCDXRecordFilters() {
         cdxrecordfilters = new HashMap<String, CDXRecordFilter>();
@@ -118,7 +117,7 @@ public class CDXReader {
 
     /**
      * Get a table of all filters.
-     * 
+     *
      * @return a Hashtable with all the filters.
      */
     public Map<String, CDXRecordFilter> getFilters() {
@@ -127,7 +126,7 @@ public class CDXReader {
 
     /**
      * Get a specific filter by the name of the filter - if not found return null.
-     * 
+     *
      * @param filtername The given filtername.
      * @return the CDXRecordFilter
      */
@@ -137,7 +136,7 @@ public class CDXReader {
 
     /**
      * Remove a specific filter by the name of the filter.
-     * 
+     *
      * @param filtername The given filtername.
      * @throws UnknownID if there is no filter of that name.
      */
@@ -159,7 +158,8 @@ public class CDXReader {
             String firstBrokenLine = null;
             long numBrokenLines = 0;
             try {
-                CDXLINES: for (String s : BinSearch.getLinesInFile(f, uri)) {
+                CDXLINES:
+                for (String s : BinSearch.getLinesInFile(f, uri)) {
                     String[] fieldParts = s.split(SEPARATOR_REGEX);
                     CDXRecord cdxrec;
                     try {

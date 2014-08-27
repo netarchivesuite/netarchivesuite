@@ -50,7 +50,6 @@ public abstract class HeritrixLauncher {
      * Private HeritrixLauncher constructor. Sets up the HeritrixLauncher from the given order file and seedsfile.
      *
      * @param files Object encapsulating location of Heritrix crawldir and configuration files.
-     *
      * @throws ArgumentNotValid If either seedsfile or orderfile does not exist.
      */
     protected HeritrixLauncher(HeritrixFiles files) throws ArgumentNotValid {
@@ -72,7 +71,7 @@ public abstract class HeritrixLauncher {
      * Generic constructor to allow HeritrixLauncher to use any implementation of HeritrixController.
      *
      * @param args the arguments to be passed to the constructor or non-static factory method of the HeritrixController
-     *            class specified in settings
+     * class specified in settings
      */
     public HeritrixLauncher(Object... args) {
         this.args = args;
@@ -80,7 +79,7 @@ public abstract class HeritrixLauncher {
 
     /**
      * Launches the crawl and monitors its progress.
-     * 
+     *
      * @throws IOFailure
      */
     public abstract void doCrawl() throws IOFailure;

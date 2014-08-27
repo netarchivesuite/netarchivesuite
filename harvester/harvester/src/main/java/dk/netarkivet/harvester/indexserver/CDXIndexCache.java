@@ -40,14 +40,13 @@ import dk.netarkivet.common.utils.FileUtils;
 
 /**
  * A cache that serves CDX index files for job IDs.
- *
+ * <p>
  * Notice that since data for some IDs may not be available, the actual cached file might not correspond in its content
  * to what was asked for. For instance, if asking for data for IDs 2, 3, and 4, and 3 fails, a cached file for IDs 2 and
  * 4 will be returned. There is currently no way to tell if you got everything you asked for.
- *
+ * <p>
  * This cache uses the Unix sort(1) command as an external process call, as that one is optimized for handling large,
  * disk-based sorts.
- *
  */
 public class CDXIndexCache extends CombiningMultiFileBasedCache<Long> implements JobIndexCache {
 
