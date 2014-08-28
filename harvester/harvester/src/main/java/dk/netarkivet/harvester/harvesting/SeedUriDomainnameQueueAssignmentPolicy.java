@@ -61,7 +61,7 @@ public class SeedUriDomainnameQueueAssignmentPolicy extends HostnameQueueAssignm
      * @param cauri A potential URI.
      * @return a class key (really an arbitrary string), one of <domainOrIP>, <domainOrIP>#<port>, or "default...".
      * @see HostnameQueueAssignmentPolicy#getClassKey(org.archive.crawler.framework.CrawlController,
-     * org.archive.crawler.datamodel.CandidateURI)
+     *      org.archive.crawler.datamodel.CandidateURI)
      */
     public String getClassKey(CrawlController controller, CandidateURI cauri) {
         String candidate;

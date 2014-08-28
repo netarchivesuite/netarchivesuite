@@ -71,7 +71,7 @@ public final class EventHarvestUtil {
      * @param i18n the translation information to use in this context
      * @param eventHarvestName The name of the partial harvest to which these seeds are to be added
      * @throws ForwardedToErrorPage If maxBytes is not a number, or if any of the seeds is badly formatted such that no
-     * domain name can be parsed from it, or if orderTemplate is not given or unknown.
+     *         domain name can be parsed from it, or if orderTemplate is not given or unknown.
      */
     public static void addConfigurations(PageContext context, I18n i18n, String eventHarvestName) {
         ArgumentNotValid.checkNotNull(context, "PageContext context");

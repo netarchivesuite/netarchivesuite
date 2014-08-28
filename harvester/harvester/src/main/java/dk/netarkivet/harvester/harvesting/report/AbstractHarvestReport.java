@@ -253,7 +253,7 @@ public abstract class AbstractHarvestReport implements HarvestReport {
      *
      * @param logFile A progress-statistics.log file.
      * @return StopReason.DOWNLOAD_COMPLETE for progress statistics ending with CRAWL ENDED,
-     * StopReason.DOWNLOAD_UNFINISHED otherwise or if file does not exist.
+     *         StopReason.DOWNLOAD_UNFINISHED otherwise or if file does not exist.
      * @throws ArgumentNotValid on null argument.
      */
     public static StopReason findDefaultStopReason(File logFile) throws ArgumentNotValid {

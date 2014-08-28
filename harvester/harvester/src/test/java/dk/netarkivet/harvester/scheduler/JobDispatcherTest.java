@@ -141,11 +141,12 @@ public class JobDispatcherTest {
         MetadataEntry metadataEntry = crawlMessage.getMetadata().get(0);
         assertNotNull("Should have 1 metadata entry", metadataEntry);
         assertEquals("Should have mimetype text/plain", "text/plain", metadataEntry.getMimeType());
-        assertEquals("Should have right url", "metadata://netarkivet.dk/crawl/setup/duplicatereductionjobs"
-                + "?majorversion=1" + "&minorversion=0" + "&harvestid=" + harvest.getOid() + "&harvestnum="
-                + jobMock.getHarvestNum() + "&jobid=" + jobMock.getJobID(), metadataEntry.getURL());
-        assertEquals("Should have right data", jobIDsForDuplicateReduction.get(0) + "", new String(metadataEntry
-                .getData()));
+        assertEquals("Should have right url",
+                "metadata://netarkivet.dk/crawl/setup/duplicatereductionjobs" + "?majorversion=1" + "&minorversion=0"
+                        + "&harvestid=" + harvest.getOid() + "&harvestnum=" + jobMock.getHarvestNum() + "&jobid="
+                        + jobMock.getJobID(), metadataEntry.getURL());
+        assertEquals("Should have right data", jobIDsForDuplicateReduction.get(0) + "",
+                new String(metadataEntry.getData()));
     }
 
     private static final HarvestChannel SNAPSHOT = new HarvestChannel("SNAPSHOT", true, true, "");

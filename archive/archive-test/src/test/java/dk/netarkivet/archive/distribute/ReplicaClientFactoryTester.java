@@ -62,8 +62,8 @@ public class ReplicaClientFactoryTester {
 
         for (ReplicaClient client : clients) {
             if (client instanceof ChecksumClient) {
-                assertEquals("ChecksumClients must be of type " + ReplicaType.CHECKSUM, ReplicaType.CHECKSUM, client
-                        .getType());
+                assertEquals("ChecksumClients must be of type " + ReplicaType.CHECKSUM, ReplicaType.CHECKSUM,
+                        client.getType());
             } else if (client instanceof BitarchiveClient) {
                 assertEquals("BitarchiveClients must be of type " + ReplicaType.BITARCHIVE, ReplicaType.BITARCHIVE,
                         client.getType());

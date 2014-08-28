@@ -53,12 +53,12 @@ public class StopReasonTester {
                 StopReason.getStopReason(0));
 
         // Test that stopreasonNum=1 returns StopReason.OBJECT_LIMIT
-        assertEquals("getStopReason(1) should return StopReason.OBJECT_LIMIT", StopReason.OBJECT_LIMIT, StopReason
-                .getStopReason(1));
+        assertEquals("getStopReason(1) should return StopReason.OBJECT_LIMIT", StopReason.OBJECT_LIMIT,
+                StopReason.getStopReason(1));
 
         // Test that stopreasonNum=2 returns StopReason.SIZE_LIMIT
-        assertEquals("getStopReason(2) should return StopReason.SIZE_LIMIT", StopReason.SIZE_LIMIT, StopReason
-                .getStopReason(2));
+        assertEquals("getStopReason(2) should return StopReason.SIZE_LIMIT", StopReason.SIZE_LIMIT,
+                StopReason.getStopReason(2));
 
         // Test that stopreasonNum=3 returns StopReason.CONFIG_SIZE_LIMIT
         assertEquals("getStopReason(3) should return StopReason.CONFIG_SIZE_LIMIT", StopReason.CONFIG_SIZE_LIMIT,
@@ -73,8 +73,8 @@ public class StopReasonTester {
                 StopReason.getStopReason(5));
 
         // Test that stopreasonNum=6 returns StopReason.TIME_LIMIT
-        assertEquals("getStopReason(6) should return StopReason.TIME_LIMIT", StopReason.TIME_LIMIT, StopReason
-                .getStopReason(6));
+        assertEquals("getStopReason(6) should return StopReason.TIME_LIMIT", StopReason.TIME_LIMIT,
+                StopReason.getStopReason(6));
 
         // Test that stopreasonNum less than 0 and greater than 6 results in
         // IOFailure
@@ -99,21 +99,23 @@ public class StopReasonTester {
     public void testGetLocalizedString() {
         Locale l = new Locale("en");
         assertEquals("StopReason.DOWNLOAD_UNFINISHED.getLocalizedString(l) "
-                + "should return correct String for english Locale", StopReason.DOWNLOAD_UNFINISHED
-                .getLocalizedString(l), I18N.getString(l, "stopreason.download.unfinished"));
+                + "should return correct String for english Locale",
+                StopReason.DOWNLOAD_UNFINISHED.getLocalizedString(l),
+                I18N.getString(l, "stopreason.download.unfinished"));
 
         assertEquals("StopReason.DOWNLOAD_COMPLETE.getLocalizedString(l) "
                 + "should return correct String for english Locale",
                 StopReason.DOWNLOAD_COMPLETE.getLocalizedString(l), I18N.getString(l, "stopreason.complete"));
 
         assertEquals("StopReason.CONFIG_OBJECT_LIMIT.getLocalizedString(l) "
-                + "should return correct String for english Locale", StopReason.CONFIG_OBJECT_LIMIT
-                .getLocalizedString(l), I18N.getString(l, "stopreason.max.domainobjects.limit.reached"));
+                + "should return correct String for english Locale",
+                StopReason.CONFIG_OBJECT_LIMIT.getLocalizedString(l),
+                I18N.getString(l, "stopreason.max.domainobjects.limit.reached"));
 
         assertEquals("StopReason.CONFIG_SIZE_LIMIT.getLocalizedString(l) "
                 + "should return correct String for english Locale",
-                StopReason.CONFIG_SIZE_LIMIT.getLocalizedString(l), I18N.getString(l,
-                        "stopreason.max.domainconfig.limit.reached"));
+                StopReason.CONFIG_SIZE_LIMIT.getLocalizedString(l),
+                I18N.getString(l, "stopreason.max.domainconfig.limit.reached"));
 
         assertEquals("StopReason.OBJECT_LIMIT.getLocalizedString(l) "
                 + "should return correct String for english Locale", StopReason.OBJECT_LIMIT.getLocalizedString(l),

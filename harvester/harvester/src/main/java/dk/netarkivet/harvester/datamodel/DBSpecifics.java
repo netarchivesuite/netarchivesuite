@@ -96,9 +96,9 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
      * @param tableName The table to update
      * @param toVersion The version to update the table to.
      * @throws IllegalState If the table is an unsupported version, and the toVersion is less than the current version
-     * of the table
+     *         of the table
      * @throws NotImplementedException If no method exists for migration from current version of the table to the
-     * toVersion of the table.
+     *         toVersion of the table.
      * @throws IOFailure in case of problems in interacting with the database
      */
 

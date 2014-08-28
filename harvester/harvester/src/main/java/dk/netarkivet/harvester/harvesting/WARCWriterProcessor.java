@@ -597,12 +597,12 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
             // }
 
             addIfNotBlank(record, "description", XmlUtils.xpathOrNull(doc, "//meta/description"));
-            addIfNotBlank(record, "robots", XmlUtils.xpathOrNull(doc,
-                    "//newObject[@name='robots-honoring-policy']/string[@name='type']"));
-            addIfNotBlank(record, "http-header-user-agent", XmlUtils.xpathOrNull(doc,
-                    "//map[@name='http-headers']/string[@name='user-agent']"));
-            addIfNotBlank(record, "http-header-from", XmlUtils.xpathOrNull(doc,
-                    "//map[@name='http-headers']/string[@name='from']"));
+            addIfNotBlank(record, "robots",
+                    XmlUtils.xpathOrNull(doc, "//newObject[@name='robots-honoring-policy']/string[@name='type']"));
+            addIfNotBlank(record, "http-header-user-agent",
+                    XmlUtils.xpathOrNull(doc, "//map[@name='http-headers']/string[@name='user-agent']"));
+            addIfNotBlank(record, "http-header-from",
+                    XmlUtils.xpathOrNull(doc, "//map[@name='http-headers']/string[@name='from']"));
             if (pjd == null) {
                 loadPersistentJobData(doc);
             }

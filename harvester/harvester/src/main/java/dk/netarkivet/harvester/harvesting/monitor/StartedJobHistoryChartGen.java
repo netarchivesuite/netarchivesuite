@@ -187,19 +187,24 @@ class StartedJobHistoryChartGen {
             }
 
             long startTime = System.currentTimeMillis();
-            gen.generatePngChart(newPngFile, CHART_RESOLUTION[0],
+            gen.generatePngChart(
+                    newPngFile,
+                    CHART_RESOLUTION[0],
                     CHART_RESOLUTION[1],
                     null, // no chart title
-                    I18N.getString(gen.locale, "running.job.details.chart.legend.crawlTime"), new String[] {
-                            I18N.getString(gen.locale, "running.job.details.chart.legend.progress"),
-                            I18N.getString(gen.locale, "running.job.details.chart.legend.queuedUris")}, NumberUtils
-                            .toPrimitiveArray(timeValues), new double[][] {new double[] {0, 100}, null},
+                    I18N.getString(gen.locale, "running.job.details.chart.legend.crawlTime"),
+                    new String[] {I18N.getString(gen.locale, "running.job.details.chart.legend.progress"),
+                            I18N.getString(gen.locale, "running.job.details.chart.legend.queuedUris")},
+                    NumberUtils.toPrimitiveArray(timeValues),
+                    new double[][] {new double[] {0, 100}, null},
                     new double[][] {NumberUtils.toPrimitiveArray(progressValues),
                             NumberUtils.toPrimitiveArray(urlValues)}, new Color[] {Color.blue, Color.green.darker()},
                     new String[] {"%", ""}, false, Color.lightGray.brighter().brighter());
 
             long genTime = System.currentTimeMillis() - startTime;
-            LOG.info("Generated history chart for job {} in {}.", jobId,
+            LOG.info(
+                    "Generated history chart for job {} in {}.",
+                    jobId,
                     (genTime < TimeUtils.SECOND_IN_MILLIS ? genTime + " ms" : StringUtils.formatDuration(genTime
                             / TimeUtils.SECOND_IN_MILLIS)));
 

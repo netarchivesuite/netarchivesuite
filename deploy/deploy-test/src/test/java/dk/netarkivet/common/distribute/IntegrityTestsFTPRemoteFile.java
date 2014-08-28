@@ -255,8 +255,8 @@ public class IntegrityTestsFTPRemoteFile {
         rf.copyTo(testFile2);
         FileAsserts.assertFileContains("Contents from remotefile should not" + "be affected by overwriting testfile",
                 originalContents, testFile2);
-        assertEquals("MD5 sum should not be affected", ChecksumCalculator.calculateMd5(originalContents.getBytes()), rf
-                .getChecksum());
+        assertEquals("MD5 sum should not be affected", ChecksumCalculator.calculateMd5(originalContents.getBytes()),
+                rf.getChecksum());
         FileAsserts.assertFileContains("Original file should be unchanged", "a simple string", testFile1);
     }
 

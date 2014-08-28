@@ -77,7 +77,7 @@ public class RegExpExclusionFilterFactory implements ExclusionFilterFactory {
      * 
      * @throws IOException if the file specifying the exclusions cannot be read.
      * @throws PatternSyntaxException if one or more of the patterns in the configuration file is an invalid java
-     * regular expression.
+     *         regular expression.
      */
     public void init() throws IOException, PatternSyntaxException {
         loadFile();
@@ -89,7 +89,7 @@ public class RegExpExclusionFilterFactory implements ExclusionFilterFactory {
      * 
      * @throws IOException if the file cannot be read.
      * @throws PatternSyntaxException if one or more of the patterns in the configuration file is an invalid java
-     * regular expression.
+     *         regular expression.
      */
     private void loadFile() throws IOException, PatternSyntaxException {
         Collection<Pattern> regexps = new ArrayList<Pattern>();

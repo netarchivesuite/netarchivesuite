@@ -74,7 +74,7 @@ public class BitpreserveFileState {
      * @param context the current JSP context
      * @return an I18N string telling which type of update has just been initiated.
      * @throws ForwardedToErrorPage if an unknown bitarchive or update type is posted, or one of the two required
-     * parameters are missing.
+     *         parameters are missing.
      * @throws ArgumentNotValid If the context is null.
      */
     public static String processUpdateRequest(PageContext context) throws ArgumentNotValid, ForwardedToErrorPage {
@@ -135,7 +135,7 @@ public class BitpreserveFileState {
      *
      * @param context the current JSP context.
      * @param res the result object. This is updated with result information, and expected to be printed to the
-     * resulting page.
+     *        resulting page.
      * @return A map of info gathered for files as requested.
      * @throws ArgumentNotValid If the context or res is null.
      * @throws ForwardedToErrorPage if the commands have the wrong number of arguments.
@@ -149,8 +149,8 @@ public class BitpreserveFileState {
         String bitarchiveName = params.get(Constants.BITARCHIVE_NAME_PARAM)[0];
         if (!Replica.isKnownReplicaName(bitarchiveName)) {
             List<String> names = new ArrayList<String>();
-            HTMLUtils.forwardOnIllegalParameter(context, Constants.BITARCHIVE_NAME_PARAM, StringUtils.conjoin(", ",
-                    names.toArray(Replica.getKnownNames())));
+            HTMLUtils.forwardOnIllegalParameter(context, Constants.BITARCHIVE_NAME_PARAM,
+                    StringUtils.conjoin(", ", names.toArray(Replica.getKnownNames())));
         }
         ActiveBitPreservation preserve = ActiveBitPreservationFactory.getInstance();
         Locale l = context.getResponse().getLocale();
@@ -226,7 +226,7 @@ public class BitpreserveFileState {
      * checksum in the given bitarchive, using the credentials for authorisation.
      *
      * @param res the result object. This is updated with result information, and expected to be printed to the
-     * resulting page.
+     *        resulting page.
      * @param context the current JSP pagecontext.
      * @return The file preservation state for a file, if a filename is given in the request. Null otherwise.
      * @throws ArgumentNotValid If the context or res is null.
@@ -459,9 +459,9 @@ public class BitpreserveFileState {
 
         // Table headers for info table
         out.println("<table>");
-        out.print(HTMLUtils.makeTableRow(HTMLUtils.makeTableHeader(I18N.getString(locale, "replica")), HTMLUtils
-                .makeTableHeader(I18N.getString(locale, "admin.state")), HTMLUtils.makeTableHeader(I18N.getString(
-                locale, "checksum"))));
+        out.print(HTMLUtils.makeTableRow(HTMLUtils.makeTableHeader(I18N.getString(locale, "replica")),
+                HTMLUtils.makeTableHeader(I18N.getString(locale, "admin.state")),
+                HTMLUtils.makeTableHeader(I18N.getString(locale, "checksum"))));
 
         // Admin data info
         printFileStateForAdminData(out, fs, locale);
@@ -483,8 +483,8 @@ public class BitpreserveFileState {
      */
     private static void printFileStateForAdminData(JspWriter out, PreservationState fs, Locale locale)
             throws IOException {
-        out.print(HTMLUtils.makeTableRow(HTMLUtils.makeTableElement(I18N.getString(locale, "admin.data")), HTMLUtils
-                .makeTableElement("-"), HTMLUtils.makeTableElement(fs.getAdminChecksum())));
+        out.print(HTMLUtils.makeTableRow(HTMLUtils.makeTableElement(I18N.getString(locale, "admin.data")),
+                HTMLUtils.makeTableElement("-"), HTMLUtils.makeTableElement(fs.getAdminChecksum())));
     }
 
     /**
@@ -499,9 +499,9 @@ public class BitpreserveFileState {
     private static void printFileStateForBitarchive(JspWriter out, Replica baReplica, PreservationState fs,
             Locale locale) throws IOException {
         log.debug("Printing filestate for bitarchive '" + baReplica.getName() + "'");
-        out.print(HTMLUtils.makeTableRow(HTMLUtils.makeTableElement(baReplica.getName()), HTMLUtils.makeTableElement(fs
-                .getAdminReplicaState(baReplica)), HTMLUtils.makeTableElement(presentChecksum(fs
-                .getReplicaChecksum(baReplica), locale))));
+        out.print(HTMLUtils.makeTableRow(HTMLUtils.makeTableElement(baReplica.getName()),
+                HTMLUtils.makeTableElement(fs.getAdminReplicaState(baReplica)),
+                HTMLUtils.makeTableElement(presentChecksum(fs.getReplicaChecksum(baReplica), locale))));
     }
 
     /**
@@ -539,7 +539,7 @@ public class BitpreserveFileState {
      * @param command The type of checkbox.
      * @param numberOfCheckboxes The total number of checksboxes possible to turn on or off.
      * @param label The I18N label for the describing text. An input box with the number to change will be added as
-     * parameter {0} in this label.
+     *        parameter {0} in this label.
      * @param locale The locale for the checkbox.
      * @throws IOException On trouble printing the checkbox.
      */
@@ -547,8 +547,11 @@ public class BitpreserveFileState {
             Locale locale) throws IOException {
         out.print("<input type=\"checkbox\" id=\"toggle" + command + "\" onclick=\"toggleCheckboxes('" + command
                 + "')\"/>");
-        out.print(I18N.getString(locale, label, "<input id=\"toggleAmount" + command + "\" value=\""
-                + Math.min(numberOfCheckboxes, Constants.MAX_TOGGLE_AMOUNT) + "\" />"));
+        out.print(I18N.getString(
+                locale,
+                label,
+                "<input id=\"toggleAmount" + command + "\" value=\""
+                        + Math.min(numberOfCheckboxes, Constants.MAX_TOGGLE_AMOUNT) + "\" />"));
         out.println("<br/> ");
     }
 

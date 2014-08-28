@@ -118,8 +118,9 @@ public class JMXUtilsTester {
         }
         Date now = new Date();
         long time = now.getTime() - then.getTime();
-        assertTrue("Should take at least 2^" + maxJmxRetries + " milliseconds, but was " + time + ", should be "
-                + Math.pow(2, maxJmxRetries), time >= Math.pow(2, maxJmxRetries) - 1);
+        assertTrue(
+                "Should take at least 2^" + maxJmxRetries + " milliseconds, but was " + time + ", should be "
+                        + Math.pow(2, maxJmxRetries), time >= Math.pow(2, maxJmxRetries) - 1);
         assertEquals("Should have been called " + maxJmxRetries + " times.", 1, connection.failCount);
     }
 
@@ -130,7 +131,7 @@ public class JMXUtilsTester {
          * Create a test MBeanServerConnection that fails a number of times.
          *
          * @param failCount Number of times the getAttribute/executeCommand methods should be called before they
-         * succeed.
+         *        succeed.
          */
         TestMBeanServerConnection(int failCount) {
             this.failCount = failCount;

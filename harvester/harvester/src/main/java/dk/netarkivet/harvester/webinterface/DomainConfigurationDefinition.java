@@ -67,7 +67,7 @@ public class DomainConfigurationDefinition {
      * @param context The context of this request
      * @param i18n I18n information
      * @throws ForwardedToErrorPage if a user error has caused forwarding to the error page, in which case processing
-     * should abort.
+     *         should abort.
      */
     public static void processRequest(PageContext context, I18n i18n) {
         ArgumentNotValid.checkNotNull(context, "PageContext context");
@@ -97,7 +97,10 @@ public class DomainConfigurationDefinition {
 
         // check the edition number before updating
         if (domain.getEdition() != edition) {
-            HTMLUtils.forwardWithRawErrorMessage(context, i18n, "errormsg;domain.definition.changed.0.retry.1",
+            HTMLUtils.forwardWithRawErrorMessage(
+                    context,
+                    i18n,
+                    "errormsg;domain.definition.changed.0.retry.1",
                     "<br/><a href=\"Definitions-edit-domain.jsp?" + Constants.DOMAIN_PARAM + "="
                             + HTMLUtils.escapeHtmlValues(HTMLUtils.encode(name)) + "\">", "</a>");
             throw new ForwardedToErrorPage("Domain '" + name + "' has changed");

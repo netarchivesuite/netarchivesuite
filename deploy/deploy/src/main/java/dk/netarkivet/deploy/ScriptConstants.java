@@ -446,7 +446,7 @@ public final class ScriptConstants {
      * For giving readonly permission to a directory in the security policy.
      *
      * @param dir The path to the directory. This has to be formatted to have the correct directory separator: '${/}',
-     * instead of '/' or '\\' for Windows and Linux respectively.
+     *        instead of '/' or '\\' for Windows and Linux respectively.
      * @return The permission string.
      * @throws ArgumentNotValid If the dir is null or the empty string.
      */

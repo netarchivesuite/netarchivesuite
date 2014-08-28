@@ -55,7 +55,7 @@ public abstract class FileArrayIterator<T> extends FilterIterator<File, T> {
      *
      * @param file The file to read
      * @return An object of the type iterated over by the list, or null if the file does not exist or cannot be used to
-     * create an appropriate object.
+     *         create an appropriate object.
      */
     protected abstract T getNext(final File file);
 

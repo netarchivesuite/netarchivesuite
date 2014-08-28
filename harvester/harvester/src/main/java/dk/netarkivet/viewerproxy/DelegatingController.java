@@ -157,8 +157,8 @@ public class DelegatingController implements Controller {
         } else {
             List<Long> availableList = new ArrayList<Long>(availableSet);
             Collections.sort(availableList);
-            status.append(I18N.getString(locale, "index.0.built.on.jobs.1", indexLabel, StringUtils.conjoin(", ",
-                    availableList)));
+            status.append(I18N.getString(locale, "index.0.built.on.jobs.1", indexLabel,
+                    StringUtils.conjoin(", ", availableList)));
             if (!availableSet.containsAll(jobSet)) {
                 // Generate a status message that lists
                 // - what was requested
@@ -171,9 +171,9 @@ public class DelegatingController implements Controller {
                 List<Long> missingList = new ArrayList<Long>(missingSet);
                 Collections.sort(missingList);
                 status.append('\n');
-                status.append(I18N.getString(locale, "errormsg;request.was.for.0.but.got.1.missing.2", StringUtils
-                        .conjoin(", ", jobList), StringUtils.conjoin(", ", availableList), StringUtils.conjoin(", ",
-                        missingList)));
+                status.append(I18N.getString(locale, "errormsg;request.was.for.0.but.got.1.missing.2",
+                        StringUtils.conjoin(", ", jobList), StringUtils.conjoin(", ", availableList),
+                        StringUtils.conjoin(", ", missingList)));
             }
         }
         return status.toString();

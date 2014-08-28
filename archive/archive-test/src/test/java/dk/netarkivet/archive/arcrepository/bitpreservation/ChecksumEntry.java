@@ -96,7 +96,7 @@ public class ChecksumEntry extends Object {
      *
      * @param obj The object to evaluate whether it is identical to this ChecksumEntry.
      * @return Whether the argument has the same values as this ChecksumEntry. It returns false if the argument is not
-     * of type ChecksumEntry, or if it has either different filename or different checksum.
+     *         of type ChecksumEntry, or if it has either different filename or different checksum.
      */
     public boolean equals(Object obj) {
         if (this == obj) {

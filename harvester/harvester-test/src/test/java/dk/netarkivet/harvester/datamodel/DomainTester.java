@@ -126,8 +126,8 @@ public class DomainTester extends DataModelTestCase {
 
         wd.addSeedList(TestInfo.seedlist);
 
-        DomainConfiguration newcfg = new DomainConfiguration("Deep", wd, Arrays
-                .asList(new SeedList[] {TestInfo.seedlist}), new ArrayList<Password>());
+        DomainConfiguration newcfg = new DomainConfiguration("Deep", wd,
+                Arrays.asList(new SeedList[] {TestInfo.seedlist}), new ArrayList<Password>());
 
         newcfg.setOrderXmlName(TestInfo.ORDER_XML_NAME);
         newcfg.setMaxObjects(10);
@@ -145,8 +145,8 @@ public class DomainTester extends DataModelTestCase {
         assertEquals("Expecting value just set", TestInfo.ORDER_XML_NAME, cfg.getOrderXmlName());
         assertEquals("Expecting value just set", 10, cfg.getMaxObjects());
         assertEquals("Expecting value just set", 11, cfg.getMaxRequestRate());
-        assertEquals("Expecting value just set", TestInfo.seedlist.getName(), ((Named) cfg.getSeedLists().next())
-                .getName());
+        assertEquals("Expecting value just set", TestInfo.seedlist.getName(),
+                ((Named) cfg.getSeedLists().next()).getName());
     }
 
     /**
@@ -330,8 +330,8 @@ public class DomainTester extends DataModelTestCase {
 
         DomainConfiguration cfg1 = TestInfo.getDefaultConfig(wd);
 
-        DomainConfiguration cfg2 = new DomainConfiguration("Another", wd, Arrays
-                .asList(new SeedList[] {TestInfo.seedlist}), new ArrayList<Password>());
+        DomainConfiguration cfg2 = new DomainConfiguration("Another", wd,
+                Arrays.asList(new SeedList[] {TestInfo.seedlist}), new ArrayList<Password>());
         cfg1.setOrderXmlName(TestInfo.ORDER_XML_NAME);
         cfg2.setOrderXmlName(TestInfo.ORDER_XML_NAME);
         wd.addConfiguration(cfg1);
@@ -377,8 +377,8 @@ public class DomainTester extends DataModelTestCase {
             // expected
         }
         d.addPassword(TestInfo.password);
-        DomainConfiguration conf2 = new DomainConfiguration(conf.getName(), d, seedlists, Arrays
-                .asList(new Password[] {TestInfo.password}));
+        DomainConfiguration conf2 = new DomainConfiguration(conf.getName(), d, seedlists,
+                Arrays.asList(new Password[] {TestInfo.password}));
         d.updateConfiguration(conf2);
         DomainConfiguration conf3 = d.getDefaultConfiguration();
         assertEquals("Default config must now equals new config", conf2, conf3);
@@ -530,8 +530,8 @@ public class DomainTester extends DataModelTestCase {
         DomainConfiguration cfg1 = TestInfo.getDefaultConfig(wd);
         wd.addConfiguration(cfg1);
 
-        DomainConfiguration cfg2 = new DomainConfiguration("Deep", wd, Arrays
-                .asList(new SeedList[] {TestInfo.seedlist}), new ArrayList<Password>());
+        DomainConfiguration cfg2 = new DomainConfiguration("Deep", wd,
+                Arrays.asList(new SeedList[] {TestInfo.seedlist}), new ArrayList<Password>());
         wd.addConfiguration(cfg2);
 
         Iterator<DomainConfiguration> cfglist = wd.getAllConfigurations();
@@ -770,8 +770,8 @@ public class DomainTester extends DataModelTestCase {
         assertFalse("Password should not exist at start", d.hasPassword(TestInfo.PASSWORD_NAME));
         d.addPassword(TestInfo.password);
         assertTrue("Password should exist after adding", d.hasPassword(TestInfo.PASSWORD_NAME));
-        assertEquals("Password added should be the same as found", TestInfo.password, d
-                .getPassword(TestInfo.PASSWORD_NAME));
+        assertEquals("Password added should be the same as found", TestInfo.password,
+                d.getPassword(TestInfo.PASSWORD_NAME));
         try {
             d.addPassword(TestInfo.password);
             fail("Should not be able to add password twice");
@@ -792,8 +792,8 @@ public class DomainTester extends DataModelTestCase {
         }
         d.addPassword(TestInfo.password);
         assertTrue("Password should exist after adding", d.hasPassword(TestInfo.PASSWORD_NAME));
-        assertEquals("Password added should be the same as found", TestInfo.password, d
-                .getPassword(TestInfo.PASSWORD_NAME));
+        assertEquals("Password added should be the same as found", TestInfo.password,
+                d.getPassword(TestInfo.PASSWORD_NAME));
         Password p2 = new Password(TestInfo.PASSWORD_NAME, "Secret comment!", "www.snort.dk", "backdoor", "cracker",
                 "letmein");
         d.updatePassword(p2);
@@ -834,8 +834,8 @@ public class DomainTester extends DataModelTestCase {
     @Test
     public void testSetCrawlerTraps() {
         Domain d = Domain.getDefaultDomain("dr.dk");
-        assertEquals("Crawler traps should return empty list if not defined", d.getCrawlerTraps(), Collections
-                .<String>emptyList());
+        assertEquals("Crawler traps should return empty list if not defined", d.getCrawlerTraps(),
+                Collections.<String>emptyList());
 
         List<String> definedregexps = new ArrayList<String>();
         definedregexps.add(".*dr\\.dk.*/.*\\.cgi");
@@ -911,10 +911,10 @@ public class DomainTester extends DataModelTestCase {
         assertTrue("Raw IP numbers should be legal", DomainUtils.isValidDomainName("192.168.0.1"));
         assertFalse("Mixed IP/DNS names should not be legal", DomainUtils.isValidDomainName("foo.1"));
         assertTrue("DNS names starting with numbers should be legal", DomainUtils.isValidDomainName("1.dk"));
-        assertFalse("Temporarily enabled domain names should eventually not be valid", DomainUtils
-                .isValidDomainName("foo.aspx"));
-        assertFalse("Temporarily enabled domain names should eventually not be valid", DomainUtils
-                .isValidDomainName("bar.d"));
+        assertFalse("Temporarily enabled domain names should eventually not be valid",
+                DomainUtils.isValidDomainName("foo.aspx"));
+        assertFalse("Temporarily enabled domain names should eventually not be valid",
+                DomainUtils.isValidDomainName("bar.d"));
     }
 
     @Test
@@ -953,8 +953,8 @@ public class DomainTester extends DataModelTestCase {
                 assertTrue("Domain name calculated from " + entry.getKey() + " must be a legal domain name",
                         DomainUtils.isValidDomainName(domainName));
             } else {
-                assertFalse("Should not get null domain name from legal domainname " + entry.getKey(), DomainUtils
-                        .isValidDomainName(entry.getKey()));
+                assertFalse("Should not get null domain name from legal domainname " + entry.getKey(),
+                        DomainUtils.isValidDomainName(entry.getKey()));
             }
         }
     }
@@ -1299,8 +1299,8 @@ public class DomainTester extends DataModelTestCase {
         while (passwordIterator.hasNext()) {
             passwordList.add(passwordIterator.next());
         }
-        return new DomainConfiguration(nameOfClone, config.getDomainName(), config.getDomainhistory(), config
-                .getCrawlertraps(), seedListList, passwordList);
+        return new DomainConfiguration(nameOfClone, config.getDomainName(), config.getDomainhistory(),
+                config.getCrawlertraps(), seedListList, passwordList);
     }
 
     private Password createDefaultPassword(String name) {
@@ -1315,7 +1315,7 @@ public class DomainTester extends DataModelTestCase {
      * @return a clone of thePassword
      */
     private Password clonePasswordWithNewName(Password thePassword, String nameOfClone) {
-        return new Password(nameOfClone, thePassword.getComments(), thePassword.getPasswordDomain(), thePassword
-                .getRealm(), thePassword.getUsername(), thePassword.getPassword());
+        return new Password(nameOfClone, thePassword.getComments(), thePassword.getPasswordDomain(),
+                thePassword.getRealm(), thePassword.getUsername(), thePassword.getPassword());
     }
 }

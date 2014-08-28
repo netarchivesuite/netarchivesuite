@@ -185,8 +185,8 @@ public class JMSArcRepositoryClientTester {
     /** Tests the correct object is returned when getHacoInstance is called. */
     @Test
     public void testGetHacoInstance() {
-        assertTrue("Must return an instance of HarvesterArcRepositoryClient", ArcRepositoryClientFactory
-                .getHarvesterInstance() instanceof HarvesterArcRepositoryClient);
+        assertTrue("Must return an instance of HarvesterArcRepositoryClient",
+                ArcRepositoryClientFactory.getHarvesterInstance() instanceof HarvesterArcRepositoryClient);
     }
 
     /** Test get() methods arguments. */
@@ -248,8 +248,8 @@ public class JMSArcRepositoryClientTester {
         Replica replica = Replica.getReplicaFromId(Settings.get(CommonSettings.USE_REPLICA_ID));
         arc.getFile(filename, replica, toFile);
         assertTrue("Result file should exist", toFile.exists());
-        assertEquals("Result file should contain right text", FileUtils.readFile(new File(ARCDIR, filename)), FileUtils
-                .readFile(toFile));
+        assertEquals("Result file should contain right text", FileUtils.readFile(new File(ARCDIR, filename)),
+                FileUtils.readFile(toFile));
 
         toFile = new File(WORKING, "newFile2.arc");
         try {

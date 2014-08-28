@@ -334,15 +334,16 @@ public final class BatchGUI {
      * @param locale The locale language package.
      * @return The HTML code describing the class.
      * @Resource(description="Batchjob for finding URLs which matches a given" +
-     * " regular expression and has a mimetype which matches another" + " regular expression.", type=dk.netarkivet
-     * .common.utils.batch.UrlSearch.class)}
-     * <p>
-     * <br/>
-     * <br/>
-     * Which gives the UrlSearch batchjob the following description: <br/>
-     * <br/>
-     * Description: Batchjob for finding URLs which matches a given regular expression and has a mimetype which matches
-     * another regular expression. &lt;br/&gt;&lt;br/&gt;
+     *                                 " regular expression and has a mimetype which matches another" +
+     *                                 " regular expression.", type=dk.netarkivet .common.utils.batch.UrlSearch.class)}
+     *                                 <p>
+     *                                 <br/>
+     *                                 <br/>
+     *                                 Which gives the UrlSearch batchjob the following description: <br/>
+     *                                 <br/>
+     *                                 Description: Batchjob for finding URLs which matches a given regular expression
+     *                                 and has a mimetype which matches another regular expression.
+     *                                 &lt;br/&gt;&lt;br/&gt;
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
     private static String getClassDescription(Class c, Locale locale) {
@@ -376,30 +377,30 @@ public final class BatchGUI {
      * @return The HTML code for the arguments for executing the batchjob.
      * @Resource(name="regex", description="The regular expression for the " + "urls.", type=java.lang.String.class)<br/>
      * @Resource(name="mimetype", type=java.lang.String.class)<br/>
-     * Though the batchjob takes three arguments (thus one undefined). <br/>
+     *                            Though the batchjob takes three arguments (thus one undefined). <br/>
      * <br/>
-     * <p>
-     * Arguments:&lt;br/&gt;<br/>
-     * regex (The regular expression for the urls.)&lt;br/&gt;<br/>
-     * &lt;input name="arg1" size="50" value=""&gt;&lt;br/&gt;<br/>
-     * mimetype&lt;br/&gt;<br/>
-     * &lt;input name="arg2" size="50" value=""&gt;&lt;br/&gt;<br/>
-     * Argument 3 (missing argument metadata)&lt;br/&gt;<br/>
-     * &lt;input name="arg3" size="50" value=""&gt;&lt;br/&gt;<br/>
-     * <p>
-     * <br/>
-     * Which will look like: <br/>
-     * <br/>
-     * <p>
-     * Arguments:<br/>
-     * regex (The regular expression for the urls.)<br/>
-     * <input name="arg1" size="50" value="" /><br/>
-     * mimetype<br/>
-     * <input name="arg2" size="50" value="" /><br/>
-     * Argument 3 (missing argument metadata)<br/>
-     * <input name="arg3" size="50" value="" /><br/>
-     * <p>
-     * TODO this does not work until batchjobs can be used with arguments.
+     *                            <p>
+     *                            Arguments:&lt;br/&gt;<br/>
+     *                            regex (The regular expression for the urls.)&lt;br/&gt;<br/>
+     *                            &lt;input name="arg1" size="50" value=""&gt;&lt;br/&gt;<br/>
+     *                            mimetype&lt;br/&gt;<br/>
+     *                            &lt;input name="arg2" size="50" value=""&gt;&lt;br/&gt;<br/>
+     *                            Argument 3 (missing argument metadata)&lt;br/&gt;<br/>
+     *                            &lt;input name="arg3" size="50" value=""&gt;&lt;br/&gt;<br/>
+     *                            <p>
+     *                            <br/>
+     *                            Which will look like: <br/>
+     *                            <br/>
+     *                            <p>
+     *                            Arguments:<br/>
+     *                            regex (The regular expression for the urls.)<br/>
+     *                            <input name="arg1" size="50" value="" /><br/>
+     *                            mimetype<br/>
+     *                            <input name="arg2" size="50" value="" /><br/>
+     *                            Argument 3 (missing argument metadata)<br/>
+     *                            <input name="arg3" size="50" value="" /><br/>
+     *                            <p>
+     *                            TODO this does not work until batchjobs can be used with arguments.
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
     private static String getHTMLarguments(Class c, Locale locale) {
@@ -843,9 +844,9 @@ public final class BatchGUI {
      * result-files for the given batchjob. The list is sorted and the last (and thus latest) is returned.
      *
      * @param batchjobName The name of the batchjob in question. Is has to be the name without the path (e.g.
-     * dk.netarkivet.archive.arcrepository.bitpreservation .ChecksumJob should just be ChecksumJob).
+     *        dk.netarkivet.archive.arcrepository.bitpreservation .ChecksumJob should just be ChecksumJob).
      * @return The name of the files for the given batchjob. The empty string is returned if no result files have been
-     * found, indicating that the batchjob has never been run.
+     *         found, indicating that the batchjob has never been run.
      * @throws ArgumentNotValid If the name of the batchjob is either null or the empty string.
      */
     private static String getLatestTimestamp(String batchjobName) throws ArgumentNotValid {

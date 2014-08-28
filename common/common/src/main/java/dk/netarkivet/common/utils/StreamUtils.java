@@ -102,8 +102,8 @@ public class StreamUtils {
                     long transferred = 0;
                     final long fileLength = inChannel.size();
                     do {
-                        transferred += inChannel.transferTo(transferred, Math.min(Constants.IO_CHUNK_SIZE, fileLength
-                                - transferred), outChannel);
+                        transferred += inChannel.transferTo(transferred,
+                                Math.min(Constants.IO_CHUNK_SIZE, fileLength - transferred), outChannel);
                     } while (transferred < fileLength);
                 } else {
                     byte[] buf = new byte[Constants.IO_BUFFER_SIZE];

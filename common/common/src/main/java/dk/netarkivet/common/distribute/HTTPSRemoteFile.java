@@ -76,7 +76,7 @@ public class HTTPSRemoteFile extends HTTPRemoteFile {
      * @param useChecksums Whether communications are checksummed. If true, getChecksum will also return the checksum.
      * @param fileDeletable if true, the file given to this method is deletable, once it is transferred.
      * @param multipleDownloads if true, the file may be transferred more than once. Otherwise, all file handles are
-     * attempted to be made invalid after the first transfer, although no guarantees are made.
+     *        attempted to be made invalid after the first transfer, although no guarantees are made.
      * @throws ArgumentNotValid if file is null, or not a readable file.
      * @throws IOFailure if checksums are requested, but i/o errors occur while checksumming.
      */
@@ -91,7 +91,7 @@ public class HTTPSRemoteFile extends HTTPRemoteFile {
      * @param useChecksums Whether communications are checksummed. If true, getChecksum will also return the checksum.
      * @param fileDeletable if true, the file given to this method is deletable, once it is transferred.
      * @param multipleDownloads if true, the file may be transferred more than once. Otherwise, all file handles are
-     * attempted to be made invalid after the first transfer, although no guarantees are made.
+     *        attempted to be made invalid after the first transfer, although no guarantees are made.
      * @throws ArgumentNotValid if file is null, or not a readable file.
      * @throws IOFailure if checksums are requested, but i/o errors occur while checksumming.
      */

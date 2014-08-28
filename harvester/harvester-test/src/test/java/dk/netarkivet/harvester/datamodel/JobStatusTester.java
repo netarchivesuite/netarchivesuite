@@ -55,8 +55,8 @@ public class JobStatusTester {
     @Test
     public void testLegalChange() {
         JobStatus status = JobStatus.FAILED_REJECTED;
-        assertTrue("Should be legal to change JobStatus from FAILED_REJECTED " + "back to FAILED", status
-                .legalChange(JobStatus.FAILED));
+        assertTrue("Should be legal to change JobStatus from FAILED_REJECTED " + "back to FAILED",
+                status.legalChange(JobStatus.FAILED));
     }
 
     @Test

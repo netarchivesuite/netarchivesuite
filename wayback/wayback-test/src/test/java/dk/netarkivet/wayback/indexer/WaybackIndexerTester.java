@@ -78,8 +78,8 @@ public class WaybackIndexerTester extends IndexerTestCase {
         ingestMethod.setAccessible(true);
         ingestMethod.invoke(null);
         ArchiveFileDAO dao = new ArchiveFileDAO();
-        assertTrue("Three file should have been ingested", dao.exists("1.arc") && dao.exists("2.arc")
-                && dao.exists("3.arc"));
+        assertTrue("Three file should have been ingested",
+                dao.exists("1.arc") && dao.exists("2.arc") && dao.exists("3.arc"));
         assertTrue("Should be no files awaiting indexing", dao.getFilesAwaitingIndexing().isEmpty());
 
     }

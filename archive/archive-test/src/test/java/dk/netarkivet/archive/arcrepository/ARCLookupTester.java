@@ -187,8 +187,8 @@ public class ARCLookupTester {
         // Read the expected result from the "local" copy
         String filename = dk.netarkivet.archive.distribute.arcrepository.TestInfo.GIF_URL_KEY.getFile().getName();
         File in = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, filename);
-        arcReader = ARCReaderFactory.get(in, dk.netarkivet.archive.distribute.arcrepository.TestInfo.GIF_URL_KEY
-                .getOffset());
+        arcReader = ARCReaderFactory.get(in,
+                dk.netarkivet.archive.distribute.arcrepository.TestInfo.GIF_URL_KEY.getOffset());
         ARCRecord arc = (ARCRecord) arcReader.get();
         BitarchiveRecord result = new BitarchiveRecord(arc, filename);
         arc.close();
@@ -338,7 +338,7 @@ public class ARCLookupTester {
      *
      * @param inputStream A source of data
      * @return A line of text read from inputStream, with terminating \r\n or \n removed, or null if no data is
-     * available.
+     *         available.
      * @throws IOException on trouble reading from input stream
      */
     private String readLine(InputStream inputStream) throws IOException {

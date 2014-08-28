@@ -161,8 +161,8 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
                 String localindexLocation = tmpFile.getAbsolutePath();
                 Long cached = cdxcache.cache(jobId);
                 if (cached == null) {
-                    log.warn("Skipping the ingest of logs for job {}. Unable to retrieve cdx-file for job.", entry
-                            .getKey());
+                    log.warn("Skipping the ingest of logs for job {}. Unable to retrieve cdx-file for job.",
+                            entry.getKey());
                     continue;
                 }
                 File cachedCDXFile = cdxcache.getCacheFile(cached);
@@ -363,7 +363,7 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
      *
      * @param cdxFile A cdxfile
      * @return A temporary file with CDX info for that just sorted according to the standard CDX sorting rules. This
-     * file will be removed at the exit of the JVM, but should be attempted removed when it is no longer used.
+     *         file will be removed at the exit of the JVM, but should be attempted removed when it is no longer used.
      */
     protected static File getSortedCDX(File cdxFile) {
         try {
@@ -382,7 +382,7 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
      *
      * @param file The file containing an unsorted crawl.log file.
      * @return A temporary file containing the entries sorted according to URL. The file will be removed upon exit of
-     * the JVM, but should be attempted removed when it is no longer used.
+     *         the JVM, but should be attempted removed when it is no longer used.
      */
     protected static File getSortedCrawlLog(File file) {
         try {

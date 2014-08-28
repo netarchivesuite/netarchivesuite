@@ -158,8 +158,8 @@ public final class TestIndexRequestServer extends HarvesterMessageHandler implem
 
         if (!jobsForDefaultIndex.exists()) {
             final String msg = "The file '" + jobsForDefaultIndex.getAbsolutePath() + "' does not exist";
-            log.error("The file containing job identifiers for default index '{}' does not exist", jobsForDefaultIndex
-                    .getAbsolutePath());
+            log.error("The file containing job identifiers for default index '{}' does not exist",
+                    jobsForDefaultIndex.getAbsolutePath());
             System.err.println(msg + ". Exiting program");
             System.exit(1);
         }
@@ -499,8 +499,8 @@ public final class TestIndexRequestServer extends HarvesterMessageHandler implem
      */
     public void start() {
         restoreRequestsfromRequestDir();
-        log.info("{} indexing jobs in progress that was stored in requestdir: {}", currentJobs.size(), requestDir
-                .getAbsolutePath());
+        log.info("{} indexing jobs in progress that was stored in requestdir: {}", currentJobs.size(),
+                requestDir.getAbsolutePath());
 
         // Define and start thread to observe current jobs:
         // Only job is to look at the isListening atomicBoolean.

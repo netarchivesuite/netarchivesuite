@@ -59,7 +59,7 @@ public abstract class Schedule implements Serializable, Named {
      * Create a new schedule starting at a specific time and going on for an undefined time.
      *
      * @param startDate Time at which the schedule starts happening (though not necessarily the time of the first
-     * event). May be null, meaning at any time.
+     *        event). May be null, meaning at any time.
      * @param frequency How frequently the events should happen
      * @param name The unique name of this schedule.
      * @param comments Comments entered by the user

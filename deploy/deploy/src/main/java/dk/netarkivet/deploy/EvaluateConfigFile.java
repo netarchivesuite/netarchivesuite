@@ -116,7 +116,7 @@ public class EvaluateConfigFile {
      * element. The method is called recursively for the children of curElem.
      *
      * @param curElem The current element to evaluate. Null element represents in this context that no settings branch
-     * exists for the current instance.
+     *        exists for the current instance.
      */
     @SuppressWarnings("unchecked")
     private void evaluateElement(Element curElem) {

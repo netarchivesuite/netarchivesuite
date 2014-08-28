@@ -47,9 +47,9 @@ public class OrderXmlBuilder {
     }
 
     public OrderXmlBuilder enableDeduplication() {
-        Node deduplicationNode = NodeTraverser.create(orderxmlDoc).getChildNode("crawl-order", null).getChildNode(
-                "controller", null).getChildNode("map", "write-processors").getChildNode("newObject", "DeDuplicator")
-                .getChildNode("boolean", "enabled").getNode();
+        Node deduplicationNode = NodeTraverser.create(orderxmlDoc).getChildNode("crawl-order", null)
+                .getChildNode("controller", null).getChildNode("map", "write-processors")
+                .getChildNode("newObject", "DeDuplicator").getChildNode("boolean", "enabled").getNode();
         deduplicationNode.setTextContent("true");
         return this;
     }

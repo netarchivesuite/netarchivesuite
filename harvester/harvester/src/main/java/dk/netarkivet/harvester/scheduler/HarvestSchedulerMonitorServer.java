@@ -112,8 +112,8 @@ public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler imple
                 jobDAO.update(job);
             } else {
                 // Must not change status back to STARTED
-                log.warn("CrawlStatusMessage tried to update job status for job {} from {} to {}. Ignoring.", job
-                        .getJobID(), oldStatus, newStatus);
+                log.warn("CrawlStatusMessage tried to update job status for job {} from {} to {}. Ignoring.",
+                        job.getJobID(), oldStatus, newStatus);
             }
             break;
         case DONE:
@@ -129,8 +129,8 @@ public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler imple
                 }
                 if (newStatus == JobStatus.FAILED) {
                     log.warn("Job {} failed: HarvestErrors = {}\n" + "HarvestErrorDetails = {}\n"
-                            + "UploadErrors = {}\n" + "UploadErrorDetails = {}", jobID, cmsg.getHarvestErrors(), cmsg
-                            .getHarvestErrorDetails(), cmsg.getUploadErrors(), cmsg.getUploadErrorDetails());
+                            + "UploadErrors = {}\n" + "UploadErrorDetails = {}", jobID, cmsg.getHarvestErrors(),
+                            cmsg.getHarvestErrorDetails(), cmsg.getUploadErrors(), cmsg.getUploadErrorDetails());
                 } else {
                     log.info("Job #{} succesfully completed", jobID);
                 }

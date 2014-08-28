@@ -107,7 +107,7 @@ public class BinSearch {
          * Construct an Iterable from the given file, offset and prefix.
          *
          * @param file This file will be read when the iterator() is made. The lines in this file must be sorted
-         * alphabetically.
+         *        alphabetically.
          * @param offset The place where reading will start from.
          * @param prefix The prefix of all lines that will be read.
          */
@@ -121,7 +121,7 @@ public class BinSearch {
          * Return a new iterator that stops (not skips) when the line read no longer matches the prefix.
          *
          * @return an iterator that stops (not skips) when the line read no longer matches the prefix. When the iterator
-         * ends, the underlying file is closed.
+         *         ends, the underlying file is closed.
          */
         public Iterator<String> iterator() {
             final RandomAccessFile infile;
@@ -223,7 +223,7 @@ public class BinSearch {
      * @param in The file to search in
      * @param find The string to match against the first line
      * @param matchingline The index to start searching from. This index must be at the start of a line that matches
-     * 'find'
+     *        'find'
      * @return The offset into the file of the first line matching 'find'. Guaranteed to be <= matchingline.
      * @throws IOException If the matchingLine < 0 or some I/O error occurs.
      */

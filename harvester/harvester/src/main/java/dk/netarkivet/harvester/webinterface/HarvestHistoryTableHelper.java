@@ -104,7 +104,7 @@ public class HarvestHistoryTableHelper {
 
     /**
      * @return the index of the first result on the current page. The result is the full list of
-     * <code>DomainHarvestInfo</code> objects for this domain for the selected sorting.
+     *         <code>DomainHarvestInfo</code> objects for this domain for the selected sorting.
      */
     public long getStartIndex() {
         return startIndex;
@@ -112,7 +112,7 @@ public class HarvestHistoryTableHelper {
 
     /**
      * @return the index of the last result on the current page. The result is the full list of
-     * <code>DomainHarvestInfo</code> objects for this domain for the selected sorting.
+     *         <code>DomainHarvestInfo</code> objects for this domain for the selected sorting.
      */
     public long getEndIndex() {
         return endIndex;
@@ -159,7 +159,7 @@ public class HarvestHistoryTableHelper {
      *
      * @param sortField The sort field to find a arrow for.
      * @return The relevant arrow for the indicated field. Will be the reverse if the sorting is already on this field
-     * else an empty string will be returned
+     *         else an empty string will be returned
      */
     public String getOrderArrow(String sortField) {
         ArgumentNotValid.checkNotNull(sortField, "sortField");

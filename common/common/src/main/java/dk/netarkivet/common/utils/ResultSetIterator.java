@@ -119,7 +119,7 @@ public abstract class ResultSetIterator<T> implements Iterator<T> {
      *
      * @throws UnsupportedOperationException if the <tt>remove</tt> operation is not supported by this Iterator.
      * @throws IllegalStateException if the <tt>next</tt> method has not yet been called, or the <tt>remove</tt> method
-     * has already been called after the last call to the <tt>next</tt> method.
+     *         has already been called after the last call to the <tt>next</tt> method.
      */
     public void remove() {
         throw new UnsupportedOperationException("This class does not support remove()");

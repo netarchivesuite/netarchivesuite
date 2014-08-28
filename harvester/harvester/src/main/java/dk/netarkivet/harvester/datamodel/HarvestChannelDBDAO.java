@@ -265,8 +265,8 @@ public class HarvestChannelDBDAO extends HarvestChannelDAO {
     }
 
     private HarvestChannel buildFromResultSet(ResultSet rs) throws SQLException {
-        return new HarvestChannel(rs.getLong("id"), rs.getString("name"), rs.getBoolean("issnapshot"), rs
-                .getBoolean("isdefault"), rs.getString("comments"));
+        return new HarvestChannel(rs.getLong("id"), rs.getString("name"), rs.getBoolean("issnapshot"),
+                rs.getBoolean("isdefault"), rs.getString("comments"));
     }
 
 }

@@ -347,7 +347,7 @@ public class HarvestStatusQuery {
 
     /**
      * @return the start date as milliseconds since Epoch or {@link HarvestStatusQuery#DATE_NONE} if start date is
-     * undefined
+     *         undefined
      */
     public long getStartDate() {
         return (startDate == null ? DATE_NONE : startDate.getTime());
@@ -355,7 +355,7 @@ public class HarvestStatusQuery {
 
     /**
      * @return the end date as milliseconds since Epoch, or {@link HarvestStatusQuery#DATE_NONE} if end date is
-     * undefined
+     *         undefined
      */
     public long getEndDate() {
         return (endDate == null ? DATE_NONE : endDate.getTime());

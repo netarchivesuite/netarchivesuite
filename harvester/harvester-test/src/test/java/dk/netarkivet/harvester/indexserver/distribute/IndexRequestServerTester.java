@@ -233,8 +233,8 @@ public class IndexRequestServerTester {
                 fis.close();
             }
         }
-        assertTrue("JOBSET, and the contents of extractfile should be identical", longFromExtractFile
-                .containsAll(JOB_SET));
+        assertTrue("JOBSET, and the contents of extractfile should be identical",
+                longFromExtractFile.containsAll(JOB_SET));
 
         FileUtils.remove(mmfbc.getCacheFile(JOB_SET));
 

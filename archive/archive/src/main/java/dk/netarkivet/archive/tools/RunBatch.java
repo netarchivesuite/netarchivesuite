@@ -82,7 +82,8 @@ public class RunBatch extends ToolRunnerBase {
      * Management of this, exception handling etc. is delegated to ToolRunnerBase class.
      *
      * @param argv command line parameters as defined in local class BatchParameters required: The name of a class-file
-     * containing an implementation of FileBatchJob Name of jar file which includes the class file, and the className
+     *        containing an implementation of FileBatchJob Name of jar file which includes the class file, and the
+     *        className
      */
     public static void main(String[] argv) {
         RunBatch instance = new RunBatch();
@@ -249,9 +250,10 @@ public class RunBatch extends ToolRunnerBase {
 
                 options.addOption(REGEXP_OPTION_KEY, hasArg, "Regular expression for files to be processed "
                         + "(default: '" + regexp + "')");
-                options.addOption(REPLICA_OPTION_KEY, hasArg, "Name of bitarchive replica where batch must "
-                        + "be run " + "(default: '"
-                        + Replica.getReplicaFromId(Settings.get(CommonSettings.USE_REPLICA_ID)).getName() + "')");
+                options.addOption(REPLICA_OPTION_KEY, hasArg,
+                        "Name of bitarchive replica where batch must " + "be run " + "(default: '"
+                                + Replica.getReplicaFromId(Settings.get(CommonSettings.USE_REPLICA_ID)).getName()
+                                + "')");
                 options.addOption(OUTPUTFILE_OPTION_KEY, hasArg, "Output file to contain result (default is "
                         + "stdout)");
                 options.addOption(ERRORFILE_OPTION_KEY, hasArg, "Error file to contain errors from run "

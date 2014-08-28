@@ -103,8 +103,8 @@ public class NotifyingURIResolverTester {
         NotifyingURIResolver notifying = new NotifyingURIResolver(uriResolver, uriObserver);
         notifying.lookup(new TestRequest(new URI("http://foo.bar")), response);
         assertEquals("Should have called lookup method on uri resolver", 1, uriResolver.lookupCount);
-        assertEquals("Argument should be given unchanged", new URI("http://foo.bar"), uriResolver.lookupRequestArgument
-                .getURI());
+        assertEquals("Argument should be given unchanged", new URI("http://foo.bar"),
+                uriResolver.lookupRequestArgument.getURI());
         assertEquals("Argument should be given unchanged", response, uriResolver.lookupResponseArgument);
         assertEquals("Observers notify method should be called.", 1, uriObserver.notifyCount);
         assertEquals("URI argument should be given unchanged.", new URI("http://foo.bar"),

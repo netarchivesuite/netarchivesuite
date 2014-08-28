@@ -84,8 +84,8 @@ public class IntegrityTests {
         conv.setExceptionsThrownOnErrorStatus(false);
         WebResponse resp = conv.getResponse("http://localhost:" + Integer.toString(TestInfo.GUI_WEB_SERVER_PORT) + "/"
                 + TestInfo.GUI_WEB_SERVER_WEBBASE);
-        assertTrue("Expected responsecode 200 for " + resp.getURL() + ", got " + resp.getResponseCode(), resp
-                .getResponseCode() == 200);
+        assertTrue("Expected responsecode 200 for " + resp.getURL() + ", got " + resp.getResponseCode(),
+                resp.getResponseCode() == 200);
     }
 
     public void testContextWorksStaticPages() throws IOException, SAXException {
@@ -96,8 +96,8 @@ public class IntegrityTests {
             conv.setExceptionsThrownOnErrorStatus(false);
             WebResponse resp = conv.getResponse("http://localhost:" + TestInfo.GUI_WEB_SERVER_PORT + "/"
                     + TestInfo.GUI_WEB_SERVER_WEBBASE + "/index.html");
-            assertTrue("Expected responsecode 200 for " + resp.getURL() + ", got " + resp.getResponseCode(), resp
-                    .getResponseCode() == 200);
+            assertTrue("Expected responsecode 200 for " + resp.getURL() + ", got " + resp.getResponseCode(),
+                    resp.getResponseCode() == 200);
             assertEquals("Expected title to be 'Test'. Got " + resp.getTitle(), resp.getTitle(), "Test");
 
         } finally {
@@ -113,8 +113,8 @@ public class IntegrityTests {
             conv.setExceptionsThrownOnErrorStatus(false);
             WebResponse resp = conv.getResponse("http://localhost:" + TestInfo.GUI_WEB_SERVER_PORT + "/"
                     + TestInfo.GUI_WEB_SERVER_WEBBASE + "/index.jsp");
-            assertTrue("Expected responsecode 200 for " + resp.getURL() + ", got " + resp.getResponseCode(), resp
-                    .getResponseCode() == 200);
+            assertTrue("Expected responsecode 200 for " + resp.getURL() + ", got " + resp.getResponseCode(),
+                    resp.getResponseCode() == 200);
             assertEquals("Expected title to be 'Test'. Got " + resp.getTitle(), resp.getTitle(), "Test");
 
         } finally {

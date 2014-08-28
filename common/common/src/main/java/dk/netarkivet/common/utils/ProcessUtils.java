@@ -100,7 +100,7 @@ public class ProcessUtils {
      * method just implements a consumer thread to eat the output of a process and so prevent blocking.
      *
      * @param inputStream A stream to read up to end of file. This stream is closed at some point in the future, but not
-     * necessarily before this method returns.
+     *        necessarily before this method returns.
      */
     public static void discardProcessOutput(final InputStream inputStream) {
         makeCollectorThread(inputStream, new DiscardingOutputStream(), -1).start();
@@ -117,7 +117,7 @@ public class ProcessUtils {
      * @param maxCollect The maximum number of bytes to collect, or -1 for no limit
      * @param collectionThreads Set of threads that concurrently collect output
      * @return An object that collects the output. Once the thread returned is finished, the object will no longer be
-     * written to. The collected output can be retrieved with the toString method.
+     *         written to. The collected output can be retrieved with the toString method.
      */
     public static Object collectProcessOutput(final InputStream inputStream, final int maxCollect,
             Set<Thread> collectionThreads) {

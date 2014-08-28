@@ -53,8 +53,8 @@ public class GetMetadataArchiveBatchJob extends ArchiveBatchJob {
      *
      * @param urlMatcher A pattern for matching URLs of the desired entries. If null, a .* pattern will be used.
      * @param mimeMatcher A pattern for matching mime-types of the desired entries. If null, a .* pattern will be used.
-     * <p>
-     * The batchJobTimeout is set to one day.
+     *        <p>
+     *        The batchJobTimeout is set to one day.
      */
     public GetMetadataArchiveBatchJob(Pattern urlMatcher, Pattern mimeMatcher) {
         this.urlMatcher = urlMatcher;

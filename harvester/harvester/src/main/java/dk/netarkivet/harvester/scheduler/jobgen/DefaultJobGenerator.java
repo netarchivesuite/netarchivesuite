@@ -139,8 +139,8 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
         while (domainConfSubset.hasNext()) {
             DomainConfiguration cfg = domainConfSubset.next();
             if (EXCLUDE_ZERO_BUDGET && (0 == cfg.getMaxBytes() || 0 == cfg.getMaxObjects())) {
-                log.info("Config '{}' for '{}'" + " excluded (0{})", cfg.getName(), cfg.getDomainName(), (cfg
-                        .getMaxBytes() == 0 ? " bytes" : " objects"));
+                log.info("Config '{}' for '{}'" + " excluded (0{})", cfg.getName(), cfg.getDomainName(),
+                        (cfg.getMaxBytes() == 0 ? " bytes" : " objects"));
                 continue;
             }
             // Do we need to create a new Job or is the current job ok
@@ -156,8 +156,8 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
 
             } else {
                 job.addConfiguration(cfg);
-                log.trace("Added job configuration {} for domain {} to current job for harvest #{}", cfg.getName(), cfg
-                        .getDomainName(), harvest.getOid());
+                log.trace("Added job configuration {} for domain {} to current job for harvest #{}", cfg.getName(),
+                        cfg.getDomainName(), harvest.getOid());
             }
         }
         if (job != null) {

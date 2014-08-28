@@ -73,17 +73,17 @@ public class HTMLUtilsTester {
     @Test
     public void testEscapeJavascriptQuotes() throws Exception {
         assertEquals("Null should be empty string", "", HTMLUtils.escapeJavascriptQuotes(null));
-        assertEquals("Quotes should be escaped", "\\\"he\\'\\\"x\\\"\\\"st\\\"\\\"", HTMLUtils
-                .escapeJavascriptQuotes("\"he'\"x\"\"st\"\""));
-        assertEquals("Special characters should be escaped", "\\b\\f\\n\\r\\t\\v\\\\", HTMLUtils
-                .escapeJavascriptQuotes("\b\f\n\r\t\u000B\\"));
+        assertEquals("Quotes should be escaped", "\\\"he\\'\\\"x\\\"\\\"st\\\"\\\"",
+                HTMLUtils.escapeJavascriptQuotes("\"he'\"x\"\"st\"\""));
+        assertEquals("Special characters should be escaped", "\\b\\f\\n\\r\\t\\v\\\\",
+                HTMLUtils.escapeJavascriptQuotes("\b\f\n\r\t\u000B\\"));
         assertEquals("Other control characters should be escaped",
                 "\\u0000\\u0001\\u0002\\u0003\\u0004\\u0005\\u0006\\u0007"
                         + "\\u000E\\u000F\\u0010\\u0011\\u0012\\u0013\\u0014\\u0015"
-                        + "\\u0016\\u0017\\u0018\\u0019\\u001A\\u001B\\u001C\\u001D" + "\\u001E\\u001F", HTMLUtils
-                        .escapeJavascriptQuotes("\u0000\u0001\u0002\u0003\u0004\u0005\u0006\u0007"
-                                + "\u000E\u000F\u0010\u0011\u0012\u0013\u0014"
-                                + "\u0015\u0016\u0017\u0018\u0019\u001A\u001B" + "\u001C\u001D\u001E\u001F"));
+                        + "\\u0016\\u0017\\u0018\\u0019\\u001A\\u001B\\u001C\\u001D" + "\\u001E\\u001F",
+                HTMLUtils.escapeJavascriptQuotes("\u0000\u0001\u0002\u0003\u0004\u0005\u0006\u0007"
+                        + "\u000E\u000F\u0010\u0011\u0012\u0013\u0014" + "\u0015\u0016\u0017\u0018\u0019\u001A\u001B"
+                        + "\u001C\u001D\u001E\u001F"));
     }
 
     /** Test URL encoding. */
@@ -98,8 +98,8 @@ public class HTMLUtilsTester {
     public void testDecode() throws Exception {
         assertEquals("Should decode + as space", "a b", HTMLUtils.decode("a+b"));
         assertEquals("Should decode å in UTF-8", "å", HTMLUtils.decode("%C3%A5"));
-        assertEquals("Should be reverse of eachother", "æblegrød med :// i og ()!!\"#¤%", HTMLUtils.decode(HTMLUtils
-                .encode("æblegrød med :// i og ()!!\"#¤%")));
+        assertEquals("Should be reverse of eachother", "æblegrød med :// i og ()!!\"#¤%",
+                HTMLUtils.decode(HTMLUtils.encode("æblegrød med :// i og ()!!\"#¤%")));
     }
 
     /** Test header. */
@@ -129,8 +129,8 @@ public class HTMLUtilsTester {
             String locale = language.getValue(CommonSettings.WEBINTERFACE_LANGUAGE_LOCALE);
             String name = language.getValue(CommonSettings.WEBINTERFACE_LANGUAGE_NAME);
             StringAsserts.assertStringContains("Should contain link to locale", "locale=" + locale, result);
-            StringAsserts.assertStringContains("Should contain name of locale", "name="
-                    + HTMLUtils.encodeAndEscapeHTML(name), result);
+            StringAsserts.assertStringContains("Should contain name of locale",
+                    "name=" + HTMLUtils.encodeAndEscapeHTML(name), result);
         }
 
         out = new JspWriterMockup();
@@ -204,31 +204,31 @@ public class HTMLUtilsTester {
         // I18n(dk.netarkivet.common.Constants.TRANSLATIONS_BUNDLE);
         PageContext pageContext = new WebinterfaceTestCase.TestPageContext(request);
 
-        assertEquals("Should be able to parse simple long", Long.valueOf(10L), HTMLUtils.parseOptionalLong(pageContext,
-                "aLong", -1L));
+        assertEquals("Should be able to parse simple long", Long.valueOf(10L),
+                HTMLUtils.parseOptionalLong(pageContext, "aLong", -1L));
 
         parameterMap.put("aLong", new String[] {" -11  "});
 
-        assertEquals("Should be able to parse spaced negative long", Long.valueOf(-11L), HTMLUtils.parseOptionalLong(
-                pageContext, "aLong", -1L));
+        assertEquals("Should be able to parse spaced negative long", Long.valueOf(-11L),
+                HTMLUtils.parseOptionalLong(pageContext, "aLong", -1L));
 
-        assertEquals("Should get default if not set", Long.valueOf(-1L), HTMLUtils.parseOptionalLong(pageContext,
-                "anotherLong", -1L));
+        assertEquals("Should get default if not set", Long.valueOf(-1L),
+                HTMLUtils.parseOptionalLong(pageContext, "anotherLong", -1L));
         parameterMap.put("aLong", new String[] {Long.toString(((long) Integer.MAX_VALUE) * 5)});
-        assertEquals("Should be able to parse large long", new Long(((long) Integer.MAX_VALUE) * 5), HTMLUtils
-                .parseOptionalLong(pageContext, "aLong", -1L));
+        assertEquals("Should be able to parse large long", new Long(((long) Integer.MAX_VALUE) * 5),
+                HTMLUtils.parseOptionalLong(pageContext, "aLong", -1L));
 
         parameterMap.put("aLong", new String[] {""});
-        assertEquals("Should get default from empty param", Long.valueOf(-2L), HTMLUtils.parseOptionalLong(pageContext,
-                "aLong", -2L));
+        assertEquals("Should get default from empty param", Long.valueOf(-2L),
+                HTMLUtils.parseOptionalLong(pageContext, "aLong", -2L));
 
         parameterMap.put("aLong", new String[] {"   "});
-        assertEquals("Should get default from space-only param", Long.valueOf(-2L), HTMLUtils.parseOptionalLong(
-                pageContext, "aLong", -2L));
+        assertEquals("Should get default from space-only param", Long.valueOf(-2L),
+                HTMLUtils.parseOptionalLong(pageContext, "aLong", -2L));
 
         parameterMap.put("aLong", new String[] {"   "});
-        assertEquals("Should get null default from space-only param", null, HTMLUtils.parseOptionalLong(pageContext,
-                "aLong", null));
+        assertEquals("Should get null default from space-only param", null,
+                HTMLUtils.parseOptionalLong(pageContext, "aLong", null));
 
         try {
             parameterMap.put("noLong", new String[] {"not a long"});
@@ -261,23 +261,23 @@ public class HTMLUtilsTester {
         PageContext pageContext = new WebinterfaceTestCase.TestPageContext(request);
 
         GregorianCalendar calendar = new GregorianCalendar(2007, Calendar.AUGUST, 10, 6, 17, 00);
-        assertEquals("Should be able to parse simple date", calendar.getTime(), HTMLUtils.parseOptionalDate(
-                pageContext, "aDate", "dd/M yyyy HH:mm", null));
+        assertEquals("Should be able to parse simple date", calendar.getTime(),
+                HTMLUtils.parseOptionalDate(pageContext, "aDate", "dd/M yyyy HH:mm", null));
 
-        assertEquals("Should get default if not set", calendar.getTime(), HTMLUtils.parseOptionalDate(pageContext,
-                "anotherDate", "dd/M yyyy HH:mm", calendar.getTime()));
+        assertEquals("Should get default if not set", calendar.getTime(),
+                HTMLUtils.parseOptionalDate(pageContext, "anotherDate", "dd/M yyyy HH:mm", calendar.getTime()));
 
         parameterMap.put("aDate", new String[] {""});
-        assertEquals("Should get default from empty param", calendar.getTime(), HTMLUtils.parseOptionalDate(
-                pageContext, "aDate", "dd/M yyyy HH:mm", calendar.getTime()));
+        assertEquals("Should get default from empty param", calendar.getTime(),
+                HTMLUtils.parseOptionalDate(pageContext, "aDate", "dd/M yyyy HH:mm", calendar.getTime()));
 
         parameterMap.put("aDate", new String[] {"   "});
-        assertEquals("Should get default from space-only param", calendar.getTime(), HTMLUtils.parseOptionalDate(
-                pageContext, "aDate", "dd/M yyyy HH:mm", calendar.getTime()));
+        assertEquals("Should get default from space-only param", calendar.getTime(),
+                HTMLUtils.parseOptionalDate(pageContext, "aDate", "dd/M yyyy HH:mm", calendar.getTime()));
 
         parameterMap.put("aDate", new String[] {"   "});
-        assertEquals("Should get null default from space-only param", null, HTMLUtils.parseOptionalDate(pageContext,
-                "aDate", "dd/M yyyy HH:mm", null));
+        assertEquals("Should get null default from space-only param", null,
+                HTMLUtils.parseOptionalDate(pageContext, "aDate", "dd/M yyyy HH:mm", null));
 
         try {
             parameterMap.put("noDate", new String[] {"not a date"});

@@ -189,7 +189,7 @@ public abstract class Frequency {
      *
      * @param timeunit The type or frequency
      * @param anytime Allow events to start anytime. If false, the starting point is described precisely. If true, the
-     * starting point will be immediately.
+     *        starting point will be immediately.
      * @param numtimeunits The number of periods between events
      * @param minute A given minute. Used to create hourly, daily, and monthly frequencies, if anytime is false.
      * @param hour A given hour. Used to create hourly, daily, and monthly frequencies, if anytime is false.
@@ -197,7 +197,7 @@ public abstract class Frequency {
      * @param dayofmonth A given day of month. Used only to create monthly frequencies, if anytime is false.
      * @return a new instance of the Frequency class.
      * @throws ArgumentNotValid If the given timeunit is illegal, or the values of timeunit and numtimeunits is
-     * negative.
+     *         negative.
      * @throws NotImplementedException If we can't yet make a Frequency for a legal timeunit.
      */
     public static Frequency getNewInstance(int timeunit, boolean anytime, int numtimeunits, Integer minute,

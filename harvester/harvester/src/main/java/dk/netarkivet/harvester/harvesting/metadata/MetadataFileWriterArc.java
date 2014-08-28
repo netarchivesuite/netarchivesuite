@@ -87,8 +87,8 @@ public class MetadataFileWriterArc extends MetadataFileWriter {
      * @param URL the URL with which it is stored in the arcfile
      * @param mimetype The mimetype of the File-contents
      * @return true, if file exists, and is written to the arcfile.
-     * <p>
-     * TODO I wonder if this is a clone of the ARCUtils method. (nicl)
+     *         <p>
+     *         TODO I wonder if this is a clone of the ARCUtils method. (nicl)
      */
     @Override
     public boolean writeTo(File fileToArchive, String URL, String mimetype) {

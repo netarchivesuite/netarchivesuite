@@ -106,19 +106,20 @@ public class DatabaseAdminTester {
 
         // make sure that the test instance can now be found.
         assertTrue("Should contain " + TestInfo.TEST_FILE_1.getName(), da.hasEntry(TestInfo.TEST_FILE_1.getName()));
-        assertTrue("Should have replyInfo for " + TestInfo.TEST_FILE_1.getName(), da.hasReplyInfo(TestInfo.TEST_FILE_1
-                .getName()));
+        assertTrue("Should have replyInfo for " + TestInfo.TEST_FILE_1.getName(),
+                da.hasReplyInfo(TestInfo.TEST_FILE_1.getName()));
         assertEquals("Should have the given checksum", "1234567890", da.getCheckSum(TestInfo.TEST_FILE_1.getName()));
 
         // Test the hasState.
-        assertFalse("Should not yet have a acceptable state", da.hasState(TestInfo.TEST_FILE_1.getName(), ONE
-                .getIdentificationChannel().getName()));
+        assertFalse("Should not yet have a acceptable state",
+                da.hasState(TestInfo.TEST_FILE_1.getName(), ONE.getIdentificationChannel().getName()));
         da.setState(TestInfo.TEST_FILE_1.getName(), ONE.getIdentificationChannel().getName(),
                 ReplicaStoreState.UPLOAD_STARTED);
-        assertTrue("Should now have a acceptable state", da.hasState(TestInfo.TEST_FILE_1.getName(), ONE
-                .getIdentificationChannel().getName()));
-        assertEquals("Should have the same state", da.getState(TestInfo.TEST_FILE_1.getName(), ONE
-                .getIdentificationChannel().getName()), ReplicaStoreState.UPLOAD_STARTED);
+        assertTrue("Should now have a acceptable state",
+                da.hasState(TestInfo.TEST_FILE_1.getName(), ONE.getIdentificationChannel().getName()));
+        assertEquals("Should have the same state",
+                da.getState(TestInfo.TEST_FILE_1.getName(), ONE.getIdentificationChannel().getName()),
+                ReplicaStoreState.UPLOAD_STARTED);
 
         StoreMessage storeMsg2 = new StoreMessage(Channels.getError(), TestInfo.TEST_FILE_1);
         JMSConnectionMockupMQ.updateMsgID(storeMsg2, "store2");
@@ -144,8 +145,8 @@ public class DatabaseAdminTester {
         }
 
         Set<String> filenames = da.getAllFileNames();
-        assertTrue("Should contain the file '" + TestInfo.TEST_FILE_1.getName() + "' but was '" + filenames, filenames
-                .contains(TestInfo.TEST_FILE_1.getName()));
+        assertTrue("Should contain the file '" + TestInfo.TEST_FILE_1.getName() + "' but was '" + filenames,
+                filenames.contains(TestInfo.TEST_FILE_1.getName()));
 
         filenames = da.getAllFileNames(THREE, ReplicaStoreState.UPLOAD_FAILED);
         assertTrue("The list of files with state UPLOAD_FAILED for replica " + "THREE should be empty, but it was: "
@@ -153,8 +154,8 @@ public class DatabaseAdminTester {
 
         filenames = da.getAllFileNames(THREE, ReplicaStoreState.UPLOAD_COMPLETED);
         assertTrue("The list of files with state UPLOAD_COMPLETED for replica " + "THREE should contain the file: '"
-                + TestInfo.TEST_FILE_1.getName() + "', but it contained: " + filenames, filenames
-                .contains(TestInfo.TEST_FILE_1.getName()));
+                + TestInfo.TEST_FILE_1.getName() + "', but it contained: " + filenames,
+                filenames.contains(TestInfo.TEST_FILE_1.getName()));
     }
 
 }

@@ -203,7 +203,7 @@ public abstract class DomainDAO implements DAO, Iterable<Domain> {
      *
      * @param previousHarvestDefinition A harvest definition that has already been run.
      * @return An array of information for all domainconfigurations which were harvested by the given harvest
-     * definition.
+     *         definition.
      */
     public abstract Iterator<HarvestInfo> getHarvestInfoBasedOnPreviousHarvestDefinition(
             final HarvestDefinition previousHarvestDefinition);
@@ -275,7 +275,7 @@ public abstract class DomainDAO implements DAO, Iterable<Domain> {
      * @param configName the name of a given configuration
      * @param job the job
      * @return The HarvestInfo object for a certain job and DomainConfiguration or null, if job has not yet been
-     * started.
+     *         started.
      */
     public abstract HarvestInfo getDomainJobInfo(Job job, String domainName, String configName);
 
@@ -288,7 +288,7 @@ public abstract class DomainDAO implements DAO, Iterable<Domain> {
      * @param domainName Domain to get info for.
      * @param orderBy The column attribute to order by.
      * @param asc true if the results should be ordered according to the natural order, false if they are to be sorted
-     * in reverse.
+     *        in reverse.
      * @return List of DomainHarvestInfo objects with information on that domain.
      */
     public abstract List<DomainHarvestInfo> listDomainHarvestInfo(String domainName, String orderBy, boolean asc);

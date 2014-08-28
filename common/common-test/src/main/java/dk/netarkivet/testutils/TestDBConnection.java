@@ -116,7 +116,7 @@ public class TestDBConnection implements Connection {
      * <code>TYPE_FORWARD_ONLY</code> and have a concurrency level of <code>CONCUR_READ_ONLY</code>.
      *
      * @param sql an SQL statement that may contain one or more '?' parameter placeholders. Typically this statement is
-     * a JDBC function call escape string.
+     *        a JDBC function call escape string.
      * @return a new default <code>CallableStatement</code> object containing the pre-compiled SQL statement
      * @throws SQLException if a database access error occurs
      */
@@ -181,7 +181,7 @@ public class TestDBConnection implements Connection {
      * will still be able to roll back the entire test.
      *
      * @throws SQLException if a database access error occurs or this <code>Connection</code> object is in auto-commit
-     * mode
+     *         mode
      * @see #setAutoCommit
      */
     public void commit() throws SQLException {
@@ -196,7 +196,7 @@ public class TestDBConnection implements Connection {
      * <code>Connection</code> object. This method should be used only when auto-commit mode has been disabled.
      *
      * @throws SQLException if a database access error occurs or this <code>Connection</code> object is in auto-commit
-     * mode
+     *         mode
      * @see #setAutoCommit
      */
     public void rollback() throws SQLException {
@@ -230,7 +230,7 @@ public class TestDBConnection implements Connection {
      * operation is attempted.
      *
      * @return <code>true</code> if this <code>Connection</code> object is closed; <code>false</code> if it is still
-     * open
+     *         open
      * @throws SQLException if a database access error occurs
      */
     public boolean isClosed() throws SQLException {
@@ -282,7 +282,7 @@ public class TestDBConnection implements Connection {
      * If the driver does not support catalogs, it will silently ignore this request.
      *
      * @param catalog the name of a catalog (subspace in this <code>Connection</code> object's database) in which to
-     * work
+     *        work
      * @throws SQLException if a database access error occurs
      * @see #getCatalog
      */
@@ -308,12 +308,12 @@ public class TestDBConnection implements Connection {
      * <B>Note:</B> If this method is called during a transaction, the result is implementation-defined.
      *
      * @param level one of the following <code>Connection</code> constants:
-     * <code>Connection.TRANSACTION_READ_UNCOMMITTED</code>, <code>Connection.TRANSACTION_READ_COMMITTED</code>,
-     * <code>Connection.TRANSACTION_REPEATABLE_READ</code>, or <code>Connection.TRANSACTION_SERIALIZABLE</code>. (Note
-     * that <code>Connection.TRANSACTION_NONE</code> cannot be used because it specifies that transactions are not
-     * supported.)
+     *        <code>Connection.TRANSACTION_READ_UNCOMMITTED</code>, <code>Connection.TRANSACTION_READ_COMMITTED</code>,
+     *        <code>Connection.TRANSACTION_REPEATABLE_READ</code>, or <code>Connection.TRANSACTION_SERIALIZABLE</code>.
+     *        (Note that <code>Connection.TRANSACTION_NONE</code> cannot be used because it specifies that transactions
+     *        are not supported.)
      * @throws SQLException if a database access error occurs or the given parameter is not one of the
-     * <code>Connection</code> constants
+     *         <code>Connection</code> constants
      * @see DatabaseMetaData#supportsTransactionIsolationLevel
      * @see #getTransactionIsolation
      */
@@ -325,9 +325,9 @@ public class TestDBConnection implements Connection {
      * Retrieves this <code>Connection</code> object's current transaction isolation level.
      *
      * @return the current transaction isolation level, which will be one of the following constants:
-     * <code>Connection.TRANSACTION_READ_UNCOMMITTED</code>, <code>Connection.TRANSACTION_READ_COMMITTED</code>,
-     * <code>Connection.TRANSACTION_REPEATABLE_READ</code>, <code>Connection.TRANSACTION_SERIALIZABLE</code>, or
-     * <code>Connection.TRANSACTION_NONE</code>.
+     *         <code>Connection.TRANSACTION_READ_UNCOMMITTED</code>, <code>Connection.TRANSACTION_READ_COMMITTED</code>,
+     *         <code>Connection.TRANSACTION_REPEATABLE_READ</code>, <code>Connection.TRANSACTION_SERIALIZABLE</code>, or
+     *         <code>Connection.TRANSACTION_NONE</code>.
      * @throws SQLException if a database access error occurs
      * @see #setTransactionIsolation
      */
@@ -373,13 +373,13 @@ public class TestDBConnection implements Connection {
      * result set type and concurrency to be overridden.
      *
      * @param resultSetType a result set type; one of <code>ResultSet.TYPE_FORWARD_ONLY</code> ,
-     * <code>ResultSet.TYPE_SCROLL_INSENSITIVE</code>, or <code>ResultSet.TYPE_SCROLL_SENSITIVE</code>
+     *        <code>ResultSet.TYPE_SCROLL_INSENSITIVE</code>, or <code>ResultSet.TYPE_SCROLL_SENSITIVE</code>
      * @param resultSetConcurrency a concurrency type; one of <code>ResultSet.CONCUR_READ_ONLY</code> or
-     * <code>ResultSet.CONCUR_UPDATABLE</code>
+     *        <code>ResultSet.CONCUR_UPDATABLE</code>
      * @return a new <code>Statement</code> object that will generate <code>ResultSet</code> objects with the given type
-     * and concurrency
+     *         and concurrency
      * @throws SQLException if a database access error occurs or the given parameters are not <code>ResultSet</code>
-     * constants indicating type and concurrency
+     *         constants indicating type and concurrency
      */
     public Statement createStatement(int resultSetType, int resultSetConcurrency) throws SQLException {
         return conn.createStatement(resultSetType, resultSetConcurrency);
@@ -391,15 +391,15 @@ public class TestDBConnection implements Connection {
      * the default result set type and concurrency to be overridden.
      *
      * @param sql a <code>String</code> object that is the SQL statement to be sent to the database; may contain one or
-     * more ? IN parameters
+     *        more ? IN parameters
      * @param resultSetType a result set type; one of <code>ResultSet.TYPE_FORWARD_ONLY</code> ,
-     * <code>ResultSet.TYPE_SCROLL_INSENSITIVE</code>, or <code>ResultSet.TYPE_SCROLL_SENSITIVE</code>
+     *        <code>ResultSet.TYPE_SCROLL_INSENSITIVE</code>, or <code>ResultSet.TYPE_SCROLL_SENSITIVE</code>
      * @param resultSetConcurrency a concurrency type; one of <code>ResultSet.CONCUR_READ_ONLY</code> or
-     * <code>ResultSet.CONCUR_UPDATABLE</code>
+     *        <code>ResultSet.CONCUR_UPDATABLE</code>
      * @return a new PreparedStatement object containing the pre-compiled SQL statement that will produce
-     * <code>ResultSet</code> objects with the given type and concurrency
+     *         <code>ResultSet</code> objects with the given type and concurrency
      * @throws SQLException if a database access error occurs or the given parameters are not <code>ResultSet</code>
-     * constants indicating type and concurrency
+     *         constants indicating type and concurrency
      */
     public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency)
             throws SQLException {
@@ -413,15 +413,15 @@ public class TestDBConnection implements Connection {
      * default result set type and concurrency to be overridden.
      *
      * @param sql a <code>String</code> object that is the SQL statement to be sent to the database; may contain on or
-     * more ? parameters
+     *        more ? parameters
      * @param resultSetType a result set type; one of <code>ResultSet.TYPE_FORWARD_ONLY</code> ,
-     * <code>ResultSet.TYPE_SCROLL_INSENSITIVE</code>, or <code>ResultSet.TYPE_SCROLL_SENSITIVE</code>
+     *        <code>ResultSet.TYPE_SCROLL_INSENSITIVE</code>, or <code>ResultSet.TYPE_SCROLL_SENSITIVE</code>
      * @param resultSetConcurrency a concurrency type; one of <code>ResultSet.CONCUR_READ_ONLY</code> or
-     * <code>ResultSet.CONCUR_UPDATABLE</code>
+     *        <code>ResultSet.CONCUR_UPDATABLE</code>
      * @return a new <code>CallableStatement</code> object containing the pre-compiled SQL statement that will produce
-     * <code>ResultSet</code> objects with the given type and concurrency
+     *         <code>ResultSet</code> objects with the given type and concurrency
      * @throws SQLException if a database access error occurs or the given parameters are not <code>ResultSet</code>
-     * constants indicating type and concurrency
+     *         constants indicating type and concurrency
      */
     public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency) throws SQLException {
         lastStatement = sql;
@@ -445,9 +445,9 @@ public class TestDBConnection implements Connection {
      * map will be used for the custom mapping of SQL structured types and distinct types.
      *
      * @param map the <code>java.util.Map</code> object to install as the replacement for this <code>Connection</code>
-     * object's default type map
+     *        object's default type map
      * @throws SQLException if a database access error occurs or the given parameter is not a <code>java.util.Map</code>
-     * object
+     *         object
      * @see #getTypeMap
      */
     public void setTypeMap(java.util.Map<String, Class<?>> map) throws SQLException {
@@ -461,9 +461,9 @@ public class TestDBConnection implements Connection {
      * the given holdability.
      *
      * @param holdability a <code>ResultSet</code> holdability constant; one of
-     * <code>ResultSet.HOLD_CURSORS_OVER_COMMIT</code> or <code>ResultSet.CLOSE_CURSORS_AT_COMMIT</code>
+     *        <code>ResultSet.HOLD_CURSORS_OVER_COMMIT</code> or <code>ResultSet.CLOSE_CURSORS_AT_COMMIT</code>
      * @throws SQLException if a database access occurs, the given parameter is not a <code>ResultSet</code> constant
-     * indicating holdability, or the given holdability is not supported
+     *         indicating holdability, or the given holdability is not supported
      * @see #getHoldability
      * @see ResultSet
      */
@@ -476,7 +476,7 @@ public class TestDBConnection implements Connection {
      * object.
      *
      * @return the holdability, one of <code>ResultSet.HOLD_CURSORS_OVER_COMMIT</code> or
-     * <code>ResultSet.CLOSE_CURSORS_AT_COMMIT</code>
+     *         <code>ResultSet.CLOSE_CURSORS_AT_COMMIT</code>
      * @throws SQLException if a database access occurs
      * @see #setHoldability
      * @see ResultSet
@@ -491,7 +491,7 @@ public class TestDBConnection implements Connection {
      *
      * @return the new <code>Savepoint</code> object
      * @throws SQLException if a database access error occurs or this <code>Connection</code> object is currently in
-     * auto-commit mode
+     *         auto-commit mode
      * @see Savepoint
      */
     public Savepoint setSavepoint() throws SQLException {
@@ -505,7 +505,7 @@ public class TestDBConnection implements Connection {
      * @param name a <code>String</code> containing the name of the savepoint
      * @return the new <code>Savepoint</code> object
      * @throws SQLException if a database access error occurs or this <code>Connection</code> object is currently in
-     * auto-commit mode
+     *         auto-commit mode
      * @see Savepoint
      */
     public Savepoint setSavepoint(String name) throws SQLException {
@@ -519,7 +519,7 @@ public class TestDBConnection implements Connection {
      *
      * @param savepoint the <code>Savepoint</code> object to roll back to
      * @throws SQLException if a database access error occurs, the <code>Savepoint</code> object is no longer valid, or
-     * this <code>Connection</code> object is currently in auto-commit mode
+     *         this <code>Connection</code> object is currently in auto-commit mode
      * @see Savepoint
      * @see #rollback
      */
@@ -539,7 +539,7 @@ public class TestDBConnection implements Connection {
      *
      * @param savepoint the <code>Savepoint</code> object to be removed
      * @throws SQLException if a database access error occurs or the given <code>Savepoint</code> object is not a valid
-     * savepoint in the current transaction
+     *         savepoint in the current transaction
      */
     public void releaseSavepoint(Savepoint savepoint) throws SQLException {
         while (!savepoints.isEmpty() && savepoints.peek() != savepoint) {
@@ -557,16 +557,16 @@ public class TestDBConnection implements Connection {
      * allows the default result set type, concurrency, and holdability to be overridden.
      *
      * @param resultSetType one of the following <code>ResultSet</code> constants:
-     * <code>ResultSet.TYPE_FORWARD_ONLY</code>, <code>ResultSet.TYPE_SCROLL_INSENSITIVE</code>, or
-     * <code>ResultSet.TYPE_SCROLL_SENSITIVE</code>
+     *        <code>ResultSet.TYPE_FORWARD_ONLY</code>, <code>ResultSet.TYPE_SCROLL_INSENSITIVE</code>, or
+     *        <code>ResultSet.TYPE_SCROLL_SENSITIVE</code>
      * @param resultSetConcurrency one of the following <code>ResultSet</code> constants:
-     * <code>ResultSet.CONCUR_READ_ONLY</code> or <code>ResultSet.CONCUR_UPDATABLE</code>
+     *        <code>ResultSet.CONCUR_READ_ONLY</code> or <code>ResultSet.CONCUR_UPDATABLE</code>
      * @param resultSetHoldability one of the following <code>ResultSet</code> constants:
-     * <code>ResultSet.HOLD_CURSORS_OVER_COMMIT</code> or <code>ResultSet.CLOSE_CURSORS_AT_COMMIT</code>
+     *        <code>ResultSet.HOLD_CURSORS_OVER_COMMIT</code> or <code>ResultSet.CLOSE_CURSORS_AT_COMMIT</code>
      * @return a new <code>Statement</code> object that will generate <code>ResultSet</code> objects with the given
-     * type, concurrency, and holdability
+     *         type, concurrency, and holdability
      * @throws SQLException if a database access error occurs or the given parameters are not <code>ResultSet</code>
-     * constants indicating type, concurrency, and holdability
+     *         constants indicating type, concurrency, and holdability
      * @see ResultSet
      */
     public Statement createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability)
@@ -582,18 +582,18 @@ public class TestDBConnection implements Connection {
      * type, concurrency, and holdability to be overridden.
      *
      * @param sql a <code>String</code> object that is the SQL statement to be sent to the database; may contain one or
-     * more ? IN parameters
+     *        more ? IN parameters
      * @param resultSetType one of the following <code>ResultSet</code> constants:
-     * <code>ResultSet.TYPE_FORWARD_ONLY</code>, <code>ResultSet.TYPE_SCROLL_INSENSITIVE</code>, or
-     * <code>ResultSet.TYPE_SCROLL_SENSITIVE</code>
+     *        <code>ResultSet.TYPE_FORWARD_ONLY</code>, <code>ResultSet.TYPE_SCROLL_INSENSITIVE</code>, or
+     *        <code>ResultSet.TYPE_SCROLL_SENSITIVE</code>
      * @param resultSetConcurrency one of the following <code>ResultSet</code> constants:
-     * <code>ResultSet.CONCUR_READ_ONLY</code> or <code>ResultSet.CONCUR_UPDATABLE</code>
+     *        <code>ResultSet.CONCUR_READ_ONLY</code> or <code>ResultSet.CONCUR_UPDATABLE</code>
      * @param resultSetHoldability one of the following <code>ResultSet</code> constants:
-     * <code>ResultSet.HOLD_CURSORS_OVER_COMMIT</code> or <code>ResultSet.CLOSE_CURSORS_AT_COMMIT</code>
+     *        <code>ResultSet.HOLD_CURSORS_OVER_COMMIT</code> or <code>ResultSet.CLOSE_CURSORS_AT_COMMIT</code>
      * @return a new <code>PreparedStatement</code> object, containing the pre-compiled SQL statement, that will
-     * generate <code>ResultSet</code> objects with the given type, concurrency, and holdability
+     *         generate <code>ResultSet</code> objects with the given type, concurrency, and holdability
      * @throws SQLException if a database access error occurs or the given parameters are not <code>ResultSet</code>
-     * constants indicating type, concurrency, and holdability
+     *         constants indicating type, concurrency, and holdability
      * @see ResultSet
      */
     public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency,
@@ -608,18 +608,18 @@ public class TestDBConnection implements Connection {
      * default result set type, result set concurrency type and holdability to be overridden.
      *
      * @param sql a <code>String</code> object that is the SQL statement to be sent to the database; may contain on or
-     * more ? parameters
+     *        more ? parameters
      * @param resultSetType one of the following <code>ResultSet</code> constants:
-     * <code>ResultSet.TYPE_FORWARD_ONLY</code>, <code>ResultSet.TYPE_SCROLL_INSENSITIVE</code>, or
-     * <code>ResultSet.TYPE_SCROLL_SENSITIVE</code>
+     *        <code>ResultSet.TYPE_FORWARD_ONLY</code>, <code>ResultSet.TYPE_SCROLL_INSENSITIVE</code>, or
+     *        <code>ResultSet.TYPE_SCROLL_SENSITIVE</code>
      * @param resultSetConcurrency one of the following <code>ResultSet</code> constants:
-     * <code>ResultSet.CONCUR_READ_ONLY</code> or <code>ResultSet.CONCUR_UPDATABLE</code>
+     *        <code>ResultSet.CONCUR_READ_ONLY</code> or <code>ResultSet.CONCUR_UPDATABLE</code>
      * @param resultSetHoldability one of the following <code>ResultSet</code> constants:
-     * <code>ResultSet.HOLD_CURSORS_OVER_COMMIT</code> or <code>ResultSet.CLOSE_CURSORS_AT_COMMIT</code>
+     *        <code>ResultSet.HOLD_CURSORS_OVER_COMMIT</code> or <code>ResultSet.CLOSE_CURSORS_AT_COMMIT</code>
      * @return a new <code>CallableStatement</code> object, containing the pre-compiled SQL statement, that will
-     * generate <code>ResultSet</code> objects with the given type, concurrency, and holdability
+     *         generate <code>ResultSet</code> objects with the given type, concurrency, and holdability
      * @throws SQLException if a database access error occurs or the given parameters are not <code>ResultSet</code>
-     * constants indicating type, concurrency, and holdability
+     *         constants indicating type, concurrency, and holdability
      * @see ResultSet
      */
     public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency,
@@ -644,11 +644,11 @@ public class TestDBConnection implements Connection {
      *
      * @param sql an SQL statement that may contain one or more '?' IN parameter placeholders
      * @param autoGeneratedKeys a flag indicating whether auto-generated keys should be returned; one of
-     * <code>Statement.RETURN_GENERATED_KEYS</code> or <code>Statement.NO_GENERATED_KEYS</code>
+     *        <code>Statement.RETURN_GENERATED_KEYS</code> or <code>Statement.NO_GENERATED_KEYS</code>
      * @return a new <code>PreparedStatement</code> object, containing the pre-compiled SQL statement, that will have
-     * the capability of returning auto-generated keys
+     *         the capability of returning auto-generated keys
      * @throws SQLException if a database access error occurs or the given parameter is not a <code>Statement</code>
-     * constant indicating whether auto-generated keys should be returned
+     *         constant indicating whether auto-generated keys should be returned
      */
     public PreparedStatement prepareStatement(String sql, int autoGeneratedKeys) throws SQLException {
         lastStatement = sql;
@@ -675,9 +675,9 @@ public class TestDBConnection implements Connection {
      *
      * @param sql an SQL statement that may contain one or more '?' IN parameter placeholders
      * @param columnIndexes an array of column indexes indicating the columns that should be returned from the inserted
-     * row or rows
+     *        row or rows
      * @return a new <code>PreparedStatement</code> object, containing the pre-compiled statement, that is capable of
-     * returning the auto-generated keys designated by the given array of column indexes
+     *         returning the auto-generated keys designated by the given array of column indexes
      * @throws SQLException if a database access error occurs
      */
     public PreparedStatement prepareStatement(String sql, int columnIndexes[]) throws SQLException {
@@ -705,9 +705,9 @@ public class TestDBConnection implements Connection {
      *
      * @param sql an SQL statement that may contain one or more '?' IN parameter placeholders
      * @param columnNames an array of column names indicating the columns that should be returned from the inserted row
-     * or rows
+     *        or rows
      * @return a new <code>PreparedStatement</code> object, containing the pre-compiled statement, that is capable of
-     * returning the auto-generated keys designated by the given array of column names
+     *         returning the auto-generated keys designated by the given array of column names
      * @throws SQLException if a database access error occurs
      */
     public PreparedStatement prepareStatement(String sql, String columnNames[]) throws SQLException {

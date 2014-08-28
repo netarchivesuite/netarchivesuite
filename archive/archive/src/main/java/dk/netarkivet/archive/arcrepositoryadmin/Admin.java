@@ -65,7 +65,7 @@ public interface Admin {
      * @param filename The name of the file to have the checksum changed.
      * @param checksum The new checksum for the file.
      * @deprecated It should not be change the checksum through Admin. Only by voting through the bitpreservation
-     * interface should it be possible.
+     *             interface should it be possible.
      */
     void setCheckSum(String filename, String checksum);
 

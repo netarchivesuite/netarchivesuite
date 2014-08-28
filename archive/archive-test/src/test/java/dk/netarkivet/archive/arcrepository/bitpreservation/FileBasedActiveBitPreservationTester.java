@@ -417,8 +417,8 @@ public class FileBasedActiveBitPreservationTester {
                 if (job.getClass().equals(ChecksumJob.class)) {
 
                     if (results.containsKey(Replica.getReplicaFromId(replicaId))) {
-                        return new BatchStatus("AP1", Collections.<File>emptyList(), 1, new StringRemoteFile(results
-                                .get(Replica.getReplicaFromId(replicaId))),
+                        return new BatchStatus("AP1", Collections.<File>emptyList(), 1, new StringRemoteFile(
+                                results.get(Replica.getReplicaFromId(replicaId))),
                                 new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
                     } else {
                         return new BatchStatus("AP1", Collections.<File>emptyList(), 0, null,
@@ -633,8 +633,9 @@ public class FileBasedActiveBitPreservationTester {
                 FileOutputStream os = new FileOutputStream(output);
                 new BatchLocalFiles(in_files).run(job, os);
                 os.close();
-                return new BatchStatus("BA1", Collections.<File>emptyList(), in_files.length, RemoteFileFactory
-                        .getMovefileInstance(output), new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
+                return new BatchStatus("BA1", Collections.<File>emptyList(), in_files.length,
+                        RemoteFileFactory.getMovefileInstance(output), new ArrayList<FileBatchJob.ExceptionOccurrence>(
+                                0));
             } catch (IOException e) {
                 fail("IO error during test");
                 return null;

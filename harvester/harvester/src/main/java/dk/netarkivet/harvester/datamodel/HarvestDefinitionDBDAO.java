@@ -307,13 +307,13 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 final long prevhd = res.getLong(5);
                 if (!res.wasNull()) {
                     fh = new FullHarvest(name, comments, prevhd, maxObjects, maxBytes, maxJobRunningtime, isIndexReady,
-                            DAOProviderFactory.getHarvestDefinitionDAOProvider(), DAOProviderFactory
-                                    .getJobDAOProvider(), DAOProviderFactory.getExtendedFieldDAOProvider(),
+                            DAOProviderFactory.getHarvestDefinitionDAOProvider(),
+                            DAOProviderFactory.getJobDAOProvider(), DAOProviderFactory.getExtendedFieldDAOProvider(),
                             DAOProviderFactory.getDomainDAOProvider());
                 } else {
                     fh = new FullHarvest(name, comments, null, maxObjects, maxBytes, maxJobRunningtime, isIndexReady,
-                            DAOProviderFactory.getHarvestDefinitionDAOProvider(), DAOProviderFactory
-                                    .getJobDAOProvider(), DAOProviderFactory.getExtendedFieldDAOProvider(),
+                            DAOProviderFactory.getHarvestDefinitionDAOProvider(),
+                            DAOProviderFactory.getJobDAOProvider(), DAOProviderFactory.getExtendedFieldDAOProvider(),
                             DAOProviderFactory.getDomainDAOProvider());
                 }
                 fh.setSubmissionDate(submissionDate);
@@ -375,8 +375,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 s.close();
                 List<DomainConfiguration> configurations = new ArrayList<DomainConfiguration>();
                 for (SparseDomainConfiguration domainConfig : configs) {
-                    configurations.add(domainDao.getDomainConfiguration(domainConfig.getDomainName(), domainConfig
-                            .getConfigurationName()));
+                    configurations.add(domainDao.getDomainConfiguration(domainConfig.getDomainName(),
+                            domainConfig.getConfigurationName()));
                 }
 
                 Schedule schedule = ScheduleDAO.getInstance().read(scheduleName);
@@ -654,7 +654,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
      *
      * @param now The current date
      * @return List of ready harvest definitions. No check is performed for whether these are already in the middle of
-     * being scheduled.
+     *         being scheduled.
      */
     @Override
     public Iterable<Long> getReadyHarvestDefinitions(Date now) {
@@ -863,9 +863,9 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             List<SparsePartialHarvest> harvests = new ArrayList<SparsePartialHarvest>();
             while (res.next()) {
                 SparsePartialHarvest sph = new SparsePartialHarvest(res.getLong(1), res.getString(2), res.getString(3),
-                        res.getInt(4), new Date(res.getTimestamp(5).getTime()), res.getBoolean(6), res.getLong(7), res
-                                .getString(8), DBUtils.getDateMaybeNull(res, 9), res.getString(10), DBUtils
-                                .getLongMaybeNull(res, 11));
+                        res.getInt(4), new Date(res.getTimestamp(5).getTime()), res.getBoolean(6), res.getLong(7),
+                        res.getString(8), DBUtils.getDateMaybeNull(res, 9), res.getString(10),
+                        DBUtils.getLongMaybeNull(res, 11));
                 harvests.add(sph);
             }
             return harvests;
@@ -901,10 +901,10 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             s.setString(1, harvestName);
             ResultSet res = s.executeQuery();
             if (res.next()) {
-                SparsePartialHarvest sph = new SparsePartialHarvest(res.getLong(1), harvestName, res.getString(2), res
-                        .getInt(3), new Date(res.getTimestamp(4).getTime()), res.getBoolean(5), res.getLong(6), res
-                        .getString(7), DBUtils.getDateMaybeNull(res, 8), res.getString(9), DBUtils.getLongMaybeNull(
-                        res, 10));
+                SparsePartialHarvest sph = new SparsePartialHarvest(res.getLong(1), harvestName, res.getString(2),
+                        res.getInt(3), new Date(res.getTimestamp(4).getTime()), res.getBoolean(5), res.getLong(6),
+                        res.getString(7), DBUtils.getDateMaybeNull(res, 8), res.getString(9), DBUtils.getLongMaybeNull(
+                                res, 10));
                 sph.setExtendedFieldValues(getExtendedFieldValues(sph.getOid()));
                 return sph;
             } else {
@@ -937,9 +937,9 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             ResultSet res = s.executeQuery();
             List<SparseFullHarvest> harvests = new ArrayList<SparseFullHarvest>();
             while (res.next()) {
-                SparseFullHarvest sfh = new SparseFullHarvest(res.getLong(1), res.getString(2), res.getString(3), res
-                        .getInt(4), res.getBoolean(5), res.getLong(6), res.getLong(7), res.getLong(8), res.getLong(9),
-                        DBUtils.getLongMaybeNull(res, 10), DBUtils.getLongMaybeNull(res, 11));
+                SparseFullHarvest sfh = new SparseFullHarvest(res.getLong(1), res.getString(2), res.getString(3),
+                        res.getInt(4), res.getBoolean(5), res.getLong(6), res.getLong(7), res.getLong(8),
+                        res.getLong(9), DBUtils.getLongMaybeNull(res, 10), DBUtils.getLongMaybeNull(res, 11));
                 harvests.add(sfh);
             }
             return harvests;
@@ -1044,9 +1044,9 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             s.setString(1, harvestName);
             ResultSet res = s.executeQuery();
             if (res.next()) {
-                SparseFullHarvest sfh = new SparseFullHarvest(res.getLong(1), harvestName, res.getString(2), res
-                        .getInt(3), res.getBoolean(4), res.getLong(5), res.getLong(6), res.getLong(7), res.getLong(8),
-                        DBUtils.getLongMaybeNull(res, 9), DBUtils.getLongMaybeNull(res, 10));
+                SparseFullHarvest sfh = new SparseFullHarvest(res.getLong(1), harvestName, res.getString(2),
+                        res.getInt(3), res.getBoolean(4), res.getLong(5), res.getLong(6), res.getLong(7),
+                        res.getLong(8), DBUtils.getLongMaybeNull(res, 9), DBUtils.getLongMaybeNull(res, 10));
 
                 sfh.setExtendedFieldValues(getExtendedFieldValues(sfh.getOid()));
                 return sfh;
@@ -1237,8 +1237,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 int rows = s.executeUpdate();
                 log.debug(rows + " entries of table fullharvests updated");
             } catch (SQLException e) {
-                log.warn("Exception thrown while updating fullharvests.isindexready field: {}", ExceptionUtils
-                        .getSQLExceptionCause(e), e);
+                log.warn("Exception thrown while updating fullharvests.isindexready field: {}",
+                        ExceptionUtils.getSQLExceptionCause(e), e);
             } finally {
                 DBUtils.closeStatementIfOpen(s);
                 HarvestDBConnection.release(c);
@@ -1342,8 +1342,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         try {
             createHarvestConfigsEntries(connection, ph, ph.getOid());
         } catch (SQLException e) {
-            log.warn("Exception thrown while resetting domainConfigurations: {}", ExceptionUtils
-                    .getSQLExceptionCause(e), e);
+            log.warn("Exception thrown while resetting domainConfigurations: {}",
+                    ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             HarvestDBConnection.release(connection);
         }

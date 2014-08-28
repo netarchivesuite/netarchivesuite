@@ -69,8 +69,8 @@ public class AggregationWorkerTest extends AggregatorTestCase {
 
         worker.runAggregation();
 
-        assertNull("Unexpected content of aggregated index", testIndex
-                .compareToIndex(AggregationWorker.INTERMEDIATE_INDEX_FILE));
+        assertNull("Unexpected content of aggregated index",
+                testIndex.compareToIndex(AggregationWorker.INTERMEDIATE_INDEX_FILE));
         assertTrue("InputFiles remain after aggregation", new File(inputDirName).list().length == 0);
         assertTrue("Temporary intermediate index file remains after aggregation",
                 !AggregationWorker.tempIntermediateIndexFile.exists());
@@ -93,8 +93,8 @@ public class AggregationWorkerTest extends AggregatorTestCase {
 
         worker.runAggregation();
 
-        assertNull("Unexpected content of aggregated index", testIndex
-                .compareToIndex(AggregationWorker.INTERMEDIATE_INDEX_FILE));
+        assertNull("Unexpected content of aggregated index",
+                testIndex.compareToIndex(AggregationWorker.INTERMEDIATE_INDEX_FILE));
         assertTrue("InputFiles remain after aggregation", new File(inputDirName).list().length == 0);
         assertTrue("Temporary intermediate index file remains after aggregation",
                 !AggregationWorker.tempIntermediateIndexFile.exists());
@@ -118,8 +118,8 @@ public class AggregationWorkerTest extends AggregatorTestCase {
 
         worker.runAggregation();
 
-        assertNull("Unexpected content of aggregated index", testIndex
-                .compareToIndex(AggregationWorker.FINAL_INDEX_FILE));
+        assertNull("Unexpected content of aggregated index",
+                testIndex.compareToIndex(AggregationWorker.FINAL_INDEX_FILE));
         assertTrue("InputFiles remain after aggregation", new File(inputDirName).list().length == 0);
         assertTrue("Temporary intermediate index file remains after aggregation",
                 !AggregationWorker.tempIntermediateIndexFile.exists());
@@ -143,8 +143,8 @@ public class AggregationWorkerTest extends AggregatorTestCase {
 
         worker.runAggregation();
 
-        assertNull("Unexpected content of aggregated index", testIndex
-                .compareToIndex(AggregationWorker.FINAL_INDEX_FILE));
+        assertNull("Unexpected content of aggregated index",
+                testIndex.compareToIndex(AggregationWorker.FINAL_INDEX_FILE));
     }
 
     /**
@@ -164,8 +164,8 @@ public class AggregationWorkerTest extends AggregatorTestCase {
 
         worker.runAggregation();
 
-        assertNull("Unexpected content of aggregated index after roll-over", testIndex
-                .compareToIndex(AggregationWorker.FINAL_INDEX_FILE));
+        assertNull("Unexpected content of aggregated index after roll-over",
+                testIndex.compareToIndex(AggregationWorker.FINAL_INDEX_FILE));
         File oldIndexFile = new File(AggregationWorker.indexOutputDir, "wayback.index.1");
         ;
         assertTrue("No wayback.index.1 present", oldIndexFile.exists());

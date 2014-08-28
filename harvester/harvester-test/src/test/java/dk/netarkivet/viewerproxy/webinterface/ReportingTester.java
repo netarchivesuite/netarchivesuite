@@ -104,8 +104,8 @@ public class ReportingTester {
         }
         CollectionAsserts.assertListEquals("Job 2 chould contain two files", Reporting.getFilesForJob(2, "2-1"),
                 "2-1-20080601120000-00000-dev.arc", "2-metadata-1.arc");
-        CollectionAsserts.assertListEquals("Job 4 not harvested, list should be empty", Reporting.getFilesForJob(4,
-                "4-2"));
+        CollectionAsserts.assertListEquals("Job 4 not harvested, list should be empty",
+                Reporting.getFilesForJob(4, "4-2"));
     }
 
     @Test
@@ -128,8 +128,8 @@ public class ReportingTester {
                 "^metadata://netarkivet.dk/crawl/setup/duplicatereductionjobs.*", recordsForJob.get(0).getURL());
         StringAsserts.assertStringMatches("Last record should be cdx", "^metadata://netarkivet.dk/crawl/index/cdx.*",
                 recordsForJob.get(recordsForJob.size() - 1).getURL());
-        CollectionAsserts.assertListEquals("Job 4 not harvested, list should be empty", Reporting
-                .getMetadataCDXRecordsForJob(4));
+        CollectionAsserts.assertListEquals("Job 4 not harvested, list should be empty",
+                Reporting.getMetadataCDXRecordsForJob(4));
     }
 
     /**

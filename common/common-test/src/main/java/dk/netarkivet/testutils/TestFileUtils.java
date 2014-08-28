@@ -275,8 +275,8 @@ public class TestFileUtils {
      *
      * @param start The directory (or file) to start at.
      * @param filter Filter of files to include. All files (including directories) are passed to this filter and are
-     * included if filter.accept() returns true. Subdirectories are scanned whether or not filter.accept() returns true
-     * for them.
+     *        included if filter.accept() returns true. Subdirectories are scanned whether or not filter.accept()
+     *        returns true for them.
      * @return List of files (in no particular order) that match the filter. and reside under start.
      */
     public static List<File> findFiles(File start, FileFilter filter) {

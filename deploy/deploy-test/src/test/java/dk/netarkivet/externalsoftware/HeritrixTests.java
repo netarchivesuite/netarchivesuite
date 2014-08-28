@@ -177,8 +177,9 @@ public class HeritrixTests extends TestCase {
     private HeritrixLauncher getHeritrixLauncher(File origOrderXml, File origSeedsFile, File origIndexDir)
             throws IOException {
 
-        return getHeritrixLauncher(origOrderXml, origSeedsFile, origIndexDir, new File(Settings
-                .get(CommonSettings.JMX_PASSWORD_FILE)), new File(Settings.get(CommonSettings.JMX_ACCESS_FILE)));
+        return getHeritrixLauncher(origOrderXml, origSeedsFile, origIndexDir,
+                new File(Settings.get(CommonSettings.JMX_PASSWORD_FILE)),
+                new File(Settings.get(CommonSettings.JMX_ACCESS_FILE)));
     }
 
     /**
@@ -281,8 +282,8 @@ public class HeritrixTests extends TestCase {
 
             // System.out.println("ex.getCause().getMessage():" +
             // ex.getCause().getMessage());
-            if (!ex.getCause().getMessage().contains(
-                    "Failed to read the password file '" + passwordFile.getAbsolutePath() + "'")) {
+            if (!ex.getCause().getMessage()
+                    .contains("Failed to read the password file '" + passwordFile.getAbsolutePath() + "'")) {
                 ex.printStackTrace();
                 fail("An exception different from IOFailure has been thrown "
                         + "when launching with a non existing file (" + passwordFile.getAbsolutePath() + ")"
@@ -813,8 +814,8 @@ public class HeritrixTests extends TestCase {
 
         // Get CDXReader of the cdx for the previous crawl.
         // Note that this may break if the arcs dir has more than one file.
-        LuceneUtils.generateIndex(sortedCrawlLog, getCXDReaderForArc(arcsDir
-                .listFiles(TestFileUtils.NON_CVS_DIRS_FILTER)[0]), indexDir);
+        LuceneUtils.generateIndex(sortedCrawlLog,
+                getCXDReaderForArc(arcsDir.listFiles(TestFileUtils.NON_CVS_DIRS_FILTER)[0]), indexDir);
 
         FileUtils.removeRecursively(TestInfo.HERITRIX_TEMP_DIR);
         runHeritrix(modifiedOrderFile, TestInfo.SEEDS_FILE, indexDir);

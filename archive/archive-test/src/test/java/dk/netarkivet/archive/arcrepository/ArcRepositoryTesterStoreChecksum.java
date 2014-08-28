@@ -104,8 +104,8 @@ public class ArcRepositoryTesterStoreChecksum {
         String orgCheckSum = ChecksumCalculator.calculateMd5(file);
 
         UpdateableAdminData adminData = AdminData.getUpdateableInstance();
-        adminData.addEntry(file.getName(), new StoreMessage(Channels.getThisReposClient(), file), ChecksumCalculator
-                .calculateMd5(file));
+        adminData.addEntry(file.getName(), new StoreMessage(Channels.getThisReposClient(), file),
+                ChecksumCalculator.calculateMd5(file));
         adminData.setState(file.getName(), Channels.retrieveReplicaChannelFromReplicaId("TWO").getName(),
                 ReplicaStoreState.UPLOAD_COMPLETED);
         adminData.setState(file.getName(), Channels.retrieveReplicaChannelFromReplicaId("THREE").getName(),
@@ -215,8 +215,8 @@ public class ArcRepositoryTesterStoreChecksum {
         ad.setState(arcFileName, ba1Name, ReplicaStoreState.UPLOAD_STARTED);
         ad.setState(arcFileName, ba2Name, ReplicaStoreState.DATA_UPLOADED);
         m.invoke(arcRepos, new Object[] {arcFileName, ba1Name, correctChecksum, "wrong checksum", true});
-        assertEquals("Should go into UPLOAD_FAILED without outstanding remotefile", ReplicaStoreState.UPLOAD_FAILED, ad
-                .getState(arcFileName, ba1Name));
+        assertEquals("Should go into UPLOAD_FAILED without outstanding remotefile", ReplicaStoreState.UPLOAD_FAILED,
+                ad.getState(arcFileName, ba1Name));
 
         arcFileName = "NetarchiveSuite-store2.arc";
         ad.addEntry(arcFileName, null, correctChecksum);
@@ -228,13 +228,13 @@ public class ArcRepositoryTesterStoreChecksum {
         f = ArcRepository.class.getDeclaredField("connectedReplicas");
         f.setAccessible(true);
         Map<String, BitarchiveClient> connectedBitarchives = (Map<String, BitarchiveClient>) f.get(arcRepos);
-        connectedBitarchives.put(ba1Name, BitarchiveClient.getInstance(Channels.getAllBa(), Channels.getAnyBa(),
-                Channels.getTheBamon()));
+        connectedBitarchives.put(ba1Name,
+                BitarchiveClient.getInstance(Channels.getAllBa(), Channels.getAnyBa(), Channels.getTheBamon()));
         // Have to use a real file here, as startUpload will grab the name
         outstandingRemoteFiles.put(arcFileName, new TestRemoteFile(new File(ORIGINALS_DIR, STORABLE_FILES[1]), false,
                 false, false));
         m.invoke(arcRepos, new Object[] {arcFileName, ba1Name, correctChecksum, "wrong checksum", true});
-        assertEquals("Wrong checksum should always result in upload failure", ReplicaStoreState.UPLOAD_FAILED, ad
-                .getState(STORABLE_FILES[1], ba1Name));
+        assertEquals("Wrong checksum should always result in upload failure", ReplicaStoreState.UPLOAD_FAILED,
+                ad.getState(STORABLE_FILES[1], ba1Name));
     }
 }

@@ -87,7 +87,7 @@ public class CrawlLogIterator extends CrawlDataIterator {
      * Returns the next valid item from the crawl log.
      *
      * @return An item from the crawl log. Note that unlike the Iterator interface, this method returns null if there
-     * are no more items to fetch.
+     *         are no more items to fetch.
      * @throws IOException If there is an error reading the item *after* the item to be returned from the crawl.log.
      * @throws NoSuchElementException If there are no more items
      */

@@ -178,8 +178,8 @@ public class DomainDefinitionTester extends HarvesterWebinterfaceTestCase {
         int slCount = 0;
         while (slIt.hasNext()) {
             String slName = slIt.next().getName();
-            assertTrue("Seedlist should be in given list, not " + slName, slName.equals("defaultseeds")
-                    || slName.equals("seeds"));
+            assertTrue("Seedlist should be in given list, not " + slName,
+                    slName.equals("defaultseeds") || slName.equals("seeds"));
             slCount++;
         }
         assertEquals("Should be exactly two seedlists", 2, slCount);

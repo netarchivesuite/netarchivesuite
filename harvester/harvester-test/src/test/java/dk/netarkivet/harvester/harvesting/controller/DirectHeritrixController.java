@@ -286,7 +286,7 @@ public class DirectHeritrixController implements HeritrixController {
          *
          * @param checkpointDir Checkpoint dir. Write checkpoint state here.
          * @throws Exception A fatal exception. Any exceptions that are let out of this checkpoint are assumed fatal and
-         * terminate further checkpoint processing.
+         *         terminate further checkpoint processing.
          * @see CrawlStatusListener#crawlCheckpoint(java.io.File)
          */
         public void crawlCheckpoint(File checkpointDir) throws Exception {

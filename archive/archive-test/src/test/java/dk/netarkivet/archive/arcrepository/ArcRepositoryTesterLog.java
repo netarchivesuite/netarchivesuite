@@ -98,8 +98,8 @@ public class ArcRepositoryTesterLog {
         File f = new File(ORIGINALS_DIR, fileName);
 
         UpdateableAdminData adminData = AdminData.getUpdateableInstance();
-        adminData.addEntry(f.getName(), new StoreMessage(Channels.getThisReposClient(), f), ChecksumCalculator
-                .calculateMd5(f));
+        adminData.addEntry(f.getName(), new StoreMessage(Channels.getThisReposClient(), f),
+                ChecksumCalculator.calculateMd5(f));
         adminData.setState(f.getName(), Channels.retrieveReplicaChannelFromReplicaId("TWO").getName(),
                 ReplicaStoreState.UPLOAD_COMPLETED);
         adminData.setState(f.getName(), Channels.retrieveReplicaChannelFromReplicaId("THREE").getName(),

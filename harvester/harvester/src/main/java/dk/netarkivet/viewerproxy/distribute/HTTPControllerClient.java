@@ -65,7 +65,7 @@ public class HTTPControllerClient implements Controller {
      * @param response The response object to use for redirect.
      * @param out The JspWriter used to communicate with the users.
      * @param returnURL The URL to return to afterwards if no output is given. This must not be null or not empty if
-     * either startRecordingURIs, stopRecordingURIs, changeIndex or clearRecordedURIs are called.
+     *        either startRecordingURIs, stopRecordingURIs, changeIndex or clearRecordedURIs are called.
      */
     public HTTPControllerClient(HttpServletResponse response, JspWriter out, String returnURL) {
         ArgumentNotValid.checkNotNull(response, "HttpServletResponse response");
@@ -154,8 +154,8 @@ public class HTTPControllerClient implements Controller {
                     + HTMLUtils.escapeHtmlValues(label) + "'/>");
             out.println("</form>");
             out.println("<p>");
-            out.println(I18N.getString(response.getLocale(), "generating.index.0.for.jobs.1", HTMLUtils
-                    .escapeHtmlValues(label), StringUtils.conjoin(", ", jobList)));
+            out.println(I18N.getString(response.getLocale(), "generating.index.0.for.jobs.1",
+                    HTMLUtils.escapeHtmlValues(label), StringUtils.conjoin(", ", jobList)));
             out.println("</body></html>");
         } catch (IOException e) {
             throw new IOFailure("Unable to redirect to controller server", e);

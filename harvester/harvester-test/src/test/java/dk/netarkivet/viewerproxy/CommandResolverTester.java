@@ -50,10 +50,11 @@ public class CommandResolverTester {
                 throw new NotImplementedException("Not implemented");
             }
         }));
-        assertFalse("Request with other uri should not be command host", CommandResolver
-                .isCommandHostRequest(makeRequest("http://www.foo.bims")));
-        assertTrue("Request with actual localhost name should be command host", CommandResolver
-                .isCommandHostRequest(makeRequest("http://" + "netarchivesuite.viewerproxy.invalid" + "/stop?foo=bar")));
+        assertFalse("Request with other uri should not be command host",
+                CommandResolver.isCommandHostRequest(makeRequest("http://www.foo.bims")));
+        assertTrue("Request with actual localhost name should be command host",
+                CommandResolver.isCommandHostRequest(makeRequest("http://" + "netarchivesuite.viewerproxy.invalid"
+                        + "/stop?foo=bar")));
     }
 
     private Request makeRequest(final String uri) {

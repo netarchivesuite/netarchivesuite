@@ -72,8 +72,8 @@ public class BitarchiveARCFileTester {
 
         BitarchiveARCFile f = new BitarchiveARCFile("Test1", NON__EXISTING__FILE);
         assertEquals("File names should be the same", f.getName(), "Test1");
-        assertEquals("File paths should be the same", f.getFilePath().getCanonicalPath(), NON__EXISTING__FILE
-                .getCanonicalPath());
+        assertEquals("File paths should be the same", f.getFilePath().getCanonicalPath(),
+                NON__EXISTING__FILE.getCanonicalPath());
         assertFalse("File should not exist", f.exists());
 
         BitarchiveARCFile f2 = new BitarchiveARCFile("Test1", EXISTING_FILE);

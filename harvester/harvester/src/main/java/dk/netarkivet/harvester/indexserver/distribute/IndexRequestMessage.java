@@ -150,7 +150,7 @@ public class IndexRequestMessage extends HarvesterMessage {
 
     /**
      * @return true, if this index requested should be returned to the caller. False, if we instead should send a
-     * IndexReadyMessage to the HarvestJobManager queue.
+     *         IndexReadyMessage to the HarvestJobManager queue.
      */
     public boolean mustReturnIndex() {
         return this.shouldReturnIndex;

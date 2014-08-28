@@ -60,13 +60,13 @@ public class GUIWebServerTester {
                 dk.netarkivet.common.webinterface.TestInfo.GUI_WEB_SERVER_JSP_DIRECTORY);
         Settings.set(CommonSettings.SITESECTION_CLASS,
                 dk.netarkivet.common.webinterface.TestInfo.GUI_WEB_SERVER_SITESECTION_CLASS);
-        Settings.set(CommonSettings.HTTP_PORT_NUMBER, Integer
-                .toString(dk.netarkivet.common.webinterface.TestInfo.GUI_WEB_SERVER_PORT));
+        Settings.set(CommonSettings.HTTP_PORT_NUMBER,
+                Integer.toString(dk.netarkivet.common.webinterface.TestInfo.GUI_WEB_SERVER_PORT));
 
         FileUtils.removeRecursively(dk.netarkivet.common.webinterface.TestInfo.TEMPDIR);
         dk.netarkivet.common.webinterface.TestInfo.TEMPDIR.mkdirs();
-        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, dk.netarkivet.common.webinterface.TestInfo.TEMPDIR
-                .getAbsolutePath());
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR,
+                dk.netarkivet.common.webinterface.TestInfo.TEMPDIR.getAbsolutePath());
         // Use mockup JMS
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
 

@@ -275,9 +275,9 @@ public final class HarvestDBConnection {
                     + "- maxPoolSize={}\n" + "- acquireIncrement={}\n" + "- maxStatements={}\n"
                     + "- maxStatementsPerConnection={}\n" + "- idleConnTestPeriod={}\n" + "- idleConnTestQuery='{}'\n"
                     + "- idleConnTestOnCheckin={}", dataSource.getMinPoolSize(), dataSource.getMaxPoolSize(),
-                    dataSource.getAcquireIncrement(), dataSource.getMaxStatements(), dataSource
-                            .getMaxStatementsPerConnection(), dataSource.getIdleConnectionTestPeriod(), dataSource
-                            .getPreferredTestQuery(), dataSource.isTestConnectionOnCheckin());
+                    dataSource.getAcquireIncrement(), dataSource.getMaxStatements(),
+                    dataSource.getMaxStatementsPerConnection(), dataSource.getIdleConnectionTestPeriod(),
+                    dataSource.getPreferredTestQuery(), dataSource.isTestConnectionOnCheckin());
         }
     }
 

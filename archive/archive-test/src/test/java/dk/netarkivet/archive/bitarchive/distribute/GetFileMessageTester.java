@@ -77,15 +77,15 @@ public class GetFileMessageTester {
     // FIXME: test temporarily disabled
     public void testGetData() throws IOException, NoSuchFieldException, IllegalAccessException {
         File origFile = new File(WORKING, "NetarchiveSuite-store1.arc");
-        GetFileMessage message = new GetFileMessage(Channels.getAllBa(), Channels.getThisReposClient(), origFile
-                .getName(), "ONE");
+        GetFileMessage message = new GetFileMessage(Channels.getAllBa(), Channels.getThisReposClient(),
+                origFile.getName(), "ONE");
         message.setFile(origFile);
         File destDir = new File(WORKING, "dest");
         FileUtils.createDir(destDir);
         File destFile = new File(destDir, "NetarchiveSuite-store1.arc");
         message.getData(destFile);
-        assertEquals("File from GetFile should have same content as original", FileUtils.readFile(origFile), FileUtils
-                .readFile(destFile));
+        assertEquals("File from GetFile should have same content as original", FileUtils.readFile(origFile),
+                FileUtils.readFile(destFile));
         Field remoteFileField = ReflectUtils.getPrivateField(GetFileMessage.class, "remoteFile");
         assertNull("Remote file field should have been nulled", remoteFileField.get(message));
         FileUtils.remove(destFile);

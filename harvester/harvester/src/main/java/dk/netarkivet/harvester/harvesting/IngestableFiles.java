@@ -110,7 +110,7 @@ public class IngestableFiles {
      * Return true if the metadata generation process is known to have failed.
      *
      * @return True if metadata generation is finished without success, false if generation is still ongoing or has been
-     * successfully done.
+     *         successfully done.
      */
     public boolean isMetadataFailed() {
         return error;
@@ -122,7 +122,7 @@ public class IngestableFiles {
      *
      * @param success True if metadata was successfully generated, false otherwise.
      * @throws PermissionDenied If the metadata has already been marked as ready, or if no metadata file exists upon
-     * success.
+     *         success.
      * @throws IOFailure if there is an error marking the metadata as ready.
      */
     public void setMetadataGenerationSucceeded(boolean success) {
@@ -168,7 +168,7 @@ public class IngestableFiles {
      *
      * @return the files in the metadata dir
      * @throws PermissionDenied if the metadata file is not ready, either because generation is still going on or there
-     * was an error generating the metadata.
+     *         was an error generating the metadata.
      */
     public List<File> getMetadataArcFiles() {
         // Our one known metadata file must exist.
@@ -268,7 +268,7 @@ public class IngestableFiles {
      * while harvesting is still in progress.
      *
      * @param waitSeconds How many seconds to wait before closing files. This may be done in order to allow Heritrix to
-     * finish writing before we close the files.
+     *        finish writing before we close the files.
      */
     public void closeOpenFiles(int waitSeconds) {
         // wait for Heritrix threads to create and close last arc or warc files

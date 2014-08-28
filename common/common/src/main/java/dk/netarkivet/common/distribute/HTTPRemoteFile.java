@@ -86,7 +86,7 @@ public class HTTPRemoteFile extends AbstractRemoteFile {
      * @param useChecksums Whether communications are checksummed. If true, getChecksum will also return the checksum.
      * @param fileDeletable if true, the file given to this method is deletable, once it is transferred.
      * @param multipleDownloads if true, the file may be transferred more than once. Otherwise, all file handles are
-     * attempted to be made invalid after the first transfer, although no guarantees are made.
+     *        attempted to be made invalid after the first transfer, although no guarantees are made.
      * @throws ArgumentNotValid if file is null, or not a readable file.
      * @throws IOFailure if checksums are requested, but i/o errors occur while checksumming.
      */
@@ -112,7 +112,7 @@ public class HTTPRemoteFile extends AbstractRemoteFile {
      * @param useChecksums Whether communications are checksummed. If true, getChecksum will also return the checksum.
      * @param fileDeletable if true, the file given to this method is deletable, once it is transferred.
      * @param multipleDownloads if true, the file may be transferred more than once. Otherwise, all file handles are
-     * attempted to be made invalid after the first transfer, although no guarantees are made.
+     *        attempted to be made invalid after the first transfer, although no guarantees are made.
      * @throws ArgumentNotValid if file is null, or not a readable file.
      * @throws IOFailure if checksums are requested, but i/o errors occur while checksumming.
      */
@@ -136,7 +136,7 @@ public class HTTPRemoteFile extends AbstractRemoteFile {
      *
      * @param destFile The file to write the remote file to.
      * @throws ArgumentNotValid on null destFile, or parent to destfile is not a writeable directory, or destfile exists
-     * and cannot be overwritten.
+     *         and cannot be overwritten.
      * @throws IOFailure on I/O trouble writing remote file to destination.
      */
     public void copyTo(File destFile) {
@@ -165,7 +165,7 @@ public class HTTPRemoteFile extends AbstractRemoteFile {
      *
      * @return An input stream for the remote file.
      * @throws IOFailure on I/O trouble generating inputstream for remote file. Also, the returned remote file will
-     * throw IOFailure on close, if checksums are requested, but do not match.
+     *         throw IOFailure on close, if checksums are requested, but do not match.
      */
     public InputStream getInputStream() {
         if (filesize == 0) {

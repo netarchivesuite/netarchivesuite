@@ -247,10 +247,10 @@ public class ArcRepositoryTesterBatch {
         job2 = (ChecksumJob) ois.readObject();
         // ois.close();
         // Finally, compare their visible states:
-        assertEquals("The two jobs should have same number of processed files", job1.getNoOfFilesProcessed(), job2
-                .getNoOfFilesProcessed());
-        assertEquals("The two jobs should have identical lists of failed files", job1.getFilesFailed(), job2
-                .getFilesFailed());
+        assertEquals("The two jobs should have same number of processed files", job1.getNoOfFilesProcessed(),
+                job2.getNoOfFilesProcessed());
+        assertEquals("The two jobs should have identical lists of failed files", job1.getFilesFailed(),
+                job2.getFilesFailed());
         assertEquals("The two jobs should have identical String representations", job1.toString(), job2.toString());
     }
 

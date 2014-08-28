@@ -385,92 +385,92 @@ public class ArcRepositoryServerTester {
         JMSConnectionMockupMQ.updateMsgID(ragf, "removeAndGetFile1");
         arcServ.visit(ragf);
         assertTrue("The function 'removeAndGetFile' should have been called", arc.calls.containsKey("removeAndGetFile"));
-        assertEquals("The function 'removeAndGetFile' should have been called once.", Integer.valueOf(1), arc.calls
-                .get("removeAndGetFile"));
+        assertEquals("The function 'removeAndGetFile' should have been called once.", Integer.valueOf(1),
+                arc.calls.get("removeAndGetFile"));
 
         // admin data message sends and reply
         AdminDataMessage ad = new AdminDataMessage("filename", "checksum");
         JMSConnectionMockupMQ.updateMsgID(ad, "adminData1");
         arcServ.visit(ad);
         assertTrue("The function 'updateAdminData' should have been called", arc.calls.containsKey("updateAdminData"));
-        assertEquals("The function 'updateAdminData' should have been called once.", Integer.valueOf(1), arc.calls
-                .get("updateAdminData"));
+        assertEquals("The function 'updateAdminData' should have been called once.", Integer.valueOf(1),
+                arc.calls.get("updateAdminData"));
         testCon.waitForConcurrentTasksToFinish();
         assertEquals("It should be a reply to the admin data message", ad.getID(), listenReposClient.getAllReceived()
                 .get(0).getID());
 
         // test Upload message
-        UploadMessage upmsg = new UploadMessage(Channels.getTheRepos(), Channels.getError(), RemoteFileFactory
-                .getCopyfileInstance(file));
+        UploadMessage upmsg = new UploadMessage(Channels.getTheRepos(), Channels.getError(),
+                RemoteFileFactory.getCopyfileInstance(file));
         arcServ.visit(upmsg);
         assertTrue("The function 'onUpload' should have been called", arc.calls.containsKey("onUpload"));
-        assertEquals("The function 'onUpload' should have been called once.", Integer.valueOf(1), arc.calls
-                .get("onUpload"));
+        assertEquals("The function 'onUpload' should have been called once.", Integer.valueOf(1),
+                arc.calls.get("onUpload"));
 
         // test BatchReplyMessage
         BatchReplyMessage brmsg = new BatchReplyMessage(Channels.getTheRepos(), Channels.getError(),
                 "originatingBatchMsgId", 0, Collections.<File>emptyList(), RemoteFileFactory.getCopyfileInstance(file));
         arcServ.visit(brmsg);
         assertTrue("The function 'onBatchReply' should have been called", arc.calls.containsKey("onBatchReply"));
-        assertEquals("The function 'onBatchReply' should have been called once.", Integer.valueOf(1), arc.calls
-                .get("onBatchReply"));
+        assertEquals("The function 'onBatchReply' should have been called once.", Integer.valueOf(1),
+                arc.calls.get("onBatchReply"));
 
         // test BatchMessage
         BatchMessage bm = new BatchMessage(Channels.getThisIndexClient(), new ChecksumJob(), "ONE");
         JMSConnectionMockupMQ.updateMsgID(bm, "bm1");
         arcServ.visit(bm);
-        assertTrue("The function 'getReplicaClientFromReplicaId' should have been called", arc.calls
-                .containsKey("getReplicaClientFromReplicaId"));
-        assertEquals("The function 'getReplicaClientFromReplicaId' should have been called once.", Integer
-                .valueOf(++getReplicaClientValue), arc.calls.get("getReplicaClientFromReplicaId"));
+        assertTrue("The function 'getReplicaClientFromReplicaId' should have been called",
+                arc.calls.containsKey("getReplicaClientFromReplicaId"));
+        assertEquals("The function 'getReplicaClientFromReplicaId' should have been called once.",
+                Integer.valueOf(++getReplicaClientValue), arc.calls.get("getReplicaClientFromReplicaId"));
 
         // test GetMessage
         GetMessage gm = new GetMessage(Channels.getThisIndexClient(), Channels.getError(), "filename", 0L);
         JMSConnectionMockupMQ.updateMsgID(gm, "gm1");
         arcServ.visit(gm);
-        assertTrue("The function 'getReplicaClientFromReplicaId' should have been called", arc.calls
-                .containsKey("getReplicaClientFromReplicaId"));
-        assertEquals("The function 'getReplicaClientFromReplicaId' should have been called once.", Integer
-                .valueOf(++getReplicaClientValue), arc.calls.get("getReplicaClientFromReplicaId"));
+        assertTrue("The function 'getReplicaClientFromReplicaId' should have been called",
+                arc.calls.containsKey("getReplicaClientFromReplicaId"));
+        assertEquals("The function 'getReplicaClientFromReplicaId' should have been called once.",
+                Integer.valueOf(++getReplicaClientValue), arc.calls.get("getReplicaClientFromReplicaId"));
 
         // test GetFileMessage
         GetFileMessage gfm = new GetFileMessage(Channels.getThisIndexClient(), Channels.getError(), "filename", "ONE");
         JMSConnectionMockupMQ.updateMsgID(gfm, "gfm1");
         arcServ.visit(gfm);
-        assertTrue("The function 'getReplicaClientFromReplicaId' should have been called", arc.calls
-                .containsKey("getReplicaClientFromReplicaId"));
-        assertEquals("The function 'getReplicaClientFromReplicaId' should have been called once.", Integer
-                .valueOf(++getReplicaClientValue), arc.calls.get("getReplicaClientFromReplicaId"));
+        assertTrue("The function 'getReplicaClientFromReplicaId' should have been called",
+                arc.calls.containsKey("getReplicaClientFromReplicaId"));
+        assertEquals("The function 'getReplicaClientFromReplicaId' should have been called once.",
+                Integer.valueOf(++getReplicaClientValue), arc.calls.get("getReplicaClientFromReplicaId"));
 
         // test GetAllFilenamesMessage
         GetAllFilenamesMessage gafm = new GetAllFilenamesMessage(Channels.getThisIndexClient(), Channels.getError(),
                 "ONE");
         JMSConnectionMockupMQ.updateMsgID(gafm, "gafm1");
         arcServ.visit(gafm);
-        assertTrue("The function 'getReplicaClientFromReplicaId' should have been called", arc.calls
-                .containsKey("getReplicaClientFromReplicaId"));
-        assertEquals("The function 'getReplicaClientFromReplicaId' should have been called once.", Integer
-                .valueOf(++getReplicaClientValue), arc.calls.get("getReplicaClientFromReplicaId"));
+        assertTrue("The function 'getReplicaClientFromReplicaId' should have been called",
+                arc.calls.containsKey("getReplicaClientFromReplicaId"));
+        assertEquals("The function 'getReplicaClientFromReplicaId' should have been called once.",
+                Integer.valueOf(++getReplicaClientValue), arc.calls.get("getReplicaClientFromReplicaId"));
 
         // test GetAllChecksumsMessage
         GetAllChecksumsMessage gacm = new GetAllChecksumsMessage(Channels.getThisIndexClient(), Channels.getError(),
                 "ONE");
         JMSConnectionMockupMQ.updateMsgID(gacm, "gacm1");
         arcServ.visit(gacm);
-        assertTrue("The function 'getReplicaClientFromReplicaId' should have been called", arc.calls
-                .containsKey("getReplicaClientFromReplicaId"));
-        assertEquals("The function 'getReplicaClientFromReplicaId' should have been called once.", Integer
-                .valueOf(++getReplicaClientValue), arc.calls.get("getReplicaClientFromReplicaId"));
+        assertTrue("The function 'getReplicaClientFromReplicaId' should have been called",
+                arc.calls.containsKey("getReplicaClientFromReplicaId"));
+        assertEquals("The function 'getReplicaClientFromReplicaId' should have been called once.",
+                Integer.valueOf(++getReplicaClientValue), arc.calls.get("getReplicaClientFromReplicaId"));
 
         // test GetChecksumMessage 1
         GetChecksumMessage gcm = new GetChecksumMessage(Channels.getThisIndexClient(), Channels.getError(), "filename",
                 "ONE");
         JMSConnectionMockupMQ.updateMsgID(gcm, "gcm1");
         arcServ.visit(gcm);
-        assertTrue("The function 'getReplicaClientFromReplicaId' should have been called", arc.calls
-                .containsKey("getReplicaClientFromReplicaId"));
-        assertEquals("The function 'getReplicaClientFromReplicaId' should have been called once.", Integer
-                .valueOf(++getReplicaClientValue), arc.calls.get("getReplicaClientFromReplicaId"));
+        assertTrue("The function 'getReplicaClientFromReplicaId' should have been called",
+                arc.calls.containsKey("getReplicaClientFromReplicaId"));
+        assertEquals("The function 'getReplicaClientFromReplicaId' should have been called once.",
+                Integer.valueOf(++getReplicaClientValue), arc.calls.get("getReplicaClientFromReplicaId"));
 
         // test GetChecksumMessage 2
         GetChecksumMessage gcm2 = new GetChecksumMessage(Channels.getThisIndexClient(), Channels.getError(), "ONE",
@@ -479,18 +479,18 @@ public class ArcRepositoryServerTester {
         gcm2.setIsReply();
         arcServ.visit(gcm2);
         assertTrue("The function 'onChecksumReply' should have been called", arc.calls.containsKey("onChecksumReply"));
-        assertEquals("The function 'onChecksumReply' should have been called once.", Integer.valueOf(1), arc.calls
-                .get("onChecksumReply"));
+        assertEquals("The function 'onChecksumReply' should have been called once.", Integer.valueOf(1),
+                arc.calls.get("onChecksumReply"));
 
         // test CorrectMessage
         CorrectMessage cm = new CorrectMessage(Channels.getThisIndexClient(), Channels.getError(), "badChecksum",
                 RemoteFileFactory.getCopyfileInstance(file), "ONE", "Credentials");
         JMSConnectionMockupMQ.updateMsgID(cm, "correct1");
         arcServ.visit(cm);
-        assertTrue("The function 'getReplicaClientFromReplicaId' should have been called", arc.calls
-                .containsKey("getReplicaClientFromReplicaId"));
-        assertEquals("The function 'getReplicaClientFromReplicaId' should have been called once.", Integer
-                .valueOf(++getReplicaClientValue), arc.calls.get("getReplicaClientFromReplicaId"));
+        assertTrue("The function 'getReplicaClientFromReplicaId' should have been called",
+                arc.calls.containsKey("getReplicaClientFromReplicaId"));
+        assertEquals("The function 'getReplicaClientFromReplicaId' should have been called once.",
+                Integer.valueOf(++getReplicaClientValue), arc.calls.get("getReplicaClientFromReplicaId"));
 
         arcServ.close();
     }

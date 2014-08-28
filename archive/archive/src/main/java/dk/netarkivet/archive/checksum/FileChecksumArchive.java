@@ -657,9 +657,9 @@ public final class FileChecksumArchive implements ChecksumArchive {
      * @return A file containing the removed entry.
      * @throws ArgumentNotValid If one of the arguments are not valid.
      * @throws IOFailure If the entry cannot be corrected. Either the bad entry cannot be stored, or the new checksum
-     * file cannot be created. Or if a file for the removed entry cannot be created.
+     *         file cannot be created. Or if a file for the removed entry cannot be created.
      * @throws IllegalState If no such entry exists to be corrected, or if the entry has a different checksum than the
-     * incorrectChecksum.
+     *         incorrectChecksum.
      */
     @Override
     public File correct(String filename, File correctFile) throws IOFailure, ArgumentNotValid, IllegalState {

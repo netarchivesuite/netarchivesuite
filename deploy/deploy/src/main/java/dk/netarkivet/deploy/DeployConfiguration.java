@@ -81,7 +81,7 @@ public class DeployConfiguration {
      * @param externalJarFolder The folder containing the external jar library files.
      * @param sourceEncoding the encoding to use to read input files
      * @throws ArgumentNotValid If one of the following arguments is null: deployConfigFileName netarchiveSuiteFileName,
-     * secPolicyFileName, logPropFileName.
+     *         secPolicyFileName, logPropFileName.
      */
     public DeployConfiguration(File deployConfigFileName, File netarchiveSuiteFileName, File secPolicyFileName,
             File julPropFileName, File slf4jConfigFileName, String outputDirName, File dbFileName, File arcdbFileName,

@@ -117,8 +117,8 @@ public class CreateIndexTester {
         int exitCode = pse.getExitValue();
 
         assertEquals("Should have exit code 1, but was: " + exitCode, 1, exitCode);
-        assertTrue("The error message should contain '" + expectedMsg + "', but saw '" + errMsg + "'.", errMsg
-                .contains(expectedMsg));
+        assertTrue("The error message should contain '" + expectedMsg + "', but saw '" + errMsg + "'.",
+                errMsg.contains(expectedMsg));
     }
 
     @Test
@@ -139,8 +139,8 @@ public class CreateIndexTester {
         int exitCode = pse.getExitValue();
 
         assertEquals("Should have exit code 1, but was: " + exitCode, 1, exitCode);
-        assertTrue("The error message should contain '" + expectedMsg + "', but saw '" + errMsg + "'.", errMsg
-                .contains(expectedMsg));
+        assertTrue("The error message should contain '" + expectedMsg + "', but saw '" + errMsg + "'.",
+                errMsg.contains(expectedMsg));
     }
 
     @Test
@@ -161,8 +161,8 @@ public class CreateIndexTester {
         int exitCode = pse.getExitValue();
 
         assertEquals("Should have exit code 1, but was: " + exitCode, 1, exitCode);
-        assertTrue("The error message should contain '" + expectedMsg + "', but saw '" + errMsg + "'.", errMsg
-                .contains(expectedMsg));
+        assertTrue("The error message should contain '" + expectedMsg + "', but saw '" + errMsg + "'.",
+                errMsg.contains(expectedMsg));
     }
 
     @Test
@@ -181,8 +181,8 @@ public class CreateIndexTester {
         int exitCode = pse.getExitValue();
 
         assertEquals("Should have exit code 1, but was: " + exitCode, 1, exitCode);
-        assertTrue("The error message should contain '" + expectedMsg + "', but saw '" + errMsg + "'.", errMsg
-                .contains(expectedMsg));
+        assertTrue("The error message should contain '" + expectedMsg + "', but saw '" + errMsg + "'.",
+                errMsg.contains(expectedMsg));
     }
 
     /**

@@ -305,7 +305,7 @@ public class JMXHeritrixController extends AbstractJMXHeritrixController {
      * Check if the crawl has ended, either because Heritrix finished of its own, or because we terminated it.
      *
      * @return True if the crawl has ended, either because Heritrix finished or because we terminated it. Otherwise we
-     * return false.
+     *         return false.
      * @see HeritrixController#crawlIsEnded()
      */
     public synchronized boolean crawlIsEnded() {

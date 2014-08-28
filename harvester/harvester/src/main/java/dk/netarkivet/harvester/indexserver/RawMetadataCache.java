@@ -68,7 +68,7 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
      * format might.
      *
      * @param prefix A prefix that will be used to distinguish this cache's files from other caches'. It will be used
-     * for creating a directory, so it must not contain characters not legal in directory names.
+     *        for creating a directory, so it must not contain characters not legal in directory names.
      * @param urlMatcher A pattern for matching URLs of the desired entries. If null, a .* pattern will be used.
      * @param mimeMatcher A pattern for matching mime-types of the desired entries. If null, a .* pattern will be used.
      */

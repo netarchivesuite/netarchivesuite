@@ -121,7 +121,7 @@ public class BitarchiveServer extends ArchiveMessageHandler implements CleanupIF
      * alive.
      *
      * @throws UnknownID - if there was no heartbeat frequency or temp dir defined in settings or if the bitarchiveid
-     * cannot be created.
+     *         cannot be created.
      * @throws PermissionDenied - if the temporary directory or the file directory cannot be written
      */
     private BitarchiveServer() throws UnknownID, PermissionDenied {
@@ -405,8 +405,8 @@ public class BitarchiveServer extends ArchiveMessageHandler implements CleanupIF
 
             // check whether the batchjob is still running.
             if (t == null) {
-                log.info("The batchjob with ID '{}' cannot be found, and must have terminated by it self.", msg
-                        .getTerminateID());
+                log.info("The batchjob with ID '{}' cannot be found, and must have terminated by it self.",
+                        msg.getTerminateID());
                 return;
             }
 

@@ -135,8 +135,8 @@ public class ZipUtilsTester {
                 File originalFile = new File(TestInfo.ZIPDIR, s);
                 assertEquals("File " + s + " should have same size in unpacked dir", originalFile.length(),
                         unpackedFile.length());
-                assertEquals("MD5 should be the same on old and new file", ChecksumCalculator
-                        .calculateMd5(originalFile), ChecksumCalculator.calculateMd5(unpackedFile));
+                assertEquals("MD5 should be the same on old and new file",
+                        ChecksumCalculator.calculateMd5(originalFile), ChecksumCalculator.calculateMd5(unpackedFile));
             }
             files.remove(s);
         }

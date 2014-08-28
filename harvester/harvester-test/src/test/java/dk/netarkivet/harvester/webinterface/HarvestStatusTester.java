@@ -83,8 +83,8 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
         HarvestStatus hs = new HarvestStatus(420L, jsiList);
 
         assertEquals("Should have returned the correct fullresultsCount", 420L, hs.getFullResultsCount());
-        assertEquals("Should have returned the same empty list " + "of JobstatusInfo objects", jsiList, hs
-                .getJobStatusInfo());
+        assertEquals("Should have returned the same empty list " + "of JobstatusInfo objects", jsiList,
+                hs.getJobStatusInfo());
     }
 
     @Test
@@ -244,8 +244,8 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
 
         // check set order parameter
         parms = new HashMap<String, String[]>();
-        parms.put(HarvestStatusQuery.UI_FIELD.JOB_ID_ORDER.name(), new String[] {HarvestStatusQuery.SORT_ORDER.DESC
-                .name()});
+        parms.put(HarvestStatusQuery.UI_FIELD.JOB_ID_ORDER.name(),
+                new String[] {HarvestStatusQuery.SORT_ORDER.DESC.name()});
         servletRequest.setParameterMap(parms);
         query = new HarvestStatusQuery(servletRequest);
         assertFalse("Expected descending sort order", query.isSortAscending());
@@ -285,8 +285,8 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
         servletRequest.setParameterMap(parms);
         query = new HarvestStatusQuery(servletRequest);
         assertEquals("Only one statuscode should have selected", query.getSelectedJobStatuses().length, 1);
-        assertEquals("Expected failed job status for selection", JobStatus.FAILED.name(), query
-                .getSelectedJobStatuses()[0].name());
+        assertEquals("Expected failed job status for selection", JobStatus.FAILED.name(),
+                query.getSelectedJobStatuses()[0].name());
 
     }
 

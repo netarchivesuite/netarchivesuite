@@ -125,11 +125,12 @@ public class JMSConnectionSunMQ extends JMSConnection {
      *
      * @return QueueConnectionFactory
      * @throws JMSException If unable to create a QueueConnectionfactory with the necessary properties:
-     * imqConsumerflowLimit set to 1, imqBrokerHostname and imqBrokerHostPort set to the values defined in our settings.
+     *         imqConsumerflowLimit set to 1, imqBrokerHostname and imqBrokerHostPort set to the values defined in our
+     *         settings.
      */
     protected com.sun.messaging.ConnectionFactory getConnectionFactory() throws JMSException {
-        log.info("Establishing SunMQ JMS Connection to '{}:{}'", Settings.get(JMS_BROKER_HOST), Settings
-                .getInt(JMS_BROKER_PORT));
+        log.info("Establishing SunMQ JMS Connection to '{}:{}'", Settings.get(JMS_BROKER_HOST),
+                Settings.getInt(JMS_BROKER_PORT));
         com.sun.messaging.ConnectionFactory cFactory = new com.sun.messaging.ConnectionFactory();
         cFactory.setProperty(ConnectionConfiguration.imqBrokerHostName, Settings.get(JMS_BROKER_HOST));
         cFactory.setProperty(ConnectionConfiguration.imqBrokerHostPort, Settings.get(JMS_BROKER_PORT));

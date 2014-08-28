@@ -717,8 +717,8 @@ public class WindowsMachine extends Machine {
                     env.put("slf4jlogger", "");
                 }
                 if (app.getTotalName().contains(ScriptConstants.BITARCHIVE_APPLICATION_NAME)) {
-                    env.put("securityManagement", Template.untemplate(windowsStartVbsScriptTpl.securityManagement, env,
-                            true));
+                    env.put("securityManagement",
+                            Template.untemplate(windowsStartVbsScriptTpl.securityManagement, env, true));
                 } else {
                     env.put("securityManagement", "");
                 }

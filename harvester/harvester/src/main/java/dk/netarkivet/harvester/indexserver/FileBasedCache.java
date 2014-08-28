@@ -61,7 +61,7 @@ public abstract class FileBasedCache<T> {
      * files.
      *
      * @param cacheName Name of this cache (enabling sharing among processes). The directory created in the cachedir
-     * will have this name.
+     *        will have this name.
      */
     public FileBasedCache(String cacheName) {
         ArgumentNotValid.checkNotNullOrEmpty(cacheName, "cacheName");
@@ -94,8 +94,8 @@ public abstract class FileBasedCache<T> {
      *
      * @param id Some identifier for the item to be cached.
      * @return An id of content actually available. In most cases, this will be the same as id, but for complex I it
-     * could be a subset (or null if the type argument I is a simple type). If the return value is not the same as id,
-     * the file will not contain cached data, and may not even exist.
+     *         could be a subset (or null if the type argument I is a simple type). If the return value is not the same
+     *         as id, the file will not contain cached data, and may not even exist.
      */
     protected abstract T cacheData(T id);
 
@@ -114,7 +114,7 @@ public abstract class FileBasedCache<T> {
      *
      * @param id Some sort of id that uniquely identifies the item within the cache.
      * @return The id given if it was successfully fetched, otherwise null if the type parameter I does not allow
-     * subsets, or a subset of id if it does. This subset should be immediately cacheable.
+     *         subsets, or a subset of id if it does. This subset should be immediately cacheable.
      */
     public T cache(T id) {
         ArgumentNotValid.checkNotNull(id, "id");
@@ -167,7 +167,7 @@ public abstract class FileBasedCache<T> {
      *
      * @param ids List of IDs that uniquely identify a set of items within the cache.
      * @return A map from ID to the files containing cached data for those IDs. If caching failed, even partially, for
-     * an ID, the entry for the ID doesn't exist.
+     *         an ID, the entry for the ID doesn't exist.
      */
     public Map<T, File> get(Set<T> ids) {
         ArgumentNotValid.checkNotNull(ids, "Set<I> ids");

@@ -124,8 +124,8 @@ public class AggregationWorker implements CleanupIF {
                 }
             };
             Timer aggregatorThreadTimer = new Timer("AggregatorThread");
-            aggregatorThreadTimer.schedule(aggregatorTask, 0, Settings
-                    .getLong(WaybackSettings.WAYBACK_AGGREGATOR_AGGREGATION_INTERVAL));
+            aggregatorThreadTimer.schedule(aggregatorTask, 0,
+                    Settings.getLong(WaybackSettings.WAYBACK_AGGREGATOR_AGGREGATION_INTERVAL));
         } else {
             throw new IllegalStateException("An attempt has been made to start a second aggregation job");
         }

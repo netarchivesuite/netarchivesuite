@@ -177,8 +177,8 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
             rc.sendBatchJob(msg);
         } catch (Throwable t) {
             log.warn("Failed to handle batch request", t);
-            BatchReplyMessage replyMessage = new BatchReplyMessage(msg.getReplyTo(), Channels.getTheRepos(), msg
-                    .getID(), 0, Collections.<File>emptyList(), null);
+            BatchReplyMessage replyMessage = new BatchReplyMessage(msg.getReplyTo(), Channels.getTheRepos(),
+                    msg.getID(), 0, Collections.<File>emptyList(), null);
             replyMessage.setNotOk(t);
             JMSConnectionFactory.getInstance().send(replyMessage);
         }

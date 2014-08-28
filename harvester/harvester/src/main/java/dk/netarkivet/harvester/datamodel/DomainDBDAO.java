@@ -75,7 +75,7 @@ public class DomainDBDAO extends DomainDAO {
      * update the ones that haven't.
      *
      * @throws IOFailure on trouble updating tables to new versions, or on tables with wrong versions that we don't know
-     * how to change to expected version.
+     *         how to change to expected version.
      */
     protected DomainDBDAO() {
         Connection connection = HarvestDBConnection.get();
@@ -123,8 +123,11 @@ public class DomainDBDAO extends DomainDAO {
             long initialEdition = 1;
             s.setLong(4, initialEdition);
             AliasInfo aliasInfo = d.getAliasInfo();
-            DBUtils.setLongMaybeNull(s, 5, aliasInfo == null ? null : DBUtils.selectLongValue(connection,
-                    "SELECT domain_id FROM domains WHERE name = ?", aliasInfo.getAliasOf()));
+            DBUtils.setLongMaybeNull(
+                    s,
+                    5,
+                    aliasInfo == null ? null : DBUtils.selectLongValue(connection,
+                            "SELECT domain_id FROM domains WHERE name = ?", aliasInfo.getAliasOf()));
             DBUtils.setDateMaybeNull(s, 6, aliasInfo == null ? null : aliasInfo.getLastChange());
             s.executeUpdate();
 
@@ -206,8 +209,8 @@ public class DomainDBDAO extends DomainDAO {
         try {
             connection.setAutoCommit(false);
             // Domain object may not have ID yet, so get it from the DB
-            long domainID = DBUtils.selectLongValue(connection, "SELECT domain_id FROM domains WHERE name = ?", d
-                    .getName());
+            long domainID = DBUtils.selectLongValue(connection, "SELECT domain_id FROM domains WHERE name = ?",
+                    d.getName());
             if (d.hasID() && d.getID() != domainID) {
                 String message = "Domain " + d + " has wrong id: Has " + d.getID() + ", but persistent store claims "
                         + domainID;
@@ -228,8 +231,11 @@ public class DomainDBDAO extends DomainDAO {
             final long newEdition = d.getEdition() + 1;
             s.setLong(3, newEdition);
             AliasInfo aliasInfo = d.getAliasInfo();
-            DBUtils.setLongMaybeNull(s, 4, aliasInfo == null ? null : DBUtils.selectLongValue(connection,
-                    "SELECT domain_id FROM domains WHERE name = ?", aliasInfo.getAliasOf()));
+            DBUtils.setLongMaybeNull(
+                    s,
+                    4,
+                    aliasInfo == null ? null : DBUtils.selectLongValue(connection,
+                            "SELECT domain_id FROM domains WHERE name = ?", aliasInfo.getAliasOf()));
             DBUtils.setDateMaybeNull(s, 5, aliasInfo == null ? null : aliasInfo.getLastChange());
             s.setLong(6, d.getID());
             s.setLong(7, d.getEdition());
@@ -439,8 +445,8 @@ public class DomainDBDAO extends DomainDAO {
      * @throws SQLException If any database problems occur during the update process.
      */
     private void updateOwnerInfo(Connection c, Domain d) throws SQLException {
-        List<Long> oldIDs = DBUtils.selectLongList(c, "SELECT ownerinfo_id FROM ownerinfo " + "WHERE domain_id = ?", d
-                .getID());
+        List<Long> oldIDs = DBUtils.selectLongList(c, "SELECT ownerinfo_id FROM ownerinfo " + "WHERE domain_id = ?",
+                d.getID());
         PreparedStatement s = c.prepareStatement("UPDATE ownerinfo SET " + "created = ?, " + "info = ? "
                 + "WHERE ownerinfo_id = ?");
         for (DomainOwnerInfo doi : d.getAllDomainOwnerInfo()) {
@@ -668,7 +674,7 @@ public class DomainDBDAO extends DomainDAO {
      * @param d A domain to operate on.
      * @param dc A configuration to create xref table for.
      * @throws SQLException If any database problems occur during the insertion of password entries for the given domain
-     * configuration
+     *         configuration
      */
     private void createConfigPasswordsEntries(Connection c, Domain d, DomainConfiguration dc) throws SQLException {
         PreparedStatement s = c.prepareStatement("INSERT INTO config_passwords " + "( config_id, password_id ) "
@@ -706,7 +712,7 @@ public class DomainDBDAO extends DomainDAO {
      * @param d A domain to operate on.
      * @param dc A configuration to create xref table for.
      * @throws SQLException If any database problems occur during the insertion of seedlist entries for the given domain
-     * configuration
+     *         configuration
      */
     private void createConfigSeedlistsEntries(Connection c, Domain d, DomainConfiguration dc) throws SQLException {
         PreparedStatement s = c.prepareStatement("INSERT INTO config_seedlists " + " ( config_id, seedlist_id ) "
@@ -894,8 +900,8 @@ public class DomainDBDAO extends DomainDAO {
         s.setLong(1, d.getID());
         ResultSet res = s.executeQuery();
         while (res.next()) {
-            final DomainOwnerInfo ownerinfo = new DomainOwnerInfo(new Date(res.getTimestamp(2).getTime()), res
-                    .getString(3));
+            final DomainOwnerInfo ownerinfo = new DomainOwnerInfo(new Date(res.getTimestamp(2).getTime()),
+                    res.getString(3));
             ownerinfo.setID(res.getLong(1));
             d.addOwnerInfo(ownerinfo);
         }
@@ -1098,8 +1104,8 @@ public class DomainDBDAO extends DomainDAO {
         try {
             // Never delete default config and don't delete configs being used.
             return !config.getName().equals(defaultConfigName)
-                    && !DBUtils.selectAny(c, "SELECT config_id" + " FROM harvest_configs WHERE config_id = ?", config
-                            .getID());
+                    && !DBUtils.selectAny(c, "SELECT config_id" + " FROM harvest_configs WHERE config_id = ?",
+                            config.getID());
         } finally {
             HarvestDBConnection.release(c);
         }
@@ -1422,8 +1428,8 @@ public class DomainDBDAO extends DomainDAO {
                 List<Password> passwords = new ArrayList<Password>();
                 while (passwordResultset.next()) {
                     final Password pwd = new Password(passwordResultset.getString(2), passwordResultset.getString(3),
-                            passwordResultset.getString(4), passwordResultset.getString(5), passwordResultset
-                                    .getString(6), passwordResultset.getString(7));
+                            passwordResultset.getString(4), passwordResultset.getString(5),
+                            passwordResultset.getString(6), passwordResultset.getString(7));
                     pwd.setID(passwordResultset.getLong(1));
                     passwords.add(pwd);
                 }
@@ -1490,8 +1496,8 @@ public class DomainDBDAO extends DomainDAO {
             protected HarvestInfo filter(DomainConfiguration o) {
                 DomainConfiguration config = o;
                 DomainHistory domainHistory = getDomainHistory(config.getDomainName());
-                HarvestInfo hi = domainHistory.getSpecifiedHarvestInfo(previousHarvestDefinition.getOid(), config
-                        .getName());
+                HarvestInfo hi = domainHistory.getSpecifiedHarvestInfo(previousHarvestDefinition.getOid(),
+                        config.getName());
                 return hi;
             }
         }; // Here ends the above return-statement

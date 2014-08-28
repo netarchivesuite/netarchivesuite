@@ -235,7 +235,7 @@ public class ArcRepositoryTester {
      * Call the readChecksum method with some input and a file to look for.
      *
      * @param input Will be written to a file that readChecksum reads. Valid input is of the form
-     * <arcfilename>##<checksum>, but invalid input is part of the test.
+     *        <arcfilename>##<checksum>, but invalid input is part of the test.
      * @param arcfilename The name of the arcfile that readChecksum should look for.
      * @return The string found for the given filename.
      * @throws IOFailure when readChecksum does.
@@ -285,8 +285,8 @@ public class ArcRepositoryTester {
         JMSConnectionMockupMQ.updateMsgID(bamsg0, id1);
         a.onBatchReply(bamsg0);
         lr.assertLogNotContains("Should have no warnings", "WARNING: Read unex");
-        assertEquals("Should have updated the store state", ReplicaStoreState.UPLOAD_COMPLETED, ad.getState(arcname1,
-                Channels.getTheBamon().getName()));
+        assertEquals("Should have updated the store state", ReplicaStoreState.UPLOAD_COMPLETED,
+                ad.getState(arcname1, Channels.getTheBamon().getName()));
 
         // Test what happens when a known arcfile gets an error message.
         outstanding.put(id1, arcname1);
@@ -297,8 +297,8 @@ public class ArcRepositoryTester {
         bamsg2.setNotOk("Test an error");
         a.onBatchReply(bamsg2);
         lr.assertLogContains("Should have warning about error message", "Reported error: 'Test an error'");
-        assertEquals("Bad message should set entry to failed", ReplicaStoreState.UPLOAD_FAILED, ad.getState(arcname1,
-                Channels.getTheBamon().getName()));
+        assertEquals("Bad message should set entry to failed", ReplicaStoreState.UPLOAD_FAILED,
+                ad.getState(arcname1, Channels.getTheBamon().getName()));
 
         // Check what happens if not in AdminData
         // Related bug: 574 -- processing of errors is strange
@@ -312,8 +312,8 @@ public class ArcRepositoryTester {
             a.onBatchReply(bamsg3);
             fail("Should have thrown UnknownID when presented with an unknown arc file " + arcname1);
         } catch (UnknownID e) {
-            StringAsserts.assertStringContains("Should have mention of file " + "in error message", arcname1, e
-                    .getMessage());
+            StringAsserts.assertStringContains("Should have mention of file " + "in error message", arcname1,
+                    e.getMessage());
         }
         lr.assertLogContains("Should have warning about error message", "Reported error: 'Test another error'");
         assertFalse("Should not have info about non-yet-processed arcfile", ad.hasEntry(arcname1));
@@ -353,8 +353,8 @@ public class ArcRepositoryTester {
             fail("Should throw exception here!");
         } catch (UnknownID e) {
             // no previous knowledge about 'filename'.
-            assertTrue("Should say, that it known nothing about 'filename', but was: " + e, e.getMessage().contains(
-                    "Don't know anything about file 'filename'"));
+            assertTrue("Should say, that it known nothing about 'filename', but was: " + e,
+                    e.getMessage().contains("Don't know anything about file 'filename'"));
         }
 
         lr.assertLogContains("Should give Warning of about message being NotOk.",
@@ -411,17 +411,17 @@ public class ArcRepositoryTester {
                 .getAllFileNames(Replica.getReplicaFromId("ONE"), ReplicaStoreState.UPLOAD_COMPLETED).size());
         List<String> res = new ArrayList<String>();
         res.add("filename");
-        assertEquals("The admin data should have the files 'filename' as UPLOAD_COMPLETE for replica ONE", res
-                .toString(), admin.getAllFileNames(Replica.getReplicaFromId("ONE"), ReplicaStoreState.UPLOAD_COMPLETED)
-                .toString());
+        assertEquals("The admin data should have the files 'filename' as UPLOAD_COMPLETE for replica ONE",
+                res.toString(),
+                admin.getAllFileNames(Replica.getReplicaFromId("ONE"), ReplicaStoreState.UPLOAD_COMPLETED).toString());
 
         msg = new AdminDataMessage("filename", "TWO", ReplicaStoreState.UPLOAD_FAILED);
         arc.updateAdminData(msg);
 
-        assertEquals("The admin data should have no UPLOAD_COMPLETED files for replica TWO", 0, admin.getAllFileNames(
-                Replica.getReplicaFromId("TWO"), ReplicaStoreState.UPLOAD_COMPLETED).size());
-        assertEquals("The admin data should have one UPLOAD_FAILED files for replica TWO", 1, admin.getAllFileNames(
-                Replica.getReplicaFromId("TWO"), ReplicaStoreState.UPLOAD_FAILED).size());
+        assertEquals("The admin data should have no UPLOAD_COMPLETED files for replica TWO", 0,
+                admin.getAllFileNames(Replica.getReplicaFromId("TWO"), ReplicaStoreState.UPLOAD_COMPLETED).size());
+        assertEquals("The admin data should have one UPLOAD_FAILED files for replica TWO", 1,
+                admin.getAllFileNames(Replica.getReplicaFromId("TWO"), ReplicaStoreState.UPLOAD_FAILED).size());
 
         // check for changing the checksum.
         assertEquals("Should give the first assigned checksum.", "checksum", admin.getCheckSum("filename"));
@@ -455,8 +455,8 @@ public class ArcRepositoryTester {
         pse.tearDown();
 
         assertEquals("Should give exit code 1", 1, pse.getExitValue());
-        assertTrue("Should tell that no arguments are expected.", pss.getOut().contains(
-                "This application takes no arguments"));
+        assertTrue("Should tell that no arguments are expected.",
+                pss.getOut().contains("This application takes no arguments"));
     }
 
 }

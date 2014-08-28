@@ -97,8 +97,8 @@ public class RunBatchTester {
         int pseVal = pse.getExitValue();
 
         assertEquals("The exception should be 1 but was: " + pseVal, 1, pseVal);
-        assertTrue("The error message should start with '" + expectedErrorMessage + "' but it is: " + errMsg, errMsg
-                .startsWith(expectedErrorMessage));
+        assertTrue("The error message should start with '" + expectedErrorMessage + "' but it is: " + errMsg,
+                errMsg.startsWith(expectedErrorMessage));
     }
 
     /**
@@ -122,8 +122,8 @@ public class RunBatchTester {
         int pseVal = pse.getExitValue();
 
         assertEquals("The exception should be 1 but was: " + pseVal, 1, pseVal);
-        assertTrue("The error message should start with '" + expectedErrorMessage + "' but it is: " + errMsg, errMsg
-                .startsWith(expectedErrorMessage));
+        assertTrue("The error message should start with '" + expectedErrorMessage + "' but it is: " + errMsg,
+                errMsg.startsWith(expectedErrorMessage));
     }
 
     /**
@@ -144,8 +144,8 @@ public class RunBatchTester {
         int pseVal = pse.getExitValue();
 
         assertEquals("The exception should be 1 but was: " + pseVal, 1, pseVal);
-        assertTrue("The error message should start with '" + expectedErrorMessage + "' but it is: " + errMsg, errMsg
-                .startsWith(expectedErrorMessage));
+        assertTrue("The error message should start with '" + expectedErrorMessage + "' but it is: " + errMsg,
+                errMsg.startsWith(expectedErrorMessage));
     }
 
     /**
@@ -166,8 +166,8 @@ public class RunBatchTester {
         int pseVal = pse.getExitValue();
 
         assertEquals("The exception should be 1 but was: " + pseVal, 1, pseVal);
-        assertTrue("The error message should start with '" + expectedErrorMessage + "' but it is: " + errMsg, errMsg
-                .startsWith(expectedErrorMessage));
+        assertTrue("The error message should start with '" + expectedErrorMessage + "' but it is: " + errMsg,
+                errMsg.startsWith(expectedErrorMessage));
     }
 
     /**
@@ -189,8 +189,8 @@ public class RunBatchTester {
         int pseVal = pse.getExitValue();
 
         assertEquals("The exception should be 1 but was: " + pseVal, 1, pseVal);
-        assertTrue("The error message should start with '" + expectedErrorMessage + "' but it is: " + errMsg, errMsg
-                .startsWith(expectedErrorMessage));
+        assertTrue("The error message should start with '" + expectedErrorMessage + "' but it is: " + errMsg,
+                errMsg.startsWith(expectedErrorMessage));
     }
 
     /**
@@ -211,8 +211,8 @@ public class RunBatchTester {
         int pseVal = pse.getExitValue();
 
         assertEquals("The exception should be 1 but was: " + pseVal, 1, pseVal);
-        assertTrue("The error message should start with '" + expectedErrorMessage + "' but it is: " + errMsg, errMsg
-                .startsWith(expectedErrorMessage));
+        assertTrue("The error message should start with '" + expectedErrorMessage + "' but it is: " + errMsg,
+                errMsg.startsWith(expectedErrorMessage));
     }
 
     /**
@@ -233,8 +233,8 @@ public class RunBatchTester {
         int pseVal = pse.getExitValue();
 
         assertEquals("The exception should be 1 but was: " + pseVal, 1, pseVal);
-        assertTrue("The error message should start with '" + expectedErrorMessage + "' but it is: " + errMsg, errMsg
-                .startsWith(expectedErrorMessage));
+        assertTrue("The error message should start with '" + expectedErrorMessage + "' but it is: " + errMsg,
+                errMsg.startsWith(expectedErrorMessage));
     }
 
     /**
@@ -255,8 +255,8 @@ public class RunBatchTester {
         int pseVal = pse.getExitValue();
 
         assertEquals("The exception should be 1 but was: " + pseVal, 1, pseVal);
-        assertTrue("The error message should start with '" + expectedErrorMessage + "' but it is: " + errMsg, errMsg
-                .startsWith(expectedErrorMessage));
+        assertTrue("The error message should start with '" + expectedErrorMessage + "' but it is: " + errMsg,
+                errMsg.startsWith(expectedErrorMessage));
     }
 
     /**
@@ -277,8 +277,8 @@ public class RunBatchTester {
         int pseVal = pse.getExitValue();
 
         assertEquals("The exception should be 1 but was: " + pseVal, 1, pseVal);
-        assertTrue("The error message should start with '" + expectedErrorMessage + "' but it is: " + errMsg, errMsg
-                .startsWith(expectedErrorMessage));
+        assertTrue("The error message should start with '" + expectedErrorMessage + "' but it is: " + errMsg,
+                errMsg.startsWith(expectedErrorMessage));
     }
 
     /**
@@ -301,8 +301,8 @@ public class RunBatchTester {
         int pseVal = pse.getExitValue();
 
         assertEquals("The exception should be 1 but was: " + pseVal, 1, pseVal);
-        assertTrue("The error message should start with '" + expectedErrorMessage + "' but it is: " + errMsg, errMsg
-                .startsWith(expectedErrorMessage));
+        assertTrue("The error message should start with '" + expectedErrorMessage + "' but it is: " + errMsg,
+                errMsg.startsWith(expectedErrorMessage));
     }
 
     /**
@@ -325,8 +325,8 @@ public class RunBatchTester {
         int pseVal = pse.getExitValue();
 
         assertEquals("The exception should be 1 but was: " + pseVal, 1, pseVal);
-        assertTrue("The error message should start with '" + expectedErrorMessage + "' but it is: " + errMsg, errMsg
-                .startsWith(expectedErrorMessage));
+        assertTrue("The error message should start with '" + expectedErrorMessage + "' but it is: " + errMsg,
+                errMsg.startsWith(expectedErrorMessage));
     }
 
     /**
@@ -350,8 +350,8 @@ public class RunBatchTester {
         int pseVal = pse.getExitValue();
 
         assertEquals("The exception should be 1 but was: " + pseVal, 1, pseVal);
-        assertTrue("The error message should start with '" + expectedErrorMessage + "' but it is: " + errMsg, errMsg
-                .startsWith(expectedErrorMessage));
+        assertTrue("The error message should start with '" + expectedErrorMessage + "' but it is: " + errMsg,
+                errMsg.startsWith(expectedErrorMessage));
     }
 
     /**
@@ -374,8 +374,8 @@ public class RunBatchTester {
         int pseVal = pse.getExitValue();
 
         assertEquals("The exception should be 1 but was: " + pseVal, 1, pseVal);
-        assertTrue("The error message should start with '" + expectedErrorMessage + "' but it is: " + errMsg, errMsg
-                .startsWith(expectedErrorMessage));
+        assertTrue("The error message should start with '" + expectedErrorMessage + "' but it is: " + errMsg,
+                errMsg.startsWith(expectedErrorMessage));
     }
 
     /**
@@ -398,8 +398,8 @@ public class RunBatchTester {
         int pseVal = pse.getExitValue();
 
         assertEquals("The exception should be 1 but was: " + pseVal, 1, pseVal);
-        assertTrue("The error message should start with '" + expectedErrorMessage + "' but it is: " + errMsg, errMsg
-                .startsWith(expectedErrorMessage));
+        assertTrue("The error message should start with '" + expectedErrorMessage + "' but it is: " + errMsg,
+                errMsg.startsWith(expectedErrorMessage));
     }
 
     /**
@@ -436,8 +436,8 @@ public class RunBatchTester {
                 BatchMessage m = (BatchMessage) nmsg;
 
                 BatchReplyMessage brm = new BatchReplyMessage(m.getReplyTo(), Channels.getTheBamon(), m.getID(), 0,
-                        (Collection<File>) new ArrayList<File>(), RemoteFileFactory
-                                .getCopyfileInstance(TestInfo.BATCH_TEST_JAR_FILE));
+                        (Collection<File>) new ArrayList<File>(),
+                        RemoteFileFactory.getCopyfileInstance(TestInfo.BATCH_TEST_JAR_FILE));
 
                 JMSConnectionFactory.getInstance().send(brm);
             }

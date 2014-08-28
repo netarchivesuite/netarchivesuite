@@ -128,7 +128,7 @@ public class PartialHarvest extends HarvestDefinition {
      * Get the next date this harvest definition should be run.
      *
      * @return The next date the harvest definition should be run or null, if the harvest definition should never run
-     * again.
+     *         again.
      */
     public Date getNextDate() {
         return nextDate;

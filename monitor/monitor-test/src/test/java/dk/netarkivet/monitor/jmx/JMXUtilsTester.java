@@ -62,8 +62,8 @@ public class JMXUtilsTester extends TestCase {
         JMXServiceURL JmxServiceUrl = JMXUtils.getUrl(defaultServer, 8000, 8100);
         // JmxServiceUrl = JMXUtils.getUrl("kb-test-adm-001.kb.dk", 8000, 8100);
         try {
-            JMXUtils.getMBeanServerConnection(JmxServiceUrl, JMXUtils.packageCredentials("monitorRole",
-                    "monitorRolePassword"));
+            JMXUtils.getMBeanServerConnection(JmxServiceUrl,
+                    JMXUtils.packageCredentials("monitorRole", "monitorRolePassword"));
         } catch (IOFailure e) {
             // Expected
         }

@@ -115,8 +115,8 @@ public class HTTPControllerServer extends CommandResolver {
      *
      * @param request The request to check
      * @param response The response to give command results to if it is a command. If the request is one of these
-     * commands, the response code is set to 303 if page is redirected to return url; 200 if command url returns data;
-     * otherwise whatever is returned by the wrapped resolver
+     *        commands, the response code is set to 303 if page is redirected to return url; 200 if command url returns
+     *        data; otherwise whatever is returned by the wrapped resolver
      * @return Whether this was a command URL
      */
     protected boolean executeCommand(Request request, Response response) {
@@ -283,7 +283,7 @@ public class HTTPControllerServer extends CommandResolver {
      * @param request A request to look up parameters in.
      * @param parameterName The name of the parameter to look up.
      * @return The value of one instance of the parameter in the request. If more than one instance exists, an arbitrary
-     * one is picked.
+     *         one is picked.
      * @throws IOFailure if the parameter is not given.
      */
     private String getParameter(Request request, String parameterName) {

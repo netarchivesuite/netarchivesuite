@@ -112,8 +112,8 @@ public abstract class ArchiveBatchJob extends ArchiveBatchJobBase {
                         if (!getFilter().accept(record)) {
                             continue;
                         }
-                        log.debug("Processing record #{} in archive file '{}'.", noOfRecordsProcessed, archiveFile
-                                .getName());
+                        log.debug("Processing record #{} in archive file '{}'.", noOfRecordsProcessed,
+                                archiveFile.getName());
                         processRecord(record, os);
                         ++noOfRecordsProcessed;
                     } catch (NetarkivetException e) {

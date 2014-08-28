@@ -121,7 +121,7 @@ public class XmlTree<T> implements StringTree<T> {
      * Get the value of a named sub-leaf.
      *
      * @param name Name of the sub-leaf to get the value of. These are strings, and as a shorthand may specify subtrees
-     * of subtrees by separating each level with '.', i.e. getSubtrees("subtree.subsubtree").
+     *        of subtrees by separating each level with '.', i.e. getSubtrees("subtree.subsubtree").
      * @return The value of the named leaf of this Tree, if it exists.
      * @throws IllegalState if this StringTree does not have exactly one leaf sub-node with the given name.
      * @throws ArgumentNotValid if argument is null or empty.
@@ -153,7 +153,7 @@ public class XmlTree<T> implements StringTree<T> {
      * Get the only subtree with the given name.
      *
      * @param name The name of the subtree. These are strings, and as a shorthand may specify subtrees of subtrees by
-     * separating each level with '.', i.e. getSubtrees("subtree.subsubtree").
+     *        separating each level with '.', i.e. getSubtrees("subtree.subsubtree").
      * @return The single subtree with the given name.
      * @throws IllegalState if this object is a leaf, or there is not exactly one subtree with the given name.
      * @throws ArgumentNotValid if argument is null or empty.
@@ -171,7 +171,7 @@ public class XmlTree<T> implements StringTree<T> {
      * Get the named subtrees.
      *
      * @param name The name of the subtrees. These are strings, and as a shorthand may specify subtrees of subtrees by
-     * separating each level with '.', i.e. getSubtrees("subtree.subsubtree").
+     *        separating each level with '.', i.e. getSubtrees("subtree.subsubtree").
      * @return All subtrees with the given name, or an empty list for none.
      * @throws IllegalState if this object is a leaf.
      * @throws ArgumentNotValid if argument is null or empty.
@@ -261,7 +261,7 @@ public class XmlTree<T> implements StringTree<T> {
      *
      * @return Map from subtree names to values of their leaves.
      * @throws IllegalState if this object is a leaf or if the subtrees are not uniquely named, or if any of its
-     * children are not leaves.
+     *         children are not leaves.
      */
     public Map<String, T> getLeafMap() {
         if (isLeaf()) {

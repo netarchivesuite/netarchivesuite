@@ -60,7 +60,7 @@ public interface JMXProxyConnection {
      * Returns true if this object still can return usable proxies.
      *
      * @return True if we can return usable proxies. Otherwise, somebody may have to make a new instance of
-     * JMXProxyFactory to get new proxies.
+     *         JMXProxyFactory to get new proxies.
      */
     boolean isLive();
 }

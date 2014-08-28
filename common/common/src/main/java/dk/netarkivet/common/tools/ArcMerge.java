@@ -44,7 +44,7 @@ public class ArcMerge extends ToolRunnerBase {
      * Main method. Reads all ARC files specified (as arguments) and outputs a merged ARC file on stdout.
      *
      * @param args The command line arguments should be a list of ARC files to be merged. At least one input ARC file
-     * should be given.
+     *        should be given.
      */
     public static void main(String[] args) {
         ArcMerge instance = new ArcMerge();

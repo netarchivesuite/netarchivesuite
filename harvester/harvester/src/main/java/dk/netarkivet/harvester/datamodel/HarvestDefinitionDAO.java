@@ -137,7 +137,7 @@ public abstract class HarvestDefinitionDAO implements DAO, Iterable<HarvestDefin
      *
      * @param now
      * @return IDs of the harvest definitions that are currently ready to be scheduled. Some of these might already be
-     * in the process of being scheduled.
+     *         in the process of being scheduled.
      */
     public abstract Iterable<Long> getReadyHarvestDefinitions(Date now);
 

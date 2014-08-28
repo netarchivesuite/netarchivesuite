@@ -217,8 +217,8 @@ public class ARCBatchJobTester {
         List<FileBatchJob.ExceptionOccurrence> state1 = job1.getExceptions();
         List<FileBatchJob.ExceptionOccurrence> state2 = job2.getExceptions();
 
-        assertEquals("The two jobs should have the same number of " + "registered exceptions.", state1.size(), state2
-                .size());
+        assertEquals("The two jobs should have the same number of " + "registered exceptions.", state1.size(),
+                state2.size());
         for (int i = 0; i < state1.size(); i++) {
             assertEquals("Found differing registered exceptions: " + state1.get(i).toString()
                     + state2.get(i).toString(), state1.get(i).toString(), state2.get(i).toString());

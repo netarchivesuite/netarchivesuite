@@ -387,8 +387,8 @@ public class LinuxMachine extends Machine {
 
                     // PIDS = $(ps -wwfe | grep fullapp | grep -v grep | grep
                     // path\settings_app.xml | awk "{print \\$2}")
-                    appPrint.println(ScriptConstants.getLinuxPIDS(app.getTotalName(), getConfDirPath(), app
-                            .getIdentification()));
+                    appPrint.println(ScriptConstants.getLinuxPIDS(app.getTotalName(), getConfDirPath(),
+                            app.getIdentification()));
                     // if [ -n "$PIDS" ]; then
                     appPrint.println(ScriptConstants.LINUX_IF_N_EXIST + Constants.SPACE + Constants.QUOTE_MARK
                             + ScriptConstants.PIDS + Constants.QUOTE_MARK + Constants.SPACE
@@ -402,8 +402,8 @@ public class LinuxMachine extends Machine {
 
                     appPrint.println();
                     // Set PIDS
-                    appPrint.println(ScriptConstants.getLinuxPIDS(app.getTotalName(), getConfDirPath(), app
-                            .getIdentification()));
+                    appPrint.println(ScriptConstants.getLinuxPIDS(app.getTotalName(), getConfDirPath(),
+                            app.getIdentification()));
                     // IF
                     appPrint.println(ScriptConstants.LINUX_IF_N_EXIST + Constants.SPACE + Constants.QUOTE_MARK
                             + ScriptConstants.PIDS + Constants.QUOTE_MARK + Constants.SPACE
@@ -425,8 +425,8 @@ public class LinuxMachine extends Machine {
                         appPrint.println();
                         // - PIDS = $(ps -wwfe | grep heritrix | grep -v grep
                         // | grep path\settings_app.xml | awk "{print \\$2}")
-                        appPrint.println(ScriptConstants.getLinuxPIDS(Heritrix.class.getName(), getConfDirPath(), app
-                                .getIdentification()));
+                        appPrint.println(ScriptConstants.getLinuxPIDS(Heritrix.class.getName(), getConfDirPath(),
+                                app.getIdentification()));
                         // - if [ -n "$PIDS" ]; then
                         appPrint.println(ScriptConstants.LINUX_IF_N_EXIST + Constants.SPACE + Constants.QUOTE_MARK
                                 + ScriptConstants.PIDS + Constants.QUOTE_MARK + Constants.SPACE
@@ -442,8 +442,8 @@ public class LinuxMachine extends Machine {
                         appPrint.println(ScriptConstants.SLEEP_2);
                         appPrint.println();
                         // See if Process is still around
-                        appPrint.println(ScriptConstants.getLinuxPIDS(Heritrix.class.getName(), getConfDirPath(), app
-                                .getIdentification()));
+                        appPrint.println(ScriptConstants.getLinuxPIDS(Heritrix.class.getName(), getConfDirPath(),
+                                app.getIdentification()));
                         // if still around
                         appPrint.println(ScriptConstants.LINUX_IF_N_EXIST + Constants.SPACE + Constants.QUOTE_MARK
                                 + ScriptConstants.PIDS + Constants.QUOTE_MARK + Constants.SPACE
@@ -501,8 +501,8 @@ public class LinuxMachine extends Machine {
                     appPrint.println(ScriptConstants.CD + Constants.SPACE + app.installPathLinux());
                     // PIDS = $(ps -wwfe | grep fullapp | grep -v grep | grep
                     // path\settings_app.xml | awk "{print \\$2}")
-                    appPrint.println(ScriptConstants.getLinuxPIDS(app.getTotalName(), getConfDirPath(), app
-                            .getIdentification()));
+                    appPrint.println(ScriptConstants.getLinuxPIDS(app.getTotalName(), getConfDirPath(),
+                            app.getIdentification()));
                     // if [ -n "$PIDS" ]; then
                     appPrint.println(ScriptConstants.LINUX_IF_N_EXIST + Constants.SPACE + Constants.QUOTE_MARK
                             + ScriptConstants.PIDS + Constants.QUOTE_MARK + Constants.SPACE

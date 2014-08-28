@@ -124,8 +124,8 @@ public class BitarchiveTesterAdmin extends BitarchiveTestCase {
      */
     @Test
     public void testCTOR() {
-        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, ARCHIVE_DIR_1.getAbsolutePath(), ARCHIVE_DIR_2
-                .getAbsolutePath());
+        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, ARCHIVE_DIR_1.getAbsolutePath(),
+                ARCHIVE_DIR_2.getAbsolutePath());
         archive.close();
         archive = null;
         archive = Bitarchive.getInstance();

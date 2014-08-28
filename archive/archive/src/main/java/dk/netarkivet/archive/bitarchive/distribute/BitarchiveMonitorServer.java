@@ -154,8 +154,8 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler implements Ob
 
         log.info("Received BatchMessage\n{}", inbMsg.toString());
         try {
-            BatchMessage outbMsg = new BatchMessage(Channels.getAllBa(), inbMsg.getJob(), Settings
-                    .get(CommonSettings.USE_REPLICA_ID));
+            BatchMessage outbMsg = new BatchMessage(Channels.getAllBa(), inbMsg.getJob(),
+                    Settings.get(CommonSettings.USE_REPLICA_ID));
             con.send(outbMsg);
             long batchTimeout = inbMsg.getJob().getBatchJobTimeout();
             // if batch time out is not a positive number, then use settings.
@@ -192,9 +192,9 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler implements Ob
                         errorMessages = beMsg.getErrMsg();
                     }
                     // send reply to the bitarchive.
-                    bamon.bitarchiveReply(beMsg.getOriginatingBatchMsgID(), beMsg.getBitarchiveID(), beMsg
-                            .getNoOfFilesProcessed(), beMsg.getFilesFailed(), beMsg.getRemoteFile(), errorMessages,
-                            beMsg.getExceptions());
+                    bamon.bitarchiveReply(beMsg.getOriginatingBatchMsgID(), beMsg.getBitarchiveID(),
+                            beMsg.getNoOfFilesProcessed(), beMsg.getFilesFailed(), beMsg.getRemoteFile(),
+                            errorMessages, beMsg.getExceptions());
                 }
             }.start();
         } catch (Exception e) {
@@ -237,8 +237,8 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler implements Ob
 
         try {
             // Create the RemoveAndGetFileMessage for removing the file.
-            RemoveAndGetFileMessage ragfm = new RemoveAndGetFileMessage(Channels.getAllBa(), Channels.getTheBamon(), cm
-                    .getArcfileName(), cm.getReplicaId(), cm.getIncorrectChecksum(), cm.getCredentials());
+            RemoveAndGetFileMessage ragfm = new RemoveAndGetFileMessage(Channels.getAllBa(), Channels.getTheBamon(),
+                    cm.getArcfileName(), cm.getReplicaId(), cm.getIncorrectChecksum(), cm.getCredentials());
 
             // Send the message.
             con.send(ragfm);
@@ -404,8 +404,8 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler implements Ob
      */
     private void executeConvertedBatch(FileBatchJob job, NetarkivetMessage msg) {
         try {
-            BatchMessage outbMsg = new BatchMessage(Channels.getAllBa(), job, Settings
-                    .get(CommonSettings.USE_REPLICA_ID));
+            BatchMessage outbMsg = new BatchMessage(Channels.getAllBa(), job,
+                    Settings.get(CommonSettings.USE_REPLICA_ID));
             con.send(outbMsg);
 
             long batchTimeout = job.getBatchJobTimeout();
@@ -433,9 +433,9 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler implements Ob
      * request.
      *
      * @param o the observable object. Should always be the bitarchive monitor. If it isn't, this notification will be
-     * logged and ignored.
+     *        logged and ignored.
      * @param arg an argument passed from the bitarchive monitor. This should always be a batch status object indicating
-     * the end of that batchjob. If it isn't, this notification will be logged and ignored.
+     *        the end of that batchjob. If it isn't, this notification will be logged and ignored.
      */
     public void update(Observable o, final Object arg) {
         if (o != bamon) {
@@ -631,8 +631,8 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler implements Ob
             }
             if (output.size() > 1) {
                 // Log that duplicates have been found.
-                log.warn("The file '{}' was found {} times in the archive. Using the first found '{}' out of '{}'", msg
-                        .getArcfileName(), output.size(), output.get(0), output);
+                log.warn("The file '{}' was found {} times in the archive. Using the first found '{}' out of '{}'",
+                        msg.getArcfileName(), output.size(), output.get(0), output);
 
                 // check if any different values.
                 String firstVal = output.get(0);

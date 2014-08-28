@@ -66,7 +66,7 @@ public class CDXOriginCrawlLogIterator extends CrawlLogIterator {
      *
      * @param source File containing a crawl.log sorted by URL (LANG=C sort -k 4b)
      * @param cdx A reader of a sorted CDX file. This is given as a reader so that it may be closed after use
-     * (CrawlLogIterator provides no close())
+     *        (CrawlLogIterator provides no close())
      * @throws IOException If the underlying CrawlLogIterator fails, e.g. due to missing files.
      */
     public CDXOriginCrawlLogIterator(File source, BufferedReader cdx) throws IOException {
@@ -150,8 +150,8 @@ public class CDXOriginCrawlLogIterator extends CrawlLogIterator {
                 if (lastRecord == null) {
                     log.trace("No matching CDX for URL '{}'. No last CDX was found.", item.getURL());
                 } else {
-                    log.trace("No matching CDX for URL '{}'. Last CDX was for URL '{}'", item.getURL(), lastRecord
-                            .getURL());
+                    log.trace("No matching CDX for URL '{}'. Last CDX was for URL '{}'", item.getURL(),
+                            lastRecord.getURL());
                 }
 
                 return null;

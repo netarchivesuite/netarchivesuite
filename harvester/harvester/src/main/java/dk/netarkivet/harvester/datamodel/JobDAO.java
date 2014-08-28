@@ -90,7 +90,7 @@ public abstract class JobDAO implements DAO, Iterable<Job> {
      * @param jobID The ID of the job to read
      * @return a Job instance
      * @throws ArgumentNotValid If failed to create job instance in case the configuration or priority is null, or the
-     * harvestID is invalid.
+     *         harvestID is invalid.
      * @throws UnknownID If the job with the given jobID does not exist in persistent storage.
      * @throws IOFailure If the loaded ID of job does not match the expected.
      */
@@ -193,7 +193,7 @@ public abstract class JobDAO implements DAO, Iterable<Job> {
      *
      * @param jobID The job ID to find duplicate reduction data for.
      * @return A list of job IDs (possibly empty) of potential previous harvests of this job, to use for duplicate
-     * reduction.
+     *         reduction.
      * @throws UnknownID if job ID is unknown
      * @throws IOFailure on trouble getting ids from metadata storage
      */

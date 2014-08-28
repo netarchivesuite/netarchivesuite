@@ -308,11 +308,11 @@ public class BitarchiveServerTester {
         // It should have been received by GenericMessageListener:
         assertTrue("Should have received at least one message on arcRepos q", listener.messagesReceived.size() >= 1);
 
-        assertEquals("Reposted message should be identical to original UploadMessage.", msg, listener.messagesReceived
-                .get(0));
+        assertEquals("Reposted message should be identical to original UploadMessage.", msg,
+                listener.messagesReceived.get(0));
 
-        assertFalse("The message reposted should not be okay", ((NetarkivetMessage) listener.messagesReceived.get(0))
-                .isOk());
+        assertFalse("The message reposted should not be okay",
+                ((NetarkivetMessage) listener.messagesReceived.get(0)).isOk());
     }
 
     /**
@@ -401,8 +401,8 @@ public class BitarchiveServerTester {
 
         // Construct a BatchMessage to do a checksum job and pass it to
         // the Bitarchive
-        BatchMessage bm = new BatchMessage(Channels.getTheBamon(), new ChecksumJob(), Settings
-                .get(CommonSettings.USE_REPLICA_ID));
+        BatchMessage bm = new BatchMessage(Channels.getTheBamon(), new ChecksumJob(),
+                Settings.get(CommonSettings.USE_REPLICA_ID));
 
         JMSConnectionMockupMQ.updateMsgID(bm, "ID45");
         bas.visit(bm);
@@ -480,8 +480,8 @@ public class BitarchiveServerTester {
                 }
             }
         }, Settings.get(CommonSettings.USE_REPLICA_ID));
-        BatchMessage bm2 = new BatchMessage(Channels.getTheBamon(), new TimedChecksumJob(), Settings
-                .get(CommonSettings.USE_REPLICA_ID));
+        BatchMessage bm2 = new BatchMessage(Channels.getTheBamon(), new TimedChecksumJob(),
+                Settings.get(CommonSettings.USE_REPLICA_ID));
 
         JMSConnectionMockupMQ.updateMsgID(bm1, "ID45");
         JMSConnectionMockupMQ.updateMsgID(bm2, "ID46");
@@ -597,8 +597,8 @@ public class BitarchiveServerTester {
 
         assertEquals("Should have no remote files left on the server", 0, TestRemoteFile.remainingFiles().size());
 
-        assertTrue("The message should refer to the current replica id.", m4.getReplicaId().contains(
-                Settings.get(CommonSettings.USE_REPLICA_ID)));
+        assertTrue("The message should refer to the current replica id.",
+                m4.getReplicaId().contains(Settings.get(CommonSettings.USE_REPLICA_ID)));
         m4.clearBuffer();
         m4.accept(bas);
         try {
@@ -644,8 +644,8 @@ public class BitarchiveServerTester {
 
         // Construct a BatchMessage to do a checksum job and pass it to
         // the Bitarchive
-        BatchMessage bm = new BatchMessage(Channels.getTheBamon(), new TimedChecksumJob(), Settings
-                .get(CommonSettings.USE_REPLICA_ID));
+        BatchMessage bm = new BatchMessage(Channels.getTheBamon(), new TimedChecksumJob(),
+                Settings.get(CommonSettings.USE_REPLICA_ID));
 
         JMSConnectionMockupMQ.updateMsgID(bm, "ID45");
         bas.visit(bm);
@@ -858,8 +858,8 @@ public class BitarchiveServerTester {
         pse.tearDown();
 
         assertEquals("Should give exit code 1", 1, pse.getExitValue());
-        assertTrue("Should tell that no arguments are expected.", pss.getOut().contains(
-                "This application takes no arguments"));
+        assertTrue("Should tell that no arguments are expected.",
+                pss.getOut().contains("This application takes no arguments"));
     }
 
     /**

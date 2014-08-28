@@ -197,8 +197,8 @@ public class NetarkivetMessageTester {
         NetarkivetMessage m = new TestMessage(toQ, replyToQ);
         m.setNotOk(ERR_MSG);
         m.setNotOk(ERR_MSG);
-        assertEquals("Wrong error message: " + m.getErrMsg(), ERR_MSG + NetarkivetMessage.ERROR_DELIMITTER + ERR_MSG, m
-                .getErrMsg());
+        assertEquals("Wrong error message: " + m.getErrMsg(), ERR_MSG + NetarkivetMessage.ERROR_DELIMITTER + ERR_MSG,
+                m.getErrMsg());
     }
 
     /**

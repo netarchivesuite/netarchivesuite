@@ -81,8 +81,8 @@ abstract class AbstractJobGenerator implements JobGenerator {
             }
 
             Collections.sort(subset, getDomainConfigurationSubsetComparator(harvest));
-            log.trace("{} domainconfigs now sorted and ready to processing for harvest #{}", subset.size(), harvest
-                    .getOid());
+            log.trace("{} domainconfigs now sorted and ready to processing for harvest #{}", subset.size(),
+                    harvest.getOid());
             jobsMade += processDomainConfigurationSubset(harvest, subset.iterator());
         }
         harvest.setNumEvents(harvest.getNumEvents() + 1);
@@ -104,8 +104,8 @@ abstract class AbstractJobGenerator implements JobGenerator {
                     ++eventsSkipped;
                 }
                 log.warn("Refusing to schedule harvest definition '{}' in the past. Skipped {} events. "
-                        + "Old nextDate was {} new nextDate is {}", harvest.getName(), eventsSkipped, focused
-                        .getNextDate(), nextEvent);
+                        + "Old nextDate was {} new nextDate is {}", harvest.getName(), eventsSkipped,
+                        focused.getNextDate(), nextEvent);
             }
 
             // Set next event
@@ -135,8 +135,8 @@ abstract class AbstractJobGenerator implements JobGenerator {
             channel = harvestChannelDao.getDefaultChannel(harvest.isSnapShot());
         }
         if (harvest.isSnapShot()) {
-            return Job.createSnapShotJob(harvest.getOid(), channel, cfg, harvest.getMaxCountObjects(), harvest
-                    .getMaxBytes(), ((FullHarvest) harvest).getMaxJobRunningTime(), harvest.getNumEvents());
+            return Job.createSnapShotJob(harvest.getOid(), channel, cfg, harvest.getMaxCountObjects(),
+                    harvest.getMaxBytes(), ((FullHarvest) harvest).getMaxJobRunningTime(), harvest.getNumEvents());
         }
         return Job.createJob(harvest.getOid(), channel, cfg, harvest.getNumEvents());
     }

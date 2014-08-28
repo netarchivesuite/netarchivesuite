@@ -95,7 +95,7 @@ public class MetadataEntry implements Serializable {
      * @param mimeType the mimeType for this metadata (normally text/plain or text/xml)
      * @param data the metadata itself
      * @throws ArgumentNotValid if arguments are null or empty strings, or if argument url is not valid URL or if
-     * argument mimeType is not valid MimeType
+     *         argument mimeType is not valid MimeType
      */
     public MetadataEntry(String url, String mimeType, String data) {
         ArgumentNotValid.checkNotNullOrEmpty(url, "url");
@@ -115,7 +115,7 @@ public class MetadataEntry implements Serializable {
      * @param harvestNum The number of the harvest that the job with the given jobid belongs to
      * @param jobId The id of the Job, which this metadata belongs to
      * @return null, if the list if empty (or only consists of expired aliases), otherwise returns a MetadataEntry from
-     * a list of AliasInfo objects containing unexpired aliases.
+     *         a list of AliasInfo objects containing unexpired aliases.
      */
     public static MetadataEntry makeAliasMetadataEntry(List<AliasInfo> aliases, Long origHarvestDefinitionID,
             int harvestNum, Long jobId) {
@@ -170,8 +170,8 @@ public class MetadataEntry implements Serializable {
         String metadataUrl = String.format(DUPLICATEREDUCTION_METADATA_URL_PREFIX_TEMPLATE + METADATA_URL_SUFFIX,
                 organization, origHarvestDefinitionID, harvestNum, jobId);
 
-        return new MetadataEntry(metadataUrl, MIMETYPE_TEXT_PLAIN, StringUtils
-                .conjoin(",", jobIDsForDuplicateReduction));
+        return new MetadataEntry(metadataUrl, MIMETYPE_TEXT_PLAIN,
+                StringUtils.conjoin(",", jobIDsForDuplicateReduction));
     }
 
     /**

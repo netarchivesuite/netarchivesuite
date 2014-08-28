@@ -50,7 +50,7 @@ public class DatedFileListJob extends FileListJob {
      * @param file an arcfile
      * @param os the OutputStream to which data is to be written
      * @return false If listing of this arcfile fails because of an error; true if the name is listed or if it is not
-     * listed because the file is too old.
+     *         listed because the file is too old.
      */
     @Override
     public boolean processFile(File file, OutputStream os) {

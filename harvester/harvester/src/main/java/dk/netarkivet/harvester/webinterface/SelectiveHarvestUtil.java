@@ -63,7 +63,7 @@ public final class SelectiveHarvestUtil {
      * Update or create a partial harvest definition.
      *
      * @param context JSP context of this call. Contains parameters as described in
-     * Definitions-edit-selective-harvest.jsp
+     *        Definitions-edit-selective-harvest.jsp
      * @param i18n Translation information.
      * @param unknownDomains List to which unknown legal domains are added.
      * @param illegalDomains List to which illegal domains are added,
@@ -144,7 +144,7 @@ public final class SelectiveHarvestUtil {
      * @param unknownDomains List to add unknown but legal domains to.
      * @param illegalDomains List to add illegal domains to.
      * @return The updated harvest definition. This object holds an edition that is legal to use for further updates
-     * (adding or deleting domains)
+     *         (adding or deleting domains)
      */
     private static PartialHarvest updateHarvestDefinition(PageContext context, I18n i18n, List<String> unknownDomains,
             List<String> illegalDomains) {

@@ -98,8 +98,8 @@ public class SynchronizerTester {
          * Pretest: Test everything is initialized.
          */
         // Test no messages have been received.
-        assertNull("A reply shouldn't have been received before " + "request/reply has been dispatched", sr
-                .getReceived());
+        assertNull("A reply shouldn't have been received before " + "request/reply has been dispatched",
+                sr.getReceived());
 
         /**
          * Send one message and check all queues
@@ -137,8 +137,8 @@ public class SynchronizerTester {
          * Pretest: Test everything is initialized.
          */
         // Test no messages have been received.
-        assertNull("A reply shouldn't have been received before " + "request/reply has been dispatched", sr
-                .getReceived());
+        assertNull("A reply shouldn't have been received before " + "request/reply has been dispatched",
+                sr.getReceived());
 
         /**
          * Send one message and check all queues.
@@ -157,8 +157,8 @@ public class SynchronizerTester {
         waitUntilEnded(sr);
 
         // Check that no messages have been received.
-        assertNull("A reply shouldn't have been received when incorrect reply" + " has been dispatched", sr
-                .getReceived());
+        assertNull("A reply shouldn't have been received when incorrect reply" + " has been dispatched",
+                sr.getReceived());
     }
 
     /**
@@ -178,8 +178,8 @@ public class SynchronizerTester {
          * Pretest: Test everything is initialized.
          */
         // Test no messages have been received.
-        assertNull("A reply shouldn't have been received before " + "request/reply has been dispatched", sr
-                .getReceived());
+        assertNull("A reply shouldn't have been received before " + "request/reply has been dispatched",
+                sr.getReceived());
 
         /**
          * Send one message and check all queues
@@ -191,8 +191,8 @@ public class SynchronizerTester {
         waitUntilEnded(sr);
 
         // Check that no messages have been received.
-        assertNull("A reply shouldn't have been received when incorrect reply" + " has been dispatched", sr
-                .getReceived());
+        assertNull("A reply shouldn't have been received when incorrect reply" + " has been dispatched",
+                sr.getReceived());
     }
 
     /**
@@ -212,8 +212,8 @@ public class SynchronizerTester {
          * Pretest: Test everything is initialized.
          */
         // Test no messages have been received.
-        assertNull("A reply shouldn't have been received before " + "request/reply has been dispatched", sr
-                .getReceived());
+        assertNull("A reply shouldn't have been received before " + "request/reply has been dispatched",
+                sr.getReceived());
 
         /**
          * Send one message and check all queues
@@ -281,8 +281,8 @@ public class SynchronizerTester {
          * Pretest: Test everything is initialized.
          */
         // Test no messages have been received.
-        assertNull("A reply shouldn't have been received before " + "request/reply has been dispatched", sr
-                .getReceived());
+        assertNull("A reply shouldn't have been received before " + "request/reply has been dispatched",
+                sr.getReceived());
 
         /*
          * Send one message and check all queues
@@ -299,8 +299,8 @@ public class SynchronizerTester {
         } catch (InterruptedException e) {
 
         }
-        assertNull("A reply shouldn't have been received before " + "request/reply has been dispatched", sr
-                .getReceived());
+        assertNull("A reply shouldn't have been received before " + "request/reply has been dispatched",
+                sr.getReceived());
 
         con.reply(msg);
         // Wait for reply message

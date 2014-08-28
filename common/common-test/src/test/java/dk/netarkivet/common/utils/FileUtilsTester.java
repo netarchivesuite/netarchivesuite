@@ -100,8 +100,8 @@ public class FileUtilsTester {
     @Test
     public void testRemoveRecursively() {
         assertFalse("Should return false when removing non-existent file: ", FileUtils.removeRecursively(NO_SUCH_FILE));
-        assertTrue("Should return true when removing actually existing " + "directory: ", FileUtils
-                .removeRecursively(SUBDIR));
+        assertTrue("Should return true when removing actually existing " + "directory: ",
+                FileUtils.removeRecursively(SUBDIR));
         assertFalse("Have not removed subdirectory", SUBDIR.isDirectory());
     }
 
@@ -326,8 +326,8 @@ public class FileUtilsTester {
         File newDir = FileUtils.createUniqueTempDir(checkDir, prefix);
         assertNotNull("Should return non-null", newDir);
         assertTrue("Returned dir should exist", newDir.isDirectory());
-        assertEquals("Returned dir should be under checkDir", newDir.getParentFile().getCanonicalPath(), checkDir
-                .getCanonicalPath());
+        assertEquals("Returned dir should be under checkDir", newDir.getParentFile().getCanonicalPath(),
+                checkDir.getCanonicalPath());
         assertEquals("Exactly one more dir should have been made", prevCount + 1, checkDir.list().length);
 
         // Error cases
@@ -391,14 +391,14 @@ public class FileUtilsTester {
             // expected
         }
 
-        assertEquals("Must get correct last line", TestInfo.LAST_LINE_TEXT, FileUtils
-                .readLastLine(TestInfo.FILE_WITH_NEWLINE_AT_END));
+        assertEquals("Must get correct last line", TestInfo.LAST_LINE_TEXT,
+                FileUtils.readLastLine(TestInfo.FILE_WITH_NEWLINE_AT_END));
 
-        assertEquals("Must get correct last line", TestInfo.LAST_LINE_TEXT, FileUtils
-                .readLastLine(TestInfo.FILE_WITH_NEWLINE_AT_END));
+        assertEquals("Must get correct last line", TestInfo.LAST_LINE_TEXT,
+                FileUtils.readLastLine(TestInfo.FILE_WITH_NEWLINE_AT_END));
 
-        assertEquals("Must get correct last line", TestInfo.LAST_LINE_TEXT, FileUtils
-                .readLastLine(TestInfo.FILE_WITH_ONE_LINE));
+        assertEquals("Must get correct last line", TestInfo.LAST_LINE_TEXT,
+                FileUtils.readLastLine(TestInfo.FILE_WITH_ONE_LINE));
 
         assertEquals("Must get correct last line", "", FileUtils.readLastLine(TestInfo.EMPTY_FILE));
     }
@@ -458,8 +458,8 @@ public class FileUtilsTester {
 
         final String previousFilenameOne = "royal library:+.txt";
         final String resultingFilenameOne = "royal_library__.txt";
-        assertEquals("Illegal characters should have replaced by underscores", resultingFilenameOne, FileUtils
-                .formatFilename(previousFilenameOne));
+        assertEquals("Illegal characters should have replaced by underscores", resultingFilenameOne,
+                FileUtils.formatFilename(previousFilenameOne));
 
         final String previousFilenameTwo = "RoyalLibrary.txt";
         final String resultingFilenameTwo = "RoyalLibrary.txt";

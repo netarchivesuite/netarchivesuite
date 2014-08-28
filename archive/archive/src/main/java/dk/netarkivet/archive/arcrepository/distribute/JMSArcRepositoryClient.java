@@ -223,7 +223,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements ArcRepositor
      *
      * @param file A file to be stored. Must exist.
      * @throws IOFailure thrown if store is unsuccessful, or failed to clean up files locally or on the ftp server after
-     * the store operation.
+     *         the store operation.
      * @throws ArgumentNotValid if file parameter is null or file is not an existing file.
      */
     public void store(File file) throws IOFailure, ArgumentNotValid {
@@ -304,9 +304,9 @@ public class JMSArcRepositoryClient extends Synchronizer implements ArcRepositor
      * remotely while it is running.
      *
      * @param job An object that implements the FileBatchJob interface. The initialize() method will be called before
-     * processing and the finish() method will be called afterwards. The process() method will be called with each File
-     * entry. An optional function postProcess() allows handling the combined results of the batchjob, e.g. summing the
-     * results, sorting, etc.
+     *        processing and the finish() method will be called afterwards. The process() method will be called with
+     *        each File entry. An optional function postProcess() allows handling the combined results of the batchjob,
+     *        e.g. summing the results, sorting, etc.
      * @param replicaId The archive to execute the job on.
      * @param args The arguments for the batchjob.
      * @return The status of the batch job after it ended.
@@ -319,9 +319,9 @@ public class JMSArcRepositoryClient extends Synchronizer implements ArcRepositor
      * Runs a batch job on each file in the ArcRepository.
      *
      * @param job An object that implements the FileBatchJob interface. The initialize() method will be called before
-     * processing and the finish() method will be called afterwards. The process() method will be called with each File
-     * entry. An optional function postProcess() allows handling the combined results of the batchjob, e.g. summing the
-     * results, sorting, etc.
+     *        processing and the finish() method will be called afterwards. The process() method will be called with
+     *        each File entry. An optional function postProcess() allows handling the combined results of the batchjob,
+     *        e.g. summing the results, sorting, etc.
      * @param replicaId The archive to execute the job on.
      * @param args The arguments for the batchjob. This is allowed to be null.
      * @param batchId The id for the batch process.
@@ -346,8 +346,8 @@ public class JMSArcRepositoryClient extends Synchronizer implements ArcRepositor
                 throw new IOFailure(msg);
             }
         }
-        return new BatchStatus(brMsg.getFilesFailed(), brMsg.getNoOfFilesProcessed(), brMsg.getResultFile(), job
-                .getExceptions());
+        return new BatchStatus(brMsg.getFilesFailed(), brMsg.getNoOfFilesProcessed(), brMsg.getResultFile(),
+                job.getExceptions());
     }
 
     /**
@@ -406,7 +406,8 @@ public class JMSArcRepositoryClient extends Synchronizer implements ArcRepositor
      * @return The file that was removed
      * @throws ArgumentNotValid if arguments are null or equal to the empty string
      * @throws IOFailure if we could not delete the remote file, or there was no response to our RemoveAndGetFileMessage
-     * within the allotted time defined by the setting {@link JMSArcRepositoryClient#ARCREPOSITORY_STORE_TIMEOUT}.
+     *         within the allotted time defined by the setting
+     *         {@link JMSArcRepositoryClient#ARCREPOSITORY_STORE_TIMEOUT}.
      */
     public File removeAndGetFile(String fileName, String bitarchiveId, String checksum, String credentials)
             throws IOFailure, ArgumentNotValid {
@@ -419,8 +420,8 @@ public class JMSArcRepositoryClient extends Synchronizer implements ArcRepositor
                 + bitarchiveId + "'";
         log.warn(msg);
         NotificationsFactory.getInstance().notify(msg, NotificationType.WARNING);
-        RemoveAndGetFileMessage aMsg = new RemoveAndGetFileMessage(Channels.getTheRepos(), Channels
-                .getThisReposClient(), fileName, bitarchiveId, checksum, credentials);
+        RemoveAndGetFileMessage aMsg = new RemoveAndGetFileMessage(Channels.getTheRepos(),
+                Channels.getThisReposClient(), fileName, bitarchiveId, checksum, credentials);
         RemoveAndGetFileMessage replyMsg = (RemoveAndGetFileMessage) sendAndWaitForOneReply(aMsg, storeTimeout);
 
         // The removed file is returned, move to temp location
@@ -445,9 +446,9 @@ public class JMSArcRepositoryClient extends Synchronizer implements ArcRepositor
      *
      * @param replicaId The id of the replica from which the checksums should be retrieved.
      * @return A file containing filename and checksum of all the files in an archive in the same format as a
-     * ChecksumJob.
+     *         ChecksumJob.
      * @throws IOFailure If the reply is not of type GetAllChecksumsMessage or if the file could not properly be
-     * retrieved from the reply message or if the message timed out.
+     *         retrieved from the reply message or if the message timed out.
      * @throws ArgumentNotValid If the replicaId is null or empty.
      * @see dk.netarkivet.archive.checksum.distribute.GetAllChecksumsMessage
      */
@@ -495,9 +496,9 @@ public class JMSArcRepositoryClient extends Synchronizer implements ArcRepositor
      *
      * @param replicaId The id of the replica from which the list of filenames should be retrieved.
      * @return A file with all the filenames within the archive of the given replica. A null is returned if the message
-     * timeout.
+     *         timeout.
      * @throws IOFailure If the reply is not of type GetAllFilenamesMessage or if the file could not properly be
-     * retrieved from the reply message
+     *         retrieved from the reply message
      * @throws ArgumentNotValid If the replicaId is null or empty.
      * @see dk.netarkivet.archive.checksum.distribute.GetAllFilenamesMessage
      */
@@ -589,14 +590,14 @@ public class JMSArcRepositoryClient extends Synchronizer implements ArcRepositor
      *
      * @param replicaId The id of the replica to send the message.
      * @param checksum The checksum of the corrupt entry in the archive. It is important to validate that the checksum
-     * actually is wrong before correcting the entry.
+     *        actually is wrong before correcting the entry.
      * @param file The file to correct the entry in the archive of the replica.
      * @param credentials A string with the password for allowing changes inside an archive. If it does not correspond
-     * to the credentials of the archive, the correction will not be allowed.
+     *        to the credentials of the archive, the correction will not be allowed.
      * @return The corrupted file from the archive.
      * @throws IOFailure If the message is not handled properly.
      * @throws ArgumentNotValid If the replicaId, the checksum or the credentials are either null or empty, or if file
-     * is null.
+     *         is null.
      */
     public File correct(String replicaId, String checksum, File file, String credentials) throws IOFailure,
             ArgumentNotValid {

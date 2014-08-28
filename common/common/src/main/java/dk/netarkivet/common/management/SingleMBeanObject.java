@@ -103,8 +103,8 @@ public class SingleMBeanObject<I> {
         nameProperties.put(Constants.PRIORITY_KEY_LOCATION, Settings.get(CommonSettings.THIS_PHYSICAL_LOCATION));
         nameProperties.put(Constants.PRIORITY_KEY_MACHINE, SystemUtils.getLocalHostName());
         nameProperties.put(Constants.PRIORITY_KEY_APPLICATIONNAME, Settings.get(CommonSettings.APPLICATION_NAME));
-        nameProperties.put(Constants.PRIORITY_KEY_APPLICATIONINSTANCEID, Settings
-                .get(CommonSettings.APPLICATION_INSTANCE_ID));
+        nameProperties.put(Constants.PRIORITY_KEY_APPLICATIONINSTANCEID,
+                Settings.get(CommonSettings.APPLICATION_INSTANCE_ID));
         nameProperties.put(Constants.PRIORITY_KEY_HTTP_PORT, Settings.get(CommonSettings.HTTP_PORT_NUMBER));
         try {
             String val;

@@ -85,8 +85,8 @@ public class CDXOriginCrawlLogIteratorTester {
         // Second item found in both cdx and crawl.log
         CrawlDataItem item2 = it.next();
         StringAsserts.assertStringContains("Must have found expected url", "purl.org/robots.txt", item2.getURL());
-        assertEquals("Must have right other origin from CDXReader for " + item2.getURL(), "check-arc,43", item2
-                .getOrigin());
+        assertEquals("Must have right other origin from CDXReader for " + item2.getURL(), "check-arc,43",
+                item2.getOrigin());
 
         assertTrue("Should have item 3 after next()'s", it.hasNext());
 
@@ -197,8 +197,8 @@ public class CDXOriginCrawlLogIteratorTester {
                 .parseLine("2005-05-06T11:48:24.182Z   200       1410 http://www.kb.dk/bevarbogen/script.js LE http://www.kb.dk/bevarbogen/ application/x-javascript #020 20050506114824169+3 Sha1:LLPRTJSSTYX4TCKRKGWG44NTPHUR2ZCH - deduplicate:\"check-arc,42\"");
         assertNotNull("Must have correctly parsed item", fromSha);
         assertNotNull("Must have content digest", fromSha.getContentDigest());
-        assertFalse("Checksum entry should not start with sha1:", fromSha.getContentDigest().toLowerCase().startsWith(
-                "sha1:"));
+        assertFalse("Checksum entry should not start with sha1:",
+                fromSha.getContentDigest().toLowerCase().startsWith("sha1:"));
 
     }
 

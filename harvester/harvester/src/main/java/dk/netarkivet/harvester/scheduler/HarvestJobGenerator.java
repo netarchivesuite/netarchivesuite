@@ -124,8 +124,8 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
          * Check if jobs should be generated for any ready harvest definitions for the specified time.
          *
          * @param timeToGenerateJobsFor Jobs will be generated which should be run at this time. Note: In a production
-         * system the provided time will normally be current time, but during testing we need to simulated other
-         * points-in-time
+         *        system the provided time will normally be current time, but during testing we need to simulated other
+         *        points-in-time
          */
         void generateJobs(Date timeToGenerateJobsFor) {
             final Iterable<Long> readyHarvestDefinitions = haDefinitionDAO
@@ -189,8 +189,8 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                             JobGenerator jobGen = JobGeneratorFactory.getInstance();
                             int jobsMade = jobGen.generateJobs(harvestDefinition);
                             if (jobsMade > 0) {
-                                log.info("Created {} jobs for harvest definition ({})", jobsMade, harvestDefinition
-                                        .getName());
+                                log.info("Created {} jobs for harvest definition ({})", jobsMade,
+                                        harvestDefinition.getName());
                             } else {
                                 String msg = "No jobs created for harvest definition '"
                                         + harvestDefinition.getName()
@@ -234,7 +234,7 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
          *
          * @param harvestId A given harvestId
          * @return true, if a scheduling of the given harvestId has taken more than 5 minutes, or false, if not or no
-         * scheduling for this harvestId is underway
+         *         scheduling for this harvestId is underway
          */
         private static boolean takesSuspiciouslyLongToSchedule(Long harvestId) {
             // acceptable delay before issuing warning is currently hard-wired

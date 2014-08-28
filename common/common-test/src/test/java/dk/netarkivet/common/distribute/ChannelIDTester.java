@@ -114,8 +114,8 @@ public class ChannelIDTester {
                     // Ignore the channels for the checksum replicas.
                     if (ALL_BAs[j] != null) {
                         if (i != j) {
-                            assertNotSame("Two ALL_BAs have the same name " + ALL_BAs[i].getName(), ALL_BAs[i]
-                                    .getName(), ALL_BAs[j].getName());
+                            assertNotSame("Two ALL_BAs have the same name " + ALL_BAs[i].getName(),
+                                    ALL_BAs[i].getName(), ALL_BAs[j].getName());
                         }
                     }
                 }
@@ -189,16 +189,17 @@ public class ChannelIDTester {
             if (CRs[i] == null) {
                 continue;
             }
-            assertTrue("ChannelID.getAllArchives_BAMONs() returned a channel without BAMON " + "in its name: "
-                    + CRs[i].getName(), CRs[i].getName().indexOf("THE_CR") != -1);
+            assertTrue(
+                    "ChannelID.getAllArchives_BAMONs() returned a channel without BAMON " + "in its name: "
+                            + CRs[i].getName(), CRs[i].getName().indexOf("THE_CR") != -1);
             for (int j = 0; j < CRs.length; j++) {
                 // Ignore the channels for the checksum replicas.
                 if (CRs[j] == null) {
                     continue;
                 }
                 if (i != j) {
-                    assertNotSame("Two BAMONs have the same name " + CRs[i].getName(), CRs[i].getName(), CRs[j]
-                            .getName());
+                    assertNotSame("Two BAMONs have the same name " + CRs[i].getName(), CRs[i].getName(),
+                            CRs[j].getName());
                 }
             }
         }
@@ -211,8 +212,9 @@ public class ChannelIDTester {
     @Test
     public void testClients() {
         ChannelID client = Channels.getThisReposClient();
-        assertTrue("ChannelID.getThisClient() returned a channel without " + "THIS_REPOS_CLIENT in its name: "
-                + client.getName(), client.getName().indexOf("THIS_REPOS_CLIENT") != -1);
+        assertTrue(
+                "ChannelID.getThisClient() returned a channel without " + "THIS_REPOS_CLIENT in its name: "
+                        + client.getName(), client.getName().indexOf("THIS_REPOS_CLIENT") != -1);
         assertTrue("ChannelID.getThisClient() returned a channel without " + "application settings in its name: "
                 + client.getName(), client.getName().indexOf("_IS") != -1);
         assertTrue("ChannelID.getThisClient() returned a channel without "

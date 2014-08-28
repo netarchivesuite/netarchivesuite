@@ -62,7 +62,7 @@ import dk.netarkivet.common.utils.batch.ChecksumJob;
  * However, it still talks JMS with the arcrepository.
  *
  * @deprecated Use the DatabaseBasedActiveBitPreservation instead (define in the setting:
- * <b>settings.archive.admin.class</b>).
+ *             <b>settings.archive.admin.class</b>).
  */
 @Deprecated
 public class FileBasedActiveBitPreservation implements ActiveBitPreservation, CleanupIF {
@@ -126,7 +126,7 @@ public class FileBasedActiveBitPreservation implements ActiveBitPreservation, Cl
      *
      * @param filenames List of filenames
      * @return a map ([filename]-> [FilePreservationState]) of the preservation status for the given files. The
-     * preservationstate is null, if the file named does not exist in admin data.
+     *         preservationstate is null, if the file named does not exist in admin data.
      * @throws ArgumentNotValid If the list of filenames is null or contains a null.
      */
     public Map<String, PreservationState> getPreservationStateMap(String... filenames) throws ArgumentNotValid {
@@ -157,9 +157,13 @@ public class FileBasedActiveBitPreservation implements ActiveBitPreservation, Cl
         }
 
         if (missingInAdmindata.size() > 0) {
-            log.warn("The following {} files are unknown to admindata: {}", missingInAdmindata.size(), StringUtils
-                    .conjoin(",", new ArrayList<String>(missingInAdmindata).subList(0, Math.min(missingInAdmindata
-                            .size(), MAX_LIST_SIZE))));
+            log.warn(
+                    "The following {} files are unknown to admindata: {}",
+                    missingInAdmindata.size(),
+                    StringUtils.conjoin(
+                            ",",
+                            new ArrayList<String>(missingInAdmindata).subList(0,
+                                    Math.min(missingInAdmindata.size(), MAX_LIST_SIZE))));
         }
 
         // filepreservationStates: map ([filename] -> [filepreservationstate])
@@ -186,8 +190,8 @@ public class FileBasedActiveBitPreservation implements ActiveBitPreservation, Cl
         for (Map.Entry<String, ArcRepositoryEntry> entry : adminInfo.entrySet()) {
             String filename = entry.getKey();
             ArcRepositoryEntry adminFileInfo = entry.getValue();
-            filepreservationStates.put(filename, new FilePreservationState(filename, adminFileInfo, checksumMaps
-                    .get(filename)));
+            filepreservationStates.put(filename,
+                    new FilePreservationState(filename, adminFileInfo, checksumMaps.get(filename)));
         }
         return filepreservationStates;
     }
@@ -197,7 +201,7 @@ public class FileBasedActiveBitPreservation implements ActiveBitPreservation, Cl
      *
      * @param filename A given file
      * @return the FilePreservationState for the given file. This will be null, if the filename is not found in admin
-     * data.
+     *         data.
      */
     public PreservationState getPreservationState(String filename) {
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
@@ -228,8 +232,8 @@ public class FileBasedActiveBitPreservation implements ActiveBitPreservation, Cl
             // Get the checksum information from Replica 'rep' as
             // a map ([filename]->[list of checksums]).
             Map<String, List<String>> checksums = getChecksums(rep, filenames);
-            log.debug("Adding checksums for replica '{}' for filenames: {}", rep, StringUtils.conjoin(",", filenames,
-                    MAX_LIST_SIZE));
+            log.debug("Adding checksums for replica '{}' for filenames: {}", rep,
+                    StringUtils.conjoin(",", filenames, MAX_LIST_SIZE));
 
             for (String filename : filenames) {
                 // Update 'checksummaps' datastructure with the checksums
@@ -342,7 +346,7 @@ public class FileBasedActiveBitPreservation implements ActiveBitPreservation, Cl
      *
      * @param replica the replica to search for missing files
      * @throws ArgumentNotValid If the given directory does not contain a file filelistOutput/sorted.txt, or the
-     * argument replica is null.
+     *         argument replica is null.
      * @throws PermissionDenied If the output directory cannot be created.
      */
     public void findMissingFiles(Replica replica) throws ArgumentNotValid, PermissionDenied {
@@ -366,8 +370,9 @@ public class FileBasedActiveBitPreservation implements ActiveBitPreservation, Cl
             log.warn("The "
                     + extraFilesInAdminData.size()
                     + " files '"
-                    + new ArrayList<String>(extraFilesInAdminData).subList(0, Math.min(extraFilesInAdminData.size(),
-                            MAX_LIST_SIZE)) + "' are not present in the replica listing in '"
+                    + new ArrayList<String>(extraFilesInAdminData).subList(0,
+                            Math.min(extraFilesInAdminData.size(), MAX_LIST_SIZE))
+                    + "' are not present in the replica listing in '"
                     + WorkFiles.getPreservationDir(replica).getAbsolutePath() + "'");
         }
 
@@ -383,8 +388,7 @@ public class FileBasedActiveBitPreservation implements ActiveBitPreservation, Cl
             log.warn("The "
                     + extraFilesInRep.size()
                     + " files '"
-                    + new ArrayList<String>(extraFilesInRep)
-                            .subList(0, Math.min(extraFilesInRep.size(), MAX_LIST_SIZE))
+                    + new ArrayList<String>(extraFilesInRep).subList(0, Math.min(extraFilesInRep.size(), MAX_LIST_SIZE))
                     + "' have been found in the replica listing in '"
                     + WorkFiles.getPreservationDir(replica).getAbsolutePath() + "' though they are not known by the "
                     + "system.");
@@ -549,7 +553,7 @@ public class FileBasedActiveBitPreservation implements ActiveBitPreservation, Cl
      *
      * @param replica the bitarchive to check
      * @return the number of files found in the bitarchive. If nothing is known about the bitarchive replica, -1 is
-     * returned.
+     *         returned.
      * @throws ArgumentNotValid If the replica is null.
      */
     public long getNumberOfFiles(Replica replica) throws ArgumentNotValid {
@@ -709,8 +713,8 @@ public class FileBasedActiveBitPreservation implements ActiveBitPreservation, Cl
             log.warn(errmsg, e);
             throw new IOFailure(errmsg, e);
         }
-        log.info("Reestablished {} in {} with copy from {}", fileName, damagedReplica.getName(), referenceArchive
-                .getName());
+        log.info("Reestablished {} in {} with copy from {}", fileName, damagedReplica.getName(),
+                referenceArchive.getName());
         FileUtils.removeLineFromFile(fileName, WorkFiles.getFile(damagedReplica, WorkFiles.MISSING_FILES_BA));
         FileUtils.appendToFile(WorkFiles.getFile(damagedReplica, WorkFiles.FILES_ON_BA), fileName);
     }
@@ -777,7 +781,7 @@ public class FileBasedActiveBitPreservation implements ActiveBitPreservation, Cl
      * @throws IOFailure if the file cannot be reestablished
      * @throws PermissionDenied if the file is not in correct state
      * @throws ArgumentNotValid If the filename, the credentials or the checksum either are null or contain the empty
-     * string, or if the replica is null.
+     *         string, or if the replica is null.
      */
     public void replaceChangedFile(Replica replica, String filename, String credentials, String checksum)
             throws ArgumentNotValid, IOFailure, PermissionDenied {

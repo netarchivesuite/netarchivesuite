@@ -310,9 +310,9 @@ public class DomainConfiguration implements Named {
      * a maximum limit pr. domain
      *
      * @param objectLimit The maximum limit, or Constants.HERITRIX_MAXOBJECTS_INFINITY for no limit. This limit
-     * overrides the limit set on the configuration, unless override is in effect.
+     *        overrides the limit set on the configuration, unless override is in effect.
      * @param byteLimit The maximum number of bytes that will be used as limit in the harvest. This limit overrides the
-     * limit set on the configuration, unless override is in effect.
+     *        limit set on the configuration, unless override is in effect.
      * @return The expected number of objects.
      */
     public long getExpectedNumberOfObjects(long objectLimit, long byteLimit) {
@@ -405,15 +405,15 @@ public class DomainConfiguration implements Named {
      * objects is greater than the setting MIN_OBJECTS_TO_TRUST_SMALL_EXPECTATION.
      *
      * @param bestInfo The best (newest complete or biggest, as per getBestHarvestInfoExpectation()) harvest info we
-     * have for the domain.
+     *        have for the domain.
      * @return How large we expect the average object to be. This number will be >= MIN_EXPECTATION (unless nothing is
-     * harvested and is EXPECTED_AVERAGE_BYTES_PER_OBJECT <= 0).
+     *         harvested and is EXPECTED_AVERAGE_BYTES_PER_OBJECT <= 0).
      */
     private long getExpectedBytesPerObject(HarvestInfo bestInfo) {
         long defaultExpectation = Settings.getLong(HarvesterSettings.EXPECTED_AVERAGE_BYTES_PER_OBJECT);
         if (bestInfo != null && bestInfo.getCountObjectRetrieved() > 0) {
-            long expectation = Math.max(MIN_EXPECTATION, bestInfo.getSizeDataRetrieved()
-                    / bestInfo.getCountObjectRetrieved());
+            long expectation = Math.max(MIN_EXPECTATION,
+                    bestInfo.getSizeDataRetrieved() / bestInfo.getCountObjectRetrieved());
             if (expectation < defaultExpectation
                     && bestInfo.getCountObjectRetrieved() < MIN_OBJECTS_TO_TRUST_SMALL_EXPECTATION) {
                 return defaultExpectation;

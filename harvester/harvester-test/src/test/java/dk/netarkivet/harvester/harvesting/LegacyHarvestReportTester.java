@@ -100,10 +100,10 @@ public class LegacyHarvestReportTester {
         AbstractHarvestReport hostReport = new LegacyHarvestReport(hf);
 
         assertNotNull("A AbstractHarvestReport should have a non-null set of domain names", hostReport.getDomainNames());
-        assertNotNull("A AbstractHarvestReport should have a non-null number of object counts", hostReport
-                .getObjectCount("netarkivet.dk"));
-        assertNotNull("A AbstractHarvestReport should have a non-null number of bytes retrieved", hostReport
-                .getByteCount("netarkivet.dk"));
+        assertNotNull("A AbstractHarvestReport should have a non-null number of object counts",
+                hostReport.getObjectCount("netarkivet.dk"));
+        assertNotNull("A AbstractHarvestReport should have a non-null number of bytes retrieved",
+                hostReport.getByteCount("netarkivet.dk"));
         lr.stopRecorder();
     }
 
@@ -138,8 +138,8 @@ public class LegacyHarvestReportTester {
         // Check if set of domain names contains normalized domain name
         // TestInfo.TEST_DOMAIN:
         assertTrue("hostReport.getDomainNames() should contain domain name "
-                + dk.netarkivet.harvester.harvesting.TestInfo.TEST_DOMAIN, hostReport.getDomainNames().contains(
-                dk.netarkivet.harvester.harvesting.TestInfo.TEST_DOMAIN));
+                + dk.netarkivet.harvester.harvesting.TestInfo.TEST_DOMAIN,
+                hostReport.getDomainNames().contains(dk.netarkivet.harvester.harvesting.TestInfo.TEST_DOMAIN));
     }
 
     @Test
@@ -150,8 +150,8 @@ public class LegacyHarvestReportTester {
                 + TestInfo.NO_OF_OBJECTS_TEST, TestInfo.NO_OF_OBJECTS_TEST, // Expected
                 // value
                 (long) hostReport.getObjectCount(dk.netarkivet.harvester.harvesting.TestInfo.TEST_DOMAIN));
-        assertNull("AbstractHarvestReport.getObjectCount('bibliotek.dk')) expected to return Null", hostReport
-                .getObjectCount("bibliotek.dk"));
+        assertNull("AbstractHarvestReport.getObjectCount('bibliotek.dk')) expected to return Null",
+                hostReport.getObjectCount("bibliotek.dk"));
 
     }
 
@@ -163,8 +163,8 @@ public class LegacyHarvestReportTester {
                 + TestInfo.NO_OF_BYTES_TEST, TestInfo.NO_OF_BYTES_TEST, // Expected
                 // value
                 (long) hostReport.getByteCount(dk.netarkivet.harvester.harvesting.TestInfo.TEST_DOMAIN));
-        assertNull("AbstractHarvestReport.getByteCount('bibliotek.dk')) expected to return Null", hostReport
-                .getByteCount("bibliotek.dk"));
+        assertNull("AbstractHarvestReport.getByteCount('bibliotek.dk')) expected to return Null",
+                hostReport.getByteCount("bibliotek.dk"));
     }
 
     /** Test solution to bugs 391 - hosts report with long values. */
@@ -206,8 +206,8 @@ public class LegacyHarvestReportTester {
         AbstractHarvestReport hr = new LegacyHarvestReport(hf);
         assertEquals("kb.dk is unfinished", StopReason.DOWNLOAD_UNFINISHED, hr.getStopReason("kb.dk"));
         assertEquals("netarkivet.dk reached byte limit", StopReason.SIZE_LIMIT, hr.getStopReason("netarkivet.dk"));
-        assertEquals("statsbiblioteket.dk reached object limit", StopReason.OBJECT_LIMIT, hr
-                .getStopReason("statsbiblioteket.dk"));
+        assertEquals("statsbiblioteket.dk reached object limit", StopReason.OBJECT_LIMIT,
+                hr.getStopReason("statsbiblioteket.dk"));
         assertEquals("no information about bibliotek.dk", null, hr.getStopReason("bibliotek.dk"));
     }
 

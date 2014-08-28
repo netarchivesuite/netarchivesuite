@@ -91,8 +91,8 @@ public class FileChecksumArchiveTester {
     @Ignore("The file '/Users/ravn/git/netarchivesuite/archive/archive-test/tests/dk/netarkivet/archive/checksum/distribute/data/working/basefiledir/checksum_THREE.md5' is not a valid file.")
     // FIXME: Failing test
     public void testChecksum() {
-        assertTrue("less than " + Settings.getLong(ArchiveSettings.CHECKSUM_MIN_SPACE_LEFT) + " free.", fca
-                .hasEnoughSpace());
+        assertTrue("less than " + Settings.getLong(ArchiveSettings.CHECKSUM_MIN_SPACE_LEFT) + " free.",
+                fca.hasEnoughSpace());
     }
 
     /**
@@ -151,8 +151,8 @@ public class FileChecksumArchiveTester {
         List<String> archiveChecksums = FileUtils.readListFromFile(fca.getArchiveAsFile());
         List<String> fileChecksums = FileUtils.readListFromFile(new File(fca.getFileName()));
 
-        assertEquals("The amount of checksums should be identical in the file and from the archive.", fileChecksums
-                .size(), archiveChecksums.size());
+        assertEquals("The amount of checksums should be identical in the file and from the archive.",
+                fileChecksums.size(), archiveChecksums.size());
         assertEquals("The amount of checksum should be 2", 2, fileChecksums.size());
         for (int i = 0; i < fileChecksums.size(); i++) {
             assertEquals("The checksum entry in the file should be identical to the one in the archive",
@@ -166,27 +166,27 @@ public class FileChecksumArchiveTester {
             fca.correct("ERROR!", TestInfo.UPLOAD_FILE_1);
             fail("It is not allowed for 'correct' to correct a wrong 'incorrectChecksum'.");
         } catch (IllegalState e) {
-            assertTrue("The correct error message should be sent.", e.getMessage().contains(
-                    "No file entry for file 'ERROR!'"));
+            assertTrue("The correct error message should be sent.",
+                    e.getMessage().contains("No file entry for file 'ERROR!'"));
         }
 
         fca.correct("TEST1.arc", TestInfo.UPLOAD_FILE_2);
-        assertEquals("The new checksum for 'TEST1.arc' should now be the checksum for 'TEST2.arc'.", fca
-                .getChecksum("TEST1.arc"), TestInfo.TEST2_CHECKSUM);
+        assertEquals("The new checksum for 'TEST1.arc' should now be the checksum for 'TEST2.arc'.",
+                fca.getChecksum("TEST1.arc"), TestInfo.TEST2_CHECKSUM);
 
         fca.correct("TEST2.arc", TestInfo.UPLOAD_FILE_1);
-        assertEquals("The new checksum for 'TEST2.arc' should now be the checksum for 'TEST1.arc'.", fca
-                .getChecksum("TEST2.arc"), TestInfo.TEST1_CHECKSUM);
+        assertEquals("The new checksum for 'TEST2.arc' should now be the checksum for 'TEST1.arc'.",
+                fca.getChecksum("TEST2.arc"), TestInfo.TEST1_CHECKSUM);
 
         // ---------------------------------------------------------------
         // Check that the correct function has changed the archive file.
         // ---------------------------------------------------------------
         String correctChecksums = FileUtils.readFile(new File(fca.getFileName()));
 
-        assertTrue("The new checksums should be reversed.", correctChecksums.contains("TEST1.arc" + "##"
-                + TestInfo.TEST2_CHECKSUM));
-        assertTrue("The new checksums should be reversed", correctChecksums.contains("TEST2.arc" + "##"
-                + TestInfo.TEST1_CHECKSUM));
+        assertTrue("The new checksums should be reversed.",
+                correctChecksums.contains("TEST1.arc" + "##" + TestInfo.TEST2_CHECKSUM));
+        assertTrue("The new checksums should be reversed",
+                correctChecksums.contains("TEST2.arc" + "##" + TestInfo.TEST1_CHECKSUM));
 
         // ---------------------------------------------------------------
         // Check that the correct function has put the old record into the
@@ -194,10 +194,10 @@ public class FileChecksumArchiveTester {
         // ---------------------------------------------------------------
         String wrongEntryContent = FileUtils.readFile(new File(fca.getWrongEntryFilename()));
 
-        assertTrue("The old checksums should be store here.", wrongEntryContent.contains("TEST1.arc" + "##"
-                + TestInfo.TEST1_CHECKSUM));
-        assertTrue("The old checksums should be store here.", wrongEntryContent.contains("TEST2.arc" + "##"
-                + TestInfo.TEST2_CHECKSUM));
+        assertTrue("The old checksums should be store here.",
+                wrongEntryContent.contains("TEST1.arc" + "##" + TestInfo.TEST1_CHECKSUM));
+        assertTrue("The old checksums should be store here.",
+                wrongEntryContent.contains("TEST2.arc" + "##" + TestInfo.TEST2_CHECKSUM));
     }
 
     /**

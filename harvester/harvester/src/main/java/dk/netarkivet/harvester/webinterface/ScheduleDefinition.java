@@ -139,7 +139,10 @@ public final class ScheduleDefinition {
         long edition = HTMLUtils.parseOptionalLong(context, EDITION_PARAMETER, -1L);
         if (ScheduleDAO.getInstance().exists(name)) {
             if (ScheduleDAO.getInstance().read(name).getEdition() != edition) {
-                HTMLUtils.forwardWithRawErrorMessage(context, i18n, "errormsg;schedule.has.changed.0.retry.1",
+                HTMLUtils.forwardWithRawErrorMessage(
+                        context,
+                        i18n,
+                        "errormsg;schedule.has.changed.0.retry.1",
                         "<br/><a href=\"Definitions-edit-schedule.jsp?name="
                                 + HTMLUtils.escapeHtmlValues(HTMLUtils.encode(name)) + "\">", "</a>");
                 throw new ForwardedToErrorPage("Schedule '" + name + "' has changed");

@@ -81,7 +81,7 @@ public class CDXUtils {
      * @param archiveFileDirectory A directory with archive files to generate index for
      * @param cdxFileDirectory A directory to generate CDX files in
      * @throws ArgumentNotValid if any of directories are null or is not an existing directory, or if cdxFileDirectory
-     * is not writable.
+     *         is not writable.
      */
     public static void generateCDX(ArchiveProfile archiveProfile, File archiveFileDirectory, File cdxFileDirectory)
             throws ArgumentNotValid {
@@ -99,8 +99,8 @@ public class CDXUtils {
         Map<File, Exception> exceptions = new HashMap<File, Exception>();
         File[] filesToProcess = archiveFileDirectory.listFiles(archiveProfile.filename_filter);
         if (filesToProcess.length == 0) {
-            log.warn("Found no related arcfiles to process in the archive dir '{}'.", archiveFileDirectory
-                    .getAbsolutePath());
+            log.warn("Found no related arcfiles to process in the archive dir '{}'.",
+                    archiveFileDirectory.getAbsolutePath());
         } else {
             log.debug("Found {} related arcfiles to process in the archive dir '{}'.", filesToProcess.length,
                     archiveFileDirectory.getAbsolutePath());

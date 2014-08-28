@@ -185,7 +185,7 @@ public enum WorkFiles {
      * Get the directory that file listings are to live in, creating it if necessary.
      *
      * @param dir The directory that the file listings should live under. Note that this is not directly derived from
-     * the name of the replica, as it can also be used for reference file listings.
+     *        the name of the replica, as it can also be used for reference file listings.
      * @return The directory to put file listings in under the given dir.
      */
     private static File getFilelistOutputDir(File dir) {
@@ -225,7 +225,7 @@ public enum WorkFiles {
      *
      * @param unsortedFile An unsorted file
      * @return A file that contains the same lines as unsortedFile, but sorted. The file will be placed in the same
-     * directory as the input file, but have the name Constants.SORTED_OUTPUT_FILE defines.
+     *         directory as the input file, but have the name Constants.SORTED_OUTPUT_FILE defines.
      * @throws IOFailure If the file does not exist.
      */
     protected static File getSortedFile(File unsortedFile) throws IOFailure {

@@ -226,7 +226,7 @@ public class Job implements Serializable, JobInfo {
      * @param cfg the configuration to base the Job on
      * @param channel the channel on which the job will be submitted.
      * @param forceMaxObjectsPerDomain the maximum number of objects harvested from a domain, overrides individual
-     * configuration settings. -1 means no limit
+     *        configuration settings. -1 means no limit
      * @param forceMaxBytesPerDomain The maximum number of objects harvested from a domain, or -1 for no limit.
      * @param forceMaxJobRunningTime The max time in seconds given to the harvester for this job
      * @param harvestNum the run number of the harvest definition
@@ -313,7 +313,7 @@ public class Job implements Serializable, JobInfo {
      * @param channel the name of the channel on which the job will be submitted.
      * @param snapshot whether the job belongs to a snapshot harvest
      * @param forceMaxObjectsPerDomain the maximum number of objects harvested from a domain, overrides individual
-     * configuration settings. 0 means no limit.
+     *        configuration settings. 0 means no limit.
      * @param forceMaxBytesPerDomain The maximum number of objects harvested from a domain, or -1 for no limit.
      * @param forceMaxJobRunningTime The max time in seconds given to the harvester for this job
      * @param status the current status of the job.
@@ -366,9 +366,9 @@ public class Job implements Serializable, JobInfo {
      * @param channel the channel for the job
      * @param cfg the configuration to base the Job on
      * @param maxObjectsPerDomain the maximum number of objects to harvest from a domain, overrides individual
-     * configuration settings unless the domain has overrideLimits set. 0 means no limit.
+     *        configuration settings unless the domain has overrideLimits set. 0 means no limit.
      * @param maxBytesPerDomain the maximum number of bytes to harvest from a domain, overrides individual configuration
-     * settings unless the domain has overrideLimits set. -1 means no limit.
+     *        settings unless the domain has overrideLimits set. -1 means no limit.
      * @param maxJobRunningTime The maximum of seconds which the harvest can spend on the harvest. 0 means no limit.
      * @param harvestNum Which run of the harvest definition this is (should always be 1).
      * @return SnapShotJob
@@ -386,8 +386,8 @@ public class Job implements Serializable, JobInfo {
      */
     private void addGlobalCrawlerTraps(Document orderXmlDoc) {
         GlobalCrawlerTrapListDAO dao = GlobalCrawlerTrapListDAO.getInstance();
-        HeritrixTemplate.editOrderXMLAddCrawlerTraps(orderXmlDoc, Constants.GLOBAL_CRAWLER_TRAPS_ELEMENT_NAME, dao
-                .getAllActiveTrapExpressions());
+        HeritrixTemplate.editOrderXMLAddCrawlerTraps(orderXmlDoc, Constants.GLOBAL_CRAWLER_TRAPS_ELEMENT_NAME,
+                dao.getAllActiveTrapExpressions());
     }
 
     /**
@@ -395,7 +395,7 @@ public class Job implements Serializable, JobInfo {
      *
      * @param cfg the configuration to add
      * @throws ArgumentNotValid if cfg is null or cfg uses a different orderxml than this job or if this job already
-     * contains a configuration associated with domain of configuration cfg.
+     *         contains a configuration associated with domain of configuration cfg.
      */
     public void addConfiguration(DomainConfiguration cfg) {
         ArgumentNotValid.checkNotNull(cfg, "cfg");
@@ -1137,7 +1137,7 @@ public class Job implements Serializable, JobInfo {
 
     /**
      * @return id of the job that this job is supposed to continue using Heritrix recover-log or null if it starts from
-     * scratch.
+     *         scratch.
      */
     public Long getContinuationOf() {
         return this.continuationOF;

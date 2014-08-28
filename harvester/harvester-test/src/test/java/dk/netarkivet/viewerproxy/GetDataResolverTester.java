@@ -124,20 +124,20 @@ public class GetDataResolverTester {
                 response);
         assertEquals("Should have 200 response for second record", 200, result);
         String resultText = response.getOutputStream().toString();
-        assertTrue("Should have start of record in response, not " + resultText, resultText
-                .startsWith("HTTP/1.1 200 OK"));
-        assertEquals("Should have right length of data in response", 6669, ((ByteArrayOutputStream) response
-                .getOutputStream()).size());
+        assertTrue("Should have start of record in response, not " + resultText,
+                resultText.startsWith("HTTP/1.1 200 OK"));
+        assertEquals("Should have right length of data in response", 6669,
+                ((ByteArrayOutputStream) response.getOutputStream()).size());
 
         // Metadata
         response = makeNewResponse();
         result = res.lookup(makeRequest(urlPrefix + "/getMetadata?jobID=" + 2), response);
         assertEquals("Should have 200 response for metadata", 200, result);
         resultText = response.getOutputStream().toString();
-        assertTrue("Should have start of record in response, not " + resultText, resultText
-                .startsWith("filedesc://2-metadata-1.arc "));
-        assertEquals("Should have right length of data in response", 17948, ((ByteArrayOutputStream) response
-                .getOutputStream()).size());
+        assertTrue("Should have start of record in response, not " + resultText,
+                resultText.startsWith("filedesc://2-metadata-1.arc "));
+        assertEquals("Should have right length of data in response", 17948,
+                ((ByteArrayOutputStream) response.getOutputStream()).size());
 
         response = makeNewResponse();
         try {

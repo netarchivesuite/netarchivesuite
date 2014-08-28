@@ -166,8 +166,8 @@ public class ExtractorOAI extends Extractor {
             UURI oldUri = curi.getUURI();
             try {
                 final String newQueryPart = "verb=ListRecords&resumptionToken=" + token;
-                URI newUri = new URI(oldUri.getScheme(), oldUri.getAuthority(), oldUri.getPath(), newQueryPart, oldUri
-                        .getFragment());
+                URI newUri = new URI(oldUri.getScheme(), oldUri.getAuthority(), oldUri.getPath(), newQueryPart,
+                        oldUri.getFragment());
                 curi.createAndAddLink(newUri.toString(), Link.NAVLINK_MISC, Link.NAVLINK_HOP);
             } catch (URISyntaxException e) {
                 log.error(e);

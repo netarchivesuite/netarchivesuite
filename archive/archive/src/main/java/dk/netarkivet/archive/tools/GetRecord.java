@@ -55,7 +55,7 @@ public class GetRecord extends ToolRunnerBase {
      * the GetRecordTool class. Management of this, exception handling etc. is delegated to ToolRunnerBase class.
      *
      * @param argv Takes two command line paramers: - indexdir (the Lucene index directory) - uri (the URI to get the
-     * record from)
+     *        record from)
      */
     public static void main(String[] argv) {
         GetRecord instance = new GetRecord();

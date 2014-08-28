@@ -49,8 +49,8 @@ public class HarvestJobManager extends LifeCycleComponent {
      */
     public HarvestJobManager() {
         jmsConnection = JMSConnectionFactory.getInstance();
-        JobDispatcher jobDispather = new JobDispatcher(jmsConnection, HarvestDefinitionDAO.getInstance(), JobDAO
-                .getInstance());
+        JobDispatcher jobDispather = new JobDispatcher(jmsConnection, HarvestDefinitionDAO.getInstance(),
+                JobDAO.getInstance());
         HarvestChannelRegistry harvestChannelRegistry = new HarvestChannelRegistry();
 
         addChild(new HarvesterStatusReceiver(jobDispather, jmsConnection, HarvestChannelDAO.getInstance(),

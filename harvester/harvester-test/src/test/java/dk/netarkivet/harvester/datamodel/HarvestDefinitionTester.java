@@ -253,10 +253,9 @@ public class HarvestDefinitionTester extends DataModelTestCase {
 
         assertTrue("The first event must not happen before now (" + before + "), but happens at " + firstEvent,
                 firstEvent.compareTo(before) <= 0);
-        assertTrue("The first event must be consistent with schedule", firstEvent
-                .equals(schedule.getFirstEvent(before))
-                || firstEvent.equals(schedule.getFirstEvent(after))
-                || schedule.getFirstEvent(firstEvent).equals(firstEvent));
+        assertTrue("The first event must be consistent with schedule",
+                firstEvent.equals(schedule.getFirstEvent(before)) || firstEvent.equals(schedule.getFirstEvent(after))
+                        || schedule.getFirstEvent(firstEvent).equals(firstEvent));
 
         assertEquals("The new harvest definition must have run 0 times", 0, harvestDef.getNumEvents());
 
@@ -264,8 +263,8 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         assertEquals("Value from CTOR expected", schedule, harvestDef.getSchedule());
         assertEquals("Value from CTOR expected", TestInfo.DEFAULT_HARVEST_NAME, harvestDef.getName());
         assertEquals("Value from CTOR expected", TestInfo.DEFAULT_HARVEST_COMMENT, harvestDef.getComments());
-        CollectionAsserts.assertIteratorEquals("Value from CTOR expected", domainConfigs.iterator(), harvestDef
-                .getDomainConfigurations());
+        CollectionAsserts.assertIteratorEquals("Value from CTOR expected", domainConfigs.iterator(),
+                harvestDef.getDomainConfigurations());
 
         // verify getters and setters
         Long id = Long.valueOf(42L);
@@ -398,12 +397,12 @@ public class HarvestDefinitionTester extends DataModelTestCase {
 
         generateJobs(harvestDef);
 
-        assertFalse("After all subsequent creations of jobs, runNow() " + "should return false", harvestDef
-                .runNow(new Date()));
+        assertFalse("After all subsequent creations of jobs, runNow() " + "should return false",
+                harvestDef.runNow(new Date()));
 
         generateJobs(harvestDef);
-        assertFalse("After all subsequent creations of jobs, runNow() should return false", harvestDef
-                .runNow(new Date()));
+        assertFalse("After all subsequent creations of jobs, runNow() should return false",
+                harvestDef.runNow(new Date()));
     }
 
     /**
@@ -457,8 +456,8 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         Date nextDate0 = harvestDef0.getNextDate();
         generateJobs(harvestDef0);
         assertEquals("Must count up number of events on generating jobs", numEvents0 + 1, harvestDef0.getNumEvents());
-        assertEquals("Must set next date on generating jobs", sched0.getNextEvent(nextDate0, 1), harvestDef0
-                .getNextDate());
+        assertEquals("Must set next date on generating jobs", sched0.getNextEvent(nextDate0, 1),
+                harvestDef0.getNextDate());
 
         int numEvents1 = harvestDef1.getNumEvents();
         generateJobs(harvestDef1);
@@ -764,8 +763,8 @@ public class HarvestDefinitionTester extends DataModelTestCase {
             assertEquals("Job should have been created by given HD", hd.getOid(), job.getOrigHarvestDefinitionID());
             // verify that the jobs created are set to max. harvest 124 objects
             // per domain
-            assertEquals("Config settings should override " + "Harvestdefinition settings", 0, job
-                    .getMaxObjectsPerDomain());
+            assertEquals("Config settings should override " + "Harvestdefinition settings", 0,
+                    job.getMaxObjectsPerDomain());
         }
     }
 
@@ -782,8 +781,8 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         // namely one for each domain not marked as complete.
         DomainDAO dao = DomainDAO.getInstance();
 
-        assertEquals("There should be 4 domains. If more are added," + "update this unit test", 4, dao
-                .getCountDomains());
+        assertEquals("There should be 4 domains. If more are added," + "update this unit test", 4,
+                dao.getCountDomains());
 
         HarvestDefinition hd = HarvestDefinition.createFullHarvest("Full Harvest", "Test of full harvest", null, 2000,
                 Constants.DEFAULT_MAX_BYTES, Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
@@ -895,9 +894,9 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         HarvestDefinitionDAO dao = HarvestDefinitionDAO.getInstance();
 
         FullHarvest hd1 = new FullHarvest("foo", "bar", null, 2, Constants.DEFAULT_MAX_BYTES,
-                Constants.HERITRIX_MAXJOBRUNNINGTIME_INFINITY, false, DAOProviderFactory
-                        .getHarvestDefinitionDAOProvider(), DAOProviderFactory.getJobDAOProvider(), DAOProviderFactory
-                        .getExtendedFieldDAOProvider(), DAOProviderFactory.getDomainDAOProvider());
+                Constants.HERITRIX_MAXJOBRUNNINGTIME_INFINITY, false,
+                DAOProviderFactory.getHarvestDefinitionDAOProvider(), DAOProviderFactory.getJobDAOProvider(),
+                DAOProviderFactory.getExtendedFieldDAOProvider(), DAOProviderFactory.getDomainDAOProvider());
         hd1.setSubmissionDate(new Date());
         dao.create(hd1);
         FullHarvest hd1a = (FullHarvest) dao.read(hd1.getOid());

@@ -72,8 +72,8 @@ public class TrivialJobIndexCacheTester {
         Set<Long> jobs = new HashSet<Long>();
         jobs.add(2L);
         jobs.add(3L);
-        assertEquals("Should give the expected cache with the right jobs", "2-3-DEDUP_CRAWL_LOG-cache", cache.getIndex(
-                jobs).getIndexFile().getName());
+        assertEquals("Should give the expected cache with the right jobs", "2-3-DEDUP_CRAWL_LOG-cache",
+                cache.getIndex(jobs).getIndexFile().getName());
 
     }
 }

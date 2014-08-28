@@ -181,7 +181,7 @@ public class RmiProxyConnectionFactory implements JMXProxyConnectionFactory {
          * Returns true if this object still can return usable proxies.
          *
          * @return True if we can return usable proxies. Otherwise, somebody may have to make a new instance of
-         * JMXProxyFactory to get new proxies.
+         *         JMXProxyFactory to get new proxies.
          */
         public boolean isLive() {
             if (connection == null) {
@@ -209,7 +209,7 @@ public class RmiProxyConnectionFactory implements JMXProxyConnectionFactory {
          * @param intf The interface that the returned proxy should implement.
          * @param <T> the type of class the argument intf is, and the return type.
          * @return an object implementing T. This object forwards all method calls to the MBean registered under the
-         * given name on the MBeanServerConnection that we use.
+         *         given name on the MBeanServerConnection that we use.
          */
         public <T> T createProxy(ObjectName name, Class<T> intf) {
             ArgumentNotValid.checkNotNull(name, "ObjectName name");

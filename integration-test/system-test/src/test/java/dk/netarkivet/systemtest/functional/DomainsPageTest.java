@@ -230,14 +230,14 @@ public class DomainsPageTest extends SeleniumTest {
     }
 
     private List<WebElement> readConfigurationTableRows(WebDriver driver) {
-        List<WebElement> seedListTableRows = driver.findElements(By.className("selection_table")).get(0).findElements(
-                By.className("row0"));
+        List<WebElement> seedListTableRows = driver.findElements(By.className("selection_table")).get(0)
+                .findElements(By.className("row0"));
         return seedListTableRows;
     }
 
     private List<WebElement> readSeedListTableRows(WebDriver driver) {
-        List<WebElement> seedListTableRows = driver.findElements(By.className("selection_table")).get(1).findElements(
-                By.className("row0"));
+        List<WebElement> seedListTableRows = driver.findElements(By.className("selection_table")).get(1)
+                .findElements(By.className("row0"));
         return seedListTableRows;
     }
 }

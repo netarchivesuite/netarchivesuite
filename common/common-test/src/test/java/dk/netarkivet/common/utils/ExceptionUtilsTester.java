@@ -48,8 +48,8 @@ public class ExceptionUtilsTester {
      */
     @Test
     public void testGetStackTrace() throws Exception {
-        assertEquals("Null exceptions should simply return 'null' and a linebreak", "null\n", ExceptionUtils
-                .getStackTrace(null));
+        assertEquals("Null exceptions should simply return 'null' and a linebreak", "null\n",
+                ExceptionUtils.getStackTrace(null));
         String exceptionMessage = "Test";
         ArgumentNotValid cause = new ArgumentNotValid(exceptionMessage);
         ArgumentNotValid throwable = new ArgumentNotValid(exceptionMessage, cause);

@@ -65,8 +65,8 @@ public class Serial {
      *
      * @param obj A Serializable object to test.
      * @param excludedFields Names of fields that we do not care are not initialized after deserialization. Could be
-     * integers that are properly initialized to 0 or the like. Only include fields here if you are sure that
-     * initialization is not required!
+     *        integers that are properly initialized to 0 or the like. Only include fields here if you are sure that
+     *        initialization is not required!
      * @throws IOException
      * @throws ClassNotFoundException
      * @throws IllegalAccessException

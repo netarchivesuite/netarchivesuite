@@ -53,8 +53,8 @@ public class ClassAsserts {
         } catch (NoSuchMethodException e) {
             TestCase.fail("Expect to find getInstance() method in class " + c.getName());
         }
-        TestCase.assertEquals("getInstance() method should return " + "an object of the same class: ", c, m
-                .getReturnType());
+        TestCase.assertEquals("getInstance() method should return " + "an object of the same class: ", c,
+                m.getReturnType());
         TestCase.assertTrue("getInstance() method should be static:", Modifier.isStatic(m.getModifiers()));
     }
 
@@ -90,8 +90,8 @@ public class ClassAsserts {
      * @param c A class to test.
      */
     public static <T> void assertPrivateConstructor(Class<T> c) {
-        TestCase.assertEquals("Expect to find no public constructors for " + "class " + c.getName(), 0, c
-                .getConstructors().length);
+        TestCase.assertEquals("Expect to find no public constructors for " + "class " + c.getName(), 0,
+                c.getConstructors().length);
     }
 
     /**
@@ -129,8 +129,8 @@ public class ClassAsserts {
                 field.set(o2, fieldValues2.get(field.getName()));
                 TestCase.assertFalse("Changing field " + field + " should cause non-equals", o1.equals(o2));
                 field.set(o2, fieldValues1.get(field.getName()));
-                TestCase.assertEquals("Objects must have same hashcode with all fields equals", o1.hashCode(), o2
-                        .hashCode());
+                TestCase.assertEquals("Objects must have same hashcode with all fields equals", o1.hashCode(),
+                        o2.hashCode());
             }
         }
     }

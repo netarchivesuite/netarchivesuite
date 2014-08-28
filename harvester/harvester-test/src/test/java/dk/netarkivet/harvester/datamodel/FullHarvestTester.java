@@ -60,8 +60,8 @@ public class FullHarvestTester extends DataModelTestCase {
         final HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
         FullHarvest fh = HarvestDefinition.createFullHarvest("testfullharvest", "comment", null, 200L,
                 Constants.DEFAULT_MAX_BYTES, Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
-        assertEquals("Should have default number of max bytes from start", Constants.DEFAULT_MAX_BYTES, fh
-                .getMaxBytes());
+        assertEquals("Should have default number of max bytes from start", Constants.DEFAULT_MAX_BYTES,
+                fh.getMaxBytes());
         final int maxBytes = 201 * 1024 * 1024;
         fh.setMaxBytes(maxBytes);
         assertEquals("Should have set number of max bytes after update", maxBytes, fh.getMaxBytes());
@@ -162,8 +162,9 @@ public class FullHarvestTester extends DataModelTestCase {
 
         // Create a FullHarvest, that has previousFullHarvest as previous
         // FullHarvest
-        FullHarvest fh = HarvestDefinition.createFullHarvest("previousfullharvest", "comment", previousFullHarvest
-                .getOid(), 200L, Constants.DEFAULT_MAX_BYTES, Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
+        FullHarvest fh = HarvestDefinition
+                .createFullHarvest("previousfullharvest", "comment", previousFullHarvest.getOid(), 200L,
+                        Constants.DEFAULT_MAX_BYTES, Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
 
         // Create one HarvestInfo objects for netarkivet.dk for this
         // FullHarvest.

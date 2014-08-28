@@ -209,7 +209,7 @@ public class ArchiveSettings {
      * set to zero, statement pooling is fully deactivated.
      *
      * @see <a href="http://www.mchange.com/projects/c3p0/index.html#maxStatements"> c3p0 maxStatements
-     * documentation</a>
+     *      documentation</a>
      */
     public static String DB_POOL_MAX_STM = "settings.archive.admin.database.pool.maxStm";
 
@@ -220,7 +220,7 @@ public class ArchiveSettings {
      * set to zero, statement pooling is fully deactivated.
      *
      * @see <a href="http://www.mchange.com/projects/c3p0/index.html#maxStatementsPerConnection"> c3p0
-     * maxStatementsPerConnection documentation</a>
+     *      maxStatementsPerConnection documentation</a>
      */
     public static String DB_POOL_MAX_STM_PER_CONN = "settings.archive.admin.database.pool.maxStmPerConn";
 
@@ -229,7 +229,7 @@ public class ArchiveSettings {
      * Configure idle connection testing period in seconds. Default is 0, which means no idle connection testing
      *
      * @see <a href="http://www.mchange.com/projects/c3p0/index.html#idleConnectionTestPeriod"> c3p0
-     * idleConnectionTestPeriod documentation</a>
+     *      idleConnectionTestPeriod documentation</a>
      */
     public static String DB_POOL_IDLE_CONN_TEST_PERIOD = "settings.archive.admin.database.pool.idleConnTestPeriod";
 
@@ -238,7 +238,7 @@ public class ArchiveSettings {
      * Configure if a connection validity should be checked when returned to the pool. Default is false.
      *
      * @see <a href="http://www.mchange.com/projects/c3p0/index.html#testConnectionOnCheckin"> c3p0
-     * testConnectionOnCheckin documentation</a>
+     *      testConnectionOnCheckin documentation</a>
      */
     public static String DB_POOL_IDLE_CONN_TEST_ON_CHECKIN = "settings.archive.admin.database.pool.idleConnTestOnCheckin";
 
@@ -247,7 +247,7 @@ public class ArchiveSettings {
      * The SQL query to be used when testing an idle connection. Default is empty, which means using c3p0 defaults.
      *
      * @see <a href="http://www.mchange.com/projects/c3p0/index.html#preferredTestQuery"> c3p0 preferredTestQuery
-     * documentation</a>
+     *      documentation</a>
      */
     public static String DB_POOL_IDLE_CONN_TEST_QUERY = "settings.archive.admin.database.pool.idleConnTestQuery";
 

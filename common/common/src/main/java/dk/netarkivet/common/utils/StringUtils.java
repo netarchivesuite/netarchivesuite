@@ -101,10 +101,10 @@ public final class StringUtils {
      *
      * @param <T> The type of collection.
      * @param separator The string to separate the entries in the collection with. This is allowed to be the empty
-     * string.
+     *        string.
      * @param objects The collection to have the string representation of its entries concatenated.
      * @param max The maximum number of objects in the collection to concatenate. If this number is 0 or below only the
-     * first entry in the collection is returned.
+     *        first entry in the collection is returned.
      * @return The concatenation of the string representation of a limited amount of entries in the collection.
      * @throws ArgumentNotValid If the separator or the objects are null.
      */
@@ -273,7 +273,7 @@ public final class StringUtils {
      *
      * @param s The given string
      * @return Return a string leftpadded with a "0" if the string is only one character long, Otherwise just return the
-     * string.
+     *         string.
      */
     private static String formatDurationLpad(final String s) {
         return (s.length() == 1 ? "0" + s : s);

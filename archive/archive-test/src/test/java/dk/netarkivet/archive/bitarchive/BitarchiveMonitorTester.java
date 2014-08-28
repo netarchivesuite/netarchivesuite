@@ -83,8 +83,8 @@ public class BitarchiveMonitorTester {
         TimeoutBatch timeoutBatch = new TimeoutBatch();
 
         // jmsARClient.batch(timeoutBatch, "ONE");
-        BatchMessage msg = new BatchMessage(Channels.getTheBamon(), Channels.getError(), timeoutBatch, Settings
-                .get(CommonSettings.USE_REPLICA_ID));
+        BatchMessage msg = new BatchMessage(Channels.getTheBamon(), Channels.getError(), timeoutBatch,
+                Settings.get(CommonSettings.USE_REPLICA_ID));
 
         long batchTimeout = msg.getJob().getBatchJobTimeout();
         /*
@@ -97,8 +97,8 @@ public class BitarchiveMonitorTester {
         EvilBatch eb = new EvilBatch();
 
         // jmsARClient.batch(timeoutBatch, "ONE");
-        msg = new BatchMessage(Channels.getTheBamon(), Channels.getError(), eb, Settings
-                .get(CommonSettings.USE_REPLICA_ID));
+        msg = new BatchMessage(Channels.getTheBamon(), Channels.getError(), eb,
+                Settings.get(CommonSettings.USE_REPLICA_ID));
 
         batchTimeout = msg.getJob().getBatchJobTimeout();
         /*

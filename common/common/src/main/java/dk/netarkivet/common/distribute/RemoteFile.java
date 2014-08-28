@@ -58,7 +58,7 @@ public interface RemoteFile extends Serializable {
      * Get an inputstream that contains the data transferred in this RemoteFile.
      *
      * @return A stream object with the data in the object. Note that the close() method of this may throw exceptions if
-     * e.g. a transmission error is detected.
+     *         e.g. a transmission error is detected.
      * @throws IOFailure on communication trouble.
      */
     InputStream getInputStream();

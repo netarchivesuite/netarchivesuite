@@ -130,8 +130,8 @@ public class FileBatchJobTester {
             patterns.add(i + "-[0-9]+-[0-9]+-[0-9]+-.*");
         }
         f1.processOnlyFilesMatching(patterns);
-        assertTrue("Should have combined patterns into one regexp", f1.getFilenamePattern().pattern().startsWith(
-                "(" + patterns.get(0) + "|" + patterns.get(1)));
+        assertTrue("Should have combined patterns into one regexp",
+                f1.getFilenamePattern().pattern().startsWith("(" + patterns.get(0) + "|" + patterns.get(1)));
     }
 
     private static class ConcreteFileBatchJob extends FileBatchJob {

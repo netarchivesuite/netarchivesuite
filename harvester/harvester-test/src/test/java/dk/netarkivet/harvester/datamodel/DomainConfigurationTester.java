@@ -73,8 +73,8 @@ public class DomainConfigurationTester extends DataModelTestCase {
         Domain wd = Domain.getDefaultDomain(TestInfo.DOMAIN_NAME);
         wd.addSeedList(TestInfo.seedlist);
 
-        DomainConfiguration newcfg = new DomainConfiguration(TestInfo.CONFIGURATION_NAME, wd, Arrays
-                .asList(new SeedList[] {TestInfo.seedlist}), new ArrayList<Password>());
+        DomainConfiguration newcfg = new DomainConfiguration(TestInfo.CONFIGURATION_NAME, wd,
+                Arrays.asList(new SeedList[] {TestInfo.seedlist}), new ArrayList<Password>());
 
         wd.addConfiguration(newcfg);
         wd.setDefaultConfiguration(newcfg.getName());
@@ -100,8 +100,8 @@ public class DomainConfigurationTester extends DataModelTestCase {
         Domain wd = dao.read(TestInfo.EXISTINGDOMAINNAME);
         wd.addSeedList(TestInfo.seedlist);
 
-        DomainConfiguration newcfg = new DomainConfiguration(TestInfo.DEFAULTCFGNAME, wd, Arrays
-                .asList(new SeedList[] {TestInfo.seedlist}), new ArrayList<Password>());
+        DomainConfiguration newcfg = new DomainConfiguration(TestInfo.DEFAULTCFGNAME, wd,
+                Arrays.asList(new SeedList[] {TestInfo.seedlist}), new ArrayList<Password>());
         // TODO: Make sure a config always has a valid template?
         newcfg.setOrderXmlName(TestInfo.ORDER_XML_NAME);
         assertEquals("maxBytes should start out at default value", Constants.DEFAULT_MAX_BYTES, newcfg.getMaxBytes());
@@ -159,8 +159,8 @@ public class DomainConfigurationTester extends DataModelTestCase {
         Domain d = Domain.getDefaultDomain(TestInfo.DEFAULTNEWDOMAINNAME);
         d.addPassword(TestInfo.password);
         DomainConfiguration conf = d.getDefaultConfiguration();
-        assertFalse("Configuration should not be using any passwords by default", conf
-                .usesPassword(TestInfo.PASSWORD_NAME));
+        assertFalse("Configuration should not be using any passwords by default",
+                conf.usesPassword(TestInfo.PASSWORD_NAME));
         conf.addPassword(d, TestInfo.password);
         assertTrue("Configuration uses password", conf.usesPassword(TestInfo.PASSWORD_NAME));
     }
@@ -168,13 +168,13 @@ public class DomainConfigurationTester extends DataModelTestCase {
     public void testGetExpectedNumberOfObjects() throws Exception {
         Domain domain = Domain.getDefaultDomain("testdomain01.dk");
         DomainConfiguration dc = domain.getDefaultConfiguration();
-        assertEquals("Unharvested config should return the default given number", 5000, dc.getExpectedNumberOfObjects(
-                -1L, -1L));
+        assertEquals("Unharvested config should return the default given number", 5000,
+                dc.getExpectedNumberOfObjects(-1L, -1L));
         dc.setMaxObjects(4000);
-        assertEquals("Unharvested config should the set number of objects", 4000, dc.getExpectedNumberOfObjects(-1L,
-                -1L));
-        assertEquals("Unharvested config should expect the configured number (4000 objects)", 4000, dc
-                .getExpectedNumberOfObjects(6000, -1L));
+        assertEquals("Unharvested config should the set number of objects", 4000,
+                dc.getExpectedNumberOfObjects(-1L, -1L));
+        assertEquals("Unharvested config should expect the configured number (4000 objects)", 4000,
+                dc.getExpectedNumberOfObjects(6000, -1L));
 
         Date d1 = new GregorianCalendar(1970, 01, 01).getTime();
         Date d2 = new GregorianCalendar(1980, 01, 01).getTime();
@@ -200,66 +200,66 @@ public class DomainConfigurationTester extends DataModelTestCase {
         assertEquals("Override flag should not affect lower limits", 1150L, dc.getExpectedNumberOfObjects(2200L, -1L));
         System.out.println("-------");
         dc.setMaxObjects(200);
-        assertEquals("Override flag should be a maximum of the end result", 200L, dc.getExpectedNumberOfObjects(2200L,
-                -1L));
+        assertEquals("Override flag should be a maximum of the end result", 200L,
+                dc.getExpectedNumberOfObjects(2200L, -1L));
 
         dc.setMaxObjects(1000);
-        assertEquals("Override flag should be a maximum of the end result", 1000L, dc.getExpectedNumberOfObjects(2200L,
-                -1L));
+        assertEquals("Override flag should be a maximum of the end result", 1000L,
+                dc.getExpectedNumberOfObjects(2200L, -1L));
 
         domain = Domain.getDefaultDomain("testdomain02.dk");
         dc = domain.getDefaultConfiguration();
         addHistoryObject(domain, dc, d1, 100L, 1L, StopReason.SIZE_LIMIT);
         dc.setMaxObjects(1100);
-        assertEquals("Unfinished harvest should add 50% of difference", 1100L, dc
-                .getExpectedNumberOfObjects(2100L, -1L));
+        assertEquals("Unfinished harvest should add 50% of difference", 1100L,
+                dc.getExpectedNumberOfObjects(2100L, -1L));
 
         domain = Domain.getDefaultDomain("testdomain03.dk");
         dc = domain.getDefaultConfiguration();
         addHistoryObject(domain, dc, d1, 200L, 1L, StopReason.DOWNLOAD_COMPLETE);
         addHistoryObject(domain, dc, d2, 100L, 1L, StopReason.SIZE_LIMIT);
-        assertEquals("Newer smaller unfinished harvest should not affect expectation", 400L, dc
-                .getExpectedNumberOfObjects(2200L, -1L));
+        assertEquals("Newer smaller unfinished harvest should not affect expectation", 400L,
+                dc.getExpectedNumberOfObjects(2200L, -1L));
 
         domain = Domain.getDefaultDomain("testdomain04.dk");
         dc = domain.getDefaultConfiguration();
         addHistoryObject(domain, dc, d1, 200L, 1L, StopReason.DOWNLOAD_COMPLETE);
         addHistoryObject(domain, dc, d2, 300L, 1L, StopReason.SIZE_LIMIT);
         dc.setMaxObjects(2300);
-        assertEquals("Newer larger unfinished harvest should define expectation", 1300L, dc.getExpectedNumberOfObjects(
-                -1L, -1L));
+        assertEquals("Newer larger unfinished harvest should define expectation", 1300L,
+                dc.getExpectedNumberOfObjects(-1L, -1L));
 
         domain = Domain.getDefaultDomain("testdomain04.dk");
         dc = domain.getDefaultConfiguration();
         addHistoryObject(domain, dc, d1, 300L, 1L, StopReason.SIZE_LIMIT);
         addHistoryObject(domain, dc, d2, 200L, 1L, StopReason.DOWNLOAD_COMPLETE);
-        assertEquals("Older larger unfinished harvest should not affect expectation", 400L, dc
-                .getExpectedNumberOfObjects(2200L, -1L));
+        assertEquals("Older larger unfinished harvest should not affect expectation", 400L,
+                dc.getExpectedNumberOfObjects(2200L, -1L));
 
         // Testing limits using expected object sizes from byte limits
         domain = Domain.getDefaultDomain("testdomain05.dk");
         dc = domain.getDefaultConfiguration();
         addHistoryObject(domain, dc, d1, 40L, 400L, StopReason.SIZE_LIMIT);
-        assertEquals("The expected object size should be 38000 because only 40 objects were harvested", 85L, dc
-                .getExpectedNumberOfObjects(-1L, 5000000L));
+        assertEquals("The expected object size should be 38000 because only 40 objects were harvested", 85L,
+                dc.getExpectedNumberOfObjects(-1L, 5000000L));
 
         domain = Domain.getDefaultDomain("testdomain06.dk");
         dc = domain.getDefaultConfiguration();
         addHistoryObject(domain, dc, d1, 100L, 1000L, StopReason.SIZE_LIMIT);
-        assertEquals("The expected object size should be 10 because 100 objects were harvested", 250050L, dc
-                .getExpectedNumberOfObjects(-1L, 5000000L));
+        assertEquals("The expected object size should be 10 because 100 objects were harvested", 250050L,
+                dc.getExpectedNumberOfObjects(-1L, 5000000L));
 
         domain = Domain.getDefaultDomain("testdomain07.dk");
         dc = domain.getDefaultConfiguration();
         addHistoryObject(domain, dc, d1, 1L, 1L, StopReason.SIZE_LIMIT);
-        assertEquals("When heritrix writes 1/1 we shouldn't expect too many objects next time", 66L, dc
-                .getExpectedNumberOfObjects(-1L, 5000000L));
+        assertEquals("When heritrix writes 1/1 we shouldn't expect too many objects next time", 66L,
+                dc.getExpectedNumberOfObjects(-1L, 5000000L));
 
         domain = Domain.getDefaultDomain("testdomain08.dk");
         dc = domain.getDefaultConfiguration();
         addHistoryObject(domain, dc, d1, 10L, 10000000L, StopReason.SIZE_LIMIT);
-        assertEquals("Even on small harvests we should trust large expectations", 5L, dc.getExpectedNumberOfObjects(
-                -1L, 5000000L));
+        assertEquals("Even on small harvests we should trust large expectations", 5L,
+                dc.getExpectedNumberOfObjects(-1L, 5000000L));
     }
 
     /** Test that adding seedlists to domainconfigs doesn't confuse the domain. */
@@ -295,8 +295,8 @@ public class DomainConfigurationTester extends DataModelTestCase {
         Domain d = TestInfo.getDefaultDomain();
         Password password = new Password("test", "no comment", "domain of evil", "realm of hades", "morgoth", "666");
         d.addPassword(password);
-        Password copy = new Password(password.getName(), password.getComments(), password.getPasswordDomain(), password
-                .getRealm(), password.getUsername(), password.getPassword());
+        Password copy = new Password(password.getName(), password.getComments(), password.getPasswordDomain(),
+                password.getRealm(), password.getUsername(), password.getPassword());
         DomainConfiguration dc = d.getAllConfigurations().next();
         final ArrayList<Password> passwords = new ArrayList<Password>();
         passwords.add(copy);
@@ -313,8 +313,8 @@ public class DomainConfigurationTester extends DataModelTestCase {
         try {
             final ArrayList<String> seeds = new ArrayList<String>();
             seeds.add("foobarbaz");
-            copy = new Password(password.getName(), password.getComments(), password.getPasswordDomain(), password
-                    .getRealm(), password.getUsername(), "TrustEveryOne");
+            copy = new Password(password.getName(), password.getComments(), password.getPasswordDomain(),
+                    password.getRealm(), password.getUsername(), "TrustEveryOne");
             dc.addPassword(d, copy);
             fail("Should not accept an wrong password");
         } catch (PermissionDenied e) {

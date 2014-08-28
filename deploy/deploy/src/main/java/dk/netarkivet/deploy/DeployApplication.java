@@ -82,14 +82,14 @@ public final class DeployApplication {
      *
      * @param args The Command-line arguments in no particular order:
      *
-     * -C The deploy configuration file (ends with .xml). -Z The NetarchiveSuite file to be unpacked (ends with .zip).
-     * -S The security policy file (ends with .policy). -L The logging property file (ends with .prop). -O [OPTIONAL]
-     * The output directory -D [OPTIONAL] The harvest definition database -T [OPTIONAL] The test arguments
-     * (httpportoffset, port, environmentName, mailReceiver) -R [OPTIONAL] For resetting the tempDir (takes arguments
-     * 'y' or 'yes') -E [OPTIONAL] Evaluating the deployConfig file (arguments: 'y' or 'yes') -A [OPTIONAL] For archive
-     * database. -J [OPTIONAL] For deploying with external jar files. Must be the total path to the directory containing
-     * jar-files. These external files will be placed on every machine, and they have to manually be put into the
-     * classpath, where they should be used.
+     *        -C The deploy configuration file (ends with .xml). -Z The NetarchiveSuite file to be unpacked (ends with
+     *        .zip). -S The security policy file (ends with .policy). -L The logging property file (ends with .prop). -O
+     *        [OPTIONAL] The output directory -D [OPTIONAL] The harvest definition database -T [OPTIONAL] The test
+     *        arguments (httpportoffset, port, environmentName, mailReceiver) -R [OPTIONAL] For resetting the tempDir
+     *        (takes arguments 'y' or 'yes') -E [OPTIONAL] Evaluating the deployConfig file (arguments: 'y' or 'yes') -A
+     *        [OPTIONAL] For archive database. -J [OPTIONAL] For deploying with external jar files. Must be the total
+     *        path to the directory containing jar-files. These external files will be placed on every machine, and they
+     *        have to manually be put into the classpath, where they should be used.
      */
     /**
      * @param args

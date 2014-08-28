@@ -67,7 +67,7 @@ public class FilterIteratorTester {
          *
          * @param o The file to read
          * @return An object of the type iterated over by the list, or null if the file does not exist or cannot be used
-         * to create an appropriate object.
+         *         to create an appropriate object.
          */
         protected File filter(File o) {
             if (o.exists()) {

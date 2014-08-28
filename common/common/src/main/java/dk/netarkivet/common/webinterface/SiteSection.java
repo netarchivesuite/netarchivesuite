@@ -73,7 +73,7 @@ public abstract class SiteSection {
      * @param prefix The prefix that all the JSP pages will have.
      * @param visiblePages How many of the pages will be visible in the menu (taken from the start of the list).
      * @param pagesAndTitles The actual pages and title-labels, without the prefix and jsp extension, involved in the
-     * section. They must be given as an array of 2-element arrays.
+     *        section. They must be given as an array of 2-element arrays.
      * @param dirname The top level directory this site section is deployed under.
      * @param bundle The resource bundle with translations of this sitesection.
      * @throws ArgumentNotValid if any of the elements of pagesAndTitles are not a 2-element array.
@@ -126,7 +126,7 @@ public abstract class SiteSection {
      *
      * @param out A place to write our HTML
      * @param url The url of the page we're currently viewing. The list of subpages will only be displayed if the page
-     * we're viewing is one that belongs to this section.
+     *        we're viewing is one that belongs to this section.
      * @param locale The locale to generate the navigation tree for.
      * @throws IOException If there is a problem writing to the page.
      */

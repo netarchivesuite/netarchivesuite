@@ -145,8 +145,8 @@ public class ArcRepositoryTesterStore {
             ReplicaClient repClient = arcRepos.getReplicaClientFromReplicaId(rep.getId());
 
             assertNotNull("The replica client must not be null.", repClient);
-            assertEquals("The replica and the replica client must of the same type.", rep.getType(), repClient
-                    .getType());
+            assertEquals("The replica and the replica client must of the same type.", rep.getType(),
+                    repClient.getType());
         }
 
         String wrongReplicaId = "ERROR";
@@ -154,8 +154,8 @@ public class ArcRepositoryTesterStore {
             arcRepos.getReplicaClientFromReplicaId(wrongReplicaId);
             fail("There should be no replica with ID '" + wrongReplicaId + "'.");
         } catch (UnknownID e) {
-            assertTrue("The error message should have the right format.", e.getMessage().contains(
-                    "Can't find replica with id '" + wrongReplicaId + "'"));
+            assertTrue("The error message should have the right format.",
+                    e.getMessage().contains("Can't find replica with id '" + wrongReplicaId + "'"));
         }
     }
 
@@ -219,12 +219,13 @@ public class ArcRepositoryTesterStore {
 
         // Check admin data
         ArcRepositoryEntry entry = adminData.getEntry(STORABLE_FILE.getName());
-        assertEquals("Should have expected checksum", ChecksumCalculator.calculateMd5(STORABLE_FILE), entry
-                .getChecksum());
+        assertEquals("Should have expected checksum", ChecksumCalculator.calculateMd5(STORABLE_FILE),
+                entry.getChecksum());
 
         // Check log for message
-        lr.assertLogContains("Should have the log message", "Retrying store of already known file '"
-                + STORABLE_FILE.getName() + "'," + " Already completed: " + true);
+        lr.assertLogContains("Should have the log message",
+                "Retrying store of already known file '" + STORABLE_FILE.getName() + "'," + " Already completed: "
+                        + true);
         lr.stopRecorder();
     }
 
@@ -329,12 +330,12 @@ public class ArcRepositoryTesterStore {
 
         // Check admin data
         ArcRepositoryEntry entry = adminData.getEntry(STORABLE_FILE.getName());
-        assertEquals("Should have expected checksum", ChecksumCalculator.calculateMd5(STORABLE_FILE), entry
-                .getChecksum());
+        assertEquals("Should have expected checksum", ChecksumCalculator.calculateMd5(STORABLE_FILE),
+                entry.getChecksum());
         assertEquals("Should have expected state", ReplicaStoreState.UPLOAD_STARTED, entry.getGeneralStoreState()
                 .getState());
-        assertEquals("Should have expected state", ReplicaStoreState.UPLOAD_STARTED, entry.getStoreState(Channels
-                .retrieveReplicaChannelNameFromReplicaId("ONE")));
+        assertEquals("Should have expected state", ReplicaStoreState.UPLOAD_STARTED,
+                entry.getStoreState(Channels.retrieveReplicaChannelNameFromReplicaId("ONE")));
     }
 
     /**
@@ -385,21 +386,22 @@ public class ArcRepositoryTesterStore {
                 sentMsg instanceof GetChecksumMessage);
         GetChecksumMessage gcm = (GetChecksumMessage) sentMsg;
         assertTrue("The checksum message should be okay", gcm.isOk());
-        assertEquals("The GetChecksumMessage should ask for the file '" + STORABLE_FILE.getName() + "', not '"
-                + gcm.getArcfileName(), STORABLE_FILE.getName(), gcm.getArcfileName());
+        assertEquals(
+                "The GetChecksumMessage should ask for the file '" + STORABLE_FILE.getName() + "', not '"
+                        + gcm.getArcfileName(), STORABLE_FILE.getName(), gcm.getArcfileName());
 
         // Check admin data
         ArcRepositoryEntry entry = adminData.getEntry(STORABLE_FILE.getName());
-        assertEquals("Should have expected checksum", ChecksumCalculator.calculateMd5(STORABLE_FILE), entry
-                .getChecksum());
+        assertEquals("Should have expected checksum", ChecksumCalculator.calculateMd5(STORABLE_FILE),
+                entry.getChecksum());
         assertEquals("Should have expected state", ReplicaStoreState.UPLOAD_STARTED, entry.getGeneralStoreState()
                 .getState());
-        assertEquals("Should have expected state", ReplicaStoreState.UPLOAD_STARTED, entry.getStoreState(Channels
-                .retrieveReplicaChannelNameFromReplicaId("ONE")));
+        assertEquals("Should have expected state", ReplicaStoreState.UPLOAD_STARTED,
+                entry.getStoreState(Channels.retrieveReplicaChannelNameFromReplicaId("ONE")));
 
         // Check log for message
-        lr.assertLogContains("Should have the log message", "Retrying store of already known file '"
-                + STORABLE_FILE.getName() + "', Already completed: " + false);
+        lr.assertLogContains("Should have the log message",
+                "Retrying store of already known file '" + STORABLE_FILE.getName() + "', Already completed: " + false);
         lr.stopRecorder();
     }
 
@@ -453,17 +455,20 @@ public class ArcRepositoryTesterStore {
 
         // Check admin data
         ArcRepositoryEntry entry = adminData.getEntry(STORABLE_FILE.getName());
-        assertEquals("Should have expected checksum", ChecksumCalculator.calculateMd5(STORABLE_FILE), entry
-                .getChecksum());
-        assertEquals("Should have expected state", ReplicaStoreState.DATA_UPLOADED, adminData.getState(STORABLE_FILE
-                .getName(), Replica.getReplicaFromId("ONE").getIdentificationChannel().getName()));
+        assertEquals("Should have expected checksum", ChecksumCalculator.calculateMd5(STORABLE_FILE),
+                entry.getChecksum());
+        assertEquals(
+                "Should have expected state",
+                ReplicaStoreState.DATA_UPLOADED,
+                adminData.getState(STORABLE_FILE.getName(), Replica.getReplicaFromId("ONE").getIdentificationChannel()
+                        .getName()));
         // entry.getGeneralStoreState().getState());
-        assertEquals("Should have expected state", ReplicaStoreState.DATA_UPLOADED, entry.getStoreState(Channels
-                .retrieveReplicaChannelNameFromReplicaId("ONE")));
+        assertEquals("Should have expected state", ReplicaStoreState.DATA_UPLOADED,
+                entry.getStoreState(Channels.retrieveReplicaChannelNameFromReplicaId("ONE")));
 
         // Check log for message
-        lr.assertLogContains("Should have the log message", "Retrying store of already known file '"
-                + STORABLE_FILE.getName() + "', Already completed: " + false);
+        lr.assertLogContains("Should have the log message",
+                "Retrying store of already known file '" + STORABLE_FILE.getName() + "', Already completed: " + false);
         lr.stopRecorder();
     }
 
@@ -519,16 +524,16 @@ public class ArcRepositoryTesterStore {
 
         // Check admin data
         ArcRepositoryEntry entry = adminData.getEntry(STORABLE_FILE.getName());
-        assertEquals("Should have expected checksum", ChecksumCalculator.calculateMd5(STORABLE_FILE), entry
-                .getChecksum());
+        assertEquals("Should have expected checksum", ChecksumCalculator.calculateMd5(STORABLE_FILE),
+                entry.getChecksum());
         assertEquals("Should have expected state", ReplicaStoreState.UPLOAD_STARTED, entry.getGeneralStoreState()
                 .getState());
-        assertEquals("Should have expected state", ReplicaStoreState.UPLOAD_STARTED, entry.getStoreState(Channels
-                .retrieveReplicaChannelNameFromReplicaId("ONE")));
+        assertEquals("Should have expected state", ReplicaStoreState.UPLOAD_STARTED,
+                entry.getStoreState(Channels.retrieveReplicaChannelNameFromReplicaId("ONE")));
 
         // Check log for message
-        lr.assertLogContains("Should have the log message", "Retrying store of already known file '"
-                + STORABLE_FILE.getName() + "', Already completed: " + false);
+        lr.assertLogContains("Should have the log message",
+                "Retrying store of already known file '" + STORABLE_FILE.getName() + "', Already completed: " + false);
         lr.stopRecorder();
     }
 
@@ -559,8 +564,8 @@ public class ArcRepositoryTesterStore {
                 ReplicaStoreState.UPLOAD_STARTED);
 
         // Deliver message
-        UploadMessage msg = new UploadMessage(Channels.getAnyBa(), Channels.getTheRepos(), RemoteFileFactory
-                .getInstance(STORABLE_FILE, true, false, true));
+        UploadMessage msg = new UploadMessage(Channels.getAnyBa(), Channels.getTheRepos(),
+                RemoteFileFactory.getInstance(STORABLE_FILE, true, false, true));
         JMSConnectionMockupMQ.updateMsgID(msg, "Msg-id-0");
         arcRepos.onUpload(msg);
         con.waitForConcurrentTasksToFinish();
@@ -588,16 +593,16 @@ public class ArcRepositoryTesterStore {
 
         // Check admin data
         ArcRepositoryEntry entry = adminData.getEntry(STORABLE_FILE.getName());
-        assertEquals("Should have expected checksum", ChecksumCalculator.calculateMd5(STORABLE_FILE), entry
-                .getChecksum());
+        assertEquals("Should have expected checksum", ChecksumCalculator.calculateMd5(STORABLE_FILE),
+                entry.getChecksum());
         assertEquals("Should have expected state", ReplicaStoreState.DATA_UPLOADED, entry.getGeneralStoreState()
                 .getState());
-        assertEquals("Should have expected state", ReplicaStoreState.DATA_UPLOADED, entry.getStoreState(Channels
-                .retrieveReplicaChannelNameFromReplicaId("ONE")));
-        assertNull("Replica 'TWO' should not have any entries for the file '" + STORABLE_FILE.getName(), entry
-                .getStoreState(Channels.retrieveReplicaChannelNameFromReplicaId("TWO")));
-        assertNull("Replica 'THREE' should not have any entries for the file '" + STORABLE_FILE.getName(), entry
-                .getStoreState(Channels.retrieveReplicaChannelNameFromReplicaId("THREE")));
+        assertEquals("Should have expected state", ReplicaStoreState.DATA_UPLOADED,
+                entry.getStoreState(Channels.retrieveReplicaChannelNameFromReplicaId("ONE")));
+        assertNull("Replica 'TWO' should not have any entries for the file '" + STORABLE_FILE.getName(),
+                entry.getStoreState(Channels.retrieveReplicaChannelNameFromReplicaId("TWO")));
+        assertNull("Replica 'THREE' should not have any entries for the file '" + STORABLE_FILE.getName(),
+                entry.getStoreState(Channels.retrieveReplicaChannelNameFromReplicaId("THREE")));
     }
 
     /**
@@ -631,8 +636,8 @@ public class ArcRepositoryTesterStore {
                 ReplicaStoreState.UPLOAD_COMPLETED);
 
         // Deliver message
-        UploadMessage msg = new UploadMessage(Channels.getAnyBa(), Channels.getTheRepos(), RemoteFileFactory
-                .getInstance(STORABLE_FILE, true, false, true));
+        UploadMessage msg = new UploadMessage(Channels.getAnyBa(), Channels.getTheRepos(),
+                RemoteFileFactory.getInstance(STORABLE_FILE, true, false, true));
         msg.setNotOk("NOT OK!");
         JMSConnectionMockupMQ.updateMsgID(msg, "Msg-id-0");
         arcRepos.onUpload(msg);
@@ -657,12 +662,12 @@ public class ArcRepositoryTesterStore {
 
         // Check admin data
         ArcRepositoryEntry entry = adminData.getEntry(STORABLE_FILE.getName());
-        assertEquals("Should have expected checksum", ChecksumCalculator.calculateMd5(STORABLE_FILE), entry
-                .getChecksum());
+        assertEquals("Should have expected checksum", ChecksumCalculator.calculateMd5(STORABLE_FILE),
+                entry.getChecksum());
         assertEquals("Should have expected state", ReplicaStoreState.UPLOAD_FAILED, entry.getGeneralStoreState()
                 .getState());
-        assertEquals("Should have expected state", ReplicaStoreState.UPLOAD_FAILED, entry.getStoreState(Channels
-                .retrieveReplicaChannelNameFromReplicaId("ONE")));
+        assertEquals("Should have expected state", ReplicaStoreState.UPLOAD_FAILED,
+                entry.getStoreState(Channels.retrieveReplicaChannelNameFromReplicaId("ONE")));
     }
 
     /**
@@ -702,8 +707,8 @@ public class ArcRepositoryTesterStore {
         outstandingChecksumFiles.put("Msg-id-0", STORABLE_FILE.getName());
 
         // Deliver message
-        BatchReplyMessage msg = new BatchReplyMessage(Channels.getTheRepos(), Channels
-                .retrieveReplicaChannelFromReplicaId("ONE"), "Msg-id-0", 1, Collections.<File>emptyList(),
+        BatchReplyMessage msg = new BatchReplyMessage(Channels.getTheRepos(),
+                Channels.retrieveReplicaChannelFromReplicaId("ONE"), "Msg-id-0", 1, Collections.<File>emptyList(),
                 RemoteFileFactory.getInstance(BATCH_RESULT, true, false, true));
         JMSConnectionMockupMQ.updateMsgID(msg, "Msg-id-1");
         arcRepos.onBatchReply(msg);
@@ -728,12 +733,12 @@ public class ArcRepositoryTesterStore {
 
         // Check admin data
         ArcRepositoryEntry entry = adminData.getEntry(STORABLE_FILE.getName());
-        assertEquals("Should have expected checksum", ChecksumCalculator.calculateMd5(STORABLE_FILE), entry
-                .getChecksum());
+        assertEquals("Should have expected checksum", ChecksumCalculator.calculateMd5(STORABLE_FILE),
+                entry.getChecksum());
         assertEquals("Should have expected state", ReplicaStoreState.UPLOAD_COMPLETED, entry.getGeneralStoreState()
                 .getState());
-        assertEquals("Should have expected state", ReplicaStoreState.UPLOAD_COMPLETED, entry.getStoreState(Channels
-                .retrieveReplicaChannelNameFromReplicaId("ONE")));
+        assertEquals("Should have expected state", ReplicaStoreState.UPLOAD_COMPLETED,
+                entry.getStoreState(Channels.retrieveReplicaChannelNameFromReplicaId("ONE")));
     }
 
     /**
@@ -769,8 +774,8 @@ public class ArcRepositoryTesterStore {
         outstandingChecksumFiles.put("Msg-id-0", STORABLE_FILE.getName());
 
         // Deliver message
-        BatchReplyMessage msg = new BatchReplyMessage(Channels.getTheRepos(), Channels
-                .retrieveReplicaChannelFromReplicaId("ONE"), "Msg-id-0", 1, Collections.<File>emptyList(),
+        BatchReplyMessage msg = new BatchReplyMessage(Channels.getTheRepos(),
+                Channels.retrieveReplicaChannelFromReplicaId("ONE"), "Msg-id-0", 1, Collections.<File>emptyList(),
                 RemoteFileFactory.getInstance(BATCH_RESULT_WRONG, true, false, true));
         JMSConnectionMockupMQ.updateMsgID(msg, "Msg-id-1");
         arcRepos.onBatchReply(msg);
@@ -795,12 +800,12 @@ public class ArcRepositoryTesterStore {
 
         // Check admin data
         ArcRepositoryEntry entry = adminData.getEntry(STORABLE_FILE.getName());
-        assertEquals("Should have expected checksum", ChecksumCalculator.calculateMd5(STORABLE_FILE), entry
-                .getChecksum());
+        assertEquals("Should have expected checksum", ChecksumCalculator.calculateMd5(STORABLE_FILE),
+                entry.getChecksum());
         assertEquals("Should have expected state", ReplicaStoreState.UPLOAD_FAILED, entry.getGeneralStoreState()
                 .getState());
-        assertEquals("Should have expected state", ReplicaStoreState.UPLOAD_FAILED, entry.getStoreState(Channels
-                .retrieveReplicaChannelNameFromReplicaId("ONE")));
+        assertEquals("Should have expected state", ReplicaStoreState.UPLOAD_FAILED,
+                entry.getStoreState(Channels.retrieveReplicaChannelNameFromReplicaId("ONE")));
     }
 
     /**
@@ -836,8 +841,8 @@ public class ArcRepositoryTesterStore {
         outstandingChecksumFiles.put("Msg-id-0", STORABLE_FILE.getName());
 
         // Deliver message
-        BatchReplyMessage msg = new BatchReplyMessage(Channels.getTheRepos(), Channels
-                .retrieveReplicaChannelFromReplicaId("ONE"), "Msg-id-0", 0, Collections.<File>emptyList(),
+        BatchReplyMessage msg = new BatchReplyMessage(Channels.getTheRepos(),
+                Channels.retrieveReplicaChannelFromReplicaId("ONE"), "Msg-id-0", 0, Collections.<File>emptyList(),
                 RemoteFileFactory.getInstance(BATCH_RESULT_EMPTY, true, false, true));
         JMSConnectionMockupMQ.updateMsgID(msg, "Msg-id-1");
         arcRepos.onBatchReply(msg);
@@ -862,12 +867,12 @@ public class ArcRepositoryTesterStore {
 
         // Check admin data
         ArcRepositoryEntry entry = adminData.getEntry(STORABLE_FILE.getName());
-        assertEquals("Should have expected checksum", ChecksumCalculator.calculateMd5(STORABLE_FILE), entry
-                .getChecksum());
+        assertEquals("Should have expected checksum", ChecksumCalculator.calculateMd5(STORABLE_FILE),
+                entry.getChecksum());
         assertEquals("Should have expected state", ReplicaStoreState.UPLOAD_FAILED, entry.getGeneralStoreState()
                 .getState());
-        assertEquals("Should have expected state", ReplicaStoreState.UPLOAD_FAILED, entry.getStoreState(Channels
-                .retrieveReplicaChannelNameFromReplicaId("ONE")));
+        assertEquals("Should have expected state", ReplicaStoreState.UPLOAD_FAILED,
+                entry.getStoreState(Channels.retrieveReplicaChannelNameFromReplicaId("ONE")));
     }
 
     // TODO: Check that tests are exhaustive, and check more than one BA

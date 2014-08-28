@@ -99,8 +99,8 @@ public class ChecksumClientTester {
 
         // Test batch through a batch message.
         try {
-            BatchMessage bm = new BatchMessage(Channels.getTheCR(), new ChecksumJob(), Settings
-                    .get(CommonSettings.USE_REPLICA_ID));
+            BatchMessage bm = new BatchMessage(Channels.getTheCR(), new ChecksumJob(),
+                    Settings.get(CommonSettings.USE_REPLICA_ID));
             cc.sendBatchJob(bm);
             fail("This should not be allowed.");
         } catch (IllegalState e) {
@@ -129,8 +129,8 @@ public class ChecksumClientTester {
 
         // Test GetFileMessage
         try {
-            GetFileMessage gfm = new GetFileMessage(Channels.getTheCR(), Channels.getError(), "filename.arc", Settings
-                    .get(CommonSettings.USE_REPLICA_ID));
+            GetFileMessage gfm = new GetFileMessage(Channels.getTheCR(), Channels.getError(), "filename.arc",
+                    Settings.get(CommonSettings.USE_REPLICA_ID));
             cc.sendGetFileMessage(gfm);
             fail("This should not be allowed.");
         } catch (IllegalState e) {
@@ -176,12 +176,12 @@ public class ChecksumClientTester {
         con.waitForConcurrentTasksToFinish();
 
         assertEquals("Another GetChecksumMessage expected to be sent.", 2, handler.getChecksumMsg.size());
-        assertEquals("The received message should be one returned by the function", csMsg, handler.getChecksumMsg
-                .get(1));
+        assertEquals("The received message should be one returned by the function", csMsg,
+                handler.getChecksumMsg.get(1));
 
         // check GetAllChecksums through message
-        GetAllChecksumsMessage gcsMsg = new GetAllChecksumsMessage(Channels.getTheCR(), Channels.getError(), Settings
-                .get(CommonSettings.USE_REPLICA_ID));
+        GetAllChecksumsMessage gcsMsg = new GetAllChecksumsMessage(Channels.getTheCR(), Channels.getError(),
+                Settings.get(CommonSettings.USE_REPLICA_ID));
         cc.sendGetAllChecksumsMessage(gcsMsg);
         con.waitForConcurrentTasksToFinish();
 
@@ -189,8 +189,8 @@ public class ChecksumClientTester {
         assertEquals("The received message should be one returned by the function", gcsMsg, handler.checksumsMsg.get(0));
 
         // check GetAllFilenames through message
-        GetAllFilenamesMessage gfsMsg = new GetAllFilenamesMessage(Channels.getTheCR(), Channels.getError(), Settings
-                .get(CommonSettings.USE_REPLICA_ID));
+        GetAllFilenamesMessage gfsMsg = new GetAllFilenamesMessage(Channels.getTheCR(), Channels.getError(),
+                Settings.get(CommonSettings.USE_REPLICA_ID));
         cc.sendGetAllFilenamesMessage(gfsMsg);
         con.waitForConcurrentTasksToFinish();
 
@@ -199,8 +199,8 @@ public class ChecksumClientTester {
 
         // check Correct through message
         CorrectMessage corMsg = new CorrectMessage(Channels.getTheCR(), Channels.getError(), "badChecksum",
-                RemoteFileFactory.getInstance(TestInfo.UPLOADMESSAGE_TESTFILE_1, true, false, true), Settings
-                        .get(CommonSettings.USE_REPLICA_ID), "credentials");
+                RemoteFileFactory.getInstance(TestInfo.UPLOADMESSAGE_TESTFILE_1, true, false, true),
+                Settings.get(CommonSettings.USE_REPLICA_ID), "credentials");
         cc.sendCorrectMessage(corMsg);
         con.waitForConcurrentTasksToFinish();
 

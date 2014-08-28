@@ -183,7 +183,7 @@ public class DailyFrequency extends Frequency {
      * it should happen on.
      *
      * @return the exact minute event should happen on, or null if this is an anyTime event or doesn't define what
-     * minute it should happen on
+     *         minute it should happen on
      */
     public Integer getOnMinute() {
         if (!isAnytime()) {
@@ -197,7 +197,7 @@ public class DailyFrequency extends Frequency {
      * should happen on.
      *
      * @return the exact hour event should happen on, or null if this is an anyTime event or doesn't define what hour it
-     * should happen on
+     *         should happen on
      */
     public Integer getOnHour() {
         if (!isAnytime()) {
@@ -211,7 +211,7 @@ public class DailyFrequency extends Frequency {
      * day of week it should happen on.
      *
      * @return the exact day of week event should happen on, or null if this is an anyTime event or doesn't define what
-     * day of week it should happen on
+     *         day of week it should happen on
      */
     public Integer getOnDayOfWeek() {
         return null;
@@ -222,7 +222,7 @@ public class DailyFrequency extends Frequency {
      * day of month it should happen on.
      *
      * @return the exact day of month event should happen on, or null if this is an anyTime event or doesn't define what
-     * day of month it should happen on
+     *         day of month it should happen on
      */
     public Integer getOnDayOfMonth() {
         return null;

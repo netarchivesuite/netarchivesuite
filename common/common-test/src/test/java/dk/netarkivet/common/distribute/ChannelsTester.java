@@ -83,8 +83,9 @@ public class ChannelsTester {
     public void testBadLocation() throws Exception {
         ChannelsTesterHelper.resetChannels();
         String env = Settings.get(CommonSettings.ENVIRONMENT_NAME);
-        assertEquals("Channel must have default name before changing settings", env + "_"
-                + Settings.get(CommonSettings.USE_REPLICA_ID) + "_THE_BAMON", Channels.getTheBamon().getName());
+        assertEquals("Channel must have default name before changing settings",
+                env + "_" + Settings.get(CommonSettings.USE_REPLICA_ID) + "_THE_BAMON", Channels.getTheBamon()
+                        .getName());
         Settings.set(CommonSettings.USE_REPLICA_ID, "NOWHERE");
         try {
             ChannelsTesterHelper.resetChannels();

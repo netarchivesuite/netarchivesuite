@@ -44,8 +44,8 @@ public class HarvestHistoryPageHelper {
 
     public static List<HarvestHistoryEntry> readHarvestHistory() {
         List<HarvestHistoryEntry> harvestHistory = new LinkedList<HarvestHistoryEntry>();
-        List<WebElement> rows = PageHelper.getWebDriver().findElement(By.className("selection_table")).findElements(
-                By.tagName("tr"));
+        List<WebElement> rows = PageHelper.getWebDriver().findElement(By.className("selection_table"))
+                .findElements(By.tagName("tr"));
         rows.remove(0); // SKip headers
         for (WebElement rowElement : rows) {
             harvestHistory.add(new HarvestHistoryEntry(rowElement));

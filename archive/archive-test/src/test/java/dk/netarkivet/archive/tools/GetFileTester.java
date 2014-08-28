@@ -100,8 +100,8 @@ public class GetFileTester {
         int exitCode = pse.getExitValue();
 
         assertEquals("Should have exit code 0, but was: " + exitCode, 0, exitCode);
-        assertTrue("The output message should claim to retrieve the file", errMsg
-                .contains("Retrieving file 'test1.arc' from replica 'BarOne' as file "));
+        assertTrue("The output message should claim to retrieve the file",
+                errMsg.contains("Retrieving file 'test1.arc' from replica 'BarOne' as file "));
     }
 
     @Test
@@ -119,8 +119,8 @@ public class GetFileTester {
         int exitCode = pse.getExitValue();
 
         assertEquals("Should have exit code 1, but was: " + exitCode, 1, exitCode);
-        assertTrue("Should contain a message for the usage of the tool.", errMsg.contains(GetFile.class.getName()
-                + " filename [destination-file]"));
+        assertTrue("Should contain a message for the usage of the tool.",
+                errMsg.contains(GetFile.class.getName() + " filename [destination-file]"));
     }
 
     @Test
@@ -138,8 +138,8 @@ public class GetFileTester {
         int exitCode = pse.getExitValue();
 
         assertEquals("Should have exit code 1, but was: " + exitCode, 1, exitCode);
-        assertTrue("Should contain a message for the usage of the tool.", errMsg.contains(GetFile.class.getName()
-                + " filename [destination-file]"));
+        assertTrue("Should contain a message for the usage of the tool.",
+                errMsg.contains(GetFile.class.getName() + " filename [destination-file]"));
     }
 
     /**

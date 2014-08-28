@@ -274,20 +274,20 @@ public class AdminDataTester {
         }
 
         ad.setState(filename, bitArchiveID, ReplicaStoreState.UPLOAD_STARTED);
-        assertEquals("BitArchiveStoreState set - expected ", ReplicaStoreState.UPLOAD_STARTED, ad.getState(filename,
-                bitArchiveID));
+        assertEquals("BitArchiveStoreState set - expected ", ReplicaStoreState.UPLOAD_STARTED,
+                ad.getState(filename, bitArchiveID));
 
         ad.setState(filename, bitArchiveID, ReplicaStoreState.DATA_UPLOADED);
-        assertEquals("BitArchiveStoreState set - expected ", ReplicaStoreState.DATA_UPLOADED, ad.getState(filename,
-                bitArchiveID));
+        assertEquals("BitArchiveStoreState set - expected ", ReplicaStoreState.DATA_UPLOADED,
+                ad.getState(filename, bitArchiveID));
 
         ad.setState(filename, bitArchiveID, ReplicaStoreState.UPLOAD_COMPLETED);
-        assertEquals("BitArchiveStoreState set - expected ", ReplicaStoreState.UPLOAD_COMPLETED, ad.getState(filename,
-                bitArchiveID));
+        assertEquals("BitArchiveStoreState set - expected ", ReplicaStoreState.UPLOAD_COMPLETED,
+                ad.getState(filename, bitArchiveID));
 
         ad.setState(filename, bitArchiveID, ReplicaStoreState.UPLOAD_FAILED);
-        assertEquals("BitArchiveStoreState set - expected ", ReplicaStoreState.UPLOAD_FAILED, ad.getState(filename,
-                bitArchiveID));
+        assertEquals("BitArchiveStoreState set - expected ", ReplicaStoreState.UPLOAD_FAILED,
+                ad.getState(filename, bitArchiveID));
     }
 
     /**
@@ -375,10 +375,10 @@ public class AdminDataTester {
                 3);
 
         // Check that the admin data is still aware of the files.
-        assertTrue("Should have the first test filename: " + TestInfo.files[0], ad.toString().contains(
-                TestInfo.files[0]));
-        assertTrue("Should have the first test filename: " + TestInfo.files[1], ad.toString().contains(
-                TestInfo.files[1]));
+        assertTrue("Should have the first test filename: " + TestInfo.files[0],
+                ad.toString().contains(TestInfo.files[0]));
+        assertTrue("Should have the first test filename: " + TestInfo.files[1],
+                ad.toString().contains(TestInfo.files[1]));
     }
 
     /**
@@ -432,8 +432,8 @@ public class AdminDataTester {
         // close to force new instance
         ad.close();
         assertTrue("Changed entry should turn up", ad.hasEntry(filename1));
-        assertEquals("Changed entry should have right state", ReplicaStoreState.UPLOAD_COMPLETED, ad.getState(
-                filename1, ba1));
+        assertEquals("Changed entry should have right state", ReplicaStoreState.UPLOAD_COMPLETED,
+                ad.getState(filename1, ba1));
         // LogUtils.flushLogs(UpdateableAdminData.class.getName());
         /*
          * FileAsserts.assertFileNotContains("Should have no warning in log", TestInfo.LOG_DIR, "WARNING");
@@ -446,8 +446,8 @@ public class AdminDataTester {
                 + dummyBitarchiveStoreState);
         ad = UpdateableAdminData.getUpdateableInstance();
         assertTrue("Old entry should turn up", ad.hasEntry(filename1));
-        assertEquals("Old entry should have right state", ReplicaStoreState.UPLOAD_COMPLETED, ad.getState(filename1,
-                ba1));
+        assertEquals("Old entry should have right state", ReplicaStoreState.UPLOAD_COMPLETED,
+                ad.getState(filename1, ba1));
 
         /*
          * LogUtils.flushLogs(AdminData.class.getName()); FileAsserts.assertFileContains("Should have a warning in log",

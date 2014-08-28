@@ -120,11 +120,13 @@ public class StressTest extends ExtendedTestCase {
             environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, populateSchedulesDB);
         } else {
             addFixture("Ingesting full production admindb backup.");
-            environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, "pg_restore -U test -d "
-                    + TESTNAME.toLowerCase() + "_admindb  --no-owner --schema public /tmp/prod_admindb.out");
+            environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER,
+                    "pg_restore -U test -d " + TESTNAME.toLowerCase()
+                            + "_admindb  --no-owner --schema public /tmp/prod_admindb.out");
             addFixture("Ingesting full production harvestdb backup");
-            environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, "pg_restore -U test -d "
-                    + TESTNAME.toLowerCase() + "_harvestdb  --no-owner --schema public /tmp/prod_harvestdb.dump.out");
+            environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER,
+                    "pg_restore -U test -d " + TESTNAME.toLowerCase()
+                            + "_harvestdb  --no-owner --schema public /tmp/prod_harvestdb.dump.out");
         }
         addFixture("Replacing checksum database with prod data");
         environmentManager.runTestXCommand(TestEnvironment.CHECKSUM_SERVER, "rm -rf CS");

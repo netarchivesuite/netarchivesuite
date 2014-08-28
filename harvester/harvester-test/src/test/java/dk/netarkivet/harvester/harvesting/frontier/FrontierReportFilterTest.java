@@ -71,7 +71,7 @@ public class FrontierReportFilterTest {
      * Test the extraction of 200 top queues out of a much larger report.
      *
      * @throws IOException FIXME this test fails, and is therefore disabled by renaming it (by changing the method
-     * prefix from test to TEST);
+     *         prefix from test to TEST);
      */
     @Test
     @Ignore("test disabled before migration")

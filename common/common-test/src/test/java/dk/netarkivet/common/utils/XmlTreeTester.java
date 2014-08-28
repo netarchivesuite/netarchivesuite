@@ -72,8 +72,8 @@ public class XmlTreeTester {
         // <list1>item3</list1>
         // <q> what is the question </q>
         // </test> ...
-        assertEquals("Should have node from backing XML", "what is the question", tree1.getSubTree("dk").getSubTrees(
-                "netarkivet").get(0).getSubTree("test").getSubTree("q").getValue());
+        assertEquals("Should have node from backing XML", "what is the question",
+                tree1.getSubTree("dk").getSubTrees("netarkivet").get(0).getSubTree("test").getSubTree("q").getValue());
 
         try {
             XmlTree.getStringTree(null);
@@ -240,8 +240,8 @@ public class XmlTreeTester {
         assertNotNull("Should find settings subtree", subTree);
         assertNotNull("Should find common subtree of settings in multimap", subTree.getChildMap().get("common"));
         assertNotNull("Should find common subtree of settings", subTree.getSubTree("common"));
-        assertNotNull("Should find webinterface subtree of common", subTree.getSubTree("common").getSubTrees(
-                "webinterface"));
+        assertNotNull("Should find webinterface subtree of common",
+                subTree.getSubTree("common").getSubTrees("webinterface"));
 
         List<StringTree<String>> languages = tree1.getSubTree("settings.common.webinterface").getSubTrees("language");
         assertEquals("Should have found two language objects", 2, languages.size());

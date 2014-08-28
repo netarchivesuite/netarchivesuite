@@ -79,14 +79,14 @@ public class SparsePartialHarvestTester extends DataModelTestCase {
 
         PartialHarvest sphComplete = (PartialHarvest) HarvestDefinitionDBDAO.getInstance().getHarvestDefinition(
                 harvestName);
-        assertEquals("the SparsePartialHarvest and PartialHarvest should have same name", sph.getName(), sphComplete
-                .getName());
-        assertEquals("the SparsePartialHarvest and PartialHarvest should have same named schedule ", sph
-                .getScheduleName(), sphComplete.getSchedule().getName());
-        assertEquals("the SparsePartialHarvest and PartialHarvest should have same oid", sph.getOid(), sphComplete
-                .getOid());
-        assertEquals("the SparsePartialHarvest and PartialHarvest should have same SubmissionDate", sph
-                .getSubmissionDate(), sphComplete.getSubmissionDate());
+        assertEquals("the SparsePartialHarvest and PartialHarvest should have same name", sph.getName(),
+                sphComplete.getName());
+        assertEquals("the SparsePartialHarvest and PartialHarvest should have same named schedule ",
+                sph.getScheduleName(), sphComplete.getSchedule().getName());
+        assertEquals("the SparsePartialHarvest and PartialHarvest should have same oid", sph.getOid(),
+                sphComplete.getOid());
+        assertEquals("the SparsePartialHarvest and PartialHarvest should have same SubmissionDate",
+                sph.getSubmissionDate(), sphComplete.getSubmissionDate());
         assertEquals("the SparsePartialHarvest and PartialHarvest should have same comments", sph.getComments(),
                 sphComplete.getComments());
         assertEquals("the SparsePartialHarvest and PartialHarvest should have same NextDate", sph.getNextDate(),

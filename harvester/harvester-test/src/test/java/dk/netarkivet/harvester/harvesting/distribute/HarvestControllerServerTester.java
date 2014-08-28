@@ -182,8 +182,11 @@ public class HarvestControllerServerTester {
         } catch (Exception e) {
             // expected
         }
-        assertEquals("Should have no listeners to the HACO queue", 0, ((JMSConnectionMockupMQ) JMSConnectionFactory
-                .getInstance()).getListeners(HarvestControllerServer.HARVEST_CHAN_VALID_RESP_ID).size());
+        assertEquals(
+                "Should have no listeners to the HACO queue",
+                0,
+                ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance()).getListeners(
+                        HarvestControllerServer.HARVEST_CHAN_VALID_RESP_ID).size());
     }
 
     /**
@@ -244,10 +247,10 @@ public class HarvestControllerServerTester {
         //
         // Check that JobIDs are corrects
         //
-        assertEquals("JobIDs do not match for first message:", j.getJobID().longValue(), (listener.jobids.get(0))
-                .longValue());
-        assertEquals("JobIDs do not match for second message:", j.getJobID().longValue(), (listener.jobids.get(1))
-                .longValue());
+        assertEquals("JobIDs do not match for first message:", j.getJobID().longValue(),
+                (listener.jobids.get(0)).longValue());
+        assertEquals("JobIDs do not match for second message:", j.getJobID().longValue(),
+                (listener.jobids.get(1)).longValue());
     }
 
     /**
@@ -282,9 +285,9 @@ public class HarvestControllerServerTester {
         theJob.setStatus(JobStatus.DONE);
         theJob.setJobID(Long.valueOf(42L));
         String channel = Settings.get(HarvesterSettings.HARVEST_CONTROLLER_CHANNEL);
-        NetarkivetMessage naMsg = new DoOneCrawlMessage(theJob, HarvesterChannels
-                .getHarvestJobChannelId(new HarvestChannel("FOCUSED", false, true, "")), new HarvestDefinitionInfo(
-                "test", "test", "test"), TestInfo.emptyMetadata);
+        NetarkivetMessage naMsg = new DoOneCrawlMessage(theJob,
+                HarvesterChannels.getHarvestJobChannelId(new HarvestChannel("FOCUSED", false, true, "")),
+                new HarvestDefinitionInfo("test", "test", "test"), TestInfo.emptyMetadata);
         JMSConnectionMockupMQ.updateMsgID(naMsg, "id1");
         ObjectMessage oMsg = JMSConnectionMockupMQ.getObjectMessage(naMsg);
         hcs.onMessage(oMsg);
@@ -302,7 +305,7 @@ public class HarvestControllerServerTester {
      *
      * @param crawlDir the location of the crawldir
      * @param numberOfStoreMessagesExpected The number of stored messages expected. Usually number of files in dir + 1
-     * for metadata arc file.
+     *        for metadata arc file.
      * @param storeFailFile If not null, simulate failure on upload of this file
      * @return The CrawlStatusMessage returned by the HarvestControllerServer for the found job.
      */
@@ -334,12 +337,12 @@ public class HarvestControllerServerTester {
          * should generate exactly one FAILED status msg.
          */
         assertEquals("Should have received one crawl status message", 1, sched.messagesReceived.size());
-        assertEquals("Job status should be FAILED", JobStatus.FAILED, ((CrawlStatusMessage) sched.messagesReceived
-                .get(0)).getStatusCode());
+        assertEquals("Job status should be FAILED", JobStatus.FAILED,
+                ((CrawlStatusMessage) sched.messagesReceived.get(0)).getStatusCode());
         // The HCS should move found crawlDir to oldjobsdir
         assertFalse("Crawl directory should have been moved", crawlDir.exists());
-        File expected_new_crawl_dir = new File(Settings.get(HarvesterSettings.HARVEST_CONTROLLER_OLDJOBSDIR), crawlDir
-                .getName());
+        File expected_new_crawl_dir = new File(Settings.get(HarvesterSettings.HARVEST_CONTROLLER_OLDJOBSDIR),
+                crawlDir.getName());
         File expected_new_arcs_dir = new File(expected_new_crawl_dir, "arcs");
         assertTrue("Should find crawl directory moved to " + expected_new_crawl_dir, expected_new_crawl_dir.exists());
         // The moved dir should only contain ARC files that couldn't be
@@ -374,8 +377,8 @@ public class HarvestControllerServerTester {
         assertEquals("Job upload message should detail number of failures",
                 "No hosts report found, 1 files failed to upload", crawlStatusMessage.getUploadErrors());
         StringAsserts.assertStringMatches("Detailed upload message should declare which files failed",
-                "Error uploading.*" + TestInfo.LEFTOVER_JOB_DIR_2_SOME_FILE_PATTERN, crawlStatusMessage
-                        .getUploadErrorDetails());
+                "Error uploading.*" + TestInfo.LEFTOVER_JOB_DIR_2_SOME_FILE_PATTERN,
+                crawlStatusMessage.getUploadErrorDetails());
         StringAsserts.assertStringContains("Harvest should seem interrupted", "Crawl probably interrupted",
                 crawlStatusMessage.getHarvestErrors());
         StringAsserts.assertStringMatches("Harvest should seem interrupted",
@@ -468,10 +471,10 @@ public class HarvestControllerServerTester {
         assertEquals("Expected no records except our 3 metadata samples", 3, mfContent.size());
         // Verify that sampleEntry is in the final metadata
         CDXRecord rec = mfContent.get(0);
-        assertEquals("The first record should be our metadata example record", TestInfo.sampleEntry.getURL(), rec
-                .getURL());
-        assertEquals("The first record should be our metadata example record", TestInfo.sampleEntry.getMimeType(), rec
-                .getMimetype());
+        assertEquals("The first record should be our metadata example record", TestInfo.sampleEntry.getURL(),
+                rec.getURL());
+        assertEquals("The first record should be our metadata example record", TestInfo.sampleEntry.getMimeType(),
+                rec.getMimetype());
         assertEquals("The first record should be our metadata example record", TestInfo.sampleEntry.getData().length,
                 rec.getLength());
     }

@@ -64,7 +64,7 @@ public class CrawlDataItem {
      * @param etag Etag for the URL
      * @param mimetype MIME type of the document found at the URL
      * @param origin The origin of the CrawlDataItem (the exact meaning of the origin is outside the scope of this class
-     * and it may be any String value)
+     *        and it may be any String value)
      * @param duplicate True if this CrawlDataItem was marked as duplicate
      */
     public CrawlDataItem(String URL, String contentDigest, String timestamp, String etag, String mimetype,

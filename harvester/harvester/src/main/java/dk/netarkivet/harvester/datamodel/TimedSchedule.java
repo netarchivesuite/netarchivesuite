@@ -40,9 +40,9 @@ public class TimedSchedule extends Schedule {
      * Create a new TimedSchedule that runs over a period of time.
      *
      * @param startDate The time at which the schedule starts running. This is not necessarily the time of the first
-     * event, but no events will happen before this. May be null, meaning start any time.
+     *        event, but no events will happen before this. May be null, meaning start any time.
      * @param endDate The time at which the schedule stops running. No events will happen after this. May be null,
-     * meaning continue forever.
+     *        meaning continue forever.
      * @param frequency How frequently the event should happen.
      * @param comments Comments entered by the user
      * @param name The unique name of the schedule.
@@ -95,7 +95,7 @@ public class TimedSchedule extends Schedule {
      * then that value is returned. If it is after the end date, null is returned.
      *
      * @param lastEvent The time at which the previous event happened. If this is null, then the method returns null. Ie
-     * once one is after the last event one is always after the last event.
+     *        once one is after the last event one is always after the last event.
      * @param numPreviousEvents How many events have previously happened (ignored).
      * @return The date of the next event to happen or null for no more events.
      * @throws ArgumentNotValid if numPreviousEvents is negative

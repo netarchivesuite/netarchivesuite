@@ -201,8 +201,8 @@ public class DeployTester extends TestCase {
         String pssMsg = pss.getErr();
 
         assertEquals("Exit value asserted 1.", 1, pseVal);
-        assertTrue("The error message should start with: " + Constants.MSG_ERROR_PARSE_ARGUMENTS, pssMsg
-                .startsWith(Constants.MSG_ERROR_PARSE_ARGUMENTS));
+        assertTrue("The error message should start with: " + Constants.MSG_ERROR_PARSE_ARGUMENTS,
+                pssMsg.startsWith(Constants.MSG_ERROR_PARSE_ARGUMENTS));
     }
 
     /**
@@ -240,8 +240,8 @@ public class DeployTester extends TestCase {
         int pseVal = pse.getExitValue();
 
         assertEquals("Exit value asserted 1.", 1, pseVal);
-        assertTrue("The error message should start with: " + Constants.MSG_ERROR_NOT_ENOUGH_ARGUMENTS, pssMsg
-                .startsWith(Constants.MSG_ERROR_NOT_ENOUGH_ARGUMENTS));
+        assertTrue("The error message should start with: " + Constants.MSG_ERROR_NOT_ENOUGH_ARGUMENTS,
+                pssMsg.startsWith(Constants.MSG_ERROR_NOT_ENOUGH_ARGUMENTS));
     }
 
     /**
@@ -260,8 +260,8 @@ public class DeployTester extends TestCase {
         String pssMsg = pss.getErr();
 
         assertEquals("Exit value asserted 1.", 1, pseVal);
-        assertTrue("The error message should start with: " + Constants.MSG_ERROR_CONFIG_EXTENSION, pssMsg
-                .startsWith(Constants.MSG_ERROR_CONFIG_EXTENSION));
+        assertTrue("The error message should start with: " + Constants.MSG_ERROR_CONFIG_EXTENSION,
+                pssMsg.startsWith(Constants.MSG_ERROR_CONFIG_EXTENSION));
     }
 
     /**
@@ -280,8 +280,8 @@ public class DeployTester extends TestCase {
         String pssMsg = pss.getErr();
 
         assertEquals("Exit value asserted 1.", 1, pseVal);
-        assertTrue("The error message should start with: " + Constants.MSG_ERROR_NETARCHIVESUITE_EXTENSION, pssMsg
-                .startsWith(Constants.MSG_ERROR_NETARCHIVESUITE_EXTENSION));
+        assertTrue("The error message should start with: " + Constants.MSG_ERROR_NETARCHIVESUITE_EXTENSION,
+                pssMsg.startsWith(Constants.MSG_ERROR_NETARCHIVESUITE_EXTENSION));
     }
 
     /**
@@ -300,8 +300,8 @@ public class DeployTester extends TestCase {
         String pssMsg = pss.getErr();
 
         assertEquals("Exit value asserted 1.", 1, pseVal);
-        assertTrue("The error message should start with: " + Constants.MSG_ERROR_SECURITY_EXTENSION, pssMsg
-                .startsWith(Constants.MSG_ERROR_SECURITY_EXTENSION));
+        assertTrue("The error message should start with: " + Constants.MSG_ERROR_SECURITY_EXTENSION,
+                pssMsg.startsWith(Constants.MSG_ERROR_SECURITY_EXTENSION));
     }
 
     /**
@@ -320,8 +320,8 @@ public class DeployTester extends TestCase {
         String pssMsg = pss.getErr();
 
         assertEquals("Exit value asserted 1.", 1, pseVal);
-        assertTrue("The error message should start with: " + Constants.MSG_ERROR_JUL_PROPERTY_EXTENSION, pssMsg
-                .startsWith(Constants.MSG_ERROR_JUL_PROPERTY_EXTENSION));
+        assertTrue("The error message should start with: " + Constants.MSG_ERROR_JUL_PROPERTY_EXTENSION,
+                pssMsg.startsWith(Constants.MSG_ERROR_JUL_PROPERTY_EXTENSION));
     }
 
     /**
@@ -340,8 +340,8 @@ public class DeployTester extends TestCase {
         String pssMsg = pss.getErr();
 
         assertEquals("Exit value asserted 1.", 1, pseVal);
-        assertTrue("The error message should start with: " + Constants.MSG_ERROR_DATABASE_EXTENSION, pssMsg
-                .startsWith(Constants.MSG_ERROR_DATABASE_EXTENSION));
+        assertTrue("The error message should start with: " + Constants.MSG_ERROR_DATABASE_EXTENSION,
+                pssMsg.startsWith(Constants.MSG_ERROR_DATABASE_EXTENSION));
     }
 
     /**
@@ -360,8 +360,8 @@ public class DeployTester extends TestCase {
         String pssMsg = pss.getErr();
 
         assertEquals("Exit value asserted 1.", 1, pseVal);
-        assertTrue("The error message should start with: " + Constants.MSG_ERROR_BPDB_EXTENSION, pssMsg
-                .startsWith(Constants.MSG_ERROR_BPDB_EXTENSION));
+        assertTrue("The error message should start with: " + Constants.MSG_ERROR_BPDB_EXTENSION,
+                pssMsg.startsWith(Constants.MSG_ERROR_BPDB_EXTENSION));
     }
 
     /**
@@ -380,8 +380,8 @@ public class DeployTester extends TestCase {
         String pssMsg = pss.getErr();
 
         assertEquals("Exit value asserted 1.", 1, pseVal);
-        assertTrue("The error message should start with: " + Constants.MSG_ERROR_NO_JAR_FOLDER, pssMsg
-                .startsWith(Constants.MSG_ERROR_NO_JAR_FOLDER));
+        assertTrue("The error message should start with: " + Constants.MSG_ERROR_NO_JAR_FOLDER,
+                pssMsg.startsWith(Constants.MSG_ERROR_NO_JAR_FOLDER));
     }
 
     /**
@@ -401,8 +401,8 @@ public class DeployTester extends TestCase {
         String pssMsg = pss.getErr();
 
         assertEquals("Exit value asserted 1.", 1, pseVal);
-        assertTrue("The error message should start with: " + Constants.MSG_ERROR_NO_CONFIG_FILE_ARG, pssMsg
-                .startsWith(Constants.MSG_ERROR_NO_CONFIG_FILE_ARG));
+        assertTrue("The error message should start with: " + Constants.MSG_ERROR_NO_CONFIG_FILE_ARG,
+                pssMsg.startsWith(Constants.MSG_ERROR_NO_CONFIG_FILE_ARG));
     }
 
     /**
@@ -422,8 +422,8 @@ public class DeployTester extends TestCase {
         String pssMsg = pss.getErr();
 
         assertEquals("Exit value asserted 1.", 1, pseVal);
-        assertTrue("The error message should start with: " + Constants.MSG_ERROR_NO_NETARCHIVESUITE_FILE_ARG, pssMsg
-                .startsWith(Constants.MSG_ERROR_NO_NETARCHIVESUITE_FILE_ARG));
+        assertTrue("The error message should start with: " + Constants.MSG_ERROR_NO_NETARCHIVESUITE_FILE_ARG,
+                pssMsg.startsWith(Constants.MSG_ERROR_NO_NETARCHIVESUITE_FILE_ARG));
     }
 
     /**
@@ -442,8 +442,8 @@ public class DeployTester extends TestCase {
         String pssMsg = pss.getErr();
 
         assertEquals("Exit value asserted 1.", 1, pseVal);
-        assertTrue("The error message should start with: " + Constants.MSG_ERROR_NO_SECURITY_FILE_ARG, pssMsg
-                .startsWith(Constants.MSG_ERROR_NO_SECURITY_FILE_ARG));
+        assertTrue("The error message should start with: " + Constants.MSG_ERROR_NO_SECURITY_FILE_ARG,
+                pssMsg.startsWith(Constants.MSG_ERROR_NO_SECURITY_FILE_ARG));
     }
 
     /**
@@ -462,8 +462,8 @@ public class DeployTester extends TestCase {
         String pssMsg = pss.getErr();
 
         assertEquals("Exit value asserted 1.", 1, pseVal);
-        assertTrue("The error message should start with: " + Constants.MSG_ERROR_NO_LOG_CONFIG_FILE_FOUND, pssMsg
-                .startsWith(Constants.MSG_ERROR_NO_LOG_CONFIG_FILE_FOUND));
+        assertTrue("The error message should start with: " + Constants.MSG_ERROR_NO_LOG_CONFIG_FILE_FOUND,
+                pssMsg.startsWith(Constants.MSG_ERROR_NO_LOG_CONFIG_FILE_FOUND));
     }
 
     /**
@@ -482,8 +482,8 @@ public class DeployTester extends TestCase {
         String pssMsg = pss.getErr();
 
         assertEquals("Exit value asserted 1.", 1, pseVal);
-        assertTrue("The error message should start with: " + Constants.MSG_ERROR_NO_CONFIG_FILE_FOUND, pssMsg
-                .startsWith(Constants.MSG_ERROR_NO_CONFIG_FILE_FOUND));
+        assertTrue("The error message should start with: " + Constants.MSG_ERROR_NO_CONFIG_FILE_FOUND,
+                pssMsg.startsWith(Constants.MSG_ERROR_NO_CONFIG_FILE_FOUND));
     }
 
     /**
@@ -502,8 +502,8 @@ public class DeployTester extends TestCase {
         String pssMsg = pss.getErr();
 
         assertEquals("Exit value asserted 1.", 1, pseVal);
-        assertTrue("The error message should start with: " + Constants.MSG_ERROR_NO_NETARCHIVESUITE_FILE_FOUND, pssMsg
-                .startsWith(Constants.MSG_ERROR_NO_NETARCHIVESUITE_FILE_FOUND));
+        assertTrue("The error message should start with: " + Constants.MSG_ERROR_NO_NETARCHIVESUITE_FILE_FOUND,
+                pssMsg.startsWith(Constants.MSG_ERROR_NO_NETARCHIVESUITE_FILE_FOUND));
     }
 
     /**
@@ -522,8 +522,8 @@ public class DeployTester extends TestCase {
         String pssMsg = pss.getErr();
 
         assertEquals("Exit value asserted 1.", 1, pseVal);
-        assertTrue("The error message should start with: " + Constants.MSG_ERROR_NO_SECURITY_FILE_FOUND, pssMsg
-                .startsWith(Constants.MSG_ERROR_NO_SECURITY_FILE_FOUND));
+        assertTrue("The error message should start with: " + Constants.MSG_ERROR_NO_SECURITY_FILE_FOUND,
+                pssMsg.startsWith(Constants.MSG_ERROR_NO_SECURITY_FILE_FOUND));
     }
 
     /**
@@ -542,8 +542,8 @@ public class DeployTester extends TestCase {
         String pssMsg = pss.getErr();
 
         assertEquals("Exit value asserted 1.", 1, pseVal);
-        assertTrue("The error message should start with: " + Constants.MSG_ERROR_NO_JUL_PROPERTY_FILE_FOUND, pssMsg
-                .startsWith(Constants.MSG_ERROR_NO_JUL_PROPERTY_FILE_FOUND));
+        assertTrue("The error message should start with: " + Constants.MSG_ERROR_NO_JUL_PROPERTY_FILE_FOUND,
+                pssMsg.startsWith(Constants.MSG_ERROR_NO_JUL_PROPERTY_FILE_FOUND));
     }
 
     /**
@@ -562,8 +562,8 @@ public class DeployTester extends TestCase {
         String pssMsg = pss.getErr();
 
         assertEquals("Exit value asserted 1.", 1, pseVal);
-        assertTrue("The error message should start with: " + Constants.MSG_ERROR_NO_DATABASE_FILE_FOUND, pssMsg
-                .startsWith(Constants.MSG_ERROR_NO_DATABASE_FILE_FOUND));
+        assertTrue("The error message should start with: " + Constants.MSG_ERROR_NO_DATABASE_FILE_FOUND,
+                pssMsg.startsWith(Constants.MSG_ERROR_NO_DATABASE_FILE_FOUND));
     }
 
     /**
@@ -582,8 +582,8 @@ public class DeployTester extends TestCase {
         String pssMsg = pss.getErr();
 
         assertEquals("Exit value asserted 1.", 1, pseVal);
-        assertTrue("The error message should start with: " + Constants.MSG_ERROR_TEST_ARGUMENTS, pssMsg
-                .startsWith(Constants.MSG_ERROR_TEST_ARGUMENTS));
+        assertTrue("The error message should start with: " + Constants.MSG_ERROR_TEST_ARGUMENTS,
+                pssMsg.startsWith(Constants.MSG_ERROR_TEST_ARGUMENTS));
     }
 
     /**
@@ -603,7 +603,7 @@ public class DeployTester extends TestCase {
         String pssMsg = pss.getErr();
 
         assertEquals("Exit value asserted 1.", 1, pseVal);
-        assertTrue("The error message should start with: " + Constants.MSG_ERROR_TEST_OFFSET, pssMsg
-                .startsWith(Constants.MSG_ERROR_TEST_OFFSET));
+        assertTrue("The error message should start with: " + Constants.MSG_ERROR_TEST_OFFSET,
+                pssMsg.startsWith(Constants.MSG_ERROR_TEST_OFFSET));
     }
 }

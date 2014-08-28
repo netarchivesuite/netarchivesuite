@@ -160,8 +160,10 @@ public class HarvestHistoryForDomainPageTest extends SeleniumTest {
         addStep("Goto the harvest history for the default domain",
                 "Only 2 harvests should be listed and the next link should be enabled.");
         HarvestUtils.gotoHarvestHistoryForDomain(HarvestUtils.DEFAULT_DOMAIN);
-        assertEquals("Didn't find the expected 2 harvests on the first page", PageHelper.getWebDriver().findElements(
-                By.xpath("//table[@class='selection_table']/tbody/tr[position()>1]")).size(), 2);
+        assertEquals(
+                "Didn't find the expected 2 harvests on the first page",
+                PageHelper.getWebDriver()
+                        .findElements(By.xpath("//table[@class='selection_table']/tbody/tr[position()>1]")).size(), 2);
 
         addStep("Click the next link until the next link disappears",
                 "All the pages should have been listed, 2 at a time");
@@ -173,8 +175,8 @@ public class HarvestHistoryForDomainPageTest extends SeleniumTest {
             rows.remove(0); // Skip headers
             for (int rowNumber = 0; rowNumber < rows.size(); rowNumber++) {
                 WebElement row = rows.get(rowNumber);
-                assertEquals(new HarvestHistoryPageHelper.HarvestHistoryEntry(row), harvestHistory
-                        .get(harvestCounter++));
+                assertEquals(new HarvestHistoryPageHelper.HarvestHistoryEntry(row),
+                        harvestHistory.get(harvestCounter++));
             }
             boolean lastPage = pageNumber == numberOfPages;
             if (!lastPage) {
@@ -194,8 +196,8 @@ public class HarvestHistoryForDomainPageTest extends SeleniumTest {
             rows.remove(0); // Skip headers
             for (int rowNumber = rows.size() - 1; rowNumber >= 0; rowNumber--) {
                 WebElement row = rows.get(rowNumber);
-                assertEquals(new HarvestHistoryPageHelper.HarvestHistoryEntry(row), harvestHistory
-                        .get(--harvestCounter));
+                assertEquals(new HarvestHistoryPageHelper.HarvestHistoryEntry(row),
+                        harvestHistory.get(--harvestCounter));
             }
             boolean firstPage = pageNumber == 1;
             if (!firstPage) {
@@ -230,8 +232,10 @@ public class HarvestHistoryForDomainPageTest extends SeleniumTest {
         addStep("Goto the harvest history for the default domain",
                 "Only 2 harvests should be listed and the next link should be enabled.");
         HarvestUtils.gotoHarvestHistoryForDomain(HarvestUtils.DEFAULT_DOMAIN);
-        assertEquals("Didn't find the expected 2 harvests on the first page", PageHelper.getWebDriver().findElements(
-                By.xpath("//table[@class='selection_table']/tbody/tr[position()>1]")).size(), 2);
+        assertEquals(
+                "Didn't find the expected 2 harvests on the first page",
+                PageHelper.getWebDriver()
+                        .findElements(By.xpath("//table[@class='selection_table']/tbody/tr[position()>1]")).size(), 2);
 
         addStep("Click the 'End time' header link twice",
                 "The table should now again be sorted descending according to End time.");
@@ -250,8 +254,8 @@ public class HarvestHistoryForDomainPageTest extends SeleniumTest {
             rows.remove(0); // Skip headers
             for (int rowNumber = 0; rowNumber < rows.size(); rowNumber++) {
                 WebElement row = rows.get(rowNumber);
-                assertEquals(new HarvestHistoryPageHelper.HarvestHistoryEntry(row), harvestHistory
-                        .get(harvestCounter++));
+                assertEquals(new HarvestHistoryPageHelper.HarvestHistoryEntry(row),
+                        harvestHistory.get(harvestCounter++));
             }
             boolean lastPage = pageNumber == numberOfPages;
             if (!lastPage) {
@@ -271,8 +275,8 @@ public class HarvestHistoryForDomainPageTest extends SeleniumTest {
             rows.remove(0); // Skip headers
             for (int rowNumber = rows.size() - 1; rowNumber >= 0; rowNumber--) {
                 WebElement row = rows.get(rowNumber);
-                assertEquals(new HarvestHistoryPageHelper.HarvestHistoryEntry(row), harvestHistory
-                        .get(--harvestCounter));
+                assertEquals(new HarvestHistoryPageHelper.HarvestHistoryEntry(row),
+                        harvestHistory.get(--harvestCounter));
             }
             boolean firstPage = pageNumber == 1;
             if (!firstPage) {

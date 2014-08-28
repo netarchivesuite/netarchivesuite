@@ -37,7 +37,7 @@ public interface BitPreservationDAO extends CleanupIF {
      * be implemented with output in the same form as checksumJobOutput for implementation of bitArchive replicas
      *
      * @param checksumOutput The parsed output of a GetAllChecksumMessage as a File with ChecksumJob lines, i.e.
-     * filename##checksum.
+     *        filename##checksum.
      * @param replica The replica this checksum job is for.
      */
     void addChecksumInformation(File checksumOutput, Replica replica);

@@ -422,7 +422,7 @@ public class HarvestController {
      * @param metadataEntries list of metadataEntries top get jobIDs from.
      * @return a directory containing the index itself.
      * @throws IOFailure on errors retrieving the index from the client. FIXME Better forgiving handling of no index
-     * available Add setting for disable deduplication if no index available
+     *         available Add setting for disable deduplication if no index available
      */
     private File fetchDeduplicateIndex(List<MetadataEntry> metadataEntries) {
         // Get list of jobs, which should be used for duplicate reduction
@@ -439,8 +439,8 @@ public class HarvestController {
         Set<Long> diffSet = new HashSet<Long>(jobIDsForDuplicateReduction);
         diffSet.removeAll(jobIndex.getIndexSet());
         if (log.isDebugEnabled()) {
-            log.debug("Received deduplication index containing {} jobs. {}", jobIndex.getIndexSet().size(), ((diffSet
-                    .size() > 0) ? "Missing jobs: " + StringUtils.conjoin(",", diffSet) : ""));
+            log.debug("Received deduplication index containing {} jobs. {}", jobIndex.getIndexSet().size(),
+                    ((diffSet.size() > 0) ? "Missing jobs: " + StringUtils.conjoin(",", diffSet) : ""));
         }
 
         return jobIndex.getIndexFile();

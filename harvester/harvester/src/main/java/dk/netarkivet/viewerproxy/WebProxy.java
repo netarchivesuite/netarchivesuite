@@ -147,8 +147,9 @@ public class WebProxy extends DefaultHandler implements URIResolverHandler {
             browserOut.flush();
             log.warn("Exception for : " + uri, e);
         } catch (Exception e1) {
-            log.warn("Error writing error response to browser " + "for '" + uri + "' with exception "
-                    + ExceptionUtils.getStackTrace(e) + ". Giving up!", e1);
+            log.warn(
+                    "Error writing error response to browser " + "for '" + uri + "' with exception "
+                            + ExceptionUtils.getStackTrace(e) + ". Giving up!", e1);
         }
         // Do not close stream! That is left to the servlet.
     }

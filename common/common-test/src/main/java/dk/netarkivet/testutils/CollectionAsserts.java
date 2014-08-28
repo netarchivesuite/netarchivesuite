@@ -69,8 +69,8 @@ public class CollectionAsserts {
     public static void assertIteratorNamedEquals(String message, Iterator i1, Iterator i2) {
         String[] a1 = getSortedArray(i1, message);
         String[] a2 = getSortedArray(i2, message);
-        TestCase.assertTrue(message + "\n List 1: " + Arrays.asList(a1) + "\n List 2: " + Arrays.asList(a1), Arrays
-                .equals(a1, a2));
+        TestCase.assertTrue(message + "\n List 1: " + Arrays.asList(a1) + "\n List 2: " + Arrays.asList(a1),
+                Arrays.equals(a1, a2));
     }
 
     private static String[] getSortedArray(Iterator i1, String message) {

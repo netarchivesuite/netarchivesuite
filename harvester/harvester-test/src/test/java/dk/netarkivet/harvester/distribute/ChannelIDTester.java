@@ -50,14 +50,15 @@ public class ChannelIDTester {
                 if (i == j) {
                     assertEquals("Two different instances of same queue " + channelArray[i].getName(), channelArray[i],
                             channelArray[j]);
-                    assertEquals("Two instances of same channel have different " + "names: "
-                            + channelArray[i].getName() + " and " + channelArray[j].getName(), channelArray[i]
-                            .getName(), channelArray[j].getName());
+                    assertEquals(
+                            "Two instances of same channel have different " + "names: " + channelArray[i].getName()
+                                    + " and " + channelArray[j].getName(), channelArray[i].getName(),
+                            channelArray[j].getName());
                 } else {
                     assertNotSame("Two different queues are the same object " + channelArray[i].getName() + " "
                             + channelArray[j].getName(), channelArray[i], channelArray[j]);
-                    assertNotSame("Two different channels have same name", channelArray[i].getName(), channelArray[j]
-                            .getName());
+                    assertNotSame("Two different channels have same name", channelArray[i].getName(),
+                            channelArray[j].getName());
                 }
             }
         }

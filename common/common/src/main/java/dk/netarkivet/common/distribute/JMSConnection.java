@@ -125,7 +125,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      *
      * @param destinationName the name of the wanted Queue
      * @return The destination. Note that the implementation should make sure that this is a Queue or a Topic, as
-     * required by the NetarchiveSuite design. {@link Channels#isTopic(String)}
+     *         required by the NetarchiveSuite design. {@link Channels#isTopic(String)}
      * @throws JMSException If unable to get a destination.
      */
     protected abstract Destination getDestination(String destinationName) throws JMSException;

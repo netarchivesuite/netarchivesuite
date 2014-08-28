@@ -134,8 +134,8 @@ public class JMXSummaryUtils {
             if (CHARACTER_NOT_COLUMN.equals(starredRequest.getParameter(parameter))) {
                 // generate the link, but use the parameter applied to the
                 // table field value.
-                res.append(generateLink(starredRequest, parameter, CHARACTER_SHOW_ALL, I18N.getString(l, "tablefield;"
-                        + parameter)));
+                res.append(generateLink(starredRequest, parameter, CHARACTER_SHOW_ALL,
+                        I18N.getString(l, "tablefield;" + parameter)));
                 res.append(",");
             }
         }
@@ -156,7 +156,7 @@ public class JMXSummaryUtils {
      *
      * @param starredRequest A request to take parameters from, should not be null.
      * @param parameter The parameter that, if not already unrestricted, should be unrestricted in the "show all" link,
-     * should not be null.
+     *        should not be null.
      * @param l the current locale.
      * @return HTML to insert at the top of the JMX monitor table.
      * @throws ArgumentNotValid if arguments isn't valid.
@@ -179,7 +179,7 @@ public class JMXSummaryUtils {
      *
      * @param starredRequest A request to take parameters from, should not be null.
      * @param parameter The parameter that, if not already unrestricted, should be unrestricted in the "show all",
-     * should not be null.
+     *        should not be null.
      * @param l the current locale.
      * @return HTML to insert at the top of the JMX monitor table.
      * @throws ArgumentNotValid if arguments isn't valid.
@@ -221,9 +221,9 @@ public class JMXSummaryUtils {
      * @param setPart Which of the parameters to set.
      * @param setValue The value to set that parameter to.
      * @param linkText The HTML text that should go inside the link. Remember to escape HTML values if inserting a
-     * normal string.
+     *        normal string.
      * @return A link to insert in the page, or an unlinked text, if setPart or setValue is null, or an empty string if
-     * linkText is null.
+     *         linkText is null.
      * @throws ArgumentNotValid if request is null.
      */
     public static String generateLink(StarredRequest request, String setPart, String setValue, String linkText)
@@ -328,7 +328,7 @@ public class JMXSummaryUtils {
      * a property pattern (wildcarded), even if all the values we define in the names are specified.
      *
      * @param parameters The parameters to query for. These should make up the parts of the unique identification of an
-     * MBean.
+     *        MBean.
      * @param starredRequest A request containing current values for the given parameters.
      * @return A query, wildcarded for those parameters that are or missing in starredRequest.
      * @throws ArgumentNotValid if one or all of the arguements are null.

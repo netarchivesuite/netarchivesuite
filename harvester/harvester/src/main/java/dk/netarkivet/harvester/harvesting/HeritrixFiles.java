@@ -91,9 +91,9 @@ public class HeritrixFiles {
      * @param crawlDir The dir, where the crawl-files are placed. Assumes, that crawlDir exists already.
      * @param harvestJob The harvestjob behind this instance of HeritrixFiles
      * @param jmxPasswordFile The jmx password file to be used by Heritrix. The existence of this file is checked
-     * another place.
+     *        another place.
      * @param jmxAccessFile The JMX access file to be used by Heritrix. The existence of this file is checked another
-     * place.
+     *        place.
      * @throws ArgumentNotValid if null crawlDir, or non-positive jobID and harvestID.
      */
     public HeritrixFiles(File crawlDir, JobInfo harvestJob, File jmxPasswordFile, File jmxAccessFile) {
@@ -116,8 +116,8 @@ public class HeritrixFiles {
      * @param harvestJob The harvestjob behind this instance of HeritrixFiles
      */
     public HeritrixFiles(File crawlDir, JobInfo harvestJob) {
-        this(crawlDir, harvestJob, new File(Settings.get(CommonSettings.JMX_PASSWORD_FILE)), new File(Settings
-                .get(CommonSettings.JMX_ACCESS_FILE)));
+        this(crawlDir, harvestJob, new File(Settings.get(CommonSettings.JMX_PASSWORD_FILE)), new File(
+                Settings.get(CommonSettings.JMX_ACCESS_FILE)));
     }
 
     /**

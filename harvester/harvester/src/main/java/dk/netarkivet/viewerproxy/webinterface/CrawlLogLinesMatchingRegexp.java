@@ -51,8 +51,8 @@ public class CrawlLogLinesMatchingRegexp extends ArchiveBatchJob {
     private final Log log = LogFactory.getLog(getClass().getName());
 
     /** Metadata URL for crawl logs. */
-    private static final String SETUP_URL_FORMAT = String.format("metadata://%s/crawl/logs/crawl.log", Settings
-            .get(CommonSettings.ORGANIZATION));
+    private static final String SETUP_URL_FORMAT = String.format("metadata://%s/crawl/logs/crawl.log",
+            Settings.get(CommonSettings.ORGANIZATION));
 
     /** The regular expression to match in the crawl.log line. */
     private final String regexp;

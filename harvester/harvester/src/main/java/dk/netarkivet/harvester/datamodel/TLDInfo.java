@@ -122,7 +122,7 @@ public class TLDInfo implements Comparable<TLDInfo> {
      *
      * @param o the Object to be compared.
      * @return a negative integer, zero, or a positive integer as this object is less than, equal to, or greater than
-     * the specified object.
+     *         the specified object.
      * @see Comparable#compareTo(Object o)
      */
     public int compareTo(TLDInfo o) {

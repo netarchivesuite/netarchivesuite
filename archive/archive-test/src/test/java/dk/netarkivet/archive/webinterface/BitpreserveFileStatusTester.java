@@ -147,8 +147,8 @@ public class BitpreserveFileStatusTester {
         request.setupAddParameter(BITARCHIVE_NAME_PARAM, new String[] {Replica.getReplicaFromId(replicaID1).getName()});
         request.setupGetParameterMap(args);
         request.setupGetParameterNames(new Vector<String>(args.keySet()).elements());
-        Map<String, PreservationState> status = BitpreserveFileState.processMissingRequest(WebinterfaceTestCase
-                .getDummyPageContext(defaultLocale, request), new StringBuilder());
+        Map<String, PreservationState> status = BitpreserveFileState.processMissingRequest(
+                WebinterfaceTestCase.getDummyPageContext(defaultLocale, request), new StringBuilder());
         assertEquals("Should have one call to reestablish", 1, mockabp.getCallCount(ADD_METHOD));
         assertEquals("Should have one call to getFilePreservationStatus", 1, mockabp.getCallCount(GET_INFO_METHOD));
         assertEquals("Should have one info element (with mock results)", null, status.get(filename1));
@@ -160,8 +160,8 @@ public class BitpreserveFileStatusTester {
         args.put(BITARCHIVE_NAME_PARAM, new String[] {Replica.getReplicaFromId(replicaID1).getName()});
         request.setupAddParameter(BITARCHIVE_NAME_PARAM, new String[] {Replica.getReplicaFromId(replicaID1).getName()});
         request.setupGetParameterMap(args);
-        status = BitpreserveFileState.processMissingRequest(WebinterfaceTestCase.getDummyPageContext(defaultLocale,
-                request), new StringBuilder());
+        status = BitpreserveFileState.processMissingRequest(
+                WebinterfaceTestCase.getDummyPageContext(defaultLocale, request), new StringBuilder());
         assertEquals("Should have no call to restablish", 0, mockabp.getCallCount(ADD_METHOD));
         assertEquals("Should have no call to getFilePreservationStatus", 0, mockabp.getCallCount(GET_INFO_METHOD));
         assertEquals("Should have no status", 0, status.size());
@@ -182,8 +182,8 @@ public class BitpreserveFileStatusTester {
         request.setupAddParameter(GET_INFO_COMMAND, new String[] {filename1, filename2, filename1});
         args.put(GET_INFO_COMMAND, new String[] {filename1, filename2, filename1});
         request.setupGetParameterMap(args);
-        status = BitpreserveFileState.processMissingRequest(WebinterfaceTestCase.getDummyPageContext(defaultLocale,
-                request), new StringBuilder());
+        status = BitpreserveFileState.processMissingRequest(
+                WebinterfaceTestCase.getDummyPageContext(defaultLocale, request), new StringBuilder());
         assertEquals("Should have two calls to restablish", 2, mockabp.getCallCount(ADD_METHOD));
         assertEquals("Should have three calls to getFilePreservationStatus", 3, mockabp.getCallCount(GET_INFO_METHOD));
         assertEquals("Should have two info elements", 2, status.size());
@@ -195,13 +195,13 @@ public class BitpreserveFileStatusTester {
         // System.out.println(it.next());
         // }
 
-        CollectionAsserts.assertIteratorEquals("Should have the args given add", Arrays.asList(
-                new String[] {filename1 + "," + replicaID2, filename1 + "," + replicaID2}).iterator(), mockabp.calls
-                .get(ADD_METHOD).iterator());
+        CollectionAsserts.assertIteratorEquals("Should have the args given add",
+                Arrays.asList(new String[] {filename1 + "," + replicaID2, filename1 + "," + replicaID2}).iterator(),
+                mockabp.calls.get(ADD_METHOD).iterator());
 
-        CollectionAsserts.assertIteratorEquals("Should have the args given info", Arrays.asList(
-                new String[] {filename1, filename2, filename1}).iterator(), mockabp.calls.get(GET_INFO_METHOD)
-                .iterator());
+        CollectionAsserts.assertIteratorEquals("Should have the args given info",
+                Arrays.asList(new String[] {filename1, filename2, filename1}).iterator(),
+                mockabp.calls.get(GET_INFO_METHOD).iterator());
     }
 
     /**
@@ -287,7 +287,8 @@ public class BitpreserveFileStatusTester {
         assertTrue(
                 "Should contain TEST-ARG1 and TEST-ARG2 seperated by "
                         + dk.netarkivet.archive.webinterface.Constants.STRING_FILENAME_SEPARATOR
-                        + " but the result was " + res, res.contains("value=\"" + "TEST-ARG1"
+                        + " but the result was " + res,
+                res.contains("value=\"" + "TEST-ARG1"
                         + dk.netarkivet.archive.webinterface.Constants.STRING_FILENAME_SEPARATOR + "TEST-ARG2" + "\""));
     }
 
@@ -298,21 +299,21 @@ public class BitpreserveFileStatusTester {
         BitpreserveFileState.printMissingFileStateForReplica(fw, Replica.getReplicaFromId("ONE"), new Locale("da"));
         BitpreserveFileState.printMissingFileStateForReplica(fw, Replica.getReplicaFromId("TWO"), new Locale("da"));
 
-        assertTrue("Number of missing files should be called by a bitarchive replica", fbabp.calls.get(
-                NUM_MISSING_FILES).contains(Replica.getReplicaFromId("ONE").getType().name()));
-        assertFalse("Number of missing files should not be called by the Checksum replica.", fbabp.calls.get(
-                NUM_MISSING_FILES).contains(Replica.getReplicaFromId("THREE").getType().name()));
-        assertEquals("Number of missing files should be put into the array 2 times", 2, fbabp.calls.get(
-                NUM_MISSING_FILES).size());
+        assertTrue("Number of missing files should be called by a bitarchive replica",
+                fbabp.calls.get(NUM_MISSING_FILES).contains(Replica.getReplicaFromId("ONE").getType().name()));
+        assertFalse("Number of missing files should not be called by the Checksum replica.",
+                fbabp.calls.get(NUM_MISSING_FILES).contains(Replica.getReplicaFromId("THREE").getType().name()));
+        assertEquals("Number of missing files should be put into the array 2 times", 2,
+                fbabp.calls.get(NUM_MISSING_FILES).size());
 
         assertTrue("Number of files should be called by replica ONE", fbabp.calls.get(NUM_FILES).contains("ONE"));
-        assertFalse("Number of file should not have been called by replica THREE", fbabp.calls.get(NUM_FILES).contains(
-                "THREE"));
+        assertFalse("Number of file should not have been called by replica THREE",
+                fbabp.calls.get(NUM_FILES).contains("THREE"));
 
         assertTrue("Date for missing files should be called by replica TWO", fbabp.calls.get(DATE_MISSING_FILES)
                 .contains("TWO"));
-        assertFalse("Date for missing files should not have been called by replica THREE", fbabp.calls.get(
-                DATE_MISSING_FILES).contains("THREE"));
+        assertFalse("Date for missing files should not have been called by replica THREE",
+                fbabp.calls.get(DATE_MISSING_FILES).contains("THREE"));
 
         fbabp.calls.clear();
     }
@@ -324,15 +325,15 @@ public class BitpreserveFileStatusTester {
         JspWriter jw = new MockJspWriter();
         BitpreserveFileState.printChecksumErrorStateForReplica(jw, Replica.getReplicaFromId("ONE"), new Locale("da"));
 
-        assertTrue("Number of changed files should be called by a bitarchive replica", fbabp.calls.get(
-                NUM_CHANGED_FILES).contains("ONE"));
-        assertFalse("Number of changed files should not be called by the Checksum replica.", fbabp.calls.get(
-                NUM_CHANGED_FILES).contains(Replica.getReplicaFromId("THREE").getType().name()));
+        assertTrue("Number of changed files should be called by a bitarchive replica",
+                fbabp.calls.get(NUM_CHANGED_FILES).contains("ONE"));
+        assertFalse("Number of changed files should not be called by the Checksum replica.",
+                fbabp.calls.get(NUM_CHANGED_FILES).contains(Replica.getReplicaFromId("THREE").getType().name()));
 
         assertTrue("Date for changed files should be called by replica ONE", fbabp.calls.get(DATE_CHANGED_FILES)
                 .contains("ONE"));
-        assertFalse("Date for changed files should not have been called by replica THREE", fbabp.calls.get(
-                DATE_CHANGED_FILES).contains("THREE"));
+        assertFalse("Date for changed files should not have been called by replica THREE",
+                fbabp.calls.get(DATE_CHANGED_FILES).contains("THREE"));
 
         fbabp.calls.clear();
     }
