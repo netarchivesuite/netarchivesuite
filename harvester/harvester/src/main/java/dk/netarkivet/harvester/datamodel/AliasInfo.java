@@ -46,7 +46,7 @@ public class AliasInfo {
      * @param aliasOf the given domain is an alias of this domain
      * @param lastChange the alias was (re-)registered on this date.
      * @throws ArgumentNotValid in the following cases: 1. domain is null or empty 2. aliasOf is null or empty 3.
-     *         lastChange is null 4. domain equals aliasOf
+     * lastChange is null 4. domain equals aliasOf
      */
     public AliasInfo(String domain, String aliasOf, Date lastChange) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(domain, "domain");

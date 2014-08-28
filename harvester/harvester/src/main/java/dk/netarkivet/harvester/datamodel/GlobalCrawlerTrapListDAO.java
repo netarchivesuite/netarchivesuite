@@ -101,7 +101,7 @@ public abstract class GlobalCrawlerTrapListDAO implements DAO {
      *
      * @param trapList the trap list to update
      * @throws UnknownID if the id of the trapList argument does not correspond to an existing trap list in the
-     *         database.
+     * database.
      */
     public abstract void update(GlobalCrawlerTrapList trapList) throws UnknownID;
 

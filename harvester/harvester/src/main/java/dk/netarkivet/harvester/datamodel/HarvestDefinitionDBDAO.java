@@ -654,7 +654,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
      *
      * @param now The current date
      * @return List of ready harvest definitions. No check is performed for whether these are already in the middle of
-     *         being scheduled.
+     * being scheduled.
      */
     @Override
     public Iterable<Long> getReadyHarvestDefinitions(Date now) {

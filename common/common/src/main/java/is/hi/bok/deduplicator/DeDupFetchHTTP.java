@@ -196,7 +196,7 @@ public class DeDupFetchHTTP extends FetchHTTP implements AdaptiveRevisitAttribut
      *
      * @param curi The Crawl URI being processed.
      * @return True if header infomation indicates that the document has not changed since the crawl that the index is
-     *         based on was performed.
+     * based on was performed.
      */
     protected boolean isDuplicate(CrawlURI curi) {
         boolean ret = false;

@@ -323,7 +323,7 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
          * @param line The line to parse.
          * @param harvestnamePrefix .
          * @return An object containing the salient parts of the filename of the ARC file as mentioned in the given CDX
-         *         line, or null if the filename didn't match the job we're working on.
+         * line, or null if the filename didn't match the job we're working on.
          */
         private String parseLine(String line, String harvestnamePrefix) {
             try {
@@ -345,7 +345,7 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
          *
          * @param writer The writer we're currently writing to.
          * @param filename The filename of all the entries stored in baos. This is used to generate the URI for the
-         *        entry.
+         * entry.
          * @param bytes The bytes of the CDX records to be written under this entry.
          * @throws IOFailure if the write fails for any reason
          */

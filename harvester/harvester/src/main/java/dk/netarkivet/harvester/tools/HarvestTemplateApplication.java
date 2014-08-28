@@ -139,7 +139,7 @@ public class HarvestTemplateApplication {
      * Update a given template.
      *
      * @param args array of commandline-arguments args[0]: templateName args[1]: File that should replace an existing
-     *        template
+     * template
      */
     private static void updateTemplate(final String[] args) {
         TemplateDAO dao = TemplateDAO.getInstance();

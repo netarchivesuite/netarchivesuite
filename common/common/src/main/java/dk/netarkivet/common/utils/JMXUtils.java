@@ -120,9 +120,9 @@ public final class JMXUtils {
      *
      * @param server The server that should be connected to using the constructed URL.
      * @param jmxPort The number of the JMX port that should be connected to using the constructed URL (may not be a
-     *        negative number)
+     * negative number)
      * @param rmiPort The number of the RMI port that should be connected to using the constructed URL, or -1 if the
-     *        default RMI port should be used.
+     * default RMI port should be used.
      * @return the constructed URL.
      */
     public static JMXServiceURL getUrl(String server, int jmxPort, int rmiPort) {
@@ -175,7 +175,7 @@ public final class JMXUtils {
      *
      * @param url The JMX service url of some JVM on some machine.
      * @param credentials a map with (at least) one entry, mapping "jmx.remote.credentials" to a String array of length
-     *        2. Its first item should be the user name. Its second item should be the password.
+     * 2. Its first item should be the user name. Its second item should be the password.
      * @return An MBeanServerConnection representing the connected session.
      */
     public static MBeanServerConnection getMBeanServerConnection(JMXServiceURL url, Map<String, String[]> credentials) {

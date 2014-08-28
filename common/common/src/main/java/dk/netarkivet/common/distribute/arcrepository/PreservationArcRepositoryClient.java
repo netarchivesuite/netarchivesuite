@@ -70,9 +70,9 @@ public interface PreservationArcRepositoryClient {
      * Runs a batch batch job on each file in the ArcRepository.
      *
      * @param job An object that implements the FileBatchJob interface. The initialize() method will be called before
-     *        processing and the finish() method will be called afterwards. The process() method will be called with
-     *        each File entry. An optional function postProcess() allows handling the combined results of the batchjob,
-     *        e.g. summing the results, sorting, etc.
+     * processing and the finish() method will be called afterwards. The process() method will be called with each File
+     * entry. An optional function postProcess() allows handling the combined results of the batchjob, e.g. summing the
+     * results, sorting, etc.
      * @param replicaId The archive to execute the job on.
      * @param args The arguments for the batchjob.
      * @return The status of the batch job after it ended.
@@ -150,7 +150,7 @@ public interface PreservationArcRepositoryClient {
      *
      * @param replicaId The identification of the replica.
      * @param checksum The checksum of the corrupt entry in the archive. It is important to validate that the checksum
-     *        actually is wrong before correcting the entry.
+     * actually is wrong before correcting the entry.
      * @param file The new file to replace the old one.
      * @param credentials The password for allowing to remove a file entry in the archive.
      * @return The corrupted file from the archive.

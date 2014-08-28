@@ -91,7 +91,7 @@ public abstract class RunningJobsInfoDAO implements DAO {
      * @param startTime the crawl time (in seconds) to begin.
      * @param limit the maximum number of records to fetch.
      * @return an array of progress records chronologically sorted for the given job ID, starting at a given crawl time,
-     *         and limited to a given number of record.
+     * and limited to a given number of record.
      */
     public abstract StartedJobInfo[] getMostRecentByJobId(long jobId, long startTime, int limit);
 

@@ -117,7 +117,7 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
      * @param useChecksums If true, checksums will be used to check transfers.
      * @param fileDeletable If true, this file will be deleted after upload to FTP.
      * @param multipleDownloads If true, the file will not be removed from FTP server automatically after first
-     *        download.
+     * download.
      * @param connectionParams If not null, contains connection parameters to the FTP-server desired by the user
      * @throws IOFailure if MD5 checksum fails, or ftp fails
      * @throws ArgumentNotValid if the local file cannot be read.
@@ -236,7 +236,7 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
      * @param useChecksums If true, checksums will be used to check transfers.
      * @param fileDeletable If true, this file will be deleted after upload to FTP.
      * @param multipleDownloads If true, the file will not be removed from FTP server automatically after first
-     *        download.
+     * download.
      * @return FTPRemoteFile object
      * @throws IOFailure if FTPRemoteFile creation fails
      */
@@ -258,7 +258,7 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
      * place where we can know we're done.
      *
      * @return An InputStream that will deliver the data transferred by FTP. Holding on to this for long periods without
-     *         reading any data might cause a timeout.
+     * reading any data might cause a timeout.
      */
     public InputStream getInputStream() {
         if (filesize == 0) {

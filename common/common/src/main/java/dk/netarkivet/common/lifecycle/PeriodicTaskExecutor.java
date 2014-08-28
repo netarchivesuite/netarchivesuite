@@ -79,7 +79,7 @@ public final class PeriodicTaskExecutor {
          * @param taskId the task id string (should be unique)
          * @param task the actual {@link Runnable} object.
          * @param secondsBeforeFirstExec the delay in seconds between starting the executor and the initial task
-         *        execution.
+         * execution.
          * @param secondsBetweenExec the delay in seconds between two successive task executions.
          */
         public PeriodicTask(String taskId, Runnable task, long secondsBeforeFirstExec, long secondsBetweenExec) {

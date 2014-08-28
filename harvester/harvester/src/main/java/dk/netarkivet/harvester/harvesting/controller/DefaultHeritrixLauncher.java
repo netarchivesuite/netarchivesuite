@@ -83,7 +83,7 @@ public class DefaultHeritrixLauncher extends HeritrixLauncher {
      * crawling is finished. This method is called from the HarvestControllerServer.onDoOneCrawl() method.
      *
      * @throws IOFailure - if the order.xml is invalid if unable to initialize Heritrix CrawlController if Heritrix
-     *         process interrupted
+     * process interrupted
      */
     public void doCrawl() throws IOFailure {
         setupOrderfile(getHeritrixFiles());
@@ -117,7 +117,7 @@ public class DefaultHeritrixLauncher extends HeritrixLauncher {
      * been made for too long, the crawl is ended.
      *
      * @throws IOFailure if the call to HeritrixController.requestCrawlStop() fails. Other failures in calls to the
-     *         controller are caught and logged.
+     * controller are caught and logged.
      */
     private void doCrawlLoop() throws IOFailure {
         String errorMessage = "Non-fatal I/O error while communicating with Heritrix during crawl";

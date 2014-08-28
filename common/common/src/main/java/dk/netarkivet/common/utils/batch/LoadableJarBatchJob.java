@@ -64,7 +64,7 @@ public class LoadableJarBatchJob extends FileBatchJob {
      * Load a given class from a jar file.
      *
      * @param jarFiles The jar file(s) to load from. This file may also contain other classes required by the
-     *        FileBatchJob class.
+     * FileBatchJob class.
      * @param arguments The arguments for the batchjob.
      * @param jobClass The class to load initially. This must be a subclass of FileBatchJob.
      * @throws ArgumentNotValid If any of the arguments are null.
@@ -199,7 +199,7 @@ public class LoadableJarBatchJob extends FileBatchJob {
      *
      * @param in Stream that the object can be read from.
      * @throws IOException If there is an error reading from the stream, or the serialized object cannot be deserialized
-     *         due to errors in the serialized form.
+     * due to errors in the serialized form.
      * @throws ClassNotFoundException If the class definition of the serialized object cannot be found.
      */
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {

@@ -422,7 +422,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
      * @param startTime the crawl time (in seconds) to begin.
      * @param limit the maximum number of records to fetch.
      * @return an array of chronologically sorted progress records for the given job ID, starting at a given crawl time,
-     *         and limited to a given number of record.
+     * and limited to a given number of record.
      */
     @Override
     public StartedJobInfo[] getMostRecentByJobId(long jobId, long startTime, int limit) {

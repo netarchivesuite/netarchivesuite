@@ -168,9 +168,9 @@ public class XmlStructure {
      * Retrieves the content of a branch deep in tree structure.
      *
      * @param name Specifies the path in the tree (e.g. in HTML: GetSubChildValue("HTML", "HEAD", "TITLE") to get the
-     *        title of a HTML document)
+     * title of a HTML document)
      * @return The content of the leaf. If it is not a leaf, the entire XML-branch is returned. Returns 'null' if the
-     *         path to the branch cannot be found.
+     * path to the branch cannot be found.
      */
     public String getSubChildValue(String... name) {
         ArgumentNotValid.checkNotNull(name, "String ...name");
@@ -191,9 +191,9 @@ public class XmlStructure {
      * Retrieves the content of a branch deep in tree structure.
      *
      * @param path Specifies the path in the tree (e.g. in HTML: GetSubChildValue("HTML", "HEAD", "TITLE") to get the
-     *        title of a HTML document)
+     * title of a HTML document)
      * @return The content of the leaf. If it is not a leaf, return null. Returns 'null' if the path to the branch
-     *         cannot be found.
+     * cannot be found.
      */
     public String getLeafValue(String... path) {
         ArgumentNotValid.checkNotNull(path, "String ...name");
@@ -210,9 +210,9 @@ public class XmlStructure {
      * Retrieves the content of a the leafs deep in the tree structure. It only retrieves branches at the first path.
      *
      * @param path Specifies the path in the tree (e.g. in HTML: GetSubChildValue("HTML", "HEAD", "TITLE") to get the
-     *        title of a HTML document)
+     * title of a HTML document)
      * @return The content of the leaf. If no leafs are found then an empty collection of strings are returned (new
-     *         String[0]).
+     * String[0]).
      */
     public String[] getLeafValues(String... path) {
         // check argument

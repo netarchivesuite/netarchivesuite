@@ -103,7 +103,7 @@ public class LocalCDXCache implements JobIndexCache {
      *
      * @param jobIDs Set of job IDs, in no particular order.
      * @return A File that specifies where the index.cdx data for the job IDs should reside. This does not check whether
-     *         the file exists or even if the directory it belongs to exists.
+     * the file exists or even if the directory it belongs to exists.
      */
     private File getIndexFile(Set<Long> jobIDs) {
         List<Long> jobIDList = new ArrayList<Long>(jobIDs);

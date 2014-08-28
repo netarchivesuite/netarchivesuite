@@ -38,7 +38,7 @@ public abstract class CrawlDataIterator {
      * Constructor.
      *
      * @param source The location of the crawl data. The meaning of this value may vary based on the implementation of
-     *        concrete subclasses. Typically it will refer to a directory or a file.
+     * concrete subclasses. Typically it will refer to a directory or a file.
      */
     public CrawlDataIterator(String source) {
         this.source = source;

@@ -422,7 +422,7 @@ public class HarvestController {
      * @param metadataEntries list of metadataEntries top get jobIDs from.
      * @return a directory containing the index itself.
      * @throws IOFailure on errors retrieving the index from the client. FIXME Better forgiving handling of no index
-     *         available Add setting for disable deduplication if no index available
+     * available Add setting for disable deduplication if no index available
      */
     private File fetchDeduplicateIndex(List<MetadataEntry> metadataEntries) {
         // Get list of jobs, which should be used for duplicate reduction

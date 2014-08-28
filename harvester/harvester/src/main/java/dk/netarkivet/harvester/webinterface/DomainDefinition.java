@@ -86,7 +86,7 @@ public class DomainDefinition {
      * @param i18n I18n information
      * @throws IOFailure on updateerrors in the DAO
      * @throws ForwardedToErrorPage if domain is not found, if the edition is out-of-date, or if parameters are missing
-     *         or invalid
+     * or invalid
      */
     public static void processRequest(PageContext context, I18n i18n) {
         ArgumentNotValid.checkNotNull(context, "PageContext context");

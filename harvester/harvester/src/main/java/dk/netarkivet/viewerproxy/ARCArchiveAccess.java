@@ -254,7 +254,7 @@ public class ARCArchiveAccess implements URIResolver {
      *
      * @param inputStream A source of data
      * @return A line of text read from inputStream, with terminating \r\n or \n removed, or null if no data is
-     *         available.
+     * available.
      * @throws IOException on trouble reading from input stream
      */
     private String readLine(InputStream inputStream) throws IOException {

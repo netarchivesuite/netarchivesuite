@@ -49,7 +49,7 @@ public class GetFile extends ToolRunnerBase {
      * ToolRunnerBase class.
      *
      * @param argv Takes one or two command line parameter: the name of the file to retrieve. optionally, the name of
-     *        the destination file.
+     * the destination file.
      */
     public static void main(String[] argv) {
         GetFile instance = new GetFile();

@@ -107,7 +107,7 @@ public final class DatabaseAdmin implements Admin {
      *
      * @param filename The name of the file for the ReplicaStoreState.
      * @param replicaChannelName The name of the identification channel for uniquely identifying the replica of for the
-     *        ReplicaStoreState.
+     * ReplicaStoreState.
      * @return The ReplicaStoreState of a given file in a specific replica.
      * @throws ArgumentNotValid If the filename or the replica id is null or the empty string.
      */
@@ -132,7 +132,7 @@ public final class DatabaseAdmin implements Admin {
      * @param repChannelId The identification channel of the replica for the ReplicaStoreState.
      * @return Whether a given file in a specific replica has a valid store state.
      * @throws ArgumentNotValid If either the filenames or the replica identification channel is null or the empty
-     *         string.
+     * string.
      */
     @Override
     public boolean hasState(String filename, String repChannelId) throws ArgumentNotValid {
@@ -156,7 +156,7 @@ public final class DatabaseAdmin implements Admin {
      * @param repChannelId The identification channel of the replica for the entry.
      * @param state The new state for the entry.
      * @throws ArgumentNotValid If the ReplicaStoreState is null, or if either the filename or the replica
-     *         identification channel is either null or the empty string.
+     * identification channel is either null or the empty string.
      */
     @Override
     public void setState(String filename, String repChannelId, ReplicaStoreState state) throws ArgumentNotValid {
@@ -191,7 +191,7 @@ public final class DatabaseAdmin implements Admin {
      *
      * @param filename The name of the file whose StoreMessage should be retrieved.
      * @return The StoreMessage corresponding to the file. A null is returned if the corresponding StoreMessage is not
-     *         found.
+     * found.
      * @throws ArgumentNotValid If the filename is either null or the empty string.
      */
     @Override
@@ -248,7 +248,7 @@ public final class DatabaseAdmin implements Admin {
      * @param checksum The new checksum for the file.
      * @throws ArgumentNotValid If either the filename or the checksum is either null or the empty string.
      * @throws IllegalState Always, since it is not allowed for arcrepository to change the checksum of a completed
-     *         upload.
+     * upload.
      */
     @Override
     public void setCheckSum(String filename, String checksum) throws ArgumentNotValid, IllegalState {

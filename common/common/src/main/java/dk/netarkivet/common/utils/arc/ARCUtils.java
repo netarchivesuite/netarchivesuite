@@ -229,11 +229,11 @@ public final class ARCUtils {
      * Read the contents of an ARC record into a byte array.
      *
      * @param in An ARC record to read from. After reading, the ARC Record will no longer have its own data available
-     *        for reading.
+     * for reading.
      * @return A byte array containing the contents of the ARC record. Note that the size of this may be different from
-     *         the size given in the ARC record metadata.
+     * the size given in the ARC record metadata.
      * @throws IOException If there is an error reading the data, or if the record is longer than Integer.MAX_VALUE
-     *         (since we can't make bigger arrays).
+     * (since we can't make bigger arrays).
      */
     public static byte[] readARCRecord(ARCRecord in) throws IOException {
         ArgumentNotValid.checkNotNull(in, "ARCRecord in");

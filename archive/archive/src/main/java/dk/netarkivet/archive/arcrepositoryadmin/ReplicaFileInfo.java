@@ -68,7 +68,7 @@ public class ReplicaFileInfo {
      * @param fDate The date for the last filelist update.
      * @param cDate The date for the last checksum update.
      * @throws ArgumentNotValid If gId or fId is negative, the rId is either null or the empty string. The other
-     *         variables are not validated, since they are allowed to be null (e.g. the dates before they are updated).
+     * variables are not validated, since they are allowed to be null (e.g. the dates before they are updated).
      */
     public ReplicaFileInfo(long gId, String rId, long fId, long sId, String cs, int us, int fs, int css, Date fDate,
             Date cDate) throws ArgumentNotValid {

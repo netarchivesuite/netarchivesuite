@@ -216,7 +216,7 @@ public class FilePreservationState implements PreservationState {
      *
      * @param r A replica to get checksum for this file from
      * @return The checksum for this file in the replica, if all machines that have that file agree, otherwise "". If no
-     *         checksums are found, also returns "".
+     * checksums are found, also returns "".
      */
     public String getUniqueChecksum(Replica r) {
         ArgumentNotValid.checkNotNull(r, "Replica r");

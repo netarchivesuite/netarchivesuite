@@ -82,8 +82,7 @@ public class RunBatch extends ToolRunnerBase {
      * Management of this, exception handling etc. is delegated to ToolRunnerBase class.
      *
      * @param argv command line parameters as defined in local class BatchParameters required: The name of a class-file
-     *        containing an implementation of FileBatchJob Name of jar file which includes the class file, and the
-     *        className
+     * containing an implementation of FileBatchJob Name of jar file which includes the class file, and the className
      */
     public static void main(String[] argv) {
         RunBatch instance = new RunBatch();

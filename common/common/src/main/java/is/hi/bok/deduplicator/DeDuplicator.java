@@ -492,7 +492,7 @@ public class DeDuplicator extends Processor implements AdaptiveRevisitAttributeC
      *
      * @param curi The CrawlURI to process
      * @param currHostStats A statistics object for the current host. If per host statistics tracking is enabled this
-     *        must be non null and the method will increment appropriate counters on it.
+     * must be non null and the method will increment appropriate counters on it.
      * @return The result of the lookup (a Lucene document). If a duplicate is not found null is returned.
      */
     protected Document lookupByURL(CrawlURI curi, Statistics currHostStats) {
@@ -572,7 +572,7 @@ public class DeDuplicator extends Processor implements AdaptiveRevisitAttributeC
      *
      * @param curi The CrawlURI to process
      * @param currHostStats A statistics object for the current host. If per host statistics tracking is enabled this
-     *        must be non null and the method will increment appropriate counters on it.
+     * must be non null and the method will increment appropriate counters on it.
      * @return The result of the lookup (a Lucene document). If a duplicate is not found null is returned.
      */
     protected Document lookupByDigest(CrawlURI curi, Statistics currHostStats) {

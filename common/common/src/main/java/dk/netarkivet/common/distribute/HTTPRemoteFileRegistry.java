@@ -250,7 +250,7 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
          * @throws IOException On trouble in communication.
          * @throws ServletException On servlet trouble.
          * @see AbstractHandler#handle(String, org.eclipse.jetty.server.Request, HttpServletRequest,
-         *      HttpServletResponse), HttpServletResponse, int)
+         * HttpServletResponse), HttpServletResponse, int)
          */
         @Override
         public void handle(String string, Request baseRequest, HttpServletRequest httpServletRequest,

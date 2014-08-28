@@ -75,7 +75,7 @@ public class DomainDBDAO extends DomainDAO {
      * update the ones that haven't.
      *
      * @throws IOFailure on trouble updating tables to new versions, or on tables with wrong versions that we don't know
-     *         how to change to expected version.
+     * how to change to expected version.
      */
     protected DomainDBDAO() {
         Connection connection = HarvestDBConnection.get();
@@ -674,7 +674,7 @@ public class DomainDBDAO extends DomainDAO {
      * @param d A domain to operate on.
      * @param dc A configuration to create xref table for.
      * @throws SQLException If any database problems occur during the insertion of password entries for the given domain
-     *         configuration
+     * configuration
      */
     private void createConfigPasswordsEntries(Connection c, Domain d, DomainConfiguration dc) throws SQLException {
         PreparedStatement s = c.prepareStatement("INSERT INTO config_passwords " + "( config_id, password_id ) "
@@ -712,7 +712,7 @@ public class DomainDBDAO extends DomainDAO {
      * @param d A domain to operate on.
      * @param dc A configuration to create xref table for.
      * @throws SQLException If any database problems occur during the insertion of seedlist entries for the given domain
-     *         configuration
+     * configuration
      */
     private void createConfigSeedlistsEntries(Connection c, Domain d, DomainConfiguration dc) throws SQLException {
         PreparedStatement s = c.prepareStatement("INSERT INTO config_seedlists " + " ( config_id, seedlist_id ) "

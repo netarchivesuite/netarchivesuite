@@ -305,7 +305,7 @@ public class HarvestControllerServerTester {
      *
      * @param crawlDir the location of the crawldir
      * @param numberOfStoreMessagesExpected The number of stored messages expected. Usually number of files in dir + 1
-     *        for metadata arc file.
+     * for metadata arc file.
      * @param storeFailFile If not null, simulate failure on upload of this file
      * @return The CrawlStatusMessage returned by the HarvestControllerServer for the found job.
      */

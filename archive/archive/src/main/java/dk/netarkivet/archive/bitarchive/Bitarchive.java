@@ -178,8 +178,8 @@ public class Bitarchive {
      *
      * @param bitarchiveAppId A String representing the bitarchive AppId.
      * @param job An object that implements the ARCBatchJob interface. The initialize() method will be called before
-     *        processing and the finish() method will be called afterwards. The process() method will be called with
-     *        each ARC entry.
+     * processing and the finish() method will be called afterwards. The process() method will be called with each ARC
+     * entry.
      * @return A localBatchStatus
      * @throws ArgumentNotValid if job or file is null.
      * @throws IOFailure if there was problems writing to the RemoteFile

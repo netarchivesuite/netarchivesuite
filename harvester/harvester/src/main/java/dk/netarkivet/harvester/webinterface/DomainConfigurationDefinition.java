@@ -67,7 +67,7 @@ public class DomainConfigurationDefinition {
      * @param context The context of this request
      * @param i18n I18n information
      * @throws ForwardedToErrorPage if a user error has caused forwarding to the error page, in which case processing
-     *         should abort.
+     * should abort.
      */
     public static void processRequest(PageContext context, I18n i18n) {
         ArgumentNotValid.checkNotNull(context, "PageContext context");

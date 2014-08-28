@@ -523,7 +523,7 @@ public class FileUtils {
              * @param dir the directory in which the file was found. Unused in this implementation of accept.
              * @param name the name of the file.
              * @return <code>true</code> if and only if the name should be included in the file list; <code>false</code>
-             *         otherwise.
+             * otherwise.
              * @see FilenameFilter#accept(java.io.File, java.lang.String)
              */
             public boolean accept(File dir, String name) {
@@ -619,7 +619,7 @@ public class FileUtils {
      *
      * @param line The full line to remove
      * @param file The file to remove the line from. This file will be rewritten in full, and the entire contents will
-     *        be kept in memory
+     * be kept in memory
      * @throws UnknownID If the file does not exist
      */
     public static void removeLineFromFile(String line, File file) {
@@ -692,7 +692,7 @@ public class FileUtils {
      * @param theFile A file to make relative
      * @param theDir A directory
      * @return the filepath of the theFile relative to theDir. null, if theFile is not relative to theDir. null, if
-     *         theDir is not a directory.
+     * theDir is not a directory.
      */
     public static String relativeTo(File theFile, File theDir) {
         ArgumentNotValid.checkNotNull(theFile, "File theFile");
@@ -771,7 +771,7 @@ public class FileUtils {
      * Create an InputStream that reads from a file but removes the file when all data has been read.
      *
      * @param file A file to read. This file will be deleted when the inputstream is closed, finalized, reaches
-     *        end-of-file, or when the VM closes.
+     * end-of-file, or when the VM closes.
      * @return An InputStream containing the file's contents.
      * @throws IOFailure If an error occurs in creating the ephemeral input stream
      */

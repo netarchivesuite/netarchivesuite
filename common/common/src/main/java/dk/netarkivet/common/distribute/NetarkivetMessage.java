@@ -63,7 +63,7 @@ public abstract class NetarkivetMessage implements Serializable {
      * @param to the initial receiver of the message
      * @param replyTo the initial sender of the message
      * @throws ArgumentNotValid if to==replyTo, the replyTo parameter is a topic instead of a queue, or there is a null
-     *         parameter.
+     * parameter.
      */
     protected NetarkivetMessage(ChannelID to, ChannelID replyTo) {
         ArgumentNotValid.checkNotNull(to, "to");

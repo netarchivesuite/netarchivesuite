@@ -81,7 +81,7 @@ public class SparseFullHarvest extends ExtendableEntity {
      * @param maxBytes Limit for how many bytes can be harvested
      * @param maxJobRunningTime Limit on how much time can be used for this job. See {@link #getMaxJobRunningTime()}
      * @param previousFullHarvest This id of the harvestDefinition used to create this Fullharvest definition. May be
-     *        null for none
+     * null for none
      * @param channelId the channel id, or null for the default one
      * @throws ArgumentNotValid if oid, name or comments is null, or name is empty.
      */

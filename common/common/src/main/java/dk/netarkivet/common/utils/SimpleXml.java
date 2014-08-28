@@ -325,7 +325,7 @@ public class SimpleXml {
      *
      * @param path A dotted path
      * @return An XPath that matches the dotted path equivalent, using "dk:" as namespace prefix for all but the first
-     *         element.
+     * element.
      */
     private XPath getXPath(String path) {
         String[] pathParts = path.split("\\.");

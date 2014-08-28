@@ -52,7 +52,7 @@ public class SettingsFactory<T> {
      *
      * @param settingsField A field in the Settings class.
      * @param args The arguments that will be passed to the getInstance method or the constructor. These will also be
-     *        used to determine which getInstance method or constructor to find.
+     * used to determine which getInstance method or constructor to find.
      * @param <T> the object-type returned by this method.
      * @return A new instance of type T created by calling getInstance() or by invoking a constructor.
      * @throws ArgumentNotValid if settingsField is null or the invoked method or constructor threw an exception.

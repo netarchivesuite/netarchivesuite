@@ -97,7 +97,7 @@ public abstract class Machine {
      * @param resetDir Whether the temporary directory should be reset.
      * @param externalJarFolder The folder containing the external jar library files.
      * @throws ArgumentNotValid If one of the following arguments are null: subTreeRoot, parentSettings, param,
-     *         netarchiveSuiteSource, logProp, securityPolicy.
+     * netarchiveSuiteSource, logProp, securityPolicy.
      */
     public Machine(Element subTreeRoot, XmlStructure parentSettings, Parameters param, String netarchiveSuiteSource,
             File julProp, File slf4JConfig, File securityPolicy, File dbFileName, File archiveDbFileName,
@@ -484,7 +484,7 @@ public abstract class Machine {
      *
      * @return The string to add to the jmxremote.password file.
      * @throws IllegalState If there is a different amount of usernames and passwords, or if two application has
-     *         different values for their username or passwords (applications without values are ignored).
+     * different values for their username or passwords (applications without values are ignored).
      */
     protected String getMonitorLogin() throws IllegalState {
         StringBuilder res = new StringBuilder();
@@ -591,7 +591,7 @@ public abstract class Machine {
      *
      * @return The string to add to the jmxremote.password file.
      * @throws IllegalState If there is a different amount of usernames and passwords, or if two application has
-     *         different values for their username or passwords (applications without values are ignored).
+     * different values for their username or passwords (applications without values are ignored).
      */
     protected String getHeritrixLogin() throws IllegalState {
         StringBuilder res = new StringBuilder();

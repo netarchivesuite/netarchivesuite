@@ -149,7 +149,7 @@ public class ExtendedFTPRemoteFile implements RemoteFile {
      * @param useChecksums If true, checksums will be used to check transfers.
      * @param fileDeletable If true, this file will be deleted after upload to FTP.
      * @param multipleDownloads If true, the file will not be removed from FTP server automatically after first
-     *        download.
+     * download.
      * @return FTPRemoteFile object
      * @throws IOFailure if FTPRemoteFile creation fails
      */
@@ -166,7 +166,7 @@ public class ExtendedFTPRemoteFile implements RemoteFile {
      * @param useChecksums If true, checksums will be used to check transfers.
      * @param fileDeletable If true, this file will be deleted after upload to FTP.
      * @param multipleDownloads If true, the file will not be removed from FTP server automatically after first
-     *        download.
+     * download.
      * @return FTPRemoteFile object
      * @throws IOFailure if FTPRemoteFile creation fails
      */

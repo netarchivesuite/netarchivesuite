@@ -100,7 +100,7 @@ public class CDXRecord {
      *
      * @param fields the given fields of a line i CDX-format.
      * @throws ArgumentNotValid if argument is null or number of fields is less than 7 or if length or offset does not
-     *         contain long values.
+     * contain long values.
      */
     public CDXRecord(String[] fields) {
         ArgumentNotValid.checkNotNull(fields, "String[] fields");

@@ -732,7 +732,7 @@ public class JobDBDAO extends JobDAO {
      *
      * @param jobID The job ID to find duplicate reduction data for.
      * @return A list of job IDs (possibly empty) of potential previous harvests of this job, to use for duplicate
-     *         reduction.
+     * reduction.
      * @throws UnknownID if job ID is unknown
      * @throws IOFailure on trouble querying database
      */

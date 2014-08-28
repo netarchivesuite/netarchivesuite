@@ -40,7 +40,7 @@ public class RepeatingSchedule extends Schedule {
      * Create a new RepeatingSchedule that runs a given number of times.
      *
      * @param startDate The time at which the schedule starts running. This is not necessarily the time of the first
-     *        event, but no events will happen before this. May be null, meaning start any time.
+     * event, but no events will happen before this. May be null, meaning start any time.
      * @param repeats how many events should happen totally.
      * @param frequency How frequently the event should happen.
      * @param name The unique name of the schedule.

@@ -131,7 +131,7 @@ public class JMXUtilsTester {
          * Create a test MBeanServerConnection that fails a number of times.
          *
          * @param failCount Number of times the getAttribute/executeCommand methods should be called before they
-         *        succeed.
+         * succeed.
          */
         TestMBeanServerConnection(int failCount) {
             this.failCount = failCount;

@@ -81,7 +81,7 @@ public class CDXUtils {
      * @param archiveFileDirectory A directory with archive files to generate index for
      * @param cdxFileDirectory A directory to generate CDX files in
      * @throws ArgumentNotValid if any of directories are null or is not an existing directory, or if cdxFileDirectory
-     *         is not writable.
+     * is not writable.
      */
     public static void generateCDX(ArchiveProfile archiveProfile, File archiveFileDirectory, File cdxFileDirectory)
             throws ArgumentNotValid {

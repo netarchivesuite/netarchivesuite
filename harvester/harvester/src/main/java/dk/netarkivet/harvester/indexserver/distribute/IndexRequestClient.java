@@ -216,7 +216,7 @@ public class IndexRequestClient extends MultiFileBasedCache<Long> implements Job
      *
      * @param files List of RemoteFiles to gunzip. The RemoteFiles will be deleted as part of the process.
      * @param toDir The directory that the gunzipped files will eventually be placed in. This directory will be created
-     *        and filled atomically.
+     * and filled atomically.
      * @throws IOFailure If errors occur during unzipping, e.g. disk full.
      */
     private void gunzipToDir(List<RemoteFile> files, File toDir) throws IOFailure {
@@ -284,7 +284,7 @@ public class IndexRequestClient extends MultiFileBasedCache<Long> implements Job
      * {@link CommonSettings#REMOTE_FILE_CLASS} is not {@link FTPRemoteFile}.
      *
      * @return true, if we should use the local ftpserver when retrieving data from the indexserver, false, if the
-     *         indexserver should decide for us.
+     * indexserver should decide for us.
      */
     protected boolean useLocalFtpserver() {
         // check first that RemoteFileClass is FTPRemoteFile

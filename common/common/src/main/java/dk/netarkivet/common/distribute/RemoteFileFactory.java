@@ -48,7 +48,7 @@ public class RemoteFileFactory extends SettingsFactory<RemoteFile> {
      *
      * @param file The File object to make accessable on another machine
      * @param useChecksums Whether transfers should be doublechecked with checksums. Added value is access to checksum
-     *        of objects.
+     * of objects.
      * @param fileDeletable If true, the local file will be deleted when it is no longer needed.
      * @param multipleDownloads Whether this file should be allowed to be transferred more than once.
      * @return A RemoteFile instance encapsulating the file argument.

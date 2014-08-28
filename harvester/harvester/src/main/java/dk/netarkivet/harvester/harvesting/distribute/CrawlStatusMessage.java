@@ -62,7 +62,7 @@ public class CrawlStatusMessage extends HarvesterMessage implements Serializable
      * @param jobID the unique identifier for the crawl job to which this message refers
      * @param statusCode All values are accepted, except null
      * @param harvestReport A calculated domain harvest report produced by the crawl. May be null for no domain harvest
-     *        report.
+     * report.
      * @throws ArgumentNotValid If invalid arguments: jobID < 0L statusCode == null
      */
     public CrawlStatusMessage(long jobID, JobStatus statusCode, HarvestReport harvestReport) {

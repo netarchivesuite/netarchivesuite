@@ -62,7 +62,7 @@ import dk.netarkivet.common.utils.batch.ChecksumJob;
  * However, it still talks JMS with the arcrepository.
  *
  * @deprecated Use the DatabaseBasedActiveBitPreservation instead (define in the setting:
- *             <b>settings.archive.admin.class</b>).
+ * <b>settings.archive.admin.class</b>).
  */
 @Deprecated
 public class FileBasedActiveBitPreservation implements ActiveBitPreservation, CleanupIF {
@@ -126,7 +126,7 @@ public class FileBasedActiveBitPreservation implements ActiveBitPreservation, Cl
      *
      * @param filenames List of filenames
      * @return a map ([filename]-> [FilePreservationState]) of the preservation status for the given files. The
-     *         preservationstate is null, if the file named does not exist in admin data.
+     * preservationstate is null, if the file named does not exist in admin data.
      * @throws ArgumentNotValid If the list of filenames is null or contains a null.
      */
     public Map<String, PreservationState> getPreservationStateMap(String... filenames) throws ArgumentNotValid {
@@ -201,7 +201,7 @@ public class FileBasedActiveBitPreservation implements ActiveBitPreservation, Cl
      *
      * @param filename A given file
      * @return the FilePreservationState for the given file. This will be null, if the filename is not found in admin
-     *         data.
+     * data.
      */
     public PreservationState getPreservationState(String filename) {
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
@@ -346,7 +346,7 @@ public class FileBasedActiveBitPreservation implements ActiveBitPreservation, Cl
      *
      * @param replica the replica to search for missing files
      * @throws ArgumentNotValid If the given directory does not contain a file filelistOutput/sorted.txt, or the
-     *         argument replica is null.
+     * argument replica is null.
      * @throws PermissionDenied If the output directory cannot be created.
      */
     public void findMissingFiles(Replica replica) throws ArgumentNotValid, PermissionDenied {
@@ -553,7 +553,7 @@ public class FileBasedActiveBitPreservation implements ActiveBitPreservation, Cl
      *
      * @param replica the bitarchive to check
      * @return the number of files found in the bitarchive. If nothing is known about the bitarchive replica, -1 is
-     *         returned.
+     * returned.
      * @throws ArgumentNotValid If the replica is null.
      */
     public long getNumberOfFiles(Replica replica) throws ArgumentNotValid {
@@ -781,7 +781,7 @@ public class FileBasedActiveBitPreservation implements ActiveBitPreservation, Cl
      * @throws IOFailure if the file cannot be reestablished
      * @throws PermissionDenied if the file is not in correct state
      * @throws ArgumentNotValid If the filename, the credentials or the checksum either are null or contain the empty
-     *         string, or if the replica is null.
+     * string, or if the replica is null.
      */
     public void replaceChangedFile(Replica replica, String filename, String credentials, String checksum)
             throws ArgumentNotValid, IOFailure, PermissionDenied {

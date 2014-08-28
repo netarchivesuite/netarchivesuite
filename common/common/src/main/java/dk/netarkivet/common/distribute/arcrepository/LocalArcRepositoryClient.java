@@ -173,7 +173,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
      * @param toFile Filename of a place where the file fetched can be put.
      * @throws ArgumentNotValid if arcfilename is null or empty, or if toFile is null
      * @throws IOFailure if there are problems reading or writing file, or the file with the given arcfilename could not
-     *         be found.
+     * be found.
      */
     @Override
     public void getFile(String arcfilename, Replica replica, File toFile) {
@@ -191,9 +191,9 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
      * Runs a batch job on each file in the ArcRepository.
      *
      * @param job An object that implements the FileBatchJob interface. The initialize() method will be called before
-     *        processing and the finish() method will be called afterwards. The process() method will be called with
-     *        each File entry. An optional function postProcess() allows handling the combined results of the batchjob,
-     *        e.g. summing the results, sorting, etc.
+     * processing and the finish() method will be called afterwards. The process() method will be called with each File
+     * entry. An optional function postProcess() allows handling the combined results of the batchjob, e.g. summing the
+     * results, sorting, etc.
      * @param replicaId The archive to execute the job on.
      * @param args The arguments for the batchjob. This can be null.
      * @return The status of the batch job after it ended.
@@ -271,7 +271,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
      *
      * @param fileName The name of the file to remove.
      * @param bitarchiveId The id of the replica from which to remove the file. Not used in this implementation, may be
-     *        null.
+     * null.
      * @param checksum The checksum of the file to be removed.
      * @param credentials A string that shows that the user is allowed to perform this operation.
      * @return A local copy of the file removed.

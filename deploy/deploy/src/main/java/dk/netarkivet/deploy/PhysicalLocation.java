@@ -86,7 +86,7 @@ public class PhysicalLocation {
      * @param resetDir Whether the temporary directory should be reset.
      * @param externalJarFolder The folder containing the external jar library files.
      * @throws ArgumentNotValid If one of the following arguments are null: subTreeRoot, parentSettings, param, logProp,
-     *         securityPolicy; or if the netarchiveSuiteSource if either null or empty.
+     * securityPolicy; or if the netarchiveSuiteSource if either null or empty.
      */
     public PhysicalLocation(Element subTreeRoot, XmlStructure parentSettings, Parameters param,
             String netarchiveSuiteSource, File logProp, File slf4JConfig, File securityPolicy, File dbFile,

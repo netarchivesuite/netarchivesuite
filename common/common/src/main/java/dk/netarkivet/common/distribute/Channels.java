@@ -159,7 +159,7 @@ public class Channels {
      * Returns the queue on which HarvestControllers reply with status messages to the HarvestScheduler.
      *
      * @return the <code>ChannelID</code> object for the queue on which HarvestControllers reply with status messages to
-     *         the HarvestScheduler
+     * the HarvestScheduler
      */
     public static ChannelID getTheSched() {
         return getInstance().THE_SCHED;
@@ -230,7 +230,7 @@ public class Channels {
      * Returns the channels for the all Checksum replicas.
      *
      * @return An array of THE_CR channels - one for each replica, though only the checksum replicas have values (the
-     *         others are null).
+     * others are null).
      */
     public static final ChannelID[] getAllArchives_CRs() {
         return getInstance().THE_CR_ARRAY;

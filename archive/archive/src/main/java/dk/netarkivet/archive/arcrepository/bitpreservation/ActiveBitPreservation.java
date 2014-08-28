@@ -40,7 +40,7 @@ public interface ActiveBitPreservation {
      *
      * @param filenames the list of filenames to investigate
      * @return a map ([filename]-> [FilePreservationState]) with the preservationstate of all files in the list. The
-     *         preservationstates in the map will be null for all filenames, that are not found in admin data.
+     * preservationstates in the map will be null for all filenames, that are not found in admin data.
      */
     Map<String, PreservationState> getPreservationStateMap(String... filenames);
 
@@ -49,7 +49,7 @@ public interface ActiveBitPreservation {
      *
      * @param filename A given file
      * @return the FilePreservationState for the given file. This will be null, if the filename is not found in admin
-     *         data.
+     * data.
      */
     PreservationState getPreservationState(String filename);
 

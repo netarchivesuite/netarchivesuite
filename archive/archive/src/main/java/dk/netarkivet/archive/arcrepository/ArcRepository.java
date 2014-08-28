@@ -473,7 +473,7 @@ public class ArcRepository implements CleanupIF {
      *
      * @param arcfileName The arcfile that was uploaded.
      * @param replicaChannelName The name of the identification channel for the replica that uploaded it (THE_BAMON for
-     *        bitarchive and THE_CR for checksum).
+     * bitarchive and THE_CR for checksum).
      */
     private synchronized void processDataUploaded(String arcfileName, String replicaChannelName) {
         log.debug("Data uploaded '{}' ,{}", arcfileName, replicaChannelName);
@@ -719,7 +719,7 @@ public class ArcRepository implements CleanupIF {
      * @param replicaChannelName The id of the replica reporting a checksum.
      * @param orgChecksum The original checksum.
      * @param reportedChecksum The checksum calculated by the replica. This value is "", if an error has occurred
-     *        (except reply NOT ok from replica).
+     * (except reply NOT ok from replica).
      * @param checksumReadOk Tells whether the checksum was read ok by batch job.
      */
     private synchronized void processCheckSum(String arcFileName, String replicaChannelName, String orgChecksum,

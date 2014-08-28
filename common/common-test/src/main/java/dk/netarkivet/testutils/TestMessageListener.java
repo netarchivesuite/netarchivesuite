@@ -122,7 +122,7 @@ public class TestMessageListener implements MessageListener {
      *
      * @param msgClass A subclass of NetarkivetMessage, e.g. BatchMessage.class;
      * @return The instance that was most recently received, or null if no messages of the specified type has been
-     *         received.
+     * received.
      */
     @SuppressWarnings("rawtypes")
     public NetarkivetMessage getLastInstance(Class msgClass) {

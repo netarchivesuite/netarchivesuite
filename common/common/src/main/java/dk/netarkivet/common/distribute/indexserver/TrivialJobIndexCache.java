@@ -64,7 +64,7 @@ public class TrivialJobIndexCache implements JobIndexCache {
      *
      * @param jobIDs Set of job IDs to generate index for.
      * @return A file containing the index, and always the full set. The file must not be modified or deleted, since it
-     *         is part of the cache of data.
+     * is part of the cache of data.
      * @throws IOFailure if there is no cache file for the set.
      */
     @Override

@@ -172,7 +172,7 @@ public abstract class AdminData {
      *
      * @param arcfileName The file to retrieve the state for
      * @param replicaChannelName The name of the identification channel for the replica the state should be retrieved
-     *        for.
+     * for.
      * @return true if BitArchiveStoreState is registered, false otherwise.
      */
     public boolean hasState(String arcfileName, String replicaChannelName) {
@@ -190,7 +190,7 @@ public abstract class AdminData {
      *
      * @param arcfileName The file to retrieve the state for.
      * @param replicaChannelName The name of the identification channel for the replica the state should be retrieved
-     *        for.
+     * for.
      * @return The storage state.
      * @throws UnknownID When no record exists.
      */

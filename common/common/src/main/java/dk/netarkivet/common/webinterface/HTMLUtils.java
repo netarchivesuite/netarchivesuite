@@ -376,7 +376,7 @@ public class HTMLUtils {
      *
      * @param d A date
      * @return A representation of the date that can be directly inserted into an HTML document, or the empty string if
-     *         d is null.
+     * d is null.
      * @deprecated Please use <fmt:date> from taglib instead.
      */
     public static String makeDate(Date d) {
@@ -750,7 +750,7 @@ public class HTMLUtils {
      * @param maxValue The maximum allowed value
      * @return The value x parsed from the string, if minValue <= x <= maxValue
      * @throws ForwardedToErrorPage if the parameter doesn't exist, is not a parseable integer, or doesn't lie within
-     *         the limits.
+     * the limits.
      */
     public static int parseAndCheckInteger(PageContext context, String param, int minValue, int maxValue)
             throws ForwardedToErrorPage {
@@ -785,7 +785,7 @@ public class HTMLUtils {
      * @param param The name of the parameter to parse.
      * @param defaultValue A value to return if the parameter is not present (may be null).
      * @return Parsed value or default value if the parameter is missing or empty. Null will only be returned if passed
-     *         as the default value.
+     * as the default value.
      * @throws ForwardedToErrorPage if the parameter is present but not parseable as a long value.
      */
     public static Long parseOptionalLong(PageContext context, String param, Long defaultValue) {
@@ -807,7 +807,7 @@ public class HTMLUtils {
      * @param format The format of the date, in the format defined by SimpleDateFormat
      * @param defaultValue A value to return if the parameter is not present (may be null)
      * @return Parsed value or default value if the parameter is missing or empty. Null will only be returned if passed
-     *         as the default value.
+     * as the default value.
      * @throws ForwardedToErrorPage if the parameter is present but not parseable as a date
      */
     public static Date parseOptionalDate(PageContext context, String param, String format, Date defaultValue) {
@@ -836,7 +836,7 @@ public class HTMLUtils {
      * @param param The name of the parameter to parse
      * @param defaultValue A value to return if the parameter is not present (may be null)
      * @return Parsed value or default value if the parameter is missing or empty. Null will only be returned if passed
-     *         as the default value.
+     * as the default value.
      */
     public static boolean parseOptionalBoolean(PageContext context, String param, boolean defaultValue) {
         ArgumentNotValid.checkNotNullOrEmpty(param, "String param");
@@ -855,7 +855,7 @@ public class HTMLUtils {
      * @param i A long integer
      * @param context The given JSP context
      * @return a localized string representation of the given long TODO Should this method throw ArgumentNotValid if the
-     *         context is null
+     * context is null
      */
     public static String localiseLong(long i, PageContext context) {
         NumberFormat nf = NumberFormat.getInstance(HTMLUtils.getLocaleObject(context));
@@ -868,7 +868,7 @@ public class HTMLUtils {
      * @param i A long integer
      * @param locale The given locale.
      * @return a localized string representation of the given long TODO Should this method throw ArgumentNotValid if the
-     *         locale is null
+     * locale is null
      */
     public static String localiseLong(long i, Locale locale) {
         NumberFormat nf = NumberFormat.getInstance(locale);

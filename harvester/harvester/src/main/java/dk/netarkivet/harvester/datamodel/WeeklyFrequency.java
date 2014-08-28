@@ -60,7 +60,7 @@ public class WeeklyFrequency extends Frequency {
      * @param hour The hour on which the event should happen.
      * @param minute The minute of hour on which the event should happen.
      * @throws ArgumentNotValid if numUnits if 0 or negative or dayOfWeek <1=SUNDAY >7=SATURDAY or hour is <0 or >23 or
-     *         minutes is <0 or >59
+     * minutes is <0 or >59
      */
     public WeeklyFrequency(int numUnits, int dayOfWeek, int hour, int minute) {
         super(numUnits, false);

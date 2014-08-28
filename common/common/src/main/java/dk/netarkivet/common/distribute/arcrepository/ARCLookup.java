@@ -85,7 +85,7 @@ public class ARCLookup {
      * TODO javadoc
      *
      * @param searchForFtpUri if true, we replace the http schema with ftp and try again, if unsuccessful with http as
-     *        the schema
+     * the schema
      */
     public void setTryToLookupUriAsFtp(boolean searchForFtpUri) {
         this.tryToLookupUriAsFtp = searchForFtpUri;
@@ -131,10 +131,10 @@ public class ARCLookup {
      * lookup the uri with the original schema.
      *
      * @param uri The URI to find in the archive. If the URI does not match any entries in the archive, null is
-     *        returned.
+     * returned.
      * @return An InputStream Containing all the data in the entry, or null if the entry was not found
      * @throws IOFailure If the ARC file was found in the Lucene index but not in the bit archive, or if some other
-     *         failure happened while finding the file.
+     * failure happened while finding the file.
      */
     public ResultStream lookup(URI uri) {
         ArgumentNotValid.checkNotNull(uri, "uri");
@@ -200,8 +200,8 @@ public class ARCLookup {
      *
      * @param uri A URI to look for.
      * @return The file and offset where that URI can be found, or null if it doesn't exist. TODO Does TermRangeFilter
-     *         needs to be modified to memory efficient enough. The the optimizations in the previous used
-     *         SparseRangeFilter may or may not relevant for Lucene 3.6+
+     * needs to be modified to memory efficient enough. The the optimizations in the previous used SparseRangeFilter may
+     * or may not relevant for Lucene 3.6+
      */
     private ARCKey luceneLookUp(String uri) {
         // SparseRangeFilter + ConstantScoreQuery means we ignore norms,

@@ -465,7 +465,7 @@ public final class IndexRequestServer extends HarvesterMessageHandler implements
      * @param foundIDs The list of IDs contained in the index
      * @param requestedIDs The list of IDs requested in the index.
      * @return true, if the ratio foundIDs/requestedIDs is above the
-     *         {@link IndexRequestServer#satisfactoryThresholdPercentage}.
+     * {@link IndexRequestServer#satisfactoryThresholdPercentage}.
      */
     private boolean satisfactoryTresholdReached(Set<Long> foundIDs, Set<Long> requestedIDs) {
         int jobsRequested = requestedIDs.size();

@@ -71,7 +71,7 @@ public abstract class HeritrixLauncher {
      * Generic constructor to allow HeritrixLauncher to use any implementation of HeritrixController.
      *
      * @param args the arguments to be passed to the constructor or non-static factory method of the HeritrixController
-     *        class specified in settings
+     * class specified in settings
      */
     public HeritrixLauncher(Object... args) {
         this.args = args;

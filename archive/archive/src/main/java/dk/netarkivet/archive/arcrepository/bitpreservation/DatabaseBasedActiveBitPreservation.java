@@ -269,7 +269,7 @@ public final class DatabaseBasedActiveBitPreservation implements ActiveBitPreser
      *
      * @param replica The replica for which to count the number of changed files.
      * @return The number of files for the replica where the checksum does not correspond to the checksum of the same
-     *         file in the other replicas.
+     * file in the other replicas.
      * @throws ArgumentNotValid If the replica is null.
      */
     public long getNumberOfChangedFiles(Replica replica) throws ArgumentNotValid {
@@ -288,7 +288,7 @@ public final class DatabaseBasedActiveBitPreservation implements ActiveBitPreser
      *
      * @param replica The replica for which the changed files should be found.
      * @return The names of files in the replica where the checksum does not correspond to the checksum of the same file
-     *         in the other replicas.
+     * in the other replicas.
      * @throws ArgumentNotValid If the replica is null.
      */
     public Iterable<String> getChangedFiles(Replica replica) throws ArgumentNotValid {
@@ -343,7 +343,7 @@ public final class DatabaseBasedActiveBitPreservation implements ActiveBitPreser
      *
      * @param replica The replica for which the date for last checksum update should be retrieved.
      * @return The date for the last time the checksums has been update. If the checksum update has never occurred, then
-     *         a null is returned.
+     * a null is returned.
      * @throws ArgumentNotValid If the replica is null.
      */
     public Date getDateForChangedFiles(Replica replica) throws ArgumentNotValid {
@@ -363,7 +363,7 @@ public final class DatabaseBasedActiveBitPreservation implements ActiveBitPreser
      *
      * @param replica The replica for which the date for last filelist update should be retrieved.
      * @return The date for the last time the filelist has been update. If the filelist update has never occurred, then
-     *         a null is returned.
+     * a null is returned.
      * @throws ArgumentNotValid If the replica is null.
      */
     public Date getDateForMissingFiles(Replica replica) throws ArgumentNotValid {

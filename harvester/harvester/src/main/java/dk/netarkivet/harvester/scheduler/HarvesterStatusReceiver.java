@@ -58,7 +58,7 @@ public class HarvesterStatusReceiver extends HarvesterMessageHandler implements 
 
     /**
      * @param jobDispatcher The <code>JobDispatcher</code> to delegate the dispatching of new jobs to, when a 'Ready for
-     *        job' event is received.
+     * job' event is received.
      * @param jmsConnection The JMS connection by which {@link HarvesterReadyMessage} is received.
      */
     public HarvesterStatusReceiver(JobDispatcher jobDispatcher, JMSConnection jmsConnection,

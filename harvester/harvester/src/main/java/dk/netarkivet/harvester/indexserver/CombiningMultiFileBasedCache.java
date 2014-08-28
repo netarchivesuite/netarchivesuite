@@ -63,7 +63,7 @@ public abstract class CombiningMultiFileBasedCache<T extends Comparable<T>> exte
      *
      * @param ids The set of identifiers for which we want the corresponding data
      * @return The set of IDs, or subset if data fetching failed for some IDs. If some IDs failed, the file is not
-     *         filled, though some data may be cached at a lower level.
+     * filled, though some data may be cached at a lower level.
      */
     protected Set<T> cacheData(Set<T> ids) {
         Map<T, File> filesFound = prepareCombine(ids);
@@ -82,7 +82,7 @@ public abstract class CombiningMultiFileBasedCache<T extends Comparable<T>> exte
      *
      * @param ids Set of job IDs to get ready to combine
      * @return The map of ID->file of the data we will combine for each ID. If subclasses override this method to ensure
-     *         other data is present, jobs with missing IDs should be removed from this map.
+     * other data is present, jobs with missing IDs should be removed from this map.
      */
     protected Map<T, File> prepareCombine(Set<T> ids) {
         Map<T, File> rawdata = rawcache.get(ids);
@@ -100,7 +100,7 @@ public abstract class CombiningMultiFileBasedCache<T extends Comparable<T>> exte
      * Combine a set of files found in the raw data cache to form our kind of file.
      *
      * @param filesFound The files that were found for the IDs in the raw data cache. The map must not contain any null
-     *        values.
+     * values.
      */
     protected abstract void combine(Map<T, File> filesFound);
 

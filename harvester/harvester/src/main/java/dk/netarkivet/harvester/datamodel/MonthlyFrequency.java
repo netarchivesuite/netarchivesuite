@@ -60,7 +60,7 @@ public class MonthlyFrequency extends Frequency {
      * @param hour The hour on which the event should happen.
      * @param minute The minute of hour on which the event should happen.
      * @throws ArgumentNotValid if numUnits if 0 or negative or dayOfMonth <1 or >31 or hour is <0 or >23 or minutes is
-     *         <0 or >59
+     * <0 or >59
      */
     public MonthlyFrequency(int numUnits, int dayOfMonth, int hour, int minute) {
         super(numUnits, false);

@@ -67,7 +67,7 @@ public enum ReplicaType {
      *
      * @param s A string representing a ReplicaType.
      * @return the ReplicaType related to a certain string; if the string does not correspond to a known replicatype, it
-     *         returns NO_REPLICA_TYPE
+     * returns NO_REPLICA_TYPE
      * @throws ArgumentNotValid If argument s is null
      */
     public static ReplicaType fromSetting(String s) {

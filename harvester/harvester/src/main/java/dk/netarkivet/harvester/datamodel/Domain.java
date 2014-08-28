@@ -132,7 +132,7 @@ public class Domain extends ExtendableEntity implements Named {
      *
      * @param theDomainName Name used to reference the domain
      * @throws ArgumentNotValid if either of the arguments are null or empty, or if the domain does not match the regex
-     *         for valid domains
+     * for valid domains
      */
     protected Domain(String theDomainName) {
         super(DAOProviderFactory.getExtendedFieldDAOProvider());
@@ -254,8 +254,8 @@ public class Domain extends ExtendableEntity implements Named {
      * @param m the map to modify
      * @param name the name of the element to add or update
      * @param addAction when true an add action is performed and en entry with the name is not allowed to exist in the
-     *        map before the operation, when false an update operation is performed and an entry must already exists
-     *        with the name in the map.
+     * map before the operation, when false an update operation is performed and an entry must already exists with the
+     * name in the map.
      * @param value the object to add to m
      * @param <T> The type contained as values in the map m.
      */
@@ -502,7 +502,7 @@ public class Domain extends ExtendableEntity implements Named {
      * @param configName The name of a configuration to remove.
      * @throws ArgumentNotValid if name is null or empty
      * @throws PermissionDenied if the default configuration is attempted removed or if one or more HarvestDefinitions
-     *         reference the configuration
+     * reference the configuration
      */
     public void removeConfiguration(String configName) {
         ArgumentNotValid.checkNotNullOrEmpty(configName, "configName");
@@ -784,7 +784,7 @@ public class Domain extends ExtendableEntity implements Named {
      * @param regExps The list defining urls never to be harvested.
      * @param strictMode If true, we throw ArgumentNotValid exception if invalid regexps are found
      * @throws ArgumentNotValid if regExps is null or regExps contains invalid regular expressions (unless strictMode is
-     *         false).
+     * false).
      */
     public void setCrawlerTraps(List<String> regExps, boolean strictMode) {
         ArgumentNotValid.checkNotNull(regExps, "List<String> regExps");
@@ -843,7 +843,7 @@ public class Domain extends ExtendableEntity implements Named {
      * @param alias The name (e.g. "netarkivet.dk") of the domain that this domain is an alias of.
      * @throws UnknownID If the given domain does not exist
      * @throws IllegalState If updating the alias info would violate constraints of alias: No transitivity, no
-     *         reflection.
+     * reflection.
      */
     public void updateAlias(String alias) {
         if (getName().equals(alias)) {
@@ -898,7 +898,7 @@ public class Domain extends ExtendableEntity implements Named {
      *
      * @param configName The name of the configuration
      * @return The Harvest Information for the harvest defining the best expectation, including the number retrieved and
-     *         the stop reason.
+     * the stop reason.
      */
     public HarvestInfo getBestHarvestInfoExpectation(String configName) {
         ArgumentNotValid.checkNotNullOrEmpty(configName, "String configName");

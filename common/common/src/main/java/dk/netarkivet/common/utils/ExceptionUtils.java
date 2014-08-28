@@ -46,7 +46,7 @@ public class ExceptionUtils {
      *
      * @param aThrowable An exception
      * @return String containing a stacktrace of exception aThrowable. Will return the string "null" and a linebreak if
-     *         aThrowable is null.
+     * aThrowable is null.
      */
     public static String getStackTrace(Throwable aThrowable) {
         final Writer result = new StringWriter();

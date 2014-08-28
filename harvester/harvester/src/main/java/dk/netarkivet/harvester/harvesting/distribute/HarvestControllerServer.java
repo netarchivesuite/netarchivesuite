@@ -531,7 +531,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
      *
      * @param crawlDir The location of harvest-info to be processed
      * @param crawlException any exceptions thrown by the crawl which need to be reported back to the scheduler (may be
-     *        null for success)
+     * null for success)
      * @throws IOFailure if the file cannot be read
      */
     private void processHarvestInfoFile(File crawlDir, Throwable crawlException) throws IOFailure {

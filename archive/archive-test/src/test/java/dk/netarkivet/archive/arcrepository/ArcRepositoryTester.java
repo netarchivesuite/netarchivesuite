@@ -235,7 +235,7 @@ public class ArcRepositoryTester {
      * Call the readChecksum method with some input and a file to look for.
      *
      * @param input Will be written to a file that readChecksum reads. Valid input is of the form
-     *        <arcfilename>##<checksum>, but invalid input is part of the test.
+     * <arcfilename>##<checksum>, but invalid input is part of the test.
      * @param arcfilename The name of the arcfile that readChecksum should look for.
      * @return The string found for the given filename.
      * @throws IOFailure when readChecksum does.

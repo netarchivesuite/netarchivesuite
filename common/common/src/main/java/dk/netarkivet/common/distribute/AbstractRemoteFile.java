@@ -70,7 +70,7 @@ public abstract class AbstractRemoteFile implements RemoteFile {
      * @param file The file to make remote file for.
      * @param useChecksums If true, communications should be checksummed.
      * @param fileDeletable If true, the file may be downloaded multiple times. Otherwise, the remote file is
-     *        invalidated after first transfer.
+     * invalidated after first transfer.
      * @param multipleDownloads If useChecksums is true, contains the file checksum.
      */
     public AbstractRemoteFile(File file, boolean useChecksums, boolean fileDeletable, boolean multipleDownloads) {
@@ -91,7 +91,7 @@ public abstract class AbstractRemoteFile implements RemoteFile {
      *
      * @param destFile The file to write the remote file to.
      * @throws ArgumentNotValid on null destFile, or parent to destfile is not a writeable directory, or destfile exists
-     *         and cannot be overwritten.
+     * and cannot be overwritten.
      * @throws IOFailure on I/O trouble writing remote file to destination.
      */
     public void copyTo(File destFile) {

@@ -96,7 +96,7 @@ public final class BuildCompleteSettings {
      * Retrieves the main element from the file.
      *
      * @param settingFile The file to load into an Element. This has to be a temporary file, since it is deleted
-     *        afterwards.
+     * afterwards.
      * @return The root of the XML structure of the settings file. Returns null if problems occurred during reading.
      */
     private static Element retrieveXmlSettingsTree(File settingFile) {

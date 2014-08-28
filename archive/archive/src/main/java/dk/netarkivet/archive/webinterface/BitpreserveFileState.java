@@ -74,7 +74,7 @@ public class BitpreserveFileState {
      * @param context the current JSP context
      * @return an I18N string telling which type of update has just been initiated.
      * @throws ForwardedToErrorPage if an unknown bitarchive or update type is posted, or one of the two required
-     *         parameters are missing.
+     * parameters are missing.
      * @throws ArgumentNotValid If the context is null.
      */
     public static String processUpdateRequest(PageContext context) throws ArgumentNotValid, ForwardedToErrorPage {
@@ -135,7 +135,7 @@ public class BitpreserveFileState {
      *
      * @param context the current JSP context.
      * @param res the result object. This is updated with result information, and expected to be printed to the
-     *        resulting page.
+     * resulting page.
      * @return A map of info gathered for files as requested.
      * @throws ArgumentNotValid If the context or res is null.
      * @throws ForwardedToErrorPage if the commands have the wrong number of arguments.
@@ -226,7 +226,7 @@ public class BitpreserveFileState {
      * checksum in the given bitarchive, using the credentials for authorisation.
      *
      * @param res the result object. This is updated with result information, and expected to be printed to the
-     *        resulting page.
+     * resulting page.
      * @param context the current JSP pagecontext.
      * @return The file preservation state for a file, if a filename is given in the request. Null otherwise.
      * @throws ArgumentNotValid If the context or res is null.
@@ -539,7 +539,7 @@ public class BitpreserveFileState {
      * @param command The type of checkbox.
      * @param numberOfCheckboxes The total number of checksboxes possible to turn on or off.
      * @param label The I18N label for the describing text. An input box with the number to change will be added as
-     *        parameter {0} in this label.
+     * parameter {0} in this label.
      * @param locale The locale for the checkbox.
      * @throws IOException On trouble printing the checkbox.
      */

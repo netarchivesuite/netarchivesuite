@@ -113,7 +113,7 @@ public class GlobalCrawlerTrapList {
      * @param is The input stream from which to read.
      * @throws IOFailure if the input stream cannot be read.
      * @throws ArgumentNotValid if the input stream is null or if any of the specified traps are not valid regular
-     *         expressions.
+     * expressions.
      */
     public void setTrapsFromInputStream(InputStream is) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(is, "is");

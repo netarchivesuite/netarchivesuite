@@ -433,9 +433,9 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler implements Ob
      * request.
      *
      * @param o the observable object. Should always be the bitarchive monitor. If it isn't, this notification will be
-     *        logged and ignored.
+     * logged and ignored.
      * @param arg an argument passed from the bitarchive monitor. This should always be a batch status object indicating
-     *        the end of that batchjob. If it isn't, this notification will be logged and ignored.
+     * the end of that batchjob. If it isn't, this notification will be logged and ignored.
      */
     public void update(Observable o, final Object arg) {
         if (o != bamon) {

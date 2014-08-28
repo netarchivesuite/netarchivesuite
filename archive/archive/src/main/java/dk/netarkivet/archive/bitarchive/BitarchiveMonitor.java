@@ -192,7 +192,7 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
      * @param bitarchiveID The ID of the replying bitarchive.
      * @param noOfFilesProcessed The number of files the bitarchive has processed.
      * @param filesFailed A collection of filenames of failed files in that bitarchive. Might be null if no files
-     *        failed.
+     * failed.
      * @param remoteFile A remote pointer to a file with results from that bitarchive. Might be null if job was not OK.
      * @param errMsg An error message, if the job was not successful on the bitarchive, or null for none.
      * @param exceptions A list of exceptions caught during batch processing.

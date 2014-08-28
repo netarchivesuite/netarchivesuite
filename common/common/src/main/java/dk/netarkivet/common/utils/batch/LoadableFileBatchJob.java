@@ -103,7 +103,7 @@ public class LoadableFileBatchJob extends FileBatchJob {
      *
      * @param in Stream that the object can be read from.
      * @throws IOException If there is an error reading from the stream, or the serialized object cannot be deserialized
-     *         due to errors in the serialized form.
+     * due to errors in the serialized form.
      * @throws ClassNotFoundException If the class definition of the serialized object cannot be found.
      */
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {

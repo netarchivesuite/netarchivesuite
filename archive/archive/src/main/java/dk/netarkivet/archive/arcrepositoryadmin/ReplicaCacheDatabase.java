@@ -356,7 +356,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
      * @param replicaId The id of the replica.
      * @param state The ReplicaStoreState for the specified entry.
      * @throws ArgumentNotValid If the replicaId or the filename are eihter null or the empty string. Or if the
-     *         ReplicaStoreState is null.
+     * ReplicaStoreState is null.
      */
     public void setReplicaStoreState(String filename, String replicaId, ReplicaStoreState state)
             throws ArgumentNotValid {
@@ -405,7 +405,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
      * @param checksum The checksum of the file.
      * @throws ArgumentNotValid If the filename or the checksum is either null or the empty string.
      * @throws IllegalState If the file exists with another checksum on one of the replicas. Or if the file has already
-     *         been completely uploaded to one of the replicas.
+     * been completely uploaded to one of the replicas.
      */
     public void insertNewFileForUpload(String filename, String checksum) throws ArgumentNotValid, IllegalState {
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
@@ -467,7 +467,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
      * @param replica The replica for the replicafileinfo.
      * @param state The new ReplicaStoreState for the entry.
      * @throws ArgumentNotValid If the filename is either null or the empty string. Or if the replica or the status is
-     *         null.
+     * null.
      */
     public void changeStateOfReplicafileinfo(String filename, Replica replica, ReplicaStoreState state)
             throws ArgumentNotValid {
@@ -508,7 +508,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
      * @param replica The replica for the replicafileinfo.
      * @param state The new ReplicaStoreState for the entry.
      * @throws ArgumentNotValid If the filename or the checksum is either null or the empty string. Or if the replica or
-     *         the status is null.
+     * the status is null.
      * @throws IllegalState If an sql exception is thrown.
      */
     public void changeStateOfReplicafileinfo(String filename, String checksum, Replica replica, ReplicaStoreState state)
@@ -849,7 +849,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
      * - filelist_checkdatetime = now.
      *
      * @param filelistFile The list of filenames either parsed from a FilelistJob or the result from a
-     *        GetAllFilenamesMessage.
+     * GetAllFilenamesMessage.
      * @param replica The replica, which the FilelistBatchjob has run upon.
      * @throws ArgumentNotValid If the filelist or the replica is null.
      * @throws UnknownID If the replica does not already exist in the database.
@@ -944,7 +944,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
      *
      * @param replica The replica to get the date for.
      * @return The date of the last missing files update for the replica. A null is returned if no last missing files
-     *         update has been performed.
+     * update has been performed.
      * @throws ArgumentNotValid If the replica is null.
      * @throws IllegalArgumentException If the Date of the Timestamp cannot be instantiated.
      */
@@ -978,7 +978,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
      *
      * @param replica The replica to find the date for the latest update for corruption of files.
      * @return The date for the last checksum update. A null is returned if no wrong files update has been performed for
-     *         this replica.
+     * this replica.
      * @throws ArgumentNotValid If the replica is null.
      * @throws IllegalArgumentException If the Date of the Timestamp cannot be instantiated.
      */
@@ -1193,7 +1193,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
      * @param filename The name of the file which needs to have a valid version in a bitarchive.
      * @param badReplica The Replica which has a bad copy of the given file
      * @return A bitarchive which contains a valid version of the file, or null if no such bitarchive exists (in which
-     *         case, a notification is sent)
+     * case, a notification is sent)
      * @throws ArgumentNotValid If the replica is null or the filename is either null or the empty string.
      */
     @Override

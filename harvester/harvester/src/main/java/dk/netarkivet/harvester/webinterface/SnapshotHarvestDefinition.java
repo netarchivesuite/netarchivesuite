@@ -85,7 +85,7 @@ public class SnapshotHarvestDefinition {
      * @param context The context of the web request.
      * @param i18n Translation information
      * @throws ForwardedToErrorPage if an error happened that caused a forward to the standard error page, in which case
-     *         further JSP processing should be aborted.
+     * further JSP processing should be aborted.
      */
     public void processRequest(PageContext context, I18n i18n) {
         ArgumentNotValid.checkNotNull(context, "PageContext context");

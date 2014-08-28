@@ -120,11 +120,11 @@ public class DigestIndexer {
      * @param indexLocation The location of the index (path).
      * @param indexingMode Index {@link #MODE_URL}, {@link #MODE_HASH} or {@link #MODE_BOTH}.
      * @param includeNormalizedURL Should a normalized version of the URL be added to the index. See
-     *        {@link #stripURL(String)}.
+     * {@link #stripURL(String)}.
      * @param includeTimestamp Should a timestamp be included in the index.
      * @param includeEtag Should an Etag be included in the index.
      * @param addToExistingIndex Are we opening up an existing index. Setting this to false will cause any index at
-     *        <code>indexLocation</code> to be overwritten.
+     * <code>indexLocation</code> to be overwritten.
      * @throws IOException If an error occurs opening the index.
      */
     public DigestIndexer(String indexLocation, String indexingMode, boolean includeNormalizedURL,
@@ -161,9 +161,9 @@ public class DigestIndexer {
      * @param dataIt The CrawlDataIterator that provides the data to index.
      * @param mimefilter A regular expression that is used as a filter on the mimetypes to include in the index.
      * @param blacklist If true then the <code>mimefilter</code> is used as a blacklist for mimetypes. If false then the
-     *        <code>mimefilter</code> is treated as a whitelist.
+     * <code>mimefilter</code> is treated as a whitelist.
      * @param defaultOrigin If an item is missing an origin, this default value will be assigned to it. Can be null if
-     *        no default origin value should be assigned.
+     * no default origin value should be assigned.
      * @param verbose If true then progress information will be sent to System.out.
      * @return The number of items added to the index.
      * @throws IOException If an error occurs writing the index.
@@ -181,9 +181,9 @@ public class DigestIndexer {
      * @param dataIt The CrawlDataIterator that provides the data to index.
      * @param mimefilter A regular expression that is used as a filter on the mimetypes to include in the index.
      * @param blacklist If true then the <code>mimefilter</code> is used as a blacklist for mimetypes. If false then the
-     *        <code>mimefilter</code> is treated as a whitelist.
+     * <code>mimefilter</code> is treated as a whitelist.
      * @param defaultOrigin If an item is missing an origin, this default value will be assigned to it. Can be null if
-     *        no default origin value should be assigned.
+     * no default origin value should be assigned.
      * @param verbose If true then progress information will be sent to System.out.
      * @param skipDuplicates Do not add URLs that are marked as duplicates to the index
      * @return The number of items added to the index.

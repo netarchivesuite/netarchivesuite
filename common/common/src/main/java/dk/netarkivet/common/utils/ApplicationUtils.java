@@ -225,7 +225,7 @@ public abstract class ApplicationUtils {
      *
      * @param dir A File object denoting a directory.
      * @throws PermissionDenied if the directory doesn't exist and cannot be created/written to, or if the File object
-     *         indicates an existing non-directory.
+     * indicates an existing non-directory.
      */
     public static void dirMustExist(File dir) {
         ArgumentNotValid.checkNotNull(dir, "File dir");

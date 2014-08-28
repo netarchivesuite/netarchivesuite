@@ -221,7 +221,7 @@ public class HeritrixTemplate {
      * @param doc the order.xml
      * @param verify If true, verifies if the given dom4j Document contains the elements required by our software.
      * @throws ArgumentNotValid if doc is null, or verify is true and doc does not obey the constraints required by our
-     *         software.
+     * software.
      */
     public HeritrixTemplate(Document doc, boolean verify) {
         ArgumentNotValid.checkNotNull(doc, "Document doc");
@@ -395,7 +395,7 @@ public class HeritrixTemplate {
      *
      * @param orderXML the specific heritrix template to modify.
      * @param archiveFormat the chosen archiveformat ('arc' or 'warc' supported) Throws ArgumentNotValid If the chosen
-     *        archiveFormat is not supported.
+     * archiveFormat is not supported.
      */
     public static void editOrderXML_ArchiveFormat(Document orderXML, String archiveFormat) {
         boolean arcMode = false;
@@ -506,7 +506,7 @@ public class HeritrixTemplate {
      * @param forceMaxObjectsPerDomain The maximum number of objects to retrieve per domain, or 0 for no limit.
      * @throws PermissionDenied If unable to replace the frontier node of the orderXMLdoc Document
      * @throws IOFailure If the group-max-fetch-success element is not found in the orderXml. TODO The
-     *         group-max-fetch-success check should also be performed in TemplateDAO.create, TemplateDAO.update
+     * group-max-fetch-success check should also be performed in TemplateDAO.create, TemplateDAO.update
      */
     public static void editOrderXML_maxObjectsPerDomain(Document orderXMLdoc, long forceMaxObjectsPerDomain,
             boolean maxObjectsIsSetByQuotaEnforcer) {
@@ -570,10 +570,10 @@ public class HeritrixTemplate {
      * subelement of 'pre-fetch-processors' node. with the value of the argument forceMaxBytesPerDomain
      *
      * @param forceMaxBytesPerDomain The maximum number of byte to retrieve per domain, or -1 for no limit. Note that
-     *        the number is divided by 1024 before being inserted into the orderXml, as Heritrix expects KB.
+     * the number is divided by 1024 before being inserted into the orderXml, as Heritrix expects KB.
      * @throws PermissionDenied If unable to replace the QuotaEnforcer node of the orderXMLdoc Document
      * @throws IOFailure If the group-max-all-kb element cannot be found. TODO This group-max-all-kb check also be
-     *         performed in TemplateDAO.create, TemplateDAO.update
+     * performed in TemplateDAO.create, TemplateDAO.update
      */
     public static void editOrderXML_maxBytesPerDomain(Document orderXMLdoc, long forceMaxBytesPerDomain) {
         // get and set the group-max-all-kb Node of the orderXMLdoc:
@@ -624,7 +624,7 @@ public class HeritrixTemplate {
      * deduplication processor.
      *
      * @throws IOFailure - When the orderfile could not be saved to disk When a specific node is not found in the
-     *         XML-document When the SAXReader cannot parse the XML
+     * XML-document When the SAXReader cannot parse the XML
      */
     public static void makeOrderfileReadyForHeritrix(HeritrixFiles files) throws IOFailure {
         Document doc = XmlUtils.getXmlDoc(files.getOrderXmlFile());
