@@ -21,13 +21,8 @@
   </properties>
 
   <modules>
-    <module>archive</module>
-    <module>common</module>
-    <module>deploy</module>
-    <module>harvester</module>
-    <module>monitor</module>
-    <module>wayback</module>
-    <module>integration-test</module>
+    <module>suite</module>
+    <module>slow-tests</module>
     <module>build-tools</module>
   </modules>
 

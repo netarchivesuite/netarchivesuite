@@ -1,0 +1,128 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>dk.netarkivet.netarchivesuite</groupId>
+    <artifactId>fast-tests-pom</artifactId>
+    <version>5.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>archive-test</artifactId>
+  <packaging>jar</packaging>
+
+  <name>Netarchivesuite - archive - test</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>archive</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>common</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- Test dependencies. -->
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>harvester</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.11</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>mockobjects</groupId>
+      <artifactId>mockobjects-core</artifactId>
+      <version>0.09</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>mockobjects</groupId>
+      <artifactId>mockobjects-jdk1.4-j2ee1.3</artifactId>
+      <version>0.09</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- Ugly test dependencies. -->
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>common-test</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derbyclient</artifactId>
+      <version>10.10.1.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derby</artifactId>
+      <version>10.10.1.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derbytools</artifactId>
+      <version>10.10.1.1</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+      </testResource>
+      <testResource>
+        <directory>tests</directory>
+      </testResource>
+    </testResources>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <argLine>
+            -Xmx768m
+            -Dfile.encoding=UTF-8
+            -Ddk.netarkivet.settings.file=tests/dk/netarkivet/test-settings.xml
+            -DXjava.security.manager
+            -DXjava.security.policy=tests/dk/netarkivet/ant-test.policy
+            -Dorg.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy=org.archive.crawler.frontier.HostnameQueueAssignmentPolicy,org.archive.crawler.frontier.IPQueueAssignmentPolicy,org.archive.crawler.frontier.BucketQueueAssignmentPolicy,org.archive.crawler.frontier.SurtAuthorityQueueAssignmentPolicy,org.archive.crawler.frontier.TopmostAssignedSurtQueueAssignmentPolicy,dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy
+            -Duser.language=en -Duser.country=US -Duser.variant=US -Duser.timezone=Europe/Copenhagen
+          </argLine>
+          <forkCount>1</forkCount>
+          <reuseForks>true</reuseForks>
+          <includes>
+            <!-- consider all java files as tests -->
+            <include>**/*Test*.java</include>
+          </includes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
