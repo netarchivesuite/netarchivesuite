@@ -1,178 +1,178 @@
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-         xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <modelVersion>4.0.0</modelVersion>
+  xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>dk.netarkivet.netarchivesuite</groupId>
-        <artifactId>integration-test</artifactId>
-        <version>5.0-SNAPSHOT</version>
-    </parent>
+  <parent>
+    <groupId>dk.netarkivet.netarchivesuite</groupId>
+    <artifactId>integration-test</artifactId>
+    <version>5.0-SNAPSHOT</version>
+  </parent>
 
-    <artifactId>system-test</artifactId>
+  <artifactId>system-test</artifactId>
 
-    <name>NetarchiveSuite System test</name>
-    <description>Contains the automatic NetarchiveSuite system tests</description>
+  <name>NetarchiveSuite System test</name>
+  <description>Contains the automatic NetarchiveSuite system tests</description>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
+  <dependencies>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
 
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-        </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+    </dependency>
 
-        <!-- Hook up the other loggers to use SLF4J -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jul-to-slf4j</artifactId>
-        </dependency>
+    <!-- Hook up the other loggers to use SLF4J -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jul-to-slf4j</artifactId>
+    </dependency>
 
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>log4j-over-slf4j</artifactId>
-        </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>log4j-over-slf4j</artifactId>
+    </dependency>
 
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jcl-over-slf4j</artifactId>
-        </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+    </dependency>
 
-        <dependency>
-            <groupId>org.jaccept</groupId>
-            <artifactId>jaccept-gui</artifactId>
-            <version>0.4</version>
-            <scope>test</scope>
-        </dependency>
+    <dependency>
+      <groupId>org.jaccept</groupId>
+      <artifactId>jaccept-gui</artifactId>
+      <version>0.4</version>
+      <scope>test</scope>
+    </dependency>
 
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <version>6.8.8</version>
-        </dependency>
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <version>6.8.8</version>
+    </dependency>
 
-        <dependency>
-            <groupId>com.jcraft</groupId>
-            <artifactId>jsch</artifactId>
-            <version>0.1.50</version>
-            <scope>test</scope>
-        </dependency>
+    <dependency>
+      <groupId>com.jcraft</groupId>
+      <artifactId>jsch</artifactId>
+      <version>0.1.50</version>
+      <scope>test</scope>
+    </dependency>
 
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-java</artifactId>
-            <version>2.41.0</version>
-            <scope>test</scope>
-        </dependency>
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-java</artifactId>
+      <version>2.41.0</version>
+      <scope>test</scope>
+    </dependency>
 
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-api</artifactId>
-            <version>2.42.2</version>
-        </dependency>
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-api</artifactId>
+      <version>2.42.2</version>
+    </dependency>
 
-        <dependency>
-            <groupId>org.jaccept</groupId>
-            <artifactId>jaccept-core</artifactId>
-            <version>0.4</version>
-        </dependency>
-    </dependencies>
+    <dependency>
+      <groupId>org.jaccept</groupId>
+      <artifactId>jaccept-core</artifactId>
+      <version>0.4</version>
+    </dependency>
+  </dependencies>
 
-    <build>
+  <build>
+    <plugins>
+      <!-- Only run tests if systemTest is active -->
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
+  <profiles>
+    <profile>
+      <id>systemTest</id>
+      <properties>
+        <deployable.postfix>SystemTest</deployable.postfix>
+      </properties>
+      <build>
         <plugins>
-            <!-- Only run tests if systemTest is active -->
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>surefire-it</id>
+                <phase>integration-test</phase>
+                <goals>
+                  <goal>test</goal>
+                </goals>
                 <configuration>
-                    <skip>true</skip>
+                  <skip>false</skip>
+                  <groups>functest</groups>
                 </configuration>
-            </plugin>
+              </execution>
+            </executions>
+            <configuration>
+              <systemPropertyVariables>
+                <systemtest.deploy>true</systemtest.deploy>
+                <deployable.postfix>${deployable.postfix}</deployable.postfix>
+              </systemPropertyVariables>
+            </configuration>
+          </plugin>
 
+          <plugin>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>copy-releasezipball</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>copy</goal>
+                </goals>
+                <configuration>
+                  <artifactItems>
+                    <artifactItem>
+                      <groupId>${project.groupId}</groupId>
+                      <artifactId>releasezipball</artifactId>
+                      <version>${project.version}</version>
+                      <type>zip</type>
+                      <outputDirectory>${project.build.directory}</outputDirectory>
+                      <destFileName>NetarchiveSuite-${deployable.postfix}.zip</destFileName>
+                    </artifactItem>
+                  </artifactItems>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.7</version>
+            <executions>
+              <execution>
+                <phase>pre-integration-test</phase>
+                <configuration>
+                  <target>
+                    <ant antfile="deploy.xml" target="deploy2test" />
+                  </target>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+            <dependencies>
+              <dependency>
+                <groupId>org.apache.ant</groupId>
+                <artifactId>ant-jsch</artifactId>
+                <version>1.9.1</version>
+              </dependency>
+            </dependencies>
+          </plugin>
         </plugins>
-    </build>
-    <profiles>
-        <profile>
-            <id>systemTest</id>
-            <properties>
-                <deployable.postfix>SystemTest</deployable.postfix>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>surefire-it</id>
-                                <phase>integration-test</phase>
-                                <goals>
-                                    <goal>test</goal>
-                                </goals>
-                                <configuration>
-                                    <skip>false</skip>
-                                    <groups>functest</groups>
-                                </configuration>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <systemPropertyVariables>
-                                <systemtest.deploy>true</systemtest.deploy>
-                                <deployable.postfix>${deployable.postfix}</deployable.postfix>
-                            </systemPropertyVariables>
-                        </configuration>
-                    </plugin>
-
-                    <plugin>
-                        <artifactId>maven-dependency-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>copy-releasezipball</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>copy</goal>
-                                </goals>
-                                <configuration>
-                                    <artifactItems>
-                                        <artifactItem>
-                                            <groupId>${project.groupId}</groupId>
-                                            <artifactId>releasezipball</artifactId>
-                                            <version>${project.version}</version>
-                                            <type>zip</type>
-                                            <outputDirectory>${project.build.directory}</outputDirectory>
-                                            <destFileName>NetarchiveSuite-${deployable.postfix}.zip</destFileName>
-                                        </artifactItem>
-                                    </artifactItems>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <version>1.7</version>
-                        <executions>
-                            <execution>
-                                <phase>pre-integration-test</phase>
-                                <configuration>
-                                    <target>
-                                        <ant antfile="deploy.xml" target="deploy2test" />
-                                    </target>
-                                </configuration>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.apache.ant</groupId>
-                                <artifactId>ant-jsch</artifactId>
-                                <version>1.9.1</version>
-                            </dependency>
-                        </dependencies>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
+      </build>
+    </profile>
+  </profiles>
 </project>

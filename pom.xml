@@ -55,7 +55,7 @@
     domains) to harvesting and archiving the content of an entire national domain. The NetarchiveSuite is built
     around the Heritrix web crawler.
   </description>
-  
+
   <url>https://sbforge.org/display/NAS</url>
 
   <organization>
@@ -154,8 +154,13 @@
         </plugin>
 
         <plugin>
+          <artifactId>maven-deploy-plugin</artifactId>
+          <version>2.8.1</version>
+        </plugin>
+
+        <plugin>
           <artifactId>maven-assembly-plugin</artifactId>
-          <version>2.4</version>
+          <version>2.4.1</version>
         </plugin>
 
         <plugin>
@@ -169,12 +174,12 @@
           <groupId>com.googlecode.maven-java-formatter-plugin</groupId>
           <artifactId>maven-java-formatter-plugin</artifactId>
           <version>0.4</version>
-          
+
           <configuration>
-            <!--  found as classpath resource -->
+            <!-- found as classpath resource -->
             <configFile>eclipse-formatter-settings.xml</configFile>
           </configuration>
-          
+
           <dependencies>
             <dependency>
               <groupId>dk.netarkivet.netarchivesuite</groupId>
@@ -218,8 +223,7 @@
       </plugin>
 
       <plugin>
-        <!-- install source jars to maven repo
-             http://maven.apache.org/plugins/maven-source-plugin/usage.html -->
+        <!-- install source jars to maven repo http://maven.apache.org/plugins/maven-source-plugin/usage.html -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
         <version>2.2.1</version>
@@ -233,12 +237,15 @@
           </execution>
         </executions>
       </plugin>
-      <!-- Generate javadoc jar. Note wellformness (doclint) check has been disabled -->
+
+      <!-- Generate javadoc jar. Note: Java 8 (doclint) check has been disabled. -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.9.1</version>
         <configuration>
+          <linksource>true</linksource>
+          <quiet>true</quiet>
+          <!-- Note: This fails with a JVM older than Java 8 -->
           <additionalparam>-Xdoclint:none</additionalparam>
         </configuration>
         <executions>
@@ -251,20 +258,20 @@
           </execution>
         </executions>
       </plugin>
-      <plugin> 
+
+      <plugin>
         <!-- explicitly define maven-deploy-plugin after other to force exec order -->
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-deploy-plugin</artifactId> 
-        <version>2.8.1</version>
-        <executions> 
-          <execution> 
+        <artifactId>maven-deploy-plugin</artifactId>
+        <executions>
+          <execution>
             <id>deploy</id>
             <phase>deploy</phase>
             <goals>
               <goal>deploy</goal>
-            </goals> 
-          </execution> 
-        </executions> 
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

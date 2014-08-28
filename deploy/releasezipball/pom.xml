@@ -1,175 +1,173 @@
 <?xml version="1.0"?>
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-         xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <modelVersion>4.0.0</modelVersion>
+  xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>dk.netarkivet.netarchivesuite</groupId>
-        <artifactId>deploy-pom</artifactId>
-        <version>5.0-SNAPSHOT</version>
-    </parent>
+  <parent>
+    <groupId>dk.netarkivet.netarchivesuite</groupId>
+    <artifactId>deploy-pom</artifactId>
+    <version>5.0-SNAPSHOT</version>
+  </parent>
 
-    <artifactId>releasezipball</artifactId>
-    <packaging>pom</packaging>
+  <artifactId>releasezipball</artifactId>
+  <packaging>pom</packaging>
 
-    <name>Netarchivesuite - deploy - releasezipball</name>
+  <name>Netarchivesuite - deploy - releasezipball</name>
 
-    <dependencies>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>common</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>archive</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>archive</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>harvester</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>harvester</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>monitor</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>monitor</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>deploy</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>deploy</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>wayback</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>wayback</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>status-gui</artifactId>
-            <type>war</type>
-            <version>${project.version}</version>
-        </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>status-gui</artifactId>
+      <type>war</type>
+      <version>${project.version}</version>
+    </dependency>
 
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>qa-gui</artifactId>
-            <type>war</type>
-            <version>${project.version}</version>
-        </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>qa-gui</artifactId>
+      <type>war</type>
+      <version>${project.version}</version>
+    </dependency>
 
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>history-gui</artifactId>
-            <type>war</type>
-            <version>${project.version}</version>
-        </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>history-gui</artifactId>
+      <type>war</type>
+      <version>${project.version}</version>
+    </dependency>
 
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>harvestdefinition-gui</artifactId>
-            <type>war</type>
-            <version>${project.version}</version>
-        </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>harvestdefinition-gui</artifactId>
+      <type>war</type>
+      <version>${project.version}</version>
+    </dependency>
 
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>harvestchannel-gui</artifactId>
-            <type>war</type>
-            <version>${project.version}</version>
-        </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>harvestchannel-gui</artifactId>
+      <type>war</type>
+      <version>${project.version}</version>
+    </dependency>
 
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>bitpreservation-gui</artifactId>
-            <type>war</type>
-            <version>${project.version}</version>
-        </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>bitpreservation-gui</artifactId>
+      <type>war</type>
+      <version>${project.version}</version>
+    </dependency>
 
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>jul-to-slf4j</artifactId>
-      </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jul-to-slf4j</artifactId>
+    </dependency>
 
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>log4j-over-slf4j</artifactId>
-      </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>log4j-over-slf4j</artifactId>
+    </dependency>
 
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>jcl-over-slf4j</artifactId>
-      </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+    </dependency>
 
-      <dependency>
-          <groupId>ch.qos.logback</groupId>
-          <artifactId>logback-classic</artifactId>
-      </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+    </dependency>
 
-        <!--
-             Derby server
-          -->
+    <!-- Derby server -->
 
-        <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derbynet</artifactId>
-            <version>10.10.1.1</version>
-        </dependency>
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derbynet</artifactId>
+      <version>10.10.1.1</version>
+    </dependency>
 
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>9.2-1003-jdbc4</version>
-        </dependency>
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>9.2-1003-jdbc4</version>
+    </dependency>
 
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.13</version>
-        </dependency>
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>5.1.13</version>
+    </dependency>
 
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>3.8.1</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
-    
-    <!-- See http://stackoverflow.com/a/7838060/53897 -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 
-    <build>
-        <finalName>NetarchiveSuite</finalName>
+  <!-- See http://stackoverflow.com/a/7838060/53897 -->
 
-        <plugins>    
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>distro-assembly</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <configuration>
-                            <appendAssemblyId>false</appendAssemblyId>
-                            <classifier>prod</classifier>
-                            <finalName>NetarchiveSuite-${project.version}</finalName>
-                            <descriptors>
-                                <descriptor>src/main/assembly/release.xml</descriptor>
-                            </descriptors>
-                            <tarLongFileMode>gnu</tarLongFileMode>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+  <build>
+    <finalName>NetarchiveSuite</finalName>
+
+    <plugins>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>distro-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <appendAssemblyId>false</appendAssemblyId>
+              <classifier>prod</classifier>
+              <finalName>NetarchiveSuite-${project.version}</finalName>
+              <descriptors>
+                <descriptor>src/main/assembly/release.xml</descriptor>
+              </descriptors>
+              <tarLongFileMode>gnu</tarLongFileMode>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>
