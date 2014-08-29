@@ -52,7 +52,6 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 /**
  * Tester class for the FileChecksumArchive.
- * 
  */
 
 public class FileChecksumArchiveTester {
@@ -68,8 +67,7 @@ public class FileChecksumArchiveTester {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         FileUtils.removeRecursively(TestInfo.TMP_DIR);
 
-        TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINAL_DIR,
-                TestInfo.WORKING_DIR);
+        TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINAL_DIR, TestInfo.WORKING_DIR);
 
         Settings.set(ArchiveSettings.CHECKSUM_BASEDIR, TestInfo.CHECKSUM_DIR.getAbsolutePath());
         Settings.set(CommonSettings.USE_REPLICA_ID, "THREE");
@@ -98,9 +96,8 @@ public class FileChecksumArchiveTester {
     }
 
     /**
-     * Checks whether the filename for the checksum file is defined correct in
-     * the settings.
-     */ 
+     * Checks whether the filename for the checksum file is defined correct in the settings.
+     */
     @Test
     @Ignore("The files should have the same name.  expected:<...t/archive/checksum/d[istribute/data/working/basefiledir]/checksum_THREE.md5> but was:<...t/archive/checksum/d[ata/working/cs]/checksum_THREE.md5>")
     public void testFilename() {
@@ -109,62 +106,54 @@ public class FileChecksumArchiveTester {
     }
 
     /**
-     * Check the following:
-     * 1. FileChecksumArchiev can perform Upload.
-     * 2. The correct checksums are retrieved from the upload.
-     * 3. The correct file can be retrieved.
-     * 4. That the Correct function can be performed.
-     * 5. That the data also is changed appropriately.
-     * 6. The old and 'wrong' entries have been move to the backup file.
-     * 
-     * @throws Exception So it is unnecessary to catch IOExceptions, since the 
-     * test should fail.
+     * Check the following: 1. FileChecksumArchiev can perform Upload. 2. The correct checksums are retrieved from the
+     * upload. 3. The correct file can be retrieved. 4. That the Correct function can be performed. 5. That the data
+     * also is changed appropriately. 6. The old and 'wrong' entries have been move to the backup file.
+     *
+     * @throws Exception So it is unnecessary to catch IOExceptions, since the test should fail.
      */
     @Test
     @Ignore("FIXME")
     // FIXME: test temporarily disabled
     public void testContent() throws Exception {
         RemoteFile arcfile1 = RemoteFileFactory.getInstance(TestInfo.UPLOAD_FILE_1, false, false, false);
-        assertFalse("The archive should not already contain TEST1.arc", 
-                fca.hasEntry("TEST1.arc"));
+        assertFalse("The archive should not already contain TEST1.arc", fca.hasEntry("TEST1.arc"));
         fca.upload(arcfile1, "TEST1.arc");
         RemoteFile arcfile2 = RemoteFileFactory.getInstance(TestInfo.UPLOAD_FILE_2, false, false, false);
-        assertFalse("The archive should not already contain TEST2.arc", 
-                fca.hasEntry("TEST2.arc"));
+        assertFalse("The archive should not already contain TEST2.arc", fca.hasEntry("TEST2.arc"));
         fca.upload(arcfile2, "TEST2.arc");
         List<String> filenames = FileUtils.readListFromFile(fca.getAllFilenames());
 
         // ---------------------------------------------------------------
         // Make check for whether the correct files exist in the archive.
         // ---------------------------------------------------------------
-        assertEquals("The expected number of filenames in the archive.", 2,
-                filenames.size());
+        assertEquals("The expected number of filenames in the archive.", 2, filenames.size());
         assertTrue("TEST1.arc should be amongst the filenames", filenames.contains("TEST1.arc"));
         assertTrue("TEST2.arc should be amongst the filenames", filenames.contains("TEST2.arc"));
 
         // ---------------------------------------------------------------
         // Make check for whether the correct checksums are stored in the archive.
         // ---------------------------------------------------------------
-        assertEquals("The stored value and the checksum calculated through the method.",
-                fca.getChecksum("TEST1.arc"), fca.calculateChecksum(TestInfo.UPLOAD_FILE_1));
+        assertEquals("The stored value and the checksum calculated through the method.", fca.getChecksum("TEST1.arc"),
+                fca.calculateChecksum(TestInfo.UPLOAD_FILE_1));
         assertEquals("The value stored in the checksum archive and a precalculated value of the file",
                 TestInfo.TEST1_CHECKSUM, fca.getChecksum("TEST1.arc"));
 
-        assertEquals("The stored value and the checksum calculated through the method.",
-                fca.getChecksum("TEST2.arc"), fca.calculateChecksum(TestInfo.UPLOAD_FILE_2));
+        assertEquals("The stored value and the checksum calculated through the method.", fca.getChecksum("TEST2.arc"),
+                fca.calculateChecksum(TestInfo.UPLOAD_FILE_2));
         assertEquals("The value stored in the checksum archive and a precalculated value of the file",
                 TestInfo.TEST2_CHECKSUM, fca.getChecksum("TEST2.arc"));
 
         // ---------------------------------------------------------------
         // Check whether the archive file is identical to the retrieved archive
-        // ---------------------------------------------------------------	
+        // ---------------------------------------------------------------
         List<String> archiveChecksums = FileUtils.readListFromFile(fca.getArchiveAsFile());
         List<String> fileChecksums = FileUtils.readListFromFile(new File(fca.getFileName()));
 
-        assertEquals("The amount of checksums should be identical in the file and from the archive.", 
+        assertEquals("The amount of checksums should be identical in the file and from the archive.",
                 fileChecksums.size(), archiveChecksums.size());
         assertEquals("The amount of checksum should be 2", 2, fileChecksums.size());
-        for(int i = 0; i < fileChecksums.size(); i++) {
+        for (int i = 0; i < fileChecksums.size(); i++) {
             assertEquals("The checksum entry in the file should be identical to the one in the archive",
                     archiveChecksums.get(i), fileChecksums.get(i));
         }
@@ -175,7 +164,7 @@ public class FileChecksumArchiveTester {
         try {
             fca.correct("ERROR!", TestInfo.UPLOAD_FILE_1);
             fail("It is not allowed for 'correct' to correct a wrong 'incorrectChecksum'.");
-        } catch(IllegalState e) {
+        } catch (IllegalState e) {
             assertTrue("The correct error message should be sent.",
                     e.getMessage().contains("No file entry for file 'ERROR!'"));
         }
@@ -199,7 +188,7 @@ public class FileChecksumArchiveTester {
                 correctChecksums.contains("TEST2.arc" + "##" + TestInfo.TEST1_CHECKSUM));
 
         // ---------------------------------------------------------------
-        // Check that the correct function has put the old record into the 
+        // Check that the correct function has put the old record into the
         // wrong entry file.
         // ---------------------------------------------------------------
         String wrongEntryContent = FileUtils.readFile(new File(fca.getWrongEntryFilename()));
@@ -209,10 +198,11 @@ public class FileChecksumArchiveTester {
         assertTrue("The old checksums should be store here.",
                 wrongEntryContent.contains("TEST2.arc" + "##" + TestInfo.TEST2_CHECKSUM));
     }
-    
+
     /**
      * Checks how the archive handles it, when there is an admin.data file.
-     * @throws IOException 
+     *
+     * @throws IOException
      */
     @Test
     @Ignore("IOFailure:  Cannot create the output file containing all the entries of this archive")
@@ -231,28 +221,23 @@ public class FileChecksumArchiveTester {
         fw.append("TEST3.arc checksum3 UPLOAD_COMPLETED 2" + "\n");
         fw.append("TEST4.arc checksum4 UPLOAD_COMPLETED 3" + "\n");
         fw.append("TEST3.arc checksum3 UPLOAD_COMPLETED 4" + "\n");
-        
+
         fw.flush();
         fw.close();
-        
+
         try {
             FileChecksumArchive fca = FileChecksumArchive.getInstance();
 
-            assertFalse("TEST1.arc is not complete and should not be in archive", 
-                    fca.hasEntry("TEST1.arc"));
-            assertFalse("TEST2.arc is not complete and should not be in archive", 
-                    fca.hasEntry("TEST2.arc"));
-            assertEquals("Unexpected checksum for TEST3.arc", 
-                    "checksum3", fca.getChecksum("TEST3.arc"));
-            assertEquals("Unexpected checksum for TEST4.arc", 
-                    "checksum4", fca.getChecksum("TEST4.arc"));
-            
+            assertFalse("TEST1.arc is not complete and should not be in archive", fca.hasEntry("TEST1.arc"));
+            assertFalse("TEST2.arc is not complete and should not be in archive", fca.hasEntry("TEST2.arc"));
+            assertEquals("Unexpected checksum for TEST3.arc", "checksum3", fca.getChecksum("TEST3.arc"));
+            assertEquals("Unexpected checksum for TEST4.arc", "checksum4", fca.getChecksum("TEST4.arc"));
+
             String archiveFile = FileUtils.readFile(fca.getArchiveAsFile());
-            
+
             Matcher match = Pattern.compile("TEST3.arc").matcher(archiveFile);
             assertTrue("TEST3.arc should be found the first time", match.find());
-            assertFalse("TEST3.arc should not be found the second time", 
-                    match.find(match.end()));
+            assertFalse("TEST3.arc should not be found the second time", match.find(match.end()));
         } finally {
             adminFile.delete();
         }

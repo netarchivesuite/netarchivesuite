@@ -22,17 +22,21 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * Unit-tests for the Schedule class.
@@ -83,8 +87,7 @@ public class ScheduleTester extends DataModelTestCase {
             // expected
         }
 
-        Schedule sched = Schedule.getInstance(null, null,
-                new MonthlyFrequency(12), "Half flag",
+        Schedule sched = Schedule.getInstance(null, null, new MonthlyFrequency(12), "Half flag",
                 "In rememberance of the German occupation");
         try {
             sched.getFirstEvent(null);
@@ -93,30 +96,31 @@ public class ScheduleTester extends DataModelTestCase {
         }
     }
 
-    /** Test the first event happens at the given time if the given time is
-     * given as the first possible.
+    /**
+     * Test the first event happens at the given time if the given time is given as the first possible.
+     *
      * @throws Exception
      */
     @Test
     public void testGetFirstEvent1() throws Exception {
         Calendar cal = new GregorianCalendar(1940, Calendar.APRIL, 9, 9, 30);
-        Schedule sched = Schedule.getInstance(cal.getTime(), null,
-                new MonthlyFrequency(12), "Half flag",
+        Schedule sched = Schedule.getInstance(cal.getTime(), null, new MonthlyFrequency(12), "Half flag",
                 "In rememberance of the German occupation");
         assertTrue("Schedule should be timed", sched instanceof TimedSchedule);
         Date first = sched.getFirstEvent(cal.getTime());
         assertEquals("First event must happen immediately.", cal.getTime(), first);
     }
 
-    /** Test the first event happens at first time matching frequency
-     * requirements if the given time is given as the first possible.
+    /**
+     * Test the first event happens at first time matching frequency requirements if the given time is given as the
+     * first possible.
+     *
      * @throws Exception
      */
     @Test
     public void testGetFirstEvent2() throws Exception {
         Calendar cal = new GregorianCalendar(1940, Calendar.APRIL, 9, 9, 30);
-        Schedule sched = Schedule.getInstance(cal.getTime(), null,
-                new MonthlyFrequency(12, 9, 12, 0), "Full flag",
+        Schedule sched = Schedule.getInstance(cal.getTime(), null, new MonthlyFrequency(12, 9, 12, 0), "Full flag",
                 "In rememberance of the German occupation");
         assertTrue("Schedule should be timed", sched instanceof TimedSchedule);
         Date first = sched.getFirstEvent(cal.getTime());
@@ -125,29 +129,31 @@ public class ScheduleTester extends DataModelTestCase {
         assertEquals("First event must happen at noon.", cal.getTime(), first);
     }
 
-    /** Tests that first event happens now if no first time is given.
+    /**
+     * Tests that first event happens now if no first time is given.
+     *
      * @throws Exception
      */
     @Test
     public void testGetFirstEvent3() throws Exception {
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.MILLISECOND, 0);
-        Schedule sched = Schedule.getInstance(null, null,
-                new MonthlyFrequency(12), "Half flag",
+        Schedule sched = Schedule.getInstance(null, null, new MonthlyFrequency(12), "Half flag",
                 "In rememberance of the German occupation");
         assertTrue("Schedule should be timed", sched instanceof TimedSchedule);
         Date first = sched.getFirstEvent(cal.getTime());
         assertEquals("First event must happen immediately.", cal.getTime(), first);
     }
 
-    /** Tests that first event happens at first possible time allowed by
-     * frequency requirements if no first time is given.
+    /**
+     * Tests that first event happens at first possible time allowed by frequency requirements if no first time is
+     * given.
+     *
      * @throws Exception
      */
     @Test
     public void testGetFirstEvent4() throws Exception {
-        Schedule sched = Schedule.getInstance(null, null,
-                new MonthlyFrequency(12, 9, 12, 0), "Full flag",
+        Schedule sched = Schedule.getInstance(null, null, new MonthlyFrequency(12, 9, 12, 0), "Full flag",
                 "In rememberance of the German occupation");
         assertTrue("Schedule should be timed", sched instanceof TimedSchedule);
         Calendar cal = Calendar.getInstance();
@@ -167,43 +173,42 @@ public class ScheduleTester extends DataModelTestCase {
         assertEquals("First event must happen at noon.", cal.getTime(), first);
     }
 
-    /** Tests that first event happens at given first time
-     *  if now is before then.
-     *  @throws Exception
+    /**
+     * Tests that first event happens at given first time if now is before then.
+     *
+     * @throws Exception
      */
     @Test
     public void testGetFirstEvent5() throws Exception {
         Calendar cal = new GregorianCalendar(1940, Calendar.APRIL, 9, 9, 30);
         Calendar cal2 = new GregorianCalendar(1943, Calendar.APRIL, 9, 9, 29);
         Calendar cal3 = new GregorianCalendar(1935, Calendar.APRIL, 9, 9, 29);
-        Schedule sched = Schedule.getInstance(cal.getTime(), cal2.getTime(),
-                new MonthlyFrequency(12), "Half flag",
+        Schedule sched = Schedule.getInstance(cal.getTime(), cal2.getTime(), new MonthlyFrequency(12), "Half flag",
                 "In rememberance of the German occupation");
         assertTrue("Schedule should be timed", sched instanceof TimedSchedule);
         Date first = sched.getFirstEvent(cal3.getTime());
         assertEquals("First event must happen at correct time.", cal.getTime(), first);
     }
 
-    /** Tests that first event happens at given first time
-     *  if now is before then but at time allowed by frequency requirements.
-     *  @throws Exception
+    /**
+     * Tests that first event happens at given first time if now is before then but at time allowed by frequency
+     * requirements.
+     *
+     * @throws Exception
      */
     @Test
     public void testGetFirstEvent6() throws Exception {
         Calendar cal = new GregorianCalendar(1940, Calendar.APRIL, 9, 9, 30);
         Calendar cal2 = new GregorianCalendar(1943, Calendar.APRIL, 9, 9, 29);
         Calendar cal3 = new GregorianCalendar(1935, Calendar.APRIL, 9, 9, 29);
-        Schedule sched = Schedule.getInstance(cal.getTime(), cal2.getTime(),
-                new MonthlyFrequency(12, 9, 12, 0), "Full flag",
-                "In rememberance of the German occupation");
+        Schedule sched = Schedule.getInstance(cal.getTime(), cal2.getTime(), new MonthlyFrequency(12, 9, 12, 0),
+                "Full flag", "In rememberance of the German occupation");
         assertTrue("Schedule should be timed", sched instanceof TimedSchedule);
         Date first = sched.getFirstEvent(cal3.getTime());
         cal.set(Calendar.HOUR_OF_DAY, 12);
         cal.set(Calendar.MINUTE, 00);
         assertEquals("First event must happen at noon.", cal.getTime(), first);
     }
-
-
 
     @Test
     public void testEquals() {
@@ -222,10 +227,11 @@ public class ScheduleTester extends DataModelTestCase {
         // A different schedule:
         Schedule sch_4 = new TimedSchedule(startDate, endDate, new HourlyFrequency(1), "NonDefaultSchedule", "");
 
-        //  reflexive: for any non-null reference value x, x.equals(x) should return true.
+        // reflexive: for any non-null reference value x, x.equals(x) should return true.
         assertTrue("Schedule.equals() is not reflexive", sch.equals(sch));
 
-        // symmetric: for any non-null reference values x and y, x.equals(y) should return true if and only if y.equals(x) returns true.
+        // symmetric: for any non-null reference values x and y, x.equals(y) should return true if and only if
+        // y.equals(x) returns true.
         if (sch.equals(sch_2)) {
             assertTrue("Schedule.equals() is not symmetric", sch_2.equals(sch));
             assertFalse("Schedule.equals() is not symmetric", sch.equals(sch_4));
@@ -233,14 +239,17 @@ public class ScheduleTester extends DataModelTestCase {
             fail("Symmetry: Schedule sch does not equal Schedule sch_2");
         }
 
-        // transitive: for any non-null reference values x, y, and z, if x.equals(y) returns true and y.equals(z) returns true, then x.equals(z) should return true.
+        // transitive: for any non-null reference values x, y, and z, if x.equals(y) returns true and y.equals(z)
+        // returns true, then x.equals(z) should return true.
         if (sch.equals(sch_2) && sch_2.equals(sch_3)) {
             assertTrue("Schedule.equals() is not transitive", sch.equals(sch_3));
         } else {
             fail("Transitivity failure...");
         }
 
-        //  consistent: for any non-null reference values x and y, multiple invocations of x.equals(y) consistently return true or consistently return false, provided no information used in equals comparisons on the objects is modified.
+        // consistent: for any non-null reference values x and y, multiple invocations of x.equals(y) consistently
+        // return true or consistently return false, provided no information used in equals comparisons on the objects
+        // is modified.
         for (int i = 0; i < 10; i++) {
             assertTrue("Schedule.equals() is not consistent", sch.equals(sch_2));
             assertFalse("Schedule.equals() is not consistent", sch.equals(sch_4));

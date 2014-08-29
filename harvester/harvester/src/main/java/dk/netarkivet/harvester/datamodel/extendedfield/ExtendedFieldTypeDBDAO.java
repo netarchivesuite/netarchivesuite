@@ -41,17 +41,16 @@ import dk.netarkivet.harvester.datamodel.HarvestDBConnection;
 import dk.netarkivet.harvester.datamodel.HarvesterDatabaseTables;
 
 /**
- * Implementation of the ExtendedFieldTypeDAO interface
- * for creating and accessing extended fields in persistent storage.
+ * Implementation of the ExtendedFieldTypeDAO interface for creating and accessing extended fields in persistent
+ * storage.
  */
 public class ExtendedFieldTypeDBDAO extends ExtendedFieldTypeDAO {
 
-	/** The logger for this class. */
+    /** The logger for this class. */
     private static final Logger log = LoggerFactory.getLogger(ExtendedFieldTypeDBDAO.class);
 
     /**
-     * Default constructor of this class. Tries to make any necessary migration
-     * of the database.
+     * Default constructor of this class. Tries to make any necessary migration of the database.
      */
     protected ExtendedFieldTypeDBDAO() {
         Connection connection = HarvestDBConnection.get();
@@ -76,17 +75,17 @@ public class ExtendedFieldTypeDBDAO extends ExtendedFieldTypeDAO {
         }
 
     }
-    
+
     /**
      * Tests if exists an ExtendedFieldType with the given ID.
+     *
      * @param c an open connection to the database
      * @param aExtendedfieldtypeId an id belonging to a ExtendedFieldType
-     * @return true, if there exists an ExtendedFieldType with the given ID,
-     * otherwise returns false.
+     * @return true, if there exists an ExtendedFieldType with the given ID, otherwise returns false.
      */
     private synchronized boolean exists(Connection c, Long aExtendedfieldtypeId) {
         return 1 == DBUtils.selectLongValue(c, "SELECT COUNT(*) FROM extendedfieldtype "
-        		+ "WHERE extendedfieldtype_id = ?", aExtendedfieldtypeId);
+                + "WHERE extendedfieldtype_id = ?", aExtendedfieldtypeId);
     }
 
     @Override
@@ -99,23 +98,24 @@ public class ExtendedFieldTypeDBDAO extends ExtendedFieldTypeDAO {
             HarvestDBConnection.release(connection);
         }
     }
-    
+
     /**
      * Read an ExtendedFieldType from database belonging to the given id.
+     *
      * @param connection an open connection to the database
      * @param aExtendedfieldtypeId an id belonging to a ExtendedFieldType
      * @return an ExtendedFieldType from database belonging to the given id.
      */
     private synchronized ExtendedFieldType read(Connection connection, Long aExtendedfieldtypeId) {
         if (!exists(connection, aExtendedfieldtypeId)) {
-            throw new UnknownID("Extended FieldType id " + aExtendedfieldtypeId
-            		+ " is not known in persistent storage");
+            throw new UnknownID("Extended FieldType id " + aExtendedfieldtypeId + " is not known in persistent storage");
         }
 
         ExtendedFieldType extendedFieldType = null;
         PreparedStatement statement = null;
         try {
-            statement = connection.prepareStatement("SELECT name FROM extendedfieldtype WHERE extendedfieldtype_id = ?");
+            statement = connection
+                    .prepareStatement("SELECT name FROM extendedfieldtype WHERE extendedfieldtype_id = ?");
 
             statement.setLong(1, aExtendedfieldtypeId);
             ResultSet result = statement.executeQuery();

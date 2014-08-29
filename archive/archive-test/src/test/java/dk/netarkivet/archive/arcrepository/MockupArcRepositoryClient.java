@@ -22,10 +22,11 @@
  */
 package dk.netarkivet.archive.arcrepository;
 
-import javax.jms.Message;
-import javax.jms.MessageListener;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.jms.Message;
+import javax.jms.MessageListener;
 
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
 import dk.netarkivet.common.distribute.Channels;
@@ -60,7 +61,7 @@ public class MockupArcRepositoryClient implements TestConfigurationIF, MessageLi
         msgCount++;
         StoreMessage sm = (StoreMessage) JMSConnection.unpack(message);
         storeMsgs.add(sm);
-        if(failOnFiles.contains(sm.getArcfileName())) {
+        if (failOnFiles.contains(sm.getArcfileName())) {
             sm.setNotOk("Simulating store failed.");
         }
         JMSConnectionFactory.getInstance().resend(sm, sm.getReplyTo());
@@ -74,4 +75,3 @@ public class MockupArcRepositoryClient implements TestConfigurationIF, MessageLi
         return storeMsgs;
     }
 }
-

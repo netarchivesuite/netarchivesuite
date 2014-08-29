@@ -22,6 +22,8 @@
  */
 package dk.netarkivet.harvester.harvesting;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -30,90 +32,69 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.ParseException;
 
-import static org.junit.Assert.*;
 import org.junit.Test;
 
 public class ArchiveFilesReportGeneratorTest {
 
     @Test
-	public final void testPatterns() throws ParseException {
+    public final void testPatterns() throws ParseException {
 
-		Object[] params = ArchiveFilesReportGenerator.FILE_OPEN_FORMAT.parse(
-				"2010-07-20 16:12:53.698 INFO thread-14 org.archive.io.WriterPoolMember.createFile() Opened /somepath/jobs/current/high/5_1279642368951/arcs/5-1-20100720161253-00000.arc.gz.open"
-		);
-		assertEquals(
-				"2010-07-20 16:12:53.698",
-				(String) params[0]);
-		assertEquals(
-				"14",
-				(String) params[1]);
-		assertEquals(
-				"/somepath/jobs/current/high/5_1279642368951/arcs/5-1-20100720161253-00000.arc.gz",
-				(String) params[2]);
+        Object[] params = ArchiveFilesReportGenerator.FILE_OPEN_FORMAT
+                .parse("2010-07-20 16:12:53.698 INFO thread-14 org.archive.io.WriterPoolMember.createFile() Opened /somepath/jobs/current/high/5_1279642368951/arcs/5-1-20100720161253-00000.arc.gz.open");
+        assertEquals("2010-07-20 16:12:53.698", (String) params[0]);
+        assertEquals("14", (String) params[1]);
+        assertEquals("/somepath/jobs/current/high/5_1279642368951/arcs/5-1-20100720161253-00000.arc.gz",
+                (String) params[2]);
 
-		params = ArchiveFilesReportGenerator.FILE_CLOSE_FORMAT.parse(
-				"2010-07-20 16:14:31.792 INFO thread-29 org.archive.io.WriterPoolMember.close() Closed /somepath/jobs/current/high/5_1279642368951/arcs/5-1-20100720161253-00000-bnf_test.arc.gz, size 162928");
-		assertEquals(
-				"2010-07-20 16:14:31.792",
-				(String) params[0]);
-		assertEquals(
-				"29",
-				(String) params[1]);
-		assertEquals(
-				"/somepath/jobs/current/high/5_1279642368951/arcs/5-1-20100720161253-00000-bnf_test.arc.gz",
-				(String) params[2]);
-		assertEquals(
-				162928L,
-				Long.parseLong((String) params[3]));
-	}
+        params = ArchiveFilesReportGenerator.FILE_CLOSE_FORMAT
+                .parse("2010-07-20 16:14:31.792 INFO thread-29 org.archive.io.WriterPoolMember.close() Closed /somepath/jobs/current/high/5_1279642368951/arcs/5-1-20100720161253-00000-bnf_test.arc.gz, size 162928");
+        assertEquals("2010-07-20 16:14:31.792", (String) params[0]);
+        assertEquals("29", (String) params[1]);
+        assertEquals("/somepath/jobs/current/high/5_1279642368951/arcs/5-1-20100720161253-00000-bnf_test.arc.gz",
+                (String) params[2]);
+        assertEquals(162928L, Long.parseLong((String) params[3]));
+    }
 
     @Test
-	public final void testReportGeneration() throws IOException {
+    public final void testReportGeneration() throws IOException {
 
-		File actualReport = null;
-		try {
-			File crawlDir = new File(
-					TestInfo.BASEDIR,
-					"arcFilesReport" + File.separator + "crawldir");
-			ArchiveFilesReportGenerator gen = new ArchiveFilesReportGenerator(crawlDir);
+        File actualReport = null;
+        try {
+            File crawlDir = new File(TestInfo.BASEDIR, "arcFilesReport" + File.separator + "crawldir");
+            ArchiveFilesReportGenerator gen = new ArchiveFilesReportGenerator(crawlDir);
 
-			File expectedReport = new File(TestInfo.BASEDIR,
-					"arcFilesReport" + File.separator
-					+ "expected.arcfiles-report.txt");
+            File expectedReport = new File(TestInfo.BASEDIR, "arcFilesReport" + File.separator
+                    + "expected.arcfiles-report.txt");
 
+            actualReport = gen.generateReport();
 
-			actualReport = gen.generateReport();
+            assertEquals(toString(expectedReport), toString(actualReport));
 
-			assertEquals(
-					toString(expectedReport),
-					toString(actualReport));
+        } finally {
+            if ((actualReport != null) && actualReport.exists()) {
+                if (!actualReport.delete()) {
+                    actualReport.deleteOnExit();
+                }
+            }
+        }
+    }
 
-		} finally {
-			if ((actualReport != null) && actualReport.exists()) {
-				if (! actualReport.delete()) {
-					actualReport.deleteOnExit();
-				}
-			}
-		}
-	}
+    private static String toString(File f) throws IOException {
 
-	private static String toString(File f) throws IOException {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        BufferedReader br = new BufferedReader(new FileReader(f));
+        String line = null;
+        while ((line = br.readLine()) != null) {
+            pw.println(line);
+        }
 
-		StringWriter sw = new StringWriter();
-		PrintWriter pw = new PrintWriter(sw);
-		BufferedReader br =
-			new BufferedReader(new FileReader(f));
-		String line = null;
-		while ((line = br.readLine()) != null) {
-			pw.println(line);
-		}
+        String fileContents = sw.toString();
 
-		String fileContents = sw.toString();
+        pw.close();
+        br.close();
 
-		pw.close();
-		br.close();
-
-		return fileContents;
-	}
+        return fileContents;
+    }
 
 }

@@ -32,7 +32,6 @@ import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDBDAO;
 
 /**
  * Action class for deleting a global crawler trap list.
- *
  */
 
 public class TrapDeleteAction extends TrapAction {

@@ -22,46 +22,39 @@
  */
 package dk.netarkivet.harvester.distribute;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
+
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.harvester.datamodel.HarvestChannel;
-import static org.junit.Assert.*;
-import org.junit.Test;
-
 
 /**
  * Unittests of the class dk.netarkivet.common.distribute.Channels.
  */
 public class HarvesterChannelsTester {
     /**
-     * Test if static Channels.isTopic(String name) works.
-     * Only names containing substring "ALL_BA" is considered a name
+     * Test if static Channels.isTopic(String name) works. Only names containing substring "ALL_BA" is considered a name
      * for a topic.
      */
     @Test
     public void testIsTopic() {
-        ChannelID[]queues = new ChannelID[]{
-                HarvesterChannels.getHarvestJobChannelId(
-                        new HarvestChannel("FOCUSED", false, true, "")),
-                HarvesterChannels.getHarvestJobChannelId(
-                		new HarvestChannel("SNAPSHOT", true, true, "")),
-                HarvesterChannels.getHarvestMonitorChannel()
-        };
+        ChannelID[] queues = new ChannelID[] {
+                HarvesterChannels.getHarvestJobChannelId(new HarvestChannel("FOCUSED", false, true, "")),
+                HarvesterChannels.getHarvestJobChannelId(new HarvestChannel("SNAPSHOT", true, true, "")),
+                HarvesterChannels.getHarvestMonitorChannel()};
         for (ChannelID queue : queues) {
-           String queueName = queue.getName();
-           assertFalse(queueName + " is not a topic",
-                   Channels.isTopic(queueName));
+            String queueName = queue.getName();
+            assertFalse(queueName + " is not a topic", Channels.isTopic(queueName));
         }
 
-
-        ChannelID[]topics = new ChannelID[]{
-                HarvesterChannels.getHarvesterStatusChannel()
-        };
+        ChannelID[] topics = new ChannelID[] {HarvesterChannels.getHarvesterStatusChannel()};
 
         for (ChannelID topic : topics) {
             String topicName = topic.getName();
-            assertTrue(topicName + " is a topic",
-                    Channels.isTopic(topicName));
-         }
+            assertTrue(topicName + " is a topic", Channels.isTopic(topicName));
+        }
     }
 }

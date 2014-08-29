@@ -155,7 +155,7 @@
                 <phase>pre-integration-test</phase>
                 <configuration>
                   <target>
-                    <ant antfile="deploy.xml" target="deploy2test" />
+                    <ant antfile="deploy.xml" target="deploy2test"/>
                   </target>
                 </configuration>
                 <goals>

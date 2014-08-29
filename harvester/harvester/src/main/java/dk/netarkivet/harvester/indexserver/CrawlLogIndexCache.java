@@ -23,9 +23,6 @@
 
 package dk.netarkivet.harvester.indexserver;
 
-import is.hi.bok.deduplicator.CrawlDataIterator;
-import is.hi.bok.deduplicator.DigestIndexer;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -55,16 +52,14 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.TimeUtils;
 import dk.netarkivet.common.utils.ZipUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
+import is.hi.bok.deduplicator.CrawlDataIterator;
+import is.hi.bok.deduplicator.DigestIndexer;
 
 /**
- * A cache that serves Lucene indices of crawl logs for given job IDs.
- * Uses the DigestIndexer in the deduplicator software:
- * http://deduplicator.sourceforge.net/apidocs/is/hi/bok/deduplicator/DigestIndexer.html
- * Upon combination of underlying files, each file in the Lucene index is
- * gzipped and the compressed versions are stored in the directory given by
- * getCacheFile().
- * The subclass has to determine in its constructor call which mime types are
- * included.
+ * A cache that serves Lucene indices of crawl logs for given job IDs. Uses the DigestIndexer in the deduplicator
+ * software: http://deduplicator.sourceforge.net/apidocs/is/hi/bok/deduplicator/DigestIndexer.html Upon combination of
+ * underlying files, each file in the Lucene index is gzipped and the compressed versions are stored in the directory
+ * given by getCacheFile(). The subclass has to determine in its constructor call which mime types are included.
  */
 public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Long> implements JobIndexCache {
 
@@ -73,27 +68,26 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
 
     /** Needed to find origin information, which is file+offset from CDX index. */
     private final CDXDataCache cdxcache = new CDXDataCache();
-    
+
     /** the useBlacklist set to true results in docs matching the mimefilter being ignored. */
     private boolean useBlacklist;
 
     /** An regular expression for the mimetypes to include or exclude from the index. See useBlackList. */
     private String mimeFilter;
 
-    /** The time to sleep between each check of completeness.*/
-    private final long sleepintervalBetweenCompletenessChecks =
-    		Settings.getLong(HarvesterSettings.INDEXSERVER_INDEXING_CHECKINTERVAL);
+    /** The time to sleep between each check of completeness. */
+    private final long sleepintervalBetweenCompletenessChecks = Settings
+            .getLong(HarvesterSettings.INDEXSERVER_INDEXING_CHECKINTERVAL);
 
     /** Number to separate logs the different combine tasks. */
     private int indexingJobCount = 0;
-    
+
     /**
      * Constructor for the CrawlLogIndexCache class.
+     *
      * @param name The name of the CrawlLogIndexCache
-     * @param blacklist Shall the mimefilter be considered a blacklist 
-     *  or a whitelist?
-     * @param mimeFilter A regular expression for the mimetypes to
-     * exclude/include
+     * @param blacklist Shall the mimefilter be considered a blacklist or a whitelist?
+     * @param mimeFilter A regular expression for the mimetypes to exclude/include
      */
     public CrawlLogIndexCache(String name, boolean blacklist, String mimeFilter) {
         super(name, new CrawlLogDataCache());
@@ -101,12 +95,11 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
         this.mimeFilter = mimeFilter;
     }
 
-    /** Prepare data for combining.  This class overrides prepareCombine to
-     * make sure that CDX data is available.
+    /**
+     * Prepare data for combining. This class overrides prepareCombine to make sure that CDX data is available.
      *
      * @param ids Set of IDs that will be combined.
-     * @return Map of ID->File of data to combine for the IDs where we could
-     * find data.
+     * @return Map of ID->File of data to combine for the IDs where we could find data.
      */
     protected Map<Long, File> prepareCombine(Set<Long> ids) {
         log.info("Starting to generate {} for the {} jobs: {}", getCacheDir().getName(), ids.size(), ids);
@@ -127,17 +120,17 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
         return returnMap;
     }
 
-    /** Combine a number of crawl.log files into one Lucene index.  This index
-     * is placed as gzip files under the directory returned by getCacheFile().
+    /**
+     * Combine a number of crawl.log files into one Lucene index. This index is placed as gzip files under the directory
+     * returned by getCacheFile().
      *
-     * @param rawfiles The map from job ID into crawl.log contents. No
-     * null values are allowed in this map.
+     * @param rawfiles The map from job ID into crawl.log contents. No null values are allowed in this map.
      */
     protected void combine(Map<Long, File> rawfiles) {
-    	++indexingJobCount;
+        ++indexingJobCount;
         long datasetSize = rawfiles.values().size();
         log.info("Starting combine task #{}. This combines a dataset with {} crawl logs (thread = {})",
-        		indexingJobCount, datasetSize, Thread.currentThread().getName());
+                indexingJobCount, datasetSize, Thread.currentThread().getName());
 
         File resultDir = getCacheFile(rawfiles.keySet());
         Set<File> tmpfiles = new HashSet<File>();
@@ -151,8 +144,8 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
             Set<IndexingState> outstandingJobs = new HashSet<IndexingState>();
             final int maxThreads = Settings.getInt(HarvesterSettings.INDEXSERVER_INDEXING_MAXTHREADS);
             executor = new ThreadPoolExecutor(maxThreads, maxThreads, 0L, TimeUnit.MILLISECONDS,
-            		new LinkedBlockingQueue<Runnable>());
-            
+                    new LinkedBlockingQueue<Runnable>());
+
             executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
 
             for (Map.Entry<Long, File> entry : rawfiles.entrySet()) {
@@ -165,19 +158,19 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
                 Long cached = cdxcache.cache(jobId);
                 if (cached == null) {
                     log.warn("Skipping the ingest of logs for job {}. Unable to retrieve cdx-file for job.",
-                    		entry.getKey());
+                            entry.getKey());
                     continue;
                 }
                 File cachedCDXFile = cdxcache.getCacheFile(cached);
-                
-                // Dispatch this indexing task to a separate thread that 
+
+                // Dispatch this indexing task to a separate thread that
                 // handles the sorting of the logfiles and the generation
                 // of a lucene index for this crawllog and cdxfile.
                 ++count;
                 String taskID = count + " out of " + datasetSize;
                 log.debug("Making subthread for indexing job " + jobId + " - task " + taskID);
                 Callable<Boolean> task = new DigestIndexerWorker(localindexLocation, jobId, crawlLog, cachedCDXFile,
-                		indexingOptions, taskID);
+                        indexingOptions, taskID);
                 Future<Boolean> result = executor.submit(task);
                 outstandingJobs.add(new IndexingState(jobId, localindexLocation, result));
             }
@@ -196,16 +189,15 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
             int maxSegments = Settings.getInt(HarvesterSettings.INDEXSERVER_INDEXING_MAX_SEGMENTS);
 
             final int ACCUMULATED_SUBINDICES_BEFORE_MERGING = 200;
-            
+
             while (outstandingJobs.size() > 0) {
-                log.info("Outstanding jobs in combine task #{} is now {}",
-                		indexingJobCount, outstandingJobs.size());
+                log.info("Outstanding jobs in combine task #{} is now {}", indexingJobCount, outstandingJobs.size());
                 Iterator<IndexingState> iterator = outstandingJobs.iterator();
                 if (timeOutTime < System.currentTimeMillis()) {
-                   log.warn("Max indexing time exceeded for one index ({}). Indexing stops here, "
-                		   + "although missing subindices for {} jobs",
-                		   TimeUtils.readableTimeInterval(combineTimeout), outstandingJobs.size());
-                   break; 
+                    log.warn("Max indexing time exceeded for one index ({}). Indexing stops here, "
+                            + "although missing subindices for {} jobs",
+                            TimeUtils.readableTimeInterval(combineTimeout), outstandingJobs.size());
+                    break;
                 }
                 while (iterator.hasNext() && subindices.size() < ACCUMULATED_SUBINDICES_BEFORE_MERGING) {
                     Future<Boolean> nextResult;
@@ -214,49 +206,51 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
                         nextResult = next.getResultObject();
                         try {
                             // check, if the indexing failed
-                            if (nextResult.get()) { 
+                            if (nextResult.get()) {
                                 subindices.add(new SimpleFSDirectory(new File(next.getIndex())));
                             } else {
                                 log.warn("Indexing of job {} failed.", next.getJobIdentifier());
                             }
-                            
+
                         } catch (InterruptedException e) {
                             log.warn("Unable to get Result back from indexing thread", e);
                         } catch (ExecutionException e) {
                             log.warn("Unable to get Result back from indexing thread", e);
                         }
-                        //remove the done object from the set
+                        // remove the done object from the set
                         iterator.remove();
-                    }   
+                    }
                 }
-                
-                if (subindices.size() >= ACCUMULATED_SUBINDICES_BEFORE_MERGING){
-                    
-                    log.info("Adding {} subindices to main index. Forcing index to contain max {} files (related to combine task #{})",
-                    		subindices.size(), maxSegments, indexingJobCount);
+
+                if (subindices.size() >= ACCUMULATED_SUBINDICES_BEFORE_MERGING) {
+
+                    log.info(
+                            "Adding {} subindices to main index. Forcing index to contain max {} files (related to combine task #{})",
+                            subindices.size(), maxSegments, indexingJobCount);
                     totalIndex.addIndexes(subindices.toArray(new Directory[0]));
                     totalIndex.forceMerge(maxSegments);
                     totalIndex.commit();
-                    for (Directory luceneDir: subindices) {
+                    for (Directory luceneDir : subindices) {
                         luceneDir.close();
                     }
                     subindicesInTotalIndex += subindices.size();
-                    log.info("Completed adding {} subindices to main index, now containing {} subindices(related to combine task #{})",
-                    		subindices.size(), subindicesInTotalIndex, indexingJobCount);
+                    log.info(
+                            "Completed adding {} subindices to main index, now containing {} subindices(related to combine task #{})",
+                            subindices.size(), subindicesInTotalIndex, indexingJobCount);
                     subindices.clear();
                 } else {
                     sleepAwhile();
                 }
             }
-            
+
             log.info("Adding the final {} subindices to main index. "
-            		+ "Forcing index to contain max {} files (related to combine task #{})",
-            		subindices.size(), maxSegments, indexingJobCount);
+                    + "Forcing index to contain max {} files (related to combine task #{})", subindices.size(),
+                    maxSegments, indexingJobCount);
 
             totalIndex.addIndexes(subindices.toArray(new Directory[0]));
             totalIndex.forceMerge(maxSegments);
             totalIndex.commit();
-            for (Directory luceneDir: subindices) {
+            for (Directory luceneDir : subindices) {
                 luceneDir.close();
             }
             subindices.clear();
@@ -270,10 +264,11 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
             // Now the index is made, gzip it up.
             File totalIndexDir = new File(indexLocation);
             log.info("Gzip-compressing the individual {} index files of combine task # {}",
-            		totalIndexDir.list().length, indexingJobCount);
+                    totalIndexDir.list().length, indexingJobCount);
             ZipUtils.gzipFiles(totalIndexDir, resultDir);
-            log.info("Completed combine task #{} that combined a dataset with {} crawl logs (entries in combined index: {}) - compressed index has size {}",
-            		indexingJobCount, datasetSize, docsInIndex, FileUtils.getHumanReadableFileSize(resultDir));
+            log.info(
+                    "Completed combine task #{} that combined a dataset with {} crawl logs (entries in combined index: {}) - compressed index has size {}",
+                    indexingJobCount, datasetSize, docsInIndex, FileUtils.getHumanReadableFileSize(resultDir));
         } catch (IOException e) {
             throw new IOFailure("Error setting up craw.log index framework for " + resultDir.getAbsolutePath(), e);
         } finally {
@@ -285,9 +280,10 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
             }
         }
     }
-    
+
     /**
      * Try to release all resources connected to the given ThreadPoolExecutor.
+     *
      * @param executor a ThreadPoolExecutor
      */
     private void closeDownThreadpoolQuietly(ThreadPoolExecutor executor) {
@@ -298,7 +294,7 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
             executor.shutdownNow();
         }
     }
-    
+
     /**
      * Helper class to sleep a little between completeness checks.
      */
@@ -310,8 +306,8 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
         }
     }
 
-    /** Ingest a single crawl.log file using the corresponding CDX file to find
-     * offsets.
+    /**
+     * Ingest a single crawl.log file using the corresponding CDX file to find offsets.
      *
      * @param id ID of a job to ingest.
      * @param crawllogfile The file containing the crawl.log data for the job
@@ -319,13 +315,13 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
      * @param options The digesting options used.
      * @param indexer The indexer to add to.
      */
-    protected static void indexFile(Long id, File crawllogfile, File cdxfile,
-    		DigestIndexer indexer, DigestOptions options) {
+    protected static void indexFile(Long id, File crawllogfile, File cdxfile, DigestIndexer indexer,
+            DigestOptions options) {
         log.debug("Ingesting the crawl.log file '{}' related to job {}", crawllogfile.getAbsolutePath(), id);
         boolean blacklist = options.getUseBlacklist();
         final String mimefilter = options.getMimeFilter();
         final boolean verbose = options.getVerboseMode();
-        
+
         CrawlDataIterator crawlLogIterator = null;
         File sortedCdxFile = null;
         File tmpCrawlLog = null;
@@ -360,16 +356,15 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
 
     /**
      * Get a sorted, temporary CDX file corresponding to the given CDXfile.
-     * @param cdxFile A cdxfile 
-     * @return A temporary file with CDX info for that just sorted according
-     * to the standard CDX sorting rules.  This file will be removed at the
-     * exit of the JVM, but should be attempted removed when it is no longer
-     * used.
+     *
+     * @param cdxFile A cdxfile
+     * @return A temporary file with CDX info for that just sorted according to the standard CDX sorting rules. This
+     * file will be removed at the exit of the JVM, but should be attempted removed when it is no longer used.
      */
-    protected static File getSortedCDX(File cdxFile) {     
+    protected static File getSortedCDX(File cdxFile) {
         try {
             final File tmpFile = File.createTempFile("sorted", "cdx", FileUtils.getTempDir());
-            // This throws IOFailure, if the sorting operation fails 
+            // This throws IOFailure, if the sorting operation fails
             FileUtils.sortCDX(cdxFile, tmpFile);
             tmpFile.deleteOnExit();
             return tmpFile;
@@ -378,12 +373,12 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
         }
     }
 
-    /** Get a sorted, temporary crawl.log file from an unsorted one.
+    /**
+     * Get a sorted, temporary crawl.log file from an unsorted one.
      *
      * @param file The file containing an unsorted crawl.log file.
-     * @return A temporary file containing the entries sorted according to
-     * URL.  The file will be removed upon exit of the JVM, but should be
-     * attempted removed when it is no longer used.
+     * @return A temporary file containing the entries sorted according to URL. The file will be removed upon exit of
+     * the JVM, but should be attempted removed when it is no longer used.
      */
     protected static File getSortedCrawlLog(File file) {
         try {
@@ -396,10 +391,10 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
             throw new IOFailure("Error creating sorted crawl log file for '" + file + "'", e);
         }
     }
-    
+
     /**
-     *  Create standard deduplication indexer.
-     * 
+     * Create standard deduplication indexer.
+     *
      * @param indexLocation The full path to the indexing directory
      * @return the created deduplication indexer.
      * @throws IOException If unable to open the index.
@@ -417,7 +412,7 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
         boolean includeEtag = true;
         boolean addToExistingIndex = false;
         DigestIndexer indexer = new DigestIndexer(indexLocation, indexingMode, includeNormalizedURL, includeTimestamp,
-        		includeEtag, addToExistingIndex);
+                includeEtag, addToExistingIndex);
         return indexer;
     }
 

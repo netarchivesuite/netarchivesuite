@@ -22,8 +22,16 @@
  */
 package dk.netarkivet.archive.checksum.distribute;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.archive.bitarchive.distribute.GetFileMessage;
@@ -47,12 +55,6 @@ import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import static org.junit.Assert.*;
-
 public class ChecksumClientTester {
 
     UseTestRemoteFile rf = new UseTestRemoteFile();
@@ -60,7 +62,7 @@ public class ChecksumClientTester {
     MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINAL_DIR, TestInfo.WORK_DIR);
     MessageTestHandler handler;
     JMSConnectionMockupMQ con;
-    
+
     @Before
     public void setUp() {
         rs.setUp();
@@ -68,15 +70,15 @@ public class ChecksumClientTester {
         mtf.setUp();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         ChannelsTesterHelper.resetChannels();
-        
+
         Settings.set(CommonSettings.USE_REPLICA_ID, "THREE");
-        
+
         con = (JMSConnectionMockupMQ) JMSConnectionFactory.getInstance();
         handler = new MessageTestHandler();
-        
+
         con.setListener(Channels.getTheCR(), handler);
     }
-    
+
     @After
     public void tearDown() {
         JMSConnectionMockupMQ.clearTestQueues();
@@ -90,149 +92,132 @@ public class ChecksumClientTester {
     public void testClient() {
         ClassAsserts.assertPrivateConstructor(ChecksumClient.class);
     }
-    
+
     @Test
     public void testFails() {
         ChecksumClient cc = ChecksumClient.getInstance(Channels.getTheCR());
-        
+
         // Test batch through a batch message.
         try {
-            BatchMessage bm = new BatchMessage(Channels.getTheCR(),
-                    new ChecksumJob(),
+            BatchMessage bm = new BatchMessage(Channels.getTheCR(), new ChecksumJob(),
                     Settings.get(CommonSettings.USE_REPLICA_ID));
             cc.sendBatchJob(bm);
             fail("This should not be allowed.");
         } catch (IllegalState e) {
-            assertTrue("The error should say that it is impossible to send "
-                    + "batch messages to a checksum replica: " + e.getMessage(), 
-                    e.getMessage().contains("Trying to execute the batchjob"));
+            assertTrue("The error should say that it is impossible to send " + "batch messages to a checksum replica: "
+                    + e.getMessage(), e.getMessage().contains("Trying to execute the batchjob"));
         }
-        
+
         // Test batch through batch function.
         try {
             cc.sendBatchJob(Channels.getTheCR(), new ChecksumJob());
             fail("This should not be allowed.");
         } catch (IllegalState e) {
-            assertTrue("The error should say that it is impossible to send "
-                    + "batch messages to a checksum replica: " + e.getMessage(), 
-                    e.getMessage().contains("Trying to execute the batchjob"));
+            assertTrue("The error should say that it is impossible to send " + "batch messages to a checksum replica: "
+                    + e.getMessage(), e.getMessage().contains("Trying to execute the batchjob"));
         }
-        
+
         // Test GetMessage
         try {
-            GetMessage gm = new GetMessage(Channels.getTheCR(), Channels.getError(),
-                    "filename.arc", 0);
+            GetMessage gm = new GetMessage(Channels.getTheCR(), Channels.getError(), "filename.arc", 0);
             cc.sendGetMessage(gm);
             fail("This should not be allowed.");
         } catch (IllegalState e) {
-            assertTrue("The error should say that it is impossible to send "
-                    + "GetMessages to a checksum replica: " + e.getMessage(),
-                    e.getMessage().contains("A checksum replica cannot handle a GetMessage"));
+            assertTrue("The error should say that it is impossible to send " + "GetMessages to a checksum replica: "
+                    + e.getMessage(), e.getMessage().contains("A checksum replica cannot handle a GetMessage"));
         }
-        
+
         // Test GetFileMessage
         try {
-            GetFileMessage gfm = new GetFileMessage(Channels.getTheCR(), Channels.getError(),
-                    "filename.arc", Settings.get(CommonSettings.USE_REPLICA_ID));
+            GetFileMessage gfm = new GetFileMessage(Channels.getTheCR(), Channels.getError(), "filename.arc",
+                    Settings.get(CommonSettings.USE_REPLICA_ID));
             cc.sendGetFileMessage(gfm);
             fail("This should not be allowed.");
         } catch (IllegalState e) {
-            assertTrue("The erro should say that it is impossible to send GetFileMessages to a checksum replica", 
-                    e.getMessage().contains("A checksum replica cannot handle a GetFileMessage"));
+            assertTrue("The erro should say that it is impossible to send GetFileMessages to a checksum replica", e
+                    .getMessage().contains("A checksum replica cannot handle a GetFileMessage"));
         }
 
         // Test RemoveAndGetFileMessage
         try {
             RemoveAndGetFileMessage ragfm = new RemoveAndGetFileMessage(Channels.getTheCR(), Channels.getError(),
-                    "filename.arc", Settings.get(CommonSettings.USE_REPLICA_ID),
-                    "checksum", "credentials");
+                    "filename.arc", Settings.get(CommonSettings.USE_REPLICA_ID), "checksum", "credentials");
             cc.sendRemoveAndGetFileMessage(ragfm);
             fail("This should not be allowed.");
         } catch (IllegalState e) {
-            assertTrue("The erro should say that it is impossible to send GetFileMessages to a checksum replica", 
-                    e.getMessage().contains("A checksum replica cannot handle a RemoveAndGetFileMessage"));
+            assertTrue("The erro should say that it is impossible to send GetFileMessages to a checksum replica", e
+                    .getMessage().contains("A checksum replica cannot handle a RemoveAndGetFileMessage"));
         }
     }
-    
+
     @Test
     public void testValid() {
         ChecksumClient cc = ChecksumClient.getInstance(Channels.getTheCR());
-        
-        assertEquals("A checksum replica should be of the type CHECKSUM",
-                cc.getType(), ReplicaType.CHECKSUM);
-        
+
+        assertEquals("A checksum replica should be of the type CHECKSUM", cc.getType(), ReplicaType.CHECKSUM);
+
         // check upload
         cc.sendUploadMessage(RemoteFileFactory.getInstance(TestInfo.UPLOADMESSAGE_TESTFILE_1, true, false, true));
         con.waitForConcurrentTasksToFinish();
-        
+
         assertEquals("One upload message expected to be sent.", 1, handler.uploadMsg.size());
 
         // check GetChecksum through function
         NetarkivetMessage msg = cc.sendGetChecksumMessage(Channels.getError(), "filename.arc");
         con.waitForConcurrentTasksToFinish();
-        
+
         assertEquals("One GetChecksumMessage expected to be sent.", 1, handler.getChecksumMsg.size());
-        assertEquals("The received message should be one returned by the function", 
-                msg, handler.getChecksumMsg.get(0));
+        assertEquals("The received message should be one returned by the function", msg, handler.getChecksumMsg.get(0));
 
         // check GetChecksum through message
-        GetChecksumMessage csMsg = new GetChecksumMessage(Channels.getTheCR(),
-                Channels.getError(), "filename.arc", Settings.get(CommonSettings.USE_REPLICA_ID));
+        GetChecksumMessage csMsg = new GetChecksumMessage(Channels.getTheCR(), Channels.getError(), "filename.arc",
+                Settings.get(CommonSettings.USE_REPLICA_ID));
         cc.sendGetChecksumMessage(csMsg);
         con.waitForConcurrentTasksToFinish();
-        
+
         assertEquals("Another GetChecksumMessage expected to be sent.", 2, handler.getChecksumMsg.size());
-        assertEquals("The received message should be one returned by the function", 
-                csMsg, handler.getChecksumMsg.get(1));
-        
+        assertEquals("The received message should be one returned by the function", csMsg,
+                handler.getChecksumMsg.get(1));
+
         // check GetAllChecksums through message
-        GetAllChecksumsMessage gcsMsg = new GetAllChecksumsMessage(Channels.getTheCR(),
-                Channels.getError(), Settings.get(CommonSettings.USE_REPLICA_ID));
+        GetAllChecksumsMessage gcsMsg = new GetAllChecksumsMessage(Channels.getTheCR(), Channels.getError(),
+                Settings.get(CommonSettings.USE_REPLICA_ID));
         cc.sendGetAllChecksumsMessage(gcsMsg);
         con.waitForConcurrentTasksToFinish();
-        
+
         assertEquals("One GetAllChecksumsMessage expected to be sent.", 1, handler.checksumsMsg.size());
-        assertEquals("The received message should be one returned by the function", 
-                gcsMsg, handler.checksumsMsg.get(0));
-        
+        assertEquals("The received message should be one returned by the function", gcsMsg, handler.checksumsMsg.get(0));
+
         // check GetAllFilenames through message
-        GetAllFilenamesMessage gfsMsg = new GetAllFilenamesMessage(Channels.getTheCR(),
-                Channels.getError(), Settings.get(CommonSettings.USE_REPLICA_ID));
+        GetAllFilenamesMessage gfsMsg = new GetAllFilenamesMessage(Channels.getTheCR(), Channels.getError(),
+                Settings.get(CommonSettings.USE_REPLICA_ID));
         cc.sendGetAllFilenamesMessage(gfsMsg);
         con.waitForConcurrentTasksToFinish();
-        
+
         assertEquals("One GetAllFilenamesMessage expected to be sent.", 1, handler.filenamesMsg.size());
-        assertEquals("The received message should be one returned by the function", 
-                gfsMsg, handler.filenamesMsg.get(0));
+        assertEquals("The received message should be one returned by the function", gfsMsg, handler.filenamesMsg.get(0));
 
         // check Correct through message
-        CorrectMessage corMsg = new CorrectMessage(Channels.getTheCR(),
-                Channels.getError(), "badChecksum", 
+        CorrectMessage corMsg = new CorrectMessage(Channels.getTheCR(), Channels.getError(), "badChecksum",
                 RemoteFileFactory.getInstance(TestInfo.UPLOADMESSAGE_TESTFILE_1, true, false, true),
                 Settings.get(CommonSettings.USE_REPLICA_ID), "credentials");
         cc.sendCorrectMessage(corMsg);
         con.waitForConcurrentTasksToFinish();
-        
+
         assertEquals("One CorrectMessage expected to be sent.", 1, handler.correctMsg.size());
-        assertEquals("The received message should be one returned by the function", 
-                corMsg, handler.correctMsg.get(0));
+        assertEquals("The received message should be one returned by the function", corMsg, handler.correctMsg.get(0));
 
     }
 
-
     public class MessageTestHandler extends ArchiveMessageHandler {
         public List<UploadMessage> uploadMsg = new ArrayList<UploadMessage>();
-        public List<GetAllFilenamesMessage> filenamesMsg 
-                = new ArrayList<GetAllFilenamesMessage>();
-        public List<GetAllChecksumsMessage> checksumsMsg 
-                = new ArrayList<GetAllChecksumsMessage>();
-        public List<GetChecksumMessage> getChecksumMsg 
-                = new ArrayList<GetChecksumMessage>();
-        public List<CorrectMessage> correctMsg
-                = new ArrayList<CorrectMessage>();
+        public List<GetAllFilenamesMessage> filenamesMsg = new ArrayList<GetAllFilenamesMessage>();
+        public List<GetAllChecksumsMessage> checksumsMsg = new ArrayList<GetAllChecksumsMessage>();
+        public List<GetChecksumMessage> getChecksumMsg = new ArrayList<GetChecksumMessage>();
+        public List<CorrectMessage> correctMsg = new ArrayList<CorrectMessage>();
 
         public MessageTestHandler() {
-            //System.out.println("MessageTestHandler initiated!");
+            // System.out.println("MessageTestHandler initiated!");
         }
 
         public void visit(UploadMessage msg) {
@@ -250,14 +235,13 @@ public class ChecksumClientTester {
         public void visit(GetChecksumMessage msg) {
             getChecksumMsg.add(msg);
         }
-        
+
         public void visit(CorrectMessage msg) {
             correctMsg.add(msg);
         }
 
         synchronized public int getTotalCount() {
-            return (uploadMsg.size() + filenamesMsg.size()
-                    + checksumsMsg.size() + getChecksumMsg.size());
+            return (uploadMsg.size() + filenamesMsg.size() + checksumsMsg.size() + getChecksumMsg.size());
         }
 
         synchronized void receive(long ms) {

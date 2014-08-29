@@ -31,34 +31,30 @@ import org.slf4j.LoggerFactory;
 import dk.netarkivet.common.utils.DomainUtils;
 
 /**
- * Using the domain as the queue-name.
- * The domain is defined as the last two names in the entire hostname or
- * the entirety of an IP address.
- * x.y.z -> y.z
- * y.z -> y.z
- * nn.nn.nn.nn -> nn.nn.nn.nn
+ * Using the domain as the queue-name. The domain is defined as the last two names in the entire hostname or the
+ * entirety of an IP address. x.y.z -> y.z y.z -> y.z nn.nn.nn.nn -> nn.nn.nn.nn
  */
 public class DomainnameQueueAssignmentPolicy extends HostnameQueueAssignmentPolicy {
 
     private static final Logger log = LoggerFactory.getLogger(DomainnameQueueAssignmentPolicy.class);
 
-	/** A key used for the cases when we can't figure out the URI.
-     *  This is taken from parent, where it has private access.  Parent returns
-     *  this on things like about:blank. */
+    /**
+     * A key used for the cases when we can't figure out the URI. This is taken from parent, where it has private
+     * access. Parent returns this on things like about:blank.
+     */
     static final String DEFAULT_CLASS_KEY = "default...";
 
-    /** Return a key for queue names based on domain names (last two parts of
-     * host name) or IP address.  They key may include a #<portnr> at the end.
+    /**
+     * Return a key for queue names based on domain names (last two parts of host name) or IP address. They key may
+     * include a #<portnr> at the end.
      *
      * @param controller The controller the crawl is running on.
      * @param cauri A potential URI.
-     * @return a class key (really an arbitrary string), one of <domainOrIP>,
-     * <domainOrIP>#<port>, or "default...".
-     * @see HostnameQueueAssignmentPolicy#getClassKey(
-     *  org.archive.crawler.framework.CrawlController,
-     *  org.archive.crawler.datamodel.CandidateURI)
+     * @return a class key (really an arbitrary string), one of <domainOrIP>, <domainOrIP>#<port>, or "default...".
+     * @see HostnameQueueAssignmentPolicy#getClassKey(org.archive.crawler.framework.CrawlController,
+     * org.archive.crawler.datamodel.CandidateURI)
      */
-     public String getClassKey(CrawlController controller, CandidateURI cauri) {
+    public String getClassKey(CrawlController controller, CandidateURI cauri) {
         String candidate;
         try {
             // Since getClassKey has no contract, we must encapsulate it from

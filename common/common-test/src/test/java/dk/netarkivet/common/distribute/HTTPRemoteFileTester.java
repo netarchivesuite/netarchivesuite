@@ -44,7 +44,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 /** Tests for HTTPRemoteFile */
 
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class HTTPRemoteFileTester {
     MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
     UseTestRemoteFile utrf = new UseTestRemoteFile();
@@ -157,7 +157,8 @@ public class HTTPRemoteFileTester {
     }
 
     private class ForceRemoteHTTPRemoteFile extends HTTPRemoteFile {
-        public ForceRemoteHTTPRemoteFile(File f, boolean useChecksums, boolean fileDeletable, boolean multipleDownloads) {
+        public ForceRemoteHTTPRemoteFile(File f, boolean useChecksums, boolean fileDeletable,
+                boolean multipleDownloads) {
             super(f, useChecksums, fileDeletable, multipleDownloads);
         }
 

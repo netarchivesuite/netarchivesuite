@@ -58,14 +58,12 @@ import dk.netarkivet.testutils.preconfigured.MockupJMS;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
-
 /**
- * Tests JMSConnection, the class that handles all JMS operations for
- * Netarkivet.
+ * Tests JMSConnection, the class that handles all JMS operations for Netarkivet.
  */
 
 @Ignore("Not in junit3 test suite")
-@SuppressWarnings({ "unchecked", "rawtypes", "unused", "serial" })
+@SuppressWarnings({"unchecked", "rawtypes", "unused", "serial"})
 public class JMSConnectionTester {
 
     private SecurityManager originalSecurityManager;
@@ -104,12 +102,10 @@ public class JMSConnectionTester {
      */
     @Test
     public void testUnpackParameterIsNull() {
-        Settings.set(CommonSettings.JMS_BROKER_CLASS,
-                     "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
+        Settings.set(CommonSettings.JMS_BROKER_CLASS, "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
         try {
             JMSConnection.unpack(null);
-            fail("Should throw an ArgumentNotValidException when given a " +
-                    "null parameter");
+            fail("Should throw an ArgumentNotValidException when given a " + "null parameter");
         } catch (ArgumentNotValid e) {
             // Expected
         }
@@ -120,30 +116,24 @@ public class JMSConnectionTester {
      */
     @Test
     public void testUnpackParameterIsAnObjectMessage() {
-        Settings.set(CommonSettings.JMS_BROKER_CLASS,
-                     "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
+        Settings.set(CommonSettings.JMS_BROKER_CLASS, "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
         try {
             JMSConnection.unpack(new DummyMapMessage());
-            fail("Should throw an ArgumentNotValid exception when given a " +
-                    "wrong message type");
+            fail("Should throw an ArgumentNotValid exception when given a " + "wrong message type");
         } catch (ArgumentNotValid e) {
             // Expected
         }
     }
 
     /**
-     * Tests for correct error handling if ObjectMessage has the wrong
-     * payload.
+     * Tests for correct error handling if ObjectMessage has the wrong payload.
      */
     @Test
     public void testUnpackInvalidPayload() {
-        Settings.set(CommonSettings.JMS_BROKER_CLASS,
-                     "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
+        Settings.set(CommonSettings.JMS_BROKER_CLASS, "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
         try {
-            JMSConnection.unpack(new JMSConnectionMockupMQ.TestObjectMessage(
-                    new DummySerializableClass()));
-            fail("Should throw an ArgumentNotValidException when given a " +
-                    "wrong payload");
+            JMSConnection.unpack(new JMSConnectionMockupMQ.TestObjectMessage(new DummySerializableClass()));
+            fail("Should throw an ArgumentNotValidException when given a " + "wrong payload");
         } catch (ArgumentNotValid e) {
             // Expected
         }
@@ -154,15 +144,12 @@ public class JMSConnectionTester {
      */
     @Test
     public void testUnpackOfCorrectPayload() {
-        Settings.set(CommonSettings.JMS_BROKER_CLASS,
-                     "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
+        Settings.set(CommonSettings.JMS_BROKER_CLASS, "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
         String testID = "42";
         TestMessage testMessage = new TestMessage(Channels.getTheRepos(), Channels.getTheBamon(), testID);
         JMSConnectionMockupMQ.updateMsgID(testMessage, "ID89");
-        TestMessage msg = (TestMessage)JMSConnection.unpack(
-                new JMSConnectionMockupMQ.TestObjectMessage(testMessage));
-        assertEquals("Unpacking should have given correct ID",
-                msg.testID, testID);
+        TestMessage msg = (TestMessage) JMSConnection.unpack(new JMSConnectionMockupMQ.TestObjectMessage(testMessage));
+        assertEquals("Unpacking should have given correct ID", msg.testID, testID);
     }
 
     /**
@@ -171,9 +158,8 @@ public class JMSConnectionTester {
     @Test
     public void testResendArgumentsNotNull() {
         /*
-         * Check it is the correct resend method which is invoked and not
-         * an overloaded version in fx. JMSConnectionMockupMQ. Resend should be
-         * declared final.
+         * Check it is the correct resend method which is invoked and not an overloaded version in fx.
+         * JMSConnectionMockupMQ. Resend should be declared final.
          */
         Class parameterTypes[] = {NetarkivetMessage.class, ChannelID.class};
         assertMethodIsFinal(JMSConnection.class, "resend", parameterTypes);
@@ -181,12 +167,10 @@ public class JMSConnectionTester {
         /*
          * Set up JMSConnection and dummy receive servers.
          */
-        Settings.set(CommonSettings.JMS_BROKER_CLASS,
-                     "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
+        Settings.set(CommonSettings.JMS_BROKER_CLASS, "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
 
         /*
-         * Test if ArgumentNotValid is thrown if null
-         * is given as first parameter.
+         * Test if ArgumentNotValid is thrown if null is given as first parameter.
          */
         try {
             JMSConnectionFactory.getInstance().resend(null, Channels.getError());
@@ -196,12 +180,11 @@ public class JMSConnectionTester {
         }
 
         /*
-         * Test if ArgumentNotValid is thrown if null
-         * is given as second parameter
+         * Test if ArgumentNotValid is thrown if null is given as second parameter
          */
         try {
-            JMSConnectionFactory.getInstance().resend(new TestMessage(
-                    Channels.getError(), Channels.getError(), ""), null);
+            JMSConnectionFactory.getInstance().resend(new TestMessage(Channels.getError(), Channels.getError(), ""),
+                    null);
             fail("Should throw ArgumentNotValid exception");
         } catch (ArgumentNotValid e) {
             // Expected
@@ -209,16 +192,14 @@ public class JMSConnectionTester {
     }
 
     /**
-     * Test the resend method. Message shouldn't be sent according to the
-     * address specified in the "to" field of the message. It should be sent to
-     * the address given in the "to" parameter of the resend() method.
+     * Test the resend method. Message shouldn't be sent according to the address specified in the "to" field of the
+     * message. It should be sent to the address given in the "to" parameter of the resend() method.
      */
     @Test
     public void testResendCorrectSendBehaviour() {
         /**
-         * Check it is the correct resend method which is invoked and not
-         * an overloaded version in fx. JMSConnectionMockupMQ. Resend should be
-         * declared final.
+         * Check it is the correct resend method which is invoked and not an overloaded version in fx.
+         * JMSConnectionMockupMQ. Resend should be declared final.
          */
         Class parameterTypes[] = {NetarkivetMessage.class, ChannelID.class};
         assertMethodIsFinal(JMSConnection.class, "resend", parameterTypes);
@@ -226,8 +207,7 @@ public class JMSConnectionTester {
         /**
          * Set up JMSConnection and dummy receive servers.
          */
-        Settings.set(CommonSettings.JMS_BROKER_CLASS,
-                     "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
+        Settings.set(CommonSettings.JMS_BROKER_CLASS, "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
         JMSConnection con = JMSConnectionFactory.getInstance();
 
         // Create dummy server and listen on the Error queue.
@@ -244,7 +224,7 @@ public class JMSConnectionTester {
         DummyServer serverTheBamonQueue = new DummyServer();
         serverTheBamonQueue.reset();
         con.setListener(Channels.getTheBamon(), serverTheBamonQueue);
-        
+
         /**
          * The actual test.
          */
@@ -262,8 +242,8 @@ public class JMSConnectionTester {
         assertEquals("Server should have received 1 message", 1, serverErrorQueue.msgReceived);
     }
 
-    /** Tests that initconnection actually starts a topic connection and a
-     * queue connection.
+    /**
+     * Tests that initconnection actually starts a topic connection and a queue connection.
      *
      * @throws Exception On failures
      */
@@ -272,48 +252,40 @@ public class JMSConnectionTester {
         /*
          * Set up JMSConnection and dummy receive servers.
          */
-        Settings.set(CommonSettings.JMS_BROKER_CLASS,
-                     "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
+        Settings.set(CommonSettings.JMS_BROKER_CLASS, "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
         JMSConnection con = JMSConnectionFactory.getInstance();
         assertTrue("Should have started the queue connection",
-                   ((JMSConnectionMockupMQ.TestConnection)con.connection).isStarted);
+                ((JMSConnectionMockupMQ.TestConnection) con.connection).isStarted);
     }
 
     @Test
-    public void testSendToQueue() throws JMSException, NoSuchFieldException,
-            IllegalAccessException {
-        Settings.set(CommonSettings.JMS_BROKER_CLASS,
-                     "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
+    public void testSendToQueue() throws JMSException, NoSuchFieldException, IllegalAccessException {
+        Settings.set(CommonSettings.JMS_BROKER_CLASS, "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
         JMSConnection con = JMSConnectionFactory.getInstance();
         con.initConnection();
 
         ChannelID sendChannel = Channels.getTheRepos();
         ChannelID replyChannel = Channels.getTheBamon();
-        NetarkivetMessage msg = new TestMessage(sendChannel,
-                replyChannel, "testMSG");
+        NetarkivetMessage msg = new TestMessage(sendChannel, replyChannel, "testMSG");
 
         con.send(msg);
 
         String sendName = sendChannel.getName();
 
-        //Find message producer for queue.
-        JMSConnectionMockupMQ.TestMessageProducer queueSender =
-                (JMSConnectionMockupMQ.TestMessageProducer) con.producers.get(sendName);
+        // Find message producer for queue.
+        JMSConnectionMockupMQ.TestMessageProducer queueSender = (JMSConnectionMockupMQ.TestMessageProducer) con.producers
+                .get(sendName);
 
-        assertNotNull("Should have created a sender for " + sendName,
-                queueSender);
+        assertNotNull("Should have created a sender for " + sendName, queueSender);
         ObjectMessage sentSerialMsg = queueSender.messages.get(0);
         assertNotNull("Should have a sent message", sentSerialMsg);
-        assertEquals("Received message should be the same as was sent",
-                sentSerialMsg.getObject(), msg);
+        assertEquals("Received message should be the same as was sent", sentSerialMsg.getObject(), msg);
         assertNotNull("Message should now have an id", msg.getID());
     }
 
     @Test
-    public void testSendToTopic() throws JMSException, NoSuchFieldException,
-            IllegalAccessException {
-        Settings.set(CommonSettings.JMS_BROKER_CLASS,
-                     "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
+    public void testSendToTopic() throws JMSException, NoSuchFieldException, IllegalAccessException {
+        Settings.set(CommonSettings.JMS_BROKER_CLASS, "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
         JMSConnection con = JMSConnectionFactory.getInstance();
         con.initConnection();
 
@@ -321,30 +293,25 @@ public class JMSConnectionTester {
 
         ChannelID sendChannel = Channels.getAllBa();
         ChannelID replyChannel = Channels.getTheBamon();
-        NetarkivetMessage msg = new TestMessage(sendChannel,
-                replyChannel, "testMSG");
+        NetarkivetMessage msg = new TestMessage(sendChannel, replyChannel, "testMSG");
 
         con.send(msg);
 
         String sendName = sendChannel.getName();
 
-        JMSConnectionMockupMQ.TestMessageProducer topicPublisher =
-                (JMSConnectionMockupMQ.TestMessageProducer)publishersMap.get(sendName);
+        JMSConnectionMockupMQ.TestMessageProducer topicPublisher = (JMSConnectionMockupMQ.TestMessageProducer) publishersMap
+                .get(sendName);
 
-        assertNotNull("Should have created a publisher for " + sendName,
-                topicPublisher);
+        assertNotNull("Should have created a publisher for " + sendName, topicPublisher);
         ObjectMessage sentSerialMsg = topicPublisher.messages.get(0);
         assertNotNull("Should have a published message", sentSerialMsg);
-        assertEquals("Received message should be the same as was published",
-                sentSerialMsg.getObject(), msg);
+        assertEquals("Received message should be the same as was published", sentSerialMsg.getObject(), msg);
         assertNotNull("Message should now have an id", msg.getID());
     }
 
     @Test
-    public void testSetListener() throws JMSException, NoSuchFieldException,
-            IllegalAccessException {
-        Settings.set(CommonSettings.JMS_BROKER_CLASS,
-                     "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
+    public void testSetListener() throws JMSException, NoSuchFieldException, IllegalAccessException {
+        Settings.set(CommonSettings.JMS_BROKER_CLASS, "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
         JMSConnection con = JMSConnectionFactory.getInstance();
         con.initConnection();
 
@@ -352,6 +319,7 @@ public class JMSConnectionTester {
             public void onMessage(Message message) {
                 throw new NotImplementedException("Not implemented");
             }
+
             public String toString() {
                 return "listener1";
             }
@@ -360,6 +328,7 @@ public class JMSConnectionTester {
             public void onMessage(Message message) {
                 throw new NotImplementedException("Not implemented");
             }
+
             public String toString() {
                 return "listener2";
             }
@@ -367,48 +336,35 @@ public class JMSConnectionTester {
         ChannelID anyBa = Channels.getAnyBa();
         con.setListener(anyBa, listener1);
         Map<String, MessageConsumer> consumerMap = con.consumers;
-        MessageConsumer messageConsumer
-                = consumerMap.get(anyBa.getName()
-                + "##listener1");
-        assertEquals("Should have added listener for queue",
-                listener1, messageConsumer.getMessageListener());
+        MessageConsumer messageConsumer = consumerMap.get(anyBa.getName() + "##listener1");
+        assertEquals("Should have added listener for queue", listener1, messageConsumer.getMessageListener());
 
         ChannelID allBa = Channels.getAllBa();
         con.setListener(allBa, listener2);
-        messageConsumer
-                = consumerMap.get(allBa.getName()
-                + "##listener2");
-        assertEquals("Should have added listener for topic",
-                listener2, messageConsumer.getMessageListener());
+        messageConsumer = consumerMap.get(allBa.getName() + "##listener2");
+        assertEquals("Should have added listener for topic", listener2, messageConsumer.getMessageListener());
 
         con.removeListener(anyBa, listener1);
-        assertFalse("Should have lost the listener",
-                consumerMap.containsKey(anyBa.getName() + "##listener1"));
-        messageConsumer
-                = consumerMap.get(allBa.getName()
-                + "##listener2");
-        assertEquals("Should still have listener for topic",
-                listener2, messageConsumer.getMessageListener());
+        assertFalse("Should have lost the listener", consumerMap.containsKey(anyBa.getName() + "##listener1"));
+        messageConsumer = consumerMap.get(allBa.getName() + "##listener2");
+        assertEquals("Should still have listener for topic", listener2, messageConsumer.getMessageListener());
         con.setListener(anyBa, listener1);
-        assertEquals("Should have two listeners now",
-                2, consumerMap.size());
+        assertEquals("Should have two listeners now", 2, consumerMap.size());
     }
-    
+
     @Test
-    public void testGetConsumerKey() throws NoSuchMethodException,
-            IllegalAccessException {
-        Settings.set(CommonSettings.JMS_BROKER_CLASS,
-                     "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
+    public void testGetConsumerKey() throws NoSuchMethodException, IllegalAccessException {
+        Settings.set(CommonSettings.JMS_BROKER_CLASS, "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
         MessageListener listener = new MessageListener() {
             public void onMessage(Message message) {
                 throw new NotImplementedException("Not implemented");
             }
+
             public String toString() {
                 return "ourListener";
             }
         };
-        assertEquals("Should have expected key for topic",
-                Channels.getAllBa().getName() + "##" + listener.toString(),
+        assertEquals("Should have expected key for topic", Channels.getAllBa().getName() + "##" + listener.toString(),
                 JMSConnection.getConsumerKey(Channels.getAllBa().getName(), listener));
         assertEquals("Should have expected key for queue",
                 Channels.getTheBamon().getName() + "##" + listener.toString(),
@@ -416,44 +372,33 @@ public class JMSConnectionTester {
     }
 
     @Test
-    public void testReply() throws JMSException, NoSuchFieldException,
-            IllegalAccessException {
-        Settings.set(CommonSettings.JMS_BROKER_CLASS,
-                     "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
+    public void testReply() throws JMSException, NoSuchFieldException, IllegalAccessException {
+        Settings.set(CommonSettings.JMS_BROKER_CLASS, "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
         JMSConnection con = JMSConnectionFactory.getInstance();
 
-        NetarkivetMessage msg = new TestMessage(Channels.getTheRepos(),
-                Channels.getTheBamon(), "testMSG");
+        NetarkivetMessage msg = new TestMessage(Channels.getTheRepos(), Channels.getTheBamon(), "testMSG");
 
-        Map<String, MessageProducer> sendersMap =
-                con.producers;
+        Map<String, MessageProducer> sendersMap = con.producers;
 
         con.send(msg);
         String sendName = Channels.getTheRepos().getName();
-        JMSConnectionMockupMQ.TestMessageProducer queueSender =
-                (JMSConnectionMockupMQ.TestMessageProducer)sendersMap.get(sendName);
+        JMSConnectionMockupMQ.TestMessageProducer queueSender = (JMSConnectionMockupMQ.TestMessageProducer) sendersMap
+                .get(sendName);
         ObjectMessage sentSerialMsg = (queueSender.messages.get(0));
-        NetarkivetMessage sentMessage = (NetarkivetMessage)sentSerialMsg.getObject();
+        NetarkivetMessage sentMessage = (NetarkivetMessage) sentSerialMsg.getObject();
         sentMessage.setNotOk("Test error");
         con.reply(sentMessage);
 
         String replyName = Channels.getTheBamon().getName();
-        queueSender =
-                (JMSConnectionMockupMQ.TestMessageProducer)sendersMap.get(replyName);
+        queueSender = (JMSConnectionMockupMQ.TestMessageProducer) sendersMap.get(replyName);
         assertNotNull("Should have a sender for " + replyName, queueSender);
 
-        ObjectMessage receivedSerialMsg
-                = queueSender.messages.get(0);
-        NetarkivetMessage received
-                = (NetarkivetMessage)receivedSerialMsg.getObject();
-        assertEquals("Should have sent a message on " + queueSender,
-                received, msg);
-        assertFalse("Message should now be notOk",
-                received.isOk());
+        ObjectMessage receivedSerialMsg = queueSender.messages.get(0);
+        NetarkivetMessage received = (NetarkivetMessage) receivedSerialMsg.getObject();
+        assertEquals("Should have sent a message on " + queueSender, received, msg);
+        assertFalse("Message should now be notOk", received.isOk());
 
-
-        msg = new TestMessage(Channels.getTheRepos(),
-                Channels.getTheBamon(), "testMSG");
+        msg = new TestMessage(Channels.getTheRepos(), Channels.getTheBamon(), "testMSG");
         try {
             con.reply(msg);
             fail("Shouldn't be able to reply to unsent message.");
@@ -472,7 +417,7 @@ public class JMSConnectionTester {
     private void assertMethodIsFinal(Class aClass, String name, Class[] parameterTypes) {
         try {
             Method m = aClass.getMethod(name, parameterTypes);
-            assertTrue(name+"() in JMSConnection is not declared final!", Modifier.isFinal(m.getModifiers()));
+            assertTrue(name + "() in JMSConnection is not declared final!", Modifier.isFinal(m.getModifiers()));
         } catch (Exception e) {
             fail("Method " + name + " in JMSConnection doesn't exist!");
         }
@@ -486,11 +431,13 @@ public class JMSConnectionTester {
         public int msgNotOK = 0;
         public int msgReceived = 0;
 
-        /* (non-Javadoc)
+        /*
+         * (non-Javadoc)
+         * 
          * @see javax.jms.MessageListener#onMessage(javax.jms.Message)
          */
         public void onMessage(Message msg) {
-            log.fine("DummyServer received message: "+msg);
+            log.fine("DummyServer received message: " + msg);
             NetarkivetMessage netMsg = JMSConnection.unpack(msg);
             msgReceived = (netMsg.isOk() ? ++msgOK : ++msgNotOK);
         }

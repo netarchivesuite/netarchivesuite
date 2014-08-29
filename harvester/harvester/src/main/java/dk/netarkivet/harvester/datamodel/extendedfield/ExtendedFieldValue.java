@@ -30,7 +30,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  */
 public class ExtendedFieldValue {
 
-	/** The ID of the value of the ExtendedField. */
+    /** The ID of the value of the ExtendedField. */
     private Long extendedFieldValueID;
     /** The ID of the ExtendedField. */
     private Long extendedFieldID;
@@ -38,17 +38,17 @@ public class ExtendedFieldValue {
     private String content;
     /** The instanceid. */
     private Long instanceID;
-    
+
     /**
-     * 
      * @return the ID of the value of the ExtendedField
      */
     public Long getExtendedFieldValueID() {
         return extendedFieldValueID;
     }
-    
+
     /**
      * Set the ID of value of the ExtendedField.
+     *
      * @param extendedFieldValueID the ID of the value of the ExtendedField
      */
     public void setExtendedFieldValueID(Long extendedFieldValueID) {
@@ -62,16 +62,17 @@ public class ExtendedFieldValue {
     public Long getExtendedFieldID() {
         return extendedFieldID;
     }
-    
+
     /**
      * Set the ID of the ExtendedField.
+     *
      * @param extendedFieldID the ID of the ExtendedField
      */
     public void setExtendedFieldID(Long extendedFieldID) {
         ArgumentNotValid.checkNotNull(extendedFieldID, "Long extendedFieldID");
         this.extendedFieldID = extendedFieldID;
     }
-    
+
     /**
      * @return the content of the value
      */
@@ -80,7 +81,8 @@ public class ExtendedFieldValue {
     }
 
     /**
-     *  Set the content. Null arg is not accepted.
+     * Set the content. Null arg is not accepted.
+     *
      * @param content The content of the value
      */
     public void setContent(String content) {
@@ -93,10 +95,11 @@ public class ExtendedFieldValue {
     public Long getInstanceID() {
         return instanceID;
     }
-    
+
     /**
      * Set the instanceId. Null arg is not accepted.
-     * @param instanceID The instanceid 
+     *
+     * @param instanceID The instanceid
      */
     public void setInstanceID(Long instanceID) {
         this.instanceID = instanceID;
@@ -110,13 +113,12 @@ public class ExtendedFieldValue {
     }
 
     /**
-     * Constructor initializing all instance members.
-     * Used when reading from persistent storage.
+     * Constructor initializing all instance members. Used when reading from persistent storage.
+     *
      * @param aExtendedFieldValueID The ID of the value of the ExtendedField.
      * @param aExtendedFieldID The ID of the ExtendedField.
      * @param aInstanceID The instance id of the value
-     * @param aContent The contents of the value (the value itself)
-     * TODO argument validation
+     * @param aContent The contents of the value (the value itself) TODO argument validation
      */
     public ExtendedFieldValue(Long aExtendedFieldValueID, Long aExtendedFieldID, Long aInstanceID, String aContent) {
         extendedFieldValueID = aExtendedFieldValueID;
@@ -145,15 +147,8 @@ public class ExtendedFieldValue {
     }
 
     public String toString() {
-        return ""
-                + "extendedFieldValueID:[" +  extendedFieldValueID
-                + "]\n"
-                + "extendedFieldID:[" +  extendedFieldID
-                + "]\n"
-                + "content:[" +  content
-                + "]\n"
-                + "instanceID:[" +  instanceID
-                + "]\n";
+        return "" + "extendedFieldValueID:[" + extendedFieldValueID + "]\n" + "extendedFieldID:[" + extendedFieldID
+                + "]\n" + "content:[" + content + "]\n" + "instanceID:[" + instanceID + "]\n";
     }
-    
+
 }

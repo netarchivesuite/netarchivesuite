@@ -29,7 +29,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-@SuppressWarnings({ "unchecked"})
+@SuppressWarnings({"unchecked"})
 public class FileNameHarvesterTester extends IndexerTestCase {
 
     @Before
@@ -45,7 +45,7 @@ public class FileNameHarvesterTester extends IndexerTestCase {
         List<ArchiveFile> files = dao.getSession().createQuery("from ArchiveFile").list();
         assertEquals("There should be four files", 6, files.size());
         FileNameHarvester.harvestAllFilenames();
-        assertEquals("There should still be four files", 6, files.size());      
+        assertEquals("There should still be four files", 6, files.size());
     }
 
 }

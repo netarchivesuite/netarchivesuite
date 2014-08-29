@@ -43,13 +43,12 @@ import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
- * Unit test for Bitarchive API
- * The CTOR method is tested
+ * Unit test for Bitarchive API The CTOR method is tested
  */
-@SuppressWarnings({ "unused"})
+@SuppressWarnings({"unused"})
 public class BitarchiveTesterCTOR {
 
-	private static File PATH_TO_TEST = new File("tests/dk/netarkivet/archive/bitarchive/data/ctor");
+    private static File PATH_TO_TEST = new File("tests/dk/netarkivet/archive/bitarchive/data/ctor");
     private static File NEW_ARCHIVE_DIR = new File(PATH_TO_TEST, "new");
     private static File EXISTING_ARCHIVE_NAME = new File(PATH_TO_TEST, "existing");
     private static File NOACCESS_ARCHIVE_DIR = new File(PATH_TO_TEST, "noaccess");
@@ -86,7 +85,7 @@ public class BitarchiveTesterCTOR {
      */
     @Test
     public void testFromScratch() {
-    	LogbackRecorder lr = LogbackRecorder.startRecorder();
+        LogbackRecorder lr = LogbackRecorder.startRecorder();
         assertFalse("No bitarchive should exist before creating it", NEW_ARCHIVE_DIR.exists());
         // Create new test archive and close it
         Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, NEW_ARCHIVE_DIR.getAbsolutePath());
@@ -99,33 +98,28 @@ public class BitarchiveTesterCTOR {
     }
 
     /**
-     * Create bitarchive with access denied to location of admin data
-     * verify that exceptions are thrown
+     * Create bitarchive with access denied to location of admin data verify that exceptions are thrown
      */
     @Test
     public void testAccessDenied() {
         // Make sure archive exists
-        assertTrue("Inaccessible archive dir must exist",
-                NOACCESS_ARCHIVE_DIR.exists());
+        assertTrue("Inaccessible archive dir must exist", NOACCESS_ARCHIVE_DIR.exists());
 
         if (NOACCESS_ARCHIVE_DIR.canWrite()) {
             NOACCESS_ARCHIVE_DIR.setReadOnly();
         }
 
         // and that admin file is inaccessible
-        assertFalse("Must not be able to write to inaccessible admin file",
-                NOACCESS_ARCHIVE_DIR.canWrite());
+        assertFalse("Must not be able to write to inaccessible admin file", NOACCESS_ARCHIVE_DIR.canWrite());
 
         try {
-            Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR,
-                         NOACCESS_ARCHIVE_DIR.getAbsolutePath());
+            Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, NOACCESS_ARCHIVE_DIR.getAbsolutePath());
             Bitarchive ba = Bitarchive.getInstance();
             ba.close();
             fail("Accessing read-only archive should throw exception"); // do not come here
         } catch (PermissionDenied e) {
             // Expected case
-            StringAsserts.assertStringContains("Should mention noaccess dir",
-                    "noaccess/filedir", e.getMessage());
+            StringAsserts.assertStringContains("Should mention noaccess dir", "noaccess/filedir", e.getMessage());
         }
     }
 

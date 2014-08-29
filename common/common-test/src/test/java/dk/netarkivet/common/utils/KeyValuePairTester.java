@@ -28,9 +28,7 @@ import static org.junit.Assert.fail;
 import org.junit.Test;
 
 /**
- * 
  * Unit tests for the KeyValuePair class.
- *
  */
 public class KeyValuePairTester {
 

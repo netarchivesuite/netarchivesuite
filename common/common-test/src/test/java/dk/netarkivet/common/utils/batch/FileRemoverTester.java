@@ -22,18 +22,18 @@
  */
 package dk.netarkivet.common.utils.batch;
 
-
 import static org.junit.Assert.assertFalse;
 
 import java.io.File;
 import java.io.IOException;
 
 import org.junit.Test;
+
 /**
  * Unit tests for the {@link FileRemover} class.
  */
 public class FileRemoverTester {
-    
+
     @Test
     public void testRemoverJob() throws IOException {
         FileBatchJob job = new FileRemover();
@@ -44,5 +44,5 @@ public class FileRemoverTester {
         job.finish(null);
         assertFalse(tmp.exists());
     }
-    
+
 }

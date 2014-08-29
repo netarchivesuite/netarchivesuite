@@ -26,17 +26,15 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.NoSuchMethodException;
-import java.lang.IllegalAccessException;
 
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.batch.FileBatchJob;
 
-/** This class is used for loading by LoadableFileBatchJobTester.  The compiled
- * class file should be placed under data/originals.
- * Create the jar file with jar cvf <jarfilename> <names of compiled classes> */
-@SuppressWarnings({ "unchecked", "rawtypes", "serial" })
+/**
+ * This class is used for loading by LoadableFileBatchJobTester. The compiled class file should be placed under
+ * data/originals. Create the jar file with jar cvf <jarfilename> <names of compiled classes>
+ */
+@SuppressWarnings({"unchecked", "rawtypes", "serial"})
 public class LoadableTestJob extends FileBatchJob {
     String ourName = "me";
 
@@ -50,8 +48,7 @@ public class LoadableTestJob extends FileBatchJob {
     }
 
     /**
-     * Initialize the job before runnning. This is called before the
-     * processFile() calls
+     * Initialize the job before runnning. This is called before the processFile() calls
      *
      * @param os the OutputStream to which output should be written
      */
@@ -67,8 +64,7 @@ public class LoadableTestJob extends FileBatchJob {
      * Process one file stored in the bit archive.
      *
      * @param file the file to be processed.
-     * @param os   the OutputStream to which output should be written
-     *
+     * @param os the OutputStream to which output should be written
      * @return true if the file was successfully processed, false otherwise
      */
     public boolean processFile(File file, OutputStream os) {
@@ -92,7 +88,8 @@ public class LoadableTestJob extends FileBatchJob {
                         loader = ClassLoader.getSystemClassLoader();
                     }
                     Class c = loader.loadClass("dk.netarkivet.utils.FileUtils");
-                    c.getMethod("writeBinaryFile", File.class, String.class).invoke(null, new File("free"), "gotout".getBytes());
+                    c.getMethod("writeBinaryFile", File.class, String.class).invoke(null, new File("free"),
+                            "gotout".getBytes());
                 } catch (ClassNotFoundException e) {
                     os.write(e.toString().getBytes());
                     return false;
@@ -121,8 +118,7 @@ public class LoadableTestJob extends FileBatchJob {
                 return file.length() % 2 == 1;
             }
         } catch (IOException e) {
-            throw new IOFailure("Error in processing " + file
-                                + " with " + this + ": ", e);
+            throw new IOFailure("Error in processing " + file + " with " + this + ": ", e);
         }
     }
 
@@ -154,8 +150,7 @@ public class LoadableTestJob extends FileBatchJob {
         }
 
         /**
-         * Initialize the job before runnning. This is called before the
-         * processFile() calls
+         * Initialize the job before runnning. This is called before the processFile() calls
          *
          * @param os the OutputStream to which output should be written
          */
@@ -171,8 +166,7 @@ public class LoadableTestJob extends FileBatchJob {
          * Process one file stored in the bit archive.
          *
          * @param file the file to be processed.
-         * @param os   the OutputStream to which output should be written
-         *
+         * @param os the OutputStream to which output should be written
          * @return true if the file was successfully processed, false otherwise
          */
         public boolean processFile(File file, OutputStream os) {
@@ -180,8 +174,7 @@ public class LoadableTestJob extends FileBatchJob {
                 os.write(("processFile() called on " + this + " with " + file.getName() + "\n").getBytes());
                 return true;
             } catch (IOException e) {
-                throw new IOFailure("Error in processing " + file
-                                    + " with " + this + ": ", e);
+                throw new IOFailure("Error in processing " + file + " with " + this + ": ", e);
             }
         }
 

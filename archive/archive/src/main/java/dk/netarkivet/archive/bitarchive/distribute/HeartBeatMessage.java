@@ -29,29 +29,25 @@ import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
- * Simple class representing a HeartBeat message from a bit archive application.
- * A heartbeat has an applicationId, that identifies the application
- * that generated the heartbeat.
- *
- * TODO This class should probably contain more status data from
-   bit archive application later.
- *
+ * Simple class representing a HeartBeat message from a bit archive application. A heartbeat has an applicationId, that
+ * identifies the application that generated the heartbeat.
+ * <p>
+ * TODO This class should probably contain more status data from bit archive application later.
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({"serial"})
 public class HeartBeatMessage extends ArchiveMessage {
 
-    /** time when heartbeat occurred. Note that timestamps cannot be compared
-         between processes.
-      */
+    /**
+     * time when heartbeat occurred. Note that timestamps cannot be compared between processes.
+     */
     private long timestamp;
-    /** id of the application sending the heartbeat.*/
+    /** id of the application sending the heartbeat. */
     private String applicationId;
 
     /**
-     * Creates a heartbeat message.
-     * The time of the heartbeat is set to the creation of this object.
+     * Creates a heartbeat message. The time of the heartbeat is set to the creation of this object.
      *
-     * @param inReceiver   ChannelID for the recipient of this message.
+     * @param inReceiver ChannelID for the recipient of this message.
      * @param applicationId - id of the application that sent the heartbeat
      */
     public HeartBeatMessage(ChannelID inReceiver, String applicationId) {
@@ -77,7 +73,7 @@ public class HeartBeatMessage extends ArchiveMessage {
 
     /**
      * Retrieval of a string representation of this instance.
-     * 
+     *
      * @return The string representation of this instance.
      */
     public String toString() {
@@ -85,8 +81,8 @@ public class HeartBeatMessage extends ArchiveMessage {
     }
 
     /**
-     * Should be implemented as a part of the visitor pattern. fx.: public void
-     * accept(ArchiveMessageVisitor v) { v.visit(this); }
+     * Should be implemented as a part of the visitor pattern. fx.: public void accept(ArchiveMessageVisitor v) {
+     * v.visit(this); }
      *
      * @param v A message visitor
      */

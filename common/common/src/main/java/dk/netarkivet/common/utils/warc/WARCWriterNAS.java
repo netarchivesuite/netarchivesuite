@@ -37,13 +37,13 @@ import org.slf4j.LoggerFactory;
 
 public class WARCWriterNAS extends WARCWriter {
 
-    private static final Logger logger =  LoggerFactory.getLogger(WARCWriter.class);
+    private static final Logger logger = LoggerFactory.getLogger(WARCWriter.class);
 
     /**
-     * Constructor.
-     * Takes a stream. Use with caution. There is no upperbound check on size.
-     * Will just keep writing.  Only pass Streams that are bounded. 
-     * @param serialNo  used to generate unique file name sequences
+     * Constructor. Takes a stream. Use with caution. There is no upperbound check on size. Will just keep writing. Only
+     * pass Streams that are bounded.
+     *
+     * @param serialNo used to generate unique file name sequences
      * @param out Where to write.
      * @param f File the <code>out</code> is connected to.
      * @param cmprs Compress the content written.
@@ -51,7 +51,7 @@ public class WARCWriterNAS extends WARCWriter {
      * @throws IOException
      */
     public WARCWriterNAS(final AtomicInteger serialNo, final OutputStream out, final File f, final boolean cmprs,
-    		final String a14DigitDate, final List<String> warcinfoData) throws IOException {
+            final String a14DigitDate, final List<String> warcinfoData) throws IOException {
         super(serialNo, out, f, cmprs, a14DigitDate, warcinfoData);
     }
 
@@ -60,20 +60,20 @@ public class WARCWriterNAS extends WARCWriter {
      *
      * @param dirs Where to drop files.
      * @param prefix File prefix to use.
-     * @param cmprs Compress the records written. 
+     * @param cmprs Compress the records written.
      * @param maxSize Maximum size for ARC files written.
-     * @param suffix File tail to use.  If null, unused.
+     * @param suffix File tail to use. If null, unused.
      * @param warcinfoData File metadata for warcinfo record.
      */
     public WARCWriterNAS(final AtomicInteger serialNo, final List<File> dirs, final String prefix, final String suffix,
-    		final boolean cmprs, final long maxSize, final List<String> warcinfoData) {
+            final boolean cmprs, final long maxSize, final List<String> warcinfoData) {
         super(serialNo, dirs, prefix, suffix, cmprs, maxSize, warcinfoData);
     }
 
     @Override
     protected void writeRecord(final String type, final String url, final String create14DigitDate,
-    		final String mimetype, final URI recordId, ANVLRecord xtraHeaders, final InputStream contentStream,
-    		final long contentLength, boolean enforceLength) throws IOException {
+            final String mimetype, final URI recordId, ANVLRecord xtraHeaders, final InputStream contentStream,
+            final long contentLength, boolean enforceLength) throws IOException {
         if (!TYPES_LIST.contains(type)) {
             throw new IllegalArgumentException("Unknown record type: " + type);
         }

@@ -30,15 +30,13 @@ import org.junit.Test;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.TableSort.SortOrder;
 
-
 /**
- * Unittests for the {@link TableSort} class. 
+ * Unittests for the {@link TableSort} class.
  */
 public class TablesortTester {
- 
+
     /**
-     * Test of TableSort constructor.
-     * Note: no validation of columnId in TableSort class.
+     * Test of TableSort constructor. Note: no validation of columnId in TableSort class.
      */
     @Test
     public void testConstructor() {
@@ -48,19 +46,19 @@ public class TablesortTester {
         } catch (ArgumentNotValid e) {
             // Expected
         }
-        
+
         // this is currently valid, but probably shouldn't be
         try {
             new TableSort(-99, SortOrder.INCR);
         } catch (ArgumentNotValid e) {
             fail("Should not throw ArgumentNotValid on negative columnID, but did");
         }
-        
+
         TableSort ts = new TableSort(0, TableSort.SortOrder.DESC);
         assertEquals(0, ts.getColumnIdent());
         assertEquals(TableSort.SortOrder.DESC, ts.getOrder());
     }
-    
+
     @Test
     public void testGetters() {
         TableSort ts = new TableSort(0, TableSort.SortOrder.DESC);
@@ -71,5 +69,5 @@ public class TablesortTester {
         assertEquals(99, ts.getColumnIdent());
         assertEquals(TableSort.SortOrder.INCR, ts.getOrder());
     }
-    
+
 }

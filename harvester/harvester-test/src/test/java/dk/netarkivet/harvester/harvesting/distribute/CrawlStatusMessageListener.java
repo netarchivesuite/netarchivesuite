@@ -23,13 +23,14 @@
 
 package dk.netarkivet.harvester.harvesting.distribute;
 
-import dk.netarkivet.common.distribute.JMSConnection;
-import dk.netarkivet.common.distribute.NetarkivetMessage;
-import dk.netarkivet.harvester.datamodel.JobStatus;
+import java.util.ArrayList;
 
 import javax.jms.Message;
 import javax.jms.MessageListener;
-import java.util.ArrayList;
+
+import dk.netarkivet.common.distribute.JMSConnection;
+import dk.netarkivet.common.distribute.NetarkivetMessage;
+import dk.netarkivet.harvester.datamodel.JobStatus;
 
 /**
  * Utility class to listen to and record all CrawlStatusMessages
@@ -46,7 +47,7 @@ public class CrawlStatusMessageListener implements MessageListener {
             status_codes.add(csm.getStatusCode());
             jobids.add(Long.valueOf(csm.getJobID()));
             messages.add(csm);
-            synchronized(this) {
+            synchronized (this) {
                 notifyAll();
             }
         }

@@ -30,9 +30,10 @@ import java.util.logging.Logger;
  */
 public class LogUtils {
 
-	/**
-	 * Flush all logs for the given class. 
-     * @param className Class to flush logs for. 
+    /**
+     * Flush all logs for the given class.
+     *
+     * @param className Class to flush logs for.
      */
     public static void flushLogs(final String className) {
         // Make sure that all logs are flushed before testing.

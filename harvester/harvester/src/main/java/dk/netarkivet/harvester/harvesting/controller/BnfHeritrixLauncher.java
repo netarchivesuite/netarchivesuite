@@ -40,11 +40,9 @@ import dk.netarkivet.harvester.harvesting.frontier.FrontierReportAnalyzer;
 import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor;
 
 /**
- * BnF specific Heritrix launcher, that forces the use of
- * {@link BnfHeritrixController}. Every turn of the crawl control loop, asks the
- * Heritrix controller to generate a progress report as a
- * {@link CrawlProgressMessage} and then send this message on the JMS bus to
- * be consumed by the {@link HarvestMonitor} instance.
+ * BnF specific Heritrix launcher, that forces the use of {@link BnfHeritrixController}. Every turn of the crawl control
+ * loop, asks the Heritrix controller to generate a progress report as a {@link CrawlProgressMessage} and then send this
+ * message on the JMS bus to be consumed by the {@link HarvestMonitor} instance.
  */
 public class BnfHeritrixLauncher extends HeritrixLauncher {
 
@@ -52,11 +50,9 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
     private static final Logger log = LoggerFactory.getLogger(BnfHeritrixLauncher.class);
 
     /**
-     * This class executes a crawl control task, e.g. queries the crawler for
-     * progress summary, sends the adequate JMS message to the monitor, and
-     * checks whether the crawl is finished, in which case crawl control will
-     * be ended.
-     *
+     * This class executes a crawl control task, e.g. queries the crawler for progress summary, sends the adequate JMS
+     * message to the monitor, and checks whether the crawl is finished, in which case crawl control will be ended.
+     * <p>
      * These tasks are scheduled by a {@link CrawlControlExecutor}.
      */
     private class CrawlControl implements Runnable {
@@ -88,15 +84,19 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
                 return;
             }
 
-            log.info("Job ID: " + files.getJobID() + ", Harvest ID: " + files.getHarvestID() + ", " + cpm.getHostUrl() + "\n" + cpm.getProgressStatisticsLegend() + "\n" + cpm.getJobStatus().getStatus() + " " + cpm.getJobStatus().getProgressStatistics());
+            log.info("Job ID: " + files.getJobID() + ", Harvest ID: " + files.getHarvestID() + ", " + cpm.getHostUrl()
+                    + "\n" + cpm.getProgressStatisticsLegend() + "\n" + cpm.getJobStatus().getStatus() + " "
+                    + cpm.getJobStatus().getProgressStatistics());
         }
     }
 
     /** Wait time in milliseconds (10s). */
     private static final int SLEEP_TIME_MS = 10 * 60 * 1000;
 
-    /** Frequency in seconds for generating the full harvest report.
-     *  Also serves as delay before the first generation occurs. */
+    /**
+     * Frequency in seconds for generating the full harvest report. Also serves as delay before the first generation
+     * occurs.
+     */
     static final long FRONTIER_REPORT_GEN_FREQUENCY = Settings.getLong(HarvesterSettings.FRONTIER_REPORT_WAIT_TIME);
 
     /** The CrawlController used. */
@@ -106,6 +106,7 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
 
     /**
      * Private constructor for this class.
+     *
      * @param files the files needed by Heritrix to launch a job.
      * @throws ArgumentNotValid
      */
@@ -116,15 +117,9 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
     /**
      * Get instance of this class.
      *
-     * @param files
-     *            Object encapsulating location of Heritrix crawldir and
-     *            configuration files
-     *
+     * @param files Object encapsulating location of Heritrix crawldir and configuration files
      * @return {@link BnfHeritrixLauncher} object
-     *
-     * @throws ArgumentNotValid
-     *             If either order.xml or seeds.txt does not exist, or argument
-     *             files is null.
+     * @throws ArgumentNotValid If either order.xml or seeds.txt does not exist, or argument files is null.
      */
     public static BnfHeritrixLauncher getInstance(HeritrixFiles files) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(files, "HeritrixFiles files");
@@ -132,13 +127,10 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
     }
 
     /**
-     * Initializes an Heritrix controller, then launches the Heritrix instance.
-     * Then starts the crawl control loop:
+     * Initializes an Heritrix controller, then launches the Heritrix instance. Then starts the crawl control loop:
      * <ol>
-     * <li>Waits the amount of time configured in
-     * {@link HarvesterSettings#CRAWL_LOOP_WAIT_TIME}.</li>
-     * <li>Obtains crawl progress information as a {@link CrawlProgressMessage}
-     * from the Heritrix controller</li>
+     * <li>Waits the amount of time configured in {@link HarvesterSettings#CRAWL_LOOP_WAIT_TIME}.</li>
+     * <li>Obtains crawl progress information as a {@link CrawlProgressMessage} from the Heritrix controller</li>
      * <li>Sends the progress message via JMS</li>
      * <li>If the crawl if reported as finished, end loop.</li>
      * </ol>
@@ -156,9 +148,9 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
 
             // Schedule full frontier report generation
             exec = new PeriodicTaskExecutor(new PeriodicTask("CrawlControl", new CrawlControl(),
-            		CRAWL_CONTROL_WAIT_PERIOD, CRAWL_CONTROL_WAIT_PERIOD),
-                    new PeriodicTask("FrontierReportAnalyzer", new FrontierReportAnalyzer(heritrixController),
-                    		FRONTIER_REPORT_GEN_FREQUENCY, FRONTIER_REPORT_GEN_FREQUENCY));
+                    CRAWL_CONTROL_WAIT_PERIOD, CRAWL_CONTROL_WAIT_PERIOD), new PeriodicTask("FrontierReportAnalyzer",
+                    new FrontierReportAnalyzer(heritrixController), FRONTIER_REPORT_GEN_FREQUENCY,
+                    FRONTIER_REPORT_GEN_FREQUENCY));
 
             while (!crawlIsOver) {
                 // Wait a bit
@@ -179,7 +171,7 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
             throw new RuntimeException("Exception during crawl", e);
         } finally {
             // Stop the crawl control & frontier report analyzer
-            if (exec!= null) {
+            if (exec != null) {
                 exec.shutdown();
             }
 

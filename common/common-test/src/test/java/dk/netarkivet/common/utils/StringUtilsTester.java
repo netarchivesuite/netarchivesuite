@@ -174,7 +174,7 @@ public class StringUtilsTester {
             // Exception
         }
 
-        String[] stringInts = new String[] { "2", "53", "55" };
+        String[] stringInts = new String[] {"2", "53", "55"};
 
         List<Integer> targetList = new ArrayList<Integer>();
         targetList.add(Integer.valueOf(2));
@@ -184,7 +184,7 @@ public class StringUtilsTester {
         targetList.removeAll(StringUtils.parseIntList(stringInts));
         assertTrue(targetList.isEmpty());
 
-        String[] stringIntsWithUnparseableInt = new String[] { "2", "53", "55", "4#" };
+        String[] stringIntsWithUnparseableInt = new String[] {"2", "53", "55", "4#"};
 
         try {
             StringUtils.parseIntList(stringIntsWithUnparseableInt);

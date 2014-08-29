@@ -50,54 +50,52 @@ import dk.netarkivet.common.utils.ApplicationUtils;
 import dk.netarkivet.common.utils.Settings;
 
 /**
- * Class for accessing and manipulating the administrative data for
- * the ArcRepository.
- * In the current implementation, it consists of a file with a number of lines
- * of the form: <filename/> <checksum/> <state/> 
- * <timestamp-for-last-state-change/> [,<bitarchive/> <storestatus/> 
- * <timestamp-for-last-state-change/>]*
+ * Class for accessing and manipulating the administrative data for the ArcRepository. In the current implementation, it
+ * consists of a file with a number of lines of the form: <filename/> <checksum/> <state/>
+ * <timestamp-for-last-state-change/> [,<bitarchive/> <storestatus/> <timestamp-for-last-state-change/>]*
+ * <p>
+ * This abstract class is overridden to give either a read/write or a readonly version of this class.
  *
- * This abstract class is overridden to give either a read/write or a readonly
- * version of this class.
- * 
  * @deprecated Use the DatabaseAdmin instead.
  */
 @Deprecated
 public abstract class AdminData {
 
-	/** The log.*/
+    /** The log. */
     private Logger log = LoggerFactory.getLogger(AdminData.class);
 
     /** Admindata version. VersionNumber is the current version. */
     public static final String VERSION_NUMBER = "0.4";
     /**
-     * Admindata version. oldVersionNumber is the earlier but still valid version. */
+     * Admindata version. oldVersionNumber is the earlier but still valid version.
+     */
     private static final String OLD_VERSION_NUMBER = "0.3";
     /** Map containing a mapping from arcfilename to ArcRepositoryEntry. */
     protected Map<String, ArcRepositoryEntry> storeEntries = new HashMap<String, ArcRepositoryEntry>();
-    /** General delimiter.
-     *  TODO add constants class where these constants are placed. */
+    /**
+     * General delimiter. TODO add constants class where these constants are placed.
+     */
     private static final String GENERAL_DELIMITER = " ";
 
-    /** The directory where the admin data resides, currently the directory:
-     * Settings.DIRS_ARCREPOSITORY_ADMIN. */
+    /**
+     * The directory where the admin data resides, currently the directory: Settings.DIRS_ARCREPOSITORY_ADMIN.
+     */
     protected File adminDir;
-    
+
     /** The name of the admin file. */
     protected static final String ADMIN_FILE_NAME = "admin.data";
 
-    /** List containing the names of all knownBitArchives.
-     * This list is updated in the setState() method
-     * But only used in the toString() method.
+    /**
+     * List containing the names of all knownBitArchives. This list is updated in the setState() method But only used in
+     * the toString() method.
      */
     protected List<String> knownBitArchives = new ArrayList<String>();
 
     /** The File object for the admin data file. */
     protected final File adminDataFile;
 
-    /** 
-     * Common constructor for admin data. Reads current admin data from admin
-     * data file.
+    /**
+     * Common constructor for admin data. Reads current admin data from admin data file.
      */
     protected AdminData() {
         this.adminDir = new File(Settings.get(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN));
@@ -115,6 +113,7 @@ public abstract class AdminData {
 
     /**
      * Returns the one and only AdminData instance.
+     *
      * @return the one and only AdminData instance.
      */
     public static synchronized UpdateableAdminData getUpdateableInstance() {
@@ -123,6 +122,7 @@ public abstract class AdminData {
 
     /**
      * Returns a read-only AdminData instance.
+     *
      * @return a read-only AdminData instance.
      */
     public static synchronized ReadOnlyAdminData getReadOnlyInstance() {
@@ -132,6 +132,7 @@ public abstract class AdminData {
 
     /**
      * Check, if there is an entry for a certain arcfile?
+     *
      * @param arcfileName A given arcfile
      * @return true, if there is an entry for the given arcfile
      */
@@ -141,8 +142,8 @@ public abstract class AdminData {
     }
 
     /**
-     * Return the ArcRepositoryEntry for a certain arcfileName.
-     * Returns null, if not found.
+     * Return the ArcRepositoryEntry for a certain arcfileName. Returns null, if not found.
+     *
      * @param arcfileName a certain filename
      * @return the ArcRepositoryEntry for a certain arcfileName
      */
@@ -151,13 +152,11 @@ public abstract class AdminData {
     }
 
     /**
-     * Tells whether there is a replyInfo associated with
-     * the given arcfile. If the file is not registered,
-     * a warning is logged and false is returned.
+     * Tells whether there is a replyInfo associated with the given arcfile. If the file is not registered, a warning is
+     * logged and false is returned.
      *
      * @param arcfileName The arc file we want to reply a store request for.
-     * @return Whether setReplyInfo() has been called
-     *         (and the replyInfo hasn't been removed since).
+     * @return Whether setReplyInfo() has been called (and the replyInfo hasn't been removed since).
      */
     public boolean hasReplyInfo(String arcfileName) {
         ArgumentNotValid.checkNotNullOrEmpty(arcfileName, "arcfileName");
@@ -169,12 +168,11 @@ public abstract class AdminData {
     }
 
     /**
-     * Returns whether or not a BitArchiveStoreState is registered for the given
-     * ARC file at the given bit archive.
+     * Returns whether or not a BitArchiveStoreState is registered for the given ARC file at the given bit archive.
      *
      * @param arcfileName The file to retrieve the state for
-     * @param replicaChannelName  The name of the identification channel for 
-     * the replica the state should be retrieved for.
+     * @param replicaChannelName The name of the identification channel for the replica the state should be retrieved
+     * for.
      * @return true if BitArchiveStoreState is registered, false otherwise.
      */
     public boolean hasState(String arcfileName, String replicaChannelName) {
@@ -191,8 +189,8 @@ public abstract class AdminData {
      * Retrieves the storage state of a file for a specific replica.
      *
      * @param arcfileName The file to retrieve the state for.
-     * @param replicaChannelName  The name of the identification channel for 
-     * the replica the state should be retrieved for.
+     * @param replicaChannelName The name of the identification channel for the replica the state should be retrieved
+     * for.
      * @return The storage state.
      * @throws UnknownID When no record exists.
      */
@@ -207,13 +205,11 @@ public abstract class AdminData {
 
     /**
      * Get Checksum for a given arcfile.
-     * @param arcfileName Unique reference to file for which to
-     *  retrieve checksum
-     * @return checksum the latest registered reference checksum or null,
-     *         if no reference checksum is available
+     *
+     * @param arcfileName Unique reference to file for which to retrieve checksum
+     * @return checksum the latest registered reference checksum or null, if no reference checksum is available
      * @throws UnknownID if the file is not registered
-     * @throws ArgumentNotValid If the arcFileName is either null or the empty
-     * string. 
+     * @throws ArgumentNotValid If the arcFileName is either null or the empty string.
      */
     public String getCheckSum(String arcfileName) throws ArgumentNotValid, UnknownID {
         ArgumentNotValid.checkNotNullOrEmpty(arcfileName, "arcfileName");
@@ -224,8 +220,9 @@ public abstract class AdminData {
     }
 
     /**
-     * Reads the admin data from a file. If the data read is a valid old version
-     * the it is converted to the new version and written to disk.
+     * Reads the admin data from a file. If the data read is a valid old version the it is converted to the new version
+     * and written to disk.
+     *
      * @throws IOFailure on trouble reading from file
      */
     protected void read() throws IOFailure {
@@ -234,11 +231,10 @@ public abstract class AdminData {
             try {
                 reader = new BufferedReader(new FileReader(adminDataFile));
                 /*
-                * Check version. When this check is done, we either have
-                *  - dataVersion.equals(versionNumber)) && !validOldVersion, or
-                *  - !dataVersion.equals(versionNumber)) && validOldVersion
-                *  The latter applies if the data file was empty.
-                */
+                 * Check version. When this check is done, we either have - dataVersion.equals(versionNumber)) &&
+                 * !validOldVersion, or - !dataVersion.equals(versionNumber)) && validOldVersion The latter applies if
+                 * the data file was empty.
+                 */
                 String dataVersion = OLD_VERSION_NUMBER;
 
                 boolean validOldVersion = false;
@@ -253,7 +249,7 @@ public abstract class AdminData {
                 if (!dataVersion.equals(VERSION_NUMBER) && !validOldVersion) {
                     throw new IOFailure("Invalid version" + dataVersion);
                 }
-                //Now read the data file, depending on version.
+                // Now read the data file, depending on version.
                 if (dataVersion.equals(VERSION_NUMBER)) {
                     log.debug("admindata version: {}", VERSION_NUMBER);
                     readCurrentVersion(reader);
@@ -272,21 +268,14 @@ public abstract class AdminData {
         }
     }
 
-    /** Read the valid old version (0.3) of the admin data.
-     * The valid old version contains lines of the format
-     * <filename/> <checksum/> [<bitarchive/> <storestatus/>]*
-     * The same filename may occur multiple times, but must always
-     * have the same checksum.  This indicates updates of the storestatus
-     * for the file.  Updates to checksum happen only during 'correct'
-     * operations and cause the entire file to be written, leaving the changed
-     * entry with the new checksum only.
-     * An entry-line is considered corrupt (!valid) if any of the
-     * following occur:
-     * There is no checksum.
-     * There is a bitarchive with a missing or invalid status
-     * The checksum does not match a previously found checksum.
-     * NB: If we come upon a corrupt entry-line, the entry for the filename
-     * in question is removed from admin.data
+    /**
+     * Read the valid old version (0.3) of the admin data. The valid old version contains lines of the format
+     * <filename/> <checksum/> [<bitarchive/> <storestatus/>]* The same filename may occur multiple times, but must
+     * always have the same checksum. This indicates updates of the storestatus for the file. Updates to checksum happen
+     * only during 'correct' operations and cause the entire file to be written, leaving the changed entry with the new
+     * checksum only. An entry-line is considered corrupt (!valid) if any of the following occur: There is no checksum.
+     * There is a bitarchive with a missing or invalid status The checksum does not match a previously found checksum.
+     * NB: If we come upon a corrupt entry-line, the entry for the filename in question is removed from admin.data
      *
      * @param reader The stream to read the input from.
      */
@@ -300,7 +289,7 @@ public abstract class AdminData {
                 String filename = parts[0];
                 if (parts.length < 2 || parts.length % 2 != 0) {
                     logMessage = "Corrupt admin data file:  Too few or not " + "an even number of fields for "
-                    		+ filename + ": "  + s;
+                            + filename + ": " + s;
                     log.warn(logMessage);
                     valid = false;
                 }
@@ -309,19 +298,19 @@ public abstract class AdminData {
                     if (hasEntry(filename)) {
                         if (!checksum.equals(getCheckSum(filename))) {
                             log.warn("Wrong checksum encountered in admin data for known file '{}': Old={} New={}",
-                            		filename, getCheckSum(filename), checksum);
-                            // this means, that the existing entry is removed 
+                                    filename, getCheckSum(filename), checksum);
+                            // this means, that the existing entry is removed
                             // from admin.data
-                            valid = false; 
+                            valid = false;
                         }
                     } else {
                         StoreMessage replyInfo = null;
                         storeEntries.put(filename, new ArcRepositoryEntry(filename, checksum, replyInfo));
                     }
-                } else { //parts.length == 1
+                } else { // parts.length == 1
                     if (hasEntry(filename)) {
                         log.debug("Entry is invalid, because no checksumstring found in line: {}", s);
-                        //this means, that the existing entry
+                        // this means, that the existing entry
                         // is removed from admin.data
                         valid = false;
                     } else {
@@ -336,7 +325,7 @@ public abstract class AdminData {
                     ArcRepositoryEntry entry = storeEntries.get(filename);
                     for (int i = 2; i < parts.length; i += 2) {
                         try {
-                            entry.setStoreState(parts[i],ReplicaStoreState.valueOf(parts[i + 1]));
+                            entry.setStoreState(parts[i], ReplicaStoreState.valueOf(parts[i + 1]));
                         } catch (IllegalArgumentException e) {
                             log.warn("Corrupt admin data entry. ", e);
                             valid = false;
@@ -347,8 +336,8 @@ public abstract class AdminData {
                 // Note that the previous if could set valid to false
                 if (!valid) {
                     log.warn("Entry for file '{}' with checksum '{}' is invalid and therefore removed after reading "
-                    		+ "line with inconsistent information: {}",
-                    		filename, storeEntries.get(filename).getChecksum(), s);
+                            + "line with inconsistent information: {}", filename, storeEntries.get(filename)
+                            .getChecksum(), s);
                     storeEntries.remove(filename);
                 }
             }
@@ -360,97 +349,88 @@ public abstract class AdminData {
     }
 
     /**
-      * Read the current version (0.4) of the admin data.
-      * The current version contains lines of the format
-      * <filename/> <checksum/> <state/> <timestamp-for-last-state-change/>
-       [,<bitarchive/> <storestatus/> <timestamp-for-last-state-change/>]*
-      *
-      * The same filename may occur multiple times, but must always
-      * have the same checksum.  This indicates updates of the storestatus
-      * for the file.  Updates to checksum happen only during 'correct'
-      * operations and cause the entire file to be written, leaving the
-        changed entry with the new checksum only.
-      * An entry is considered corrupt (!valid) if any of the following
-      *  occur:
-      *     - There is no checksum.
-      *     - There is no state
-      *     - timestamp-for-last-state-change is missing
-      *     - There is a bitarchive with a missing or invalid status
-      *     - The checksum does not match a previously found checksum.
-      * NB: If we come upon a corrupt entry-line, the entry for the filename
-      * in question is removed from admin.data
-      *
-      * @param reader The stream to read the input from.
-      * @throws ArgumentNotValid If reader is null.
-      * @throws IOFailure If an error occurred with access to the admin.data.
-      */
+     * Read the current version (0.4) of the admin data. The current version contains lines of the format <filename/>
+     * <checksum/> <state/> <timestamp-for-last-state-change/> [,<bitarchive/> <storestatus/>
+     * <timestamp-for-last-state-change/>]*
+     * <p>
+     * The same filename may occur multiple times, but must always have the same checksum. This indicates updates of the
+     * storestatus for the file. Updates to checksum happen only during 'correct' operations and cause the entire file
+     * to be written, leaving the changed entry with the new checksum only. An entry is considered corrupt (!valid) if
+     * any of the following occur: - There is no checksum. - There is no state - timestamp-for-last-state-change is
+     * missing - There is a bitarchive with a missing or invalid status - The checksum does not match a previously found
+     * checksum. NB: If we come upon a corrupt entry-line, the entry for the filename in question is removed from
+     * admin.data
+     *
+     * @param reader The stream to read the input from.
+     * @throws ArgumentNotValid If reader is null.
+     * @throws IOFailure If an error occurred with access to the admin.data.
+     */
     private void readCurrentVersion(BufferedReader reader) throws ArgumentNotValid, IOFailure {
         ArgumentNotValid.checkNotNull(reader, "reader");
-        
+
         // The expected number of elements in first part of a line.
         final int firstPartLength = 4;
-        
+
         // indices for the different parts in the first line.
         final int indexFirstPartFilename = 0;
         final int indexFirstPartChecksum = 1;
         final int indexFirstPartState = 2;
         final int indexFirstPartTimestamp = 3;
-        
+
         // The expected number of elements in the other parts of the line.
         final int otherPartsLength = 3;
-        
+
         // The indices for the different parts in the other lines.
         final int indexOtherPartsReplica = 0;
         final int indexOtherPartsState = 1;
         final int indexOtherPartsTimestamp = 2;
-        
+
         String s;
         try {
             while ((s = reader.readLine()) != null) {
 
-                //Split the line up in parts defined by
-                //the ENTRY_COMPONENT_SEPARATOR_STRING
+                // Split the line up in parts defined by
+                // the ENTRY_COMPONENT_SEPARATOR_STRING
                 String[] parts = s.split(ArcRepositoryEntry.ENTRY_COMPONENT_SEPARATOR_STRING);
 
-                // parts[0] should now contain the <filename> <checksum> 
+                // parts[0] should now contain the <filename> <checksum>
                 // <state> <timestamp-for-last-state-change>
 
-                //For i=0,1.. : parts[1+i] contains the state-information
+                // For i=0,1.. : parts[1+i] contains the state-information
                 // for the file on our bitarchives.
 
                 String[] firstparts = parts[0].split(GENERAL_DELIMITER);
 
                 if (firstparts.length != firstPartLength) {
                     String logMessage = "Corrupt admin data file: One of the components '<filename> <checksum> "
-                    		+ "<state> <timestamp-for-last-state-change>' is missing from this line: " + s
-                    		+ "\nIgnoring this line";
+                            + "<state> <timestamp-for-last-state-change>' is missing from this line: " + s
+                            + "\nIgnoring this line";
                     log.warn(logMessage);
                     continue; // ignore this linie, and go to next line
                 }
 
                 /**
-                 * Parse the different components of filename> <checksum>
-                 * <state> <timestamp-for-last-state-change>
+                 * Parse the different components of filename> <checksum> <state> <timestamp-for-last-state-change>
                  */
                 String filename = firstparts[indexFirstPartFilename];
                 String checksumString = firstparts[indexFirstPartChecksum];
                 String stateString = firstparts[indexFirstPartState];
                 String timestampString = firstparts[indexFirstPartTimestamp];
-                log.trace("Found (filename, checksum, state, timestamp): {}, {}, {}, {}",
-                		filename, checksumString, stateString, timestampString);
+                log.trace("Found (filename, checksum, state, timestamp): {}, {}, {}, {}", filename, checksumString,
+                        stateString, timestampString);
 
                 ReplicaStoreState state = ReplicaStoreState.valueOf(stateString);
                 Long tempLong = Long.parseLong(timestampString);
                 Date timestampAsDate = new Date(tempLong);
-                
+
                 // Check, if we already have entry for this filename
-                if (hasEntry(filename)) { 
-                    // check, if 'checksum' equals checksum-value in 
+                if (hasEntry(filename)) {
+                    // check, if 'checksum' equals checksum-value in
                     // existing entry
                     if (!checksumString.equals(getCheckSum(filename))) {
                         log.warn("Wrong checksum encountered in admin data for known file '{}': Old={} New={}. "
-                        		+ "Entry removed from admin.data and the remaining line ignored: {}",
-                        		filename, getCheckSum(filename), checksumString, s);
+                                + "Entry removed from admin.data and the remaining line ignored: {}", filename,
+                                getCheckSum(filename), checksumString, s);
                         storeEntries.remove(filename);
                         continue; // Stop processing, and go to next line
                     }
@@ -461,15 +441,15 @@ public abstract class AdminData {
                 }
 
                 // Parse the remaining parts[1..] array
-                // Expected format: 
+                // Expected format:
                 // <bitarchive> <storestatus> <timestamp-for-last-state-change>
                 ArcRepositoryEntry entry = getEntry(filename);
                 for (int i = 1; i < parts.length; i++) {
-                    String[] bitparts =  parts[i].split(GENERAL_DELIMITER);
+                    String[] bitparts = parts[i].split(GENERAL_DELIMITER);
                     if (bitparts.length != otherPartsLength) {
                         final String message = "Line incomplete. Expected 3 elements: <bitarchive> <storestatus> "
-                        		+ "<timestamp-for-last-state-change>. Found only " + bitparts.length
-                        		+ " elements in line: " + s;
+                                + "<timestamp-for-last-state-change>. Found only " + bitparts.length
+                                + " elements in line: " + s;
                         log.warn(message);
                     } else {
                         String bitarchiveString = bitparts[indexOtherPartsReplica];
@@ -483,9 +463,9 @@ public abstract class AdminData {
                 }
             }
         } catch (IOException e) {
-        	final String message = "Failed to read admin data from '" + adminDataFile.getPath() + "'";
-        	log.error(message);
-        	throw new IOFailure(message, e);
+            final String message = "Failed to read admin data from '" + adminDataFile.getPath() + "'";
+            log.error(message);
+            throw new IOFailure(message, e);
         }
     }
 
@@ -503,12 +483,10 @@ public abstract class AdminData {
     }
 
     /**
-     * Returns a set of the arcfile names that are in a given state for a
-     * specific bitarchive in the repository.
+     * Returns a set of the arcfile names that are in a given state for a specific bitarchive in the repository.
      *
      * @param replica the object representing the BA
-     * @param state the state to look for, e.g.
-     *  ReplicaStoreState.STATE_COMPLETED
+     * @param state the state to look for, e.g. ReplicaStoreState.STATE_COMPLETED
      * @return the set of files in the repository with the given state
      */
     public Set<String> getAllFileNames(Replica replica, ReplicaStoreState state) {
@@ -526,6 +504,7 @@ public abstract class AdminData {
 
     /**
      * Return info about current object as String.
+     *
      * @return info about current object as String.
      */
     public String toString() {

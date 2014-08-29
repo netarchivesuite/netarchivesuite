@@ -46,8 +46,7 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 
 /**
- * Utilities to allow testing databases. //FIXME: Rename without Test as these
- * are not specifically test related.
+ * Utilities to allow testing databases. //FIXME: Rename without Test as these are not specifically test related.
  */
 public class DatabaseTestUtils {
 
@@ -56,10 +55,9 @@ public class DatabaseTestUtils {
     private static String dburi;
 
     /**
-     * Get access to the database stored in the given file. This will start a
-     * new transaction that will be rolled back with dropDatabase. Only one
-     * connection can be taken at a time.
-     * 
+     * Get access to the database stored in the given file. This will start a new transaction that will be rolled back
+     * with dropDatabase. Only one connection can be taken at a time.
+     *
      * @param resourcePath A file that contains a test database.
      * @param dbCreationDir
      * @return a connection to the database stored in the given file
@@ -84,11 +82,11 @@ public class DatabaseTestUtils {
         long startTime = System.currentTimeMillis();
 
         Connection c = DriverManager.getConnection(dburi + ";create=true");
-        c.setAutoCommit(false);  // load faster.
-        
+        c.setAutoCommit(false); // load faster.
+
         // locate create script first, next to resource
         File createFile = new File(new File(resourcePath).getParentFile(), "create.sql");
-        
+
         applyStatementsInInputStream(c, checkNotNull(new FileInputStream(createFile), "create.sql"));
 
         // then populate it.
@@ -96,7 +94,7 @@ public class DatabaseTestUtils {
         applyStatementsInInputStream(c, is);
 
         c.commit();
-        
+
         log.debug("Populated {} in {}(ms)", dbfile, (System.currentTimeMillis() - startTime));
 
         c.close();
@@ -104,8 +102,7 @@ public class DatabaseTestUtils {
         return DriverManager.getConnection(dburi);
     }
 
-    private static void applyStatementsInInputStream(Connection connection, InputStream is)
-            throws SQLException,
+    private static void applyStatementsInInputStream(Connection connection, InputStream is) throws SQLException,
             IOException {
         Statement statement = connection.createStatement();
 
@@ -139,12 +136,10 @@ public class DatabaseTestUtils {
     }
 
     /**
-     * Get access to the database stored in the given file. This will start a
-     * new transaction that will be rolled back with dropDatabase. Only one
-     * connection can be taken at a time.
-     * 
-     * @param resourcePath
-     *            A file that contains a test database.
+     * Get access to the database stored in the given file. This will start a new transaction that will be rolled back
+     * with dropDatabase. Only one connection can be taken at a time.
+     *
+     * @param resourcePath A file that contains a test database.
      * @param dbCreationDir
      * @return a connection to the database stored in the given file
      * @throws SQLException
@@ -157,9 +152,9 @@ public class DatabaseTestUtils {
     }
 
     /**
-     * Get a connection to the given sample harvest definition database and fool
-     * the HD DB connect class into thinking it should use that one.
-     * 
+     * Get a connection to the given sample harvest definition database and fool the HD DB connect class into thinking
+     * it should use that one.
+     *
      * @param resourcePath Location of the sql files to create and populate the test DB.
      * @param dbCreationDir
      * @return a connection to the given sample harvest definition database
@@ -174,7 +169,7 @@ public class DatabaseTestUtils {
 
     /**
      * Drop access to the database that's currently taken.
-     * 
+     *
      * @throws SQLException
      */
     public static void dropDatabase() throws SQLException, NoSuchFieldException, IllegalAccessException {
@@ -196,20 +191,17 @@ public class DatabaseTestUtils {
 
         f.set(null, null);
         /*
-         * for (Thread t: connectionPool.keySet()) { final Connection connection
-         * = connectionPool.get(t); if (!(connection instanceof
-         * TestDBConnection)) { throw new UnknownID("Illegal connection " +
-         * connection); } try { if (savepoints.containsKey(t)) {
-         * connection.rollback(); // connection.rollback(savepoints.get(t));
-         * savepoints.remove(t); } } catch (SQLException e) {
-         * System.out.println("Can't rollback: " + e); } connection.close(); }
-         * connectionPool.clear();
+         * for (Thread t: connectionPool.keySet()) { final Connection connection = connectionPool.get(t); if
+         * (!(connection instanceof TestDBConnection)) { throw new UnknownID("Illegal connection " + connection); } try
+         * { if (savepoints.containsKey(t)) { connection.rollback(); // connection.rollback(savepoints.get(t));
+         * savepoints.remove(t); } } catch (SQLException e) { System.out.println("Can't rollback: " + e); }
+         * connection.close(); } connectionPool.clear();
          */
     }
 
     /**
      * Drop the connection to the harvest definition database.
-     * 
+     *
      * @throws IllegalAccessException
      * @throws NoSuchFieldException
      * @throws Exception

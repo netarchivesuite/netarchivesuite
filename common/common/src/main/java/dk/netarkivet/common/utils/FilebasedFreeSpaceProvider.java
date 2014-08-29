@@ -38,7 +38,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  */
 
 public class FilebasedFreeSpaceProvider implements FreeSpaceProvider {
-    
+
     /** The error logger we notify about error messages on. */
     private static final Logger log = LoggerFactory.getLogger(FilebasedFreeSpaceProvider.class);
 
@@ -46,28 +46,26 @@ public class FilebasedFreeSpaceProvider implements FreeSpaceProvider {
     private static String DEFAULT_SETTINGS_CLASSPATH = "dk/netarkivet/common/utils/FilebasedFreeSpaceProvider.xml";
 
     /*
-     * The static initialiser is called when the class is loaded.
-     * It will add default values for all settings defined in this class, by
-     * loading them from a settings.xml file in classpath.
+     * The static initialiser is called when the class is loaded. It will add default values for all settings defined in
+     * this class, by loading them from a settings.xml file in classpath.
      */
     static {
         Settings.addDefaultClasspathSettings(DEFAULT_SETTINGS_CLASSPATH);
     }
 
-    /** 
+    /**
      * <b>settings.common.freespaceprovider.file</b>: <br>
      * The setting for filename of the free space information.
      */
     public static final String FREESPACEPROVIDER_DIR_SETTING = "settings.common.freespaceprovider.dir";
-    
+
     /** The filename for reading out the free space infomation. */
     private static final String FREESPACEPROVIDER_DIR = Settings.get(FREESPACEPROVIDER_DIR_SETTING);
-    
+
     /**
-     * Returns the number of bytes free which is read out of a file
-     * containing the bytes free information. This file is located 
-     * in the FREESPACEPROVIDER_DIR and has the name as parameter f.
-     * Will return 0 on any IO- or Format-Exceptions.
+     * Returns the number of bytes free which is read out of a file containing the bytes free information. This file is
+     * located in the FREESPACEPROVIDER_DIR and has the name as parameter f. Will return 0 on any IO- or
+     * Format-Exceptions.
      *
      * @param f a given file
      * @return the number of bytes free.
@@ -81,9 +79,9 @@ public class FilebasedFreeSpaceProvider implements FreeSpaceProvider {
         File bytesFreeFile = new File(FREESPACEPROVIDER_DIR, f.getName());
 
         try {
-           reader = new BufferedReader(new FileReader(bytesFreeFile));
-           content = reader.readLine();     // only read first line
-           bytes = Long.parseLong(content);
+            reader = new BufferedReader(new FileReader(bytesFreeFile));
+            content = reader.readLine(); // only read first line
+            bytes = Long.parseLong(content);
         } catch (Exception e) {
             log.warn("Exception while reading {}. The value 0 returned.", bytesFreeFile.getAbsolutePath());
             return 0;
@@ -96,7 +94,7 @@ public class FilebasedFreeSpaceProvider implements FreeSpaceProvider {
                 }
             }
         }
-        
+
         return bytes;
     }
 

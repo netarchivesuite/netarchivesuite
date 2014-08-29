@@ -22,22 +22,22 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.Locale;
+
+import org.junit.Test;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
-import static org.junit.Assert.*;
-import org.junit.Test;
-
-
 /**
- * Tests of the JobStatus class.
- * Currently, only the static method getLocalizedString
- * is tested here.
+ * Tests of the JobStatus class. Currently, only the static method getLocalizedString is tested here.
  */
 public class JobStatusTester {
 
-    /** 
+    /**
      * Test getLocalizedString.
      */
     @Test
@@ -50,15 +50,15 @@ public class JobStatusTester {
         assertEquals(JobStatus.FAILED.getLocalizedString(en), "Failed");
         assertEquals(JobStatus.RESUBMITTED.getLocalizedString(en), "Resubmitted");
         assertEquals(JobStatus.FAILED_REJECTED.getLocalizedString(en), "Failed (Rejected for Resubmission)");
-      }
+    }
 
     @Test
     public void testLegalChange() {
         JobStatus status = JobStatus.FAILED_REJECTED;
-        assertTrue("Should be legal to change JobStatus from FAILED_REJECTED "
-                   + "back to FAILED", status.legalChange(JobStatus.FAILED));
+        assertTrue("Should be legal to change JobStatus from FAILED_REJECTED " + "back to FAILED",
+                status.legalChange(JobStatus.FAILED));
     }
-    
+
     @Test
     public void testFromOrdinal() {
         assertEquals(JobStatus.NEW, JobStatus.fromOrdinal(0));
@@ -75,6 +75,5 @@ public class JobStatusTester {
             // Expected
         }
     }
-    
 
 }

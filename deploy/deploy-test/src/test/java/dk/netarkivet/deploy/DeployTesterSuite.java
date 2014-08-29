@@ -27,8 +27,7 @@ import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
 public class DeployTesterSuite {
-    public static Test suite()
-    {
+    public static Test suite() {
         TestSuite suite;
         suite = new TestSuite(DeployTesterSuite.class.getName());
 
@@ -42,8 +41,7 @@ public class DeployTesterSuite {
         suite.addTestSuite(CompleteSettingsTester.class);
     }
 
-    public static void main(String args[])
-    {
+    public static void main(String args[]) {
         String args2[] = {"-noloading", DeployTesterSuite.class.getName()};
         TestRunner.main(args2);
     }

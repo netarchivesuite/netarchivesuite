@@ -44,8 +44,8 @@ import dk.netarkivet.testutils.TestUtils;
 public class BinSearchTester {
 
     /**
-     * Test that getLinesInFile(File, String) returns the expected lines. Uses
-     * the locally defined wrapper method findLinesInFile.
+     * Test that getLinesInFile(File, String) returns the expected lines. Uses the locally defined wrapper method
+     * findLinesInFile.
      */
     @Test
     public void testGetLinesInFile() throws IOException {
@@ -83,9 +83,8 @@ public class BinSearchTester {
 
     /**
      * Test the BinSearch.getLinesInFile(File, String) with Danish letters.
-     * 
-     * FIXME Fails in Hudson (Properly because the test is dependent on the
-     * environment lang settings )
+     * <p>
+     * FIXME Fails in Hudson (Properly because the test is dependent on the environment lang settings )
      */
     @Test
     @Ignore("Netarchivesuite bug 1913")
@@ -116,11 +115,9 @@ public class BinSearchTester {
 
     /**
      * Wrapper around getLinesInFile that turns them into a List.
-     * 
-     * @param file
-     *            The file to search in
-     * @param find
-     *            The string to look for in the file.
+     *
+     * @param file The file to search in
+     * @param find The string to look for in the file.
      * @return a List of lines that matches the String given by arg find.
      */
     private static List<String> findLinesInFile(File file, String find) {
@@ -128,14 +125,13 @@ public class BinSearchTester {
     }
 
     /**
-     * Test that skipToLine goes to the expected place, and puts the file
-     * pointer there.
-     * 
+     * Test that skipToLine goes to the expected place, and puts the file pointer there.
+     *
      * @throws Exception
      */
     @Test
     public void testSkipToLine() throws Exception {
-        Method m = BinSearch.class.getDeclaredMethod("skipToLine", new Class[] { RandomAccessFile.class, Long.TYPE });
+        Method m = BinSearch.class.getDeclaredMethod("skipToLine", new Class[] {RandomAccessFile.class, Long.TYPE});
         m.setAccessible(true);
         RandomAccessFile f = new RandomAccessFile(TestInfo.SORTED_CDX_FILE, "r");
         // Test at start of line

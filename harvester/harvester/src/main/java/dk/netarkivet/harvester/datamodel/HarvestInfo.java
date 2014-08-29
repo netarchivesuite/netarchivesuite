@@ -27,12 +27,11 @@ import java.util.Date;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
- * Summary information about a specific harvest of a domain. This class is
- * immutable.
+ * Summary information about a specific harvest of a domain. This class is immutable.
  */
 public class HarvestInfo {
 
-	/** The date the harvest information was created. */
+    /** The date the harvest information was created. */
     private final Date date;
 
     /** The identifier of the harvest. */
@@ -53,8 +52,8 @@ public class HarvestInfo {
     /** The configuration that the domain was harvested with. */
     private final String domainCfgName;
 
-    /** The job that was used to create this info, or null if it cannot be
-     * determined (for old harvestinfo only).
+    /**
+     * The job that was used to create this info, or null if it cannot be determined (for old harvestinfo only).
      */
     private final Long jobID;
 
@@ -63,6 +62,7 @@ public class HarvestInfo {
 
     /**
      * Create new harvest info instance.
+     *
      * @param harvestID The id of the harvest
      * @param domainName The name of the Domain
      * @param domainCfgName The name of the Domain configuration
@@ -72,12 +72,13 @@ public class HarvestInfo {
      * @param stopReason The reason why the current harvest terminated
      */
     public HarvestInfo(Long harvestID, String domainName, String domainCfgName, Date date, long sizeDataRetrieved,
-    		long countObjectRetrieved, StopReason stopReason) {
+            long countObjectRetrieved, StopReason stopReason) {
         this(harvestID, null, domainName, domainCfgName, date, sizeDataRetrieved, countObjectRetrieved, stopReason);
     }
 
     /**
      * Create new harvest info instance.
+     *
      * @param harvestID The id of the harvest
      * @param jobID The id of the job, if available
      * @param domainName The name of the Domain
@@ -88,7 +89,7 @@ public class HarvestInfo {
      * @param stopReason The reason why the current harvest terminated
      */
     public HarvestInfo(Long harvestID, Long jobID, String domainName, String domainCfgName, Date date,
-    		long sizeDataRetrieved, long countObjectRetrieved, StopReason stopReason) {
+            long sizeDataRetrieved, long countObjectRetrieved, StopReason stopReason) {
         ArgumentNotValid.checkNotNull(harvestID, "harvestID");
         ArgumentNotValid.checkNotNull(date, "date");
         ArgumentNotValid.checkNotNullOrEmpty(domainName, "domainName");
@@ -109,7 +110,8 @@ public class HarvestInfo {
 
     /**
      * Get the total amount of data downloaded (bytes).
-     * @return  the total amount of data downloaded (bytes)
+     *
+     * @return the total amount of data downloaded (bytes)
      */
     public long getSizeDataRetrieved() {
         return sizeDataRetrieved;
@@ -117,7 +119,8 @@ public class HarvestInfo {
 
     /**
      * Get the total number of objects downloaded.
-     * @return  the total number of objects downloaded
+     *
+     * @return the total number of objects downloaded
      */
     public long getCountObjectRetrieved() {
         return countObjectRetrieved;
@@ -125,6 +128,7 @@ public class HarvestInfo {
 
     /**
      * Get the reason the harvest stopped.
+     *
      * @return the reason the harvest stopped
      */
     public StopReason getStopReason() {
@@ -133,6 +137,7 @@ public class HarvestInfo {
 
     /**
      * Get the date this harvest information was recorded.
+     *
      * @return the date the harvest information was recorded
      */
     public Date getDate() {
@@ -141,6 +146,7 @@ public class HarvestInfo {
 
     /**
      * Get the id of the harvest.
+     *
      * @return the harvest ID
      */
     public Long getHarvestID() {
@@ -149,6 +155,7 @@ public class HarvestInfo {
 
     /**
      * Get the id of the job, if available.
+     *
      * @return the job ID or null.
      */
     public Long getJobID() {
@@ -157,6 +164,7 @@ public class HarvestInfo {
 
     /**
      * Get the domain name of the harvest.
+     *
      * @return the domain name
      */
     public String getDomainName() {
@@ -165,35 +173,43 @@ public class HarvestInfo {
 
     /**
      * Get the domain configuration name of the harvest.
+     *
      * @return the domain configuration name
      */
     public String getDomainConfigurationName() {
         return domainCfgName;
     }
 
-    /** Get the ID of this harvestinfo.  Only for use by DBDAO.
+    /**
+     * Get the ID of this harvestinfo. Only for use by DBDAO.
+     *
      * @return the ID of this harvestinfo
      */
     long getID() {
         return id;
     }
 
-    /** Set the ID of this harvestinfo.  Only for use by DBDAO
+    /**
+     * Set the ID of this harvestinfo. Only for use by DBDAO
+     *
      * @param newid the new ID of this harvestinfo
      */
     void setID(long newid) {
         this.id = newid;
     }
 
-    /** Check if this harvestinfo has an ID set yet (doesn't happen until
-     * the DBDAO persists it).
+    /**
+     * Check if this harvestinfo has an ID set yet (doesn't happen until the DBDAO persists it).
+     *
      * @return true, if this harvestinfo has an ID set
      */
     boolean hasID() {
         return id != null;
     }
 
-    /** Autogenerated from IDEA.
+    /**
+     * Autogenerated from IDEA.
+     *
      * @return true if object fields are equal
      * @see Object#equals(java.lang.Object)
      */
@@ -232,7 +248,9 @@ public class HarvestInfo {
         return true;
     }
 
-    /** Autogenerated from IDEA.
+    /**
+     * Autogenerated from IDEA.
+     *
      * @return hashcode
      * @see Object#hashCode()
      */
@@ -248,15 +266,15 @@ public class HarvestInfo {
         return result;
     }
 
-    /** A human readable representation.
-     * @return A human readable representation */
+    /**
+     * A human readable representation.
+     *
+     * @return A human readable representation
+     */
     public String toString() {
-        return "Harvest info for harvest #" + harvestID
-               + " of " + domainName + "(" + domainCfgName + ")"
-               + " on " + date + "\n"
-               + "Status: " + stopReason + "\n"
-               + countObjectRetrieved + "objects / "
-               + sizeDataRetrieved + "bytes\n";
+        return "Harvest info for harvest #" + harvestID + " of " + domainName + "(" + domainCfgName + ")" + " on "
+                + date + "\n" + "Status: " + stopReason + "\n" + countObjectRetrieved + "objects / "
+                + sizeDataRetrieved + "bytes\n";
     }
 
 }

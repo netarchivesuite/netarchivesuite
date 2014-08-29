@@ -22,6 +22,11 @@
  */
 package dk.netarkivet.archive.arcrepository.distribute;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
@@ -34,7 +39,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.ArcRepository;
 import dk.netarkivet.archive.arcrepository.bitpreservation.AdminDataMessage;
@@ -57,10 +61,10 @@ import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.JMSConnectionTester;
+import dk.netarkivet.common.distribute.JMSConnectionTester.DummyServer;
 import dk.netarkivet.common.distribute.NullRemoteFile;
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
-import dk.netarkivet.common.distribute.JMSConnectionTester.DummyServer;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.FileUtils;
@@ -74,7 +78,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 /**
  * Unit tests for the class ArcRepositoryServer.
  */
-@SuppressWarnings({ "deprecation" })
+@SuppressWarnings({"deprecation"})
 public class ArcRepositoryServerTester {
     /**
      * The test log directories for Controller and AdminData.
@@ -100,10 +104,9 @@ public class ArcRepositoryServerTester {
     public final File TESTLOGPROP = new File("tests/dk/netarkivet/testlog.prop");
 
     /**
-     * The files that are uploaded during the tests and that must be removed
-     * afterwards.
+     * The files that are uploaded during the tests and that must be removed afterwards.
      */
-    private static final List<String> STORABLE_FILES = Arrays.asList(new String[] { "get1.ARC", "get2.ARC" });
+    private static final List<String> STORABLE_FILES = Arrays.asList(new String[] {"get1.ARC", "get2.ARC"});
 
     private File file;
 
@@ -406,7 +409,7 @@ public class ArcRepositoryServerTester {
 
         // test BatchReplyMessage
         BatchReplyMessage brmsg = new BatchReplyMessage(Channels.getTheRepos(), Channels.getError(),
-                "originatingBatchMsgId", 0, Collections.<File> emptyList(), RemoteFileFactory.getCopyfileInstance(file));
+                "originatingBatchMsgId", 0, Collections.<File>emptyList(), RemoteFileFactory.getCopyfileInstance(file));
         arcServ.visit(brmsg);
         assertTrue("The function 'onBatchReply' should have been called", arc.calls.containsKey("onBatchReply"));
         assertEquals("The function 'onBatchReply' should have been called once.", Integer.valueOf(1),

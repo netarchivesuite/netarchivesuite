@@ -22,17 +22,17 @@
  */
 package dk.netarkivet.harvester.harvesting.distribute;
 
-import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlStatus;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 
+import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlStatus;
 
 /**
- * Unit tests for the class
- * {@link CrawlProgressMessage}.
+ * Unit tests for the class {@link CrawlProgressMessage}.
  */
 public class CrawlProgressMessageTester {
-    
+
     @Test
     public void testConstructor() {
         long harvestId = 2L;

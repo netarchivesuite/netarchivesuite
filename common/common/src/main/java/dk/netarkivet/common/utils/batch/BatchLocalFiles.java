@@ -37,31 +37,28 @@ import dk.netarkivet.common.exceptions.BatchTermination;
 import dk.netarkivet.common.utils.Settings;
 
 /**
- * Class for running FileBatchJobs on a set of local files. The constructor
- * takes an array of files to be processed and the run() method takes a
- * FileBatchJob and applies it to each file in turn.
+ * Class for running FileBatchJobs on a set of local files. The constructor takes an array of files to be processed and
+ * the run() method takes a FileBatchJob and applies it to each file in turn.
  */
 public class BatchLocalFiles {
 
     /** The class logger. */
     private static final Logger log = LoggerFactory.getLogger(BatchLocalFiles.class);
 
-	/** The list of files to run batch jobs on. */
+    /** The list of files to run batch jobs on. */
     private File[] files;
 
     /** The last time logging was performed. Initial 0 to ensure logging the first time. */
     private long lastLoggingDate = 0;
-    /** The time when the batchjob was started.*/
+    /** The time when the batchjob was started. */
     private long startTime = 0;
 
     /**
-     * Given an array of files, constructs a BatchLocalFiles instance
-     * to be used in running a batch job over those files.
+     * Given an array of files, constructs a BatchLocalFiles instance to be used in running a batch job over those
+     * files.
      *
-     * @param incomingFiles The files that should be used processed
-     * by the batchjob
-     * @throws ArgumentNotValid if incomingFiles is null or contains
-     * a null entry
+     * @param incomingFiles The files that should be used processed by the batchjob
+     * @throws ArgumentNotValid if incomingFiles is null or contains a null entry
      */
     public BatchLocalFiles(File[] incomingFiles) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(incomingFiles, "incomingFiles");
@@ -91,22 +88,24 @@ public class BatchLocalFiles {
             long logInterval = Settings.getLong(CommonSettings.BATCH_LOGGING_INTERVAL);
             // get the time for starting the batchjob (used for logging).
             startTime = new Date().getTime();
-            //Process each file:
+            // Process each file:
             for (File file : files) {
                 fileCount++;
                 if (job.getFilenamePattern().matcher(file.getName()).matches()) {
                     long currentTime = new Date().getTime();
                     // perform logging if necessary.
-                    if(lastLoggingDate + logInterval < currentTime) {
-                        log.info("The batchjob '{}' has run for {} seconds and has reached file '{}', which is number {} out of {}",
-                        		job.getClass(), (currentTime-startTime)/1000, file.getName(), fileCount, files.length);
+                    if (lastLoggingDate + logInterval < currentTime) {
+                        log.info(
+                                "The batchjob '{}' has run for {} seconds and has reached file '{}', which is number {} out of {}",
+                                job.getClass(), (currentTime - startTime) / 1000, file.getName(), fileCount,
+                                files.length);
                         // set that we have just logged.
                         lastLoggingDate = currentTime;
                     }
                     processFile(job, file, os);
                 }
-                
-                // check whether the batchjob should stop. 
+
+                // check whether the batchjob should stop.
                 if (Thread.currentThread().isInterrupted()) {
                     // log and throw an error (not exception, they are caught!)
                     String errMsg = "The batchjob '" + job.toString() + "' has been interrupted and will terminate!";
@@ -143,7 +142,8 @@ public class BatchLocalFiles {
         }
     }
 
-    /** Process a single file.
+    /**
+     * Process a single file.
      *
      * @param job The job that does the processing
      * @param file The file to process

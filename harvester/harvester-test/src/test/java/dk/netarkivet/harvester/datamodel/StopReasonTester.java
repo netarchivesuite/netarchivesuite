@@ -22,9 +22,12 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.Locale;
 
-import static org.junit.Assert.*;
 import org.junit.Test;
 
 import dk.netarkivet.common.exceptions.UnknownID;
@@ -39,10 +42,9 @@ public class StopReasonTester {
 
     /**
      * Tests the translation from numbers to stop reasons.
-     *
-     * DO NOT CHANGE THESE NUMBERS! StopReason is serialised to database using
-     * these numbers, and they are never expected to change. That would kill an
-     * upgrade with an existing database!
+     * <p>
+     * DO NOT CHANGE THESE NUMBERS! StopReason is serialised to database using these numbers, and they are never
+     * expected to change. That would kill an upgrade with an existing database!
      */
     @Test
     public void testGetStopReason() {
@@ -91,8 +93,7 @@ public class StopReasonTester {
     }
 
     /**
-     * Test, that the localized String for a given StopReason is correct. We
-     * only test with english Locale.
+     * Test, that the localized String for a given StopReason is correct. We only test with english Locale.
      */
     @Test
     public void testGetLocalizedString() {

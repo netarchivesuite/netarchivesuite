@@ -22,13 +22,14 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import static org.junit.Assert.*;
 import org.junit.Test;
-
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
@@ -37,24 +38,19 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  */
 public class DailyFrequencyTester {
 
-    /** 
+    /**
      * Test value is daily.
      */
     @Test
     public void testTimeunitIsDaily() {
-    	DailyFrequency freq = new DailyFrequency(20);
-        assertEquals("Timeunit must be daily.", 
-        		     freq.ordinal(), 
-        		     TimeUnit.DAILY.ordinal()
-        );
-        assertEquals("Check TimeUnit daily", 
-        		      TimeUnit.DAILY, 
-        		      TimeUnit.fromOrdinal(TimeUnit.DAILY.ordinal())
-        );
+        DailyFrequency freq = new DailyFrequency(20);
+        assertEquals("Timeunit must be daily.", freq.ordinal(), TimeUnit.DAILY.ordinal());
+        assertEquals("Check TimeUnit daily", TimeUnit.DAILY, TimeUnit.fromOrdinal(TimeUnit.DAILY.ordinal()));
     }
 
-    /** Given a frequency that can start any time, check that first event is
-     * immediate.
+    /**
+     * Given a frequency that can start any time, check that first event is immediate.
+     *
      * @throws Exception
      */
     @Test
@@ -67,8 +63,9 @@ public class DailyFrequencyTester {
         assertEquals("First event should happen at once.", d1, d2);
     }
 
-    /** Given a frequency that can start at 4:22, check that first event starts
-     * first time it is 4:22.
+    /**
+     * Given a frequency that can start at 4:22, check that first event starts first time it is 4:22.
+     *
      * @throws Exception
      */
     @Test
@@ -84,8 +81,9 @@ public class DailyFrequencyTester {
         assertEquals("First event should happen on the 22nd minute of the 4th hour.", d3, d2);
     }
 
-    /** Given a frequency that can start any time, check that next event starts
-     * after the correct period.
+    /**
+     * Given a frequency that can start any time, check that next event starts after the correct period.
+     *
      * @throws Exception
      */
     @Test
@@ -99,8 +97,9 @@ public class DailyFrequencyTester {
         assertEquals("Second event should happen four days later", d3, d4);
     }
 
-    /** Given a frequency that can start 5:23, check that next event starts
-     * at 5:23 after the correct period.
+    /**
+     * Given a frequency that can start 5:23, check that next event starts at 5:23 after the correct period.
+     *
      * @throws Exception
      */
     @Test
@@ -117,8 +116,10 @@ public class DailyFrequencyTester {
         assertEquals("Second event should happen four days later, on the 23rd minute of the 5th hour", d3, d4);
     }
 
-    /** Given a frequency that can start 5:23, check that next event starts
-     * at 5:23 after the correct period, given a time that is actually 5:23.
+    /**
+     * Given a frequency that can start 5:23, check that next event starts at 5:23 after the correct period, given a
+     * time that is actually 5:23.
+     *
      * @throws Exception
      */
     @Test
@@ -132,7 +133,9 @@ public class DailyFrequencyTester {
         assertEquals("Second event should happen four days later, on the 23rd minute of the 5th hour", d3, d4);
     }
 
-    /** Test validity of arguments.
+    /**
+     * Test validity of arguments.
+     *
      * @throws Exception
      */
     @Test
@@ -141,56 +144,56 @@ public class DailyFrequencyTester {
             new DailyFrequency(-1);
             fail("should throw exception on negative number of units");
         } catch (ArgumentNotValid e) {
-            //Expected
+            // Expected
         }
 
         try {
             new DailyFrequency(0);
             fail("should throw exception on zero number of units");
         } catch (ArgumentNotValid e) {
-            //Expected
+            // Expected
         }
 
         try {
             new DailyFrequency(-1, 5, 23);
             fail("should throw exception on negative number of units");
         } catch (ArgumentNotValid e) {
-            //Expected
+            // Expected
         }
 
         try {
             new DailyFrequency(0, 5, 23);
             fail("should throw exception on zero number of units");
         } catch (ArgumentNotValid e) {
-            //Expected
+            // Expected
         }
 
         try {
             new DailyFrequency(1, 24, 23);
             fail("should throw exception on illegal time");
         } catch (ArgumentNotValid e) {
-            //Expected
+            // Expected
         }
 
         try {
             new DailyFrequency(1, -1, 23);
             fail("should throw exception on illegal time");
         } catch (ArgumentNotValid e) {
-            //Expected
+            // Expected
         }
 
         try {
             new DailyFrequency(1, 0, -1);
             fail("should throw exception on illegal time");
         } catch (ArgumentNotValid e) {
-            //Expected
+            // Expected
         }
 
         try {
             new DailyFrequency(1, 0, 60);
             fail("should throw exception on illegal time");
         } catch (ArgumentNotValid e) {
-            //Expected
+            // Expected
         }
 
         DailyFrequency freq = new DailyFrequency(4, 5, 23);
@@ -198,13 +201,13 @@ public class DailyFrequencyTester {
             freq.getFirstEvent(null);
             fail("should throw exception");
         } catch (ArgumentNotValid e) {
-            //Expected
+            // Expected
         }
         try {
             freq.getNextEvent(null);
             fail("should throw exception");
         } catch (ArgumentNotValid e) {
-            //Expected
+            // Expected
         }
     }
 

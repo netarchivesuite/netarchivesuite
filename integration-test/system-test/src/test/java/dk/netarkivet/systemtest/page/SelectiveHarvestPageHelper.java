@@ -22,22 +22,22 @@
  */
 package dk.netarkivet.systemtest.page;
 
-import dk.netarkivet.systemtest.HarvestUtils;
+import java.util.List;
+
 import org.jaccept.TestEventManager;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import java.util.List;
+import dk.netarkivet.systemtest.HarvestUtils;
 
 /**
  * Provides functionality for commonly used test access to domain web content.
- *
+ * <p>
  * Will also log webpage interactions.
  */
 public class SelectiveHarvestPageHelper {
-    public static void createSelectiveHarvest(
-            String name, String comments, String[] domains) {
+    public static void createSelectiveHarvest(String name, String comments, String[] domains) {
         TestEventManager.getInstance().addStimuli("Creating harvest " + name);
         WebDriver driver = PageHelper.getWebDriver();
         PageHelper.gotoPage(PageHelper.MenuPages.SelectiveHarvests);
@@ -52,7 +52,7 @@ public class SelectiveHarvestPageHelper {
         }
 
         driver.findElement(By.name("domainlist")).clear();
-        for (String domain:domains) {
+        for (String domain : domains) {
             driver.findElement(By.name("domainlist")).sendKeys(domain + "\n");
         }
 
@@ -75,7 +75,7 @@ public class SelectiveHarvestPageHelper {
         }
         WebElement table = PageHelper.getWebDriver().findElement(By.className("selection_table"));
         List<WebElement> tr_collection = table.findElements(By.tagName("tr"));
-        for (WebElement webElement:tr_collection) {
+        for (WebElement webElement : tr_collection) {
             if (webElement.getText().contains(name)) {
                 webElement.findElement(By.linkText("Activate")).click();
                 break;
@@ -88,7 +88,7 @@ public class SelectiveHarvestPageHelper {
         PageHelper.gotoPage(PageHelper.MenuPages.SelectiveHarvests);
         WebElement table = PageHelper.getWebDriver().findElement(By.className("selection_table"));
         List<WebElement> tr_collection = table.findElements(By.tagName("tr"));
-        for (WebElement webElement:tr_collection) {
+        for (WebElement webElement : tr_collection) {
             if (webElement.getText().contains(name)) {
                 webElement.findElement(By.linkText("Deactivate")).click();
             }
@@ -106,8 +106,8 @@ public class SelectiveHarvestPageHelper {
             PageHelper.getWebDriver().findElement(By.linkText("Create new selective harvest definition"));
             WebElement table = PageHelper.getWebDriver().findElement(By.className("selection_table"));
             List<WebElement> tr_collection = table.findElements(By.tagName("tr"));
-            TestEventManager.getInstance().addStimuli("Deactivating harvest: " +
-                    tr_collection.get(1).findElements(By.xpath("td")).get(0).getText());
+            TestEventManager.getInstance().addStimuli(
+                    "Deactivating harvest: " + tr_collection.get(1).findElements(By.xpath("td")).get(0).getText());
             tr_collection.get(1).findElement(By.linkText("Deactivate")).click();
         }
     }

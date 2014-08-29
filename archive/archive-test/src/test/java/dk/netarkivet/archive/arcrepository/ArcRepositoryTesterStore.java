@@ -68,10 +68,10 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 /** This class tests the store() method of ArcRepository. */
-@SuppressWarnings({ "deprecation", "unchecked" })
+@SuppressWarnings({"deprecation", "unchecked"})
 public class ArcRepositoryTesterStore {
 
-	private UseTestRemoteFile rf = new UseTestRemoteFile();
+    private UseTestRemoteFile rf = new UseTestRemoteFile();
 
     /** The directory from where we upload the ARC files. */
     private static final File ORIGINALS_DIR = new File(ServerSetUp.TEST_DIR, "originals");
@@ -136,9 +136,8 @@ public class ArcRepositoryTesterStore {
     }
 
     /**
-     * Tests whether the replica client can be retrieved for every replica. And
-     * confirms that the correct error is send, if a wrong replica is tried to
-     * be retrieved.
+     * Tests whether the replica client can be retrieved for every replica. And confirms that the correct error is send,
+     * if a wrong replica is tried to be retrieved.
      */
     @Test
     public void testReplicaClientRetrieval() {
@@ -161,11 +160,11 @@ public class ArcRepositoryTesterStore {
     }
 
     /**
-     * Tests the scenario where a file has been stored, but the confirmation was
-     * lost, so that the harvester will want to store the file again.
-     *
-     * If the first store() was successful, the second one should be too
-     * (providing the file name and the MD5 is the same).
+     * Tests the scenario where a file has been stored, but the confirmation was lost, so that the harvester will want
+     * to store the file again.
+     * <p>
+     * If the first store() was successful, the second one should be too (providing the file name and the MD5 is the
+     * same).
      *
      * @throws InterruptedException
      */
@@ -173,8 +172,8 @@ public class ArcRepositoryTesterStore {
     @Ignore("FIXME")
     // FIXME: test temporarily disabled
     public void testStoreFileAlreadyStored() throws InterruptedException, IOException {
-    	LogbackRecorder lr = LogbackRecorder.startRecorder();
-    	// Set listeners
+        LogbackRecorder lr = LogbackRecorder.startRecorder();
+        // Set listeners
         JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
         GenericMessageListener gmlAnyBa = new GenericMessageListener();
         con.setListener(Channels.getAnyBa(), gmlAnyBa);
@@ -225,13 +224,14 @@ public class ArcRepositoryTesterStore {
 
         // Check log for message
         lr.assertLogContains("Should have the log message",
-        		"Retrying store of already known file '" + STORABLE_FILE.getName() + "'," + " Already completed: " + true);
+                "Retrying store of already known file '" + STORABLE_FILE.getName() + "'," + " Already completed: "
+                        + true);
         lr.stopRecorder();
     }
 
     /**
-     * Tests that we get a Not-OK message, if the file is known with other
-     * checksum. Also test that state is unchanged afterwards
+     * Tests that we get a Not-OK message, if the file is known with other checksum. Also test that state is unchanged
+     * afterwards
      */
     @Test
     @Ignore("FIXME")
@@ -283,9 +283,8 @@ public class ArcRepositoryTesterStore {
     }
 
     /**
-     * Tests that if we call store with a new file, a store message is sent to
-     * the bitarchives. Also tests that state is now UPLOAD_STARTED for all
-     * bitarchives
+     * Tests that if we call store with a new file, a store message is sent to the bitarchives. Also tests that state is
+     * now UPLOAD_STARTED for all bitarchives
      */
     @Test
     @Ignore("FIXME")
@@ -340,14 +339,14 @@ public class ArcRepositoryTesterStore {
     }
 
     /**
-     * Tests that if we call store with a file in state FAILED a checksum job is
-     * submitted to the bitarchive. Also test that state is changed to UPLOADED
+     * Tests that if we call store with a file in state FAILED a checksum job is submitted to the bitarchive. Also test
+     * that state is changed to UPLOADED
      */
     @Test
     @Ignore("FIXME")
     // FIXME: test temporarily disabled
     public void testStoreFailedFile() throws IOException {
-    	LogbackRecorder lr = LogbackRecorder.startRecorder();
+        LogbackRecorder lr = LogbackRecorder.startRecorder();
         JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
         GenericMessageListener gmlAnyBa = new GenericMessageListener();
         con.setListener(Channels.getAnyBa(), gmlAnyBa);
@@ -402,19 +401,19 @@ public class ArcRepositoryTesterStore {
 
         // Check log for message
         lr.assertLogContains("Should have the log message",
-        		"Retrying store of already known file '" + STORABLE_FILE.getName() + "', Already completed: " + false);
+                "Retrying store of already known file '" + STORABLE_FILE.getName() + "', Already completed: " + false);
         lr.stopRecorder();
     }
 
     /**
-     * Tests that if we call store with a file in state UPLOADED a checksum job
-     * is submitted to the bitarchive. Also test that state is still UPLOADED
+     * Tests that if we call store with a file in state UPLOADED a checksum job is submitted to the bitarchive. Also
+     * test that state is still UPLOADED
      */
     @Test
     @Ignore("FIXME")
     // FIXME: test temporarily disabled
     public void testStoreUploadedFile() throws IOException {
-    	LogbackRecorder lr = LogbackRecorder.startRecorder();
+        LogbackRecorder lr = LogbackRecorder.startRecorder();
         JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
         GenericMessageListener gmlAnyBa = new GenericMessageListener();
         con.setListener(Channels.getAnyBa(), gmlAnyBa);
@@ -469,19 +468,19 @@ public class ArcRepositoryTesterStore {
 
         // Check log for message
         lr.assertLogContains("Should have the log message",
-        		"Retrying store of already known file '" + STORABLE_FILE.getName() + "', Already completed: " + false);
+                "Retrying store of already known file '" + STORABLE_FILE.getName() + "', Already completed: " + false);
         lr.stopRecorder();
     }
 
     /**
-     * Tests that if we call store with a file in state STARTED a checksum job
-     * is submitted to the bitarchive. Also test that state is still STARTED
+     * Tests that if we call store with a file in state STARTED a checksum job is submitted to the bitarchive. Also test
+     * that state is still STARTED
      */
     @Test
     @Ignore("FIXME")
     // FIXME: test temporarily disabled
     public void testStoreStartedFile() throws IOException {
-    	LogbackRecorder lr = LogbackRecorder.startRecorder();
+        LogbackRecorder lr = LogbackRecorder.startRecorder();
         JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
         GenericMessageListener gmlAnyBa = new GenericMessageListener();
         con.setListener(Channels.getAnyBa(), gmlAnyBa);
@@ -534,13 +533,13 @@ public class ArcRepositoryTesterStore {
 
         // Check log for message
         lr.assertLogContains("Should have the log message",
-        		"Retrying store of already known file '" + STORABLE_FILE.getName() + "', Already completed: " + false);
+                "Retrying store of already known file '" + STORABLE_FILE.getName() + "', Already completed: " + false);
         lr.stopRecorder();
     }
 
     /**
-     * Tests that if we get an OK from a bitarchive, we send a checksum job to
-     * check the file. Also test that state is data uploaded
+     * Tests that if we get an OK from a bitarchive, we send a checksum job to check the file. Also test that state is
+     * data uploaded
      */
     @Test
     @Ignore("FIXME")
@@ -607,9 +606,8 @@ public class ArcRepositoryTesterStore {
     }
 
     /**
-     * Tests that if we get a not OK from a bitarchive, we reply not OK (no
-     * other bitarchive is waiting for upload replies). Also test that state is
-     * upload failed
+     * Tests that if we get a not OK from a bitarchive, we reply not OK (no other bitarchive is waiting for upload
+     * replies). Also test that state is upload failed
      */
     @Test
     @Ignore("FIXME")
@@ -673,8 +671,8 @@ public class ArcRepositoryTesterStore {
     }
 
     /**
-     * Tests that a batch reply with correct checksum results in an OK message
-     * (all bitarchives are OK) Also test that state is completed
+     * Tests that a batch reply with correct checksum results in an OK message (all bitarchives are OK) Also test that
+     * state is completed
      */
     @Test
     @Ignore("FIXME")
@@ -710,7 +708,7 @@ public class ArcRepositoryTesterStore {
 
         // Deliver message
         BatchReplyMessage msg = new BatchReplyMessage(Channels.getTheRepos(),
-                Channels.retrieveReplicaChannelFromReplicaId("ONE"), "Msg-id-0", 1, Collections.<File> emptyList(),
+                Channels.retrieveReplicaChannelFromReplicaId("ONE"), "Msg-id-0", 1, Collections.<File>emptyList(),
                 RemoteFileFactory.getInstance(BATCH_RESULT, true, false, true));
         JMSConnectionMockupMQ.updateMsgID(msg, "Msg-id-1");
         arcRepos.onBatchReply(msg);
@@ -744,9 +742,8 @@ public class ArcRepositoryTesterStore {
     }
 
     /**
-     * Tests that a batch reply with un-correct checksum after an upload results
-     * in a not OK message, unless some bitarchive is waiting for replies Also
-     * test that state is failed
+     * Tests that a batch reply with un-correct checksum after an upload results in a not OK message, unless some
+     * bitarchive is waiting for replies Also test that state is failed
      */
     @Test
     @Ignore("FIXME")
@@ -778,7 +775,7 @@ public class ArcRepositoryTesterStore {
 
         // Deliver message
         BatchReplyMessage msg = new BatchReplyMessage(Channels.getTheRepos(),
-                Channels.retrieveReplicaChannelFromReplicaId("ONE"), "Msg-id-0", 1, Collections.<File> emptyList(),
+                Channels.retrieveReplicaChannelFromReplicaId("ONE"), "Msg-id-0", 1, Collections.<File>emptyList(),
                 RemoteFileFactory.getInstance(BATCH_RESULT_WRONG, true, false, true));
         JMSConnectionMockupMQ.updateMsgID(msg, "Msg-id-1");
         arcRepos.onBatchReply(msg);
@@ -812,9 +809,8 @@ public class ArcRepositoryTesterStore {
     }
 
     /**
-     * Tests that a batch reply with no checksum for a file missing upload reply
-     * (a retry) results in an attempt to store the file again Also test that
-     * state is upload started
+     * Tests that a batch reply with no checksum for a file missing upload reply (a retry) results in an attempt to
+     * store the file again Also test that state is upload started
      */
     @Test
     @Ignore("FIXME")
@@ -846,7 +842,7 @@ public class ArcRepositoryTesterStore {
 
         // Deliver message
         BatchReplyMessage msg = new BatchReplyMessage(Channels.getTheRepos(),
-                Channels.retrieveReplicaChannelFromReplicaId("ONE"), "Msg-id-0", 0, Collections.<File> emptyList(),
+                Channels.retrieveReplicaChannelFromReplicaId("ONE"), "Msg-id-0", 0, Collections.<File>emptyList(),
                 RemoteFileFactory.getInstance(BATCH_RESULT_EMPTY, true, false, true));
         JMSConnectionMockupMQ.updateMsgID(msg, "Msg-id-1");
         arcRepos.onBatchReply(msg);

@@ -21,6 +21,7 @@
  * #L%
  */
 package dk.netarkivet.harvester.tools;
+
 /**
  * Tests of the tool to create metadata files.
  */
@@ -45,15 +46,10 @@ import dk.netarkivet.harvester.datamodel.TestInfo;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.SetSystemProperty;
 
-
-
 @Ignore("binary derby database not converted to scripts yet")
 public class HarvestdatabaseUpdateApplicationTester {
-    SetSystemProperty derbyLog
-            = new SetSystemProperty(
-            "derby.stream.error.file",
-            new File(dk.netarkivet.harvester.datamodel.TestInfo.TEMPDIR, "derby.log")
-                    .getAbsolutePath());
+    SetSystemProperty derbyLog = new SetSystemProperty("derby.stream.error.file", new File(
+            dk.netarkivet.harvester.datamodel.TestInfo.TEMPDIR, "derby.log").getAbsolutePath());
     ReloadSettings rs = new ReloadSettings();
     File commonTempdir = new File(TestInfo.TEMPDIR, "commontempdir");
 
@@ -76,27 +72,21 @@ public class HarvestdatabaseUpdateApplicationTester {
     }
 
     private void setupDatabase(String dataFile) throws IOException, SQLException, IllegalAccessException {
-        String derbyDBUrl = "jdbc:derby:" + TestInfo.TEMPDIR.getCanonicalPath()
-            + "/" + dataFile;
+        String derbyDBUrl = "jdbc:derby:" + TestInfo.TEMPDIR.getCanonicalPath() + "/" + dataFile;
         Settings.set(CommonSettings.DB_BASE_URL, derbyDBUrl);
         Settings.set(CommonSettings.DB_MACHINE, "");
         Settings.set(CommonSettings.DB_PORT, "");
         Settings.set(CommonSettings.DB_DIR, "");
         commonTempdir.mkdir();
-        Settings.set(CommonSettings.DIR_COMMONTEMPDIR,
-                commonTempdir.getAbsolutePath());
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, commonTempdir.getAbsolutePath());
 
-        Settings.set(CommonSettings.NOTIFICATIONS_CLASS,
-                RememberNotifications.class.getName());
+        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
         HarvestDAOUtils.resetDAOs();
 
         Connection c = DatabaseTestUtils.getHDDB("/" + dk.netarkivet.harvester.datamodel.TestInfo.TOPDATADIR + "/"
-                + dataFile + ".sql",
-                dataFile,
-                dk.netarkivet.harvester.datamodel.TestInfo.TEMPDIR);
+                + dataFile + ".sql", dataFile, dk.netarkivet.harvester.datamodel.TestInfo.TEMPDIR);
         if (c == null) {
-            fail("No connection to Database: "
- + dk.netarkivet.harvester.datamodel.TestInfo.DBFILE);
+            fail("No connection to Database: " + dk.netarkivet.harvester.datamodel.TestInfo.DBFILE);
         }
     }
 }

@@ -37,7 +37,6 @@ import dk.netarkivet.wayback.WaybackSettings;
 public class ArchiveFileTester extends IndexerTestCase {
     private final File destDir = Settings.getFile(WaybackSettings.WAYBACK_BATCH_OUTPUTDIR);
 
-
     @Override
     @Before
     public void setUp() {
@@ -61,10 +60,8 @@ public class ArchiveFileTester extends IndexerTestCase {
         file.setFilename("arcfile_withredirects.arc");
         (new ArchiveFileDAO()).create(file);
         file.index();
-        File outputFile = new File(destDir,
-                                   file.getOriginalIndexFileName());
-        assertTrue("Should have a resonable numer of lines in output file",
-                   FileUtils.countLines(outputFile)>5);
+        File outputFile = new File(destDir, file.getOriginalIndexFileName());
+        assertTrue("Should have a resonable numer of lines in output file", FileUtils.countLines(outputFile) > 5);
     }
 
     /**
@@ -76,9 +73,7 @@ public class ArchiveFileTester extends IndexerTestCase {
         file.setFilename("duplicate.metadata.arc");
         (new ArchiveFileDAO()).create(file);
         file.index();
-        File outputFile = new File(destDir,
-                                   file.getOriginalIndexFileName());
-        assertTrue("Should have a resonable numer of lines in output file",
-                   FileUtils.countLines(outputFile) == 15);
+        File outputFile = new File(destDir, file.getOriginalIndexFileName());
+        assertTrue("Should have a resonable numer of lines in output file", FileUtils.countLines(outputFile) == 15);
     }
 }

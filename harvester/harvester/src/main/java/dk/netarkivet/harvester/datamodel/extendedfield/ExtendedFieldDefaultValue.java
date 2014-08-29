@@ -34,12 +34,11 @@ import org.slf4j.LoggerFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
- * Class for constructing, validating, and keeping the default
- * value for a single ExtendedField.
+ * Class for constructing, validating, and keeping the default value for a single ExtendedField.
  */
 public class ExtendedFieldDefaultValue {
-    
-    /** The logger. */    
+
+    /** The logger. */
     private static final Logger log = LoggerFactory.getLogger(ExtendedFieldDefaultValue.class);
 
     /** Array of strings considered to be "true" values. */
@@ -48,7 +47,7 @@ public class ExtendedFieldDefaultValue {
     protected static final String[] possibleFalseValues = {"false", "f", "0"};
     /** The valid state of this ExtendedFieldDefaultValue. */
     protected final boolean valid;
-    
+
     /** The value of this ExtendedFieldDefaultValue. */
     protected String value;
     /** The formatting pattern of this ExtendedFieldDefaultValue. */
@@ -58,6 +57,7 @@ public class ExtendedFieldDefaultValue {
 
     /**
      * Constructor for the ExtendedFieldDefaultValues class.
+     *
      * @param aValue The given default value
      * @param aFormat the given formatting pattern
      * @param aDatatype the given datatype
@@ -68,9 +68,10 @@ public class ExtendedFieldDefaultValue {
         datatype = aDatatype;
         valid = validate();
     }
-    
+
     /**
      * Validate the arguments to the constructor.
+     *
      * @return true, if arguments are valid; false otherwise.
      */
     private boolean validate() {
@@ -85,17 +86,17 @@ public class ExtendedFieldDefaultValue {
             }
             break;
         case ExtendedFieldDataTypes.NUMBER:
-        	if (value == null || value.length() == 0) {	// no value no format check
-        		isValid = true;
-        		break;
-        	}
-        	
+            if (value == null || value.length() == 0) { // no value no format check
+                isValid = true;
+                break;
+            }
+
             if (format != null) {
-            	if (format.length() == 0) {
-            		isValid = true;
-            		break;
-            	}
-            	
+                if (format.length() == 0) {
+                    isValid = true;
+                    break;
+                }
+
                 DecimalFormat decimalFormat = new DecimalFormat(format);
                 try {
                     decimalFormat.parse(value);
@@ -109,17 +110,17 @@ public class ExtendedFieldDefaultValue {
             break;
         case ExtendedFieldDataTypes.TIMESTAMP:
         case ExtendedFieldDataTypes.JSCALENDAR:
-        	if (value == null || value.length() == 0) { // no value no format check
-        		isValid = true;
-        		break;
-        	}
-        	
+            if (value == null || value.length() == 0) { // no value no format check
+                isValid = true;
+                break;
+            }
+
             if (format != null) {
-            	if (format.length() == 0) {
-            		isValid = true;
-            		break;
-            	}
-            	
+                if (format.length() == 0) {
+                    isValid = true;
+                    break;
+                }
+
                 SimpleDateFormat dateFormat = new SimpleDateFormat(format);
                 try {
                     dateFormat.parse(value);
@@ -136,16 +137,17 @@ public class ExtendedFieldDefaultValue {
             break;
         case ExtendedFieldDataTypes.SELECT:
             isValid = true; // Any kind of SELECT value currently accepted.
-            break;   
+            break;
         default:
             throw new ArgumentNotValid("Unable to validate unknown datatype: " + datatype);
         }
-        
+
         return isValid;
     }
 
     /**
      * Check the given string if it can be parsed as a Boolean.
+     *
      * @param aBooleanValue A given boolean
      * @return true, if the given string if it can be parsed as a Boolean.
      */
@@ -173,39 +175,38 @@ public class ExtendedFieldDefaultValue {
     public boolean isValid() {
         return valid;
     }
-    
+
     /**
-     * @return String, the DB-Value of the a Value 
+     * @return String, the DB-Value of the a Value
      */
     public String getDBValue() {
-    	// prevent that any null value fills content column of extendedFieldValue
-    	if (value == null) {
-    		value = "";
-    	}
-    	
-    	// only if datatype is Timestamp, JSCalendar or Number. Otherwise DB-Value = Value
-    	if (value != null && value.length() > 0) {
-    		if (ExtendedFieldDataTypes.TIMESTAMP == datatype || ExtendedFieldDataTypes.JSCALENDAR == datatype) {
-            	try {
-            		// the Milliseconds from 1.1.1970 will be stored as String
-            		SimpleDateFormat sdf = new SimpleDateFormat(format);
-            		sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-    	            return String.valueOf(sdf.parse(value).getTime());
+        // prevent that any null value fills content column of extendedFieldValue
+        if (value == null) {
+            value = "";
+        }
+
+        // only if datatype is Timestamp, JSCalendar or Number. Otherwise DB-Value = Value
+        if (value != null && value.length() > 0) {
+            if (ExtendedFieldDataTypes.TIMESTAMP == datatype || ExtendedFieldDataTypes.JSCALENDAR == datatype) {
+                try {
+                    // the Milliseconds from 1.1.1970 will be stored as String
+                    SimpleDateFormat sdf = new SimpleDateFormat(format);
+                    sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+                    return String.valueOf(sdf.parse(value).getTime());
                 } catch (ParseException e) {
                     log.debug("Invalid TIMESTAMP: {}", value);
                 }
-    		}
-    		else if (ExtendedFieldDataTypes.NUMBER == datatype) {
-            	try {
-            		// a Double Value will be stored String
-    	            return String.valueOf(new DecimalFormat(format).parse(value).doubleValue());
+            } else if (ExtendedFieldDataTypes.NUMBER == datatype) {
+                try {
+                    // a Double Value will be stored String
+                    return String.valueOf(new DecimalFormat(format).parse(value).doubleValue());
                 } catch (ParseException e) {
                     log.debug("Invalid NUMBER: {}", value);
                 }
-    		} 
-    	}
-        
+            }
+        }
+
         return value;
     }
-    
+
 }

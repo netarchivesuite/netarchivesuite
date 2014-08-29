@@ -37,45 +37,42 @@ import dk.netarkivet.common.utils.Settings;
 
 /**
  * A command-line tool to get ARC files from the bitarchive.
- *
- * Usage: 
- * java dk.netarkivet.archive.tools.GetFile arcfilename [destination-file]
+ * <p>
+ * Usage: java dk.netarkivet.archive.tools.GetFile arcfilename [destination-file]
  */
 
 public class GetFile extends ToolRunnerBase {
 
     /**
-     * Main method. Retrieves a file from the bitarchive and copies it to
-     * current working directory.
-     * Setup, teardown and run is delegated to the GetFileTool class.
-     * Management of this, exception handling etc. is delegated to
+     * Main method. Retrieves a file from the bitarchive and copies it to current working directory. Setup, teardown and
+     * run is delegated to the GetFileTool class. Management of this, exception handling etc. is delegated to
      * ToolRunnerBase class.
      *
-     * @param argv Takes one or two command line parameter: 
-     *    the name of the file to retrieve. 
-     *    optionally, the name of the destination file.
+     * @param argv Takes one or two command line parameter: the name of the file to retrieve. optionally, the name of
+     * the destination file.
      */
     public static void main(String[] argv) {
         GetFile instance = new GetFile();
         instance.runTheTool(argv);
     }
-    
+
     /**
      * Create an instance of GetFileTool.
+     *
      * @return an instance of GetFileTool.
      */
     protected SimpleCmdlineTool makeMyTool() {
         return new GetFileTool();
     }
-    
+
     /** The implementation of SimpleCmdlineTool for GetFile. */
     private static class GetFileTool implements SimpleCmdlineTool {
         /**
-         * This instance is declared outside of run method to ensure reliable
-         * teardown in case of exceptions during execution.
+         * This instance is declared outside of run method to ensure reliable teardown in case of exceptions during
+         * execution.
          */
         private ViewerArcRepositoryClient arcrep;
-        
+
         /**
          * the bitarchive replica requested to deliver the file.
          */
@@ -85,29 +82,25 @@ public class GetFile extends ToolRunnerBase {
          * Accept 1 or 2 parameters.
          *
          * @param args the arguments
-         * @return true, if length of args list is 1 or 2; 
-         *  returns false otherwise
+         * @return true, if length of args list is 1 or 2; returns false otherwise
          */
         public boolean checkArgs(String... args) {
             return (args.length >= 1 && args.length <= 2);
         }
 
         /**
-         * Create the ArcRepositoryClient instance here for reliable execution
-         * of close method in teardown.
+         * Create the ArcRepositoryClient instance here for reliable execution of close method in teardown.
          *
          * @param args the arguments (not used)
          */
         public void setUp(String... args) {
             arcrep = ArcRepositoryClientFactory.getViewerInstance();
-            myReplica = Replica.getReplicaFromId(Settings.get(
-                    CommonSettings.USE_REPLICA_ID));
+            myReplica = Replica.getReplicaFromId(Settings.get(CommonSettings.USE_REPLICA_ID));
         }
 
         /**
-         * Ensure reliable execution of the ArcRepositoryClient.close() method.
-         * Remember to check if arcrep was actually created. Also reliably
-         * cleans up the JMSConnection.
+         * Ensure reliable execution of the ArcRepositoryClient.close() method. Remember to check if arcrep was actually
+         * created. Also reliably cleans up the JMSConnection.
          */
         public void tearDown() {
             if (arcrep != null) {
@@ -117,11 +110,9 @@ public class GetFile extends ToolRunnerBase {
         }
 
         /**
-         * Perform the actual work. Procure the necessary information from
-         * command line parameters and system settings required to run the
-         * ViewerArcRepositoryClient.getFile(), and perform the operation.
-         * Creating and closing the ArcRepositoryClient (arcrep) is
-         * done in setup and teardown methods.
+         * Perform the actual work. Procure the necessary information from command line parameters and system settings
+         * required to run the ViewerArcRepositoryClient.getFile(), and perform the operation. Creating and closing the
+         * ArcRepositoryClient (arcrep) is done in setup and teardown methods.
          *
          * @param args the arguments
          */
@@ -134,14 +125,12 @@ public class GetFile extends ToolRunnerBase {
                 } else {
                     destfile = new File(args[1]);
                 }
-                System.out.println("Retrieving file '" + filename
-                        + "' from replica '" + myReplica.getName()
+                System.out.println("Retrieving file '" + filename + "' from replica '" + myReplica.getName()
                         + "' as file " + destfile.getAbsolutePath());
                 arcrep.getFile(filename, myReplica, destfile);
 
             } catch (NetarkivetException e) {
-                System.out.println("Execution of arcrep.getFile(arcfilename, "
-                        + "replica, toFile) failed).");
+                System.out.println("Execution of arcrep.getFile(arcfilename, " + "replica, toFile) failed).");
                 e.printStackTrace();
                 System.exit(1);
             }

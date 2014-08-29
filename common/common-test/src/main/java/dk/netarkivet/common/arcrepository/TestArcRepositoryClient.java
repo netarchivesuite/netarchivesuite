@@ -23,14 +23,6 @@
 
 package dk.netarkivet.common.arcrepository;
 
-import dk.netarkivet.common.distribute.TestRemoteFile;
-import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
-import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
-import dk.netarkivet.common.distribute.arcrepository.Replica;
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.batch.FileBatchJob;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -40,17 +32,26 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.archive.io.ArchiveReader;
 import org.archive.io.ArchiveReaderFactory;
 import org.archive.io.ArchiveRecord;
 
+import dk.netarkivet.common.distribute.TestRemoteFile;
+import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
+import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
+import dk.netarkivet.common.distribute.arcrepository.Replica;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.batch.FileBatchJob;
+
 /**
- * A local-file based arc repository client.  Given one or more directories
- * with ARC files, this client will serve them out like a normal arcrepository.
- *
+ * A local-file based arc repository client. Given one or more directories with ARC files, this client will serve them
+ * out like a normal arcrepository.
  */
 
-//public class TestArcRepositoryClient extends JMSArcRepositoryClient {
+// public class TestArcRepositoryClient extends JMSArcRepositoryClient {
 public class TestArcRepositoryClient extends TrivialArcRepositoryClient {
     public File arcDir;
     /** How many times batch has been called */
@@ -89,8 +90,7 @@ public class TestArcRepositoryClient extends TrivialArcRepositoryClient {
     }
 
     @Override
-    public BitarchiveRecord get(String arcfile, long index)
-            throws ArgumentNotValid {
+    public BitarchiveRecord get(String arcfile, long index) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(arcfile, "arcfile");
         ArgumentNotValid.checkNotNegative(index, "index");
 
@@ -124,22 +124,19 @@ public class TestArcRepositoryClient extends TrivialArcRepositoryClient {
         try {
             os = new FileOutputStream(f);
         } catch (IOException e) {
-            return new BatchStatus(replicaId,
-                    new ArrayList<File>(), 0, null, job.getExceptions());
+            return new BatchStatus(replicaId, new ArrayList<File>(), 0, null, job.getExceptions());
         }
-        File[] files = arcDir.listFiles(
-                new FilenameFilter() {
-                    public boolean accept(File dir, String name) {
-                        return name.endsWith(".arc");
-                    }
-                }
-        );
+        File[] files = arcDir.listFiles(new FilenameFilter() {
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".arc");
+            }
+        });
         job.initialize(os);
         int processed = 0;
         List<File> failures = new ArrayList<File>();
         for (File f1 : files) {
             if (job.getFilenamePattern().matcher(f1.getName()).matches()) {
-                processed ++;
+                processed++;
                 if (!job.processFile(f1, os)) {
                     failures.add(f1);
                 }
@@ -153,11 +150,7 @@ public class TestArcRepositoryClient extends TrivialArcRepositoryClient {
             throw new IOFailure("Error in close", e);
         }
 
-        return new BatchStatus(replicaId,
-                failures, processed, 
-                new TestRemoteFile(f, batchMustDie,
-                        batchMustDie,
-                        batchMustDie),
-                        job.getExceptions());
+        return new BatchStatus(replicaId, failures, processed, new TestRemoteFile(f, batchMustDie, batchMustDie,
+                batchMustDie), job.getExceptions());
     }
 }

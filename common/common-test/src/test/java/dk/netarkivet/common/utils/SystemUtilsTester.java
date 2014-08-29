@@ -33,7 +33,6 @@ import org.junit.Test;
 
 import dk.netarkivet.testutils.CollectionAsserts;
 
-
 /**
  * Unit tests for the class SystemUtils.
  */
@@ -42,52 +41,40 @@ public class SystemUtilsTester {
     public void testGetLocalIP() {
         String ip = SystemUtils.getLocalIP();
         String[] parts = ip.split("\\.");
-        assertTrue("Expected at least four parts in the IP adress " + ip,
-                   parts.length >= 4);
+        assertTrue("Expected at least four parts in the IP adress " + ip, parts.length >= 4);
     }
 
-	/**
-	 * 
-	 * Tests getting hostname. This is nearly impossible, but we _can_ check
-	 * that an IP address is not returned (note: IP number comparison disabled
-	 * as the method invoked uses getCanonicalHostname which does a reverse DNS
-	 * lookup which does not return a name but the IP-number if the number is
-	 * not in DNS (which frequently is the case for residential networks behind
-	 * a NAT-router), and that it at least does not throw an exception.
-	 * 
-	 * @throws Exception
-	 */
+    /**
+     * Tests getting hostname. This is nearly impossible, but we _can_ check that an IP address is not returned (note:
+     * IP number comparison disabled as the method invoked uses getCanonicalHostname which does a reverse DNS lookup
+     * which does not return a name but the IP-number if the number is not in DNS (which frequently is the case for
+     * residential networks behind a NAT-router), and that it at least does not throw an exception.
+     *
+     * @throws Exception
+     */
     @Test
     public void testGetLocalHostName() throws Exception {
         String result = SystemUtils.getLocalHostName();
-        //assertFalse("Should not be an IPv4 address: " + result,
-        //            Constants.IP_KEY_REGEXP.matcher(result).matches());
-        //assertFalse("Should not be an IPv6 address: " + result,
-        //            Constants.IPv6_KEY_REGEXP.matcher(result).matches());
+        // assertFalse("Should not be an IPv4 address: " + result,
+        // Constants.IP_KEY_REGEXP.matcher(result).matches());
+        // assertFalse("Should not be an IPv6 address: " + result,
+        // Constants.IPv6_KEY_REGEXP.matcher(result).matches());
         assertTrue("hostname not empty string", result.length() > 0);
     }
 
     @Test
     public void testGetCurrentClasspath() throws Exception {
         List<String> classpath = SystemUtils.getCurrentClasspath();
-        String[] systemClassPath
-            = System.getProperty("java.class.path").split(":");
-        CollectionAsserts.assertListEquals("Should return the system"
-                                           + " class path as a list",
-                                           classpath,
-                                           (Object[]) systemClassPath);
+        String[] systemClassPath = System.getProperty("java.class.path").split(":");
+        CollectionAsserts.assertListEquals("Should return the system" + " class path as a list", classpath,
+                (Object[]) systemClassPath);
         // Test that some version of the standard libraries are in there
-        JARS: for (String jar : new String[] {
-                "commons-fileupload.*\\.jar$",
-                "commons-httpclient.*\\.jar$",
-                "commons-logging.*\\.jar$",
-                "dom4j-.*\\.jar$",
-                "jaxen-.*\\.jar$",
-                "jetty-.*\\.jar$",
-                "junit-.*\\.jar$",
-        // Removed as not used in common.
-        // "libidn-.*\\.jar$",
-        // "lucene-core-.*\\.jar$"
+        JARS:
+        for (String jar : new String[] {"commons-fileupload.*\\.jar$", "commons-httpclient.*\\.jar$",
+                "commons-logging.*\\.jar$", "dom4j-.*\\.jar$", "jaxen-.*\\.jar$", "jetty-.*\\.jar$", "junit-.*\\.jar$",
+                // Removed as not used in common.
+                // "libidn-.*\\.jar$",
+                // "lucene-core-.*\\.jar$"
         }) {
             Matcher m = Pattern.compile(jar).matcher("");
             for (String path : classpath) {

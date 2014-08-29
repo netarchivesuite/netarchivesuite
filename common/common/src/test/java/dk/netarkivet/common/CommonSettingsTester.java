@@ -32,9 +32,7 @@ import java.lang.reflect.Field;
 import org.junit.Test;
 
 /**
- * Test that all the public static fields for the CommonSettings class are
- * <i>not</i> final.
- * 
+ * Test that all the public static fields for the CommonSettings class are <i>not</i> final.
  */
 public class CommonSettingsTester {
 
@@ -45,8 +43,7 @@ public class CommonSettingsTester {
         for (Field f : fields) {
             int modifiers = f.getModifiers();
             if (isPublic(modifiers) && isStatic(modifiers)) {
-                assertFalse("CommonSettings: field final: " + f.getName(),
-                        isFinal(modifiers));
+                assertFalse("CommonSettings: field final: " + f.getName(), isFinal(modifiers));
             }
         }
     }

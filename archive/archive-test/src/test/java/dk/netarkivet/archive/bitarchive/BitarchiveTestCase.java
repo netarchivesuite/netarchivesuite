@@ -38,12 +38,14 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 /** A collection of setup/teardown stuff usable by most bitarchive tests.. */
 public abstract class BitarchiveTestCase {
 
-	private UseTestRemoteFile rf = new UseTestRemoteFile();
+    private UseTestRemoteFile rf = new UseTestRemoteFile();
     protected static Bitarchive archive;
     ReloadSettings rs = new ReloadSettings();
 
     MockupJMS mj = new MockupJMS();
-    /** Make a new BitarchiveTestCase using the given directory for originals.
+
+    /**
+     * Make a new BitarchiveTestCase using the given directory for originals.
      *
      * @param s Name of the test.
      */

@@ -66,8 +66,8 @@ import dk.netarkivet.testutils.TestMessageListener;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
- * Test bitarchive client and server As a number of tests only succeed if both
- * the client and server both operate correctly, both are tested together.
+ * Test bitarchive client and server As a number of tests only succeed if both the client and server both operate
+ * correctly, both are tested together.
  */
 @Ignore("Needs to be run in deploy-test module according to junit 3 test suite.")
 public class IntegrityTests {
@@ -75,7 +75,7 @@ public class IntegrityTests {
     // A named logger for this class is retrieved
     protected final Logger logger = LoggerFactory.getLogger(IntegrityTests.class);
 
-	private static final String ARC_FILE_NAME = "Upload5.ARC";
+    private static final String ARC_FILE_NAME = "Upload5.ARC";
     private static final File TEST_DIR = new File("tests/dk/netarkivet/archive/bitarchive/distribute/data/");
     private static final File ORIGINALS_DIR = new File(TEST_DIR, "originals");
     private static final File WORKING_DIR = new File(TEST_DIR, "working");
@@ -135,9 +135,8 @@ public class IntegrityTests {
         theFTPClient = new FTPClient();
 
         /*
-         * try { theFTPClient.setFileType(FTPClient.BINARY_FILE_TYPE); } catch
-         * (IOException e) { throw new IOFailure("Unable to set Transfer mode: "
-         * + e); }
+         * try { theFTPClient.setFileType(FTPClient.BINARY_FILE_TYPE); } catch (IOException e) { throw new
+         * IOFailure("Unable to set Transfer mode: " + e); }
          */
 
         try {
@@ -181,8 +180,8 @@ public class IntegrityTests {
 
                 if (currentUploadedFile != null) {
                     if (!theFTPClient.deleteFile(currentUploadedFile)) {
-                        logger.warn("deleteFile operation failed on {}. Reply from ftpserver: {}",
-                        		currentUploadedFile, theFTPClient.getReplyString());
+                        logger.warn("deleteFile operation failed on {}. Reply from ftpserver: {}", currentUploadedFile,
+                                theFTPClient.getReplyString());
                     }
                 }
             }
@@ -206,8 +205,8 @@ public class IntegrityTests {
     }
 
     /**
-     * Test that monitor can receive and aggregate data from more than one
-     * BitarchiveServer and aggregate the data and upload it via FTPRemoteFile.
+     * Test that monitor can receive and aggregate data from more than one BitarchiveServer and aggregate the data and
+     * upload it via FTPRemoteFile.
      */
     @Test
     @Ignore("FIXME")
@@ -268,11 +267,9 @@ public class IntegrityTests {
         // monitor should have written the data to a remote file we can collect
         assertEquals("Should have received exactly two messages, but got " + listener.getAllReceived(), 2,
                 listener.getNumReceived());
-        List<NetarkivetMessage> received = listener.getAllReceived();
-        for (Iterator<NetarkivetMessage> i = received.iterator(); i.hasNext();) {
-            Object o = i.next();
-            if (o instanceof BatchReplyMessage) {
-                ((BatchReplyMessage) o).getResultFile().copyTo(output_file);
+        for (NetarkivetMessage message : listener.getAllReceived()) {
+            if (message instanceof BatchReplyMessage) {
+                ((BatchReplyMessage) message).getResultFile().copyTo(output_file);
             }
         }
 
@@ -324,10 +321,10 @@ public class IntegrityTests {
             // System.out.println("Sending message #" + i);
             bac.get(FILENAME_TO_GET, 0);
             bac.sendUploadMessage(RemoteFileFactory.getInstance(FILE_TO_UPLOAD, true, false, true)); // only
-                                                                                                     // first
-                                                                                                     // upload
-                                                                                                     // will
-                                                                                                     // succeed
+            // first
+            // upload
+            // will
+            // succeed
             BatchMessage bMsg = new BatchMessage(THE_BAMON, Channels.getThisReposClient(), new TestBatchJobRuns(),
                     Settings.get(CommonSettings.USE_REPLICA_ID));
             bac.sendBatchJob(bMsg);
@@ -338,7 +335,7 @@ public class IntegrityTests {
         // System.out.println("Sending messages done");
         System.out.println("Sleeping until active threads are equal to " + beforeCount);
         long maxAllowedExecutionTime = 300000; // Only run this test for max. 5
-                                               // minutes.
+        // minutes.
         long starttime = System.currentTimeMillis();
         while (Thread.activeCount() > beforeCount && System.currentTimeMillis() < starttime + maxAllowedExecutionTime) {
             // System.out.println("Active count:" + Thread.activeCount());
@@ -457,8 +454,7 @@ public class IntegrityTests {
         }
 
         /**
-         * test, if original ARC file still exists, and has the same size as
-         * before
+         * test, if original ARC file still exists, and has the same size as before
          */
         assertEquals("Test-file has been modified!!", fileSize, testARCFile.length());
     }
@@ -500,16 +496,8 @@ public class IntegrityTests {
         }
 
         synchronized public int getTotalCount() {
-            return (uploadMsg.size() + getMsg.size() + removeMsg.size() + batchMsg.size() + getfileMsg.size() + batchReplyMsg
-                    .size());
-        }
-
-        synchronized void receive(long ms) {
-            try {
-                this.wait(ms);
-            } catch (InterruptedException e) {
-                fail("should not be interupted");
-            }
+            return (uploadMsg.size() + getMsg.size() + removeMsg.size() + batchMsg.size() + getfileMsg.size()
+                    + batchReplyMsg.size());
         }
     }
 }

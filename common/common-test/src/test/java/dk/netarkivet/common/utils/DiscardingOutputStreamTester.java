@@ -29,10 +29,8 @@ import java.io.OutputStream;
 
 import org.junit.Test;
 
-
 /**
- * 
- * Unit tests for the DiscardingOutputStream class.   
+ * Unit tests for the DiscardingOutputStream class.
  */
 // FIXME: Does not close properly if anything fails.
 public class DiscardingOutputStreamTester {
@@ -59,7 +57,7 @@ public class DiscardingOutputStreamTester {
         }
         os.close();
     }
- 
+
     @Test
     public void testWriteBytearrayWithArgs() throws IOException {
         OutputStream os = new DiscardingOutputStream();

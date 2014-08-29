@@ -28,9 +28,8 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * Base abstract implementation of an Heritrix frontier report wrapper.
- *
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({"serial"})
 abstract class AbstractFrontierReport implements FrontierReport, Serializable {
 
     /**
@@ -52,6 +51,7 @@ abstract class AbstractFrontierReport implements FrontierReport, Serializable {
 
     /**
      * Initializes an empty Heritrix frontier report wrapper object.
+     *
      * @param jobName the Heritrix job name
      */
     public AbstractFrontierReport(String jobName) {

@@ -22,36 +22,37 @@
  */
 package dk.netarkivet.wayback.batch.copycode;
 
-import java.io.IOException;
 import java.io.File;
+import java.io.IOException;
 
+import org.apache.commons.httpclient.Header;
 import org.archive.io.arc.ARCRecord;
 import org.archive.io.arc.ARCRecordMetaData;
+import org.archive.wayback.UrlCanonicalizer;
+import org.archive.wayback.WaybackConstants;
 import org.archive.wayback.core.CaptureSearchResult;
 import org.archive.wayback.util.Adapter;
 import org.archive.wayback.util.url.IdentityUrlCanonicalizer;
-import org.archive.wayback.UrlCanonicalizer;
-import org.archive.wayback.WaybackConstants;
-import org.apache.commons.httpclient.Header;
 
 /**
- * This class is cut and paste from waybacks ARCRecordToSearchResultAdapter,
- * except for the use of NetarchiveSuiteUrlOperations as a substitute for
- * UrlOperations.
- * 
+ * This class is cut and paste from waybacks ARCRecordToSearchResultAdapter, except for the use of
+ * NetarchiveSuiteUrlOperations as a substitute for UrlOperations.
+ *
  * @deprecated use {@link org.archive.wayback.resourcestore.indexer.ARCRecordToSearchResultAdapter}
  */
-public class NetarchiveSuiteARCRecordToSearchResultAdapter implements Adapter<ARCRecord,CaptureSearchResult> {
-        private UrlCanonicalizer canonicalizer = null;
+public class NetarchiveSuiteARCRecordToSearchResultAdapter implements Adapter<ARCRecord, CaptureSearchResult> {
+    private UrlCanonicalizer canonicalizer = null;
 
     public NetarchiveSuiteARCRecordToSearchResultAdapter() {
         canonicalizer = new IdentityUrlCanonicalizer();
     }
-    
-    //public static SearchResult arcRecordToSearchResult(final ARCRecord rec)
-    //      throws IOException, ParseException {
 
-    /* (non-Javadoc)
+    // public static SearchResult arcRecordToSearchResult(final ARCRecord rec)
+    // throws IOException, ParseException {
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.archive.wayback.util.Adapter#adapt(java.lang.Object)
      */
     public CaptureSearchResult adapt(ARCRecord rec) {
@@ -99,8 +100,7 @@ public class NetarchiveSuiteARCRecordToSearchResultAdapter implements Adapter<AR
 
             result.setOriginalUrl(uriStr);
 
-            String statusCode = (meta.getStatusCode() == null) ? "-" : meta
-                    .getStatusCode();
+            String statusCode = (meta.getStatusCode() == null) ? "-" : meta.getStatusCode();
             result.setHttpCode(statusCode);
 
             String redirectUrl = "-";
@@ -108,8 +108,7 @@ public class NetarchiveSuiteARCRecordToSearchResultAdapter implements Adapter<AR
             if (headers != null) {
 
                 for (int i = 0; i < headers.length; i++) {
-                    if (headers[i].getName().equals(
-                            WaybackConstants.LOCATION_HTTP_HEADER)) {
+                    if (headers[i].getName().equals(WaybackConstants.LOCATION_HTTP_HEADER)) {
 
                         String locationStr = headers[i].getValue();
                         // TODO "Location" is supposed to be absolute:
@@ -122,8 +121,7 @@ public class NetarchiveSuiteARCRecordToSearchResultAdapter implements Adapter<AR
                         // headers...
                         // should we prefer one over the other?
                         // right now, we're ignoring "Content-Location"
-                        redirectUrl = NetarchiveSuiteUrlOperations.resolveUrl(
-                                uriStr, locationStr);
+                        redirectUrl = NetarchiveSuiteUrlOperations.resolveUrl(uriStr, locationStr);
 
                         break;
                     }

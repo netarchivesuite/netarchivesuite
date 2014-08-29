@@ -22,8 +22,6 @@
  */
 package dk.netarkivet.harvester.indexserver;
 
-import is.hi.bok.deduplicator.DigestIndexer;
-
 import java.io.File;
 import java.util.concurrent.Callable;
 
@@ -31,11 +29,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import is.hi.bok.deduplicator.DigestIndexer;
 
-/** 
- * This worker class handles the indexing of one single crawl-log 
- * and associated cdxfile. 
- */ 
+/**
+ * This worker class handles the indexing of one single crawl-log and associated cdxfile.
+ */
 public class DigestIndexerWorker implements Callable<Boolean> {
 
     /** The log. */
@@ -47,7 +45,7 @@ public class DigestIndexerWorker implements Callable<Boolean> {
     private Long jobId;
     /** The crawllog from the job. */
     private File crawlLog;
-    /** The cdxfile from the job.*/
+    /** The cdxfile from the job. */
     private File cdxfile;
     /** The options for the indexing process. */
     private DigestOptions indexingOptions;
@@ -55,18 +53,19 @@ public class DigestIndexerWorker implements Callable<Boolean> {
     private boolean successful = true;
     /** String defining this task among other tasks. */
     private String taskID;
-        
+
     /**
      * Constructor for the DigestIndexerWorker.
+     *
      * @param indexpath The full path to the index
      * @param jobId The ID of the job which logfiles are being indexed
-     * @param crawllogfile The crawllog from the job 
+     * @param crawllogfile The crawllog from the job
      * @param cdxFile The cdxfile from the job
      * @param indexingOptions The options for the indexing process.
      * @param taskID string defining this task
      */
     public DigestIndexerWorker(String indexpath, Long jobId, File crawllogfile, File cdxFile,
-    		DigestOptions indexingOptions, String taskID) {
+            DigestOptions indexingOptions, String taskID) {
         ArgumentNotValid.checkNotNullOrEmpty(indexpath, "String indexpath");
         ArgumentNotValid.checkNotNull(crawllogfile, "File crawllogfile");
         ArgumentNotValid.checkNotNull(cdxFile, "File cdxFile");
@@ -79,11 +78,11 @@ public class DigestIndexerWorker implements Callable<Boolean> {
         this.indexingOptions = indexingOptions;
         this.taskID = taskID;
     }
-    
+
     /**
      * This method does the actual indexing.
-     * @return true, if the indexing completes successfully;
-     * otherwise it returns false
+     *
+     * @return true, if the indexing completes successfully; otherwise it returns false
      */
     @Override
     public Boolean call() {
@@ -92,8 +91,8 @@ public class DigestIndexerWorker implements Callable<Boolean> {
             DigestIndexer localindexer = CrawlLogIndexCache.createStandardIndexer(indexlocation);
             CrawlLogIndexCache.indexFile(jobId, crawlLog, cdxfile, localindexer, indexingOptions);
 
-            log.info("Completed subindexing task ({}) of data from job {} w/ {} index-entries)",
-            		taskID, this.jobId, localindexer.getIndex().numDocs());
+            log.info("Completed subindexing task ({}) of data from job {} w/ {} index-entries)", taskID, this.jobId,
+                    localindexer.getIndex().numDocs());
 
             localindexer.close();
         } catch (Throwable t) {
@@ -101,7 +100,7 @@ public class DigestIndexerWorker implements Callable<Boolean> {
             log.warn("Indexing for job w/ id {} failed.", jobId, t);
         }
         return successful;
- 
+
     }
 
 }

@@ -23,18 +23,21 @@
 
 package dk.netarkivet.harvester.datamodel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
- *  Unittests for the GlobalCrawlerTrapList class.
+ * Unittests for the GlobalCrawlerTrapList class.
  */
 public class GlobalCrawlerTrapListTester extends DataModelTestCase {
 
@@ -47,7 +50,7 @@ public class GlobalCrawlerTrapListTester extends DataModelTestCase {
     @After
     @Override
     public void tearDown() throws Exception {
-      super.tearDown();
+        super.tearDown();
     }
 
     /**
@@ -55,14 +58,10 @@ public class GlobalCrawlerTrapListTester extends DataModelTestCase {
      */
     @Test
     public void testConstructor() throws FileNotFoundException {
-        GlobalCrawlerTrapList trapList = new GlobalCrawlerTrapList(
-                new FileInputStream(new File(TestInfo.TOPDATADIR, 
-                        TestInfo.CRAWLER_TRAPS_01)), "a_name",
-                "A Description", true);
+        GlobalCrawlerTrapList trapList = new GlobalCrawlerTrapList(new FileInputStream(new File(TestInfo.TOPDATADIR,
+                TestInfo.CRAWLER_TRAPS_01)), "a_name", "A Description", true);
         assertEquals("Expected 5 traps in this list", 5, trapList.getTraps().size());
     }
-
-
 
     /**
      * Tests that the constructor throws expected exceptions on bad data
@@ -71,40 +70,34 @@ public class GlobalCrawlerTrapListTester extends DataModelTestCase {
     public void testConstructorFail() throws FileNotFoundException {
 
         try {
-            new GlobalCrawlerTrapList(
-                    new FileInputStream(new File(TestInfo.TOPDATADIR, 
-                            TestInfo.CRAWLER_TRAPS_02)), "",
-                    "A Description", true);
+            new GlobalCrawlerTrapList(new FileInputStream(new File(TestInfo.TOPDATADIR, TestInfo.CRAWLER_TRAPS_02)),
+                    "", "A Description", true);
             fail("Should throw ArgumentNotValid");
         } catch (ArgumentNotValid e) {
-            //expected
+            // expected
         }
 
-
         try {
-            new GlobalCrawlerTrapList(
-                    null, "a_name",
-                    "A Description", true);
+            new GlobalCrawlerTrapList(null, "a_name", "A Description", true);
             fail("Should throw ArgumentNotValid");
         } catch (ArgumentNotValid e) {
-            //expected
+            // expected
         }
     }
 
     /**
-     * Unit test for  https://sbforge.org/jira/browse/NAS-1793
+     * Unit test for https://sbforge.org/jira/browse/NAS-1793
+     *
      * @throws FileNotFoundException
      */
     @Test
     public void testBadRegexp() throws FileNotFoundException {
         try {
-            new GlobalCrawlerTrapList(
-                    new FileInputStream(new File(TestInfo.TOPDATADIR, 
-                            TestInfo.CRAWLER_TRAPS_03)), "a_name",
-                    "A Description", true);
+            new GlobalCrawlerTrapList(new FileInputStream(new File(TestInfo.TOPDATADIR, TestInfo.CRAWLER_TRAPS_03)),
+                    "a_name", "A Description", true);
             fail("Should have thrown ArgumentNotValid on bad regexp");
         } catch (ArgumentNotValid e) {
-            //expected
+            // expected
         }
     }
 }

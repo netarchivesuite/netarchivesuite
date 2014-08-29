@@ -40,9 +40,9 @@ public class CachingSLF4JAppender extends AppenderBase<ILoggingEvent> {
 
     protected String pattern;
 
-	protected PatternLayout layout;
+    protected PatternLayout layout;
 
-	/** The size of the logging cache. */
+    /** The size of the logging cache. */
     private final int loggingHistorySize;
 
     /** The logging cache itself, caching the last "loggingHistorySize" log entries. */
@@ -51,54 +51,54 @@ public class CachingSLF4JAppender extends AppenderBase<ILoggingEvent> {
     /** The log entries exposed as MBeans. */
     private final List<CachingSLF4JLogRecord> loggingMBeans;
 
-    /** The place in the loggingHistory for the next LogRecord. */ 
+    /** The place in the loggingHistory for the next LogRecord. */
     private int currentIndex;
 
-	public CachingSLF4JAppender() {
-		layout = new PatternLayout();
+    public CachingSLF4JAppender() {
+        layout = new PatternLayout();
         loggingHistorySize = Settings.getInt(MonitorSettings.LOGGING_HISTORY_SIZE);
         loggingHistory = Collections.synchronizedList(new ArrayList<String>(loggingHistorySize));
-        //Fill out the list with loggingHistorySize null-records.
+        // Fill out the list with loggingHistorySize null-records.
         loggingHistory.addAll(Arrays.asList(new String[loggingHistorySize]));
         loggingMBeans = new ArrayList<CachingSLF4JLogRecord>(loggingHistorySize);
         for (int i = 0; i < loggingHistorySize; i++) {
             loggingMBeans.add(new CachingSLF4JLogRecord(i, this));
         }
         currentIndex = 0;
-	}
+    }
 
-	@Override
-	public void setContext(Context context) {
-		super.setContext(context);
-		layout.setContext(this.context);
-	}
+    @Override
+    public void setContext(Context context) {
+        super.setContext(context);
+        layout.setContext(this.context);
+    }
 
-	@Override
-	public void start() {
-		super.start();
-		layout.start();
-	}
+    @Override
+    public void start() {
+        super.start();
+        layout.start();
+    }
 
-	@Override
-	public void stop() {
-		super.stop();
-		layout.stop();
-	}
+    @Override
+    public void stop() {
+        super.stop();
+        layout.stop();
+    }
 
-	@Override
-	protected void append(ILoggingEvent event) {
+    @Override
+    protected void append(ILoggingEvent event) {
         loggingHistory.set(currentIndex, layout.doLayout(event));
         currentIndex = (currentIndex + 1) % loggingHistorySize;
-	}
+    }
 
-	public String getPattern() {
-		return pattern;
-	}
+    public String getPattern() {
+        return pattern;
+    }
 
-	public void setPattern(String pattern) {
-		this.pattern = pattern;
-		layout.setPattern(pattern);
-	}
+    public void setPattern(String pattern) {
+        this.pattern = pattern;
+        layout.setPattern(pattern);
+    }
 
     /**
      * Returns the nth logrecord from the top.

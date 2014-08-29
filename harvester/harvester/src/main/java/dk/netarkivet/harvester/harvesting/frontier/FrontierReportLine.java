@@ -32,10 +32,9 @@ import com.sleepycat.persist.model.Persistent;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
- * Wraps a line of the frontier report.
- * As of Heritrix 1.14.4, the format of a frontier report line
- * sequentially lists the following tokens, separated by a whitespace :
- *
+ * Wraps a line of the frontier report. As of Heritrix 1.14.4, the format of a frontier report line sequentially lists
+ * the following tokens, separated by a whitespace :
+ * <p>
  * <ol>
  * <li>queue</li>
  * <li>currentSize</li>
@@ -49,28 +48,21 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * <li>lastPeekUri</li>
  * <li>lastQueuedUri</li>
  * </ol>
- *
- * This class implements a natural order : comparisons are made :
- * - first by decreasing values of totalEnqueues
- * - secondly by domain name (string natural order)
- *
- * Thanks to Gordon Mohr at Internet Archive for explaining the exact semantics
- * of the frontier report fields.
- *
+ * <p>
+ * This class implements a natural order : comparisons are made : - first by decreasing values of totalEnqueues -
+ * secondly by domain name (string natural order)
+ * <p>
+ * Thanks to Gordon Mohr at Internet Archive for explaining the exact semantics of the frontier report fields.
  */
 @Persistent
-@SuppressWarnings({ "serial"})
-public class FrontierReportLine
-implements Serializable,
-           Comparable<FrontierReportLine>,
-           FrontierReportLineOrderKey {
+@SuppressWarnings({"serial"})
+public class FrontierReportLine implements Serializable, Comparable<FrontierReportLine>, FrontierReportLineOrderKey {
 
     /** The logger for this class. */
     private static final Log LOG = LogFactory.getLog(FrontierReportLine.class);
 
     /**
-     * Expected size of string array when we split the line token
-     * across "\\s+".
+     * Expected size of string array when we split the line token across "\\s+".
      */
     private static final int EXPECTED_SPLIT_SEGMENTS = 11;
 
@@ -84,35 +76,29 @@ implements Serializable,
      */
     private String domainName;
 
-    /**  Number of URIs currently in the queue.  */
+    /** Number of URIs currently in the queue. */
     private long currentSize;
 
     /**
-     * Count of total times a URI has been enqueued to this queue;
-     * a measure of the total number of URI instances ever put on this queue.
-     * This can be a larger number than the unique URIs, as some URIs
-     * (most notably DNS/robots when refetched, but possibly other things
-     * force-requeued under advanced usage) may be enqueued more than once.
+     * Count of total times a URI has been enqueued to this queue; a measure of the total number of URI instances ever
+     * put on this queue. This can be a larger number than the unique URIs, as some URIs (most notably DNS/robots when
+     * refetched, but possibly other things force-requeued under advanced usage) may be enqueued more than once.
      */
     private long totalEnqueues;
 
     /**
-     * When using the 'budget/rotation' functionality (a non-zero URI cost
-     * policy), this is the running 'balance' of a queue during its current
-     * 'active' session. This balance declines; when it hits zero, another queue
-     * (if any are waiting 'inactive') gets a chance to enter active crawling
-     * (as fast as politeness allows).
+     * When using the 'budget/rotation' functionality (a non-zero URI cost policy), this is the running 'balance' of a
+     * queue during its current 'active' session. This balance declines; when it hits zero, another queue (if any are
+     * waiting 'inactive') gets a chance to enter active crawling (as fast as politeness allows).
      */
     private long sessionBalance;
 
     /**
-     * The 'cost' of the last URI charged against the queue's budgets. If
-     * using a cost policy that makes some URIs more costly than others, this
-     * may indicate the queue has reached more-costly URIs. (Such larger-cost
-     * URIs will be inserted later in the queue, accelerate the depletion of
-     * the session balance, and accelerate progress towards the total queue
-     * budget, which could send the queue into 'retirement'. Thus higher-cost
-     * URIs mean a queue over time gets less of the crawler's cycles.)
+     * The 'cost' of the last URI charged against the queue's budgets. If using a cost policy that makes some URIs more
+     * costly than others, this may indicate the queue has reached more-costly URIs. (Such larger-cost URIs will be
+     * inserted later in the queue, accelerate the depletion of the session balance, and accelerate progress towards the
+     * total queue budget, which could send the queue into 'retirement'. Thus higher-cost URIs mean a queue over time
+     * gets less of the crawler's cycles.)
      */
     private double lastCost;
 
@@ -120,17 +106,15 @@ implements Serializable,
     private double averageCost;
 
     /**
-     *  Timestamp of when the last URI came off this queue for processing.
-     *  May give an indication of how long a queue has been empty/inactive.
+     * Timestamp of when the last URI came off this queue for processing. May give an indication of how long a queue has
+     * been empty/inactive.
      */
     private String lastDequeueTime;
 
     /**
-     * If the queue is in any sort of politeness- or connect-problem-'snooze'
-     * delay, this indicates when it will again be eligible to offer URIs to
-     * waiting threads. (When it wakes, it gets in line -- so actual wait before
-     * next URI is tried may be longer depending on the balance of threads and
-     * other active queues.)
+     * If the queue is in any sort of politeness- or connect-problem-'snooze' delay, this indicates when it will again
+     * be eligible to offer URIs to waiting threads. (When it wakes, it gets in line -- so actual wait before next URI
+     * is tried may be longer depending on the balance of threads and other active queues.)
      */
     private String wakeTime;
 
@@ -140,16 +124,15 @@ implements Serializable,
     private long totalSpend;
 
     /**
-     * The totalBudget above which the queue will be retired (made permanently
-     * inactive unless its totalBudget is raised).
+     * The totalBudget above which the queue will be retired (made permanently inactive unless its totalBudget is
+     * raised).
      */
     private long totalBudget;
 
     /**
-     * The number of URIs from this queue that reached 'finished' status with
-     * an error code (non-retryable errors, or exhausted retries, or other
-     * errors). When nonzero and rising there may be special problems with the
-     * site(s) related to this queue.
+     * The number of URIs from this queue that reached 'finished' status with an error code (non-retryable errors, or
+     * exhausted retries, or other errors). When nonzero and rising there may be special problems with the site(s)
+     * related to this queue.
      */
     private long errorCount;
 
@@ -172,6 +155,7 @@ implements Serializable,
 
     /**
      * Builds a cloned line.
+     *
      * @param original the line to clone
      */
     protected FrontierReportLine(FrontierReportLine original) {
@@ -192,6 +176,7 @@ implements Serializable,
 
     /**
      * Parses the given string.
+     *
      * @param lineToken the string to parse.
      */
     FrontierReportLine(String lineToken) {
@@ -199,15 +184,14 @@ implements Serializable,
         String[] split = lineToken.split("\\s+");
 
         if (split.length != EXPECTED_SPLIT_SEGMENTS) {
-            throw new ArgumentNotValid("Format of line token '"
-                    + lineToken + "' is not a valid frontier report line!");
+            throw new ArgumentNotValid("Format of line token '" + lineToken + "' is not a valid frontier report line!");
         }
 
         this.domainName = split[0];
         try {
             this.currentSize = parseLong(split[1]);
         } catch (NumberFormatException e) {
-            LOG.warn("Found incorrect formatted currentsize " +  split[1]);
+            LOG.warn("Found incorrect formatted currentsize " + split[1]);
         }
         this.totalEnqueues = parseLong(split[2]);
         this.sessionBalance = parseLong(split[3]);
@@ -216,8 +200,7 @@ implements Serializable,
         String costToken = split[4];
         int leftParenIdx = costToken.indexOf("(");
         this.lastCost = parseDouble(costToken.substring(0, leftParenIdx));
-        this.averageCost = parseDouble(
-                costToken.substring(leftParenIdx + 1, costToken.indexOf(")")));
+        this.averageCost = parseDouble(costToken.substring(leftParenIdx + 1, costToken.indexOf(")")));
         this.lastDequeueTime = split[5];
         this.wakeTime = split[6];
 
@@ -433,8 +416,7 @@ implements Serializable,
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof FrontierReportLine) {
-            return domainName.equals(
-                    ((FrontierReportLine) obj).getDomainName());
+            return domainName.equals(((FrontierReportLine) obj).getDomainName());
         }
         return false;
     }
@@ -457,6 +439,7 @@ implements Serializable,
 
     /**
      * Parses the token.
+     *
      * @param longToken token to parse.
      * @return parsed value or default value if value is empty or unparsable.
      */
@@ -474,6 +457,7 @@ implements Serializable,
 
     /**
      * Parses the token.
+     *
      * @param dblToken token to parse.
      * @return parsed value or default value if value is empty or unparsable.
      */

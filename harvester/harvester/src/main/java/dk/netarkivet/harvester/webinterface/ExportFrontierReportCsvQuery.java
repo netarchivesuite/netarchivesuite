@@ -56,11 +56,10 @@ public class ExportFrontierReportCsvQuery {
         }
 
         /**
-         * Extracts the field's value from a servlet request. If the request
-         * does not define the paraeter's value, it is set to the default value.
+         * Extracts the field's value from a servlet request. If the request does not define the paraeter's value, it is
+         * set to the default value.
          *
-         * @param req
-         *            a servlet request
+         * @param req a servlet request
          * @return the field's value
          */
         public String getValue(ServletRequest req) {
@@ -89,6 +88,7 @@ public class ExportFrontierReportCsvQuery {
 
     /**
      * Performs the export.
+     *
      * @param context the page context
      * @param i18n the internationalization package to use.
      */
@@ -99,25 +99,20 @@ public class ExportFrontierReportCsvQuery {
         RunningJobsInfoDAO dao = RunningJobsInfoDAO.getInstance();
         InMemoryFrontierReport report = dao.getFrontierReport(jobId, filterId);
 
-        HttpServletResponse resp =
-            (HttpServletResponse) context.getResponse();
+        HttpServletResponse resp = (HttpServletResponse) context.getResponse();
         resp.setHeader("Content-Type", "text/plain");
-        resp.setHeader("Content-Disposition", "Attachment; filename="
-                + filterId + "-" + report.getJobName() + ".csv");
+        resp.setHeader("Content-Disposition", "Attachment; filename=" + filterId + "-" + report.getJobName() + ".csv");
 
         PrintWriter pw;
         try {
             pw = new PrintWriter(resp.getOutputStream());
         } catch (IOException e) {
-            HTMLUtils.forwardWithErrorMessage(context, i18n, e,
-                "errorMsg;running.job.details.frontier.exportAsCsv");
-            throw new ForwardedToErrorPage(
-                    "Error in frontier report CSV export", e);
+            HTMLUtils.forwardWithErrorMessage(context, i18n, e, "errorMsg;running.job.details.frontier.exportAsCsv");
+            throw new ForwardedToErrorPage("Error in frontier report CSV export", e);
         }
 
         FrontierReportCsvExport.outputAsCsv(report, pw, ";");
         pw.close();
     }
-
 
 }

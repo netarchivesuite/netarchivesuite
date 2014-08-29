@@ -22,18 +22,15 @@
  */
 package dk.netarkivet.harvester.datamodel.extendedfield;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.List;
 
-import dk.netarkivet.harvester.datamodel.DataModelTestCase;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldType;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypeDAO;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypeDBDAO;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
+import dk.netarkivet.harvester.datamodel.DataModelTestCase;
 
 public class ExtendedFieldTypeTester extends DataModelTestCase {
     @Before
@@ -45,29 +42,23 @@ public class ExtendedFieldTypeTester extends DataModelTestCase {
     public void tearDown() throws Exception {
         super.tearDown();
     }
-    
+
     @Test
     public void testRead() {
         ExtendedFieldTypeDAO extDAO = ExtendedFieldTypeDBDAO.getInstance();
         ExtendedFieldType type = null;
 
         type = extDAO.read(Long.valueOf(ExtendedFieldTypes.DOMAIN));
-        assertEquals(type.getName(),
-                ExtendedFieldTypes.tableNames[ExtendedFieldTypes.DOMAIN]);
+        assertEquals(type.getName(), ExtendedFieldTypes.tableNames[ExtendedFieldTypes.DOMAIN]);
 
         type = extDAO.read(Long.valueOf(ExtendedFieldTypes.HARVESTDEFINITION));
-        assertEquals(
-                type.getName(),
-                ExtendedFieldTypes.tableNames[ExtendedFieldTypes.HARVESTDEFINITION]);
+        assertEquals(type.getName(), ExtendedFieldTypes.tableNames[ExtendedFieldTypes.HARVESTDEFINITION]);
 
         ExtendedFieldTypeDAO extDAO2 = ExtendedFieldTypeDBDAO.getInstance();
         List<ExtendedFieldType> list = extDAO2.getAll();
 
         assertEquals(list.size(), 2);
-        assertEquals(list.get(0).getName(),
-                ExtendedFieldTypes.tableNames[ExtendedFieldTypes.DOMAIN]);
-        assertEquals(
-                list.get(1).getName(),
-                ExtendedFieldTypes.tableNames[ExtendedFieldTypes.HARVESTDEFINITION]);
+        assertEquals(list.get(0).getName(), ExtendedFieldTypes.tableNames[ExtendedFieldTypes.DOMAIN]);
+        assertEquals(list.get(1).getName(), ExtendedFieldTypes.tableNames[ExtendedFieldTypes.HARVESTDEFINITION]);
     }
 }

@@ -43,37 +43,33 @@ public class CachingProxyFactoryConnectionTest extends TestCase {
     }
 
     /*
-     * Test method for 'dk.netarkivet.monitor.jmx.CachingProxyFactoryConnectionFactory.CachingProxyFactoryConnection(JMXProxyFactoryConnectionFactory)'
+     * Test method for
+     * 'dk.netarkivet.monitor.jmx.CachingProxyFactoryConnectionFactory.CachingProxyFactoryConnection(JMXProxyFactoryConnectionFactory)'
      */
     public void testCachingProxyFactoryConnection() {
         JMXProxyConnectionFactory f = new CachingProxyConnectionFactory(new DummyJMXProxyConnectionFactory());
     }
 
     /*
-     * Test method for 'dk.netarkivet.monitor.jmx.CachingProxyFactoryConnectionFactory.getConnection(String, int, int, String, String)'
+     * Test method for 'dk.netarkivet.monitor.jmx.CachingProxyFactoryConnectionFactory.getConnection(String, int, int,
+     * String, String)'
      */
     public void testGetConnection() {
         JMXProxyConnectionFactory f = new CachingProxyConnectionFactory(new DummyJMXProxyConnectionFactory());
         f.getConnection("server", 8001, 8101, "monitorRole", "Deterbareløgn");
     }
-    
-    // dummy class that implements JMXProxyFactoryConnectionFactory 
-    
-    private class DummyJMXProxyConnectionFactory implements
-                                                 JMXProxyConnectionFactory {
-        
-        public JMXProxyConnection getConnection(String server, int port, int rmiPort,
-                String userName, String password) {
-            return 
-                null;
+
+    // dummy class that implements JMXProxyFactoryConnectionFactory
+
+    private class DummyJMXProxyConnectionFactory implements JMXProxyConnectionFactory {
+
+        public JMXProxyConnection getConnection(String server, int port, int rmiPort, String userName, String password) {
+            return null;
         }
     }
-    
+
     private class DummyJmxProxyFactory {
-        
+
     }
-    
-    
-    
 
 }

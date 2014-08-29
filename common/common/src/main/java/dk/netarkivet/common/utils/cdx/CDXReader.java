@@ -38,8 +38,8 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.arc.ARCKey;
 
 /**
- * This class handles reading CDX files and finding entries in them.
- * Furthermore it implements the possibility to do filtering of searchresults
+ * This class handles reading CDX files and finding entries in them. Furthermore it implements the possibility to do
+ * filtering of searchresults
  */
 public class CDXReader {
 
@@ -55,7 +55,8 @@ public class CDXReader {
     /** The regular expression that defines separation between fields. */
     static final String SEPARATOR_REGEX = "\\s+";
 
-    /** Create a new CDXReader that reads the given file.
+    /**
+     * Create a new CDXReader that reads the given file.
      *
      * @param cdxFile A CDX file to read.
      * @throws IOFailure If the file cannot be found.
@@ -68,7 +69,8 @@ public class CDXReader {
     public CDXReader() {
     }
 
-    /** Add another CDX file to those being searched.
+    /**
+     * Add another CDX file to those being searched.
      *
      * @param cdxFile A CDX file to search.
      * @throws IOFailure If the file cannot be found or read
@@ -83,21 +85,21 @@ public class CDXReader {
         files.add(cdxFile);
     }
 
-    /** Forget about all CDX files.
+    /**
+     * Forget about all CDX files.
      */
     public void clearCDXFiles() {
         files.clear();
     }
 
-    /** Add another CDXRecordFilter to the list of filters to use when
-     * searching.
+    /**
+     * Add another CDXRecordFilter to the list of filters to use when searching.
      *
      * @param cdxrecfilter A CDXRecordFilter to use when searching.
-     * @throws ArgumentNotValid If the filter is invalid or another filter
-     * exists with the same name.
+     * @throws ArgumentNotValid If the filter is invalid or another filter exists with the same name.
      */
     public void addCDXRecordFilter(CDXRecordFilter cdxrecfilter) throws ArgumentNotValid {
-        ArgumentNotValid.checkNotNull(cdxrecfilter,  "cdxrecfilter");
+        ArgumentNotValid.checkNotNull(cdxrecfilter, "cdxrecfilter");
         ArgumentNotValid.checkNotNullOrEmpty(cdxrecfilter.getFilterName(), "cdxrecfilter.getFilterName()");
 
         if (cdxrecordfilters.containsKey(cdxrecfilter.getFilterName())) {
@@ -106,32 +108,37 @@ public class CDXReader {
         cdxrecordfilters.put(cdxrecfilter.getFilterName(), cdxrecfilter);
     }
 
-    /** Remove all CDXRecordFilters.
-     *
+    /**
+     * Remove all CDXRecordFilters.
      */
     public void removeAllCDXRecordFilters() {
         cdxrecordfilters = new HashMap<String, CDXRecordFilter>();
     }
 
-    /** Get a table of all filters.
-     *  @return a Hashtable with all the filters.
+    /**
+     * Get a table of all filters.
+     *
+     * @return a Hashtable with all the filters.
      */
     public Map<String, CDXRecordFilter> getFilters() {
         return Collections.unmodifiableMap(cdxrecordfilters);
     }
 
-    /** Get a specific filter by the name of the filter -
-     *  if not found return null.
-     *  @param filtername The given filtername.
-     *  @return the CDXRecordFilter
+    /**
+     * Get a specific filter by the name of the filter - if not found return null.
+     *
+     * @param filtername The given filtername.
+     * @return the CDXRecordFilter
      */
-    public CDXRecordFilter getCDXRecordFilter(String filtername){
+    public CDXRecordFilter getCDXRecordFilter(String filtername) {
         return cdxrecordfilters.get(filtername);
     }
 
-    /** Remove a specific filter by the name of the filter.
-     *  @param filtername The given filtername.
-     *  @throws UnknownID if there is no filter of that name.
+    /**
+     * Remove a specific filter by the name of the filter.
+     *
+     * @param filtername The given filtername.
+     * @throws UnknownID if there is no filter of that name.
      */
     public void removeCDXRecordFilter(String filtername) {
         if (!cdxrecordfilters.containsKey(filtername)) {
@@ -140,12 +147,11 @@ public class CDXReader {
         cdxrecordfilters.remove(filtername);
     }
 
-    /** Look up an entry in CDX files.  Notice that only full match search is
-     * allowed, not prefix search.
+    /**
+     * Look up an entry in CDX files. Notice that only full match search is allowed, not prefix search.
      *
      * @param uri A URI to find in the CDX files.
-     * @return A key indicating the place where the entry can be found, or
-     * null if no such entry was found;
+     * @return A key indicating the place where the entry can be found, or null if no such entry was found;
      */
     public ARCKey getKey(String uri) {
         for (File f : files) {
@@ -172,14 +178,13 @@ public class CDXReader {
                                 continue CDXLINES;
                             }
                         }
-                        return new ARCKey(cdxrec.getArcfile(),
-                                cdxrec.getOffset());
+                        return new ARCKey(cdxrec.getArcfile(), cdxrec.getOffset());
                     }
                 }
             } finally {
                 if (numBrokenLines > 0) {
-                    log.warn("CDX file '{}' contains {} invalid CDX lines, first one is\n{}",
-                    		f, numBrokenLines, firstBrokenLine);
+                    log.warn("CDX file '{}' contains {} invalid CDX lines, first one is\n{}", f, numBrokenLines,
+                            firstBrokenLine);
                 }
             }
         }

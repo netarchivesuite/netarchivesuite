@@ -32,7 +32,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -73,7 +72,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.wayback.indexer.IndexerTestCase;
 
 /** Unit test for testNetarchiveResourceStore */
-@SuppressWarnings({ "unchecked", "rawtypes", "unused" })
+@SuppressWarnings({"unchecked", "rawtypes", "unused"})
 public class NetarchiveResourceStoreTester extends IndexerTestCase {
 
     NetarchiveResourceStore netarchiveResourceStore = null;
@@ -241,7 +240,7 @@ public class NetarchiveResourceStoreTester extends IndexerTestCase {
 
     /**
      * Test ARC record with non http address, like ARC file header
-     * 
+     *
      * @throws ResourceNotAvailableException
      */
     @Test(expected = ResourceNotAvailableException.class)
@@ -262,10 +261,9 @@ public class NetarchiveResourceStoreTester extends IndexerTestCase {
     }
 
     /**
-     * DummyGetMessageReplyServer, which acts as an intermediate JMS Server.
-     * Functionality: - If ARC file exists read the appropriate data into an ARC
-     * record, and create metadata information - If ARC file doesn't exists,
-     * make dummy ARC record, with no data and dummy metadata information
+     * DummyGetMessageReplyServer, which acts as an intermediate JMS Server. Functionality: - If ARC file exists read
+     * the appropriate data into an ARC record, and create metadata information - If ARC file doesn't exists, make dummy
+     * ARC record, with no data and dummy metadata information
      */
     private static class DummyGetMessageReplyServer implements MessageListener {
         JMSConnection conn = JMSConnectionFactory.getInstance();
@@ -294,11 +292,11 @@ public class NetarchiveResourceStoreTester extends IndexerTestCase {
                     metadata.put(field, "");
                 }
                 metadata.put(ARCConstants.ABSOLUTE_OFFSET_KEY, 0L); // Offset
-                                                                    // not
-                                                                    // stored as
-                                                                    // String
-                                                                    // but as
-                                                                    // Long
+                // not
+                // stored as
+                // String
+                // but as
+                // Long
                 byte[] encodedKey = encode(netMsg.getArcFile(), netMsg.getIndex());
                 try {
                     String filename = netMsg.getArcFile();
@@ -318,8 +316,8 @@ public class NetarchiveResourceStoreTester extends IndexerTestCase {
                         in = new FileInputStream(arcFile);
                         in.skip(netMsg.getIndex());
                         /*
-                         * while(InputStreamUtils.readLine(in).length() == 0) {
-                         * // needed for testUploadDataRetrieveResource }
+                         * while(InputStreamUtils.readLine(in).length() == 0) { // needed for
+                         * testUploadDataRetrieveResource }
                          */
                         int tmp_length = new String(InputStreamUtils.readRawLine(in)).length();
                         headers.put(ARCRecordMetaData.ABSOLUTE_OFFSET_KEY,

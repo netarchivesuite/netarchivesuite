@@ -22,6 +22,11 @@
  */
 package dk.netarkivet.archive.arcrepository;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -30,15 +35,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import dk.netarkivet.common.distribute.arcrepository.*;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
 import dk.netarkivet.common.distribute.TestRemoteFile;
+import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.FileUtils;
@@ -54,7 +57,6 @@ public class BatchStatusTester {
     MoveTestFiles mtf = new MoveTestFiles(dk.netarkivet.archive.distribute.arcrepository.TestInfo.ORIGINALS_DIR,
             dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR);
 
-    
     private UseTestRemoteFile utrf = new UseTestRemoteFile();
 
     @Before
@@ -76,13 +78,11 @@ public class BatchStatusTester {
         List<File> emptyList = Collections.emptyList();
         File tmpFile = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, "newFile");
         String fileContents = FileUtils.readFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE);
-        TestRemoteFile lrf = new TestRemoteFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE, false,
-                                                  false, false);
-        BatchStatus bs = new BatchStatus("ONE", emptyList, 1, lrf,
-                new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
+        TestRemoteFile lrf = new TestRemoteFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE,
+                false, false, false);
+        BatchStatus bs = new BatchStatus("ONE", emptyList, 1, lrf, new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
         bs.copyResults(tmpFile);
-        FileAsserts.assertFileContains("Should have copied result contents",
-                fileContents, tmpFile);
+        FileAsserts.assertFileContains("Should have copied result contents", fileContents, tmpFile);
         assertTrue("Source (remote) file should be deleted", lrf.isDeleted());
         FileUtils.copyFile(tmpFile, dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE);
 
@@ -93,35 +93,31 @@ public class BatchStatusTester {
         } catch (IllegalState e) {
             // expected
         }
-        assertFalse("Should not have made a result file",
-                noSuchFile.exists());
+        assertFalse("Should not have made a result file", noSuchFile.exists());
 
-        lrf = new TestRemoteFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.EMPTY_FILE, false, false, false);
-        bs = new BatchStatus("KB", emptyList, 1, lrf,
-                new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
+        lrf = new TestRemoteFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.EMPTY_FILE, false, false,
+                false);
+        bs = new BatchStatus("KB", emptyList, 1, lrf, new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
         bs.copyResults(tmpFile);
         assertEquals("Should have zero-length file", 0, tmpFile.length());
         assertTrue("Source (remote) file should be deleted", lrf.isDeleted());
 
-        bs = new BatchStatus("KB", emptyList, 0, null,
-                new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
+        bs = new BatchStatus("KB", emptyList, 0, null, new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
         try {
             bs.copyResults(noSuchFile);
             fail("Should have thrown exception on missing file");
         } catch (IllegalState e) {
             // expected
         }
-        assertFalse("Should not have made a result file",
-                noSuchFile.exists());
+        assertFalse("Should not have made a result file", noSuchFile.exists());
 
         try {
             bs.copyResults(null);
             fail("Should have throw ArgumentNotValid");
         } catch (ArgumentNotValid e) {
-            //expected
+            // expected
         }
-        assertFalse("Should not have made a result file",
-                noSuchFile.exists());
+        assertFalse("Should not have made a result file", noSuchFile.exists());
     }
 
     @Test
@@ -130,16 +126,13 @@ public class BatchStatusTester {
     public void testAppendResults() throws IOException {
         List<File> emptyList = Collections.emptyList();
         String fileContents = FileUtils.readFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE);
-        TestRemoteFile lrf = new TestRemoteFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE, false,
-                                                  false, false);
-        BatchStatus bs = new BatchStatus("KB", emptyList, 0, lrf, 
-                new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
+        TestRemoteFile lrf = new TestRemoteFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE,
+                false, false, false);
+        BatchStatus bs = new BatchStatus("KB", emptyList, 0, lrf, new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         bs.appendResults(out);
-        assertEquals("Should have same contents in outputstream",
-                fileContents, out.toString());
-        assertTrue("Should have deleted remotefile",
-                lrf.isDeleted());
+        assertEquals("Should have same contents in outputstream", fileContents, out.toString());
+        assertTrue("Should have deleted remotefile", lrf.isDeleted());
 
         try {
             bs.appendResults(new OutputStream() {
@@ -152,17 +145,16 @@ public class BatchStatusTester {
             // expected
         }
 
-        lrf = new TestRemoteFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.EMPTY_FILE, false, false, false);
-        bs = new BatchStatus("KB", emptyList, 1, lrf, 
-                new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
+        lrf = new TestRemoteFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.EMPTY_FILE, false, false,
+                false);
+        bs = new BatchStatus("KB", emptyList, 1, lrf, new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
         bs.appendResults(new OutputStream() {
             public void write(int b) throws IOException {
                 fail("Should not write anything to outputstream");
             }
         });
 
-        bs = new BatchStatus("KB", emptyList, 0, null, 
-                new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
+        bs = new BatchStatus("KB", emptyList, 0, null, new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
         try {
             bs.appendResults(new OutputStream() {
                 public void write(int b) throws IOException {
@@ -178,7 +170,7 @@ public class BatchStatusTester {
             bs.copyResults(null);
             fail("Should have throw ArgumentNotValid");
         } catch (ArgumentNotValid e) {
-            //expected
+            // expected
         }
 
     }
@@ -188,29 +180,24 @@ public class BatchStatusTester {
     // FIXME: test temporarily disabled
     public void testHasResultFile() throws IOException {
         List<File> emptyList = Collections.emptyList();
-        TestRemoteFile lrf = new TestRemoteFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE, false,
-                                                  false, false);
-        BatchStatus bs = new BatchStatus("KB", emptyList, 0, lrf, 
-                new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
+        TestRemoteFile lrf = new TestRemoteFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE,
+                false, false, false);
+        BatchStatus bs = new BatchStatus("KB", emptyList, 0, lrf, new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
         File tmpFile = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, "newFile");
         assertTrue("Should have result file when given", bs.hasResultFile());
         bs.copyResults(tmpFile);
-        assertFalse("Should not have result file after copying",
-                bs.hasResultFile());
+        assertFalse("Should not have result file after copying", bs.hasResultFile());
         FileUtils.copyFile(tmpFile, dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE);
 
-        lrf = new TestRemoteFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE, false, false, false);
-        bs = new BatchStatus("KB", emptyList, 0, lrf, 
-                new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
+        lrf = new TestRemoteFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE, false, false,
+                false);
+        bs = new BatchStatus("KB", emptyList, 0, lrf, new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         assertTrue("Should have result file when given", bs.hasResultFile());
         bs.appendResults(out);
-        assertFalse("Should not have result file after appending",
-                bs.hasResultFile());
+        assertFalse("Should not have result file after appending", bs.hasResultFile());
 
-        bs = new BatchStatus("KB", emptyList, 0, null,
-                new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
-        assertFalse("Should not have result file with no-result BS",
-                bs.hasResultFile());
+        bs = new BatchStatus("KB", emptyList, 0, null, new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
+        assertFalse("Should not have result file with no-result BS", bs.hasResultFile());
     }
 }

@@ -47,22 +47,21 @@ import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 import dk.netarkivet.harvester.harvesting.distribute.DomainStats;
 
 /**
- * This implementation of the harvest report has the same pre-processing as
- *  {@link LegacyHarvestReport}, but is intended to be used with a crawl order
- *  that sets budget using "queue-total-budget" instead of the QuotaEnforcer
- *   (@see {@link HarvesterSettings#OBJECT_LIMIT_SET_BY_QUOTA_ENFORCER}).
- *  Hence post-processing cannot rely any more on annotations added by
- *  QuotaEnforcer anymore and thus simply compares actual document counts to
- *  crawl and configuration budgets.
+ * This implementation of the harvest report has the same pre-processing as {@link LegacyHarvestReport}, but is intended
+ * to be used with a crawl order that sets budget using "queue-total-budget" instead of the QuotaEnforcer (@see
+ * {@link HarvesterSettings#OBJECT_LIMIT_SET_BY_QUOTA_ENFORCER}). Hence post-processing cannot rely any more on
+ * annotations added by QuotaEnforcer anymore and thus simply compares actual document counts to crawl and configuration
+ * budgets.
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({"serial"})
 public class BnfHarvestReport extends AbstractHarvestReport {
 
     /** The logger for this class. */
     private static final Logger LOG = LoggerFactory.getLogger(BnfHarvestReport.class);
-    
+
     /**
-     *  Constructor for this class.
+     * Constructor for this class.
+     *
      * @param files A HeritrixFiles object.
      * @throws IOFailure If the processing of the files goes wrong
      */
@@ -71,8 +70,8 @@ public class BnfHarvestReport extends AbstractHarvestReport {
     }
 
     /**
-     * Post-processing happens on the scheduler side when ARC files
-     * have been uploaded.
+     * Post-processing happens on the scheduler side when ARC files have been uploaded.
+     *
      * @param job the actual job.
      */
     @Override
@@ -119,11 +118,11 @@ public class BnfHarvestReport extends AbstractHarvestReport {
             StopReason finalStopReason = ds.getStopReason();
 
             if (harvestByteLimit > 0 && (actualByteCount >= harvestByteLimit)) {
-                    finalStopReason = StopReason.SIZE_LIMIT;
+                finalStopReason = StopReason.SIZE_LIMIT;
             } else if (harvestObjectLimit > 0 && (actualObjectCount >= harvestObjectLimit)) {
                 finalStopReason = StopReason.OBJECT_LIMIT;
             } else if (confByteLimit > 0 && (actualByteCount >= confByteLimit)) {
-                    finalStopReason = StopReason.CONFIG_SIZE_LIMIT;
+                finalStopReason = StopReason.CONFIG_SIZE_LIMIT;
             } else if (confObjectLimit > 0 && (actualObjectCount >= confObjectLimit)) {
                 finalStopReason = StopReason.CONFIG_OBJECT_LIMIT;
             }
@@ -132,7 +131,7 @@ public class BnfHarvestReport extends AbstractHarvestReport {
 
             // Create the HarvestInfo object
             HarvestInfo hi = new HarvestInfo(job.getOrigHarvestDefinitionID(), job.getJobID(), domainName, confName,
-            		new Date(), actualByteCount, actualObjectCount, finalStopReason);
+                    new Date(), actualByteCount, actualObjectCount, finalStopReason);
 
             // Add HarvestInfo to Domain and make data persistent
             // by updating DAO
@@ -142,8 +141,8 @@ public class BnfHarvestReport extends AbstractHarvestReport {
 
         if (LOG.isInfoEnabled()) {
             long time = System.currentTimeMillis() - startTime;
-            LOG.info("Finished post-processing of harvest report for job {}, operation took {}",
-            		job.getJobID(), StringUtils.formatDuration(time / TimeUtils.SECOND_IN_MILLIS));
+            LOG.info("Finished post-processing of harvest report for job {}, operation took {}", job.getJobID(),
+                    StringUtils.formatDuration(time / TimeUtils.SECOND_IN_MILLIS));
         }
 
     }

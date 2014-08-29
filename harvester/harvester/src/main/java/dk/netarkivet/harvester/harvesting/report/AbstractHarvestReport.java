@@ -55,43 +55,40 @@ import dk.netarkivet.harvester.harvesting.distribute.DomainStats;
 
 /**
  * Base implementation for a harvest report.
- *
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({"serial"})
 public abstract class AbstractHarvestReport implements HarvestReport {
 
     /** The logger for this class. */
     private static final Logger log = LoggerFactory.getLogger(AbstractHarvestReport.class);
 
     /**
-     * Strings found in the progress-statistics.log, used to devise the
-     * default stop reason for domains.
+     * Strings found in the progress-statistics.log, used to devise the default stop reason for domains.
      */
     public static enum ProgressStatisticsConstants {
 
         /**
-         * String in crawl.log, that Heritrix writes
-         *  as the last entry in the progress-statistics.log.
+         * String in crawl.log, that Heritrix writes as the last entry in the progress-statistics.log.
          */
         ORDERLY_FINISH("CRAWL ENDED"),
 
-        /** This is written when Heritrix terminates the job due to
-         *  its timelimit (max-time-sec) being reached.
+        /**
+         * This is written when Heritrix terminates the job due to its timelimit (max-time-sec) being reached.
          */
         TIMELIMIT_EXCEEDED("Timelimit hit"),
-        
+
         /**
-         * String which shows that the harvest was deliberately aborted from
-         * the Heritrix GUI or forcibly stopped by the Netarchive Suite
-         * software due to an inactivity timeout.
+         * String which shows that the harvest was deliberately aborted from the Heritrix GUI or forcibly stopped by the
+         * Netarchive Suite software due to an inactivity timeout.
          */
         HARVEST_ABORTED("Ended by operator");
-        
+
         /** The pattern associated with a given enum value. */
         private final String pattern;
 
         /**
          * Constructor for this enum class.
+         *
          * @param pattern The pattern associated with a given enum value.
          */
         ProgressStatisticsConstants(String pattern) {
@@ -106,34 +103,33 @@ public abstract class AbstractHarvestReport implements HarvestReport {
     // Used at construction tile only, does not need to be serialized.
     private transient HeritrixFiles heritrixFiles;
 
-    /** The default reason why we stopped harvesting this domain.
-     *  This value is set by looking for a CRAWL ENDED in the crawl.log. */
+    /**
+     * The default reason why we stopped harvesting this domain. This value is set by looking for a CRAWL ENDED in the
+     * crawl.log.
+     */
     private StopReason defaultStopReason;
 
     /**
-     * Default constructor that does nothing.
-     * The real construction is supposed to be done
-     * in the subclasses by filling out the domainStats map with crawl results.
+     * Default constructor that does nothing. The real construction is supposed to be done in the subclasses by filling
+     * out the domainStats map with crawl results.
      */
     public AbstractHarvestReport() {
     }
 
     /**
-     * Constructor from Heritrix report files. Subclasses might use a different
-     * set of Heritrix reports.
+     * Constructor from Heritrix report files. Subclasses might use a different set of Heritrix reports.
+     *
      * @param files the set of Heritrix reports.
      */
     public AbstractHarvestReport(HeritrixFiles files) {
         ArgumentNotValid.checkNotNull(files, "files");
         this.heritrixFiles = files;
-        this.defaultStopReason = findDefaultStopReason(
-                heritrixFiles.getProgressStatisticsLog());
+        this.defaultStopReason = findDefaultStopReason(heritrixFiles.getProgressStatisticsLog());
         preProcess(heritrixFiles);
     }
 
     /**
-     * Pre-processing happens when the report is built just at the end of the
-     * crawl, before the ARC files upload.
+     * Pre-processing happens when the report is built just at the end of the crawl, before the ARC files upload.
      */
     @Override
     public void preProcess(HeritrixFiles files) {
@@ -151,14 +147,13 @@ public abstract class AbstractHarvestReport implements HarvestReport {
 
         if (log.isInfoEnabled()) {
             long time = System.currentTimeMillis() - startTime;
-            log.info("Finished pre-processing of harvest report for job {}, operation took {}",
-            		files.getJobID(), StringUtils.formatDuration(time));
+            log.info("Finished pre-processing of harvest report for job {}, operation took {}", files.getJobID(),
+                    StringUtils.formatDuration(time));
         }
     }
 
     /**
-     * Post-processing happens on the scheduler side when ARC files
-     * have been uploaded.
+     * Post-processing happens on the scheduler side when ARC files have been uploaded.
      */
     @Override
     public abstract void postProcess(Job job);
@@ -169,9 +164,7 @@ public abstract class AbstractHarvestReport implements HarvestReport {
     }
 
     /**
-     * Returns the set of domain names
-     * that are contained in hosts-report.txt
-     * (i.e. host names mapped to domains)
+     * Returns the set of domain names that are contained in hosts-report.txt (i.e. host names mapped to domains)
      *
      * @return a Set of Strings
      */
@@ -201,8 +194,7 @@ public abstract class AbstractHarvestReport implements HarvestReport {
      * Get the number of bytes downloaded for the given domain.
      *
      * @param domainName A domain name (as given by getDomainNames())
-     * @return How many bytes were collected for that domain or
-     * null if information available for this domain.
+     * @return How many bytes were collected for that domain or null if information available for this domain.
      * @throws ArgumentNotValid if null or empty domainName
      */
     @Override
@@ -217,9 +209,9 @@ public abstract class AbstractHarvestReport implements HarvestReport {
 
     /**
      * Get the StopReason for the given domain.
+     *
      * @param domainName A domain name (as given by getDomainNames())
-     * @return the StopReason for the given domain or null, if no stopreason 
-     * found for this domain
+     * @return the StopReason for the given domain or null, if no stopreason found for this domain
      * @throws ArgumentNotValid if null or empty domainName
      */
     @Override
@@ -240,8 +232,9 @@ public abstract class AbstractHarvestReport implements HarvestReport {
     }
 
     /**
-     * Attempts to get an already existing {@link DomainStats} object for that
-     * domain, and if not found creates one with zero values.
+     * Attempts to get an already existing {@link DomainStats} object for that domain, and if not found creates one with
+     * zero values.
+     *
      * @param domainName the name of the domain to get DomainStats for.
      * @return a DomainStats object for the given domain-name.
      */
@@ -257,10 +250,10 @@ public abstract class AbstractHarvestReport implements HarvestReport {
 
     /**
      * Find out whether we stopped normally in progress statistics log.
+     *
      * @param logFile A progress-statistics.log file.
-     * @return StopReason.DOWNLOAD_COMPLETE for progress statistics ending with
-     * CRAWL ENDED, StopReason.DOWNLOAD_UNFINISHED otherwise or if file does
-     * not exist.
+     * @return StopReason.DOWNLOAD_COMPLETE for progress statistics ending with CRAWL ENDED,
+     * StopReason.DOWNLOAD_UNFINISHED otherwise or if file does not exist.
      * @throws ArgumentNotValid on null argument.
      */
     public static StopReason findDefaultStopReason(File logFile) throws ArgumentNotValid {
@@ -273,9 +266,9 @@ public abstract class AbstractHarvestReport implements HarvestReport {
             if (lastLine.contains(ProgressStatisticsConstants.HARVEST_ABORTED.pattern)) {
                 return StopReason.DOWNLOAD_UNFINISHED;
             } else if (lastLine.contains(ProgressStatisticsConstants.TIMELIMIT_EXCEEDED.pattern)) {
-               return StopReason.TIME_LIMIT;
+                return StopReason.TIME_LIMIT;
             } else {
-               return StopReason.DOWNLOAD_COMPLETE;
+                return StopReason.DOWNLOAD_COMPLETE;
             }
         } else {
             return StopReason.DOWNLOAD_UNFINISHED;
@@ -283,9 +276,7 @@ public abstract class AbstractHarvestReport implements HarvestReport {
     }
 
     /**
-     * Computes the domain-name/byte-count and domain-name/object-count
-     * and domain-name/stopreason maps
-     * for a crawl.log.
+     * Computes the domain-name/byte-count and domain-name/object-count and domain-name/stopreason maps for a crawl.log.
      *
      * @param file the local file to be processed
      * @throws IOFailure if there is problem reading the file
@@ -305,8 +296,8 @@ public abstract class AbstractHarvestReport implements HarvestReport {
                 try {
                     processHarvestLine(line, disregardSeedUrls);
                 } catch (ArgumentNotValid e) {
-                    log.debug("Invalid line in '{}' line {}: '{}'. Ignoring due to reason: {}",
-                    		file.getAbsolutePath(), lineCnt, line, e.getMessage(), e);
+                    log.debug("Invalid line in '{}' line {}: '{}'. Ignoring due to reason: {}", file.getAbsolutePath(),
+                            lineCnt, line, e.getMessage(), e);
                 }
             }
         } catch (IOException e) {
@@ -329,35 +320,34 @@ public abstract class AbstractHarvestReport implements HarvestReport {
      * Processes a harvest-line, updating the object and byte maps.
      *
      * @param line the line to process.
-     * @param disregardSeedUrlInfo Boolean saying whether or not to disregard 
-     * SeedURL Information
+     * @param disregardSeedUrlInfo Boolean saying whether or not to disregard SeedURL Information
      */
     private void processHarvestLine(final String line, boolean disregardSeedUrlInfo) throws ArgumentNotValid {
-        //A legal crawl log line has at least 11 parts, + optional annotations
-        
+        // A legal crawl log line has at least 11 parts, + optional annotations
+
         final int MIN_CRAWL_LOG_PARTS = 11;
         final int MAX_PARTS = 12;
         final int ANNOTATION_PART_INDEX = 11;
         String[] parts = line.split("\\s+", MAX_PARTS);
         if (parts.length < MIN_CRAWL_LOG_PARTS) {
-            throw new ArgumentNotValid("Not enough fields for line in crawl.log: '" + line + "'. Was only " 
+            throw new ArgumentNotValid("Not enough fields for line in crawl.log: '" + line + "'. Was only "
                     + parts.length + " fields. Should have been at least " + MIN_CRAWL_LOG_PARTS);
         }
-        
-        // Check the seed url (part 11 of the crawl-log-line). 
-        // If equal to "-", the seed url is not written to the log, 
+
+        // Check the seed url (part 11 of the crawl-log-line).
+        // If equal to "-", the seed url is not written to the log,
         // and this information is disregarded
         // Note This information is disregarded if setting disregard_seed_url_information
         // is enabled.
-        
+
         String seedURL = parts[10];
-    
+
         boolean sourceTagEnabled = true;
         if (seedURL.equals("-") || disregardSeedUrlInfo) {
             sourceTagEnabled = false;
         }
         String seedDomain = null;
-        
+
         if (sourceTagEnabled) {
             try {
                 seedDomain = getDomainNameFromURIString(seedURL);
@@ -366,15 +356,15 @@ public abstract class AbstractHarvestReport implements HarvestReport {
                     seedDomain = IDNA.toUnicode(seedDomain);
                 }
             } catch (URIException e) {
-                log.debug("Unable to extract a domain from the seedURL found in field 11 of crawl.log: '{}'.",
-                		seedURL, e);
+                log.debug("Unable to extract a domain from the seedURL found in field 11 of crawl.log: '{}'.", seedURL,
+                        e);
             }
         }
-        
-        //Get the object domain name from the URL in the fourth field
+
+        // Get the object domain name from the URL in the fourth field
         String objectDomain = null;
         String objectUrl = parts[3];
-        
+
         try {
             objectDomain = getDomainNameFromURIString(objectUrl);
             if (objectDomain != null) {
@@ -382,26 +372,25 @@ public abstract class AbstractHarvestReport implements HarvestReport {
                 objectDomain = IDNA.toUnicode(objectDomain);
             }
         } catch (URIException e) {
-            log.debug("Unable to extract a domain from the object URL found in field 4 of crawl.log: '{}'.",
-            		objectUrl, e);
+            log.debug("Unable to extract a domain from the object URL found in field 4 of crawl.log: '{}'.", objectUrl,
+                    e);
         }
-        
-        if (objectDomain == null && seedDomain == null){
-            throw new ArgumentNotValid("Unable to find a domainName in the line: '"
-                    + line + "'.");
+
+        if (objectDomain == null && seedDomain == null) {
+            throw new ArgumentNotValid("Unable to find a domainName in the line: '" + line + "'.");
         }
-        
+
         String domainName = null;
-        
+
         if (sourceTagEnabled && seedDomain != null) {
             domainName = seedDomain;
         } else if (objectDomain != null) {
             domainName = objectDomain;
         } else {
             throw new ArgumentNotValid("Unable to find valid domainname");
-        }     
-       
-        //Get the response code for the URL in the second field
+        }
+
+        // Get the response code for the URL in the second field
         long response;
         try {
             response = Long.parseLong(parts[1]);
@@ -409,21 +398,21 @@ public abstract class AbstractHarvestReport implements HarvestReport {
             throw new ArgumentNotValid("Unparsable response code in field 2 of crawl.log: '" + parts[1] + "'.");
         }
 
-        //Get the byte count from annotation field "content-size"
-        //and the stop reason from annotation field if status code is -5003
+        // Get the byte count from annotation field "content-size"
+        // and the stop reason from annotation field if status code is -5003
         StopReason stopReason = getDefaultStopReason();
         long byteCounter = 0;
-        if (parts.length > MIN_CRAWL_LOG_PARTS) { 
+        if (parts.length > MIN_CRAWL_LOG_PARTS) {
             // test if any annotations exist
             String[] annotations = parts[ANNOTATION_PART_INDEX].split(",");
             for (String annotation : annotations) {
                 if (annotation.trim().startsWith(ContentSizeAnnotationPostProcessor.CONTENT_SIZE_ANNOTATION_PREFIX)) {
                     try {
-                        byteCounter = Long.parseLong(annotation.substring(
-                        		ContentSizeAnnotationPostProcessor.CONTENT_SIZE_ANNOTATION_PREFIX.length()));
+                        byteCounter = Long.parseLong(annotation
+                                .substring(ContentSizeAnnotationPostProcessor.CONTENT_SIZE_ANNOTATION_PREFIX.length()));
                     } catch (NumberFormatException e) {
                         throw new ArgumentNotValid("Unparsable annotation in field 12 of crawl.log: '"
-                        		+ parts[ANNOTATION_PART_INDEX] + "'.", e);
+                                + parts[ANNOTATION_PART_INDEX] + "'.", e);
                     }
                 }
                 if (response == CrawlURI.S_BLOCKED_BY_QUOTA) {
@@ -436,17 +425,17 @@ public abstract class AbstractHarvestReport implements HarvestReport {
             }
         }
 
-        //Update stats for domain
+        // Update stats for domain
         DomainStats dhi = getOrCreateDomainStats(domainName);
 
-        //Only count harvested URIs
+        // Only count harvested URIs
         if (response >= 0) {
             long oldObjectCount = dhi.getObjectCount();
             dhi.setObjectCount(oldObjectCount + 1);
             long oldByteCount = dhi.getByteCount();
             dhi.setByteCount(oldByteCount + byteCounter);
         }
-        //Only if reason not set
+        // Only if reason not set
         if (dhi.getStopReason() == defaultStopReason) {
             dhi.setStopReason(stopReason);
         }
@@ -454,18 +443,19 @@ public abstract class AbstractHarvestReport implements HarvestReport {
 
     /**
      * Extract DomainName from URI string. Does not handle Danish characters in URI.
+     *
      * @param uriAsString a given URI as string.
      * @return the domainName if possible or null, if not possible
      * @throws URIException If unable to create valid URI from the given string
      */
     private String getDomainNameFromURIString(String uriAsString) throws URIException {
-            UURI uuri = new FixedUURI(uriAsString, false);
-            String hostName = uuri.getReferencedHost();
-            if (hostName == null){
-                log.debug("Not possible to extract domainname from URL: {}", uriAsString);
-                return null;
-            }
-            return DomainUtils.domainNameFromHostname(hostName);
+        UURI uuri = new FixedUURI(uriAsString, false);
+        String hostName = uuri.getReferencedHost();
+        if (hostName == null) {
+            log.debug("Not possible to extract domainname from URL: {}", uriAsString);
+            return null;
+        }
+        return DomainUtils.domainNameFromHostname(hostName);
     }
 
 }

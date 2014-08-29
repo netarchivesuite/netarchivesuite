@@ -23,9 +23,10 @@
 
 package dk.netarkivet.common.webinterface;
 
-import javax.servlet.jsp.JspWriter;
 import java.io.IOException;
 import java.io.StringWriter;
+
+import javax.servlet.jsp.JspWriter;
 
 /** JSP writer that simply writes to a public string writer. */
 public class JspWriterMockup extends JspWriter {

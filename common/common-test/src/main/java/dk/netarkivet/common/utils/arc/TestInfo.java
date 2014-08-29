@@ -27,11 +27,9 @@ import java.io.File;
 
 /**
  * Static constants for utils.arc and also utils.batch testing.
- *
  */
 public class TestInfo {
-    public static final File BASE_DIR
-            = new File("tests/dk/netarkivet/common/utils/arc/data");
+    public static final File BASE_DIR = new File("tests/dk/netarkivet/common/utils/arc/data");
     public static final File WORKING_DIR = new File(BASE_DIR, "working");
     public static final File ORIGINALS_DIR = new File(BASE_DIR, "originals");
 

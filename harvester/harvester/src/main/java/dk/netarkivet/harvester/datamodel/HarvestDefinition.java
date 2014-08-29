@@ -37,23 +37,21 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue;
 
 /**
- * This abstract class models the general properties of a harvest definition,
- * i.e. object id , name, comments, and submission date
- * <p/>
- * The specializing classes FullHarvest and PartielHarvest contains the specific
- * properties and operations of snapshot harvestdefinitions and all other kinds
- * of harvestdefinitions, respectively.
- * <p/>
+ * This abstract class models the general properties of a harvest definition, i.e. object id , name, comments, and
+ * submission date
+ * <p>
+ * The specializing classes FullHarvest and PartielHarvest contains the specific properties and operations of snapshot
+ * harvestdefinitions and all other kinds of harvestdefinitions, respectively.
+ * <p>
  * Methods exist to generate jobs from this harvest definition.
- *
  */
 public abstract class HarvestDefinition extends ExtendableEntity implements Named {
 
-	protected Long oid;
+    protected Long oid;
     protected String harvestDefName;
     /** The intended audience for the harvest. */
     protected String audience;
-    
+
     /** The time this harvest definition was first written. */
     protected Date submissionDate;
     protected String comments;
@@ -61,12 +59,11 @@ public abstract class HarvestDefinition extends ExtendableEntity implements Name
     /** Edition is used by the DAO to keep track of changes. */
     protected long edition = -1;
 
-    /** Determines if the harvest definition is active and ready
-     * for scheduling. When true the jobs should be scheduled
-     * otherwise the scheduler should ignore the definition.
-     * Initially a definition is assumed active - the original behaviour
-     * before the isActive flag was introduced.
-     * */
+    /**
+     * Determines if the harvest definition is active and ready for scheduling. When true the jobs should be scheduled
+     * otherwise the scheduler should ignore the definition. Initially a definition is assumed active - the original
+     * behaviour before the isActive flag was introduced.
+     */
     protected boolean isActive = true;
 
     /** The number of times this event has already run. */
@@ -75,73 +72,48 @@ public abstract class HarvestDefinition extends ExtendableEntity implements Name
     /** The id of the associated harvest channel, or null if the default one is to be used. */
     protected Long channelId;
 
-    protected HarvestDefinition(
-            Provider<ExtendedFieldDAO> extendedFieldDAO) {
+    protected HarvestDefinition(Provider<ExtendedFieldDAO> extendedFieldDAO) {
         super(extendedFieldDAO);
     }
 
     /**
-     * Create new instance of a PartialHavest configured according
-     * to the properties of the supplied DomainConfiguration.
+     * Create new instance of a PartialHavest configured according to the properties of the supplied
+     * DomainConfiguration.
      *
      * @param domainConfigurations a list of domain configurations
-     * @param schedule             the harvest definition schedule
-     * @param harvestDefName       the name of the harvest definition
-     * @param comments             comments
+     * @param schedule the harvest definition schedule
+     * @param harvestDefName the name of the harvest definition
+     * @param comments comments
      * @return the newly created PartialHarvest
      */
-    public static PartialHarvest createPartialHarvest(
-            List<DomainConfiguration> domainConfigurations,
-            Schedule schedule,
-            String harvestDefName,
-            String comments, 
-            String audience) {
+    public static PartialHarvest createPartialHarvest(List<DomainConfiguration> domainConfigurations,
+            Schedule schedule, String harvestDefName, String comments, String audience) {
 
-        return new PartialHarvest(domainConfigurations,
-                                  schedule,
-                                  harvestDefName,
-                                  comments, 
-                                  audience);
+        return new PartialHarvest(domainConfigurations, schedule, harvestDefName, comments, audience);
     }
 
     /**
-     * Create snapshot harvestdefinition.
-     * A snapshot harvestdefinition creates jobs for all domains,
-     * using the default configuration for each domain.
-     * The HarvestDefinition is scheduled to run once as soon as possible.
-     * <p/>
-     * When a previous harvest definition is supplied, only domains not
-     * completely harvested by the previous harvestdefinition are included
-     * in this harvestdefinition.
-     * indexready set to false.
+     * Create snapshot harvestdefinition. A snapshot harvestdefinition creates jobs for all domains, using the default
+     * configuration for each domain. The HarvestDefinition is scheduled to run once as soon as possible.
+     * <p>
+     * When a previous harvest definition is supplied, only domains not completely harvested by the previous
+     * harvestdefinition are included in this harvestdefinition. indexready set to false.
      *
-     * @param harvestDefName  the name of the harvest definition
-     * @param comments        description of the harvestdefinition
-     * @param prevHarvestOid  an id of a previous harvest to use as
-     *                        basis for this definition, ignored when null.
-     * @param maxCountObjects the maximum number of objects harvested from
-     *                        any domain
-     * @param maxBytes        the maximum number of bytes harvested from
-     *                        any domain  
+     * @param harvestDefName the name of the harvest definition
+     * @param comments description of the harvestdefinition
+     * @param prevHarvestOid an id of a previous harvest to use as basis for this definition, ignored when null.
+     * @param maxCountObjects the maximum number of objects harvested from any domain
+     * @param maxBytes the maximum number of bytes harvested from any domain
      * @param maxJobRunningTime The maximum running time for each job
      * @return a snapshot harvestdefinition
      */
-    public static FullHarvest createFullHarvest(String harvestDefName,
-                                                String comments,
-                                                Long prevHarvestOid,
-                                                long maxCountObjects,
-                                                long maxBytes,
-                                                long maxJobRunningTime) {
+    public static FullHarvest createFullHarvest(String harvestDefName, String comments, Long prevHarvestOid,
+            long maxCountObjects, long maxBytes, long maxJobRunningTime) {
 
-        return new FullHarvest(
-                harvestDefName, comments, prevHarvestOid, maxCountObjects,  maxBytes, maxJobRunningTime, false,
-                DAOProviderFactory.getHarvestDefinitionDAOProvider(),
-                DAOProviderFactory.getJobDAOProvider(),
-                DAOProviderFactory.getExtendedFieldDAOProvider(),
-                DAOProviderFactory.getDomainDAOProvider()
-        );
+        return new FullHarvest(harvestDefName, comments, prevHarvestOid, maxCountObjects, maxBytes, maxJobRunningTime,
+                false, DAOProviderFactory.getHarvestDefinitionDAOProvider(), DAOProviderFactory.getJobDAOProvider(),
+                DAOProviderFactory.getExtendedFieldDAOProvider(), DAOProviderFactory.getDomainDAOProvider());
     }
-
 
     /**
      * Set the object ID of this harvest definition.
@@ -163,8 +135,9 @@ public abstract class HarvestDefinition extends ExtendableEntity implements Name
         return oid;
     }
 
-    /** Check if this harvestdefinition has an ID set yet (doesn't happen until
-     * the DBDAO persists it).
+    /**
+     * Check if this harvestdefinition has an ID set yet (doesn't happen until the DBDAO persists it).
+     *
      * @return true, if this harvestdefinition has an ID set
      */
     boolean hasID() {
@@ -200,6 +173,7 @@ public abstract class HarvestDefinition extends ExtendableEntity implements Name
 
     /**
      * Returns the comments for this harvest definition.
+     *
      * @return the comments for this harvest definition.
      */
     public String getComments() {
@@ -218,6 +192,7 @@ public abstract class HarvestDefinition extends ExtendableEntity implements Name
 
     /**
      * Get the edition number.
+     *
      * @return The edition number
      */
     public long getEdition() {
@@ -232,7 +207,6 @@ public abstract class HarvestDefinition extends ExtendableEntity implements Name
     public void setEdition(long theEdition) {
         edition = theEdition;
     }
-
 
     /**
      * Get the number of times this harvest definition has been run so far.
@@ -255,8 +229,8 @@ public abstract class HarvestDefinition extends ExtendableEntity implements Name
     }
 
     /**
-     * Set's activation status. Only active harvestdefinitions should
-     * be scheduled.
+     * Set's activation status. Only active harvestdefinitions should be scheduled.
+     *
      * @param active new activation status
      */
     public void setActive(boolean active) {
@@ -265,6 +239,7 @@ public abstract class HarvestDefinition extends ExtendableEntity implements Name
 
     /**
      * Returns the activation status.
+     *
      * @return activation status
      */
     public boolean getActive() {
@@ -280,6 +255,7 @@ public abstract class HarvestDefinition extends ExtendableEntity implements Name
 
     /**
      * Return a human-readable string representation of this object.
+     *
      * @return A human-readable string representation of this object
      */
     public String toString() {
@@ -287,25 +263,34 @@ public abstract class HarvestDefinition extends ExtendableEntity implements Name
     }
 
     /**
-     * Tests whether some other object is "equal to" this HarvestDefinition.
-     * Cfr. documentation of java.lang.Object.equals()
+     * Tests whether some other object is "equal to" this HarvestDefinition. Cfr. documentation of
+     * java.lang.Object.equals()
      *
      * @param o
      * @return True or false, indicating equality.
      */
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof HarvestDefinition)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof HarvestDefinition)) {
+            return false;
+        }
 
         final HarvestDefinition harvestDefinition = (HarvestDefinition) o;
 
-        if (!comments.equals(harvestDefinition.comments)) return false;
-        if (!harvestDefName.equals(harvestDefinition.harvestDefName))
+        if (!comments.equals(harvestDefinition.comments)) {
             return false;
-        if (oid != null ? !oid.equals(harvestDefinition.oid) : harvestDefinition.oid != null) return false;
+        }
+        if (!harvestDefName.equals(harvestDefinition.harvestDefName)) {
+            return false;
+        }
+        if (oid != null ? !oid.equals(harvestDefinition.oid) : harvestDefinition.oid != null) {
+            return false;
+        }
 
-        if ((extendedFieldValues == null && harvestDefinition.getExtendedFieldValues() != null) ||
-                (extendedFieldValues != null && harvestDefinition.getExtendedFieldValues() == null)) {
+        if ((extendedFieldValues == null && harvestDefinition.getExtendedFieldValues() != null)
+                || (extendedFieldValues != null && harvestDefinition.getExtendedFieldValues() == null)) {
             return false;
         }
 
@@ -329,18 +314,14 @@ public abstract class HarvestDefinition extends ExtendableEntity implements Name
                 }
             }
         }
-        
+
         return true;
     }
 
     /**
-     * Returns a hashcode of this object generated on fields oid,
-     * harvestDefName, and comments.
+     * Returns a hashcode of this object generated on fields oid, harvestDefName, and comments.
      *
      * @return the hashCode
-     *
-     *
-     *
      */
     public int hashCode() {
         int result;
@@ -365,46 +346,51 @@ public abstract class HarvestDefinition extends ExtendableEntity implements Name
      */
     public abstract boolean isSnapShot();
 
-    /** Returns how many objects to harvest per domain, or 0 for no limit.
+    /**
+     * Returns how many objects to harvest per domain, or 0 for no limit.
+     *
      * @return how many objects to harvest per domain
      */
     public abstract long getMaxCountObjects();
 
-    /** Returns how many bytes to harvest per domain, or -1 for no limit.
+    /**
+     * Returns how many bytes to harvest per domain, or -1 for no limit.
+     *
      * @return how many bytes to harvest per domain
      */
     public abstract long getMaxBytes();
-    
-    /** 
+
+    /**
      * @return the intended audience for this harvest.
      */
     public String getAudience() {
         return this.audience;
     }
-    
+
     /**
      * Set the audience.
+     *
      * @param audience the audience.
      */
     public void setAudience(String audience) {
         this.audience = audience;
     }
 
-	public Long getChannelId() {
-		return channelId;
-	}
+    public Long getChannelId() {
+        return channelId;
+    }
 
-	protected void setChannelId(Long channelId) {
-		this.channelId = channelId;
-	}
+    protected void setChannelId(Long channelId) {
+        this.channelId = channelId;
+    }
 
     /**
-     * All derived classes allow ExtendedFields from Type ExtendedFieldTypes.HARVESTDEFINITION  
+     * All derived classes allow ExtendedFields from Type ExtendedFieldTypes.HARVESTDEFINITION
      *
      * @return ExtendedFieldTypes.HARVESTDEFINITION
      */
     protected int getExtendedFieldType() {
-    	return ExtendedFieldTypes.HARVESTDEFINITION;
+        return ExtendedFieldTypes.HARVESTDEFINITION;
     }
 
 }

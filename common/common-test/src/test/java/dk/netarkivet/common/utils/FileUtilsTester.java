@@ -40,8 +40,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -59,6 +57,7 @@ import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
+import junit.framework.TestCase;
 
 /**
  * Unit tests for the FileUtils class.
@@ -117,7 +116,7 @@ public class FileUtilsTester {
 
     /**
      * test that FileUtils.append can append between two remote files.
-     * 
+     *
      * @throws IOException
      */
     @Test
@@ -147,7 +146,7 @@ public class FileUtilsTester {
 
     /**
      * Check that we can at least get some information out of getBytesFree
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -166,8 +165,7 @@ public class FileUtilsTester {
     public void testCreateDir() throws InterruptedException {
         // FIXME NAS-2319
         /*
-         * try { FileUtils.createDir(new File("/foo"));
-         * fail("Should fail when given a nonwritable path"); } catch
+         * try { FileUtils.createDir(new File("/foo")); fail("Should fail when given a nonwritable path"); } catch
          * (PermissionDenied e) { // Expected }
          */
         try {
@@ -191,7 +189,7 @@ public class FileUtilsTester {
     public void testCreateDirInParallel() throws InterruptedException {
         // Test that multiple threads making a directory at once don't fail
         List<Thread> threads = new ArrayList<Thread>();
-        final boolean[] failed = new boolean[] { false };
+        final boolean[] failed = new boolean[] {false};
         final File threaddir = new File(WORKING, "threaddir/dir1/dir2");
         for (int i = 0; i < 10; i++) {
             threads.clear();
@@ -215,7 +213,8 @@ public class FileUtilsTester {
             for (Thread t : threads) {
                 t.start();
             }
-            WAITLOOP: do {
+            WAITLOOP:
+            do {
                 Thread.sleep(10);
                 for (Thread t : threads) {
                     if (t.isAlive()) {
@@ -292,9 +291,8 @@ public class FileUtilsTester {
     // }
 
     /**
-     * Tests that the new makeValidFile method behaves as designed. It must
-     * either return a valid file, or throw an IOException.
-     *
+     * Tests that the new makeValidFile method behaves as designed. It must either return a valid file, or throw an
+     * IOException.
      */
     @Test
     public void testMakeValidFileFromExistingMakeAValidFileFromExisting() {
@@ -363,8 +361,7 @@ public class FileUtilsTester {
         }
 
         /*
-         * "foo/bar" is not illegal in Java 8, which extracts the filename to
-         * use (here "bar").
+         * "foo/bar" is not illegal in Java 8, which extracts the filename to use (here "bar").
          */
         // String[] prevFiles = checkDir.list();
         // try {
@@ -424,8 +421,8 @@ public class FileUtilsTester {
     }
 
     /**
-     * Unittest for testing that removing a file using FileUtils.remove(File)
-     * does not throw an exception, if it fails to do so.
+     * Unittest for testing that removing a file using FileUtils.remove(File) does not throw an exception, if it fails
+     * to do so.
      */
     @Test
     @Ignore("Surefire: File should still exist.")
@@ -499,8 +496,7 @@ public class FileUtilsTester {
     }
 
     /**
-     * Unittest that tests the method
-     * {@link FileUtils#getHumanReadableFileSize(File)}.
+     * Unittest that tests the method {@link FileUtils#getHumanReadableFileSize(File)}.
      */
     @Test
     public void testGetHumanReadableFileSize() {

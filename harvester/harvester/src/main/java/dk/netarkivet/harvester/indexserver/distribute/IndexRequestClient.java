@@ -55,56 +55,53 @@ import dk.netarkivet.harvester.indexserver.MultiFileBasedCache;
 
 /**
  * Client for index request server.
- *
- * Allows to request an index of some type over a list of jobs. Factory method
- * will return the index request client of the type wished.
+ * <p>
+ * Allows to request an index of some type over a list of jobs. Factory method will return the index request client of
+ * the type wished.
  */
 public class IndexRequestClient extends MultiFileBasedCache<Long> implements JobIndexCache {
-    
+
     /** Logger for this indexRequestClient. */
     private static final Logger log = LoggerFactory.getLogger(IndexRequestClient.class);
-    
+
     /** The default place in classpath where the settings file can be found. */
     private static String defaultSettingsClasspath = "dk/netarkivet/harvester/"
-        + "indexserver/distribute/IndexRequestClientSettings.xml";
+            + "indexserver/distribute/IndexRequestClientSettings.xml";
 
     /*
-     * The static initialiser is called when the class is loaded.
-     * It will add default values for all settings defined in this class, by
-     * loading them from a settings.xml file in classpath.
+     * The static initialiser is called when the class is loaded. It will add default values for all settings defined in
+     * this class, by loading them from a settings.xml file in classpath.
      */
     static {
-        Settings.addDefaultClasspathSettings(defaultSettingsClasspath
-        );
+        Settings.addDefaultClasspathSettings(defaultSettingsClasspath);
     }
-    
+
     /** Synchronizer used to make requests. */
     private static Synchronizer synchronizer;
 
     /** Factory method map of clients created of specific types. */
-    private static Map<RequestType, IndexRequestClient> clients =
-    		new EnumMap<RequestType, IndexRequestClient>(RequestType.class);
+    private static Map<RequestType, IndexRequestClient> clients = new EnumMap<RequestType, IndexRequestClient>(
+            RequestType.class);
 
     /** The type of this indexRequestClient. */
     private RequestType requestType;
-    
+
     /**
      * <b>settings.common.indexClient.indexRequestTimeout</b>: <br>
-     * Setting for the amount of time, in milliseconds, we should wait for 
-     * replies when issuing a call to generate an index over some jobs. */
+     * Setting for the amount of time, in milliseconds, we should wait for replies when issuing a call to generate an
+     * index over some jobs.
+     */
     public static final String INDEXREQUEST_TIMEOUT = "settings.common.indexClient.indexRequestTimeout";
 
     /**
      * <b>settings.common.indexClient.useLocalFtpServer</b>: <br>
-     * Setting for using the ftpserver assigned to the client instead of the 
-     * one assigned to the indexserver.
-     * Set to false by default.
+     * Setting for using the ftpserver assigned to the client instead of the one assigned to the indexserver. Set to
+     * false by default.
      */
     public static final String INDEXREQUEST_USE_LOCAL_FTPSERVER = "settings.common.indexClient.useLocalFtpServer";
-    
+
     /**
-     * Initialise this client, handling requests of a given type. Start
-     * listening to channel if not done yet.
+     * Initialise this client, handling requests of a given type. Start listening to channel if not done yet.
      *
      * @param type Type of this cache
      */
@@ -113,8 +110,11 @@ public class IndexRequestClient extends MultiFileBasedCache<Long> implements Job
         this.requestType = type;
     }
 
-    /** Get the singleton synchronizer for sending requests.
-     * @return synchronizer */
+    /**
+     * Get the singleton synchronizer for sending requests.
+     *
+     * @return synchronizer
+     */
     private synchronized Synchronizer getSynchronizer() {
         if (synchronizer == null) {
             synchronizer = new Synchronizer();
@@ -124,8 +124,7 @@ public class IndexRequestClient extends MultiFileBasedCache<Long> implements Job
     }
 
     /**
-     * Factory method returning an IndexRequestClient for the given type of
-     * index cache.
+     * Factory method returning an IndexRequestClient for the given type of index cache.
      *
      * @param type The type of this cache.
      * @return The singleton instance dedicated to this type of index requests.
@@ -142,19 +141,16 @@ public class IndexRequestClient extends MultiFileBasedCache<Long> implements Job
     }
 
     /**
-     * This method makes sure the actual caching of underlying data is done
-     * using the index server. It will convert calls into an IndexRequestMessage
-     * which is sent to the server. The Set&lt;Long&gt; of found jobs, and 
-     * the side effect of caching the index, is done using this communication 
-     * with the server. The resulting files will be unzipped into the cache dir.
-     *
-     * This method should not be called directly! Instead call cache() or
-     * getIndex().
+     * This method makes sure the actual caching of underlying data is done using the index server. It will convert
+     * calls into an IndexRequestMessage which is sent to the server. The Set&lt;Long&gt; of found jobs, and the side
+     * effect of caching the index, is done using this communication with the server. The resulting files will be
+     * unzipped into the cache dir.
+     * <p>
+     * This method should not be called directly! Instead call cache() or getIndex().
      *
      * @param jobSet The set of job IDs.
      * @return The set of found job IDs.
-     * @throws ArgumentNotValid on null argument; or on wrong parameters in
-     * replied message.
+     * @throws ArgumentNotValid on null argument; or on wrong parameters in replied message.
      * @throws IOFailure on trouble in communication or invalid reply types.
      * @throws IllegalState if message is not OK.
      * @see dk.netarkivet.harvester.indexserver.FileBasedCache#cache
@@ -162,20 +158,20 @@ public class IndexRequestClient extends MultiFileBasedCache<Long> implements Job
      */
     protected Set<Long> cacheData(Set<Long> jobSet) throws IOFailure, IllegalState, ArgumentNotValid {
         ArgumentNotValid.checkNotNull(jobSet, "Set<Long> id");
-        
+
         if (log.isInfoEnabled()) {
-            log.info("Requesting an index of type '{}' for the jobs [{}]",
-            		this.requestType, StringUtils.conjoin(",", jobSet));
+            log.info("Requesting an index of type '{}' for the jobs [{}]", this.requestType,
+                    StringUtils.conjoin(",", jobSet));
         }
         // use locally defined ftp-server, if required
         RemoteFileSettings ftpSettings = null;
-        
+
         if (useLocalFtpserver()) {
             log.debug("Requesting the use of the FTPserver defined locally.");
             ftpSettings = FTPRemoteFile.getRemoteFileSettings();
         }
-        
-        //Send request to server
+
+        // Send request to server
         IndexRequestMessage irMsg = new IndexRequestMessage(requestType, jobSet, ftpSettings);
         if (log.isDebugEnabled()) {
             log.debug("Waiting {} for the index", TimeUtils.readableTimeInterval(getIndexTimeout()));
@@ -190,10 +186,10 @@ public class IndexRequestClient extends MultiFileBasedCache<Long> implements Job
         Set<Long> diffSet = new HashSet<Long>(jobSet);
         diffSet.removeAll(foundJobs);
         if (diffSet.size() == 0) {
-        	if (log.isDebugEnabled()) {
-                log.debug("Successfully received an index of type '{}' for the jobs [{}]",
-                		this.requestType, StringUtils.conjoin(",", jobSet));
-        	}
+            if (log.isDebugEnabled()) {
+                log.debug("Successfully received an index of type '{}' for the jobs [{}]", this.requestType,
+                        StringUtils.conjoin(",", jobSet));
+            }
             try {
                 if (reply.isIndexIsStoredInDirectory()) {
                     gunzipToDir(reply.getResultFiles(), getCacheFile(jobSet));
@@ -205,23 +201,22 @@ public class IndexRequestClient extends MultiFileBasedCache<Long> implements Job
                 return new HashSet<Long>();
             }
         } else {
-        	if (log.isDebugEnabled()) {
+            if (log.isDebugEnabled()) {
                 log.debug("No index received. The following jobs were not found: {}", StringUtils.conjoin(",", diffSet));
-        	}
+            }
         }
 
-        //Return the set of found jobs
+        // Return the set of found jobs
         return foundJobs;
     }
 
-    /** Gunzip a list of RemoteFiles into a given directory.  The actual
-     * unzipping takes place in a temporary directory which gets renamed,
-     * so the directory appears to be created atomically.
+    /**
+     * Gunzip a list of RemoteFiles into a given directory. The actual unzipping takes place in a temporary directory
+     * which gets renamed, so the directory appears to be created atomically.
      *
-     * @param files List of RemoteFiles to gunzip.  The RemoteFiles will be
-     * deleted as part of the process.
-     * @param toDir The directory that the gunzipped files will eventually
-     * be placed in.  This directory will be created and filled atomically.
+     * @param files List of RemoteFiles to gunzip. The RemoteFiles will be deleted as part of the process.
+     * @param toDir The directory that the gunzipped files will eventually be placed in. This directory will be created
+     * and filled atomically.
      * @throws IOFailure If errors occur during unzipping, e.g. disk full.
      */
     private void gunzipToDir(List<RemoteFile> files, File toDir) throws IOFailure {
@@ -236,18 +231,18 @@ public class IndexRequestClient extends MultiFileBasedCache<Long> implements Job
             }
             if (!tmpDir.renameTo(toDir)) {
                 throw new IOFailure("Error renaming temp dir '" + tmpDir + "' to target directory '"
-                		+ toDir.getAbsolutePath() + "'");
+                        + toDir.getAbsolutePath() + "'");
             }
         } finally {
             FileUtils.removeRecursively(tmpDir);
         }
     }
 
-    /** Unzip a RemoteFile to a given file, deleting the RemoteFile afterwards.
-     *  Problems arising while deleting are logged, but do not cause exceptions.
+    /**
+     * Unzip a RemoteFile to a given file, deleting the RemoteFile afterwards. Problems arising while deleting are
+     * logged, but do not cause exceptions.
      *
-     * @param remoteFile A file to download. This file will be attempted deleted
-     * after successfull unzipping.
+     * @param remoteFile A file to download. This file will be attempted deleted after successfull unzipping.
      * @param destFile A place to put the unzipped file.
      * @throws IOFailure on any I/O error, e.g. disk full
      */
@@ -273,84 +268,87 @@ public class IndexRequestClient extends MultiFileBasedCache<Long> implements Job
         }
     }
 
-    /** How long should we wait for index replies?
+    /**
+     * How long should we wait for index replies?
      *
      * @return Index timeout value in milliseconds.
      */
     protected long getIndexTimeout() {
-        //TODO It might be a good idea to make this dependant on "type"
+        // TODO It might be a good idea to make this dependant on "type"
         return Settings.getLong(INDEXREQUEST_TIMEOUT);
     }
-    
-    /** 
-     * Check if we should use local ftpserver or not, provided you are using 
-     * FTPRemoteFile as the {@link CommonSettings#REMOTE_FILE_CLASS}.
-     * This always returns false, when {@link CommonSettings#REMOTE_FILE_CLASS}
-     * is not {@link FTPRemoteFile}. 
-     * @return true, if we should use the local ftpserver when retrieving
-     * data from the indexserver, false, if the indexserver should decide for us.
+
+    /**
+     * Check if we should use local ftpserver or not, provided you are using FTPRemoteFile as the
+     * {@link CommonSettings#REMOTE_FILE_CLASS}. This always returns false, when
+     * {@link CommonSettings#REMOTE_FILE_CLASS} is not {@link FTPRemoteFile}.
+     *
+     * @return true, if we should use the local ftpserver when retrieving data from the indexserver, false, if the
+     * indexserver should decide for us.
      */
     protected boolean useLocalFtpserver() {
         // check first that RemoteFileClass is FTPRemoteFile
         String remotefileClassname = Settings.get(CommonSettings.REMOTE_FILE_CLASS);
         if (!remotefileClassname.equalsIgnoreCase(FTPRemoteFile.class.getName())) {
             log.debug("Not using localftpserver as transport, because this application uses " + remotefileClassname
-            		+ " as file transport class");
+                    + " as file transport class");
             return false;
         } else {
             return Settings.getBoolean(INDEXREQUEST_USE_LOCAL_FTPSERVER);
         }
     }
-    
+
     /**
      * Check the reply message is valid.
+     *
      * @param jobSet The requested set of jobs
      * @param msg The message received
      * @throws ArgumentNotValid On wrong parameters in replied message.
      * @throws IOFailure on trouble in communication or invalid reply types.
      * @throws IllegalState if message is not OK.
      */
-    private void checkMessageValid(Set<Long> jobSet, NetarkivetMessage msg) throws IllegalState, IOFailure, ArgumentNotValid {
-        //Read and check reply
+    private void checkMessageValid(Set<Long> jobSet, NetarkivetMessage msg) throws IllegalState, IOFailure,
+            ArgumentNotValid {
+        // Read and check reply
         if (msg == null) {
             throw new IOFailure("Timeout waiting for reply of index request for jobs "
-            		+ StringUtils.conjoin(",", jobSet));
+                    + StringUtils.conjoin(",", jobSet));
         }
         if (!msg.isOk()) {
             throw new IllegalState("Reply message not ok. Message is: '" + msg.getErrMsg()
-            		+ "' in index request for jobs " + StringUtils.conjoin(",", jobSet));
+                    + "' in index request for jobs " + StringUtils.conjoin(",", jobSet));
         }
         if (!(msg instanceof IndexRequestMessage)) {
             throw new IOFailure("Unexpected type of reply message: '" + msg.getClass().getName()
-            		+ "' in index request for jobs " + StringUtils.conjoin(",", jobSet));
+                    + "' in index request for jobs " + StringUtils.conjoin(",", jobSet));
         }
         IndexRequestMessage reply = (IndexRequestMessage) msg;
         Set<Long> foundJobs = reply.getFoundJobs();
         if (foundJobs == null) {
             throw new ArgumentNotValid("Missing parameter foundjobs in reply to index request for jobs "
-            		+ StringUtils.conjoin(",", jobSet));
+                    + StringUtils.conjoin(",", jobSet));
         }
 
-        //FoundJobs should always be a subset
+        // FoundJobs should always be a subset
         if (!jobSet.containsAll(foundJobs)) {
             throw new ArgumentNotValid("foundJobs is not a subset of requested jobs. Requested: "
-            		+ StringUtils.conjoin(",", jobSet) + ". Found: " + StringUtils.conjoin(",", foundJobs));
+                    + StringUtils.conjoin(",", jobSet) + ". Found: " + StringUtils.conjoin(",", foundJobs));
         }
 
         if (jobSet.equals(foundJobs)) {
-            //Files should only be present if jobSet=foundJobs
+            // Files should only be present if jobSet=foundJobs
             if (reply.isIndexIsStoredInDirectory()) {
                 List<RemoteFile> files;
                 files = reply.getResultFiles();
-                if  (files == null) {
+                if (files == null) {
                     throw new ArgumentNotValid("Missing files in reply to" + " index request for jobs "
-                    		+ StringUtils.conjoin(",", jobSet));
+                            + StringUtils.conjoin(",", jobSet));
                 }
             } else {
                 RemoteFile file = reply.getResultFile();
-                if  (file == null) {
+                if (file == null) {
                     throw new ArgumentNotValid("Missing file in reply to" + " index request for jobs "
-                    		+ StringUtils.conjoin(",", jobSet));
+                            + StringUtils.conjoin(",", jobSet));
                 }
             }
         }
@@ -358,29 +356,28 @@ public class IndexRequestClient extends MultiFileBasedCache<Long> implements Job
 
     /**
      * Method to request an Index without having the result sent right away.
+     *
      * @param jobSet The set of job IDs.
      * @param harvestId The ID of the harvest requesting this index.
      * @throws IOFailure On trouble in communication or invalid reply types.
-     * @throws IllegalState if message is not OK. 
+     * @throws IllegalState if message is not OK.
      * @throws ArgumentNotValid if the jobSet is null.
      */
-    public void requestIndex(Set<Long> jobSet, Long harvestId) 
-    throws IOFailure, IllegalState, ArgumentNotValid {
+    public void requestIndex(Set<Long> jobSet, Long harvestId) throws IOFailure, IllegalState, ArgumentNotValid {
         ArgumentNotValid.checkNotNull(jobSet, "Set<Long> id");
 
         if (log.isInfoEnabled()) {
-            log.info("Requesting an index of type '{}' for the jobs [{}]",
-            		this.requestType, StringUtils.conjoin(",", jobSet));
+            log.info("Requesting an index of type '{}' for the jobs [{}]", this.requestType,
+                    StringUtils.conjoin(",", jobSet));
         }
-        
+
         // Send request to server but ask for it not to be returned
-        // Ask that a message is sent to the scheduling queue when 
+        // Ask that a message is sent to the scheduling queue when
         // index is finished
-        
-        IndexRequestMessage irMsg = new IndexRequestMessage(
-                requestType, jobSet, Channels.getTheSched(),
-                false, harvestId);
-        
+
+        IndexRequestMessage irMsg = new IndexRequestMessage(requestType, jobSet, Channels.getTheSched(), false,
+                harvestId);
+
         JMSConnectionFactory.getInstance().send(irMsg);
     }
 

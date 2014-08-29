@@ -29,30 +29,28 @@ import org.slf4j.LoggerFactory;
 import dk.netarkivet.common.exceptions.IllegalState;
 
 /**
- * A version of AdminData that cannot be changed, but which allows
- * synchronization through a file.
+ * A version of AdminData that cannot be changed, but which allows synchronization through a file.
+ * <p>
+ * To avoid excessive reading of the admin data file and constant stat() calls, users of this are required call
+ * synchronize() before major chunks of use to ensure that the data are up to date.
+ * <p>
+ * Implementation note: Two alternative synch strategies are
+ * <p>
+ * 1) Recreate ReadOnlyAdminData before every use -- this requires reading the entire file again (millions of lines).<br>
+ * 2) Synchronize at every entry point (hasEntry, getState etc) -- this requires an expensive stat() call before every
+ * action, costly when iterating.
  *
- * To avoid excessive reading of the admin data file and constant stat() calls,
- * users of this are required call synchronize() before major chunks of use to
- * ensure that the data are up to date.
- *
- * Implementation note: Two alternative synch strategies are<p>
- * 1) Recreate ReadOnlyAdminData before every use -- this requires reading the
- *    entire file again (millions of lines).<br>
- * 2) Synchronize at every entry point (hasEntry, getState etc) -- this requires
- *    an expensive stat() call before every action, costly when iterating.
- *    
- * @deprecated This class is only used by the deprecated class
- * FileBasedActiveBitPreservation.
+ * @deprecated This class is only used by the deprecated class FileBasedActiveBitPreservation.
  */
-@Deprecated 
+@Deprecated
 public class ReadOnlyAdminData extends AdminData {
 
-	/** The log.*/
+    /** The log. */
     private static final Logger log = LoggerFactory.getLogger(ReadOnlyAdminData.class);
-    
-    /** The time the underlying file (adminDataFile) was last read in.
-     * If 0, we have never read admin data (the file doesn't exist).
+
+    /**
+     * The time the underlying file (adminDataFile) was last read in. If 0, we have never read admin data (the file
+     * doesn't exist).
      */
     protected long lastModified = 0;
 
@@ -65,14 +63,15 @@ public class ReadOnlyAdminData extends AdminData {
 
     /**
      * Returns _an_ instance if admin data. This is _not_ a singleton.
+     *
      * @return An instance of ReadOnlyAdminData
      */
     public static ReadOnlyAdminData getInstance() {
         return new ReadOnlyAdminData();
     }
 
-    /** Read admin data. This should not be used, use synchronize instead, which
-     * only rereads when necessary.
+    /**
+     * Read admin data. This should not be used, use synchronize instead, which only rereads when necessary.
      */
     protected void read() {
         lastModified = adminDataFile.lastModified();

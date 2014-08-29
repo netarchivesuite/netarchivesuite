@@ -29,47 +29,38 @@ import org.apache.lucene.util.Version;
 
 /**
  * This class is used for global constants only.
- *
- * If your constant is only to be used in a single package, put it in a
- * Constants-class in that package, and make sure it is package private (no
- * modifiers).
- *
- * If your constant is used in a single class only, put it in that class, and
- * make sure it is private.
- *
+ * <p>
+ * If your constant is only to be used in a single package, put it in a Constants-class in that package, and make sure
+ * it is package private (no modifiers).
+ * <p>
+ * If your constant is used in a single class only, put it in that class, and make sure it is private.
+ * <p>
  * Remember everything placed here MUST be constants.
- *
+ * <p>
  * This class is never instantiated, so thread security is not an issue.
- *
  */
 public final class Constants {
     /** The pattern for an IP-address key. */
-    public static final String IP_REGEX_STRING
-            = "[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}";
+    public static final String IP_REGEX_STRING = "[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}";
     /** A full string matcher for an IP-address. */
-    public static final Pattern IP_KEY_REGEXP
-            = Pattern.compile("^" + IP_REGEX_STRING + "$");
+    public static final Pattern IP_KEY_REGEXP = Pattern.compile("^" + IP_REGEX_STRING + "$");
     /** A full string matcher for an IPv6-address. */
-    public static final Pattern IPv6_KEY_REGEXP
-            = Pattern.compile("^([0-9A-F]{1,2}\\:){5}[0-9A-F]{1,2}$");
+    public static final Pattern IPv6_KEY_REGEXP = Pattern.compile("^([0-9A-F]{1,2}\\:){5}[0-9A-F]{1,2}$");
     /**
-     * The suffix of a regular expression that matches the metadata files.
-     * Add job IDs to the front as necessary.
+     * The suffix of a regular expression that matches the metadata files. Add job IDs to the front as necessary.
      */
-    public static final String METADATA_FILE_PATTERN_SUFFIX
-            = "-metadata-[0-9]+.(w)?arc";
+    public static final String METADATA_FILE_PATTERN_SUFFIX = "-metadata-[0-9]+.(w)?arc";
     /** The mimetype for a list of CDX entries. */
-    public static final String CDX_MIME_TYPE =
-            "application/x-cdx";
+    public static final String CDX_MIME_TYPE = "application/x-cdx";
 
     /** Possible states of code. */
     private static enum CodeStatus {
         /** Released code. */
         RELEASE,
         /** Code is under codefreeze. The code is a release candidate. */
-        CODEFREEZE, 
-        /** The code is not production ready. Although it usually compiles,
-         * all code has not necessarily been tested. 
+        CODEFREEZE,
+        /**
+         * The code is not production ready. Although it usually compiles, all code has not necessarily been tested.
          */
         UNSTABLE
     }
@@ -77,7 +68,7 @@ public final class Constants {
     /** Extension of XML file names. */
     public static final String XML_EXTENSION = ".xml";
 
-    //It is QA's responsibility to update the following parameters on all
+    // It is QA's responsibility to update the following parameters on all
     // release and codefreeze actions
     /** Major version number. */
     public static final int MAJORVERSION = 5;
@@ -92,10 +83,9 @@ public final class Constants {
     private static final String HERITRIX_VERSION = "1.14.4";
 
     /**
-     * Read this much data when copying data from a file channel. Note that due
-     * to a bug in java, this should never be set larger than Integer.MAX_VALUE,
-     * since a call to fileChannel.transferFrom/To fails with an error while
-     * calling mmap.
+     * Read this much data when copying data from a file channel. Note that due to a bug in java, this should never be
+     * set larger than Integer.MAX_VALUE, since a call to fileChannel.transferFrom/To fails with an error while calling
+     * mmap.
      */
     public static final long IO_CHUNK_SIZE = 65536L;
     /** The directory name of the heritrix directory with arcfiles. */
@@ -103,24 +93,21 @@ public final class Constants {
     /** The directory name of the heritrix directory with warcfiles. */
     public static final String WARCDIRECTORY_NAME = "warcs";
     /**
-     * How big a buffer we use for read()/write() operations on InputStream/
-     * OutputStream.
+     * How big a buffer we use for read()/write() operations on InputStream/ OutputStream.
      */
     public static final int IO_BUFFER_SIZE = 4096;
-        
+
     /** The date format used for NetarchiveSuite dateformatting. */
     private static final String ISO_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss Z";
 
     /** Internationalisation resource bundle for common module. */
-    public static final String TRANSLATIONS_BUNDLE =
-            "dk.netarkivet.common.Translations";
+    public static final String TRANSLATIONS_BUNDLE = "dk.netarkivet.common.Translations";
 
     /**
-     * Private constructor that does absolutely nothing. Necessary in order to
-     * prevent initialization.
+     * Private constructor that does absolutely nothing. Necessary in order to prevent initialization.
      */
     private Constants() {
-        //Not to be initialised
+        // Not to be initialised
     }
 
     /**
@@ -130,22 +117,18 @@ public final class Constants {
      */
     public static String getVersionString() {
         if (BUILDSTATUS.equals(CodeStatus.RELEASE)) {
-            return "Version: " + MAJORVERSION + "." + MINORVERSION + "."
-                    + PATCHVERSION + " status " + BUILDSTATUS;
+            return "Version: " + MAJORVERSION + "." + MINORVERSION + "." + PATCHVERSION + " status " + BUILDSTATUS;
         } else {
-            String version = "Version: " + MAJORVERSION + "." 
-                    + MINORVERSION + "."
-                    + PATCHVERSION + " status " + BUILDSTATUS;
-            String implementationVersion = Constants.class.getPackage()
-                    .getImplementationVersion();
+            String version = "Version: " + MAJORVERSION + "." + MINORVERSION + "." + PATCHVERSION + " status "
+                    + BUILDSTATUS;
+            String implementationVersion = Constants.class.getPackage().getImplementationVersion();
             if (implementationVersion != null) {
                 version += " (r" + implementationVersion + ")";
-            } 
+            }
             return version;
-        }       
-    }     
+        }
+    }
 
-    
     /**
      * Get the Heritrix version presently in use.
      *
@@ -156,8 +139,7 @@ public final class Constants {
     }
 
     /**
-     * Get a formatter that can read and write a date in ISO format including
-     * hours/minutes/seconds and timezone.
+     * Get a formatter that can read and write a date in ISO format including hours/minutes/seconds and timezone.
      *
      * @return The formatter.
      */
@@ -176,10 +158,10 @@ public final class Constants {
 
     /** Pattern that matches everything. */
     public static final String ALL_PATTERN = ".*";
-    
+
     /** Lucene version used by this release of NetarchiveSuite. */
     public static final Version LUCENE_VERSION = Version.LUCENE_44;
-    
+
     /** The current website for the NetarchiveSuite project. */
     public static final String PROJECT_WEBSITE = "https://sbforge.org/display/NAS";
 }

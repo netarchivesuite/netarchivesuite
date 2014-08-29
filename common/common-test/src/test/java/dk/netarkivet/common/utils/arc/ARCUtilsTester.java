@@ -80,10 +80,7 @@ public class ARCUtilsTester {
     /**
      * Test that the insertARCFile method inserts the expected things.
      *
-     * @throws Exception
-     * 
-     *             FIXME: Consider splitting into individual tests expected to
-     *             fail.
+     * @throws Exception FIXME: Consider splitting into individual tests expected to fail.
      */
     @Test
     public void testInsertARCFile() throws Exception {
@@ -224,9 +221,8 @@ public class ARCUtilsTester {
 
     /**
      * Test, that ARCUtils#writeFileToARC() works Test, that bug 914 is fixed.
-     * 
-     * @throws Exception
-     *             If file not found
+     *
+     * @throws Exception If file not found
      */
     @Test
     public void testWriteFileToARC() throws Exception {
@@ -272,7 +268,7 @@ public class ARCUtilsTester {
 
     /**
      * Test, that ARCFile has correct header including correct date (Bug 987).
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -287,9 +283,8 @@ public class ARCUtilsTester {
     }
 
     /**
-     * Tests, that ARCUtils.getToolsARCWriter create a proper arcfile with
-     * correct header information.
-     * 
+     * Tests, that ARCUtils.getToolsARCWriter create a proper arcfile with correct header information.
+     *
      * @throws Exception
      */
     @Test
@@ -308,20 +303,18 @@ public class ARCUtilsTester {
 
     /**
      * Encapsulate ARCWriter creation for test-purposes.
-     * 
-     * @param stream
-     *            the PrintStream
-     * @param arcfile
-     *            the destination arcfile
-     * @throws IOException
+     *
+     * @param stream the PrintStream
+     * @param arcfile the destination arcfile
      * @return new ARCWriter
+     * @throws IOException
      */
     public static ARCWriter getTestARCWriter(PrintStream stream, File arcfile) throws IOException {
         return new ARCWriter(new AtomicInteger(), stream, arcfile, false, // Don't
-                                                                          // compress
+                // compress
                 ArchiveUtils.get14DigitDate(System.currentTimeMillis()), // Use
-                                                                         // current
-                                                                         // time
+                // current
+                // time
                 null // No particular file metadata to add
         );
     }

@@ -47,41 +47,39 @@ import dk.netarkivet.harvester.scheduler.jobgen.JobGenerator;
 import dk.netarkivet.harvester.scheduler.jobgen.JobGeneratorFactory;
 
 /**
- * Handles the generation of new jobs based on the harvest definitions in
- * persistent storage. The <code>HarvestJobGenerator</code> continuously scans
- * the harvest definition database for harvest which should be run now. If a HD
- * defines a harvest which should be run, a Harvest Job is created in the
- * harvest job database.
+ * Handles the generation of new jobs based on the harvest definitions in persistent storage. The
+ * <code>HarvestJobGenerator</code> continuously scans the harvest definition database for harvest which should be run
+ * now. If a HD defines a harvest which should be run, a Harvest Job is created in the harvest job database.
  */
 public class HarvestJobGenerator implements ComponentLifeCycle {
 
     /** The class logger. */
     private static final Logger log = LoggerFactory.getLogger(HarvestJobGenerator.class);
 
-    /** The set of HDs (or rather their OIDs) that are currently being
-     * scheduled in a separate thread.
-     * This set is a SynchronizedSet
+    /**
+     * The set of HDs (or rather their OIDs) that are currently being scheduled in a separate thread. This set is a
+     * SynchronizedSet
      */
     protected static Set<Long> harvestDefinitionsBeingScheduled = Collections.synchronizedSet(new HashSet<Long>());
 
-    /** Used the store the currenttimeMillis when the scheduling of
-     *  a particular harvestdefinition # started or when last
-     *  a warning was issued.
+    /**
+     * Used the store the currenttimeMillis when the scheduling of a particular harvestdefinition # started or when last
+     * a warning was issued.
      */
     protected static Map<Long, Long> schedulingStartedMap = Collections.synchronizedMap(new HashMap<Long, Long>());
-    
+
     /** The executor used to schedule the generator jobs. */
     private PeriodicTaskExecutor genExec;
-    
+
     /** @see HarvesterSettings#JOBGEN_POSTPONE_UNREGISTERED_HARVEST_CHANNEL. */
-    private static final boolean postponeUnregisteredChannel = Settings.getBoolean(
-    		HarvesterSettings.JOBGEN_POSTPONE_UNREGISTERED_HARVEST_CHANNEL);
-    
+    private static final boolean postponeUnregisteredChannel = Settings
+            .getBoolean(HarvesterSettings.JOBGEN_POSTPONE_UNREGISTERED_HARVEST_CHANNEL);
+
     /** The HarvestDefinitionDAO used by the HarvestJobGenerator. */
     private static final HarvestDefinitionDAO haDefinitionDAO = HarvestDefinitionDAO.getInstance();
-    
+
     private final HarvestChannelRegistry harvestChannelRegistry;
-    
+
     public HarvestJobGenerator(final HarvestChannelRegistry harvestChannelRegistry) {
         this.harvestChannelRegistry = harvestChannelRegistry;
     }
@@ -91,12 +89,8 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
      */
     @Override
     public void start() {
-        genExec = new PeriodicTaskExecutor(
-                "JobGeneratorTask",
-                new JobGeneratorTask(harvestChannelRegistry),
-                0,
-                Settings.getInt(HarvesterSettings.GENERATE_JOBS_PERIOD)
-        );
+        genExec = new PeriodicTaskExecutor("JobGeneratorTask", new JobGeneratorTask(harvestChannelRegistry), 0,
+                Settings.getInt(HarvesterSettings.GENERATE_JOBS_PERIOD));
     }
 
     @Override
@@ -127,31 +121,28 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
         }
 
         /**
-         * Check if jobs should be generated for any ready harvest definitions
-         * for the specified time.
-         * @param timeToGenerateJobsFor Jobs will be generated which should be
-         * run at this time.
-         * Note: In a production system the provided time will normally be
-         * current time, but during testing we need to simulated other
+         * Check if jobs should be generated for any ready harvest definitions for the specified time.
+         *
+         * @param timeToGenerateJobsFor Jobs will be generated which should be run at this time. Note: In a production
+         * system the provided time will normally be current time, but during testing we need to simulated other
          * points-in-time
          */
         void generateJobs(Date timeToGenerateJobsFor) {
-            final Iterable<Long> readyHarvestDefinitions = haDefinitionDAO.getReadyHarvestDefinitions(
-            		timeToGenerateJobsFor);
+            final Iterable<Long> readyHarvestDefinitions = haDefinitionDAO
+                    .getReadyHarvestDefinitions(timeToGenerateJobsFor);
 
             HarvestChannelDAO hChanDao = HarvestChannelDAO.getInstance();
-            
+
             for (final Long id : readyHarvestDefinitions) {
                 // Make every HD run in its own thread, but at most once.
                 if (harvestDefinitionsBeingScheduled.contains(id)) {
                     if (takesSuspiciouslyLongToSchedule(id)) {
                         String harvestName = haDefinitionDAO.getHarvestName(id);
-                        String errMsg = "Not creating jobs for harvestdefinition #"
-                                + id + " (" + harvestName + ")"
+                        String errMsg = "Not creating jobs for harvestdefinition #" + id + " (" + harvestName + ")"
                                 + " as the previous scheduling is still running";
                         if (haDefinitionDAO.isSnapshot(id)) {
-                            // Log only at level debug if the ID represents 
-                            // is a snapshot harvestdefinition, which are only run 
+                            // Log only at level debug if the ID represents
+                            // is a snapshot harvestdefinition, which are only run
                             // once anyway
                             log.debug(errMsg);
                         } else { // Log at level WARN, and send a notification, if it is time
@@ -161,21 +152,20 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                     }
                     continue;
                 }
-                
-                final HarvestDefinition harvestDefinition =
-                    haDefinitionDAO.read(id);
+
+                final HarvestDefinition harvestDefinition = haDefinitionDAO.read(id);
 
                 if (!harvestDefinition.isSnapShot()) {
                     Long chanId = harvestDefinition.getChannelId();
 
-                    HarvestChannel chan =
-                    		(chanId == null ? hChanDao.getDefaultChannel(false) : hChanDao.getById(chanId));
+                    HarvestChannel chan = (chanId == null ? hChanDao.getDefaultChannel(false) : hChanDao
+                            .getById(chanId));
 
                     String channelName = chan.getName();
                     if (postponeUnregisteredChannel && !harvestChannelRegistry.isRegistered(channelName)) {
                         log.info("Harvest channel '{}' has not yet been registered by any harvester, hence harvest "
-                        		+ "definition '{}' ({}) cannot be processed by the job generator for now.",
-                        		channelName, harvestDefinition.getName(), id);
+                                + "definition '{}' ({}) cannot be processed by the job generator for now.",
+                                channelName, harvestDefinition.getName(), id);
                         continue;
                     }
                 }
@@ -197,11 +187,12 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                             JobGenerator jobGen = JobGeneratorFactory.getInstance();
                             int jobsMade = jobGen.generateJobs(harvestDefinition);
                             if (jobsMade > 0) {
-                                log.info("Created {} jobs for harvest definition ({})",
-                                		jobsMade, harvestDefinition.getName());
+                                log.info("Created {} jobs for harvest definition ({})", jobsMade,
+                                        harvestDefinition.getName());
                             } else {
-                                String msg = "No jobs created for harvest definition '" + harvestDefinition.getName()
-                                		+ "'. Probable cause: harvest tries to continue harvest that is already finished "; 
+                                String msg = "No jobs created for harvest definition '"
+                                        + harvestDefinition.getName()
+                                        + "'. Probable cause: harvest tries to continue harvest that is already finished ";
                                 log.warn(msg);
                                 NotificationsFactory.getInstance().notify(msg, NotificationType.WARNING);
                             }
@@ -212,27 +203,24 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                                 hd.setActive(false);
                                 haDefinitionDAO.update(hd);
                                 String errMsg = "Exception while scheduling harvestdefinition #" + id + "("
-                                		+ harvestDefinition.getName() + "). The harvestdefinition has been "
-                                		+ "deactivated!";
+                                        + harvestDefinition.getName() + "). The harvestdefinition has been "
+                                        + "deactivated!";
                                 log.warn(errMsg, e);
-                                NotificationsFactory.getInstance().
-                                notify(errMsg, NotificationType.ERROR, e);
+                                NotificationsFactory.getInstance().notify(errMsg, NotificationType.ERROR, e);
                             } catch (Exception e1) {
                                 String errMsg = "Exception while scheduling harvestdefinition #" + id + "("
-                                    + harvestDefinition.getName() + "). The harvestdefinition couldn't be "
-                                    + "deactivated!";
+                                        + harvestDefinition.getName() + "). The harvestdefinition couldn't be "
+                                        + "deactivated!";
                                 log.warn(errMsg, e);
                                 log.warn("Unable to deactivate", e1);
-                                NotificationsFactory.getInstance().
-                                notify(errMsg, NotificationType.ERROR, e);
+                                NotificationsFactory.getInstance().notify(errMsg, NotificationType.ERROR, e);
                             }
                         } finally {
-                            harvestDefinitionsBeingScheduled.
-                            remove(id);
+                            harvestDefinitionsBeingScheduled.remove(id);
                             schedulingStartedMap.remove(id);
                             log.debug("Removed HD #{}({}) from list of harvestdefinitions to be scheduled. "
-                            		+ "Harvestdefinitions still to be scheduled: {}",
-                            		id, harvestDefinition.getName(), harvestDefinitionsBeingScheduled);
+                                    + "Harvestdefinitions still to be scheduled: {}", id, harvestDefinition.getName(),
+                                    harvestDefinitionsBeingScheduled);
                         }
                     }
                 }.start();
@@ -240,12 +228,11 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
         }
 
         /**
-         * Find out if a scheduling takes more than is acceptable
-         * currently 5 minutes.
+         * Find out if a scheduling takes more than is acceptable currently 5 minutes.
+         *
          * @param harvestId A given harvestId
-         * @return true, if a scheduling of the given harvestId has taken more
-         * than 5 minutes, or false, if not or no scheduling for this harvestId 
-         * is underway
+         * @return true, if a scheduling of the given harvestId has taken more than 5 minutes, or false, if not or no
+         * scheduling for this harvestId is underway
          */
         private static boolean takesSuspiciouslyLongToSchedule(Long harvestId) {
             // acceptable delay before issuing warning is currently hard-wired to
@@ -256,9 +243,9 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                 return false;
             } else {
                 long now = System.currentTimeMillis();
-                if (timewhenscheduled + acceptableDelay <  now) {
+                if (timewhenscheduled + acceptableDelay < now) {
                     // updates the schedulingStartedMap with currenttime for
-                    //the given harvestID when returning true
+                    // the given harvestID when returning true
                     schedulingStartedMap.put(harvestId, now);
                     return true;
                 } else {

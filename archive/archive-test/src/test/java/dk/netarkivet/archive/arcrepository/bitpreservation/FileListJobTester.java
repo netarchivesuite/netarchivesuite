@@ -23,6 +23,8 @@
 
 package dk.netarkivet.archive.arcrepository.bitpreservation;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 
@@ -30,19 +32,16 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.batch.FileListJob;
 import dk.netarkivet.testutils.Serial;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
 /**
- * Unit tests for FileListJob.
- * TODO Move unittest to common.utils.batch
+ * Unit tests for FileListJob. TODO Move unittest to common.utils.batch
  */
 public class FileListJobTester {
-    private MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,
-                                                 TestInfo.WORKING_DIR);
+    private MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
 
     @Before
     public void setUp() throws Exception {
@@ -64,21 +63,20 @@ public class FileListJobTester {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         FileBatchJob job = new FileListJob();
         job.processFile(arcfile, baos);
-        assertEquals("Job should return filename + newline", arcfile.getName()
-                +"\n", baos.toString());
+        assertEquals("Job should return filename + newline", arcfile.getName() + "\n", baos.toString());
     }
 
     /**
-     * Tests serializability of this class, under the assumption that its
-     * toString() method is dependent on its entire relevant state.
+     * Tests serializability of this class, under the assumption that its toString() method is dependent on its entire
+     * relevant state.
+     *
      * @throws Exception On any error
      */
     @Test
     public void testSerializable() throws Exception {
         FileBatchJob job = new FileListJob();
         FileBatchJob job2 = (FileBatchJob) Serial.serial(job);
-        assertEquals("Should have same toString()", job.toString(),
-                job2.toString());
+        assertEquals("Should have same toString()", job.toString(), job2.toString());
     }
 
 }

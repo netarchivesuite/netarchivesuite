@@ -22,13 +22,14 @@
  */
 package dk.netarkivet.archive.arcrepository;
 
-import dk.netarkivet.common.distribute.arcrepository.ReplicaType;
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import org.junit.After;
-import org.junit.Before;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import dk.netarkivet.common.distribute.arcrepository.ReplicaType;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+
 /** Tests of the ReplicaType enum class. */
 
 public class ReplicaTypeTester {
@@ -45,7 +46,7 @@ public class ReplicaTypeTester {
             // Expected
         }
     }
-     
+
     @Test
     public void testFromSetting() {
         try {
@@ -53,15 +54,11 @@ public class ReplicaTypeTester {
         } catch (ArgumentNotValid e) {
             // Expected
         }
-        
-        assertEquals(ReplicaType.BITARCHIVE, 
-                ReplicaType.fromSetting(ReplicaType.BITARCHIVE_REPLICATYPE_AS_STRING));
-        assertEquals(ReplicaType.CHECKSUM, 
-                ReplicaType.fromSetting(ReplicaType.CHECKSUM_REPLICATYPE_AS_STRING));
-        assertEquals(ReplicaType.NO_REPLICA_TYPE, 
-                ReplicaType.fromSetting(""));
-        assertEquals(ReplicaType.NO_REPLICA_TYPE, 
-                ReplicaType.fromSetting("not yet introduced type"));
-        
+
+        assertEquals(ReplicaType.BITARCHIVE, ReplicaType.fromSetting(ReplicaType.BITARCHIVE_REPLICATYPE_AS_STRING));
+        assertEquals(ReplicaType.CHECKSUM, ReplicaType.fromSetting(ReplicaType.CHECKSUM_REPLICATYPE_AS_STRING));
+        assertEquals(ReplicaType.NO_REPLICA_TYPE, ReplicaType.fromSetting(""));
+        assertEquals(ReplicaType.NO_REPLICA_TYPE, ReplicaType.fromSetting("not yet introduced type"));
+
     }
 }

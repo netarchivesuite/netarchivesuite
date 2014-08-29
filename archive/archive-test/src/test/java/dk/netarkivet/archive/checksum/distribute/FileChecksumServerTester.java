@@ -22,6 +22,12 @@
  */
 package dk.netarkivet.archive.checksum.distribute;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -31,7 +37,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.bitarchive.distribute.UploadMessage;
 import dk.netarkivet.archive.checksum.ChecksumFileApplication;
@@ -111,18 +116,14 @@ public class FileChecksumServerTester {
     }
 
     /**
-     * Checks the following: - The connection has only one listener when we
-     * start listening. - We receive a reply on a message when we sent one. -
-     * The checksum archive contains at least one entry. - All the checksums are
-     * retrievable both as a map and individually, and that these checksum are
-     * the same. - It is possible to upload a file and then retrieve the
-     * checksum. - The retrieved checksum has the correct precalculated
-     * checksum. - It is possible to correct the file, and it new has a
-     * different value. - That the new value equals a precalculated checksum for
-     * the new file.
-     * 
-     * @throws IOException
-     *             If file handling error in test.
+     * Checks the following: - The connection has only one listener when we start listening. - We receive a reply on a
+     * message when we sent one. - The checksum archive contains at least one entry. - All the checksums are retrievable
+     * both as a map and individually, and that these checksum are the same. - It is possible to upload a file and then
+     * retrieve the checksum. - The retrieved checksum has the correct precalculated checksum. - It is possible to
+     * correct the file, and it new has a different value. - That the new value equals a precalculated checksum for the
+     * new file.
+     *
+     * @throws IOException If file handling error in test.
      */
 
     @Test
@@ -353,7 +354,7 @@ public class FileChecksumServerTester {
         pss.setUp();
 
         try {
-            ChecksumFileApplication.main(new String[] { "ERROR" });
+            ChecksumFileApplication.main(new String[] {"ERROR"});
             fail("It should throw an exception ");
         } catch (SecurityException e) {
             // expected !

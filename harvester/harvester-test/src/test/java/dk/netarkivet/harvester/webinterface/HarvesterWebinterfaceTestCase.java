@@ -23,6 +23,11 @@
 
 package dk.netarkivet.harvester.webinterface;
 
+import java.io.File;
+
+import org.junit.After;
+import org.junit.Before;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
@@ -34,35 +39,26 @@ import dk.netarkivet.harvester.datamodel.HarvestDAOUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
-import java.io.File;
-
-import org.junit.After;
-import org.junit.Before;
-
 /**
- * A TestCase subclass specifically tailored to test webinterface classes,
- * primarily the classes in dk.netarkivet.harvester.webinterface:
- * HarvestStatusTester, EventHarvestTester, DomainDefinitionTester,
+ * A TestCase subclass specifically tailored to test webinterface classes, primarily the classes in
+ * dk.netarkivet.harvester.webinterface: HarvestStatusTester, EventHarvestTester, DomainDefinitionTester,
  * ScheduleDefinitionTester, SnapshotHarvestDefinitionTester but also
  * dk.netarkivet.archive.webinterface.BitpreserveFileStatusTester
  */
 public abstract class HarvesterWebinterfaceTestCase extends WebinterfaceTestCase {
-    static final File HARVEST_DEFINITION_BASEDIR
-            = new File(TestInfo.WORKING_DIR, "harvestdefinitionbasedir");
+    static final File HARVEST_DEFINITION_BASEDIR = new File(TestInfo.WORKING_DIR, "harvestdefinitionbasedir");
     ReloadSettings rs = new ReloadSettings();
 
     @Before
     public void setUp() throws Exception {
         super.setUp();
         rs.setUp();
-        TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR,
-                TestInfo.WORKING_DIR);
+        TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
         HarvestDAOUtils.resetDAOs();
         GlobalCrawlerTrapListDBDAO.reset();
 
-        Settings.set(CommonSettings.DB_BASE_URL, "jdbc:derby:"
-                                            + HARVEST_DEFINITION_BASEDIR.getCanonicalPath()
-                                            + "/fullhddb");
+        Settings.set(CommonSettings.DB_BASE_URL, "jdbc:derby:" + HARVEST_DEFINITION_BASEDIR.getCanonicalPath()
+                + "/fullhddb");
         DatabaseTestUtils.getHDDB("./" + TestInfo.DBFILE + "/fullhddb.sql", "fullhddb", HARVEST_DEFINITION_BASEDIR);
         DBSpecifics.getInstance().updateTables();
     }
@@ -70,12 +66,11 @@ public abstract class HarvesterWebinterfaceTestCase extends WebinterfaceTestCase
     @After
     public void tearDown() throws Exception {
         DatabaseTestUtils.dropHDDB();
-      HarvestDAOUtils.resetDAOs();
-      GlobalCrawlerTrapListDBDAO.reset();
+        HarvestDAOUtils.resetDAOs();
+        GlobalCrawlerTrapListDBDAO.reset();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         rs.tearDown();
         super.tearDown();
     }
 
 }
-   

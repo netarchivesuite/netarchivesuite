@@ -23,12 +23,12 @@
 
 package dk.netarkivet.harvester.webinterface;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.PageContext;
-
-import java.io.IOException;
-import java.io.OutputStream;
 
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.utils.I18n;
@@ -39,7 +39,6 @@ import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDBDAO;
 
 /**
  * Class to read and return a global crawler trap list to a web request.
- *
  */
 
 public class TrapReadAction extends TrapAction {
@@ -48,14 +47,12 @@ public class TrapReadAction extends TrapAction {
         HttpServletRequest request = (HttpServletRequest) context.getRequest();
         int trapId = Integer.parseInt(request.getParameter(Constants.TRAP_ID));
         String contentType = request.getParameter(Constants.TRAP_CONTENT_TYPE);
-        HttpServletResponse response = (HttpServletResponse)
-                context.getResponse();
+        HttpServletResponse response = (HttpServletResponse) context.getResponse();
         GlobalCrawlerTrapListDAO dao = GlobalCrawlerTrapListDBDAO.getInstance();
         GlobalCrawlerTrapList trapList = dao.read(trapId);
         response.setHeader("Content-Type", contentType);
         if (contentType.startsWith("binary")) {
-            response.setHeader("Content-Disposition", "Attachment; filename="
-                                                      +  trapList.getName());
+            response.setHeader("Content-Disposition", "Attachment; filename=" + trapList.getName());
         }
         OutputStream out = null;
         try {

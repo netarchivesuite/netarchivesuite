@@ -22,7 +22,14 @@
  */
 package dk.netarkivet.archive.arcrepositoryadmin;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.FileUtils;
@@ -30,23 +37,17 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import static org.junit.Assert.*;
 /**
  * Unit tests for the class ReadOnlyAdminData.
  */
-@SuppressWarnings({ "deprecation"})
+@SuppressWarnings({"deprecation"})
 public class ReadOnlyAdminDataTester {
     ReloadSettings rs = new ReloadSettings();
 
     @Before
     public void setUp() {
         rs.setUp();
-        TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR,
-                TestInfo.TEST_DIR);
+        TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.TEST_DIR);
         Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, TestInfo.TEST_DIR.getAbsolutePath());
     }
 
@@ -69,35 +70,27 @@ public class ReadOnlyAdminDataTester {
 
         UpdateableAdminData updad = AdminData.getUpdateableInstance();
         ad.synchronize();
-        assertEquals("Should start out with no files",
-                0, ad.getAllFileNames().size());
+        assertEquals("Should start out with no files", 0, ad.getAllFileNames().size());
 
         Thread.sleep(1000);
-        updad.addEntry("foo", null, "bar"
-        );
-        assertEquals("Should not have noticed change without synch",
-                0, ad.getAllFileNames().size());
+        updad.addEntry("foo", null, "bar");
+        assertEquals("Should not have noticed change without synch", 0, ad.getAllFileNames().size());
 
         // Not a test of the method, but if the file does not look modifed,
-        // synchronize will fail.  The sleep before update should ensure we
+        // synchronize will fail. The sleep before update should ensure we
         // get beyond the granularity of file system datestamps.
-        assertTrue("File should look modified",
-                ad.lastModified < ad.adminDataFile.lastModified());
+        assertTrue("File should look modified", ad.lastModified < ad.adminDataFile.lastModified());
 
         ad.synchronize();
-        assertEquals("Should have noticed new entry now",
-                1, ad.getAllFileNames().size());
+        assertEquals("Should have noticed new entry now", 1, ad.getAllFileNames().size());
 
         updad.close();
         Thread.sleep(1000);
 
         // Also check that we clear the entries at update
-        TestFileUtils.copyDirectoryNonCVS(
-                TestInfo.NON_EMPTY_ADMIN_DATA_DIR_ORIG,
-                TestInfo.TEST_DIR);
+        TestFileUtils.copyDirectoryNonCVS(TestInfo.NON_EMPTY_ADMIN_DATA_DIR_ORIG, TestInfo.TEST_DIR);
         ad.synchronize();
         // Now the "foo" file should be gone.
-        assertEquals("Should see only new entries",
-                5, ad.getAllFileNames().size());
+        assertEquals("Should see only new entries", 5, ad.getAllFileNames().size());
     }
 }

@@ -29,27 +29,23 @@ package dk.netarkivet.harvester.webinterface;
 public class Constants {
 
     /**
-     * The constructor for this class. Making the constructor private prevents
-     * the class from being instantiated.
+     * The constructor for this class. Making the constructor private prevents the class from being instantiated.
      */
     private Constants() {
     }
 
     /** Names of various parameters used in the webinterface. */
-    public static final String JOBSTATUS_PARAM
-        = HarvestStatusQuery.UI_FIELD.JOB_STATUS.name();
+    public static final String JOBSTATUS_PARAM = HarvestStatusQuery.UI_FIELD.JOB_STATUS.name();
 
     public static final String JOBIDORDER_PARAM = "jobidorder";
 
     public static final String DOMAIN_SEARCH_PARAM = "domainName";
-    
-    //public static final String DOMAIN
 
-    public static final String HARVEST_ID_PARAM
-        = HarvestStatusQuery.UI_FIELD.HARVEST_ID.name();
+    // public static final String DOMAIN
 
-    public static final String HARVEST_NUM_PARAM
-        = HarvestStatusQuery.UI_FIELD.HARVEST_RUN.name();
+    public static final String HARVEST_ID_PARAM = HarvestStatusQuery.UI_FIELD.HARVEST_ID.name();
+
+    public static final String HARVEST_NUM_PARAM = HarvestStatusQuery.UI_FIELD.HARVEST_RUN.name();
 
     public static final String EDIT_CONFIG_PARAM = "editConfig";
 
@@ -99,7 +95,7 @@ public class Constants {
     public static final String SAVE_PARAM = "save";
 
     public static final String COMMENTS_PARAM = "comments";
-    
+
     public static final String AUDIENCE_PARAM = "audience";
 
     public static final String NEXTDATE_PARAM = "nextdate";
@@ -153,15 +149,15 @@ public class Constants {
     public static final String RENEW_ALIAS_PARAM = "renewAlias";
 
     public static final String UPLOAD_FILE_PARAM = "upload_file";
-    
+
     public static final String IS_NEWEST_FIRST = "is_newest_first";
-    
+
     public static final String DESCENDING = "DESC";
     public static final String ASCENDING = "ASC";
-    
+
     public static final String FALSE = "false";
     public static final String TRUE = "true";
-    
+
     /**
      * Names of some parameters used in management of global crawler traps.
      */
@@ -188,12 +184,10 @@ public class Constants {
     public static final String TRAP_DESCRIPTION = "trap_description";
 
     /**
-     * Names of the two directories for the sitesections belonging to the
-     * harvester package, and the directory belonging to the viewerproxy
-     * package.
+     * Names of the two directories for the sitesections belonging to the harvester package, and the directory belonging
+     * to the viewerproxy package.
      */
-    public static final String DEFINITIONS_SITESECTION_DIRNAME
-        = "HarvestDefinition";
+    public static final String DEFINITIONS_SITESECTION_DIRNAME = "HarvestDefinition";
 
     public static final String HISTORY_SITESECTION_DIRNAME = "History";
 
@@ -213,9 +207,8 @@ public class Constants {
     public static final String HOW_OFTEN_FIELD = "howOftenField";
 
     /**
-     * This constant is used as a prefix to identify a request parameter as a
-     * domain/configuration pair. Ie one sets such a pair as
-     * DOMAIN_IDENTIFIER<domainname>=<configname>
+     * This constant is used as a prefix to identify a request parameter as a domain/configuration pair. Ie one sets
+     * such a pair as DOMAIN_IDENTIFIER<domainname>=<configname>
      */
     public static final String DOMAIN_IDENTIFIER = "domain_config_pair_";
 
@@ -236,14 +229,12 @@ public class Constants {
     public static final int DOMAIN_NAME_FIELD_SIZE = 40;
 
     /**
-     * The number of columns when showing the crawlertraps associated with a
-     * domain.
+     * The number of columns when showing the crawlertraps associated with a domain.
      */
     public static final int CRAWLERTRAPS_COLUMNS = 60;
 
     /**
-     * The number of rows when showing the crawlertraps associated with a
-     * domain.
+     * The number of rows when showing the crawlertraps associated with a domain.
      */
     public static final int CRAWLERTRAPS_ROWS = 20;
 
@@ -257,27 +248,27 @@ public class Constants {
 
     /** Optional argument for which page of the searchresult to show. */
     public static final String START_PAGE_PARAMETER = "START_PAGE_INDEX";
-    
-    /** Domain query type parameter. Used in the jsp-page
-     * Definitions-find-domains.jsp.
+
+    /**
+     * Domain query type parameter. Used in the jsp-page Definitions-find-domains.jsp.
      */
     public static final String DOMAIN_QUERY_TYPE_PARAM = "DOMAIN_QUERY_TYPE";
-    
-    /** Domain search key parameter. Used in the jsp-page
-     * Definitions-find-domains.jsp.
+
+    /**
+     * Domain search key parameter. Used in the jsp-page Definitions-find-domains.jsp.
      */
-    public static final String DOMAIN_QUERY_STRING_PARAM =  "DOMAIN_QUERY_STRING";
-    
+    public static final String DOMAIN_QUERY_STRING_PARAM = "DOMAIN_QUERY_STRING";
+
     public static final String TRAPS_DOMAIN_SEARCH = "crawlertraps";
-    
+
     public static final String NAME_DOMAIN_SEARCH = "name";
-    
+
     public static final String COMMENTS_DOMAIN_SEARCH = "comments";
-    
+
     /**
      * The default domain search type is name.
      */
     public static final String DEFAULT_DOMAIN_SEARCH_TYPE = NAME_DOMAIN_SEARCH;
-    
+
     public static final String JOB_ORDERING_BY_STARTDATE_PARAM = "ORDERING_BY_STARTDATE";
 }

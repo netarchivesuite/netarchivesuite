@@ -38,8 +38,7 @@ public class ConstantsTester {
 
     @Test
     public void is_getHeritrixVersionString_sameAsConstant() {
-        Assert.assertEquals("HeritrixVersionString is wrong", "1.14.4",
-                Constants.getHeritrixVersionString());
+        Assert.assertEquals("HeritrixVersionString is wrong", "1.14.4", Constants.getHeritrixVersionString());
     }
 
     /**
@@ -56,7 +55,7 @@ public class ConstantsTester {
         // FIXME: What do we actually want to do here?
 
         // This is a latch, so we don't need to synchronize
-        final boolean[] failed = new boolean[] { false };
+        final boolean[] failed = new boolean[] {false};
 
         for (int i = 0; i < 30; i++) {
             threads.add(new Thread() {

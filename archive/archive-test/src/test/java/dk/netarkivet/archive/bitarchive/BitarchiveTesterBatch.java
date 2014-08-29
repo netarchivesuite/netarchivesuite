@@ -22,6 +22,11 @@
  */
 package dk.netarkivet.archive.bitarchive;
 
+import static dk.netarkivet.testutils.CollectionUtils.list;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,6 +36,11 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -39,20 +49,12 @@ import dk.netarkivet.common.utils.StreamUtils;
 import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.common.utils.batch.ARCBatchFilter;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
-import static dk.netarkivet.testutils.CollectionUtils.list;
 import dk.netarkivet.testutils.FileAsserts;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 /**
  * This class tests the bitarchive's batch() method.
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class BitarchiveTesterBatch extends BitarchiveTestCase {
     static final File ORIGINALS_DIR = new File(new File(TestInfo.DATA_DIR, "batch"), "originals");
     private static List<String> arcFiles = list("Upload3.ARC", "fyensdk.arc", "Upload1.ARC", "Upload2.ARC");
@@ -97,8 +99,7 @@ public class BitarchiveTesterBatch extends BitarchiveTestCase {
     }
 
     /**
-     * Test that exceptions thrown in the batch program are thrown back to the
-     * caller.
+     * Test that exceptions thrown in the batch program are thrown back to the caller.
      */
     @Test
     public void testBatchExceptionInBatch() {
@@ -121,9 +122,8 @@ public class BitarchiveTesterBatch extends BitarchiveTestCase {
     }
 
     /**
-     * Test that the batch code actually runs, that it enters each of the
-     * initialize() and finish() methods, and that process() is called at least
-     * once.
+     * Test that the batch code actually runs, that it enters each of the initialize() and finish() methods, and that
+     * process() is called at least once.
      */
     @Test
     public void testBatchCodeRuns() {
@@ -158,8 +158,7 @@ public class BitarchiveTesterBatch extends BitarchiveTestCase {
     }
 
     /**
-     * Test that the batch code runs once for each entry. Both for multiple
-     * entries in a file and in several files.
+     * Test that the batch code runs once for each entry. Both for multiple entries in a file and in several files.
      */
     @Test
     public void testBatchCodeRunsAll() {
@@ -215,9 +214,9 @@ public class BitarchiveTesterBatch extends BitarchiveTestCase {
     }
 
     /**
-     * Test that illegal code (e.g. that tries to read outside of a bitarchive
-     * directory, or that tries to write anywhere) cannot be executed.
-     * 
+     * Test that illegal code (e.g. that tries to read outside of a bitarchive directory, or that tries to write
+     * anywhere) cannot be executed.
+     * <p>
      * Fails in Hudson
      */
     @Test
@@ -293,8 +292,7 @@ public class BitarchiveTesterBatch extends BitarchiveTestCase {
     }
 
     /**
-     * Method that checks, if a BatchJob have processed the correct files, and
-     * the correct number of files.
+     * Method that checks, if a BatchJob have processed the correct files, and the correct number of files.
      */
     private BatchStatus assertBatchJobProcessesCorrectly(String message, TestFileBatchJob job, String... files) {
         BatchStatus lbs = archive.batch(TestInfo.baAppId, job);

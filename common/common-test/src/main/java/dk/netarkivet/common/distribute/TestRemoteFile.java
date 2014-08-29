@@ -33,6 +33,8 @@ import dk.netarkivet.common.exceptions.IOFailure;
 
 /**
  * Version of RemoteFile that reads/writes a file to local storage.
+ * <p>
+ * 
  * <pre>
  * Created by IntelliJ IDEA.
  * User: csr
@@ -40,41 +42,33 @@ import dk.netarkivet.common.exceptions.IOFailure;
  * Time: 3:09:26 PM
  * </pre>
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({"serial"})
 public class TestRemoteFile extends HTTPRemoteFile implements RemoteFile {
     public boolean failsOnCopy;
 
-    public static Map<RemoteFile,String> remainingRemoteFiles
-            = new WeakHashMap<RemoteFile,String>();
+    public static Map<RemoteFile, String> remainingRemoteFiles = new WeakHashMap<RemoteFile, String>();
 
-    public TestRemoteFile(File localFile, boolean useChecksum,
-                           boolean fileDeletable, boolean multipleDownloads)
+    public TestRemoteFile(File localFile, boolean useChecksum, boolean fileDeletable, boolean multipleDownloads)
             throws IOFailure {
-        super (localFile, useChecksum, fileDeletable, multipleDownloads);
+        super(localFile, useChecksum, fileDeletable, multipleDownloads);
         remainingRemoteFiles.put(this, localFile.getName());
     }
 
-    public static RemoteFile getInstance(File remoteFile,
-                                         Boolean useChecksums,
-                                         Boolean fileDeletable,
-                                         Boolean multipleDownloads)
-            throws IOFailure {
-        return new TestRemoteFile(remoteFile, useChecksums, fileDeletable,
-                                   multipleDownloads);
+    public static RemoteFile getInstance(File remoteFile, Boolean useChecksums, Boolean fileDeletable,
+            Boolean multipleDownloads) throws IOFailure {
+        return new TestRemoteFile(remoteFile, useChecksums, fileDeletable, multipleDownloads);
     }
 
     public void copyTo(File destFile) {
         if (failsOnCopy) {
-            throw new IOFailure("Expected IO error in copying "
-                    + "- you told me so!");
+            throw new IOFailure("Expected IO error in copying " + "- you told me so!");
         }
         super.copyTo(destFile);
     }
 
     public void appendTo(OutputStream out) {
         if (failsOnCopy) {
-            throw new IOFailure("Expected IO error in copying "
-                    + "- you told me so!");
+            throw new IOFailure("Expected IO error in copying " + "- you told me so!");
         }
         super.appendTo(out);
     }
@@ -94,15 +88,16 @@ public class TestRemoteFile extends HTTPRemoteFile implements RemoteFile {
 
     /** Remove any remote files that may have been left over. */
     public static void removeRemainingFiles() {
-        //Must copy keyset to avoid concurrent modificaion of set
-        for (RemoteFile rf :
-                new HashSet<RemoteFile>(remainingRemoteFiles.keySet())) {
+        // Must copy keyset to avoid concurrent modificaion of set
+        for (RemoteFile rf : new HashSet<RemoteFile>(remainingRemoteFiles.keySet())) {
             rf.cleanup();
         }
         remainingRemoteFiles.clear();
     }
 
-    /** Give the set of remaining remote files.
+    /**
+     * Give the set of remaining remote files.
+     *
      * @return the Set of remaining files
      */
     public static Set<RemoteFile> remainingFiles() {

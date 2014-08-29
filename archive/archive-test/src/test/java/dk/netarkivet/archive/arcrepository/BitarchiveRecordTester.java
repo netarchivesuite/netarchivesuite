@@ -22,6 +22,8 @@
  */
 package dk.netarkivet.archive.arcrepository;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -31,20 +33,18 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 
-import dk.netarkivet.common.distribute.arcrepository.*;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import static org.junit.Assert.*;
 import org.archive.io.arc.ARCReader;
 import org.archive.io.arc.ARCReaderFactory;
 import org.archive.io.arc.ARCRecord;
 import org.archive.io.warc.WARCReader;
 import org.archive.io.warc.WARCReaderFactory;
 import org.archive.io.warc.WARCRecord;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StreamUtils;
@@ -55,48 +55,43 @@ public class BitarchiveRecordTester {
     private UseTestRemoteFile utrf = new UseTestRemoteFile();
     ReloadSettings rs = new ReloadSettings();
     private File testFile = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.ORIGINALS_DIR,
-        "3-3-20070119143010-00000-sb-test-har-001.statsbiblioteket.dk.arc");
+            "3-3-20070119143010-00000-sb-test-har-001.statsbiblioteket.dk.arc");
     /**
-     * The following warcfile consists of multiple record-types.
-     * These unittests only handle the response-record which is similar to what we now extract
-     * from our arc-files.
-     * We use the following record with a normal HTTP response with mimetype text/html
-     * (Record type, offset, ContentBegin, Length): response, 28917, 393, 1121
-     * 
+     * The following warcfile consists of multiple record-types. These unittests only handle the response-record which
+     * is similar to what we now extract from our arc-files. We use the following record with a normal HTTP response
+     * with mimetype text/html (Record type, offset, ContentBegin, Length): response, 28917, 393, 1121
+     * <p>
      * (Record type, offset, ContentBegin, Length): response, 955, 345, 621
-     * 
      */
     private File warcTestFile = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.ORIGINALS_DIR,
-        "NAS-20100909163324-00000-mette.kb.dk.warc");
-    /* private long warcOffset = 955;
-    private int warcContentBegin = 345;
-    private long warcRecordLength = 621;
-    */
+            "NAS-20100909163324-00000-mette.kb.dk.warc");
     /*
-    (Record type, url, offset, ContentBegin, Length): response, http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_20.gif, 81527, 387, 887
-        (Record type, url, offset, ContentBegin, Length): response, http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif, 83458, 369, 660
-        (Record type, url, offset, ContentBegin, Length): response, http://netarkivet.dk/organisation/index-da.php, 85108, 361, 9291
-    */
-    
-    private long smallWarcRecordOffset =  85108;
- 
-    /** (Record type, url, offset, ContentBegin, Length): 
-     *   response, http://netarkivet.dk/nyheder/index-da.php, 
-     *   100262, 
-     *   357, 
-     *   14248 
-    **/
-    private long bigWarcRecordOffset =  100262;
-    
-    
+     * private long warcOffset = 955; private int warcContentBegin = 345; private long warcRecordLength = 621;
+     */
+    /*
+     * (Record type, url, offset, ContentBegin, Length): response,
+     * http://netarkivet.dk/netarkivet_alm/billeder/netarkivet_guidelines_20.gif, 81527, 387, 887 (Record type, url,
+     * offset, ContentBegin, Length): response, http://netarkivet.dk/netarkivet_alm/billeder/spacer.gif, 83458, 369, 660
+     * (Record type, url, offset, ContentBegin, Length): response, http://netarkivet.dk/organisation/index-da.php,
+     * 85108, 361, 9291
+     */
+
+    private long smallWarcRecordOffset = 85108;
+
+    /**
+     * (Record type, url, offset, ContentBegin, Length): response, http://netarkivet.dk/nyheder/index-da.php, 100262,
+     * 357, 14248
+     */
+    private long bigWarcRecordOffset = 100262;
+
     @Before
     public void setUp() throws Exception {
         rs.setUp();
         utrf.setUp();
-        Settings.set(CommonSettings.BITARCHIVE_LIMIT_FOR_RECORD_DATATRANSFER_IN_FILE,
-                     "10000");
+        Settings.set(CommonSettings.BITARCHIVE_LIMIT_FOR_RECORD_DATATRANSFER_IN_FILE, "10000");
         dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR.mkdir();
-        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR.getAbsolutePath());
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR,
+                dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR.getAbsolutePath());
     }
 
     @After
@@ -106,16 +101,18 @@ public class BitarchiveRecordTester {
         rs.tearDown();
     }
 
-    /** Test storing ArcRecord in byte array.
-     * @throws IOException */
+    /**
+     * Test storing ArcRecord in byte array.
+     *
+     * @throws IOException
+     */
     @Test
     public void testGetDataSmallRecord() throws IOException {
         File f = testFile;
         ARCReader ar = ARCReaderFactory.get(f);
         ARCRecord record = (ARCRecord) ar.get(2001); // record representing record of size 9471 bytes
         BitarchiveRecord br = new BitarchiveRecord(record, f.getName());
-        byte[] contents = StreamUtils.inputStreamToBytes(
-                br.getData(), (int) br.getLength());
+        byte[] contents = StreamUtils.inputStreamToBytes(br.getData(), (int) br.getLength());
         assertEquals("Should have same length", contents.length, br.getLength());
         // getData(outputStream)
         record = (ARCRecord) ar.get(2001); // record representing record of size 9471 bytes
@@ -125,39 +122,41 @@ public class BitarchiveRecordTester {
         OutputStream os = new FileOutputStream(f);
         br.getData(os);
         assertEquals("Output file should have same length as record length", f.length(), br.getLength());
-        f.delete();        
+        f.delete();
     }
 
-    /** Test storing WArcRecord in byte array.
-     * Tests on WarcRecord less than 10000 bytes.
-     * @throws IOException */
+    /**
+     * Test storing WArcRecord in byte array. Tests on WarcRecord less than 10000 bytes.
+     *
+     * @throws IOException
+     */
     @Test
     public void testGetDataSmallRecordWithWarc() throws IOException {
         File f = warcTestFile;
         WARCReader ar = WARCReaderFactory.get(f);
-        
+
         WARCRecord record = (WARCRecord) ar.get(smallWarcRecordOffset);
         BitarchiveRecord br = new BitarchiveRecord(record, f.getName());
-        
-        byte[] contents = StreamUtils.inputStreamToBytes(
-                br.getData(), (int) br.getLength());
+
+        byte[] contents = StreamUtils.inputStreamToBytes(br.getData(), (int) br.getLength());
         assertEquals("Should have same length", contents.length, br.getLength());
         // getData(outputStream)
-         
-        record = (WARCRecord) ar.get(smallWarcRecordOffset); 
+
+        record = (WARCRecord) ar.get(smallWarcRecordOffset);
         br = new BitarchiveRecord(record, f.getName());
         // Store locally as tmp file
         f = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, "BitarchiveRecordGetData");
         OutputStream os = new FileOutputStream(f);
         br.getData(os);
-        //assertFalse("Failed: " + FileUtils.readFile(f), true);
+        // assertFalse("Failed: " + FileUtils.readFile(f), true);
         assertEquals("Output file should have same length as record length", f.length(), br.getLength());
-        
-        f.delete();        
-    }    
-    
+
+        f.delete();
+    }
+
     /**
      * Test storing ArcRecord in RemoteFile.
+     *
      * @throws IOException
      */
     @Test
@@ -166,10 +165,8 @@ public class BitarchiveRecordTester {
         ARCReader ar = ARCReaderFactory.get(f);
         ARCRecord record = (ARCRecord) ar.get(11563); // record representing record of size 395390 bytes
         BitarchiveRecord br = new BitarchiveRecord(record, f.getName());
-        byte[] contents = StreamUtils.inputStreamToBytes(
-                br.getData(), (int) br.getLength());
-        assertEquals("Should have same length: ",
-                contents.length, br.getLength());
+        byte[] contents = StreamUtils.inputStreamToBytes(br.getData(), (int) br.getLength());
+        assertEquals("Should have same length: ", contents.length, br.getLength());
 
         // getData(outputStream)
         record = (ARCRecord) ar.get(11563); // record representing record of size 395390 bytes
@@ -178,42 +175,38 @@ public class BitarchiveRecordTester {
         f = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, "BitarchiveRecordGetData");
         OutputStream os = new FileOutputStream(f);
         br.getData(os);
-        assertEquals("Output file should have same length as record length",
-                f.length(), br.getLength());
+        assertEquals("Output file should have same length as record length", f.length(), br.getLength());
         f.delete();
     }
 
     /**
-     * Test storing WarcRecord in RemoteFile.
-     * Tests on WarcRecord greater than 10000 bytes.
+     * Test storing WarcRecord in RemoteFile. Tests on WarcRecord greater than 10000 bytes.
+     *
      * @throws IOException
      */
     @Test
     public void testGetDataLargeRecordWithWarc() throws IOException {
         File f = warcTestFile;
         WARCReader ar = WARCReaderFactory.get(f);
-        WARCRecord record = (WARCRecord) ar.get(bigWarcRecordOffset); 
+        WARCRecord record = (WARCRecord) ar.get(bigWarcRecordOffset);
         BitarchiveRecord br = new BitarchiveRecord(record, f.getName());
-        byte[] contents = StreamUtils.inputStreamToBytes(
-                br.getData(), (int) br.getLength());
-        assertEquals("Should have same length: ",
-                contents.length, br.getLength());
+        byte[] contents = StreamUtils.inputStreamToBytes(br.getData(), (int) br.getLength());
+        assertEquals("Should have same length: ", contents.length, br.getLength());
 
         // getData(outputStream)
-        record = (WARCRecord) ar.get(bigWarcRecordOffset); 
+        record = (WARCRecord) ar.get(bigWarcRecordOffset);
         br = new BitarchiveRecord(record, f.getName());
         // Store locally as tmp file
         f = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, "BitarchiveRecordGetData");
         OutputStream os = new FileOutputStream(f);
         br.getData(os);
-        assertEquals("Output file should have same length as record length",
-                f.length(), br.getLength());
+        assertEquals("Output file should have same length as record length", f.length(), br.getLength());
         f.delete();
     }
-    
-    
+
     /**
      * Test serializability of this class.
+     *
      * @throws IOException
      * @throws ClassNotFoundException
      */
@@ -228,24 +221,20 @@ public class BitarchiveRecordTester {
         ObjectOutputStream ous = new ObjectOutputStream(baos);
         ous.writeObject(br);
         ous.close();
-        ObjectInputStream ois = new ObjectInputStream(
-                new ByteArrayInputStream(baos.toByteArray()));
+        ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(baos.toByteArray()));
         BitarchiveRecord brCopy = (BitarchiveRecord) ois.readObject();
 
         f = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, "BitarchiveRecordGetData");
         OutputStream os = new FileOutputStream(f);
         brCopy.getData(os);
-        assertEquals("Output file should have same length as record length",
-                f.length(), br.getLength());
+        assertEquals("Output file should have same length as record length", f.length(), br.getLength());
 
         // finally, compare their states
-        assertEquals("After serialization, their state is different",
-                relevantState(br), relevantState(brCopy));
+        assertEquals("After serialization, their state is different", relevantState(br), relevantState(brCopy));
     }
 
     private String relevantState(BitarchiveRecord br) {
         return br.getFile();
     }
-
 
 }

@@ -53,7 +53,7 @@ public class BitarchiveTesterGetFile extends BitarchiveTestCase {
 
     @Test
     public void testGetFile_Failure() throws Exception {
-    	LogbackRecorder lr = LogbackRecorder.startRecorder();
+        LogbackRecorder lr = LogbackRecorder.startRecorder();
         String arcFileID = "test";
         File result = archive.getFile(arcFileID);
         assertNull("Non-existing file should give null result", result);
@@ -63,8 +63,8 @@ public class BitarchiveTesterGetFile extends BitarchiveTestCase {
 
     @Test
     public void testGetFile_Success() throws IOException {
-    	LogbackRecorder lr = LogbackRecorder.startRecorder();
-    	String arcFileID = "Upload1.ARC";
+        LogbackRecorder lr = LogbackRecorder.startRecorder();
+        String arcFileID = "Upload1.ARC";
         File result = archive.getFile(arcFileID);
         assertEquals("Result should be the expected file", new File(TestInfo.FILE_DIR, arcFileID).getCanonicalPath(),
                 result.getCanonicalPath());

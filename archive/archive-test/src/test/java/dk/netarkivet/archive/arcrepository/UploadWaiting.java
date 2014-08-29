@@ -26,8 +26,8 @@ import java.io.File;
 
 import dk.netarkivet.archive.arcrepositoryadmin.Admin;
 import dk.netarkivet.archive.arcrepositoryadmin.AdminFactory;
-import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
+import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.exceptions.IOFailure;
 
 /**
@@ -38,15 +38,13 @@ public class UploadWaiting {
     public static final long SHORT_TIME = 10;
 
     /**
-     * Assuming that someone asked the ArcRepository to store the given file,
-     * waits (but not forever) until all bitarchives are recorded as having
-     * completed (and verified) their upload.
+     * Assuming that someone asked the ArcRepository to store the given file, waits (but not forever) until all
+     * bitarchives are recorded as having completed (and verified) their upload.
      *
      * @param file the file being uploaded
-     * @param o    an object to synchronize with (for .wait()).
+     * @param o an object to synchronize with (for .wait()).
      * @return Waited time in milliseconds
-     * @throws IOFailure if the upload is not completed in less than
-     *                   Settings.SHORT_TIMEOUT
+     * @throws IOFailure if the upload is not completed in less than Settings.SHORT_TIMEOUT
      */
     public static long waitForUpload(File file, Object o) throws IOFailure {
         long timeout = TestInfo.SHORT_TIMEOUT;
@@ -58,7 +56,7 @@ public class UploadWaiting {
                     o.wait(short_time);
                     time_waited += short_time;
                 } catch (InterruptedException e) {
-                    //Interrupted? OK, let's go on.
+                    // Interrupted? OK, let's go on.
                 }
             }
         }
@@ -74,14 +72,13 @@ public class UploadWaiting {
         if (ad.hasReplyInfo(arcFile)) {
             return false;
         }
-        
-        for(Replica rep : Replica.getKnown()) {
-            if(!ad.hasState(arcFile, rep.getIdentificationChannel().getName())) {
-        	return false;
+
+        for (Replica rep : Replica.getKnown()) {
+            if (!ad.hasState(arcFile, rep.getIdentificationChannel().getName())) {
+                return false;
             }
-            if(ad.getState(arcFile, rep.getIdentificationChannel().getName()) 
-        	    != ReplicaStoreState.UPLOAD_COMPLETED) {
-        	return false;
+            if (ad.getState(arcFile, rep.getIdentificationChannel().getName()) != ReplicaStoreState.UPLOAD_COMPLETED) {
+                return false;
             }
         }
         return true;

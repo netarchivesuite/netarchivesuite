@@ -38,14 +38,13 @@ import dk.netarkivet.common.utils.batch.ARCBatchFilter;
 import dk.netarkivet.wayback.batch.copycode.NetarchiveSuiteARCRecordToSearchResultAdapter;
 
 /**
- * Returns a cdx file using the appropriate format for wayback, including
- * canonicalisation of urls. The returned files are unsorted.
- *
+ * Returns a cdx file using the appropriate format for wayback, including canonicalisation of urls. The returned files
+ * are unsorted.
  */
-@SuppressWarnings({ "deprecation", "serial"})
+@SuppressWarnings({"deprecation", "serial"})
 public class WaybackCDXExtractionARCBatchJob extends ARCBatchJob {
 
-	/** Logger for this class. */
+    /** Logger for this class. */
     private static final Logger log = LoggerFactory.getLogger(WaybackCDXExtractionARCBatchJob.class);
 
     /** Utility for converting an ArcRecord to a CaptureSearchResult (wayback's representation of a CDX record). */
@@ -54,7 +53,7 @@ public class WaybackCDXExtractionARCBatchJob extends ARCBatchJob {
     /** Utility for converting a wayback CaptureSearchResult to a String representing a line in a CDX file. */
     private SearchResultToCDXLineAdapter srToCDXAdapter;
 
-     /**
+    /**
      * Constructor which set timeout to one day.
      */
     public WaybackCDXExtractionARCBatchJob() {
@@ -63,6 +62,7 @@ public class WaybackCDXExtractionARCBatchJob extends ARCBatchJob {
 
     /**
      * Constructor.
+     *
      * @param timeout specific timeout period
      */
     public WaybackCDXExtractionARCBatchJob(long timeout) {
@@ -70,28 +70,28 @@ public class WaybackCDXExtractionARCBatchJob extends ARCBatchJob {
     }
 
     /**
-     *  Initializes the private fields of this class. Some of these are
-     *  relatively heavy objects, so it is important that they are only
-     *  initialised once.
+     * Initializes the private fields of this class. Some of these are relatively heavy objects, so it is important that
+     * they are only initialised once.
+     *
      * @param os unused argument
      */
     @Override
     public void initialize(OutputStream os) {
         log.info("Starting a {}", this.getClass().getName());
         aToSAdapter = new NetarchiveSuiteARCRecordToSearchResultAdapter();
-        UrlCanonicalizer uc = UrlCanonicalizerFactory
-                .getDefaultUrlCanonicalizer();
+        UrlCanonicalizer uc = UrlCanonicalizerFactory.getDefaultUrlCanonicalizer();
         aToSAdapter.setCanonicalizer(uc);
         srToCDXAdapter = new SearchResultToCDXLineAdapter();
     }
 
     /**
      * Does nothing except log the end of the job.
+     *
      * @param os unused argument.
      */
     public void finish(OutputStream os) {
         log.info("Finishing the {}", this.getClass().getName());
-        //No cleanup required
+        // No cleanup required
     }
 
     @Override
@@ -100,9 +100,9 @@ public class WaybackCDXExtractionARCBatchJob extends ARCBatchJob {
     }
 
     /**
-     * For each ARCRecord writes one CDX line (including newline) to the output.
-     * If an arcrecord cannot be converted to a CDX record for any reason then
-     * any resulting exception is caught and logged.
+     * For each ARCRecord writes one CDX line (including newline) to the output. If an arcrecord cannot be converted to
+     * a CDX record for any reason then any resulting exception is caught and logged.
+     *
      * @param record the ARCRecord to be indexed.
      * @param os the OutputStream to which output is written.
      */

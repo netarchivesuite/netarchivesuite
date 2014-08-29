@@ -45,7 +45,7 @@ public class MockupJMS implements TestConfigurationIF {
         try {
             JMSConnectionFactory.getInstance().cleanup();
         } catch (Exception e) {
-            //just ignore it
+            // just ignore it
         }
         Settings.set(CommonSettings.JMS_BROKER_CLASS, originalClass);
     }

@@ -34,13 +34,14 @@ import dk.netarkivet.common.lifecycle.LifeCycleComponent;
  */
 public class ShutdownHook extends Thread {
 
-	/** The component to hook up to. */
+    /** The component to hook up to. */
     private LifeCycleComponent app;
     /** The name of the hooked application. */
-    private String appName;    
+    private String appName;
 
     /**
      * Returns a ShutdownHook thread for an object with a cleanup() method.
+     *
      * @param app the Object to be cleaned up
      */
     public ShutdownHook(LifeCycleComponent app) {
@@ -50,10 +51,8 @@ public class ShutdownHook extends Thread {
     }
 
     /**
-     * Called by the JVM to clean up the object before exiting.
-     * The method calls the cleanup() method 
-     * Note: System.out.println is added in this method
-     * because logging may or may not be active at this time.
+     * Called by the JVM to clean up the object before exiting. The method calls the cleanup() method Note:
+     * System.out.println is added in this method because logging may or may not be active at this time.
      */
     public void run() {
         Logger log = null;
@@ -61,7 +60,7 @@ public class ShutdownHook extends Thread {
             log = LoggerFactory.getLogger(appName);
             log.info("Shutting down {}", appName);
         } catch (Throwable e) {
-            //Ignore
+            // Ignore
         }
         try {
             app.shutdown();

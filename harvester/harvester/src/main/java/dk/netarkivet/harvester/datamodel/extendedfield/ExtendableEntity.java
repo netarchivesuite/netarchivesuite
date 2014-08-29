@@ -51,9 +51,8 @@ public abstract class ExtendableEntity {
 
     /**
      * sets a List of extendedFieldValues.
-     * 
+     *
      * @param aList List of extended Field objects
-     * 
      */
     public void setExtendedFieldValues(List<ExtendedFieldValue> aList) {
         extendedFieldValues = aList;
@@ -61,7 +60,7 @@ public abstract class ExtendableEntity {
 
     /**
      * adds a Value to the ExtendedFieldValue List.
-     * 
+     *
      * @param aValue Valueobject of the extended Field
      */
     public void addExtendedFieldValue(ExtendedFieldValue aValue) {
@@ -70,9 +69,8 @@ public abstract class ExtendableEntity {
 
     /**
      * gets a extendedFieldValue by extendedField ID.
-     * 
+     *
      * @param aExtendedFieldId id of the extendedfield
-     * 
      * @return ExtendedFieldValue Object
      */
     public ExtendedFieldValue getExtendedFieldValue(Long aExtendedFieldId) {
@@ -87,10 +85,9 @@ public abstract class ExtendableEntity {
 
     /**
      * updates a extendedFieldValue by extendedField Id.
-     * 
+     *
      * @param aExtendedFieldId id of the extendedfield
      * @param aContent id content to set
-     * 
      */
     public void updateExtendedFieldValue(Long aExtendedFieldId, String aContent) {
         for (int i = 0; i < extendedFieldValues.size(); i++) {
@@ -116,7 +113,8 @@ public abstract class ExtendableEntity {
             ExtendedField ef = it.next();
 
             ExtendedFieldValue efv = new ExtendedFieldValue();
-            efv.setContent(new ExtendedFieldDefaultValue(ef.getDefaultValue(), ef.getFormattingPattern(), ef.getDatatype()).getDBValue());
+            efv.setContent(new ExtendedFieldDefaultValue(ef.getDefaultValue(), ef.getFormattingPattern(), ef
+                    .getDatatype()).getDBValue());
             efv.setExtendedFieldID(ef.getExtendedFieldID());
             getExtendedFieldValues().add(efv);
         }
@@ -124,9 +122,9 @@ public abstract class ExtendableEntity {
 
     /**
      * abstract method for receiving the ExtendedFieldType for concret class which inherits ExtendableEntity
-     * 
+     *
      * @return ExtendedFieldType
      */
-    abstract protected int getExtendedFieldType(); 
+    abstract protected int getExtendedFieldType();
 
 }

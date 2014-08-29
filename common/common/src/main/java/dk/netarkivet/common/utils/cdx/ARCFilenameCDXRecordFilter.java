@@ -29,18 +29,17 @@ import java.util.regex.Pattern;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
- * A filter to use in CDXReader when finding CDXRecords matching a
- * filename-pattern.
- *
+ * A filter to use in CDXReader when finding CDXRecords matching a filename-pattern.
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({"serial"})
 public class ARCFilenameCDXRecordFilter extends SimpleCDXRecordFilter {
 
-	private String arcfilenamepattern;
+    private String arcfilenamepattern;
     private Pattern p;
 
     /**
      * Class constructor.
+     *
      * @param arcfilenamepattern The filename pattern to be used by this filter
      * @param filtername The name of this filter
      * @throws ArgumentNotValid If any argument are null or an empty string.
@@ -54,16 +53,17 @@ public class ARCFilenameCDXRecordFilter extends SimpleCDXRecordFilter {
 
     /**
      * Get the filename pattern used by this filter.
+     *
      * @return the filename pattern used by this filter.
      */
     public String getFilenamePattern() {
-         return this.arcfilenamepattern;
+        return this.arcfilenamepattern;
     }
-    
+
     /*
      * (non-Javadoc)
-     * @see dk.netarkivet.common.utils.cdx.SimpleCDXRecordFilter#process(
-     * dk.netarkivet.common.utils.cdx.CDXRecord)
+     * 
+     * @see dk.netarkivet.common.utils.cdx.SimpleCDXRecordFilter#process( dk.netarkivet.common.utils.cdx.CDXRecord)
      */
     public boolean process(CDXRecord cdxrec) {
         ArgumentNotValid.checkNotNull(cdxrec, "CDXRecord cdxrec");

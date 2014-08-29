@@ -37,56 +37,53 @@ import dk.netarkivet.common.utils.archive.ArchiveHeaderBase;
 import dk.netarkivet.common.utils.archive.ArchiveRecordBase;
 
 /** A batch job that extracts metadata. */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({"serial"})
 public class GetMetadataArchiveBatchJob extends ArchiveBatchJob {
 
-	/** The logger for this class. */
+    /** The logger for this class. */
     private static final Logger log = LoggerFactory.getLogger(GetMetadataArchiveBatchJob.class);
 
-    /** The pattern for matching the urls.*/
+    /** The pattern for matching the urls. */
     private final Pattern urlMatcher;
-    /** The pattern for the mimetype matcher.*/
+    /** The pattern for the mimetype matcher. */
     private final Pattern mimeMatcher;
-    
+
     /**
      * Constructor.
-     * 
-     * @param urlMatcher A pattern for matching URLs of the desired entries.
-     * If null, a .* pattern will be used.
-     * @param mimeMatcher A pattern for matching mime-types of the desired
-     * entries.  If null, a .* pattern will be used.
-     * 
-     * The batchJobTimeout is set to one day. 
+     *
+     * @param urlMatcher A pattern for matching URLs of the desired entries. If null, a .* pattern will be used.
+     * @param mimeMatcher A pattern for matching mime-types of the desired entries. If null, a .* pattern will be used.
+     * <p>
+     * The batchJobTimeout is set to one day.
      */
     public GetMetadataArchiveBatchJob(Pattern urlMatcher, Pattern mimeMatcher) {
         this.urlMatcher = urlMatcher;
         this.mimeMatcher = mimeMatcher;
-        
+
         batchJobTimeout = Constants.ONE_DAY_IN_MILLIES;
     }
 
     /**
-     * Initialize method. Run before the arc-records are being processed.
-     * Currently does nothing.
-     * 
+     * Initialize method. Run before the arc-records are being processed. Currently does nothing.
+     *
      * @param os The output stream to print any pre-processing data.
      */
     @Override
-    public void initialize(OutputStream os) { }
+    public void initialize(OutputStream os) {
+    }
 
     /**
      * The method for processing the arc-records.
-     * 
+     *
      * @param record The arc-record to process.
      * @param os The output stream to write the results of the processing.
-     * @throws IOFailure In an IOException is caught during handling of 
-     * the arc record.
+     * @throws IOFailure In an IOException is caught during handling of the arc record.
      */
     @Override
     public void processRecord(ArchiveRecordBase record, OutputStream os) throws IOFailure {
         ArchiveHeaderBase header = record.getHeader();
         InputStream in = record.getInputStream();
-        
+
         if (header.getUrl() == null) {
             return;
         }
@@ -96,7 +93,7 @@ public class GetMetadataArchiveBatchJob extends ArchiveBatchJob {
                 byte[] buf = new byte[Constants.IO_BUFFER_SIZE];
                 int bytesRead;
                 while ((bytesRead = in.read(buf)) != -1) {
-                	os.write(buf, 0, bytesRead);
+                    os.write(buf, 0, bytesRead);
                 }
             } catch (IOException e) {
                 // TODO is getOffset() correct using the IA archiveReader?
@@ -115,18 +112,17 @@ public class GetMetadataArchiveBatchJob extends ArchiveBatchJob {
     }
 
     /**
-     * Method for post-processing the data.
-     * Currently does nothing.
-     * 
-     * @param os The output stream to write the results of the 
-     * post-processing data.
+     * Method for post-processing the data. Currently does nothing.
+     *
+     * @param os The output stream to write the results of the post-processing data.
      */
     @Override
-    public void finish(OutputStream os) { }
-    
+    public void finish(OutputStream os) {
+    }
+
     /**
      * Humanly readable description of this instance.
-     * 
+     *
      * @return The human readable description of this instance.
      */
     @Override

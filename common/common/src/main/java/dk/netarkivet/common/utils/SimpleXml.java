@@ -45,13 +45,12 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
 
 /**
- * Utility class to load and save data from/to XML files using a
- * very simple XML format.
+ * Utility class to load and save data from/to XML files using a very simple XML format.
  */
-@SuppressWarnings({ "unused", "unchecked"})
+@SuppressWarnings({"unused", "unchecked"})
 public class SimpleXml {
 
-	protected static final Logger log = LoggerFactory.getLogger(SimpleXml.class);
+    protected static final Logger log = LoggerFactory.getLogger(SimpleXml.class);
 
     /** The underlying XML Document object that we give access to. */
     private Document xmlDoc;
@@ -61,6 +60,7 @@ public class SimpleXml {
 
     /**
      * Create a new SimpleXml object by loading a file.
+     *
      * @param f XML file to load
      */
     public SimpleXml(File f) {
@@ -68,7 +68,8 @@ public class SimpleXml {
         load(f);
     }
 
-    /** Create a new SimpleXml just containing the root element.
+    /**
+     * Create a new SimpleXml just containing the root element.
      *
      * @param rootElement Name of the root element
      */
@@ -79,7 +80,8 @@ public class SimpleXml {
         source = "Newly creating XML file with root '" + rootElement + "'";
     }
 
-    /** Create a new SimpleXml object by loading a file.
+    /**
+     * Create a new SimpleXml object by loading a file.
      *
      * @param resourceAsStream XML file to load
      */
@@ -115,45 +117,42 @@ public class SimpleXml {
     }
 
     /**
-     * Add entries to the current set of settings.  If a node with this
-     * key already exists in the XML, the new nodes are added after that,
-     * otherwise the new nodes are added at the end.
+     * Add entries to the current set of settings. If a node with this key already exists in the XML, the new nodes are
+     * added after that, otherwise the new nodes are added at the end.
      *
-     * @param key
-     *            the key to add
-     * @param values
-     *            the values to add
-     * @throws ArgumentNotValid
-     *             if the key is null or empty, or the value is null
+     * @param key the key to add
+     * @param values the values to add
+     * @throws ArgumentNotValid if the key is null or empty, or the value is null
      */
     public void add(String key, String... values) {
         ArgumentNotValid.checkNotNullOrEmpty(key, "key");
         ArgumentNotValid.checkNotNull(values, "values");
 
-        //find values to set
+        // find values to set
         List<String> allValues = new ArrayList<String>(getList(key));
         allValues.addAll(Arrays.asList(values));
 
-        //ensure the key exists
+        // ensure the key exists
         Element newNode = addParents(key.split("\\."));
 
-        //set values
-        update(key, allValues.toArray(new String[]{}));
+        // set values
+        update(key, allValues.toArray(new String[] {}));
     }
 
-    /** Add all the necessary parents to have the given elements available,
-     * and add a new Element node at the lowest level.
+    /**
+     * Add all the necessary parents to have the given elements available, and add a new Element node at the lowest
+     * level.
      *
      * @param elementNames A list of tags, must start with the document root.
      * @return The last element added.
      */
     private Element addParents(String... elementNames) {
         ArgumentNotValid.checkTrue(elementNames.length >= 2, "Must have at least root element and final element in "
-        		+ "element names, not just " + Arrays.asList(elementNames));
+                + "element names, not just " + Arrays.asList(elementNames));
         Element currentNode = xmlDoc.getRootElement();
         if (!currentNode.getName().equals(elementNames[0])) {
             throw new ArgumentNotValid("Document has root element '" + currentNode.getName() + "', not '"
-            		+ elementNames[0] + "'");
+                    + elementNames[0] + "'");
         }
         for (int i = 1; i < elementNames.length - 1; i++) {
             String elementName = elementNames[i];
@@ -168,8 +167,8 @@ public class SimpleXml {
         return addAfterSameElement(currentNode, elementNames[elementNames.length - 1]);
     }
 
-    /** Add another element either right after the last of its kind in
-     * currentNode or at the end of currentNode.
+    /**
+     * Add another element either right after the last of its kind in currentNode or at the end of currentNode.
      *
      * @param currentNode A node that the new element will be a sub-node of
      * @param elementName The name of the new element
@@ -192,18 +191,14 @@ public class SimpleXml {
     }
 
     /**
-     * Removes current settings for a key and adds new values
-     * for the same key. Calling update() is equivalent to calling
-     * delete() and add(), except the old value does not get destroyed on
-     * errors and order of the elements are kept.
-     * If no values are given, the key is removed.
+     * Removes current settings for a key and adds new values for the same key. Calling update() is equivalent to
+     * calling delete() and add(), except the old value does not get destroyed on errors and order of the elements are
+     * kept. If no values are given, the key is removed.
      *
      * @param key The key for which the value should be updated.
      * @param values The new values that should be set for the key.
-     * @throws UnknownID
-     *             if the key does not exist
-     * @throws ArgumentNotValid
-     *             if the key is null or empty, or any of the values are null
+     * @throws UnknownID if the key does not exist
+     * @throws ArgumentNotValid if the key is null or empty, or any of the values are null
      */
     public void update(String key, String... values) {
         ArgumentNotValid.checkNotNullOrEmpty(key, "String key");
@@ -235,19 +230,14 @@ public class SimpleXml {
     }
 
     /**
-     * Get the first entry that matches the key. Keys are constructed as a dot
-     * separated path of xml tag names. Example: The following XML definition of
-     * a user name &lt;dk&gt;&lt;netarkivet&gt;&lt;user&gt;ssc&lt;/user&gt;
-     * &lt;/netarkivet&gt;&lt;/dk&gt; is
-     * accessed using the path: "dk.netarkivet.user"
+     * Get the first entry that matches the key. Keys are constructed as a dot separated path of xml tag names. Example:
+     * The following XML definition of a user name &lt;dk&gt;&lt;netarkivet&gt;&lt;user&gt;ssc&lt;/user&gt;
+     * &lt;/netarkivet&gt;&lt;/dk&gt; is accessed using the path: "dk.netarkivet.user"
      *
-     * @param key
-     *            the key of the entry.
+     * @param key the key of the entry.
      * @return the first entry that matches the key.
-     * @throws UnknownID
-     *             if no element matches the key
-     * @throws ArgumentNotValid
-     *             if the key is null or empty
+     * @throws UnknownID if no element matches the key
+     * @throws ArgumentNotValid if the key is null or empty
      */
     public String getString(String key) {
         ArgumentNotValid.checkNotNullOrEmpty(key, "key");
@@ -266,8 +256,7 @@ public class SimpleXml {
      *
      * @param key a key for a setting
      * @return true if the key exists
-     * @throws ArgumentNotValid
-     *             if key is null or empty
+     * @throws ArgumentNotValid if key is null or empty
      */
     public boolean hasKey(String key) {
         ArgumentNotValid.checkNotNullOrEmpty(key, "key");
@@ -277,11 +266,9 @@ public class SimpleXml {
     }
 
     /**
-     * Get list of all items matching the key. If no items exist matching the
-     * key, an empty list is returned.
+     * Get list of all items matching the key. If no items exist matching the key, an empty list is returned.
      *
-     * @param key
-     *            the path down to elements to get
+     * @param key the path down to elements to get
      * @return a list of items that match the supplied key
      */
     public List<String> getList(String key) {
@@ -301,16 +288,16 @@ public class SimpleXml {
     /**
      * Save the current settings as an XML file.
      *
-     * @param f
-     *            the file to write the XML to.
+     * @param f the file to write the XML to.
      */
     public void save(File f) {
         ArgumentNotValid.checkNotNull(f, "f");
         XmlUtils.writeXmlToFile(xmlDoc, f);
     }
 
-
-    /** Return a tree structure reflecting the XML and trimmed values.
+    /**
+     * Return a tree structure reflecting the XML and trimmed values.
+     *
      * @param path Dotted path into the xml.
      * @return A tree reflecting the xml at the given path.
      * @throws UnknownID If the path does not exist in the tree or is ambiguous
@@ -328,16 +315,15 @@ public class SimpleXml {
     }
 
     /**
-     * Get an XPath version of the given dotted path.  A dotted path
-     * foo.bar.baz corresponds to the XML node &lt;foo&gt;&lt;bar&gt;&lt;baz&gt;
-     *  &lt;/baz&gt;&lt;/bar&gt;&lt;/foo&gt;
-     *
-     * Implementation note: If needed, this could be optimized by keeping a
-     * HashMap cache of the XPaths, since they don't change.
+     * Get an XPath version of the given dotted path. A dotted path foo.bar.baz corresponds to the XML node
+     * &lt;foo&gt;&lt;bar&gt;&lt;baz&gt; &lt;/baz&gt;&lt;/bar&gt;&lt;/foo&gt;
+     * <p>
+     * Implementation note: If needed, this could be optimized by keeping a HashMap cache of the XPaths, since they
+     * don't change.
      *
      * @param path A dotted path
-     * @return An XPath that matches the dotted path equivalent, using
-     * "dk:" as namespace prefix for all but the first element.
+     * @return An XPath that matches the dotted path equivalent, using "dk:" as namespace prefix for all but the first
+     * element.
      */
     private XPath getXPath(String path) {
         String[] pathParts = path.split("\\.");

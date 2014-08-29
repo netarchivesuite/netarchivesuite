@@ -51,38 +51,38 @@ import dk.netarkivet.common.utils.Settings;
  */
 public final class BitarchiveAdmin {
 
-	/** The class logger. */
+    /** The class logger. */
     private static final Logger log = LoggerFactory.getLogger(BitarchiveAdmin.class);
 
-    /** Map containing the archive directories and their files. The file must be the CanonicalFile (use getCanonicalFile() before access). */
-    private Map<File, List<String>> archivedFiles = Collections.synchronizedMap(new LinkedHashMap<File, List<String>>());
+    /**
+     * Map containing the archive directories and their files. The file must be the CanonicalFile (use
+     * getCanonicalFile() before access).
+     */
+    private Map<File, List<String>> archivedFiles = Collections
+            .synchronizedMap(new LinkedHashMap<File, List<String>>());
 
     /**
-     * Map containing the time for the latest update of the filelist for each
-     * archive directory. The file must be the CanonicalFile 
-     * (use getCanonicalFile() before access).
+     * Map containing the time for the latest update of the filelist for each archive directory. The file must be the
+     * CanonicalFile (use getCanonicalFile() before access).
      */
     private Map<File, Long> archiveTime = Collections.synchronizedMap(new HashMap<File, Long>());
 
     /** Singleton instance. */
     private static BitarchiveAdmin instance;
 
-    /** How much space we must have available *in a single dir* before we will listen  for new uploads. */
+    /** How much space we must have available *in a single dir* before we will listen for new uploads. */
     private final long minSpaceLeft;
 
     /** How much space we require available *in every dir* after we have accepted an upload. */
     private final long minSpaceRequired;
 
     /**
-     * Creates a new BitarchiveAdmin object for an existing bit archive.
-     * Reads the directories to use from settings.
+     * Creates a new BitarchiveAdmin object for an existing bit archive. Reads the directories to use from settings.
      *
-     * @throws ArgumentNotValid If the settings for minSpaceLeft is 
-     * non-positive or the setting for minSpaceRequired is negative. 
-     * @throws PermissionDenied If any of the directories cannot be created or
-     * are not writeable.
-     * @throws IOFailure If it is not possible to retrieve the canonical file
-     * for the directories.
+     * @throws ArgumentNotValid If the settings for minSpaceLeft is non-positive or the setting for minSpaceRequired is
+     * negative.
+     * @throws PermissionDenied If any of the directories cannot be created or are not writeable.
+     * @throws IOFailure If it is not possible to retrieve the canonical file for the directories.
      */
     private BitarchiveAdmin() throws ArgumentNotValid, PermissionDenied, IOFailure {
         String[] filedirnames = Settings.getAll(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR);
@@ -90,16 +90,14 @@ public final class BitarchiveAdmin {
         // Check, if value of minSpaceLeft is greater than zero
         if (minSpaceLeft <= 0L) {
             log.warn("Wrong setting of minSpaceLeft read from Settings: {}", minSpaceLeft);
-            throw new ArgumentNotValid(
-                    "Wrong setting of minSpaceLeft read from Settings: " + minSpaceLeft);
+            throw new ArgumentNotValid("Wrong setting of minSpaceLeft read from Settings: " + minSpaceLeft);
         }
 
         minSpaceRequired = Settings.getLong(ArchiveSettings.BITARCHIVE_MIN_SPACE_REQUIRED);
         // Check, if value of minSpaceRequired is at least zero
         if (minSpaceLeft < 0L) {
             log.warn("Wrong setting of minSpaceRequired read from Settings: {}", minSpaceLeft);
-            throw new ArgumentNotValid(
-                    "Wrong setting of minSpaceRequired read from Settings: " + minSpaceLeft);
+            throw new ArgumentNotValid("Wrong setting of minSpaceRequired read from Settings: " + minSpaceLeft);
         }
 
         log.info("Requiring at least {} bytes free.", minSpaceRequired);
@@ -128,9 +126,11 @@ public final class BitarchiveAdmin {
                 updateFileList(basedir);
 
                 final Long bytesUsedInDir = calculateBytesUsed(basedir);
-                log.info("Using bit archive directorys {'{}', '{}', '{}'} under base directory: '{}' with {} bytes of content and {} bytes free. Current number of files archived: {}",
-                		Constants.FILE_DIRECTORY_NAME, Constants.TEMPORARY_DIRECTORY_NAME, Constants.ATTIC_DIRECTORY_NAME,
-                		basedir, bytesUsedInDir, FileUtils.getBytesFree(basedir), archivedFiles.get(basedir).size());
+                log.info(
+                        "Using bit archive directorys {'{}', '{}', '{}'} under base directory: '{}' with {} bytes of content and {} bytes free. Current number of files archived: {}",
+                        Constants.FILE_DIRECTORY_NAME, Constants.TEMPORARY_DIRECTORY_NAME,
+                        Constants.ATTIC_DIRECTORY_NAME, basedir, bytesUsedInDir, FileUtils.getBytesFree(basedir),
+                        archivedFiles.get(basedir).size());
             }
         } catch (IOException e) {
             throw new IOFailure("Could not retrieve Canonical files.", e);
@@ -138,31 +138,27 @@ public final class BitarchiveAdmin {
     }
 
     /**
-     * Checks whether the filelist is up to date. If the modified timestamp
-     * for the a directory is larger than the last recorded timestamp, then
-     * the stored filelist is updated with the latest changes.  
+     * Checks whether the filelist is up to date. If the modified timestamp for the a directory is larger than the last
+     * recorded timestamp, then the stored filelist is updated with the latest changes.
      */
     public synchronized void verifyFilelistUpToDate() {
-        for(File basedir : archivedFiles.keySet()) {
+        for (File basedir : archivedFiles.keySet()) {
             File filedir = new File(basedir, Constants.FILE_DIRECTORY_NAME);
-            long lastModified = filedir.lastModified(); 
-            if(archiveTime.get(basedir) < lastModified) {
-                // Update the list and the time. 
+            long lastModified = filedir.lastModified();
+            if (archiveTime.get(basedir) < lastModified) {
+                // Update the list and the time.
                 updateFileList(basedir);
             }
         }
     }
-    
+
     /**
      * Method for updating the filelist for a given basedir.
-     * 
+     *
      * @param basedir The basedir to update the filelist for.
-     * @throws ArgumentNotValid If basedir is null or if it not a proper 
-     * directory.
-     * @throws UnknownID If the basedir cannot be found both the archivedFiles 
-     * map or the archiveTime map.
-     * @throws IOFailure If it is not possible to retrieve the canonical file 
-     * for the basedir.
+     * @throws ArgumentNotValid If basedir is null or if it not a proper directory.
+     * @throws UnknownID If the basedir cannot be found both the archivedFiles map or the archiveTime map.
+     * @throws IOFailure If it is not possible to retrieve the canonical file for the basedir.
      */
     public void updateFileList(File basedir) throws ArgumentNotValid, UnknownID, IOFailure {
         ArgumentNotValid.checkNotNull(basedir, "File basedir");
@@ -170,26 +166,27 @@ public final class BitarchiveAdmin {
         try {
             basedir = basedir.getCanonicalFile();
         } catch (IOException e) {
-            throw new IOFailure("Could not retrieve canonical path for file '"  + basedir, e);
+            throw new IOFailure("Could not retrieve canonical path for file '" + basedir, e);
         }
-        if(!basedir.isDirectory()) {
+        if (!basedir.isDirectory()) {
             throw new ArgumentNotValid("The directory '" + basedir.getPath() + " is not a proper directory.");
         }
-        if(!archivedFiles.containsKey(basedir) || !archiveTime.containsKey(basedir)) {
-            throw new UnknownID("The directory '" + basedir + "' is not known " + "by the settings. Known directories are: "  + archivedFiles.keySet());
+        if (!archivedFiles.containsKey(basedir) || !archiveTime.containsKey(basedir)) {
+            throw new UnknownID("The directory '" + basedir + "' is not known "
+                    + "by the settings. Known directories are: " + archivedFiles.keySet());
         }
-        
-        log.debug("Updating the filelist for '{}'.", basedir);      
+
+        log.debug("Updating the filelist for '{}'.", basedir);
         File filedir = new File(basedir, Constants.FILE_DIRECTORY_NAME);
-        if(!checkArchiveDir(filedir)) {
+        if (!checkArchiveDir(filedir)) {
             throw new UnknownID("The directory '" + filedir + "' is not an " + " archive directory.");
         }
-        
+
         String[] dirContent = filedir.list();
         List<String> filenames = new ArrayList<String>(dirContent.length);
-        for(String file : dirContent) {
+        for (String file : dirContent) {
             // ensure that only files are handled
-            if((new File(filedir, file)).isFile()) {
+            if ((new File(filedir, file)).isFile()) {
                 filenames.add(file);
             } else {
                 log.warn("The file '{}' in directory {} is not a proper file.", file, filedir.getPath());
@@ -198,18 +195,15 @@ public final class BitarchiveAdmin {
         archivedFiles.put(basedir, filenames);
         archiveTime.put(basedir, filedir.lastModified());
     }
-    
+
     /**
-     * Returns true if we have at least one dir with the required amount
-     * of space left.
+     * Returns true if we have at least one dir with the required amount of space left.
      *
-     * @return true if we have at least one dir with the required amount
-     *         of space left, otherwise false.
+     * @return true if we have at least one dir with the required amount of space left, otherwise false.
      */
     public boolean hasEnoughSpace() {
         for (File dir : archivedFiles.keySet()) {
-            if (checkArchiveDir(dir)
-                && FileUtils.getBytesFree(dir) > minSpaceLeft) {
+            if (checkArchiveDir(dir) && FileUtils.getBytesFree(dir) > minSpaceLeft) {
                 return true;
             }
         }
@@ -222,11 +216,8 @@ public final class BitarchiveAdmin {
      * @param arcFileName The simple name (i.e. no dirs) of the ARC file.
      * @param requestedSize How large the file is in bytes.
      * @return The path where the arcFile should go.
-     *
-     * @throws ArgumentNotValid
-     *          If arcFileName is null or empty, or requestedSize is negative.
-     * @throws IOFailure if there is no more room left to store this file of
-     *                   size=requestedSize
+     * @throws ArgumentNotValid If arcFileName is null or empty, or requestedSize is negative.
+     * @throws IOFailure if there is no more room left to store this file of size=requestedSize
      */
     public File getTemporaryPath(String arcFileName, long requestedSize) throws ArgumentNotValid, IOFailure {
         ArgumentNotValid.checkNotNullOrEmpty(arcFileName, "arcFile");
@@ -240,31 +231,32 @@ public final class BitarchiveAdmin {
             // method BitarchiveServer.visit(UploadMessage msg)
             // This is bug 1586.
 
-            if (checkArchiveDir(dir) && (bytesFreeInDir > minSpaceLeft) && (bytesFreeInDir - requestedSize > minSpaceRequired)) {
+            if (checkArchiveDir(dir) && (bytesFreeInDir > minSpaceLeft)
+                    && (bytesFreeInDir - requestedSize > minSpaceRequired)) {
                 File filedir = new File(dir, Constants.TEMPORARY_DIRECTORY_NAME);
                 return new File(filedir, arcFileName);
             } else {
-                log.debug("Not enough space on dir '{}' for file '{}' of size {} bytes. Only {} left",
-                		dir.getPath(), arcFileName, requestedSize, bytesFreeInDir);
+                log.debug("Not enough space on dir '{}' for file '{}' of size {} bytes. Only {} left", dir.getPath(),
+                        arcFileName, requestedSize, bytesFreeInDir);
             }
         }
-        log.warn("No space left in dirs: {}, to store file '{}' of size {}" , archivedFiles.keySet(), arcFileName, requestedSize);
-        throw new IOFailure("No space left in dirs: " + archivedFiles.keySet() + ", to store file '" + arcFileName + "' of size " + requestedSize);
+        log.warn("No space left in dirs: {}, to store file '{}' of size {}", archivedFiles.keySet(), arcFileName,
+                requestedSize);
+        throw new IOFailure("No space left in dirs: " + archivedFiles.keySet() + ", to store file '" + arcFileName
+                + "' of size " + requestedSize);
     }
 
     /**
      * Moves a file from temporary storage to file storage.
+     * <p>
+     * Note: It is checked, if tempLocation resides in directory TEMPORARY_DIRECTORY_NAME and whether the parent of
+     * tempLocation is a Bitarchive directory.
      *
-     * Note: It is checked, if tempLocation resides in directory
-     *  TEMPORARY_DIRECTORY_NAME and whether the parent of tempLocation
-     *   is a Bitarchive directory.
-     *
-     * @param tempLocation The temporary location where the file was stored.
-     *                     This must be a path returned from getTemporaryPath
-     *
+     * @param tempLocation The temporary location where the file was stored. This must be a path returned from
+     * getTemporaryPath
      * @return The location where the file is now stored
-     * @throws IOFailure if tempLocation is not created from getTemporaryPath
-     *                   or file cannot be moved to Storage location.
+     * @throws IOFailure if tempLocation is not created from getTemporaryPath or file cannot be moved to Storage
+     * location.
      * @throws ArgumentNotValid If the tempLocation file is null.
      */
     public File moveToStorage(File tempLocation) throws IOFailure, ArgumentNotValid {
@@ -277,16 +269,16 @@ public final class BitarchiveAdmin {
         String arcFileName = tempLocation.getName();
 
         /**
-         * Check, that File tempLocation resides in directory
-         * TEMPORARY_DIRECTORY_NAME.
+         * Check, that File tempLocation resides in directory TEMPORARY_DIRECTORY_NAME.
          */
         File arcFilePath = tempLocation.getParentFile();
         if (arcFilePath == null || !arcFilePath.getName().equals(Constants.TEMPORARY_DIRECTORY_NAME)) {
-            throw new IOFailure("Location '" + tempLocation + "' is not in " + "tempdir '"  + Constants.TEMPORARY_DIRECTORY_NAME + "'");
+            throw new IOFailure("Location '" + tempLocation + "' is not in " + "tempdir '"
+                    + Constants.TEMPORARY_DIRECTORY_NAME + "'");
         }
         /**
-         * Check, that arcFilePath (now known to be TEMPORARY_DIRECTORY_NAME)
-         * resides in a recognised Bitarchive Directory.
+         * Check, that arcFilePath (now known to be TEMPORARY_DIRECTORY_NAME) resides in a recognised Bitarchive
+         * Directory.
          */
         File archivedir = arcFilePath.getParentFile();
         if (archivedir == null || !isBitarchiveDirectory(archivedir)) {
@@ -305,13 +297,12 @@ public final class BitarchiveAdmin {
         return storageFile;
     }
 
-    /** 
+    /**
      * Checks whether a directory is one of the known bitarchive directories.
      *
      * @param theDir The dir to check
      * @return true If it is a valid archive directory; otherwise returns false.
-     * @throws IOFailure if theDir or one of the valid archive directories
-     * does not exist
+     * @throws IOFailure if theDir or one of the valid archive directories does not exist
      * @throws ArgumentNotValid if theDir is null
      */
     protected boolean isBitarchiveDirectory(File theDir) throws ArgumentNotValid, IOFailure {
@@ -324,9 +315,8 @@ public final class BitarchiveAdmin {
     }
 
     /**
-     * Check that the given file is a directory appropriate for use.
-     * A File is appropiate to use as archivedir, if the file is an
-     * existing directory, and is writable by this java process.
+     * Check that the given file is a directory appropriate for use. A File is appropiate to use as archivedir, if the
+     * file is an existing directory, and is writable by this java process.
      *
      * @param file A file
      * @return true, if 'file' is an existing directory and is writable.
@@ -370,13 +360,13 @@ public final class BitarchiveAdmin {
         return files.toArray(new File[files.size()]);
     }
 
-    /** Return an array of all files in this archive that match a given
-     * regular expression on the filename.
+    /**
+     * Return an array of all files in this archive that match a given regular expression on the filename.
      *
-     * @param regexp A precompiled regular expression matching whole filenames.
-     * This will probably be given to a FilenameFilter
-     * @return An array of all the files in this bitarchive that exactly match
-     * the regular expression on the filename (sans paths).
+     * @param regexp A precompiled regular expression matching whole filenames. This will probably be given to a
+     * FilenameFilter
+     * @return An array of all the files in this bitarchive that exactly match the regular expression on the filename
+     * (sans paths).
      */
     public File[] getFilesMatching(final Pattern regexp) {
         ArgumentNotValid.checkNotNull(regexp, "Pattern regexp");
@@ -386,8 +376,8 @@ public final class BitarchiveAdmin {
         for (File archivePath : archivedFiles.keySet()) {
             File archiveDir = new File(archivePath, Constants.FILE_DIRECTORY_NAME);
             if (checkArchiveDir(archiveDir)) {
-                for(String filename : archivedFiles.get(archivePath)) {
-                    if(regexp.matcher(filename).matches()) {
+                for (String filename : archivedFiles.get(archivePath)) {
+                    if (regexp.matcher(filename).matches()) {
                         files.add(new File(archiveDir, filename));
                     }
                 }
@@ -400,8 +390,7 @@ public final class BitarchiveAdmin {
      * Return the path that a given arc file can be found in.
      *
      * @param arcFileName Name of an arc file (with no path)
-     * @return A BitarchiveARCFile for the given file, or null if the
-     *         file does not exist.
+     * @return A BitarchiveARCFile for the given file, or null if the file does not exist.
      */
     public BitarchiveARCFile lookup(String arcFileName) {
         ArgumentNotValid.checkNotNullOrEmpty(arcFileName, "arcFileName");
@@ -423,10 +412,8 @@ public final class BitarchiveAdmin {
     /**
      * Calculate how many bytes are used by all files in a directory.
      *
-     * @param filedir An existing directory with a FILE_DIRECTORY_NAME subdir
-     *                and a TEMPORARY_DIRECTORY_NAME subdir.
-     * @return Number of bytes used by all files in the directory (not including
-     *         overhead from partially used blocks).
+     * @param filedir An existing directory with a FILE_DIRECTORY_NAME subdir and a TEMPORARY_DIRECTORY_NAME subdir.
+     * @return Number of bytes used by all files in the directory (not including overhead from partially used blocks).
      */
     private long calculateBytesUsed(File filedir) {
         long used = 0;
@@ -436,7 +423,7 @@ public final class BitarchiveAdmin {
             for (File datafiles : files) {
                 if (datafiles.isFile()) {
                     // Add size of file f to amount of bytes used.
-                    used += datafiles.length(); 
+                    used += datafiles.length();
                 } else {
                     log.warn("Non-file '{}' found in archive", datafiles.getAbsolutePath());
                 }
@@ -446,7 +433,7 @@ public final class BitarchiveAdmin {
         }
         File[] tempfiles = new File(filedir, Constants.TEMPORARY_DIRECTORY_NAME).listFiles();
         // Check, that listFiles() method returns valid information
-        if (tempfiles != null) { 
+        if (tempfiles != null) {
             for (File tempfile : tempfiles) {
                 if (tempfile.isFile()) {
                     // Add size of file f to amount of bytes used.
@@ -488,8 +475,7 @@ public final class BitarchiveAdmin {
     }
 
     /**
-     * Close down the bitarchive admin.
-     * Currently has no data to store.
+     * Close down the bitarchive admin. Currently has no data to store.
      */
     public void close() {
         archivedFiles.clear();
@@ -497,11 +483,10 @@ public final class BitarchiveAdmin {
         instance = null;
     }
 
-    /** Return the path used to store files that are removed by
-     * RemoveAndGetFileMessage.
+    /**
+     * Return the path used to store files that are removed by RemoveAndGetFileMessage.
      *
      * @param existingFile a File object for an existing file in the bitarchive
-     * 
      * @return The full path of the file in the attic dir
      */
     public File getAtticPath(File existingFile) {

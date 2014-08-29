@@ -39,72 +39,59 @@ import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 import dk.netarkivet.common.utils.warc.WARCBatchJob;
 import dk.netarkivet.testutils.LogbackRecorder;
 
-
 /**
- * Unittests for the batchjob WaybackCDXExtractionARCBatchJob
- * and WaybackCDXExtractionWARCBatchJob.
+ * Unittests for the batchjob WaybackCDXExtractionARCBatchJob and WaybackCDXExtractionWARCBatchJob.
  */
 public class WaybackCDXExtractionArcAndWarcBatchJobTester {
 
     private BatchLocalFiles blaf;
     private BatchLocalFiles blafWarc;
-     
 
     @Before
     public void setUp() throws Exception {
-        File file = new File(
-                "tests/dk/netarkivet/wayback/data/originals/arcfile_withredirects.arc");
-        File warcfile = new File(
-                "tests/dk/netarkivet/wayback/data/originals/warcfile_withredirects.warc");
-        assertTrue("ArcFile should exist: '"
-                + file.getAbsolutePath() + "'", file.exists());
-        assertTrue("WarcFile should exist: '" + warcfile.getAbsolutePath()
-                + "'", warcfile.exists());
+        File file = new File("tests/dk/netarkivet/wayback/data/originals/arcfile_withredirects.arc");
+        File warcfile = new File("tests/dk/netarkivet/wayback/data/originals/warcfile_withredirects.warc");
+        assertTrue("ArcFile should exist: '" + file.getAbsolutePath() + "'", file.exists());
+        assertTrue("WarcFile should exist: '" + warcfile.getAbsolutePath() + "'", warcfile.exists());
         blaf = new BatchLocalFiles(new File[] {file});
         blafWarc = new BatchLocalFiles(new File[] {warcfile});
     }
 
     @Test
     public void testARCProcess() throws IOException {
-    	LogbackRecorder lr = LogbackRecorder.startRecorder();
+        LogbackRecorder lr = LogbackRecorder.startRecorder();
         ARCBatchJob job = new WaybackCDXExtractionARCBatchJob();
         OutputStream os = new ByteArrayOutputStream();
-        blaf.run(job,os);
+        blaf.run(job, os);
         os.flush();
-        //System.out.println(os);
-        assertFalse("expect a non-empty output", os.toString() == null || os.toString().length()==0);
+        // System.out.println(os);
+        assertFalse("expect a non-empty output", os.toString() == null || os.toString().length() == 0);
         assertTrue("Should be no exceptions", job.getExceptions().isEmpty());
         // Check log for "Could not parse errors
         lr.assertLogNotContains("Batchjob results in 'could not parse' errors.", "Could not parse");
         lr.stopRecorder();
     }
 
-    /** Asserts that a source string does not contain a given string, and prints
-     * out the source string if the target string is found.
+    /**
+     * Asserts that a source string does not contain a given string, and prints out the source string if the target
+     * string is found.
      *
      * @param msg An explanatory message
      * @param src A string to search through
      * @param str A string to search for
      */
     /*
-    private void assertNotStringContains(String msg, String src, String str) {
-        int index = src.indexOf(str);
-        if (index != -1) {
-            System.out.println("Actual string: ");
-            System.out.println(src);
-            assertEquals(msg, -1, index);
-        }
-    }
-    */
-    
+     * private void assertNotStringContains(String msg, String src, String str) { int index = src.indexOf(str); if
+     * (index != -1) { System.out.println("Actual string: "); System.out.println(src); assertEquals(msg, -1, index); } }
+     */
     @Test
     public void testWARCProcess() throws IOException {
         WARCBatchJob job = new WaybackCDXExtractionWARCBatchJob();
         OutputStream os = new ByteArrayOutputStream();
-        blafWarc.run(job,os);
+        blafWarc.run(job, os);
         os.flush();
-        //System.out.println(os);
-        assertFalse("expect a non-empty output", os.toString() == null || os.toString().length()==0);
+        // System.out.println(os);
+        assertFalse("expect a non-empty output", os.toString() == null || os.toString().length() == 0);
         assertTrue("Should be no exceptions", job.getExceptions().isEmpty());
     }
 }

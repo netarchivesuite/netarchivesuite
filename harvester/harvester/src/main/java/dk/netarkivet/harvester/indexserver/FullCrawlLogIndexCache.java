@@ -31,11 +31,10 @@ import dk.netarkivet.common.exceptions.NotImplementedException;
  * A CrawlLogIndexCache that takes in all entries in the crawl log.
  *
  * @see CrawlLogIndexCache
- *
  */
 public class FullCrawlLogIndexCache extends CrawlLogIndexCache {
 
-	/** Create a new FullCrawlLogIndexCache, creating Lucene indexes. */
+    /** Create a new FullCrawlLogIndexCache, creating Lucene indexes. */
     public FullCrawlLogIndexCache() {
         super("fullcrawllogindex", false, ".*");
     }

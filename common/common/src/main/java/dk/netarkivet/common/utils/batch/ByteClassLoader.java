@@ -27,11 +27,12 @@ import java.io.File;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
 
-/** A subclass of ClassLoader that can take a byte[] containing a class file.
+/**
+ * A subclass of ClassLoader that can take a byte[] containing a class file.
  */
 public class ByteClassLoader extends ClassLoader {
 
-	/** Binary class data loaded from file. */
+    /** Binary class data loaded from file. */
     private final byte[] binaryData;
 
     /**
@@ -55,12 +56,11 @@ public class ByteClassLoader extends ClassLoader {
     }
 
     /**
-     * Define the class that this class loader knows about.  The name of
-     * the class is taken from the data given in the constructor.
-     *
-     * Note that this does *not* override any of the
-     * java.lang.ClassLoader#defineClass methods.  Calling this method directly
-     * is the only way to get the class defined by this classloader. 
+     * Define the class that this class loader knows about. The name of the class is taken from the data given in the
+     * constructor.
+     * <p>
+     * Note that this does *not* override any of the java.lang.ClassLoader#defineClass methods. Calling this method
+     * directly is the only way to get the class defined by this classloader.
      *
      * @return A new Class object for this class.
      */

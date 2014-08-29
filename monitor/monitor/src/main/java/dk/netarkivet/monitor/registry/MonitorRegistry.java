@@ -35,19 +35,20 @@ import dk.netarkivet.common.distribute.monitorregistry.HostEntry;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
- * A registry of known JMX URLs.
- * This class is coded to be thread safe.
+ * A registry of known JMX URLs. This class is coded to be thread safe.
  */
 public class MonitorRegistry {
 
-	/** A map from host names to known host entries. */
-    private Map<String, Set<HostEntry>> hostEntries = Collections.synchronizedMap(new HashMap<String, Set<HostEntry>>());
+    /** A map from host names to known host entries. */
+    private Map<String, Set<HostEntry>> hostEntries = Collections
+            .synchronizedMap(new HashMap<String, Set<HostEntry>>());
     /** The singleton instance. */
     private static MonitorRegistry instance;
     /** The logger for this class. */
     private static final Logger log = LoggerFactory.getLogger(MonitorRegistry.class);
 
-    /** Get the singleton instance.
+    /**
+     * Get the singleton instance.
      *
      * @return The singleton instance.
      */
@@ -60,8 +61,8 @@ public class MonitorRegistry {
 
     /**
      * Register a new JMX host entry.
-     * @param hostEntry The entry to add
      *
+     * @param hostEntry The entry to add
      * @throws ArgumentNotValid if hostEntry is null.
      */
     public synchronized void register(HostEntry hostEntry) {
@@ -72,19 +73,19 @@ public class MonitorRegistry {
             hostEntries.put(hostEntry.getName(), set);
         }
         if (set.add(hostEntry)) {
-            log.info("Added host '{}' port {}/{}",
-            		hostEntry.getName(), hostEntry.getJmxPort(), hostEntry.getRmiPort());
+            log.info("Added host '{}' port {}/{}", hostEntry.getName(), hostEntry.getJmxPort(), hostEntry.getRmiPort());
         } else {
-        	// TODO WTF?!
+            // TODO WTF?!
             set.remove(hostEntry);
             set.add(hostEntry);
-            log.trace("Updated time for '{}' port {}/{} to {}",
-            		hostEntry.getName(), hostEntry.getJmxPort(), hostEntry.getRmiPort(), hostEntry.getTime());
+            log.trace("Updated time for '{}' port {}/{} to {}", hostEntry.getName(), hostEntry.getJmxPort(),
+                    hostEntry.getRmiPort(), hostEntry.getTime());
         }
     }
 
     /**
      * Get all JMX host entries.
+     *
      * @return All JMX host entries.
      */
     public synchronized Map<String, Set<HostEntry>> getHostEntries() {

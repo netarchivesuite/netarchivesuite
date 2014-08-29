@@ -22,30 +22,24 @@
  */
 package dk.netarkivet.archive.checksum;
 
-import com.sleepycat.je.DatabaseException;
-
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import com.sleepycat.je.DatabaseException;
 
-@SuppressWarnings({ "unused"})
+@SuppressWarnings({"unused"})
 public class DatabaseChecksumTester {
 
     /**
      * @param args
-     * @throws Exception 
+     * @throws Exception
      */
     public static void main(String[] args) throws Exception {
         DatabaseChecksumArchive dca = new DatabaseChecksumArchive();
     }
-    
+
     @Test
     public void testConstructor() throws DatabaseException {
         DatabaseChecksumArchive dca = new DatabaseChecksumArchive();
     }
-    
-    
 
 }

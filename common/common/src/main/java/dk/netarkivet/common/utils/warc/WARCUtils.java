@@ -57,17 +57,17 @@ import dk.netarkivet.common.utils.archive.ArchiveDateConverter;
 import dk.netarkivet.common.utils.archive.HeritrixArchiveHeaderWrapper;
 
 /**
-* Various utilities on WARC-records.
-* We have borrowed code from wayback.
-* See org.archive.wayback.resourcestore.indexer.WARCRecordToSearchResultAdapter
-*/
+ * Various utilities on WARC-records. We have borrowed code from wayback. See
+ * org.archive.wayback.resourcestore.indexer.WARCRecordToSearchResultAdapter
+ */
 public class WARCUtils {
-    
+
     /** Logging output place. */
     protected static final Logger log = LoggerFactory.getLogger(WARCUtils.class);
 
     /**
      * Create new WARCWriter, writing to warcfile newFile.
+     *
      * @param newFile the WARCfile, that the WARCWriter writes to.
      * @return new WARCWriter, writing to warcfile newFile.
      */
@@ -76,14 +76,12 @@ public class WARCUtils {
         PrintStream ps = null;
         try {
             ps = new PrintStream(new FileOutputStream(newFile));
-            writer = new WARCWriterNAS(
-                    new AtomicInteger(), ps,
-                    //This name is used for the first (file metadata) record
-                    newFile, 
-                    false, //Don't compress
-                    //Use current time
-                    ArchiveDateConverter.getWarcDateFormat().format(new Date()),
-                    null //No particular file metadata to add
+            writer = new WARCWriterNAS(new AtomicInteger(), ps,
+            // This name is used for the first (file metadata) record
+                    newFile, false, // Don't compress
+                    // Use current time
+                    ArchiveDateConverter.getWarcDateFormat().format(new Date()), null // No particular file metadata to
+                                                                                      // add
             );
         } catch (IOException e) {
             if (ps != null) {
@@ -136,45 +134,27 @@ public class WARCUtils {
         ignoreHeadersMap.add("warc-record-id");
         ignoreHeadersMap.add("warc-type");
         ignoreHeadersMap.add("warc-target-uri");
-        String[] headerNames = {
-                "WARC-Type",
-                "WARC-Record-ID",
-                "WARC-Date",
-                "Content-Length",
-                "Content-Type",
-                "WARC-Concurrent-To",
-                "WARC-Block-Digest",
-                "WARC-Payload-Digest",
-                "WARC-IP-Address",
-                "WARC-Refers-To",
-                "WARC-Target-URI",
-                "WARC-Truncated",
-                "WARC-Warcinfo-ID",
-                "WARC-Filename",
-                "WARC-Profile",
-                "WARC-Identified-Payload-Type",
-                "WARC-Segment-Origin-ID",
-                "WARC-Segment-Number",
-                "WARC-Segment-Total-Length"
-        };
-        for (int i=0; i<headerNames.length; ++i) {
+        String[] headerNames = {"WARC-Type", "WARC-Record-ID", "WARC-Date", "Content-Length", "Content-Type",
+                "WARC-Concurrent-To", "WARC-Block-Digest", "WARC-Payload-Digest", "WARC-IP-Address", "WARC-Refers-To",
+                "WARC-Target-URI", "WARC-Truncated", "WARC-Warcinfo-ID", "WARC-Filename", "WARC-Profile",
+                "WARC-Identified-Payload-Type", "WARC-Segment-Origin-ID", "WARC-Segment-Number",
+                "WARC-Segment-Total-Length"};
+        for (int i = 0; i < headerNames.length; ++i) {
             headerNamesCaseMap.put(headerNames[i].toLowerCase(), headerNames[i]);
         }
     }
 
     /**
      * Writes the given WARCRecord on the given WARCWriter.
-     * 
+     * <p>
      * Creates a new unique UUID for the copied record.
-     * 
-     * @param aw
-     *            The WARCWriter to output the record on.
-     * @param record
-     *            The record to output
+     *
+     * @param aw The WARCWriter to output the record on.
+     * @param record The record to output
      */
     private static void copySingleRecord(WARCWriter aw, WARCRecord record) {
         try {
-            //Prepare metadata...
+            // Prepare metadata...
             HeritrixArchiveHeaderWrapper header = HeritrixArchiveHeaderWrapper.wrapArchiveHeader(null, record);
             String warcType = header.getHeaderStringValue("WARC-Type");
 
@@ -194,7 +174,7 @@ public class WARCUtils {
                 throw new IllegalState("Epic fail creating URI from UUID!");
             }
 
-            ANVLRecord  namedFields = new ANVLRecord();
+            ANVLRecord namedFields = new ANVLRecord();
 
             // Copy to headers from the original WARC record to the new one.
             // Since we store the headres lowercase, we recase them.
@@ -242,18 +222,13 @@ public class WARCUtils {
 
     /**
      * Read the contents (payload) of an WARC record into a byte array.
-     * 
-     * @param record
-     *            An WARC record to read from. After reading, the WARC Record 
-     *            will no longer have its own data available for reading.
-     * @return A byte array containing the payload of the WARC record. Note 
-     *         that the size of the payload is calculated by subtracting
-     *         the contentBegin value from the length of the record (both values
-     *         included in the record header).
-     * @throws IOFailure
-     *             If there is an error reading the data, or if the record is
-     *             longer than Integer.MAX_VALUE (since we can't make bigger
-     *             arrays).
+     *
+     * @param record An WARC record to read from. After reading, the WARC Record will no longer have its own data
+     * available for reading.
+     * @return A byte array containing the payload of the WARC record. Note that the size of the payload is calculated
+     * by subtracting the contentBegin value from the length of the record (both values included in the record header).
+     * @throws IOFailure If there is an error reading the data, or if the record is longer than Integer.MAX_VALUE (since
+     * we can't make bigger arrays).
      */
     public static byte[] readWARCRecord(WARCRecord record) throws IOFailure {
         ArgumentNotValid.checkNotNull(record, "WARCRecord record");
@@ -264,26 +239,25 @@ public class WARCUtils {
         // Calculate the length of the payload.
         // the size of the payload is calculated by subtracting
         // the contentBegin value from the length of the record.
-        
+
         ArchiveRecordHeader header = record.getHeader();
         long length = header.getLength();
-        
-        int payloadLength = (int) (length - header.getContentBegin()); 
-                
+
+        int payloadLength = (int) (length - header.getContentBegin());
+
         // read from stream
         byte[] tmpbuffer = new byte[payloadLength];
         byte[] buffer = new byte[Constants.IO_BUFFER_SIZE];
         int bytesRead;
         int totalBytes = 0;
         try {
-            for (; (totalBytes < payloadLength) && ((bytesRead = record.read(buffer)) != -1);
-            		totalBytes += bytesRead) {
+            for (; (totalBytes < payloadLength) && ((bytesRead = record.read(buffer)) != -1); totalBytes += bytesRead) {
                 System.arraycopy(buffer, 0, tmpbuffer, totalBytes, bytesRead);
             }
         } catch (IOException e) {
             throw new IOFailure("Failure when reading the WARC-record", e);
         }
-        
+
         // Check if the number of bytes read (= totalbytes) matches the
         // size of the buffer.
         if (tmpbuffer.length != totalBytes) {
@@ -297,9 +271,10 @@ public class WARCUtils {
         }
 
     }
-    
+
     /**
      * Find out what type of WARC-record this is.
+     *
      * @param record a given WARCRecord
      * @return the type of WARCRecord as a String.
      */
@@ -309,8 +284,9 @@ public class WARCUtils {
         return (String) header.getHeaderValue(WARCConstants.HEADER_KEY_TYPE);
     }
 
-    /** 
+    /**
      * Check if the given filename represents a WARC file.
+     *
      * @param filename A given filename
      * @return true, if the filename ends with .warc or .warc.gz
      */

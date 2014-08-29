@@ -22,6 +22,12 @@
  */
 package dk.netarkivet.archive.bitarchive;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -34,7 +40,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveServer;
 import dk.netarkivet.common.distribute.RemoteFile;
@@ -55,13 +60,11 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
 
     /**
      * The directory from where we upload the ARC files.
-     *
      */
     private static final File ORIGINALS_DIR = new File(new File(TestInfo.DATA_DIR, "upload"), "originals");
 
     /**
-     * The files that are uploaded during the tests and that must be removed
-     * afterwards.
+     * The files that are uploaded during the tests and that must be removed afterwards.
      */
     private static final List<String> UPLOADED_FILES = Arrays.asList("Upload1.ARC", "Upload2.ARC", "Upload3.ARC");
 
@@ -90,9 +93,9 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
     }
 
     /* **** Part one: Test that illegal parameters are handled correctly. ** */
+
     /**
      * Test that giving null for a filename gives the right exception.
-     *
      */
     @Test
     public void testUploadNoFile() {
@@ -105,9 +108,9 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
     }
 
     /* **** Part two: Test that errors are treated correctly. **** */
+
     /**
-     * Uploading a file that does not exist should throw an ArgumentNotValid
-     * exception.
+     * Uploading a file that does not exist should throw an ArgumentNotValid exception.
      */
     @Test
     public void testUploadMissingFile() {
@@ -141,7 +144,6 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
 
     /**
      * Test that uploading a directory throws an exception.
-     *
      */
     @Test
     public void testUploadNoDir() {
@@ -155,8 +157,7 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
     }
 
     /**
-     * Uploading a file that already exists in the archive should throw a
-     * FileAlreadyExists exception.
+     * Uploading a file that already exists in the archive should throw a FileAlreadyExists exception.
      */
     @Test
     @Ignore("FIXME")
@@ -173,8 +174,7 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
     }
 
     /**
-     * Uploading a file that exists (valid reference) and that does not exist in
-     * the archive.
+     * Uploading a file that exists (valid reference) and that does not exist in the archive.
      */
     @Test
     @Ignore("FIXME")
@@ -185,11 +185,10 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
     }
 
     /**
-     * Verify that data do not exist in the archive before uploading the file
-     * and that data are part of the archive after upload.
-     * 
-     * @throws IOException
-     *             If unable to close FileOutputStream.
+     * Verify that data do not exist in the archive before uploading the file and that data are part of the archive
+     * after upload.
+     *
+     * @throws IOException If unable to close FileOutputStream.
      */
     @Test
     @Ignore("FIXME")
@@ -236,7 +235,7 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
     // FIXME: test temporarily disabled
     public void testUploadUsesDir() {
         final File dir1 = new File(TestInfo.WORKING_DIR, "dir1");
-        setupBitarchiveWithDirs(new String[] { dir1.getAbsolutePath(), });
+        setupBitarchiveWithDirs(new String[] {dir1.getAbsolutePath(),});
         archive.upload(new TestRemoteFile(new File(ORIGINALS_DIR, UPLOADED_FILES.get(2)), false, false, false),
                 UPLOADED_FILES.get(2));
         assertTrue("Should place file in directory " + dir1,

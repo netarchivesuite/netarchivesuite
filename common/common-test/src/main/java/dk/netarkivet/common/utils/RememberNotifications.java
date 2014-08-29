@@ -25,7 +25,6 @@ package dk.netarkivet.common.utils;
 
 /**
  * Mockup that simply remembers its last calls in two public fields.
- *
  */
 public class RememberNotifications extends Notifications {
     public NotificationType type;
@@ -34,7 +33,8 @@ public class RememberNotifications extends Notifications {
 
     private static RememberNotifications instance;
 
-    private RememberNotifications() {}
+    private RememberNotifications() {
+    }
 
     public static synchronized RememberNotifications getInstance() {
         if (instance == null) {
@@ -53,8 +53,7 @@ public class RememberNotifications extends Notifications {
     public void notify(String message, NotificationType eventType, Throwable exception) {
         this.message = message;
         this.e = exception;
-        System.out.println("[" + eventType + "-Notification] "
-                + message);
+        System.out.println("[" + eventType + "-Notification] " + message);
         if (exception != null) {
             exception.printStackTrace(System.out);
         }

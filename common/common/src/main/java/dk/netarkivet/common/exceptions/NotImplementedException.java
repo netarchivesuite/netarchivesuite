@@ -25,13 +25,13 @@ package dk.netarkivet.common.exceptions;
 
 /**
  * An exception to throw when an unfinished function is called.
- *
  */
 
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({"serial"})
 public class NotImplementedException extends NetarkivetException {
     /**
      * Constructs new NotImplementedException with the specified detail message.
+     *
      * @param message The detail message
      */
     public NotImplementedException(String message) {
@@ -39,8 +39,8 @@ public class NotImplementedException extends NetarkivetException {
     }
 
     /**
-     * Constructs new NotImplementedException with the
-     * specified detail message and cause.
+     * Constructs new NotImplementedException with the specified detail message and cause.
+     *
      * @param message The detail message
      * @param cause The cause
      */

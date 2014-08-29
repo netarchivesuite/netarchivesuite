@@ -28,19 +28,18 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import junit.framework.TestCase;
 import dk.netarkivet.common.utils.Named;
+import junit.framework.TestCase;
 
-
-/** 
- * Utilities for doing asserts on collections. 
+/**
+ * Utilities for doing asserts on collections.
  */
-@SuppressWarnings({ "rawtypes" })
+@SuppressWarnings({"rawtypes"})
 public class CollectionAsserts {
-    
-    /** Test that two iterators contain the same objects in the same order.
-     * The objects are tested using equals().  The iterators will be used
-     * by this.
+
+    /**
+     * Test that two iterators contain the same objects in the same order. The objects are tested using equals(). The
+     * iterators will be used by this.
      *
      * @param msg Failure message
      * @param i1 First iterator
@@ -60,7 +59,8 @@ public class CollectionAsserts {
         }
     }
 
-    /** Assert iterators of Named or String-objects have equal names in any order.
+    /**
+     * Assert iterators of Named or String-objects have equal names in any order.
      *
      * @param message Failure message
      * @param i1 First iterator
@@ -69,59 +69,55 @@ public class CollectionAsserts {
     public static void assertIteratorNamedEquals(String message, Iterator i1, Iterator i2) {
         String[] a1 = getSortedArray(i1, message);
         String[] a2 = getSortedArray(i2, message);
-        TestCase.assertTrue(message + "\n List 1: " + Arrays.asList(a1) + "\n List 2: " 
-                + Arrays.asList(a1), Arrays.equals(a1, a2));
+        TestCase.assertTrue(message + "\n List 1: " + Arrays.asList(a1) + "\n List 2: " + Arrays.asList(a1),
+                Arrays.equals(a1, a2));
     }
 
     private static String[] getSortedArray(Iterator i1, String message) {
         List<String> l1 = new ArrayList<String>();
-        while(i1.hasNext()) {
+        while (i1.hasNext()) {
             Object o = i1.next();
             if (o instanceof Named) {
                 l1.add(((Named) o).getName());
             } else if (o instanceof String) {
                 l1.add((String) o);
             } else {
-                TestCase.fail(message + "(iterator of wrong kind of object '" 
-                        + o + "' - " + o.getClass() + ")");
+                TestCase.fail(message + "(iterator of wrong kind of object '" + o + "' - " + o.getClass() + ")");
             }
         }
-        String[] a1 = l1.toArray(new String[]{});
+        String[] a1 = l1.toArray(new String[] {});
         Arrays.sort(a1);
         return a1;
     }
 
-    /** Assert that a list contains the given elements in order
+    /**
+     * Assert that a list contains the given elements in order
      *
      * @param msg A message in case of failure
      * @param actual A list of objects
      * @param expected The values that the list should contain.
      */
-    public static void assertListEquals(String msg, List<? extends Object> actual,
-                                        Object... expected) {
+    public static void assertListEquals(String msg, List<? extends Object> actual, Object... expected) {
         if (actual == null) {
             TestCase.fail(msg + ": Null list not expected");
         }
         if (expected.length != actual.size()) {
-            TestCase.fail(msg + ": Length mismatch: Expected " + expected.length
-                    + ", but got " + actual.size() + "\nExpected list: "
-                    + Arrays.asList(expected) + "\nActual list: " + actual);
+            TestCase.fail(msg + ": Length mismatch: Expected " + expected.length + ", but got " + actual.size()
+                    + "\nExpected list: " + Arrays.asList(expected) + "\nActual list: " + actual);
         }
         for (int i = 0; i < expected.length; i++) {
             final Object expectedValue = expected[i];
             final Object actualValue = actual.get(i);
             if (expectedValue != null) {
                 if (actualValue == null) {
-                    TestCase.fail(msg + ": Element " + i + " should be '" +
-                            expectedValue + "', but was null");
+                    TestCase.fail(msg + ": Element " + i + " should be '" + expectedValue + "', but was null");
                 } else if (!expectedValue.equals(actualValue)) {
-                    TestCase.fail(msg + ": Element " + i + " should be '" +
-                            expectedValue + "', but was '" + actualValue + "'");
+                    TestCase.fail(msg + ": Element " + i + " should be '" + expectedValue + "', but was '"
+                            + actualValue + "'");
                 }
             } else {
                 if (actualValue != null) {
-                    TestCase.fail(msg + ": Element " + i
-                            + " should be null, but was '" + actualValue);
+                    TestCase.fail(msg + ": Element " + i + " should be null, but was '" + actualValue);
                 }
             }
         }

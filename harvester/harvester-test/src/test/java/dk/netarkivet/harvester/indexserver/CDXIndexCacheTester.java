@@ -28,12 +28,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.harvester.indexserver.CDXIndexCache;
-import dk.netarkivet.testutils.FileAsserts;
-import org.junit.Before;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+
+import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.testutils.FileAsserts;
 
 /**
  * Unit test(s) for the CDXIndexCache class.
@@ -62,13 +62,14 @@ public class CDXIndexCacheTester extends CacheTestCase {
         requiredSet.add(4L);
         cache.combine(files);
         File cacheFile = cache.getCacheFile(files.keySet());
-        FileAsserts.assertFileNumberOfLines("Should have files 3 and 4",
+        FileAsserts.assertFileNumberOfLines(
+                "Should have files 3 and 4",
                 cacheFile,
-                (int)FileUtils.countLines(TestInfo.METADATA_FILE_3)
-                + (int)FileUtils.countLines(TestInfo.METADATA_FILE_4));
-        // Checks that lines are sorted:  The original metadata3 file has a
+                (int) FileUtils.countLines(TestInfo.METADATA_FILE_3)
+                        + (int) FileUtils.countLines(TestInfo.METADATA_FILE_4));
+        // Checks that lines are sorted: The original metadata3 file has a
         // metadatb line after the file 3 block 2 line.
-        FileAsserts.assertFileContains("Must have lines sorted",
-                "metadata file 3 block 2\nmetadata file 4 block 1", cacheFile);
+        FileAsserts.assertFileContains("Must have lines sorted", "metadata file 3 block 2\nmetadata file 4 block 1",
+                cacheFile);
     }
 }

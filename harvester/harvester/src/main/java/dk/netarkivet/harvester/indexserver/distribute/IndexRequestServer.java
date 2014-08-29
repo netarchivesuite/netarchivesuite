@@ -67,59 +67,55 @@ import dk.netarkivet.harvester.indexserver.IndexRequestServerInterface;
 
 /**
  * Index request server singleton.
- *
+ * <p>
  * This class contains a singleton that handles requesting an index over JMS.
- *
- * It will ALWAYS reply to such messages, either with the index, a message
- * telling that only a subset is available, and which, or an error message,
- *
+ * <p>
+ * It will ALWAYS reply to such messages, either with the index, a message telling that only a subset is available, and
+ * which, or an error message,
  */
-public final class IndexRequestServer extends HarvesterMessageHandler
-		implements CleanupIF, IndexRequestServerInterface  {
+public final class IndexRequestServer extends HarvesterMessageHandler implements CleanupIF, IndexRequestServerInterface {
 
-	/** The class logger. */
+    /** The class logger. */
     private static final Logger log = LoggerFactory.getLogger(IndexRequestServer.class);
 
     /** The unique instance. */
     private static IndexRequestServer instance;
     /** The handlers for index request types. */
     private Map<RequestType, FileBasedCache<Set<Long>>> handlers;
-    
+
     /** The connection to the JMSBroker. */
     private static JMSConnection conn;
     /** A set with the current indexing jobs in progress. */
     private static Map<String, IndexRequestMessage> currentJobs;
-    
+
     /** The max number of concurrent jobs. */
     private static long maxConcurrentJobs;
     /** Are we listening, now. */
     private static AtomicBoolean isListening = new AtomicBoolean();
-    
+
     /** Interval in milliseconds between listening checks. */
     private static long listeningInterval;
     /** The timer that initiates the checkIflisteningTask. */
     private Timer checkIflisteningTimer = new Timer();
-    
+
     /** satisfactoryThreshold percentage as an integer. */
     private int satisfactoryThresholdPercentage;
 
     /**
-     * The directory to store backup copies of the currentJobs.
-     * In case of the indexserver crashing. 
+     * The directory to store backup copies of the currentJobs. In case of the indexserver crashing.
      */
     private File requestDir;
 
     /**
-     * Initialise index request server with no handlers, listening to the
-     * index JMS channel.
+     * Initialise index request server with no handlers, listening to the index JMS channel.
      */
     private IndexRequestServer() {
         maxConcurrentJobs = Settings.getLong(HarvesterSettings.INDEXSERVER_INDEXING_MAXCLIENTS);
         requestDir = Settings.getFile(HarvesterSettings.INDEXSERVER_INDEXING_REQUESTDIR);
         listeningInterval = Settings.getLong(HarvesterSettings.INDEXSERVER_INDEXING_LISTENING_INTERVAL);
-        satisfactoryThresholdPercentage = Settings.getInt(
-        		HarvesterSettings.INDEXSERVER_INDEXING_SATISFACTORYTHRESHOLD_PERCENTAGE);
-        
+        satisfactoryThresholdPercentage = Settings
+                .getInt(HarvesterSettings.INDEXSERVER_INDEXING_SATISFACTORYTHRESHOLD_PERCENTAGE);
+
         currentJobs = new HashMap<String, IndexRequestMessage>();
         handlers = new EnumMap<RequestType, FileBasedCache<Set<Long>>>(RequestType.class);
         conn = JMSConnectionFactory.getInstance();
@@ -144,14 +140,14 @@ public final class IndexRequestServer extends HarvesterMessageHandler
         for (File request : requests) {
             if (request.isFile()) {
                 final IndexRequestMessage msg = restoreMessage(request);
-                synchronized(currentJobs) {
+                synchronized (currentJobs) {
                     if (!currentJobs.containsKey(msg.getID())) {
                         currentJobs.put(msg.getID(), msg);
                     } else {
                         log.debug("Skipped message w/id='{}'. Already among current jobs", msg.getID());
                         continue;
                     }
-                    
+
                 }
                 // Start a new thread to handle the actual request.
                 new Thread() {
@@ -166,7 +162,8 @@ public final class IndexRequestServer extends HarvesterMessageHandler
         }
     }
 
-    /** Get the unique index request server instance.
+    /**
+     * Get the unique index request server instance.
      *
      * @return The index request server.
      */
@@ -178,8 +175,8 @@ public final class IndexRequestServer extends HarvesterMessageHandler
         return instance;
     }
 
-    /** Set handler for certain type of index request. If called more than once,
-     * new handler overwrites old one.
+    /**
+     * Set handler for certain type of index request. If called more than once, new handler overwrites old one.
      *
      * @param t The type of index requested
      * @param handler The handler that should handle this request.
@@ -191,32 +188,25 @@ public final class IndexRequestServer extends HarvesterMessageHandler
         handlers.put(t, handler);
     }
 
-    /** Given a request for an index over a set of job ids, use a cache to
-     * try to create the index, Then reply result.
-     *
-     * If for any reason not all requested jobs can be indexed, return the
-     * subset. The client can then retry with this subset, in order to get index
-     * of that subset.
-     *
-     * Values read from the message in order to handle this:
-     * - Type of index requested - will use the index cache of this type
-     * - Set of job IDs - which jobs to generate index for
-     *
-     * Values written to message before replying:
-     * - The subset indexed - may be the entire set. ALWAYS set unless reply !OK
-     * - File with index - ONLY if subset is entire set, the index requested.
-     *
-     * This method should ALWAYS reply. May reply with not OK message if:
-     * - Message received was not OK
-     * - Request type is null or unknown in message
-     * - Set of job ids is null in message
-     * - Cache generation throws exception
+    /**
+     * Given a request for an index over a set of job ids, use a cache to try to create the index, Then reply result.
+     * <p>
+     * If for any reason not all requested jobs can be indexed, return the subset. The client can then retry with this
+     * subset, in order to get index of that subset.
+     * <p>
+     * Values read from the message in order to handle this: - Type of index requested - will use the index cache of
+     * this type - Set of job IDs - which jobs to generate index for
+     * <p>
+     * Values written to message before replying: - The subset indexed - may be the entire set. ALWAYS set unless reply
+     * !OK - File with index - ONLY if subset is entire set, the index requested.
+     * <p>
+     * This method should ALWAYS reply. May reply with not OK message if: - Message received was not OK - Request type
+     * is null or unknown in message - Set of job ids is null in message - Cache generation throws exception
      *
      * @param irMsg A message requesting an index.
      * @throws ArgumentNotValid on null parameter
      */
-    public synchronized void visit(final IndexRequestMessage irMsg) 
-    throws ArgumentNotValid {
+    public synchronized void visit(final IndexRequestMessage irMsg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(irMsg, "IndexRequestMessage irMsg");
         // save new msg to requestDir
         try {
@@ -226,12 +216,12 @@ public final class IndexRequestServer extends HarvesterMessageHandler
                     currentJobs.put(irMsg.getID(), irMsg);
                 } else {
                     final String errMsg = "Should not happen. Skipping msg w/ id= '" + irMsg.getID()
-                    		+ "' because already among current jobs. "
-                    		+ "Unable to initiate indexing. Sending failed message back to sender";
-                        log.warn(errMsg);
-                        irMsg.setNotOk(errMsg);
-                        JMSConnectionFactory.getInstance().reply(irMsg);
-                        return;
+                            + "' because already among current jobs. "
+                            + "Unable to initiate indexing. Sending failed message back to sender";
+                    log.warn(errMsg);
+                    irMsg.setNotOk(errMsg);
+                    JMSConnectionFactory.getInstance().reply(irMsg);
+                    return;
                 }
             }
             // Limit the number of concurrently indexing job
@@ -242,15 +232,15 @@ public final class IndexRequestServer extends HarvesterMessageHandler
                 }
             }
 
-            //Start a new thread to handle the actual request.
-            new Thread(){
+            // Start a new thread to handle the actual request.
+            new Thread() {
                 public void run() {
                     doProcessIndexRequestMessage(irMsg);
                 }
             }.start();
             log.debug("Now {} indexing jobs in progress", currentJobs.size());
         } catch (IOException e) {
-            final String errMsg = "Unable to initiate indexing. Send failed message back to sender: " + e; 
+            final String errMsg = "Unable to initiate indexing. Send failed message back to sender: " + e;
             log.warn(errMsg, e);
             irMsg.setNotOk(errMsg);
             JMSConnectionFactory.getInstance().reply(irMsg);
@@ -259,6 +249,7 @@ public final class IndexRequestServer extends HarvesterMessageHandler
 
     /**
      * Save a IndexRequestMessage to disk.
+     *
      * @param irMsg A message to store to disk
      * @throws IOException Throws IOExecption, if unable to save message
      */
@@ -274,15 +265,16 @@ public final class IndexRequestServer extends HarvesterMessageHandler
         } finally {
             IOUtils.closeQuietly(oos);
         }
-        
+
     }
 
     /**
      * Restore message from serialized state.
+     *
      * @param serializedObject the object stored as a file.
      * @return the restored message.
      */
-    private IndexRequestMessage restoreMessage(File serializedObject) {        
+    private IndexRequestMessage restoreMessage(File serializedObject) {
         Object obj = null;
         ObjectInputStream ois = null;
         try {
@@ -293,29 +285,29 @@ public final class IndexRequestServer extends HarvesterMessageHandler
             obj = ois.readObject();
         } catch (ClassNotFoundException e) {
             throw new IllegalState("Not possible to read the stored message from file '"
-            		+ serializedObject.getAbsolutePath() + "':", e);
+                    + serializedObject.getAbsolutePath() + "':", e);
         } catch (IOException e) {
             throw new IOFailure("Not possible to read the stored message from file '"
-            		+ serializedObject.getAbsolutePath() + "':", e);
+                    + serializedObject.getAbsolutePath() + "':", e);
         } finally {
             IOUtils.closeQuietly(ois);
         }
 
-        if (obj instanceof IndexRequestMessage){
+        if (obj instanceof IndexRequestMessage) {
             return (IndexRequestMessage) obj;
         } else {
-            throw new IllegalState("The serialized message is not a " + IndexRequestMessage.class.getName()
-            		+ " but a " + obj.getClass().getName());
+            throw new IllegalState("The serialized message is not a " + IndexRequestMessage.class.getName() + " but a "
+                    + obj.getClass().getName());
         }
     }
-    
+
     /**
-     * Method that handles the processing of an indexRequestMessage. Returns the requested
-     * index immediately, if already available, otherwise proceeds with the index generation of
-     * the requested index. 
-     * Must be run in its own thread, because it blocks while the index is generated.
-     * @see #visit(IndexRequestMessage)
+     * Method that handles the processing of an indexRequestMessage. Returns the requested index immediately, if already
+     * available, otherwise proceeds with the index generation of the requested index. Must be run in its own thread,
+     * because it blocks while the index is generated.
+     *
      * @param irMsg A message requesting an index
+     * @see #visit(IndexRequestMessage)
      */
     private void doProcessIndexRequestMessage(final IndexRequestMessage irMsg) {
         final boolean mustReturnIndex = irMsg.mustReturnIndex();
@@ -325,72 +317,72 @@ public final class IndexRequestServer extends HarvesterMessageHandler
             Set<Long> jobIDs = irMsg.getRequestedJobs();
 
             if (log.isInfoEnabled()) {
-                log.info("Request received for an index of type '{}' for the {} jobs [{}]",
-                		type, jobIDs.size(), StringUtils.conjoin(",", jobIDs));
+                log.info("Request received for an index of type '{}' for the {} jobs [{}]", type, jobIDs.size(),
+                        StringUtils.conjoin(",", jobIDs));
             }
             FileBasedCache<Set<Long>> handler = handlers.get(type);
-            
+
             // Here we need to make sure that we don't accidentally process more than
             // one message at the time before the whole process is over
             List<Long> sortedList = new ArrayList<Long>(jobIDs);
             String allIDsString = StringUtils.conjoin("-", sortedList);
             String checksum = ChecksumCalculator.calculateMd5(allIDsString.getBytes());
             log.debug("Waiting to enter the synchronization zone for the indexing job of size {} with checksum '{}'",
-            		jobIDs.size(), checksum);
+                    jobIDs.size(), checksum);
             // Begin synchronization
             synchronized (checksum.intern()) {
                 log.debug("The indexing job of size {} with checksum '{}' is now in the synchronization zone",
-                		jobIDs.size(), checksum);
+                        jobIDs.size(), checksum);
                 Set<Long> foundIDs = handler.cache(jobIDs);
                 irMsg.setFoundJobs(foundIDs);
                 if (foundIDs.equals(jobIDs)) {
-                	if (log.isInfoEnabled()) {
-                        log.info("Retrieved successfully index of type '{}' for the {} jobs [{}]",
-                        		type, jobIDs.size(), StringUtils.conjoin(",", jobIDs));
-                	}
+                    if (log.isInfoEnabled()) {
+                        log.info("Retrieved successfully index of type '{}' for the {} jobs [{}]", type, jobIDs.size(),
+                                StringUtils.conjoin(",", jobIDs));
+                    }
                     File cacheFile = handler.getCacheFile(jobIDs);
-                    if (mustReturnIndex) { // return index now! 
+                    if (mustReturnIndex) { // return index now!
                         packageResultFiles(irMsg, cacheFile);
                     }
                 } else if (satisfactoryTresholdReached(foundIDs, jobIDs)) {
                     log.info("Data for full index w/ {} jobs not available. Only found data for {} jobs - "
-                    		+ "but satisfactoryTreshold reached, so assuming presence of all data",
-                    		jobIDs.size(), foundIDs.size());
+                            + "but satisfactoryTreshold reached, so assuming presence of all data", jobIDs.size(),
+                            foundIDs.size());
                     // Make sure that the index of the data available is generated
                     Set<Long> theFoundIDs = handler.cache(foundIDs);
                     // TheFoundIDS should be identical to foundIDs
-                    // Lets make sure of that 
+                    // Lets make sure of that
                     Set<Long> diffSet = new HashSet<Long>(foundIDs);
                     diffSet.removeAll(theFoundIDs);
-                    
+
                     // Make a copy of the index available, and give it the name of
                     // the index cache file wanted.
                     File cacheFileWanted = handler.getCacheFile(jobIDs);
                     File cacheFileCreated = handler.getCacheFile(foundIDs);
 
                     log.info("Satisfactory threshold reached - copying index {} '{}' to full index: {}",
-                    		(cacheFileCreated.isDirectory()? "dir": "file"), cacheFileCreated.getAbsolutePath(),
-                    		cacheFileWanted.getAbsolutePath());
+                            (cacheFileCreated.isDirectory() ? "dir" : "file"), cacheFileCreated.getAbsolutePath(),
+                            cacheFileWanted.getAbsolutePath());
                     if (cacheFileCreated.isDirectory()) {
-                        // create destination cacheFileWanted, and 
+                        // create destination cacheFileWanted, and
                         // copy all files in cacheFileCreated to cacheFileWanted.
                         cacheFileWanted.mkdirs();
                         FileUtils.copyDirectory(cacheFileCreated, cacheFileWanted);
                     } else {
                         FileUtils.copyFile(cacheFileCreated, cacheFileWanted);
                     }
-                    
-                    //TODO This delete-operation commented out, because it is deemed too dangerous,
+
+                    // TODO This delete-operation commented out, because it is deemed too dangerous,
                     // as the cachedir represented by cacheFileCreated may still be used
-                    
-                    //log.info("Deleting the temporary index " 
-                    //        + cacheFileCreated.getAbsolutePath());
-                    //FileUtils.removeRecursively(cacheFileCreated);
+
+                    // log.info("Deleting the temporary index "
+                    // + cacheFileCreated.getAbsolutePath());
+                    // FileUtils.removeRecursively(cacheFileCreated);
                     log.info("We keep the index '{}', as we don't know if anybody is using it",
-                    		cacheFileCreated.getAbsolutePath());
+                            cacheFileCreated.getAbsolutePath());
 
                     // Information needed by recipient to store index in local cache
-                    irMsg.setFoundJobs(jobIDs); 
+                    irMsg.setFoundJobs(jobIDs);
                     if (mustReturnIndex) { // return index now.
                         packageResultFiles(irMsg, cacheFileWanted);
                     }
@@ -398,12 +390,13 @@ public final class IndexRequestServer extends HarvesterMessageHandler
                     Set<Long> missingJobIds = new HashSet<Long>(jobIDs);
                     missingJobIds.removeAll(foundIDs);
                     log.warn("Failed generating index of type '{}' for the jobs [{}]. Missing data for jobs [{}].",
-                    		type, StringUtils.conjoin(",", jobIDs), StringUtils.conjoin(",", missingJobIds));
+                            type, StringUtils.conjoin(",", jobIDs), StringUtils.conjoin(",", missingJobIds));
                 }
-                
+
             } // End of synchronization block
         } catch (Throwable t) {
-            log.warn("Unable to generate index for jobs [" + StringUtils.conjoin(",", irMsg.getRequestedJobs()) + "]", t);
+            log.warn("Unable to generate index for jobs [" + StringUtils.conjoin(",", irMsg.getRequestedJobs()) + "]",
+                    t);
             irMsg.setNotOk(t);
         } finally {
             // Remove job from currentJobs Set
@@ -420,26 +413,27 @@ public final class IndexRequestServer extends HarvesterMessageHandler
                 log.info("Sending {} reply for IndexRequestMessage back to sender '{}'.", state, irMsg.getReplyTo());
                 JMSConnectionFactory.getInstance().reply(irMsg);
             } else {
-               log.info("Sending {} IndexReadyMessage to Scheduler for harvest {}", state, irMsg.getHarvestId());
-               boolean isindexready = true;
-               if (state.equalsIgnoreCase("failed")) {
-                   isindexready = false;
-               }
-               IndexReadyMessage irm = new IndexReadyMessage(irMsg.getHarvestId(),isindexready, irMsg.getReplyTo(),
-            		   Channels.getTheIndexServer());
-               JMSConnectionFactory.getInstance().send(irm);
+                log.info("Sending {} IndexReadyMessage to Scheduler for harvest {}", state, irMsg.getHarvestId());
+                boolean isindexready = true;
+                if (state.equalsIgnoreCase("failed")) {
+                    isindexready = false;
+                }
+                IndexReadyMessage irm = new IndexReadyMessage(irMsg.getHarvestId(), isindexready, irMsg.getReplyTo(),
+                        Channels.getTheIndexServer());
+                JMSConnectionFactory.getInstance().send(irm);
             }
         }
     }
-  
+
     /**
      * Package the result files with the message reply.
+     *
      * @param irMsg the message being answered
      * @param cacheFile The location of the result on disk.
      */
     private void packageResultFiles(IndexRequestMessage irMsg, File cacheFile) {
         RemoteFileSettings connectionParams = irMsg.getRemoteFileSettings();
-        
+
         if (connectionParams != null) {
             log.debug("Trying to use client supplied RemoteFileServer: {}", connectionParams.getServerName());
         }
@@ -449,7 +443,7 @@ public final class IndexRequestServer extends HarvesterMessageHandler
             File[] cacheFiles = cacheFile.listFiles();
             List<RemoteFile> resultFiles = new ArrayList<RemoteFile>(cacheFiles.length);
             for (File f : cacheFiles) {
-                resultFiles.add(RemoteFileFactory.getCopyfileInstance(f, irMsg.getRemoteFileSettings()));   
+                resultFiles.add(RemoteFileFactory.getCopyfileInstance(f, irMsg.getRemoteFileSettings()));
             }
             irMsg.setResultFiles(resultFiles);
         } else {
@@ -458,16 +452,16 @@ public final class IndexRequestServer extends HarvesterMessageHandler
     }
 
     /**
-     * Threshold for when the created index contains enough data to be 
-     * considered a satisfactory index.
-     * Uses the {@link IndexRequestServer#satisfactoryThresholdPercentage}.
+     * Threshold for when the created index contains enough data to be considered a satisfactory index. Uses the
+     * {@link IndexRequestServer#satisfactoryThresholdPercentage}.
+     *
      * @param foundIDs The list of IDs contained in the index
      * @param requestedIDs The list of IDs requested in the index.
      * @return true, if the ratio foundIDs/requestedIDs is above the
-     * {@link IndexRequestServer#satisfactoryThresholdPercentage}.    
+     * {@link IndexRequestServer#satisfactoryThresholdPercentage}.
      */
     private boolean satisfactoryTresholdReached(Set<Long> foundIDs, Set<Long> requestedIDs) {
-        int jobsRequested = requestedIDs.size(); 
+        int jobsRequested = requestedIDs.size();
         int jobsFound = foundIDs.size();
         int percentage = (jobsFound * 100) / jobsRequested;
         if (percentage > satisfactoryThresholdPercentage) {
@@ -479,6 +473,7 @@ public final class IndexRequestServer extends HarvesterMessageHandler
 
     /**
      * Deleted stored file for given message.
+     *
      * @param irMsg a given IndexRequestMessage
      */
     private void deleteStoredMessage(IndexRequestMessage irMsg) {
@@ -495,13 +490,11 @@ public final class IndexRequestServer extends HarvesterMessageHandler
     }
 
     /**
-     * Helper method to check message properties. Will throw exceptions on any
-     * trouble.
+     * Helper method to check message properties. Will throw exceptions on any trouble.
+     *
      * @param irMsg The message to check.
-     * @throws ArgumentNotValid If message is not OK, or if the list of jobs or
-     * the index request type is null.
-     * @throws UnknownID If the index request type is of a form that is unknown
-     * to the server.
+     * @throws ArgumentNotValid If message is not OK, or if the list of jobs or the index request type is null.
+     * @throws UnknownID If the index request type is of a form that is unknown to the server.
      */
     private void checkMessage(final IndexRequestMessage irMsg) throws UnknownID, ArgumentNotValid {
         ArgumentNotValid.checkTrue(irMsg.isOk(), "Message was not OK");
@@ -522,34 +515,33 @@ public final class IndexRequestServer extends HarvesterMessageHandler
         // shutdown listening timer.
         checkIflisteningTimer.cancel();
         conn.removeListener(Channels.getTheIndexServer(), this);
-        handlers.clear();    
+        handlers.clear();
 
         if (instance != null) {
             instance = null;
         }
     }
-    
+
     /**
-     * Look for stored messages to be preprocessed, and start processing those.
-     * And start the separate thread that decides if we should listen for 
-     * index-requests.
+     * Look for stored messages to be preprocessed, and start processing those. And start the separate thread that
+     * decides if we should listen for index-requests.
      */
     public void start() {
-        restoreRequestsfromRequestDir();    
-        log.info("{} indexing jobs in progress that was stored in requestdir: {}",
-        		currentJobs.size(), requestDir.getAbsolutePath());
+        restoreRequestsfromRequestDir();
+        log.info("{} indexing jobs in progress that was stored in requestdir: {}", currentJobs.size(),
+                requestDir.getAbsolutePath());
 
         // Define and start thread to observe current jobs:
         // Only job is to look at the isListening atomicBoolean.
-        // If not listening, check if we are ready to listen again.   
+        // If not listening, check if we are ready to listen again.
         TimerTask checkIfListening = new ListeningTask(this);
         isListening.set(false);
         checkIflisteningTimer.schedule(checkIfListening, 0L, listeningInterval);
     }
-    
+
     /**
-     * Defines the task to repeatedly check the listening status.
-     * And begin listening again, if we are ready for more tasks.
+     * Defines the task to repeatedly check the listening status. And begin listening again, if we are ready for more
+     * tasks.
      */
     private static class ListeningTask extends TimerTask {
         /** The indexrequestserver this task is associated with. */
@@ -557,9 +549,8 @@ public final class IndexRequestServer extends HarvesterMessageHandler
 
         /**
          * Constructor for the ListeningTask.
-         * 
-         * @param irs
-         *            The indexrequestserver this task should be associated with
+         *
+         * @param irs The indexrequestserver this task should be associated with
          */
         ListeningTask(IndexRequestServer irs) {
             thisIrs = irs;

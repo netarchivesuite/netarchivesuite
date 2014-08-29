@@ -22,11 +22,12 @@
  */
 package dk.netarkivet.harvester.distribute;
 
-import dk.netarkivet.common.distribute.ChannelID;
-import dk.netarkivet.common.distribute.Channels;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 
+import dk.netarkivet.common.distribute.ChannelID;
+import dk.netarkivet.common.distribute.Channels;
 
 public class IndexReadyMessageTester {
 
@@ -37,11 +38,10 @@ public class IndexReadyMessageTester {
         IndexReadyMessage irm = new IndexReadyMessage(42L, true, to, replyTo);
         assertTrue(42L == irm.getHarvestId());
         assertTrue(true == irm.getIndexOK());
-        
+
         irm = new IndexReadyMessage(43L, false, to, replyTo);
         assertTrue(43L == irm.getHarvestId());
         assertTrue(false == irm.getIndexOK());
-        
-        
+
     }
 }

@@ -39,8 +39,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.archive.io.ArchiveReader;
 import org.archive.io.ArchiveReaderFactory;
 import org.archive.io.ArchiveRecord;
@@ -52,22 +50,21 @@ import org.junit.Test;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 import dk.netarkivet.common.utils.batch.FileBatchJob.ExceptionOccurrence;
+import junit.framework.TestCase;
 
 /**
- * Test class used for investigating CDX generation from WARC-files 
- * using a modified ExtractCDXJob class.
- * 
+ * Test class used for investigating CDX generation from WARC-files using a modified ExtractCDXJob class.
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({"serial"})
 public class ExtractCDXFromWarcJobTester {
-    
-    //Shared instance of BatchLocalFiles
+
+    // Shared instance of BatchLocalFiles
     private BatchLocalFiles warcBlaf;
-    
-    //Our main instance of ExtractCDXFromWarcJob:
+
+    // Our main instance of ExtractCDXFromWarcJob:
     private ExtractCDXFromWarcJob warcJob;
-    
-    //A useful counter:
+
+    // A useful counter:
     private int processed;
 
     /**
@@ -76,14 +73,10 @@ public class ExtractCDXFromWarcJobTester {
     @Before
     public void setUp() throws Exception {
         processed = 0;
-        warcBlaf = new BatchLocalFiles(new File[]{
-                TestInfo.WARC_FILE1,
-                TestInfo.WARC_FILE2,
-                TestInfo.WARC_FILE3,
-        });
- 
+        warcBlaf = new BatchLocalFiles(new File[] {TestInfo.WARC_FILE1, TestInfo.WARC_FILE2, TestInfo.WARC_FILE3,});
+
         FileUtils.createDir(TestInfo.CDX_DIR);
-        
+
     }
 
     @After
@@ -102,8 +95,7 @@ public class ExtractCDXFromWarcJobTester {
     }
 
     /**
-     * Verify that the job runs without problems and visits all relevant
-     * records.
+     * Verify that the job runs without problems and visits all relevant records.
      */
     @Test
     @Ignore("The correct number of records should be processed expected:<11> but was:<135>")
@@ -120,16 +112,14 @@ public class ExtractCDXFromWarcJobTester {
         Exception[] es = warcJob.getExceptionArray();
         printExceptions(es);
         assertEquals("No exceptions should be thrown", 0, es.length);
-        assertEquals("The correct number of records should be processed",
-                     TestInfo.NUM_RECORDS, processed);
+        assertEquals("The correct number of records should be processed", TestInfo.NUM_RECORDS, processed);
     }
-    
+
     @Test
     public void testExtractCDXJobWithWarcfilesExcludeChecsum() throws Exception {
         warcJob = new ExtractCDXFromWarcJob(false);
         OutputStream os = new ByteArrayOutputStream();
-        assertFalse("The to-be-generated file should not exist aforehand",
-                    TestInfo.CDX_FILE.exists());
+        assertFalse("The to-be-generated file should not exist aforehand", TestInfo.CDX_FILE.exists());
         os = new FileOutputStream(TestInfo.CDX_FILE);
         warcBlaf.run(warcJob, os);
         os.close();
@@ -138,7 +128,7 @@ public class ExtractCDXFromWarcJobTester {
             System.out.println("Exception: " + eo.getException());
         }
         assertTrue(warcJob.getExceptions().isEmpty());
-        
+
         System.out.println(FileUtils.readFile(TestInfo.CDX_FILE));
     }
 
@@ -146,8 +136,7 @@ public class ExtractCDXFromWarcJobTester {
     public void testExtractCDXJobWithWarcfilesIncludeChecksum() throws Exception {
         warcJob = new ExtractCDXFromWarcJob(true);
         OutputStream os = new ByteArrayOutputStream();
-        assertFalse("The to-be-generated file should not exist aforehand",
-                    TestInfo.CDX_FILE.exists());
+        assertFalse("The to-be-generated file should not exist aforehand", TestInfo.CDX_FILE.exists());
         os = new FileOutputStream(TestInfo.CDX_FILE);
         warcBlaf.run(warcJob, os);
         os.close();
@@ -155,12 +144,11 @@ public class ExtractCDXFromWarcJobTester {
         for (ExceptionOccurrence eo : exceptions) {
             System.out.println("Exception: " + eo.getException());
         }
-        //assertFalse(warcJob.getExceptions().isEmpty());
-        
+        // assertFalse(warcJob.getExceptions().isEmpty());
+
         System.out.println(FileUtils.readFile(TestInfo.CDX_FILE));
     }
-    
-    
+
     @Test
     public void testWarcIteration() throws Exception {
         warcJob = new ExtractCDXFromWarcJob() {
@@ -170,36 +158,33 @@ public class ExtractCDXFromWarcJobTester {
             }
         };
         OutputStream os = new ByteArrayOutputStream();
-        assertFalse("The to-be-generated file should not exist aforehand",
-                    TestInfo.CDX_FILE.exists());
+        assertFalse("The to-be-generated file should not exist aforehand", TestInfo.CDX_FILE.exists());
         os = new FileOutputStream(TestInfo.CDX_FILE);
         warcBlaf.run(warcJob, os);
         os.close();
-        
+
     }
-    
+
     /**
      * Test whether the class is really Serializable.
      */
     @Test
-    public void testSerializability()
-            throws IOException, ClassNotFoundException {
-        //Take two jobs: one for study and one for reference.
+    public void testSerializability() throws IOException, ClassNotFoundException {
+        // Take two jobs: one for study and one for reference.
         ExtractCDXFromWarcJob job1 = new StubbornJob();
         ExtractCDXFromWarcJob job2 = new StubbornJob();
-        //Now serialize and deserialize the studied job (but NOT the reference):
+        // Now serialize and deserialize the studied job (but NOT the reference):
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ObjectOutputStream ous = new ObjectOutputStream(baos);
         ous.writeObject(job1);
         ous.close();
         baos.close();
-        ObjectInputStream ois = new ObjectInputStream(
-                new ByteArrayInputStream(baos.toByteArray()));
+        ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(baos.toByteArray()));
         job1 = (ExtractCDXFromWarcJob) ois.readObject();
-        //Finally, compare their outputs:
+        // Finally, compare their outputs:
         ByteArrayOutputStream baos1 = new ByteArrayOutputStream();
         ByteArrayOutputStream baos2 = new ByteArrayOutputStream();
-        //Run both jobs ordinarily:
+        // Run both jobs ordinarily:
         warcBlaf.run(job1, baos1);
         warcBlaf.run(job2, baos2);
         baos1.close();
@@ -213,18 +198,17 @@ public class ExtractCDXFromWarcJobTester {
                 System.out.println("b2=" + b2[i]);
                 fail("\nDifference at position " + i);
             } else {
-                //System.out.println(b1[i]);
+                // System.out.println(b1[i]);
             }
         }
-        assertTrue("Output from cdx jobs should be the same",
-                   Arrays.equals(baos1.toByteArray(), baos2.toByteArray()));
+        assertTrue("Output from cdx jobs should be the same", Arrays.equals(baos1.toByteArray(), baos2.toByteArray()));
     }
 
     @Test
-    public void testWarcReading() throws Exception{     
-    
+    public void testWarcReading() throws Exception {
+
         ArchiveReader archiveReader = ArchiveReaderFactory.get(TestInfo.WARC_FILE1);
-        
+
         Iterator<? extends ArchiveRecord> it = archiveReader.iterator();
         assertTrue("Warc should contains records", it.hasNext());
         while (it.hasNext()) {
@@ -233,11 +217,9 @@ public class ExtractCDXFromWarcJobTester {
             System.out.println("url:" + next.getHeader().getUrl());
         }
     }
-    
-    
+
     /**
-     * A class used in testing Serializability. For this test, we need a job
-     * that doesn't finish until asked twice
+     * A class used in testing Serializability. For this test, we need a job that doesn't finish until asked twice
      */
     private static class StubbornJob extends ExtractCDXFromWarcJob {
         boolean askedBefore = false;
@@ -265,16 +247,16 @@ public class ExtractCDXFromWarcJobTester {
             es[i].printStackTrace();
         }
     }
-    
+
     /**
      * Helper method (no longer used).
+     *
      * @param psWord
      * @param psReplace
      * @param psNewSeg
      * @return
      */
-    public static String replace(String psWord, String psReplace,
-            String psNewSeg) {
+    public static String replace(String psWord, String psReplace, String psNewSeg) {
         StringBuffer lsNewStr = new StringBuffer();
         int liFound = 0;
         int liLastPointer = 0;
@@ -284,8 +266,7 @@ public class ExtractCDXFromWarcJobTester {
             liFound = psWord.indexOf(psReplace, liLastPointer);
 
             if (liFound < 0) {
-                lsNewStr.append(psWord
-                        .substring(liLastPointer, psWord.length()));
+                lsNewStr.append(psWord.substring(liLastPointer, psWord.length()));
             } else {
 
                 if (liFound > liLastPointer) {

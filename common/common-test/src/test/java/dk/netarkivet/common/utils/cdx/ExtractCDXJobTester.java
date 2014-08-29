@@ -40,8 +40,6 @@ import java.io.OutputStream;
 import java.io.StringReader;
 import java.util.Arrays;
 
-import junit.framework.TestCase;
-
 import org.archive.io.arc.ARCRecord;
 import org.junit.After;
 import org.junit.Before;
@@ -49,17 +47,18 @@ import org.junit.Test;
 
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
+import junit.framework.TestCase;
 
-@SuppressWarnings({ "unused", "serial"})
+@SuppressWarnings({"unused", "serial"})
 public class ExtractCDXJobTester {
-    
-    //Shared instance of BatchLocalFiles
+
+    // Shared instance of BatchLocalFiles
     private BatchLocalFiles arcBlaf;
-        
-    //Our main instance of ExtractCDXJob:
+
+    // Our main instance of ExtractCDXJob:
     private ExtractCDXJob job;
 
-    //A useful counter:
+    // A useful counter:
     private int processed;
 
     /**
@@ -68,10 +67,9 @@ public class ExtractCDXJobTester {
     @Before
     public void setUp() throws Exception {
         processed = 0;
-        arcBlaf = new BatchLocalFiles(new File[]{TestInfo.ARC_FILE1,
-                new File(TestInfo.ARC_DIR, "input-2.arc"),
+        arcBlaf = new BatchLocalFiles(new File[] {TestInfo.ARC_FILE1, new File(TestInfo.ARC_DIR, "input-2.arc"),
                 new File(TestInfo.ARC_DIR, "input-3.arc")});
-        FileUtils.createDir(TestInfo.CDX_DIR);        
+        FileUtils.createDir(TestInfo.CDX_DIR);
     }
 
     @After
@@ -90,8 +88,7 @@ public class ExtractCDXJobTester {
     }
 
     /**
-     * Verify that the job runs without problems and visits all relevant
-     * records.
+     * Verify that the job runs without problems and visits all relevant records.
      */
     @Test
     public void testRun() throws IOException {
@@ -107,79 +104,70 @@ public class ExtractCDXJobTester {
         Exception[] es = job.getExceptionArray();
         printExceptions(es);
         assertEquals("No exceptions should be thrown", 0, es.length);
-        assertEquals("The correct number of records should be processed",
-                     TestInfo.NUM_RECORDS, processed);
+        assertEquals("The correct number of records should be processed", TestInfo.NUM_RECORDS, processed);
     }
 
     /**
-     * Test the output of CDX data. It is not a requirement that this operation
-     * can be performed several times in a row; the job is allowed to let go of
-     * the CDX data after successfully writing it out.
+     * Test the output of CDX data. It is not a requirement that this operation can be performed several times in a row;
+     * the job is allowed to let go of the CDX data after successfully writing it out.
      */
     @Test
     public void testDumpCDX() throws IOException {
         job = new ExtractCDXJob();
         OutputStream os = new ByteArrayOutputStream();
-        assertFalse("The to-be-generated file should not exist aforehand",
-                    TestInfo.CDX_FILE.exists());
+        assertFalse("The to-be-generated file should not exist aforehand", TestInfo.CDX_FILE.exists());
         os = new FileOutputStream(TestInfo.CDX_FILE);
         arcBlaf.run(job, os);
         Exception[] es = job.getExceptionArray();
         os.close();
-        //TODO: Should test for length or content instead:
+        // TODO: Should test for length or content instead:
         assertTrue("The generated file must exist", TestInfo.CDX_FILE.exists());
         String tpath = FileUtils.readFile(TestInfo.CORRECT_CDX_FILE);
-        BufferedReader expectedReader = new BufferedReader(
-                new StringReader(tpath));
-        BufferedReader resultsReader = new BufferedReader(
-                new FileReader(TestInfo.CDX_FILE));
+        BufferedReader expectedReader = new BufferedReader(new StringReader(tpath));
+        BufferedReader resultsReader = new BufferedReader(new FileReader(TestInfo.CDX_FILE));
         String s;
         while ((s = expectedReader.readLine()) != null) {
-            assertEquals("The contents of the file should be correct", s,
-                         resultsReader.readLine());
+            assertEquals("The contents of the file should be correct", s, resultsReader.readLine());
         }
         expectedReader.close();
         resultsReader.close();
     }
-    
+
     /*
-     * The CDX content itself is not tested. The requirement on that is that it
-     * is compatible with existing tools. There is an external test for that.
+     * The CDX content itself is not tested. The requirement on that is that it is compatible with existing tools. There
+     * is an external test for that.
      */
     @Test
     public void testMain() throws IOException {
-        File[] arcFiles = new File[]{TestInfo.ARC_FILE1};
+        File[] arcFiles = new File[] {TestInfo.ARC_FILE1};
 
         ExtractCDXJob job = new ExtractCDXJob();
         BatchLocalFiles blaf = new BatchLocalFiles(arcFiles);
         blaf.run(job, new ByteArrayOutputStream());
 
-        assertEquals("No exceptions expected", 0,
-                job.getExceptionArray().length);
+        assertEquals("No exceptions expected", 0, job.getExceptionArray().length);
     }
 
     /**
      * Test whether the class is really Serializable.
      */
     @Test
-    public void testSerializability()
-            throws IOException, ClassNotFoundException {
-        //Take two jobs: one for study and one for reference.
+    public void testSerializability() throws IOException, ClassNotFoundException {
+        // Take two jobs: one for study and one for reference.
         ExtractCDXJob job1 = new StubbornJob();
         ExtractCDXJob job2 = new StubbornJob();
-        //Now serialize and deserialize the studied job (but NOT the reference):
+        // Now serialize and deserialize the studied job (but NOT the reference):
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ObjectOutputStream ous = new ObjectOutputStream(baos);
         ous.writeObject(job1);
         ous.close();
         baos.close();
-        ObjectInputStream ois = new ObjectInputStream(
-                new ByteArrayInputStream(baos.toByteArray()));
+        ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(baos.toByteArray()));
         job1 = (ExtractCDXJob) ois.readObject();
-        //Finally, compare their outputs:
+        // Finally, compare their outputs:
         ByteArrayOutputStream baos1 = new ByteArrayOutputStream();
         ByteArrayOutputStream baos2 = new ByteArrayOutputStream();
-        //Run both jobs ordinarily:
+        // Run both jobs ordinarily:
         arcBlaf.run(job1, baos1);
         arcBlaf.run(job2, baos2);
         baos1.close();
@@ -193,16 +181,14 @@ public class ExtractCDXJobTester {
                 System.out.println("b2=" + b2[i]);
                 fail("\nDifference at position " + i);
             } else {
-                //System.out.println(b1[i]);
+                // System.out.println(b1[i]);
             }
         }
-        assertTrue("Output from cdx jobs should be the same",
-                   Arrays.equals(baos1.toByteArray(), baos2.toByteArray()));
+        assertTrue("Output from cdx jobs should be the same", Arrays.equals(baos1.toByteArray(), baos2.toByteArray()));
     }
-    
+
     /**
-     * A class used in testing Serializability. For this test, we need a job
-     * that doesn't finish until asked twice
+     * A class used in testing Serializability. For this test, we need a job that doesn't finish until asked twice
      */
     private static class StubbornJob extends ExtractCDXJob {
         boolean askedBefore = false;
@@ -230,16 +216,16 @@ public class ExtractCDXJobTester {
             es[i].printStackTrace();
         }
     }
-    
+
     /**
      * Helper method (no longer used).
+     *
      * @param psWord
      * @param psReplace
      * @param psNewSeg
      * @return
      */
-    public static String replace(String psWord, String psReplace,
-            String psNewSeg) {
+    public static String replace(String psWord, String psReplace, String psNewSeg) {
         StringBuffer lsNewStr = new StringBuffer();
         int liFound = 0;
         int liLastPointer = 0;
@@ -249,8 +235,7 @@ public class ExtractCDXJobTester {
             liFound = psWord.indexOf(psReplace, liLastPointer);
 
             if (liFound < 0) {
-                lsNewStr.append(psWord
-                        .substring(liLastPointer, psWord.length()));
+                lsNewStr.append(psWord.substring(liLastPointer, psWord.length()));
             } else {
 
                 if (liFound > liLastPointer) {

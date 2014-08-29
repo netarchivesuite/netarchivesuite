@@ -33,7 +33,6 @@ import dk.netarkivet.harvester.datamodel.Job;
 
 /**
  * Contains test information about all scheduler test data.
- *
  */
 public class TestInfo {
 
@@ -49,13 +48,14 @@ public class TestInfo {
     static File ORDER_FILE = new File(TestInfo.WORKING_DIR, "order.xml");
 
     static final File orderTemplatesOriginalsDir = new File("tests/dk/netarkivet/"
-    		+ "/harvester/data/originals/order_templates/");
-    
+            + "/harvester/data/originals/order_templates/");
+
     public TestInfo() {
     }
 
     /**
      * Get a simple job.
+     *
      * @return Job
      */
     static Job getJob() {
@@ -67,11 +67,7 @@ public class TestInfo {
             throw new IOFailure(e.getMessage());
         }
         return Job.createJob(0L, new HarvestChannel("test", false, true, ""),
-                DomainDAO.getInstance()
-                .read("netarkivet.dk")
-                .getConfiguration("Engelsk_netarkiv_et_niveau"), 0);
+                DomainDAO.getInstance().read("netarkivet.dk").getConfiguration("Engelsk_netarkiv_et_niveau"), 0);
     }
-    
+
 }
-
-

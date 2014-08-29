@@ -36,8 +36,6 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.archive.io.warc.WARCRecord;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -52,11 +50,12 @@ import dk.netarkivet.common.utils.archive.HeritrixArchiveRecordWrapper;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.batch.WARCBatchFilter;
 import dk.netarkivet.testutils.TestFileUtils;
+import junit.framework.TestCase;
 
 /**
  * Unit tests for the class WARCBatchJob.
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class WARCBatchJobTester {
 
     // Reference to test files:
@@ -83,9 +82,8 @@ public class WARCBatchJobTester {
 
     /**
      * Utility method for printing Exception arrays on System.out.
-     * 
-     * @param es
-     *            The Exception array to be printed.
+     *
+     * @param es The Exception array to be printed.
      */
     private void printExceptions(Exception[] es) {
         if (es.length > 0) {
@@ -132,8 +130,8 @@ public class WARCBatchJobTester {
     }
 
     /**
-     * Verifies that thrown Exceptions in process get collected TODO Check more
-     * error conditions -- the exception handling is tricky!
+     * Verifies that thrown Exceptions in process get collected TODO Check more error conditions -- the exception
+     * handling is tricky!
      */
     @Test
     public void testOneJob_ExceptionInProcess() {
@@ -164,8 +162,7 @@ public class WARCBatchJobTester {
     @Test
     public void testFiltering() {
         /*
-         * We do not need to verify that BatchFilter.NO_FILTER is respected, as
-         * this is done in testBatchARCFiles().
+         * We do not need to verify that BatchFilter.NO_FILTER is respected, as this is done in testBatchARCFiles().
          */
         WARCBatchJob job = new TestWARCBatchJob() {
             public WARCBatchFilter getFilter() {
@@ -176,9 +173,9 @@ public class WARCBatchJobTester {
         Exception[] es = job.getExceptionArray();
         printExceptions(es);
         assertEquals("Should have processed all but one records", TOTAL_RECORDS - 2, processed); // Minus
-                                                                                                 // warcinfo
-                                                                                                 // and
-                                                                                                 // metadata
+        // warcinfo
+        // and
+        // metadata
         assertEquals("Filtered batch should not throw any exceptions", 0, es.length);
     }
 
@@ -190,8 +187,7 @@ public class WARCBatchJobTester {
     }
 
     /**
-     * Verify that ARCBatchJob objects can be serialized and deserialized
-     * without harm.
+     * Verify that ARCBatchJob objects can be serialized and deserialized without harm.
      */
     @Test
     public void testSerializability() {
@@ -239,9 +235,8 @@ public class WARCBatchJobTester {
 
     /**
      * Makes the given job process a few null records and handle an Exception.
-     * 
-     * @param job
-     *            the given job
+     *
+     * @param job the given job
      */
     private void doStuff(SerializableWARCBatchJob job) {
         job.processRecord(null, new ByteArrayOutputStream());
@@ -250,8 +245,7 @@ public class WARCBatchJobTester {
     }
 
     /**
-     * Verify that we can also process arc.gz files. FIXME Broken by
-     * http://sbforge.org/jira/browse/NAS-1918
+     * Verify that we can also process arc.gz files. FIXME Broken by http://sbforge.org/jira/browse/NAS-1918
      */
     @Test
     @Ignore("Broken by http://sbforge.org/jira/browse/NAS-1918")
@@ -276,14 +270,13 @@ public class WARCBatchJobTester {
     }
 
     /**
-     * A very simple ARCBatchJob that simply counts relevant method calls in the
-     * parents class's designated fields. It also exposes ARCBatchJob's internal
-     * list of Exceptions.
+     * A very simple ARCBatchJob that simply counts relevant method calls in the parents class's designated fields. It
+     * also exposes ARCBatchJob's internal list of Exceptions.
      */
     private class TestWARCBatchJob extends WARCBatchJob {
         /**
-         * @see ARCBatchJob#getFilter()
          * @return A filter that allows all records.
+         * @see ARCBatchJob#getFilter()
          */
         public WARCBatchFilter getFilter() {
             return WARCBatchFilter.NO_FILTER;
@@ -320,8 +313,8 @@ public class WARCBatchJobTester {
 
     private static class SerializableWARCBatchJob extends WARCBatchJob {
         /**
-         * @see ARCBatchJob#getFilter()
          * @return A filter that allows all records.
+         * @see ARCBatchJob#getFilter()
          */
         public WARCBatchFilter getFilter() {
             return WARCBatchFilter.NO_FILTER;

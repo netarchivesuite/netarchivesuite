@@ -22,12 +22,12 @@
  */
 package dk.netarkivet.systemtest.page;
 
+import java.util.List;
+
 import org.jaccept.TestEventManager;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-
-import java.util.List;
 
 public class DomainConfigurationPageHelper {
     public static final String NEW_CONFIGURATION = "New configuration";
@@ -60,10 +60,10 @@ public class DomainConfigurationPageHelper {
 
         WebElement table = PageHelper.getWebDriver().findElement(By.className("selection_table"));
         List<WebElement> tr_collection = table.findElements(By.tagName("tr"));
-        for (WebElement webElement:tr_collection) {
+        for (WebElement webElement : tr_collection) {
             List<WebElement> rowCells = webElement.findElements(By.xpath("td"));
-            if (rowCells.size() > 0 && //none header
-                rowCells.get(0).getText().contains(configurationName)) {
+            if (rowCells.size() > 0 && // none header
+                    rowCells.get(0).getText().contains(configurationName)) {
                 webElement.findElement(By.linkText("Edit")).click();
                 break;
             }

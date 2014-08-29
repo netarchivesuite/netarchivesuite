@@ -35,12 +35,12 @@ import org.apache.commons.cli.PosixParser;
 
 import dk.netarkivet.common.utils.Settings;
 
-/** 
- * The application that is run to generate install and start/stop scripts
- * for all physical locations, machines and applications.
- * 
- * The actual deployment has to be done from an Linux/Unix machine, 
- * and this application should therefore not be run on Windows.
+/**
+ * The application that is run to generate install and start/stop scripts for all physical locations, machines and
+ * applications.
+ * <p>
+ * The actual deployment has to be done from an Linux/Unix machine, and this application should therefore not be run on
+ * Windows.
  */
 public final class DeployApplication {
 
@@ -54,49 +54,42 @@ public final class DeployApplication {
     private static ArgumentParameters ap = new ArgumentParameters();
     /** The deploy-config file. */
     private static File deployConfigFile;
-    /** The NetarchiveSuite file.*/
+    /** The NetarchiveSuite file. */
     private static File netarchiveSuiteFile;
-    /** The security policy file.*/
+    /** The security policy file. */
     private static File secPolicyFile;
-    /** The java.util.logging property file.*/
+    /** The java.util.logging property file. */
     private static File julPropFile;
     /** SLF4J xml configuration file. */
     private static File slf4jConfigFile;
-    /** The database file.*/
+    /** The database file. */
     private static File dbFile;
-    /** The arguments for resetting tempDir.*/
+    /** The arguments for resetting tempDir. */
     private static boolean resetDirectory;
-    /** The archive database file.*/
+    /** The archive database file. */
     private static File arcDbFile;
-    /** The folder with the external libraries to be deployed.*/
-    private static File externalJarFolder; 
+    /** The folder with the external libraries to be deployed. */
+    private static File externalJarFolder;
 
-	/**
+    /**
      * Private constructor to disallow instantiation of this class.
      */
-    private DeployApplication() {}
-    
+    private DeployApplication() {
+    }
+
     /**
      * Run deploy.
-     * 
+     *
      * @param args The Command-line arguments in no particular order:
-     * 
-     * -C  The deploy configuration file (ends with .xml).
-     * -Z  The NetarchiveSuite file to be unpacked (ends with .zip).
-     * -S  The security policy file (ends with .policy).
-     * -L  The logging property file (ends with .prop).
-     * -O  [OPTIONAL] The output directory
-     * -D  [OPTIONAL] The harvest definition database
-     * -T  [OPTIONAL] The test arguments (httpportoffset, port, 
-     *                                    environmentName, mailReceiver)
-     * -R  [OPTIONAL] For resetting the tempDir (takes arguments 'y' or 'yes')
-     * -E  [OPTIONAL] Evaluating the deployConfig file (arguments: 'y' or 'yes')
-     * -A  [OPTIONAL] For archive database.
-     * -J  [OPTIONAL] For deploying with external jar files. Must be the total
-     *                path to the directory containing jar-files. These external
-     *                files will be placed on every machine, and they have to 
-     *                manually be put into the classpath, where they should be 
-     *                used.
+     *
+     * -C The deploy configuration file (ends with .xml). -Z The NetarchiveSuite file to be unpacked (ends with .zip).
+     * -S The security policy file (ends with .policy). -L The logging property file (ends with .prop). -O [OPTIONAL]
+     * The output directory -D [OPTIONAL] The harvest definition database -T [OPTIONAL] The test arguments
+     * (httpportoffset, port, environmentName, mailReceiver) -R [OPTIONAL] For resetting the tempDir (takes arguments
+     * 'y' or 'yes') -E [OPTIONAL] Evaluating the deployConfig file (arguments: 'y' or 'yes') -A [OPTIONAL] For archive
+     * database. -J [OPTIONAL] For deploying with external jar files. Must be the total path to the directory containing
+     * jar-files. These external files will be placed on every machine, and they have to manually be put into the
+     * classpath, where they should be used.
      */
     /**
      * @param args
@@ -104,14 +97,14 @@ public final class DeployApplication {
     public static void main(String[] args) {
         try {
             // Make sure the arguments can be parsed.
-            if(!ap.parseParameters(args)) {
+            if (!ap.parseParameters(args)) {
                 System.err.print(Constants.MSG_ERROR_PARSE_ARGUMENTS);
                 System.out.println(ap.listArguments());
                 System.exit(1);
             }
 
             // Check arguments
-            if(ap.getCommandLine().getOptions().length < Constants.ARGUMENTS_REQUIRED) {
+            if (ap.getCommandLine().getOptions().length < Constants.ARGUMENTS_REQUIRED) {
                 System.err.print(Constants.MSG_ERROR_NOT_ENOUGH_ARGUMENTS);
                 System.out.println();
                 System.out.println("Use DeployApplication with following arguments:");
@@ -119,7 +112,7 @@ public final class DeployApplication {
                 System.out.println("outputdir defaults to ./environmentName (set in config file)");
                 System.exit(1);
             }
-            // test if more arguments than options is given 
+            // test if more arguments than options is given
             if (args.length > ap.getOptions().getOptions().size()) {
                 System.err.print(Constants.MSG_ERROR_TOO_MANY_ARGUMENTS);
                 System.out.println();
@@ -151,20 +144,20 @@ public final class DeployApplication {
             String arcDbFileName = ap.getCommandLine().getOptionValue(Constants.ARG_ARC_DB);
             // Retrieves the jar-folder name.
             String jarFolderName = ap.getCommandLine().getOptionValue(Constants.ARG_JAR_FOLDER);
-            
+
             // Retrieves the source encoding.
             // If not specified get system default
             String sourceEncoding = ap.getCommandLine().getOptionValue(Constants.ARG_SOURCE_ENCODING);
             String msgTail = "";
             if (sourceEncoding == null || sourceEncoding.isEmpty()) {
-            	sourceEncoding = Charset.defaultCharset().name();
-            	msgTail = " (defaulted)";
+                sourceEncoding = Charset.defaultCharset().name();
+                msgTail = " (defaulted)";
             }
             System.out.println("Will read source files using encoding '" + sourceEncoding + "'" + msgTail);
 
             // check deployConfigFileName and retrieve the corresponding file
             initConfigFile(deployConfigFileName);
-            
+
             // check netarchiveSuiteFileName and retrieve the corresponding file
             initNetarchiveSuiteFile(netarchiveSuiteFileName);
 
@@ -192,40 +185,30 @@ public final class DeployApplication {
 
             // check database
             initDatabase(databaseFileName);
-            
+
             // check and apply the test arguments
             initTestArguments(testArguments);
-            
+
             // check reset arguments.
             initReset(resetArgument);
-            
+
             // evaluates the config file
             initEvaluate(evaluateArgument, sourceEncoding);
-            
+
             // check the archive database
             initArchiveDatabase(arcDbFileName);
-            
+
             // check the external jar-files library folder.
             initJarFolder(jarFolderName);
-            
+
             // Make the configuration based on the input data
-            deployConfig = new DeployConfiguration(
-                    deployConfigFile,
-                    netarchiveSuiteFile,
-                    secPolicyFile,
-                    julPropFile,
-                    slf4jConfigFile,
-                    outputDir,
-                    dbFile,
-                    arcDbFile,
-                    resetDirectory,
-                    externalJarFolder,
-                    sourceEncoding); 
+            deployConfig = new DeployConfiguration(deployConfigFile, netarchiveSuiteFile, secPolicyFile, julPropFile,
+                    slf4jConfigFile, outputDir, dbFile, arcDbFile, resetDirectory, externalJarFolder, sourceEncoding);
 
             // Write the scripts, directories and everything
             deployConfig.write();
         } catch (SecurityException e) {
-            // This problem should only occur in tests -> thus not err message. 
+            // This problem should only occur in tests -> thus not err message.
             System.out.println("SECURITY ERROR: ");
             e.printStackTrace();
         } catch (Throwable e) {
@@ -233,21 +216,21 @@ public final class DeployApplication {
             e.printStackTrace();
         }
     }
-    
-    /** 
+
+    /**
      * Checks the configuration file argument and retrieves the file.
-     * 
+     *
      * @param deployConfigFileName The configuration file argument.
      */
     private static void initConfigFile(String deployConfigFileName) {
         // check whether deploy-config file name is given as argument
-        if(deployConfigFileName == null) {
+        if (deployConfigFileName == null) {
             System.err.print(Constants.MSG_ERROR_NO_CONFIG_FILE_ARG);
             System.out.println();
             System.exit(1);
         }
         // check whether deploy-config file has correct extensions
-        if(!deployConfigFileName.endsWith(Constants.EXTENSION_XML_FILES)) {
+        if (!deployConfigFileName.endsWith(Constants.EXTENSION_XML_FILES)) {
             System.err.print(Constants.MSG_ERROR_CONFIG_EXTENSION);
             System.out.println();
             System.exit(1);
@@ -255,27 +238,27 @@ public final class DeployApplication {
         // get the file
         deployConfigFile = new File(deployConfigFileName);
         // check whether the deploy-config file exists.
-        if(!deployConfigFile.exists()) {
+        if (!deployConfigFile.exists()) {
             System.err.print(Constants.MSG_ERROR_NO_CONFIG_FILE_FOUND);
             System.out.println();
             System.exit(1);
         }
     }
 
-    /** 
+    /**
      * Checks the NetarchiveSuite file argument and retrieves the file.
-     * 
+     *
      * @param netarchiveSuiteFileName The NetarchiveSuite argument.
      */
     private static void initNetarchiveSuiteFile(String netarchiveSuiteFileName) {
         // check whether NetarchiveSuite file name is given as argument
-        if(netarchiveSuiteFileName == null) {
+        if (netarchiveSuiteFileName == null) {
             System.err.print(Constants.MSG_ERROR_NO_NETARCHIVESUITE_FILE_ARG);
             System.out.println();
             System.exit(1);
         }
         // check whether the NetarchiveSuite file has correct extensions
-        if(!netarchiveSuiteFileName.endsWith(Constants.EXTENSION_ZIP_FILES)) {
+        if (!netarchiveSuiteFileName.endsWith(Constants.EXTENSION_ZIP_FILES)) {
             System.err.print(Constants.MSG_ERROR_NETARCHIVESUITE_EXTENSION);
             System.out.println();
             System.exit(1);
@@ -283,28 +266,28 @@ public final class DeployApplication {
         // get the file
         netarchiveSuiteFile = new File(netarchiveSuiteFileName);
         // check whether the NetarchiveSuite file exists.
-        if(!netarchiveSuiteFile.isFile()) {
+        if (!netarchiveSuiteFile.isFile()) {
             System.err.print(Constants.MSG_ERROR_NO_NETARCHIVESUITE_FILE_FOUND);
             System.out.println();
             System.out.println("Couldn't find file: " + netarchiveSuiteFile.getAbsolutePath());
             System.exit(1);
         }
     }
-    
-    /** 
+
+    /**
      * Checks the security policy file argument and retrieves the file.
-     * 
+     *
      * @param secPolicyFileName The security policy argument.
      */
     private static void initSecPolicyFile(String secPolicyFileName) {
         // check whether security policy file name is given as argument
-        if(secPolicyFileName == null) {
+        if (secPolicyFileName == null) {
             System.err.print(Constants.MSG_ERROR_NO_SECURITY_FILE_ARG);
             System.out.println();
             System.exit(1);
         }
         // check whether security policy file has correct extensions
-        if(!secPolicyFileName.endsWith(Constants.EXTENSION_POLICY_FILES)) {
+        if (!secPolicyFileName.endsWith(Constants.EXTENSION_POLICY_FILES)) {
             System.err.print(Constants.MSG_ERROR_SECURITY_EXTENSION);
             System.out.println();
             System.exit(1);
@@ -312,28 +295,28 @@ public final class DeployApplication {
         // get the file
         secPolicyFile = new File(secPolicyFileName);
         // check whether the security policy file exists.
-        if(!secPolicyFile.exists()) {
+        if (!secPolicyFile.exists()) {
             System.err.print(Constants.MSG_ERROR_NO_SECURITY_FILE_FOUND);
             System.out.println();
             System.out.println("Couldn't find file: " + secPolicyFile.getAbsolutePath());
             System.exit(1);
         }
     }
-    
-    /** 
+
+    /**
      * Checks the java.util.logging property file argument and retrieves the file.
-     * 
+     *
      * @param julPropFileName The java.util.logging property argument.
      */
     private static void initJulPropFile(String julPropFileName) {
         // check whether log property file name is given as argument
-        if(julPropFileName == null) {
+        if (julPropFileName == null) {
             System.err.print(Constants.MSG_ERROR_NO_JUL_PROPERTY_FILE_ARG);
             System.out.println();
             System.exit(1);
         }
         // check whether the log property file has correct extensions
-        if(!julPropFileName.endsWith(Constants.EXTENSION_JUL_PROPERTY_FILES)) {
+        if (!julPropFileName.endsWith(Constants.EXTENSION_JUL_PROPERTY_FILES)) {
             System.err.print(Constants.MSG_ERROR_JUL_PROPERTY_EXTENSION);
             System.out.println();
             System.exit(1);
@@ -341,28 +324,28 @@ public final class DeployApplication {
         // get the file
         julPropFile = new File(julPropFileName);
         // check whether the log property file exists.
-        if(!julPropFile.exists()) {
+        if (!julPropFile.exists()) {
             System.err.print(Constants.MSG_ERROR_NO_JUL_PROPERTY_FILE_FOUND);
             System.out.println();
             System.out.println("Couldn't find file: " + julPropFile.getAbsolutePath());
             System.exit(1);
         }
     }
-    
-    /** 
+
+    /**
      * Checks the SLF4J config file argument and retrieves the file.
-     * 
+     *
      * @param slf4jXmlFileName The SLF4J config argument.
      */
     private static void initSLF4JXmlFile(String slf4jXmlFileName) {
         // check whether SLF4J config file name is given as argument
-        if(slf4jXmlFileName == null) {
+        if (slf4jXmlFileName == null) {
             System.err.print(Constants.MSG_ERROR_NO_SLF4J_CONFIG_FILE_ARG);
             System.out.println();
             System.exit(1);
         }
         // check whether the SLF4J xml file has correct extensions
-        if(!slf4jXmlFileName.endsWith(Constants.EXTENSION_XML_FILES)) {
+        if (!slf4jXmlFileName.endsWith(Constants.EXTENSION_XML_FILES)) {
             System.err.print(Constants.MSG_ERROR_SLF4J_CONFIG_EXTENSION);
             System.out.println();
             System.exit(1);
@@ -370,7 +353,7 @@ public final class DeployApplication {
         // get the file
         slf4jConfigFile = new File(slf4jXmlFileName);
         // check whether the SLF4J xml file exists.
-        if(!slf4jConfigFile.exists()) {
+        if (!slf4jConfigFile.exists()) {
             System.err.print(Constants.MSG_ERROR_NO_SLF4J_CONFIG_FILE_FOUND);
             System.out.println();
             System.out.println("Couldn't find file: " + slf4jConfigFile.getAbsolutePath());
@@ -380,24 +363,24 @@ public final class DeployApplication {
 
     /**
      * Checks the database argument (if any) for extension and existence.
-     * 
+     *
      * @param databaseFileName The name of the database file.
      */
     private static void initDatabase(String databaseFileName) {
         dbFile = null;
-        // check the extension on the database, if it is given as argument 
-        if(databaseFileName != null) {
-            if(!databaseFileName.endsWith(Constants.EXTENSION_JAR_FILES) 
+        // check the extension on the database, if it is given as argument
+        if (databaseFileName != null) {
+            if (!databaseFileName.endsWith(Constants.EXTENSION_JAR_FILES)
                     && !databaseFileName.endsWith(Constants.EXTENSION_ZIP_FILES)) {
                 System.err.print(Constants.MSG_ERROR_DATABASE_EXTENSION);
                 System.out.println();
                 System.exit(1);
             }
-            
+
             // get the file
             dbFile = new File(databaseFileName);
             // check whether the database file exists.
-            if(!dbFile.isFile()) {
+            if (!dbFile.isFile()) {
                 System.err.print(Constants.MSG_ERROR_NO_DATABASE_FILE_FOUND);
                 System.out.println();
                 System.out.println("Couldn't find file: " + dbFile.getAbsolutePath());
@@ -405,20 +388,18 @@ public final class DeployApplication {
             }
         }
     }
-    
+
     /**
-     * Checks the arguments for resetting the directory.
-     * Only the arguments 'y' or 'yes' resets the database directory. 
+     * Checks the arguments for resetting the directory. Only the arguments 'y' or 'yes' resets the database directory.
      * Default is 'no'.
-     * 
-     * If another argument than 'y', 'yes', 'n' or 'no' is given, an warning 
-     * is given. 
-     * 
+     * <p>
+     * If another argument than 'y', 'yes', 'n' or 'no' is given, an warning is given.
+     *
      * @param resetArgument The argument for resetting given.
      */
     private static void initReset(String resetArgument) {
-        if(resetArgument != null) {
-            if(resetArgument.equalsIgnoreCase(Constants.YES_SHORT)
+        if (resetArgument != null) {
+            if (resetArgument.equalsIgnoreCase(Constants.YES_SHORT)
                     || resetArgument.equalsIgnoreCase(Constants.YES_LONG)) {
                 // if positive argument, then set to true.
                 resetDirectory = true;
@@ -432,51 +413,50 @@ public final class DeployApplication {
                 resetDirectory = false;
             }
         } else {
-            // if no arguments, then 
+            // if no arguments, then
             resetDirectory = false;
         }
     }
-    
+
     /**
-     * Checks the arguments for evaluating the config file.
-     * Only the arguments 'y' or 'yes' is accepted for evaluation.
-     * Anything else (including argument set to null) does not evaluate the
-     * deployConfigFile. 
-     * 
+     * Checks the arguments for evaluating the config file. Only the arguments 'y' or 'yes' is accepted for evaluation.
+     * Anything else (including argument set to null) does not evaluate the deployConfigFile.
+     *
      * @param evaluateArgument The argument for evaluation.
      * @param encoding the encoding to use to read from the input file
      */
     public static void initEvaluate(String evaluateArgument, String encoding) {
         // check if argument is given and it is acknowledgement ('y' or 'yes')
-        if((evaluateArgument != null) && (!evaluateArgument.isEmpty()) 
-                && (evaluateArgument.equalsIgnoreCase(Constants.YES_SHORT)
-                    || evaluateArgument.equalsIgnoreCase(Constants.YES_LONG))) {
+        if ((evaluateArgument != null)
+                && (!evaluateArgument.isEmpty())
+                && (evaluateArgument.equalsIgnoreCase(Constants.YES_SHORT) || evaluateArgument
+                        .equalsIgnoreCase(Constants.YES_LONG))) {
             // if yes, then evaluate config file
             EvaluateConfigFile evf = new EvaluateConfigFile(deployConfigFile, encoding);
             evf.evaluate();
         }
     }
-    
+
     /**
      * Checks the argument for the archive database.
-     * 
+     *
      * @param arcDbFileName The path to the archive database.
      */
     public static void initArchiveDatabase(String arcDbFileName) {
         arcDbFile = null;
-        // check the extension on the database, if it is given as argument 
-        if(arcDbFileName != null) {
-            if(!arcDbFileName.endsWith(Constants.EXTENSION_JAR_FILES) 
+        // check the extension on the database, if it is given as argument
+        if (arcDbFileName != null) {
+            if (!arcDbFileName.endsWith(Constants.EXTENSION_JAR_FILES)
                     && !arcDbFileName.endsWith(Constants.EXTENSION_ZIP_FILES)) {
                 System.err.print(Constants.MSG_ERROR_BPDB_EXTENSION);
                 System.out.println();
                 System.exit(1);
             }
-            
+
             // get the file
             arcDbFile = new File(arcDbFileName);
             // check whether the database file exists.
-            if(!arcDbFile.isFile()) {
+            if (!arcDbFile.isFile()) {
                 System.err.print(Constants.MSG_ERROR_NO_BPDB_FILE_FOUND);
                 System.out.println();
                 System.out.println("Couldn't find file: " + arcDbFile.getAbsolutePath());
@@ -484,18 +464,18 @@ public final class DeployApplication {
             }
         }
     }
-    
+
     /**
      * Checks the argument for the external jar-folder.
-     * 
+     *
      * @param folderName The path to the folder. Global path.
      */
     public static void initJarFolder(String folderName) {
         externalJarFolder = null;
-        if(folderName != null && !folderName.isEmpty()) {
+        if (folderName != null && !folderName.isEmpty()) {
             externalJarFolder = new File(folderName);
-            
-            if(!externalJarFolder.isDirectory()) {
+
+            if (!externalJarFolder.isDirectory()) {
                 System.err.print(Constants.MSG_ERROR_NO_JAR_FOLDER);
                 System.out.println();
                 System.out.println("Couldn't find directory: " + externalJarFolder.getAbsolutePath());
@@ -503,32 +483,30 @@ public final class DeployApplication {
             }
         }
     }
-       
+
     /**
      * Applies the test arguments.
-     * 
-     * If the test arguments are given correctly, the configuration file is 
-     * loaded and changed appropriately, then written to a test configuration 
-     * file.
-     * 
-     * The new test configuration file has the same name as the original 
-     * configuration file, except ".xml" is replaced by "_text.xml".
-     * Thus "path/config.xml" -> "path/config_test.xml".  
-     * 
+     * <p>
+     * If the test arguments are given correctly, the configuration file is loaded and changed appropriately, then
+     * written to a test configuration file.
+     * <p>
+     * The new test configuration file has the same name as the original configuration file, except ".xml" is replaced
+     * by "_text.xml". Thus "path/config.xml" -> "path/config_test.xml".
+     *
      * @param testArguments The test arguments.
      */
     private static void initTestArguments(String testArguments) {
         // test if any test arguments (if none, don't apply, just stop).
-        if(testArguments == null || testArguments.isEmpty()) {
+        if (testArguments == null || testArguments.isEmpty()) {
             return;
         }
 
         String[] changes = testArguments.split(Constants.REGEX_COMMA_CHARACTER);
-        if(changes.length != Constants.TEST_ARGUMENTS_REQUIRED) {
+        if (changes.length != Constants.TEST_ARGUMENTS_REQUIRED) {
             System.err.print(Constants.MSG_ERROR_TEST_ARGUMENTS);
             System.out.println();
             System.out.println(changes.length + " arguments was given and " + Constants.TEST_ARGUMENTS_REQUIRED
-            		+ " was expected.");
+                    + " was expected.");
             System.out.println("Received: " + testArguments);
             System.exit(1);
         }
@@ -537,20 +515,18 @@ public final class DeployApplication {
             CreateTestInstance cti = new CreateTestInstance(deployConfigFile);
 
             // apply the arguments
-            cti.applyTestArguments(
-                    changes[Constants.TEST_ARGUMENT_OFFSET_INDEX], 
-                    changes[Constants.TEST_ARGUMENT_HTTP_INDEX], 
-                    changes[Constants.TEST_ARGUMENT_ENVIRONMENT_NAME_INDEX], 
-                    changes[Constants.TEST_ARGUMENT_MAIL_INDEX]
-            ); 
+            cti.applyTestArguments(changes[Constants.TEST_ARGUMENT_OFFSET_INDEX],
+                    changes[Constants.TEST_ARGUMENT_HTTP_INDEX],
+                    changes[Constants.TEST_ARGUMENT_ENVIRONMENT_NAME_INDEX],
+                    changes[Constants.TEST_ARGUMENT_MAIL_INDEX]);
 
             // replace ".xml" with "_test.xml"
             String tmp = deployConfigFile.getPath();
             // split this into two ("path/config.xml" = {"path/config", ".xml"})
             String[] configFile = tmp.split(Constants.REGEX_DOT_CHARACTER);
-            // take the first part and add test ending 
+            // take the first part and add test ending
             // ("path/config" + "_test.xml" = "path/config_test.xml")
-            String nameOfNewConfig =  configFile[0] + Constants.TEST_CONFIG_FILE_REPLACE_ENDING;
+            String nameOfNewConfig = configFile[0] + Constants.TEST_CONFIG_FILE_REPLACE_ENDING;
 
             // create and use new config file.
             cti.createConfigurationFile(nameOfNewConfig);
@@ -560,59 +536,46 @@ public final class DeployApplication {
             System.exit(1);
         }
     }
-    
+
     /**
      * Handles the incoming arguments.
      */
     private static class ArgumentParameters {
-        /** Options object for parameters.*/
+        /** Options object for parameters. */
         private Options options = new Options();
-        /** Parser for parsing the command line arguments.*/
+        /** Parser for parsing the command line arguments. */
         private CommandLineParser parser = new PosixParser();
-        /** The command line.*/
+        /** The command line. */
         private CommandLine cmd;
-        /** Whether the options has an argument.*/
+        /** Whether the options has an argument. */
         private static final boolean HAS_ARG = true;
+
         /**
          * Initialise options by setting legal parameters for batch jobs.
          */
         ArgumentParameters() {
-            options.addOption(Constants.ARG_CONFIG_FILE, 
-                    HAS_ARG, "Config file.");
-            options.addOption(Constants.ARG_NETARCHIVE_SUITE_FILE, 
-                    HAS_ARG, "The NetarchiveSuite package file.");
-            options.addOption(Constants.ARG_SECURITY_FILE, 
-                    HAS_ARG, "Security property file.");
-            options.addOption(Constants.ARG_JUL_PROPERTY_FILE, 
-                    HAS_ARG, "java.util.logging property file.");
-            options.addOption(Constants.ARG_SLF4J_CONFIG_FILE, 
-                    HAS_ARG, "SLF4J config file.");
-            options.addOption(Constants.ARG_OUTPUT_DIRECTORY, 
-                    HAS_ARG, "[OPTIONAL] output directory.");
-            options.addOption(Constants.ARG_DATABASE_FILE, 
-                    HAS_ARG, "[OPTIONAL] Database file.");
-            options.addOption(Constants.ARG_TEST, 
-                    HAS_ARG, "[OPTIONAL] Tests arguments (offset for http port,"
+            options.addOption(Constants.ARG_CONFIG_FILE, HAS_ARG, "Config file.");
+            options.addOption(Constants.ARG_NETARCHIVE_SUITE_FILE, HAS_ARG, "The NetarchiveSuite package file.");
+            options.addOption(Constants.ARG_SECURITY_FILE, HAS_ARG, "Security property file.");
+            options.addOption(Constants.ARG_JUL_PROPERTY_FILE, HAS_ARG, "java.util.logging property file.");
+            options.addOption(Constants.ARG_SLF4J_CONFIG_FILE, HAS_ARG, "SLF4J config file.");
+            options.addOption(Constants.ARG_OUTPUT_DIRECTORY, HAS_ARG, "[OPTIONAL] output directory.");
+            options.addOption(Constants.ARG_DATABASE_FILE, HAS_ARG, "[OPTIONAL] Database file.");
+            options.addOption(Constants.ARG_TEST, HAS_ARG, "[OPTIONAL] Tests arguments (offset for http port,"
                     + " http port, environment name, mail receiver).");
-            options.addOption(Constants.ARG_RESET,
-                    HAS_ARG, "[OPTIONAL] Reset temp directory ('y' or 'yes'"
+            options.addOption(Constants.ARG_RESET, HAS_ARG, "[OPTIONAL] Reset temp directory ('y' or 'yes'"
                     + "means reset, anything else means do not reset."
-                    + " Different from 'y', 'yes', 'n' or 'no' gives"
-                    + " an error message.");
-            options.addOption(Constants.ARG_EVALUATE, 
-                    HAS_ARG, "[OPTIONAL] Evaluate the config file.");
-            options.addOption(Constants.ARG_ARC_DB,
-                    HAS_ARG, "[OPTIONAL] The archive database file");
-            options.addOption(Constants.ARG_JAR_FOLDER, 
-                    HAS_ARG, "[OPTIONAL] Installing the external jar library "
+                    + " Different from 'y', 'yes', 'n' or 'no' gives" + " an error message.");
+            options.addOption(Constants.ARG_EVALUATE, HAS_ARG, "[OPTIONAL] Evaluate the config file.");
+            options.addOption(Constants.ARG_ARC_DB, HAS_ARG, "[OPTIONAL] The archive database file");
+            options.addOption(Constants.ARG_JAR_FOLDER, HAS_ARG, "[OPTIONAL] Installing the external jar library "
                     + "files within the given folder.");
-            options.addOption(Constants.ARG_SOURCE_ENCODING, 
-                    HAS_ARG, "[OPTIONAL] Encoding to use for source files.");
+            options.addOption(Constants.ARG_SOURCE_ENCODING, HAS_ARG, "[OPTIONAL] Encoding to use for source files.");
         }
 
         /**
          * Parsing the input arguments.
-         * 
+         *
          * @param args The input arguments.
          * @return Whether it parsed correctly or not.
          */
@@ -620,16 +583,16 @@ public final class DeployApplication {
             try {
                 // parse the command line arguments
                 cmd = parser.parse(options, args);
-            } catch(ParseException exp) {
+            } catch (ParseException exp) {
                 System.out.println("Parsing error: " + exp);
                 return false;
             }
             return true;
         }
-        
+
         /**
          * Get the list of possible arguments with their description.
-         * 
+         *
          * @return The list describing the possible arguments.
          */
         String listArguments() {
@@ -637,7 +600,7 @@ public final class DeployApplication {
             res.append(Constants.NEWLINE);
             res.append(Constants.INIT_ARGUMENTS_LIST);
             // add options
-            for (Object o: options.getOptions()) {
+            for (Object o : options.getOptions()) {
                 Option op = (Option) o;
                 res.append(Constants.NEWLINE);
                 res.append(Constants.DASH);
@@ -647,19 +610,19 @@ public final class DeployApplication {
             }
             return res.toString();
         }
-        
+
         /**
          * For retrieving the options.
-         * 
+         *
          * @return The options.
          */
         public Options getOptions() {
             return options;
         }
-        
+
         /**
          * For retrieving the commandLine.
-         * 
+         *
          * @return The cmd.
          */
         public CommandLine getCommandLine() {

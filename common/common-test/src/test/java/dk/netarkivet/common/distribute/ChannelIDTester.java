@@ -44,8 +44,7 @@ import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
- * Tests the ChannelID class that defines instances of message channels (ie.
- * queues and topics).
+ * Tests the ChannelID class that defines instances of message channels (ie. queues and topics).
  */
 public class ChannelIDTester {
     ReloadSettings rs = new ReloadSettings();
@@ -100,8 +99,8 @@ public class ChannelIDTester {
     }
 
     /**
-     * Test that AllArchives_ALL_BAs returns as array of ALL_BA channels which
-     * are all distinct and all contain ALL_BA in name.
+     * Test that AllArchives_ALL_BAs returns as array of ALL_BA channels which are all distinct and all contain ALL_BA
+     * in name.
      */
     @Test
     public void testALL_ALL_BAs() {
@@ -114,9 +113,10 @@ public class ChannelIDTester {
                 for (int j = 0; j < ALL_BAs.length; j++) {
                     // Ignore the channels for the checksum replicas.
                     if (ALL_BAs[j] != null) {
-                        if (i != j)
+                        if (i != j) {
                             assertNotSame("Two ALL_BAs have the same name " + ALL_BAs[i].getName(),
                                     ALL_BAs[i].getName(), ALL_BAs[j].getName());
+                        }
                     }
                 }
             }
@@ -124,8 +124,8 @@ public class ChannelIDTester {
     }
 
     /**
-     * Test that AllArchives_ANY_BAs returns as array of ANY_BA channels which
-     * are all distinct and all contain ANY_BA in name
+     * Test that AllArchives_ANY_BAs returns as array of ANY_BA channels which are all distinct and all contain ANY_BA
+     * in name
      */
     @Test
     public void testALL_ANY_BAs() {
@@ -142,16 +142,17 @@ public class ChannelIDTester {
                 if (ANY_BAs[j] == null) {
                     continue;
                 }
-                if (i != j)
+                if (i != j) {
                     assertNotSame("Two ANY_BAs have the same name " + ANY_BAs[i].getName(), ANY_BAs[i].getName(),
                             ANY_BAs[j].getName());
+                }
             }
         }
     }
 
     /**
-     * Test that AllArchives_BAMONs returns as array of BAMON channels which are
-     * all distinct and all contain BAMON in name.
+     * Test that AllArchives_BAMONs returns as array of BAMON channels which are all distinct and all contain BAMON in
+     * name.
      */
     @Test
     public void testAllArchives_BAMONs() {
@@ -168,16 +169,17 @@ public class ChannelIDTester {
                 if (BAMONs[j] == null) {
                     continue;
                 }
-                if (i != j)
+                if (i != j) {
                     assertNotSame("Two BAMONs have the same name " + BAMONs[i].getName(), BAMONs[i].getName(),
                             BAMONs[j].getName());
+                }
             }
         }
     }
 
     /**
-     * Test that AllArchives_CRs returns as array of checksum replica channels
-     * which are all distinct and all contain THE_CR in name.
+     * Test that AllArchives_CRs returns as array of checksum replica channels which are all distinct and all contain
+     * THE_CR in name.
      */
     @Test
     public void testAllArchives_CRs() {
@@ -195,16 +197,17 @@ public class ChannelIDTester {
                 if (CRs[j] == null) {
                     continue;
                 }
-                if (i != j)
+                if (i != j) {
                     assertNotSame("Two BAMONs have the same name " + CRs[i].getName(), CRs[i].getName(),
                             CRs[j].getName());
+                }
             }
         }
     }
 
     /**
-     * Test that AllArchives_BAMONs returns as array of BAMON channels which are
-     * all distinct and all contain BAMON in name.
+     * Test that AllArchives_BAMONs returns as array of BAMON channels which are all distinct and all contain BAMON in
+     * name.
      */
     @Test
     public void testClients() {
@@ -215,14 +218,13 @@ public class ChannelIDTester {
         assertTrue("ChannelID.getThisClient() returned a channel without " + "application settings in its name: "
                 + client.getName(), client.getName().indexOf("_IS") != -1);
         assertTrue("ChannelID.getThisClient() returned a channel without "
-                + "application instance settings in its name: " + client.getName(),
+                        + "application instance settings in its name: " + client.getName(),
                 client.getName().indexOf("_XXX") != -1);
     }
 
     /**
-     * Tests that only the ArcRepository may request channels for all bit
-     * archives. At the time of writing, there is no ArcRepository application,
-     * so this funtionality cannot be implemented (or tested).
+     * Tests that only the ArcRepository may request channels for all bit archives. At the time of writing, there is no
+     * ArcRepository application, so this funtionality cannot be implemented (or tested).
      */
     @Test
     @Ignore("no ArcRepository application yet")

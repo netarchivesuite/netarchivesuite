@@ -22,6 +22,16 @@
  */
 package dk.netarkivet.viewerproxy.webinterface;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.io.File;
+import java.util.List;
+
+import org.junit.After;
+import org.junit.Before;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.arcrepository.TrivialArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
@@ -35,11 +45,6 @@ import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.After;
-import java.io.File;
-import java.util.List;
 
 /**
  * Unit tests for Reporting class.
@@ -57,17 +62,13 @@ public class ReportingWarcTester {
         rs.setUp();
         utrf.setUp();
         working.mkdirs();
-        Settings.set(CommonSettings.DIR_COMMONTEMPDIR,
-                tempdir.getAbsolutePath());
-              Settings.set(CommonSettings.ARC_REPOSITORY_CLIENT,
-                     TrivialArcRepositoryClient.class.getName());
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, tempdir.getAbsolutePath());
+        Settings.set(CommonSettings.ARC_REPOSITORY_CLIENT, TrivialArcRepositoryClient.class.getName());
         ArcRepositoryClientFactory.getViewerInstance().close();
-        tarc = (TrivialArcRepositoryClient) ArcRepositoryClientFactory
-                .getViewerInstance();
-        dir = (File) ReflectUtils.getPrivateField(
-                TrivialArcRepositoryClient.class, "dir").get(tarc);
-        
-        // Copy the two files "2-2-20120903165904-00000-kb-test-har-002.kb.dk.warc", 
+        tarc = (TrivialArcRepositoryClient) ArcRepositoryClientFactory.getViewerInstance();
+        dir = (File) ReflectUtils.getPrivateField(TrivialArcRepositoryClient.class, "dir").get(tarc);
+
+        // Copy the two files "2-2-20120903165904-00000-kb-test-har-002.kb.dk.warc",
         // "2-metadata-1.warc" to our local
         // archive accessed using a TrivalArcRepositoryClient
         TestFileUtils.copyDirectoryNonCVS(TestInfo.WARC_ORIGINALS_DIR, dir);
@@ -91,66 +92,63 @@ public class ReportingWarcTester {
             Reporting.getFilesForJob(-1, "2-1");
             fail("Should fail on negative values");
         } catch (ArgumentNotValid e) {
-            //Expected
+            // Expected
         }
         try {
             Reporting.getFilesForJob(0, "2-1");
             fail("Should fail on zero");
         } catch (ArgumentNotValid e) {
-            //Expected
+            // Expected
         }
-        CollectionAsserts.assertListEquals("Job 2 chould contain two files", 
-        		Reporting.getFilesForJob(2, "2-2"), 
+        CollectionAsserts.assertListEquals("Job 2 chould contain two files", Reporting.getFilesForJob(2, "2-2"),
                 "2-2-20120903165904-00000-kb-test-har-002.kb.dk.warc", "2-metadata-1.warc");
     }
 
     public void testGetMetadataCDXRecordsForJob() throws Exception {
         List<CDXRecord> recordsForJob = Reporting.getMetadataCDXRecordsForJob(2);
-//        for (CDXRecord rec : recordsForJob) {
-//            System.out.println("rec:" + rec.getURL());
-//        }
+        // for (CDXRecord rec : recordsForJob) {
+        // System.out.println("rec:" + rec.getURL());
+        // }
         assertEquals("Should return the expected number of records", 20, recordsForJob.size());
-        StringAsserts.assertStringMatches("First record should be the crawl-manifest", 
+        StringAsserts.assertStringMatches("First record should be the crawl-manifest",
                 "^metadata://netarkivet.dk/crawl/setup/crawl-manifest.txt.*", recordsForJob.get(0).getURL());
-        //StringAsserts.assertStringMatches("First record should be preharvester metadata dedup", 
-        //        "^metadata://netarkivet.dk/crawl/setup/duplicatereductionjobs.*", recordsForJob.get(0).getURL());
-        StringAsserts.assertStringMatches("Last record should be cdx", 
-                "^metadata://netarkivet.dk/crawl/index/cdx.*", recordsForJob.get(recordsForJob.size() - 1).getURL());
-        CollectionAsserts.assertListEquals("Job 4 not harvested, list should be empty", 
+        // StringAsserts.assertStringMatches("First record should be preharvester metadata dedup",
+        // "^metadata://netarkivet.dk/crawl/setup/duplicatereductionjobs.*", recordsForJob.get(0).getURL());
+        StringAsserts.assertStringMatches("Last record should be cdx", "^metadata://netarkivet.dk/crawl/index/cdx.*",
+                recordsForJob.get(recordsForJob.size() - 1).getURL());
+        CollectionAsserts.assertListEquals("Job 4 not harvested, list should be empty",
                 Reporting.getMetadataCDXRecordsForJob(4));
     }
 
     /**
-     * Tests the method getCrawlLogForDomainInJob.
-     * This unit-test also implicitly tests the class HarvestedUrlsForDomainBatchJob
-     * @throws Exception
-     * Now works again after resolving bug NAS-2266
+     * Tests the method getCrawlLogForDomainInJob. This unit-test also implicitly tests the class
+     * HarvestedUrlsForDomainBatchJob
+     *
+     * @throws Exception Now works again after resolving bug NAS-2266
      */
     public void testGetCrawlLogForDomainInJob() throws Exception {
         int jobId = 2;
         // Find the crawl-log lines for domain netarkivet.dk in metadata file for job 2
         File file = Reporting.getCrawlLogForDomainInJob("netarkivet.dk", jobId);
         List<String> lines = FileUtils.readListFromFile(file);
-        /*int count=0;
-        for (String line: lines) {
-            count++;
-            //System.out.println("Line #" + count + ": " + line);
-        }*/
+        /*
+         * int count=0; for (String line: lines) { count++; //System.out.println("Line #" + count + ": " + line); }
+         */
 
         assertTrue("Should have found a result, but found none", lines.size() > 0);
         StringAsserts.assertStringContains("First line should be dns", "dns:", lines.get(0));
-        
-        StringAsserts.assertStringContains("Last line should be netarkivet.dk", 
-                "netarkivet.dk", lines.get(lines.size() - 1));
+
+        StringAsserts.assertStringContains("Last line should be netarkivet.dk", "netarkivet.dk",
+                lines.get(lines.size() - 1));
         assertEquals("Should have 161 lines", 161, lines.size());
-        
+
         assertEquals("Should have 161 lines", 161, lines.size());
-        jobId=1;
+        jobId = 1;
         file = Reporting.getCrawlLogForDomainInJob("netarkivet.dk", jobId);
         lines = FileUtils.readListFromFile(file);
         assertTrue("Should have found a result, but found none", lines.size() > 0);
-        StringAsserts.assertStringContains("Last line should be netarkivet.dk", 
-                "netarkivet.dk", lines.get(lines.size() - 1));
+        StringAsserts.assertStringContains("Last line should be netarkivet.dk", "netarkivet.dk",
+                lines.get(lines.size() - 1));
         assertEquals("Should have 302 lines", 302, lines.size());
     }
 

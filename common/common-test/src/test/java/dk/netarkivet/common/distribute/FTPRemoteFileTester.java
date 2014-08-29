@@ -70,8 +70,7 @@ public class FTPRemoteFileTester {
             TestFileUtils.copyDirectoryNonCVS(TestInfo.DATADIR, TestInfo.TEMPDIR);
 
             /*
-             * make 3 duplicates of TestInfo.TESTXML: test1.xml, test2.xml,
-             * test3.xml
+             * make 3 duplicates of TestInfo.TESTXML: test1.xml, test2.xml, test3.xml
              */
             testFile1 = new File(TestInfo.TEMPDIR, "test.xml");
             testFile2 = new File(TestInfo.TEMPDIR, "should_not_exist.xml");

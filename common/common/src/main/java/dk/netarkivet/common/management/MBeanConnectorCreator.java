@@ -46,34 +46,33 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
 
 /**
- * Utility class that handles exposing the platform mbean server using rmi, and
- * using specified ports and password files. <br/><br/>
- *
- * See http://java.sun.com/j2se/1.5.0/docs/guide/jmx/tutorial/security.html
- * <br/><br/>
- *
+ * Utility class that handles exposing the platform mbean server using rmi, and using specified ports and password
+ * files. <br/>
+ * <br/>
+ * <p>
+ * See http://java.sun.com/j2se/1.5.0/docs/guide/jmx/tutorial/security.html <br/>
+ * <br/>
+ * <p>
  * TODO This implementation is not robust and could be improved. <br/>
  * TODO For instance: - Singleton behaviour <br/>
- * TODO                -Reuse of already created registry <br/>
+ * TODO -Reuse of already created registry <br/>
  * TODO Usage of access rights (for read-only mbeans) (see reference above)
- *
  */
 public class MBeanConnectorCreator {
 
     private static final Logger log = LoggerFactory.getLogger(MBeanConnectorCreator.class);
 
-	public static boolean isExposed = false;
+    public static boolean isExposed = false;
 
     private static final String SERVICE_JMX_RMI_URL = "service:jmx:rmi://{0}:{1}/jndi/rmi://{0}:{2}/jmxrmi";
 
     private static final String ENVIRONMENT_PASSWORD_FILE_PROPERTY = "jmx.remote.x.password.file";
-    
+
     /**
-     * Registers an RMI connector to the local mbean server in a private RMI
-     * registry, under the name "jmxrmi". The port for the registry is read from
-     * settings, and the RMI port used for exposing the connector is also read
-     * from settings. Access to the mbean server is restricted by the rules set
-     * in the password file, likewise read from settings.
+     * Registers an RMI connector to the local mbean server in a private RMI registry, under the name "jmxrmi". The port
+     * for the registry is read from settings, and the RMI port used for exposing the connector is also read from
+     * settings. Access to the mbean server is restricted by the rules set in the password file, likewise read from
+     * settings.
      *
      * @throws IOFailure on trouble exposing the server.
      */
@@ -92,7 +91,7 @@ public class MBeanConnectorCreator {
                 // name "jmxrmi".
                 String canonicalHostName = SystemUtils.getLocalHostName();
                 JMXServiceURL url = new JMXServiceURL(MessageFormat.format(SERVICE_JMX_RMI_URL, canonicalHostName,
-                		Integer.toString(rmiPort), Integer.toString(jmxPort)));
+                        Integer.toString(rmiPort), Integer.toString(jmxPort)));
                 // Insert the password file into environment used when creating
                 // the connector server.
                 Map<String, Serializable> env = new HashMap<String, Serializable>();
@@ -107,12 +106,12 @@ public class MBeanConnectorCreator {
                 isExposed = true;
                 // Register the JMX server at the registry.
                 MonitorRegistryClientFactory.getInstance().register(canonicalHostName,
-                		Settings.getInt(CommonSettings.JMX_PORT), Settings.getInt(CommonSettings.JMX_RMI_PORT));
+                        Settings.getInt(CommonSettings.JMX_PORT), Settings.getInt(CommonSettings.JMX_RMI_PORT));
 
                 if (log.isInfoEnabled()) {
                     log.info("Registered mbean server in registry on port {} communicating on port {} "
-                    		+ "using password file '{}'." + "\nService URL is {}",
-                    		jmxPort, rmiPort, passwordFile, url.toString());
+                            + "using password file '{}'." + "\nService URL is {}", jmxPort, rmiPort, passwordFile,
+                            url.toString());
                 }
             }
         } catch (IOException e) {

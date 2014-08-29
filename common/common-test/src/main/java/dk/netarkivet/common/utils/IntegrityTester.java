@@ -61,9 +61,8 @@ public class IntegrityTester {
     private static final File SUBDIR2 = new File(WORKING, "subdir2");
     private static final File SUBDIR3 = new File(WORKING, "subdir3");
     private static final int BLOCKSIZE = 32768;
-    private static final long LARGE =((long) Integer.MAX_VALUE) + 1L;
+    private static final long LARGE = ((long) Integer.MAX_VALUE) + 1L;
     public static final String LARGE_FILE = "largeFile";
-
 
     public void setUp() {
         rs.setUp();
@@ -79,8 +78,7 @@ public class IntegrityTester {
     }
 
     /**
-     * test that FileUtils.append can append between two remote files
-     * using ftp.
+     * test that FileUtils.append can append between two remote files using ftp.
      */
     @Test
     public void failingTestAppendRemoteFiles() throws IOException {
@@ -94,8 +92,7 @@ public class IntegrityTester {
         rf1.appendTo(out);
         rf2.appendTo(out);
         out.close();
-        FileAsserts.assertFileNumberOfLines("File has wrong number of lines",
-                out_file, 2);
+        FileAsserts.assertFileNumberOfLines("File has wrong number of lines", out_file, 2);
         FileAsserts.assertFileContains("Missing content", "1", out_file);
         FileAsserts.assertFileContains("Missing content", "2", out_file);
     }
@@ -117,15 +114,14 @@ public class IntegrityTester {
             FileUtils.copyDirectory(SUBDIR, SUBDIR2);
             File file1 = new File(SUBDIR, LARGE_FILE);
             File file2 = new File(SUBDIR2, LARGE_FILE);
-            assertEquals("Should have same file sizes", file1.length(),
-                    file2.length());
+            assertEquals("Should have same file sizes", file1.length(), file2.length());
         } finally {
             IOUtils.closeQuietly(os);
         }
     }
 
-    /** This tests that we are actually able to write and read more than
-     * 4GB worth of data using GZip.
+    /**
+     * This tests that we are actually able to write and read more than 4GB worth of data using GZip.
      *
      * @throws IOException
      */
@@ -133,10 +129,8 @@ public class IntegrityTester {
     public void failingTestGzipLargeFile() throws IOException {
         byte[] block = new byte[BLOCKSIZE];
         File largeFile = new File(WORKING, LARGE_FILE);
-        OutputStream os = new GZIPOutputStream(
-                new BufferedOutputStream(new FileOutputStream(largeFile)));
-        System.out.println("Creating " + 5 * LARGE + " bytes file "
-                + "- this will take a long time");
+        OutputStream os = new GZIPOutputStream(new BufferedOutputStream(new FileOutputStream(largeFile)));
+        System.out.println("Creating " + 5 * LARGE + " bytes file " + "- this will take a long time");
         block[1] = 'a';
         block[2] = 'b';
         for (long l = 0; l < 5 * LARGE / ((long) BLOCKSIZE) + 1L; l++) {
@@ -144,10 +138,8 @@ public class IntegrityTester {
         }
         os.close();
 
-        InputStream is = new LargeFileGZIPInputStream(
-                new BufferedInputStream(new FileInputStream(largeFile)));
-        System.out.println("Reading " + 5 * LARGE + " bytes file "
-                + "- this will take a long time");
+        InputStream is = new LargeFileGZIPInputStream(new BufferedInputStream(new FileInputStream(largeFile)));
+        System.out.println("Reading " + 5 * LARGE + " bytes file " + "- this will take a long time");
         byte[] buf = new byte[BLOCKSIZE];
         for (long l = 0; l < 5 * LARGE / ((long) BLOCKSIZE) + 1L; l++) {
             int totalRead = 0;
@@ -156,11 +148,9 @@ public class IntegrityTester {
                 read = is.read(buf, totalRead, buf.length - totalRead);
                 totalRead += read;
             }
-            assertEquals("Should have read full length of block " + l,
-                    block.length, totalRead);
+            assertEquals("Should have read full length of block " + l, block.length, totalRead);
             for (int i = 0; i < 8; i++) {
-            assertEquals("Read block " + l + " should be equals at " + i,
-                    block[i], buf[i]);
+                assertEquals("Read block " + l + " should be equals at " + i, block[i], buf[i]);
             }
         }
         assertEquals("This should be the end of the stream.", -1, is.read());
@@ -186,44 +176,41 @@ public class IntegrityTester {
             ZipUtils.gunzipFiles(SUBDIR2, SUBDIR3);
             File file1 = new File(SUBDIR, LARGE_FILE);
             File file2 = new File(SUBDIR3, LARGE_FILE);
-            assertEquals("Should have same file sizes", file1.length(),
-                    file2.length());
+            assertEquals("Should have same file sizes", file1.length(), file2.length());
         } finally {
             IOUtils.closeQuietly(os);
         }
     }
 
-    /** Test reading two large files: One that should unzip OK, one that should
-     * fail with wrong CRC checksum.
+    /**
+     * Test reading two large files: One that should unzip OK, one that should fail with wrong CRC checksum.
+     *
      * @throws IOException
      */
     @Test
     public void failingTestLargeGZIPReadLargeFiles() throws IOException {
-        LargeFileGZIPInputStream largeFileGZIPInputStream
-                = new LargeFileGZIPInputStream(new FileInputStream(
-                new File(BASE_DIR, "data/largeFileWrongCRC/largeFile.gz")));
+        LargeFileGZIPInputStream largeFileGZIPInputStream = new LargeFileGZIPInputStream(new FileInputStream(new File(
+                BASE_DIR, "data/largeFileWrongCRC/largeFile.gz")));
         try {
             byte[] buffer = new byte[Constants.IO_BUFFER_SIZE];
             while ((largeFileGZIPInputStream.read(buffer)) > 0) {
-                //just carry on.
+                // just carry on.
             }
             largeFileGZIPInputStream.close();
-            //Unfortunately this doesn't work. Let's look forward to Java 1.6.0.
-            //fail("Should throw exception on wrong CRC");
+            // Unfortunately this doesn't work. Let's look forward to Java 1.6.0.
+            // fail("Should throw exception on wrong CRC");
         } catch (IOException e) {
-            //expected... but
-            //Unfortunately this doesn't work. Let's look forward to Java 1.6.0.
-            assertEquals("Must be the right exception, not "
-                         + ExceptionUtils.getStackTrace(e),
-                         "Corrupt GZIP trailer", e.getMessage());
+            // expected... but
+            // Unfortunately this doesn't work. Let's look forward to Java 1.6.0.
+            assertEquals("Must be the right exception, not " + ExceptionUtils.getStackTrace(e), "Corrupt GZIP trailer",
+                    e.getMessage());
         }
 
-        largeFileGZIPInputStream
-                = new LargeFileGZIPInputStream(new FileInputStream(
-                new File(BASE_DIR, "data/largeFile/largeFile.gz")));
+        largeFileGZIPInputStream = new LargeFileGZIPInputStream(new FileInputStream(new File(BASE_DIR,
+                "data/largeFile/largeFile.gz")));
         byte[] buffer = new byte[Constants.IO_BUFFER_SIZE];
         while ((largeFileGZIPInputStream.read(buffer)) > 0) {
-            //just carry on.
+            // just carry on.
         }
         largeFileGZIPInputStream.close();
     }

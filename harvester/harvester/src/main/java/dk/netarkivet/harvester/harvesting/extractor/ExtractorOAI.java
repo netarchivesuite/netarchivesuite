@@ -38,48 +38,33 @@ import org.archive.net.UURI;
 import org.archive.util.TextUtils;
 
 /**
- * This is a link extractor for use with Heritrix. It will find the
- * resumptionToken in an OAI-PMH listMetadata query and construct the link for
- * the next page of the results. This extractor will not extract any other links
- * so if there are additional urls in the OAI metadata then an additional
- * extractor should be used for these. Typically this means that the extractor
- * chain in the order template will end: 
- * <newObject name="ExtractorOAI"
- *      class="dk.netarkivet.harvester.harvesting.extractor.ExtractorOAI"> 
- *      <boolean name="enabled">true</boolean> 
- *      <newObject name="ExtractorOAI#decide-rules"
- *       class="org.archive.crawler.deciderules.DecideRuleSequence"> 
- *            <map name="rules"/> 
- *       </newObject> 
- *</newObject> 
- * <newObject name="ExtractorXML"
- *      class="org.archive.crawler.extractor.ExtractorXML"> 
- *      <boolean name="enabled">true</boolean> 
- *      <newObject name="ExtractorXML#decide-rules"
- *              class="org.archive.crawler.deciderules.DecideRuleSequence"> 
- *              <map name="rules"/> 
- *      </newObject> 
- * </newObject>
+ * This is a link extractor for use with Heritrix. It will find the resumptionToken in an OAI-PMH listMetadata query and
+ * construct the link for the next page of the results. This extractor will not extract any other links so if there are
+ * additional urls in the OAI metadata then an additional extractor should be used for these. Typically this means that
+ * the extractor chain in the order template will end: <newObject name="ExtractorOAI"
+ * class="dk.netarkivet.harvester.harvesting.extractor.ExtractorOAI"> <boolean name="enabled">true</boolean> <newObject
+ * name="ExtractorOAI#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence"> <map name="rules"/>
+ * </newObject> </newObject> <newObject name="ExtractorXML" class="org.archive.crawler.extractor.ExtractorXML"> <boolean
+ * name="enabled">true</boolean> <newObject name="ExtractorXML#decide-rules"
+ * class="org.archive.crawler.deciderules.DecideRuleSequence"> <map name="rules"/> </newObject> </newObject>
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({"serial"})
 public class ExtractorOAI extends Extractor {
 
     /**
      * Regular expression matching the simple resumptionToken like this.
      * <resumptionToken>oai_dc/421315/56151148/100/0/292/x/x/x</resumptionToken>
      */
-    public static final String SIMPLE_RESUMPTION_TOKEN_MATCH
-        = "(?i)<resumptionToken>\\s*(.*)\\s*</resumptionToken>";
-    
+    public static final String SIMPLE_RESUMPTION_TOKEN_MATCH = "(?i)<resumptionToken>\\s*(.*)\\s*</resumptionToken>";
+
     /**
-     * Regular expression matching the extended resumptionToken with attributes like this.
-     * <resumptionToken cursor="0" completeListSize="421315">oai_dc/421315/56151148/100/0/292/x/x/x</resumptionToken>
-     * This is seen in OAI targets used by PURE.
+     * Regular expression matching the extended resumptionToken with attributes like this. <resumptionToken cursor="0"
+     * completeListSize="421315">oai_dc/421315/56151148/100/0/292/x/x/x</resumptionToken> This is seen in OAI targets
+     * used by PURE.
      */
-    public static final String EXTENDED_RESUMPTION_TOKEN_MATCH
-    = "(?i)<resumptionToken\\s*cursor=\"[0-9]+\"\\s*completeListSize=\"[0-9]+\">\\s*(.*)\\s*</resumptionToken>";
-    
-     /** The class logger. */
+    public static final String EXTENDED_RESUMPTION_TOKEN_MATCH = "(?i)<resumptionToken\\s*cursor=\"[0-9]+\"\\s*completeListSize=\"[0-9]+\">\\s*(.*)\\s*</resumptionToken>";
+
+    /** The class logger. */
     final Log log = LogFactory.getLog(getClass());
 
     /**
@@ -94,37 +79,36 @@ public class ExtractorOAI extends Extractor {
 
     /**
      * Constructor for this extractor.
+     *
      * @param name the name of this extractor
      */
     public ExtractorOAI(String name) {
         super(name, "Extractor which finds the resumptionToken in an OAI "
-                    + "listMetadata query and adds the next page of results "
-                    + "to the crawl");
+                + "listMetadata query and adds the next page of results " + "to the crawl");
     }
 
     /**
-     * Perform the link extraction on the current crawl uri. This method
-     * does not set linkExtractorFinished() on the current crawlURI, so
-     * subsequent extractors in the chain can find more links.
+     * Perform the link extraction on the current crawl uri. This method does not set linkExtractorFinished() on the
+     * current crawlURI, so subsequent extractors in the chain can find more links.
+     *
      * @param curi the CrawlUI from which to extract the link.
      */
     @Override
     protected void extract(CrawlURI curi) {
-         if (!isHttpTransactionContentToProcess(curi)) {
+        if (!isHttpTransactionContentToProcess(curi)) {
             return;
         }
         String mimeType = curi.getContentType();
         if (mimeType == null) {
             return;
         }
-        if ((mimeType.toLowerCase().indexOf("xml") < 0)
-            && (!curi.toString().toLowerCase().endsWith(".rss"))
-            && (!curi.toString().toLowerCase().endsWith(".xml"))) {
+        if ((mimeType.toLowerCase().indexOf("xml") < 0) && (!curi.toString().toLowerCase().endsWith(".rss"))
+                && (!curi.toString().toLowerCase().endsWith(".xml"))) {
             return;
         }
         try {
             String query = curi.getUURI().getQuery();
-            if (query == null || !query.contains("verb=ListRecords")) { //Not an OAI-PMH document
+            if (query == null || !query.contains("verb=ListRecords")) { // Not an OAI-PMH document
                 return;
             }
         } catch (URIException e) {
@@ -138,8 +122,7 @@ public class ExtractorOAI extends Extractor {
             log.error("Failed getting ReplayCharSequence: " + e.getMessage());
         }
         if (cs == null) {
-            log.error("Failed getting ReplayCharSequence: "
-                    + curi.toString());
+            log.error("Failed getting ReplayCharSequence: " + curi.toString());
             return;
         }
         try {
@@ -152,16 +135,15 @@ public class ExtractorOAI extends Extractor {
                 try {
                     cs.close();
                 } catch (IOException ioe) {
-                    log.warn(TextUtils.exceptionToString(
-                            "Failed close of ReplayCharSequence.", ioe));
+                    log.warn(TextUtils.exceptionToString("Failed close of ReplayCharSequence.", ioe));
                 }
             }
         }
     }
 
     /**
-     * Searches for resumption token and adds link if it is found. Returns true
-     * iff a link is added.
+     * Searches for resumption token and adds link if it is found. Returns true iff a link is added.
+     *
      * @param curi the CrawlURI.
      * @param cs the character sequency in which to search.
      * @return true iff a resumptionToken is found and a link added.
@@ -169,7 +151,7 @@ public class ExtractorOAI extends Extractor {
     public boolean processXml(CrawlURI curi, CharSequence cs) {
         Matcher m = TextUtils.getMatcher(SIMPLE_RESUMPTION_TOKEN_MATCH, cs);
         Matcher mPure = TextUtils.getMatcher(EXTENDED_RESUMPTION_TOKEN_MATCH, cs);
-        boolean matchesPure = mPure.find(); 
+        boolean matchesPure = mPure.find();
         boolean matches = m.find();
         String token = null;
         if (matches) {
@@ -180,13 +162,10 @@ public class ExtractorOAI extends Extractor {
         if (token != null) {
             UURI oldUri = curi.getUURI();
             try {
-                final String newQueryPart = "verb=ListRecords&resumptionToken="
-                                            + token;
-                URI newUri = new URI(oldUri.getScheme(), oldUri.getAuthority(),
-                                     oldUri.getPath(),
-                                     newQueryPart, oldUri.getFragment());
-                curi.createAndAddLink(newUri.toString(), Link.NAVLINK_MISC,
-                                      Link.NAVLINK_HOP);
+                final String newQueryPart = "verb=ListRecords&resumptionToken=" + token;
+                URI newUri = new URI(oldUri.getScheme(), oldUri.getAuthority(), oldUri.getPath(), newQueryPart,
+                        oldUri.getFragment());
+                curi.createAndAddLink(newUri.toString(), Link.NAVLINK_MISC, Link.NAVLINK_HOP);
             } catch (URISyntaxException e) {
                 log.error(e);
             } catch (URIException e) {
@@ -200,6 +179,7 @@ public class ExtractorOAI extends Extractor {
 
     /**
      * Return a report from this processor.
+     *
      * @return the report.
      */
     @Override
@@ -208,8 +188,7 @@ public class ExtractorOAI extends Extractor {
         ret.append("Processor: dk.netarkivet.harvester.harvesting.extractor.ExtractorOAI\n");
         ret.append("  Function:          Link extraction as part of OAI harvesting\n");
         ret.append("  CrawlURIs handled: " + this.numberOfCURIsHandled + "\n");
-        ret.append("  Links extracted:   " + this.numberOfLinksExtracted
-                + "\n\n");
+        ret.append("  Links extracted:   " + this.numberOfLinksExtracted + "\n\n");
         return ret.toString();
     }
 

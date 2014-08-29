@@ -40,42 +40,38 @@ import dk.netarkivet.common.utils.TimeUtils;
 
 /**
  * Abstract superclass for easy implementation of remote file.
- *
- * Sub classes should override this class, and do the following:
- * - Implement getChecksum.
- * - Implement getInputStream.
- * - Implement cleanup.
- * - Add getInstance(File, Boolean, Boolean, Boolean)-method to make the file
- *   work with the factory.
+ * <p>
+ * Sub classes should override this class, and do the following: - Implement getChecksum. - Implement getInputStream. -
+ * Implement cleanup. - Add getInstance(File, Boolean, Boolean, Boolean)-method to make the file work with the factory.
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({"serial"})
 public abstract class AbstractRemoteFile implements RemoteFile {
 
     /** A named logger for this class. */
     private static final transient Logger log = LoggerFactory.getLogger(AbstractRemoteFile.class);
 
-	/** The file this is remote file for. */
+    /** The file this is remote file for. */
     protected final File file;
     /** If true, communication is checksummed. */
     protected final boolean useChecksums;
     /** If true, the file may be deleted after all transfers are done. */
     protected final boolean fileDeletable;
-    /** If true, the file may be downloaded multiple times. Otherwise, the
-     * remote file is invalidated after first transfer. */
+    /**
+     * If true, the file may be downloaded multiple times. Otherwise, the remote file is invalidated after first
+     * transfer.
+     */
     protected final boolean multipleDownloads;
     /** The size of the file. */
     protected final long filesize;
 
     /**
-     * Initialise common fields in remote file.
-     * Overriding classes should also initialise checksum field.
+     * Initialise common fields in remote file. Overriding classes should also initialise checksum field.
      *
      * @param file The file to make remote file for.
      * @param useChecksums If true, communications should be checksummed.
-     * @param fileDeletable If true, the file may be downloaded multiple times.
-     * Otherwise, the remote file is invalidated after first transfer.
-     * @param multipleDownloads If useChecksums is true, contains the file
-     * checksum.
+     * @param fileDeletable If true, the file may be downloaded multiple times. Otherwise, the remote file is
+     * invalidated after first transfer.
+     * @param multipleDownloads If useChecksums is true, contains the file checksum.
      */
     public AbstractRemoteFile(File file, boolean useChecksums, boolean fileDeletable, boolean multipleDownloads) {
         ArgumentNotValid.checkNotNull(file, "File file");
@@ -90,27 +86,27 @@ public abstract class AbstractRemoteFile implements RemoteFile {
     }
 
     /**
-     * Copy this remote file to the given file.
-     * This method will make a fileoutputstream, and use appendTo to write
-     * the remote file to this stream.
+     * Copy this remote file to the given file. This method will make a fileoutputstream, and use appendTo to write the
+     * remote file to this stream.
+     *
      * @param destFile The file to write the remote file to.
-     * @throws ArgumentNotValid on null destFile, or parent to destfile is not
-     * a writeable directory, or destfile exists and cannot be overwritten.
+     * @throws ArgumentNotValid on null destFile, or parent to destfile is not a writeable directory, or destfile exists
+     * and cannot be overwritten.
      * @throws IOFailure on I/O trouble writing remote file to destination.
      */
     public void copyTo(File destFile) {
         ArgumentNotValid.checkNotNull(destFile, "File destFile");
         destFile = destFile.getAbsoluteFile();
         if ((!destFile.isFile() || !destFile.canWrite())
-        		&& (!destFile.getParentFile().isDirectory() || !destFile.getParentFile().canWrite())) {
+                && (!destFile.getParentFile().isDirectory() || !destFile.getParentFile().canWrite())) {
             throw new ArgumentNotValid("Destfile '" + destFile + "' does not point to a writable file for "
-            		+ "remote file '" + file + "'");
+                    + "remote file '" + file + "'");
         }
         try {
             FileOutputStream fos = null;
             int retry = 0;
             boolean success = false;
-            
+
             // retry if it fails, but always make at least one attempt.
             do {
                 try {
@@ -125,25 +121,25 @@ public abstract class AbstractRemoteFile implements RemoteFile {
                     }
                 } catch (IOFailure e) {
                     if (retry == 0) {
-                       log.warn("Could not retrieve the file '{}' on first attempt. Will retry up to '{}' times.",
-                    		   getName(), getNumberOfRetries(), e);
+                        log.warn("Could not retrieve the file '{}' on first attempt. Will retry up to '{}' times.",
+                                getName(), getNumberOfRetries(), e);
                     } else {
-                       log.warn("Could not retrieve the file '{}' on retry number '{}' of '{}' retries.",
-                    		   getName(), retry, getNumberOfRetries(), e);
+                        log.warn("Could not retrieve the file '{}' on retry number '{}' of '{}' retries.", getName(),
+                                retry, getNumberOfRetries(), e);
                     }
                 }
                 ++retry;
                 if (!success && retry < getNumberOfRetries()) {
                     log.debug("CopyTo attempt #{} of max {} failed. Will sleep a while before trying to copyTo again.",
-                    		retry, getNumberOfRetries());
+                            retry, getNumberOfRetries());
                     TimeUtils.exponentialBackoffSleep(retry, Calendar.MINUTE);
                 }
-            } while(!success && retry < getNumberOfRetries());
-            
+            } while (!success && retry < getNumberOfRetries());
+
             // handle case when the retrieval is unsuccessful.
-            if(!success) {
+            if (!success) {
                 throw new IOFailure("Unable to retrieve the file '" + getName() + "' in '" + getNumberOfRetries()
-                		+ "' attempts.");
+                        + "' attempts.");
             }
         } catch (Exception e) {
             FileUtils.remove(destFile);
@@ -152,9 +148,9 @@ public abstract class AbstractRemoteFile implements RemoteFile {
     }
 
     /**
-     * Append this remote file to the given output stream.
-     * This method will use getInputStream to get the remote stream, and then
-     * copy that stream to the given output stream.
+     * Append this remote file to the given output stream. This method will use getInputStream to get the remote stream,
+     * and then copy that stream to the given output stream.
+     *
      * @param out The stream to write the remote file to.
      * @throws ArgumentNotValid if outputstream is null.
      * @throws IOFailure on I/O trouble writing remote file to stream.
@@ -165,10 +161,10 @@ public abstract class AbstractRemoteFile implements RemoteFile {
     }
 
     /**
-     * Get an input stream representing the remote file.
-     * The returned input stream should throw IOFailure on close, if
-     * checksums are requested, but do not match. The returned inputstream
-     * should call cleanup on close, if multipleDownloads is not true.
+     * Get an input stream representing the remote file. The returned input stream should throw IOFailure on close, if
+     * checksums are requested, but do not match. The returned inputstream should call cleanup on close, if
+     * multipleDownloads is not true.
+     *
      * @return An input stream for the remote file.
      * @throws IOFailure on I/O trouble generating inputstream for remote file.
      */
@@ -176,6 +172,7 @@ public abstract class AbstractRemoteFile implements RemoteFile {
 
     /**
      * Get the name of the remote file.
+     *
      * @return The name of the remote file.
      */
     public String getName() {
@@ -184,26 +181,28 @@ public abstract class AbstractRemoteFile implements RemoteFile {
 
     /**
      * Get checksum for file, or null if checksums were not requested.
+     *
      * @return checksum for file, or null if checksums were not requested.
      */
     public abstract String getChecksum();
 
     /**
-     * Invalidate all file handles. If file is deletable, it should be deleted
-     * after this method is called. This method should never throw exceptions,
-     * but only log a warning on trouble. It should be idempotent, meaning it
-     * should be safe to call this method twice.
+     * Invalidate all file handles. If file is deletable, it should be deleted after this method is called. This method
+     * should never throw exceptions, but only log a warning on trouble. It should be idempotent, meaning it should be
+     * safe to call this method twice.
      */
     public abstract void cleanup();
-    
+
     /**
      * Method for retrieving the number of retries for retrieving a file.
+     *
      * @return The number of retries for retrieving a file.
      */
     public abstract int getNumberOfRetries();
 
     /**
      * Get the size of this remote file.
+     *
      * @return The size of this remote file.
      */
     public long getSize() {

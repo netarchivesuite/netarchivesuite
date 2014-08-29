@@ -22,13 +22,11 @@
  */
 package dk.netarkivet.harvester.harvesting.extractor;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
-
-import static org.junit.Assert.*;
-import org.junit.Test;
-
 
 import org.apache.commons.httpclient.URIException;
 import org.archive.crawler.datamodel.CrawlURI;
@@ -37,35 +35,32 @@ import org.archive.crawler.extractor.Link;
 import org.archive.io.ReplayCharSequence;
 import org.archive.net.UURIFactory;
 import org.archive.util.HttpRecorder;
+import org.junit.Test;
 
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({"serial"})
 public class ExtractorOAITest {
 
     public static final String xmlText = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><OAI-PMH xmlns=\"http://www.openarchives.org/OAI/2.0/\" \n"
-                                         + "         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
-                                         + "         xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/\n"
-                                         + "         http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd\"> \n"
-                                         + " <responseDate>2011-01-24T15:19:38Z</responseDate> \n"
-                                         + " <request verb=\"ListRecords\"  metadataPrefix=\"oai_dc\">http://www.mtp.hum.ku.dk/library/uni/netarkiv/oai2v3/</request>\n"
-                                         + " <ListRecords>\n"
-                                         + "\n"
-                                         + "\t<record>\n"
-                                         + "    <header>\n"
-                                         + "      <identifier>9788772895819,9788763500128</identifier>\n"
-                                         + "      <datestamp>2010-12-06</datestamp>\n"
-                                         + "\n"
-                                         + "    </header>\n"
-                                         + "    <metadata>\n"
+            + "         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
+            + "         xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/\n"
+            + "         http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd\"> \n"
+            + " <responseDate>2011-01-24T15:19:38Z</responseDate> \n"
+            + " <request verb=\"ListRecords\"  metadataPrefix=\"oai_dc\">http://www.mtp.hum.ku.dk/library/uni/netarkiv/oai2v3/</request>\n"
+            + " <ListRecords>\n"
+            + "\n"
+            + "\t<record>\n"
+            + "    <header>\n"
+            + "      <identifier>9788772895819,9788763500128</identifier>\n"
+            + "      <datestamp>2010-12-06</datestamp>\n"
+            + "\n"
+            + "    </header>\n"
+            + "    <metadata>\n"
 
-                                         + "  </metadata>\n"
-                                         + "  </record>\n"
-                                         + "\n"
-                                         + "   <resumptionToken>foobar</resumptionToken>\n"
-                                         + "      \n"
-                                         + "   \n"
-                                         + "</ListRecords>\n"
-                                         + "\n"
-                                         + "</OAI-PMH>\n";
+            + "  </metadata>\n"
+            + "  </record>\n"
+            + "\n"
+            + "   <resumptionToken>foobar</resumptionToken>\n"
+            + "      \n" + "   \n" + "</ListRecords>\n" + "\n" + "</OAI-PMH>\n";
     public static final String uri = "http://www.mtp.hum.ku.dk/library/uni/netarkiv/oai2v3/?verb=ListRecords&metadataPrefix=oai_dc";
 
     class TestReplayCharSequence implements ReplayCharSequence {
@@ -93,25 +88,24 @@ public class ExtractorOAITest {
     }
 
     /**
-     * Create a CrawlURI corresponding to this xml and uri. Run the extract method on it.
-     * Check that it now has a new link with resumptionToken=foobar in the query.
+     * Create a CrawlURI corresponding to this xml and uri. Run the extract method on it. Check that it now has a new
+     * link with resumptionToken=foobar in the query.
      */
     @Test
     public void testExtract() throws URIException, InterruptedException {
         CrawlURI curi = new CrawlURI(UURIFactory.getInstance(uri)) {
             @Override
             public HttpRecorder getHttpRecorder() {
-                return new HttpRecorder(new File("/"),"") {
+                return new HttpRecorder(new File("/"), "") {
                     @Override
-                    public ReplayCharSequence getReplayCharSequence()
-                            throws IOException {
+                    public ReplayCharSequence getReplayCharSequence() throws IOException {
                         return new TestReplayCharSequence(xmlText);
                     }
                 };
             }
-        } ;
+        };
         curi.setContentType("text/xml");
-        Extractor x = new ExtractorOAI("foobar"){
+        Extractor x = new ExtractorOAI("foobar") {
             @Override
             protected boolean isHttpTransactionContentToProcess(CrawlURI curi) {
                 return true;

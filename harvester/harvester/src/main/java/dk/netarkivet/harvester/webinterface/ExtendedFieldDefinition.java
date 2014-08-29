@@ -43,22 +43,20 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDefaultValue
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldOptions;
 
 /**
- * Contains utility methods for creating and editing schedule definitions for
- * harvests.
+ * Contains utility methods for creating and editing schedule definitions for harvests.
  */
 public final class ExtendedFieldDefinition {
-    
+
     /**
      * Private constructor. No instances.
      */
     private ExtendedFieldDefinition() {
     }
-    
+
     /**
-     * Process an request from the jsp-pages.
-     * HarvestDefinition/Definitions-edit-extendedfield.jsp
-     * HarvestDefinition/Definitions-list-extendedfields.jsp
-     * HarvestDefinition/Definitions-edit-domain.jsp
+     * Process an request from the jsp-pages. HarvestDefinition/Definitions-edit-extendedfield.jsp
+     * HarvestDefinition/Definitions-list-extendedfields.jsp HarvestDefinition/Definitions-edit-domain.jsp
+     *
      * @param context the given JSP-context
      * @param i18n the given I18n object.
      * @return the extendedfield resulting from the processing.
@@ -69,18 +67,13 @@ public final class ExtendedFieldDefinition {
 
         ServletRequest request = context.getRequest();
 
-        Long extendedFieldID = HTMLUtils.parseOptionalLong(context, 
-                ExtendedFieldConstants.EXTF_ID, null);
-        Long extendedFieldTypeID = HTMLUtils.parseOptionalLong(context,
-                ExtendedFieldConstants.EXTF_TYPE_ID, null);
+        Long extendedFieldID = HTMLUtils.parseOptionalLong(context, ExtendedFieldConstants.EXTF_ID, null);
+        Long extendedFieldTypeID = HTMLUtils.parseOptionalLong(context, ExtendedFieldConstants.EXTF_TYPE_ID, null);
 
         HTMLUtils.forwardOnEmptyParameter(context, ExtendedFieldConstants.EXTF_NAME);
         String name = request.getParameter(ExtendedFieldConstants.EXTF_NAME).trim();
-        int datatype = HTMLUtils.parseAndCheckInteger(context, 
-                ExtendedFieldConstants.EXTF_DATATYPE,
-                ExtendedFieldDataTypes.MIN_DATATYPE_VALUE, 
-                ExtendedFieldDataTypes.MAX_DATATYPE_VALUE
-                );
+        int datatype = HTMLUtils.parseAndCheckInteger(context, ExtendedFieldConstants.EXTF_DATATYPE,
+                ExtendedFieldDataTypes.MIN_DATATYPE_VALUE, ExtendedFieldDataTypes.MAX_DATATYPE_VALUE);
 
         boolean mandatory = false;
 
@@ -89,9 +82,11 @@ public final class ExtendedFieldDefinition {
         if (checkboxValues != null) {
             mandatory = true;
         }
-        
-        int maxlen = HTMLUtils.parseAndCheckInteger(context, ExtendedFieldConstants.EXTF_MAXLEN, ExtendedFieldConstants.MAXLEN_EXTF_BOOLEAN, ExtendedFieldConstants.MAXLEN_EXTF_CONTENT);
-        int sequencenr = HTMLUtils.parseAndCheckInteger(context, ExtendedFieldConstants.EXTF_SEQUENCENR, 1, Integer.MAX_VALUE);
+
+        int maxlen = HTMLUtils.parseAndCheckInteger(context, ExtendedFieldConstants.EXTF_MAXLEN,
+                ExtendedFieldConstants.MAXLEN_EXTF_BOOLEAN, ExtendedFieldConstants.MAXLEN_EXTF_CONTENT);
+        int sequencenr = HTMLUtils.parseAndCheckInteger(context, ExtendedFieldConstants.EXTF_SEQUENCENR, 1,
+                Integer.MAX_VALUE);
 
         String options = "";
         ExtendedFieldOptions efo = null;
@@ -113,18 +108,15 @@ public final class ExtendedFieldDefinition {
         String defaultvalue = "";
         if (datatype == ExtendedFieldDataTypes.NOTE) {
             defaultvalue = request.getParameter(ExtendedFieldConstants.EXTF_DEFAULTVALUE_TEXTAREA);
-        }
-        else if (datatype == ExtendedFieldDataTypes.BOOLEAN) {
+        } else if (datatype == ExtendedFieldDataTypes.BOOLEAN) {
             checkboxValues = request.getParameterValues(ExtendedFieldConstants.EXTF_DEFAULTVALUE_CHECKBOX);
             if (checkboxValues != null) {
-            	defaultvalue = ExtendedFieldConstants.TRUE;
+                defaultvalue = ExtendedFieldConstants.TRUE;
             }
-        }
-        else {
+        } else {
             defaultvalue = request.getParameter(ExtendedFieldConstants.EXTF_DEFAULTVALUE_TEXTFIELD);
         }
-        
-        
+
         if (defaultvalue == null || defaultvalue.length() == 0) {
             defaultvalue = "";
         }
@@ -134,13 +126,13 @@ public final class ExtendedFieldDefinition {
         }
 
         String format = "";
-        if (datatype == ExtendedFieldDataTypes.NUMBER || datatype == ExtendedFieldDataTypes.TIMESTAMP || datatype == ExtendedFieldDataTypes.JSCALENDAR) {
-        	if (datatype == ExtendedFieldDataTypes.JSCALENDAR) {
+        if (datatype == ExtendedFieldDataTypes.NUMBER || datatype == ExtendedFieldDataTypes.TIMESTAMP
+                || datatype == ExtendedFieldDataTypes.JSCALENDAR) {
+            if (datatype == ExtendedFieldDataTypes.JSCALENDAR) {
                 format = request.getParameter(ExtendedFieldConstants.EXTF_FORMAT_JSCALENDAR);
-        	}
-        	else {
+            } else {
                 format = request.getParameter(ExtendedFieldConstants.EXTF_FORMAT);
-        	}
+            }
             if (format == null || format.length() == 0) {
                 format = "";
             } else {
@@ -170,41 +162,38 @@ public final class ExtendedFieldDefinition {
         if (defaultvalue.length() > 0) {
             ExtendedFieldDefaultValue efd = new ExtendedFieldDefaultValue(defaultvalue, format, datatype);
             if (!efd.isValid()) {
-                throw new ForwardedToErrorPage(
-                        "errormsg;extendedfields.defaultvalue.invalid");
+                throw new ForwardedToErrorPage("errormsg;extendedfields.defaultvalue.invalid");
             }
 
-            if (datatype == ExtendedFieldDataTypes.SELECT && efo != null  && !efo.isKeyValid(defaultvalue)) {
-                throw new ForwardedToErrorPage(
-                        "errormsg;extendedfields.defaultvalue.invalid");
+            if (datatype == ExtendedFieldDataTypes.SELECT && efo != null && !efo.isKeyValid(defaultvalue)) {
+                throw new ForwardedToErrorPage("errormsg;extendedfields.defaultvalue.invalid");
             }
         }
 
         String maxlenStr = "";
         maxlenStr = request.getParameter(ExtendedFieldConstants.EXTF_MAXLEN);
         if (maxlenStr == null || maxlenStr.length() == 0) {
-        	try {
+            try {
                 maxlen = Integer.valueOf(maxlenStr);
-        	}
-        	catch(NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 throw new ForwardedToErrorPage("errormsg;extendedfields.maxlen.invalid");
-        	}
+            }
         }
 
         if (mandatory && defaultvalue.length() == 0) {
-            throw new ForwardedToErrorPage(
-                    "errormsg;extendedfields.defaultvalue.empty");
+            throw new ForwardedToErrorPage("errormsg;extendedfields.defaultvalue.empty");
         }
-        
-        ExtendedField extendedField = new ExtendedField(extendedFieldID, extendedFieldTypeID, name, format, datatype, mandatory,
-                										sequencenr, defaultvalue, options, maxlen);
+
+        ExtendedField extendedField = new ExtendedField(extendedFieldID, extendedFieldTypeID, name, format, datatype,
+                mandatory, sequencenr, defaultvalue, options, maxlen);
         updateExtendedField(extendedField);
 
         return extendedField;
     }
-    
+
     /**
-     * Create or update the extendedField in the database. 
+     * Create or update the extendedField in the database.
+     *
      * @param aExtendedField The given extendedfield
      */
     private static void updateExtendedField(ExtendedField aExtendedField) {
@@ -219,6 +208,7 @@ public final class ExtendedFieldDefinition {
 
     /**
      * Read and return the Extendedfield for the given id.
+     *
      * @param aId An Id for a specific ExtendedField
      * @return the Extendedfield for the given id.
      */

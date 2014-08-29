@@ -32,11 +32,12 @@ public final class ChecksumFileApplication {
     /**
      * Private constructor. Prevents instantiation of this class.
      */
-    private ChecksumFileApplication() {}
-    
+    private ChecksumFileApplication() {
+    }
+
     /**
      * Runs the Checksum File Application.
-     * 
+     *
      * @param args No arguments required - thus an empty array.
      * @see ChecksumFileServer
      */

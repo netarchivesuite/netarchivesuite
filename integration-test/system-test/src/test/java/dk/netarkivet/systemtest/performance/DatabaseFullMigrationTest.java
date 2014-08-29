@@ -22,10 +22,9 @@
  */
 package dk.netarkivet.systemtest.performance;
 
-import dk.netarkivet.systemtest.environment.ApplicationManager;
-import dk.netarkivet.systemtest.functional.DomainsPageTest;
-import dk.netarkivet.systemtest.functional.ExtendedFieldTest;
-import dk.netarkivet.systemtest.page.PageHelper;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -33,13 +32,15 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
+import dk.netarkivet.systemtest.environment.ApplicationManager;
+import dk.netarkivet.systemtest.functional.DomainsPageTest;
+import dk.netarkivet.systemtest.functional.ExtendedFieldTest;
+import dk.netarkivet.systemtest.page.PageHelper;
 
 @SuppressWarnings("unused")
 public class DatabaseFullMigrationTest extends StressTest {
 
-    @Test(groups = {"guitest","performancetest"})
+    @Test(groups = {"guitest", "performancetest"})
     public void dbFullMigrationTest() throws Exception {
         addDescription("Test complete backup-database ingest from production produces a functional NAS system.");
         doStuff();
@@ -74,13 +75,14 @@ public class DatabaseFullMigrationTest extends StressTest {
         applicationManager.waitForGUIToStart(60);
         addFixture("Opening NAS front page.");
         DomainsPageTest domainsPageTest = new DomainsPageTest();
-        domainsPageTest.usedConfigurationsTest(driver, (new Date()).getTime()+".dk");
+        domainsPageTest.usedConfigurationsTest(driver, (new Date()).getTime() + ".dk");
         ExtendedFieldTest extendedFieldTest = new ExtendedFieldTest();
-        extendedFieldTest.extendedDomainStringFieldTest(driver,  (new Date()).getTime() + "");
-        //Add dependency injection of EnvironmentManager so this can work:
-        //HarvestHistoryForDomainPageTest harvestHistoryForDomainPageTest = new HarvestHistoryForDomainPageTest();
-        //harvestHistoryForDomainPageTest.historySortedTablePagingTest();
-        addStep("Opening bitpreservation section of GUI.", "The page should open and show the number of files in the archive.");
+        extendedFieldTest.extendedDomainStringFieldTest(driver, (new Date()).getTime() + "");
+        // Add dependency injection of EnvironmentManager so this can work:
+        // HarvestHistoryForDomainPageTest harvestHistoryForDomainPageTest = new HarvestHistoryForDomainPageTest();
+        // harvestHistoryForDomainPageTest.historySortedTablePagingTest();
+        addStep("Opening bitpreservation section of GUI.",
+                "The page should open and show the number of files in the archive.");
         driver.manage().timeouts().pageLoadTimeout(10L, TimeUnit.MINUTES);
         driver.findElement(By.linkText("Bitpreservation")).click();
         driver.getPageSource().matches("Number of files:.*[0-9]+");
@@ -88,4 +90,3 @@ public class DatabaseFullMigrationTest extends StressTest {
     }
 
 }
-

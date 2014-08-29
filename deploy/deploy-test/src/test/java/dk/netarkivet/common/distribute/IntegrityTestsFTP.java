@@ -63,8 +63,8 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 @Ignore("Not in junit3 test suite")
 public class IntegrityTestsFTP {
     private static final String FILE_1_CONTENTS = "The contents of file 1";
-    private static final String FILE_2_CONTENTS = "File 2 contains\n" +
-            "this and this\nit also has\nsome more\nlike this\nBurma-Shave";
+    private static final String FILE_2_CONTENTS = "File 2 contains\n"
+            + "this and this\nit also has\nsome more\nlike this\nBurma-Shave";
     private FTPClient theFTPClient;
     private ArrayList<RemoteFile> upLoadedFTPRemoteFiles = new ArrayList<RemoteFile>();
     private ArrayList<String> upLoadedFiles = new ArrayList<String>();
@@ -98,31 +98,24 @@ public class IntegrityTestsFTP {
         FileUtils.copyFile(TestInfo.TESTXML, testFile3);
 
         /* Read ftp-related settings from settings.xml. */
-        final String ftpServerName = Settings.get(
-                CommonSettings.FTP_SERVER_NAME);
-        final int ftpServerPort = Integer.parseInt(Settings.get(
-                CommonSettings.FTP_SERVER_PORT));
+        final String ftpServerName = Settings.get(CommonSettings.FTP_SERVER_NAME);
+        final int ftpServerPort = Integer.parseInt(Settings.get(CommonSettings.FTP_SERVER_PORT));
         final String ftpUserName = Settings.get(CommonSettings.FTP_USER_NAME);
-        final String ftpUserPassword = Settings.get(
-                CommonSettings.FTP_USER_PASSWORD);
+        final String ftpUserPassword = Settings.get(CommonSettings.FTP_USER_PASSWORD);
 
         /* Connect to test ftp-server. */
         theFTPClient = new FTPClient();
-        
+
         try {
             theFTPClient.connect(ftpServerName, ftpServerPort);
-            assertTrue("Could not login to ' + " + ftpServerName
-            		+ ":" + ftpServerPort + "' with username,password="
-            		+ ftpUserName + "," + ftpUserPassword,
-            		theFTPClient.login(ftpUserName, ftpUserPassword));
+            assertTrue("Could not login to ' + " + ftpServerName + ":" + ftpServerPort + "' with username,password="
+                    + ftpUserName + "," + ftpUserPassword, theFTPClient.login(ftpUserName, ftpUserPassword));
             assertTrue("Must be possible to set the file type to binary after login",
                     theFTPClient.setFileType(FTPClient.BINARY_FILE_TYPE));
         } catch (SocketException e) {
-            throw new IOFailure("Connect to " + ftpServerName + ":" + ftpServerPort +
-                                " failed", e.getCause());
+            throw new IOFailure("Connect to " + ftpServerName + ":" + ftpServerPort + " failed", e.getCause());
         } catch (IOException e) {
-            throw new IOFailure("Connect to " + ftpServerName + ":" + ftpServerPort +
-                                " failed",  e.getCause());
+            throw new IOFailure("Connect to " + ftpServerName + ":" + ftpServerPort + " failed", e.getCause());
         }
 
         /** Do not send notification by email. Print them to STDOUT. */
@@ -138,16 +131,14 @@ public class IntegrityTestsFTP {
 
             if (currentUploadedFile != null) {
                 if (!theFTPClient.deleteFile(currentUploadedFile)) {
-                    logger.warning("deleteFile operation failed on " +
-                            currentUploadedFile + ". Reply from ftpserver: " +
-                            theFTPClient.getReplyString());
+                    logger.warning("deleteFile operation failed on " + currentUploadedFile + ". Reply from ftpserver: "
+                            + theFTPClient.getReplyString());
                 }
             }
         }
 
         if (!theFTPClient.logout()) {
-            logger.warning("logout operation failed. Reply from ftp-server: " +
-                    theFTPClient.getReplyString());
+            logger.warning("logout operation failed. Reply from ftp-server: " + theFTPClient.getReplyString());
         }
 
         theFTPClient.disconnect();
@@ -167,18 +158,16 @@ public class IntegrityTestsFTP {
     }
 
     /**
-     * Initially verify that communication with the ftp-server succeeds
-     * without using the RemoteFile.
-     * (1) Verify, that you can upload a file to a ftp-server, and retrieve the
-     * same file from this server-server.
-     * (2) Verify, that file was not corrupted in transit
-     * author: SVC
+     * Initially verify that communication with the ftp-server succeeds without using the RemoteFile. (1) Verify, that
+     * you can upload a file to a ftp-server, and retrieve the same file from this server-server. (2) Verify, that file
+     * was not corrupted in transit author: SVC
+     *
      * @throws IOException
      */
     public void testConfigSettings() throws IOException {
-        /** this code has been tested with
-         * the ftp-server proftpd (www.proftpd.org), using
-         * the configuration stored in CVS here: /projects/webarkivering/proftpd.org
+        /**
+         * this code has been tested with the ftp-server proftpd (www.proftpd.org), using the configuration stored in
+         * CVS here: /projects/webarkivering/proftpd.org
          */
         String nameOfUploadedFile;
         String nameOfUploadedFile2;
@@ -194,29 +183,26 @@ public class IntegrityTestsFTP {
 
         /** try to append data to file on FTP-server */
         /** Assumption: File does not exist on FTP-server */
-        assertFalse("File should not exist already on server",
-                onServer(nameOfUploadedFile));
+        assertFalse("File should not exist already on server", onServer(nameOfUploadedFile));
 
-        assertTrue("Appendfile operation failed",
-                theFTPClient.appendFile(nameOfUploadedFile, in));
+        assertTrue("Appendfile operation failed", theFTPClient.appendFile(nameOfUploadedFile, in));
         upLoadedFiles.add(nameOfUploadedFile);
 
         /** try to append data to file on the FTP-server */
-        assertTrue("AppendFile operation 2 failed!",
-                theFTPClient.appendFile(nameOfUploadedFile, in2));
+        assertTrue("AppendFile operation 2 failed!", theFTPClient.appendFile(nameOfUploadedFile, in2));
 
         if (!upLoadedFiles.contains(nameOfUploadedFile)) {
             upLoadedFiles.add(nameOfUploadedFile);
         }
 
         /** try to store data to a file on the FTP-server */
-        assertTrue("Store operation failed",
-                theFTPClient.storeFile(nameOfUploadedFile2, in));
+        assertTrue("Store operation failed", theFTPClient.storeFile(nameOfUploadedFile2, in));
         upLoadedFiles.add(nameOfUploadedFile2);
     }
 
     /**
      * test arguments extensively
+     *
      * @throws FileNotFoundException
      */
     public void testArguments() throws FileNotFoundException {
@@ -230,8 +216,7 @@ public class IntegrityTestsFTP {
 
         /** test 3: test that FTPRemoteFile.appendTo(null) throws an ArgumentNotValid exception */
         try {
-            RemoteFile rf = FTPRemoteFile.getInstance(testFile1, true, false,
-                                                      true);
+            RemoteFile rf = FTPRemoteFile.getInstance(testFile1, true, false, true);
             rf.appendTo(null);
             fail("ArgumentNotValid Expected");
         } catch (ArgumentNotValid e) {
@@ -239,8 +224,7 @@ public class IntegrityTestsFTP {
         }
         /** test 4: test that FTPRemoteFile.copyTo(null) throws an ArgumentNotValid exception */
         try {
-            RemoteFile rf = FTPRemoteFile.getInstance(testFile2, true, false,
-                                                      true);
+            RemoteFile rf = FTPRemoteFile.getInstance(testFile2, true, false, true);
             upLoadedFTPRemoteFiles.add(rf);
 
             rf.copyTo(null);
@@ -249,18 +233,16 @@ public class IntegrityTestsFTP {
             // Expected
         }
 
-        /** test 5: test that FTPRemoteFile.copyTo(destFile) throws an ArgumentNotValid exception
-         *  if destFile is not an acceptable destinationFile, i.e. the file 'destFile' is writable
+        /**
+         * test 5: test that FTPRemoteFile.copyTo(destFile) throws an ArgumentNotValid exception if destFile is not an
+         * acceptable destinationFile, i.e. the file 'destFile' is writable
          */
-            RemoteFile rf = FTPRemoteFile.getInstance(testFile2, true, false,
-                                                      true);
+        RemoteFile rf = FTPRemoteFile.getInstance(testFile2, true, false, true);
 
-            /** this creates a File object pointing to an illegal file */
-            File destFile = new File(TestInfo.TEMPDIR.getAbsolutePath() + "/" +
-                    TestInfo.TEMPDIR.getName() + "/" +
-                    TestInfo.TESTXML.getName());
-            assertFalse(destFile.getAbsolutePath() + " should not exist!",
-                    destFile.exists());
+        /** this creates a File object pointing to an illegal file */
+        File destFile = new File(TestInfo.TEMPDIR.getAbsolutePath() + "/" + TestInfo.TEMPDIR.getName() + "/"
+                + TestInfo.TESTXML.getName());
+        assertFalse(destFile.getAbsolutePath() + " should not exist!", destFile.exists());
 
         try {
             rf.copyTo(destFile); /* This operation tries to copy the file to an file, which cannot be created */
@@ -270,10 +252,9 @@ public class IntegrityTestsFTP {
         }
     }
 
-
     /**
-     * (1) Test, if uploaded and retrieved file are equal
-     * (2) test that rf.getSize() reports the correct value;
+     * (1) Test, if uploaded and retrieved file are equal (2) test that rf.getSize() reports the correct value;
+     *
      * @throws IOException
      */
     public void testUploadAndRetrieve() throws IOException {
@@ -285,14 +266,13 @@ public class IntegrityTestsFTP {
         /** register that testFile should now be present on ftp-server */
         upLoadedFTPRemoteFiles.add(rf);
 
-        assertEquals("The size of the file written to the ftp-server " +
-                "should not differ from the original size", rf.getSize(),
-                testFile.length());
+        assertEquals("The size of the file written to the ftp-server " + "should not differ from the original size",
+                rf.getSize(), testFile.length());
 
         rf.copyTo(newFile);
 
-        /** check, if the original file and the same file retrieved
-         * from the ftp-server contains the same contents
+        /**
+         * check, if the original file and the same file retrieved from the ftp-server contains the same contents
          */
         byte[] datasend = FileUtils.readBinaryFile(testFile);
         byte[] datareceived = FileUtils.readBinaryFile(newFile);
@@ -302,6 +282,7 @@ public class IntegrityTestsFTP {
 
     /**
      * Check that the delete method can delete a file on the ftp server
+     *
      * @throws FileNotFoundException
      */
     public void testDelete() throws FileNotFoundException {
@@ -310,36 +291,35 @@ public class IntegrityTestsFTP {
 
         File newFile = new File(TestInfo.TEMPDIR, "newfile.xml");
 
-        //Check that file is actually there
+        // Check that file is actually there
         rf.copyTo(newFile);
 
         // Delete the file (both locally and one the server)
         newFile.delete();
         rf.cleanup();
 
-        //And check to see that it's gone
+        // And check to see that it's gone
         try {
             rf.copyTo(newFile);
             fail("Should throw an exception getting deleted file");
         } catch (IOFailure e) {
-            //expected
+            // expected
         }
     }
 
-    /** Test that multiple uploads of the same file does not clash.
-     * Test for bug #135
+    /**
+     * Test that multiple uploads of the same file does not clash. Test for bug #135
+     *
      * @throws IOException
      */
     public void testDoubleUpload() throws IOException {
-        Settings.set(CommonSettings.REMOTE_FILE_CLASS, 
-        "dk.netarkivet.common.distribute.FTPRemoteFile");
+        Settings.set(CommonSettings.REMOTE_FILE_CLASS, "dk.netarkivet.common.distribute.FTPRemoteFile");
         File testFile = TestInfo.TESTXML;
         PrintWriter write1 = new PrintWriter(new FileWriter(testFile));
         write1.print(FILE_1_CONTENTS);
         write1.close();
 
-        RemoteFile rf1 = RemoteFileFactory.getInstance(testFile, true, false,
-                                                       true);
+        RemoteFile rf1 = RemoteFileFactory.getInstance(testFile, true, false, true);
 
         /** register that testFile should now be present on ftp-server */
         upLoadedFTPRemoteFiles.add(rf1);
@@ -348,67 +328,56 @@ public class IntegrityTestsFTP {
         write2.print(FILE_2_CONTENTS);
         write2.close();
 
-        RemoteFile rf2 = RemoteFileFactory.getInstance(testFile, true, false,
-                                                       true);
+        RemoteFile rf2 = RemoteFileFactory.getInstance(testFile, true, false, true);
 
         upLoadedFTPRemoteFiles.add(rf2);
 
         File newFile = new File(TestInfo.TEMPDIR, "newfile.xml");
         rf1.copyTo(newFile);
-        assertEquals("Contents of first file should be preserved",
-                FILE_1_CONTENTS, FileUtils.readFile(newFile));
+        assertEquals("Contents of first file should be preserved", FILE_1_CONTENTS, FileUtils.readFile(newFile));
 
         rf2.copyTo(newFile);
-        assertEquals("Contents of second file should be preserved",
-                FILE_2_CONTENTS, FileUtils.readFile(newFile));
+        assertEquals("Contents of second file should be preserved", FILE_2_CONTENTS, FileUtils.readFile(newFile));
     }
 
     public void tet501MFile() throws FileNotFoundException {
-        File zipFile = new File(TestInfo.DATADIR,
-                TestInfo.FIVE_HUNDRED_MEGA_FILE_ZIPPED);
-        assertTrue("File '" + TestInfo.FIVE_HUNDRED_MEGA_FILE_ZIPPED +
-                " does not exist!", zipFile.exists());
-        
+        File zipFile = new File(TestInfo.DATADIR, TestInfo.FIVE_HUNDRED_MEGA_FILE_ZIPPED);
+        assertTrue("File '" + TestInfo.FIVE_HUNDRED_MEGA_FILE_ZIPPED + " does not exist!", zipFile.exists());
+
         ZipUtils.unzip(zipFile, TestInfo.TEMPDIR);
 
-        File unzippedFile = new File(TestInfo.TEMPDIR,
-                TestInfo.FIVE_HUNDRED_MEGA_FILE_UNZIPPED);
+        File unzippedFile = new File(TestInfo.TEMPDIR, TestInfo.FIVE_HUNDRED_MEGA_FILE_UNZIPPED);
 
-        assertTrue("File '" + TestInfo.FIVE_HUNDRED_MEGA_FILE_UNZIPPED +
-                " does not exist!", unzippedFile.exists());
+        assertTrue("File '" + TestInfo.FIVE_HUNDRED_MEGA_FILE_UNZIPPED + " does not exist!", unzippedFile.exists());
 
-        RemoteFile rf = FTPRemoteFile.getInstance(unzippedFile, true, false,
-                                                  true);
+        RemoteFile rf = FTPRemoteFile.getInstance(unzippedFile, true, false, true);
 
         upLoadedFTPRemoteFiles.add(rf);
 
-        assertEquals("Size of Uploaded data should be the same as original data",
-                unzippedFile.length(), rf.getSize());
+        assertEquals("Size of Uploaded data should be the same as original data", unzippedFile.length(), rf.getSize());
 
-        File destinationFile = new File(TestInfo.TEMPDIR,
-                unzippedFile.getName() + ".new");
+        File destinationFile = new File(TestInfo.TEMPDIR, unzippedFile.getName() + ".new");
 
         rf.copyTo(destinationFile);
 
-        //throw new IOFailure("Unable to copy remoteFile: " + rf +
-        //    " to " + destinationFile);
+        // throw new IOFailure("Unable to copy remoteFile: " + rf +
+        // " to " + destinationFile);
         /** Check filesizes, and see, if they differ */
-        assertEquals("Length of original unzipped file " +
-                " and unzipped file retrieved from the ftp-server should not differ!",
-                unzippedFile.length(), destinationFile.length());
+        assertEquals("Length of original unzipped file "
+                + " and unzipped file retrieved from the ftp-server should not differ!", unzippedFile.length(),
+                destinationFile.length());
     }
 
     // public void testSerializability(){
-    //     fail("test of serializability not yet implemented!");
+    // fail("test of serializability not yet implemented!");
     //
-    //}
-    public boolean onServer(String nameOfUploadedFile)
-            throws IOException {
+    // }
+    public boolean onServer(String nameOfUploadedFile) throws IOException {
         assertTrue("theFTPClient should not be null", theFTPClient != null);
 
         FTPFile[] listOfFiles = theFTPClient.listFiles();
 
-        //assertTrue("This list should not be null",listOfFiles != null);
+        // assertTrue("This list should not be null",listOfFiles != null);
         if (listOfFiles == null) {
             return false;
         }
@@ -423,27 +392,24 @@ public class IntegrityTestsFTP {
     }
 
     public void testWrongChecksumThrowsError() throws Exception {
-        Settings.set(CommonSettings.REMOTE_FILE_CLASS, 
-                "dk.netarkivet.common.distribute.FTPRemoteFile");
-        RemoteFile rf = RemoteFileFactory.getInstance(testFile2, true, false,
-                                                      true);
-        //upload error to ftp server
+        Settings.set(CommonSettings.REMOTE_FILE_CLASS, "dk.netarkivet.common.distribute.FTPRemoteFile");
+        RemoteFile rf = RemoteFileFactory.getInstance(testFile2, true, false, true);
+        // upload error to ftp server
         File temp = File.createTempFile("foo", "bar");
         FTPClient client = new FTPClient();
-        client.connect(Settings.get(CommonSettings.FTP_SERVER_NAME), Integer.parseInt(
-                Settings.get(CommonSettings.FTP_SERVER_PORT)));
-        client.login(Settings.get(CommonSettings.FTP_USER_NAME),
-                     Settings.get(CommonSettings.FTP_USER_PASSWORD));
+        client.connect(Settings.get(CommonSettings.FTP_SERVER_NAME),
+                Integer.parseInt(Settings.get(CommonSettings.FTP_SERVER_PORT)));
+        client.login(Settings.get(CommonSettings.FTP_USER_NAME), Settings.get(CommonSettings.FTP_USER_PASSWORD));
         Field field = FTPRemoteFile.class.getDeclaredField("ftpFileName");
         field.setAccessible(true);
-        String filename = (String)field.get(rf);
+        String filename = (String) field.get(rf);
         client.storeFile(filename, new ByteArrayInputStream("foo".getBytes()));
         client.logout();
         try {
             rf.copyTo(temp);
             fail("Should throw exception on wrong checksum");
-        } catch(IOFailure e) {
-            //expected
+        } catch (IOFailure e) {
+            // expected
         }
         assertFalse("Destination file should not exist", temp.exists());
     }

@@ -25,7 +25,7 @@ package dk.netarkivet.wayback;
 import org.junit.Test;
 
 /** TODO complete unittests. */
-@SuppressWarnings({ "unused" })
+@SuppressWarnings({"unused"})
 public class LRUCacheTester {
 
     @Test

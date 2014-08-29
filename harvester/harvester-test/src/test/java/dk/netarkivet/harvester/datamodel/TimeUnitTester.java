@@ -22,17 +22,18 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
-import static org.junit.Assert.*;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
+import org.junit.Test;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
-/** 
- * Unit tests for the {@link TimeUnit} class. 
- */ 
+/**
+ * Unit tests for the {@link TimeUnit} class.
+ */
 public class TimeUnitTester {
-    
+
     @Test
     public void testFromOrdinal() {
         assertEquals(TimeUnit.HOURLY, TimeUnit.fromOrdinal(1));

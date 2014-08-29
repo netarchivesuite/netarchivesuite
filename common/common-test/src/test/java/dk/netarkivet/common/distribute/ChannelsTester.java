@@ -57,9 +57,8 @@ public class ChannelsTester {
     }
 
     /**
-     * This test checks that changing settings and resetting actually changes
-     * things.
-     * 
+     * This test checks that changing settings and resetting actually changes things.
+     *
      * @throws Exception
      */
     @Test
@@ -76,9 +75,8 @@ public class ChannelsTester {
     }
 
     /**
-     * This test checks that changing settings and resetting actually changes
-     * things.
-     * 
+     * This test checks that changing settings and resetting actually changes things.
+     *
      * @throws Exception
      */
     @Test
@@ -122,8 +120,8 @@ public class ChannelsTester {
     }
 
     /**
-     * Verify that getting the JMS channel for the index server - does not throw
-     * an exception - returns a non-null value.
+     * Verify that getting the JMS channel for the index server - does not throw an exception - returns a non-null
+     * value.
      */
     @Test
     public void testGetThisIndexClient() {
@@ -131,8 +129,8 @@ public class ChannelsTester {
     }
 
     /**
-     * Verify that getting the JMS channel for the local index client - does not
-     * throw an exception - returns a non-null value.
+     * Verify that getting the JMS channel for the local index client - does not throw an exception - returns a non-null
+     * value.
      */
     @Test
     public void testGetTheIndexServer() {
@@ -140,12 +138,12 @@ public class ChannelsTester {
     }
 
     /**
-     * Test if static method Channels.isTopic(String name) works. Only names
-     * containing substring "ALL_BA" is considered a name for a topic.
+     * Test if static method Channels.isTopic(String name) works. Only names containing substring "ALL_BA" is considered
+     * a name for a topic.
      */
     @Test
     public void testIsTopic() {
-        ChannelID[] queues = new ChannelID[] { Channels.getAnyBa(), //
+        ChannelID[] queues = new ChannelID[] {Channels.getAnyBa(), //
                 Channels.getTheRepos(), //
                 Channels.getTheIndexServer(), //
                 Channels.getError(), //
@@ -158,7 +156,7 @@ public class ChannelsTester {
             assertFalse(queueName + " is not a topic", Channels.isTopic(queueName));
         }
 
-        ChannelID[] topics = new ChannelID[] { Channels.getAllBa(), Channels.getTheMonitorServer(), };
+        ChannelID[] topics = new ChannelID[] {Channels.getAllBa(), Channels.getTheMonitorServer(),};
 
         for (ChannelID topic : topics) {
             String topicName = topic.getName();

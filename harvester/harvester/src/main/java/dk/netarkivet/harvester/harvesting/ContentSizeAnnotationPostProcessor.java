@@ -29,29 +29,28 @@ import org.archive.crawler.framework.Processor;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
- * A post processor that adds an annotation
- *   content-size:<bytes>
- * for each successfully harvested URI.
- *
+ * A post processor that adds an annotation content-size:<bytes> for each successfully harvested URI.
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({"serial"})
 public class ContentSizeAnnotationPostProcessor extends Processor {
 
-    /** Prefix associated with annotations made by this processor.*/
+    /** Prefix associated with annotations made by this processor. */
     public static final String CONTENT_SIZE_ANNOTATION_PREFIX = "content-size:";
 
     /**
      * Constructor.
+     *
      * @param name the name of the processor.
      * @see Processor
      */
     public ContentSizeAnnotationPostProcessor(String name) {
         super(name, "A post processor that adds an annotation content-size:<bytes> for each successfully harvested"
-        		+ " URI.");
+                + " URI.");
     }
 
-    /** For each URI with a successful status code (status code > 0),
-     *  add annotation with content size.
+    /**
+     * For each URI with a successful status code (status code > 0), add annotation with content size.
+     *
      * @param crawlURI URI to add annotation for if successful.
      * @throws ArgumentNotValid if crawlURI is null.
      * @throws InterruptedException never.

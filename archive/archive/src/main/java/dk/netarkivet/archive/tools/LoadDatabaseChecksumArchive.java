@@ -38,16 +38,14 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.ChecksumJob;
 
 /**
- *  Program for uploading data from the filebased FileChecksumArchive to
- *  a DatabaseChecksumArchive.
- *  The two arguments are /full/path/to/databaseBaseDirectory
- *  and /full/path/to/checksum_CS.md5
+ * Program for uploading data from the filebased FileChecksumArchive to a DatabaseChecksumArchive. The two arguments are
+ * /full/path/to/databaseBaseDirectory and /full/path/to/checksum_CS.md5
  */
 public class LoadDatabaseChecksumArchive {
     /**
      * Main program for the LoadDatabaseChecksumArchive class
-     * @param args two arguments /full/path/to/databaseBaseDirectory
-     *  and /full/path/to/checksum_CS.md5
+     *
+     * @param args two arguments /full/path/to/databaseBaseDirectory and /full/path/to/checksum_CS.md5
      * @throws IOFailure
      * @throws DatabaseException
      */
@@ -59,16 +57,16 @@ public class LoadDatabaseChecksumArchive {
         }
         File databaseBasedir = new File(args[0]);
         File checksumCSFile = new File(args[1]);
-        
+
         if (!databaseBasedir.isDirectory()) {
-            String errMsg = "databaseBaseDirectory '" + databaseBasedir.getAbsolutePath() 
-            + "' does not exist or is a file instead";
+            String errMsg = "databaseBaseDirectory '" + databaseBasedir.getAbsolutePath()
+                    + "' does not exist or is a file instead";
             throw new IOFailure(errMsg);
         }
         System.out.println("Started loading database at: " + new Date());
         Settings.set(ArchiveSettings.CHECKSUM_BASEDIR, databaseBasedir.getAbsolutePath());
         DatabaseChecksumArchive dca = new DatabaseChecksumArchive();
-        
+
         BufferedReader in = null;
         int loginterval = 10000;
         int currentLine = 0;
@@ -81,8 +79,7 @@ public class LoadDatabaseChecksumArchive {
                     if (currentLine % loginterval == 0) {
                         System.out.println("Processing line " + currentLine);
                     }
-                    KeyValuePair<String, String> entry = 
-                            ChecksumJob.parseLine(line);
+                    KeyValuePair<String, String> entry = ChecksumJob.parseLine(line);
                     dca.put(entry.getKey(), entry.getValue());
                 }
             } finally {
@@ -91,12 +88,10 @@ public class LoadDatabaseChecksumArchive {
                 }
             }
         } catch (IOException e) {
-            String msg = "Could not read data from "
-                         + checksumCSFile.getAbsolutePath();
+            String msg = "Could not read data from " + checksumCSFile.getAbsolutePath();
             throw new IOFailure(msg, e);
         }
-        
-        System.out.println("Finished importing " + currentLine 
-                + " lines into the database at " + new Date());
+
+        System.out.println("Finished importing " + currentLine + " lines into the database at " + new Date());
     }
 }

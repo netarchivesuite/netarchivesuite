@@ -73,7 +73,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 /**
  * Tests of the ARCLookup class.
  */
-@SuppressWarnings({ "unchecked" })
+@SuppressWarnings({"unchecked"})
 public class ARCLookupTester {
     private ViewerArcRepositoryClient realArcRepos;
     private static ARCLookup lookup;
@@ -143,33 +143,23 @@ public class ARCLookupTester {
 
         // TODO Ok retardos, dont use logging files for testing non logging stuff!!
         /*
-        try {
-            lookup.setIndex(dk.netarkivet.archive.distribute.arcrepository.TestInfo.LOG_FILE);
-            fail("Should die on non-dir index");
-        } catch (ArgumentNotValid e) {
-            StringAsserts.assertStringContains("Should mention non-directory",
-                    dk.netarkivet.archive.distribute.arcrepository.TestInfo.LOG_FILE.getName(), e.getMessage());
-        }
-
-        // Test that we don't close the Lucene index twice.
-        // Try with a file that fails.
-        try {
-            lookup.setIndex(dk.netarkivet.archive.distribute.arcrepository.TestInfo.LOG_FILE);
-            fail("Should die on non-dir index");
-        } catch (ArgumentNotValid e) {
-            StringAsserts.assertStringContains("Should mention non-directory",
-                    dk.netarkivet.archive.distribute.arcrepository.TestInfo.LOG_FILE.getName(), e.getMessage());
-        }
-
-        // No getting a "can't close" error here.
-        try {
-            lookup.setIndex(dk.netarkivet.archive.distribute.arcrepository.TestInfo.LOG_FILE);
-            fail("Should die on non-dir index");
-        } catch (ArgumentNotValid e) {
-            StringAsserts.assertStringContains("Should mention non-directory",
-                    dk.netarkivet.archive.distribute.arcrepository.TestInfo.LOG_FILE.getName(), e.getMessage());
-        }
-        */
+         * try { lookup.setIndex(dk.netarkivet.archive.distribute.arcrepository.TestInfo.LOG_FILE);
+         * fail("Should die on non-dir index"); } catch (ArgumentNotValid e) {
+         * StringAsserts.assertStringContains("Should mention non-directory",
+         * dk.netarkivet.archive.distribute.arcrepository.TestInfo.LOG_FILE.getName(), e.getMessage()); }
+         * 
+         * // Test that we don't close the Lucene index twice. // Try with a file that fails. try {
+         * lookup.setIndex(dk.netarkivet.archive.distribute.arcrepository.TestInfo.LOG_FILE);
+         * fail("Should die on non-dir index"); } catch (ArgumentNotValid e) {
+         * StringAsserts.assertStringContains("Should mention non-directory",
+         * dk.netarkivet.archive.distribute.arcrepository.TestInfo.LOG_FILE.getName(), e.getMessage()); }
+         * 
+         * // No getting a "can't close" error here. try {
+         * lookup.setIndex(dk.netarkivet.archive.distribute.arcrepository.TestInfo.LOG_FILE);
+         * fail("Should die on non-dir index"); } catch (ArgumentNotValid e) {
+         * StringAsserts.assertStringContains("Should mention non-directory",
+         * dk.netarkivet.archive.distribute.arcrepository.TestInfo.LOG_FILE.getName(), e.getMessage()); }
+         */
 
         lookup.setIndex(dk.netarkivet.archive.distribute.arcrepository.TestInfo.INDEX_DIR_2_3);
         // This forces us to close the previous index before setting the new
@@ -178,9 +168,8 @@ public class ARCLookupTester {
     }
 
     /**
-     * Test that lookup returns real arcrecord data, and that it is correct
-     * TODO: This test is bad: It may not clean up properly on fail, and it is
-     * really an integrity test. Move and clean up!
+     * Test that lookup returns real arcrecord data, and that it is correct TODO: This test is bad: It may not clean up
+     * properly on fail, and it is really an integrity test. Move and clean up!
      */
     @Test
     public void testLookup() throws Exception {
@@ -208,9 +197,8 @@ public class ARCLookupTester {
     }
 
     /**
-     * Test that when a uri with escaped characters is looked up, the uri is
-     * urldecoded first.
-     * 
+     * Test that when a uri with escaped characters is looked up, the uri is urldecoded first.
+     *
      * @throws Exception
      */
     @Test
@@ -246,9 +234,9 @@ public class ARCLookupTester {
     }
 
     /**
-     * Test that asking for a given URL makes ARCArchiveAccess ask the right
-     * stuff in the arc repository client and returns it correctly.
-     * 
+     * Test that asking for a given URL makes ARCArchiveAccess ask the right stuff in the arc repository client and
+     * returns it correctly.
+     *
      * @throws Exception
      */
     @Test
@@ -298,8 +286,7 @@ public class ARCLookupTester {
     }
 
     /**
-     * Fake arc repository client which on get returns a fake record which is
-     * ok.
+     * Fake arc repository client which on get returns a fake record which is ok.
      */
     private class TestArcRepositoryClient extends JMSArcRepositoryClient {
         public TestArcRepositoryClient() {
@@ -307,8 +294,7 @@ public class ARCLookupTester {
         }
 
         /**
-         * Returns an OK BitarchiveRecord. Content is simply arcfile name and
-         * index encoded in a stream.
+         * Returns an OK BitarchiveRecord. Content is simply arcfile name and index encoded in a stream.
          */
         public BitarchiveRecord get(String arcFile, long index) {
             final Map<String, Object> metadata = new HashMap<String, Object>();
@@ -316,7 +302,7 @@ public class ARCLookupTester {
                 metadata.put(header_field, "");
             }
             metadata.put(ARCConstants.ABSOLUTE_OFFSET_KEY, Long.valueOf(0L)); // Dummy
-                                                                              // offset
+            // offset
             byte[] data = ("HTTP/1.1 200 OK\nLocation: " + arcFile + "\n\n" + arcFile + " " + index).getBytes();
             // TODO replace this by something else, or remove ?
             // (ARCConstants.LENGTH_HEADER_FIELD_KEY)
@@ -348,15 +334,12 @@ public class ARCLookupTester {
     }
 
     /**
-     * Read a line of bytes from an InputStream. Useful when an InputStream may
-     * contain both text and binary data.
-     * 
-     * @param inputStream
-     *            A source of data
-     * @return A line of text read from inputStream, with terminating \r\n or \n
-     *         removed, or null if no data is available.
-     * @throws IOException
-     *             on trouble reading from input stream
+     * Read a line of bytes from an InputStream. Useful when an InputStream may contain both text and binary data.
+     *
+     * @param inputStream A source of data
+     * @return A line of text read from inputStream, with terminating \r\n or \n removed, or null if no data is
+     * available.
+     * @throws IOException on trouble reading from input stream
      */
     private String readLine(InputStream inputStream) throws IOException {
         byte[] rawdata = readRawLine(inputStream);
@@ -378,15 +361,12 @@ public class ARCLookupTester {
     }
 
     /**
-     * Reads a raw line from an InputStream, up till \n. Since HTTP allows \r\n
-     * and \n as terminators, this gets the whole line. This code is adapted
-     * from org.apache.commons.httpclient.HttpParser
+     * Reads a raw line from an InputStream, up till \n. Since HTTP allows \r\n and \n as terminators, this gets the
+     * whole line. This code is adapted from org.apache.commons.httpclient.HttpParser
      *
-     * @param inputStream
-     *            A stream to read from.
+     * @param inputStream A stream to read from.
      * @return Array of bytes read or null if none are available.
-     * @throws IOException
-     *             if the underlying reads fail
+     * @throws IOException if the underlying reads fail
      */
     private static byte[] readRawLine(InputStream inputStream) throws IOException {
         ByteArrayOutputStream buf = new ByteArrayOutputStream();

@@ -34,15 +34,15 @@ public class BitarchiveMonitorApplication {
     /**
      * Private constructor to prevent instantiation of this class.
      */
-    private BitarchiveMonitorApplication() {}
-    
-   /**
-    * Runs the BitarchiveMonitor. Settings are read from
-    * config files
-    *
-    * @param args an empty array
-    */
-   public static void main(String[] args) {
-       ApplicationUtils.startApp(BitarchiveMonitorServer.class, args);
-   }
+    private BitarchiveMonitorApplication() {
+    }
+
+    /**
+     * Runs the BitarchiveMonitor. Settings are read from config files
+     *
+     * @param args an empty array
+     */
+    public static void main(String[] args) {
+        ApplicationUtils.startApp(BitarchiveMonitorServer.class, args);
+    }
 }

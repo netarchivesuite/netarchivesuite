@@ -35,18 +35,15 @@ import dk.netarkivet.common.management.SingleMBeanObject;
  */
 public class CachingLogRecord implements SingleLogRecord {
 
-	private final int index;
+    private final int index;
     private final CachingLogHandler cachingLogHandler;
     private SingleMBeanObject<SingleLogRecord> singleMBeanObject;
 
     /**
-     * Make a caching log record, that exposes a log record at a given index as
-     * an MBean.
+     * Make a caching log record, that exposes a log record at a given index as an MBean.
      *
-     * @param index             The index of this log record, counted from the
-     *                          top of the list.
-     * @param cachingLogHandler The caching log handler this is an exposing view
-     *                          on.
+     * @param index The index of this log record, counted from the top of the list.
+     * @param cachingLogHandler The caching log handler this is an exposing view on.
      * @throws IOFailure on any trouble registering.
      */
     public CachingLogRecord(int index, CachingLogHandler cachingLogHandler) {
@@ -58,8 +55,8 @@ public class CachingLogRecord implements SingleLogRecord {
     }
 
     /**
-     * Get the log record on a given index from the top as a string. This will
-     * be formatted by the formatter from the CachingLogHandler.
+     * Get the log record on a given index from the top as a string. This will be formatted by the formatter from the
+     * CachingLogHandler.
      *
      * @return A String representation of the LogRecord, or null for none.
      */
@@ -76,9 +73,8 @@ public class CachingLogRecord implements SingleLogRecord {
      * Registers this object as an mbean.
      */
     private void register() {
-        singleMBeanObject = new SingleMBeanObject<SingleLogRecord>(
-                "dk.netarkivet.common.logging", this, SingleLogRecord.class,
-                ManagementFactory.getPlatformMBeanServer());
+        singleMBeanObject = new SingleMBeanObject<SingleLogRecord>("dk.netarkivet.common.logging", this,
+                SingleLogRecord.class, ManagementFactory.getPlatformMBeanServer());
         singleMBeanObject.getNameProperties().put("index", Integer.toString(this.index));
         singleMBeanObject.register();
     }
