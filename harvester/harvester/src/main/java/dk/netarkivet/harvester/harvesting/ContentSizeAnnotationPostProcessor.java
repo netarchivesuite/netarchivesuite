@@ -30,7 +30,6 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * A post processor that adds an annotation content-size:<bytes> for each successfully harvested URI.
- *
  */
 @SuppressWarnings({"serial"})
 public class ContentSizeAnnotationPostProcessor extends Processor {
@@ -40,7 +39,7 @@ public class ContentSizeAnnotationPostProcessor extends Processor {
 
     /**
      * Constructor.
-     * 
+     *
      * @param name the name of the processor.
      * @see Processor
      */
@@ -51,7 +50,7 @@ public class ContentSizeAnnotationPostProcessor extends Processor {
 
     /**
      * For each URI with a successful status code (status code > 0), add annotation with content size.
-     * 
+     *
      * @param crawlURI URI to add annotation for if successful.
      * @throws ArgumentNotValid if crawlURI is null.
      * @throws InterruptedException never.

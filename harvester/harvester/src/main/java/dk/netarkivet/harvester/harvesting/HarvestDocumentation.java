@@ -82,17 +82,16 @@ public class HarvestDocumentation {
     /**
      * Documents the harvest under the given dir in a packaged metadata arc file in a directory 'metadata' under the
      * current dir. Only documents the files belonging to the given jobID, the rest are moved to oldjobs.
-     *
+     * <p>
      * In the current implementation, the documentation consists of CDX indices over all ARC files (with one CDX record
      * per harvested ARC file), plus packaging of log files.
-     *
+     * <p>
      * If this method finishes without an exception, it is guaranteed that metadata is ready for upload.
-     * 
+     * <p>
      * TODO Place preharvestmetadata in IngestableFiles-defined area TODO This method may be a good place to copy
      * deduplicate information from the crawl log to the cdx file.
      *
      * @param ingestables Information about the finished crawl (crawldir, jobId, harvestID).
-     * 
      * @throws ArgumentNotValid if crawlDir is null or does not exist, or if jobID or harvestID is negative.
      * @throws IOFailure if - reading ARC files or temporary files fails - writing a file to arcFilesDir fails
      */
@@ -215,7 +214,7 @@ public class HarvestDocumentation {
 
     /**
      * Restore serialized MetadataEntry objects from the "metadata" subdirectory of the crawldir.
-     * 
+     *
      * @param crawlDir the given crawl directory
      * @return a set of deserialized MetadataEntry objects
      */
@@ -232,7 +231,7 @@ public class HarvestDocumentation {
     /**
      * Generates a URI identifying CDX info for one harvested (W)ARC file. In Netarkivet, all of the parameters below
      * are in the (W)ARC file's name.
-     * 
+     *
      * @param harvestID The number of the harvest that generated the (W)ARC file.
      * @param jobID The number of the job that generated the (W)ARC file.
      * @param filename The name of the ARC or WARC file behind the cdx-data
@@ -249,7 +248,7 @@ public class HarvestDocumentation {
             result = new URI(CDX_URI_SCHEME, null, // Don't include user info (e.g. "foo@")
                     CDX_URI_AUTHORITY_HOST, -1, // Don't include port no. (e.g. ":8080")
                     CDX_URI_PATH, getCDXURIQuery(harvestID, jobID, filename), null); // Don't include fragment (e.g.
-                                                                                     // "#foo")
+            // "#foo")
         } catch (URISyntaxException e) {
             throw new UnknownID("Failed to generate URI for " + harvestID + "," + jobID + "," + filename + ",", e);
         }
@@ -261,7 +260,6 @@ public class HarvestDocumentation {
      *
      * @param jobID The number of the job that generated the ARC file.
      * @param filename the filename.
-     * 
      * @return A URI in the proprietary schema "metadata".
      * @throws ArgumentNotValid if any parameter is null.
      * @throws UnknownID if something goes terribly wrong in our URI construction.
@@ -274,7 +272,7 @@ public class HarvestDocumentation {
             result = new URI(CDX_URI_SCHEME, null, // Don't include user info (e.g. "foo@")
                     CDX_URI_AUTHORITY_HOST, -1, // Don't include port no. (e.g. ":8080")
                     CDX_URI_PATH, getAlternateCDXURIQuery(jobID, filename), null); // Don't include fragment (e.g.
-                                                                                   // "#foo")
+            // "#foo")
         } catch (URISyntaxException e) {
             throw new UnknownID("Failed to generate URI for " + jobID + "," + filename + ",", e);
         }
@@ -283,7 +281,7 @@ public class HarvestDocumentation {
 
     /**
      * Generate the query part of a CDX URI.
-     * 
+     *
      * @param harvestID The number of the harvest that generated the ARC file.
      * @param jobID The number of the job that generated the ARC file.
      * @param timeStamp The timestamp in the name of the ARC file.
@@ -301,7 +299,7 @@ public class HarvestDocumentation {
 
     /**
      * Generate the query part of a CDX URI. Alternate version
-     * 
+     *
      * @param jobID The number of the job that generated the ARC file.
      * @param filename the filename of the arcfile
      * @return An appropriate list of assigned parameters, separated by the "&" character.
@@ -360,8 +358,8 @@ public class HarvestDocumentation {
      * @param crawlDir the directory where the crawljob took place
      * @param writer an MetadaFileWriter used to store the harvest configuration, and harvest logs and reports.
      * @param heritrixVersion the heritrix version used by the harvest.
-     * @throws ArgumentNotValid If null arguments occur
      * @return a list of files added to the archive file.
+     * @throws ArgumentNotValid If null arguments occur
      */
     private static List<File> writeHarvestDetails(long jobID, long harvestID, File crawlDir, MetadataFileWriter mdfw,
             String heritrixVersion) {
@@ -444,7 +442,7 @@ public class HarvestDocumentation {
 
     /**
      * Finds domain-specific configurations in the settings subdirectory of the crawl directory.
-     * 
+     *
      * @param settingsDir the given settings directory
      * @return the settings file paired with their domain..
      */
@@ -472,7 +470,7 @@ public class HarvestDocumentation {
 
     /**
      * Find all domains which have a settings.xml file in the given directory.
-     * 
+     *
      * @param directory a given directory
      * @param domainReversed the domain reversed
      * @return a list of domains (in reverse), which contained a file with given filename
@@ -505,7 +503,7 @@ public class HarvestDocumentation {
 
     /**
      * Reverses a domain string, e.g. reverses "com.amazon" to "amazon.com"
-     * 
+     *
      * @param reversedDomain the domain name to reverse
      * @return the reversed domain string
      */

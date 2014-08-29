@@ -87,7 +87,7 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
 
     /**
      * The Berkeley DB binder for the data object and keyObject in our database, i.e. Url and Long, respectively.
-     **/
+     */
     private EntryBinding objectBinding;
     private EntryBinding keyBinding;
 
@@ -107,7 +107,7 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
     /**
      * Method for obtaining the current singleton instance of this class. If the instance of this class has not yet been
      * constructed, then it will be initialised.
-     * 
+     *
      * @return The current instance of this class.
      * @throws Exception
      */
@@ -121,7 +121,7 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
     /**
      * Constructor. Retrieves the minimum space left variable, and ensures the existence of the archive file. If the
      * file does not exist, then it is created.
-     * 
+     *
      * @throws Exception
      */
     public DatabaseChecksumArchive() throws DatabaseException {
@@ -268,7 +268,7 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
     /**
      * Method for appending a 'wrong' entry in the wrongEntryFile. It will be noted which time the wrong entry was
      * appended: date + " : " + wrongRecord.
-     * 
+     *
      * @param wrongRecord The record to append.
      * @throws IOFailure If the wrong record cannot be appended correctly.
      */
@@ -358,7 +358,7 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
 
     /**
      * Update the database with a new filename and its checksum.
-     * 
+     *
      * @param filename A given filename
      * @param checksum The related checksum
      */
@@ -404,7 +404,7 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
 
     /**
      * Write the contents of the database to the given file.
-     * 
+     *
      * @param outputFile The outputfile whereto the data is written.
      * @param writeOnlyFilenames If true, we only write the filenames to the files, not the checksums
      * @throws IOException If unable to write to file for some reason

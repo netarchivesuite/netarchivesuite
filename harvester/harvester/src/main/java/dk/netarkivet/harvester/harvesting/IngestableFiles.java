@@ -41,7 +41,6 @@ import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriter;
 /**
  * Encapsulation of files to be ingested into the archive. These files are presently placed subdirectories under the
  * crawldir.
- *
  */
 public class IngestableFiles {
 
@@ -74,7 +73,7 @@ public class IngestableFiles {
     /**
      * Constructor for this class. HeritrixFiles contains information about crawlDir, jobId, and harvestnameprefix for a
      * specific finished harvestjob.
-     * 
+     *
      * @param files An instance of HeritrixFiles
      * @throws ArgumentNotValid if null-arguments are given; if jobID < 1; if crawlDir does not exist
      */
@@ -100,7 +99,7 @@ public class IngestableFiles {
     /**
      * Check, if the metadatafile already exists. If this is true, metadata has been successfully generated. If false,
      * either metadata has not finished being generated, or there was an error generating them.
-     * 
+     *
      * @return true, if it does exist; false otherwise.
      */
     public boolean isMetadataReady() {
@@ -120,7 +119,7 @@ public class IngestableFiles {
     /**
      * Marks generated metadata as final, closes the writer, and moves the temporary metadata file to its final
      * position, if successful.
-     * 
+     *
      * @param success True if metadata was successfully generated, false otherwise.
      * @throws PermissionDenied If the metadata has already been marked as ready, or if no metadata file exists upon
      * success.
@@ -146,7 +145,7 @@ public class IngestableFiles {
     /**
      * Get a MetaDatafileWriter for the temporary metadata file. Successive calls to this method on the same object will
      * return the same writer. Once the metadata have been finalized, calling this method will fail.
-     * 
+     *
      * @return a MetaDatafileWriter for the temporary metadata file.
      * @throws PermissionDenied if metadata generation is already finished.
      */
@@ -166,7 +165,7 @@ public class IngestableFiles {
 
     /**
      * Gets the files containing the metadata.
-     * 
+     *
      * @return the files in the metadata dir
      * @throws PermissionDenied if the metadata file is not ready, either because generation is still going on or there
      * was an error generating the metadata.
@@ -181,7 +180,7 @@ public class IngestableFiles {
 
     /**
      * Constructs the metadata subdir from the crawlDir.
-     * 
+     *
      * @return The metadata subdir as a File
      */
     private File getMetadataDir() {
@@ -190,7 +189,7 @@ public class IngestableFiles {
 
     /**
      * Constructs the single metadata arc file from the crawlDir and the jobID.
-     * 
+     *
      * @return metadata arc file as a File
      */
     protected File getMetadataFile() {
@@ -199,7 +198,7 @@ public class IngestableFiles {
 
     /**
      * Constructs the TEMPORARY metadata subdir from the crawlDir.
-     * 
+     *
      * @return The tmp-metadata subdir as a File
      */
     public File getTmpMetadataDir() {
@@ -208,7 +207,7 @@ public class IngestableFiles {
 
     /**
      * Constructs the TEMPORARY metadata arc file from the crawlDir and the jobID.
-     * 
+     *
      * @return tmp-metadata arc file as a File
      */
     private File getTmpMetadataFile() {
@@ -287,7 +286,7 @@ public class IngestableFiles {
      * Given an archive sub-directory name and a filter to match against this method tries to rename the matched files.
      * Files that can not be renamed generate a log message. The filter should always match files that end with ".open"
      * as a minimum.
-     * 
+     *
      * @param archiveDirName archive directory name, currently "arc" or "warc"
      * @param filter filename filter used to select ".open" files to rename
      */
@@ -329,7 +328,6 @@ public class IngestableFiles {
     }
 
     /**
-     * 
      * @return the harvestnamePrefix of the harvest job being processed.
      */
     public String getHarvestnamePrefix() {

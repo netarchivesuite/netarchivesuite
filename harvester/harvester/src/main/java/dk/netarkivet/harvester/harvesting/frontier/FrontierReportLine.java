@@ -34,7 +34,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 /**
  * Wraps a line of the frontier report. As of Heritrix 1.14.4, the format of a frontier report line sequentially lists
  * the following tokens, separated by a whitespace :
- *
+ * <p>
  * <ol>
  * <li>queue</li>
  * <li>currentSize</li>
@@ -48,12 +48,11 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * <li>lastPeekUri</li>
  * <li>lastQueuedUri</li>
  * </ol>
- *
+ * <p>
  * This class implements a natural order : comparisons are made : - first by decreasing values of totalEnqueues -
  * secondly by domain name (string natural order)
- *
+ * <p>
  * Thanks to Gordon Mohr at Internet Archive for explaining the exact semantics of the frontier report fields.
- *
  */
 @Persistent
 @SuppressWarnings({"serial"})
@@ -156,7 +155,7 @@ public class FrontierReportLine implements Serializable, Comparable<FrontierRepo
 
     /**
      * Builds a cloned line.
-     * 
+     *
      * @param original the line to clone
      */
     protected FrontierReportLine(FrontierReportLine original) {
@@ -177,7 +176,7 @@ public class FrontierReportLine implements Serializable, Comparable<FrontierRepo
 
     /**
      * Parses the given string.
-     * 
+     *
      * @param lineToken the string to parse.
      */
     FrontierReportLine(String lineToken) {
@@ -440,7 +439,7 @@ public class FrontierReportLine implements Serializable, Comparable<FrontierRepo
 
     /**
      * Parses the token.
-     * 
+     *
      * @param longToken token to parse.
      * @return parsed value or default value if value is empty or unparsable.
      */
@@ -458,7 +457,7 @@ public class FrontierReportLine implements Serializable, Comparable<FrontierRepo
 
     /**
      * Parses the token.
-     * 
+     *
      * @param dblToken token to parse.
      * @return parsed value or default value if value is empty or unparsable.
      */

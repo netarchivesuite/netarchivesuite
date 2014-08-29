@@ -50,7 +50,7 @@ public class HourlyFrequencyTester {
 
     /**
      * Given a frequency that can start any time, check that first event is immediate.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -65,7 +65,7 @@ public class HourlyFrequencyTester {
 
     /**
      * Given a frequency that can start a the 22nd minute, check that first event is at the 22nd minute.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -82,7 +82,7 @@ public class HourlyFrequencyTester {
 
     /**
      * Given a frequency that can start any time, check that next event is after correct period.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -99,7 +99,7 @@ public class HourlyFrequencyTester {
 
     /**
      * Given a frequency that can start at 23rd minute, check that next event is after correct period on 23rd minute.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -118,7 +118,7 @@ public class HourlyFrequencyTester {
     /**
      * Given a frequency that can start at 23rd minute, check that next event is after correct period on 23rd minute
      * given a time that is on the 23rd minute.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -134,7 +134,7 @@ public class HourlyFrequencyTester {
 
     /**
      * Test validity of arguments.
-     * 
+     *
      * @throws Exception
      */
     @Test

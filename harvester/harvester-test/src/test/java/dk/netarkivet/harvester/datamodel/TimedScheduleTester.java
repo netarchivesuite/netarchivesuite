@@ -54,13 +54,15 @@ public class TimedScheduleTester {
         int totalCount = 0;
         Date first = sched.getFirstEvent(cal.getTime());
         assertNotNull("Should have non-null first time", first);
-        if (first != null)
+        if (first != null) {
             totalCount++;
+        }
         for (int i = 0; i < 10; i++) {
             Date next = sched.getNextEvent(cal.getTime(), 0);
             cal.add(Calendar.MONTH, 12);
-            if (next != null)
+            if (next != null) {
                 totalCount++;
+            }
         }
         assertEquals("Should have scheduled 5 times", 5, totalCount);
     }
@@ -85,7 +87,7 @@ public class TimedScheduleTester {
     /**
      * Given a timed schedule that should run yearly and end just before the fourth event, test that we get the expected
      * three events
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -108,7 +110,7 @@ public class TimedScheduleTester {
     /**
      * Given a timed schedule that should run yearly at noon and end just before the fourth event, test that we get the
      * expected three events
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -132,7 +134,7 @@ public class TimedScheduleTester {
 
     /**
      * Test of invalid arguments
-     * 
+     *
      * @throws Exception
      */
     @Test

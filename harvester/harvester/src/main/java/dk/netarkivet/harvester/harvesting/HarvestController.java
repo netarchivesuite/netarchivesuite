@@ -69,7 +69,6 @@ import dk.netarkivet.harvester.harvesting.report.HarvestReportFactory;
 /**
  * This class handles all the things in a single harvest that are not related directly related either to launching
  * Heritrix or to handling JMS messages.
- *
  */
 public class HarvestController {
 
@@ -184,7 +183,7 @@ public class HarvestController {
     /**
      * This method attempts to retrieve the Heritrix recover log from the job which this job tries to continue. If
      * successful, the Heritrix template is updated accordingly.
-     * 
+     *
      * @param job The harvest Job object containing various harvest setup data.
      * @param files Heritrix files related to this harvestjob.
      */
@@ -233,7 +232,7 @@ public class HarvestController {
 
     /**
      * Insert the correct recoverpath in the order.xml for the given harvestjob.
-     * 
+     *
      * @param job A harvestjob
      * @param files Heritrix files related to this harvestjob.
      */
@@ -293,7 +292,7 @@ public class HarvestController {
      * Controls storing all files involved in a job. The files are 1) The actual ARC/WARC files, 2) The metadata files
      * The crawl.log is parsed and information for each domain is generated and stored in a AbstractHarvestReport object
      * which is sent along in the crawlstatusmessage.
-     *
+     * <p>
      * Additionally, any leftover open ARC files are closed and harvest documentation is extracted before upload starts.
      *
      * @param files The HeritrixFiles object for this crawl. Not Null.
@@ -375,7 +374,7 @@ public class HarvestController {
 
     /**
      * Retrieve the list of jobs for deduplicate reduction.
-     *
+     * <p>
      * Runs through all metadata entries, finding duplicate reduction entries, and parsing all jobIDs in them, warning
      * only on errors.
      *
@@ -408,7 +407,7 @@ public class HarvestController {
     /**
      * Get an index for deduplication. This will make a call to the index server, requesting an index for the given IDs.
      * The files will then be cached locally.
-     *
+     * <p>
      * If we request index for IDs that don't exist/have problems, we get a smaller set of IDs in our cache files, and
      * next time we ask for the same index, we will call the index server again. This will be handled well, though,
      * because if the ids are still missing, we will get a reply telling us to use the cached smaller index anyway.
@@ -442,7 +441,7 @@ public class HarvestController {
 
     /**
      * Submit a batch job to generate cdx for all metadata files for a job, and report result in a list.
-     * 
+     *
      * @param jobid The job to get cdx for.
      * @return A list of cdx records.
      * @throws ArgumentNotValid If jobid is 0 or negative.

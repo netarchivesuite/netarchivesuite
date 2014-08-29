@@ -61,7 +61,6 @@ import dk.netarkivet.harvester.webinterface.ExtendedFieldConstants;
 
 /**
  * Unit tests for the class dk.netarkivet.harvester.datamodel.DomainDBDAO.
- *
  */
 public class DomainDBDAOTester extends DataModelTestCase {
 
@@ -123,7 +122,7 @@ public class DomainDBDAOTester extends DataModelTestCase {
 
     /**
      * Test that a bad update doesn't kill the DB.
-     * 
+     *
      * @throws Exception
      */
     @Test

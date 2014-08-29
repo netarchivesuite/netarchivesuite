@@ -22,8 +22,6 @@
  */
 package dk.netarkivet.harvester.indexserver;
 
-import is.hi.bok.deduplicator.DigestIndexer;
-
 import java.io.File;
 import java.util.concurrent.Callable;
 
@@ -31,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import is.hi.bok.deduplicator.DigestIndexer;
 
 /**
  * This worker class handles the indexing of one single crawl-log and associated cdxfile.
@@ -57,7 +56,7 @@ public class DigestIndexerWorker implements Callable<Boolean> {
 
     /**
      * Constructor for the DigestIndexerWorker.
-     * 
+     *
      * @param indexpath The full path to the index
      * @param jobId The ID of the job which logfiles are being indexed
      * @param crawllogfile The crawllog from the job
@@ -82,7 +81,7 @@ public class DigestIndexerWorker implements Callable<Boolean> {
 
     /**
      * This method does the actual indexing.
-     * 
+     *
      * @return true, if the indexing completes successfully; otherwise it returns false
      */
     @Override

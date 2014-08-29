@@ -43,13 +43,13 @@ import dk.netarkivet.common.exceptions.IOFailure;
  * object. The given class will be loaded and used to perform the actions of the
  * FileBatchJob class.
  */
-@SuppressWarnings({ "unchecked", "rawtypes", "serial" })
+@SuppressWarnings({"unchecked", "rawtypes", "serial"})
 public class LoadableJarBatchJob extends FileBatchJob {
 
     /** The log. */
     private static final transient Logger log = LoggerFactory.getLogger(LoadableJarBatchJob.class);
 
-	/** The FileBatchJob that this LoadableJarBatchJob is a wrapper for. */
+    /** The FileBatchJob that this LoadableJarBatchJob is a wrapper for. */
     transient FileBatchJob loadedJob;
 
     /** The ClassLoader of type ByteJarLoader associated with this job. */
@@ -57,14 +57,14 @@ public class LoadableJarBatchJob extends FileBatchJob {
 
     /** The name of the loaded Job. */
     private String jobClass;
-    
-    /** The arguments for instantiating the batchjob.*/
+
+    /** The arguments for instantiating the batchjob. */
     private List<String> args;
 
     /**
      * Load a given class from a jar file.
-     * 
-     * @param jarFiles The jar file(s) to load from. This file may also contain 
+     *
+     * @param jarFiles The jar file(s) to load from. This file may also contain
      * other classes required by the FileBatchJob class.
      * @param arguments The arguments for the batchjob.
      * @param jobClass The class to load initially. This must be a subclass of
@@ -87,27 +87,27 @@ public class LoadableJarBatchJob extends FileBatchJob {
         }
         log.info(res.toString());
         multipleClassLoader = new ByteJarLoader(jarFiles);
-        
+
         // Ensure that the batchjob can be loaded.
         loadBatchJob();
     }
-    
+
     /**
      * Method for initialising the batch job.
-     * 
+     *
      * @throws IOFailure If the job is not loaded correctly.
      */
     private void loadBatchJob() throws IOFailure {
         try {
             Class batchClass = multipleClassLoader.loadClass(jobClass);
-            
+
             if (args.size() == 0) {
                 // just load if no arguments.
                 loadedJob = (FileBatchJob) batchClass.newInstance();
             } else {
                 // get argument classes (string only).
                 Class[] argClasses = new Class[args.size()];
-                for(int i = 0; i < args.size(); i++) {
+                for (int i = 0; i < args.size(); i++) {
                     argClasses[i] = String.class;
                 }
 
@@ -122,7 +122,7 @@ public class LoadableJarBatchJob extends FileBatchJob {
             throw new IOFailure(msg, e);
         } catch (NoSuchMethodException e) {
             final String msg = "No constructor for the arguments '" + args + "' can be found for the batchjob '"
-            		+ jobClass + "'.";
+                    + jobClass + "'.";
             log.warn(msg, e);
             throw new IOFailure(msg, e);
         } catch (InstantiationException e) {
@@ -143,13 +143,12 @@ public class LoadableJarBatchJob extends FileBatchJob {
     /**
      * Initialize the job before running. This is called before the
      * processFile() calls.
-     * 
-     * @param os
-     *            the OutputStream to which output should be written
+     *
+     * @param os the OutputStream to which output should be written
      */
     public void initialize(OutputStream os) {
         ArgumentNotValid.checkNotNull(os, "os");
-        
+
         // Initialise the loadedJob.
         loadBatchJob();
         loadedJob.initialize(os);
@@ -157,12 +156,9 @@ public class LoadableJarBatchJob extends FileBatchJob {
 
     /**
      * Process one file stored in the bit archive.
-     * 
-     * @param file
-     *            the file to be processed.
-     * @param os
-     *            the OutputStream to which output should be written
-     * 
+     *
+     * @param file the file to be processed.
+     * @param os the OutputStream to which output should be written
      * @return true if the file was successfully processed, false otherwise
      */
     public boolean processFile(File file, OutputStream os) {
@@ -173,9 +169,8 @@ public class LoadableJarBatchJob extends FileBatchJob {
 
     /**
      * Finish the job. This is called after the last process() call.
-     * 
-     * @param os
-     *            the OutputStream to which output should be written
+     *
+     * @param os the OutputStream to which output should be written
      */
     public void finish(OutputStream os) {
         ArgumentNotValid.checkNotNull(os, "OutputStream os");
@@ -185,7 +180,7 @@ public class LoadableJarBatchJob extends FileBatchJob {
     /**
      * Human readable representation of this object. Overrides
      * FileBatchJob.toString to include name of loaded jar/class.
-     * 
+     *
      * @return a Human readable representation of this class
      */
     public String toString() {
@@ -194,12 +189,10 @@ public class LoadableJarBatchJob extends FileBatchJob {
 
     /**
      * Override of the default way to serialize this class.
-     * 
-     * @param out
-     *            Stream that the object will be written to.
-     * @throws IOException
-     *             In case there is an error from the underlying stream, or this
-     *             object cannot be serialized.
+     *
+     * @param out Stream that the object will be written to.
+     * @throws IOException In case there is an error from the underlying stream, or this
+     * object cannot be serialized.
      */
     private void writeObject(ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
@@ -207,16 +200,13 @@ public class LoadableJarBatchJob extends FileBatchJob {
 
     /**
      * Override of the default way to deserialize an object of this class.
-     * 
-     * @param in
-     *            Stream that the object can be read from.
-     * @throws IOException
-     *             If there is an error reading from the stream, or the
-     *             serialized object cannot be deserialized due to errors in the
-     *             serialized form.
-     * @throws ClassNotFoundException
-     *             If the class definition of the serialized object cannot be
-     *             found.
+     *
+     * @param in Stream that the object can be read from.
+     * @throws IOException If there is an error reading from the stream, or the
+     * serialized object cannot be deserialized due to errors in the
+     * serialized form.
+     * @throws ClassNotFoundException If the class definition of the serialized object cannot be
+     * found.
      */
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
@@ -232,10 +222,10 @@ public class LoadableJarBatchJob extends FileBatchJob {
         loadBatchJob();
         return loadedJob.postProcess(input, output);
     }
-    
+
     /**
      * Method for retrieving the name of the loaded class.
-     *  
+     *
      * @return The name of the loaded class.
      */
     public String getLoadedJobClass() {

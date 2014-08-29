@@ -57,7 +57,7 @@ public final class DatabaseAdmin implements Admin {
 
     /**
      * Retrieval of a singleton DatabaseAdmin. Ensures that this class is not instantiated multiple times.
-     * 
+     *
      * @return The current instance of this class.
      */
     public static synchronized DatabaseAdmin getInstance() {
@@ -69,7 +69,7 @@ public final class DatabaseAdmin implements Admin {
 
     /**
      * Method for adding an entry for administration.
-     * 
+     *
      * @param filename The name of the file to be stored.
      * @param msg The StoreMessage of the entry.
      * @param checksum The checksum of the entry.
@@ -89,7 +89,7 @@ public final class DatabaseAdmin implements Admin {
 
     /**
      * Method for telling whether a file entry exists.
-     * 
+     *
      * @param filename The name of the file, the existence of whose entry is to be determined.
      * @return Whether the entry exists.
      * @throws ArgumentNotValid If the filename is either null or empty.
@@ -104,7 +104,7 @@ public final class DatabaseAdmin implements Admin {
 
     /**
      * Returns the ReplicaStoreState of a given file in a specific replica.
-     * 
+     *
      * @param filename The name of the file for the ReplicaStoreState.
      * @param replicaChannelName The name of the identification channel for uniquely identifying the replica of for the
      * ReplicaStoreState.
@@ -125,9 +125,9 @@ public final class DatabaseAdmin implements Admin {
     /**
      * Determines whether a given file in a specific replica has a valid replica store state. By valid means a replica
      * store state other that UNKNOWN_UPLOAD_STATE.
-     * 
+     * <p>
      * TODO Find out if the assumption that all upload states besides UNKNOWN_UPLOAD_STATE are acceptable!
-     * 
+     *
      * @param filename The name of the file for the ReplicaStoreState.
      * @param repChannelId The identification channel of the replica for the ReplicaStoreState.
      * @return Whether a given file in a specific replica has a valid store state.
@@ -151,7 +151,7 @@ public final class DatabaseAdmin implements Admin {
 
     /**
      * Sets the store state of an entry to a specific value.
-     * 
+     *
      * @param filename The name of the file for the entry.
      * @param repChannelId The identification channel of the replica for the entry.
      * @param state The new state for the entry.
@@ -173,7 +173,7 @@ public final class DatabaseAdmin implements Admin {
 
     /**
      * Determines whether the StoreMessage of a given file exists.
-     * 
+     *
      * @param filename The name of the file to which the existence of the StoreMessage should be determined.
      * @return Whether the StoreMessage of the file exists.
      * @throws ArgumentNotValid If the filename is null or the empty string.
@@ -188,7 +188,7 @@ public final class DatabaseAdmin implements Admin {
 
     /**
      * Retrieves the StoreMessage of a specific file.
-     * 
+     *
      * @param filename The name of the file whose StoreMessage should be retrieved.
      * @return The StoreMessage corresponding to the file. A null is returned if the corresponding StoreMessage is not
      * found.
@@ -205,7 +205,7 @@ public final class DatabaseAdmin implements Admin {
     /**
      * Assign a StoreMessage to a specific filename. If the filename is already associated with a StoreMessage, then
      * this StoreMessage will be overwritten by the new StoreMessage.
-     * 
+     *
      * @param filename The name of the file to have a StoreMessage assigned.
      * @param msg The StoreMessage to be assigned to a file.
      * @throws ArgumentNotValid If the StoreMessage is null or if the filename is either null or the empty string.
@@ -221,7 +221,7 @@ public final class DatabaseAdmin implements Admin {
 
     /**
      * Retrieves the checksum of a given file.
-     * 
+     *
      * @param filename The name of the file, whose checksum should be retrieved.
      * @return The checksum of the file.
      * @throws ArgumentNotValid If the filename is either null or the empty string.
@@ -241,9 +241,9 @@ public final class DatabaseAdmin implements Admin {
 
     /**
      * Sets the checksum of a given file.
-     * 
+     * <p>
      * It should not be possible to change the checksum in the database through arcrepository.
-     * 
+     *
      * @param filename The name of the file to have the checksum changed.
      * @param checksum The new checksum for the file.
      * @throws ArgumentNotValid If either the filename or the checksum is either null or the empty string.
@@ -262,7 +262,7 @@ public final class DatabaseAdmin implements Admin {
 
     /**
      * Retrieves a set of the names for all the known files.
-     * 
+     *
      * @return A set of the names for all the known file.
      */
     @Override
@@ -277,7 +277,7 @@ public final class DatabaseAdmin implements Admin {
 
     /**
      * Retrieves a set with the name of the files with a specific ReplicaStoreState in a specific replica.
-     * 
+     *
      * @param rep The replica where the files belong.
      * @param state The ReplicaStoreState for the files.
      * @return A set with the names of the files with a specific ReplicaStoreState in a specific replica.

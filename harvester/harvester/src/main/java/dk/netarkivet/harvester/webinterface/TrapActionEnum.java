@@ -29,7 +29,6 @@ import dk.netarkivet.common.utils.I18n;
 
 /**
  * Represents the various actions which can be carried out to modify Global Crawler Traps.
- *
  */
 
 public enum TrapActionEnum {
@@ -99,7 +98,7 @@ public enum TrapActionEnum {
 
     /**
      * Get the concrete TrapAction which can process this request.
-     * 
+     *
      * @return the correct TrapAction for this request type.
      */
     public abstract TrapAction getTrapAction();

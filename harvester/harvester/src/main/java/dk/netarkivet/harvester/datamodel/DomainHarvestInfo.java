@@ -57,7 +57,7 @@ public class DomainHarvestInfo {
 
     /**
      * Constructor for a DomainHarvestInfo object.
-     * 
+     *
      * @param domainName The given domain
      * @param jobID The Id of the job that harvested this domain
      * @param harvestName The name of the harvestdefinition behind the job
@@ -88,7 +88,7 @@ public class DomainHarvestInfo {
 
     /**
      * Get the domain Name.
-     * 
+     *
      * @return the domain Name.
      */
     public String getDomain() {
@@ -97,7 +97,7 @@ public class DomainHarvestInfo {
 
     /**
      * Get the Id of the job that harvested this domain.
-     * 
+     *
      * @return the Id of the job that harvested this domain
      */
     public long getJobID() {
@@ -106,7 +106,7 @@ public class DomainHarvestInfo {
 
     /**
      * Get the name of the harvestdefinition behind the job.
-     * 
+     *
      * @return The name of the harvestdefinition behind the job
      */
     public String getHarvestName() {
@@ -115,7 +115,7 @@ public class DomainHarvestInfo {
 
     /**
      * Get the ID of the harvestdefinition behind the job.
-     * 
+     *
      * @return The ID of the harvestdefinition behind the job
      */
     public long getHarvestID() {
@@ -124,7 +124,7 @@ public class DomainHarvestInfo {
 
     /**
      * Get the number of the harvest.
-     * 
+     *
      * @return The number of the harvest
      */
     public int getHarvestNum() {
@@ -133,7 +133,7 @@ public class DomainHarvestInfo {
 
     /**
      * Get the name of the configuration.
-     * 
+     *
      * @return The name of the configuration
      */
     public String getConfigName() {
@@ -142,7 +142,7 @@ public class DomainHarvestInfo {
 
     /**
      * Get the date when the harvestjob started.
-     * 
+     *
      * @return Get the date when the harvestjob started.
      */
     public Date getStartDate() {
@@ -151,7 +151,7 @@ public class DomainHarvestInfo {
 
     /**
      * Get the date when the harvestjob finished.
-     * 
+     *
      * @return Get the date when the harvestjob finished.
      */
     public Date getEndDate() {
@@ -160,7 +160,7 @@ public class DomainHarvestInfo {
 
     /**
      * Get the number of bytes that were downloaded by this job for this domain.
-     * 
+     *
      * @return The number of bytes that were downloaded by this job for this domain.
      */
     public long getBytesDownloaded() {
@@ -169,7 +169,7 @@ public class DomainHarvestInfo {
 
     /**
      * Get the number of documents (URIs) that were downloaded by this job for this domain.
-     * 
+     *
      * @return The number of documents (URIs) that were downloaded by this job for this domain.
      */
     public long getDocsDownloaded() {
@@ -178,7 +178,7 @@ public class DomainHarvestInfo {
 
     /**
      * Get the reason why the harvestjob stopped harvesting any more URIs from this domain.
-     * 
+     *
      * @return The reason why the harvestjob stopped harvesting any more URIs from this domain.
      */
     public StopReason getStopReason() {

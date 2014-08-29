@@ -293,12 +293,12 @@ public class WebinterfaceTestCase {
 
         public HttpSession getSession() {
             return null; // To change body of implemented methods use File |
-                         // Settings | File Templates.
+            // Settings | File Templates.
         }
 
         public Object getPage() {
             return null; // To change body of implemented methods use File |
-                         // Settings | File Templates.
+            // Settings | File Templates.
         }
 
         public ServletRequest getRequest() {
@@ -310,22 +310,22 @@ public class WebinterfaceTestCase {
 
                 public String getCharacterEncoding() {
                     return null; // To change body of implemented methods use
-                                 // File | Settings | File Templates.
+                    // File | Settings | File Templates.
                 }
 
                 public String getContentType() {
                     return null; // To change body of implemented methods use
-                                 // File | Settings | File Templates.
+                    // File | Settings | File Templates.
                 }
 
                 public ServletOutputStream getOutputStream() throws IOException {
                     return null; // To change body of implemented methods use
-                                 // File | Settings | File Templates.
+                    // File | Settings | File Templates.
                 }
 
                 public PrintWriter getWriter() throws IOException {
                     return null; // To change body of implemented methods use
-                                 // File | Settings | File Templates.
+                    // File | Settings | File Templates.
                 }
 
                 public void setCharacterEncoding(String string) {
@@ -355,7 +355,7 @@ public class WebinterfaceTestCase {
 
                 public int getBufferSize() {
                     return 0; // To change body of implemented methods use File
-                              // | Settings | File Templates.
+                    // | Settings | File Templates.
                 }
 
                 public void flushBuffer() throws IOException {
@@ -370,7 +370,7 @@ public class WebinterfaceTestCase {
 
                 public boolean isCommitted() {
                     return false; // To change body of implemented methods use
-                                  // File | Settings | File Templates.
+                    // File | Settings | File Templates.
                 }
 
                 public void reset() {
@@ -391,34 +391,34 @@ public class WebinterfaceTestCase {
 
         public Exception getException() {
             return null; // To change body of implemented methods use File |
-                         // Settings | File Templates.
+            // Settings | File Templates.
         }
 
         public ServletConfig getServletConfig() {
             return null; // To change body of implemented methods use File |
-                         // Settings | File Templates.
+            // Settings | File Templates.
         }
 
         public ServletContext getServletContext() {
             return new ServletContext() {
                 public String getContextPath() {
                     return null; // To change body of implemented methods use
-                                 // File | Settings | File Templates.
+                    // File | Settings | File Templates.
                 }
 
                 public ServletContext getContext(String string) {
                     return null; // To change body of implemented methods use
-                                 // File | Settings | File Templates.
+                    // File | Settings | File Templates.
                 }
 
                 public int getMajorVersion() {
                     return 0; // To change body of implemented methods use File
-                              // | Settings | File Templates.
+                    // | Settings | File Templates.
                 }
 
                 public int getMinorVersion() {
                     return 0; // To change body of implemented methods use File
-                              // | Settings | File Templates.
+                    // | Settings | File Templates.
                 }
 
                 @Override
@@ -433,22 +433,22 @@ public class WebinterfaceTestCase {
 
                 public String getMimeType(String string) {
                     return null; // To change body of implemented methods use
-                                 // File | Settings | File Templates.
+                    // File | Settings | File Templates.
                 }
 
                 public Set getResourcePaths(String string) {
                     return null; // To change body of implemented methods use
-                                 // File | Settings | File Templates.
+                    // File | Settings | File Templates.
                 }
 
                 public URL getResource(String string) throws MalformedURLException {
                     return null; // To change body of implemented methods use
-                                 // File | Settings | File Templates.
+                    // File | Settings | File Templates.
                 }
 
                 public InputStream getResourceAsStream(String string) {
                     return null; // To change body of implemented methods use
-                                 // File | Settings | File Templates.
+                    // File | Settings | File Templates.
                 }
 
                 public RequestDispatcher getRequestDispatcher(String string) {
@@ -468,22 +468,22 @@ public class WebinterfaceTestCase {
 
                 public RequestDispatcher getNamedDispatcher(String string) {
                     return null; // To change body of implemented methods use
-                                 // File | Settings | File Templates.
+                    // File | Settings | File Templates.
                 }
 
                 public Servlet getServlet(String string) throws ServletException {
                     return null; // To change body of implemented methods use
-                                 // File | Settings | File Templates.
+                    // File | Settings | File Templates.
                 }
 
                 public Enumeration getServlets() {
                     return null; // To change body of implemented methods use
-                                 // File | Settings | File Templates.
+                    // File | Settings | File Templates.
                 }
 
                 public Enumeration getServletNames() {
                     return null; // To change body of implemented methods use
-                                 // File | Settings | File Templates.
+                    // File | Settings | File Templates.
                 }
 
                 public void log(String string) {
@@ -503,22 +503,22 @@ public class WebinterfaceTestCase {
 
                 public String getRealPath(String string) {
                     return null; // To change body of implemented methods use
-                                 // File | Settings | File Templates.
+                    // File | Settings | File Templates.
                 }
 
                 public String getServerInfo() {
                     return null; // To change body of implemented methods use
-                                 // File | Settings | File Templates.
+                    // File | Settings | File Templates.
                 }
 
                 public String getInitParameter(String string) {
                     return null; // To change body of implemented methods use
-                                 // File | Settings | File Templates.
+                    // File | Settings | File Templates.
                 }
 
                 public Enumeration getInitParameterNames() {
                     return null; // To change body of implemented methods use
-                                 // File | Settings | File Templates.
+                    // File | Settings | File Templates.
                 }
 
                 @Override
@@ -528,12 +528,12 @@ public class WebinterfaceTestCase {
 
                 public Object getAttribute(String string) {
                     return null; // To change body of implemented methods use
-                                 // File | Settings | File Templates.
+                    // File | Settings | File Templates.
                 }
 
                 public Enumeration getAttributeNames() {
                     return null; // To change body of implemented methods use
-                                 // File | Settings | File Templates.
+                    // File | Settings | File Templates.
                 }
 
                 public void setAttribute(String string, Object object) {
@@ -548,7 +548,7 @@ public class WebinterfaceTestCase {
 
                 public String getServletContextName() {
                     return null; // To change body of implemented methods use
-                                 // File | Settings | File Templates.
+                    // File | Settings | File Templates.
                 }
 
                 @Override
@@ -710,17 +710,17 @@ public class WebinterfaceTestCase {
 
         public Object getAttribute(String string) {
             return null; // To change body of implemented methods use File |
-                         // Settings | File Templates.
+            // Settings | File Templates.
         }
 
         public Object getAttribute(String string, int i) {
             return null; // To change body of implemented methods use File |
-                         // Settings | File Templates.
+            // Settings | File Templates.
         }
 
         public Object findAttribute(String string) {
             return null; // To change body of implemented methods use File |
-                         // Settings | File Templates.
+            // Settings | File Templates.
         }
 
         public void removeAttribute(String string) {
@@ -735,12 +735,12 @@ public class WebinterfaceTestCase {
 
         public int getAttributesScope(String string) {
             return 0; // To change body of implemented methods use File |
-                      // Settings | File Templates.
+            // Settings | File Templates.
         }
 
         public Enumeration<String> getAttributeNamesInScope(int i) {
             return null; // To change body of implemented methods use File |
-                         // Settings | File Templates.
+            // Settings | File Templates.
         }
 
         public JspWriter getOut() {
@@ -749,17 +749,17 @@ public class WebinterfaceTestCase {
 
         public ExpressionEvaluator getExpressionEvaluator() {
             return null; // To change body of implemented methods use File |
-                         // Settings | File Templates.
+            // Settings | File Templates.
         }
 
         public VariableResolver getVariableResolver() {
             return null; // To change body of implemented methods use File |
-                         // Settings | File Templates.
+            // Settings | File Templates.
         }
 
         public ELContext getELContext() {
             return null; // To change body of implemented methods use File |
-                         // Settings | File Templates.
+            // Settings | File Templates.
         }
     }
 

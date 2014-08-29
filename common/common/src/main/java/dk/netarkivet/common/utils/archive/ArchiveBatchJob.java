@@ -44,20 +44,21 @@ import dk.netarkivet.common.utils.batch.ArchiveBatchFilter;
  * job runs initialize(), runs processRecord() on each record in each file in
  * the archive, and then runs finish().
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({"serial"})
 public abstract class ArchiveBatchJob extends ArchiveBatchJobBase {
 
     private static final Logger log = LoggerFactory.getLogger(ArchiveBatchJob.class);
 
     /**
      * Exceptions should be handled with the handleException() method.
+     *
      * @param os The OutputStream to which output data is written
      * @param record the object to be processed.
      */
     public abstract void processRecord(ArchiveRecordBase record, OutputStream os);
 
     /**
-     * Returns an ArchiveBatchFilter object which restricts the set of records in the 
+     * Returns an ArchiveBatchFilter object which restricts the set of records in the
      * archive on which this batch-job is performed. The default value is
      * a neutral filter which allows all records.
      *
@@ -74,10 +75,10 @@ public abstract class ArchiveBatchJob extends ArchiveBatchJobBase {
      *
      * @param archiveFile The arc(.gz) or warc(.gz) file to be processed.
      * @param os the OutputStream to which output is to be written
-     * @throws ArgumentNotValid if either argument is null
      * @return true, if file processed successful, otherwise false
+     * @throws ArgumentNotValid if either argument is null
      */
-    public final boolean processFile(File archiveFile, OutputStream os) throws ArgumentNotValid{
+    public final boolean processFile(File archiveFile, OutputStream os) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(archiveFile, "archiveFile");
         ArgumentNotValid.checkNotNull(os, "os");
         long arcFileIndex = 0;
@@ -116,7 +117,7 @@ public abstract class ArchiveBatchJob extends ArchiveBatchJobBase {
                             continue;
                         }
                         log.debug("Processing record #{} in archive file '{}'.",
-                        		noOfRecordsProcessed, archiveFile.getName());
+                                noOfRecordsProcessed, archiveFile.getName());
                         processRecord(record, os);
                         ++noOfRecordsProcessed;
                     } catch (NetarkivetException e) {
@@ -137,15 +138,16 @@ public abstract class ArchiveBatchJob extends ArchiveBatchJobBase {
                     }
                     // Close the record
                     try {
-                    	/*
+                        /*
                         // FIXME: Don't know  how to compute this for warc-files
                         // computation for arc-files: long arcRecordOffset =
                         //        record.getBodyOffset() + record.getMetaData().getLength();
                         // computation for warc-files (experimental)
                         long arcRecordOffset = record.getHeader().getOffset();
                         */
-                    	// TODO maybe this works, maybe not...
-                        long arcRecordOffset = archiveRecord.getHeader().getContentBegin() + archiveRecord.getHeader().getLength();
+                        // TODO maybe this works, maybe not...
+                        long arcRecordOffset =
+                                archiveRecord.getHeader().getContentBegin() + archiveRecord.getHeader().getLength();
                         archiveRecord.close();
                         arcFileIndex = arcRecordOffset;
                     } catch (IOException ioe) { // Couldn't close an WARCRecord
@@ -157,7 +159,7 @@ public abstract class ArchiveBatchJob extends ArchiveBatchJobBase {
                         break;
                     }
                     log.trace("At end of processing-loop");
-                } 
+                }
             } finally {
                 try {
                     archiveReader.close();
@@ -173,5 +175,5 @@ public abstract class ArchiveBatchJob extends ArchiveBatchJobBase {
         }
         return success;
     }
-    
+
 }

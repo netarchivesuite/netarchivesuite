@@ -141,7 +141,7 @@ public class FullFrontierReport extends AbstractFrontierReport {
 
         /**
          * Returns an iterator on the given sort key.
-         * 
+         *
          * @param cursor The cursor (sort key) to iterate on.
          */
         ReportIterator(EntityCursor<PersistentLine> cursor) {
@@ -219,7 +219,7 @@ public class FullFrontierReport extends AbstractFrontierReport {
 
     /**
      * Builds an empty frontier report wrapper.
-     * 
+     *
      * @param jobName the Heritrix job name
      */
     private FullFrontierReport(String jobName) {
@@ -295,7 +295,7 @@ public class FullFrontierReport extends AbstractFrontierReport {
     /**
      * Returns an iterator where lines are ordered by primary key order: first by decreasing totalEnqueues, then by
      * domain name natural order.
-     * 
+     *
      * @return an iterator on the report lines.
      */
     public ReportIterator iterateOnTotalEnqueues() {
@@ -308,7 +308,7 @@ public class FullFrontierReport extends AbstractFrontierReport {
 
     /**
      * Returns an iterator where lines are ordered by domain name natural order.
-     * 
+     *
      * @return an iterator on the report lines.
      */
     public ReportIterator iterateOnDomainName() {
@@ -321,7 +321,7 @@ public class FullFrontierReport extends AbstractFrontierReport {
 
     /**
      * Returns an iterator where lines are ordered by increasing currentSize.
-     * 
+     *
      * @return an iterator on the report lines.
      */
     public ReportIterator iterateOnCurrentSize() {
@@ -334,7 +334,7 @@ public class FullFrontierReport extends AbstractFrontierReport {
 
     /**
      * Returns an iterator on lines having a given currentSize.
-     * 
+     *
      * @param dupValue
      * @return an iterator on the report lines.
      */
@@ -348,7 +348,7 @@ public class FullFrontierReport extends AbstractFrontierReport {
 
     /**
      * Returns an iterator where lines are ordered by increasing totalSpend.
-     * 
+     *
      * @return an iterator on the report lines.
      */
     public ReportIterator iterateOnSpentBudget() {
@@ -361,7 +361,7 @@ public class FullFrontierReport extends AbstractFrontierReport {
 
     /**
      * Returns an iterator on lines having a given totalSpend.
-     * 
+     *
      * @param dupValue
      * @return an iterator on the report lines.
      */
@@ -376,7 +376,7 @@ public class FullFrontierReport extends AbstractFrontierReport {
     /**
      * Generates an Heritrix frontier report wrapper object by parsing the frontier report returned by the JMX
      * controller as a string.
-     * 
+     *
      * @param jobName the Heritrix job name
      * @param contentsAsString the text returned by the JMX call
      * @return the report wrapper object
@@ -427,7 +427,7 @@ public class FullFrontierReport extends AbstractFrontierReport {
 
     /**
      * Return the directory where the BDB is stored.
-     * 
+     *
      * @return the storage directory.
      */
     File getStorageDir() {

@@ -37,10 +37,9 @@ import dk.netarkivet.common.utils.I18n;
  * 4) We stopped harvesting because we hit the per-configuration limit (CONFIG_SIZE_LIMIT) <br>
  * 5) We don't know whether or not the harvesting is completed, because the crawler did not finish in an orderly way
  * (DOWNLOAD_UNFINISHED) <br>
- *
+ * <p>
  * Note: This enum is serialized to the database using the order in which these are defined. Thus the order of stop
  * reasons MUST NOT BE CHANGED!
- *
  */
 public enum StopReason {
 
@@ -84,10 +83,9 @@ public enum StopReason {
 
     /**
      * Get the StopReason corresponding to the given positive integer.
-     * 
+     *
      * @param stopreasonNum a given positive integer
      * @return the StopReason corresponding to the given positive integer
-     * 
      * @see StopReason#ordinal()
      */
     static StopReason getStopReason(final int stopreasonNum) {
@@ -113,7 +111,7 @@ public enum StopReason {
 
     /**
      * Return a localized string describing a stopreason.
-     * 
+     *
      * @param l the locale
      * @return a localized string describing a stopreason.
      */

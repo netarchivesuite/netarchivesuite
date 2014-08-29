@@ -30,8 +30,10 @@ import dk.netarkivet.common.CommonSettings;
  */
 public class NotificationsFactory extends SettingsFactory<Notifications> {
 
-	/** Get a notification instance to handle serious errors, as defined
+    /**
+     * Get a notification instance to handle serious errors, as defined
      * by the setting settings.common.notifications.class.
+     *
      * @return The Notifications instance.
      */
     public static Notifications getInstance() {

@@ -30,27 +30,29 @@ import org.archive.io.arc.ARCRecord;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
-/** A filter class for batch entries.  Allows testing whether or not
+/**
+ * A filter class for batch entries.  Allows testing whether or not
  * to process an entry without loading the entry data first.
  * The class in itself is abstract but contains implementation of several
  * filters.
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({"serial"})
 public abstract class ARCBatchFilter implements Serializable {
-    
+
     /** The name of the BatchFilter. */
     private String name;
-    
+
     /** A default filter: Accepts everything. */
     public static final ARCBatchFilter NO_FILTER = new ARCBatchFilter("NO_FILTER") {
-            public boolean accept(ARCRecord record) {
-                return true;
-            }
+        public boolean accept(ARCRecord record) {
+            return true;
+        }
     };
-    
-    /** The ARCRecord url for the filedesc record (the header record of every 
+
+    /**
+     * The ARCRecord url for the filedesc record (the header record of every
      * ARC File).
-     */    
+     */
     private static final String FILE_HEADERS_FILEDESC_PREFIX = "filedesc";
     /** The name of the filter that filters out the filedesc record. */
     private static final String EXCLUDE_FILE_HEADERS_FILTER_NAME = "EXCLUDE_FILE_HEADERS";
@@ -62,7 +64,7 @@ public abstract class ARCBatchFilter implements Serializable {
         }
     };
 
-    /** Prefix for the url in HTTP records. */    
+    /** Prefix for the url in HTTP records. */
     private static final String HTTP_ENTRIES_HTTP_PREFIX = "http:";
     /** The name of th filter accepting only HTTP entries. */
     private static final String ONLY_HTTP_ENTRIES_FILTER_NAME = "ONLY_HTTP_ENTRIES";
@@ -76,15 +78,16 @@ public abstract class ARCBatchFilter implements Serializable {
                     HTTP_ENTRIES_HTTP_PREFIX);
         }
     };
-    
-    /** The name-prefix for mimetype filters. */    
+
+    /** The name-prefix for mimetype filters. */
     private static final String MIMETYPE_BATCH_FILTER_NAME_PREFIX = "MimetypeBatchFilter-";
     /** Regexp for mimetypes. */
     private static final String MIMETYPE_REGEXP = "\\w+/\\w+";
     /** Pattern for mimetypes. */
     private static final Pattern MIMETYPE_PATTERN = Pattern.compile(MIMETYPE_REGEXP);
 
-    /** Create a new filter with the given name.
+    /**
+     * Create a new filter with the given name.
      *
      * @param name The name of this filter, for debugging mostly.
      */
@@ -95,20 +98,21 @@ public abstract class ARCBatchFilter implements Serializable {
 
     /**
      * Get the name of the filter.
+     *
      * @return the name of the filter.
      */
     protected String getName() {
         return this.name;
     }
-    
+
     /**
      * @param mimetype String denoting the mimetype this filter represents
-     * @return a BatchFilter that filters out all ARCRecords, that does not 
-     *  have this mimetype
+     * @return a BatchFilter that filters out all ARCRecords, that does not
+     * have this mimetype
      * @throws MimeTypeParseException If mimetype is invalid
      */
     public static ARCBatchFilter getMimetypeBatchFilter(final String mimetype)
-        throws MimeTypeParseException {
+            throws MimeTypeParseException {
         ArgumentNotValid.checkNotNullOrEmpty(mimetype, "String mimetype");
         if (!mimetypeIsOk(mimetype)) {
             throw new MimeTypeParseException("Mimetype argument '" + mimetype + "' is invalid");
@@ -123,10 +127,11 @@ public abstract class ARCBatchFilter implements Serializable {
     }
 
     /**
-    * Check, if a certain mimetype is valid.
-    * @param mimetype a given mimetype
-    * @return boolean true, if mimetype matches word/word, otherwise false
-    */
+     * Check, if a certain mimetype is valid.
+     *
+     * @param mimetype a given mimetype
+     * @return boolean true, if mimetype matches word/word, otherwise false
+     */
     public static boolean mimetypeIsOk(String mimetype) {
         ArgumentNotValid.checkNotNullOrEmpty(mimetype, "String mimetype");
         return MIMETYPE_PATTERN.matcher(mimetype).matches();
@@ -134,6 +139,7 @@ public abstract class ARCBatchFilter implements Serializable {
 
     /**
      * Check if a given record is accepted (not filtered out) by this filter.
+     *
      * @param record a given ARCRecord
      * @return true, if the given record is accepted by this filter
      */

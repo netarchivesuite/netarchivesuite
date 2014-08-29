@@ -62,7 +62,7 @@ public class Application {
 
     /**
      * A application is the program to be run on a machine.
-     * 
+     *
      * @param subTreeRoot The root of this instance in the XML document.
      * @param parentSettings The setting inherited by the parent.
      * @param param The machine parameters inherited by the parent.
@@ -92,7 +92,7 @@ public class Application {
 
     /**
      * Extract the local variables from the root.
-     * 
+     * <p>
      * Currently, this is the name and the optional applicationId.
      */
     private void extractVariables() {
@@ -134,7 +134,7 @@ public class Application {
 
     /**
      * Uses the name and the optional applicationId to create an unique identification for this application.
-     * 
+     *
      * @return The unique identification of this application.
      */
     public String getIdentification() {
@@ -157,7 +157,7 @@ public class Application {
     /**
      * Creates the settings file for this application. This is extracted from the XMLStructure and put into a specific
      * file. The name of the settings file for this application is: "settings_" + identification + ".xml".
-     * 
+     *
      * @param directory The directory where the settings file should be placed.
      */
     public void createSettingsFile(File directory) {
@@ -186,7 +186,7 @@ public class Application {
 
     /**
      * Makes the install path with linux syntax.
-     * 
+     *
      * @return The path in linux syntax.
      */
     public String installPathLinux() {
@@ -196,7 +196,7 @@ public class Application {
 
     /**
      * Makes the install path with windows syntax.
-     * 
+     *
      * @return The path with windows syntax.
      */
     public String installPathWindows() {
@@ -206,7 +206,7 @@ public class Application {
 
     /**
      * For acquiring the machine parameter variable.
-     * 
+     *
      * @return The machine parameter variable.
      */
     public Parameters getMachineParameters() {
@@ -215,7 +215,7 @@ public class Application {
 
     /**
      * For acquiring all the values of the leafs at the end of the path.
-     * 
+     *
      * @param path The path to the branches.
      * @return The values of the leafs. If no values were found, then an empty collection of strings are returned.
      */

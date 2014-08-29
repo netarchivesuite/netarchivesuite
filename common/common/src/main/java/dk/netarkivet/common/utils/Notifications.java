@@ -28,7 +28,7 @@ package dk.netarkivet.common.utils;
  */
 public abstract class Notifications {
 
-	/**
+    /**
      * Notify about an event. This is the same as calling
      * {@link #notify(String, NotificationType, Throwable)} with null as the second parameter.
      *
@@ -43,7 +43,7 @@ public abstract class Notifications {
      *
      * @param message The message to notify about.
      * @param eventType The type of event
-     * @param e  An exception related to the event, if not the event itself
+     * @param e An exception related to the event, if not the event itself
      * May be null for no exception.
      */
     public abstract void notify(String message, NotificationType eventType, Throwable e);

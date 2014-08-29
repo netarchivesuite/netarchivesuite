@@ -64,7 +64,7 @@ public class PersistentJobData implements JobInfo {
 
         /**
          * Builds a harvest definition info object.
-         * 
+         *
          * @param origHarvestName the harvest definition's name
          * @param origHarvestDesc the harvest definition's comments (can be empty string)
          * @param scheduleName the harvest definition's schedule name (only applicable for selective harvests)
@@ -183,7 +183,7 @@ public class PersistentJobData implements JobInfo {
 
     /**
      * Constructor for class PersistentJobData.
-     * 
+     *
      * @param crawlDir The directory where the harvestInfo can be found
      * @throws ArgumentNotValid if crawlDir is null or does not exist.
      */
@@ -195,7 +195,7 @@ public class PersistentJobData implements JobInfo {
 
     /**
      * Returns true, if harvestInfo exists in crawDir, otherwise false.
-     * 
+     *
      * @return true, if harvestInfo exists, otherwise false
      */
     public boolean exists() {
@@ -214,7 +214,7 @@ public class PersistentJobData implements JobInfo {
 
     /**
      * Read harvestInfo into SimpleXML object.
-     * 
+     *
      * @return SimpleXml object for harvestInfo
      * @throws IOFailure if HarvestInfoFile does not exist or if HarvestInfoFile is invalid
      */
@@ -245,7 +245,7 @@ public class PersistentJobData implements JobInfo {
 
     /**
      * Write information about given Job to XML-structure.
-     * 
+     *
      * @param harvestJob the given Job
      * @param hdi Information about the harvestJob.
      * @throws IOFailure if any failure occurs while persisting data, or if the file has already been written.
@@ -305,7 +305,7 @@ public class PersistentJobData implements JobInfo {
 
     /**
      * Checks that the xml data in the persistent job data file is valid.
-     * 
+     *
      * @param sx the SimpleXml object containing the persistent job data
      * @return empty string, if valid persistent job data, otherwise a string containing the problem.
      */
@@ -423,7 +423,7 @@ public class PersistentJobData implements JobInfo {
 
     /**
      * Return the harvestInfo jobID.
-     * 
+     *
      * @return the harvestInfo JobID
      * @throws IOFailure if no harvestInfo exists or it is invalid.
      */
@@ -435,7 +435,7 @@ public class PersistentJobData implements JobInfo {
 
     /**
      * Return the job's harvest channel name.
-     * 
+     *
      * @return the job's harvest channel name
      * @throws IOFailure if no harvestInfo exists or it is invalid.
      */
@@ -446,7 +446,7 @@ public class PersistentJobData implements JobInfo {
 
     /**
      * Return the job harvestNum.
-     * 
+     *
      * @return the job harvestNum
      * @throws IOFailure if no harvestInfo exists or it is invalid.
      */
@@ -458,7 +458,7 @@ public class PersistentJobData implements JobInfo {
 
     /**
      * Return the job origHarvestDefinitionID.
-     * 
+     *
      * @return the job origHarvestDefinitionID
      * @throws IOFailure if no harvestInfo exists or it is invalid.
      */
@@ -470,7 +470,7 @@ public class PersistentJobData implements JobInfo {
 
     /**
      * Return the job maxBytesPerDomain value.
-     * 
+     *
      * @return the job maxBytesPerDomain value.
      * @throws IOFailure if no harvestInfo exists or it is invalid.
      */
@@ -482,7 +482,7 @@ public class PersistentJobData implements JobInfo {
 
     /**
      * Return the job maxObjectsPerDomain value.
-     * 
+     *
      * @return the job maxObjectsPerDomain value.
      * @throws IOFailure if no harvestInfo exists or it is invalid.
      */
@@ -494,7 +494,7 @@ public class PersistentJobData implements JobInfo {
 
     /**
      * Return the job orderXMLName.
-     * 
+     *
      * @return the job orderXMLName.
      * @throws IOFailure if no harvestInfo exists or it is invalid.
      */
@@ -505,7 +505,7 @@ public class PersistentJobData implements JobInfo {
 
     /**
      * Return the version of the xml.
-     * 
+     *
      * @return the version of the xml
      * @throws IOFailure if no harvestInfo exists or it is invalid.
      */
@@ -526,11 +526,12 @@ public class PersistentJobData implements JobInfo {
         /** the state of the XML. */
         private OKSTATE ok;
         /** The error coming from an xml-validation. */
-        private String error;;
+        private String error;
+        ;
 
         /**
          * Constructor of an XmlState object.
-         * 
+         *
          * @param ok Is the XML OK or not OKAY?
          * @param error The error found during validation, if any.
          */
@@ -572,7 +573,7 @@ public class PersistentJobData implements JobInfo {
 
     /**
      * Return the harvestname in this xml.
-     * 
+     *
      * @return the harvestname in this xml.
      * @throws IOFailure if no harvestInfo exists or it is invalid.
      */
@@ -583,7 +584,7 @@ public class PersistentJobData implements JobInfo {
 
     /**
      * Return the schedulename in this xml.
-     * 
+     *
      * @return the schedulename in this xml (or null, if undefined for this job)
      * @throws IOFailure if no harvestInfo exists or it is invalid.
      */
@@ -598,7 +599,7 @@ public class PersistentJobData implements JobInfo {
 
     /**
      * Return the submit date of the job in this xml.
-     * 
+     *
      * @return the submit date of the job in this xml.
      * @throws IOFailure if no harvestInfo exists or it is invalid.
      */
@@ -609,7 +610,7 @@ public class PersistentJobData implements JobInfo {
 
     /**
      * Return the performer information in this xml.
-     * 
+     *
      * @return the performer information in this xml or null if value undefined
      * @throws IOFailure if no harvestInfo exists or it is invalid.
      */
@@ -624,7 +625,7 @@ public class PersistentJobData implements JobInfo {
 
     /**
      * Return the audience information in this xml.
-     * 
+     *
      * @return the audience information in this xml or null if value undefined
      * @throws IOFailure if no harvestInfo exists or it is invalid.
      */

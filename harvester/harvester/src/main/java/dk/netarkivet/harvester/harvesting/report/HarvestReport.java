@@ -67,7 +67,7 @@ public interface HarvestReport extends Serializable {
 
     /**
      * Get the StopReason for the given domain.
-     * 
+     *
      * @param domainName A domain name (as given by getDomainNames())
      * @return the StopReason for the given domain.
      * @throws ArgumentNotValid if null or empty domainName

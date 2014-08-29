@@ -61,7 +61,7 @@ public class ExtendedFieldValueDBDAO extends ExtendedFieldValueDAO {
 
     /**
      * Create a ExtendedFieldValue in persistent storage.
-     * 
+     *
      * @param aConnection an open connection to the HarvestDatabase.
      * @param aExtendedFieldValue The ExtendedFieldValue to create in persistent storage
      * @param aCommit Should we commit this or not
@@ -165,7 +165,7 @@ public class ExtendedFieldValueDBDAO extends ExtendedFieldValueDAO {
 
     /**
      * Find out if there already exists in persistent storage a ExtendedFieldValue with the given id.
-     * 
+     *
      * @param c an open connection to the HarvestDatabase.
      * @param aExtendedFieldValueID An id associated with a ExtendedFieldValue
      * @return true, if there already exists in persistent storage a ExtendedFieldValue with the given id.
@@ -189,7 +189,7 @@ public class ExtendedFieldValueDBDAO extends ExtendedFieldValueDAO {
 
     /**
      * Read the ExtendedFieldValue with the given extendedFieldID.
-     * 
+     *
      * @param connection an open connection to the HarvestDatabase
      * @param aExtendedFieldID A given ID for a ExtendedFieldValue
      * @param aInstanceID A given instanceID
@@ -227,7 +227,7 @@ public class ExtendedFieldValueDBDAO extends ExtendedFieldValueDAO {
 
     /**
      * Read a ExtendedFieldValue in persistent storage.
-     * 
+     *
      * @param aConnection an open connection to the HarvestDatabase
      * @param aExtendedFieldValue The ExtendedFieldValue to update
      * @param aCommit Should we commit this or not

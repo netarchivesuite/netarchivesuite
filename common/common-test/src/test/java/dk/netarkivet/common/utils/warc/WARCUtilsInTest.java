@@ -36,7 +36,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 
 /**
  * Various utilities on WARC-records. We have borrowed code from wayback.
- * 
+ *
  * @see org.archive.wayback.resourcestore.indexer.NetarchiveSuiteWARCRecordToSearchResultAdapter.java
  */
 public class WARCUtilsInTest {
@@ -46,7 +46,7 @@ public class WARCUtilsInTest {
 
     /**
      * Read the contents (payload) of an WARC record into a byte array.
-     * 
+     *
      * @param record An WARC record to read from. After reading, the WARC Record will no longer have its own data
      * available for reading.
      * @return A byte array containing the payload of the WARC record. Note that the size of the payload is calculated
@@ -98,7 +98,7 @@ public class WARCUtilsInTest {
 
     /**
      * Find out what type of WARC-record this is.
-     * 
+     *
      * @param record a given WARCRecord
      * @return the type of WARCRecord as a String.
      */

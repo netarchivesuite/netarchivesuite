@@ -53,7 +53,7 @@ public class AdminDataMessage extends ArchiveMessage {
 
     /**
      * Constructor used when you change the BitarchiveStoreState.
-     * 
+     *
      * @param theFileName The filename you want to give a new BitarchiveStoreState.
      * @param theReplicaId The ID for the bitarchive where the file resides
      * @param newval The new BitarchiveStoreState
@@ -68,7 +68,7 @@ public class AdminDataMessage extends ArchiveMessage {
 
     /**
      * Constructor used when you want to change the checksum for the given filename.
-     * 
+     *
      * @param theFileName the given filename
      * @param theChecksum the new checksum for the filename
      */
@@ -91,7 +91,7 @@ public class AdminDataMessage extends ArchiveMessage {
 
     /**
      * Method for retrieving the replica id from this message.
-     * 
+     *
      * @return Returns the replicaId.
      */
     public String getReplicaId() {
@@ -100,7 +100,7 @@ public class AdminDataMessage extends ArchiveMessage {
 
     /**
      * Method for retrieving the name of the file which are refered to in this message.
-     * 
+     *
      * @return Returns the fileName.
      */
     public String getFileName() {
@@ -116,7 +116,7 @@ public class AdminDataMessage extends ArchiveMessage {
 
     /**
      * Return the state of the changestorestate - flag.
-     * 
+     *
      * @return true, if this message is a changestorestate message
      */
     public boolean isChangeStoreState() {
@@ -125,7 +125,7 @@ public class AdminDataMessage extends ArchiveMessage {
 
     /**
      * Return the state of the changechecksum - flag.
-     * 
+     *
      * @return true, if this message is a changechecksum message
      */
     public boolean isChangeChecksum() {

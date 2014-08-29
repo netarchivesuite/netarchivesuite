@@ -57,7 +57,7 @@ public class IndexAggregator {
 
     /**
      * Takes a list of sorted files and merges them.
-     * 
+     *
      * @param files The files to merge.
      * @param outputFile The resulting file containing total sorted set of index lines found in all the provided index
      * files
@@ -72,7 +72,7 @@ public class IndexAggregator {
     /**
      * Calls the Unix sort command with the options <code>$filesNames -o
      * $outputfile -T WaybackSettings#WAYBACK_AGGREGATOR_TEMP_DIR.
-     * 
+     * <p>
      * Sets the LC_ALL environment variable before making the call.
      *
      * @param files The files to merge and sort

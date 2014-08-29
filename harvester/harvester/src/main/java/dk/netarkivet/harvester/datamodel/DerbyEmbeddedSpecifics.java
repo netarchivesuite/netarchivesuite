@@ -30,7 +30,7 @@ public class DerbyEmbeddedSpecifics extends DerbySpecifics {
 
     /**
      * Get an instance of the Embedded Derby specifics.
-     * 
+     *
      * @return Instance of the Derby specifics implementation
      */
     public static DBSpecifics getInstance() {

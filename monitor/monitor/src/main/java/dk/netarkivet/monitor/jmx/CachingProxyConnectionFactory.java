@@ -63,9 +63,7 @@ public class CachingProxyConnectionFactory implements JMXProxyConnectionFactory 
          * Equals method, that overrides the Object.equals method.
          *
          * @param o anObject
-         *
          * @return true, if o is equal to this object; else false
-         *
          * @see Object#equals(java.lang.Object)
          */
         public boolean equals(Object o) {
@@ -101,7 +99,6 @@ public class CachingProxyConnectionFactory implements JMXProxyConnectionFactory 
          * hashCode method, that overrides the Object.hashCode method.
          *
          * @return the hashcode for this object
-         *
          * @see Object#hashCode()
          */
         public int hashCode() {

@@ -45,20 +45,21 @@ import dk.netarkivet.common.utils.SystemUtils;
 
 /**
  * Wrapper class for registering objects of type I as MBeans.
- *
+ * <p>
  * The register method will register a given object under an object name,
  * generated with the domain given in constructor, and fields from the Hashtable
  * nameProperties. It is prefilled with values common for all MBeans, but it is
  * expected to be extended after the object is created with additional info.
- * @param <I> The Type of Object to expose as an MBean. Currently only used 
+ *
+ * @param <I> The Type of Object to expose as an MBean. Currently only used
  * with {@link SingleMBeanObject}
  */
 public class SingleMBeanObject<I> {
-  
+
     /** Initialise the log for this class. */
     private static final Logger log = LoggerFactory.getLogger(SingleMBeanObject.class);
 
-	/** Properties for the ObjectName name. */
+    /** Properties for the ObjectName name. */
     private Hashtable<String, String> nameProperties = new Hashtable<String, String>();
     /** The domain for this SingleMBeanObject. */
     private String domain;
@@ -83,13 +84,12 @@ public class SingleMBeanObject<I> {
      * default values, and remember the domain and interface given. It will not,
      * however, register the MBean.
      *
-     * @param domain      The domain of the MBean.
-     * @param object      The object to expose as an MBean.
+     * @param domain The domain of the MBean.
+     * @param object The object to expose as an MBean.
      * @param asInterface The interface this MBean is exposed as.
      * @param mBeanServer The server to register the mbean in.
-     *
      * @throws ArgumentNotValid If domain is null or empty, or any other
-     *                          argument is null.
+     * argument is null.
      */
     public SingleMBeanObject(String domain, I object, Class<I> asInterface, MBeanServer mBeanServer) {
         ArgumentNotValid.checkNotNullOrEmpty(domain, "String domain");
@@ -104,7 +104,7 @@ public class SingleMBeanObject<I> {
         nameProperties.put(Constants.PRIORITY_KEY_MACHINE, SystemUtils.getLocalHostName());
         nameProperties.put(Constants.PRIORITY_KEY_APPLICATIONNAME, Settings.get(CommonSettings.APPLICATION_NAME));
         nameProperties.put(Constants.PRIORITY_KEY_APPLICATIONINSTANCEID, Settings.get(
-        		CommonSettings.APPLICATION_INSTANCE_ID));
+                CommonSettings.APPLICATION_INSTANCE_ID));
         nameProperties.put(Constants.PRIORITY_KEY_HTTP_PORT, Settings.get(CommonSettings.HTTP_PORT_NUMBER));
         try {
             String val;
@@ -127,17 +127,16 @@ public class SingleMBeanObject<I> {
 
     /**
      * Create a single mbean object.
-     *
+     * <p>
      * This is a helper method for the constructor taking a domain, which take
      * the domain from a preconstructed ObjectName and replaces the
      * nameProperties with the properties from the given object name. Use this
      * if you have an object name created already, which you wish to use.
      *
-     * @param name        The object name to register under.
-     * @param o           The object to register.
+     * @param name The object name to register under.
+     * @param o The object to register.
      * @param asInterface The interface o should implement.
      * @param mBeanServer The mbean server to register o in.
-     *
      * @throws ArgumentNotValid on any null parameter.
      */
     public SingleMBeanObject(ObjectName name, I o, Class<I> asInterface, MBeanServer mBeanServer) {
@@ -162,7 +161,7 @@ public class SingleMBeanObject<I> {
      * domain given in constructor and the nameProperties hashTable.
      *
      * @throws IllegalState if bean is already registered.
-     * @throws IOFailure    on trouble registering.
+     * @throws IOFailure on trouble registering.
      */
     public void register() {
         try {

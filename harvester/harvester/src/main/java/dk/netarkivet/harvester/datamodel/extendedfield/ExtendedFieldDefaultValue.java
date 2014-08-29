@@ -57,7 +57,7 @@ public class ExtendedFieldDefaultValue {
 
     /**
      * Constructor for the ExtendedFieldDefaultValues class.
-     * 
+     *
      * @param aValue The given default value
      * @param aFormat the given formatting pattern
      * @param aDatatype the given datatype
@@ -71,7 +71,7 @@ public class ExtendedFieldDefaultValue {
 
     /**
      * Validate the arguments to the constructor.
-     * 
+     *
      * @return true, if arguments are valid; false otherwise.
      */
     private boolean validate() {
@@ -147,7 +147,7 @@ public class ExtendedFieldDefaultValue {
 
     /**
      * Check the given string if it can be parsed as a Boolean.
-     * 
+     *
      * @param aBooleanValue A given boolean
      * @return true, if the given string if it can be parsed as a Boolean.
      */

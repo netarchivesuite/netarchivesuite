@@ -29,18 +29,16 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
-import junit.framework.TestCase;
-
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.core.IsNot;
 import org.junit.Assert;
 
 import dk.netarkivet.common.utils.FileUtils;
+import junit.framework.TestCase;
 
 /**
  * Utility functions for asserting statements about files. Notice that using these may cause the files to be re-read
  * several times. This ought to be cheap, but may not be for big files.
- *
  */
 
 public class FileAsserts {
@@ -114,8 +112,9 @@ public class FileAsserts {
             String line = "";
             while (line != null) {
                 line = r.readLine();
-                if (line != null)
+                if (line != null) {
                     i++;
+                }
             }
             if (i != n) {
                 TestCase.fail(msg + ": Expected " + n + " lines in " + file + " but found only " + i);

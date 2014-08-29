@@ -62,7 +62,7 @@ public class PreventSystemExit implements TestConfigurationIF {
 
     /**
      * Checks whether System.exit() has been called after reset().
-     * 
+     *
      * @return true if and only if System.exit() has been called after reset().
      */
     public boolean getExitCalled() {
@@ -71,7 +71,7 @@ public class PreventSystemExit implements TestConfigurationIF {
 
     /**
      * Looks up the value given to the latest invocation of System.exit()
-     * 
+     *
      * @return The int value. Throws UnknownID if System.exit() has not been called after reset().
      */
     public int getExitValue() {

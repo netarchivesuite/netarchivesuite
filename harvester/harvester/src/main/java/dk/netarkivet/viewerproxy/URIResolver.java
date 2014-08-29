@@ -25,7 +25,6 @@ package dk.netarkivet.viewerproxy;
 
 /**
  * Interface for all classes that may resolve requests and update response with result.
- *
  */
 public interface URIResolver {
     /** Not HTTP response code used for unresolvable URI, i.e. not in archive. */

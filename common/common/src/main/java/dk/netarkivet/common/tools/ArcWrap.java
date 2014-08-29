@@ -48,10 +48,9 @@ public class ArcWrap extends ToolRunnerBase {
      * delegated to the ArcWrapTool class. Management of this, exception
      * handling etc. is delegated to ToolRunnerBase class.
      *
-     * @param args
-     *            Takes three command line parameters: - input file (the content
-     *            to archive) - uri (the name to record the content by) -
-     *            mime-type (the type to record for the content)
+     * @param args Takes three command line parameters: - input file (the content
+     * to archive) - uri (the name to record the content by) -
+     * mime-type (the type to record for the content)
      */
     public static void main(String[] args) {
         ArcWrap instance = new ArcWrap();
@@ -73,10 +72,9 @@ public class ArcWrap extends ToolRunnerBase {
         /**
          * Accept only exactly 3 parameters.
          *
-         * @param args
-         *            the arguments
+         * @param args the arguments
          * @return true, if length of argument list is 3; returns false
-         *         otherwise
+         * otherwise
          */
         public boolean checkArgs(String... args) {
             return args.length == 3;
@@ -86,8 +84,7 @@ public class ArcWrap extends ToolRunnerBase {
          * Create the ARCWriter instance here for reliable execution of close
          * method in teardown.
          *
-         * @param args
-         *            the arguments (presently not used)
+         * @param args the arguments (presently not used)
          */
         public void setUp(String... args) {
             try {
@@ -118,8 +115,7 @@ public class ArcWrap extends ToolRunnerBase {
          * perform the write. Creating and closing the ARCWriter is done in
          * setup and teardown methods.
          *
-         * @param args
-         *            the arguments
+         * @param args the arguments
          */
         public void run(String... args) {
             try {
@@ -129,7 +125,7 @@ public class ArcWrap extends ToolRunnerBase {
                 // as parameters URI, MIME type, IP, Timestamp, Length and IS
                 String uri = args[1];
                 String mimetype = args[2];
-                aw.write(uri, mimetype, SystemUtils.getLocalIP(), 
+                aw.write(uri, mimetype, SystemUtils.getLocalIP(),
                         content.lastModified(),
                         content.length(), new FileInputStream(content));
             } catch (IOException e) {
@@ -139,6 +135,7 @@ public class ArcWrap extends ToolRunnerBase {
 
         /**
          * Return the list of parameters accepted by the ArcWrapTool class.
+         *
          * @return the list of parameters accepted
          */
         public String listParameters() {

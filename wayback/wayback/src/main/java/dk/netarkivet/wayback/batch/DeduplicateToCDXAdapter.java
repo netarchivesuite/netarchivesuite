@@ -71,7 +71,7 @@ public class DeduplicateToCDXAdapter implements DeduplicateToCDXAdapterInterface
     /**
      * If the input line is a crawl log entry representing a duplicate then a CDX entry is written to the output.
      * Otherwise returns null. In the event of an error returns null.
-     * 
+     *
      * @param line the crawl-log line to be analysed
      * @return a CDX line (without newline) or null
      */
@@ -125,7 +125,7 @@ public class DeduplicateToCDXAdapter implements DeduplicateToCDXAdapterInterface
     /**
      * Reads an input stream representing a crawl log line by line and converts any lines representing duplicate entries
      * to wayback-compliant cdx lines.
-     * 
+     *
      * @param is The input stream from which data is read.
      * @param os The output stream to which the cdx lines are written.
      */

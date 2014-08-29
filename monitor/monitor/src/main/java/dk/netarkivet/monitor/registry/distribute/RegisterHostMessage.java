@@ -42,7 +42,6 @@ public class RegisterHostMessage extends MonitorMessage {
      * @param name The name of the remote host.
      * @param jmxPort The JMX port allocated on the remote host.
      * @param rmiPort The RMI port allocated on the remote host.
-     *
      * @throws ArgumentNotValid on null or empty hostname, or negative ports.
      */
     public RegisterHostMessage(String name, int jmxPort, int rmiPort) {
@@ -55,13 +54,12 @@ public class RegisterHostMessage extends MonitorMessage {
 
     /**
      * Should be implemented as a part of the visitor pattern. e.g.: <code>
-     *     public void accept(MonitorMessageVisitor v) {
-     *         v.visit(this);
-     *     }
+     * public void accept(MonitorMessageVisitor v) {
+     * v.visit(this);
+     * }
      * </code>
      *
      * @param v A message visitor.
-     *
      * @see MonitorMessageVisitor
      */
     public void accept(MonitorMessageVisitor v) {
@@ -70,7 +68,7 @@ public class RegisterHostMessage extends MonitorMessage {
 
     /**
      * Get the host entry for the host registering.
-     * 
+     *
      * @return The host entry.
      */
     public HostEntry getHostEntry() {

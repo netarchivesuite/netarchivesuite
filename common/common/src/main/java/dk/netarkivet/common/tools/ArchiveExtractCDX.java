@@ -33,13 +33,13 @@ import dk.netarkivet.common.utils.cdx.ArchiveExtractCDXJob;
 
 /**
  * Command line tool for extracting CDX information from given ARC/WARC files.
- *
+ * <p>
  * Usage:
  * java dk.netarkivet.common.tools.ExtractCDX file1.ext [file2.ext ...]
- *      > myindex.cdx
- *
+ * > myindex.cdx
+ * <p>
  * "ext" can be arc, arc.gz, warc or warc.gz
- *
+ * <p>
  * Note: Does not depend on logging - communicates failures on stderr.
  */
 public class ArchiveExtractCDX {
@@ -47,6 +47,7 @@ public class ArchiveExtractCDX {
     /**
      * Main method. Extracts CDX from all given files and outputs the index
      * on stdout.
+     *
      * @param argv A list of (absolute paths to) files to index.
      */
     public static void main(String[] argv) {
@@ -57,10 +58,10 @@ public class ArchiveExtractCDX {
         }
         List<File> arcFiles = new ArrayList<File>();
         for (String arg : argv) {
-           File f = toArcFile(arg);
+            File f = toArcFile(arg);
             arcFiles.add(f);
         }
-        File[] arcFileArray = arcFiles.toArray(new File[]{});
+        File[] arcFileArray = arcFiles.toArray(new File[] {});
         BatchLocalFiles batchRunner = new BatchLocalFiles(arcFileArray);
         batchRunner.run(new ArchiveExtractCDXJob(), System.out);
     }
@@ -68,6 +69,7 @@ public class ArchiveExtractCDX {
     /**
      * Verifies that the filename (absolute path) points to
      * an existing file and that it is an arc or warc file.
+     *
      * @param filename The filename to verify.
      * @return The arc or warc file, as a File.
      */
@@ -81,13 +83,14 @@ public class ArchiveExtractCDX {
             }
             return f;
         } catch (IOFailure e) {
-           dieWithError("Could not accept " + filename + ":" + e);
-           return null; //Compiler does not recognize System.exit()
+            dieWithError("Could not accept " + filename + ":" + e);
+            return null; //Compiler does not recognize System.exit()
         }
     }
 
     /**
      * Prints out a message on stderr and exits with an error code.
+     *
      * @param msg The message to print.
      */
     private static void dieWithError(String msg) {

@@ -30,7 +30,6 @@ import java.util.TreeSet;
 
 /**
  * This class handles recordings of URIs not found during URI lookup.
- *
  */
 
 public class MissingURIRecorder extends URIObserver {
@@ -67,7 +66,7 @@ public class MissingURIRecorder extends URIObserver {
 
     /**
      * Getter for the recorded missing URIs.
-     * 
+     *
      * @return the recorded URIs, as a sorted set. Note that this is the primary copy, so don't modify it!
      */
     public Set<URI> getRecordedURIs() {
@@ -76,7 +75,7 @@ public class MissingURIRecorder extends URIObserver {
 
     /**
      * If we are recording URIs, and the response code is NOT_FOUND, then add URI to the list of missing URIs.
-     * 
+     *
      * @param uri The URI observed.
      * @param responseCode The responsecode of the uri.
      */

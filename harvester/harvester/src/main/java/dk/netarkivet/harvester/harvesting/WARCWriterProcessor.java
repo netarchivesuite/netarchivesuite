@@ -67,9 +67,9 @@ import dk.netarkivet.harvester.harvesting.metadata.PersistentJobData;
 /**
  * WARCWriterProcessor. Goes against the 0.18 version of the WARC specification (which is functionally identical to 0.17
  * except in the protocol identifier string). See http://archive-access.sourceforge.net/warc/
- * 
+ * <p>
  * Based on the WARCWriterProcessor in package org.archive.crawler.writer With modifications to the WARC-info record..
- * 
+ *
  * @author stack
  * @author svc
  */
@@ -155,7 +155,7 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
      * Load data from harvestinfo.xml into a PersistentJobData object. If the attribute ATTR_HARVESTINFO_PATH is not
      * set, assume that harvestInfo.xml is in the same directory as the order.xml (divined indirectly from the disk-path
      * attribute
-     * 
+     *
      * @param doc xmldocument for the order.xml
      */
     private synchronized void loadPersistentJobData(Document doc) {
@@ -177,11 +177,10 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
 
     /**
      * Writes a CrawlURI and its associated data to store file.
-     * 
+     * <p>
      * Currently this method understands the following uri types: dns, http, and https.
-     * 
+     *
      * @param curi CrawlURI to process.
-     * 
      */
     protected void innerProcess(CrawlURI curi) {
         // If failure, or we haven't fetched the resource yet, return
@@ -280,7 +279,7 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
                     String value = curi.isTimeTruncatedFetch() ? NAMED_FIELD_TRUNCATED_VALUE_TIME : curi
                             .isLengthTruncatedFetch() ? NAMED_FIELD_TRUNCATED_VALUE_LENGTH : curi
                             .isHeaderTruncatedFetch() ? NAMED_FIELD_TRUNCATED_VALUE_HEAD :
-                    // TODO: Add this to spec.
+                            // TODO: Add this to spec.
                             TRUNCATED_VALUE_UNSPECIFIED;
                     headers.addLabelValue(HEADER_KEY_TRUNCATED, value);
                 }
@@ -334,7 +333,7 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
                         .isLengthTruncatedFetch() ? NAMED_FIELD_TRUNCATED_VALUE_LENGTH
                         : curi.isHeaderTruncatedFetch() ? NAMED_FIELD_TRUNCATED_VALUE_HEAD :
                         // TODO: Add this to spec.
-                                TRUNCATED_VALUE_UNSPECIFIED;
+                        TRUNCATED_VALUE_UNSPECIFIED;
                 headers.addLabelValue(HEADER_KEY_TRUNCATED, value);
             }
             rid = writeResponse(w, timestamp, HTTP_RESPONSE_MIMETYPE, baseid, curi, headers);
@@ -454,7 +453,7 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
 
     /**
      * Save a header from the given HTTP operation into the provider headers under a new name
-     * 
+     *
      * @param origName header name to get if present
      * @param method http operation containing headers
      */
@@ -547,7 +546,7 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
     /**
      * Return relevant values as header-like fields (here ANVLRecord, but spec-defined "application/warc-fields" type
      * when written). Field names from from DCMI Terms and the WARC/0.17 specification.
-     * 
+     *
      * @see org.archive.crawler.framework.WriterPoolProcessor#getFirstrecordBody(java.io.File)
      */
     @Override

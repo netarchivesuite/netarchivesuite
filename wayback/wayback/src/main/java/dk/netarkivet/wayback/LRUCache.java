@@ -34,18 +34,18 @@ import dk.netarkivet.common.utils.Settings;
 
 /**
  * An LRU cache, based on <code>LinkedHashMap</code>.
- *
+ * <p>
  * <p>
  * This cache has a fixed maximum number of elements (<code>cacheSize</code>). If the cache is full and another entry is
  * added, the LRU (least recently used) entry is dropped.
- *
+ * <p>
  * <p>
  * This class is thread-safe. All methods of this class are synchronized.
- *
+ * <p>
  * <p>
  * Author: Christian d'Heureuse, Inventec Informatik AG, Zurich, Switzerland<br>
  * Multi-licensed: EPL / LGPL / GPL / AL / BSD.
- * 
+ * <p>
  * Modified slightly to fit the use of a wayback file cache.
  */
 public class LRUCache {
@@ -65,10 +65,9 @@ public class LRUCache {
 
     /**
      * Creates a new LRU cache. Using filename as the key, and the cached file as the value.
-     * 
+     *
      * @param dir The directory where the file is stored.
      * @param cacheSize the maximum number of entries that will be kept in this cache.
-     * 
      */
     public LRUCache(File dir, int cacheSize) {
         // Validate args
@@ -135,7 +134,7 @@ public class LRUCache {
     /**
      * Retrieves an entry from the cache.<br>
      * The retrieved entry becomes the MRU (most recently used) entry.
-     * 
+     *
      * @param key the key whose associated value is to be returned.
      * @return the value associated to this key, or null if no value with this key exists in the cache.
      */
@@ -147,7 +146,7 @@ public class LRUCache {
      * Adds an entry to this cache. The new entry becomes the MRU (most recently used) entry. If an entry with the
      * specified key already exists in the cache, it is replaced by the new entry. If the cache is full, the LRU (least
      * recently used) entry is removed from the cache.
-     * 
+     *
      * @param key the key with which the specified value is to be associated.
      * @param value a value to be associated with the specified key.
      */
@@ -164,7 +163,7 @@ public class LRUCache {
 
     /**
      * Returns the number of used entries in the cache.
-     * 
+     *
      * @return the number of entries currently in the cache.
      */
     public synchronized int usedEntries() {

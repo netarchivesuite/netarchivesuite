@@ -37,18 +37,17 @@ import dk.netarkivet.common.utils.Settings;
 
 /**
  * This class encapsulates access to the files used in bitpreservation.
- *
+ * <p>
  * The following files are encapsulated:
- *
+ * <p>
  * "unsorted.txt": Unsorted list of files in a bitarchive "sorted.txt": Sorted list of files in a bitarchive
- *
+ * <p>
  * "missingba.txt": Files that are missing in a bitarchive "missingadmindata.txt"; Files that are missing from admin
  * data "wrongfiles.txt": Files with wrong checksum??? "referenceba.txt"; File list from reference ba?
- *
+ * <p>
  * "wrongstates.txt"; Files that are in wrong state "insertinadmin.txt"; Files to insert into admin data
  * "deletefromadmin.txt"; Files to delete from admin data "uploadtoba.txt"; Files to upload to the bitarchive
  * "deletefromba.txt"; Files to delete from the bitarchive
- *
  */
 public enum WorkFiles {
     /**
@@ -184,7 +183,7 @@ public enum WorkFiles {
 
     /**
      * Get the directory that file listings are to live in, creating it if necessary.
-     * 
+     *
      * @param dir The directory that the file listings should live under. Note that this is not directly derived from
      * the name of the replica, as it can also be used for reference file listings.
      * @return The directory to put file listings in under the given dir.
@@ -242,9 +241,10 @@ public enum WorkFiles {
     }
 
     /* public interfaces below here. */
+
     /**
      * Method for writing the list of files to a work file.
-     * 
+     *
      * @param replica The replica for the working file.
      * @param fileType The type of working file.
      * @param files The list of filenames (?) to write to the working file.
@@ -258,7 +258,7 @@ public enum WorkFiles {
 
     /**
      * Method for retrieving a working file. Note: it is not tested, whether the file exists.
-     * 
+     *
      * @param rep The replica to whom the file corresponds.
      * @param fileType The type of working file.
      * @return The requested working file.
@@ -271,9 +271,9 @@ public enum WorkFiles {
 
     /**
      * Method for retrieving the last modified date of a working file for a specific replica.
-     * 
+     * <p>
      * FIXME this might throw odd exceptions if the file does not exist.
-     * 
+     *
      * @param rep The replica for the working file.
      * @param fileType The type of working file.
      * @return The last modified date for the working file.
@@ -286,7 +286,7 @@ public enum WorkFiles {
 
     /**
      * Method for retrieving the lines of a working file for a specific replica.
-     * 
+     *
      * @param replica The replica of the working file.
      * @param fileType The type of workfile.
      * @return A list containing the lines of the file.

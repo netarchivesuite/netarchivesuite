@@ -33,11 +33,12 @@ import dk.netarkivet.common.exceptions.IllegalState;
  * This is a recursively defined datastructure, so each instance can be a tree or a leaf.
  * Each is node is named with a String, and each leaf can contain a value of type T.
  * Each non-leaf tree can have any number of subnodes, each identified by a String.
+ *
  * @param <T> The leaf type
  */
 public interface StringTree<T> {
 
-	/**
+    /**
      * Returns true if this object is a leaf, and thus if getValue is legal.
      *
      * @return True if the implementing object is a leaf, false otherwise.
@@ -57,7 +58,8 @@ public interface StringTree<T> {
      */
     T getValue(String name);
 
-    /** Get the value of a leaf.
+    /**
+     * Get the value of a leaf.
      *
      * @return The value of this Tree, if it is a leaf.
      * @throws IllegalState if this StringTree is a node.
@@ -89,7 +91,8 @@ public interface StringTree<T> {
      */
     List<StringTree<T>> getSubTrees(String name);
 
-    /** Get a map of all direct children of this node.
+    /**
+     * Get a map of all direct children of this node.
      *
      * @return Map of children of this node, or an empty map for none.
      * @throws IllegalState if this object is a leaf.
@@ -99,14 +102,15 @@ public interface StringTree<T> {
     /**
      * Get a map of all direct subtrees, assuming that all subtrees are uniquely
      * named.
-     * 
+     *
      * @return Map of all subtrees.
      * @throws IllegalState if this object is a leaf or if there is more
      * than one subtree with the same name.
      */
     Map<String, StringTree<T>> getChildMap();
 
-    /** Get a multimap of the names and values of all direct subtrees, assuming
+    /**
+     * Get a multimap of the names and values of all direct subtrees, assuming
      * that all subtrees are leafs.
      *
      * @return Multimap from subtree names to values of their leaves.
@@ -120,7 +124,6 @@ public interface StringTree<T> {
      * subtrees are leafs and are uniquely named.
      *
      * @return Map from subtree names to values of their leaves.
-     *
      * @throws IllegalState if this object is a leaf or if the subtrees are not
      * uniquely named, or if any of its children are not leaves.
      */

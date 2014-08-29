@@ -25,8 +25,8 @@ package dk.netarkivet.common;
 import java.io.File;
 import java.io.FileFilter;
 
-import junit.framework.TestCase;
 import dk.netarkivet.common.utils.FileUtils;
+import junit.framework.TestCase;
 
 public class CleanupTester extends TestCase {
 

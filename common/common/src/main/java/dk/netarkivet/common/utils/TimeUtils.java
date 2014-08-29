@@ -31,18 +31,19 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  */
 public class TimeUtils {
 
-	/** Constant for the number of milliseconds per second: 1000.*/
+    /** Constant for the number of milliseconds per second: 1000. */
     public static final long SECOND_IN_MILLIS = 1000;
-    /** Constant for the number of seconds per minute: 60.*/
+    /** Constant for the number of seconds per minute: 60. */
     public static final long MINUTE_IN_SECONDS = 60;
-    /** Constant for the number of minutes per hour: 60.*/
+    /** Constant for the number of minutes per hour: 60. */
     public static final long HOUR_IN_MINUTES = 60;
-    /** Constant for the number of hours per day: 24.*/
+    /** Constant for the number of hours per day: 24. */
     public static final long DAY_IN_HOURS = 24;
     /** Constant for the number of days per week: 7. */
     public static final long WEEK_IN_DAYS = 7;
-    
-    /** Sleep for an exponentially backing off amount of time, in milliseconds.
+
+    /**
+     * Sleep for an exponentially backing off amount of time, in milliseconds.
      * Thus the first attempt will sleep for 1 ms, the second for 2, the third
      * for 4, etc.
      *
@@ -56,6 +57,7 @@ public class TimeUtils {
     /**
      * Sleep for an exponentially backing off amount of time.
      * The mode describes the unit of time as defined by @see java.util.Calendar
+     *
      * @param attempt The attempt number, which is the log2 of the number of
      * timeunits spent asleep.
      * @param timeunit the specified timeunit in miliseconds
@@ -64,7 +66,7 @@ public class TimeUtils {
     public static void exponentialBackoffSleep(int attempt, int timeunit) {
         ArgumentNotValid.checkNotNegative(attempt, "int attempt");
         ArgumentNotValid.checkTrue(timeunit >= 0 && timeunit < Calendar.FIELD_COUNT,
-        		"Time unit must be one of the fields defined" + " by Calendar, not " + timeunit);
+                "Time unit must be one of the fields defined" + " by Calendar, not " + timeunit);
 
         Calendar now = Calendar.getInstance();
         long startTime = now.getTimeInMillis();
@@ -78,13 +80,13 @@ public class TimeUtils {
             // Early wake-up is not a problem
         }
     }
-    
+
     /**
      * Method for translating a time in milliseconds to a human readable String.
      * E.g. the argument "604800000" should result in "7 days".
-     * 
+     *
      * @param millis The amount of milliseconds.
-     * @return The human readable string. 
+     * @return The human readable string.
      */
     public static String readableTimeInterval(long millis) {
         // check whether it is in seconds (if not return in milliseconds).
@@ -94,8 +96,8 @@ public class TimeUtils {
             }
             return millis + " milliseconds";
         }
-        long seconds = millis/SECOND_IN_MILLIS;
-        
+        long seconds = millis / SECOND_IN_MILLIS;
+
         // check whether it is in minutes (if not return in seconds).
         if ((seconds % MINUTE_IN_SECONDS) != 0) {
             if (seconds == 1) {
@@ -103,7 +105,7 @@ public class TimeUtils {
             }
             return seconds + " seconds";
         }
-        long minutes = seconds/MINUTE_IN_SECONDS;
+        long minutes = seconds / MINUTE_IN_SECONDS;
 
         // check whether it is in hours (if not return in minutes).
         if ((minutes % HOUR_IN_MINUTES) != 0) {
@@ -112,7 +114,7 @@ public class TimeUtils {
             }
             return minutes + " minutes";
         }
-        long hours = minutes/HOUR_IN_MINUTES;
+        long hours = minutes / HOUR_IN_MINUTES;
 
         // check whether it is in days (if not return in hours).
         if ((hours % DAY_IN_HOURS) != 0) {
@@ -121,7 +123,7 @@ public class TimeUtils {
             }
             return hours + " hours";
         }
-        long days = hours/DAY_IN_HOURS;
+        long days = hours / DAY_IN_HOURS;
 
         if ((days % WEEK_IN_DAYS) != 0) {
             if (days == 1) {
@@ -129,8 +131,8 @@ public class TimeUtils {
             }
             return days + " days";
         }
-        long weeks = days/WEEK_IN_DAYS;
-        
+        long weeks = days / WEEK_IN_DAYS;
+
         if (weeks == 1) {
             return weeks + " week";
         }

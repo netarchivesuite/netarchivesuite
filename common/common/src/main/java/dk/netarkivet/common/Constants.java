@@ -29,18 +29,17 @@ import org.apache.lucene.util.Version;
 
 /**
  * This class is used for global constants only.
- *
+ * <p>
  * If your constant is only to be used in a single package, put it in a
  * Constants-class in that package, and make sure it is package private (no
  * modifiers).
- *
+ * <p>
  * If your constant is used in a single class only, put it in that class, and
  * make sure it is private.
- *
+ * <p>
  * Remember everything placed here MUST be constants.
- *
+ * <p>
  * This class is never instantiated, so thread security is not an issue.
- *
  */
 public final class Constants {
     /** The pattern for an IP-address key. */
@@ -67,9 +66,10 @@ public final class Constants {
         /** Released code. */
         RELEASE,
         /** Code is under codefreeze. The code is a release candidate. */
-        CODEFREEZE, 
-        /** The code is not production ready. Although it usually compiles,
-         * all code has not necessarily been tested. 
+        CODEFREEZE,
+        /**
+         * The code is not production ready. Although it usually compiles,
+         * all code has not necessarily been tested.
          */
         UNSTABLE
     }
@@ -107,7 +107,7 @@ public final class Constants {
      * OutputStream.
      */
     public static final int IO_BUFFER_SIZE = 4096;
-        
+
     /** The date format used for NetarchiveSuite dateformatting. */
     private static final String ISO_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss Z";
 
@@ -133,19 +133,18 @@ public final class Constants {
             return "Version: " + MAJORVERSION + "." + MINORVERSION + "."
                     + PATCHVERSION + " status " + BUILDSTATUS;
         } else {
-            String version = "Version: " + MAJORVERSION + "." 
+            String version = "Version: " + MAJORVERSION + "."
                     + MINORVERSION + "."
                     + PATCHVERSION + " status " + BUILDSTATUS;
             String implementationVersion = Constants.class.getPackage()
                     .getImplementationVersion();
             if (implementationVersion != null) {
                 version += " (r" + implementationVersion + ")";
-            } 
+            }
             return version;
-        }       
-    }     
+        }
+    }
 
-    
     /**
      * Get the Heritrix version presently in use.
      *
@@ -176,10 +175,10 @@ public final class Constants {
 
     /** Pattern that matches everything. */
     public static final String ALL_PATTERN = ".*";
-    
+
     /** Lucene version used by this release of NetarchiveSuite. */
     public static final Version LUCENE_VERSION = Version.LUCENE_44;
-    
+
     /** The current website for the NetarchiveSuite project. */
     public static final String PROJECT_WEBSITE = "https://sbforge.org/display/NAS";
 }

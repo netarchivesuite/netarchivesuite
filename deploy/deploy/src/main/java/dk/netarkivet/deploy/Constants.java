@@ -33,7 +33,7 @@ import dk.netarkivet.monitor.MonitorSettings;
 
 /**
  * Class containing the constant variables.
- * 
+ * <p>
  * SETTINGS_ = path to branches from the settings branch. COMPLETE_ = path from beyond the settings branch.
  */
 public final class Constants {
@@ -81,7 +81,7 @@ public final class Constants {
     static final String DOLLAR_SIGN = "$";
     /** | - Separator. */
     static final String SEPARATOR = "|";
-    /** * - Star. */
+    /** - Star. */
     static final String STAR = "*";
 
     // deploy specific parameters.
@@ -340,7 +340,8 @@ public final class Constants {
     /** The name of the harvest database kill script. */
     static final String SCRIPT_NAME_HARVEST_DB_KILL = "kill_external_harvest_database";
     /** The name of the harvest database update script. */
-    static final String SCRIPT_NAME_HARVEST_DB_UPDATE = "update_external_harvest_database";;
+    static final String SCRIPT_NAME_HARVEST_DB_UPDATE = "update_external_harvest_database";
+    ;
     /** The name of the wait script for windows. 'wait'. */
     static final String SCRIPT_NAME_WAIT = "wait";
     /** Prefix for the application kill script. 'kill_' . */
@@ -525,11 +526,13 @@ public final class Constants {
     /**
      * The error message when the environment name for the test instance is invalid.
      */
-    public static final String MSG_ERROR_INVALID_TEST_ENVIRONMENT_NAME = "The environment name for the test instance was not valid to the "
-            + "regular expressions: '" + VALID_REGEX_ENVIRONMENT_NAME + "'. " + "But was given: ";
+    public static final String MSG_ERROR_INVALID_TEST_ENVIRONMENT_NAME =
+            "The environment name for the test instance was not valid to the "
+                    + "regular expressions: '" + VALID_REGEX_ENVIRONMENT_NAME + "'. " + "But was given: ";
     /** The error message when the environment name is invalid. */
-    public static final String MSG_ERROR_INVALID_ENVIRONMENT_NAME = "The environment name must be valid to the regular expression: '"
-            + VALID_REGEX_ENVIRONMENT_NAME + "'. But the given was: ";
+    public static final String MSG_ERROR_INVALID_ENVIRONMENT_NAME =
+            "The environment name must be valid to the regular expression: '"
+                    + VALID_REGEX_ENVIRONMENT_NAME + "'. But the given was: ";
     /** The error message when the wait script file cannot be written. */
     public static final String MSG_ERROR_WAIT_FILE = "Problems creating local wait script.";
     /** The error message when the restart script cannot be written. */
@@ -555,7 +558,7 @@ public final class Constants {
 
     /**
      * Create the beginning of a scope in XML (e.g. html = \< html \>).
-     * 
+     *
      * @param scope The name of the XML-scope to have the start created.
      * @return The beginning of the XML-scope.
      * @throws ArgumentNotValid If the scope is null or empty.
@@ -567,7 +570,7 @@ public final class Constants {
 
     /**
      * Create the ending of a scope in XML (e.g. html = \< \html \>).
-     * 
+     *
      * @param scope The name of the XML-scope to have the end created.
      * @return The ending of the XML-scope.
      * @throws ArgumentNotValid If the scope is null or empty.
@@ -579,7 +582,7 @@ public final class Constants {
 
     /**
      * Checks whether a string is valid for environment name. The string is checked against a regular expression.
-     * 
+     *
      * @param name The environment name to validate.
      * @return Whether the environment name is valid.
      * @throws ArgumentNotValid If the name is null or empty.

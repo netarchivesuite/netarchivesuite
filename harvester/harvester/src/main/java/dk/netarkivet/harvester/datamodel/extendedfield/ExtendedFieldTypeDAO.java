@@ -49,7 +49,7 @@ public abstract class ExtendedFieldTypeDAO implements DAO {
 
     /**
      * Tests if exists an ExtendedFieldType with the given ID.
-     * 
+     *
      * @param aExtendedfieldtypeId An id belonging to an ExtendedFieldType
      * @return true, if there exists an ExtendedFieldType with the given ID, otherwise returns false.
      */
@@ -57,7 +57,7 @@ public abstract class ExtendedFieldTypeDAO implements DAO {
 
     /**
      * Read an ExtendedFieldType belonging to the given id.
-     * 
+     *
      * @param aExtendedfieldtypeId an id belonging to a ExtendedFieldType
      * @return an ExtendedFieldType from belonging to the given id.
      */
@@ -70,7 +70,7 @@ public abstract class ExtendedFieldTypeDAO implements DAO {
 
     /**
      * If an instance exists, return it, otherwise instantiate one, and return it.
-     * 
+     *
      * @return the instance of this class.
      */
     public static synchronized ExtendedFieldTypeDAO getInstance() {

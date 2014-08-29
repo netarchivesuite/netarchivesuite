@@ -28,9 +28,10 @@ package dk.netarkivet.common.utils;
  */
 public class ReadOnlyByteArray {
 
-	private byte[] array;
+    private byte[] array;
 
-	/** Creates a new instance based on the given array.
+    /**
+     * Creates a new instance based on the given array.
      *
      * @param array Array to provide read-only access to.  The array will
      * not be copied by this class.
@@ -39,7 +40,8 @@ public class ReadOnlyByteArray {
         this.array = array;
     }
 
-    /** Returns the length of the array.
+    /**
+     * Returns the length of the array.
      *
      * @return The length of the array.  Always >= 0.
      */
@@ -47,7 +49,8 @@ public class ReadOnlyByteArray {
         return array.length;
     }
 
-    /** Gets the element at the given index.
+    /**
+     * Gets the element at the given index.
      *
      * @param index The index to get the element at.
      * @return The byte at the given index.

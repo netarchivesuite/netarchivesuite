@@ -38,9 +38,7 @@ import org.slf4j.LoggerFactory;
 import dk.netarkivet.common.utils.DBUtils;
 
 /**
- *
  * Unit test testing the DerbySpecifics class.
- *
  */
 
 public class DerbySpecificsTester extends DataModelTestCase {

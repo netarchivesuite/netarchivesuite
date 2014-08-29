@@ -79,7 +79,7 @@ public class ExtractorOAI extends Extractor {
 
     /**
      * Constructor for this extractor.
-     * 
+     *
      * @param name the name of this extractor
      */
     public ExtractorOAI(String name) {
@@ -90,7 +90,7 @@ public class ExtractorOAI extends Extractor {
     /**
      * Perform the link extraction on the current crawl uri. This method does not set linkExtractorFinished() on the
      * current crawlURI, so subsequent extractors in the chain can find more links.
-     * 
+     *
      * @param curi the CrawlUI from which to extract the link.
      */
     @Override
@@ -143,7 +143,7 @@ public class ExtractorOAI extends Extractor {
 
     /**
      * Searches for resumption token and adds link if it is found. Returns true iff a link is added.
-     * 
+     *
      * @param curi the CrawlURI.
      * @param cs the character sequency in which to search.
      * @return true iff a resumptionToken is found and a link added.
@@ -179,7 +179,7 @@ public class ExtractorOAI extends Extractor {
 
     /**
      * Return a report from this processor.
-     * 
+     *
      * @return the report.
      */
     @Override

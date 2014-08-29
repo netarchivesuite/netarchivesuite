@@ -38,7 +38,7 @@ public class ExtendedFieldType implements Serializable {
 
     /**
      * Constructor. TODO Add validation
-     * 
+     *
      * @param aExtendedFieldTypeID The id of this ExtendedFieldType.
      * @param aName The name of this ExtendedFieldType.
      */
@@ -56,7 +56,7 @@ public class ExtendedFieldType implements Serializable {
 
     /**
      * Set the id of this ExtendedFieldType.
-     * 
+     *
      * @param extendedFieldTypeID the id of this ExtendedFieldType
      */
     public void setExtendedFieldTypeID(Long extendedFieldTypeID) {
@@ -72,7 +72,7 @@ public class ExtendedFieldType implements Serializable {
 
     /**
      * Set the name of this ExtendedFieldType.
-     * 
+     *
      * @param name the name of this ExtendedFieldType.
      */
     public void setName(String name) {

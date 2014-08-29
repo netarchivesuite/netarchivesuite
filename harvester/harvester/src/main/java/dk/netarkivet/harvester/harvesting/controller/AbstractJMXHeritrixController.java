@@ -257,9 +257,9 @@ public abstract class AbstractJMXHeritrixController implements HeritrixControlle
 
     /**
      * Change an environment to be suitable for running Heritrix.
-     *
+     * <p>
      * At the moment, this involves the following:
-     *
+     * <p>
      * Prepend the Jar files from the lib/heritrix/lib dir to the classpath. Make sure the Heritrix jar file is at the
      * front.
      *
@@ -426,9 +426,9 @@ public abstract class AbstractJMXHeritrixController implements HeritrixControlle
                 NotificationsFactory
                         .getInstance()
                         .notify("Heritrix process of "
-                                + this
-                                + " not dead after destroy. "
-                                + "Exiting harvest controller. Make sure you kill the runaway Heritrix before you restart.",
+                                        + this
+                                        + " not dead after destroy. "
+                                        + "Exiting harvest controller. Make sure you kill the runaway Heritrix before you restart.",
                                 NotificationType.ERROR);
                 System.exit(1);
             }

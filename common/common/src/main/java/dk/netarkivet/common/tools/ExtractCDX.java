@@ -33,20 +33,19 @@ import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 import dk.netarkivet.common.utils.cdx.ExtractCDXJob;
 
 /**
- *
- *
  * Command line tool for extracting CDX information from given ARC files.
- *
+ * <p>
  * Usage:
  * java dk.netarkivet.common.tools.ExtractCDX file1.arc [file2.arc ...]
- *      > myindex.cdx
- *
+ * > myindex.cdx
+ * <p>
  * Note: Does not depend on logging - communicates failures on stderr.
  */
 public class ExtractCDX {
     /**
      * Main method. Extracts CDX from all given files and outputs the index
      * on stdout.
+     *
      * @param argv A list of (absolute paths to) files to index.
      */
     public static void main(String[] argv) {
@@ -57,10 +56,10 @@ public class ExtractCDX {
         }
         List<File> arcFiles = new ArrayList<File>();
         for (String arg : argv) {
-           File f = toArcFile(arg);
+            File f = toArcFile(arg);
             arcFiles.add(f);
         }
-        File[] arcFileArray = arcFiles.toArray(new File[]{});
+        File[] arcFileArray = arcFiles.toArray(new File[] {});
         BatchLocalFiles batchRunner = new BatchLocalFiles(arcFileArray);
         batchRunner.run(new ExtractCDXJob(), System.out);
     }
@@ -68,6 +67,7 @@ public class ExtractCDX {
     /**
      * Verifies that the filename (absolute path) points to
      * an existing file and that it is an arc file.
+     *
      * @param filename The filename to verify.
      * @return The arc file, as a File.
      */
@@ -81,13 +81,14 @@ public class ExtractCDX {
             }
             return f;
         } catch (IOFailure e) {
-           dieWithError("Could not accept " + filename + ":" + e);
-           return null; //Compiler does not recognize System.exit()
+            dieWithError("Could not accept " + filename + ":" + e);
+            return null; //Compiler does not recognize System.exit()
         }
     }
 
     /**
      * Prints out a message on stderr and exits with an error code.
+     *
      * @param msg The message to print.
      */
     private static void dieWithError(String msg) {

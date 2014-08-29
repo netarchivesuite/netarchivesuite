@@ -28,7 +28,6 @@ import dk.netarkivet.common.exceptions.IOFailure;
 /**
  * This interface encapsulates the direct access to Heritrix, allowing for accessing in various ways (direct class
  * access or JMX). Heritrix is expected to perform one crawl for each instance of an implementing class.
- *
  */
 public interface HeritrixController {
 
@@ -40,7 +39,7 @@ public interface HeritrixController {
     /**
      * Request that Heritrix start crawling. When this method returns, either Heritrix has failed in the early stages,
      * or the crawljob has been successfully created. Actual crawling will commence at some point hereafter.
-     * 
+     *
      * @throws IOFailure If something goes wrong during startup.
      */
     void requestCrawlStart() throws IOFailure;
@@ -77,7 +76,7 @@ public interface HeritrixController {
 
     /**
      * Get the number of currently active ToeThreads (crawler threads).
-     * 
+     *
      * @return Number of ToeThreads currently active within Heritrix.
      */
     int getActiveToeCount();
@@ -92,9 +91,9 @@ public interface HeritrixController {
 
     /**
      * Get an estimate of the rate, in kb, at which documents are currently being processed by the crawler.
-     * 
-     * @see org.archive.crawler.framework.StatisticsTracking#currentProcessedKBPerSec()
+     *
      * @return Number of KB data downloaded by Heritrix over an undefined interval up to now.
+     * @see org.archive.crawler.framework.StatisticsTracking#currentProcessedKBPerSec()
      */
     int getCurrentProcessedKBPerSec();
 
@@ -124,7 +123,7 @@ public interface HeritrixController {
 
     /**
      * Get harvest information. An example of this can be an URL pointing to the GUI of a running Heritrix process.
-     * 
+     *
      * @return information about the harvest process.
      */
     String getHarvestInformation();

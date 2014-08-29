@@ -52,6 +52,7 @@ public class SingleMBeanObjectTester {
     private ObjectName name;
     private MBeanServer platformMBeanServer;
     ReloadSettings rs = new ReloadSettings();
+
     {
         try {
             name = new ObjectName("Test:" + Constants.PRIORITY_KEY_LOCATION + "=NO," + Constants.PRIORITY_KEY_MACHINE
@@ -73,8 +74,8 @@ public class SingleMBeanObjectTester {
         Settings.set(CommonSettings.THIS_PHYSICAL_LOCATION, "NO");
         Settings.set(CommonSettings.USE_REPLICA_ID, "ONE");
         Settings.set("settings.harvester.harvesting.channel", "high"); // Will
-                                                                       // this
-                                                                       // work
+        // this
+        // work
         platformMBeanServer = ManagementFactory.getPlatformMBeanServer();
     }
 

@@ -33,17 +33,18 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.NetarkivetException;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({"serial"})
 public abstract class ArchiveBatchJobBase extends FileBatchJob {
 
     private static final Logger log = LoggerFactory.getLogger(ArchiveBatchJobBase.class);
 
-	/** The total number of records processed. */
+    /** The total number of records processed. */
     protected int noOfRecordsProcessed = 0;
 
     /**
      * Initialize the job before running.
      * This is called before the processRecord() calls start coming.
+     *
      * @param os The OutputStream to which output data is written
      */
     public abstract void initialize(OutputStream os);
@@ -51,18 +52,20 @@ public abstract class ArchiveBatchJobBase extends FileBatchJob {
     /**
      * Finish up the job.
      * This is called after the last processRecord() call.
+     *
      * @param os The OutputStream to which output data is written
      */
     public abstract void finish(OutputStream os);
 
     /**
      * Private method that handles our exception.
+     *
      * @param e the given exception
      * @param archiveFile The archive file where the exception occurred.
      * @param index The offset in the archive file where the exception occurred.
      */
     protected void handleOurException(NetarkivetException e, File archiveFile, long index) {
-    	handleException(e, archiveFile, index);
+        handleException(e, archiveFile, index);
     }
 
     /**
@@ -76,11 +79,11 @@ public abstract class ArchiveBatchJobBase extends FileBatchJob {
      * @param index The index (in the archive file) at which the Exception was thrown
      * @throws ArgumentNotValid if e is null
      */
-    public void handleException(Exception e, File archiveFile, long index) throws ArgumentNotValid{
+    public void handleException(Exception e, File archiveFile, long index) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(e, "e");
 
         log.debug("Caught exception while running batch job on file {}, position {}:\n{}",
-        		archiveFile, index, e, e.getMessage());
+                archiveFile, index, e, e.getMessage());
         addException(archiveFile, index, ExceptionOccurrence.UNKNOWN_OFFSET, e);
     }
 
@@ -104,6 +107,7 @@ public abstract class ArchiveBatchJobBase extends FileBatchJob {
 
     /**
      * Returns the number of records processed.
+     *
      * @return the number of records processed.
      */
     public int noOfRecordsProcessed() {

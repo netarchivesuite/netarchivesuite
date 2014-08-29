@@ -111,7 +111,7 @@ public class HeritrixFiles {
 
     /**
      * Alternate constructor that by default reads the jmxPasswordFile, and jmxAccessFile from the current settings.
-     * 
+     *
      * @param crawlDir The dir, where the crawl-files are placed
      * @param harvestJob The harvestjob behind this instance of HeritrixFiles
      */
@@ -167,7 +167,7 @@ public class HeritrixFiles {
 
     /**
      * Try to write the recover-backup file.
-     * 
+     *
      * @param recoverlog The recoverlog in the form of an InputStream
      * @return true, if operation succeeds, otherwise false
      */
@@ -221,7 +221,7 @@ public class HeritrixFiles {
 
     /**
      * Set the deduplicate index dir.
-     * 
+     *
      * @param indexDir the cache dir containing unzipped files
      * @throws ArgumentNotValid if indexDir is not a directory or is null
      */
@@ -234,7 +234,7 @@ public class HeritrixFiles {
 
     /**
      * Returns the index directory, if one has been set.
-     * 
+     *
      * @return the index directory or null if no index has been set.
      */
     public File getIndexDir() {
@@ -254,7 +254,7 @@ public class HeritrixFiles {
 
     /**
      * Retrieve the crawlLog as a File object.
-     * 
+     *
      * @return the crawlLog as a File object.
      */
     public File getCrawlLog() {
@@ -264,7 +264,7 @@ public class HeritrixFiles {
 
     /**
      * Retrieve the progress statistics log as a File object.
-     * 
+     *
      * @return the progress statistics log as a File object.
      */
     public File getProgressStatisticsLog() {
@@ -274,7 +274,7 @@ public class HeritrixFiles {
 
     /**
      * Get the job ID.
-     * 
+     *
      * @return Job ID this heritrix files object is for.
      */
     public Long getJobID() {
@@ -283,7 +283,7 @@ public class HeritrixFiles {
 
     /**
      * Get the harvest ID.
-     * 
+     *
      * @return Harvest ID this heritrix files object is for.
      */
     public Long getHarvestID() {
@@ -336,7 +336,7 @@ public class HeritrixFiles {
 
     /**
      * Return the directory, where Heritrix writes its arcfiles.
-     * 
+     *
      * @return the directory, where Heritrix writes its arcfiles.
      */
     public File getArcsDir() {
@@ -345,7 +345,7 @@ public class HeritrixFiles {
 
     /**
      * Return the directory, where Heritrix writes its warcfiles.
-     * 
+     *
      * @return the directory, where Heritrix writes its warcfiles.
      */
     public File getWarcsDir() {
@@ -354,7 +354,7 @@ public class HeritrixFiles {
 
     /**
      * Method for retrieving the jmxremote.password file.
-     * 
+     *
      * @return the jmxPasswordFile.
      */
     public File getJmxPasswordFile() {
@@ -363,7 +363,7 @@ public class HeritrixFiles {
 
     /**
      * Method for retrieving the jmxremote.access file.
-     * 
+     *
      * @return the jmxAccessFile.
      */
     public File getJmxAccessFile() {

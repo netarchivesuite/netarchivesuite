@@ -41,15 +41,16 @@ import dk.netarkivet.common.utils.archive.ArchiveHeaderBase;
 import dk.netarkivet.common.utils.archive.ArchiveRecordBase;
 import dk.netarkivet.common.utils.batch.ArchiveBatchFilter;
 
-/** Batch job that extracts information to create a CDX file.
- *
+/**
+ * Batch job that extracts information to create a CDX file.
+ * <p>
  * A CDX file contains sorted lines of metadata from the ARC/WARC files, with
  * each line followed by the file and offset the record was found at, and
  * optionally a checksum.
  * The timeout of this job is 7 days.
  * See http://www.archive.org/web/researcher/cdx_file_format.php
  */
-@SuppressWarnings({ "serial", "unused"})
+@SuppressWarnings({"serial", "unused"})
 public class ArchiveExtractCDXJob extends ArchiveBatchJob {
 
     /** Logger for this class. */
@@ -57,11 +58,11 @@ public class ArchiveExtractCDXJob extends ArchiveBatchJob {
 
     /** An encoding for the standard included metadata fields without checksum. */
     private static final String[] STD_FIELDS_EXCL_CHECKSUM = {
-    	"A", "e", "b", "m", "n", "g", "v"};
+            "A", "e", "b", "m", "n", "g", "v"};
 
     /** An encoding for the standard included metadata fields with checksum. */
     private static final String[] STD_FIELDS_INCL_CHECKSUM = {
-    	"A", "e", "b", "m", "n", "g", "v", "c"
+            "A", "e", "b", "m", "n", "g", "v", "c"
     };
 
     /** The fields to be included in CDX output. */
@@ -72,13 +73,14 @@ public class ArchiveExtractCDXJob extends ArchiveBatchJob {
 
     /**
      * Constructs a new job for extracting CDX indexes.
+     *
      * @param includeChecksum If true, an MD5 checksum is also
      * written for each record. If false, it is not.
      */
     public ArchiveExtractCDXJob(boolean includeChecksum) {
         this.fields = includeChecksum ? STD_FIELDS_INCL_CHECKSUM : STD_FIELDS_EXCL_CHECKSUM;
         this.includeChecksum = includeChecksum;
-        batchJobTimeout = 7*Constants.ONE_DAY_IN_MILLIES;
+        batchJobTimeout = 7 * Constants.ONE_DAY_IN_MILLIES;
     }
 
     /**
@@ -90,9 +92,10 @@ public class ArchiveExtractCDXJob extends ArchiveBatchJob {
 
     /**
      * Filters out the NON-RESPONSE records.
-     * @see dk.netarkivet.common.utils.archive.ArchiveBatchJob#getFilter()
+     *
      * @return The filter that defines what ARC/WARC records are wanted
      * in the output CDX file.
+     * @see dk.netarkivet.common.utils.archive.ArchiveBatchJob#getFilter()
      */
     @Override
     public ArchiveBatchFilter getFilter() {
@@ -101,6 +104,7 @@ public class ArchiveExtractCDXJob extends ArchiveBatchJob {
 
     /**
      * Initialize any data needed (none).
+     *
      * @see dk.netarkivet.common.utils.archive.ArchiveBatchJob#initialize(OutputStream)
      */
     @Override
@@ -109,9 +113,10 @@ public class ArchiveExtractCDXJob extends ArchiveBatchJob {
 
     /**
      * Process this entry, reading metadata into the output stream.
-     * @see dk.netarkivet.common.utils.archive.ArchiveBatchJob#processRecord(
-     * ArchiveRecordBase, OutputStream)
+     *
      * @throws IOFailure on trouble reading arc record data
+     * @see dk.netarkivet.common.utils.archive.ArchiveBatchJob#processRecord(
+     *ArchiveRecordBase, OutputStream)
      */
     @Override
     public void processRecord(ArchiveRecordBase record, OutputStream os) {
@@ -122,13 +127,13 @@ public class ArchiveExtractCDXJob extends ArchiveBatchJob {
         * fieldarray.
         */
         ArchiveHeaderBase header = record.getHeader();
-        Map<String, String> fieldsread = new HashMap<String,String>();
+        Map<String, String> fieldsread = new HashMap<String, String>();
         fieldsread.put("A", header.getUrl());
         fieldsread.put("e", header.getIp());
         fieldsread.put("b", header.getArcDateStr());
         fieldsread.put("n", Long.toString(header.getLength()));
         fieldsread.put("g", record.getHeader().getArchiveFile().getName());
-        fieldsread.put("v", Long.toString(record.getHeader().getOffset())); 
+        fieldsread.put("v", Long.toString(record.getHeader().getOffset()));
 
         String mimeType = header.getMimetype();
         String msgType;
@@ -181,18 +186,21 @@ public class ArchiveExtractCDXJob extends ArchiveBatchJob {
         printFields(fieldsread, os);
     }
 
-    /** End of the batch job.
+    /**
+     * End of the batch job.
+     *
      * @see dk.netarkivet.common.utils.arc.ARCBatchJob#finish(OutputStream)
      */
     @Override
     public void finish(OutputStream os) {
     }
 
-    /** Print the values found for a set of fields.  Prints the '-'
+    /**
+     * Print the values found for a set of fields.  Prints the '-'
      * character for any null values.
      *
      * @param fieldsread A hashtable of values indexed by field letters
-     * @param outstream The outputstream to write the values to 
+     * @param outstream The outputstream to write the values to
      */
     private void printFields(Map<String, String> fieldsread, OutputStream outstream) {
         StringBuffer sb = new StringBuffer();

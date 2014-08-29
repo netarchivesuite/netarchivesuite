@@ -61,9 +61,8 @@ public class MonitorRegistry {
 
     /**
      * Register a new JMX host entry.
-     * 
-     * @param hostEntry The entry to add
      *
+     * @param hostEntry The entry to add
      * @throws ArgumentNotValid if hostEntry is null.
      */
     public synchronized void register(HostEntry hostEntry) {
@@ -86,7 +85,7 @@ public class MonitorRegistry {
 
     /**
      * Get all JMX host entries.
-     * 
+     *
      * @return All JMX host entries.
      */
     public synchronized Map<String, Set<HostEntry>> getHostEntries() {

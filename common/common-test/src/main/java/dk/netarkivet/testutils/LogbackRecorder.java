@@ -159,7 +159,9 @@ public class LogbackRecorder extends ch.qos.logback.core.AppenderBase<ch.qos.log
         public FilterReply decide(ILoggingEvent event) {
             return FilterReply.DENY;
         }
-    };
+    }
+
+    ;
 
     public void addFilter(ch.qos.logback.core.filter.Filter<ch.qos.logback.classic.spi.ILoggingEvent> filter,
             String loggerName) {

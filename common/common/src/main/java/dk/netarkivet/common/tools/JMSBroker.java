@@ -27,7 +27,6 @@ import dk.netarkivet.common.distribute.JMSConnectionFactory;
 /**
  * Used to check if firewall ports are open and
  * if the JMS broker is up and responding.
- *
  */
 public class JMSBroker {
 

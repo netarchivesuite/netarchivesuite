@@ -31,9 +31,8 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 /**
  * Simple class representing a HeartBeat message from a bit archive application. A heartbeat has an applicationId, that
  * identifies the application that generated the heartbeat.
- *
+ * <p>
  * TODO This class should probably contain more status data from bit archive application later.
- *
  */
 @SuppressWarnings({"serial"})
 public class HeartBeatMessage extends ArchiveMessage {
@@ -74,7 +73,7 @@ public class HeartBeatMessage extends ArchiveMessage {
 
     /**
      * Retrieval of a string representation of this instance.
-     * 
+     *
      * @return The string representation of this instance.
      */
     public String toString() {

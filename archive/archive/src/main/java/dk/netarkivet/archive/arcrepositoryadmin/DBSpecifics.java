@@ -34,7 +34,6 @@ import dk.netarkivet.common.utils.SettingsFactory;
 /**
  * Abstract collection of DB methods that are not standard SQL. This class is a singleton class whose actual
  * implementation is provided by a subclass as determined by the DB_SPECIFICS_CLASS setting.
- *
  */
 public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
 
@@ -55,7 +54,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
 
     /**
      * Shutdown the database system, if running in embedded mode. Otherwise, this is ignored.
-     *
+     * <p>
      * Will log a warning on errors, but otherwise ignore them.
      */
     public abstract void shutdownDatabase();

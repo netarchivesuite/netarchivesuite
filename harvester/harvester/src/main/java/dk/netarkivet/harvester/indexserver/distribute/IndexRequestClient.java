@@ -55,7 +55,7 @@ import dk.netarkivet.harvester.indexserver.MultiFileBasedCache;
 
 /**
  * Client for index request server.
- *
+ * <p>
  * Allows to request an index of some type over a list of jobs. Factory method will return the index request client of
  * the type wished.
  */
@@ -112,7 +112,7 @@ public class IndexRequestClient extends MultiFileBasedCache<Long> implements Job
 
     /**
      * Get the singleton synchronizer for sending requests.
-     * 
+     *
      * @return synchronizer
      */
     private synchronized Synchronizer getSynchronizer() {
@@ -145,7 +145,7 @@ public class IndexRequestClient extends MultiFileBasedCache<Long> implements Job
      * calls into an IndexRequestMessage which is sent to the server. The Set&lt;Long&gt; of found jobs, and the side
      * effect of caching the index, is done using this communication with the server. The resulting files will be
      * unzipped into the cache dir.
-     *
+     * <p>
      * This method should not be called directly! Instead call cache() or getIndex().
      *
      * @param jobSet The set of job IDs.
@@ -282,7 +282,7 @@ public class IndexRequestClient extends MultiFileBasedCache<Long> implements Job
      * Check if we should use local ftpserver or not, provided you are using FTPRemoteFile as the
      * {@link CommonSettings#REMOTE_FILE_CLASS}. This always returns false, when
      * {@link CommonSettings#REMOTE_FILE_CLASS} is not {@link FTPRemoteFile}.
-     * 
+     *
      * @return true, if we should use the local ftpserver when retrieving data from the indexserver, false, if the
      * indexserver should decide for us.
      */
@@ -300,7 +300,7 @@ public class IndexRequestClient extends MultiFileBasedCache<Long> implements Job
 
     /**
      * Check the reply message is valid.
-     * 
+     *
      * @param jobSet The requested set of jobs
      * @param msg The message received
      * @throws ArgumentNotValid On wrong parameters in replied message.
@@ -356,7 +356,7 @@ public class IndexRequestClient extends MultiFileBasedCache<Long> implements Job
 
     /**
      * Method to request an Index without having the result sent right away.
-     * 
+     *
      * @param jobSet The set of job IDs.
      * @param harvestId The ID of the harvest requesting this index.
      * @throws IOFailure On trouble in communication or invalid reply types.

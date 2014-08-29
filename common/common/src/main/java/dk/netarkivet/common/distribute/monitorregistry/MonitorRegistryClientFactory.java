@@ -31,8 +31,10 @@ import dk.netarkivet.common.utils.SettingsFactory;
  */
 public class MonitorRegistryClientFactory
         extends SettingsFactory<MonitorRegistryClient> {
-    /** Returns a new MonitorRegistryClient as defined by the setting
-     * Settings.MONITOR_REGISTRY_CLIENT. 
+    /**
+     * Returns a new MonitorRegistryClient as defined by the setting
+     * Settings.MONITOR_REGISTRY_CLIENT.
+     *
      * @return A MonitorRegistryClient.
      */
     public static MonitorRegistryClient getInstance() {

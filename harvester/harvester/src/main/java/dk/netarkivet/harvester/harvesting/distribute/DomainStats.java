@@ -43,7 +43,7 @@ public class DomainStats implements Serializable {
 
     /**
      * Constructor for a DomainStats object.
-     * 
+     *
      * @param initObjectCount Start counting objects from this number
      * @param initByteCount Start counting bytes from this number
      * @param defaultStopReason The default StopReason for a given domain.
@@ -83,7 +83,7 @@ public class DomainStats implements Serializable {
 
     /**
      * Set objectcount to something new.
-     * 
+     *
      * @param objectCount The objectCount to set.
      * @throws ArgumentNotValid If objectCount is a negative number.
      */
@@ -101,7 +101,7 @@ public class DomainStats implements Serializable {
 
     /**
      * Set stopreason to something new.
-     * 
+     *
      * @param stopReason The stopReason to set.
      * @throws ArgumentNotValid If argument is null
      */

@@ -179,7 +179,8 @@ public class JMSArcRepositoryClientTester {
     public void testGetViewerInstance() {
         assertTrue(
                 "Must return an instance of ViewerArcRepositoryClient",
-                (arcrepos = (JMSArcRepositoryClient) ArcRepositoryClientFactory.getViewerInstance()) instanceof ViewerArcRepositoryClient);
+                (arcrepos = (JMSArcRepositoryClient) ArcRepositoryClientFactory
+                        .getViewerInstance()) instanceof ViewerArcRepositoryClient);
     }
 
     /** Tests the correct object is returned when getHacoInstance is called. */
@@ -919,11 +920,11 @@ public class JMSArcRepositoryClientTester {
                     metadata.put(field, "");
                 }
                 metadata.put(ARCConstants.ABSOLUTE_OFFSET_KEY, 0L); // Offset
-                                                                    // not
-                                                                    // stored as
-                                                                    // String
-                                                                    // but as
-                                                                    // Long
+                // not
+                // stored as
+                // String
+                // but as
+                // Long
                 byte[] encodedKey = encode(netMsg.getArcFile(), netMsg.getIndex());
                 try {
                     // final ARCRecordMetaData meta = new ARCRecordMetaData(

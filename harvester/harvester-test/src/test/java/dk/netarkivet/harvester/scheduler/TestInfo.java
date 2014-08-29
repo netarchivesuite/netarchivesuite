@@ -33,7 +33,6 @@ import dk.netarkivet.harvester.datamodel.Job;
 
 /**
  * Contains test information about all scheduler test data.
- *
  */
 public class TestInfo {
 
@@ -56,7 +55,7 @@ public class TestInfo {
 
     /**
      * Get a simple job.
-     * 
+     *
      * @return Job
      */
     static Job getJob() {

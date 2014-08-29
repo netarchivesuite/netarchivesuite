@@ -31,17 +31,16 @@ import dk.netarkivet.common.exceptions.NotImplementedException;
 /**
  * This is an implementation of RemoteFile which does nothing and can
  * therefore be used in batch jobs for which no output is required.
- *
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({"serial"})
 public class NullRemoteFile implements RemoteFile {
 
     /**
      * @see RemoteFileFactory#getInstance(File, boolean, boolean, boolean)
      */
     public static RemoteFile getInstance(File f, Boolean useChecksums, Boolean fileDeletable,
-    		Boolean multipleDownloads) {
-    	return new NullRemoteFile();
+            Boolean multipleDownloads) {
+        return new NullRemoteFile();
     }
 
     /**
@@ -75,6 +74,7 @@ public class NullRemoteFile implements RemoteFile {
 
     /**
      * Return the file name.
+     *
      * @return the file name
      * @see RemoteFile#getName()
      */
@@ -84,9 +84,10 @@ public class NullRemoteFile implements RemoteFile {
 
     /**
      * Returns a MD5 Checksum on the file.
+     *
      * @return MD5 checksum
-     * @see RemoteFile#getChecksum()
      * @throws NotImplementedException Because it is not implemented
+     * @see RemoteFile#getChecksum()
      */
     public String getChecksum() throws NotImplementedException {
         throw new NotImplementedException("Not implemented!");

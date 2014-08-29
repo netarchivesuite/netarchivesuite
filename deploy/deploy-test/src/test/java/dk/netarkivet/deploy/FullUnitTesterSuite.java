@@ -23,10 +23,10 @@
 
 package dk.netarkivet.deploy;
 
+import dk.netarkivet.common.CleanupSuite;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
-import dk.netarkivet.common.CleanupSuite;
 
 /**
  * This class runs the deploy unit tests. Maven runs the unit tests for the other modules.

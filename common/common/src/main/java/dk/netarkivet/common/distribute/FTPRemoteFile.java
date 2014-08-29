@@ -53,10 +53,10 @@ import dk.netarkivet.common.utils.TimeUtils;
 
 /**
  * Class encapsulating upload to & download from an ftp-server.
- *
+ * <p>
  * Transfers are done using binary type and passive mode, if available.
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({"serial"})
 public final class FTPRemoteFile extends AbstractRemoteFile {
 
     /** A named logger for this class. */
@@ -73,7 +73,7 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
 
     /** The default place in classpath where the settings file can be found. */
     private static final String DEFAULT_SETTINGS_CLASSPATH =
-    		"dk/netarkivet/common/distribute/FTPRemoteFileSettings.xml";
+            "dk/netarkivet/common/distribute/FTPRemoteFileSettings.xml";
 
     /*
      * The static initialiser is called when the class is loaded.
@@ -91,7 +91,7 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
     private String ftpServerName;
 
     /** The ftp-server port. */
-    private final int ftpServerPort;  
+    private final int ftpServerPort;
     /** The username used to connect to the ftp-server. */
     private final String ftpUserName;
     /** The password used to connect to the ftp-server. */
@@ -114,20 +114,20 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
      * Private constructor used by getInstance() static-method Tries to generate
      * unique name on ftp-server.
      *
-     * @param localFile         File used to create new file on ftp-server.
-     * @param useChecksums      If true, checksums will be used to check
-     *                          transfers.
-     * @param fileDeletable     If true, this file will be deleted after upload
-     *                          to FTP.
+     * @param localFile File used to create new file on ftp-server.
+     * @param useChecksums If true, checksums will be used to check
+     * transfers.
+     * @param fileDeletable If true, this file will be deleted after upload
+     * to FTP.
      * @param multipleDownloads If true, the file will not be removed from FTP
-     *                          server automatically after first download.
-     * @param connectionParams  If not null, contains connection parameters 
-     *  to the FTP-server desired by the user 
-     * @throws IOFailure        if MD5 checksum fails, or ftp fails
+     * server automatically after first download.
+     * @param connectionParams If not null, contains connection parameters
+     * to the FTP-server desired by the user
+     * @throws IOFailure if MD5 checksum fails, or ftp fails
      * @throws ArgumentNotValid if the local file cannot be read.
      */
-    private FTPRemoteFile(File localFile, boolean useChecksums, boolean fileDeletable, boolean multipleDownloads, 
-    		RemoteFileSettings connectionParams) throws IOFailure {
+    private FTPRemoteFile(File localFile, boolean useChecksums, boolean fileDeletable, boolean multipleDownloads,
+            RemoteFileSettings connectionParams) throws IOFailure {
         super(localFile, useChecksums, fileDeletable, multipleDownloads);
         if (connectionParams != null) {
             // use the connection parameters desired by the user.
@@ -155,7 +155,7 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
             if (ftpServerName.equalsIgnoreCase("localhost")) {
                 ftpServerName = SystemUtils.getLocalHostName();
                 log.debug("ftpServerName set to localhost on machine: {}, resetting to {}",
-                		SystemUtils.getLocalHostName(), ftpServerName);
+                        SystemUtils.getLocalHostName(), ftpServerName);
             }
             // A large enough number to make it unlikely that two files are
             // created with the same FTP server name.  Already the millisecond
@@ -166,7 +166,7 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
             final int aMagicNumber = 100000;
             ftpFileName = file.getName() + "-" + new Random().nextInt(aMagicNumber) + "-" + new Date().getTime();
             InputStream in;
-            
+
             try {
                 in = new FileInputStream(localFile);
             } catch (FileNotFoundException e) {
@@ -191,13 +191,13 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
                         success = currentFTPClient.storeFile(ftpFileName, in);
                         if (!success) {
                             log.debug("FTP store failed attempt '{}' of {}: {}",
-                            		tried, FTP_RETRIES, getFtpErrorMessage());
+                                    tried, FTP_RETRIES, getFtpErrorMessage());
                         }
                     } catch (IOException e) {
                         String message = "Write operation to '" + ftpFileName + "' failed on attempt " + tried + " of "
-                        		+ FTP_RETRIES;
+                                + FTP_RETRIES;
                         if (e instanceof CopyStreamException) {
-                            CopyStreamException realException  = (CopyStreamException) e;
+                            CopyStreamException realException = (CopyStreamException) e;
                             message += "(real cause = " + realException.getIOException() + ")";
                         }
                         log.debug(message, e);
@@ -236,30 +236,29 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
      * Create a remote file that handles the transport of the remote file data.
      * This method is used by the sender to prepare the transport.
      *
-     * @param localFile         File object for the remote file
-     * @param useChecksums      If true, checksums will be used to check
-     *                          transfers.
-     * @param fileDeletable     If true, this file will be deleted after upload
-     *                          to FTP.
+     * @param localFile File object for the remote file
+     * @param useChecksums If true, checksums will be used to check
+     * transfers.
+     * @param fileDeletable If true, this file will be deleted after upload
+     * to FTP.
      * @param multipleDownloads If true, the file will not be removed from FTP
-     *                          server automatically after first download.
+     * server automatically after first download.
      * @return FTPRemoteFile object
      * @throws IOFailure if FTPRemoteFile creation fails
      */
     public static RemoteFile getInstance(File localFile, Boolean useChecksums, Boolean fileDeletable,
-    		Boolean multipleDownloads) throws IOFailure {
+            Boolean multipleDownloads) throws IOFailure {
         ArgumentNotValid.checkNotNull(localFile, "File remoteFile");
         return new FTPRemoteFile(localFile, useChecksums,
-                                 fileDeletable, multipleDownloads, null);
+                fileDeletable, multipleDownloads, null);
     }
 
     public static RemoteFile getInstance(File localFile, Boolean useChecksums, Boolean fileDeletable,
-    		Boolean multipleDownloads, RemoteFileSettings connectionParams) throws IOFailure {
+            Boolean multipleDownloads, RemoteFileSettings connectionParams) throws IOFailure {
         ArgumentNotValid.checkNotNull(localFile, "File remoteFile");
         return new FTPRemoteFile(localFile, useChecksums, fileDeletable, multipleDownloads, connectionParams);
     }
-    
-    
+
     /**
      * An implementation of the getInputStream operation that works with FTP.
      * Notice that most of the special work (logging out and checking MD5)
@@ -267,12 +266,12 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
      * the only place where we can know we're done.
      *
      * @return An InputStream that will deliver the data transferred by FTP.
-     *         Holding on to this for long periods without reading any data
-     *         might cause a timeout.
+     * Holding on to this for long periods without reading any data
+     * might cause a timeout.
      */
     public InputStream getInputStream() {
         if (filesize == 0) {
-            return new ByteArrayInputStream(new byte[]{});
+            return new ByteArrayInputStream(new byte[] {});
         }
         try {
             logOn();
@@ -290,10 +289,10 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
                         super.close();
                         if (useChecksums) {
                             String newChecksum = ChecksumCalculator.toHex(((DigestInputStream) in)
-                            		.getMessageDigest().digest());
+                                    .getMessageDigest().digest());
                             if (!newChecksum.equals(checksum)) {
                                 final String msg = "Checksums of '" + ftpFileName + "' do not match! "
-                                		+ "Should be " + checksum + " but was " + newChecksum;
+                                        + "Should be " + checksum + " but was " + newChecksum;
                                 log.warn(msg);
                                 throw new IOFailure(msg);
                             }
@@ -411,7 +410,7 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
 
         if (log.isTraceEnabled()) {
             log.trace("Try to logon to ftp://{}:{}@{}:{}",
-            		ftpUserName, ftpUserPassword.replaceAll(".", "*"), ftpServerName, ftpServerPort);
+                    ftpUserName, ftpUserPassword.replaceAll(".", "*"), ftpServerName, ftpServerPort);
         }
 
         int tries = 0;
@@ -423,15 +422,15 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
                 currentFTPClient.setDataTimeout(FTP_DATATIMEOUT);
                 if (!currentFTPClient.login(ftpUserName, ftpUserPassword)) {
                     final String message = "Could not log in [from host: " + SystemUtils.getLocalHostName() + "] to '"
-                    		+ ftpServerName + "' on port " + ftpServerPort + " with user '" + ftpUserName
-                    		+ "' password '" + ftpUserPassword.replaceAll(".", "*") + "': " + getFtpErrorMessage();
+                            + ftpServerName + "' on port " + ftpServerPort + " with user '" + ftpUserName
+                            + "' password '" + ftpUserPassword.replaceAll(".", "*") + "': " + getFtpErrorMessage();
                     log.warn(message);
                     throw new IOFailure(message);
                 }
 
                 if (!currentFTPClient.setFileType(FTPClient.BINARY_FILE_TYPE)) {
                     final String message = "Could not set binary on '" + ftpServerName + "', losing high bits. "
-                    		+ "Error: " + getFtpErrorMessage();
+                            + "Error: " + getFtpErrorMessage();
                     log.warn(message);
                     throw new IOFailure(message);
                 }
@@ -439,16 +438,17 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
                 // This only means that PASV is sent before every transfer
                 // command.
                 currentFTPClient.enterLocalPassiveMode();
-                
+
                 log.debug("w/ DataTimeout (ms): {}", currentFTPClient.getDefaultTimeout());
                 logOnSuccessful = true;
             } catch (IOException e) {
                 final String msg = "Connect to " + ftpServerName + " from host: " + SystemUtils.getLocalHostName()
-                		+ " failed";
+                        + " failed";
                 if (tries < FTP_RETRIES) {
-                    log.debug("{}. Attempt #{} of max {}. Will sleep a while before trying to connect again. Exception: ",
-                    		msg, tries, FTP_RETRIES, e);
-                    TimeUtils.exponentialBackoffSleep(tries, Calendar.MINUTE); 
+                    log.debug(
+                            "{}. Attempt #{} of max {}. Will sleep a while before trying to connect again. Exception: ",
+                            msg, tries, FTP_RETRIES, e);
+                    TimeUtils.exponentialBackoffSleep(tries, Calendar.MINUTE);
                 } else {
                     log.warn("{}. This was the last (#{}) connection attempt", msg, tries);
                     throw new IOFailure(msg, e);
@@ -458,7 +458,7 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
 
         if (log.isDebugEnabled()) {
             log.debug("Logged onto ftp://{}:{}@{}:{}",
-            		ftpUserName, ftpUserPassword.replaceAll(".", "*"), ftpServerName, ftpServerPort);
+                    ftpUserName, ftpUserPassword.replaceAll(".", "*"), ftpServerName, ftpServerPort);
         }
     }
 
@@ -473,7 +473,7 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
             }
         } catch (IOException e) {
             String msg = "Disconnect from '" + ftpServerName
-                               + "' failed ";
+                    + "' failed ";
             if (e instanceof CopyStreamException) {
                 CopyStreamException realException = (CopyStreamException) e;
                 msg += "(real cause = " + realException.getIOException() + ")";
@@ -500,7 +500,9 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
         return "RemoteFile '" + file.getName() + "' (#" + checksum + ")";
     }
 
-    /** Get checksum for file, or null if checksums were not requested.
+    /**
+     * Get checksum for file, or null if checksums were not requested.
+     *
      * @return checksum for file, or null if checksums were not requested.
      */
     public String getChecksum() {
@@ -510,17 +512,18 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
     /**
      * Retrieval of the number of retries for retrieving a file from a FTP
      * server. Returns the setting for number of retries.
-     * @return The number of retries for the FTP connection, defined in 
+     *
+     * @return The number of retries for the FTP connection, defined in
      * settings.
      */
     @Override
     public int getNumberOfRetries() {
         return FTP_RETRIES;
     }
-    
+
     public static RemoteFileSettings getRemoteFileSettings() {
         return new RemoteFileSettings(Settings.get(CommonSettings.FTP_SERVER_NAME),
-        		Settings.getInt(CommonSettings.FTP_SERVER_PORT), Settings.get(CommonSettings.FTP_USER_NAME),
+                Settings.getInt(CommonSettings.FTP_SERVER_PORT), Settings.get(CommonSettings.FTP_USER_NAME),
                 Settings.get(CommonSettings.FTP_USER_PASSWORD));
     }
 

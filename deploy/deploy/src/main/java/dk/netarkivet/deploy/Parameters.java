@@ -50,7 +50,7 @@ public class Parameters {
 
     /**
      * Constructor. Retrieves the parameters from the XML tree.
-     * 
+     *
      * @param root The root of the branch for the parent instance. This retrieves the variables in the branch.
      * @throws ArgumentNotValid If the root is null.
      */
@@ -67,7 +67,7 @@ public class Parameters {
 
     /**
      * Constructor. Inherits the parameters of the parent instance.
-     * 
+     *
      * @param parent The parameters of the parent instance.
      * @throws ArgumentNotValid If the parent is null.
      */
@@ -103,7 +103,7 @@ public class Parameters {
 
     /**
      * Overwrites the inherited parameters, if the root has new specified.
-     * 
+     *
      * @param root The root of the current instance.
      * @throws ArgumentNotValid If the root is null.
      */
@@ -167,7 +167,7 @@ public class Parameters {
 
     /**
      * Makes all the java options into a single String.
-     * 
+     *
      * @return All the java options.
      */
     public String writeJavaOptions() {
@@ -182,7 +182,7 @@ public class Parameters {
 
     /**
      * For retrieving the install directory parameter.
-     * 
+     *
      * @return The install directory element, or empty string if install dir is null.
      */
     public String getInstallDirValue() {
@@ -195,7 +195,7 @@ public class Parameters {
 
     /**
      * For retrieving the directory for the database.
-     * 
+     *
      * @return The database directory element, or empty string if install dir is null.
      */
     public String getHarvestDatabaseDirValue() {
@@ -208,7 +208,7 @@ public class Parameters {
 
     /**
      * For retrieving the directory for the archive database.
-     * 
+     *
      * @return The archive database install directory element, or empty string if install dir is null.
      */
     public String getArchiveDatabaseDirValue() {
@@ -221,7 +221,7 @@ public class Parameters {
 
     /**
      * For retrieving the machine user name parameter.
-     * 
+     *
      * @return The machine user name.
      */
     public Element getMachineUserName() {
@@ -230,7 +230,7 @@ public class Parameters {
 
     /**
      * For retrieving the list of class paths.
-     * 
+     *
      * @return The list of class paths.
      */
     public List<Element> getClassPaths() {

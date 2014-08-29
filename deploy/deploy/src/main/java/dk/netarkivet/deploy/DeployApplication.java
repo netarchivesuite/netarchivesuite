@@ -38,7 +38,7 @@ import dk.netarkivet.common.utils.Settings;
 /**
  * The application that is run to generate install and start/stop scripts for all physical locations, machines and
  * applications.
- * 
+ * <p>
  * The actual deployment has to be done from an Linux/Unix machine, and this application should therefore not be run on
  * Windows.
  */
@@ -79,9 +79,9 @@ public final class DeployApplication {
 
     /**
      * Run deploy.
-     * 
+     *
      * @param args The Command-line arguments in no particular order:
-     * 
+     *
      * -C The deploy configuration file (ends with .xml). -Z The NetarchiveSuite file to be unpacked (ends with .zip).
      * -S The security policy file (ends with .policy). -L The logging property file (ends with .prop). -O [OPTIONAL]
      * The output directory -D [OPTIONAL] The harvest definition database -T [OPTIONAL] The test arguments
@@ -219,7 +219,7 @@ public final class DeployApplication {
 
     /**
      * Checks the configuration file argument and retrieves the file.
-     * 
+     *
      * @param deployConfigFileName The configuration file argument.
      */
     private static void initConfigFile(String deployConfigFileName) {
@@ -247,7 +247,7 @@ public final class DeployApplication {
 
     /**
      * Checks the NetarchiveSuite file argument and retrieves the file.
-     * 
+     *
      * @param netarchiveSuiteFileName The NetarchiveSuite argument.
      */
     private static void initNetarchiveSuiteFile(String netarchiveSuiteFileName) {
@@ -276,7 +276,7 @@ public final class DeployApplication {
 
     /**
      * Checks the security policy file argument and retrieves the file.
-     * 
+     *
      * @param secPolicyFileName The security policy argument.
      */
     private static void initSecPolicyFile(String secPolicyFileName) {
@@ -305,7 +305,7 @@ public final class DeployApplication {
 
     /**
      * Checks the java.util.logging property file argument and retrieves the file.
-     * 
+     *
      * @param julPropFileName The java.util.logging property argument.
      */
     private static void initJulPropFile(String julPropFileName) {
@@ -334,7 +334,7 @@ public final class DeployApplication {
 
     /**
      * Checks the SLF4J config file argument and retrieves the file.
-     * 
+     *
      * @param slf4jXmlFileName The SLF4J config argument.
      */
     private static void initSLF4JXmlFile(String slf4jXmlFileName) {
@@ -363,7 +363,7 @@ public final class DeployApplication {
 
     /**
      * Checks the database argument (if any) for extension and existence.
-     * 
+     *
      * @param databaseFileName The name of the database file.
      */
     private static void initDatabase(String databaseFileName) {
@@ -392,9 +392,9 @@ public final class DeployApplication {
     /**
      * Checks the arguments for resetting the directory. Only the arguments 'y' or 'yes' resets the database directory.
      * Default is 'no'.
-     * 
+     * <p>
      * If another argument than 'y', 'yes', 'n' or 'no' is given, an warning is given.
-     * 
+     *
      * @param resetArgument The argument for resetting given.
      */
     private static void initReset(String resetArgument) {
@@ -421,7 +421,7 @@ public final class DeployApplication {
     /**
      * Checks the arguments for evaluating the config file. Only the arguments 'y' or 'yes' is accepted for evaluation.
      * Anything else (including argument set to null) does not evaluate the deployConfigFile.
-     * 
+     *
      * @param evaluateArgument The argument for evaluation.
      * @param encoding the encoding to use to read from the input file
      */
@@ -430,7 +430,7 @@ public final class DeployApplication {
         if ((evaluateArgument != null)
                 && (!evaluateArgument.isEmpty())
                 && (evaluateArgument.equalsIgnoreCase(Constants.YES_SHORT) || evaluateArgument
-                        .equalsIgnoreCase(Constants.YES_LONG))) {
+                .equalsIgnoreCase(Constants.YES_LONG))) {
             // if yes, then evaluate config file
             EvaluateConfigFile evf = new EvaluateConfigFile(deployConfigFile, encoding);
             evf.evaluate();
@@ -439,7 +439,7 @@ public final class DeployApplication {
 
     /**
      * Checks the argument for the archive database.
-     * 
+     *
      * @param arcDbFileName The path to the archive database.
      */
     public static void initArchiveDatabase(String arcDbFileName) {
@@ -467,7 +467,7 @@ public final class DeployApplication {
 
     /**
      * Checks the argument for the external jar-folder.
-     * 
+     *
      * @param folderName The path to the folder. Global path.
      */
     public static void initJarFolder(String folderName) {
@@ -486,13 +486,13 @@ public final class DeployApplication {
 
     /**
      * Applies the test arguments.
-     * 
+     * <p>
      * If the test arguments are given correctly, the configuration file is loaded and changed appropriately, then
      * written to a test configuration file.
-     * 
+     * <p>
      * The new test configuration file has the same name as the original configuration file, except ".xml" is replaced
      * by "_text.xml". Thus "path/config.xml" -> "path/config_test.xml".
-     * 
+     *
      * @param testArguments The test arguments.
      */
     private static void initTestArguments(String testArguments) {
@@ -575,7 +575,7 @@ public final class DeployApplication {
 
         /**
          * Parsing the input arguments.
-         * 
+         *
          * @param args The input arguments.
          * @return Whether it parsed correctly or not.
          */
@@ -592,7 +592,7 @@ public final class DeployApplication {
 
         /**
          * Get the list of possible arguments with their description.
-         * 
+         *
          * @return The list describing the possible arguments.
          */
         String listArguments() {
@@ -613,7 +613,7 @@ public final class DeployApplication {
 
         /**
          * For retrieving the options.
-         * 
+         *
          * @return The options.
          */
         public Options getOptions() {
@@ -622,7 +622,7 @@ public final class DeployApplication {
 
         /**
          * For retrieving the commandLine.
-         * 
+         *
          * @return The cmd.
          */
         public CommandLine getCommandLine() {

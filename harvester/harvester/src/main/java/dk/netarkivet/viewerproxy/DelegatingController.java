@@ -40,7 +40,6 @@ import dk.netarkivet.common.utils.StringUtils;
 /**
  * Control of viewer proxy. Delegates URL-methods to a missing URL recorder, and cdx control to a CDXCache instance
  * combined with an ARCArchiveAccess instance.
- *
  */
 
 public class DelegatingController implements Controller {
@@ -139,8 +138,8 @@ public class DelegatingController implements Controller {
     /**
      * Get a human readable status of the viewer proxy.
      *
-     * @return A human readable status string.
      * @param locale The locale used to generate the string
+     * @return A human readable status string.
      */
     public String getStatus(Locale locale) {
         ArgumentNotValid.checkNotNull(locale, "locale");

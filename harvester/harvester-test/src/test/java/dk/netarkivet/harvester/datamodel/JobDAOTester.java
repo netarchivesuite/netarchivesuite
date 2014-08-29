@@ -103,7 +103,7 @@ public class JobDAOTester extends DataModelTestCase {
     /**
      * This test creates (and stores) a new job and reads it back again Verifies that state of stored job equals state
      * of original job
-     * 
+     *
      * @throws SQLException
      */
     @Test
@@ -192,7 +192,7 @@ public class JobDAOTester extends DataModelTestCase {
 
     /**
      * This test creates (and stores) a new job, modifies it, and checks that the modified job can be retrieved.
-     * 
+     *
      * @throws SQLException
      */
     @Test
@@ -244,7 +244,7 @@ public class JobDAOTester extends DataModelTestCase {
         Map<String, String> domainConfigurationMap = jobUpdated.getDomainConfigurationMap();
 
         assertTrue("The DomainConfigurationMap of the retrieved job does not "
-                + "match that of the original job - domain name " + dc.getDomainName() + " not found",
+                        + "match that of the original job - domain name " + dc.getDomainName() + " not found",
                 domainConfigurationMap.containsKey(dc.getDomainName()));
         assertTrue(
                 "The DomainConfigurationMap of the retrieved job does not "
@@ -252,18 +252,18 @@ public class JobDAOTester extends DataModelTestCase {
                         + " not found", domainConfigurationMap.containsKey(anotherConfiguration.getDomainName()));
 
         assertEquals("The DomainConfigurationMap of the retrieved job does not "
-                + "match that of the original job - domainConfiguration name " + dc.getName() + " not found",
+                        + "match that of the original job - domainConfiguration name " + dc.getName() + " not found",
                 domainConfigurationMap.get(dc.getDomainName()), dc.getName());
 
         assertEquals("The DomainConfigurationMap of the retrieved job does not "
-                + "match that of the original job - domainConfiguration name " + anotherConfiguration.getName()
-                + " not found", domainConfigurationMap.get(anotherConfiguration.getDomainName()),
+                        + "match that of the original job - domainConfiguration name " + anotherConfiguration.getName()
+                        + " not found", domainConfigurationMap.get(anotherConfiguration.getDomainName()),
                 anotherConfiguration.getName());
     }
 
     /**
      * Test that the max objects per domain attribute can be updated in persistent storage.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -283,7 +283,7 @@ public class JobDAOTester extends DataModelTestCase {
 
         long expectedCappedMaxObjects = dc.getMaxObjects();
         assertEquals("The retrieved job should have max object per domain = " + expectedCappedMaxObjects
-                + ", but it is equal to " + jobUpdated.getForceMaxObjectsPerDomain(), expectedCappedMaxObjects,
+                        + ", but it is equal to " + jobUpdated.getForceMaxObjectsPerDomain(), expectedCappedMaxObjects,
                 jobUpdated.getForceMaxObjectsPerDomain());
 
         // check that the job-specific order.xml is modified accordingly:
@@ -316,7 +316,7 @@ public class JobDAOTester extends DataModelTestCase {
 
     /**
      * Test getting jobs with various statuses
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -379,7 +379,7 @@ public class JobDAOTester extends DataModelTestCase {
 
     /**
      * Verifies the functionality of the #getAllJobIds(JobStatus, JobPriority)
-     * 
+     *
      * @throws SQLException
      */
     @Test
@@ -458,10 +458,8 @@ public class JobDAOTester extends DataModelTestCase {
 
     /**
      * Test that we can get reasonable status info about jobs.
-     * 
-     * @throws Exception
      *
-     * FIXME Fails in Hudson
+     * @throws Exception FIXME Fails in Hudson
      */
     @Test
     @Ignore("Query returned wrong number of jobs")
@@ -535,7 +533,7 @@ public class JobDAOTester extends DataModelTestCase {
 
     /**
      * Test that we can get reasonable status info about jobs from specific harvest runs.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -678,15 +676,14 @@ public class JobDAOTester extends DataModelTestCase {
 
     /**
      * Tests the retrieval of jobs to use for duplicate reduction.
-     *
+     * <p>
      * The following cases are tested:
-     *
+     * <p>
      * Unknown job ID. Partial harvests with no previous harvest is present should return empty list. Partial harvests
      * with two previous harvests should return jobs from first harvest. Full harvest with no previous full harvests
      * should return empty list. Full harvest not based on anything but with previous chain should return that. Full
      * harvest based on something but with no previous chain should return that. Full harvest based on something AND
      * with previous chains should return that.
-     *
      *
      * @throws Exception
      */

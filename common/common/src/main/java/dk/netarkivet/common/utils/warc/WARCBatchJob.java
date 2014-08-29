@@ -47,7 +47,7 @@ import dk.netarkivet.common.utils.batch.WARCBatchFilter;
  * job run initialize(), runs processRecord() on each record in each file in
  * the archive, and then runs finish().
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({"serial"})
 public abstract class WARCBatchJob extends FileBatchJob {
 
     private static final Logger log = LoggerFactory.getLogger(WARCBatchJob.class);
@@ -58,12 +58,14 @@ public abstract class WARCBatchJob extends FileBatchJob {
     /**
      * Initialize the job before running.
      * This is called before the processRecord() calls start coming.
+     *
      * @param os The OutputStream to which output data is written
      */
     public abstract void initialize(OutputStream os);
 
     /**
      * Exceptions should be handled with the handleException() method.
+     *
      * @param os The OutputStream to which output data is written
      * @param record the object to be processed.
      */
@@ -72,6 +74,7 @@ public abstract class WARCBatchJob extends FileBatchJob {
     /**
      * Finish up the job.
      * This is called after the last processRecord() call.
+     *
      * @param os The OutputStream to which output data is written
      */
     public abstract void finish(OutputStream os);
@@ -95,10 +98,10 @@ public abstract class WARCBatchJob extends FileBatchJob {
      *
      * @param warcFile The WARC or WARCGZ file to be processed.
      * @param os the OutputStream to which output is to be written
-     * @throws ArgumentNotValid if either argument is null
      * @return true, if file processed successful, otherwise false
+     * @throws ArgumentNotValid if either argument is null
      */
-    public final boolean processFile(File warcFile, OutputStream os) throws ArgumentNotValid{
+    public final boolean processFile(File warcFile, OutputStream os) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(warcFile, "warcFile");
         ArgumentNotValid.checkNotNull(os, "os");
         long arcFileIndex = 0;
@@ -135,7 +138,7 @@ public abstract class WARCBatchJob extends FileBatchJob {
                             continue;
                         }
                         log.debug("Processing WARCRecord #{} in WARCfile '{}'.",
-                        		noOfRecordsProcessed, warcFile.getName());
+                                noOfRecordsProcessed, warcFile.getName());
                         processRecord(record, os);
                         ++noOfRecordsProcessed;
                     } catch (NetarkivetException e) {
@@ -169,7 +172,7 @@ public abstract class WARCBatchJob extends FileBatchJob {
                         break;
                     }
                     log.trace("At end of processing-loop");
-                } 
+                }
             } finally {
                 try {
                     warcReader.close();
@@ -185,9 +188,10 @@ public abstract class WARCBatchJob extends FileBatchJob {
         }
         return success;
     }
-    
+
     /**
      * Private method that handles our exception.
+     *
      * @param e the given exception
      * @param warcFile The WARC File where the exception occurred.
      * @param index The offset in the WARC File where the exception occurred.
@@ -209,11 +213,11 @@ public abstract class WARCBatchJob extends FileBatchJob {
      * was thrown
      * @throws ArgumentNotValid if e is null
      */
-    public void handleException(Exception e, File warcfile, long index) throws ArgumentNotValid{
+    public void handleException(Exception e, File warcfile, long index) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(e, "e");
 
         log.debug("Caught exception while running batch job on file {}, position {}:\n{}",
-        		warcfile, index, e.getMessage(), e);
+                warcfile, index, e.getMessage(), e);
         addException(warcfile, index, ExceptionOccurrence.UNKNOWN_OFFSET, e);
     }
 
@@ -234,9 +238,8 @@ public abstract class WARCBatchJob extends FileBatchJob {
         }
         return exceptionList;
     }
-    
+
     /**
-     * 
      * @return the number of records processed.
      */
     public int noOfRecordsProcessed() {

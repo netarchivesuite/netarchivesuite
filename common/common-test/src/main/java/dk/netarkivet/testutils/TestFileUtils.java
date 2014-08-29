@@ -43,7 +43,8 @@ import dk.netarkivet.common.utils.FileUtils;
 public class TestFileUtils {
     public static final FilenameFilter NON_CVS_DIRS_FILTER = new FilenameFilter() {
         public boolean accept(File directory, String filename) {
-            return !((filename.equals("CVS") && new File(directory, filename).isDirectory() || (filename.equals(".svn") && new File(
+            return !((filename.equals("CVS") && new File(directory, filename).isDirectory() || (filename.equals(".svn")
+                    && new File(
                     directory, filename).isDirectory())));
         }
     };
@@ -180,7 +181,7 @@ public class TestFileUtils {
 
     /**
      * Return textual description of the differences between two strings.
-     * 
+     *
      * @param s1 strings to compare
      * @param s2 strings to compare
      * @return first line of text that differs

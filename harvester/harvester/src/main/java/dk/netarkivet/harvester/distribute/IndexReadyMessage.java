@@ -39,7 +39,7 @@ public class IndexReadyMessage extends HarvesterMessage {
 
     /**
      * Constructor for the IndexReadyMessage.
-     * 
+     *
      * @param harvestId The harvestId that requires the index.
      * @param indexIsOK is the index now OK or not
      * @param to The destination channel
@@ -66,7 +66,7 @@ public class IndexReadyMessage extends HarvesterMessage {
 
     /**
      * Is the index OK.
-     * 
+     *
      * @return true, if the index is OK, else false.
      */
     public boolean getIndexOK() {

@@ -54,7 +54,6 @@ import dk.netarkivet.harvester.webinterface.EventHarvestUtil;
 /**
  * This class contains the specific properties and operations of harvest definitions which are not snapshot harvest
  * definitions. I.e. this class models definitions of event and selective harvests.
- *
  */
 public class PartialHarvest extends HarvestDefinition {
 
@@ -146,7 +145,7 @@ public class PartialHarvest extends HarvestDefinition {
 
     /**
      * Remove domainconfiguration from this partialHarvest.
-     * 
+     *
      * @param dcKey domainConfiguration key
      */
     public void removeDomainConfiguration(SparseDomainConfiguration dcKey) {
@@ -158,7 +157,7 @@ public class PartialHarvest extends HarvestDefinition {
 
     /**
      * Add a new domainconfiguration to this PartialHarvest.
-     * 
+     *
      * @param newConfiguration A new DomainConfiguration
      */
     public void addDomainConfiguration(DomainConfiguration newConfiguration) {
@@ -202,7 +201,7 @@ public class PartialHarvest extends HarvestDefinition {
 
     /**
      * Add the list of configurations to the configuration associated with this PartialHarvest.
-     * 
+     *
      * @param configs a List of configurations
      */
     private void addConfigurations(List<DomainConfiguration> configs) {
@@ -213,7 +212,7 @@ public class PartialHarvest extends HarvestDefinition {
 
     /**
      * Add a configuration to this PartialHarvest.
-     * 
+     *
      * @param dc the given configuration
      */
     private void addConfiguration(DomainConfiguration dc) {
@@ -253,7 +252,7 @@ public class PartialHarvest extends HarvestDefinition {
 
     /**
      * Always returns no limit.
-     * 
+     *
      * @return 0, meaning no limit.
      */
     public long getMaxCountObjects() {
@@ -262,7 +261,7 @@ public class PartialHarvest extends HarvestDefinition {
 
     /**
      * Always returns no limit.
-     * 
+     *
      * @return -1, meaning no limit.
      */
     public long getMaxBytes() {
@@ -275,12 +274,12 @@ public class PartialHarvest extends HarvestDefinition {
      * NAS-1317</A> addresses this issue. Current naming of the seedlists and domainconfigurations are: one of <br>
      * harvestdefinitionname + "_" + templateName + "_" + "UnlimitedBytes" (if maxbytes is negative)<br>
      * harvestdefinitionname + "_" + templateName + "_" + maxBytes + "Bytes" (if maxbytes is zero or postive).
-     * 
-     * @see EventHarvestUtil#addConfigurations(PageContext, I18n, String) for details
+     *
      * @param seeds a list of the seeds to be added
      * @param templateName the name of the template to be used
      * @param maxBytes Maximum number of bytes to harvest per domain
      * @param maxObjects Maximum number of objects to harvest per domain
+     * @see EventHarvestUtil#addConfigurations(PageContext, I18n, String) for details
      */
     public void addSeeds(Set<String> seeds, String templateName, long maxBytes, int maxObjects) {
         ArgumentNotValid.checkNotNull(seeds, "seeds");
@@ -311,7 +310,7 @@ public class PartialHarvest extends HarvestDefinition {
 
     /**
      * This method is a duplicate of the addSeeds method but for seedsFile parameter
-     * 
+     *
      * @param seedsFile a newline-separated File containing the seeds to be added
      * @param templateName the name of the template to be used
      * @param maxBytes Maximum number of bytes to harvest per domain
@@ -359,7 +358,7 @@ public class PartialHarvest extends HarvestDefinition {
 
     /**
      * Process each seed.
-     * 
+     *
      * @param seed The given seed.
      * @param invalidMessage The message builder where the invalid seeds are added.
      * @param acceptedSeeds The set of accepted seeds
@@ -399,7 +398,7 @@ public class PartialHarvest extends HarvestDefinition {
 
     /**
      * Generate domain configurations for the accepted seeds.
-     * 
+     *
      * @param templateName The Heritrix template to be used.
      * @param maxBytes The number of max bytes allowed
      * @param maxObjects The number of max objected allowed

@@ -24,11 +24,10 @@ package dk.netarkivet.common.utils;
 
 /**
  * Encapsulates the three different notification Types.
- * 
  */
 public enum NotificationType {
 
-	ERROR,
+    ERROR,
     INFO,
     WARNING;
 

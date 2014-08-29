@@ -32,7 +32,6 @@ import dk.netarkivet.common.utils.archive.ArchiveRecordBase;
 /**
  * This batch batch job takes deduplication records from a crawl log in a metadata arcfile and converts them to cdx
  * records for use in wayback.
- *
  */
 @SuppressWarnings({"serial"})
 public class DeduplicationCDXExtractionBatchJob extends ArchiveBatchJob {
@@ -54,7 +53,7 @@ public class DeduplicationCDXExtractionBatchJob extends ArchiveBatchJob {
 
     /**
      * Initializes various fields of this class.
-     * 
+     *
      * @param os unused parameter
      */
     @Override
@@ -67,7 +66,7 @@ public class DeduplicationCDXExtractionBatchJob extends ArchiveBatchJob {
      * If the ArchiveRecord is a crawl-log entry then any duplicate entries in the crawl log are converted to CDX
      * entries and written to the output. Otherwise this method returns without doing anything. If the ArchiveRecord is
      * a WarcRecord, and the record is the warcinfo, the record is skipped.
-     * 
+     *
      * @param record The ArchiveRecord to be processed
      * @param os the stream to which output is written
      */
@@ -86,7 +85,7 @@ public class DeduplicationCDXExtractionBatchJob extends ArchiveBatchJob {
 
     /**
      * Does nothing.
-     * 
+     *
      * @param os an outputstream
      */
     @Override

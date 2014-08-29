@@ -57,7 +57,7 @@ public class TestEnvironmentManager {
      * <li>MAILRECEIVERS = systemtest.mailreceivers property
      * <li>TESTX = The supplied test name
      * </ul>
-     * 
+     *
      * @param testX Defines the test name this test should be run under in the test system.
      */
     public TestEnvironmentManager(String testX, String host, int port) {
@@ -92,7 +92,7 @@ public class TestEnvironmentManager {
     /**
      * Runs the a command on the DEPLOYMENT_SERVER with a command timeout of 1000 seconds. Delegates to the ${link
      * runCommand(String,int).
-     * 
+     *
      * @param remoteCommand The command to run on the test server
      */
     public void runCommand(String remoteCommand) throws Exception {
@@ -101,7 +101,7 @@ public class TestEnvironmentManager {
 
     /**
      * Runs the a command on the DEPLOYMENT_SERVER. Delegates to the ${link runCommand(String,String,String,int).
-     * 
+     *
      * @param remoteCommand The server to run the command on.
      * @param remoteCommand The command to run on the test server.
      */
@@ -111,7 +111,7 @@ public class TestEnvironmentManager {
 
     /**
      * Runs the a command with a command timeout of 1000 seconds. Delegates to the ${link runCommand(String,String,int).
-     * 
+     *
      * @param remoteCommand The command to run on the test server.
      * @param commandTimeout The timeout for the command.
      */
@@ -121,7 +121,7 @@ public class TestEnvironmentManager {
 
     /**
      * Run the command the in the TESTX dir. This is the normal way of separating diffrent test run in parallel.
-     * 
+     *
      * @param server The server to run the command on.
      * @param remoteCommand The command to run on the remote server.
      */
@@ -134,7 +134,7 @@ public class TestEnvironmentManager {
      * Runs a remote command in the test environment via ssh. The system test environment variables: are set prior to
      * running the command. Extends the {@link #runCommand(String)} with the possibility of overriding the default
      * timeout of 1000 seconds. This may be useful in case of prolong operations.
-     * 
+     *
      * @param server The server to run the command on. If this is null the command is run on the DEPLOYMENT_SERVER.
      * Commands run other server the will command will be executed by ssh to the DEPLOYMENT_SERVER and from here ssh to
      * the actual test server.
@@ -225,12 +225,14 @@ public class TestEnvironmentManager {
 
                 String s;
                 while ((s = inReader.readLine()) != null) {
-                    if (!s.trim().isEmpty())
+                    if (!s.trim().isEmpty()) {
                         log.debug("ssh: " + s);
+                    }
                 }
                 while ((s = errReader.readLine()) != null) {
-                    if (!s.trim().isEmpty())
+                    if (!s.trim().isEmpty()) {
                         log.warn("ssh error: " + s);
+                    }
                 }
             } catch (InterruptedException ie) {
             }
@@ -295,7 +297,7 @@ public class TestEnvironmentManager {
     /**
      * The deployment script on the test server expects the 'TIMESTAMP' variable to be set to the value between the
      * 'NetarchiveSuite-' and '.zip' part of the NetarchiveSuite zip file in the 'target/deploy' directory.
-     * 
+     *
      * @return
      */
     private String lookupRevisionValue() {
@@ -323,7 +325,7 @@ public class TestEnvironmentManager {
     /**
      * Setup public/private key authentication for JSch. The following attributes are used:
      * <ul>
-     * 
+     *
      * @param jsch The JSch instance to configure.
      */
     private void setupJSchIdentity(JSch jsch) throws Exception {

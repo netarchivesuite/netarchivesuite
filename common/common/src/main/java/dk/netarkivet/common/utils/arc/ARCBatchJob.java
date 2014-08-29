@@ -47,17 +47,18 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
  * job run initialize(), runs processRecord() on each record in each file in
  * the archive, and then runs finish().
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({"serial"})
 public abstract class ARCBatchJob extends FileBatchJob {
-                                
+
     private static final Logger log = LoggerFactory.getLogger(ARCBatchJob.class);
 
-	/** The total number of records processed. */
+    /** The total number of records processed. */
     protected int noOfRecordsProcessed = 0;
 
     /**
      * Initialize the job before running.
      * This is called before the processRecord() calls start coming.
+     *
      * @param os The OutputStream to which output data is written
      */
     @Override
@@ -65,6 +66,7 @@ public abstract class ARCBatchJob extends FileBatchJob {
 
     /**
      * Exceptions should be handled with the handleException() method.
+     *
      * @param os The OutputStream to which output data is written
      * @param record the object to be processed.
      */
@@ -73,6 +75,7 @@ public abstract class ARCBatchJob extends FileBatchJob {
     /**
      * Finish up the job.
      * This is called after the last processRecord() call.
+     *
      * @param os The OutputStream to which output data is written
      */
     @Override
@@ -97,8 +100,8 @@ public abstract class ARCBatchJob extends FileBatchJob {
      *
      * @param arcFile The ARC or ARCGZ file to be processed.
      * @param os the OutputStream to which output is to be written
-     * @throws ArgumentNotValid if either argument is null
      * @return true, if file processed successful, otherwise false
+     * @throws ArgumentNotValid if either argument is null
      */
     @Override
     public final boolean processFile(File arcFile, OutputStream os) throws ArgumentNotValid {
@@ -119,7 +122,7 @@ public abstract class ARCBatchJob extends FileBatchJob {
 
                 return false; // Can't process file after exception
             }
-            
+
             try {
                 Iterator<? extends ArchiveRecord> it = arcReader.iterator();
                 /* Process all records from this Iterator: */
@@ -138,7 +141,7 @@ public abstract class ARCBatchJob extends FileBatchJob {
                             continue;
                         }
                         log.debug("Processing ARCRecord #{} in ARCfile '{}'.",
-                        		noOfRecordsProcessed, arcFile.getName());
+                                noOfRecordsProcessed, arcFile.getName());
                         processRecord(record, os);
                         ++noOfRecordsProcessed;
                     } catch (NetarkivetException e) {
@@ -171,7 +174,7 @@ public abstract class ARCBatchJob extends FileBatchJob {
                         break;
                     }
                     log.trace("At end of processing-loop");
-                } 
+                }
             } finally {
                 try {
                     arcReader.close();
@@ -187,9 +190,10 @@ public abstract class ARCBatchJob extends FileBatchJob {
         }
         return success;
     }
-    
+
     /**
      * Private method that handles our exception.
+     *
      * @param e the given exception
      * @param arcFile The ARCFile where the exception occurred.
      * @param index The offset in the ARCFile where the exception occurred.
@@ -211,11 +215,11 @@ public abstract class ARCBatchJob extends FileBatchJob {
      * was thrown
      * @throws ArgumentNotValid if e is null
      */
-    public void handleException(Exception e, File arcfile, long index) throws ArgumentNotValid{
+    public void handleException(Exception e, File arcfile, long index) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(e, "e");
-        
+
         log.debug("Caught exception while running batch job on file {}, position {}:\n{}",
-        		arcfile, index, e.getMessage(), e);
+                arcfile, index, e.getMessage(), e);
         addException(arcfile, index, ExceptionOccurrence.UNKNOWN_OFFSET, e);
     }
 
@@ -236,9 +240,8 @@ public abstract class ARCBatchJob extends FileBatchJob {
         }
         return exceptionList;
     }
-    
+
     /**
-     * 
      * @return the number of records processed.
      */
     public int noOfRecordsProcessed() {

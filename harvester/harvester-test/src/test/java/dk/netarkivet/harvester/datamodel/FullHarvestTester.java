@@ -52,7 +52,7 @@ public class FullHarvestTester extends DataModelTestCase {
     /**
      * Test that the maxbytes field is correctly stored and reloaded. This field is added to the DB after the DB went
      * into production, so unit tests are needed.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -147,7 +147,6 @@ public class FullHarvestTester extends DataModelTestCase {
 
     /**
      * Test that the FullHarvester.getDomainConfigurations() part of bug 716 is fixed.
-     *
      */
     @Test
     public void testGetDomainsConfigurationsBug716() {

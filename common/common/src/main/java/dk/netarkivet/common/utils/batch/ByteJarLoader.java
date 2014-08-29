@@ -48,7 +48,7 @@ import dk.netarkivet.common.utils.StreamUtils;
 @SuppressWarnings("serial")
 public class ByteJarLoader extends ClassLoader implements Serializable {
 
-	/** The log. */
+    /** The log. */
     private static final transient Logger log = LoggerFactory.getLogger(ByteJarLoader.class);
 
     /** The map, that holds the class data. */
@@ -62,10 +62,9 @@ public class ByteJarLoader extends ClassLoader implements Serializable {
 
     /**
      * Constructor for the ByteLoader.
-     * 
-     * @param files
-     *            An array of files, which are assumed to be jar-files, but
-     *            they need not have the extension .jar
+     *
+     * @param files An array of files, which are assumed to be jar-files, but
+     * they need not have the extension .jar
      */
     public ByteJarLoader(File... files) {
         ArgumentNotValid.checkNotNull(files, "File ... files");
@@ -73,7 +72,7 @@ public class ByteJarLoader extends ClassLoader implements Serializable {
         for (File file : files) {
             try {
                 JarFile jarFile = new JarFile(file);
-                for (Enumeration<JarEntry> e = jarFile.entries(); e.hasMoreElements();) {
+                for (Enumeration<JarEntry> e = jarFile.entries(); e.hasMoreElements(); ) {
                     JarEntry entry = e.nextElement();
                     String name = entry.getName();
                     InputStream in = jarFile.getInputStream(entry);
@@ -89,17 +88,14 @@ public class ByteJarLoader extends ClassLoader implements Serializable {
     }
 
     /**
-     * Lookup and return the Class with the given className. 
+     * Lookup and return the Class with the given className.
      * This method overrides the ClassLoader.findClass method.
-     * 
-     * @param className
-     *            The name of the class to lookup
-     * @throws ClassNotFoundException
-     *             If the class could not be found
+     *
+     * @param className The name of the class to lookup
      * @return the Class with the given className.
-     * 
+     * @throws ClassNotFoundException If the class could not be found
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public Class findClass(String className) throws ClassNotFoundException {
         ArgumentNotValid.checkNotNullOrEmpty(className, "String className");
         // replace all dots with '/' in the className before looking it up

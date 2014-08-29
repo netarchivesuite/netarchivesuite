@@ -38,11 +38,10 @@ import dk.netarkivet.common.utils.DomainUtils;
 /**
  * This is a modified version of the {@link DomainnameQueueAssignmentPolicy} where domainname returned is the domainname
  * of the candidateURI except where the domainname of the SeedURI is a different one.
- * 
- * 
+ * <p>
+ * <p>
  * Using the domain as the queue-name. The domain is defined as the last two names in the entire hostname or the
  * entirety of an IP address. x.y.z -> y.z y.z -> y.z nn.nn.nn.nn -> nn.nn.nn.nn
- * 
  */
 public class SeedUriDomainnameQueueAssignmentPolicy extends HostnameQueueAssignmentPolicy {
 
@@ -103,7 +102,7 @@ public class SeedUriDomainnameQueueAssignmentPolicy extends HostnameQueueAssignm
 
     /**
      * Find a candidate from the source.
-     * 
+     *
      * @param cauri A potential URI
      * @return a candidate from the source or null if none found
      */

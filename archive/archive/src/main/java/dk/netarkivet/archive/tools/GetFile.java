@@ -37,7 +37,7 @@ import dk.netarkivet.common.utils.Settings;
 
 /**
  * A command-line tool to get ARC files from the bitarchive.
- *
+ * <p>
  * Usage: java dk.netarkivet.archive.tools.GetFile arcfilename [destination-file]
  */
 
@@ -58,7 +58,7 @@ public class GetFile extends ToolRunnerBase {
 
     /**
      * Create an instance of GetFileTool.
-     * 
+     *
      * @return an instance of GetFileTool.
      */
     protected SimpleCmdlineTool makeMyTool() {

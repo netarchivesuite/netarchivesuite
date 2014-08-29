@@ -55,17 +55,19 @@ import dk.netarkivet.common.exceptions.IOFailure;
 /**
  * Utilities for handling XML-files.
  */
-@SuppressWarnings({ "unchecked"})
+@SuppressWarnings({"unchecked"})
 public class XmlUtils {
 
     private static final Logger log = LoggerFactory.getLogger(XmlUtils.class);
 
-   /** Read and parse an XML-file, and return
+    /**
+     * Read and parse an XML-file, and return
      * a Document object representing this object.
+     *
      * @param f a given xml file
      * @return a Document representing the xml file
      * @throws IOFailure if unable to read the xml file
-     *          or unable to parse the file as XML
+     * or unable to parse the file as XML
      */
     public static Document getXmlDoc(File f) throws IOFailure {
         ArgumentNotValid.checkNotNull(f, "File f");
@@ -81,14 +83,16 @@ public class XmlUtils {
             log.warn("Could not parse the file as XML: '{}'", f, e);
             throw new IOFailure("Could not parse the file as XML: '" + f + "'", e);
         }
-   }
+    }
 
-    /** Read and parse an XML stream, and return
+    /**
+     * Read and parse an XML stream, and return
      * a Document object representing this object.
+     *
      * @param resourceAsStream a given xml document
      * @return a Document representing the xml document
      * @throws IOFailure if unable to read the xml document
-     *          or unable to parse the document as XML
+     * or unable to parse the document as XML
      */
     public static Document getXmlDoc(InputStream resourceAsStream) {
         ArgumentNotValid.checkNotNull(resourceAsStream, "InputStream resourceAsStream");
@@ -104,7 +108,7 @@ public class XmlUtils {
     /**
      * Set a XmlNode defined by the given XPath to the given value.
      *
-     * @param doc   the Document, which is being modified
+     * @param doc the Document, which is being modified
      * @param xpath the given XPath
      * @param value the given value
      * @throws IOFailure If the given XPath was not found in the document
@@ -117,7 +121,7 @@ public class XmlUtils {
         Node xpathNode = doc.selectSingleNode(xpath);
         if (xpathNode == null) {
             throw new IOFailure("Element '" + xpath + "' could not be found in the document '"
-            		+ doc.getRootElement().getName() + "'!");
+                    + doc.getRootElement().getName() + "'!");
         }
         xpathNode.setText(value);
     }
@@ -125,7 +129,7 @@ public class XmlUtils {
     /**
      * Set a List of XmlNodes defined by the given XPath to the given value.
      *
-     * @param doc   the Document, which is being modified
+     * @param doc the Document, which is being modified
      * @param xpath the given XPath
      * @param value the given value
      * @throws IOFailure If the given XPath was not found in the document
@@ -137,9 +141,9 @@ public class XmlUtils {
         List<Node> xpathNodes = doc.selectNodes(xpath);
         if (xpathNodes == null) {
             throw new IOFailure("Element '" + xpath + "' could not be found in the document '"
-            		+ doc.getRootElement().getName() + "'!");
+                    + doc.getRootElement().getName() + "'!");
         }
-        for (int i=0; i<xpathNodes.size(); ++i) {
+        for (int i = 0; i < xpathNodes.size(); ++i) {
             xpathNodes.get(i).setText(value);
         }
     }
@@ -149,7 +153,7 @@ public class XmlUtils {
      *
      * @param xsdFile Schema to check settings against.
      * @throws ArgumentNotValid if unable to validate the settings files
-     * @throws IOFailure If unable to read the settings files and/or 
+     * @throws IOFailure If unable to read the settings files and/or
      * the xsd file.
      */
     public static void validateWithXSD(File xsdFile) {
@@ -159,7 +163,7 @@ public class XmlUtils {
             try {
                 DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
                 builderFactory.setNamespaceAware(true);
-                DocumentBuilder parser = builderFactory .newDocumentBuilder();
+                DocumentBuilder parser = builderFactory.newDocumentBuilder();
                 org.w3c.dom.Document document = parser.parse(settingsFile);
 
                 // create a SchemaFactory capable of understanding WXS schemas
@@ -179,7 +183,7 @@ public class XmlUtils {
                 } catch (SAXException e) {
                     // instance document is invalid!
                     final String msg = "Settings file '" + settingsFile + "' does not validate using '"
-                    		+ xsdFile + "'";
+                            + xsdFile + "'";
                     log.warn(msg, e);
                     throw new ArgumentNotValid(msg, e);
                 }
@@ -219,15 +223,17 @@ public class XmlUtils {
             throw new IOFailure("Unable to write XML to file '" + f.getAbsolutePath() + "'", e);
         }
     }
-    
-    /** Parses a given string to produce a {@link org.w3c.dom.Document} 
+
+    /**
+     * Parses a given string to produce a {@link org.w3c.dom.Document}
      * instance.
+     *
      * @param xml Some XML text.
-     * @return a {@link org.w3c.dom.Document} parsed from the given xml. 
+     * @return a {@link org.w3c.dom.Document} parsed from the given xml.
      * @throws DocumentException If unable to parse the given text as XML.
      */
-    public static Document documentFromString(String xml) 
-    throws DocumentException {
+    public static Document documentFromString(String xml)
+            throws DocumentException {
         Document doc;
         try {
             SAXReader reader = new SAXReader();
@@ -240,5 +246,5 @@ public class XmlUtils {
         }
         return doc;
     }
-    
+
 }

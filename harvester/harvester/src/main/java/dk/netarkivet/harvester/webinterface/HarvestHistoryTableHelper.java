@@ -156,7 +156,7 @@ public class HarvestHistoryTableHelper {
 
     /**
      * Calculates the sort order arrow for the headers of a sortable table
-     * 
+     *
      * @param sortField The sort field to find a arrow for.
      * @return The relevant arrow for the indicated field. Will be the reverse if the sorting is already on this field
      * else an empty string will be returned
@@ -172,7 +172,7 @@ public class HarvestHistoryTableHelper {
     /**
      * Calculates the reverse sort order for this file. If the field isn't used for ordering, Constants.SORT_ORDER_ASC
      * is returned.
-     * 
+     *
      * @param sortField The sort field to find a new order for.
      * @return The relevant asc/desc string.
      */

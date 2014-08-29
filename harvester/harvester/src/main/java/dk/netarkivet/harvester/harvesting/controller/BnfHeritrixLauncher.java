@@ -52,7 +52,7 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
     /**
      * This class executes a crawl control task, e.g. queries the crawler for progress summary, sends the adequate JMS
      * message to the monitor, and checks whether the crawl is finished, in which case crawl control will be ended.
-     *
+     * <p>
      * These tasks are scheduled by a {@link CrawlControlExecutor}.
      */
     private class CrawlControl implements Runnable {
@@ -106,7 +106,7 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
 
     /**
      * Private constructor for this class.
-     * 
+     *
      * @param files the files needed by Heritrix to launch a job.
      * @throws ArgumentNotValid
      */
@@ -118,9 +118,7 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
      * Get instance of this class.
      *
      * @param files Object encapsulating location of Heritrix crawldir and configuration files
-     *
      * @return {@link BnfHeritrixLauncher} object
-     *
      * @throws ArgumentNotValid If either order.xml or seeds.txt does not exist, or argument files is null.
      */
     public static BnfHeritrixLauncher getInstance(HeritrixFiles files) throws ArgumentNotValid {

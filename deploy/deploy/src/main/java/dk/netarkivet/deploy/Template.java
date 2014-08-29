@@ -39,14 +39,15 @@ public class Template {
     /**
      * Takes an array of strings and returns a concatenated string with all ${...} occurrences replaced according to the
      * env map.
-     * 
+     *
      * @param strArray array of strings to be processed with env strings
      * @param env map of replacement strings
      * @param bFailOnMissing throw an exception on missing replacement string or not
      * @param separator separator to insert between lines or null
      * @return concatenated and processed string
      */
-    public static String untemplate(String[] strArray, Map<String, String> env, boolean bFailOnMissing, String separator) {
+    public static String untemplate(String[] strArray, Map<String, String> env, boolean bFailOnMissing,
+            String separator) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < strArray.length; ++i) {
             sb.append(untemplate(strArray[i], env, bFailOnMissing));
@@ -59,7 +60,7 @@ public class Template {
 
     /**
      * Takes a string and replaces all ${...} occurrences with env map strings.
-     * 
+     *
      * @param str string to be processed
      * @param env map of replacement strings
      * @param bFailOnMissing throw an exception on missing replacement string or not

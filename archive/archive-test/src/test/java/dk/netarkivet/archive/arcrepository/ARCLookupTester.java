@@ -198,7 +198,7 @@ public class ARCLookupTester {
 
     /**
      * Test that when a uri with escaped characters is looked up, the uri is urldecoded first.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -236,7 +236,7 @@ public class ARCLookupTester {
     /**
      * Test that asking for a given URL makes ARCArchiveAccess ask the right stuff in the arc repository client and
      * returns it correctly.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -302,7 +302,7 @@ public class ARCLookupTester {
                 metadata.put(header_field, "");
             }
             metadata.put(ARCConstants.ABSOLUTE_OFFSET_KEY, Long.valueOf(0L)); // Dummy
-                                                                              // offset
+            // offset
             byte[] data = ("HTTP/1.1 200 OK\nLocation: " + arcFile + "\n\n" + arcFile + " " + index).getBytes();
             // TODO replace this by something else, or remove ?
             // (ARCConstants.LENGTH_HEADER_FIELD_KEY)
@@ -335,7 +335,7 @@ public class ARCLookupTester {
 
     /**
      * Read a line of bytes from an InputStream. Useful when an InputStream may contain both text and binary data.
-     * 
+     *
      * @param inputStream A source of data
      * @return A line of text read from inputStream, with terminating \r\n or \n removed, or null if no data is
      * available.

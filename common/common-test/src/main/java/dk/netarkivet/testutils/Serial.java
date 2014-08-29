@@ -42,7 +42,7 @@ public class Serial {
 
     /**
      * Serializes an Object, deserializes it, and then returns it.
-     * 
+     *
      * @param input_object
      * @return Object
      * @throws IOException

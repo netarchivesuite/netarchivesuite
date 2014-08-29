@@ -45,7 +45,6 @@ import dk.netarkivet.viewerproxy.URIResolver;
 /**
  * Wrapper for an URIResolver, which calls the controller methods on given specific URLs, and forwards all others to the
  * wrapped handler. This allows you to access control methods by giving specific urls to this class.
- *
  */
 public class HTTPControllerServer extends CommandResolver {
     /**

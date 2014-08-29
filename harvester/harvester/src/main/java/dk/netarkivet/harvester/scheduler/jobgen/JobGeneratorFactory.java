@@ -37,7 +37,7 @@ public class JobGeneratorFactory extends SettingsFactory<JobGenerator> {
      * Returns an instance of the configured {@link JobGenerator} implementation defined by the setting
      * {@link HarvesterSettings#JOBGEN_CLASS}. This class must have a constructor or factory method with a signature
      * matching the array args.
-     * 
+     *
      * @param args the arguments to the constructor or factory method
      * @return the {@link JobGenerator} instance.
      */

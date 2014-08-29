@@ -44,7 +44,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 /**
  * Heritrix wrapper implementation of the abstract archive header interface.
  */
-@SuppressWarnings({ "unchecked"})
+@SuppressWarnings({"unchecked"})
 public class HeritrixArchiveHeaderWrapper extends ArchiveHeaderBase {
 
     /** The logger for this class. */
@@ -62,23 +62,27 @@ public class HeritrixArchiveHeaderWrapper extends ArchiveHeaderBase {
     /** Original Heritrix header object. */
     protected ArchiveRecordHeader header;
 
-    /** Map of header fields extracted from the Heritrix header.
-     *  Only difference is that the keys are normalized to lower case. */
+    /**
+     * Map of header fields extracted from the Heritrix header.
+     * Only difference is that the keys are normalized to lower case.
+     */
     protected Map<String, Object> headerFields = new HashMap<String, Object>();
 
     /**
      * Construct a Heritrix record header wrapper object.
+     *
      * @param recordWrapper wrapped Heritrix header
      * @param record original Heritrix record
      * @return wrapped Heritrix record header
      */
-    public static HeritrixArchiveHeaderWrapper wrapArchiveHeader(HeritrixArchiveRecordWrapper recordWrapper, ArchiveRecord record) {
+    public static HeritrixArchiveHeaderWrapper wrapArchiveHeader(HeritrixArchiveRecordWrapper recordWrapper,
+            ArchiveRecord record) {
         //ArgumentNotValid.checkNotNull(recordWrapper, "recordWrapper");
         ArgumentNotValid.checkNotNull(record, "record");
         HeritrixArchiveHeaderWrapper headerWrapper = new HeritrixArchiveHeaderWrapper();
         headerWrapper.recordWrapper = recordWrapper;
         headerWrapper.header = record.getHeader();
-        Map<String, Object> heritrixHeaderFields = (Map<String, Object>)headerWrapper.header.getHeaderFields();
+        Map<String, Object> heritrixHeaderFields = (Map<String, Object>) headerWrapper.header.getHeaderFields();
         Iterator<Map.Entry<String, Object>> iter = heritrixHeaderFields.entrySet().iterator();
         Map.Entry<String, Object> entry;
         while (iter.hasNext()) {
@@ -186,7 +190,7 @@ public class HeritrixArchiveHeaderWrapper extends ArchiveHeaderBase {
             log.info("Archive date could not be parsed: '{}'.", dateStr);
         }
         return date;
-    } 
+    }
 
     @Override
     public String getArcDateStr() {
@@ -201,7 +205,7 @@ public class HeritrixArchiveHeaderWrapper extends ArchiveHeaderBase {
             }
         }
         return dateStr;
-    } 
+    }
 
     @Override
     public String getMimetype() {

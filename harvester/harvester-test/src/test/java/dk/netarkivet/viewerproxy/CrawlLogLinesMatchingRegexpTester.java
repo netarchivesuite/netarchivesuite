@@ -44,7 +44,6 @@ import dk.netarkivet.viewerproxy.webinterface.CrawlLogLinesMatchingRegexp;
 
 /**
  * Tester for the class CrawlLogLinesMatchingRegexp used in Reporting.getCrawlLoglinesMatchingRegexp(jobid, regexp);
- *
  */
 public class CrawlLogLinesMatchingRegexpTester {
 

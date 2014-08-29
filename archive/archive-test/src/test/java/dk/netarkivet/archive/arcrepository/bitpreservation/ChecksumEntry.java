@@ -33,7 +33,7 @@ import dk.netarkivet.common.utils.batch.ChecksumJob;
 
 /**
  * Method for storing a checksum along with its filename.
- * 
+ * <p>
  * This class also holds the method for extracting the results of a ChecksumJob into a list of ChecksumEntry, which is
  * used by the BitPreservationDAO.
  */
@@ -45,7 +45,7 @@ public class ChecksumEntry extends Object {
 
     /**
      * Constructor.
-     * 
+     *
      * @param filename The name of the file.
      * @param checksum The checksum of the file.
      */
@@ -56,7 +56,7 @@ public class ChecksumEntry extends Object {
 
     /**
      * Retrieves the filename.
-     * 
+     *
      * @return The filename.
      */
     public String getFilename() {
@@ -65,7 +65,7 @@ public class ChecksumEntry extends Object {
 
     /**
      * Retrieves the checksum.
-     * 
+     *
      * @return The checksum.
      */
     public String getChecksum() {
@@ -74,7 +74,7 @@ public class ChecksumEntry extends Object {
 
     /**
      * Retrieval of the hashCode of this instance.
-     * 
+     *
      * @return The hashCode of this instance.
      */
     public int hashCode() {
@@ -93,7 +93,7 @@ public class ChecksumEntry extends Object {
 
     /**
      * Method for testing whether a ChecksumEntry is identical to another ChecksumEntry.
-     * 
+     *
      * @param obj The object to evaluate whether it is identical to this ChecksumEntry.
      * @return Whether the argument has the same values as this ChecksumEntry. It returns false if the argument is not
      * of type ChecksumEntry, or if it has either different filename or different checksum.
@@ -128,7 +128,7 @@ public class ChecksumEntry extends Object {
 
     /**
      * Make human readable string.
-     * 
+     *
      * @return This instance as a human readable string.
      */
     public String toString() {
@@ -137,7 +137,7 @@ public class ChecksumEntry extends Object {
 
     /**
      * Method for changing the resulting file of a checksum job into a list of ChecksumEntry.
-     * 
+     *
      * @param checksumjobOutput The file with the output from a checksum job.
      * @return The list of the checksum entries.
      * @throws ArgumentNotValid If the checksumjobOutput is null.

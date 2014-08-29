@@ -77,29 +77,39 @@ public class HarvestHistoryPageHelper {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o)
+            if (this == o) {
                 return true;
-            if (!(o instanceof HarvestHistoryEntry))
+            }
+            if (!(o instanceof HarvestHistoryEntry)) {
                 return false;
+            }
 
             HarvestHistoryEntry that = (HarvestHistoryEntry) o;
 
-            if (!bytesHarvested.equals(that.bytesHarvested))
+            if (!bytesHarvested.equals(that.bytesHarvested)) {
                 return false;
-            if (!configuration.equals(that.configuration))
+            }
+            if (!configuration.equals(that.configuration)) {
                 return false;
-            if (!documentsHarvested.equals(that.documentsHarvested))
+            }
+            if (!documentsHarvested.equals(that.documentsHarvested)) {
                 return false;
-            if (!endTime.equals(that.endTime))
+            }
+            if (!endTime.equals(that.endTime)) {
                 return false;
-            if (!runID.equals(that.runID))
+            }
+            if (!runID.equals(that.runID)) {
                 return false;
-            if (!runNumber.equals(that.runNumber))
+            }
+            if (!runNumber.equals(that.runNumber)) {
                 return false;
-            if (!startTime.equals(that.startTime))
+            }
+            if (!startTime.equals(that.startTime)) {
                 return false;
-            if (!stoppedDueTo.equals(that.stoppedDueTo))
+            }
+            if (!stoppedDueTo.equals(that.stoppedDueTo)) {
                 return false;
+            }
 
             return true;
         }

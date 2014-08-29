@@ -37,8 +37,6 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -91,9 +89,6 @@ public class ArcRepositoryTesterBatch {
 
     ReloadSettings rs = new ReloadSettings();
 
-    /**
-     * @see TestCase#setUp()
-     */
     @Before
     public void setUp() throws Exception {
         rs.setUp();
@@ -119,9 +114,6 @@ public class ArcRepositoryTesterBatch {
         rf.setUp();
     }
 
-    /**
-     * @see TestCase#tearDown()
-     */
     @After
     public void tearDown() throws Exception {
         c.close(); // Close down ArcRepository controller

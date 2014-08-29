@@ -45,9 +45,8 @@ import dk.netarkivet.common.utils.Settings;
 /**
  * The WebProxy is the ONLY viewerproxy class that interfaces with the Jetty classes. This class packages all requests
  * up nicely as calls to uriResolver.lookup().
- *
+ * <p>
  * In particular, it handles the control of the Jetty server that the Proxy server builds on.
- *
  */
 @SuppressWarnings({"deprecation", "unchecked"})
 public class WebProxy extends DefaultHandler implements URIResolverHandler {
@@ -91,7 +90,7 @@ public class WebProxy extends DefaultHandler implements URIResolverHandler {
 
     /**
      * Sets the current URIResolver.
-     * 
+     *
      * @param ur The resolver to handle lookups.
      * @throws ArgumentNotValid on null uriResolver.
      */
@@ -104,7 +103,7 @@ public class WebProxy extends DefaultHandler implements URIResolverHandler {
      * Handle an HTTP request. Overrides default behaviour of Jetty. This will forward the URI and response to the
      * wrapped URI resolver. Note that the server will NOT force the return value to be the one returned by the uri
      * resolver, rather it will use the one the uri resolver has set in the response object.
-     *
+     * <p>
      * Exceptions will generate an internal server error-page with the details.
      *
      * @param target URL or name for request. Not used
@@ -210,7 +209,7 @@ public class WebProxy extends DefaultHandler implements URIResolverHandler {
 
         /**
          * Set status code and explanatory text string describing the status.
-         * 
+         *
          * @param statusCode should be valid http status ie. 200, 404,
          * @param reason text string explaining status ie. OK, not found,
          */
@@ -286,7 +285,7 @@ public class WebProxy extends DefaultHandler implements URIResolverHandler {
          * ctor java.net.URI(String s) violates its own documentation. It should encode all "other" characters in the
          * query part of the URI. These "other" characters include curly brackets, but actually the escaping is never
          * done. Hence we do it here.
-         * 
+         *
          * @param s the String to be encoded
          * @return the encoded String
          */

@@ -33,15 +33,14 @@ import dk.netarkivet.monitor.logging.SingleLogRecord;
 /**
  * This tool will simply reregister all MBeans that matches the given query from the JMX hosts read in settings, using
  * its own platformmbeanserver. It will then wait forever.
- *
+ * <p>
  * It can then be connected to with any JMX client, e.g. jconsole. Start this tool with -Dcom.sun.management.jmxremote
- *
  */
 public class JMXProxy extends ToolRunnerBase {
 
     /**
      * Run the tool as described in class comment.
-     * 
+     *
      * @param args Should take one arg, the query.
      */
     public static void main(String[] args) {

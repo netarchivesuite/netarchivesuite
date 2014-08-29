@@ -29,7 +29,6 @@ import dk.netarkivet.common.utils.FilterIterator;
 
 /**
  * DAO methods for reading templates only. Implemented as a Singleton
- *
  */
 public abstract class TemplateDAO implements DAO {
 
@@ -44,7 +43,7 @@ public abstract class TemplateDAO implements DAO {
 
     /**
      * Gets the TemplateDAO singleton.
-     * 
+     *
      * @return the singleton.
      */
     public static synchronized TemplateDAO getInstance() {
@@ -85,7 +84,7 @@ public abstract class TemplateDAO implements DAO {
 
     /**
      * Check, if there exists a orderxml-template with a given name.
-     * 
+     *
      * @param orderXmlName a given orderxml name
      * @return true, if there exists a orderxml-template with this name
      */
@@ -93,7 +92,7 @@ public abstract class TemplateDAO implements DAO {
 
     /**
      * Create a orderxml-template with a given name.
-     * 
+     *
      * @param orderXmlName the given name
      * @param orderXml the Document containing the contents of this new orderxml-template
      */
@@ -101,7 +100,7 @@ public abstract class TemplateDAO implements DAO {
 
     /**
      * Update a specific orderxml-template to contain the contents of the orderXml argument.
-     * 
+     *
      * @param orderXmlName the name of a specific orderxml-template
      * @param orderXml the new contents of this template
      */

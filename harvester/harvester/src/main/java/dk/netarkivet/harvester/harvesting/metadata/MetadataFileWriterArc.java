@@ -35,9 +35,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.arc.ARCUtils;
 
 /**
- * 
  * MetadataFileWriter that writes to ARC files.
- *
  */
 public class MetadataFileWriterArc extends MetadataFileWriter {
 
@@ -48,7 +46,7 @@ public class MetadataFileWriterArc extends MetadataFileWriter {
 
     /**
      * Create a <code>MetadataFileWriter</code> for ARC output.
-     * 
+     *
      * @param metadataARCFile The metadata ARC <code>File</code>
      * @return <code>MetadataFileWriter</code> for writing metadata files in ARC
      */
@@ -82,12 +80,12 @@ public class MetadataFileWriterArc extends MetadataFileWriter {
 
     /**
      * Writes a File to an ARCWriter, if available, otherwise logs the failure to the class-logger.
-     * 
+     *
      * @param fileToArchive the File to archive
      * @param URL the URL with which it is stored in the arcfile
      * @param mimetype The mimetype of the File-contents
      * @return true, if file exists, and is written to the arcfile.
-     *
+     * <p>
      * TODO I wonder if this is a clone of the ARCUtils method. (nicl)
      */
     @Override

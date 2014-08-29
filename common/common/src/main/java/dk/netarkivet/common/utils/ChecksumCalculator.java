@@ -42,7 +42,7 @@ import dk.netarkivet.common.exceptions.IllegalState;
  */
 public final class ChecksumCalculator {
 
-	/** Defines the MD5 checksum algorithm */
+    /** Defines the MD5 checksum algorithm */
     public static final String MD5 = "MD5";
     /** Defines the SHA1 checksum algorithm */
     public static final String SHA1 = "SHA1";
@@ -106,12 +106,12 @@ public final class ChecksumCalculator {
     }
 
     /**
-     * Calculates an SHA-1 digest on an InputStream, throwing away the 
-     * data itself. Throws Alert if there is an error reading from the 
+     * Calculates an SHA-1 digest on an InputStream, throwing away the
+     * data itself. Throws Alert if there is an error reading from the
      * stream
      *
-     * @param instream An <code>InputStream</code> to calculate the SHA-1 digest on.  
-     * The contents of the stream will be consumed by this call, but the 
+     * @param instream An <code>InputStream</code> to calculate the SHA-1 digest on.
+     * The contents of the stream will be consumed by this call, but the
      * stream will not be closed.
      * @return The calculated SHA-1 digest as a string.
      */
@@ -121,6 +121,7 @@ public final class ChecksumCalculator {
 
     /**
      * Generate an MD5 for a byte array.
+     *
      * @param msg The given bytearray
      * @return the MD5 for a byte array
      */
@@ -129,12 +130,12 @@ public final class ChecksumCalculator {
     }
 
     /**
-     * Calculates a digest on an InputStream, throwing away the 
-     * data itself. Throws Alert if there is an error reading from the 
+     * Calculates a digest on an InputStream, throwing away the
+     * data itself. Throws Alert if there is an error reading from the
      * stream
      *
-     * @param instream An <code>InputStream</code> to calculate the digest on.  
-     * The contents of the stream will be consumed by this call, but the 
+     * @param instream An <code>InputStream</code> to calculate the digest on.
+     * The contents of the stream will be consumed by this call, but the
      * stream will not be closed.
      * @param algorithm digest algorithm to use
      * @return The calculated digest as a string.
@@ -174,8 +175,10 @@ public final class ChecksumCalculator {
         }
         return new String(hexchars);
     }
+
     /**
      * Get a MessageDigest for a specific algorithm.
+     *
      * @param algorithm a specific MessageDigest algorithm.
      * @return a MessageDigest for a specific algorithm
      */

@@ -59,7 +59,6 @@ import dk.netarkivet.common.utils.SystemUtils;
 /**
  * Bitarchive container responsible for processing the different classes of message which can be received by a
  * bitarchive and returning appropriate data.
- *
  */
 public class BitarchiveServer extends ArchiveMessageHandler implements CleanupIF {
 
@@ -97,7 +96,7 @@ public class BitarchiveServer extends ArchiveMessageHandler implements CleanupIF
     /**
      * Returns the unique instance of this class The server creates an instance of the bitarchive it provides access to
      * and starts to listen to JMS messages on the incomming jms queue
-     * <p/>
+     * <p>
      * Also, heartbeats are sent out at regular intervals to the Bitarchive Monitor, to tell that this bitarchive is
      * alive.
      *
@@ -115,7 +114,7 @@ public class BitarchiveServer extends ArchiveMessageHandler implements CleanupIF
     /**
      * The server creates an instance of the bitarchive it provides access to and starts to listen to JMS messages on
      * the incomming jms queue
-     * <p/>
+     * <p>
      * Also, heartbeats are sent out at regular intervals to the Bitarchive Monitor, to tell that this bitarchive is
      * alive.
      *
@@ -275,15 +274,15 @@ public class BitarchiveServer extends ArchiveMessageHandler implements CleanupIF
 
     /**
      * Removes an arcfile from the bitarchive and returns the removed file as an remotefile.
-     *
+     * <p>
      * Answers OK if the file is actually removed. Answers notOk if the file exists with wrong checksum or wrong
      * credentials Doesn't answer if the file doesn't exist.
-     *
+     * <p>
      * This method always generates a warning when deleting a file.
-     *
+     * <p>
      * Before the file is removed it is verified that - the file exists in the bitarchive - the file has the correct
      * checksum - the supplied credentials are correct
-     * 
+     *
      * @param msg a container for remove request
      * @throws ArgumentNotValid If the RemoveAndGetFileMessage is null.
      */

@@ -46,7 +46,7 @@ import org.archive.wayback.util.url.IdentityUrlCanonicalizer;
  * Adapts certain WARCRecords into SearchResults. DNS and response records are mostly straightforward, but SearchResult
  * objects generated from revisit records contain lots of "placeholder" fields, which are expected to be understood by
  * later processes traversing a stream of SearchResult objects.
- * 
+ * <p>
  * This is cut'n'pasted from org.archive.wayback.resourcestore.indexer.WARCRecordToSearchResultAdapter
  */
 public class NetarchiveSuiteWARCRecordToSearchResultAdapter implements Adapter<WARCRecord, CaptureSearchResult> {
@@ -190,7 +190,7 @@ public class NetarchiveSuiteWARCRecordToSearchResultAdapter implements Adapter<W
 
     /**
      * borrowed(copied) from org.archive.io.arc.ARCRecord...
-     * 
+     *
      * @param bytes Array of bytes to examine for an EOL.
      * @return Count of end-of-line characters or zero if none.
      */

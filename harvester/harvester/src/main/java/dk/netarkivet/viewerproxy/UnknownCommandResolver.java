@@ -33,7 +33,6 @@ import dk.netarkivet.common.exceptions.IOFailure;
  * Wrapper for an URIResolver, which gives failures on specific specific URLs, and forwards all others to the wrapped
  * handler. This allows you to reserve a specific host for commands and get a well-defined error if giving an undefined
  * command.
- *
  */
 public class UnknownCommandResolver extends CommandResolver {
     /** Logger for this class. */

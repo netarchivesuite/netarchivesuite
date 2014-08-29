@@ -41,12 +41,12 @@ import dk.netarkivet.common.utils.TimeUtils;
 
 /**
  * This class handles connections to the Archive database
- * 
+ * <p>
  * The statements to create the tables are in scripts/sql/createBitpreservationDB.sql
- *
+ * <p>
  * The implementation relies on a connection pool. Once acquired through the get() method, a connection must be
  * explicitly returned to the pool by calling the release(Connection) method.
- *
+ * <p>
  * THis class is intended to be used statically, and hence cannot be instantiated and is final.
  */
 public final class ArchiveDBConnection {
@@ -76,7 +76,7 @@ public final class ArchiveDBConnection {
      * <li>@see {@link ArchiveSettings#DB_POOL_ACQ_INC}</li>
      * </ul>
      * Note that the connection obtained must be returned to the pool by calling {@link #release(Connection)}.
-     * 
+     *
      * @return a connection to the harvest definition database
      * @throws IOFailure if we cannot connect to the database (or find the driver).
      */
@@ -93,7 +93,7 @@ public final class ArchiveDBConnection {
                 }
                 con = dataSource.getConnection();
                 con.setAutoCommit(false); // different from in
-                                          // HarvestDBConnection
+                // HarvestDBConnection
             } catch (SQLException e) {
                 final String message = "Can't connect to database with DBurl: '" + jdbcUrl + "' using driver '"
                         + dbSpec.getDriverClassName() + "'" + "\n" + ExceptionUtils.getSQLExceptionCause(e);
@@ -145,7 +145,7 @@ public final class ArchiveDBConnection {
 
     /**
      * Helper method to return a connection to the pool.
-     * 
+     *
      * @param connection a connection
      */
     public static synchronized void release(Connection connection) {
@@ -160,7 +160,7 @@ public final class ArchiveDBConnection {
     /**
      * Method for retrieving the url for the archive database. This url will be constructed from the base-url, the
      * machine, the port and the directory.
-     * 
+     *
      * @return The url for the archive database.
      */
     public static String getArchiveUrl() {
@@ -192,7 +192,7 @@ public final class ArchiveDBConnection {
 
     /**
      * Initializes the connection pool.
-     * 
+     *
      * @param dbSpec the object representing the chosen DB target system.
      * @param jdbcUrl the JDBC URL to connect to.
      * @throws SQLException
@@ -244,9 +244,10 @@ public final class ArchiveDBConnection {
         dataSource.setDebugUnreturnedConnectionStackTraces(true);
 
         log.info("Connection pool initialized with the following values:\n" + "- minPoolSize={}\n"
-                + "- maxPoolSize={}\n" + "- acquireIncrement={}\n" + "- maxStatements={}\n"
-                + "- maxStatementsPerConnection={}\n" + "- idleConnTestPeriod={}\n" + "- idleConnTestQuery='{}'\n"
-                + "- idleConnTestOnCheckin={}", dataSource.getMinPoolSize(), dataSource.getMaxPoolSize(),
+                        + "- maxPoolSize={}\n" + "- acquireIncrement={}\n" + "- maxStatements={}\n"
+                        + "- maxStatementsPerConnection={}\n" + "- idleConnTestPeriod={}\n"
+                        + "- idleConnTestQuery='{}'\n"
+                        + "- idleConnTestOnCheckin={}", dataSource.getMinPoolSize(), dataSource.getMaxPoolSize(),
                 dataSource.getAcquireIncrement(), dataSource.getMaxStatements(),
                 dataSource.getMaxStatementsPerConnection(), dataSource.getIdleConnectionTestPeriod(),
                 dataSource.getPreferredTestQuery(), dataSource.isTestConnectionOnCheckin());

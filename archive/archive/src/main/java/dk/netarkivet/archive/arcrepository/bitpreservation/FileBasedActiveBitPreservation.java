@@ -57,10 +57,10 @@ import dk.netarkivet.common.utils.batch.ChecksumJob;
 
 /**
  * Class handling integrity check of the arcrepository.
- * <p/>
+ * <p>
  * This class must run on the same machine as the arcrepository, as it uses the same admin data file (read-only).
  * However, it still talks JMS with the arcrepository.
- * 
+ *
  * @deprecated Use the DatabaseBasedActiveBitPreservation instead (define in the setting:
  * <b>settings.archive.admin.class</b>).
  */
@@ -92,7 +92,7 @@ public class FileBasedActiveBitPreservation implements ActiveBitPreservation, Cl
     /**
      * File preservation is done in a singleton, which means that any user using the file preservation interface will
      * update the same state.
-     *
+     * <p>
      * Nothing breaks by two users simultaneously do bit preservation actions, but it may have undesirable consequences,
      * such as two users simultaneously starting checksum jobs of the full archive.
      */
@@ -125,10 +125,8 @@ public class FileBasedActiveBitPreservation implements ActiveBitPreservation, Cl
      * the bitarchives and admin data.
      *
      * @param filenames List of filenames
-     *
      * @return a map ([filename]-> [FilePreservationState]) of the preservation status for the given files. The
      * preservationstate is null, if the file named does not exist in admin data.
-     *
      * @throws ArgumentNotValid If the list of filenames is null or contains a null.
      */
     public Map<String, PreservationState> getPreservationStateMap(String... filenames) throws ArgumentNotValid {
@@ -200,7 +198,7 @@ public class FileBasedActiveBitPreservation implements ActiveBitPreservation, Cl
 
     /**
      * Get the details of the state of the given file in the bitarchives and admin data.
-     * 
+     *
      * @param filename A given file
      * @return the FilePreservationState for the given file. This will be null, if the filename is not found in admin
      * data.
@@ -218,7 +216,6 @@ public class FileBasedActiveBitPreservation implements ActiveBitPreservation, Cl
      * checksums for the files with these filenames.
      *
      * @param filenames The filenames to get the checksums for.
-     *
      * @return Map containing the output of checksum jobs from the bitarchives.
      */
     private Map<String, Map<Replica, List<String>>> getChecksumMaps(Set<String> filenames) {
@@ -272,7 +269,7 @@ public class FileBasedActiveBitPreservation implements ActiveBitPreservation, Cl
 
     /**
      * Get the checksum of a list of files in a replica (map ([filename] -> map ([replica] -> [list of checksums])).
-     *
+     * <p>
      * Note that this method runs a batch job on the bitarchives, and therefore may take a long time, depending on
      * network delays.
      *
@@ -341,14 +338,13 @@ public class FileBasedActiveBitPreservation implements ActiveBitPreservation, Cl
      * subdirectory missingFiles is created with two unsorted files: 'missingba.txt' containing missing files, ie those
      * registered in the admin data, but not found in the replica, and 'missingadmindata.txt' containing extra files,
      * ie. those found in the replica but not in the arcrepository admin data.
-     *
+     * <p>
      * TODO The second file is never used on the current implementation.
-     *
+     * <p>
      * FIXME: It is unclear if the decision if which files are missing isn't better suited to be in getMissingFiles, so
      * this method only runs the batch job.
      *
      * @param replica the replica to search for missing files
-     *
      * @throws ArgumentNotValid If the given directory does not contain a file filelistOutput/sorted.txt, or the
      * argument replica is null.
      * @throws PermissionDenied If the output directory cannot be created.
@@ -375,7 +371,7 @@ public class FileBasedActiveBitPreservation implements ActiveBitPreservation, Cl
                     + extraFilesInAdminData.size()
                     + " files '"
                     + new ArrayList<String>(extraFilesInAdminData).subList(0,
-                            Math.min(extraFilesInAdminData.size(), MAX_LIST_SIZE))
+                    Math.min(extraFilesInAdminData.size(), MAX_LIST_SIZE))
                     + "' are not present in the replica listing in '"
                     + WorkFiles.getPreservationDir(replica).getAbsolutePath() + "'");
         }
@@ -408,7 +404,6 @@ public class FileBasedActiveBitPreservation implements ActiveBitPreservation, Cl
      * WorkFiles.FILES_ON_BA.
      *
      * @param replica the replica where the given bitarchive lies
-     *
      * @throws PermissionDenied if the output directories cannot be created
      * @throws IOFailure if there is a problem writing the output file, or if the job fails for some reason
      * @throws UnknownID If the replica has an unknown replicaType.
@@ -430,9 +425,7 @@ public class FileBasedActiveBitPreservation implements ActiveBitPreservation, Cl
      * Get a list of corrupt files in a given bitarchive.
      *
      * @param bitarchive a bitarchive
-     *
      * @return a list of wrong files in a given bitarchive.
-     *
      * @throws IllegalState if the file with the list cannot be found.
      */
     public Iterable<String> getChangedFiles(Replica bitarchive) throws IllegalState {
@@ -450,15 +443,14 @@ public class FileBasedActiveBitPreservation implements ActiveBitPreservation, Cl
     /**
      * This method finds out which files in a given bitarchive are misrepresented in the admin data: Either having the
      * wrong checksum or not being marked as uploaded when it actually is.
-     * <p/>
+     * <p>
      * It uses the admindata file from the DIRS_ARCREPOSITORY_ADMIN directory, as well as the files output by a
      * runChecksumJob. The erroneous files are stored in files.
-     *
+     * <p>
      * FIXME: It is unclear if the decision if which files are changed isn't better suited to be in getChangedFiles, so
      * this method only runs the batch job.
      *
      * @param replica the bitarchive replica the checksumjob came from
-     *
      * @throws IOFailure On file or network trouble.
      * @throws PermissionDenied if the output directory cannot be created
      * @throws ArgumentNotValid if argument replica is null
@@ -540,7 +532,7 @@ public class FileBasedActiveBitPreservation implements ActiveBitPreservation, Cl
     /**
      * Runs a checksum job on if the replica is a bitarchive replica and sends a GetAllChecksumsMessage if the replica
      * is a checksum replica. Output is written to file returned by WorkFiles.getChecksumOutputFile(replica).
-     * 
+     *
      * @param replica One of the bitarchive replicas.
      * @throws IOFailure If unable to create output dirs or if unable to write/read output to files.
      */
@@ -560,7 +552,6 @@ public class FileBasedActiveBitPreservation implements ActiveBitPreservation, Cl
      * Return the number of files found in the replica. If nothing is known about the replica, -1 is returned.
      *
      * @param replica the bitarchive to check
-     *
      * @return the number of files found in the bitarchive. If nothing is known about the bitarchive replica, -1 is
      * returned.
      * @throws ArgumentNotValid If the replica is null.
@@ -614,7 +605,7 @@ public class FileBasedActiveBitPreservation implements ActiveBitPreservation, Cl
 
     /**
      * Get the date for last time the checksum information was updated for this replica.
-     * 
+     *
      * @param replica The replica to check last time for.
      * @return The date for last check. Will return 1970-01-01 for never.
      * @throws ArgumentNotValid If the replica is null.
@@ -626,7 +617,7 @@ public class FileBasedActiveBitPreservation implements ActiveBitPreservation, Cl
 
     /**
      * Get the date for last time the missing files information was updated for this replica.
-     * 
+     *
      * @param replica The replica to check last time for.
      * @return The date for last check. Will return 1970-01-01 for never.
      * @throws ArgumentNotValid If the replica is null.
@@ -732,7 +723,7 @@ public class FileBasedActiveBitPreservation implements ActiveBitPreservation, Cl
      * Checks the conditions that must be true before reestablishing a missing file. Returns true if and only if all of
      * the below are true; returns false otherwise.
      * <p>
-     *
+     * <p>
      * 1) the file is registered correctly in AdminData.<br/>
      * 2) the file is missing in the given bitarchive.<br/>
      * 3) the file is present in another bitarchive (the reference archive). <br/>
@@ -805,7 +796,7 @@ public class FileBasedActiveBitPreservation implements ActiveBitPreservation, Cl
 
     /**
      * Method for correcting a corrupt entry in an archive. This message is handled different for the different replicas
-     * 
+     *
      * @param replica The replica which contains the bad entry.
      * @param filename The name of the file.
      * @param checksum The checksum of the bad entry.

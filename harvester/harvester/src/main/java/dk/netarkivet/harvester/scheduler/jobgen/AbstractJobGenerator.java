@@ -50,7 +50,7 @@ import dk.netarkivet.harvester.datamodel.Schedule;
 /**
  * A base class for {@link JobGenerator} implementations. It is recommended to extend this class to implement a new job
  * generator.
- * 
+ * <p>
  * The base algorithm iterates over domain configurations within the harvest definition, and according to the
  * configuration ({@link HarvesterSettings#JOBGEN_DOMAIN_CONFIG_SUBSET_SIZE}, constitutes a subset of domain
  * configurations from which one or more jobs will be generated.
@@ -65,7 +65,7 @@ abstract class AbstractJobGenerator implements JobGenerator {
      */
     private final long DOMAIN_CONFIG_SUBSET_SIZE = Settings.getLong(HarvesterSettings.JOBGEN_DOMAIN_CONFIG_SUBSET_SIZE);
 
-    /** Is deduplication enabled or disabled. **/
+    /** Is deduplication enabled or disabled. * */
     private final boolean DEDUPLICATION_ENABLED = Settings.getBoolean(HarvesterSettings.DEDUPLICATION_ENABLED);
 
     @Override
@@ -104,7 +104,7 @@ abstract class AbstractJobGenerator implements JobGenerator {
                     ++eventsSkipped;
                 }
                 log.warn("Refusing to schedule harvest definition '{}' in the past. Skipped {} events. "
-                        + "Old nextDate was {} new nextDate is {}", harvest.getName(), eventsSkipped,
+                                + "Old nextDate was {} new nextDate is {}", harvest.getName(), eventsSkipped,
                         focused.getNextDate(), nextEvent);
             }
 
@@ -122,7 +122,7 @@ abstract class AbstractJobGenerator implements JobGenerator {
 
     /**
      * Instantiates a new job.
-     * 
+     *
      * @param cfg the {@link DomainConfiguration} being processed
      * @param harvest the {@link HarvestDefinition} being processed
      * @return an instance of {@link Job}
@@ -144,7 +144,7 @@ abstract class AbstractJobGenerator implements JobGenerator {
     /**
      * Returns a comparator used to sort the subset of {@link #DOMAIN_CONFIG_SUBSET_SIZE} configurations that are
      * scanned at each iteration.
-     * 
+     *
      * @param harvest the {@link HarvestDefinition} being processed.
      * @return a comparator
      */
@@ -173,7 +173,7 @@ abstract class AbstractJobGenerator implements JobGenerator {
      * Called by {@link #canAccept(Job, DomainConfiguration)}. Tests the implementation-specific conditions to accept
      * the given {@link DomainConfiguration} in the given {@link Job}. It is assumed that
      * {@link #checkAddDomainConfInvariant(Job, DomainConfiguration)} has already passed.
-     * 
+     *
      * @param job the {@link Job} n=being built
      * @param cfg the {@link DomainConfiguration} to test
      * @return true if the configuration passes the conditions.
@@ -186,7 +186,7 @@ abstract class AbstractJobGenerator implements JobGenerator {
      * <li>Edit the harvest template to add/remove deduplicator configuration.</li>
      * <li></li>
      * </ol>
-     * 
+     *
      * @param job the job
      */
     protected void editJobOrderXml(Job job) {
@@ -216,7 +216,7 @@ abstract class AbstractJobGenerator implements JobGenerator {
      * <li>The job does not already contain the given domain configuration.</li>
      * <li>The domain configuration has the same order xml name as the first inserted domain config.</li>
      * </ol>
-     * 
+     *
      * @param job a given Job
      * @param cfg a given DomainConfiguration
      * @return true, if the given DomainConfiguration can be inserted into the given job

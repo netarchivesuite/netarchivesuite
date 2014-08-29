@@ -35,15 +35,17 @@ import org.dom4j.Node;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IllegalState;
 
-/** A class that implements the StringTree<T> interface by backing it with
+/**
+ * A class that implements the StringTree<T> interface by backing it with
  * XML. The name of each XML node corresponds to the identifier of a node
  * in the tree.
+ *
  * @param <T> The type of XmlTree
  */
-@SuppressWarnings({ "unchecked"})
+@SuppressWarnings({"unchecked"})
 public class XmlTree<T> implements StringTree<T> {
 
-	/** This matches string values that are valid for identifying a field. */
+    /** This matches string values that are valid for identifying a field. */
     private static final Pattern LEGAL_FIELD_NAME = Pattern.compile("[a-zA-Z0-9.-]*");
 
     /**
@@ -52,7 +54,9 @@ public class XmlTree<T> implements StringTree<T> {
      */
     interface ValueParser<T> {
         T parse(String s);
-    };
+    }
+
+    ;
 
     /**
      * A value parser that simply converts an XML node to a string, by trimming
@@ -97,11 +101,11 @@ public class XmlTree<T> implements StringTree<T> {
         this.parser = parser;
     }
 
-    /** Returns a StringTree&lt;String&gt; view of the given XML node.
+    /**
+     * Returns a StringTree&lt;String&gt; view of the given XML node.
      *
      * @param n A part of an XML document structure
      * @return A StringTree&lt;String&gt; backed by the given XML part.
-     *
      * @throws ArgumentNotValid on null argument.
      */
     public static StringTree<String> getStringTree(Node n) {
@@ -147,7 +151,7 @@ public class XmlTree<T> implements StringTree<T> {
     public T getValue() {
         if (!isLeaf()) {
             throw new IllegalState("Node is not text, but "
-            		+ (element != null ? element.getNodeTypeName() : root.getNodeTypeName()));
+                    + (element != null ? element.getNodeTypeName() : root.getNodeTypeName()));
         }
         return parseLeafNode(element);
     }
@@ -241,9 +245,8 @@ public class XmlTree<T> implements StringTree<T> {
      * subtrees are leafs.
      *
      * @return Multimap from subtree names to values of their leaves.
-     *
      * @throws ArgumentNotValid if this object is not a node, or if any of its
-     *                          children are not leaves.
+     * children are not leaves.
      */
     public Map<String, List<T>> getLeafMultimap() {
         if (isLeaf()) {
@@ -272,7 +275,6 @@ public class XmlTree<T> implements StringTree<T> {
      * subtrees are leafs and are uniquely named.
      *
      * @return Map from subtree names to values of their leaves.
-     *
      * @throws IllegalState if this object is a leaf or if the subtrees are not
      * uniquely named, or if any of its children are not leaves.
      */
@@ -284,7 +286,8 @@ public class XmlTree<T> implements StringTree<T> {
         return convertMultimapToMap(map);
     }
 
-    /** Select a list of nodes from the current tree, resolving dotted paths.
+    /**
+     * Select a list of nodes from the current tree, resolving dotted paths.
      * Currently, if any part of the dotted path has multiple subtrees with
      * the given name, this method will find all that match.
      *
@@ -297,7 +300,7 @@ public class XmlTree<T> implements StringTree<T> {
     private List<Element> selectMultipleNodes(String name) {
         ArgumentNotValid.checkNotNullOrEmpty(name, "String name");
         ArgumentNotValid.checkTrue(LEGAL_FIELD_NAME.matcher(name).matches(),
-        		"Name must contain only alphanumeric, dash and period");
+                "Name must contain only alphanumeric, dash and period");
         // parts contains the dotted path, split into individual components
         String[] parts = name.split("\\.");
         // elements contains the root elements to find children from.
@@ -329,7 +332,8 @@ public class XmlTree<T> implements StringTree<T> {
         return elements;
     }
 
-    /** Select a single node from the current tree, resolving dotted paths.
+    /**
+     * Select a single node from the current tree, resolving dotted paths.
      *
      * @param name Name of a node (tree or leaf), possibly via a dotted path
      * @return A single node found via the given name from the root of this
@@ -351,7 +355,8 @@ public class XmlTree<T> implements StringTree<T> {
         return elements.get(0);
     }
 
-    /** Parse the contents of this leaf node according to the parser.
+    /**
+     * Parse the contents of this leaf node according to the parser.
      *
      * @param e A leaf node to parse.
      * @return The parsed contents of the node.
@@ -360,7 +365,8 @@ public class XmlTree<T> implements StringTree<T> {
         return parser.parse(e.getText());
     }
 
-    /** Returns true if the given node is a leaf (i.e. has only text).
+    /**
+     * Returns true if the given node is a leaf (i.e. has only text).
      *
      * @param e A node to check
      * @return True if the given node is a leaf.
@@ -369,7 +375,8 @@ public class XmlTree<T> implements StringTree<T> {
         return e.isTextOnly();
     }
 
-    /** Get the nodes that are children of the current node.  This works
+    /**
+     * Get the nodes that are children of the current node.  This works
      * for both Documents and Elements.
      *
      * @return List of Element objects that are children of the current node.
@@ -385,12 +392,12 @@ public class XmlTree<T> implements StringTree<T> {
         return nodeList;
     }
 
-    /** Convert a multimap into a map, checking that there is only one value for
+    /**
+     * Convert a multimap into a map, checking that there is only one value for
      * each key.
      *
      * @param map The multimap to convert from
      * @return The map to convert to.
-     *
      * @throws IllegalState if the map does not contain exactly one value for
      * each key.
      */

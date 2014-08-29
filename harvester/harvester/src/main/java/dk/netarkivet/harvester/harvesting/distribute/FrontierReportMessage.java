@@ -31,7 +31,6 @@ import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor;
 
 /**
  * Sends a frontier report to the {@link HarvestMonitor}.
- *
  */
 @SuppressWarnings({"serial"})
 public class FrontierReportMessage extends HarvesterMessage {
@@ -47,7 +46,7 @@ public class FrontierReportMessage extends HarvesterMessage {
 
     /**
      * Builds a frontier report wrapper message.
-     * 
+     *
      * @param filter the filter that generated the report.
      * @param report the report to wrap.
      */

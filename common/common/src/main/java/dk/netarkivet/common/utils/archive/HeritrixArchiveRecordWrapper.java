@@ -35,8 +35,10 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  */
 public class HeritrixArchiveRecordWrapper extends ArchiveRecordBase {
 
-    /** The original Heritrix record, since it is also the record payload
-     *  input stream. */
+    /**
+     * The original Heritrix record, since it is also the record payload
+     * input stream.
+     */
     protected ArchiveRecord record;
 
     /** The wrapper archive header. */
@@ -44,6 +46,7 @@ public class HeritrixArchiveRecordWrapper extends ArchiveRecordBase {
 
     /**
      * Construct a Heritrix record wrapper object.
+     *
      * @param record Heritrix record object
      */
     public HeritrixArchiveRecordWrapper(ArchiveRecord record) {
@@ -55,7 +58,7 @@ public class HeritrixArchiveRecordWrapper extends ArchiveRecordBase {
         } else if (record instanceof WARCRecord) {
             this.bIsWarc = true;
         } else {
-            throw new ArgumentNotValid("Unsupported ArchiveRecord type: "+ record.getClass().getName());
+            throw new ArgumentNotValid("Unsupported ArchiveRecord type: " + record.getClass().getName());
         }
     }
 

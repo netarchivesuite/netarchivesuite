@@ -173,16 +173,16 @@ public class Bitarchive {
 
     /**
      * Run a batch job on all ARC entries in the archive.
-     * <p/>
+     * <p>
      * This currently runs synchronously, and returns only after finish() has been called.
      *
      * @param bitarchiveAppId A String representing the bitarchive AppId.
      * @param job An object that implements the ARCBatchJob interface. The initialize() method will be called before
      * processing and the finish() method will be called afterwards. The process() method will be called with each ARC
      * entry.
+     * @return A localBatchStatus
      * @throws ArgumentNotValid if job or file is null.
      * @throws IOFailure if there was problems writing to the RemoteFile
-     * @return A localBatchStatus
      */
     public BatchStatus batch(String bitarchiveAppId, final FileBatchJob job) throws ArgumentNotValid, IOFailure {
         ArgumentNotValid.checkNotNullOrEmpty(bitarchiveAppId, "String bitarchiveAppId");
@@ -262,7 +262,7 @@ public class Bitarchive {
 
     /**
      * Get a file for a given arcFileID.
-     * 
+     *
      * @param arcFileID name of the file to be retrieved.
      * @return The file requested or null if not found
      * @throws ArgumentNotValid If arcFileID was null or empty.

@@ -52,7 +52,7 @@ public class OnNSDomainsDecideRule extends SurtPrefixedDecideRule {
 
     /**
      * Constructor for the class OnNSDomainsDecideRule.
-     * 
+     *
      * @param s The name of this DecideRule
      */
     public OnNSDomainsDecideRule(String s) {
@@ -110,7 +110,7 @@ public class OnNSDomainsDecideRule extends SurtPrefixedDecideRule {
 
     /**
      * Generate the SURT prefix that matches the domain definition of NetarchiveSuite.
-     * 
+     *
      * @param uri URL to convert to SURT
      * @return String with SURT that matches the domain definition of NetarchiveSuite
      */
@@ -121,7 +121,7 @@ public class OnNSDomainsDecideRule extends SurtPrefixedDecideRule {
 
     /**
      * Convert a URI to its domain.
-     * 
+     *
      * @param uri URL to convert to Top most domain-name according to NetarchiveSuite definition
      * @return Domain name
      */

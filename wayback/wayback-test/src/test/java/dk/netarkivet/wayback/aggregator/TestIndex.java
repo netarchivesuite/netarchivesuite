@@ -90,7 +90,6 @@ public class TestIndex {
      * Loads all the indexes in a files into a sorted TreeSet
      *
      * @param indexFile The file to load
-     *
      * @return The sorted set containing the file indexes
      */
     private TreeSet<String> indexFileToIndexSet(File indexFile) {
@@ -102,8 +101,9 @@ public class TestIndex {
                 while ((line = input.readLine()) != null) {
                     indexSet.add(line);
                     boolean DEBUG = false;
-                    if (DEBUG)
+                    if (DEBUG) {
                         System.out.println("\nAdding line to set: " + line);
+                    }
                 }
             } finally {
                 input.close();

@@ -40,7 +40,7 @@ public class ArchiveStoreState {
 
     /**
      * Constructor for this class. This sets the lastchanged value to Now.
-     * 
+     *
      * @param storestate A BitArchiveStoreState
      */
     public ArchiveStoreState(ReplicaStoreState storestate) {
@@ -49,7 +49,7 @@ public class ArchiveStoreState {
 
     /**
      * Constructor for this class.
-     * 
+     *
      * @param storestate A BitArchiveStoreState
      * @param lastchanged Time for when this state was set
      */
@@ -57,9 +57,9 @@ public class ArchiveStoreState {
         setState(storestate, lastchanged);
     }
 
-    /***
+    /**
      * Return the current BitArchiveStoreState.
-     * 
+     *
      * @return the current BitArchiveStoreState
      */
     public ReplicaStoreState getState() {
@@ -68,7 +68,7 @@ public class ArchiveStoreState {
 
     /**
      * Sets the current ReplicaStoreState.
-     * 
+     *
      * @param state The ReplicaStoreState.
      * @param lastDate The lastchanged date.
      * @throws ArgumentNotValid If the state or the lastDate is null.
@@ -83,7 +83,7 @@ public class ArchiveStoreState {
 
     /**
      * Sets the current ReplicaStoreState. As a sideeffect lastchanged is set to NOW.
-     * 
+     *
      * @param state the ReplicaStoreState.
      * @throws ArgumentNotValid If the state is null.
      */
@@ -95,7 +95,7 @@ public class ArchiveStoreState {
 
     /**
      * Get the Date for when the state was lastchanged.
-     * 
+     *
      * @return the Date for when the state was lastchanged
      */
     public Date getLastChanged() {
@@ -105,7 +105,7 @@ public class ArchiveStoreState {
 
     /**
      * Creates an string representation of this instance.
-     * 
+     *
      * @return The string representation of this instance.
      */
     public String toString() {

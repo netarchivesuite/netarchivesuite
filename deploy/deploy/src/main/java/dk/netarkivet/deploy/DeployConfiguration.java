@@ -69,7 +69,7 @@ public class DeployConfiguration {
 
     /**
      * Constructor. Initialise everything.
-     * 
+     *
      * @param deployConfigFileName Name of configuration file.
      * @param netarchiveSuiteFileName Name of installation file.
      * @param secPolicyFileName Name of security policy file.
@@ -147,7 +147,7 @@ public class DeployConfiguration {
 
     /**
      * Method for copying the NetarchiveSuite file to output directory. This handles the following three scenarios:
-     * 
+     * <p>
      * <ol>
      * <li>outputDir == directory of zip file</li>
      * Do nothing. <br>

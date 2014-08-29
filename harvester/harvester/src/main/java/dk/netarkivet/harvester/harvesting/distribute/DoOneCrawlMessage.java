@@ -110,7 +110,7 @@ public class DoOneCrawlMessage extends HarvesterMessage implements Serializable 
 
     /**
      * Method needed to de-serializable an object of this class.
-     * 
+     *
      * @param s an ObjectInputStream
      * @throws ClassNotFoundException In case the object read is of unknown class.
      * @throws IOException On I/O trouble reading the object.
@@ -121,7 +121,7 @@ public class DoOneCrawlMessage extends HarvesterMessage implements Serializable 
 
     /**
      * Method needed to serializable an object of this class.
-     * 
+     *
      * @param s an ObjectOutputStream
      * @throws IOException On I/O trouble writing the object.
      */

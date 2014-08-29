@@ -64,11 +64,11 @@ import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriterWarc;
  * This tool creates a CDX metadata file for a given job's jobID and harvestPrefix by running a batch job on the
  * bitarchive and processing the results to give a metadata file. Use option -w to select WARC output, and -a to select
  * ARC output: If no option available, then warc mode is selected
- *
+ * <p>
  * Usage: java dk.netarkivet.harvester.tools.CreateCDXMetadataFile -w --jobID 2 --harvestnamePrefix 2-1 Usage: java
  * dk.netarkivet.harvester.tools.CreateCDXMetadataFile -a --jobID 2 --harvestnamePrefix 2-1 Usage: java
  * dk.netarkivet.harvester.tools.CreateCDXMetadataFile --jobID 2 --harvestnamePrefix 2-1
- * 
+ * <p>
  * The CDX records is slightly different from the one produced normally. As we are not able to extract the timestamp,
  * and harvestID from the (W) arcfilenames, this information is not part of the CXDURI.
  */
@@ -114,7 +114,6 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
         /**
          * The file pattern that matches an ARC or WARC file name without the jobID. If combined with a
          * harvestnameprefix, this will match filenames that begin with the given harvestname prefix.
-         * 
          */
         private static final String REMAINING_ARCHIVE_FILE_PATTERN = ".*";
 

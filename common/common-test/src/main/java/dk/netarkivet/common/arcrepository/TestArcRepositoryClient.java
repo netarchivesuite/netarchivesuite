@@ -49,7 +49,6 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
 /**
  * A local-file based arc repository client. Given one or more directories with ARC files, this client will serve them
  * out like a normal arcrepository.
- *
  */
 
 // public class TestArcRepositoryClient extends JMSArcRepositoryClient {

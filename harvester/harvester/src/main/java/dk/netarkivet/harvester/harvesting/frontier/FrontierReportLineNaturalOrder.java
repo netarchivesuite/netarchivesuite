@@ -27,7 +27,6 @@ import java.util.Comparator;
 /**
  * This class implements a natural order on {@link FrontierReportLine}. Comparisons are made : - first by decreasing
  * values of totalEnqueues - secondly by domain name (string natural order)
- *
  */
 public class FrontierReportLineNaturalOrder implements Comparator<FrontierReportLineOrderKey> {
 
@@ -44,7 +43,7 @@ public class FrontierReportLineNaturalOrder implements Comparator<FrontierReport
 
     /**
      * Returns the singleton instance of this class.
-     * 
+     *
      * @return the singleton instance of this class.
      */
     public static FrontierReportLineNaturalOrder getInstance() {

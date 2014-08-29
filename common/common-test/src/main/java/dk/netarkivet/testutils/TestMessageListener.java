@@ -35,7 +35,6 @@ import dk.netarkivet.common.distribute.NetarkivetMessage;
 
 /**
  * A simple message listener that collects the messages given to it and lets you query them
- *
  */
 
 public class TestMessageListener implements MessageListener {
@@ -63,7 +62,7 @@ public class TestMessageListener implements MessageListener {
 
     /**
      * Return the number of messages received so far.
-     * 
+     *
      * @return the number of messages received so far
      */
     public int getNumReceived() {
@@ -81,7 +80,6 @@ public class TestMessageListener implements MessageListener {
 
     /**
      * Reset the list of messages returned.
-     *
      */
     public void reset() {
         received.clear();
@@ -89,12 +87,12 @@ public class TestMessageListener implements MessageListener {
 
     /**
      * Returns the number of received messages that were ok.
-     * 
+     *
      * @return the number of received messages that were ok
      */
     public int getNumOk() {
         int count = 0;
-        for (Iterator<NetarkivetMessage> i = received.iterator(); i.hasNext();) {
+        for (Iterator<NetarkivetMessage> i = received.iterator(); i.hasNext(); ) {
             NetarkivetMessage msg = i.next();
             if (msg.isOk()) {
                 count++;
@@ -105,12 +103,12 @@ public class TestMessageListener implements MessageListener {
 
     /**
      * Returns the number of received messages that were not ok.
-     * 
+     *
      * @return the number of received messages that were not ok
      */
     public int getNumNotOk() {
         int count = 0;
-        for (Iterator<NetarkivetMessage> i = received.iterator(); i.hasNext();) {
+        for (Iterator<NetarkivetMessage> i = received.iterator(); i.hasNext(); ) {
             NetarkivetMessage msg = i.next();
             if (!msg.isOk()) {
                 count++;
@@ -121,7 +119,7 @@ public class TestMessageListener implements MessageListener {
 
     /**
      * Looks up the messages that are instances of the given class.
-     * 
+     *
      * @param msgClass A subclass of NetarkivetMessage, e.g. BatchMessage.class;
      * @return The instance that was most recently received, or null if no messages of the specified type has been
      * received.

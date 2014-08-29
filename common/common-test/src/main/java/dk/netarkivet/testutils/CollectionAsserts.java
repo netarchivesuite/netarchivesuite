@@ -28,8 +28,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import junit.framework.TestCase;
 import dk.netarkivet.common.utils.Named;
+import junit.framework.TestCase;
 
 /**
  * Utilities for doing asserts on collections.

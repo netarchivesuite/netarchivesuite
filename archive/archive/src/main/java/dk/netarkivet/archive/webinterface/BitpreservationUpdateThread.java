@@ -50,7 +50,7 @@ public class BitpreservationUpdateThread extends Thread {
 
     /**
      * Constructor for the BitpreservationUpdateThread.
-     * 
+     *
      * @param replica The given replica to work on.
      * @param updateType The type of update requested.
      * @throws ArgumentNotValid If either the Replica or the BitpreservationUpdateType is null.

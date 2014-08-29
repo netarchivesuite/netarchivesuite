@@ -45,7 +45,7 @@ import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 /**
  * This implementation of the HeritrixController interface starts Heritrix as a separate process and uses JMX to
  * communicate with it. Each instance executes exactly one process that runs exactly one crawl job.
- * 
+ *
  * @deprecated Use the {@link BnfHeritrixController} instead
  */
 @SuppressWarnings({"unused", "unchecked"})
@@ -234,7 +234,7 @@ public class JMXHeritrixController extends AbstractJMXHeritrixController {
 
     /**
      * @see HeritrixController#getQueuedUriCount()
-     * */
+     */
     public long getQueuedUriCount() {
         /*
          * Implementation note: This count is not as precise as what StatisticsTracker could provide, but it's presently
@@ -331,7 +331,7 @@ public class JMXHeritrixController extends AbstractJMXHeritrixController {
      * Cleanup after an Heritrix process. This entails sending the shutdown command to the Heritrix process, and killing
      * it forcefully, if it is still alive after waiting the period of time specified by the
      * CommonSettings.PROCESS_TIMEOUT setting.
-     * 
+     *
      * @see HeritrixController#cleanup()
      */
     public void cleanup() {
@@ -346,7 +346,7 @@ public class JMXHeritrixController extends AbstractJMXHeritrixController {
 
     /**
      * Return the URL for monitoring this instance.
-     * 
+     *
      * @return the URL for monitoring this instance.
      */
     public String getHarvestInformation() {
@@ -426,7 +426,7 @@ public class JMXHeritrixController extends AbstractJMXHeritrixController {
     /**
      * Get the password to use to access the Heritrix JMX as the user returned by getJMXAdminName(). This password can
      * be set in a file pointed to in settings.xml.
-     * 
+     *
      * @return Password for accessing Heritrix JMX
      */
     private String getJMXAdminPassword() {

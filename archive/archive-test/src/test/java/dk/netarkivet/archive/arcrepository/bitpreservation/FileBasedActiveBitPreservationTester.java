@@ -151,9 +151,9 @@ public class FileBasedActiveBitPreservationTester {
 
     /**
      * Tests the normal behaviour of findChangedFiles.
-     *
+     * <p>
      * This should check:
-     *
+     * <p>
      * That the two files are created with the expected output. What happens if the expected input isn't there.
      *
      * @throws IOException
@@ -245,7 +245,7 @@ public class FileBasedActiveBitPreservationTester {
     /**
      * Tests that the correct setup is done when running a checksum batch job and that the checksum batch job generates
      * the expected output.
-     *
+     * <p>
      * Tests requirements of Assignment 3.1.2
      *
      * @throws FileNotFoundException
@@ -360,10 +360,10 @@ public class FileBasedActiveBitPreservationTester {
 
     /**
      * Test normal behaviour of runFileListJob():
-     *
+     * <p>
      * It should pick normal or reference dir. It should generate the correct files. It should restrict itself to
      * specified files. It should check the number of lines. It should remove the temporary file.
-     *
+     * <p>
      * Note that we don't need to test if the expected files are found, as the file scanning is done in submethods, but
      * it comes automatically when we check for restriction.
      *
@@ -392,7 +392,7 @@ public class FileBasedActiveBitPreservationTester {
         // Check that wrong counts are caught
         MockupArcRepositoryClient.getInstance().overrideBatch = new BatchStatus("AP1", Collections.<File>emptyList(),
                 17, RemoteFileFactory.getMovefileInstance(new File(TestInfo.WORKING_DIR, "test_file_list_output/"
-                        + "filelistOutput/unsorted.txt")), new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
+                + "filelistOutput/unsorted.txt")), new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
         runFilelistJob.invoke(abp, replica);
 
         abp.close();
@@ -400,7 +400,7 @@ public class FileBasedActiveBitPreservationTester {
 
     /**
      * Fails in Ant
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -538,7 +538,7 @@ public class FileBasedActiveBitPreservationTester {
 
         /**
          * The following three methods are used by the ActiveBitPreservation.
-         * 
+         *
          * @param job a given FileBatchjob
          * @param file a given RemoteFile (ignored)
          * @return BatchStatus
@@ -636,7 +636,7 @@ public class FileBasedActiveBitPreservationTester {
                 os.close();
                 return new BatchStatus("BA1", Collections.<File>emptyList(), in_files.length,
                         RemoteFileFactory.getMovefileInstance(output), new ArrayList<FileBatchJob.ExceptionOccurrence>(
-                                0));
+                        0));
             } catch (IOException e) {
                 fail("IO error during test");
                 return null;

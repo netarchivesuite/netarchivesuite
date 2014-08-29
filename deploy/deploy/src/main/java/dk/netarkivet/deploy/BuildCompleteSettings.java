@@ -38,12 +38,11 @@ import dk.netarkivet.common.utils.FileUtils;
 /**
  * Class for combining the different setting files into a complete settings file. The different settings are listed
  * here: {@link Constants#BUILD_SETTING_FILES}
- *
+ * <p>
  * export NAS_SRC=$HOME/workspace/netarchivesuite cd $NAS_SRC ant jarfiles export
  * CLASSPATH=$NAS_SRC/lib/dk.netarkivet.harvester.jar:$NAS_SRC/lib/dk.netarkivet.archive.jar:\
  * $NAS_SRC/lib/dk.netarkivet.wayback.jar:$NAS_SRC/lib/dk.netarkivet.deploy.jar: cd src java
  * dk.netarkivet.deploy.BuildCompleteSettings
- *
  */
 public final class BuildCompleteSettings {
     /**

@@ -80,7 +80,7 @@ public class BitarchiveTesterLog extends BitarchiveTestCase {
 
     /**
      * Test logging of upload command
-     * 
+     *
      * @throws IOException
      */
     @Test

@@ -30,47 +30,48 @@ import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
-/** 
- * Takes care of the lifecycling of subcomponents(children). 
- * 
+/**
+ * Takes care of the lifecycling of subcomponents(children).
+ * <p>
  * When extending this class you must: <ol>
- * <li> Add all lifecycle subcomponents with the addChild, before the start 
+ * <li> Add all lifecycle subcomponents with the addChild, before the start
  * method is called.
  * <li> Call the <code>super.start()</code> operation to start the children.
- * <li> Call the <code>super.shutdown</code> operation to  
+ * <li> Call the <code>super.shutdown</code> operation to
  */
-public class LifeCycleComponent implements ComponentLifeCycle { 
+public class LifeCycleComponent implements ComponentLifeCycle {
 
     /** The instance logger. */
     private static final Logger log = LoggerFactory.getLogger(LifeCycleComponent.class);
 
-	/** The child-components of this lifecycle. */
+    /** The child-components of this lifecycle. */
     private List<ComponentLifeCycle> children = new ArrayList<ComponentLifeCycle>();
 
     @Override
     public void start() {
         log.debug("Starting {}", toString());
-        for (ComponentLifeCycle child: children) {
+        for (ComponentLifeCycle child : children) {
             child.start();
         }
     }
-    
+
     @Override
     public void shutdown() {
         log.debug("Shutting down {}", toString());
-        for (ComponentLifeCycle child: children) {
+        for (ComponentLifeCycle child : children) {
             child.shutdown();
         }
     }
-    
+
     /**
-     * Adds a child <code>ComponentLifeCycle</code>. The childs lifecycle will 
+     * Adds a child <code>ComponentLifeCycle</code>. The childs lifecycle will
      * be managed by by the <code>LifeCycleComponent</code>.
+     *
      * @param childComponent The child to add
      */
     public void addChild(ComponentLifeCycle childComponent) {
         ArgumentNotValid.checkNotNull(childComponent, "Child can not be null");
-        children.add(childComponent);        
+        children.add(childComponent);
     }
 
 }

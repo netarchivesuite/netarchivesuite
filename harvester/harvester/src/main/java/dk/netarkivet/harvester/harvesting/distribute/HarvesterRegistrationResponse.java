@@ -33,7 +33,6 @@ import dk.netarkivet.harvester.scheduler.HarvesterStatusReceiver;
  * Message sent by the {@link HarvesterStatusReceiver} after processing a {@link HarvesterRegistrationRequest} message.
  * It notifies crawlers whether a given harvest channel effectively matches a {@link HarvestChannel} defined in the
  * harvest database.
- *
  */
 @SuppressWarnings({"serial"})
 public class HarvesterRegistrationResponse extends HarvesterMessage {
@@ -52,11 +51,10 @@ public class HarvesterRegistrationResponse extends HarvesterMessage {
 
     /**
      * Constructor from fields.
-     * 
+     *
      * @param harvestChannelName the harvest channel name
      * @param isValid whether the given name denotes an existing channel
      * @param isSnapshot true if the channel accepts snapshot harvest, false for partial.
-     *
      */
     public HarvesterRegistrationResponse(final String harvestChannelName, final boolean isValid,
             final boolean isSnapshot) {

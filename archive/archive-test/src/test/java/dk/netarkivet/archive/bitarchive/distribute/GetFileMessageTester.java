@@ -50,7 +50,6 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 /**
  * Tests for GetFileMessage
- *
  */
 public class GetFileMessageTester {
     UseTestRemoteFile utrf = new UseTestRemoteFile();

@@ -38,7 +38,7 @@ public class JobUtils {
 
     /**
      * Get a simple job with low priority
-     * 
+     *
      * @return a simple job with low priority
      */
     public static Job getJobLowPriority(File ORDER_FILE) {
@@ -57,7 +57,7 @@ public class JobUtils {
 
     /**
      * Get a simple job with high priority.
-     * 
+     *
      * @return a simple job with high priority
      */
     public static Job getHighPriorityJob(File ONE_LEVEL_ORDER_FILE, JobStatus jobstate, String templateName) {

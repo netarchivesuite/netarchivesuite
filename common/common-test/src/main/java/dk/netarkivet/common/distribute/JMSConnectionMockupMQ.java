@@ -168,7 +168,6 @@ public class JMSConnectionMockupMQ extends JMSConnection {
      * Wrap a NetarkivetMessage into an ObjectMessage
      *
      * @param nMsg a NetarkivetMessage
-     *
      * @return an ObjectMessage
      */
     public static ObjectMessage getObjectMessage(NetarkivetMessage nMsg) {
@@ -462,10 +461,11 @@ public class JMSConnectionMockupMQ extends JMSConnection {
         @Override
         public Message receiveNoWait() throws JMSException {
             List<TestObjectMessage> messageQueue = ((TestQueue) getQueue()).messageQueue;
-            if (messageQueue.isEmpty())
+            if (messageQueue.isEmpty()) {
                 return null;
-            else
+            } else {
                 return ((TestQueue) getQueue()).messageQueue.remove(0);
+            }
         }
     }
 
@@ -830,7 +830,8 @@ public class JMSConnectionMockupMQ extends JMSConnection {
                 listener.onMessage(msg);
             }
 
-            Set<Thread> concurrentTasksToComplete = ((JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance()).concurrentTasksToComplete;
+            Set<Thread> concurrentTasksToComplete = ((JMSConnectionMockupMQ) JMSConnectionMockupMQ
+                    .getInstance()).concurrentTasksToComplete;
             synchronized (concurrentTasksToComplete) {
                 concurrentTasksToComplete.remove(Thread.currentThread());
                 if (concurrentTasksToComplete.isEmpty()) {

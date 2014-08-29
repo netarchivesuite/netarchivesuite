@@ -84,7 +84,6 @@ public class WaybackCDXExtractionArcAndWarcBatchJobTester {
      * private void assertNotStringContains(String msg, String src, String str) { int index = src.indexOf(str); if
      * (index != -1) { System.out.println("Actual string: "); System.out.println(src); assertEquals(msg, -1, index); } }
      */
-
     @Test
     public void testWARCProcess() throws IOException {
         WARCBatchJob job = new WaybackCDXExtractionWARCBatchJob();

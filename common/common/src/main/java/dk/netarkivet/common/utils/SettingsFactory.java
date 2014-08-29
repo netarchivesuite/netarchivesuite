@@ -34,17 +34,19 @@ import dk.netarkivet.common.exceptions.PermissionDenied;
 /**
  * Generic class for creating class instances from class names given in
  * settings.
+ *
  * @param <T> the object-type returned by this class.
  */
 public class SettingsFactory<T> {
 
-	/** Creates a new class of the class given in the settings field.
-     *
+    /**
+     * Creates a new class of the class given in the settings field.
+     * <p>
      * If the loaded class has a getInstance() method that matches the given
      * arguments, that will be called to create the class, otherwise a
      * matching constructor will be called, if it exists.  This sequence allows
      * for creating singletons.
-     *
+     * <p>
      * Due to limitations of the Java Reflection API, the parameters of the
      * getInstance method declared on the loaded class must match the given
      * arguments exactly, without subclassing, interface implementation or
@@ -57,7 +59,7 @@ public class SettingsFactory<T> {
      * or the constructor. These will also be used to determine which
      * getInstance method or constructor to find.
      * @param <T> the object-type returned by this method.
-     * @return A new instance of type T created by calling getInstance() or by 
+     * @return A new instance of type T created by calling getInstance() or by
      * invoking a constructor.
      * @throws ArgumentNotValid if settingsField is null or the invoked method
      * or constructor threw an exception.
@@ -65,8 +67,8 @@ public class SettingsFactory<T> {
      * class.
      * @throws PermissionDenied if the class or methods cannot be accessed.
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    public static<T> T getInstance(String settingsField, Object... args) {
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public static <T> T getInstance(String settingsField, Object... args) {
         ArgumentNotValid.checkNotNull(settingsField, "String settingsField");
         String className = Settings.get(settingsField);
         try {
@@ -88,13 +90,13 @@ public class SettingsFactory<T> {
                     c = aClass.getConstructor(classArgs);
                 } catch (NoSuchMethodException e1) {
                     throw new ArgumentNotValid("No suitable getInstance() or" + " constructor for class '" + className
-                    		+ "'", e1);
+                            + "'", e1);
                 }
                 try {
                     return c.newInstance(args);
                 } catch (InvocationTargetException e1) {
                     throw new ArgumentNotValid("Error creating singleton " + "of class '" + className + "': ",
-                    		e1.getCause());
+                            e1.getCause());
                 }
             }
             try {
@@ -104,15 +106,15 @@ public class SettingsFactory<T> {
             }
         } catch (IllegalAccessException e) {
             throw new PermissionDenied("Cannot access class '" + className + "' defined by '" + settingsField + "'",
-            		e);
+                    e);
         } catch (ClassNotFoundException e) {
             throw new IOFailure("Error finding class '" + className + "' defined by '" + settingsField + "'", e);
         } catch (InstantiationException e) {
             throw new IOFailure("Error while instantiating class '" + className + "' defined by '" + settingsField
-            		+ "'", e);
+                    + "'", e);
         } catch (ClassCastException e) {
             throw new IOFailure("Set class '" + className + "' is of wrong type" + " defined by '" + settingsField
-            		+ "'", e);
+                    + "'", e);
         }
     }
 

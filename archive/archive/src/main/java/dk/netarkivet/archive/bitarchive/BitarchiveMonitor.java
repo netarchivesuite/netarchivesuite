@@ -56,10 +56,10 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
 /**
  * Class representing the monitor for bitarchives. The monitor is used for sending out and combining the results of
  * executing batch jobs.
- *
+ * <p>
  * Registers outgoing batchjobs to bitarchives, and handles replies from bitarchives, finally notifying observers when
  * all bitarchives have replied, or when the batch times out, after a time specified in settings.
- *
+ * <p>
  * We wait for replies from bitarchives that are considered live when the batch begins. A bitarchive is considered live
  * if we have heard any activity from it within a time specified in settings.
  */
@@ -101,7 +101,7 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
 
     /**
      * Method for retrieving the current instance. If no instance has been instantiated, then a new one will be created.
-     * 
+     *
      * @return The current instance of the BitarchiveMonitor.
      */
     public static synchronized BitarchiveMonitor getInstance() {
@@ -128,7 +128,7 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
 
     /**
      * Register a new batch sent to the bitarchives.
-     *
+     * <p>
      * This registers a new batchstatus object, with a list of live bitarchives awaiting reply, and a timer task letting
      * the job time out after the specified time.
      *
@@ -180,12 +180,12 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
 
     /**
      * Handle a reply received from a bitarchive.
-     *
+     * <p>
      * This method registers the information from the bitarchive in the batch status for this job, if any (otherwise
      * logs and quits).
-     *
+     * <p>
      * If this is the last bitarchive we were missing replies from, notify observers with the batch status for this job.
-     * 
+     * <p>
      * TODO why are the 'exceptions' argument not used?
      *
      * @param bitarchiveBatchID The ID of the batch job sent on to the bit archives.
@@ -245,7 +245,7 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
 
     /**
      * Class handling state and updates in batch job status.
-     *
+     * <p>
      * This class remembers information about the batchjob sent, and information from all bitarchive replies received.
      * It also contains information about the original requester of the batchjob.
      */
@@ -336,7 +336,7 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
 
         /**
          * Updates the status with info from a bitarchive reply.
-         *
+         * <p>
          * This will add the results given to the status, and if this was the last remaining bitarchive, also sends a
          * notification to all observers of the bitarchive monitor.
          *
@@ -430,7 +430,6 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
         /**
          * Checks whether this batch job is already being notified about. If not, it notifies observers with this batch
          * status.
-         *
          */
         private synchronized void notifyBatchEnded() {
             if (!notifyInitiated) {

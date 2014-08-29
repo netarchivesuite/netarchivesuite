@@ -30,7 +30,7 @@ import org.openqa.selenium.WebDriver;
 
 /**
  * Provides functionality for commonly used test access to domain web content.
- *
+ * <p>
  * Will also log webpage interactions.
  */
 public class DomainWebTestHelper {

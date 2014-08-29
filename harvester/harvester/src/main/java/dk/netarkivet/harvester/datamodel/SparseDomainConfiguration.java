@@ -26,9 +26,8 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * Sparse version for DomainConfiguration class. To be used for GUI purposes only. Immutable.
- * 
- * @see dk.netarkivet.harvester.datamodel.DomainConfiguration
  *
+ * @see dk.netarkivet.harvester.datamodel.DomainConfiguration
  */
 public class SparseDomainConfiguration {
     /** Name of domain this is a configuration for. */
@@ -52,7 +51,7 @@ public class SparseDomainConfiguration {
 
     /**
      * Alternate constructor taking a DomainConfiguration as input.
-     * 
+     *
      * @param dc a DomainConfiguration
      */
     public SparseDomainConfiguration(DomainConfiguration dc) {
@@ -63,7 +62,7 @@ public class SparseDomainConfiguration {
 
     /**
      * Get domain name.
-     * 
+     *
      * @return The domain name.
      */
     public String getDomainName() {
@@ -72,7 +71,7 @@ public class SparseDomainConfiguration {
 
     /**
      * Get configuration name.
-     * 
+     *
      * @return The configuration name.
      */
     public String getConfigurationName() {
@@ -80,17 +79,21 @@ public class SparseDomainConfiguration {
     }
 
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (!(o instanceof SparseDomainConfiguration))
+        }
+        if (!(o instanceof SparseDomainConfiguration)) {
             return false;
+        }
 
         final SparseDomainConfiguration configKey = (SparseDomainConfiguration) o;
 
-        if (!configurationName.equals(configKey.getConfigurationName()))
+        if (!configurationName.equals(configKey.getConfigurationName())) {
             return false;
-        if (!domainName.equals(configKey.getDomainName()))
+        }
+        if (!domainName.equals(configKey.getDomainName())) {
             return false;
+        }
 
         return true;
     }

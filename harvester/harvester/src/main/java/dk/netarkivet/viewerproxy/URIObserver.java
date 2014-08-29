@@ -29,7 +29,6 @@ import java.util.Observer;
 /**
  * Super class for all URIObservers - calls the URIObserver notify method on all notifications of a URI and its response
  * code.
- *
  */
 public abstract class URIObserver implements Observer {
     /**

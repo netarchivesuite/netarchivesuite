@@ -104,7 +104,7 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
     /**
      * Test, that GUIWebServer.getInstance throws UnknownID exception if templates tables does not contain the template
      * with name Settings.DOMAIN_DEFAULT_ORDERXML This tests the partial solution of bug 916
-     * 
+     *
      * @throws InterruptedException
      */
     @Test

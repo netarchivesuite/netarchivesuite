@@ -56,7 +56,7 @@ public class EventHarvestUtilTester extends HarvesterWebinterfaceTestCase {
 
     /**
      * Initialize the unit-tests. This creates a valid PartialHarvest.
-     * 
+     *
      * @throws Exception
      */
     @Before
@@ -74,7 +74,7 @@ public class EventHarvestUtilTester extends HarvesterWebinterfaceTestCase {
 
     /**
      * Tests the simple case of adding a single seed to an empty harvest.
-     * 
+     * <p>
      * FIXME Fails in Hudson. Rember to reinclude the test case in the webinterface test suite when fixed.
      */
     @Test

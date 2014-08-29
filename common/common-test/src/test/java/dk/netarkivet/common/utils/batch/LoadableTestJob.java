@@ -65,7 +65,6 @@ public class LoadableTestJob extends FileBatchJob {
      *
      * @param file the file to be processed.
      * @param os the OutputStream to which output should be written
-     *
      * @return true if the file was successfully processed, false otherwise
      */
     public boolean processFile(File file, OutputStream os) {
@@ -168,7 +167,6 @@ public class LoadableTestJob extends FileBatchJob {
          *
          * @param file the file to be processed.
          * @param os the OutputStream to which output should be written
-         *
          * @return true if the file was successfully processed, false otherwise
          */
         public boolean processFile(File file, OutputStream os) {

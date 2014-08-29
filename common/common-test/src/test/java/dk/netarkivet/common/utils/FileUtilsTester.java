@@ -40,8 +40,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -59,6 +57,7 @@ import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
+import junit.framework.TestCase;
 
 /**
  * Unit tests for the FileUtils class.
@@ -117,7 +116,7 @@ public class FileUtilsTester {
 
     /**
      * test that FileUtils.append can append between two remote files.
-     * 
+     *
      * @throws IOException
      */
     @Test
@@ -147,7 +146,7 @@ public class FileUtilsTester {
 
     /**
      * Check that we can at least get some information out of getBytesFree
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -214,7 +213,8 @@ public class FileUtilsTester {
             for (Thread t : threads) {
                 t.start();
             }
-            WAITLOOP: do {
+            WAITLOOP:
+            do {
                 Thread.sleep(10);
                 for (Thread t : threads) {
                     if (t.isAlive()) {
@@ -293,7 +293,6 @@ public class FileUtilsTester {
     /**
      * Tests that the new makeValidFile method behaves as designed. It must either return a valid file, or throw an
      * IOException.
-     *
      */
     @Test
     public void testMakeValidFileFromExistingMakeAValidFileFromExisting() {

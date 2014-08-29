@@ -42,10 +42,11 @@ import dk.netarkivet.common.exceptions.IOFailure;
  */
 public class BinSearch {
 
-	/** The logger. */
+    /** The logger. */
     private static final Logger log = LoggerFactory.getLogger(BinSearch.class);
 
-    /** Our own comparison function.  Right now just does prefix match.
+    /**
+     * Our own comparison function.  Right now just does prefix match.
      *
      * @param line A line to find the prefix of
      * @param pattern The prefix to find.
@@ -57,10 +58,11 @@ public class BinSearch {
         return cmp;
     }
 
-    /** Given a file in sorted order and a prefix to search for, return a
+    /**
+     * Given a file in sorted order and a prefix to search for, return a
      * an iterable that will return the lines in the files that start with
      * the prefix, in order.  They will be read lazily from the file.
-     *
+     * <p>
      * If no matches are found, it will still return an iterable with no
      * entries.
      *
@@ -93,10 +95,11 @@ public class BinSearch {
         }
     }
 
-    /** An implementation of Iterable that returns lines matching a given
+    /**
+     * An implementation of Iterable that returns lines matching a given
      * prefix, starting at an offset.  We use compare() to determine if the
      * prefix matches.
-     * */
+     */
     private static class PrefixIterable implements Iterable<String> {
         /** File we're reading from. */
         private final File file;
@@ -105,7 +108,8 @@ public class BinSearch {
         /** Where to start reading - seek to this without reading it. */
         private final long offset;
 
-        /** Construct an Iterable from the given file, offset and prefix.
+        /**
+         * Construct an Iterable from the given file, offset and prefix.
          *
          * @param file This file will be read when the iterator() is made.
          * The lines in this file must be sorted alphabetically.
@@ -118,8 +122,10 @@ public class BinSearch {
             this.prefix = prefix;
         }
 
-        /** Return a new iterator that stops (not skips) when the line
+        /**
+         * Return a new iterator that stops (not skips) when the line
          * read no longer matches the prefix.
+         *
          * @return an iterator that stops (not skips) when the line
          * read no longer matches the prefix.  When the iterator ends, the
          * underlying file is closed.
@@ -219,15 +225,12 @@ public class BinSearch {
      * O(sqrt(n)) lines, where n is the distance from matchingline to the first
      * line.
      *
-     * @param in
-     *            The file to search in
-     * @param find
-     *            The string to match against the first line
-     * @param matchingline
-     *            The index to start searching from.  This index must be at
-     *            the start of a line that matches 'find'
+     * @param in The file to search in
+     * @param find The string to match against the first line
+     * @param matchingline The index to start searching from.  This index must be at
+     * the start of a line that matches 'find'
      * @return The offset into the file of the first line matching 'find'.
-     *         Guaranteed to be <= matchingline.
+     * Guaranteed to be <= matchingline.
      * @throws IOException If the matchingLine < 0 or some I/O error occurs.
      */
     private static long findFirstLine(RandomAccessFile in, String find, long matchingline) throws IOException {
@@ -235,7 +238,7 @@ public class BinSearch {
         String line = in.readLine();
         if (line == null || compare(line, find) != 0) {
             final String msg = "Internal: Called findFirstLine without a matching line in '"
-            		+ in + "' byte " + matchingline;
+                    + in + "' byte " + matchingline;
             log.warn(msg);
             throw new ArgumentNotValid(msg);
         }
@@ -263,14 +266,15 @@ public class BinSearch {
         while ((line = in.readLine()) != null) {
             if (compare(line, find) == 0) {
                 return pos;
-             }
+            }
             pos = in.getFilePointer();
         }
 
         return -1;
     }
 
-    /** Skip to the next line after the given position by
+    /**
+     * Skip to the next line after the given position by
      * reading a line.  Note that if the position is at the start
      * of a line, it will go to the next line.
      *
@@ -286,13 +290,15 @@ public class BinSearch {
         return in.getFilePointer();
     }
 
-    /** Perform a binary search for a string in a file.
+    /**
+     * Perform a binary search for a string in a file.
      * Returns the position of a line that begins with 'find'.
      * Note that this may not be the first line, if there be duplicates.
+     *
      * @param in the RandomAccessFile
      * @param find The String to look for in the above file
-     * @throws IOException If some I/O error occurs
      * @return The index of a line matching find, or -1 if none found.
+     * @throws IOException If some I/O error occurs
      */
     private static long binSearch(RandomAccessFile in, String find) throws IOException {
         // The starting position for the binary search.  Always
@@ -343,9 +349,11 @@ public class BinSearch {
         } while (true);
     }
 
-    /** Returns the position of a line between startpos and endpos.
+    /**
+     * Returns the position of a line between startpos and endpos.
      * If no line other than the one starting at startpos can be found,
      * returns -1. Also sets the file pointer to the start of the line.
+     *
      * @param in The file to read from
      * @param startpos The lower bound for the position.  Must be the
      * start of a line.

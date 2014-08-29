@@ -51,7 +51,6 @@ import dk.netarkivet.harvester.harvesting.report.HarvestReport;
 /**
  * Submitted harvesting jobs are registered with this singleton. The class listens for CrawlStatusMessages on the
  * THE_SCHED queue and processes completed harvests.
- *
  */
 public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler implements MessageListener,
         ComponentLifeCycle {
@@ -129,7 +128,7 @@ public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler imple
                 }
                 if (newStatus == JobStatus.FAILED) {
                     log.warn("Job {} failed: HarvestErrors = {}\n" + "HarvestErrorDetails = {}\n"
-                            + "UploadErrors = {}\n" + "UploadErrorDetails = {}", jobID, cmsg.getHarvestErrors(),
+                                    + "UploadErrors = {}\n" + "UploadErrorDetails = {}", jobID, cmsg.getHarvestErrors(),
                             cmsg.getHarvestErrorDetails(), cmsg.getUploadErrors(), cmsg.getUploadErrorDetails());
                 } else {
                     log.info("Job #{} succesfully completed", jobID);
@@ -169,7 +168,7 @@ public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler imple
     /**
      * Takes the crawl report from the job and updates the domain information with harvesting history. If the crawler
      * was unable to generate a {@link HarvestReport}, it will do nothing.
-     * 
+     *
      * @param job the completed job
      * @param dhr the domain harvest report, or null if none available.
      * @throws ArgumentNotValid if job is null
@@ -216,7 +215,7 @@ public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler imple
 
     /**
      * Process an incoming IndexReadyMessage.
-     * 
+     *
      * @param msg the message
      */
     private void processIndexReadyMessage(IndexReadyMessage msg) {

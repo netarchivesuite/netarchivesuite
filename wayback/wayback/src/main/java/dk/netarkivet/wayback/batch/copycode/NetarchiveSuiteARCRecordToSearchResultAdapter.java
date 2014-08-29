@@ -37,7 +37,7 @@ import org.archive.wayback.util.url.IdentityUrlCanonicalizer;
 /**
  * This class is cut and paste from waybacks ARCRecordToSearchResultAdapter, except for the use of
  * NetarchiveSuiteUrlOperations as a substitute for UrlOperations.
- * 
+ *
  * @deprecated use {@link org.archive.wayback.resourcestore.indexer.ARCRecordToSearchResultAdapter}
  */
 public class NetarchiveSuiteARCRecordToSearchResultAdapter implements Adapter<ARCRecord, CaptureSearchResult> {

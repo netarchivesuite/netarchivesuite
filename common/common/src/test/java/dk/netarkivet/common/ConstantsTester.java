@@ -56,7 +56,7 @@ public class ConstantsTester {
         // FIXME: What do we actually want to do here?
 
         // This is a latch, so we don't need to synchronize
-        final boolean[] failed = new boolean[] { false };
+        final boolean[] failed = new boolean[] {false};
 
         for (int i = 0; i < 30; i++) {
             threads.add(new Thread() {
@@ -84,7 +84,8 @@ public class ConstantsTester {
         for (Thread t : threads) {
             t.start();
         }
-        WAITLOOP: do {
+        WAITLOOP:
+        do {
             Thread.sleep(10);
             if (failed[0]) {
                 break;

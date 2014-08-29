@@ -23,7 +23,6 @@
 package dk.netarkivet.testutils.preconfigured;
 
 /**
- *
  * This interface should be implemented by classes that encapsulate one particular aspect to be handled by setUp() and
  * tearDown() in many unit tests.
  */

@@ -31,6 +31,7 @@ public class CommonSettings {
     /** The default place in classpath where the settings file can be found. */
     private static final String DEFAULT_SETTINGS_CLASSPATH
             = "dk/netarkivet/common/settings.xml";
+
     /*
      * The static initialiser is called when the class is loaded.
      * It will add default values for all settings defined in this class, by
@@ -46,48 +47,53 @@ public class CommonSettings {
     // purpose! Otherwise, the static initialiser that loads default values
     // will not run.
 
-    /** The path in the XML-tree for the settings branch. (Used by deploy).*/
+    /** The path in the XML-tree for the settings branch. (Used by deploy). */
     public static String SETTINGS = "settings";
 
     /**
      * <b>settings.common.environmentName</b>: <br>
      * The name of the environment in which this code is running.
      * E.g. PROD, RELEASETEST. It is used as a Common prefix to all JMS
-     * channels created in a NetarchiveSuite installation. */
+     * channels created in a NetarchiveSuite installation.
+     */
     public static String ENVIRONMENT_NAME = "settings.common.environmentName";
 
     /**
      * <b>settings.common.tempDir</b>: <br>
      * Common temporary directory for all applications.
      * Some subdirs of this directory  must be set to have AllPermision in the
-     * conf/security.conf file, or the web pages won't work. */
+     * conf/security.conf file, or the web pages won't work.
+     */
     public static String DIR_COMMONTEMPDIR = "settings.common.tempDir";
 
     /**
      * <b>settings.common.remoteFile.class</b>: <br>
      * The class to use for RemoteFile objects (for transferring files around).
      * This class must implement the dk.netarkivet.common.distribute.RemoteFile
-     * interface. */
+     * interface.
+     */
     public static String REMOTE_FILE_CLASS
             = "settings.common.remoteFile.class";
 
     /**
      * <b>settings.common.jms.class</b>: <br>
      * Selects the broker class to be used. Must be subclass of
-     * dk.netarkivet.common.distribute.JMSConnection. */
+     * dk.netarkivet.common.distribute.JMSConnection.
+     */
     public static String JMS_BROKER_CLASS = "settings.common.jms.class";
 
     /**
      * <b>settings.common.jms.retries</b>: <br>
-     * Selects the number of times the JMS connection tries to 
+     * Selects the number of times the JMS connection tries to
      * reconnect to the broker.
-     * */
+     */
     public static String JMS_BROKER_RETRIES = "settings.common.jms.retries";
-    
+
     /**
      * <b>settings.common.http.port</b>: <br>
      * The *unique* (per host) port number that may or may not be used to serve
-     * http. */
+     * http.
+     */
     public static String HTTP_PORT_NUMBER = "settings.common.http.port";
 
     /**
@@ -120,12 +126,13 @@ public class CommonSettings {
      * has the batchJobTimeout set to -1 (inherited value from FileBatchJob).
      */
     public static String BATCH_DEFAULT_TIMEOUT =
-        "settings.common.batch.defaultBatchTimeout";
+            "settings.common.batch.defaultBatchTimeout";
 
     /**
      * <b>settings.common.monitorregistryClient.class</b>: <br>
      * Which class to use for monitor registry. Must implement the interface
-     * dk.netarkivet.common.distribute.monitorregistry.MonitorRegistryClient. */
+     * dk.netarkivet.common.distribute.monitorregistry.MonitorRegistryClient.
+     */
     public static String MONITOR_REGISTRY_CLIENT
             = "settings.common.monitorregistryClient.class";
 
@@ -154,11 +161,12 @@ public class CommonSettings {
      * use the common temp dir defined by common.settings.tempDir.
      * By default the value is false (use system temp), which is the legacy behavior.
      * This setting is part of the fix for Jira issue NAS-1995.
+     *
      * @see #DIR_COMMONTEMPDIR
      */
     public static String UNIX_SORT_USE_COMMON_TEMP_DIR
             = "settings.common.unixSort.useCommonTempDir";
-    
+
     /**
      * <b>settings.common.cacheDir</b>: <br>
      * The name of the directory where cache data global to the entire
@@ -172,30 +180,35 @@ public class CommonSettings {
     /**
      * <b>settings.common.processTimeout</b>: <br>
      * The number of milliseconds we wait for processes to react to
-     * shutdown requests. */
+     * shutdown requests.
+     */
     public static String PROCESS_TIMEOUT
             = "settings.common.processTimeout";
 
     /**
      * <b>settings.common.notifications.class</b>: <br>
      * The implementation class for notifications, e.g. error notification.
-     * The class must extend dk.netarkivet.common.utils.Notifications */
+     * The class must extend dk.netarkivet.common.utils.Notifications
+     */
     public static String NOTIFICATIONS_CLASS
             = "settings.common.notifications.class";
 
     /**
      * <b>settings.common.mail.server</b>: <br>
-     * The mail server to use when sending mails. */
+     * The mail server to use when sending mails.
+     */
     public static String MAIL_SERVER = "settings.common.mail.server";
 
     /**
      * <b>settings.common.jmx.port</b>: <br>
-     * The port to use for JMX. */
+     * The port to use for JMX.
+     */
     public static String JMX_PORT = "settings.common.jmx.port";
 
     /**
      * <b>settings.common.jmx.rmiPort</b>: <br>
-     * The JMX's RMI port to use for internal communication with beans. */
+     * The JMX's RMI port to use for internal communication with beans.
+     */
     public static String JMX_RMI_PORT = "settings.common.jmx.rmiPort";
 
     /**
@@ -203,7 +216,9 @@ public class CommonSettings {
      * The password file, containing information about who may connect to the
      * beans.
      * The file has a format defined by the JMX standard,
-     * @see <URL:http://java.sun.com/j2se/1.5.0/docs/guide/management/agent.html#PasswordAccessFiles>*/
+     *
+     * @see <URL:http://java.sun.com/j2se/1.5.0/docs/guide/management/agent.html#PasswordAccessFiles>
+     */
     public static String JMX_PASSWORD_FILE
             = "settings.common.jmx.passwordFile";
 
@@ -212,45 +227,52 @@ public class CommonSettings {
      * The access file, containing information about who have which JMX roles
      * have which access privileges.
      * The file has a format defined by the JMX standard,
-     * @see <URL:http://java.sun.com/j2se/1.5.0/docs/guide/management/agent.html#PasswordAccessFiles>*/
+     *
+     * @see <URL:http://java.sun.com/j2se/1.5.0/docs/guide/management/agent.html#PasswordAccessFiles>
+     */
     public static String JMX_ACCESS_FILE
             = "settings.common.jmx.accessFile";
 
-
     /**
      * <b>settings.common.jmx.timeout</b>: <br>
-     * How many seconds we will wait before giving up on a JMX connection. */
+     * How many seconds we will wait before giving up on a JMX connection.
+     */
     public static String JMX_TIMEOUT
-            = "settings.common.jmx.timeout";    
+            = "settings.common.jmx.timeout";
 
     /**
      * <b>settings.common.webinterface</b>: <br>
-     * The entire webinterface setting structure. */
+     * The entire webinterface setting structure.
+     */
     public static String WEBINTERFACE_SETTINGS
             = "settings.common.webinterface";
 
     /**
      * settings.common.webinterface.<b>language</b>: <br>
      * The entire language setting structure under the webinterface setting.
-     * Is repeated for each language */
+     * Is repeated for each language
+     */
     public static String WEBINTERFACE_LANGUAGE = "language";
 
     /**
      * settings.common.webinterface.language.<b>locale</b>: <br>
-     * The locale the GUI is available as under specific language setting. */
+     * The locale the GUI is available as under specific language setting.
+     */
     public static String WEBINTERFACE_LANGUAGE_LOCALE = "locale";
 
     /**
      * settings.common.webinterface.language.<b>name</b>: <br>
      * The native name of the language for the locale under specific language
-     * setting. */
+     * setting.
+     */
     public static String WEBINTERFACE_LANGUAGE_NAME = "name";
 
     /**
      * <b>settings.common.webinterface.siteSection.class</b>: <br>
      * The subclass of SiteSection that defines a part of the
      * web interface. Is part of repeated siteSection settings for each
-     * part. */
+     * part.
+     */
     public static String SITESECTION_CLASS
             = "settings.common.webinterface.siteSection.class";
 
@@ -258,7 +280,8 @@ public class CommonSettings {
      * <b>settings.common.webinterface.siteSection.webapplication</b>: <br>
      * The directory or war-file containing the web application
      * for a site section. Is part of repeated siteSection settings for each
-     * part. */
+     * part.
+     */
     public static String SITESECTION_WEBAPPLICATION
             = "settings.common.webinterface.siteSection.webapplication";
 
@@ -272,7 +295,8 @@ public class CommonSettings {
     /**
      * <b>settings.common.topLevelDomains.tld</b>: <br>
      * Valid top level domain, like .co.uk, .dk, .org. Is part of repeated
-     * in settings for each top level domain */
+     * in settings for each top level domain
+     */
     public static String TLDS = "settings.common.topLevelDomains.tld";
 
     // TODO Currently only used by harvestscheduler - move to harvester
@@ -280,7 +304,8 @@ public class CommonSettings {
     /**
      * <b>settings.common.database.class</b>: <br>
      * The class that defines DB-specific methods. This class must extend
-     * the DBSpecifics class */
+     * the DBSpecifics class
+     */
     public static String DB_SPECIFICS_CLASS
             = "settings.common.database.class";
 
@@ -326,7 +351,7 @@ public class CommonSettings {
      * If the timeout period expires before the operation completes, this
      * method returns false. A value of 0 indicates a timeout is not
      * applied to the database operation.
-     *
+     * <p>
      * {@link java.sql.Connection#isValid(int)}
      */
     public static String DB_CONN_VALID_CHECK_TIMEOUT
@@ -338,7 +363,7 @@ public class CommonSettings {
      * Default value is 5.
      */
     public static String DB_POOL_MIN_SIZE =
-        "settings.common.database.pool.minSize";
+            "settings.common.database.pool.minSize";
 
     /**
      * <b>settings.common.database.pool.maxSize</b>: <br>
@@ -346,7 +371,7 @@ public class CommonSettings {
      * Default value is 10.
      */
     public static String DB_POOL_MAX_SIZE =
-        "settings.common.database.pool.maxSize";
+            "settings.common.database.pool.maxSize";
 
     /**
      * <b>settings.common.database.pool.acquireInc</b>: <br>
@@ -354,7 +379,7 @@ public class CommonSettings {
      * Default value is 5 (half the max size).
      */
     public static String DB_POOL_ACQ_INC =
-        "settings.common.database.pool.acquireInc";
+            "settings.common.database.pool.acquireInc";
 
     /**
      * <b>settings.common.database.pool.maxStm</b>: <br>
@@ -363,10 +388,11 @@ public class CommonSettings {
      * Default value is 0. Note that if both {@link #DB_POOL_MAX_STM} and
      * {@link #DB_POOL_MAX_STM_PER_CONN} are set to zero, statement pooling is
      * fully deactivated.
+     *
      * @see <a href="http://www.mchange.com/projects/c3p0/index.html">c3p0 documentation</a>
      */
     public static String DB_POOL_MAX_STM =
-        "settings.common.database.pool.maxStm";
+            "settings.common.database.pool.maxStm";
 
     /**
      * <b>settings.common.database.pool.maxStmPerConn</b>: <br>
@@ -375,37 +401,41 @@ public class CommonSettings {
      * Default value is 0. Note that if both {@link #DB_POOL_MAX_STM} and
      * {@link #DB_POOL_MAX_STM_PER_CONN} are set to zero, statement pooling is
      * fully deactivated.
+     *
      * @see <a href="http://www.mchange.com/projects/c3p0/index.html">c3p0 documentation</a>
      */
     public static String DB_POOL_MAX_STM_PER_CONN =
-        "settings.common.database.pool.maxStmPerConn";
+            "settings.common.database.pool.maxStmPerConn";
 
     /**
      * <b>settings.common.database.pool.idleConnTestPeriod</b>: <br>
      * Configure idle connection testing period in seconds.
      * Default is 0, which means no idle connection testing
+     *
      * @see <a href="http://www.mchange.com/projects/c3p0/index.html#idleConnectionTestPeriod"/>
      */
     public static String DB_POOL_IDLE_CONN_TEST_PERIOD =
-        "settings.common.database.pool.idleConnTestPeriod";
+            "settings.common.database.pool.idleConnTestPeriod";
 
     /**
      * <b>settings.common.database.pool.idleConnTestOnCheckin</b>: <br>
      * Configure if a connection validity should be checked when returned to the pool.
      * Default is false.
+     *
      * @see <a href="http://www.mchange.com/projects/c3p0/index.html#testConnectionOnCheckin"/>
      */
     public static String DB_POOL_IDLE_CONN_TEST_ON_CHECKIN =
-        "settings.common.database.pool.idleConnTestOnCheckin";
+            "settings.common.database.pool.idleConnTestOnCheckin";
 
     /**
      * <b>settings.common.database.pool.idleConnTestQuery</b>: <br>
      * The SQL query to be used when testing an idle connection.
      * Default is empty, which means using c3p0 defaults.
+     *
      * @see <a href="http://www.mchange.com/projects/c3p0/index.html#preferredTestQuery"/>
      */
     public static String DB_POOL_IDLE_CONN_TEST_QUERY =
-        "settings.common.database.pool.idleConnTestQuery";
+            "settings.common.database.pool.idleConnTestQuery";
 
     /**
      * The username for login to the harvest database.
@@ -444,7 +474,8 @@ public class CommonSettings {
     /**
      * settings.common.replicas.replica.<b>replicaId</b>: <br>
      * The tags for identifier of the replica, placed under the replica tag.
-     * The replica id is used internally in e.g. naming of channels. */
+     * The replica id is used internally in e.g. naming of channels.
+     */
     public static String REPLICAID_TAG
             = "replicaId";
     /**
@@ -452,7 +483,8 @@ public class CommonSettings {
      * The tags for name of the replica, placed under the replica tag.
      * The replica name is used in interfaces like the GUI or command-line
      * batch-programs.
-     * The name can be the same value as the id. */
+     * The name can be the same value as the id.
+     */
     public static String REPLICANAME_TAG
             = "replicaName";
     /**
@@ -460,7 +492,8 @@ public class CommonSettings {
      * The tags for type of the replica, placed under the replica tag.
      * The type is used to identify whether it is a bitarchive or a checksum
      * replica. NOTE: checksum replicas are not implemented yet
-     * Possible values are defined in ReplicaType */
+     * Possible values are defined in ReplicaType
+     */
     public static String REPLICATYPE_TAG
             = "replicaType";
 
@@ -473,21 +506,24 @@ public class CommonSettings {
 
     /**
      * <b>settings.common.useReplicaId</b>: <br>
-     * Default bitarchive to use for e.g. batch jobs (if none is specified). */
+     * Default bitarchive to use for e.g. batch jobs (if none is specified).
+     */
     public static String USE_REPLICA_ID
             = "settings.common.useReplicaId";
 
     /**
      * <b>settings.common.thisPhysicalLocation</b>: <br>
      * Physical location of where the application is running.
-     * Only use for System state GUI and deploy */
+     * Only use for System state GUI and deploy
+     */
     public static String THIS_PHYSICAL_LOCATION
             = "settings.common.thisPhysicalLocation";
 
     /**
      * <b>settings.common.applicationName</b>: <br>
      * The name of the application, e.g. "BitarchiveServerApplication".
-     * The monitor puts this with each log message. */
+     * The monitor puts this with each log message.
+     */
     public static String APPLICATION_NAME
             = "settings.common.applicationName";
 
@@ -497,7 +533,8 @@ public class CommonSettings {
      * This is used when there are more than one of the same application
      * running on the same machine, e.g. when more harvesters are running
      * on the same machine or more bitarchive applications are running on
-     * the same machine. */
+     * the same machine.
+     */
     public static String APPLICATION_INSTANCE_ID
             = "settings.common.applicationInstanceId";
 
@@ -505,7 +542,8 @@ public class CommonSettings {
      * <b>settings.common.freespaceprovider.class</b>: <br>
      * The implementation class for free space provider,
      * e.g. dk.netarkivet.common.utils.DefaultFreeSpaceProvider.
-     * The class must implement FreeSpaceProvider-Interface.  */
+     * The class must implement FreeSpaceProvider-Interface.
+     */
     public static String FREESPACE_PROVIDER_CLASS
             = "settings.common.freespaceprovider.class";
 
@@ -538,43 +576,49 @@ public class CommonSettings {
     public static String BATCHJOBS_BASEDIR = "settings.common.batch.baseDir";
     /**
      * <b>settings.common.remoteFile.serverName</b>: <br>
-     * The setting for the FTP-server used. */
+     * The setting for the FTP-server used.
+     */
     public static String FTP_SERVER_NAME
             = "settings.common.remoteFile.serverName";
     /**
      * <b>settings.common.remoteFile.serverPort</b>: <br>
-     * The setting for the FTP-server port used. */
+     * The setting for the FTP-server port used.
+     */
     public static String FTP_SERVER_PORT
             = "settings.common.remoteFile.serverPort";
     /**
      * <b>settings.common.remoteFile.userName</b>: <br>
-     * The setting for the FTP username. */
+     * The setting for the FTP username.
+     */
     public static String FTP_USER_NAME
             = "settings.common.remoteFile.userName";
     /**
      * <b>settings.common.remoteFile.userPassword</b>: <br>
-     * The setting for the FTP password. * */
+     * The setting for the FTP password. *
+     */
     public static String FTP_USER_PASSWORD
             = "settings.common.remoteFile.userPassword";
     /**
      * <b>settings.common.remoteFile.retries</b>: <br>
      * The setting for the number of times FTPRemoteFile should try before
-     * giving up a copyTo operation or logOn operation. */
+     * giving up a copyTo operation or logOn operation.
+     */
     public static String FTP_RETRIES_SETTINGS
             = "settings.common.remoteFile.retries";
     /**
      * <b>settings.common.remoteFile.datatimeout</b>: <br>
      * The setting for the FTP data timeout in seconds.
-     * The default value is 600 (10 minutes). */
+     * The default value is 600 (10 minutes).
+     */
     public static String FTP_DATATIMEOUT_SETTINGS
             = "settings.common.remoteFile.datatimeout";
 
     /**
      * <b>settings.common.organization</b>: <br>
      * The name of the organization responsible.
-     * The default value is netarkivet.dk 
+     * The default value is netarkivet.dk
      */
-    public static String ORGANIZATION 
-            = "settings.common.organization"; 
-    
+    public static String ORGANIZATION
+            = "settings.common.organization";
+
 }

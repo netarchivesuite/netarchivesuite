@@ -38,9 +38,9 @@ import dk.netarkivet.common.exceptions.IOFailure;
  * A batch job which returns a list of all files in the bitarchive in which it
  * runs.
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({"serial"})
 public class FileListJob extends FileBatchJob {
-    
+
     private static final transient Logger log = LoggerFactory.getLogger(FileListJob.class);
 
     /** The constructor. */
@@ -48,9 +48,10 @@ public class FileListJob extends FileBatchJob {
         // Keep the batchJobTimeout at default (-1) so it will be overridden 
         // by the settings for default batch timeout.
     }
-    
+
     /**
      * Initializes fields in this class.
+     *
      * @param os the OutputStream to which data is to be written
      */
     public void initialize(OutputStream os) {
@@ -59,6 +60,7 @@ public class FileListJob extends FileBatchJob {
     /**
      * Invoke default method for deserializing object, and reinitialise the
      * logger.
+     *
      * @param s the ObjectInputStream from which the object is read
      */
     private void readObject(ObjectInputStream s) {
@@ -71,6 +73,7 @@ public class FileListJob extends FileBatchJob {
 
     /**
      * Writes the name of the arcfile to the OutputStream.
+     *
      * @param file an arcfile
      * @param os the OutputStream to which data is to be written
      * @return false If listing of this arcfile fails; otherwise true
@@ -89,6 +92,7 @@ public class FileListJob extends FileBatchJob {
 
     /**
      * Does nothing.
+     *
      * @param os the OutputStream to which data is to be written
      */
     public void finish(OutputStream os) {
@@ -96,6 +100,7 @@ public class FileListJob extends FileBatchJob {
 
     /**
      * Return a human-readable representation of a FileListJob.
+     *
      * @return a human-readable representation of a FileListJob
      */
     public String toString() {

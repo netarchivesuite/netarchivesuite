@@ -61,9 +61,9 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
     /** The logger for this class. */
     private static final Logger log = LoggerFactory.getLogger(LocalArcRepositoryClient.class);
 
-	/** The default place in classpath where the settings file can be found. */
+    /** The default place in classpath where the settings file can be found. */
     private static String defaultSettingsClasspath = "dk/netarkivet/common/distribute/arcrepository/"
-    		+ "LocalArcRepositoryClientSettings.xml";
+            + "LocalArcRepositoryClientSettings.xml";
 
     /*
      * The static initialiser is called when the class is loaded.
@@ -73,10 +73,10 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
     static {
         Settings.addDefaultClasspathSettings(defaultSettingsClasspath);
     }
-    
+
     /** List of the directories that we store files in. Non-absolute dirs are relative to the current directory. */
     private final List<File> storageDirs = new ArrayList<File>(1);
-    
+
     /** Store the file in the directories designated by this setting. */
     private static final String FILE_DIRS = "settings.common.arcrepositoryClient.fileDir";
     /** The credentials used to correct data in the archive. */
@@ -106,7 +106,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
      * up files after the store operation.
      * @throws IllegalState if file already exists.
      * @throws ArgumentNotValid if file parameter is null or file is not an
-     *                          existing file.
+     * existing file.
      */
     @Override
     public void store(File file) throws IOFailure, ArgumentNotValid {
@@ -128,7 +128,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
      * Gets a single ARC record out of the ArcRepository.
      *
      * @param arcfile The name of a file containing the desired record.
-     * @param index   The offset of the desired record in the file
+     * @param index The offset of the desired record in the file
      * @return a BitarchiveRecord-object, or null if request times out or object
      * is not found.
      * @throws ArgumentNotValid on null or empty filenames, or if index is
@@ -173,13 +173,13 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
     /**
      * Retrieves a file from an ArcRepository and places it in a local file.
      *
-     * @param arcfilename Name of the arcfile to retrieve. 
+     * @param arcfilename Name of the arcfile to retrieve.
      * @param replica The bitarchive to retrieve the data from.
-     *  (Note argument is ignored)
+     * (Note argument is ignored)
      * @param toFile Filename of a place where the file fetched can be put.
      * @throws ArgumentNotValid if arcfilename is null or empty, or if toFile
      * is null
-     * @throws IOFailure if there are problems reading or writing file, or 
+     * @throws IOFailure if there are problems reading or writing file, or
      * the file with the given arcfilename could not be found.
      */
     @Override
@@ -198,12 +198,11 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
      * Runs a batch job on each file in the ArcRepository.
      *
      * @param job An object that implements the FileBatchJob interface. The
-     *  initialize() method will be called before processing and the finish()
-     *  method will be called afterwards. The process() method will be called
-     *  with each File entry. An optional function postProcess() allows handling
-     *  the combined results of the batchjob, e.g. summing the results, sorting,
-     *  etc.
-     *
+     * initialize() method will be called before processing and the finish()
+     * method will be called afterwards. The process() method will be called
+     * with each File entry. An optional function postProcess() allows handling
+     * the combined results of the batchjob, e.g. summing the results, sorting,
+     * etc.
      * @param replicaId The archive to execute the job on.
      * @param args The arguments for the batchjob. This can be null.
      * @return The status of the batch job after it ended.
@@ -213,7 +212,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
      */
     @Override
     public BatchStatus batch(final FileBatchJob job, String replicaId, String... args)
-    		throws ArgumentNotValid, IOFailure {
+            throws ArgumentNotValid, IOFailure {
         ArgumentNotValid.checkNotNull(job, "FileBatchJob job");
         ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
         OutputStream os = null;
@@ -226,7 +225,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
                 public boolean accept(File dir, String name) {
                     Pattern filenamePattern = job.getFilenamePattern();
                     return new File(dir, name).isFile()
-                    		&& (filenamePattern == null || filenamePattern.matcher(name).matches());
+                            && (filenamePattern == null || filenamePattern.matcher(name).matches());
                 }
             };
             for (File dir : storageDirs) {
@@ -249,10 +248,11 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
             }
         }
         return new BatchStatus(replicaId, job.getFilesFailed(), job.getNoOfFilesProcessed(),
-        		new FileRemoteFile(resultFile), job.getExceptions());
+                new FileRemoteFile(resultFile), job.getExceptions());
     }
 
-    /** Updates the administrative data in the ArcRepository for a given
+    /**
+     * Updates the administrative data in the ArcRepository for a given
      * file and replica. This implementation does nothing.
      *
      * @param fileName The name of a file stored in the ArcRepository.
@@ -264,7 +264,8 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
     public void updateAdminData(String fileName, String bitarchiveId, ReplicaStoreState newval) {
     }
 
-    /** Updates the checksum kept in the ArcRepository for a given
+    /**
+     * Updates the checksum kept in the ArcRepository for a given
      * file.  It is the responsibility of the ArcRepository implementation to
      * ensure that this checksum matches that of the underlying files.
      * This implementation does nothing.
@@ -276,7 +277,8 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
     public void updateAdminChecksum(String filename, String checksum) {
     }
 
-    /** Remove a file from one part of the ArcRepository, retrieving a copy
+    /**
+     * Remove a file from one part of the ArcRepository, retrieving a copy
      * for security purposes.  This is typically used when repairing a file
      * that has been corrupted.
      *
@@ -318,7 +320,8 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
         return copiedTo;
     }
 
-    /** Returns a File object for a filename if it exists in the archive.
+    /**
+     * Returns a File object for a filename if it exists in the archive.
      *
      * @param filename Name of file to find.
      * @return A File object for the filename if the file exists,
@@ -336,7 +339,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
 
     /**
      * Method for retrieving the checksums of all the files of the replica.
-     * 
+     *
      * @param replicaId Inherited dummy argument.
      * @return A file containing the names and checksum of all the files in
      * the system.
@@ -347,13 +350,13 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
     @Override
     public File getAllChecksums(String replicaId) throws IOFailure, ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
-        
+
         try {
             List<String> checksums = new ArrayList<String>();
             // go through the different storageDirs and find files and checksums.
-            for(File dir : storageDirs) {
+            for (File dir : storageDirs) {
                 // go through all file and calculate the checksum
-                for(File entry : dir.listFiles()) {
+                for (File entry : dir.listFiles()) {
                     String checksum = ChecksumCalculator.calculateMd5(entry);
                     String filename = entry.getName();
 
@@ -372,7 +375,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
 
     /**
      * Method for retrieving all the filenames of the replica.
-     * 
+     *
      * @param replicaId Inherited dummy argument.
      * @return A file containing the names of all the files.
      * @throws ArgumentNotValid If the replicaId is either null or empty.
@@ -381,16 +384,16 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
     @Override
     public File getAllFilenames(String replicaId) throws IOFailure, ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
-        
+
         List<String> filenames = new ArrayList<String>();
         // go through the different storageDirs and put the name of the files
         // into the resulting list of filenames.
-        for(File dir : storageDirs) {
-            for(String name : dir.list()) {
+        for (File dir : storageDirs) {
+            for (String name : dir.list()) {
                 filenames.add(name);
             }
         }
-        
+
         try {
             File res = File.createTempFile("all", "filenames", FileUtils.getTempDir());
             FileUtils.writeCollectionToFile(res, filenames);
@@ -403,7 +406,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
     /**
      * Method for correcting a bad entry.
      * Calls 'removeAndGetFile' followed by 'store'.
-     *  
+     *
      * @param replicaId Inherited dummy argument.
      * @param checksum The checksum of the bad entry.
      * @param file The new file to replace the bad entry.
@@ -411,16 +414,16 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
      * @return The bad entry file.
      * @throws ArgumentNotValid If one of the arguments are null, or if a string
      * is empty.
-     * @throws PermissionDenied If the credentials or checksum are invalid. 
+     * @throws PermissionDenied If the credentials or checksum are invalid.
      */
     @Override
     public File correct(String replicaId, String checksum, File file, String credentials)
-    		throws ArgumentNotValid, PermissionDenied {
+            throws ArgumentNotValid, PermissionDenied {
         ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
         ArgumentNotValid.checkNotNullOrEmpty(checksum, "String checksum");
         ArgumentNotValid.checkNotNull(file, "File file");
         ArgumentNotValid.checkNotNullOrEmpty(credentials, "String credentials");
-        
+
         // remove bad file.
         File res = removeAndGetFile(file.getName(), replicaId, checksum, credentials);
         // store good new file.
@@ -431,10 +434,10 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
 
     /**
      * Method for finding the checksum of a file.
-     * 
+     *
      * @param replicaId Inherited dummy variable.
      * @param filename The name of the file to calculate the checksum.
-     * @return The checksum of the file, or the empty string if the file was 
+     * @return The checksum of the file, or the empty string if the file was
      * not found or an error occurred.
      * @throws ArgumentNotValid If the replicaId or the filename is either
      * null or the empty string.

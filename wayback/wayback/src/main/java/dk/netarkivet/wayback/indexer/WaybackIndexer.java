@@ -45,13 +45,12 @@ import dk.netarkivet.wayback.WaybackSettings;
 
 /**
  * The WaybackIndexer starts threads to find new files to be indexed and indexes them.
- *
+ * <p>
  * There is 1 producer thread which runs as a timer thread, for example once a day, and runs first a FileNameHarvester
  * to get a list of all files in the archive after which it fills the indexer queue with any new files found.
- *
+ * <p>
  * Simultaneously there is a family of consumer threads which wait for the queue to be populated and take elements from
  * it and index them.
- *
  */
 public class WaybackIndexer implements CleanupIF {
 
@@ -65,7 +64,7 @@ public class WaybackIndexer implements CleanupIF {
      * Factory method which creates a singleton wayback indexer and sets it running. It has the side effect of creating
      * the output directories for the indexer if these do not already exist. It also reads files for the initial ingest
      * if necessary.
-     * 
+     *
      * @return the indexer.
      */
     public static synchronized WaybackIndexer getInstance() {

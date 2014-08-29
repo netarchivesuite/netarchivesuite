@@ -56,7 +56,7 @@ public class SelectiveHarvestUtilTester extends DataModelTestCase {
 
     /**
      * Verify that the correct domain configurations are created. This test handles the normal usage.
-     * 
+     * <p>
      * DISABLED 20140528 as it fails intermittently /tra FIXME: https://sbforge.org/jira/browse/NAS-2320
      */
     public void DISABLED_20140528_testgetDomainConfigurations() throws NoSuchMethodException, IllegalAccessException,

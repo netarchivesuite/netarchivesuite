@@ -44,7 +44,6 @@ import dk.netarkivet.harvester.datamodel.TemplateDAO;
 
 /**
  * Contains utility methods for supporting event harvest GUI.
- *
  */
 public final class EventHarvestUtil {
 
@@ -125,7 +124,7 @@ public final class EventHarvestUtil {
 
     /**
      * Add configurations to an existing selective harvest.
-     * 
+     *
      * @param context The current JSP context
      * @param i18n The translation information to use in this context
      * @param eventHarvestName The name of the partial harvest to which these seeds are to be added

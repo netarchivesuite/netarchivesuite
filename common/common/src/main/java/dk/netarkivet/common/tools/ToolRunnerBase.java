@@ -30,8 +30,6 @@ import dk.netarkivet.common.utils.ExceptionUtils;
  * The class contains an abstract factory method, which will create the actual
  * implementation when specialized. This could also have been done with
  * generics, but this is the traditional implementation.
- *
- *
  */
 public abstract class ToolRunnerBase {
 
@@ -54,6 +52,7 @@ public abstract class ToolRunnerBase {
     /**
      * A template method implementing default behaviour for showing a message
      * (send to stderr). Can be overridden to ensure logging.
+     *
      * @param msg The message to display
      */
     protected void showMessage(String msg) {
@@ -86,6 +85,7 @@ public abstract class ToolRunnerBase {
         }
         return true;
     }
+
     private boolean setupAndRunIt(SimpleCmdlineTool tool, String... args) {
         try {
             tool.setUp(args);
@@ -98,6 +98,7 @@ public abstract class ToolRunnerBase {
             tool.tearDown();
         }
     }
+
     private boolean checkArgsSetupAndRun(SimpleCmdlineTool tool,
             String... args) {
         try {
@@ -111,6 +112,7 @@ public abstract class ToolRunnerBase {
             return false;
         }
     }
+
     private boolean internalRunTheTool(String... args) {
         try {
             SimpleCmdlineTool tool = makeMyTool();

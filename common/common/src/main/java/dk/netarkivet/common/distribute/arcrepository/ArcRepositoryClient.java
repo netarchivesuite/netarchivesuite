@@ -35,15 +35,16 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
  * superinterfaces.
  */
 public interface ArcRepositoryClient extends HarvesterArcRepositoryClient, ViewerArcRepositoryClient,
-		PreservationArcRepositoryClient {
-    
+        PreservationArcRepositoryClient {
+
     /** Call on shutdown to release external resources. */
     void close();
 
     /**
      * Gets a single ARC record out of the ArcRepository.
+     *
      * @param arcfile The name of a file containing the desired record.
-     * @param index   The offset of the desired record in the file
+     * @param index The offset of the desired record in the file
      * @return a BitarchiveRecord-object, or null if request times out or object
      * is not found.
      * @throws IOFailure If the get operation failed.
@@ -54,6 +55,7 @@ public interface ArcRepositoryClient extends HarvesterArcRepositoryClient, Viewe
 
     /**
      * Retrieves a file from an ArcRepository and places it in a local file.
+     *
      * @param arcfilename Name of the arcfile to retrieve.
      * @param replica The bitarchive to retrieve the data from. On
      * implementations with only one replica, null may be used.
@@ -65,11 +67,12 @@ public interface ArcRepositoryClient extends HarvesterArcRepositoryClient, Viewe
 
     /**
      * Store the given file in the ArcRepository.  After storing, the file is deleted.
+     *
      * @param file A file to be stored. Must exist.
      * @throws IOFailure thrown if store is unsuccessful, or failed to clean
      * up files after the store operation.
      * @throws ArgumentNotValid if file parameter is null or file is not an
-     *                          existing file.
+     * existing file.
      */
     void store(File file) throws IOFailure, ArgumentNotValid;
 
@@ -77,12 +80,11 @@ public interface ArcRepositoryClient extends HarvesterArcRepositoryClient, Viewe
      * Runs a batch batch job on each file in the ArcRepository.
      *
      * @param job An object that implements the FileBatchJob interface. The
-     *  initialize() method will be called before processing and the finish()
-     *  method will be called afterwards. The process() method will be called
-     *  with each File entry. An optional function postProcess() allows handling
-     *  the combined results of the batchjob, e.g. summing the results, sorting,
-     *  etc.
-     *
+     * initialize() method will be called before processing and the finish()
+     * method will be called afterwards. The process() method will be called
+     * with each File entry. An optional function postProcess() allows handling
+     * the combined results of the batchjob, e.g. summing the results, sorting,
+     * etc.
      * @param replicaId The archive to execute the job on.
      * @param args The arguments for the batchjob.
      * @return The status of the batch job after it ended.
@@ -91,6 +93,7 @@ public interface ArcRepositoryClient extends HarvesterArcRepositoryClient, Viewe
 
     /**
      * Updates the administrative data in the ArcRepository for a given file and replica.
+     *
      * @param fileName The name of a file stored in the ArcRepository.
      * @param bitarchiveId The id of the replica that the administrative
      * data for fileName is wrong for.
@@ -102,6 +105,7 @@ public interface ArcRepositoryClient extends HarvesterArcRepositoryClient, Viewe
      * Updates the checksum kept in the ArcRepository for a given
      * file.  It is the responsibility of the ArcRepository implementation to
      * ensure that this checksum matches that of the underlying files.
+     *
      * @param filename The name of a file stored in the ArcRepository.
      * @param checksum The new checksum.
      */
@@ -111,6 +115,7 @@ public interface ArcRepositoryClient extends HarvesterArcRepositoryClient, Viewe
      * Remove a file from one part of the ArcRepository, retrieving a copy
      * for security purposes.  This is typically used when repairing a file
      * that has been corrupted.
+     *
      * @param fileName The name of the file to remove.
      * @param bitarchiveId The id of the replica from which to remove the file.
      * @param checksum The checksum of the file to be removed.

@@ -126,21 +126,28 @@ public class Difference {
      */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         Difference other = (Difference) obj;
-        if (addEnd != other.addEnd)
+        if (addEnd != other.addEnd) {
             return false;
-        if (addStart != other.addStart)
+        }
+        if (addStart != other.addStart) {
             return false;
-        if (delEnd != other.delEnd)
+        }
+        if (delEnd != other.delEnd) {
             return false;
-        if (delStart != other.delStart)
+        }
+        if (delStart != other.delStart) {
             return false;
+        }
         return true;
     }
 

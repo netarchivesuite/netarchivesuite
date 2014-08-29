@@ -44,7 +44,7 @@ public class IndexerQueue {
 
     /**
      * Factory method for obtaining the unique instance of this class.
-     * 
+     *
      * @return the instance.
      */
     public static synchronized IndexerQueue getInstance() {

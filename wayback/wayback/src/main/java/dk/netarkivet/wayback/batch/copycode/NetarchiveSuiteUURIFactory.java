@@ -24,7 +24,6 @@ package dk.netarkivet.wayback.batch.copycode;
 
 import gnu.inet.encoding.IDNA;
 import gnu.inet.encoding.IDNAException;
-import it.unimi.dsi.mg4j.util.MutableString;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
@@ -40,10 +39,11 @@ import org.archive.net.LaxURLCodec;
 import org.archive.net.UURI;
 import org.archive.util.TextUtils;
 
+import it.unimi.dsi.mg4j.util.MutableString;
+
 /**
  * This is a cut and paste version of the class org.archive.net.UURIFactory, but omitting calls to read system
  * properties. It can therefore be used in batch jobs without violating our security permissions.
- * 
  */
 @SuppressWarnings({"serial", "unused"})
 public class NetarchiveSuiteUURIFactory extends UURI {
@@ -61,36 +61,36 @@ public class NetarchiveSuiteUURIFactory extends UURI {
 
     /**
      * RFC 2396-inspired regex.
-     *
+     * <p>
      * From the RFC Appendix B:
-     * 
+     * <p>
      * <pre>
      * URI Generic Syntax                August 1998
-     * 
+     *
      * B. Parsing a URI Reference with a Regular Expression
-     * 
+     *
      * As described in Section 4.3, the generic URI syntax is not sufficient
      * to disambiguate the components of some forms of URI.  Since the
      * "greedy algorithm" described in that section is identical to the
      * disambiguation method used by POSIX regular expressions, it is
      * natural and commonplace to use a regular expression for parsing the
      * potential four components and fragment identifier of a URI reference.
-     * 
+     *
      * The following line is the regular expression for breaking-down a URI
      * reference into its components.
-     * 
+     *
      * ^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?
      * 12            3  4          5       6  7        8 9
-     * 
+     *
      * The numbers in the second line above are only to assist readability;
      * they indicate the reference points for each subexpression (i.e., each
      * paired parenthesis).  We refer to the value matched for subexpression
      * <n> as $<n>.  For example, matching the above expression to
-     * 
+     *
      * http://www.ics.uci.edu/pub/ietf/uri/#Related
-     * 
+     *
      * results in the following subexpression matches:
-     * 
+     *
      * $1 = http:
      * $2 = http
      * $3 = //www.ics.uci.edu
@@ -100,18 +100,18 @@ public class NetarchiveSuiteUURIFactory extends UURI {
      * $7 = <undefined>
      * $8 = #Related
      * $9 = Related
-     * 
+     *
      * where <undefined> indicates that the component is not present, as is
      * the case for the query component in the above example.  Therefore, we
      * can determine the value of the four components and fragment as
-     * 
+     *
      * scheme    = $2
      * authority = $4
      * path      = $5
      * query     = $7
      * fragment  = $9
      * </pre>
-     *
+     * <p>
      * --
      * <p>
      * Below differs from the rfc regex in that... (1) it has java escaping of regex characters (2) we allow a URI made
@@ -192,7 +192,7 @@ public class NetarchiveSuiteUURIFactory extends UURI {
     /**
      * Characters we'll accept in the domain label part of a URI authority: ASCII letters-digits-hyphen (LDH) plus
      * underscore, with single intervening '.' characters.
-     *
+     * <p>
      * (We accept '_' because DNS servers have tolerated for many years counter to spec; we also accept dash patterns
      * and ACE prefixes that will be rejected by IDN-punycoding attempt.)
      */
@@ -269,7 +269,7 @@ public class NetarchiveSuiteUURIFactory extends UURI {
     /**
      * Test of whether passed String has an allowed URI scheme. First tests if likely scheme suffix. If so, we then test
      * if its one of the supported schemes.
-     * 
+     *
      * @param possibleUrl URL string to examine.
      * @return True if passed string looks like it could be an URL.
      */
@@ -326,11 +326,11 @@ public class NetarchiveSuiteUURIFactory extends UURI {
 
     /**
      * Check the generated UURI.
-     *
+     * <p>
      * At the least look at length of uuri string. We were seeing case where before escaping, string was &lt;
      * MAX_URL_LENGTH but after was &gt;. Letting out a too-big message was causing us troubles later down the
      * processing chain.
-     * 
+     *
      * @param uuri Created uuri to check.
      * @return The passed <code>uuri</code> so can easily inline this check.
      * @throws URIException
@@ -344,7 +344,7 @@ public class NetarchiveSuiteUURIFactory extends UURI {
 
     /**
      * Do heritrix fix-up on passed uri string.
-     *
+     * <p>
      * Does heritrix escaping; usually escaping done to make our behavior align with IEs. This method codifies our
      * experience pulling URIs from the wilds. Its does all the escaping we want; its output can always be assumed to be
      * 'escaped' (though perhaps to a laxer standard than the vanilla HttpClient URI class or official specs might
@@ -508,7 +508,7 @@ public class NetarchiveSuiteUURIFactory extends UURI {
 
     /**
      * If http(s) scheme, check scheme specific part begins '//'.
-     * 
+     *
      * @throws URIException
      * @see <A href="http://www.faqs.org/rfcs/rfc1738.html">Section 3.1. Common Internet Scheme Syntax</A>
      */
@@ -582,7 +582,7 @@ public class NetarchiveSuiteUURIFactory extends UURI {
 
     /**
      * Fixup the domain label part of the authority.
-     *
+     * <p>
      * We're more lax than the spec. in that we allow underscores.
      *
      * @param label Domain label to fix.
@@ -656,12 +656,12 @@ public class NetarchiveSuiteUURIFactory extends UURI {
 
     /**
      * Escape any whitespace found.
-     *
+     * <p>
      * The parent class takes care of the bulk of escaping. But if any instance of escaping is found in the URI, then we
      * ask for parent to do NO escaping. Here we escape any whitespace found irrespective of whether the uri has already
      * been escaped. We do this for case where uri has been judged already-escaped only, its been incompletly done and
      * whitespace remains. Spaces, etc., in the URI are a real pain. Their presence will break log file and ARC parsing.
-     * 
+     *
      * @param uri URI string to check.
      * @return uri with spaces escaped if any found.
      */

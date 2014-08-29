@@ -27,7 +27,7 @@ public enum BitpreservationUpdateType {
 
     /**
      * Update of findmissing information.
-     **/
+     */
     FINDMISSING,
     /**
      * Update of checksum information.

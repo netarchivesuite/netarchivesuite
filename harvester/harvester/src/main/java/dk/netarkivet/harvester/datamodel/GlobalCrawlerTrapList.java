@@ -38,7 +38,6 @@ import dk.netarkivet.common.exceptions.IOFailure;
 
 /**
  * Class representing one or more global crawler traps, modelled as a list of regular expressions.
- *
  */
 public class GlobalCrawlerTrapList {
 
@@ -85,7 +84,7 @@ public class GlobalCrawlerTrapList {
 
     /**
      * Construct a new GlobalCrawlerTrapList from an input stream consisting of newline-separated regular expressions.
-     * 
+     *
      * @param is an input stream from which the list of trap expressions can be read.
      * @param name a name by which this list is known.
      * @param description A textual description of this list.
@@ -110,7 +109,7 @@ public class GlobalCrawlerTrapList {
 
     /**
      * A utility method to read the list of traps from an InputStream, line-by-line.
-     * 
+     *
      * @param is The input stream from which to read.
      * @throws IOFailure if the input stream cannot be read.
      * @throws ArgumentNotValid if the input stream is null or if any of the specified traps are not valid regular
@@ -139,7 +138,7 @@ public class GlobalCrawlerTrapList {
 
     /**
      * Get the id of this list.
-     * 
+     *
      * @return the id.
      */
     public int getId() {
@@ -148,7 +147,7 @@ public class GlobalCrawlerTrapList {
 
     /**
      * Set the id of this list.
-     * 
+     *
      * @param id the id.
      */
     protected void setId(int id) {
@@ -157,7 +156,7 @@ public class GlobalCrawlerTrapList {
 
     /**
      * Get the name of the list.
-     * 
+     *
      * @return the name.
      */
     public String getName() {
@@ -166,7 +165,7 @@ public class GlobalCrawlerTrapList {
 
     /**
      * Set the name of the list.
-     * 
+     *
      * @param name the name.
      */
     public void setName(String name) {
@@ -176,7 +175,7 @@ public class GlobalCrawlerTrapList {
 
     /**
      * Get the trap expressions for this list.
-     * 
+     *
      * @return the trap expressions.
      */
     public Set<String> getTraps() {
@@ -185,7 +184,7 @@ public class GlobalCrawlerTrapList {
 
     /**
      * Set the trap expressions for this list.
-     * 
+     *
      * @param traps the trap expressions.
      */
     public void setTraps(Set<String> traps) {
@@ -195,7 +194,7 @@ public class GlobalCrawlerTrapList {
 
     /**
      * Get the description of this list.
-     * 
+     *
      * @return the description.
      */
     public String getDescription() {
@@ -204,7 +203,7 @@ public class GlobalCrawlerTrapList {
 
     /**
      * Set the description of this list.
-     * 
+     *
      * @param description the description.
      */
     public void setDescription(String description) {
@@ -214,7 +213,7 @@ public class GlobalCrawlerTrapList {
 
     /**
      * Retruns true if this list is active.
-     * 
+     *
      * @return the activity state of the list.
      */
     public boolean isActive() {
@@ -223,7 +222,7 @@ public class GlobalCrawlerTrapList {
 
     /**
      * Set the activity state of the list.
-     * 
+     *
      * @param active the activity state.
      */
     public void setActive(boolean active) {

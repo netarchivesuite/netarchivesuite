@@ -111,7 +111,7 @@ public class DomainnameQueueAssignmentPolicyTester {
 
     /**
      * Get the domain name part of a string same way as the harvester does.
-     * 
+     *
      * @param s
      * @return the domain name part of a string same way as the harvester does.
      * @throws URIException

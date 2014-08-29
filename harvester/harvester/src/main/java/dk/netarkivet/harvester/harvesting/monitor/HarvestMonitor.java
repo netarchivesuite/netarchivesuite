@@ -126,7 +126,7 @@ public class HarvestMonitor extends HarvesterMessageHandler implements MessageLi
 
     /**
      * Cleans up the database on transitions to status DONE and FAILED.
-     * 
+     *
      * @param msg a {@link JobEndedMessage}
      */
     @Override
@@ -152,7 +152,7 @@ public class HarvestMonitor extends HarvesterMessageHandler implements MessageLi
     /**
      * Returns the delay in seconds after which a harvest monitor webpage should refresh itself. This delay is set by
      * overriding the value of the {@link HarvesterSettings#HARVEST_MONITOR_REFRESH_INTERVAL} property.
-     * 
+     *
      * @return the delay in seconds after which a harvest monitor webpage should refresh itself
      */
     public static final int getAutoRefreshDelay() {
@@ -161,7 +161,7 @@ public class HarvestMonitor extends HarvesterMessageHandler implements MessageLi
 
     /**
      * Returns a configurable number of the most recent running job info records available for the given job ID.
-     * 
+     *
      * @param jobId
      * @return the most recent running job info records available for the given job ID.
      * @see HarvesterSettings#HARVEST_MONITOR_DISPLAYED_HISTORY_SIZE
@@ -174,7 +174,7 @@ public class HarvestMonitor extends HarvesterMessageHandler implements MessageLi
 
     /**
      * Returns the most recent running job info record available for the given job ID.
-     * 
+     *
      * @param jobId
      * @return the most recent running job info records available for the given job ID.
      */
@@ -196,7 +196,7 @@ public class HarvestMonitor extends HarvesterMessageHandler implements MessageLi
 
     /**
      * Retrieves the latest frontier report stored for the given job ID.
-     * 
+     *
      * @param jobId the job id
      * @return a frontier report
      */
@@ -207,7 +207,7 @@ public class HarvestMonitor extends HarvesterMessageHandler implements MessageLi
 
     /**
      * Retrieves the latest frontier extract report stored for the given job ID, that contains only retired queues.
-     * 
+     *
      * @param jobId the job id
      * @return a frontier report that contains only retired queues.
      */
@@ -217,7 +217,7 @@ public class HarvestMonitor extends HarvesterMessageHandler implements MessageLi
 
     /**
      * Retrieves the latest frontier extract report stored for the given job ID, that contains only exhausted queues.
-     * 
+     *
      * @param jobId the job id
      * @return a frontier report that contains only exhausted queues.
      */
@@ -231,7 +231,7 @@ public class HarvestMonitor extends HarvesterMessageHandler implements MessageLi
     /**
      * Returns the path of the chart image file, relative to the webapp directory. If no chart is available, returns a
      * default empty image.
-     * 
+     *
      * @param jobId the job id
      * @return the path of the chart image file, relative to the webapp directory.
      */

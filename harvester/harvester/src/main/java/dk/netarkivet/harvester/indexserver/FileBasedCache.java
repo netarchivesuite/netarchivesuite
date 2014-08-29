@@ -45,7 +45,7 @@ import dk.netarkivet.common.utils.Settings;
 /**
  * A generic cache that stores items in files. This abstract superclass handles placement of the cache directory and
  * adding/getting files using the subclasses' methods for generating filenames.
- * 
+ *
  * @param <T> The type of cache.
  */
 public abstract class FileBasedCache<T> {
@@ -84,7 +84,6 @@ public abstract class FileBasedCache<T> {
      * Get the file that caches content for the given ID.
      *
      * @param id Some sort of id that uniquely identifies the item within the cache.
-     *
      * @return A file (possibly nonexistant or empty) that can cache the data for the id.
      */
     public abstract File getCacheFile(T id);
@@ -94,7 +93,6 @@ public abstract class FileBasedCache<T> {
      * When this method is called, the cache can assume that getCacheFile(id) does not exist.
      *
      * @param id Some identifier for the item to be cached.
-     *
      * @return An id of content actually available. In most cases, this will be the same as id, but for complex I it
      * could be a subset (or null if the type argument I is a simple type). If the return value is not the same as id,
      * the file will not contain cached data, and may not even exist.
@@ -106,7 +104,7 @@ public abstract class FileBasedCache<T> {
      * method may return null (if I is a simple type) or an appropriate subset (if I is, say, a Set) indicating the data
      * that is actually available. In the latter case, calling cache on the returned set should always fill the file for
      * that subset (barring catastrophic failure).
-     *
+     * <p>
      * Locking: If the file is not immediately found, we enter a file-creation state. To avoid corrupted data, we must
      * ensure that only one cache instance, and only one thread within any instance, creates the file. Thus as long as
      * somebody else seems to be creating the file, we wait and see if they finish. This is checked by having an
@@ -115,7 +113,6 @@ public abstract class FileBasedCache<T> {
      * the lock on it matters.
      *
      * @param id Some sort of id that uniquely identifies the item within the cache.
-     *
      * @return The id given if it was successfully fetched, otherwise null if the type parameter I does not allow
      * subsets, or a subset of id if it does. This subset should be immediately cacheable.
      */
@@ -167,7 +164,6 @@ public abstract class FileBasedCache<T> {
      * perform the caching more efficiently, if caching overhead per file is large.
      *
      * @param ids List of IDs that uniquely identify a set of items within the cache.
-     *
      * @return A map from ID to the files containing cached data for those IDs. If caching failed, even partially, for
      * an ID, the entry for the ID doesn't exist.
      */
@@ -187,14 +183,12 @@ public abstract class FileBasedCache<T> {
     /**
      * Forgiving index generating method, that returns a file with an index, of the greatest possible subset of a given
      * id, and the subset.
-     *
+     * <p>
      * If the type I for instance is a Set, you may get an index of only a subset. If I is a File, null may be seen as a
      * subset.
      *
      * @param id The requested index.
-     *
      * @return An index over the greatest possible subset, and the subset.
-     *
      * @see #cache for more information.
      */
     public Index<T> getIndex(T id) {

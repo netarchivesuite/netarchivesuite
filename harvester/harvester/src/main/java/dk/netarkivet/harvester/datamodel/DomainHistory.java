@@ -31,7 +31,6 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * Container for the historical information available for a domain.
- *
  */
 public class DomainHistory {
 
@@ -129,7 +128,7 @@ public class DomainHistory {
     /**
      * Return the most recent harvestresult for the configuration identified by name that was a complete harvest of the
      * domain.
-     * 
+     *
      * @param configName The name of the configuration
      * @param history The domainHistory for a domain
      * @return the most recent harvestresult for the configuration identified by name that was a complete harvest of the

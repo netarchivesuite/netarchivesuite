@@ -37,7 +37,7 @@ public final class ChecksumFileApplication {
 
     /**
      * Runs the Checksum File Application.
-     * 
+     *
      * @param args No arguments required - thus an empty array.
      * @see ChecksumFileServer
      */

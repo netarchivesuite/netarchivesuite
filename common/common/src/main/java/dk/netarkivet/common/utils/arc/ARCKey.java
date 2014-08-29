@@ -29,7 +29,7 @@ import java.io.File;
  */
 public class ARCKey {
 
-	/** The ARC file that we will be reading from. */
+    /** The ARC file that we will be reading from. */
     private File arcFile;
     /** The offset that the entry starts at in the file. */
     private long offset;
@@ -38,7 +38,8 @@ public class ARCKey {
     /** Extension used Alexa dat files. */
     private static final String ALEXA_DAT_FILE_EXTENSION = ".dat";
 
-    /** Constructor for ARCKey.
+    /**
+     * Constructor for ARCKey.
      * Note that if the filename ends in .dat (it's an Alexa-style
      * DAT file), we assume that the file we actually want is a
      * .arc.gz file as produced by Alexa tools.  That is because the
@@ -51,7 +52,7 @@ public class ARCKey {
         String arcgz;
         if (archiveFileName.toLowerCase().endsWith(ALEXA_DAT_FILE_EXTENSION)) {
             arcgz = archiveFileName.substring(0, archiveFileName.length() - ALEXA_DAT_FILE_EXTENSION.length()
-                    ) + GZIPPED_ARC_FILE_EXTENSION;
+            ) + GZIPPED_ARC_FILE_EXTENSION;
         } else {
             arcgz = archiveFileName;
         }
@@ -59,14 +60,20 @@ public class ARCKey {
         this.offset = offset;
     }
 
-    /** Getter for offset.
-     * @return The offset into the ARC file used for this key */
+    /**
+     * Getter for offset.
+     *
+     * @return The offset into the ARC file used for this key
+     */
     public long getOffset() {
         return offset;
     }
 
-    /** Getter for arcFile.
-     * @return The ARC file that this entry can be found in */
+    /**
+     * Getter for arcFile.
+     *
+     * @return The ARC file that this entry can be found in
+     */
     public File getFile() {
         return arcFile;
     }

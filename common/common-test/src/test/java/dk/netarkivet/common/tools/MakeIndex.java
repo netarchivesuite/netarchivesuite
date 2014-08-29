@@ -38,9 +38,8 @@ import dk.netarkivet.common.utils.cdx.ExtractCDXJob;
 
 /**
  * A tool to create index.cdx files.
- *
+ * <p>
  * Usage: java dk.netarkivet.common.tools.MakeIndex [filename]
- *
  */
 @Deprecated
 // what is this used for? /tra

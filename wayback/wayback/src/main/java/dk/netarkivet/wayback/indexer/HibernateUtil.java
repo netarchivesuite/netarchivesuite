@@ -33,7 +33,7 @@ import dk.netarkivet.wayback.WaybackSettings;
 
 /**
  * This class contains a single static utility method which returns a Hibernate session: HibernateUtil.getSession().
- *
+ * <p>
  * The configuration for the session is read from settings.xml in the elements nested under settings/wayback/hibernate.
  */
 public class HibernateUtil {
@@ -147,7 +147,7 @@ public class HibernateUtil {
     /**
      * Get a hibernate session for communicating with the object store for the wayback indexer. This method has the side
      * effect of creating and initialising a SessionFactory object if there is no current open SessionFactory.
-     * 
+     *
      * @return the above mentioned hibernate session.
      */
     public static Session getSession() {

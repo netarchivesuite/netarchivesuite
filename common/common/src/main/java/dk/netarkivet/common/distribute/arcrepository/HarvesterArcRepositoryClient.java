@@ -33,9 +33,9 @@ import dk.netarkivet.common.exceptions.IOFailure;
  */
 public interface HarvesterArcRepositoryClient {
 
-	/**
-	 * Call on shutdown to release external resources.
-	 */
+    /**
+     * Call on shutdown to release external resources.
+     */
     void close();
 
     /**
@@ -46,7 +46,7 @@ public interface HarvesterArcRepositoryClient {
      * @throws IOFailure thrown if store is unsuccesful, or failed to clean
      * up files after the store operation.
      * @throws ArgumentNotValid if file parameter is null or file is not an
-     *                          existing file.
+     * existing file.
      */
     void store(File file) throws IOFailure, ArgumentNotValid;
 

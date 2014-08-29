@@ -32,21 +32,21 @@ public interface Response {
 
     /**
      * Return outputstream response should be written to.
-     * 
+     *
      * @return the outputstream response should be written to
      */
     OutputStream getOutputStream();
 
     /**
      * Set status code.
-     * 
+     *
      * @param statusCode should be valid http status ie. 200, 404,
      */
     void setStatus(int statusCode);
 
     /**
      * Set status code. and explanatory text string describing the status.
-     * 
+     *
      * @param statusCode should be valid http status ie. 200, 404,
      * @param reason text string explaining status ie. OK, not found,
      */
@@ -54,7 +54,7 @@ public interface Response {
 
     /**
      * Add an HTTP header to the response.
-     * 
+     *
      * @param name Name of the header, e.g. Last-Modified-Date
      * @param value The value of the header
      */

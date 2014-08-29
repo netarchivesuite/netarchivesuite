@@ -40,7 +40,6 @@ import dk.netarkivet.testutils.TestFileUtils;
 
 /**
  * csr forgot to comment this!
- *
  */
 
 public class DeduplicateToCDXApplicationTester {

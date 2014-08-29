@@ -42,7 +42,6 @@ import dk.netarkivet.common.utils.ExceptionUtils;
 
 /**
  * A singleton giving access to global crawler traps.
- *
  */
 public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
 
@@ -69,7 +68,7 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
 
     /**
      * Returns a list of either all active or all inactive trap lists.
-     * 
+     *
      * @param isActive whether to return active or inactive lists.
      * @return a list if global crawler trap lists.
      */
@@ -133,8 +132,9 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
     /**
      * Statement to insert a new trap list.
      */
-    private static final String INSERT_TRAPLIST_STMT = "INSERT INTO global_crawler_trap_lists (name, description, isActive)"
-            + "VALUES (?,?,?)";
+    private static final String INSERT_TRAPLIST_STMT =
+            "INSERT INTO global_crawler_trap_lists (name, description, isActive)"
+                    + "VALUES (?,?,?)";
 
     /**
      * Statement to insert a new trap expression in a given list.
@@ -227,7 +227,7 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
     /**
      * Update a trap list. In order to update the trap expressions for this list, we first delete all the existing trap
      * expressions for the list then add all those in the updated version.
-     * 
+     *
      * @param trapList the trap list to update
      */
     @Override
@@ -322,7 +322,7 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
 
     /**
      * Does crawlertrap with this name already exist.
-     * 
+     *
      * @param name The name for a crawlertrap
      * @return true, if a crawlertrap with the given name already exists in the database; otherwise false
      */

@@ -51,22 +51,23 @@ import dk.netarkivet.common.exceptions.IOFailure;
  */
 public class ProcessUtils {
 
-	/** The logger. */
+    /** The logger. */
     private static final Logger log = LoggerFactory.getLogger(ProcessUtils.class);
 
     /**
      * Runs an external process that takes no input, discarding its output.
+     *
      * @param environment An environment to run the process in (may be null)
      * @param programAndArgs The program and its arguments.
      * @return The return code of the process.
      */
     public static int runProcess(String[] environment, String... programAndArgs) {
         try {
-        	if (log.isDebugEnabled()) {
-                log.debug("Running external program: {} with environment {}", 
-                		StringUtils.conjoin(" ", programAndArgs), StringUtils.conjoin(" ", environment));
-        	}
-            
+            if (log.isDebugEnabled()) {
+                log.debug("Running external program: {} with environment {}",
+                        StringUtils.conjoin(" ", programAndArgs), StringUtils.conjoin(" ", environment));
+            }
+
             Process p = Runtime.getRuntime().exec(programAndArgs, environment);
             discardProcessOutput(p.getInputStream());
             discardProcessOutput(p.getErrorStream());
@@ -86,6 +87,7 @@ public class ProcessUtils {
     /**
      * Runs an external process that takes no input, discarding its output.
      * This is a convenience wrapper for runProcess(environment, programAndArgs)
+     *
      * @param programAndArgs The program to run and its arguments
      * @return The return code of the process.
      */
@@ -99,10 +101,9 @@ public class ProcessUtils {
      * a consumer thread to eat the output of a process and so prevent
      * blocking.
      *
-     * @param inputStream
-     *            A stream to read up to end of file. This stream is closed at
-     *            some point in the future, but not necessarily before this
-     *            method returns.
+     * @param inputStream A stream to read up to end of file. This stream is closed at
+     * some point in the future, but not necessarily before this
+     * method returns.
      */
     public static void discardProcessOutput(final InputStream inputStream) {
         makeCollectorThread(inputStream, new DiscardingOutputStream(), -1).start();
@@ -119,14 +120,14 @@ public class ProcessUtils {
      *
      * @param inputStream The inputstream to read contents from
      * @param maxCollect The maximum number of bytes to collect, or -1 for no
-     *  limit
+     * limit
      * @param collectionThreads Set of threads that concurrently collect output
      * @return An object that collects the output.  Once the thread returned
      * is finished, the object will no longer be written to.  The collected
      * output can be retrieved with the toString method.
      */
     public static Object collectProcessOutput(final InputStream inputStream, final int maxCollect,
-    		Set<Thread> collectionThreads) {
+            Set<Thread> collectionThreads) {
         final OutputStream stream = new ByteArrayOutputStream();
         Thread t = makeCollectorThread(inputStream, stream, maxCollect);
         t.start();
@@ -146,7 +147,7 @@ public class ProcessUtils {
      * @param collectionThreads Set of threads that concurrently collect output
      */
     public static void writeProcessOutput(final InputStream inputStream, final File outputFile,
-    		Set<Thread> collectionThreads) {
+            Set<Thread> collectionThreads) {
         final OutputStream stream;
         try {
             stream = new FileOutputStream(outputFile, true);
@@ -169,11 +170,11 @@ public class ProcessUtils {
      * @param inputStream The inputstream to read contents from
      * @param outputStream An stream to write the output to.
      * @param maxCollect The maximum number of bytes to collect, or -1 for no
-     *  limit
+     * limit
      * @return The thread that will collect the output.
      */
     private static Thread makeCollectorThread(final InputStream inputStream, final OutputStream outputStream,
-    		final int maxCollect) {
+            final int maxCollect) {
         return new Thread() {
             public void run() {
                 try {
@@ -201,6 +202,7 @@ public class ProcessUtils {
 
     /**
      * Reads all contents from a stream, writing some or all to another.
+     *
      * @param in InputStream to read from
      * @param out OutputStream to write to
      * @param maxCollect Maximum number of bytes to write to out
@@ -231,6 +233,7 @@ public class ProcessUtils {
     /**
      * Wait for the end of a process, but only for a limited time.
      * This method takes care of the ways waitFor can get interrupted.
+     *
      * @param p Process to wait for
      * @param maxWait The maximum number of milliseconds to wait for the
      * process to exit.
@@ -250,10 +253,10 @@ public class ProcessUtils {
                 if (!wakeupScheduled) {
                     // First time in here, we need to start the wakup thread,
                     // but be sure it doesn't notify us too early or too late.
-                    synchronized(waitThread) {
+                    synchronized (waitThread) {
                         timer.schedule(new TimerTask() {
                             public void run() {
-                                synchronized(waitThread) {
+                                synchronized (waitThread) {
                                     if (!doneWaiting.get()) {
                                         waitThread.interrupt();
                                     }
@@ -283,9 +286,10 @@ public class ProcessUtils {
             return null;
         }
     }
-    
+
     /**
      * Runs a system process (Unix sort) to sort a file.
+     *
      * @param inputFile the input file.
      * @param outputFile the output file.
      * @return the process exit code.
@@ -296,6 +300,7 @@ public class ProcessUtils {
 
     /**
      * Runs a system process (Unix sort) to sort a file.
+     *
      * @param inputFile the input file.
      * @param outputFile the output file.
      * @param tempDir the directory where to store temporary files (null for default system temp).

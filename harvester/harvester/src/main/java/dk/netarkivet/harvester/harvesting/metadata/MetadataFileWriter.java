@@ -98,7 +98,7 @@ public abstract class MetadataFileWriter {
 
     /**
      * Create a writer that writes data to the given archive file.
-     * 
+     *
      * @param metadataArchiveFile The archive file to write to.
      * @return a writer that writes data to the given archive file.
      */
@@ -128,7 +128,7 @@ public abstract class MetadataFileWriter {
 
     /**
      * Write the given file to the metadata file.
-     * 
+     *
      * @param file A given file with metadata to write to the metadata archive file.
      * @param uri The uri associated with the piece of metadata
      * @param mime The mimetype associated with the piece of metadata
@@ -137,7 +137,7 @@ public abstract class MetadataFileWriter {
 
     /**
      * Writes a File to an ARCWriter, if available, otherwise logs the failure to the class-logger.
-     * 
+     *
      * @param fileToArchive the File to archive
      * @param URL the URL with which it is stored in the arcfile
      * @param mimetype The mimetype of the File-contents
@@ -147,7 +147,7 @@ public abstract class MetadataFileWriter {
 
     /**
      * Write a record to the archive file.
-     * 
+     *
      * @param uri record URI
      * @param contentType content-type of record
      * @param hostIP resource ip-address
@@ -162,7 +162,7 @@ public abstract class MetadataFileWriter {
     /**
      * Append the files contained in the directory to the metadata archive file, but only if the filename matches the
      * supplied filter.
-     * 
+     *
      * @param parentDir directory containing the files to append to metadata
      * @param filter filter describing which files to accept and which to ignore
      * @param mimetype The content-type to write along with the files in the metadata output
@@ -186,7 +186,7 @@ public abstract class MetadataFileWriter {
 
     /**
      * Parses the name of the given file and generates a URI representation of it.
-     * 
+     *
      * @param cdx A CDX file.
      * @return A URI appropriate for identifying the file's content in Netarkivet.
      * @throws UnknownID if something goes terribly wrong in the CDX URI construction

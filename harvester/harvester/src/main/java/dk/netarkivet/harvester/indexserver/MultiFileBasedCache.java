@@ -31,7 +31,7 @@ import dk.netarkivet.common.utils.FileUtils;
 /**
  * Implementation of file based cache, that works with the assumption we are working on a set if ids, of which we might
  * only get a subset correct.
- *
+ * <p>
  * Implements generating a filename from this.
  *
  * @param <T> The cache type, must extend java.lang.Comparable.

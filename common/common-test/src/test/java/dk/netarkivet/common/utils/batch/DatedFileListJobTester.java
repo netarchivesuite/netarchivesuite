@@ -31,9 +31,9 @@ import java.io.OutputStream;
 import java.io.StringReader;
 import java.util.Date;
 
-import junit.framework.TestCase;
 import dk.netarkivet.common.utils.arc.TestInfo;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
+import junit.framework.TestCase;
 
 public class DatedFileListJobTester extends TestCase {
     MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);

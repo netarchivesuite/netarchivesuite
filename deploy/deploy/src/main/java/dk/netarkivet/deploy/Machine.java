@@ -85,7 +85,7 @@ public abstract class Machine {
     /**
      * A machine is referring to an actual computer at a physical location, which can have independent applications from
      * the other machines at the same location.
-     * 
+     *
      * @param subTreeRoot The root of this instance in the XML document.
      * @param parentSettings The setting inherited by the parent.
      * @param param The machine parameters inherited by the parent.
@@ -176,7 +176,7 @@ public abstract class Machine {
     /**
      * Create the directory for the specific configurations of this machine and call the functions for creating all the
      * scripts in this directory.
-     * 
+     *
      * @param parentDirectory The directory where to write the files.
      * @throws ArgumentNotValid If the parenteDirectory is null.
      */
@@ -228,7 +228,7 @@ public abstract class Machine {
 
     /**
      * Make the script for killing this machine. This is put into the entire kill all script for the physical location.
-     * 
+     *
      * @return The script to kill this machine.
      */
     public String writeToGlobalKillScript() {
@@ -242,7 +242,7 @@ public abstract class Machine {
     /**
      * Make the script for installing this machine. This is put into the entire install script for the physical
      * location.
-     * 
+     *
      * @return The script to make the installation on this machine
      */
     public String writeToGlobalInstallScript() {
@@ -255,7 +255,7 @@ public abstract class Machine {
 
     /**
      * Make the script for starting this machine. This is put into the entire startall script for the physical location.
-     * 
+     *
      * @return The script to start this machine.
      */
     public String writeToGlobalStartScript() {
@@ -268,7 +268,7 @@ public abstract class Machine {
 
     /**
      * Copy inherited securityPolicyFile to local directory.
-     * 
+     *
      * @param directory The local directory for this machine.
      * @throws IOFailure If an error occurred during the creation of the security policy file.
      */
@@ -332,7 +332,7 @@ public abstract class Machine {
     /**
      * Creates a the java.util.logging property file for every application. This is done by taking the inherited log
      * file and changing "APPID" in the file into the identification of the application.
-     * 
+     *
      * @param directory The local directory for this machine
      * @throws IOFailure If an error occurred during the creationg of the log property file.
      */
@@ -368,7 +368,7 @@ public abstract class Machine {
     /**
      * Creates a the SLF4J config file for every application. This is done by taking the inherited log file and changing
      * "APPID" in the file into the identification of the application.
-     * 
+     *
      * @param directory The local directory for this machine
      * @throws IOFailure If an error occurred during the creationg of the log property file.
      */
@@ -404,7 +404,7 @@ public abstract class Machine {
     /**
      * Make any OS-specific modifications to logging properties. The default makes no modifications, but this can be
      * overridden in subclasses.
-     * 
+     *
      * @param logProperties the contents of the logging properties file.
      * @return the contents of the logging properties file with any desired modifications.
      */
@@ -414,7 +414,7 @@ public abstract class Machine {
 
     /**
      * Creates the jmxremote.password file, based on the settings.
-     * 
+     *
      * @param directory The local directory for this machine
      * @throws IOFailure If an error occurred during the creation of the jmx remote password file.
      */
@@ -447,7 +447,7 @@ public abstract class Machine {
 
     /**
      * Creates the jmxremote.password file, based on the settings.
-     * 
+     *
      * @param directory The local directory for this machine
      * @throws IOFailure If an error occurred during the creation of the jmx remote access file.
      */
@@ -481,7 +481,7 @@ public abstract class Machine {
     /**
      * For finding the jmxUsernames and jmxPasswords under the monitor branch in the settings. Goes through all
      * applications, which all must have the same username and the same passwords.
-     * 
+     *
      * @return The string to add to the jmxremote.password file.
      * @throws IllegalState If there is a different amount of usernames and passwords, or if two application has
      * different values for their username or passwords (applications without values are ignored).
@@ -545,7 +545,7 @@ public abstract class Machine {
 
     /**
      * For retrieving the monitor username for the jmxremote.access file. This will have the rights 'readonly'.
-     * 
+     *
      * @return The string for the jmxremote.access file for allowing the monitor user to readonly.
      * @throws IllegalState If different applications on the machine have different user names.
      */
@@ -588,7 +588,7 @@ public abstract class Machine {
     /**
      * For finding the jmxUsernames and jmxPasswords under the harvest.harvesting.heritrix branch under in the settings.
      * Goes through all applications, which all must have the same username and the same passwords.
-     * 
+     *
      * @return The string to add to the jmxremote.password file.
      * @throws IllegalState If there is a different amount of usernames and passwords, or if two application has
      * different values for their username or passwords (applications without values are ignored).
@@ -652,7 +652,7 @@ public abstract class Machine {
 
     /**
      * For retrieving the Heritrix username for the jmxremote.access file. This will have the rights 'readwrite'.
-     * 
+     *
      * @return The string for the jmxremote.access file for allowing the heritrix user to readonly.
      */
     protected String getHeritrixUsername() {
@@ -693,7 +693,7 @@ public abstract class Machine {
 
     /**
      * The string for accessing this machine through SSH.
-     * 
+     *
      * @return The access through SSH to the machine
      */
     protected String machineUserLogin() {
@@ -702,7 +702,7 @@ public abstract class Machine {
 
     /**
      * For retrieving the environment name variable.
-     * 
+     *
      * @return The environment name.
      */
     protected String getEnvironmentName() {
@@ -711,14 +711,14 @@ public abstract class Machine {
 
     /**
      * Creates the kill scripts for all the applications.
-     * 
+     *
      * @param directory The directory for this machine (use global variable?).
      */
     protected abstract void createApplicationKillScripts(File directory);
 
     /**
      * Creates the start scripts for all the applications.
-     * 
+     *
      * @param directory The directory for this machine (use global variable?).
      */
     protected abstract void createApplicationStartScripts(File directory);
@@ -726,7 +726,7 @@ public abstract class Machine {
     /**
      * This function creates the script to start all applications on this machine. The scripts calls all the start
      * script for each application.
-     * 
+     *
      * @param directory The directory for this machine (use global variable?).
      */
     protected abstract void createOSLocalStartAllScript(File directory);
@@ -734,56 +734,56 @@ public abstract class Machine {
     /**
      * This function creates the script to kill all applications on this machine. The scripts calls all the kill script
      * for each application.
-     * 
+     *
      * @param directory The directory for this machine (use global variable?).
      */
     protected abstract void createOSLocalKillAllScript(File directory);
 
     /**
      * The operation system specific path to the installation directory.
-     * 
+     *
      * @return Install path.
      */
     protected abstract String getInstallDirPath();
 
     /**
      * The operation system specific path to the conf directory.
-     * 
+     *
      * @return Conf path.
      */
     protected abstract String getConfDirPath();
 
     /**
      * The operation system specific path to the lib directory.
-     * 
+     *
      * @return Lib path.
      */
     protected abstract String getLibDirPath();
 
     /**
      * Creates the operation system specific killing script for this machine.
-     * 
+     *
      * @return Operation system specific part of the killscript.
      */
     protected abstract String osKillScript();
 
     /**
      * Creates the operation system specific installation script for this machine.
-     * 
+     *
      * @return Operation system specific part of the installscript.
      */
     protected abstract String osInstallScript();
 
     /**
      * Creates the specified directories in the deploy-configuration file.
-     * 
+     *
      * @return The script for creating the directories.
      */
     protected abstract String osInstallScriptCreateDir();
 
     /**
      * Creates the operation system specific starting script for this machine.
-     * 
+     *
      * @return Operation system specific part of the startscript.
      */
     protected abstract String osStartScript();
@@ -791,7 +791,7 @@ public abstract class Machine {
     /**
      * Makes all the class paths into the operation system specific syntax, and puts them into a string where they are
      * separated by the operation system specific separator (':' for linux, ';' for windows).
-     * 
+     *
      * @param app The application which has the class paths.
      * @return The class paths in operation system specific syntax.
      */
@@ -800,12 +800,12 @@ public abstract class Machine {
     /**
      * Checks if a specific directory for the database is given in the settings, and thus if the database should be
      * installed on this machine.
-     * 
+     * <p>
      * If no specific database is given as deploy argument (databaseFileName = null) then use the standard database
      * extracted from NetarchiveSuite.zip. Else send the given new database to the standard database location.
-     * 
+     * <p>
      * Extract the database in the standard database location to the specified database directory.
-     * 
+     *
      * @return The script for installing the database (if needed).
      */
     protected abstract String osInstallDatabase();
@@ -813,11 +813,11 @@ public abstract class Machine {
     /**
      * Checks if a specific directory for the archive database is given in the settings, and thus if the archive
      * database should be installed on this machine.
-     * 
+     * <p>
      * If not specific database is given (adminDatabaseFileName = null) then use the default in the NetarchiveSuite.zip
      * package. Else send the new archive database to the standard database location, and extract it to the given
      * location.
-     * 
+     *
      * @return The script for installing the archive database (if needed).
      */
     protected abstract String osInstallArchiveDatabase();
@@ -825,17 +825,17 @@ public abstract class Machine {
     /**
      * This function makes the part of the install script for installing the external jar files from within the
      * jarFolder. If the jarFolder is null, then no action will be performed.
-     * 
+     *
      * @return The script for installing the external jar files (if needed).
      */
     protected abstract String osInstallExternalJarFiles();
 
     /**
      * This functions makes the script for creating the new directories.
-     * 
+     * <p>
      * Linux creates directories directly through ssh. Windows creates an install a script file for installing the
      * directories, which has to be sent to the machine, then executed and finally deleted.
-     * 
+     *
      * @param dir The name of the directory to create.
      * @param clean Whether the directory should be cleaned\reset.
      * @return The lines of code for creating the directories.
@@ -846,7 +846,7 @@ public abstract class Machine {
     /**
      * Creates the script for creating the application specified directories. Also creates the directories along the
      * path to the directories.
-     * 
+     *
      * @return The script for creating the application specified directories.
      */
     protected abstract String getAppDirectories();
@@ -855,21 +855,21 @@ public abstract class Machine {
      * This method does the following: Retrieves the path to the jmxremote.access and jmxremote.password files. Moves
      * these files, if they are different from standard. Makes the jmxremote.access and jmxremote.password files
      * readonly.
-     * 
+     *
      * @return The commands for handling the jmxremote files.
      */
     protected abstract String getJMXremoteFilesCommand();
 
     /**
      * Function to create the script which installs the new directories. This is only used for windows machines!
-     * 
+     *
      * @param dir The directory to put the file
      */
     protected abstract void createInstallDirScript(File dir);
 
     /**
      * Creates a script for restating all the applications on a given machine.
-     * 
+     *
      * @param dir The directory where the script will be placed.
      */
     protected abstract void createRestartScript(File dir);
@@ -877,7 +877,7 @@ public abstract class Machine {
     /**
      * Creates a script for starting the archive database on a given machine. This is only created if the
      * &lt;globalArchiveDatabaseDir&gt; parameter is defined on the machine level.
-     * 
+     *
      * @param dir The directory where the script will be placed.
      */
     protected abstract void createArchiveDatabaseStartScript(File dir);
@@ -885,7 +885,7 @@ public abstract class Machine {
     /**
      * Creates a script for killing the archive database on a given machine. This is only created if the
      * &lt;globalArchiveDatabaseDir&gt; parameter is defined on the machine level.
-     * 
+     *
      * @param dir The directory where the script will be placed.
      */
     protected abstract void createArchiveDatabaseKillScript(File dir);
@@ -893,7 +893,7 @@ public abstract class Machine {
     /**
      * Creates a script for starting the harvest database on a given machine. This is only created if the
      * &lt;deployHarvestDatabaseDir&gt; parameter is defined on the machine level.
-     * 
+     *
      * @param dir The directory where the script will be placed.
      */
     protected abstract void createHarvestDatabaseStartScript(File dir);
@@ -901,14 +901,14 @@ public abstract class Machine {
     /**
      * Creates a script for killing the harvest database on a given machine. This is only created if the
      * &lt;globalHarvestDatabaseDir&gt; parameter is defined on the machine level.
-     * 
+     *
      * @param dir The directory where the script will be placed.
      */
     protected abstract void createHarvestDatabaseKillScript(File dir);
 
     /**
      * Changes the file directory path to the format used in the security policy.
-     * 
+     *
      * @param path The current path.
      * @return The formatted path.
      */
@@ -916,7 +916,7 @@ public abstract class Machine {
 
     /**
      * create a harvestDatabaseUpdatescript in the given machineDirectory.
-     * 
+     *
      * @param machineDirectory a given MachineDirectory.
      */
     protected abstract void createHarvestDatabaseUpdateScript(File machineDirectory);

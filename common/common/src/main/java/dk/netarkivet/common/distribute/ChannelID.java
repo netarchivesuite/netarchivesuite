@@ -36,7 +36,7 @@ import dk.netarkivet.common.utils.SystemUtils;
 /**
  * A class for representing the names of JMS queues.
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({"serial"})
 public class ChannelID implements Serializable {
 
     /**
@@ -54,7 +54,7 @@ public class ChannelID implements Serializable {
      * only has uppercase characters.
      */
     private static final String applicationInstanceId = Settings.get(
-    		CommonSettings.APPLICATION_INSTANCE_ID).toUpperCase();
+            CommonSettings.APPLICATION_INSTANCE_ID).toUpperCase();
 
     /**
      * application instance id is a setting for an application's
@@ -62,7 +62,7 @@ public class ChannelID implements Serializable {
      * An example value is "BAONE".
      */
     private static final String applicationAbbreviation = getApplicationAbbreviation(Settings.get(
-    		CommonSettings.APPLICATION_NAME));
+            CommonSettings.APPLICATION_NAME));
 
     /**
      * Constants to make the semantics of parameters to our name constructors
@@ -83,42 +83,44 @@ public class ChannelID implements Serializable {
     private String name;
 
     /**
-    * Constructor of channel names.
-    * The constructor is package private because we should never use any
-    * channels except the ones constructed by our friend Channels.java
-    * @param appPref The prefix used for the applications listening 
-    * to the channel.
-    * @param replicaId Name of the replica, or ChannelID.COMMON if
-    * channel shared by all replicas.
-    * @param useNodeId Whether that IP address of the local node should
-    * be included in the channel name.
-    * @param useAppInstId Whether application instance id from settings 
-    * should be included in the channel name.
-    * @param isTopic Whether the Channel is a Topic or a Queue.
-    * @throws UnknownID if looking up the local IP number failed.
-    */
+     * Constructor of channel names.
+     * The constructor is package private because we should never use any
+     * channels except the ones constructed by our friend Channels.java
+     *
+     * @param appPref The prefix used for the applications listening
+     * to the channel.
+     * @param replicaId Name of the replica, or ChannelID.COMMON if
+     * channel shared by all replicas.
+     * @param useNodeId Whether that IP address of the local node should
+     * be included in the channel name.
+     * @param useAppInstId Whether application instance id from settings
+     * should be included in the channel name.
+     * @param isTopic Whether the Channel is a Topic or a Queue.
+     * @throws UnknownID if looking up the local IP number failed.
+     */
     public ChannelID(String appPref, String replicaId, boolean useNodeId,
-        boolean useAppInstId, boolean isTopic) {
+            boolean useAppInstId, boolean isTopic) {
         this.name = constructName(appPref, replicaId, useNodeId, useAppInstId, isTopic);
     }
 
     /**
-    * Constructs a channel name according to the specifications
-    * of channels in the NetarchiveSuite Developer Manual.
-    * @param appPref The prefix used for the applications listening 
-    * to the channel.
-    * @param replicaId Id of the replica, or ChannelID.COMMON if
-    * channel common to all bitarchive replicas.
-    * @param useNodeId Whether that IP address of the local node should
-    * be included in the channel name.
-    * @param useAppInstId Whether application instance id from settings 
-    * should be included in the channel name.
-    * @param isTopic If true, the channel is a Topic, else it is a Queue
-    * @return The properly concatenated channel name.
-    * @throws UnknownID if looking up the local IP number failed.
-    */
+     * Constructs a channel name according to the specifications
+     * of channels in the NetarchiveSuite Developer Manual.
+     *
+     * @param appPref The prefix used for the applications listening
+     * to the channel.
+     * @param replicaId Id of the replica, or ChannelID.COMMON if
+     * channel common to all bitarchive replicas.
+     * @param useNodeId Whether that IP address of the local node should
+     * be included in the channel name.
+     * @param useAppInstId Whether application instance id from settings
+     * should be included in the channel name.
+     * @param isTopic If true, the channel is a Topic, else it is a Queue
+     * @return The properly concatenated channel name.
+     * @throws UnknownID if looking up the local IP number failed.
+     */
     private String constructName(String appPref, String replicaId,
-        boolean useNodeId, boolean useAppInstId, boolean isTopic) {
+            boolean useNodeId, boolean useAppInstId, boolean isTopic) {
         String userId = environmentName;
         String id = "";
         if (useNodeId) {
@@ -131,14 +133,14 @@ public class ChannelID implements Serializable {
                 }
             }
         }
-        
+
         String resultingName = userId + Channels.CHANNEL_PART_SEPARATOR + replicaId + Channels.CHANNEL_PART_SEPARATOR
-        		+ appPref;
+                + appPref;
         if (!id.isEmpty()) {
-            resultingName += Channels.CHANNEL_PART_SEPARATOR + id; 
+            resultingName += Channels.CHANNEL_PART_SEPARATOR + id;
         }
         if (isTopic) {
-            resultingName += Channels.CHANNEL_PART_SEPARATOR + "TOPIC"; 
+            resultingName += Channels.CHANNEL_PART_SEPARATOR + "TOPIC";
         }
         return resultingName;
     }
@@ -153,19 +155,21 @@ public class ChannelID implements Serializable {
     }
 
     /**
-    * Pretty-printer.
-    * @return a nice String representation of the ChannelID.
-    */
+     * Pretty-printer.
+     *
+     * @return a nice String representation of the ChannelID.
+     */
     public String toString() {
         return Channels.isTopic(name) ? ("[Topic '" + name + "']") : ("[Queue '" + name + "']");
     }
-    
+
     /**
      * Method used by Java deserialization.
      * Our coding guidelines prescribes that this method should always
      * be implemented, even if it only calls the default method:
      * http://kb-prod-udv-001.kb.dk/twiki/bin/view/Netarkiv/ImplementeringOgTestAfSerializable
      * See also "Effective Java", pages 219 and 224.
+     *
      * @param ois the ObjectInputStream used to read in the object
      * @throws IOFailure if Java could not deserialize the object.
      */
@@ -176,12 +180,14 @@ public class ChannelID implements Serializable {
             throw new IOFailure("Standard deserialization of ChannelID failed.", e);
         }
     }
+
     /**
      * Method used by Java serialization.
      * Our coding guidelines prescribes that this method should always
      * be implemented, even if it only calls the default method:
      * http://kb-prod-udv-001.kb.dk/twiki/bin/view/Netarkiv/ImplementeringOgTestAfSerializable
      * See also "Effective Java", pages 219 and 224.
+     *
      * @param oos the ObjectOutputStream used to serialize the object.
      * @throws IOFailure if Java could not serialize the object.
      */
@@ -192,12 +198,14 @@ public class ChannelID implements Serializable {
             throw new IOFailure("Standard serialization of ChannelID failed.", e);
         }
     }
+
     /**
-    * Implements equality check for ChannelIDs. Useful when these are used
-    * as indexes in Java collections, for instance.
-    * @param o The object to compare this object with.
-    * @return Whether o and this should be considered the same ChannelID.
-    */
+     * Implements equality check for ChannelIDs. Useful when these are used
+     * as indexes in Java collections, for instance.
+     *
+     * @param o The object to compare this object with.
+     * @return Whether o and this should be considered the same ChannelID.
+     */
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -211,20 +219,23 @@ public class ChannelID implements Serializable {
         }
         return true;
     }
+
     /**
-    * Computes a hash code based on the channel name and whether it is a topic.
-    * @return A hash code for this object.
-    */
+     * Computes a hash code based on the channel name and whether it is a topic.
+     *
+     * @return A hash code for this object.
+     */
     public int hashCode() {
         int result;
         result = name.hashCode();
         return result;
     }
-    
+
     /**
      * Finds abbreviation for an application name.
      * The abbreviation is only calculated from the application name without
      * path. It is made from the uppercase letters in the name.
+     *
      * @param applName application name with full path
      * @return abbreviation for given application name.
      */
@@ -238,7 +249,7 @@ public class ChannelID implements Serializable {
         String shortName = p[p.length - 1];
         //put uppercase letters into abbr
         String abbr = "";
-        for (int i = 0; i< shortName.length(); i++) {
+        for (int i = 0; i < shortName.length(); i++) {
             if (Character.isUpperCase(shortName.charAt(i))) {
                 abbr += shortName.substring(i, i + 1);
             }

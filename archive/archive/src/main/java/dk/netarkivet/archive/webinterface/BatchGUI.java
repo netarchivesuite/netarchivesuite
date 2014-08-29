@@ -81,7 +81,7 @@ public final class BatchGUI {
     /**
      * Method for creating the batchjob overview page. Creates both the heading and the table for the batchjobs defined
      * in settings.
-     * 
+     *
      * @param context The context of the page. Contains the locale for the language package.
      * @throws ArgumentNotValid If the PageContext is null.
      * @throws IOException If it is not possible to write to the JspWriter.
@@ -120,17 +120,18 @@ public final class BatchGUI {
 
     /**
      * Method for creating the page for a batchjob. It contains the following informations:
-     * 
+     * <p>
      * <br/>
      * - Creates a line with the name of the batchjob.<br/>
-     * - Write the description if the batchjob has a metadata resource annotation description of the batchjob class.<br/>
+     * - Write the description if the batchjob has a metadata resource annotation description of the batchjob
+     * class.<br/>
      * - The last run information, date and size of the error and output files. <br/>
      * - The arguments of the batchjob, with information if they have been defined in the resource annotations of the
      * class.<br/>
      * - Radio buttons for choosing the replica.<br/>
      * - Input box for regular expression for filenames to match.<br/>
      * - Execution button.<br/>
-     * 
+     *
      * @param context The context of the page. Must contains a class name of the batchjob.
      * @throws UnknownID If the class cannot be found.
      * @throws ArgumentNotValid If the context is null.
@@ -180,7 +181,7 @@ public final class BatchGUI {
 
     /**
      * Method for executing a batchjob.
-     * 
+     *
      * @param context The page context containing the needed information for executing the batchjob.
      */
     @SuppressWarnings("rawtypes")
@@ -256,7 +257,7 @@ public final class BatchGUI {
 
     /**
      * Extracts and validates the class from the class name.
-     * 
+     *
      * @param className The name of the class to extract.
      * @return The class from the class name.
      * @throws UnknownID If the className does not refer to a known class.
@@ -297,7 +298,7 @@ public final class BatchGUI {
     /**
      * Finds a constructor which either does not take any arguments, or does only takes string arguments. Any
      * constructor which does has other arguments than string is ignored.
-     * 
+     *
      * @param c The class to retrieve the constructor from.
      * @return The string argument based constructor of the class.
      * @throws UnknownID If no valid constructor can be found.
@@ -326,24 +327,23 @@ public final class BatchGUI {
     /**
      * Retrieves the HTML code for the description of the class. The description of the class is given in the resource
      * annotation which has the type of the given class.
-     * 
+     * <p>
      * <br/>
      * E.g. <br/>
-     * 
+     *
+     * @param c The class to be described.
+     * @param locale The locale language package.
+     * @return The HTML code describing the class.
      * @Resource(description="Batchjob for finding URLs which matches a given" +
      * " regular expression and has a mimetype which matches another" + " regular expression.",
      * type=dk.netarkivet.common.utils.batch.UrlSearch.class)}
-     * 
+     * <p>
      * <br/>
      * <br/>
      * Which gives the UrlSearch batchjob the following description: <br/>
      * <br/>
      * Description: Batchjob for finding URLs which matches a given regular expression and has a mimetype which matches
      * another regular expression. &lt;br/&gt;&lt;br/&gt;
-     * 
-     * @param c The class to be described.
-     * @param locale The locale language package.
-     * @return The HTML code describing the class.
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
     private static String getClassDescription(Class c, Locale locale) {
@@ -368,15 +368,19 @@ public final class BatchGUI {
     /**
      * Creates the HTML code for the arguments of the constructor. It reads the resources for the batchjob, where the
      * metadata for the constructor is defined in the 'resources' annotation for the class.
-     * 
+     * <p>
      * <br/>
      * E.g. The UrlSearch batchjob. Which has the following resources:<br/>
-     * 
-     * @Resource(name="regex", description="The regular expression for the " + "urls.", type=java.lang.String.class)<br/>
+     *
+     * @param c The class whose constructor should be used.
+     * @param locale The language package.
+     * @return The HTML code for the arguments for executing the batchjob.
+     * @Resource(name="regex", description="The regular expression for the " + "urls.",
+     * type=java.lang.String.class)<br/>
      * @Resource(name="mimetype", type=java.lang.String.class)<br/>
      * Though the batchjob takes three arguments (thus one undefined). <br/>
      * <br/>
-     * 
+     * <p>
      * Arguments:&lt;br/&gt;<br/>
      * regex (The regular expression for the urls.)&lt;br/&gt;<br/>
      * &lt;input name="arg1" size="50" value=""&gt;&lt;br/&gt;<br/>
@@ -384,11 +388,11 @@ public final class BatchGUI {
      * &lt;input name="arg2" size="50" value=""&gt;&lt;br/&gt;<br/>
      * Argument 3 (missing argument metadata)&lt;br/&gt;<br/>
      * &lt;input name="arg3" size="50" value=""&gt;&lt;br/&gt;<br/>
-     * 
+     * <p>
      * <br/>
      * Which will look like: <br/>
      * <br/>
-     * 
+     * <p>
      * Arguments:<br/>
      * regex (The regular expression for the urls.)<br/>
      * <input name="arg1" size="50" value="" /><br/>
@@ -396,12 +400,8 @@ public final class BatchGUI {
      * <input name="arg2" size="50" value="" /><br/>
      * Argument 3 (missing argument metadata)<br/>
      * <input name="arg3" size="50" value="" /><br/>
-     * 
+     * <p>
      * TODO this does not work until batchjobs can be used with arguments.
-     * 
-     * @param c The class whose constructor should be used.
-     * @param locale The language package.
-     * @return The HTML code for the arguments for executing the batchjob.
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
     private static String getHTMLarguments(Class c, Locale locale) {
@@ -478,7 +478,7 @@ public final class BatchGUI {
      * - The size of the error file.<br/>
      * - The number of lines in the error file. <br/>
      * - A link to download the error file.<br/>
-     * 
+     *
      * @param jobPath The name of the batch job.
      * @param locale The locale language package.
      * @return The HTML code for describing the previous executions of the batchjob.
@@ -502,7 +502,7 @@ public final class BatchGUI {
             // match and put into set.
             if (filename.startsWith(batchName)
                     && (filename.endsWith(Constants.ERROR_FILE_EXTENSION) || filename
-                            .endsWith(Constants.OUTPUT_FILE_EXTENSION))) {
+                    .endsWith(Constants.OUTPUT_FILE_EXTENSION))) {
                 String prefix = filename.split("[.]")[0];
                 // the prefix is not added twice, since it is a hash-set.
                 prefixes.add(prefix);
@@ -594,7 +594,7 @@ public final class BatchGUI {
 
     /**
      * Find the timestamp from the given prefix.
-     * 
+     *
      * @param prefix a given prefix of a filename
      * @param locale a given locale used for an error-message
      * @return a timestamp as a string or a message telling that the timestamp was not valid
@@ -619,24 +619,25 @@ public final class BatchGUI {
     }
 
     /**
-     * Creates the HTML code for making the radio buttons for choosing which replica the batchjob will be run upon. <br/>
+     * Creates the HTML code for making the radio buttons for choosing which replica the batchjob will be run upon.
+     * <br/>
      * E.g. the default replica settings (with two bitarchive replicas and one checksum replica) will give:<br/>
      * <br/>
-     * 
+     * <p>
      * Choose replica: &lt;br/&gt;<br/>
      * &lt;input type="radio" name="replica" value="CsOne" disabled&gtCsOne CHECKSUM&lt;/input&gt&lt;br/&gt;<br/>
      * &lt;input type="radio" name="replica" value="BarOne" checked&gtBarOne BITARCHIVE&lt;/input&gt&lt;br/&gt;<br/>
      * &lt;input type="radio" name="replica" value="BarTwo"&gtBarTwo BITARCHIVE&lt;/input&gt;&lt;br/&gt;<br/>
-     * 
+     * <p>
      * <br/>
      * which gives: <br/>
-     * 
+     * <p>
      * Choose replica: <br/>
      * <input type="radio" name="replica" value="CsOne" disabled>CsOne CHECKSUM </input><br/>
      * <input type="radio" name="replica" value="BarOne" checked>BarOne BITARCHIVE</input><br/>
      * <input type="radio" name="replica" value="BarTwo">BarTwo BITARCHIVE </input><br/>
      * <br/>
-     * 
+     *
      * @param locale The locale language package.
      * @return The HTML code for the radio buttons for choosing which replica to run a batchjob upon.
      */
@@ -666,23 +667,23 @@ public final class BatchGUI {
      * Creates the HTML code for choosing the regular expression for limiting the amount the files to be run upon. <br/>
      * E.g. a default class with no specific argument for the limit will give:<br/>
      * <br/>
-     * 
+     * <p>
      * Which files: &lt;br/&gt;<br/>
      * Job ID: &nbsp; &nbsp; &nbsp; &lt;input name="JobId" size="25" value="1" /&gt;&lt;br/&gt;\n<br/>
      * &lt;input type="radio" name="filetype" value="Metadata" checked /&gt;Metadata&lt;br/&gt;\n<br/>
      * &lt;input type="radio" name="filetype" value="Content" checked /&gt;Content&lt;br/&gt;\n<br/>
      * &lt;input type="radio" name="filetype" value="Both" checked /&gt;Both&lt;br/&gt;\n<br/>
-     * 
+     * <p>
      * <br/>
      * Which gives:<br/>
      * <br/>
-     * 
+     * <p>
      * Which files: <br/>
      * Job ID: &nbsp; &nbsp; &nbsp; <input name="JobId" size="25" value="1" /> <br/>
      * <input type="radio" name="filetype" value="Metadata" checked />Metadata <br/>
      * <input type="radio" name="filetype" value="Content" checked />Content <br/>
      * <input type="radio" name="filetype" value="Both" checked />Both<br/>
-     * 
+     *
      * @param locale The locale language package.
      * @return The HTML code for creating the regular expression input box.
      */
@@ -712,22 +713,22 @@ public final class BatchGUI {
 
     /**
      * Creates the HTML code for the submit button.
-     * 
+     * <p>
      * <br/>
      * E.g. a default class with no specific argument for the limit will give:<br/>
      * <br/>
-     * 
+     * <p>
      * Regular expression for file names (".*" = all files):&lt;br/&gt;<br/>
      * &lt;input name="regex" size="50" value=".*"&gt; &lt;/input&gt;&lt;br/&gt;&lt;br/&gt;<br/>
-     * 
+     * <p>
      * <br/>
      * Which gives:<br/>
      * <br/>
-     * 
+     * <p>
      * Regular expression for file names (".*" = all files):<br/>
      * <input name="regex" size="50" value=".*"> </input><br/>
      * <br/>
-     * 
+     *
      * @param locale The locale language package.
      * @return The HTML code for the submit button.
      */
@@ -743,7 +744,7 @@ public final class BatchGUI {
     /**
      * Creates an entry for the overview table for the batchjobs. If the batchjob cannot be instatiated, then an error
      * is written before the table entry, and only the name of the batchjob is written, though the whole name.
-     * 
+     * <p>
      * <br/>
      * E.g.: <br/>
      * &lt;tr&gt;<br/>
@@ -756,11 +757,11 @@ public final class BatchGUI {
      * &lt;input type="submit" name="ChecksumJob_error" value="download" /&gt;<br/>
      * 5 bytes&lt;/th&gt;<br/>
      * &lt;/tr&gt;
-     * 
+     * <p>
      * <br/>
      * Which looks something like this: <br/>
      * <br/>
-     * 
+     * <p>
      * <tr>
      * <th>ChecksumJob</th>
      * <th>Tue Mar 23 13:56:45 CET 2010</th>
@@ -769,7 +770,7 @@ public final class BatchGUI {
      * <th><input type="submit" name="ChecksumJob_error" value="view" /> <input type="submit" name="ChecksumJob_error"
      * value="download" /> 5 bytes</th>
      * </tr>
-     * 
+     *
      * @param batchClassPath The name of the batch job.
      * @param locale The language package.
      * @return The HTML code for the entry in the table.
@@ -843,7 +844,7 @@ public final class BatchGUI {
     /**
      * Method for aquiring the name of the files with the latest timestamp. Creates a list with all the names of the
      * result-files for the given batchjob. The list is sorted and the last (and thus latest) is returned.
-     * 
+     *
      * @param batchjobName The name of the batchjob in question. Is has to be the name without the path (e.g.
      * dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob should just be ChecksumJob).
      * @return The name of the files for the given batchjob. The empty string is returned if no result files have been
@@ -880,7 +881,7 @@ public final class BatchGUI {
     /**
      * Method for extracting the name of the batchjob from the batchjob path. E.g. the batchjob:
      * dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob would become ChecksumJob.
-     * 
+     *
      * @param classPath The complete path for class (retrieve by class.getName()).
      * @return The batchjob name of the class.
      * @throws ArgumentNotValid If the classPath is either null or empty.
@@ -894,7 +895,7 @@ public final class BatchGUI {
 
     /**
      * Retrieves the directory for the batchDir (defined in settings).
-     * 
+     *
      * @return The directory containing all the batchjob results.
      */
     public static File getBatchDir() {
@@ -911,7 +912,7 @@ public final class BatchGUI {
 
     /**
      * Method for retrieving the path to the arcfile corresponding to the classpath.
-     * 
+     *
      * @param classpath The classpath to a batchjob.
      * @return The path to the arc file for the batchjob.
      * @throws UnknownID If the classpath is not within the settings.
@@ -932,7 +933,7 @@ public final class BatchGUI {
 
     /**
      * Method for retrieving and validating the arc-file for a given DOOM!
-     * 
+     *
      * @param classPath The path to the file.
      * @return The arc-file at the given path, or if the path is null or the empty string, then a null is returned.
      * @throws ArgumentNotValid If the classPath argument is null or the empty string.

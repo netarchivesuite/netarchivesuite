@@ -167,7 +167,7 @@ public class IntegrityTestsFTPRemoteFile {
      * Initially verify that communication with the ftp-server succeeds without using the RemoteFile. (1) Verify, that
      * you can upload a file to a ftp-server, and retrieve the same file from this server-server. (2) Verify, that file
      * was not corrupted in transit author: SVC
-     * 
+     *
      * @throws IOException
      */
     public void testConfigSettings() throws IOException {
@@ -208,7 +208,7 @@ public class IntegrityTestsFTPRemoteFile {
 
     /**
      * test 1: test that FTPRemoteFile.getInstance(null) throws an ArgumentNotValid exception
-     * 
+     *
      * @throws FileNotFoundException
      */
     public void testArgumentsNewInstanceNotNull() throws FileNotFoundException {
@@ -222,7 +222,7 @@ public class IntegrityTestsFTPRemoteFile {
 
     /**
      * test 3: test that FTPRemoteFile.appendTo(null) throws an ArgumentNotValid exception
-     * 
+     *
      * @throws FileNotFoundException
      */
     public void testArgumentsRemoteFileAppendToNotNull() throws FileNotFoundException {
@@ -238,7 +238,7 @@ public class IntegrityTestsFTPRemoteFile {
     /**
      * Test that writing to the original file after making a remotefile does not change the remotefile contents. Test
      * for bug #289
-     * 
+     *
      * @throws IOException
      */
     public void testContentsNotOverwriter() throws IOException {

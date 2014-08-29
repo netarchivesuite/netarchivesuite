@@ -34,7 +34,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * Default Free Space Provider of the number of bytes free on the file system.
  */
 public class DefaultFreeSpaceProvider implements FreeSpaceProvider {
-    
+
     /** The error logger we notify about error messages on. */
     private static final Logger log = LoggerFactory.getLogger(DefaultFreeSpaceProvider.class);
 

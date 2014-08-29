@@ -31,16 +31,18 @@ import java.util.NoSuchElementException;
  * Java 1.5 type:
  * FilterIterator<T>,<S>>
  * <S> filter(<T> o);
+ *
  * @param <T> Type of Iterator
  * @param <S> Type of objects returned by the iterator.
  */
 public abstract class FilterIterator<T, S> implements Iterator<S> {
 
-	private S objectcache;
+    private S objectcache;
 
     private final Iterator<T> iter;
 
-    /** Create a new iterator based on an old one.
+    /**
+     * Create a new iterator based on an old one.
      * The old one must not contain any null entries.
      *
      * @param i An iterator
@@ -49,7 +51,8 @@ public abstract class FilterIterator<T, S> implements Iterator<S> {
         iter = i;
     }
 
-    /** Returns the object corresponding to the given object, or null if
+    /**
+     * Returns the object corresponding to the given object, or null if
      * that object is to be skipped.
      *
      * @param o An object in the source iterator domain
@@ -96,14 +99,12 @@ public abstract class FilterIterator<T, S> implements Iterator<S> {
      * the underlying collection is modified while the iteration is in
      * progress in any way other than by calling this method.
      *
-     * @throws UnsupportedOperationException
-     *              if the <tt>remove</tt>
-     *              operation is not supported by this Iterator.
-     * @throws IllegalStateException
-     *              if the <tt>next</tt> method has not
-     *              yet been called, or the <tt>remove</tt> method has already
-     *              been called after the last call to the <tt>next</tt>
-     *              method.
+     * @throws UnsupportedOperationException if the <tt>remove</tt>
+     * operation is not supported by this Iterator.
+     * @throws IllegalStateException if the <tt>next</tt> method has not
+     * yet been called, or the <tt>remove</tt> method has already
+     * been called after the last call to the <tt>next</tt>
+     * method.
      */
     public void remove() {
         throw new UnsupportedOperationException("Cannot remove from this iterator");

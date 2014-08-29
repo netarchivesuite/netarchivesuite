@@ -117,9 +117,8 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
     /**
      * Generates the next id of a extended field. this implementation retrieves the maximum value of extendedfield_id in
      * the DB, and returns this value + 1.
-     * 
+     *
      * @param c an open connection to the HarvestDatabase
-     * 
      * @return The next available ID
      */
     private Long generateNextID(Connection c) {
@@ -133,7 +132,7 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
 
     /**
      * Check whether a particular extended Field exists.
-     * 
+     *
      * @param aExtendedfieldId Id of the extended field.
      * @return true if the extended field exists.
      */
@@ -150,7 +149,7 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
 
     /**
      * Check, if there exists an ExtendedField with a given ID.
-     * 
+     *
      * @param c An open connection to the HarvestDatabase
      * @param aExtendedfieldId An Id for a given Extended Field.
      * @return true, if the extended field with the Id exists; otherwise false
@@ -226,7 +225,7 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
 
     /**
      * Read an ExtendedField from database.
-     * 
+     *
      * @param connection A connection to the harvestDatabase
      * @param aExtendedfieldId The ID for a given ExtendedField
      * @return An ExtendedField object for the given ID.

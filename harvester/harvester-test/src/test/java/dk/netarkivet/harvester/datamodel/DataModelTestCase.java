@@ -143,10 +143,9 @@ public class DataModelTestCase {
     /**
      * Creates the following jobs and hds: HDs: HD#1: selective HD#2: full; no previous HD#3: full; previous: HD#2 HD#4:
      * full; no previous, later than HD#1, HD#2 HD#5: full; previous: HD#4, later than HD#1, HD#2
-     *
+     * <p>
      * Jobs: HD#1, harvest 0: 2,3 Jobs: HD#1, harvest 1: 4,5 Jobs: HD#1, harvest 2: 6,7 Jobs: HD#2, harvest 0: 8,9 Jobs:
      * HD#3, harvest 0: 10,11 Jobs: HD#4, harvest 0: 12,13 Jobs: HD#5, harvest 0: 14,15
-     *
      */
     public static void createTestJobs(long startJobId, long endJobId) {
         HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();

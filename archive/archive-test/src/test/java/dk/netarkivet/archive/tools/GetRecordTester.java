@@ -57,7 +57,6 @@ import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 
 /**
  * Unit test for the GetRecord tool.
- *
  */
 public class GetRecordTester {
 
@@ -166,5 +165,7 @@ public class GetRecordTester {
                 JMSConnectionFactory.getInstance().reply(m);
             }
         }
-    };
+    }
+
+    ;
 }

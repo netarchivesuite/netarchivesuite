@@ -28,8 +28,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
 
-import junit.framework.TestCase;
-
 import org.archive.io.ArchiveRecord;
 import org.archive.io.arc.ARCReader;
 import org.archive.io.arc.ARCReaderFactory;
@@ -38,6 +36,7 @@ import org.archive.io.arc.ARCWriter;
 
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.arc.ARCUtils;
+import junit.framework.TestCase;
 
 @SuppressWarnings({"unused"})
 public class Bug901Tester extends TestCase {
@@ -65,7 +64,7 @@ public class Bug901Tester extends TestCase {
     /**
      * Test, if bug 901 is fixed. Try to insert 3.0 gb file into an ARC file file 4000-metadata-2.arc is taken from
      * kb-prod-udv-001.kb.dk:/home/test
-     * 
+     *
      * @throws IOException
      */
     public void testbug901Fixed() throws IOException {

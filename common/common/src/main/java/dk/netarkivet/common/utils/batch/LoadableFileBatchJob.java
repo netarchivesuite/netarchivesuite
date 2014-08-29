@@ -40,26 +40,30 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 
-/** This implementation of FileBatchJob is a bridge to a class file given
+/**
+ * This implementation of FileBatchJob is a bridge to a class file given
  * as a File object.
  * The given class will be loaded and used to perform
- * the actions of the FileBatchJob class. */
-@SuppressWarnings({ "unchecked", "rawtypes", "serial" })
+ * the actions of the FileBatchJob class.
+ */
+@SuppressWarnings({"unchecked", "rawtypes", "serial"})
 public class LoadableFileBatchJob extends FileBatchJob {
 
-	/** The class logger. */
+    /** The class logger. */
     private static final transient Logger log = LoggerFactory.getLogger(LoadableFileBatchJob.class);
 
     /** The job loaded from file. */
     transient FileBatchJob loadedJob;
     /** The binary contents of the file before they are turned into a class. */
     byte[] fileContents;
-    /** The name of the file before they are turned into a class. */    
+    /** The name of the file before they are turned into a class. */
     String fileName;
-    /** The arguments for instantiating the batchjob.*/
+    /** The arguments for instantiating the batchjob. */
     private List<String> args;
 
-    /** Create a new batch job that runs the loaded class.
+    /**
+     * Create a new batch job that runs the loaded class.
+     *
      * @param classFile the classfile for the batch job we want to run.
      * @param arguments The arguments for the batchjobs. This can be null.
      * @throws ArgumentNotValid If the classfile is null.
@@ -68,22 +72,26 @@ public class LoadableFileBatchJob extends FileBatchJob {
         ArgumentNotValid.checkNotNull(classFile, "File classFile");
         fileContents = FileUtils.readBinaryFile(classFile);
         fileName = classFile.getName();
-        if(arguments == null) {
+        if (arguments == null) {
             this.args = new ArrayList<String>();
         } else {
             this.args = arguments;
         }
-        
+
         loadBatchJob();
     }
 
-    /** Override of the default toString to include name of loaded class.
-     * @return string representation of this class. */
-   public String toString() {
-       return this.getClass().getName() + " processing " + fileName;
-   }
+    /**
+     * Override of the default toString to include name of loaded class.
+     *
+     * @return string representation of this class.
+     */
+    public String toString() {
+        return this.getClass().getName() + " processing " + fileName;
+    }
 
-    /** Override of the default way to serialize this class.
+    /**
+     * Override of the default way to serialize this class.
      *
      * @param out Stream that the object will be written to.
      * @throws IOException In case there is an error from the underlying stream,
@@ -93,7 +101,8 @@ public class LoadableFileBatchJob extends FileBatchJob {
         out.defaultWriteObject();
     }
 
-    /** Override of the default way to unserialize an object of this class.
+    /**
+     * Override of the default way to unserialize an object of this class.
      *
      * @param in Stream that the object can be read from.
      * @throws IOException If there is an error reading from the stream, or
@@ -117,21 +126,22 @@ public class LoadableFileBatchJob extends FileBatchJob {
         loadBatchJob();
         loadedJob.initialize(os);
     }
-    
+
     /**
      * Method for initializing the loaded batchjob.
+     *
      * @throws IOFailure If the batchjob cannot be loaded.
      */
     protected void loadBatchJob() throws IOFailure {
         ByteClassLoader singleClassLoader = new ByteClassLoader(fileContents);
         try {
             Class batchClass = singleClassLoader.defineClass();
-            if(args.size() == 0) {
+            if (args.size() == 0) {
                 loadedJob = (FileBatchJob) batchClass.newInstance();
             } else {
                 // get argument classes (string only).
                 Class[] argClasses = new Class[args.size()];
-                for(int i = 0; i < args.size(); i++) {
+                for (int i = 0; i < args.size(); i++) {
                     argClasses[i] = String.class;
                 }
 
@@ -146,7 +156,7 @@ public class LoadableFileBatchJob extends FileBatchJob {
             throw new IOFailure(msg, e);
         } catch (NoSuchMethodException e) {
             final String msg = "No constructor for the arguments '" + args + "' can be found for the batchjob '"
-            		+ fileName + "'.";
+                    + fileName + "'.";
             log.warn(msg, e);
             throw new IOFailure(msg, e);
         } catch (InstantiationException e) {
@@ -164,8 +174,7 @@ public class LoadableFileBatchJob extends FileBatchJob {
      * Process one file stored in the bit archive.
      *
      * @param file the file to be processed.
-     * @param os   the OutputStream to which output should be written
-     *
+     * @param os the OutputStream to which output should be written
      * @return true if the file was successfully processed, false otherwise
      */
     public boolean processFile(File file, OutputStream os) {
@@ -184,7 +193,7 @@ public class LoadableFileBatchJob extends FileBatchJob {
         ArgumentNotValid.checkNotNull(os, "OutputStream os");
         loadedJob.finish(os);
     }
-    
+
     @Override
     public boolean postProcess(InputStream input, OutputStream output) {
         ArgumentNotValid.checkNotNull(input, "InputStream input");

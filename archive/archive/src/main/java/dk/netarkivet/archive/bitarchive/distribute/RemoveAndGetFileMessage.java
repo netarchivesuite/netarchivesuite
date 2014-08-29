@@ -60,7 +60,7 @@ public class RemoveAndGetFileMessage extends ArchiveMessage {
 
     /**
      * Constructor.
-     * 
+     *
      * @param to Where to send the message.
      * @param replyTo Where the reply of the message should be sent.
      * @param fileName The name of the file to remove and retrieve.
@@ -79,7 +79,7 @@ public class RemoveAndGetFileMessage extends ArchiveMessage {
 
     /**
      * Set the file this message should remove and return. Note: This will make a remote file handle for the file.
-     * 
+     *
      * @param data Content of the file to retrieve
      * @throws ArgumentNotValid If the data file is null.
      */
@@ -92,7 +92,7 @@ public class RemoveAndGetFileMessage extends ArchiveMessage {
     /**
      * Writes the the content of the retrieved file into a local file. Note: This is transferred through a remote file
      * handle, and then the handle is invalidated. This method may only be called once.
-     * 
+     *
      * @return file content
      * @throws IOFailure on error reading the file
      */
@@ -117,7 +117,7 @@ public class RemoveAndGetFileMessage extends ArchiveMessage {
 
     /**
      * Returns the remote file.
-     * 
+     *
      * @return The remote file.
      */
     public RemoteFile getRemoteFile() {
@@ -126,7 +126,7 @@ public class RemoveAndGetFileMessage extends ArchiveMessage {
 
     /**
      * Retrieve the replica id.
-     * 
+     *
      * @return replica id
      */
     public String getReplicaId() {
@@ -135,7 +135,7 @@ public class RemoveAndGetFileMessage extends ArchiveMessage {
 
     /**
      * Get name of the file to retrieve.
-     * 
+     *
      * @return file name
      */
     public String getFileName() {
@@ -144,7 +144,7 @@ public class RemoveAndGetFileMessage extends ArchiveMessage {
 
     /**
      * Get the checksum of the file to remove.
-     * 
+     *
      * @return the checksum of the file to remove
      */
     public String getCheckSum() {
@@ -153,7 +153,7 @@ public class RemoveAndGetFileMessage extends ArchiveMessage {
 
     /**
      * Get the credentials for the remove operation.
-     * 
+     *
      * @return the credentials for the remove operation
      */
     public String getCredentials() {
@@ -179,7 +179,7 @@ public class RemoveAndGetFileMessage extends ArchiveMessage {
 
     /**
      * Retrieval of a string representation of this instance.
-     * 
+     *
      * @return The string representation of this instance.
      * @see dk.netarkivet.common.distribute.NetarkivetMessage#toString()
      */

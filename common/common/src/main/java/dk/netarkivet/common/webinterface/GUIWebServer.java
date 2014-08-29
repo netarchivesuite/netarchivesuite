@@ -43,7 +43,6 @@ import dk.netarkivet.common.utils.StringUtils;
 /**
  * A class representing an HttpServer. This class loads web applications as
  * given in settings.
- *
  */
 public class GUIWebServer implements CleanupIF {
     /**
@@ -58,13 +57,13 @@ public class GUIWebServer implements CleanupIF {
      * Logger for this class.
      */
     private Log log = LogFactory.getLog(getClass().getName());
-    
+
     /** The lower limit of acceptable HTTP port-numbers. */
     private static final int HTTP_PORT_NUMBER_LOWER_LIMIT = 1025;
 
     /** The upper limit of acceptable HTTP port-numbers. */
     private static final int HTTP_PORT_NUMBER_UPPER_LIMIT = 65535;
-    
+
     /**
      * Initialises a GUI Web Server and adds web applications.
      *
@@ -74,11 +73,11 @@ public class GUIWebServer implements CleanupIF {
         //Read and log settings.
         int port = Integer.parseInt(Settings.get(
                 CommonSettings.HTTP_PORT_NUMBER));
-        if (port < HTTP_PORT_NUMBER_LOWER_LIMIT 
+        if (port < HTTP_PORT_NUMBER_LOWER_LIMIT
                 || port > HTTP_PORT_NUMBER_UPPER_LIMIT) {
             throw new IOFailure(
-                    "Port must be in the range [" 
-                            + HTTP_PORT_NUMBER_LOWER_LIMIT + ", " 
+                    "Port must be in the range ["
+                            + HTTP_PORT_NUMBER_LOWER_LIMIT + ", "
                             + HTTP_PORT_NUMBER_UPPER_LIMIT + "], not " + port);
         }
         //TODO Replace with just one setting. See issue NAS-1687
@@ -88,17 +87,17 @@ public class GUIWebServer implements CleanupIF {
         if (webApps.length != classes.length) {
             throw new IOFailure(
                     "Number of webapplications and number of classes defining "
-                    + "the webapps do not match. "
-                    + "Webapps: [" + StringUtils.conjoin(",", webApps) + "]. "
-                    + "]. Classes: [" + StringUtils.conjoin(",", classes)
-                    + "]");
+                            + "the webapps do not match. "
+                            + "Webapps: [" + StringUtils.conjoin(",", webApps) + "]. "
+                            + "]. Classes: [" + StringUtils.conjoin(",", classes)
+                            + "]");
         }
 
         log.info("Starting webserver. Port: " + port
-                 + " deployment directories: '"
-                 + StringUtils.conjoin(",", webApps)
-                 + "' classes: '"
-                 + StringUtils.conjoin(",", classes) + "'");
+                + " deployment directories: '"
+                + StringUtils.conjoin(",", webApps)
+                + "' classes: '"
+                + StringUtils.conjoin(",", classes) + "'");
 
         //Get a Jetty server.
         server = new Server(port);
@@ -137,10 +136,10 @@ public class GUIWebServer implements CleanupIF {
      * Note: This must be done BEFORE starting the server.
      * The webbase is deduced from the name of the webapp.
      *
-     * @param webapp  a directory with jsp files or a war file.
-     * @throws IOFailure        if directory is not found.
+     * @param webapp a directory with jsp files or a war file.
+     * @throws IOFailure if directory is not found.
      * @throws ArgumentNotValid if either argument is null or empty or if
-     *                          webbase doesn't start with '/'.
+     * webbase doesn't start with '/'.
      * @throws PermissionDenied if the server is already running.
      */
     private WebAppContext getWebApplication(String webapp)
@@ -157,7 +156,7 @@ public class GUIWebServer implements CleanupIF {
         String webbase = "/" + webappFilename;
         final String warSuffix = ".war";
         if (webappFilename.toLowerCase().endsWith(warSuffix)) {
-            webbase = "/" + webappFilename.substring(0, 
+            webbase = "/" + webappFilename.substring(0,
                     webappFilename.length() - warSuffix.length());
         }
 
@@ -218,7 +217,7 @@ public class GUIWebServer implements CleanupIF {
 
         resetInstance();
     }
-    
+
     /** resetClassInstance. */
     private static synchronized void resetInstance() {
         instance = null;

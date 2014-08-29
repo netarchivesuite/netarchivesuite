@@ -42,7 +42,7 @@ public class GetMessage extends ArchiveMessage {
 
     /**
      * Constructor.
-     * 
+     *
      * @param to Where the message should be sent.
      * @param replyTo where the reply of this message should be sent.
      * @param arcfile The name of the file to retrieve a arc-record from.
@@ -56,7 +56,7 @@ public class GetMessage extends ArchiveMessage {
 
     /**
      * Get name of the arc file.
-     * 
+     *
      * @return file name
      */
     public String getArcFile() {
@@ -65,7 +65,7 @@ public class GetMessage extends ArchiveMessage {
 
     /**
      * Index of the record to retrieve.
-     * 
+     *
      * @return offset
      */
     public long getIndex() {
@@ -74,7 +74,7 @@ public class GetMessage extends ArchiveMessage {
 
     /**
      * Register retrieved record.
-     * 
+     *
      * @param rec Record retrieved from arcfile at offset index
      */
     public void setRecord(BitarchiveRecord rec) {
@@ -83,7 +83,7 @@ public class GetMessage extends ArchiveMessage {
 
     /**
      * Get the data retrieved from the arcfile.
-     * 
+     *
      * @return Record from arcfile
      */
     public BitarchiveRecord getRecord() {
@@ -102,7 +102,7 @@ public class GetMessage extends ArchiveMessage {
 
     /**
      * Retrieval of a string representation of this instance.
-     * 
+     *
      * @return The string representation of this instance.
      */
     public String toString() {

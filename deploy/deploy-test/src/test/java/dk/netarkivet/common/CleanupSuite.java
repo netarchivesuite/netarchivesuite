@@ -30,7 +30,7 @@ public class CleanupSuite {
 
     /**
      * Create a test suite just for these tests.
-     * 
+     *
      * @return this testsuite
      */
     public static Test suite() {
@@ -42,7 +42,7 @@ public class CleanupSuite {
 
     /**
      * Add the tests here.
-     * 
+     *
      * @param suite The testsuite to be added
      */
     public static void addToSuite(TestSuite suite) {

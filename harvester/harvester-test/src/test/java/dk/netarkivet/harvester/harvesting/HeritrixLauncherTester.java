@@ -104,7 +104,7 @@ public class HeritrixLauncherTester {
      * Centralized place for tests to construct a HeritrixLauncher. - Constructs the given crawlDir. - Copies the given
      * order.xml to the proper place in the given crawlDir. - Copies the standard seeds.txt to the proper place in the
      * given crawlDir. - Constructs a HeritrixLauncher and returns it
-     * 
+     *
      * @param origOrderXml original order.xml
      * @param indexDir
      * @return a HeritrixLauncher used by (most) tests.
@@ -282,9 +282,9 @@ public class HeritrixLauncherTester {
     /**
      * Test that starting a job does not throw an Exception. Will fail if tests/dk/netarkivet/jmxremote.password has
      * other rights than -r------
-     * 
+     * <p>
      * FIXME Fails on Hudson
-     * 
+     *
      * @throws NoSuchFieldException
      * @throws IllegalAccessException
      */
@@ -424,7 +424,7 @@ public class HeritrixLauncherTester {
 
     /**
      * Tests that HeritricLauncher will fail on an error in HeritrixController.initialize().
-     * 
+     * <p>
      * FIXME Fails in Hudson
      */
     @Test
@@ -446,7 +446,7 @@ public class HeritrixLauncherTester {
 
     /**
      * When the an exception is thrown in cleanup, any exceptions thrown in the initialiser are lost.
-     * 
+     * <p>
      * * FIXME Fails in Hudson
      */
     @Test
@@ -469,8 +469,8 @@ public class HeritrixLauncherTester {
     /**
      * A failure to communicate with heritrix during the crawl should be logged but not be in any way fatal to the
      * crawl.
-     * 
-     * 
+     * <p>
+     * <p>
      * * FIXME Fails in Hudson
      */
     @Test
@@ -535,7 +535,9 @@ public class HeritrixLauncherTester {
     public static class FailingTestController implements HeritrixController {
 
         public FailingTestController(HeritrixFiles files) {
-        };
+        }
+
+        ;
 
         public void initialize() {
             // TODO: implement method
@@ -622,7 +624,7 @@ public class HeritrixLauncherTester {
         private static final long serialVersionUID = 1L;
         /**
          * List of crawl status listeners.
-         *
+         * <p>
          * All iterations need to synchronize on this object if they're to avoid concurrent modification exceptions. See
          * {@link java.util.Collections#synchronizedList(List)}.
          */
@@ -636,7 +638,6 @@ public class HeritrixLauncherTester {
          * Register for CrawlStatus events.
          *
          * @param cl a class implementing the CrawlStatusListener interface
-         *
          * @see CrawlStatusListener
          */
         public void addCrawlStatusListener(CrawlStatusListener cl) {
@@ -680,8 +681,7 @@ public class HeritrixLauncherTester {
         /**
          * Dummy frontier used by TestCrawlController
          */
-        @SuppressWarnings("rawtypes")
-        class TestFrontier implements Frontier {
+        @SuppressWarnings("rawtypes") class TestFrontier implements Frontier {
 
             public void initialize(CrawlController crawlController) throws FatalConfigurationException, IOException {
             }
@@ -833,5 +833,7 @@ public class HeritrixLauncherTester {
             }
 
         }
-    };
+    }
+
+    ;
 }

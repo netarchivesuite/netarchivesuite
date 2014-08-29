@@ -41,7 +41,7 @@ import dk.netarkivet.common.utils.Settings;
  */
 public class Channels {
 
-	private static final Log log = LogFactory.getLog(Channels.class);
+    private static final Log log = LogFactory.getLog(Channels.class);
 
     /**
      * Channel type prefixes for the current set of channels.
@@ -102,7 +102,7 @@ public class Channels {
         int i = 0;
         int useReplicaIndex = -1;
         // go through all replicas and initialize their channels.
-        for(Replica rep : replicas) {
+        for (Replica rep : replicas) {
             if (rep.getType() == ReplicaType.BITARCHIVE) {
                 // Bitarchive has 'ALL_BA', 'ANY_BA' and 'THE_BAMON'.
                 ALL_BA_ARRAY[i] = new ChannelID(ALLBA_CHANNEL_PREFIX, rep.getId(), ChannelID.NO_IP,
@@ -112,13 +112,13 @@ public class Channels {
                 THE_BAMON_ARRAY[i] = new ChannelID(THEBAMON_CHANNEL_PREFIX, rep.getId(), ChannelID.NO_IP,
                         ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
                 THE_CR_ARRAY[i] = null;
-            } else if (rep.getType() == ReplicaType.CHECKSUM){
+            } else if (rep.getType() == ReplicaType.CHECKSUM) {
                 // Checksum has only 'THE_CR'.
                 ALL_BA_ARRAY[i] = null;
                 ANY_BA_ARRAY[i] = null;
                 THE_BAMON_ARRAY[i] = null;
                 THE_CR_ARRAY[i] = new ChannelID(THECR_CHANNEL_PREFIX, rep.getId(), ChannelID.NO_IP,
-                		ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
+                        ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
             } else {
                 // Throw an exception when unknown replica type.
                 throw new UnknownID("The replica '" + rep + "' does not have " + "a valid replica type.");
@@ -136,7 +136,7 @@ public class Channels {
         if (useReplicaIndex < 0 || useReplicaIndex >= replicas.size()) {
             // issue an error, if the use replica could not be found.
             throw new ArgumentNotValid("The useReplica '" + useReplica + "' was not found in the list of replicas: '"
-            		+ replicas + "'.");
+                    + replicas + "'.");
         }
 
         // set the channels for the useReplica
@@ -161,15 +161,15 @@ public class Channels {
      * to the HarvestScheduler.
      *
      * @return the <code>ChannelID</code> object for the queue on which
-     *         HarvestControllers reply with status messages to the
-     *         HarvestScheduler
+     * HarvestControllers reply with status messages to the
+     * HarvestScheduler
      */
     public static ChannelID getTheSched() {
         return getInstance().THE_SCHED;
     }
 
     private final ChannelID THE_SCHED = new ChannelID(THESCHED_CHANNEL_PREFIX, ChannelID.COMMON, ChannelID.NO_IP,
-    		ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
+            ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
 
     /**
      * Returns the one-per-client queue on which client receives replies from
@@ -194,7 +194,7 @@ public class Channels {
     }
 
     private final ChannelID THE_REPOS = new ChannelID(THEREPOS_CHANNEL_PREFIX, ChannelID.COMMON, ChannelID.NO_IP,
-    		ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
+            ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
 
     /**
      * Returns BAMON channels for every known bitarchive (replica).
@@ -218,7 +218,7 @@ public class Channels {
 
         if (res == null) {
             throw new IllegalState("The channel for the bitarchive monitor  cannot to be retrieved for replica '"
-            		+ getInstance().useReplica + "'.");
+                    + getInstance().useReplica + "'.");
         }
 
         return res;
@@ -240,7 +240,7 @@ public class Channels {
         return getInstance().THE_CR_ARRAY;
     }
 
-    /** The array containing the 'THE_CR' channels.*/
+    /** The array containing the 'THE_CR' channels. */
     private final ChannelID[] THE_CR_ARRAY
             = new ChannelID[replicas.size()];
 
@@ -256,7 +256,7 @@ public class Channels {
 
         if (res == null) {
             throw new IllegalState("A bitarchive replica does not have the channel for communicating with a checksum "
-            		+ "replica.");
+                    + "replica.");
         }
 
         return res;
@@ -264,7 +264,8 @@ public class Channels {
 
     /**
      * The 'THE_CR' channel for this replica. This has the value 'null' if
-     * the replica is not a checksum replica.*/
+     * the replica is not a checksum replica.
+     */
     private final ChannelID THE_CR;
 
     /**
@@ -295,7 +296,7 @@ public class Channels {
 
         if (res == null) {
             throw new IllegalState("A checksum replica does not have the channels for communicating with a bitarchive "
-            		+ "replica.");
+                    + "replica.");
         }
 
         return res;
@@ -327,7 +328,7 @@ public class Channels {
      * this replica will get the message.
      *
      * @return A queue channel that reaches one of the local bitarchive
-     *         machines.
+     * machines.
      * @throws IllegalState If the current replica is not a bitarchive replica.
      */
     public static ChannelID getAnyBa() throws IllegalState {
@@ -335,7 +336,7 @@ public class Channels {
 
         if (res == null) {
             throw new IllegalState("A checksum replica does not have the channels for communicating with a bitarchive "
-            		+ "replica.");
+                    + "replica.");
         }
 
         return res;
@@ -357,7 +358,7 @@ public class Channels {
     }
 
     private final ChannelID ERROR = new ChannelID(ERROR_CHANNEL_PREFIX, ChannelID.COMMON, ChannelID.NO_IP,
-    		ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
+            ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
 
     /**
      * Given an replica, returns the BAMON queue to which batch jobs
@@ -365,15 +366,14 @@ public class Channels {
      *
      * @param replicaId The id of the replica
      * @return the channel
-     * @throws ArgumentNotValid
-     *             if the replicaId is null, unknown, or empty string
+     * @throws ArgumentNotValid if the replicaId is null, unknown, or empty string
      */
     public static ChannelID getBaMonForReplica(String replicaId) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(replicaId, "replicaId");
         ChannelID[] bamons = getAllArchives_BAMONs();
         for (ChannelID bamon : bamons) {
             if (bamon != null && bamon.getName().equals(Settings.get(CommonSettings.ENVIRONMENT_NAME)
-            		+ CHANNEL_PART_SEPARATOR + replicaId + CHANNEL_PART_SEPARATOR + THEBAMON_CHANNEL_PREFIX)) {
+                    + CHANNEL_PART_SEPARATOR + replicaId + CHANNEL_PART_SEPARATOR + THEBAMON_CHANNEL_PREFIX)) {
                 return bamon;
             }
         }
@@ -385,7 +385,7 @@ public class Channels {
         ChannelID[] crs = getAllArchives_CRs();
         for (ChannelID cr : crs) {
             if (cr != null && cr.getName().equals(Settings.get(CommonSettings.ENVIRONMENT_NAME)
-            		+ CHANNEL_PART_SEPARATOR + replicaId + CHANNEL_PART_SEPARATOR + THECR_CHANNEL_PREFIX)) {
+                    + CHANNEL_PART_SEPARATOR + replicaId + CHANNEL_PART_SEPARATOR + THECR_CHANNEL_PREFIX)) {
                 return cr;
             }
         }
@@ -460,7 +460,7 @@ public class Channels {
     }
 
     private final ChannelID THE_INDEX_SERVER = new ChannelID(INDEXSERVER_CHANNEL_PREFIX, ChannelID.COMMON,
-    		ChannelID.NO_IP, ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
+            ChannelID.NO_IP, ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
 
     /**
      * Returns the queue for getting responses from the IndexServer
@@ -476,7 +476,8 @@ public class Channels {
     private final ChannelID THIS_INDEX_CLIENT = new ChannelID(THISINDEXCLIENT_CHANNEL_PREFIX, ChannelID.COMMON,
             ChannelID.INCLUDE_IP, ChannelID.INCLUDE_APPLINST_ID, ChannelID.QUEUE);
 
-    /** Return the topic for the monitor registry.
+    /**
+     * Return the topic for the monitor registry.
      *
      * @return the <code>ChannelID</code> object for the queue.
      */
@@ -485,7 +486,7 @@ public class Channels {
     }
 
     private final ChannelID THE_MONITOR_SERVER = new ChannelID(MONITOR_CHANNEL_PREFIX, ChannelID.COMMON,
-    		ChannelID.NO_IP, ChannelID.NO_APPLINST_ID, ChannelID.TOPIC);
+            ChannelID.NO_IP, ChannelID.NO_APPLINST_ID, ChannelID.TOPIC);
 
     /**
      * Reset the instance to re-read the settings. Only for use in tests.
@@ -496,6 +497,7 @@ public class Channels {
 
     /**
      * Is a given name a ChannelName for a Topic or a Queue.
+     *
      * @param name a given name
      * @return true, if arg name contains the string "_ALL_"
      */

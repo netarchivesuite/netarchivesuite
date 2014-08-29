@@ -44,7 +44,7 @@ public class UrlCanonicalizerFactory extends SettingsFactory<UrlCanonicalizer> {
      * dk.netarkivet.wayback module. In the event that reading this file generates a SecurityException, as may occur in
      * batch operation if security does not allow System properties to be read, the method will fall back on returning
      * an instance of the class dk.netarkivet.wayback.batch.copycode.NetarchiveSuiteAggressiveUrlCanonicalizer
-     * 
+     *
      * @return a canonicalizer for urls
      */
     public static UrlCanonicalizer getDefaultUrlCanonicalizer() {

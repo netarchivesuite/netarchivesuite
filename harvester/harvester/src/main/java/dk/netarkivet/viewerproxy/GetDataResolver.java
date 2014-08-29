@@ -48,7 +48,6 @@ import dk.netarkivet.harvester.HarvesterSettings;
 /**
  * Wrapper for an URIResolver, which retrieves raw data on given specific URLs, and forwards all others to the wrapped
  * handler. This allows you to get metadata, individual files, and individual records.
- *
  */
 @SuppressWarnings({"serial", "unused"})
 public class GetDataResolver extends CommandResolver {
@@ -129,7 +128,7 @@ public class GetDataResolver extends CommandResolver {
 
     /**
      * Get all metadata for a given job id, and write it to response. Multiple metadata files will be concatenated.
-     * 
+     *
      * @param request A get metadata request; a parameter jobID is expected to be set.
      * @param response Metadata will be written to this response.
      * @throws IOFailure in any trouble.
@@ -166,7 +165,7 @@ public class GetDataResolver extends CommandResolver {
     /**
      * Get a record from an ARC file, and write it to response. If the record has size greater than
      * settings.viewerproxy.maxSizeInBrowser then a header is added to turn the response into a file-download.
-     * 
+     *
      * @param request A get metadata request; parameters arcFile and arcOffset are expected to be set.
      * @param response Metadata will be written to this response.
      * @throws IOFailure in any trouble.
@@ -202,7 +201,7 @@ public class GetDataResolver extends CommandResolver {
 
     /**
      * Get a file from bitarchive, and write it to response.
-     * 
+     *
      * @param request A get metadata request; parameter arcFile is expected to be set.
      * @param response File will be written to this response.
      * @throws IOFailure in any trouble.

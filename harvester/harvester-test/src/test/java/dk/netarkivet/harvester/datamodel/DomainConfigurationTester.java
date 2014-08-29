@@ -47,7 +47,6 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
  * Tests for the DomainConfiguration class. Also widely tested from other places.
- *
  */
 
 public class DomainConfigurationTester extends DataModelTestCase {
@@ -132,7 +131,7 @@ public class DomainConfigurationTester extends DataModelTestCase {
 
     /**
      * Test that we can remove a password.
-     * 
+     *
      * @throws Exception
      */
     public void testRemovePassword() throws Exception {
@@ -153,7 +152,7 @@ public class DomainConfigurationTester extends DataModelTestCase {
 
     /**
      * Test that we can ask for the use of a password.
-     * 
+     *
      * @throws Exception
      */
     public void testUsesPassword() throws Exception {

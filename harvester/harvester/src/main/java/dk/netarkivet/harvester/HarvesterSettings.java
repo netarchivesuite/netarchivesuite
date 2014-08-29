@@ -62,7 +62,7 @@ public class HarvesterSettings {
     /**
      * <b>settings.harvester.datamodel.domain.validSeedRegex</b>: <br>
      * Regular expression used to validate a seed within a seedlist.
-     *
+     * <p>
      * Default value accepts all non-empty strings.
      */
     public static String VALID_SEED_REGEX = "settings.harvester.datamodel.domain.validSeedRegex";
@@ -211,7 +211,7 @@ public class HarvesterSettings {
      * Controls whether the domain configuration object limit should be set in Heritrix's crawl order through the
      * QuotaEnforcer configuration (parameter set to true) or through the frontier parameter 'queue-total-budget' (
      * parameter set to false).
-     *
+     * <p>
      * Default value is true, as legacy implementation was to use only the QuotaEnforcer.
      */
     public static String OBJECT_LIMIT_SET_BY_QUOTA_ENFORCER = "settings.harvester.scheduler.jobGen.objectLimitIsSetByQuotaEnforcer";
@@ -251,9 +251,9 @@ public class HarvesterSettings {
     /**
      * <b>settings.harvester.harvesting.channel</b>: <br>
      * Harvest channel to take jobs from. This is the default channel assigned to the harvest controller.
-     * 
-     * @see dk.netarkivet.harvester.datamodel.HarvestChannel
      *
+     * @see dk.netarkivet.harvester.datamodel.HarvestChannel
+     * <p>
      * NOTE: this one is also used in SingleMBeanObject parsing information to System state
      */
     public static String HARVEST_CONTROLLER_CHANNEL = "settings.harvester.harvesting.channel";
@@ -299,7 +299,7 @@ public class HarvesterSettings {
     /**
      * <b>settings.harvester.snapshotChannelId</b>: <br>
      * ID of the unique harvest channel for broad crawls.
-     * 
+     *
      * @see dk.netarkivet.harvester.datamodel.HarvestChannel
      */
     /*
@@ -317,10 +317,10 @@ public class HarvesterSettings {
      * Time interval in seconds to wait before transmitting a {@link HarvesterReadyMessage} to the {@link JobDispatcher}
      * .
      * <p>
-     * 
+     * <p>
      * Lower values will make the JobDispatcher detect ready harvester faster, but will make it more likely that the
      * harvester may send two ready messages before a job is received, causing the JobDispatcher to dispatch two jobs.
-     * 
+     * <p>
      * Default value is 30 second.
      */
     public static String SEND_READY_INTERVAL = "settings.harvester.harvesting.sendReadyInterval";
@@ -357,7 +357,7 @@ public class HarvesterSettings {
      * Boolean flag. If set to true, the harvest controller will abort the current crawl when the JMX connection is
      * lost. If set to true it will only log a warning, leaving the crawl operator shutting down harvester manually.
      * Default value is true.
-     * 
+     *
      * @see BnfHeritrixController
      */
     public static String ABORT_IF_CONNECTION_LOST = "settings.harvester.harvesting.heritrix.abortIfConnectionLost";
@@ -648,7 +648,6 @@ public class HarvesterSettings {
      * <b>settings.viewerproxy.tryLookupUriAsFtp</b>: <br>
      * If we fail to lookup an URI, we will try changing the protocol to ftp, if this setting is set to true. The
      * default is false.
-     *
      */
     public static String TRY_LOOKUP_URI_AS_FTP = "settings.harvester.viewerproxy.tryLookupUriAsFtp";
 

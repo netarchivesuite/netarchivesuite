@@ -152,9 +152,9 @@ public class BitarchiveServerTester {
     /**
      * Test that a BitarchiveServer is removed as listener of the ANY_BA queue when trying to upload a file that cannot
      * fit in the archive.
-     *
+     * <p>
      * We currently don't resend the message, but just reply.
-     * 
+     *
      * @throws InterruptedException
      */
     @Test
@@ -226,7 +226,7 @@ public class BitarchiveServerTester {
 
     /**
      * Test that a BitarchiveServer is removed as listener of the ANY_BA queue when a directory disappears.
-     *
+     * <p>
      * We currently don't resend the message, but just reply.
      */
     @Test
@@ -443,10 +443,10 @@ public class BitarchiveServerTester {
 
     /**
      * Test that batch messages can run concurrently. THIS UNIT TEST CAN OCCATIONALLY FAIL DUE TO SOME RACE-CONDITION
-     * 
+     * <p>
      * FIXME: Removed test from unit test suite. Primary purpose of unit test is regression testing. Tests which 'can
      * occationally fail' therefore defeats the purpose of unit testing.
-     * 
+     *
      * @throws IOException If unable to read a file.
      */
     @Test
@@ -534,7 +534,7 @@ public class BitarchiveServerTester {
 
     /**
      * Test that a visit(RemoveAndGetMessage) call actually removes (moves) the file.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -873,7 +873,7 @@ public class BitarchiveServerTester {
 
         /**
          * Handle the message.
-         * 
+         *
          * @param message the given message
          */
         public void onMessage(Message message) {

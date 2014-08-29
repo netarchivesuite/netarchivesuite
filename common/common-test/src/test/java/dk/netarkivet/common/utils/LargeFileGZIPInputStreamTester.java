@@ -50,7 +50,7 @@ public class LargeFileGZIPInputStreamTester {
      * Tests read on four small files: 1) A gzipped small file that should unzip succesfully and contain the string
      * "text\n". 2) A small file with wrong checksum 3) A small file with wrong length 4) A small file cut off abruptly
      * in trailer
-     * 
+     *
      * @throws Exception
      */
     @Test

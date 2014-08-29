@@ -49,7 +49,7 @@ public class CookieUtils {
 
     /**
      * Returns the value of a request parameter, or if not found tries to find a cookie with the same name.
-     * 
+     *
      * @param request the HTTP request
      * @param name the parameter name
      * @return the value (never null, may be empty)
@@ -68,7 +68,7 @@ public class CookieUtils {
 
     /**
      * Set a cookie on the client.
-     * 
+     *
      * @param response the HTTP response wrapper
      * @param name the cookie name
      * @param value the cookie value
@@ -82,7 +82,7 @@ public class CookieUtils {
 
     /**
      * Set a cookie on the client, with a default lifespan of @see Lifespan#HOUR
-     * 
+     *
      * @param response the HTTP response wrapper
      * @param name the cookie name
      * @param value the cookie value

@@ -32,7 +32,6 @@ import org.junit.Test;
 
 /**
  * Unit test for the utility class NumberUtils. TODO Move class to the common package.
- * 
  */
 public class NumberUtilsTester {
     /** Test minimum where -1 means infinite */

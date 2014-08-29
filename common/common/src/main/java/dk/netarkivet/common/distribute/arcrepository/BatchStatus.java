@@ -38,7 +38,7 @@ import dk.netarkivet.common.utils.batch.FileBatchJob.ExceptionOccurrence;
  */
 public class BatchStatus {
 
-	/** The total number of files processed so far. */
+    /** The total number of files processed so far. */
     private final int noOfFilesProcessed;
     /** A list of files that the batch job could not process. */
     private final Collection<File> filesFailed;
@@ -52,6 +52,7 @@ public class BatchStatus {
 
     /**
      * Create a new BatchStatus object for a specific bitarchive.
+     *
      * @param bitArchiveAppId The application ID identifying the bitarchive, that run this
      * batch job.
      * @param filesFailed A list of files that the batch job could not process.
@@ -61,7 +62,7 @@ public class BatchStatus {
      * the batchJob
      */
     public BatchStatus(String bitArchiveAppId, Collection<File> filesFailed, int noOfFilesProcessed,
-    		RemoteFile resultFile, List<FileBatchJob.ExceptionOccurrence> exceptions) {
+            RemoteFile resultFile, List<FileBatchJob.ExceptionOccurrence> exceptions) {
         this.bitArchiveAppId = bitArchiveAppId;
         this.filesFailed = filesFailed;
         this.noOfFilesProcessed = noOfFilesProcessed;
@@ -71,19 +72,21 @@ public class BatchStatus {
 
     /**
      * Create a new BatchStatus object for a specific bitarchive.
+     *
      * @param filesFailed A list of files that the batch job could not process
      * @param noOfFilesProcessed The total number of files processed
      * @param resultFile A file containing the result of the batch job
      * @param exceptions A list of exceptions caught during the execution of the batchJob
      */
     public BatchStatus(Collection<File> filesFailed, int noOfFilesProcessed, RemoteFile resultFile,
-    		List<FileBatchJob.ExceptionOccurrence> exceptions) {
+            List<FileBatchJob.ExceptionOccurrence> exceptions) {
         this("ALL_BITARCHIVE_APPS", filesFailed, noOfFilesProcessed, resultFile, exceptions);
     }
 
     /**
      * Get the number of files processed by the batch job.  This counts all
      * files whether failed or not.
+     *
      * @return number of files passed to processFile
      */
     public int getNoOfFilesProcessed() {
@@ -92,6 +95,7 @@ public class BatchStatus {
 
     /**
      * Get the File objects for the files that failed.
+     *
      * @return A collection containing the files that processFile returned false on.
      */
     public Collection<File> getFilesFailed() {
@@ -102,6 +106,7 @@ public class BatchStatus {
      * Get the appId (internal string) for the bitarchive that these are
      * the results from.
      * Set to ALL_BITARCHIVE_APPS if this it the combined status.
+     *
      * @return A uniquely identifying string that should *not* be parsed
      */
     public String getBitArchiveAppId() {
@@ -111,6 +116,7 @@ public class BatchStatus {
     /**
      * Get the file containing results from a batch job. This may be null,
      * if the batch job resulted in errors.
+     *
      * @return A remote file containing results in some job-specific format.
      */
     public RemoteFile getResultFile() {
@@ -119,17 +125,19 @@ public class BatchStatus {
 
     /**
      * Get the list of exceptions that happened during the batch job.
+     *
      * @return List of exceptions with information on where they occurred.
      */
     public List<ExceptionOccurrence> getExceptions() {
         return exceptions;
     }
-    
+
     /**
      * Copy the results of a batch job into a local file.  This deletes the
      * file from the remote server as appropriate. Note that this method or
      * appendResults can only be called once on a given object. If
      * hasResultFile() returns true, this method is safe to call.
+     *
      * @param targetFile File to copy the results into. This file will be overridden if hasResultFile() returns true;
      * @throws IllegalState If the results have already been copied, or there
      * are no results to copy due to errors.
@@ -146,7 +154,7 @@ public class BatchStatus {
             }
         } else {
             throw new IllegalState("No results to copy into '" + targetFile + "' from batch job on '" + bitArchiveAppId
-            		+ "' (" + filesFailed.size() + " failures in " + noOfFilesProcessed + " processed files)");
+                    + "' (" + filesFailed.size() + " failures in " + noOfFilesProcessed + " processed files)");
         }
     }
 
@@ -155,6 +163,7 @@ public class BatchStatus {
      * results file from the remote server, so this or copyResults can only
      * be called once.  If hasResultFile() returns true, this method is
      * safe to call.
+     *
      * @param stream A stream to append results to.
      * @throws IllegalState If the results have already been copied, or there
      * are no results to copy due to errors.
@@ -171,7 +180,7 @@ public class BatchStatus {
             }
         } else {
             throw new IllegalState("No results to append to '" + stream + "' from batch job on '" + bitArchiveAppId
-            		+ "' (" + filesFailed.size() + " failures in " + noOfFilesProcessed + " processed files)");
+                    + "' (" + filesFailed.size() + " failures in " + noOfFilesProcessed + " processed files)");
         }
     }
 
@@ -180,6 +189,7 @@ public class BatchStatus {
      * if no bitarchives succeeded in processing any files, or if the result
      * file sent has already been deleted (e.g., by calling copyResults or
      * appendResults).
+     *
      * @return True if this object has a result file.
      */
     public boolean hasResultFile() {
@@ -187,13 +197,14 @@ public class BatchStatus {
     }
 
     /**
-     * Returns a human-readable description of this object. 
+     * Returns a human-readable description of this object.
      * The value returned should not be machine-processed, as it is subject to change without notice.
+     *
      * @return Human-readable description of this object.
      */
     public String toString() {
         return getFilesFailed().size() + " failures in processing " + getNoOfFilesProcessed() + " files at "
-        		+ getBitArchiveAppId();
+                + getBitArchiveAppId();
     }
 
 }

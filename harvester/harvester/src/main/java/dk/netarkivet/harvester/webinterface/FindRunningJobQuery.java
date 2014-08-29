@@ -37,7 +37,6 @@ import dk.netarkivet.harvester.datamodel.JobStatusInfo;
 
 /**
  * Represents a query for job IDs that would be set to harvest a given domain.
- *
  */
 public class FindRunningJobQuery {
 
@@ -56,7 +55,7 @@ public class FindRunningJobQuery {
         /**
          * Extracts the field's value from a servlet request. If the request does not define the paraeter's value, it is
          * set to the default value.
-         * 
+         *
          * @param req a servlet request
          * @return the field's value
          */
@@ -86,7 +85,7 @@ public class FindRunningJobQuery {
 
     /**
      * Builds a request to find a running job. UI fileds values will be extracted from the given {@link ServletRequest}.
-     * 
+     *
      * @param req the {@link ServletRequest} to parse.
      */
     public FindRunningJobQuery(ServletRequest req) {

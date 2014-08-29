@@ -44,19 +44,19 @@ import dk.netarkivet.common.utils.StreamUtils;
  * you now, that recipient is a local process.
  * The file is deleted during cleanup.
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({"serial"})
 public class FileRemoteFile implements RemoteFile {
 
-	/** The logger for this class. */
+    /** The logger for this class. */
     private static final Logger log = LoggerFactory.getLogger(FileRemoteFile.class);
-    
+
     /** The local File where the data is stored. */
     private File dataFile;
-    
+
     public FileRemoteFile(File dataFile) {
         ArgumentNotValid.checkNotNull(dataFile, "File dataFile");
         ArgumentNotValid.checkTrue(dataFile.isFile(), "The dataFile with value '" + dataFile.getAbsolutePath()
-        		+ "' does not exist.");
+                + "' does not exist.");
         this.dataFile = dataFile;
     }
 

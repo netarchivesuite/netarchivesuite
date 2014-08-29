@@ -33,7 +33,6 @@ import org.archive.net.UURI;
  * This is a cut'n'paste job from the wayback subversion repository, with calls to UURIFactory replaced with calls to
  * NetarchiveSuiteUURIFactory. Calls to it can be replaced with calls to org.archive.wayback.util.url.UrlOperations when
  * we have an execution environment which allows the reading of system properties
- * 
  */
 
 public class NetarchiveSuiteUrlOperations {

@@ -168,8 +168,8 @@ public abstract class JobDAO implements DAO, Iterable<Job> {
      * Return status information for all jobs defined by the supplied query.
      *
      * @param query the user query
-     * @throws IOFailure on trouble in database access
      * @return A HarvestStatus object corresponding to the given query.
+     * @throws IOFailure on trouble in database access
      */
     public abstract HarvestStatus getStatusInfo(HarvestStatusQuery query);
 
@@ -184,10 +184,10 @@ public abstract class JobDAO implements DAO, Iterable<Job> {
 
     /**
      * Calculate all jobIDs to use for duplication reduction.
-     *
+     * <p>
      * More precisely, this method calculates the following: If the job ID corresponds to a partial harvest, all jobIDs
      * from the previous scheduled harvest are returned, or the empty list if this harvest hasn't been scheduled before.
-     *
+     * <p>
      * If the job ID corresponds to a full harvest, the entire chain of harvests this is based on is returned, and all
      * jobIDs from the previous chain of full harvests is returned.
      *
@@ -201,7 +201,7 @@ public abstract class JobDAO implements DAO, Iterable<Job> {
 
     /**
      * Reschedule a job by creating a new job (in status NEW) and setting the old job to status RESUBMITTED.
-     *
+     * <p>
      * Notice the slightly confusing naming: The only job is marked RESUBMITTED, but the new job is not really
      * submitted, that happens in a separate stage, the new job is in status NEW.
      *
@@ -214,7 +214,7 @@ public abstract class JobDAO implements DAO, Iterable<Job> {
 
     /**
      * Get Jobstatus for the job with the given id.
-     * 
+     *
      * @param jobID A given Jobid
      * @return the Jobstatus for the job with the given id.
      * @throws UnknownID if no job exists with id jobID

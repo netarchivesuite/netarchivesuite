@@ -36,8 +36,6 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.archive.io.warc.WARCRecord;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -52,6 +50,7 @@ import dk.netarkivet.common.utils.archive.HeritrixArchiveRecordWrapper;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.batch.WARCBatchFilter;
 import dk.netarkivet.testutils.TestFileUtils;
+import junit.framework.TestCase;
 
 /**
  * Unit tests for the class WARCBatchJob.
@@ -83,7 +82,7 @@ public class WARCBatchJobTester {
 
     /**
      * Utility method for printing Exception arrays on System.out.
-     * 
+     *
      * @param es The Exception array to be printed.
      */
     private void printExceptions(Exception[] es) {
@@ -174,9 +173,9 @@ public class WARCBatchJobTester {
         Exception[] es = job.getExceptionArray();
         printExceptions(es);
         assertEquals("Should have processed all but one records", TOTAL_RECORDS - 2, processed); // Minus
-                                                                                                 // warcinfo
-                                                                                                 // and
-                                                                                                 // metadata
+        // warcinfo
+        // and
+        // metadata
         assertEquals("Filtered batch should not throw any exceptions", 0, es.length);
     }
 
@@ -236,7 +235,7 @@ public class WARCBatchJobTester {
 
     /**
      * Makes the given job process a few null records and handle an Exception.
-     * 
+     *
      * @param job the given job
      */
     private void doStuff(SerializableWARCBatchJob job) {
@@ -276,8 +275,8 @@ public class WARCBatchJobTester {
      */
     private class TestWARCBatchJob extends WARCBatchJob {
         /**
-         * @see ARCBatchJob#getFilter()
          * @return A filter that allows all records.
+         * @see ARCBatchJob#getFilter()
          */
         public WARCBatchFilter getFilter() {
             return WARCBatchFilter.NO_FILTER;
@@ -314,8 +313,8 @@ public class WARCBatchJobTester {
 
     private static class SerializableWARCBatchJob extends WARCBatchJob {
         /**
-         * @see ARCBatchJob#getFilter()
          * @return A filter that allows all records.
+         * @see ARCBatchJob#getFilter()
          */
         public WARCBatchFilter getFilter() {
             return WARCBatchFilter.NO_FILTER;

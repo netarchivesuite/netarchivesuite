@@ -359,7 +359,7 @@ public class DomainTester extends DataModelTestCase {
 
     /**
      * Test that we can update a configuration.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -737,7 +737,7 @@ public class DomainTester extends DataModelTestCase {
 
     /**
      * Test that getting a new domain actually does that.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -761,7 +761,7 @@ public class DomainTester extends DataModelTestCase {
 
     /**
      * Test that we can add a password
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -803,7 +803,7 @@ public class DomainTester extends DataModelTestCase {
 
     /**
      * Test that we can remove an existing password.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -1277,7 +1277,7 @@ public class DomainTester extends DataModelTestCase {
 
     /**
      * Make a clone of param config and let its name be nameOfClone.
-     * 
+     *
      * @param config a given domainconfig
      * @param nameOfClone The name of the cloned config
      * @return a clone of config
@@ -1303,7 +1303,7 @@ public class DomainTester extends DataModelTestCase {
 
     /**
      * Make a clone of the given password with a new name.
-     * 
+     *
      * @param thePassword a given Password
      * @param nameOfClone the name of the cloned password
      * @return a clone of thePassword

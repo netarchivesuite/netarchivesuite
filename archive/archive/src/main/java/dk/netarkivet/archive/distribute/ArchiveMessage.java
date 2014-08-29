@@ -49,9 +49,8 @@ public abstract class ArchiveMessage extends NetarkivetMessage {
      * Should be implemented as a part of the visitor pattern. e.g.: public void accept(ArchiveMessageVisitor v) {
      * v.visit(this); }
      *
-     * @see ArchiveMessageVisitor
-     *
      * @param v A message visitor
+     * @see ArchiveMessageVisitor
      */
     public abstract void accept(ArchiveMessageVisitor v);
 }

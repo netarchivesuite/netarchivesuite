@@ -184,7 +184,7 @@ public class IntegrityTester {
 
     /**
      * Test reading two large files: One that should unzip OK, one that should fail with wrong CRC checksum.
-     * 
+     *
      * @throws IOException
      */
     @Test

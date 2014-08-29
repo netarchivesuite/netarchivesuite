@@ -40,7 +40,7 @@ import dk.netarkivet.wayback.WaybackSettings;
 /**
  * The <code>AggregationWorker</code> singleton contains the schedule and file bookkeeping functionality needed in the
  * aggregation of indexes.
- * 
+ * <p>
  * The <code>AggregationWorker</code> has the responsibility of ensuring each index in the raw index files ends up
  * appearing exactly once in the index files used by Wayback. If this isn't possible the fallback is to allow duplicate
  * occurrences of index lines ensuring index lines appears at least once.
@@ -90,7 +90,7 @@ public class AggregationWorker implements CleanupIF {
     /**
      * Factory method which creates a singleton aggregator and sets it running. It has the side effect of creating the
      * output directories for the indexer if these do not already exist.
-     *
+     * <p>
      * A temp directory is create if it doesn't exist. The aggregator won't run if a temp directory is already present,
      * as this might indicate an instance of the aggregator already running.
      *
@@ -133,7 +133,7 @@ public class AggregationWorker implements CleanupIF {
 
     /**
      * Runs the actual aggregation. See package description for details.
-     * 
+     * <p>
      * Is synchronized so several subsequent scheduled runs of the method will have to run one at a time.
      */
     protected synchronized void runAggregation() {

@@ -423,9 +423,9 @@ public enum HarvesterDatabaseTables {
 
     /**
      * Check that a database table has the required version.
-     *
+     * <p>
      * NB: the provided connection is not closed.
-     * 
+     *
      * @param connection connection to the database.
      * @param table The table to check up against required version
      * @throws IllegalState if the version isn't as required.

@@ -50,7 +50,7 @@ public class DailyFrequencyTester {
 
     /**
      * Given a frequency that can start any time, check that first event is immediate.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -65,7 +65,7 @@ public class DailyFrequencyTester {
 
     /**
      * Given a frequency that can start at 4:22, check that first event starts first time it is 4:22.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -83,7 +83,7 @@ public class DailyFrequencyTester {
 
     /**
      * Given a frequency that can start any time, check that next event starts after the correct period.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -99,7 +99,7 @@ public class DailyFrequencyTester {
 
     /**
      * Given a frequency that can start 5:23, check that next event starts at 5:23 after the correct period.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -119,7 +119,7 @@ public class DailyFrequencyTester {
     /**
      * Given a frequency that can start 5:23, check that next event starts at 5:23 after the correct period, given a
      * time that is actually 5:23.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -135,7 +135,7 @@ public class DailyFrequencyTester {
 
     /**
      * Test validity of arguments.
-     * 
+     *
      * @throws Exception
      */
     @Test

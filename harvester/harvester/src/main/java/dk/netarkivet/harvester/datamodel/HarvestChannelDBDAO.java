@@ -39,7 +39,6 @@ import dk.netarkivet.common.exceptions.UnknownID;
  * Implementation class for the DAO handling the persistence of {@link HarvestChannel} instances.
  *
  * @author ngiraud
- *
  */
 public class HarvestChannelDBDAO extends HarvestChannelDAO {
 

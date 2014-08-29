@@ -34,10 +34,10 @@ import dk.netarkivet.common.utils.FileUtils;
  * This class provides the framework for classes that cache the effort of combining multiple files into one. For
  * instance, creating a Lucene index out of crawl.log files takes O(nlogn) where n is the number of lines in the files
  * combined.
- *
+ * <p>
  * It is based on an underlying cache of single files. It handles the possibility of some of the files in the underlying
  * cache not being available by telling which files are available rather than by sending an incomplete file.
- * 
+ *
  * @param <T> A comparable instance. Must inherit the java.lang.Comparable interface.
  */
 public abstract class CombiningMultiFileBasedCache<T extends Comparable<T>> extends MultiFileBasedCache<T> {
@@ -79,7 +79,7 @@ public abstract class CombiningMultiFileBasedCache<T extends Comparable<T>> exte
     /**
      * Prepare needed data for performing combine(). This should ensure that all data is ready to use, or else the ids
      * where the data cannot be obtained should be missing in the returned set.
-     * 
+     *
      * @param ids Set of job IDs to get ready to combine
      * @return The map of ID->file of the data we will combine for each ID. If subclasses override this method to ensure
      * other data is present, jobs with missing IDs should be removed from this map.

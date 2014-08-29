@@ -36,9 +36,8 @@ import dk.netarkivet.common.utils.FileUtils;
 /**
  * A tool to force upload of given arc or warc files into the ArcRepository found in settings.xml. All successfully
  * uploaded files are deleted locally.
- *
+ * <p>
  * Usage: java dk.netarkivet.archive.tools.Upload file1 [file2 ...]
- *
  */
 public class Upload {
     /**
@@ -88,7 +87,7 @@ public class Upload {
 
     /**
      * Checks existence and arcness of all input files.
-     * 
+     *
      * @param fileNames The input files as a String array
      * @return If all files existed and were arc or warc files, a list of Files that is 1-1 with the input files.
      */
@@ -131,7 +130,7 @@ public class Upload {
 
     /**
      * Output a message and a stack trace before exiting with a failure code.
-     * 
+     *
      * @param msg The message to output
      * @param e The Exception containing the relevant stack trace
      */

@@ -29,7 +29,6 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 /**
  * Class encapsulating domain alias information. The information is used to prevent harvesting the domains which are
  * aliases of other domains.
- *
  */
 public class AliasInfo {
 
@@ -86,7 +85,7 @@ public class AliasInfo {
      * Is this alias expired? This method depends upon the Constant:
      * dk.netarkivet.harvester.webinterface.Constants.ALIAS_TIMEOUT_IN_MILLISECONDS Note that this constant is now read
      * from settings.
-     * 
+     *
      * @return true, if alias is expired
      */
     public boolean isExpired() {
@@ -106,8 +105,8 @@ public class AliasInfo {
     }
 
     /**
-     * @see java.lang.Object#toString
      * @return String representation of this AliasInfo object.
+     * @see java.lang.Object#toString
      */
     public String toString() {
         return "Domain '" + getDomain() + "' is an alias of '" + getAliasOf() + "', last updated " + getLastChange();

@@ -125,7 +125,7 @@ public class TrivialArcRepositoryClient implements ArcRepositoryClient {
 
     /**
      * Retrieves a file from an ArcRepository and places it in a local file.
-     * 
+     *
      * @param arcfilename Name of the arcfile to retrieve.
      * @param replica The bitarchive to retrieve the data from (not used in this implementation)
      * @param toFile Filename of a place where the file fetched can be put.
@@ -144,7 +144,6 @@ public class TrivialArcRepositoryClient implements ArcRepositoryClient {
      * processing and the finish() method will be called afterwards. The process() method will be called with each File
      * entry. An optional function postProcess() allows handling the combined results of the batchjob, e.g. summing the
      * results, sorting, etc.
-     *
      * @param replicaId The archive to execute the job on (not used in this implementation)
      * @param args The arguments for the batchjob.
      * @return The status of the batch job after it ended.

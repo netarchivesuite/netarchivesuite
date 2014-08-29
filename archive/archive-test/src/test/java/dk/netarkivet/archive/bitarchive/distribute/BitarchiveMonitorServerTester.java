@@ -251,8 +251,8 @@ public class BitarchiveMonitorServerTester {
     // FIXME: test temporarily disabled
     public void FAILtestBatchReceive() {
         TestJob job = new TestJob("testBatchReceive_ID"); // job is used for
-                                                          // carrying an id to
-                                                          // recognize later
+        // carrying an id to
+        // recognize later
         NetarkivetMessage message = new BatchMessage(THE_BAMON, job, Settings.get(CommonSettings.USE_REPLICA_ID));
 
         bam_server = new TestBitarchiveMonitorServer();
@@ -272,7 +272,7 @@ public class BitarchiveMonitorServerTester {
 
     /**
      * Verify that the BA monitor can timeout if no reply is received within the timeout limit.
-     * 
+     *
      * @throws InterruptedException
      */
     @Test
@@ -493,8 +493,8 @@ public class BitarchiveMonitorServerTester {
         BitarchiveServer bas1 = BitarchiveServer.getInstance();
 
         TestJob job = new TestJob("testBatchReceive_ID"); // job is used for
-                                                          // carrying an id to
-                                                          // recognize later
+        // carrying an id to
+        // recognize later
         BatchMessage batchMessage = new BatchMessage(THE_BAMON, Channels.getTheRepos(), job,
                 Settings.get(CommonSettings.USE_REPLICA_ID));
 
@@ -560,7 +560,7 @@ public class BitarchiveMonitorServerTester {
     /**
      * Test that monitor can receive and aggregate data from more than one BitarchiveServer and aggregate the data and
      * upload.
-     * 
+     * <p>
      * FIXME Fails on command line
      *
      * @throws ArgumentNotValid
@@ -656,7 +656,7 @@ public class BitarchiveMonitorServerTester {
 
     /**
      * Testing GetAllChecksumMessage.
-     * 
+     * <p>
      * FIXME: This test is unstable and occasionally fails. Disabled because it
      */
     @Test
@@ -720,7 +720,7 @@ public class BitarchiveMonitorServerTester {
 
     /**
      * Testing GetAllFilenamesMessage.
-     * 
+     * <p>
      * FIXME: Fragile, sometimes fail with: junit.framework.AssertionFailedError: The listener should have one message
      * expected:<1> but was:<0> at dk.netarkivet.archive.bitarchive.distribute .BitarchiveMonitorServerTester.
      * testGetAllFilenamesMessage(BitarchiveMonitorServerTester.java:818)
@@ -836,7 +836,7 @@ public class BitarchiveMonitorServerTester {
 
     /**
      * Tests the opportunity to correct a entry in the archive through CorrectMessage.
-     * 
+     *
      * @throws InterruptedException
      */
     @Test

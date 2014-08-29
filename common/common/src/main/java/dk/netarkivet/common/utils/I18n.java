@@ -37,7 +37,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  */
 public class I18n {
 
-	/** Logger for this class. */
+    /** Logger for this class. */
     private static final Logger log = LoggerFactory.getLogger(I18n.class);
 
     /** Name of the resource bundle. */
@@ -52,11 +52,11 @@ public class I18n {
     /**
      * Get a localized message for a given locale and label, and optionally
      * arguments.
-     *
+     * <p>
      * E.g.
-     *
+     * <p>
      * I18N.getString(Locale.default, "job.unknown.id", 17)
-     *
+     * <p>
      * In contrast to {@link java.util.ResourceBundle#getString}, this method is
      * forgiving on errors
      *
@@ -74,10 +74,10 @@ public class I18n {
 
     /**
      * Get a localized message for a given resource bundle, locale and label.
-     *
+     * <p>
      * In contrast to {@link java.util.ResourceBundle#getString}, this method is
      * forgiving on errors
-     *
+     * <p>
      * I18n.getString("dk.netarkivet.common.Translations",
      * Locale.default, "job.unknown.id", 17)
      *

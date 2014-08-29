@@ -32,25 +32,25 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
  * Implements the Facade pattern to shield off the methods in
  * JMSArcRepositoryClient not to be used by the bit preservation system.
  */
-public interface PreservationArcRepositoryClient  {
+public interface PreservationArcRepositoryClient {
 
-	/** Call on shutdown to release external resources. */
+    /** Call on shutdown to release external resources. */
     void close();
 
     /**
      * Gets a single ARC record out of the ArcRepository.
      *
      * @param arcfile The name of a file containing the desired record.
-     * @param index   The offset of the desired record in the file
+     * @param index The offset of the desired record in the file
      * @return a BitarchiveRecord-object, or null if request times out or object
      * is not found.
-     * @exception ArgumentNotValid If the get operation failed.
+     * @throws ArgumentNotValid If the get operation failed.
      */
     BitarchiveRecord get(String arcfile, long index) throws ArgumentNotValid;
 
     /**
      * Retrieves a file from an ArcRepository and places it in a local file.
-
+     *
      * @param arcfilename Name of the arcfile to retrieve.
      * @param replica The bitarchive to retrieve the data from.
      * @param toFile Filename of a place where the file fetched can be put.
@@ -67,7 +67,7 @@ public interface PreservationArcRepositoryClient  {
      * @throws IOFailure thrown if store is unsuccessful, or failed to clean
      * up files after the store operation.
      * @throws ArgumentNotValid if file parameter is null or file is not an
-     *                          existing file.
+     * existing file.
      */
     void store(File file) throws IOFailure, ArgumentNotValid;
 
@@ -75,19 +75,19 @@ public interface PreservationArcRepositoryClient  {
      * Runs a batch batch job on each file in the ArcRepository.
      *
      * @param job An object that implements the FileBatchJob interface. The
-     *  initialize() method will be called before processing and the finish()
-     *  method will be called afterwards. The process() method will be called
-     *  with each File entry. An optional function postProcess() allows handling
-     *  the combined results of the batchjob, e.g. summing the results, sorting,
-     *  etc.
-     *
+     * initialize() method will be called before processing and the finish()
+     * method will be called afterwards. The process() method will be called
+     * with each File entry. An optional function postProcess() allows handling
+     * the combined results of the batchjob, e.g. summing the results, sorting,
+     * etc.
      * @param replicaId The archive to execute the job on.
      * @param args The arguments for the batchjob.
      * @return The status of the batch job after it ended.
      */
     BatchStatus batch(FileBatchJob job, String replicaId, String... args);
 
-    /** Updates the administrative data in the ArcRepository for a given
+    /**
+     * Updates the administrative data in the ArcRepository for a given
      * file and bitarchive replica.
      *
      * @param fileName The name of a file stored in the ArcRepository.
@@ -97,7 +97,8 @@ public interface PreservationArcRepositoryClient  {
      */
     void updateAdminData(String fileName, String replicaId, ReplicaStoreState newval);
 
-    /** Updates the checksum kept in the ArcRepository for a given
+    /**
+     * Updates the checksum kept in the ArcRepository for a given
      * file. It is the responsibility of the ArcRepository implementation to
      * ensure that this checksum matches that of the underlying files.
      *
@@ -106,7 +107,8 @@ public interface PreservationArcRepositoryClient  {
      */
     void updateAdminChecksum(String filename, String checksum);
 
-    /** Remove a file from one part of the ArcRepository, retrieving a copy
+    /**
+     * Remove a file from one part of the ArcRepository, retrieving a copy
      * for security purposes.  This is typically used when repairing a file
      * that has been corrupted.
      *
@@ -118,58 +120,58 @@ public interface PreservationArcRepositoryClient  {
      * @return A local copy of the file removed.
      */
     File removeAndGetFile(String fileName, String replicaId, String checksum, String credentials);
-    
+
     /**
-     * Retrieves all the checksum from the replica through a 
+     * Retrieves all the checksum from the replica through a
      * GetAllChecksumMessage.
-     * 
-     * This is the checksum archive alternative to running a ChecksumBatchJob. 
-     * 
-     * @param replicaId The id of the replica from which the checksums should 
+     * <p>
+     * This is the checksum archive alternative to running a ChecksumBatchJob.
+     *
+     * @param replicaId The id of the replica from which the checksums should
      * be retrieved.
-     * @return A list of ChecksumEntries which is the results of the 
+     * @return A list of ChecksumEntries which is the results of the
      * GetAllChecksumMessage.
      * @see dk.netarkivet.archive.checksum.distribute.GetAllChecksumsMessage
      */
     File getAllChecksums(String replicaId);
-    
+
     /**
      * Retrieves the checksum of a specific file.
-     * 
-     * This is the checksum archive alternative to running a ChecksumJob 
+     * <p>
+     * This is the checksum archive alternative to running a ChecksumJob
      * limited to a specific file.
-     * 
+     *
      * @param replicaId The name of the replica to send the message.
      * @param filename The name of the file for whom the checksum should be
      * retrieved.
-     * @return The checksum of the file in the replica. Or null if an 
+     * @return The checksum of the file in the replica. Or null if an
      * error occurred.
      */
     String getChecksum(String replicaId, String filename);
-    
+
     /**
-     * Retrieves the names of all the files in the replica through a 
+     * Retrieves the names of all the files in the replica through a
      * GetAllFilenamesMessage.
-     * 
-     * This is the checksum archive alternative to running a FilelistBatchJob. 
-     * 
+     * <p>
+     * This is the checksum archive alternative to running a FilelistBatchJob.
+     *
      * @param replicaId The id of the replica from which the list of filenames
      * should be retrieved.
-     * @return A list of all the filenames within the archive of the given 
+     * @return A list of all the filenames within the archive of the given
      * replica.
      * @see dk.netarkivet.archive.checksum.distribute.GetAllFilenamesMessage
      */
     File getAllFilenames(String replicaId);
-    
+
     /**
      * Method for correcting a file in a replica.
-     * 
-     * This is the checksum archive method for correcting a file entry in the 
+     * <p>
+     * This is the checksum archive method for correcting a file entry in the
      * archive. The bitarchive uses 'removeAndGetFile' followed by a 'store'.
-     * 
+     *
      * @param replicaId The identification of the replica.
-     * @param checksum The checksum of the corrupt entry in the archive. It is 
-     * important to validate that the checksum actually is wrong before 
+     * @param checksum The checksum of the corrupt entry in the archive. It is
+     * important to validate that the checksum actually is wrong before
      * correcting the entry.
      * @param file The new file to replace the old one.
      * @param credentials The password for allowing to remove a file entry in

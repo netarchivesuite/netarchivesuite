@@ -233,14 +233,14 @@ public class SynchronizerTester {
 
     /**
      * This test checks that we handle being woken by other than expected means.
-     *
+     * <p>
      * It first sets up a Synchronizer to listen for replies. Then a listener is added to the toQ that just notifies the
      * message (thus waking the Synchronizer). While the Synchronizer doesn't leave the method since it wasn't notified
      * for having received a message, it does call getId() on the message. Our message counts how many times getId() is
      * called on it. The first time is when sendAndWaitForOneReply starts, the second time is when it is mistakenly
      * woken up. When the second getId() is called, we know we got the false notify and can continue the test. No reply
      * will be available.
-     *
+     * <p>
      * DISABLED 20140528 as it failed intermittently.
      */
     @Test

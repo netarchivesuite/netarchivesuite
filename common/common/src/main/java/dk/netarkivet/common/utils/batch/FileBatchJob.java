@@ -47,7 +47,7 @@ import dk.netarkivet.common.utils.StringUtils;
  * a file by calling processFile() and any cleanup is
  * handled by finish().
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({"serial"})
 public abstract class FileBatchJob implements Serializable {
 
     /** The class log. */
@@ -56,7 +56,8 @@ public abstract class FileBatchJob implements Serializable {
     /** Regexp that matches everything. */
     private static final String EVERYTHING_REGEXP = ".*";
 
-    /** Regular expression for the files to process with this job.
+    /**
+     * Regular expression for the files to process with this job.
      * By default, all files are processed.  This pattern must match the
      * entire filename, but not the path (e.g. .*foo.* for any file with
      * foo in it).
@@ -68,13 +69,13 @@ public abstract class FileBatchJob implements Serializable {
 
     /**
      * If positiv it is the timeout of specific Batch Job in miliseconds. If
-     * numbers is negative we use standard timeout from settings. 
+     * numbers is negative we use standard timeout from settings.
      */
     protected long batchJobTimeout = -1;
 
     /** A Set of files which generated errors. */
     protected Set<File> filesFailed = new HashSet<File>();
-    
+
     /** A list with information about the exceptions thrown during the execution of the batchjob. */
     protected List<ExceptionOccurrence> exceptions = new ArrayList<ExceptionOccurrence>();
 
@@ -101,12 +102,13 @@ public abstract class FileBatchJob implements Serializable {
      * If the initialize() call throws an exception, this will still be called
      * so that any resources allocated can be cleaned up.  Implementations
      * should make sure that this method can handle a partial initialization
-     * 
+     *
      * @param os the OutputStream to which output should be written
      */
     public abstract void finish(OutputStream os);
 
-    /** Mark the job to process only the specified files.  This will
+    /**
+     * Mark the job to process only the specified files.  This will
      * override any previous setting of which files to process.
      *
      * @param specifiedFilenames A list of filenamess to process (without
@@ -124,8 +126,8 @@ public abstract class FileBatchJob implements Serializable {
         }
     }
 
-
-    /** Helper method for only processing one file.  This will
+    /**
+     * Helper method for only processing one file.  This will
      * override any previous setting of which files to process.
      *
      * @param specifiedFilename The name of the single file that should
@@ -136,7 +138,8 @@ public abstract class FileBatchJob implements Serializable {
         processOnlyFilesMatching(Pattern.quote(specifiedFilename));
     }
 
-    /** Set this job to match only a certain set of patterns.  This will
+    /**
+     * Set this job to match only a certain set of patterns.  This will
      * override any previous setting of which files to process.
      *
      * @param specifiedPatterns The patterns of file names that this job
@@ -149,7 +152,8 @@ public abstract class FileBatchJob implements Serializable {
         processOnlyFilesMatching("(" + StringUtils.conjoin("|", specifiedPatterns) + ")");
     }
 
-    /** Set this job to match only a certain pattern.  This will
+    /**
+     * Set this job to match only a certain pattern.  This will
      * override any previous setting of which files to process.
      *
      * @param specifiedPattern Regular expression of file names that this job
@@ -162,7 +166,8 @@ public abstract class FileBatchJob implements Serializable {
         filesToProcess = Pattern.compile(specifiedPattern);
     }
 
-    /** Get the pattern for files that should be processed.
+    /**
+     * Get the pattern for files that should be processed.
      *
      * @return A pattern for files to process.
      */
@@ -189,26 +194,27 @@ public abstract class FileBatchJob implements Serializable {
     public Collection<File> getFilesFailed() {
         return filesFailed;
     }
-    
-    /** Get the list of exceptions that have occurred during processing.
-      *
-      * @return List of exceptions together with information on where they
-      * happened.
-      */
+
+    /**
+     * Get the list of exceptions that have occurred during processing.
+     *
+     * @return List of exceptions together with information on where they
+     * happened.
+     */
     public List<ExceptionOccurrence> getExceptions() {
-            return exceptions;
+        return exceptions;
     }
-    
+
     /**
      * Processes the concatenated result files.
-     * This is intended to be overridden by batchjobs, who they wants a 
+     * This is intended to be overridden by batchjobs, who they wants a
      * different post-processing process than concatenation.
-     *  
-     * @param input The inputstream to the file containing the concatenated 
+     *
+     * @param input The inputstream to the file containing the concatenated
      * results.
-     * @param output The outputstream where the resulting data should be 
+     * @param output The outputstream where the resulting data should be
      * written.
-     * @return Whether it actually does any post processing.  If false is 
+     * @return Whether it actually does any post processing.  If false is
      * returned then the default concatenated result file is returned.
      * @throws ArgumentNotValid If the concatenated file is null.
      */
@@ -216,8 +222,9 @@ public abstract class FileBatchJob implements Serializable {
         // Do not post process. Override in inherited classes to post process.
         return false;
     }
-    
-    /** Record an exception that occurred during the processFile of this job
+
+    /**
+     * Record an exception that occurred during the processFile of this job
      * and that should be returned with the result.  If maxExceptionsReached()
      * returns true, this method silently does nothing.
      *
@@ -232,15 +239,16 @@ public abstract class FileBatchJob implements Serializable {
         if (!maxExceptionsReached()) {
             exceptions.add(new ExceptionOccurrence(currentFile, currentOffset, outputOffset, e));
         } else {
-        	if (log.isTraceEnabled()) {
+            if (log.isTraceEnabled()) {
                 log.trace("Exception not added, because max exceptions reached. currentFile = {},currentOffset = {},"
-                		+ "outputOffset = {}, exception: ",
-                		currentFile.getAbsolutePath(), currentOffset, outputOffset, e);
-        	}
+                                + "outputOffset = {}, exception: ",
+                        currentFile.getAbsolutePath(), currentOffset, outputOffset, e);
+            }
         }
     }
-    
-    /** Record an exception that occurred during the initialize() method of
+
+    /**
+     * Record an exception that occurred during the initialize() method of
      * this job.
      *
      * @param outputOffset The offset we were at in the outputstream when the
@@ -252,11 +260,12 @@ public abstract class FileBatchJob implements Serializable {
             exceptions.add(new ExceptionOccurrence(true, outputOffset, e));
         } else {
             log.trace("Exception not added, because max exceptions reached. outputOffset = {}, exception: ",
-            		outputOffset, e);
+                    outputOffset, e);
         }
     }
 
-    /** Record an exception that occurred during the finish() method of
+    /**
+     * Record an exception that occurred during the finish() method of
      * this job.
      *
      * @param outputOffset The offset we were at in the outputstream when the
@@ -268,7 +277,7 @@ public abstract class FileBatchJob implements Serializable {
             exceptions.add(new ExceptionOccurrence(false, outputOffset, e));
         } else {
             log.trace("Exception not added, because max exceptions reached. outputOffset = {}, exception: ",
-            		outputOffset, e);
+                    outputOffset, e);
         }
     }
 
@@ -276,7 +285,7 @@ public abstract class FileBatchJob implements Serializable {
      * Getter for batchJobTimeout.
      * If the batchjob has not defined a maximum time (thus set the value to -1)
      * then the default value from settings are used.
-     *  
+     *
      * @return timeout in miliseconds.
      */
     public long getBatchJobTimeout() {
@@ -287,7 +296,8 @@ public abstract class FileBatchJob implements Serializable {
         }
     }
 
-    /** Returns true if we have already recorded the maximum number of
+    /**
+     * Returns true if we have already recorded the maximum number of
      * exceptions.  At this point, no more exceptions will be recorded, and
      * processing should be aborted.
      *
@@ -307,31 +317,37 @@ public abstract class FileBatchJob implements Serializable {
         this.batchJobTimeout = batchJobTimeout;
     }
 
-    /** This class holds the information about exceptions that occurred in
+    /**
+     * This class holds the information about exceptions that occurred in
      * a batchjob.
      */
     public static class ExceptionOccurrence implements Serializable {
 
-        /** The maximum number of exceptions we will accumulate before
-         * aborting processing. 
+        /**
+         * The maximum number of exceptions we will accumulate before
+         * aborting processing.
          */
         private static final int MAX_EXCEPTIONS = Settings.getInt(CommonSettings.MAX_NUM_BATCH_EXCEPTIONS);
 
-        /** Marker for the case when we couldn't find an offset for the
+        /**
+         * Marker for the case when we couldn't find an offset for the
          * outputstream.
          */
         public static final long UNKNOWN_OFFSET = -1;
 
-        /** The name of the file we were processing when the exception
+        /**
+         * The name of the file we were processing when the exception
          * occurred, or null.
          */
         private final String fileName;
 
-        /** The offset in the file we were processing when the exception
+        /**
+         * The offset in the file we were processing when the exception
          * occurred.
          */
         private final long fileOffset;
-        /** How much we had written to the output stream when the exception
+        /**
+         * How much we had written to the output stream when the exception
          * occurred.
          */
         private final long outputOffset;
@@ -342,16 +358,18 @@ public abstract class FileBatchJob implements Serializable {
         /** True if this exception was thrown during finish(). */
         private final boolean inFinish;
 
-        /** Standard Constructor for ExceptionOccurrence.
-         * @see FileBatchJob#addException(File,long,long, Exception) for
-         * details on the parameters. 
+        /**
+         * Standard Constructor for ExceptionOccurrence.
+         *
          * @param file The file that caused the exception.
          * @param fileOffset The relevant offset into the file when the
          * exception happened (e.g. the start of an ARC record).
          * @param outputOffset The offset we were at in the outputstream when
          * the exception happened.
          * @param exception The exception thrown.
-         *  This exception must be serializable.
+         * This exception must be serializable.
+         * @see FileBatchJob#addException(File, long, long, Exception) for
+         * details on the parameters.
          */
         public ExceptionOccurrence(File file, long fileOffset, long outputOffset, Exception exception) {
             ArgumentNotValid.checkNotNull(file, "File file");
@@ -367,7 +385,8 @@ public abstract class FileBatchJob implements Serializable {
             this.exception = exception;
         }
 
-        /** Constructor for ExceptionOccurrence when an exception happened
+        /**
+         * Constructor for ExceptionOccurrence when an exception happened
          * during initialize() or finish().
          *
          * @param inInitialize True if the exception happened in initialize()
@@ -387,7 +406,8 @@ public abstract class FileBatchJob implements Serializable {
             this.exception = exception;
         }
 
-        /** Get the name of the file that this exception occurred in.
+        /**
+         * Get the name of the file that this exception occurred in.
          *
          * @return Name of the file that this exception occurred in, or null
          * if it happened during initialize() or finish().
@@ -396,7 +416,8 @@ public abstract class FileBatchJob implements Serializable {
             return fileName;
         }
 
-        /** Get the offset into the file that this exception occurred at.  This
+        /**
+         * Get the offset into the file that this exception occurred at.  This
          * location may not be exactly where the problem that caused the
          * exception occurred, but may be e.g. at the start of a corrupt
          * record.
@@ -408,7 +429,8 @@ public abstract class FileBatchJob implements Serializable {
             return fileOffset;
         }
 
-        /** Offset of the output stream when this exception occurred.
+        /**
+         * Offset of the output stream when this exception occurred.
          *
          * @return Offset in output stream, or UNKNOWN_OFFSET if the offset
          * could not be determined.
@@ -417,7 +439,8 @@ public abstract class FileBatchJob implements Serializable {
             return outputOffset;
         }
 
-        /** The exception that was thrown.
+        /**
+         * The exception that was thrown.
          *
          * @return An exception.
          */
@@ -425,7 +448,8 @@ public abstract class FileBatchJob implements Serializable {
             return exception;
         }
 
-        /** Returns true if the exception was thrown during initialize().  In
+        /**
+         * Returns true if the exception was thrown during initialize().  In
          * that case, no processing has taken place, but finish() has been
          * called.
          *
@@ -435,24 +459,25 @@ public abstract class FileBatchJob implements Serializable {
             return inInitialize;
         }
 
-        /** Returns true if the exception was thrown during finish().
+        /**
+         * Returns true if the exception was thrown during finish().
          *
          * @return true if the exception was thrown during finish().
          */
         public boolean isFinishException() {
             return inFinish;
         }
-        
+
         /**
          * @return a Human readable representation of this
          * ExceptionOccurence object.
          */
         public String toString() {
             return "ExceptionOccurrence: (filename, fileoffset, outputoffset, " + "exception, inInitialize, inFinish)"
-            		+ " = (" + fileName + ", " + fileOffset + ", " + outputOffset + ", " + exception + ", "
-            		+ inInitialize + ", " + inFinish + "). ";
+                    + " = (" + fileName + ", " + fileOffset + ", " + outputOffset + ", " + exception + ", "
+                    + inInitialize + ", " + inFinish + "). ";
         }
-        
+
     }
 
 }

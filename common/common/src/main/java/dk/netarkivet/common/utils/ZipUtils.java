@@ -46,17 +46,17 @@ import dk.netarkivet.common.exceptions.IOFailure;
  * package.
  */
 public final class ZipUtils {
-    
+
     /** The class logger. */
     private static final Logger log = LoggerFactory.getLogger(ZipUtils.class);
 
     /** The standard suffix for a gzipped file. */
     public static final String GZIP_SUFFIX = ".gz";
 
-    /** Default constructor to avoid initialization.*/
+    /** Default constructor to avoid initialization. */
     private ZipUtils() {
     }
-    
+
     /**
      * Zip the contents of a directory into a file.
      * Does *not* zip recursively.
@@ -70,7 +70,7 @@ public final class ZipUtils {
         ArgumentNotValid.checkNotNull(into, "File into");
         ArgumentNotValid.checkTrue(dir.isDirectory(), "directory '" + dir + "' to zip is not a directory");
         ArgumentNotValid.checkTrue(into.getAbsoluteFile().getParentFile().canWrite(),
-        		"cannot write to '" + into + "'");
+                "cannot write to '" + into + "'");
 
         File[] files = dir.listFiles();
         FileOutputStream out;
@@ -82,7 +82,7 @@ public final class ZipUtils {
         ZipOutputStream zipout = new ZipOutputStream(out);
         try {
             try {
-                for (File f: files) {
+                for (File f : files) {
                     if (f.isFile()) {
                         ZipEntry entry = new ZipEntry(f.getName());
                         zipout.putNextEntry(entry);
@@ -110,7 +110,7 @@ public final class ZipUtils {
         ArgumentNotValid.checkNotNull(zipFile, "File zipFile");
         ArgumentNotValid.checkNotNull(toDir, "File toDir");
         ArgumentNotValid.checkTrue(toDir.getAbsoluteFile().getParentFile().canWrite(),
-        		"can't write to '" + toDir + "'");
+                "can't write to '" + toDir + "'");
         ArgumentNotValid.checkTrue(zipFile.canRead(),
                 "can't read '" + zipFile + "'");
         InputStream inputStream = null;
@@ -154,7 +154,7 @@ public final class ZipUtils {
      * @param fromDir An existing directory
      * @param toDir A directory where gzipped files will be placed.  This
      * directory must not previously exist.
-     *   If the operation is not successful, the directory will not be created.
+     * If the operation is not successful, the directory will not be created.
      */
     public static void gzipFiles(File fromDir, File toDir) {
         ArgumentNotValid.checkNotNull(fromDir, "File fromDir");
@@ -246,7 +246,7 @@ public final class ZipUtils {
             }
             if (!tempDir.renameTo(toDir)) {
                 throw new IOFailure("Error renaming temporary directory '" + tempDir + "' to target directory '"
-                		+ toDir);
+                        + toDir);
             }
         } finally {
             FileUtils.removeRecursively(tempDir);
@@ -267,7 +267,8 @@ public final class ZipUtils {
         gunzipFile(f, outFile);
     }
 
-    /** Gunzip a single gzipped file into the given file. Unlike with the gzip()
+    /**
+     * Gunzip a single gzipped file into the given file. Unlike with the gzip()
      * command-line tool, the original file is not deleted.
      *
      * @param fromFile A gzipped file to unzip.
@@ -280,7 +281,7 @@ public final class ZipUtils {
         ArgumentNotValid.checkTrue(fromFile.canRead(), "fromFile must be readable");
         ArgumentNotValid.checkNotNull(toFile, "File toFile");
         ArgumentNotValid.checkTrue(toFile.getAbsoluteFile().getParentFile().canWrite(),
-        		"toFile must be in a writeable dir");
+                "toFile must be in a writeable dir");
         try {
             GZIPInputStream in = new LargeFileGZIPInputStream(new FileInputStream(fromFile));
             FileUtils.writeStreamToFile(in, toFile);

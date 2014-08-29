@@ -35,7 +35,6 @@ import dk.netarkivet.common.utils.FileUtils;
 
 /**
  * A RemoteFile implementation that just takes a string.
- *
  */
 
 @SuppressWarnings({"serial"})

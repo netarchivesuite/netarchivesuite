@@ -122,7 +122,7 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
 
         /**
          * Check if jobs should be generated for any ready harvest definitions for the specified time.
-         * 
+         *
          * @param timeToGenerateJobsFor Jobs will be generated which should be run at this time. Note: In a production
          * system the provided time will normally be current time, but during testing we need to simulated other
          * points-in-time
@@ -164,7 +164,7 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                     String channelName = chan.getName();
                     if (postponeUnregisteredChannel && !harvestChannelRegistry.isRegistered(channelName)) {
                         log.info("Harvest channel '{}' has not yet been registered by any harvester, hence harvest "
-                                + "definition '{}' ({}) cannot be processed by the job generator for now.",
+                                        + "definition '{}' ({}) cannot be processed by the job generator for now.",
                                 channelName, harvestDefinition.getName(), id);
                         continue;
                     }
@@ -219,7 +219,8 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                             harvestDefinitionsBeingScheduled.remove(id);
                             schedulingStartedMap.remove(id);
                             log.debug("Removed HD #{}({}) from list of harvestdefinitions to be scheduled. "
-                                    + "Harvestdefinitions still to be scheduled: {}", id, harvestDefinition.getName(),
+                                            + "Harvestdefinitions still to be scheduled: {}", id,
+                                    harvestDefinition.getName(),
                                     harvestDefinitionsBeingScheduled);
                         }
                     }
@@ -229,7 +230,7 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
 
         /**
          * Find out if a scheduling takes more than is acceptable currently 5 minutes.
-         * 
+         *
          * @param harvestId A given harvestId
          * @return true, if a scheduling of the given harvestId has taken more than 5 minutes, or false, if not or no
          * scheduling for this harvestId is underway

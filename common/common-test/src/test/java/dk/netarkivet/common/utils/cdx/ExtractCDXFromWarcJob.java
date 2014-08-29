@@ -23,7 +23,6 @@
 package dk.netarkivet.common.utils.cdx;
 
 import java.io.IOException;
-//import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,11 +35,13 @@ import org.archive.io.warc.WARCRecord;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+
+//import java.io.InputStream;
 //import dk.netarkivet.common.utils.MD5;
 
 /**
  * Batch job that extracts information to create a CDX file.
- *
+ * <p>
  * A CDX file contains sorted lines of metadata from the ARC files, with each line followed by the file and offset the
  * record was found at, and optionally a checksum. See http://www.archive.org/web/researcher/cdx_file_format.php
  */
@@ -68,7 +69,7 @@ public class ExtractCDXFromWarcJob extends ArchiveBatchJob {
 
     /**
      * Constructs a new job for extracting CDX indexes.
-     * 
+     *
      * @param includeChecksum If true, an MD5 checksum is also written for each record. If false, it is not.
      */
     public ExtractCDXFromWarcJob(boolean includeChecksum) {
@@ -85,9 +86,9 @@ public class ExtractCDXFromWarcJob extends ArchiveBatchJob {
 
     /**
      * Filter out the filedesc: headers.
-     * 
-     * @see dk.netarkivet.common.utils.arc.ARCBatchJob#getFilter()
+     *
      * @return The filter that defines what ARC records are wanted in the output CDX file.
+     * @see dk.netarkivet.common.utils.arc.ARCBatchJob#getFilter()
      */
     public ArchiveBatchFilter getFilter() {
         // Per default we want to index all records except ARC file headers:
@@ -97,7 +98,7 @@ public class ExtractCDXFromWarcJob extends ArchiveBatchJob {
 
     /**
      * Initialize any data needed (none).
-     * 
+     *
      * @see dk.netarkivet.common.utils.arc.ARCBatchJob#initialize(OutputStream)
      */
     public void initialize(OutputStream os) {
@@ -105,9 +106,9 @@ public class ExtractCDXFromWarcJob extends ArchiveBatchJob {
 
     /**
      * Process this entry, reading metadata into the output stream.
-     * 
-     * @see dk.netarkivet.common.utils.arc.ARCBatchJob#processRecord(ArchiveRecord, OutputStream)
+     *
      * @throws IOFailure on trouble reading arc record data
+     * @see dk.netarkivet.common.utils.arc.ARCBatchJob#processRecord(ArchiveRecord, OutputStream)
      */
     public void processRecord(ArchiveRecord rec, OutputStream os) {
         log.trace("Processing ArchiveRecord with offset: " + rec.getHeader().getOffset());
@@ -164,7 +165,7 @@ public class ExtractCDXFromWarcJob extends ArchiveBatchJob {
 
     /**
      * End of the batch job.
-     * 
+     *
      * @see dk.netarkivet.common.utils.arc.ARCBatchJob#finish(OutputStream)
      */
     public void finish(OutputStream os) {

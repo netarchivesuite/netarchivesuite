@@ -216,7 +216,7 @@ public class UploadTester {
 
     /**
      * Asserts that we got the expected number of StoreMessages.
-     * 
+     *
      * @param succeeded Number of files successfully stored
      * @param failed Number of files that never got stored
      */
@@ -229,7 +229,7 @@ public class UploadTester {
     /**
      * Asserts that the nth StoreMessage is regarding the given arc file and that the arc file is delete if and only if
      * store succeeded.
-     * 
+     *
      * @param n The relevant index to marc.getStoreMsgs()
      * @param arcFile The arc file that was stored
      * @param shouldSucceed Whether store was supposed to succeed

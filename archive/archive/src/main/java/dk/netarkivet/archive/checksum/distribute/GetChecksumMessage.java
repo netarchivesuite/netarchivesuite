@@ -29,7 +29,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * The GetChecksumMessage has the purpose to retrieve the checksum of a specific file.
- * 
+ * <p>
  * This is checksum replica alternative to sending a ChecksumBatchJob, with a filename limitation.
  */
 @SuppressWarnings({"serial"})
@@ -45,7 +45,7 @@ public class GetChecksumMessage extends ArchiveMessage {
 
     /**
      * Constructor.
-     * 
+     *
      * @param to Where this message should be sent.
      * @param replyTo Where the reply for this message should be sent.
      * @param filename The name of the file.
@@ -63,7 +63,7 @@ public class GetChecksumMessage extends ArchiveMessage {
 
     /**
      * Retrieve name of the uploaded file.
-     * 
+     *
      * @return current value of arcfileName
      */
     public String getArcfileName() {
@@ -72,7 +72,7 @@ public class GetChecksumMessage extends ArchiveMessage {
 
     /**
      * Retrieves the replica id.
-     * 
+     *
      * @return The replica id.
      */
     public String getReplicaId() {
@@ -82,7 +82,7 @@ public class GetChecksumMessage extends ArchiveMessage {
     /**
      * Retrieves the checksum. This method is intended for the reply. If this checksum has not been sent, then the value
      * is null.
-     * 
+     *
      * @return The retrieved checksum, or null if the entry was not found in the archive.
      */
     public String getChecksum() {
@@ -91,7 +91,7 @@ public class GetChecksumMessage extends ArchiveMessage {
 
     /**
      * Retrieves the variable for telling whether this it currently is a reply to this message or not.
-     * 
+     *
      * @return Whether this is a reply or not.
      */
     public boolean getIsReply() {
@@ -107,7 +107,7 @@ public class GetChecksumMessage extends ArchiveMessage {
 
     /**
      * Method for returning the result of the checksum.
-     * 
+     *
      * @param cs The checksum.
      * @throws ArgumentNotValid If the checksum which is attempted to be set is either null or an empty string.
      */
@@ -128,7 +128,7 @@ public class GetChecksumMessage extends ArchiveMessage {
 
     /**
      * Generate String representation of this object.
-     * 
+     *
      * @return String representation of this object
      */
     public String toString() {

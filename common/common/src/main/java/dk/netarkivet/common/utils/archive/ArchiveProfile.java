@@ -49,6 +49,7 @@ public class ArchiveProfile {
 
     /**
      * Construct an archive profile.
+     *
      * @param filename_filter archive filename filter
      * @param filename_pattern archive filename string pattern
      * @param metadataFilenamePattern archive metadata filename regex pattern
@@ -68,6 +69,6 @@ public class ArchiveProfile {
 
     /** WARC archive profile. */
     public static final ArchiveProfile WARC_PROFILE = new ArchiveProfile(FileUtils.WARCS_FILTER,
-    		FileUtils.WARC_PATTERN, Pattern.compile("([0-9]+)-metadata-([0-9]+).warc"), Constants.WARCDIRECTORY_NAME);
+            FileUtils.WARC_PATTERN, Pattern.compile("([0-9]+)-metadata-([0-9]+).warc"), Constants.WARCDIRECTORY_NAME);
 
 }

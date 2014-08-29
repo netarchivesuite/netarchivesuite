@@ -138,7 +138,7 @@ public class HarvestSchedulerMonitorServerTester {
 
     /**
      * Tests that default onMessage is used.
-     * 
+     *
      * @throws JMSException
      */
     @Test
@@ -499,16 +499,15 @@ public class HarvestSchedulerMonitorServerTester {
 
     /**
      * Test that the stop reason is set correctly.
-     *
+     * <p>
      * There are the following cases: Completed domains are set as completed Domains reaching object limit should be set
      * as object limit reached For domains reaching the byte limit there are the following cases: - We reached the
      * harvest byte limit but not yet the config limit - We reached the config limit
-     *
+     * <p>
      * We use a crawl log with the following characteristics: - statsbiblioteket.dk reached object limit - dr.dk reached
      * byte limit - kb.dk harvested complete
-     *
+     * <p>
      * (netarkivet.dk we fiddle with harvest and config limit to see results but use the same crawllog)
-     *
      */
     @Test
     public void testStopReasonSetCorrectly() {

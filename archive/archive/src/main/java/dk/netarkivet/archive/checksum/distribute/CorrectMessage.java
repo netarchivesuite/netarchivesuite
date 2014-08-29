@@ -60,7 +60,7 @@ public class CorrectMessage extends ArchiveMessage {
 
     /**
      * Constructor. Initializes the variables.
-     * 
+     *
      * @param to Where the message should be sent.
      * @param replyTo Who is sending this message.
      * @param badChecksum The checksum of the 'bad' entry.
@@ -86,7 +86,7 @@ public class CorrectMessage extends ArchiveMessage {
 
     /**
      * Retrieve name of the uploaded file.
-     * 
+     *
      * @return current value of arcfileName
      */
     public String getArcfileName() {
@@ -96,7 +96,7 @@ public class CorrectMessage extends ArchiveMessage {
     /**
      * Retrieves the content of the remoteFile and writes it into the local file. Note: This is transferred through a
      * remote file handle, and then the handle is invalidated. This method may only be called once.
-     * 
+     *
      * @param toFile where to write the content
      * @throws IOFailure on error reading the remote file or writing the local file
      * @throws ArgumentNotValid If <b>toFile</b> is null.
@@ -123,7 +123,7 @@ public class CorrectMessage extends ArchiveMessage {
 
     /**
      * Method for retrieving the correct file.
-     * 
+     *
      * @return The RemoteFile for the correct file.
      */
     public RemoteFile getCorrectFile() {
@@ -133,7 +133,7 @@ public class CorrectMessage extends ArchiveMessage {
     /**
      * Method for retrieving the 'bad' checksum which should correspond to the checksum of the current entry on this
      * file in the archive.
-     * 
+     *
      * @return The checksum for the archive entry.
      */
     public String getIncorrectChecksum() {
@@ -142,7 +142,7 @@ public class CorrectMessage extends ArchiveMessage {
 
     /**
      * Method for retrieving the replica, where this message should be sent.
-     * 
+     *
      * @return The id of the replica where this message should be sent.
      */
     public String getReplicaId() {
@@ -151,7 +151,7 @@ public class CorrectMessage extends ArchiveMessage {
 
     /**
      * The credentials to allow correction of an entry in the archive.
-     * 
+     *
      * @return The credentials.
      */
     public String getCredentials() {
@@ -160,7 +160,7 @@ public class CorrectMessage extends ArchiveMessage {
 
     /**
      * Returns the removed file.
-     * 
+     *
      * @return The removed file.
      * @throws IOFailure If the removed file is null.
      */
@@ -173,7 +173,7 @@ public class CorrectMessage extends ArchiveMessage {
 
     /**
      * Sets the removed file. This is the file which are returned to the sender of the message.
-     * 
+     *
      * @param rf The removed file which is part of the reply of this message.
      * @throws ArgumentNotValid If the remote file is null.
      */
@@ -193,7 +193,7 @@ public class CorrectMessage extends ArchiveMessage {
 
     /**
      * Generate String representation of this object.
-     * 
+     *
      * @return String representation of this object
      */
     public String toString() {

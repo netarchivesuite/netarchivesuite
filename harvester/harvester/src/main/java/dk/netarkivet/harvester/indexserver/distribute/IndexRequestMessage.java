@@ -65,7 +65,7 @@ public class IndexRequestMessage extends HarvesterMessage {
     /**
      * The list of files that make up the generated index. Should only be set on reply, and only if index was generated
      * for all files
-     *
+     * <p>
      * if indexIsStoredInDirectory is false, this list must contain exactly one file (or not have been set yet).
      */
     private List<RemoteFile> resultFiles;
@@ -99,7 +99,6 @@ public class IndexRequestMessage extends HarvesterMessage {
      * @param requestType Type of index requested.
      * @param jobSet Type of index requested.
      * @param ftpconnectionInfo FTP connection parameters to be used (if null, we use the local settings)
-     * 
      * @throws ArgumentNotValid if any argument is null.
      */
     public IndexRequestMessage(RequestType requestType, Set<Long> jobSet, RemoteFileSettings ftpconnectionInfo)
@@ -116,7 +115,7 @@ public class IndexRequestMessage extends HarvesterMessage {
 
     /**
      * Generate an IndexRequestMessage that can send its reply to a specific channel.
-     * 
+     *
      * @param requestType Type of index requested.
      * @param jobSet Type of index requested.
      * @param replyTo The channel to send the reply to.
@@ -143,7 +142,6 @@ public class IndexRequestMessage extends HarvesterMessage {
     }
 
     /**
-     * 
      * @return the harvestId which will use this index, if available.
      */
     public Long getHarvestId() {
@@ -160,7 +158,7 @@ public class IndexRequestMessage extends HarvesterMessage {
 
     /**
      * Calls visit on the visitor.
-     * 
+     *
      * @param v The visitor of this message.
      * @see HarvesterMessageVisitor
      */
@@ -272,7 +270,7 @@ public class IndexRequestMessage extends HarvesterMessage {
      * @param resultFiles RemoteFiles containing index over requested jobs.
      * @throws ArgumentNotValid on null argument or null element in list.
      * @throws IllegalState if the result files have already been set.
-     * */
+     */
     public void setResultFiles(List<RemoteFile> resultFiles) throws IllegalState, ArgumentNotValid {
         ArgumentNotValid.checkNotNull(resultFiles, "List<RemoteFile> resultFiles");
         for (RemoteFile rf : resultFiles) {

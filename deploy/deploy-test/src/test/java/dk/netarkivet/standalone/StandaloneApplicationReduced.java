@@ -35,7 +35,7 @@ import dk.netarkivet.common.webinterface.GUIWebServer;
  * yet another test application. This application starts an arcrepository, bitarchive, bitarchivemonitor,
  * harvestdefinitionGUI within the same JVM. TestRemoteFile and TestJMSConnection are used, the application therefore
  * does not need access to a JMSBroker nor an FTPServer.
- *
+ * <p>
  * Based on StandaloneApplication Primarily a tool to test the GUI
  */
 

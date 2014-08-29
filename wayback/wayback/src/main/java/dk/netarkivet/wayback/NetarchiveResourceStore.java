@@ -49,7 +49,6 @@ import dk.netarkivet.common.utils.InputStreamUtils;
 /**
  * This is the connector between netarchivesuite and wayback. And is based on PrototypeNetarchiveResourceStore.java
  * which was made as a prototype connector.
- *
  */
 public class NetarchiveResourceStore implements ResourceStore {
 
@@ -71,7 +70,7 @@ public class NetarchiveResourceStore implements ResourceStore {
 
     /**
      * Transforms search result into a resource, according to the ResourceStore interface.
-     * 
+     *
      * @param captureSearchResult the search result.
      * @return a valid resource containing metadata and a link to the ARC record.
      * @throws ResourceNotAvailableException if something went wrong fetching record.
@@ -202,7 +201,7 @@ public class NetarchiveResourceStore implements ResourceStore {
 
     /**
      * Shuts down this resource store, closing the arcrepository client.
-     * 
+     *
      * @throws IOException if an exception occurred while closing the client.
      */
     public void shutdown() throws IOException {

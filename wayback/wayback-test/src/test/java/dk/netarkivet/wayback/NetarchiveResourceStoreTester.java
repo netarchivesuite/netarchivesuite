@@ -240,7 +240,7 @@ public class NetarchiveResourceStoreTester extends IndexerTestCase {
 
     /**
      * Test ARC record with non http address, like ARC file header
-     * 
+     *
      * @throws ResourceNotAvailableException
      */
     @Test(expected = ResourceNotAvailableException.class)
@@ -292,11 +292,11 @@ public class NetarchiveResourceStoreTester extends IndexerTestCase {
                     metadata.put(field, "");
                 }
                 metadata.put(ARCConstants.ABSOLUTE_OFFSET_KEY, 0L); // Offset
-                                                                    // not
-                                                                    // stored as
-                                                                    // String
-                                                                    // but as
-                                                                    // Long
+                // not
+                // stored as
+                // String
+                // but as
+                // Long
                 byte[] encodedKey = encode(netMsg.getArcFile(), netMsg.getIndex());
                 try {
                     String filename = netMsg.getArcFile();

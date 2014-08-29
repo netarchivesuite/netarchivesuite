@@ -80,7 +80,7 @@ public class ArchiveFile {
 
     /**
      * Gets originalIndexFileName.
-     * 
+     *
      * @return the originalIndexFileName
      */
     public String getOriginalIndexFileName() {
@@ -89,7 +89,7 @@ public class ArchiveFile {
 
     /**
      * Sets originalIndexFileName.
-     * 
+     *
      * @param originalIndexFileName The new original index filename
      */
     public void setOriginalIndexFileName(String originalIndexFileName) {
@@ -98,7 +98,7 @@ public class ArchiveFile {
 
     /**
      * Returns indexedDate.
-     * 
+     *
      * @return the date indexed.
      */
     public Date getIndexedDate() {
@@ -107,7 +107,7 @@ public class ArchiveFile {
 
     /**
      * Sets indexedDate.
-     * 
+     *
      * @param indexedDate The new indexed date.
      */
     public void setIndexedDate(Date indexedDate) {
@@ -117,7 +117,7 @@ public class ArchiveFile {
     /**
      * The filename is used as a natural key because it is a fundamental property of the arcrepository that filenames
      * are unique.
-     * 
+     *
      * @return the filename.
      */
     @Id
@@ -127,7 +127,7 @@ public class ArchiveFile {
 
     /**
      * Sets the filename.
-     * 
+     *
      * @param filename The new filename
      */
     public void setFilename(String filename) {
@@ -136,7 +136,7 @@ public class ArchiveFile {
 
     /**
      * Returns true if the file has been indexed.
-     * 
+     *
      * @return whether the file is indexed
      */
     public boolean isIndexed() {
@@ -145,7 +145,7 @@ public class ArchiveFile {
 
     /**
      * Sets whether the file has been indexed.
-     * 
+     *
      * @param indexed The new value of the isIndexed variable.
      */
     public void setIndexed(boolean indexed) {
@@ -154,7 +154,7 @@ public class ArchiveFile {
 
     /**
      * Gets the number of failed indexing attempts.
-     * 
+     *
      * @return the number of failed attempts
      */
     public int getIndexingFailedAttempts() {
@@ -163,7 +163,7 @@ public class ArchiveFile {
 
     /**
      * Sets the number of failed indexing attempts.
-     * 
+     *
      * @param indexingFailedAttempts The number of failed indexing attempts
      */
     public void setIndexingFailedAttempts(int indexingFailedAttempts) {
@@ -174,7 +174,7 @@ public class ArchiveFile {
      * Run a batch job to index this file, storing the result locally. If this method runs successfully, the isIndexed
      * flag will be set to true and the originalIndexFileName field will be set to the (arbitrary) name of the file
      * containing the results. The values are persisted to the datastore.
-     * 
+     *
      * @throws IllegalState If the indexing has already been done.
      */
     public void index() throws IllegalState {
@@ -229,7 +229,7 @@ public class ArchiveFile {
      * Collects the batch results from the BatchStatus, first to a file in temporary directory, after which they are
      * renamed to the directory WAYBACK_BATCH_OUTPUTDIR. The status of this object is then updated to reflect that the
      * object has been indexed.
-     * 
+     *
      * @param status the status of a batch job.
      */
     private void collectResults(BatchStatus status) {
@@ -267,7 +267,7 @@ public class ArchiveFile {
 
     /**
      * Logs the error and increments the number of failed attempts for this ArchiveFile.
-     * 
+     *
      * @param status the status of the batch job.
      */
     private void logBatchError(BatchStatus status) {

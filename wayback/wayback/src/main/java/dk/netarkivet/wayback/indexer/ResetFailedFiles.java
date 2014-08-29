@@ -38,10 +38,10 @@ public class ResetFailedFiles {
      * -Ddk.netarkivet.settings.file=/home/test/TEST12/conf/settings_WaybackIndexerApplication.xml
      * -Dsettings.common.applicationInstanceId=RESET_FILES dk.netarkivet.wayback.indexer.ResetFailedFiles file1 file2
      * ...
-     *
+     * <p>
      * The given files are reset so that they appear never to have failed an indexing attempt. They will therefore be
      * placed in the index queue the next time the indexer runs.
-     * 
+     *
      * @param args the file names
      */
     public static void main(String[] args) {

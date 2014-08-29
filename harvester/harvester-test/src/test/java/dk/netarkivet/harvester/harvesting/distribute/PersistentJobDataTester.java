@@ -85,7 +85,7 @@ public class PersistentJobDataTester {
 
     /**
      * Test that the write(Job) method persists all necessary information about the current harvest-job.
-     * 
+     *
      * @throws Exception If failure to persist the information or unable to access DB
      */
     @Test

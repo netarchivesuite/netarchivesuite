@@ -43,7 +43,6 @@ import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
 /**
  * Tests for the LoadableJarBatchJob class.
- *
  */
 public class LoadableJarBatchJobTester {
     MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);

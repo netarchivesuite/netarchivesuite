@@ -129,12 +129,12 @@ public class LegacyHarvestReportTester {
         // Number of domain names in AbstractHarvestReport should be less than or equal to
         // the number of lines in the host-reports.txt file (minus 1 , due to header):
         assertEquals("Number of domain names in AbstractHarvestReport should equal testnumber "
-                + TestInfo.NO_OF_TEST_DOMAINS, TestInfo.NO_OF_TEST_DOMAINS, // Expected value
+                        + TestInfo.NO_OF_TEST_DOMAINS, TestInfo.NO_OF_TEST_DOMAINS, // Expected value
                 hostReport.getDomainNames().size());
 
         // Check if set of domain names contains normalized domain name TestInfo.TEST_DOMAIN:
         assertTrue("hostReport.getDomainNames() should contain domain name "
-                + dk.netarkivet.harvester.harvesting.TestInfo.TEST_DOMAIN,
+                        + dk.netarkivet.harvester.harvesting.TestInfo.TEST_DOMAIN,
                 hostReport.getDomainNames().contains(dk.netarkivet.harvester.harvesting.TestInfo.TEST_DOMAIN));
     }
 
@@ -143,7 +143,7 @@ public class LegacyHarvestReportTester {
         AbstractHarvestReport hostReport = createValidHeritrixHostsReport();
 
         assertEquals("AbstractHarvestReport.getObjectCount(TestInfo.TEST_DOMAIN)) should expected to return "
-                + TestInfo.NO_OF_OBJECTS_TEST, TestInfo.NO_OF_OBJECTS_TEST, // Expected value
+                        + TestInfo.NO_OF_OBJECTS_TEST, TestInfo.NO_OF_OBJECTS_TEST, // Expected value
                 (long) hostReport.getObjectCount(dk.netarkivet.harvester.harvesting.TestInfo.TEST_DOMAIN));
         assertNull("AbstractHarvestReport.getObjectCount('bibliotek.dk')) expected to return Null",
                 hostReport.getObjectCount("bibliotek.dk"));
@@ -155,7 +155,7 @@ public class LegacyHarvestReportTester {
         AbstractHarvestReport hostReport = createValidHeritrixHostsReport();
 
         assertEquals("AbstractHarvestReport.getByteCount(TestInfo.TEST_DOMAIN)) expected to return "
-                + TestInfo.NO_OF_BYTES_TEST, TestInfo.NO_OF_BYTES_TEST, // Expected value
+                        + TestInfo.NO_OF_BYTES_TEST, TestInfo.NO_OF_BYTES_TEST, // Expected value
                 (long) hostReport.getByteCount(dk.netarkivet.harvester.harvesting.TestInfo.TEST_DOMAIN));
         assertNull("AbstractHarvestReport.getByteCount('bibliotek.dk')) expected to return Null",
                 hostReport.getByteCount("bibliotek.dk"));

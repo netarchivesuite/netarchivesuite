@@ -60,7 +60,6 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
 
     /**
      * The directory from where we upload the ARC files.
-     *
      */
     private static final File ORIGINALS_DIR = new File(new File(TestInfo.DATA_DIR, "upload"), "originals");
 
@@ -94,9 +93,9 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
     }
 
     /* **** Part one: Test that illegal parameters are handled correctly. ** */
+
     /**
      * Test that giving null for a filename gives the right exception.
-     *
      */
     @Test
     public void testUploadNoFile() {
@@ -109,6 +108,7 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
     }
 
     /* **** Part two: Test that errors are treated correctly. **** */
+
     /**
      * Uploading a file that does not exist should throw an ArgumentNotValid exception.
      */
@@ -144,7 +144,6 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
 
     /**
      * Test that uploading a directory throws an exception.
-     *
      */
     @Test
     public void testUploadNoDir() {
@@ -188,7 +187,7 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
     /**
      * Verify that data do not exist in the archive before uploading the file and that data are part of the archive
      * after upload.
-     * 
+     *
      * @throws IOException If unable to close FileOutputStream.
      */
     @Test

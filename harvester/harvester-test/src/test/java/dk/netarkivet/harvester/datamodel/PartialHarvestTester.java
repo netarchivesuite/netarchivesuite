@@ -360,7 +360,7 @@ public class PartialHarvestTester extends DataModelTestCase {
 
     /**
      * Test that setting domain configurations actually removes duplicates.
-     * 
+     *
      * @throws Exception
      */
     @Test

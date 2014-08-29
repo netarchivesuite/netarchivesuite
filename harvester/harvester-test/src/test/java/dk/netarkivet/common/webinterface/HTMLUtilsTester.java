@@ -291,7 +291,6 @@ public class HTMLUtilsTester {
      * Make a HttpServletRequest with the given requestUrl.
      *
      * @param requestUrl
-     *
      * @return
      */
     private HttpServletRequest makeHttpServletRequest(final String requestUrl) {

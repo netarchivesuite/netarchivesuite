@@ -216,7 +216,7 @@ public class BitarchiveTesterBatch extends BitarchiveTestCase {
     /**
      * Test that illegal code (e.g. that tries to read outside of a bitarchive directory, or that tries to write
      * anywhere) cannot be executed.
-     * 
+     * <p>
      * Fails in Hudson
      */
     @Test

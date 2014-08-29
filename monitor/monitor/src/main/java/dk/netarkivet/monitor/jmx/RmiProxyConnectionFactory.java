@@ -54,7 +54,6 @@ public class RmiProxyConnectionFactory implements JMXProxyConnectionFactory {
      * @param rmiPort the RMI port on that server (dedicated to the above jmxPort)
      * @param userName the userName for access to the MBeanserver on that server
      * @param password the password for access to the MBeanserver on that server
-     *
      * @return a JMXProxyFactory with the above properties.
      */
     public JMXProxyConnection getConnection(String server, int jmxPort, int rmiPort, String userName, String password) {
@@ -156,9 +155,7 @@ public class RmiProxyConnectionFactory implements JMXProxyConnectionFactory {
          * Return object names from remote location.
          *
          * @param query The query remote mbeans should match
-         *
          * @return set of names of matching mbeans.
-         *
          * @throws IOFailure on communication trouble.
          * @throws ArgumentNotValid on null or empty query.
          */

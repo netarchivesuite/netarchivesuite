@@ -39,10 +39,10 @@ import org.archive.wayback.util.flatfile.FlatFile;
 /**
  * This class allows one to specify a file containing a list of regular expressions specifying url's to be blocked from
  * access via wayback.
- *
+ * <p>
  * The class is intended to be instantiated as a Spring bean in a wayback access point, for example by adding something
  * like
- * 
+ * <p>
  * <pre>
  * {@code
  *   <property name="exclusionFactory">
@@ -52,7 +52,7 @@ import org.archive.wayback.util.flatfile.FlatFile;
  *   </property>
  * }
  * </pre>
- * 
+ * <p>
  * to an access-point definition in wayback.xml.
  */
 public class RegExpExclusionFilterFactory implements ExclusionFilterFactory {
@@ -74,7 +74,7 @@ public class RegExpExclusionFilterFactory implements ExclusionFilterFactory {
 
     /**
      * Initialiser to be called from Spring framework.
-     * 
+     *
      * @throws IOException if the file specifying the exclusions cannot be read.
      * @throws PatternSyntaxException if one or more of the patterns in the configuration file is an invalid java
      * regular expression.
@@ -86,7 +86,7 @@ public class RegExpExclusionFilterFactory implements ExclusionFilterFactory {
     /**
      * Reads the file containing the regular expressions to be used as a filter, ignoring any blank lines or leading and
      * trailing whitespace.
-     * 
+     *
      * @throws IOException if the file cannot be read.
      * @throws PatternSyntaxException if one or more of the patterns in the configuration file is an invalid java
      * regular expression.
@@ -112,7 +112,7 @@ public class RegExpExclusionFilterFactory implements ExclusionFilterFactory {
 
     /**
      * Get the file from which regexps are read.
-     * 
+     *
      * @return the file.
      */
     public File getFile() {
@@ -121,7 +121,7 @@ public class RegExpExclusionFilterFactory implements ExclusionFilterFactory {
 
     /**
      * Set the file from which regexps are read.
-     * 
+     *
      * @param file thefile.
      */
     public void setFile(File file) {

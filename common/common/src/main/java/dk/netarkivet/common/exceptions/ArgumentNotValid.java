@@ -44,7 +44,7 @@ public class ArgumentNotValid extends NetarkivetException {
      * message and cause.
      *
      * @param message The detail message
-     * @param cause   The cause
+     * @param cause The cause
      */
     public ArgumentNotValid(String message, Throwable cause) {
         super(message, cause);
@@ -53,7 +53,7 @@ public class ArgumentNotValid extends NetarkivetException {
     /**
      * Check if a String argument is null or the empty string.
      *
-     * @param val  the value to check
+     * @param val the value to check
      * @param name the name and type of the value being checked
      * @throws ArgumentNotValid if test fails
      */
@@ -69,7 +69,7 @@ public class ArgumentNotValid extends NetarkivetException {
     /**
      * Check if an Object argument is null.
      *
-     * @param val  the value to check
+     * @param val the value to check
      * @param name the name and type of the value being checked.
      * @throws ArgumentNotValid if test fails
      */
@@ -83,7 +83,7 @@ public class ArgumentNotValid extends NetarkivetException {
     /**
      * Check if an int argument is less than 0.
      *
-     * @param num  argument to check
+     * @param num argument to check
      * @param name the name and type of the value being checked.
      * @throws ArgumentNotValid if test fails
      */
@@ -111,7 +111,7 @@ public class ArgumentNotValid extends NetarkivetException {
     /**
      * Check if an int argument is less than or equal to 0.
      *
-     * @param num  argument to check
+     * @param num argument to check
      * @param name the name and type of the value being checked.
      * @throws ArgumentNotValid if test fails
      */
@@ -148,13 +148,14 @@ public class ArgumentNotValid extends NetarkivetException {
 
         if (c.isEmpty()) {
             throw new ArgumentNotValid("The contents of the variable '" + name
-                        + "' must not be empty.");
+                    + "' must not be empty.");
         }
     }
 
     /**
      * Check that some condition on input parameters is true and throw an
      * ArgumentNotValid if it is false.
+     *
      * @param b the condition to check
      * @param s the error message to be reported
      * @throws ArgumentNotValid if b is false
@@ -164,33 +165,35 @@ public class ArgumentNotValid extends NetarkivetException {
             throw new ArgumentNotValid(s);
         }
     }
-    
+
     /**
      * Check, if the given argument is an existing directory.
+     *
      * @param aDir a given File object.
      * @param name Name of object
-     * @throws ArgumentNotValid If aDir is not an existing directory 
+     * @throws ArgumentNotValid If aDir is not an existing directory
      */
     public static void checkExistsDirectory(File aDir, String name) {
         checkNotNull(aDir, name);
         if (!aDir.isDirectory()) {
             String message = "The file '" + aDir.getAbsolutePath()
-                             + "' does not exist or is not a directory.";
+                    + "' does not exist or is not a directory.";
             throw new ArgumentNotValid(message);
         }
     }
-    
+
     /**
      * Check, if the given argument is an existing normal file.
+     *
      * @param aFile a given File object.
      * @param name Name of object
-     * @throws ArgumentNotValid If aDir is not an existing file 
+     * @throws ArgumentNotValid If aDir is not an existing file
      */
     public static void checkExistsNormalFile(File aFile, String name) {
         checkNotNull(aFile, name);
         if (!aFile.isFile()) {
             String message = "The file '" + aFile.getAbsolutePath()
-                             + "' does not exist or is not a normal file.";
+                    + "' does not exist or is not a normal file.";
             throw new ArgumentNotValid(message);
         }
     }

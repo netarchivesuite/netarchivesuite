@@ -31,24 +31,25 @@ import org.archive.io.warc.WARCRecord;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.archive.HeritrixArchiveRecordWrapper;
 
-/** A filter class for batch entries.  Allows testing whether or not
+/**
+ * A filter class for batch entries.  Allows testing whether or not
  * to process an entry without loading the entry data first.
  * The class in itself is abstract but contains implementation of several
  * filters.
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({"serial"})
 public abstract class WARCBatchFilter implements Serializable {
 
     /** The name of the BatchFilter. */
     private String name;
-    
+
     /** A default filter: Accepts everything. */
     public static final WARCBatchFilter NO_FILTER = new WARCBatchFilter("NO_FILTER") {
         public boolean accept(WARCRecord record) {
             return true;
         }
     };
-    
+
     /** The name of the filter that filters out non response records. */
     private static final String EXCLUDE_NON_RESPONSE_RECORDS_FILTER_NAME = "EXCLUDE_NON_RESPONSE_RECORDS";
 
@@ -62,7 +63,7 @@ public abstract class WARCBatchFilter implements Serializable {
         }
     };
 
-    /** Prefix for the url in HTTP records. */    
+    /** Prefix for the url in HTTP records. */
     private static final String HTTP_ENTRIES_HTTP_PREFIX = "http:";
     /** The name of the filter accepting only HTTP entries. */
     private static final String ONLY_HTTP_ENTRIES_FILTER_NAME = "ONLY_HTTP_ENTRIES";
@@ -76,8 +77,10 @@ public abstract class WARCBatchFilter implements Serializable {
             return recordWrapper.getHeader().getUrl().startsWith(HTTP_ENTRIES_HTTP_PREFIX);
         }
     };
-    
-    /** Create a new filter with the given name.
+
+    /**
+     * Create a new filter with the given name.
+     *
      * @param name The name of this filter, for debugging mostly.
      */
     protected WARCBatchFilter(String name) {
@@ -87,21 +90,23 @@ public abstract class WARCBatchFilter implements Serializable {
 
     /**
      * Get the name of the filter.
+     *
      * @return the name of the filter.
      */
     protected String getName() {
         return this.name;
     }
-    
+
     /**
      * Note that the mimetype of the WARC responserecord is not (necessarily) the same as its payload.
+     *
      * @param mimetype String denoting the mimetype this filter represents
-     * @return a BatchFilter that filters out all WARCRecords, that does not 
-     *  have this mimetype
+     * @return a BatchFilter that filters out all WARCRecords, that does not
+     * have this mimetype
      * @throws MimeTypeParseException If mimetype is invalid
      */
     public static WARCBatchFilter getMimetypeBatchFilter(final String mimetype)
-        throws MimeTypeParseException {
+            throws MimeTypeParseException {
         ArgumentNotValid.checkNotNullOrEmpty(mimetype, "String mimetype");
         if (!mimetypeIsOk(mimetype)) {
             throw new MimeTypeParseException("Mimetype argument '" + mimetype + "' is invalid");
@@ -114,7 +119,7 @@ public abstract class WARCBatchFilter implements Serializable {
         };
     }
 
-    /** The name-prefix for mimetype filters. */    
+    /** The name-prefix for mimetype filters. */
     private static final String MIMETYPE_BATCH_FILTER_NAME_PREFIX = "MimetypeBatchFilter-";
     /** Regexp for mimetypes. */
     private static final String MIMETYPE_REGEXP = "\\w+/\\w+";
@@ -122,10 +127,11 @@ public abstract class WARCBatchFilter implements Serializable {
     private static final Pattern MIMETYPE_PATTERN = Pattern.compile(MIMETYPE_REGEXP);
 
     /**
-    * Check, if a certain mimetype is valid.
-    * @param mimetype a given mimetype
-    * @return boolean true, if mimetype matches word/word, otherwise false
-    */
+     * Check, if a certain mimetype is valid.
+     *
+     * @param mimetype a given mimetype
+     * @return boolean true, if mimetype matches word/word, otherwise false
+     */
     public static boolean mimetypeIsOk(String mimetype) {
         ArgumentNotValid.checkNotNullOrEmpty(mimetype, "String mimetype");
         return MIMETYPE_PATTERN.matcher(mimetype).matches();
@@ -133,6 +139,7 @@ public abstract class WARCBatchFilter implements Serializable {
 
     /**
      * Check if a given record is accepted (not filtered out) by this filter.
+     *
      * @param record a given WARCRecord
      * @return true, if the given record is accepted by this filter
      */

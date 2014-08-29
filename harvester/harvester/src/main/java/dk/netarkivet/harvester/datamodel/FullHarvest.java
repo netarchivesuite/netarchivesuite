@@ -149,9 +149,8 @@ public class FullHarvest extends HarvestDefinition {
      * previous harvest, they: 1) were completed 2) reached their maxBytes limit (and the maxBytes limit has not changed
      * since time of harvest) 3) reached their maxObjects limit (and the maxObjects limit has not changed since time of
      * harvest) 4) died uncleanly (e.g. due to a manual shutdown of heritrix) on their last harvest.
-     *
+     * <p>
      * Domains are also excluded if they are aliases of another domain.
-     *
      *
      * @return Iterator containing information about the domain configurations
      */
@@ -219,7 +218,6 @@ public class FullHarvest extends HarvestDefinition {
      *
      * @param harvestInfo A harvest info object from a previous harvest.
      * @param dao The dao to read configurations from.
-     *
      * @return A configuration if found and the download in this harvestinfo was complete, null otherwise
      */
     private DomainConfiguration getConfigurationFromPreviousHarvest(final HarvestInfo harvestInfo, DomainDAO dao) {
@@ -258,7 +256,6 @@ public class FullHarvest extends HarvestDefinition {
      * Check if this harvest definition should be run, given the time now.
      *
      * @param now The current time
-     *
      * @return true if harvest definition should be run
      */
     public boolean runNow(Date now) {
@@ -275,7 +272,6 @@ public class FullHarvest extends HarvestDefinition {
     }
 
     /**
-     * 
      * @return Returns the max job running time
      */
     public long getMaxJobRunningTime() {
@@ -294,7 +290,7 @@ public class FullHarvest extends HarvestDefinition {
     /**
      * Is index ready. Used to check, whether or a FullHarvest is ready for scheduling. The scheduling requires, that
      * the deduplication index used by the jobs in the FullHarvest, has allready been prepared by the IndexServer.
-     * 
+     *
      * @return true, if the deduplication index is ready. Otherwise false.
      */
     public boolean getIndexReady() {
@@ -303,7 +299,7 @@ public class FullHarvest extends HarvestDefinition {
 
     /**
      * Set the indexReady field.
-     * 
+     *
      * @param isIndexReady The new value of the indexReady field.
      */
     public void setIndexReady(boolean isIndexReady) {

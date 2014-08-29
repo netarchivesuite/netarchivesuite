@@ -58,7 +58,7 @@ public class DatabasePreservationState implements PreservationState {
 
     /**
      * Constructor.
-     * 
+     *
      * @param fileName The name of the file.
      * @param rfis A list of the ReplicaFileInfo entries in the database for the given file.
      * @throws ArgumentNotValid If the filename is null or the empty string, or if the list of ReplicaFileInfos are null
@@ -128,7 +128,7 @@ public class DatabasePreservationState implements PreservationState {
 
     /**
      * INHERITED DUMMY FUNCTION!
-     * 
+     *
      * @return true, since a non-existing admin.data is OK for the database instance.
      */
     public boolean isAdminDataOk() {
@@ -138,9 +138,9 @@ public class DatabasePreservationState implements PreservationState {
 
     /**
      * Returns a reference to a replica that contains a version of the file with the correct checksum.
-     *
+     * <p>
      * The correct checksum is defined as the checksum that the majority of the replica and admin data agree upon.
-     *
+     * <p>
      * If no replica exists with a correct version of the file null is returned.
      *
      * @return the name of the reference replica or null if no reference exists.
@@ -195,7 +195,7 @@ public class DatabasePreservationState implements PreservationState {
 
     /**
      * THIS IS VOTING! Retrieve checksum that the majority of checksum references replicas agree upon.
-     * 
+     * <p>
      * TODO Voting is already done by the DatabasedActiveBitPreservation. Thus replace with finding an entry with
      * checksum-status = OK.
      *
@@ -292,7 +292,7 @@ public class DatabasePreservationState implements PreservationState {
     /**
      * Get the filename, this FilePreservationState is about. Needed to get at the filename given to constructor, and
      * allow for a better datastructure.
-     * 
+     *
      * @return the filename
      */
     public String getFilename() {

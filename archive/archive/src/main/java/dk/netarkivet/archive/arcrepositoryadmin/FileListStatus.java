@@ -37,7 +37,7 @@ public enum FileListStatus {
 
     /**
      * Method to retrieve the FileListStatus based on an integer.
-     * 
+     *
      * @param status A specific integer for the upload status
      * @return The UploadStatus related to the certain integer
      * @throws ArgumentNotValid If argument rt does not correspond to a UploadStatus.

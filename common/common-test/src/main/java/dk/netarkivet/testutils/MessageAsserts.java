@@ -23,12 +23,11 @@
 
 package dk.netarkivet.testutils;
 
-import junit.framework.TestCase;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
+import junit.framework.TestCase;
 
 /**
  * Assertions on JMS/Netarkivet messages
- *
  */
 
 public class MessageAsserts {

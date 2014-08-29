@@ -29,7 +29,6 @@ import java.util.Set;
 
 /**
  * The API for controlling the viewerproxy.
- *
  */
 public interface Controller {
     /** Start URI collection. */
@@ -60,8 +59,8 @@ public interface Controller {
      * Get current status of viewerproxy. The status is not supposed to be machine parsable. Do not base anything on the
      * content of this status message, the format may change without notice.
      *
-     * @return A human-readable string with current status of the viewerproxy.
      * @param locale Indication of which locale to use for generating the string.
+     * @return A human-readable string with current status of the viewerproxy.
      */
     String getStatus(Locale locale);
 }

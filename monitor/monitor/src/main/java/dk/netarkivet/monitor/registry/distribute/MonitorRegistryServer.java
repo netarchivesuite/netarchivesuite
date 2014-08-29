@@ -51,7 +51,7 @@ public class MonitorRegistryServer extends MonitorMessageHandler implements Clea
 
     /**
      * Get the registry server singleton.
-     * 
+     *
      * @return The registry server.
      */
     public static MonitorRegistryServer getInstance() {

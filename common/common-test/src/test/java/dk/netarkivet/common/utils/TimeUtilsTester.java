@@ -31,7 +31,6 @@ import org.junit.Test;
 
 /**
  * Unit tests for the TimeUtils class.
- *
  */
 public class TimeUtilsTester {
 

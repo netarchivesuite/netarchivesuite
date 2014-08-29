@@ -35,7 +35,6 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * Unit tests for the class BitarchiveARCFile.
- *
  */
 public class BitarchiveARCFileTester {
     private static final File EXISTING_FILE = new File(TestInfo.ORIGINALS_DIR, "Upload2.ARC");

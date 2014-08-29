@@ -27,7 +27,6 @@ import java.io.File;
 
 /**
  * Static constants for utils.arc and also utils.batch testing.
- *
  */
 public class TestInfo {
     public static final File BASE_DIR = new File("tests/dk/netarkivet/common/utils/arc/data");

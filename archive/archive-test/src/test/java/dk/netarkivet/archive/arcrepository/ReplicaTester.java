@@ -127,8 +127,9 @@ public class ReplicaTester {
                     found = true;
                 }
                 ;
-                if (found)
+                if (found) {
                     break;
+                }
             }
             ;
             assertTrue("Location id " + knownTestIds[i] + " was not found in known replicas.", found);
@@ -141,8 +142,9 @@ public class ReplicaTester {
                     found = true;
                 }
                 ;
-                if (found)
+                if (found) {
                     break;
+                }
             }
             ;
             assertTrue("Replica id " + knownTestIds[i] + " was not found in test replicas.", found);
@@ -165,8 +167,9 @@ public class ReplicaTester {
                     found = true;
                 }
                 ;
-                if (found)
+                if (found) {
                     break;
+                }
             }
             ;
             assertTrue("Replica id " + knownTestIds[i] + " was not found in known ids for replica.", found);
@@ -180,8 +183,9 @@ public class ReplicaTester {
                     found = true;
                 }
                 ;
-                if (found)
+                if (found) {
                     break;
+                }
             }
             ;
             assertTrue("Replica id " + knownTestIds[i] + " was not found in known ids for test replicas.", found);

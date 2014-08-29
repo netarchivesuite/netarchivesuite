@@ -60,9 +60,7 @@ import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
- * 
  * Unit tests for the JMXUtils class.
- *
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class JMXUtilsTester {

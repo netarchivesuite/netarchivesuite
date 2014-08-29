@@ -144,7 +144,7 @@ public class IntegrityTests extends DataModelTestCase {
 
     /**
      * After test is done close test-objects.
-     * 
+     *
      * @throws Exception
      */
     @After
@@ -307,7 +307,7 @@ public class IntegrityTests extends DataModelTestCase {
     /**
      * Checks that we can submit a crawl job, receive the expected CrawlStatusMessages from a HarvestControllerServer,
      * and that the resulting crawl log is available and contains the expected data.
-     * 
+     *
      * @throws IOException
      * @throws InterruptedException
      */

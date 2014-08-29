@@ -85,9 +85,8 @@ public class HarvesterStatusReceiver extends HarvesterMessageHandler implements 
 
     /**
      * Tells the dispatcher that it may dispatch a new job.
-     * 
-     * @param message The message containing the relevant harvester information.
      *
+     * @param message The message containing the relevant harvester information.
      */
     @Override
     public void visit(HarvesterReadyMessage message) {

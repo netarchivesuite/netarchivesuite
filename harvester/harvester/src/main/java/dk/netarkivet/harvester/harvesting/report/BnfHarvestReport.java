@@ -61,7 +61,7 @@ public class BnfHarvestReport extends AbstractHarvestReport {
 
     /**
      * Constructor for this class.
-     * 
+     *
      * @param files A HeritrixFiles object.
      * @throws IOFailure If the processing of the files goes wrong
      */
@@ -71,7 +71,7 @@ public class BnfHarvestReport extends AbstractHarvestReport {
 
     /**
      * Post-processing happens on the scheduler side when ARC files have been uploaded.
-     * 
+     *
      * @param job the actual job.
      */
     @Override

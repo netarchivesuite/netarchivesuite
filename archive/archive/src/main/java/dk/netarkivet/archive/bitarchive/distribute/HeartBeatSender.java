@@ -36,7 +36,6 @@ import dk.netarkivet.common.exceptions.IOFailure;
 /**
  * Thread reponsible for sending out periodic HeartBeatMessages. The BitarchiveServer is closed down if any error occurs
  * whilst sending heartbeats.
- *
  */
 public class HeartBeatSender extends TimerTask {
     /** The log. */
@@ -79,7 +78,7 @@ public class HeartBeatSender extends TimerTask {
 
     /**
      * Retrieval of a string representation of this instance.
-     * 
+     *
      * @return The string representation of this instance.
      */
     public String toString() {

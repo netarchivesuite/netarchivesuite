@@ -27,8 +27,6 @@ import dk.netarkivet.common.utils.ApplicationUtils;
 
 /**
  * This class is used to start the BitArchive application.
- *
- *
  */
 public final class BitarchiveApplication {
 
@@ -41,8 +39,8 @@ public final class BitarchiveApplication {
     /**
      * Runs the BitarchiveApplication. Settings are read from config files
      *
-     * @see BitarchiveServer
      * @param args an empty array
+     * @see BitarchiveServer
      */
     public static void main(String[] args) {
         ApplicationUtils.startApp(BitarchiveServer.class, args);

@@ -28,7 +28,6 @@ import java.util.List;
 
 /**
  * Miscellaneous utility functions for collections that Sun neglected to make.
- *
  */
 
 public class CollectionUtils {

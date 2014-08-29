@@ -65,7 +65,7 @@ import dk.netarkivet.common.utils.TimeUtils;
  */
 public abstract class JMSConnection implements ExceptionListener, CleanupIF {
 
-	/** The log. */
+    /** The log. */
     private static final Logger log = LoggerFactory.getLogger(JMSConnection.class);
 
     /** Separator used in the consumer key. Separates the ChannelName from the MessageListener.toString(). */
@@ -73,7 +73,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
 
     /** The number to times to (re)try whenever a JMSException is thrown. */
     static final int JMS_MAXTRIES = Settings.getInt(CommonSettings.JMS_BROKER_RETRIES);
-    
+
     /** The JMS Connection. */
     protected Connection connection;
 
@@ -82,10 +82,10 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * queues and topics.
      */
     protected Session session;
-    
+
     /** Map for caching message producers. */
     protected final Map<String, MessageProducer> producers = Collections.synchronizedMap(
-    		new HashMap<String, MessageProducer>());
+            new HashMap<String, MessageProducer>());
 
     /** Map for caching message consumers (topic-subscribers and queue-receivers). */
     protected final Map<String, MessageConsumer> consumers = Collections.synchronizedMap(
@@ -112,7 +112,6 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * Should be implemented according to a specific JMS broker.
      *
      * @return QueueConnectionFactory
-     *
      * @throws JMSException If unable to get QueueConnectionFactory
      */
     protected abstract ConnectionFactory getConnectionFactory() throws JMSException;
@@ -121,11 +120,9 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * Should be implemented according to a specific JMS broker.
      *
      * @param destinationName the name of the wanted Queue
-     *
      * @return The destination. Note that the implementation should make sure
-     *         that this is a Queue or a Topic, as required by the
-     *         NetarchiveSuite design. {@link Channels#isTopic(String)}
-     *
+     * that this is a Queue or a Topic, as required by the
+     * NetarchiveSuite design. {@link Channels#isTopic(String)}
      * @throws JMSException If unable to get a destination.
      */
     protected abstract Destination getDestination(String destinationName) throws JMSException;
@@ -158,7 +155,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
             JMSException lastException = null;
             boolean operationSuccessful = false;
             while (!operationSuccessful && tries < JMS_MAXTRIES) {
-            	++tries;
+                ++tries;
                 try {
                     establishConnectionAndSession();
                     operationSuccessful = true;
@@ -189,10 +186,9 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * overridden. Override the method sendMessage to change functionality.
      *
      * @param msg The NetarkivetMessage to send to the destination queue (null
-     *            not allowed)
-     *
+     * not allowed)
      * @throws ArgumentNotValid if nMsg is null.
-     * @throws IOFailure        if the operation failed.
+     * @throws IOFailure if the operation failed.
      */
     public void send(NetarkivetMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
@@ -205,7 +201,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * channel defined in the message.
      *
      * @param msg Message to be sent
-     * @param to  The destination channel
+     * @param to The destination channel
      */
     public final void resend(NetarkivetMessage msg, ChannelID to) {
         ArgumentNotValid.checkNotNull(msg, "msg");
@@ -218,11 +214,10 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * Submit an object to the reply queue.
      *
      * @param msg The NetarkivetMessage to send to the reply queue (null not
-     *            allowed)
-     *
+     * allowed)
      * @throws ArgumentNotValid if nMsg is null.
      * @throws PermissionDenied if message nMsg has not been sent yet.
-     * @throws IOFailure        if unable to reply.
+     * @throws IOFailure if unable to reply.
      */
     public final void reply(NetarkivetMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
@@ -238,7 +233,6 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      *
      * @param mq the messagequeue to listen to
      * @param ml the messagelistener
-     *
      * @throws IOFailure if the operation failed.
      */
     public void setListener(ChannelID mq, MessageListener ml) throws IOFailure {
@@ -252,7 +246,6 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      *
      * @param mq the given queue or topic
      * @param ml a messagelistener
-     *
      * @throws IOFailure On network trouble
      */
     public void removeListener(ChannelID mq, MessageListener ml) throws IOFailure {
@@ -264,10 +257,10 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
     /**
      * Creates a QueueBrowser object to peek at the messages on the specified
      * queue.
+     *
      * @param queueID The ChannelID for a specified queue.
      * @return A new QueueBrowser instance with access to the specified queue
-     * @throws JMSException
-     *             If unable to create the specified queue browser
+     * @throws JMSException If unable to create the specified queue browser
      */
     public QueueBrowser createQueueBrowser(ChannelID queueID) throws JMSException {
         ArgumentNotValid.checkNotNull(queueID, "ChannelID queueID");
@@ -279,12 +272,11 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * Provides a QueueSession instance. Functionality for retrieving a
      * <code>QueueSession</code> object isen't available on the generic
      * <code>JMSConnectionFactory</code>
-     * 
+     *
      * @return A <code>QueueSession</code> object connected to the current JMS
-     *         broker
-     * @throws JMSException
-     *             Failure to retrieve the <code>QueueBrowser</code> JMS
-     *             Browser
+     * broker
+     * @throws JMSException Failure to retrieve the <code>QueueBrowser</code> JMS
+     * Browser
      */
     public abstract QueueSession getQueueSession() throws JMSException;
 
@@ -341,11 +333,9 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * Unwraps a NetarkivetMessage from an ObjectMessage.
      *
      * @param msg a javax.jms.ObjectMessage
-     *
      * @return a NetarkivetMessage
-     *
      * @throws ArgumentNotValid when msg in valid or format of JMS Object
-     *                          message is invalid
+     * message is invalid
      */
     public static NetarkivetMessage unpack(Message msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "msg");
@@ -365,11 +355,11 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
             netMsg = (NetarkivetMessage) objMsg.getObject();
             // Note: Id is only updated if the message does not already have an
             // id. On unpack, this means the first time the message is received.
-            
+
             // FIXME Fix for NAS-2043 doesn't seem to work
             //String randomID = UUID.randomUUID().toString();
             //netMsg.updateId(randomID);
-            
+
             netMsg.updateId(msg.getJMSMessageID());
         } catch (ClassCastException e) {
             log.warn("Invalid message type: {}", classname, e);
@@ -387,9 +377,8 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * Submit an ObjectMessage to the destination channel.
      *
      * @param nMsg the NetarkivetMessage to be wrapped and send as an
-     *             ObjectMessage
-     * @param to   the destination channel
-     *
+     * ObjectMessage
+     * @param to the destination channel
      * @throws IOFailure if message failed to be sent.
      */
     protected void sendMessage(NetarkivetMessage nMsg, ChannelID to) throws IOFailure {
@@ -398,7 +387,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
         int tries = 0;
 
         while (!operationSuccessful && tries < JMS_MAXTRIES) {
-        	++tries;
+            ++tries;
             try {
                 doSend(nMsg, to);
                 operationSuccessful = true;
@@ -442,7 +431,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
             Exception lastException = null;
             int tries = 0;
             while (!operationSuccessful && tries < JMS_MAXTRIES) {
-            	++tries;
+                ++tries;
                 try {
                     doReconnect();
                     operationSuccessful = true;
@@ -469,10 +458,8 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * Helper method for getting the right producer for a queue or topic.
      *
      * @param queueName The name of the channel
-     *
      * @return The producer for that channel. A new one is created, if none
-     *         exists.
-     *
+     * exists.
      * @throws JMSException If a new producer cannot be created.
      */
     private MessageProducer getProducer(String queueName) throws JMSException {
@@ -490,9 +477,8 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * Get the session. Will try reconnecting if session is null.
      *
      * @return The session.
-     *
      * @throws IOFailure if no session is available, and reconnect does not
-     *                   help.
+     * help.
      */
     private Session getSession() {
         if (session == null) {
@@ -509,12 +495,10 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * message listener.
      *
      * @param channelName The name of the channel
-     * @param ml          The message listener to add as listener to the
-     *                    channel
-     *
+     * @param ml The message listener to add as listener to the
+     * channel
      * @return The producer for that channel. A new one is created, if none
-     *         exists.
-     *
+     * exists.
      * @throws JMSException If a new producer cannot be created.
      */
     private MessageConsumer getConsumer(String channelName, MessageListener ml) throws JMSException {
@@ -532,20 +516,18 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * Generate a consumerkey based on the given channel name and
      * messageListener.
      *
-     * @param channel         Channel name
+     * @param channel Channel name
      * @param messageListener a messageListener
-     *
      * @return the generated consumerkey.
      */
     protected static String getConsumerKey(String channel, MessageListener messageListener) {
         return channel + CONSUMER_KEY_SEPARATOR + messageListener;
     }
-    
+
     /**
      * Get the channelName embedded in a consumerKey.
      *
      * @param consumerKey a consumerKey
-     *
      * @return name of channel embedded in a consumerKey
      */
     private static String getChannelName(String consumerKey) {
@@ -557,7 +539,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * Helper method to establish one Connection and associated Session.
      *
      * @throws JMSException If some JMS error occurred during the creation of
-     *                      the required JMS connection and session
+     * the required JMS connection and session
      */
     private void establishConnectionAndSession() throws JMSException {
         // Establish a queue connection and a session
@@ -571,9 +553,8 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * Sends an ObjectMessage on a queue destination.
      *
      * @param msg the NetarkivetMessage to be wrapped and send as an
-     *            ObjectMessage.
-     * @param to  the destination topic.
-     *
+     * ObjectMessage.
+     * @param to the destination topic.
      * @throws JMSException if message failed to be sent.
      */
     private void doSend(NetarkivetMessage msg, ChannelID to) throws JMSException {
@@ -585,12 +566,12 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
                 // Note: Id is only updated if the message does not already have
                 // an id. This ensures that resent messages keep the same ID
                 // TODO Is it always OK for resent messages to keep the same ID
-                
+
                 // FIXME Solution for NAS-2043 doesn't work; rolled back
                 //String randomID = UUID.randomUUID().toString();
                 //msg.updateId(randomID);
                 msg.updateId(message.getJMSMessageID());
-                
+
             }
         } finally {
             connectionLock.readLock().unlock();
@@ -602,8 +583,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * Method adds a listener to the given queue or topic.
      *
      * @param channelName the messagequeue to listen to
-     * @param ml          the messagelistener
-     *
+     * @param ml the messagelistener
      * @throws IOFailure if the operation failed.
      */
     private void setListener(String channelName, MessageListener ml) {
@@ -614,7 +594,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
         boolean operationSuccessful = false;
         Exception lastException = null;
         while (!operationSuccessful && tries < JMS_MAXTRIES) {
-        	++tries;
+            ++tries;
             try {
                 connectionLock.readLock().lock();
                 try {
@@ -651,7 +631,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
     /**
      * Remove a messagelistener from a channel (a queue or a topic).
      *
-     * @param ml          A specific MessageListener
+     * @param ml A specific MessageListener
      * @param channelName a channelname
      */
     private void removeListener(MessageListener ml, String channelName) {
@@ -663,7 +643,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
         log.info("Removing listener from channel '{}'", channelName);
         while (!operationSuccessful && tries < JMS_MAXTRIES) {
             try {
-            	++tries;
+                ++tries;
                 connectionLock.readLock().lock();
                 try {
                     MessageConsumer messageConsumer = getConsumer(channelName, ml);
@@ -699,7 +679,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * publishers.
      *
      * @throws JMSException If unable to reconnect to JMSBroker and/or
-     *                      reestablish sessions
+     * reestablish sessions
      */
     private void doReconnect()
             throws JMSException {

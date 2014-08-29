@@ -30,7 +30,6 @@ import dk.netarkivet.viewerproxy.Constants;
 
 /**
  * Site section that creates the menu for QA.
- *
  */
 public class QASiteSection extends SiteSection {
     /** The amount of pages visible in the QA menu. */
@@ -38,7 +37,7 @@ public class QASiteSection extends SiteSection {
 
     /**
      * Create a QA SiteSection object.
-     *
+     * <p>
      * This initialises the SiteSection object with the pages that exists in QA.
      */
     public QASiteSection() {
@@ -52,7 +51,7 @@ public class QASiteSection extends SiteSection {
 
     /**
      * Create a return-url for the QA pages that takes one.
-     *
+     * <p>
      * The current implementation is hokey, but trying to go through URL objects is a mess.
      *
      * @param request The request that we have been called with.

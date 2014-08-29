@@ -46,7 +46,6 @@ import dk.netarkivet.testutils.LogUtils;
 
 /**
  * Test class for the Database utilities in HarvestDBConnection, especially the ones related to backup of the database.
- *
  */
 @SuppressWarnings({"unused"})
 public class HarvestDBConnectionTester extends DataModelTestCase {
@@ -76,7 +75,7 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
 
     /**
      * Check that the connection has the expected setup.
-     * 
+     *
      * @throws SQLException
      */
     @Test
@@ -93,7 +92,7 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
 
     /**
      * Check that read locks are released after use.
-     * 
+     *
      * @throws InterruptedException
      */
     @Test
@@ -378,7 +377,7 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
     /**
      * Delete the given table from the table if it exists. Furthermore delete the given table from table
      * 'schemaversions'
-     * 
+     *
      * @param tablename a given table that we want to have deleted
      * @throws SQLException
      */

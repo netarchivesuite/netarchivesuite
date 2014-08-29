@@ -43,7 +43,7 @@ import dk.netarkivet.common.utils.TimeUtils;
  * to catch and process any {@link RuntimeException} that would be thrown during
  * task execution, which cannot be done by simply overriding
  * {@link ScheduledThreadPoolExecutor#afterExecute}.
- *
+ * <p>
  * TODO Currently {@link RuntimeException} are only caught and logged, but the
  * executor stops scheduling future executions. We should implement a
  * configurable restart mechanism, possibly with exception filtering.
@@ -75,6 +75,7 @@ public final class PeriodicTaskExecutor {
 
         /**
          * Builds a new task.
+         *
          * @param taskId the task id string (should be unique)
          * @param task the actual {@link Runnable} object.
          * @param secondsBeforeFirstExec the delay in seconds between starting
@@ -89,11 +90,12 @@ public final class PeriodicTaskExecutor {
             this.secondsBeforeFirstExec = secondsBeforeFirstExec;
             this.secondsBetweenExec = secondsBetweenExec;
         }
-        
+
         /**
-         * Set the designated ScheduledFuture object to the one given 
+         * Set the designated ScheduledFuture object to the one given
          * as argument.
-         * @param future a given ScheduledFuture 
+         *
+         * @param future a given ScheduledFuture
          */
         void setFuture(ScheduledFuture<?> future) {
             this.future = future;
@@ -118,6 +120,7 @@ public final class PeriodicTaskExecutor {
 
     /**
      * Builds an executor for a single task.
+     *
      * @param taskId the task id string (should be unique)
      * @param task the actual {@link Runnable} object.
      * @param secondsBeforeFirstExec the delay in seconds between starting
@@ -131,6 +134,7 @@ public final class PeriodicTaskExecutor {
 
     /**
      * Builds an executor for a set of tasks.
+     *
      * @param tasks the task definitions.
      */
     public PeriodicTaskExecutor(PeriodicTask... tasks) {

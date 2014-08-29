@@ -52,7 +52,6 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 /**
  * Tester class for the FileChecksumArchive.
- * 
  */
 
 public class FileChecksumArchiveTester {
@@ -110,7 +109,7 @@ public class FileChecksumArchiveTester {
      * Check the following: 1. FileChecksumArchiev can perform Upload. 2. The correct checksums are retrieved from the
      * upload. 3. The correct file can be retrieved. 4. That the Correct function can be performed. 5. That the data
      * also is changed appropriately. 6. The old and 'wrong' entries have been move to the backup file.
-     * 
+     *
      * @throws Exception So it is unnecessary to catch IOExceptions, since the test should fail.
      */
     @Test
@@ -202,7 +201,7 @@ public class FileChecksumArchiveTester {
 
     /**
      * Checks how the archive handles it, when there is an admin.data file.
-     * 
+     *
      * @throws IOException
      */
     @Test

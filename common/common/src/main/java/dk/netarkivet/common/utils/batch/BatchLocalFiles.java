@@ -46,12 +46,12 @@ public class BatchLocalFiles {
     /** The class logger. */
     private static final Logger log = LoggerFactory.getLogger(BatchLocalFiles.class);
 
-	/** The list of files to run batch jobs on. */
+    /** The list of files to run batch jobs on. */
     private File[] files;
 
     /** The last time logging was performed. Initial 0 to ensure logging the first time. */
     private long lastLoggingDate = 0;
-    /** The time when the batchjob was started.*/
+    /** The time when the batchjob was started. */
     private long startTime = 0;
 
     /**
@@ -97,15 +97,17 @@ public class BatchLocalFiles {
                 if (job.getFilenamePattern().matcher(file.getName()).matches()) {
                     long currentTime = new Date().getTime();
                     // perform logging if necessary.
-                    if(lastLoggingDate + logInterval < currentTime) {
-                        log.info("The batchjob '{}' has run for {} seconds and has reached file '{}', which is number {} out of {}",
-                        		job.getClass(), (currentTime-startTime)/1000, file.getName(), fileCount, files.length);
+                    if (lastLoggingDate + logInterval < currentTime) {
+                        log.info(
+                                "The batchjob '{}' has run for {} seconds and has reached file '{}', which is number {} out of {}",
+                                job.getClass(), (currentTime - startTime) / 1000, file.getName(), fileCount,
+                                files.length);
                         // set that we have just logged.
                         lastLoggingDate = currentTime;
                     }
                     processFile(job, file, os);
                 }
-                
+
                 // check whether the batchjob should stop. 
                 if (Thread.currentThread().isInterrupted()) {
                     // log and throw an error (not exception, they are caught!)
@@ -143,7 +145,8 @@ public class BatchLocalFiles {
         }
     }
 
-    /** Process a single file.
+    /**
+     * Process a single file.
      *
      * @param job The job that does the processing
      * @param file The file to process

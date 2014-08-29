@@ -34,31 +34,31 @@ public class LifeCycleComponentTester {
         lcc.start();
         lcc.shutdown();
     }
-    
+
     static private class OneTestLifeCycle implements ComponentLifeCycle {
 
         @Override
         public void start() {
-            
+
         }
 
         @Override
         public void shutdown() {
-            
+
         }
-        
+
     }
-    
+
     static private class AnotherTestLifeCycle implements ComponentLifeCycle {
 
         @Override
         public void start() {
-            
+
         }
 
         @Override
         public void shutdown() {
-            
-        }       
+
+        }
     }
 }

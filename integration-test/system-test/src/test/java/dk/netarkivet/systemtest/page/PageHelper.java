@@ -68,7 +68,7 @@ public class PageHelper {
 
     /**
      * Load the page relative to the base ur.
-     * 
+     *
      * @param subURL
      */
     public static void gotoSubPage(String subURL) {
@@ -79,7 +79,7 @@ public class PageHelper {
 
     /**
      * Load the page relative to the base url. Doesn't log the page reload
-     * 
+     *
      * @param subURL
      */
     public static void reloadSubPage(String subURL) {

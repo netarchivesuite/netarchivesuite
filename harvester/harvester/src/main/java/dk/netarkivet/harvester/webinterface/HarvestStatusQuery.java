@@ -43,7 +43,7 @@ import dk.netarkivet.harvester.datamodel.JobStatus;
  * <li>Job start date (day of month and year)</li>
  * <li>Job end date (day of month and year)</li>
  * </ul>
- * 
+ * <p>
  * The semantics of the date filters is as follows:
  * <ol>
  * <li>If only a start date is specified, will fetch jobs whose start date is equal or posterior</li>
@@ -51,12 +51,11 @@ import dk.netarkivet.harvester.datamodel.JobStatus;
  * <li>If both are specified, will fetch jobs whose start and end date are equal or comprised between the specified
  * bounds.</li>
  * </ol>
- * 
+ * <p>
  * The class enforces that end date is set at a date posterior to start date.
- * 
+ * <p>
  * Additionally a sort order (applied to job IDs) can be set (ascending or descending), and the query can be limited to
  * a certain row number and a start index.
- * 
  */
 public class HarvestStatusQuery {
 
@@ -83,7 +82,7 @@ public class HarvestStatusQuery {
 
         /**
          * Parse the given argument and return a sorting order.
-         * 
+         *
          * @param order a given sorting order as string
          * @return a sorting order representing the given string.
          */
@@ -130,7 +129,7 @@ public class HarvestStatusQuery {
 
         /**
          * Constructor for the UI_FIELD enum class.
-         * 
+         *
          * @param defaultValue the default value of the field.
          */
         UI_FIELD(String defaultValue) {
@@ -139,7 +138,7 @@ public class HarvestStatusQuery {
 
         /**
          * Get the values stored in the request for this UI_FIELD.
-         * 
+         *
          * @param req the servlet request
          * @return the values stored in the request for this UI_FIELD as a string array.
          */
@@ -154,7 +153,7 @@ public class HarvestStatusQuery {
         /**
          * Extracts the field's value from a servlet request. If the request does not define the paraeter's value, it is
          * set to the default value.
-         * 
+         *
          * @param req a servlet request
          * @return the field's value
          */
@@ -206,7 +205,7 @@ public class HarvestStatusQuery {
 
     /**
      * Builds a default query that will find jobs for a given run of a harvest.
-     * 
+     *
      * @param harvestId A given harvestId
      * @param harvestRunNumber a given harvestRunNumber
      */
@@ -325,7 +324,7 @@ public class HarvestStatusQuery {
 
     /**
      * Set the harvest name.
-     * 
+     *
      * @param harvestName The harvest name
      */
     public void setHarvestName(String harvestName) {
@@ -398,7 +397,7 @@ public class HarvestStatusQuery {
 
     /**
      * Sets the page size.
-     * 
+     *
      * @param pageSize a number > 0.
      */
     public void setPageSize(long pageSize) {
@@ -415,7 +414,7 @@ public class HarvestStatusQuery {
 
     /**
      * Define whether or not the harvest name is case sensitive.
-     * 
+     *
      * @param isHarvestNameCaseSensitive If true, harvestname is case sensitive, otherwise not.
      */
     public void setCaseSensitiveHarvestName(boolean isHarvestNameCaseSensitive) {
@@ -431,7 +430,7 @@ public class HarvestStatusQuery {
 
     /**
      * Set the selected states in the query.
-     * 
+     *
      * @param chosenStates the set of selected states.
      */
     public void setJobStatus(Set<JobStatus> chosenStates) {

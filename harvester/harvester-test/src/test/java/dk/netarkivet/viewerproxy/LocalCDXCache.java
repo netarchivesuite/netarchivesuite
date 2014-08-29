@@ -55,7 +55,7 @@ import dk.netarkivet.harvester.HarvesterSettings;
 
 /**
  * This class handles retrieval and merging of index.cdx files for sets of jobs.
- *
+ * <p>
  * It has been designed to allow multiple instances to use the same cache dir without interfering with each other, even
  * if they run in separate VMs.
  *
@@ -100,7 +100,7 @@ public class LocalCDXCache implements JobIndexCache {
      * Returns the name of the index file for a set of jobIds. This filename must be unique for these IDs and always
      * give the same for the same set of IDs. In this implementation, long lists of IDs will be shortened to the first
      * few IDs followed by an MD5 sum of all the IDs.
-     * 
+     *
      * @param jobIDs Set of job IDs, in no particular order.
      * @return A File that specifies where the index.cdx data for the job IDs should reside. This does not check whether
      * the file exists or even if the directory it belongs to exists.

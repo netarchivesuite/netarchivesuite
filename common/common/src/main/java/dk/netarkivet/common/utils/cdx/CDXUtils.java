@@ -57,7 +57,7 @@ public class CDXUtils {
      */
     public static void writeCDXInfo(File archivefile, OutputStream cdxstream) {
         ArchiveExtractCDXJob job = new ArchiveExtractCDXJob();
-        BatchLocalFiles runner = new BatchLocalFiles(new File [] {archivefile});
+        BatchLocalFiles runner = new BatchLocalFiles(new File[] {archivefile});
         runner.run(job, cdxstream);
         log.trace("Created index for {} records on file '{}'", job.noOfRecordsProcessed(), archivefile);
         Exception[] exceptions = job.getExceptionArray();
@@ -72,7 +72,7 @@ public class CDXUtils {
         log.debug("Created index of {} records on file '{}'", job.noOfRecordsProcessed(), archivefile);
     }
 
-   /**
+    /**
      * Applies createCDXRecord() to all ARC/WARC files in a directory, creating
      * one CDX file per ARC/WARC file.
      * Note, any exceptions during index generation are logged at level FINE
@@ -90,27 +90,27 @@ public class CDXUtils {
      * existing directory, or if cdxFileDirectory is not writable.
      */
     public static void generateCDX(ArchiveProfile archiveProfile, File archiveFileDirectory, File cdxFileDirectory)
-    		throws ArgumentNotValid {
+            throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(archiveProfile, "ArchiveProfile archiveProfile");
         ArgumentNotValid.checkNotNull(archiveFileDirectory, "File archiveFileDirectory");
         ArgumentNotValid.checkNotNull(cdxFileDirectory, "File cdxFileDirectory");
         if (!archiveFileDirectory.isDirectory() || !archiveFileDirectory.canRead()) {
             throw new ArgumentNotValid("The directory for arc files '" + archiveFileDirectory
-            		+ "' is not a readable directory");
+                    + "' is not a readable directory");
         }
         if (!cdxFileDirectory.isDirectory() || !cdxFileDirectory.canWrite()) {
             throw new ArgumentNotValid("The directory for cdx files '" + archiveFileDirectory
-            		+ "' is not a writable directory");
+                    + "' is not a writable directory");
         }
         Map<File, Exception> exceptions = new HashMap<File, Exception>();
         File[] filesToProcess = archiveFileDirectory.listFiles(archiveProfile.filename_filter);
         if (filesToProcess.length == 0) {
             log.warn("Found no related arcfiles to process in the archive dir '{}'.",
-            		archiveFileDirectory.getAbsolutePath());
+                    archiveFileDirectory.getAbsolutePath());
         } else {
             log.debug("Found {} related arcfiles to process in the archive dir '{}'.",
-            		filesToProcess.length, archiveFileDirectory.getAbsolutePath());
-        } 
+                    filesToProcess.length, archiveFileDirectory.getAbsolutePath());
+        }
         for (File arcfile : filesToProcess) {
             File cdxfile = new File(cdxFileDirectory, arcfile.getName() + FileUtils.CDX_EXTENSION);
             try {
@@ -130,7 +130,7 @@ public class CDXUtils {
         // Log any errors
         if (exceptions.size() > 0) {
             StringBuilder errorMsg = new StringBuilder("Exceptions during cdx file generation:\n");
-            for (Map.Entry<File, Exception> fileException: exceptions.entrySet()) {
+            for (Map.Entry<File, Exception> fileException : exceptions.entrySet()) {
                 errorMsg.append("Could not create cdxfile '");
                 errorMsg.append(fileException.getKey().getAbsolutePath());
                 errorMsg.append("':\n");

@@ -38,20 +38,20 @@ import dk.netarkivet.common.utils.KeyValuePair;
 
 /**
  * Class responsible for checksumming a list of files.
- *
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({"serial"})
 public class ChecksumJob extends FileBatchJob {
 
-    /** The log.*/
+    /** The log. */
     protected static final transient Logger log = LoggerFactory.getLogger(ChecksumJob.class);
-    
-    /** Characters used for separating a file identifier 
+
+    /**
+     * Characters used for separating a file identifier
      * from the checksum in the output from a checksum job.
      */
     public static final String STRING_FILENAME_SEPARATOR = "##";
-    
-    /** The constructor.*/
+
+    /** The constructor. */
     public ChecksumJob() {
         // Keep the batchJobTimeout at default (-1) so it will be overridden 
         // by the settings for default batch timeout.
@@ -60,7 +60,7 @@ public class ChecksumJob extends FileBatchJob {
     /**
      * Initialization of a ChecksumJob: a new structure for storing files
      * failed is created.
-     * 
+     *
      * @param os The output stream where the output data is written.
      * @see FileBatchJob#initialize(OutputStream)
      */
@@ -82,7 +82,7 @@ public class ChecksumJob extends FileBatchJob {
         ArgumentNotValid.checkNotNull(file, "file");
         try {
             os.write((file.getName() + STRING_FILENAME_SEPARATOR
-            		+ ChecksumCalculator.calculateMd5(file) + "\n").getBytes());
+                    + ChecksumCalculator.calculateMd5(file) + "\n").getBytes());
         } catch (IOException e) {
             log.warn("Checksumming of file {} failed: ", file.getName(), e);
             return false;
@@ -99,7 +99,8 @@ public class ChecksumJob extends FileBatchJob {
     public void finish(OutputStream os) {
     }
 
-    /** Create a line in checksum job format from a filename and a checksum.
+    /**
+     * Create a line in checksum job format from a filename and a checksum.
      *
      * @param filename A filename (no path)
      * @param checksum An MD5 checksum
@@ -111,10 +112,11 @@ public class ChecksumJob extends FileBatchJob {
         return filename + STRING_FILENAME_SEPARATOR + checksum;
     }
 
-    /** Parse a line of output into a key-value pair.
+    /**
+     * Parse a line of output into a key-value pair.
      *
      * @param line The line to parse, of the form
-     *  <b>filename</b>##<b>checksum</b>
+     * <b>filename</b>##<b>checksum</b>
      * @return The filename->checksum mapping.
      * @throws ArgumentNotValid if the line is not on the correct form.
      */
@@ -131,6 +133,7 @@ public class ChecksumJob extends FileBatchJob {
      * Write a human-readily description of this ChecksumJob object.
      * Writes out the name of the ChecksumJob, the number of files processed,
      * and the number of files that failed during processing.
+     *
      * @return a human-readily description of this ChecksumJob object
      */
     public String toString() {
@@ -147,6 +150,7 @@ public class ChecksumJob extends FileBatchJob {
     /**
      * Invoke default method for deserializing object, and reinitialise the
      * logger.
+     *
      * @param s the InputStream
      */
     private void readObject(ObjectInputStream s) {
@@ -159,6 +163,7 @@ public class ChecksumJob extends FileBatchJob {
 
     /**
      * Invoke default method for serializing object.
+     *
      * @param s the OutputStream
      * @throws IOFailure If an exception is caught during writing of the object.
      */

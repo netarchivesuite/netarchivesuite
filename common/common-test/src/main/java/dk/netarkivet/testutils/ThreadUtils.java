@@ -44,12 +44,14 @@ public abstract class ThreadUtils {
     }
 
     public static ThreadGroup getRootThreadGroup() {
-        if (rootThreadGroup != null)
+        if (rootThreadGroup != null) {
             return rootThreadGroup;
+        }
         ThreadGroup tg = Thread.currentThread().getThreadGroup();
         ThreadGroup ptg;
-        while ((ptg = tg.getParent()) != null)
+        while ((ptg = tg.getParent()) != null) {
             tg = ptg;
+        }
         return tg;
     }
 }

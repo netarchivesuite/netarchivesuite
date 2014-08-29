@@ -36,7 +36,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 public interface JMXProxyConnection {
     /**
      * Method to create a proxy to a given MBean on some remote server. Example use:
-     *
+     * <p>
      * SingleLogRecord logMsg = (SingleLogRecord) myJMXProxyFactory.createProxy(myObjectName,SingleLogRecord.class);
      *
      * @param name The name of an MBean on some remote server.
@@ -48,7 +48,7 @@ public interface JMXProxyConnection {
 
     /**
      * Get the set of ObjectNames from the remote MBeanserver, that matches the given query.
-     * 
+     *
      * @param query the given query
      * @return the set of ObjectNames, that matches the given query.
      * @throws IOFailure on communication trouble.

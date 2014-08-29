@@ -22,8 +22,6 @@
  */
 package dk.netarkivet.externalsoftware;
 
-import is.hi.bok.deduplicator.DeDuplicator;
-
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -44,8 +42,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import junit.framework.TestCase;
 
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.io.IOUtils;
@@ -78,7 +74,6 @@ import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 import dk.netarkivet.harvester.harvesting.HeritrixLauncher;
 import dk.netarkivet.harvester.harvesting.HeritrixLauncherFactory;
 import dk.netarkivet.harvester.harvesting.JobInfo;
-//import dk.netarkivet.harvester.harvesting.JobInfoTestImpl;
 import dk.netarkivet.harvester.harvesting.controller.AbstractJMXHeritrixController;
 import dk.netarkivet.harvester.harvesting.report.AbstractHarvestReport;
 import dk.netarkivet.harvester.harvesting.report.HarvestReport;
@@ -89,16 +84,19 @@ import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
+import is.hi.bok.deduplicator.DeDuplicator;
+import junit.framework.TestCase;
+
+//import dk.netarkivet.harvester.harvesting.JobInfoTestImpl;
 
 /**
  * Tests various aspects of launching Heritrix and Heritrix' capabilities. Note that some of these tests require much
  * heap space, so JVM parameter -Xmx512M may be required.
- *
- *
+ * <p>
+ * <p>
  * Note: after upgrading to Heritrix 1.14.3, the unittest testBug820() that tests if it is still necessary to use
  * FixedUURI does not work any more. //import org.apache.commons.httpclient.URIException; //import org.archive.net.UURI;
  * //import dk.netarkivet.common.utils.FixedUURI;
- *
  */
 @SuppressWarnings({"serial", "unchecked"})
 public class HeritrixTests extends TestCase {
@@ -167,14 +165,12 @@ public class HeritrixTests extends TestCase {
      * order.xml to the proper place in the given crawlDir. - Copies the given seeds.txt to the proper place in the
      * given crawlDir. - Copies the given indexDir to the proper place in the given crawlDir (index) - Constructs a
      * HeritrixLauncher and returns it Uses the values of JMX_PASSWORD_FILE and JMX_ACCESS_FILE read in settings.
-     * 
+     *
      * @param origOrderXml the given order.xml
      * @param origSeedsFile the given seeds file
      * @param origIndexDir the given index directory
      * @return a HeritrixLauncher object
-     *
      * @throws IOException
-     *
      */
     private HeritrixLauncher getHeritrixLauncher(File origOrderXml, File origSeedsFile, File origIndexDir)
             throws IOException {
@@ -189,7 +185,7 @@ public class HeritrixTests extends TestCase {
      * given order.xml to the proper place in the given crawlDir. - Copies the given seeds.txt to the proper place in
      * the given crawlDir. - Copies the given indexDir to the proper place in the given crawlDir (index) - Constructs a
      * HeritrixLauncher and returns it
-     * 
+     *
      * @param origOrderXml the given order.xml
      * @param origSeedsFile the given seeds file
      * @param origIndexDir the given index directory
@@ -254,7 +250,6 @@ public class HeritrixTests extends TestCase {
     /**
      * Check that IOFailure is thrown by the JMXHeritrixController if the JMXPasswordFile does not exist / is hidden /
      * unreadable / impossible to open for other reasons.
-     *
      */
     public void testIOFailureThrown() throws IOException {
         // Here it would make sense to get all the settings files and do the control
@@ -335,7 +330,7 @@ public class HeritrixTests extends TestCase {
 
     /**
      * Test that the launcher handles an empty order file correctly.
-     * 
+     *
      * @throws IOException
      */
     public void testStartEmptyFile() throws IOException {
@@ -353,7 +348,7 @@ public class HeritrixTests extends TestCase {
 
     /**
      * Test that the launcher actually launches Heritrix and generates at least one arcfile.
-     * 
+     *
      * @throws IOException
      */
     public void testLaunch() throws IOException {
@@ -385,7 +380,7 @@ public class HeritrixTests extends TestCase {
      * Test that the launcher actually launches Heritrix and fetches at least 50 objects from different hosts on tv2.dk
      * (sporten.tv2.dk, nyheder.tv2.dk.....) and netarkivet.dk by parsing the hosts-report.txt This number includes the
      * dns-lookups for each host in these domains.
-     * 
+     *
      * @throws IOException
      */
     public void testLaunchWithMaxObjectsPrDomain() throws IOException {
@@ -410,7 +405,7 @@ public class HeritrixTests extends TestCase {
 
     /**
      * Test that the main method works and generates output from known working crawl.
-     * 
+     *
      * @throws IOException
      */
     public void testLaunchMain() throws IOException {
@@ -441,7 +436,7 @@ public class HeritrixTests extends TestCase {
 
     /**
      * Test that Heritrix can use a URL seed list to define a harvest. This tests requirement #1.
-     * 
+     *
      * @throws IOException
      */
     public void testUrlSeedList() throws IOException {
@@ -464,7 +459,7 @@ public class HeritrixTests extends TestCase {
 
     /**
      * Test that Heritrix can limit the number of objects harvested pr. domain. This tests requirement #7.
-     * 
+     *
      * @throws IOException
      */
     public void testRestrictNumObjectsPrDomain() throws IOException {
@@ -491,7 +486,7 @@ public class HeritrixTests extends TestCase {
 
     /**
      * Test that Heritrix can limit the number of objects pr. harvest This tests requirement #7.
-     * 
+     *
      * @throws IOException
      */
     public void testRestrictNumObjectsHarvested() throws IOException {
@@ -523,7 +518,7 @@ public class HeritrixTests extends TestCase {
 
     /**
      * Test that Heritrix can handle cookies - setting and changing them. This tests requirement #28.
-     * 
+     *
      * @throws IOException
      */
     public void testCookiesSupport() throws IOException {
@@ -573,9 +568,9 @@ public class HeritrixTests extends TestCase {
     /**
      * Test that Heritrix can use a regular expression to limit a harvest Tests with regular expression
      * .*(ArcUtils\.[0-9]\.[0-1]|-da.htm).* which takes the danish index pages and two of three ArcUtil sources.
-     * <p/>
+     * <p>
      * This tests requirement #29.
-     * 
+     *
      * @throws IOException
      */
     public void testUrlExpressionRestriction() throws IOException {
@@ -599,7 +594,7 @@ public class HeritrixTests extends TestCase {
     /**
      * Test that the Maxbytes feature is handled correctly by the the current harvester. Sets maxbytes limit to 500000
      * bytes.
-     * 
+     *
      * @throws DocumentException
      * @throws IOException
      * @throws IOFailure
@@ -644,7 +639,7 @@ public class HeritrixTests extends TestCase {
 
     /**
      * Tests, whether org.archive.io.RecoverableIOException from the ARCReader can be serialized (bug 755)
-     * 
+     *
      * @throws IOException
      */
     public void testArcReaderBug755() throws IOException {
@@ -711,7 +706,7 @@ public class HeritrixTests extends TestCase {
     /**
      * Verify, that FixedUURI solves bug 820, and that the class org.archive.net.UURI still has the problem. When bug
      * 820 is resolved in the Heritrix class, this test will fail, and FixedUURI can be removed.
-     * 
+     *
      * @throws URIException
      */
     public void testBug820() throws URIException {
@@ -733,7 +728,7 @@ public class HeritrixTests extends TestCase {
 
     /**
      * Test we can use the Deduplicator write-processor.
-     * 
+     *
      * @throws Exception
      */
     public void testDeduplicatorOrderXml() throws Exception {
@@ -810,7 +805,7 @@ public class HeritrixTests extends TestCase {
     /**
      * Test we can harvest from FTP-sites using the FTP processor. Downloads max 25 files from klid.dk using the seed:
      * ftp://ftp.klid.dk/OpenOffice/haandbog
-     * 
+     *
      * @throws Exception
      */
     public void testFtpHarvesting() throws Exception {
@@ -853,7 +848,7 @@ public class HeritrixTests extends TestCase {
         reader.setValidation(true);
         try {
             reader.setProperty("http://apache.org/xml/properties/schema/external-noNamespaceSchemaLocation",
-            // TestInfo.HERITRIX_SETTINGS_SCHEMA_FILE.getAbsolutePath());
+                    // TestInfo.HERITRIX_SETTINGS_SCHEMA_FILE.getAbsolutePath());
                     "heritrix_settings.xsd");
             reader.setFeature("http://apache.org/xml/features/validation/schema", true);
             // add error handler which turns any errors into XML
@@ -880,7 +875,7 @@ public class HeritrixTests extends TestCase {
 
     /**
      * Iterate over all children of a XML-element.
-     * 
+     *
      * @param anElement
      */
     private void iterateChildren(Element anElement) {
@@ -901,7 +896,7 @@ public class HeritrixTests extends TestCase {
 
     /**
      * Check, if class exists, and can be loaded. TODO try to instantiate the class as well.
-     * 
+     *
      * @param className a name for a class
      * @return true, if class exists, and can be loaded.XS
      */
@@ -919,7 +914,7 @@ public class HeritrixTests extends TestCase {
 
     /**
      * Get a list of URLs as calculated by the Heritrix tests.
-     * 
+     *
      * @return The list of URLs.
      */
     private URL[] classPathAsURLS() {
@@ -989,7 +984,7 @@ public class HeritrixTests extends TestCase {
 
     /**
      * Set a XmlNode defined by the given XPath to the given value.
-     * 
+     *
      * @param doc the Document, which is being modified
      * @param xpath the given XPath
      * @param value the given value

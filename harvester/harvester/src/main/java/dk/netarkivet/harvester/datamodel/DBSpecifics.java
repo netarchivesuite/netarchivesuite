@@ -39,7 +39,7 @@ import dk.netarkivet.common.utils.SettingsFactory;
 
 /**
  * Defines database specific implementations used by the Harvester.
- *
+ * <p>
  * The actual actual implementation which is loaded is defined by the {@link CommonSettings#DB_SPECIFICS_CLASS} setting.
  * See the sub class list for available implementations
  */
@@ -68,8 +68,8 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
      * in the table must be deleted at commit or rollback.
      *
      * @param c The DB connection to use.
-     * @throws SQLException if there is a problem getting the table.
      * @return The name of the created table
+     * @throws SQLException if there is a problem getting the table.
      */
     public abstract String getJobConfigsTmpTable(Connection c) throws SQLException;
 
@@ -231,7 +231,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
 
     /**
      * Migrate the frontierreportmonitor table.
-     * 
+     *
      * @param currentVersion the current version of the frontierreportmonitor table
      * @param toVersion the required version of the frontierreportmonitor table
      */
@@ -250,7 +250,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
 
     /**
      * Migrate the runningjobsmonitor table.
-     * 
+     *
      * @param currentVersion the current version of the runningjobsmonitor table
      * @param toVersion the required version of the runningjobsmonitor table
      */
@@ -272,7 +272,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
 
     /**
      * Migrate the runningjobshistory table.
-     * 
+     *
      * @param currentVersion the current version of the runningjobshistory table
      * @param toVersion The required version of the runningjobshistory table
      */
@@ -296,7 +296,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
 
     /**
      * Migrate the globalecrawlertrapexpressions table.
-     * 
+     *
      * @param currentVersion the current version of the jobs table
      * @param toVersion The required version of the jobs table
      */
@@ -316,7 +316,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
 
     /**
      * Migrate the globalecrawlertraplists table.
-     * 
+     *
      * @param currentVersion the current version of the globalecrawlertraplists table
      * @param toVersion The required version of the globalecrawlertraplists table
      */
@@ -336,7 +336,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
 
     /**
      * Migrate the jobs table.
-     * 
+     *
      * @param currentVersion the current version of the jobs table
      * @param toVersion The required version of the jobs table
      */
@@ -391,7 +391,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
 
     /**
      * Migrate the configurations table.
-     * 
+     *
      * @param currentVersion the current version of the configurations table
      * @param toVersion the required version of the configurations table
      */
@@ -439,7 +439,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
 
     /**
      * Migrate the fullharvests table.
-     * 
+     *
      * @param currentVersion the current version of the fullharvests table
      * @param toVersion the required version of the fullharvests table
      */
@@ -475,7 +475,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
 
     /**
      * Migrate the harvestchannel table.
-     * 
+     *
      * @param currentVersion the current version of the harvestchannel table
      * @param toVersion the required version of the harvestchannel table
      */

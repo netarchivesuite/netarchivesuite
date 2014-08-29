@@ -88,7 +88,6 @@ public class CreateCDXMetadataFileTester {
 
     /**
      * Test that arguments are handled correctly.
-     *
      */
     @Test
     @Ignore("Incorrect usage text output")

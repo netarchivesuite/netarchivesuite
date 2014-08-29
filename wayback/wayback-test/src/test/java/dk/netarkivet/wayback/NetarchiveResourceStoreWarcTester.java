@@ -74,7 +74,7 @@ import dk.netarkivet.wayback.indexer.IndexerTestCase;
 
 /**
  * Unit test for testNetarchiveResourceStore with WARC files.
- *
+ * <p>
  * This test should be integrated with NetarchiveResourceStoreTester. But since we are not using JUnit4 Parameterized
  * testing is to cumbersome.
  */

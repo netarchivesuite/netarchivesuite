@@ -34,12 +34,12 @@ import dk.netarkivet.common.utils.Settings;
  * Optimised to transfer 0 byte files inline.
  * Will use one shared certificate for secure communication.
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({"serial"})
 public class HTTPSRemoteFile extends HTTPRemoteFile {
 
-	/** The default place in classpath where the settings file can be found. */
+    /** The default place in classpath where the settings file can be found. */
     private static final String DEFAULT_SETTINGS_CLASSPATH =
-    		"dk/netarkivet/common/distribute/HTTPSRemoteFileSettings.xml";
+            "dk/netarkivet/common/distribute/HTTPSRemoteFileSettings.xml";
 
     /*
      * The static initialiser is called when the class is loaded.
@@ -55,43 +55,44 @@ public class HTTPSRemoteFile extends HTTPRemoteFile {
     // purpose! Otherwise, the static initialiser that loads default values
     // will not run.
 
-    /** 
+    /**
      * <b>settings.common.remoteFile.certificateKeyStore</b>: <br>
-     * The setting for the keystore file used for HTTPS remotefiles. 
-     * It contains the certificate for HTTPS */
+     * The setting for the keystore file used for HTTPS remotefiles.
+     * It contains the certificate for HTTPS
+     */
     public static String HTTPSREMOTEFILE_KEYSTORE_FILE = "settings.common.remoteFile.certificateKeyStore";
-    
-    /** 
+
+    /**
      * <b>settings.common.remoteFile.certificateKeyStorePassword</b>: <br>
-     * The setting for the password that the keystore used for HTTPS 
+     * The setting for the password that the keystore used for HTTPS
      * remotefile keystore is encrypted with.
      * Refer to the configuration manual for how to build a keystore.
      */
     public static String HTTPSREMOTEFILE_KEYSTORE_PASSWORD = "settings.common.remoteFile.certificateKeyStorePassword";
-    
-    /** 
+
+    /**
      * <b>settings.common.remoteFile.certificatePassword</b>: <br>
-     * The setting for the password that the certificate used for HTTPS 
-     * remotefile (private key) is encrypted with. */
+     * The setting for the password that the certificate used for HTTPS
+     * remotefile (private key) is encrypted with.
+     */
     public static String HTTPSREMOTEFILE_KEY_PASSWORD = "settings.common.remoteFile.certificatePassword";
 
     /**
      * Initialises a remote file implemented by point-to-point HTTPS
      * communication.
      *
-     * @param file              The file to make a remote file for
-     * @param useChecksums      Whether communications are checksummed. If true,
-     *                          getChecksum will also return the checksum.
-     * @param fileDeletable     if true, the file given to this method is
-     *                          deletable, once it is transferred.
+     * @param file The file to make a remote file for
+     * @param useChecksums Whether communications are checksummed. If true,
+     * getChecksum will also return the checksum.
+     * @param fileDeletable if true, the file given to this method is
+     * deletable, once it is transferred.
      * @param multipleDownloads if true, the file may be transferred more than
-     *                          once. Otherwise, all file handles are attempted
-     *                          to be made invalid after the first transfer,
-     *                          although no guarantees are made.
-     *
+     * once. Otherwise, all file handles are attempted
+     * to be made invalid after the first transfer,
+     * although no guarantees are made.
      * @throws ArgumentNotValid if file is null, or not a readable file.
-     * @throws IOFailure        if checksums are requested, but i/o errors occur
-     *                          while checksumming.
+     * @throws IOFailure if checksums are requested, but i/o errors occur
+     * while checksumming.
      */
     protected HTTPSRemoteFile(File file, boolean useChecksums, boolean fileDeletable, boolean multipleDownloads) {
         super(file, useChecksums, fileDeletable, multipleDownloads);
@@ -100,6 +101,7 @@ public class HTTPSRemoteFile extends HTTPRemoteFile {
     /**
      * Initialises a remote file implemented by point-to-point HTTPS
      * communication.
+     *
      * @param f The file to make a remote file for
      * @param useChecksums Whether communications are checksummed. If true,
      * getChecksum will also return the checksum.
@@ -113,7 +115,7 @@ public class HTTPSRemoteFile extends HTTPRemoteFile {
      * checksumming.
      */
     public static RemoteFile getInstance(File f, Boolean useChecksums, Boolean fileDeletable,
-    		Boolean multipleDownloads) {
+            Boolean multipleDownloads) {
         return new HTTPSRemoteFile(f, useChecksums, fileDeletable, multipleDownloads);
     }
 

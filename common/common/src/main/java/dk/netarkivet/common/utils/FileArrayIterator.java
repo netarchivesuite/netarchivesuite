@@ -37,13 +37,14 @@ import java.util.Arrays;
  *
  * @param <T> The type returned by the FileArrayIterator
  */
-public abstract class FileArrayIterator<T> extends FilterIterator<File,T> {
+public abstract class FileArrayIterator<T> extends FilterIterator<File, T> {
 
-	protected FileArrayIterator(File[] files) {
+    protected FileArrayIterator(File[] files) {
         super(Arrays.asList(files).iterator());
     }
 
-    /** Returns the T object corresponding to the given file, or null if
+    /**
+     * Returns the T object corresponding to the given file, or null if
      * that object is to be skipped.
      *
      * @param f A given file
@@ -53,7 +54,8 @@ public abstract class FileArrayIterator<T> extends FilterIterator<File,T> {
         return getNext(f);
     }
 
-    /** Gives an object created from the given file, or null.
+    /**
+     * Gives an object created from the given file, or null.
      *
      * @param file The file to read
      * @return An object of the type iterated over by the list, or null

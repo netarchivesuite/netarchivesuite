@@ -50,7 +50,6 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
 
 /**
  * Utility class for handling update of domain from the domain jsp page.
- *
  */
 @SuppressWarnings("unused")
 public class DomainDefinition {
@@ -64,25 +63,25 @@ public class DomainDefinition {
     /**
      * Extracts all required parameters from the request, checks for any inconsistencies, and passes the requisite data
      * to the updateDomain method for processing.
-     *
+     * <p>
      * For reference, the parameters for this page look something like
      * http://localhost:8076/HarvestDefinition/Definitions-edit-domain.jsp?
      * update=1&name=netarkivet.dk&default=defaultconfig&configName=&order_xml=&
      * load=&maxObjects=&urlListName=&seedList=+&passwordName=&passwordDomain=& passwordRealm=&userName=&password=&
      * crawlertraps=%2Fcgi-bin%2F*%0D%0A%2Ftrap%2F*%0D%0A
-     *
+     * <p>
      * update: This method throws an exception if update is not set
-     *
+     * <p>
      * name: must be the name of a known domain
-     *
+     * <p>
      * comments: optional user-entered comments about the domain
-     *
+     * <p>
      * default: the defaultconfig is set to this value. Must be non-null and a known configuration of this domain.
-     *
+     * <p>
      * crawlertraps: a newline-separated list of urls to be ignored. May be empty or null
-     *
+     * <p>
      * alias: If set, this domain is an alias of the set domain renewAlias: If set, the alias date should be renewed
-     * 
+     *
      * @param context The context of this request
      * @param i18n I18n information
      * @throws IOFailure on updateerrors in the DAO
@@ -151,7 +150,7 @@ public class DomainDefinition {
 
     /**
      * This updates the given domain in the database.
-     * 
+     *
      * @param domain the given domain
      * @param defaultConfig the name of the default configuration
      * @param crawlertraps the current crawlertraps stated for the domain
@@ -210,7 +209,7 @@ public class DomainDefinition {
      * alias is null, and the old alias is different from null 2. The alias information is updated, if the new alias is
      * different from null, and old alias is null 3. The alias information is updated, if the new alias is different
      * from null, and the old alias is different from null, and they are not either not equal, or renewAlias is true
-     * 
+     *
      * @param oldAlias the old alias (could be null)
      * @param newAlias the new alias (could be null)
      * @param renewAlias should we renew alias, if the alias is unchanged?
@@ -280,7 +279,7 @@ public class DomainDefinition {
     /**
      * Creates a url based on the supplied request where all the parameters are the same, except the
      * <code>ShowUnusedConfigurations</code> boolean, which is flipped.
-     * 
+     *
      * @param request The original 'create domain' request to based the new url on.
      * @return The new url with the <code>ShowUnusedConfigurations</code> boolean switched.
      */
@@ -300,7 +299,7 @@ public class DomainDefinition {
     /**
      * Creates a url based on the supplied request where all the parameters are the same, except the
      * <code>ShowUnusedSeedLists</code> boolean, which is flipped.
-     * 
+     *
      * @param request The original 'create domain' request to based the new url on.
      * @return The new url with the <code>ShowUnusedSeedLists</code> boolean switched.
      */
@@ -319,7 +318,7 @@ public class DomainDefinition {
 
     /**
      * Search for domains matching the following criteria. Should we allow more than one criteria?
-     * 
+     *
      * @param context the context of the JSP page calling
      * @param i18n The translation properties file used
      * @param searchQuery The given searchQuery for searching for among the domains.
@@ -346,7 +345,7 @@ public class DomainDefinition {
     /**
      * Returns the list of domain configurations which are either used in a concrete harvest or is a 'default
      * configuration'.
-     *
+     * <p>
      * The list is sorted alphabetically by name according to the supplied locale.
      *
      * @param domain The domain to find the used configurations for.
@@ -370,7 +369,7 @@ public class DomainDefinition {
 
     /**
      * Returnes the seed lists associated with the supplied configurations.
-     * 
+     *
      * @param configurations The configurations to find seed lists for
      * @return The seed lists used in the supplied configurations.
      */

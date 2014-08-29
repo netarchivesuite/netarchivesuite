@@ -31,13 +31,12 @@ import junit.framework.TestCase;
 
 /**
  * More complex asserts for strings
- *
  */
 
 public class StringAsserts {
     /**
      * Assert that one string contains another.
-     * 
+     *
      * @param msg the error message to show in case of failure
      * @param toFind The string to find.
      * @param toCheck The string to look in
@@ -50,7 +49,7 @@ public class StringAsserts {
 
     /**
      * Asserts that one string contains a set of substrings
-     * 
+     *
      * @param msg the error message to show in case of failure
      * @param toCheck The string to look in
      * @param contents the strings to look for
@@ -74,7 +73,7 @@ public class StringAsserts {
 
     /**
      * Assert that a string matches a regular expression.
-     * 
+     *
      * @param msg the error message to show in case of failure
      * @param toFind The string to find
      * @param toCheck The string to look in
@@ -87,7 +86,7 @@ public class StringAsserts {
 
     /**
      * Assert that one string doesn not contain another.
-     * 
+     *
      * @param msg the error message to show in case of failure
      * @param toFind The string to find.
      * @param toCheck The string to look in

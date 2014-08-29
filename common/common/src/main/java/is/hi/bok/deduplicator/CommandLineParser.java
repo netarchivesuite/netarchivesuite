@@ -33,13 +33,12 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 import org.apache.commons.cli.UnrecognizedOptionException;
 
-
 /**
  * Print DigestIndexer command-line usage message.
  *
  * @author Kristinn Sigur&eth;sson
  */
-@SuppressWarnings({ "rawtypes", "unused" })
+@SuppressWarnings({"rawtypes", "unused"})
 public class CommandLineParser {
     private static final String USAGE = "Usage: ";
     private static final String NAME = "DigestIndexer";
@@ -49,7 +48,6 @@ public class CommandLineParser {
 
     /**
      * Block default construction.
-     *
      */
     private CommandLineParser() {
         super();
@@ -60,63 +58,62 @@ public class CommandLineParser {
      *
      * @param args Command-line arguments to process.
      * @param out PrintStream to write on.
-     *
      * @throws ParseException Failed parse of command line.
      */
-    public CommandLineParser(String [] args, PrintWriter out)
-    throws ParseException {
+    public CommandLineParser(String[] args, PrintWriter out)
+            throws ParseException {
         super();
 
         this.out = out;
 
         this.options = new Options();
-        this.options.addOption(new Option("h","help", false,
+        this.options.addOption(new Option("h", "help", false,
                 "Prints this message and exits."));
-        
-        Option opt = new Option("o","mode", true,
+
+        Option opt = new Option("o", "mode", true,
                 "Index by URL, HASH or BOTH. Default: BOTH.");
         opt.setArgName("type");
         this.options.addOption(opt);
-        
-        this.options.addOption(new Option("s","equivalent", false,
-                "Include a stripped URL in the index for equivalent URL " +
-                "matches."));
-        
-        this.options.addOption(new Option("t","timestamp", false,
-                "Include the time of fetch in the index."));
-        
-        this.options.addOption(new Option("e","etag", false,
-        "Include etags in the index (if available in the source)."));
 
-        opt = new Option("m","mime", true,
+        this.options.addOption(new Option("s", "equivalent", false,
+                "Include a stripped URL in the index for equivalent URL " +
+                        "matches."));
+
+        this.options.addOption(new Option("t", "timestamp", false,
+                "Include the time of fetch in the index."));
+
+        this.options.addOption(new Option("e", "etag", false,
+                "Include etags in the index (if available in the source)."));
+
+        opt = new Option("m", "mime", true,
                 "A filter on what mime types are added into the index " +
-                "(blacklist). Default: ^text/.*");
+                        "(blacklist). Default: ^text/.*");
         opt.setArgName("reg.expr.");
         this.options.addOption(opt);
 
-        this.options.addOption(new Option("w","whitelist", false,
+        this.options.addOption(new Option("w", "whitelist", false,
                 "Make the --mime filter a whitelist instead of blacklist."));
-        
-        opt = new Option("i","iterator", true,
+
+        opt = new Option("i", "iterator", true,
                 "An iterator suitable for the source data (default iterator " +
-                "works on Heritrix's crawl.log).");
+                        "works on Heritrix's crawl.log).");
         opt.setArgName("classname");
         this.options.addOption(opt);
 
-        this.options.addOption(new Option("a","add", false,
-            "Add source data to existing index."));
+        this.options.addOption(new Option("a", "add", false,
+                "Add source data to existing index."));
 
-        opt = new Option("r","origin", true,
+        opt = new Option("r", "origin", true,
                 "If set, the 'origin' of each URI will be added to the index." +
-                " If no origin is provided by the source data then the " +
-                "argument provided here will be used.");
+                        " If no origin is provided by the source data then the " +
+                        "argument provided here will be used.");
         opt.setArgName("origin");
         this.options.addOption(opt);
 
-        this.options.addOption(new Option("d","skip-duplicates", false,
+        this.options.addOption(new Option("d", "skip-duplicates", false,
                 "If set, URIs marked as duplicates will not be added to the " +
-                "index."));
-        
+                        "index."));
+
         PosixParser parser = new PosixParser();
         try {
             this.commandLine = parser.parse(this.options, args, false);
@@ -143,7 +140,7 @@ public class CommandLineParser {
 
     /**
      * Print message then usage then exit.
-     *
+     * <p>
      * The JVM exits inside in this method.
      *
      * @param message Message to print before we do usage.
@@ -155,7 +152,7 @@ public class CommandLineParser {
 
     /**
      * Print message and then exit.
-     *
+     * <p>
      * The JVM exits inside in this method.
      *
      * @param message Message to print before we do usage.
@@ -167,7 +164,7 @@ public class CommandLineParser {
 
     /**
      * Print out optional message an optional usage and then exit.
-     *
+     * <p>
      * Private utility method.  JVM exits from inside in this method.
      *
      * @param message Message to print before we do usage.
@@ -175,15 +172,15 @@ public class CommandLineParser {
      * @param exitCode Exit code to use in call to System.exit.
      */
     private void outputAndExit(String message, boolean doUsage, int exitCode) {
-        if (message !=  null) {
+        if (message != null) {
             this.out.println(message);
         }
 
         if (doUsage) {
             HelpFormatter formatter =
-                new DigestHelpFormatter();
+                    new DigestHelpFormatter();
             formatter.printHelp(this.out, 80, NAME, "Options:", this.options,
-                1, 2, "Arguments:", false);
+                    1, 2, "Arguments:", false);
             this.out.println(" source                     Data to iterate " +
                     "over (typically a crawl.log). If");
             this.out.println("                            using a non-standard " +
@@ -203,7 +200,7 @@ public class CommandLineParser {
     /**
      * @return Options passed on the command line.
      */
-    public Option [] getCommandLineOptions() {
+    public Option[] getCommandLineOptions() {
         return this.commandLine.getOptions();
     }
 
@@ -221,12 +218,11 @@ public class CommandLineParser {
         return this.commandLine;
     }
 
-    
     /**
      * Override so can customize usage output.
      */
     public class DigestHelpFormatter
-    extends HelpFormatter {
+            extends HelpFormatter {
         public DigestHelpFormatter() {
             super();
         }
@@ -238,7 +234,7 @@ public class CommandLineParser {
         }
 
         public void printUsage(PrintWriter pw, int width,
-            String app, Options options) {
+                String app, Options options) {
             this.printUsage(pw, width, app);
         }
     }

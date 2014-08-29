@@ -24,7 +24,6 @@ package dk.netarkivet.harvester.harvesting;
 
 /**
  * Test implementation of JobInfo used mostly by HeritrixFiles unittests.
- *
  */
 public class JobInfoTestImpl implements JobInfo {
 

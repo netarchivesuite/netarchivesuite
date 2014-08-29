@@ -69,7 +69,7 @@ public class FrontierReportFilterTest {
 
     /**
      * Test the extraction of 200 top queues out of a much larger report.
-     * 
+     *
      * @throws IOException FIXME this test fails, and is therefore disabled by renaming it (by changing the method
      * prefix from test to TEST);
      */
@@ -107,7 +107,7 @@ public class FrontierReportFilterTest {
 
     /**
      * Test the extraction of 200 top queues out of a much smaller report.
-     * 
+     *
      * @throws IOException
      */
     @Test
@@ -190,7 +190,6 @@ public class FrontierReportFilterTest {
     }
 
     /**
-     * 
      * Test CVS export. FIXME is disabled because it fails (by changing the method prefix from test to TEST);
      */
     public final void TESTCsvExport() throws IOException {

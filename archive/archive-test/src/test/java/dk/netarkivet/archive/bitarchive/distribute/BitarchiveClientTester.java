@@ -383,7 +383,7 @@ public class BitarchiveClientTester {
      * Utility method for the batch tests. Waits for JMS tasks to finish, then chekcs that - exactly one reply was
      * generated - that the reply had its OK flag set to true - that the output file contains a text that indicates
      * proper processing was done.
-     * 
+     *
      * @throws Exception
      */
     private void verifyBatchWentWell() {

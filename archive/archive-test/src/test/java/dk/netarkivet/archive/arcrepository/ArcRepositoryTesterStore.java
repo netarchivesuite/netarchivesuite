@@ -162,7 +162,7 @@ public class ArcRepositoryTesterStore {
     /**
      * Tests the scenario where a file has been stored, but the confirmation was lost, so that the harvester will want
      * to store the file again.
-     *
+     * <p>
      * If the first store() was successful, the second one should be too (providing the file name and the MD5 is the
      * same).
      *

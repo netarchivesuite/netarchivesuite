@@ -113,9 +113,10 @@ public class ChannelIDTester {
                 for (int j = 0; j < ALL_BAs.length; j++) {
                     // Ignore the channels for the checksum replicas.
                     if (ALL_BAs[j] != null) {
-                        if (i != j)
+                        if (i != j) {
                             assertNotSame("Two ALL_BAs have the same name " + ALL_BAs[i].getName(),
                                     ALL_BAs[i].getName(), ALL_BAs[j].getName());
+                        }
                     }
                 }
             }
@@ -141,9 +142,10 @@ public class ChannelIDTester {
                 if (ANY_BAs[j] == null) {
                     continue;
                 }
-                if (i != j)
+                if (i != j) {
                     assertNotSame("Two ANY_BAs have the same name " + ANY_BAs[i].getName(), ANY_BAs[i].getName(),
                             ANY_BAs[j].getName());
+                }
             }
         }
     }
@@ -167,9 +169,10 @@ public class ChannelIDTester {
                 if (BAMONs[j] == null) {
                     continue;
                 }
-                if (i != j)
+                if (i != j) {
                     assertNotSame("Two BAMONs have the same name " + BAMONs[i].getName(), BAMONs[i].getName(),
                             BAMONs[j].getName());
+                }
             }
         }
     }
@@ -194,9 +197,10 @@ public class ChannelIDTester {
                 if (CRs[j] == null) {
                     continue;
                 }
-                if (i != j)
+                if (i != j) {
                     assertNotSame("Two BAMONs have the same name " + CRs[i].getName(), CRs[i].getName(),
                             CRs[j].getName());
+                }
             }
         }
     }
@@ -214,7 +218,7 @@ public class ChannelIDTester {
         assertTrue("ChannelID.getThisClient() returned a channel without " + "application settings in its name: "
                 + client.getName(), client.getName().indexOf("_IS") != -1);
         assertTrue("ChannelID.getThisClient() returned a channel without "
-                + "application instance settings in its name: " + client.getName(),
+                        + "application instance settings in its name: " + client.getName(),
                 client.getName().indexOf("_XXX") != -1);
     }
 

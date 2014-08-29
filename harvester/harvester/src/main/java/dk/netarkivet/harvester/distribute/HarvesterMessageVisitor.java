@@ -38,10 +38,9 @@ import dk.netarkivet.harvester.indexserver.distribute.IndexRequestMessage;
  * with a visitor pattern: Upon receipt, the HarvesterMessageHandler.onMessage() method invokes the
  * Harvesteressage.accept() method on the message with itself as argument. The accept() method in turn invokes the
  * HarvesterMessageVisitorvisit() method, using method overloading to invoke the visit method for the message received.
- *
+ * <p>
  * Thus to handle a message, you should subclass HarvesterMessageHandler and override the visit() method for that kind
  * of message. You should not implement this interface in any other way.
- *
  */
 public interface HarvesterMessageVisitor {
     /**

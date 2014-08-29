@@ -27,7 +27,6 @@ import java.util.Date;
 
 /**
  * A simple tuple to deliver information on the status of jobs.
- *
  */
 public class JobStatusInfo {
 
@@ -63,7 +62,7 @@ public class JobStatusInfo {
 
     /**
      * Constructor for the JobStatusInfo class.
-     * 
+     *
      * @param jobID The ID of the job
      * @param status The current status of the Job
      * @param harvestDefinitionID The Id of the harvestdefinition behind this job

@@ -30,7 +30,6 @@ import dk.netarkivet.common.utils.I18n;
 
 /**
  * Enumeration of the possible states (alt.: status) a Job can be in.
- *
  */
 public enum JobStatus {
 
@@ -133,7 +132,7 @@ public enum JobStatus {
 
     /**
      * Return a localized human-readable string describing this status.
-     *
+     * <p>
      * Strings are read from the harvester translation bundle found in Translation.properties in this module.
      *
      * @param l The locale

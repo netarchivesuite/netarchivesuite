@@ -56,7 +56,7 @@ public class AggregationWorkerTest extends AggregatorTestCase {
     /**
      * Verifies that a simple aggregation of two unsorted index files behave correctly the first time the aggregator is
      * run. No intermediate index file merging is performed at this time.
-     *
+     * <p>
      * Disabled, see https://sbforge.org/jira/browse/NAS-2326.
      */
     @Test

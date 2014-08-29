@@ -34,10 +34,10 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * This class applies the test variables.
- * 
+ * <p>
  * It creates a new instance of the settings where the variables are changed, and then writes it out as a new
  * deploy-configuration file (does not overwrite the original, but creates a new in same directory).
- * 
+ * <p>
  * This class is prompted by our need to be able to install and run multiple instances the NetarchiveSuite in our
  * test-environment simultaneously.
  */
@@ -67,7 +67,7 @@ public class CreateTestInstance {
 
     /**
      * The constructor.
-     * 
+     *
      * @param configSource The source configuration file.
      */
     public CreateTestInstance(File configSource) {
@@ -82,7 +82,7 @@ public class CreateTestInstance {
 
     /**
      * Function to apply the variables.
-     * 
+     *
      * @param offset The input offset value (1-9 below httpPort).
      * @param httpPort The new value for the HTTP port.
      * @param environmentName The new value for the environment name.
@@ -129,10 +129,10 @@ public class CreateTestInstance {
                 new OffsetSystem(Constants.TEST_OFFSET_HERITRIX_GUI_PORT,
                         Constants.COMPLETE_HARVEST_HERITRIX_GUI_PORT_PATH),
                 new OffsetSystem(Constants.TEST_OFFSET_HERITRIX_JMX_PORT, Constants.COMPLETE_HARVEST_HERITRIX_JMX_PORT),
-        // new OffsetSystem(Constants.TEST_OFFSET_ARCHIVE_DB_URL_PORT,
-        // Constants.COMPLETE_ARCHIVE_DATABASE_PORT),
-        // new OffsetSystem(Constants.TEST_OFFSET_HARVEST_DB_URL_PORT,
-        // Constants.COMPLETE_HARVEST_DATABASE_PORT)
+                // new OffsetSystem(Constants.TEST_OFFSET_ARCHIVE_DB_URL_PORT,
+                // Constants.COMPLETE_ARCHIVE_DATABASE_PORT),
+                // new OffsetSystem(Constants.TEST_OFFSET_HARVEST_DB_URL_PORT,
+                // Constants.COMPLETE_HARVEST_DATABASE_PORT)
         };
 
         // apply the arguments
@@ -171,7 +171,7 @@ public class CreateTestInstance {
 
     /**
      * Applies the new variables on a specific element.
-     * 
+     *
      * @param e The element where the variables are to be applied.
      */
     private void applyOnElement(Element e) {
@@ -190,7 +190,7 @@ public class CreateTestInstance {
 
     /**
      * Applies the environment name on the name of the file-directories. Thus: fileDir -> fileDir/environmentName
-     * 
+     *
      * @param app The application where this has to be applied.
      */
     private void applyEnvironmentNameOnBaseFileDir(Element app) {
@@ -216,7 +216,7 @@ public class CreateTestInstance {
 
     /**
      * Creates a file containing the new configuration instance.
-     * 
+     *
      * @param filename The name of the file to be written.
      * @throws IOException If anything goes wrong.
      */
@@ -245,7 +245,7 @@ public class CreateTestInstance {
 
         /**
          * The constructor.
-         * 
+         *
          * @param i The index variable.
          * @param p The path variable.
          */
@@ -256,7 +256,7 @@ public class CreateTestInstance {
 
         /**
          * For retrieving the index.
-         * 
+         *
          * @return The index where the offset should be applied.
          */
         public int getIndex() {
@@ -265,7 +265,7 @@ public class CreateTestInstance {
 
         /**
          * For retrieving the path.
-         * 
+         *
          * @return The path in the xml-structure to the element which should have a character changed.
          */
         public String[] getPath() {
