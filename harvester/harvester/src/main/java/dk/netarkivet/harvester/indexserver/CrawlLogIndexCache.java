@@ -195,7 +195,7 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
                 Iterator<IndexingState> iterator = outstandingJobs.iterator();
                 if (timeOutTime < System.currentTimeMillis()) {
                     log.warn("Max indexing time exceeded for one index ({}). Indexing stops here, "
-                                    + "although missing subindices for {} jobs",
+                            + "although missing subindices for {} jobs",
                             TimeUtils.readableTimeInterval(combineTimeout), outstandingJobs.size());
                     break;
                 }
@@ -244,7 +244,7 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
             }
 
             log.info("Adding the final {} subindices to main index. "
-                            + "Forcing index to contain max {} files (related to combine task #{})", subindices.size(),
+                    + "Forcing index to contain max {} files (related to combine task #{})", subindices.size(),
                     maxSegments, indexingJobCount);
 
             totalIndex.addIndexes(subindices.toArray(new Directory[0]));

@@ -371,7 +371,7 @@ public class FileBasedActiveBitPreservation implements ActiveBitPreservation, Cl
                     + extraFilesInAdminData.size()
                     + " files '"
                     + new ArrayList<String>(extraFilesInAdminData).subList(0,
-                    Math.min(extraFilesInAdminData.size(), MAX_LIST_SIZE))
+                            Math.min(extraFilesInAdminData.size(), MAX_LIST_SIZE))
                     + "' are not present in the replica listing in '"
                     + WorkFiles.getPreservationDir(replica).getAbsolutePath() + "'");
         }

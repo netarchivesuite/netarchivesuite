@@ -429,7 +429,7 @@ public abstract class AdminData {
                     // existing entry
                     if (!checksumString.equals(getCheckSum(filename))) {
                         log.warn("Wrong checksum encountered in admin data for known file '{}': Old={} New={}. "
-                                        + "Entry removed from admin.data and the remaining line ignored: {}", filename,
+                                + "Entry removed from admin.data and the remaining line ignored: {}", filename,
                                 getCheckSum(filename), checksumString, s);
                         storeEntries.remove(filename);
                         continue; // Stop processing, and go to next line

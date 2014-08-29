@@ -229,8 +229,7 @@ public abstract class DerbySpecifics extends DBSpecifics {
      */
     @Override
     protected void migrateRunningJobsHistoryTableV1ToV2() {
-        String[] sqlStatements = {
-                "ALTER TABLE runningjobshistory ADD COLUMN retiredQueuesCount bigint not null DEFAULT 0"};
+        String[] sqlStatements = {"ALTER TABLE runningjobshistory ADD COLUMN retiredQueuesCount bigint not null DEFAULT 0"};
         HarvestDBConnection.updateTable("runningjobshistory", 2, sqlStatements);
     }
 
@@ -240,8 +239,7 @@ public abstract class DerbySpecifics extends DBSpecifics {
      */
     @Override
     protected void migrateRunningJobsMonitorTableV1ToV2() {
-        String[] sqlStatements = {
-                "ALTER TABLE runningjobsmonitor ADD COLUMN retiredQueuesCount bigint not null DEFAULT 0"};
+        String[] sqlStatements = {"ALTER TABLE runningjobsmonitor ADD COLUMN retiredQueuesCount bigint not null DEFAULT 0"};
         HarvestDBConnection.updateTable("runningjobsmonitor", 2, sqlStatements);
     }
 

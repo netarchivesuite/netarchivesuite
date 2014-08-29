@@ -64,33 +64,34 @@ public class NetarchiveSuiteUURIFactory extends UURI {
      * <p>
      * From the RFC Appendix B:
      * <p>
+     * 
      * <pre>
      * URI Generic Syntax                August 1998
-     *
+     * 
      * B. Parsing a URI Reference with a Regular Expression
-     *
+     * 
      * As described in Section 4.3, the generic URI syntax is not sufficient
      * to disambiguate the components of some forms of URI.  Since the
      * "greedy algorithm" described in that section is identical to the
      * disambiguation method used by POSIX regular expressions, it is
      * natural and commonplace to use a regular expression for parsing the
      * potential four components and fragment identifier of a URI reference.
-     *
+     * 
      * The following line is the regular expression for breaking-down a URI
      * reference into its components.
-     *
+     * 
      * ^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?
      * 12            3  4          5       6  7        8 9
-     *
+     * 
      * The numbers in the second line above are only to assist readability;
      * they indicate the reference points for each subexpression (i.e., each
      * paired parenthesis).  We refer to the value matched for subexpression
      * <n> as $<n>.  For example, matching the above expression to
-     *
+     * 
      * http://www.ics.uci.edu/pub/ietf/uri/#Related
-     *
+     * 
      * results in the following subexpression matches:
-     *
+     * 
      * $1 = http:
      * $2 = http
      * $3 = //www.ics.uci.edu
@@ -100,11 +101,11 @@ public class NetarchiveSuiteUURIFactory extends UURI {
      * $7 = <undefined>
      * $8 = #Related
      * $9 = Related
-     *
+     * 
      * where <undefined> indicates that the component is not present, as is
      * the case for the query component in the above example.  Therefore, we
      * can determine the value of the four components and fragment as
-     *
+     * 
      * scheme    = $2
      * authority = $4
      * path      = $5

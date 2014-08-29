@@ -52,10 +52,8 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
 
 /**
- * This is a registry for HTTP remote file, meant for serving registered files
- * to remote hosts.
- * The embedded webserver handling remote files for HTTPRemoteFile
- * point-to-point communication. Optimised to use direct transfer on local
+ * This is a registry for HTTP remote file, meant for serving registered files to remote hosts. The embedded webserver
+ * handling remote files for HTTPRemoteFile point-to-point communication. Optimised to use direct transfer on local
  * machine.
  */
 public class HTTPRemoteFileRegistry implements CleanupIF {
@@ -82,8 +80,7 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
     private final Random random;
 
     /**
-     * Postfix to add to an URL to get cleanup URL.
-     * We are not using query string, because it behaves strangely in
+     * Postfix to add to an URL to get cleanup URL. We are not using query string, because it behaves strangely in
      * HttpServletRequest.
      */
     private static final String UNREGISTER_URL_POSTFIX = "/unregister";
@@ -94,8 +91,7 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
     private CleanupHook cleanupHook;
 
     /**
-     * Initialise the registry. This includes registering an HTTP server for
-     * getting the files from this machine.
+     * Initialise the registry. This includes registering an HTTP server for getting the files from this machine.
      *
      * @throws IOFailure if it cannot be initialised.
      */
@@ -110,8 +106,8 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
     }
 
     /**
-     * Start the server, including a handler that responds with registered
-     * files, removes registered files on request, and gives 404 otherwise.
+     * Start the server, including a handler that responds with registered files, removes registered files on request,
+     * and gives 404 otherwise.
      *
      * @throws IOFailure if it cannot be initialised.
      */
@@ -165,7 +161,7 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
         }
         String path;
         URL url;
-        //ensure we get a random and unique URL.
+        // ensure we get a random and unique URL.
         do {
             path = "/" + Integer.toHexString(random.nextInt());
             try {
@@ -181,8 +177,7 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
     }
 
     /**
-     * Get the url for cleaning up after a remote file registered under some
-     * URL.
+     * Get the url for cleaning up after a remote file registered under some URL.
      *
      * @param url some URL
      * @return the cleanup url.
@@ -233,7 +228,7 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
             try {
                 Runtime.getRuntime().removeShutdownHook(cleanupHook);
             } catch (Exception e) {
-                //ignore
+                // ignore
             }
             instance = null;
         }
@@ -242,9 +237,8 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
     /**
      * A handler for the registry.
      * <p>
-     * It has three ways to behave:
-     * Serve registered files, return 404 on unknown files, and unregister
-     * registered files, depending on the URL.
+     * It has three ways to behave: Serve registered files, return 404 on unknown files, and unregister registered
+     * files, depending on the URL.
      */
     protected class HTTPRemoteFileRegistryHandler extends AbstractHandler {
         /**
@@ -256,8 +250,7 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
          * @throws IOException On trouble in communication.
          * @throws ServletException On servlet trouble.
          * @see AbstractHandler#handle(String, org.eclipse.jetty.server.Request, HttpServletRequest,
-         * HttpServletResponse),
-         * HttpServletResponse, int)
+         * HttpServletResponse), HttpServletResponse, int)
          */
         @Override
         public void handle(String string, Request baseRequest, HttpServletRequest httpServletRequest,

@@ -60,23 +60,18 @@ import dk.netarkivet.common.utils.AllDocsCollector;
 /**
  * Heritrix compatible processor.
  * <p>
- * Will abort the processing (skip to post processor chain) of CrawlURIs that
- * are deemed <i>duplicates</i>.
+ * Will abort the processing (skip to post processor chain) of CrawlURIs that are deemed <i>duplicates</i>.
  * <p>
- * Duplicate detection can only be performed <i>after</i> the fetch processors
- * have run.
+ * Duplicate detection can only be performed <i>after</i> the fetch processors have run.
  *
  * @author Kristinn Sigur&eth;sson
  * @author Søren Vejrup Carlsen
  */
-public class DeDuplicator extends Processor
-        implements AdaptiveRevisitAttributeConstants {
+public class DeDuplicator extends Processor implements AdaptiveRevisitAttributeConstants {
 
-    private static final long serialVersionUID =
-            ArchiveUtils.classnameBasedUID(DeDuplicator.class, 1);
+    private static final long serialVersionUID = ArchiveUtils.classnameBasedUID(DeDuplicator.class, 1);
 
-    private static Logger logger =
-            Logger.getLogger(DeDuplicator.class.getName());
+    private static Logger logger = Logger.getLogger(DeDuplicator.class.getName());
 
     protected IndexSearcher index = null;
     protected IndexReader indexReader = null;
@@ -87,8 +82,7 @@ public class DeDuplicator extends Processor
     protected boolean doTimestampAnalysis = false;
     protected boolean doETagAnalysis = false;
     protected boolean statsPerHost = DEFAULT_STATS_PER_HOST.booleanValue();
-    protected boolean changeContentSize =
-            DEFAULT_CHANGE_CONTENT_SIZE.booleanValue();
+    protected boolean changeContentSize = DEFAULT_CHANGE_CONTENT_SIZE.booleanValue();
     protected boolean useOrigin = false;
     protected boolean useOriginFromIndex = false;
     protected boolean useSparseRangeFilter = DEFAULT_USE_SPARSE_RANGE_FILTER;
@@ -97,17 +91,10 @@ public class DeDuplicator extends Processor
     protected HashMap<String, Statistics> perHostStats = null;
     protected boolean skipWriting = DEFAULT_SKIP_WRITE.booleanValue();
 
-    /* Configurable parameters
-     * - Index location
-     * - Matching mode (By URL (default) or By Content Digest)
-     * - Try equivalent matches
-     * - Mime filter
-     * - Filter mode (blacklist (default) or whitelist)
-     * - Analysis (None (default), Timestamp only or Timestamp and ETag)
-     * - Log level
-     * - Track per host stats
-     * - Origin
-     * - Skip writing
+    /*
+     * Configurable parameters - Index location - Matching mode (By URL (default) or By Content Digest) - Try equivalent
+     * matches - Mime filter - Filter mode (blacklist (default) or whitelist) - Analysis (None (default), Timestamp only
+     * or Timestamp and ETag) - Log level - Track per host stats - Origin - Skip writing
      */
     /** Location of Lucene Index to use for lookups */
     public final static String ATTR_INDEX_LOCATION = "index-location";
@@ -115,64 +102,44 @@ public class DeDuplicator extends Processor
 
     /** The matching method in use (by url or content digest) */
     public final static String ATTR_MATCHING_METHOD = "matching-method";
-    public final static String[] AVAILABLE_MATCHING_METHODS = {
-            "By URL",
-            "By content digest"
-    };
-    public final static String DEFAULT_MATCHING_METHOD =
-            AVAILABLE_MATCHING_METHODS[0];
+    public final static String[] AVAILABLE_MATCHING_METHODS = {"By URL", "By content digest"};
+    public final static String DEFAULT_MATCHING_METHOD = AVAILABLE_MATCHING_METHODS[0];
 
     /**
-     * If an exact match is not made, should the processor try
-     * to find an equivalent match?
+     * If an exact match is not made, should the processor try to find an equivalent match?
      */
     public final static String ATTR_EQUIVALENT = "try-equivalent";
     public final static Boolean DEFAULT_EQUIVALENT = new Boolean(false);
 
     /**
-     * The filter on mime types. This is either a blacklist or whitelist
-     * depending on ATTR_FILTER_MODE.
+     * The filter on mime types. This is either a blacklist or whitelist depending on ATTR_FILTER_MODE.
      */
     public final static String ATTR_MIME_FILTER = "mime-filter";
     public final static String DEFAULT_MIME_FILTER = "^text/.*";
 
     /**
-     * Is the mime filter a blacklist (do not apply processor to what matches)
-     * or whitelist (apply processor only to what matches).
+     * Is the mime filter a blacklist (do not apply processor to what matches) or whitelist (apply processor only to
+     * what matches).
      */
     public final static String ATTR_FILTER_MODE = "filter-mode";
-    public final static String[] AVAILABLE_FILTER_MODES = {
-            "Blacklist",
-            "Whitelist"
-    };
-    public final static String DEFAULT_FILTER_MODE =
-            AVAILABLE_FILTER_MODES[0];
+    public final static String[] AVAILABLE_FILTER_MODES = {"Blacklist", "Whitelist"};
+    public final static String DEFAULT_FILTER_MODE = AVAILABLE_FILTER_MODES[0];
 
     /** Set analysis mode. */
     public final static String ATTR_ANALYSIS_MODE = "analysis-mode";
-    public final static String[] AVAILABLE_ANALYSIS_MODES = {
-            "None",
-            "Timestamp",
-            "Timestamp and ETag"
-    };
-    public final static String DEFAULT_ANALYSIS_MODE =
-            AVAILABLE_ANALYSIS_MODES[0];
+    public final static String[] AVAILABLE_ANALYSIS_MODES = {"None", "Timestamp", "Timestamp and ETag"};
+    public final static String DEFAULT_ANALYSIS_MODE = AVAILABLE_ANALYSIS_MODES[0];
 
     /**
-     * Should the content size information be set to zero when a duplicate is
-     * found?
+     * Should the content size information be set to zero when a duplicate is found?
      */
     public final static String ATTR_CHANGE_CONTENT_SIZE = "change-content-size";
-    public final static Boolean DEFAULT_CHANGE_CONTENT_SIZE =
-            new Boolean(true);
+    public final static Boolean DEFAULT_CHANGE_CONTENT_SIZE = new Boolean(true);
 
     /** What to write to a log file */
     public final static String ATTR_LOG_LEVEL = "log-level";
-    public final static String[] AVAILABLE_LOG_LEVELS = {
-            Level.SEVERE.toString(),
-            Level.INFO.toString(),
-            Level.FINEST.toString()
-    };
+    public final static String[] AVAILABLE_LOG_LEVELS = {Level.SEVERE.toString(), Level.INFO.toString(),
+            Level.FINEST.toString()};
     public final static String DEFAULT_LOG_LEVEL = AVAILABLE_LOG_LEVELS[0];
 
     /** Should statistics be tracked per host? * */
@@ -181,19 +148,12 @@ public class DeDuplicator extends Processor
 
     /** How should 'origin' be handled * */
     public final static String ATTR_ORIGIN_HANDLING = "origin-handling";
-    public final static String ORIGIN_HANDLING_NONE =
-            "No origin information";
-    public final static String ORIGIN_HANDLING_PROCESSOR =
-            "Use processor setting";
-    public final static String ORIGIN_HANDLING_INDEX =
-            "Use index information";
-    public final static String[] AVAILABLE_ORIGIN_HANDLING = {
-            ORIGIN_HANDLING_NONE,
-            ORIGIN_HANDLING_PROCESSOR,
-            ORIGIN_HANDLING_INDEX
-    };
-    public final static String DEFAULT_ORIGIN_HANDLING =
-            ORIGIN_HANDLING_NONE;
+    public final static String ORIGIN_HANDLING_NONE = "No origin information";
+    public final static String ORIGIN_HANDLING_PROCESSOR = "Use processor setting";
+    public final static String ORIGIN_HANDLING_INDEX = "Use index information";
+    public final static String[] AVAILABLE_ORIGIN_HANDLING = {ORIGIN_HANDLING_NONE, ORIGIN_HANDLING_PROCESSOR,
+            ORIGIN_HANDLING_INDEX};
+    public final static String DEFAULT_ORIGIN_HANDLING = ORIGIN_HANDLING_NONE;
 
     /** Origin of duplicate URLs * */
     public final static String ATTR_ORIGIN = "origin";
@@ -208,158 +168,114 @@ public class DeDuplicator extends Processor
     public final static Boolean DEFAULT_USE_SPARSE_RANGE_FILTER = new Boolean(false);
 
     public DeDuplicator(String name) {
-        super(name, "Aborts the processing of URIs (skips to post processing " +
-                "chain) if a duplicate is found in the specified index. " +
-                "Note that any changes made to this processors configuration " +
-                "at run time will be ignored unless otherwise stated.");
-        Type t = new SimpleType(
-                ATTR_INDEX_LOCATION,
-                "Location of index (full path). Can not be changed at run " +
-                        "time.",
-                DEFAULT_INDEX_LOCATION);
+        super(name, "Aborts the processing of URIs (skips to post processing "
+                + "chain) if a duplicate is found in the specified index. "
+                + "Note that any changes made to this processors configuration "
+                + "at run time will be ignored unless otherwise stated.");
+        Type t = new SimpleType(ATTR_INDEX_LOCATION, "Location of index (full path). Can not be changed at run "
+                + "time.", DEFAULT_INDEX_LOCATION);
         t.setOverrideable(false);
         addElementToDefinition(t);
-        t = new SimpleType(
-                ATTR_MATCHING_METHOD,
-                "Select if we should lookup by URL " +
-                        "or by content digest (counts mirror matches).",
-                DEFAULT_MATCHING_METHOD, AVAILABLE_MATCHING_METHODS);
+        t = new SimpleType(ATTR_MATCHING_METHOD, "Select if we should lookup by URL "
+                + "or by content digest (counts mirror matches).", DEFAULT_MATCHING_METHOD, AVAILABLE_MATCHING_METHODS);
         t.setOverrideable(false);
         addElementToDefinition(t);
-        t = new SimpleType(
-                ATTR_EQUIVALENT,
-                "If an exact match of URI and content digest is not found " +
-                        "then an equivalent URI (i.e. one with any www[0-9]*, " +
-                        "trailing slashes and parameters removed) can be checked. " +
-                        "If an equivalent URI has an identical content digest then " +
-                        "enabling this feature will cause the processor to consider " +
-                        "this a duplicate. Equivalent matches are noted in the " +
-                        "crawl log and their number is tracked seperately.",
-                DEFAULT_EQUIVALENT);
+        t = new SimpleType(ATTR_EQUIVALENT, "If an exact match of URI and content digest is not found "
+                + "then an equivalent URI (i.e. one with any www[0-9]*, "
+                + "trailing slashes and parameters removed) can be checked. "
+                + "If an equivalent URI has an identical content digest then "
+                + "enabling this feature will cause the processor to consider "
+                + "this a duplicate. Equivalent matches are noted in the "
+                + "crawl log and their number is tracked seperately.", DEFAULT_EQUIVALENT);
         t.setOverrideable(false);
         addElementToDefinition(t);
-        t = new SimpleType(
-                ATTR_MIME_FILTER,
-                "A regular expression that the mimetype of all documents " +
-                        "will be compared against. \nIf the attribute filter-mode is " +
-                        "set to 'Blacklist' then all the documents whose mimetype " +
-                        "matches will be ignored by this processor. If the filter-" +
-                        "mode is set to 'Whitelist' only those documents whose " +
-                        "mimetype matches will be processed.",
+        t = new SimpleType(ATTR_MIME_FILTER, "A regular expression that the mimetype of all documents "
+                + "will be compared against. \nIf the attribute filter-mode is "
+                + "set to 'Blacklist' then all the documents whose mimetype "
+                + "matches will be ignored by this processor. If the filter-"
+                + "mode is set to 'Whitelist' only those documents whose " + "mimetype matches will be processed.",
                 DEFAULT_MIME_FILTER);
         t.setOverrideable(false);
         t.setExpertSetting(true);
         addElementToDefinition(t);
-        t = new SimpleType(
-                ATTR_FILTER_MODE,
-                "Determines if the mime-filter acts as a blacklist (declares " +
-                        "what should be ignored) or whitelist (declares what should " +
-                        "be processed).",
+        t = new SimpleType(ATTR_FILTER_MODE, "Determines if the mime-filter acts as a blacklist (declares "
+                + "what should be ignored) or whitelist (declares what should " + "be processed).",
                 DEFAULT_FILTER_MODE, AVAILABLE_FILTER_MODES);
         t.setOverrideable(false);
         t.setExpertSetting(true);
         addElementToDefinition(t);
-        t = new SimpleType(
-                ATTR_ANALYSIS_MODE,
-                "If enabled, the processor can analyse the timestamp (last-" +
-                        "modified) and ETag info of the HTTP headers and compare " +
-                        "their predictions as to whether or not the document had " +
-                        "changed against the result of the index lookup. This is " +
-                        "ONLY for the purpose of gathering statistics about the " +
-                        "usefulness and accuracy of the HTTP header information in " +
-                        "question and has no effect on the processing of documents. " +
-                        "Analysis is only possible if " +
-                        "the relevant data was included in the index.",
-                DEFAULT_ANALYSIS_MODE, AVAILABLE_ANALYSIS_MODES);
+        t = new SimpleType(ATTR_ANALYSIS_MODE, "If enabled, the processor can analyse the timestamp (last-"
+                + "modified) and ETag info of the HTTP headers and compare "
+                + "their predictions as to whether or not the document had "
+                + "changed against the result of the index lookup. This is "
+                + "ONLY for the purpose of gathering statistics about the "
+                + "usefulness and accuracy of the HTTP header information in "
+                + "question and has no effect on the processing of documents. " + "Analysis is only possible if "
+                + "the relevant data was included in the index.", DEFAULT_ANALYSIS_MODE, AVAILABLE_ANALYSIS_MODES);
         t.setOverrideable(false);
         t.setExpertSetting(true);
         addElementToDefinition(t);
 
-        t = new SimpleType(
-                ATTR_LOG_LEVEL,
-                "Adjust the verbosity of the processor. By default, it only " +
-                        "reports serious (Java runtime) errors. " +
-                        "By setting the log level " +
-                        "higher, various additional data can be logged. " +
-                        "* Serious - Default logging level, only serious errors. " +
-                        "Note that it is possible that a more permissive default " +
-                        "logging level has been set via the heritrix.properties " +
-                        "file. This setting (severe) will not affect that.\n" +
-                        "* Info - Records some anomalies. Such as the information " +
-                        "on URIs that the HTTP header info falsely predicts " +
-                        "no-change on.\n" +
-                        "* Finest - Full logging of all URIs processed. For " +
-                        "debugging purposes only!",
+        t = new SimpleType(ATTR_LOG_LEVEL, "Adjust the verbosity of the processor. By default, it only "
+                + "reports serious (Java runtime) errors. " + "By setting the log level "
+                + "higher, various additional data can be logged. "
+                + "* Serious - Default logging level, only serious errors. "
+                + "Note that it is possible that a more permissive default "
+                + "logging level has been set via the heritrix.properties "
+                + "file. This setting (severe) will not affect that.\n"
+                + "* Info - Records some anomalies. Such as the information "
+                + "on URIs that the HTTP header info falsely predicts " + "no-change on.\n"
+                + "* Finest - Full logging of all URIs processed. For " + "debugging purposes only!",
                 DEFAULT_LOG_LEVEL, AVAILABLE_LOG_LEVELS);
         t.setOverrideable(false);
         t.setExpertSetting(true);
         addElementToDefinition(t);
-        t = new SimpleType(
-                ATTR_STATS_PER_HOST,
-                "If enabled the processor will keep track of the number of " +
-                        "processed uris, duplicates found etc. per host. The listing " +
-                        "will be added to the processor report (not the host-report).",
-                DEFAULT_STATS_PER_HOST);
+        t = new SimpleType(ATTR_STATS_PER_HOST, "If enabled the processor will keep track of the number of "
+                + "processed uris, duplicates found etc. per host. The listing "
+                + "will be added to the processor report (not the host-report).", DEFAULT_STATS_PER_HOST);
         t.setOverrideable(false);
         t.setExpertSetting(true);
         addElementToDefinition(t);
-        t = new SimpleType(
-                ATTR_CHANGE_CONTENT_SIZE,
-                "If set to true then the processor will set the content size " +
-                        "of the CrawlURI to zero when a duplicate is discovered. ",
-                DEFAULT_CHANGE_CONTENT_SIZE);
+        t = new SimpleType(ATTR_CHANGE_CONTENT_SIZE, "If set to true then the processor will set the content size "
+                + "of the CrawlURI to zero when a duplicate is discovered. ", DEFAULT_CHANGE_CONTENT_SIZE);
         t.setOverrideable(false);
         addElementToDefinition(t);
 
-        t = new SimpleType(
-                ATTR_ORIGIN_HANDLING,
-                "The origin of duplicate URLs can be handled a few different " +
-                        "ways. It is important to note that the 'origin' information " +
-                        "is malleable and may be anything from a ARC name and offset " +
-                        "to a simple ID of a particular crawl. It is entirely at the " +
-                        "operators discretion.\n " +
-                        ORIGIN_HANDLING_NONE + " - No origin information is " +
-                        "associated with the URLs.\n " +
-                        ORIGIN_HANDLING_PROCESSOR + " - Duplicate URLs are all given " +
-                        "the same origin, specified by the 'origin' setting of this " +
-                        "processor.\n " +
-                        ORIGIN_HANDLING_INDEX + " - The origin of each duplicate URL " +
-                        "is read from the index. If the index does not contain any " +
-                        "origin information for an URL, the processor setting is " +
-                        "used as a fallback!",
+        t = new SimpleType(ATTR_ORIGIN_HANDLING, "The origin of duplicate URLs can be handled a few different "
+                + "ways. It is important to note that the 'origin' information "
+                + "is malleable and may be anything from a ARC name and offset "
+                + "to a simple ID of a particular crawl. It is entirely at the " + "operators discretion.\n "
+                + ORIGIN_HANDLING_NONE + " - No origin information is " + "associated with the URLs.\n "
+                + ORIGIN_HANDLING_PROCESSOR + " - Duplicate URLs are all given "
+                + "the same origin, specified by the 'origin' setting of this " + "processor.\n "
+                + ORIGIN_HANDLING_INDEX + " - The origin of each duplicate URL "
+                + "is read from the index. If the index does not contain any "
+                + "origin information for an URL, the processor setting is " + "used as a fallback!",
                 DEFAULT_ORIGIN_HANDLING, AVAILABLE_ORIGIN_HANDLING);
         t.setOverrideable(false);
         addElementToDefinition(t);
 
-        t = new SimpleType(
-                ATTR_ORIGIN,
-                "The origin of duplicate URLs.",
-                DEFAULT_ORIGIN);
+        t = new SimpleType(ATTR_ORIGIN, "The origin of duplicate URLs.", DEFAULT_ORIGIN);
         addElementToDefinition(t);
 
-        t = new SimpleType(
-                ATTR_SKIP_WRITE,
-                "If set to true, then processing of duplicate URIs will be " +
-                        "skipped directly to the post processing chain. If false, " +
-                        "processing of duplicates will skip directly to the writer " +
-                        "chain that precedes the post processing chain.",
-                DEFAULT_SKIP_WRITE);
+        t = new SimpleType(ATTR_SKIP_WRITE, "If set to true, then processing of duplicate URIs will be "
+                + "skipped directly to the post processing chain. If false, "
+                + "processing of duplicates will skip directly to the writer "
+                + "chain that precedes the post processing chain.", DEFAULT_SKIP_WRITE);
         t.setOverrideable(true);
         addElementToDefinition(t);
 
-        t = new SimpleType(
-                ATTR_USE_SPARSE_RANGE_FILTER,
-                "If set to true, then Lucene queries use a custom 'sparse' " +
-                        "range filter. This uses less memory at the cost of some " +
-                        "lost performance. Suitable for very large indexes.",
-                DEFAULT_USE_SPARSE_RANGE_FILTER);
+        t = new SimpleType(ATTR_USE_SPARSE_RANGE_FILTER, "If set to true, then Lucene queries use a custom 'sparse' "
+                + "range filter. This uses less memory at the cost of some "
+                + "lost performance. Suitable for very large indexes.", DEFAULT_USE_SPARSE_RANGE_FILTER);
         t.setOverrideable(false);
         t.setExpertSetting(true);
         addElementToDefinition(t);
     }
 
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see org.archive.crawler.framework.Processor#initialTasks()
      */
     @Override
@@ -370,7 +286,7 @@ public class DeDuplicator extends Processor
         String indexLocation = (String) readAttribute(ATTR_INDEX_LOCATION, "");
         try {
             FSDirectory indexDir = FSDirectory.open(new File(indexLocation));
-            //https://issues.apache.org/jira/browse/LUCENE-1566
+            // https://issues.apache.org/jira/browse/LUCENE-1566
             // Reduce chunksize to avoid OOM to half the size of the default (=100 MB)
             int chunksize = indexDir.getReadChunkSize();
             indexDir.setReadChunkSize(chunksize / 2);
@@ -381,26 +297,20 @@ public class DeDuplicator extends Processor
         }
 
         // Matching method
-        String matchingMethod = (String) readAttribute(
-                ATTR_MATCHING_METHOD, DEFAULT_MATCHING_METHOD);
+        String matchingMethod = (String) readAttribute(ATTR_MATCHING_METHOD, DEFAULT_MATCHING_METHOD);
         lookupByURL = matchingMethod.equals(DEFAULT_MATCHING_METHOD);
 
         // Try equivalent matches
-        equivalent = ((Boolean) readAttribute(
-                ATTR_EQUIVALENT, DEFAULT_EQUIVALENT)).booleanValue();
+        equivalent = ((Boolean) readAttribute(ATTR_EQUIVALENT, DEFAULT_EQUIVALENT)).booleanValue();
 
         // Mime filter
-        mimefilter = (String) readAttribute(
-                ATTR_MIME_FILTER, DEFAULT_MIME_FILTER);
+        mimefilter = (String) readAttribute(ATTR_MIME_FILTER, DEFAULT_MIME_FILTER);
 
         // Filter mode (blacklist (default) or whitelist)
-        blacklist = ((String) readAttribute(
-                ATTR_FILTER_MODE, DEFAULT_FILTER_MODE)).equals(
-                DEFAULT_FILTER_MODE);
+        blacklist = ((String) readAttribute(ATTR_FILTER_MODE, DEFAULT_FILTER_MODE)).equals(DEFAULT_FILTER_MODE);
 
         // Analysis (None (default), Timestamp only or Timestamp and ETag)
-        String analysisMode = (String) readAttribute(
-                ATTR_ANALYSIS_MODE, DEFAULT_ANALYSIS_MODE);
+        String analysisMode = (String) readAttribute(ATTR_ANALYSIS_MODE, DEFAULT_ANALYSIS_MODE);
         if (analysisMode.equals(AVAILABLE_ANALYSIS_MODES[1])) {
             // Timestamp only
             doTimestampAnalysis = true;
@@ -416,20 +326,17 @@ public class DeDuplicator extends Processor
             logger.setLevel(Level.FINEST);
         } else if (lev.equals(Level.INFO.toString())) {
             logger.setLevel(Level.INFO);
-        } // Severe effectively means default level.  
+        } // Severe effectively means default level.
 
         // Track per host stats
-        statsPerHost = ((Boolean) readAttribute(
-                ATTR_STATS_PER_HOST, DEFAULT_STATS_PER_HOST)).booleanValue();
+        statsPerHost = ((Boolean) readAttribute(ATTR_STATS_PER_HOST, DEFAULT_STATS_PER_HOST)).booleanValue();
 
         // Change content size
-        changeContentSize = ((Boolean) readAttribute(
-                ATTR_CHANGE_CONTENT_SIZE,
-                DEFAULT_CHANGE_CONTENT_SIZE)).booleanValue();
+        changeContentSize = ((Boolean) readAttribute(ATTR_CHANGE_CONTENT_SIZE, DEFAULT_CHANGE_CONTENT_SIZE))
+                .booleanValue();
 
         // Origin handling.
-        String originHandling = (String) readAttribute(
-                ATTR_ORIGIN_HANDLING, DEFAULT_ORIGIN_HANDLING);
+        String originHandling = (String) readAttribute(ATTR_ORIGIN_HANDLING, DEFAULT_ORIGIN_HANDLING);
         if (originHandling.equals(ORIGIN_HANDLING_NONE) == false) {
             useOrigin = true;
             if (originHandling.equals(ORIGIN_HANDLING_INDEX)) {
@@ -438,9 +345,8 @@ public class DeDuplicator extends Processor
         }
 
         // Range Filter type
-        useSparseRangeFilter = ((Boolean) readAttribute(
-                ATTR_USE_SPARSE_RANGE_FILTER,
-                DEFAULT_USE_SPARSE_RANGE_FILTER)).booleanValue();
+        useSparseRangeFilter = ((Boolean) readAttribute(ATTR_USE_SPARSE_RANGE_FILTER, DEFAULT_USE_SPARSE_RANGE_FILTER))
+                .booleanValue();
 
         // Initialize some internal variables:
         stats = new Statistics();
@@ -450,20 +356,17 @@ public class DeDuplicator extends Processor
     }
 
     /**
-     * A utility method for reading attributes. If not found, an error is logged
-     * and the defaultValue is returned.
+     * A utility method for reading attributes. If not found, an error is logged and the defaultValue is returned.
      *
      * @param name The name of the attribute
      * @param defaultValue A default value to return if an error occurs
-     * @return The value of the attribute or the default value if an error
-     * occurs
+     * @return The value of the attribute or the default value if an error occurs
      */
     protected Object readAttribute(String name, Object defaultValue) {
         try {
             return getAttribute(name);
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Unable read " + name +
-                    " attribute", e);
+            logger.log(Level.SEVERE, "Unable read " + name + " attribute", e);
             return defaultValue;
         }
     }
@@ -471,55 +374,44 @@ public class DeDuplicator extends Processor
     protected void innerProcess(CrawlURI curi) throws InterruptedException {
         if (curi.isSuccess() == false) {
             // Early return. No point in doing comparison on failed downloads.
-            logger.finest("Not handling " + curi.toString()
-                    + ", did not succeed.");
+            logger.finest("Not handling " + curi.toString() + ", did not succeed.");
             return;
         }
         if (curi.isPrerequisite()) {
             // Early return. Prerequisites are exempt from checking.
-            logger.finest("Not handling " + curi.toString()
-                    + ", prerequisite.");
+            logger.finest("Not handling " + curi.toString() + ", prerequisite.");
             return;
         }
-        if (curi.isSuccess() == false
-                || curi.isPrerequisite()
-                || curi.toString().startsWith("http") == false) {
+        if (curi.isSuccess() == false || curi.isPrerequisite() || curi.toString().startsWith("http") == false) {
             // Early return. Non-http documents are not handled at present
-            logger.finest("Not handling " + curi.toString()
-                    + ", non-http.");
+            logger.finest("Not handling " + curi.toString() + ", non-http.");
             return;
         }
         if (curi.getContentType() == null) {
             // No content type means we can not handle it.
-            logger.finest("Not handling " + curi.toString()
-                    + ", missing content (mime) type");
+            logger.finest("Not handling " + curi.toString() + ", missing content (mime) type");
             return;
         }
         if (curi.getContentType().matches(mimefilter) == blacklist) {
             // Early return. Does not pass the mime filter
-            logger.finest("Not handling " + curi.toString()
-                    + ", excluded by mimefilter (" +
-                    curi.getContentType() + ").");
+            logger.finest("Not handling " + curi.toString() + ", excluded by mimefilter (" + curi.getContentType()
+                    + ").");
             return;
         }
-        if (curi.containsKey(A_CONTENT_STATE_KEY) &&
-                curi.getInt(A_CONTENT_STATE_KEY) == CONTENT_UNCHANGED) {
+        if (curi.containsKey(A_CONTENT_STATE_KEY) && curi.getInt(A_CONTENT_STATE_KEY) == CONTENT_UNCHANGED) {
             // Early return. A previous processor or filter has judged this
             // CrawlURI as having unchanged content.
-            logger.finest("Not handling " + curi.toString()
-                    + ", already flagged as unchanged.");
+            logger.finest("Not handling " + curi.toString() + ", already flagged as unchanged.");
             return;
         }
-        logger.finest("Processing " + curi.toString() + "(" +
-                curi.getContentType() + ")");
+        logger.finest("Processing " + curi.toString() + "(" + curi.getContentType() + ")");
 
         stats.handledNumber++;
         stats.totalAmount += curi.getContentSize();
         Statistics currHostStats = null;
         if (statsPerHost) {
             synchronized (perHostStats) {
-                String host = getController().getServerCache()
-                        .getHostFor(curi).getHostName();
+                String host = getController().getServerCache().getHostFor(curi).getHostName();
                 currHostStats = perHostStats.get(host);
                 if (currHostStats == null) {
                     currHostStats = new Statistics();
@@ -548,29 +440,23 @@ public class DeDuplicator extends Processor
                 currHostStats.duplicateNumber++;
             }
             // Duplicate. Abort further processing of URI.
-            if (((Boolean) readAttribute(
-                    ATTR_SKIP_WRITE,
-                    DEFAULT_SKIP_WRITE)).booleanValue()) {
+            if (((Boolean) readAttribute(ATTR_SKIP_WRITE, DEFAULT_SKIP_WRITE)).booleanValue()) {
                 // Skip writing, go directly to post processing chain
-                curi.skipToProcessorChain(
-                        getController().getPostprocessorChain());
+                curi.skipToProcessorChain(getController().getPostprocessorChain());
             } else {
                 // Do not skip writing, go to writer processors
-                curi.skipToProcessorChain(
-                        getController().getProcessorChainList()
-                                .getProcessorChain(CrawlOrder.ATTR_WRITE_PROCESSORS));
+                curi.skipToProcessorChain(getController().getProcessorChainList().getProcessorChain(
+                        CrawlOrder.ATTR_WRITE_PROCESSORS));
             }
 
             // Record origin?
             String annotation = "duplicate";
             if (useOrigin) {
                 // TODO: Save origin in the CrawlURI so that other processors
-                //       can make use of it. (Future: WARC)
-                if (useOriginFromIndex &&
-                        duplicate.get(DigestIndexer.FIELD_ORIGIN) != null) {
+                // can make use of it. (Future: WARC)
+                if (useOriginFromIndex && duplicate.get(DigestIndexer.FIELD_ORIGIN) != null) {
                     // Index contains origin, use it.
-                    annotation += ":\"" + duplicate.get(
-                            DigestIndexer.FIELD_ORIGIN) + "\"";
+                    annotation += ":\"" + duplicate.get(DigestIndexer.FIELD_ORIGIN) + "\"";
                 } else {
                     String tmp = (String) getUncheckedAttribute(curi, ATTR_ORIGIN);
                     // Check if an origin value is actually available
@@ -584,7 +470,7 @@ public class DeDuplicator extends Processor
             curi.addAnnotation(annotation);
 
             if (changeContentSize) {
-                // Set content size to zero, we are not planning to 
+                // Set content size to zero, we are not planning to
                 // 'write it to disk'
                 // TODO: Reconsider this
                 curi.setContentSize(0);
@@ -602,18 +488,14 @@ public class DeDuplicator extends Processor
      * Process a CrawlURI looking up in the index by URL
      *
      * @param curi The CrawlURI to process
-     * @param currHostStats A statistics object for the current host.
-     * If per host statistics tracking is enabled this
-     * must be non null and the method will increment
-     * appropriate counters on it.
-     * @return The result of the lookup (a Lucene document). If a duplicate is
-     * not found null is returned.
+     * @param currHostStats A statistics object for the current host. If per host statistics tracking is enabled this
+     * must be non null and the method will increment appropriate counters on it.
+     * @return The result of the lookup (a Lucene document). If a duplicate is not found null is returned.
      */
     protected Document lookupByURL(CrawlURI curi, Statistics currHostStats) {
         // Look the CrawlURI's URL up in the index.
         try {
-            Query query = queryField(DigestIndexer.FIELD_URL,
-                    curi.toString());
+            Query query = queryField(DigestIndexer.FIELD_URL, curi.toString());
             AllDocsCollector collectAllCollector = new AllDocsCollector();
             index.search(query, collectAllCollector);
 
@@ -624,7 +506,7 @@ public class DeDuplicator extends Processor
                 // Typically there should only be one it, but we'll allow for
                 // multiple hits.
                 for (ScoreDoc hit : hits) {
-                    //for(int i=0 ; i < hits.size() ; i++){
+                    // for(int i=0 ; i < hits.size() ; i++){
                     // Multiple hits on same exact URL should be rare
                     // See if any have matching content digests
                     int docId = hit.doc;
@@ -637,8 +519,7 @@ public class DeDuplicator extends Processor
                             currHostStats.exactURLDuplicates++;
                         }
 
-                        logger.finest("Found exact match for " +
-                                curi.toString());
+                        logger.finest("Found exact match for " + curi.toString());
 
                         // If we found a hit, no need to look at other hits.
                         return doc;
@@ -648,33 +529,30 @@ public class DeDuplicator extends Processor
             if (equivalent) {
                 // No exact hits. Let's try lenient matching.
                 String normalizedURL = DigestIndexer.stripURL(curi.toString());
-                query = queryField(DigestIndexer.FIELD_URL_NORMALIZED,
-                        normalizedURL);
+                query = queryField(DigestIndexer.FIELD_URL_NORMALIZED, normalizedURL);
                 collectAllCollector.reset(); // reset collector
                 index.search(query, collectAllCollector);
                 hits = collectAllCollector.getHits();
 
                 for (ScoreDoc hit : hits) {
-                    //int i=0 ; i < hits.length ; i++){
+                    // int i=0 ; i < hits.length ; i++){
 
                     int docId = hit.doc;
                     Document doc1 = index.doc(docId);
                     String indexDigest = doc1.get(DigestIndexer.FIELD_DIGEST);
                     if (indexDigest.equals(currentDigest)) {
                         // Make note in log
-                        String equivURL = doc1.get(
-                                DigestIndexer.FIELD_URL);
+                        String equivURL = doc1.get(DigestIndexer.FIELD_URL);
                         curi.addAnnotation("equivalent to " + equivURL);
                         // Increment statistics counters
                         stats.equivalentURLDuplicates++;
                         if (statsPerHost) {
                             currHostStats.equivalentURLDuplicates++;
                         }
-                        logger.finest("Found equivalent match for " +
-                                curi.toString() + ". Normalized: " +
-                                normalizedURL + ". Equivalent to: " + equivURL);
+                        logger.finest("Found equivalent match for " + curi.toString() + ". Normalized: "
+                                + normalizedURL + ". Equivalent to: " + equivURL);
 
-                        //If we found a hit, no need to look at more.
+                        // If we found a hit, no need to look at more.
                         return doc1;
                     }
                 }
@@ -690,12 +568,9 @@ public class DeDuplicator extends Processor
      * Process a CrawlURI looking up in the index by content digest
      *
      * @param curi The CrawlURI to process
-     * @param currHostStats A statistics object for the current host.
-     * If per host statistics tracking is enabled this
-     * must be non null and the method will increment
-     * appropriate counters on it.
-     * @return The result of the lookup (a Lucene document). If a duplicate is
-     * not found null is returned.
+     * @param currHostStats A statistics object for the current host. If per host statistics tracking is enabled this
+     * must be non null and the method will increment appropriate counters on it.
+     * @return The result of the lookup (a Lucene document). If a duplicate is not found null is returned.
      */
     protected Document lookupByDigest(CrawlURI curi, Statistics currHostStats) {
         Document duplicate = null;
@@ -720,7 +595,7 @@ public class DeDuplicator extends Processor
             if (hits != null && hits.size() > 0) {
                 // Can definitely be more then one
                 // Note: We may find an equivalent match before we find an
-                //       (existing) exact match. 
+                // (existing) exact match.
                 // TODO: Ensure that an exact match is recorded if it exists.
                 Iterator<ScoreDoc> hitsIterator = hits.iterator();
                 while (hitsIterator.hasNext() && duplicate == null) {
@@ -735,18 +610,14 @@ public class DeDuplicator extends Processor
                         if (statsPerHost) {
                             currHostStats.exactURLDuplicates++;
                         }
-                        logger.finest("Found exact match for " +
-                                curi.toString());
+                        logger.finest("Found exact match for " + curi.toString());
                     }
 
                     // If not, then check if it is an equivalent match (if
                     // equivalent matches are allowed).
                     if (duplicate == null && equivalent) {
-                        String normalURL =
-                                DigestIndexer.stripURL(curi.toString());
-                        String indexNormalURL =
-                                doc.get(
-                                        DigestIndexer.FIELD_URL_NORMALIZED);
+                        String normalURL = DigestIndexer.stripURL(curi.toString());
+                        String indexNormalURL = doc.get(DigestIndexer.FIELD_URL_NORMALIZED);
                         if (normalURL.equals(indexNormalURL)) {
                             duplicate = doc;
                             stats.equivalentURLDuplicates++;
@@ -754,9 +625,8 @@ public class DeDuplicator extends Processor
                                 currHostStats.equivalentURLDuplicates++;
                             }
                             curi.addAnnotation("equivalent to " + indexURL);
-                            logger.finest("Found equivalent match for " +
-                                    curi.toString() + ". Normalized: " +
-                                    normalURL + ". Equivalent to: " + indexURL);
+                            logger.finest("Found equivalent match for " + curi.toString() + ". Normalized: "
+                                    + normalURL + ". Equivalent to: " + indexURL);
                         }
                     }
 
@@ -771,8 +641,7 @@ public class DeDuplicator extends Processor
                     if (statsPerHost) {
                         currHostStats.mirrorNumber++;
                     }
-                    logger.log(Level.FINEST, "Found mirror URLs for " +
-                            curi.toString() + ". " + mirrors);
+                    logger.log(Level.FINEST, "Found mirror URLs for " + curi.toString() + ". " + mirrors);
                 }
             }
         } catch (IOException e) {
@@ -785,19 +654,19 @@ public class DeDuplicator extends Processor
         StringBuffer ret = new StringBuffer();
         ret.append("Processor: is.hi.bok.digest.DeDuplicator\n");
         ret.append("  Function:          Abort processing of duplicate records\n");
-        ret.append("                     - Lookup by " +
-                (lookupByURL ? "url" : "digest") + " in use\n");
+        ret.append("                     - Lookup by " + (lookupByURL ? "url" : "digest") + " in use\n");
         ret.append("  Total handled:     " + stats.handledNumber + "\n");
-        ret.append("  Duplicates found:  " + stats.duplicateNumber + " " +
-                getPercentage(stats.duplicateNumber, stats.handledNumber) + "\n");
-        ret.append("  Bytes total:       " + stats.totalAmount + " (" +
-                ArchiveUtils.formatBytesForDisplay(stats.totalAmount) + ")\n");
-        ret.append("  Bytes discarded:   " + stats.duplicateAmount + " (" +
-                ArchiveUtils.formatBytesForDisplay(stats.duplicateAmount) + ") " +
-                getPercentage(stats.duplicateAmount, stats.totalAmount) + "\n");
+        ret.append("  Duplicates found:  " + stats.duplicateNumber + " "
+                + getPercentage(stats.duplicateNumber, stats.handledNumber) + "\n");
+        ret.append("  Bytes total:       " + stats.totalAmount + " ("
+                + ArchiveUtils.formatBytesForDisplay(stats.totalAmount) + ")\n");
+        ret.append("  Bytes discarded:   " + stats.duplicateAmount + " ("
+                + ArchiveUtils.formatBytesForDisplay(stats.duplicateAmount) + ") "
+                + getPercentage(stats.duplicateAmount, stats.totalAmount) + "\n");
 
-        ret.append("  New (no hits):     " + (stats.handledNumber -
-                (stats.mirrorNumber + stats.exactURLDuplicates + stats.equivalentURLDuplicates)) + "\n");
+        ret.append("  New (no hits):     "
+                + (stats.handledNumber - (stats.mirrorNumber + stats.exactURLDuplicates + stats.equivalentURLDuplicates))
+                + "\n");
         ret.append("  Exact hits:        " + stats.exactURLDuplicates + "\n");
         ret.append("  Equivalent hits:   " + stats.equivalentURLDuplicates + "\n");
         if (lookupByURL == false) {
@@ -815,8 +684,7 @@ public class DeDuplicator extends Processor
         }
 
         if (statsPerHost) {
-            ret.append("  [Host] [total] [duplicates] [bytes] " +
-                    "[bytes discarded] [new] [exact] [equiv]");
+            ret.append("  [Host] [total] [duplicates] [bytes] " + "[bytes discarded] [new] [exact] [equiv]");
             if (lookupByURL == false) {
                 ret.append(" [mirror]");
             }
@@ -840,10 +708,8 @@ public class DeDuplicator extends Processor
                     ret.append(" ");
                     ret.append(curr.duplicateAmount);
                     ret.append(" ");
-                    ret.append(curr.handledNumber -
-                            (curr.mirrorNumber +
-                                    curr.exactURLDuplicates +
-                                    curr.equivalentURLDuplicates));
+                    ret.append(curr.handledNumber
+                            - (curr.mirrorNumber + curr.exactURLDuplicates + curr.equivalentURLDuplicates));
                     ret.append(" ");
                     ret.append(curr.exactURLDuplicates);
                     ret.append(" ");
@@ -895,11 +761,9 @@ public class DeDuplicator extends Processor
         return null;
     }
 
-    protected void doAnalysis(CrawlURI curi, Statistics currHostStats,
-            boolean isDuplicate) {
+    protected void doAnalysis(CrawlURI curi, Statistics currHostStats, boolean isDuplicate) {
         try {
-            Query query = queryField(DigestIndexer.FIELD_URL,
-                    curi.toString());
+            Query query = queryField(DigestIndexer.FIELD_URL, curi.toString());
             AllDocsCollector collectAllCollector = new AllDocsCollector();
             index.search(query, collectAllCollector);
             List<ScoreDoc> hits = collectAllCollector.getHits();
@@ -917,9 +781,7 @@ public class DeDuplicator extends Processor
                     // us to do a greater then (later) or lesser than (earlier)
                     // comparison of the strings.
                     String timestamp = doc.get(DigestIndexer.FIELD_TIMESTAMP);
-                    if (docToEval == null
-                            || docToEval.get(DigestIndexer.FIELD_TIMESTAMP)
-                            .compareTo(timestamp) > 0) {
+                    if (docToEval == null || docToEval.get(DigestIndexer.FIELD_TIMESTAMP).compareTo(timestamp) > 0) {
                         // Found a more recent hit.
                         docToEval = doc;
                     }
@@ -934,24 +796,18 @@ public class DeDuplicator extends Processor
         }
     }
 
-    protected void doTimestampAnalysis(CrawlURI curi, Document urlHit,
-            Statistics currHostStats, boolean isDuplicate) {
+    protected void doTimestampAnalysis(CrawlURI curi, Document urlHit, Statistics currHostStats, boolean isDuplicate) {
 
-        HttpMethod method = (HttpMethod) curi.getObject(
-                CoreAttributeConstants.A_HTTP_TRANSACTION);
+        HttpMethod method = (HttpMethod) curi.getObject(CoreAttributeConstants.A_HTTP_TRANSACTION);
 
         // Compare datestamps (last-modified versus the indexed date)
         Date lastModified = null;
         if (method.getResponseHeader("last-modified") != null) {
-            SimpleDateFormat sdf =
-                    new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z",
-                            Locale.ENGLISH);
+            SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.ENGLISH);
             try {
-                lastModified = sdf.parse(
-                        method.getResponseHeader("last-modified").getValue());
+                lastModified = sdf.parse(method.getResponseHeader("last-modified").getValue());
             } catch (ParseException e) {
-                logger.log(Level.INFO, "Exception parsing last modified of " +
-                        curi.toString(), e);
+                logger.log(Level.INFO, "Exception parsing last modified of " + curi.toString(), e);
                 return;
             }
         } else {
@@ -966,11 +822,9 @@ public class DeDuplicator extends Processor
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
         Date lastFetch = null;
         try {
-            lastFetch = sdf.parse(
-                    urlHit.get(DigestIndexer.FIELD_TIMESTAMP));
+            lastFetch = sdf.parse(urlHit.get(DigestIndexer.FIELD_TIMESTAMP));
         } catch (ParseException e) {
-            logger.log(Level.WARNING, "Exception parsing indexed date for " +
-                    urlHit.get(DigestIndexer.FIELD_URL), e);
+            logger.log(Level.WARNING, "Exception parsing indexed date for " + urlHit.get(DigestIndexer.FIELD_URL), e);
             return;
         }
 
@@ -982,15 +836,13 @@ public class DeDuplicator extends Processor
                 if (statsPerHost) {
                     currHostStats.timestampChangeFalse++;
                 }
-                logger.finest("Last-modified falsly predicts change on " +
-                        curi.toString());
+                logger.finest("Last-modified falsly predicts change on " + curi.toString());
             } else {
                 stats.timestampChangeCorrect++;
                 if (statsPerHost) {
                     currHostStats.timestampChangeCorrect++;
                 }
-                logger.finest("Last-modified correctly predicts change on " +
-                        curi.toString());
+                logger.finest("Last-modified correctly predicts change on " + curi.toString());
             }
         } else {
             // Header does not predict change.
@@ -1000,14 +852,11 @@ public class DeDuplicator extends Processor
                 if (statsPerHost) {
                     currHostStats.timestampNoChangeCorrect++;
                 }
-                logger.finest("Last-modified correctly predicts no-change on " +
-                        curi.toString());
+                logger.finest("Last-modified correctly predicts no-change on " + curi.toString());
             } else {
                 // As this is particularly bad we'll log the URL at INFO level
-                logger.log(Level.INFO, "Last-modified incorrectly indicated " +
-                        "no-change on " + curi.toString() + " " +
-                        curi.getContentType() + ". last-modified: " +
-                        lastModified + ". Last fetched: " + lastFetch);
+                logger.log(Level.INFO, "Last-modified incorrectly indicated " + "no-change on " + curi.toString() + " "
+                        + curi.getContentType() + ". last-modified: " + lastModified + ". Last fetched: " + lastFetch);
                 stats.timestampNoChangeFalse++;
                 if (statsPerHost) {
                     currHostStats.timestampNoChangeFalse++;
@@ -1029,12 +878,11 @@ public class DeDuplicator extends Processor
 
         /** alternate solution. */
         BytesRef valueRef = new BytesRef(value.getBytes());
-        query = new ConstantScoreQuery(
-                new TermRangeFilter(fieldName, valueRef, valueRef, true, true));
+        query = new ConstantScoreQuery(new TermRangeFilter(fieldName, valueRef, valueRef, true, true));
 
         /** The most clean solution, but it seems also memory demanding */
-        //query = new ConstantScoreQuery(new FieldCacheTermsFilter(fieldName,
-        //        value));
+        // query = new ConstantScoreQuery(new FieldCacheTermsFilter(fieldName,
+        // value));
         return query;
     }
 
@@ -1047,38 +895,34 @@ class Statistics {
     // General statistics
 
     /**
-     * Number of URIs that make it through the processors exclusion rules
-     * and are processed by it.
+     * Number of URIs that make it through the processors exclusion rules and are processed by it.
      */
     long handledNumber = 0;
 
     /**
-     * Number of URIs that are deemed duplicates and further processing is
-     * aborted
+     * Number of URIs that are deemed duplicates and further processing is aborted
      */
     long duplicateNumber = 0;
 
     /**
-     * Then number of URIs that turned out to have exact URL and content
-     * digest matches.
+     * Then number of URIs that turned out to have exact URL and content digest matches.
      */
     long exactURLDuplicates = 0;
 
     /**
-     * The number of URIs that turned out to have equivalent URL and content
-     * digest matches.
+     * The number of URIs that turned out to have equivalent URL and content digest matches.
      */
     long equivalentURLDuplicates = 0;
 
     /**
-     * The number of URIs that, while having no exact or equivalent matches,
-     * do have exact content digest matches against non-equivalent URIs.
+     * The number of URIs that, while having no exact or equivalent matches, do have exact content digest matches
+     * against non-equivalent URIs.
      */
     long mirrorNumber = 0;
 
     /**
-     * The total amount of data represented by the documents who were deemed
-     * duplicates and excluded from further processing.
+     * The total amount of data represented by the documents who were deemed duplicates and excluded from further
+     * processing.
      */
     long duplicateAmount = 0;
 

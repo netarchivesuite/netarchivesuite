@@ -56,9 +56,8 @@ import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.common.utils.TimeUtils;
 
 /**
- * This class extends the functionality of FTPRemoteFile by allowing local input
- * to be taken from an ArchiveRecord. It has factory methods which return an
- * instance of FTPRemoteFile when a File is used as input so that behaviour is
+ * This class extends the functionality of FTPRemoteFile by allowing local input to be taken from an ArchiveRecord. It
+ * has factory methods which return an instance of FTPRemoteFile when a File is used as input so that behaviour is
  * effectively delegated to that class when required.
  */
 @SuppressWarnings({"serial"})
@@ -71,9 +70,8 @@ public class ExtendedFTPRemoteFile implements RemoteFile {
     private transient ArchiveRecord record;
 
     /**
-     * The name to be used for the original record. ArchiveRecords do not
-     * necessarily possess natural names so a guid is used. For arcfiles, this
-     * is not guaranteed to be the same across multiple fetches of the same record
+     * The name to be used for the original record. ArchiveRecords do not necessarily possess natural names so a guid is
+     * used. For arcfiles, this is not guaranteed to be the same across multiple fetches of the same record
      */
     private String name;
 
@@ -95,13 +93,11 @@ public class ExtendedFTPRemoteFile implements RemoteFile {
     private static final transient int FTP_DATATIMEOUT = Settings.getInt(FTP_DATATIMEOUT_SETTINGS);
 
     /** The default place in classpath where the settings file can be found. */
-    private static final String DEFAULT_SETTINGS_CLASSPATH =
-            "dk/netarkivet/common/distribute/FTPRemoteFileSettings.xml";
+    private static final String DEFAULT_SETTINGS_CLASSPATH = "dk/netarkivet/common/distribute/FTPRemoteFileSettings.xml";
 
     /*
-     * The static initialiser is called when the class is loaded.
-     * It will add default values for all settings defined in this class, by
-     * loading them from a settings.xml file in classpath.
+     * The static initialiser is called when the class is loaded. It will add default values for all settings defined in
+     * this class, by loading them from a settings.xml file in classpath.
      */
     static {
         Settings.addDefaultClasspathSettings(DEFAULT_SETTINGS_CLASSPATH);
@@ -114,11 +110,10 @@ public class ExtendedFTPRemoteFile implements RemoteFile {
     private final String ftpFileName;
 
     /**
-     * Create an instance of this class connected to an ARC or WARC record.
-     * Unfortunately the reflection we use to find the factory method cannot
-     * find this method directly because the runtime-class of the parameter
-     * is not ArchiveRecord. Therefore we also define the two specific overloaded
-     * factory methods for ARCRecords and WARCRecord.
+     * Create an instance of this class connected to an ARC or WARC record. Unfortunately the reflection we use to find
+     * the factory method cannot find this method directly because the runtime-class of the parameter is not
+     * ArchiveRecord. Therefore we also define the two specific overloaded factory methods for ARCRecords and
+     * WARCRecord.
      *
      * @param record the record
      * @return the instance
@@ -148,16 +143,13 @@ public class ExtendedFTPRemoteFile implements RemoteFile {
     }
 
     /**
-     * This method returns an instance of FTPRemoteFile using the
-     * factory method with the same signature in that class.
+     * This method returns an instance of FTPRemoteFile using the factory method with the same signature in that class.
      *
      * @param localFile File object for the remote file
-     * @param useChecksums If true, checksums will be used to check
-     * transfers.
-     * @param fileDeletable If true, this file will be deleted after upload
-     * to FTP.
-     * @param multipleDownloads If true, the file will not be removed from FTP
-     * server automatically after first download.
+     * @param useChecksums If true, checksums will be used to check transfers.
+     * @param fileDeletable If true, this file will be deleted after upload to FTP.
+     * @param multipleDownloads If true, the file will not be removed from FTP server automatically after first
+     * download.
      * @return FTPRemoteFile object
      * @throws IOFailure if FTPRemoteFile creation fails
      */
@@ -168,16 +160,13 @@ public class ExtendedFTPRemoteFile implements RemoteFile {
     }
 
     /**
-     * This method returns an instance of FTPRemoteFile using the
-     * factory method with the same signature in that class.
+     * This method returns an instance of FTPRemoteFile using the factory method with the same signature in that class.
      *
      * @param localFile File object for the remote file
-     * @param useChecksums If true, checksums will be used to check
-     * transfers.
-     * @param fileDeletable If true, this file will be deleted after upload
-     * to FTP.
-     * @param multipleDownloads If true, the file will not be removed from FTP
-     * server automatically after first download.
+     * @param useChecksums If true, checksums will be used to check transfers.
+     * @param fileDeletable If true, this file will be deleted after upload to FTP.
+     * @param multipleDownloads If true, the file will not be removed from FTP server automatically after first
+     * download.
      * @return FTPRemoteFile object
      * @throws IOFailure if FTPRemoteFile creation fails
      */
@@ -278,8 +267,7 @@ public class ExtendedFTPRemoteFile implements RemoteFile {
     }
 
     /**
-     * The cleanup to be effected is deletion of the intermediate file from the
-     * ftp server.
+     * The cleanup to be effected is deletion of the intermediate file from the ftp server.
      */
     @Override
     public void cleanup() {
@@ -301,9 +289,8 @@ public class ExtendedFTPRemoteFile implements RemoteFile {
     }
 
     /**
-     * For an ARCRecord, this is the length of the record as defined in the
-     * header. For a WARCRecods, this is the payload length, defined as the
-     * difference between the total record length and the size of the header.
+     * For an ARCRecord, this is the length of the record as defined in the header. For a WARCRecods, this is the
+     * payload length, defined as the difference between the total record length and the size of the header.
      *
      * @return the length of the record content in bytes.
      */
@@ -322,8 +309,7 @@ public class ExtendedFTPRemoteFile implements RemoteFile {
     }
 
     /**
-     * Creates a RemoteFile instance by uploading the content of the given
-     * record to a file on the ftp server.
+     * Creates a RemoteFile instance by uploading the content of the given record to a file on the ftp server.
      *
      * @param record The record to be copied.
      */
@@ -383,8 +369,7 @@ public class ExtendedFTPRemoteFile implements RemoteFile {
     }
 
     /**
-     * A human readbale description of the object which should be sufficient to
-     * identify and track it.
+     * A human readbale description of the object which should be sufficient to identify and track it.
      *
      * @return description of this object.
      */
@@ -392,14 +377,13 @@ public class ExtendedFTPRemoteFile implements RemoteFile {
         return record.getHeader().getRecordIdentifier() + "_" + record.getHeader().getOffset() + "_" + "(" + name + ")";
     }
 
-    //TODO This code is copied from FTPRemoteFile. A better solution would
-    //be to have some sort of helper class - e.g. an FTPConnectionManager - with
-    //a single copy of this code.
+    // TODO This code is copied from FTPRemoteFile. A better solution would
+    // be to have some sort of helper class - e.g. an FTPConnectionManager - with
+    // a single copy of this code.
 
     /**
-     * Create FTPClient and log on to ftp-server, if not already connected to
-     * ftp-server.  Attempts to set binary mode and passive mode.
-     * Will try to login up to FTP_RETRIES times, if login fails.
+     * Create FTPClient and log on to ftp-server, if not already connected to ftp-server. Attempts to set binary mode
+     * and passive mode. Will try to login up to FTP_RETRIES times, if login fails.
      */
     private void logOn() {
         if (currentFTPClient != null && currentFTPClient.isConnected()) {
@@ -409,8 +393,8 @@ public class ExtendedFTPRemoteFile implements RemoteFile {
         }
 
         if (log.isDebugEnabled()) {
-            log.trace("Try to logon to ftp://{}:{}@{}:{}",
-                    ftpUserName, ftpUserPassword.replaceAll(".", "*"), ftpServerName, ftpServerPort);
+            log.trace("Try to logon to ftp://{}:{}@{}:{}", ftpUserName, ftpUserPassword.replaceAll(".", "*"),
+                    ftpServerName, ftpServerPort);
         }
 
         int tries = 0;
@@ -421,8 +405,8 @@ public class ExtendedFTPRemoteFile implements RemoteFile {
                 currentFTPClient.connect(ftpServerName, ftpServerPort);
                 currentFTPClient.setDataTimeout(FTP_DATATIMEOUT);
                 if (!currentFTPClient.login(ftpUserName, ftpUserPassword)) {
-                    final String message = "Could not log in [from host: " + SystemUtils.getLocalHostName()
-                            + "] to '" + ftpServerName + "' on port " + ftpServerPort + " with user '" + ftpUserName
+                    final String message = "Could not log in [from host: " + SystemUtils.getLocalHostName() + "] to '"
+                            + ftpServerName + "' on port " + ftpServerPort + " with user '" + ftpUserName
                             + "' password '" + ftpUserPassword.replaceAll(".", "*") + "': " + getFtpErrorMessage();
                     log.warn(message);
                     throw new IOFailure(message);
@@ -457,8 +441,8 @@ public class ExtendedFTPRemoteFile implements RemoteFile {
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("Logged onto ftp://{}:{}@{}:{}",
-                    ftpUserName, ftpUserPassword.replaceAll(".", "*"), ftpServerName, ftpServerPort);
+            log.debug("Logged onto ftp://{}:{}@{}:{}", ftpUserName, ftpUserPassword.replaceAll(".", "*"),
+                    ftpServerName, ftpServerPort);
         }
     }
 

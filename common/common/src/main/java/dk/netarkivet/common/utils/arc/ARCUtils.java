@@ -53,8 +53,8 @@ import dk.netarkivet.common.utils.InputStreamUtils;
 import dk.netarkivet.common.utils.SystemUtils;
 
 /**
- * Various utilities that do stuff that ARCWriter does not provide.
- * Also includes method for converting an ARCRecord to a byte array.
+ * Various utilities that do stuff that ARCWriter does not provide. Also includes method for converting an ARCRecord to
+ * a byte array.
  */
 public final class ARCUtils {
 
@@ -66,9 +66,7 @@ public final class ARCUtils {
     }
 
     /**
-     * Matches HTTP header lines like
-     * HTTP/1.1 404 Page has gone south
-     * Groups:  111 2222222222222222222.
+     * Matches HTTP header lines like HTTP/1.1 404 Page has gone south Groups: 111 2222222222222222222.
      */
     private static final Pattern HTTP_HEADER_PATTERN = Pattern.compile("^HTTP/1\\.[01] (\\d+) (.*)$");
 
@@ -76,8 +74,7 @@ public final class ARCUtils {
     public static final String RESPONSETEXT = "RESPONSETEXT";
 
     /**
-     * Insert the contents of an ARC file (skipping an optional initial
-     * filedesc: header) in another ARCfile.
+     * Insert the contents of an ARC file (skipping an optional initial filedesc: header) in another ARCfile.
      *
      * @param arcFile An ARC file to read.
      * @param aw A place to write the arc records
@@ -97,7 +94,7 @@ public final class ARCUtils {
         }
         Iterator<ArchiveRecord> it = r.iterator();
         ARCRecord record;
-        it.next(); //Skip ARC file header
+        it.next(); // Skip ARC file header
         // ARCReaderFactory guarantees the first record exists and is a
         // filedesc, or it would throw exception
         while (it.hasNext()) {
@@ -109,10 +106,9 @@ public final class ARCUtils {
     /**
      * Writes the given ARCRecord on the given ARCWriter.
      * <p>
-     * Note that the ARCWriter.write method takes the metadata fields as
-     * separate arguments instead of accepting an ARCRecordMetaData object. It
-     * uses the ArchiveUtils.getDate method to convert an ARCstyle datestring to
-     * a Date object.
+     * Note that the ARCWriter.write method takes the metadata fields as separate arguments instead of accepting an
+     * ARCRecordMetaData object. It uses the ArchiveUtils.getDate method to convert an ARCstyle datestring to a Date
+     * object.
      *
      * @param aw The ARCWriter to output the record on.
      * @param record The record to output
@@ -120,16 +116,16 @@ public final class ARCUtils {
      */
     private static void copySingleRecord(ARCWriter aw, ARCRecord record) {
         try {
-            //Prepare metadata...
+            // Prepare metadata...
             ARCRecordMetaData meta = record.getMetaData();
             String uri = meta.getUrl();
             String mime = meta.getMimetype();
             String ip = meta.getIp();
-            // Note the ArchiveUtils.getDate() converts an ARC-style datestring 
+            // Note the ArchiveUtils.getDate() converts an ARC-style datestring
             // to a Date object
             long timeStamp = ArchiveUtils.getDate(meta.getDate()).getTime();
-            //...and write the given files content into the writer
-            // Note ARCRecord extends InputStream            
+            // ...and write the given files content into the writer
+            // Note ARCRecord extends InputStream
             aw.write(uri, mime, ip, timeStamp, meta.getLength(), record);
         } catch (Exception e) {
             throw new IOFailure("Error occurred while writing an ARC record" + record, e);
@@ -147,14 +143,11 @@ public final class ARCUtils {
         PrintStream ps = null;
         try {
             ps = new PrintStream(new FileOutputStream(newFile));
-            aw = new ARCWriter(
-                    new AtomicInteger(), ps,
-                    //This name is used for the first (file metadata) record
-                    newFile,
-                    false, //Don't compress
-                    //Use current time
-                    ArchiveUtils.get14DigitDate(System.currentTimeMillis()),
-                    null //No particular file metadata to add
+            aw = new ARCWriter(new AtomicInteger(), ps,
+            // This name is used for the first (file metadata) record
+                    newFile, false, // Don't compress
+                    // Use current time
+                    ArchiveUtils.get14DigitDate(System.currentTimeMillis()), null // No particular file metadata to add
             );
         } catch (IOException e) {
             if (ps != null) {
@@ -168,18 +161,15 @@ public final class ARCUtils {
     }
 
     /**
-     * Write a file to an ARC file. The writing is done by
-     * an existing ARCWriter.
-     * An ARCRecord will be added, which contains a header and the contents
-     * of the file. The date of the record written will be set to
-     * the lastModified value of the file being written.
+     * Write a file to an ARC file. The writing is done by an existing ARCWriter. An ARCRecord will be added, which
+     * contains a header and the contents of the file. The date of the record written will be set to the lastModified
+     * value of the file being written.
      *
      * @param aw The ARCWriter doing the writing
      * @param file The file we want to write to the ARC file
      * @param uri The uri for the ARCRecord being written
      * @param mime The mimetype for the ARCRecord being written
-     * @throws ArgumentNotValid if any arguments aw and file are null
-     * and arguments uri and mime are null or empty.
+     * @throws ArgumentNotValid if any arguments aw and file are null and arguments uri and mime are null or empty.
      */
     public static void writeFileToARC(ARCWriter aw, File file, String uri, String mime) {
         ArgumentNotValid.checkNotNull(aw, "ARCWriter aw");
@@ -190,11 +180,11 @@ public final class ARCUtils {
         InputStream is = null;
         try {
             try {
-                //Prepare metadata...
+                // Prepare metadata...
                 String ip = SystemUtils.getLocalIP();
                 long timeStamp = file.lastModified();
                 long length = file.length();
-                //...and write the CDX file's content into the writer
+                // ...and write the CDX file's content into the writer
                 is = new FileInputStream(file);
                 aw.write(uri, mime, ip, timeStamp, length, is);
             } finally {
@@ -218,26 +208,21 @@ public final class ARCUtils {
      * @throws IOException redirect from ARCWriter constructure
      */
     public static ARCWriter getToolsARCWriter(PrintStream stream, File destinationArcfile) throws IOException {
-        return new ARCWriter(new AtomicInteger(), stream,
-                destinationArcfile,
-                false, //Don't compress
+        return new ARCWriter(new AtomicInteger(), stream, destinationArcfile, false, // Don't compress
                 // Use current time
-                ArchiveUtils.get14DigitDate(System.currentTimeMillis()),
-                null // //No particular file metadata to add
+                ArchiveUtils.get14DigitDate(System.currentTimeMillis()), null // //No particular file metadata to add
         );
     }
 
     /**
      * Read the contents of an ARC record into a byte array.
      *
-     * @param in An ARC record to read from.  After reading, the ARC Record
-     * will no longer have its own data available for reading.
-     * @return A byte array containing the contents of the ARC record.  Note
-     * that the size of this may be different from the size given in the
-     * ARC record metadata.
-     * @throws IOException If there is an error reading the data, or if the
-     * record is longer than Integer.MAX_VALUE (since we can't make bigger
-     * arrays).
+     * @param in An ARC record to read from. After reading, the ARC Record will no longer have its own data available
+     * for reading.
+     * @return A byte array containing the contents of the ARC record. Note that the size of this may be different from
+     * the size given in the ARC record metadata.
+     * @throws IOException If there is an error reading the data, or if the record is longer than Integer.MAX_VALUE
+     * (since we can't make bigger arrays).
      */
     public static byte[] readARCRecord(ARCRecord in) throws IOException {
         ArgumentNotValid.checkNotNull(in, "ARCRecord in");
@@ -247,9 +232,9 @@ public final class ARCUtils {
         }
         // read from stream
         // The arcreader has a number of "features" that complicates the read
-        //  1) the record at offset 0, returns too large a length
-        //  2) readfully does not work
-        //  3) ARCRecord.read(buf, offset, length) is broken.
+        // 1) the record at offset 0, returns too large a length
+        // 2) readfully does not work
+        // 3) ARCRecord.read(buf, offset, length) is broken.
         // TODO verify if these "features" are still around: See bugs #903, #904,
         // #905
         int dataLength = (int) in.getMetaData().getLength();

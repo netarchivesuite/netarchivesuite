@@ -72,21 +72,19 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
     public static int FTP_DATATIMEOUT = Settings.getInt(CommonSettings.FTP_DATATIMEOUT_SETTINGS);
 
     /** The default place in classpath where the settings file can be found. */
-    private static final String DEFAULT_SETTINGS_CLASSPATH =
-            "dk/netarkivet/common/distribute/FTPRemoteFileSettings.xml";
+    private static final String DEFAULT_SETTINGS_CLASSPATH = "dk/netarkivet/common/distribute/FTPRemoteFileSettings.xml";
 
     /*
-     * The static initialiser is called when the class is loaded.
-     * It will add default values for all settings defined in this class, by
-     * loading them from a settings.xml file in classpath.
+     * The static initialiser is called when the class is loaded. It will add default values for all settings defined in
+     * this class, by loading them from a settings.xml file in classpath.
      */
     static {
         Settings.addDefaultClasspathSettings(DEFAULT_SETTINGS_CLASSPATH);
     }
 
     /**
-     * Ftp-connection information. FTP-related settings are by default read from
-     * settings, unless connectionParameters are given in the constructor.
+     * Ftp-connection information. FTP-related settings are by default read from settings, unless connectionParameters
+     * are given in the constructor.
      */
     private String ftpServerName;
 
@@ -100,7 +98,7 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
     /** The FTP client object for the current connection. */
     private transient FTPClient currentFTPClient;
 
-    /** The name that we use for the file on the FTP server.  This is only for internal use. */
+    /** The name that we use for the file on the FTP server. This is only for internal use. */
     private final String ftpFileName;
 
     /** If useChecksums is true, contains the file checksum. */
@@ -111,18 +109,14 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
     // will not run.
 
     /**
-     * Private constructor used by getInstance() static-method Tries to generate
-     * unique name on ftp-server.
+     * Private constructor used by getInstance() static-method Tries to generate unique name on ftp-server.
      *
      * @param localFile File used to create new file on ftp-server.
-     * @param useChecksums If true, checksums will be used to check
-     * transfers.
-     * @param fileDeletable If true, this file will be deleted after upload
-     * to FTP.
-     * @param multipleDownloads If true, the file will not be removed from FTP
-     * server automatically after first download.
-     * @param connectionParams If not null, contains connection parameters
-     * to the FTP-server desired by the user
+     * @param useChecksums If true, checksums will be used to check transfers.
+     * @param fileDeletable If true, this file will be deleted after upload to FTP.
+     * @param multipleDownloads If true, the file will not be removed from FTP server automatically after first
+     * download.
+     * @param connectionParams If not null, contains connection parameters to the FTP-server desired by the user
      * @throws IOFailure if MD5 checksum fails, or ftp fails
      * @throws ArgumentNotValid if the local file cannot be read.
      */
@@ -151,14 +145,14 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
             ftpFileName = "-";
         } else {
             // If the ftpServerName is localhost, it is not going to work across
-            // a network.  Warn about this.
+            // a network. Warn about this.
             if (ftpServerName.equalsIgnoreCase("localhost")) {
                 ftpServerName = SystemUtils.getLocalHostName();
                 log.debug("ftpServerName set to localhost on machine: {}, resetting to {}",
                         SystemUtils.getLocalHostName(), ftpServerName);
             }
             // A large enough number to make it unlikely that two files are
-            // created with the same FTP server name.  Already the millisecond
+            // created with the same FTP server name. Already the millisecond
             // datestamp reduces likelyhood, with this even if two
             // processes/threads try to upload the same file in the same
             // millisecond (very unlikely) they have only .01% chance of
@@ -190,8 +184,8 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
                     try {
                         success = currentFTPClient.storeFile(ftpFileName, in);
                         if (!success) {
-                            log.debug("FTP store failed attempt '{}' of {}: {}",
-                                    tried, FTP_RETRIES, getFtpErrorMessage());
+                            log.debug("FTP store failed attempt '{}' of {}: {}", tried, FTP_RETRIES,
+                                    getFtpErrorMessage());
                         }
                     } catch (IOException e) {
                         String message = "Write operation to '" + ftpFileName + "' failed on attempt " + tried + " of "
@@ -233,24 +227,21 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
     }
 
     /**
-     * Create a remote file that handles the transport of the remote file data.
-     * This method is used by the sender to prepare the transport.
+     * Create a remote file that handles the transport of the remote file data. This method is used by the sender to
+     * prepare the transport.
      *
      * @param localFile File object for the remote file
-     * @param useChecksums If true, checksums will be used to check
-     * transfers.
-     * @param fileDeletable If true, this file will be deleted after upload
-     * to FTP.
-     * @param multipleDownloads If true, the file will not be removed from FTP
-     * server automatically after first download.
+     * @param useChecksums If true, checksums will be used to check transfers.
+     * @param fileDeletable If true, this file will be deleted after upload to FTP.
+     * @param multipleDownloads If true, the file will not be removed from FTP server automatically after first
+     * download.
      * @return FTPRemoteFile object
      * @throws IOFailure if FTPRemoteFile creation fails
      */
     public static RemoteFile getInstance(File localFile, Boolean useChecksums, Boolean fileDeletable,
             Boolean multipleDownloads) throws IOFailure {
         ArgumentNotValid.checkNotNull(localFile, "File remoteFile");
-        return new FTPRemoteFile(localFile, useChecksums,
-                fileDeletable, multipleDownloads, null);
+        return new FTPRemoteFile(localFile, useChecksums, fileDeletable, multipleDownloads, null);
     }
 
     public static RemoteFile getInstance(File localFile, Boolean useChecksums, Boolean fileDeletable,
@@ -260,14 +251,12 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
     }
 
     /**
-     * An implementation of the getInputStream operation that works with FTP.
-     * Notice that most of the special work (logging out and checking MD5)
-     * happens in the close() method of the returned InputStream, since that is
-     * the only place where we can know we're done.
+     * An implementation of the getInputStream operation that works with FTP. Notice that most of the special work
+     * (logging out and checking MD5) happens in the close() method of the returned InputStream, since that is the only
+     * place where we can know we're done.
      *
-     * @return An InputStream that will deliver the data transferred by FTP.
-     * Holding on to this for long periods without reading any data
-     * might cause a timeout.
+     * @return An InputStream that will deliver the data transferred by FTP. Holding on to this for long periods without
+     * reading any data might cause a timeout.
      */
     public InputStream getInputStream() {
         if (filesize == 0) {
@@ -288,11 +277,11 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
                     try {
                         super.close();
                         if (useChecksums) {
-                            String newChecksum = ChecksumCalculator.toHex(((DigestInputStream) in)
-                                    .getMessageDigest().digest());
+                            String newChecksum = ChecksumCalculator.toHex(((DigestInputStream) in).getMessageDigest()
+                                    .digest());
                             if (!newChecksum.equals(checksum)) {
-                                final String msg = "Checksums of '" + ftpFileName + "' do not match! "
-                                        + "Should be " + checksum + " but was " + newChecksum;
+                                final String msg = "Checksums of '" + ftpFileName + "' do not match! " + "Should be "
+                                        + checksum + " but was " + newChecksum;
                                 log.warn(msg);
                                 throw new IOFailure(msg);
                             }
@@ -317,13 +306,11 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
     }
 
     /**
-     * Write the contents of this ftp remote file to an output stream.
-     * Notice that while the checksum of the transferred data is checked, no
-     * retries are performed, and in case of failure, there is no guarantee
-     * that any data have been transferred.
+     * Write the contents of this ftp remote file to an output stream. Notice that while the checksum of the transferred
+     * data is checked, no retries are performed, and in case of failure, there is no guarantee that any data have been
+     * transferred.
      *
-     * @param out OutputStream that the data will be written to.  This stream
-     * will not be closed by this operation.
+     * @param out OutputStream that the data will be written to. This stream will not be closed by this operation.
      * @throws IOFailure If append operation fails
      */
     public void appendTo(OutputStream out) {
@@ -371,9 +358,8 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
     }
 
     /**
-     * Cleanup will delete the file on the FTP server. This method should never
-     * throw exceptions. It is idempotent, meaning it can be called twice
-     * without trouble.
+     * Cleanup will delete the file on the FTP server. This method should never throw exceptions. It is idempotent,
+     * meaning it can be called twice without trouble.
      */
     public void cleanup() {
         if (filesize == 0) {
@@ -397,9 +383,8 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
     }
 
     /**
-     * Create FTPClient and log on to ftp-server, if not already connected to
-     * ftp-server.  Attempts to set binary mode and passive mode.
-     * Will try to login up to FTP_RETRIES times, if login fails.
+     * Create FTPClient and log on to ftp-server, if not already connected to ftp-server. Attempts to set binary mode
+     * and passive mode. Will try to login up to FTP_RETRIES times, if login fails.
      */
     private void logOn() {
         if (currentFTPClient != null && currentFTPClient.isConnected()) {
@@ -409,8 +394,8 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
         }
 
         if (log.isTraceEnabled()) {
-            log.trace("Try to logon to ftp://{}:{}@{}:{}",
-                    ftpUserName, ftpUserPassword.replaceAll(".", "*"), ftpServerName, ftpServerPort);
+            log.trace("Try to logon to ftp://{}:{}@{}:{}", ftpUserName, ftpUserPassword.replaceAll(".", "*"),
+                    ftpServerName, ftpServerPort);
         }
 
         int tries = 0;
@@ -457,8 +442,8 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("Logged onto ftp://{}:{}@{}:{}",
-                    ftpUserName, ftpUserPassword.replaceAll(".", "*"), ftpServerName, ftpServerPort);
+            log.debug("Logged onto ftp://{}:{}@{}:{}", ftpUserName, ftpUserPassword.replaceAll(".", "*"),
+                    ftpServerName, ftpServerPort);
         }
     }
 
@@ -472,8 +457,7 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
                 currentFTPClient.disconnect();
             }
         } catch (IOException e) {
-            String msg = "Disconnect from '" + ftpServerName
-                    + "' failed ";
+            String msg = "Disconnect from '" + ftpServerName + "' failed ";
             if (e instanceof CopyStreamException) {
                 CopyStreamException realException = (CopyStreamException) e;
                 msg += "(real cause = " + realException.getIOException() + ")";
@@ -510,11 +494,10 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
     }
 
     /**
-     * Retrieval of the number of retries for retrieving a file from a FTP
-     * server. Returns the setting for number of retries.
+     * Retrieval of the number of retries for retrieving a file from a FTP server. Returns the setting for number of
+     * retries.
      *
-     * @return The number of retries for the FTP connection, defined in
-     * settings.
+     * @return The number of retries for the FTP connection, defined in settings.
      */
     @Override
     public int getNumberOfRetries() {

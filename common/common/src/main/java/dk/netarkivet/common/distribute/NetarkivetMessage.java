@@ -62,8 +62,8 @@ public abstract class NetarkivetMessage implements Serializable {
      *
      * @param to the initial receiver of the message
      * @param replyTo the initial sender of the message
-     * @throws ArgumentNotValid if to==replyTo, the replyTo parameter is a
-     * topic instead of a queue, or there is a null parameter.
+     * @throws ArgumentNotValid if to==replyTo, the replyTo parameter is a topic instead of a queue, or there is a null
+     * parameter.
      */
     protected NetarkivetMessage(ChannelID to, ChannelID replyTo) {
         ArgumentNotValid.checkNotNull(to, "to");
@@ -132,8 +132,8 @@ public abstract class NetarkivetMessage implements Serializable {
     }
 
     /**
-     * Retrieve message id. Note that message ID is not set until message is
-     * sent, and this method must not be called before then.
+     * Retrieve message id. Note that message ID is not set until message is sent, and this method must not be called
+     * before then.
      *
      * @return message id
      * @throws PermissionDenied If the message has not yet been sent.
@@ -160,9 +160,8 @@ public abstract class NetarkivetMessage implements Serializable {
     }
 
     /**
-     * Retrieve replyOfId. This is set by subclasses of NetarkivetMessage, to
-     * indicate that this is a reply of some other message. If
-     * the subclass doesn't set replyOfId, this method behaves like getId.
+     * Retrieve replyOfId. This is set by subclasses of NetarkivetMessage, to indicate that this is a reply of some
+     * other message. If the subclass doesn't set replyOfId, this method behaves like getId.
      *
      * @return replyOfId
      */
@@ -193,8 +192,7 @@ public abstract class NetarkivetMessage implements Serializable {
     }
 
     /**
-     * Returns a string containing:
-     * <id>: To <toName> ReplyTo <replyToName> <isOK> [:error message].
+     * Returns a string containing: <id>: To <toName> ReplyTo <replyToName> <isOK> [:error message].
      *
      * @return String representation of Message.
      */
@@ -232,8 +230,7 @@ public abstract class NetarkivetMessage implements Serializable {
     }
 
     /**
-     * Check, if a given message has been sent yet.
-     * If the message has a null id, it hasn't been sent yet.
+     * Check, if a given message has been sent yet. If the message has a null id, it hasn't been sent yet.
      *
      * @return true, if message has been sent yet, false otherwise.
      */

@@ -65,10 +65,8 @@ import dk.netarkivet.common.utils.batch.LoadableJarBatchJob;
  * -C&lt;classfile&gt; is a file containing a FileBatchJob implementation <br/>
  * -R&lt;regexp&gt; is a regular expression that will be matched against file names in the archive, by default .* <br/>
  * -B&lt;replica&gt; is the name of the bitarchive replica this should be run on, by default taken from settings. <br/>
- * -O&lt;outputfile&lt; is a file where the output from the batch job will be written. By default, it goes to stdout.
- * <br/>
- * -E&lt;errorFile&gt; is a file where the errors from the batch job will be written. By default, it goes to stderr.
- * <br/>
+ * -O&lt;outputfile&lt; is a file where the output from the batch job will be written. By default, it goes to stdout. <br/>
+ * -E&lt;errorFile&gt; is a file where the errors from the batch job will be written. By default, it goes to stderr. <br/>
  * -N&lt;className&gt; is the name of the primary class to be loaded when doing a LoadableJarBatchJob <br/>
  * -A&lt;Arguments&gt; The arguments for the batchjob, separated by '##', e.g. -Aarg1##arg2##... <br/>
  * Examples: <br/>

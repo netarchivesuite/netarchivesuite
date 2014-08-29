@@ -425,7 +425,7 @@ public class Job implements Serializable, JobInfo {
 
         // Add the seeds from the configuration to the Job seeds.
         // Take care of duplicates.
-        for (Iterator<SeedList> itt = cfg.getSeedLists(); itt.hasNext(); ) {
+        for (Iterator<SeedList> itt = cfg.getSeedLists(); itt.hasNext();) {
             SeedList seed = itt.next();
             List<String> seeds = seed.getSeeds();
             for (String seedUrl : seeds) {

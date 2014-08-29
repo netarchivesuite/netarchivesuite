@@ -681,7 +681,8 @@ public class HeritrixLauncherTester {
         /**
          * Dummy frontier used by TestCrawlController
          */
-        @SuppressWarnings("rawtypes") class TestFrontier implements Frontier {
+        @SuppressWarnings("rawtypes")
+        class TestFrontier implements Frontier {
 
             public void initialize(CrawlController crawlController) throws FatalConfigurationException, IOException {
             }

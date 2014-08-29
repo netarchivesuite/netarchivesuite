@@ -23,8 +23,7 @@
 package is.hi.bok.deduplicator;
 
 /**
- * A base class for individual items of crawl data that should be added to the
- * index.
+ * A base class for individual items of crawl data that should be added to the index.
  *
  * @author Kristinn Sigur&eth;sson
  */
@@ -44,8 +43,7 @@ public class CrawlDataItem {
     protected boolean duplicate;
 
     /**
-     * Constructor. Creates a new CrawlDataItem with all its data initialized
-     * to null.
+     * Constructor. Creates a new CrawlDataItem with all its data initialized to null.
      */
     public CrawlDataItem() {
         URL = null;
@@ -58,22 +56,19 @@ public class CrawlDataItem {
     }
 
     /**
-     * Constructor. Creates a new CrawlDataItem with all its data initialized
-     * via the constructor.
+     * Constructor. Creates a new CrawlDataItem with all its data initialized via the constructor.
      *
      * @param URL The URL for this CrawlDataItem
      * @param contentDigest A content digest of the document found at the URL
-     * @param timestamp Date of when the content digest was valid for that URL.
-     * Format: yyyyMMddHHmmssSSS
+     * @param timestamp Date of when the content digest was valid for that URL. Format: yyyyMMddHHmmssSSS
      * @param etag Etag for the URL
      * @param mimetype MIME type of the document found at the URL
-     * @param origin The origin of the CrawlDataItem (the exact meaning of the
-     * origin is outside the scope of this class and it may be
-     * any String value)
+     * @param origin The origin of the CrawlDataItem (the exact meaning of the origin is outside the scope of this class
+     * and it may be any String value)
      * @param duplicate True if this CrawlDataItem was marked as duplicate
      */
-    public CrawlDataItem(String URL, String contentDigest, String timestamp,
-            String etag, String mimetype, String origin, boolean duplicate) {
+    public CrawlDataItem(String URL, String contentDigest, String timestamp, String etag, String mimetype,
+            String origin, boolean duplicate) {
         this.URL = URL;
         this.contentDigest = contentDigest;
         this.timestamp = timestamp;
@@ -120,8 +115,7 @@ public class CrawlDataItem {
     }
 
     /**
-     * Returns a timestamp for when the URL was fetched in the format:
-     * yyyyMMddHHmmssSSS
+     * Returns a timestamp for when the URL was fetched in the format: yyyyMMddHHmmssSSS
      *
      * @return the time of the URLs fetching
      */
@@ -132,8 +126,7 @@ public class CrawlDataItem {
     /**
      * Set a new timestamp.
      *
-     * @param timestamp The new timestamp. It should be in the format:
-     * yyyyMMddHHmmssSSS
+     * @param timestamp The new timestamp. It should be in the format: yyyyMMddHHmmssSSS
      */
     public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;

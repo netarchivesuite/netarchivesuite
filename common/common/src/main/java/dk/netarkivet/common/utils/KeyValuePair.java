@@ -68,13 +68,11 @@ public class KeyValuePair<K, V> implements Map.Entry<K, V> {
     }
 
     /**
-     * Replaces the value corresponding to this entry with the specified value
-     * (optional operation).
+     * Replaces the value corresponding to this entry with the specified value (optional operation).
      *
      * @param newValue new value to be stored in this entry.
      * @return old value corresponding to the entry.
-     * @throws UnsupportedOperationException if the <tt>put</tt> operation is not supported by the backing
-     * map.
+     * @throws UnsupportedOperationException if the <tt>put</tt> operation is not supported by the backing map.
      */
     public V setValue(V newValue) throws UnsupportedOperationException {
         throw new UnsupportedOperationException("Stand-alone entries cannot be changed");

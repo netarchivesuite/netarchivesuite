@@ -62,7 +62,7 @@ public class SparsePartialHarvestTester extends DataModelTestCase {
     public void testConstructor() {
         SparsePartialHarvest sph = new SparsePartialHarvest(harvest.oid, harvest.harvestDefName, harvest.comments,
                 harvest.getNumEvents(), harvest.submissionDate, harvest.isActive, harvest.getEdition(), harvest
-                .getSchedule().getName(), harvest.getNextDate(), harvest.getAudience(), harvest.getChannelId());
+                        .getSchedule().getName(), harvest.getNextDate(), harvest.getAudience(), harvest.getChannelId());
         assertEquals("Should have same oid", harvest.getOid(), sph.getOid());
     }
 

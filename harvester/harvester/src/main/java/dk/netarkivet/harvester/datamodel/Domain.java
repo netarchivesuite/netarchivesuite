@@ -453,7 +453,7 @@ public class Domain extends ExtendableEntity implements Named {
         for (String cfgname : domainConfigurations.keySet()) {
             DomainConfiguration cfg = domainConfigurations.get(cfgname);
 
-            for (Iterator<SeedList> i = cfg.getSeedLists(); i.hasNext(); ) {
+            for (Iterator<SeedList> i = cfg.getSeedLists(); i.hasNext();) {
                 SeedList seedlist = i.next();
 
                 if (seedlist.getName().equals(name)) {

@@ -244,7 +244,7 @@ public class JobDAOTester extends DataModelTestCase {
         Map<String, String> domainConfigurationMap = jobUpdated.getDomainConfigurationMap();
 
         assertTrue("The DomainConfigurationMap of the retrieved job does not "
-                        + "match that of the original job - domain name " + dc.getDomainName() + " not found",
+                + "match that of the original job - domain name " + dc.getDomainName() + " not found",
                 domainConfigurationMap.containsKey(dc.getDomainName()));
         assertTrue(
                 "The DomainConfigurationMap of the retrieved job does not "
@@ -252,12 +252,12 @@ public class JobDAOTester extends DataModelTestCase {
                         + " not found", domainConfigurationMap.containsKey(anotherConfiguration.getDomainName()));
 
         assertEquals("The DomainConfigurationMap of the retrieved job does not "
-                        + "match that of the original job - domainConfiguration name " + dc.getName() + " not found",
+                + "match that of the original job - domainConfiguration name " + dc.getName() + " not found",
                 domainConfigurationMap.get(dc.getDomainName()), dc.getName());
 
         assertEquals("The DomainConfigurationMap of the retrieved job does not "
-                        + "match that of the original job - domainConfiguration name " + anotherConfiguration.getName()
-                        + " not found", domainConfigurationMap.get(anotherConfiguration.getDomainName()),
+                + "match that of the original job - domainConfiguration name " + anotherConfiguration.getName()
+                + " not found", domainConfigurationMap.get(anotherConfiguration.getDomainName()),
                 anotherConfiguration.getName());
     }
 
@@ -283,7 +283,7 @@ public class JobDAOTester extends DataModelTestCase {
 
         long expectedCappedMaxObjects = dc.getMaxObjects();
         assertEquals("The retrieved job should have max object per domain = " + expectedCappedMaxObjects
-                        + ", but it is equal to " + jobUpdated.getForceMaxObjectsPerDomain(), expectedCappedMaxObjects,
+                + ", but it is equal to " + jobUpdated.getForceMaxObjectsPerDomain(), expectedCappedMaxObjects,
                 jobUpdated.getForceMaxObjectsPerDomain());
 
         // check that the job-specific order.xml is modified accordingly:

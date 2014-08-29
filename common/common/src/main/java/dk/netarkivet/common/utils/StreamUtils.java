@@ -54,8 +54,7 @@ public class StreamUtils {
     private static final String UTF8_CHARSET = "UTF-8";
 
     /**
-     * Will copy everything from input stream to jsp writer, closing input
-     * stream afterwards. Charset UTF-8 is assumed.
+     * Will copy everything from input stream to jsp writer, closing input stream afterwards. Charset UTF-8 is assumed.
      *
      * @param in Inputstream to copy from
      * @param out JspWriter to copy to
@@ -84,8 +83,7 @@ public class StreamUtils {
     }
 
     /**
-     * Will copy everything from input stream to output stream, closing input
-     * stream afterwards.
+     * Will copy everything from input stream to output stream, closing input stream afterwards.
      *
      * @param in Inputstream to copy from
      * @param out Outputstream to copy to
@@ -126,8 +124,7 @@ public class StreamUtils {
     }
 
     /**
-     * Write document tree to stream. Note, the stream is flushed, but not
-     * closed.
+     * Write document tree to stream. Note, the stream is flushed, but not closed.
      *
      * @param doc the document tree to save.
      * @param os the stream to write xml to
@@ -162,8 +159,7 @@ public class StreamUtils {
      * @param in The input stream.
      * @return The string content of the input stream in the UTF8-charset.
      * @throws ArgumentNotValid If the input stream is null.
-     * @throws IOFailure If an IOException is caught while reading the
-     * inputstream.
+     * @throws IOFailure If an IOException is caught while reading the inputstream.
      */
     public static String getInputStreamAsString(InputStream in) throws ArgumentNotValid, IOFailure {
         ArgumentNotValid.checkNotNull(in, "InputStream in");

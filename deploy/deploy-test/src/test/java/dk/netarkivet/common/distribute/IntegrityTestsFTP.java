@@ -364,7 +364,7 @@ public class IntegrityTestsFTP {
         // " to " + destinationFile);
         /** Check filesizes, and see, if they differ */
         assertEquals("Length of original unzipped file "
-                        + " and unzipped file retrieved from the ftp-server should not differ!", unzippedFile.length(),
+                + " and unzipped file retrieved from the ftp-server should not differ!", unzippedFile.length(),
                 destinationFile.length());
     }
 

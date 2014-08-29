@@ -39,11 +39,9 @@ public class ARCKey {
     private static final String ALEXA_DAT_FILE_EXTENSION = ".dat";
 
     /**
-     * Constructor for ARCKey.
-     * Note that if the filename ends in .dat (it's an Alexa-style
-     * DAT file), we assume that the file we actually want is a
-     * .arc.gz file as produced by Alexa tools.  That is because the
-     * Alexa cdx generator does not put the correct filename in there.
+     * Constructor for ARCKey. Note that if the filename ends in .dat (it's an Alexa-style DAT file), we assume that the
+     * file we actually want is a .arc.gz file as produced by Alexa tools. That is because the Alexa cdx generator does
+     * not put the correct filename in there.
      *
      * @param archiveFileName The name of the archive found in the cdx file
      * @param offset The offset in the arc file of this entry.
@@ -51,8 +49,8 @@ public class ARCKey {
     public ARCKey(String archiveFileName, long offset) {
         String arcgz;
         if (archiveFileName.toLowerCase().endsWith(ALEXA_DAT_FILE_EXTENSION)) {
-            arcgz = archiveFileName.substring(0, archiveFileName.length() - ALEXA_DAT_FILE_EXTENSION.length()
-            ) + GZIPPED_ARC_FILE_EXTENSION;
+            arcgz = archiveFileName.substring(0, archiveFileName.length() - ALEXA_DAT_FILE_EXTENSION.length())
+                    + GZIPPED_ARC_FILE_EXTENSION;
         } else {
             arcgz = archiveFileName;
         }

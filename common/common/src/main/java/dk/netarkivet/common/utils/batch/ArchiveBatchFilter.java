@@ -30,11 +30,11 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.archive.ArchiveRecordBase;
 
 /**
- * A filter class for batch entries.  Allows testing whether or not
- * to process an entry without loading the entry data first.
+ * A filter class for batch entries. Allows testing whether or not to process an entry without loading the entry data
+ * first.
  * <p>
- * accept() is given an ArchiveRecord to avoid unnecessary reading and
- * copying of data of records not accepted by filter.
+ * accept() is given an ArchiveRecord to avoid unnecessary reading and copying of data of records not accepted by
+ * filter.
  */
 @SuppressWarnings({"serial"})
 public abstract class ArchiveBatchFilter implements Serializable {
@@ -78,8 +78,7 @@ public abstract class ArchiveBatchFilter implements Serializable {
     };
 
     /**
-     * The ARCRecord url for the filedesc record (the header record of every
-     * ARC File).
+     * The ARCRecord url for the filedesc record (the header record of every ARC File).
      */
     private static final String ARC_FILE_FILEDESC_HEADER_PREFIX = "filedesc";
 
@@ -87,8 +86,7 @@ public abstract class ArchiveBatchFilter implements Serializable {
     private static final String EXCLUDE_NON_RESPONSE_RECORDS_FILTER_NAME = "EXCLUDE_NON_RESPONSE_RECORDS";
 
     /** The name of the filter that filters out the filedesc record and/or non-warcinfo records */
-    private static final String EXCLUDE_WARCINFO_AND_FILEDESC_RECORDS_FILTER_NAME =
-            "EXCLUDE_WARCINFO_AND_FILEDESC_RECORDS";
+    private static final String EXCLUDE_WARCINFO_AND_FILEDESC_RECORDS_FILTER_NAME = "EXCLUDE_WARCINFO_AND_FILEDESC_RECORDS";
 
     /** A default filter: Accepts only response records. */
     public static final ArchiveBatchFilter EXCLUDE_NON_RESPONSE_RECORDS = new ArchiveBatchFilter(
@@ -130,8 +128,7 @@ public abstract class ArchiveBatchFilter implements Serializable {
     /**
      * Filter that only accepts records where the url starts with http.
      */
-    public static final ArchiveBatchFilter ONLY_HTTP_ENTRIES = new ArchiveBatchFilter(
-            ONLY_HTTP_ENTRIES_FILTER_NAME) {
+    public static final ArchiveBatchFilter ONLY_HTTP_ENTRIES = new ArchiveBatchFilter(ONLY_HTTP_ENTRIES_FILTER_NAME) {
         @Override
         public boolean accept(ArchiveRecordBase record) {
             return record.getHeader().getUrl().startsWith(EXCLUDE_HTTP_ENTRIES_HTTP_PREFIX);
@@ -147,8 +144,7 @@ public abstract class ArchiveBatchFilter implements Serializable {
      * @return a BatchFilter that filters out all ARCRecords, that does not have this mimetype
      * @throws java.awt.datatransfer.MimeTypeParseException (if mimetype is invalid)
      */
-    public static ArchiveBatchFilter getMimetypeBatchFilter(final String mimetype)
-            throws MimeTypeParseException {
+    public static ArchiveBatchFilter getMimetypeBatchFilter(final String mimetype) throws MimeTypeParseException {
         if (!mimetypeIsOk(mimetype)) {
             throw new MimeTypeParseException("Mimetype argument '" + mimetype + "' is invalid");
         }

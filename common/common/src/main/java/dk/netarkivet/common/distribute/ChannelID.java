@@ -40,33 +40,28 @@ import dk.netarkivet.common.utils.SystemUtils;
 public class ChannelID implements Serializable {
 
     /**
-     * The name of the enviroment in which this process is running.
-     * It is used for prefixing all ChannelIDs.
-     * An example value is "PROD".
+     * The name of the enviroment in which this process is running. It is used for prefixing all ChannelIDs. An example
+     * value is "PROD".
      */
     private final String environmentName = Settings.get(CommonSettings.ENVIRONMENT_NAME);
 
     /**
-     * application instance id is a setting for an application's
-     * identification as a specific process on a given machine.
-     * An example value is "BAONE"
-     * Note that it is set to uppercase in order to ensure that a channel name
-     * only has uppercase characters.
+     * application instance id is a setting for an application's identification as a specific process on a given
+     * machine. An example value is "BAONE" Note that it is set to uppercase in order to ensure that a channel name only
+     * has uppercase characters.
      */
-    private static final String applicationInstanceId = Settings.get(
-            CommonSettings.APPLICATION_INSTANCE_ID).toUpperCase();
+    private static final String applicationInstanceId = Settings.get(CommonSettings.APPLICATION_INSTANCE_ID)
+            .toUpperCase();
 
     /**
-     * application instance id is a setting for an application's
-     * identification as a specific process on a given machine.
-     * An example value is "BAONE".
+     * application instance id is a setting for an application's identification as a specific process on a given
+     * machine. An example value is "BAONE".
      */
-    private static final String applicationAbbreviation = getApplicationAbbreviation(Settings.get(
-            CommonSettings.APPLICATION_NAME));
+    private static final String applicationAbbreviation = getApplicationAbbreviation(Settings
+            .get(CommonSettings.APPLICATION_NAME));
 
     /**
-     * Constants to make the semantics of parameters to our name constructors
-     * more explicit.
+     * Constants to make the semantics of parameters to our name constructors more explicit.
      */
     public static final String COMMON = "COMMON";
     public static final boolean INCLUDE_IP = true;
@@ -77,50 +72,38 @@ public class ChannelID implements Serializable {
     public static final boolean QUEUE = false;
 
     /**
-     * A ChannelID is identified by its name.
-     * It has one bit of state information: is it a queue or a topic?
+     * A ChannelID is identified by its name. It has one bit of state information: is it a queue or a topic?
      */
     private String name;
 
     /**
-     * Constructor of channel names.
-     * The constructor is package private because we should never use any
-     * channels except the ones constructed by our friend Channels.java
+     * Constructor of channel names. The constructor is package private because we should never use any channels except
+     * the ones constructed by our friend Channels.java
      *
-     * @param appPref The prefix used for the applications listening
-     * to the channel.
-     * @param replicaId Name of the replica, or ChannelID.COMMON if
-     * channel shared by all replicas.
-     * @param useNodeId Whether that IP address of the local node should
-     * be included in the channel name.
-     * @param useAppInstId Whether application instance id from settings
-     * should be included in the channel name.
+     * @param appPref The prefix used for the applications listening to the channel.
+     * @param replicaId Name of the replica, or ChannelID.COMMON if channel shared by all replicas.
+     * @param useNodeId Whether that IP address of the local node should be included in the channel name.
+     * @param useAppInstId Whether application instance id from settings should be included in the channel name.
      * @param isTopic Whether the Channel is a Topic or a Queue.
      * @throws UnknownID if looking up the local IP number failed.
      */
-    public ChannelID(String appPref, String replicaId, boolean useNodeId,
-            boolean useAppInstId, boolean isTopic) {
+    public ChannelID(String appPref, String replicaId, boolean useNodeId, boolean useAppInstId, boolean isTopic) {
         this.name = constructName(appPref, replicaId, useNodeId, useAppInstId, isTopic);
     }
 
     /**
-     * Constructs a channel name according to the specifications
-     * of channels in the NetarchiveSuite Developer Manual.
+     * Constructs a channel name according to the specifications of channels in the NetarchiveSuite Developer Manual.
      *
-     * @param appPref The prefix used for the applications listening
-     * to the channel.
-     * @param replicaId Id of the replica, or ChannelID.COMMON if
-     * channel common to all bitarchive replicas.
-     * @param useNodeId Whether that IP address of the local node should
-     * be included in the channel name.
-     * @param useAppInstId Whether application instance id from settings
-     * should be included in the channel name.
+     * @param appPref The prefix used for the applications listening to the channel.
+     * @param replicaId Id of the replica, or ChannelID.COMMON if channel common to all bitarchive replicas.
+     * @param useNodeId Whether that IP address of the local node should be included in the channel name.
+     * @param useAppInstId Whether application instance id from settings should be included in the channel name.
      * @param isTopic If true, the channel is a Topic, else it is a Queue
      * @return The properly concatenated channel name.
      * @throws UnknownID if looking up the local IP number failed.
      */
-    private String constructName(String appPref, String replicaId,
-            boolean useNodeId, boolean useAppInstId, boolean isTopic) {
+    private String constructName(String appPref, String replicaId, boolean useNodeId, boolean useAppInstId,
+            boolean isTopic) {
         String userId = environmentName;
         String id = "";
         if (useNodeId) {
@@ -164,11 +147,10 @@ public class ChannelID implements Serializable {
     }
 
     /**
-     * Method used by Java deserialization.
-     * Our coding guidelines prescribes that this method should always
-     * be implemented, even if it only calls the default method:
-     * http://kb-prod-udv-001.kb.dk/twiki/bin/view/Netarkiv/ImplementeringOgTestAfSerializable
-     * See also "Effective Java", pages 219 and 224.
+     * Method used by Java deserialization. Our coding guidelines prescribes that this method should always be
+     * implemented, even if it only calls the default method:
+     * http://kb-prod-udv-001.kb.dk/twiki/bin/view/Netarkiv/ImplementeringOgTestAfSerializable See also
+     * "Effective Java", pages 219 and 224.
      *
      * @param ois the ObjectInputStream used to read in the object
      * @throws IOFailure if Java could not deserialize the object.
@@ -182,11 +164,10 @@ public class ChannelID implements Serializable {
     }
 
     /**
-     * Method used by Java serialization.
-     * Our coding guidelines prescribes that this method should always
-     * be implemented, even if it only calls the default method:
-     * http://kb-prod-udv-001.kb.dk/twiki/bin/view/Netarkiv/ImplementeringOgTestAfSerializable
-     * See also "Effective Java", pages 219 and 224.
+     * Method used by Java serialization. Our coding guidelines prescribes that this method should always be
+     * implemented, even if it only calls the default method:
+     * http://kb-prod-udv-001.kb.dk/twiki/bin/view/Netarkiv/ImplementeringOgTestAfSerializable See also
+     * "Effective Java", pages 219 and 224.
      *
      * @param oos the ObjectOutputStream used to serialize the object.
      * @throws IOFailure if Java could not serialize the object.
@@ -200,8 +181,8 @@ public class ChannelID implements Serializable {
     }
 
     /**
-     * Implements equality check for ChannelIDs. Useful when these are used
-     * as indexes in Java collections, for instance.
+     * Implements equality check for ChannelIDs. Useful when these are used as indexes in Java collections, for
+     * instance.
      *
      * @param o The object to compare this object with.
      * @return Whether o and this should be considered the same ChannelID.
@@ -232,8 +213,7 @@ public class ChannelID implements Serializable {
     }
 
     /**
-     * Finds abbreviation for an application name.
-     * The abbreviation is only calculated from the application name without
+     * Finds abbreviation for an application name. The abbreviation is only calculated from the application name without
      * path. It is made from the uppercase letters in the name.
      *
      * @param applName application name with full path
@@ -241,20 +221,20 @@ public class ChannelID implements Serializable {
      */
     private static String getApplicationAbbreviation(String applName) {
         ArgumentNotValid.checkNotNull(applName, "applName");
-        //Strip path from name
+        // Strip path from name
         String[] p = applName.split("[.]");
         if (p.length <= 0) {
             return "";
         }
         String shortName = p[p.length - 1];
-        //put uppercase letters into abbr
+        // put uppercase letters into abbr
         String abbr = "";
         for (int i = 0; i < shortName.length(); i++) {
             if (Character.isUpperCase(shortName.charAt(i))) {
                 abbr += shortName.substring(i, i + 1);
             }
         }
-        //return found abbreviation
+        // return found abbreviation
         return abbr;
     }
 

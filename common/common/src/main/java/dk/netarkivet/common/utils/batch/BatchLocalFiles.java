@@ -37,9 +37,8 @@ import dk.netarkivet.common.exceptions.BatchTermination;
 import dk.netarkivet.common.utils.Settings;
 
 /**
- * Class for running FileBatchJobs on a set of local files. The constructor
- * takes an array of files to be processed and the run() method takes a
- * FileBatchJob and applies it to each file in turn.
+ * Class for running FileBatchJobs on a set of local files. The constructor takes an array of files to be processed and
+ * the run() method takes a FileBatchJob and applies it to each file in turn.
  */
 public class BatchLocalFiles {
 
@@ -55,13 +54,11 @@ public class BatchLocalFiles {
     private long startTime = 0;
 
     /**
-     * Given an array of files, constructs a BatchLocalFiles instance
-     * to be used in running a batch job over those files.
+     * Given an array of files, constructs a BatchLocalFiles instance to be used in running a batch job over those
+     * files.
      *
-     * @param incomingFiles The files that should be used processed
-     * by the batchjob
-     * @throws ArgumentNotValid if incomingFiles is null or contains
-     * a null entry
+     * @param incomingFiles The files that should be used processed by the batchjob
+     * @throws ArgumentNotValid if incomingFiles is null or contains a null entry
      */
     public BatchLocalFiles(File[] incomingFiles) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(incomingFiles, "incomingFiles");
@@ -91,7 +88,7 @@ public class BatchLocalFiles {
             long logInterval = Settings.getLong(CommonSettings.BATCH_LOGGING_INTERVAL);
             // get the time for starting the batchjob (used for logging).
             startTime = new Date().getTime();
-            //Process each file:
+            // Process each file:
             for (File file : files) {
                 fileCount++;
                 if (job.getFilenamePattern().matcher(file.getName()).matches()) {
@@ -108,7 +105,7 @@ public class BatchLocalFiles {
                     processFile(job, file, os);
                 }
 
-                // check whether the batchjob should stop. 
+                // check whether the batchjob should stop.
                 if (Thread.currentThread().isInterrupted()) {
                     // log and throw an error (not exception, they are caught!)
                     String errMsg = "The batchjob '" + job.toString() + "' has been interrupted and will terminate!";

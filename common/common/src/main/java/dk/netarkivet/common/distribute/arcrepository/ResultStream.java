@@ -27,8 +27,7 @@ import java.io.InputStream;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
- * Simple helper class to store the fact, whether we have a stream which
- * contains a header or a stream, which does not.
+ * Simple helper class to store the fact, whether we have a stream which contains a header or a stream, which does not.
  */
 public class ResultStream {
 
@@ -39,8 +38,8 @@ public class ResultStream {
     private final boolean containsHeader;
 
     /**
-     * Create a ResultStream with the given inputStream and information of
-     * whether or not the inputStream contains a header.
+     * Create a ResultStream with the given inputStream and information of whether or not the inputStream contains a
+     * header.
      *
      * @param inputstream An inputStream w/ the data for a stored URI
      * @param containsHeader true, if the stream contains a header, otherwise false

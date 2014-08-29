@@ -48,9 +48,8 @@ import dk.netarkivet.common.utils.arc.ARCKey;
 import is.hi.bok.deduplicator.DigestIndexer;
 
 /**
- * This class allows lookup of URLs in the ArcRepository, using full Lucene
- * indexes to find offsets.  The input takes the form of a directory
- * containing a Lucene index.
+ * This class allows lookup of URLs in the ArcRepository, using full Lucene indexes to find offsets. The input takes the
+ * form of a directory containing a Lucene index.
  */
 public class ARCLookup {
 
@@ -83,16 +82,16 @@ public class ARCLookup {
     /**
      * TODO javadoc
      *
-     * @param searchForFtpUri if true, we replace the http schema with ftp and
-     * try again, if unsuccessful with http as the schema
+     * @param searchForFtpUri if true, we replace the http schema with ftp and try again, if unsuccessful with http as
+     * the schema
      */
     public void setTryToLookupUriAsFtp(boolean searchForFtpUri) {
         this.tryToLookupUriAsFtp = searchForFtpUri;
     }
 
     /**
-     * This method sets the current Lucene index this object works
-     * on, replacing and closing the current index if one is already set.
+     * This method sets the current Lucene index this object works on, replacing and closing the current index if one is
+     * already set.
      *
      * @param indexDir The new index, a directory containing Lucene files.
      * @throws ArgumentNotValid If argument is null
@@ -114,7 +113,7 @@ public class ARCLookup {
         try {
             // IndexReader.open is deprecated in Lucene 4.0
             luceneReader = org.apache.lucene.index.DirectoryReader.open(FSDirectory.open(indexDir));
-            //luceneReader = IndexReader.open(FSDirectory.open(indexDir));
+            // luceneReader = IndexReader.open(FSDirectory.open(indexDir));
             luceneSearcher = new IndexSearcher(luceneReader);
         } catch (IOException e) {
             throw new IOFailure("Unable to find/open index " + indexDir, e);
@@ -122,23 +121,18 @@ public class ARCLookup {
     }
 
     /**
-     * Look up a given URI and return the contents as an InputStream.
-     * The uri is first checked using url-decoding (e.g. "," in the argument
-     * is converted to "%2C"). If this returns no match, the method then
-     * searches for a non-url-decoded match. If neither returns a match
-     * the method returns null.
+     * Look up a given URI and return the contents as an InputStream. The uri is first checked using url-decoding (e.g.
+     * "," in the argument is converted to "%2C"). If this returns no match, the method then searches for a
+     * non-url-decoded match. If neither returns a match the method returns null.
      * <p>
-     * If the tryToLookupUriAsFtp field is set to true, we will try exchanging
-     * the schema with ftp, whenever we can't lookup the uri with the original
-     * schema.
+     * If the tryToLookupUriAsFtp field is set to true, we will try exchanging the schema with ftp, whenever we can't
+     * lookup the uri with the original schema.
      *
-     * @param uri The URI to find in the archive.  If the URI does not
-     * match any entries in the archive, null is returned.
-     * @return An InputStream Containing all the data in the entry, or
-     * null if the entry was not found
-     * @throws IOFailure If the ARC file was found in the Lucene index but not
-     * in the bit archive, or if some other failure happened while finding
-     * the file.
+     * @param uri The URI to find in the archive. If the URI does not match any entries in the archive, null is
+     * returned.
+     * @return An InputStream Containing all the data in the entry, or null if the entry was not found
+     * @throws IOFailure If the ARC file was found in the Lucene index but not in the bit archive, or if some other
+     * failure happened while finding the file.
      */
     public ResultStream lookup(URI uri) {
         ArgumentNotValid.checkNotNull(uri, "uri");
@@ -187,8 +181,7 @@ public class ARCLookup {
      * Looks up a URI in our lucene index and extracts a key.
      *
      * @param uri A URI to look for.
-     * @return The file and offset where that URI can be found, or null if it
-     * doesn't exist.
+     * @return The file and offset where that URI can be found, or null if it doesn't exist.
      * @throws IllegalState If a URL is found with a malformed origin field.
      * @throws IOFailure if no index is set or Lucene gives problems.
      */
@@ -200,22 +193,19 @@ public class ARCLookup {
     }
 
     /**
-     * Lucene Lookup.
-     * It now uses the new Lucene API used in release 3.6
+     * Lucene Lookup. It now uses the new Lucene API used in release 3.6
      *
      * @param uri A URI to look for.
-     * @return The file and offset where that URI can be found, or null if it
-     * doesn't exist.
-     * TODO Does TermRangeFilter needs to be modified to memory efficient enough.
-     * The the optimizations in the previous used SparseRangeFilter may or may not
-     * relevant for Lucene 3.6+
+     * @return The file and offset where that URI can be found, or null if it doesn't exist. TODO Does TermRangeFilter
+     * needs to be modified to memory efficient enough. The the optimizations in the previous used SparseRangeFilter may
+     * or may not relevant for Lucene 3.6+
      */
     private ARCKey luceneLookUp(String uri) {
         // SparseRangeFilter + ConstantScoreQuery means we ignore norms,
         // bitsets, and other memory-eating things we don't need that TermQuery
         // or RangeFilter would imply.
-        //Query query = new ConstantScoreQuery(new SparseRangeFilter(
-        //        DigestIndexer.FIELD_URL, uri, uri, true, true));
+        // Query query = new ConstantScoreQuery(new SparseRangeFilter(
+        // DigestIndexer.FIELD_URL, uri, uri, true, true));
         BytesRef uriRef = new BytesRef(uri.getBytes()); // Should we decide which charset?
 
         Query query = new ConstantScoreQuery(new TermRangeFilter(DigestIndexer.FIELD_URL, uriRef, uriRef, true, true));

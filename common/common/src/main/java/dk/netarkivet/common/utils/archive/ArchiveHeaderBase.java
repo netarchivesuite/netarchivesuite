@@ -28,8 +28,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Utility class for presenting the same interface record header API for both
- * ARC and WARC record headers.
+ * Utility class for presenting the same interface record header API for both ARC and WARC record headers.
  */
 public abstract class ArchiveHeaderBase {
 
@@ -72,7 +71,7 @@ public abstract class ArchiveHeaderBase {
     /**
      * Return the header date as a <code>Date</code> object.
      *
-     * @return header date as a  <code>Date</code> object
+     * @return header date as a <code>Date</code> object
      */
     public abstract Date getDate();
 

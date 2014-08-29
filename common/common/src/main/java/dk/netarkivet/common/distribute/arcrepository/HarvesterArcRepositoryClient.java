@@ -28,8 +28,8 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 
 /**
- * Implements the Facade pattern to shield off the methods in
- * JMSArcRepositoryClient not to be used by the harvest system.
+ * Implements the Facade pattern to shield off the methods in JMSArcRepositoryClient not to be used by the harvest
+ * system.
  */
 public interface HarvesterArcRepositoryClient {
 
@@ -39,14 +39,11 @@ public interface HarvesterArcRepositoryClient {
     void close();
 
     /**
-     * Store the given file in the ArcRepository.  After storing, the file is
-     * deleted.
+     * Store the given file in the ArcRepository. After storing, the file is deleted.
      *
      * @param file A file to be stored. Must exist.
-     * @throws IOFailure thrown if store is unsuccesful, or failed to clean
-     * up files after the store operation.
-     * @throws ArgumentNotValid if file parameter is null or file is not an
-     * existing file.
+     * @throws IOFailure thrown if store is unsuccesful, or failed to clean up files after the store operation.
+     * @throws ArgumentNotValid if file parameter is null or file is not an existing file.
      */
     void store(File file) throws IOFailure, ArgumentNotValid;
 

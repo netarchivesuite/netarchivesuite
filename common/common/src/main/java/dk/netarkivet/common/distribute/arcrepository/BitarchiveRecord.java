@@ -49,13 +49,9 @@ import dk.netarkivet.common.utils.arc.ARCUtils;
 import dk.netarkivet.common.utils.warc.WARCUtils;
 
 /**
- * Class to hold the result of a lookup operation in the bitarchive:
- * The metadata information associated with the record
- * The actual byte content
- * The name of the file the data were retrieved from
- * If length of record exceeds value of
- * Settings.BITARCHIVE_LIMIT_FOR_RECORD_DATATRANSFER_IN_FILE
- * The record is stored in a RemoteFile.
+ * Class to hold the result of a lookup operation in the bitarchive: The metadata information associated with the record
+ * The actual byte content The name of the file the data were retrieved from If length of record exceeds value of
+ * Settings.BITARCHIVE_LIMIT_FOR_RECORD_DATATRANSFER_IN_FILE The record is stored in a RemoteFile.
  */
 @SuppressWarnings({"serial"})
 public class BitarchiveRecord implements Serializable {
@@ -85,21 +81,17 @@ public class BitarchiveRecord implements Serializable {
     private boolean hasRemoteFileBeenDeleted = false;
 
     /** How large the ARCRecord can before saving as RemoteFile. */
-    private final long LIMIT_FOR_SAVING_DATA_IN_OBJECT_BUFFER = Settings.getLong(
-            CommonSettings.BITARCHIVE_LIMIT_FOR_RECORD_DATATRANSFER_IN_FILE);
+    private final long LIMIT_FOR_SAVING_DATA_IN_OBJECT_BUFFER = Settings
+            .getLong(CommonSettings.BITARCHIVE_LIMIT_FOR_RECORD_DATATRANSFER_IN_FILE);
 
     /**
-     * Creates a BitarchiveRecord from the a ArchiveRecord, which can be either
-     * a ARCRecord or WARCRecord. Note that record metadata is not included with
-     * the BitarchiveRecord, only the payload of the record.
+     * Creates a BitarchiveRecord from the a ArchiveRecord, which can be either a ARCRecord or WARCRecord. Note that
+     * record metadata is not included with the BitarchiveRecord, only the payload of the record.
      * <p>
-     * If the length of the record is higher than Settings
-     * .BITARCHIVE_LIMIT_FOR_RECORD_DATATRANSFER_IN_FILE
-     * the data is stored in a RemoteFile, otherwise the data is stored in
-     * a byte array.
+     * If the length of the record is higher than Settings .BITARCHIVE_LIMIT_FOR_RECORD_DATATRANSFER_IN_FILE the data is
+     * stored in a RemoteFile, otherwise the data is stored in a byte array.
      *
-     * @param record the ArchiveRecord that the data should come from.  We do not
-     * close the ArchiveRecord.
+     * @param record the ArchiveRecord that the data should come from. We do not close the ArchiveRecord.
      * @param filename The filename of the ArchiveFile
      */
     public BitarchiveRecord(ArchiveRecord record, String filename) {
@@ -168,8 +160,7 @@ public class BitarchiveRecord implements Serializable {
     }
 
     /**
-     * Retrieve the data in the record.
-     * If data is in RemoteFile, this operation deletes the RemoteFile.
+     * Retrieve the data in the record. If data is in RemoteFile, this operation deletes the RemoteFile.
      *
      * @return the data from the ARCRecord as an InputStream.
      * @throws IllegalState if remotefile already deleted
@@ -197,8 +188,8 @@ public class BitarchiveRecord implements Serializable {
     }
 
     /**
-     * Deliver the data in the record to a given OutputStream.
-     * If data is in RemoteFile, this operation deletes the RemoteFile
+     * Deliver the data in the record to a given OutputStream. If data is in RemoteFile, this operation deletes the
+     * RemoteFile
      *
      * @param out deliver the data to this outputstream
      * @throws IOFailure if any IOException occurs reading or writing the data

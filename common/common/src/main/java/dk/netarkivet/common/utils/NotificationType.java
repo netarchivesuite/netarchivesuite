@@ -27,8 +27,6 @@ package dk.netarkivet.common.utils;
  */
 public enum NotificationType {
 
-    ERROR,
-    INFO,
-    WARNING;
+    ERROR, INFO, WARNING;
 
 }

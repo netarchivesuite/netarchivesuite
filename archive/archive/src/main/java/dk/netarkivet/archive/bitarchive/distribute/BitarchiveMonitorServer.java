@@ -548,7 +548,7 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler implements Ob
             replyToGetAllFilenamesMessage(bjs, (GetAllFilenamesMessage) msg);
         } else if (msg instanceof GetChecksumMessage) {
             replyToGetChecksumMessage(bjs, (GetChecksumMessage) msg);
-        } else /* unhandled message type. */ {
+        } else /* unhandled message type. */{
             String errMsg = "The message cannot be handled '" + msg + "'";
             log.error(errMsg);
             msg.setNotOk(errMsg);

@@ -34,23 +34,19 @@ import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.common.utils.arc.ARCUtils;
 
 /**
- * Command line tool for creating an ARC file from given data. Uses
- * ToolRunnerBase and SimpleCmdlineTool to coordinate task. Usage: java
- * dk.netarkivet.common.tools.ArcWrap input_file uri mime-type > myarchive.arc
- * Note: Does not depend on logging - communicates failure on stderr
+ * Command line tool for creating an ARC file from given data. Uses ToolRunnerBase and SimpleCmdlineTool to coordinate
+ * task. Usage: java dk.netarkivet.common.tools.ArcWrap input_file uri mime-type > myarchive.arc Note: Does not depend
+ * on logging - communicates failure on stderr
  */
 public class ArcWrap extends ToolRunnerBase {
     /**
-     * Main method. Reads given content and outputs an ARC file on stdout. The
-     * output ARC file has two records: the ARC file header and one record
-     * containing the given content. The uri and mimetype of the latter record
-     * are specified as command line parameters. Setup, teardown and run is
-     * delegated to the ArcWrapTool class. Management of this, exception
-     * handling etc. is delegated to ToolRunnerBase class.
+     * Main method. Reads given content and outputs an ARC file on stdout. The output ARC file has two records: the ARC
+     * file header and one record containing the given content. The uri and mimetype of the latter record are specified
+     * as command line parameters. Setup, teardown and run is delegated to the ArcWrapTool class. Management of this,
+     * exception handling etc. is delegated to ToolRunnerBase class.
      *
-     * @param args Takes three command line parameters: - input file (the content
-     * to archive) - uri (the name to record the content by) -
-     * mime-type (the type to record for the content)
+     * @param args Takes three command line parameters: - input file (the content to archive) - uri (the name to record
+     * the content by) - mime-type (the type to record for the content)
      */
     public static void main(String[] args) {
         ArcWrap instance = new ArcWrap();
@@ -64,8 +60,8 @@ public class ArcWrap extends ToolRunnerBase {
     private static class ArcWrapTool implements SimpleCmdlineTool {
 
         /**
-         * This instance is declared outside of run method to ensure reliable
-         * teardown in case of exceptions during execution.
+         * This instance is declared outside of run method to ensure reliable teardown in case of exceptions during
+         * execution.
          */
         private ARCWriter aw;
 
@@ -73,31 +69,27 @@ public class ArcWrap extends ToolRunnerBase {
          * Accept only exactly 3 parameters.
          *
          * @param args the arguments
-         * @return true, if length of argument list is 3; returns false
-         * otherwise
+         * @return true, if length of argument list is 3; returns false otherwise
          */
         public boolean checkArgs(String... args) {
             return args.length == 3;
         }
 
         /**
-         * Create the ARCWriter instance here for reliable execution of close
-         * method in teardown.
+         * Create the ARCWriter instance here for reliable execution of close method in teardown.
          *
          * @param args the arguments (presently not used)
          */
         public void setUp(String... args) {
             try {
-                aw = ARCUtils.getToolsARCWriter(System.out,
-                        new File("dummy.arc"));
+                aw = ARCUtils.getToolsARCWriter(System.out, new File("dummy.arc"));
             } catch (IOException e) {
                 throw new IOFailure(e.getMessage());
             }
         }
 
         /**
-         * Ensure reliable execution of the ARCWriter.close() method. Remember
-         * to check if aw was actually created.
+         * Ensure reliable execution of the ARCWriter.close() method. Remember to check if aw was actually created.
          */
         public void tearDown() {
             try {
@@ -110,10 +102,9 @@ public class ArcWrap extends ToolRunnerBase {
         }
 
         /**
-         * Perform the actual work. Procure the necessary information to run the
-         * ARCWriter from command line parameters and system settings, and
-         * perform the write. Creating and closing the ARCWriter is done in
-         * setup and teardown methods.
+         * Perform the actual work. Procure the necessary information to run the ARCWriter from command line parameters
+         * and system settings, and perform the write. Creating and closing the ARCWriter is done in setup and teardown
+         * methods.
          *
          * @param args the arguments
          */
@@ -125,9 +116,8 @@ public class ArcWrap extends ToolRunnerBase {
                 // as parameters URI, MIME type, IP, Timestamp, Length and IS
                 String uri = args[1];
                 String mimetype = args[2];
-                aw.write(uri, mimetype, SystemUtils.getLocalIP(),
-                        content.lastModified(),
-                        content.length(), new FileInputStream(content));
+                aw.write(uri, mimetype, SystemUtils.getLocalIP(), content.lastModified(), content.length(),
+                        new FileInputStream(content));
             } catch (IOException e) {
                 throw new IOFailure(e.getMessage());
             }

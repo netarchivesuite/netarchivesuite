@@ -27,9 +27,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * A sparse implementation of a BitSet, that does not require memory linear
- * to the largest index. This is done at the cost of performance, but should
- * be fairly efficient on few set bits.
+ * A sparse implementation of a BitSet, that does not require memory linear to the largest index. This is done at the
+ * cost of performance, but should be fairly efficient on few set bits.
  */
 @SuppressWarnings({"serial"})
 public class SparseBitSet extends BitSet {
@@ -41,8 +40,8 @@ public class SparseBitSet extends BitSet {
      * Initialise the bitset.
      */
     public SparseBitSet() {
-        //Initialise super class to a zero-length bitset, to avoid allocating
-        //a bit array.
+        // Initialise super class to a zero-length bitset, to avoid allocating
+        // a bit array.
         super(0);
     }
 
@@ -103,8 +102,7 @@ public class SparseBitSet extends BitSet {
             throw new IndexOutOfBoundsException("toIndex < 0: " + toIndex);
         }
         if (fromIndex > toIndex) {
-            throw new IndexOutOfBoundsException("fromIndex: " + fromIndex
-                    + " > toIndex: " + toIndex);
+            throw new IndexOutOfBoundsException("fromIndex: " + fromIndex + " > toIndex: " + toIndex);
         }
         for (int i = fromIndex; i < toIndex; i++) {
             set(i);
@@ -120,8 +118,7 @@ public class SparseBitSet extends BitSet {
             throw new IndexOutOfBoundsException("toIndex < 0: " + toIndex);
         }
         if (fromIndex > toIndex) {
-            throw new IndexOutOfBoundsException("fromIndex: " + fromIndex
-                    + " > toIndex: " + toIndex);
+            throw new IndexOutOfBoundsException("fromIndex: " + fromIndex + " > toIndex: " + toIndex);
         }
         for (int i = fromIndex; i < toIndex; i++) {
             set(i, value);
@@ -257,8 +254,7 @@ public class SparseBitSet extends BitSet {
     @Override
     public void or(BitSet set) {
         Set<Integer> orbits = new HashSet<Integer>(setbits);
-        for (int index = set.nextSetBit(0); index != -1;
-             index = set.nextSetBit(index + 1)) {
+        for (int index = set.nextSetBit(0); index != -1; index = set.nextSetBit(index + 1)) {
             orbits.add(index);
         }
         setbits = orbits;
@@ -272,8 +268,7 @@ public class SparseBitSet extends BitSet {
                 xorbits.add(index);
             }
         }
-        for (int index = set.nextSetBit(0); index != -1;
-             index = set.nextSetBit(index + 1)) {
+        for (int index = set.nextSetBit(0); index != -1; index = set.nextSetBit(index + 1)) {
             if (!setbits.contains(index)) {
                 xorbits.add(index);
             }
@@ -293,10 +288,9 @@ public class SparseBitSet extends BitSet {
     }
 
     /**
-     * A hash code for this bit set.
-     * Note: The hash codes are not implemented to be compatible with
-     * java.util.BitSet#hashCode(). Implementing that algorithm would be
-     * difficult and inefficient on the current implementation.
+     * A hash code for this bit set. Note: The hash codes are not implemented to be compatible with
+     * java.util.BitSet#hashCode(). Implementing that algorithm would be difficult and inefficient on the current
+     * implementation.
      *
      * @return A hashcode.
      */
@@ -305,13 +299,11 @@ public class SparseBitSet extends BitSet {
     }
 
     /**
-     * In contrast with {@link BitSet#size()} this does not return the
-     * size in bytes used to represent this set. Instead, it returns the
-     * same as {@link #length()} for compatibility with
-     * {@link BitSet}. The actual space used is a hashset of size
-     * {@link #cardinality()}.
+     * In contrast with {@link BitSet#size()} this does not return the size in bytes used to represent this set.
+     * Instead, it returns the same as {@link #length()} for compatibility with {@link BitSet}. The actual space used is
+     * a hashset of size {@link #cardinality()}.
      *
-     * @return the same as  {@link #length()}
+     * @return the same as {@link #length()}
      */
     public int size() {
         return length();
@@ -320,14 +312,12 @@ public class SparseBitSet extends BitSet {
     /**
      * Two SparseBitSets are considered equal if they contain the same bits.
      * <p>
-     * Note: A SparseBitSet is never considered equal to a BitSet. This would
-     * be impossible to implement in a way so equality is symmetric, since
-     * {@link BitSet#equals(Object)} is implemented using its private fields to
-     * determine equality.
+     * Note: A SparseBitSet is never considered equal to a BitSet. This would be impossible to implement in a way so
+     * equality is symmetric, since {@link BitSet#equals(Object)} is implemented using its private fields to determine
+     * equality.
      *
      * @param obj The object to compare for equality.
-     * @return true, if obj is a SparseBitSet and contains the same bits as this
-     * object.
+     * @return true, if obj is a SparseBitSet and contains the same bits as this object.
      */
     public boolean equals(Object obj) {
         return obj instanceof SparseBitSet && setbits.equals(((SparseBitSet) obj).setbits);

@@ -33,8 +33,7 @@ public class ReadOnlyByteArray {
     /**
      * Creates a new instance based on the given array.
      *
-     * @param array Array to provide read-only access to.  The array will
-     * not be copied by this class.
+     * @param array Array to provide read-only access to. The array will not be copied by this class.
      */
     public ReadOnlyByteArray(byte[] array) {
         this.array = array;
@@ -43,7 +42,7 @@ public class ReadOnlyByteArray {
     /**
      * Returns the length of the array.
      *
-     * @return The length of the array.  Always >= 0.
+     * @return The length of the array. Always >= 0.
      */
     public int length() {
         return array.length;

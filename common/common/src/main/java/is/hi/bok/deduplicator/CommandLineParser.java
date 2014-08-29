@@ -60,59 +60,48 @@ public class CommandLineParser {
      * @param out PrintStream to write on.
      * @throws ParseException Failed parse of command line.
      */
-    public CommandLineParser(String[] args, PrintWriter out)
-            throws ParseException {
+    public CommandLineParser(String[] args, PrintWriter out) throws ParseException {
         super();
 
         this.out = out;
 
         this.options = new Options();
-        this.options.addOption(new Option("h", "help", false,
-                "Prints this message and exits."));
+        this.options.addOption(new Option("h", "help", false, "Prints this message and exits."));
 
-        Option opt = new Option("o", "mode", true,
-                "Index by URL, HASH or BOTH. Default: BOTH.");
+        Option opt = new Option("o", "mode", true, "Index by URL, HASH or BOTH. Default: BOTH.");
         opt.setArgName("type");
         this.options.addOption(opt);
 
         this.options.addOption(new Option("s", "equivalent", false,
-                "Include a stripped URL in the index for equivalent URL " +
-                        "matches."));
+                "Include a stripped URL in the index for equivalent URL " + "matches."));
 
-        this.options.addOption(new Option("t", "timestamp", false,
-                "Include the time of fetch in the index."));
+        this.options.addOption(new Option("t", "timestamp", false, "Include the time of fetch in the index."));
 
         this.options.addOption(new Option("e", "etag", false,
                 "Include etags in the index (if available in the source)."));
 
-        opt = new Option("m", "mime", true,
-                "A filter on what mime types are added into the index " +
-                        "(blacklist). Default: ^text/.*");
+        opt = new Option("m", "mime", true, "A filter on what mime types are added into the index "
+                + "(blacklist). Default: ^text/.*");
         opt.setArgName("reg.expr.");
         this.options.addOption(opt);
 
         this.options.addOption(new Option("w", "whitelist", false,
                 "Make the --mime filter a whitelist instead of blacklist."));
 
-        opt = new Option("i", "iterator", true,
-                "An iterator suitable for the source data (default iterator " +
-                        "works on Heritrix's crawl.log).");
+        opt = new Option("i", "iterator", true, "An iterator suitable for the source data (default iterator "
+                + "works on Heritrix's crawl.log).");
         opt.setArgName("classname");
         this.options.addOption(opt);
 
-        this.options.addOption(new Option("a", "add", false,
-                "Add source data to existing index."));
+        this.options.addOption(new Option("a", "add", false, "Add source data to existing index."));
 
-        opt = new Option("r", "origin", true,
-                "If set, the 'origin' of each URI will be added to the index." +
-                        " If no origin is provided by the source data then the " +
-                        "argument provided here will be used.");
+        opt = new Option("r", "origin", true, "If set, the 'origin' of each URI will be added to the index."
+                + " If no origin is provided by the source data then the " + "argument provided here will be used.");
         opt.setArgName("origin");
         this.options.addOption(opt);
 
         this.options.addOption(new Option("d", "skip-duplicates", false,
-                "If set, URIs marked as duplicates will not be added to the " +
-                        "index."));
+                "If set, URIs marked as duplicates will not be added to the " + "index."));
 
         PosixParser parser = new PosixParser();
         try {
@@ -165,7 +154,7 @@ public class CommandLineParser {
     /**
      * Print out optional message an optional usage and then exit.
      * <p>
-     * Private utility method.  JVM exits from inside in this method.
+     * Private utility method. JVM exits from inside in this method.
      *
      * @param message Message to print before we do usage.
      * @param doUsage True if we are to print out the usage message.
@@ -177,19 +166,13 @@ public class CommandLineParser {
         }
 
         if (doUsage) {
-            HelpFormatter formatter =
-                    new DigestHelpFormatter();
-            formatter.printHelp(this.out, 80, NAME, "Options:", this.options,
-                    1, 2, "Arguments:", false);
-            this.out.println(" source                     Data to iterate " +
-                    "over (typically a crawl.log). If");
-            this.out.println("                            using a non-standard " +
-                    "iterator, consult relevant.");
+            HelpFormatter formatter = new DigestHelpFormatter();
+            formatter.printHelp(this.out, 80, NAME, "Options:", this.options, 1, 2, "Arguments:", false);
+            this.out.println(" source                     Data to iterate " + "over (typically a crawl.log). If");
+            this.out.println("                            using a non-standard " + "iterator, consult relevant.");
             this.out.println("                            documentation");
-            this.out.println(" target                     Target directory " +
-                    "for index output. Directory need not");
-            this.out.println("                            exist, but " +
-                    "unless --add should be empty.");
+            this.out.println(" target                     Target directory " + "for index output. Directory need not");
+            this.out.println("                            exist, but " + "unless --add should be empty.");
         }
 
         // Close printwriter so stream gets flushed.
@@ -221,20 +204,17 @@ public class CommandLineParser {
     /**
      * Override so can customize usage output.
      */
-    public class DigestHelpFormatter
-            extends HelpFormatter {
+    public class DigestHelpFormatter extends HelpFormatter {
         public DigestHelpFormatter() {
             super();
         }
 
-        public void printUsage(PrintWriter pw, int width,
-                String cmdLineSyntax) {
+        public void printUsage(PrintWriter pw, int width, String cmdLineSyntax) {
             out.println(USAGE + NAME + " --help");
             out.println(USAGE + NAME + " [options] source target");
         }
 
-        public void printUsage(PrintWriter pw, int width,
-                String app, Options options) {
+        public void printUsage(PrintWriter pw, int width, String app, Options options) {
             this.printUsage(pw, width, app);
         }
     }

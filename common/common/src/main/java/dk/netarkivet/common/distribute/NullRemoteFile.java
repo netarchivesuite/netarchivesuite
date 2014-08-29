@@ -29,8 +29,8 @@ import java.io.OutputStream;
 import dk.netarkivet.common.exceptions.NotImplementedException;
 
 /**
- * This is an implementation of RemoteFile which does nothing and can
- * therefore be used in batch jobs for which no output is required.
+ * This is an implementation of RemoteFile which does nothing and can therefore be used in batch jobs for which no
+ * output is required.
  */
 @SuppressWarnings({"serial"})
 public class NullRemoteFile implements RemoteFile {
@@ -38,8 +38,7 @@ public class NullRemoteFile implements RemoteFile {
     /**
      * @see RemoteFileFactory#getInstance(File, boolean, boolean, boolean)
      */
-    public static RemoteFile getInstance(File f, Boolean useChecksums, Boolean fileDeletable,
-            Boolean multipleDownloads) {
+    public static RemoteFile getInstance(File f, Boolean useChecksums, Boolean fileDeletable, Boolean multipleDownloads) {
         return new NullRemoteFile();
     }
 

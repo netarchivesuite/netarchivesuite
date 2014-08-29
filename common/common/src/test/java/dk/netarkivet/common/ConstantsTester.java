@@ -38,8 +38,7 @@ public class ConstantsTester {
 
     @Test
     public void is_getHeritrixVersionString_sameAsConstant() {
-        Assert.assertEquals("HeritrixVersionString is wrong", "1.14.4",
-                Constants.getHeritrixVersionString());
+        Assert.assertEquals("HeritrixVersionString is wrong", "1.14.4", Constants.getHeritrixVersionString());
     }
 
     /**
@@ -84,8 +83,7 @@ public class ConstantsTester {
         for (Thread t : threads) {
             t.start();
         }
-        WAITLOOP:
-        do {
+        WAITLOOP: do {
             Thread.sleep(10);
             if (failed[0]) {
                 break;

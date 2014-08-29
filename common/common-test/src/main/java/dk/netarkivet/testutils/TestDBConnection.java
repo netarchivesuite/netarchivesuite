@@ -180,8 +180,8 @@ public class TestDBConnection implements Connection {
      * In the TestDBConnection 'implementation', commit is ignored, but the savepoints are still forgotten locally -- we
      * will still be able to roll back the entire test.
      *
-     * @throws SQLException if a database access error occurs or this <code>Connection</code> object is in
-     * auto-commit mode
+     * @throws SQLException if a database access error occurs or this <code>Connection</code> object is in auto-commit
+     * mode
      * @see #setAutoCommit
      */
     public void commit() throws SQLException {
@@ -195,8 +195,8 @@ public class TestDBConnection implements Connection {
      * Undoes all changes made in the current transaction and releases any database locks currently held by this
      * <code>Connection</code> object. This method should be used only when auto-commit mode has been disabled.
      *
-     * @throws SQLException if a database access error occurs or this <code>Connection</code> object is in
-     * auto-commit mode
+     * @throws SQLException if a database access error occurs or this <code>Connection</code> object is in auto-commit
+     * mode
      * @see #setAutoCommit
      */
     public void rollback() throws SQLException {
@@ -446,8 +446,8 @@ public class TestDBConnection implements Connection {
      *
      * @param map the <code>java.util.Map</code> object to install as the replacement for this <code>Connection</code>
      * object's default type map
-     * @throws SQLException if a database access error occurs or the given parameter is not a
-     * <code>java.util.Map</code> object
+     * @throws SQLException if a database access error occurs or the given parameter is not a <code>java.util.Map</code>
+     * object
      * @see #getTypeMap
      */
     public void setTypeMap(java.util.Map<String, Class<?>> map) throws SQLException {
@@ -518,8 +518,8 @@ public class TestDBConnection implements Connection {
      * This method should be used only when auto-commit has been disabled.
      *
      * @param savepoint the <code>Savepoint</code> object to roll back to
-     * @throws SQLException if a database access error occurs, the <code>Savepoint</code> object is no longer valid,
-     * or this <code>Connection</code> object is currently in auto-commit mode
+     * @throws SQLException if a database access error occurs, the <code>Savepoint</code> object is no longer valid, or
+     * this <code>Connection</code> object is currently in auto-commit mode
      * @see Savepoint
      * @see #rollback
      */
@@ -538,8 +538,8 @@ public class TestDBConnection implements Connection {
      * after it have been removed will cause an <code>SQLException</code> to be thrown.
      *
      * @param savepoint the <code>Savepoint</code> object to be removed
-     * @throws SQLException if a database access error occurs or the given <code>Savepoint</code> object is not a
-     * valid savepoint in the current transaction
+     * @throws SQLException if a database access error occurs or the given <code>Savepoint</code> object is not a valid
+     * savepoint in the current transaction
      */
     public void releaseSavepoint(Savepoint savepoint) throws SQLException {
         while (!savepoints.isEmpty() && savepoints.peek() != savepoint) {

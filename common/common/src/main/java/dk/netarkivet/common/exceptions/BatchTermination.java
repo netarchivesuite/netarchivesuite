@@ -38,8 +38,7 @@ public class BatchTermination extends NetarkivetException {
     }
 
     /**
-     * Constructs new BatchTermination exception with the given message and
-     * cause.
+     * Constructs new BatchTermination exception with the given message and cause.
      *
      * @param message The exception message.
      * @param cause The cause of the exception.

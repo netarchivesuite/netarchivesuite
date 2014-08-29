@@ -55,8 +55,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
 
 /**
- * Various JMX-related utility functions.  FIXME: Use generic RegistryContextFactory
- * instead of Oracle specific.
+ * Various JMX-related utility functions. FIXME: Use generic RegistryContextFactory instead of Oracle specific.
  */
 @SuppressWarnings("restriction")
 public final class JMXUtils {
@@ -65,8 +64,8 @@ public final class JMXUtils {
     public static final Logger log = LoggerFactory.getLogger(JMXUtils.class);
 
     /**
-     * The system property that Java uses to get an initial context
-     * for JNDI. This must be set for RMI connections to work.
+     * The system property that Java uses to get an initial context for JNDI. This must be set for RMI connections to
+     * work.
      */
     private static final String JNDI_INITIAL_CONTEXT_PROPERTY = "java.naming.factory.initial";
 
@@ -81,9 +80,8 @@ public final class JMXUtils {
     }
 
     /**
-     * The maximum number of times we back off on getting an mbean or a job.
-     * The cumulative time trying is 2^(MAX_TRIES) milliseconds,
-     * thus the constant is defined as log_2(TIMEOUT), as set in settings.
+     * The maximum number of times we back off on getting an mbean or a job. The cumulative time trying is 2^(MAX_TRIES)
+     * milliseconds, thus the constant is defined as log_2(TIMEOUT), as set in settings.
      *
      * @return The number of tries
      */
@@ -99,37 +97,32 @@ public final class JMXUtils {
     }
 
     /**
-     * If no initial JNDI context has been configured,
-     * configures the system to use Sun's standard one.
-     * This is necessary for RMI connections to work.
+     * If no initial JNDI context has been configured, configures the system to use Sun's standard one. This is
+     * necessary for RMI connections to work.
      */
     private static void ensureJndiInitialContext() {
         if (System.getProperty(JNDI_INITIAL_CONTEXT_PROPERTY) == null) {
             System.setProperty(JNDI_INITIAL_CONTEXT_PROPERTY, RegistryContextFactory.class.getCanonicalName());
-            log.info("Set property '{}' to: {}",
-                    JNDI_INITIAL_CONTEXT_PROPERTY, RegistryContextFactory.class.getCanonicalName());
+            log.info("Set property '{}' to: {}", JNDI_INITIAL_CONTEXT_PROPERTY,
+                    RegistryContextFactory.class.getCanonicalName());
         } else {
-            log.debug("Property '{}' is set to: {}",
-                    JNDI_INITIAL_CONTEXT_PROPERTY, System.getProperty(JNDI_INITIAL_CONTEXT_PROPERTY));
+            log.debug("Property '{}' is set to: {}", JNDI_INITIAL_CONTEXT_PROPERTY,
+                    System.getProperty(JNDI_INITIAL_CONTEXT_PROPERTY));
         }
     }
 
     /**
-     * Constructs the same service URL that JConsole does
-     * on the basis of a server name, a JMX port number,
-     * and a RMI port number.
+     * Constructs the same service URL that JConsole does on the basis of a server name, a JMX port number, and a RMI
+     * port number.
      * <p>
-     * Example URL:
-     * service:jmx:rmi://0.0.0.0:9999/jndi/rmi://0.0.0.0:1099/JMXConnector
-     * where RMI port number = 9999, JMX port number = 1099
-     * server = 0.0.0.0 a.k.a localhost(?).
+     * Example URL: service:jmx:rmi://0.0.0.0:9999/jndi/rmi://0.0.0.0:1099/JMXConnector where RMI port number = 9999,
+     * JMX port number = 1099 server = 0.0.0.0 a.k.a localhost(?).
      *
-     * @param server The server that should be connected to using
-     * the constructed URL.
-     * @param jmxPort The number of the JMX port that should be connected to
-     * using the constructed URL (may not be a negative number)
-     * @param rmiPort The number of the RMI port that should be connected to
-     * using the constructed URL, or -1 if the default RMI port should be used.
+     * @param server The server that should be connected to using the constructed URL.
+     * @param jmxPort The number of the JMX port that should be connected to using the constructed URL (may not be a
+     * negative number)
+     * @param rmiPort The number of the RMI port that should be connected to using the constructed URL, or -1 if the
+     * default RMI port should be used.
      * @return the constructed URL.
      */
     public static JMXServiceURL getUrl(String server, int jmxPort, int rmiPort) {
@@ -151,16 +144,14 @@ public final class JMXUtils {
     }
 
     /**
-     * Returns a connection to a remote MbeanServer defined by
-     * the given arguments.
+     * Returns a connection to a remote MbeanServer defined by the given arguments.
      *
      * @param server the remote servername
      * @param jmxPort the remote jmx-port
      * @param rmiPort the remote rmi-port
      * @param userName the username
      * @param password the password
-     * @return a MBeanServerConnection to a remote MbeanServer defined by
-     * the given arguments.
+     * @return a MBeanServerConnection to a remote MbeanServer defined by the given arguments.
      */
     public static MBeanServerConnection getMBeanServerConnection(String server, int jmxPort, int rmiPort,
             String userName, String password) {
@@ -180,19 +171,14 @@ public final class JMXUtils {
     }
 
     /**
-     * Connects to the given (url-specified) service point,
-     * sending the given credentials as login.
+     * Connects to the given (url-specified) service point, sending the given credentials as login.
      *
      * @param url The JMX service url of some JVM on some machine.
-     * @param credentials a map with (at least) one entry, mapping
-     * "jmx.remote.credentials" to a String array of length 2.
-     * Its first item should be the user name.
-     * Its second item should be the password.
-     * @return An MBeanServerConnection representing the
-     * connected session.
+     * @param credentials a map with (at least) one entry, mapping "jmx.remote.credentials" to a String array of length
+     * 2. Its first item should be the user name. Its second item should be the password.
+     * @return An MBeanServerConnection representing the connected session.
      */
-    public static MBeanServerConnection getMBeanServerConnection(JMXServiceURL url,
-            Map<String, String[]> credentials) {
+    public static MBeanServerConnection getMBeanServerConnection(JMXServiceURL url, Map<String, String[]> credentials) {
         ArgumentNotValid.checkNotNull(url, "JMXServiceURL url");
         ArgumentNotValid.checkNotNull(credentials, "Map<String,String[]> credentials");
         try {
@@ -204,10 +190,9 @@ public final class JMXUtils {
     }
 
     /**
-     * Packages credentials as an environment for JMX connections.
-     * This packaging has the same form that JConsole uses:
-     * a one-entry Map, the mapping of "jmx.remote.credentials" being
-     * an array containing the user name and the password.
+     * Packages credentials as an environment for JMX connections. This packaging has the same form that JConsole uses:
+     * a one-entry Map, the mapping of "jmx.remote.credentials" being an array containing the user name and the
+     * password.
      *
      * @param userName The user to login as
      * @param password The password to use for that user
@@ -227,8 +212,7 @@ public final class JMXUtils {
      * @param connection Connection to the server holding the bean.
      * @param beanName Name of the bean.
      * @param command Command to execute.
-     * @param arguments Arguments to the command.  Only string arguments are
-     * possible at the moment.
+     * @param arguments Arguments to the command. Only string arguments are possible at the moment.
      * @return The return value of the executed command.
      */
     public static Object executeCommand(MBeanServerConnection connection, String beanName, String command,
@@ -261,8 +245,8 @@ public final class JMXUtils {
                         TimeUtils.exponentialBackoffSleep(tries);
                     }
                 } catch (IOException e) {
-                    log.warn("Exception thrown while executing {} with args {} on {}",
-                            command, Arrays.toString(arguments), beanName, e);
+                    log.warn("Exception thrown while executing {} with args {} on {}", command,
+                            Arrays.toString(arguments), beanName, e);
                     lastException = e;
                     if (tries < maxJmxRetries) {
                         TimeUtils.exponentialBackoffSleep(tries);
@@ -348,16 +332,13 @@ public final class JMXUtils {
      * Get a JMXConnector to a given host and port, using login and password.
      *
      * @param hostName The host to attempt to connect to.
-     * @param jmxPort The port on the host to connect to
-     * (a non-negative number).
-     * @param login The login name to authenticate as (typically "controlRole"
-     * or "monitorRole".
+     * @param jmxPort The port on the host to connect to (a non-negative number).
+     * @param login The login name to authenticate as (typically "controlRole" or "monitorRole".
      * @param password The password for JMX access.
      * @return A JMX connector to the given host and port, using default RMI.
      * @throws IOFailure if connecting to JMX fails.
      */
-    public static JMXConnector getJMXConnector(String hostName, int jmxPort, final String login,
-            final String password) {
+    public static JMXConnector getJMXConnector(String hostName, int jmxPort, final String login, final String password) {
         ArgumentNotValid.checkNotNullOrEmpty(hostName, "String hostName");
         ArgumentNotValid.checkNotNegative(jmxPort, "int jmxPort");
         ArgumentNotValid.checkNotNullOrEmpty(login, "String login");
@@ -373,15 +354,15 @@ public final class JMXUtils {
                 return JMXConnectorFactory.connect(rmiurl, environment);
             } catch (IOException e) {
                 lastException = e;
-                if (retries < maxJmxRetries && e.getCause() != null
-                        && (e.getCause() instanceof ServiceUnavailableException
-                        || e.getCause() instanceof SocketTimeoutException)) {
+                if (retries < maxJmxRetries
+                        && e.getCause() != null
+                        && (e.getCause() instanceof ServiceUnavailableException || e.getCause() instanceof SocketTimeoutException)) {
                     // Sleep a bit before trying again
                     TimeUtils.exponentialBackoffSleep(retries);
-                    /*  called exponentialBackoffSleep(retries) which used
-                        Calendar.MILLISECOND as time unit, which means we only
-                        wait an exponential number of milliseconds.
-                    */
+                    /*
+                     * called exponentialBackoffSleep(retries) which used Calendar.MILLISECOND as time unit, which means
+                     * we only wait an exponential number of milliseconds.
+                     */
                     continue;
                 }
                 break;
@@ -396,8 +377,7 @@ public final class JMXUtils {
      *
      * @param items TabularData structure as returned from JMX calls.
      * @return The one item in the items structure.
-     * @throws ArgumentNotValid if there is not exactly one item in items,
-     * or items is null.
+     * @throws ArgumentNotValid if there is not exactly one item in items, or items is null.
      */
     public static CompositeData getOneCompositeData(TabularData items) {
         ArgumentNotValid.checkNotNull(items, "TabularData items");
@@ -406,8 +386,7 @@ public final class JMXUtils {
     }
 
     /**
-     * Execute a single command, closing the connector afterwards.  If you
-     * wish to hold on to the connector, call
+     * Execute a single command, closing the connector afterwards. If you wish to hold on to the connector, call
      * JMXUtils#executeCommand(MBeanServerConnection, String, String, String[])
      *
      * @param connector A one-shot connector object.
@@ -429,8 +408,7 @@ public final class JMXUtils {
             throw new IOFailure("Failure getting JMX connection", e);
         }
         try {
-            return executeCommand(connection, beanName,
-                    command, arguments);
+            return executeCommand(connection, beanName, command, arguments);
         } finally {
             try {
                 connector.close();
@@ -441,8 +419,7 @@ public final class JMXUtils {
     }
 
     /**
-     * Get the value of an attribute, closing the connector afterwards.  If you
-     * wish to hold on to the connector, call
+     * Get the value of an attribute, closing the connector afterwards. If you wish to hold on to the connector, call
      * JMXUtils#executeCommand(MBeanServerConnection, String, String, String[])
      *
      * @param connector A one-shot connector object.

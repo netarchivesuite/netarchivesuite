@@ -34,9 +34,8 @@ public interface CDXRecordFilter extends Serializable {
      * Process one CDXRecord - return true/false.
      *
      * @param cdxrec the CDXRecord to be processed.
-     * @return true or false on whether the processed CDXRecord is "valid"
-     * according to this filter implementation.
-     * true means this CDXRecord is valid!
+     * @return true or false on whether the processed CDXRecord is "valid" according to this filter implementation. true
+     * means this CDXRecord is valid!
      */
     boolean process(CDXRecord cdxrec);
 

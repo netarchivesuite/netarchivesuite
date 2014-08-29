@@ -36,8 +36,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 public class HeritrixArchiveRecordWrapper extends ArchiveRecordBase {
 
     /**
-     * The original Heritrix record, since it is also the record payload
-     * input stream.
+     * The original Heritrix record, since it is also the record payload input stream.
      */
     protected ArchiveRecord record;
 

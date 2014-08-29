@@ -50,8 +50,7 @@ public class AllDocsCollector extends Collector {
 
     @Override
     public void collect(int doc) throws IOException {
-        docs.add(
-                new ScoreDoc(doc + docBase, scorer.score()));
+        docs.add(new ScoreDoc(doc + docBase, scorer.score()));
     }
 
     public List<ScoreDoc> getHits() {

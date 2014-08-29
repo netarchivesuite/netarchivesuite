@@ -656,9 +656,8 @@ public class WindowsMachine extends Machine {
                 "  Do While oExec.StdErr.AtEndOfStream <> True",
                 "    Set outFile = CreateObject(\"Scripting.FileSystemObject\").OpenTextFile(\"${startlogname}\", 8, True)",
                 "    outFile.WriteLine oExec.StdErr.ReadLine", "    outFile.close", "  Loop", "Loop"};
-        protected static final String jdkLogger =
-                " -Dorg.apache.commons.logging.Log=\"\"org.apache.commons.logging.impl.Jdk14Logger\"\""
-                        + " -Djava.util.logging.config.file=\"\"${confdirpath}log_${id}.prop\"\"";
+        protected static final String jdkLogger = " -Dorg.apache.commons.logging.Log=\"\"org.apache.commons.logging.impl.Jdk14Logger\"\""
+                + " -Djava.util.logging.config.file=\"\"${confdirpath}log_${id}.prop\"\"";
         protected static final String slf4jLogger = " -Dlogback.configurationFile=\"\"${confdirpath}logback_${id}.xml\"\"";
         protected static final String securityManagement = " -Djava.security.manager -Djava.security.policy=\"\"${confdirpath}security.policy\"\"";
     }
@@ -1094,8 +1093,7 @@ public class WindowsMachine extends Machine {
         res.append(Constants.NEWLINE);
 
         // IF NOT DEFAULT PATHS, THEN MAKE SCRIPT TO MOVE THE FILES.
-        if (!accessFilePath
-                .equals(ScriptConstants.replaceWindowsDirSeparators(Constants.JMX_ACCESS_FILE_PATH_DEFAULT))) {
+        if (!accessFilePath.equals(ScriptConstants.replaceWindowsDirSeparators(Constants.JMX_ACCESS_FILE_PATH_DEFAULT))) {
             // ssh dev@kb-test-adm-001.kb.dk "mv
             // installpath/conf/jmxremote.access installpath/accessFilePath"
             res.append(ScriptConstants.SSH + Constants.SPACE);

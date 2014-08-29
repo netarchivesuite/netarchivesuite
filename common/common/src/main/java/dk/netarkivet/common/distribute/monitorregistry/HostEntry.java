@@ -105,9 +105,8 @@ public class HostEntry implements Serializable {
     /**
      * Return whether two hosts are equal.
      * <p>
-     * Two hosts are considered equal, if they have the same name and JMX/RMI
-     * ports. However, the time last seen alive is not, and should not be,
-     * considered.
+     * Two hosts are considered equal, if they have the same name and JMX/RMI ports. However, the time last seen alive
+     * is not, and should not be, considered.
      *
      * @param obj The host to compare with.
      * @return Whether the two objects represent the same host.
@@ -123,8 +122,7 @@ public class HostEntry implements Serializable {
 
         final HostEntry hostEntry1 = (HostEntry) obj;
 
-        if (name != null ? !name.equals(hostEntry1.name)
-                : hostEntry1.name != null) {
+        if (name != null ? !name.equals(hostEntry1.name) : hostEntry1.name != null) {
             return false;
         }
 
@@ -157,8 +155,7 @@ public class HostEntry implements Serializable {
      * @return A human readable string.
      */
     public String toString() {
-        return "Host=" + name + ", JMXport=" + jmxPort + ", RMIport=" + rmiPort
-                + ", last seen live at " + time;
+        return "Host=" + name + ", JMXport=" + jmxPort + ", RMIport=" + rmiPort + ", last seen live at " + time;
     }
 
     /**

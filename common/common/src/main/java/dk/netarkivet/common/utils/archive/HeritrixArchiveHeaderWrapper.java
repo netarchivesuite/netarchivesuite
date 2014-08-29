@@ -63,8 +63,8 @@ public class HeritrixArchiveHeaderWrapper extends ArchiveHeaderBase {
     protected ArchiveRecordHeader header;
 
     /**
-     * Map of header fields extracted from the Heritrix header.
-     * Only difference is that the keys are normalized to lower case.
+     * Map of header fields extracted from the Heritrix header. Only difference is that the keys are normalized to lower
+     * case.
      */
     protected Map<String, Object> headerFields = new HashMap<String, Object>();
 
@@ -77,7 +77,7 @@ public class HeritrixArchiveHeaderWrapper extends ArchiveHeaderBase {
      */
     public static HeritrixArchiveHeaderWrapper wrapArchiveHeader(HeritrixArchiveRecordWrapper recordWrapper,
             ArchiveRecord record) {
-        //ArgumentNotValid.checkNotNull(recordWrapper, "recordWrapper");
+        // ArgumentNotValid.checkNotNull(recordWrapper, "recordWrapper");
         ArgumentNotValid.checkNotNull(record, "record");
         HeritrixArchiveHeaderWrapper headerWrapper = new HeritrixArchiveHeaderWrapper();
         headerWrapper.recordWrapper = recordWrapper;

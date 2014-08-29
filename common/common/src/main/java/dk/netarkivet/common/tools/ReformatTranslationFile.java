@@ -33,8 +33,7 @@ import java.io.OutputStreamWriter;
 import java.util.Properties;
 
 /**
- * Program to reformat a a Translation file.
- * This executable takes three parameters :
+ * Program to reformat a a Translation file. This executable takes three parameters :
  * <ol>
  * <li>base properties file, that defines the key ordering</li>
  * <li>properties file to reformat, sorting keys in the order defined by the first file</li>
@@ -54,10 +53,8 @@ public class ReformatTranslationFile {
     public static void main(String[] args) throws IOException {
 
         if (args.length != 3) {
-            System.out.println("Usage: java "
-                    + ReformatTranslationFile.class.getName()
-                    + "\n\t<properties file defining key order>"
-                    + "\n\t<properties file to fetch values from>"
+            System.out.println("Usage: java " + ReformatTranslationFile.class.getName()
+                    + "\n\t<properties file defining key order>" + "\n\t<properties file to fetch values from>"
                     + "\n\t<second and output file encoding>");
             System.exit(1);
         }
@@ -75,8 +72,7 @@ public class ReformatTranslationFile {
         if (reformat.delete()) {
             reformat.createNewFile();
         }
-        BufferedWriter out = new BufferedWriter(new OutputStreamWriter(
-                new FileOutputStream(reformat), encoding));
+        BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(reformat), encoding));
 
         BufferedReader in = new BufferedReader(new FileReader(order));
         String line = null;
@@ -97,8 +93,7 @@ public class ReformatTranslationFile {
                 }
                 String propVal = sourceProps.getProperty(key);
                 if (propVal == null) {
-                    System.out.println(
-                            "No value for key '" + key + "' in right file");
+                    System.out.println("No value for key '" + key + "' in right file");
                     out.write(defaultProps.getProperty(key));
                 } else {
                     out.write(propVal);
@@ -111,8 +106,7 @@ public class ReformatTranslationFile {
         in.close();
         out.close();
 
-        System.out.println("Successfully reformatted "
-                + reformat.getAbsolutePath());
+        System.out.println("Successfully reformatted " + reformat.getAbsolutePath());
         System.exit(0);
     }
 

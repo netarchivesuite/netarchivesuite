@@ -38,8 +38,8 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.arc.ARCKey;
 
 /**
- * This class handles reading CDX files and finding entries in them.
- * Furthermore it implements the possibility to do filtering of searchresults
+ * This class handles reading CDX files and finding entries in them. Furthermore it implements the possibility to do
+ * filtering of searchresults
  */
 public class CDXReader {
 
@@ -93,12 +93,10 @@ public class CDXReader {
     }
 
     /**
-     * Add another CDXRecordFilter to the list of filters to use when
-     * searching.
+     * Add another CDXRecordFilter to the list of filters to use when searching.
      *
      * @param cdxrecfilter A CDXRecordFilter to use when searching.
-     * @throws ArgumentNotValid If the filter is invalid or another filter
-     * exists with the same name.
+     * @throws ArgumentNotValid If the filter is invalid or another filter exists with the same name.
      */
     public void addCDXRecordFilter(CDXRecordFilter cdxrecfilter) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(cdxrecfilter, "cdxrecfilter");
@@ -127,8 +125,7 @@ public class CDXReader {
     }
 
     /**
-     * Get a specific filter by the name of the filter -
-     * if not found return null.
+     * Get a specific filter by the name of the filter - if not found return null.
      *
      * @param filtername The given filtername.
      * @return the CDXRecordFilter
@@ -151,20 +148,17 @@ public class CDXReader {
     }
 
     /**
-     * Look up an entry in CDX files.  Notice that only full match search is
-     * allowed, not prefix search.
+     * Look up an entry in CDX files. Notice that only full match search is allowed, not prefix search.
      *
      * @param uri A URI to find in the CDX files.
-     * @return A key indicating the place where the entry can be found, or
-     * null if no such entry was found;
+     * @return A key indicating the place where the entry can be found, or null if no such entry was found;
      */
     public ARCKey getKey(String uri) {
         for (File f : files) {
             String firstBrokenLine = null;
             long numBrokenLines = 0;
             try {
-                CDXLINES:
-                for (String s : BinSearch.getLinesInFile(f, uri)) {
+                CDXLINES: for (String s : BinSearch.getLinesInFile(f, uri)) {
                     String[] fieldParts = s.split(SEPARATOR_REGEX);
                     CDXRecord cdxrec;
                     try {
@@ -184,14 +178,13 @@ public class CDXReader {
                                 continue CDXLINES;
                             }
                         }
-                        return new ARCKey(cdxrec.getArcfile(),
-                                cdxrec.getOffset());
+                        return new ARCKey(cdxrec.getArcfile(), cdxrec.getOffset());
                     }
                 }
             } finally {
                 if (numBrokenLines > 0) {
-                    log.warn("CDX file '{}' contains {} invalid CDX lines, first one is\n{}",
-                            f, numBrokenLines, firstBrokenLine);
+                    log.warn("CDX file '{}' contains {} invalid CDX lines, first one is\n{}", f, numBrokenLines,
+                            firstBrokenLine);
                 }
             }
         }

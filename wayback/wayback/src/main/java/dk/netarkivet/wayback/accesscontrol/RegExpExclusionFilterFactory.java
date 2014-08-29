@@ -43,6 +43,7 @@ import org.archive.wayback.util.flatfile.FlatFile;
  * The class is intended to be instantiated as a Spring bean in a wayback access point, for example by adding something
  * like
  * <p>
+ * 
  * <pre>
  * {@code
  *   <property name="exclusionFactory">

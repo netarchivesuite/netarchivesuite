@@ -32,10 +32,8 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.archive.HeritrixArchiveRecordWrapper;
 
 /**
- * A filter class for batch entries.  Allows testing whether or not
- * to process an entry without loading the entry data first.
- * The class in itself is abstract but contains implementation of several
- * filters.
+ * A filter class for batch entries. Allows testing whether or not to process an entry without loading the entry data
+ * first. The class in itself is abstract but contains implementation of several filters.
  */
 @SuppressWarnings({"serial"})
 public abstract class WARCBatchFilter implements Serializable {
@@ -101,12 +99,10 @@ public abstract class WARCBatchFilter implements Serializable {
      * Note that the mimetype of the WARC responserecord is not (necessarily) the same as its payload.
      *
      * @param mimetype String denoting the mimetype this filter represents
-     * @return a BatchFilter that filters out all WARCRecords, that does not
-     * have this mimetype
+     * @return a BatchFilter that filters out all WARCRecords, that does not have this mimetype
      * @throws MimeTypeParseException If mimetype is invalid
      */
-    public static WARCBatchFilter getMimetypeBatchFilter(final String mimetype)
-            throws MimeTypeParseException {
+    public static WARCBatchFilter getMimetypeBatchFilter(final String mimetype) throws MimeTypeParseException {
         ArgumentNotValid.checkNotNullOrEmpty(mimetype, "String mimetype");
         if (!mimetypeIsOk(mimetype)) {
             throw new MimeTypeParseException("Mimetype argument '" + mimetype + "' is invalid");

@@ -39,9 +39,8 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 
 /**
- * This implementation of FileBatchJob is a bridge to a jar file given as a File
- * object. The given class will be loaded and used to perform the actions of the
- * FileBatchJob class.
+ * This implementation of FileBatchJob is a bridge to a jar file given as a File object. The given class will be loaded
+ * and used to perform the actions of the FileBatchJob class.
  */
 @SuppressWarnings({"unchecked", "rawtypes", "serial"})
 public class LoadableJarBatchJob extends FileBatchJob {
@@ -64,11 +63,10 @@ public class LoadableJarBatchJob extends FileBatchJob {
     /**
      * Load a given class from a jar file.
      *
-     * @param jarFiles The jar file(s) to load from. This file may also contain
-     * other classes required by the FileBatchJob class.
+     * @param jarFiles The jar file(s) to load from. This file may also contain other classes required by the
+     * FileBatchJob class.
      * @param arguments The arguments for the batchjob.
-     * @param jobClass The class to load initially. This must be a subclass of
-     * FileBatchJob.
+     * @param jobClass The class to load initially. This must be a subclass of FileBatchJob.
      * @throws ArgumentNotValid If any of the arguments are null.
      */
     public LoadableJarBatchJob(String jobClass, List<String> arguments, File... jarFiles) throws ArgumentNotValid {
@@ -141,8 +139,7 @@ public class LoadableJarBatchJob extends FileBatchJob {
     }
 
     /**
-     * Initialize the job before running. This is called before the
-     * processFile() calls.
+     * Initialize the job before running. This is called before the processFile() calls.
      *
      * @param os the OutputStream to which output should be written
      */
@@ -178,8 +175,8 @@ public class LoadableJarBatchJob extends FileBatchJob {
     }
 
     /**
-     * Human readable representation of this object. Overrides
-     * FileBatchJob.toString to include name of loaded jar/class.
+     * Human readable representation of this object. Overrides FileBatchJob.toString to include name of loaded
+     * jar/class.
      *
      * @return a Human readable representation of this class
      */
@@ -191,8 +188,7 @@ public class LoadableJarBatchJob extends FileBatchJob {
      * Override of the default way to serialize this class.
      *
      * @param out Stream that the object will be written to.
-     * @throws IOException In case there is an error from the underlying stream, or this
-     * object cannot be serialized.
+     * @throws IOException In case there is an error from the underlying stream, or this object cannot be serialized.
      */
     private void writeObject(ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
@@ -202,11 +198,9 @@ public class LoadableJarBatchJob extends FileBatchJob {
      * Override of the default way to deserialize an object of this class.
      *
      * @param in Stream that the object can be read from.
-     * @throws IOException If there is an error reading from the stream, or the
-     * serialized object cannot be deserialized due to errors in the
-     * serialized form.
-     * @throws ClassNotFoundException If the class definition of the serialized object cannot be
-     * found.
+     * @throws IOException If there is an error reading from the stream, or the serialized object cannot be deserialized
+     * due to errors in the serialized form.
+     * @throws ClassNotFoundException If the class definition of the serialized object cannot be found.
      */
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
@@ -217,7 +211,7 @@ public class LoadableJarBatchJob extends FileBatchJob {
         ArgumentNotValid.checkNotNull(input, "InputStream input");
         ArgumentNotValid.checkNotNull(output, "OutputStream output");
 
-        // Let the loaded job handle the post processing. 
+        // Let the loaded job handle the post processing.
         log.debug("Post-processing in the loaded batchjob.");
         loadBatchJob();
         return loadedJob.postProcess(input, output);

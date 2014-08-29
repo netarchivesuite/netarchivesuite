@@ -32,8 +32,8 @@ import java.text.SimpleDateFormat;
 import java.util.NoSuchElementException;
 
 /**
- * An implementation of a  {@link is.hi.bok.deduplicator.CrawlDataIterator}
- * capable of iterating over a Heritrix's style <code>crawl.log</code>.
+ * An implementation of a {@link is.hi.bok.deduplicator.CrawlDataIterator} capable of iterating over a Heritrix's style
+ * <code>crawl.log</code>.
  *
  * @author Kristinn Sigur&eth;sson
  * @author Lars Clausen
@@ -43,14 +43,11 @@ public class CrawlLogIterator extends CrawlDataIterator {
     /**
      * The date format used in crawl.log files.
      */
-    protected final SimpleDateFormat crawlDateFormat =
-            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    protected final SimpleDateFormat crawlDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     /**
-     * The date format specified by the {@link CrawlDataItem} for dates
-     * entered into it (and eventually into the index)
+     * The date format specified by the {@link CrawlDataItem} for dates entered into it (and eventually into the index)
      */
-    protected final SimpleDateFormat crawlDataItemFormat =
-            new SimpleDateFormat(CrawlDataItem.dateFormat);
+    protected final SimpleDateFormat crawlDataItemFormat = new SimpleDateFormat(CrawlDataItem.dateFormat);
 
     /**
      * A reader for the crawl.log file being processed
@@ -58,8 +55,8 @@ public class CrawlLogIterator extends CrawlDataIterator {
     protected BufferedReader in;
 
     /**
-     * The next item to be issued (if ready) or null if the next item
-     * has not been prepared or there are no more elements
+     * The next item to be issued (if ready) or null if the next item has not been prepared or there are no more
+     * elements
      */
     protected CrawlDataItem next;
 
@@ -69,11 +66,9 @@ public class CrawlLogIterator extends CrawlDataIterator {
      * @param source The path of a Heritrix crawl.log file.
      * @throws IOException If errors were found reading the log.
      */
-    public CrawlLogIterator(String source)
-            throws IOException {
+    public CrawlLogIterator(String source) throws IOException {
         super(source);
-        in = new BufferedReader(new InputStreamReader(
-                new FileInputStream(new File(source))));
+        in = new BufferedReader(new InputStreamReader(new FileInputStream(new File(source))));
     }
 
     /**
@@ -91,11 +86,9 @@ public class CrawlLogIterator extends CrawlDataIterator {
     /**
      * Returns the next valid item from the crawl log.
      *
-     * @return An item from the crawl log.  Note that unlike the Iterator
-     * interface, this method returns null if there are no more items
-     * to fetch.
-     * @throws IOException If there is an error reading the item *after* the
-     * item to be returned from the crawl.log.
+     * @return An item from the crawl log. Note that unlike the Iterator interface, this method returns null if there
+     * are no more items to fetch.
+     * @throws IOException If there is an error reading the item *after* the item to be returned from the crawl.log.
      * @throws NoSuchElementException If there are no more items
      */
     public CrawlDataItem next() throws IOException {
@@ -108,9 +101,8 @@ public class CrawlLogIterator extends CrawlDataIterator {
     }
 
     /**
-     * Ready the next item.  This method will skip over items that
-     * getNextItem() rejects.  When the method returns, either next is non-null
-     * or there are no more items in the crawl log.
+     * Ready the next item. This method will skip over items that getNextItem() rejects. When the method returns, either
+     * next is non-null or there are no more items in the crawl log.
      * <p>
      * Note: This method should only be called when <code>next==null<code>
      */
@@ -127,13 +119,11 @@ public class CrawlLogIterator extends CrawlDataIterator {
     /**
      * Parse the a line in the crawl log.
      * <p>
-     * Override this method to change how individual crawl log
-     * items are processed and accepted/rejected.  This method is called from
-     * within the loop in prepareNext().
+     * Override this method to change how individual crawl log items are processed and accepted/rejected. This method is
+     * called from within the loop in prepareNext().
      *
-     * @param line A line from the crawl log.  Must not be null.
-     * @return A {@link CrawlDataItem} if the next line in the crawl log yielded
-     * a usable item, null otherwise.
+     * @param line A line from the crawl log. Must not be null.
+     * @return A {@link CrawlDataItem} if the next line in the crawl log yielded a usable item, null otherwise.
      */
     protected CrawlDataItem parseLine(String line) {
         if (line != null && line.length() > 42) {
@@ -143,18 +133,17 @@ public class CrawlLogIterator extends CrawlDataIterator {
             String[] lineParts = line.split("\\s+", 12);
 
             if (lineParts.length < 10) {
-                // If the lineParts are fewer then 10 then the line is 
+                // If the lineParts are fewer then 10 then the line is
                 // malformed.
                 return null;
             }
 
-            // Index 0: Timestamp 
+            // Index 0: Timestamp
             String timestamp;
             try {
                 // Convert from crawl.log format to the format specified by
                 // CrawlDataItem
-                timestamp = crawlDataItemFormat.format(
-                        crawlDateFormat.parse(lineParts[0]));
+                timestamp = crawlDataItemFormat.format(crawlDateFormat.parse(lineParts[0]));
             } catch (ParseException e) {
                 System.err.println("Error parsing date for: " + line);
                 e.printStackTrace();
@@ -178,8 +167,8 @@ public class CrawlLogIterator extends CrawlDataIterator {
 
             // Index 9: Digest
             String digest = lineParts[9];
-            // The digest may contain a prefix. 
-            // The prefix will be terminated by a : which is immediately 
+            // The digest may contain a prefix.
+            // The prefix will be terminated by a : which is immediately
             // followed by the actual digest
             if (digest.lastIndexOf(":") >= 0) {
                 digest = digest.substring(digest.lastIndexOf(":") + 1);
@@ -193,8 +182,8 @@ public class CrawlLogIterator extends CrawlDataIterator {
             if (lineParts.length == 12) {
                 // Have an annotation field. Look for origin inside it.
                 // Origin can be found in the 'annotations' field, preceeded by
-                // 'deduplicate:' (no quotes) and contained within a pair of 
-                // double quotes. Example: deduplicate:"origin". 
+                // 'deduplicate:' (no quotes) and contained within a pair of
+                // double quotes. Example: deduplicate:"origin".
                 // Can very possibly be missing.
                 String annotation = lineParts[11];
 
@@ -204,7 +193,7 @@ public class CrawlLogIterator extends CrawlDataIterator {
                     startIndex += 11; // Skip over the ]deduplicate:"' part
                     int endIndex = annotation.indexOf('"', startIndex + 1);
                     origin = annotation.substring(startIndex, endIndex);
-                    // That also means this is a duplicate of an URL from an 
+                    // That also means this is a duplicate of an URL from an
                     // earlier crawl
                     duplicate = true;
                 } else if (annotation.contains("duplicate")) {
@@ -214,8 +203,7 @@ public class CrawlLogIterator extends CrawlDataIterator {
                 }
             }
             // Got a valid item.
-            return new CrawlDataItem(
-                    url, digest, timestamp, null, mime, origin, duplicate);
+            return new CrawlDataItem(url, digest, timestamp, null, mime, origin, duplicate);
         }
         return null;
     }
@@ -229,6 +217,7 @@ public class CrawlLogIterator extends CrawlDataIterator {
 
     /*
      * (non-Javadoc)
+     * 
      * @see is.hi.bok.deduplicator.CrawlDataIterator#getSourceType()
      */
     public String getSourceType() {

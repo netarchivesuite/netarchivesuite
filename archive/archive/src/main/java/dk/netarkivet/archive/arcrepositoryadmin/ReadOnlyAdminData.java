@@ -36,8 +36,7 @@ import dk.netarkivet.common.exceptions.IllegalState;
  * <p>
  * Implementation note: Two alternative synch strategies are
  * <p>
- * 1) Recreate ReadOnlyAdminData before every use -- this requires reading the entire file again (millions of
- * lines).<br>
+ * 1) Recreate ReadOnlyAdminData before every use -- this requires reading the entire file again (millions of lines).<br>
  * 2) Synchronize at every entry point (hasEntry, getState etc) -- this requires an expensive stat() call before every
  * action, costly when iterating.
  *

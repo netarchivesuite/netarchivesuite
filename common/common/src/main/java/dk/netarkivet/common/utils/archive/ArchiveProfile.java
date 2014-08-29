@@ -30,8 +30,7 @@ import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.utils.FileUtils;
 
 /**
- * Assemble the constants related to an archive format into profiles.
- * Currently only an ARC and WARC profile.
+ * Assemble the constants related to an archive format into profiles. Currently only an ARC and WARC profile.
  */
 public class ArchiveProfile {
 

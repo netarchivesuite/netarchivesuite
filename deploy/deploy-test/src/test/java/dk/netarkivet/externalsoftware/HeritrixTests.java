@@ -848,7 +848,7 @@ public class HeritrixTests extends TestCase {
         reader.setValidation(true);
         try {
             reader.setProperty("http://apache.org/xml/properties/schema/external-noNamespaceSchemaLocation",
-                    // TestInfo.HERITRIX_SETTINGS_SCHEMA_FILE.getAbsolutePath());
+            // TestInfo.HERITRIX_SETTINGS_SCHEMA_FILE.getAbsolutePath());
                     "heritrix_settings.xsd");
             reader.setFeature("http://apache.org/xml/features/validation/schema", true);
             // add error handler which turns any errors into XML

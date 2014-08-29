@@ -49,15 +49,14 @@ public final class DomainUtils {
     public static final String TLD_REGEX_STRING = "\\.(" + StringUtils.conjoin("|", readTlds()) + ")";
 
     /**
-     * Regexp for matching a valid domain, that is a single domainnamepart followed by a TLD from settings,
-     * or an IP address.
+     * Regexp for matching a valid domain, that is a single domainnamepart followed by a TLD from settings, or an IP
+     * address.
      */
-    public static final Pattern VALID_DOMAIN_MATCHER = Pattern.compile("^(" + Constants.IP_REGEX_STRING
-            + "|" + DOMAINNAME_CHAR_REGEX_STRING + "+" + TLD_REGEX_STRING + ")$");
+    public static final Pattern VALID_DOMAIN_MATCHER = Pattern.compile("^(" + Constants.IP_REGEX_STRING + "|"
+            + DOMAINNAME_CHAR_REGEX_STRING + "+" + TLD_REGEX_STRING + ")$");
 
     /**
-     * A regular expression matching hostnames, and remembering the hostname
-     * in group 1 and the domain in group 2.
+     * A regular expression matching hostnames, and remembering the hostname in group 1 and the domain in group 2.
      */
     private static final Pattern HOSTNAME_REGEX = Pattern.compile("^(|.*?\\.)(" + DOMAINNAME_CHAR_REGEX_STRING + "+"
             + TLD_REGEX_STRING + ")");
@@ -67,10 +66,8 @@ public final class DomainUtils {
     }
 
     /**
-     * Helper method for reading TLDs from settings.
-     * Will read all settings, validate them as legal TLDs and
-     * warn and ignore them if any are invalid.
-     * Settings may be with or without prefix "."
+     * Helper method for reading TLDs from settings. Will read all settings, validate them as legal TLDs and warn and
+     * ignore them if any are invalid. Settings may be with or without prefix "."
      *
      * @return a List of TLDs as Strings
      */
@@ -90,8 +87,8 @@ public final class DomainUtils {
     }
 
     /**
-     * Check if a given domainName is valid domain. A valid domain is an IP
-     * address or a domain name part followed by a TLD as defined in settings.
+     * Check if a given domainName is valid domain. A valid domain is an IP address or a domain name part followed by a
+     * TLD as defined in settings.
      *
      * @param domainName A name of a domain (netarkivet.dk)
      * @return true if domain is valid; otherwise it returns false.
@@ -102,19 +99,15 @@ public final class DomainUtils {
     }
 
     /**
-     * Return a domain name.
-     * A domain name is defined as either an IP address if the given host is an
-     * IP address, or a postfix of the given host name containing one
-     * hostnamepart and a TLD as defined in settings.
+     * Return a domain name. A domain name is defined as either an IP address if the given host is an IP address, or a
+     * postfix of the given host name containing one hostnamepart and a TLD as defined in settings.
      * <p>
-     * E.g. if '.dk' and 'co.uk' are valid TLDs, www.netarchive.dk will be
-     * become netarchive.dk and news.bbc.co.uk will be come bbc.co.uk
+     * E.g. if '.dk' and 'co.uk' are valid TLDs, www.netarchive.dk will be become netarchive.dk and news.bbc.co.uk will
+     * be come bbc.co.uk
      *
      * @param hostname A hostname or IP address. Null hostname is not allowed
-     * @return A domain name (foo.bar) or IP address, or null if no valid
-     * domain could be obtained from the given hostname.  If non-null,
-     * the return value is guaranteed to be a valid domain as determined
-     * by isValidDomainName().
+     * @return A domain name (foo.bar) or IP address, or null if no valid domain could be obtained from the given
+     * hostname. If non-null, the return value is guaranteed to be a valid domain as determined by isValidDomainName().
      */
     public static String domainNameFromHostname(String hostname) {
         ArgumentNotValid.checkNotNull(hostname, "String hostname");

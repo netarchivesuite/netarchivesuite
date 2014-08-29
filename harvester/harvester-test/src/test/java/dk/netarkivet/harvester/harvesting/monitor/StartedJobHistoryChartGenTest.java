@@ -93,7 +93,7 @@ public class StartedJobHistoryChartGenTest {
         pngFile.createNewFile();
 
         gen.generatePngChart(pngFile, 512, 384, "Test history graph", "Crawl time", new String[] {"Progress", "URL",
-                        "Random"}, NumberUtils.toPrimitiveArray(timeValues),
+                "Random"}, NumberUtils.toPrimitiveArray(timeValues),
                 new double[][] {new double[] {0, 100}, null, null},
                 new double[][] {NumberUtils.toPrimitiveArray(progressValues), NumberUtils.toPrimitiveArray(urlValues),
                         NumberUtils.toPrimitiveArray(randomValues)}, new Color[] {Color.red, Color.blue, Color.green},

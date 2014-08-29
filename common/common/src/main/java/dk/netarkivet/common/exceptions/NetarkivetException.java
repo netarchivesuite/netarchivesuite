@@ -23,8 +23,7 @@
 package dk.netarkivet.common.exceptions;
 
 /**
- * Base exception for all Netarkivet exceptions.
- * Note that RuntimeException is extended
+ * Base exception for all Netarkivet exceptions. Note that RuntimeException is extended
  */
 @SuppressWarnings({"serial"})
 public abstract class NetarkivetException extends RuntimeException {
@@ -39,8 +38,7 @@ public abstract class NetarkivetException extends RuntimeException {
     }
 
     /**
-     * Constructs new NetarkivetException with the specified
-     * detail message and cause.
+     * Constructs new NetarkivetException with the specified detail message and cause.
      *
      * @param message The detail message
      * @param cause The cause

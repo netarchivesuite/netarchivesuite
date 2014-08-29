@@ -34,9 +34,8 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 
 /**
- * Converts an asynchronous call to a synchronous call. The method
- * sendAndWaitForOneReply() is a blocking call which responds when a
- * reply is received or returns null on timeout.
+ * Converts an asynchronous call to a synchronous call. The method sendAndWaitForOneReply() is a blocking call which
+ * responds when a reply is received or returns null on timeout.
  */
 public class Synchronizer implements MessageListener {
 
@@ -57,8 +56,7 @@ public class Synchronizer implements MessageListener {
     }
 
     /**
-     * Receives replies from a message queue and triggers the blocked call in
-     * sendAndWaitForOneReply().
+     * Receives replies from a message queue and triggers the blocked call in sendAndWaitForOneReply().
      *
      * @param msg an ObjectMessage containing a NetarkivetMessage.
      */
@@ -81,18 +79,14 @@ public class Synchronizer implements MessageListener {
     }
 
     /**
-     * Sends a message to a message queue and blocks the method
-     * invocation until a reply arrives. If it times out a null is returned.
-     * If a spurious wakeup is received and a timeout is set, the method will
-     * carry on waiting for the reply until the total timeout time has been used
-     * up. If a spurious wakeup is received and
-     * no timeout is set the method will just go back to waiting
+     * Sends a message to a message queue and blocks the method invocation until a reply arrives. If it times out a null
+     * is returned. If a spurious wakeup is received and a timeout is set, the method will carry on waiting for the
+     * reply until the total timeout time has been used up. If a spurious wakeup is received and no timeout is set the
+     * method will just go back to waiting
      *
      * @param msg the request message
-     * @param timeout the timeout in milliseconds (or zero for no
-     * timeout)
-     * @return a reply message from the receiver of the request or null if
-     * timed out.
+     * @param timeout the timeout in milliseconds (or zero for no timeout)
+     * @return a reply message from the receiver of the request or null if timed out.
      */
     public NetarkivetMessage sendAndWaitForOneReply(NetarkivetMessage msg, long timeout) {
         ArgumentNotValid.checkNotNull(msg, "msg");
@@ -114,10 +108,10 @@ public class Synchronizer implements MessageListener {
                             long timeAfterWait = System.currentTimeMillis();
                             // the new timeout value
                             timeout -= timeAfterWait - timeBeforeWait;
-                            if (noTimeout || timeout > 0) {   //Unexpected wakeup
+                            if (noTimeout || timeout > 0) { // Unexpected wakeup
                                 log.debug("Unexpected wakeup for {}", msg.toString());
                             } else {
-                                //timed out
+                                // timed out
                                 // NB! if timeout is exactly zero here then this
                                 // counts as a timeout. Otherwise we would call
                                 // wait(0) on the next loop with disastrous

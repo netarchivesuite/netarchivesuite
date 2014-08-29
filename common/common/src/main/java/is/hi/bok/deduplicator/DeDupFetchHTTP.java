@@ -52,11 +52,9 @@ import org.archive.util.ArchiveUtils;
 import dk.netarkivet.common.utils.AllDocsCollector;
 
 /**
- * An extension of Heritrix's {@link org.archive.crawler.fetcher.FetchHTTP}
- * processor for downloading HTTP documents. This extension adds a check after
- * the content header has been downloaded that compares the 'last-modified' and
- * or 'last-etag' values from the header against information stored in an
- * appropriate index.
+ * An extension of Heritrix's {@link org.archive.crawler.fetcher.FetchHTTP} processor for downloading HTTP documents.
+ * This extension adds a check after the content header has been downloaded that compares the 'last-modified' and or
+ * 'last-etag' values from the header against information stored in an appropriate index.
  *
  * @author Kristinn Sigur&eth;sson
  * @author Søren Vejrup Carlsen
@@ -64,11 +62,9 @@ import dk.netarkivet.common.utils.AllDocsCollector;
  * @see org.archive.crawler.fetcher.FetchHTTP
  */
 
-public class DeDupFetchHTTP extends FetchHTTP
-        implements AdaptiveRevisitAttributeConstants {
+public class DeDupFetchHTTP extends FetchHTTP implements AdaptiveRevisitAttributeConstants {
 
-    private static final long serialVersionUID =
-            ArchiveUtils.classnameBasedUID(DeDupFetchHTTP.class, 1);
+    private static final long serialVersionUID = ArchiveUtils.classnameBasedUID(DeDupFetchHTTP.class, 1);
 
     private static Logger logger = Logger.getLogger(FetchHTTP.class.getName());
 
@@ -91,34 +87,25 @@ public class DeDupFetchHTTP extends FetchHTTP
     public static final String SCHEME_ETAG = "Etag only";
     public static final String SCHEME_TIMESTAMP_AND_ETAG = "Timestamp AND Etag";
     public static final String SCHEME_TIMESTAMP_OR_ETAG = "Timestamp OR Etag";
-    public static final String[] AVAILABLE_DECISION_SCHEMES = {
-            SCHEME_TIMESTAMP,
-            SCHEME_ETAG,
-            SCHEME_TIMESTAMP_AND_ETAG,
-            SCHEME_TIMESTAMP_OR_ETAG
-    };
-    public static final String DEFAULT_DECISION_SCHEME =
-            SCHEME_TIMESTAMP;
+    public static final String[] AVAILABLE_DECISION_SCHEMES = {SCHEME_TIMESTAMP, SCHEME_ETAG,
+            SCHEME_TIMESTAMP_AND_ETAG, SCHEME_TIMESTAMP_OR_ETAG};
+    public static final String DEFAULT_DECISION_SCHEME = SCHEME_TIMESTAMP;
 
     public static final String ATTR_INDEX_LOCATION = "index-location";
     public static final String DEFAULT_INDEX_LOCATION = "";
 
     /**
-     * The filter on mime types. This is either a blacklist or whitelist
-     * depending on ATTR_FILTER_MODE.
+     * The filter on mime types. This is either a blacklist or whitelist depending on ATTR_FILTER_MODE.
      */
     public final static String ATTR_MIME_FILTER = "mime-filter";
     public final static String DEFAULT_MIME_FILTER = "^text/.*";
 
     /**
-     * Is the mime filter a blacklist (do not apply processor to what matches)
-     * or whitelist (apply processor only to what matches).
+     * Is the mime filter a blacklist (do not apply processor to what matches) or whitelist (apply processor only to
+     * what matches).
      */
     public final static String ATTR_FILTER_MODE = "filter-mode";
-    public final static String[] AVAILABLE_FILTER_MODES = {
-            "Blacklist",
-            "Whitelist"
-    };
+    public final static String[] AVAILABLE_FILTER_MODES = {"Blacklist", "Whitelist"};
     public final static String DEFAULT_FILTER_MODE = AVAILABLE_FILTER_MODES[0];
 
     /** Should we use sparse queries (uses less memory at a cost to performance? * */
@@ -127,78 +114,58 @@ public class DeDupFetchHTTP extends FetchHTTP
 
     public DeDupFetchHTTP(String name) {
         super(name);
-        setDescription("Fetch HTTP processor that aborts downloading of " +
-                "unchanged documents. This processor extends the standard " +
-                "FetchHTTP processor, adding a check after the header is " +
-                "downloaded where the header information for 'last-modified' " +
-                "and 'etag' is compared against values stored in a Lucene " +
-                "index built using the DigestIndexer.\n Note that the index " +
-                "must have been built indexed by URL and the Timestamp " +
-                "and/or Etag info must have been included in the index!");
+        setDescription("Fetch HTTP processor that aborts downloading of "
+                + "unchanged documents. This processor extends the standard "
+                + "FetchHTTP processor, adding a check after the header is "
+                + "downloaded where the header information for 'last-modified' "
+                + "and 'etag' is compared against values stored in a Lucene "
+                + "index built using the DigestIndexer.\n Note that the index "
+                + "must have been built indexed by URL and the Timestamp "
+                + "and/or Etag info must have been included in the index!");
         Type t;
-        t = new SimpleType(
-                ATTR_DECISION_SCHEME,
-                "The different schmes for deciding when to re-download a " +
-                        "page given an old version of the same page (or rather " +
-                        "meta-data on it)\n " +
-                        "Timestamp only: Download when a datestamp is missing " +
-                        "in either the downloaded header or index or if the header " +
-                        "datestamp is newer then the one in the index.\n " +
-                        "Etag only: Download when the Etag is missing in either the" +
-                        "header download or the index or the header Etag and the one " +
-                        "in the index differ.\n " +
-                        "Timestamp AND Etag: When both datestamp and Etag are " +
-                        "available in both the header download and the index, " +
-                        "download if EITHER of them indicates change." +
-                        "Timestamp OR Etag: When both datestamp and Etag are " +
-                        "available in both the header download and the index, " +
-                        "download only if BOTH of them indicate change.",
-                DEFAULT_DECISION_SCHEME, AVAILABLE_DECISION_SCHEMES);
+        t = new SimpleType(ATTR_DECISION_SCHEME, "The different schmes for deciding when to re-download a "
+                + "page given an old version of the same page (or rather " + "meta-data on it)\n "
+                + "Timestamp only: Download when a datestamp is missing "
+                + "in either the downloaded header or index or if the header "
+                + "datestamp is newer then the one in the index.\n "
+                + "Etag only: Download when the Etag is missing in either the"
+                + "header download or the index or the header Etag and the one " + "in the index differ.\n "
+                + "Timestamp AND Etag: When both datestamp and Etag are "
+                + "available in both the header download and the index, "
+                + "download if EITHER of them indicates change."
+                + "Timestamp OR Etag: When both datestamp and Etag are "
+                + "available in both the header download and the index, "
+                + "download only if BOTH of them indicate change.", DEFAULT_DECISION_SCHEME, AVAILABLE_DECISION_SCHEMES);
         addElementToDefinition(t);
-        t = new SimpleType(
-                ATTR_INDEX_LOCATION,
-                "Location of index (full path). Can not be changed at run " +
-                        "time.",
+        t = new SimpleType(ATTR_INDEX_LOCATION, "Location of index (full path). Can not be changed at run " + "time.",
                 DEFAULT_INDEX_LOCATION);
         t.setOverrideable(false);
         addElementToDefinition(t);
-        t = new SimpleType(
-                ATTR_MIME_FILTER,
-                "A regular expression that the mimetype of all documents " +
-                        "will be compared against. Only those that pass will be " +
-                        "considered. Others are given a pass. " +
-                        "\nIf the attribute filter-mode is " +
-                        "set to 'Blacklist' then all the documents whose mimetype " +
-                        "matches will be ignored by this processor. If the filter-" +
-                        "mode is set to 'Whitelist' only those documents whose " +
-                        "mimetype matches will be processed.",
+        t = new SimpleType(ATTR_MIME_FILTER, "A regular expression that the mimetype of all documents "
+                + "will be compared against. Only those that pass will be " + "considered. Others are given a pass. "
+                + "\nIf the attribute filter-mode is " + "set to 'Blacklist' then all the documents whose mimetype "
+                + "matches will be ignored by this processor. If the filter-"
+                + "mode is set to 'Whitelist' only those documents whose " + "mimetype matches will be processed.",
                 DEFAULT_MIME_FILTER);
         t.setOverrideable(false);
         t.setExpertSetting(true);
         addElementToDefinition(t);
-        t = new SimpleType(
-                ATTR_FILTER_MODE,
-                "Determines if the mime-filter acts as a blacklist (declares " +
-                        "what should be ignored) or whitelist (declares what should " +
-                        "be processed).",
+        t = new SimpleType(ATTR_FILTER_MODE, "Determines if the mime-filter acts as a blacklist (declares "
+                + "what should be ignored) or whitelist (declares what should " + "be processed).",
                 DEFAULT_FILTER_MODE, AVAILABLE_FILTER_MODES);
         t.setOverrideable(false);
         t.setExpertSetting(true);
         addElementToDefinition(t);
 
-        t = new SimpleType(
-                ATTR_USE_SPARSE_RANGE_FILTER,
-                "If set to true, then Lucene queries use a custom 'sparse' " +
-                        "range filter. This uses less memory at the cost of some " +
-                        "lost performance. Suitable for very large indexes.",
-                DEFAULT_USE_SPARSE_RANGE_FILTER);
+        t = new SimpleType(ATTR_USE_SPARSE_RANGE_FILTER, "If set to true, then Lucene queries use a custom 'sparse' "
+                + "range filter. This uses less memory at the cost of some "
+                + "lost performance. Suitable for very large indexes.", DEFAULT_USE_SPARSE_RANGE_FILTER);
         t.setOverrideable(false);
         t.setExpertSetting(true);
         addElementToDefinition(t);
     }
 
-    protected boolean checkMidfetchAbort(
-            CrawlURI curi, HttpRecorderMethod method, HttpConnection conn) {
+    protected boolean checkMidfetchAbort(CrawlURI curi, HttpRecorderMethod method, HttpConnection conn) {
         // We'll check for prerequisites here since there is no way to know
         // if the super method returns false because of a prereq or because
         // all filters accepeted.
@@ -206,7 +173,7 @@ public class DeDupFetchHTTP extends FetchHTTP
             return false;
         }
 
-        // Run super to allow filters to also abort. Also this method has 
+        // Run super to allow filters to also abort. Also this method has
         // been pressed into service as a general 'stuff to do at this point'
         boolean ret = super.checkMidfetchAbort(curi, method, conn);
 
@@ -223,23 +190,20 @@ public class DeDupFetchHTTP extends FetchHTTP
     }
 
     /**
-     * Compare the header infomation for 'last-modified' and/or 'etag' against
-     * data in the index.
+     * Compare the header infomation for 'last-modified' and/or 'etag' against data in the index.
      *
      * @param curi The Crawl URI being processed.
-     * @return True if header infomation indicates that the document has not
-     * changed since the crawl that the index is based on was performed.
+     * @return True if header infomation indicates that the document has not changed since the crawl that the index is
+     * based on was performed.
      */
     protected boolean isDuplicate(CrawlURI curi) {
         boolean ret = false;
-        if (curi.getContentType() != null &&
-                curi.getContentType().matches(mimefilter) != blacklist) {
+        if (curi.getContentType() != null && curi.getContentType().matches(mimefilter) != blacklist) {
             processedURLs++;
             // Ok, passes mime-filter
             HttpMethod method = (HttpMethod) curi.getObject(A_HTTP_TRANSACTION);
             // Check the decision scheme.
-            String scheme = (String) getUncheckedAttribute(
-                    curi, ATTR_DECISION_SCHEME);
+            String scheme = (String) getUncheckedAttribute(curi, ATTR_DECISION_SCHEME);
 
             Document doc = lookup(curi);
 
@@ -252,11 +216,9 @@ public class DeDupFetchHTTP extends FetchHTTP
                 } else {
 
                     if (scheme.equals(SCHEME_TIMESTAMP_AND_ETAG)) {
-                        ret = datestampIndicatesNonChange(method, doc)
-                                && etagIndicatesNonChange(method, doc);
+                        ret = datestampIndicatesNonChange(method, doc) && etagIndicatesNonChange(method, doc);
                     } else if (scheme.equals(SCHEME_TIMESTAMP_OR_ETAG)) {
-                        ret = datestampIndicatesNonChange(method, doc)
-                                || etagIndicatesNonChange(method, doc);
+                        ret = datestampIndicatesNonChange(method, doc) || etagIndicatesNonChange(method, doc);
                     } else {
                         logger.log(Level.SEVERE, "Unknown decision sceme: " + scheme);
                     }
@@ -267,18 +229,15 @@ public class DeDupFetchHTTP extends FetchHTTP
     }
 
     /**
-     * Checks if the 'last-modified' in the HTTP header and compares it against
-     * the timestamp in the supplied Lucene document. If both dates are found
-     * and the header's date is older then the datestamp indicates non-change.
+     * Checks if the 'last-modified' in the HTTP header and compares it against the timestamp in the supplied Lucene
+     * document. If both dates are found and the header's date is older then the datestamp indicates non-change.
      * Otherwise a change must be assumed.
      *
      * @param method HTTPMethod that allows access to the relevant HTTP header
      * @param doc The Lucene document to compare against
-     * @return True if a the header and document data indicates a non-change.
-     * False otherwise.
+     * @return True if a the header and document data indicates a non-change. False otherwise.
      */
-    protected boolean datestampIndicatesNonChange(
-            HttpMethod method, Document doc) {
+    protected boolean datestampIndicatesNonChange(HttpMethod method, Document doc) {
         String headerDate = null;
         if (method.getResponseHeader("last-modified") != null) {
             headerDate = method.getResponseHeader("last-modified").getValue();
@@ -289,12 +248,11 @@ public class DeDupFetchHTTP extends FetchHTTP
             try {
                 // If both dates exist and last-modified is before the index
                 // date then we assume no change has occured.
-                return (sdfLastModified.parse(headerDate)).before(
-                        sdfIndexDate.parse(indexDate));
+                return (sdfLastModified.parse(headerDate)).before(sdfIndexDate.parse(indexDate));
             } catch (Exception e) {
                 // Any exceptions parsing the date should be interpreted as
                 // missing date information.
-                // ParseException and NumberFormatException are the most 
+                // ParseException and NumberFormatException are the most
                 // likely exceptions to occur.
                 return false;
             }
@@ -303,18 +261,14 @@ public class DeDupFetchHTTP extends FetchHTTP
     }
 
     /**
-     * Checks if the 'etag' in the HTTP header and compares it against
-     * the etag in the supplied Lucene document. If both dates are found
-     * and match then the datestamp indicate non-change.
-     * Otherwise a change must be assumed.
+     * Checks if the 'etag' in the HTTP header and compares it against the etag in the supplied Lucene document. If both
+     * dates are found and match then the datestamp indicate non-change. Otherwise a change must be assumed.
      *
      * @param method HTTPMethod that allows access to the relevant HTTP header
      * @param doc The Lucene document to compare against
-     * @return True if a the header and document data indicates a non-change.
-     * False otherwise.
+     * @return True if a the header and document data indicates a non-change. False otherwise.
      */
-    protected boolean etagIndicatesNonChange(
-            HttpMethod method, Document doc) {
+    protected boolean etagIndicatesNonChange(HttpMethod method, Document doc) {
         String headerEtag = null;
         if (method.getResponseHeader("last-etag") != null) {
             headerEtag = method.getResponseHeader("last-etag").getValue();
@@ -322,7 +276,7 @@ public class DeDupFetchHTTP extends FetchHTTP
         String indexEtag = doc.get(DigestIndexer.FIELD_ETAG);
 
         if (headerEtag != null && indexEtag != null) {
-            // If both etags exist and are identical then we assume no 
+            // If both etags exist and are identical then we assume no
             // change has occured.
             return headerEtag.equals(indexEtag);
         }
@@ -330,10 +284,8 @@ public class DeDupFetchHTTP extends FetchHTTP
     }
 
     /**
-     * Searches the index for the URL of the given CrawlURI. If multiple hits
-     * are found the most recent one is returned if the index included the
-     * timestamp, otherwise a random one is returned.
-     * If no hit is found null is returned.
+     * Searches the index for the URL of the given CrawlURI. If multiple hits are found the most recent one is returned
+     * if the index included the timestamp, otherwise a random one is returned. If no hit is found null is returned.
      *
      * @param curi The CrawlURI to search for
      * @return the index Document matching the URI or null if none was found
@@ -344,12 +296,12 @@ public class DeDupFetchHTTP extends FetchHTTP
 
             /** The least memory demanding query. */
             BytesRef curiStringRef = new BytesRef(curi.toString().getBytes());
-            query = new ConstantScoreQuery(
-                    new TermRangeFilter(DigestIndexer.FIELD_URL, curiStringRef, curiStringRef, true, true));
+            query = new ConstantScoreQuery(new TermRangeFilter(DigestIndexer.FIELD_URL, curiStringRef, curiStringRef,
+                    true, true));
 
             /** The preferred solution, but it seems also more memory demanding */
-            //query = new ConstantScoreQuery(new FieldCacheTermsFilter(fieldName,
-            //        value));
+            // query = new ConstantScoreQuery(new FieldCacheTermsFilter(fieldName,
+            // value));
 
             AllDocsCollector collectAllCollector = new AllDocsCollector();
             index.search(query, collectAllCollector);
@@ -368,11 +320,10 @@ public class DeDupFetchHTTP extends FetchHTTP
                     // comparison of the strings.
                     String timestamp = doc.get(DigestIndexer.FIELD_TIMESTAMP);
                     if (docToEval == null || timestamp == null
-                            || docToEval.get(DigestIndexer.FIELD_TIMESTAMP)
-                            .compareTo(timestamp) > 0) {
+                            || docToEval.get(DigestIndexer.FIELD_TIMESTAMP).compareTo(timestamp) > 0) {
                         // Found a more recent hit or timestamp is null
-                        // NOTE: Either all hits should have a timestamp or 
-                        // none. This implementation will cause the last 
+                        // NOTE: Either all hits should have a timestamp or
+                        // none. This implementation will cause the last
                         // URI in the hit list to be returned if there is no
                         // timestamp.
                         docToEval = doc;
@@ -398,7 +349,7 @@ public class DeDupFetchHTTP extends FetchHTTP
         try {
             String indexLocation = (String) getAttribute(ATTR_INDEX_LOCATION);
             FSDirectory indexDir = FSDirectory.open(new File(indexLocation));
-            //https://issues.apache.org/jira/browse/LUCENE-1566
+            // https://issues.apache.org/jira/browse/LUCENE-1566
             // Reduce chunksize to avoid OOM to half the size of the default (=100 MB)
             int chunksize = indexDir.getReadChunkSize();
             indexDir.setReadChunkSize(chunksize / 2);
@@ -412,17 +363,14 @@ public class DeDupFetchHTTP extends FetchHTTP
         try {
             mimefilter = (String) getAttribute(ATTR_MIME_FILTER);
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Unable to get attribute " +
-                    ATTR_MIME_FILTER, e);
+            logger.log(Level.SEVERE, "Unable to get attribute " + ATTR_MIME_FILTER, e);
         }
 
         // Filter mode (blacklist (default) or whitelist)
         try {
-            blacklist = ((String) getAttribute(ATTR_FILTER_MODE)).equals(
-                    DEFAULT_FILTER_MODE);
+            blacklist = ((String) getAttribute(ATTR_FILTER_MODE)).equals(DEFAULT_FILTER_MODE);
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Unable to get attribute " +
-                    ATTR_FILTER_MODE, e);
+            logger.log(Level.SEVERE, "Unable to get attribute " + ATTR_FILTER_MODE, e);
         }
 
         // Date format of last-modified is EEE, dd MMM yyyy HH:mm:ss z
@@ -432,11 +380,9 @@ public class DeDupFetchHTTP extends FetchHTTP
 
         // Range Filter type
         try {
-            useSparseRangeFilter = ((Boolean) getAttribute(
-                    ATTR_USE_SPARSE_RANGE_FILTER)).booleanValue();
+            useSparseRangeFilter = ((Boolean) getAttribute(ATTR_USE_SPARSE_RANGE_FILTER)).booleanValue();
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Unable to get attribute " +
-                    ATTR_USE_SPARSE_RANGE_FILTER, e);
+            logger.log(Level.SEVERE, "Unable to get attribute " + ATTR_USE_SPARSE_RANGE_FILTER, e);
             useSparseRangeFilter = DEFAULT_USE_SPARSE_RANGE_FILTER;
         }
     }

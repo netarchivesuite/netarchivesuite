@@ -68,7 +68,7 @@ public class FileNameHarvester {
                     log.info("Creating object store entry for '{}'", file.getFilename());
                     dao.create(file);
                 } // If the file is already known in the persistent store, no
-                // action needs to be taken.
+                  // action needs to be taken.
             }
         } catch (IOException e) {
             throw new IOFailure("Error reading remote file", e);
@@ -99,7 +99,7 @@ public class FileNameHarvester {
                     log.info("Creating object store entry for '{}'", file.getFilename());
                     dao.create(file);
                 } // If the file is already known in the persistent store, no
-                // action needs to be taken.
+                  // action needs to be taken.
             }
         } catch (IOException e) {
             throw new IOFailure("Error reading remote file", e);

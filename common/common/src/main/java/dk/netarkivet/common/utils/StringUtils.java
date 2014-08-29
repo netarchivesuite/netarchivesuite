@@ -71,10 +71,9 @@ public final class StringUtils {
     }
 
     /**
-     * Concatenate all objects in a collection with the given separator
-     * between each.  If the Collection is a List, this method will generate
-     * the conjoined string in list order.  If the objects are not Strings,
-     * the toString method will be used to convert them to strings.
+     * Concatenate all objects in a collection with the given separator between each. If the Collection is a List, this
+     * method will generate the conjoined string in list order. If the objects are not Strings, the toString method will
+     * be used to convert them to strings.
      *
      * @param sep A string to separate the list items.
      * @param objects A collection of object to concatenate as a string.
@@ -96,22 +95,17 @@ public final class StringUtils {
     }
 
     /**
-     * Concatenate the string representation of a maximum number of objects in
-     * a collection with a given separator between them. If the Collection is
-     * a List, this method will generate the conjoined string in list order. If
-     * the objects are not Strings, the toString method will be used to convert
-     * them to strings.
+     * Concatenate the string representation of a maximum number of objects in a collection with a given separator
+     * between them. If the Collection is a List, this method will generate the conjoined string in list order. If the
+     * objects are not Strings, the toString method will be used to convert them to strings.
      *
      * @param <T> The type of collection.
-     * @param separator The string to separate the entries in the collection
-     * with. This is allowed to be the empty string.
-     * @param objects The collection to have the string representation of its
-     * entries concatenated.
-     * @param max The maximum number of objects in the collection to
-     * concatenate. If this number is 0 or below only the first entry in the
-     * collection is returned.
-     * @return The concatenation of the string representation of a limited
-     * amount of entries in the collection.
+     * @param separator The string to separate the entries in the collection with. This is allowed to be the empty
+     * string.
+     * @param objects The collection to have the string representation of its entries concatenated.
+     * @param max The maximum number of objects in the collection to concatenate. If this number is 0 or below only the
+     * first entry in the collection is returned.
+     * @return The concatenation of the string representation of a limited amount of entries in the collection.
      * @throws ArgumentNotValid If the separator or the objects are null.
      */
     public static <T> String conjoin(String separator, Collection<T> objects, int max) throws ArgumentNotValid {
@@ -215,9 +209,8 @@ public final class StringUtils {
     }
 
     /**
-     * Generate a ellipsis of orgString. If orgString is longer than
-     * maxLength, then we return a String containing the first maxLength
-     * characters and then append  " ..".
+     * Generate a ellipsis of orgString. If orgString is longer than maxLength, then we return a String containing the
+     * first maxLength characters and then append " ..".
      *
      * @param orgString the original string.
      * @param maxLength the maximum length of the string before ellipsing it.
@@ -279,8 +272,8 @@ public final class StringUtils {
      * Leftpad the string with "0", if the string is only one character long.
      *
      * @param s The given string
-     * @return Return a string leftpadded with a "0" if the string is only one
-     * character long, Otherwise just return the string.
+     * @return Return a string leftpadded with a "0" if the string is only one character long, Otherwise just return the
+     * string.
      */
     private static String formatDurationLpad(final String s) {
         return (s.length() == 1 ? "0" + s : s);
@@ -327,8 +320,7 @@ public final class StringUtils {
     }
 
     /**
-     * Formats the given date (as elapsed milliseconds) using the default
-     * format 'yyyy/MM/dd HH:mm:ss'.
+     * Formats the given date (as elapsed milliseconds) using the default format 'yyyy/MM/dd HH:mm:ss'.
      *
      * @param millis the date
      * @return a formatted date string
@@ -338,8 +330,7 @@ public final class StringUtils {
     }
 
     /**
-     * Formats the given date (as elapsed milliseconds) using the provided
-     * format pattern.
+     * Formats the given date (as elapsed milliseconds) using the provided format pattern.
      *
      * @param millis the date
      * @param format the format pattern {@link SimpleDateFormat}
@@ -350,10 +341,8 @@ public final class StringUtils {
     }
 
     /**
-     * Given an input String, this method splits the String with newlines
-     * into a multiline String with line-lengths approximately lineLength. The
-     * split is made at the first blank space found at more than lineLength
-     * characters
+     * Given an input String, this method splits the String with newlines into a multiline String with line-lengths
+     * approximately lineLength. The split is made at the first blank space found at more than lineLength characters
      * after the previous split.
      *
      * @param input the input String.
@@ -385,15 +374,13 @@ public final class StringUtils {
     }
 
     /**
-     * Given a multi-line input string, this method splits the string so that
-     * no line has length greater than maxLineLength. Any input lines less than
-     * or equal to this length remain unaffected.
+     * Given a multi-line input string, this method splits the string so that no line has length greater than
+     * maxLineLength. Any input lines less than or equal to this length remain unaffected.
      *
      * @param input the input String.
      * @param maxLineLength the maximum permitted line length.
      * @return the split multi-line String.
-     * @throws ArgumentNotValid if input is null or maxLineLength is
-     * non-positive
+     * @throws ArgumentNotValid if input is null or maxLineLength is non-positive
      */
     public static String splitStringForce(String input, int maxLineLength) {
         ArgumentNotValid.checkNotNull(input, "input");

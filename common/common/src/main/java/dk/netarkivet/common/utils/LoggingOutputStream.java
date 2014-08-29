@@ -28,10 +28,9 @@ import java.io.OutputStream;
 import org.slf4j.Logger;
 
 /**
- * OutputStream which can be used to redirect all stdout and stderr to a logger.
- * Usage:
- * System.setOut(new PrintStream(new LoggingOutputStream(LoggingOutputStream.LoggingLevel.INFO, log, "StdOut: ")));
- * System.setErr(new PrintStream(new LoggingOutputStream(LoggingOutputStream.LoggingLevel.WARN, log, "StdErr: ")));
+ * OutputStream which can be used to redirect all stdout and stderr to a logger. Usage: System.setOut(new
+ * PrintStream(new LoggingOutputStream(LoggingOutputStream.LoggingLevel.INFO, log, "StdOut: "))); System.setErr(new
+ * PrintStream(new LoggingOutputStream(LoggingOutputStream.LoggingLevel.WARN, log, "StdErr: ")));
  */
 public class LoggingOutputStream extends OutputStream {
 
@@ -72,8 +71,8 @@ public class LoggingOutputStream extends OutputStream {
     public void write(int b) throws IOException {
         this.buffer.append((char) b);
         String s = buffer.toString();
-        //This next line is an optimisation. Only convert the whole buffer to string
-        //if the most recent character might be the end of the line separator.
+        // This next line is an optimisation. Only convert the whole buffer to string
+        // if the most recent character might be the end of the line separator.
         if ((lineSeparator.indexOf(b) != -1) && s.contains(lineSeparator)) {
             s = prefix + "'" + s + "'";
             switch (loggingLevel) {

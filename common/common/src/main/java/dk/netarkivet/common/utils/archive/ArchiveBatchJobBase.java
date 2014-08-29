@@ -42,16 +42,14 @@ public abstract class ArchiveBatchJobBase extends FileBatchJob {
     protected int noOfRecordsProcessed = 0;
 
     /**
-     * Initialize the job before running.
-     * This is called before the processRecord() calls start coming.
+     * Initialize the job before running. This is called before the processRecord() calls start coming.
      *
      * @param os The OutputStream to which output data is written
      */
     public abstract void initialize(OutputStream os);
 
     /**
-     * Finish up the job.
-     * This is called after the last processRecord() call.
+     * Finish up the job. This is called after the last processRecord() call.
      *
      * @param os The OutputStream to which output data is written
      */
@@ -69,10 +67,9 @@ public abstract class ArchiveBatchJobBase extends FileBatchJob {
     }
 
     /**
-     * When the org.archive.io.arc classes throw IOExceptions while reading,
-     * this is where they go. Subclasses are welcome to override the default
-     * functionality which simply logs and records them in a list.
-     * TODO: Actually use the archive file/index entries in the exception list
+     * When the org.archive.io.arc classes throw IOExceptions while reading, this is where they go. Subclasses are
+     * welcome to override the default functionality which simply logs and records them in a list. TODO: Actually use
+     * the archive file/index entries in the exception list
      *
      * @param e An Exception thrown by the org.archive.io.arc classes.
      * @param archiveFile The archive file that was processed while the Exception was thrown
@@ -82,16 +79,14 @@ public abstract class ArchiveBatchJobBase extends FileBatchJob {
     public void handleException(Exception e, File archiveFile, long index) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(e, "e");
 
-        log.debug("Caught exception while running batch job on file {}, position {}:\n{}",
-                archiveFile, index, e, e.getMessage());
+        log.debug("Caught exception while running batch job on file {}, position {}:\n{}", archiveFile, index, e,
+                e.getMessage());
         addException(archiveFile, index, ExceptionOccurrence.UNKNOWN_OFFSET, e);
     }
 
     /**
-     * Returns a representation of the list of Exceptions recorded for this
-     * archive batch job.
-     * If called by a subclass, a method overriding handleException()
-     * should always call super.handleException().
+     * Returns a representation of the list of Exceptions recorded for this archive batch job. If called by a subclass,
+     * a method overriding handleException() should always call super.handleException().
      *
      * @return All Exceptions passed to handleException so far.
      */

@@ -104,7 +104,7 @@ abstract class AbstractJobGenerator implements JobGenerator {
                     ++eventsSkipped;
                 }
                 log.warn("Refusing to schedule harvest definition '{}' in the past. Skipped {} events. "
-                                + "Old nextDate was {} new nextDate is {}", harvest.getName(), eventsSkipped,
+                        + "Old nextDate was {} new nextDate is {}", harvest.getName(), eventsSkipped,
                         focused.getNextDate(), nextEvent);
             }
 

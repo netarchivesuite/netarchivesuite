@@ -392,7 +392,7 @@ public class FileBasedActiveBitPreservationTester {
         // Check that wrong counts are caught
         MockupArcRepositoryClient.getInstance().overrideBatch = new BatchStatus("AP1", Collections.<File>emptyList(),
                 17, RemoteFileFactory.getMovefileInstance(new File(TestInfo.WORKING_DIR, "test_file_list_output/"
-                + "filelistOutput/unsorted.txt")), new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
+                        + "filelistOutput/unsorted.txt")), new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
         runFilelistJob.invoke(abp, replica);
 
         abp.close();
@@ -636,7 +636,7 @@ public class FileBasedActiveBitPreservationTester {
                 os.close();
                 return new BatchStatus("BA1", Collections.<File>emptyList(), in_files.length,
                         RemoteFileFactory.getMovefileInstance(output), new ArrayList<FileBatchJob.ExceptionOccurrence>(
-                        0));
+                                0));
             } catch (IOException e) {
                 fail("IO error during test");
                 return null;

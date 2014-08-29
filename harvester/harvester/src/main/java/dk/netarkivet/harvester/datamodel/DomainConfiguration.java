@@ -440,7 +440,7 @@ public class DomainConfiguration implements Named {
         if (!usesPassword(passwordName)) {
             throw new UnknownID("No password named '" + passwordName + "' found in '" + this + "'");
         }
-        for (Iterator<Password> i = passwords.iterator(); i.hasNext(); ) {
+        for (Iterator<Password> i = passwords.iterator(); i.hasNext();) {
             Password p = i.next();
             if (p.getName().equals(passwordName)) {
                 i.remove();

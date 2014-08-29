@@ -110,7 +110,7 @@ public class FrontierReportAnalyzer implements Runnable {
         elapsed = endTime - startTime;
         LOG.info("Generated full Heritrix frontier report in "
                 + (elapsed < TimeUtils.SECOND_IN_MILLIS ? elapsed + " ms" : StringUtils.formatDuration(elapsed
-                / TimeUtils.SECOND_IN_MILLIS)) + ".");
+                        / TimeUtils.SECOND_IN_MILLIS)) + ".");
 
         lastExecTime = endTime;
 
@@ -123,7 +123,7 @@ public class FrontierReportAnalyzer implements Runnable {
                     + filter.getClass().getName()
                     + " to full frontier report, this took "
                     + (elapsed < TimeUtils.SECOND_IN_MILLIS ? elapsed + " ms" : StringUtils.formatDuration(elapsed
-                    / TimeUtils.SECOND_IN_MILLIS)) + ".");
+                            / TimeUtils.SECOND_IN_MILLIS)) + ".");
             Long jobId = heritrixController.getFiles().getJobID();
             JMSConnectionFactory.getInstance().send(new FrontierReportMessage(filter, filtered, jobId));
         }

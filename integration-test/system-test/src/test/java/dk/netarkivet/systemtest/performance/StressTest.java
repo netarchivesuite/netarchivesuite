@@ -190,7 +190,7 @@ public class StressTest extends ExtendedTestCase {
         environmentManager.runCommandWithoutQuotes(envDef
                 + "diff -b -B testdbs_schema.txt.sort proddbs_schema.txt.sort  > test-prod-diff", new int[] {0, 1});
         environmentManager.runCommandWithoutQuotes(envDef
-                        + "diff -b -B bundleddbs_schema.txt.sort testdbs_schema.txt.sort  > test-bundled-diff",
+                + "diff -b -B bundleddbs_schema.txt.sort testdbs_schema.txt.sort  > test-bundled-diff",
                 new int[] {0, 1});
     }
 

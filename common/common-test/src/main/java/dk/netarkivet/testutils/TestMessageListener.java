@@ -92,7 +92,7 @@ public class TestMessageListener implements MessageListener {
      */
     public int getNumOk() {
         int count = 0;
-        for (Iterator<NetarkivetMessage> i = received.iterator(); i.hasNext(); ) {
+        for (Iterator<NetarkivetMessage> i = received.iterator(); i.hasNext();) {
             NetarkivetMessage msg = i.next();
             if (msg.isOk()) {
                 count++;
@@ -108,7 +108,7 @@ public class TestMessageListener implements MessageListener {
      */
     public int getNumNotOk() {
         int count = 0;
-        for (Iterator<NetarkivetMessage> i = received.iterator(); i.hasNext(); ) {
+        for (Iterator<NetarkivetMessage> i = received.iterator(); i.hasNext();) {
             NetarkivetMessage msg = i.next();
             if (!msg.isOk()) {
                 count++;

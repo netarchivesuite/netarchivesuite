@@ -38,11 +38,9 @@ import dk.netarkivet.common.exceptions.NetarkivetException;
 import dk.netarkivet.common.utils.batch.ArchiveBatchFilter;
 
 /**
- * Abstract class defining a batch job to run on a set of ARC/WARC files.
- * Each implementation is required to define initialize() , processRecord() and
- * finish() methods. The bitarchive application then ensures that the batch
- * job runs initialize(), runs processRecord() on each record in each file in
- * the archive, and then runs finish().
+ * Abstract class defining a batch job to run on a set of ARC/WARC files. Each implementation is required to define
+ * initialize() , processRecord() and finish() methods. The bitarchive application then ensures that the batch job runs
+ * initialize(), runs processRecord() on each record in each file in the archive, and then runs finish().
  */
 @SuppressWarnings({"serial"})
 public abstract class ArchiveBatchJob extends ArchiveBatchJobBase {
@@ -58,9 +56,8 @@ public abstract class ArchiveBatchJob extends ArchiveBatchJobBase {
     public abstract void processRecord(ArchiveRecordBase record, OutputStream os);
 
     /**
-     * Returns an ArchiveBatchFilter object which restricts the set of records in the
-     * archive on which this batch-job is performed. The default value is
-     * a neutral filter which allows all records.
+     * Returns an ArchiveBatchFilter object which restricts the set of records in the archive on which this batch-job is
+     * performed. The default value is a neutral filter which allows all records.
      *
      * @return A filter telling which records should be given to processRecord().
      */
@@ -69,9 +66,8 @@ public abstract class ArchiveBatchJob extends ArchiveBatchJobBase {
     }
 
     /**
-     * Accepts only arc(.gz) and warc(.gz) files. Runs through all records and calls
-     * processRecord() on every record that is allowed by getFilter().
-     * Does nothing on a non-(w)arc file.
+     * Accepts only arc(.gz) and warc(.gz) files. Runs through all records and calls processRecord() on every record
+     * that is allowed by getFilter(). Does nothing on a non-(w)arc file.
      *
      * @param archiveFile The arc(.gz) or warc(.gz) file to be processed.
      * @param os the OutputStream to which output is to be written
@@ -86,12 +82,12 @@ public abstract class ArchiveBatchJob extends ArchiveBatchJobBase {
         log.info("Processing archive file: {}", archiveFile.getName());
 
         try { // This outer try-catch block catches all unexpected exceptions
-            //Create an ArchiveReader and retrieve its Iterator:
+              // Create an ArchiveReader and retrieve its Iterator:
             ArchiveReader archiveReader = null;
 
             try {
                 archiveReader = ArchiveReaderFactory.get(archiveFile);
-            } catch (IOException e) { //Some IOException
+            } catch (IOException e) { // Some IOException
                 handleException(e, archiveFile, arcFileIndex);
 
                 return false; // Can't process file after exception
@@ -116,8 +112,8 @@ public abstract class ArchiveBatchJob extends ArchiveBatchJobBase {
                         if (!getFilter().accept(record)) {
                             continue;
                         }
-                        log.debug("Processing record #{} in archive file '{}'.",
-                                noOfRecordsProcessed, archiveFile.getName());
+                        log.debug("Processing record #{} in archive file '{}'.", noOfRecordsProcessed,
+                                archiveFile.getName());
                         processRecord(record, os);
                         ++noOfRecordsProcessed;
                     } catch (NetarkivetException e) {
@@ -139,15 +135,14 @@ public abstract class ArchiveBatchJob extends ArchiveBatchJobBase {
                     // Close the record
                     try {
                         /*
-                        // FIXME: Don't know  how to compute this for warc-files
-                        // computation for arc-files: long arcRecordOffset =
-                        //        record.getBodyOffset() + record.getMetaData().getLength();
-                        // computation for warc-files (experimental)
-                        long arcRecordOffset = record.getHeader().getOffset();
-                        */
+                         * // FIXME: Don't know how to compute this for warc-files // computation for arc-files: long
+                         * arcRecordOffset = // record.getBodyOffset() + record.getMetaData().getLength(); //
+                         * computation for warc-files (experimental) long arcRecordOffset =
+                         * record.getHeader().getOffset();
+                         */
                         // TODO maybe this works, maybe not...
-                        long arcRecordOffset =
-                                archiveRecord.getHeader().getContentBegin() + archiveRecord.getHeader().getLength();
+                        long arcRecordOffset = archiveRecord.getHeader().getContentBegin()
+                                + archiveRecord.getHeader().getLength();
                         archiveRecord.close();
                         arcFileIndex = arcRecordOffset;
                     } catch (IOException ioe) { // Couldn't close an WARCRecord
@@ -163,7 +158,7 @@ public abstract class ArchiveBatchJob extends ArchiveBatchJobBase {
             } finally {
                 try {
                     archiveReader.close();
-                } catch (IOException e) { //Some IOException
+                } catch (IOException e) { // Some IOException
                     // TODO Discuss whether exceptions on close cause
                     // filesFailed addition
                     handleException(e, archiveFile, arcFileIndex);

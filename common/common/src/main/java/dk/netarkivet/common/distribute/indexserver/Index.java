@@ -42,8 +42,7 @@ public class Index<I> {
      * Initialise the set.
      *
      * @param indexFile The index file.
-     * @param indexSet The set this is an index for. Can be null
-     * TODO Should the indexSet be allowed to be null?
+     * @param indexSet The set this is an index for. Can be null TODO Should the indexSet be allowed to be null?
      * @throws ArgumentNotValid if indexFile is null.
      */
     public Index(File indexFile, I indexSet) {

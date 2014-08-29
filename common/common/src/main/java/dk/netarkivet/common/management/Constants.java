@@ -28,15 +28,13 @@ package dk.netarkivet.common.management;
 public final class Constants {
 
     /**
-     * Constructor.
-     * Private due to constants only class.
+     * Constructor. Private due to constants only class.
      */
     private Constants() {
     }
 
     /**
-     * These constant priority keys are also used by the monitor to find 
-     * the value in the Translation files.
+     * These constant priority keys are also used by the monitor to find the value in the Translation files.
      */
 
     /** The location key word. */

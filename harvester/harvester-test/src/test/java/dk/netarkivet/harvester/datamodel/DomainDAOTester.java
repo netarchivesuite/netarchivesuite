@@ -328,7 +328,7 @@ public class DomainDAOTester extends DataModelTestCase {
 
         List<HarvestInfo> readhislist = new ArrayList<HarvestInfo>();
 
-        for (Iterator<HarvestInfo> i = domainHistory1.getHarvestInfo(); i.hasNext(); ) {
+        for (Iterator<HarvestInfo> i = domainHistory1.getHarvestInfo(); i.hasNext();) {
             readhislist.add(i.next());
         }
 

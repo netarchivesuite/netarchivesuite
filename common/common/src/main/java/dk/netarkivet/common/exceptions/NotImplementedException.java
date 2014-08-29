@@ -39,8 +39,7 @@ public class NotImplementedException extends NetarkivetException {
     }
 
     /**
-     * Constructs new NotImplementedException with the
-     * specified detail message and cause.
+     * Constructs new NotImplementedException with the specified detail message and cause.
      *
      * @param message The detail message
      * @param cause The cause

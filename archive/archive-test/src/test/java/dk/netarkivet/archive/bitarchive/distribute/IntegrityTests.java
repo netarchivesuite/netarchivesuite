@@ -268,7 +268,7 @@ public class IntegrityTests {
         assertEquals("Should have received exactly two messages, but got " + listener.getAllReceived(), 2,
                 listener.getNumReceived());
         List<NetarkivetMessage> received = listener.getAllReceived();
-        for (Iterator<NetarkivetMessage> i = received.iterator(); i.hasNext(); ) {
+        for (Iterator<NetarkivetMessage> i = received.iterator(); i.hasNext();) {
             Object o = i.next();
             if (o instanceof BatchReplyMessage) {
                 ((BatchReplyMessage) o).getResultFile().copyTo(output_file);
@@ -498,8 +498,7 @@ public class IntegrityTests {
         }
 
         synchronized public int getTotalCount() {
-            return (uploadMsg.size() + getMsg.size() + removeMsg.size() + batchMsg.size() + getfileMsg.size()
-                    + batchReplyMsg
+            return (uploadMsg.size() + getMsg.size() + removeMsg.size() + batchMsg.size() + getfileMsg.size() + batchReplyMsg
                     .size());
         }
 

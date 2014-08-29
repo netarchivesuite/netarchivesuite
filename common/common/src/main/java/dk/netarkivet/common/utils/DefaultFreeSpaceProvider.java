@@ -39,12 +39,11 @@ public class DefaultFreeSpaceProvider implements FreeSpaceProvider {
     private static final Logger log = LoggerFactory.getLogger(DefaultFreeSpaceProvider.class);
 
     /**
-     * Returns the number of bytes free on the file system that the given file
-     * resides on. Will return 0 on non-existing files.
+     * Returns the number of bytes free on the file system that the given file resides on. Will return 0 on non-existing
+     * files.
      *
      * @param f a given file
-     * @return the number of bytes free on the file system where file f resides.
-     * 0 if the file cannot be found.
+     * @return the number of bytes free on the file system where file f resides. 0 if the file cannot be found.
      */
     public long getBytesFree(File f) {
         ArgumentNotValid.checkNotNull(f, "File f");

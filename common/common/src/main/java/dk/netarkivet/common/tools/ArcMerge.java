@@ -34,20 +34,17 @@ import dk.netarkivet.common.utils.arc.ARCUtils;
 /**
  * Command line tool for merging several ARC files into a single ARC file.
  * <p>
- * Usage:
- * java dk.netarkivet.common.tools.ArcMerge file1 [file2] ... > myarchive.arc
+ * Usage: java dk.netarkivet.common.tools.ArcMerge file1 [file2] ... > myarchive.arc
  * <p>
  * Note: Does not depend on logging - communicates failure on stderr
  */
 public class ArcMerge extends ToolRunnerBase {
 
     /**
-     * Main method. Reads all ARC files specified (as arguments)
-     * and outputs a merged ARC file on stdout.
+     * Main method. Reads all ARC files specified (as arguments) and outputs a merged ARC file on stdout.
      *
-     * @param args The command line arguments should be a list of ARC files
-     * to be merged.
-     * At least one input ARC file should be given.
+     * @param args The command line arguments should be a list of ARC files to be merged. At least one input ARC file
+     * should be given.
      */
     public static void main(String[] args) {
         ArcMerge instance = new ArcMerge();
@@ -61,8 +58,8 @@ public class ArcMerge extends ToolRunnerBase {
     private static class ArcMergeTool implements SimpleCmdlineTool {
 
         /**
-         * This instance is declared outside of run method to ensure reliable
-         * teardown in ase of exceptions during execution.
+         * This instance is declared outside of run method to ensure reliable teardown in ase of exceptions during
+         * execution.
          */
         private ARCWriter aw;
 
@@ -77,8 +74,7 @@ public class ArcMerge extends ToolRunnerBase {
         }
 
         /**
-         * Create the ARCWriter instance here for reliable execution of
-         * close method in teardown.
+         * Create the ARCWriter instance here for reliable execution of close method in teardown.
          *
          * @param args the arguments (presently not used)
          */
@@ -86,16 +82,14 @@ public class ArcMerge extends ToolRunnerBase {
             try {
                 // The name "dummy.arc" is used for the first (file metadata)
                 // record
-                aw = ARCUtils.getToolsARCWriter(System.out,
-                        new File("dummy.arc"));
+                aw = ARCUtils.getToolsARCWriter(System.out, new File("dummy.arc"));
             } catch (IOException e) {
                 throw new IOFailure(e.getMessage());
             }
         }
 
         /**
-         * Ensure reliable execution of the ARCWriter.close() method.
-         * Remember to check if aw was actually created.
+         * Ensure reliable execution of the ARCWriter.close() method. Remember to check if aw was actually created.
          */
         public void tearDown() {
             try {
@@ -108,17 +102,14 @@ public class ArcMerge extends ToolRunnerBase {
         }
 
         /**
-         * Perform the actual work. Iterate over the input files passed in args
-         * (from command line), inert in file and close. Creating and closing
-         * the ARCWriter is done in setup and teardown methods.
+         * Perform the actual work. Iterate over the input files passed in args (from command line), inert in file and
+         * close. Creating and closing the ARCWriter is done in setup and teardown methods.
          *
          * @param args the input files (represented as a String array)
          */
         public void run(String... args) {
             for (String s : args) {
-                ARCUtils.insertARCFile(
-                        FileUtils.makeValidFileFromExisting(s),
-                        aw);
+                ARCUtils.insertARCFile(FileUtils.makeValidFileFromExisting(s), aw);
             }
         }
 

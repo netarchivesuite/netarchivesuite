@@ -54,7 +54,7 @@ public class HarvesterSettingsTester {
     @Test
     public void testHarvestControllerPrioritySettingUnchanged() {
         assertEquals("The 'HarvesterSettings.HARVEST_CONTROLLER_CHANNEL' " + "setting has changed. Please update "
-                        + "SingleMBeanObjectTester#Setup method", HarvesterSettings.HARVEST_CONTROLLER_CHANNEL,
+                + "SingleMBeanObjectTester#Setup method", HarvesterSettings.HARVEST_CONTROLLER_CHANNEL,
                 "settings.harvester.harvesting.channel");
     }
 }

@@ -40,9 +40,8 @@ public class EMailNotifications extends Notifications {
     private static String DEFAULT_SETTINGS_CLASSPATH = "dk/netarkivet/common/utils/EMailNotificationsSettings.xml";
 
     /*
-     * The static initialiser is called when the class is loaded.
-     * It will add default values for all settings defined in this class, by
-     * loading them from a settings.xml file in classpath.
+     * The static initialiser is called when the class is loaded. It will add default values for all settings defined in
+     * this class, by loading them from a settings.xml file in classpath.
      */
     static {
         Settings.addDefaultClasspathSettings(DEFAULT_SETTINGS_CLASSPATH);
@@ -56,8 +55,7 @@ public class EMailNotifications extends Notifications {
 
     /**
      * <b>settings.common.notifications.sender</b>: <br>
-     * The setting for the sender of email notifications (and receiver of
-     * bounces).
+     * The setting for the sender of email notifications (and receiver of bounces).
      */
     public static String MAIL_SENDER_SETTING = "settings.common.notifications.sender";
 
@@ -131,7 +129,7 @@ public class EMailNotifications extends Notifications {
             // Send the mail
             EMailUtils.sendEmail(MAIL_RECEIVER, MAIL_SENDER, subject, body.toString());
 
-            //Log as error
+            // Log as error
 
             log.error("Mailing {}{}", subjectPrefix, message, e);
         } catch (Exception e1) {

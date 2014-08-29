@@ -430,7 +430,7 @@ public final class DeployApplication {
         if ((evaluateArgument != null)
                 && (!evaluateArgument.isEmpty())
                 && (evaluateArgument.equalsIgnoreCase(Constants.YES_SHORT) || evaluateArgument
-                .equalsIgnoreCase(Constants.YES_LONG))) {
+                        .equalsIgnoreCase(Constants.YES_LONG))) {
             // if yes, then evaluate config file
             EvaluateConfigFile evf = new EvaluateConfigFile(deployConfigFile, encoding);
             evf.evaluate();

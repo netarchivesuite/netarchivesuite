@@ -35,8 +35,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 
 /**
- * A batch job which returns a list of all files in the bitarchive in which it
- * runs.
+ * A batch job which returns a list of all files in the bitarchive in which it runs.
  */
 @SuppressWarnings({"serial"})
 public class FileListJob extends FileBatchJob {
@@ -45,7 +44,7 @@ public class FileListJob extends FileBatchJob {
 
     /** The constructor. */
     public FileListJob() {
-        // Keep the batchJobTimeout at default (-1) so it will be overridden 
+        // Keep the batchJobTimeout at default (-1) so it will be overridden
         // by the settings for default batch timeout.
     }
 
@@ -58,8 +57,7 @@ public class FileListJob extends FileBatchJob {
     }
 
     /**
-     * Invoke default method for deserializing object, and reinitialise the
-     * logger.
+     * Invoke default method for deserializing object, and reinitialise the logger.
      *
      * @param s the ObjectInputStream from which the object is read
      */

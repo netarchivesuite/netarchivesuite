@@ -164,7 +164,7 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                     String channelName = chan.getName();
                     if (postponeUnregisteredChannel && !harvestChannelRegistry.isRegistered(channelName)) {
                         log.info("Harvest channel '{}' has not yet been registered by any harvester, hence harvest "
-                                        + "definition '{}' ({}) cannot be processed by the job generator for now.",
+                                + "definition '{}' ({}) cannot be processed by the job generator for now.",
                                 channelName, harvestDefinition.getName(), id);
                         continue;
                     }
@@ -219,8 +219,7 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                             harvestDefinitionsBeingScheduled.remove(id);
                             schedulingStartedMap.remove(id);
                             log.debug("Removed HD #{}({}) from list of harvestdefinitions to be scheduled. "
-                                            + "Harvestdefinitions still to be scheduled: {}", id,
-                                    harvestDefinition.getName(),
+                                    + "Harvestdefinitions still to be scheduled: {}", id, harvestDefinition.getName(),
                                     harvestDefinitionsBeingScheduled);
                         }
                     }

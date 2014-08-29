@@ -119,28 +119,24 @@ public class ReplicaCacheDatabaseTester {
         // Assert that the time of insert is between the start of this test
         // and now.
         assertTrue("The last missing file update for replica '" + Replica.getReplicaFromId("ONE")
-                        + "' should be after " + "the test was begun. Thus '" + DateFormat.getDateInstance()
-                        .format(dbDate)
-                        + "' should be after '" + DateFormat.getDateInstance().format(beforeTest) + "'.",
+                + "' should be after " + "the test was begun. Thus '" + DateFormat.getDateInstance().format(dbDate)
+                + "' should be after '" + DateFormat.getDateInstance().format(beforeTest) + "'.",
                 dbDate.after(beforeTest));
         assertTrue("The last missing file update for replica '" + Replica.getReplicaFromId("ONE")
-                        + "' should be before " + "the current time. Thus '" + DateFormat.getDateInstance()
-                        .format(dbDate)
-                        + "' should be before '" + DateFormat.getDateInstance().format(afterInsert) + "'.",
+                + "' should be before " + "the current time. Thus '" + DateFormat.getDateInstance().format(dbDate)
+                + "' should be before '" + DateFormat.getDateInstance().format(afterInsert) + "'.",
                 dbDate.before(afterInsert));
 
         // Check that getDateOfLastWrongFilesUpdate gives a date between
         // the start of this test and now.
         dbDate = cache.getDateOfLastWrongFilesUpdate(Replica.getReplicaFromId("ONE"));
         assertTrue("The last missing file update for replica '" + Replica.getReplicaFromId("ONE")
-                        + "' should be after " + "the test was begun. Thus '" + DateFormat.getDateInstance()
-                        .format(dbDate)
-                        + "' should be after '" + DateFormat.getDateInstance().format(beforeTest) + "'.",
+                + "' should be after " + "the test was begun. Thus '" + DateFormat.getDateInstance().format(dbDate)
+                + "' should be after '" + DateFormat.getDateInstance().format(beforeTest) + "'.",
                 dbDate.after(beforeTest));
         assertTrue("The last missing file update for replica '" + Replica.getReplicaFromId("ONE")
-                        + "' should be before " + "the current time. Thus '" + DateFormat.getDateInstance()
-                        .format(dbDate)
-                        + "' should be before '" + DateFormat.getDateInstance().format(afterInsert) + "'.",
+                + "' should be before " + "the current time. Thus '" + DateFormat.getDateInstance().format(dbDate)
+                + "' should be before '" + DateFormat.getDateInstance().format(afterInsert) + "'.",
                 dbDate.before(afterInsert));
 
         // retrieve empty file and set all files in replica 'THREE' to missing
@@ -180,7 +176,7 @@ public class ReplicaCacheDatabaseTester {
         File csFile2 = makeTemporaryChecksumFile2();
         cache.addChecksumInformation(csFile2, Replica.getReplicaFromId("THREE"));
         assertEquals("All the files in Replica 'THREE' has been assigned "
-                        + "checksums, but not checksum update has been run yet. " + "Therefore no corrupt files yet!", 0,
+                + "checksums, but not checksum update has been run yet. " + "Therefore no corrupt files yet!", 0,
                 cache.getNumberOfWrongFilesInLastUpdate(Replica.getReplicaFromId("THREE")));
         assertEquals("Entries for replica 'THREE' has should be assigned.", FileUtils.countLines(csFile2),
                 cache.getNumberOfFiles(Replica.getReplicaFromId("THREE")));
@@ -202,10 +198,10 @@ public class ReplicaCacheDatabaseTester {
         // check that a file can become missing, after it was ok, but still be ok!
         cache.addFileListInformation(flFile, Replica.getReplicaFromId("ONE"));
         assertEquals("Replica 'ONE' had the files '" + allFilenames + "' before updating the filelist with '"
-                        + FileUtils.readListFromFile(flFile) + "'. Therefore one " + "file should now be missing.", 1,
+                + FileUtils.readListFromFile(flFile) + "'. Therefore one " + "file should now be missing.", 1,
                 cache.getNumberOfMissingFilesInLastUpdate(Replica.getReplicaFromId("ONE")));
         assertEquals("Replica 'ONE' is missing 1 file, but since the "
-                        + "checksum already is set to 'OK', then it is not CORRUPT", 0,
+                + "checksum already is set to 'OK', then it is not CORRUPT", 0,
                 cache.getNumberOfWrongFilesInLastUpdate(Replica.getReplicaFromId("ONE")));
 
         // set replica THREE to having the same checksum as the other two,
@@ -218,9 +214,9 @@ public class ReplicaCacheDatabaseTester {
 
         // Check that replica 'TWO' is found with good file.
         assertEquals("Now only replica 'TWO' and 'THREE' both have "
-                        + "checksum_status set to OK, and since replica 'TWO' is "
-                        + "the only bitarchive, it should found when searching"
-                        + "for replica with good file for the file 'TEST1'.", cache.getBitarchiveWithGoodFile("TEST1"),
+                + "checksum_status set to OK, and since replica 'TWO' is "
+                + "the only bitarchive, it should found when searching"
+                + "for replica with good file for the file 'TEST1'.", cache.getBitarchiveWithGoodFile("TEST1"),
                 Replica.getReplicaFromId("TWO"));
 
         assertEquals("No bitarchive replica should be returned.", null,

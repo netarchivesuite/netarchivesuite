@@ -40,9 +40,8 @@ public class WARCWriterNAS extends WARCWriter {
     private static final Logger logger = LoggerFactory.getLogger(WARCWriter.class);
 
     /**
-     * Constructor.
-     * Takes a stream. Use with caution. There is no upperbound check on size.
-     * Will just keep writing.  Only pass Streams that are bounded.
+     * Constructor. Takes a stream. Use with caution. There is no upperbound check on size. Will just keep writing. Only
+     * pass Streams that are bounded.
      *
      * @param serialNo used to generate unique file name sequences
      * @param out Where to write.
@@ -63,7 +62,7 @@ public class WARCWriterNAS extends WARCWriter {
      * @param prefix File prefix to use.
      * @param cmprs Compress the records written.
      * @param maxSize Maximum size for ARC files written.
-     * @param suffix File tail to use.  If null, unused.
+     * @param suffix File tail to use. If null, unused.
      * @param warcinfoData File metadata for warcinfo record.
      */
     public WARCWriterNAS(final AtomicInteger serialNo, final List<File> dirs, final String prefix, final String suffix,

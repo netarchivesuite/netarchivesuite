@@ -43,8 +43,8 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringTree;
 
 /**
- * This class encapsulates the bitarchive or checksum replicas.
- * It guarantees that there is only one Replica object per replica id/name.
+ * This class encapsulates the bitarchive or checksum replicas. It guarantees that there is only one Replica object per
+ * replica id/name.
  */
 public class Replica {
 
@@ -58,14 +58,12 @@ public class Replica {
     /** The type of this replica (checksum or bitarchive). */
     private final ReplicaType type;
     /**
-     * List of the replicas we know of. This list is initialized by the
-     * "first" call to initializeKnownReplicasList().
+     * List of the replicas we know of. This list is initialized by the "first" call to initializeKnownReplicasList().
      */
     private static Map<String, Replica> knownReplicas;
 
     /**
-     * Private constructor that makes a new Replica object.  These will
-     * all be stored in the knownReplicas map.
+     * Private constructor that makes a new Replica object. These will all be stored in the knownReplicas map.
      *
      * @param repId Id of the replica (e.g. One)
      * @param repName Name of the replica (e.g. ReplicaOne)
@@ -78,8 +76,8 @@ public class Replica {
     }
 
     /**
-     * Initialize the list of known replicas from settings.
-     * This must be called before using known, but after settings are loaded.
+     * Initialize the list of known replicas from settings. This must be called before using known, but after settings
+     * are loaded.
      */
     private static synchronized void initializeKnownReplicasList() {
         if (knownReplicas == null) {
@@ -89,11 +87,10 @@ public class Replica {
             List<StringTree<String>> replicaList = replicas.getSubTrees(CommonSettings.REPLICA_TAG);
             for (StringTree<String> replicaTree : replicaList) {
                 String replicaId = replicaTree.getValue(CommonSettings.REPLICAID_TAG);
-                knownReplicas.put(replicaId, new Replica(
-                                replicaId, replicaTree.getValue(CommonSettings.REPLICANAME_TAG),
-                                ReplicaType.fromSetting(replicaTree.getValue(CommonSettings.REPLICATYPE_TAG))
-                        )
-                );
+                knownReplicas.put(
+                        replicaId,
+                        new Replica(replicaId, replicaTree.getValue(CommonSettings.REPLICANAME_TAG), ReplicaType
+                                .fromSetting(replicaTree.getValue(CommonSettings.REPLICATYPE_TAG))));
             }
         }
     }
@@ -279,8 +276,7 @@ public class Replica {
     }
 
     /**
-     * Get the identification channel that corresponds to this replica.
-     * Please do not parse its name!
+     * Get the identification channel that corresponds to this replica. Please do not parse its name!
      *
      * @return The BaMon ChannelID of this replica.
      */
@@ -299,7 +295,7 @@ public class Replica {
     /**
      * Returns a human-readable representation of the object.
      *
-     * @return An arbitrary string version of the object.  Do not depend on its format.
+     * @return An arbitrary string version of the object. Do not depend on its format.
      */
     public String toString() {
         return type.toString() + "Replica (" + id + ") " + name;

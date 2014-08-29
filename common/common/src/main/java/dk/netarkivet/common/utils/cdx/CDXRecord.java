@@ -32,8 +32,8 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.StringUtils;
 
 /**
- * Represents a line i a CDX-file. A CDX-file is an index over arcfiles, with
- * fields for uri, ip, date, mimetype, length, arcfile, and offset in the file.
+ * Represents a line i a CDX-file. A CDX-file is an index over arcfiles, with fields for uri, ip, date, mimetype,
+ * length, arcfile, and offset in the file.
  */
 public class CDXRecord {
 
@@ -70,8 +70,7 @@ public class CDXRecord {
     }
 
     /**
-     * Compare two URLs for equality; first URL-unescaping (in UTF-8) all
-     * arguments in any query part.
+     * Compare two URLs for equality; first URL-unescaping (in UTF-8) all arguments in any query part.
      *
      * @param url1 The first URL
      * @param url2 The second URL
@@ -100,9 +99,8 @@ public class CDXRecord {
      * Constructor for class CDXRecord.
      *
      * @param fields the given fields of a line i CDX-format.
-     * @throws ArgumentNotValid if argument is null or number of fields is less
-     * than 7 or if length or offset does not contain
-     * long values.
+     * @throws ArgumentNotValid if argument is null or number of fields is less than 7 or if length or offset does not
+     * contain long values.
      */
     public CDXRecord(String[] fields) {
         ArgumentNotValid.checkNotNull(fields, "String[] fields");

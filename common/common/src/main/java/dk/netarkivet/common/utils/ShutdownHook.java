@@ -51,10 +51,8 @@ public class ShutdownHook extends Thread {
     }
 
     /**
-     * Called by the JVM to clean up the object before exiting.
-     * The method calls the cleanup() method
-     * Note: System.out.println is added in this method
-     * because logging may or may not be active at this time.
+     * Called by the JVM to clean up the object before exiting. The method calls the cleanup() method Note:
+     * System.out.println is added in this method because logging may or may not be active at this time.
      */
     public void run() {
         Logger log = null;
@@ -62,7 +60,7 @@ public class ShutdownHook extends Thread {
             log = LoggerFactory.getLogger(appName);
             log.info("Shutting down {}", appName);
         } catch (Throwable e) {
-            //Ignore
+            // Ignore
         }
         try {
             app.shutdown();

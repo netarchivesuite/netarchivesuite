@@ -41,10 +41,8 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 
 /**
- * This implementation of FileBatchJob is a bridge to a class file given
- * as a File object.
- * The given class will be loaded and used to perform
- * the actions of the FileBatchJob class.
+ * This implementation of FileBatchJob is a bridge to a class file given as a File object. The given class will be
+ * loaded and used to perform the actions of the FileBatchJob class.
  */
 @SuppressWarnings({"unchecked", "rawtypes", "serial"})
 public class LoadableFileBatchJob extends FileBatchJob {
@@ -94,8 +92,7 @@ public class LoadableFileBatchJob extends FileBatchJob {
      * Override of the default way to serialize this class.
      *
      * @param out Stream that the object will be written to.
-     * @throws IOException In case there is an error from the underlying stream,
-     * or this object cannot be serialized.
+     * @throws IOException In case there is an error from the underlying stream, or this object cannot be serialized.
      */
     private void writeObject(ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
@@ -105,19 +102,16 @@ public class LoadableFileBatchJob extends FileBatchJob {
      * Override of the default way to unserialize an object of this class.
      *
      * @param in Stream that the object can be read from.
-     * @throws IOException If there is an error reading from the stream, or
-     * the serialized object cannot be deserialized due to errors in the
-     * serialized form.
-     * @throws ClassNotFoundException If the class definition of the
-     * serialized object cannot be found.
+     * @throws IOException If there is an error reading from the stream, or the serialized object cannot be deserialized
+     * due to errors in the serialized form.
+     * @throws ClassNotFoundException If the class definition of the serialized object cannot be found.
      */
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
     }
 
     /**
-     * Initialize the job before runnning. This is called before the
-     * processFile() calls.
+     * Initialize the job before runnning. This is called before the processFile() calls.
      *
      * @param os the OutputStream to which output should be written
      */
@@ -199,7 +193,7 @@ public class LoadableFileBatchJob extends FileBatchJob {
         ArgumentNotValid.checkNotNull(input, "InputStream input");
         ArgumentNotValid.checkNotNull(output, "OutputStream output");
 
-        // Let the loaded job handle the post processing. 
+        // Let the loaded job handle the post processing.
         loadBatchJob();
         return loadedJob.postProcess(input, output);
     }

@@ -69,7 +69,7 @@ public class HeritrixTemplateTester {
             fail("ArgumentNotValid exception not expected with verify set to false: " + e);
         }
 
-        Object[][] orderXmls = {{"default_orderxml.xml", new Callback() {
+        Object[][] orderXmls = { {"default_orderxml.xml", new Callback() {
             @Override
             public void check(File f) {
                 checkArcValues(f);

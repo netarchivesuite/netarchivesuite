@@ -346,8 +346,7 @@ public final class IndexRequestServer extends HarvesterMessageHandler implements
                     }
                 } else if (satisfactoryTresholdReached(foundIDs, jobIDs)) {
                     log.info("Data for full index w/ {} jobs not available. Only found data for {} jobs - "
-                                    + "but satisfactoryTreshold reached, so assuming presence of all data",
-                            jobIDs.size(),
+                            + "but satisfactoryTreshold reached, so assuming presence of all data", jobIDs.size(),
                             foundIDs.size());
                     // Make sure that the index of the data available is generated
                     Set<Long> theFoundIDs = handler.cache(foundIDs);

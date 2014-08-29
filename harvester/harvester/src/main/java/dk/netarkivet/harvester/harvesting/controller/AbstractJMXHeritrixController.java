@@ -426,9 +426,9 @@ public abstract class AbstractJMXHeritrixController implements HeritrixControlle
                 NotificationsFactory
                         .getInstance()
                         .notify("Heritrix process of "
-                                        + this
-                                        + " not dead after destroy. "
-                                        + "Exiting harvest controller. Make sure you kill the runaway Heritrix before you restart.",
+                                + this
+                                + " not dead after destroy. "
+                                + "Exiting harvest controller. Make sure you kill the runaway Heritrix before you restart.",
                                 NotificationType.ERROR);
                 System.exit(1);
             }

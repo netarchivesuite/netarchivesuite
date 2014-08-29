@@ -57,9 +57,8 @@ import dk.netarkivet.common.utils.archive.ArchiveDateConverter;
 import dk.netarkivet.common.utils.archive.HeritrixArchiveHeaderWrapper;
 
 /**
- * Various utilities on WARC-records.
- * We have borrowed code from wayback.
- * See org.archive.wayback.resourcestore.indexer.WARCRecordToSearchResultAdapter
+ * Various utilities on WARC-records. We have borrowed code from wayback. See
+ * org.archive.wayback.resourcestore.indexer.WARCRecordToSearchResultAdapter
  */
 public class WARCUtils {
 
@@ -77,14 +76,12 @@ public class WARCUtils {
         PrintStream ps = null;
         try {
             ps = new PrintStream(new FileOutputStream(newFile));
-            writer = new WARCWriterNAS(
-                    new AtomicInteger(), ps,
-                    //This name is used for the first (file metadata) record
-                    newFile,
-                    false, //Don't compress
-                    //Use current time
-                    ArchiveDateConverter.getWarcDateFormat().format(new Date()),
-                    null //No particular file metadata to add
+            writer = new WARCWriterNAS(new AtomicInteger(), ps,
+            // This name is used for the first (file metadata) record
+                    newFile, false, // Don't compress
+                    // Use current time
+                    ArchiveDateConverter.getWarcDateFormat().format(new Date()), null // No particular file metadata to
+                                                                                      // add
             );
         } catch (IOException e) {
             if (ps != null) {
@@ -137,27 +134,11 @@ public class WARCUtils {
         ignoreHeadersMap.add("warc-record-id");
         ignoreHeadersMap.add("warc-type");
         ignoreHeadersMap.add("warc-target-uri");
-        String[] headerNames = {
-                "WARC-Type",
-                "WARC-Record-ID",
-                "WARC-Date",
-                "Content-Length",
-                "Content-Type",
-                "WARC-Concurrent-To",
-                "WARC-Block-Digest",
-                "WARC-Payload-Digest",
-                "WARC-IP-Address",
-                "WARC-Refers-To",
-                "WARC-Target-URI",
-                "WARC-Truncated",
-                "WARC-Warcinfo-ID",
-                "WARC-Filename",
-                "WARC-Profile",
-                "WARC-Identified-Payload-Type",
-                "WARC-Segment-Origin-ID",
-                "WARC-Segment-Number",
-                "WARC-Segment-Total-Length"
-        };
+        String[] headerNames = {"WARC-Type", "WARC-Record-ID", "WARC-Date", "Content-Length", "Content-Type",
+                "WARC-Concurrent-To", "WARC-Block-Digest", "WARC-Payload-Digest", "WARC-IP-Address", "WARC-Refers-To",
+                "WARC-Target-URI", "WARC-Truncated", "WARC-Warcinfo-ID", "WARC-Filename", "WARC-Profile",
+                "WARC-Identified-Payload-Type", "WARC-Segment-Origin-ID", "WARC-Segment-Number",
+                "WARC-Segment-Total-Length"};
         for (int i = 0; i < headerNames.length; ++i) {
             headerNamesCaseMap.put(headerNames[i].toLowerCase(), headerNames[i]);
         }
@@ -173,7 +154,7 @@ public class WARCUtils {
      */
     private static void copySingleRecord(WARCWriter aw, WARCRecord record) {
         try {
-            //Prepare metadata...
+            // Prepare metadata...
             HeritrixArchiveHeaderWrapper header = HeritrixArchiveHeaderWrapper.wrapArchiveHeader(null, record);
             String warcType = header.getHeaderStringValue("WARC-Type");
 
@@ -242,15 +223,12 @@ public class WARCUtils {
     /**
      * Read the contents (payload) of an WARC record into a byte array.
      *
-     * @param record An WARC record to read from. After reading, the WARC Record
-     * will no longer have its own data available for reading.
-     * @return A byte array containing the payload of the WARC record. Note
-     * that the size of the payload is calculated by subtracting
-     * the contentBegin value from the length of the record (both values
-     * included in the record header).
-     * @throws IOFailure If there is an error reading the data, or if the record is
-     * longer than Integer.MAX_VALUE (since we can't make bigger
-     * arrays).
+     * @param record An WARC record to read from. After reading, the WARC Record will no longer have its own data
+     * available for reading.
+     * @return A byte array containing the payload of the WARC record. Note that the size of the payload is calculated
+     * by subtracting the contentBegin value from the length of the record (both values included in the record header).
+     * @throws IOFailure If there is an error reading the data, or if the record is longer than Integer.MAX_VALUE (since
+     * we can't make bigger arrays).
      */
     public static byte[] readWARCRecord(WARCRecord record) throws IOFailure {
         ArgumentNotValid.checkNotNull(record, "WARCRecord record");
@@ -273,8 +251,7 @@ public class WARCUtils {
         int bytesRead;
         int totalBytes = 0;
         try {
-            for (; (totalBytes < payloadLength) && ((bytesRead = record.read(buffer)) != -1);
-                 totalBytes += bytesRead) {
+            for (; (totalBytes < payloadLength) && ((bytesRead = record.read(buffer)) != -1); totalBytes += bytesRead) {
                 System.arraycopy(buffer, 0, tmpbuffer, totalBytes, bytesRead);
             }
         } catch (IOException e) {

@@ -29,8 +29,8 @@ import org.archive.net.UURI;
 /**
  * Fixed UURI which extends UURI to fix an NPE bug in getReferencedHost.
  * <p>
- * Pending fix of bug in Heritrix. The bug has been reported, and
- * has number 616: http://webteam.archive.org/jira/browse/HER-616
+ * Pending fix of bug in Heritrix. The bug has been reported, and has number 616:
+ * http://webteam.archive.org/jira/browse/HER-616
  */
 @SuppressWarnings({"serial"})
 public class FixedUURI extends UURI {

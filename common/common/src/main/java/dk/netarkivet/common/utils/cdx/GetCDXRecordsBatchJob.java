@@ -78,10 +78,10 @@ public class GetCDXRecordsBatchJob extends ARCBatchJob {
                         os.write(buf, 0, bytesRead);
                     }
                 } finally {
-                    //TODO Should we close ARCRecord here???
-                    //if (is != null) {
-                    //    is.close();
-                    //}
+                    // TODO Should we close ARCRecord here???
+                    // if (is != null) {
+                    // is.close();
+                    // }
                 }
             } catch (IOException e) {
                 String message = "Error writing body of ARC entry '" + sar.getMetaData().getArcFile() + "' offset '"

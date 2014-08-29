@@ -48,32 +48,27 @@ public abstract class ApplicationUtils {
     public static final int WRONG_ARGUMENTS = 1;
 
     /**
-     * System.exit() value for the case where the application does not
-     * have a factory method.
+     * System.exit() value for the case where the application does not have a factory method.
      */
     public static final int NO_FACTORY_METHOD = 2;
 
     /**
-     * System.exit() value for the case where the application class
-     * could not be instantiated.
+     * System.exit() value for the case where the application class could not be instantiated.
      */
     public static final int EXCEPTION_WHILE_INSTANTIATING = 3;
 
     /**
-     * System.exit() value for the case where the Shutdown Hook
-     * for the application could not be added.
+     * System.exit() value for the case where the Shutdown Hook for the application could not be added.
      */
     public static final int EXCEPTION_WHEN_ADDING_SHUTDOWN_HOOK = 4;
 
     /**
-     * System.exit() value for the case where the management registration for
-     * the application could not be started.
+     * System.exit() value for the case where the management registration for the application could not be started.
      */
     public static final int EXCEPTION_WHEN_ADDING_MANAGEMENT = 6;
 
     /**
-     * Helper class that prints a String to STDOUT, and logs it at INFO level
-     * at the same time.
+     * Helper class that prints a String to STDOUT, and logs it at INFO level at the same time.
      *
      * @param s the given string.
      */
@@ -83,9 +78,8 @@ public abstract class ApplicationUtils {
     }
 
     /**
-     * Helper class for logging an exception (at level fatal)
-     * and printing it to STDOUT at the same time.
-     * Also invokes the error notifier.
+     * Helper class for logging an exception (at level fatal) and printing it to STDOUT at the same time. Also invokes
+     * the error notifier.
      *
      * @param s a given String.
      * @param t a given Exception.
@@ -98,8 +92,7 @@ public abstract class ApplicationUtils {
     }
 
     /**
-     * Checks that the arguments for a class are empty. Exits the JVM with error
-     * code 1 if the arguments are not empty.
+     * Checks that the arguments for a class are empty. Exits the JVM with error code 1 if the arguments are not empty.
      *
      * @param args the argument array.
      */
@@ -118,8 +111,7 @@ public abstract class ApplicationUtils {
      * Should we show the version of NetarchiveSuite.
      *
      * @param args commandline arguments to NetarchiveSuite
-     * @return true, if we should show the version of NetarchiveSuite;
-     * otherwise false
+     * @return true, if we should show the version of NetarchiveSuite; otherwise false
      */
     private static boolean showVersion(String[] args) {
         if (args.length == 1 && (args[0].equals("-v") || args[0].equals("--version"))) {
@@ -129,17 +121,10 @@ public abstract class ApplicationUtils {
     }
 
     /**
-     * Starts up an application. The applications class must:
-     * (i) Have a static getInstance() method which returns a
-     * an instance of itself.
-     * (ii) Implement CleanupIF.
-     * If the class cannot be started and a shutdown hook added, the JVM
-     * exits with a return code depending on the problem:
-     * 1 means wrong arguments
-     * 2 means no factory method exists for class
-     * 3 means couldn't instantiate class
-     * 4 means couldn't add shutdown hook
-     * 5 means couldn't add liveness logger
+     * Starts up an application. The applications class must: (i) Have a static getInstance() method which returns a an
+     * instance of itself. (ii) Implement CleanupIF. If the class cannot be started and a shutdown hook added, the JVM
+     * exits with a return code depending on the problem: 1 means wrong arguments 2 means no factory method exists for
+     * class 3 means couldn't instantiate class 4 means couldn't add shutdown hook 5 means couldn't add liveness logger
      * 6 means couldn't add remote management
      *
      * @param c The class to be started.
@@ -235,15 +220,12 @@ public abstract class ApplicationUtils {
     }
 
     /**
-     * Ensure that a directory is available and writable.  Will warn
-     * if the directory doesn't already exist (it ought to be created by
-     * the install script) and throws a PermissionDenied exception
-     * if the directory cannot be created.
+     * Ensure that a directory is available and writable. Will warn if the directory doesn't already exist (it ought to
+     * be created by the install script) and throws a PermissionDenied exception if the directory cannot be created.
      *
      * @param dir A File object denoting a directory.
-     * @throws PermissionDenied if the directory doesn't exist and
-     * cannot be created/written to, or if the File object indicates an existing
-     * non-directory.
+     * @throws PermissionDenied if the directory doesn't exist and cannot be created/written to, or if the File object
+     * indicates an existing non-directory.
      */
     public static void dirMustExist(File dir) {
         ArgumentNotValid.checkNotNull(dir, "File dir");

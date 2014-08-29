@@ -38,8 +38,7 @@ public class PermissionDenied extends NetarkivetException {
     }
 
     /**
-     * Constructs new PermissionDenied with the specified
-     * detail message and cause.
+     * Constructs new PermissionDenied with the specified detail message and cause.
      *
      * @param message The detail message
      * @param cause The cause

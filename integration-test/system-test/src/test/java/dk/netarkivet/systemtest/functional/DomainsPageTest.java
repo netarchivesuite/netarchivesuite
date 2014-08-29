@@ -128,7 +128,7 @@ public class DomainsPageTest extends SeleniumTest {
                 "Didn't find the defaultconfig as the only configuration");
 
         addStep("Click the 'Show unused configurations' link again, set the second configuration as "
-                        + "default configuration and click save. ",
+                + "default configuration and click save. ",
                 "Only the second configuration should be, as the 'Hide unused configurations' filter has been reset "
                         + "after the save.");
         PageHelper.clickLink(SHOW_UNUSED_CONFIGURATIONS_LINK);

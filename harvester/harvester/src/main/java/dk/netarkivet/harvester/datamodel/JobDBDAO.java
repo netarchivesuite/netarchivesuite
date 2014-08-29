@@ -909,9 +909,9 @@ public class JobDBDAO extends JobDAO {
             final long jobId = res.getLong(1);
             joblist.add(new JobStatusInfo(jobId, JobStatus.fromOrdinal(res.getInt(2)), res.getLong(3),
                     res.getString(4), res.getInt(5), res.getString(6), res.getString(7), res.getString(8), res
-                    .getInt(9), DBUtils.getDateMaybeNull(res, 10), DBUtils.getDateMaybeNull(res, 11), DBUtils
-                    .getDateMaybeNull(res, 12), DBUtils.getDateMaybeNull(res, 13), DBUtils.getLongMaybeNull(
-                    res, 14)));
+                            .getInt(9), DBUtils.getDateMaybeNull(res, 10), DBUtils.getDateMaybeNull(res, 11), DBUtils
+                            .getDateMaybeNull(res, 12), DBUtils.getDateMaybeNull(res, 13), DBUtils.getLongMaybeNull(
+                            res, 14)));
         }
         return joblist;
     }
@@ -1096,7 +1096,7 @@ public class JobDBDAO extends JobDAO {
             if (pagesize != HarvestStatusQuery.PAGE_SIZE_NONE) {
                 sql.append(" "
                         + DBSpecifics.getInstance().getOrderByLimitAndOffsetSubClause(pagesize,
-                        (query.getStartPageIndex() - 1) * pagesize));
+                                (query.getStartPageIndex() - 1) * pagesize));
             }
         }
 

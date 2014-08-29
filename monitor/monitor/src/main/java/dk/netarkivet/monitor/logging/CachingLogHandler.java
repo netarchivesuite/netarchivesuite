@@ -137,8 +137,7 @@ public class CachingLogHandler extends Handler {
      * done in the constructor of the CachingLogRecord.
      *
      * @see dk.netarkivet.common.management.SingleMBeanObject
-     * @see SingleLogRecord
-     * <p>
+     * @see SingleLogRecord <p>
      * The number of remembered log records is read from the setting Settings.LOGGING_HISTORY_SIZE
      */
     public CachingLogHandler() {

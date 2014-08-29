@@ -44,12 +44,11 @@ import dk.netarkivet.common.utils.Settings;
 /**
  * Handles the communication with a Sun JMS broker.
  * <p>
- * Methods are implemented to get a connection, as well as queues and topics.
- * The error handling will try to reconnect on given error scenarios.
+ * Methods are implemented to get a connection, as well as queues and topics. The error handling will try to reconnect
+ * on given error scenarios.
  * <p>
- * The warnings and errorcodes reported by Sun Message Queue 4.1 can be found in
- * Appendix A Sun Java System Message Queue 4.1 Developer's Guide for Java
- * Clients: http://docs.sun.com/app/docs/doc/819-7757/aeqgo?a=view
+ * The warnings and errorcodes reported by Sun Message Queue 4.1 can be found in Appendix A Sun Java System Message
+ * Queue 4.1 Developer's Guide for Java Clients: http://docs.sun.com/app/docs/doc/819-7757/aeqgo?a=view
  */
 public class JMSConnectionSunMQ extends JMSConnection {
 
@@ -57,38 +56,41 @@ public class JMSConnectionSunMQ extends JMSConnection {
     private static final Logger log = LoggerFactory.getLogger(JMSConnectionSunMQ.class);
 
     /** The default place in classpath where the settings file can be found. */
-    private static String DEFAULT_SETTINGS_CLASSPATH =
-            "dk/netarkivet/common/distribute/JMSConnectionSunMQSettings.xml";
+    private static String DEFAULT_SETTINGS_CLASSPATH = "dk/netarkivet/common/distribute/JMSConnectionSunMQSettings.xml";
 
     /*
-     * The static initialiser is called when the class is loaded.
-     * It will add default values for all settings defined in this class, by
-     * loading them from a settings.xml file in classpath.
+     * The static initialiser is called when the class is loaded. It will add default values for all settings defined in
+     * this class, by loading them from a settings.xml file in classpath.
      */
     static {
         Settings.addDefaultClasspathSettings(DEFAULT_SETTINGS_CLASSPATH);
     }
 
-    public static final String[] RECONNECT_ERRORCODES = {
-            "C4000", //Packet acknowledgment failed
-            "C4001", //Write packet failed
-            "C4002", //Read packet failed
-            "C4003", //Connection timed out
-            "C4036", //Server error
-            "C4056", //Received goodbye from broker
-            "C4059", //Session is closed
-            "C4062", //Connection is closed
-            "C4063"  //Consumer is closed
+    public static final String[] RECONNECT_ERRORCODES = {"C4000", // Packet acknowledgment failed
+            "C4001", // Write packet failed
+            "C4002", // Read packet failed
+            "C4003", // Connection timed out
+            "C4036", // Server error
+            "C4056", // Received goodbye from broker
+            "C4059", // Session is closed
+            "C4062", // Connection is closed
+            "C4063" // Consumer is closed
     };
 
     // NOTE: The constants defining setting names below are left non-final on
     // purpose! Otherwise, the static initialiser that loads default values
     // will not run.
 
-    /** <b>settings.common.jms.broker</b>: <br> The JMS broker host contacted by the JMS connection. */
+    /**
+     * <b>settings.common.jms.broker</b>: <br>
+     * The JMS broker host contacted by the JMS connection.
+     */
     public static String JMS_BROKER_HOST = "settings.common.jms.broker";
 
-    /** <b>settings.common.jms.port</b>: <br> The port the JMS connection should use. */
+    /**
+     * <b>settings.common.jms.port</b>: <br>
+     * The port the JMS connection should use.
+     */
     public static String JMS_BROKER_PORT = "settings.common.jms.port";
 
     private QueueConnection qConnection;
@@ -114,21 +116,18 @@ public class JMSConnectionSunMQ extends JMSConnection {
     }
 
     /**
-     * Returns a new QueueConnectionFactory. This is an SunMQ implementation of
-     * QueueConnectionFactory.
+     * Returns a new QueueConnectionFactory. This is an SunMQ implementation of QueueConnectionFactory.
      * <p>
-     * Notice: The return type is explicitly defined with package prefix to
-     * avoid name collision with javax.jms.QueueConnectionFactory
+     * Notice: The return type is explicitly defined with package prefix to avoid name collision with
+     * javax.jms.QueueConnectionFactory
      *
      * @return QueueConnectionFactory
-     * @throws JMSException If unable to create a QueueConnectionfactory with
-     * the necessary properties: imqConsumerflowLimit set
-     * to 1, imqBrokerHostname and imqBrokerHostPort set to
-     * the values defined in our settings.
+     * @throws JMSException If unable to create a QueueConnectionfactory with the necessary properties:
+     * imqConsumerflowLimit set to 1, imqBrokerHostname and imqBrokerHostPort set to the values defined in our settings.
      */
     protected com.sun.messaging.ConnectionFactory getConnectionFactory() throws JMSException {
-        log.info("Establishing SunMQ JMS Connection to '{}:{}'",
-                Settings.get(JMS_BROKER_HOST), Settings.getInt(JMS_BROKER_PORT));
+        log.info("Establishing SunMQ JMS Connection to '{}:{}'", Settings.get(JMS_BROKER_HOST),
+                Settings.getInt(JMS_BROKER_PORT));
         com.sun.messaging.ConnectionFactory cFactory = new com.sun.messaging.ConnectionFactory();
         cFactory.setProperty(ConnectionConfiguration.imqBrokerHostName, Settings.get(JMS_BROKER_HOST));
         cFactory.setProperty(ConnectionConfiguration.imqBrokerHostPort, Settings.get(JMS_BROKER_PORT));
@@ -137,9 +136,8 @@ public class JMSConnectionSunMQ extends JMSConnection {
     }
 
     /**
-     * Returns an Queue or a Topic. This is an SunMQ implementation of Queue and
-     * Topic. The method depends on the JMS provider being configured to
-     * autocreate queues and topics.
+     * Returns an Queue or a Topic. This is an SunMQ implementation of Queue and Topic. The method depends on the JMS
+     * provider being configured to autocreate queues and topics.
      *
      * @param channelName the name of the queue or topic.
      * @return A queue or topic depending on the channel name.
@@ -163,8 +161,8 @@ public class JMSConnectionSunMQ extends JMSConnection {
     }
 
     /**
-     * Exceptionhandler for the JMSConnection. Will try to reconnect on errors
-     * with error codes defined in the constant RECONNECT_ERRORCODES.
+     * Exceptionhandler for the JMSConnection. Will try to reconnect on errors with error codes defined in the constant
+     * RECONNECT_ERRORCODES.
      *
      * @param e an JMSException
      */

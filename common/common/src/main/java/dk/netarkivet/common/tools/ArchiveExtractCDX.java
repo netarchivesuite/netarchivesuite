@@ -34,9 +34,7 @@ import dk.netarkivet.common.utils.cdx.ArchiveExtractCDXJob;
 /**
  * Command line tool for extracting CDX information from given ARC/WARC files.
  * <p>
- * Usage:
- * java dk.netarkivet.common.tools.ExtractCDX file1.ext [file2.ext ...]
- * > myindex.cdx
+ * Usage: java dk.netarkivet.common.tools.ExtractCDX file1.ext [file2.ext ...] > myindex.cdx
  * <p>
  * "ext" can be arc, arc.gz, warc or warc.gz
  * <p>
@@ -45,15 +43,13 @@ import dk.netarkivet.common.utils.cdx.ArchiveExtractCDXJob;
 public class ArchiveExtractCDX {
 
     /**
-     * Main method. Extracts CDX from all given files and outputs the index
-     * on stdout.
+     * Main method. Extracts CDX from all given files and outputs the index on stdout.
      *
      * @param argv A list of (absolute paths to) files to index.
      */
     public static void main(String[] argv) {
         if (argv.length == 0) {
-            System.err.println("Missing parameter: "
-                    + "Must supply one or more ARC/WARC file(s) to be indexed");
+            System.err.println("Missing parameter: " + "Must supply one or more ARC/WARC file(s) to be indexed");
             dieWithUsage();
         }
         List<File> arcFiles = new ArrayList<File>();
@@ -67,8 +63,7 @@ public class ArchiveExtractCDX {
     }
 
     /**
-     * Verifies that the filename (absolute path) points to
-     * an existing file and that it is an arc or warc file.
+     * Verifies that the filename (absolute path) points to an existing file and that it is an arc or warc file.
      *
      * @param filename The filename to verify.
      * @return The arc or warc file, as a File.
@@ -78,13 +73,12 @@ public class ArchiveExtractCDX {
         try {
             f = FileUtils.makeValidFileFromExisting(filename).getAbsoluteFile();
             if (!FileUtils.WARCS_ARCS_FILTER.accept(f.getParentFile(), f.getName())) {
-                dieWithError("Could not accept " + filename
-                        + ": was not an arc or warc file");
+                dieWithError("Could not accept " + filename + ": was not an arc or warc file");
             }
             return f;
         } catch (IOFailure e) {
             dieWithError("Could not accept " + filename + ":" + e);
-            return null; //Compiler does not recognize System.exit()
+            return null; // Compiler does not recognize System.exit()
         }
     }
 
@@ -100,12 +94,11 @@ public class ArchiveExtractCDX {
     }
 
     /**
-     * Prints out proper usage of this tool on stderr and exits
-     * with an error code.
+     * Prints out proper usage of this tool on stderr and exits with an error code.
      */
     private static void dieWithUsage() {
-        System.err.println("Usage: java " + ArchiveExtractCDX.class.getName()
-                + " file1.arc[.gz] [file2.warc[.gz] ...]");
+        System.err
+                .println("Usage: java " + ArchiveExtractCDX.class.getName() + " file1.arc[.gz] [file2.warc[.gz] ...]");
         System.exit(1);
     }
 

@@ -128,7 +128,7 @@ public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler imple
                 }
                 if (newStatus == JobStatus.FAILED) {
                     log.warn("Job {} failed: HarvestErrors = {}\n" + "HarvestErrorDetails = {}\n"
-                                    + "UploadErrors = {}\n" + "UploadErrorDetails = {}", jobID, cmsg.getHarvestErrors(),
+                            + "UploadErrors = {}\n" + "UploadErrorDetails = {}", jobID, cmsg.getHarvestErrors(),
                             cmsg.getHarvestErrorDetails(), cmsg.getUploadErrors(), cmsg.getUploadErrorDetails());
                 } else {
                     log.info("Job #{} succesfully completed", jobID);

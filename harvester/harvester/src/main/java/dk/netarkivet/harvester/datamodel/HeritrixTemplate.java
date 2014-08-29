@@ -65,15 +65,13 @@ public class HeritrixTemplate {
 
     /** Xpath needed by Job.editOrderXML_maxBytesPerDomain(). */
     public static final String QUOTA_ENFORCER_ENABLED_XPATH = "/crawl-order/controller/map[@name='pre-fetch-processors']"
-            + "/newObject[@name='QuotaEnforcer']" + "/boolean[@name='enabled']";
-    ;
+            + "/newObject[@name='QuotaEnforcer']" + "/boolean[@name='enabled']";;
     /** Xpath needed by Job.editOrderXML_maxBytesPerDomain(). */
     public static final String GROUP_MAX_ALL_KB_XPATH = "/crawl-order/controller/map[@name='pre-fetch-processors']"
             + "/newObject[@name='QuotaEnforcer']" + "/long[@name='group-max-all-kb']";
     /** Xpath needed by Job.editOrderXML_maxObjectsPerDomain(). */
-    public static final String GROUP_MAX_FETCH_SUCCESS_XPATH =
-            "/crawl-order/controller/map[@name='pre-fetch-processors']"
-                    + "/newObject[@name='QuotaEnforcer']" + "/long[@name='group-max-fetch-successes']";
+    public static final String GROUP_MAX_FETCH_SUCCESS_XPATH = "/crawl-order/controller/map[@name='pre-fetch-processors']"
+            + "/newObject[@name='QuotaEnforcer']" + "/long[@name='group-max-fetch-successes']";
     /** Xpath needed by Job.editOrderXML_maxObjectsPerDomain(). */
     public static final String QUEUE_TOTAL_BUDGET_XPATH = "/crawl-order/controller/newObject[@name='frontier']"
             + "/long[@name='queue-total-budget']";
@@ -609,8 +607,7 @@ public class HeritrixTemplate {
      * <li>sets the disk-path to the outputdir specified in HeritrixFiles.</li>
      * <li>sets the seedsfile to the seedsfile specified in HeritrixFiles.</li>
      * <li>sets the prefix of the arcfiles to unique prefix defined in HeritrixFiles</li>
-     * <li>checks that the arcs-file dir is 'arcs' - to ensure that we know where the arc-files are when crawl
-     * finishes</li>
+     * <li>checks that the arcs-file dir is 'arcs' - to ensure that we know where the arc-files are when crawl finishes</li>
      * <p>
      * <li>if deduplication is enabled, sets the node pointing to index directory for deduplication (see step 3)</li>
      * </ol>
