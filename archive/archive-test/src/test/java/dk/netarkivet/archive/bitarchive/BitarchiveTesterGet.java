@@ -57,12 +57,6 @@ public class BitarchiveTesterGet extends BitarchiveTestCase {
      */
     static final String ARC_FILE_NAME = "Upload2.ARC";
 
-    /**
-     * Create a new test object.
-     *
-     * @param sTestName Name of this test.
-     */
-
     protected File getOriginalsDir() {
         return ORIGINALS_DIR;
     }
@@ -143,9 +137,7 @@ public class BitarchiveTesterGet extends BitarchiveTestCase {
         String targetcontents = FileUtils.readFile(new File(TestInfo.WORKING_DIR, ARC_RECORD_0));
         String foundContents = FileUtils.readFile(new File(TestInfo.WORKING_DIR, ARC_RECORD_0_TMP));
         // verify that their contents are identical
-        assertTrue("Strings targetcontents (length = " + targetcontents.length() + ") and foundContents (length="
-                + foundContents.length() + ") should have same length",
-                targetcontents.length() == foundContents.length());
+        assertEquals("Strings targetcontents should have same length", targetcontents.length(), foundContents.length());
         assertEquals("The contents should be exactly the same", targetcontents, foundContents);
     }
 
@@ -195,14 +187,11 @@ public class BitarchiveTesterGet extends BitarchiveTestCase {
             File recordOFile = new File(TestInfo.WORKING_DIR, ARC_RECORD_0_TMP);
             OutputStream os = new FileOutputStream(recordOFile);
             record.getData(os);
-            // read targetContents and foundContents from respectively
-            // ARC_RECORD_0 ARC_RECORD_0_TMP
+
             String targetcontents = FileUtils.readFile(new File(TestInfo.WORKING_DIR, ARC_RECORD_0));
             String foundContents = FileUtils.readFile(new File(TestInfo.WORKING_DIR, ARC_RECORD_0_TMP));
-            // verify that their contents are identical
-            assertTrue("Strings targetcontents (length = " + targetcontents.length() + ") and foundContents (length="
-                    + foundContents.length() + ") should have same length",
-                    targetcontents.length() == foundContents.length());
+            assertEquals("Strings targetcontents should have same length",
+                    targetcontents.length(), foundContents.length());
             assertEquals("Contents should be exactly as expected", targetcontents, foundContents);
         } catch (Exception e) {
             fail("Proper ARC file access should not give any exceptions, not " + e);

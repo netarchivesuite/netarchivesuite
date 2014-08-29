@@ -267,11 +267,9 @@ public class IntegrityTests {
         // monitor should have written the data to a remote file we can collect
         assertEquals("Should have received exactly two messages, but got " + listener.getAllReceived(), 2,
                 listener.getNumReceived());
-        List<NetarkivetMessage> received = listener.getAllReceived();
-        for (Iterator<NetarkivetMessage> i = received.iterator(); i.hasNext();) {
-            Object o = i.next();
-            if (o instanceof BatchReplyMessage) {
-                ((BatchReplyMessage) o).getResultFile().copyTo(output_file);
+        for (NetarkivetMessage message : listener.getAllReceived()) {
+            if (message instanceof BatchReplyMessage) {
+                ((BatchReplyMessage) message).getResultFile().copyTo(output_file);
             }
         }
 
@@ -498,16 +496,8 @@ public class IntegrityTests {
         }
 
         synchronized public int getTotalCount() {
-            return (uploadMsg.size() + getMsg.size() + removeMsg.size() + batchMsg.size() + getfileMsg.size() + batchReplyMsg
-                    .size());
-        }
-
-        synchronized void receive(long ms) {
-            try {
-                this.wait(ms);
-            } catch (InterruptedException e) {
-                fail("should not be interupted");
-            }
+            return (uploadMsg.size() + getMsg.size() + removeMsg.size() + batchMsg.size() + getfileMsg.size()
+                    + batchReplyMsg.size());
         }
     }
 }

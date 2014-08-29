@@ -177,9 +177,9 @@ public class JMSArcRepositoryClientTester {
     /** Tests the correct object is returned when getViewerInstance is called. */
     @Test
     public void testGetViewerInstance() {
-        assertTrue(
-                "Must return an instance of ViewerArcRepositoryClient",
-                (arcrepos = (JMSArcRepositoryClient) ArcRepositoryClientFactory.getViewerInstance()) instanceof ViewerArcRepositoryClient);
+        arcrepos = (JMSArcRepositoryClient) ArcRepositoryClientFactory.getViewerInstance();
+        assertTrue("Must return an instance of ViewerArcRepositoryClient",
+                (arcrepos instanceof ViewerArcRepositoryClient));
     }
 
     /** Tests the correct object is returned when getHacoInstance is called. */
