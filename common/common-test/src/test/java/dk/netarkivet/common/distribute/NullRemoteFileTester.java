@@ -38,7 +38,6 @@ import org.junit.Test;
 
 import dk.netarkivet.common.exceptions.NotImplementedException;
 
-
 public class NullRemoteFileTester {
 
     @Test
@@ -49,10 +48,10 @@ public class NullRemoteFileTester {
         assertEquals(nrf1.getInputStream(), null);
         assertEquals(nrf1.getName(), null);
         try {
-        	nrf1.getChecksum();
-        	fail("Should have thrown NotImplementedException");
-        } catch (NotImplementedException e){
-        	// Expected
+            nrf1.getChecksum();
+            fail("Should have thrown NotImplementedException");
+        } catch (NotImplementedException e) {
+            // Expected
         }
         OutputStream os = new ByteArrayOutputStream();
         nrf1.appendTo(os);

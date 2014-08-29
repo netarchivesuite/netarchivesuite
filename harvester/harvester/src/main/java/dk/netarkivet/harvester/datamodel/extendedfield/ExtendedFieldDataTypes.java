@@ -24,12 +24,11 @@
 package dk.netarkivet.harvester.datamodel.extendedfield;
 
 /**
- * Constants for the available ExtendedFieldDatatypes.
- * TODO change into an enum.
+ * Constants for the available ExtendedFieldDatatypes. TODO change into an enum.
  */
 public class ExtendedFieldDataTypes {
 
-	/** The datatype STRING. */
+    /** The datatype STRING. */
     public static final int STRING = 1;
     /** The datatype BOOLEAN. */
     public static final int BOOLEAN = 2;

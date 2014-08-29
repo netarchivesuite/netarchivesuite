@@ -32,11 +32,13 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 
-/** This class attempts to do illegal actions.
+/**
+ * This class attempts to do illegal actions.
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({"serial"})
 public class EvilBatch extends FileBatchJob {
     String location;
+
     public void initialize(OutputStream os) {
         try {
             os.write("Legal\n".getBytes());
@@ -44,6 +46,7 @@ public class EvilBatch extends FileBatchJob {
             throw new IOFailure("Failed to write location", e);
         }
     }
+
     public boolean processFile(File file, OutputStream os) {
         try {
             FileReader reader = new FileReader(file);
@@ -60,6 +63,7 @@ public class EvilBatch extends FileBatchJob {
         }
         return true;
     }
+
     public void finish(OutputStream os) {
         // Here's where we do something very illegal.
         try {

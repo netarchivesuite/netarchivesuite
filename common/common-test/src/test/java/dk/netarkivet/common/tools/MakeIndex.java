@@ -58,17 +58,15 @@ public class MakeIndex {
         try {
             // Set to one below the number used by the hacos to avoid them
             // eating our reply.
-            // Yes, it's a kludge.  Anyone care to add me a channel just for this?
+            // Yes, it's a kludge. Anyone care to add me a channel just for this?
             Settings.set(CommonSettings.HTTP_PORT_NUMBER, "" + (Settings.getInt(CommonSettings.HTTP_PORT_NUMBER) - 1));
             System.out.println("Connecting to ArcRepository");
             arcrep = ArcRepositoryClientFactory.getViewerInstance();
             System.out.println("Creating index file '" + indexfile + "'");
             ExtractCDXJob cdxjob = new ExtractCDXJob(false);
             // Do index on the first bitarchive found.
-            //String baName = wc.getBitarchiveNames()[0];
-            BatchStatus cdxstatus =
-                    arcrep.batch(cdxjob, Settings.get(
-                            CommonSettings.USE_REPLICA_ID));
+            // String baName = wc.getBitarchiveNames()[0];
+            BatchStatus cdxstatus = arcrep.batch(cdxjob, Settings.get(CommonSettings.USE_REPLICA_ID));
             cdxstatus.getResultFile().copyTo(indexfile);
             cdxstatus.getResultFile().cleanup();
             final List<File> filesFailed = new ArrayList<File>(cdxstatus.getFilesFailed());
@@ -89,8 +87,7 @@ public class MakeIndex {
     }
 
     private static void dieWithUsage() {
-        System.out.println("Usage: java " + MakeIndex.class.getName()
-                + " [indexfile]");
+        System.out.println("Usage: java " + MakeIndex.class.getName() + " [indexfile]");
         System.exit(1);
     }
 }

@@ -53,16 +53,14 @@ public class BitarchiveTesterGet extends BitarchiveTestCase {
     /** An ARC file that must not exist in the ARCHIVE_DIR directory. */
     static final String MISSING_ARC_FILE_NAME = "ShouldNotExist.ARC";
     /**
-     * The name of the ARC file that we're reading. This file must not exist in
-     * the ARCHIVE_DIR directory.
+     * The name of the ARC file that we're reading. This file must not exist in the ARCHIVE_DIR directory.
      */
     static final String ARC_FILE_NAME = "Upload2.ARC";
 
     /**
      * Create a new test object.
      *
-     * @param sTestName
-     *            Name of this test.
+     * @param sTestName Name of this test.
      */
 
     protected File getOriginalsDir() {
@@ -136,21 +134,21 @@ public class BitarchiveTesterGet extends BitarchiveTestCase {
      */
     @Test
     public void testGetEntry() throws IOException {
-            BitarchiveRecord record = archive.get(ARC_FILE_NAME, 0);
-            assertNotNull("ARC record should be non-null", record);
+        BitarchiveRecord record = archive.get(ARC_FILE_NAME, 0);
+        assertNotNull("ARC record should be non-null", record);
         assertEquals("The arc file name should appear in the record.", ARC_FILE_NAME, record.getFile());
-            // Write contents of record to ARC_RECORD_0_TMP
-            File recordOFile = new File(TestInfo.WORKING_DIR, ARC_RECORD_0_TMP);
-            OutputStream os = new FileOutputStream(recordOFile);
-            record.getData(os);
-            // read targetContents and foundContents from respectively
-            // ARC_RECORD_0 ARC_RECORD_0_TMP
+        // Write contents of record to ARC_RECORD_0_TMP
+        File recordOFile = new File(TestInfo.WORKING_DIR, ARC_RECORD_0_TMP);
+        OutputStream os = new FileOutputStream(recordOFile);
+        record.getData(os);
+        // read targetContents and foundContents from respectively
+        // ARC_RECORD_0 ARC_RECORD_0_TMP
         String targetcontents = FileUtils.readFile(new File(TestInfo.WORKING_DIR, ARC_RECORD_0));
         String foundContents = FileUtils.readFile(new File(TestInfo.WORKING_DIR, ARC_RECORD_0_TMP));
-            // verify that their contents are identical
+        // verify that their contents are identical
         assertTrue("Strings targetcontents (length = " + targetcontents.length() + ") and foundContents (length="
-                    + foundContents.length() + ") should have same length",
-                    targetcontents.length() == foundContents.length());
+                + foundContents.length() + ") should have same length",
+                targetcontents.length() == foundContents.length());
         assertEquals("The contents should be exactly the same", targetcontents, foundContents);
     }
 
@@ -187,8 +185,8 @@ public class BitarchiveTesterGet extends BitarchiveTestCase {
 
     /* **** Part four: Test that bug 4 is fixed **** */
     /**
-     * Test that a correct query gives the correct file and that the ArcRecord
-     * is closed so that the file can be deleted afterwards.
+     * Test that a correct query gives the correct file and that the ArcRecord is closed so that the file can be deleted
+     * afterwards.
      */
     public void testArcRecordIsClosedAfterGet() {
         try {

@@ -41,9 +41,7 @@ public interface HarvestReport extends Serializable {
     StopReason getDefaultStopReason();
 
     /**
-     * Returns the set of domain names
-     * that are contained in hosts-report.txt
-     * (i.e. host names mapped to domains)
+     * Returns the set of domain names that are contained in hosts-report.txt (i.e. host names mapped to domains)
      *
      * @return a Set of Strings
      */
@@ -69,6 +67,7 @@ public interface HarvestReport extends Serializable {
 
     /**
      * Get the StopReason for the given domain.
+     * 
      * @param domainName A domain name (as given by getDomainNames())
      * @return the StopReason for the given domain.
      * @throws ArgumentNotValid if null or empty domainName
@@ -76,14 +75,12 @@ public interface HarvestReport extends Serializable {
     StopReason getStopReason(String domainName) throws ArgumentNotValid;
 
     /**
-     * Pre-processing happens when the report is built just at the end of the
-     * crawl, before the ARC files upload.
+     * Pre-processing happens when the report is built just at the end of the crawl, before the ARC files upload.
      */
     void preProcess(HeritrixFiles files);
 
     /**
-     * Post-processing happens on the scheduler side when ARC files
-     * have been uploaded.
+     * Post-processing happens on the scheduler side when ARC files have been uploaded.
      */
     void postProcess(Job job);
 

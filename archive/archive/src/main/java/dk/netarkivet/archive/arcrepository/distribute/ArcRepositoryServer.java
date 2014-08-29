@@ -50,19 +50,18 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.Settings;
 
 /**
- * Listens on the queue "TheArcrepos" and submits the messages to
- * a corresponding visit method on BitarchiveClient.
+ * Listens on the queue "TheArcrepos" and submits the messages to a corresponding visit method on BitarchiveClient.
  */
 public class ArcRepositoryServer extends ArchiveMessageHandler {
 
-	/** The log.*/
+    /** The log. */
     private static final Logger log = LoggerFactory.getLogger(ArcRepositoryServer.class);
-    /** The ArcRepository connected to this server.*/
+    /** The ArcRepository connected to this server. */
     private final ArcRepository ar;
 
     /**
-     * Creates and adds a ArcRepositoryMessageHandler as listener on
-     * the "TheArcrepos"-queue.
+     * Creates and adds a ArcRepositoryMessageHandler as listener on the "TheArcrepos"-queue.
+     * 
      * @param ar the ArcRepository
      */
     public ArcRepositoryServer(ArcRepository ar) {
@@ -74,10 +73,8 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
     }
 
     /**
-     * Forwards the call to the ArcRepository.store() method with
-     * the StoreMessage as parameter.
-     * In case of exception when calling store, a reply message is sent
-     * containing the message set as NotOK.
+     * Forwards the call to the ArcRepository.store() method with the StoreMessage as parameter. In case of exception
+     * when calling store, a reply message is sent containing the message set as NotOK.
      *
      * @param msg the message to be processed by the store command.
      */
@@ -93,10 +90,9 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
     }
 
     /**
-     * Request a file to be deleted from bitarchives. This request will be
-     * handled by the bitarchives, and the bitarchive containing the file
-     * will reply with the removed file if succesful, or with a notOk message
-     * if unsuccesful.
+     * Request a file to be deleted from bitarchives. This request will be handled by the bitarchives, and the
+     * bitarchive containing the file will reply with the removed file if succesful, or with a notOk message if
+     * unsuccesful.
      *
      * Will send a not-ok reply on exceptions handling this request.
      *
@@ -115,8 +111,7 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
     }
 
     /**
-     * Update the admin data in the arcrepository. Reply aftwerwards. Will reply
-     * with notOk on exceptions.
+     * Update the admin data in the arcrepository. Reply aftwerwards. Will reply with notOk on exceptions.
      * 
      * @param msg the message to be processed
      */
@@ -134,8 +129,7 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
     }
 
     /**
-     * Forwards the handling of upload replies to the arc repository.
-     * Will log errors, but otherwise ignore.
+     * Forwards the handling of upload replies to the arc repository. Will log errors, but otherwise ignore.
      *
      * @param msg a UploadMessage
      * @throws ArgumentNotValid If the message is null.
@@ -150,15 +144,14 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
     }
 
     /**
-     * Forwards the handling of batch replies to the arc repository.
-     * Will log errors, but otherwise ignore.
+     * Forwards the handling of batch replies to the arc repository. Will log errors, but otherwise ignore.
      *
      * @param msg a BatchReplyMessage
      * @throws ArgumentNotValid If the message is null.
      */
     public void visit(BatchReplyMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "BatchReplyMessage msg");
-        
+
         try {
             ar.onBatchReply(msg);
         } catch (Throwable t) {
@@ -166,10 +159,11 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
         }
     }
 
-    /** Resends a batch message to the requested bitarchive.
+    /**
+     * Resends a batch message to the requested bitarchive.
      *
-     * Note that this circumvents the ArcRepository entirely and that the
-     * reply goes directly back to whoever set the message.
+     * Note that this circumvents the ArcRepository entirely and that the reply goes directly back to whoever set the
+     * message.
      *
      * @param msg the batch message to be resend.
      * @throws ArgumentNotValid if parameters are null
@@ -184,16 +178,17 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
         } catch (Throwable t) {
             log.warn("Failed to handle batch request", t);
             BatchReplyMessage replyMessage = new BatchReplyMessage(msg.getReplyTo(), Channels.getTheRepos(),
-            		msg.getID(), 0, Collections.<File>emptyList(), null);
+                    msg.getID(), 0, Collections.<File>emptyList(), null);
             replyMessage.setNotOk(t);
             JMSConnectionFactory.getInstance().send(replyMessage);
         }
     }
 
-    /** Forwards a get message to the local bitarchive.
+    /**
+     * Forwards a get message to the local bitarchive.
      *
-     * Note that this circumvents the ArcRepository entirely and that the
-     * reply goes directly back to whoever sent the message.
+     * Note that this circumvents the ArcRepository entirely and that the reply goes directly back to whoever sent the
+     * message.
      *
      * @param msg the message to be processed by the get command.
      * @throws ArgumentNotValid If the message is null.
@@ -211,10 +206,11 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
         }
     }
 
-    /** Forwards a getfile message to requested bitarchive replica.
+    /**
+     * Forwards a getfile message to requested bitarchive replica.
      *
-     * Note that this circumvents the ArcRepository entirely and that the
-     * reply goes directly back to whoever set the message.
+     * Note that this circumvents the ArcRepository entirely and that the reply goes directly back to whoever set the
+     * message.
      *
      * @param msg the message to be processed by the get command.
      * @throws ArgumentNotValid If one of the arguments are null.
@@ -231,7 +227,7 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
             JMSConnectionFactory.getInstance().reply(msg);
         }
     }
-    
+
     /**
      * For retrieving all the filenames from a replica.
      * 
@@ -240,7 +236,7 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
      */
     public void visit(GetAllFilenamesMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "GetAllFilenames msg");
-        
+
         try {
             // retrieve the checksum client
             ReplicaClient rc = ar.getReplicaClientFromReplicaId(msg.getReplicaId());
@@ -251,7 +247,7 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
             JMSConnectionFactory.getInstance().reply(msg);
         }
     }
-    
+
     /**
      * Method for retrieving all the checksums from a replica.
      * 
@@ -260,7 +256,7 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
      */
     public void visit(GetAllChecksumsMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "GetAllChecksumsMessage msg");
-        
+
         try {
             // retrieve the checksum client
             ReplicaClient rc = ar.getReplicaClientFromReplicaId(msg.getReplicaId());
@@ -273,9 +269,8 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
     }
 
     /**
-     * Method for handling the results of a GetChecksumMessage.
-     * This should be handled similar to a ReplyBatchMessage, when a batchjob
-     * has run on a single file.
+     * Method for handling the results of a GetChecksumMessage. This should be handled similar to a ReplyBatchMessage,
+     * when a batchjob has run on a single file.
      * 
      * @param msg The GetChecksumMessage message.
      */
@@ -284,12 +279,12 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
 
         log.info("Received GetChecksumMessage '{}'.", msg);
 
-        // If it is a reply, then handle by arc-repository. 
+        // If it is a reply, then handle by arc-repository.
         // Otherwise send further.
-        if(msg.getIsReply()) {
+        if (msg.getIsReply()) {
             try {
                 ar.onChecksumReply(msg);
-            } catch(Throwable t) {
+            } catch (Throwable t) {
                 log.warn("Failed to handle GetChecksumMessage", t);
             }
         } else {
@@ -305,9 +300,8 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
     }
 
     /**
-     * Method for handling CorrectMessages. This message is just sent along to
-     * the corresponding replica archive, where the 'bad' entry will be 
-     * corrected (made backup of and then replaced).
+     * Method for handling CorrectMessages. This message is just sent along to the corresponding replica archive, where
+     * the 'bad' entry will be corrected (made backup of and then replaced).
      * 
      * @param msg The message for correcting a bad entry in an archive.
      * @throws ArgumentNotValid If the CorrectMessage is null.

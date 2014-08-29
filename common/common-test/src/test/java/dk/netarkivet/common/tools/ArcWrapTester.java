@@ -80,7 +80,7 @@ public class ArcWrapTester {
         OutputStream myOut = new FileOutputStream(arcFile);
         System.setOut(new PrintStream(myOut));
         try {
-            ArcWrap.main(new String[] { storeFile.getAbsolutePath(), arcUri, mime });
+            ArcWrap.main(new String[] {storeFile.getAbsolutePath(), arcUri, mime});
         } catch (SecurityException e) {
             assertEquals("Should have exited normally", 0, pse.getExitValue());
         }

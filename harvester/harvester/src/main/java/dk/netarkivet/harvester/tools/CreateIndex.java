@@ -42,16 +42,16 @@ import dk.netarkivet.common.distribute.indexserver.JobIndexCache;
 /**
  * A tool to ask indices from indexserver on demand.
  *
- * Usage: java dk.netarkivet.archive.tools.CreateIndex 
- *      --type cdx|dedup|crawllog [jobid]+
+ * Usage: java dk.netarkivet.archive.tools.CreateIndex --type cdx|dedup|crawllog [jobid]+
  *
  */
-@SuppressWarnings({ "unused"})
+@SuppressWarnings({"unused"})
 public class CreateIndex {
-    /** 
+    /**
      * Private constructor to avoid instantiation of this class.
      */
-    private CreateIndex() { }
+    private CreateIndex() {
+    }
 
     /** Option for selecting the type of index required. */
     private static final String INDEXTYPE_OPTION = "t";
@@ -60,11 +60,9 @@ public class CreateIndex {
     private static final String JOBIDS_OPTION = "l";
 
     /**
-     * The main method that does the parsing of the commandline, and makes the
-     * actual index request.
+     * The main method that does the parsing of the commandline, and makes the actual index request.
      * 
-     * @param args
-     *            the arguments
+     * @param args the arguments
      */
     public static void main(String[] args) {
         Options options = new Options();
@@ -81,12 +79,10 @@ public class CreateIndex {
             // parse the command line arguments
             cmd = parser.parse(options, args);
         } catch (MissingOptionException e) {
-            System.err.println("Some of the required parameters are missing: "
-                    + e.getMessage());
+            System.err.println("Some of the required parameters are missing: " + e.getMessage());
             dieWithUsage();
         } catch (ParseException exp) {
-            System.err.println("Parsing of parameters failed: "
-                    + exp.getMessage());
+            System.err.println("Parsing of parameters failed: " + exp.getMessage());
             dieWithUsage();
         }
 
@@ -110,20 +106,17 @@ public class CreateIndex {
             indexTypeAstring = "CRAWLLOG";
             cache = IndexClientFactory.getFullCrawllogInstance();
         } else {
-            System.err.println("Unknown indextype '" + typeValue
-                    + "' requested.");
+            System.err.println("Unknown indextype '" + typeValue + "' requested.");
             dieWithUsage();
         }
 
-        System.out.println("Creating " + indexTypeAstring + " index for ids: "
-                + jobIDs);
+        System.out.println("Creating " + indexTypeAstring + " index for ids: " + jobIDs);
         Index<Set<Long>> index = cache.getIndex(jobIDs);
         JMSConnectionFactory.getInstance().cleanup();
     }
 
     /**
-     * Method for terminating this instance, with writing out the usage.
-     * This is used when the arguments are incorrect.
+     * Method for terminating this instance, with writing out the usage. This is used when the arguments are incorrect.
      */
     private static void dieWithUsage() {
         System.err.println("Usage: java " + CreateIndex.class.getName()

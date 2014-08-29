@@ -69,13 +69,12 @@ import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
- * A TestCase subclass specifically tailored to test webinterface classes,
- * primarily the classes in dk.netarkivet.harvester.webinterface:
- * HarvestStatusTester, EventHarvestTester, DomainDefinitionTester,
+ * A TestCase subclass specifically tailored to test webinterface classes, primarily the classes in
+ * dk.netarkivet.harvester.webinterface: HarvestStatusTester, EventHarvestTester, DomainDefinitionTester,
  * ScheduleDefinitionTester, SnapshotHarvestDefinitionTester but also
  * dk.netarkivet.archive.webinterface.BitpreserveFileStatusTester
  */
-@SuppressWarnings({ "rawtypes", "deprecation" })
+@SuppressWarnings({"rawtypes", "deprecation"})
 @Ignore("Not in junit3 test suite")
 public class WebinterfaceTestCase {
     ReloadSettings rs = new ReloadSettings();
@@ -91,8 +90,8 @@ public class WebinterfaceTestCase {
     }
 
     /**
-     * A dummy class implementing only the methods for getting parameters. A
-     * single setter method is provided to set the parameter map.
+     * A dummy class implementing only the methods for getting parameters. A single setter method is provided to set the
+     * parameter map.
      */
     public static class TestServletRequest implements ServletRequest {
         Map<String, Object> attributes = new HashMap<String, Object>();
@@ -122,7 +121,8 @@ public class WebinterfaceTestCase {
             throw new NotImplementedException("Not implemented");
         }
 
-        @Override public long getContentLengthLong() {
+        @Override
+        public long getContentLengthLong() {
             return 0;
         }
 
@@ -226,32 +226,39 @@ public class WebinterfaceTestCase {
             return 0;
         }
 
-        @Override public ServletContext getServletContext() {
+        @Override
+        public ServletContext getServletContext() {
             return null;
         }
 
-        @Override public AsyncContext startAsync() throws IllegalStateException {
+        @Override
+        public AsyncContext startAsync() throws IllegalStateException {
             return null;
         }
 
-        @Override public AsyncContext startAsync(ServletRequest servletRequest, ServletResponse servletResponse)
+        @Override
+        public AsyncContext startAsync(ServletRequest servletRequest, ServletResponse servletResponse)
                 throws IllegalStateException {
             return null;
         }
 
-        @Override public boolean isAsyncStarted() {
+        @Override
+        public boolean isAsyncStarted() {
             return false;
         }
 
-        @Override public boolean isAsyncSupported() {
+        @Override
+        public boolean isAsyncSupported() {
             return false;
         }
 
-        @Override public AsyncContext getAsyncContext() {
+        @Override
+        public AsyncContext getAsyncContext() {
             return null;
         }
 
-        @Override public DispatcherType getDispatcherType() {
+        @Override
+        public DispatcherType getDispatcherType() {
             return null;
         }
     }
@@ -331,7 +338,8 @@ public class WebinterfaceTestCase {
                     // | File Templates.
                 }
 
-                @Override public void setContentLengthLong(long l) {
+                @Override
+                public void setContentLengthLong(long l) {
 
                 }
 
@@ -413,11 +421,13 @@ public class WebinterfaceTestCase {
                               // | Settings | File Templates.
                 }
 
-                @Override public int getEffectiveMajorVersion() {
+                @Override
+                public int getEffectiveMajorVersion() {
                     return 0;
                 }
 
-                @Override public int getEffectiveMinorVersion() {
+                @Override
+                public int getEffectiveMinorVersion() {
                     return 0;
                 }
 
@@ -511,7 +521,8 @@ public class WebinterfaceTestCase {
                                  // File | Settings | File Templates.
                 }
 
-                @Override public boolean setInitParameter(String s, String s2) {
+                @Override
+                public boolean setInitParameter(String s, String s2) {
                     return false;
                 }
 
@@ -540,99 +551,123 @@ public class WebinterfaceTestCase {
                                  // File | Settings | File Templates.
                 }
 
-                @Override public ServletRegistration.Dynamic addServlet(String s, String s2) {
+                @Override
+                public ServletRegistration.Dynamic addServlet(String s, String s2) {
                     return null;
                 }
 
-                @Override public ServletRegistration.Dynamic addServlet(String s, Servlet servlet) {
+                @Override
+                public ServletRegistration.Dynamic addServlet(String s, Servlet servlet) {
                     return null;
                 }
 
-                @Override public ServletRegistration.Dynamic addServlet(String s, Class<? extends Servlet> aClass) {
+                @Override
+                public ServletRegistration.Dynamic addServlet(String s, Class<? extends Servlet> aClass) {
                     return null;
                 }
 
-                @Override public <T extends Servlet> T createServlet(Class<T> tClass) throws ServletException {
+                @Override
+                public <T extends Servlet> T createServlet(Class<T> tClass) throws ServletException {
                     return null;
                 }
 
-                @Override public ServletRegistration getServletRegistration(String s) {
+                @Override
+                public ServletRegistration getServletRegistration(String s) {
                     return null;
                 }
 
-                @Override public Map<String, ? extends ServletRegistration> getServletRegistrations() {
+                @Override
+                public Map<String, ? extends ServletRegistration> getServletRegistrations() {
                     return null;
                 }
 
-                @Override public FilterRegistration.Dynamic addFilter(String s, String s2) {
+                @Override
+                public FilterRegistration.Dynamic addFilter(String s, String s2) {
                     return null;
                 }
 
-                @Override public FilterRegistration.Dynamic addFilter(String s, Filter filter) {
+                @Override
+                public FilterRegistration.Dynamic addFilter(String s, Filter filter) {
                     return null;
                 }
 
-                @Override public FilterRegistration.Dynamic addFilter(String s, Class<? extends Filter> aClass) {
+                @Override
+                public FilterRegistration.Dynamic addFilter(String s, Class<? extends Filter> aClass) {
                     return null;
                 }
 
-                @Override public <T extends Filter> T createFilter(Class<T> tClass) throws ServletException {
+                @Override
+                public <T extends Filter> T createFilter(Class<T> tClass) throws ServletException {
                     return null;
                 }
 
-                @Override public FilterRegistration getFilterRegistration(String s) {
+                @Override
+                public FilterRegistration getFilterRegistration(String s) {
                     return null;
                 }
 
-                @Override public Map<String, ? extends FilterRegistration> getFilterRegistrations() {
+                @Override
+                public Map<String, ? extends FilterRegistration> getFilterRegistrations() {
                     return null;
                 }
 
-                @Override public SessionCookieConfig getSessionCookieConfig() {
+                @Override
+                public SessionCookieConfig getSessionCookieConfig() {
                     return null;
                 }
 
-                @Override public void setSessionTrackingModes(Set<SessionTrackingMode> sessionTrackingModes) {
+                @Override
+                public void setSessionTrackingModes(Set<SessionTrackingMode> sessionTrackingModes) {
 
                 }
 
-                @Override public Set<SessionTrackingMode> getDefaultSessionTrackingModes() {
+                @Override
+                public Set<SessionTrackingMode> getDefaultSessionTrackingModes() {
                     return null;
                 }
 
-                @Override public Set<SessionTrackingMode> getEffectiveSessionTrackingModes() {
+                @Override
+                public Set<SessionTrackingMode> getEffectiveSessionTrackingModes() {
                     return null;
                 }
 
-                @Override public void addListener(String s) {
+                @Override
+                public void addListener(String s) {
 
                 }
 
-                @Override public <T extends EventListener> void addListener(T t) {
+                @Override
+                public <T extends EventListener> void addListener(T t) {
 
                 }
 
-                @Override public void addListener(Class<? extends EventListener> aClass) {
+                @Override
+                public void addListener(Class<? extends EventListener> aClass) {
 
                 }
 
-                @Override public <T extends EventListener> T createListener(Class<T> tClass) throws ServletException {
+                @Override
+                public <T extends EventListener> T createListener(Class<T> tClass) throws ServletException {
                     return null;
                 }
 
-                @Override public JspConfigDescriptor getJspConfigDescriptor() {
+                @Override
+                public JspConfigDescriptor getJspConfigDescriptor() {
                     return null;
                 }
 
-                @Override public ClassLoader getClassLoader() {
+                @Override
+                public ClassLoader getClassLoader() {
                     return null;
                 }
 
-                @Override public void declareRoles(String... strings) {
+                @Override
+                public void declareRoles(String... strings) {
 
                 }
 
-                @Override public String getVirtualServerName() {
+                @Override
+                public String getVirtualServerName() {
                     return null;
                 }
             };
@@ -774,7 +809,8 @@ public class WebinterfaceTestCase {
                     public void setContentLength(int i) {
                     }
 
-                    @Override public void setContentLengthLong(long l) {
+                    @Override
+                    public void setContentLengthLong(long l) {
 
                     }
 

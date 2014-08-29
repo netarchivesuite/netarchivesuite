@@ -27,7 +27,6 @@ import org.junit.Before;
 import org.junit.After;
 import org.junit.Test;
 
-
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
@@ -38,27 +37,23 @@ public class MySQLSpecificsTester {
     @Before
     public void setUp() throws Exception {
         rs.setUp();
-        Settings.set(CommonSettings.DB_SPECIFICS_CLASS,
-                     "dk.netarkivet.harvester.datamodel.MySQLSpecifics");
+        Settings.set(CommonSettings.DB_SPECIFICS_CLASS, "dk.netarkivet.harvester.datamodel.MySQLSpecifics");
     }
 
     @After
     public void tearDown() throws Exception {
         rs.tearDown();
     }
-    
+
     @Test
     public void testLoadClass() {
-        DBSpecifics instance = DBSpecifics.getInstance(
-                CommonSettings.DB_SPECIFICS_CLASS);
+        DBSpecifics instance = DBSpecifics.getInstance(CommonSettings.DB_SPECIFICS_CLASS);
         assertNotNull("instance should not be null", instance);
     }
-    
+
     @Test
-   public void testGetDriverClassName() {
-           DBSpecifics instance = DBSpecifics.getInstance(
-                   CommonSettings.DB_SPECIFICS_CLASS);
-           assertEquals("Wrong driver", instance.getDriverClassName(),
-            "com.mysql.jdbc.Driver");
+    public void testGetDriverClassName() {
+        DBSpecifics instance = DBSpecifics.getInstance(CommonSettings.DB_SPECIFICS_CLASS);
+        assertEquals("Wrong driver", instance.getDriverClassName(), "com.mysql.jdbc.Driver");
     }
 }

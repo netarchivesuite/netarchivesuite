@@ -39,8 +39,8 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.indexserver.distribute.IndexRequestMessage;
 import dk.netarkivet.testutils.preconfigured.TestConfigurationIF;
 
-/** A fake IndexServer that gives one or more files back as specified in
- * its constructor.
+/**
+ * A fake IndexServer that gives one or more files back as specified in its constructor.
  */
 public class MockupIndexServer implements TestConfigurationIF, MessageListener {
     private File resultFile;
@@ -48,42 +48,46 @@ public class MockupIndexServer implements TestConfigurationIF, MessageListener {
     private List<IndexRequestMessage> msgs = new ArrayList<IndexRequestMessage>();
     private String origDir;
 
-    /** Create a new MockupIndexServer that serves back the given file or
-     * directory of files.
+    /**
+     * Create a new MockupIndexServer that serves back the given file or directory of files.
      *
-     * @param resultFile Files that this IndexServer should return upon request.
-     * The file (or files if resultFile is a directory) should be gzipped, as
-     * they will be ungzipped in the receiving end. 
+     * @param resultFile Files that this IndexServer should return upon request. The file (or files if resultFile is a
+     * directory) should be gzipped, as they will be ungzipped in the receiving end.
      */
     public MockupIndexServer(File resultFile) {
         this.resultFile = resultFile;
     }
+
     public void setUp() {
         setResponseSuccessfull(true);
         origDir = Settings.get(CommonSettings.CACHE_DIR);
         Settings.set(CommonSettings.CACHE_DIR, Settings.get(CommonSettings.DIR_COMMONTEMPDIR));
         JMSConnectionFactory.getInstance().setListener(Channels.getTheIndexServer(), this);
     }
+
     public void tearDown() {
         JMSConnectionFactory.getInstance().removeListener(Channels.getTheIndexServer(), this);
         Settings.set(CommonSettings.CACHE_DIR, origDir);
     }
+
     public void setResponseSuccessfull(boolean isOk) {
         responseOK = isOk;
     }
+
     public void resetMsgList() {
         msgs.clear();
     }
+
     public List<IndexRequestMessage> getMsgList() {
         return msgs;
     }
+
     public void onMessage(Message message) {
         IndexRequestMessage irm = (IndexRequestMessage) JMSConnection.unpack(message);
         msgs.add(irm);
         irm.setFoundJobs(irm.getRequestedJobs());
         if (irm.getRequestType() == RequestType.CDX) {
-            RemoteFile resultFile = RemoteFileFactory
-                    .getInstance(this.resultFile, true, false, true);
+            RemoteFile resultFile = RemoteFileFactory.getInstance(this.resultFile, true, false, true);
             irm.setResultFile(resultFile);
         } else {
             List<RemoteFile> resultFiles = new ArrayList<RemoteFile>();
@@ -91,9 +95,7 @@ public class MockupIndexServer implements TestConfigurationIF, MessageListener {
             if (files != null) {
                 for (File f : files) {
                     if (f.isFile()) {
-                        resultFiles.add(RemoteFileFactory.getInstance(f, true,
-                                                                      false,
-                                                                      true));
+                        resultFiles.add(RemoteFileFactory.getInstance(f, true, false, true));
                     }
                 }
             }

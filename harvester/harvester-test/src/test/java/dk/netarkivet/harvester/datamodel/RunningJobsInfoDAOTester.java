@@ -30,7 +30,7 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-@SuppressWarnings({ "unused"})
+@SuppressWarnings({"unused"})
 public class RunningJobsInfoDAOTester extends DataModelTestCase {
 
     @Before
@@ -42,10 +42,10 @@ public class RunningJobsInfoDAOTester extends DataModelTestCase {
     public void tearDown() throws Exception {
         super.tearDown();
     }
-    
+
     @Test
     public void testGetInstance() {
-    	StartedJobInfo sji = new StartedJobInfo("harvest", 42L);
+        StartedJobInfo sji = new StartedJobInfo("harvest", 42L);
         RunningJobsInfoDAO dao = RunningJobsInfoDAO.getInstance();
         String[] types = dao.getFrontierReportFilterTypes();
         dao.deleteFrontierReports(42L);
@@ -55,6 +55,6 @@ public class RunningJobsInfoDAOTester extends DataModelTestCase {
         dao.getFullJobHistory(42l);
         dao.getMostRecentByJobId(42L);
         dao.removeInfoForJob(42L);
-        //dao.storeFrontierReport(filterId, report);
+        // dao.storeFrontierReport(filterId, report);
     }
 }

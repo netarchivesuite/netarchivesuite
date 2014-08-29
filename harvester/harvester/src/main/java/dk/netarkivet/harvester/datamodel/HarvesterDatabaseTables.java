@@ -29,16 +29,15 @@ import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.DBUtils;
 
 /**
- *  Enum class defining the tables of the Harvester database and the 
- * required versions of the individual tables.  
+ * Enum class defining the tables of the Harvester database and the required versions of the individual tables.
  */
 public enum HarvesterDatabaseTables {
-    
+
     /** The table containing information about domains. */
-    DOMAINS {        
+    DOMAINS {
         static final String NAME = "domains";
         static final int REQUIRED_VERSION = 3;
-        
+
         @Override
         public int getRequiredVersion() {
             return REQUIRED_VERSION;
@@ -53,7 +52,7 @@ public enum HarvesterDatabaseTables {
     CONFIGURATIONS {
         static final String NAME = "configurations";
         static final int REQUIRED_VERSION = 5;
-       
+
         @Override
         public int getRequiredVersion() {
             return REQUIRED_VERSION;
@@ -68,7 +67,7 @@ public enum HarvesterDatabaseTables {
     SEEDLISTS {
         static final String NAME = "seedlists";
         static final int REQUIRED_VERSION = 1;
-       
+
         @Override
         public int getRequiredVersion() {
             return REQUIRED_VERSION;
@@ -79,12 +78,13 @@ public enum HarvesterDatabaseTables {
             return NAME;
         }
     },
-    /** The table containing information about passwords.
-     * Currently not used.  */
+    /**
+     * The table containing information about passwords. Currently not used.
+     */
     PASSWORDS {
         static final String NAME = "passwords";
         static final int REQUIRED_VERSION = 1;
-       
+
         @Override
         public int getRequiredVersion() {
             return REQUIRED_VERSION;
@@ -95,12 +95,13 @@ public enum HarvesterDatabaseTables {
             return NAME;
         }
     },
-    /** The table containing information about ownerinfo.
-     * Currently not used. */
+    /**
+     * The table containing information about ownerinfo. Currently not used.
+     */
     OWNERINFO {
         static final String NAME = "ownerinfo";
         static final int REQUIRED_VERSION = 1;
-       
+
         @Override
         public int getRequiredVersion() {
             return REQUIRED_VERSION;
@@ -115,7 +116,7 @@ public enum HarvesterDatabaseTables {
     HISTORYINFO {
         static final String NAME = "historyinfo";
         static final int REQUIRED_VERSION = 2;
-       
+
         @Override
         public int getRequiredVersion() {
             return REQUIRED_VERSION;
@@ -126,13 +127,13 @@ public enum HarvesterDatabaseTables {
             return NAME;
         }
     },
-    /** The table containing information about config passwords.
-        * Currently not used.
-        */
+    /**
+     * The table containing information about config passwords. Currently not used.
+     */
     CONFIGPASSWORDS {
         static final String NAME = "config_passwords";
         static final int REQUIRED_VERSION = 1;
-       
+
         @Override
         public int getRequiredVersion() {
             return REQUIRED_VERSION;
@@ -147,7 +148,7 @@ public enum HarvesterDatabaseTables {
     CONFIGSEEDLISTS {
         static final String NAME = "config_seedlists";
         static final int REQUIRED_VERSION = 1;
-       
+
         @Override
         public int getRequiredVersion() {
             return REQUIRED_VERSION;
@@ -162,7 +163,7 @@ public enum HarvesterDatabaseTables {
     HARVESTDEFINITIONS {
         static final String NAME = "harvestdefinitions";
         static final int REQUIRED_VERSION = 4;
-       
+
         @Override
         public int getRequiredVersion() {
             return REQUIRED_VERSION;
@@ -177,7 +178,7 @@ public enum HarvesterDatabaseTables {
     PARTIALHARVESTS {
         static final String NAME = "partialharvests";
         static final int REQUIRED_VERSION = 1;
-       
+
         @Override
         public int getRequiredVersion() {
             return REQUIRED_VERSION;
@@ -192,7 +193,7 @@ public enum HarvesterDatabaseTables {
     FULLHARVESTS {
         static final String NAME = "fullharvests";
         static final int REQUIRED_VERSION = 5;
-       
+
         @Override
         public int getRequiredVersion() {
             return REQUIRED_VERSION;
@@ -207,7 +208,7 @@ public enum HarvesterDatabaseTables {
     HARVESTCONFIGS {
         static final String NAME = "harvest_configs";
         static final int REQUIRED_VERSION = 1;
-       
+
         @Override
         public int getRequiredVersion() {
             return REQUIRED_VERSION;
@@ -222,7 +223,7 @@ public enum HarvesterDatabaseTables {
     SCHEDULES {
         static final String NAME = "schedules";
         static final int REQUIRED_VERSION = 1;
-       
+
         @Override
         public int getRequiredVersion() {
             return REQUIRED_VERSION;
@@ -237,7 +238,7 @@ public enum HarvesterDatabaseTables {
     ORDERTEMPLATES {
         static final String NAME = "ordertemplates";
         static final int REQUIRED_VERSION = 1;
-       
+
         @Override
         public int getRequiredVersion() {
             return REQUIRED_VERSION;
@@ -252,7 +253,7 @@ public enum HarvesterDatabaseTables {
     JOBS {
         static final String NAME = "jobs";
         static final int REQUIRED_VERSION = 10;
-       
+
         @Override
         public int getRequiredVersion() {
             return REQUIRED_VERSION;
@@ -267,7 +268,7 @@ public enum HarvesterDatabaseTables {
     JOBCONFIGS {
         static final String NAME = "job_configs";
         static final int REQUIRED_VERSION = 1;
-       
+
         @Override
         public int getRequiredVersion() {
             return REQUIRED_VERSION;
@@ -279,10 +280,10 @@ public enum HarvesterDatabaseTables {
         }
     },
     /** The table containing information about list of global crawlertraps. */
-    GLOBALCRAWLERTRAPLISTS {        
+    GLOBALCRAWLERTRAPLISTS {
         static final String NAME = "global_crawler_trap_lists";
         static final int REQUIRED_VERSION = 1;
-       
+
         @Override
         public int getRequiredVersion() {
             return REQUIRED_VERSION;
@@ -297,7 +298,7 @@ public enum HarvesterDatabaseTables {
     GLOBALCRAWLERTRAPEXPRESSIONS {
         static final String NAME = "global_crawler_trap_expressions";
         static final int REQUIRED_VERSION = 1;
-       
+
         @Override
         public int getRequiredVersion() {
             return REQUIRED_VERSION;
@@ -312,7 +313,7 @@ public enum HarvesterDatabaseTables {
     RUNNINGJOBSHISTORY {
         static final String NAME = "runningjobshistory";
         static final int REQUIRED_VERSION = 2;
-       
+
         @Override
         public int getRequiredVersion() {
             return REQUIRED_VERSION;
@@ -327,7 +328,7 @@ public enum HarvesterDatabaseTables {
     RUNNINGJOBSMONITOR {
         static final String NAME = "runningjobsmonitor";
         static final int REQUIRED_VERSION = 2;
-       
+
         @Override
         public int getRequiredVersion() {
             return REQUIRED_VERSION;
@@ -342,7 +343,7 @@ public enum HarvesterDatabaseTables {
     FRONTIERREPORTMONITOR {
         static final String NAME = "frontierreportmonitor";
         static final int REQUIRED_VERSION = 1;
-       
+
         @Override
         public int getRequiredVersion() {
             return REQUIRED_VERSION;
@@ -357,7 +358,7 @@ public enum HarvesterDatabaseTables {
     EXTENDEDFIELD {
         static final String NAME = "extendedfield";
         static final int REQUIRED_VERSION = 2;
-       
+
         @Override
         public int getRequiredVersion() {
             return REQUIRED_VERSION;
@@ -372,7 +373,7 @@ public enum HarvesterDatabaseTables {
     EXTENDEDFIELDVALUE {
         static final String NAME = "extendedfieldvalue";
         static final int REQUIRED_VERSION = 2;
-       
+
         @Override
         public int getRequiredVersion() {
             return REQUIRED_VERSION;
@@ -387,7 +388,7 @@ public enum HarvesterDatabaseTables {
     EXTENDEDFIELDTYPE {
         static final String NAME = "extendedfieldtype";
         static final int REQUIRED_VERSION = 1;
-       
+
         @Override
         public int getRequiredVersion() {
             return REQUIRED_VERSION;
@@ -398,11 +399,11 @@ public enum HarvesterDatabaseTables {
             return NAME;
         }
     },
-    /** Harvest channels.  */
+    /** Harvest channels. */
     HARVESTCHANNELS {
         static final String NAME = "harvestchannel";
         static final int REQUIRED_VERSION = 1;
-       
+
         @Override
         public int getRequiredVersion() {
             return REQUIRED_VERSION;
@@ -413,29 +414,32 @@ public enum HarvesterDatabaseTables {
             return NAME;
         }
     };
-    
+
     /** @return required version of table. */
     public abstract int getRequiredVersion();
+
     /** @return name of database table. */
     public abstract String getTablename();
-    
-    /** Check that a database table has the required version.
-    *
-    * NB: the provided connection is not closed.
-    * @param connection connection to the database.
-    * @param table The table to check up against required version
-    * @throws IllegalState if the version isn't as required.
-    */
-   public static void checkVersion(Connection connection, HarvesterDatabaseTables table) {
-       ArgumentNotValid.checkNotNull(connection, "Connection connection");
-       ArgumentNotValid.checkNotNull(table, "HarvesterDatabaseTables table");
-       
-       int actualVersion = DBUtils.getTableVersion(connection, table.getTablename());
-       if (actualVersion != table.getRequiredVersion()) {
-           String message = "Wrong table version for '" + table.getTablename() + "': "
-           		+ "Should be " + table.getRequiredVersion() + ", but is " + actualVersion;
-           throw new IllegalState(message);
-       }
-   }
+
+    /**
+     * Check that a database table has the required version.
+     *
+     * NB: the provided connection is not closed.
+     * 
+     * @param connection connection to the database.
+     * @param table The table to check up against required version
+     * @throws IllegalState if the version isn't as required.
+     */
+    public static void checkVersion(Connection connection, HarvesterDatabaseTables table) {
+        ArgumentNotValid.checkNotNull(connection, "Connection connection");
+        ArgumentNotValid.checkNotNull(table, "HarvesterDatabaseTables table");
+
+        int actualVersion = DBUtils.getTableVersion(connection, table.getTablename());
+        if (actualVersion != table.getRequiredVersion()) {
+            String message = "Wrong table version for '" + table.getTablename() + "': " + "Should be "
+                    + table.getRequiredVersion() + ", but is " + actualVersion;
+            throw new IllegalState(message);
+        }
+    }
 
 }

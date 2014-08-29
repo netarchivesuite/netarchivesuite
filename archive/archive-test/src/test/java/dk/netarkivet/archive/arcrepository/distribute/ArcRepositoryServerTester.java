@@ -74,7 +74,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 /**
  * Unit tests for the class ArcRepositoryServer.
  */
-@SuppressWarnings({ "deprecation" })
+@SuppressWarnings({"deprecation"})
 public class ArcRepositoryServerTester {
     /**
      * The test log directories for Controller and AdminData.
@@ -100,10 +100,9 @@ public class ArcRepositoryServerTester {
     public final File TESTLOGPROP = new File("tests/dk/netarkivet/testlog.prop");
 
     /**
-     * The files that are uploaded during the tests and that must be removed
-     * afterwards.
+     * The files that are uploaded during the tests and that must be removed afterwards.
      */
-    private static final List<String> STORABLE_FILES = Arrays.asList(new String[] { "get1.ARC", "get2.ARC" });
+    private static final List<String> STORABLE_FILES = Arrays.asList(new String[] {"get1.ARC", "get2.ARC"});
 
     private File file;
 
@@ -406,7 +405,7 @@ public class ArcRepositoryServerTester {
 
         // test BatchReplyMessage
         BatchReplyMessage brmsg = new BatchReplyMessage(Channels.getTheRepos(), Channels.getError(),
-                "originatingBatchMsgId", 0, Collections.<File> emptyList(), RemoteFileFactory.getCopyfileInstance(file));
+                "originatingBatchMsgId", 0, Collections.<File>emptyList(), RemoteFileFactory.getCopyfileInstance(file));
         arcServ.visit(brmsg);
         assertTrue("The function 'onBatchReply' should have been called", arc.calls.containsKey("onBatchReply"));
         assertEquals("The function 'onBatchReply' should have been called once.", Integer.valueOf(1),

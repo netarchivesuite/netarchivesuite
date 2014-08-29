@@ -57,8 +57,7 @@ public class ScheduleDBDAOTester extends DataModelTestCase {
         s1.setComments(build.toString());
         try {
             dao.update(s1);
-            fail("Should throw PermissionDenied on comment of length "
-                    + s1.getName().length());
+            fail("Should throw PermissionDenied on comment of length " + s1.getName().length());
         } catch (PermissionDenied e) {
             // expected
         }
@@ -66,14 +65,12 @@ public class ScheduleDBDAOTester extends DataModelTestCase {
         for (int i = 0; i < 11; i++) {
             build.append(THIRTY_CHAR_STRING);
         }
-        Schedule s2 = new RepeatingSchedule(new Date(), 2, new HourlyFrequency(2),
-                build.toString(), "Small comment");
+        Schedule s2 = new RepeatingSchedule(new Date(), 2, new HourlyFrequency(2), build.toString(), "Small comment");
         try {
             dao.create(s2);
-            fail("Should throw PermissionDenied on name of length "
-                    + s2.getName().length());
+            fail("Should throw PermissionDenied on name of length " + s2.getName().length());
         } catch (PermissionDenied e) {
-            //Expected
+            // Expected
         }
     }
 }

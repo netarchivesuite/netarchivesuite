@@ -49,17 +49,16 @@ import dk.netarkivet.common.utils.ExceptionUtils;
 /**
  * Implements the TemplateDAO with databases.
  *
- * The statements to create the tables are now in
- * scripts/sql/createfullhddb.sql
+ * The statements to create the tables are now in scripts/sql/createfullhddb.sql
  */
 
 public class TemplateDBDAO extends TemplateDAO {
 
-	/** the log.*/
+    /** the log. */
     private static final Logger log = LoggerFactory.getLogger(TemplateDBDAO.class);
 
-    /** Default constructor.
-     * Only used by TemplateDAO,getInstance().
+    /**
+     * Default constructor. Only used by TemplateDAO,getInstance().
      */
     TemplateDBDAO() {
         Connection connection = HarvestDBConnection.get();
@@ -80,7 +79,8 @@ public class TemplateDBDAO extends TemplateDAO {
         ArgumentNotValid.checkNotNullOrEmpty(orderXmlName, "String orderXmlName");
         Connection c = HarvestDBConnection.get();
         PreparedStatement s = null;
-        try {s = c.prepareStatement("SELECT orderxml FROM ordertemplates WHERE name = ?");
+        try {
+            s = c.prepareStatement("SELECT orderxml FROM ordertemplates WHERE name = ?");
             s.setString(1, orderXmlName);
             ResultSet res = s.executeQuery();
             if (!res.next()) {
@@ -92,7 +92,7 @@ public class TemplateDBDAO extends TemplateDAO {
                 orderTemplateReader = clob.getCharacterStream();
             } else {
                 String string = res.getString(1);
-                //log.debug("clob=" + string);
+                // log.debug("clob=" + string);
                 orderTemplateReader = new StringReader(string);
             }
             SAXReader reader = new SAXReader();
@@ -101,7 +101,7 @@ public class TemplateDBDAO extends TemplateDAO {
             return new HeritrixTemplate(orderXMLdoc);
         } catch (SQLException e) {
             final String message = "SQL error finding order.xml for " + orderXmlName + "\n"
-            		+ ExceptionUtils.getSQLExceptionCause(e);
+                    + ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         } catch (DocumentException e) {
@@ -129,7 +129,8 @@ public class TemplateDBDAO extends TemplateDAO {
         }
     }
 
-    /** Return true if the database contains a template with the given name.
+    /**
+     * Return true if the database contains a template with the given name.
      *
      * @param orderXmlName Name of an order.xml template (without .xml).
      * @return True if such a template exists.
@@ -146,23 +147,24 @@ public class TemplateDBDAO extends TemplateDAO {
         }
     }
 
-    /** Return true if the database contains a template with the given name.
-    *
-    * @param orderXmlName Name of an order.xml template (without .xml).
-    * @return True if such a template exists.
-    * @throws ArgumentNotValid If the orderXmlName is null or an empty String
-    */
-   private synchronized boolean exists(Connection c, String orderXmlName) {
-       int count = DBUtils.selectIntValue(c, "SELECT COUNT(*) FROM ordertemplates WHERE name = ?", orderXmlName);
-       return count == 1;
-   }
+    /**
+     * Return true if the database contains a template with the given name.
+     *
+     * @param orderXmlName Name of an order.xml template (without .xml).
+     * @return True if such a template exists.
+     * @throws ArgumentNotValid If the orderXmlName is null or an empty String
+     */
+    private synchronized boolean exists(Connection c, String orderXmlName) {
+        int count = DBUtils.selectIntValue(c, "SELECT COUNT(*) FROM ordertemplates WHERE name = ?", orderXmlName);
+        return count == 1;
+    }
 
-    /** Create a template. The template must not already exist.
+    /**
+     * Create a template. The template must not already exist.
      *
      * @param orderXmlName Name of the template.
      * @param orderXml XML documents that is a Heritrix order.xml template.
-     * @throws ArgumentNotValid If the orderXmlName is null or an empty String,
-     * or the orderXml is null.
+     * @throws ArgumentNotValid If the orderXmlName is null or an empty String, or the orderXml is null.
      */
     public synchronized void create(String orderXmlName, HeritrixTemplate orderXml) {
         ArgumentNotValid.checkNotNullOrEmpty(orderXmlName, "String orderXmlName");
@@ -181,20 +183,20 @@ public class TemplateDBDAO extends TemplateDAO {
             s.executeUpdate();
         } catch (SQLException e) {
             throw new IOFailure("SQL error creating template " + orderXmlName + "\n"
-            		+ ExceptionUtils.getSQLExceptionCause(e), e);
+                    + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             HarvestDBConnection.release(c);
         }
     }
 
-    /** Update a template. The template must already exist.
+    /**
+     * Update a template. The template must already exist.
      *
      * @param orderXmlName Name of the template.
      * @param orderXml XML document that is a Heritrix order.xml template.
      * @throws PermissionDenied If the template does not exist
      * @throws IOFailure If the template could not be
-     * @throws ArgumentNotValid If the orderXmlName is null or an empty String,
-     * or the orderXml is null.
+     * @throws ArgumentNotValid If the orderXmlName is null or an empty String, or the orderXml is null.
      */
     public synchronized void update(String orderXmlName, HeritrixTemplate orderXml) {
         ArgumentNotValid.checkNotNullOrEmpty(orderXmlName, "String orderXmlName");
@@ -213,7 +215,7 @@ public class TemplateDBDAO extends TemplateDAO {
             s.executeUpdate();
         } catch (SQLException e) {
             throw new IOFailure("SQL error updating template " + orderXmlName + "\n"
-            		+ ExceptionUtils.getSQLExceptionCause(e), e);
+                    + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             HarvestDBConnection.release(c);
         }

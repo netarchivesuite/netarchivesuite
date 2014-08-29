@@ -35,19 +35,15 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.arc.ARCBatchJob;
 
 /**
- * The batchjob checks each record whether it has a specific URL and/or 
- * specific mimetype (both in the shape of a regular expression).
- * The URLs of the digital objects which matches these constrains are returned.
+ * The batchjob checks each record whether it has a specific URL and/or specific mimetype (both in the shape of a
+ * regular expression). The URLs of the digital objects which matches these constrains are returned.
  */
 @SuppressWarnings({"serial", "unused"})
 @Resources(value = {
-        @Resource(name="regex", description="The regular expression for the "
-            + "urls.", type=java.lang.String.class), 
-        @Resource(name="mimetype", type=java.lang.String.class),
-        @Resource(description="Batchjob for finding URLs which matches a given"
-            + " regular expression and has a mimetype which matches another"
-            + " regular expression.", 
-                type=dk.netarkivet.common.utils.batch.UrlSearch.class)})
+        @Resource(name = "regex", description = "The regular expression for the " + "urls.", type = java.lang.String.class),
+        @Resource(name = "mimetype", type = java.lang.String.class),
+        @Resource(description = "Batchjob for finding URLs which matches a given"
+                + " regular expression and has a mimetype which matches another" + " regular expression.", type = dk.netarkivet.common.utils.batch.UrlSearch.class)})
 public class UrlSearch extends ARCBatchJob {
     private String regex;
     private String mimetype;
@@ -69,50 +65,44 @@ public class UrlSearch extends ARCBatchJob {
 
         try {
             os.write("\nResults:\n".getBytes());
-            os.write(("Urls matched = " + urlCount 
-                    + "\n").getBytes());
-            os.write(("Mimetypes matched = " + mimeCount 
-                    + "\n").getBytes());
-            os.write(("Url and Mimetype matches = " + bothCount 
-                    + "\n").getBytes());
+            os.write(("Urls matched = " + urlCount + "\n").getBytes());
+            os.write(("Mimetypes matched = " + mimeCount + "\n").getBytes());
+            os.write(("Url and Mimetype matches = " + bothCount + "\n").getBytes());
         } catch (IOException e) {
-            throw new IOFailure("Unexpected problem when writing to output "
-                    + "stream.", e);
+            throw new IOFailure("Unexpected problem when writing to output " + "stream.", e);
         }
     }
 
     @Override
     public void initialize(OutputStream os) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void processRecord(ARCRecord record, OutputStream os) {
         totalCount++;
         boolean valid = true;
-        if(record.getMetaData().getUrl().matches(regex)) {
+        if (record.getMetaData().getUrl().matches(regex)) {
             urlCount++;
         } else {
             valid = false;
         }
-        if(record.getMetaData().getMimetype().matches(mimetype)) {
+        if (record.getMetaData().getMimetype().matches(mimetype)) {
             mimeCount++;
         } else {
             valid = false;
         }
-        
-        if(valid) {
+
+        if (valid) {
             bothCount++;
             try {
-            os.write((record.getMetaData().getUrl() + " : " 
-                    + record.getMetaData().getMimetype() + "\n").getBytes());
+                os.write((record.getMetaData().getUrl() + " : " + record.getMetaData().getMimetype() + "\n").getBytes());
             } catch (IOException e) {
                 // unexpected!
                 throw new IOFailure("Cannot print to os!", e);
             }
         }
     }
-    
 
 }

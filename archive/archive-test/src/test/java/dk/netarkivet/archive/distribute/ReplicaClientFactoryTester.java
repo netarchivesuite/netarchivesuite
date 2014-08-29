@@ -38,7 +38,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class ReplicaClientFactoryTester {
-    
+
     @Before
     public void setUp() {
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
@@ -49,23 +49,23 @@ public class ReplicaClientFactoryTester {
     public void tearDown() {
         JMSConnectionMockupMQ.clearTestQueues();
     }
-    
+
     @Test
     public void testUtilityConstructor() {
         ReflectUtils.testUtilityConstructor(ReplicaClientFactory.class);
     }
-    
+
     @Test
     public void testList() {
         List<ReplicaClient> clients = ReplicaClientFactory.getReplicaClients();
-        
-        for(ReplicaClient client : clients) {
-            if(client instanceof ChecksumClient) {
-                assertEquals("ChecksumClients must be of type " + ReplicaType.CHECKSUM,
-                        ReplicaType.CHECKSUM, client.getType());
-            } else if(client instanceof BitarchiveClient) {
-                assertEquals("BitarchiveClients must be of type " + ReplicaType.BITARCHIVE,
-                        ReplicaType.BITARCHIVE, client.getType());
+
+        for (ReplicaClient client : clients) {
+            if (client instanceof ChecksumClient) {
+                assertEquals("ChecksumClients must be of type " + ReplicaType.CHECKSUM, ReplicaType.CHECKSUM,
+                        client.getType());
+            } else if (client instanceof BitarchiveClient) {
+                assertEquals("BitarchiveClients must be of type " + ReplicaType.BITARCHIVE, ReplicaType.BITARCHIVE,
+                        client.getType());
             } else {
                 fail("Unknown replica type: " + client.getType());
             }

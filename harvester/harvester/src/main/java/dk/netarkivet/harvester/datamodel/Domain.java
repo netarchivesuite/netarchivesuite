@@ -53,33 +53,33 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue;
 
 /**
- * Represents known information about a domain A domain is identified by a
- * domain name (ex: kb.dk) <p> The following information is used to control how
- * a domain is harvested: Seedlists, configurations and passwords. Each seedlist
- * defines one or more URL's that the harvester should use as starting points. A
- * configuration defines a specific combination of settings (seedlist, harvester
- * settings, passwords) that should be used during harvest. Passwords define
- * user names and passwords that might be used for the domain. <p> Information
- * about previous harvests of this domain is available via the domainHistory.
- * <p> Information from the domain registrant (DK-HOSTMASTER) about the domain
- * registration is available in the registration. This includes the dates where
- * the domain was known to exist (included in a domain list), together with
- * domain owner information. <p> Notice that each configuration references one
- * of the seedlists by name, and possibly one of the Passwords.
+ * Represents known information about a domain A domain is identified by a domain name (ex: kb.dk)
+ * <p>
+ * The following information is used to control how a domain is harvested: Seedlists, configurations and passwords. Each
+ * seedlist defines one or more URL's that the harvester should use as starting points. A configuration defines a
+ * specific combination of settings (seedlist, harvester settings, passwords) that should be used during harvest.
+ * Passwords define user names and passwords that might be used for the domain.
+ * <p>
+ * Information about previous harvests of this domain is available via the domainHistory.
+ * <p>
+ * Information from the domain registrant (DK-HOSTMASTER) about the domain registration is available in the
+ * registration. This includes the dates where the domain was known to exist (included in a domain list), together with
+ * domain owner information.
+ * <p>
+ * Notice that each configuration references one of the seedlists by name, and possibly one of the Passwords.
  */
-@SuppressWarnings({ "rawtypes" })
+@SuppressWarnings({"rawtypes"})
 public class Domain extends ExtendableEntity implements Named {
 
-	/** Prefix all domain names with this string. */
+    /** Prefix all domain names with this string. */
     protected static final Logger log = LoggerFactory.getLogger(Domain.class);
 
     /** The identification used to lookup the domain. */
-    
+
     private String domainName;
 
     /**
-     * Map<String, DomainConfiguration> the various harvest configurations that
-     * can be used to harvest this domain.
+     * Map<String, DomainConfiguration> the various harvest configurations that can be used to harvest this domain.
      */
     private Map<String, DomainConfiguration> domainConfigurations;
 
@@ -87,8 +87,7 @@ public class Domain extends ExtendableEntity implements Named {
     private String defaultConfigName;
 
     /**
-     * Map<String, SeedList> The different seedlists used as starting points by
-     * the harvesters.
+     * Map<String, SeedList> The different seedlists used as starting points by the harvesters.
      */
     private Map<String, SeedList> seedlists;
 
@@ -96,8 +95,7 @@ public class Domain extends ExtendableEntity implements Named {
     private Map<String, Password> passwords;
 
     /**
-     * List of crawler traps, that is regexps that should be ignored for this
-     * domain.
+     * List of crawler traps, that is regexps that should be ignored for this domain.
      */
     private List<String> crawlerTraps;
 
@@ -105,8 +103,7 @@ public class Domain extends ExtendableEntity implements Named {
     private DomainHistory history;
 
     /**
-     * List<DomainOwnerInfo> contains information about the known owners of this
-     * domain.
+     * List<DomainOwnerInfo> contains information about the known owners of this domain.
      */
     private List<DomainOwnerInfo> domainOwnerInfos;
 
@@ -117,29 +114,26 @@ public class Domain extends ExtendableEntity implements Named {
     long edition = -1;
 
     /**
-     * If non-null, this domain is considered an alias of the domain named.  The
-     * field must be either null or aliasInfo that defines an alias from this
-     * domain to another, and the time the alias field was last updated.  This
-     * is used to allow operators to check the domains that have been aliases
-     * for a long time.
+     * If non-null, this domain is considered an alias of the domain named. The field must be either null or aliasInfo
+     * that defines an alias from this domain to another, and the time the alias field was last updated. This is used to
+     * allow operators to check the domains that have been aliases for a long time.
      *
-     * Note that we do not allow transitive aliases, so the domain named in this
-     * field is not allowed to become an alias itself.
+     * Note that we do not allow transitive aliases, so the domain named in this field is not allowed to become an alias
+     * itself.
      */
     private AliasInfo aliasInfo;
-    
+
     /** ID autogenerated by DB DAO. */
     private Long id;
 
     /**
-     * Create new instance of a domain. It is generally recommended that
-     * getDefaultDomain is used instead of this constructor.
+     * Create new instance of a domain. It is generally recommended that getDefaultDomain is used instead of this
+     * constructor.
      *
      * @param theDomainName Name used to reference the domain
      *
-     * @throws ArgumentNotValid if either of the arguments are null or empty, or
-     *                          if the domain does not match the regex for valid
-     *                          domains
+     * @throws ArgumentNotValid if either of the arguments are null or empty, or if the domain does not match the regex
+     * for valid domains
      */
     protected Domain(String theDomainName) {
         super(DAOProviderFactory.getExtendedFieldDAOProvider());
@@ -189,8 +183,8 @@ public class Domain extends ExtendableEntity implements Named {
         // Create default configuration using the default seedlist
         String domainDefaultConfig = Settings.get(HarvesterSettings.DOMAIN_DEFAULT_CONFIG);
 
-        DomainConfiguration cfg = new DomainConfiguration(domainDefaultConfig,
-                myDomain, seedlists, new ArrayList<Password>());
+        DomainConfiguration cfg = new DomainConfiguration(domainDefaultConfig, myDomain, seedlists,
+                new ArrayList<Password>());
         cfg.setOrderXmlName(Settings.get(HarvesterSettings.DOMAIN_DEFAULT_ORDERXML));
         cfg.setMaxRequestRate(Integer.parseInt(Settings.get(HarvesterSettings.DOMAIN_CONFIG_MAXRATE)));
         myDomain.addConfiguration(cfg);
@@ -199,25 +193,22 @@ public class Domain extends ExtendableEntity implements Named {
     }
 
     /**
-     * Adds a new configuration to the domain. If this is the first
-     * configuration added, it becomes the default configuration. The seedlist
-     * referenced by the configuration must already be registered in this domain
-     * otherwise an UnknownID exception is thrown.
+     * Adds a new configuration to the domain. If this is the first configuration added, it becomes the default
+     * configuration. The seedlist referenced by the configuration must already be registered in this domain otherwise
+     * an UnknownID exception is thrown.
      *
      * @param cfg the configuration that is added
      *
-     * @throws UnknownID        if the name of the seedlist referenced by cfg is
-     *                          unknown
-     * @throws PermissionDenied if a configuration with the same name already
-     *                          exists
+     * @throws UnknownID if the name of the seedlist referenced by cfg is unknown
+     * @throws PermissionDenied if a configuration with the same name already exists
      * @throws ArgumentNotValid if null supplied
      */
     public void addConfiguration(DomainConfiguration cfg) {
         ArgumentNotValid.checkNotNull(cfg, "cfg");
 
         if (domainConfigurations.containsKey(cfg.getName())) {
-            throw new PermissionDenied("A configuration already exists with the name:"
-                    + cfg.getName() + "; in the domain:" + getName() + ";");
+            throw new PermissionDenied("A configuration already exists with the name:" + cfg.getName()
+                    + "; in the domain:" + getName() + ";");
         }
 
         putConfiguration(cfg);
@@ -228,8 +219,7 @@ public class Domain extends ExtendableEntity implements Named {
     }
 
     /**
-     * Set a configuration in the domain. This checks that the seedlists and
-     * passwords are legal.
+     * Set a configuration in the domain. This checks that the seedlists and passwords are legal.
      *
      * @param cfg The configuration to add.
      */
@@ -241,17 +231,14 @@ public class Domain extends ExtendableEntity implements Named {
     }
 
     /**
-     * Helper method used to verify that a configuration does not reference
-     * seedlists or passwords that do not exist in this domain.
+     * Helper method used to verify that a configuration does not reference seedlists or passwords that do not exist in
+     * this domain.
      *
-     * @param cfg      the configuration being checked
-     * @param items    an iterator to the references that are checked (seedlists
-     *                 or passwords)
+     * @param cfg the configuration being checked
+     * @param items an iterator to the references that are checked (seedlists or passwords)
      * @param typename the name of the references being checked
-     * @param m        the corresponding domain map that must contain entries
-     *                 matching the names in the items
-     * @param <T>      The type contained in items iterator. 
-     *  The type extends Named                 
+     * @param m the corresponding domain map that must contain entries matching the names in the items
+     * @param <T> The type contained in items iterator. The type extends Named
      */
     private <T extends Named> void checkListContainsNamed(DomainConfiguration cfg, final Iterator<T> items,
             final String typename, final Map m) {
@@ -260,31 +247,28 @@ public class Domain extends ExtendableEntity implements Named {
 
             if (!m.containsKey(named.getName())) {
                 throw new UnknownID("Configuration:" + cfg.getName() + "; uses unknown " + typename + ":"
-                		+ named.getName() + "; in the domain:" + getName() + ";");
+                        + named.getName() + "; in the domain:" + getName() + ";");
             }
         }
     }
 
     /**
-     * Helper method that adds or updates an entry in a map. Used to add/update
-     * entries in seedlists and passwords maps
+     * Helper method that adds or updates an entry in a map. Used to add/update entries in seedlists and passwords maps
      *
-     * @param m         the map to modify
-     * @param name      the name of the element to add or update
-     * @param addAction when true an add action is performed and en entry with
-     *                  the name is not allowed to exist in the map before the
-     *                  operation, when false an update operation is performed
-     *                  and an entry must already exists with the name in the
-     *                  map.
-     * @param value     the object to add to m
-     * @param <T>       The type contained as values in the map m. 
+     * @param m the map to modify
+     * @param name the name of the element to add or update
+     * @param addAction when true an add action is performed and en entry with the name is not allowed to exist in the
+     * map before the operation, when false an update operation is performed and an entry must already exists with the
+     * name in the map.
+     * @param value the object to add to m
+     * @param <T> The type contained as values in the map m.
      */
     private <T extends Named> void put(Map<String, T> m, String name, boolean addAction, T value) {
         boolean alreadyExist = m.containsKey(name);
 
         if (addAction && alreadyExist) {
             throw new PermissionDenied("An entry already exists with the name:" + name + "; in the domain:" + getName()
-            		+ ";");
+                    + ";");
         }
 
         if ((!addAction) && (!alreadyExist)) {
@@ -308,13 +292,12 @@ public class Domain extends ExtendableEntity implements Named {
     }
 
     /**
-     * Update a seed list to the domain. Replaces an existing seedlist with the
-     * same name.
+     * Update a seed list to the domain. Replaces an existing seedlist with the same name.
      *
      * @param seedlist the actual seedslist.
      *
      * @throws ArgumentNotValid if an argument is null
-     * @throws UnknownID        if the seedlist.getName() does not exists
+     * @throws UnknownID if the seedlist.getName() does not exists
      */
     public void updateSeedList(SeedList seedlist) {
         ArgumentNotValid.checkNotNull(seedlist, "seedlist");
@@ -348,14 +331,12 @@ public class Domain extends ExtendableEntity implements Named {
     }
 
     /**
-     * Mark a configuration as the default configuration to use. The
-     * configuration name must match an already added configuration, otherwise
-     * an UnknownID exception is thrown.
+     * Mark a configuration as the default configuration to use. The configuration name must match an already added
+     * configuration, otherwise an UnknownID exception is thrown.
      *
      * @param cfgName a name of a configuration
      *
-     * @throws UnknownID        when the cfgName does not match an added
-     *                          configuration
+     * @throws UnknownID when the cfgName does not match an added configuration
      * @throws ArgumentNotValid if cfgName is null or empty
      */
     public void setDefaultConfiguration(String cfgName) {
@@ -363,7 +344,7 @@ public class Domain extends ExtendableEntity implements Named {
 
         if (!domainConfigurations.containsKey(cfgName)) {
             throw new UnknownID("Default configuration not registered:" + cfgName + "; in the domain:" + getName()
-            		+ ";");
+                    + ";");
         }
 
         defaultConfigName = cfgName;
@@ -376,7 +357,7 @@ public class Domain extends ExtendableEntity implements Named {
      *
      * @return the configuration
      *
-     * @throws UnknownID        if the name is not a registered configuration
+     * @throws UnknownID if the name is not a registered configuration
      * @throws ArgumentNotValid if cfgName is null or empty
      */
     public DomainConfiguration getConfiguration(String cfgName) {
@@ -391,9 +372,8 @@ public class Domain extends ExtendableEntity implements Named {
     }
 
     /**
-     * Gets the default configuration. If no configuration has been explicitly
-     * set the first configuration added to this domain is returned. If no
-     * configurations have been added at all a UnknownID exception is thrown.
+     * Gets the default configuration. If no configuration has been explicitly set the first configuration added to this
+     * domain is returned. If no configurations have been added at all a UnknownID exception is thrown.
      *
      * @return the default configuration (never null)
      *
@@ -415,7 +395,7 @@ public class Domain extends ExtendableEntity implements Named {
     public String getName() {
         return domainName;
     }
-    
+
     /**
      * @return the domain comments.
      */
@@ -440,8 +420,7 @@ public class Domain extends ExtendableEntity implements Named {
      * @return the specified seedlist
      *
      * @throws ArgumentNotValid if name is null or empty
-     * @throws UnknownID        if no seedlist has been added with the supplied
-     *                          name
+     * @throws UnknownID if no seedlist has been added with the supplied name
      */
     public SeedList getSeedList(String name) {
         ArgumentNotValid.checkNotNullOrEmpty(name, "name");
@@ -467,15 +446,13 @@ public class Domain extends ExtendableEntity implements Named {
     }
 
     /**
-     * Removes a seedlist from this Domain. The seedlist must not be in use by
-     * any of the configurations, otherwise a PermissionDenied exception is
-     * thrown.
+     * Removes a seedlist from this Domain. The seedlist must not be in use by any of the configurations, otherwise a
+     * PermissionDenied exception is thrown.
      *
      * @param name the name of the seedlist to remove
      *
-     * @throws PermissionDenied if the seedlist is in use by a configuration or
-     *                          this is the last seedlist in this Domain
-     * @throws UnknownID        if the no seedlist exists with the name
+     * @throws PermissionDenied if the seedlist is in use by a configuration or this is the last seedlist in this Domain
+     * @throws UnknownID if the no seedlist exists with the name
      * @throws ArgumentNotValid if a null argument is supplied
      */
     public void removeSeedList(String name) {
@@ -496,8 +473,8 @@ public class Domain extends ExtendableEntity implements Named {
                 SeedList seedlist = i.next();
 
                 if (seedlist.getName().equals(name)) {
-                    throw new PermissionDenied("The seedlist:" + name + "; is used by the configuration:" 
-                            + cfgname + ";");
+                    throw new PermissionDenied("The seedlist:" + name + "; is used by the configuration:" + cfgname
+                            + ";");
                 }
             }
         }
@@ -507,15 +484,13 @@ public class Domain extends ExtendableEntity implements Named {
     }
 
     /**
-     * Removes a password from this Domain. The password must not be in use by
-     * any of the configurations, otherwise a PermissionDenied exception is
-     * thrown.
+     * Removes a password from this Domain. The password must not be in use by any of the configurations, otherwise a
+     * PermissionDenied exception is thrown.
      *
      * @param name the name of the password to remove
      *
-     * @throws PermissionDenied if the password is in use by a configuration or
-     *                          this is the last password in this Domain
-     * @throws UnknownID        if the no password exists with the name
+     * @throws PermissionDenied if the password is in use by a configuration or this is the last password in this Domain
+     * @throws UnknownID if the no password exists with the name
      * @throws ArgumentNotValid if a null argument is supplied
      */
     public void removePassword(String name) {
@@ -538,17 +513,14 @@ public class Domain extends ExtendableEntity implements Named {
     }
 
     /**
-     * Removes a configuration from this domain. The default configuration can
-     * not be removed, instead PermissionDenied is thrown. It is not possible to
-     * remove a configuration that is referenced by one or more
-     * HarvestDefinitions
+     * Removes a configuration from this domain. The default configuration can not be removed, instead PermissionDenied
+     * is thrown. It is not possible to remove a configuration that is referenced by one or more HarvestDefinitions
      *
      * @param configName The name of a configuration to remove.
      *
      * @throws ArgumentNotValid if name is null or empty
-     * @throws PermissionDenied if the default configuration is attempted
-     *                          removed or if one or more HarvestDefinitions
-     *                          reference the configuration
+     * @throws PermissionDenied if the default configuration is attempted removed or if one or more HarvestDefinitions
+     * reference the configuration
      */
     public void removeConfiguration(String configName) {
         ArgumentNotValid.checkNotNullOrEmpty(configName, "configName");
@@ -565,7 +537,7 @@ public class Domain extends ExtendableEntity implements Named {
         final DomainDAO dao = DomainDAO.getInstance();
         if (!dao.mayDelete(getConfiguration(configName))) {
             // Since this is an error case, spend a little time getting better
-            // info.  This could be done a lot faster by adding a function to
+            // info. This could be done a lot faster by adding a function to
             // the DomainDAO.
             HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
             Iterator<HarvestDefinition> hds = hddao.getAllHarvestDefinitions();
@@ -581,7 +553,7 @@ public class Domain extends ExtendableEntity implements Named {
                 }
             }
             throw new PermissionDenied("Cannot delete domain configuration '" + configName + "', because it is used "
-            		+ "by the following " + "harvest definitions: " + usages);
+                    + "by the following " + "harvest definitions: " + usages);
         }
 
         domainConfigurations.remove(configName);
@@ -615,13 +587,12 @@ public class Domain extends ExtendableEntity implements Named {
     }
 
     /**
-     * Gets all configurations belonging to this domain. The returned list is
-     * sorted by name according to language given in the parameter.
+     * Gets all configurations belonging to this domain. The returned list is sorted by name according to language given
+     * in the parameter.
      *
      * @param loc contains the language sorting must adhere to
      *
-     * @return all configurations belonging to this domain sorted according to
-     *         language
+     * @return all configurations belonging to this domain sorted according to language
      */
     public List<DomainConfiguration> getAllConfigurationsAsSortedList(Locale loc) {
         ArgumentNotValid.checkNotNull(loc, "loc");
@@ -631,13 +602,12 @@ public class Domain extends ExtendableEntity implements Named {
     }
 
     /**
-     * Gets all seedlists belonging to this domain. The returned list is sorted
-     * by name according to language given in the parameter.
+     * Gets all seedlists belonging to this domain. The returned list is sorted by name according to language given in
+     * the parameter.
      *
      * @param loc contains the language sorting must adhere to
      *
-     * @return all seedlists belonging to this domain sorted according to
-     *         language
+     * @return all seedlists belonging to this domain sorted according to language
      */
     public List<SeedList> getAllSeedListsAsSortedList(Locale loc) {
         ArgumentNotValid.checkNotNull(loc, "loc");
@@ -647,8 +617,8 @@ public class Domain extends ExtendableEntity implements Named {
     }
 
     /**
-     * Returns the passwords defined for this domain. The returned list is
-     * sorted by name according to language given in the parameter.
+     * Returns the passwords defined for this domain. The returned list is sorted by name according to language given in
+     * the parameter.
      *
      * @param loc contains the language sorting must adhere to
      *
@@ -709,20 +679,18 @@ public class Domain extends ExtendableEntity implements Named {
     }
 
     /**
-     * Replaces existing configuration with cfg, using cfg.getName() as the id
-     * for the configuration.
+     * Replaces existing configuration with cfg, using cfg.getName() as the id for the configuration.
      *
      * @param cfg the configuration to update
      *
-     * @throws UnknownID if no configuration exists with the id cfg.getName().
-     *                   ArgumentNotValid if cfg is null.
+     * @throws UnknownID if no configuration exists with the id cfg.getName(). ArgumentNotValid if cfg is null.
      */
     public void updateConfiguration(DomainConfiguration cfg) {
         ArgumentNotValid.checkNotNull(cfg, "cfg");
 
         if (!domainConfigurations.containsKey(cfg.getName())) {
             throw new UnknownID("No configuration exists with the name:" + cfg.getName() + "; in the domain:"
-            		+ getName() + ";");
+                    + getName() + ";");
         }
 
         putConfiguration(cfg);
@@ -769,7 +737,7 @@ public class Domain extends ExtendableEntity implements Named {
     }
 
     /**
-     * Get the ID of this domain.  Only for use by DBDAO
+     * Get the ID of this domain. Only for use by DBDAO
      *
      * @return Get the ID of this domain
      */
@@ -778,7 +746,7 @@ public class Domain extends ExtendableEntity implements Named {
     }
 
     /**
-     * Set the ID of this domain.  Only for use by DBDAO.
+     * Set the ID of this domain. Only for use by DBDAO.
      *
      * @param newId The new ID for this domain.
      */
@@ -787,8 +755,7 @@ public class Domain extends ExtendableEntity implements Named {
     }
 
     /**
-     * Check if this harvestinfo has an ID set yet (doesn't happen until the
-     * DBDAO persists it).
+     * Check if this harvestinfo has an ID set yet (doesn't happen until the DBDAO persists it).
      *
      * @return true, if this domain has an ID different from null
      */
@@ -799,8 +766,7 @@ public class Domain extends ExtendableEntity implements Named {
     /**
      * Return a human-readable representation of this object.
      *
-     * @return Some string identifying the object.  Do not use this for machine
-     *         processing.
+     * @return Some string identifying the object. Do not use this for machine processing.
      */
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -826,7 +792,7 @@ public class Domain extends ExtendableEntity implements Named {
         }
 
         sb.append("Extended Fields:\n");
-        
+
         for (int i = 0; i < extendedFieldValues.size(); i++) {
             ExtendedFieldValue efv = extendedFieldValues.get(i);
             sb.append("\t").append(efv.getExtendedFieldID() + ": " + efv.getContent()).append(";\n");
@@ -838,17 +804,14 @@ public class Domain extends ExtendableEntity implements Named {
     }
 
     /**
-     * Sets a list of regular expressions defining urls that should never be
-     * harvested from this domain. The list (after trimming the strings, and any
-     * empty strings have been removed) is copied to a list that is stored
-     * immutably.
+     * Sets a list of regular expressions defining urls that should never be harvested from this domain. The list (after
+     * trimming the strings, and any empty strings have been removed) is copied to a list that is stored immutably.
      *
      * @param regExps The list defining urls never to be harvested.
-     * @param strictMode If true, we throw ArgumentNotValid exception
-     * if invalid regexps are found 
+     * @param strictMode If true, we throw ArgumentNotValid exception if invalid regexps are found
      *
-     * @throws ArgumentNotValid if regExps is null or regExps contains
-     * invalid regular expressions (unless strictMode is false).
+     * @throws ArgumentNotValid if regExps is null or regExps contains invalid regular expressions (unless strictMode is
+     * false).
      */
     public void setCrawlerTraps(List<String> regExps, boolean strictMode) {
         ArgumentNotValid.checkNotNull(regExps, "List<String> regExps");
@@ -869,7 +832,7 @@ public class Domain extends ExtendableEntity implements Named {
                 Pattern.compile(regexp);
             } catch (PatternSyntaxException e) {
                 final String errMsg = "The regular expression '" + regexp + "' is invalid. "
-                		+ "Please correct the expression.";
+                        + "Please correct the expression.";
                 if (strictMode) {
                     throw new ArgumentNotValid(errMsg, e);
                 } else {
@@ -881,19 +844,17 @@ public class Domain extends ExtendableEntity implements Named {
     }
 
     /**
-     * Returns the list of regexps never to be harvested from this domain, or
-     * the empty list if none. The returned list should never be null.
+     * Returns the list of regexps never to be harvested from this domain, or the empty list if none. The returned list
+     * should never be null.
      *
-     * @return The list of regexps of url's never to be harvested when
-     *         harvesting this domain. This list is immutable.
+     * @return The list of regexps of url's never to be harvested when harvesting this domain. This list is immutable.
      */
     public List<String> getCrawlerTraps() {
         return crawlerTraps;
     }
 
     /**
-     * Returns the alias info for this domain, or null if this domain is not an
-     * alias.
+     * Returns the alias info for this domain, or null if this domain is not an alias.
      *
      * @return A domain name.
      */
@@ -902,17 +863,15 @@ public class Domain extends ExtendableEntity implements Named {
     }
 
     /**
-     * Update which domain this domain is considered an alias of. Calling this
-     * function will a) cause some slightly expensive checks to be performed,
-     * and b) set the time of last update.  For object construction and copying,
-     * use setAlias.
+     * Update which domain this domain is considered an alias of. Calling this function will a) cause some slightly
+     * expensive checks to be performed, and b) set the time of last update. For object construction and copying, use
+     * setAlias.
      *
-     * @param alias The name (e.g. "netarkivet.dk") of the domain that this
-     *              domain is an alias of.
+     * @param alias The name (e.g. "netarkivet.dk") of the domain that this domain is an alias of.
      *
-     * @throws UnknownID    If the given domain does not exist
-     * @throws IllegalState If updating the alias info would violate constraints
-     *                      of alias: No transitivity, no reflection.
+     * @throws UnknownID If the given domain does not exist
+     * @throws IllegalState If updating the alias info would violate constraints of alias: No transitivity, no
+     * reflection.
      */
     public void updateAlias(String alias) {
         if (getName().equals(alias)) {
@@ -926,7 +885,7 @@ public class Domain extends ExtendableEntity implements Named {
             Domain otherD = dao.read(alias);
             if (otherD.aliasInfo != null) {
                 String message = "Cannot make domain '" + this.getName() + "' an alias of '" + otherD.getName() + "',"
-                		+ " as that domain is already an alias of '" + otherD.aliasInfo.getAliasOf() + "'";
+                        + " as that domain is already an alias of '" + otherD.aliasInfo.getAliasOf() + "'";
                 log.debug(message);
                 throw new IllegalState(message);
             }
@@ -936,8 +895,8 @@ public class Domain extends ExtendableEntity implements Named {
                     aliasesForThisDomain.add(ai.getDomain());
                 }
                 String message = "Cannot make domain '" + this.getName() + "' an alias of '" + otherD.getName() + "',"
-                		+ " as the domains '" + StringUtils.conjoin(",", aliasesForThisDomain) + "' are "
-                                 + "already aliases of '" + this.getName() + "'";
+                        + " as the domains '" + StringUtils.conjoin(",", aliasesForThisDomain) + "' are "
+                        + "already aliases of '" + this.getName() + "'";
                 log.debug(message);
                 throw new IllegalState(message);
             }
@@ -948,9 +907,8 @@ public class Domain extends ExtendableEntity implements Named {
     }
 
     /**
-     * Set the alias field on this object.  This function performs no checking
-     * of existence of transitivity of alias domains, but it does check that the
-     * alias info is for this domain
+     * Set the alias field on this object. This function performs no checking of existence of transitivity of alias
+     * domains, but it does check that the alias info is for this domain
      *
      * @param aliasInfo Alias information
      *
@@ -962,29 +920,28 @@ public class Domain extends ExtendableEntity implements Named {
         }
         this.aliasInfo = aliasInfo;
     }
-    
+
     /**
-     * Gets the harvest info giving best information for expectation
-     * or how many objects a harvest using a given configuration will retrieve,
-     * we will prioritise the most recently harvest, where we have a full
-     * harvest.
+     * Gets the harvest info giving best information for expectation or how many objects a harvest using a given
+     * configuration will retrieve, we will prioritise the most recently harvest, where we have a full harvest.
+     * 
      * @param configName The name of the configuration
      *
-     * @return The Harvest Information for the harvest defining the best
-     * expectation, including the number retrieved and the stop reason.
+     * @return The Harvest Information for the harvest defining the best expectation, including the number retrieved and
+     * the stop reason.
      */
     public HarvestInfo getBestHarvestInfoExpectation(String configName) {
         ArgumentNotValid.checkNotNullOrEmpty(configName, "String configName");
         return DomainHistory.getBestHarvestInfoExpectation(configName, this.getHistory());
     }
-    
+
     /**
-     * All derived classes allow ExtendedFields from Type ExtendedFieldTypes.DOMAIN  
+     * All derived classes allow ExtendedFields from Type ExtendedFieldTypes.DOMAIN
      *
      * @return ExtendedFieldTypes.DOMAIN
      */
     protected int getExtendedFieldType() {
-    	return ExtendedFieldTypes.DOMAIN;
+        return ExtendedFieldTypes.DOMAIN;
     }
 
 }

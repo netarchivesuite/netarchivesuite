@@ -37,23 +37,21 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 
 /**
- * Class for evaluating a config file.
- * Tests the settings in the config file against default settings to
- * test for wrongly assigned elements. 
+ * Class for evaluating a config file. Tests the settings in the config file against default settings to test for
+ * wrongly assigned elements.
  * 
  */
 public class EvaluateConfigFile {
 
-	/** The elements to check the settings against.*/
+    /** The elements to check the settings against. */
     private Element completeSettings;
-    /** The root element in the xml tree.*/
+    /** The root element in the xml tree. */
     private XmlStructure root;
-    /** the log, for logging stuff instead of displaying them directly.*/
+    /** the log, for logging stuff instead of displaying them directly. */
     private static final Logger log = LoggerFactory.getLogger(EvaluateConfigFile.class);
 
     /**
-     * Constructor.
-     * Only initialises the config file and settings list.
+     * Constructor. Only initialises the config file and settings list.
      * 
      * @param deployConfigFile The file to evaluate.
      * @param encoding the encoding to use to read from file
@@ -63,11 +61,10 @@ public class EvaluateConfigFile {
         initLoadDefaultSettings();
         root = new XmlStructure(deployConfigFile, encoding);
     }
-    
+
     /**
-     * Evaluates the config file.
-     * This is done by evaluating the settings branch for all the instances in 
-     * the XML-tree (global, physical locaiton, machine and application)
+     * Evaluates the config file. This is done by evaluating the settings branch for all the instances in the XML-tree
+     * (global, physical locaiton, machine and application)
      */
     @SuppressWarnings("unchecked")
     public void evaluate() {
@@ -75,15 +72,15 @@ public class EvaluateConfigFile {
             // check global settings
             evaluateElement(root.getChild(Constants.COMPLETE_SETTINGS_BRANCH));
             List<Element> physLocs = root.getChildren(Constants.DEPLOY_PHYSICAL_LOCATION);
-            for(Element pl : physLocs) {
+            for (Element pl : physLocs) {
                 // check physical location settings
                 evaluateElement(pl.element(Constants.COMPLETE_SETTINGS_BRANCH));
                 List<Element> macs = pl.elements(Constants.DEPLOY_MACHINE);
-                for(Element mac : macs) {
-                    // check machine settings 
+                for (Element mac : macs) {
+                    // check machine settings
                     evaluateElement(mac.element(Constants.COMPLETE_SETTINGS_BRANCH));
                     List<Element> apps = mac.elements(Constants.DEPLOY_APPLICATION_NAME);
-                    for(Element app : apps) {
+                    for (Element app : apps) {
                         // check application settings
                         evaluateElement(app.element(Constants.COMPLETE_SETTINGS_BRANCH));
                     }
@@ -93,11 +90,10 @@ public class EvaluateConfigFile {
             log.error("Error occured during evaluation: ", e);
         }
     }
-    
+
     /**
-     * Load the default settings files as reference trees.
-     * These are used for testing whether the branches in the settings file
-     * are to be used or not.
+     * Load the default settings files as reference trees. These are used for testing whether the branches in the
+     * settings file are to be used or not.
      */
     private void initLoadDefaultSettings() {
         File f = FileUtils.getResourceFileFromClassPath(Constants.BUILD_COMPLETE_SETTINGS_FILE_PATH);
@@ -105,7 +101,7 @@ public class EvaluateConfigFile {
             Document doc;
             SAXReader reader = new SAXReader();
             if (f.canRead()) {
-                doc =  reader.read(f);
+                doc = reader.read(f);
                 completeSettings = doc.getRootElement();
             } else {
                 log.warn("Cannot read file: '{}'", f.getAbsolutePath());
@@ -115,24 +111,22 @@ public class EvaluateConfigFile {
             throw new IOFailure("Cannot handle complete settings file.", e);
         }
     }
-    
+
     /**
-     * Evaluates a element (has to called with the settings branch).
-     * Then tries to evaluate all the branches to the element. 
-     * The method is called recursively for the children of curElem.
+     * Evaluates a element (has to called with the settings branch). Then tries to evaluate all the branches to the
+     * element. The method is called recursively for the children of curElem.
      * 
-     * @param curElem The current element to evaluate.
-     * Null element represents in this context that no settings branch 
-     * exists for the current instance. 
+     * @param curElem The current element to evaluate. Null element represents in this context that no settings branch
+     * exists for the current instance.
      */
     @SuppressWarnings("unchecked")
     private void evaluateElement(Element curElem) {
         // make sure to catch null-pointers
-        if(curElem == null) {
+        if (curElem == null) {
             return;
         }
         List<Element> elList = curElem.elements();
-        for(Element el : elList) {
+        for (Element el : elList) {
             boolean valid = false;
             // get path
             String path = getSettingsPath(el);
@@ -140,17 +134,17 @@ public class EvaluateConfigFile {
             // check if path exists in any default setting.
             valid = existBranch(completeSettings, path.split(Constants.SLASH));
 
-            if(valid) {
-                if(!el.isTextOnly()) {
+            if (valid) {
+                if (!el.isTextOnly()) {
                     evaluateElement(el);
                 }
             } else {
                 // Print out the 'illegal' branches.
-                System.out.println("Branch in settings not found: "  + path.replace(Constants.SLASH, Constants.DOT));
+                System.out.println("Branch in settings not found: " + path.replace(Constants.SLASH, Constants.DOT));
             }
         }
     }
-    
+
     /**
      * For testing whether a branch with the current path exists.
      * 
@@ -160,8 +154,8 @@ public class EvaluateConfigFile {
      */
     private boolean existBranch(Element settings, String[] path) {
         Element curE = settings;
-        for(String st : path) {
-            if(curE == null) {
+        for (String st : path) {
+            if (curE == null) {
                 return false;
             }
             curE = curE.element(st);
@@ -170,7 +164,7 @@ public class EvaluateConfigFile {
         // return whether the final branch exists.
         return (curE != null);
     }
-    
+
     /**
      * Gets the path from settings of an element.
      * 
@@ -183,20 +177,20 @@ public class EvaluateConfigFile {
         StringBuilder res = new StringBuilder();
         int i = 0;
         // find the index for settings
-        while(i < elList.length && !elList[i].equalsIgnoreCase(Constants.COMPLETE_SETTINGS_BRANCH)) {
-        	++i;
+        while (i < elList.length && !elList[i].equalsIgnoreCase(Constants.COMPLETE_SETTINGS_BRANCH)) {
+            ++i;
         }
 
         // TODO WTF?!
-        for(i++; i<elList.length; i++) {
+        for (i++; i < elList.length; i++) {
             res.append(elList[i]);
             res.append(Constants.SLASH);
         }
 
         // remove last '/'
-       res.deleteCharAt(res.length()-1);
+        res.deleteCharAt(res.length() - 1);
 
-       return res.toString();
+        return res.toString();
     }
 
 }

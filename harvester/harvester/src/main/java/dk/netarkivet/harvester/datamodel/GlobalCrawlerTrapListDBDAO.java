@@ -50,8 +50,7 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
     private static final Logger log = LoggerFactory.getLogger(GlobalCrawlerTrapListDBDAO.class);
 
     /**
-     * protected constructor of this class. Checks if any migration
-     * are needed before operation starts.
+     * protected constructor of this class. Checks if any migration are needed before operation starts.
      */
     protected GlobalCrawlerTrapListDBDAO() {
         Connection connection = HarvestDBConnection.get();
@@ -66,13 +65,13 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
     /**
      * Statement to select all trap lists which are either active or inactive.
      */
-    private static final String SELECT_BY_ACTIVITY =
-            "SELECT global_crawler_trap_list_id FROM global_crawler_trap_lists WHERE isActive = ?";
+    private static final String SELECT_BY_ACTIVITY = "SELECT global_crawler_trap_list_id FROM global_crawler_trap_lists WHERE isActive = ?";
 
     /**
      * Returns a list of either all active or all inactive trap lists.
+     * 
      * @param isActive whether to return active or inactive lists.
-     * @return  a list if global crawler trap lists.
+     * @return a list if global crawler trap lists.
      */
     private List<GlobalCrawlerTrapList> getAllByActivity(boolean isActive) {
         List<GlobalCrawlerTrapList> result = new ArrayList<GlobalCrawlerTrapList>();
@@ -103,7 +102,7 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
 
     @Override
     public List<GlobalCrawlerTrapList> getAllInActive() {
-           return getAllByActivity(false);
+        return getAllByActivity(false);
     }
 
     @Override
@@ -113,10 +112,8 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
         PreparedStatement stmt = null;
         try {
             stmt = conn.prepareStatement("SELECT DISTINCT trap_expression FROM global_crawler_trap_lists, "
-                    + "global_crawler_trap_expressions "
-                    + "WHERE global_crawler_trap_list_id = "
-                    + "crawler_trap_list_id "
-                    + "AND isActive = ?");
+                    + "global_crawler_trap_expressions " + "WHERE global_crawler_trap_list_id = "
+                    + "crawler_trap_list_id " + "AND isActive = ?");
             stmt.setBoolean(1, true);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -136,14 +133,13 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
     /**
      * Statement to insert a new trap list.
      */
-    private static final String INSERT_TRAPLIST_STMT =
-    		"INSERT INTO global_crawler_trap_lists (name, description, isActive)" + "VALUES (?,?,?)";
+    private static final String INSERT_TRAPLIST_STMT = "INSERT INTO global_crawler_trap_lists (name, description, isActive)"
+            + "VALUES (?,?,?)";
 
     /**
      * Statement to insert a new trap expression in a given list.
      */
-    private static final String INSERT_TRAP_EXPR_STMT =
-            "INSERT INTO global_crawler_trap_expressions (crawler_trap_list_id, trap_expression) VALUES (?,?) ";
+    private static final String INSERT_TRAP_EXPR_STMT = "INSERT INTO global_crawler_trap_expressions (crawler_trap_list_id, trap_expression) VALUES (?,?) ";
 
     @Override
     public int create(GlobalCrawlerTrapList trapList) {
@@ -167,7 +163,7 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
             rs.next();
             trapId = rs.getInt(1);
             trapList.setId(trapId);
-            for (String expr: trapList.getTraps()) {
+            for (String expr : trapList.getTraps()) {
                 stmt = conn.prepareStatement(INSERT_TRAP_EXPR_STMT);
                 stmt.setInt(1, trapId);
                 stmt.setString(2, expr);
@@ -179,9 +175,9 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
-           DBUtils.closeStatementIfOpen(stmt);
-           DBUtils.rollbackIfNeeded(conn, "create trap list", trapList);
-           HarvestDBConnection.release(conn);
+            DBUtils.closeStatementIfOpen(stmt);
+            DBUtils.rollbackIfNeeded(conn, "create trap list", trapList);
+            HarvestDBConnection.release(conn);
         }
         return trapId;
     }
@@ -189,14 +185,12 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
     /**
      * Statement to delete a trap list.
      */
-    private static final String DELETE_TRAPLIST_STMT =
-            "DELETE from global_crawler_trap_lists WHERE global_crawler_trap_list_id = ?";
+    private static final String DELETE_TRAPLIST_STMT = "DELETE from global_crawler_trap_lists WHERE global_crawler_trap_list_id = ?";
 
     /**
      * Statement to delete all expressions in a given trap list.
      */
-    private static final String DELETE_EXPR_STMT =
-            "DELETE FROM global_crawler_trap_expressions WHERE crawler_trap_list_id = ?";
+    private static final String DELETE_EXPR_STMT = "DELETE FROM global_crawler_trap_expressions WHERE crawler_trap_list_id = ?";
 
     @Override
     public void delete(int id) {
@@ -228,13 +222,12 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
     /**
      * Statement to update the elementary properties of a trap list.
      */
-    private static final String LIST_UPDATE_STMT =
-            "UPDATE global_crawler_trap_lists SET name = ?, description = ?, isActive = ? WHERE global_crawler_trap_list_id = ?";
+    private static final String LIST_UPDATE_STMT = "UPDATE global_crawler_trap_lists SET name = ?, description = ?, isActive = ? WHERE global_crawler_trap_list_id = ?";
 
     /**
-     * Update a trap list. In order to update the trap expressions for this
-     * list, we first delete all the existing trap expressions for the list
-     * then add all those in the updated version.
+     * Update a trap list. In order to update the trap expressions for this list, we first delete all the existing trap
+     * expressions for the list then add all those in the updated version.
+     * 
      * @param trapList the trap list to update
      */
     @Override
@@ -251,14 +244,14 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
             stmt.setInt(4, trapList.getId());
             stmt.executeUpdate();
             stmt.close();
-            
-            //Delete all the trap expressions.
+
+            // Delete all the trap expressions.
             stmt = conn.prepareStatement(DELETE_EXPR_STMT);
             stmt.setInt(1, trapList.getId());
             stmt.executeUpdate();
             stmt.close();
             // Add the new trap expressions one by one.
-            for (String expr: trapList.getTraps()) {
+            for (String expr : trapList.getTraps()) {
                 stmt = conn.prepareStatement(INSERT_TRAP_EXPR_STMT);
                 stmt.setInt(1, trapList.getId());
                 stmt.setString(2, expr);
@@ -267,7 +260,8 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
             }
             conn.commit();
         } catch (SQLException e) {
-            String message = "Error updating trap list :'" + trapList.getId() + "'\n" + ExceptionUtils.getSQLExceptionCause(e);
+            String message = "Error updating trap list :'" + trapList.getId() + "'\n"
+                    + ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new UnknownID(message, e);
         } finally {
@@ -280,15 +274,12 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
     /**
      * Statement to read the elementary properties of a trap list.
      */
-    private static final String SELECT_TRAPLIST_STMT =
-    		"SELECT name, description, isActive FROM global_crawler_trap_lists WHERE global_crawler_trap_list_id = ?";
+    private static final String SELECT_TRAPLIST_STMT = "SELECT name, description, isActive FROM global_crawler_trap_lists WHERE global_crawler_trap_list_id = ?";
 
     /**
      * Statement to read the trap expressions for a trap list.
      */
-    private static final String SELECT_TRAP_EXPRESSIONS_STMT =
-    		"SELECT trap_expression from global_crawler_trap_expressions WHERE crawler_trap_list_id = ?";
-
+    private static final String SELECT_TRAP_EXPRESSIONS_STMT = "SELECT trap_expression from global_crawler_trap_expressions WHERE crawler_trap_list_id = ?";
 
     @Override
     public GlobalCrawlerTrapList read(int id) {
@@ -298,7 +289,7 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
             stmt = conn.prepareStatement(SELECT_TRAPLIST_STMT);
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
-            if (!rs.next()){
+            if (!rs.next()) {
                 throw new UnknownID("No such GlobalCrawlerTrapList: '" + id + "'");
             }
             String name = rs.getString("name");
@@ -315,7 +306,7 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
             return new GlobalCrawlerTrapList(id, exprs, name, description, isActive);
         } catch (SQLException e) {
             String message = "Error retrieving trap list for id '" + id + "'\n"
-            		+  ExceptionUtils.getSQLExceptionCause(e);
+                    + ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
@@ -327,14 +318,13 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
     /**
      * Statement to read the elementary properties of a trap list.
      */
-    private static final String EXISTS_TRAPLIST_STMT
-        = "SELECT * FROM global_crawler_trap_lists WHERE name = ?";
+    private static final String EXISTS_TRAPLIST_STMT = "SELECT * FROM global_crawler_trap_lists WHERE name = ?";
 
     /**
      * Does crawlertrap with this name already exist.
+     * 
      * @param name The name for a crawlertrap
-     * @return true, if a crawlertrap with the given name already exists
-     * in the database; otherwise false
+     * @return true, if a crawlertrap with the given name already exists in the database; otherwise false
      */
     @Override
     public boolean exists(String name) {
@@ -346,14 +336,14 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
             stmt = conn.prepareStatement(EXISTS_TRAPLIST_STMT);
             stmt.setString(1, name);
             ResultSet rs = stmt.executeQuery();
-            if (rs.next()){
+            if (rs.next()) {
                 exists = true;
             }
 
             return exists;
         } catch (SQLException e) {
             String message = "Error checking for existence of trap list " + "with name '" + name + "'\n"
-            		+  ExceptionUtils.getSQLExceptionCause(e);
+                    + ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {

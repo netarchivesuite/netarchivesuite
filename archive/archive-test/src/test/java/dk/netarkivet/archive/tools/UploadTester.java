@@ -51,17 +51,16 @@ public class UploadTester {
     private UseTestRemoteFile ulrf = new UseTestRemoteFile();
     private PreventSystemExit pse = new PreventSystemExit();
     private PreserveStdStreams pss = new PreserveStdStreams(true);
-    private MoveTestFiles mtf = new MoveTestFiles(TestInfo.DATA_DIR,TestInfo.WORKING_DIR);
+    private MoveTestFiles mtf = new MoveTestFiles(TestInfo.DATA_DIR, TestInfo.WORKING_DIR);
     private MockupJMS mjms = new MockupJMS();
     private MockupArcRepositoryClient marc = new MockupArcRepositoryClient();
     ReloadSettings rs = new ReloadSettings();
 
-    /** Max number of store retries.*/
-    private final int storeRetries = Settings.getInt(
-            JMSArcRepositoryClient.ARCREPOSITORY_STORE_RETRIES);
+    /** Max number of store retries. */
+    private final int storeRetries = Settings.getInt(JMSArcRepositoryClient.ARCREPOSITORY_STORE_RETRIES);
 
     @Before
-    public void setUp(){
+    public void setUp() {
         rs.setUp();
         ulrf.setUp();
         mjms.setUp();
@@ -73,7 +72,7 @@ public class UploadTester {
     }
 
     @After
-    public void tearDown(){
+    public void tearDown() {
         marc.tearDown();
         pse.tearDown();
         pss.tearDown();
@@ -83,76 +82,66 @@ public class UploadTester {
         RememberNotifications.resetSingleton();
         rs.tearDown();
     }
-    
+
     @Test
     public void testConstructor() {
         ReflectUtils.testUtilityConstructor(Upload.class);
     }
 
     /**
-     * Verify that uploading a single ARC file works as expected
-     * and deletes the file locally.
+     * Verify that uploading a single ARC file works as expected and deletes the file locally.
      */
     @Test
     public void testMainOneFile() {
-        Upload.main(new String[]{TestInfo.ARC1.getAbsolutePath()});
+        Upload.main(new String[] {TestInfo.ARC1.getAbsolutePath()});
         assertMsgCount(1, 0);
         assertStoreStatus(0, TestInfo.ARC1, true);
     }
 
     /**
-     * Verify that uploading more than one ARC file works as expected
-     * and deletes the files locally.
+     * Verify that uploading more than one ARC file works as expected and deletes the files locally.
      */
     @Test
     public void testMainSeveralFiles() {
-        Upload.main(new String[]{
-                TestInfo.ARC1.getAbsolutePath(),
-                TestInfo.ARC2.getAbsolutePath()});
+        Upload.main(new String[] {TestInfo.ARC1.getAbsolutePath(), TestInfo.ARC2.getAbsolutePath()});
         assertMsgCount(2, 0);
         assertStoreStatus(0, TestInfo.ARC1, true);
         assertStoreStatus(1, TestInfo.ARC2, true);
     }
-    
+
     /**
-     * Verify that non-ARC files are rejected and execution fails.
-     * Also verifies that nothing is stored in that case.
+     * Verify that non-ARC files are rejected and execution fails. Also verifies that nothing is stored in that case.
      */
     @Test
     public void testMainNonArc() {
         try {
-            Upload.main(new String[]{
-                    TestInfo.ARC1.getAbsolutePath(),
-                    TestInfo.INDEX_DIR.getAbsolutePath()});
+            Upload.main(new String[] {TestInfo.ARC1.getAbsolutePath(), TestInfo.INDEX_DIR.getAbsolutePath()});
             fail("Calling Upload with non-arc file should System.exit");
         } catch (SecurityException e) {
-            //Expected
+            // Expected
             assertMsgCount(0, 0);
         }
     }
-    
+
     /**
-     * Verify that uploading a single WARC file works as expected
-     * and deletes the file locally.
+     * Verify that uploading a single WARC file works as expected and deletes the file locally.
      */
     @Test
     public void testMainOneWarcFile() {
-        Upload.main(new String[]{TestInfo.WARC1.getAbsolutePath()});
+        Upload.main(new String[] {TestInfo.WARC1.getAbsolutePath()});
         assertMsgCount(1, 0);
         assertStoreStatus(0, TestInfo.WARC1, true);
     }
-    
+
     /**
-     * Verify that  the system fails as expected when the store operation
-     * fails on the server side. (Local files must NOT be deleted).
+     * Verify that the system fails as expected when the store operation fails on the server side. (Local files must NOT
+     * be deleted).
      */
     @Test
     public void testMainStoreFails1() {
         marc.failOnFile(TestInfo.ARC1.getName());
-       
-        Upload.main(new String[]{
-                TestInfo.ARC1.getAbsolutePath(),
-                TestInfo.ARC2.getAbsolutePath(),
+
+        Upload.main(new String[] {TestInfo.ARC1.getAbsolutePath(), TestInfo.ARC2.getAbsolutePath(),
                 TestInfo.ARC3.getAbsolutePath()});
         assertMsgCount(2, 1);
         int index = 0;
@@ -166,16 +155,14 @@ public class UploadTester {
     }
 
     /**
-     * Verify that  the system fails as expected when the store operation
-     * fails on the server side. (Local files must NOT be deleted).
+     * Verify that the system fails as expected when the store operation fails on the server side. (Local files must NOT
+     * be deleted).
      */
     @Test
     public void testMainStoreFails2() {
         marc.failOnFile(TestInfo.ARC2.getName());
-        
-        Upload.main(new String[]{
-                TestInfo.ARC1.getAbsolutePath(),
-                TestInfo.ARC2.getAbsolutePath(),
+
+        Upload.main(new String[] {TestInfo.ARC1.getAbsolutePath(), TestInfo.ARC2.getAbsolutePath(),
                 TestInfo.ARC3.getAbsolutePath()});
         assertMsgCount(2, 1);
         int index = 0;
@@ -189,16 +176,14 @@ public class UploadTester {
     }
 
     /**
-     * Verify that  the system fails as expected when the store operation
-     * fails on the server side. (Local files must NOT be deleted).
+     * Verify that the system fails as expected when the store operation fails on the server side. (Local files must NOT
+     * be deleted).
      */
     @Test
     public void testMainStoreFails3() {
         marc.failOnFile(TestInfo.ARC3.getName());
-        
-        Upload.main(new String[]{
-                TestInfo.ARC1.getAbsolutePath(),
-                TestInfo.ARC2.getAbsolutePath(),
+
+        Upload.main(new String[] {TestInfo.ARC1.getAbsolutePath(), TestInfo.ARC2.getAbsolutePath(),
                 TestInfo.ARC3.getAbsolutePath()});
         assertMsgCount(2, 1);
         int index = 0;
@@ -213,50 +198,46 @@ public class UploadTester {
     }
 
     /**
-     * Verifies that calling Upload without arguments fails.
-     * Also verifies that nothing is stored in that case.
+     * Verifies that calling Upload without arguments fails. Also verifies that nothing is stored in that case.
      */
     @Test
     public void testNoArguments() {
         try {
-            Upload.main(new String[]{});
+            Upload.main(new String[] {});
             fail("Calling Upload without arguments should System.exit");
         } catch (SecurityException e) {
-            //Expected
+            // Expected
             assertMsgCount(0, 0);
         }
     }
 
     /**
      * Asserts that we got the expected number of StoreMessages.
+     * 
      * @param succeeded Number of files successfully stored
      * @param failed Number of files that never got stored
      */
     private void assertMsgCount(int succeeded, int failed) {
         int expected = succeeded + failed * storeRetries;
-        assertEquals("Upload should generate exactly 1 StoreMessage "
-                + "per succeeded arc file and "
-                + storeRetries + " per failed store",
-                expected, marc.getMsgCount());
+        assertEquals("Upload should generate exactly 1 StoreMessage " + "per succeeded arc file and " + storeRetries
+                + " per failed store", expected, marc.getMsgCount());
     }
+
     /**
-     * Asserts that the nth StoreMessage is regarding the given arc file
-     * and that the arc file is delete if and only if store succeeded.
+     * Asserts that the nth StoreMessage is regarding the given arc file and that the arc file is delete if and only if
+     * store succeeded.
+     * 
      * @param n The relevant index to marc.getStoreMsgs()
      * @param arcFile The arc file that was stored
      * @param shouldSucceed Whether store was supposed to succeed
      */
-    private void assertStoreStatus(
-            int n, File arcFile, boolean shouldSucceed) {
+    private void assertStoreStatus(int n, File arcFile, boolean shouldSucceed) {
         StoreMessage sm = marc.getStoreMsgs().get(n);
-        assertEquals("Upload should attempt to upload the specified files",
-                arcFile.getName(), sm.getArcfileName());
+        assertEquals("Upload should attempt to upload the specified files", arcFile.getName(), sm.getArcfileName());
         if (shouldSucceed) {
-            assertFalse("Upload should delete a properly uploaded file",
-                arcFile.exists());
+            assertFalse("Upload should delete a properly uploaded file", arcFile.exists());
         } else {
-            assertTrue("Upload should not delete a file that wasn't "
-                    + " properly uploaded", arcFile.exists());
+            assertTrue("Upload should not delete a file that wasn't " + " properly uploaded", arcFile.exists());
         }
     }
 }

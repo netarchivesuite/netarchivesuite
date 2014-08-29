@@ -23,7 +23,6 @@
 
 package dk.netarkivet.deploy;
 
-
 /**
  * This class runs all the integrity tests.
  *
@@ -57,4 +56,4 @@ public class IntegrityTesterSuite {
     // String[] args2 = {"-noloading", "dk.netarkivet.IntegrityTesterSuite"};
     // TestRunner.main(args2);
     // }
-    }
+}

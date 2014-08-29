@@ -89,24 +89,21 @@ public class JobDAOTester extends DataModelTestCase {
     @Test
     public void testGetCountJobs() throws Exception {
         JobDAO dao = JobDAO.getInstance();
-        assertEquals("Must have " + INITIAL_JOB_COUNT + " jobs from the" +
-                " beginning",
-                INITIAL_JOB_COUNT, dao.getCountJobs());
+        assertEquals("Must have " + INITIAL_JOB_COUNT + " jobs from the" + " beginning", INITIAL_JOB_COUNT,
+                dao.getCountJobs());
         HarvestDefinitionDAO hdDao = HarvestDefinitionDAO.getInstance();
         HarvestDefinition hd = hdDao.read(Long.valueOf(42));
         DefaultJobGenerator jobGen = new DefaultJobGenerator();
         int jobsMade = jobGen.generateJobs(hd);
-        assertEquals("Must find same number of jobs as we created",
-                     jobsMade + INITIAL_JOB_COUNT, dao.getCountJobs());
+        assertEquals("Must find same number of jobs as we created", jobsMade + INITIAL_JOB_COUNT, dao.getCountJobs());
         jobsMade = jobGen.generateJobs(hd);
-        assertEquals("Must find all the jobs we have created",
-                     2 * jobsMade + INITIAL_JOB_COUNT,
-                     dao.getCountJobs());
+        assertEquals("Must find all the jobs we have created", 2 * jobsMade + INITIAL_JOB_COUNT, dao.getCountJobs());
     }
 
     /**
-     * This test creates (and stores) a new job and reads it back again
-     * Verifies that state of stored job equals state of original job
+     * This test creates (and stores) a new job and reads it back again Verifies that state of stored job equals state
+     * of original job
+     * 
      * @throws SQLException
      */
     @Test
@@ -120,8 +117,7 @@ public class JobDAOTester extends DataModelTestCase {
 
         try {
             dao.read(null);
-            fail("Failed to throw ArgumentNotValid exception on null-argument" +
-            		" to constructor");
+            fail("Failed to throw ArgumentNotValid exception on null-argument" + " to constructor");
         } catch (ArgumentNotValid e) {
             // expected
         }
@@ -135,56 +131,42 @@ public class JobDAOTester extends DataModelTestCase {
         }
 
         Job readJob = dao.read(job.getJobID());
-        assertEquals("Id of read Job should equal id of original Job",
-                job.getJobID(), readJob.getJobID());
-        assertEquals("Status of read Job should equal status of original Job",
-                job.getStatus(),
-                     readJob.getStatus());
-        assertEquals("Seedlist of read Job should equal seedlist of original " +
-        		"Job", job.getSeedListAsString(),
-                     readJob.getSeedListAsString());
-        assertEquals("Order.xml of read Job should equal order.xml of " +
-        		"original Job", job.getOrderXMLdoc().getText(),
-                     readJob.getOrderXMLdoc().getText());
-        assertEquals("Filename of order.xml of read Job should equal filename" +
-        		" of order.xml of original Job",
-                     job.getOrderXMLName(), readJob.getOrderXMLName());
+        assertEquals("Id of read Job should equal id of original Job", job.getJobID(), readJob.getJobID());
+        assertEquals("Status of read Job should equal status of original Job", job.getStatus(), readJob.getStatus());
+        assertEquals("Seedlist of read Job should equal seedlist of original " + "Job", job.getSeedListAsString(),
+                readJob.getSeedListAsString());
+        assertEquals("Order.xml of read Job should equal order.xml of " + "original Job", job.getOrderXMLdoc()
+                .getText(), readJob.getOrderXMLdoc().getText());
+        assertEquals("Filename of order.xml of read Job should equal filename" + " of order.xml of original Job",
+                job.getOrderXMLName(), readJob.getOrderXMLName());
         assertArrayEquals(
-                "List of settings.xml's of read Job should equal list of" +
-        		" settings.xml's of original Job",
-                     job.getSettingsXMLdocs(), readJob.getSettingsXMLdocs());
-        assertEquals("OrigHarvestDefinitionID of read Job should equal" +
-        		" OrigHarvestDefinitionID of original Job",
-                     job.getOrigHarvestDefinitionID(),
-                     readJob.getOrigHarvestDefinitionID());
+                "List of settings.xml's of read Job should equal list of" + " settings.xml's of original Job",
+                job.getSettingsXMLdocs(), readJob.getSettingsXMLdocs());
+        assertEquals("OrigHarvestDefinitionID of read Job should equal" + " OrigHarvestDefinitionID of original Job",
+                job.getOrigHarvestDefinitionID(), readJob.getOrigHarvestDefinitionID());
 
-        assertEquals("DomainConfigurationMap of read Job should equal" +
-        		" DomainConfigurationMap of original Job",
-                     job.getDomainConfigurationMap(),
-                     readJob.getDomainConfigurationMap());
+        assertEquals("DomainConfigurationMap of read Job should equal" + " DomainConfigurationMap of original Job",
+                job.getDomainConfigurationMap(), readJob.getDomainConfigurationMap());
 
-        assertEquals("harvestnamePrefix of read Job should equal" +
-                " harvestnamePrefix of original Job",
-                     job.getHarvestFilenamePrefix(),
-                     readJob.getHarvestFilenamePrefix());
+        assertEquals("harvestnamePrefix of read Job should equal" + " harvestnamePrefix of original Job",
+                job.getHarvestFilenamePrefix(), readJob.getHarvestFilenamePrefix());
 
         String defaultNamePrefix = "2-5678";
-        assertEquals("harvestnamePrefix of read Job should equal" +
-                " '2-5678'", defaultNamePrefix,
-                     readJob.getHarvestFilenamePrefix());
+        assertEquals("harvestnamePrefix of read Job should equal" + " '2-5678'", defaultNamePrefix,
+                readJob.getHarvestFilenamePrefix());
         readJob = dao.read(job.getJobID());
 
         final String harvestnamePrefix = "netarkivet-collection";
         readJob.setHarvestFilenamePrefix(harvestnamePrefix);
         dao.update(readJob);
         readJob = dao.read(job.getJobID());
-        assertEquals("harvestname_prefix should be 'netarkivet-collection' but was' "
-        + readJob.getHarvestFilenamePrefix(), harvestnamePrefix, readJob.getHarvestFilenamePrefix());
-
+        assertEquals(
+                "harvestname_prefix should be 'netarkivet-collection' but was' " + readJob.getHarvestFilenamePrefix(),
+                harvestnamePrefix, readJob.getHarvestFilenamePrefix());
 
         // Job.getSettingsXMLfiles() is probably obsolete
         // No decided if we need Job.getActualStart() and Job.getActualStop()
-        //- but we probably do (at least nice to have)
+        // - but we probably do (at least nice to have)
     }
 
     /**
@@ -194,8 +176,7 @@ public class JobDAOTester extends DataModelTestCase {
     public void testCreateJobWithUnknownHarvestId() {
         JobDAO dao = JobDAO.getInstance();
         HarvestDefinitionDAO hdd = HarvestDefinitionDAO.getInstance();
-        assertFalse("Harvestdefinition should not exist with ID= "
-                + TestInfo.UNKNOWN_HARVESTID,
+        assertFalse("Harvestdefinition should not exist with ID= " + TestInfo.UNKNOWN_HARVESTID,
                 hdd.exists(TestInfo.UNKNOWN_HARVESTID));
 
         /* Create Job to update. */
@@ -210,8 +191,8 @@ public class JobDAOTester extends DataModelTestCase {
     }
 
     /**
-     * This test creates (and stores) a new job, modifies it, and checks that
-     * the modified job can be retrieved.
+     * This test creates (and stores) a new job, modifies it, and checks that the modified job can be retrieved.
+     * 
      * @throws SQLException
      */
     @Test
@@ -247,8 +228,7 @@ public class JobDAOTester extends DataModelTestCase {
         job.setStatus(JobStatus.DONE);
 
         // modify the list of configuration aggregated to this job:
-        DomainConfiguration anotherConfiguration =
-            TestInfo.getNetarkivetConfiguration();
+        DomainConfiguration anotherConfiguration = TestInfo.getNetarkivetConfiguration();
         job.addConfiguration(anotherConfiguration);
 
         dao.update(job);
@@ -257,45 +237,33 @@ public class JobDAOTester extends DataModelTestCase {
         JobDAO dao2 = JobDAO.getInstance();
         Job jobUpdated = dao2.read(job.getJobID());
 
-        assertTrue("The retrieved job should have status " + JobStatus.DONE
-                + ", but has status " + jobUpdated.getStatus(), jobUpdated
-                .getStatus() == JobStatus.DONE);
-
-        Map<String, String> domainConfigurationMap = jobUpdated
-                .getDomainConfigurationMap();
-
         assertTrue(
-                "The DomainConfigurationMap of the retrieved job does not " +
-                "match that of the original job - domain name "
-                        + dc.getDomainName()
-                        + " not found", domainConfigurationMap.containsKey(dc
-                        .getDomainName()));
+                "The retrieved job should have status " + JobStatus.DONE + ", but has status " + jobUpdated.getStatus(),
+                jobUpdated.getStatus() == JobStatus.DONE);
+
+        Map<String, String> domainConfigurationMap = jobUpdated.getDomainConfigurationMap();
+
+        assertTrue("The DomainConfigurationMap of the retrieved job does not "
+                + "match that of the original job - domain name " + dc.getDomainName() + " not found",
+                domainConfigurationMap.containsKey(dc.getDomainName()));
         assertTrue(
-                "The DomainConfigurationMap of the retrieved job does not " +
-                "match that of the original job - domain name "
-                        + anotherConfiguration.getDomainName()
-                        + " not found",
-                domainConfigurationMap.containsKey(anotherConfiguration
-                        .getDomainName()));
+                "The DomainConfigurationMap of the retrieved job does not "
+                        + "match that of the original job - domain name " + anotherConfiguration.getDomainName()
+                        + " not found", domainConfigurationMap.containsKey(anotherConfiguration.getDomainName()));
 
-        assertEquals(
-                "The DomainConfigurationMap of the retrieved job does not " +
-                "match that of the original job - domainConfiguration name "
-                        + dc.getName()
-                        + " not found", domainConfigurationMap.get(dc
-                        .getDomainName()), dc.getName());
+        assertEquals("The DomainConfigurationMap of the retrieved job does not "
+                + "match that of the original job - domainConfiguration name " + dc.getName() + " not found",
+                domainConfigurationMap.get(dc.getDomainName()), dc.getName());
 
-        assertEquals(
-                "The DomainConfigurationMap of the retrieved job does not " +
-                "match that of the original job - domainConfiguration name "
-                        + anotherConfiguration.getName() + " not found",
-                domainConfigurationMap.get(anotherConfiguration.getDomainName()),
-                		anotherConfiguration.getName());
+        assertEquals("The DomainConfigurationMap of the retrieved job does not "
+                + "match that of the original job - domainConfiguration name " + anotherConfiguration.getName()
+                + " not found", domainConfigurationMap.get(anotherConfiguration.getDomainName()),
+                anotherConfiguration.getName());
     }
 
     /**
-     * Test that the max objects per domain attribute can be updated in
-     * persistent storage.
+     * Test that the max objects per domain attribute can be updated in persistent storage.
+     * 
      * @throws Exception
      */
     @Test
@@ -305,8 +273,7 @@ public class JobDAOTester extends DataModelTestCase {
         /* Create Job to update */
         addHarvestDefinitionToDatabaseWithId(TestInfo.HARVESTID);
         DomainConfiguration dc = TestInfo.getDRConfiguration();
-        Job job = Job.createSnapShotJob(TestInfo.HARVESTID, highChan, dc,
-                TestInfo.MAX_OBJECTS_PER_DOMAIN, -1L,
+        Job job = Job.createSnapShotJob(TestInfo.HARVESTID, highChan, dc, TestInfo.MAX_OBJECTS_PER_DOMAIN, -1L,
                 Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 0);
         dao.create(job);
 
@@ -315,55 +282,41 @@ public class JobDAOTester extends DataModelTestCase {
         Job jobUpdated = dao2.read(job.getJobID());
 
         long expectedCappedMaxObjects = dc.getMaxObjects();
-        assertEquals("The retrieved job should have max object per domain = " +
-                   expectedCappedMaxObjects + ", but it is equal to "
-                   + jobUpdated.getForceMaxObjectsPerDomain(),
-                   expectedCappedMaxObjects,
-                   jobUpdated.getForceMaxObjectsPerDomain());
+        assertEquals("The retrieved job should have max object per domain = " + expectedCappedMaxObjects
+                + ", but it is equal to " + jobUpdated.getForceMaxObjectsPerDomain(), expectedCappedMaxObjects,
+                jobUpdated.getForceMaxObjectsPerDomain());
 
         // check that the job-specific order.xml is modified accordingly:
 
         final Document orderXMLdoc = jobUpdated.getOrderXMLdoc();
-        String xpath =
-            "/crawl-order/controller/map[@name='pre-fetch-processors']"
-            + "/newObject[@name='QuotaEnforcer']"
-            + "/long[@name='group-max-fetch-successes']";
+        String xpath = "/crawl-order/controller/map[@name='pre-fetch-processors']"
+                + "/newObject[@name='QuotaEnforcer']" + "/long[@name='group-max-fetch-successes']";
         Node queueTotalBudgetNode = orderXMLdoc.selectSingleNode(xpath);
-        assertEquals("OrderXML value should equals set value",
-                     expectedCappedMaxObjects,
-                     Integer.parseInt(queueTotalBudgetNode.getText()));
+        assertEquals("OrderXML value should equals set value", expectedCappedMaxObjects,
+                Integer.parseInt(queueTotalBudgetNode.getText()));
 
     }
 
-
     /*
-     * Check that an apropriate number of jobs of various statuses are found
-     * with getAll()
+     * Check that an apropriate number of jobs of various statuses are found with getAll()
      */
-    private void assertJobsFound(String msg,
-                                 int c_new, int c_submitted, int c_started,
-                                 int c_failed, int c_done) {
+    private void assertJobsFound(String msg, int c_new, int c_submitted, int c_started, int c_failed, int c_done) {
         JobDAO jdao = JobDAO.getInstance();
-        assertEquals(c_new + " jobs with status NEW should be present " + msg,
-                c_new, IteratorUtils.toList(jdao.getAll(JobStatus.NEW)).size());
-        assertEquals(c_started + " jobs with status STARTED should be present "
-                + msg, c_started, IteratorUtils.toList(
-                jdao.getAll(JobStatus.STARTED)).size());
-        assertEquals(c_submitted
-                + " jobs with status SUBMITTED should be present " + msg,
-                c_submitted, IteratorUtils.toList(
-                        jdao.getAll(JobStatus.SUBMITTED)).size());
-        assertEquals(c_failed + " jobs with status FAILED should be present "
-                + msg, c_failed, IteratorUtils.toList(
-                jdao.getAll(JobStatus.FAILED)).size());
-        assertEquals((INITIAL_JOB_COUNT + c_done)
-                + " jobs with status DONE should be present " + msg,
-                INITIAL_JOB_COUNT + c_done, IteratorUtils.toList(
-                        jdao.getAll(JobStatus.DONE)).size());
+        assertEquals(c_new + " jobs with status NEW should be present " + msg, c_new,
+                IteratorUtils.toList(jdao.getAll(JobStatus.NEW)).size());
+        assertEquals(c_started + " jobs with status STARTED should be present " + msg, c_started,
+                IteratorUtils.toList(jdao.getAll(JobStatus.STARTED)).size());
+        assertEquals(c_submitted + " jobs with status SUBMITTED should be present " + msg, c_submitted, IteratorUtils
+                .toList(jdao.getAll(JobStatus.SUBMITTED)).size());
+        assertEquals(c_failed + " jobs with status FAILED should be present " + msg, c_failed,
+                IteratorUtils.toList(jdao.getAll(JobStatus.FAILED)).size());
+        assertEquals((INITIAL_JOB_COUNT + c_done) + " jobs with status DONE should be present " + msg,
+                INITIAL_JOB_COUNT + c_done, IteratorUtils.toList(jdao.getAll(JobStatus.DONE)).size());
     }
 
     /**
      * Test getting jobs with various statuses
+     * 
      * @throws Exception
      */
     @Test
@@ -398,90 +351,70 @@ public class JobDAOTester extends DataModelTestCase {
 
     @Test
     public void testPersistenseOfPriority() throws SQLException {
-        //create two jobs with different priority
+        // create two jobs with different priority
         Domain d = Domain.getDefaultDomain("testdomain.dk");
         DomainDAO.getInstance().create(d);
         addHarvestDefinitionToDatabaseWithId(1);
         Job job0 = Job.createJob(Long.valueOf(1), highChan, d.getDefaultConfiguration(), 0);
-        assertEquals("The channel should be named highpriority",
-                "FOCUSED", job0.getChannel());
-        Job job1 = Job.createSnapShotJob(Long.valueOf(1L), lowChan, d
-                .getDefaultConfiguration(), 2000L, -1L,
+        assertEquals("The channel should be named highpriority", "FOCUSED", job0.getChannel());
+        Job job1 = Job.createSnapShotJob(Long.valueOf(1L), lowChan, d.getDefaultConfiguration(), 2000L, -1L,
                 Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 0);
-        assertEquals("The channel should be named " + lowChan.getName(),
-                lowChan.getName(), job1.getChannel());
+        assertEquals("The channel should be named " + lowChan.getName(), lowChan.getName(), job1.getChannel());
 
-        //save them
+        // save them
         JobDAO jobDAO = JobDAO.getInstance();
         jobDAO.create(job0);
         jobDAO.create(job1);
 
-        //read them again
+        // read them again
         Job job2 = jobDAO.read(job0.getJobID());
         Job job3 = jobDAO.read(job1.getJobID());
 
-        //check the priorities
-        assertEquals("Jobs should preserve priority", job0.getChannel(),
-                     job2.getChannel());
+        // check the priorities
+        assertEquals("Jobs should preserve priority", job0.getChannel(), job2.getChannel());
 
-        //check the priorities
-        assertEquals("Jobs should preserve priority", job1.getChannel(),
-                     job3.getChannel());
+        // check the priorities
+        assertEquals("Jobs should preserve priority", job1.getChannel(), job3.getChannel());
     }
 
     /**
      * Verifies the functionality of the #getAllJobIds(JobStatus, JobPriority)
+     * 
      * @throws SQLException
      */
     @Test
     public void testGetAllJobIdsForStatusAndPriority() throws SQLException {
         JobDAO jobDAO = JobDAO.getInstance();
 
-        Iterator<Long> idsForNewHighPriorityJobs =
-            jobDAO.getAllJobIds(JobStatus.NEW, highChan);
-        assertTrue("Initiel size of jobs with jobstatus " + JobStatus.NEW +
-                " and channel HIGHPRIORITY" +
-                " larger than zero", !idsForNewHighPriorityJobs.hasNext());
+        Iterator<Long> idsForNewHighPriorityJobs = jobDAO.getAllJobIds(JobStatus.NEW, highChan);
+        assertTrue("Initiel size of jobs with jobstatus " + JobStatus.NEW + " and channel HIGHPRIORITY"
+                + " larger than zero", !idsForNewHighPriorityJobs.hasNext());
 
-        Iterator<Long> idsForNewLowPriorityJobs =
-            jobDAO.getAllJobIds(JobStatus.NEW, lowChan);
-        assertTrue("Initiel size of jobs with jobstatus " + JobStatus.NEW +
-                " and channel LOWPRIORITY" +
-                " larger than zero", !idsForNewLowPriorityJobs.hasNext());
+        Iterator<Long> idsForNewLowPriorityJobs = jobDAO.getAllJobIds(JobStatus.NEW, lowChan);
+        assertTrue("Initiel size of jobs with jobstatus " + JobStatus.NEW + " and channel LOWPRIORITY"
+                + " larger than zero", !idsForNewLowPriorityJobs.hasNext());
 
         // Create a high and a low priority job
         Domain d = Domain.getDefaultDomain("testdomain.dk");
         DomainDAO.getInstance().create(d);
         addHarvestDefinitionToDatabaseWithId(1);
-        Job jobHighPriorityID = Job.createJob(Long.valueOf(1),
-        		highChan,
-                d.getDefaultConfiguration(), 0);
-        Job jobLowPriorityID = Job.createSnapShotJob(Long.valueOf(1),
-        		lowChan,
-                d.getDefaultConfiguration(), 2000L, -1L,
+        Job jobHighPriorityID = Job.createJob(Long.valueOf(1), highChan, d.getDefaultConfiguration(), 0);
+        Job jobLowPriorityID = Job.createSnapShotJob(Long.valueOf(1), lowChan, d.getDefaultConfiguration(), 2000L, -1L,
                 Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 0);
         jobDAO.create(jobHighPriorityID);
         jobDAO.create(jobLowPriorityID);
 
-        idsForNewHighPriorityJobs =
-            jobDAO.getAllJobIds(JobStatus.NEW, highChan);
-        assertTrue("No job with jobstatus " + JobStatus.NEW +
-                " and channel HIGHPRIORITY" +
-                " returned after creating job",
-                idsForNewHighPriorityJobs.hasNext());
+        idsForNewHighPriorityJobs = jobDAO.getAllJobIds(JobStatus.NEW, highChan);
+        assertTrue("No job with jobstatus " + JobStatus.NEW + " and channel HIGHPRIORITY"
+                + " returned after creating job", idsForNewHighPriorityJobs.hasNext());
         Job jobHighPriority = jobDAO.read(idsForNewHighPriorityJobs.next());
-        assertEquals("Job should have high priority",
-                jobHighPriorityID.getChannel(), jobHighPriority.getChannel());
+        assertEquals("Job should have high priority", jobHighPriorityID.getChannel(), jobHighPriority.getChannel());
 
-        idsForNewLowPriorityJobs =
-            jobDAO.getAllJobIds(JobStatus.NEW, lowChan);
-        assertTrue("No job with jobstatus " + JobStatus.NEW +
-                " and channel LOWPRIORITY" +
-                " returned after creating job", jobDAO.getAllJobIds(JobStatus.NEW,
-                        lowChan).hasNext());
+        idsForNewLowPriorityJobs = jobDAO.getAllJobIds(JobStatus.NEW, lowChan);
+        assertTrue("No job with jobstatus " + JobStatus.NEW + " and channel LOWPRIORITY"
+                + " returned after creating job", jobDAO.getAllJobIds(JobStatus.NEW, lowChan).hasNext());
         Job jobLowPriority = jobDAO.read(idsForNewLowPriorityJobs.next());
-        assertEquals("Job should have low priority",
-                jobLowPriorityID.getChannel(), jobLowPriority.getChannel());
+        assertEquals("Job should have low priority", jobLowPriorityID.getChannel(), jobLowPriority.getChannel());
     }
 
     private void setJobStatus(List<Job> jobs, int i, JobStatus status) {
@@ -500,29 +433,22 @@ public class JobDAOTester extends DataModelTestCase {
         JobDAO dao = JobDAO.getInstance();
         dao.create(j);
         Job j2 = dao.read(j.getJobID());
-        assertNull("Should have no harvest error by default",
-                j2.getHarvestErrors());
-        assertNull("Should have no harvest error details by default",
-                j2.getHarvestErrorDetails());
-        assertNull("Should have no upload error by default",
-                j2.getUploadErrors());
-        assertNull("Should have no upload error details by default",
-                j2.getUploadErrorDetails());
+        assertNull("Should have no harvest error by default", j2.getHarvestErrors());
+        assertNull("Should have no harvest error details by default", j2.getHarvestErrorDetails());
+        assertNull("Should have no upload error by default", j2.getUploadErrors());
+        assertNull("Should have no upload error details by default", j2.getUploadErrorDetails());
         j2.appendHarvestErrors("str1");
         j2.appendHarvestErrorDetails("str2");
         j2.appendUploadErrors("str3");
         j2.appendUploadErrorDetails("str4");
         dao.update(j2);
         Job j3 = dao.read(j2.getJobID());
-        assertEquals("Should have new harvest error string",
-                     "str1", j3.getHarvestErrors());
-        assertEquals("Should have new harvest error detail string",
-                     "str2", j3.getHarvestErrorDetails());
-        assertEquals("Should have new upload error string",
-                     "str3", j3.getUploadErrors());
-        assertEquals("Should have new upload error detail string",
-                     "str4", j3.getUploadErrorDetails());
+        assertEquals("Should have new harvest error string", "str1", j3.getHarvestErrors());
+        assertEquals("Should have new harvest error detail string", "str2", j3.getHarvestErrorDetails());
+        assertEquals("Should have new upload error string", "str3", j3.getUploadErrors());
+        assertEquals("Should have new upload error detail string", "str4", j3.getUploadErrorDetails());
     }
+
     /**
      * Reset the job dao.
      */
@@ -530,7 +456,9 @@ public class JobDAOTester extends DataModelTestCase {
         JobDAO.reset();
     }
 
-    /** Test that we can get reasonable status info about jobs.
+    /**
+     * Test that we can get reasonable status info about jobs.
+     * 
      * @throws Exception
      *
      * FIXME Fails in Hudson
@@ -544,8 +472,7 @@ public class JobDAOTester extends DataModelTestCase {
         HarvestDefinitionDAO.getInstance();
         JobDAO dao = JobDAO.getInstance();
         Job j = dao.read(1L);
-        List<JobStatusInfo> infos =
-        	dao.getStatusInfo(new HarvestStatusQuery()).getJobStatusInfo();
+        List<JobStatusInfo> infos = dao.getStatusInfo(new HarvestStatusQuery()).getJobStatusInfo();
         assertEquals("Should get info on one job", 1, infos.size());
         checkInfoCorrect(j, infos.get(0));
 
@@ -554,8 +481,7 @@ public class JobDAOTester extends DataModelTestCase {
         d.addConfiguration(dc);
         d.setDefaultConfiguration(dc.getName());
         ddao.create(d);
-        Job j2 = new Job(43L, dc, highChan, 0L, -1L,
-        		Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 3);
+        Job j2 = new Job(43L, dc, highChan, 0L, -1L, Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 3);
         dao.create(j2);
         j2.appendUploadErrors("Bad stuff");
         j2.appendHarvestErrors("Good harvest");
@@ -564,60 +490,52 @@ public class JobDAOTester extends DataModelTestCase {
 
         infos = dao.getStatusInfo(new HarvestStatusQuery()).getJobStatusInfo();
         assertEquals("Should get info on two jobs", 2, infos.size());
-        Map<JobStatus, JobStatusInfo> jobStatusSet =
-            new HashMap<JobStatus, JobStatusInfo>();
-        for (JobStatusInfo info:infos) {
+        Map<JobStatus, JobStatusInfo> jobStatusSet = new HashMap<JobStatus, JobStatusInfo>();
+        for (JobStatusInfo info : infos) {
             jobStatusSet.put(info.getStatus(), info);
         }
         assertTrue("No new job found", jobStatusSet.containsKey(JobStatus.NEW));
         checkInfoCorrect(j2, jobStatusSet.get(JobStatus.NEW));
-        assertTrue("No done job found",
-                jobStatusSet.containsKey(JobStatus.DONE));
+        assertTrue("No done job found", jobStatusSet.containsKey(JobStatus.DONE));
         checkInfoCorrect(j, jobStatusSet.get(JobStatus.DONE));
 
         Map<String, String[]> params = new HashMap<String, String[]>();
         params.put(HarvestStatusQuery.UI_FIELD.JOB_ID_ORDER.name(),
-                new String[]{HarvestStatusQuery.SORT_ORDER.DESC.name()});
+                new String[] {HarvestStatusQuery.SORT_ORDER.DESC.name()});
         HarvestStatusQuery query = HarvestStatusTester.getTestQuery(params);
         infos = dao.getStatusInfo(query).getJobStatusInfo();
         assertEquals("Query returned wrong number of jobs", 2, infos.size());
         jobStatusSet.clear();
-        for (JobStatusInfo info:infos) {
+        for (JobStatusInfo info : infos) {
             jobStatusSet.put(info.getStatus(), info);
         }
         assertTrue("No new job found", jobStatusSet.containsKey(JobStatus.NEW));
         checkInfoCorrect(j, jobStatusSet.get(JobStatus.NEW));
-        assertTrue("No done job found",
-                jobStatusSet.containsKey(JobStatus.DONE));
+        assertTrue("No done job found", jobStatusSet.containsKey(JobStatus.DONE));
         checkInfoCorrect(j, jobStatusSet.get(JobStatus.DONE));
 
         infos = dao.getStatusInfo(JobStatus.DONE);
-        assertEquals("Should get info on one job with status DONE", 1,
-                infos.size());
+        assertEquals("Should get info on one job with status DONE", 1, infos.size());
 
         params.clear();
-        params.put(HarvestStatusQuery.UI_FIELD.JOB_STATUS.name(),
-                new String[]{JobStatus.DONE.name()});
+        params.put(HarvestStatusQuery.UI_FIELD.JOB_STATUS.name(), new String[] {JobStatus.DONE.name()});
         query = HarvestStatusTester.getTestQuery(params);
         infos = dao.getStatusInfo(query).getJobStatusInfo();
-        assertEquals("Should get info on one job with status DONE (ascending)",
-                1, infos.size());
+        assertEquals("Should get info on one job with status DONE (ascending)", 1, infos.size());
         params.put(HarvestStatusQuery.UI_FIELD.JOB_ID_ORDER.name(),
-                new String[]{HarvestStatusQuery.SORT_ORDER.DESC.name()});
+                new String[] {HarvestStatusQuery.SORT_ORDER.DESC.name()});
         query = HarvestStatusTester.getTestQuery(params);
-        infos= dao.getStatusInfo(query).getJobStatusInfo();
-        assertEquals("Should get info on one job with status DONE (descending)",
-                1, infos.size());
+        infos = dao.getStatusInfo(query).getJobStatusInfo();
+        assertEquals("Should get info on one job with status DONE (descending)", 1, infos.size());
         infos = dao.getStatusInfo(JobStatus.NEW);
-        assertEquals("Should get info on one job with status NEW", 1,
-                infos.size());
+        assertEquals("Should get info on one job with status NEW", 1, infos.size());
         infos = dao.getStatusInfo(JobStatus.FAILED);
-        assertEquals("Should get info on no job with status FAILED", 0,
-                infos.size());
+        assertEquals("Should get info on no job with status FAILED", 0, infos.size());
     }
 
-    /** Test that we can get reasonable status info about jobs from specific
-     * harvest runs.
+    /**
+     * Test that we can get reasonable status info about jobs from specific harvest runs.
+     * 
      * @throws Exception
      */
     @Test
@@ -630,34 +548,27 @@ public class JobDAOTester extends DataModelTestCase {
         d.addConfiguration(dc);
         d.setDefaultConfiguration(dc.getName());
         ddao.create(d);
-        Job j2 = new Job(43L, dc, highChan, 0L, -1L,
-        		Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 3);
+        Job j2 = new Job(43L, dc, highChan, 0L, -1L, Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 3);
         dao.create(j2);
 
-        Job j3 = new Job(43L, dc, highChan, 0L, -1L,
-        		Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 4);
+        Job j3 = new Job(43L, dc, highChan, 0L, -1L, Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 4);
         dao.create(j3);
 
-        Job j4 = new Job(43L, dc, highChan, 0L, -1L,
-        		Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 4);
+        Job j4 = new Job(43L, dc, highChan, 0L, -1L, Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 4);
         dao.create(j4);
 
-        List<JobStatusInfo> infos = dao.getStatusInfo(
-        		new HarvestStatusQuery(43L, 0)).getJobStatusInfo();
+        List<JobStatusInfo> infos = dao.getStatusInfo(new HarvestStatusQuery(43L, 0)).getJobStatusInfo();
         assertEquals("Should get info on no jobs", 0, infos.size());
 
-        infos = dao.getStatusInfo(
-        		new HarvestStatusQuery(117L, 23)).getJobStatusInfo();
+        infos = dao.getStatusInfo(new HarvestStatusQuery(117L, 23)).getJobStatusInfo();
         assertEquals("Should get info on no jobs", 0, infos.size());
 
-        infos = dao.getStatusInfo(
-        		new HarvestStatusQuery(43L, 3)).getJobStatusInfo();
+        infos = dao.getStatusInfo(new HarvestStatusQuery(43L, 3)).getJobStatusInfo();
         assertEquals("Should get info on one job", 1, infos.size());
         JobStatusInfo info = infos.get(0);
         checkInfoCorrect(j2, info);
 
-        infos = dao.getStatusInfo(
-        		new HarvestStatusQuery(43L, 4)).getJobStatusInfo();
+        infos = dao.getStatusInfo(new HarvestStatusQuery(43L, 4)).getJobStatusInfo();
         assertEquals("Should get info on two jobs", 2, infos.size());
         info = infos.get(0);
         checkInfoCorrect(j3, info);
@@ -667,31 +578,20 @@ public class JobDAOTester extends DataModelTestCase {
 
     private void checkInfoCorrect(Job j, JobStatusInfo info) {
         HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
-        assertEquals("Info should be for job " + j.getJobID(),
-                     j.getJobID(), j.getJobID());
-        assertEquals("Status for job " + j.getJobID(),
-                     j.getStatus(), info.getStatus());
-        assertEquals("HarvestID for job " + j.getJobID(),
-                     (long)j.getOrigHarvestDefinitionID(),
-                     info.getHarvestDefinitionID());
-        assertEquals("HarvestNum for job " + j.getJobID(),
-                     j.getHarvestNum(), info.getHarvestNum());
-        assertEquals("HarvestName for job " + j.getJobID(),
-                     hddao.read(j.getOrigHarvestDefinitionID()).getName(),
-                     info.getHarvestDefinition());
-        assertEquals("HarvestError for job " + j.getJobID(),
-                     j.getHarvestErrors(), info.getHarvestErrors());
-        assertEquals("UploadError for job " + j.getJobID(),
-                     j.getUploadErrors(), info.getUploadErrors());
-        assertEquals("OrderXML name for job  " + j.getJobID(),
-                     j.getOrderXMLName(), info.getOrderXMLname());
-        assertEquals("Domain count for job " + j.getJobID(),
-                     j.getDomainConfigurationMap().size(),
-                     info.getConfigCount());
-        assertEquals("Start date for job " + j.getJobID(),
-                     j.getActualStart(), info.getStartDate());
-        assertEquals("End date for job " + j.getJobID(),
-                     j.getActualStop(), info.getEndDate());
+        assertEquals("Info should be for job " + j.getJobID(), j.getJobID(), j.getJobID());
+        assertEquals("Status for job " + j.getJobID(), j.getStatus(), info.getStatus());
+        assertEquals("HarvestID for job " + j.getJobID(), (long) j.getOrigHarvestDefinitionID(),
+                info.getHarvestDefinitionID());
+        assertEquals("HarvestNum for job " + j.getJobID(), j.getHarvestNum(), info.getHarvestNum());
+        assertEquals("HarvestName for job " + j.getJobID(), hddao.read(j.getOrigHarvestDefinitionID()).getName(),
+                info.getHarvestDefinition());
+        assertEquals("HarvestError for job " + j.getJobID(), j.getHarvestErrors(), info.getHarvestErrors());
+        assertEquals("UploadError for job " + j.getJobID(), j.getUploadErrors(), info.getUploadErrors());
+        assertEquals("OrderXML name for job  " + j.getJobID(), j.getOrderXMLName(), info.getOrderXMLname());
+        assertEquals("Domain count for job " + j.getJobID(), j.getDomainConfigurationMap().size(),
+                info.getConfigCount());
+        assertEquals("Start date for job " + j.getJobID(), j.getActualStart(), info.getStartDate());
+        assertEquals("End date for job " + j.getJobID(), j.getActualStop(), info.getEndDate());
     }
 
     /** Check that start and end dates are created and stored correctly. */
@@ -702,31 +602,26 @@ public class JobDAOTester extends DataModelTestCase {
         Domain d = ddao.read("netarkivet.dk");
         DomainConfiguration dc = d.getDefaultConfiguration();
         Date startDate = new Date();
-        Job newJob1 = new Job(42L, dc, highChan, 10L, -1L,
-        		Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 2);
+        Job newJob1 = new Job(42L, dc, highChan, 10L, -1L, Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 2);
         newJob1.setStatus(JobStatus.SUBMITTED);
         jdao.create(newJob1);
-        assertNull("Should have null start date at start, but was "
-                   + newJob1.getActualStart(), newJob1.getActualStart());
-        assertNull("Should have null stop date at start, but was "
-                   + newJob1.getActualStop(), newJob1.getActualStop());
+        assertNull("Should have null start date at start, but was " + newJob1.getActualStart(),
+                newJob1.getActualStart());
+        assertNull("Should have null stop date at start, but was " + newJob1.getActualStop(), newJob1.getActualStop());
         newJob1.setStatus(JobStatus.STARTED);
-        assertNotNull("Should have non-null start date after starting",
-                      newJob1.getActualStart());
+        assertNotNull("Should have non-null start date after starting", newJob1.getActualStart());
         assertFalse("Should have updated start date after starting (>= before)",
-                    startDate.after(newJob1.getActualStart()));
+                startDate.after(newJob1.getActualStart()));
         assertFalse("Should have updated start date after starting (<= now)",
-                    new Date().before(newJob1.getActualStart()));
-        assertNull("Should have null stop date after starting, but was "
-                   + newJob1.getActualStop(), newJob1.getActualStop());
+                new Date().before(newJob1.getActualStart()));
+        assertNull("Should have null stop date after starting, but was " + newJob1.getActualStop(),
+                newJob1.getActualStop());
         jdao.update(newJob1);
         Job newJob2 = jdao.read(newJob1.getJobID());
-        assertNotNull("Should have non-null start date after rereading",
-                      newJob2.getActualStart());
-        assertEquals("Should have same start date after rereading",
-                     newJob1.getActualStart(), newJob2.getActualStart());
-        assertNull("Should have null stop date after rereading, but was "
-                   + newJob2.getActualStop(),  newJob2.getActualStop());
+        assertNotNull("Should have non-null start date after rereading", newJob2.getActualStart());
+        assertEquals("Should have same start date after rereading", newJob1.getActualStart(), newJob2.getActualStart());
+        assertNull("Should have null stop date after rereading, but was " + newJob2.getActualStop(),
+                newJob2.getActualStop());
         try {
             // Make sure new time is different
             Thread.sleep(1);
@@ -735,26 +630,19 @@ public class JobDAOTester extends DataModelTestCase {
         }
         Date stopDate = new Date();
         newJob2.setStatus(JobStatus.DONE);
-        assertNotNull("Should have non-null start date after finishing",
-                      newJob2.getActualStart());
-        assertEquals("Should have same start date after rereading",
-                     newJob1.getActualStart(), newJob2.getActualStart());
-        assertNotNull("Should have non-null stop date after finishing",
-                      newJob2.getActualStop());
+        assertNotNull("Should have non-null start date after finishing", newJob2.getActualStart());
+        assertEquals("Should have same start date after rereading", newJob1.getActualStart(), newJob2.getActualStart());
+        assertNotNull("Should have non-null stop date after finishing", newJob2.getActualStop());
         assertFalse("Should have updated stop date after finishing (>= before)",
-                    stopDate.after(newJob2.getActualStop()));
+                stopDate.after(newJob2.getActualStop()));
         assertFalse("Should have updated stop date after finishing (<= now)",
-                    new Date().before(newJob2.getActualStop()));
+                new Date().before(newJob2.getActualStop()));
         jdao.update(newJob2);
         Job newJob3 = jdao.read(newJob2.getJobID());
-        assertNotNull("Should have non-null start date after rerereading",
-                      newJob3.getActualStart());
-        assertEquals("Should have same start date after rereading",
-                     newJob2.getActualStart(), newJob3.getActualStart());
-        assertNotNull("Should have non-null stop date after rerereading",
-                      newJob3.getActualStop());
-        assertEquals("Should have same stop date after rereading",
-                     newJob2.getActualStop(), newJob3.getActualStop());
+        assertNotNull("Should have non-null start date after rerereading", newJob3.getActualStart());
+        assertEquals("Should have same start date after rereading", newJob2.getActualStart(), newJob3.getActualStart());
+        assertNotNull("Should have non-null stop date after rerereading", newJob3.getActualStop());
+        assertEquals("Should have same stop date after rereading", newJob2.getActualStop(), newJob3.getActualStop());
         // Also check that you can't mess with the dates.
         try {
             // Make sure new time is different
@@ -766,49 +654,38 @@ public class JobDAOTester extends DataModelTestCase {
         // It is now possible to set start date to after end date '
         // without any exceptions being thrown. However, a notification is
         // emitted.
-        Settings.set(CommonSettings.NOTIFICATIONS_CLASS,
-                RememberNotifications.class.getName());
+        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
         RememberNotifications.resetSingleton();
 
         try {
             newJob3.setActualStart(new Date());
-            assertTrue("Setting start date to after end date should result " +
-            		"in notification",
+            assertTrue("Setting start date to after end date should result " + "in notification",
                     RememberNotifications.getInstance().message.length() > 0);
         } catch (ArgumentNotValid e) {
-            fail ("Setting start date to after end date should not throw " +
-            		"exception: " + e);
+            fail("Setting start date to after end date should not throw " + "exception: " + e);
         }
         RememberNotifications.resetSingleton();
         newJob3.setActualStart(stopDate);
 
         try {
             newJob3.setActualStop(startDate);
-            assertTrue("Setting stop date to before end date should result in" +
-            		" notification",
+            assertTrue("Setting stop date to before end date should result in" + " notification",
                     RememberNotifications.getInstance().message.length() > 0);
         } catch (ArgumentNotValid e) {
-            fail ("Setting stop date to before end date should not throw " +
-            		"exception: " + e);
+            fail("Setting stop date to before end date should not throw " + "exception: " + e);
         }
     }
 
-    /** Tests the retrieval of jobs to use for duplicate reduction.
+    /**
+     * Tests the retrieval of jobs to use for duplicate reduction.
      *
      * The following cases are tested:
      *
-     * Unknown job ID.
-     * Partial harvests with no previous harvest is present should return empty
-     * list.
-     * Partial harvests with two previous harvests should return jobs from first
-     * harvest.
-     * Full harvest with no previous full harvests should return empty list.
-     * Full harvest not based on anything but with previous chain should return
-     * that.
-     * Full harvest based on something but with no previous chain should return
-     * that.
-     * Full harvest based on something AND with previous chains should return
-     * that.
+     * Unknown job ID. Partial harvests with no previous harvest is present should return empty list. Partial harvests
+     * with two previous harvests should return jobs from first harvest. Full harvest with no previous full harvests
+     * should return empty list. Full harvest not based on anything but with previous chain should return that. Full
+     * harvest based on something but with no previous chain should return that. Full harvest based on something AND
+     * with previous chains should return that.
      *
      *
      * @throws Exception
@@ -823,89 +700,70 @@ public class JobDAOTester extends DataModelTestCase {
             dao.getJobIDsForDuplicateReduction(9999L);
             fail("Expected UnknownID on job ID not in database");
         } catch (UnknownID e) {
-            //expected
+            // expected
         }
 
         List<Long> result;
         List<Long> expected;
 
         result = dao.getJobIDsForDuplicateReduction(2L);
-        assertEquals("Should get empty list on no previous harvest",
-                     0, result.size());
+        assertEquals("Should get empty list on no previous harvest", 0, result.size());
 
         result = dao.getJobIDsForDuplicateReduction(7L);
-        expected = Arrays.asList(new Long[]{4L, 5L});
+        expected = Arrays.asList(new Long[] {4L, 5L});
         Collections.sort(result);
         Collections.sort(expected);
-        assertEquals("Should get previous harvests' job ids in list",
-                     expected, result);
+        assertEquals("Should get previous harvests' job ids in list", expected, result);
 
         result = dao.getJobIDsForDuplicateReduction(8L);
-        assertEquals("Should get empty list on no previous harvest",
-                     0, result.size());
+        assertEquals("Should get empty list on no previous harvest", 0, result.size());
 
         result = dao.getJobIDsForDuplicateReduction(10L);
-        expected = Arrays.asList(new Long[]{8L, 9L});
+        expected = Arrays.asList(new Long[] {8L, 9L});
         Collections.sort(result);
         Collections.sort(expected);
-        assertEquals("Should get originating harvests' job ids in list",
-                     expected, result);
+        assertEquals("Should get originating harvests' job ids in list", expected, result);
 
         result = dao.getJobIDsForDuplicateReduction(12L);
-        expected = Arrays.asList(new Long[]{8L, 9L, 10L, 11L});
+        expected = Arrays.asList(new Long[] {8L, 9L, 10L, 11L});
         Collections.sort(result);
         Collections.sort(expected);
-        assertEquals("Should get previous full harvests' job ids in list",
-                     expected, result);
+        assertEquals("Should get previous full harvests' job ids in list", expected, result);
 
         result = dao.getJobIDsForDuplicateReduction(14L);
-        expected = Arrays.asList(new Long[]{8L, 9L, 10L, 11L, 12L, 13L});
+        expected = Arrays.asList(new Long[] {8L, 9L, 10L, 11L, 12L, 13L});
         Collections.sort(result);
         Collections.sort(expected);
-        assertEquals("Should get previous full harvests' job ids in list",
-                     expected, result);
+        assertEquals("Should get previous full harvests' job ids in list", expected, result);
     }
 
     private void compareCopiedJob(Job oldJob1, Job newJob1, Long newID) {
-        assertEquals("Should have same domain count",
-                oldJob1.getCountDomains(), newJob1.getCountDomains());
-        assertEquals("Should have same domain config map",
-                oldJob1.getDomainConfigurationMap(),
+        assertEquals("Should have same domain count", oldJob1.getCountDomains(), newJob1.getCountDomains());
+        assertEquals("Should have same domain config map", oldJob1.getDomainConfigurationMap(),
                 newJob1.getDomainConfigurationMap());
-        assertEquals("Should have same forceMaxObjects",
-                oldJob1.getForceMaxObjectsPerDomain(),
+        assertEquals("Should have same forceMaxObjects", oldJob1.getForceMaxObjectsPerDomain(),
                 newJob1.getForceMaxObjectsPerDomain());
-        assertEquals("Should have same alias info",
-                oldJob1.getJobAliasInfo(), newJob1.getJobAliasInfo());
-        assertEquals("Should have same max bytes",
-                oldJob1.getMaxBytesPerDomain(), newJob1.getMaxBytesPerDomain());
-        assertEquals("Should have same max objects",
-                oldJob1.getMaxObjectsPerDomain(),
-                newJob1.getMaxObjectsPerDomain());
-        assertEquals("Should have same order.xml",
-                oldJob1.getOrderXMLdoc().asXML(),
-                newJob1.getOrderXMLdoc().asXML());
-        assertEquals("Should have same order xml name",
-                oldJob1.getOrderXMLName(), newJob1.getOrderXMLName());
-        assertEquals("Should have same original harvest id",
-                oldJob1.getOrigHarvestDefinitionID(),
+        assertEquals("Should have same alias info", oldJob1.getJobAliasInfo(), newJob1.getJobAliasInfo());
+        assertEquals("Should have same max bytes", oldJob1.getMaxBytesPerDomain(), newJob1.getMaxBytesPerDomain());
+        assertEquals("Should have same max objects", oldJob1.getMaxObjectsPerDomain(), newJob1.getMaxObjectsPerDomain());
+        assertEquals("Should have same order.xml", oldJob1.getOrderXMLdoc().asXML(), newJob1.getOrderXMLdoc().asXML());
+        assertEquals("Should have same order xml name", oldJob1.getOrderXMLName(), newJob1.getOrderXMLName());
+        assertEquals("Should have same original harvest id", oldJob1.getOrigHarvestDefinitionID(),
                 newJob1.getOrigHarvestDefinitionID());
-        assertEquals("Should have same channel",
-                oldJob1.getChannel(), newJob1.getChannel());
-        assertEquals("Should have same seedlist",
-                oldJob1.getSeedListAsString(), newJob1.getSeedListAsString());
-        assertArrayEquals("Should have same settingsxml docs",
-                oldJob1.getSettingsXMLdocs(), newJob1.getSettingsXMLdocs());
-        assertArrayEquals("Should have same settingsxml files",
-                oldJob1.getSettingsXMLfiles(), newJob1.getSettingsXMLfiles());
-        assertEquals("Should have new status",
-                     JobStatus.NEW, newJob1.getStatus());
+        assertEquals("Should have same channel", oldJob1.getChannel(), newJob1.getChannel());
+        assertEquals("Should have same seedlist", oldJob1.getSeedListAsString(), newJob1.getSeedListAsString());
+        assertArrayEquals("Should have same settingsxml docs", oldJob1.getSettingsXMLdocs(),
+                newJob1.getSettingsXMLdocs());
+        assertArrayEquals("Should have same settingsxml files", oldJob1.getSettingsXMLfiles(),
+                newJob1.getSettingsXMLfiles());
+        assertEquals("Should have new status", JobStatus.NEW, newJob1.getStatus());
         // TODO changed from 2L to 1L
-        assertEquals("Should have new edition",
-                1L, newJob1.getEdition());
+        assertEquals("Should have new edition", 1L, newJob1.getEdition());
         assertEquals("Should have new ID", newID, newJob1.getJobID());
-        /* assertNotSame("The harvestnamePrefixes should not be the same", oldJob1.getHarvestFilenamePrefix(),
-                newJob1.getHarvestFilenamePrefix()); */
+        /*
+         * assertNotSame("The harvestnamePrefixes should not be the same", oldJob1.getHarvestFilenamePrefix(),
+         * newJob1.getHarvestFilenamePrefix());
+         */
     }
 
     public static void changeStatus(long jobID, JobStatus newStatus) {
@@ -917,8 +775,7 @@ public class JobDAOTester extends DataModelTestCase {
             s.setLong(2, jobID);
             s.executeUpdate();
         } catch (SQLException e) {
-            String message = "SQL error changing job state for job with id="
-                + jobID + " in database";
+            String message = "SQL error changing job state for job with id=" + jobID + " in database";
             throw new IOFailure(message, e);
         } finally {
             HarvestDBConnection.release(c);
@@ -926,19 +783,17 @@ public class JobDAOTester extends DataModelTestCase {
     }
 
     /**
-     * Tests method in JobDBDAO.rescheduleJob
-     * Now verifies, that the new job has startdate and enddate set to null.
+     * Tests method in JobDBDAO.rescheduleJob Now verifies, that the new job has startdate and enddate set to null.
      */
     @Test
     public void testRescheduleJob() {
-     // Assume 1st job has id=2, and Last job has id 15
+        // Assume 1st job has id=2, and Last job has id 15
         createTestJobs(2L, 15L);
         JobDAO dao = JobDAO.getInstance();
 
         for (long i = 1; i < 16; i++) {
             Job oldJob = dao.read(i);
-            if (oldJob.getStatus() != JobStatus.SUBMITTED &&
-                    oldJob.getStatus() != JobStatus.FAILED) {
+            if (oldJob.getStatus() != JobStatus.SUBMITTED && oldJob.getStatus() != JobStatus.FAILED) {
                 try {
                     dao.rescheduleJob(i);
                     fail("Should not have been able to resubmit job " + oldJob);
@@ -949,19 +804,15 @@ public class JobDAOTester extends DataModelTestCase {
         }
 
         for (long i = 1; i < 16; i++) {
-            changeStatus(i, i % 2 == 0 ? JobStatus.SUBMITTED :
-                JobStatus.FAILED);
+            changeStatus(i, i % 2 == 0 ? JobStatus.SUBMITTED : JobStatus.FAILED);
             long newJobID = dao.rescheduleJob(i);
             Job oldJob = dao.read(i);
             Job newJob = dao.read(newJobID);
-            long newID = i+15;
+            long newID = i + 15;
             compareCopiedJob(oldJob, newJob, newID);
-            assertEquals("Old job should have resubmitted status",
-                         JobStatus.RESUBMITTED, oldJob.getStatus());
-            assertTrue("New job must have null startdate",
-                    newJob.getActualStart() == null);
-            assertTrue("New job must have null enddate",
-                    newJob.getActualStop() == null);
+            assertEquals("Old job should have resubmitted status", JobStatus.RESUBMITTED, oldJob.getStatus());
+            assertTrue("New job must have null startdate", newJob.getActualStart() == null);
+            assertTrue("New job must have null enddate", newJob.getActualStop() == null);
         }
 
         try {
@@ -971,6 +822,7 @@ public class JobDAOTester extends DataModelTestCase {
             // expected
         }
     }
+
     public static void testGetJobStatusFromId() {
         JobDAO dao = JobDAO.getInstance();
         Iterator<Long> iterator = dao.getAllJobIds();
@@ -978,10 +830,8 @@ public class JobDAOTester extends DataModelTestCase {
             Long id = iterator.next();
             Job j = dao.read(id);
             JobStatus status = dao.getJobStatus(id);
-            assertTrue("The two states should be equal",
-                    status.equals(j.getStatus()));
+            assertTrue("The two states should be equal", status.equals(j.getStatus()));
         }
     }
-
 
 }

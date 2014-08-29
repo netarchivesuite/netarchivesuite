@@ -27,7 +27,6 @@ import dk.netarkivet.common.distribute.Channels;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
-
 public class IndexReadyMessageTester {
 
     @Test
@@ -37,11 +36,10 @@ public class IndexReadyMessageTester {
         IndexReadyMessage irm = new IndexReadyMessage(42L, true, to, replyTo);
         assertTrue(42L == irm.getHarvestId());
         assertTrue(true == irm.getIndexOK());
-        
+
         irm = new IndexReadyMessage(43L, false, to, replyTo);
         assertTrue(43L == irm.getHarvestId());
         assertTrue(false == irm.getIndexOK());
-        
-        
+
     }
 }

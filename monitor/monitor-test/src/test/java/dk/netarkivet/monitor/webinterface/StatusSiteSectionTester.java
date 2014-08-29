@@ -37,5 +37,5 @@ public class StatusSiteSectionTester extends TestCase {
             fail("Should not throw exception: " + e);
         }
     }
-    
+
 }

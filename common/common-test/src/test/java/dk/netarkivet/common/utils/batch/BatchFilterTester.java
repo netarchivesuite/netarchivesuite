@@ -61,9 +61,8 @@ public class BatchFilterTester {
     }
 
     /**
-     * Test the
-     * dk.netarkivet.common.utils.arc.BatchFilter.getMimetypeBatchFilter Test
-     * the validity of the given mimetype
+     * Test the dk.netarkivet.common.utils.arc.BatchFilter.getMimetypeBatchFilter Test the validity of the given
+     * mimetype
      */
     @Test
     public void testGetMimetype() {

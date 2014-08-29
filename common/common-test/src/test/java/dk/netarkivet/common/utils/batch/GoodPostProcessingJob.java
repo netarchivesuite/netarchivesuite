@@ -34,7 +34,7 @@ import java.util.List;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
 
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({"serial"})
 public class GoodPostProcessingJob extends FileBatchJob {
 
     @Override
@@ -54,10 +54,10 @@ public class GoodPostProcessingJob extends FileBatchJob {
         } catch (Exception e) {
             return false;
         }
-        
+
         return true;
     }
-    
+
     @Override
     public boolean postProcess(InputStream input, OutputStream output) {
         Log log = LogFactory.getLog(this.getClass());
@@ -69,18 +69,18 @@ public class GoodPostProcessingJob extends FileBatchJob {
             // read all the filenames.
             BufferedReader br = new BufferedReader(new InputStreamReader(input));
             String line;
-            while((line = br.readLine()) != null) {
+            while ((line = br.readLine()) != null) {
                 filenames.add(line);
             }
-            
+
             log.info("Sorting the filenames");
             // sort and print to output.
             Collections.sort(filenames);
-            for(String file : filenames) {
+            for (String file : filenames) {
                 output.write(file.getBytes());
                 output.write("\n".getBytes());
             }
-            
+
             return true;
         } catch (Exception e) {
             log.warn(e.getMessage());

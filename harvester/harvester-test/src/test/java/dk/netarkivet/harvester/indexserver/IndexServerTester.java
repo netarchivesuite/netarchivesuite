@@ -34,15 +34,14 @@ import org.junit.Before;
 import org.junit.After;
 import org.junit.Test;
 
-
 public class IndexServerTester {
-    
+
     @Before
     public void setUp() {
         ChannelsTesterHelper.resetChannels();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
     }
-    
+
     @After
     public void tearDown() {
         JMSConnectionMockupMQ.clearTestQueues();
@@ -60,9 +59,9 @@ public class IndexServerTester {
         PreserveStdStreams pss = new PreserveStdStreams(true);
         pse.setUp();
         pss.setUp();
-        
+
         try {
-            IndexServerApplication.main(new String[]{"ERROR"});
+            IndexServerApplication.main(new String[] {"ERROR"});
             fail("It should throw an exception ");
         } catch (SecurityException e) {
             // expected !
@@ -70,17 +69,17 @@ public class IndexServerTester {
 
         pss.tearDown();
         pse.tearDown();
-        
+
         assertEquals("Should give exit code 1", 1, pse.getExitValue());
-        assertTrue("Should tell that no arguments are expected.", 
+        assertTrue("Should tell that no arguments are expected.",
                 pss.getOut().contains("This application takes no arguments"));
     }
-        
-//    /**
-//     * Test the basic class.
-//     * TODO IT DOES SOMETHING SO THE PREVIOUS UNIT TESTS DOES NOT WORK 
-//     */
-//    public void testIndexServer() {
-//        IndexServer.getInstance().cleanup();
-//    }
+
+    // /**
+    // * Test the basic class.
+    // * TODO IT DOES SOMETHING SO THE PREVIOUS UNIT TESTS DOES NOT WORK
+    // */
+    // public void testIndexServer() {
+    // IndexServer.getInstance().cleanup();
+    // }
 }

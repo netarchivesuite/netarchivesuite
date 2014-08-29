@@ -36,9 +36,8 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- * Unit-test for the GUIWebServer class when the DefinitionsSiteSection
- * is loaded.
- * FIXME Some of these tests can be merged into the GUIWebServerTester.
+ * Unit-test for the GUIWebServer class when the DefinitionsSiteSection is loaded. FIXME Some of these tests can be
+ * merged into the GUIWebServerTester.
  */
 public class HarvestDefinitionGUITester extends DataModelTestCase {
     private GUIWebServer gui;
@@ -51,12 +50,8 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
         super.setUp();
         // Add a DefinitionsSiteSection to the list of Sitesections being loaded
         // when GUIWebServer starts.
-        Settings.set(
-                CommonSettings.SITESECTION_WEBAPPLICATION,
-                TestInfo.HARVESTDEFINITION_JSP_DIR);
-        Settings.set(
-                CommonSettings.SITESECTION_CLASS,
-                TestInfo.HARVESTDEFINITION_SITESECTIONCLASS);
+        Settings.set(CommonSettings.SITESECTION_WEBAPPLICATION, TestInfo.HARVESTDEFINITION_JSP_DIR);
+        Settings.set(CommonSettings.SITESECTION_CLASS, TestInfo.HARVESTDEFINITION_SITESECTIONCLASS);
 
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
     }
@@ -73,12 +68,11 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
     @Test
     public void testSettingsWebappFault() {
         try {
-            Settings.set(CommonSettings.SITESECTION_WEBAPPLICATION,
-                         "not_a_webapp");
+            Settings.set(CommonSettings.SITESECTION_WEBAPPLICATION, "not_a_webapp");
             gui = GUIWebServer.getInstance();
             fail("Should throw an error on invalid webapp");
         } catch (IOFailure e) {
-            //expected
+            // expected
         }
     }
 
@@ -89,7 +83,7 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
             gui = GUIWebServer.getInstance();
             fail("Should throw an error on invalid port number");
         } catch (NumberFormatException e) {
-            //expected
+            // expected
         }
     }
 
@@ -100,31 +94,28 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
             gui = GUIWebServer.getInstance();
             fail("Should throw an error on invalid port number");
         } catch (IOFailure e) {
-            //expected
+            // expected
         }
     }
 
     /**
-     * Test, that GUIWebServer.getInstance throws UnknownID exception
-     * if templates tables does not contain the template with name
-     * Settings.DOMAIN_DEFAULT_ORDERXML
-     * This tests the partial solution of bug 916
+     * Test, that GUIWebServer.getInstance throws UnknownID exception if templates tables does not contain the template
+     * with name Settings.DOMAIN_DEFAULT_ORDERXML This tests the partial solution of bug 916
+     * 
      * @throws InterruptedException
      */
     @Test
-     public void testExitWithoutDefaultTemplateInTemplatesTable() throws InterruptedException {
-         String[] webApps = Settings.getAll(
-                 CommonSettings.SITESECTION_WEBAPPLICATION);
-         boolean harvestdefinitionFound = false;
-         for (String webapp : webApps) {
-             if (webapp.contains("HarvestDefinition")) {
-                 harvestdefinitionFound = true;
-                 break;
-             }
-         }
-         assertTrue("Test-requirement not met: "
-                 + "DefinitionsSiteSection not in default settings",
-                 harvestdefinitionFound);
-     }
+    public void testExitWithoutDefaultTemplateInTemplatesTable() throws InterruptedException {
+        String[] webApps = Settings.getAll(CommonSettings.SITESECTION_WEBAPPLICATION);
+        boolean harvestdefinitionFound = false;
+        for (String webapp : webApps) {
+            if (webapp.contains("HarvestDefinition")) {
+                harvestdefinitionFound = true;
+                break;
+            }
+        }
+        assertTrue("Test-requirement not met: " + "DefinitionsSiteSection not in default settings",
+                harvestdefinitionFound);
+    }
 
 }

@@ -64,36 +64,29 @@ import dk.netarkivet.harvester.harvesting.metadata.PersistentJobData.HarvestDefi
 import dk.netarkivet.harvester.harvesting.report.HarvestReport;
 
 /**
- * This class responds to JMS doOneCrawl messages from the HarvestScheduler and
- * launches a Heritrix crawl with the received job description. The generated
- * ARC files are uploaded to the bitarchives once a harvest job has been
+ * This class responds to JMS doOneCrawl messages from the HarvestScheduler and launches a Heritrix crawl with the
+ * received job description. The generated ARC files are uploaded to the bitarchives once a harvest job has been
  * completed.
  *
- * During its operation CrawlStatus messages are sent to the
- * HarvestSchedulerMonitorServer. When starting the actual harvesting a message
- * is sent with status 'STARTED'. When the harvesting has finished a message is
- * sent with either status 'DONE' or 'FAILED'. Either a 'DONE' or 'FAILED'
- * message with result should ALWAYS be sent if at all possible, but only ever
- * one such message per job.
+ * During its operation CrawlStatus messages are sent to the HarvestSchedulerMonitorServer. When starting the actual
+ * harvesting a message is sent with status 'STARTED'. When the harvesting has finished a message is sent with either
+ * status 'DONE' or 'FAILED'. Either a 'DONE' or 'FAILED' message with result should ALWAYS be sent if at all possible,
+ * but only ever one such message per job.
  *
- * It is necessary to be able to run the Heritrix harvester on several machines
- * and several processes on each machine. Each instance of Heritrix is started
- * and monitored by a HarvestControllerServer.
+ * It is necessary to be able to run the Heritrix harvester on several machines and several processes on each machine.
+ * Each instance of Heritrix is started and monitored by a HarvestControllerServer.
  *
- * Initially, all directories under serverdir are scanned for harvestinfo files.
- * If any are found, they are parsed for information, and all remaining files
- * are attempted uploaded to the bitarchive. It will then send back a
+ * Initially, all directories under serverdir are scanned for harvestinfo files. If any are found, they are parsed for
+ * information, and all remaining files are attempted uploaded to the bitarchive. It will then send back a
  * crawlstatusmessage with status failed.
  *
- * A new thread is started for each actual crawl, in which the JMS listener is
- * removed. Threading is required since JMS will not let the called thread
- * remove the listener that's being handled.
+ * A new thread is started for each actual crawl, in which the JMS listener is removed. Threading is required since JMS
+ * will not let the called thread remove the listener that's being handled.
  *
- * After a harvestjob has been terminated, either successfully or
- * unsuccessfully, the serverdir is again scanned for harvestInfo files to
- * attempt upload of files not yet uploaded. Then it begins to listen again
- * after new jobs, if there is enough room available on the machine. If not, it
- * logs a warning about this, which is also sent as a notification.
+ * After a harvestjob has been terminated, either successfully or unsuccessfully, the serverdir is again scanned for
+ * harvestInfo files to attempt upload of files not yet uploaded. Then it begins to listen again after new jobs, if
+ * there is enough room available on the machine. If not, it logs a warning about this, which is also sent as a
+ * notification.
  */
 public class HarvestControllerServer extends HarvesterMessageHandler implements CleanupIF {
 
@@ -103,17 +96,17 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
     /** The unique instance of this class. */
     private static HarvestControllerServer instance;
 
-    /** The configured application instance id.
+    /**
+     * The configured application instance id.
+     * 
      * @see CommonSettings#APPLICATION_INSTANCE_ID
      */
     private final String applicationInstanceId = Settings.get(CommonSettings.APPLICATION_INSTANCE_ID);
 
     /**
-     * The name of the server this <code>HarvestControllerServer</code> is
-     * running on.
+     * The name of the server this <code>HarvestControllerServer</code> is running on.
      */
-    private final String physicalServerName
-            = DomainUtils.reduceHostname(SystemUtils.getLocalHostName());
+    private final String physicalServerName = DomainUtils.reduceHostname(SystemUtils.getLocalHostName());
 
     /** The message to write to log when starting the server. */
     private static final String STARTING_MESSAGE = "Starting HarvestControllerServer.";
@@ -132,15 +125,14 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
     /** Heritrix version property. */
     private static final String HERITRIX_VERSION_PROPERTY = "heritrix.version";
     /** queue-assignment-policy property. */
-    private static final String HERITRIX_QUEUE_ASSIGNMENT_POLICY_PROPERTY =
-    		"org.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy";
+    private static final String HERITRIX_QUEUE_ASSIGNMENT_POLICY_PROPERTY = "org.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy";
 
     /** The CHANNEL of jobs processed by this instance. */
     private static final String CHANNEL = Settings.get(HarvesterSettings.HARVEST_CONTROLLER_CHANNEL);
 
     /** The JMS channel on which to listen for {@link HarvesterRegistrationResponse}s. */
-    public static final ChannelID HARVEST_CHAN_VALID_RESP_ID =
-    		HarvesterChannels.getHarvesterRegistrationResponseChannel();
+    public static final ChannelID HARVEST_CHAN_VALID_RESP_ID = HarvesterChannels
+            .getHarvesterRegistrationResponseChannel();
 
     /** The JMSConnection to use. */
     private JMSConnection jmsConnection;
@@ -157,23 +149,19 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
     /** the serverdir, where the harvesting takes place. */
     private final File serverDir;
 
-    /** This is true while a doOneCrawl is running. No jobs are accepted while
-     * this is running. */
+    /**
+     * This is true while a doOneCrawl is running. No jobs are accepted while this is running.
+     */
     private CrawlStatus status;
 
     /**
-     * In this constructor, the server creates an instance of the
-     * HarvestController, uploads any arc-files from incomplete harvests.
-     * Then it starts listening for new doOneCrawl messages, unless there
-     * is no available space. In that case, it sends a notification to
-     * the administrator and pauses.
+     * In this constructor, the server creates an instance of the HarvestController, uploads any arc-files from
+     * incomplete harvests. Then it starts listening for new doOneCrawl messages, unless there is no available space. In
+     * that case, it sends a notification to the administrator and pauses.
      *
-     * @throws PermissionDenied
-     *             If the serverdir or oldjobsdir can't be created.
-     * @throws IOFailure
-     *             If harvestInfoFile contains invalid data.
-     * @throws UnknownID if the settings file does not specify a valid queue
-     * priority.
+     * @throws PermissionDenied If the serverdir or oldjobsdir can't be created.
+     * @throws IOFailure If harvestInfoFile contains invalid data.
+     * @throws UnknownID if the settings file does not specify a valid queue priority.
      */
     private HarvestControllerServer() throws IOFailure {
         log.info(STARTING_MESSAGE);
@@ -196,17 +184,14 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
 
         // Set properties "heritrix.version" and
         // "org.archive.crawler.frontier.AbstractFrontier
-        //  .queue-assignment-policy"
+        // .queue-assignment-policy"
         System.setProperty(HERITRIX_VERSION_PROPERTY, Constants.getHeritrixVersionString());
         System.setProperty(HERITRIX_QUEUE_ASSIGNMENT_POLICY_PROPERTY,
                 "org.archive.crawler.frontier.HostnameQueueAssignmentPolicy,"
-                		+ "org.archive.crawler.frontier.IPQueueAssignmentPolicy,"
-                        + "org.archive.crawler.frontier.BucketQueueAssignmentPolicy,"
-                        + "org.archive.crawler.frontier"
-                        + ".SurtAuthorityQueueAssignmentPolicy,"
-                        + DomainnameQueueAssignmentPolicy.class.getName()
-                        + ","
-                        + SeedUriDomainnameQueueAssignmentPolicy.class.getName());
+                        + "org.archive.crawler.frontier.IPQueueAssignmentPolicy,"
+                        + "org.archive.crawler.frontier.BucketQueueAssignmentPolicy," + "org.archive.crawler.frontier"
+                        + ".SurtAuthorityQueueAssignmentPolicy," + DomainnameQueueAssignmentPolicy.class.getName()
+                        + "," + SeedUriDomainnameQueueAssignmentPolicy.class.getName());
 
         // Get JMS-connection
         // Channel THIS_CLIENT is only used for replies to store messages so
@@ -225,23 +210,19 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
 
         // Register for listening to harvest channel validity responses
         JMSConnectionFactory.getInstance().setListener(HARVEST_CHAN_VALID_RESP_ID, this);
-        
+
         // Ask if the channel this harvester is assigned to is valid
         jmsConnection.send(new HarvesterRegistrationRequest(HarvestControllerServer.CHANNEL, applicationInstanceId));
         log.info("Requested to check the validity of harvest channel '{}'", HarvestControllerServer.CHANNEL);
     }
 
     /**
-     * Returns or creates the unique instance of this singleton
-     * The server creates an instance of the HarvestController,
-     * uploads arc-files from unfinished harvests, and
-     * starts to listen to JMS messages on the incoming jms queues.
+     * Returns or creates the unique instance of this singleton The server creates an instance of the HarvestController,
+     * uploads arc-files from unfinished harvests, and starts to listen to JMS messages on the incoming jms queues.
      *
      * @return The instance
-     * @throws PermissionDenied
-     *             If the serverdir or oldjobsdir can't be created
-     * @throws IOFailure
-     *             if data from old harvests exist, but contain illegal data
+     * @throws PermissionDenied If the serverdir or oldjobsdir can't be created
+     * @throws IOFailure if data from old harvests exist, but contain illegal data
      */
     public static synchronized HarvestControllerServer getInstance() throws IOFailure {
         if (instance == null) {
@@ -261,6 +242,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
 
     /**
      * Will be called on shutdown.
+     * 
      * @see CleanupIF#cleanup()
      */
     public void cleanup() {
@@ -284,7 +266,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
      * Looks for old job directories that await uploading.
      */
     private void processOldJobs() {
-        //Search through all crawldirs and process PersistentJobData
+        // Search through all crawldirs and process PersistentJobData
         // files in them
         File crawlDir = new File(Settings.get(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR));
         File[] subdirs = crawlDir.listFiles();
@@ -297,50 +279,41 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
                 log.warn(msg);
                 NotificationsFactory.getInstance().notify(msg, NotificationType.WARNING);
                 processHarvestInfoFile(oldCrawlDir, new IOFailure("Crawl probably interrupted by "
-                		+ "shutdown of HarvestController"));
+                        + "shutdown of HarvestController"));
             }
         }
     }
 
     /**
-     * Checks that we're available to do a crawl, and if so, marks us as
-     * unavailable, checks that the job message is well-formed, and starts
-     * the thread that the crawl happens in.  If an error occurs starting the
-     * crawl, we will start listening for messages again.
+     * Checks that we're available to do a crawl, and if so, marks us as unavailable, checks that the job message is
+     * well-formed, and starts the thread that the crawl happens in. If an error occurs starting the crawl, we will
+     * start listening for messages again.
      *
-     * The sequence of actions involved in a crawl are:</br>
-     * 1. If we are already running, resend the job to the queue and return</br>
-     * 2. Check the job for validity</br>
-     * 3. Send a CrawlStatus message that crawl has STARTED</br>
-     * In a separate thread:</br>
-     * 4. Unregister this HACO as listener</br>
-     * 5. Create a new crawldir (based on the JobID and a timestamp)</br>
-     * 6. Write a harvestInfoFile (using JobID and crawldir) and metadata</br>
-     * 7. Instantiate a new HeritrixLauncher</br>
-     * 8. Start a crawl</br>
-     * 9. Store the generated arc-files and metadata in the known bit-archives
-     * </br>10. _Always_ send CrawlStatus DONE or FAILED</br>
-     * 11. Move crawldir into oldJobs dir</br>
-
+     * The sequence of actions involved in a crawl are:</br> 1. If we are already running, resend the job to the queue
+     * and return</br> 2. Check the job for validity</br> 3. Send a CrawlStatus message that crawl has STARTED</br> In a
+     * separate thread:</br> 4. Unregister this HACO as listener</br> 5. Create a new crawldir (based on the JobID and a
+     * timestamp)</br> 6. Write a harvestInfoFile (using JobID and crawldir) and metadata</br> 7. Instantiate a new
+     * HeritrixLauncher</br> 8. Start a crawl</br> 9. Store the generated arc-files and metadata in the known
+     * bit-archives </br>10. _Always_ send CrawlStatus DONE or FAILED</br> 11. Move crawldir into oldJobs dir</br>
+     * 
      * @see #visit(DoOneCrawlMessage) for more details
      * @param msg The crawl job
-     * @throws IOFailure On trouble harvesting, uploading or
-     * processing harvestInfo
+     * @throws IOFailure On trouble harvesting, uploading or processing harvestInfo
      * @throws UnknownID if jobID is null in the message
-     * @throws ArgumentNotValid
-     *             if the status of the job is not valid - must be SUBMITTED
+     * @throws ArgumentNotValid if the status of the job is not valid - must be SUBMITTED
      * @throws PermissionDenied
      */
-    private void onDoOneCrawl(final DoOneCrawlMessage msg)
-    		throws IOFailure, UnknownID, ArgumentNotValid, PermissionDenied {
+    private void onDoOneCrawl(final DoOneCrawlMessage msg) throws IOFailure, UnknownID, ArgumentNotValid,
+            PermissionDenied {
         // Only one doOneCrawl at a time. Returning should almost never happen,
         // since we deregister the listener, but we may receive another message
-        // before the listener is removed.  Also, if the job message is
+        // before the listener is removed. Also, if the job message is
         // malformed or starting the crawl fails, we re-add the listener.
         synchronized (this) {
             if (status.isRunning()) {
-                log.warn("Received crawl request, but sent it back to queue, as another crawl is already running: '{}'",
-                		msg);
+                log.warn(
+                        "Received crawl request, but sent it back to queue, as another crawl is already running: '{}'",
+                        msg);
                 jmsConnection.resend(msg, jobChannel);
                 try {
                     // Wait a second before listening again, so the message has
@@ -357,8 +330,8 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
 
         Thread t = null;
 
-        //This 'try' matches a finally that restores running=false if we don't
-        //start a crawl after all
+        // This 'try' matches a finally that restores running=false if we don't
+        // start a crawl after all
         try {
             final Job job = msg.getJob();
 
@@ -373,8 +346,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
             log.info("Received crawlrequest for job {}: '{}'", jobID, msg);
 
             // Send message to scheduler that job is started
-            CrawlStatusMessage csmStarted = new CrawlStatusMessage(
-                    jobID, JobStatus.STARTED);
+            CrawlStatusMessage csmStarted = new CrawlStatusMessage(jobID, JobStatus.STARTED);
             jmsConnection.send(csmStarted);
 
             // Jobs should arrive with status "submitted". If this is not the
@@ -399,7 +371,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
             t1.start();
             log.info("Started harvester thread for job {}", jobID);
             // We delay assigning the thread variable until start() has
-            // succeeded.  Thus, if start() fails, we will resume accepting
+            // succeeded. Thus, if start() fails, we will resume accepting
             // jobs.
             t = t1;
         } finally {
@@ -414,13 +386,12 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
         // THIS_CLIENT in the crawl thread.
     }
 
-    /** Sends a CrawlStatusMessage for a failed job with the given short message
-     * and detailed message.
+    /**
+     * Sends a CrawlStatusMessage for a failed job with the given short message and detailed message.
      *
      * @param jobID ID of the job that failed
      * @param message A short message indicating what went wrong
-     * @param detailedMessage A more detailed message detailing why it went
-     * wrong.
+     * @param detailedMessage A more detailed message detailing why it went wrong.
      */
     private void sendErrorMessage(long jobID, String message, String detailedMessage) {
         CrawlStatusMessage csm = new CrawlStatusMessage(jobID, JobStatus.FAILED, null);
@@ -429,27 +400,28 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
         jmsConnection.send(csm);
     }
 
-    /** Stop accepting more jobs.  After this is called, all crawl messages
-     * received will be resent to the queue.  A bit further down, we will stop
-     * listening altogether, but that requires another thread.
+    /**
+     * Stop accepting more jobs. After this is called, all crawl messages received will be resent to the queue. A bit
+     * further down, we will stop listening altogether, but that requires another thread.
      */
     private synchronized void stopAcceptingJobs() {
         status.setRunning(true);
         log.debug("No longer accepting jobs.");
     }
 
-    /** Start listening for new crawl requests again.  This actually doesn't
-     * re-add a listener, but the listener only gets removed when we're so
-     * far committed that we're going to exit at the end.  So to start accepting
-     * jobs again, we stop resending messages we get.
+    /**
+     * Start listening for new crawl requests again. This actually doesn't re-add a listener, but the listener only gets
+     * removed when we're so far committed that we're going to exit at the end. So to start accepting jobs again, we
+     * stop resending messages we get.
      *
      */
     private synchronized void startAcceptingJobs() {
-        //allow this haco to receive messages
+        // allow this haco to receive messages
         status.setRunning(false);
     }
 
-    /** Stop listening for new crawl requests.
+    /**
+     * Stop listening for new crawl requests.
      *
      */
     private void removeListener() {
@@ -466,23 +438,23 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
             log.info(STARTED_MESSAGE);
         } else {
             String pausedMessage = "Not enough available diskspace. Only " + availableSpace + " bytes available."
-            		+ " Harvester is paused.";
+                    + " Harvester is paused.";
             log.error(pausedMessage);
             NotificationsFactory.getInstance().notify(pausedMessage, NotificationType.ERROR);
         }
     }
 
-    /** Adds error messages from an exception to the status message errors.
+    /**
+     * Adds error messages from an exception to the status message errors.
      *
      * @param csm The message we're setting messages on.
-     * @param crawlException The exception that got thrown from further in,
-     * possibly as far in as Heritrix.
+     * @param crawlException The exception that got thrown from further in, possibly as far in as Heritrix.
      * @param errorMessage Description of errors that happened during upload.
      * @param missingHostsReport If true, no hosts report was found.
      * @param failedFiles List of files that failed to upload.
      */
     private void setErrorMessages(CrawlStatusMessage csm, Throwable crawlException, String errorMessage,
-    		boolean missingHostsReport, int failedFiles) {
+            boolean missingHostsReport, int failedFiles) {
         if (crawlException != null) {
             csm.setHarvestErrors(crawlException.toString());
             csm.setHarvestErrorDetails(ExceptionUtils.getStackTrace(crawlException));
@@ -507,44 +479,38 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
      * Receives a DoOneCrawlMessage and call onDoOneCrawl.
      *
      * @param msg the message received
-     * @throws IOFailure
-     *             if the crawl fails
-     *             if unable to write to harvestInfoFile
-     * @throws UnknownID
-     *             if jobID is null in the message
-     * @throws ArgumentNotValid
-     *             if the status of the job is not valid - must be
-     *             SUBMITTED
-     * @throws PermissionDenied
-     *             if the crawldir can't be created
+     * @throws IOFailure if the crawl fails if unable to write to harvestInfoFile
+     * @throws UnknownID if jobID is null in the message
+     * @throws ArgumentNotValid if the status of the job is not valid - must be SUBMITTED
+     * @throws PermissionDenied if the crawldir can't be created
      */
     public void visit(DoOneCrawlMessage msg) throws IOFailure, UnknownID, ArgumentNotValid, PermissionDenied {
         onDoOneCrawl(msg);
     }
 
-	@Override
-	public void visit(HarvesterRegistrationResponse msg) {
-		
-		// If we have already started or the message notifies for another channel,
-		// resend it.
-		String channelName = msg.getHarvestChannelName();
-		if (status.isChannelValid() || !CHANNEL.equals(channelName)) {
-			// Controller has already started
-			jmsConnection.resend(msg, msg.getTo());
-			if (log.isDebugEnabled()) {
-				log.debug("Resending harvest channel validity message for channel '{}'", channelName);
-			}
-			return;
-		}
-		
-		if (!msg.isValid()) {
-			log.error("Received message stating that channel '{}' is invalid. Will stop.", channelName);
-			close();
-			return;
-		}
-		
-		log.info("Received message stating that channel '{}' is valid.", channelName);
-		// Environment and connections are now ready for processing of messages        
+    @Override
+    public void visit(HarvesterRegistrationResponse msg) {
+
+        // If we have already started or the message notifies for another channel,
+        // resend it.
+        String channelName = msg.getHarvestChannelName();
+        if (status.isChannelValid() || !CHANNEL.equals(channelName)) {
+            // Controller has already started
+            jmsConnection.resend(msg, msg.getTo());
+            if (log.isDebugEnabled()) {
+                log.debug("Resending harvest channel validity message for channel '{}'", channelName);
+            }
+            return;
+        }
+
+        if (!msg.isValid()) {
+            log.error("Received message stating that channel '{}' is invalid. Will stop.", channelName);
+            close();
+            return;
+        }
+
+        log.info("Received message stating that channel '{}' is valid.", channelName);
+        // Environment and connections are now ready for processing of messages
         jobChannel = HarvesterChannels.getHarvestJobChannelId(channelName, msg.isSnapshot());
 
         // Only listen for harvester jobs if enough available space
@@ -556,17 +522,13 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
     }
 
     /**
-     * Processes an existing harvestInfoFile:</br>
-     * 1. Retrieve jobID, and crawlDir from the harvestInfoFile
-     *      using class PersistentJobData</br>
-     * 2. finds JobId and arcsdir</br>
-     * 3. calls storeArcFiles</br>
-     * 4. moves harvestdir to oldjobs and deletes crawl.log and
-     *  other superfluous files.
+     * Processes an existing harvestInfoFile:</br> 1. Retrieve jobID, and crawlDir from the harvestInfoFile using class
+     * PersistentJobData</br> 2. finds JobId and arcsdir</br> 3. calls storeArcFiles</br> 4. moves harvestdir to oldjobs
+     * and deletes crawl.log and other superfluous files.
      *
      * @param crawlDir The location of harvest-info to be processed
-     * @param crawlException any exceptions thrown by the crawl which need to
-     * be reported back to the scheduler (may be null for success)
+     * @param crawlException any exceptions thrown by the crawl which need to be reported back to the scheduler (may be
+     * null for success)
      * @throws IOFailure if the file cannot be read
      */
     private void processHarvestInfoFile(File crawlDir, Throwable crawlException) throws IOFailure {
@@ -591,8 +553,9 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
             log.warn(msg, e);
             errorMessage.append(e.getMessage()).append("\n");
             // send a mail about this problem
-            NotificationsFactory.getInstance().notify(msg + ". Errors accumulated during the postprocessing: "
-            		+ errorMessage.toString(), NotificationType.ERROR, e);
+            NotificationsFactory.getInstance().notify(
+                    msg + ". Errors accumulated during the postprocessing: " + errorMessage.toString(),
+                    NotificationType.ERROR, e);
         } finally {
             // Send a done or failed message back to harvest scheduler
             // FindBugs claims a load of known null value here, but that
@@ -623,14 +586,13 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
         log.info("Done post-processing files for job {} in dir: '{}'", jobID, crawlDir.getAbsolutePath());
     }
 
-    /** A Thread class for the actual harvesting.  This is required
-     * in order to stop listening while we're busy harvesting, since JMS
-     * doesn't allow the called thread to remove the listener that was
-     * called.
+    /**
+     * A Thread class for the actual harvesting. This is required in order to stop listening while we're busy
+     * harvesting, since JMS doesn't allow the called thread to remove the listener that was called.
      */
     private class HarvesterThread extends Thread {
 
-    	/** The harvester Job in this thread. */
+        /** The harvester Job in this thread. */
         private final Job job;
 
         /** Stores documentary information about the harvest. */
@@ -639,10 +601,11 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
         /** The list of metadata associated with this Job. */
         private final List<MetadataEntry> metadataEntries;
 
-        /** Constructor for the HarvesterThread class.
+        /**
+         * Constructor for the HarvesterThread class.
+         * 
          * @param job a harvesting job
-         * @param origHarvestInfo Info about the harvestdefinition 
-         *      that scheduled this job
+         * @param origHarvestInfo Info about the harvestdefinition that scheduled this job
          * @param metadataEntries metadata associated with the given job
          */
         public HarvesterThread(Job job, HarvestDefinitionInfo origHarvestInfo, List<MetadataEntry> metadataEntries) {
@@ -651,15 +614,14 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
             this.metadataEntries = metadataEntries;
         }
 
-        /** The thread body for the harvester thread.  Removes the JMS
-         * listener, sets up the files for Heritrix, then passes control
-         * to the HarvestController to perform the actual harvest.
+        /**
+         * The thread body for the harvester thread. Removes the JMS listener, sets up the files for Heritrix, then
+         * passes control to the HarvestController to perform the actual harvest.
          *
-         * TODO Get file writing into HarvestController as well
-         *       (requires some rearrangement of the message sending)
+         * TODO Get file writing into HarvestController as well (requires some rearrangement of the message sending)
+         * 
          * @throws PermissionDenied if we cannot create the crawl directory.
-         * @throws IOFailure if there are problems preparing or running the
-         * crawl.
+         * @throws IOFailure if there are problems preparing or running the crawl.
          */
         public void run() {
             try {
@@ -671,7 +633,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
                 File crawlDir = createCrawlDir();
 
                 final HeritrixFiles files = controller.writeHarvestFiles(crawlDir, job, origHarvestInfo,
-                		metadataEntries);
+                        metadataEntries);
 
                 log.info(STARTCRAWL_MESSAGE + " {}", job.getJobID());
 
@@ -707,10 +669,8 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
         }
 
         /**
-         * Does the operator want us to shutdown now.
-         * TODO In a later implementation, the harvestControllerServer could 
-         * be notified over JMX. Now we just look for a "shutdown.txt" file
-         * in the HARVEST_CONTROLLER_SERVERDIR
+         * Does the operator want us to shutdown now. TODO In a later implementation, the harvestControllerServer could
+         * be notified over JMX. Now we just look for a "shutdown.txt" file in the HARVEST_CONTROLLER_SERVERDIR
          */
         private void shutdownNowOrContinue() {
             File shutdownFile = new File(serverDir, "shutdown.txt");
@@ -722,8 +682,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
         }
 
         /**
-         * Create the crawl dir, but make sure a message is sent if there is a
-         * problem.
+         * Create the crawl dir, but make sure a message is sent if there is a problem.
          *
          * @return The directory that the crawl will take place in.
          * @throws PermissionDenied if the directory cannot be created.
@@ -732,7 +691,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
             // The directory where arcfiles are stored (crawldir in the above
             // description)
             File crawlDir = null;
-            // Create the crawldir.  This is done here in order to be able
+            // Create the crawldir. This is done here in order to be able
             // to send a proper message if something goes wrong.
             try {
                 File baseCrawlDir = new File(Settings.get(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR));
@@ -750,15 +709,14 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
     }
 
     /**
-     * Used for maintaining the running status of the crawling, is it running 
-     * or not. Will also take care of notifying the HarvestJobManager of the 
-     * status.
+     * Used for maintaining the running status of the crawling, is it running or not. Will also take care of notifying
+     * the HarvestJobManager of the status.
      */
     private class CrawlStatus {
 
-    	/** The status. */
+        /** The status. */
         private boolean running = false;
-        
+
         private boolean channelIsValid = false;
 
         /** Handles the periodic sending of status messages. */
@@ -767,8 +725,8 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
         private final int SEND_READY_DELAY = Settings.getInt(HarvesterSettings.SEND_READY_DELAY);
 
         /**
-         * Returns <code>true</code> if the a doOneCrawl is running, else 
-         * <code>false</code>.
+         * Returns <code>true</code> if the a doOneCrawl is running, else <code>false</code>.
+         * 
          * @return Whether a crawl running.
          */
         public boolean isRunning() {
@@ -777,6 +735,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
 
         /**
          * Use for changing the running state.
+         * 
          * @param running The new status
          */
         public synchronized void setRunning(boolean running) {
@@ -784,24 +743,22 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
         }
 
         /**
-		 * @return the channelIsValid
-		 */
-		protected final boolean isChannelValid() {
-			return channelIsValid;
-		}
+         * @return the channelIsValid
+         */
+        protected final boolean isChannelValid() {
+            return channelIsValid;
+        }
 
-		/**
+        /**
          * Starts the sending of status messages.
          */
         public void startSending() {
-        	this.channelIsValid = true;
-            statusTransmitter = new PeriodicTaskExecutor("HarvesterStatus",
-                    new Runnable() {
-                        public void run() {
-                            sendStatus();
-                        }
-                    },
-                    0, Settings.getInt(HarvesterSettings.SEND_READY_INTERVAL));
+            this.channelIsValid = true;
+            statusTransmitter = new PeriodicTaskExecutor("HarvesterStatus", new Runnable() {
+                public void run() {
+                    sendStatus();
+                }
+            }, 0, Settings.getInt(HarvesterSettings.SEND_READY_INTERVAL));
         }
 
         /**

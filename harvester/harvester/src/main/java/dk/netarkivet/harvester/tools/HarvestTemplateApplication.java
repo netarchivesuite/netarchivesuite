@@ -38,17 +38,14 @@ import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 import dk.netarkivet.harvester.datamodel.TemplateDAO;
 
 /**
- * Utility for maintaining harvest-templates from the commandline.
- * With this utility, you can
- *  - create new templates
- *  - update existing templates
- *  - download one or more templates
- *  - show all existing templates
+ * Utility for maintaining harvest-templates from the commandline. With this utility, you can - create new templates -
+ * update existing templates - download one or more templates - show all existing templates
  */
 public class HarvestTemplateApplication {
 
     /**
      * The main method of the HarvestTemplateApplication.
+     * 
      * @param args array of commandline arguments
      */
     public static void main(final String[] args) {
@@ -71,12 +68,12 @@ public class HarvestTemplateApplication {
             } else if (command.equals("showall")) {
                 showallTemplates();
             } else {
-                System.err.println("The command '" + command
-                        + "' is not one of the legal commands.");
+                System.err.println("The command '" + command + "' is not one of the legal commands.");
                 printUsage();
             }
         }
     }
+
     /**
      * Show all available templates.
      */
@@ -93,10 +90,9 @@ public class HarvestTemplateApplication {
     }
 
     /**
-     * Download one or more templates to current working directory.
-     * if length of args is 0, all templates are downloaded.
-     * if length of args > 0, the strings in args are considered
-     * to be names of templates to be downloaded.
+     * Download one or more templates to current working directory. if length of args is 0, all templates are
+     * downloaded. if length of args > 0, the strings in args are considered to be names of templates to be downloaded.
+     * 
      * @param args String-array containing template-names
      */
     private static void downloadTemplates(final String[] args) {
@@ -112,9 +108,7 @@ public class HarvestTemplateApplication {
             for (String arg : args) {
                 templateName = arg;
                 if (!dao.exists(templateName)) {
-                    System.err.println("Unable to download template '"
-                            + templateName
-                            + "'. It does not exist.");
+                    System.err.println("Unable to download template '" + templateName + "'. It does not exist.");
                 } else {
                     download(templateName);
                 }
@@ -123,13 +117,12 @@ public class HarvestTemplateApplication {
     }
 
     /**
-     * Download the template with a given name.
-     * The template is assumed to exist.
+     * Download the template with a given name. The template is assumed to exist.
+     * 
      * @param templateName The name of a given template
      */
     private static void download(final String templateName) {
-        System.out.println("Downloading template '" + templateName
-                + "'.");
+        System.out.println("Downloading template '" + templateName + "'.");
         try {
             TemplateDAO dao = TemplateDAO.getInstance();
             HeritrixTemplate doc = dao.read(templateName);
@@ -137,41 +130,37 @@ public class HarvestTemplateApplication {
             XMLWriter writer = new XMLWriter(os);
             writer.write(doc.getTemplate());
         } catch (IOException e) {
-            System.err.println("Error downloading template '" + templateName
-                    + "': " + e);
+            System.err.println("Error downloading template '" + templateName + "': " + e);
             e.printStackTrace(System.err);
         }
     }
 
     /**
      * Update a given template.
-     * @param args array of commandline-arguments
-     *        args[0]: templateName
-     *        args[1]: File that should replace an existing template
+     * 
+     * @param args array of commandline-arguments args[0]: templateName args[1]: File that should replace an existing
+     * template
      */
     private static void updateTemplate(final String[] args) {
         TemplateDAO dao = TemplateDAO.getInstance();
         if (!(args.length == 2)) {
-            System.err.println("Unable to update template: Wrong number("
-                    + (args.length) + ") of arguments.");
+            System.err.println("Unable to update template: Wrong number(" + (args.length) + ") of arguments.");
             printUsage();
         } else {
             String templateName = args[0];
             File templateFile = new File(args[1]);
             if (!dao.exists(templateName)) {
-                System.err.println("There is no template named '" + templateName
-                        + "'. Use the create-command instead.");
+                System.err
+                        .println("There is no template named '" + templateName + "'. Use the create-command instead.");
             } else {
                 try {
                     // Try to convert orderxml-file to Document object
                     Document doc = XmlUtils.getXmlDoc(templateFile);
                     HeritrixTemplate ht = new HeritrixTemplate(doc);
                     dao.update(templateName, ht);
-                    System.out.println("The template '" + templateName
-                            + "' has now been updated.");
+                    System.out.println("The template '" + templateName + "' has now been updated.");
                 } catch (IOFailure e) {
-                    System.err.println("The file '" + args[1]
-                            + "' could not be read or is not valid xml.");
+                    System.err.println("The file '" + args[1] + "' could not be read or is not valid xml.");
                     e.printStackTrace(System.err);
                 }
             }
@@ -180,34 +169,28 @@ public class HarvestTemplateApplication {
 
     /**
      * Create a new template.
-     * @param args
-     *            array of commandline-arguments
-     *            args[0]: templateName
-     *            args[1]: file containing the new template.
+     * 
+     * @param args array of commandline-arguments args[0]: templateName args[1]: file containing the new template.
      */
     private static void createTemplate(final String[] args) {
         TemplateDAO dao = TemplateDAO.getInstance();
         if (!(args.length == 2)) {
-            System.err.println("Unable to create template: Wrong number("
-                    + (args.length) + ") of arguments.");
+            System.err.println("Unable to create template: Wrong number(" + (args.length) + ") of arguments.");
             printUsage();
         } else {
             String templateName = args[0];
             File templateFile = new File(args[1]);
             if (dao.exists(templateName)) {
-                System.err.println("There is already a template with name '"
-                        + templateName + "'.");
+                System.err.println("There is already a template with name '" + templateName + "'.");
             } else {
                 try {
                     // Try to convert orderxml-file to Document object
                     Document doc = XmlUtils.getXmlDoc(templateFile);
                     HeritrixTemplate ht = new HeritrixTemplate(doc);
                     dao.create(templateName, ht);
-                    System.out.println("The template '" + templateName
-                            + "' has now been created.");
+                    System.out.println("The template '" + templateName + "' has now been created.");
                 } catch (IOFailure e) {
-                    System.err.println("The File '" + args[1]
-                            + "' is not readable or is not valid xml.");
+                    System.err.println("The File '" + args[1] + "' is not readable or is not valid xml.");
                     e.printStackTrace(System.err);
                 }
             }
@@ -219,16 +202,13 @@ public class HarvestTemplateApplication {
      *
      */
     private static void printUsage() {
-        System.err.print("java " 
-                + HarvestTemplateApplication.class.getName());
+        System.err.print("java " + HarvestTemplateApplication.class.getName());
         System.err.println(" <command> <args>");
-        
-        System.err.println("create <template-name> "
-                + "<xml-file for this template>");
+
+        System.err.println("create <template-name> " + "<xml-file for this template>");
         System.err.println("download [<template-name>] ");
-        System.err.println("update <template-name> "
-                + "<xml-file to replace this template>");
+        System.err.println("update <template-name> " + "<xml-file to replace this template>");
         System.err.println("showall");
     }
 
- }
+}

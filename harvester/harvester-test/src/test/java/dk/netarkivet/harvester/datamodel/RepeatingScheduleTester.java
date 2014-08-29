@@ -29,7 +29,6 @@ import java.util.GregorianCalendar;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
-
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
@@ -37,18 +36,18 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  */
 public class RepeatingScheduleTester {
 
-    /** Given a repeating schedule that should run yearly 3 times, check
-     * that it gives the expected events, and no fourth event.
+    /**
+     * Given a repeating schedule that should run yearly 3 times, check that it gives the expected events, and no fourth
+     * event.
+     * 
      * @throws Exception
      */
     @Test
     public void testGetNextEvent1() throws Exception {
         Calendar cal = new GregorianCalendar(1940, Calendar.APRIL, 9, 9, 30);
-        Schedule sched = Schedule.getInstance(cal.getTime(), 3,
-                new MonthlyFrequency(12), "Half flag",
+        Schedule sched = Schedule.getInstance(cal.getTime(), 3, new MonthlyFrequency(12), "Half flag",
                 "In rememberance of the German occupation");
-        assertTrue("Schedule should be repeating",
-                   sched instanceof RepeatingSchedule);
+        assertTrue("Schedule should be repeating", sched instanceof RepeatingSchedule);
         Date next = sched.getNextEvent(cal.getTime(), 1);
         cal.add(Calendar.MONTH, 12);
         assertEquals("Second event must happen next year.", cal.getTime(), next);
@@ -59,18 +58,18 @@ public class RepeatingScheduleTester {
         assertNull("Fourth event should not happen.", next);
     }
 
-    /** Given a repeting schedule that should run yearly at noon 3 times, check
-     * that it gives the expected events, and no fourth event.
+    /**
+     * Given a repeting schedule that should run yearly at noon 3 times, check that it gives the expected events, and no
+     * fourth event.
+     * 
      * @throws Exception
      */
     @Test
     public void testGetNextEvent2() throws Exception {
         Calendar cal = new GregorianCalendar(1940, Calendar.APRIL, 9, 9, 30);
-        Schedule sched = Schedule.getInstance(cal.getTime(), 3,
-                new MonthlyFrequency(12, 9, 12, 0), "Full flag",
+        Schedule sched = Schedule.getInstance(cal.getTime(), 3, new MonthlyFrequency(12, 9, 12, 0), "Full flag",
                 "In rememberance of the German occupation");
-        assertTrue("Schedule should be repeating",
-                   sched instanceof RepeatingSchedule);
+        assertTrue("Schedule should be repeating", sched instanceof RepeatingSchedule);
         Date next = sched.getNextEvent(cal.getTime(), 1);
         cal.set(Calendar.HOUR, 12);
         cal.set(Calendar.MINUTE, 00);
@@ -84,38 +83,35 @@ public class RepeatingScheduleTester {
     }
 
     /**
-     * Test that negative argument on getNextEvent
-     * throws ArgumentNotValid exception.
+     * Test that negative argument on getNextEvent throws ArgumentNotValid exception.
+     * 
      * @throws Exception
      */
     @Test
     public void testExceptions() throws Exception {
         Calendar cal = new GregorianCalendar(1940, Calendar.APRIL, 9, 9, 30);
-        Schedule sched = Schedule.getInstance(cal.getTime(), 1,
-                new MonthlyFrequency(12, 9, 12, 0), "Full flag",
+        Schedule sched = Schedule.getInstance(cal.getTime(), 1, new MonthlyFrequency(12, 9, 12, 0), "Full flag",
                 "In rememberance of the German occupation");
-        assertTrue("Schedule should be repeating",
-                   sched instanceof RepeatingSchedule);
+        assertTrue("Schedule should be repeating", sched instanceof RepeatingSchedule);
         try {
             sched.getNextEvent(cal.getTime(), -1);
             fail("Expected argument not valid on negative argument");
         } catch (ArgumentNotValid e) {
-            //Expected
+            // Expected
         }
     }
-    
-    /** Given a repeating schedule check, that given the date of previous event is null,
-     * the date of the next event is also null.
+
+    /**
+     * Given a repeating schedule check, that given the date of previous event is null, the date of the next event is
+     * also null.
      */
     @Test
     public void testGetNextEvent3() throws Exception {
         Calendar cal = new GregorianCalendar(1940, Calendar.APRIL, 9, 9, 30);
-        Schedule sched = Schedule.getInstance(cal.getTime(), 1,
-                new MonthlyFrequency(12, 9, 12, 0), "Full flag",
+        Schedule sched = Schedule.getInstance(cal.getTime(), 1, new MonthlyFrequency(12, 9, 12, 0), "Full flag",
                 "In rememberance of the German occupation");
-        assertTrue("Schedule should be repeating",
-                sched instanceof RepeatingSchedule);
-        
+        assertTrue("Schedule should be repeating", sched instanceof RepeatingSchedule);
+
         assertNull("Null expected", sched.getNextEvent(null, 0));
     }
 }

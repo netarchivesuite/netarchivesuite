@@ -57,8 +57,7 @@ public class GetFileMessageTester {
         rs.setUp();
         utrf.setUp();
         FileUtils.removeRecursively(WORKING);
-        TestFileUtils.copyDirectoryNonCVS(TestInfo.UPLOADMESSAGE_ORIGINALS_DIR,
-                WORKING);
+        TestFileUtils.copyDirectoryNonCVS(TestInfo.UPLOADMESSAGE_ORIGINALS_DIR, WORKING);
     }
 
     @After
@@ -68,43 +67,38 @@ public class GetFileMessageTester {
         rs.tearDown();
     }
 
-
     @Test
     @Ignore("FIXME")
     // FIXME: test temporarily disabled
-    public void testGetData() throws IOException, NoSuchFieldException,
-            IllegalAccessException {
+    public void testGetData() throws IOException, NoSuchFieldException, IllegalAccessException {
         File origFile = new File(WORKING, "NetarchiveSuite-store1.arc");
-        GetFileMessage message = new GetFileMessage(Channels.getAllBa(),
-                Channels.getThisReposClient(), origFile.getName(), "ONE");
+        GetFileMessage message = new GetFileMessage(Channels.getAllBa(), Channels.getThisReposClient(),
+                origFile.getName(), "ONE");
         message.setFile(origFile);
         File destDir = new File(WORKING, "dest");
         FileUtils.createDir(destDir);
         File destFile = new File(destDir, "NetarchiveSuite-store1.arc");
         message.getData(destFile);
-        assertEquals("File from GetFile should have same content as original",
-                FileUtils.readFile(origFile), FileUtils.readFile(destFile));
-        Field remoteFileField = ReflectUtils.getPrivateField(GetFileMessage.class,
-                "remoteFile");
-        assertNull("Remote file field should have been nulled",
-                remoteFileField.get(message));
+        assertEquals("File from GetFile should have same content as original", FileUtils.readFile(origFile),
+                FileUtils.readFile(destFile));
+        Field remoteFileField = ReflectUtils.getPrivateField(GetFileMessage.class, "remoteFile");
+        assertNull("Remote file field should have been nulled", remoteFileField.get(message));
         FileUtils.remove(destFile);
         // Error cases:
         try {
             message.getData(destFile);
             fail("Should not be able to read file a second time");
         } catch (IOFailure e) {
-            StringAsserts.assertStringContains("Should mention arcfilename in"
-                    + " error message", origFile.getName(), e.getMessage());
+            StringAsserts.assertStringContains("Should mention arcfilename in" + " error message", origFile.getName(),
+                    e.getMessage());
         }
-        message = new GetFileMessage(Channels.getAllBa(),
-                Channels.getThisReposClient(), origFile.getName(), "KB");
+        message = new GetFileMessage(Channels.getAllBa(), Channels.getThisReposClient(), origFile.getName(), "KB");
         try {
             message.getData(destFile);
             fail("Should die if no file is set");
         } catch (IOFailure e) {
-            StringAsserts.assertStringContains("Should mention arcfilename in"
-                    + " error message", origFile.getName(), e.getMessage());
+            StringAsserts.assertStringContains("Should mention arcfilename in" + " error message", origFile.getName(),
+                    e.getMessage());
         }
         message.setFile(origFile);
         try {
@@ -118,19 +112,15 @@ public class GetFileMessageTester {
             message.getData(new File("/fnord"));
             fail("Should die on impossible file");
         } catch (ArgumentNotValid e) {
-            StringAsserts.assertStringContains("Should mention file in error",
-                    "/fnord", e.getMessage());
+            StringAsserts.assertStringContains("Should mention file in error", "/fnord", e.getMessage());
         }
         assertFalse("New file should not exist", destFile.exists());
-        assertTrue("Should not have deleted remote file on error",
-                origFile.exists());
+        assertTrue("Should not have deleted remote file on error", origFile.exists());
 
         Field remoteFile = ReflectUtils.getPrivateField(GetFileMessage.class, "remoteFile");
         assertNotNull("The message should contain a remote file", remoteFile.get(message));
         message.clearBuffer();
-        assertNull("The message should now contain a null instead of the remote file", 
-                remoteFile.get(message));
-        
+        assertNull("The message should now contain a null instead of the remote file", remoteFile.get(message));
 
     }
 }

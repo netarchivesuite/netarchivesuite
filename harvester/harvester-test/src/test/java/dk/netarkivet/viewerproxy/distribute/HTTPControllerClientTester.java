@@ -35,9 +35,8 @@ import org.junit.Test;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
- * Unit-tests of the class HTTPControllerClient. 
- * Uses two dummy classes: An anonymous JspWriter,
- * and a MockHttpServletResponse.
+ * Unit-tests of the class HTTPControllerClient. Uses two dummy classes: An anonymous JspWriter, and a
+ * MockHttpServletResponse.
  */
 public class HTTPControllerClientTester {
     String returnUrl;

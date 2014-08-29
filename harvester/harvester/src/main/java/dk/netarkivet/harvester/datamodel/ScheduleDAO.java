@@ -80,7 +80,7 @@ public abstract class ScheduleDAO implements DAO, Iterable<Schedule> {
      * @param scheduleName the name of the schedule
      * @return The schedule read
      * @throws ArgumentNotValid if schedulename is null or empty
-     * @throws UnknownID        if the schedule doesn't exist
+     * @throws UnknownID if the schedule doesn't exist
      */
     public abstract Schedule read(String scheduleName);
 
@@ -89,9 +89,8 @@ public abstract class ScheduleDAO implements DAO, Iterable<Schedule> {
      *
      * @param schedule The schedule to update
      * @throws ArgumentNotValid If the schedule is null
-     * @throws UnknownID        If the schedule doesn't exist in the DAO
-     * @throws IOFailure        If the edition of the schedule to update is
-     *                          older than the DAO's
+     * @throws UnknownID If the schedule doesn't exist in the DAO
+     * @throws IOFailure If the edition of the schedule to update is older than the DAO's
      */
     public abstract void update(Schedule schedule);
 
@@ -102,8 +101,8 @@ public abstract class ScheduleDAO implements DAO, Iterable<Schedule> {
      */
     public abstract Iterator<Schedule> getAllSchedules();
 
-    /** Get an iterator over the schedules handled by this DAO.
-     * Implements the Iterable interface.
+    /**
+     * Get an iterator over the schedules handled by this DAO. Implements the Iterable interface.
      * 
      * @return Iterator of all current schedules.
      */
@@ -113,12 +112,13 @@ public abstract class ScheduleDAO implements DAO, Iterable<Schedule> {
 
     /**
      * Get the number of defined schedules.
+     * 
      * @return The number of defined schedules
      */
     public abstract int getCountSchedules();
 
     /**
-     * Reset the DAO.  Only for use from within tests.
+     * Reset the DAO. Only for use from within tests.
      */
     static void reset() {
         instance = null;

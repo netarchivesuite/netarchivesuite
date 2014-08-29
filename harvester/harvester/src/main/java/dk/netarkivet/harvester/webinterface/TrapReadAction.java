@@ -48,14 +48,12 @@ public class TrapReadAction extends TrapAction {
         HttpServletRequest request = (HttpServletRequest) context.getRequest();
         int trapId = Integer.parseInt(request.getParameter(Constants.TRAP_ID));
         String contentType = request.getParameter(Constants.TRAP_CONTENT_TYPE);
-        HttpServletResponse response = (HttpServletResponse)
-                context.getResponse();
+        HttpServletResponse response = (HttpServletResponse) context.getResponse();
         GlobalCrawlerTrapListDAO dao = GlobalCrawlerTrapListDBDAO.getInstance();
         GlobalCrawlerTrapList trapList = dao.read(trapId);
         response.setHeader("Content-Type", contentType);
         if (contentType.startsWith("binary")) {
-            response.setHeader("Content-Disposition", "Attachment; filename="
-                                                      +  trapList.getName());
+            response.setHeader("Content-Disposition", "Attachment; filename=" + trapList.getName());
         }
         OutputStream out = null;
         try {

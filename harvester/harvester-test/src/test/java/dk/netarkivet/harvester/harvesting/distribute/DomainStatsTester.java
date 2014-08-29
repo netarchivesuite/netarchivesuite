@@ -28,10 +28,8 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-
 /**
- * Unit tests for the class
- * dk.netarkivet.harvester.harvesting.distribute.DomainStats.
+ * Unit tests for the class dk.netarkivet.harvester.harvesting.distribute.DomainStats.
  */
 public class DomainStatsTester {
 
@@ -42,51 +40,43 @@ public class DomainStatsTester {
     private final StopReason downloadComplete = StopReason.DOWNLOAD_COMPLETE;
     private final StopReason nullStopreason = null;
     private DomainStats domainstats;
-    
+
     @Before
     public void setUp() throws Exception {
-        domainstats = new DomainStats(positiveInitObjectCount,
-                positiveInitByteCount, downloadComplete);
+        domainstats = new DomainStats(positiveInitObjectCount, positiveInitByteCount, downloadComplete);
     }
 
     /** test the DomainStats constructor. */
     @Test
     public void testDomainStats() {
         try {
-            new DomainStats(negativeInitObjectCount,
-                    positiveInitByteCount, downloadComplete);
-            fail("Should throw ArgumentNotValid exception on negative"
-                    + " objectCount");
+            new DomainStats(negativeInitObjectCount, positiveInitByteCount, downloadComplete);
+            fail("Should throw ArgumentNotValid exception on negative" + " objectCount");
         } catch (ArgumentNotValid e) {
             // Expected
         }
-        
+
         try {
-            new DomainStats(positiveInitObjectCount,
-                    negativeInitByteCount, downloadComplete);
-            fail("Should throw ArgumentNotValid exception on negative"
-                    + " byteCount");
+            new DomainStats(positiveInitObjectCount, negativeInitByteCount, downloadComplete);
+            fail("Should throw ArgumentNotValid exception on negative" + " byteCount");
         } catch (ArgumentNotValid e) {
             // Expected
         }
- 
+
         try {
-            new DomainStats(positiveInitObjectCount,
-                    positiveInitByteCount, nullStopreason);
+            new DomainStats(positiveInitObjectCount, positiveInitByteCount, nullStopreason);
             fail("Should throw ArgumentNotValid exception on null stopreason");
         } catch (ArgumentNotValid e) {
             // Expected
         }
-        
+
         try {
-            new DomainStats(positiveInitObjectCount,
-                    positiveInitByteCount, downloadComplete);
+            new DomainStats(positiveInitObjectCount, positiveInitByteCount, downloadComplete);
         } catch (ArgumentNotValid e) {
-            fail("Should not throw ArgumentNotValid exception on "
-                    + "correct arguments.");
+            fail("Should not throw ArgumentNotValid exception on " + "correct arguments.");
         }
     }
-    
+
     /** Test the setByteCount method. */
     @Test
     public void testSetByteCount() {
@@ -94,6 +84,7 @@ public class DomainStatsTester {
         domainstats.setByteCount(bytes);
         assertEquals(bytes, domainstats.getByteCount());
     }
+
     /** Test the setObjectCount method. */
     @Test
     public void testSetObjectCount() {
@@ -101,7 +92,7 @@ public class DomainStatsTester {
         domainstats.setObjectCount(objects);
         assertEquals(objects, domainstats.getObjectCount());
     }
-    
+
     /** Test the setStopReason method. */
     @Test
     public void testSetStopReason() {

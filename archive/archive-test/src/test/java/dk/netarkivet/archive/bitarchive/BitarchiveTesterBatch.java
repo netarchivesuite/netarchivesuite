@@ -52,7 +52,7 @@ import static org.junit.Assert.*;
 /**
  * This class tests the bitarchive's batch() method.
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class BitarchiveTesterBatch extends BitarchiveTestCase {
     static final File ORIGINALS_DIR = new File(new File(TestInfo.DATA_DIR, "batch"), "originals");
     private static List<String> arcFiles = list("Upload3.ARC", "fyensdk.arc", "Upload1.ARC", "Upload2.ARC");
@@ -97,8 +97,7 @@ public class BitarchiveTesterBatch extends BitarchiveTestCase {
     }
 
     /**
-     * Test that exceptions thrown in the batch program are thrown back to the
-     * caller.
+     * Test that exceptions thrown in the batch program are thrown back to the caller.
      */
     @Test
     public void testBatchExceptionInBatch() {
@@ -121,9 +120,8 @@ public class BitarchiveTesterBatch extends BitarchiveTestCase {
     }
 
     /**
-     * Test that the batch code actually runs, that it enters each of the
-     * initialize() and finish() methods, and that process() is called at least
-     * once.
+     * Test that the batch code actually runs, that it enters each of the initialize() and finish() methods, and that
+     * process() is called at least once.
      */
     @Test
     public void testBatchCodeRuns() {
@@ -158,8 +156,7 @@ public class BitarchiveTesterBatch extends BitarchiveTestCase {
     }
 
     /**
-     * Test that the batch code runs once for each entry. Both for multiple
-     * entries in a file and in several files.
+     * Test that the batch code runs once for each entry. Both for multiple entries in a file and in several files.
      */
     @Test
     public void testBatchCodeRunsAll() {
@@ -215,8 +212,8 @@ public class BitarchiveTesterBatch extends BitarchiveTestCase {
     }
 
     /**
-     * Test that illegal code (e.g. that tries to read outside of a bitarchive
-     * directory, or that tries to write anywhere) cannot be executed.
+     * Test that illegal code (e.g. that tries to read outside of a bitarchive directory, or that tries to write
+     * anywhere) cannot be executed.
      * 
      * Fails in Hudson
      */
@@ -293,8 +290,7 @@ public class BitarchiveTesterBatch extends BitarchiveTestCase {
     }
 
     /**
-     * Method that checks, if a BatchJob have processed the correct files, and
-     * the correct number of files.
+     * Method that checks, if a BatchJob have processed the correct files, and the correct number of files.
      */
     private BatchStatus assertBatchJobProcessesCorrectly(String message, TestFileBatchJob job, String... files) {
         BatchStatus lbs = archive.batch(TestInfo.baAppId, job);

@@ -29,31 +29,32 @@ import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
 /**
- * Class to represent options for Extended Fields. 
+ * Class to represent options for Extended Fields.
  */
 public class ExtendedFieldOptions {
 
-	/** Key-Value separator. */
+    /** Key-Value separator. */
     public static final String KEYVALUESEPARATOR = "=";
     /** Line separator. */
     public static final String NEWLINE = System.getProperty("line.separator");
     /** The option lines. */
     private String lines;
-    /** The validity state of the list of extended field options. */        
+    /** The validity state of the list of extended field options. */
     private boolean valid = false;
-    
+
     /** Key-Value map containing the options. */
     private Map<String, String> options = new LinkedHashMap<String, String>();
-    
+
     /**
-     * Constructor. 
+     * Constructor.
+     * 
      * @param aLines Options separated by newlines (Null argument allowed)
      */
     public ExtendedFieldOptions(String aLines) {
         lines = aLines;
         parsing();
     }
-    
+
     /**
      * Method that parses the data given to the constructor.
      */
@@ -92,6 +93,7 @@ public class ExtendedFieldOptions {
     /**
      * 
      * Is these ExtendedField options valid.
+     * 
      * @return true, if the options are valid; otherwise false
      */
     public boolean isValid() {
@@ -119,12 +121,12 @@ public class ExtendedFieldOptions {
 
         return str;
     }
-    
+
     /**
      * Check, if the given key is a valid option.
+     * 
      * @param aKey a given option key.
-     * @return true, if the list of options is valid, and 
-     * there is an option in the options map with the given key.
+     * @return true, if the list of options is valid, and there is an option in the options map with the given key.
      */
     public boolean isKeyValid(String aKey) {
         if (isValid()) {

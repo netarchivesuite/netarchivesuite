@@ -48,10 +48,10 @@ public class NodeTraverser {
         Node childNode = null;
         NodeList nodes = currentNode.getChildNodes();
         if (nodes != null) {
-            for (int i = 0 ; i < nodes.getLength() ; i++) {
+            for (int i = 0; i < nodes.getLength(); i++) {
                 Node node = nodes.item(i);
-                if ((name == null || name.equals(node.getNodeName())) &&
-                        element.equals(node.getAttributes().getNamedItem("name"))) {
+                if ((name == null || name.equals(node.getNodeName()))
+                        && element.equals(node.getAttributes().getNamedItem("name"))) {
                     childNode = node;
                     break;
                 }

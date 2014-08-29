@@ -51,9 +51,10 @@ public class CrawlLogIndexCacheTester extends CacheTestCase {
     public void tearDown() throws Exception {
         super.tearDown();
     }
-    
+
     /**
      * Test of private method sortCrawlLog.
+     * 
      * @throws Exception
      */
     @Test
@@ -74,26 +75,25 @@ public class CrawlLogIndexCacheTester extends CacheTestCase {
             String url = split[urlField];
             if (prev != null) {
                 if (url.compareTo(prev) < 0) {
-                    fail(msg + ": " + f + " unsorted at line " + i
-                            + ":\n" + url + "\n" + prev);
+                    fail(msg + ": " + f + " unsorted at line " + i + ":\n" + url + "\n" + prev);
                 }
             }
             prev = url;
             i++;
         }
     }
-    
+
     /**
      * Test of preparecombine.
+     * 
      * @throws Exception
      */
     @Test
     public void testPrepareCombine() throws NoSuchFieldException, IllegalAccessException {
-    	LogbackRecorder lr = LogbackRecorder.startRecorder();
+        LogbackRecorder lr = LogbackRecorder.startRecorder();
         // Currently only tests that a log message is written
         CrawlLogIndexCache cache = new FullCrawlLogIndexCache();
-        ReflectUtils.getPrivateField(CrawlLogIndexCache.class, "cdxcache").set(cache,
-                new CDXDataCache() {
+        ReflectUtils.getPrivateField(CrawlLogIndexCache.class, "cdxcache").set(cache, new CDXDataCache() {
             public Long cache(Long ID) {
                 if (ID % 3 == 0) {
                     return null;
@@ -104,19 +104,19 @@ public class CrawlLogIndexCacheTester extends CacheTestCase {
         });
         ReflectUtils.getPrivateField(CombiningMultiFileBasedCache.class, "rawcache").set(cache,
                 new CrawlLogDataCache() {
-            public File getCacheFile(Long id) {
-                return new File(TestInfo.WORKING_DIR, "cache-" + id);
-            }
+                    public File getCacheFile(Long id) {
+                        return new File(TestInfo.WORKING_DIR, "cache-" + id);
+                    }
 
-            protected Long cacheData(Long id) {
-                return null;
-            }
-        });
+                    protected Long cacheData(Long id) {
+                        return null;
+                    }
+                });
         Set<Long> jobIDs = new HashSet<Long>();
         jobIDs.add(1L);
         cache.prepareCombine(jobIDs);
-        lr.assertLogContains("Should have info about starting index",
-                "Starting to generate fullcrawllogindex for the " + jobIDs.size() + " jobs: " + jobIDs);
+        lr.assertLogContains("Should have info about starting index", "Starting to generate fullcrawllogindex for the "
+                + jobIDs.size() + " jobs: " + jobIDs);
         lr.stopRecorder();
     }
 

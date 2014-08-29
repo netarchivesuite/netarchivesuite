@@ -26,12 +26,11 @@ package dk.netarkivet.archive.arcrepository;
 import java.io.File;
 
 /**
- * Defines test data and directories for the package
- * dk.netarkivet.archive.arcrepository.
+ * Defines test data and directories for the package dk.netarkivet.archive.arcrepository.
  */
 class TestInfo {
 
-	static final File DATA_DIR = new File("tests/dk/netarkivet/archive/arcrepository/data");
+    static final File DATA_DIR = new File("tests/dk/netarkivet/archive/arcrepository/data");
     static final File ORIGINALS_DIR = new File(DATA_DIR, "originals");
     static final File WORKING_DIR = new File(DATA_DIR, "working");
     static final File CORRECT_ORIGINALS_DIR = new File(DATA_DIR, "correct/originals/");

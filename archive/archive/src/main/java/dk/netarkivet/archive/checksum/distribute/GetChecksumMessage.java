@@ -28,33 +28,30 @@ import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
- * The GetChecksumMessage has the purpose to retrieve the checksum of a 
- * specific file.
+ * The GetChecksumMessage has the purpose to retrieve the checksum of a specific file.
  * 
- * This is checksum replica alternative to sending a ChecksumBatchJob, with
- * a filename limitation.
+ * This is checksum replica alternative to sending a ChecksumBatchJob, with a filename limitation.
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({"serial"})
 public class GetChecksumMessage extends ArchiveMessage {
-    /** The name of the arc file to retrieve the checksum from.*/
+    /** The name of the arc file to retrieve the checksum from. */
     private String arcFilename;
-    /** The resulting checksum for the arcFile.*/
+    /** The resulting checksum for the arcFile. */
     private String checksum;
-    /** The id of the replica where the checksum should be retrieved.*/
+    /** The id of the replica where the checksum should be retrieved. */
     private String replicaId;
-    /** Variable to tell whether this is a reply.*/
+    /** Variable to tell whether this is a reply. */
     private boolean isReply = false;
 
     /**
      * Constructor.
-     *  
+     * 
      * @param to Where this message should be sent.
      * @param replyTo Where the reply for this message should be sent.
      * @param filename The name of the file.
      * @param repId The id of the replica where the message is to be sent.
      */
-    public GetChecksumMessage(ChannelID to, ChannelID replyTo, 
-            String filename, String repId) {
+    public GetChecksumMessage(ChannelID to, ChannelID replyTo, String filename, String repId) {
         super(to, replyTo);
         // validate arguments (channels are validated in 'super').
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
@@ -83,30 +80,26 @@ public class GetChecksumMessage extends ArchiveMessage {
     }
 
     /**
-     * Retrieves the checksum. This method is intended for the reply.
-     * If this checksum has not been sent, then the value is null.
+     * Retrieves the checksum. This method is intended for the reply. If this checksum has not been sent, then the value
+     * is null.
      * 
-     * @return The retrieved checksum, or null if the entry was not found in 
-     * the archive. 
+     * @return The retrieved checksum, or null if the entry was not found in the archive.
      */
     public String getChecksum() {
         return checksum;
     }
-    
+
     /**
-     * Retrieves the variable for telling whether this it currently is a reply
-     * to this message or not.
+     * Retrieves the variable for telling whether this it currently is a reply to this message or not.
      * 
      * @return Whether this is a reply or not.
      */
     public boolean getIsReply() {
         return isReply;
     }
-    
+
     /**
-     * Set that this is a reply. This should be set when there is replied to 
-     * this message. 
-     * <b>isReply = true</b>.
+     * Set that this is a reply. This should be set when there is replied to this message. <b>isReply = true</b>.
      */
     public void setIsReply() {
         isReply = true;
@@ -116,8 +109,7 @@ public class GetChecksumMessage extends ArchiveMessage {
      * Method for returning the result of the checksum.
      * 
      * @param cs The checksum.
-     * @throws ArgumentNotValid If the checksum which is attempted to be set
-     * is either null or an empty string.
+     * @throws ArgumentNotValid If the checksum which is attempted to be set is either null or an empty string.
      */
     public void setChecksum(String cs) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(cs, "String cs");
@@ -140,7 +132,6 @@ public class GetChecksumMessage extends ArchiveMessage {
      * @return String representation of this object
      */
     public String toString() {
-        return super.toString() + " Arcfiles: " + arcFilename 
-        + ", ReplicaId: " + replicaId + ", Checksum: " + checksum;
+        return super.toString() + " Arcfiles: " + arcFilename + ", ReplicaId: " + replicaId + ", Checksum: " + checksum;
     }
 }

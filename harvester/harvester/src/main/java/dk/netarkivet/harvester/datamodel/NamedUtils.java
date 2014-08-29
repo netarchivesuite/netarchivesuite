@@ -32,21 +32,17 @@ import java.util.Locale;
 import dk.netarkivet.common.utils.Named;
 
 /**
- * Utilities for handling named objects. Named objects are objects in our
- * datamodel, which have a name and a comment.
+ * Utilities for handling named objects. Named objects are objects in our datamodel, which have a name and a comment.
  */
 public class NamedUtils {
 
-	/**
-     * Sorts List of Named objects according to language defined in parameter
-     * loc. The sorting is done via a compare function on named objects. The
-     * compare function uses Collator for sorting according to language in loc.
-     * The compare function is used as Comparator for the Collection Sorting on
-     * Named object Lists.
+    /**
+     * Sorts List of Named objects according to language defined in parameter loc. The sorting is done via a compare
+     * function on named objects. The compare function uses Collator for sorting according to language in loc. The
+     * compare function is used as Comparator for the Collection Sorting on Named object Lists.
      *
-     * @param loc  contains the language sorting must adhere to
-     * @param list contains list to be sorted. Objects in the List must
-     *             implement Named
+     * @param loc contains the language sorting must adhere to
+     * @param list contains list to be sorted. Objects in the List must implement Named
      */
     public static <T extends Named> void sortNamedObjectList(final Locale loc, List<T> list) {
         Collections.sort(list, new Comparator<Named>() {

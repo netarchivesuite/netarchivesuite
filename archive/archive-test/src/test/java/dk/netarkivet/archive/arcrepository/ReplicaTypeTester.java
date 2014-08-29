@@ -29,6 +29,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
+
 /** Tests of the ReplicaType enum class. */
 
 public class ReplicaTypeTester {
@@ -45,7 +46,7 @@ public class ReplicaTypeTester {
             // Expected
         }
     }
-     
+
     @Test
     public void testFromSetting() {
         try {
@@ -53,15 +54,11 @@ public class ReplicaTypeTester {
         } catch (ArgumentNotValid e) {
             // Expected
         }
-        
-        assertEquals(ReplicaType.BITARCHIVE, 
-                ReplicaType.fromSetting(ReplicaType.BITARCHIVE_REPLICATYPE_AS_STRING));
-        assertEquals(ReplicaType.CHECKSUM, 
-                ReplicaType.fromSetting(ReplicaType.CHECKSUM_REPLICATYPE_AS_STRING));
-        assertEquals(ReplicaType.NO_REPLICA_TYPE, 
-                ReplicaType.fromSetting(""));
-        assertEquals(ReplicaType.NO_REPLICA_TYPE, 
-                ReplicaType.fromSetting("not yet introduced type"));
-        
+
+        assertEquals(ReplicaType.BITARCHIVE, ReplicaType.fromSetting(ReplicaType.BITARCHIVE_REPLICATYPE_AS_STRING));
+        assertEquals(ReplicaType.CHECKSUM, ReplicaType.fromSetting(ReplicaType.CHECKSUM_REPLICATYPE_AS_STRING));
+        assertEquals(ReplicaType.NO_REPLICA_TYPE, ReplicaType.fromSetting(""));
+        assertEquals(ReplicaType.NO_REPLICA_TYPE, ReplicaType.fromSetting("not yet introduced type"));
+
     }
 }

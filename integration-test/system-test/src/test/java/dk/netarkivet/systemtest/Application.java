@@ -45,8 +45,7 @@ public class Application {
      * @param priority
      * @param replica
      */
-    public Application(String machine, String application, String instance_Id,
-            String priority, String replica) {
+    public Application(String machine, String application, String instance_Id, String priority, String replica) {
         this.machine = "".equals(machine) ? null : machine;
         this.application = "".equals(application) ? null : application;
         this.instance_Id = "".equals(instance_Id) ? null : instance_Id;
@@ -56,22 +55,18 @@ public class Application {
 
     @Override
     public String toString() {
-        return "Application [machine=" + machine + ", application="
-                + application + ", instance_Id=" + instance_Id + ", priority="
-                + priority + ", replica=" + replica + "]";
+        return "Application [machine=" + machine + ", application=" + application + ", instance_Id=" + instance_Id
+                + ", priority=" + priority + ", replica=" + replica + "]";
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result
-                + ((application == null) ? 0 : application.hashCode());
-        result = prime * result
-                + ((instance_Id == null) ? 0 : instance_Id.hashCode());
+        result = prime * result + ((application == null) ? 0 : application.hashCode());
+        result = prime * result + ((instance_Id == null) ? 0 : instance_Id.hashCode());
         result = prime * result + ((machine == null) ? 0 : machine.hashCode());
-        result = prime * result
-                + ((priority == null) ? 0 : priority.hashCode());
+        result = prime * result + ((priority == null) ? 0 : priority.hashCode());
         result = prime * result + ((replica == null) ? 0 : replica.hashCode());
         return result;
     }

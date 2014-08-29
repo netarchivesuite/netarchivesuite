@@ -32,7 +32,8 @@ import java.util.List;
  */
 
 public class CollectionUtils {
-    /** Return all the arguments as a list.
+    /**
+     * Return all the arguments as a list.
      *
      * @param args Objects to put into a list
      * @return A list containing all the objects in that order

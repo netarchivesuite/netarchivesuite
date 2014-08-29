@@ -41,22 +41,22 @@ import dk.netarkivet.common.exceptions.IllegalState;
  */
 public class Application {
 
-	/** the log, for logging stuff instead of displaying them directly.*/ 
+    /** the log, for logging stuff instead of displaying them directly. */
     private static final Logger log = LoggerFactory.getLogger(Application.class);
 
-    /** the root-branch for this application in the XML tree.*/
+    /** the root-branch for this application in the XML tree. */
     private Element applicationRoot;
-    /** The specific settings for this instance, inherited and overwritten.*/
+    /** The specific settings for this instance, inherited and overwritten. */
     private XmlStructure settings;
-    /** parameters.*/
+    /** parameters. */
     private Parameters machineParameters;
-    /** Name of this instance.*/
+    /** Name of this instance. */
     private String name;
-    /** The total name of this instance.*/
+    /** The total name of this instance. */
     private String nameWithNamePath;
     /** application instance id (optional, used when two application has same name). */
     private String applicationInstanceId;
-    
+
     /** The encoding to use when writing files. */
     private final String targetEncoding;
 
@@ -77,9 +77,9 @@ public class Application {
         settings = new XmlStructure(parentSettings.getRoot());
         applicationRoot = subTreeRoot;
         machineParameters = new Parameters(param);
-        // retrieve the specific settings for this instance 
+        // retrieve the specific settings for this instance
         Element tmpSet = applicationRoot.element(Constants.COMPLETE_SETTINGS_BRANCH);
-        // Generate the specific settings by combining the general settings 
+        // Generate the specific settings by combining the general settings
         // and the specific, (only if this instance has specific settings)
         if (tmpSet != null) {
             settings.overWrite(tmpSet);
@@ -99,22 +99,22 @@ public class Application {
         try {
             // retrieve name
             Attribute at = applicationRoot.attribute(Constants.APPLICATION_NAME_ATTRIBUTE);
-            if(at != null) {
+            if (at != null) {
                 // the name is actually the classpath, so the specific class is
                 // set as the name. It is the last element in the classpath.
                 nameWithNamePath = at.getText().trim();
                 // the classpath is is separated by '.'
                 String[] stlist = nameWithNamePath.split(Constants.REGEX_DOT_CHARACTER);
-                // take the last part of the application class path as name. 
+                // take the last part of the application class path as name.
                 // e.g.
                 // dk.netarkivet.archive.bitarhcive.BitarchiveMonitorApplication
                 // gets the name BitarchiveMonitorApplication.
-                name = stlist[stlist.length -1];
-                
-                // overwriting the name, if it exists already; 
-                // otherwise it is inserted. 
+                name = stlist[stlist.length - 1];
+
+                // overwriting the name, if it exists already;
+                // otherwise it is inserted.
                 String xmlName = XmlStructure.pathAndContentToXML(nameWithNamePath,
-                		Constants.COMPLETE_APPLICATION_NAME_LEAF);
+                        Constants.COMPLETE_APPLICATION_NAME_LEAF);
                 Element appXmlName = XmlStructure.makeElementFromString(xmlName);
                 settings.overWrite(appXmlName);
             } else {
@@ -123,25 +123,24 @@ public class Application {
             }
             // look for the optional application instance id
             Element elem = settings.getSubChild(Constants.SETTINGS_APPLICATION_INSTANCE_ID_LEAF);
-            if(elem != null && !elem.getText().trim().isEmpty()) {
+            if (elem != null && !elem.getText().trim().isEmpty()) {
                 applicationInstanceId = elem.getText().trim();
-            } 
-        } catch(Exception e) {
+            }
+        } catch (Exception e) {
             log.debug("Application variables not extractable.", e);
             throw new IOFailure("Application variables not extractable.", e);
         }
     }
 
-     /**
-     * Uses the name and the optional applicationId to create
-     * an unique identification for this application.
-     *  
+    /**
+     * Uses the name and the optional applicationId to create an unique identification for this application.
+     * 
      * @return The unique identification of this application.
      */
     public String getIdentification() {
         StringBuilder res = new StringBuilder(name);
         // use only applicationInstanceId if it exists and has content
-        if(applicationInstanceId != null && !applicationInstanceId.isEmpty()) {
+        if (applicationInstanceId != null && !applicationInstanceId.isEmpty()) {
             res.append(Constants.UNDERSCORE);
             res.append(applicationInstanceId);
         }
@@ -155,11 +154,9 @@ public class Application {
         return nameWithNamePath;
     }
 
-     /**
-     * Creates the settings file for this application.
-     * This is extracted from the XMLStructure and put into a specific file.
-     * The name of the settings file for this application is:
-     * "settings_" + identification + ".xml".
+    /**
+     * Creates the settings file for this application. This is extracted from the XMLStructure and put into a specific
+     * file. The name of the settings file for this application is: "settings_" + identification + ".xml".
      * 
      * @param directory The directory where the settings file should be placed.
      */
@@ -167,8 +164,8 @@ public class Application {
         ArgumentNotValid.checkNotNull(directory, "File directory");
 
         // make file
-        File settingsFile = new File(directory, 
-                Constants.PREFIX_SETTINGS + getIdentification() + Constants.EXTENSION_XML_FILES);
+        File settingsFile = new File(directory, Constants.PREFIX_SETTINGS + getIdentification()
+                + Constants.EXTENSION_XML_FILES);
         try {
             // initiate writer
             PrintWriter pw = new PrintWriter(settingsFile, targetEncoding);
@@ -184,7 +181,7 @@ public class Application {
         } catch (UnsupportedEncodingException e) {
             log.debug("Unsupported encoding '{}'", targetEncoding, e);
             throw new IOFailure("Unsupported encoding '" + targetEncoding + "'", e);
-		}
+        }
     }
 
     /**
@@ -194,7 +191,7 @@ public class Application {
      */
     public String installPathLinux() {
         return machineParameters.getInstallDirValue() + Constants.SLASH
-        		+ settings.getSubChildValue(Constants.SETTINGS_ENVIRONMENT_NAME_LEAF);
+                + settings.getSubChildValue(Constants.SETTINGS_ENVIRONMENT_NAME_LEAF);
     }
 
     /**
@@ -204,23 +201,23 @@ public class Application {
      */
     public String installPathWindows() {
         return machineParameters.getInstallDirValue() + Constants.BACKSLASH
-        		+ settings.getSubChildValue(Constants.SETTINGS_ENVIRONMENT_NAME_LEAF);
+                + settings.getSubChildValue(Constants.SETTINGS_ENVIRONMENT_NAME_LEAF);
     }
 
-    /** 
+    /**
      * For acquiring the machine parameter variable.
+     * 
      * @return The machine parameter variable.
      */
     public Parameters getMachineParameters() {
         return machineParameters;
     }
-    
+
     /**
      * For acquiring all the values of the leafs at the end of the path.
      * 
      * @param path The path to the branches.
-     * @return The values of the leafs. If no values were found, then an empty
-     * collection of strings are returned.
+     * @return The values of the leafs. If no values were found, then an empty collection of strings are returned.
      */
     public String[] getSettingsValues(String[] path) {
         ArgumentNotValid.checkNotNull(path, "String[] path");

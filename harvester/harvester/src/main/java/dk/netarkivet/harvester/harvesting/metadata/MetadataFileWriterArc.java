@@ -48,6 +48,7 @@ public class MetadataFileWriterArc extends MetadataFileWriter {
 
     /**
      * Create a <code>MetadataFileWriter</code> for ARC output.
+     * 
      * @param metadataARCFile The metadata ARC <code>File</code>
      * @return <code>MetadataFileWriter</code> for writing metadata files in ARC
      */
@@ -79,8 +80,9 @@ public class MetadataFileWriterArc extends MetadataFileWriter {
         ARCUtils.writeFileToARC(writer, file, uri, mime);
     }
 
-    /** Writes a File to an ARCWriter, if available,
-     * otherwise logs the failure to the class-logger.
+    /**
+     * Writes a File to an ARCWriter, if available, otherwise logs the failure to the class-logger.
+     * 
      * @param fileToArchive the File to archive
      * @param URL the URL with which it is stored in the arcfile
      * @param mimetype The mimetype of the File-contents
@@ -108,7 +110,7 @@ public class MetadataFileWriterArc extends MetadataFileWriter {
     /* Copied from the ARCWriter. */
     @Override
     public void write(String uri, String contentType, String hostIP, long fetchBeginTimeStamp, byte[] payload)
-    		throws IOException {
+            throws IOException {
         ByteArrayInputStream in = new ByteArrayInputStream(payload);
         writer.write(uri, contentType, hostIP, fetchBeginTimeStamp, payload.length, in);
     }

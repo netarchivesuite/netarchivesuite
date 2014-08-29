@@ -26,13 +26,11 @@ import org.archive.crawler.frontier.WorkQueue;
 
 import dk.netarkivet.harvester.harvesting.frontier.FullFrontierReport.ReportIterator;
 
-
 public class RetiredQueuesFilter extends MaxSizeFrontierReportExtract {
 
     @Override
     public InMemoryFrontierReport process(FrontierReport initialFrontier) {
-        InMemoryFrontierReport result = new InMemoryFrontierReport(
-                initialFrontier.getJobName());
+        InMemoryFrontierReport result = new InMemoryFrontierReport(initialFrontier.getJobName());
 
         FullFrontierReport full = (FullFrontierReport) initialFrontier;
         ReportIterator iter = full.iterateOnSpentBudget();
@@ -57,6 +55,7 @@ public class RetiredQueuesFilter extends MaxSizeFrontierReportExtract {
 
     /**
      * Determines whether a given frontier queue is retired, e.g. over budget.
+     * 
      * @param l a {@link FrontierReportLine} representing a frontier queue
      * @return true if the queue is retired, false otherwise.
      * @see WorkQueue#isOverBudget()

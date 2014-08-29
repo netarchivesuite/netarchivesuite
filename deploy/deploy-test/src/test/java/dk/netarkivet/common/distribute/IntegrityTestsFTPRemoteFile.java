@@ -22,7 +22,6 @@
  */
 package dk.netarkivet.common.distribute;
 
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -58,13 +57,13 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 /**
  * Class testing the FTPRemoteFile class.
  */
-@SuppressWarnings({ "unused"})
+@SuppressWarnings({"unused"})
 @Ignore("Not in junit3 test suite")
 public class IntegrityTestsFTPRemoteFile {
 
-	private static final String FILE_1_CONTENTS = "The contents of file 1";
-    private static final String FILE_2_CONTENTS = "File 2 contains\n" +
-            "this and this\nit also has\nsome more\nlike this\nBurma-Shave";
+    private static final String FILE_1_CONTENTS = "The contents of file 1";
+    private static final String FILE_2_CONTENTS = "File 2 contains\n"
+            + "this and this\nit also has\nsome more\nlike this\nBurma-Shave";
     private FTPClient theFTPClient;
     private List<RemoteFile> upLoadedFTPRemoteFiles = new ArrayList<RemoteFile>();
     private List<String> upLoadedFiles = new ArrayList<String>();
@@ -104,13 +103,10 @@ public class IntegrityTestsFTPRemoteFile {
         }
 
         /** Read ftp-related settings from settings.xml. */
-        final String ftpServerName = Settings.get(
-                CommonSettings.FTP_SERVER_NAME);
-        final int ftpServerPort = Integer.parseInt(Settings.get(
-                CommonSettings.FTP_SERVER_PORT));
+        final String ftpServerName = Settings.get(CommonSettings.FTP_SERVER_NAME);
+        final int ftpServerPort = Integer.parseInt(Settings.get(CommonSettings.FTP_SERVER_PORT));
         final String ftpUserName = Settings.get(CommonSettings.FTP_USER_NAME);
-        final String ftpUserPassword = Settings.get(
-                CommonSettings.FTP_USER_PASSWORD);
+        final String ftpUserPassword = Settings.get(CommonSettings.FTP_USER_PASSWORD);
 
         /** Connect to test ftp-server. */
         theFTPClient = new FTPClient();
@@ -119,14 +115,11 @@ public class IntegrityTestsFTPRemoteFile {
             theFTPClient.connect(ftpServerName, ftpServerPort);
             theFTPClient.login(ftpUserName, ftpUserPassword);
             boolean b = theFTPClient.setFileType(FTPClient.BINARY_FILE_TYPE);
-            assertTrue("Must be possible to set the file type to binary after login",
-                    b);
+            assertTrue("Must be possible to set the file type to binary after login", b);
         } catch (SocketException e) {
-            throw new IOFailure("Connect to " + ftpServerName + " failed",
-                    e.getCause());
+            throw new IOFailure("Connect to " + ftpServerName + " failed", e.getCause());
         } catch (IOException e) {
-            throw new IOFailure("Connect to " + ftpServerName + " failed",
-                    e.getCause());
+            throw new IOFailure("Connect to " + ftpServerName + " failed", e.getCause());
         }
         theFTPClient.enterLocalPassiveMode();
         rf = FTPRemoteFile.getInstance(testFile1, true, false, true);
@@ -144,22 +137,20 @@ public class IntegrityTestsFTPRemoteFile {
 
             if (currentUploadedFile != null) {
                 if (!theFTPClient.deleteFile(currentUploadedFile)) {
-                    logger.warning("deleteFile operation failed on " +
-                            currentUploadedFile + ". Reply from ftpserver: " +
-                            theFTPClient.getReplyString());
+                    logger.warning("deleteFile operation failed on " + currentUploadedFile + ". Reply from ftpserver: "
+                            + theFTPClient.getReplyString());
                 }
             }
         }
 
         if (!theFTPClient.logout()) {
-            logger.warning("logout operation failed. Reply from ftp-server: " +
-                    theFTPClient.getReplyString());
+            logger.warning("logout operation failed. Reply from ftp-server: " + theFTPClient.getReplyString());
         }
 
         theFTPClient.disconnect();
 
         Iterator<RemoteFile> ftpIterator = upLoadedFTPRemoteFiles.iterator();
-            
+
         while (ftpIterator.hasNext()) {
             FTPRemoteFile currentUploadedFile = (FTPRemoteFile) ftpIterator.next();
 
@@ -172,22 +163,17 @@ public class IntegrityTestsFTPRemoteFile {
         rs.tearDown();
     }
 
-
-
-
     /**
-     * Initially verify that communication with the ftp-server succeeds
-     * without using the RemoteFile.
-     * (1) Verify, that you can upload a file to a ftp-server, and retrieve the
-     * same file from this server-server.
-     * (2) Verify, that file was not corrupted in transit
-     * author: SVC
+     * Initially verify that communication with the ftp-server succeeds without using the RemoteFile. (1) Verify, that
+     * you can upload a file to a ftp-server, and retrieve the same file from this server-server. (2) Verify, that file
+     * was not corrupted in transit author: SVC
+     * 
      * @throws IOException
      */
     public void testConfigSettings() throws IOException {
-        /** this code has been tested with
-         * the ftp-server proftpd (www.proftpd.org), using
-         * the configuration stored in CVS here: /projects/webarkivering/proftpd.org
+        /**
+         * this code has been tested with the ftp-server proftpd (www.proftpd.org), using the configuration stored in
+         * CVS here: /projects/webarkivering/proftpd.org
          */
         String nameOfUploadedFile;
         String nameOfUploadedFile2;
@@ -203,30 +189,26 @@ public class IntegrityTestsFTPRemoteFile {
 
         /** try to append data to file on FTP-server */
         /** Assumption: File does not exist on FTP-server */
-        assertFalse("File should not exist already on server",
-                onServer(nameOfUploadedFile));
+        assertFalse("File should not exist already on server", onServer(nameOfUploadedFile));
 
-        assertTrue("Appendfile operation failed",
-                theFTPClient.appendFile(nameOfUploadedFile, in));
+        assertTrue("Appendfile operation failed", theFTPClient.appendFile(nameOfUploadedFile, in));
         upLoadedFiles.add(nameOfUploadedFile);
 
         /** try to append data to file on the FTP-server */
-        assertTrue("AppendFile operation 2 failed!",
-                theFTPClient.appendFile(nameOfUploadedFile, in2));
+        assertTrue("AppendFile operation 2 failed!", theFTPClient.appendFile(nameOfUploadedFile, in2));
 
         if (!upLoadedFiles.contains(nameOfUploadedFile)) {
             upLoadedFiles.add(nameOfUploadedFile);
         }
 
         /** try to store data to a file on the FTP-server */
-        assertTrue("Store operation failed",
-                theFTPClient.storeFile(nameOfUploadedFile2, in));
+        assertTrue("Store operation failed", theFTPClient.storeFile(nameOfUploadedFile2, in));
         upLoadedFiles.add(nameOfUploadedFile2);
     }
 
     /**
-     * test 1: test that FTPRemoteFile.getInstance(null) throws an
-     * ArgumentNotValid exception
+     * test 1: test that FTPRemoteFile.getInstance(null) throws an ArgumentNotValid exception
+     * 
      * @throws FileNotFoundException
      */
     public void testArgumentsNewInstanceNotNull() throws FileNotFoundException {
@@ -239,13 +221,13 @@ public class IntegrityTestsFTPRemoteFile {
     }
 
     /**
-     * test 3: test that FTPRemoteFile.appendTo(null) throws an
-     * ArgumentNotValid exception
+     * test 3: test that FTPRemoteFile.appendTo(null) throws an ArgumentNotValid exception
+     * 
      * @throws FileNotFoundException
      */
     public void testArgumentsRemoteFileAppendToNotNull() throws FileNotFoundException {
         try {
-            //RemoteFile rf = FTPRemoteFile.getInstance(testFile1);
+            // RemoteFile rf = FTPRemoteFile.getInstance(testFile1);
             rf.appendTo(null);
             fail("ArgumentNotValid Expected");
         } catch (ArgumentNotValid e) {
@@ -253,41 +235,35 @@ public class IntegrityTestsFTPRemoteFile {
         }
     }
 
-    /** Test that writing to the original file after making a remotefile
-     * does not change the remotefile contents.
-     * Test for bug #289
+    /**
+     * Test that writing to the original file after making a remotefile does not change the remotefile contents. Test
+     * for bug #289
+     * 
      * @throws IOException
      */
     public void testContentsNotOverwriter() throws IOException {
-        Settings.set(CommonSettings.REMOTE_FILE_CLASS, 
-        "dk.netarkivet.common.distribute.FTPRemoteFile");
+        Settings.set(CommonSettings.REMOTE_FILE_CLASS, "dk.netarkivet.common.distribute.FTPRemoteFile");
         FileUtils.writeBinaryFile(testFile2, "another simple string".getBytes());
         String originalContents = FileUtils.readFile(testFile1);
-        RemoteFile rf = RemoteFileFactory.getInstance(testFile1, true, false,
-                                                      true);
+        RemoteFile rf = RemoteFileFactory.getInstance(testFile1, true, false, true);
         FileUtils.writeBinaryFile(testFile1, "a simple string".getBytes());
-        FileAsserts.assertFileContains("Original file should be overwritten",
-                "a simple string", testFile1);
-        FileAsserts.assertFileNotContains("Contents from remotefile should not" +
-                "exist before writing", testFile2, originalContents);
+        FileAsserts.assertFileContains("Original file should be overwritten", "a simple string", testFile1);
+        FileAsserts.assertFileNotContains("Contents from remotefile should not" + "exist before writing", testFile2,
+                originalContents);
         rf.copyTo(testFile2);
-        FileAsserts.assertFileContains("Contents from remotefile should not" +
-                "be affected by overwriting testfile", originalContents,
-                testFile2);
-        assertEquals("MD5 sum should not be affected",
-                ChecksumCalculator.calculateMd5(originalContents.getBytes()),
+        FileAsserts.assertFileContains("Contents from remotefile should not" + "be affected by overwriting testfile",
+                originalContents, testFile2);
+        assertEquals("MD5 sum should not be affected", ChecksumCalculator.calculateMd5(originalContents.getBytes()),
                 rf.getChecksum());
-        FileAsserts.assertFileContains("Original file should be unchanged",
-                "a simple string", testFile1);
+        FileAsserts.assertFileContains("Original file should be unchanged", "a simple string", testFile1);
     }
 
-    public boolean onServer(String nameOfUploadedFile)
-            throws IOException {
+    public boolean onServer(String nameOfUploadedFile) throws IOException {
         assertTrue("theFTPClient should not be null", theFTPClient != null);
 
         FTPFile[] listOfFiles = theFTPClient.listFiles();
 
-        //assertTrue("This list should not be null",listOfFiles != null);
+        // assertTrue("This list should not be null",listOfFiles != null);
         if (listOfFiles == null) {
             return false;
         }

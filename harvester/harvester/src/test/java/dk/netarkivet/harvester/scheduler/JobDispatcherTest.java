@@ -68,8 +68,8 @@ public class JobDispatcherTest {
     private JobDAO jobDAO;
     private JMSConnection jmsConnection;
     private HarvestChannel SELECTIVE_HARVEST_CHANNEL = new HarvestChannel("FOCUSED", false, true, "");
-    private final ArgumentCaptor<DoOneCrawlMessage> crawlMessageCaptor =
-            ArgumentCaptor.forClass(DoOneCrawlMessage.class);
+    private final ArgumentCaptor<DoOneCrawlMessage> crawlMessageCaptor = ArgumentCaptor
+            .forClass(DoOneCrawlMessage.class);
     private Job jobMock = createJob(1);
     private SparsePartialHarvest harvest = createDefaultSparsePartialHarvest();
 
@@ -95,9 +95,8 @@ public class JobDispatcherTest {
         verify(jobDAO).update(jobMock);
         verify(jmsConnection).send(crawlMessageCaptor.capture());
         assertTrue(jobMock == crawlMessageCaptor.getValue().getJob());
-        assertEquals(
-                HarvesterChannels.getHarvestJobChannelId(SELECTIVE_HARVEST_CHANNEL),
-                crawlMessageCaptor.getValue().getTo());
+        assertEquals(HarvesterChannels.getHarvestJobChannelId(SELECTIVE_HARVEST_CHANNEL), crawlMessageCaptor.getValue()
+                .getTo());
         assertEquals(harvest.getName(), crawlMessageCaptor.getValue().getOrigHarvestInfo().getOrigHarvestName());
     }
 
@@ -109,16 +108,16 @@ public class JobDispatcherTest {
         prepareDefaultMockAnswers(SELECTIVE_HARVEST_CHANNEL, jobMock);
         String originalDomain = "netarkiv.dk";
         String aliasDomain = "netatarkivalias.dk";
-        when(jobMock.getJobAliasInfo()).thenReturn(Arrays.asList(new AliasInfo[] {
-                new AliasInfo("netatarkivalias.dk", "netarkiv.dk", new Date())}));
+        when(jobMock.getJobAliasInfo()).thenReturn(
+                Arrays.asList(new AliasInfo[] {new AliasInfo("netatarkivalias.dk", "netarkiv.dk", new Date())}));
 
         jobDispatcher.submitNextNewJob(SELECTIVE_HARVEST_CHANNEL);
 
         verify(jmsConnection).send(crawlMessageCaptor.capture());
-        assertEquals("Should have 1 metadata entry in last received message",
-                1, crawlMessageCaptor.getValue().getMetadata().size());
-        assertEquals(aliasDomain + " is an alias for " + originalDomain + "\n",
-                new String(crawlMessageCaptor.getValue().getMetadata().get(0).getData()));
+        assertEquals("Should have 1 metadata entry in last received message", 1, crawlMessageCaptor.getValue()
+                .getMetadata().size());
+        assertEquals(aliasDomain + " is an alias for " + originalDomain + "\n", new String(crawlMessageCaptor
+                .getValue().getMetadata().get(0).getData()));
     }
 
     /**
@@ -129,38 +128,30 @@ public class JobDispatcherTest {
         prepareDefaultMockAnswers(SELECTIVE_HARVEST_CHANNEL, jobMock);
         Document doc = OrderXmlBuilder.create().enableDeduplication().getOrderXml();
         when(jobMock.getOrderXMLdoc()).thenReturn(doc);
-        List<Long> jobIDsForDuplicateReduction = Arrays.asList(new Long[]{1L});
+        List<Long> jobIDsForDuplicateReduction = Arrays.asList(new Long[] {1L});
         when(jobDAO.getJobIDsForDuplicateReduction(jobMock.getJobID())).thenReturn(jobIDsForDuplicateReduction);
 
         jobDispatcher.submitNextNewJob(SELECTIVE_HARVEST_CHANNEL);
 
         verify(jmsConnection).send(crawlMessageCaptor.capture());
 
-
         DoOneCrawlMessage crawlMessage = crawlMessageCaptor.getValue();
-        assertEquals("Should have 1 metadata entry in the crawl request",
-                1, crawlMessage.getMetadata().size());
+        assertEquals("Should have 1 metadata entry in the crawl request", 1, crawlMessage.getMetadata().size());
         MetadataEntry metadataEntry = crawlMessage.getMetadata().get(0);
         assertNotNull("Should have 1 metadata entry", metadataEntry);
-        assertEquals("Should have mimetype text/plain", "text/plain",
-                metadataEntry.getMimeType());
+        assertEquals("Should have mimetype text/plain", "text/plain", metadataEntry.getMimeType());
         assertEquals("Should have right url",
-                "metadata://netarkivet.dk/crawl/setup/duplicatereductionjobs" +
-                        "?majorversion=1" +
-                        "&minorversion=0" +
-                        "&harvestid=" + harvest.getOid() +
-                        "&harvestnum=" + jobMock.getHarvestNum() +
-                        "&jobid=" + jobMock.getJobID(),
-                metadataEntry.getURL());
-        assertEquals("Should have right data", jobIDsForDuplicateReduction.get(0) + "", new String(
-                metadataEntry.getData()));
+                "metadata://netarkivet.dk/crawl/setup/duplicatereductionjobs" + "?majorversion=1" + "&minorversion=0"
+                        + "&harvestid=" + harvest.getOid() + "&harvestnum=" + jobMock.getHarvestNum() + "&jobid="
+                        + jobMock.getJobID(), metadataEntry.getURL());
+        assertEquals("Should have right data", jobIDsForDuplicateReduction.get(0) + "",
+                new String(metadataEntry.getData()));
     }
 
     private static final HarvestChannel SNAPSHOT = new HarvestChannel("SNAPSHOT", true, true, "");
 
     /**
-     * Test sending + check that we send a message
-     * Uses MessageTestHandler()
+     * Test sending + check that we send a message Uses MessageTestHandler()
      */
     @Test
     public void testSendingToCorrectQueue() {
@@ -169,9 +160,8 @@ public class JobDispatcherTest {
         jobDispatcher.submitNextNewJob(SELECTIVE_HARVEST_CHANNEL);
         verify(jmsConnection).send(crawlMessageCaptor.capture());
         assertTrue(jobMock == crawlMessageCaptor.getValue().getJob());
-        assertEquals(
-                HarvesterChannels.getHarvestJobChannelId(SELECTIVE_HARVEST_CHANNEL),
-                crawlMessageCaptor.getValue().getTo());
+        assertEquals(HarvesterChannels.getHarvestJobChannelId(SELECTIVE_HARVEST_CHANNEL), crawlMessageCaptor.getValue()
+                .getTo());
         reset(jmsConnection);
 
         Job snapshotJob = createJob(2);
@@ -180,20 +170,16 @@ public class JobDispatcherTest {
         verify(jmsConnection).send(crawlMessageCaptor.capture());
         assertTrue(snapshotJob == crawlMessageCaptor.getValue().getJob());
 
-        assertEquals(
-                HarvesterChannels.getHarvestJobChannelId(SNAPSHOT),
-                crawlMessageCaptor.getValue().getTo());
+        assertEquals(HarvesterChannels.getHarvestJobChannelId(SNAPSHOT), crawlMessageCaptor.getValue().getTo());
     }
 
     /**
-     * Verify handling of NULL value for Job
-     * Uses MessageTestHandler()
+     * Verify handling of NULL value for Job Uses MessageTestHandler()
      */
     @Test
     public void testNullJob() {
         try {
-            jobDispatcher.doOneCrawl((Job)null, "test", "test", "test", SELECTIVE_HARVEST_CHANNEL,
-                    "unittesters",
+            jobDispatcher.doOneCrawl((Job) null, "test", "test", "test", SELECTIVE_HARVEST_CHANNEL, "unittesters",
                     new ArrayList<MetadataEntry>());
             fail("Should throw ArgumentNotValid on NULL job");
         } catch (ArgumentNotValid e) {
@@ -202,9 +188,8 @@ public class JobDispatcherTest {
     }
 
     private SparsePartialHarvest createDefaultSparsePartialHarvest() {
-        SparsePartialHarvest harvest = new SparsePartialHarvest(
-                9L, "TestHarvest", "A comment", 2, new Date(), true, 3, "schedule", new Date(), "The audience",
-                SELECTIVE_HARVEST_CHANNEL.getId());
+        SparsePartialHarvest harvest = new SparsePartialHarvest(9L, "TestHarvest", "A comment", 2, new Date(), true, 3,
+                "schedule", new Date(), "The audience", SELECTIVE_HARVEST_CHANNEL.getId());
         return harvest;
     }
 
@@ -217,7 +202,7 @@ public class JobDispatcherTest {
     }
 
     private void prepareDefaultMockAnswers(HarvestChannel channel, Job job) {
-        Iterator<Long> jobIDIterator = Arrays.asList(new Long[]{job.getJobID()}).iterator();
+        Iterator<Long> jobIDIterator = Arrays.asList(new Long[] {job.getJobID()}).iterator();
         when(jobDAO.getAllJobIds(JobStatus.NEW, channel)).thenReturn(jobIDIterator);
         when(jobDAO.read(job.getJobID())).thenReturn(job);
         when(harvestDefinitionDAO.getHarvestName(harvest.getOid())).thenReturn(harvest.getName());

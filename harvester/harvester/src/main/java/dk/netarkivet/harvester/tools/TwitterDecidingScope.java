@@ -50,18 +50,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Heritrix CrawlScope that uses the Twitter Search API (https://dev.twitter.com/docs/api/1/get/search)
- * to add seeds to a crawl. The following parameters to twitter search are supported:
- * keywords: a list equivalent twitters "query" text.
- * geo_locations: as defined in the twitter api.
- * language: quivalent to twitter's "lang" parameter.
- * These may be omitted. In practice only "keywords" works well in the current version of twitter.
+ * Heritrix CrawlScope that uses the Twitter Search API (https://dev.twitter.com/docs/api/1/get/search) to add seeds to
+ * a crawl. The following parameters to twitter search are supported: keywords: a list equivalent twitters "query" text.
+ * geo_locations: as defined in the twitter api. language: quivalent to twitter's "lang" parameter. These may be
+ * omitted. In practice only "keywords" works well in the current version of twitter.
  *
  *
  * In addition, the number of results to be considered is determined by the parameters "pages" and
  * "twitter_results_per_page".
  */
-@SuppressWarnings({ "deprecation", "serial"})
+@SuppressWarnings({"deprecation", "serial"})
 public class TwitterDecidingScope extends DecidingScope {
 
     /**
@@ -77,7 +75,7 @@ public class TwitterDecidingScope extends DecidingScope {
     /**
      * Attribute/value pair. The list of keywords to search for
      */
-    public static final String ATTR_KEYWORDS= "keywords";
+    public static final String ATTR_KEYWORDS = "keywords";
     private StringList keywords;
 
     /**
@@ -93,18 +91,16 @@ public class TwitterDecidingScope extends DecidingScope {
     private int resultsPerPage = 100;
 
     /**
-     * Attribute/value pair. A list of geo_locations to include in the search. These
-     * have the form lat,long,radius,units e.g. 100.1,10.5,25.0,km
+     * Attribute/value pair. A list of geo_locations to include in the search. These have the form lat,long,radius,units
+     * e.g. 100.1,10.5,25.0,km
      */
     public static final String ATTR_GEOLOCATIONS = "geo_locations";
     private StringList geoLocations;
 
-
     /**
-     * Attribute/value pair. If set, the language to which results are restricted.
-     * Unfortunately the twitter language identification heuristics are so poor
-     * that this option is unusable.
-     * (Broken. See http://code.google.com/p/twitter-api/issues/detail?id=1942 )
+     * Attribute/value pair. If set, the language to which results are restricted. Unfortunately the twitter language
+     * identification heuristics are so poor that this option is unusable. (Broken. See
+     * http://code.google.com/p/twitter-api/issues/detail?id=1942 )
      */
     public static final String ATTR_LANG = "language";
     private String language = "all";
@@ -116,7 +112,7 @@ public class TwitterDecidingScope extends DecidingScope {
     private boolean queueLinks = true;
 
     /**
-     *Attribute/value pair specifying whether the status of discovered users should be harvested.
+     * Attribute/value pair specifying whether the status of discovered users should be harvested.
      */
     public static final String ATTR_QUEUE_USER_STATUS = "queue_user_status";
     private boolean queueUserStatus = true;
@@ -126,7 +122,6 @@ public class TwitterDecidingScope extends DecidingScope {
      */
     public static final String ATTR_QUEUE_USER_STATUS_LINKS = "queue_user_status_links";
     private boolean queueUserStatusLinks = true;
-
 
     /**
      * Attribute/value pair specifying whether an html search for the given keyword(s) should also be queued.
@@ -140,6 +135,7 @@ public class TwitterDecidingScope extends DecidingScope {
 
     /**
      * This routine makes any necessary Twitter API calls and queues the content discovered.
+     * 
      * @param controller The controller for this crawl.
      */
     @Override
@@ -170,22 +166,22 @@ public class TwitterDecidingScope extends DecidingScope {
             e1.printStackTrace();
             throw new RuntimeException(e1);
         }
-        for (Object keyword: keywords) {
+        for (Object keyword : keywords) {
             logger.info("Twitter Scope keyword: " + keyword);
         }
-        //If keywords or geoLocations is missing, add a list with a single empty string so that the main loop is
+        // If keywords or geoLocations is missing, add a list with a single empty string so that the main loop is
         // executed at least once.
         if (keywords == null || keywords.isEmpty()) {
-            keywords = new StringList("keywords", "empty keyword list", new String[]{""});
+            keywords = new StringList("keywords", "empty keyword list", new String[] {""});
         }
         if (geoLocations == null || geoLocations.isEmpty()) {
-            geoLocations = new StringList("geolocations", "empty geolocation list",new String[]{""} );
+            geoLocations = new StringList("geolocations", "empty geolocation list", new String[] {""});
         }
         logger.info("Twitter Scope will queue " + pages + " page(s) of results.");
-        //Nested loop over keywords, geo_locations and pages.
-        for (Object keyword: keywords) {
+        // Nested loop over keywords, geo_locations and pages.
+        for (Object keyword : keywords) {
             String keywordString = (String) keyword;
-            for (Object geoLocation: geoLocations) {
+            for (Object geoLocation : geoLocations) {
                 String urlQuery = (String) keyword;
                 Query query = new Query();
                 query.setRpp(resultsPerPage);
@@ -206,7 +202,8 @@ public class TwitterDecidingScope extends DecidingScope {
                     if (!geoLocation.equals("")) {
                         String[] locationArray = ((String) geoLocation).split(",");
                         try {
-                            GeoLocation location = new GeoLocation(Double.parseDouble(locationArray[0]), Double.parseDouble(locationArray[1]));
+                            GeoLocation location = new GeoLocation(Double.parseDouble(locationArray[0]),
+                                    Double.parseDouble(locationArray[1]));
                             query.setGeoCode(location, Double.parseDouble(locationArray[2]), locationArray[3]);
                         } catch (NumberFormatException e) {
                             e.printStackTrace();
@@ -215,23 +212,23 @@ public class TwitterDecidingScope extends DecidingScope {
                     try {
                         final QueryResult result = twitter.search(query);
                         List<Tweet> tweets = result.getTweets();
-                        for (Tweet tweet: tweets) {
-                                long id = tweet.getId();
-                                String fromUser = tweet.getFromUser();
-                                String tweetUrl = "http://www.twitter.com/" + fromUser + "/status/" + id;
-                                addSeedIfLegal(tweetUrl);
-                                tweetCount++;
-                                if (queueLinks) {
-                                    extractEmbeddedLinks(tweet);
+                        for (Tweet tweet : tweets) {
+                            long id = tweet.getId();
+                            String fromUser = tweet.getFromUser();
+                            String tweetUrl = "http://www.twitter.com/" + fromUser + "/status/" + id;
+                            addSeedIfLegal(tweetUrl);
+                            tweetCount++;
+                            if (queueLinks) {
+                                extractEmbeddedLinks(tweet);
+                            }
+                            if (queueUserStatus) {
+                                String statusUrl = "http://twitter.com/" + tweet.getFromUser() + "/";
+                                addSeedIfLegal(statusUrl);
+                                linkCount++;
+                                if (queueUserStatusLinks) {
+                                    queueUserStatusLinks(tweet.getFromUser());
                                 }
-                                if (queueUserStatus) {
-                                    String statusUrl = "http://twitter.com/" + tweet.getFromUser() + "/";
-                                    addSeedIfLegal(statusUrl);
-                                    linkCount++;
-                                    if (queueUserStatusLinks) {
-                                        queueUserStatusLinks(tweet.getFromUser());
-                                    }
-                                }
+                            }
                         }
                     } catch (TwitterException e1) {
                         logger.log(Level.SEVERE, e1.getMessage());
@@ -240,11 +237,13 @@ public class TwitterDecidingScope extends DecidingScope {
             }
 
         }
-        System.out.println(TwitterDecidingScope.class + " added " + tweetCount + " tweets and " + linkCount + " other links.");
+        System.out.println(TwitterDecidingScope.class + " added " + tweetCount + " tweets and " + linkCount
+                + " other links.");
     }
 
     /**
      * Adds links to embedded url's and media in a tweet.
+     * 
      * @param tweet The tweet from which links are to be extracted.
      */
     private void extractEmbeddedLinks(Tweet tweet) {
@@ -258,7 +257,7 @@ public class TwitterDecidingScope extends DecidingScope {
         }
         final MediaEntity[] mediaEntities = tweet.getMediaEntities();
         if (mediaEntities != null) {
-            for (MediaEntity mediaEntity: mediaEntities) {
+            for (MediaEntity mediaEntity : mediaEntities) {
                 final String mediaUrl = mediaEntity.getMediaURL().toString();
                 addSeedIfLegal(mediaUrl);
                 linkCount++;
@@ -268,11 +267,12 @@ public class TwitterDecidingScope extends DecidingScope {
 
     /**
      * Searches for a given users recent tweets and queues and embedded material found.
+     * 
      * @param user The twitter username (without the @ prefix).
      */
     private void queueUserStatusLinks(String user) {
         Query query = new Query();
-        query.setQuery("@"+user);
+        query.setQuery("@" + user);
         query.setRpp(20);
         if (!language.equals("")) {
             query.setLang(language);
@@ -282,7 +282,7 @@ public class TwitterDecidingScope extends DecidingScope {
             if (results != null && !results.isEmpty()) {
                 System.out.println("Extracting embedded links for user " + user);
             }
-            for (Tweet result: results) {
+            for (Tweet result : results) {
                 if (result.getIsoLanguageCode().equals(language) || language.equals("")) {
                     extractEmbeddedLinks(result);
                 }
@@ -294,6 +294,7 @@ public class TwitterDecidingScope extends DecidingScope {
 
     /**
      * Adds a url as a seed if possible. Otherwise just prints an error description and returns.
+     * 
      * @param tweetUrl The url to be added.
      */
     private void addSeedIfLegal(String tweetUrl) {
@@ -309,25 +310,32 @@ public class TwitterDecidingScope extends DecidingScope {
 
     /**
      * Constructor for the method. Sets up all known attributes.
+     * 
      * @param name the name of this scope.
      */
     public TwitterDecidingScope(String name) {
         super(name);
         addElementToDefinition(new StringList(ATTR_KEYWORDS, "Keywords to search for"));
         addElementToDefinition(new SimpleType(ATTR_PAGES, "Number of pages of twitter results to use.", new Integer(1)));
-        addElementToDefinition(new StringList(ATTR_GEOLOCATIONS, "Geolocations to search for, comma separated as " +
-                "lat,long,radius,units e.g. 56.0,10.1,200.0,km"));
+        addElementToDefinition(new StringList(ATTR_GEOLOCATIONS, "Geolocations to search for, comma separated as "
+                + "lat,long,radius,units e.g. 56.0,10.1,200.0,km"));
         addElementToDefinition(new SimpleType(ATTR_LANG, "Exclusive language for search", ""));
-        addElementToDefinition(new SimpleType(ATTR_RESULTS_PER_PAGE, "Number of results per twitter search page (max 100)", new Integer(100)));
-        addElementToDefinition(new SimpleType(ATTR_QUEUE_KEYWORD_LINKS, "Whether to queue an html search result for the specified keywords", new Boolean(true)));
-        addElementToDefinition(new SimpleType(ATTR_QUEUE_LINKS, "Whether to queue links discovered in search results", new Boolean(true)));
-        addElementToDefinition(new SimpleType(ATTR_QUEUE_USER_STATUS, "Whether to queue an html status listing for discovered users.", new Boolean(true)));
-        addElementToDefinition(new SimpleType(ATTR_QUEUE_USER_STATUS_LINKS, "Whether to search for and queue links embedded in the status of discovered users.", new Boolean(true)));
+        addElementToDefinition(new SimpleType(ATTR_RESULTS_PER_PAGE,
+                "Number of results per twitter search page (max 100)", new Integer(100)));
+        addElementToDefinition(new SimpleType(ATTR_QUEUE_KEYWORD_LINKS,
+                "Whether to queue an html search result for the specified keywords", new Boolean(true)));
+        addElementToDefinition(new SimpleType(ATTR_QUEUE_LINKS, "Whether to queue links discovered in search results",
+                new Boolean(true)));
+        addElementToDefinition(new SimpleType(ATTR_QUEUE_USER_STATUS,
+                "Whether to queue an html status listing for discovered users.", new Boolean(true)));
+        addElementToDefinition(new SimpleType(ATTR_QUEUE_USER_STATUS_LINKS,
+                "Whether to search for and queue links embedded in the status of discovered users.", new Boolean(true)));
     }
 
     /**
      * Adds a candidate uri as a seed for the crawl.
-     * @param curi  The crawl uri to be added.
+     * 
+     * @param curi The crawl uri to be added.
      * @return whether the uri was added as a seed.
      */
     @Override

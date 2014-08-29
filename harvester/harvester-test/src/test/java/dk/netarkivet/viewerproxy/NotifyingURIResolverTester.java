@@ -31,7 +31,6 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
@@ -49,8 +48,8 @@ public class NotifyingURIResolverTester {
         response = new TestResponse();
     }
 
-    /** Test constructor. Only thing really testable is that ArgumentNotValid is
-     * thrown on null arguments.
+    /**
+     * Test constructor. Only thing really testable is that ArgumentNotValid is thrown on null arguments.
      */
     @Test
     public void testNotifyingURIResolver() throws Exception {
@@ -58,99 +57,82 @@ public class NotifyingURIResolverTester {
             new NotifyingURIResolver(null, uriObserver);
             fail("Should throw ArgumentNotValid on null argument");
         } catch (ArgumentNotValid e) {
-            //Expected
+            // Expected
         }
         try {
             new NotifyingURIResolver(uriResolver, null);
             fail("Should throw ArgumentNotValid on null argument");
         } catch (ArgumentNotValid e) {
-            //Expected
+            // Expected
         }
         new NotifyingURIResolver(uriResolver, uriObserver);
     }
 
-    /** Test setURIResolver. Tests null arguments, and that lookup calls are
-     * delegated to this resolver after setting it.
+    /**
+     * Test setURIResolver. Tests null arguments, and that lookup calls are delegated to this resolver after setting it.
      */
     @Test
     public void testSetURIResolver() throws Exception {
-        NotifyingURIResolver notifying
-                = new NotifyingURIResolver(uriResolver, uriObserver);
+        NotifyingURIResolver notifying = new NotifyingURIResolver(uriResolver, uriObserver);
         try {
             notifying.setURIResolver(null);
             fail("Should throw ArgumentNotValid on null argument");
         } catch (ArgumentNotValid e) {
-            //Expected
+            // Expected
         }
         notifying.lookup(null, response);
-        assertEquals("Should have called lookup method on uri resolver",
-                     1, uriResolver.lookupCount);
+        assertEquals("Should have called lookup method on uri resolver", 1, uriResolver.lookupCount);
         TestURIResolver uriResolver2 = new TestURIResolver();
         notifying.setURIResolver(uriResolver2);
         notifying.lookup(null, response);
-        assertEquals("Should NOT have called lookup method on uri resolver",
-                     1, uriResolver.lookupCount);
-        assertEquals("Should have called lookup method on uri resolver 2",
-                     1, uriResolver2.lookupCount);
+        assertEquals("Should NOT have called lookup method on uri resolver", 1, uriResolver.lookupCount);
+        assertEquals("Should have called lookup method on uri resolver 2", 1, uriResolver2.lookupCount);
     }
 
-    /** Tests lookup.
-     * Tests that argument is not checked here - that should be done by the
-     * wrapped class.
-     * Tests that lookup is delegated to wrapped class with argument.
-     * Also tests that result of this method is given to the observing class.
+    /**
+     * Tests lookup. Tests that argument is not checked here - that should be done by the wrapped class. Tests that
+     * lookup is delegated to wrapped class with argument. Also tests that result of this method is given to the
+     * observing class.
+     * 
      * @throws Exception
      */
     @Test
     public void testLookup() throws Exception {
-        NotifyingURIResolver notifying
-                = new NotifyingURIResolver(uriResolver, uriObserver);
+        NotifyingURIResolver notifying = new NotifyingURIResolver(uriResolver, uriObserver);
         notifying.lookup(new TestRequest(new URI("http://foo.bar")), response);
-        assertEquals("Should have called lookup method on uri resolver",
-                     1, uriResolver.lookupCount);
-        assertEquals("Argument should be given unchanged",
-                     new URI("http://foo.bar"), uriResolver.lookupRequestArgument.getURI());
-        assertEquals("Argument should be given unchanged",
-                     response, uriResolver.lookupResponseArgument);
-        assertEquals("Observers notify method should be called.",
-                     1, uriObserver.notifyCount);
-        assertEquals("URI argument should be given unchanged.",
-                     new URI("http://foo.bar"), uriObserver.notifyURIArgument);
-        assertEquals("URI argument should be given uri resolver argument.",
-                     42, uriObserver.notifyResponseCodeArgument);
+        assertEquals("Should have called lookup method on uri resolver", 1, uriResolver.lookupCount);
+        assertEquals("Argument should be given unchanged", new URI("http://foo.bar"),
+                uriResolver.lookupRequestArgument.getURI());
+        assertEquals("Argument should be given unchanged", response, uriResolver.lookupResponseArgument);
+        assertEquals("Observers notify method should be called.", 1, uriObserver.notifyCount);
+        assertEquals("URI argument should be given unchanged.", new URI("http://foo.bar"),
+                uriObserver.notifyURIArgument);
+        assertEquals("URI argument should be given uri resolver argument.", 42, uriObserver.notifyResponseCodeArgument);
         try {
             notifying.lookup(null, response);
-            assertEquals("Should have called lookup method on uri resolver",
-                         2, uriResolver.lookupCount);
-            assertEquals("Argument should be given unchanged",
-                         null, uriResolver.lookupRequestArgument);
-            assertEquals("Argument should be given unchanged",
-                         response, uriResolver.lookupResponseArgument);
-            assertEquals("URI argument should be given unchanged.",
-                         null, uriObserver.notifyURIArgument);
-            assertEquals("URI argument should be given uri resolver argument.",
-                         42, uriObserver.notifyResponseCodeArgument);
+            assertEquals("Should have called lookup method on uri resolver", 2, uriResolver.lookupCount);
+            assertEquals("Argument should be given unchanged", null, uriResolver.lookupRequestArgument);
+            assertEquals("Argument should be given unchanged", response, uriResolver.lookupResponseArgument);
+            assertEquals("URI argument should be given unchanged.", null, uriObserver.notifyURIArgument);
+            assertEquals("URI argument should be given uri resolver argument.", 42,
+                    uriObserver.notifyResponseCodeArgument);
         } catch (ArgumentNotValid e) {
             fail("Should NOT throw ArgumentNotValid on null argument."
-                 + "This wuold be the job of the wrapped class - this is just"
-                 + "a wrapper");
+                    + "This wuold be the job of the wrapped class - this is just" + "a wrapper");
         }
         try {
             notifying.lookup(new TestRequest(new URI("http://foo.bar")), null);
-            assertEquals("Should have called lookup method on uri resolver",
-                         3, uriResolver.lookupCount);
-            assertEquals("Argument should be given unchanged",
-                         new URI("http://foo.bar"), uriResolver.lookupRequestArgument.getURI());
-            assertEquals("Argument should be given unchanged",
-                         null, uriResolver.lookupResponseArgument);
-            assertEquals("URI argument should be given unchanged.",
-                         new URI("http://foo.bar"), uriObserver.notifyURIArgument);
-            assertEquals("URI argument should be given uri resolver argument.",
-                         42, uriObserver.notifyResponseCodeArgument);
+            assertEquals("Should have called lookup method on uri resolver", 3, uriResolver.lookupCount);
+            assertEquals("Argument should be given unchanged", new URI("http://foo.bar"),
+                    uriResolver.lookupRequestArgument.getURI());
+            assertEquals("Argument should be given unchanged", null, uriResolver.lookupResponseArgument);
+            assertEquals("URI argument should be given unchanged.", new URI("http://foo.bar"),
+                    uriObserver.notifyURIArgument);
+            assertEquals("URI argument should be given uri resolver argument.", 42,
+                    uriObserver.notifyResponseCodeArgument);
         } catch (ArgumentNotValid e) {
             fail("Should NOT throw ArgumentNotValid on null argument."
-                 + "This wuold be the job of the wrapped class - this is just"
-                 + "a wrapper");
+                    + "This wuold be the job of the wrapped class - this is just" + "a wrapper");
         }
     }
 
@@ -213,7 +195,7 @@ public class NotifyingURIResolverTester {
             return uri;
         }
 
-        public Map<String,String[]> getParameterMap() {
+        public Map<String, String[]> getParameterMap() {
             return Collections.emptyMap();
         }
     }

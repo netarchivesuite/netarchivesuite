@@ -37,8 +37,9 @@ public class RegExpExclusionFilter extends ExclusionFilter {
     Collection<Pattern> regexps;
 
     /**
-     * Creates an exclusion filter which will filter out any search result for
-     * which the original url matches any of the specified regular expression.
+     * Creates an exclusion filter which will filter out any search result for which the original url matches any of the
+     * specified regular expression.
+     * 
      * @param regexps The regular expressions to match.
      */
     public RegExpExclusionFilter(Collection<Pattern> regexps) {
@@ -52,7 +53,7 @@ public class RegExpExclusionFilter extends ExclusionFilter {
         // results in the excluded objects being marked as not in the archive.
         // With these calls, they are correctly identified as blocked.
         filterGroup.setSawAdministrative();
-        for (Pattern regexp: regexps) {
+        for (Pattern regexp : regexps) {
             if (regexp.matcher(captureSearchResult.getOriginalUrl()).matches()) {
                 return ObjectFilter.FILTER_EXCLUDE;
             }

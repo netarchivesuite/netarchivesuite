@@ -31,25 +31,24 @@ import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 /**
  * Container for get requests.
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({"serial"})
 public class GetMessage extends ArchiveMessage {
-    /** the arcfile to retrieve an record from.  */
+    /** the arcfile to retrieve an record from. */
     private String arcfile;
     /** offset of the record to retrieve. */
     private long index;
     /** the retrieved record. */
     private BitarchiveRecord record;
 
-    /** 
+    /**
      * Constructor.
      * 
      * @param to Where the message should be sent.
-     * @param replyTo where the reply of this message should be sent. 
+     * @param replyTo where the reply of this message should be sent.
      * @param arcfile The name of the file to retrieve a arc-record from.
      * @param index The offset of the arc-file.
      */
-    public GetMessage(ChannelID to, ChannelID replyTo, String arcfile,
-            long index) {
+    public GetMessage(ChannelID to, ChannelID replyTo, String arcfile, long index) {
         super(to, replyTo);
         this.arcfile = arcfile;
         this.index = index;
@@ -57,6 +56,7 @@ public class GetMessage extends ArchiveMessage {
 
     /**
      * Get name of the arc file.
+     * 
      * @return file name
      */
     public String getArcFile() {
@@ -65,14 +65,16 @@ public class GetMessage extends ArchiveMessage {
 
     /**
      * Index of the record to retrieve.
+     * 
      * @return offset
      */
-    public long getIndex()  {
+    public long getIndex() {
         return index;
     }
 
     /**
      * Register retrieved record.
+     * 
      * @param rec Record retrieved from arcfile at offset index
      */
     public void setRecord(BitarchiveRecord rec) {
@@ -81,6 +83,7 @@ public class GetMessage extends ArchiveMessage {
 
     /**
      * Get the data retrieved from the arcfile.
+     * 
      * @return Record from arcfile
      */
     public BitarchiveRecord getRecord() {
@@ -88,8 +91,8 @@ public class GetMessage extends ArchiveMessage {
     }
 
     /**
-     * Should be implemented as a part of the visitor pattern. fx.: public void
-     * accept(ArchiveMessageVisitor v) { v.visit(this); }
+     * Should be implemented as a part of the visitor pattern. fx.: public void accept(ArchiveMessageVisitor v) {
+     * v.visit(this); }
      *
      * @param v A message visitor
      */

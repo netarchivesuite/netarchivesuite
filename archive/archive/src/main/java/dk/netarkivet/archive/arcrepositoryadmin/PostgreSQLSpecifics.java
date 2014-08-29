@@ -35,10 +35,10 @@ public class PostgreSQLSpecifics extends DBSpecifics {
 
     /** The log. */
     private static final Logger log = LoggerFactory.getLogger(PostgreSQLSpecifics.class);
-    
+
     /**
-     * Factory method discoverable by reflection from
-     * SettingsFactory.getInstance().
+     * Factory method discoverable by reflection from SettingsFactory.getInstance().
+     * 
      * @return a new instance of theis class.
      */
     public static DBSpecifics getInstance() {
@@ -51,8 +51,7 @@ public class PostgreSQLSpecifics extends DBSpecifics {
     }
 
     @Override
-    public void backupDatabase(Connection c, File backupDir)
-            throws SQLException, PermissionDenied {
+    public void backupDatabase(Connection c, File backupDir) throws SQLException, PermissionDenied {
         log.warn("Attempt to backup the database ignored. Only meaningful for embedded databases");
     }
 

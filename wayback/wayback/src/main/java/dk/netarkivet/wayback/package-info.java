@@ -33,4 +33,5 @@
  *       described in the Configuration Manual.
  *   </ul>
  */
- package dk.netarkivet.wayback;
+package dk.netarkivet.wayback;
+

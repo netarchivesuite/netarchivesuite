@@ -39,83 +39,75 @@ import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.FileUtils;
 
 /**
- * Machine defines an abstract representation of a physical computer
- * at a physical location.
- * The actual instances are depending on the operation system:
- * LinuxMachine and WindowsMachine.
- * All non-OS specific methods are implemented this machine class.
+ * Machine defines an abstract representation of a physical computer at a physical location. The actual instances are
+ * depending on the operation system: LinuxMachine and WindowsMachine. All non-OS specific methods are implemented this
+ * machine class.
  */
 public abstract class Machine {
 
-	/** the log, for logging stuff instead of displaying them directly.*/
+    /** the log, for logging stuff instead of displaying them directly. */
     protected static final Logger log = LoggerFactory.getLogger(Machine.class);
-    /** The root-branch for this machine in the XML tree.*/
+    /** The root-branch for this machine in the XML tree. */
     protected Element machineRoot;
-    /** The settings, inherited from parent and overwritten.*/
+    /** The settings, inherited from parent and overwritten. */
     protected XmlStructure settings;
-    /** The machine parameters.*/
+    /** The machine parameters. */
     protected Parameters machineParameters;
-    /** The list of the application on this machine.*/
+    /** The list of the application on this machine. */
     protected List<Application> applications;
-    /** The name of this machine.*/
+    /** The name of this machine. */
     protected String name;
-    /** The operating system on this machine: 'windows' or 'linux'.*/
+    /** The operating system on this machine: 'windows' or 'linux'. */
     protected String operatingSystem;
-    /** The extension on the script files (specified by operating system).*/
+    /** The extension on the script files (specified by operating system). */
     protected String scriptExtension;
-    /** The name of the NetarchiveSuite.zip file.*/
+    /** The name of the NetarchiveSuite.zip file. */
     protected String netarchiveSuiteFileName;
-    /** The inherited java.util.logging prop file.*/
+    /** The inherited java.util.logging prop file. */
     protected File inheriteJulPropFile;
     /** The inherited SLF4J config file. */
     protected File inheritedSlf4jConfigFile;
-    /** The inherited security.policy file.*/
+    /** The inherited security.policy file. */
     protected File inheritedSecurityPolicyFile;
-    /** The inherited database file name.*/
+    /** The inherited database file name. */
     protected File databaseFile;
-    /** The inherited archive database file name.*/
+    /** The inherited archive database file name. */
     protected File arcDatabaseFile;
-    /** The directory for this machine.*/
+    /** The directory for this machine. */
     protected File machineDirectory;
-    /** Whether the temp dir should be cleaned.*/
+    /** Whether the temp dir should be cleaned. */
     protected boolean resetTempDir;
-    /** The folder containing the external jar library files.*/
+    /** The folder containing the external jar library files. */
     protected File jarFolder;
     /** The encoding to use when writing files. */
     protected String targetEncoding;
 
     /**
-     * A machine is referring to an actual computer at a physical location, 
-     * which can have independent applications from the other machines at the 
-     * same location.
+     * A machine is referring to an actual computer at a physical location, which can have independent applications from
+     * the other machines at the same location.
      * 
      * @param subTreeRoot The root of this instance in the XML document.
      * @param parentSettings The setting inherited by the parent.
      * @param param The machine parameters inherited by the parent.
-     * @param netarchiveSuiteSource The name of the NetarchiveSuite 
-     * package file.
+     * @param netarchiveSuiteSource The name of the NetarchiveSuite package file.
      * @param julProp The logging property file.
      * @param securityPolicy The security policy file.
      * @param dbFileName The name of the database file.
      * @param archiveDbFileName The name of the archive database file.
      * @param resetDir Whether the temporary directory should be reset.
-     * @param externalJarFolder The folder containing the external jar 
-     * library files.
-     * @throws ArgumentNotValid If one of the following arguments are null:
-     * subTreeRoot, parentSettings, param, netarchiveSuiteSource, logProp,
-     * securityPolicy.
+     * @param externalJarFolder The folder containing the external jar library files.
+     * @throws ArgumentNotValid If one of the following arguments are null: subTreeRoot, parentSettings, param,
+     * netarchiveSuiteSource, logProp, securityPolicy.
      */
-    public Machine(Element subTreeRoot, XmlStructure parentSettings, 
-            Parameters param, String netarchiveSuiteSource,
-            File julProp, File slf4JConfig, File securityPolicy, File dbFileName,
-            File archiveDbFileName, boolean resetDir, File externalJarFolder) 
-            throws ArgumentNotValid {
+    public Machine(Element subTreeRoot, XmlStructure parentSettings, Parameters param, String netarchiveSuiteSource,
+            File julProp, File slf4JConfig, File securityPolicy, File dbFileName, File archiveDbFileName,
+            boolean resetDir, File externalJarFolder) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(subTreeRoot, "Element subTreeRoot");
         ArgumentNotValid.checkNotNull(parentSettings, "XmlStructure parentSettings");
         ArgumentNotValid.checkNotNull(param, "Parameters param");
         ArgumentNotValid.checkNotNull(netarchiveSuiteSource, "String netarchiveSuiteSource");
-        //ArgumentNotValid.checkNotNull(julProp, "File logProp");
-        //ArgumentNotValid.checkNotNull(slf4JConfig, "File slf4JConfig");
+        // ArgumentNotValid.checkNotNull(julProp, "File logProp");
+        // ArgumentNotValid.checkNotNull(slf4JConfig, "File slf4JConfig");
         ArgumentNotValid.checkNotNull(securityPolicy, "File securityPolicy");
 
         settings = new XmlStructure(parentSettings.getRoot());
@@ -129,25 +121,23 @@ public abstract class Machine {
         arcDatabaseFile = archiveDbFileName;
         resetTempDir = resetDir;
         jarFolder = externalJarFolder;
-        
+
         // Retrieve machine encoding
         targetEncoding = machineRoot.attributeValue(Constants.MACHINE_ENCODING_ATTRIBUTE);
         String msgTail = "";
         if (targetEncoding == null || targetEncoding.isEmpty()) {
-        	targetEncoding = Constants.MACHINE_ENCODING_DEFAULT;
-        	msgTail = " (defaulted)";
+            targetEncoding = Constants.MACHINE_ENCODING_DEFAULT;
+            msgTail = " (defaulted)";
         }
-        System.out.println("Machine '" 
-        		+ machineRoot.attributeValue(Constants.MACHINE_NAME_ATTRIBUTE) 
-        		+"' configured with encoding '" + targetEncoding + "'" + msgTail);
+        System.out.println("Machine '" + machineRoot.attributeValue(Constants.MACHINE_NAME_ATTRIBUTE)
+                + "' configured with encoding '" + targetEncoding + "'" + msgTail);
 
-        // retrieve the specific settings for this instance 
-        Element tmpSet = machineRoot.element(
-                Constants.COMPLETE_SETTINGS_BRANCH);
-        // Generate the specific settings by combining the general settings 
+        // retrieve the specific settings for this instance
+        Element tmpSet = machineRoot.element(Constants.COMPLETE_SETTINGS_BRANCH);
+        // Generate the specific settings by combining the general settings
         // and the specific, (only if this instance has specific settings)
         if (tmpSet != null) {
-                settings.overWrite(tmpSet);
+            settings.overWrite(tmpSet);
         }
 
         // check if new machine parameters
@@ -159,8 +149,7 @@ public abstract class Machine {
     }
 
     /**
-     * Extract the local variables from the root.
-     * Currently, this is the name and the operating system.
+     * Extract the local variables from the root. Currently, this is the name and the operating system.
      */
     private void extractVariables() {
         // retrieve name
@@ -173,21 +162,20 @@ public abstract class Machine {
     }
 
     /**
-     * Extracts the XML for the applications from the root, 
-     * creates the applications and puts them into the list.
+     * Extracts the XML for the applications from the root, creates the applications and puts them into the list.
      */
     @SuppressWarnings("unchecked")
     private void extractApplications() {
         applications = new ArrayList<Application>();
         List<Element> le = machineRoot.elements(Constants.DEPLOY_APPLICATION_NAME);
-        for(Element e : le) {
+        for (Element e : le) {
             applications.add(new Application(e, settings, machineParameters, targetEncoding));
         }
     }
 
     /**
-     * Create the directory for the specific configurations of this machine
-     * and call the functions for creating all the scripts in this directory.
+     * Create the directory for the specific configurations of this machine and call the functions for creating all the
+     * scripts in this directory.
      * 
      * @param parentDirectory The directory where to write the files.
      * @throws ArgumentNotValid If the parenteDirectory is null.
@@ -233,14 +221,13 @@ public abstract class Machine {
         createInstallDirScript(parentDirectory);
 
         // write the settings for all application at this machine
-        for(Application app : applications) {
+        for (Application app : applications) {
             app.createSettingsFile(machineDirectory);
         }
     }
 
     /**
-     * Make the script for killing this machine.
-     * This is put into the entire kill all script for the physical location.
+     * Make the script for killing this machine. This is put into the entire kill all script for the physical location.
      * 
      * @return The script to kill this machine.
      */
@@ -253,8 +240,8 @@ public abstract class Machine {
     }
 
     /**
-     * Make the script for installing this machine.
-     * This is put into the entire install script for the physical location.
+     * Make the script for installing this machine. This is put into the entire install script for the physical
+     * location.
      * 
      * @return The script to make the installation on this machine
      */
@@ -267,8 +254,7 @@ public abstract class Machine {
     }
 
     /**
-     * Make the script for starting this machine.
-     * This is put into the entire startall script for the physical location.
+     * Make the script for starting this machine. This is put into the entire startall script for the physical location.
      * 
      * @return The script to start this machine.
      */
@@ -284,8 +270,7 @@ public abstract class Machine {
      * Copy inherited securityPolicyFile to local directory.
      * 
      * @param directory The local directory for this machine.
-     * @throws IOFailure If an error occurred during the creation of the 
-     * security policy file.
+     * @throws IOFailure If an error occurred during the creation of the security policy file.
      */
     protected void createSecurityPolicyFile(File directory) throws IOFailure {
         // make file
@@ -330,8 +315,8 @@ public abstract class Machine {
                 if (!dirs.isEmpty()) {
                     secPrinter.write("grant {" + "\n");
                     for (String dir : dirs) {
-                        secPrinter.write(ScriptConstants.writeSecurityPolicyDirPermission(
-                        		changeFileDirPathForSecurity(dir)));
+                        secPrinter.write(ScriptConstants
+                                .writeSecurityPolicyDirPermission(changeFileDirPathForSecurity(dir)));
                     }
                     secPrinter.write("};");
                 }
@@ -345,13 +330,11 @@ public abstract class Machine {
     }
 
     /**
-     * Creates a the java.util.logging property file for every application.
-     * This is done by taking the inherited log file and changing 
-     * "APPID" in the file into the identification of the application.
+     * Creates a the java.util.logging property file for every application. This is done by taking the inherited log
+     * file and changing "APPID" in the file into the identification of the application.
      * 
      * @param directory The local directory for this machine
-     * @throws IOFailure If an error occurred during the creationg of the 
-     * log property file.
+     * @throws IOFailure If an error occurred during the creationg of the log property file.
      */
     protected void createJulPropertyFiles(File directory) throws IOFailure {
         // make log property file for every application
@@ -362,7 +345,7 @@ public abstract class Machine {
             try {
                 // init writer
                 PrintWriter logPrinter = new PrintWriter(logProp, getTargetEncoding());
-                
+
                 try {
                     // read the inherited log property file.
                     String prop = FileUtils.readFile(inheriteJulPropFile);
@@ -373,7 +356,7 @@ public abstract class Machine {
                     // write to file.
                     logPrinter.write(prop);
                 } finally {
-                	logPrinter.close();
+                    logPrinter.close();
                 }
             } catch (IOException e) {
                 log.warn("IOException while creating log property file:", e);
@@ -383,13 +366,11 @@ public abstract class Machine {
     }
 
     /**
-     * Creates a the SLF4J config file for every application.
-     * This is done by taking the inherited log file and changing 
+     * Creates a the SLF4J config file for every application. This is done by taking the inherited log file and changing
      * "APPID" in the file into the identification of the application.
      * 
      * @param directory The local directory for this machine
-     * @throws IOFailure If an error occurred during the creationg of the 
-     * log property file.
+     * @throws IOFailure If an error occurred during the creationg of the log property file.
      */
     protected void createSlf4jConfigFiles(File directory) throws IOFailure {
         // make config file for every application
@@ -400,7 +381,7 @@ public abstract class Machine {
             try {
                 // init writer
                 PrintWriter logPrinter = new PrintWriter(logProp, getTargetEncoding());
-                
+
                 try {
                     // read the inherited log property file.
                     String prop = FileUtils.readFile(inheritedSlf4jConfigFile);
@@ -411,7 +392,7 @@ public abstract class Machine {
                     // write to file.
                     logPrinter.write(prop);
                 } finally {
-                	logPrinter.close();
+                    logPrinter.close();
                 }
             } catch (IOException e) {
                 log.warn("IOException while creating SLF4J config file:", e);
@@ -421,11 +402,11 @@ public abstract class Machine {
     }
 
     /**
-     * Make any OS-specific modifications to logging properties. The default
-     * makes no modifications, but this can be overridden in subclasses.
+     * Make any OS-specific modifications to logging properties. The default makes no modifications, but this can be
+     * overridden in subclasses.
+     * 
      * @param logProperties the contents of the logging properties file.
-     * @return the contents of the logging properties file with any desired
-     * modifications.
+     * @return the contents of the logging properties file with any desired modifications.
      */
     protected String modifyLogProperties(String logProperties) {
         return logProperties;
@@ -435,8 +416,7 @@ public abstract class Machine {
      * Creates the jmxremote.password file, based on the settings.
      * 
      * @param directory The local directory for this machine
-     * @throws IOFailure If an error occurred during the creation of the
-     * jmx remote password file.  
+     * @throws IOFailure If an error occurred during the creation of the jmx remote password file.
      */
     protected void createJmxRemotePasswordFile(File directory) throws IOFailure {
         // make file
@@ -451,10 +431,10 @@ public abstract class Machine {
                 // Get the username and password for monitor and heritrix.
                 StringBuilder logins = new StringBuilder();
 
-                // Append the jmx logins for monitor and heritrix. 
+                // Append the jmx logins for monitor and heritrix.
                 logins.append(getMonitorLogin());
                 logins.append(getHeritrixLogin());
-                
+
                 jw.print(logins.toString());
             } finally {
                 jw.close();
@@ -464,13 +444,12 @@ public abstract class Machine {
             throw new IOFailure("Cannot create jmxremote.password.", e);
         }
     }
-    
+
     /**
      * Creates the jmxremote.password file, based on the settings.
      * 
      * @param directory The local directory for this machine
-     * @throws IOFailure If an error occurred during the creation of the 
-     * jmx remote access file. 
+     * @throws IOFailure If an error occurred during the creation of the jmx remote access file.
      */
     protected void createJmxRemoteAccessFile(File directory) throws IOFailure {
         // make file
@@ -485,10 +464,10 @@ public abstract class Machine {
                 // Get the username and password for monitor and heritrix.
                 StringBuilder logins = new StringBuilder();
 
-                // Append the jmx logins for monitor and heritrix. 
+                // Append the jmx logins for monitor and heritrix.
                 logins.append(getMonitorUsername());
                 logins.append(getHeritrixUsername());
-                
+
                 jw.print(logins.toString());
             } finally {
                 jw.close();
@@ -498,17 +477,14 @@ public abstract class Machine {
             throw new IOFailure("Cannot create jmxremote.access file.", e);
         }
     }
-    
+
     /**
-     * For finding the jmxUsernames and jmxPasswords under the monitor branch
-     * in the settings. 
-     * Goes through all applications, which all must have the same 
-     * username and the same passwords.  
-     *  
+     * For finding the jmxUsernames and jmxPasswords under the monitor branch in the settings. Goes through all
+     * applications, which all must have the same username and the same passwords.
+     * 
      * @return The string to add to the jmxremote.password file.
-     * @throws IllegalState If there is a different amount of usernames 
-     * and passwords, or if two application has different values for their
-     * username or passwords (applications without values are ignored). 
+     * @throws IllegalState If there is a different amount of usernames and passwords, or if two application has
+     * different values for their username or passwords (applications without values are ignored).
      */
     protected String getMonitorLogin() throws IllegalState {
         StringBuilder res = new StringBuilder();
@@ -537,7 +513,8 @@ public abstract class Machine {
 
         // if different amount of usernames and passwords => DIE
         if (usernames.size() != passwords.size()) {
-        	String msg = "Different amount of usernames and passwords in monitor under applications on machine: '" + name + "'";
+            String msg = "Different amount of usernames and passwords in monitor under applications on machine: '"
+                    + name + "'";
             log.warn(msg);
             throw new IllegalState(msg);
         }
@@ -546,16 +523,16 @@ public abstract class Machine {
         if (usernames.size() == 0) {
             log.warn("No usernames or passwords for monitor on machine: '{}'", name);
         }
-        
+
         // check if the usernames and passwords are the same.
         for (int i = 1; i < usernames.size(); i++) {
             if (!usernames.get(0).equals(usernames.get(i)) || !passwords.get(0).equals(passwords.get(i))) {
-            	String msg = "Different usernames or passwords under monitor on the same machine: '" + name + "'";
+                String msg = "Different usernames or passwords under monitor on the same machine: '" + name + "'";
                 log.warn(msg);
                 throw new IllegalState(msg);
             }
         }
-        
+
         // make the resulting string
         if (usernames.size() > 0) {
             res.append(usernames.get(0));
@@ -565,15 +542,12 @@ public abstract class Machine {
         }
         return res.toString();
     }
-    
+
     /**
-     * For retrieving the monitor username for the jmxremote.access file.
-     * This will have the rights 'readonly'.
+     * For retrieving the monitor username for the jmxremote.access file. This will have the rights 'readonly'.
      * 
-     * @return The string for the jmxremote.access file for allowing the 
-     * monitor user to readonly.
-     * @throws IllegalState If different applications on the machine have 
-     * different user names.
+     * @return The string for the jmxremote.access file for allowing the monitor user to readonly.
+     * @throws IllegalState If different applications on the machine have different user names.
      */
     protected String getMonitorUsername() throws IllegalState {
         StringBuilder res = new StringBuilder();
@@ -591,18 +565,18 @@ public abstract class Machine {
                 }
             }
         }
-        
+
         // check if the usernames and passwords are the same.
         for (int i = 1; i < usernames.size(); i++) {
             if (!usernames.get(0).equals(usernames.get(i))) {
-            	String msg = "Different usernames for the monitor on the same machine: '" + name + "'";
+                String msg = "Different usernames for the monitor on the same machine: '" + name + "'";
                 log.warn(msg);
                 throw new IllegalState(msg);
             }
         }
-        
+
         // make the resulting string
-        if(usernames.size() > 0) {
+        if (usernames.size() > 0) {
             res.append(usernames.get(0));
             res.append(Constants.SPACE);
             res.append(ScriptConstants.JMXREMOTE_MONITOR_PRIVILEGES);
@@ -612,17 +586,14 @@ public abstract class Machine {
     }
 
     /**
-     * For finding the jmxUsernames and jmxPasswords under the 
-     * harvest.harvesting.heritrix branch under in the settings. 
-     * Goes through all applications, which all must have the same 
-     * username and the same passwords.  
-     *  
+     * For finding the jmxUsernames and jmxPasswords under the harvest.harvesting.heritrix branch under in the settings.
+     * Goes through all applications, which all must have the same username and the same passwords.
+     * 
      * @return The string to add to the jmxremote.password file.
-     * @throws IllegalState If there is a different amount of usernames 
-     * and passwords, or if two application has different values for their
-     * username or passwords (applications without values are ignored). 
+     * @throws IllegalState If there is a different amount of usernames and passwords, or if two application has
+     * different values for their username or passwords (applications without values are ignored).
      */
-    protected String getHeritrixLogin() throws IllegalState { 
+    protected String getHeritrixLogin() throws IllegalState {
         StringBuilder res = new StringBuilder();
         // initialise list of usernames and passwords to add
         List<String> usernames = new ArrayList<String>();
@@ -649,7 +620,8 @@ public abstract class Machine {
 
         // if different amount of usernames and passwords. DIE
         if (usernames.size() != passwords.size()) {
-        	String msg = "Different amount of usernames and passwords in heritrix under applications on machine: '" + name + "'";
+            String msg = "Different amount of usernames and passwords in heritrix under applications on machine: '"
+                    + name + "'";
             log.warn(msg);
             throw new IllegalState(msg);
         }
@@ -658,18 +630,18 @@ public abstract class Machine {
         if (usernames.size() == 0) {
             return "";
         }
-        
+
         // check if the usernames and passwords are the same.
         for (int i = 1; i < usernames.size(); i++) {
             if (!usernames.get(0).equals(usernames.get(i)) || !passwords.get(0).equals(passwords.get(i))) {
-            	String msg = "Different usernames or passwords " + "under heritrix on machine: '" + name + "'";
+                String msg = "Different usernames or passwords " + "under heritrix on machine: '" + name + "'";
                 log.warn(msg);
                 throw new IllegalState(msg);
             }
         }
 
         // make the resulting string
-        if(usernames.size() > 0) {
+        if (usernames.size() > 0) {
             res.append(usernames.get(0));
             res.append(Constants.SPACE);
             res.append(passwords.get(0));
@@ -679,13 +651,11 @@ public abstract class Machine {
     }
 
     /**
-     * For retrieving the Heritrix username for the jmxremote.access file.
-     * This will have the rights 'readwrite'.
+     * For retrieving the Heritrix username for the jmxremote.access file. This will have the rights 'readwrite'.
      * 
-     * @return The string for the jmxremote.access file for allowing the 
-     * heritrix user to readonly.
+     * @return The string for the jmxremote.access file for allowing the heritrix user to readonly.
      */
-    protected String getHeritrixUsername(){
+    protected String getHeritrixUsername() {
         StringBuilder res = new StringBuilder();
         // initialise list of usernames and passwords to add
         List<String> usernames = new ArrayList<String>();
@@ -705,14 +675,14 @@ public abstract class Machine {
         // check if the usernames and passwords are the same.
         for (int i = 1; i < usernames.size(); i++) {
             if (!usernames.get(0).equals(usernames.get(i))) {
-            	String msg = "Different usernames for Heritrix on the same machine: '" + name + "'";
+                String msg = "Different usernames for Heritrix on the same machine: '" + name + "'";
                 log.warn(msg);
                 throw new IllegalState(msg);
             }
         }
-        
+
         // make the resulting string
-        if(usernames.size() > 0) {
+        if (usernames.size() > 0) {
             res.append(usernames.get(0));
             res.append(Constants.SPACE);
             res.append(ScriptConstants.JMXREMOTE_HERITRIX_PRIVILEGES);
@@ -754,26 +724,24 @@ public abstract class Machine {
     protected abstract void createApplicationStartScripts(File directory);
 
     /**
-     * This function creates the script to start all applications on this 
-     * machine.
-     * The scripts calls all the start script for each application. 
+     * This function creates the script to start all applications on this machine. The scripts calls all the start
+     * script for each application.
      * 
      * @param directory The directory for this machine (use global variable?).
      */
     protected abstract void createOSLocalStartAllScript(File directory);
 
     /**
-     * This function creates the script to kill all applications on this 
-     * machine.
-     * The scripts calls all the kill script for each application. 
+     * This function creates the script to kill all applications on this machine. The scripts calls all the kill script
+     * for each application.
      * 
      * @param directory The directory for this machine (use global variable?).
      */
     protected abstract void createOSLocalKillAllScript(File directory);
 
-    /** 
+    /**
      * The operation system specific path to the installation directory.
-     *  
+     * 
      * @return Install path.
      */
     protected abstract String getInstallDirPath();
@@ -791,7 +759,7 @@ public abstract class Machine {
      * @return Lib path.
      */
     protected abstract String getLibDirPath();
-    
+
     /**
      * Creates the operation system specific killing script for this machine.
      * 
@@ -800,13 +768,12 @@ public abstract class Machine {
     protected abstract String osKillScript();
 
     /**
-     * Creates the operation system specific installation script for 
-     * this machine.
+     * Creates the operation system specific installation script for this machine.
      * 
      * @return Operation system specific part of the installscript.
      */
     protected abstract String osInstallScript();
-    
+
     /**
      * Creates the specified directories in the deploy-configuration file.
      * 
@@ -822,61 +789,52 @@ public abstract class Machine {
     protected abstract String osStartScript();
 
     /**
-     * Makes all the class paths into the operation system specific syntax,
-     * and puts them into a string where they are separated by the operation
-     * system specific separator (':' for linux, ';' for windows).
+     * Makes all the class paths into the operation system specific syntax, and puts them into a string where they are
+     * separated by the operation system specific separator (':' for linux, ';' for windows).
      * 
      * @param app The application which has the class paths.
      * @return The class paths in operation system specific syntax.
      */
     protected abstract String osGetClassPath(Application app);
-    
+
     /**
-     * Checks if a specific directory for the database is given in the settings,
-     * and thus if the database should be installed on this machine.
+     * Checks if a specific directory for the database is given in the settings, and thus if the database should be
+     * installed on this machine.
      * 
-     * If no specific database is given as deploy argument 
-     * (databaseFileName = null) then use the standard database extracted from 
-     * NetarchiveSuite.zip. Else send the given new database to the standard 
-     * database location.
+     * If no specific database is given as deploy argument (databaseFileName = null) then use the standard database
+     * extracted from NetarchiveSuite.zip. Else send the given new database to the standard database location.
      * 
-     * Extract the database in the standard database location to the specified
-     * database directory.
+     * Extract the database in the standard database location to the specified database directory.
      * 
      * @return The script for installing the database (if needed).
      */
     protected abstract String osInstallDatabase();
-    
+
     /**
-     * Checks if a specific directory for the archive database is given 
-     * in the settings, and thus if the archive database should be 
-     * installed on this machine.
+     * Checks if a specific directory for the archive database is given in the settings, and thus if the archive
+     * database should be installed on this machine.
      * 
-     * If not specific database is given (adminDatabaseFileName = null)
-     * then use the default in the NetarchiveSuite.zip package.
-     * Else send the new archive database to the standard database 
-     * location, and extract it to the given location.
+     * If not specific database is given (adminDatabaseFileName = null) then use the default in the NetarchiveSuite.zip
+     * package. Else send the new archive database to the standard database location, and extract it to the given
+     * location.
      * 
-     * @return The script for installing the archive database 
-     * (if needed).
+     * @return The script for installing the archive database (if needed).
      */
     protected abstract String osInstallArchiveDatabase();
 
     /**
-     * This function makes the part of the install script for installing the
-     * external jar files from within the jarFolder.
-     * If the jarFolder is null, then no action will be performed.
+     * This function makes the part of the install script for installing the external jar files from within the
+     * jarFolder. If the jarFolder is null, then no action will be performed.
      * 
      * @return The script for installing the external jar files (if needed).
      */
     protected abstract String osInstallExternalJarFiles();
-    
+
     /**
      * This functions makes the script for creating the new directories.
      * 
-     * Linux creates directories directly through ssh.
-     * Windows creates an install a script file for installing the directories, 
-     * which has to be sent to the machine, then executed and finally deleted. 
+     * Linux creates directories directly through ssh. Windows creates an install a script file for installing the
+     * directories, which has to be sent to the machine, then executed and finally deleted.
      * 
      * @param dir The name of the directory to create.
      * @param clean Whether the directory should be cleaned\reset.
@@ -884,91 +842,87 @@ public abstract class Machine {
      * @see #createInstallDirScript(File)
      */
     protected abstract String scriptCreateDir(String dir, boolean clean);
-    
+
     /**
-     * Creates the script for creating the application specified directories.
-     * Also creates the directories along the path to the directories.
+     * Creates the script for creating the application specified directories. Also creates the directories along the
+     * path to the directories.
      * 
      * @return The script for creating the application specified directories.
      */
     protected abstract String getAppDirectories();
-    
+
     /**
-     * This method does the following:
-     * Retrieves the path to the jmxremote.access and jmxremote.password files.
-     * Moves these files, if they are different from standard.
-     * Makes the jmxremote.access and jmxremote.password files readonly.
+     * This method does the following: Retrieves the path to the jmxremote.access and jmxremote.password files. Moves
+     * these files, if they are different from standard. Makes the jmxremote.access and jmxremote.password files
+     * readonly.
+     * 
      * @return The commands for handling the jmxremote files.
      */
     protected abstract String getJMXremoteFilesCommand();
 
     /**
-     * Function to create the script which installs the new directories.
-     * This is only used for windows machines!
+     * Function to create the script which installs the new directories. This is only used for windows machines!
      * 
      * @param dir The directory to put the file
      */
     protected abstract void createInstallDirScript(File dir);
-    
+
     /**
      * Creates a script for restating all the applications on a given machine.
      * 
      * @param dir The directory where the script will be placed.
      */
     protected abstract void createRestartScript(File dir);
-    
+
     /**
-     * Creates a script for starting the archive database on a given machine.
-     * This is only created if the &lt;globalArchiveDatabaseDir&gt; parameter
-     * is defined on the machine level.
+     * Creates a script for starting the archive database on a given machine. This is only created if the
+     * &lt;globalArchiveDatabaseDir&gt; parameter is defined on the machine level.
      * 
      * @param dir The directory where the script will be placed.
      */
     protected abstract void createArchiveDatabaseStartScript(File dir);
 
     /**
-     * Creates a script for killing the archive database on a given machine.
-     * This is only created if the &lt;globalArchiveDatabaseDir&gt; parameter
-     * is defined on the machine level.
+     * Creates a script for killing the archive database on a given machine. This is only created if the
+     * &lt;globalArchiveDatabaseDir&gt; parameter is defined on the machine level.
      * 
      * @param dir The directory where the script will be placed.
      */
     protected abstract void createArchiveDatabaseKillScript(File dir);
-    
+
     /**
-     * Creates a script for starting the harvest database on a given machine.
-     * This is only created if the &lt;deployHarvestDatabaseDir&gt; parameter
-     * is defined on the machine level.
+     * Creates a script for starting the harvest database on a given machine. This is only created if the
+     * &lt;deployHarvestDatabaseDir&gt; parameter is defined on the machine level.
      * 
      * @param dir The directory where the script will be placed.
      */
     protected abstract void createHarvestDatabaseStartScript(File dir);
-    
+
     /**
-     * Creates a script for killing the harvest database on a given machine.
-     * This is only created if the &lt;globalHarvestDatabaseDir&gt; parameter
-     * is defined on the machine level.
+     * Creates a script for killing the harvest database on a given machine. This is only created if the
+     * &lt;globalHarvestDatabaseDir&gt; parameter is defined on the machine level.
      * 
      * @param dir The directory where the script will be placed.
      */
     protected abstract void createHarvestDatabaseKillScript(File dir);
 
     /**
-     * Changes the file directory path to the format used in the security 
-     * policy.
+     * Changes the file directory path to the format used in the security policy.
+     * 
      * @param path The current path.
      * @return The formatted path.
      */
     protected abstract String changeFileDirPathForSecurity(String path);
-    
+
     /**
      * create a harvestDatabaseUpdatescript in the given machineDirectory.
+     * 
      * @param machineDirectory a given MachineDirectory.
      */
     protected abstract void createHarvestDatabaseUpdateScript(File machineDirectory);
 
-	protected String getTargetEncoding() {
-		return targetEncoding;
-	}
+    protected String getTargetEncoding() {
+        return targetEncoding;
+    }
 
 }

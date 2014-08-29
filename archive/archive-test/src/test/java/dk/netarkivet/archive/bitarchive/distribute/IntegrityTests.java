@@ -66,8 +66,8 @@ import dk.netarkivet.testutils.TestMessageListener;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
- * Test bitarchive client and server As a number of tests only succeed if both
- * the client and server both operate correctly, both are tested together.
+ * Test bitarchive client and server As a number of tests only succeed if both the client and server both operate
+ * correctly, both are tested together.
  */
 @Ignore("Needs to be run in deploy-test module according to junit 3 test suite.")
 public class IntegrityTests {
@@ -75,7 +75,7 @@ public class IntegrityTests {
     // A named logger for this class is retrieved
     protected final Logger logger = LoggerFactory.getLogger(IntegrityTests.class);
 
-	private static final String ARC_FILE_NAME = "Upload5.ARC";
+    private static final String ARC_FILE_NAME = "Upload5.ARC";
     private static final File TEST_DIR = new File("tests/dk/netarkivet/archive/bitarchive/distribute/data/");
     private static final File ORIGINALS_DIR = new File(TEST_DIR, "originals");
     private static final File WORKING_DIR = new File(TEST_DIR, "working");
@@ -135,9 +135,8 @@ public class IntegrityTests {
         theFTPClient = new FTPClient();
 
         /*
-         * try { theFTPClient.setFileType(FTPClient.BINARY_FILE_TYPE); } catch
-         * (IOException e) { throw new IOFailure("Unable to set Transfer mode: "
-         * + e); }
+         * try { theFTPClient.setFileType(FTPClient.BINARY_FILE_TYPE); } catch (IOException e) { throw new
+         * IOFailure("Unable to set Transfer mode: " + e); }
          */
 
         try {
@@ -181,8 +180,8 @@ public class IntegrityTests {
 
                 if (currentUploadedFile != null) {
                     if (!theFTPClient.deleteFile(currentUploadedFile)) {
-                        logger.warn("deleteFile operation failed on {}. Reply from ftpserver: {}",
-                        		currentUploadedFile, theFTPClient.getReplyString());
+                        logger.warn("deleteFile operation failed on {}. Reply from ftpserver: {}", currentUploadedFile,
+                                theFTPClient.getReplyString());
                     }
                 }
             }
@@ -206,8 +205,8 @@ public class IntegrityTests {
     }
 
     /**
-     * Test that monitor can receive and aggregate data from more than one
-     * BitarchiveServer and aggregate the data and upload it via FTPRemoteFile.
+     * Test that monitor can receive and aggregate data from more than one BitarchiveServer and aggregate the data and
+     * upload it via FTPRemoteFile.
      */
     @Test
     @Ignore("FIXME")
@@ -457,8 +456,7 @@ public class IntegrityTests {
         }
 
         /**
-         * test, if original ARC file still exists, and has the same size as
-         * before
+         * test, if original ARC file still exists, and has the same size as before
          */
         assertEquals("Test-file has been modified!!", fileSize, testARCFile.length());
     }

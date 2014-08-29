@@ -56,17 +56,14 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 
 /**
- * Wraps an Heritrix full frontier report.
- * As these reports can be big in size, this implementation relies on
- * Berkeley DB direct persistence layer to store the report lines, allowing to
- * store the lines partially in memory, and on disk.
+ * Wraps an Heritrix full frontier report. As these reports can be big in size, this implementation relies on Berkeley
+ * DB direct persistence layer to store the report lines, allowing to store the lines partially in memory, and on disk.
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({"serial"})
 public class FullFrontierReport extends AbstractFrontierReport {
 
     @Persistent
-    static class PersistentLineKey
-    implements Comparable<PersistentLineKey>, FrontierReportLineOrderKey {
+    static class PersistentLineKey implements Comparable<PersistentLineKey>, FrontierReportLineOrderKey {
 
         @KeyField(1)
         long totalEnqueues;
@@ -97,8 +94,7 @@ public class FullFrontierReport extends AbstractFrontierReport {
          */
         @Override
         public int compareTo(PersistentLineKey k) {
-            return FrontierReportLineNaturalOrder.getInstance()
-                .compare(this, k);
+            return FrontierReportLineNaturalOrder.getInstance().compare(this, k);
         }
 
         @Override
@@ -114,13 +110,13 @@ public class FullFrontierReport extends AbstractFrontierReport {
         @PrimaryKey
         private PersistentLineKey primaryKey;
 
-        @SecondaryKey(relate=Relationship.ONE_TO_ONE)
+        @SecondaryKey(relate = Relationship.ONE_TO_ONE)
         private String domainNameKey;
 
-        @SecondaryKey(relate=Relationship.MANY_TO_ONE)
+        @SecondaryKey(relate = Relationship.MANY_TO_ONE)
         private Long totalSpendKey;
 
-        @SecondaryKey(relate=Relationship.MANY_TO_ONE)
+        @SecondaryKey(relate = Relationship.MANY_TO_ONE)
         private Long currentSizeKey;
 
         // Default empty constructor for BDB.
@@ -145,6 +141,7 @@ public class FullFrontierReport extends AbstractFrontierReport {
 
         /**
          * Returns an iterator on the given sort key.
+         * 
          * @param cursor The cursor (sort key) to iterate on.
          */
         ReportIterator(EntityCursor<PersistentLine> cursor) {
@@ -168,26 +165,22 @@ public class FullFrontierReport extends AbstractFrontierReport {
         }
 
         /**
-         * Close method should be called explicitely to free underlying
-         * resources!
+         * Close method should be called explicitely to free underlying resources!
          */
         public void close() {
             try {
                 cursor.close();
             } catch (DatabaseException e) {
-                LOG.error("Error closing entity cursor:\n"
-                        + e.getLocalizedMessage());
+                LOG.error("Error closing entity cursor:\n" + e.getLocalizedMessage());
             }
         }
 
     }
 
-    private static final String WORKING_DIR =
-        FullFrontierReport.class.getSimpleName();
+    private static final String WORKING_DIR = FullFrontierReport.class.getSimpleName();
 
     /** The logger for this class. */
-    private static final Log LOG =
-        LogFactory.getLog(FullFrontierReport.class);
+    private static final Log LOG = LogFactory.getLog(FullFrontierReport.class);
 
     /**
      * The Berkeley DB JE environment.
@@ -207,20 +200,17 @@ public class FullFrontierReport extends AbstractFrontierReport {
     /**
      * Secondary index, per domain name.
      */
-    private final SecondaryIndex<String, PersistentLineKey, PersistentLine>
-        linesByDomain;
+    private final SecondaryIndex<String, PersistentLineKey, PersistentLine> linesByDomain;
 
     /**
      * Secondary index, per current size.
      */
-    private final SecondaryIndex<Long, PersistentLineKey, PersistentLine>
-        linesByCurrentSize;
+    private final SecondaryIndex<Long, PersistentLineKey, PersistentLine> linesByCurrentSize;
 
     /**
      * Secondary index, per spent budget.
      */
-    private final SecondaryIndex<Long, PersistentLineKey, PersistentLine>
-        linesBySpentBudget;
+    private final SecondaryIndex<Long, PersistentLineKey, PersistentLine> linesBySpentBudget;
 
     /**
      * The directory where the BDB is stored.
@@ -229,19 +219,17 @@ public class FullFrontierReport extends AbstractFrontierReport {
 
     /**
      * Builds an empty frontier report wrapper.
+     * 
      * @param jobName the Heritrix job name
      */
     private FullFrontierReport(String jobName) {
         super(jobName);
 
-        File workingDir = new File(
-                Settings.getFile(CommonSettings.CACHE_DIR),
-                WORKING_DIR);
+        File workingDir = new File(Settings.getFile(CommonSettings.CACHE_DIR), WORKING_DIR);
 
         this.storageDir = new File(workingDir, jobName);
         if (!storageDir.mkdirs()) {
-            throw new IOFailure("Failed to create directory "
-                    + storageDir.getAbsolutePath());
+            throw new IOFailure("Failed to create directory " + storageDir.getAbsolutePath());
         }
 
         try {
@@ -252,33 +240,25 @@ public class FullFrontierReport extends AbstractFrontierReport {
             StoreConfig storeConfig = new StoreConfig();
             storeConfig.setAllowCreate(true);
 
-            store = new EntityStore(
-                    dbEnvironment,
-                    FrontierReportLine.class.getSimpleName() + "-" + jobName,
+            store = new EntityStore(dbEnvironment, FrontierReportLine.class.getSimpleName() + "-" + jobName,
                     storeConfig);
 
-            linesIndex = store.getPrimaryIndex(
-                    PersistentLineKey.class, PersistentLine.class);
+            linesIndex = store.getPrimaryIndex(PersistentLineKey.class, PersistentLine.class);
 
-            linesByDomain = store.getSecondaryIndex(
-                    linesIndex, String.class, "domainNameKey");
+            linesByDomain = store.getSecondaryIndex(linesIndex, String.class, "domainNameKey");
 
-            linesByCurrentSize = store.getSecondaryIndex(
-                    linesIndex, Long.class, "currentSizeKey");
+            linesByCurrentSize = store.getSecondaryIndex(linesIndex, Long.class, "currentSizeKey");
 
-            linesBySpentBudget = store.getSecondaryIndex(
-                    linesIndex, Long.class, "totalSpendKey");
+            linesBySpentBudget = store.getSecondaryIndex(linesIndex, Long.class, "totalSpendKey");
 
         } catch (DatabaseException e) {
-            throw new IOFailure(
-                    "Failed to init frontier BDB for job " + jobName, e);
+            throw new IOFailure("Failed to init frontier BDB for job " + jobName, e);
         }
 
     }
 
     /**
-     * Releases all resources once this report is to be discarded.
-     * NB this method MUST be explicitly called!
+     * Releases all resources once this report is to be discarded. NB this method MUST be explicitly called!
      */
     public void dispose() {
 
@@ -287,8 +267,7 @@ public class FullFrontierReport extends AbstractFrontierReport {
             dbEnvironment.cleanLog();
             dbEnvironment.close();
         } catch (DatabaseException e) {
-            throw new IOFailure(
-                    "Failed to close frontier BDB for job " + getJobName(), e);
+            throw new IOFailure("Failed to close frontier BDB for job " + getJobName(), e);
         }
 
         FileUtils.removeRecursively(storageDir);
@@ -299,9 +278,7 @@ public class FullFrontierReport extends AbstractFrontierReport {
         try {
             linesIndex.put(new PersistentLine(line));
         } catch (DatabaseException e) {
-            throw new IOFailure(
-                    "Failed to store frontier report line for job "
-                    + getJobName(), e);
+            throw new IOFailure("Failed to store frontier report line for job " + getJobName(), e);
         }
     }
 
@@ -316,106 +293,101 @@ public class FullFrontierReport extends AbstractFrontierReport {
     }
 
     /**
-     * Returns an iterator where lines are ordered by primary key order:
-     * first by decreasing totalEnqueues, then by domain name natural order.
+     * Returns an iterator where lines are ordered by primary key order: first by decreasing totalEnqueues, then by
+     * domain name natural order.
+     * 
      * @return an iterator on the report lines.
      */
     public ReportIterator iterateOnTotalEnqueues() {
         try {
             return new ReportIterator(linesIndex.entities());
         } catch (DatabaseException e) {
-            throw new IOFailure(
-                    "Failed to read frontier BDB for job " + getJobName(), e);
+            throw new IOFailure("Failed to read frontier BDB for job " + getJobName(), e);
         }
     }
 
     /**
      * Returns an iterator where lines are ordered by domain name natural order.
+     * 
      * @return an iterator on the report lines.
      */
     public ReportIterator iterateOnDomainName() {
         try {
             return new ReportIterator(linesByDomain.entities());
         } catch (DatabaseException e) {
-            throw new IOFailure(
-                    "Failed to read frontier BDB for job " + getJobName(), e);
+            throw new IOFailure("Failed to read frontier BDB for job " + getJobName(), e);
         }
     }
 
     /**
      * Returns an iterator where lines are ordered by increasing currentSize.
+     * 
      * @return an iterator on the report lines.
      */
     public ReportIterator iterateOnCurrentSize() {
         try {
             return new ReportIterator(linesByCurrentSize.entities());
         } catch (DatabaseException e) {
-            throw new IOFailure(
-                    "Failed to read frontier BDB for job " + getJobName(), e);
+            throw new IOFailure("Failed to read frontier BDB for job " + getJobName(), e);
         }
     }
 
     /**
      * Returns an iterator on lines having a given currentSize.
-     * @param dupValue 
+     * 
+     * @param dupValue
      * @return an iterator on the report lines.
      */
     public ReportIterator iterateOnDuplicateCurrentSize(long dupValue) {
         try {
-            return new ReportIterator(
-                    linesByCurrentSize.subIndex(dupValue).entities());
+            return new ReportIterator(linesByCurrentSize.subIndex(dupValue).entities());
         } catch (DatabaseException e) {
-            throw new IOFailure(
-                    "Failed to read frontier BDB for job " + getJobName(), e);
+            throw new IOFailure("Failed to read frontier BDB for job " + getJobName(), e);
         }
     }
 
     /**
      * Returns an iterator where lines are ordered by increasing totalSpend.
+     * 
      * @return an iterator on the report lines.
      */
     public ReportIterator iterateOnSpentBudget() {
         try {
             return new ReportIterator(linesBySpentBudget.entities());
         } catch (DatabaseException e) {
-            throw new IOFailure(
-                    "Failed to read frontier BDB for job " + getJobName(), e);
+            throw new IOFailure("Failed to read frontier BDB for job " + getJobName(), e);
         }
     }
 
     /**
      * Returns an iterator on lines having a given totalSpend.
-     * @param dupValue 
+     * 
+     * @param dupValue
      * @return an iterator on the report lines.
      */
     public ReportIterator iterateOnDuplicateSpentBudget(long dupValue) {
         try {
-            return new ReportIterator(
-                    linesBySpentBudget.subIndex(dupValue).entities());
+            return new ReportIterator(linesBySpentBudget.subIndex(dupValue).entities());
         } catch (DatabaseException e) {
-            throw new IOFailure(
-                    "Failed to read frontier BDB for job " + getJobName(), e);
+            throw new IOFailure("Failed to read frontier BDB for job " + getJobName(), e);
         }
     }
 
     /**
-     * Generates an Heritrix frontier report wrapper object by parsing
-     * the frontier report returned by the JMX controller as a string.
+     * Generates an Heritrix frontier report wrapper object by parsing the frontier report returned by the JMX
+     * controller as a string.
+     * 
      * @param jobName the Heritrix job name
      * @param contentsAsString the text returned by the JMX call
      * @return the report wrapper object
      */
-    public static FullFrontierReport parseContentsAsString(
-            String jobName,
-            String contentsAsString)  {
+    public static FullFrontierReport parseContentsAsString(String jobName, String contentsAsString) {
 
         FullFrontierReport report = new FullFrontierReport(jobName);
 
         // First dump this possibly huge string to a file
         File tmpDir = Settings.getFile(CommonSettings.CACHE_DIR);
-        File tmpFile = new File(
-                tmpDir,
-                jobName + "-" + System.currentTimeMillis() + ".txt");
+        File tmpFile = new File(tmpDir, jobName + "-" + System.currentTimeMillis() + ".txt");
         try {
             tmpFile.createNewFile();
             BufferedWriter out = new BufferedWriter(new FileWriter(tmpFile));
@@ -455,6 +427,7 @@ public class FullFrontierReport extends AbstractFrontierReport {
 
     /**
      * Return the directory where the BDB is stored.
+     * 
      * @return the storage directory.
      */
     File getStorageDir() {

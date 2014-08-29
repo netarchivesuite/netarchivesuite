@@ -45,16 +45,17 @@ public class ExtendedFieldTester extends DataModelTestCase {
     public void tearDown() throws Exception {
         super.tearDown();
     }
-    
+
     @Test
     public void testCreateReadUpdateDelete() {
         ExtendedFieldDAO extDAO = ExtendedFieldDBDAO.getInstance();
-        ExtendedField extField = new ExtendedField(null, (long)ExtendedFieldTypes.DOMAIN, "Test", "12345", 1, true, 1, "a", "b", 50);
+        ExtendedField extField = new ExtendedField(null, (long) ExtendedFieldTypes.DOMAIN, "Test", "12345", 1, true, 1,
+                "a", "b", 50);
         extDAO.create(extField);
 
         ExtendedFieldDAO extDAO2 = ExtendedFieldDBDAO.getInstance();
         extField = extDAO2.read(Long.valueOf(1L));
-        
+
         assertEquals(extField.getExtendedFieldID().longValue(), 1L);
         assertEquals(extField.getExtendedFieldTypeID().longValue(), ExtendedFieldTypes.DOMAIN);
         assertEquals(extField.getName(), "Test");
@@ -65,9 +66,9 @@ public class ExtendedFieldTester extends DataModelTestCase {
         assertEquals(extField.getDefaultValue(), "a");
         assertEquals(extField.getOptions(), "b");
         assertEquals(extField.getMaxlen(), 50);
-        
+
         ExtendedFieldDAO extDAO3 = ExtendedFieldDBDAO.getInstance();
-        extField.setExtendedFieldTypeID((long)ExtendedFieldTypes.HARVESTDEFINITION);
+        extField.setExtendedFieldTypeID((long) ExtendedFieldTypes.HARVESTDEFINITION);
         extField.setName("Test2");
         extField.setFormattingPattern("67890");
         extField.setDatatype(2);
@@ -76,12 +77,12 @@ public class ExtendedFieldTester extends DataModelTestCase {
         extField.setDefaultValue("c");
         extField.setOptions("d");
         extField.setMaxlen(55);
-        
+
         extDAO3.update(extField);
 
         ExtendedFieldDAO extDAO4 = ExtendedFieldDBDAO.getInstance();
         extField = extDAO4.read(Long.valueOf(1L));
-        
+
         assertEquals(extField.getExtendedFieldID().longValue(), 1L);
         assertEquals(extField.getExtendedFieldTypeID().longValue(), ExtendedFieldTypes.HARVESTDEFINITION);
         assertEquals(extField.getName(), "Test2");
@@ -95,7 +96,7 @@ public class ExtendedFieldTester extends DataModelTestCase {
 
         ExtendedFieldDAO extDAO5 = ExtendedFieldDBDAO.getInstance();
         List<ExtendedField> list = extDAO5.getAll(2);
-        
+
         assertEquals(list.size(), 1);
         assertEquals(list.get(0).getExtendedFieldID(), extField.getExtendedFieldID());
         assertEquals(list.get(0).getExtendedFieldTypeID(), extField.getExtendedFieldTypeID());
@@ -107,14 +108,14 @@ public class ExtendedFieldTester extends DataModelTestCase {
         assertEquals(list.get(0).getDefaultValue(), extField.getDefaultValue());
         assertEquals(list.get(0).getOptions(), extField.getOptions());
         assertEquals(list.get(0).getMaxlen(), extField.getMaxlen());
-        
+
         ExtendedFieldDAO extDAO6 = ExtendedFieldDBDAO.getInstance();
         assertEquals(extDAO6.exists(extField.getExtendedFieldID()), true);
         extDAO6.delete(extField.getExtendedFieldID());
-        
+
         ExtendedFieldDAO extDAO7 = ExtendedFieldDBDAO.getInstance();
         assertEquals(extDAO7.exists(extField.getExtendedFieldID()), false);
-        
+
         ExtendedFieldDAO extDAO8 = ExtendedFieldDBDAO.getInstance();
         List<ExtendedField> list2 = extDAO8.getAll(ExtendedFieldTypes.HARVESTDEFINITION);
         assertEquals(list2.size(), 0);

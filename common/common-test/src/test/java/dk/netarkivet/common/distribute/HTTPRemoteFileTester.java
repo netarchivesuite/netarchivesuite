@@ -44,7 +44,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 /** Tests for HTTPRemoteFile */
 
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class HTTPRemoteFileTester {
     MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
     UseTestRemoteFile utrf = new UseTestRemoteFile();

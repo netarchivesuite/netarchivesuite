@@ -45,7 +45,7 @@ import dk.netarkivet.harvester.datamodel.JobStatus;
  */
 public class JobSupervisor implements ComponentLifeCycle {
 
-	/** The logger to use. */
+    /** The logger to use. */
     private static final Logger log = LoggerFactory.getLogger(JobSupervisor.class);
 
     /** For scheduling tasks */
@@ -55,10 +55,8 @@ public class JobSupervisor implements ComponentLifeCycle {
     private final Long jobTimeoutTime;
 
     /**
-     * @param jobDaoProvider
-     *            Used for accessing the jobdao.
-     * @param jobTimeoutTime
-     *            timeout in seconds.
+     * @param jobDaoProvider Used for accessing the jobdao.
+     * @param jobTimeoutTime timeout in seconds.
      */
     public JobSupervisor(Provider<JobDAO> jobDaoProvider, Long jobTimeoutTime) {
         this.jobDaoProvider = jobDaoProvider;
@@ -68,8 +66,8 @@ public class JobSupervisor implements ComponentLifeCycle {
     /**
      * <ol>
      * <li>Starts the rescheduling of left over jobs (in a separate thread).
-     * <li>Starts the timer for cleaning old jobs. eg. jobs that have been run
-     * longer than {@link HarvesterSettings#JOB_TIMEOUT_TIME}.
+     * <li>Starts the timer for cleaning old jobs. eg. jobs that have been run longer than
+     * {@link HarvesterSettings#JOB_TIMEOUT_TIME}.
      * </ol>
      */
     @Override
@@ -94,8 +92,7 @@ public class JobSupervisor implements ComponentLifeCycle {
     }
 
     /**
-     * Reschedule all jobs with JobStatus SUBMITTED. Runs in a separate thread
-     * to avoid blocking.
+     * Reschedule all jobs with JobStatus SUBMITTED. Runs in a separate thread to avoid blocking.
      * 
      * Package protected to allow unit testing.
      */
@@ -112,8 +109,8 @@ public class JobSupervisor implements ComponentLifeCycle {
     }
 
     /**
-     * Stops any job that has been in status STARTED a very long time defined
-     * by the {@link HarvesterSettings#JOB_TIMEOUT_TIME} setting.
+     * Stops any job that has been in status STARTED a very long time defined by the
+     * {@link HarvesterSettings#JOB_TIMEOUT_TIME} setting.
      * 
      * Package protected to allow unit testing.
      */
@@ -130,8 +127,8 @@ public class JobSupervisor implements ComponentLifeCycle {
                 endTime.setTime(job.getActualStart().getTime() + timeDiff);
                 if (new Date().after(endTime)) {
                     final String msg = " Job " + id + " has exceeded its timeout of "
-                            + (jobTimeoutTime / TimeUtils.HOUR_IN_MINUTES) + " minutes." +
-                            " Changing status to " + "FAILED.";
+                            + (jobTimeoutTime / TimeUtils.HOUR_IN_MINUTES) + " minutes." + " Changing status to "
+                            + "FAILED.";
                     log.warn(msg);
                     job.setStatus(JobStatus.FAILED);
                     job.appendHarvestErrors(msg);

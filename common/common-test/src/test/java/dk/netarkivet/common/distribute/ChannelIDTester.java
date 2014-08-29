@@ -44,8 +44,7 @@ import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
- * Tests the ChannelID class that defines instances of message channels (ie.
- * queues and topics).
+ * Tests the ChannelID class that defines instances of message channels (ie. queues and topics).
  */
 public class ChannelIDTester {
     ReloadSettings rs = new ReloadSettings();
@@ -100,8 +99,8 @@ public class ChannelIDTester {
     }
 
     /**
-     * Test that AllArchives_ALL_BAs returns as array of ALL_BA channels which
-     * are all distinct and all contain ALL_BA in name.
+     * Test that AllArchives_ALL_BAs returns as array of ALL_BA channels which are all distinct and all contain ALL_BA
+     * in name.
      */
     @Test
     public void testALL_ALL_BAs() {
@@ -124,8 +123,8 @@ public class ChannelIDTester {
     }
 
     /**
-     * Test that AllArchives_ANY_BAs returns as array of ANY_BA channels which
-     * are all distinct and all contain ANY_BA in name
+     * Test that AllArchives_ANY_BAs returns as array of ANY_BA channels which are all distinct and all contain ANY_BA
+     * in name
      */
     @Test
     public void testALL_ANY_BAs() {
@@ -150,8 +149,8 @@ public class ChannelIDTester {
     }
 
     /**
-     * Test that AllArchives_BAMONs returns as array of BAMON channels which are
-     * all distinct and all contain BAMON in name.
+     * Test that AllArchives_BAMONs returns as array of BAMON channels which are all distinct and all contain BAMON in
+     * name.
      */
     @Test
     public void testAllArchives_BAMONs() {
@@ -176,8 +175,8 @@ public class ChannelIDTester {
     }
 
     /**
-     * Test that AllArchives_CRs returns as array of checksum replica channels
-     * which are all distinct and all contain THE_CR in name.
+     * Test that AllArchives_CRs returns as array of checksum replica channels which are all distinct and all contain
+     * THE_CR in name.
      */
     @Test
     public void testAllArchives_CRs() {
@@ -203,8 +202,8 @@ public class ChannelIDTester {
     }
 
     /**
-     * Test that AllArchives_BAMONs returns as array of BAMON channels which are
-     * all distinct and all contain BAMON in name.
+     * Test that AllArchives_BAMONs returns as array of BAMON channels which are all distinct and all contain BAMON in
+     * name.
      */
     @Test
     public void testClients() {
@@ -220,9 +219,8 @@ public class ChannelIDTester {
     }
 
     /**
-     * Tests that only the ArcRepository may request channels for all bit
-     * archives. At the time of writing, there is no ArcRepository application,
-     * so this funtionality cannot be implemented (or tested).
+     * Tests that only the ArcRepository may request channels for all bit archives. At the time of writing, there is no
+     * ArcRepository application, so this funtionality cannot be implemented (or tested).
      */
     @Test
     @Ignore("no ArcRepository application yet")

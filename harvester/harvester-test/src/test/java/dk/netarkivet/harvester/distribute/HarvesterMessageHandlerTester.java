@@ -43,7 +43,6 @@ import org.junit.Before;
 import org.junit.After;
 import org.junit.Test;
 
-
 import org.mockito.Mockito;
 
 import javax.jms.JMSException;
@@ -81,7 +80,8 @@ public class HarvesterMessageHandlerTester {
         try {
             harvesterMessageHandlerUT.visit(mock(CrawlStatusMessage.class));
             fail("Should have thrown a permission denied.");
-        } catch (PermissionDenied e) {}
+        } catch (PermissionDenied e) {
+        }
     }
 
     /*
@@ -92,7 +92,8 @@ public class HarvesterMessageHandlerTester {
         try {
             harvesterMessageHandlerUT.visit(mock(DoOneCrawlMessage.class));
             fail("Should have thrown a permission denied.");
-        } catch (PermissionDenied e) {}
+        } catch (PermissionDenied e) {
+        }
     }
 
     /*
@@ -103,10 +104,12 @@ public class HarvesterMessageHandlerTester {
         try {
             harvesterMessageHandlerUT.visit(mock(IndexRequestMessage.class));
             fail("Should have thrown a permission denied.");
-        } catch (PermissionDenied e) {}
+        } catch (PermissionDenied e) {
+        }
     }
 
     private static class TestMessageHandler extends HarvesterMessageHandler {
-        public TestMessageHandler() {}
+        public TestMessageHandler() {
+        }
     }
 }

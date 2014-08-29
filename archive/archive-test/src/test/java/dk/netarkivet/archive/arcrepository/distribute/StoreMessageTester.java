@@ -66,7 +66,7 @@ public class StoreMessageTester {
     public void testInvalidArguments() {
 
         try {
-            new StoreMessage( (ChannelID) null, new File(""));
+            new StoreMessage((ChannelID) null, new File(""));
             fail("Should throw ArgumentNotValid on null Channel");
         } catch (ArgumentNotValid e) {
             // expected case
@@ -79,25 +79,24 @@ public class StoreMessageTester {
             // expected case
         }
     }
-    
+
     @Test
     public void testValid() {
-        StoreMessage msg = new StoreMessage(Channels.getError(), 
-                TestInfo.ARCFILE);
-        
+        StoreMessage msg = new StoreMessage(Channels.getError(), TestInfo.ARCFILE);
+
         ArchiveMessageVisitor amv = new ArchiveMessageHandler() {
             @Override
             public void visit(StoreMessage msg) {
                 // ??
-                assertEquals("Should be replied to the error queue.",
-                        msg.getReplyTo().getName(), Channels.getError().getName());
-                assertEquals("Should be sent to the repos queue.",
-                        msg.getTo().getName(), Channels.getTheRepos().getName());
-                assertEquals("Should be the file '" + TestInfo.ARCFILE.getName() + "'.",
-                        msg.getArcfileName(), TestInfo.ARCFILE.getName());
+                assertEquals("Should be replied to the error queue.", msg.getReplyTo().getName(), Channels.getError()
+                        .getName());
+                assertEquals("Should be sent to the repos queue.", msg.getTo().getName(), Channels.getTheRepos()
+                        .getName());
+                assertEquals("Should be the file '" + TestInfo.ARCFILE.getName() + "'.", msg.getArcfileName(),
+                        TestInfo.ARCFILE.getName());
             }
         };
-        
+
         msg.accept(amv);
         // test getters
         assertEquals(Channels.getError(), msg.getReplyTo());

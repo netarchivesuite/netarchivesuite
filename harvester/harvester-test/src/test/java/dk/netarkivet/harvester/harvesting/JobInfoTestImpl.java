@@ -23,7 +23,7 @@
 package dk.netarkivet.harvester.harvesting;
 
 /**
- * Test implementation of JobInfo used mostly by HeritrixFiles unittests. 
+ * Test implementation of JobInfo used mostly by HeritrixFiles unittests.
  *
  */
 public class JobInfoTestImpl implements JobInfo {
@@ -35,7 +35,7 @@ public class JobInfoTestImpl implements JobInfo {
         this.jobId = jobId;
         this.harvestId = harvestId;
     }
-    
+
     @Override
     public Long getJobID() {
         return jobId;
@@ -50,5 +50,5 @@ public class JobInfoTestImpl implements JobInfo {
     public String getHarvestFilenamePrefix() {
         return jobId + "-" + harvestId;
     }
-    
+
 }

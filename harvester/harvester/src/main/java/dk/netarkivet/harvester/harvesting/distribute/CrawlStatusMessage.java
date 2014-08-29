@@ -33,17 +33,16 @@ import dk.netarkivet.harvester.distribute.HarvesterMessageVisitor;
 import dk.netarkivet.harvester.harvesting.report.HarvestReport;
 
 /**
- * Instances of this class are sent by a HarvestControllerServer to the
- * THE_SCHED queue to indicate the progress of a heritrix crawl. They are
- * collected and processed by the HarvestSchedulerMonitorServer.
+ * Instances of this class are sent by a HarvestControllerServer to the THE_SCHED queue to indicate the progress of a
+ * heritrix crawl. They are collected and processed by the HarvestSchedulerMonitorServer.
  * <p/>
  * This class is immutable
  *
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({"serial"})
 public class CrawlStatusMessage extends HarvesterMessage implements Serializable {
 
-	/** the id for the crawlJob, for which this message reports. */
+    /** the id for the crawlJob, for which this message reports. */
     private long jobID;
     /** The current state of the crawl-job. */
     private JobStatus statusCode;
@@ -61,15 +60,11 @@ public class CrawlStatusMessage extends HarvesterMessage implements Serializable
     /**
      * Creates an instance of this class corresponding to a job.
      *
-     * @param jobID     the unique identifier for the crawl job
-     *                  to which this message refers
-     * @param statusCode          All values are accepted, except null
-     * @param harvestReport A calculated domain harvest report
-     *                              produced by the crawl.
-     *                            May be null for no domain harvest report.
-     * @throws ArgumentNotValid   If invalid arguments:
-     *                              jobID < 0L
-     *                              statusCode == null
+     * @param jobID the unique identifier for the crawl job to which this message refers
+     * @param statusCode All values are accepted, except null
+     * @param harvestReport A calculated domain harvest report produced by the crawl. May be null for no domain harvest
+     * report.
+     * @throws ArgumentNotValid If invalid arguments: jobID < 0L statusCode == null
      */
     public CrawlStatusMessage(long jobID, JobStatus statusCode, HarvestReport harvestReport) {
         super(Channels.getTheSched(), Channels.getError());
@@ -79,13 +74,13 @@ public class CrawlStatusMessage extends HarvesterMessage implements Serializable
         this.statusCode = statusCode;
         this.harvestReport = harvestReport;
     }
+
     /**
-     * Alternate constructor, which does not have the DomainHarvestreport
-     * as argument.
+     * Alternate constructor, which does not have the DomainHarvestreport as argument.
+     * 
      * @param jobID (see description for the other constructor)
      * @param statusCode (see description for the other constructor)
-     * @see CrawlStatusMessage#CrawlStatusMessage(long,
-     *  JobStatus, HarvestReport)
+     * @see CrawlStatusMessage#CrawlStatusMessage(long, JobStatus, HarvestReport)
      */
     public CrawlStatusMessage(long jobID, JobStatus statusCode) {
         this(jobID, statusCode, null);
@@ -93,6 +88,7 @@ public class CrawlStatusMessage extends HarvesterMessage implements Serializable
 
     /**
      * Returns the jobID of this crawl job.
+     * 
      * @return the jobID
      */
     public long getJobID() {
@@ -101,6 +97,7 @@ public class CrawlStatusMessage extends HarvesterMessage implements Serializable
 
     /**
      * Returns the status code of this crawl job.
+     * 
      * @return the status code
      */
     public JobStatus getStatusCode() {
@@ -108,9 +105,8 @@ public class CrawlStatusMessage extends HarvesterMessage implements Serializable
     }
 
     /**
-     * Returns the generated domain harvest report object
-     * by this crawl job. May be null on non-finished status, or job finished
-     * with no log file
+     * Returns the generated domain harvest report object by this crawl job. May be null on non-finished status, or job
+     * finished with no log file
      *
      * @return the hosts report.
      */
@@ -119,8 +115,8 @@ public class CrawlStatusMessage extends HarvesterMessage implements Serializable
     }
 
     /**
-     * Should be implemented as a part of the visitor pattern. fx.: public void
-     * accept(HarvesterMessageVisitor v) { v.visit(this); }
+     * Should be implemented as a part of the visitor pattern. fx.: public void accept(HarvesterMessageVisitor v) {
+     * v.visit(this); }
      *
      * @param v A message visitor
      */
@@ -139,12 +135,13 @@ public class CrawlStatusMessage extends HarvesterMessage implements Serializable
             dhr = harvestReport.toString();
         }
 
-        return "CrawlStatusMessage:\n" + "JobID: " + jobID  + '\n' + "StatusCode: " + statusCode + '\n' + dhr + '\n'
-        		+ super.toString();
+        return "CrawlStatusMessage:\n" + "JobID: " + jobID + '\n' + "StatusCode: " + statusCode + '\n' + dhr + '\n'
+                + super.toString();
     }
 
     /**
      * Get-method for private field harvestErrors.
+     * 
      * @return harvestErrors
      */
     public String getHarvestErrors() {
@@ -153,6 +150,7 @@ public class CrawlStatusMessage extends HarvesterMessage implements Serializable
 
     /**
      * Set-method for private field harvestErrors.
+     * 
      * @param harvestErrors The value for harvest errors.
      * @throws ArgumentNotValid if null argument
      */
@@ -163,6 +161,7 @@ public class CrawlStatusMessage extends HarvesterMessage implements Serializable
 
     /**
      * Get-method for private field harvestErrorDetails.
+     * 
      * @return harvestErrorDetails
      */
     public String getHarvestErrorDetails() {
@@ -171,6 +170,7 @@ public class CrawlStatusMessage extends HarvesterMessage implements Serializable
 
     /**
      * Set-method for private field harvestErrorDetails.
+     * 
      * @param harvestErrorDetails The value for harvest error details.
      * @throws ArgumentNotValid if null argument
      */
@@ -181,6 +181,7 @@ public class CrawlStatusMessage extends HarvesterMessage implements Serializable
 
     /**
      * Get-method for private field uploadErrors.
+     * 
      * @return uploadErrors
      */
     public String getUploadErrors() {
@@ -189,6 +190,7 @@ public class CrawlStatusMessage extends HarvesterMessage implements Serializable
 
     /**
      * Set-method for private field uploadErrors.
+     * 
      * @param uploadErrors The value for upload errors.
      * @throws ArgumentNotValid if null argument
      */
@@ -199,6 +201,7 @@ public class CrawlStatusMessage extends HarvesterMessage implements Serializable
 
     /**
      * Get-method for private field uploadErrorDetails.
+     * 
      * @return uploadErrorDetails
      */
     public String getUploadErrorDetails() {
@@ -207,6 +210,7 @@ public class CrawlStatusMessage extends HarvesterMessage implements Serializable
 
     /**
      * Set-method for private field uploadErrorDetails.
+     * 
      * @param uploadErrorDetails The value for upload error details.
      * @throws ArgumentNotValid if null argument
      */

@@ -29,7 +29,6 @@ import java.util.GregorianCalendar;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
-
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
@@ -37,24 +36,19 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  */
 public class WeeklyFrequencyTester {
 
-    /** 
+    /**
      * Test value is weekly.
      */
     @Test
     public void testTimeunitIsWeekly() {
-    	WeeklyFrequency freq = new WeeklyFrequency(20);
-        assertEquals("Timeunit must be weekly.", 
-        		     freq.ordinal(), 
-        		     TimeUnit.WEEKLY.ordinal()
-        );
-        assertEquals("Check TimeUnit Weekly", 
-        		      TimeUnit.WEEKLY, 
-        		      TimeUnit.fromOrdinal(TimeUnit.WEEKLY.ordinal())
-        );
+        WeeklyFrequency freq = new WeeklyFrequency(20);
+        assertEquals("Timeunit must be weekly.", freq.ordinal(), TimeUnit.WEEKLY.ordinal());
+        assertEquals("Check TimeUnit Weekly", TimeUnit.WEEKLY, TimeUnit.fromOrdinal(TimeUnit.WEEKLY.ordinal()));
     }
-    
-    /** Given a frequency that can start any time, check that first event is
-     * immediate.
+
+    /**
+     * Given a frequency that can start any time, check that first event is immediate.
+     * 
      * @throws Exception
      */
     @Test
@@ -67,13 +61,15 @@ public class WeeklyFrequencyTester {
         assertEquals("First event should happen at once.", d1, d2);
     }
 
-    /** Given a frequency that can start Wed at 4:22, check that first event is
-     * first possible Wed 4:22
+    /**
+     * Given a frequency that can start Wed at 4:22, check that first event is first possible Wed 4:22
+     * 
      * @throws Exception
      */
     @Test
     public void testGetFirstEvent2() throws Exception {
-        WeeklyFrequency freq = new WeeklyFrequency(4, Calendar.WEDNESDAY, 4, 22); // Every four weeks, on the day, hour and minute
+        WeeklyFrequency freq = new WeeklyFrequency(4, Calendar.WEDNESDAY, 4, 22); // Every four weeks, on the day, hour
+                                                                                  // and minute
         Calendar cal = GregorianCalendar.getInstance();
         cal.set(2005, Calendar.FEBRUARY, 28, 22, 42);// Feb. 28th. is a monday
         Date d1 = cal.getTime();
@@ -85,8 +81,9 @@ public class WeeklyFrequencyTester {
         assertEquals("First event should happen Wednesday on the 22nd minute of the 4th hour.", d3, d2);
     }
 
-    /** Given a frequency that can start any time, check that next event is
-     * after correct period.
+    /**
+     * Given a frequency that can start any time, check that next event is after correct period.
+     * 
      * @throws Exception
      */
     @Test
@@ -95,44 +92,51 @@ public class WeeklyFrequencyTester {
         Calendar cal = GregorianCalendar.getInstance();
         cal.set(2005, 1, 28, 22, 42);// Feb. 28th.
         Date d1 = cal.getTime();
-        cal.add(Calendar.DATE, 4*7);
+        cal.add(Calendar.DATE, 4 * 7);
         Date d3 = cal.getTime();
         Date d4 = freq.getNextEvent(d1);
         assertEquals("Second event should happen four weeks later", d3, d4);
     }
 
-    /** Given a frequency that can start Mon at 5:23, check that first event is
-     * first possible Mon 5:23.
+    /**
+     * Given a frequency that can start Mon at 5:23, check that first event is first possible Mon 5:23.
+     * 
      * @throws Exception
      */
     @Test
     public void testGetNextEvent2() throws Exception {
-        WeeklyFrequency freq = new WeeklyFrequency(4, Calendar.MONDAY, 5, 23); // Every four days, on the day, hour and minute
+        WeeklyFrequency freq = new WeeklyFrequency(4, Calendar.MONDAY, 5, 23); // Every four days, on the day, hour and
+                                                                               // minute
         Calendar cal = GregorianCalendar.getInstance();
         cal.set(2005, Calendar.FEBRUARY, 28, 22, 42); // 28/2 2005 is a Monday
         Date d1 = cal.getTime();
-        cal.add(Calendar.DAY_OF_MONTH, 4*7);
+        cal.add(Calendar.DAY_OF_MONTH, 4 * 7);
         cal.add(Calendar.MINUTE, ((60 + 23) - 42));
         cal.add(Calendar.HOUR, ((24 + 5) - (22 + 1))); // Now it's Tuesday
         cal.add(Calendar.DATE, 6); // Make it next Monday
         Date d3 = cal.getTime();
         Date d4 = freq.getNextEvent(d1);
-        assertEquals("Second event should happen four weeks later, on Monday at the 23rd minute of the 5th hour", d3, d4);
+        assertEquals("Second event should happen four weeks later, on Monday at the 23rd minute of the 5th hour", d3,
+                d4);
     }
 
-    /** Given a frequency that can start Mon at 5:23, check that first event is
-     * first possible Mon 5:23, given a time that IS actually Mon 5:23.
+    /**
+     * Given a frequency that can start Mon at 5:23, check that first event is first possible Mon 5:23, given a time
+     * that IS actually Mon 5:23.
+     * 
      * @throws Exception
      */
     @Test
     public void testGetNextEvent3() throws Exception {
-        WeeklyFrequency freq = new WeeklyFrequency(4, Calendar.MONDAY, 5, 23); // Every four days, on the day, hour and minute
+        WeeklyFrequency freq = new WeeklyFrequency(4, Calendar.MONDAY, 5, 23); // Every four days, on the day, hour and
+                                                                               // minute
         Calendar cal = new GregorianCalendar(2005, Calendar.FEBRUARY, 28, 5, 23); // 28/2 2005 is a Monday
         Date d1 = cal.getTime();
         Calendar cal2 = new GregorianCalendar(2005, Calendar.MARCH, 28, 5, 23);
         Date d3 = cal2.getTime();
         Date d4 = freq.getNextEvent(d1);
-        assertEquals("Second event should happen four weeks later, on Monday at the 23rd minute of the 5th hour", d3, d4);
+        assertEquals("Second event should happen four weeks later, on Monday at the 23rd minute of the 5th hour", d3,
+                d4);
     }
 
     /**
@@ -144,70 +148,70 @@ public class WeeklyFrequencyTester {
             new WeeklyFrequency(-1);
             fail("should throw exception on negative number of units");
         } catch (ArgumentNotValid e) {
-            //Expected
+            // Expected
         }
 
         try {
             new WeeklyFrequency(0);
             fail("should throw exception on zero number of units");
         } catch (ArgumentNotValid e) {
-            //Expected
+            // Expected
         }
 
         try {
             new WeeklyFrequency(-1, 5, 5, 23);
             fail("should throw exception on negative number of units");
         } catch (ArgumentNotValid e) {
-            //Expected
+            // Expected
         }
 
         try {
             new WeeklyFrequency(0, 5, 5, 23);
             fail("should throw exception on zero number of units");
         } catch (ArgumentNotValid e) {
-            //Expected
+            // Expected
         }
 
         try {
-            new WeeklyFrequency(1, Calendar.SUNDAY-1, 5, 23);
+            new WeeklyFrequency(1, Calendar.SUNDAY - 1, 5, 23);
             fail("should throw exception on illegal date");
         } catch (ArgumentNotValid e) {
-            //Expected
+            // Expected
         }
 
         try {
-            new WeeklyFrequency(1, Calendar.SATURDAY+1, 5, 23);
+            new WeeklyFrequency(1, Calendar.SATURDAY + 1, 5, 23);
             fail("should throw exception on illegal date");
         } catch (ArgumentNotValid e) {
-            //Expected
+            // Expected
         }
 
         try {
             new WeeklyFrequency(1, 21, 24, 23);
             fail("should throw exception on illegal time");
         } catch (ArgumentNotValid e) {
-            //Expected
+            // Expected
         }
 
         try {
             new WeeklyFrequency(1, 32, -1, 23);
             fail("should throw exception on illegal time");
         } catch (ArgumentNotValid e) {
-            //Expected
+            // Expected
         }
 
         try {
             new WeeklyFrequency(1, 32, 0, -1);
             fail("should throw exception on illegal time");
         } catch (ArgumentNotValid e) {
-            //Expected
+            // Expected
         }
 
         try {
             new WeeklyFrequency(1, 32, 0, 60);
             fail("should throw exception on illegal time");
         } catch (ArgumentNotValid e) {
-            //Expected
+            // Expected
         }
 
         WeeklyFrequency freq = new WeeklyFrequency(4, Calendar.MONDAY, 5, 23);
@@ -215,13 +219,13 @@ public class WeeklyFrequencyTester {
             freq.getFirstEvent(null);
             fail("should throw exception");
         } catch (ArgumentNotValid e) {
-            //Expected
+            // Expected
         }
         try {
             freq.getNextEvent(null);
             fail("should throw exception");
         } catch (ArgumentNotValid e) {
-            //Expected
+            // Expected
         }
     }
 }

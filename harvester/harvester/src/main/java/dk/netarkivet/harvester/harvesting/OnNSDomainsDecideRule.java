@@ -35,40 +35,37 @@ import org.archive.util.SurtPrefixSet;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
- * Class that re-creates the SurtPrefixSet to include only domain names
- * according to the domain definition of NetarchiveSuite.
- * The NetarchiveSuite can't use the
- * org.archive.crawler.deciderules.OnDomainsDecideRule because
- * it uses a different domain definition.  
+ * Class that re-creates the SurtPrefixSet to include only domain names according to the domain definition of
+ * NetarchiveSuite. The NetarchiveSuite can't use the org.archive.crawler.deciderules.OnDomainsDecideRule because it
+ * uses a different domain definition.
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({"serial"})
 public class OnNSDomainsDecideRule extends SurtPrefixedDecideRule {
 
-    /** This is what SurtPrefixSet.prefixFromPlain returns for
-     *  a non valid URI. */
+    /**
+     * This is what SurtPrefixSet.prefixFromPlain returns for a non valid URI.
+     */
     public static final String NON_VALID_DOMAIN = "http://(http,)";
-    
+
     /** Pattern that matches the first part of SURT - until ?? */
     public static final Pattern SURT_FIRSTPART_PATTERN = Pattern.compile("http\\://\\([^\\)]*");
 
-    /** 
-     * Constructor for the class OnNSDomainsDecideRule. 
+    /**
+     * Constructor for the class OnNSDomainsDecideRule.
+     * 
      * @param s The name of this DecideRule
      */
     public OnNSDomainsDecideRule(String s) {
         super(s);
-        setDescription(
-                "OnNSDomainsDecideRule. Makes the configured decision "
+        setDescription("OnNSDomainsDecideRule. Makes the configured decision "
                 + "for any URI which is inside one of the domains in the "
-                + "configured set of domains - according to the domain "
-                + "definition of the NetarchiveSuite system. "
+                + "configured set of domains - according to the domain " + "definition of the NetarchiveSuite system. "
                 + "Giving that e.g. sports.tv2.dk will resolve to tv2.dk"
                 + " but www.bbc.co.uk will resolve to bbc.co.uk");
     }
-    
+
     /**
-     * We override the default readPrefixes, because we want to
-     * make our prefixes.
+     * We override the default readPrefixes, because we want to make our prefixes.
      */
     protected void readPrefixes() {
         buildSurtPrefixSet();
@@ -77,48 +74,45 @@ public class OnNSDomainsDecideRule extends SurtPrefixedDecideRule {
     }
 
     /**
-     * Method that rebuilds the SurtPrefixSet to include only
-     * topmost domains - according to the domain definition
-     * in NetarchiveSuite.
-     * This is only done once, during the startup phase?
+     * Method that rebuilds the SurtPrefixSet to include only topmost domains - according to the domain definition in
+     * NetarchiveSuite. This is only done once, during the startup phase?
      */
     protected void myBuildSurtPrefixSet() {
-        //make copy of original SurtPrefixSet to loop
+        // make copy of original SurtPrefixSet to loop
         SurtPrefixSet newSurtPrefixes = (SurtPrefixSet) surtPrefixes.clone();
-        //pattern that matches first part of SURT
-        
-        //loop all original SURTs
+        // pattern that matches first part of SURT
+
+        // loop all original SURTs
         for (String s : newSurtPrefixes) {
             Matcher m = SURT_FIRSTPART_PATTERN.matcher(s);
             if (m.find()) {
-                //cut off http:// (https:// are converted by heritrix classes)
+                // cut off http:// (https:// are converted by heritrix classes)
                 String hostpart = m.group().substring(8);
-                //split in hostname/domainname/TLD parts
+                // split in hostname/domainname/TLD parts
                 String[] parts = hostpart.split(",");
                 StringBuilder domnameBuilder = new StringBuilder();
-                //loop through parts in reverse order - add '.'
-                //(not after last part)
+                // loop through parts in reverse order - add '.'
+                // (not after last part)
                 for (int j = parts.length - 1; j >= 0; j--) {
                     domnameBuilder.append(parts[j]);
                     if (j != 0) {
                         domnameBuilder.append(".");
                     }
                 }
-                //add the new domain name to surtPrefixes
-                //since this is always shorter SURTs than the originals
-                //they will automatically
-                //override longer ones (built in SURTs logic)
+                // add the new domain name to surtPrefixes
+                // since this is always shorter SURTs than the originals
+                // they will automatically
+                // override longer ones (built in SURTs logic)
                 surtPrefixes.add(prefixFrom(domnameBuilder.toString()));
             }
         }
     }
 
     /**
-     * Generate the SURT prefix that matches the domain definition
-     * of NetarchiveSuite.
+     * Generate the SURT prefix that matches the domain definition of NetarchiveSuite.
+     * 
      * @param uri URL to convert to SURT
-     * @return String with SURT that matches the domain definition
-     * of NetarchiveSuite
+     * @return String with SURT that matches the domain definition of NetarchiveSuite
      */
     protected String prefixFrom(String uri) {
         uri = ArchiveUtils.addImpliedHttpIfNecessary(uri);
@@ -127,8 +121,8 @@ public class OnNSDomainsDecideRule extends SurtPrefixedDecideRule {
 
     /**
      * Convert a URI to its domain.
-     * @param uri URL to convert to Top most domain-name according to
-     * NetarchiveSuite definition
+     * 
+     * @param uri URL to convert to Top most domain-name according to NetarchiveSuite definition
      * @return Domain name
      */
     public static String convertToDomain(String uri) {
@@ -142,8 +136,7 @@ public class OnNSDomainsDecideRule extends SurtPrefixedDecideRule {
             // allow to continue with original string uri
         }
         try {
-            return policy.getClassKey(
-                    null, CandidateURI.fromString(u.toString()));
+            return policy.getClassKey(null, CandidateURI.fromString(u.toString()));
         } catch (URIException e) {
             // illegal URI - return a SURT that will not match any real URIs
             return NON_VALID_DOMAIN;

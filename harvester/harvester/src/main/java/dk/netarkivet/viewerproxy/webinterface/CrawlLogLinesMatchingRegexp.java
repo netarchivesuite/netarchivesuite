@@ -41,20 +41,18 @@ import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
 
 /**
- * Batchjob that extracts lines from a crawl log matching a regular expression 
- * The batch job should be restricted to run on metadata files for a specific
- * job only, using the {@link #processOnlyFilesMatching(String)} construct.
+ * Batchjob that extracts lines from a crawl log matching a regular expression The batch job should be restricted to run
+ * on metadata files for a specific job only, using the {@link #processOnlyFilesMatching(String)} construct.
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({"serial"})
 public class CrawlLogLinesMatchingRegexp extends ArchiveBatchJob {
 
     /** The logger. */
     private final Log log = LogFactory.getLog(getClass().getName());
-    
+
     /** Metadata URL for crawl logs. */
-    private static final String SETUP_URL_FORMAT
-            = String.format("metadata://%s/crawl/logs/crawl.log", 
-                    Settings.get(CommonSettings.ORGANIZATION));
+    private static final String SETUP_URL_FORMAT = String.format("metadata://%s/crawl/logs/crawl.log",
+            Settings.get(CommonSettings.ORGANIZATION));
 
     /** The regular expression to match in the crawl.log line. */
     private final String regexp;
@@ -69,24 +67,25 @@ public class CrawlLogLinesMatchingRegexp extends ArchiveBatchJob {
         this.regexp = regexp;
 
         /**
-        * One week in milliseconds.
-        */
-        batchJobTimeout = 7* Constants.ONE_DAY_IN_MILLIES;
+         * One week in milliseconds.
+         */
+        batchJobTimeout = 7 * Constants.ONE_DAY_IN_MILLIES;
     }
 
     /**
      * Does nothing, no initialisation is needed.
+     * 
      * @param os Not used.
      */
     @Override
     public void initialize(OutputStream os) {
     }
-    
+
     @Override
     public ArchiveBatchFilter getFilter() {
         return new ArchiveBatchFilter("OnlyCrawlLog") {
             public boolean accept(ArchiveRecordBase record) {
-                String URL = record.getHeader().getUrl(); 
+                String URL = record.getHeader().getUrl();
                 if (URL == null) {
                     return false;
                 } else {
@@ -98,6 +97,7 @@ public class CrawlLogLinesMatchingRegexp extends ArchiveBatchJob {
 
     /**
      * Process a record on crawl log concerning the given domain to result.
+     * 
      * @param record The record to process.
      * @param os The output stream for the result.
      *
@@ -108,11 +108,9 @@ public class CrawlLogLinesMatchingRegexp extends ArchiveBatchJob {
     public void processRecord(ArchiveRecordBase record, OutputStream os) {
         ArgumentNotValid.checkNotNull(record, "ArchiveRecordBase record");
         ArgumentNotValid.checkNotNull(os, "OutputStream os");
-        BufferedReader arcreader
-                = new BufferedReader(new InputStreamReader(record.getInputStream()));
+        BufferedReader arcreader = new BufferedReader(new InputStreamReader(record.getInputStream()));
         try {
-            for(String line = arcreader.readLine(); line != null;
-                line = arcreader.readLine()) {
+            for (String line = arcreader.readLine(); line != null; line = arcreader.readLine()) {
                 if (line.matches(regexp)) {
                     os.write(line.getBytes("UTF-8"));
                     os.write('\n');
@@ -123,7 +121,7 @@ public class CrawlLogLinesMatchingRegexp extends ArchiveBatchJob {
             throw new IOFailure("Unable to process (w)arc record", e);
         } finally {
             try {
-                arcreader.close(); 
+                arcreader.close();
             } catch (IOException e) {
                 log.warn("unable to close arcreader probably", e);
             }
@@ -132,6 +130,7 @@ public class CrawlLogLinesMatchingRegexp extends ArchiveBatchJob {
 
     /**
      * Does nothing, no finishing is needed.
+     * 
      * @param os Not used.
      */
     @Override
@@ -140,7 +139,6 @@ public class CrawlLogLinesMatchingRegexp extends ArchiveBatchJob {
 
     @Override
     public String toString() {
-        return getClass().getName() + ", with arguments: Regexp = " 
-            + regexp + ", Filter = " + getFilter();
+        return getClass().getName() + ", with arguments: Regexp = " + regexp + ", Filter = " + getFilter();
     }
 }

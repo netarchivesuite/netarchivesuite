@@ -35,15 +35,15 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 public class MonthlyFrequency extends Frequency {
 
-	/** The minute of the hour the event should happen at.*/
+    /** The minute of the hour the event should happen at. */
     private int minute;
-    /** The hour of the day the event should happen at.*/
+    /** The hour of the day the event should happen at. */
     private int hour;
-    /** The day of the month the event should happen at.*/
+    /** The day of the month the event should happen at. */
     private int dayOfMonth;
 
-    /** Create a new monthly frequency that happens every
-     * numUnits month, anytime.
+    /**
+     * Create a new monthly frequency that happens every numUnits month, anytime.
      *
      * @param numUnits Number of days from event to event.
      * @throws ArgumentNotValid if numUnits if 0 or negative
@@ -52,17 +52,15 @@ public class MonthlyFrequency extends Frequency {
         super(numUnits, true);
     }
 
-    /** Create a new monthly frequency that happens every numUnits month, on
-     * the given day of month, hour and minute.
+    /**
+     * Create a new monthly frequency that happens every numUnits month, on the given day of month, hour and minute.
      *
      * @param numUnits Number of days from event to event.
-     * @param dayOfMonth The day of the month the event should happen.  The
-     * month starts on day 1.
+     * @param dayOfMonth The day of the month the event should happen. The month starts on day 1.
      * @param hour The hour on which the event should happen.
      * @param minute The minute of hour on which the event should happen.
-     * @throws ArgumentNotValid if numUnits if 0 or negative
-     * or dayOfMonth <1 or >31
-     * or hour is <0 or >23 or minutes is <0 or >59
+     * @throws ArgumentNotValid if numUnits if 0 or negative or dayOfMonth <1 or >31 or hour is <0 or >23 or minutes is
+     * <0 or >59
      */
     public MonthlyFrequency(int numUnits, int dayOfMonth, int hour, int minute) {
         super(numUnits, false);
@@ -70,15 +68,15 @@ public class MonthlyFrequency extends Frequency {
         Calendar cal = GregorianCalendar.getInstance();
         if (dayOfMonth < cal.getMinimum(Calendar.DAY_OF_MONTH) || dayOfMonth > cal.getMaximum(Calendar.DAY_OF_MONTH)) {
             throw new ArgumentNotValid("Day of month must be in legal range '" + cal.getMinimum(Calendar.DAY_OF_MONTH)
-            		+ "' to '" + cal.getMaximum(Calendar.DAY_OF_MONTH) + "'");
+                    + "' to '" + cal.getMaximum(Calendar.DAY_OF_MONTH) + "'");
         }
         if (hour < cal.getMinimum(Calendar.HOUR_OF_DAY) || hour > cal.getMaximum(Calendar.HOUR_OF_DAY)) {
             throw new ArgumentNotValid("Hour of day must be in legal range '" + cal.getMinimum(Calendar.HOUR_OF_DAY)
-            		+ "' to '" + cal.getMaximum(Calendar.HOUR_OF_DAY) + "'");
+                    + "' to '" + cal.getMaximum(Calendar.HOUR_OF_DAY) + "'");
         }
         if (minute < cal.getMinimum(Calendar.MINUTE) || minute > cal.getMaximum(Calendar.MINUTE)) {
-            throw new ArgumentNotValid("Minute must be in legal range '" + cal.getMinimum(Calendar.MINUTE)
-            		+ "' to '" + cal.getMaximum(Calendar.MINUTE) + "'");
+            throw new ArgumentNotValid("Minute must be in legal range '" + cal.getMinimum(Calendar.MINUTE) + "' to '"
+                    + cal.getMaximum(Calendar.MINUTE) + "'");
         }
         this.dayOfMonth = dayOfMonth;
         this.hour = hour;
@@ -86,14 +84,12 @@ public class MonthlyFrequency extends Frequency {
     }
 
     /**
-     * Given when the last event happened, tell us when the next event should
-     * happen (even if the new event is in the past).
+     * Given when the last event happened, tell us when the next event should happen (even if the new event is in the
+     * past).
      *
-     * The time of the next event is guaranteed to be later that lastEvent.
-     * For certain frequencies (e.g. once a day, any time of day), the time
-     * of the next event is derived from lastEvent, for others (e.g. once a day
-     * at 13:00) the time of the next event is the first matching time after
-     * lastEvent.
+     * The time of the next event is guaranteed to be later that lastEvent. For certain frequencies (e.g. once a day,
+     * any time of day), the time of the next event is derived from lastEvent, for others (e.g. once a day at 13:00) the
+     * time of the next event is the first matching time after lastEvent.
      *
      * @param lastEvent A time from which the next event should be calculated.
      * @return At what point the event should happen next.
@@ -103,8 +99,8 @@ public class MonthlyFrequency extends Frequency {
 
         Calendar last = new GregorianCalendar();
         last.setTime(getFirstEvent(lastEvent));
-        //Note: If the dayOfMonth becomes impossible by this addition, it is
-        //set back to the maximum possible date for this month
+        // Note: If the dayOfMonth becomes impossible by this addition, it is
+        // set back to the maximum possible date for this month
         last.add(Calendar.MONTH, getNumUnits());
         return getFirstEvent(last.getTime());
     }
@@ -138,6 +134,7 @@ public class MonthlyFrequency extends Frequency {
 
     /**
      * If not anytime, the minute at which events should start.
+     * 
      * @return the minute
      */
     public int getMinute() {
@@ -146,6 +143,7 @@ public class MonthlyFrequency extends Frequency {
 
     /**
      * If not anytime, the hour at which events should start.
+     * 
      * @return the hour
      */
     public int getHour() {
@@ -154,6 +152,7 @@ public class MonthlyFrequency extends Frequency {
 
     /**
      * If not anytime, the day in the month at which events should start.
+     * 
      * @return the day
      */
     public int getDayOfMonth() {
@@ -162,27 +161,36 @@ public class MonthlyFrequency extends Frequency {
 
     /**
      * Autogenerated equals.
+     * 
      * @param o The object to compare with
      * @return Whether objects are equal
      */
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof MonthlyFrequency)) return false;
-        if (!super.equals(o)) return false;
+        if (this == o)
+            return true;
+        if (!(o instanceof MonthlyFrequency))
+            return false;
+        if (!super.equals(o))
+            return false;
 
         final MonthlyFrequency monthlyFrequency = (MonthlyFrequency) o;
 
-        if (isAnytime()) return true;
+        if (isAnytime())
+            return true;
 
-        if (dayOfMonth != monthlyFrequency.dayOfMonth) return false;
-        if (hour != monthlyFrequency.hour) return false;
-        if (minute != monthlyFrequency.minute) return false;
+        if (dayOfMonth != monthlyFrequency.dayOfMonth)
+            return false;
+        if (hour != monthlyFrequency.hour)
+            return false;
+        if (minute != monthlyFrequency.minute)
+            return false;
 
         return true;
     }
 
     /**
      * Autogenerated hashcode method.
+     * 
      * @return the hashcode
      */
     public int hashCode() {
@@ -194,8 +202,8 @@ public class MonthlyFrequency extends Frequency {
     }
 
     /**
-     * Return the exact minute event should happen on, or null if this is
-     * an anyTime event or doesn't define what minute it should happen on.
+     * Return the exact minute event should happen on, or null if this is an anyTime event or doesn't define what minute
+     * it should happen on.
      *
      * @return the exact minute event should happen on
      */
@@ -207,8 +215,8 @@ public class MonthlyFrequency extends Frequency {
     }
 
     /**
-     * Return the exact hour event should happen on, or null if this is
-     * an anyTime event or doesn't define what hour it should happen on.
+     * Return the exact hour event should happen on, or null if this is an anyTime event or doesn't define what hour it
+     * should happen on.
      *
      * @return the exact hour event should happen on
      */
@@ -220,8 +228,8 @@ public class MonthlyFrequency extends Frequency {
     }
 
     /**
-     * Return the exact day of week event should happen on, or null if this is
-     * an anyTime event or doesn't define what day of week it should happen on.
+     * Return the exact day of week event should happen on, or null if this is an anyTime event or doesn't define what
+     * day of week it should happen on.
      *
      * @return the exact day of week event should happen on
      */
@@ -230,8 +238,8 @@ public class MonthlyFrequency extends Frequency {
     }
 
     /**
-     * Return the exact day of month event should happen on, or null if this is
-     * an anyTime event or doesn't define what day of month it should happen on.
+     * Return the exact day of month event should happen on, or null if this is an anyTime event or doesn't define what
+     * day of month it should happen on.
      *
      * @return the exact day of month event should happen on
      */
@@ -243,8 +251,8 @@ public class MonthlyFrequency extends Frequency {
     }
 
     /**
-     * Return an integer that can be used to identify the kind of frequency.
-     * No two subclasses should use the same integer
+     * Return an integer that can be used to identify the kind of frequency. No two subclasses should use the same
+     * integer
      *
      * @return an integer that can be used to identify the kind of frequency
      */
@@ -252,7 +260,8 @@ public class MonthlyFrequency extends Frequency {
         return TimeUnit.MONTHLY.ordinal();
     }
 
-    /** Human readable representation of this object.
+    /**
+     * Human readable representation of this object.
      *
      * @return Human readable representation
      */

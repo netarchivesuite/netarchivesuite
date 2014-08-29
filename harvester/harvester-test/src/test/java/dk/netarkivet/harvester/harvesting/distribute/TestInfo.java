@@ -39,15 +39,13 @@ import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
  */
 public class TestInfo {
 
-	public static final File DATA_DIR = new File("tests/dk/netarkivet/harvester/harvesting/distribute/data/");
+    public static final File DATA_DIR = new File("tests/dk/netarkivet/harvester/harvesting/distribute/data/");
     public static final int WAIT_TIME = 6000;
     public static ChannelID CLIENT_ID = Channels.getTheSched();
     public static ChannelID SERVER_ID = Channels.getThisReposClient();
     public static final File SERVER_DIR = new File(TestInfo.DATA_DIR, "server");
     public static final String DUMMY_SERVER_ID = "hc_test_dummy_server";
-    public static final MetadataEntry sampleEntry = new MetadataEntry(
-            "metadata://netarkivet.dk",
-            "text/plain",
+    public static final MetadataEntry sampleEntry = new MetadataEntry("metadata://netarkivet.dk", "text/plain",
             "THIS IS SOME METADATA");
     public static final List<MetadataEntry> emptyMetadata = new ArrayList<MetadataEntry>();
     public static final List<MetadataEntry> oneMetadata = new ArrayList<MetadataEntry>();
@@ -65,37 +63,35 @@ public class TestInfo {
     static final File ARCHIVE_DIR = new File(TestInfo.WORKING_DIR, "bitarchive1");
     static final File SERVER_TEMP_DIR = new File(TestInfo.ARCHIVE_DIR, "temp");
 
-    private static final File LEFTOVER_JOB_DIR_1 = new File(TestInfo.WORKING_DIR,"testserverdir1");
-    static final File LEFTOVER_CRAWLDIR_1 = new File(TestInfo.LEFTOVER_JOB_DIR_1,"crawldir");
+    private static final File LEFTOVER_JOB_DIR_1 = new File(TestInfo.WORKING_DIR, "testserverdir1");
+    static final File LEFTOVER_CRAWLDIR_1 = new File(TestInfo.LEFTOVER_JOB_DIR_1, "crawldir");
     static final int FILES_IN_LEFTOVER_JOB_DIR_1 = 1;
-    private static final File LEFTOVER_JOB_DIR_2 = new File(TestInfo.WORKING_DIR,"testserverdir2");
-    static final File LEFTOVER_CRAWLDIR_2 = new File(TestInfo.LEFTOVER_JOB_DIR_2,"crawldir");
+    private static final File LEFTOVER_JOB_DIR_2 = new File(TestInfo.WORKING_DIR, "testserverdir2");
+    static final File LEFTOVER_CRAWLDIR_2 = new File(TestInfo.LEFTOVER_JOB_DIR_2, "crawldir");
     static final String[] FILES_IN_LEFTOVER_JOB_DIR_2 = {
-        "42-117-20051212141240-00000-sb-test-har-001.statsbiblioteket.dk.arc",
-        "42-117-20051212141240-00001-sb-test-har-001.statsbiblioteket.dk.arc",
-        "42-117-20051212141242-00002-sb-test-har-001.statsbiblioteket.dk.arc"
-    };
-    static final String LEFTOVER_JOB_DIR_2_SOME_FILE_PATTERN =
-        "(" + TestInfo.FILES_IN_LEFTOVER_JOB_DIR_2[0]
-        + "|" + TestInfo.FILES_IN_LEFTOVER_JOB_DIR_2[1]
-        + "|" + TestInfo.FILES_IN_LEFTOVER_JOB_DIR_2[2] + ")";
+            "42-117-20051212141240-00000-sb-test-har-001.statsbiblioteket.dk.arc",
+            "42-117-20051212141240-00001-sb-test-har-001.statsbiblioteket.dk.arc",
+            "42-117-20051212141242-00002-sb-test-har-001.statsbiblioteket.dk.arc"};
+    static final String LEFTOVER_JOB_DIR_2_SOME_FILE_PATTERN = "(" + TestInfo.FILES_IN_LEFTOVER_JOB_DIR_2[0] + "|"
+            + TestInfo.FILES_IN_LEFTOVER_JOB_DIR_2[1] + "|" + TestInfo.FILES_IN_LEFTOVER_JOB_DIR_2[2] + ")";
     // used by HarvestControllerServerTester#testStoreHarvestInformation()
-    static final File LEFTOVER_JOB_DIR_3 = new File(TestInfo.WORKING_DIR,"testserverdir3");
-    static final File LEFTOVER_CRAWLDIR_3 = new File(TestInfo.LEFTOVER_JOB_DIR_3,"crawldir");
-    static final File TEST_CRAWL_DIR = new File ("tests/dk/netarkivet/harvester/harvesting/data/crawldir");
-    static final File CRAWL_DIR_COPY = new File ("tests/dk/netarkivet/harvester/harvesting/data/copyOfCrawldir");
-    
+    static final File LEFTOVER_JOB_DIR_3 = new File(TestInfo.WORKING_DIR, "testserverdir3");
+    static final File LEFTOVER_CRAWLDIR_3 = new File(TestInfo.LEFTOVER_JOB_DIR_3, "crawldir");
+    static final File TEST_CRAWL_DIR = new File("tests/dk/netarkivet/harvester/harvesting/data/crawldir");
+    static final File CRAWL_DIR_COPY = new File("tests/dk/netarkivet/harvester/harvesting/data/copyOfCrawldir");
+
     static final String HarvestInfofilename = "harvestInfo.xml";
-    
-    
+
     /**
      * Load resources needed by unit tests.
      */
     public TestInfo() {
     }
 
-    /** Get a simple job with high priority.
-     *  @return a simple job with high priority
+    /**
+     * Get a simple job with high priority.
+     * 
+     * @return a simple job with high priority
      */
     static Job getJob() {
         return JobUtils.getHighPriorityJob(ORDER_FILE, JobStatus.NEW, "default_orderxml");

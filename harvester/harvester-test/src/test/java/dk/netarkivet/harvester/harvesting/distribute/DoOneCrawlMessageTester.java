@@ -51,14 +51,14 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 public class DoOneCrawlMessageTester {
 
     /**
-     We use (arbitrarily) THIS_CLIENT as channel for testing.
+     * We use (arbitrarily) THIS_CLIENT as channel for testing.
      */
     private static final ChannelID CHAN1 = Channels.getThisReposClient();
     ReloadSettings rs = new ReloadSettings();
 
     @Before
-    public void setUp() throws SQLException, IllegalAccessException,
-            IOException, NoSuchFieldException, ClassNotFoundException {
+    public void setUp() throws SQLException, IllegalAccessException, IOException, NoSuchFieldException,
+            ClassNotFoundException {
         rs.setUp();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
@@ -66,8 +66,7 @@ public class DoOneCrawlMessageTester {
     }
 
     @After
-    public void tearDown()
-            throws SQLException, IllegalAccessException, NoSuchFieldException {
+    public void tearDown() throws SQLException, IllegalAccessException, NoSuchFieldException {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         ChannelsTesterHelper.resetChannels();
         rs.tearDown();
@@ -77,13 +76,11 @@ public class DoOneCrawlMessageTester {
     @Test
     public void testCTOR1() {
         try {
-            new DoOneCrawlMessage(
-                    null, CHAN1,
-                    new HarvestDefinitionInfo("test", "test", "test"),
+            new DoOneCrawlMessage(null, CHAN1, new HarvestDefinitionInfo("test", "test", "test"),
                     TestInfo.emptyMetadata);
             fail("Calling CTOR with null value for Job should throw exception !");
         } catch (ArgumentNotValid e) {
-            //expected case
+            // expected case
         }
     }
 
@@ -91,13 +88,11 @@ public class DoOneCrawlMessageTester {
     @Test
     public void testCTOR2() {
         try {
-            new DoOneCrawlMessage(
-                    TestInfo.getJob(), null,
-                    new HarvestDefinitionInfo("test", "test", "test"),
+            new DoOneCrawlMessage(TestInfo.getJob(), null, new HarvestDefinitionInfo("test", "test", "test"),
                     TestInfo.emptyMetadata);
             fail("Calling CTOR with null value for to-queue should throw exception !");
         } catch (ArgumentNotValid e) {
-            //expected case
+            // expected case
         }
     }
 
@@ -105,84 +100,66 @@ public class DoOneCrawlMessageTester {
     @Test
     public void testCTOR3() {
         try {
-            new DoOneCrawlMessage(
-                    TestInfo.getJob(),
-                    CHAN1,
-                    new HarvestDefinitionInfo("test", "test", "test"),
-                    null);
+            new DoOneCrawlMessage(TestInfo.getJob(), CHAN1, new HarvestDefinitionInfo("test", "test", "test"), null);
             fail("Calling CTOR with null value for metadata should throw exception !");
         } catch (ArgumentNotValid e) {
-            //expected case
+            // expected case
         }
     }
-    
+
     /** Test four of constructor. */
     @Test
     public void testCTOR4() {
         try {
-            new DoOneCrawlMessage(
-                    TestInfo.getJob(), CHAN1,
-                    new HarvestDefinitionInfo("test", "test", "test"),
+            new DoOneCrawlMessage(TestInfo.getJob(), CHAN1, new HarvestDefinitionInfo("test", "test", "test"),
                     TestInfo.emptyMetadata);
         } catch (ArgumentNotValid e) {
             fail("Calling CTOR with valid arguments should not throw exception !");
         }
     }
-    
+
     /** Test the getJob() method. */
     @Test
     public void testGetJob() {
         Job j = TestInfo.getJob();
-        DoOneCrawlMessage docm = new DoOneCrawlMessage(
-                j, CHAN1,
-                new HarvestDefinitionInfo("test", "test", "test"),
+        DoOneCrawlMessage docm = new DoOneCrawlMessage(j, CHAN1, new HarvestDefinitionInfo("test", "test", "test"),
                 TestInfo.emptyMetadata);
         assertSame("Job is not the same object", j, docm.getJob());
     }
-    
+
     /** Test the getMetadata() method. */
     @Test
     public void testGetMetadata() {
         Job j = TestInfo.getJob();
-        DoOneCrawlMessage docm = new DoOneCrawlMessage(
-                j, CHAN1,
-                new HarvestDefinitionInfo("test", "test", "test"),
+        DoOneCrawlMessage docm = new DoOneCrawlMessage(j, CHAN1, new HarvestDefinitionInfo("test", "test", "test"),
                 TestInfo.emptyMetadata);
-        assertEquals("metadata is not the same object", TestInfo.emptyMetadata,
-                docm.getMetadata());
+        assertEquals("metadata is not the same object", TestInfo.emptyMetadata, docm.getMetadata());
     }
 
     /**
-     * tests serialization - generating 2 DoOneCrawlMessages -
-     * put one of them through serialization/deserialization
-     * testing that certain fields in the two objects are still the same !
-     * Should possible be tested more overall
+     * tests serialization - generating 2 DoOneCrawlMessages - put one of them through serialization/deserialization
+     * testing that certain fields in the two objects are still the same ! Should possible be tested more overall
      * (waiting for NHC to make some kind of framework for testing serialization
      */
     @Test
     public void testSerialization() {
         Job j = TestInfo.getJob();
         TestInfo.oneMetadata.add(TestInfo.sampleEntry);
-        DoOneCrawlMessage docm1 = new DoOneCrawlMessage(j,
-                CHAN1,
-                new HarvestDefinitionInfo("test", "test", "test"),
+        DoOneCrawlMessage docm1 = new DoOneCrawlMessage(j, CHAN1, new HarvestDefinitionInfo("test", "test", "test"),
                 TestInfo.oneMetadata);
-        DoOneCrawlMessage docm2 = new DoOneCrawlMessage(j,
-                CHAN1,
-                new HarvestDefinitionInfo("test", "test", "test"),
+        DoOneCrawlMessage docm2 = new DoOneCrawlMessage(j, CHAN1, new HarvestDefinitionInfo("test", "test", "test"),
                 TestInfo.oneMetadata);
         docm1.setNotOk("test of errormessage");
         docm2.setNotOk("test of errormessage");
 
-        //Now serialize and deserialize the studied doOneCrawlMessage (but NOT the reference):
+        // Now serialize and deserialize the studied doOneCrawlMessage (but NOT the reference):
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ObjectOutputStream ous = new ObjectOutputStream(baos);
             ous.writeObject(docm1);
             ous.close();
             baos.close();
-            ObjectInputStream ois = new ObjectInputStream(
-                    new ByteArrayInputStream(baos.toByteArray()));
+            ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(baos.toByteArray()));
             docm1 = (DoOneCrawlMessage) ois.readObject();
         } catch (IOException e) {
             fail(e.toString());
@@ -202,12 +179,11 @@ public class DoOneCrawlMessageTester {
             fail("ChannelID (replyTo) is no longer the same !");
         }
 
-        if (!docm1.getMetadata().get(0).getURL().
-                equals(docm2.getMetadata().get(0).getURL())) {
+        if (!docm1.getMetadata().get(0).getURL().equals(docm2.getMetadata().get(0).getURL())) {
             fail("metadata is no longer the same !");
         }
     }
-    
+
     @Test
     public void testHarvestDefinitionInfo() {
         try {
@@ -215,26 +191,26 @@ public class DoOneCrawlMessageTester {
         } catch (ArgumentNotValid e) {
             fail("Should not throw ArgumentNotValid with valid args");
         }
-        
+
         try {
             new HarvestDefinitionInfo("test", "", "");
         } catch (ArgumentNotValid e) {
             fail("Should not throw ArgumentNotValid with valid args");
         }
-        
+
         try {
             new HarvestDefinitionInfo("test", "Some comments", "");
         } catch (ArgumentNotValid e) {
             fail("Should not throw ArgumentNotValid with valid args");
         }
-        
+
         try {
             new HarvestDefinitionInfo("", "", "");
             fail("Should throw ArgumentNotValid with empty harvest name");
         } catch (ArgumentNotValid e) {
             //
         }
-        
+
         try {
             new HarvestDefinitionInfo((String) null, (String) null, (String) null);
             fail("Should throw ArgumentNotValid with null args");

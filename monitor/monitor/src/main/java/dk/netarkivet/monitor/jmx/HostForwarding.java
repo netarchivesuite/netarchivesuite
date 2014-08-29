@@ -52,13 +52,12 @@ import dk.netarkivet.monitor.MonitorSettings;
 import dk.netarkivet.monitor.registry.MonitorRegistry;
 
 /**
- * Handles the forwarding of other hosts' MBeans matching a specific regular
- * query and interface to a given mbean server. The interface should be of type
- * T.
+ * Handles the forwarding of other hosts' MBeans matching a specific regular query and interface to a given mbean
+ * server. The interface should be of type T.
  *
  * @param <T> The type of object exposed through the MBeans.
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class HostForwarding<T> {
 
     /** The log. */
@@ -73,55 +72,55 @@ public class HostForwarding<T> {
     private final MBeanServer mBeanServer;
     /** The interface the remote mbeans should implement. */
     private final Class<T> asInterface;
-    
+
     /**
-     * The username for JMX read from either a System property, the overriding
-     * settings given by the installer, or the default value stored in
-     * src/dk/netarkivet/monitor/settings.xml.
+     * The username for JMX read from either a System property, the overriding settings given by the installer, or the
+     * default value stored in src/dk/netarkivet/monitor/settings.xml.
      */
     private String jmxUsername;
-    /** 
+
+    /**
      * @return the JMX-Username
      */
     private String getJmxUsername() {
         return jmxUsername;
     }
+
     /**
-     * Set the JMX-username with a new value. Null or empty username is not 
-     * allowed.
+     * Set the JMX-username with a new value. Null or empty username is not allowed.
+     * 
      * @param newJmxUsername New value for the JMX-username
      */
     private synchronized void setJmxUsername(String newJmxUsername) {
         ArgumentNotValid.checkNotNullOrEmpty(newJmxUsername, "String newJmxUsername");
         this.jmxUsername = newJmxUsername;
     }
-    
+
     /**
-     * The password for JMX read from either a System property, the overriding
-     * settings given by the installer, or the default value stored in
-     * src/dk/netarkivet/monitor/settings.xml.
+     * The password for JMX read from either a System property, the overriding settings given by the installer, or the
+     * default value stored in src/dk/netarkivet/monitor/settings.xml.
      */
     private String jmxPassword;
-    
-    /** 
+
+    /**
      * @return the JMX-password
      */
     private String getJmxPassword() {
         return jmxPassword;
     }
+
     /**
-     * Set the JMX-password with a new value. Null or empty password is not 
-     * allowed.
-     * @param newJmxPassword New value for the JMX-password 
+     * Set the JMX-password with a new value. Null or empty password is not allowed.
+     * 
+     * @param newJmxPassword New value for the JMX-password
      */
     private synchronized void setJmxPassword(String newJmxPassword) {
         ArgumentNotValid.checkNotNullOrEmpty(newJmxPassword, "String newJmxPassword");
         this.jmxPassword = newJmxPassword;
     }
-    
+
     /**
-     * The instances of host forwardings, to ensure mbeans are only forwarded
-     * once.
+     * The instances of host forwardings, to ensure mbeans are only forwarded once.
      */
     private static Map<String, HostForwarding> instances = new HashMap<String, HostForwarding>();
 
@@ -129,43 +128,36 @@ public class HostForwarding<T> {
     private final JMXProxyConnectionFactory connectionFactory;
 
     /**
-     * Initialise forwarding MBeans. This will connect to all hosts mentioned in
-     * settings, and register proxy beans for each bean on remote servers
-     * matching the given query. The remote beans should implement the given
-     * interface.
+     * Initialise forwarding MBeans. This will connect to all hosts mentioned in settings, and register proxy beans for
+     * each bean on remote servers matching the given query. The remote beans should implement the given interface.
      *
      * @param asInterface The interface remote beans should implement.
-     * @param mBeanServer The MBean server the proxy beans should be registered
-     *                    in.
-     * @param mBeanQuery  The query that returns the mbeans that should be
-     *                    proxied.
+     * @param mBeanServer The MBean server the proxy beans should be registered in.
+     * @param mBeanQuery The query that returns the mbeans that should be proxied.
      */
     private HostForwarding(Class<T> asInterface, MBeanServer mBeanServer, String mBeanQuery) {
         this.mBeanServer = mBeanServer;
         this.asInterface = asInterface;
         this.mBeanQuery = mBeanQuery;
-        this.connectionFactory = new CachingProxyConnectionFactory(
-                new RmiProxyConnectionFactory());
+        this.connectionFactory = new CachingProxyConnectionFactory(new RmiProxyConnectionFactory());
 
         updateJmx();
     }
 
     /**
-     * Get a host forwarding instance. As a side effect of this, all mbeans
-     * matching a query from remote hosts, are proxied and registered in the
-     * given mbean server. Only one HostForwarding instance will be made for
-     * each query string. Any subsequent call with the same query string will
-     * simply return the previously initiated instance.
+     * Get a host forwarding instance. As a side effect of this, all mbeans matching a query from remote hosts, are
+     * proxied and registered in the given mbean server. Only one HostForwarding instance will be made for each query
+     * string. Any subsequent call with the same query string will simply return the previously initiated instance.
      *
      * @param asInterface The interface remote mbeans should implement.
      * @param mBeanServer The MBean server to register proxy mbeans in.
-     * @param query       The query for which we should proxy matching mbeans on
-     *                    remote servers.
-     * @param <T>         The type of HostForwarding to return.
+     * @param query The query for which we should proxy matching mbeans on remote servers.
+     * @param <T> The type of HostForwarding to return.
      *
      * @return This host forwarding instance.
      */
-    public static synchronized <T> HostForwarding getInstance(Class<T> asInterface, MBeanServer mBeanServer, String query) {
+    public static synchronized <T> HostForwarding getInstance(Class<T> asInterface, MBeanServer mBeanServer,
+            String query) {
         if (instances.get(query) == null) {
             instances.put(query, new HostForwarding<T>(asInterface, mBeanServer, query));
         }
@@ -175,9 +167,8 @@ public class HostForwarding<T> {
     }
 
     /**
-     * Gets the list of hosts and corresponding JMX ports from the monitor
-     * registry. For all unknown hosts, it registers proxies to all Mbeans
-     * registered on the remote MBeanservers in the given MBeanserver.
+     * Gets the list of hosts and corresponding JMX ports from the monitor registry. For all unknown hosts, it registers
+     * proxies to all Mbeans registered on the remote MBeanservers in the given MBeanserver.
      */
     private synchronized void updateJmx() {
         // Update username/password setting, if either of the settings
@@ -186,9 +177,10 @@ public class HostForwarding<T> {
 
         boolean changed = updateJmxUsernameAndPassword();
         if (changed) {
-            log.info("Settings '{}' and '{}' has been updated with value from a System property or one of the files: {}",
-            		MonitorSettings.JMX_USERNAME_SETTING, MonitorSettings.JMX_PASSWORD_SETTING,
-            		StringUtils.conjoin(",", Settings.getSettingsFiles()));
+            log.info(
+                    "Settings '{}' and '{}' has been updated with value from a System property or one of the files: {}",
+                    MonitorSettings.JMX_USERNAME_SETTING, MonitorSettings.JMX_PASSWORD_SETTING,
+                    StringUtils.conjoin(",", Settings.getSettingsFiles()));
         }
 
         List<HostEntry> newJmxHosts = new ArrayList<HostEntry>();
@@ -252,8 +244,7 @@ public class HostForwarding<T> {
     }
 
     /**
-     * Get current list of host-JMX port mappings. This lists the mappings from
-     * the registry server.
+     * Get current list of host-JMX port mappings. This lists the mappings from the registry server.
      *
      * @return current list of host-JMX port mappings.
      */
@@ -262,11 +253,9 @@ public class HostForwarding<T> {
     }
 
     /**
-     * Register all remote Mbeans on the given MBeanServer. The username, and
-     * password are the same for all JMX-connections. For hosts which cannot be
-     * connected to, an mbean is registered in the same domain, which tries to
-     * reconnect on any invocation, and returns the status of the attempt as a
-     * string.
+     * Register all remote Mbeans on the given MBeanServer. The username, and password are the same for all
+     * JMX-connections. For hosts which cannot be connected to, an mbean is registered in the same domain, which tries
+     * to reconnect on any invocation, and returns the status of the attempt as a string.
      *
      * @param hosts the list of remote Hosts.
      */
@@ -282,7 +271,7 @@ public class HostForwarding<T> {
                     // invocation of any method on the object.
                     NoHostInvocationHandler handler = new NoHostInvocationHandler(hostEntry);
                     Class<T> proxyClass = (Class<T>) Proxy.getProxyClass(asInterface.getClassLoader(),
-                            new Class[]{asInterface});
+                            new Class[] {asInterface});
                     T noHostMBean = proxyClass.getConstructor(InvocationHandler.class).newInstance(handler);
                     SingleMBeanObject<T> singleMBeanObject = new SingleMBeanObject<T>(queryToDomain(mBeanQuery),
                             noHostMBean, asInterface, mBeanServer);
@@ -300,9 +289,8 @@ public class HostForwarding<T> {
     }
 
     /**
-     * Connects to the given host, and lists all mbeans matching the query. For
-     * each of these mbeans, registers a proxymbean, that on any invocation will
-     * connect to the remote host, and return the result of invoking the method
+     * Connects to the given host, and lists all mbeans matching the query. For each of these mbeans, registers a
+     * proxymbean, that on any invocation will connect to the remote host, and return the result of invoking the method
      * on the remote object.
      *
      * @param hostEntry The host to connect to.
@@ -311,11 +299,8 @@ public class HostForwarding<T> {
      */
     private synchronized void createProxyMBeansForHost(HostEntry hostEntry) {
         Set<ObjectName> remoteObjectNames;
-        JMXProxyConnection connection = connectionFactory.getConnection(
-                hostEntry.getName(),
-                hostEntry.getJmxPort(),
-                hostEntry.getRmiPort(),
-                getJmxUsername(), getJmxPassword());
+        JMXProxyConnection connection = connectionFactory.getConnection(hostEntry.getName(), hostEntry.getJmxPort(),
+                hostEntry.getRmiPort(), getJmxUsername(), getJmxPassword());
 
         remoteObjectNames = connection.query(mBeanQuery);
         for (ObjectName name : remoteObjectNames) {
@@ -323,8 +308,8 @@ public class HostForwarding<T> {
                 // This creates a proxy object that calls the handler on any
                 // invocation of any method on the object.
                 ProxyMBeanInvocationHandler handler = new ProxyMBeanInvocationHandler(name, hostEntry);
-                Class<T> proxyClass = (Class<T>) Proxy.getProxyClass(
-                		asInterface.getClassLoader(), new Class[]{asInterface});
+                Class<T> proxyClass = (Class<T>) Proxy.getProxyClass(asInterface.getClassLoader(),
+                        new Class[] {asInterface});
                 T mbean = proxyClass.getConstructor(InvocationHandler.class).newInstance(handler);
 
                 SingleMBeanObject<T> singleMBeanObject = new SingleMBeanObject<T>(name, mbean, asInterface, mBeanServer);
@@ -336,8 +321,7 @@ public class HostForwarding<T> {
     }
 
     /**
-     * Returns the domain from a given query. Used for constructing an
-     * error-mbean-name on connection trouble.
+     * Returns the domain from a given query. Used for constructing an error-mbean-name on connection trouble.
      *
      * @param aMBeanQuery The query to return the domain from.
      *
@@ -357,10 +341,9 @@ public class HostForwarding<T> {
     }
 
     /**
-     * An invocation handler for the mbeans registered when a host does not
-     * respond. This handler will on any invocation attempt to reconnect, and
-     * then return a string with the result. Unsuccessfully connecting, it will
-     * unregister the mbean.
+     * An invocation handler for the mbeans registered when a host does not respond. This handler will on any invocation
+     * attempt to reconnect, and then return a string with the result. Unsuccessfully connecting, it will unregister the
+     * mbean.
      */
     private class NoHostInvocationHandler implements InvocationHandler {
         /** The mbean this invocation handler handles. */
@@ -369,8 +352,7 @@ public class HostForwarding<T> {
         private HostEntry hostEntry;
 
         /**
-         * Make a new invocation handler for showing errors and retrying
-         * connect.
+         * Make a new invocation handler for showing errors and retrying connect.
          *
          * @param hostEntry The host to retry connecting to.
          */
@@ -379,8 +361,8 @@ public class HostForwarding<T> {
         }
 
         /**
-         * Remembers the mbean this invocation handler is registered in. Should
-         * always be called before actually registering the mbean.
+         * Remembers the mbean this invocation handler is registered in. Should always be called before actually
+         * registering the mbean.
          *
          * @param singleMBeanObject The mbean this object handles.
          */
@@ -389,32 +371,27 @@ public class HostForwarding<T> {
         }
 
         /**
-         * Retries connecting to the host. On success, returns a string with
-         * success, and unregisters. On failure, returns a string with failure.
+         * Retries connecting to the host. On success, returns a string with success, and unregisters. On failure,
+         * returns a string with failure.
          *
-         * @param proxy  The error mbean that invoked this, ignored.
+         * @param proxy The error mbean that invoked this, ignored.
          * @param method The method attempted invoked, ignored.
-         * @param args   The arguments for the method, ignored.
+         * @param args The arguments for the method, ignored.
          *
          * @return A string with success or failure.
          *
          * @throws Throwable Shouldn't throw exceptions.
          */
-        public Object invoke(Object proxy, Method method, Object[] args)
-                throws Throwable {
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             try {
                 createProxyMBeansForHost(hostEntry);
                 singleMBeanObject.unregister();
-                return "Now proxying JMX beans for host '"
-                       + hostEntry.getName() + ":" + hostEntry.getJmxPort()
-                       + "'";
+                return "Now proxying JMX beans for host '" + hostEntry.getName() + ":" + hostEntry.getJmxPort() + "'";
             } catch (Exception e) {
-                //Still unable to connect. Oh well.
-                return "[" + new Date() + "] Unable to proxy JMX beans on host '"
-                       + hostEntry.getName() + ":" + hostEntry.getJmxPort()
-                       + "', last seen active at '"
-                       + hostEntry.getTime() + "'\n"
-                       + ExceptionUtils.getStackTrace(e);
+                // Still unable to connect. Oh well.
+                return "[" + new Date() + "] Unable to proxy JMX beans on host '" + hostEntry.getName() + ":"
+                        + hostEntry.getJmxPort() + "', last seen active at '" + hostEntry.getTime() + "'\n"
+                        + ExceptionUtils.getStackTrace(e);
             }
         }
     }
@@ -429,48 +406,36 @@ public class HostForwarding<T> {
         /**
          * Make a new forwarding mbean handler.
          *
-         * @param name      The name of the remote mbean.
+         * @param name The name of the remote mbean.
          * @param hostEntry The host for the remote mbean.
          */
-        public ProxyMBeanInvocationHandler(
-                ObjectName name,
-                HostEntry hostEntry) {
+        public ProxyMBeanInvocationHandler(ObjectName name, HostEntry hostEntry) {
             this.name = name;
             this.hostEntry = hostEntry;
         }
 
         /**
-         * Initialises a connection to a remote bean. Then invokes the method on
-         * that bean.
+         * Initialises a connection to a remote bean. Then invokes the method on that bean.
          *
-         * @param proxy  This proxying object. Ignored.
-         * @param method The method invoked. This is called on the remote
-         *               mbean.
-         * @param args   The arguments to the method. These are given to the
-         *               remote mbean.
+         * @param proxy This proxying object. Ignored.
+         * @param method The method invoked. This is called on the remote mbean.
+         * @param args The arguments to the method. These are given to the remote mbean.
          *
          * @return Whatever the remote mbean returns.
          *
          * @throws IOFailure On trouble establishing the connection.
-         * @throws javax.management.RuntimeMBeanException
-         *                   On exceptions in the mbean invocations.
+         * @throws javax.management.RuntimeMBeanException On exceptions in the mbean invocations.
          * @throws Throwable What ever the remote mbean has thrown.
          */
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             // establish or reestablish mbean.
             JMXProxyConnection connection;
             try {
-                connection = connectionFactory.getConnection(
-                        hostEntry.getName(),
-                        hostEntry.getJmxPort(),
-                        hostEntry.getRmiPort(),
-                        getJmxUsername(), getJmxPassword());
+                connection = connectionFactory.getConnection(hostEntry.getName(), hostEntry.getJmxPort(),
+                        hostEntry.getRmiPort(), getJmxUsername(), getJmxPassword());
             } catch (Exception e) {
-                throw new IOFailure("Could not connect to host '"
-                                    + hostEntry.getName() + ":"
-                                    + hostEntry.getJmxPort()
-                                    + "', last seen active at '"
-                                    + hostEntry.getTime() + "'\n", e);
+                throw new IOFailure("Could not connect to host '" + hostEntry.getName() + ":" + hostEntry.getJmxPort()
+                        + "', last seen active at '" + hostEntry.getTime() + "'\n", e);
             }
             // call remote method.
             T mBean = connection.createProxy(name, asInterface);

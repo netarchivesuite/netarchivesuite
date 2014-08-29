@@ -38,7 +38,7 @@ import dk.netarkivet.harvester.webinterface.HarvestStatusQuery;
  */
 public abstract class JobDAO implements DAO, Iterable<Job> {
 
-	/** The database singleton model. */
+    /** The database singleton model. */
     private static JobDAO instance;
 
     /**
@@ -60,18 +60,17 @@ public abstract class JobDAO implements DAO, Iterable<Job> {
     }
 
     /**
-     * Creates an instance in persistent storage of the given job.
-     * If the job doesn't have an ID, one is generated for it.
+     * Creates an instance in persistent storage of the given job. If the job doesn't have an ID, one is generated for
+     * it.
      *
      * @param job a job to create in persistent storage.
-     * @throws PermissionDenied If a job already exists in persistent storage
-     *                          with id of the given job
-     * @throws IOFailure        If some IOException occurs while
-     *                          writing the job
+     * @throws PermissionDenied If a job already exists in persistent storage with id of the given job
+     * @throws IOFailure If some IOException occurs while writing the job
      */
     public abstract void create(Job job);
 
-    /** Check whether a particular job exists.
+    /**
+     * Check whether a particular job exists.
      *
      * @param jobID Id of the job.
      * @return true if the job exists in any state.
@@ -90,11 +89,9 @@ public abstract class JobDAO implements DAO, Iterable<Job> {
      *
      * @param jobID The ID of the job to read
      * @return a Job instance
-     * @throws ArgumentNotValid If failed to create job instance
-                 in case the configuration or priority is null,
-                 or the harvestID is invalid.
-     * @throws UnknownID        If the job with the given jobID
-     *                          does not exist in persistent storage.
+     * @throws ArgumentNotValid If failed to create job instance in case the configuration or priority is null, or the
+     * harvestID is invalid.
+     * @throws UnknownID If the job with the given jobID does not exist in persistent storage.
      * @throws IOFailure If the loaded ID of job does not match the expected.
      */
     public abstract Job read(Long jobID) throws ArgumentNotValid, UnknownID, IOFailure;
@@ -111,7 +108,7 @@ public abstract class JobDAO implements DAO, Iterable<Job> {
     public abstract void update(Job job) throws IOFailure;
 
     /**
-     * Reset the DAO instance.  Only for use from within tests.
+     * Reset the DAO instance. Only for use from within tests.
      */
     public static void reset() {
         instance = null;
@@ -122,8 +119,7 @@ public abstract class JobDAO implements DAO, Iterable<Job> {
      *
      * @param status A given status.
      * @return A list of all job with given status
-     * @throws ArgumentNotValid If the given status is not one of the six
-     *                          valid states specified in JobStatus.
+     * @throws ArgumentNotValid If the given status is not one of the six valid states specified in JobStatus.
      */
     public abstract Iterator<Job> getAll(JobStatus status);
 
@@ -132,19 +128,16 @@ public abstract class JobDAO implements DAO, Iterable<Job> {
      *
      * @param status A given status.
      * @return A list of all job_id's representing jobs with given status
-     * @throws ArgumentNotValid If the given status is not one of the six
-     *                          valid states specified in JobStatus.
+     * @throws ArgumentNotValid If the given status is not one of the six valid states specified in JobStatus.
      */
     public abstract Iterator<Long> getAllJobIds(JobStatus status);
 
     /**
-     * Return a list of all job_id's representing jobs with the given status
-     * and channel.
+     * Return a list of all job_id's representing jobs with the given status and channel.
      *
      * @param status A given status
      * @param channel A given {@link HarvestChannel}
-     * @return A list of all job_id's representing jobs with given status
-     * and channel.
+     * @return A list of all job_id's representing jobs with given status and channel.
      */
     public abstract Iterator<Long> getAllJobIds(JobStatus status, HarvestChannel channel);
 
@@ -155,8 +148,8 @@ public abstract class JobDAO implements DAO, Iterable<Job> {
      */
     public abstract Iterator<Job> getAll();
 
-    /** Gets an iterator of all jobs.
-     * Implements the Iterable interface.
+    /**
+     * Gets an iterator of all jobs. Implements the Iterable interface.
      *
      * @return Iterator of all jobs, regardless of status.
      */
@@ -171,7 +164,8 @@ public abstract class JobDAO implements DAO, Iterable<Job> {
      */
     public abstract Iterator<Long> getAllJobIds();
 
-    /** Return status information for all jobs defined by the supplied query.
+    /**
+     * Return status information for all jobs defined by the supplied query.
      *
      * @param query the user query
      * @throws IOFailure on trouble in database access
@@ -179,40 +173,37 @@ public abstract class JobDAO implements DAO, Iterable<Job> {
      */
     public abstract HarvestStatus getStatusInfo(HarvestStatusQuery query);
 
-    /** Return status information for all jobs with given job status.
+    /**
+     * Return status information for all jobs with given job status.
      *
      * @param status The status asked for.
-     * @return A list of status objects with the pertinent information for
-     *         all jobs with given job status.
+     * @return A list of status objects with the pertinent information for all jobs with given job status.
      * @throws IOFailure on trouble in database access
      */
     public abstract List<JobStatusInfo> getStatusInfo(JobStatus status);
 
-    /** Calculate all jobIDs to use for duplication reduction.
+    /**
+     * Calculate all jobIDs to use for duplication reduction.
      *
-     * More precisely, this method calculates the following:
-     * If the job ID corresponds to a partial harvest, all jobIDs from the
-     * previous scheduled harvest are returned, or the empty list if this
-     * harvest hasn't been scheduled before.
+     * More precisely, this method calculates the following: If the job ID corresponds to a partial harvest, all jobIDs
+     * from the previous scheduled harvest are returned, or the empty list if this harvest hasn't been scheduled before.
      *
-     * If the job ID corresponds to a full harvest, the entire chain of harvests
-     * this is based on is returned, and all jobIDs from the previous chain
-     * of full harvests is returned.
+     * If the job ID corresponds to a full harvest, the entire chain of harvests this is based on is returned, and all
+     * jobIDs from the previous chain of full harvests is returned.
      *
      * @param jobID The job ID to find duplicate reduction data for.
-     * @return A list of job IDs (possibly empty) of potential previous harvests
-     * of this job, to use for duplicate reduction.
+     * @return A list of job IDs (possibly empty) of potential previous harvests of this job, to use for duplicate
+     * reduction.
      * @throws UnknownID if job ID is unknown
      * @throws IOFailure on trouble getting ids from metadata storage
      */
     public abstract List<Long> getJobIDsForDuplicateReduction(long jobID) throws UnknownID;
 
-    /** Reschedule a job by creating a new job (in status NEW) and setting the
-     * old job to status RESUBMITTED.
+    /**
+     * Reschedule a job by creating a new job (in status NEW) and setting the old job to status RESUBMITTED.
      *
-     * Notice the slightly confusing naming: The only job is marked RESUBMITTED,
-     * but the new job is not really submitted, that happens in a separate
-     * stage, the new job is in status NEW.
+     * Notice the slightly confusing naming: The only job is marked RESUBMITTED, but the new job is not really
+     * submitted, that happens in a separate stage, the new job is in status NEW.
      *
      * @param oldJobID ID of a job to reschedule
      * @return ID of the newly created job
@@ -223,6 +214,7 @@ public abstract class JobDAO implements DAO, Iterable<Job> {
 
     /**
      * Get Jobstatus for the job with the given id.
+     * 
      * @param jobID A given Jobid
      * @return the Jobstatus for the job with the given id.
      * @throws UnknownID if no job exists with id jobID

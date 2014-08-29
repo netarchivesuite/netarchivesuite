@@ -76,7 +76,7 @@ import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
-@SuppressWarnings({ "deprecation", "unused"})
+@SuppressWarnings({"deprecation", "unused"})
 // FIXME: @Ignore
 @Ignore("test hangs")
 public class DatabaseBasedActiveBitPreservationTester {
@@ -84,8 +84,7 @@ public class DatabaseBasedActiveBitPreservationTester {
     private UseTestRemoteFile rf = new UseTestRemoteFile();
     private ReloadSettings rs = new ReloadSettings();
     private MockupJMS jmsConnection = new MockupJMS();
-    private MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,
-            TestInfo.WORKING_DIR);
+    private MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
 
     DatabaseBasedActiveBitPreservation dbabp;
 
@@ -101,24 +100,16 @@ public class DatabaseBasedActiveBitPreservationTester {
         jmsConnection.setUp();
         rf.setUp();
 
-        DatabaseTestUtils.takeDatabase(TestInfo.DATABASE_FILE.getAbsolutePath(),
-                TestInfo.DATABASE_DIR);
+        DatabaseTestUtils.takeDatabase(TestInfo.DATABASE_FILE.getAbsolutePath(), TestInfo.DATABASE_DIR);
 
-        Settings.set(ArchiveSettings.BASEURL_ARCREPOSITORY_ADMIN_DATABASE,
-                TestInfo.DATABASE_URL);
-        Settings.set(ArchiveSettings.MACHINE_ARCREPOSITORY_ADMIN_DATABASE,
-                "");
-        Settings.set(ArchiveSettings.PORT_ARCREPOSITORY_ADMIN_DATABASE,
-                "");
-        Settings.set(ArchiveSettings.DIR_ARCREPOSITORY_ADMIN_DATABASE,
-                "");
+        Settings.set(ArchiveSettings.BASEURL_ARCREPOSITORY_ADMIN_DATABASE, TestInfo.DATABASE_URL);
+        Settings.set(ArchiveSettings.MACHINE_ARCREPOSITORY_ADMIN_DATABASE, "");
+        Settings.set(ArchiveSettings.PORT_ARCREPOSITORY_ADMIN_DATABASE, "");
+        Settings.set(ArchiveSettings.DIR_ARCREPOSITORY_ADMIN_DATABASE, "");
 
-        Settings.set(CommonSettings.ARC_REPOSITORY_CLIENT,
-                MockupArcRepositoryClient.class.getName());
-        Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN,
-                TestInfo.WORKING_DIR.getAbsolutePath());
-        Settings.set(ArchiveSettings.DIR_ARCREPOSITORY_BITPRESERVATION,
-                TestInfo.WORKING_DIR.getAbsolutePath());
+        Settings.set(CommonSettings.ARC_REPOSITORY_CLIENT, MockupArcRepositoryClient.class.getName());
+        Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, TestInfo.WORKING_DIR.getAbsolutePath());
+        Settings.set(ArchiveSettings.DIR_ARCREPOSITORY_BITPRESERVATION, TestInfo.WORKING_DIR.getAbsolutePath());
     }
 
     @After
@@ -141,8 +132,7 @@ public class DatabaseBasedActiveBitPreservationTester {
     }
 
     /**
-     * Test that it correctly identifies a missing file.
-     * This test assumes a clean database.
+     * Test that it correctly identifies a missing file. This test assumes a clean database.
      *
      * @throws Exception If error!
      */
@@ -157,24 +147,22 @@ public class DatabaseBasedActiveBitPreservationTester {
             ArchiveDBConnection.release(con);
         }
 
-
         ReplicaCacheDatabase cache = ReplicaCacheDatabase.getInstance();
         File csFile1 = makeTemporaryChecksumFile1();
         cache.addChecksumInformation(csFile1, REPLICA_THREE);
 
         dbabp = DatabaseBasedActiveBitPreservation.getInstance();
-        assertEquals("Replica '" + REPLICA_THREE + "' should not be missing any files.",
-                0, dbabp.getNumberOfMissingFiles(REPLICA_THREE));
+        assertEquals("Replica '" + REPLICA_THREE + "' should not be missing any files.", 0,
+                dbabp.getNumberOfMissingFiles(REPLICA_THREE));
         dbabp.findMissingFiles(REPLICA_TWO);
 
-        assertEquals("Replica '" + REPLICA_TWO + "' should only be missing 1 file.",
-                1, dbabp.getNumberOfMissingFiles(REPLICA_TWO));
-        assertEquals("Replica '" + REPLICA_TWO + "' should only be missing file '"
-                + "integrity7.ARC" + '.', Arrays.asList("integrity7.ARC"),
-                dbabp.getMissingFiles(REPLICA_TWO));
+        assertEquals("Replica '" + REPLICA_TWO + "' should only be missing 1 file.", 1,
+                dbabp.getNumberOfMissingFiles(REPLICA_TWO));
+        assertEquals("Replica '" + REPLICA_TWO + "' should only be missing file '" + "integrity7.ARC" + '.',
+                Arrays.asList("integrity7.ARC"), dbabp.getMissingFiles(REPLICA_TWO));
 
-        assertEquals("Replica '" + REPLICA_THREE + "' should now be missing one file.",
-                1, dbabp.getNumberOfMissingFiles(REPLICA_THREE));
+        assertEquals("Replica '" + REPLICA_THREE + "' should now be missing one file.", 1,
+                dbabp.getNumberOfMissingFiles(REPLICA_THREE));
     }
 
     /**
@@ -187,20 +175,19 @@ public class DatabaseBasedActiveBitPreservationTester {
         // This requires, that testMissingFiles has been run previously.
         // So therefore we run it here.
         testMissingFiles();
-        // Comment (Mikis): This test appears to depend on MissingFiles test being run prior to this test. 
+        // Comment (Mikis): This test appears to depend on MissingFiles test being run prior to this test.
         // So the comment stated at the top isn't strictly true. It would also be a serious side-effect of the
         // 'getInstance() methods that the database would be cleaned (or is the comment just obsolete??).
-        //ReplicaCacheDatabase.getInstance();
+        // ReplicaCacheDatabase.getInstance();
 
         dbabp = DatabaseBasedActiveBitPreservation.getInstance();
-        //dbabp.findMissingFiles(REPLICA_THREE);
+        // dbabp.findMissingFiles(REPLICA_THREE);
         Date date = dbabp.getDateForMissingFiles(REPLICA_THREE);
         assertNotNull("The returned date should not be null", date);
         assertTrue("The date for last missing files check should be less than 30 min, but was: "
-                + (Calendar.getInstance().getTimeInMillis() - date.getTime()),
-                Calendar.getInstance().getTimeInMillis() - date.getTime() < 1000*60*30);
+                + (Calendar.getInstance().getTimeInMillis() - date.getTime()), Calendar.getInstance().getTimeInMillis()
+                - date.getTime() < 1000 * 60 * 30);
         dbabp.findMissingFiles(REPLICA_THREE);
-
 
         // get checksum from all the first time.
         Date beforeUpdate = new Date(Calendar.getInstance().getTimeInMillis());
@@ -208,33 +195,25 @@ public class DatabaseBasedActiveBitPreservationTester {
         dbabp.findChangedFiles(REPLICA_ONE);
 
         date = dbabp.getDateForChangedFiles(REPLICA_ONE);
-        assertTrue("The date for last changed files check for replica THREE after "
-                + beforeUpdate.getTime() + " but was " + date.getTime(),
-                date.getTime() > beforeUpdate.getTime());
+        assertTrue("The date for last changed files check for replica THREE after " + beforeUpdate.getTime()
+                + " but was " + date.getTime(), date.getTime() > beforeUpdate.getTime());
         assertTrue("The date for last changed files check for replica THREE before now "
-                + Calendar.getInstance().getTimeInMillis() + " but was " + date.getTime(),
-                date.getTime() < Calendar.getInstance().getTimeInMillis());
+                + Calendar.getInstance().getTimeInMillis() + " but was " + date.getTime(), date.getTime() < Calendar
+                .getInstance().getTimeInMillis());
 
-
-        assertEquals("Replica '" + REPLICA_THREE + "' should have 2 corrupted files",
-                2, dbabp.getNumberOfChangedFiles(REPLICA_THREE));
+        assertEquals("Replica '" + REPLICA_THREE + "' should have 2 corrupted files", 2,
+                dbabp.getNumberOfChangedFiles(REPLICA_THREE));
         assertEquals("Replica '" + REPLICA_THREE + "' should have corrupted the files "
-                + "'integrity11.ARC' and 'integrity12.ARC'.",
-                Arrays.asList("integrity11.ARC", "integrity12.ARC"),
+                + "'integrity11.ARC' and 'integrity12.ARC'.", Arrays.asList("integrity11.ARC", "integrity12.ARC"),
                 dbabp.getChangedFiles(REPLICA_THREE));
 
+        dbabp.replaceChangedFile(REPLICA_ONE, "integrity11.ARC", "XX", "399d2f9583da5516d7cdd4dfe3ed3b71");
 
-        dbabp.replaceChangedFile(REPLICA_ONE, "integrity11.ARC", "XX",
-                "399d2f9583da5516d7cdd4dfe3ed3b71");
+        dbabp.replaceChangedFile(REPLICA_THREE, "integrity2.ARC", "XX", "b3bb49b72718b89950f8b861d2e0e2ca");
 
-        dbabp.replaceChangedFile(REPLICA_THREE, "integrity2.ARC", "XX",
-                "b3bb49b72718b89950f8b861d2e0e2ca");
+        Map<String, PreservationState> presMap = dbabp.getPreservationStateMap(new String[] {"integrity11.ARC"});
 
-        Map<String, PreservationState> presMap = dbabp.getPreservationStateMap(
-                new String[]{"integrity11.ARC"});
-
-        assertEquals("The map should only contain a single element",
-                1, presMap.size());
+        assertEquals("The map should only contain a single element", 1, presMap.size());
 
         PreservationState pres = presMap.get("integrity11.ARC");
         assertNotNull("The preservation state should not be null.", pres);
@@ -247,7 +226,6 @@ public class DatabaseBasedActiveBitPreservationTester {
         pres = dbabp.getPreservationState("integrity11.ARC");
         assertEquals("It should be now be registreret as upload completely.",
                 ReplicaStoreState.UPLOAD_COMPLETED.toString(), pres.getAdminReplicaState(REPLICA_THREE));
-
 
         try {
             dbabp.uploadMissingFiles(REPLICA_THREE, "integrity7.ARC");
@@ -267,12 +245,9 @@ public class DatabaseBasedActiveBitPreservationTester {
         FileUtils.remove(tmpFile);
 
         String misFiles = dbabp.getMissingFiles(REPLICA_THREE).toString();
-        assertTrue("integrity2.ARC should be missing",
-                misFiles.contains("integrity2.ARC"));
-        assertTrue("integrity11.ARC should be missing",
-                misFiles.contains("integrity11.ARC"));
-        assertTrue("integrity12.ARC should be missing",
-                misFiles.contains("integrity12.ARC"));
+        assertTrue("integrity2.ARC should be missing", misFiles.contains("integrity2.ARC"));
+        assertTrue("integrity11.ARC should be missing", misFiles.contains("integrity11.ARC"));
+        assertTrue("integrity12.ARC should be missing", misFiles.contains("integrity12.ARC"));
 
         // reupload the missing files.
         dbabp.uploadMissingFiles(REPLICA_THREE, "integrity2.ARC", "integrity12.ARC");
@@ -280,21 +255,18 @@ public class DatabaseBasedActiveBitPreservationTester {
         // try to upload files, which does not exist anywhere!
         try {
             dbabp.uploadMissingFiles(REPLICA_THREE, "integrity11.ARC");
-            fail("This should throw an IOFailure, since no bitarchive replica "
-                    + "should have the file.");
+            fail("This should throw an IOFailure, since no bitarchive replica " + "should have the file.");
         } catch (IOFailure e) {
             // expected!
         }
 
-        // send a filelist message which will tell that the file 
+        // send a filelist message which will tell that the file
         // 'integrity11.ARC' actually exists within the replica.
         dbabp.findMissingFiles(REPLICA_THREE);
 
         misFiles = dbabp.getMissingFiles(REPLICA_THREE).toString();
-        assertFalse("integrity11.ARC should not be missing anymore",
-                misFiles.contains("integrity11.ARC"));
-        assertFalse("integrity12.ARC should not be missing anymore",
-                misFiles.contains("integrity12.ARC"));
+        assertFalse("integrity11.ARC should not be missing anymore", misFiles.contains("integrity11.ARC"));
+        assertFalse("integrity12.ARC should not be missing anymore", misFiles.contains("integrity12.ARC"));
     }
 
     /**
@@ -340,8 +312,10 @@ public class DatabaseBasedActiveBitPreservationTester {
 
         // verify that replica TWO is missing a file, but has no wrong files.
         assertEquals("Unexpected number of files for " + REPLICA_TWO, 1, cache.getNumberOfFiles(REPLICA_TWO));
-        assertEquals("Unexpected number of missing files for " + REPLICA_TWO, 1, cache.getNumberOfMissingFilesInLastUpdate(REPLICA_TWO));
-        assertEquals("Unexpected number of wrong files for " + REPLICA_TWO, 0, cache.getNumberOfWrongFilesInLastUpdate(REPLICA_TWO));
+        assertEquals("Unexpected number of missing files for " + REPLICA_TWO, 1,
+                cache.getNumberOfMissingFilesInLastUpdate(REPLICA_TWO));
+        assertEquals("Unexpected number of wrong files for " + REPLICA_TWO, 0,
+                cache.getNumberOfWrongFilesInLastUpdate(REPLICA_TWO));
     }
 
     /**
@@ -351,16 +325,14 @@ public class DatabaseBasedActiveBitPreservationTester {
     public void testFactory() {
         ActiveBitPreservation abp = ActiveBitPreservationFactory.getInstance();
 
-        assertTrue("ActiveBitPreservation default is currently "
-                + FileBasedActiveBitPreservation.class.getName(),
+        assertTrue("ActiveBitPreservation default is currently " + FileBasedActiveBitPreservation.class.getName(),
                 abp instanceof FileBasedActiveBitPreservation);
 
         Settings.set(ArchiveSettings.CLASS_ARCREPOSITORY_BITPRESERVATION,
                 DatabaseBasedActiveBitPreservation.class.getName());
 
         ActiveBitPreservation abp2 = ActiveBitPreservationFactory.getInstance();
-        assertTrue("ActiveBitPreservation should now be "
-                + DatabaseBasedActiveBitPreservation.class.getName(),
+        assertTrue("ActiveBitPreservation should now be " + DatabaseBasedActiveBitPreservation.class.getName(),
                 abp2 instanceof DatabaseBasedActiveBitPreservation);
     }
 
@@ -420,23 +392,18 @@ public class DatabaseBasedActiveBitPreservationTester {
         con.commit();
     }
 
-
     private File makeTemporaryChecksumFile1() throws Exception {
         File res = new File("checksum_1.out");
         FileWriter fw = new FileWriter(res);
 
         StringBuilder fileContent = new StringBuilder();
-        fileContent.append(ChecksumJob.makeLine("integrity1.ARC",
-                "708afc1b7aebc12f7e65ecf1be054d23"));
+        fileContent.append(ChecksumJob.makeLine("integrity1.ARC", "708afc1b7aebc12f7e65ecf1be054d23"));
         fileContent.append("\n");
-        fileContent.append(ChecksumJob.makeLine("integrity7.ARC",
-                "44ddf7a30f7fabb838e43a8505f927c2"));
+        fileContent.append(ChecksumJob.makeLine("integrity7.ARC", "44ddf7a30f7fabb838e43a8505f927c2"));
         fileContent.append("\n");
-        fileContent.append(ChecksumJob.makeLine("integrity11.ARC",
-                "4236be8e67e0c10da2902764ff4b954a"));
+        fileContent.append(ChecksumJob.makeLine("integrity11.ARC", "4236be8e67e0c10da2902764ff4b954a"));
         fileContent.append("\n");
-        fileContent.append(ChecksumJob.makeLine("integrity12.ARC",
-                "4236be8e67e0c10da2902764ff4b954a"));
+        fileContent.append(ChecksumJob.makeLine("integrity12.ARC", "4236be8e67e0c10da2902764ff4b954a"));
 
         fw.append(fileContent.toString());
         fw.flush();
@@ -464,8 +431,7 @@ public class DatabaseBasedActiveBitPreservationTester {
             instance = null;
         }
 
-        public BitarchiveRecord get(String arcfile, long index)
-                throws ArgumentNotValid {
+        public BitarchiveRecord get(String arcfile, long index) throws ArgumentNotValid {
             if (overrideGet != null) {
                 return overrideGet;
             }
@@ -474,9 +440,7 @@ public class DatabaseBasedActiveBitPreservationTester {
                 if (!file.exists()) {
                     return null;
                 } else {
-                    return new BitarchiveRecord(
-                            (ARCRecord) ARCReaderFactory.get(file).get(index),
-                            arcfile);
+                    return new BitarchiveRecord((ARCRecord) ARCReaderFactory.get(file).get(index), arcfile);
                 }
             } catch (IOException e) {
                 fail("Test failure while reading file '" + file + "'");
@@ -502,8 +466,7 @@ public class DatabaseBasedActiveBitPreservationTester {
             FileUtils.copyFile(file, f);
         }
 
-        public BatchStatus batch(FileBatchJob job, String locationName,
-                                 String... args) {
+        public BatchStatus batch(FileBatchJob job, String locationName, String... args) {
             if (overrideBatch != null) {
                 return overrideBatch;
             }
@@ -513,20 +476,17 @@ public class DatabaseBasedActiveBitPreservationTester {
                 FileOutputStream os = new FileOutputStream(output);
                 new BatchLocalFiles(in_files).run(job, os);
                 os.close();
-                return new BatchStatus("BA1", Collections.<File>emptyList(),
-                        in_files.length,
-                        RemoteFileFactory.getMovefileInstance(output),
-                        new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
+                return new BatchStatus("BA1", Collections.<File>emptyList(), in_files.length,
+                        RemoteFileFactory.getMovefileInstance(output), new ArrayList<FileBatchJob.ExceptionOccurrence>(
+                                0));
             } catch (IOException e) {
                 fail("IO error during test");
                 return null;
             }
         }
 
-        public void updateAdminData(String fileName, String bitarchiveId,
-                                    ReplicaStoreState newval) {
-            UpdateableAdminData adminData
-                    = AdminData.getUpdateableInstance();
+        public void updateAdminData(String fileName, String bitarchiveId, ReplicaStoreState newval) {
+            UpdateableAdminData adminData = AdminData.getUpdateableInstance();
             if (!adminData.hasEntry(fileName)) {
                 adminData.addEntry(fileName, null, "xx");
             }
@@ -534,13 +494,11 @@ public class DatabaseBasedActiveBitPreservationTester {
         }
 
         public void updateAdminChecksum(String filename, String checksum) {
-            UpdateableAdminData adminData
-                    = AdminData.getUpdateableInstance();
+            UpdateableAdminData adminData = AdminData.getUpdateableInstance();
             adminData.setCheckSum(filename, checksum);
         }
 
-        public File removeAndGetFile(String fileName, String bitarchiveName,
-                                     String checksum, String credentials) {
+        public File removeAndGetFile(String fileName, String bitarchiveName, String checksum, String credentials) {
             if (overrideRemoveAndGetFile != null) {
                 return overrideRemoveAndGetFile;
             }
@@ -579,7 +537,7 @@ public class DatabaseBasedActiveBitPreservationTester {
                 FileWriter fw = new FileWriter(result);
                 File[] files = TestInfo.GOOD_ARCHIVE_FILE_DIR.listFiles();
 
-                for(File file : files) {
+                for (File file : files) {
                     fw.append(file.getName());
                     fw.append("\n");
                 }
@@ -594,8 +552,7 @@ public class DatabaseBasedActiveBitPreservationTester {
         }
 
         @Override
-        public File correct(String replicaId, String checksum, File file,
-                            String credentials) {
+        public File correct(String replicaId, String checksum, File file, String credentials) {
             return null; // this implementation is expected by the current tests
         }
 

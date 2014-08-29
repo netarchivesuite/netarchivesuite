@@ -35,10 +35,10 @@ import dk.netarkivet.monitor.registry.distribute.RegisterHostMessage;
 public class MonitorRegistryServerTester extends TestCase {
 
     public void setUp() {
-      // Out commented to avoid reference to harvester module from monitor module.
-      // JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
+        // Out commented to avoid reference to harvester module from monitor module.
+        // JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
     }
-    
+
     public void testGetInstance() {
         MonitorRegistryServer server = null;
         try {
@@ -52,7 +52,7 @@ public class MonitorRegistryServerTester extends TestCase {
             }
         }
     }
-    
+
     public void testVisit() {
         MonitorRegistryServer server = null;
         try {
@@ -70,7 +70,7 @@ public class MonitorRegistryServerTester extends TestCase {
         HostEntry localhostEntry = set.iterator().next();
         assertTrue(localhostEntry.getJmxPort() == 8081);
         assertTrue(localhostEntry.getRmiPort() == 8181);
-        assertTrue(localhostEntry.getName() == "localhost");        
+        assertTrue(localhostEntry.getName() == "localhost");
         server.cleanup();
     }
 }

@@ -28,8 +28,7 @@ import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
 /**
- * Unit tests for the package monitor.registry 
- * and monitor.registry.distribute
+ * Unit tests for the package monitor.registry and monitor.registry.distribute
  *
  */
 public class MonitorWebinterfaceTesterSuite {

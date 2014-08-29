@@ -40,14 +40,14 @@ import dk.netarkivet.common.utils.warc.WARCBatchJob;
 import dk.netarkivet.wayback.batch.copycode.NetarchiveSuiteWARCRecordToSearchResultAdapter;
 
 /**
- * Returns a cdx file using the appropriate format for wayback, including
- * canonicalisation of urls. The returned files are unsorted.
+ * Returns a cdx file using the appropriate format for wayback, including canonicalisation of urls. The returned files
+ * are unsorted.
  *
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({"serial"})
 public class WaybackCDXExtractionWARCBatchJob extends WARCBatchJob {
 
-	/** Logger for this class. */
+    /** Logger for this class. */
     private static final Logger log = LoggerFactory.getLogger(WaybackCDXExtractionWARCBatchJob.class);
 
     /** Utility for converting an WArcRecord to a CaptureSearchResult (wayback's representation of a CDX record). */
@@ -56,7 +56,7 @@ public class WaybackCDXExtractionWARCBatchJob extends WARCBatchJob {
     /** Utility for converting a wayback CaptureSearchResult to a String representing a line in a CDX file. */
     private SearchResultToCDXLineAdapter srToCDXAdapter;
 
-     /**
+    /**
      * Constructor which set timeout to one day.
      */
     public WaybackCDXExtractionWARCBatchJob() {
@@ -64,8 +64,7 @@ public class WaybackCDXExtractionWARCBatchJob extends WARCBatchJob {
     }
 
     /**
-     * Set the filter, so only response records are
-     * currently processed.
+     * Set the filter, so only response records are currently processed.
      */
     @Override
     public WARCBatchFilter getFilter() {
@@ -74,6 +73,7 @@ public class WaybackCDXExtractionWARCBatchJob extends WARCBatchJob {
 
     /**
      * Alternate constructor, where a timeout can be set.
+     * 
      * @param timeout specific timeout period
      */
     public WaybackCDXExtractionWARCBatchJob(long timeout) {
@@ -81,34 +81,34 @@ public class WaybackCDXExtractionWARCBatchJob extends WARCBatchJob {
     }
 
     /**
-     *  Initializes the private fields of this class. Some of these are
-     *  relatively heavy objects, so it is important that they are only
-     *  initialised once.
+     * Initializes the private fields of this class. Some of these are relatively heavy objects, so it is important that
+     * they are only initialised once.
+     * 
      * @param os unused argument
      */
     @Override
     public void initialize(OutputStream os) {
         log.info("Starting a {}", this.getClass().getName());
         aToSAdapter = new NetarchiveSuiteWARCRecordToSearchResultAdapter();
-        UrlCanonicalizer uc = UrlCanonicalizerFactory
-                .getDefaultUrlCanonicalizer();
+        UrlCanonicalizer uc = UrlCanonicalizerFactory.getDefaultUrlCanonicalizer();
         aToSAdapter.setCanonicalizer(uc);
         srToCDXAdapter = new SearchResultToCDXLineAdapter();
     }
 
     /**
      * Does nothing except log the end of the job.
+     * 
      * @param os unused argument.
      */
     public void finish(OutputStream os) {
         log.info("Finishing the {}", this.getClass().getName());
-        //No cleanup required
+        // No cleanup required
     }
 
     /**
-     * For each response WARCRecord it writes one CDX line (including newline) to the output.
-     * If an warcrecord cannot be converted to a CDX record for any reason then
-     * any resulting exception is caught and logged.
+     * For each response WARCRecord it writes one CDX line (including newline) to the output. If an warcrecord cannot be
+     * converted to a CDX record for any reason then any resulting exception is caught and logged.
+     * 
      * @param record the WARCRecord to be indexed.
      * @param os the OutputStream to which output is written.
      */

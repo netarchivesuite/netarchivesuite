@@ -30,22 +30,20 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-@SuppressWarnings({ "unused"})
+@SuppressWarnings({"unused"})
 public class DatabaseChecksumTester {
 
     /**
      * @param args
-     * @throws Exception 
+     * @throws Exception
      */
     public static void main(String[] args) throws Exception {
         DatabaseChecksumArchive dca = new DatabaseChecksumArchive();
     }
-    
+
     @Test
     public void testConstructor() throws DatabaseException {
         DatabaseChecksumArchive dca = new DatabaseChecksumArchive();
     }
-    
-    
 
 }

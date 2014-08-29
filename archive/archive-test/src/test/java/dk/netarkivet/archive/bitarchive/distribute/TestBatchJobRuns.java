@@ -35,7 +35,7 @@ import org.archive.io.arc.ARCRecord;
  * Helper batch job to write number of records processed at finish.
  *
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({"serial"})
 public class TestBatchJobRuns extends ARCBatchJob {
     boolean initialized;
     public int records_processed;
@@ -57,7 +57,7 @@ public class TestBatchJobRuns extends ARCBatchJob {
         try {
             os.write(("Records Processed = " + records_processed).getBytes());
         } catch (IOException e) {
-            throw new IOFailure ("Error writing to output file: ", e);
+            throw new IOFailure("Error writing to output file: ", e);
         }
         finished = true;
     }

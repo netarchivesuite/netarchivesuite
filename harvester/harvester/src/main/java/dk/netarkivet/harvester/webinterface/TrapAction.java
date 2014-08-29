@@ -36,60 +36,50 @@ import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.webinterface.HTMLUtils;
 
 /**
- * Abstract class representing an action to take on the collection of global
- * crawler traps.
+ * Abstract class representing an action to take on the collection of global crawler traps.
  *
  */
 
 public abstract class TrapAction {
 
-    private static final Log log =
-            LogFactory.getLog(TrapAction.class);
+    private static final Log log = LogFactory.getLog(TrapAction.class);
 
     /**
-     * This method processes the request to determine which action it
-     * corresponds to and passes the request along accordingly. If it
-     * is a multipart post then it is passed along to a create-or-update
-     * instance. Otherwise if no action is specified, none is taken.
-     * Otherwise the request is passed on to a specific concrete instance
-     * of this class for further processing.
+     * This method processes the request to determine which action it corresponds to and passes the request along
+     * accordingly. If it is a multipart post then it is passed along to a create-or-update instance. Otherwise if no
+     * action is specified, none is taken. Otherwise the request is passed on to a specific concrete instance of this
+     * class for further processing.
      *
      * @param context the original servlet context of the request.
      * @param i18n the internationalisation to be used.
-     * @throws ForwardedToErrorPage if an exception is thrown while carrying
-     * out the action.
+     * @throws ForwardedToErrorPage if an exception is thrown while carrying out the action.
      */
-    public static void processRequest(PageContext context, I18n i18n) throws
-                                                       ForwardedToErrorPage {
+    public static void processRequest(PageContext context, I18n i18n) throws ForwardedToErrorPage {
         ArgumentNotValid.checkNotNull(context, "PageContext context");
         ArgumentNotValid.checkNotNull(i18n, "I18n i18n");
         log.debug("Processing request");
         HttpServletRequest request = (HttpServletRequest) context.getRequest();
         try {
             if (ServletFileUpload.isMultipartContent(request)) {
-                TrapActionEnum.CREATE_OR_UPDATE.getTrapAction()
-                        .doAction(context, i18n);
+                TrapActionEnum.CREATE_OR_UPDATE.getTrapAction().doAction(context, i18n);
             } else {
-                String requestType 
-                    = request.getParameter(Constants.TRAP_ACTION);
+                String requestType = request.getParameter(Constants.TRAP_ACTION);
                 if (requestType == null || requestType.isEmpty()) {
-                    TrapActionEnum.NULL_ACTION.getTrapAction()
-                            .doAction(context, i18n);
+                    TrapActionEnum.NULL_ACTION.getTrapAction().doAction(context, i18n);
                 } else {
-                    TrapActionEnum actionType =
-                            TrapActionEnum.valueOf(requestType);
+                    TrapActionEnum actionType = TrapActionEnum.valueOf(requestType);
                     actionType.getTrapAction().doAction(context, i18n);
                 }
             }
         } catch (Throwable e) {
-            HTMLUtils.forwardWithErrorMessage(context, i18n, e,
-                                         "errormsg;crawlertrap.action.error");
+            HTMLUtils.forwardWithErrorMessage(context, i18n, e, "errormsg;crawlertrap.action.error");
             throw new ForwardedToErrorPage("Error in Global Crawler Traps", e);
         }
     }
 
     /**
      * Method implementing the specific action to take.
+     * 
      * @param context the context of the servlet request triggering this action.
      * @param i18n the internationalisation to use for presenting the results.
      */

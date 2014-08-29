@@ -41,28 +41,28 @@ public class HarvesterStatusReceiverTest {
     private HarvesterStatusReceiver receiver;
     private JMSConnection jmsConnection;
     private HarvestChannelDAO harvestChannelDao;
-    
+
     @Before
     public void setUp() throws Exception {
         jobDispatcher = mock(JobDispatcher.class);
         jmsConnection = mock(JMSConnection.class);
         harvestChannelDao = mock(HarvestChannelDAO.class);
-        receiver = new HarvesterStatusReceiver(jobDispatcher, jmsConnection, harvestChannelDao, new HarvestChannelRegistry());
+        receiver = new HarvesterStatusReceiver(jobDispatcher, jmsConnection, harvestChannelDao,
+                new HarvestChannelRegistry());
     }
-    
+
     @Test
     public void testStatusReception() {
         HarvestChannel highChan = new HarvestChannel("FOCUSED", false, true, "");
-        HarvesterReadyMessage readyMessage =
-                new HarvesterReadyMessage("Test", highChan.getName());
+        HarvesterReadyMessage readyMessage = new HarvesterReadyMessage("Test", highChan.getName());
         when(harvestChannelDao.getByName(highChan.getName())).thenReturn(highChan);
         receiver.onMessage(JMSConnectionMockupMQ.getObjectMessage(readyMessage));
         verify(jobDispatcher).submitNextNewJob(highChan);
     }
-    
+
     @Test
     public void testInvalidMessageType() {
-        CrawlProgressMessage statusmessage =  new CrawlProgressMessage(1,1);
-        receiver.onMessage( JMSConnectionMockupMQ.getObjectMessage(statusmessage));
+        CrawlProgressMessage statusmessage = new CrawlProgressMessage(1, 1);
+        receiver.onMessage(JMSConnectionMockupMQ.getObjectMessage(statusmessage));
     }
 }

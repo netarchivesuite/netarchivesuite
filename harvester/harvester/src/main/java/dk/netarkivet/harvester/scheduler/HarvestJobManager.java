@@ -36,36 +36,30 @@ import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 
 /**
- * Handles the dispatching of scheduled harvest to the harvest servers based on
- * the harvests defined in the database. <p>
+ * Handles the dispatching of scheduled harvest to the harvest servers based on the harvests defined in the database.
+ * <p>
  */
 public class HarvestJobManager extends LifeCycleComponent {
 
-	private final JMSConnection jmsConnection;
+    private final JMSConnection jmsConnection;
 
     /**
-     * Creates the components handling the harvest job management and hooks them
-     * up to the <code>HarvestJobManager</code>s lifecycle.
+     * Creates the components handling the harvest job management and hooks them up to the
+     * <code>HarvestJobManager</code>s lifecycle.
      */
     public HarvestJobManager() {
-        jmsConnection = JMSConnectionFactory.getInstance();       
-        JobDispatcher jobDispather = new JobDispatcher(
-                jmsConnection,
-                HarvestDefinitionDAO.getInstance(),
-                JobDAO.getInstance()
-        );
+        jmsConnection = JMSConnectionFactory.getInstance();
+        JobDispatcher jobDispather = new JobDispatcher(jmsConnection, HarvestDefinitionDAO.getInstance(),
+                JobDAO.getInstance());
         HarvestChannelRegistry harvestChannelRegistry = new HarvestChannelRegistry();
 
-        addChild(new HarvesterStatusReceiver(
-                jobDispather,
-                jmsConnection,
-                HarvestChannelDAO.getInstance(),
+        addChild(new HarvesterStatusReceiver(jobDispather, jmsConnection, HarvestChannelDAO.getInstance(),
                 harvestChannelRegistry));
-        
+
         addChild(new HarvestJobGenerator(harvestChannelRegistry));
-        
+
         addChild(new HarvestSchedulerMonitorServer());
-        
+
         addChild(new JobSupervisor(createJobDaoProvider(), Settings.getLong(HarvesterSettings.JOB_TIMEOUT_TIME)));
     }
 

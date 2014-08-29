@@ -48,12 +48,11 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 import dk.netarkivet.viewerproxy.distribute.HTTPControllerServerTester;
 
 /**
- * Unit-tests for the GetDataResolver class. 
+ * Unit-tests for the GetDataResolver class.
  */
-@SuppressWarnings({ "unused"})
+@SuppressWarnings({"unused"})
 public class GetDataResolverTester {
-    MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,
-            TestInfo.WORKING_DIR);
+    MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
     File tempdir = new File(TestInfo.WORKING_DIR, "commontempdir");
     ArcRepositoryClient arcrep = null;
     MockupJMS mjms = new MockupJMS();
@@ -67,9 +66,8 @@ public class GetDataResolverTester {
         mjms.setUp();
         utrf.setUp();
         tempdir.mkdir();
-        Settings.set(CommonSettings.DIR_COMMONTEMPDIR,
-                tempdir.getAbsolutePath());
-        
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, tempdir.getAbsolutePath());
+
         arcrep = new TestArcRepositoryClient(TestInfo.WORKING_DIR);
     }
 
@@ -88,85 +86,70 @@ public class GetDataResolverTester {
         URIResolver res = new GetDataResolver(new URIResolver() {
             public int lookup(Request request, Response response) {
                 return 201;
-            }}, arcrep);
+            }
+        }, arcrep);
         Response response = makeNewResponse();
         File testFile = new File(TestInfo.WORKING_DIR, "fyensdk.arc");
-        int result = res.lookup(
-                makeRequest(urlPrefix + "/getFile?arcFile=" + testFile.getName()),
-                response);
+        int result = res.lookup(makeRequest(urlPrefix + "/getFile?arcFile=" + testFile.getName()), response);
         assertEquals("Should get 200 result code", 200, result);
-        ByteArrayOutputStream outputStream
-                = (ByteArrayOutputStream)response.getOutputStream();
-        assertEquals("Should have same amount of data",
-                testFile.length(), outputStream.size());
-        assertEquals("Should get file contents",
-                FileUtils.readFile(testFile), outputStream.toString());
+        ByteArrayOutputStream outputStream = (ByteArrayOutputStream) response.getOutputStream();
+        assertEquals("Should have same amount of data", testFile.length(), outputStream.size());
+        assertEquals("Should get file contents", FileUtils.readFile(testFile), outputStream.toString());
 
         response = makeNewResponse();
         testFile = new File(TestInfo.WORKING_DIR, "dummyNotFound");
         try {
-            result = res.lookup(
-                    makeRequest(urlPrefix + "/getFile?arcFile=" + testFile.getName()),
-                    response);
+            result = res.lookup(makeRequest(urlPrefix + "/getFile?arcFile=" + testFile.getName()), response);
             fail("Should get exception on missing file");
         } catch (IOFailure e) {
-            StringAsserts.assertStringContains("Should have file name in error",
-                    testFile.getName(), e.getMessage());
+            StringAsserts.assertStringContains("Should have file name in error", testFile.getName(), e.getMessage());
         }
 
         response = makeNewResponse();
         testFile = new File(TestInfo.WORKING_DIR, "fyensdk.arc");
         try {
-            result = res.lookup(makeRequest(urlPrefix + "/getRecord?arcFile="
-                + testFile.getName() + "&arcOffset=" + 104), response);
+            result = res.lookup(makeRequest(urlPrefix + "/getRecord?arcFile=" + testFile.getName() + "&arcOffset="
+                    + 104), response);
             fail("Should get exception on missing record");
         } catch (IOFailure e) {
-            StringAsserts.assertStringContains("Should have file name in error",
-                    testFile.getName(), e.getMessage());
+            StringAsserts.assertStringContains("Should have file name in error", testFile.getName(), e.getMessage());
         }
 
         response = makeNewResponse();
 
-        result = res.lookup(makeRequest(urlPrefix + "/getRecord?arcFile="
-                + testFile.getName() + "&arcOffset=" + 136), response);
+        result = res.lookup(makeRequest(urlPrefix + "/getRecord?arcFile=" + testFile.getName() + "&arcOffset=" + 136),
+                response);
         assertEquals("Should have 200 response for second record", 200, result);
         String resultText = response.getOutputStream().toString();
         assertTrue("Should have start of record in response, not " + resultText,
                 resultText.startsWith("HTTP/1.1 200 OK"));
-        assertEquals("Should have right length of data in response",
-                6669,
-                ((ByteArrayOutputStream)response.getOutputStream()).size());
+        assertEquals("Should have right length of data in response", 6669,
+                ((ByteArrayOutputStream) response.getOutputStream()).size());
 
         // Metadata
         response = makeNewResponse();
-        result = res.lookup(makeRequest(urlPrefix + "/getMetadata?jobID=" + 2),
-                response);
+        result = res.lookup(makeRequest(urlPrefix + "/getMetadata?jobID=" + 2), response);
         assertEquals("Should have 200 response for metadata", 200, result);
         resultText = response.getOutputStream().toString();
         assertTrue("Should have start of record in response, not " + resultText,
                 resultText.startsWith("filedesc://2-metadata-1.arc "));
-        assertEquals("Should have right length of data in response",
-                17948,
-                ((ByteArrayOutputStream)response.getOutputStream()).size());
+        assertEquals("Should have right length of data in response", 17948,
+                ((ByteArrayOutputStream) response.getOutputStream()).size());
 
         response = makeNewResponse();
         try {
-            result = res.lookup(makeRequest(urlPrefix + "/getMetadata?jobID=" + 3),
-                    response);
+            result = res.lookup(makeRequest(urlPrefix + "/getMetadata?jobID=" + 3), response);
             fail("Should have gotten IOFailure on missing job");
         } catch (IOFailure e) {
-            StringAsserts.assertStringContains("Should mention the job",
-                    "for job 3 or error", e.getMessage());
+            StringAsserts.assertStringContains("Should mention the job", "for job 3 or error", e.getMessage());
         }
 
-        ((TestArcRepositoryClient)arcrep).tmpDir = new File("/dev");
+        ((TestArcRepositoryClient) arcrep).tmpDir = new File("/dev");
         response = makeNewResponse();
         try {
-            result = res.lookup(makeRequest(urlPrefix + "/getMetadata?jobID=" + 2),
-                    response);
+            result = res.lookup(makeRequest(urlPrefix + "/getMetadata?jobID=" + 2), response);
         } catch (IOFailure e) {
-            StringAsserts.assertStringContains("Should mention the job",
-                    "for job 2 or error", e.getMessage());
+            StringAsserts.assertStringContains("Should mention the job", "for job 2 or error", e.getMessage());
         }
 
     }
@@ -191,7 +174,7 @@ public class GetDataResolverTester {
             }
 
             public void addHeaderField(String name, String value) {
-                //TODO: implement method
+                // TODO: implement method
                 throw new NotImplementedException("Not implemented");
             }
 

@@ -40,8 +40,8 @@ import org.junit.Test;
 import dk.netarkivet.testutils.TestFileUtils;
 
 /**
- * Unit tests for the abstract class FilterIterator. For this purpose it uses a
- * private class TestIterator that extends FilterIterator.
+ * Unit tests for the abstract class FilterIterator. For this purpose it uses a private class TestIterator that extends
+ * FilterIterator.
  */
 public class FilterIteratorTester {
 
@@ -65,11 +65,9 @@ public class FilterIteratorTester {
         /**
          * Gives an object created from the given file, or null.
          *
-         * @param o
-         *            The file to read
-         * @return An object of the type iterated over by the list, or null if
-         *         the file does not exist or cannot be used to create an
-         *         appropriate object.
+         * @param o The file to read
+         * @return An object of the type iterated over by the list, or null if the file does not exist or cannot be used
+         * to create an appropriate object.
          */
         protected File filter(File o) {
             if (o.exists()) {
@@ -83,16 +81,16 @@ public class FilterIteratorTester {
     }
 
     /**
-     * Check that the empty list is handled correctly. Tests bug 193: Even if
-     * hasNext() returns true, there may not be a next element.
+     * Check that the empty list is handled correctly. Tests bug 193: Even if hasNext() returns true, there may not be a
+     * next element.
      */
     @Test(expected = NoSuchElementException.class)
     public void testNextEmptyList() {
         Iterator<File> list = new TestIterator(new File[0]);
         assertFalse("List should not claim more elements " + "when the list is empty", list.hasNext());
 
-            list.next();
-            fail("Should get NoSuchElementException");
+        list.next();
+        fail("Should get NoSuchElementException");
     }
 
     /**
@@ -100,14 +98,14 @@ public class FilterIteratorTester {
      */
     @Test(expected = NoSuchElementException.class)
     public void testNextOneElementList() {
-        Iterator<File> list = new TestIterator(new File[] { TestInfo.XML_FILE_1 });
+        Iterator<File> list = new TestIterator(new File[] {TestInfo.XML_FILE_1});
         assertTrue("List should give the next file when it exists", list.hasNext());
         Object d = list.next();
         assertNotNull("We should get a file from the list", d);
         assertFalse("List should have no more file", list.hasNext());
 
-            list.next();
-            fail("Should get NoSuchElementException");
+        list.next();
+        fail("Should get NoSuchElementException");
     }
 
     /**
@@ -115,10 +113,10 @@ public class FilterIteratorTester {
      */
     @Test(expected = NoSuchElementException.class)
     public void testNextBadElementList() {
-        Iterator<File> list = new TestIterator(new File[] { TestInfo.NON_EXISTING_FILE });
+        Iterator<File> list = new TestIterator(new File[] {TestInfo.NON_EXISTING_FILE});
         assertFalse("List should not claim more elements " + "when no existing objects are in the list", list.hasNext());
-            list.next();
-            fail("Should get NoSuchElementException");
+        list.next();
+        fail("Should get NoSuchElementException");
     }
 
     /**
@@ -126,8 +124,8 @@ public class FilterIteratorTester {
      */
     @Test
     public void testNextDisappearingElementList() {
-        Iterator<File> list = new TestIterator(new File[] { TestInfo.NON_EXISTING_FILE, TestInfo.DATADIR,
-                TestInfo.XML_FILE_1 });
+        Iterator<File> list = new TestIterator(new File[] {TestInfo.NON_EXISTING_FILE, TestInfo.DATADIR,
+                TestInfo.XML_FILE_1});
         assertTrue("Should be able to skip past bad dir", list.hasNext());
         Object d = list.next();
 
@@ -144,8 +142,8 @@ public class FilterIteratorTester {
     /** Test that remove throws UnsupportedOperationException. */
     @Test(expected = UnsupportedOperationException.class)
     public void testRemoveOperation() {
-        Iterator<File> list = new TestIterator(new File[] { TestInfo.NON_EXISTING_FILE, TestInfo.DATADIR,
-                TestInfo.XML_FILE_1 });
+        Iterator<File> list = new TestIterator(new File[] {TestInfo.NON_EXISTING_FILE, TestInfo.DATADIR,
+                TestInfo.XML_FILE_1});
         list.remove();
         fail("Should have thrown UnsupportedOperationException");
     }

@@ -47,13 +47,12 @@ import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 /**
- * The central class in the bit archive. Implements the API: upload(), get(),
- * correct(), batch(). A bit archive is expected to not know about any other bit
- * archives, and is not considered responsible for making MD5 checksums.
+ * The central class in the bit archive. Implements the API: upload(), get(), correct(), batch(). A bit archive is
+ * expected to not know about any other bit archives, and is not considered responsible for making MD5 checksums.
  */
 public class Bitarchive {
 
-	/** Administrative data for the current bitarchive. */
+    /** Administrative data for the current bitarchive. */
     private BitarchiveAdmin admin;
 
     /** Logging output place. */
@@ -63,12 +62,10 @@ public class Bitarchive {
     private static Bitarchive instance;
 
     /**
-     * Create a new Bitarchive with files stored on local disk in one or more
-     * directories. This can reopen an existing bit archive or create a
-     * Bitarchive from scratch, with no files on disk.
+     * Create a new Bitarchive with files stored on local disk in one or more directories. This can reopen an existing
+     * bit archive or create a Bitarchive from scratch, with no files on disk.
      *
-     * @throws PermissionDenied
-     *             if creating directory fails.
+     * @throws PermissionDenied if creating directory fails.
      */
     private Bitarchive() throws PermissionDenied {
         log.debug("Starting bit archive");
@@ -76,8 +73,7 @@ public class Bitarchive {
     }
 
     /**
-     * Release all resources allocated by the bitarchive Ensures that all admin
-     * data and log data are flushed.
+     * Release all resources allocated by the bitarchive Ensures that all admin data and log data are flushed.
      */
     public void close() {
         admin.close();
@@ -85,26 +81,18 @@ public class Bitarchive {
     }
 
     /**
-     * Get an ARC or WARC record out of the archive. Returns null if the 
-     * archive file is not found in this bitarchive.
+     * Get an ARC or WARC record out of the archive. Returns null if the archive file is not found in this bitarchive.
      *
-     * @param arcfile
-     *            The name of an Archive file.
-     * @param index
-     *            Index of the Archive record in the file
-     * @return A BitarchiveRecord object for the record in question. This record
-     *         contains the data from the file.
-     * @throws ArgumentNotValid
-     *             If arcfile is null/empty, or if index is out of bounds
-     * @throws IOFailure
-     *             If there were problems reading the arcfile.
+     * @param arcfile The name of an Archive file.
+     * @param index Index of the Archive record in the file
+     * @return A BitarchiveRecord object for the record in question. This record contains the data from the file.
+     * @throws ArgumentNotValid If arcfile is null/empty, or if index is out of bounds
+     * @throws IOFailure If there were problems reading the arcfile.
      * @throws UnknownID Does it really, and when ?
      */
-    public BitarchiveRecord get(String arcfile, long index)
-            throws ArgumentNotValid, UnknownID, IOFailure {
+    public BitarchiveRecord get(String arcfile, long index) throws ArgumentNotValid, UnknownID, IOFailure {
         /*
-         * TODO Change return type into RemoteFile. This should only cause
-         * changes in GetFileMessage.
+         * TODO Change return type into RemoteFile. This should only cause changes in GetFileMessage.
          */
         log.info("GET: {}:{}", arcfile, index);
         ArgumentNotValid.checkNotNullOrEmpty(arcfile, "arcfile");
@@ -118,7 +106,8 @@ public class Bitarchive {
         try {
             if ((barc.getSize() <= index) || (index < 0)) {
                 log.warn("GET: index out of bounds: {}:{} > {}", arcfile, index, barc.getSize());
-                throw new ArgumentNotValid("GET: index out of bounds: " + arcfile + ":" + index + " > " + barc.getSize());
+                throw new ArgumentNotValid("GET: index out of bounds: " + arcfile + ":" + index + " > "
+                        + barc.getSize());
             }
             File in = barc.getFilePath();
             arcReader = ArchiveReaderFactory.get(in);
@@ -135,10 +124,12 @@ public class Bitarchive {
             return result;
         } catch (IOException e) {
             log.warn("Could not get data from {} at: {}; Stored at: {}", arcfile, index, barc.getFilePath());
-            throw new IOFailure("Could not get data from " + arcfile + " at: " + index + "; Stored at: " + barc.getFilePath(), e);
+            throw new IOFailure("Could not get data from " + arcfile + " at: " + index + "; Stored at: "
+                    + barc.getFilePath(), e);
         } catch (IndexOutOfBoundsException e) {
             log.warn("Could not get data from {} at: {}; Stored at: {}", arcfile, index, barc.getFilePath());
-            throw new IOFailure("Could not get data from " + arcfile + " at: " + index + "; Stored at: " + barc.getFilePath(), e);
+            throw new IOFailure("Could not get data from " + arcfile + " at: " + index + "; Stored at: "
+                    + barc.getFilePath(), e);
         } finally {
             try {
                 if (arc != null) {
@@ -156,17 +147,11 @@ public class Bitarchive {
     /**
      * Upload an ARC file to this archive.
      *
-     * @param arcfile
-     *            A file to add to the archive.
-     * @param fileName
-     *            the arcfiles filename.  The file will be identified in
-     *            the archive by this filename
-     * @throws PermissionDenied
-     *             if arcfile already exists in the archive
-     * @throws IOFailure
-     *             if an IO failure occurs (e.g. running out of disk space)
-     * @throws ArgumentNotValid
-     *             if arcfile is null or the filename is null or empty.
+     * @param arcfile A file to add to the archive.
+     * @param fileName the arcfiles filename. The file will be identified in the archive by this filename
+     * @throws PermissionDenied if arcfile already exists in the archive
+     * @throws IOFailure if an IO failure occurs (e.g. running out of disk space)
+     * @throws ArgumentNotValid if arcfile is null or the filename is null or empty.
      */
     public void upload(RemoteFile arcfile, String fileName) throws PermissionDenied, ArgumentNotValid, IOFailure {
         log.info("Upload: {}", arcfile);
@@ -177,7 +162,8 @@ public class Bitarchive {
         // Check if file already exists in the archive
         if (admin.lookup(fileName) != null) {
             log.warn("Upload: file already exists: '{}' while uploading '{}'.", fileName, arcfile);
-            throw new PermissionDenied("Upload: file already exists: '" + fileName + "' while uploading '" + arcfile + "'.");
+            throw new PermissionDenied("Upload: file already exists: '" + fileName + "' while uploading '" + arcfile
+                    + "'.");
         }
 
         // Everything seems ok, initiate copy of file into archive
@@ -186,30 +172,25 @@ public class Bitarchive {
     }
 
     /**
-     * Run a batch job on all ARC entries in the archive. <p/> This currently
-     * runs synchronously, and returns only after finish() has been called.
+     * Run a batch job on all ARC entries in the archive.
+     * <p/>
+     * This currently runs synchronously, and returns only after finish() has been called.
      *
-     * @param bitarchiveAppId
-     *            A String representing the bitarchive AppId.
-     * @param job
-     *            An object that implements the ARCBatchJob interface. The
-     *            initialize() method will be called before processing and the
-     *            finish() method will be called afterwards. The process()
-     *            method will be called with each ARC entry.
-     * @throws ArgumentNotValid
-     *             if job or file is null.
-     * @throws IOFailure
-     *             if there was problems writing to the RemoteFile
+     * @param bitarchiveAppId A String representing the bitarchive AppId.
+     * @param job An object that implements the ARCBatchJob interface. The initialize() method will be called before
+     * processing and the finish() method will be called afterwards. The process() method will be called with each ARC
+     * entry.
+     * @throws ArgumentNotValid if job or file is null.
+     * @throws IOFailure if there was problems writing to the RemoteFile
      * @return A localBatchStatus
      */
-    public BatchStatus batch(String bitarchiveAppId, final FileBatchJob job) 
-            throws ArgumentNotValid, IOFailure {
+    public BatchStatus batch(String bitarchiveAppId, final FileBatchJob job) throws ArgumentNotValid, IOFailure {
         ArgumentNotValid.checkNotNullOrEmpty(bitarchiveAppId, "String bitarchiveAppId");
         ArgumentNotValid.checkNotNull(job, "FileBatchJob job");
         log.info("Starting batch job on bitarchive application with id '{}': '{}', on filename-pattern: '{}'",
-        		bitarchiveAppId, job.getClass().getName(), job.getFilenamePattern());
+                bitarchiveAppId, job.getClass().getName(), job.getFilenamePattern());
         BatchStatus returnStatus;
-        
+
         File tmpFile = null;
         try {
             tmpFile = File.createTempFile("BatchOutput", "", FileUtils.getTempDir());
@@ -240,37 +221,34 @@ public class Bitarchive {
             log.error("Failed to create temporary file for batch {}", job, e);
             throw new IOFailure("Failed to create temporary file for batch " + job, e);
         }
-        log.info("Finished batch job on bitarchive application with id '{}': '{}', on filename-pattern: '{}' + with result: {}",
-        		bitarchiveAppId, job.getClass().getName(), job.getFilenamePattern(), returnStatus);
+        log.info(
+                "Finished batch job on bitarchive application with id '{}': '{}', on filename-pattern: '{}' + with result: {}",
+                bitarchiveAppId, job.getClass().getName(), job.getFilenamePattern(), returnStatus);
         return returnStatus;
     }
 
     /**
-     * Copies a remote file into the bitarchive storage and returns the storage
-     * position of the file.
+     * Copies a remote file into the bitarchive storage and returns the storage position of the file.
      *
-     * @param arcfile
-     *            The source file.
-     * @param fileName
-     *            the source files filename.
+     * @param arcfile The source file.
+     * @param fileName the source files filename.
      * @return the storage position of the file.
-     * @throws IOFailure
-     *             if an error occurs while copying into the archive.
+     * @throws IOFailure if an error occurs while copying into the archive.
      */
     private File copyRemoteFileToArchive(RemoteFile arcfile, String fileName) throws IOFailure {
         File tempDestination = admin.getTemporaryPath(fileName, arcfile.getSize());
         File destination = null;
         try {
-            //The file is first copied to a temporary destination on the same
-            //mount. The reason for this is to eliminate that there are files
-            //in the file-directory that are currupted because of upload 
-            //errors. For example if the there is a break down after only half 
-            //the file is uploaded. It also means that we do not need to clean 
-            //up in the file directory, in case of failure - only the temporary 
-            //destination needs clean up.
+            // The file is first copied to a temporary destination on the same
+            // mount. The reason for this is to eliminate that there are files
+            // in the file-directory that are currupted because of upload
+            // errors. For example if the there is a break down after only half
+            // the file is uploaded. It also means that we do not need to clean
+            // up in the file directory, in case of failure - only the temporary
+            // destination needs clean up.
             arcfile.copyTo(tempDestination);
-            //Note that the move operation is a constant time operation within
-            //the same mount
+            // Note that the move operation is a constant time operation within
+            // the same mount
             destination = admin.moveToStorage(tempDestination);
         } catch (Throwable e) {
             // destination is known to be null here, so don't worry about it.
@@ -284,8 +262,8 @@ public class Bitarchive {
 
     /**
      * Get a file for a given arcFileID.
-     * @param arcFileID
-     *            name of the file to be retrieved.
+     * 
+     * @param arcFileID name of the file to be retrieved.
      * @return The file requested or null if not found
      * @throws ArgumentNotValid If arcFileID was null or empty.
      */
@@ -307,8 +285,7 @@ public class Bitarchive {
      * Get the one instance of the bitarchive.
      *
      * @return An instance of the Bitarchive class.
-     * @throws PermissionDenied
-     *             If the storage area used for files is not accessible.
+     * @throws PermissionDenied If the storage area used for files is not accessible.
      */
     public static Bitarchive getInstance() throws PermissionDenied {
         if (instance == null) {

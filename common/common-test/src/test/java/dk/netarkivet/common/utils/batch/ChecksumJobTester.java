@@ -60,11 +60,9 @@ public class ChecksumJobTester {
     }
 
     /**
-     * Test that processFile correctly returns the checksums of the files in the
-     * specified format.
+     * Test that processFile correctly returns the checksums of the files in the specified format.
      *
-     * @throws IOException
-     *             if unit test has trouble generating ref. checksums
+     * @throws IOException if unit test has trouble generating ref. checksums
      */
     public void testProcessFile() throws IOException {
         ChecksumJob job = new ChecksumJob();
@@ -172,11 +170,9 @@ public class ChecksumJobTester {
     }
 
     /**
-     * Test that relevant state is preserved as expected, and that extensions in
-     * readObject are honoured.
+     * Test that relevant state is preserved as expected, and that extensions in readObject are honoured.
      *
-     * @throws Exception
-     *             on serialization trouble.
+     * @throws Exception on serialization trouble.
      */
     public void testSerializability() throws Exception {
         // make a job:

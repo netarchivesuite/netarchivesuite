@@ -52,10 +52,10 @@ public class AggregationWorkerTest extends AggregatorTestCase {
     public void tearDown() throws Exception {
         super.tearDown();
     }
+
     /**
-     * Verifies that a simple aggregation of two unsorted index files behave correctly
-     * the first time the aggregator is run. No intermediate index file merging
-     * is performed at this time.
+     * Verifies that a simple aggregation of two unsorted index files behave correctly the first time the aggregator is
+     * run. No intermediate index file merging is performed at this time.
      *
      * Disabled, see https://sbforge.org/jira/browse/NAS-2326.
      */
@@ -69,9 +69,11 @@ public class AggregationWorkerTest extends AggregatorTestCase {
 
         worker.runAggregation();
 
-        assertNull("Unexpected content of aggregated index", testIndex.compareToIndex(AggregationWorker.INTERMEDIATE_INDEX_FILE));
+        assertNull("Unexpected content of aggregated index",
+                testIndex.compareToIndex(AggregationWorker.INTERMEDIATE_INDEX_FILE));
         assertTrue("InputFiles remain after aggregation", new File(inputDirName).list().length == 0);
-        assertTrue("Temporary intermediate index file remains after aggregation", !AggregationWorker.tempIntermediateIndexFile.exists());
+        assertTrue("Temporary intermediate index file remains after aggregation",
+                !AggregationWorker.tempIntermediateIndexFile.exists());
         assertTrue("Temporary index file remains after aggregation", !AggregationWorker.TEMP_FILE_INDEX.exists());
     }
 
@@ -87,21 +89,22 @@ public class AggregationWorkerTest extends AggregatorTestCase {
 
         TestIndex testIndex = new TestIndex();
         testIndex.addIndexesFromFiles(inputFiles);
-        testIndex.addIndexesFromFiles(new File[] { AggregationWorker.INTERMEDIATE_INDEX_FILE });
+        testIndex.addIndexesFromFiles(new File[] {AggregationWorker.INTERMEDIATE_INDEX_FILE});
 
         worker.runAggregation();
 
-        assertNull("Unexpected content of aggregated index", testIndex.compareToIndex(AggregationWorker.INTERMEDIATE_INDEX_FILE));
+        assertNull("Unexpected content of aggregated index",
+                testIndex.compareToIndex(AggregationWorker.INTERMEDIATE_INDEX_FILE));
         assertTrue("InputFiles remain after aggregation", new File(inputDirName).list().length == 0);
-        assertTrue("Temporary intermediate index file remains after aggregation", !AggregationWorker.tempIntermediateIndexFile.exists());
+        assertTrue("Temporary intermediate index file remains after aggregation",
+                !AggregationWorker.tempIntermediateIndexFile.exists());
         assertTrue("Temporary index file remains after aggregation", !AggregationWorker.TEMP_FILE_INDEX.exists());
     }
 
     /**
-     * Verifies that the aggregator merges the IntermediateIndexFile into the
-     * main index file when the WaybackSettings#INTERMEDIATE_INDEX_FILE_LIMIT is
-     * exceeded. The old Intermediate Index file should have been removed in this
-     * process
+     * Verifies that the aggregator merges the IntermediateIndexFile into the main index file when the
+     * WaybackSettings#INTERMEDIATE_INDEX_FILE_LIMIT is exceeded. The old Intermediate Index file should have been
+     * removed in this process
      */
     @Test
     @Ignore
@@ -111,21 +114,23 @@ public class AggregationWorkerTest extends AggregatorTestCase {
 
         TestIndex testIndex = new TestIndex();
         testIndex.addIndexesFromFiles(inputFiles);
-        testIndex.addIndexesFromFiles(new File[] { AggregationWorker.INTERMEDIATE_INDEX_FILE });
+        testIndex.addIndexesFromFiles(new File[] {AggregationWorker.INTERMEDIATE_INDEX_FILE});
 
         worker.runAggregation();
 
-        assertNull("Unexpected content of aggregated index", testIndex.compareToIndex(AggregationWorker.FINAL_INDEX_FILE));
+        assertNull("Unexpected content of aggregated index",
+                testIndex.compareToIndex(AggregationWorker.FINAL_INDEX_FILE));
         assertTrue("InputFiles remain after aggregation", new File(inputDirName).list().length == 0);
-        assertTrue("Temporary intermediate index file remains after aggregation", !AggregationWorker.tempIntermediateIndexFile.exists());
+        assertTrue("Temporary intermediate index file remains after aggregation",
+                !AggregationWorker.tempIntermediateIndexFile.exists());
         assertTrue("Temporary index file remains after aggregation", !AggregationWorker.TEMP_FILE_INDEX.exists());
-        assertTrue("Intermediate file not cleared after merge to final index file", AggregationWorker.INTERMEDIATE_INDEX_FILE.length() == 0);
+        assertTrue("Intermediate file not cleared after merge to final index file",
+                AggregationWorker.INTERMEDIATE_INDEX_FILE.length() == 0);
     }
 
     /**
-     * Verifies that the aggregator always merges the IntermediateIndexFile into the
-     * main index file when the WaybackSettings#INTERMEDIATE_INDEX_FILE_LIMIT is
-     * set to 0
+     * Verifies that the aggregator always merges the IntermediateIndexFile into the main index file when the
+     * WaybackSettings#INTERMEDIATE_INDEX_FILE_LIMIT is set to 0
      */
     @Test
     public void testZeroIntermediateIndexFileLimit() {
@@ -138,14 +143,14 @@ public class AggregationWorkerTest extends AggregatorTestCase {
 
         worker.runAggregation();
 
-        assertNull("Unexpected content of aggregated index", testIndex.compareToIndex(AggregationWorker.FINAL_INDEX_FILE));
+        assertNull("Unexpected content of aggregated index",
+                testIndex.compareToIndex(AggregationWorker.FINAL_INDEX_FILE));
     }
 
     /**
-     * Verifies that the aggregator switches to a new main wayback index file when
-     * the WaybackSettings#FINAL_INDEX_FILE_LIMIT is going to be exceed, an starts
-     * to use this file as the main index file. The old final index file will be
-     * renamed to ${finalIndexFileName}.1
+     * Verifies that the aggregator switches to a new main wayback index file when the
+     * WaybackSettings#FINAL_INDEX_FILE_LIMIT is going to be exceed, an starts to use this file as the main index file.
+     * The old final index file will be renamed to ${finalIndexFileName}.1
      */
     @Test
     @Ignore
@@ -153,14 +158,16 @@ public class AggregationWorkerTest extends AggregatorTestCase {
         disabledTestMaxIntermediateIndexFileLimit();
 
         File[] inputFiles = prepareSourceIndex(new String[] {inputFile155KName});
-        
+
         TestIndex testIndex = new TestIndex();
         testIndex.addIndexesFromFiles(inputFiles);
 
         worker.runAggregation();
 
-        assertNull("Unexpected content of aggregated index after roll-over", testIndex.compareToIndex(AggregationWorker.FINAL_INDEX_FILE));
-        File oldIndexFile = new File(AggregationWorker.indexOutputDir, "wayback.index.1");;
+        assertNull("Unexpected content of aggregated index after roll-over",
+                testIndex.compareToIndex(AggregationWorker.FINAL_INDEX_FILE));
+        File oldIndexFile = new File(AggregationWorker.indexOutputDir, "wayback.index.1");
+        ;
         assertTrue("No wayback.index.1 present", oldIndexFile.exists());
 
     }

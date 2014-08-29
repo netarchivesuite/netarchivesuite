@@ -38,8 +38,7 @@ import org.slf4j.LoggerFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
- * Class containing methods for turning duplicate entries in a crawl log into
- * lines in a CDX index file.
+ * Class containing methods for turning duplicate entries in a crawl log into lines in a CDX index file.
  */
 public class DeduplicateToCDXAdapter implements DeduplicateToCDXAdapterInterface {
 
@@ -65,15 +64,14 @@ public class DeduplicateToCDXAdapter implements DeduplicateToCDXAdapterInterface
     /**
      * Default constructor. Initializes the canonicalizer.
      */
-    public
-    DeduplicateToCDXAdapter() {
+    public DeduplicateToCDXAdapter() {
         canonicalizer = UrlCanonicalizerFactory.getDefaultUrlCanonicalizer();
     }
 
     /**
-     * If the input line is a crawl log entry representing a duplicate then a
-     * CDX entry is written to the output. Otherwise returns null. In the event
-     * of an error returns null.
+     * If the input line is a crawl log entry representing a duplicate then a CDX entry is written to the output.
+     * Otherwise returns null. In the event of an error returns null.
+     * 
      * @param line the crawl-log line to be analysed
      * @return a CDX line (without newline) or null
      */
@@ -84,13 +82,10 @@ public class DeduplicateToCDXAdapter implements DeduplicateToCDXAdapterInterface
                 String[] crawlElements = line.split("\\s+");
                 StringBuffer result = new StringBuffer();
                 String originalUrl = crawlElements[3];
-                String canonicalUrl =
-                        canonicalizer.urlStringToKey(originalUrl);
+                String canonicalUrl = canonicalizer.urlStringToKey(originalUrl);
                 result.append(canonicalUrl).append(' ');
-                String cdxDate = cdxDateFormat.format(
-                        crawlDateFormat.parse(crawlElements[0]));
-                result.append(cdxDate).append(' ')
-                    .append(originalUrl).append(' ');
+                String cdxDate = cdxDateFormat.format(crawlDateFormat.parse(crawlElements[0]));
+                result.append(cdxDate).append(' ').append(originalUrl).append(' ');
                 String mimetype = crawlElements[6];
                 result.append(mimetype).append(' ');
                 String httpCode = crawlElements[1];
@@ -114,10 +109,8 @@ public class DeduplicateToCDXAdapter implements DeduplicateToCDXAdapterInterface
                     String offset = m.group(2);
                     result.append(offset).append(' ').append(arcfile);
                 } else {
-                    throw new ArgumentNotValid("crawl record did not match "
-                                               + "expected pattern for duplicate"
-                                               + " record: '" + duplicateRecord
-                                               + "'");
+                    throw new ArgumentNotValid("crawl record did not match " + "expected pattern for duplicate"
+                            + " record: '" + duplicateRecord + "'");
                 }
                 return result.toString();
             } catch (Exception e) {
@@ -130,8 +123,9 @@ public class DeduplicateToCDXAdapter implements DeduplicateToCDXAdapterInterface
     }
 
     /**
-     * Reads an input stream representing a crawl log line by line and converts
-     * any lines representing duplicate entries to wayback-compliant cdx lines.
+     * Reads an input stream representing a crawl log line by line and converts any lines representing duplicate entries
+     * to wayback-compliant cdx lines.
+     * 
      * @param is The input stream from which data is read.
      * @param os The output stream to which the cdx lines are written.
      */
@@ -139,8 +133,7 @@ public class DeduplicateToCDXAdapter implements DeduplicateToCDXAdapterInterface
         ArgumentNotValid.checkNotNull(is, "is");
         ArgumentNotValid.checkNotNull(os, "os");
         try {
-            BufferedReader reader =
-                    new BufferedReader(new InputStreamReader(is));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
             String line;
             while ((line = reader.readLine()) != null) {
                 String cdxLine = adaptLine(line);

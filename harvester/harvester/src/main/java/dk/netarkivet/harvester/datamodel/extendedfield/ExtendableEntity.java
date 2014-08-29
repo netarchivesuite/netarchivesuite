@@ -116,7 +116,8 @@ public abstract class ExtendableEntity {
             ExtendedField ef = it.next();
 
             ExtendedFieldValue efv = new ExtendedFieldValue();
-            efv.setContent(new ExtendedFieldDefaultValue(ef.getDefaultValue(), ef.getFormattingPattern(), ef.getDatatype()).getDBValue());
+            efv.setContent(new ExtendedFieldDefaultValue(ef.getDefaultValue(), ef.getFormattingPattern(), ef
+                    .getDatatype()).getDBValue());
             efv.setExtendedFieldID(ef.getExtendedFieldID());
             getExtendedFieldValues().add(efv);
         }
@@ -127,6 +128,6 @@ public abstract class ExtendableEntity {
      * 
      * @return ExtendedFieldType
      */
-    abstract protected int getExtendedFieldType(); 
+    abstract protected int getExtendedFieldType();
 
 }

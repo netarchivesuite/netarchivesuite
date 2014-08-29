@@ -47,8 +47,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 
 /**
- * This default message handler shields of all unimplemented methods from the
- * ArchiveMessageVisitor interface.
+ * This default message handler shields of all unimplemented methods from the ArchiveMessageVisitor interface.
  *
  * Classes should not implement ArchiveMessageVisitor but extend this class.
  *
@@ -57,7 +56,7 @@ import dk.netarkivet.common.exceptions.PermissionDenied;
  */
 public abstract class ArchiveMessageHandler implements ArchiveMessageVisitor, MessageListener {
 
-    /** The log.*/
+    /** The log. */
     private static final Logger log = LoggerFactory.getLogger(ArchiveMessageHandler.class);
 
     /**
@@ -86,19 +85,20 @@ public abstract class ArchiveMessageHandler implements ArchiveMessageVisitor, Me
         }
     }
 
-    /** Handles when a handler receives a message it is not prepare to handle.
+    /**
+     * Handles when a handler receives a message it is not prepare to handle.
      *
      * @param msg The received message.
      * @throws PermissionDenied Always
      */
     private void deny(ArchiveMessage msg) throws PermissionDenied {
-        throw new PermissionDenied("'" + this + "' provides no handling for " + msg
-        		+ " of type " + msg.getClass().getName() + " and should not be invoked!");
+        throw new PermissionDenied("'" + this + "' provides no handling for " + msg + " of type "
+                + msg.getClass().getName() + " and should not be invoked!");
     }
 
     /**
-     * This method should be overridden and implemented by a sub class if
-     * message handling is wanted.
+     * This method should be overridden and implemented by a sub class if message handling is wanted.
+     * 
      * @param msg a BatchEndedMessage
      * @throws PermissionDenied when invoked
      */
@@ -108,8 +108,8 @@ public abstract class ArchiveMessageHandler implements ArchiveMessageVisitor, Me
     }
 
     /**
-     * This method should be overridden and implemented by a sub class if
-     * message handling is wanted.
+     * This method should be overridden and implemented by a sub class if message handling is wanted.
+     * 
      * @param msg a BatchMessage
      * @throws PermissionDenied when invoked
      */
@@ -119,8 +119,8 @@ public abstract class ArchiveMessageHandler implements ArchiveMessageVisitor, Me
     }
 
     /**
-     * This method should be overridden and implemented by a sub class if
-     * message handling is wanted.
+     * This method should be overridden and implemented by a sub class if message handling is wanted.
+     * 
      * @param msg a BatchReplyMessage
      * @throws PermissionDenied when invoked
      */
@@ -130,8 +130,8 @@ public abstract class ArchiveMessageHandler implements ArchiveMessageVisitor, Me
     }
 
     /**
-     * This method should be overridden and implemented by a sub class if
-     * message handling is wanted.
+     * This method should be overridden and implemented by a sub class if message handling is wanted.
+     * 
      * @param msg a GetFileMessage
      * @throws PermissionDenied when invoked
      */
@@ -141,8 +141,8 @@ public abstract class ArchiveMessageHandler implements ArchiveMessageVisitor, Me
     }
 
     /**
-     * This method should be overridden and implemented by a sub class if
-     * message handling is wanted.
+     * This method should be overridden and implemented by a sub class if message handling is wanted.
+     * 
      * @param msg a GetMessage
      * @throws PermissionDenied when invoked
      */
@@ -152,8 +152,8 @@ public abstract class ArchiveMessageHandler implements ArchiveMessageVisitor, Me
     }
 
     /**
-     * This method should be overridden and implemented by a sub class if
-     * message handling is wanted.
+     * This method should be overridden and implemented by a sub class if message handling is wanted.
+     * 
      * @param msg a HeartBeatMessage
      * @throws PermissionDenied when invoked
      */
@@ -163,8 +163,8 @@ public abstract class ArchiveMessageHandler implements ArchiveMessageVisitor, Me
     }
 
     /**
-     * This method should be overridden and implemented by a sub class if
-     * message handling is wanted.
+     * This method should be overridden and implemented by a sub class if message handling is wanted.
+     * 
      * @param msg a StoreMessage
      * @throws PermissionDenied when invoked
      */
@@ -174,8 +174,8 @@ public abstract class ArchiveMessageHandler implements ArchiveMessageVisitor, Me
     }
 
     /**
-     * This method should be overridden and implemented by a sub class if
-     * message handling is wanted.
+     * This method should be overridden and implemented by a sub class if message handling is wanted.
+     * 
      * @param msg an UploadMessage
      * @throws PermissionDenied when invoked
      */
@@ -185,8 +185,8 @@ public abstract class ArchiveMessageHandler implements ArchiveMessageVisitor, Me
     }
 
     /**
-     * This method should be overridden and implemented by a sub class if
-     * message handling is wanted.
+     * This method should be overridden and implemented by a sub class if message handling is wanted.
+     * 
      * @param msg a AdminDataMessage
      * @throws PermissionDenied when invoked
      */
@@ -196,8 +196,8 @@ public abstract class ArchiveMessageHandler implements ArchiveMessageVisitor, Me
     }
 
     /**
-     * This method should be overridden and implemented by a sub class if
-     * message handling is wanted.
+     * This method should be overridden and implemented by a sub class if message handling is wanted.
+     * 
      * @param msg a RemoveAndGetFile
      * @throws PermissionDenied when invoked
      */
@@ -207,8 +207,8 @@ public abstract class ArchiveMessageHandler implements ArchiveMessageVisitor, Me
     }
 
     /**
-     * This method should be overridden and implemented by a sub class if
-     * message handling is wanted.
+     * This method should be overridden and implemented by a sub class if message handling is wanted.
+     * 
      * @param msg an CorrectMessage for correcting a record.
      * @throws PermissionDenied when invoked
      */
@@ -218,8 +218,8 @@ public abstract class ArchiveMessageHandler implements ArchiveMessageVisitor, Me
     }
 
     /**
-     * This method should be overridden and implemented by a sub class if
-     * message handling is wanted.
+     * This method should be overridden and implemented by a sub class if message handling is wanted.
+     * 
      * @param msg the GetChecksumMessage
      * @throws PermissionDenied when invoked
      */
@@ -227,10 +227,10 @@ public abstract class ArchiveMessageHandler implements ArchiveMessageVisitor, Me
         ArgumentNotValid.checkNotNull(msg, "msg");
         deny(msg);
     }
-    
+
     /**
-     * This method should be overridden and implemented by a sub class if
-     * message handling is wanted.
+     * This method should be overridden and implemented by a sub class if message handling is wanted.
+     * 
      * @param msg the GetAllChecksumMessage
      * @throws PermissionDenied when invoked
      */
@@ -238,10 +238,10 @@ public abstract class ArchiveMessageHandler implements ArchiveMessageVisitor, Me
         ArgumentNotValid.checkNotNull(msg, "msg");
         deny(msg);
     }
-    
+
     /**
-     * This method should be overridden and implemented by a sub class if
-     * message handling is wanted.
+     * This method should be overridden and implemented by a sub class if message handling is wanted.
+     * 
      * @param msg an GetAllFilenamesMessage
      * @throws PermissionDenied when invoked
      */
@@ -249,5 +249,5 @@ public abstract class ArchiveMessageHandler implements ArchiveMessageVisitor, Me
         ArgumentNotValid.checkNotNull(msg, "msg");
         deny(msg);
     }
-    
+
 }

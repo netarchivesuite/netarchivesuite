@@ -96,7 +96,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 // FIXME:  Rework raw threads in tests into something controllable by an executor.
 
-@SuppressWarnings({ "rawtypes", "unused", "serial" })
+@SuppressWarnings({"rawtypes", "unused", "serial"})
 public class JMSArcRepositoryClientTester {
 
     private static final File BASEDIR = new File("tests/dk/netarkivet/archive/arcrepository/distribute/data");
@@ -161,8 +161,7 @@ public class JMSArcRepositoryClientTester {
     }
 
     /**
-     * Tests the correct object is returned when getPreservationInstance is
-     * called.
+     * Tests the correct object is returned when getPreservationInstance is called.
      */
     @Test
     public void testGetPreservationInstance() {
@@ -190,8 +189,7 @@ public class JMSArcRepositoryClientTester {
     @Test
     public void testGetArgumentsNotNull() {
         /**
-         * Test if ArgumentNotValid is thrown if null is given as first
-         * parameter
+         * Test if ArgumentNotValid is thrown if null is given as first parameter
          */
         try {
             arc.get(null, 0);
@@ -201,8 +199,7 @@ public class JMSArcRepositoryClientTester {
         }
 
         /**
-         * Test if ArgumentNotValid is thrown if a negative value is given as
-         * second parameter
+         * Test if ArgumentNotValid is thrown if a negative value is given as second parameter
          */
         try {
             arc.get("dummy.arc", -5);
@@ -213,8 +210,8 @@ public class JMSArcRepositoryClientTester {
     }
 
     /**
-     * This tests the get()-method returns a BitarchiveRecord via JMS. The reply
-     * record should contain a string: <code>filename+" "+index</code>.
+     * This tests the get()-method returns a BitarchiveRecord via JMS. The reply record should contain a string:
+     * <code>filename+" "+index</code>.
      */
     @Test
     public void testGet() {
@@ -234,11 +231,10 @@ public class JMSArcRepositoryClientTester {
     }
 
     /**
-     * This tests the getFile()-method returns a file via JMS. The reply file
-     * should contain a string: <code>filename+" "+index</code>.
+     * This tests the getFile()-method returns a file via JMS. The reply file should contain a string:
+     * <code>filename+" "+index</code>.
      *
-     * @throws IOException
-     *             if arc throws one
+     * @throws IOException if arc throws one
      */
     @Test
     public void testGetFile() throws IOException {
@@ -306,11 +302,9 @@ public class JMSArcRepositoryClientTester {
     }
 
     /**
-     * Testing that a message is sent via JMS and a ArgumentNotValid is thrown
-     * when message is incorrect.
+     * Testing that a message is sent via JMS and a ArgumentNotValid is thrown when message is incorrect.
      *
-     * @throws IOException
-     *             if we cant create new file
+     * @throws IOException if we cant create new file
      */
     @Test
     public void testStoreMessageNotOK() throws IOException {
@@ -333,11 +327,9 @@ public class JMSArcRepositoryClientTester {
     }
 
     /**
-     * tests that a successful store reply will result in the RemoteFile being
-     * deleted.
+     * tests that a successful store reply will result in the RemoteFile being deleted.
      *
-     * @throws InterruptedException
-     *             if ...
+     * @throws InterruptedException if ...
      */
     @Test
     public void testStoreDelete() throws InterruptedException {
@@ -346,7 +338,7 @@ public class JMSArcRepositoryClientTester {
         GenericMessageListener listener = new GenericMessageListener();
         JMSConnection con = JMSConnectionFactory.getInstance();
         con.setListener(Channels.getTheRepos(), listener);
-        final boolean[] done = new boolean[] { false };
+        final boolean[] done = new boolean[] {false};
         // Send a store message in a thread
         Thread t = new Thread() {
             public void run() {
@@ -404,8 +396,7 @@ public class JMSArcRepositoryClientTester {
         };
 
         /**
-         * Test if ArgumentNotValid is thrown if null is given as first
-         * parameter
+         * Test if ArgumentNotValid is thrown if null is given as first parameter
          */
         try {
             arc.batch(null, Settings.get(CommonSettings.USE_REPLICA_ID));
@@ -415,8 +406,7 @@ public class JMSArcRepositoryClientTester {
         }
 
         /**
-         * Test if ArgumentNotValid is thrown if null is given as third
-         * parameter
+         * Test if ArgumentNotValid is thrown if null is given as third parameter
          */
 
         try {
@@ -450,8 +440,7 @@ public class JMSArcRepositoryClientTester {
     /**
      * Tests StoreRetreies
      *
-     * @throws IOException
-     *             if creation of files fails
+     * @throws IOException if creation of files fails
      */
     @Test
     public void testStoreRetries() throws IOException {
@@ -489,7 +478,7 @@ public class JMSArcRepositoryClientTester {
         Settings.set(JMSArcRepositoryClient.ARCREPOSITORY_STORE_TIMEOUT, "1");
         arc.close();
         arc = (JMSArcRepositoryClient) ArcRepositoryClientFactory.getHarvesterInstance();
-        final boolean[] ok = new boolean[] { false };
+        final boolean[] ok = new boolean[] {false};
         new Thread() {
             public void run() {
                 try {
@@ -515,13 +504,10 @@ public class JMSArcRepositoryClientTester {
     }
 
     /**
-     * Tests that locally generated exceptions in the JMSArcRepositoryClient
-     * gives a message. See bug #867
+     * Tests that locally generated exceptions in the JMSArcRepositoryClient gives a message. See bug #867
      *
-     * @throws NoSuchFieldException
-     *             if field doens't exists
-     * @throws IllegalAccessException
-     *             if access denied
+     * @throws NoSuchFieldException if field doens't exists
+     * @throws IllegalAccessException if access denied
      */
     @Test
     public void testStoreException() throws NoSuchFieldException, IllegalAccessException {
@@ -549,10 +535,8 @@ public class JMSArcRepositoryClientTester {
     /**
      * Test that remote files are cleaned up after exceptions. Bug #1080
      *
-     * @throws IllegalAccessException
-     *             if field doens't exists
-     * @throws NoSuchFieldException
-     *             if access denied
+     * @throws IllegalAccessException if field doens't exists
+     * @throws NoSuchFieldException if access denied
      */
     @Test
     public void testStoreFailed() throws NoSuchFieldException, IllegalAccessException {
@@ -1017,8 +1001,7 @@ public class JMSArcRepositoryClientTester {
     }
 
     /**
-     * A generic message listener class which just stores a list of all messages
-     * it receives
+     * A generic message listener class which just stores a list of all messages it receives
      */
     public static class GenericMessageListener implements MessageListener {
         public ArrayList<NetarkivetMessage> messagesReceived = new ArrayList<NetarkivetMessage>();

@@ -39,14 +39,11 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.testutils.Serial;
 
 /**
- * Created by IntelliJ IDEA.
- * User: csr
- * Date: Mar 3, 2005
- * Time: 10:29:56 AM
- * To change this template use File | Settings | File Templates.
+ * Created by IntelliJ IDEA. User: csr Date: Mar 3, 2005 Time: 10:29:56 AM To change this template use File | Settings |
+ * File Templates.
  *
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({"serial"})
 public class BatchMessageTester {
     // Need a couple of queues for the constructors for the messages
     private ChannelID q1 = TestInfo.QUEUE_1;
@@ -63,28 +60,30 @@ public class BatchMessageTester {
      */
     @Test
     public void testBatchMessageSerializable() throws IOException, ClassNotFoundException {
-        BatchMessage bm = new BatchMessage(q1, job, Settings.get(
-                CommonSettings.USE_REPLICA_ID));
+        BatchMessage bm = new BatchMessage(q1, job, Settings.get(CommonSettings.USE_REPLICA_ID));
         BatchMessage bm2 = (BatchMessage) Serial.serial(bm);
         assertEquals("Serializability failure for BatchMessage", relevantState(bm), relevantState(bm2));
     }
 
-    private String relevantState(BatchMessage bm){
+    private String relevantState(BatchMessage bm) {
         return bm.toString();
     }
 
-    private static class TestBatchJob extends FileBatchJob{
+    private static class TestBatchJob extends FileBatchJob {
 
         public void initialize(OutputStream os) {
         }
+
         public void finish(OutputStream os) {
         }
+
         public boolean processFile(File file, OutputStream os) {
             return true;
         }
-        public String toString(){return "a string";}
+
+        public String toString() {
+            return "a string";
+        }
     }
-
-
 
 }

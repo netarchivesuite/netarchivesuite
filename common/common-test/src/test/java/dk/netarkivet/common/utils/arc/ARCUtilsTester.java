@@ -82,8 +82,7 @@ public class ARCUtilsTester {
      *
      * @throws Exception
      * 
-     *             FIXME: Consider splitting into individual tests expected to
-     *             fail.
+     * FIXME: Consider splitting into individual tests expected to fail.
      */
     @Test
     public void testInsertARCFile() throws Exception {
@@ -225,8 +224,7 @@ public class ARCUtilsTester {
     /**
      * Test, that ARCUtils#writeFileToARC() works Test, that bug 914 is fixed.
      * 
-     * @throws Exception
-     *             If file not found
+     * @throws Exception If file not found
      */
     @Test
     public void testWriteFileToARC() throws Exception {
@@ -287,8 +285,7 @@ public class ARCUtilsTester {
     }
 
     /**
-     * Tests, that ARCUtils.getToolsARCWriter create a proper arcfile with
-     * correct header information.
+     * Tests, that ARCUtils.getToolsARCWriter create a proper arcfile with correct header information.
      * 
      * @throws Exception
      */
@@ -309,10 +306,8 @@ public class ARCUtilsTester {
     /**
      * Encapsulate ARCWriter creation for test-purposes.
      * 
-     * @param stream
-     *            the PrintStream
-     * @param arcfile
-     *            the destination arcfile
+     * @param stream the PrintStream
+     * @param arcfile the destination arcfile
      * @throws IOException
      * @return new ARCWriter
      */

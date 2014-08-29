@@ -38,15 +38,12 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-
 /**
- * Unit test for Bitarchive API
- * The handling of administrative data is tested
+ * Unit test for Bitarchive API The handling of administrative data is tested
  */
 public class BitarchiveTesterAdmin extends BitarchiveTestCase {
     private static String ARC_FILE_NAME = "CorrectTest1.ARC";
-    private static File ARC_FILE_DIR =
-            new File(new File(TestInfo.DATA_DIR, "admin"), "originals");
+    private static File ARC_FILE_DIR = new File(new File(TestInfo.DATA_DIR, "admin"), "originals");
     private static File ARC_FILE = new File(ARC_FILE_DIR, ARC_FILE_NAME);
 
     private static File ARCHIVE_DIR_1 = new File(TestInfo.WORKING_DIR, "dir1");
@@ -58,6 +55,7 @@ public class BitarchiveTesterAdmin extends BitarchiveTestCase {
 
     /**
      * Create Bitarchive
+     * 
      * @throws Exception
      */
     @Before
@@ -72,27 +70,25 @@ public class BitarchiveTesterAdmin extends BitarchiveTestCase {
 
     /**
      * Verify that uploading a file adds the appropriate record to admin data.
+     * 
      * @throws FileNotFoundException
      * @throws PermissionDenied
      * @throws IOException
      */
     @Test
-    public void testUploadAdminAdded()
-            throws PermissionDenied, IOException {
+    public void testUploadAdminAdded() throws PermissionDenied, IOException {
         BitarchiveAdmin admin = BitarchiveAdmin.getInstance();
         assertNotNull("Must have admin object.", admin);
         // check that the record does not exist in the admin data before upload
         BitarchiveARCFile arcfile = admin.lookup(ARC_FILE_NAME);
-        assertNull("Lookup should fail before adding file.",
-                arcfile);
+        assertNull("Lookup should fail before adding file.", arcfile);
 
         // upload the file and verify that the file now exists
         archive.upload(new TestRemoteFile(ARC_FILE, false, false, false), ARC_FILE_NAME);
 
         // now verify that admin data updated correctly
         arcfile = admin.lookup(ARC_FILE_NAME);
-        assertNotNull("Lookup of added file should succeed after adding.",
-                      arcfile);
+        assertNotNull("Lookup of added file should succeed after adding.", arcfile);
     }
 
     /**
@@ -107,8 +103,8 @@ public class BitarchiveTesterAdmin extends BitarchiveTestCase {
         int countrecords = admin.getFiles().length;
 
         try {
-            archive.upload(new TestRemoteFile(new File(ARC_FILE_DIR, "thisfiledoesnotexist.not"),
-                                               false, false, false), "thisfiledoesnotexist.not");
+            archive.upload(new TestRemoteFile(new File(ARC_FILE_DIR, "thisfiledoesnotexist.not"), false, false, false),
+                    "thisfiledoesnotexist.not");
             fail("Should have thrown exception when adding missing file.");
         } catch (Exception e) {
             // Expected case.
@@ -119,24 +115,20 @@ public class BitarchiveTesterAdmin extends BitarchiveTestCase {
         assertEquals(countrecords, admin.getFiles().length);
     }
 
-    /** Verify that the bitarchive file dirs are all created and writeable
-     * after creating admin.
+    /**
+     * Verify that the bitarchive file dirs are all created and writeable after creating admin.
      */
     @Test
     public void testCTOR() {
         Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, ARCHIVE_DIR_1.getAbsolutePath(),
-                     ARCHIVE_DIR_2.getAbsolutePath());
+                ARCHIVE_DIR_2.getAbsolutePath());
         archive.close();
         archive = null;
         archive = Bitarchive.getInstance();
-        assertTrue(ARCHIVE_DIR_1 + " should exist after creating bitarchive",
-                   ARCHIVE_DIR_1.exists());
-        assertTrue(ARCHIVE_DIR_2 + " should exist after creating bitarchive",
-                   ARCHIVE_DIR_2.exists());
-        assertTrue(ARCHIVE_DIR_1 + " should be writeable after creating bitarchive",
-                   ARCHIVE_DIR_1.canWrite());
-        assertTrue(ARCHIVE_DIR_2 + " should be writeable after creating bitarchive",
-                   ARCHIVE_DIR_2.canWrite());
+        assertTrue(ARCHIVE_DIR_1 + " should exist after creating bitarchive", ARCHIVE_DIR_1.exists());
+        assertTrue(ARCHIVE_DIR_2 + " should exist after creating bitarchive", ARCHIVE_DIR_2.exists());
+        assertTrue(ARCHIVE_DIR_1 + " should be writeable after creating bitarchive", ARCHIVE_DIR_1.canWrite());
+        assertTrue(ARCHIVE_DIR_2 + " should be writeable after creating bitarchive", ARCHIVE_DIR_2.canWrite());
     }
 
     /** Check that the constructor handles illegal dirs correctly. */

@@ -54,11 +54,10 @@ public class FindRunningJobQuery {
         }
 
         /**
-         * Extracts the field's value from a servlet request. If the request
-         * does not define the paraeter's value, it is set to the default value.
+         * Extracts the field's value from a servlet request. If the request does not define the paraeter's value, it is
+         * set to the default value.
          * 
-         * @param req
-         *            a servlet request
+         * @param req a servlet request
          * @return the field's value
          */
         public String getValue(ServletRequest req) {
@@ -86,11 +85,9 @@ public class FindRunningJobQuery {
     private Set<Long> runningJobIds = new TreeSet<Long>();
 
     /**
-     * Builds a request to find a running job. UI fileds values will be
-     * extracted from the given {@link ServletRequest}.
+     * Builds a request to find a running job. UI fileds values will be extracted from the given {@link ServletRequest}.
      * 
-     * @param req
-     *            the {@link ServletRequest} to parse.
+     * @param req the {@link ServletRequest} to parse.
      */
     public FindRunningJobQuery(ServletRequest req) {
         domainName = UI_FIELD.DOMAIN_NAME.getValue(req);
@@ -103,8 +100,7 @@ public class FindRunningJobQuery {
             throw new UnknownID("Domain " + domainName + " is not registered!");
         }
 
-        List<JobStatusInfo> startedJobs = JobDAO.getInstance().getStatusInfo(
-                JobStatus.STARTED);
+        List<JobStatusInfo> startedJobs = JobDAO.getInstance().getStatusInfo(JobStatus.STARTED);
         for (JobStatusInfo jsi : startedJobs) {
             long jobId = jsi.getJobID();
             Job job = JobDAO.getInstance().read(jobId);
@@ -123,8 +119,7 @@ public class FindRunningJobQuery {
     }
 
     /**
-     * @return the IDs of the currently running jobs whose configurations
-     *         include the given domain.
+     * @return the IDs of the currently running jobs whose configurations include the given domain.
      */
     public Long[] getRunningJobIds() {
         return (Long[]) runningJobIds.toArray(new Long[runningJobIds.size()]);

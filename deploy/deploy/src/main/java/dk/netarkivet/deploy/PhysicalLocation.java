@@ -42,39 +42,38 @@ import dk.netarkivet.common.exceptions.IllegalState;
  */
 public class PhysicalLocation {
 
-	/** the log, for logging stuff instead of displaying them directly.*/ 
+    /** the log, for logging stuff instead of displaying them directly. */
     private static final Logger log = LoggerFactory.getLogger(PhysicalLocation.class);
-    /** The root for the branch of this element in the XML-tree.*/
+    /** The root for the branch of this element in the XML-tree. */
     private Element physLocRoot;
-    /** The settings structure.*/
+    /** The settings structure. */
     private XmlStructure settings;
-    /** The parameters for java.*/
+    /** The parameters for java. */
     private Parameters machineParameters;
-    /** The list of the machines.*/
+    /** The list of the machines. */
     private List<Machine> machines;
-    /** The name of this physical location.*/
+    /** The name of this physical location. */
     private String name;
-    /** The inherited name for the NetarchiveSuite file.*/
+    /** The inherited name for the NetarchiveSuite file. */
     private String netarchiveSuiteFileName;
-    /** The inherited java.util.logging property file.*/
+    /** The inherited java.util.logging property file. */
     private File logPropFile;
-    /** The inherited SLF4J config file.*/
+    /** The inherited SLF4J config file. */
     private File slf4JConfigFile;
-    /** The inherited security file.*/
+    /** The inherited security file. */
     private File securityPolicyFile;
-    /** The inherited database file name.*/
+    /** The inherited database file name. */
     private File databaseFile;
-    /** The inherited archive database file name.*/
+    /** The inherited archive database file name. */
     private File arcDatabaseFile;
-    /** The optional choice for resetting tempDir.*/
+    /** The optional choice for resetting tempDir. */
     private boolean resetDirectory;
-    /** The folder for the external jar libraries.*/
+    /** The folder for the external jar libraries. */
     private File jarFolder;
 
     /**
-     * The physical locations is referring to the position in the real world
-     * where the computers are located.
-     * One physical location can contain many machines.
+     * The physical locations is referring to the position in the real world where the computers are located. One
+     * physical location can contain many machines.
      * 
      * @param subTreeRoot The root of this branch in the XML structure.
      * @param parentSettings The settings of the parent (deploy-config).
@@ -83,27 +82,24 @@ public class PhysicalLocation {
      * @param logProp The logging property file.
      * @param securityPolicy The security policy file.
      * @param dbFile The harvest definition database.
-     * @param arcdbFile The archive database. 
+     * @param arcdbFile The archive database.
      * @param resetDir Whether the temporary directory should be reset.
-     * @param externalJarFolder The folder containing the external jar 
-     * library files.
-     * @throws ArgumentNotValid If one of the following arguments are null:
-     * subTreeRoot, parentSettings, param, logProp, securityPolicy; or if the
-     * netarchiveSuiteSource if either null or empty. 
+     * @param externalJarFolder The folder containing the external jar library files.
+     * @throws ArgumentNotValid If one of the following arguments are null: subTreeRoot, parentSettings, param, logProp,
+     * securityPolicy; or if the netarchiveSuiteSource if either null or empty.
      */
-    public PhysicalLocation(Element subTreeRoot, XmlStructure parentSettings, 
-            Parameters param, String netarchiveSuiteSource, File logProp, File slf4JConfig,
-            File securityPolicy, File dbFile, File arcdbFile, boolean resetDir,
-            File externalJarFolder) throws ArgumentNotValid {
+    public PhysicalLocation(Element subTreeRoot, XmlStructure parentSettings, Parameters param,
+            String netarchiveSuiteSource, File logProp, File slf4JConfig, File securityPolicy, File dbFile,
+            File arcdbFile, boolean resetDir, File externalJarFolder) throws ArgumentNotValid {
         // test if valid arguments
         ArgumentNotValid.checkNotNull(subTreeRoot, "Element elem (physLocRoot)");
         ArgumentNotValid.checkNotNull(parentSettings, "XmlStructure parentSettings");
         ArgumentNotValid.checkNotNull(param, "Parameters param");
         ArgumentNotValid.checkNotNullOrEmpty(netarchiveSuiteSource, "String netarchiveSuite");
-        //ArgumentNotValid.checkNotNull(logProp, "File logProp");
-        //ArgumentNotValid.checkNotNull(slf4JConfig, "File slf4JConfig");
+        // ArgumentNotValid.checkNotNull(logProp, "File logProp");
+        // ArgumentNotValid.checkNotNull(slf4JConfig, "File slf4JConfig");
         ArgumentNotValid.checkNotNull(securityPolicy, "File securityPolicy");
-        
+
         // make a copy of parent, don't use it directly.
         settings = new XmlStructure(parentSettings.getRoot());
         physLocRoot = subTreeRoot;
@@ -116,10 +112,10 @@ public class PhysicalLocation {
         arcDatabaseFile = arcdbFile;
         resetDirectory = resetDir;
         jarFolder = externalJarFolder;
-        
-        // retrieve the specific settings for this instance 
+
+        // retrieve the specific settings for this instance
         Element tmpSet = physLocRoot.element(Constants.COMPLETE_SETTINGS_BRANCH);
-        // Generate the specific settings by combining the general settings 
+        // Generate the specific settings by combining the general settings
         // and the specific, (only if this instance has specific settings)
         if (tmpSet != null) {
             settings.overWrite(tmpSet);
@@ -135,8 +131,7 @@ public class PhysicalLocation {
     /**
      * Extract the local variables from the root.
      * 
-     * It is only the name for this instance.
-     * This is then set in settings.
+     * It is only the name for this instance. This is then set in settings.
      */
     private void extractVariables() {
         // retrieve name
@@ -153,8 +148,7 @@ public class PhysicalLocation {
     }
 
     /**
-     * Extracts the XML for machines from the root, creates the machines,
-     * and puts them into the list.
+     * Extracts the XML for machines from the root, creates the machines, and puts them into the list.
      */
     @SuppressWarnings("unchecked")
     private void extractMachines() {
@@ -165,21 +159,17 @@ public class PhysicalLocation {
             // only a windows machine, if the 'os' attribute exists and
             // equals (not case-sensitive) 'windows'. Else linux machine
             if (os != null && os.equalsIgnoreCase(Constants.OPERATING_SYSTEM_WINDOWS_ATTRIBUTE)) {
-                machines.add(new WindowsMachine(e, settings, machineParameters,
-                        netarchiveSuiteFileName, logPropFile, slf4JConfigFile,
-                        securityPolicyFile, databaseFile, arcDatabaseFile, 
-                        resetDirectory, jarFolder));
+                machines.add(new WindowsMachine(e, settings, machineParameters, netarchiveSuiteFileName, logPropFile,
+                        slf4JConfigFile, securityPolicyFile, databaseFile, arcDatabaseFile, resetDirectory, jarFolder));
             } else {
-                machines.add(new LinuxMachine(e, settings, machineParameters,
-                        netarchiveSuiteFileName, logPropFile, slf4JConfigFile,
-                        securityPolicyFile, databaseFile, arcDatabaseFile,
-                        resetDirectory, jarFolder));
+                machines.add(new LinuxMachine(e, settings, machineParameters, netarchiveSuiteFileName, logPropFile,
+                        slf4JConfigFile, securityPolicyFile, databaseFile, arcDatabaseFile, resetDirectory, jarFolder));
             }
         }
     }
-    
+
     private String getTrimmedAttributeValue(Element e, String attributeName) {
-    	String value = e.attributeValue(attributeName); 
+        String value = e.attributeValue(attributeName);
         return (value != null ? value.trim() : null);
     }
 
@@ -200,12 +190,9 @@ public class PhysicalLocation {
     }
 
     /**
-     * Creates the following scripts for this physical location.
-     * * killall.
-     * * install.
-     * * startall.
+     * Creates the following scripts for this physical location. * killall. * install. * startall.
      * 
-     * The scripts for a physical location will only work from Linux/Unix.  
+     * The scripts for a physical location will only work from Linux/Unix.
      *
      * @param directory The directory where the scripts are to be placed.
      * @throws ArgumentNotValid If the directory is null.
@@ -237,7 +224,7 @@ public class PhysicalLocation {
                 kWriter.flush();
                 kWriter.close();
             }
-            
+
             // Make the install script for the physical location
             PrintWriter iWriter = new PrintWriter(install);
             try {
@@ -261,7 +248,7 @@ public class PhysicalLocation {
             try {
                 sWriter.println(ScriptConstants.BIN_BASH_COMMENT);
                 // insert machine data
-                for(Machine mac : machines) {
+                for (Machine mac : machines) {
                     // write start script from machines
                     sWriter.println(ScriptConstants.writeDashLine());
                     sWriter.print(mac.writeToGlobalStartScript());
@@ -273,7 +260,7 @@ public class PhysicalLocation {
                 sWriter.close();
             }
         } catch (IOException e) {
-        	String msg = "Cannot create the scripts for the physical " + "location: '" + name + "'.";
+            String msg = "Cannot create the scripts for the physical " + "location: '" + name + "'.";
             log.trace(msg, e);
             throw new IOFailure(msg, e);
         }

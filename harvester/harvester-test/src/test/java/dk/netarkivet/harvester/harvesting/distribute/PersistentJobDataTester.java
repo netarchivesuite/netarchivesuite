@@ -41,16 +41,14 @@ import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
  * Test class PersistentJobData.
  */
 public class PersistentJobDataTester {
-    MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,
-                                          TestInfo.WORKING_DIR);
+    MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
     private File crawldir;
 
     @Before
     public void setUp() throws Exception {
         mtf.setUp();
         crawldir = new File(TestInfo.WORKING_DIR, "my-crawldir");
-        assertTrue("Unable to create crawldir '" + crawldir.getAbsolutePath() + "'",
-                crawldir.mkdir());
+        assertTrue("Unable to create crawldir '" + crawldir.getAbsolutePath() + "'", crawldir.mkdir());
     }
 
     @After
@@ -59,8 +57,7 @@ public class PersistentJobDataTester {
     }
 
     /**
-     * Test constructor for PersistentJobData.
-     * 1. Throws ArgumentNotValid, if file argument null or file does not exist.
+     * Test constructor for PersistentJobData. 1. Throws ArgumentNotValid, if file argument null or file does not exist.
      * 2. accepts existing directory as argument
      */
     @Test
@@ -74,8 +71,7 @@ public class PersistentJobDataTester {
 
         try {
             new PersistentJobData(new File("nonExistingDir"));
-            fail("PersistentJobData should have thrown an exception when given "
-                    + " non existingdir as argument");
+            fail("PersistentJobData should have thrown an exception when given " + " non existingdir as argument");
         } catch (ArgumentNotValid e) {
             // expected
         }
@@ -85,10 +81,9 @@ public class PersistentJobDataTester {
     }
 
     /**
-     * Test that the write(Job) method persists all necessary information
-     * about the current harvest-job.
-     * @throws Exception If failure to persist the information
-     *                   or unable to access DB
+     * Test that the write(Job) method persists all necessary information about the current harvest-job.
+     * 
+     * @throws Exception If failure to persist the information or unable to access DB
      */
     @Test
     public void testWrite() throws Exception {
@@ -100,28 +95,26 @@ public class PersistentJobDataTester {
         pjd.write(testJob, new HarvestDefinitionInfo("test", "test", "test"));
 
         PersistentJobData pjdNew = new PersistentJobData(crawldir);
-        
-        assertEquals("retrieved jobID is not the same as original jobID",
-                testJob.getJobID(), pjdNew.getJobID());
-        assertEquals("retrieved jobpriority is not the same as original job priority",
-                testJob.getChannel(), pjdNew.getChannel());
+
+        assertEquals("retrieved jobID is not the same as original jobID", testJob.getJobID(), pjdNew.getJobID());
+        assertEquals("retrieved jobpriority is not the same as original job priority", testJob.getChannel(),
+                pjdNew.getChannel());
         assertEquals("retrived maxBytesPerDomain is not the same as original job maxBytesPerDomain",
                 testJob.getMaxBytesPerDomain(), pjdNew.getMaxBytesPerDomain());
         assertEquals("retrived maxObjectsPerDomain is not the same as original job maxObjectsPerDomain",
                 testJob.getMaxObjectsPerDomain(), pjdNew.getMaxObjectsPerDomain());
-        assertEquals("retrived harvestNum is not the same as original job harvestNum",
-                testJob.getHarvestNum(), pjdNew.getJobHarvestNum());
-        assertEquals("retrived orderXMlName is not the same as original job orderXMLName",
-                testJob.getOrderXMLName(), pjdNew.getOrderXMLName());
+        assertEquals("retrived harvestNum is not the same as original job harvestNum", testJob.getHarvestNum(),
+                pjdNew.getJobHarvestNum());
+        assertEquals("retrived orderXMlName is not the same as original job orderXMLName", testJob.getOrderXMLName(),
+                pjdNew.getOrderXMLName());
         assertEquals("retrived origHarvestDefinitionID is not the same as original ID",
-                testJob.getOrigHarvestDefinitionID(),
-                pjdNew.getOrigHarvestDefinitionID());
+                testJob.getOrigHarvestDefinitionID(), pjdNew.getOrigHarvestDefinitionID());
         assertEquals("The value of the performer should be set", pjdNew.getPerformer(), null);
-        
+
         // cleanup after this unit-test.
         FileUtils.removeRecursively(crawldir);
     }
-        
+
     /** Test reading the version 0.5 harvestInfo.xml. The newest */
     @Test
     public void testReadVersion0_5() {
@@ -130,7 +123,7 @@ public class PersistentJobDataTester {
         PersistentJobData pjd = new PersistentJobData(crawldir);
         pjd.getVersion();
     }
-    
+
     /** Test reading the 0.4 harvestInfo.xml. */
     @Test
     public void testReadVersion0_4() {
@@ -139,5 +132,5 @@ public class PersistentJobDataTester {
         PersistentJobData pjd = new PersistentJobData(crawldir);
         pjd.getVersion();
     }
-    
+
 }

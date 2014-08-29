@@ -27,10 +27,9 @@ import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
-
 /**
  * 
- * Unit tests for the {@link ReadOnlyByteArray} class.   
+ * Unit tests for the {@link ReadOnlyByteArray} class.
  *
  */
 public class ReadOnlyByteArrayTester {
@@ -40,7 +39,7 @@ public class ReadOnlyByteArrayTester {
 
         new ReadOnlyByteArray(null);
 
-        byte[] emptyArray = new byte[]{};
+        byte[] emptyArray = new byte[] {};
         ReadOnlyByteArray roba = new ReadOnlyByteArray(emptyArray);
         assertTrue(roba.length() == 0);
         try {
@@ -49,12 +48,12 @@ public class ReadOnlyByteArrayTester {
         } catch (Exception e) {
             // Expected
         }
-        
-        byte[] notEmptyArray = new byte[]{22,42};
+
+        byte[] notEmptyArray = new byte[] {22, 42};
         roba = new ReadOnlyByteArray(notEmptyArray);
         assertTrue(roba.length() == 2);
         assertTrue(22 == roba.get(0));
         assertTrue(42 == roba.get(1));
     }
-    
+
 }

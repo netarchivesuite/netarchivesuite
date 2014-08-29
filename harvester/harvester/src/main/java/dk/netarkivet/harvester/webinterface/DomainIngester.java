@@ -47,11 +47,11 @@ public class DomainIngester extends Thread {
     private File ingestFile;
     /** The JspWriter. */
     private JspWriter out;
-    /** The locale used in forwarding errormessages to the user.*/
+    /** The locale used in forwarding errormessages to the user. */
     private Locale l;
 
-    /** Create a new ingester for a given session and outpout, reading
-     * domains from a file.
+    /**
+     * Create a new ingester for a given session and outpout, reading domains from a file.
      *
      * @param out The writer that goes into HTML output
      * @param ingestFile The file of domains to ingest.
@@ -62,14 +62,15 @@ public class DomainIngester extends Thread {
         // We currently don't, so we don't do it here either.
         ArgumentNotValid.checkNotNull(ingestFile, "File ingestFile");
         ArgumentNotValid.checkNotNull(l, "Locale l");
-        
+
         this.out = out;
         this.ingestFile = ingestFile;
         this.l = l;
     }
 
-    /** Starts the ingesting thread.  When 'done' is set to true, the thread
-     * is finished, and any exceptions are found in 'e'.
+    /**
+     * Starts the ingesting thread. When 'done' is set to true, the thread is finished, and any exceptions are found in
+     * 'e'.
      */
     public void run() {
         try {
@@ -81,15 +82,16 @@ public class DomainIngester extends Thread {
             done = true;
         }
     }
-    
+
     /**
      * Check whether or not the DomainIngester is finished.
+     * 
      * @return true if finished; false otherwise
      */
     public boolean isDone() {
         return done;
     }
-    
+
     /**
      * @return any exception catched during ingest
      */

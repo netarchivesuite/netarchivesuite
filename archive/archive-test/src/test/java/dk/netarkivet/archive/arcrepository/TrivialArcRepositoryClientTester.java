@@ -44,8 +44,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 /**
- * Unit-tests for the class 
- * TrivialArcRepositoryClient
+ * Unit-tests for the class TrivialArcRepositoryClient
  */
 public class TrivialArcRepositoryClientTester {
     MoveTestFiles mtf = new MoveTestFiles(dk.netarkivet.archive.distribute.arcrepository.TestInfo.ORIGINALS_DIR,
@@ -58,7 +57,8 @@ public class TrivialArcRepositoryClientTester {
         rs.setUp();
         utrf.setUp();
 
-        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR.getAbsolutePath());
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR,
+                dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR.getAbsolutePath());
         mtf.setUp();
     }
 
@@ -74,25 +74,25 @@ public class TrivialArcRepositoryClientTester {
         ArcRepositoryClient arcrep = new TrivialArcRepositoryClient();
 
         BatchStatus status = arcrep.batch(new FileListJob(), "BA");
-        assertEquals("Should have no files processed at outset",
-                0, status.getNoOfFilesProcessed());
+        assertEquals("Should have no files processed at outset", 0, status.getNoOfFilesProcessed());
 
-        FileUtils.copyFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE, dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE_COPY);
+        FileUtils.copyFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE,
+                dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE_COPY);
         arcrep.store(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE);
         assertFalse("Should have deleted file after upload",
                 dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE.exists());
         status = arcrep.batch(new FileListJob(), "BA");
-        assertEquals("Should have 1 files processed after store",
-                1, status.getNoOfFilesProcessed());
+        assertEquals("Should have 1 files processed after store", 1, status.getNoOfFilesProcessed());
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         status.getResultFile().appendTo(out);
         assertEquals("Should list the one file",
-                dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE.getName() + "\n",
-                out.toString());
+                dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE.getName() + "\n", out.toString());
         File f = File.createTempFile("foo", "bar", FileUtils.getTempDir());
-        arcrep.getFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE.getName(), Replica.getReplicaFromId("TWO"), f);
+        arcrep.getFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE.getName(),
+                Replica.getReplicaFromId("TWO"), f);
         assertEquals("Should have expected contents back",
-                ChecksumCalculator.calculateMd5(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE_COPY),
+                ChecksumCalculator
+                        .calculateMd5(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE_COPY),
                 ChecksumCalculator.calculateMd5(f));
     }
 }

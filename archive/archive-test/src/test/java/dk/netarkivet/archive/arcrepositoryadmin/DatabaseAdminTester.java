@@ -52,11 +52,11 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 public class DatabaseAdminTester {
 
-	private ReloadSettings rs = new ReloadSettings();
+    private ReloadSettings rs = new ReloadSettings();
     private MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR, TestInfo.TEST_DIR);
-    
+
     private UseTestRemoteFile utrf = new UseTestRemoteFile();
-    
+
     Replica ONE = Replica.getReplicaFromId("ONE");
     Replica TWO = Replica.getReplicaFromId("TWO");
     Replica THREE = Replica.getReplicaFromId("THREE");
@@ -67,7 +67,7 @@ public class DatabaseAdminTester {
         rs.setUp();
         mtf.setUp();
         utrf.setUp();
-        
+
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
 
         DatabaseTestUtils.takeDatabase(TestInfo.DATABASE_FILE.getAbsolutePath(), TestInfo.DATABASE_DIR);
@@ -80,7 +80,7 @@ public class DatabaseAdminTester {
 
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS, PrintNotifications.class.getName());
     }
-    
+
     @After
     public void tearDown() {
         JMSConnectionMockupMQ.clearTestQueues();
@@ -95,70 +95,66 @@ public class DatabaseAdminTester {
     // FIXME: test temporarily disabled
     public void failingTestArcRepositoryCalls() {
         DatabaseAdmin da = DatabaseAdmin.getInstance();
-        
+
         assertFalse("Should not contain NON-EXISTING-FILE", da.hasEntry("NON-EXISTING-FILE"));
-        assertFalse("Should not contain StoreMessage for NON-EXISTING-FILE", 
-                da.hasReplyInfo("NON-EXISTING-FILE"));
+        assertFalse("Should not contain StoreMessage for NON-EXISTING-FILE", da.hasReplyInfo("NON-EXISTING-FILE"));
 
         StoreMessage storeMsg1 = new StoreMessage(Channels.getError(), TestInfo.TEST_FILE_1);
         JMSConnectionMockupMQ.updateMsgID(storeMsg1, "store1");
-        
+
         da.addEntry(TestInfo.TEST_FILE_1.getName(), storeMsg1, "1234567890");
 
         // make sure that the test instance can now be found.
-        assertTrue("Should contain " + TestInfo.TEST_FILE_1.getName(), 
-                da.hasEntry(TestInfo.TEST_FILE_1.getName()));
+        assertTrue("Should contain " + TestInfo.TEST_FILE_1.getName(), da.hasEntry(TestInfo.TEST_FILE_1.getName()));
         assertTrue("Should have replyInfo for " + TestInfo.TEST_FILE_1.getName(),
                 da.hasReplyInfo(TestInfo.TEST_FILE_1.getName()));
-        assertEquals("Should have the given checksum", "1234567890", 
-                da.getCheckSum(TestInfo.TEST_FILE_1.getName()));
-        
+        assertEquals("Should have the given checksum", "1234567890", da.getCheckSum(TestInfo.TEST_FILE_1.getName()));
+
         // Test the hasState.
-        assertFalse("Should not yet have a acceptable state", 
-                da.hasState(TestInfo.TEST_FILE_1.getName(), 
-                        ONE.getIdentificationChannel().getName()));
-        da.setState(TestInfo.TEST_FILE_1.getName(), ONE.getIdentificationChannel().getName(), ReplicaStoreState.UPLOAD_STARTED);
-        assertTrue("Should now have a acceptable state", 
-                da.hasState(TestInfo.TEST_FILE_1.getName(), 
-                        ONE.getIdentificationChannel().getName()));
-        assertEquals("Should have the same state", 
-                da.getState(TestInfo.TEST_FILE_1.getName(), ONE.getIdentificationChannel().getName()), 
+        assertFalse("Should not yet have a acceptable state",
+                da.hasState(TestInfo.TEST_FILE_1.getName(), ONE.getIdentificationChannel().getName()));
+        da.setState(TestInfo.TEST_FILE_1.getName(), ONE.getIdentificationChannel().getName(),
                 ReplicaStoreState.UPLOAD_STARTED);
-        
+        assertTrue("Should now have a acceptable state",
+                da.hasState(TestInfo.TEST_FILE_1.getName(), ONE.getIdentificationChannel().getName()));
+        assertEquals("Should have the same state",
+                da.getState(TestInfo.TEST_FILE_1.getName(), ONE.getIdentificationChannel().getName()),
+                ReplicaStoreState.UPLOAD_STARTED);
+
         StoreMessage storeMsg2 = new StoreMessage(Channels.getError(), TestInfo.TEST_FILE_1);
         JMSConnectionMockupMQ.updateMsgID(storeMsg2, "store2");
-        
+
         da.setReplyInfo(storeMsg2.getArcfileName(), storeMsg2);
 
-        da.setState(TestInfo.TEST_FILE_1.getName(), ONE.getIdentificationChannel().getName(), ReplicaStoreState.UPLOAD_COMPLETED);
-        da.setState(TestInfo.TEST_FILE_1.getName(), TWO.getIdentificationChannel().getName(), ReplicaStoreState.UPLOAD_COMPLETED);
-        da.setState(TestInfo.TEST_FILE_1.getName(), THREE.getIdentificationChannel().getName(), ReplicaStoreState.UPLOAD_COMPLETED);
+        da.setState(TestInfo.TEST_FILE_1.getName(), ONE.getIdentificationChannel().getName(),
+                ReplicaStoreState.UPLOAD_COMPLETED);
+        da.setState(TestInfo.TEST_FILE_1.getName(), TWO.getIdentificationChannel().getName(),
+                ReplicaStoreState.UPLOAD_COMPLETED);
+        da.setState(TestInfo.TEST_FILE_1.getName(), THREE.getIdentificationChannel().getName(),
+                ReplicaStoreState.UPLOAD_COMPLETED);
 
         StoreMessage retrievedMsg = da.removeReplyInfo(TestInfo.TEST_FILE_1.getName());
-        
-        assertEquals("The message should have the new ID.", "store2", 
-                retrievedMsg.getID());
-        
+
+        assertEquals("The message should have the new ID.", "store2", retrievedMsg.getID());
+
         try {
             da.setCheckSum(TestInfo.TEST_FILE_1.getName(), "0987654321");
             fail("An illegal state exception should be thrown here.");
         } catch (IllegalState e) {
             // expected
         }
-        
+
         Set<String> filenames = da.getAllFileNames();
-        assertTrue("Should contain the file '" + TestInfo.TEST_FILE_1.getName() 
-                + "' but was '" + filenames, filenames.contains(TestInfo.TEST_FILE_1.getName()));
-        
+        assertTrue("Should contain the file '" + TestInfo.TEST_FILE_1.getName() + "' but was '" + filenames,
+                filenames.contains(TestInfo.TEST_FILE_1.getName()));
+
         filenames = da.getAllFileNames(THREE, ReplicaStoreState.UPLOAD_FAILED);
-        assertTrue("The list of files with state UPLOAD_FAILED for replica "
-                + "THREE should be empty, but it was: " + filenames, 
-                filenames.isEmpty());
+        assertTrue("The list of files with state UPLOAD_FAILED for replica " + "THREE should be empty, but it was: "
+                + filenames, filenames.isEmpty());
 
         filenames = da.getAllFileNames(THREE, ReplicaStoreState.UPLOAD_COMPLETED);
-        assertTrue("The list of files with state UPLOAD_COMPLETED for replica "
-                + "THREE should contain the file: '" + TestInfo.TEST_FILE_1.getName() 
-                + "', but it contained: " + filenames, 
+        assertTrue("The list of files with state UPLOAD_COMPLETED for replica " + "THREE should contain the file: '"
+                + TestInfo.TEST_FILE_1.getName() + "', but it contained: " + filenames,
                 filenames.contains(TestInfo.TEST_FILE_1.getName()));
     }
 

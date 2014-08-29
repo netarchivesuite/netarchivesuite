@@ -25,14 +25,11 @@ package dk.netarkivet.harvester.datamodel;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
-
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
- * Tests of the abstract Frequency class.
- * Currently, only the static method getNewInstance
- * is tested here.
- * The other tests are performed in the subclasses of Frequency.
+ * Tests of the abstract Frequency class. Currently, only the static method getNewInstance is tested here. The other
+ * tests are performed in the subclasses of Frequency.
  */
 public class FrequencyTester {
     /**
@@ -40,10 +37,10 @@ public class FrequencyTester {
      */
     @Test
     public void testGetNewInstance() {
-        
+
         // test, that negative values for timeunit and numtimeunits
         // throws ArgumentNotValid
-        
+
         int timeunit = -1;
         boolean anytime = true;
         int numtimeunit = 2;
@@ -51,71 +48,65 @@ public class FrequencyTester {
         Integer hour = 7;
         Integer dayOfWeek = 1;
         Integer dayOfMonth = 1;
-        
+
         try {
-            Frequency.getNewInstance(timeunit, anytime, numtimeunit, minut, hour,
-                    dayOfWeek, dayOfMonth);
+            Frequency.getNewInstance(timeunit, anytime, numtimeunit, minut, hour, dayOfWeek, dayOfMonth);
             fail("ArgumentNotValid exception expected for negative timeunit");
         } catch (ArgumentNotValid e) {
             // Expected
         }
-        
+
         timeunit = TimeUnit.DAILY.ordinal();
         numtimeunit = -1;
         try {
-            Frequency.getNewInstance(timeunit, anytime, numtimeunit, minut, hour,
-                    dayOfWeek, dayOfMonth);
+            Frequency.getNewInstance(timeunit, anytime, numtimeunit, minut, hour, dayOfWeek, dayOfMonth);
             fail("ArgumentNotValid exception expected for negative numtimeunits");
         } catch (ArgumentNotValid e) {
             // Expected
         }
-  
-        
+
         // check that null Integers are always allowed, if anytime is true
-        minut = null; hour = null; dayOfWeek = null; dayOfMonth = null;
+        minut = null;
+        hour = null;
+        dayOfWeek = null;
+        dayOfMonth = null;
         numtimeunit = 2;
         anytime = true;
         try {
-            Frequency.getNewInstance(timeunit, anytime, numtimeunit, minut, hour,
-                    dayOfWeek, dayOfMonth);
+            Frequency.getNewInstance(timeunit, anytime, numtimeunit, minut, hour, dayOfWeek, dayOfMonth);
         } catch (ArgumentNotValid e) {
-            fail("ArgumentNotValid exception NOT expected "
-            		+ "for null Integers when anytime is true");
+            fail("ArgumentNotValid exception NOT expected " + "for null Integers when anytime is true");
         }
-        
+
         // Test that Null integers are not allowed in some cases:
         // case 1: null value for minute, if anytime is false
-        // case 2: null value for hour, if anytime is false, 
-        //         and we are not creating a Hourly frequency
-        // case 3: null value for dayofweek, if anytime is false and 
-        //         we are creating a Weekly frequency
+        // case 2: null value for hour, if anytime is false,
+        // and we are not creating a Hourly frequency
+        // case 3: null value for dayofweek, if anytime is false and
+        // we are creating a Weekly frequency
         // case 4: null value for dayofmonth, if anytime is false,
-        //         and we are creating a Monthly frequency
-        
+        // and we are creating a Monthly frequency
+
         anytime = false;
         // case 1
         minut = null;
         try {
-            Frequency.getNewInstance(timeunit, anytime, numtimeunit, minut, hour,
-                    dayOfWeek, dayOfMonth);
+            Frequency.getNewInstance(timeunit, anytime, numtimeunit, minut, hour, dayOfWeek, dayOfMonth);
             fail("ArgumentNotValid exception expected if null minut and anytime is true");
         } catch (ArgumentNotValid e) {
             // Expected
         }
-        
-       // case 2
+
+        // case 2
         minut = 1;
         hour = null;
-        
+
         timeunit = TimeUnit.HOURLY.ordinal();
-        Frequency.getNewInstance(timeunit, anytime, numtimeunit, minut, hour,
-                  dayOfWeek, dayOfMonth);
+        Frequency.getNewInstance(timeunit, anytime, numtimeunit, minut, hour, dayOfWeek, dayOfMonth);
         try {
             timeunit = TimeUnit.DAILY.ordinal();
-            Frequency.getNewInstance(timeunit, anytime, numtimeunit, minut, hour,
-                    dayOfWeek, dayOfMonth);
-            fail("ArgumentNotValid exception expected if null hour,"
-                    + "anytime is true, and timeunit is daily");
+            Frequency.getNewInstance(timeunit, anytime, numtimeunit, minut, hour, dayOfWeek, dayOfMonth);
+            fail("ArgumentNotValid exception expected if null hour," + "anytime is true, and timeunit is daily");
         } catch (ArgumentNotValid e) {
             // Expected
         }
@@ -128,17 +119,14 @@ public class FrequencyTester {
         dayOfMonth = 1;
         try {
             timeunit = TimeUnit.HOURLY.ordinal();
-        
-            Frequency.getNewInstance(timeunit, anytime, numtimeunit, minut, hour,
-                    dayOfWeek, dayOfMonth);
-            
+
+            Frequency.getNewInstance(timeunit, anytime, numtimeunit, minut, hour, dayOfWeek, dayOfMonth);
+
             timeunit = TimeUnit.DAILY.ordinal();
-            Frequency.getNewInstance(timeunit, anytime, numtimeunit, minut, hour,
-                    dayOfWeek, dayOfMonth);
-            
+            Frequency.getNewInstance(timeunit, anytime, numtimeunit, minut, hour, dayOfWeek, dayOfMonth);
+
             timeunit = TimeUnit.MONTHLY.ordinal();
-            Frequency.getNewInstance(timeunit, anytime, numtimeunit, minut, hour,
-                    dayOfWeek, dayOfMonth);
+            Frequency.getNewInstance(timeunit, anytime, numtimeunit, minut, hour, dayOfWeek, dayOfMonth);
         } catch (ArgumentNotValid e) {
             fail("ArgumentNotValid exception NOT expected if dayofweek is null,"
                     + "anytime is true, and timeunit is not weekly");
@@ -146,19 +134,18 @@ public class FrequencyTester {
 
         try {
             timeunit = TimeUnit.WEEKLY.ordinal();
-            
-            Frequency.getNewInstance(timeunit, anytime, numtimeunit, minut, hour,
-                    dayOfWeek, dayOfMonth);
-            
+
+            Frequency.getNewInstance(timeunit, anytime, numtimeunit, minut, hour, dayOfWeek, dayOfMonth);
+
             fail("ArgumentNotValid exception expected if dayofweek is null,"
                     + "anytime is true, and timeunit is weekly");
         } catch (ArgumentNotValid e) {
             // Expected
         }
-         
+
         // case 4: null value for dayofmonth, if anytime is false,
-        //         and we are creating a Monthly frequency
-        
+        // and we are creating a Monthly frequency
+
         anytime = false;
         minut = 1;
         hour = 1;
@@ -166,33 +153,29 @@ public class FrequencyTester {
         dayOfMonth = null;
         try {
             timeunit = TimeUnit.HOURLY.ordinal();
-        
-            Frequency.getNewInstance(timeunit, anytime, numtimeunit, minut, hour,
-                    dayOfWeek, dayOfMonth);
-            
+
+            Frequency.getNewInstance(timeunit, anytime, numtimeunit, minut, hour, dayOfWeek, dayOfMonth);
+
             timeunit = TimeUnit.DAILY.ordinal();
-            Frequency.getNewInstance(timeunit, anytime, numtimeunit, minut, hour,
-                    dayOfWeek, dayOfMonth);
-            
+            Frequency.getNewInstance(timeunit, anytime, numtimeunit, minut, hour, dayOfWeek, dayOfMonth);
+
             timeunit = TimeUnit.WEEKLY.ordinal();
-            Frequency.getNewInstance(timeunit, anytime, numtimeunit, minut, hour,
-                    dayOfWeek, dayOfMonth);
+            Frequency.getNewInstance(timeunit, anytime, numtimeunit, minut, hour, dayOfWeek, dayOfMonth);
         } catch (ArgumentNotValid e) {
             fail("ArgumentNotValid exception NOT expected if dayofmonth is null,"
                     + "anytime is true, and timeunit is not monthly");
         }
-        
+
         try {
             timeunit = TimeUnit.MONTHLY.ordinal();
-            
-            Frequency.getNewInstance(timeunit, anytime, numtimeunit, minut, hour,
-                    dayOfWeek, dayOfMonth);
-            
+
+            Frequency.getNewInstance(timeunit, anytime, numtimeunit, minut, hour, dayOfWeek, dayOfMonth);
+
             fail("ArgumentNotValid exception expected if dayofmonth is null,"
                     + "anytime is true, and timeunit is monthly");
         } catch (ArgumentNotValid e) {
             // Expected
         }
-        
+
     }
 }

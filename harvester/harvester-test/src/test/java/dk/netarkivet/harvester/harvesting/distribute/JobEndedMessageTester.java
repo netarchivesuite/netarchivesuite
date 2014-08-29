@@ -27,9 +27,8 @@ import dk.netarkivet.harvester.datamodel.JobStatus;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
-
 public class JobEndedMessageTester {
-    
+
     @Test
     public void testJobEndedConstructor() {
         JobEndedMessage msg = new JobEndedMessage(42L, JobStatus.DONE);
@@ -39,11 +38,10 @@ public class JobEndedMessageTester {
         assertEquals(JobStatus.FAILED, msg.getJobStatus());
         try {
             new JobEndedMessage(42L, JobStatus.STARTED);
-            fail("Should throw ArgumentNotValid given states "
-                    + "other than DONE and FAILED");
+            fail("Should throw ArgumentNotValid given states " + "other than DONE and FAILED");
         } catch (ArgumentNotValid e) {
             // Expected
         }
-        
+
     }
 }

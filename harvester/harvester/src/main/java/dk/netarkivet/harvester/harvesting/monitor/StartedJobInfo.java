@@ -48,10 +48,13 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
 
     /** The class logger. */
     private static final Logger log = LoggerFactory.getLogger(StartedJobInfo.class);
-    
-    /**list of the compare criteria.*/
-    public enum Criteria { JOBID, HOST, PROGRESS, ELAPSED, QFILES, TOTALQ, ACTIVEQ, EXHAUSTEDQ };
-    /**current compare criteria.*/
+
+    /** list of the compare criteria. */
+    public enum Criteria {
+        JOBID, HOST, PROGRESS, ELAPSED, QFILES, TOTALQ, ACTIVEQ, EXHAUSTEDQ
+    };
+
+    /** current compare criteria. */
     private StartedJobInfo.Criteria compareCriteria = StartedJobInfo.Criteria.JOBID;
 
     private static final String NOT_AVAILABLE_STRING = "";
@@ -80,8 +83,7 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
     private long queuedFilesCount;
 
     /**
-     * The number of URIS harvested by Heritrix since the beginning of the
-     * crawl.
+     * The number of URIS harvested by Heritrix since the beginning of the crawl.
      */
     private long downloadedFilesCount;
 
@@ -132,10 +134,8 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
     /**
      * Instantiates all readable fields with default values.
      *
-     * @param harvestName
-     *            the name of the harvest
-     * @param jobId
-     *            the ID of the job
+     * @param harvestName the name of the harvest
+     * @param jobId the ID of the job
      */
     public StartedJobInfo(String harvestName, long jobId) {
         this.timestamp = new Date(System.currentTimeMillis());
@@ -195,8 +195,7 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
     }
 
     /**
-     * @return the URL of the Heritrix admin console for the instance crawling
-     *         this job.
+     * @return the URL of the Heritrix admin console for the instance crawling this job.
      */
     public String getHostUrl() {
         return hostUrl;
@@ -229,6 +228,7 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
     public long getActiveQueuesCount() {
         return activeQueuesCount;
     }
+
     /**
      * @return the number of retired heritrix queues.
      */
@@ -315,12 +315,12 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
     }
 
     @Override
-    public int compareTo(StartedJobInfo o) throws NullPointerException  {
+    public int compareTo(StartedJobInfo o) throws NullPointerException {
 
-        if(o == null) {
+        if (o == null) {
             throw new NullPointerException("StartedJobInfo o can't be null");
         }
-        
+
         if (compareCriteria == StartedJobInfo.Criteria.HOST) {
             return hostUrl.compareTo(o.hostUrl);
         }
@@ -328,67 +328,55 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
             return new Double(progress).compareTo(new Double(o.progress));
         }
         if (compareCriteria == StartedJobInfo.Criteria.ELAPSED) {
-            return Long.valueOf(elapsedSeconds).
-            compareTo(Long.valueOf(o.elapsedSeconds));
+            return Long.valueOf(elapsedSeconds).compareTo(Long.valueOf(o.elapsedSeconds));
         }
         if (compareCriteria == StartedJobInfo.Criteria.QFILES) {
-            return Long.valueOf(queuedFilesCount).
-            compareTo(Long.valueOf(o.queuedFilesCount));
+            return Long.valueOf(queuedFilesCount).compareTo(Long.valueOf(o.queuedFilesCount));
         }
         if (compareCriteria == StartedJobInfo.Criteria.TOTALQ) {
-            return Long.valueOf(totalQueuesCount).
-            compareTo(Long.valueOf(o.totalQueuesCount));
+            return Long.valueOf(totalQueuesCount).compareTo(Long.valueOf(o.totalQueuesCount));
         }
         if (compareCriteria == StartedJobInfo.Criteria.ACTIVEQ) {
-            return Long.valueOf(activeQueuesCount).
-            compareTo(Long.valueOf(o.activeQueuesCount));
+            return Long.valueOf(activeQueuesCount).compareTo(Long.valueOf(o.activeQueuesCount));
         }
         if (compareCriteria == StartedJobInfo.Criteria.EXHAUSTEDQ) {
-            return Long.valueOf(exhaustedQueuesCount).
-            compareTo(Long.valueOf(o.exhaustedQueuesCount));
+            return Long.valueOf(exhaustedQueuesCount).compareTo(Long.valueOf(o.exhaustedQueuesCount));
         }
         return Long.valueOf(jobId).compareTo(Long.valueOf(o.jobId));
     }
 
     /**
-     * set the criteria used in the compareTo method
-     * that way we can decide how to sort StartedJobInfo.
+     * set the criteria used in the compareTo method that way we can decide how to sort StartedJobInfo.
+     * 
      * @param criteria the criteria we want to use
      */
-     public void chooseCompareCriteria(StartedJobInfo.Criteria criteria) {
-         ArgumentNotValid.checkNotNull(criteria, "criteria can't be null");
-         compareCriteria = criteria;
+    public void chooseCompareCriteria(StartedJobInfo.Criteria criteria) {
+        ArgumentNotValid.checkNotNull(criteria, "criteria can't be null");
+        compareCriteria = criteria;
     }
 
     @Override
     public String toString() {
-        return harvestName + " - " + jobId + " {" + "\n\tstatus="
-                + status.name() + "\n\telapsedSeconds=" + elapsedSeconds
-                + "\n\thostUrl=" + hostUrl + "\n\tprogress=" + progress
-                + "\n\tactiveToeCount=" + activeToeCount + "\n\talertsCount="
-                + alertsCount + "\n\tcurrentProcessedKBPerSec="
-                + currentProcessedKBPerSec + "\n\tprocessedKBPerSec="
-                + processedKBPerSec + "\n\tcurrentProcessedDocsPerSec="
-                + currentProcessedDocsPerSec + "\n\tprocessedDocsPerSec="
-                + processedDocsPerSec + "\n\tdownloadedFilesCount="
-                + downloadedFilesCount + "\n\tqueuedFilesCount="
-                + queuedFilesCount + "\n\tactiveQueuesCount="
-                + activeQueuesCount + "\n\texhaustedQueuesCount="
-                + exhaustedQueuesCount + "\n\ttotalQueuesCount="
-                + totalQueuesCount + "\n}";
+        return harvestName + " - " + jobId + " {" + "\n\tstatus=" + status.name() + "\n\telapsedSeconds="
+                + elapsedSeconds + "\n\thostUrl=" + hostUrl + "\n\tprogress=" + progress + "\n\tactiveToeCount="
+                + activeToeCount + "\n\talertsCount=" + alertsCount + "\n\tcurrentProcessedKBPerSec="
+                + currentProcessedKBPerSec + "\n\tprocessedKBPerSec=" + processedKBPerSec
+                + "\n\tcurrentProcessedDocsPerSec=" + currentProcessedDocsPerSec + "\n\tprocessedDocsPerSec="
+                + processedDocsPerSec + "\n\tdownloadedFilesCount=" + downloadedFilesCount + "\n\tqueuedFilesCount="
+                + queuedFilesCount + "\n\tactiveQueuesCount=" + activeQueuesCount + "\n\texhaustedQueuesCount="
+                + exhaustedQueuesCount + "\n\ttotalQueuesCount=" + totalQueuesCount + "\n}";
     }
 
     /**
      * Updates the members from a {@link CrawlProgressMessage} instance.
      *
-     * @param msg
-     *            the {@link CrawlProgressMessage} to process.
+     * @param msg the {@link CrawlProgressMessage} to process.
      * @return jobinfo based on the contents of the message.
      */
     public static StartedJobInfo build(CrawlProgressMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "CrawlProgressMessage msg");
         String harvestName = HarvestDefinitionDAO.getInstance().getHarvestName(msg.getHarvestID());
-        
+
         StartedJobInfo sji = new StartedJobInfo(harvestName, msg.getJobID());
 
         CrawlServiceInfo heritrixInfo = msg.getHeritrixStatus();
@@ -426,7 +414,7 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
                     Object[] params = FRONTIER_SHORT_FMT.parse(frontierShortReport);
                     sji.totalQueuesCount = Long.parseLong((String) params[0]);
                     sji.activeQueuesCount = Long.parseLong((String) params[1]);
-                    sji.retiredQueuesCount =Long.parseLong((String) params[6]);
+                    sji.retiredQueuesCount = Long.parseLong((String) params[6]);
                     sji.exhaustedQueuesCount = Long.parseLong((String) params[7]);
                 } catch (ParseException e) {
                     throw new ArgumentNotValid(frontierShortReport, e);
@@ -458,7 +446,7 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
             sji.totalQueuesCount = 0;
             break;
         default:
-        	log.debug("Nothing to do for state: {}", newStatus); 
+            log.debug("Nothing to do for state: {}", newStatus);
             break;
         }
         sji.status = newStatus;
@@ -539,8 +527,7 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
     /**
      * @param currentProcessedDocsPerSec the currentProcessedDocsPerSec to set
      */
-    public void setCurrentProcessedDocsPerSec(
-            double currentProcessedDocsPerSec) {
+    public void setCurrentProcessedDocsPerSec(double currentProcessedDocsPerSec) {
         this.currentProcessedDocsPerSec = currentProcessedDocsPerSec;
     }
 

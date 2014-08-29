@@ -56,7 +56,7 @@ import dk.netarkivet.testutils.TestFileUtils;
 /**
  * Unit tests for the class WARCBatchJob.
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class WARCBatchJobTester {
 
     // Reference to test files:
@@ -84,8 +84,7 @@ public class WARCBatchJobTester {
     /**
      * Utility method for printing Exception arrays on System.out.
      * 
-     * @param es
-     *            The Exception array to be printed.
+     * @param es The Exception array to be printed.
      */
     private void printExceptions(Exception[] es) {
         if (es.length > 0) {
@@ -132,8 +131,8 @@ public class WARCBatchJobTester {
     }
 
     /**
-     * Verifies that thrown Exceptions in process get collected TODO Check more
-     * error conditions -- the exception handling is tricky!
+     * Verifies that thrown Exceptions in process get collected TODO Check more error conditions -- the exception
+     * handling is tricky!
      */
     @Test
     public void testOneJob_ExceptionInProcess() {
@@ -164,8 +163,7 @@ public class WARCBatchJobTester {
     @Test
     public void testFiltering() {
         /*
-         * We do not need to verify that BatchFilter.NO_FILTER is respected, as
-         * this is done in testBatchARCFiles().
+         * We do not need to verify that BatchFilter.NO_FILTER is respected, as this is done in testBatchARCFiles().
          */
         WARCBatchJob job = new TestWARCBatchJob() {
             public WARCBatchFilter getFilter() {
@@ -190,8 +188,7 @@ public class WARCBatchJobTester {
     }
 
     /**
-     * Verify that ARCBatchJob objects can be serialized and deserialized
-     * without harm.
+     * Verify that ARCBatchJob objects can be serialized and deserialized without harm.
      */
     @Test
     public void testSerializability() {
@@ -240,8 +237,7 @@ public class WARCBatchJobTester {
     /**
      * Makes the given job process a few null records and handle an Exception.
      * 
-     * @param job
-     *            the given job
+     * @param job the given job
      */
     private void doStuff(SerializableWARCBatchJob job) {
         job.processRecord(null, new ByteArrayOutputStream());
@@ -250,8 +246,7 @@ public class WARCBatchJobTester {
     }
 
     /**
-     * Verify that we can also process arc.gz files. FIXME Broken by
-     * http://sbforge.org/jira/browse/NAS-1918
+     * Verify that we can also process arc.gz files. FIXME Broken by http://sbforge.org/jira/browse/NAS-1918
      */
     @Test
     @Ignore("Broken by http://sbforge.org/jira/browse/NAS-1918")
@@ -276,9 +271,8 @@ public class WARCBatchJobTester {
     }
 
     /**
-     * A very simple ARCBatchJob that simply counts relevant method calls in the
-     * parents class's designated fields. It also exposes ARCBatchJob's internal
-     * list of Exceptions.
+     * A very simple ARCBatchJob that simply counts relevant method calls in the parents class's designated fields. It
+     * also exposes ARCBatchJob's internal list of Exceptions.
      */
     private class TestWARCBatchJob extends WARCBatchJob {
         /**

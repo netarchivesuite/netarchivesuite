@@ -26,13 +26,11 @@ import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlS
 import static org.junit.Assert.*;
 import org.junit.Test;
 
-
 /**
- * Unit tests for the class
- * {@link CrawlProgressMessage}.
+ * Unit tests for the class {@link CrawlProgressMessage}.
  */
 public class CrawlProgressMessageTester {
-    
+
     @Test
     public void testConstructor() {
         long harvestId = 2L;

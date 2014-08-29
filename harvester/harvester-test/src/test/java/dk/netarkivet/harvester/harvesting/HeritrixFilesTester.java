@@ -44,14 +44,14 @@ import java.io.File;
 public class HeritrixFilesTester {
 
     private MockupJMS mjms = new MockupJMS();
-    
+
     private File defaultJmxPasswordFile = new File("/path/to/jmxpasswordfile");
     private File defaultJmxAccessFile = new File("/path/to/jmxaccessfile");
 
     @Before
     public void setUp() {
-       TestInfo.WORKING_DIR.mkdirs();
-       mjms.setUp();
+        TestInfo.WORKING_DIR.mkdirs();
+        mjms.setUp();
     }
 
     @After
@@ -78,77 +78,63 @@ public class HeritrixFilesTester {
         hf = getStandardHeritrixFiles();
 
         // check, that crawlDir is correctly set
-        assertEquals("crawlDir should be set up correctly.",
-                     TestInfo.HERITRIX_TEMP_DIR.getAbsolutePath(),
-                     hf.getCrawlDir().getAbsolutePath());
+        assertEquals("crawlDir should be set up correctly.", TestInfo.HERITRIX_TEMP_DIR.getAbsolutePath(), hf
+                .getCrawlDir().getAbsolutePath());
 
         // check, that arcFilePrefix is correctly set
-        assertEquals("arcFilePrefix should contain job id and harvest id",
-                     "42-42", hf.getArchiveFilePrefix());
-        assertEquals("jmxPasswordFile should be" 
-                + defaultJmxPasswordFile.getAbsolutePath(), 
-                defaultJmxPasswordFile, hf.getJmxPasswordFile());
-        assertEquals("jmxAccessfile should be" 
-                + defaultJmxAccessFile.getAbsolutePath(), 
-                defaultJmxAccessFile, hf.getJmxAccessFile());
-   
+        assertEquals("arcFilePrefix should contain job id and harvest id", "42-42", hf.getArchiveFilePrefix());
+        assertEquals("jmxPasswordFile should be" + defaultJmxPasswordFile.getAbsolutePath(), defaultJmxPasswordFile,
+                hf.getJmxPasswordFile());
+        assertEquals("jmxAccessfile should be" + defaultJmxAccessFile.getAbsolutePath(), defaultJmxAccessFile,
+                hf.getJmxAccessFile());
+
     }
 
     /**
-     * Test alternate constructor.  
+     * Test alternate constructor.
      */
     @Test
     public void testAlternateConstructor() {
-        HeritrixFiles hf 
-            = new HeritrixFiles(TestInfo.HERITRIX_TEMP_DIR, new JobInfoTestImpl(42L, 42L));
+        HeritrixFiles hf = new HeritrixFiles(TestInfo.HERITRIX_TEMP_DIR, new JobInfoTestImpl(42L, 42L));
         // check, that crawlDir is correctly set
-        assertEquals("crawlDir should be set up correctly.",
-                     TestInfo.HERITRIX_TEMP_DIR.getAbsolutePath(),
-                     hf.getCrawlDir().getAbsolutePath());
+        assertEquals("crawlDir should be set up correctly.", TestInfo.HERITRIX_TEMP_DIR.getAbsolutePath(), hf
+                .getCrawlDir().getAbsolutePath());
 
         // check, that arcFilePrefix is correctly set
-        assertEquals("arcFilePrefix should contain job id and harvest id",
-                     "42-42", hf.getArchiveFilePrefix());
-        
+        assertEquals("arcFilePrefix should contain job id and harvest id", "42-42", hf.getArchiveFilePrefix());
+
         // check, that in the alternate constructor the JMX files to
         // be used by Heritrix is read from settings.
-        File jmxPasswordFileFromSettings 
-            = new File(Settings.get(CommonSettings.JMX_PASSWORD_FILE));
-        File jmxAccessFileFromSettings 
-            = new File(Settings.get(CommonSettings.JMX_ACCESS_FILE));
-        
-        assertEquals("jmxPasswordFile should be" 
-                + jmxPasswordFileFromSettings.getAbsolutePath(), 
+        File jmxPasswordFileFromSettings = new File(Settings.get(CommonSettings.JMX_PASSWORD_FILE));
+        File jmxAccessFileFromSettings = new File(Settings.get(CommonSettings.JMX_ACCESS_FILE));
+
+        assertEquals("jmxPasswordFile should be" + jmxPasswordFileFromSettings.getAbsolutePath(),
                 jmxPasswordFileFromSettings, hf.getJmxPasswordFile());
-        assertEquals("jmxAccessfile should be" 
-                + jmxAccessFileFromSettings.getAbsolutePath(), 
+        assertEquals("jmxAccessfile should be" + jmxAccessFileFromSettings.getAbsolutePath(),
                 jmxAccessFileFromSettings, hf.getJmxAccessFile());
     }
-    
-    
+
     /**
-     * Test, that writeOrderXml fails correctly with bad arguments:
-     * - null argument
-     * - Document object with no contents.
+     * Test, that writeOrderXml fails correctly with bad arguments: - null argument - Document object with no contents.
      *
      * Bug 871 caused this test to be written.
      */
     @Test
-    public void testWriteOrderXml(){
+    public void testWriteOrderXml() {
         TestInfo.HERITRIX_TEMP_DIR.mkdir();
         HeritrixFiles hf = getStandardHeritrixFiles();
         try {
             hf.writeOrderXml(null);
             fail("ArgumentNotValid exception with null Document");
         } catch (ArgumentNotValid e) {
-            //Expected
+            // Expected
         }
         DocumentFactory docFactory = DocumentFactory.getInstance();
         try {
             hf.writeOrderXml(docFactory.createDocument());
             fail("ArgumentNotValid exception with Document with no contents");
         } catch (ArgumentNotValid e) {
-            //Expected
+            // Expected
         }
 
         // test, that order xml is written, if argument is valid
@@ -160,10 +146,9 @@ public class HeritrixFilesTester {
             fail("Exception not expected: " + e);
         }
     }
+
     /**
-     * Test, that writeSeedsTxt fails correctly with bad arguments:
-     * - null argument
-     * - empty String
+     * Test, that writeSeedsTxt fails correctly with bad arguments: - null argument - empty String
      *
      * Bug 871 caused this test to be written.
      */
@@ -175,14 +160,14 @@ public class HeritrixFilesTester {
             hf.writeSeedsTxt(null);
             fail("ArgumentNotValid exception with null seeds");
         } catch (ArgumentNotValid e) {
-            //Expected
+            // Expected
         }
 
         try {
             hf.writeSeedsTxt("");
             fail("ArgumentNotValid exception with seeds equal to empty string");
         } catch (ArgumentNotValid e) {
-            //Expected
+            // Expected
         }
 
         try {
@@ -191,18 +176,17 @@ public class HeritrixFilesTester {
             fail("Exception not expected with seeds equal to valid non-empty String object" + e);
         }
     }
-    
-    /** Check, that the getArcsDir method works.*/
+
+    /** Check, that the getArcsDir method works. */
     @Test
     public void testGetArcsDir() {
         TestInfo.HERITRIX_TEMP_DIR.mkdir();
         HeritrixFiles hf = getStandardHeritrixFiles();
         File arcsdir = hf.getArcsDir();
         assertEquals("Wrong arcsdir", new File(TestInfo.HERITRIX_TEMP_DIR,
-                        dk.netarkivet.common.Constants.ARCDIRECTORY_NAME),
-                        arcsdir);
+                dk.netarkivet.common.Constants.ARCDIRECTORY_NAME), arcsdir);
     }
-    
+
     /** Check the getHeritrixOutput method */
     @Test
     public void testGetHeritrixOutput() {
@@ -211,16 +195,16 @@ public class HeritrixFilesTester {
         File output = hf.getHeritrixOutput();
         assertEquals("Wrong heritrixOutputDir", new File(hf.getCrawlDir(), "heritrix.out"), output);
     }
-    
+
     /**
-     * Standard HeritrixFiles setup with crawldir =  TestInfo.HERITRIX_TEMP_DIR,
-     * jobID=42,harvestID=42,jmxPasswordFile/jmxAccessFile defined as
-     * /path/to/jmxpasswordfile and /path/to/jmxaccessfile respectively
+     * Standard HeritrixFiles setup with crawldir = TestInfo.HERITRIX_TEMP_DIR,
+     * jobID=42,harvestID=42,jmxPasswordFile/jmxAccessFile defined as /path/to/jmxpasswordfile and
+     * /path/to/jmxaccessfile respectively
+     * 
      * @return
      */
     public HeritrixFiles getStandardHeritrixFiles() {
-        return new HeritrixFiles(TestInfo.HERITRIX_TEMP_DIR, new JobInfoTestImpl(42L, 42L),
-            new File("/path/to/jmxpasswordfile"),
-            new File("/path/to/jmxaccessfile"));
+        return new HeritrixFiles(TestInfo.HERITRIX_TEMP_DIR, new JobInfoTestImpl(42L, 42L), new File(
+                "/path/to/jmxpasswordfile"), new File("/path/to/jmxaccessfile"));
     }
 }

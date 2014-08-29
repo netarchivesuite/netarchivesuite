@@ -82,7 +82,7 @@ public class SnapshotHarvestDefinitionTester {
 
         ArgumentCaptor<HarvestDefinition> hdCapture = ArgumentCaptor.forClass(HarvestDefinition.class);
         verify(harvestDefinitionDAOMock).create(hdCapture.capture());
-        FullHarvest newHD = (FullHarvest)hdCapture.getValue();
+        FullHarvest newHD = (FullHarvest) hdCapture.getValue();
 
         assertNotNull("Should have fnord after creation", newHD);
         assertEquals("Should have right name", newHDname, newHD.getName());
@@ -126,8 +126,8 @@ public class SnapshotHarvestDefinitionTester {
             snapshotHarvestDefinition.processRequest(pageContext, I18N);
             fail("Should complain about missing " + Constants.HARVEST_PARAM);
         } catch (ForwardedToErrorPage e) {
-            StringAsserts.assertStringContains(
-                    "Should mention " + Constants.HARVEST_PARAM + " in msg", Constants.HARVEST_PARAM, e.getMessage());
+            StringAsserts.assertStringContains("Should mention " + Constants.HARVEST_PARAM + " in msg",
+                    Constants.HARVEST_PARAM, e.getMessage());
         }
     }
 }

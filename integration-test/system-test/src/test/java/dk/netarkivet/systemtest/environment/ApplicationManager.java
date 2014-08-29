@@ -44,15 +44,16 @@ public class ApplicationManager {
             throw new RuntimeException("Failed to redeploy GUI", e);
         }
     }
+
     public void redeployGUI() {
         try {
             log.info("Redeploying GUI");
             environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, "rm -r tmpdircommon/*");
             environmentManager.runCommandWithoutQuotes("prepare_test_db.sh");
-            environmentManager.runCommandWithoutQuotes("scp -r release_software_dist/$TESTX/lib/* " +
-                    TestEnvironment.JOB_ADMIN_SERVER + ":~/$TESTX/lib" );
-            environmentManager.runCommandWithoutQuotes("scp -r release_software_dist/$TESTX/webpages/* " +
-                    TestEnvironment.JOB_ADMIN_SERVER + ":~/$TESTX/webpages" );
+            environmentManager.runCommandWithoutQuotes("scp -r release_software_dist/$TESTX/lib/* "
+                    + TestEnvironment.JOB_ADMIN_SERVER + ":~/$TESTX/lib");
+            environmentManager.runCommandWithoutQuotes("scp -r release_software_dist/$TESTX/webpages/* "
+                    + TestEnvironment.JOB_ADMIN_SERVER + ":~/$TESTX/webpages");
             environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, "./conf/kill_GUIApplication.sh");
             environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, "./conf/start_GUIApplication.sh");
         } catch (Exception e) {

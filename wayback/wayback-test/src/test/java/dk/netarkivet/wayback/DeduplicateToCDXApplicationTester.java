@@ -79,7 +79,6 @@ public class DeduplicateToCDXApplicationTester {
         String output = ((ByteArrayOutputStream) new_std_out).toString();
         String error = ((ByteArrayOutputStream) new_std_err).toString();
         assertTrue("Error string should be empty", error.equals(""));
-        assertTrue("Expect plenty of cdx results, not '" + output + "'",
-                   output.split("\n").length > 20);
+        assertTrue("Expect plenty of cdx results, not '" + output + "'", output.split("\n").length > 20);
     }
 }

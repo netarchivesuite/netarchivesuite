@@ -31,7 +31,7 @@ import dk.netarkivet.harvester.datamodel.DAO;
  */
 public abstract class ExtendedFieldTypeDAO implements DAO {
 
-	/** The database singleton model. */
+    /** The database singleton model. */
     protected static ExtendedFieldTypeDAO instance;
 
     /**
@@ -41,21 +41,23 @@ public abstract class ExtendedFieldTypeDAO implements DAO {
     }
 
     /**
-     * Reset the DAO instance.  Only for use from within tests.
+     * Reset the DAO instance. Only for use from within tests.
      */
     protected static void reset() {
         instance = null;
     }
 
-    /** Tests if exists an ExtendedFieldType with the given ID.
-    * @param aExtendedfieldtypeId An id belonging to an ExtendedFieldType
-    * @return true, if there exists an ExtendedFieldType with the given ID,
-    * otherwise returns false.
-    */
+    /**
+     * Tests if exists an ExtendedFieldType with the given ID.
+     * 
+     * @param aExtendedfieldtypeId An id belonging to an ExtendedFieldType
+     * @return true, if there exists an ExtendedFieldType with the given ID, otherwise returns false.
+     */
     public abstract boolean exists(Long aExtendedfieldtypeId);
 
     /**
      * Read an ExtendedFieldType belonging to the given id.
+     * 
      * @param aExtendedfieldtypeId an id belonging to a ExtendedFieldType
      * @return an ExtendedFieldType from belonging to the given id.
      */
@@ -64,11 +66,11 @@ public abstract class ExtendedFieldTypeDAO implements DAO {
     /**
      * @return a list of all ExtendedFieldTypes.
      */
-    public abstract List<ExtendedFieldType> getAll(); 
-    
+    public abstract List<ExtendedFieldType> getAll();
+
     /**
-     * If an instance exists, return it, otherwise instantiate one,
-     * and return it.
+     * If an instance exists, return it, otherwise instantiate one, and return it.
+     * 
      * @return the instance of this class.
      */
     public static synchronized ExtendedFieldTypeDAO getInstance() {
@@ -77,5 +79,5 @@ public abstract class ExtendedFieldTypeDAO implements DAO {
         }
         return instance;
     }
-    
+
 }

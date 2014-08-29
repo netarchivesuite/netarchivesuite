@@ -74,8 +74,8 @@ public class ArcMergeTester {
         PrintStream myOut = new PrintStream(new FileOutputStream(arcFile));
         try {
             System.setOut(myOut);
-            ArcMerge.main(new String[] { TestInfo.ARC1.getAbsolutePath(), TestInfo.ARC2.getAbsolutePath(),
-                    TestInfo.ARC3.getAbsolutePath() });
+            ArcMerge.main(new String[] {TestInfo.ARC1.getAbsolutePath(), TestInfo.ARC2.getAbsolutePath(),
+                    TestInfo.ARC3.getAbsolutePath()});
         } catch (SecurityException e) {
             assertEquals("Should have exited normally", 0, pse.getExitValue());
         }
@@ -93,8 +93,7 @@ public class ArcMergeTester {
     }
 
     /**
-     * Asserts that the given ARCRecord has the specified uri, mimetype and
-     * content.
+     * Asserts that the given ARCRecord has the specified uri, mimetype and content.
      */
 
     private static void assertMatches(ArchiveRecord record, String uri, String mime, String content) {

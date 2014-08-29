@@ -30,15 +30,17 @@ import com.sleepycat.persist.model.Persistent;
  */
 @Persistent
 interface FrontierReportLineOrderKey {
-    
+
     /**
      * Returns the queue's unique identifier.
+     * 
      * @return the queue's unique identifier.
      */
     String getQueueId();
-    
+
     /**
      * Returns the queue size.
+     * 
      * @return the queue size.
      */
     long getQueueSize();

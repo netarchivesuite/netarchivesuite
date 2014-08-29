@@ -35,15 +35,13 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.harvester.datamodel.AliasInfo;
 import dk.netarkivet.harvester.datamodel.Constants;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 
 /**
- * Tests for class MetadataEntry.
- * Note that this class is also tested in other test-classes.
+ * Tests for class MetadataEntry. Note that this class is also tested in other test-classes.
  */
 public class MetadataEntryTester {
     private String aRealURL;
@@ -56,17 +54,15 @@ public class MetadataEntryTester {
 
     private String realData;
     final private String nullData = null;
-    
+
     private String anInvalidUrl;
     private String anInvalidMimetype;
 
     @Before
     public void setUp() {
-        aRealURL = "metadata://netarkivet.dk/crawl/"
-                + "setup/order.xml?version=1.7.1&harvestid=1&jobid=1";
+        aRealURL = "metadata://netarkivet.dk/crawl/" + "setup/order.xml?version=1.7.1&harvestid=1&jobid=1";
         aRealMimetype = "text/plain";
-        realData = "bla bla bla bla bla bla bla bla "
-            + "a bla bla bla bla bla bla bla bla bla bla bla";
+        realData = "bla bla bla bla bla bla bla bla " + "a bla bla bla bla bla bla bla bla bla bla bla";
         anEmptyURL = "";
         anEmptyMimetype = "";
         anInvalidUrl = "http:/aninvalidUrl";
@@ -87,7 +83,7 @@ public class MetadataEntryTester {
             // expected
         }
 
-       // check, that null & empty arguments are not accepted. (2)
+        // check, that null & empty arguments are not accepted. (2)
         try {
             new MetadataEntry(anEmptyURL, aRealMimetype, realData);
             fail("ArgumentNotValid exception expected for null/empty arguments");
@@ -124,7 +120,7 @@ public class MetadataEntryTester {
         } catch (ArgumentNotValid e) {
             fail("ArgumentNotValid exception not expected for valid arguments");
         }
-        
+
         // Check, that invalid url throw ArgumentNotValid exception
         try {
             new MetadataEntry(anInvalidUrl, aRealMimetype, realData);
@@ -139,7 +135,7 @@ public class MetadataEntryTester {
         } catch (ArgumentNotValid e) {
             // Expected
         }
-        
+
     }
 
     /**
@@ -147,79 +143,78 @@ public class MetadataEntryTester {
      */
     @Test
     public void testGetterAndSetters() {
-       MetadataEntry md = new MetadataEntry(aRealURL, aRealMimetype, realData);
-       assertEquals("getData() returns wrong value", realData, new String(md.getData()));
-       assertEquals("getURL() returns wrong value", aRealURL, md.getURL());
-       assertEquals("getMimeType() returns wrong value", aRealMimetype, md.getMimeType());
+        MetadataEntry md = new MetadataEntry(aRealURL, aRealMimetype, realData);
+        assertEquals("getData() returns wrong value", realData, new String(md.getData()));
+        assertEquals("getURL() returns wrong value", aRealURL, md.getURL());
+        assertEquals("getMimeType() returns wrong value", aRealMimetype, md.getMimeType());
     }
 
     /**
      * Test isDuplicateReductionMetadataEntry.
      */
     @Test
-     public void testIsDuplicateReductionMetadataEntry() {
-         MetadataEntry md = new MetadataEntry(
-                 "metadata://netarkivet.dk/crawl/setup/duplicatereductionjobs?majorversion=1&minorversion=0&harvestid=%s&harvestnum=%s&jobid=%s", aRealMimetype, realData);
-         MetadataEntry md1 = new MetadataEntry("metadata://netarkivet.dk/crawl/setup/aliases?majorversion=1&minorversion=0&harvestid=%s&harvestnum=%s&jobid=%s", aRealMimetype, realData);
-         assertFalse("md1 should not be recognized as a duplicatereduction metadataEntry", md1.isDuplicateReductionMetadataEntry());
-         assertTrue("md should be recognized as a duplicatereduction metadataEntry", md.isDuplicateReductionMetadataEntry());
-     }
+    public void testIsDuplicateReductionMetadataEntry() {
+        MetadataEntry md = new MetadataEntry(
+                "metadata://netarkivet.dk/crawl/setup/duplicatereductionjobs?majorversion=1&minorversion=0&harvestid=%s&harvestnum=%s&jobid=%s",
+                aRealMimetype, realData);
+        MetadataEntry md1 = new MetadataEntry(
+                "metadata://netarkivet.dk/crawl/setup/aliases?majorversion=1&minorversion=0&harvestid=%s&harvestnum=%s&jobid=%s",
+                aRealMimetype, realData);
+        assertFalse("md1 should not be recognized as a duplicatereduction metadataEntry",
+                md1.isDuplicateReductionMetadataEntry());
+        assertTrue("md should be recognized as a duplicatereduction metadataEntry",
+                md.isDuplicateReductionMetadataEntry());
+    }
 
-     /** Test toString method. */
+    /** Test toString method. */
     @Test
-     public void testToString() {
-         MetadataEntry md = new MetadataEntry(aRealURL, aRealMimetype, realData);
-         String expectedToString = "URL= " + aRealURL + " ; mimetype= " + aRealMimetype 
-             +  " ; data= " + realData;
-         assertEquals("toString() returns unexpected result", expectedToString, md.toString());
-     }
-     
-     /** Test makeAliasMetadataEntry() returns null 
-      * if the aliases in the list of aliases are expired.
-      */
+    public void testToString() {
+        MetadataEntry md = new MetadataEntry(aRealURL, aRealMimetype, realData);
+        String expectedToString = "URL= " + aRealURL + " ; mimetype= " + aRealMimetype + " ; data= " + realData;
+        assertEquals("toString() returns unexpected result", expectedToString, md.toString());
+    }
+
+    /**
+     * Test makeAliasMetadataEntry() returns null if the aliases in the list of aliases are expired.
+     */
     @Test
-     public void testMakeAliasMetadataEntryReturnsNullWithOnlyExpiredAliases() {
-         Long origHarvestdefinitionId = 1L;
-         Long jobId = 1L;
-         int harvestNum = 1;
-         List<AliasInfo> aliases = new ArrayList<AliasInfo>();
-         Date expiredDate = new Date(System.currentTimeMillis()                
-                 - (Constants.ALIAS_TIMEOUT_IN_MILLISECONDS + 10L));
-                 
-         AliasInfo expiredAlias = new AliasInfo("netarkivet.dk", "alias.dk", expiredDate);
-         assertTrue("The alias should be expired", expiredAlias.isExpired());
-         aliases.add(expiredAlias);
-         MetadataEntry md = MetadataEntry.makeAliasMetadataEntry(
-                 aliases, origHarvestdefinitionId, harvestNum, jobId);
-         assertTrue("The returned MetadataEntry should be null", md == null);
-     }
-     
+    public void testMakeAliasMetadataEntryReturnsNullWithOnlyExpiredAliases() {
+        Long origHarvestdefinitionId = 1L;
+        Long jobId = 1L;
+        int harvestNum = 1;
+        List<AliasInfo> aliases = new ArrayList<AliasInfo>();
+        Date expiredDate = new Date(System.currentTimeMillis() - (Constants.ALIAS_TIMEOUT_IN_MILLISECONDS + 10L));
+
+        AliasInfo expiredAlias = new AliasInfo("netarkivet.dk", "alias.dk", expiredDate);
+        assertTrue("The alias should be expired", expiredAlias.isExpired());
+        aliases.add(expiredAlias);
+        MetadataEntry md = MetadataEntry.makeAliasMetadataEntry(aliases, origHarvestdefinitionId, harvestNum, jobId);
+        assertTrue("The returned MetadataEntry should be null", md == null);
+    }
+
     /**
      * Test serializability.
      */
     @Test
     public void testSerializability() throws IOException, ClassNotFoundException {
-        //Take an object:
+        // Take an object:
 
         MetadataEntry fooOriginal = new MetadataEntry(aRealURL, aRealMimetype, realData);
-        //serialize and deserialize the study object:
+        // serialize and deserialize the study object:
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ObjectOutputStream ous = new ObjectOutputStream(baos);
         ous.writeObject(fooOriginal);
         ous.close();
         baos.close();
-        ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(
-                baos.toByteArray()));
+        ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(baos.toByteArray()));
         MetadataEntry fooCopy;
         fooCopy = (MetadataEntry) ois.readObject();
-        //Finally, compare their visible states:
-        assertEquals("After serialization the states differed:\n" +
-                relevantState(fooOriginal) + "\n" + relevantState(fooCopy),
-                relevantState(fooOriginal),relevantState(fooCopy));
+        // Finally, compare their visible states:
+        assertEquals("After serialization the states differed:\n" + relevantState(fooOriginal) + "\n"
+                + relevantState(fooCopy), relevantState(fooOriginal), relevantState(fooCopy));
     }
 
     private String relevantState(MetadataEntry fooOriginal) {
-        return fooOriginal.getURL() + fooOriginal.getMimeType()
-                + new String(fooOriginal.getData());
+        return fooOriginal.getURL() + fooOriginal.getMimeType() + new String(fooOriginal.getData());
     }
 }

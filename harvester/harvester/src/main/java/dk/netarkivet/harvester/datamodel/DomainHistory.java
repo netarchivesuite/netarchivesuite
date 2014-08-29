@@ -40,11 +40,10 @@ public class DomainHistory {
      */
     private SortedSet<HarvestInfo> harvestInfo;
     /**
-     * Sorts HarvestInfo with newest first. Sorting on HarvestID and
-     * DomainConfiguration is only to make comparator consistent with equals.
+     * Sorts HarvestInfo with newest first. Sorting on HarvestID and DomainConfiguration is only to make comparator
+     * consistent with equals.
      */
-    private static final Comparator<HarvestInfo> DATE_COMPARATOR 
-        = new Comparator<HarvestInfo>() {
+    private static final Comparator<HarvestInfo> DATE_COMPARATOR = new Comparator<HarvestInfo>() {
         public int compare(HarvestInfo hi1, HarvestInfo hi2) {
             int i = hi2.getDate().compareTo(hi1.getDate());
             if (i != 0) {
@@ -54,8 +53,7 @@ public class DomainHistory {
             if (i2 != 0) {
                 return i2;
             }
-            return hi2.getDomainConfigurationName().compareTo(
-                    hi1.getDomainConfigurationName());
+            return hi2.getDomainConfigurationName().compareTo(hi1.getDomainConfigurationName());
         }
     };
 
@@ -69,9 +67,8 @@ public class DomainHistory {
     /**
      * Get all harvest information domain history.
      *
-     * @return Iterator of harvest information registered
-     *         for this domain. The information is sorted by date with the most
-     *         recent information as the first entry.
+     * @return Iterator of harvest information registered for this domain. The information is sorted by date with the
+     * most recent information as the first entry.
      */
     public Iterator<HarvestInfo> getHarvestInfo() {
         return harvestInfo.iterator();
@@ -81,8 +78,7 @@ public class DomainHistory {
      * Gets the most recent harvestinfo for a specific DomainConfiguration.
      *
      * @param cfgName name of the configuration
-     * @return the most recent harvest info or null if no
-     *         matching harvestinfo found
+     * @return the most recent harvest info or null if no matching harvestinfo found
      */
     public HarvestInfo getMostRecentHarvestInfo(String cfgName) {
         ArgumentNotValid.checkNotNull(cfgName, "cfgName");
@@ -90,7 +86,7 @@ public class DomainHistory {
         if (harvestInfo.size() == 0) {
             return null;
         }
-        for (HarvestInfo hi: harvestInfo) {
+        for (HarvestInfo hi : harvestInfo) {
             if (hi.getDomainConfigurationName().equals(cfgName)) {
                 return hi;
             }
@@ -99,10 +95,9 @@ public class DomainHistory {
     }
 
     /**
-     * Gets the newest harvestinfo for a specific HarvestDefinition and
-     * DomainConfiguration.
+     * Gets the newest harvestinfo for a specific HarvestDefinition and DomainConfiguration.
      *
-     * @param oid     id of the harvest definition
+     * @param oid id of the harvest definition
      * @param cfgName the name of the domain configuration
      * @return the harvest info or null if no matching harvestinfo found
      */
@@ -114,8 +109,7 @@ public class DomainHistory {
         HarvestInfo hi;
         while (iter.hasNext()) {
             hi = iter.next();
-            if (hi.getHarvestID().equals(oid)
-                    && hi.getDomainConfigurationName().equals(cfgName)) {
+            if (hi.getHarvestID().equals(oid) && hi.getDomainConfigurationName().equals(cfgName)) {
                 return hi;
             }
         }
@@ -131,43 +125,42 @@ public class DomainHistory {
         ArgumentNotValid.checkNotNull(hi, "hi");
         harvestInfo.add(hi);
     }
-    
-   /**
-    * Return the most recent harvestresult for the configuration identified by 
-    * name that was a complete harvest of the domain. 
-    * @param configName The name of the configuration 
-    * @param history The domainHistory for a domain
-    * @return the most recent harvestresult for the configuration identified by 
-    * name that was a complete harvest of the domain. 
-    */
-    public static HarvestInfo getBestHarvestInfoExpectation(String configName,
-            DomainHistory history) {
+
+    /**
+     * Return the most recent harvestresult for the configuration identified by name that was a complete harvest of the
+     * domain.
+     * 
+     * @param configName The name of the configuration
+     * @param history The domainHistory for a domain
+     * @return the most recent harvestresult for the configuration identified by name that was a complete harvest of the
+     * domain.
+     */
+    public static HarvestInfo getBestHarvestInfoExpectation(String configName, DomainHistory history) {
         ArgumentNotValid.checkNotNullOrEmpty(configName, "String configName");
         ArgumentNotValid.checkNotNull(history, "DomainHistory history");
         // Remember best expectation
         HarvestInfo best = null;
 
-        //loop through all harvest infos for this configuration. The iterator is
-        //sorted by date with most recent first
+        // loop through all harvest infos for this configuration. The iterator is
+        // sorted by date with most recent first
         Iterator<HarvestInfo> i = history.getHarvestInfo();
         while (i.hasNext()) {
             HarvestInfo hi = i.next();
             if (hi.getDomainConfigurationName().equals(configName)) {
-                //Remember this expectation, if it harvested at least
-                //as many objects as the previously remembered
-                if ((best == null) || (best.getCountObjectRetrieved()
-                                       <= hi.getCountObjectRetrieved())) {
+                // Remember this expectation, if it harvested at least
+                // as many objects as the previously remembered
+                if ((best == null) || (best.getCountObjectRetrieved() <= hi.getCountObjectRetrieved())) {
                     best = hi;
                 }
-                //if this harvest completed, stop search and return best
-                //expectation,
+                // if this harvest completed, stop search and return best
+                // expectation,
                 if (hi.getStopReason() == StopReason.DOWNLOAD_COMPLETE) {
                     return best;
                 }
             }
         }
 
-        //Return maximum uncompleted harvest, or null if never harvested
+        // Return maximum uncompleted harvest, or null if never harvested
         return best;
     }
 

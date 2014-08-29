@@ -43,20 +43,18 @@ import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
 
 /**
- * Batchjob that extracts lines referring to a specific domain from a crawl log.
- * The batch job should be restricted to run on metadata files for a specific
- * job only, using the {@link #processOnlyFilesMatching(String)} construct.
+ * Batchjob that extracts lines referring to a specific domain from a crawl log. The batch job should be restricted to
+ * run on metadata files for a specific job only, using the {@link #processOnlyFilesMatching(String)} construct.
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({"serial"})
 public class HarvestedUrlsForDomainBatchJob extends ArchiveBatchJob {
 
     // logger
     private final Log log = LogFactory.getLog(getClass().getName());
-   
+
     /** Metadata URL for crawl logs. */
-    private static final String SETUP_URL_FORMAT
-            = String.format("metadata://%s/crawl/logs/crawl.log", 
-                    Settings.get(CommonSettings.ORGANIZATION));
+    private static final String SETUP_URL_FORMAT = String.format("metadata://%s/crawl/logs/crawl.log",
+            Settings.get(CommonSettings.ORGANIZATION));
     /** The domain to extract crawl.log lines for. */
     final String domain;
 
@@ -70,30 +68,31 @@ public class HarvestedUrlsForDomainBatchJob extends ArchiveBatchJob {
         this.domain = domain;
 
         /**
-        * Two week in milliseconds.
-        */
-        batchJobTimeout = 7* Constants.ONE_DAY_IN_MILLIES;
+         * Two week in milliseconds.
+         */
+        batchJobTimeout = 7 * Constants.ONE_DAY_IN_MILLIES;
     }
 
     /**
      * Does nothing, no initialisation is needed.
+     * 
      * @param os Not used.
      */
     @Override
     public void initialize(OutputStream os) {
     }
-    
+
     @Override
     public ArchiveBatchFilter getFilter() {
         return new ArchiveBatchFilter("OnlyCrawlLog") {
             @Override
             public boolean accept(ArchiveRecordBase record) {
-                // All ARC records have a URL, but the WarcInfo records doesn't 
-                if (record.bIsWarc){
+                // All ARC records have a URL, but the WarcInfo records doesn't
+                if (record.bIsWarc) {
                     // In the WARC file the warc-info hasn't a URL. the other
                     // records in the metadata file have that.
-                    return (record.getHeader().getUrl() != null 
-                            && record.getHeader().getUrl().startsWith(SETUP_URL_FORMAT));
+                    return (record.getHeader().getUrl() != null && record.getHeader().getUrl()
+                            .startsWith(SETUP_URL_FORMAT));
                 } else {
                     return record.getHeader().getUrl().startsWith(SETUP_URL_FORMAT);
                 }
@@ -103,6 +102,7 @@ public class HarvestedUrlsForDomainBatchJob extends ArchiveBatchJob {
 
     /**
      * Process a record on crawl log concerning the given domain to result.
+     * 
      * @param record The record to process.
      * @param os The output stream for the result.
      *
@@ -114,14 +114,12 @@ public class HarvestedUrlsForDomainBatchJob extends ArchiveBatchJob {
         ArgumentNotValid.checkNotNull(record, "ArchiveRecordBase record");
         ArgumentNotValid.checkNotNull(os, "OutputStream os");
         log.info("looking for crawl-log lines for domain: " + domain);
-        
-        BufferedReader arcreader
-                = new BufferedReader(new InputStreamReader(record.getInputStream()));
+
+        BufferedReader arcreader = new BufferedReader(new InputStreamReader(record.getInputStream()));
         String line = null;
         try {
-            for(line = arcreader.readLine(); line != null;
-                line = arcreader.readLine()) {
-                
+            for (line = arcreader.readLine(); line != null; line = arcreader.readLine()) {
+
                 // Parse a single crawl-log line into parts
                 // The parts are here separated by white space.
                 // part 4 of the crawl-line is the url component
@@ -132,20 +130,18 @@ public class HarvestedUrlsForDomainBatchJob extends ArchiveBatchJob {
                 String[] parts = line.split("\\s+");
                 final int URL_PART_INDEX = 3;
                 final int DISCOVERY_URL_PART_INDEX = 5;
-                // The current crawl.log line is written to the outstream 
+                // The current crawl.log line is written to the outstream
                 // in two cases:
-                // A. If it has a URL component (4th component) and 
-                //    this URL belongs to the domain in question
-                // B. If it has a Discovery URL (6th component) and 
-                //    this URL belongs to the domain in question
-                if (parts.length > 3 && getDomainFromUrlPart(
-                        parts[URL_PART_INDEX]).equals(domain)) {
+                // A. If it has a URL component (4th component) and
+                // this URL belongs to the domain in question
+                // B. If it has a Discovery URL (6th component) and
+                // this URL belongs to the domain in question
+                if (parts.length > 3 && getDomainFromUrlPart(parts[URL_PART_INDEX]).equals(domain)) {
                     os.write(line.getBytes("UTF-8"));
                     os.write('\n');
 
                 } else if (parts.length > 5 && !parts[5].equals("-")
-                        && getDomainFromUrlPart(parts[DISCOVERY_URL_PART_INDEX])
-                            .equals(domain)) {
+                        && getDomainFromUrlPart(parts[DISCOVERY_URL_PART_INDEX]).equals(domain)) {
                     os.write(line.getBytes("UTF-8"));
                     os.write('\n');
                 }
@@ -154,11 +150,11 @@ public class HarvestedUrlsForDomainBatchJob extends ArchiveBatchJob {
         } catch (IOException e) {
             throw new IOFailure("Unable to process (w)arc record", e);
         } catch (Throwable e1) {
-              e1.printStackTrace();
-              System.out.println("caused by line '" + line + "'");
+            e1.printStackTrace();
+            System.out.println("caused by line '" + line + "'");
         } finally {
             try {
-                arcreader.close(); 
+                arcreader.close();
             } catch (IOException e) {
                 log.warn("unable to close arcreader probably", e);
             }
@@ -167,40 +163,39 @@ public class HarvestedUrlsForDomainBatchJob extends ArchiveBatchJob {
 
     /**
      * Return domain from urlpart, if feasibly. Return empty string otherwise.
+     * 
      * @param urlpart One of the URL part of the crawllog-line.
      * @return domain from urlpart, if feasibly. Return empty string otherwise
      */
     private String getDomainFromUrlPart(String urlpart) {
         String domain = null;
         try {
-            domain = DomainUtils.domainNameFromHostname(
-                new FixedUURI(urlpart, true).getReferencedHost());
-        } catch (Exception e){
-            log.warn("Unable to extract a domain name from the url ' " + urlpart 
-                    + "' due to exception", e);
+            domain = DomainUtils.domainNameFromHostname(new FixedUURI(urlpart, true).getReferencedHost());
+        } catch (Exception e) {
+            log.warn("Unable to extract a domain name from the url ' " + urlpart + "' due to exception", e);
         }
         if (domain == null) {
             domain = "";
         }
         return domain;
     }
-    
-    
+
     /**
      * Does nothing, no finishing is needed.
+     * 
      * @param os Not used.
      */
     @Override
     public void finish(OutputStream os) {
     }
-    
+
     /**
      * Humanly readable representation of this instance.
+     * 
      * @return The class content.
      */
     @Override
     public String toString() {
-        return getClass().getName() + ", with arguments: Domain = " + domain
-                + ", Filter = " + getFilter();
+        return getClass().getName() + ", with arguments: Domain = " + domain + ", Filter = " + getFilter();
     }
 }

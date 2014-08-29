@@ -37,36 +37,32 @@ import dk.netarkivet.common.exceptions.UnknownID;
 public class BitpreservationUpdateThread extends Thread {
 
     /** The log. */
-    private Log log = LogFactory.getLog(
-            BitpreservationUpdateThread.class.getName());
-    
+    private Log log = LogFactory.getLog(BitpreservationUpdateThread.class.getName());
+
     /** The ActiveBitPreservation class. */
     private final ActiveBitPreservation preserve;
-    
+
     /** The type of update requested. */
     private final BitpreservationUpdateType type;
-    
+
     /** The replica to work on. */
     private final Replica theReplica;
-    
-    
-    /** Constructor for the BitpreservationUpdateThread. 
+
+    /**
+     * Constructor for the BitpreservationUpdateThread.
      * 
      * @param replica The given replica to work on.
      * @param updateType The type of update requested.
-     * @throws ArgumentNotValid If either the Replica or the 
-     * BitpreservationUpdateType is null.
+     * @throws ArgumentNotValid If either the Replica or the BitpreservationUpdateType is null.
      */
-    public BitpreservationUpdateThread(Replica replica, 
-            BitpreservationUpdateType updateType) throws ArgumentNotValid {
+    public BitpreservationUpdateThread(Replica replica, BitpreservationUpdateType updateType) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
-        ArgumentNotValid.checkNotNull(updateType, "BitpreservationUpdateType " 
-                + "updateType");
+        ArgumentNotValid.checkNotNull(updateType, "BitpreservationUpdateType " + "updateType");
         preserve = ActiveBitPreservationFactory.getInstance();
         type = updateType;
         theReplica = replica;
     }
-    
+
     /** Starts the updatethread thread. */
     public void run() {
         try {
@@ -79,6 +75,6 @@ public class BitpreservationUpdateThread extends Thread {
             }
         } catch (Exception ex) {
             log.warn("Update of Activebitpreservation information failed", ex);
-        }    
+        }
     }
 }

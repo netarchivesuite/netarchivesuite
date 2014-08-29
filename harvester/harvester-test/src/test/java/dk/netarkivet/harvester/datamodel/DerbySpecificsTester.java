@@ -59,13 +59,13 @@ public class DerbySpecificsTester extends DataModelTestCase {
         super.tearDown();
         log.trace("tearDown() done");
     }
-    
+
     /**
      * Test added to fool JUnit.
      */
     @Test
     public void testDummy() {
-        
+
     }
 
     @Test
@@ -73,8 +73,7 @@ public class DerbySpecificsTester extends DataModelTestCase {
         Connection c = HarvestDBConnection.get();
 
         try {
-            String statement = "SELECT config_name, domain_name "
-                + "FROM session.jobconfignames";
+            String statement = "SELECT config_name, domain_name " + "FROM session.jobconfignames";
             PreparedStatement s = null;
             try {
                 s = c.prepareStatement(statement);
@@ -86,24 +85,18 @@ public class DerbySpecificsTester extends DataModelTestCase {
 
             try {
                 c.setAutoCommit(false);
-                String tmpTable =
-                    DBSpecifics.getInstance().getJobConfigsTmpTable(c);
-                assertEquals("Should have given expected name for Derby temp table",
-                        "session.jobconfignames", tmpTable);
+                String tmpTable = DBSpecifics.getInstance().getJobConfigsTmpTable(c);
+                assertEquals("Should have given expected name for Derby temp table", "session.jobconfignames", tmpTable);
                 s = c.prepareStatement(statement);
                 s.execute();
                 s.close();
-                s = c.prepareStatement("INSERT INTO " + tmpTable
-                        + " VALUES ( ?, ? )");
+                s = c.prepareStatement("INSERT INTO " + tmpTable + " VALUES ( ?, ? )");
                 s.setString(1, "foo");
                 s.setString(2, "bar");
                 s.executeUpdate();
                 s.close();
-                String domain =
-                    DBUtils.selectStringValue(
-                            c,
-                            "SELECT domain_name FROM " + tmpTable
-                            + " WHERE config_name = ?", "bar");
+                String domain = DBUtils.selectStringValue(c, "SELECT domain_name FROM " + tmpTable
+                        + " WHERE config_name = ?", "bar");
                 assertEquals("Should get expected domain name", "foo", domain);
                 c.commit();
                 c.setAutoCommit(true);
@@ -115,34 +108,27 @@ public class DerbySpecificsTester extends DataModelTestCase {
             try {
                 s = c.prepareStatement(statement);
                 s.execute();
-                fail("Should have failed query on selection from table which has "
-                     + "been dropped");
+                fail("Should have failed query on selection from table which has " + "been dropped");
             } catch (SQLException e) {
                 // expected
             }
-                c.setAutoCommit(false);
-                String tmpTable =
-                    DBSpecifics.getInstance().getJobConfigsTmpTable(c);
-                assertEquals("Should have given expected name for Derby temp table",
-                        "session.jobconfignames", tmpTable);
-                s = c.prepareStatement(statement);
-                s.execute();
-                s.close();
-                s = c.prepareStatement("INSERT INTO " + tmpTable
-                        + " VALUES ( ?, ? )");
-                s.setString(1, "foo");
-                s.setString(2, "bar");
-                s.executeUpdate();
-                s.close();
-                String domain =
-                    DBUtils.selectStringValue(c,
-                            "SELECT domain_name FROM "
-                            + tmpTable
-                            + " WHERE config_name = ?", "bar");
-                assertEquals("Should get expected domain name", "foo", domain);
-                c.commit();
-                c.setAutoCommit(true);
-                DBSpecifics.getInstance().dropJobConfigsTmpTable(c, tmpTable);
+            c.setAutoCommit(false);
+            String tmpTable = DBSpecifics.getInstance().getJobConfigsTmpTable(c);
+            assertEquals("Should have given expected name for Derby temp table", "session.jobconfignames", tmpTable);
+            s = c.prepareStatement(statement);
+            s.execute();
+            s.close();
+            s = c.prepareStatement("INSERT INTO " + tmpTable + " VALUES ( ?, ? )");
+            s.setString(1, "foo");
+            s.setString(2, "bar");
+            s.executeUpdate();
+            s.close();
+            String domain = DBUtils.selectStringValue(c, "SELECT domain_name FROM " + tmpTable
+                    + " WHERE config_name = ?", "bar");
+            assertEquals("Should get expected domain name", "foo", domain);
+            c.commit();
+            c.setAutoCommit(true);
+            DBSpecifics.getInstance().dropJobConfigsTmpTable(c, tmpTable);
 
         } finally {
             HarvestDBConnection.release(c);

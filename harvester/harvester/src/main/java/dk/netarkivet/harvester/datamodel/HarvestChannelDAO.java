@@ -29,8 +29,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
 
 /**
- * Abstract class for the DAO handling the persistence of {@link HarvestChannel}
- * instances.
+ * Abstract class for the DAO handling the persistence of {@link HarvestChannel} instances.
  *
  * @author ngiraud
  *
@@ -62,6 +61,7 @@ public abstract class HarvestChannelDAO implements DAO, Iterable<HarvestChannel>
 
     /**
      * Retrieves a {@link HarvestChannel} by its UID.
+     * 
      * @param id the UID to look for
      * @return the corresponding instance
      * @throws ArgumentNotValid if not ID is supplied
@@ -71,6 +71,7 @@ public abstract class HarvestChannelDAO implements DAO, Iterable<HarvestChannel>
 
     /**
      * Retrieves a {@link HarvestChannel} by its unique name.
+     * 
      * @param name the name to look for
      * @return the corresponding instance
      * @throws ArgumentNotValid if not name is supplied
@@ -80,19 +81,21 @@ public abstract class HarvestChannelDAO implements DAO, Iterable<HarvestChannel>
 
     /**
      * Creates a {@link HarvestChannel} object in the storage backend.
+     * 
      * @param harvestChannel the {@link HarvestChannel} object
      */
     public abstract void create(HarvestChannel harvestChannel) throws IOFailure;
 
     /**
      * Updates a {@link HarvestChannel} object in the storage backend.
+     * 
      * @param harvestChannel the {@link HarvestChannel} object
      */
     public abstract void update(HarvestChannel harvestChannel) throws IOFailure;
 
     /**
-     * Returns harvest channels by type, sorted first by type
-     * (focused first, then broad) and then by name.
+     * Returns harvest channels by type, sorted first by type (focused first, then broad) and then by name.
+     * 
      * @param includeSnapshot if true, returns the single snapshot channel in the iterator.
      * @return an iterator on {@link HarvestChannel}.
      */
@@ -100,20 +103,23 @@ public abstract class HarvestChannelDAO implements DAO, Iterable<HarvestChannel>
 
     /**
      * Returns true if a default channel exists for focused jobs.
+     * 
      * @return true if a default channel exists for focused jobs, false otherwise.
      */
     public abstract boolean defaultFocusedChannelExists();
 
     /**
      * Returns the default {@link HarvestChannel} for the given type of harvest.
+     * 
      * @param snapshot snapshot or partial harvest
      * @return the default {@link HarvestChannel}
      */
     public abstract HarvestChannel getDefaultChannel(boolean snapshot);
 
     /**
-     * Returns the {@link HarvestChannel} mapped to the given {@link HarvestDefinition} id.
-     * If no mapping was explicitly defined, returns null.
+     * Returns the {@link HarvestChannel} mapped to the given {@link HarvestDefinition} id. If no mapping was explicitly
+     * defined, returns null.
+     * 
      * @param harvestDefinitionId the {@link HarvestDefinition} id to look for
      * @return the mapped {@link HarvestChannel} id or null
      */

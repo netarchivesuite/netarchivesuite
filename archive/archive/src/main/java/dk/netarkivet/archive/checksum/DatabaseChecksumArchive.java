@@ -59,20 +59,19 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.ChecksumJob;
 
 /**
- * A ChecksumArchive persisted with a Berkeley DB JE Database.
- * Migrating from the {@link FileChecksumArchive} to the DatabaseChecksumArchive is 
- * done with the {@link LoadDatabaseChecksumArchive} tool.
+ * A ChecksumArchive persisted with a Berkeley DB JE Database. Migrating from the {@link FileChecksumArchive} to the
+ * DatabaseChecksumArchive is done with the {@link LoadDatabaseChecksumArchive} tool.
  */
 public class DatabaseChecksumArchive implements ChecksumArchive {
 
     /** The logger used by this class. */
     private static final Logger log = LoggerFactory.getLogger(DatabaseChecksumArchive.class);
-    
+
     /** The singleton instance of this class. */
     private static DatabaseChecksumArchive instance;
     /** The basedir for the database itself. */
     private File databaseBaseDir;
-    /** The subdirectory to the databaseBaseDir, where the database is located. */ 
+    /** The subdirectory to the databaseBaseDir, where the database is located. */
     private static final String DATABASE_SUBDIR = "DB";
     /** The name of the database. */
     private static final String DATABASE_NAME = "CHECKSUM";
@@ -80,56 +79,54 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
     private Environment env;
     /** The Checksum Database itself */
     private Database checksumDB;
-    
+
     /** The Database to store class information. */
     private Database classDB;
     /** The name of the class database. */
     private static final String CLASS_DATABASE_NAME = "CLASS";
-    
-    /** The Berkeley DB binder for the data object and keyObject in our database, 
-    * i.e. Url and Long, respectively. 
-    **/
+
+    /**
+     * The Berkeley DB binder for the data object and keyObject in our database, i.e. Url and Long, respectively.
+     **/
     private EntryBinding objectBinding;
     private EntryBinding keyBinding;
-    
+
     /** The minSpaceLeft value. */
     private long minSpaceLeft;
-    
+
     /** The prefix to the removedEntryFile. */
     private static final String WRONG_FILENAME_PREFIX = "removed_";
     /** The suffix to the removedEntryFile. */
     private static final String WRONG_FILENAME_SUFFIX = ".checksum";
-    
+
     /**
-     * The file for storing all the deleted entries.
-     * Each entry should be: 'date :' + 'wrongEntry'.
+     * The file for storing all the deleted entries. Each entry should be: 'date :' + 'wrongEntry'.
      */
     private File wrongEntryFile;
-    
+
     /**
-     * Method for obtaining the current singleton instance of this class.
-     * If the instance of this class has not yet been constructed, then
-     * it will be initialised.
-     *  
+     * Method for obtaining the current singleton instance of this class. If the instance of this class has not yet been
+     * constructed, then it will be initialised.
+     * 
      * @return The current instance of this class.
-     * @throws Exception 
+     * @throws Exception
      */
     public static synchronized DatabaseChecksumArchive getInstance() throws Exception {
         if (instance == null) {
             instance = new DatabaseChecksumArchive();
         }
         return instance;
-    }   
-    
+    }
+
     /**
-     * Constructor.
-     * Retrieves the minimum space left variable, and ensures the existence of
-     * the archive file. If the file does not exist, then it is created.
-     * @throws Exception 
+     * Constructor. Retrieves the minimum space left variable, and ensures the existence of the archive file. If the
+     * file does not exist, then it is created.
+     * 
+     * @throws Exception
      */
-    public DatabaseChecksumArchive() throws DatabaseException{
+    public DatabaseChecksumArchive() throws DatabaseException {
         super();
-        
+
         // Get the minimum space left setting.
         long minSpaceLeft = Settings.getLong(ArchiveSettings.CHECKSUM_MIN_SPACE_LEFT);
         // make sure, that minSpaceLeft is non-negative.
@@ -138,19 +135,19 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
             log.warn(msg);
             throw new ArgumentNotValid(msg);
         }
-        
+
         // Initialize the checksum database.
         initializeDatabase();
-        
+
         // Initialize Wrong Entry file
         initializeWrongEntryFile();
     }
 
     private void initializeWrongEntryFile() {
         String WrongEntryFilename = WRONG_FILENAME_PREFIX + Settings.get(CommonSettings.USE_REPLICA_ID)
-        		+ WRONG_FILENAME_SUFFIX;
+                + WRONG_FILENAME_SUFFIX;
         wrongEntryFile = new File(databaseBaseDir, WrongEntryFilename);
-        
+
         // ensure that the file exists.
         if (!wrongEntryFile.exists()) {
             try {
@@ -163,7 +160,7 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
         }
     }
 
-    private void initializeDatabase() throws DatabaseException{
+    private void initializeDatabase() throws DatabaseException {
         databaseBaseDir = Settings.getFile(ArchiveSettings.CHECKSUM_BASEDIR);
         File homeDirectory = new File(databaseBaseDir, DATABASE_SUBDIR);
         if (!homeDirectory.isDirectory()) {
@@ -174,19 +171,19 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
         EnvironmentConfig envConfig = new EnvironmentConfig();
         envConfig.setTransactional(true);
         envConfig.setAllowCreate(true);
-        
+
         DatabaseConfig dbConfig = new DatabaseConfig();
         dbConfig.setTransactional(true);
         dbConfig.setAllowCreate(true);
-        
+
         Transaction nullTransaction = null;
         env = new Environment(homeDirectory, envConfig);
         checksumDB = env.openDatabase(nullTransaction, DATABASE_NAME, dbConfig);
         // Open the database that stores your class information.
-        
+
         classDB = env.openDatabase(nullTransaction, CLASS_DATABASE_NAME, dbConfig);
         StoredClassCatalog classCatalog = new StoredClassCatalog(classDB);
-        
+
         // Create the binding
         objectBinding = new SerialBinding(classCatalog, String.class);
         keyBinding = new SerialBinding(classCatalog, String.class);
@@ -199,7 +196,7 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
         }
         return false;
     }
-    
+
     private boolean checkDatabaseDir(File file) {
         // The file must exist.
         if (!file.isDirectory()) {
@@ -213,7 +210,6 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
         }
         return true;
     }
-    
 
     @Override
     public File correct(String filename, File correctFile) throws IOFailure, ArgumentNotValid, IllegalState {
@@ -221,35 +217,35 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
         ArgumentNotValid.checkNotNull(correctFile, "File correctFile");
 
         // If no file entry exists, then IllegalState
-        if(!hasEntry(filename)) {
+        if (!hasEntry(filename)) {
             String errMsg = "No file entry for file '" + filename + "'.";
             log.error(errMsg);
             throw new IllegalState(errMsg);
         }
-        
+
         // retrieve the checksum
         String currentChecksum = getChecksum(filename);
-        
+
         // Calculate the new checksum and verify that it is different.
         String newChecksum = calculateChecksum(correctFile);
-        if(newChecksum.equals(currentChecksum)) {
+        if (newChecksum.equals(currentChecksum)) {
             // This should never occur.
             throw new IllegalState("The checksum of the old 'bad' entry is "
                     + " the same as the checksum of the new correcting entry");
         }
-        
+
         // Make entry in the wrongEntryFile.
         String badEntry = ChecksumJob.makeLine(filename, currentChecksum);
         appendWrongRecordToWrongEntryFile(badEntry);
-        
+
         // Correct the bad entry, by changing the value to the newChecksum.'
-        // Since the checksumArchive is a hashmap, then putting an existing 
+        // Since the checksumArchive is a hashmap, then putting an existing
         // entry with a new value will override the existing one.
         put(filename, newChecksum);
-                
-        // Make the file containing the bad entry be returned in the 
+
+        // Make the file containing the bad entry be returned in the
         // CorrectMessage.
-        File removedEntryFile; 
+        File removedEntryFile;
         try {
             // Initialise file and writer.
             removedEntryFile = File.createTempFile(filename, "tmp", FileUtils.getTempDir());
@@ -264,26 +260,24 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
         } catch (IOException e) {
             throw new IOFailure("Unable to create return file for CorrectMessage", e);
         }
-        
+
         // Return the file containing the removed entry.
         return removedEntryFile;
     }
 
     /**
-     * Method for appending a 'wrong' entry in the wrongEntryFile.
-     * It will be noted which time the wrong entry was appended:
-     * date + " : " + wrongRecord.
+     * Method for appending a 'wrong' entry in the wrongEntryFile. It will be noted which time the wrong entry was
+     * appended: date + " : " + wrongRecord.
      * 
      * @param wrongRecord The record to append.
      * @throws IOFailure If the wrong record cannot be appended correctly.
      */
-    private synchronized void appendWrongRecordToWrongEntryFile(String 
-            wrongRecord) throws IOFailure {
+    private synchronized void appendWrongRecordToWrongEntryFile(String wrongRecord) throws IOFailure {
         try {
             // Create the string to append: date + 'wrong record'.
             String entry = new Date().toString() + " : " + wrongRecord + "\n";
 
-            // get a filewriter for the checksum file, and append the record. 
+            // get a filewriter for the checksum file, and append the record.
             boolean appendToFile = true;
             FileWriter fwrite = new FileWriter(wrongEntryFile, appendToFile);
             fwrite.append(entry);
@@ -300,7 +294,7 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
     @Override
     public String getChecksum(String filename) {
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
-        
+
         Transaction nullTransaction = null;
         LockMode nullLockMode = null;
         DatabaseEntry key = new DatabaseEntry();
@@ -313,12 +307,12 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
         } catch (DatabaseException e) {
             throw new IOFailure("Could not retrieve a checksum for the filename '" + filename + "'", e);
         }
-        
+
         String resultChecksum = null;
         if (status == OperationStatus.SUCCESS) {
             resultChecksum = (String) objectBinding.entryToObject(data);
         }
-        
+
         return resultChecksum;
     }
 
@@ -338,22 +332,22 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
             input = file.getInputStream();
             String newChecksum = calculateChecksum(input);
             if (hasEntry(filename)) {
-              // fetch already stored checksum
-              String oldChecksum = getChecksum(filename);
-              if (newChecksum.equals(oldChecksum)) {
-                  log.warn("Cannot upload archivefile '{}', " + "it is already archived with the same checksum: '{}'",
-                		  filename, oldChecksum);
-              } else {
-                  throw new IllegalState("Cannot upload archivefile '" + filename 
-                          + "', it is already archived with different checksum."
-                          + " Archive checksum: '" + oldChecksum
-                          + "' and the uploaded file has: '" + newChecksum + "'.");
-              }
-              // It is considered a success that it already is within the archive, 
-              // thus do not throw an exception. 
-              return;
+                // fetch already stored checksum
+                String oldChecksum = getChecksum(filename);
+                if (newChecksum.equals(oldChecksum)) {
+                    log.warn(
+                            "Cannot upload archivefile '{}', " + "it is already archived with the same checksum: '{}'",
+                            filename, oldChecksum);
+                } else {
+                    throw new IllegalState("Cannot upload archivefile '" + filename
+                            + "', it is already archived with different checksum." + " Archive checksum: '"
+                            + oldChecksum + "' and the uploaded file has: '" + newChecksum + "'.");
+                }
+                // It is considered a success that it already is within the archive,
+                // thus do not throw an exception.
+                return;
             } else {
-              put(filename, newChecksum);
+                put(filename, newChecksum);
             }
         } finally {
             if (input != null) {
@@ -361,9 +355,10 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
             }
         }
     }
-    
+
     /**
      * Update the database with a new filename and its checksum.
+     * 
      * @param filename A given filename
      * @param checksum The related checksum
      */
@@ -372,7 +367,7 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
         ArgumentNotValid.checkNotNullOrEmpty(checksum, "String checksum");
 
         DatabaseEntry theKey = new DatabaseEntry();
-        DatabaseEntry theData = new DatabaseEntry(); 
+        DatabaseEntry theData = new DatabaseEntry();
         keyBinding.objectToEntry(filename, theKey);
         objectBinding.objectToEntry(checksum, theData);
         Transaction nullTransaction = null;
@@ -380,10 +375,10 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
         try {
             checksumDB.put(nullTransaction, theKey, theData);
         } catch (DatabaseException e) {
-                throw new IOFailure("Database exception occuring during ingest", e);
+            throw new IOFailure("Database exception occuring during ingest", e);
         }
-    }  
-    
+    }
+
     @Override
     public String calculateChecksum(File f) {
         return ChecksumCalculator.calculateMd5(f);
@@ -403,15 +398,15 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
         } catch (IOException e) {
             throw new IOFailure(e.toString());
         }
-       
+
         return tempFile;
     }
 
-    /** 
+    /**
      * Write the contents of the database to the given file.
+     * 
      * @param outputFile The outputfile whereto the data is written.
-     * @param writeOnlyFilenames If true, we only write the filenames to the files, 
-     * not the checksums
+     * @param writeOnlyFilenames If true, we only write the filenames to the files, not the checksums
      * @throws IOException If unable to write to file for some reason
      */
     private void dumpDatabaseToFile(File tempFile, boolean writeOnlyFilenames) throws IOException {
@@ -419,20 +414,20 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
         File resultFile = tempFile;
 
         FileWriter fw = new FileWriter(resultFile);
-        try { 
+        try {
             cursor = checksumDB.openCursor(null, null);
 
             DatabaseEntry foundKey = new DatabaseEntry();
             DatabaseEntry foundData = new DatabaseEntry();
 
-            while (cursor.getNext(foundKey, foundData, LockMode.DEFAULT) ==
-                OperationStatus.SUCCESS) {
+            while (cursor.getNext(foundKey, foundData, LockMode.DEFAULT) == OperationStatus.SUCCESS) {
                 String keyString = new String(foundKey.getData());
                 String dataString = new String(foundData.getData());
-                if (writeOnlyFilenames){
+                if (writeOnlyFilenames) {
                     fw.append(keyString);
                 } else {
-                    fw.append(keyString); fw.append(ChecksumJob.STRING_FILENAME_SEPARATOR); 
+                    fw.append(keyString);
+                    fw.append(ChecksumJob.STRING_FILENAME_SEPARATOR);
                     fw.append(dataString);
                 }
                 fw.append('\n'); // end with newline
@@ -455,20 +450,20 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
     }
 
     @Override
-    public File getAllFilenames()  {
+    public File getAllFilenames() {
         File tempFile = null;
         try {
             tempFile = File.createTempFile("allFilenames", "tmp", FileUtils.getTempDir());
         } catch (IOException e) {
             throw new IOFailure(e.toString());
         }
-        
+
         try {
             dumpDatabaseToFile(tempFile, true);
         } catch (IOException e) {
             throw new IOFailure("Error during the getAllFilenames operation: ", e);
         }
-        
+
         return tempFile;
     }
 

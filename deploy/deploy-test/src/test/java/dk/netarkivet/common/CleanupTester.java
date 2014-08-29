@@ -30,7 +30,7 @@ import dk.netarkivet.common.utils.FileUtils;
 
 public class CleanupTester extends TestCase {
 
-    private String[] dirsToClean = new String[] { "derbyDB/wayback_indexer_db", "oldjobs" };
+    private String[] dirsToClean = new String[] {"derbyDB/wayback_indexer_db", "oldjobs"};
 
     private File tmpdir;
 

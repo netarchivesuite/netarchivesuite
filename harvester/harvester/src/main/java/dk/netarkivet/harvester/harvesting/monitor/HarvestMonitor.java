@@ -54,8 +54,8 @@ import dk.netarkivet.harvester.harvesting.frontier.RetiredQueuesFilter;
 import dk.netarkivet.harvester.harvesting.frontier.TopTotalEnqueuesFilter;
 
 /**
- * Listens for {@link CrawlProgressMessage}s on the proper JMS channel, and
- * stores information to be presented in the monitoring console.
+ * Listens for {@link CrawlProgressMessage}s on the proper JMS channel, and stores information to be presented in the
+ * monitoring console.
  */
 public class HarvestMonitor extends HarvesterMessageHandler implements MessageListener, CleanupIF {
 
@@ -65,7 +65,7 @@ public class HarvestMonitor extends HarvesterMessageHandler implements MessageLi
     /** Singleton instance of the monitor. */
     private static HarvestMonitor instance;
 
-    /** The JMS channel on which to listen for {@link CrawlProgressMessage}s.*/
+    /** The JMS channel on which to listen for {@link CrawlProgressMessage}s. */
     public static final ChannelID HARVEST_MONITOR_CHANNEL_ID = HarvesterChannels.getHarvestMonitorChannel();
 
     private Map<Long, StartedJobHistoryChartGen> chartGenByJobId = new HashMap<Long, StartedJobHistoryChartGen>();
@@ -79,10 +79,8 @@ public class HarvestMonitor extends HarvesterMessageHandler implements MessageLi
     }
 
     /**
-     * Close down the HarvestMonitor singleton. This removes the
-     * HarvestMonitor as listener to the JMS scheduler
-     * and frontier channels, closes the persistence container, and resets
-     * the singleton.
+     * Close down the HarvestMonitor singleton. This removes the HarvestMonitor as listener to the JMS scheduler and
+     * frontier channels, closes the persistence container, and resets the singleton.
      *
      * @see CleanupIF#cleanup()
      */
@@ -128,6 +126,7 @@ public class HarvestMonitor extends HarvesterMessageHandler implements MessageLi
 
     /**
      * Cleans up the database on transitions to status DONE and FAILED.
+     * 
      * @param msg a {@link JobEndedMessage}
      */
     @Override
@@ -140,8 +139,8 @@ public class HarvestMonitor extends HarvesterMessageHandler implements MessageLi
         // Delete records in the DB
         RunningJobsInfoDAO dao = RunningJobsInfoDAO.getInstance();
         int delCount = dao.removeInfoForJob(jobId);
-        LOG.info("Deleted {} running job info records for job ID {} on transition to status {}",
-        		delCount, jobId, newStatus.name());
+        LOG.info("Deleted {} running job info records for job ID {} on transition to status {}", delCount, jobId,
+                newStatus.name());
 
         // Stop chart generation
         StartedJobHistoryChartGen gen = chartGenByJobId.get(jobId);
@@ -151,23 +150,20 @@ public class HarvestMonitor extends HarvesterMessageHandler implements MessageLi
     }
 
     /**
-     * Returns the delay in seconds after which a harvest monitor webpage should
-     * refresh itself.
-     * This delay is set by overriding the value of the
-     * {@link HarvesterSettings#HARVEST_MONITOR_REFRESH_INTERVAL} property.
-     * @return the delay in seconds after which a harvest monitor webpage should
-     * refresh itself
+     * Returns the delay in seconds after which a harvest monitor webpage should refresh itself. This delay is set by
+     * overriding the value of the {@link HarvesterSettings#HARVEST_MONITOR_REFRESH_INTERVAL} property.
+     * 
+     * @return the delay in seconds after which a harvest monitor webpage should refresh itself
      */
     public static final int getAutoRefreshDelay() {
         return Settings.getInt(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL);
     }
 
     /**
-     * Returns a configurable number of the most recent running job info records
-     * available for the given job ID.
+     * Returns a configurable number of the most recent running job info records available for the given job ID.
+     * 
      * @param jobId
-     * @return the most recent running job info records available
-     * for the given job ID.
+     * @return the most recent running job info records available for the given job ID.
      * @see HarvesterSettings#HARVEST_MONITOR_DISPLAYED_HISTORY_SIZE
      */
     public static StartedJobInfo[] getMostRecentRunningJobInfos(long jobId) {
@@ -177,14 +173,13 @@ public class HarvestMonitor extends HarvesterMessageHandler implements MessageLi
     }
 
     /**
-     * Returns the most recent running job info record available for the given
-     * job ID.
+     * Returns the most recent running job info record available for the given job ID.
+     * 
      * @param jobId
-     * @return the most recent running job info records available
-     * for the given job ID.
+     * @return the most recent running job info records available for the given job ID.
      */
     public static StartedJobInfo getMostRecentRunningJobInfo(long jobId) {
-       return RunningJobsInfoDAO.getInstance().getMostRecentByJobId(jobId);
+        return RunningJobsInfoDAO.getInstance().getMostRecentByJobId(jobId);
     }
 
     @Override
@@ -194,13 +189,14 @@ public class HarvestMonitor extends HarvesterMessageHandler implements MessageLi
         int insertCount = RunningJobsInfoDAO.getInstance().storeFrontierReport(msg.getFilterId(), msg.getReport(),
                 msg.getJobID());
         if (LOG.isInfoEnabled() && insertCount > 0) {
-            LOG.info("Stored frontier report {}-{}' ({} lines): inserted {} lines in the DB",
-            		msg.getReport().getJobName(), msg.getFilterId(), msg.getReport().getSize(), insertCount);
+            LOG.info("Stored frontier report {}-{}' ({} lines): inserted {} lines in the DB", msg.getReport()
+                    .getJobName(), msg.getFilterId(), msg.getReport().getSize(), insertCount);
         }
     }
 
     /**
      * Retrieves the latest frontier report stored for the given job ID.
+     * 
      * @param jobId the job id
      * @return a frontier report
      */
@@ -210,8 +206,8 @@ public class HarvestMonitor extends HarvesterMessageHandler implements MessageLi
     }
 
     /**
-     * Retrieves the latest frontier extract report stored for the given job ID,
-     * that contains only retired queues.
+     * Retrieves the latest frontier extract report stored for the given job ID, that contains only retired queues.
+     * 
      * @param jobId the job id
      * @return a frontier report that contains only retired queues.
      */
@@ -220,8 +216,8 @@ public class HarvestMonitor extends HarvesterMessageHandler implements MessageLi
     }
 
     /**
-     * Retrieves the latest frontier extract report stored for the given job ID,
-     * that contains only exhausted queues.
+     * Retrieves the latest frontier extract report stored for the given job ID, that contains only exhausted queues.
+     * 
      * @param jobId the job id
      * @return a frontier report that contains only exhausted queues.
      */
@@ -233,12 +229,11 @@ public class HarvestMonitor extends HarvesterMessageHandler implements MessageLi
     private static final String EMPTY_CHART_FILE = "empty-history.png";
 
     /**
-     * Returns the path of the chart image file, relative to the
-     * webapp directory. If no chart is available, returns a default empty
-     * image.
+     * Returns the path of the chart image file, relative to the webapp directory. If no chart is available, returns a
+     * default empty image.
+     * 
      * @param jobId the job id
-     * @return the path of the chart image file, relative to the
-     * webapp directory.
+     * @return the path of the chart image file, relative to the webapp directory.
      */
     public static String getChartFilePath(long jobId) {
         if (instance == null) {

@@ -32,8 +32,8 @@ import java.io.InputStreamReader;
 
 public class ARCTestUtils {
     /**
-     * Reads the content of the given record.
-     * Does not close the record - that causes trouble.
+     * Reads the content of the given record. Does not close the record - that causes trouble.
+     * 
      * @param ar An ARCRecord to be read
      * @return The content of the record, as a String.
      */
@@ -44,10 +44,10 @@ public class ARCTestUtils {
             int i = -1;
             while ((i = br.read()) != -1) {
                 sb.append((char) i);
-                //ARCRecords dislike being closed
+                // ARCRecords dislike being closed
             }
-        } catch(IOException e) {
-            throw new IOFailure("Failure reading ARCRecord",e);
+        } catch (IOException e) {
+            throw new IOFailure("Failure reading ARCRecord", e);
         }
         return sb.toString();
     }

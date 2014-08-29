@@ -48,11 +48,11 @@ public class PreserveStdStreams implements TestConfigurationIF {
         origStdIn = System.in;
         origStdOut = System.out;
         origStdErr = System.err;
-        if(overwrite) {
+        if (overwrite) {
             myOut = new ByteArrayOutputStream();
             System.setOut(new PrintStream(myOut));
         }
-        if(overwrite) {
+        if (overwrite) {
             myErr = new ByteArrayOutputStream();
             System.setErr(new PrintStream(myErr));
         }
@@ -65,14 +65,14 @@ public class PreserveStdStreams implements TestConfigurationIF {
     }
 
     public String getOut() {
-        if(overwrite) {
+        if (overwrite) {
             return myOut.toString();
         }
         throw new PermissionDenied("Set overwrite to true to use this facility");
     }
 
     public String getErr() {
-        if(overwrite) {
+        if (overwrite) {
             return myErr.toString();
         }
         throw new PermissionDenied("Set overwrite to true to use this facility");

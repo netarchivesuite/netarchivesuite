@@ -28,17 +28,17 @@ import java.io.Serializable;
 /**
  * This class represents one Extended Field Type.
  */
-@SuppressWarnings({ "serial"})
+@SuppressWarnings({"serial"})
 public class ExtendedFieldType implements Serializable {
 
-	/** The id of this ExtendedFieldType. */
+    /** The id of this ExtendedFieldType. */
     private Long extendedFieldTypeID;
     /** The name of this ExtendedFieldType. */
     private String name;
-    
-    /** 
-     * Constructor.
-     * TODO Add validation
+
+    /**
+     * Constructor. TODO Add validation
+     * 
      * @param aExtendedFieldTypeID The id of this ExtendedFieldType.
      * @param aName The name of this ExtendedFieldType.
      */
@@ -56,21 +56,23 @@ public class ExtendedFieldType implements Serializable {
 
     /**
      * Set the id of this ExtendedFieldType.
+     * 
      * @param extendedFieldTypeID the id of this ExtendedFieldType
      */
     public void setExtendedFieldTypeID(Long extendedFieldTypeID) {
         this.extendedFieldTypeID = extendedFieldTypeID;
     }
-    
+
     /**
      * @return the name of this ExtendedFieldType.
      */
     public String getName() {
         return name;
     }
-    
+
     /**
      * Set the name of this ExtendedFieldType.
+     * 
      * @param name the name of this ExtendedFieldType.
      */
     public void setName(String name) {

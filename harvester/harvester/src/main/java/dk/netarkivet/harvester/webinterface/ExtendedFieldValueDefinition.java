@@ -41,28 +41,30 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDBDAO;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDataTypes;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDefaultValue;
 
-
-@SuppressWarnings({ "unused"})
+@SuppressWarnings({"unused"})
 public class ExtendedFieldValueDefinition {
     private static Log log = LogFactory.getLog(ExtendedFieldValueDefinition.class.getName());
 
     /*
      * Subprocessing of ServletRequest for Extended Fields and update field content
+     * 
      * @param context The context of this request
+     * 
      * @param i18n I18n information
-     * @param entity ExtendableEntity 
-     * @param type ExtendedFieldType 
+     * 
+     * @param entity ExtendableEntity
+     * 
+     * @param type ExtendedFieldType
      */
     public static void processRequest(PageContext context, I18n i18n, ExtendableEntity entity, int type) {
         ArgumentNotValid.checkNotNull(context, "PageContext context");
         ArgumentNotValid.checkNotNull(i18n, "I18n i18n");
-    	
-    	
+
         ExtendedFieldDAO extdao = ExtendedFieldDBDAO.getInstance();
         Iterator<ExtendedField> it = extdao.getAll(type).iterator();
-        
+
         ServletRequest request = context.getRequest();
-        
+
         while (it.hasNext()) {
             String value = "";
 
@@ -94,18 +96,14 @@ public class ExtendedFieldValueDefinition {
                     }
 
                     if (value == null || value.length() == 0) {
-                        HTMLUtils.forwardWithErrorMessage(
-                                context,
-                                i18n,
-                                "errormsg;extendedfields.field.0.is.empty."
-                                + "but.mandatory",
-                                ef.getName());
-                        throw new ForwardedToErrorPage("Mandatory field "
-                                + ef.getName() + " is empty.");
+                        HTMLUtils.forwardWithErrorMessage(context, i18n, "errormsg;extendedfields.field.0.is.empty."
+                                + "but.mandatory", ef.getName());
+                        throw new ForwardedToErrorPage("Mandatory field " + ef.getName() + " is empty.");
                     }
                 }
 
-                ExtendedFieldDefaultValue def = new ExtendedFieldDefaultValue(value, ef.getFormattingPattern(), ef.getDatatype());
+                ExtendedFieldDefaultValue def = new ExtendedFieldDefaultValue(value, ef.getFormattingPattern(),
+                        ef.getDatatype());
                 if (!def.isValid()) {
                     HTMLUtils.forwardWithRawErrorMessage(context, i18n, "errormsg;extendedfields.value.invalid");
                     throw new ForwardedToErrorPage("errormsg;extendedfields.value.invalid");
@@ -117,6 +115,5 @@ public class ExtendedFieldValueDefinition {
             entity.updateExtendedFieldValue(ef.getExtendedFieldID(), value);
         }
     }
-    
 
 }

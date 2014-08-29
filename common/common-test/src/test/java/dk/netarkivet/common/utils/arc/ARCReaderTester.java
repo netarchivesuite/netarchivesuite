@@ -37,7 +37,7 @@ import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 /**
  * A simple test of the ARCREADER that is bundled with Heritrix 1.14.4.
  */
-@SuppressWarnings({ "unused" })
+@SuppressWarnings({"unused"})
 public class ARCReaderTester {
     public static final String ARCHIVE_DIR = "tests/dk/netarkivet/common/utils/arc/data/input/";
     public static final String testFileName = "working.arc";

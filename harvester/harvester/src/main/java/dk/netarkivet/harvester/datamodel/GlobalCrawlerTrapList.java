@@ -37,8 +37,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 
 /**
- * Class representing one or more global crawler traps, modelled as a list
- * of regular expressions. 
+ * Class representing one or more global crawler traps, modelled as a list of regular expressions.
  *
  */
 public class GlobalCrawlerTrapList {
@@ -47,10 +46,9 @@ public class GlobalCrawlerTrapList {
     private int id;
 
     /**
-     * The list of traps. Each item is a regular expression matching url's to
-     * be avoided. In the database, (id, trap) is a primary key for the table
-     * global_crawler_trap_expressions so we model
-     * the traps as a Set to avoid possible duplicates.
+     * The list of traps. Each item is a regular expression matching url's to be avoided. In the database, (id, trap) is
+     * a primary key for the table global_crawler_trap_expressions so we model the traps as a Set to avoid possible
+     * duplicates.
      */
     private Set<String> traps;
 
@@ -66,16 +64,15 @@ public class GlobalCrawlerTrapList {
     /**
      * Protected constructor used by the DAO to create instances of this class.
      *
-     * @param id  the id of this list.
+     * @param id the id of this list.
      * @param name a name by which this list is known.
      * @param traps the set of trap expressions.
      * @param description A textual description of this list (may be null).
      * @param isActive flag indicating whether this list is isActive.
      * @throws ArgumentNotValid if the name is empty or null.
      */
-    protected GlobalCrawlerTrapList(int id, List<String> traps, String name,
-                                    String description, boolean isActive) throws
-                                                             ArgumentNotValid {
+    protected GlobalCrawlerTrapList(int id, List<String> traps, String name, String description, boolean isActive)
+            throws ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(name, "name");
         ArgumentNotValid.checkNotNull(traps, "traps");
         this.id = id;
@@ -87,20 +84,17 @@ public class GlobalCrawlerTrapList {
     }
 
     /**
-     * Construct a new GlobalCrawlerTrapList from an input stream consisting of
-     * newline-separated regular expressions.
-     * @param is an input stream from which the list of trap expressions
-     * can be read.
+     * Construct a new GlobalCrawlerTrapList from an input stream consisting of newline-separated regular expressions.
+     * 
+     * @param is an input stream from which the list of trap expressions can be read.
      * @param name a name by which this list is known.
      * @param description A textual description of this list.
      * @param isActive flag indicating whether this list is isActive.
      * @throws IOFailure if the input stream cannot be found or read.
-     * @throws ArgumentNotValid if the input stream is null or the name is 
-     * null or empty.
+     * @throws ArgumentNotValid if the input stream is null or the name is null or empty.
      */
-    public GlobalCrawlerTrapList(InputStream is, String name, 
-            String description, boolean isActive) throws IOFailure,
-                                                          ArgumentNotValid {
+    public GlobalCrawlerTrapList(InputStream is, String name, String description, boolean isActive) throws IOFailure,
+            ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(name, "name");
         ArgumentNotValid.checkNotNull(is, "is");
         this.traps = new HashSet<String>();
@@ -115,12 +109,12 @@ public class GlobalCrawlerTrapList {
     }
 
     /**
-     * A utility method to read the list of traps from an InputStream,
-     * line-by-line.
-     * @param is  The input stream from which to read.
+     * A utility method to read the list of traps from an InputStream, line-by-line.
+     * 
+     * @param is The input stream from which to read.
      * @throws IOFailure if the input stream cannot be read.
-     * @throws ArgumentNotValid if the input stream is null or if any of the
-     * specified traps are not valid regular expressions.
+     * @throws ArgumentNotValid if the input stream is null or if any of the specified traps are not valid regular
+     * expressions.
      */
     public void setTrapsFromInputStream(InputStream is) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(is, "is");
@@ -130,12 +124,12 @@ public class GlobalCrawlerTrapList {
         try {
             while ((line = reader.readLine()) != null) {
                 final String trap = line.trim();
-                 try {
-                     Pattern.compile(trap);
-                 } catch (PatternSyntaxException e) {
-                     throw new ArgumentNotValid("Cannot parse the string '" + trap 
-                             + "' as a Java regular expression.", e);
-                 }
+                try {
+                    Pattern.compile(trap);
+                } catch (PatternSyntaxException e) {
+                    throw new ArgumentNotValid("Cannot parse the string '" + trap + "' as a Java regular expression.",
+                            e);
+                }
                 traps.add(trap);
             }
         } catch (IOException e) {
@@ -145,6 +139,7 @@ public class GlobalCrawlerTrapList {
 
     /**
      * Get the id of this list.
+     * 
      * @return the id.
      */
     public int getId() {
@@ -153,6 +148,7 @@ public class GlobalCrawlerTrapList {
 
     /**
      * Set the id of this list.
+     * 
      * @param id the id.
      */
     protected void setId(int id) {
@@ -161,7 +157,8 @@ public class GlobalCrawlerTrapList {
 
     /**
      * Get the name of the list.
-     * @return  the name.
+     * 
+     * @return the name.
      */
     public String getName() {
         return name;
@@ -169,6 +166,7 @@ public class GlobalCrawlerTrapList {
 
     /**
      * Set the name of the list.
+     * 
      * @param name the name.
      */
     public void setName(String name) {
@@ -178,6 +176,7 @@ public class GlobalCrawlerTrapList {
 
     /**
      * Get the trap expressions for this list.
+     * 
      * @return the trap expressions.
      */
     public Set<String> getTraps() {
@@ -186,6 +185,7 @@ public class GlobalCrawlerTrapList {
 
     /**
      * Set the trap expressions for this list.
+     * 
      * @param traps the trap expressions.
      */
     public void setTraps(Set<String> traps) {
@@ -195,6 +195,7 @@ public class GlobalCrawlerTrapList {
 
     /**
      * Get the description of this list.
+     * 
      * @return the description.
      */
     public String getDescription() {
@@ -203,6 +204,7 @@ public class GlobalCrawlerTrapList {
 
     /**
      * Set the description of this list.
+     * 
      * @param description the description.
      */
     public void setDescription(String description) {
@@ -212,6 +214,7 @@ public class GlobalCrawlerTrapList {
 
     /**
      * Retruns true if this list is active.
+     * 
      * @return the activity state of the list.
      */
     public boolean isActive() {
@@ -220,6 +223,7 @@ public class GlobalCrawlerTrapList {
 
     /**
      * Set the activity state of the list.
+     * 
      * @param active the activity state.
      */
     public void setActive(boolean active) {
@@ -243,8 +247,7 @@ public class GlobalCrawlerTrapList {
         if (isActive != that.isActive) {
             return false;
         }
-        if (description != null ? !description.equals(that.description)
-                                : that.description != null) {
+        if (description != null ? !description.equals(that.description) : that.description != null) {
             return false;
         }
         if (name != null ? !name.equals(that.name) : that.name != null) {
@@ -262,8 +265,7 @@ public class GlobalCrawlerTrapList {
         int result = id;
         result = 31 * result + (traps != null ? traps.hashCode() : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (description != null ? description.hashCode()
-                                                    : 0);
+        result = 31 * result + (description != null ? description.hashCode() : 0);
         result = 31 * result + (isActive ? 1 : 0);
         return result;
     }

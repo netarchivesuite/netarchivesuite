@@ -32,26 +32,25 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.wayback.TestInfo;
 import dk.netarkivet.wayback.WaybackSettings;
 
-@SuppressWarnings({ "unused"})
-
+@SuppressWarnings({"unused"})
 public class AggregatorTestCase {
-    protected static final String testWorkingDirectory = "target"+File.separator+"test-data"+File.separator;
+    protected static final String testWorkingDirectory = "target" + File.separator + "test-data" + File.separator;
 
-    protected static final String testSourceIndexDir = TestInfo.DATA_DIR+ File.separator+"raw-index-files"+File.separator;
-    public static final String inputDirName = testWorkingDirectory+"inputDir";
-    protected static final String tempDirName = testWorkingDirectory+"tempDir";
-    protected static final String outputDirName = testWorkingDirectory+"outPutDir";
-
+    protected static final String testSourceIndexDir = TestInfo.DATA_DIR + File.separator + "raw-index-files"
+            + File.separator;
+    public static final String inputDirName = testWorkingDirectory + "inputDir";
+    protected static final String tempDirName = testWorkingDirectory + "tempDir";
+    protected static final String outputDirName = testWorkingDirectory + "outPutDir";
 
     protected static final String inputFile1Name = "index1.txt";
     protected static final String inputFile2Name = "index2.txt";
-    protected static final String inputFile3Name = "index3.txt";     
+    protected static final String inputFile3Name = "index3.txt";
     protected static final String inputFile109KName = "index109K.txt";
     protected static final String inputFile155KName = "index155K.txt";
 
     private final ReloadSettings originalSettings = new ReloadSettings();
 
-    /** See http://kb-prod-udv-001.kb.dk/twiki/bin/view/Netarkiv/LoggingInUnittests*/
+    /** See http://kb-prod-udv-001.kb.dk/twiki/bin/view/Netarkiv/LoggingInUnittests */
     private static final File TESTLOGPROP = new File("tests/dk/netarkivet/testlog.prop");
     private static final File LOGFILE = new File("tests/testlogs/netarkivtest.log");
 
@@ -62,7 +61,9 @@ public class AggregatorTestCase {
         System.setProperty(WaybackSettings.WAYBACK_BATCH_OUTPUTDIR, inputDirName);
         System.setProperty(WaybackSettings.WAYBACK_AGGREGATOR_TEMP_DIR, tempDirName);
         System.setProperty(WaybackSettings.WAYBACK_AGGREGATOR_OUTPUT_DIR, outputDirName);
-        System.setProperty(WaybackSettings.WAYBACK_AGGREGATOR_AGGREGATION_INTERVAL, "1000000000"); //Never run the scheduled aggregation
+        System.setProperty(WaybackSettings.WAYBACK_AGGREGATOR_AGGREGATION_INTERVAL, "1000000000"); // Never run the
+                                                                                                   // scheduled
+                                                                                                   // aggregation
         System.setProperty(WaybackSettings.WAYBACK_AGGREGATOR_MAX_INTERMEDIATE_INDEX_FILE_SIZE, "15");
         System.setProperty(WaybackSettings.WAYBACK_AGGREGATOR_MAX_MAIN_INDEX_FILE_SIZE, "200");
 
@@ -77,16 +78,15 @@ public class AggregatorTestCase {
     }
 
     /**
-     * Moves index files from the source directory to the input directory, from
-     * which the index files are consumed by the aggregator.
+     * Moves index files from the source directory to the input directory, from which the index files are consumed by
+     * the aggregator.
      *
-     * @param indexFileNames The array of file names from the
-     * <code>testSourceIndexDir</code> to 'prepare'
+     * @param indexFileNames The array of file names from the <code>testSourceIndexDir</code> to 'prepare'
      * @return A array of files identifying the prepared input files
      */
     protected File[] prepareSourceIndex(String[] indexFileNames) {
         File[] inputFiles = new File[indexFileNames.length];
-        for (int i=0;i <indexFileNames.length;i++) {
+        for (int i = 0; i < indexFileNames.length; i++) {
             File finalFile = new File(inputDirName, indexFileNames[i]);
             FileUtils.copyFile(new File(testSourceIndexDir, indexFileNames[i]), finalFile);
             inputFiles[i] = finalFile;
