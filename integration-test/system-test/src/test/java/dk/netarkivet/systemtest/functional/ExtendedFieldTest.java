@@ -27,17 +27,17 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import dk.netarkivet.systemtest.HarvestUtils;
-import dk.netarkivet.systemtest.NASAssert;
-import dk.netarkivet.systemtest.SeleniumTest;
-import dk.netarkivet.systemtest.page.DomainWebTestHelper;
-import dk.netarkivet.systemtest.page.PageHelper;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.Select;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import dk.netarkivet.systemtest.HarvestUtils;
+import dk.netarkivet.systemtest.NASAssert;
+import dk.netarkivet.systemtest.SeleniumTest;
+import dk.netarkivet.systemtest.page.DomainWebTestHelper;
+import dk.netarkivet.systemtest.page.PageHelper;
 
 public class ExtendedFieldTest extends SeleniumTest {
     private String extendedIDForTest;

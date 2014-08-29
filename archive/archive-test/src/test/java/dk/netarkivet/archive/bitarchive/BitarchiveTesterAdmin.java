@@ -22,21 +22,25 @@
  */
 package dk.netarkivet.archive.bitarchive;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
-import dk.netarkivet.archive.ArchiveSettings;
-import dk.netarkivet.common.distribute.TestRemoteFile;
-import dk.netarkivet.common.exceptions.PermissionDenied;
-import dk.netarkivet.common.utils.Settings;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import dk.netarkivet.archive.ArchiveSettings;
+import dk.netarkivet.common.distribute.TestRemoteFile;
+import dk.netarkivet.common.exceptions.PermissionDenied;
+import dk.netarkivet.common.utils.Settings;
 
 /**
  * Unit test for Bitarchive API The handling of administrative data is tested

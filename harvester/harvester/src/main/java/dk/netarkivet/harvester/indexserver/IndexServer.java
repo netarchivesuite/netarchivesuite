@@ -22,11 +22,11 @@
  */
 package dk.netarkivet.harvester.indexserver;
 
-import dk.netarkivet.common.distribute.indexserver.RequestType;
-import dk.netarkivet.common.utils.CleanupIF;
-
 import java.util.HashSet;
 import java.util.Set;
+
+import dk.netarkivet.common.distribute.indexserver.RequestType;
+import dk.netarkivet.common.utils.CleanupIF;
 
 /**
  * Index server. Handles request for lucene indexes of crawl logs and cdx indexes of jobs, using two multifilebasedcache

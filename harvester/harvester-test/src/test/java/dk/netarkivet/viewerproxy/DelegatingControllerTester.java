@@ -22,12 +22,8 @@
  */
 package dk.netarkivet.viewerproxy;
 
-import dk.netarkivet.common.arcrepository.TestArcRepositoryClient;
-import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
-import dk.netarkivet.common.distribute.indexserver.Index;
-import dk.netarkivet.common.distribute.indexserver.JobIndexCache;
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.testutils.StringAsserts;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.net.URI;
@@ -36,10 +32,16 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
-import static org.junit.Assert.*;
-import org.junit.Before;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+
+import dk.netarkivet.common.arcrepository.TestArcRepositoryClient;
+import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
+import dk.netarkivet.common.distribute.indexserver.Index;
+import dk.netarkivet.common.distribute.indexserver.JobIndexCache;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.testutils.StringAsserts;
 
 /**
  * Tests of DelegatingController class.

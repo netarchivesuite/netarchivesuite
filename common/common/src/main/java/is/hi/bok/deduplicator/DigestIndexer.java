@@ -29,7 +29,6 @@ import java.lang.reflect.Constructor;
 import java.util.List;
 
 import org.apache.commons.cli.Option;
-
 import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;

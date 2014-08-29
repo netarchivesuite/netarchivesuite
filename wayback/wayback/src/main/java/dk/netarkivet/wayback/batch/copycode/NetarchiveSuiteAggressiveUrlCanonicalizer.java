@@ -22,9 +22,9 @@
  */
 package dk.netarkivet.wayback.batch.copycode;
 
-import org.archive.wayback.util.url.AggressiveUrlCanonicalizer;
-import org.archive.net.UURI;
 import org.apache.commons.httpclient.URIException;
+import org.archive.net.UURI;
+import org.archive.wayback.util.url.AggressiveUrlCanonicalizer;
 
 /**
  * This class overrides the standard wayback canonicalizer in order to use our version of UURIFactory (see Bug 1719).

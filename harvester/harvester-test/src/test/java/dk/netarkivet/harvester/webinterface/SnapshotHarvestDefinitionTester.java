@@ -38,6 +38,7 @@ import javax.servlet.jsp.PageContext;
 
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.harvester.datamodel.DomainDAO;

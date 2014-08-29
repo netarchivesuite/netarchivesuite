@@ -21,6 +21,10 @@
  */
 package dk.netarkivet.harvester.harvesting.extractor;
 
+import java.io.IOException;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.archive.crawler.datamodel.CoreAttributeConstants;
@@ -33,10 +37,6 @@ import org.archive.net.UURI;
 import org.archive.util.DevUtils;
 import org.archive.util.TextUtils;
 import org.archive.util.UriUtils;
-
-import java.io.IOException;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
 
 /**
  * Processes Javascript files for strings that are likely to be crawlable URIs.

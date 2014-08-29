@@ -22,15 +22,16 @@
  */
 package dk.netarkivet.harvester.harvesting.frontier;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import static org.junit.Assert.*;
-
-import org.junit.Before;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 

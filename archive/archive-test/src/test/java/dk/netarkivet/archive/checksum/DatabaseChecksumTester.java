@@ -22,13 +22,9 @@
  */
 package dk.netarkivet.archive.checksum;
 
-import com.sleepycat.je.DatabaseException;
-
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import com.sleepycat.je.DatabaseException;
 
 @SuppressWarnings({"unused"})
 public class DatabaseChecksumTester {

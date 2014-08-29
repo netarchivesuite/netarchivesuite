@@ -23,11 +23,6 @@
 
 package dk.netarkivet.monitor.webinterface;
 
-import javax.management.MBeanServer;
-import javax.management.MBeanServerFactory;
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
-import javax.management.RuntimeMBeanException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -35,14 +30,20 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanRegistrationException;
+import javax.management.MBeanServer;
+import javax.management.MBeanServerFactory;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+import javax.management.RuntimeMBeanException;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.webinterface.HTMLUtils;
 import dk.netarkivet.monitor.jmx.HostForwarding;
 import dk.netarkivet.monitor.logging.SingleLogRecord;
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanRegistrationException;
 
 /**
  * Implementation of StatusEntry, that receives its data from the MBeanServer (JMX).

@@ -22,13 +22,13 @@
  */
 package dk.netarkivet.archive.arcrepository;
 
-import dk.netarkivet.common.distribute.arcrepository.ReplicaType;
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import org.junit.After;
-import org.junit.Before;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import dk.netarkivet.common.distribute.arcrepository.ReplicaType;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /** Tests of the ReplicaType enum class. */
 

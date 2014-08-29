@@ -22,13 +22,15 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
+import static org.junit.Assert.fail;
+
 import java.util.Date;
 
-import dk.netarkivet.common.exceptions.PermissionDenied;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import dk.netarkivet.common.exceptions.PermissionDenied;
 
 /**
  * Unit-tests for the ScheduleDBDAO class.

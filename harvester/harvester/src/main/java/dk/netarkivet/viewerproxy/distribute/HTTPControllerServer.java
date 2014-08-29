@@ -23,6 +23,13 @@
 
 package dk.netarkivet.viewerproxy.distribute;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URI;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -34,13 +41,6 @@ import dk.netarkivet.viewerproxy.Controller;
 import dk.netarkivet.viewerproxy.Request;
 import dk.netarkivet.viewerproxy.Response;
 import dk.netarkivet.viewerproxy.URIResolver;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.URI;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
 
 /**
  * Wrapper for an URIResolver, which calls the controller methods on given specific URLs, and forwards all others to the

@@ -22,25 +22,25 @@
  */
 package dk.netarkivet.wayback.indexer;
 
-import java.io.InputStream;
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Date;
-
-import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
-import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryClient;
-import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
-import dk.netarkivet.common.distribute.RemoteFile;
-import dk.netarkivet.common.utils.batch.DatedFileListJob;
-import dk.netarkivet.common.utils.batch.FileListJob;
-import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.wayback.WaybackSettings;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import dk.netarkivet.common.distribute.RemoteFile;
+import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
+import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
+import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryClient;
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.batch.DatedFileListJob;
+import dk.netarkivet.common.utils.batch.FileListJob;
+import dk.netarkivet.wayback.WaybackSettings;
 
 public class FileNameHarvester {
 

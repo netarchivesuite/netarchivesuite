@@ -22,14 +22,6 @@
  */
 package dk.netarkivet.viewerproxy;
 
-import dk.netarkivet.common.Constants;
-import dk.netarkivet.common.distribute.arcrepository.ARCLookup;
-import dk.netarkivet.common.distribute.arcrepository.ResultStream;
-import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.harvester.HarvesterSettings;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -41,8 +33,18 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import dk.netarkivet.common.Constants;
+import dk.netarkivet.common.distribute.arcrepository.ARCLookup;
+import dk.netarkivet.common.distribute.arcrepository.ResultStream;
+import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.HarvesterSettings;
 
 /**
  * The ARCArchiveAccess class implements reading of ARC indexes and files. It builds on the Java ARC utils and Lucene

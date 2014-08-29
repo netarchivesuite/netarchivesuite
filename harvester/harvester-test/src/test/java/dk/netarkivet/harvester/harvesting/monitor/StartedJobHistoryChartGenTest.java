@@ -22,6 +22,8 @@
  */
 package dk.netarkivet.harvester.harvesting.monitor;
 
+import static org.junit.Assert.assertEquals;
+
 import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.File;
@@ -31,9 +33,8 @@ import java.text.ParseException;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.junit.Assert.*;
-import org.junit.Before;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import dk.netarkivet.common.CommonSettings;

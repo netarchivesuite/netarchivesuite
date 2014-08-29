@@ -22,6 +22,9 @@
  */
 package dk.netarkivet.harvester.indexserver;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -35,11 +38,8 @@ import java.util.Set;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.harvester.indexserver.CombiningMultiFileBasedCache;
-import dk.netarkivet.harvester.indexserver.FileBasedCache;
 
 /**
  * Unit test(s) for the CombiningMultiFileBasedCache class.

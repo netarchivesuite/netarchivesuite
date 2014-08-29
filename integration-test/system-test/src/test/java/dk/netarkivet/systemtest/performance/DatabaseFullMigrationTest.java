@@ -22,10 +22,9 @@
  */
 package dk.netarkivet.systemtest.performance;
 
-import dk.netarkivet.systemtest.environment.ApplicationManager;
-import dk.netarkivet.systemtest.functional.DomainsPageTest;
-import dk.netarkivet.systemtest.functional.ExtendedFieldTest;
-import dk.netarkivet.systemtest.page.PageHelper;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -33,8 +32,10 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
+import dk.netarkivet.systemtest.environment.ApplicationManager;
+import dk.netarkivet.systemtest.functional.DomainsPageTest;
+import dk.netarkivet.systemtest.functional.ExtendedFieldTest;
+import dk.netarkivet.systemtest.page.PageHelper;
 
 @SuppressWarnings("unused")
 public class DatabaseFullMigrationTest extends StressTest {

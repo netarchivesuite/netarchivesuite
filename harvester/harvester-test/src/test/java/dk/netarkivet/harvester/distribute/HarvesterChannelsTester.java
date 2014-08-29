@@ -22,11 +22,14 @@
  */
 package dk.netarkivet.harvester.distribute;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
+
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.harvester.datamodel.HarvestChannel;
-import static org.junit.Assert.*;
-import org.junit.Test;
 
 /**
  * Unittests of the class dk.netarkivet.common.distribute.Channels.

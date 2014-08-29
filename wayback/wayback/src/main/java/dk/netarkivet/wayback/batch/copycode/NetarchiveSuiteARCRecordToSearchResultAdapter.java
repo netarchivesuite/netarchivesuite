@@ -22,17 +22,17 @@
  */
 package dk.netarkivet.wayback.batch.copycode;
 
-import java.io.IOException;
 import java.io.File;
+import java.io.IOException;
 
+import org.apache.commons.httpclient.Header;
 import org.archive.io.arc.ARCRecord;
 import org.archive.io.arc.ARCRecordMetaData;
+import org.archive.wayback.UrlCanonicalizer;
+import org.archive.wayback.WaybackConstants;
 import org.archive.wayback.core.CaptureSearchResult;
 import org.archive.wayback.util.Adapter;
 import org.archive.wayback.util.url.IdentityUrlCanonicalizer;
-import org.archive.wayback.UrlCanonicalizer;
-import org.archive.wayback.WaybackConstants;
-import org.apache.commons.httpclient.Header;
 
 /**
  * This class is cut and paste from waybacks ARCRecordToSearchResultAdapter, except for the use of

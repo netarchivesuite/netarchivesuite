@@ -22,13 +22,13 @@
  */
 package dk.netarkivet.common.utils.cdx;
 
-import org.archive.io.ArchiveRecord;
-
-import dk.netarkivet.common.exceptions.NotImplementedException;
-
 import java.awt.datatransfer.MimeTypeParseException;
 import java.io.Serializable;
 import java.util.regex.Pattern;
+
+import org.archive.io.ArchiveRecord;
+
+import dk.netarkivet.common.exceptions.NotImplementedException;
 
 /**
  * A filter class for batch entries. Allows testing whether or not to process an entry without loading the entry data

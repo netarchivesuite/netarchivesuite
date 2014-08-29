@@ -22,8 +22,9 @@
  */
 package dk.netarkivet.monitor.jmx;
 
-import javax.management.ObjectName;
 import java.util.Set;
+
+import javax.management.ObjectName;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;

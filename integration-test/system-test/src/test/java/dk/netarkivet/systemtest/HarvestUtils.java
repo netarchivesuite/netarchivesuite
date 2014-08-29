@@ -27,6 +27,7 @@ import java.util.Set;
 
 import org.jaccept.TestEventManager;
 import org.openqa.selenium.By;
+
 import dk.netarkivet.systemtest.page.DomainConfigurationPageHelper;
 import dk.netarkivet.systemtest.page.PageHelper;
 import dk.netarkivet.systemtest.page.SelectiveHarvestPageHelper;

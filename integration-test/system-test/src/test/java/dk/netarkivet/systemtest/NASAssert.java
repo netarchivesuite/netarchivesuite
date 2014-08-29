@@ -24,6 +24,7 @@ package dk.netarkivet.systemtest;
 
 import java.util.HashSet;
 import java.util.Set;
+
 import org.testng.Assert;
 
 public class NASAssert extends Assert {

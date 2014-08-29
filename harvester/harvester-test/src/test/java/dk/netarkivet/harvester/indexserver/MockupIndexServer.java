@@ -22,11 +22,12 @@
  */
 package dk.netarkivet.harvester.indexserver;
 
-import javax.jms.Message;
-import javax.jms.MessageListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.jms.Message;
+import javax.jms.MessageListener;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;

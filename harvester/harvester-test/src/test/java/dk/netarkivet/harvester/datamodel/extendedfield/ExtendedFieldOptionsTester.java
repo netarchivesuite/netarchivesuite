@@ -23,11 +23,12 @@
 
 package dk.netarkivet.harvester.datamodel.extendedfield;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Map;
 
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldOptions;
-
-import static org.junit.Assert.*;
 import org.junit.Test;
 
 public class ExtendedFieldOptionsTester {

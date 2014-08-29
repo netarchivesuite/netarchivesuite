@@ -22,11 +22,13 @@
  */
 package dk.netarkivet.viewerproxy;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
 
-import static org.junit.Assert.*;
 import org.junit.Test;
 
 import dk.netarkivet.common.exceptions.NotImplementedException;

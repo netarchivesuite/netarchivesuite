@@ -22,17 +22,15 @@
  */
 package dk.netarkivet.harvester.datamodel.extendedfield;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.List;
 
-import dk.netarkivet.harvester.datamodel.DataModelTestCase;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldType;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypeDAO;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypeDBDAO;
-import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import dk.netarkivet.harvester.datamodel.DataModelTestCase;
 
 public class ExtendedFieldTypeTester extends DataModelTestCase {
     @Before

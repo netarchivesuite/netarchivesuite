@@ -22,22 +22,24 @@
  */
 package dk.netarkivet.harvester.scheduler;
 
-import dk.netarkivet.harvester.datamodel.Job;
-import dk.netarkivet.harvester.datamodel.JobDAO;
-import dk.netarkivet.harvester.datamodel.JobStatus;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Matchers;
-
-import javax.inject.Provider;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import javax.inject.Provider;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Matchers;
+
+import dk.netarkivet.harvester.datamodel.Job;
+import dk.netarkivet.harvester.datamodel.JobDAO;
+import dk.netarkivet.harvester.datamodel.JobStatus;
 
 public class JobSupervisorTest {
     private JobSupervisor jobSupervisor;

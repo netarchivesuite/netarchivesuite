@@ -22,9 +22,10 @@
  */
 package dk.netarkivet.systemtest.environment;
 
+import org.jaccept.TestEventManager;
+
 import dk.netarkivet.systemtest.TestLogger;
 import dk.netarkivet.systemtest.page.PageHelper;
-import org.jaccept.TestEventManager;
 
 public class ApplicationManager {
     protected final TestLogger log = new TestLogger(getClass());

@@ -22,9 +22,9 @@
  */
 package dk.netarkivet.wayback;
 
+import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.io.File;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

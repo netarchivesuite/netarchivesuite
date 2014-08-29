@@ -22,12 +22,12 @@
  */
 package dk.netarkivet.systemtest.page;
 
+import java.util.List;
+
 import org.jaccept.TestEventManager;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-
-import java.util.List;
 
 public class DomainConfigurationPageHelper {
     public static final String NEW_CONFIGURATION = "New configuration";

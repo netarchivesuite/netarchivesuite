@@ -23,9 +23,10 @@
 
 package dk.netarkivet.harvester.harvesting.controller;
 
-import javax.management.InvalidAttributeValueException;
 import java.io.File;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import javax.management.InvalidAttributeValueException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

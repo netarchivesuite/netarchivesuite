@@ -23,14 +23,14 @@
 
 package dk.netarkivet.harvester.webinterface;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.jsp.PageContext;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.jsp.PageContext;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;

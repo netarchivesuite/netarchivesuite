@@ -23,11 +23,11 @@
 
 package dk.netarkivet.wayback.batch.copycode;
 
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import org.archive.net.UURI;
 import org.apache.commons.httpclient.URIException;
+import org.archive.net.UURI;
 
 /**
  * This is a cut'n'paste job from the wayback subversion repository, with calls to UURIFactory replaced with calls to

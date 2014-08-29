@@ -22,9 +22,13 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
+
 import java.util.regex.Matcher;
 
-import static org.junit.Assert.*;
 import org.junit.Test;
 
 /**

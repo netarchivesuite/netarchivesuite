@@ -22,21 +22,23 @@
  */
 package dk.netarkivet.harvester.harvesting;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+import java.io.File;
+
+import org.dom4j.Document;
+import org.dom4j.DocumentFactory;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.testutils.preconfigured.MockupJMS;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.After;
-import org.junit.Test;
-
-import org.dom4j.Document;
-import org.dom4j.DocumentFactory;
-
-import java.io.File;
 
 /**
  * Unittests for the class HeritrixFiles.

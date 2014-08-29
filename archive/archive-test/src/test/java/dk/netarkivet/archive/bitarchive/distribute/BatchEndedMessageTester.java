@@ -22,18 +22,18 @@
  */
 package dk.netarkivet.archive.bitarchive.distribute;
 
-import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.testutils.Serial;
+import static org.junit.Assert.assertEquals;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
+import dk.netarkivet.common.distribute.Channels;
+import dk.netarkivet.testutils.Serial;
 
 public class BatchEndedMessageTester {
     private static BatchEndedMessage bem;

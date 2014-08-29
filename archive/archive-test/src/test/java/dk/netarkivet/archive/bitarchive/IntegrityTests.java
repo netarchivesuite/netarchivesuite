@@ -23,6 +23,10 @@
 
 package dk.netarkivet.archive.bitarchive;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.Writer;
@@ -34,7 +38,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveServer;
 import dk.netarkivet.common.CommonSettings;
@@ -42,8 +45,8 @@ import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.FilebasedFreeSpaceProvider;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.FilebasedFreeSpaceProvider;
 import dk.netarkivet.common.utils.MockFreeSpaceProvider;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;

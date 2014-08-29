@@ -24,21 +24,11 @@
 package dk.netarkivet.harvester.harvesting;
 
 import java.io.File;
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
-import org.dom4j.Document;
-
-import dk.netarkivet.common.utils.XmlUtils;
-import dk.netarkivet.harvester.datamodel.HarvestChannel;
-import dk.netarkivet.harvester.datamodel.Job;
-import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.datamodel.StopReason;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
-import dk.netarkivet.testutils.ReflectUtils;
 
 /**
  * Testdata for this package.

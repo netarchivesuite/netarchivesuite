@@ -22,12 +22,14 @@
  */
 package dk.netarkivet.harvester.distribute;
 
-import dk.netarkivet.harvester.datamodel.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
+
 import org.junit.Test;
 
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
+import dk.netarkivet.harvester.datamodel.HarvestChannel;
 
 /**
  * Tests the part of ChannelID class that relates to the harvesting module. The rest of ChannelID is tested in
