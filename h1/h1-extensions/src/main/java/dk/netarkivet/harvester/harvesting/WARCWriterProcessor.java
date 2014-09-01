@@ -76,11 +76,11 @@ import dk.netarkivet.harvester.harvesting.metadata.PersistentJobData;
 public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttributeConstants, CrawlStatusListener,
         WriterPoolSettings, FetchStatusCodes, WARCConstants {
 
-    private static final long serialVersionUID = -2006725968882994351L;
+   private static final Logger logger = Logger.getLogger(WARCWriterProcessor.class.getName());
 
-    private static final Logger logger = Logger.getLogger(WARCWriterProcessor.class.getName());
+   private static final long serialVersionUID = -2006725968882994351L;
 
-    public long getDefaultMaxFileSize() {
+     public long getDefaultMaxFileSize() {
         return 1000000000L; // 1 SI giga-byte (109 bytes), per WARC appendix A
     }
 

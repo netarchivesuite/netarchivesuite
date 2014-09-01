@@ -59,12 +59,6 @@
     </dependency>
 
     <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging</artifactId>
-      <version>1.2</version>
-    </dependency>
-
-    <dependency>
       <groupId>commons-net</groupId>
       <artifactId>commons-net</artifactId>
       <version>3.0.1</version>
@@ -187,10 +181,15 @@
     </dependency>
 
     <!-- not in Maven Central -->
-    <dependency>
+    <!--dependency>
       <groupId>org.archive</groupId>
       <artifactId>heritrix</artifactId>
       <version>1.14.4</version>
+    </dependency-->
+
+    <dependency>
+      <groupId>org.netpreserve.commons</groupId>
+      <artifactId>webarchive-commons</artifactId>
     </dependency>
 
     <dependency>

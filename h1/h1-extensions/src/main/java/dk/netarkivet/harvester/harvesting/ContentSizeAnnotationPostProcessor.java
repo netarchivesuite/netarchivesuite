@@ -26,8 +26,6 @@ package dk.netarkivet.harvester.harvesting;
 import org.archive.crawler.datamodel.CrawlURI;
 import org.archive.crawler.framework.Processor;
 
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-
 /**
  * A post processor that adds an annotation content-size:<bytes> for each successfully harvested URI.
  */
@@ -57,7 +55,9 @@ public class ContentSizeAnnotationPostProcessor extends Processor {
      * @see Processor#innerProcess(org.archive.crawler.datamodel.CrawlURI)
      */
     protected void innerProcess(CrawlURI crawlURI) throws InterruptedException {
-        ArgumentNotValid.checkNotNull(crawlURI, "CrawlURI crawlURI");
+        if (crawlURI == null) {
+            throw new IllegalArgumentException("The value of the variable 'CrawlURI crawlURI' must not be null.");
+        }
         if (crawlURI.getFetchStatus() > 0) {
             crawlURI.addAnnotation(CONTENT_SIZE_ANNOTATION_PREFIX + crawlURI.getContentSize());
         }

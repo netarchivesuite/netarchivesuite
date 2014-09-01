@@ -32,8 +32,6 @@ import org.archive.net.UURIFactory;
 import org.archive.util.ArchiveUtils;
 import org.archive.util.SurtPrefixSet;
 
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-
 /**
  * Class that re-creates the SurtPrefixSet to include only domain names according to the domain definition of
  * NetarchiveSuite. The NetarchiveSuite can't use the org.archive.crawler.deciderules.OnDomainsDecideRule because it
@@ -126,7 +124,9 @@ public class OnNSDomainsDecideRule extends SurtPrefixedDecideRule {
      * @return Domain name
      */
     public static String convertToDomain(String uri) {
-        ArgumentNotValid.checkNotNullOrEmpty(uri, "String uri");
+        if (uri == null || uri.isEmpty()) {
+            throw new IllegalArgumentException("The value of the variable 'String uri' must not be an empty string.");
+        }
         DomainnameQueueAssignmentPolicy policy = new DomainnameQueueAssignmentPolicy();
         String u = uri;
         try {
