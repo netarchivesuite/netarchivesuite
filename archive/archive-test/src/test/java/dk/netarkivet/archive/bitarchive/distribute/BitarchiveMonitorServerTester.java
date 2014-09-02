@@ -836,8 +836,6 @@ public class BitarchiveMonitorServerTester {
 
     /**
      * Tests the opportunity to correct a entry in the archive through CorrectMessage.
-     *
-     * @throws InterruptedException
      */
     @Test
     public void testCorrectMessage() throws InterruptedException {

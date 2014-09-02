@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.FileFilter;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import dk.netarkivet.common.utils.FileUtils;
@@ -44,6 +45,7 @@ public class CleanupTester {
     /**
      * Remove files in FileUtils.getTempDir();
      */
+    @Ignore
     @Test
     public void testThatMostTmpFilesGone() {
 

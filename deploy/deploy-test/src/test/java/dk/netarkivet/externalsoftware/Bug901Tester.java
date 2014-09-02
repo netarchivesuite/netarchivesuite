@@ -44,6 +44,7 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.arc.ARCUtils;
 
 @SuppressWarnings({"unused"})
+@Ignore
 public class Bug901Tester {
 
     private static final int BLOCKSIZE = 32768;

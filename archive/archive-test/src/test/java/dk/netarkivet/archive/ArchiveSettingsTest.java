@@ -29,8 +29,7 @@ import java.lang.reflect.Modifier;
 
 import org.junit.Test;
 
-/** Unittestersuite for the ArchiveSettings class. */
-public class ArchiveSettingsTester {
+public class ArchiveSettingsTest {
 
     @SuppressWarnings("rawtypes")
     @Test

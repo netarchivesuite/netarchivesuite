@@ -14,10 +14,6 @@
 
   <name>Netarchivesuite - monitor - test</name>
 
-  <properties>
-    <test>dk.netarkivet.monitor.UnitTesterSuite</test>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>dk.netarkivet.netarchivesuite</groupId>

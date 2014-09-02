@@ -39,6 +39,7 @@ import javax.jms.QueueBrowser;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import dk.netarkivet.common.CommonSettings;
@@ -51,8 +52,10 @@ import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
- * Tests JMSConnection, the class that handles all JMS operations for Netarkivet.
+ * Tests JMSConnection, the class that handles all JMS operations for Netarkivet. Currently disabled as this requires a
+ * jms broker to be running. Consider moving this class to the integration test phase and perhaps with an embedded broker?
  */
+@Ignore
 public class IntegrityTestSuite {
     /**
      * We need two arbitrary (but different) queues for testing send and reply.
@@ -100,6 +103,7 @@ public class IntegrityTestSuite {
      * MessageListener can removed from a Topic - at the moment we have no need for that. If the need arises, a test
      * case should be written for Topics as well.
      */
+
     @Test
     public void testRemoveListener() {
         TestMessage testMsg = new TestMessage(sendQ, replyQ);

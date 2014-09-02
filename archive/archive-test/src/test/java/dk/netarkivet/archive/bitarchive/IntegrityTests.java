@@ -37,6 +37,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveServer;
@@ -49,6 +50,7 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.FilebasedFreeSpaceProvider;
 import dk.netarkivet.common.utils.MockFreeSpaceProvider;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.SlowTest;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /** A number of integrity tests for the bitarchive package. */
@@ -114,6 +116,7 @@ public class IntegrityTests {
     /**
      * Verify that the correct value of free space will be returned, when calling the DefaultFreeSpaceProvider.
      */
+    @Category(SlowTest.class)
     @Test
     public void testDefaultFreeSpaceProvider() {
         final File dir1 = new File(ARCHIVE_DIR, "dir1");
