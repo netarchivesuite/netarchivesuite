@@ -28,11 +28,13 @@ import static org.junit.Assert.fail;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.SlowTest;
 import dk.netarkivet.common.webinterface.GUIWebServer;
 import dk.netarkivet.harvester.datamodel.DataModelTestCase;
 import dk.netarkivet.harvester.datamodel.TestInfo;
@@ -42,6 +44,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
  * Unit-test for the GUIWebServer class when the DefinitionsSiteSection is loaded. FIXME Some of these tests can be
  * merged into the GUIWebServerTester.
  */
+@Category(SlowTest.class)
 public class HarvestDefinitionGUITester extends DataModelTestCase {
     private GUIWebServer gui;
 

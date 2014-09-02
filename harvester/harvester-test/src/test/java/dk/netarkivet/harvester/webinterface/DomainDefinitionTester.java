@@ -37,10 +37,12 @@ import javax.servlet.jsp.PageContext;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.I18n;
+import dk.netarkivet.common.utils.SlowTest;
 import dk.netarkivet.harvester.datamodel.Domain;
 import dk.netarkivet.harvester.datamodel.DomainConfiguration;
 import dk.netarkivet.harvester.datamodel.DomainDAO;
@@ -54,6 +56,7 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue;
 /**
  * Tests for class DomainDefinition associated with JSP-page Definitions-edit-domain.jsp.
  */
+@Category(SlowTest.class)
 public class DomainDefinitionTester extends HarvesterWebinterfaceTestCase {
 
     @Override

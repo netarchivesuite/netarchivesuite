@@ -41,10 +41,12 @@ import javax.servlet.jsp.PageContext;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.utils.I18n;
+import dk.netarkivet.common.utils.SlowTest;
 import dk.netarkivet.harvester.datamodel.DataModelTestCase;
 import dk.netarkivet.harvester.datamodel.DomainDAO;
 import dk.netarkivet.harvester.datamodel.HarvestChannel;
@@ -58,6 +60,7 @@ import dk.netarkivet.harvester.datamodel.JobStatusInfo;
 /**
  * Test of Harvest Status utility method for resubmitting jobs.
  */
+@Category(SlowTest.class)
 public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
     private static final I18n I18N = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
 
