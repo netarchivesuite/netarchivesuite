@@ -34,9 +34,11 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.PermissionDenied;
+import dk.netarkivet.common.utils.SlowTest;
 
 public class ScheduleDAOTester extends DataModelTestCase {
     @Before
@@ -80,30 +82,35 @@ public class ScheduleDAOTester extends DataModelTestCase {
     }
 
     /** Test an hourly schedule. */
+    @Category(SlowTest.class)
     @Test
     public void testNormalUsageHourly() {
         doTestNormalUsage(TestInfo.TESTSCHEDULE_HOURLY);
     }
 
     /** Test a daily schedule. */
+    @Category(SlowTest.class)
     @Test
     public void testNormalUsageDaily() {
         doTestNormalUsage(TestInfo.TESTSCHEDULE_DAILY);
     }
 
     /** Test a weekly schedule. */
+    @Category(SlowTest.class)
     @Test
     public void testNormalUsageWeekly() {
         doTestNormalUsage(TestInfo.TESTSCHEDULE_WEEKLY);
     }
 
     /** Test a monthly schedule. */
+    @Category(SlowTest.class)
     @Test
     public void testNormalUsageMonthly() {
         doTestNormalUsage(TestInfo.TESTSCHEDULE_MONTHLY);
     }
 
     /** Test schedule with minute-based frequency */
+    @Category(SlowTest.class)
     @Test
     public void testNormalUsageMinutes() {
         doTestNormalUsage(TestInfo.TESTSCHEDULE_MINUTES);
@@ -113,6 +120,7 @@ public class ScheduleDAOTester extends DataModelTestCase {
      * Verify that basic exceptions works: Get an instance of a ScheduleDAO create a null schedule and retrieve null
      * data from it
      */
+    @Category(SlowTest.class)
     @Test
     public void testBasicArgumentExceptions() {
         ScheduleDAO scheduledao = ScheduleDAO.getInstance();
@@ -146,6 +154,7 @@ public class ScheduleDAOTester extends DataModelTestCase {
      * Test retrieval of all schedules DEFAULTSCHEDULE is already there in the schedules list. add one
      * HERE_AND_NOW_SCHEDULE schedule more and retrieve and count all schedules
      */
+    @Category(SlowTest.class)
     @Test
     public void testGetAllSchedules() {
         ScheduleDAO scheduledao = ScheduleDAO.getInstance();
@@ -178,6 +187,7 @@ public class ScheduleDAOTester extends DataModelTestCase {
     /**
      * Check that updating an entry that has already been modified results in an IOFailure
      */
+    @Category(SlowTest.class)
     @Test
     public void testOptimisticLocking() {
         // create the schedule

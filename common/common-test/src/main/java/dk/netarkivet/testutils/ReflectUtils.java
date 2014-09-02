@@ -22,11 +22,13 @@
  */
 package dk.netarkivet.testutils;
 
+import static org.junit.Assert.assertEquals;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 /**
  * Methods that help in doing common reflection tasks.
@@ -82,10 +84,10 @@ public class ReflectUtils {
     public static void testUtilityConstructor(Class c) {
         Constructor[] constructors = c.getConstructors();
 
-        Assert.assertEquals("There should be no public constructors.", 0, constructors.length);
+        assertEquals("There should be no public constructors.", 0, constructors.length);
 
         constructors = c.getDeclaredConstructors();
-        Assert.assertEquals("There should be one constructor.", 1, constructors.length);
+        assertEquals("There should be one constructor.", 1, constructors.length);
 
         for (Constructor con : constructors) {
             Assert.assertFalse("The constructor should not be accessible.", con.isAccessible());

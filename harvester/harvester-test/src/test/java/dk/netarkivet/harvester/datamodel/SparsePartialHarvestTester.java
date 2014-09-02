@@ -34,6 +34,9 @@ import java.util.ArrayList;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
+
+import dk.netarkivet.common.utils.SlowTest;
 
 public class SparsePartialHarvestTester extends DataModelTestCase {
     private PartialHarvest harvest;
@@ -58,6 +61,7 @@ public class SparsePartialHarvestTester extends DataModelTestCase {
     /**
      * Test constructor.
      */
+    @Category(SlowTest.class)
     @Test
     public void testConstructor() {
         SparsePartialHarvest sph = new SparsePartialHarvest(harvest.oid, harvest.harvestDefName, harvest.comments,
@@ -69,6 +73,7 @@ public class SparsePartialHarvestTester extends DataModelTestCase {
     /**
      * Test the method getSparsePartialHarvest
      */
+    @Category(SlowTest.class)
     @Test
     public void testGetSparsePartialHarvest() {
         if (harvest.oid == null) {

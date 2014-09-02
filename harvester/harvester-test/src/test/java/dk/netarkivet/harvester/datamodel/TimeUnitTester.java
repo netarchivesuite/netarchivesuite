@@ -26,14 +26,17 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.utils.SlowTest;
 
 /**
  * Unit tests for the {@link TimeUnit} class.
  */
 public class TimeUnitTester {
 
+    @Category(SlowTest.class)
     @Test
     public void testFromOrdinal() {
         assertEquals(TimeUnit.HOURLY, TimeUnit.fromOrdinal(1));

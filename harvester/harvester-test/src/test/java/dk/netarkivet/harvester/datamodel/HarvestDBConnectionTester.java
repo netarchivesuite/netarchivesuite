@@ -38,9 +38,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.DBUtils;
+import dk.netarkivet.common.utils.SlowTest;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 
@@ -67,6 +69,7 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
      * Simple test if HarvestDBConnection.getDBConnection() works or not. Uses Settings.DB_URL set in
      * DataModelTestCase.SetUp()
      */
+    @Category(SlowTest.class)
     @Test
     public void testGetDBConnection() {
         Connection c = HarvestDBConnection.get();
@@ -95,6 +98,7 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
      *
      * @throws InterruptedException
      */
+    @Category(SlowTest.class)
     @Test
     public void testLockRelease() throws InterruptedException {
         // Go-ahead ticker
@@ -174,6 +178,7 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
     /**
      * check HarvestDBConnection.setStringMaxLength(). Especially, that bug 970 is solved.
      */
+    @Category(SlowTest.class)
     @Test
     @Ignore("Log parsing did not find expected string")
     public void testSetStringMaxLength() throws SQLException {
@@ -228,6 +233,7 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
     /**
      * check HarvestDBConnection.setClobMaxLength(). especially, that bug 970 is solved.
      */
+    @Category(SlowTest.class)
     @Test
     @Ignore("Log parsing did not find expected string")
     public void testSetClobMaxLength() throws SQLException {
@@ -282,6 +288,7 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
         }
     }
 
+    @Category(SlowTest.class)
     @Test
     public void testCreateTable() throws SQLException {
         deleteTableIfExists("dummy");
@@ -297,6 +304,7 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
         }
     }
 
+    @Category(SlowTest.class)
     @Test
     public void testCreateAndUpdateTable() throws SQLException {
         deleteTableIfExists("dummy");

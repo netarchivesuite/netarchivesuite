@@ -100,12 +100,11 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- Ugly test dependencies. -->
-
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>common-test</artifactId>
       <version>${project.version}</version>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
@@ -138,7 +137,7 @@
       <artifactId>derbytools</artifactId>
       <version>10.10.1.1</version>
     </dependency>
-    <!-- -->
+
   </dependencies>
 
   <build>

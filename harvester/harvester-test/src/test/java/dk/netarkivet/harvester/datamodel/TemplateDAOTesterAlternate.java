@@ -32,11 +32,13 @@ import java.sql.Connection;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.SlowTest;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.TestFileUtils;
@@ -82,6 +84,7 @@ public class TemplateDAOTesterAlternate {
      * Test that it's possible to get access to an empty templates table. This tests that Bug 916 is fixed. FIXME merge
      * with TemplateDAOTester
      */
+    @Category(SlowTest.class)
     @Test
     public void testGetinstanceOnEmptyDatabase() {
         TemplateDAO dao = null;

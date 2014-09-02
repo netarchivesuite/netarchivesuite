@@ -45,7 +45,10 @@ import javax.jms.MessageListener;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
+import org.junit.rules.TestName;
 
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.bitarchive.BitarchiveApplication;
@@ -65,6 +68,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.SlowTest;
 import dk.netarkivet.common.utils.batch.ChecksumJob;
 import dk.netarkivet.testutils.ClassAsserts;
 import dk.netarkivet.testutils.FileAsserts;
@@ -82,6 +86,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
  */
 @SuppressWarnings({"unused", "serial"})
 public class BitarchiveServerTester {
+    @Rule public TestName name = new TestName();
     private UseTestRemoteFile utrf = new UseTestRemoteFile();
 
     BitarchiveServer bas;
@@ -344,6 +349,7 @@ public class BitarchiveServerTester {
     /**
      * Test the normal operation of trying to get a record of a file which is not present on this bitarchive.
      */
+    @Category(SlowTest.class)
     @Test
     public void testVisitGetMessageNoSuchFile() {
         Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, BITARCHIVE1.getAbsolutePath());

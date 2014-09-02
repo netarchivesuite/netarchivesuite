@@ -39,11 +39,13 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.IteratorUtils;
+import dk.netarkivet.common.utils.SlowTest;
 import dk.netarkivet.testutils.CollectionAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.StringAsserts;
@@ -69,6 +71,7 @@ public class DomainDAOTester extends DataModelTestCase {
      * Check that creation of a new Domain instance succeeds.
      */
     @Test
+    @Category(SlowTest.class)
     public void testCreateAndRead() {
         DomainDAO dao = DomainDAO.getInstance();
         Domain wd = TestInfo.getDefaultNewDomain();
@@ -117,6 +120,7 @@ public class DomainDAOTester extends DataModelTestCase {
     }
 
     /** Check check updating of an existing entry. */
+    @Category(SlowTest.class)
     @Test
     public void testUpdate() {
         DomainDAO dao = DomainDAO.getInstance();
@@ -157,6 +161,7 @@ public class DomainDAOTester extends DataModelTestCase {
     /**
      * Check that updating an entry that has already been modified results in an IOFailure.
      */
+    @Category(SlowTest.class)
     @Test
     public void testOptimisticLocking() {
         DomainDAO dao = DomainDAO.getInstance();
@@ -189,6 +194,7 @@ public class DomainDAOTester extends DataModelTestCase {
     }
 
     /** Test retrieval of all domains. */
+    @Category(SlowTest.class)
     @Test
     public void testGetAllDomains() {
         DomainDAO dao = DomainDAO.getInstance();
@@ -228,6 +234,7 @@ public class DomainDAOTester extends DataModelTestCase {
     /**
      * Test for bug #121: Trying to access a non-existing domain creates part of the domain structure.
      */
+    @Category(SlowTest.class)
     @Test
     public void testAccessNonExisting() {
         DomainDAO dao = DomainDAO.getInstance();
@@ -271,6 +278,7 @@ public class DomainDAOTester extends DataModelTestCase {
      *
      * @throws Exception
      */
+    @Category(SlowTest.class)
     @Test
     public void testRead() throws Exception {
         DomainDAO dao = DomainDAO.getInstance();
@@ -296,6 +304,7 @@ public class DomainDAOTester extends DataModelTestCase {
      *
      * @throws Exception
      */
+    @Category(SlowTest.class)
     @Test
     public void testReadAndWriteHarvestInfo() throws Exception {
         DomainDAO dao = DomainDAO.getInstance();
@@ -343,6 +352,7 @@ public class DomainDAOTester extends DataModelTestCase {
      *
      * @throws Exception
      */
+    @Category(SlowTest.class)
     @Test
     public void testGetHarvestInfoBasedOnPreviousHarvestDefinition() throws Exception {
         DomainDAO dao = DomainDAO.getInstance();
@@ -426,12 +436,14 @@ public class DomainDAOTester extends DataModelTestCase {
                 hi[0].equals(hi2) || hi[1].equals(hi2) || hi[2].equals(hi2));
     }
 
+    @Category(SlowTest.class)
     @Test
     public void testGetCountDomains() throws Exception {
         assertEquals("Must have expected number of domains", 4, DomainDAO.getInstance().getCountDomains());
     }
 
     /** Test that crawler traps can be reread from DAO */
+    @Category(SlowTest.class)
     @Test
     public void testReadWriteCrawlerTraps() {
         // Add some crawler traps
@@ -476,6 +488,7 @@ public class DomainDAOTester extends DataModelTestCase {
         }
     }
 
+    @Category(SlowTest.class)
     @Test
     public void testGetDomainHarvestInfo() throws Exception {
         DomainDAO dao = DomainDAO.getInstance();
@@ -512,6 +525,7 @@ public class DomainDAOTester extends DataModelTestCase {
     /**
      * Test that we cannot store a domain that drops configs, seedlists or passwords that are in use.
      */
+    @Category(SlowTest.class)
     @Test
     public void testDeleteSubparts() {
         DomainDAO dao = DomainDAO.getInstance();
@@ -610,6 +624,7 @@ public class DomainDAOTester extends DataModelTestCase {
     }
 
     /** Test that we can add and retrieve owner info. */
+    @Category(SlowTest.class)
     @Test
     public void testInsertOwnerInfo() {
         DomainDAO dao = DomainDAO.getInstance();
@@ -633,6 +648,7 @@ public class DomainDAOTester extends DataModelTestCase {
     }
 
     /** Test that we can add and retrieve owner info. */
+    @Category(SlowTest.class)
     @Test
     public void testInsertPassword() {
         DomainDAO dao = DomainDAO.getInstance();
@@ -659,6 +675,7 @@ public class DomainDAOTester extends DataModelTestCase {
         assertEquals("Should have two passwords after insertion", 2, info.size());
     }
 
+    @Category(SlowTest.class)
     @Test
     public void testReadSparse() {
         DomainDAO dao = DomainDAO.getInstance();
@@ -689,6 +706,7 @@ public class DomainDAOTester extends DataModelTestCase {
      * Test getting all domains from database, but in the order that domains are sorted by - Default configuration
      * template - Default configuration max byte limit
      */
+    @Category(SlowTest.class)
     @Test
     public void testGetAllDomainsInSnapshotHarvestOrder() {
         // First, make sure we have something interesting to sort...
@@ -728,6 +746,7 @@ public class DomainDAOTester extends DataModelTestCase {
     }
 
     /** Check constructor of DomainHarvestInfo(). */
+    @Category(SlowTest.class)
     @Test
     public void testDomainHarvestInfoConstructor() {
         long jobId = 42L;

@@ -29,8 +29,10 @@ import java.util.Date;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import dk.netarkivet.common.exceptions.PermissionDenied;
+import dk.netarkivet.common.utils.SlowTest;
 
 /**
  * Unit-tests for the ScheduleDBDAO class.
@@ -48,6 +50,7 @@ public class ScheduleDBDAOTester extends DataModelTestCase {
         super.tearDown();
     }
 
+    @Category(SlowTest.class)
     @Test
     public void testCreateChecksSize() throws Exception {
         Schedule s1 = TestInfo.getDefaultSchedule();

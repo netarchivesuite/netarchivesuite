@@ -32,10 +32,12 @@ import java.sql.SQLException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.utils.DBUtils;
+import dk.netarkivet.common.utils.SlowTest;
 
 /**
  * Unit test testing the DerbySpecifics class.
@@ -62,11 +64,13 @@ public class DerbySpecificsTester extends DataModelTestCase {
     /**
      * Test added to fool JUnit.
      */
+    @Category(SlowTest.class)
     @Test
     public void testDummy() {
 
     }
 
+    @Category(SlowTest.class)
     @Test
     public void testGetTemporaryTable() throws SQLException {
         Connection c = HarvestDBConnection.get();

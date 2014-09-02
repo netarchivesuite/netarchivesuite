@@ -38,10 +38,12 @@ import java.util.Iterator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.SlowTest;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
@@ -68,6 +70,7 @@ public class DomainConfigurationTester extends DataModelTestCase {
         rs.tearDown();
     }
 
+    @Category(SlowTest.class)
     @Test
     public void testConstructorAndSomeGetters() {
         Domain wd = Domain.getDefaultDomain(TestInfo.DOMAIN_NAME);
@@ -95,6 +98,8 @@ public class DomainConfigurationTester extends DataModelTestCase {
      * Test that the maxBytes field is stored correctly. This test is added because the maxBytes field was added after
      * the database was put into production.
      */
+    @Category(SlowTest.class)
+    @Test
     public void testMaxBytes() {
         DomainDAO dao = DomainDAO.getInstance();
         Domain wd = dao.read(TestInfo.EXISTINGDOMAINNAME);
@@ -131,9 +136,9 @@ public class DomainConfigurationTester extends DataModelTestCase {
 
     /**
      * Test that we can remove a password.
-     *
-     * @throws Exception
      */
+    @Category(SlowTest.class)
+    @Test
     public void testRemovePassword() throws Exception {
         Domain d = Domain.getDefaultDomain(TestInfo.DEFAULTNEWDOMAINNAME);
         d.addPassword(TestInfo.password);
@@ -152,9 +157,9 @@ public class DomainConfigurationTester extends DataModelTestCase {
 
     /**
      * Test that we can ask for the use of a password.
-     *
-     * @throws Exception
      */
+    @Category(SlowTest.class)
+    @Test
     public void testUsesPassword() throws Exception {
         Domain d = Domain.getDefaultDomain(TestInfo.DEFAULTNEWDOMAINNAME);
         d.addPassword(TestInfo.password);
@@ -165,6 +170,8 @@ public class DomainConfigurationTester extends DataModelTestCase {
         assertTrue("Configuration uses password", conf.usesPassword(TestInfo.PASSWORD_NAME));
     }
 
+    @Category(SlowTest.class)
+    @Test
     public void testGetExpectedNumberOfObjects() throws Exception {
         Domain domain = Domain.getDefaultDomain("testdomain01.dk");
         DomainConfiguration dc = domain.getDefaultConfiguration();
@@ -263,6 +270,8 @@ public class DomainConfigurationTester extends DataModelTestCase {
     }
 
     /** Test that adding seedlists to domainconfigs doesn't confuse the domain. */
+    @Category(SlowTest.class)
+    @Test
     public void testAddSeedlist() {
         Domain d = TestInfo.getDefaultDomain();
         SeedList seedlist = d.getAllSeedLists().next();
@@ -291,6 +300,8 @@ public class DomainConfigurationTester extends DataModelTestCase {
     }
 
     /** Test that adding passwords to domainconfigs doesn't confuse the domain. */
+    @Category(SlowTest.class)
+    @Test
     public void testAddPassword() {
         Domain d = TestInfo.getDefaultDomain();
         Password password = new Password("test", "no comment", "domain of evil", "realm of hades", "morgoth", "666");

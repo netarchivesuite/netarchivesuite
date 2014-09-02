@@ -22,25 +22,19 @@
  */
 package dk.netarkivet.monitor.jmx;
 
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
+
 import java.util.Set;
 
 import javax.management.ObjectName;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 import dk.netarkivet.common.exceptions.NotImplementedException;
 
 /** Unittest for testing the CachingProxyConnectionFactory class. */
-public class CachingProxyConnectionFactoryTester extends TestCase {
-    public CachingProxyConnectionFactoryTester(String s) {
-        super(s);
-    }
-
-    public void setUp() {
-    }
-
-    public void tearDown() {
-    }
-
+public class CachingProxyConnectionFactoryTester {
+    @Test
     public void testGetConnection() throws Exception {
         JMXProxyConnectionFactory factory = new JMXProxyConnectionFactory() {
             public JMXProxyConnection getConnection(String server, int port, int rmiPort, String userName,

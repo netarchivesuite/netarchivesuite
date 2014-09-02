@@ -48,6 +48,7 @@ import java.util.Map;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IllegalState;
@@ -56,6 +57,7 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.Named;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.SlowTest;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedField;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO;
@@ -80,6 +82,7 @@ public class DomainTester extends DataModelTestCase {
     /**
      * Test extended fields
      */
+    @Category(SlowTest.class)
     @Test
     public void testExtendedFields() {
         ExtendedFieldDAO extDAO = ExtendedFieldDBDAO.getInstance();
@@ -102,6 +105,7 @@ public class DomainTester extends DataModelTestCase {
         assertEquals(true, d.getExtendedFieldValue(new Long(2)).getBooleanValue());
     }
 
+    @Category(SlowTest.class)
     @Test
     public void testExtendedFields2() {
         ExtendedFieldDAO extDAO = ExtendedFieldDBDAO.getInstance();
@@ -120,6 +124,7 @@ public class DomainTester extends DataModelTestCase {
     /**
      * Test setters and getters with correct parameters.
      */
+    @Category(SlowTest.class)
     @Test
     public void testSetAndGet() {
         Domain wd = Domain.getDefaultDomain(TestInfo.DOMAIN_NAME);
@@ -152,6 +157,7 @@ public class DomainTester extends DataModelTestCase {
     /**
      * Test setters with incorrect parameters.
      */
+    @Category(SlowTest.class)
     @Test
     public void testSetAndGetArgumentNotValid() {
         try {
@@ -249,6 +255,7 @@ public class DomainTester extends DataModelTestCase {
     /**
      * Verify that configurations with unknown seedlists are rejected by Domain.
      */
+    @Category(SlowTest.class)
     @Test
     public void testUnknownSeedList() {
         try {
@@ -267,6 +274,7 @@ public class DomainTester extends DataModelTestCase {
     /**
      * Verify that removing a seedlist used by a configuration is rejected.
      */
+    @Category(SlowTest.class)
     @Test
     public void testSeedListRemoved() {
         Domain wd = Domain.getDefaultDomain(TestInfo.DOMAIN_NAME);
@@ -286,6 +294,7 @@ public class DomainTester extends DataModelTestCase {
     /**
      * Verify that adding a seedlist with an already used name fails.
      */
+    @Category(SlowTest.class)
     @Test
     public void testDuplicateSeedListName() {
         Domain wd = Domain.getDefaultDomain(TestInfo.DOMAIN_NAME);
@@ -302,6 +311,7 @@ public class DomainTester extends DataModelTestCase {
     /**
      * Verify that adding a configuration with an already used name fails.
      */
+    @Category(SlowTest.class)
     @Test
     public void testDuplicateCfgName() {
         Domain wd = Domain.getDefaultDomain(TestInfo.DOMAIN_NAME);
@@ -322,6 +332,7 @@ public class DomainTester extends DataModelTestCase {
      * Test removal of a configuration. Removing the default configuration is not allowed. At least one cfg must always
      * exists.
      */
+    @Category(SlowTest.class)
     @Test
     public void testRemoveConfiguration() {
         DomainDAO dao = DomainDAO.getInstance();
@@ -362,6 +373,7 @@ public class DomainTester extends DataModelTestCase {
      *
      * @throws Exception
      */
+    @Category(SlowTest.class)
     @Test
     public void testUpdateConfiguration() throws Exception {
         Domain d = Domain.getDefaultDomain(TestInfo.DEFAULTNEWDOMAINNAME);
@@ -386,6 +398,7 @@ public class DomainTester extends DataModelTestCase {
     }
 
     /** Test that we can add a new seedlist. */
+    @Category(SlowTest.class)
     @Test
     public void testAddSeedList() {
         Domain d = Domain.getDefaultDomain(TestInfo.DEFAULTNEWDOMAINNAME);
@@ -426,6 +439,7 @@ public class DomainTester extends DataModelTestCase {
         }
     }
 
+    @Category(SlowTest.class)
     @Test
     public void testGetSeedList() {
         Domain wd = Domain.getDefaultDomain(TestInfo.DOMAIN_NAME);
@@ -457,6 +471,7 @@ public class DomainTester extends DataModelTestCase {
         assertNotNull("valid id should return valid list", seedlist);
     }
 
+    @Category(SlowTest.class)
     @Test
     public void testUpdateSeedList() {
         Domain d = Domain.getDefaultDomain(TestInfo.DEFAULTNEWDOMAINNAME);
@@ -502,6 +517,7 @@ public class DomainTester extends DataModelTestCase {
     /**
      * Removing the last seed list is not allowed. At least one seed list must always exists.
      */
+    @Category(SlowTest.class)
     @Test
     public void testRemoveSeedList() {
         Domain wd = Domain.getDefaultDomain(TestInfo.DOMAIN_NAME);
@@ -521,6 +537,7 @@ public class DomainTester extends DataModelTestCase {
     /**
      * Check that it is possible to retrieve all configurations.
      */
+    @Category(SlowTest.class)
     @Test
     public void testGetAllConfigurations() {
         // Create some configurations to retrieve
@@ -562,6 +579,7 @@ public class DomainTester extends DataModelTestCase {
     }
 
     // test invalid values
+    @Category(SlowTest.class)
     @Test
     public void testAddOwnerInfoInvalidParams() {
 
@@ -576,6 +594,7 @@ public class DomainTester extends DataModelTestCase {
     }
 
     // get all the historical data about the domain
+    @Category(SlowTest.class)
     @Test
     public void testGetHistoricalData() {
         // get he historical data
@@ -601,6 +620,7 @@ public class DomainTester extends DataModelTestCase {
      * (ArgumentNotValid e) { //expected } }
      */
     // test by adding informations to Harvest
+    @Category(SlowTest.class)
     @Test
     public void testAddHarvestInfo() {
         // Domain domain = new Domain("itu.dk");
@@ -620,6 +640,7 @@ public class DomainTester extends DataModelTestCase {
     }
 
     // test the reason why harvest stopped
+    @Category(SlowTest.class)
     @Test
     public void testSetStopReason() {
         Long harvestID = new Long(1234);
@@ -633,6 +654,7 @@ public class DomainTester extends DataModelTestCase {
     }
 
     // test the number of obtained URLs
+    @Category(SlowTest.class)
     @Test
     public void testSetCountObjectRetrieved() {
         Long harvestID = new Long(1234);
@@ -645,6 +667,7 @@ public class DomainTester extends DataModelTestCase {
     }
 
     // test total amount of data download from the domain
+    @Category(SlowTest.class)
     @Test
     public void testSetSizeDataRetrieved() {
         Long harvestID = new Long(1234);
@@ -658,6 +681,7 @@ public class DomainTester extends DataModelTestCase {
     }
 
     // test create, update and load for the domains
+    @Category(SlowTest.class)
     @Test
     public void testLoadAndVerifyAllDomainCreated() {
         DomainDAO dao = DomainDAO.getInstance();
@@ -679,6 +703,7 @@ public class DomainTester extends DataModelTestCase {
     }
 
     // test invalid values with constructor
+    @Category(SlowTest.class)
     @Test
     public void testSetAndGetInvalidValues() {
         Date date = new Date();
@@ -737,9 +762,8 @@ public class DomainTester extends DataModelTestCase {
 
     /**
      * Test that getting a new domain actually does that.
-     *
-     * @throws Exception
      */
+    @Category(SlowTest.class)
     @Test
     public void testGetDefaultDomain() throws Exception {
         Domain d = Domain.getDefaultDomain("foo.dk");
@@ -761,9 +785,8 @@ public class DomainTester extends DataModelTestCase {
 
     /**
      * Test that we can add a password
-     *
-     * @throws Exception
      */
+    @Category(SlowTest.class)
     @Test
     public void testAddPassword() throws Exception {
         Domain d = Domain.getDefaultDomain(TestInfo.DEFAULTNEWDOMAINNAME);
@@ -780,6 +803,7 @@ public class DomainTester extends DataModelTestCase {
         }
     }
 
+    @Category(SlowTest.class)
     @Test
     public void testUpdatePassword() throws Exception {
         Domain d = Domain.getDefaultDomain(TestInfo.DEFAULTNEWDOMAINNAME);
@@ -803,9 +827,8 @@ public class DomainTester extends DataModelTestCase {
 
     /**
      * Test that we can remove an existing password.
-     *
-     * @throws Exception
      */
+    @Category(SlowTest.class)
     @Test
     public void testRemovePassword() throws Exception {
         Domain d = Domain.getDefaultDomain(TestInfo.DEFAULTNEWDOMAINNAME);
@@ -831,6 +854,7 @@ public class DomainTester extends DataModelTestCase {
     }
 
     /** Test setting and getting the regular expressions used for exclusions */
+    @Category(SlowTest.class)
     @Test
     public void testSetCrawlerTraps() {
         Domain d = Domain.getDefaultDomain("dr.dk");
@@ -887,9 +911,8 @@ public class DomainTester extends DataModelTestCase {
 
     /**
      * Test that we have a sensible regexp for checking validity of domain names.
-     *
-     * @throws Exception
      */
+    @Category(SlowTest.class)
     @Test
     public void testIsValidDomainName() throws Exception {
         assertFalse("Multidot should not be valid", DomainUtils.isValidDomainName("foo.bar.dk"));
@@ -914,6 +937,7 @@ public class DomainTester extends DataModelTestCase {
                 DomainUtils.isValidDomainName("bar.d"));
     }
 
+    @Category(SlowTest.class)
     @Test
     public void testDomainNameFromHostname() throws Exception {
         Map<String, String> hostnameToDomainname = new HashMap<String, String>();
@@ -957,6 +981,7 @@ public class DomainTester extends DataModelTestCase {
     }
 
     /** Tests for assignment 4.1.1: Adding alias information in database */
+    @Category(SlowTest.class)
     @Test
     public void testAliasGettersAndSetters() {
         // Create Domain fnord.dk
@@ -1059,6 +1084,7 @@ public class DomainTester extends DataModelTestCase {
      * getAllSeedListsAsSortedList(), getAllPasswordsAsSortedList() Note these methods uses Locale to sort according to
      * language
      */
+    @Category(SlowTest.class)
     @Test
     public void testGetSortedSeedlistAndDomainConfigurationsAndPasswords() {
         Domain d = Domain.getDefaultDomain(TestInfo.DEFAULTNEWDOMAINNAME);

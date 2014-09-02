@@ -38,9 +38,11 @@ import java.util.Set;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.UnknownID;
+import dk.netarkivet.common.utils.SlowTest;
 
 /**
  * Unitests for the class GlobalCrawlerTrapListDBDAO.
@@ -73,6 +75,7 @@ public class GlobalCrawlerTrapListDBDAOTester extends DataModelTestCase {
     /**
      * tests that we can get a singleton instance of the dao class
      */
+    @Category(SlowTest.class)
     @Test
     public void testGetInstance() throws SQLException {
         GlobalCrawlerTrapListDAO dao1 = GlobalCrawlerTrapListDAO.getInstance();
@@ -89,6 +92,7 @@ public class GlobalCrawlerTrapListDBDAOTester extends DataModelTestCase {
         }
     }
 
+    @Category(SlowTest.class)
     @Test
     public void testCreate() {
         GlobalCrawlerTrapListDAO dao = GlobalCrawlerTrapListDAO.getInstance();
@@ -105,6 +109,7 @@ public class GlobalCrawlerTrapListDBDAOTester extends DataModelTestCase {
     /**
      * Tests that we can insert an object in the dao and read it back.
      */
+    @Category(SlowTest.class)
     @Test
     public void testCreateAndRead() {
         GlobalCrawlerTrapListDAO dao = GlobalCrawlerTrapListDAO.getInstance();
@@ -116,6 +121,7 @@ public class GlobalCrawlerTrapListDBDAOTester extends DataModelTestCase {
     /**
      * Test that we can delete an object from the database.
      */
+    @Category(SlowTest.class)
     @Test
     public void testDelete() {
         GlobalCrawlerTrapListDAO dao = GlobalCrawlerTrapListDAO.getInstance();
@@ -132,6 +138,7 @@ public class GlobalCrawlerTrapListDBDAOTester extends DataModelTestCase {
     /**
      * Test that we can update a list and retrieve the updated list
      */
+    @Category(SlowTest.class)
     @Test
     public void testUpdate() {
         GlobalCrawlerTrapListDAO dao = GlobalCrawlerTrapListDAO.getInstance();
@@ -149,6 +156,7 @@ public class GlobalCrawlerTrapListDBDAOTester extends DataModelTestCase {
     /**
      * Tests that we can get a list of active traplists
      */
+    @Category(SlowTest.class)
     @Test
     public void testGetAllActive() {
         GlobalCrawlerTrapListDAO dao = GlobalCrawlerTrapListDAO.getInstance();
@@ -160,6 +168,7 @@ public class GlobalCrawlerTrapListDBDAOTester extends DataModelTestCase {
         assertEquals("Should be list1", list1, dao.getAllActive().get(0));
     }
 
+    @Category(SlowTest.class)
     @Test
     public void testGetAllInactive() {
         GlobalCrawlerTrapListDAO dao = GlobalCrawlerTrapListDAO.getInstance();
@@ -170,6 +179,7 @@ public class GlobalCrawlerTrapListDBDAOTester extends DataModelTestCase {
         assertEquals("Should be two inactive lists", 2, dao.getAllInActive().size());
     }
 
+    @Category(SlowTest.class)
     @Test
     public void testGetExpressions() {
         GlobalCrawlerTrapListDAO dao = GlobalCrawlerTrapListDAO.getInstance();
@@ -181,6 +191,7 @@ public class GlobalCrawlerTrapListDBDAOTester extends DataModelTestCase {
                 .size());
     }
 
+    @Category(SlowTest.class)
     @Test
     public void testExists() {
         GlobalCrawlerTrapListDAO dao = GlobalCrawlerTrapListDAO.getInstance();

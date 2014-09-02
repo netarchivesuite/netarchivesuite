@@ -22,6 +22,11 @@
  */
 package dk.netarkivet.monitor.logging;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.lang.management.ManagementFactory;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -33,7 +38,10 @@ import javax.management.MalformedObjectNameException;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.management.Constants;
@@ -47,7 +55,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 /**
  * Test behavior of the CachingLogHandler, and its exposure of log records using JMX.
  */
-public class CachingLogHandlerTester extends TestCase {
+public class CachingLogHandlerTester {
     private CachingLogHandler cachingLogHandler;
     private MBeanServer mBeanServer;
     private static final int LOG_HISTORY_SIZE = 42;
@@ -55,10 +63,7 @@ public class CachingLogHandlerTester extends TestCase {
     private static final String LOG_MESSAGE = "Log message ";
     ReloadSettings rs = new ReloadSettings();
 
-    public CachingLogHandlerTester(String s) {
-        super(s);
-    }
-
+    @Before
     public void setUp() {
         rs.setUp();
         // Get the MBean server
@@ -72,6 +77,7 @@ public class CachingLogHandlerTester extends TestCase {
         Settings.set(CommonSettings.USE_REPLICA_ID, "ONE");
     }
 
+    @After
     public void tearDown() {
         if (cachingLogHandler != null) {
             cachingLogHandler.close();
@@ -89,9 +95,8 @@ public class CachingLogHandlerTester extends TestCase {
      * log record)
      *
      * It is also tested that no MBeans were registered before this call.
-     *
-     * @throws Exception
      */
+    @Test
     public void testCachingLogHandler() throws Exception {
 
         // Check no mbeans of this type before
@@ -140,9 +145,8 @@ public class CachingLogHandlerTester extends TestCase {
      * Test that publishing more than 42 messages lets the oldest one fall out.
      *
      * Tests that publishing more than a set
-     *
-     * @throws Exception
      */
+    @Test
     public void testPublish() throws Exception {
         cachingLogHandler = new CachingLogHandler();
 
@@ -179,6 +183,7 @@ public class CachingLogHandlerTester extends TestCase {
         }
     }
 
+    @Test
     public void testGetNthLogRecord() throws Exception {
         LogRecord record1 = generateLogRecord(Level.WARNING, 1);
         LogRecord record2 = generateLogRecord(Level.INFO, 2);
@@ -230,9 +235,8 @@ public class CachingLogHandlerTester extends TestCase {
 
     /**
      * Test that close unregisters the registered mbeans.
-     *
-     * @throws Exception
      */
+    @Test
     public void testClose() throws Exception {
         // Check no mbeans of this type before
         int before = mBeanServer.getMBeanCount();

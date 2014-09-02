@@ -22,6 +22,10 @@
  */
 package dk.netarkivet.common.utils.warc;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -33,20 +37,22 @@ import org.archive.io.warc.WARCReader;
 import org.archive.io.warc.WARCReaderFactory;
 import org.archive.io.warc.WARCWriter;
 import org.archive.util.ArchiveUtils;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.arc.TestInfo;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
-import junit.framework.Assert;
-import junit.framework.TestCase;
 
 /**
  * Tests for class WARCUtils.
  */
 @SuppressWarnings({"unused"})
-public class WARCUtilsTester extends TestCase {
+public class WARCUtilsTester {
 
     private static File OUTFILE_WARC = new File(TestInfo.WORKING_DIR, "outFile.warc");
     private static File OUTFILE1_WARC = new File(TestInfo.WORKING_DIR, "outFile1.warc");
@@ -56,25 +62,20 @@ public class WARCUtilsTester extends TestCase {
     private static File INPUT_2_WARC = new File(TestInfo.WORKING_DIR, "input-2.warc");
     private static File INPUT_3_WARC = new File(TestInfo.WORKING_DIR, "input-3.warc");
 
-    public WARCUtilsTester(String s) {
-        super(s);
-    }
-
+    @Before
     public void setUp() throws Exception {
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
-        super.setUp();
     }
 
+    @After
     public void tearDown() throws Exception {
-        super.tearDown();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
     }
 
     /**
      * Test that the insertARCFile method inserts the expected things.
-     *
-     * @throws Exception
      */
+    @Test
     public void testInsertWARCFile() throws Exception {
         // Test illegal arguments first.
         try {
@@ -114,6 +115,7 @@ public class WARCUtilsTester extends TestCase {
         );
     }
 
+    @Test
     public void testWarcCopy() {
         try {
             byte[] warcBytes = ("WARC/1.0\r\n"
@@ -139,30 +141,28 @@ public class WARCUtilsTester extends TestCase {
             // System.out.println( new String(bytes));
 
             WARCReader reader = WARCReaderFactory.get(copiedFile);
-            Assert.assertNotNull(reader);
+            assertNotNull(reader);
             ArchiveRecord record = reader.get();
-            Assert.assertNotNull(record);
+            assertNotNull(record);
             ArchiveRecordHeader header = record.getHeader();
-            Assert.assertNotNull(header);
+            assertNotNull(header);
 
-            Assert.assertEquals("metadata", header.getHeaderValue("WARC-Type"));
-            Assert.assertEquals(
+            assertEquals("metadata", header.getHeaderValue("WARC-Type"));
+            assertEquals(
                     "metadata://netarkivet.dk/crawl/setup/duplicatereductionjobs?majorversion=1&minorversion=0&harvestid=1&harvestnum=59&jobid=86",
                     header.getHeaderValue("WARC-Target-URI"));
-            Assert.assertEquals("2012-08-24T11:42:55Z", header.getHeaderValue("WARC-Date"));
-            Assert.assertEquals("<urn:uuid:c93099e5-2304-487e-9ff2-41e3c01c2b51>",
+            assertEquals("2012-08-24T11:42:55Z", header.getHeaderValue("WARC-Date"));
+            assertEquals("<urn:uuid:c93099e5-2304-487e-9ff2-41e3c01c2b51>",
                     header.getHeaderValue("WARC-Record-ID"));
-            Assert.assertEquals("sha1:SUCGMUVXDKVB5CS2NL4R4JABNX7K466U", header.getHeaderValue("WARC-Payload-Digest"));
-            Assert.assertEquals("207.241.229.39", header.getHeaderValue("WARC-IP-Address"));
-            Assert.assertEquals("<urn:uuid:e7c9eff8-f5bc-4aeb-b3d2-9d3df99afb31>",
+            assertEquals("sha1:SUCGMUVXDKVB5CS2NL4R4JABNX7K466U", header.getHeaderValue("WARC-Payload-Digest"));
+            assertEquals("207.241.229.39", header.getHeaderValue("WARC-IP-Address"));
+            assertEquals("<urn:uuid:e7c9eff8-f5bc-4aeb-b3d2-9d3df99afb31>",
                     header.getHeaderValue("WARC-Concurrent-To"));
-            Assert.assertEquals("text/plain", header.getHeaderValue("Content-Type"));
-            Assert.assertEquals("2", header.getHeaderValue("Content-Length"));
+            assertEquals("text/plain", header.getHeaderValue("Content-Type"));
+            assertEquals("2", header.getHeaderValue("Content-Length"));
         } catch (IOException e) {
             e.printStackTrace();
             Assert.fail("Unexpected exception!");
         }
-
     }
-
 }

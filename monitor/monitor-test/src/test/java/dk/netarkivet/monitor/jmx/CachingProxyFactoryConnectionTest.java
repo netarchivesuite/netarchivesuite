@@ -22,30 +22,18 @@
  */
 package dk.netarkivet.monitor.jmx;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Tests the CachingProxyFactoryConnectionFactory class.
  *
  */
-public class CachingProxyFactoryConnectionTest extends TestCase {
-
-    public CachingProxyFactoryConnectionTest(String arg0) {
-        super(arg0);
-    }
-
-    protected void setUp() throws Exception {
-        super.setUp();
-    }
-
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-
+public class CachingProxyFactoryConnectionTest {
     /*
      * Test method for
      * 'dk.netarkivet.monitor.jmx.CachingProxyFactoryConnectionFactory.CachingProxyFactoryConnection(JMXProxyFactoryConnectionFactory)'
      */
+    @Test
     public void testCachingProxyFactoryConnection() {
         JMXProxyConnectionFactory f = new CachingProxyConnectionFactory(new DummyJMXProxyConnectionFactory());
     }
@@ -54,6 +42,7 @@ public class CachingProxyFactoryConnectionTest extends TestCase {
      * Test method for 'dk.netarkivet.monitor.jmx.CachingProxyFactoryConnectionFactory.getConnection(String, int, int,
      * String, String)'
      */
+    @Test
     public void testGetConnection() {
         JMXProxyConnectionFactory f = new CachingProxyConnectionFactory(new DummyJMXProxyConnectionFactory());
         f.getConnection("server", 8001, 8101, "monitorRole", "Deterbareløgn");
@@ -67,9 +56,4 @@ public class CachingProxyFactoryConnectionTest extends TestCase {
             return null;
         }
     }
-
-    private class DummyJmxProxyFactory {
-
-    }
-
 }
