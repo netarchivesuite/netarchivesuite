@@ -22,19 +22,28 @@ disable all validation.  [Ok] then rebuilds the project without errors.
 
 /tra 2014-05-09
 
-Eclipse configuration files moved to build-tools/src/main/resources so
-maven-java-formatter-plugin can run from the command line with
+Formatter preferences for Eclipse and IntelliJ has been established so their respective 
+"Format Sources" are as close as we reasonably could make them.
+
+Our findings are described at https://sbforge.org/display/NAS/Coding+Guidelines
+
+Sources and pom.xml files has been reformatted accordingly.
+
+Eclipse configuration files are placed under build-tools/src/main/resources.
+IntelliJ preferences are placed under /.idea and should be automatically picked up.
+
+The maven-java-formatter-plugin can run from the command line with
 
   mvn com.googlecode.maven-java-formatter-plugin:maven-java-formatter-plugin:format
 
 Eclipse:
 =======
 
-Use File->Import->General->Preferences to import eclipse-xml-settings.epf
-Use Preferences->Java->Code Style->Formatter->[Import] to import eclipse-formatter-settings.xml
+Use File->Import->General->Preferences to import 
+build-tools/src/main/resources/eclipse-xml-settings.epf
 
-/tra 2014-07-21
+Use Preferences->Java->Code Style->Formatter->[Import] to import 
+build-tools/src/main/resources/eclipse-formatter-settings.xml
 
-archive-test and harvester-test migrated from junit 3 to junit 4.
+/tra 2014-08-29
 
-/tra 2014-07-24
