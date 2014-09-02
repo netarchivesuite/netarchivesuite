@@ -65,8 +65,6 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- Ugly test dependencies. -->
-
     <dependency>
       <groupId>dk.netarkivet.netarchivesuite</groupId>
       <artifactId>common-test</artifactId>
@@ -84,9 +82,9 @@
         <directory>tests</directory>
       </testResource>
     </testResources>
-
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <argLine>
@@ -96,13 +94,13 @@
             -Djava.security.manager
             -Djava.security.policy=tests/dk/netarkivet/ant-test.policy
             -Dorg.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy=org.archive.crawler.frontier.HostnameQueueAssignmentPolicy,org.archive.crawler.frontier.IPQueueAssignmentPolicy,org.archive.crawler.frontier.BucketQueueAssignmentPolicy,org.archive.crawler.frontier.SurtAuthorityQueueAssignmentPolicy,org.archive.crawler.frontier.TopmostAssignedSurtQueueAssignmentPolicy,dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy
-            -Duser.language=en -Duser.country=US -Duser.variant=US
-            -Duser.timezone=Europe/Copenhagen
+            -Duser.language=en -Duser.country=US -Duser.variant=US -Duser.timezone=Europe/Copenhagen
           </argLine>
           <forkCount>1</forkCount>
-          <reuseForks>true</reuseForks>
+          <reuseForks>false</reuseForks>
           <includes>
-            <include>**/*Test*.java</include>
+            <!-- consider all java files as tests -->
+            <include>**/*Test*</include>
           </includes>
         </configuration>
       </plugin>

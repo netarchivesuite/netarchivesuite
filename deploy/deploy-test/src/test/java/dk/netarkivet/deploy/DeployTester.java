@@ -22,15 +22,21 @@
  */
 package dk.netarkivet.deploy;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
-import junit.framework.TestCase;
 
-public class DeployTester extends TestCase {
+public class DeployTester {
 
     ReloadSettings rs = new ReloadSettings();
 
@@ -46,6 +52,7 @@ public class DeployTester extends TestCase {
     private String databaseName = TestInfo.FILE_DATABASE.getPath();
     private String arcDatabaseName = TestInfo.FILE_BP_DATABASE.getPath();
 
+    @Before
     public void setUp() {
         rs.setUp();
         pss.setUp();
@@ -56,6 +63,7 @@ public class DeployTester extends TestCase {
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
     }
 
+    @After
     public void tearDown() {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         FileUtils.removeRecursively(TestInfo.TMPDIR);
@@ -68,6 +76,7 @@ public class DeployTester extends TestCase {
     /**
      * Ensures, that the constructor is as a utility class.
      */
+    @Test
     public void testConstructors() {
         ReflectUtils.testUtilityConstructor(DeployApplication.class);
         ReflectUtils.testUtilityConstructor(Constants.class);
@@ -189,6 +198,7 @@ public class DeployTester extends TestCase {
     /**
      * tests if non-existing argument is given
      */
+    @Test
     public void testDeployArguments1() {
         String[] args = {"-FAIL" + itConfXmlName, TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
                 TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
@@ -231,6 +241,7 @@ public class DeployTester extends TestCase {
     /**
      * tests not enough arguments.
      */
+    @Test
     public void testDeployArguments3() {
         String[] args = {TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,};
         DeployApplication.main(args);
@@ -247,6 +258,7 @@ public class DeployTester extends TestCase {
     /**
      * tests configuration file argument with wrong extension.
      */
+    @Test
     public void testDeployArgumentsExtension1() {
         String[] args = {TestInfo.ARGUMENT_CONFIG_FILE + "config.ERROR",
                 TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
@@ -267,6 +279,7 @@ public class DeployTester extends TestCase {
     /**
      * tests NetarchiveSuite file argument with wrong extension.
      */
+    @Test
     public void testDeployArgumentsExtension2() {
         String[] args = {TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
                 TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + "null.ERROR",
@@ -287,6 +300,7 @@ public class DeployTester extends TestCase {
     /**
      * tests security policy file argument with wrong extension.
      */
+    @Test
     public void testDeployArgumentsExtension3() {
         String[] args = {TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
                 TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
@@ -307,6 +321,7 @@ public class DeployTester extends TestCase {
     /**
      * tests log property file argument with wrong extension.
      */
+    @Test
     public void testDeployArgumentsExtension4() {
         String[] args = {TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
                 TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
@@ -327,6 +342,7 @@ public class DeployTester extends TestCase {
     /**
      * tests database file argument with wrong extension.
      */
+    @Test
     public void testDeployArgumentsExtension5() {
         String[] args = {TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
                 TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
@@ -347,6 +363,7 @@ public class DeployTester extends TestCase {
     /**
      * tests bitpreservation database file argument with wrong extension.
      */
+    @Test
     public void testDeployArgumentsExtension6() {
         String[] args = {TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
                 TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
@@ -367,6 +384,7 @@ public class DeployTester extends TestCase {
     /**
      * tests bitpreservation database file argument with wrong extension.
      */
+    @Test
     public void testDeployArgumentsExtension7() {
         String[] args = {TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
                 TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
@@ -387,6 +405,7 @@ public class DeployTester extends TestCase {
     /**
      * tests when enough arguments are given, but configuration file is missing.
      */
+    @Test
     public void testDeployArgumentsLack1() {
         String[] args = {
                 // TestInfo.ARGUMENT_CONFIG_FILE + it_conf_xml_name,
@@ -408,6 +427,7 @@ public class DeployTester extends TestCase {
     /**
      * tests when enough arguments are given, but NetarchiveSuite file is missing.
      */
+    @Test
     public void testDeployArgumentsLack2() {
         String[] args = {
                 TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
@@ -429,6 +449,7 @@ public class DeployTester extends TestCase {
     /**
      * tests when enough arguments are given, but the security file is missing.
      */
+    @Test
     public void testDeployArgumentsLack3() {
         String[] args = {TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
                 TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
@@ -449,6 +470,7 @@ public class DeployTester extends TestCase {
     /**
      * tests when enough arguments are given, but the log property file is missing.
      */
+    @Test
     public void testDeployArgumentsLack4() {
         String[] args = {TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
                 TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
@@ -469,6 +491,7 @@ public class DeployTester extends TestCase {
     /**
      * tests when config file argument refers to non-existing file.
      */
+    @Test
     public void testDeployFileExist1() {
         String[] args = {TestInfo.ARGUMENT_CONFIG_FILE + "ERROR.xml",
                 TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
@@ -489,6 +512,7 @@ public class DeployTester extends TestCase {
     /**
      * tests when NetarchiveSuite file argument refers to non-existing file.
      */
+    @Test
     public void testDeployFileExist2() {
         String[] args = {TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
                 TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + "ERROR.zip",
@@ -509,6 +533,7 @@ public class DeployTester extends TestCase {
     /**
      * tests when security file argument refers to non-existing file.
      */
+    @Test
     public void testDeployFileExist3() {
         String[] args = {TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
                 TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
@@ -529,6 +554,7 @@ public class DeployTester extends TestCase {
     /**
      * tests when log property file argument refers to non-existing file.
      */
+    @Test
     public void testDeployFileExist4() {
         String[] args = {TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
                 TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
@@ -549,6 +575,7 @@ public class DeployTester extends TestCase {
     /**
      * tests when database file argument refers to non-existing file.
      */
+    @Test
     public void testDeployFileExist5() {
         String[] args = {TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
                 TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
@@ -569,6 +596,7 @@ public class DeployTester extends TestCase {
     /**
      * tests The test arguments for errors.
      */
+    @Test
     public void testTestArgument() {
         String[] args = {TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
                 TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
@@ -589,6 +617,7 @@ public class DeployTester extends TestCase {
     /**
      * tests the test argument for too large difference between the offset and HTTP port.
      */
+    @Test
     public void testTestArgument1() {
         String[] args = {TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
                 TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,

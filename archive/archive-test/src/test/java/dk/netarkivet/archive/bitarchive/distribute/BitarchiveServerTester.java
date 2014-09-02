@@ -396,6 +396,8 @@ public class BitarchiveServerTester {
     /**
      * Pass a batch message to BitarchiveServer and test that it replies with an appropriate BatchEndedMessage.
      */
+    @Category(SlowTest.class) // This is actually not true, but the test fails if the other slowTest
+    // 'testVisitGetMessageNoSuchFile' hasn't run, and takes a long while to do this.
     @Test
     public void testVisitBatchMessage() throws InterruptedException {
         Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, BITARCHIVE1.getAbsolutePath());
@@ -540,9 +542,9 @@ public class BitarchiveServerTester {
 
     /**
      * Test that a visit(RemoveAndGetMessage) call actually removes (moves) the file.
-     *
-     * @throws Exception
      */
+    @Category(SlowTest.class) // This is actually not true, but the test fails if the other slowTest
+    // 'testVisitGetMessageNoSuchFile' hasn't run, and takes a long while to do this.
     @Test
     public void testVisitRemoveAndGetFileMessage() throws Exception {
         LogbackRecorder lr = LogbackRecorder.startRecorder();
@@ -869,7 +871,7 @@ public class BitarchiveServerTester {
     }
 
     /**
-     * A generic message listener class which just stores a list of all messages it receives.
+     * A generic message listener class which just stores a list of all messages it receives.FtestVisitRemo
      */
     public static class GenericMessageListener implements MessageListener {
         /**
@@ -887,5 +889,4 @@ public class BitarchiveServerTester {
             messagesReceived.add(naMsg);
         }
     }
-
 }

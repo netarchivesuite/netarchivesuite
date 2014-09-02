@@ -23,6 +23,8 @@
 
 package dk.netarkivet.common.utils.batch;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -31,23 +33,27 @@ import java.io.OutputStream;
 import java.io.StringReader;
 import java.util.Date;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import dk.netarkivet.common.utils.arc.TestInfo;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
-import junit.framework.TestCase;
 
-public class DatedFileListJobTester extends TestCase {
+public class DatedFileListJobTester {
     MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
 
+    @Before
     public void setUp() throws Exception {
-        super.setUp();
         mtf.setUp();
     }
 
+    @After
     public void tearDown() throws Exception {
         mtf.tearDown();
-        super.tearDown();
     }
 
+    @Test
     public void testProcess() throws IOException, InterruptedException {
         FileListJob job = new FileListJob();
         ByteArrayOutputStream os = new ByteArrayOutputStream();

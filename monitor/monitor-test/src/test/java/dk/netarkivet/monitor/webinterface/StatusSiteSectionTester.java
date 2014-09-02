@@ -22,12 +22,16 @@
  */
 package dk.netarkivet.monitor.webinterface;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.fail;
+
+import org.junit.Test;
+
 import dk.netarkivet.common.webinterface.SiteSection;
 
 /** Unittest for StatusSiteSection class. */
-public class StatusSiteSectionTester extends TestCase {
+public class StatusSiteSectionTester {
 
+    @Test
     public void testMethods() {
         SiteSection s = new StatusSiteSection();
         try {

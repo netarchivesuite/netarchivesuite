@@ -25,27 +25,26 @@ package dk.netarkivet.common;
 import java.io.File;
 import java.io.FileFilter;
 
-import dk.netarkivet.common.utils.FileUtils;
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
 
-public class CleanupTester extends TestCase {
+import dk.netarkivet.common.utils.FileUtils;
+
+public class CleanupTester {
 
     private String[] dirsToClean = new String[] {"derbyDB/wayback_indexer_db", "oldjobs"};
 
     private File tmpdir;
 
+    @Before
     public void setUp() throws Exception {
-        super.setUp();
         tmpdir = FileUtils.getTempDir();
-    }
-
-    public void tearDown() throws Exception {
-        super.tearDown();
     }
 
     /**
      * Remove files in FileUtils.getTempDir();
      */
+    @Test
     public void testThatMostTmpFilesGone() {
 
         File[] files = tmpdir.listFiles(new SvnFileFilter());
