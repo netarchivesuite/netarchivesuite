@@ -16,11 +16,12 @@
   <name>Netarchivesuite - harvester - parent pom</name>
 
   <modules>
+    <module>harvester</module>
+    <module>harvest-server</module>
     <module>harvestchannel-gui</module>
     <module>harvestdefinition-gui</module>
-    <module>harvester</module>
-    <module>harvester-test</module>
     <module>history-gui</module>
     <module>qa-gui</module>
+    <module>harvester-test</module>
   </modules>
 </project>
