@@ -90,11 +90,11 @@ public class SystemOverviewTest extends SeleniumTest {
             String machine = rowCells.get(0).getText();
             String application = rowCells.get(1).getText();
             String instance_Id = rowCells.get(2).getText();
-            String priority = rowCells.get(3).getText();
+            String channel = rowCells.get(3).getText();
             String replica = rowCells.get(4).getText();
             log.debug("Checking row " + rowCounter + ", value is: " + machine + ": " + application);
             rowCounter++;
-            displayedApplicationSet.add(new Application(machine, application, instance_Id, priority, replica));
+            displayedApplicationSet.add(new Application(machine, application, instance_Id, channel, replica));
         }
 
         NASAssert.assertEquals(expectedApplicationSet, displayedApplicationSet);

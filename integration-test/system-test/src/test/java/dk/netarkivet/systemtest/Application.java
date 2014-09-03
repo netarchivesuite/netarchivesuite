@@ -32,7 +32,7 @@ public class Application {
 
     private final String instance_Id;
 
-    private final String priority;
+    private final String channel;
 
     private final String replica;
 
@@ -42,21 +42,21 @@ public class Application {
      * @param machine
      * @param application
      * @param instance_Id
-     * @param priority
+     * @param channel
      * @param replica
      */
-    public Application(String machine, String application, String instance_Id, String priority, String replica) {
+    public Application(String machine, String application, String instance_Id, String channel, String replica) {
         this.machine = "".equals(machine) ? null : machine;
         this.application = "".equals(application) ? null : application;
         this.instance_Id = "".equals(instance_Id) ? null : instance_Id;
-        this.priority = "".equals(priority) ? null : priority;
+        this.channel = "".equals(channel) ? null : channel;
         this.replica = "".equals(replica) ? null : replica;
     }
 
     @Override
     public String toString() {
         return "Application [machine=" + machine + ", application=" + application + ", instance_Id=" + instance_Id
-                + ", priority=" + priority + ", replica=" + replica + "]";
+                + ", channel=" + channel + ", replica=" + replica + "]";
     }
 
     @Override
@@ -66,7 +66,7 @@ public class Application {
         result = prime * result + ((application == null) ? 0 : application.hashCode());
         result = prime * result + ((instance_Id == null) ? 0 : instance_Id.hashCode());
         result = prime * result + ((machine == null) ? 0 : machine.hashCode());
-        result = prime * result + ((priority == null) ? 0 : priority.hashCode());
+        result = prime * result + ((channel == null) ? 0 : channel.hashCode());
         result = prime * result + ((replica == null) ? 0 : replica.hashCode());
         return result;
     }
@@ -104,11 +104,11 @@ public class Application {
         } else if (!machine.equals(other.machine)) {
             return false;
         }
-        if (priority == null) {
-            if (other.priority != null) {
+        if (channel == null) {
+            if (other.channel != null) {
                 return false;
             }
-        } else if (!priority.equals(other.priority)) {
+        } else if (!channel.equals(other.channel)) {
             return false;
         }
         if (replica == null) {
