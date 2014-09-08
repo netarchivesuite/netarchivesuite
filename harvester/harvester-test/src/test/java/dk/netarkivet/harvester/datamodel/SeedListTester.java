@@ -32,6 +32,9 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
+
+import dk.netarkivet.common.utils.SlowTest;
 
 public class SeedListTester extends DataModelTestCase {
     final String HARVESTNAME = "TestHarvest";
@@ -89,6 +92,7 @@ public class SeedListTester extends DataModelTestCase {
     /**
      * Tests the getHarvestInfo() method.
      */
+    @Category(SlowTest.class)
     @Test
     public void testGetDomainsForHarvestdefinition() {
         String[] domains = {"wikipedia.org", "orf.at", "kurier.at", "test.at"};

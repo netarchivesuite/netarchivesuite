@@ -1,9 +1,9 @@
 /*
  * #%L
- * Netarchivesuite - harvester - test
+ * Netarchivesuite - harvester
  * %%
  * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
- *             the National Library of France and the Austrian National Library.
+ *       the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -32,7 +32,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 /**
  * Unit tests for the {@link TimeUnit} class.
  */
-public class TimeUnitTester {
+public class TimeUnitTest {
 
     @Test
     public void testFromOrdinal() {
@@ -44,14 +44,10 @@ public class TimeUnitTester {
         try {
             TimeUnit.fromOrdinal(0);
             fail("Should throw ArgumentNotValid when giving arg 0");
-        } catch (ArgumentNotValid e) {
-            // Expected
-        }
+        } catch (ArgumentNotValid e) {}
         try {
             TimeUnit.fromOrdinal(6);
             fail("Should throw ArgumentNotValid when giving arg 5");
-        } catch (ArgumentNotValid e) {
-            // Expected
-        }
+        } catch (ArgumentNotValid e) {}
     }
 }

@@ -22,6 +22,8 @@
  */
 package dk.netarkivet.externalsoftware;
 
+import static junit.framework.TestCase.assertTrue;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -33,13 +35,17 @@ import org.archive.io.arc.ARCReader;
 import org.archive.io.arc.ARCReaderFactory;
 import org.archive.io.arc.ARCRecord;
 import org.archive.io.arc.ARCWriter;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.arc.ARCUtils;
-import junit.framework.TestCase;
 
 @SuppressWarnings({"unused"})
-public class Bug901Tester extends TestCase {
+@Ignore
+public class Bug901Tester {
 
     private static final int BLOCKSIZE = 32768;
     private static final long LARGE = ((long) Integer.MAX_VALUE) + 1L;
@@ -47,26 +53,22 @@ public class Bug901Tester extends TestCase {
     static final File TEST_DIR = new File("tests/dk/netarkivet/externalsoftware/data/launcher");
     static final File WORKING_DIR = new File(TEST_DIR, "working");
 
-    public Bug901Tester(String arg0) {
-        super(arg0);
-    }
-
+    @Before
     protected void setUp() throws Exception {
         WORKING_DIR.mkdirs();
-        super.setUp();
     }
 
+    @After
     protected void tearDown() throws Exception {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
-        super.tearDown();
     }
 
     /**
      * Test, if bug 901 is fixed. Try to insert 3.0 gb file into an ARC file file 4000-metadata-2.arc is taken from
      * kb-prod-udv-001.kb.dk:/home/test
-     *
-     * @throws IOException
      */
+    @Ignore
+    @Test
     public void testbug901Fixed() throws IOException {
         byte[] block = new byte[BLOCKSIZE];
         File largeFile = new File(WORKING_DIR, LARGE_FILE);
@@ -91,5 +93,4 @@ public class Bug901Tester extends TestCase {
         }
         assertTrue("recordCount must be 2 and not: " + recordCount, recordCount == 2);
     }
-
 }

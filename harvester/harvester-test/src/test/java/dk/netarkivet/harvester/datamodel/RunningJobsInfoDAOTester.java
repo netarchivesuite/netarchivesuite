@@ -27,7 +27,9 @@ import java.util.Set;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
+import dk.netarkivet.common.utils.SlowTest;
 import dk.netarkivet.harvester.harvesting.monitor.StartedJobInfo;
 
 @SuppressWarnings({"unused"})
@@ -43,6 +45,7 @@ public class RunningJobsInfoDAOTester extends DataModelTestCase {
         super.tearDown();
     }
 
+    @Category(SlowTest.class)
     @Test
     public void testGetInstance() {
         StartedJobInfo sji = new StartedJobInfo("harvest", 42L);

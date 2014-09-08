@@ -29,7 +29,9 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
+import dk.netarkivet.common.utils.SlowTest;
 import dk.netarkivet.harvester.datamodel.DataModelTestCase;
 
 public class ExtendedFieldTester extends DataModelTestCase {
@@ -44,6 +46,7 @@ public class ExtendedFieldTester extends DataModelTestCase {
         super.tearDown();
     }
 
+    @Category(SlowTest.class)
     @Test
     public void testCreateReadUpdateDelete() {
         ExtendedFieldDAO extDAO = ExtendedFieldDBDAO.getInstance();

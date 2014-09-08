@@ -19,4 +19,5 @@
     <module>common</module>
     <module>common-test</module>
   </modules>
+
 </project>

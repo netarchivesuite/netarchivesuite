@@ -48,6 +48,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -57,6 +58,7 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.IteratorUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.SlowTest;
 import dk.netarkivet.harvester.scheduler.jobgen.DefaultJobGenerator;
 import dk.netarkivet.harvester.webinterface.HarvestStatusQuery;
 import dk.netarkivet.harvester.webinterface.HarvestStatusTester;
@@ -86,6 +88,7 @@ public class JobDAOTester extends DataModelTestCase {
         HarvestDAOUtils.resetDAOs();
     }
 
+    @Category(SlowTest.class)
     @Test
     public void testGetCountJobs() throws Exception {
         JobDAO dao = JobDAO.getInstance();
@@ -106,6 +109,7 @@ public class JobDAOTester extends DataModelTestCase {
      *
      * @throws SQLException
      */
+    @Category(SlowTest.class)
     @Test
     public void testJobRead() throws SQLException {
         JobDAO dao = JobDAO.getInstance();
@@ -172,6 +176,7 @@ public class JobDAOTester extends DataModelTestCase {
     /**
      * Test that JobDAO.create does not allow Job with unknown harvestId.
      */
+    @Category(SlowTest.class)
     @Test
     public void testCreateJobWithUnknownHarvestId() {
         JobDAO dao = JobDAO.getInstance();
@@ -195,6 +200,7 @@ public class JobDAOTester extends DataModelTestCase {
      *
      * @throws SQLException
      */
+    @Category(SlowTest.class)
     @Test
     public void testJobUpdate() throws SQLException {
         JobDAO dao = JobDAO.getInstance();
@@ -263,9 +269,8 @@ public class JobDAOTester extends DataModelTestCase {
 
     /**
      * Test that the max objects per domain attribute can be updated in persistent storage.
-     *
-     * @throws Exception
      */
+    @Category(SlowTest.class)
     @Test
     public void testJobUpdateForceMaxObjectsPerDomain() throws Exception {
         JobDAO dao = JobDAO.getInstance();
@@ -316,9 +321,8 @@ public class JobDAOTester extends DataModelTestCase {
 
     /**
      * Test getting jobs with various statuses
-     *
-     * @throws Exception
      */
+    @Category(SlowTest.class)
     @Test
     public void testGetAll() throws Exception {
         JobDAO jdao = JobDAO.getInstance();
@@ -349,6 +353,7 @@ public class JobDAOTester extends DataModelTestCase {
         assertJobsFound("only started and failed jobs", 0, 0, 2, 3, 0);
     }
 
+    @Category(SlowTest.class)
     @Test
     public void testPersistenseOfPriority() throws SQLException {
         // create two jobs with different priority
@@ -382,6 +387,7 @@ public class JobDAOTester extends DataModelTestCase {
      *
      * @throws SQLException
      */
+    @Category(SlowTest.class)
     @Test
     public void testGetAllJobIdsForStatusAndPriority() throws SQLException {
         JobDAO jobDAO = JobDAO.getInstance();
@@ -424,6 +430,7 @@ public class JobDAOTester extends DataModelTestCase {
     }
 
     /** Test that the job error info is stored correctly. */
+    @Category(SlowTest.class)
     @Test
     public void testPersistenceOfJobErrors() throws Exception {
         Domain d = Domain.getDefaultDomain("testdomain.dk");
@@ -461,6 +468,7 @@ public class JobDAOTester extends DataModelTestCase {
      *
      * @throws Exception FIXME Fails in Hudson
      */
+    @Category(SlowTest.class)
     @Test
     @Ignore("Query returned wrong number of jobs")
     public void failingTestGetStatusInfo() throws Exception {
@@ -536,6 +544,7 @@ public class JobDAOTester extends DataModelTestCase {
      *
      * @throws Exception
      */
+    @Category(SlowTest.class)
     @Test
     public void testGetStatusInfoForHarvest() throws Exception {
         DomainDAO ddao = DomainDAO.getInstance();
@@ -593,6 +602,7 @@ public class JobDAOTester extends DataModelTestCase {
     }
 
     /** Check that start and end dates are created and stored correctly. */
+    @Category(SlowTest.class)
     @Test
     public void testSetDates() {
         JobDAO jdao = JobDAO.getInstance();
@@ -684,9 +694,8 @@ public class JobDAOTester extends DataModelTestCase {
      * should return empty list. Full harvest not based on anything but with previous chain should return that. Full
      * harvest based on something but with no previous chain should return that. Full harvest based on something AND
      * with previous chains should return that.
-     *
-     * @throws Exception
      */
+    @Category(SlowTest.class)
     @Test
     public void testGetJobIDsForDuplicateReduction() throws Exception {
         // Assume 1st job has id=2, and Last job has id 15
@@ -782,6 +791,7 @@ public class JobDAOTester extends DataModelTestCase {
     /**
      * Tests method in JobDBDAO.rescheduleJob Now verifies, that the new job has startdate and enddate set to null.
      */
+    @Category(SlowTest.class)
     @Test
     public void testRescheduleJob() {
         // Assume 1st job has id=2, and Last job has id 15
@@ -819,16 +829,4 @@ public class JobDAOTester extends DataModelTestCase {
             // expected
         }
     }
-
-    public static void testGetJobStatusFromId() {
-        JobDAO dao = JobDAO.getInstance();
-        Iterator<Long> iterator = dao.getAllJobIds();
-        while (iterator.hasNext()) {
-            Long id = iterator.next();
-            Job j = dao.read(id);
-            JobStatus status = dao.getJobStatus(id);
-            assertTrue("The two states should be equal", status.equals(j.getStatus()));
-        }
-    }
-
 }

@@ -51,6 +51,7 @@ import org.archive.wayback.resourcestore.resourcefile.ArcResource;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import dk.netarkivet.archive.arcrepository.ArcRepository;
 import dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient;
@@ -66,6 +67,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.InputStreamUtils;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.SlowTest;
 import dk.netarkivet.common.utils.arc.ARCUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
@@ -73,6 +75,7 @@ import dk.netarkivet.wayback.indexer.IndexerTestCase;
 
 /** Unit test for testNetarchiveResourceStore */
 @SuppressWarnings({"unchecked", "rawtypes", "unused"})
+@Category(SlowTest.class)
 public class NetarchiveResourceStoreTester extends IndexerTestCase {
 
     NetarchiveResourceStore netarchiveResourceStore = null;

@@ -23,17 +23,21 @@
 
 package dk.netarkivet.monitor.webinterface;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.Hashtable;
 import java.util.Locale;
 
 import javax.management.ObjectName;
 
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
 
-public class JMXStatusEntryTester extends TestCase {
+public class JMXStatusEntryTester {
 
     private Hashtable<String, String> properties;
 
+    @Before
     public void setUp() {
         properties = new Hashtable<String, String>();
         properties.put(JMXSummaryUtils.JMXPhysLocationProperty, "EAST");
@@ -46,6 +50,7 @@ public class JMXStatusEntryTester extends TestCase {
         properties.put(JMXSummaryUtils.JMXIndexProperty, "1");
     }
 
+    @Test
     public void testConstructor() throws Exception {
         JMXStatusEntry entry = new JMXStatusEntry(ObjectName.getInstance("east", properties));
         assertTrue(entry.getApplicationName().equals("SH"));
@@ -58,14 +63,10 @@ public class JMXStatusEntryTester extends TestCase {
         assertTrue(entry.getHarvestPriority().equals("FOCUSED"));
     }
 
+    @Test
     public void testGetLogmessage() throws Exception {
         JMXStatusEntry entry = new JMXStatusEntry(ObjectName.getInstance("east", properties));
         Locale l = new Locale("da");
         System.out.println(entry.getLogMessage(l));
     }
-
-    // public void testQueryJMX() throws Exception {
-    // JMXStatusEntry.mBeanServer.
-    // JMXStatusEntry.queryJMX("nonsens");
-    // }
 }

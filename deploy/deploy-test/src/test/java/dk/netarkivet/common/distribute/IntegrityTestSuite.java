@@ -1,9 +1,9 @@
 /*
  * #%L
- * Netarchivesuite - common - test
+ * Netarchivesuite - deploy - test
  * %%
  * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
- *             the National Library of France and the Austrian National Library.
+ *       the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -39,6 +39,7 @@ import javax.jms.QueueBrowser;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import dk.netarkivet.common.CommonSettings;
@@ -51,8 +52,10 @@ import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
- * Tests JMSConnection, the class that handles all JMS operations for Netarkivet.
+ * Tests JMSConnection, the class that handles all JMS operations for Netarkivet. Currently disabled as this requires a
+ * jms broker to be running. Consider moving this class to the integration test phase and perhaps with an embedded broker?
  */
+@Ignore
 public class IntegrityTestSuite {
     /**
      * We need two arbitrary (but different) queues for testing send and reply.
@@ -113,9 +116,7 @@ public class IntegrityTestSuite {
             conn.send(testMsg);
             try {
                 wait(WAIT_MS);
-            } catch (InterruptedException e) {
-                // This is expected
-            }
+            } catch (InterruptedException e) {}
         }
 
         // The test is ok if exactly one of the listeners is ok.
@@ -134,9 +135,7 @@ public class IntegrityTestSuite {
             conn.send(testMsg);
             try {
                 wait(WAIT_MS);
-            } catch (InterruptedException e) {
-                // This is expected
-            }
+            } catch (InterruptedException e) {}
         }
 
         assertTrue("Expected test message " + testMsg.toString() + "\nshould be received by listener2 only",
@@ -154,9 +153,7 @@ public class IntegrityTestSuite {
             conn.send(testMsg);
             try {
                 wait(WAIT_MS);
-            } catch (InterruptedException e) {
-                // This is expected
-            }
+            } catch (InterruptedException e) {}
         }
 
         assertTrue("Expected test message " + testMsg.toString() + "\nshould not be received by neither listener1 "
@@ -170,9 +167,7 @@ public class IntegrityTestSuite {
                 if (!listener1.getOk()) {
                     wait(WAIT_MS);
                 }
-            } catch (InterruptedException e) {
-                // This is expected
-            }
+            } catch (InterruptedException e) {}
         }
 
         // The test is ok if exactly one of the listeners is ok.
@@ -198,9 +193,7 @@ public class IntegrityTestSuite {
             conn.send(testMsg);
             try {
                 wait(WAIT_MS);
-            } catch (InterruptedException e) {
-                // This is expected
-            }
+            } catch (InterruptedException e) {}
         }
 
         // The test is ok if exactly one of the listeners is ok.
@@ -240,9 +233,7 @@ public class IntegrityTestSuite {
             for (int i = 0; i < 2; i++) {
                 try {
                     wait(WAIT_MS);
-                } catch (InterruptedException e) {
-                    // This is expected
-                }
+                } catch (InterruptedException e) {}
             }
         }
 
@@ -269,9 +260,7 @@ public class IntegrityTestSuite {
             conn.send(testMsg);
             try {
                 wait(WAIT_MS);
-            } catch (InterruptedException e) {
-                // This is expected
-            }
+            } catch (InterruptedException e) {}
         }
         assertTrue("Expected test message >" + testMsg.toString() + "< to have arrived on queue " + replyQ + " within "
                 + WAIT_MS + " milliseconds.", listener.getOk());
@@ -290,9 +279,7 @@ public class IntegrityTestSuite {
             conn.reply(testMsg);
             try {
                 wait(WAIT_MS);
-            } catch (InterruptedException e) {
-                // This is expected
-            }
+            } catch (InterruptedException e) {}
         }
         assertTrue("Expected test message " + testMsg.toString() + "to have arrived on queue " + replyQ + " within "
                 + WAIT_MS + " milliseconds", listener.getOk());
@@ -317,9 +304,7 @@ public class IntegrityTestSuite {
             for (int i = 0; i < NO_OF_LISTENERS; i++) {
                 try {
                     wait(WAIT_MS);
-                } catch (InterruptedException e) {
-                    // This is expected
-                }
+                } catch (InterruptedException e) {}
                 boolean all_ok = true;
                 for (int j = 0; j < NO_OF_LISTENERS; j++) {
                     if (((TestMessageListener) listeners.get(j)).getOk()) {
@@ -345,8 +330,6 @@ public class IntegrityTestSuite {
 
     /**
      * Tests that no messages are generated twice.
-     *
-     * @throws Exception On failures
      */
     @Test
     public void testMsgIds() throws Exception {
@@ -383,8 +366,6 @@ public class IntegrityTestSuite {
 
     /**
      * Tries to generate the mysterious NullPointerException of bug 220.
-     *
-     * @throws Exception On failures
      */
     @Test
     public void testProvokeNullPointer() throws Exception {
@@ -425,8 +406,6 @@ public class IntegrityTestSuite {
     /**
      * Sets up 3 message consumers, all listening on the same channel. Then sends a message on that channel. Verify,
      * that the message is received by all three consumers.
-     *
-     * @throws Exception On failures
      */
     @Test
     public void testTopicSendMessage() throws Exception {

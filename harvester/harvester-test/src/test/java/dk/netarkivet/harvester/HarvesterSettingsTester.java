@@ -30,7 +30,6 @@ import java.lang.reflect.Modifier;
 
 import org.junit.Test;
 
-/** Unittestersuite for the HarvesterSettings class. */
 public class HarvesterSettingsTester {
 
     @Test

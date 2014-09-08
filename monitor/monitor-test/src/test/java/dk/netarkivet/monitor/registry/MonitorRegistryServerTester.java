@@ -22,21 +22,22 @@
  */
 package dk.netarkivet.monitor.registry;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.Map;
 import java.util.Set;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
 import dk.netarkivet.common.distribute.monitorregistry.HostEntry;
 import dk.netarkivet.monitor.registry.distribute.MonitorRegistryServer;
 import dk.netarkivet.monitor.registry.distribute.RegisterHostMessage;
 
-public class MonitorRegistryServerTester extends TestCase {
+public class MonitorRegistryServerTester {
 
-    public void setUp() {
-        // Out commented to avoid reference to harvester module from monitor module.
-        // JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
-    }
-
+    @Test
     public void testGetInstance() {
         MonitorRegistryServer server = null;
         try {
@@ -51,6 +52,7 @@ public class MonitorRegistryServerTester extends TestCase {
         }
     }
 
+    @Test
     public void testVisit() {
         MonitorRegistryServer server = null;
         try {

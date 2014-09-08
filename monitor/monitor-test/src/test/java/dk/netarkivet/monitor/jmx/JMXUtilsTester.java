@@ -24,33 +24,22 @@ package dk.netarkivet.monitor.jmx;
 
 import javax.management.remote.JMXServiceURL;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 import com.sun.jndi.rmi.registry.RegistryContextFactory;
 
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.JMXUtils;
 
-public class JMXUtilsTester extends TestCase {
+public class JMXUtilsTester {
 
     private static final String JNDI_INITIAL_CONTEXT_PROPERTY = "java.naming.factory.initial";
     private String defaultServer = "localhost";
 
-    public JMXUtilsTester(String arg0) {
-        super(arg0);
-    }
-
-    protected void setUp() throws Exception {
-        super.setUp();
-    }
-
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-
     /*
      * Test method for 'dk.netarkivet.monitor.webinterface.JMXUtils.getUrl(String, int, int)'
      */
+    @Test
     public final void testGetUrl() {
         JMXServiceURL JmxServiceUrl = JMXUtils.getUrl(defaultServer, 8000, 8100);
     }
@@ -58,6 +47,7 @@ public class JMXUtilsTester extends TestCase {
     /*
      * Test method for 'dk.netarkivet.monitor.webinterface.JMXUtils.getConnection(JMXServiceURL, Map<String, String[]>)'
      */
+    @Test
     public final void testGetConnection() {
         ensureJndiInitialContext();
         JMXServiceURL JmxServiceUrl = JMXUtils.getUrl(defaultServer, 8000, 8100);

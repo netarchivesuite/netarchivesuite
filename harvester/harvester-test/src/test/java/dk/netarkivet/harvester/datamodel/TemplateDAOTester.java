@@ -35,8 +35,10 @@ import org.dom4j.DocumentException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.SlowTest;
 import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
 
@@ -54,6 +56,7 @@ public class TemplateDAOTester extends DataModelTestCase {
         super.tearDown();
     }
 
+    @Category(SlowTest.class)
     @Test
     public void testGetAll() throws Exception {
         TemplateDAO dao = TemplateDAO.getInstance();
@@ -68,6 +71,7 @@ public class TemplateDAOTester extends DataModelTestCase {
                 sb.toString());
     }
 
+    @Category(SlowTest.class)
     @Test
     public void testCreate() throws DocumentException {
         TemplateDAO dao = TemplateDAO.getInstance();
@@ -93,6 +97,7 @@ public class TemplateDAOTester extends DataModelTestCase {
         assertEquals("Text of doc2 and doc3 is equal", doc2.asXML(), doc3.asXML());
     }
 
+    @Category(SlowTest.class)
     @Test
     public void testUpdate() throws Exception {
         TemplateDAO dao = TemplateDAO.getInstance();

@@ -35,8 +35,10 @@ import java.util.TimeZone;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.utils.SlowTest;
 
 /**
  * Unit-tests for the Schedule class.
@@ -53,6 +55,7 @@ public class ScheduleTester extends DataModelTestCase {
         super.tearDown();
     }
 
+    @Category(SlowTest.class)
     @Test
     public void testValidityOfArguments() {
         try {
@@ -101,6 +104,7 @@ public class ScheduleTester extends DataModelTestCase {
      *
      * @throws Exception
      */
+    @Category(SlowTest.class)
     @Test
     public void testGetFirstEvent1() throws Exception {
         Calendar cal = new GregorianCalendar(1940, Calendar.APRIL, 9, 9, 30);
@@ -117,6 +121,7 @@ public class ScheduleTester extends DataModelTestCase {
      *
      * @throws Exception
      */
+    @Category(SlowTest.class)
     @Test
     public void testGetFirstEvent2() throws Exception {
         Calendar cal = new GregorianCalendar(1940, Calendar.APRIL, 9, 9, 30);
@@ -134,6 +139,7 @@ public class ScheduleTester extends DataModelTestCase {
      *
      * @throws Exception
      */
+    @Category(SlowTest.class)
     @Test
     public void testGetFirstEvent3() throws Exception {
         Calendar cal = Calendar.getInstance();
@@ -151,6 +157,7 @@ public class ScheduleTester extends DataModelTestCase {
      *
      * @throws Exception
      */
+    @Category(SlowTest.class)
     @Test
     public void testGetFirstEvent4() throws Exception {
         Schedule sched = Schedule.getInstance(null, null, new MonthlyFrequency(12, 9, 12, 0), "Full flag",
@@ -178,6 +185,7 @@ public class ScheduleTester extends DataModelTestCase {
      *
      * @throws Exception
      */
+    @Category(SlowTest.class)
     @Test
     public void testGetFirstEvent5() throws Exception {
         Calendar cal = new GregorianCalendar(1940, Calendar.APRIL, 9, 9, 30);
@@ -196,6 +204,7 @@ public class ScheduleTester extends DataModelTestCase {
      *
      * @throws Exception
      */
+    @Category(SlowTest.class)
     @Test
     public void testGetFirstEvent6() throws Exception {
         Calendar cal = new GregorianCalendar(1940, Calendar.APRIL, 9, 9, 30);
@@ -210,6 +219,7 @@ public class ScheduleTester extends DataModelTestCase {
         assertEquals("First event must happen at noon.", cal.getTime(), first);
     }
 
+    @Category(SlowTest.class)
     @Test
     public void testEquals() {
         // Three identical schedules:
@@ -259,6 +269,7 @@ public class ScheduleTester extends DataModelTestCase {
         assertFalse("Schedule.equals() does not satisfy null-rule", sch.equals(null));
     }
 
+    @Category(SlowTest.class)
     @Test
     public void testHashCode() {
 

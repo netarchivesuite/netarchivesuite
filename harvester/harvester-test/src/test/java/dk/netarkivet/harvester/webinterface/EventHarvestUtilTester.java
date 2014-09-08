@@ -36,8 +36,10 @@ import javax.servlet.jsp.PageContext;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import dk.netarkivet.common.utils.I18n;
+import dk.netarkivet.common.utils.SlowTest;
 import dk.netarkivet.harvester.datamodel.DomainConfiguration;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.PartialHarvest;
@@ -48,6 +50,7 @@ import dk.netarkivet.harvester.datamodel.SeedList;
 /**
  * Unit-tests for the webinterface class dk.netarkivet.harvester.webinterface.EventHarvest.
  */
+@Category(SlowTest.class)
 public class EventHarvestUtilTester extends HarvesterWebinterfaceTestCase {
 
     private PartialHarvest harvest;

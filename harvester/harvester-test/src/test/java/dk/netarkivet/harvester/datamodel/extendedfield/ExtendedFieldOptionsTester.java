@@ -32,7 +32,6 @@ import java.util.Map;
 import org.junit.Test;
 
 public class ExtendedFieldOptionsTester {
-
     @Test
     public void testOptions() {
         String line = null;

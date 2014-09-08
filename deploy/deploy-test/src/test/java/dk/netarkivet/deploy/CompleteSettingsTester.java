@@ -25,12 +25,15 @@ package dk.netarkivet.deploy;
 import java.io.File;
 import java.net.URL;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.TestFileUtils;
-import junit.framework.TestCase;
 
-public class CompleteSettingsTester extends TestCase {
-    @Override
+public class CompleteSettingsTester {
+    @Before
     public void setUp() {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         FileUtils.removeRecursively(TestInfo.TMPDIR);
@@ -38,7 +41,7 @@ public class CompleteSettingsTester extends TestCase {
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
     }
 
-    @Override
+    @After
     public void tearDown() {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         FileUtils.removeRecursively(TestInfo.TMPDIR);
@@ -47,7 +50,7 @@ public class CompleteSettingsTester extends TestCase {
     /**
      * Rebuilds the file src/dk/netarkivet/deploy/default_settings.xml. Eg. this is not a real test.
      */
-
+    @Test
     public void testCompleteSettings() throws Exception {
         URL url = this.getClass().getClassLoader().getResource("");
         File file = new File(url.toURI());

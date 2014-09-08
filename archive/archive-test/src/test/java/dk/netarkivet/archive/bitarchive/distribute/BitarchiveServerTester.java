@@ -3,7 +3,7 @@
  * Netarchivesuite - archive - test
  * %%
  * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
- *             the National Library of France and the Austrian National Library.
+ *       the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -45,7 +45,10 @@ import javax.jms.MessageListener;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
+import org.junit.rules.TestName;
 
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.bitarchive.BitarchiveApplication;
@@ -65,6 +68,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.SlowTest;
 import dk.netarkivet.common.utils.batch.ChecksumJob;
 import dk.netarkivet.testutils.ClassAsserts;
 import dk.netarkivet.testutils.FileAsserts;
@@ -82,6 +86,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
  */
 @SuppressWarnings({"unused", "serial"})
 public class BitarchiveServerTester {
+    @Rule public TestName name = new TestName();
     private UseTestRemoteFile utrf = new UseTestRemoteFile();
 
     BitarchiveServer bas;
@@ -344,6 +349,7 @@ public class BitarchiveServerTester {
     /**
      * Test the normal operation of trying to get a record of a file which is not present on this bitarchive.
      */
+    @Category(SlowTest.class)
     @Test
     public void testVisitGetMessageNoSuchFile() {
         Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, BITARCHIVE1.getAbsolutePath());
@@ -390,6 +396,8 @@ public class BitarchiveServerTester {
     /**
      * Pass a batch message to BitarchiveServer and test that it replies with an appropriate BatchEndedMessage.
      */
+    @Category(SlowTest.class) // This is actually not true, but the test fails if the other slowTest
+    // 'testVisitGetMessageNoSuchFile' hasn't run, and takes a long while to do this.
     @Test
     public void testVisitBatchMessage() throws InterruptedException {
         Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, BITARCHIVE1.getAbsolutePath());
@@ -534,9 +542,9 @@ public class BitarchiveServerTester {
 
     /**
      * Test that a visit(RemoveAndGetMessage) call actually removes (moves) the file.
-     *
-     * @throws Exception
      */
+    @Category(SlowTest.class) // This is actually not true, but the test fails if the other slowTest
+    // 'testVisitGetMessageNoSuchFile' hasn't run, and takes a long while to do this.
     @Test
     public void testVisitRemoveAndGetFileMessage() throws Exception {
         LogbackRecorder lr = LogbackRecorder.startRecorder();
@@ -881,5 +889,4 @@ public class BitarchiveServerTester {
             messagesReceived.add(naMsg);
         }
     }
-
 }

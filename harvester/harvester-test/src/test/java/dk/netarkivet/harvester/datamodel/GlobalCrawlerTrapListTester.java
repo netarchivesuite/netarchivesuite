@@ -33,8 +33,10 @@ import java.io.FileNotFoundException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.utils.SlowTest;
 
 /**
  * Unittests for the GlobalCrawlerTrapList class.
@@ -56,6 +58,7 @@ public class GlobalCrawlerTrapListTester extends DataModelTestCase {
     /**
      * Tests that we can construct a trap list.
      */
+    @Category(SlowTest.class)
     @Test
     public void testConstructor() throws FileNotFoundException {
         GlobalCrawlerTrapList trapList = new GlobalCrawlerTrapList(new FileInputStream(new File(TestInfo.TOPDATADIR,
@@ -66,6 +69,7 @@ public class GlobalCrawlerTrapListTester extends DataModelTestCase {
     /**
      * Tests that the constructor throws expected exceptions on bad data
      */
+    @Category(SlowTest.class)
     @Test
     public void testConstructorFail() throws FileNotFoundException {
 
@@ -90,6 +94,7 @@ public class GlobalCrawlerTrapListTester extends DataModelTestCase {
      *
      * @throws FileNotFoundException
      */
+    @Category(SlowTest.class)
     @Test
     public void testBadRegexp() throws FileNotFoundException {
         try {

@@ -33,6 +33,9 @@ import java.util.Map;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
+
+import dk.netarkivet.common.utils.SlowTest;
 
 /**
  * Tests for class dk.netarkivet.datamodel.FullHarvest.
@@ -52,9 +55,8 @@ public class FullHarvestTester extends DataModelTestCase {
     /**
      * Test that the maxbytes field is correctly stored and reloaded. This field is added to the DB after the DB went
      * into production, so unit tests are needed.
-     *
-     * @throws Exception
      */
+    @Category(SlowTest.class)
     @Test
     public void testMaxBytes() throws Exception {
         final HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
@@ -80,6 +82,7 @@ public class FullHarvestTester extends DataModelTestCase {
      * Test that in getDomainConfigurations() only DomainConfigurations are returned for Domains which are not aliases,
      * or where the alias information is expired.
      */
+    @Category(SlowTest.class)
     @Test
     public void testGetDomainsConfigurations() {
         DomainDAO ddao = DomainDAO.getInstance();
@@ -119,6 +122,7 @@ public class FullHarvestTester extends DataModelTestCase {
      * This tests the fix to the bug known as FR1773. The requirement is that a domain for which the status was
      * "Harvesting aborted" on the previous harvest should not be included in this harvest
      */
+    @Category(SlowTest.class)
     @Test
     public void testGetDomainsPreviousHarvestAborted() {
         DomainDAO ddao = DomainDAO.getInstance();
@@ -148,6 +152,7 @@ public class FullHarvestTester extends DataModelTestCase {
     /**
      * Test that the FullHarvester.getDomainConfigurations() part of bug 716 is fixed.
      */
+    @Category(SlowTest.class)
     @Test
     public void testGetDomainsConfigurationsBug716() {
 

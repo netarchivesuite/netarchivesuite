@@ -45,10 +45,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.DBUtils;
+import dk.netarkivet.common.utils.SlowTest;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedField;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDBDAO;
@@ -77,6 +79,7 @@ public class DomainDBDAOTester extends DataModelTestCase {
     /**
      * Unittest for extended Fields.
      */
+    @Category(SlowTest.class)
     @Test
     public void testExtendedFields() {
         ExtendedFieldDAO extDAO = ExtendedFieldDBDAO.getInstance();
@@ -125,6 +128,7 @@ public class DomainDBDAOTester extends DataModelTestCase {
      *
      * @throws Exception
      */
+    @Category(SlowTest.class)
     @Test
     public void testBadUpdate() throws Exception {
         DomainDAO dao = DomainDAO.getInstance();
@@ -143,6 +147,7 @@ public class DomainDBDAOTester extends DataModelTestCase {
         dao.update(d);
     }
 
+    @Category(SlowTest.class)
     @Test
     public void testIteratorLocking() {
         DomainDAO dao = DomainDAO.getInstance();
@@ -161,6 +166,7 @@ public class DomainDBDAOTester extends DataModelTestCase {
 
     /** This stresstests the DB DAOs by running several updates in parallel. */
     // Failing: Causes all subsequent test using the database to fail.
+    @Category(SlowTest.class)
     @Test
     @Ignore("Cause all subsequent tests using the database to fail")
     public void failingTestMultipleSavepoints() {
@@ -266,6 +272,7 @@ public class DomainDBDAOTester extends DataModelTestCase {
     }
 
     /** Test that non-ascii chars are correctly stored in clobs. */
+    @Category(SlowTest.class)
     @Test
     public void testNonAsciiClob() {
         // Simplest clob: seedlist
@@ -293,6 +300,7 @@ public class DomainDBDAOTester extends DataModelTestCase {
     /**
      * Test method for testing DomainDBDAO.getAliases().
      */
+    @Category(SlowTest.class)
     @Test
     public void testGetAliases() throws IllegalAccessException, NoSuchFieldException, InterruptedException {
 
@@ -368,6 +376,7 @@ public class DomainDBDAOTester extends DataModelTestCase {
         assertEquals("Too few or too many AliasInfo objects returned", 2, aliasInfoList.size());
     }
 
+    @Category(SlowTest.class)
     @Test
     public void testGetTLDs() {
         // create some domains.
@@ -380,6 +389,7 @@ public class DomainDBDAOTester extends DataModelTestCase {
         assertEquals("Should have three IP subdomains", 3, result.get(0).getCount());
     }
 
+    @Category(SlowTest.class)
     @Test
     public void testGetMultiLevelTLD() {
         // create some domains.
@@ -416,6 +426,7 @@ public class DomainDBDAOTester extends DataModelTestCase {
     /**
      * Unittest for method getDomainJobInfo.
      */
+    @Category(SlowTest.class)
     @Test
     public void testGetDomainJobInfo() {
         // DomainDAO dao = DomainDAO.getInstance();
@@ -446,6 +457,7 @@ public class DomainDBDAOTester extends DataModelTestCase {
         }
     }
 
+    @Category(SlowTest.class)
     @Test
     public void testGetDomainHarvestInfo() {
         HarvestDefinitionDAO hdDao = HarvestDefinitionDAO.getInstance();

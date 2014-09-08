@@ -93,7 +93,6 @@ public class CheckDuplicateReduction {
 
     /**
      * @param args crawl.log; directory, where arcs are located
-     * @throws Exception
      */
     public static void main(String[] args) throws Exception {
         if (args.length < 2) {

@@ -14,10 +14,6 @@
 
   <name>Netarchivesuite - deploy - test</name>
 
-  <properties>
-    <test>dk.netarkivet.deploy.UnitTesterSuite</test>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -61,13 +57,6 @@
     <!-- Test dependencies. -->
 
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.11</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
       <groupId>mockobjects</groupId>
       <artifactId>mockobjects-core</artifactId>
       <version>0.09</version>
@@ -80,8 +69,6 @@
       <version>0.09</version>
       <scope>test</scope>
     </dependency>
-
-    <!-- Ugly test dependencies. -->
 
     <dependency>
       <groupId>dk.netarkivet.netarchivesuite</groupId>
@@ -96,6 +83,14 @@
       <version>5.0-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.11</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -110,7 +105,6 @@
 
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <argLine>
@@ -121,7 +115,11 @@
             -Djava.security.policy=tests/dk/netarkivet/ant-test.policy
             -Dorg.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy=org.archive.crawler.frontier.HostnameQueueAssignmentPolicy,org.archive.crawler.frontier.IPQueueAssignmentPolicy,org.archive.crawler.frontier.BucketQueueAssignmentPolicy,org.archive.crawler.frontier.SurtAuthorityQueueAssignmentPolicy,org.archive.crawler.frontier.TopmostAssignedSurtQueueAssignmentPolicy,dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy
             -Duser.language=en -Duser.country=US -Duser.variant=US
+            -Duser.timezone=Europe/Copenhagen
           </argLine>
+          <includes>
+            <include>**/*Test*.java</include>
+          </includes>
         </configuration>
       </plugin>
     </plugins>

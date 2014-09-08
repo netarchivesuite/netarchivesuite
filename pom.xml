@@ -140,6 +140,7 @@
         <artifactId>jwat-common</artifactId>
         <version>${jwat.version}</version>
       </dependency>
+
     </dependencies>
   </dependencyManagement>
 
@@ -232,7 +233,6 @@
 
       <plugin>
         <!-- install source jars to maven repo http://maven.apache.org/plugins/maven-source-plugin/usage.html -->
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
         <version>2.2.1</version>
         <executions>
@@ -248,7 +248,6 @@
 
       <!-- Generate javadoc jar. Note: Java 8 (doclint) check has been disabled. -->
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
           <linksource>true</linksource>
@@ -266,21 +265,43 @@
           </execution>
         </executions>
       </plugin>
-
-      <plugin>
-        <!-- explicitly define maven-deploy-plugin after other to force exec order -->
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-deploy-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>deploy</id>
-            <phase>deploy</phase>
-            <goals>
-              <goal>deploy</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>skipSlowTests</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <excludedGroups>dk.netarkivet.common.utils.SlowTest.class</excludedGroups>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>fullTest</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <excludedGroups></excludedGroups>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
