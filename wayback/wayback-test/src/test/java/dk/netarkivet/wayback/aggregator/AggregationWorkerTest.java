@@ -3,7 +3,7 @@
  * Netarchivesuite - wayback - test
  * %%
  * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
- *             the National Library of France and the Austrian National Library.
+ *       the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -82,7 +82,7 @@ public class AggregationWorkerTest extends AggregatorTestCase {
      */
     @Test
     @Ignore()
-    public void disabledTestSecondAggregationRun() {
+    public void testSecondAggregationRun() {
         disabledTestFirstAggregationRun();
 
         File[] inputFiles = prepareSourceIndex(new String[] {inputFile3Name});
@@ -130,9 +130,10 @@ public class AggregationWorkerTest extends AggregatorTestCase {
 
     /**
      * Verifies that the aggregator always merges the IntermediateIndexFile into the main index file when the
-     * WaybackSettings#INTERMEDIATE_INDEX_FILE_LIMIT is set to 0
+     * WaybackSettings#INTERMEDIATE_INDEX_FILE_LIMIT is set to 0.
      */
     @Test
+    @Ignore("https://sbforge.org/jira/browse/NAS-2326")
     public void testZeroIntermediateIndexFileLimit() {
         System.setProperty(WaybackSettings.WAYBACK_AGGREGATOR_MAX_INTERMEDIATE_INDEX_FILE_SIZE, "0");
 

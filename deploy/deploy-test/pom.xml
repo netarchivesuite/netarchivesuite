@@ -70,8 +70,6 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- Ugly test dependencies. -->
-
     <dependency>
       <groupId>dk.netarkivet.netarchivesuite</groupId>
       <artifactId>common-test</artifactId>
@@ -86,14 +84,12 @@
       <scope>test</scope>
     </dependency>
 
-
-
-      <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>4.11</version>
-        <scope>test</scope>
-      </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.11</version>
+      <scope>test</scope>
+    </dependency>
 
   </dependencies>
 
@@ -106,7 +102,6 @@
         <directory>tests</directory>
       </testResource>
     </testResources>
-
 
     <plugins>
       <plugin>

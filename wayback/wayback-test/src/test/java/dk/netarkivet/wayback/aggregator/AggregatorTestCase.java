@@ -3,7 +3,7 @@
  * Netarchivesuite - wayback - test
  * %%
  * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
- *             the National Library of France and the Austrian National Library.
+ *       the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -50,10 +50,6 @@ public class AggregatorTestCase {
 
     private final ReloadSettings originalSettings = new ReloadSettings();
 
-    /** See http://kb-prod-udv-001.kb.dk/twiki/bin/view/Netarkiv/LoggingInUnittests */
-    private static final File TESTLOGPROP = new File("tests/dk/netarkivet/testlog.prop");
-    private static final File LOGFILE = new File("tests/testlogs/netarkivtest.log");
-
     @Before
     public void setUp() throws Exception {
         originalSettings.setUp();
@@ -61,9 +57,8 @@ public class AggregatorTestCase {
         System.setProperty(WaybackSettings.WAYBACK_BATCH_OUTPUTDIR, inputDirName);
         System.setProperty(WaybackSettings.WAYBACK_AGGREGATOR_TEMP_DIR, tempDirName);
         System.setProperty(WaybackSettings.WAYBACK_AGGREGATOR_OUTPUT_DIR, outputDirName);
-        System.setProperty(WaybackSettings.WAYBACK_AGGREGATOR_AGGREGATION_INTERVAL, "1000000000"); // Never run the
-        // scheduled
-        // aggregation
+        // Never run the scheduled aggregation
+        System.setProperty(WaybackSettings.WAYBACK_AGGREGATOR_AGGREGATION_INTERVAL, "1000000000");
         System.setProperty(WaybackSettings.WAYBACK_AGGREGATOR_MAX_INTERMEDIATE_INDEX_FILE_SIZE, "15");
         System.setProperty(WaybackSettings.WAYBACK_AGGREGATOR_MAX_MAIN_INDEX_FILE_SIZE, "200");
 
