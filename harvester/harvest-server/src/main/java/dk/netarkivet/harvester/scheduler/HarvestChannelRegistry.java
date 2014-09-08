@@ -20,9 +20,6 @@
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
  * #L%
  */
-/**
- *
- */
 package dk.netarkivet.harvester.scheduler;
 
 import java.util.ArrayList;
@@ -35,7 +32,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.harvester.datamodel.HarvestChannel;
-import dk.netarkivet.harvester.harvesting.HarvestController;
 import dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationRequest;
 
 /**
