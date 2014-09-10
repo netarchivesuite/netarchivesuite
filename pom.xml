@@ -4,12 +4,12 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>dk.netarkivet.netarchivesuite</groupId>
-  <artifactId>parent</artifactId>
+  <groupId>org.netarchivesuite</groupId>
+  <artifactId>netarchivesuite</artifactId>
   <version>5.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <name>Netarchivesuite - parent</name>
+  <name>Netarchivesuite</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -184,7 +184,7 @@
 
           <dependencies>
             <dependency>
-              <groupId>dk.netarkivet.netarchivesuite</groupId>
+              <groupId>org.netarchivesuite</groupId>
               <artifactId>build-tools</artifactId>
               <version>5.0-SNAPSHOT</version>
             </dependency>

@@ -5,8 +5,8 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>dk.netarkivet.netarchivesuite</groupId>
-    <artifactId>parent</artifactId>
+    <groupId>org.netarchivesuite</groupId>
+    <artifactId>netarchivesuite</artifactId>
     <version>5.0-SNAPSHOT</version>
     <relativePath>../../pom.xml</relativePath>
   </parent>
