@@ -36,6 +36,12 @@
 
     <dependency>
       <groupId>${project.groupId}</groupId>
+      <artifactId>h1-extensions</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
       <artifactId>harvester</artifactId>
       <version>${project.version}</version>
     </dependency>
