@@ -51,14 +51,7 @@ import dk.netarkivet.harvester.indexserver.distribute.IndexRequestMessage;
  * @see HarvesterMessageVisitor
  */
 public abstract class HarvesterMessageHandler implements HarvesterMessageVisitor, MessageListener {
-
     private static final Logger log = LoggerFactory.getLogger(HarvesterMessageHandler.class);
-
-    /**
-     * Creates a HarvesterMessageHandler object.
-     */
-    public HarvesterMessageHandler() {
-    }
 
     /**
      * Unpacks and calls accept() on the message object.

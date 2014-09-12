@@ -44,6 +44,7 @@ public class HarvesterChannelsTester {
         ChannelID[] queues = new ChannelID[] {
                 HarvesterChannels.getHarvestJobChannelId(new HarvestChannel("FOCUSED", false, true, "")),
                 HarvesterChannels.getHarvestJobChannelId(new HarvestChannel("SNAPSHOT", true, true, "")),
+                HarvesterChannels.getTheSched(), //
                 HarvesterChannels.getHarvestMonitorChannel()};
         for (ChannelID queue : queues) {
             String queueName = queue.getName();

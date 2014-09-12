@@ -54,7 +54,6 @@ import org.slf4j.LoggerFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
-import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.NotificationType;
 import dk.netarkivet.common.utils.NotificationsFactory;
@@ -89,9 +88,9 @@ public class Job implements Serializable, JobInfo {
     /** The persistent ID of this job. */
     private Long jobID;
     /** The Id of the harvestdefinition, that generated this job. */
-    private Long origHarvestDefinitionID;
+    protected Long origHarvestDefinitionID;
     /** The status of the job. See the JobStatus class for the possible states. */
-    private JobStatus status;
+    protected JobStatus status;
     /** The name of the {@link HarvestChannel} on which this job will be posted. */
     private String channel;
 
@@ -215,6 +214,10 @@ public class Job implements Serializable, JobInfo {
     /** This variable is right now the same as harvestdefinitions.audience field. */
     private String harvestAudience;
 
+    Job() {
+        this.status = JobStatus.NEW;
+    }
+
     /**
      * Package private constructor for common initialisation.
      *
@@ -227,7 +230,6 @@ public class Job implements Serializable, JobInfo {
      * @param forceMaxJobRunningTime The max time in seconds given to the harvester for this job
      * @param harvestNum the run number of the harvest definition
      * @throws ArgumentNotValid if cfg or priority is null or harvestID is invalid, or if any limit < -1
-     * @throws UnknownID If the priority is invalid.
      */
     Job(Long harvestID, DomainConfiguration cfg, HarvestChannel channel, long forceMaxObjectsPerDomain,
             long forceMaxBytesPerDomain, long forceMaxJobRunningTime, int harvestNum) throws ArgumentNotValid {

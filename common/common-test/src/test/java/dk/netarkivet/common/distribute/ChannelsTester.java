@@ -147,7 +147,6 @@ public class ChannelsTester {
                 Channels.getTheRepos(), //
                 Channels.getTheIndexServer(), //
                 Channels.getError(), //
-                Channels.getTheSched(), //
                 Channels.getThisIndexClient(), //
         };
 

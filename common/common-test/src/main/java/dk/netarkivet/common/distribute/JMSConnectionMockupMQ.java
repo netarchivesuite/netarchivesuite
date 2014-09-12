@@ -69,7 +69,7 @@ import org.apache.commons.logging.LogFactory;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.batch.TestJob;
+import dk.netarkivet.common.utils.batch.TestChecksumJob;
 
 /**
  * A MockUp message queue, that generates a connection and destinations suitable for testing.
@@ -209,7 +209,7 @@ public class JMSConnectionMockupMQ extends JMSConnection {
         }
     }
 
-    public boolean isSentToChannel(TestJob job, ChannelID channelID) {
+    public boolean isSentToChannel(TestChecksumJob job, ChannelID channelID) {
         TestDestination destination = destinations.get(channelID.getName());
         for (TestObjectMessage sentMessage : destination.sent) {
             NetarkivetMessage message = unpack(sentMessage);

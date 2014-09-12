@@ -23,10 +23,10 @@
 package dk.netarkivet.common.utils.batch;
 
 @SuppressWarnings({"serial"})
-public class TestJob extends ChecksumJob {
+public class TestChecksumJob extends ChecksumJob {
     private String testId;
 
-    public TestJob(String in_testId) {
+    public TestChecksumJob(String in_testId) {
         testId = in_testId;
     }
 

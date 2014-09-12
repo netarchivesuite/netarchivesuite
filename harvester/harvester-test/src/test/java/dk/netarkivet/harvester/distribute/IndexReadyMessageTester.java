@@ -34,7 +34,7 @@ public class IndexReadyMessageTester {
     @Test
     public void testConstructor() {
         ChannelID replyTo = Channels.getTheIndexServer();
-        ChannelID to = Channels.getTheSched();
+        ChannelID to = HarvesterChannels.getTheSched();
         IndexReadyMessage irm = new IndexReadyMessage(42L, true, to, replyTo);
         assertTrue(42L == irm.getHarvestId());
         assertTrue(true == irm.getIndexOK());

@@ -46,7 +46,6 @@ import org.junit.Test;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
-import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.ChannelsTesterHelper;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
@@ -224,7 +223,7 @@ public class HarvestControllerServerTester {
         JMSConnectionMockupMQ.updateMsgID(nMsg, "UNIQUE_ID");
         JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory.getInstance();
         CrawlStatusMessageListener listener = new CrawlStatusMessageListener();
-        con.setListener(Channels.getTheSched(), listener);
+        con.setListener(HarvesterChannels.getTheSched(), listener);
         ObjectMessage msg = JMSConnectionMockupMQ.getObjectMessage(nMsg);
         hcs.onMessage(msg);
         con.waitForConcurrentTasksToFinish();
@@ -277,7 +276,7 @@ public class HarvestControllerServerTester {
     public void testJobFailedOnBadMessage() throws JMSException {
         GenericMessageListener listener = new GenericMessageListener();
         JMSConnection con = JMSConnectionFactory.getInstance();
-        con.setListener(Channels.getTheSched(), listener);
+        con.setListener(HarvesterChannels.getTheSched(), listener);
         hcs = HarvestControllerServer.getInstance();
         theJob = TestInfo.getJob();
         theJob.setStatus(JobStatus.DONE);
@@ -314,7 +313,7 @@ public class HarvestControllerServerTester {
 
         // Scheduler stub to check for crawl status messages
         GenericMessageListener sched = new GenericMessageListener();
-        con.setListener(Channels.getTheSched(), sched);
+        con.setListener(HarvesterChannels.getTheSched(), sched);
         con.waitForConcurrentTasksToFinish();
         assertEquals("Should not have received any messages yet", 0, sched.messagesReceived.size());
         // Start and close HCS, thus attempting to upload all ARC files found in arcsDir
@@ -327,7 +326,7 @@ public class HarvestControllerServerTester {
         HarvestControllerServer hcs = HarvestControllerServer.getInstance();
         con.waitForConcurrentTasksToFinish();
         hcs.close();
-        con.removeListener(Channels.getTheSched(), sched);
+        con.removeListener(HarvesterChannels.getTheSched(), sched);
 
         /*
          * The test serverDirs always contain exactly one job with one or more ARC files. Therefore, starting up the HCS

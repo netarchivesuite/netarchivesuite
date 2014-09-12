@@ -33,7 +33,6 @@ import java.util.List;
 
 import javax.inject.Provider;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;
 
@@ -44,17 +43,7 @@ import dk.netarkivet.harvester.datamodel.JobStatus;
 public class JobSupervisorTest {
     private JobSupervisor jobSupervisor;
     private JobDAO jobDaoMock = mock(JobDAO.class);
-    private Provider<JobDAO> jobDAOProvider;
-
-    @Before
-    public void setUp() {
-        jobDAOProvider = new Provider<JobDAO>() {
-            @Override
-            public JobDAO get() {
-                return jobDaoMock;
-            }
-        };
-    }
+    private Provider<JobDAO> jobDAOProvider = () -> jobDaoMock;
 
     @Test
     public void testCleanOldJobsMultipleJobs() {

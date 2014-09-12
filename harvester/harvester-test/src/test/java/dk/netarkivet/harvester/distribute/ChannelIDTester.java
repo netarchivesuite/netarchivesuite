@@ -44,7 +44,7 @@ public class ChannelIDTester {
         ChannelID harvestJobChannel = HarvesterChannels.getHarvestJobChannelId(new HarvestChannel("FOCUSED", false,
                 true, ""));
         ChannelID[] channelArray = {Channels.getAllBa(), harvestJobChannel, Channels.getAnyBa(), Channels.getError(),
-                Channels.getTheRepos(), Channels.getTheBamon(), Channels.getTheSched(), Channels.getThisReposClient()};
+                Channels.getTheRepos(), Channels.getTheBamon(), HarvesterChannels.getTheSched(), Channels.getThisReposClient()};
         for (int i = 0; i < channelArray.length; i++) {
             for (int j = 0; j < channelArray.length; j++) {
                 if (i == j) {

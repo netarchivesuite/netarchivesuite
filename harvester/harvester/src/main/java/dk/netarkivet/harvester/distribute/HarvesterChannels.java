@@ -32,6 +32,7 @@ import dk.netarkivet.harvester.datamodel.HarvestChannel;
 
 public class HarvesterChannels {
 
+    private static final String THESCHED_CHANNEL_PREFIX = "THE_SCHED";
     /**
      * Prefix for the channel used to send CrawlProgressMessages.
      */
@@ -57,6 +58,16 @@ public class HarvesterChannels {
         }
         return instance;
     }
+
+    /**
+     * @return the <code>ChannelID</code> for the queue on which HarvestControllers send harvest status messages
+     */
+    public static ChannelID getTheSched() {
+        return getInstance().THE_SCHED;
+    }
+
+    public final ChannelID THE_SCHED = new ChannelID(THESCHED_CHANNEL_PREFIX, ChannelID.COMMON, ChannelID.NO_IP,
+            ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
 
     /**
      * Return the queue for the harvest monitor registry.

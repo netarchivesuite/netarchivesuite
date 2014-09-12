@@ -28,6 +28,8 @@ import javax.inject.Provider;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.lifecycle.LifeCycleComponent;
+import dk.netarkivet.common.utils.Notifications;
+import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.HarvestChannelDAO;
@@ -40,44 +42,46 @@ import dk.netarkivet.harvester.datamodel.JobDAO;
  * <p>
  */
 public class HarvestJobManager extends LifeCycleComponent {
-
-    private final JMSConnection jmsConnection;
-
     /**
      * Creates the components handling the harvest job management and hooks them up to the
      * <code>HarvestJobManager</code>s lifecycle.
      */
     public HarvestJobManager() {
-        jmsConnection = JMSConnectionFactory.getInstance();
-        JobDispatcher jobDispather = new JobDispatcher(jmsConnection, HarvestDefinitionDAO.getInstance(),
+        JobDispatcher jobDispather = new JobDispatcher(getJMSConnectionProvider().get(), HarvestDefinitionDAO.getInstance(),
                 JobDAO.getInstance());
         HarvestChannelRegistry harvestChannelRegistry = new HarvestChannelRegistry();
 
-        addChild(new HarvesterStatusReceiver(jobDispather, jmsConnection, HarvestChannelDAO.getInstance(),
+        addChild(new HarvesterStatusReceiver(jobDispather, getJMSConnectionProvider().get(), HarvestChannelDAO.getInstance(),
                 harvestChannelRegistry));
 
         addChild(new HarvestJobGenerator(harvestChannelRegistry));
 
-        addChild(new HarvestSchedulerMonitorServer());
+        addChild(new HarvestSchedulerMonitorServer(
+                getJMSConnectionProvider(),
+                getJobDAOProvider(),
+                getHarvestDefinitionDAOProvider(),
+                getNotificationsProvider()
+        ));
 
-        addChild(new JobSupervisor(createJobDaoProvider(), Settings.getLong(HarvesterSettings.JOB_TIMEOUT_TIME)));
+        addChild(new JobSupervisor(getJobDAOProvider(), Settings.getLong(HarvesterSettings.JOB_TIMEOUT_TIME)));
     }
 
     @Override
     public void shutdown() {
         super.shutdown();
-
-        // Release DB resources
         HarvestDBConnection.cleanup();
     }
 
-    private Provider<JobDAO> createJobDaoProvider() {
-        return new Provider<JobDAO>() {
-            @Override
-            public JobDAO get() {
-                return JobDAO.getInstance();
-            }
-        };
+    public static Provider<JMSConnection> getJMSConnectionProvider() {
+        return () -> JMSConnectionFactory.getInstance();
     }
-
+    public static Provider<JobDAO> getJobDAOProvider() {
+        return () -> JobDAO.getInstance();
+    }
+    public static Provider<HarvestDefinitionDAO> getHarvestDefinitionDAOProvider() {
+        return () -> HarvestDefinitionDAO.getInstance();
+    }
+    public static Provider<Notifications> getNotificationsProvider() {
+        return () -> NotificationsFactory.getInstance();
+    }
 }

@@ -51,6 +51,7 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.TimeUtils;
 import dk.netarkivet.common.utils.ZipUtils;
+import dk.netarkivet.harvester.distribute.HarvesterChannels;
 import dk.netarkivet.harvester.indexserver.MultiFileBasedCache;
 
 /**
@@ -375,7 +376,7 @@ public class IndexRequestClient extends MultiFileBasedCache<Long> implements Job
         // Ask that a message is sent to the scheduling queue when
         // index is finished
 
-        IndexRequestMessage irMsg = new IndexRequestMessage(requestType, jobSet, Channels.getTheSched(), false,
+        IndexRequestMessage irMsg = new IndexRequestMessage(requestType, jobSet, HarvesterChannels.getTheSched(), false,
                 harvestId);
 
         JMSConnectionFactory.getInstance().send(irMsg);
