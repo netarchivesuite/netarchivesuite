@@ -78,6 +78,17 @@ public class LogbackRecorder extends ch.qos.logback.core.AppenderBase<ch.qos.log
         return events.isEmpty();
     }
 
+    public synchronized void assertLogContains(String str) {
+        Iterator<ch.qos.logback.classic.spi.ILoggingEvent> iter = events.iterator();
+        boolean bMatched = false;
+        while (!bMatched && iter.hasNext()) {
+            bMatched = (iter.next().getFormattedMessage().indexOf(str) != -1);
+        }
+        if (!bMatched) {
+            Assert.fail("Unable to match in log: " + str);
+        }
+    }
+
     public synchronized void assertLogContains(String msg, String str) {
         Iterator<ch.qos.logback.classic.spi.ILoggingEvent> iter = events.iterator();
         boolean bMatched = false;

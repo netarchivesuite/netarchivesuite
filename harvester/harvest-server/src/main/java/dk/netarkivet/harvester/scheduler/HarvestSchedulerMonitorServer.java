@@ -25,110 +25,100 @@ package dk.netarkivet.harvester.scheduler;
 
 import java.util.Date;
 
+import javax.inject.Provider;
 import javax.jms.MessageListener;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.JMSConnectionFactory;
+import dk.netarkivet.common.distribute.JMSConnection;
+import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.lifecycle.ComponentLifeCycle;
 import dk.netarkivet.common.utils.NotificationType;
-import dk.netarkivet.common.utils.NotificationsFactory;
+import dk.netarkivet.common.utils.Notifications;
 import dk.netarkivet.harvester.datamodel.HarvestDefinition;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
+import dk.netarkivet.harvester.distribute.HarvesterChannels;
 import dk.netarkivet.harvester.distribute.HarvesterMessageHandler;
 import dk.netarkivet.harvester.distribute.IndexReadyMessage;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlStatusMessage;
 import dk.netarkivet.harvester.harvesting.distribute.JobEndedMessage;
-import dk.netarkivet.harvester.harvesting.report.HarvestReport;
 
 /**
- * Submitted harvesting jobs are registered with this singleton. The class listens for CrawlStatusMessages on the
+ * Submitted harvesting jobs are registered by listening for CrawlStatusMessages on the
  * THE_SCHED queue and processes completed harvests.
  */
-public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler implements MessageListener,
-        ComponentLifeCycle {
-
-    /** The private logger for this class. */
+public class HarvestSchedulerMonitorServer
+        extends HarvesterMessageHandler
+        implements MessageListener, ComponentLifeCycle {
     private static final Logger log = LoggerFactory.getLogger(HarvestSchedulerMonitorServer.class);
 
-    /** The JobDAO. */
-    private final JobDAO jobDAO = JobDAO.getInstance();
+    private final Provider<JMSConnection> jmsConnectionProvider;
+    private final Provider<JobDAO> jobDAOProvider;
+    private final Provider<HarvestDefinitionDAO> harvestDefinitionDAOProvider;
+    private final Provider<Notifications> notificationsProvider;
+
+    public HarvestSchedulerMonitorServer(
+            Provider<JMSConnection> jmsConnectionProvider,
+            Provider<JobDAO> jobDAOProvider,
+            Provider<HarvestDefinitionDAO> harvestDefinitionDAOProvider,
+            Provider<Notifications> notificationsProvider) {
+        this.jmsConnectionProvider = jmsConnectionProvider;
+        this.jobDAOProvider = jobDAOProvider;
+        this.harvestDefinitionDAOProvider = harvestDefinitionDAOProvider;
+        this.notificationsProvider = notificationsProvider;
+    }
 
     @Override
     public void start() {
-        JMSConnectionFactory.getInstance().setListener(Channels.getTheSched(), this);
+        jmsConnectionProvider.get().setListener(HarvesterChannels.getTheSched(), this);
     }
 
     /**
-     * Updates the job status from the current status to that specified in message if it legal to do so. Logs a warning
-     * if messages arrive out of order.
-     *
-     * @param cmsg The CrawlStatusMessage received
-     * @throws ArgumentNotValid if the current job status is Job.STATUS_NEW
+     * Updates the job status with the information in the message and notifies the HarvestMonitor.
+     * If a DomainHarvestReport is included in either a DOne or FAILED message, the DomainHarvestReport is processed.
      */
-    private void processCrawlStatusMessage(CrawlStatusMessage cmsg) throws ArgumentNotValid {
+    private void processCrawlStatusMessage(CrawlStatusMessage cmsg) {
         long jobID = cmsg.getJobID();
         JobStatus newStatus = cmsg.getStatusCode();
-        Job job = jobDAO.read(Long.valueOf(jobID));
+        Job job = jobDAOProvider.get().read(Long.valueOf(jobID));
         JobStatus oldStatus = job.getStatus();
-        // Update the job status
-
-        // a NEW job should never get a message
-        if (oldStatus == JobStatus.NEW) {
-            log.warn("CrawlStatusMessage received on new job: {}", job);
-        }
 
         switch (newStatus) {
-        case RESUBMITTED:
-        case SUBMITTED:
-        case NEW:
-            // crawl status should never update to
-            // new/submitted/resubmitted, because these statuses should not
-            // be used by the harvesters!
-            String msg = "CrawlStatusMessage tried to update job " + job + " to status " + newStatus;
-            log.warn(msg);
-            throw new ArgumentNotValid(msg);
         case STARTED:
+            if (oldStatus == JobStatus.NEW) {
+                log.warn("Received new status 'Started' for unsubmitted job {}", jobID);
+            }
             if (oldStatus == JobStatus.SUBMITTED || oldStatus == JobStatus.NEW) {
-                if (oldStatus == JobStatus.NEW) {
-                    log.warn("CrawlStatusMessage updated job in unexpected state {} to {}\n{}", oldStatus, newStatus,
-                            job.toString());
-                }
-                // The usual case submitted -> started
-                job.setStatus(newStatus);
-
-                // Send the initial progress message
-                JMSConnectionFactory.getInstance().send(
-                        new CrawlProgressMessage(job.getOrigHarvestDefinitionID(), job.getJobID()));
-
                 log.info("Job #{} has been started by the harvester.", job.getJobID());
-                jobDAO.update(job);
+
+                job.setStatus(newStatus);
+                jobDAOProvider.get().update(job);
+
+                notifyRunningJobMonitor(new CrawlProgressMessage(job.getOrigHarvestDefinitionID(), jobID));
             } else {
-                // Must not change status back to STARTED
-                log.warn("CrawlStatusMessage tried to update job status for job {} from {} to {}. Ignoring.",
-                        job.getJobID(), oldStatus, newStatus);
+                log.warn("Received new status 'Started' for job {} with current status {}, ignoring.",
+                        job.getJobID(), oldStatus);
             }
             break;
         case DONE:
         case FAILED:
-            if (oldStatus == JobStatus.STARTED || oldStatus == JobStatus.SUBMITTED
-                    || oldStatus == JobStatus.RESUBMITTED || oldStatus == JobStatus.NEW) {
-                // Received done or failed on non-ended job - okay
+            if (oldStatus == JobStatus.STARTED ||
+                    oldStatus == JobStatus.SUBMITTED ||
+                    oldStatus == JobStatus.RESUBMITTED ||
+                    oldStatus == JobStatus.NEW) {
                 if (oldStatus != JobStatus.STARTED) {
-                    // we expect "started" first, but it's not serious. Just log.
-                    log.warn("CrawlStatusMessage updated job in unexpected state {} to {}\n{}", oldStatus, newStatus,
-                            job.toString());
+                    log.warn("Received CrawlStatusMessage for job {} with new status {}, current state is {}",
+                            jobID, newStatus ,oldStatus);
                 }
                 if (newStatus == JobStatus.FAILED) {
                     log.warn("Job {} failed: HarvestErrors = {}\n" + "HarvestErrorDetails = {}\n"
-                            + "UploadErrors = {}\n" + "UploadErrorDetails = {}", jobID, cmsg.getHarvestErrors(),
+                                    + "UploadErrors = {}\n" + "UploadErrorDetails = {}", jobID, cmsg.getHarvestErrors(),
                             cmsg.getHarvestErrorDetails(), cmsg.getUploadErrors(), cmsg.getUploadErrorDetails());
                 } else {
                     log.info("Job #{} succesfully completed", jobID);
@@ -138,11 +128,10 @@ public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler imple
                 job.appendHarvestErrorDetails(cmsg.getHarvestErrorDetails());
                 job.appendUploadErrors(cmsg.getUploadErrors());
                 job.appendUploadErrorDetails(cmsg.getUploadErrorDetails());
-                jobDAO.update(job);
             } else {
                 // Received done or failed on already dead job. Bad!
-                String message = "CrawlStatusMessage tried to update job status from " + oldStatus + " to " + newStatus
-                        + ". Marking job FAILED";
+                String message = "Received CrawlStatusMessage for job " + jobID + " with new status " + newStatus +
+                        ", current state is " + oldStatus+ ". Marking job as FAILED";
                 log.warn(message);
                 job.setStatus(JobStatus.FAILED);
                 job.appendHarvestErrors(cmsg.getHarvestErrors());
@@ -150,41 +139,25 @@ public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler imple
                 job.appendHarvestErrorDetails(cmsg.getHarvestErrors());
                 job.appendHarvestErrorDetails(message);
                 log.warn("Job {} failed: {}", jobID, job.getHarvestErrorDetails());
-                jobDAO.update(job);
             }
-            // Always process the data!
-            processCrawlData(job, cmsg.getDomainHarvestReport());
 
-            // Send message to notify HarvestMonitor that
-            // it should stop monitoring this job
-            JMSConnectionFactory.getInstance().send(new JobEndedMessage(job.getJobID(), newStatus));
+            jobDAOProvider.get().update(job);
+
+            if (cmsg.getDomainHarvestReport() != null) {
+                cmsg.getDomainHarvestReport().postProcess(job);
+            }
+
+            notifyRunningJobMonitor(new JobEndedMessage(job.getJobID(), newStatus));
             break;
         default:
-            log.warn("CrawlStatusMessage tried to update job status to unsupported status {}", newStatus);
+            log.warn("CrawlStatusMessage tried to update job status to unsupported status {} for job {}",
+                    newStatus, jobID);
             break;
         }
     }
 
-    /**
-     * Takes the crawl report from the job and updates the domain information with harvesting history. If the crawler
-     * was unable to generate a {@link HarvestReport}, it will do nothing.
-     *
-     * @param job the completed job
-     * @param dhr the domain harvest report, or null if none available.
-     * @throws ArgumentNotValid if job is null
-     */
-    private void processCrawlData(Job job, HarvestReport dhr) throws ArgumentNotValid {
-        ArgumentNotValid.checkNotNull(job, "job");
-
-        // If the crawler was unable to generate a HarvestReport,
-        // we will do nothing.
-
-        if (dhr == null) {
-            return;
-        }
-
-        // Post-process the report.
-        dhr.postProcess(job);
+    private void notifyRunningJobMonitor(NetarkivetMessage message) {
+        jmsConnectionProvider.get().send(message);
     }
 
     /**
@@ -201,10 +174,8 @@ public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler imple
      */
     @Override
     public void shutdown() {
-        // FIXME This command fail when shutting down properly. (kill $PID)
-        // instead of kill -9 $PID. See NAS-1976
-        // JMSConnectionFactory.getInstance().removeListener(
-        // Channels.getTheSched(), this);
+        // FIXME See NAS-1976
+        jmsConnectionProvider.get().removeListener(HarvesterChannels.getTheSched(), this);
     }
 
     @Override
@@ -213,36 +184,29 @@ public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler imple
         processIndexReadyMessage(msg);
     }
 
-    /**
-     * Process an incoming IndexReadyMessage.
-     *
-     * @param msg the message
-     */
     private void processIndexReadyMessage(IndexReadyMessage msg) {
         // Set isindexready to true if Indexisready is true
         Long harvestId = msg.getHarvestId();
         boolean indexisready = msg.getIndexOK();
-        HarvestDefinitionDAO dao = HarvestDefinitionDAO.getInstance();
-        if (dao.isSnapshot(harvestId)) {
-            dao.setIndexIsReady(harvestId, indexisready);
+        if (harvestDefinitionDAOProvider.get().isSnapshot(harvestId)) {
+            harvestDefinitionDAOProvider.get().setIndexIsReady(harvestId, indexisready);
             if (indexisready) {
                 log.info("Got message from the IndexServer, that the index is ready for harvest #{}", harvestId);
             } else {
                 String errMsg = "Got message from IndexServer, that it failed to generate index for" + " harvest # "
                         + harvestId + ". Deactivating harvest";
                 log.warn(errMsg);
-                HarvestDefinition hd = dao.read(harvestId);
+                HarvestDefinition hd = harvestDefinitionDAOProvider.get().read(harvestId);
                 hd.setActive(false);
                 StringBuilder commentsBuf = new StringBuilder(hd.getComments());
                 commentsBuf.append("\n" + (new Date())
                         + ": Deactivated by the system because indexserver failed to generate index");
                 hd.setComments(commentsBuf.toString());
-                dao.update(hd);
-                NotificationsFactory.getInstance().notify(errMsg, NotificationType.ERROR);
+                harvestDefinitionDAOProvider.get().update(hd);
+                notificationsProvider.get().notify(errMsg, NotificationType.ERROR);
             }
         } else {
             log.debug("Ignoring IndexreadyMesssage sent on behalf on selective harvest w/id {}", harvestId);
         }
     }
-
 }

@@ -260,7 +260,7 @@ public class IntegrityTests extends DataModelTestCase {
         // done listening for store replies
         con.removeListener(Channels.getTheRepos(), listenerDummy);
         // now listen for crawl ended
-        con.setListener(Channels.getTheSched(), listenerDummy);
+        con.setListener(HarvesterChannels.getTheSched(), listenerDummy);
 
         // At this point we know we are during the upload process, because we
         // have blocked the process while waiting for upload replies. At that
@@ -335,7 +335,7 @@ public class IntegrityTests extends DataModelTestCase {
         // Use a test listener to make sure that all the expected messages
         // are received in sequence
         CrawlStatusMessageListener listener = new CrawlStatusMessageListener();
-        con.setListener(Channels.getTheSched(), listener);
+        con.setListener(HarvesterChannels.getTheSched(), listener);
         // Submit the job
         // TODO ensure, that we have some alias-metadata to produce here
         List<MetadataEntry> metadata = new ArrayList<MetadataEntry>();

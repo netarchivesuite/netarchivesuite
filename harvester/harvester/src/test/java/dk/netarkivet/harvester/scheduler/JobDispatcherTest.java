@@ -181,7 +181,7 @@ public class JobDispatcherTest {
     public void testNullJob() {
         try {
             jobDispatcher.doOneCrawl((Job) null, "test", "test", "test", SELECTIVE_HARVEST_CHANNEL, "unittesters",
-                    new ArrayList<MetadataEntry>());
+                    new ArrayList<>());
             fail("Should throw ArgumentNotValid on NULL job");
         } catch (ArgumentNotValid e) {
             // expected case

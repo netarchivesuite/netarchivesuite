@@ -49,7 +49,6 @@ public class Channels {
     private static final String ALLBA_CHANNEL_PREFIX = "ALL_BA";
     private static final String ANYBA_CHANNEL_PREFIX = "ANY_BA";
     private static final String THEBAMON_CHANNEL_PREFIX = "THE_BAMON";
-    private static final String THESCHED_CHANNEL_PREFIX = "THE_SCHED";
     private static final String THEREPOS_CHANNEL_PREFIX = "THE_REPOS";
     private static final String THISREPOSCLIENT_CHANNEL_PREFIX = "THIS_REPOS_CLIENT";
     private static final String ERROR_CHANNEL_PREFIX = "ERROR";
@@ -152,19 +151,6 @@ public class Channels {
     public static Collection<Replica> getReplicas() {
         return getInstance().replicas;
     }
-
-    /**
-     * Returns the queue on which HarvestControllers reply with status messages to the HarvestScheduler.
-     *
-     * @return the <code>ChannelID</code> object for the queue on which HarvestControllers reply with status messages to
-     * the HarvestScheduler
-     */
-    public static ChannelID getTheSched() {
-        return getInstance().THE_SCHED;
-    }
-
-    private final ChannelID THE_SCHED = new ChannelID(THESCHED_CHANNEL_PREFIX, ChannelID.COMMON, ChannelID.NO_IP,
-            ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
 
     /**
      * Returns the one-per-client queue on which client receives replies from the arcrepository.

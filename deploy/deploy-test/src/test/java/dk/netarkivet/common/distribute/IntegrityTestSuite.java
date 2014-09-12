@@ -62,7 +62,7 @@ public class IntegrityTestSuite {
      */
     private static final ChannelID sendQ = Channels.getAnyBa();
 
-    private static final ChannelID replyQ = Channels.getTheSched();
+    private static final ChannelID replyQ = Channels.getTheCR();
 
     private static final ChannelID sendTopic = Channels.getAllBa();
 

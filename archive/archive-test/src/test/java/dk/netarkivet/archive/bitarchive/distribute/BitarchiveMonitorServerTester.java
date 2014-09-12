@@ -77,7 +77,7 @@ import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.ChecksumJob;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
-import dk.netarkivet.common.utils.batch.TestJob;
+import dk.netarkivet.common.utils.batch.TestChecksumJob;
 import dk.netarkivet.testutils.ClassAsserts;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
@@ -250,7 +250,7 @@ public class BitarchiveMonitorServerTester {
     @Ignore("FIXME")
     // FIXME: test temporarily disabled
     public void FAILtestBatchReceive() {
-        TestJob job = new TestJob("testBatchReceive_ID"); // job is used for
+        TestChecksumJob job = new TestChecksumJob("testBatchReceive_ID"); // job is used for
         // carrying an id to
         // recognize later
         NetarkivetMessage message = new BatchMessage(THE_BAMON, job, Settings.get(CommonSettings.USE_REPLICA_ID));
@@ -281,7 +281,7 @@ public class BitarchiveMonitorServerTester {
         bam_server = new TestBitarchiveMonitorServer();
 
         String ba_App_Id = "BA_App_1";
-        TestJob job = new TestJob("testBatchReceive_ID");
+        TestChecksumJob job = new TestChecksumJob("testBatchReceive_ID");
         job.setBatchJobTimeout(TestInfo.BITARCHIVE_BATCH_MESSAGE_TIMEOUT);
 
         // register a listener that simulates the arc repository
@@ -492,7 +492,7 @@ public class BitarchiveMonitorServerTester {
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR, TestInfo.BITARCHIVE_SERVER_DIR_1);
         BitarchiveServer bas1 = BitarchiveServer.getInstance();
 
-        TestJob job = new TestJob("testBatchReceive_ID"); // job is used for
+        TestChecksumJob job = new TestChecksumJob("testBatchReceive_ID"); // job is used for
         // carrying an id to
         // recognize later
         BatchMessage batchMessage = new BatchMessage(THE_BAMON, Channels.getTheRepos(), job,

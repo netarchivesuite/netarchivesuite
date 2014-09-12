@@ -28,6 +28,7 @@ import java.io.Serializable;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.harvester.datamodel.JobStatus;
+import dk.netarkivet.harvester.distribute.HarvesterChannels;
 import dk.netarkivet.harvester.distribute.HarvesterMessage;
 import dk.netarkivet.harvester.distribute.HarvesterMessageVisitor;
 import dk.netarkivet.harvester.harvesting.report.HarvestReport;
@@ -66,7 +67,7 @@ public class CrawlStatusMessage extends HarvesterMessage implements Serializable
      * @throws ArgumentNotValid If invalid arguments: jobID < 0L statusCode == null
      */
     public CrawlStatusMessage(long jobID, JobStatus statusCode, HarvestReport harvestReport) {
-        super(Channels.getTheSched(), Channels.getError());
+        super(HarvesterChannels.getTheSched(), Channels.getError());
         ArgumentNotValid.checkNotNegative(jobID, "jobID");
         ArgumentNotValid.checkNotNull(statusCode, "statusCode");
         this.jobID = jobID;

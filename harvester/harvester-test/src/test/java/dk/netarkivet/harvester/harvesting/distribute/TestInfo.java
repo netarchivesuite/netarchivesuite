@@ -32,6 +32,7 @@ import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.datamodel.JobUtils;
+import dk.netarkivet.harvester.distribute.HarvesterChannels;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 
 /**
@@ -41,7 +42,7 @@ public class TestInfo {
 
     public static final File DATA_DIR = new File("tests/dk/netarkivet/harvester/harvesting/distribute/data/");
     public static final int WAIT_TIME = 6000;
-    public static ChannelID CLIENT_ID = Channels.getTheSched();
+    public static ChannelID CLIENT_ID = HarvesterChannels.getTheSched();
     public static ChannelID SERVER_ID = Channels.getThisReposClient();
     public static final File SERVER_DIR = new File(TestInfo.DATA_DIR, "server");
     public static final String DUMMY_SERVER_ID = "hc_test_dummy_server";
