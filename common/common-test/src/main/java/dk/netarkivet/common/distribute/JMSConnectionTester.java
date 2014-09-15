@@ -46,7 +46,6 @@ import javax.jms.ObjectMessage;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import dk.netarkivet.common.CommonSettings;
@@ -61,11 +60,8 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 /**
  * Tests JMSConnection, the class that handles all JMS operations for Netarkivet.
  */
-
-@Ignore("Not in junit3 test suite")
 @SuppressWarnings({"unchecked", "rawtypes", "unused", "serial"})
 public class JMSConnectionTester {
-
     private SecurityManager originalSecurityManager;
 
     ReloadSettings rs = new ReloadSettings();

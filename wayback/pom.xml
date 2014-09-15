@@ -28,5 +28,12 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.netarchivesuite</groupId>
+      <artifactId>common-test</artifactId>
+      <version>5.0-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 </project>

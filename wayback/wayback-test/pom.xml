@@ -30,20 +30,6 @@
     <!-- Test dependencies. -->
 
     <dependency>
-      <groupId>mockobjects</groupId>
-      <artifactId>mockobjects-core</artifactId>
-      <version>0.09</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>mockobjects</groupId>
-      <artifactId>mockobjects-jdk1.4-j2ee1.3</artifactId>
-      <version>0.09</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
       <scope>test</scope>
@@ -53,15 +39,6 @@
       <groupId>jaxen</groupId>
       <artifactId>jaxen</artifactId>
       <version>1.1</version>
-      <scope>test</scope>
-    </dependency>
-
-    <!-- Ugly test dependencies. -->
-
-    <dependency>
-      <groupId>org.netarchivesuite</groupId>
-      <artifactId>common-test</artifactId>
-      <version>5.0-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
 

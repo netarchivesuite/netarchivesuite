@@ -116,8 +116,6 @@ public class FileUtilsTester {
 
     /**
      * test that FileUtils.append can append between two remote files.
-     *
-     * @throws IOException
      */
     @Test
     public void testAppendRemoteFiles() throws IOException {
@@ -146,8 +144,6 @@ public class FileUtilsTester {
 
     /**
      * Check that we can at least get some information out of getBytesFree
-     *
-     * @throws Exception
      */
     @Test
     public void testGetBytesFree() throws Exception {
