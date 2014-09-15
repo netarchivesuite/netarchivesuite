@@ -32,16 +32,14 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.wayback.batch.UrlCanonicalizerFactory;
 import dk.netarkivet.wayback.batch.copycode.NetarchiveSuiteAggressiveUrlCanonicalizer;
 
-/**
- *
- */
 @SuppressWarnings({"deprecation"})
-public class UrlCanonicalizerFactoryTester {
+public class UrlCanonicalizerFactoryTest {
 
     @Test
     public void testGetDefaultUrlCanonicalizer() {
         UrlCanonicalizer uc1 = UrlCanonicalizerFactory.getDefaultUrlCanonicalizer();
-        assertEquals("Expect default to return and instance of " + "NetarchiveSuiteAggressiveUrlCanonicalizer class",
+        assertEquals(
+                "Expect default to return and instance of " + "NetarchiveSuiteAggressiveUrlCanonicalizer class",
                 NetarchiveSuiteAggressiveUrlCanonicalizer.class, uc1.getClass());
         Settings.set(WaybackSettings.URL_CANONICALIZER_CLASSNAME,
                 "org.archive.wayback.util.url.IdentityUrlCanonicalizer");

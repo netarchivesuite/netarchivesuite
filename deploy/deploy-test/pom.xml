@@ -57,20 +57,6 @@
     <!-- Test dependencies. -->
 
     <dependency>
-      <groupId>mockobjects</groupId>
-      <artifactId>mockobjects-core</artifactId>
-      <version>0.09</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>mockobjects</groupId>
-      <artifactId>mockobjects-jdk1.4-j2ee1.3</artifactId>
-      <version>0.09</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
       <groupId>org.netarchivesuite</groupId>
       <artifactId>common-test</artifactId>
       <version>5.0-SNAPSHOT</version>
@@ -107,16 +93,6 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <argLine>
-            -Xmx768m
-            -Dfile.encoding=UTF-8
-            -Ddk.netarkivet.settings.file=tests/dk/netarkivet/test-settings.xml
-            -Djava.security.manager
-            -Djava.security.policy=tests/dk/netarkivet/ant-test.policy
-            -Dorg.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy=org.archive.crawler.frontier.HostnameQueueAssignmentPolicy,org.archive.crawler.frontier.IPQueueAssignmentPolicy,org.archive.crawler.frontier.BucketQueueAssignmentPolicy,org.archive.crawler.frontier.SurtAuthorityQueueAssignmentPolicy,org.archive.crawler.frontier.TopmostAssignedSurtQueueAssignmentPolicy,dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy
-            -Duser.language=en -Duser.country=US -Duser.variant=US
-            -Duser.timezone=Europe/Copenhagen
-          </argLine>
           <includes>
             <include>**/*Test*.java</include>
           </includes>

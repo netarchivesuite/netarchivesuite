@@ -75,7 +75,7 @@
         <dependencySet>
             <useProjectArtifact>false</useProjectArtifact>
             <includes>
-                <include>dk.netarkivet.netarchivesuite:*:jar</include>
+                <include>org.netarchivesuite:*:jar</include>
             </includes>
             <outputFileNameMapping>dk.netarkivet.${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
             <outputDirectory>/lib/</outputDirectory>
@@ -104,7 +104,7 @@
                 <include>*:jar</include>
             </includes>
             <!--excludes>
-                <exclude>dk.netarkivet.netarchivesuite:*:jar</exclude>
+                <exclude>org.netarchivesuite:*:jar</exclude>
                 <exclude>org.apache.derby:*:jar</exclude>
             </excludes-->
             <outputDirectory>/lib/</outputDirectory>

@@ -61,8 +61,6 @@ import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.el.ExpressionEvaluator;
 import javax.servlet.jsp.el.VariableResolver;
 
-import org.junit.Ignore;
-
 import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.TestFileUtils;
@@ -75,7 +73,6 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
  * dk.netarkivet.archive.webinterface.BitpreserveFileStatusTester
  */
 @SuppressWarnings({"rawtypes", "deprecation"})
-@Ignore("Not in junit3 test suite")
 public class WebinterfaceTestCase {
     ReloadSettings rs = new ReloadSettings();
 

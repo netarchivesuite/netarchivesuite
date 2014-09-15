@@ -105,7 +105,7 @@ public class HarvestSchedulerMonitorServerTest {
     }
 
     /**
-     * Test that the reception of a 'Started' crawl status is handled correctly for a job in initial 'New' state .
+     * Test that the reception of a 'Started' crawl status is handled correctly for a job in initial 'New' state.
      */
     @Test
     public void testStatusNewToStarted() {
@@ -293,7 +293,6 @@ public class HarvestSchedulerMonitorServerTest {
                 {JobStatus.DONE, JobStatus.FAILED});
 
         crawlMessageStatusesToTest.forEach((status) -> {
-
             job1.setStatus(JobStatus.STARTED);
             HarvestReport harvestReport = mock(HarvestReport.class);
             CrawlStatusMessage crawlStatusMessage = mock(CrawlStatusMessage.class);

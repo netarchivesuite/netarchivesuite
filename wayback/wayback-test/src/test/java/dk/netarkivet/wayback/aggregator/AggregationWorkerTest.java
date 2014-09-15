@@ -29,7 +29,6 @@ import java.io.File;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import dk.netarkivet.common.utils.FileUtils;
@@ -60,7 +59,6 @@ public class AggregationWorkerTest extends AggregatorTestCase {
      * Disabled, see https://sbforge.org/jira/browse/NAS-2326.
      */
     @Test
-    @Ignore("https://sbforge.org/jira/browse/NAS-2326")
     public void disabledTestFirstAggregationRun() {
         File[] inputFiles = prepareSourceIndex(new String[] {inputFile1Name, inputFile2Name});
 
@@ -81,7 +79,6 @@ public class AggregationWorkerTest extends AggregatorTestCase {
      * Verifies that a aggregation is run correctly the second time it is run.
      */
     @Test
-    @Ignore()
     public void testSecondAggregationRun() {
         disabledTestFirstAggregationRun();
 
@@ -107,7 +104,6 @@ public class AggregationWorkerTest extends AggregatorTestCase {
      * removed in this process
      */
     @Test
-    @Ignore
     public void disabledTestMaxIntermediateIndexFileLimit() {
         disabledTestFirstAggregationRun();
         File[] inputFiles = prepareSourceIndex(new String[] {inputFile109KName});
@@ -133,7 +129,6 @@ public class AggregationWorkerTest extends AggregatorTestCase {
      * WaybackSettings#INTERMEDIATE_INDEX_FILE_LIMIT is set to 0.
      */
     @Test
-    @Ignore("https://sbforge.org/jira/browse/NAS-2326")
     public void testZeroIntermediateIndexFileLimit() {
         System.setProperty(WaybackSettings.WAYBACK_AGGREGATOR_MAX_INTERMEDIATE_INDEX_FILE_SIZE, "0");
 
@@ -154,7 +149,6 @@ public class AggregationWorkerTest extends AggregatorTestCase {
      * The old final index file will be renamed to ${finalIndexFileName}.1
      */
     @Test
-    @Ignore
     public void disabledTestMaxFinalIndexFileLimit() {
         disabledTestMaxIntermediateIndexFileLimit();
 

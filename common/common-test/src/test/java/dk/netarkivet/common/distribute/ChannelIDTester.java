@@ -224,7 +224,7 @@ public class ChannelIDTester {
 
     /**
      * Tests that only the ArcRepository may request channels for all bit archives. At the time of writing, there is no
-     * ArcRepository application, so this funtionality cannot be implemented (or tested).
+     * ArcRepository application, so this functionality cannot be implemented (or tested).
      */
     @Test
     @Ignore("no ArcRepository application yet")

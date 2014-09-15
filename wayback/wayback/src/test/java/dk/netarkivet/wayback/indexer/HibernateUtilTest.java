@@ -28,7 +28,7 @@ import static org.junit.Assert.assertTrue;
 import org.hibernate.Session;
 import org.junit.Test;
 
-public class HibernateUtilTester {
+public class HibernateUtilTest {
 
     /**
      * Tests that we can create an open session.

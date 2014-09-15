@@ -30,13 +30,12 @@ import java.lang.reflect.Method;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
+import org.junit.Test;
 
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.wayback.WaybackSettings;
 
-@Ignore("Not referred to from TestSuite")
 public class WaybackIndexerTester extends IndexerTestCase {
 
     File originals = new File("tests/dk/netarkivet/wayback/indexer/data/originals");
@@ -57,11 +56,8 @@ public class WaybackIndexerTester extends IndexerTestCase {
 
     /**
      * ingestInitialFiles should return without doing anything if the specified file is an empty string.
-     *
-     * @throws NoSuchMethodException
-     * @throws InvocationTargetException
-     * @throws IllegalAccessException
      */
+    @Test
     public void testIngestInitialFilesBlankSetting() throws NoSuchMethodException, InvocationTargetException,
             IllegalAccessException {
         System.setProperty(WaybackSettings.WAYBACK_INDEXER_INITIAL_FILES, "");
@@ -70,6 +66,7 @@ public class WaybackIndexerTester extends IndexerTestCase {
         ingestMethod.invoke(null);
     }
 
+    @Test
     public void testIngestInitialFiles() throws NoSuchMethodException, InvocationTargetException,
             IllegalAccessException {
         String file = (new File(working, "initialfiles")).getAbsolutePath();
