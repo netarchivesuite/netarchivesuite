@@ -16,7 +16,7 @@
 
   <modules>
     <module>deploy</module>
-    <module>releasezipball</module>
+    <module>distribution</module>
     <module>deploy-test</module>
   </modules>
 

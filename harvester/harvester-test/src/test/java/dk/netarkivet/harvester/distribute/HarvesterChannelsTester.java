@@ -31,9 +31,6 @@ import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.harvester.datamodel.HarvestChannel;
 
-/**
- * Unittests of the class dk.netarkivet.common.distribute.Channels.
- */
 public class HarvesterChannelsTester {
     /**
      * Test if static Channels.isTopic(String name) works. Only names containing substring "ALL_BA" is considered a name
@@ -45,7 +42,8 @@ public class HarvesterChannelsTester {
                 HarvesterChannels.getHarvestJobChannelId(new HarvestChannel("FOCUSED", false, true, "")),
                 HarvesterChannels.getHarvestJobChannelId(new HarvestChannel("SNAPSHOT", true, true, "")),
                 HarvesterChannels.getTheSched(), //
-                HarvesterChannels.getHarvestMonitorChannel()};
+                HarvesterChannels.getHarvestMonitorChannel()
+        };
         for (ChannelID queue : queues) {
             String queueName = queue.getName();
             assertFalse(queueName + " is not a topic", Channels.isTopic(queueName));
