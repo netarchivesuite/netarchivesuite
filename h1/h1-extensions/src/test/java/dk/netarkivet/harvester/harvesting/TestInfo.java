@@ -24,11 +24,8 @@
 package dk.netarkivet.harvester.harvesting;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import dk.netarkivet.harvester.datamodel.StopReason;
-import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 
 /**
  * Testdata for this package.
@@ -130,10 +127,6 @@ public class TestInfo {
     static final long JOB_ID = 42;
     static final long HARVEST_ID = 142L;
     public static final File HARVEST_INFO_FILE = new File(CRAWLDIR_ORIGINALS_DIR, "harvestInfo.xml");
-    public static final MetadataEntry sampleEntry = new MetadataEntry("metadata://netarkivet.dk", "text/plain",
-            "DETTE ER NOGET METADATA");
-    public static final List<MetadataEntry> emptyMetadata = new ArrayList<MetadataEntry>();
-    public static final List<MetadataEntry> oneMetadata = new ArrayList<MetadataEntry>();
 
     static final File EMPTY_CRAWLLOG_FILE = new File(ORDER_AND_SEEDS_ORIGINALS_DIR, "empty_crawl.log");
     static final File REPORT_FILE = new File(new File(WORKING_DIR, "harvestreports"), "crawl.log");

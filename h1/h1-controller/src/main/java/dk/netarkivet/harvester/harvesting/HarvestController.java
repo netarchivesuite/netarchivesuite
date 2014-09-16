@@ -59,10 +59,9 @@ import dk.netarkivet.common.utils.cdx.CDXRecord;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 import dk.netarkivet.harvester.datamodel.Job;
+import dk.netarkivet.harvester.harvesting.PersistentJobData.HarvestDefinitionInfo;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFile;
-import dk.netarkivet.harvester.harvesting.metadata.PersistentJobData;
-import dk.netarkivet.harvester.harvesting.metadata.PersistentJobData.HarvestDefinitionInfo;
 import dk.netarkivet.harvester.harvesting.report.HarvestReport;
 import dk.netarkivet.harvester.harvesting.report.HarvestReportFactory;
 

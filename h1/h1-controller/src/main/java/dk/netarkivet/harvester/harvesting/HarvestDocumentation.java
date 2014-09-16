@@ -56,7 +56,6 @@ import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFile;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriter;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriterWarc;
-import dk.netarkivet.harvester.harvesting.metadata.PersistentJobData;
 
 /**
  * This class contains code for documenting a harvest. Metadata is read from the directories associated with a given

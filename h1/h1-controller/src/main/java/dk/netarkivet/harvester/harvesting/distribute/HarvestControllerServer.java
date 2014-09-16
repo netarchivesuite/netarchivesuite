@@ -57,10 +57,10 @@ import dk.netarkivet.harvester.distribute.HarvesterMessageHandler;
 import dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy;
 import dk.netarkivet.harvester.harvesting.HarvestController;
 import dk.netarkivet.harvester.harvesting.HeritrixFiles;
+import dk.netarkivet.harvester.harvesting.PersistentJobData;
 import dk.netarkivet.harvester.harvesting.SeedUriDomainnameQueueAssignmentPolicy;
+import dk.netarkivet.harvester.harvesting.PersistentJobData.HarvestDefinitionInfo;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
-import dk.netarkivet.harvester.harvesting.metadata.PersistentJobData;
-import dk.netarkivet.harvester.harvesting.metadata.PersistentJobData.HarvestDefinitionInfo;
 import dk.netarkivet.harvester.harvesting.report.HarvestReport;
 
 /**

@@ -62,8 +62,6 @@ import org.archive.util.XmlUtils;
 import org.archive.util.anvl.ANVLRecord;
 import org.w3c.dom.Document;
 
-import dk.netarkivet.harvester.harvesting.metadata.PersistentJobData;
-
 /**
  * WARCWriterProcessor. Goes against the 0.18 version of the WARC specification (which is functionally identical to 0.17
  * except in the protocol identifier string). See http://archive-access.sourceforge.net/warc/

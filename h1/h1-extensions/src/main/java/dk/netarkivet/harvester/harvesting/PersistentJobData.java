@@ -20,7 +20,7 @@
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
  * #L%
  */
-package dk.netarkivet.harvester.harvesting.metadata;
+package dk.netarkivet.harvester.harvesting;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,15 +37,14 @@ import dk.netarkivet.common.utils.SimpleXml;
 import dk.netarkivet.common.utils.archive.ArchiveDateConverter;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.Job;
-import dk.netarkivet.harvester.harvesting.JobInfo;
-import dk.netarkivet.harvester.harvesting.metadata.PersistentJobData.XmlState.OKSTATE;
+import dk.netarkivet.harvester.harvesting.PersistentJobData.XmlState.OKSTATE;
 
 /**
  * Class PersistentJobData holds information about an ongoing harvest. Presently the information is stored in a
  * XML-file.
  */
 @SuppressWarnings({"serial"})
-public class PersistentJobData implements JobInfo {
+public class PersistentJobData {
 
     /** The logger to use. */
     private static final Logger log = LoggerFactory.getLogger(PersistentJobData.class);
@@ -554,9 +553,9 @@ public class PersistentJobData implements JobInfo {
         }
     }
 
-    @Override
-    /** If not set in persistentJobData, fall back to the standard way.
-     *  jobid-harvestid.
+    /**
+     * If not set in persistentJobData, fall back to the standard way.
+     * jobid-harvestid.
      */
     public String getHarvestFilenamePrefix() {
         SimpleXml sx = read(); // reads and validates XML
