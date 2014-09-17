@@ -23,17 +23,35 @@
 package dk.netarkivet.testutils;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.junit.Assert;
 import org.slf4j.LoggerFactory;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.Appender;
+import ch.qos.logback.core.filter.Filter;
 import ch.qos.logback.core.spi.FilterReply;
 
 // TODO So maybe these methods should be unit-tested... NICL
+
+/**
+ * Can be used to test whether logging is perform. The normal usage is:
+ * <pre>
+ * <code>public void testSomething() {
+ *     LogbackRecorder logRecorder = LogbackRecorder.startRecorder();
+ *     doTheTesting();
+ *     logRecorder.assertLogContains(theStringToVerifyIsInTheLog);
+ * }
+ * </code>
+ * </pre>
+ */
 public class LogbackRecorder extends ch.qos.logback.core.AppenderBase<ch.qos.logback.classic.spi.ILoggingEvent> {
 
     protected static final ch.qos.logback.classic.LoggerContext context = (ch.qos.logback.classic.LoggerContext) LoggerFactory
@@ -78,14 +96,31 @@ public class LogbackRecorder extends ch.qos.logback.core.AppenderBase<ch.qos.log
         return events.isEmpty();
     }
 
-    public synchronized void assertLogContains(String str) {
-        Iterator<ch.qos.logback.classic.spi.ILoggingEvent> iter = events.iterator();
-        boolean bMatched = false;
-        while (!bMatched && iter.hasNext()) {
-            bMatched = (iter.next().getFormattedMessage().indexOf(str) != -1);
+    /**
+     * Tries to find a logentry with a specific log level containing a specific string and fails the if no match is
+     * found.
+     * @param level The log level of the log to find
+     * @param logStringToLookup The string to find in the log.
+     */
+    public synchronized void assertLogContains(Level level, String logStringToLookup) {
+        boolean matchFound = false;
+        Set<Level> matchedLevels = new HashSet<>();
+        for (ILoggingEvent logEntry : events) {
+            if (logEntry.getFormattedMessage().indexOf(logStringToLookup) != -1) {
+                if (logEntry.getLevel() == level) {
+                    matchFound = true;
+                    break;
+                } else {
+                    matchedLevels.add(logEntry.getLevel());
+                }
+            }
         }
-        if (!bMatched) {
-            Assert.fail("Unable to match in log: " + str);
+        if (!matchFound) {
+            StringBuilder sb = new StringBuilder("Unable to find match in " + level + " log: " + logStringToLookup);
+            if (!matchedLevels.isEmpty()) {
+                sb.append("\nFound matches for other log levels though: " + matchedLevels );
+            }
+            Assert.fail(sb.toString());
         }
     }
 
@@ -141,18 +176,6 @@ public class LogbackRecorder extends ch.qos.logback.core.AppenderBase<ch.qos.log
         return index;
     }
 
-    public synchronized void assertLogContainsLevel(String msg, ch.qos.logback.classic.Level level) {
-        Iterator<ch.qos.logback.classic.spi.ILoggingEvent> iter = events.iterator();
-        boolean bMatched = false;
-        while (!bMatched && iter.hasNext()) {
-            bMatched = (iter.next().getLevel() == level);
-        }
-        if (!bMatched) {
-            System.out.println("Unable to match level=" + level.toString() + " + in log.");
-            Assert.fail(msg);
-        }
-    }
-
     public synchronized void assertLogNotContainsLevel(String msg, ch.qos.logback.classic.Level level) {
         Iterator<ch.qos.logback.classic.spi.ILoggingEvent> iter = events.iterator();
         boolean bMatched = false;
@@ -165,7 +188,7 @@ public class LogbackRecorder extends ch.qos.logback.core.AppenderBase<ch.qos.log
         }
     }
 
-    public static class DenyFilter extends ch.qos.logback.core.filter.Filter<ch.qos.logback.classic.spi.ILoggingEvent> {
+    public static class DenyFilter extends ch.qos.logback.core.filter.Filter<ILoggingEvent> {
         @Override
         public FilterReply decide(ILoggingEvent event) {
             return FilterReply.DENY;
@@ -174,12 +197,10 @@ public class LogbackRecorder extends ch.qos.logback.core.AppenderBase<ch.qos.log
 
     ;
 
-    public void addFilter(ch.qos.logback.core.filter.Filter<ch.qos.logback.classic.spi.ILoggingEvent> filter,
-            String loggerName) {
-        ch.qos.logback.classic.Logger logger = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(loggerName);
+    public void addFilter(Filter<ILoggingEvent> filter, String loggerName) {
+        Logger logger = (Logger)LoggerFactory.getLogger(loggerName);
         if (logger != null) {
-            Iterator<ch.qos.logback.core.Appender<ch.qos.logback.classic.spi.ILoggingEvent>> index = logger
-                    .iteratorForAppenders();
+            Iterator<Appender<ILoggingEvent>> index = logger.iteratorForAppenders();
             while (index.hasNext()) {
                 appender = index.next();
                 appender.addFilter(filter);
@@ -198,21 +219,4 @@ public class LogbackRecorder extends ch.qos.logback.core.AppenderBase<ch.qos.log
             }
         }
     }
-
-    public static void listAppenders() {
-        ch.qos.logback.classic.LoggerContext context = (ch.qos.logback.classic.LoggerContext) LoggerFactory
-                .getILoggerFactory();
-        ch.qos.logback.core.Appender<ch.qos.logback.classic.spi.ILoggingEvent> appender;
-        for (ch.qos.logback.classic.Logger logger : context.getLoggerList()) {
-            Iterator<ch.qos.logback.core.Appender<ch.qos.logback.classic.spi.ILoggingEvent>> index = logger
-                    .iteratorForAppenders();
-            while (index.hasNext()) {
-                appender = index.next();
-                System.out.println("#" + appender.getName());
-                System.out.println("#" + appender.getClass().getName());
-                System.out.println("#" + appender.isStarted());
-            }
-        }
-    }
-
 }
