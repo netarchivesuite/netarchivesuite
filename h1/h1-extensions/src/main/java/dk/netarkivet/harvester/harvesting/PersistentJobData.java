@@ -24,7 +24,6 @@ package dk.netarkivet.harvester.harvesting;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +35,7 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SimpleXml;
 import dk.netarkivet.common.utils.archive.ArchiveDateConverter;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.datamodel.HarvestDefinitionInfo;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.harvesting.PersistentJobData.XmlState.OKSTATE;
 
@@ -43,62 +43,10 @@ import dk.netarkivet.harvester.harvesting.PersistentJobData.XmlState.OKSTATE;
  * Class PersistentJobData holds information about an ongoing harvest. Presently the information is stored in a
  * XML-file.
  */
-@SuppressWarnings({"serial"})
 public class PersistentJobData {
 
     /** The logger to use. */
     private static final Logger log = LoggerFactory.getLogger(PersistentJobData.class);
-
-    /** Innerclass containing Info about a harvestjob. */
-    public static class HarvestDefinitionInfo implements Serializable {
-
-        /** The original harvest name. */
-        private final String origHarvestName;
-
-        /** The original harvest description. */
-        private final String origHarvestDesc;
-
-        /** The name of the schedule for the original harvest definition. */
-        private final String scheduleName;
-
-        /**
-         * Builds a harvest definition info object.
-         *
-         * @param origHarvestName the harvest definition's name
-         * @param origHarvestDesc the harvest definition's comments (can be empty string)
-         * @param scheduleName the harvest definition's schedule name (only applicable for selective harvests)
-         */
-        public HarvestDefinitionInfo(String origHarvestName, String origHarvestDesc, String scheduleName) {
-            super();
-            ArgumentNotValid.checkNotNullOrEmpty(origHarvestName, "origHarvestName");
-            ArgumentNotValid.checkNotNull(origHarvestDesc, "origHarvestDesc");
-            ArgumentNotValid.checkNotNull(scheduleName, "scheduleName");
-            this.origHarvestName = origHarvestName;
-            this.origHarvestDesc = origHarvestDesc;
-            this.scheduleName = scheduleName;
-        }
-
-        /**
-         * @return the origHarvestName
-         */
-        public String getOrigHarvestName() {
-            return origHarvestName;
-        }
-
-        /**
-         * @return the origHarvestDesc
-         */
-        public String getOrigHarvestDesc() {
-            return origHarvestDesc;
-        }
-
-        /**
-         * @return the origHarvestScheduleName
-         */
-        public String getScheduleName() {
-            return scheduleName;
-        }
-    }
 
     /** the crawlDir. */
     private final File crawlDir;

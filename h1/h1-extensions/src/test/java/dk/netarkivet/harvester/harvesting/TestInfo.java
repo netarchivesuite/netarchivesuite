@@ -30,7 +30,6 @@ import dk.netarkivet.harvester.datamodel.StopReason;
 /**
  * Testdata for this package.
  */
-@SuppressWarnings("unused")
 public class TestInfo {
 
     static final StopReason DEFAULT_STOPREASON = StopReason.DOWNLOAD_COMPLETE;
