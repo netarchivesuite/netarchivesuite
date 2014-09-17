@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+*$Id$
+* $Revision$
+* $Author$
+* $Date$
+*
+* The Netarchive Suite - Software to harvest and preserve websites
+* Copyright 2004-2012 The Royal Danish Library, the Danish State and
+University Library, the National Library of France and the Austrian
+National Library.
+*
+* This library is free software; you can redistribute it and/or
+* modify it under the terms of the GNU Lesser General Public
+* License as published by the Free Software Foundation; either
+* version 2.1 of the License, or (at your option) any later version.
+*
+* This library is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* Lesser General Public License for more details.
+*
+* You should have received a copy of the GNU Lesser General Public
+* License along with this library; if not, write to the Free Software
+* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
+*  USA
+*
+-->
+<!--
+        This file contains an example of a deploy configuration file for the 
+        one machine scenario. Kind of running 'quickstart' on another machine.
+-->
+
+
+<deployGlobal>
+    <deployClassPath>lib/dk.netarkivet.harvester.jar</deployClassPath>
+    <deployClassPath>lib/dk.netarkivet.archive.jar</deployClassPath>
+    <deployClassPath>lib/dk.netarkivet.monitor.jar</deployClassPath>
+    <deployClassPath>lib/dk.netarkivet.wayback.jar</deployClassPath>
+    <deployJavaOpt>-Xmx1536m</deployJavaOpt>
+    <settings>
+        <common>
+            <environmentName>STANDALONE</environmentName>
+            <applicationInstanceId></applicationInstanceId>
+            <remoteFile>
+                <class>
+                    dk.netarkivet.common.distribute.FTPRemoteFile
+                </class>
+                <serverPort>21</serverPort>
+                <retries>3</retries>
+            </remoteFile>
+            <jms>
+                <class>
+                    dk.netarkivet.common.distribute.JMSConnectionSunMQ
+                </class>
+                <broker>localhost</broker>
+                <port>7676</port>
+            </jms>
+            <jmx>
+                <passwordFile>conf/jmxremote.password</passwordFile>
+                <timeout>120</timeout>
+            </jmx>
+
+            <indexClient>
+                <indexRequestTimeout>43200000</indexRequestTimeout> 
+            </indexClient>
+            <replicas>
+                <replica>
+                    <replicaId>A</replicaId>
+                    <replicaName>ReplicaA</replicaName>
+                    <replicaType>bitarchive</replicaType>
+                </replica>
+            </replicas>
+            <database>
+                <url></url>
+            </database>
+            <tempDir>tmpdircommon</tempDir> 
+        </common>
+        <monitor>
+          <jmxUsername>admin</jmxUsername>
+            <jmxPassword>admin</jmxPassword>
+        </monitor>
+    </settings>
+
+    <thisPhysicalLocation name="NATIONAL_LIBRARY">
+      <!-- TODO change to fit your setup. -->
+      <deployInstallDir>/path/to/installationdir</deployInstallDir>
+      <deployMachineUserName>test</deployMachineUserName>
+    
+    <settings>
+        <common>
+            <remoteFile>
+                <!-- TODO change to JMS broker host and username/password. -->
+                <serverName>localhost</serverName>
+                <userName>admin</userName>
+                <userPassword>admin</userPassword>
+            </remoteFile>
+            <useReplicaId>A</useReplicaId>
+            <!-- TODO change to fit your setup. 
+                The "mail.yourdomain.com" as mail server needs to be replaced as
+                well as the values for "receiver" and "sender".
+             -->
+            <mail>
+                <server>mail.yourdomain.com</server>
+            </mail>
+            <notifications>
+                <class>dk.netarkivet.common.utils.EMailNotifications</class>
+                <receiver>example</receiver>
+                <sender>example</sender>
+            </notifications>
+        </common>
+        <viewerproxy>
+            <baseDir>viewerproxy</baseDir>
+        </viewerproxy>
+    </settings>
+
+    <deployMachine name="localhost">
+        <deployDatabaseDir>harvestDatabase</deployDatabaseDir>
+        <applicationName name="dk.netarkivet.archive.arcrepository.ArcRepositoryApplication">
+            <settings>
+                <common>
+                    <jmx>
+                        <port>8111</port>
+                        <rmiPort>8211</rmiPort>
+                    </jmx>
+                </common>
+            </settings>
+        </applicationName>
+        <applicationName name="dk.netarkivet.archive.bitarchive.BitarchiveMonitorApplication">
+            <settings>
+                <common>
+                    <jmx>
+                        <port>8112</port>
+                        <rmiPort>8212</rmiPort>
+                    </jmx>
+                </common>
+            </settings>
+        </applicationName>
+        <applicationName name="dk.netarkivet.archive.bitarchive.BitarchiveApplication">
+            <settings>
+                <common>
+                    <jmx>
+                        <port>8113</port>
+                        <rmiPort>8213</rmiPort>
+                    </jmx>
+                </common>
+                <archive>
+                    <bitarchive>
+                        <!-- TODO Point this directory at your ARC files. -->
+                        <baseFileDir>/arcs/</baseFileDir>
+                    </bitarchive>
+                </archive>
+            </settings>
+        </applicationName>
+    </deployMachine>
+  </thisPhysicalLocation>
+</deployGlobal>

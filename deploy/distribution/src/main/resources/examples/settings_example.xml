@@ -1,0 +1,713 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  
+ * File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
+ *
+ * The Netarchive Suite - Software to harvest and preserve websites
+ * Copyright 2004-2012 The Royal Danish Library, the Danish State and
+University Library, the National Library of France and the Austrian
+National Library.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ * USA
+ */
+-->
+<!-- 
+	This file contains an example of a settings.xml file.
+	NOTE that this settings file is NOT necessary if you use deploy 
+-->
+<settings>
+    <common>
+        <!-- The name of the environment in which this code is running, e.g.
+                 PROD, RELEASETEST, NHC,... also used as common prefix to all 
+                 JMS channels.
+         -->
+		<environmentName>DEV</environmentName>
+        <!-- Common temporary directory for all applications. Some subdirs of
+             this directory  must be set to have AllPermision in the
+             conf/security.conf file, or the web pages won't work. -->
+        <tempDir>./tests/commontempdir</tempDir>
+        <!-- FTP connection data-->
+        <remoteFile>
+            <!-- The class to use for RemoteFile objects. -->
+            <class>dk.netarkivet.common.distribute.FTPRemoteFile</class>
+            <!-- The default FTP-server used -->
+            <serverName>localhost</serverName>
+            <!-- The default FTP-server port used -->
+            <serverPort>21</serverPort>
+            <!-- The default FTP username -->
+            <userName>exampleusername</userName>
+            <!-- The default FTP password -->
+            <userPassword>examplepassword</userPassword>
+            <!-- The number of times FTPRemoteFile should try before giving up
+                 a copyTo operation. We augment FTP with checksum checks. -->
+            <retries>3</retries>
+        </remoteFile>
+        <!-- Connection data for JMS-->
+        <jms>
+            <!-- Selects the broker class to be used. Must be a subclass of
+            dk.netarkivet.common.distribute.JMSConnection. -->
+            <class>dk.netarkivet.common.distribute.JMSConnectionSunMQ</class>
+            <!-- The JMS broker host contacted by the JMS connection -->
+            <broker>localhost</broker>
+            <!-- The port the JMS connection should use -->
+            <port>7676</port>
+        </jms>
+        <http>
+            <!-- The *unique* (per host) port number that may or may not be
+                 used to serve http, but is frequently used to identify
+                 the process.-->
+            <port>8076</port>
+        </http>
+        <arcrepositoryClient>
+            <!-- The class that implements the ArcRepositoryClient.  This class
+                 will be instantiated by the ArcRepositoryClientFactory -->
+            <class>dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient</class>
+            <!-- How many milliseconds we will wait before giving up on a
+                 lookup request to the Arcrepository. Set to 1 minute to
+                 make it possible to retrieve large records using FTP -->
+            <getTimeout>60000</getTimeout>
+            <!-- Number of times to try sending a store message before failing,
+                 including the first attempt -->
+            <storeRetries>3</storeRetries>
+            <!-- Timeout in milliseconds before retrying when calling
+                 ArcRepositoryClient.store() -->
+            <storeTimeout>3600000</storeTimeout>
+        </arcrepositoryClient>
+        <monitorregistryClient>
+            <!-- The class instantiated to register JMX urls at a registry. -->
+            <class>dk.netarkivet.monitor.distribute.JMSMonitorRegistryClient</class>
+        </monitorregistryClient>
+        <indexClient>
+            <!-- The class instantiated to give access to indices.  Will be
+                 created by IndexClientFactory -->
+            <class>dk.netarkivet.harvester.indexserver.distribute.IndexRequestClient</class>
+            <!-- The amount of time, in milliseconds, we should wait for replies
+                 when issuing a call to generate an index over som jobs.
+             -->
+            <indexRequestTimeout>43200000</indexRequestTimeout>
+        </indexClient>
+        <!-- The name of the directory where cache data global to the entire
+             machine can be stored.  Various kinds of caches should be stored in
+             subdirectories of this -->
+        <cacheDir>cache</cacheDir>
+        <!--The number of milliseconds we wait for processes to react
+            to shutdown requests.-->
+        <processTimeout>5000</processTimeout>
+        <!-- Error notification settings -->
+        <notifications>
+            <!-- Which class to instantiate to handle error notifications -->
+            <class>dk.netarkivet.common.utils.EMailNotifications</class>
+            <!-- The receiver of emails -->
+            <receiver>example@netarkivet.dk</receiver>
+            <!-- The stated sender of emails  (and receiver of bounces)-->
+            <sender>example@netarkivet.dk</sender>
+        </notifications>
+        <!-- Settings for sending email. Currently mail is only used for email
+         notifications. -->
+        <mail>
+            <!-- The email server to use -->
+            <server>examplesmtpserver.netarkivet.dk</server>
+        </mail>
+        <!-- JMX logging settings -->
+        <jmx>
+            <!-- The port to connect to using JMX -->
+            <port>8100</port>
+            <!-- The RMI port used for communicating with beans -->
+            <rmiPort>8200</rmiPort>
+            <!-- The password file, containing information about who may
+            connect -->
+            <passwordFile>conf/jmxremote.password</passwordFile>
+            <!-- How many seconds we will wait before giving up on a JMX
+            connection. -->
+            <timeout>120</timeout>
+        </jmx>
+        <!-- Settings for the web GUI -->
+        <webinterface>
+            <!-- Language settings -->
+            <language>
+                <!-- A locale the GUI is available as -->
+                <locale>da</locale>
+                <!-- Native name of the language for this locale -->
+                <name>Dansk</name>
+            </language>
+            <!-- Language settings -->
+            <language>
+                <!-- A locale the GUI is available as -->
+                <locale>en</locale>
+                <!-- Native name of the language for this locale -->
+                <name>English</name>
+            </language>
+            <siteSection>
+                <!-- A subclass of SiteSection that defines this part of the
+                     web interface. -->
+                <class>dk.netarkivet.harvester.webinterface.DefinitionsSiteSection</class>
+                <!-- The directory or war-file containing the web application
+                     for this site section.-->
+                <webapplication>webpages/HarvestDefinition</webapplication>
+            </siteSection>
+            <siteSection>
+                <!-- A subclass of SiteSection that defines this part of the
+                     web interface. -->
+                <class>dk.netarkivet.harvester.webinterface.HistorySiteSection</class>
+                <!-- The directory or war-file containing the web application
+                     for this site section.-->
+                <webapplication>webpages/History</webapplication>
+            </siteSection>
+            <siteSection>
+                <!-- A subclass of SiteSection that defines this part of the
+                     web interface. -->
+                <class>dk.netarkivet.archive.webinterface.BitPreservationSiteSection</class>
+                <!-- The directory or war-file containing the web application
+                     for this site section.-->
+                <webapplication>webpages/BitPreservation</webapplication>
+            </siteSection>
+            <siteSection>
+                <!-- A subclass of SiteSection that defines this part of the
+                     web interface. -->
+                <class>dk.netarkivet.viewerproxy.webinterface.QASiteSection</class>
+                <!-- The directory or war-file containing the web application
+                     for this site section.-->
+                <webapplication>webpages/QA</webapplication>
+            </siteSection>
+            <siteSection>
+                <!-- A subclass of SiteSection that defines this part of the
+                     web interface. -->
+                <class>dk.netarkivet.monitor.webinterface.StatusSiteSection</class>
+                <!-- The directory or war-file containing the web application
+                     for this site section.-->
+                <webapplication>webpages/Status</webapplication>
+            </siteSection>
+        </webinterface>
+        <topLevelDomains>
+            <!-- This setting describes valid TLDs to define domains. -->
+            <tld>ac</tld>
+            <tld>ad</tld>
+            <tld>ae</tld>
+            <tld>aero</tld>
+            <tld>af</tld>
+            <tld>ag</tld>
+            <tld>ai</tld>
+            <tld>al</tld>
+            <tld>am</tld>
+            <tld>an</tld>
+            <tld>ao</tld>
+            <tld>aq</tld>
+            <tld>ar</tld>
+            <tld>arpa</tld>
+            <tld>as</tld>
+            <tld>at</tld>
+            <tld>au</tld>
+            <tld>aw</tld>
+            <tld>ax</tld>
+            <tld>az</tld>
+            <tld>ba</tld>
+            <tld>bb</tld>
+            <tld>bd</tld>
+            <tld>be</tld>
+            <tld>bf</tld>
+            <tld>bg</tld>
+            <tld>bh</tld>
+            <tld>bi</tld>
+            <tld>biz</tld>
+            <tld>bj</tld>
+            <tld>bm</tld>
+            <tld>bn</tld>
+            <tld>bo</tld>
+            <tld>br</tld>
+            <tld>bs</tld>
+            <tld>bt</tld>
+            <tld>bv</tld>
+            <tld>bw</tld>
+            <tld>by</tld>
+            <tld>bz</tld>
+            <tld>ca</tld>
+            <tld>cat</tld>
+            <tld>cc</tld>
+            <tld>cd</tld>
+            <tld>cf</tld>
+            <tld>cg</tld>
+            <tld>ch</tld>
+            <tld>ci</tld>
+            <tld>ck</tld>
+            <tld>cl</tld>
+            <tld>cm</tld>
+            <tld>cn</tld>
+            <tld>co</tld>
+            <tld>com</tld>
+            <tld>coop</tld>
+            <tld>cr</tld>
+            <tld>cs</tld>
+            <tld>cu</tld>
+            <tld>cv</tld>
+            <tld>cx</tld>
+            <tld>cy</tld>
+            <tld>cz</tld>
+            <tld>de</tld>
+            <tld>dj</tld>
+            <tld>dk</tld>
+            <tld>dm</tld>
+            <tld>do</tld>
+            <tld>dz</tld>
+            <tld>ec</tld>
+            <tld>edu</tld>
+            <tld>ee</tld>
+            <tld>eg</tld>
+            <tld>eh</tld>
+            <tld>er</tld>
+            <tld>es</tld>
+            <tld>et</tld>
+            <tld>eu</tld>
+            <tld>fi</tld>
+            <tld>fj</tld>
+            <tld>fk</tld>
+            <tld>fm</tld>
+            <tld>fo</tld>
+            <tld>fr</tld>
+            <tld>ga</tld>
+            <tld>gb</tld>
+            <tld>gd</tld>
+            <tld>ge</tld>
+            <tld>gf</tld>
+            <tld>gg</tld>
+            <tld>gh</tld>
+            <tld>gi</tld>
+            <tld>gl</tld>
+            <tld>gm</tld>
+            <tld>gn</tld>
+            <tld>gov</tld>
+            <tld>gp</tld>
+            <tld>gq</tld>
+            <tld>gr</tld>
+            <tld>gs</tld>
+            <tld>gt</tld>
+            <tld>gu</tld>
+            <tld>gw</tld>
+            <tld>gy</tld>
+            <tld>hk</tld>
+            <tld>hm</tld>
+            <tld>hn</tld>
+            <tld>hr</tld>
+            <tld>ht</tld>
+            <tld>hu</tld>
+            <tld>id</tld>
+            <tld>ie</tld>
+            <tld>il</tld>
+            <tld>im</tld>
+            <tld>in</tld>
+            <tld>info</tld>
+            <tld>int</tld>
+            <tld>io</tld>
+            <tld>iq</tld>
+            <tld>ir</tld>
+            <tld>is</tld>
+            <tld>it</tld>
+            <tld>je</tld>
+            <tld>jm</tld>
+            <tld>jo</tld>
+            <tld>jobs</tld>
+            <tld>jp</tld>
+            <tld>ke</tld>
+            <tld>kg</tld>
+            <tld>kh</tld>
+            <tld>ki</tld>
+            <tld>km</tld>
+            <tld>kn</tld>
+            <tld>kp</tld>
+            <tld>kr</tld>
+            <tld>kw</tld>
+            <tld>ky</tld>
+            <tld>kz</tld>
+            <tld>la</tld>
+            <tld>lb</tld>
+            <tld>lc</tld>
+            <tld>li</tld>
+            <tld>lk</tld>
+            <tld>lr</tld>
+            <tld>ls</tld>
+            <tld>lt</tld>
+            <tld>lu</tld>
+            <tld>lv</tld>
+            <tld>ly</tld>
+            <tld>ma</tld>
+            <tld>mc</tld>
+            <tld>md</tld>
+            <tld>mg</tld>
+            <tld>mh</tld>
+            <tld>mil</tld>
+            <tld>mk</tld>
+            <tld>ml</tld>
+            <tld>mm</tld>
+            <tld>mn</tld>
+            <tld>mo</tld>
+            <tld>mobi</tld>
+            <tld>mp</tld>
+            <tld>mq</tld>
+            <tld>mr</tld>
+            <tld>ms</tld>
+            <tld>mt</tld>
+            <tld>mu</tld>
+            <tld>museum</tld>
+            <tld>mv</tld>
+            <tld>mw</tld>
+            <tld>mx</tld>
+            <tld>my</tld>
+            <tld>mz</tld>
+            <tld>na</tld>
+            <tld>name</tld>
+            <tld>nc</tld>
+            <tld>ne</tld>
+            <tld>net</tld>
+            <tld>nf</tld>
+            <tld>ng</tld>
+            <tld>ni</tld>
+            <tld>nl</tld>
+            <tld>no</tld>
+            <tld>np</tld>
+            <tld>nr</tld>
+            <tld>nt</tld>
+            <tld>nu</tld>
+            <tld>nz</tld>
+            <tld>om</tld>
+            <tld>org</tld>
+            <tld>pa</tld>
+            <tld>pe</tld>
+            <tld>pf</tld>
+            <tld>pg</tld>
+            <tld>ph</tld>
+            <tld>pk</tld>
+            <tld>pl</tld>
+            <tld>pm</tld>
+            <tld>pn</tld>
+            <tld>pr</tld>
+            <tld>pro</tld>
+            <tld>ps</tld>
+            <tld>pt</tld>
+            <tld>pw</tld>
+            <tld>py</tld>
+            <tld>qa</tld>
+            <tld>re</tld>
+            <tld>ro</tld>
+            <tld>ru</tld>
+            <tld>rw</tld>
+            <tld>sa</tld>
+            <tld>sb</tld>
+            <tld>sc</tld>
+            <tld>sd</tld>
+            <tld>se</tld>
+            <tld>sg</tld>
+            <tld>sh</tld>
+            <tld>si</tld>
+            <tld>sj</tld>
+            <tld>sk</tld>
+            <tld>sl</tld>
+            <tld>sm</tld>
+            <tld>sn</tld>
+            <tld>so</tld>
+            <tld>sr</tld>
+            <tld>st</tld>
+            <tld>su</tld>
+            <tld>sv</tld>
+            <tld>sy</tld>
+            <tld>sz</tld>
+            <tld>tc</tld>
+            <tld>td</tld>
+            <tld>tf</tld>
+            <tld>tg</tld>
+            <tld>th</tld>
+            <tld>tj</tld>
+            <tld>tk</tld>
+            <tld>tl</tld>
+            <tld>tm</tld>
+            <tld>tn</tld>
+            <tld>to</tld>
+            <tld>tp</tld>
+            <tld>tr</tld>
+            <tld>travel</tld>
+            <tld>tt</tld>
+            <tld>tv</tld>
+            <tld>tw</tld>
+            <tld>tz</tld>
+            <tld>ua</tld>
+            <tld>ug</tld>
+            <tld>ac.uk</tld>
+            <tld>co.uk</tld>
+            <tld>gov.uk</tld>
+            <tld>ltd.uk</tld>
+            <tld>me.uk</tld>
+            <tld>mod.uk</tld>
+            <tld>net.uk</tld>
+            <tld>nic.uk</tld>
+            <tld>nhs.uk</tld>
+            <tld>org.uk</tld>
+            <tld>plc.uk</tld>
+            <tld>police.uk</tld>
+            <tld>sch.uk</tld>
+            <tld>govt.uk</tld>
+            <tld>orgn.uk</tld>
+            <tld>lea.uk</tld>
+            <tld>mil.uk</tld>
+            <tld>nel.uk</tld>
+            <tld>uk</tld>
+            <tld>us</tld>
+            <tld>uy</tld>
+            <tld>uz</tld>
+            <tld>va</tld>
+            <tld>vc</tld>
+            <tld>ve</tld>
+            <tld>vg</tld>
+            <tld>vi</tld>
+            <tld>vn</tld>
+            <tld>vu</tld>
+            <tld>wf</tld>
+            <tld>ws</tld>
+            <tld>ye</tld>
+            <tld>yt</tld>
+            <tld>yu</tld>
+            <tld>za</tld>
+            <tld>zm</tld>
+            <tld>zw</tld>
+        </topLevelDomains>
+        <database>
+            <!-- The full URL for connecting to the database.
+                 If present and not empty, this URL must match the settings
+                 baseDir and class.-->
+            <url>jdbc:derby:harvestdefinitionbasedir/fullhddb</url>
+            <!-- The class that handles DB-specific methods -->
+            <class>dk.netarkivet.harvester.datamodel.DerbyServerSpecifics</class>
+        </database>
+        <repository>
+            <!-- When the length record exceeds this number, the contents of the record
+                 will be transferred using a RemoteFile. Currently set to 10 MB
+              -->
+            <limitForRecordDatatransferInFile>10485760</limitForRecordDatatransferInFile>
+        </repository>
+        <replicas>
+            <!-- The names of all bitarchive replicas in the
+                 environment, e.g., "KB" and "SB". 
+                 NOTE: settings for checksum replicas are not use yet -->                 
+            <replica>
+                <!--  the identifier of the replica. -->  
+                <replicaId>SB</replicaId>
+                <!--  the type of the replica. Bitarchive is currently 
+                	the only type used. A "checksum" type is implemented but not used by 
+                	NetarchiveSuite. -->
+                <replicaType>bitarchive</replicaType>
+                <!--  The name of the replica -->
+                <replicaName>SBB</replicaName>
+            </replica>
+            <replica>
+                <replicaId>KB</replicaId>
+                <replicaType>bitarchive</replicaType>
+                <replicaName>KBB</replicaName>
+            </replica>
+             <!-- <replica>  -->
+             <!--   <replicaId>CS</replicaId>  -->
+             <!--   <replicaType>checksum</replicaType>  -->
+             <!--   <replicaName>CS1</replicaName>  -->
+             <!-- </replica>  -->
+        </replicas>
+        <!-- Default bit archive to use for batch jobs (if none is specified) -->
+        <useReplicaId>KB</useReplicaId>
+        <!-- Physical location of applications -->
+        <thisPhysicalLocation>SBL</thisPhysicalLocation>
+        <!-- The name of the application, fx. "BitarchiveServerApplication".
+             The monitor puts this with each log message -->
+        <applicationName>NA</applicationName>
+        <!-- If more instances of the same application is running
+        	on a server, you need to distinguish between them by using distinct
+        	applicationInstanceIds -->
+        <applicationInstanceId>XX</applicationInstanceId>
+    </common>
+    <harvester>
+        <datamodel>
+            <domain>
+                <!-- Default seed list to use when new domains are created -->
+                <defaultSeedlist>defaultseeds</defaultSeedlist>
+                <!-- The name of a configuration that is created by default and
+                     which is initially used for snapshot harvests-->
+                <defaultConfig>defaultconfig</defaultConfig>
+                <!-- Name of order xml template used for domains if nothing
+                 else is specified (e.g. newly created configrations use this) -->
+                <defaultOrderxml>default_orderxml</defaultOrderxml>
+                <!-- Default download rate for domain configuration.
+                 Not currently enforced. -->
+                <defaultMaxrate>100</defaultMaxrate>
+                <!-- Default byte limit for domain configuration. -->
+                <defaultMaxbytes>1000000000</defaultMaxbytes>
+                <!-- Default object limit for domain configuration. -->
+                <defaultMaxobjects>10000</defaultMaxobjects>
+            </domain>
+        </datamodel>
+        <scheduler>
+            <!-- Used when calculating expected size of a harvest of some
+                 configuration during job-creation process. This defines how
+                 great a possible factor we will permit a harvest to be larger
+                 then the expectation, when basing the expectation on a previous
+                 completed job. -->
+            <errorFactorPrevResult>10</errorFactorPrevResult>
+            <!-- Used when calculating expected size of a harvest of some
+                 configuration during job-creation process.  This defines how
+                 great a possible factor we will permit a harvest to be larger
+                 then the expectation, when basing the expectation on previous
+                 uncompleted harvests or no harvest data at all. -->
+            <errorFactorBestGuess>2</errorFactorBestGuess>
+            <!-- How many bytes the average object is expected to be on domains
+                 where we don't know any better.  This number should grow over
+                 time, as of end of 2005 empirical data shows 38000 -->
+            <expectedAverageBytesPerObject>38000</expectedAverageBytesPerObject>
+            <!-- Initial guess of #objects in an unknown domain -->
+            <maxDomainSize>5000</maxDomainSize>
+            <jobs><!-- One Job corresponds to a Heritrix run -->
+                <!-- The maximum allowed relative difference in expected number
+                     of objects retrieved in a single job definition.  Set to
+                     MAX_LONG for no splitting -->
+                <maxRelativeSizeDifference>100</maxRelativeSizeDifference>
+                <!-- Size differences for jobs below this threshold are ignored,
+                     regardless of the limits for the relative size difference.
+                     Set to MAX_LONG for no splitting. -->
+                <minAbsoluteSizeDifference>2000</minAbsoluteSizeDifference>
+                <!-- When this limit is exceeded no more configurations may be
+                     added to a job. Set to MAX_LONG for no splitting. -->
+                <maxTotalSize>2000000</maxTotalSize>
+            </jobs>
+            <!-- How many domain configurations we will process in one go before
+                 making jobs out of them.  This amount of domains will be stored
+                 in memory at the same time.  Set to MAX_LONG for no job
+                 splitting. -->
+            <configChunkSize>10000</configChunkSize>
+            <splitByObjectLimit>false</splitByObjectLimit>
+        </scheduler>
+        <harvesting>
+            <!-- Each job gets a subdir of this dir. Job data is written and
+                 Heritrix writes to that subdir-->
+            <serverDir>server</serverDir>
+            <!--  The minimum amount of free bytes in the serverDir
+                required before accepting any harvest-jobs. Default is
+                 400000000 bytes (~400 Mbytes).
+            -->
+            <minSpaceLeft>400000000</minSpaceLeft>
+            <!-- The directory in which data from old jobs is kept after
+                 uploading.  Each directory from serverDir will be moved to
+                 here if any data remains, either due to failed uploads or
+                 because it wasn't attempted uploaded. -->
+            <oldjobsDir>oldjobs</oldjobsDir>
+            <!-- Pool to take jobs from -->
+            <channel>HIGHPRIORITY</channel>
+            <!-- When to stop Heritrix, timeouts in ms. -->
+            <heritrix>
+                <!-- The timeout setting for aborting a crawl based on
+                    crawler-inactivity. If the crawler is inactive for this
+                    amount of seconds the crawl will be aborted.
+                    The inactivity is measured on the
+                    crawlController.activeToeCount(). -->
+                <inactivityTimeout>100</inactivityTimeout>
+                <!-- The timeout value (in seconds) used in HeritrixLauncher
+                     for aborting crawl when no bytes are being received from
+                     web servers. -->
+                <noresponseTimeout>100</noresponseTimeout>
+                <!-- Name for accessing the Heritrix GUI -->
+                <adminName>admin</adminName>
+                <!-- Password for accesing the Heritrix GUI -->
+                <adminPassword>adminPassword</adminPassword>
+                <!-- Port used to access the Heritrix web user interface.
+                     This port must not be used by anything else on the machine.
+                     -->
+                <guiPort>8090</guiPort>
+                <!-- Port used to access the Heritrix JMX interface.
+                     This port must not be used by anything else on the machine,
+                     but does not need to be accessible from other machines
+                     unless you want to be able to use jconsole to access
+                     Heritrix directly
+                     -->
+                <jmxPort>8091</jmxPort>
+                <!-- The heap size to use for the Heritrix sub-process.  This
+                     should probably be fairly large.  It can be specified in
+                     the same way as for the -Xmx argument to Java, e.g.
+                     512M, 2G etc.-->
+                <!-- the username/password used to connect to Heritrix via JMX. 
+                	These values must correspond to what is written in jmxremote.password 
+               	-->
+                <jmxUsername>controlRole</jmxUsername>
+                <jmxPassword>JMX_CONTROL_ROLE_PASSWORD_PLACEHOLDER</jmxPassword>
+                <heapSize>1598M</heapSize>
+            </heritrix>
+        </harvesting>
+    </harvester>
+    <archive>
+        <arcrepository>
+            <!-- Absolute/relative path to where the "central list of files and
+                 checksums" (admin.data) is written. Used by ArcRepository and
+                 BitPreservation. -->
+            <baseDir>.</baseDir>
+        </arcrepository>
+        <bitarchive>
+            <!-- The minimum amount of bytes left *in any dir* that we will
+                 allow a bitarchive machine to accept uploads with.  When no
+                 dir has more space than this, the bitarchive machine stops
+                 listening for uploads.  This values should at the very least
+                 be greater than the largest ARC file you expect to receive.
+            -->
+            <minSpaceLeft>200000000</minSpaceLeft>
+            <!-- These are the directories where ARC files are stored
+                 (in a subdir). If more than one is given, they are used from
+                 one end. -->
+            <baseFileDir>m:\bitarchive</baseFileDir>
+            <baseFileDir>n:\bitarchive</baseFileDir>
+            <baseFileDir>o:\bitarchive</baseFileDir>
+            <baseFileDir>p:\bitarchive</baseFileDir>
+            <!-- The frequency in milliseconds of heartbeats that are sent by
+                 each BitarchiveServer to the BitarchiveMonitor. -->
+            <heartbeatFrequency>1000</heartbeatFrequency>
+            <!-- If we haven't heard from a bit archive within this many
+                 milliseconds, we don't excpect it to be online and won't wait
+                 for them to reply on a batch job.  This number should be
+                 significantly greater than heartbeatFrequency to account for
+                 temporary network congestion. -->
+            <acceptableHeartbeatDelay>60000</acceptableHeartbeatDelay>
+            <!-- The BitarchiveMonitorServer will listen for BatchEndedMessages
+                 for this many milliseconds before it decides that a batch job
+                 is taking too long and returns just the replies it has
+                 received at that point. -->
+            <batchMessageTimeout>1209600000</batchMessageTimeout>
+            <!-- Credentials to enter in the GUI for "deleting" ARC files in
+                 this bit archive -->
+            <thisCredentials>examplecredentials</thisCredentials>
+        </bitarchive>
+        <bitpreservation>
+            <!-- Absolute or relative path to dir containing results of
+                 file-list-batch-jobs and checksumming batch jobs
+                 for bit preservation-->
+            <baseDir>bitpreservation</baseDir>
+        </bitpreservation>
+    </archive>
+    <viewerproxy>
+        <!-- The main directory for the ViewerProxy, used for storing the Lucene
+             index for the jobs being viewed -->
+        <baseDir>viewerproxy</baseDir>
+    </viewerproxy>
+    <monitor>
+        <!-- the username/password used to connect to the all Mbeanservers started by the application. 
+        	These values must correspond to what is written in jmxremote.password -->
+	    <jmxUsername>monitorRole</jmxUsername>
+        <jmxPassword>JMX_MONITOR_ROLE_PASSWORD_PLACEHOLDER</jmxPassword>
+        <logging>
+        	<!-- the number of logs-entries visible in the Systemstate -->
+            <historySize>100</historySize>
+        </logging>
+    </monitor>
+</settings>

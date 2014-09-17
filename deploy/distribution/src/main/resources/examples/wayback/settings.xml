@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+File:       $Id$
+Revision:   $Revision$
+Author:     $Author$
+Date:       $Date$
+
+The Netarchive Suite - Software to harvest and preserve websites
+Copyright 2004-2012 The Royal Danish Library, the Danish State and
+University Library, the National Library of France and the Austrian
+National Library.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+-->
+<!-- 
+	This file contains the default settings used to enable wayback
+	to fetch its data from an NetarchiveSuite style archive.
+-->
+<settings>
+    <common>
+        <environmentName>STANDALONE</environmentName>
+        <!-- Use the tomcat port of the proxy connection as instance id. -->
+        <applicationInstanceId>WAYBACK_8670</applicationInstanceId>
+
+        <jms>
+            <class>
+                dk.netarkivet.common.distribute.JMSConnectionSunMQ
+            </class>
+            <broker>localhost</broker>
+            <port>7676</port>
+        </jms>
+        <jmx>
+            <passwordFile>conf/jmxremote.password</passwordFile>
+            <accessFile>conf/jmxremote.access</accessFile>
+            <timeout>120</timeout>
+            <port>8100</port>
+            <rmiPort>8200</rmiPort>
+        </jmx>
+        <replicas>
+        <!-- The names of all bit archive replicas in the environment, e.g.,
+        "nameOfBitachiveOne" and "nameOfBitachiveTwo". -->
+            <replica>
+                <replicaId>A</replicaId>
+                <replicaName>ReplicaA</replicaName>
+                <replicaType>bitarchive</replicaType>
+            </replica>
+        </replicas>
+        <remoteFile>
+            <!-- TODO: See user documentation for NetarchiveSuite
+            http://netarkivet.dk/suite/Documentation . -->
+            <serverName>ftp.yourdomain.com</serverName>
+            <userName>ftpuser</userName>
+            <userPassword>ftppassword</userPassword>
+        </remoteFile>
+        <!-- TODO: Insert mail server and to, from emails. --> 
+        <mail>
+            <server>mail.yourdomain.com</server>
+        </mail>
+        <notifications>
+            <class>dk.netarkivet.common.utils.EMailNotifications</class>
+            <sender>example@yourdomain.com</sender>
+            <receiver>example@yourdomain.com</receiver>
+        </notifications>
+        <useReplicaId>A</useReplicaId>
+        <thisPhysicalLocation>S</thisPhysicalLocation>
+    </common>
+    <wayback>
+         <urlcanonicalizer>
+             <classname>
+                 org.archive.wayback.util.url.AggressiveUrlCanonicalizer
+             </classname>
+         </urlcanonicalizer>
+    </wayback>
+</settings>
